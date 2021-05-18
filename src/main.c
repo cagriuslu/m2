@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "TTF_Init: %u\n", res);
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, SDL_WINDOW_SHOWN);
 	uint32_t pixel_format = SDL_GetWindowPixelFormat(window);
-	fprintf(stderr, "Pixel format: %d\n", pixel_format);
+	fprintf(stderr, "Pixel format: %x\n", pixel_format);
 	fprintf(stderr, "SDL_CreateWindow: %p\n", window);
 	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	fprintf(stderr, "SDL_CreateRenderer: %p\n", renderer);
