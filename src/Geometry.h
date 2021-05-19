@@ -4,6 +4,7 @@
 #include "Point.h"
 
 typedef enum _GeometryType {
+	GEOMETRY_TYPE_NONE = 0,
 	GEOMETRY_TYPE_RECTANGLE,
 	GEOMETRY_TYPE_CIRCLE
 } GeometryType;

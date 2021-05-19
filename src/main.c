@@ -1,3 +1,6 @@
+#include "Player.h"
+#include "Camera.h"
+#include "Array.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -31,6 +34,13 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "SDL_RENDERER_ACCELERATED enabled: %d\n", renderer_info.flags & SDL_RENDERER_ACCELERATED ? 1 : 0);
 	fprintf(stderr, "SDL_RENDERER_PRESENTVSYNC enabled: %d\n", renderer_info.flags & SDL_RENDERER_PRESENTVSYNC ? 1 : 0);
 	fprintf(stderr, "SDL_RENDERER_TARGETTEXTURE enabled: %d\n", renderer_info.flags & SDL_RENDERER_TARGETTEXTURE ? 1 : 0);
+
+	Array objects;
+	ArrayInit(&objects, sizeof(Object));
+	Object *player = ArrayAppend(&objects, NULL); // Append empty Player object
+	PlayerInit(player);
+	Object *camera = ArrayAppend(&objects, NULL); // Append empty Camera object
+	CameraInit(camera, player);
 
 	bool quit = false;
 	while (!quit) {
