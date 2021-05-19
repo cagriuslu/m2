@@ -4,10 +4,11 @@
 #include "Object.h"
 #include "Error.h"
 
-typedef struct _Camera {
+typedef struct _CameraData {
 	Object *player;
-} Camera;
+} CameraData;
 
 int CameraInit(Object *obj, Object *player);
+void CameraDeinit(Object *obj);
 
 #endif

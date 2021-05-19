@@ -1,21 +1,21 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "Point.h"
+#include "Vec3F.h"
 #include "Geometry.h"
 #include "Error.h"
 #include <SDL.h>
 
 typedef struct _Object {
-	Point pos; // Position of the origin of the object
+	Vec3F pos; // Position of the origin of the object
 	// Physics subsystem
 	Geometry geo; // Geometry
-	Point vel; // Velocity
-	Point avel; // Angular velocity
-	Point drag; // Drag
-	Point aDrag; // Angular drag
+	Vec3F vel; // Velocity
+	Vec3F avel; // Angular velocity
+	Vec3F drag; // Drag
+	Vec3F aDrag; // Angular drag
 	float mass; // Mass
-	Point grav; // Gravitational force
+	float grav; // Gravitational force
 	void (*prePhysics)(struct _Object*);
 	void (*onCollision)(struct _Object*);
 	void (*postPhysics)(struct _Object*);
@@ -25,15 +25,17 @@ typedef struct _Object {
 	// Graphics subsystem
 	SDL_Texture *tx;
 	SDL_Rect txSrc;
-	Point txOff; // Texture offset
+	Vec3F txOff; // Texture offset
 	float txScaleW, txScaleH;
-	float txRotZ;
+	float txRotZ; // Ignored for now
 	void (*preGraphics)(struct _Object*);
+	void (*ovrdGraphics)(struct _Object*, SDL_Renderer *renderer);
 	void (*postGraphics)(struct _Object*);
 	// Private data
 	void *privData;
 } Object;
 
 int ObjectInit(Object *obj);
+void ObjectDeinit(Object *obj);
 
 #endif

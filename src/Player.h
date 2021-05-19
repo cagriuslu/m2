@@ -5,5 +5,6 @@
 #include "Error.h"
 
 int PlayerInit(Object *obj);
+void PlayerDeinit(Object *obj);
 
 #endif

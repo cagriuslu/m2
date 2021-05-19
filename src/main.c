@@ -1,19 +1,22 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Array.h"
+#include "Vec2I.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 
 int main(int argc, char *argv[]) {
-	int res = 0;
+	const int SCREEN_WIDTH = 640;
+	const int SCREEN_HEIGHT = 480;
+	const int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
+	const int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
+	const float PIXELS_PER_METER = 20.0;
 
-	int screen_width = 640;
-	int screen_height = 480;
-	int screen_half_width = screen_width / 2;
-	int screen_half_height = screen_height / 2;
+	int res = 0;
 
 	res = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	fprintf(stderr, "SDL_Init: %u\n", res);
@@ -21,7 +24,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "IMG_Init: %u\n", res);
 	res = TTF_Init();
 	fprintf(stderr, "TTF_Init: %u\n", res);
-	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_width, screen_height, SDL_WINDOW_SHOWN);
+	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	uint32_t pixel_format = SDL_GetWindowPixelFormat(window);
 	fprintf(stderr, "Pixel format: %x\n", pixel_format);
 	fprintf(stderr, "SDL_CreateWindow: %p\n", window);
@@ -77,7 +80,30 @@ int main(int argc, char *argv[]) {
 		if (quit) {
 			break;
 		}
-		
+
+		// Graphics
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
+		for (size_t i = 0; i < ArrayLength(&objects); i++) {
+			Object *obj = ArrayGet(&objects, i);
+			Vec3F obj_origin_wrt_cam = Vec3FSub(obj->pos, camera->pos);
+			Vec3F obj_gfx_origin_wrt_cam = Vec3FAdd(obj_origin_wrt_cam, obj->txOff);
+			Vec2I obj_gfx_origin_wrt_screen_center = Vec3Fto2I(Vec3FMul(obj_gfx_origin_wrt_cam, PIXELS_PER_METER));
+			Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) {SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT}, obj_gfx_origin_wrt_screen_center);
+			SDL_Rect viewport = (SDL_Rect) {
+				obj_gfx_origin_wrt_screen_origin.x - (int32_t) round(obj->txSrc.w * obj->txScaleW / 2.0), 
+				obj_gfx_origin_wrt_screen_origin.y - (int32_t) round(obj->txSrc.h * obj->txScaleH / 2.0),
+				(int32_t) round(obj->txSrc.w * obj->txScaleW),
+				(int32_t) round(obj->txSrc.h * obj->txScaleH)
+			};
+			res = SDL_RenderSetViewport(renderer, &viewport);
+			if (res != 0) {
+				fprintf(stderr, "SDL_RenderSetViewport: %s\n", SDL_GetError());
+				abort();
+			} 
+			obj->ovrdGraphics(obj, renderer);
+		}
+		SDL_RenderPresent(renderer);
 
 		unsigned end_ticks = SDL_GetTicks();
 		//fprintf(stderr, "Frame time: %u\n", end_ticks - start_ticks);
