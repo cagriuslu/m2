@@ -2,10 +2,8 @@
 
 #define AsCameraData(p) ((CameraData*) (p))
 
-static void Camera_prePhysics(Object *obj) {
-	// Set camera position to player's position
+static void Camera_postPhysics(Object *obj) {
 	obj->pos = AsCameraData(obj->privData)->player->pos;
-	// TODO add damping
 }
 
 int CameraInit(Object *obj, Object *player) {
@@ -19,7 +17,7 @@ int CameraInit(Object *obj, Object *player) {
 	}
 	camData->player = player;
 	obj->privData = camData;
-	obj->prePhysics = Camera_prePhysics;
+	obj->postPhysics = Camera_postPhysics;
 	return X_OK;
 }
 

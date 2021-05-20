@@ -1,4 +1,20 @@
 #include "Player.h"
+#include "Main.h"
+
+static void Player_prePhysics(Object *obj) {
+	if (IsKeyDown(KEY_UP)) {
+		obj->pos.y -= 0.1;
+	}
+	if (IsKeyDown(KEY_DOWN)) {
+		obj->pos.y += 0.1;
+	}
+	if (IsKeyDown(KEY_LEFT)) {
+		obj->pos.x -= 0.1;
+	}
+	if (IsKeyDown(KEY_RIGHT)) {
+		obj->pos.x += 0.1;
+	}
+}
 
 static void Player_ovrdGraphics(Object *obj, SDL_Renderer *renderer) {
 	// Draw a blue box
@@ -17,6 +33,7 @@ int PlayerInit(Object *obj) {
 	if (res != X_OK) {
 		return res;
 	}
+	obj->prePhysics = Player_prePhysics;
 	obj->txSrc.w = 20;
 	obj->txSrc.h = 40;
 	obj->txOff.y = -20;
