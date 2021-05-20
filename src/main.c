@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Array.h"
 #include "Vec2I.h"
+#include "Debug.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -86,22 +87,30 @@ int main(int argc, char *argv[]) {
 		SDL_RenderClear(renderer);
 		for (size_t i = 0; i < ArrayLength(&objects); i++) {
 			Object *obj = ArrayGet(&objects, i);
-			Vec3F obj_origin_wrt_cam = Vec3FSub(obj->pos, camera->pos);
-			Vec3F obj_gfx_origin_wrt_cam = Vec3FAdd(obj_origin_wrt_cam, obj->txOff);
-			Vec2I obj_gfx_origin_wrt_screen_center = Vec3Fto2I(Vec3FMul(obj_gfx_origin_wrt_cam, PIXELS_PER_METER));
-			Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) {SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT}, obj_gfx_origin_wrt_screen_center);
-			SDL_Rect viewport = (SDL_Rect) {
-				obj_gfx_origin_wrt_screen_origin.x - (int32_t) round(obj->txSrc.w * obj->txScaleW / 2.0), 
-				obj_gfx_origin_wrt_screen_origin.y - (int32_t) round(obj->txSrc.h * obj->txScaleH / 2.0),
-				(int32_t) round(obj->txSrc.w * obj->txScaleW),
-				(int32_t) round(obj->txSrc.h * obj->txScaleH)
-			};
-			res = SDL_RenderSetViewport(renderer, &viewport);
-			if (res != 0) {
-				fprintf(stderr, "SDL_RenderSetViewport: %s\n", SDL_GetError());
-				abort();
-			} 
-			obj->ovrdGraphics(obj, renderer);
+			if (obj->preGraphics) {
+				obj->preGraphics(obj);
+			}
+			if (obj->ovrdGraphics) {
+				Vec3F obj_origin_wrt_camera_obj = Vec3FSub(obj->pos, camera->pos);
+				Vec2I obj_origin_wrt_screen_center = Vec3Fto2I(Vec3FMul(obj_origin_wrt_camera_obj, PIXELS_PER_METER));
+				Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, obj->txOff);
+				Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) {SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT}, obj_gfx_origin_wrt_screen_center);
+				SDL_Rect viewport = (SDL_Rect) {
+					obj_gfx_origin_wrt_screen_origin.x - (int32_t) round(obj->txSrc.w * obj->txScaleW / 2.0), 
+					obj_gfx_origin_wrt_screen_origin.y - (int32_t) round(obj->txSrc.h * obj->txScaleH / 2.0),
+					(int32_t) round(obj->txSrc.w * obj->txScaleW),
+					(int32_t) round(obj->txSrc.h * obj->txScaleH)
+				};
+				res = SDL_RenderSetViewport(renderer, &viewport);
+				if (res != 0) {
+					fprintf(stderr, "SDL_RenderSetViewport: %s\n", SDL_GetError());
+					abort();
+				} 
+				obj->ovrdGraphics(obj, renderer);
+			}
+			if (obj->postGraphics) {
+				obj->postGraphics(obj);
+			}
 		}
 		SDL_RenderPresent(renderer);
 

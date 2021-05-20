@@ -25,7 +25,7 @@ typedef struct _Object {
 	// Graphics subsystem
 	SDL_Texture *tx;
 	SDL_Rect txSrc;
-	Vec3F txOff; // Texture offset
+	Vec2I txOff; // Texture offset wrt object origin
 	float txScaleW, txScaleH;
 	float txRotZ; // Ignored for now
 	void (*preGraphics)(struct _Object*);
