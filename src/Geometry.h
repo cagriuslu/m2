@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include "Vec3F.h"
+#include "Vec2F.h"
 
 typedef enum _GeometryType {
 	GEOMETRY_TYPE_NONE = 0,
@@ -10,13 +10,13 @@ typedef enum _GeometryType {
 } GeometryType;
 
 typedef struct _GeometryTypeRectangle {
-	Vec3F off;
+	Vec2F off;
 	float w, h;
 	float rotZ; // Rotation around Z axis
 } GeometryTypeRectangle;
 
 typedef struct _GeometryTypeCircle {
-	Vec3F off;
+	Vec2F off;
 	float r;
 } GeometryTypeCircle;
 

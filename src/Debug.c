@@ -2,8 +2,8 @@
 #include "Controls.h"
 #include <stdio.h>
 
-void DebugVec3F(const char *message, Vec3F vec) {
-	fprintf(stderr, "%s Vec3F{x:%f, y:%f, z:%f}\n", message, vec.x, vec.y, vec.z);
+void DebugVec2F(const char *message, Vec2F vec) {
+	fprintf(stderr, "%s Vec2F{x:%f, y:%f}\n", message, vec.x, vec.y);
 }
 
 void DebugVec2I(const char *message, Vec2I vec) {

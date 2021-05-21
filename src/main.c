@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "Box2DWrapper.h"
 #include "Array.h"
 #include "Player.h"
 #include "Camera.h"
@@ -22,6 +23,8 @@ int main(int argc, char *argv[]) {
 	const int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
 	const int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
 	const float PIXELS_PER_METER = 20.0;
+
+	Box2DWorld *world = Box2DWorldCreate((Vec2F) {1.0, 1.0});
 
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
@@ -105,8 +108,8 @@ int main(int argc, char *argv[]) {
 				obj->preGraphics(obj);
 			}
 			if (obj->ovrdGraphics) {
-				Vec3F obj_origin_wrt_camera_obj = Vec3FSub(obj->pos, camera->pos);
-				Vec2I obj_origin_wrt_screen_center = Vec3Fto2I(Vec3FMul(obj_origin_wrt_camera_obj, PIXELS_PER_METER));
+				Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->pos, camera->pos);
+				Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, PIXELS_PER_METER));
 				Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, obj->txOff);
 				Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) {SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT}, obj_gfx_origin_wrt_screen_center);
 				SDL_Rect viewport = (SDL_Rect) {

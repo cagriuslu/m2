@@ -1,19 +1,19 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "Vec3F.h"
+#include "Vec2F.h"
 #include "Geometry.h"
 #include "Error.h"
 #include <SDL.h>
 
 typedef struct _Object {
-	Vec3F pos; // Position of the origin of the object
+	Vec2F pos; // Position of the origin of the object
 	// Physics subsystem
 	Geometry geo; // Geometry
-	Vec3F vel; // Velocity
-	Vec3F avel; // Angular velocity
-	Vec3F drag; // Drag
-	Vec3F aDrag; // Angular drag
+	Vec2F vel; // Velocity
+	float avel; // Angular velocity
+	float drag; // Drag
+	float aDrag; // Angular drag
 	float mass; // Mass
 	float grav; // Gravitational force
 	void (*prePhysics)(struct _Object*);
