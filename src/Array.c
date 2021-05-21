@@ -8,12 +8,12 @@
 int ArrayInit(Array *array, size_t itemSize) {
 	array->data = malloc(itemSize * INITIAL_CAPACITY);
 	if (!array->data) {
-		return X_OUT_OF_MEMORY;
+		return ERR_OUT_OF_MEMORY;
 	}
 	array->itemSize = itemSize;
 	array->length = 0;
 	array->capacity = INITIAL_CAPACITY;
-	return X_OK;
+	return 0;
 }
 
 size_t ArrayLength(Array *array) {

@@ -9,27 +9,23 @@
 typedef struct _Object {
 	Vec2F pos; // Position of the origin of the object
 	// Physics subsystem
-	Geometry geo; // Geometry
-	Vec2F vel; // Velocity
-	float avel; // Angular velocity
-	float drag; // Drag
-	float aDrag; // Angular drag
-	float mass; // Mass
-	float grav; // Gravitational force
+	Geometry geo;
+	float drag;
+	float angDrag;
 	void (*prePhysics)(struct _Object*);
 	void (*onCollision)(struct _Object*);
 	void (*postPhysics)(struct _Object*);
 	// Trigger subsystem
-	Geometry trig; // Geometry
+	Geometry trig;
 	void (*onTrigger)(struct _Object*);
 	// Graphics subsystem
 	SDL_Texture *tx;
 	SDL_Rect txSrc;
-	Vec2I txOff; // Texture offset wrt object origin
+	Vec2I txOff;
 	float txScaleW, txScaleH;
-	float txRotZ; // Ignored for now
+	float txRotZ;
 	void (*preGraphics)(struct _Object*);
-	void (*ovrdGraphics)(struct _Object*, SDL_Renderer *renderer);
+	void (*ovrdGraphics)(struct _Object*);
 	void (*postGraphics)(struct _Object*);
 	// Private data
 	void *privData;

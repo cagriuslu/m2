@@ -28,7 +28,8 @@ typedef union _GeometryUnion {
 typedef struct _Geometry {
 	GeometryType type;
 	GeometryUnion opt;
-	int layer; // The layer index of the object geometry
+	float mass;
+	int layer; // Valid only for triggers
 	struct _Geometry *next;
 } Geometry;
 

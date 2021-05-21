@@ -7,18 +7,15 @@ static void Camera_postPhysics(Object *obj) {
 }
 
 int CameraInit(Object *obj, Object *player) {
-	int res = ObjectInit(obj);
-	if (res != X_OK) {
-		return res;
-	}
+	PROPAGATE_ERROR(ObjectInit(obj));
 	CameraData *camData = malloc(sizeof(CameraData));
 	if (!camData) {
-		return X_OUT_OF_MEMORY;
+		return ERR_OUT_OF_MEMORY;
 	}
 	camData->player = player;
 	obj->privData = camData;
 	obj->postPhysics = Camera_postPhysics;
-	return X_OK;
+	return 0;
 }
 
 void CameraDeinit(Object *obj) {

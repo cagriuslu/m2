@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-typedef struct _Box2DWorld Box2DWorld;
+typedef void Box2DWorld;
 
-Box2DWorld *Box2DWorldCreate(Vec2F gravity);
+Box2DWorld* Box2DWorldCreate(Vec2F gravity);
 
 #ifdef __cplusplus
 }

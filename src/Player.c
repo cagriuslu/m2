@@ -16,31 +16,28 @@ static void Player_prePhysics(Object *obj) {
 	}
 }
 
-static void Player_ovrdGraphics(Object *obj, SDL_Renderer *renderer) {
+static void Player_ovrdGraphics(Object *obj) {
 	// Draw a blue box
-	SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
+	SDL_SetRenderDrawColor(CurrentRenderer(), 0, 0, 255, 255);
 	SDL_Rect rect = (SDL_Rect) {
 		0, 
 		0, 
 		(int32_t) round(obj->txSrc.w * obj->txScaleW),
 		(int32_t) round(obj->txSrc.h * obj->txScaleH)
 	};
-	SDL_RenderFillRect(renderer, &rect);
+	SDL_RenderFillRect(CurrentRenderer(), &rect);
 }
 
 int PlayerInit(Object *obj) {
-	int res = ObjectInit(obj);
-	if (res != X_OK) {
-		return res;
-	}
+	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = Player_prePhysics;
 	obj->txSrc.w = 20;
 	obj->txSrc.h = 40;
 	obj->txOff.y = -20;
 	obj->ovrdGraphics = Player_ovrdGraphics;
-	return X_OK;
+	return 0;
 }
 
 void PlayerDeinit(Object *obj) {
-
+	ObjectDeinit(obj);
 }

@@ -1,4 +1,5 @@
 #include "Main.h"
+#include "Box.h"
 #include "Box2DWrapper.h"
 #include "Array.h"
 #include "Player.h"
@@ -12,6 +13,7 @@
 #include <stdio.h>
 #include <math.h>
 
+SDL_Renderer *gRenderer;
 Array gObjects;
 uint8_t gKeysPressed[_KEY_COUNT];
 uint8_t gKeysReleased[_KEY_COUNT];
@@ -24,19 +26,22 @@ int main(int argc, char *argv[]) {
 	const int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
 	const float PIXELS_PER_METER = 20.0;
 
-	Box2DWorld *world = Box2DWorldCreate((Vec2F) {1.0, 1.0});
-
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	ArrayInit(&gObjects, sizeof(Object));
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
 	PlayerInit(player);
 	Object *camera = ArrayAppend(&gObjects, NULL); // Append empty Camera object
 	CameraInit(camera, player);
+
+	// Test object
+	Object *box1 = ArrayAppend(&gObjects, NULL);
+	BoxInit(box1);
+	box1->pos = (Vec2F) {5.0, 5.0};
 
 	bool quit = false;
 	while (!quit) {
@@ -100,8 +105,8 @@ int main(int argc, char *argv[]) {
 		}
 
 		// Graphics
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+		SDL_RenderClear(gRenderer);
 		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
 			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->preGraphics) {
@@ -118,25 +123,29 @@ int main(int argc, char *argv[]) {
 					(int32_t) round(obj->txSrc.w * obj->txScaleW),
 					(int32_t) round(obj->txSrc.h * obj->txScaleH)
 				};
-				SDL_RenderSetViewport(renderer, &viewport);
-				obj->ovrdGraphics(obj, renderer);
+				SDL_RenderSetViewport(gRenderer, &viewport);
+				obj->ovrdGraphics(obj);
 			}
 			if (obj->postGraphics) {
 				obj->postGraphics(obj);
 			}
 		}
-		SDL_RenderPresent(renderer);
+		SDL_RenderPresent(gRenderer);
 
 		unsigned end_ticks = SDL_GetTicks();
 		//fprintf(stderr, "Frame time: %u\n", end_ticks - start_ticks);
 	}
 
-	SDL_DestroyRenderer(renderer);
+	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
+}
+
+SDL_Renderer* CurrentRenderer() {
+	return gRenderer;
 }
 
 bool IsKeyPressed(Key key) {
