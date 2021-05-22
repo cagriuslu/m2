@@ -1,5 +1,5 @@
 #include "Main.h"
-#include "Box.h"
+#include "StaticBox.h"
 #include "Box2DWrapper.h"
 #include "Array.h"
 #include "Player.h"
@@ -14,6 +14,7 @@
 #include <math.h>
 
 SDL_Renderer *gRenderer;
+Box2DWorld *gWorld;
 Array gObjects;
 uint8_t gKeysPressed[_KEY_COUNT];
 uint8_t gKeysReleased[_KEY_COUNT];
@@ -31,6 +32,7 @@ int main(int argc, char *argv[]) {
 	TTF_Init();
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 
 	ArrayInit(&gObjects, sizeof(Object));
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
@@ -39,9 +41,8 @@ int main(int argc, char *argv[]) {
 	CameraInit(camera, player);
 
 	// Test object
-	Object *box1 = ArrayAppend(&gObjects, NULL);
-	BoxInit(box1);
-	box1->pos = (Vec2F) {5.0, 5.0};
+	Object *staticBox1 = ArrayAppend(&gObjects, NULL);
+	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
 
 	bool quit = false;
 	while (!quit) {
@@ -146,6 +147,10 @@ int main(int argc, char *argv[]) {
 
 SDL_Renderer* CurrentRenderer() {
 	return gRenderer;
+}
+
+Box2DWorld* CurrentWorld() {
+	return gWorld;
 }
 
 bool IsKeyPressed(Key key) {

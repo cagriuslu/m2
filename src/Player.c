@@ -35,6 +35,8 @@ int PlayerInit(Object *obj) {
 	obj->txSrc.h = 40;
 	obj->txOff.y = -20;
 	obj->ovrdGraphics = Player_ovrdGraphics;
+
+	
 	return 0;
 }
 

@@ -1,5 +1,8 @@
 #include "Camera.h"
 
+typedef struct _CameraData {
+	Object *player;
+} CameraData;
 #define AsCameraData(p) ((CameraData*) (p))
 
 static void Camera_postPhysics(Object *obj) {
