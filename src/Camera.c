@@ -1,23 +1,15 @@
 #include "Camera.h"
 
-typedef struct _CameraData {
-	Object *player;
-} CameraData;
-#define AsCameraData(p) ((CameraData*) (p))
+#define AsObject(object) ((Object*) (object))
 
 static void Camera_postPhysics(Object *obj) {
-	obj->pos = AsCameraData(obj->privData)->player->pos;
+	obj->pos = AsObject(obj->privData)->pos;
 }
 
 int CameraInit(Object *obj, Object *player) {
 	PROPAGATE_ERROR(ObjectInit(obj));
-	CameraData *camData = malloc(sizeof(CameraData));
-	if (!camData) {
-		return ERR_OUT_OF_MEMORY;
-	}
-	camData->player = player;
-	obj->privData = camData;
 	obj->postPhysics = Camera_postPhysics;
+	obj->privData = player;
 	return 0;
 }
 

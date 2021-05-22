@@ -31,11 +31,11 @@ int StaticBoxInit(Object *obj, Vec2F position) {
 	Box2DFixture *fixture = Box2DBodyCreateFixtureFromShape(body, boxShape, 0.0);
 	Box2DPolygonShapeDestroy(boxShape);
 
-	obj->privData = body;
+	obj->body = body;
 	return 0;
 }
 
 void StaticBoxDeinit(Object *obj) {
-	Box2DWorldDestroyBody(CurrentWorld(), obj->privData);
+	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
 	ObjectDeinit(obj);
 }

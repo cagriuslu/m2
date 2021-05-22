@@ -1,23 +1,20 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "Box2DWrapper.h"
 #include "Vec2F.h"
-#include "Geometry.h"
 #include "Error.h"
 #include <SDL.h>
 
 typedef struct _Object {
-	Vec2F pos; // Position of the origin of the object
+	Vec2F pos;
+	float angle;
 	// Physics subsystem
-	Geometry geo;
-	float drag;
-	float angDrag;
+	Box2DBody *body;
 	void (*prePhysics)(struct _Object*);
 	void (*onCollision)(struct _Object*);
-	void (*postPhysics)(struct _Object*);
-	// Trigger subsystem
-	Geometry trig;
 	void (*onTrigger)(struct _Object*);
+	void (*postPhysics)(struct _Object*);
 	// Graphics subsystem
 	SDL_Texture *tx;
 	SDL_Rect txSrc;

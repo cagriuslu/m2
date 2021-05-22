@@ -3,12 +3,14 @@
 #include <b2_body.h>
 #include <b2_math.h>
 #include <b2_polygon_shape.h>
+#include <b2_fixture.h>
 
 #define ToVec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})
 
 #define AsWorld(world) ((b2World*) (world))
 #define AsBodyDef(bodyDef) ((b2BodyDef*) (bodyDef))
 #define AsBody(body) ((b2Body*) (body))
+#define AsFixtureDef(fixtureDef) ((b2FixtureDef*) (fixtureDef))
 #define AsFixture(fixture) ((b2Fixture*) (fixture))
 #define AsShape(shape) ((b2Shape*) (shape))
 #define AsPolygonShape(polygonShape) ((b2PolygonShape*) (polygonShape))
@@ -19,6 +21,10 @@ Box2DWorld* Box2DWorldCreate(Vec2F gravity) {
 
 Box2DBody* Box2DWorldCreateBody(Box2DWorld *world, Box2DBodyDef *bodyDef) {
 	return AsWorld(world)->CreateBody(AsBodyDef(bodyDef));
+}
+
+void Box2DWorldStep(Box2DWorld *world, float timeStep, int velocityIterations, int positionIterations) {
+	AsWorld(world)->Step(timeStep, velocityIterations, positionIterations);
 }
 
 void Box2DWorldDestroyBody(Box2DWorld *world, Box2DBody *body) {
@@ -45,8 +51,65 @@ void Box2DBodyDefDestroy(Box2DBodyDef *bodyDef) {
 	delete AsBodyDef(bodyDef);
 }
 
+Box2DFixture* Box2DBodyCreateFixtureFromFixtureDef(Box2DBody *body, Box2DFixtureDef *fixtureDef) {
+	return AsBody(body)->CreateFixture(AsFixtureDef(fixtureDef));
+}
+
 Box2DFixture* Box2DBodyCreateFixtureFromShape(Box2DBody *body, Box2DShape *shape, float density) {
 	return AsBody(body)->CreateFixture(AsShape(shape), density);
+}
+
+void Box2DBodySetLinearDamping(Box2DBody *body, float linearDamping) {
+	AsBody(body)->SetLinearDamping(linearDamping);
+}
+
+void Box2DBodySetAngularDamping(Box2DBody *body, float angularDamping) {
+	AsBody(body)->SetAngularDamping(angularDamping);
+}
+
+void Box2DBodySetFixedRotation(Box2DBody *body, bool flag) {
+	AsBody(body)->SetFixedRotation(flag);
+}
+
+void Box2DBodySetUserData(Box2DBody *body, void *userData) {
+	AsBody(body)->GetUserData().pointer = (uintptr_t) userData;
+}
+
+void Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake) {
+	AsBody(body)->ApplyForceToCenter(ToVec2(force), wake);
+}
+
+Vec2F Box2DBodyGetPosition(Box2DBody *body) {
+	b2Vec2 v = AsBody(body)->GetPosition();
+	return (Vec2F) {v.x, v.y};
+}
+
+float Box2DBodyGetAngle(Box2DBody *body) {
+	return AsBody(body)->GetAngle();
+}
+
+void* Box2DBodyGetUserData(Box2DBody *body) {
+	return (void*) AsBody(body)->GetUserData().pointer;
+}
+
+Box2DFixtureDef* Box2DFixtureDefCreate() {
+	return new b2FixtureDef();
+}
+
+void Box2DFixtureDefSetShape(Box2DFixtureDef *fixtureDef, Box2DShape *shape) {
+	AsFixtureDef(fixtureDef)->shape = AsShape(shape);
+}
+
+void Box2DFixtureDefSetDensity(Box2DFixtureDef *fixtureDef, float density) {
+	AsFixtureDef(fixtureDef)->density = density;
+}
+
+void Box2DFixtureDefSetFriction(Box2DFixtureDef *fixtureDef, float friction) {
+	AsFixtureDef(fixtureDef)->friction = friction;
+}
+
+void Box2DFixtureDefDestroy(Box2DFixtureDef *fixtureDef) {
+	delete AsFixtureDef(fixtureDef);
 }
 
 Box2DPolygonShape* Box2DPolygonShapeCreate() {

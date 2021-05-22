@@ -26,6 +26,10 @@ int main(int argc, char *argv[]) {
 	const int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
 	const int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
 	const float PIXELS_PER_METER = 20.0;
+	const float timeStep = 1.0 / 60.0;
+	const int velocityIterations = 8;
+	const int positionIterations = 3;
+
 
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
@@ -91,15 +95,20 @@ int main(int argc, char *argv[]) {
 		}
 		KeyStateArrayFillFromSDLKeyboardStateArray(gKeysState, SDL_GetKeyboardState(NULL));
 
+		// Physics
 		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
 			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->prePhysics) {
 				obj->prePhysics(obj);
 			}
 		}
-		// Physics
+		Box2DWorldStep(gWorld, timeStep, velocityIterations, positionIterations);
 		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
 			Object *obj = ArrayGet(&gObjects, i);
+			if (obj->body) {
+				obj->pos = Box2DBodyGetPosition(obj->body);
+				obj->angle = Box2DBodyGetAngle(obj->body);
+			}
 			if (obj->postPhysics) {
 				obj->postPhysics(obj);
 			}
