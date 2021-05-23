@@ -7,6 +7,7 @@
 #include <stdbool.h>
 
 SDL_Renderer* CurrentRenderer();
+SDL_Texture* CurrentTextureLUT();
 Box2DWorld* CurrentWorld();
 bool IsKeyPressed(Key key);
 bool IsKeyReleased(Key key);

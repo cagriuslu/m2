@@ -16,11 +16,9 @@ typedef struct _Object {
 	void (*onTrigger)(struct _Object*);
 	void (*postPhysics)(struct _Object*);
 	// Graphics subsystem
-	SDL_Texture *tx;
 	SDL_Rect txSrc;
-	Vec2I txOff;
-	float txScaleW, txScaleH;
-	float txRotZ;
+	Vec2I txOffset;
+	Vec2F txSize;
 	void (*preGraphics)(struct _Object*);
 	void (*ovrdGraphics)(struct _Object*);
 	void (*postGraphics)(struct _Object*);

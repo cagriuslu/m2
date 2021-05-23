@@ -1,5 +1,5 @@
 #include "Main.h"
-#include "StaticBox.h"
+#include "Objects/StaticBox.h"
 #include "Box2DWrapper.h"
 #include "Array.h"
 #include "Player.h"
@@ -15,6 +15,7 @@
 
 SDL_Renderer *gRenderer;
 Box2DWorld *gWorld;
+SDL_Texture *gTextureLUT;
 Array gObjects;
 uint8_t gKeysPressed[_KEY_COUNT];
 uint8_t gKeysReleased[_KEY_COUNT];
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
 	const int SCREEN_HEIGHT = 480;
 	const int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
 	const int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
-	const float PIXELS_PER_METER = 20.0;
+	const float PIXELS_PER_METER = 40.0;
 	const float timeStep = 1.0 / 60.0;
 	const int velocityIterations = 8;
 	const int positionIterations = 3;
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]) {
 	TTF_Init();
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("16x16.png"));
 	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 
 	ArrayInit(&gObjects, sizeof(Object));
@@ -123,18 +125,21 @@ int main(int argc, char *argv[]) {
 				obj->preGraphics(obj);
 			}
 			if (obj->ovrdGraphics) {
+				obj->ovrdGraphics(obj);
+			} else {
 				Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->pos, camera->pos);
 				Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, PIXELS_PER_METER));
-				Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, obj->txOff);
+				Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, obj->txOffset);
 				Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) {SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT}, obj_gfx_origin_wrt_screen_center);
-				SDL_Rect viewport = (SDL_Rect) {
-					obj_gfx_origin_wrt_screen_origin.x - (int32_t) round(obj->txSrc.w * obj->txScaleW / 2.0), 
-					obj_gfx_origin_wrt_screen_origin.y - (int32_t) round(obj->txSrc.h * obj->txScaleH / 2.0),
-					(int32_t) round(obj->txSrc.w * obj->txScaleW),
-					(int32_t) round(obj->txSrc.h * obj->txScaleH)
+				int obj_width_on_screen = round(obj->txSize.x) * PIXELS_PER_METER;
+				int obj_height_on_screen = round(obj->txSize.y) * PIXELS_PER_METER;
+				SDL_Rect dstrect = (SDL_Rect) {
+					obj_gfx_origin_wrt_screen_origin.x - obj_width_on_screen / 2, 
+					obj_gfx_origin_wrt_screen_origin.y - obj_height_on_screen / 2,
+					obj_width_on_screen,
+					obj_height_on_screen
 				};
-				SDL_RenderSetViewport(gRenderer, &viewport);
-				obj->ovrdGraphics(obj);
+				SDL_RenderCopyEx(gRenderer, gTextureLUT, &obj->txSrc, &dstrect, obj->angle, NULL, SDL_FLIP_NONE);
 			}
 			if (obj->postGraphics) {
 				obj->postGraphics(obj);
@@ -156,6 +161,10 @@ int main(int argc, char *argv[]) {
 
 SDL_Renderer* CurrentRenderer() {
 	return gRenderer;
+}
+
+SDL_Texture* CurrentTextureLUT() {
+	return gTextureLUT;
 }
 
 Box2DWorld* CurrentWorld() {

@@ -16,24 +16,11 @@ static void Player_prePhysics(Object *obj) {
 	}
 }
 
-static void Player_ovrdGraphics(Object *obj) {
-	// Draw a box
-	SDL_SetRenderDrawColor(CurrentRenderer(), 0, 255, 255, 255);
-	SDL_Rect rect = (SDL_Rect) {
-		0, 
-		0, 
-		(int32_t) round(obj->txSrc.w * obj->txScaleW),
-		(int32_t) round(obj->txSrc.h * obj->txScaleH)
-	};
-	SDL_RenderFillRect(CurrentRenderer(), &rect);
-}
-
 int PlayerInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = Player_prePhysics;
-	obj->txSrc.w = 20;
-	obj->txSrc.h = 20;
-	obj->ovrdGraphics = Player_ovrdGraphics;
+	obj->txSrc = (SDL_Rect) {48, 0, 16, 16};
+	obj->txSize = (Vec2F) {1.0, 1.0};
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetTypeDynamic(bodyDef);

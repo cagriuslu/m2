@@ -1,25 +1,12 @@
 #include "StaticBox.h"
-#include "Main.h"
-#include "Box2DWrapper.h"
-
-static void StaticBox_ovrdGraphics(Object *obj) {
-	// Draw a white box
-	SDL_SetRenderDrawColor(CurrentRenderer(), 255, 255, 255, 255);
-	SDL_Rect rect = (SDL_Rect) {
-		0,
-		0,
-		(int32_t) round(obj->txSrc.w * obj->txScaleW),
-		(int32_t) round(obj->txSrc.h * obj->txScaleH)
-	};
-	SDL_RenderFillRect(CurrentRenderer(), &rect);
-}
+#include "../Main.h"
+#include "../Box2DWrapper.h"
 
 int StaticBoxInit(Object *obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->pos = position;
-	obj->txSrc.w = 20;
-	obj->txSrc.h = 20;
-	obj->ovrdGraphics = StaticBox_ovrdGraphics;
+	obj->txSrc = (SDL_Rect) {16, 64, 16, 16};
+	obj->txSize = (Vec2F) {1.0, 1.0};
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);
