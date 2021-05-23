@@ -17,6 +17,4 @@
 		}                                          \
 	} while (0)
 
-#define ERR_OUT_OF_MEMORY (-1)
-
 #endif

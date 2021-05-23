@@ -6,6 +6,8 @@
 #include <SDL.h>
 #include <stdbool.h>
 
+int CurrentScreenWidth();
+int CurrentScreenHeight();
 SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
 Box2DWorld* CurrentWorld();

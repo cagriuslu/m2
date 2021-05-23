@@ -1,15 +1,14 @@
 #include "Array.h"
 #include <math.h>
 #include <string.h>
+#include <assert.h>
 
 #define INITIAL_CAPACITY (16)
 #define GROWTH_RATE (2.0)
 
 int ArrayInit(Array *array, size_t itemSize) {
 	array->data = malloc(itemSize * INITIAL_CAPACITY);
-	if (!array->data) {
-		return ERR_OUT_OF_MEMORY;
-	}
+	assert(array->data);
 	array->itemSize = itemSize;
 	array->length = 0;
 	array->capacity = INITIAL_CAPACITY;

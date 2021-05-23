@@ -5,7 +5,9 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Vec2I.h"
+#include "UI.h"
 #include "Debug.h"
+#include "UIs/UIPanel.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -13,34 +15,34 @@
 #include <stdio.h>
 #include <math.h>
 
+int gScreenWidth = 640, gScreenHeight = 480;
 SDL_Renderer *gRenderer;
-Box2DWorld *gWorld;
 SDL_Texture *gTextureLUT;
+Box2DWorld *gWorld;
 Array gObjects;
+Array gUIs;
 uint8_t gKeysPressed[_KEY_COUNT];
 uint8_t gKeysReleased[_KEY_COUNT];
 uint8_t gKeysState[_KEY_COUNT];
 
 int main(int argc, char *argv[]) {
-	const int SCREEN_WIDTH = 640;
-	const int SCREEN_HEIGHT = 480;
-	const int SCREEN_HALF_WIDTH = SCREEN_WIDTH / 2;
-	const int SCREEN_HALF_HEIGHT = SCREEN_HEIGHT / 2;
+	const int SCREEN_HALF_WIDTH = gScreenWidth / 2;
+	const int SCREEN_HALF_HEIGHT = gScreenHeight / 2;
 	const float PIXELS_PER_METER = 40.0;
 	const float timeStep = 1.0 / 60.0;
 	const int velocityIterations = 8;
 	const int positionIterations = 3;
 
-
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
-	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("16x16.png"));
 	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
-
 	ArrayInit(&gObjects, sizeof(Object));
+	ArrayInit(&gUIs, sizeof(UI));
+
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
 	PlayerInit(player);
 	Object *camera = ArrayAppend(&gObjects, NULL); // Append empty Camera object
@@ -49,6 +51,10 @@ int main(int argc, char *argv[]) {
 	// Test object
 	Object *staticBox1 = ArrayAppend(&gObjects, NULL);
 	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
+
+	// Test panel
+	UI *panel = ArrayAppend(&gUIs, NULL);
+	UIPanelInit(panel, (Vec2I) {200, 200});
 
 	bool quit = false;
 	while (!quit) {
@@ -145,6 +151,12 @@ int main(int argc, char *argv[]) {
 				obj->postGraphics(obj);
 			}
 		}
+		for (size_t i = 0; i < ArrayLength(&gUIs); i++) {
+			UI *ui = ArrayGet(&gUIs, i);
+			if (ui->draw) {
+				ui->draw(ui);
+			}
+		}
 		SDL_RenderPresent(gRenderer);
 
 		unsigned end_ticks = SDL_GetTicks();
@@ -157,6 +169,14 @@ int main(int argc, char *argv[]) {
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
+}
+
+int CurrentScreenWidth() {
+	return gScreenWidth;
+}
+
+int CurrentScreenHeight(){
+	return gScreenHeight;
 }
 
 SDL_Renderer* CurrentRenderer() {
