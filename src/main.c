@@ -8,6 +8,7 @@
 #include "UI.h"
 #include "Debug.h"
 #include "UIs/UIPanel.h"
+#include "UIs/UIButton.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -18,6 +19,7 @@
 int gScreenWidth = 640, gScreenHeight = 480;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
+TTF_Font *gFont;
 Box2DWorld *gWorld;
 Array gObjects;
 Array gUIs;
@@ -39,6 +41,7 @@ int main(int argc, char *argv[]) {
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("16x16.png"));
+	gFont = TTF_OpenFont("fonts/joystix/joystix monospace.ttf", 16);
 	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 	ArrayInit(&gObjects, sizeof(Object));
 	ArrayInit(&gUIs, sizeof(UI));
@@ -55,6 +58,9 @@ int main(int argc, char *argv[]) {
 	// Test panel
 	UI *panel = ArrayAppend(&gUIs, NULL);
 	UIPanelInit(panel, (Vec2I) {200, 200});
+	// Test button
+	UI *button = ArrayAppend(&gUIs, NULL);
+	UIButtonInit(button, (Vec2I) {100, 100}, 0, "Level Editor");
 
 	bool quit = false;
 	while (!quit) {
@@ -185,6 +191,10 @@ SDL_Renderer* CurrentRenderer() {
 
 SDL_Texture* CurrentTextureLUT() {
 	return gTextureLUT;
+}
+
+TTF_Font* CurrentFont() {
+	return gFont;
 }
 
 Box2DWorld* CurrentWorld() {
