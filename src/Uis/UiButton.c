@@ -1,24 +1,24 @@
-#include "UIButton.h"
+#include "UiButton.h"
 #include "../Main.h"
 #include "../Error.h"
 #include <SDL.h>
 #include <assert.h>
 
-#define AsUIButtonData(uiButtonData) ((UIButtonData*) (uiButtonData))
+#define AsUiButtonData(uiButtonData) ((UiButtonData*) (uiButtonData))
 
-typedef struct _UIButtonData {
+typedef struct _UiButtonData {
 	Vec2I size;
 	int alignment;
 	SDL_Texture *textTexture;
 	int textW, textH;
-} UIButtonData;
+} UiButtonData;
 
-void UIButton_onMouseButton(UI* ui) {
+void UiButton_onMouseButton(Ui* ui) {
 
 }
 
-void UIButton_draw(UI* ui) {
-	Vec2I size = AsUIButtonData(ui->privData)->size;
+void UiButton_draw(Ui* ui) {
+	Vec2I size = AsUiButtonData(ui->privData)->size;
 	SDL_Rect outlineRect = (SDL_Rect) {
 		CurrentScreenWidth() / 2 - size.x / 2,
 		CurrentScreenHeight() / 2 - size.y / 2,
@@ -31,34 +31,34 @@ void UIButton_draw(UI* ui) {
 	SDL_SetRenderDrawColor(CurrentRenderer(), 255, 255, 255, 255);
 	SDL_RenderDrawRect(CurrentRenderer(), &outlineRect);
 
-	int textW = AsUIButtonData(ui->privData)->textW, textH = AsUIButtonData(ui->privData)->textH;
+	int textW = AsUiButtonData(ui->privData)->textW, textH = AsUiButtonData(ui->privData)->textH;
 	SDL_Rect textRect = (SDL_Rect) {
 		CurrentScreenWidth() / 2 - textW / 2,
 		CurrentScreenHeight() / 2 - textH / 2,
 		textW,
 		textH
 	};
-	SDL_RenderCopy(CurrentRenderer(), AsUIButtonData(ui->privData)->textTexture, NULL, &textRect);
+	SDL_RenderCopy(CurrentRenderer(), AsUiButtonData(ui->privData)->textTexture, NULL, &textRect);
 }
 
-int UIButtonInit(UI *ui, Vec2I size, int alignment, const char *text) {
-	PROPAGATE_ERROR(UIInit(ui));
-	ui->onMouseButton = UIButton_onMouseButton;
-	ui->draw = UIButton_draw;
-	ui->privData = malloc(sizeof(UIButtonData));
+int UiButtonInit(Ui *ui, Vec2I size, int alignment, const char *text) {
+	PROPAGATE_ERROR(UiInit(ui));
+	ui->onMouseButton = UiButton_onMouseButton;
+	ui->draw = UiButton_draw;
+	ui->privData = malloc(sizeof(UiButtonData));
 	assert(ui->privData);
-	AsUIButtonData(ui->privData)->size = size;
-	AsUIButtonData(ui->privData)->alignment = alignment;
+	AsUiButtonData(ui->privData)->size = size;
+	AsUiButtonData(ui->privData)->alignment = alignment;
 
 	SDL_Surface *textSurface = TTF_RenderUTF8_Blended(CurrentFont(), text, (SDL_Color) {255, 255, 255, 255});
 	SDL_Texture *textTexture = SDL_CreateTextureFromSurface(CurrentRenderer(), textSurface);
-	AsUIButtonData(ui->privData)->textTexture = textTexture;
-	AsUIButtonData(ui->privData)->textW = textSurface->w;
-	AsUIButtonData(ui->privData)->textH = textSurface->h;
+	AsUiButtonData(ui->privData)->textTexture = textTexture;
+	AsUiButtonData(ui->privData)->textW = textSurface->w;
+	AsUiButtonData(ui->privData)->textH = textSurface->h;
 	SDL_FreeSurface(textSurface);
 	return 0;
 }
 
-void UIButtonDeinit(UI *ui) {
+void UiButtonDeinit(Ui *ui) {
 
 }

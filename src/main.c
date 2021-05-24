@@ -5,11 +5,10 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Vec2I.h"
-#include "UI.h"
+#include "Ui.h"
 #include "ObjectDrawList.h"
 #include "Debug.h"
-#include "UIs/UIPanel.h"
-#include "UIs/UIButton.h"
+#include "Uis/UiButton.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -25,7 +24,7 @@ TTF_Font *gFont;
 Box2DWorld *gWorld;
 Array gObjects;
 ObjectDrawList gDrawList;
-Array gUIs;
+Array gUis;
 uint8_t gKeysPressed[_KEY_COUNT];
 uint8_t gKeysReleased[_KEY_COUNT];
 uint8_t gKeysState[_KEY_COUNT];
@@ -47,7 +46,7 @@ int main(int argc, char *argv[]) {
 	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 	ArrayInit(&gObjects, sizeof(Object));
 	ObjectDrawListInit(&gDrawList);
-	ArrayInit(&gUIs, sizeof(UI));
+	ArrayInit(&gUis, sizeof(Ui));
 
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
 	ObjectDrawListInsert(&gDrawList, player);
@@ -62,11 +61,11 @@ int main(int argc, char *argv[]) {
 	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
 
 	// Test panel
-	//UI *panel = ArrayAppend(&gUIs, NULL);
-	//UIPanelInit(panel, (Vec2I) {200, 200});
+	//Ui *panel = ArrayAppend(&gUis, NULL);
+	//UiPanelInit(panel, (Vec2I) {200, 200});
 	// Test button
-	//UI *button = ArrayAppend(&gUIs, NULL);
-	//UIButtonInit(button, (Vec2I) {100, 100}, 0, "Level Editor");
+	//Ui *button = ArrayAppend(&gUis, NULL);
+	//UiButtonInit(button, (Vec2I) {100, 100}, 0, "Level Editor");
 
 	bool quit = false;
 	while (!quit) {
@@ -165,8 +164,8 @@ int main(int argc, char *argv[]) {
 				obj->postGraphics(obj);
 			}
 		}
-		for (size_t i = 0; i < ArrayLength(&gUIs); i++) {
-			UI *ui = ArrayGet(&gUIs, i);
+		for (size_t i = 0; i < ArrayLength(&gUis); i++) {
+			Ui *ui = ArrayGet(&gUis, i);
 			if (ui->draw) {
 				ui->draw(ui);
 			}
