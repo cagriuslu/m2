@@ -35,10 +35,7 @@ int MainMenuDialog() {
 	levelEditorButton->eventData = &pressedButton;
 	levelEditorButton->onMouseButton = LevelEditorButton_onMouseButton;
 	
-	Vec2I maxButtonSize = (Vec2I) {
-		MAX(UIButtonSize(newGameButton).x, UIButtonSize(levelEditorButton).x),
-		MAX(UIButtonSize(newGameButton).y, UIButtonSize(levelEditorButton).y)	
-	};
+	Vec2I maxButtonSize = UiButtonMaxSizeOfButtons(2, newGameButton, levelEditorButton);
 	UIButtonSetSize(newGameButton, maxButtonSize);
 	UIButtonSetSize(levelEditorButton, maxButtonSize);
 

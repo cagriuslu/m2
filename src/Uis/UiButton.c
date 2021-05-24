@@ -2,6 +2,7 @@
 #include "../Main.h"
 #include "../Error.h"
 #include <SDL.h>
+#include <stdarg.h>
 #include <assert.h>
 
 #define AsUiButtonData(uiButtonData) ((UiButtonData*) (uiButtonData))
@@ -76,4 +77,21 @@ void UIButtonSetSize(Ui *ui, Vec2I size) {
 
 void UiButtonDeinit(Ui *ui) {
 	// TODO
+}
+
+Vec2I UiButtonMaxSizeOfButtons(unsigned n, ...) {
+    va_list args;
+    va_start(args, n);
+
+    Vec2I maxSize = (Vec2I) {0, 0};
+    for (unsigned i = 0; i < n; i++) {
+    	Ui *ui = va_arg(args, Ui*);
+    	maxSize = (Vec2I) {
+			MAX(maxSize.x, UIButtonSize(ui).x),
+			MAX(maxSize.y, UIButtonSize(ui).y)	
+		};
+    }
+
+    va_end(args);
+    return maxSize;
 }

@@ -9,4 +9,6 @@ Vec2I UIButtonSize(Ui *ui);
 void UIButtonSetSize(Ui *ui, Vec2I size);
 void UiButtonDeinit(Ui *ui);
 
+Vec2I UiButtonMaxSizeOfButtons(unsigned n, ...);
+
 #endif
