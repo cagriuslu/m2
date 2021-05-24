@@ -7,6 +7,9 @@
 #include <SDL_ttf.h>
 #include <stdbool.h>
 
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) < (b) ? (b) : (a))
+
 int CurrentScreenWidth();
 int CurrentScreenHeight();
 float CurrentPixelsPerMeter();
@@ -14,8 +17,5 @@ SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
 TTF_Font* CurrentFont();
 Box2DWorld* CurrentWorld();
-bool IsKeyPressed(Key key);
-bool IsKeyReleased(Key key);
-bool IsKeyDown(Key key);
 
 #endif

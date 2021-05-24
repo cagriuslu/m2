@@ -5,10 +5,10 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Vec2I.h"
-#include "Ui.h"
 #include "ObjectDrawList.h"
+#include "EventHandling.h"
+#include "Dialogs/MainMenuDialog.h"
 #include "Debug.h"
-#include "Uis/UiButton.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -21,13 +21,11 @@ float gPixelsPerMeter = 40.0;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
+
 Box2DWorld *gWorld;
 Array gObjects;
 ObjectDrawList gDrawList;
 Array gUis;
-uint8_t gKeysPressed[_KEY_COUNT];
-uint8_t gKeysReleased[_KEY_COUNT];
-uint8_t gKeysState[_KEY_COUNT];
 
 int main(int argc, char *argv[]) {
 	const int SCREEN_HALF_WIDTH = gScreenWidth / 2;
@@ -46,7 +44,8 @@ int main(int argc, char *argv[]) {
 	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 	ArrayInit(&gObjects, sizeof(Object));
 	ObjectDrawListInit(&gDrawList);
-	ArrayInit(&gUis, sizeof(Ui));
+
+	MainMenuDialog();
 
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
 	ObjectDrawListInsert(&gDrawList, player);
@@ -60,59 +59,16 @@ int main(int argc, char *argv[]) {
 	ObjectDrawListInsert(&gDrawList, staticBox1);
 	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
 
-	// Test panel
-	//Ui *panel = ArrayAppend(&gUis, NULL);
-	//UiPanelInit(panel, (Vec2I) {200, 200});
-	// Test button
-	//Ui *button = ArrayAppend(&gUis, NULL);
-	//UiButtonInit(button, (Vec2I) {100, 100}, 0, "Level Editor");
-
 	bool quit = false;
 	while (!quit) {
 		unsigned start_ticks = SDL_GetTicks();
 
-		// Clear events
-		memset(gKeysPressed, 0, sizeof(gKeysPressed));
-		memset(gKeysReleased, 0, sizeof(gKeysReleased));
-		memset(gKeysState, 0, sizeof(gKeysState));
-		// Handle events
-		SDL_Event e;
-		while (!quit && SDL_PollEvent(&e) != 0) {
-			switch (e.type) {
-			case SDL_QUIT:
-				quit = true;
-				break;
-			case SDL_WINDOWEVENT:
-				//res = on_event_window(delta_time, &e.window);
-				break;
-			case SDL_KEYDOWN:
-				if (e.key.repeat == 0) {
-					gKeysPressed[KeyFromSDLScancode(e.key.keysym.scancode)] = 1;
-				}
-				break;
-			case SDL_KEYUP:
-				if (e.key.repeat == 0) {
-					gKeysReleased[KeyFromSDLScancode(e.key.keysym.scancode)] = 1;
-				}
-				break;
-			case SDL_MOUSEMOTION:
-				//res = on_event_mouse_motion(delta_time, &e.motion);
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-			case SDL_MOUSEBUTTONUP:
-				//res = on_event_mouse_button(delta_time, &e.button);
-				break;
-			case SDL_MOUSEWHEEL:
-				//res = on_event_mouse_wheel(delta_time, &e.wheel);
-				break;
-			default:
-				break;
-			}
-		}
+		///// EVENT HANDLING /////
+		GatherEvents(&quit);
 		if (quit) {
 			break;
 		}
-		KeyStateArrayFillFromSDLKeyboardStateArray(gKeysState, SDL_GetKeyboardState(NULL));
+		///// END OF EVENT HANDLING /////
 
 		///// PHYSICS /////
 		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
@@ -164,12 +120,6 @@ int main(int argc, char *argv[]) {
 				obj->postGraphics(obj);
 			}
 		}
-		for (size_t i = 0; i < ArrayLength(&gUis); i++) {
-			Ui *ui = ArrayGet(&gUis, i);
-			if (ui->draw) {
-				ui->draw(ui);
-			}
-		}
 		SDL_RenderPresent(gRenderer);
 		///// END OF GRAPHICS /////
 
@@ -211,16 +161,4 @@ TTF_Font* CurrentFont() {
 
 Box2DWorld* CurrentWorld() {
 	return gWorld;
-}
-
-bool IsKeyPressed(Key key) {
-	return gKeysPressed[key];
-}
-
-bool IsKeyReleased(Key key) {
-	return gKeysReleased[key];
-}
-
-bool IsKeyDown(Key key) {
-	return gKeysState[key];
 }

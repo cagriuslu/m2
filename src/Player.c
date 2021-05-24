@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Main.h"
+#include "EventHandling.h"
 
 static void Player_prePhysics(Object *obj) {
 	if (IsKeyDown(KEY_UP)) {

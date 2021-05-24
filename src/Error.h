@@ -17,4 +17,6 @@
 		}                                          \
 	} while (0)
 
+#define X_QUIT (-1)
+
 #endif
