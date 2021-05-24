@@ -7,7 +7,8 @@
 
 typedef struct _Ui {
 	SDL_Rect trigZone;
-	void (*onMouseButton)(struct _Ui*, bool buttonDown);
+	void *eventData;
+	void (*onMouseButton)(struct _Ui*);
 	void (*draw)(struct _Ui*);
 	void *privData;
 } Ui;

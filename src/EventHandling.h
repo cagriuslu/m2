@@ -2,11 +2,25 @@
 #define EVENT_HANDLING_H
 
 #include "Controls.h"
+#include "Vec2I.h"
 #include <stdbool.h>
 
-void GatherEvents(bool *outQuit);
-bool IsKeyPressed(Key key);
-bool IsKeyReleased(Key key);
+void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion, bool *outButton, bool *outWheel);
+
+uint16_t IsKeyPressed(Key key);
+uint16_t IsKeyReleased(Key key);
 bool IsKeyDown(Key key);
+
+uint16_t IsButtonPressed(Button button);
+uint16_t IsButtonReleased(Button button);
+bool IsButtonDown(Button button);
+Vec2I PointerPosition();
+
+uint16_t* KeysPressedArray();
+uint16_t* KeysReleasedArray();
+uint8_t* KeysStateArray();
+uint16_t* ButtonsPressedArray();
+uint16_t* ButtonsReleasedArray();
+uint8_t* ButtonsStateArray();
 
 #endif

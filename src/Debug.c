@@ -14,7 +14,7 @@ void DebugSDLRect(const char *message, SDL_Rect rect) {
 	fprintf(stderr, "%s SDL_Rect{x:%d, y:%d, w:%d, h:%d}\n", message, rect.x, rect.y, rect.w, rect.h);
 }
 
-void DebugKeys(const char *message, uint8_t *keysPressed, uint8_t *keysReleased, uint8_t *keyState) {
+void DebugKeys(const char *message, uint16_t *keysPressed, uint16_t *keysReleased, uint8_t *keysState) {
 	fprintf(stderr, "%s ", message);
 	if (keysPressed) {
 		fprintf(stderr, "KeysPressed{");
@@ -48,19 +48,54 @@ void DebugKeys(const char *message, uint8_t *keysPressed, uint8_t *keysReleased,
 		}
 		fprintf(stderr, "} ");
 	}
-	if (keyState) {
-		fprintf(stderr, "KeyState{");
-		if (keyState[KEY_UP]) {
+	if (keysState) {
+		fprintf(stderr, "KeysState{");
+		if (keysState[KEY_UP]) {
 			fprintf(stderr, "UP ");
 		}
-		if (keyState[KEY_DOWN]) {
+		if (keysState[KEY_DOWN]) {
 			fprintf(stderr, "DOWN ");
 		}
-		if (keyState[KEY_LEFT]) {
+		if (keysState[KEY_LEFT]) {
 			fprintf(stderr, "LEFT ");
 		}
-		if (keyState[KEY_RIGHT]) {
+		if (keysState[KEY_RIGHT]) {
 			fprintf(stderr, "RIGHT ");
+		}
+		fprintf(stderr, "} ");
+	}
+	fprintf(stderr, "\n");
+}
+
+void DebugButtons(const char *message, uint16_t *buttonsPressed, uint16_t *buttonsReleased, uint8_t *buttonsState) {
+	fprintf(stderr, "%s ", message);
+	if (buttonsPressed) {
+		fprintf(stderr, "ButtonsPressed{");
+		if (buttonsPressed[BUTTON_PRIMARY]) {
+			fprintf(stderr, "PRIMARY ");
+		}
+		if (buttonsPressed[BUTTON_SECONDARY]) {
+			fprintf(stderr, "SECONDARY ");
+		}
+		fprintf(stderr, "} ");
+	}
+	if (buttonsReleased) {
+		fprintf(stderr, "ButtonsReleased{");
+		if (buttonsReleased[BUTTON_PRIMARY]) {
+			fprintf(stderr, "PRIMARY ");
+		}
+		if (buttonsReleased[BUTTON_SECONDARY]) {
+			fprintf(stderr, "SECONDARY ");
+		}
+		fprintf(stderr, "} ");
+	}
+	if (buttonsState) {
+		fprintf(stderr, "ButtonsState{");
+		if (buttonsState[BUTTON_PRIMARY]) {
+			fprintf(stderr, "PRIMARY ");
+		}
+		if (buttonsState[BUTTON_SECONDARY]) {
+			fprintf(stderr, "SECONDARY ");
 		}
 		fprintf(stderr, "} ");
 	}

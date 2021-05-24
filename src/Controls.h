@@ -14,7 +14,19 @@ typedef enum _Key {
 	_KEY_COUNT
 } Key;
 
+typedef enum _Button {
+	BUTTON_NONE = 0,
+
+	BUTTON_PRIMARY,
+	BUTTON_SECONDARY,
+
+	_BUTTON_COUNT
+} Button;
+
 Key KeyFromSDLScancode(SDL_Scancode sc);
 void KeyStateArrayFillFromSDLKeyboardStateArray(uint8_t *keyState, const uint8_t *keyboardState);
+
+Button ButtonFromSDLButton(int button);
+void ButtonStateArrayFillFromSDLMouseState(uint8_t *buttonState, const uint32_t bitmask);
 
 #endif

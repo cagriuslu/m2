@@ -29,3 +29,23 @@ void KeyStateArrayFillFromSDLKeyboardStateArray(uint8_t *keyState, const uint8_t
 		keyState[KEY_RIGHT] = 1;
 	}
 }
+
+Button ButtonFromSDLButton(int button) {
+	switch (button) {
+	case SDL_BUTTON_LEFT:
+		return BUTTON_PRIMARY;
+	case SDL_BUTTON_RIGHT:
+		return BUTTON_SECONDARY;
+	default:
+		return BUTTON_NONE;
+	}
+}
+
+void ButtonStateArrayFillFromSDLMouseState(uint8_t *buttonState, const uint32_t bitmask) {
+	if (bitmask & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+		buttonState[BUTTON_PRIMARY] = 1;
+	}
+	if (bitmask & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
+		buttonState[BUTTON_SECONDARY] = 1;
+	}
+}

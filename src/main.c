@@ -45,7 +45,11 @@ int main(int argc, char *argv[]) {
 	ArrayInit(&gObjects, sizeof(Object));
 	ObjectDrawListInit(&gDrawList);
 
-	MainMenuDialog();
+	int res = MainMenuDialog();
+	if (res == X_QUIT) {
+		return 0;
+	}
+	fprintf(stderr, "RES: %d\n", res);
 
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
 	ObjectDrawListInsert(&gDrawList, player);
@@ -64,7 +68,7 @@ int main(int argc, char *argv[]) {
 		unsigned start_ticks = SDL_GetTicks();
 
 		///// EVENT HANDLING /////
-		GatherEvents(&quit);
+		GatherEvents(&quit, NULL, NULL, NULL, NULL, NULL);
 		if (quit) {
 			break;
 		}

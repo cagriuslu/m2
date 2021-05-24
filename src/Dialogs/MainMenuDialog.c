@@ -1,18 +1,40 @@
 #include "MainMenuDialog.h"
 #include "../Uis/Ui.h"
+#include "../Main.h"
 #include "../Uis/UiButton.h"
 #include "../EventHandling.h"
-#include "../Main.h"
+#include "Dialog.h"
 #include "../Array.h"
+
+#define AsInt(i) ((int*) (i))
+
+void NewGameButton_onMouseButton(Ui *ui) {
+	if (IsButtonPressed(BUTTON_PRIMARY)) {
+		*AsInt(ui->eventData) = X_MAIN_MENU_NEW_GAME;
+	}
+}
+
+void LevelEditorButton_onMouseButton(Ui *ui) {
+	if (IsButtonPressed(BUTTON_PRIMARY)) {
+		*AsInt(ui->eventData) = X_MAIN_MENU_LEVEL_EDITOR;
+	}
+}
 
 int MainMenuDialog() {
 	Array uis;
 	ArrayInit(&uis, sizeof(Ui));
 
+	int pressedButton = 0;
+
 	Ui *newGameButton = ArrayAppend(&uis, NULL);
 	UiButtonInit(newGameButton, (Vec2I) {0, -35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "New Game");
+	newGameButton->eventData = &pressedButton;
+	newGameButton->onMouseButton = NewGameButton_onMouseButton;
 	Ui *levelEditorButton = ArrayAppend(&uis, NULL);
 	UiButtonInit(levelEditorButton, (Vec2I) {0, +35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Level Editor");
+	levelEditorButton->eventData = &pressedButton;
+	levelEditorButton->onMouseButton = LevelEditorButton_onMouseButton;
+	
 	Vec2I maxButtonSize = (Vec2I) {
 		MAX(UIButtonSize(newGameButton).x, UIButtonSize(levelEditorButton).x),
 		MAX(UIButtonSize(newGameButton).y, UIButtonSize(levelEditorButton).y)	
@@ -20,32 +42,13 @@ int MainMenuDialog() {
 	UIButtonSetSize(newGameButton, maxButtonSize);
 	UIButtonSetSize(levelEditorButton, maxButtonSize);
 
-	bool quit = false;
-	while (!quit) {
-		///// EVENT HANDLING /////
-		GatherEvents(&quit);
-		if (quit) {
-			break;
-		}
-		///// END OF EVENT HANDLING /////
-
-		///// GRAPHICS /////
-		SDL_SetRenderDrawColor(CurrentRenderer(), 0, 0, 0, 255);
-		SDL_RenderClear(CurrentRenderer());
-		for (size_t i = 0; i < ArrayLength(&uis); i++) {
-			Ui *ui = ArrayGet(&uis, i);
-			if (ui->draw) {
-				ui->draw(ui);
-			}
-		}
-		SDL_RenderPresent(CurrentRenderer());
-		///// END OF GRAPHICS /////
+	while (pressedButton == 0) {
+		int res = DialogWaitForEvent(&uis);
+		PROPAGATE_ERROR(res);
 	}
 
 	UiButtonDeinit(levelEditorButton);
 	UiButtonDeinit(newGameButton);
 	ArrayDeinit(&uis);
-	if (quit) {
-		return X_QUIT;
-	}
+	return pressedButton;
 }
