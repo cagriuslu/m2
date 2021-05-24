@@ -66,3 +66,11 @@ void DebugKeys(const char *message, uint8_t *keysPressed, uint8_t *keysReleased,
 	}
 	fprintf(stderr, "\n");
 }
+
+void DebugObjectDrawList(const char *message, ObjectDrawList *list) {
+	fprintf(stderr, "%s ObjectDrawList{", message);
+	for (size_t i = 0; i < ObjectDrawListLength(list); i++) {
+		fprintf(stderr, "%p ", ObjectDrawListGet(list, i));
+	}
+	fprintf(stderr, "}\n");
+}

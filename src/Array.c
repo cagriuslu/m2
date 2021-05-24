@@ -29,9 +29,7 @@ void* ArrayAppend(Array *array, void *item) {
 	} else {
 		size_t newCapacity = round(array->capacity * GROWTH_RATE);
 		void *newData = realloc(array->data, newCapacity * array->itemSize);
-		if (!newData) {
-			return NULL;
-		}
+		assert(newData);
 		array->data = newData;
 		array->capacity = newCapacity;
 		return ArrayAppend(array, item);
@@ -52,4 +50,8 @@ void* ArrayGetLast(Array *array) {
 	} else {
 		return NULL;
 	}
+}
+
+void ArrayDeinit(Array *array) {
+	free(array->data);
 }

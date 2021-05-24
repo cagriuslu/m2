@@ -9,6 +9,7 @@
 
 int CurrentScreenWidth();
 int CurrentScreenHeight();
+float CurrentPixelsPerMeter();
 SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
 TTF_Font* CurrentFont();

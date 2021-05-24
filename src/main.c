@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "Vec2I.h"
 #include "UI.h"
+#include "ObjectDrawList.h"
 #include "Debug.h"
 #include "UIs/UIPanel.h"
 #include "UIs/UIButton.h"
@@ -17,11 +18,13 @@
 #include <math.h>
 
 int gScreenWidth = 640, gScreenHeight = 480;
+float gPixelsPerMeter = 40.0;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
 Box2DWorld *gWorld;
 Array gObjects;
+ObjectDrawList gDrawList;
 Array gUIs;
 uint8_t gKeysPressed[_KEY_COUNT];
 uint8_t gKeysReleased[_KEY_COUNT];
@@ -30,7 +33,6 @@ uint8_t gKeysState[_KEY_COUNT];
 int main(int argc, char *argv[]) {
 	const int SCREEN_HALF_WIDTH = gScreenWidth / 2;
 	const int SCREEN_HALF_HEIGHT = gScreenHeight / 2;
-	const float PIXELS_PER_METER = 40.0;
 	const float timeStep = 1.0 / 60.0;
 	const int velocityIterations = 8;
 	const int positionIterations = 3;
@@ -44,23 +46,27 @@ int main(int argc, char *argv[]) {
 	gFont = TTF_OpenFont("fonts/joystix/joystix monospace.ttf", 16);
 	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 	ArrayInit(&gObjects, sizeof(Object));
+	ObjectDrawListInit(&gDrawList);
 	ArrayInit(&gUIs, sizeof(UI));
 
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
+	ObjectDrawListInsert(&gDrawList, player);
 	PlayerInit(player);
+
 	Object *camera = ArrayAppend(&gObjects, NULL); // Append empty Camera object
 	CameraInit(camera, player);
 
 	// Test object
 	Object *staticBox1 = ArrayAppend(&gObjects, NULL);
+	ObjectDrawListInsert(&gDrawList, staticBox1);
 	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
 
 	// Test panel
-	UI *panel = ArrayAppend(&gUIs, NULL);
-	UIPanelInit(panel, (Vec2I) {200, 200});
+	//UI *panel = ArrayAppend(&gUIs, NULL);
+	//UIPanelInit(panel, (Vec2I) {200, 200});
 	// Test button
-	UI *button = ArrayAppend(&gUIs, NULL);
-	UIButtonInit(button, (Vec2I) {100, 100}, 0, "Level Editor");
+	//UI *button = ArrayAppend(&gUIs, NULL);
+	//UIButtonInit(button, (Vec2I) {100, 100}, 0, "Level Editor");
 
 	bool quit = false;
 	while (!quit) {
@@ -109,7 +115,7 @@ int main(int argc, char *argv[]) {
 		}
 		KeyStateArrayFillFromSDLKeyboardStateArray(gKeysState, SDL_GetKeyboardState(NULL));
 
-		// Physics
+		///// PHYSICS /////
 		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
 			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->prePhysics) {
@@ -127,12 +133,14 @@ int main(int argc, char *argv[]) {
 				obj->postPhysics(obj);
 			}
 		}
+		///// END OF PHYSICS /////
 
-		// Graphics
+		///// GRAPHICS /////
+		ObjectDrawListSort(&gDrawList);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
-		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
-			Object *obj = ArrayGet(&gObjects, i);
+		for (size_t i = 0; i < ObjectDrawListLength(&gDrawList); i++) {
+			Object *obj = ObjectDrawListGet(&gDrawList, i);
 			if (obj->preGraphics) {
 				obj->preGraphics(obj);
 			}
@@ -140,11 +148,11 @@ int main(int argc, char *argv[]) {
 				obj->ovrdGraphics(obj);
 			} else {
 				Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->pos, camera->pos);
-				Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, PIXELS_PER_METER));
+				Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, gPixelsPerMeter));
 				Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, obj->txOffset);
 				Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) {SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT}, obj_gfx_origin_wrt_screen_center);
-				int obj_width_on_screen = round(obj->txSize.x) * PIXELS_PER_METER;
-				int obj_height_on_screen = round(obj->txSize.y) * PIXELS_PER_METER;
+				int obj_width_on_screen = round(obj->txSize.x) * gPixelsPerMeter;
+				int obj_height_on_screen = round(obj->txSize.y) * gPixelsPerMeter;
 				SDL_Rect dstrect = (SDL_Rect) {
 					obj_gfx_origin_wrt_screen_origin.x - obj_width_on_screen / 2, 
 					obj_gfx_origin_wrt_screen_origin.y - obj_height_on_screen / 2,
@@ -164,6 +172,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		SDL_RenderPresent(gRenderer);
+		///// END OF GRAPHICS /////
 
 		unsigned end_ticks = SDL_GetTicks();
 		//fprintf(stderr, "Frame time: %u\n", end_ticks - start_ticks);
@@ -183,6 +192,10 @@ int CurrentScreenWidth() {
 
 int CurrentScreenHeight(){
 	return gScreenHeight;
+}
+
+float CurrentPixelsPerMeter() {
+	return gPixelsPerMeter;
 }
 
 SDL_Renderer* CurrentRenderer() {

@@ -20,6 +20,8 @@ int PlayerInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = Player_prePhysics;
 	obj->txSrc = (SDL_Rect) {48, 0, 16, 16};
+	float screen_ppm_over_image_ppm = CurrentPixelsPerMeter() / 16;
+	obj->txOffset = (Vec2I) {0, -6 * screen_ppm_over_image_ppm};
 	obj->txSize = (Vec2F) {1.0, 1.0};
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
@@ -29,10 +31,10 @@ int PlayerInit(Object *obj) {
 	Box2DBodyDefDestroy(bodyDef);
 
 	Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
-	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.5, 0.5});
+	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.25, 0.125});
 	Box2DFixtureDef *fixtureDef = Box2DFixtureDefCreate();
 	Box2DFixtureDefSetShape(fixtureDef, boxShape);
-	Box2DFixtureDefSetDensity(fixtureDef, 1.0);
+	Box2DFixtureDefSetDensity(fixtureDef, 16.0);
 	Box2DFixtureDefSetFriction(fixtureDef, 0.3);
 	Box2DFixture *fixture = Box2DBodyCreateFixtureFromFixtureDef(body, fixtureDef);
 	Box2DFixtureDefDestroy(fixtureDef);

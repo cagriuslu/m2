@@ -25,6 +25,7 @@ typedef struct _Object {
 	// Private data
 	void *privData;
 } Object;
+typedef Object* ObjectPtr;
 
 int ObjectInit(Object *obj);
 void ObjectDeinit(Object *obj);
