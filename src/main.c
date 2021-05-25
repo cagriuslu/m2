@@ -5,9 +5,10 @@
 #include "Player.h"
 #include "Camera.h"
 #include "Vec2I.h"
-#include "ObjectDrawList.h"
+#include "DrawList.h"
 #include "EventHandling.h"
 #include "Terrain.h"
+#include "Level.h"
 #include "Dialog.h"
 #include "Debug.h"
 #include <SDL.h>
@@ -26,10 +27,11 @@ TTF_Font *gFont;
 
 Box2DWorld *gWorld;
 Array gObjects;
-ObjectDrawList gDrawList;
-Array gUis;
+DrawList gDrawList;
 
 int main(int argc, char *argv[]) {
+	int res;
+
 	const int SCREEN_HALF_WIDTH = gScreenWidth / 2;
 	const int SCREEN_HALF_HEIGHT = gScreenHeight / 2;
 	const float timeStep = 1.0 / 60.0;
@@ -45,29 +47,38 @@ int main(int argc, char *argv[]) {
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("16x16.png"));
 	gFont = TTF_OpenFont("fonts/joystix/joystix monospace.ttf", 16);
 
-	int res = DialogMainMenu();
+	bool levelLoaded = false;
+
+main_menu:
+	res = DialogMainMenu();
 	if (res == X_QUIT) {
 		return 0;
+	} else if (res == X_MAIN_MENU_RESUME) {
+		// Do nothing
+	} else {
+		// Unload level
+		if (levelLoaded) {
+			DrawListDeinit(&gDrawList);
+			ArrayDeinit(&gObjects);
+			Box2DWorldDestroy(gWorld);
+		}
+
+		// Load level
+		gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
+		ArrayInit(&gObjects, sizeof(Object));
+		DrawListInit(&gDrawList);
+		levelLoaded = true;
+		if (res == X_MAIN_MENU_NEW_GAME) {
+			PROPAGATE_ERROR(LevelTestLoad());
+		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
+			PROPAGATE_ERROR(LevelEditorLoad());
+		} else {
+			fprintf(stderr, "Level not found\n");
+			return X_QUIT;
+		}
 	}
-	fprintf(stderr, "RES: %d\n", res);
 
-	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
-	ArrayInit(&gObjects, sizeof(Object));
-	ObjectDrawListInit(&gDrawList);
-
-	TerrainInit(NULL);
-
-	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
-	ObjectDrawListInsert(&gDrawList, player);
-	PlayerInit(player);
-
-	Object *camera = ArrayAppend(&gObjects, NULL); // Append empty Camera object
-	CameraInit(camera, player);
-
-	// Test object
-	Object *staticBox1 = ArrayAppend(&gObjects, NULL);
-	ObjectDrawListInsert(&gDrawList, staticBox1);
-	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
+	Object *camera = ArrayGet(&gObjects, CAMERA_INDEX);
 
 	bool quit = false;
 	while (!quit) {
@@ -101,11 +112,11 @@ int main(int argc, char *argv[]) {
 		///// END OF PHYSICS /////
 
 		///// GRAPHICS /////
-		ObjectDrawListSort(&gDrawList);
+		DrawListSort(&gDrawList);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
-		for (size_t i = 0; i < ObjectDrawListLength(&gDrawList); i++) {
-			Object *obj = ObjectDrawListGet(&gDrawList, i);
+		for (size_t i = 0; i < DrawListLength(&gDrawList); i++) {
+			Object *obj = DrawListGet(&gDrawList, i);
 			if (obj->preGraphics) {
 				obj->preGraphics(obj);
 			}
@@ -175,4 +186,12 @@ TTF_Font* CurrentFont() {
 
 Box2DWorld* CurrentWorld() {
 	return gWorld;
+}
+
+Array* CurrentObjectArray() {
+	return &gObjects;
+}
+
+DrawList* CurrentDrawList() {
+	return &gDrawList;
 }

@@ -102,10 +102,10 @@ void DebugButtons(const char *message, uint16_t *buttonsPressed, uint16_t *butto
 	fprintf(stderr, "\n");
 }
 
-void DebugObjectDrawList(const char *message, ObjectDrawList *list) {
-	fprintf(stderr, "%s ObjectDrawList{", message);
-	for (size_t i = 0; i < ObjectDrawListLength(list); i++) {
-		fprintf(stderr, "%p ", ObjectDrawListGet(list, i));
+void DebugDrawList(const char *message, DrawList *list) {
+	fprintf(stderr, "%s DrawList{", message);
+	for (size_t i = 0; i < DrawListLength(list); i++) {
+		fprintf(stderr, "%p ", DrawListGet(list, i));
 	}
 	fprintf(stderr, "}\n");
 }

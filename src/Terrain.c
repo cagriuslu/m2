@@ -9,6 +9,7 @@ typedef struct _TerrainData {
 } TerrainData;
 
 int TerrainInit(Object *obj) {
+	PROPAGATE_ERROR(ObjectInit(obj));
 	return 0;
 }
 

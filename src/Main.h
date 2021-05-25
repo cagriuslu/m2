@@ -3,6 +3,8 @@
 
 #include "Controls.h"
 #include "Box2DWrapper.h"
+#include "Array.h"
+#include "DrawList.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <stdbool.h>
@@ -17,6 +19,9 @@ uint32_t CurrentWindowPixelFormat();
 SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
 TTF_Font* CurrentFont();
+
 Box2DWorld* CurrentWorld();
+Array* CurrentObjectArray();
+DrawList* CurrentDrawList();
 
 #endif

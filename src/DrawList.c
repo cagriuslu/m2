@@ -1,38 +1,38 @@
-#include "ObjectDrawList.h"
+#include "DrawList.h"
 #include "Error.h"
 
 #define AsObjectPtr(objptr) ((ObjectPtr*) (objptr))
 
-int ObjectDrawListInit(ObjectDrawList *list) {
+int DrawListInit(DrawList *list) {
 	PROPAGATE_ERROR(ArrayInit(&list->objects, sizeof(ObjectPtr)));
 	return 0;
 }
 
-size_t ObjectDrawListLength(ObjectDrawList *list) {
+size_t DrawListLength(DrawList *list) {
 	return ArrayLength(&list->objects);
 }
 
-ObjectPtr ObjectDrawListGet(ObjectDrawList *list, size_t i) {
+ObjectPtr DrawListGet(DrawList *list, size_t i) {
 	return *AsObjectPtr(ArrayGet(&list->objects, i));
 }
 
-int ObjectDrawListInsert(ObjectDrawList *list, ObjectPtr objptr) {
+int DrawListInsert(DrawList *list, ObjectPtr objptr) {
 	ArrayAppend(&list->objects, &objptr);
-	ObjectDrawListSort(list);
+	DrawListSort(list);
 	// TODO this can be optimized with binary search
 	// ONLY if we can make sure that the list is already sorted
 	return 0;
 }
 
-void ObjectDrawListSort(ObjectDrawList *list) {
-	size_t len = ObjectDrawListLength(list);
+void DrawListSort(DrawList *list) {
+	size_t len = DrawListLength(list);
 	if (1 < len) {
 		for (size_t i = 1; i < len; i++) {
-			ObjectPtr currObjPtr = ObjectDrawListGet(list, i);
+			ObjectPtr currObjPtr = DrawListGet(list, i);
 			float currY = currObjPtr->pos.y;
 
 			for (size_t j = i; 0 < j--; ) {
-				ObjectPtr iterObjPtr = ObjectDrawListGet(list, j);
+				ObjectPtr iterObjPtr = DrawListGet(list, j);
 				float iterY = iterObjPtr->pos.y;
 				if (currY < iterY) {
 					// Swap iter with its next item
@@ -49,6 +49,6 @@ void ObjectDrawListSort(ObjectDrawList *list) {
 	}
 }
 
-void ObjectDrawListDeinit(ObjectDrawList *list) {
+void DrawListDeinit(DrawList *list) {
 	ArrayDeinit(&list->objects);
 }
