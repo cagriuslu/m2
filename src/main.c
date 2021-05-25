@@ -7,6 +7,7 @@
 #include "Vec2I.h"
 #include "ObjectDrawList.h"
 #include "EventHandling.h"
+#include "Terrain.h"
 #include "Dialogs/MainMenuDialog.h"
 #include "Debug.h"
 #include <SDL.h>
@@ -18,6 +19,7 @@
 
 int gScreenWidth = 640, gScreenHeight = 480;
 float gPixelsPerMeter = 40.0;
+uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
@@ -38,18 +40,22 @@ int main(int argc, char *argv[]) {
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
+	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("16x16.png"));
 	gFont = TTF_OpenFont("fonts/joystix/joystix monospace.ttf", 16);
-	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
-	ArrayInit(&gObjects, sizeof(Object));
-	ObjectDrawListInit(&gDrawList);
 
 	int res = MainMenuDialog();
 	if (res == X_QUIT) {
 		return 0;
 	}
 	fprintf(stderr, "RES: %d\n", res);
+
+	gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
+	ArrayInit(&gObjects, sizeof(Object));
+	ObjectDrawListInit(&gDrawList);
+
+	TerrainInit(NULL);
 
 	Object *player = ArrayAppend(&gObjects, NULL); // Append empty Player object
 	ObjectDrawListInsert(&gDrawList, player);
@@ -149,6 +155,10 @@ int CurrentScreenHeight(){
 
 float CurrentPixelsPerMeter() {
 	return gPixelsPerMeter;
+}
+
+uint32_t CurrentWindowPixelFormat() {
+	return gWindowPixelFormat;
 }
 
 SDL_Renderer* CurrentRenderer() {
