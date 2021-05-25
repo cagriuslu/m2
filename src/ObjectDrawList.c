@@ -21,6 +21,7 @@ int ObjectDrawListInsert(ObjectDrawList *list, ObjectPtr objptr) {
 	ObjectDrawListSort(list);
 	// TODO this can be optimized with binary search
 	// ONLY if we can make sure that the list is already sorted
+	return 0;
 }
 
 void ObjectDrawListSort(ObjectDrawList *list) {

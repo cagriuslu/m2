@@ -1,4 +1,4 @@
-#include "UiButton.h"
+#include "../Ui.h"
 #include "../Main.h"
 #include "../Error.h"
 #include <SDL.h>
@@ -65,12 +65,12 @@ int UiButtonInit(Ui *ui, Vec2I position, Vec2I minSize, Vec2I pad, int alignment
 	return 0;
 }
 
-Vec2I UIButtonSize(Ui *ui) {
+Vec2I UiButtonSize(Ui *ui) {
 	UiButtonData *uiButtonData = ui->privData;
 	return (Vec2I) {uiButtonData->size.x, uiButtonData->size.y};
 }
 
-void UIButtonSetSize(Ui *ui, Vec2I size) {
+void UiButtonSetSize(Ui *ui, Vec2I size) {
 	UiButtonData *uiButtonData = ui->privData;
 	uiButtonData->size = size;
 }
@@ -87,8 +87,8 @@ Vec2I UiButtonMaxSizeOfButtons(unsigned n, ...) {
     for (unsigned i = 0; i < n; i++) {
     	Ui *ui = va_arg(args, Ui*);
     	maxSize = (Vec2I) {
-			MAX(maxSize.x, UIButtonSize(ui).x),
-			MAX(maxSize.y, UIButtonSize(ui).y)	
+			MAX(maxSize.x, UiButtonSize(ui).x),
+			MAX(maxSize.y, UiButtonSize(ui).y)	
 		};
     }
 

@@ -1,9 +1,9 @@
 #include "Dialog.h"
-#include "../EventHandling.h"
-#include "../Main.h"
-#include "../Error.h"
-#include "../Uis/Ui.h"
-#include "../Debug.h"
+#include "EventHandling.h"
+#include "Main.h"
+#include "Error.h"
+#include "Ui.h"
+#include "Debug.h"
 #include <stdbool.h>
 
 int DialogWaitForEvent(Array *uis) {

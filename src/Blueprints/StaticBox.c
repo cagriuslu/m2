@@ -1,4 +1,4 @@
-#include "StaticBox.h"
+#include "../Blueprint.h"
 #include "../Main.h"
 #include "../Box2DWrapper.h"
 

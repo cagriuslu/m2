@@ -9,7 +9,7 @@ typedef struct _TerrainData {
 } TerrainData;
 
 int TerrainInit(Object *obj) {
-	
+	return 0;
 }
 
 void TerrainDeinit(Object *obj) {

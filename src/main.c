@@ -1,5 +1,5 @@
 #include "Main.h"
-#include "Objects/StaticBox.h"
+#include "Blueprint.h"
 #include "Box2DWrapper.h"
 #include "Array.h"
 #include "Player.h"
@@ -8,7 +8,7 @@
 #include "ObjectDrawList.h"
 #include "EventHandling.h"
 #include "Terrain.h"
-#include "Dialogs/MainMenuDialog.h"
+#include "Dialog.h"
 #include "Debug.h"
 #include <SDL.h>
 #include <SDL_image.h>
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("16x16.png"));
 	gFont = TTF_OpenFont("fonts/joystix/joystix monospace.ttf", 16);
 
-	int res = MainMenuDialog();
+	int res = DialogMainMenu();
 	if (res == X_QUIT) {
 		return 0;
 	}

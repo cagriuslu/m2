@@ -1,9 +1,7 @@
-#include "MainMenuDialog.h"
-#include "../Uis/Ui.h"
+#include "../Dialog.h"
+#include "../Ui.h"
 #include "../Main.h"
-#include "../Uis/UiButton.h"
 #include "../EventHandling.h"
-#include "Dialog.h"
 #include "../Array.h"
 
 #define AsInt(i) ((int*) (i))
@@ -20,7 +18,7 @@ void LevelEditorButton_onMouseButton(Ui *ui) {
 	}
 }
 
-int MainMenuDialog() {
+int DialogMainMenu() {
 	Array uis;
 	ArrayInit(&uis, sizeof(Ui));
 
@@ -36,8 +34,8 @@ int MainMenuDialog() {
 	levelEditorButton->onMouseButton = LevelEditorButton_onMouseButton;
 	
 	Vec2I maxButtonSize = UiButtonMaxSizeOfButtons(2, newGameButton, levelEditorButton);
-	UIButtonSetSize(newGameButton, maxButtonSize);
-	UIButtonSetSize(levelEditorButton, maxButtonSize);
+	UiButtonSetSize(newGameButton, maxButtonSize);
+	UiButtonSetSize(levelEditorButton, maxButtonSize);
 
 	while (pressedButton == 0) {
 		int res = DialogWaitForEvent(&uis);
