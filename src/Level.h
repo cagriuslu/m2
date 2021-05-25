@@ -7,6 +7,7 @@
 #include "Terrain.h"
 #include "Camera.h"
 #include "Player.h"
+#include "God.h"
 #include "Blueprint.h"
 
 #define TERRAIN_INDEX (0)
@@ -17,5 +18,6 @@ int LevelTestLoad();
 int LevelEditorLoad();
 
 int LevelLoadTerrainCameraPlayer();
+int LevelLoadTerrainCameraGod();
 
 #endif

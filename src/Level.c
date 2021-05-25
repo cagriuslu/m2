@@ -18,6 +18,27 @@ int LevelLoadTerrainCameraPlayer() {
 	// 1: Camera
 	CameraInit(camera, player);
 
-	// TODO
+	// TODO return proper error
+	return 0;
+}
+
+int LevelLoadTerrainCameraGod() {
+	Array *objArray = CurrentObjectArray();
+	DrawList *drawList = CurrentDrawList();
+
+	// 0: Terrain
+	// 1: Camera
+	// 2: God
+	Object *terrain = ArrayAppend(objArray, NULL); 
+	Object *camera = ArrayAppend(objArray, NULL);
+	Object *god = ArrayAppend(objArray, NULL);
+	// 0: Terrain
+	TerrainInit(terrain);
+	// 2: Player, Camera uses God
+	GodInit(god);
+	// 1: Camera
+	CameraInit(camera, god);
+
+	// TODO return proper error
 	return 0;
 }

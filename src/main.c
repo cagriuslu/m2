@@ -58,6 +58,7 @@ main_menu:
 	} else {
 		// Unload level
 		if (levelLoaded) {
+			// TODO call level unloader properly
 			DrawListDeinit(&gDrawList);
 			ArrayDeinit(&gObjects);
 			Box2DWorldDestroy(gWorld);

@@ -14,5 +14,5 @@ int TerrainInit(Object *obj) {
 }
 
 void TerrainDeinit(Object *obj) {
-
+	ObjectDeinit(obj);
 }
