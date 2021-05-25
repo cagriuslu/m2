@@ -6,6 +6,8 @@
 typedef enum _Key {
 	KEY_NONE = 0,
 
+	KEY_MENU,
+
 	KEY_UP,
 	KEY_DOWN,
 	KEY_LEFT,

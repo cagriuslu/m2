@@ -1,5 +1,17 @@
 #include "Level.h"
 
+void (*gUnloader)();
+
+void LevelUnload() {
+	if (gUnloader) {
+		gUnloader();
+	}
+}
+
+void LevelSetUnloader(void (*unloader)()) {
+	gUnloader = unloader;
+}
+
 int LevelLoadTerrainCameraPlayer() {
 	Array *objArray = CurrentObjectArray();
 	DrawList *drawList = CurrentDrawList();

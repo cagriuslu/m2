@@ -1,5 +1,9 @@
 #include "../Level.h"
 
+void LevelTestUnloader() {
+	// TODO
+}
+
 int LevelTestLoad() {
 	PROPAGATE_ERROR(LevelLoadTerrainCameraPlayer());
 
@@ -11,5 +15,6 @@ int LevelTestLoad() {
 	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
 	DrawListInsert(drawList, staticBox1);
 
+	LevelSetUnloader(LevelTestUnloader);
 	return 0;
 }

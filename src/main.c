@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 	bool levelLoaded = false;
 
 main_menu:
-	res = DialogMainMenu();
+	res = DialogMainMenu(levelLoaded);
 	if (res == X_QUIT) {
 		return 0;
 	} else if (res == X_MAIN_MENU_RESUME) {
@@ -58,12 +58,11 @@ main_menu:
 	} else {
 		// Unload level
 		if (levelLoaded) {
-			// TODO call level unloader properly
+			LevelUnload();
 			DrawListDeinit(&gDrawList);
 			ArrayDeinit(&gObjects);
 			Box2DWorldDestroy(gWorld);
 		}
-
 		// Load level
 		gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 		ArrayInit(&gObjects, sizeof(Object));
@@ -86,9 +85,13 @@ main_menu:
 		unsigned start_ticks = SDL_GetTicks();
 
 		///// EVENT HANDLING /////
-		GatherEvents(&quit, NULL, NULL, NULL, NULL, NULL);
+		bool key = false;
+		GatherEvents(&quit, NULL, &key, NULL, NULL, NULL);
 		if (quit) {
 			break;
+		}
+		if (key && IsKeyPressed(KEY_MENU)) {
+			goto main_menu;
 		}
 		///// END OF EVENT HANDLING /////
 

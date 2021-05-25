@@ -2,6 +2,8 @@
 
 Key KeyFromSDLScancode(SDL_Scancode sc) {
 	switch (sc) {
+	case SDL_SCANCODE_ESCAPE:
+		return KEY_MENU;
 	case SDL_SCANCODE_W:
 		return KEY_UP;
 	case SDL_SCANCODE_S:
@@ -16,6 +18,9 @@ Key KeyFromSDLScancode(SDL_Scancode sc) {
 }
 
 void KeyStateArrayFillFromSDLKeyboardStateArray(uint8_t *keyState, const uint8_t *keyboardState) {
+	if (keyboardState[SDL_SCANCODE_ESCAPE]) {
+		keyState[KEY_MENU] = 1;
+	}
 	if (keyboardState[SDL_SCANCODE_W]) {
 		keyState[KEY_UP] = 1;
 	}

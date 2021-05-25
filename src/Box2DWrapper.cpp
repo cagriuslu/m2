@@ -112,6 +112,10 @@ void Box2DFixtureDefDestroy(Box2DFixtureDef *fixtureDef) {
 	delete AsFixtureDef(fixtureDef);
 }
 
+void Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag) {
+	AsFixture(fixture)->SetSensor(flag);
+}
+
 Box2DPolygonShape* Box2DPolygonShapeCreate() {
 	return new b2PolygonShape();
 }

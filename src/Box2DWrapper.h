@@ -44,6 +44,8 @@ void             Box2DFixtureDefSetDensity(Box2DFixtureDef *fixtureDef, float de
 void             Box2DFixtureDefSetFriction(Box2DFixtureDef *fixtureDef, float friction);
 void             Box2DFixtureDefDestroy(Box2DFixtureDef *fixtureDef);
 
+void Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag);
+
 Box2DPolygonShape* Box2DPolygonShapeCreate();
 void               Box2DPolygonShapeSetAsBox(Box2DPolygonShape *polygonShape, Vec2F halfdims);
 void               Box2DPolygonShapeDestroy(Box2DPolygonShape *polygonShape);

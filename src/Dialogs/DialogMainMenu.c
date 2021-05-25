@@ -6,6 +6,12 @@
 
 #define AsInt(i) ((int*) (i))
 
+void ResumeButton_onMouseButton(Ui *ui) {
+	if (IsButtonPressed(BUTTON_PRIMARY)) {
+		*AsInt(ui->eventData) = X_MAIN_MENU_RESUME;
+	}
+}
+
 void NewGameButton_onMouseButton(Ui *ui) {
 	if (IsButtonPressed(BUTTON_PRIMARY)) {
 		*AsInt(ui->eventData) = X_MAIN_MENU_NEW_GAME;
@@ -18,12 +24,19 @@ void LevelEditorButton_onMouseButton(Ui *ui) {
 	}
 }
 
-int DialogMainMenu() {
+int DialogMainMenu(bool levelLoaded) {
 	Array uis;
 	ArrayInit(&uis, sizeof(Ui));
 
 	int pressedButton = 0;
 
+	Ui *resumeButton = NULL;
+	if (levelLoaded) {
+		resumeButton = ArrayAppend(&uis, NULL);
+		UiButtonInit(resumeButton, (Vec2I) {0, -105}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Resume");
+		resumeButton->eventData = &pressedButton;
+		resumeButton->onMouseButton = ResumeButton_onMouseButton;
+	}
 	Ui *newGameButton = ArrayAppend(&uis, NULL);
 	UiButtonInit(newGameButton, (Vec2I) {0, -35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "New Game");
 	newGameButton->eventData = &pressedButton;
@@ -33,7 +46,12 @@ int DialogMainMenu() {
 	levelEditorButton->eventData = &pressedButton;
 	levelEditorButton->onMouseButton = LevelEditorButton_onMouseButton;
 	
-	Vec2I maxButtonSize = UiButtonMaxSizeOfButtons(2, newGameButton, levelEditorButton);
+	Vec2I maxButtonSize = levelLoaded ?
+		UiButtonMaxSizeOfButtons(3, newGameButton, levelEditorButton, resumeButton) :
+		UiButtonMaxSizeOfButtons(2, newGameButton, levelEditorButton);
+	if (levelLoaded) {
+		UiButtonSetSize(resumeButton, maxButtonSize);
+	}
 	UiButtonSetSize(newGameButton, maxButtonSize);
 	UiButtonSetSize(levelEditorButton, maxButtonSize);
 
@@ -44,6 +62,9 @@ int DialogMainMenu() {
 
 	UiButtonDeinit(levelEditorButton);
 	UiButtonDeinit(newGameButton);
+	if (levelLoaded) {
+		UiButtonDeinit(resumeButton);
+	}
 	ArrayDeinit(&uis);
 	return pressedButton;
 }
