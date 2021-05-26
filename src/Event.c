@@ -1,4 +1,4 @@
-#include "EventHandling.h"
+#include "Event.h"
 
 uint16_t gKeysPressed[_KEY_COUNT];
 uint16_t gKeysReleased[_KEY_COUNT];
@@ -54,7 +54,7 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 				if (outKey) {
 					*outKey = true;
 				}
-				gKeysPressed[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
+				gKeysPressed[KeyFromSDLScancode(e.key.keysym.scancode, e.key.keysym.mod)] += 1;
 			}
 			break;
 		case SDL_KEYUP:
@@ -62,7 +62,7 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 				if (outKey) {
 					*outKey = true;
 				}
-				gKeysReleased[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
+				gKeysReleased[KeyFromSDLScancode(e.key.keysym.scancode, e.key.keysym.mod)] += 1;
 			}
 			break;
 		case SDL_MOUSEMOTION:
@@ -111,15 +111,15 @@ bool IsKeyDown(Key key) {
 	return gKeysState[key];
 }
 
-uint16_t IsButtonPressed(Button button) {
+uint16_t IsButtonPressed(MouseButton button) {
 	return gButtonsPressed[button];
 }
 
-uint16_t IsButtonReleased(Button button) {
+uint16_t IsButtonReleased(MouseButton button) {
 	return gButtonsReleased[button];
 }
 
-bool IsButtonDown(Button button) {
+bool IsButtonDown(MouseButton button) {
 	return gButtonsState[button];
 }
 

@@ -1,5 +1,5 @@
 #include "Dialog.h"
-#include "EventHandling.h"
+#include "Event.h"
 #include "Main.h"
 #include "Error.h"
 #include "Ui.h"

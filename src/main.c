@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "Vec2I.h"
 #include "DrawList.h"
-#include "EventHandling.h"
+#include "Event.h"
 #include "Terrain.h"
 #include "Level.h"
 #include "Dialog.h"
@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <math.h>
 
-int gScreenWidth = 640, gScreenHeight = 480;
+int gScreenWidth = 1280, gScreenHeight = 720;
 float gPixelsPerMeter = 40.0;
 uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;

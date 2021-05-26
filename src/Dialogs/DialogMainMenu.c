@@ -1,7 +1,7 @@
 #include "../Dialog.h"
 #include "../Ui.h"
 #include "../Main.h"
-#include "../EventHandling.h"
+#include "../Event.h"
 #include "../Array.h"
 
 #define AsInt(i) ((int*) (i))

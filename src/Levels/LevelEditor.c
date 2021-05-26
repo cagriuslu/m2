@@ -1,4 +1,5 @@
 #include "../Level.h"
+#include "LevelCommon.h"
 
 void LevelEditorUnloader() {
 	// TODO

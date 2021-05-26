@@ -1,8 +1,27 @@
 #include "Player.h"
 #include "Main.h"
-#include "EventHandling.h"
+#include "Event.h"
+#include <math.h>
+
+// Shoot with mouse primary and secondary
+// Change primary skill with wheel
+// Change secondary skill with middle button
+// Shift button is also used during combat
+// Ctrl and Alt should not be used during combat
 
 static void Player_prePhysics(Object *obj) {
+	// if (IsButtonDown(BUTTON_SECONDARY)) {
+	// 	Vec2I pos_wrt_screen_origin = PointerPosition();
+	// 	Vec2I pos_wrt_screen_center = (Vec2I) {
+	// 		pos_wrt_screen_origin.x - CurrentScreenWidth() / 2,
+	// 		pos_wrt_screen_origin.y - CurrentScreenHeight() / 2
+	// 	};
+	// 	float length = sqrt(pow((float) pos_wrt_screen_center.x, 2) + pow((float) pos_wrt_screen_center.y, 2));
+	// 	Vec2F unit_vector = (Vec2F) {pos_wrt_screen_center.x / length, pos_wrt_screen_center.y / length};
+	// 	Vec2F force = Vec2FMul(unit_vector, 100.0);
+	// 	Box2DBodyApplyForceToCenter(obj->body, force, true);
+	// }
+
 	if (IsKeyDown(KEY_UP)) {
 		Box2DBodyApplyForceToCenter(obj->body, (Vec2F) {0.0, -100.0}, true);
 	}

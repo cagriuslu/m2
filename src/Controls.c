@@ -1,6 +1,6 @@
 #include "Controls.h"
 
-Key KeyFromSDLScancode(SDL_Scancode sc) {
+Key KeyFromSDLScancode(SDL_Scancode sc, SDL_Keymod mod) {
 	switch (sc) {
 	case SDL_SCANCODE_ESCAPE:
 		return KEY_MENU;
@@ -18,6 +18,12 @@ Key KeyFromSDLScancode(SDL_Scancode sc) {
 }
 
 void KeyStateArrayFillFromSDLKeyboardStateArray(uint8_t *keyState, const uint8_t *keyboardState) {
+	// If any modifier key is pressed, skip altogether
+	if (keyboardState[SDL_SCANCODE_LCTRL] || keyboardState[SDL_SCANCODE_RCTRL] ||
+		keyboardState[SDL_SCANCODE_LALT] || keyboardState[SDL_SCANCODE_RALT]) {
+		return;
+	}
+
 	if (keyboardState[SDL_SCANCODE_ESCAPE]) {
 		keyState[KEY_MENU] = 1;
 	}
@@ -35,7 +41,7 @@ void KeyStateArrayFillFromSDLKeyboardStateArray(uint8_t *keyState, const uint8_t
 	}
 }
 
-Button ButtonFromSDLButton(int button) {
+MouseButton ButtonFromSDLButton(int button) {
 	switch (button) {
 	case SDL_BUTTON_LEFT:
 		return BUTTON_PRIMARY;

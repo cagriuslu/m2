@@ -11,9 +11,9 @@ uint16_t IsKeyPressed(Key key);
 uint16_t IsKeyReleased(Key key);
 bool IsKeyDown(Key key);
 
-uint16_t IsButtonPressed(Button button);
-uint16_t IsButtonReleased(Button button);
-bool IsButtonDown(Button button);
+uint16_t IsButtonPressed(MouseButton button);
+uint16_t IsButtonReleased(MouseButton button);
+bool IsButtonDown(MouseButton button);
 Vec2I PointerPosition();
 
 uint16_t* KeysPressedArray();
