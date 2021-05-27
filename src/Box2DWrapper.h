@@ -15,6 +15,7 @@ typedef void Box2DFixtureDef;
 typedef void Box2DFixture;
 typedef void Box2DShape;
 typedef void Box2DPolygonShape;
+typedef void Box2DCircleShape;
 
 Box2DWorld*  Box2DWorldCreate(Vec2F gravity);
 Box2DBody*   Box2DWorldCreateBody(Box2DWorld *world, Box2DBodyDef *bodyDef);
@@ -47,8 +48,13 @@ void             Box2DFixtureDefDestroy(Box2DFixtureDef *fixtureDef);
 void Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag);
 
 Box2DPolygonShape* Box2DPolygonShapeCreate();
+void               Box2DPolygonShapeSetPosition(Box2DPolygonShape *polygonShape, Vec2F position);
 void               Box2DPolygonShapeSetAsBox(Box2DPolygonShape *polygonShape, Vec2F halfdims);
 void               Box2DPolygonShapeDestroy(Box2DPolygonShape *polygonShape);
+
+Box2DCircleShape* Box2DCircleShapeCreate();
+void              Box2DCircleShapeSetRadius(Box2DCircleShape *circleShape, float radius);
+void              Box2DCircleShapeDestroy(Box2DCircleShape *circleShape);
 
 #ifdef __cplusplus
 }

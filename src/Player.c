@@ -50,15 +50,19 @@ int PlayerInit(Object *obj) {
 	Box2DBody *body = Box2DWorldCreateBody(CurrentWorld(), bodyDef);
 	Box2DBodyDefDestroy(bodyDef);
 
-	Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
-	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.25, 0.125});
+	Box2DCircleShape *circleShape = Box2DCircleShapeCreate();
+	Box2DCircleShapeSetRadius(circleShape, 0.25);
+
+	//Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
+	//Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.25, 0.125});
 	Box2DFixtureDef *fixtureDef = Box2DFixtureDefCreate();
-	Box2DFixtureDefSetShape(fixtureDef, boxShape);
-	Box2DFixtureDefSetDensity(fixtureDef, 16.0);
-	Box2DFixtureDefSetFriction(fixtureDef, 0.3);
+	Box2DFixtureDefSetShape(fixtureDef, circleShape);
+	Box2DFixtureDefSetDensity(fixtureDef, 10.0);
+	Box2DFixtureDefSetFriction(fixtureDef, 0.05);
 	Box2DFixture *fixture = Box2DBodyCreateFixtureFromFixtureDef(body, fixtureDef);
 	Box2DFixtureDefDestroy(fixtureDef);
-	Box2DPolygonShapeDestroy(boxShape);
+	//Box2DPolygonShapeDestroy(boxShape);
+	Box2DCircleShapeDestroy(circleShape);
 
 	Box2DBodySetLinearDamping(body, 10.0);
 	Box2DBodySetAngularDamping(body, 0.0);

@@ -7,4 +7,6 @@
 int StaticBoxInit(Object *obj, Vec2F position);
 void StaticBoxDeinit(Object *obj);
 
+int WallInit(Object *obj, Vec2F position);
+
 #endif

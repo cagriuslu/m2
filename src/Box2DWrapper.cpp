@@ -3,6 +3,7 @@
 #include <b2_body.h>
 #include <b2_math.h>
 #include <b2_polygon_shape.h>
+#include <b2_circle_shape.h>
 #include <b2_fixture.h>
 
 #define ToVec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})
@@ -14,6 +15,7 @@
 #define AsFixture(fixture) ((b2Fixture*) (fixture))
 #define AsShape(shape) ((b2Shape*) (shape))
 #define AsPolygonShape(polygonShape) ((b2PolygonShape*) (polygonShape))
+#define AsCircleShape(circleShape) ((b2CircleShape*) (circleShape))
 
 Box2DWorld* Box2DWorldCreate(Vec2F gravity) {
 	return new b2World(ToVec2(gravity));
@@ -126,4 +128,16 @@ void Box2DPolygonShapeSetAsBox(Box2DPolygonShape *polygonShape, Vec2F halfdims) 
 
 void Box2DPolygonShapeDestroy(Box2DPolygonShape *polygonShape) {
 	delete AsPolygonShape(polygonShape);
+}
+
+Box2DCircleShape* Box2DCircleShapeCreate() {
+	return new b2CircleShape();
+}
+
+void Box2DCircleShapeSetRadius(Box2DCircleShape *circleShape, float radius) {
+	AsCircleShape(circleShape)->m_radius = radius;
+}
+
+void Box2DCircleShapeDestroy(Box2DCircleShape *circleShape) {
+	delete AsCircleShape(circleShape);
 }
