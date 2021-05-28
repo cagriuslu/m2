@@ -9,7 +9,6 @@ int TileInit(Tile* tile, Vec2F position, Vec2I txIndex) {
 		CurrentTileWidth(),
 		CurrentTileWidth()
 	};
-	// TODO create body
 
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);

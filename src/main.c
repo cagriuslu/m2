@@ -73,7 +73,6 @@ main_menu:
 		gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 		ArrayInit(&gObjects, sizeof(Object));
 		DrawListInit(&gDrawList);
-		levelLoaded = true;
 		if (res == X_MAIN_MENU_NEW_GAME) {
 			PROPAGATE_ERROR(LevelTestLoad());
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
@@ -82,6 +81,7 @@ main_menu:
 			fprintf(stderr, "Level not found\n");
 			return X_QUIT;
 		}
+		levelLoaded = true;
 	}
 
 	Object *camera = ArrayGet(&gObjects, CAMERA_INDEX);
@@ -115,6 +115,9 @@ main_menu:
 				obj->pos = Box2DBodyGetPosition(obj->body);
 				obj->angle = Box2DBodyGetAngle(obj->body);
 			}
+		}
+		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
+			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->postPhysics) {
 				obj->postPhysics(obj);
 			}
@@ -179,7 +182,7 @@ float CurrentPixelsPerMeter() {
 }
 
 int CurrentTileWidth() {
-
+	return gTileWidth;
 }
 
 uint32_t CurrentWindowPixelFormat() {

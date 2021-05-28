@@ -24,7 +24,7 @@ int LevelLoadTerrainCameraPlayer() {
 	Object *player = ArrayAppend(objArray, NULL);
 	// 0: Terrain
 	TerrainInit(terrain);
-	// 2: Player, Camera uses Player
+	// 2: Player, because Camera uses Player
 	PlayerInit(player);
 	DrawListInsert(drawList, player);
 	// 1: Camera
@@ -46,7 +46,7 @@ int LevelLoadTerrainCameraGod() {
 	Object *god = ArrayAppend(objArray, NULL);
 	// 0: Terrain
 	TerrainInit(terrain);
-	// 2: Player, Camera uses God
+	// 2: God, because Camera uses God
 	GodInit(god);
 	// 1: Camera
 	CameraInit(camera, god);
