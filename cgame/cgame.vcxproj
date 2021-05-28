@@ -150,8 +150,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\Array.c" />
-    <ClCompile Include="..\src\Blueprints\StaticBox.c" />
-    <ClCompile Include="..\src\Blueprints\Wall.c" />
+    <ClCompile Include="..\src\Blueprints\BlueprintStaticBox.c" />
     <ClCompile Include="..\src\Box2DWrapper.cpp" />
     <ClCompile Include="..\src\Camera.c" />
     <ClCompile Include="..\src\Controls.c" />
@@ -161,9 +160,6 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\DrawList.c" />
     <ClCompile Include="..\src\Event.c" />
     <ClCompile Include="..\src\God.c" />
-    <ClCompile Include="..\src\Huds\HudCommon.c" />
-    <ClCompile Include="..\src\Huds\HudLevelEditor.c" />
-    <ClCompile Include="..\src\Huds\HudSinglePlayer.c" />
     <ClCompile Include="..\src\Level.c" />
     <ClCompile Include="..\src\Levels\LevelCommon.c" />
     <ClCompile Include="..\src\Levels\LevelEditor.c" />
@@ -172,6 +168,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Object.c" />
     <ClCompile Include="..\src\Player.c" />
     <ClCompile Include="..\src\Terrain.c" />
+    <ClCompile Include="..\src\Tile.c" />
     <ClCompile Include="..\src\Ui.c" />
     <ClCompile Include="..\src\Uis\UiBooleanInput.c" />
     <ClCompile Include="..\src\Uis\UiButton.c" />
@@ -193,13 +190,13 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClInclude Include="..\src\Event.h" />
     <ClInclude Include="..\src\God.h" />
     <ClInclude Include="..\src\Hud.h" />
-    <ClInclude Include="..\src\Huds\HudCommon.h" />
     <ClInclude Include="..\src\Level.h" />
     <ClInclude Include="..\src\Levels\LevelCommon.h" />
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\Object.h" />
     <ClInclude Include="..\src\Player.h" />
     <ClInclude Include="..\src\Terrain.h" />
+    <ClInclude Include="..\src\Tile.h" />
     <ClInclude Include="..\src\Ui.h" />
     <ClInclude Include="..\src\Vec2F.h" />
     <ClInclude Include="..\src\Vec2I.h" />

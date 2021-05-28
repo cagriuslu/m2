@@ -1,8 +1,13 @@
 #include "../Blueprint.h"
 #include "../Main.h"
 #include "../Box2DWrapper.h"
+#include <stdio.h>
 
-int StaticBoxInit(Object *obj, Vec2F position) {
+void StaticBox_deinit(Object* obj) {
+	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
+}
+
+int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect) {16, 64, 16, 16};
@@ -10,6 +15,7 @@ int StaticBoxInit(Object *obj, Vec2F position) {
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);
+	Box2DBodyDefSetAllowSleep(bodyDef, true);
 	Box2DBody *body = Box2DWorldCreateBody(CurrentWorld(), bodyDef);
 	Box2DBodyDefDestroy(bodyDef);
 
@@ -17,12 +23,8 @@ int StaticBoxInit(Object *obj, Vec2F position) {
 	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.375, 0.25});
 	Box2DFixture *fixture = Box2DBodyCreateFixtureFromShape(body, boxShape, 0.0);
 	Box2DPolygonShapeDestroy(boxShape);
-
 	obj->body = body;
-	return 0;
-}
 
-void StaticBoxDeinit(Object *obj) {
-	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
-	ObjectDeinit(obj);
+	obj->deinit = StaticBox_deinit;
+	return 0;
 }

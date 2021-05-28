@@ -66,22 +66,10 @@
     <ClCompile Include="..\src\Vec2I.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Blueprints\StaticBox.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Blueprints\Wall.c">
+    <ClCompile Include="..\src\Blueprints\BlueprintStaticBox.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Dialogs\DialogMainMenu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Huds\HudCommon.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Huds\HudLevelEditor.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Huds\HudSinglePlayer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Levels\LevelCommon.c">
@@ -103,6 +91,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Uis\UiStringInput.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Tile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,11 +158,11 @@
     <ClInclude Include="..\src\Vec2I.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Huds\HudCommon.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Levels\LevelCommon.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Tile.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

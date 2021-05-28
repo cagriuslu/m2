@@ -15,6 +15,7 @@
 int CurrentScreenWidth();
 int CurrentScreenHeight();
 float CurrentPixelsPerMeter();
+int CurrentTileWidth();
 uint32_t CurrentWindowPixelFormat();
 SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();

@@ -49,8 +49,16 @@ void Box2DBodyDefSetPosition(Box2DBodyDef *bodyDef, Vec2F position) {
 	AsBodyDef(bodyDef)->position.Set(position.x, position.y);
 }
 
+void Box2DBodyDefSetAllowSleep(Box2DBodyDef* bodyDef, bool flag) {
+	AsBodyDef(bodyDef)->allowSleep = flag;
+}
+
 void Box2DBodyDefDestroy(Box2DBodyDef *bodyDef) {
 	delete AsBodyDef(bodyDef);
+}
+
+bool Box2DBodyIsAwake(Box2DBody* body) {
+	return AsBody(body)->IsAwake();
 }
 
 Box2DFixture* Box2DBodyCreateFixtureFromFixtureDef(Box2DBody *body, Box2DFixtureDef *fixtureDef) {

@@ -5,7 +5,7 @@ typedef struct _Hud {
 	void (*deinit)(struct _Hud*);
 } Hud;
 
-int HudLevelEditorInit(Hud *hud);
+int HudInit(Hud *hud);
 void HudDeinit(Hud *hud);
 
 #endif

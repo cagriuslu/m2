@@ -4,9 +4,6 @@
 #include "Object.h"
 #include "Error.h"
 
-int StaticBoxInit(Object *obj, Vec2F position);
-void StaticBoxDeinit(Object *obj);
-
-int WallInit(Object *obj, Vec2F position);
+int BlueprintStaticBoxInit(Object *obj, Vec2F position);
 
 #endif

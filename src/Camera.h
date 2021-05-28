@@ -5,6 +5,5 @@
 #include "Error.h"
 
 int CameraInit(Object *obj, Object *player);
-void CameraDeinit(Object *obj);
 
 #endif

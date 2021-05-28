@@ -4,6 +4,5 @@
 #include "Object.h"
 
 int GodInit(Object *obj);
-void GodDeinit(Object *obj);
 
 #endif

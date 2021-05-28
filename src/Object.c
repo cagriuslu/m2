@@ -7,5 +7,7 @@ int ObjectInit(Object *obj) {
 }
 
 void ObjectDeinit(Object *obj) {
-	
+	if (obj->deinit) {
+		obj->deinit(obj);
+	}
 }

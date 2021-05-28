@@ -13,7 +13,7 @@ int LevelEditorLoad() {
 	
 	// Test object
 	Object *staticBox1 = ArrayAppend(objArray, NULL);
-	StaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
+	BlueprintStaticBoxInit(staticBox1, (Vec2F) {5.0, 5.0});
 	DrawListInsert(drawList, staticBox1);
 
 	LevelSetUnloader(LevelEditorUnloader);

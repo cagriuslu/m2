@@ -18,8 +18,12 @@
 #include <stdio.h>
 #include <math.h>
 
+#define TILE_WIDTH (16)
+#define TILE_WIDTH_STR "16"
+
 int gScreenWidth = 1280, gScreenHeight = 720;
 float gPixelsPerMeter = 40.0;
+int gTileWidth = TILE_WIDTH;
 uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
@@ -46,7 +50,7 @@ int main() {
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
 	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/16x16.png"));
+	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TILE_WIDTH_STR "x" TILE_WIDTH_STR ".png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 
 	bool levelLoaded = false;
@@ -172,6 +176,10 @@ int CurrentScreenHeight(){
 
 float CurrentPixelsPerMeter() {
 	return gPixelsPerMeter;
+}
+
+int CurrentTileWidth() {
+
 }
 
 uint32_t CurrentWindowPixelFormat() {

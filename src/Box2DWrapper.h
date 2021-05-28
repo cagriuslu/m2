@@ -26,7 +26,10 @@ void         Box2DWorldDestroy(Box2DWorld *world);
 Box2DBodyDef* Box2DBodyDefCreate();
 void          Box2DBodyDefSetTypeDynamic(Box2DBodyDef *bodyDef);
 void          Box2DBodyDefSetPosition(Box2DBodyDef *bodyDef, Vec2F position);
+void          Box2DBodyDefSetAllowSleep(Box2DBodyDef* bodyDef, bool flag);
 void          Box2DBodyDefDestroy(Box2DBodyDef *bodyDef);
+
+bool Box2DBodyIsAwake(Box2DBody* body);
 
 Box2DFixture* Box2DBodyCreateFixtureFromFixtureDef(Box2DBody *body, Box2DFixtureDef *fixtureDef);
 Box2DFixture* Box2DBodyCreateFixtureFromShape(Box2DBody *body, Box2DShape *shape, float density);

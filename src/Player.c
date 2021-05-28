@@ -36,6 +36,10 @@ static void Player_prePhysics(Object *obj) {
 	}
 }
 
+void Player_deinit(Object* obj) {
+	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
+}
+
 int PlayerInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = Player_prePhysics;
@@ -68,10 +72,7 @@ int PlayerInit(Object *obj) {
 	Box2DBodySetAngularDamping(body, 0.0);
 	Box2DBodySetFixedRotation(body, true);
 	obj->body = body;
-	return 0;
-}
 
-void PlayerDeinit(Object *obj) {
-	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
-	ObjectDeinit(obj);
+	obj->deinit = Player_deinit;
+	return 0;
 }

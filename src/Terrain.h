@@ -5,6 +5,5 @@
 #include "Error.h"
 
 int TerrainInit(Object *obj);
-void TerrainDeinit(Object *obj);
 
 #endif

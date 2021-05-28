@@ -24,6 +24,8 @@ typedef struct _Object {
 	void (*postGraphics)(struct _Object*);
 	// Private data
 	void *privData;
+	// Deinit
+	void (*deinit)(struct _Object*);
 } Object;
 typedef Object* ObjectPtr;
 
