@@ -5,7 +5,7 @@
 #define AsTerrainData(terrainData) ((TerrainData*) (terrainData))
 
 typedef struct _TerrainData {
-
+	int dummy;
 } TerrainData;
 
 int TerrainInit(Object *obj) {

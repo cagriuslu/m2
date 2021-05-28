@@ -83,7 +83,8 @@ void Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake) {
 
 Vec2F Box2DBodyGetPosition(Box2DBody *body) {
 	b2Vec2 v = AsBody(body)->GetPosition();
-	return (Vec2F) {v.x, v.y};
+	Vec2F vec2f = {v.x, v.y};
+	return vec2f;
 }
 
 float Box2DBodyGetAngle(Box2DBody *body) {

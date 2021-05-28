@@ -29,9 +29,11 @@ Box2DWorld *gWorld;
 Array gObjects;
 DrawList gDrawList;
 
-int main(int argc, char *argv[]) {
+int main() {
 	int res;
 
+	fprintf(stderr, "Hello, world!\n");
+	
 	const int SCREEN_HALF_WIDTH = gScreenWidth / 2;
 	const int SCREEN_HALF_HEIGHT = gScreenHeight / 2;
 	const float timeStep = 1.0 / 60.0;
@@ -44,8 +46,8 @@ int main(int argc, char *argv[]) {
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
 	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("16x16.png"));
-	gFont = TTF_OpenFont("fonts/joystix/joystix monospace.ttf", 16);
+	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/16x16.png"));
+	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 
 	bool levelLoaded = false;
 

@@ -1,5 +1,6 @@
 bin/
 *.o
-
 .DS_Store
 */.DS_Store
+cgame/.vs
+cgame/x64
