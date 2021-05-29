@@ -14,4 +14,6 @@ typedef struct _Tile {
 int TileInit(Tile* tile, Vec2F position, Vec2I txIndex);
 void TileDeinit(Tile* tile);
 
+Vec2I TileLookup(const char* tileName);
+
 #endif

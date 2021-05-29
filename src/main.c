@@ -44,6 +44,9 @@ int main() {
 	const int velocityIterations = 8;
 	const int positionIterations = 3;
 
+	Object terrain;
+	LoadTerrain(&terrain, "resources/terrains/test.txt");
+
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
