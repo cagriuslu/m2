@@ -1,5 +1,6 @@
 #include "../Level.h"
 #include "LevelCommon.h"
+#include "../TerrainLoader.h"
 
 void LevelTestUnloader() {
 	// TODO
@@ -8,8 +9,11 @@ void LevelTestUnloader() {
 int LevelTestLoad() {
 	PROPAGATE_ERROR(LevelLoadTerrainCameraPlayer());
 
-	Array *objArray = CurrentObjectArray();
-	DrawList *drawList = CurrentDrawList();
+	Array* objArray = CurrentObjectArray();
+	DrawList* drawList = CurrentDrawList();
+
+	Object* terrain = ArrayGet(objArray, 0);
+	LoadTerrain(terrain, "resources/terrains/test.txt");
 
 	// Test object
 	Object *staticBox1 = ArrayAppend(objArray, NULL);

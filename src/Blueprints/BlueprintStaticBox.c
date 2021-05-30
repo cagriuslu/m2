@@ -20,7 +20,7 @@ int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
 	Box2DBodyDefDestroy(bodyDef);
 
 	Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
-	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.375, 0.25});
+	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.4375, 0.28125});
 	Box2DFixture *fixture = Box2DBodyCreateFixtureFromShape(body, boxShape, 0.0);
 	Box2DPolygonShapeDestroy(boxShape);
 	obj->body = body;

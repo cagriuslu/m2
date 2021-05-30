@@ -44,9 +44,6 @@ int main() {
 	const int velocityIterations = 8;
 	const int positionIterations = 3;
 
-	Object terrain;
-	LoadTerrain(&terrain, "resources/terrains/test.txt");
-
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
@@ -128,9 +125,14 @@ main_menu:
 		///// END OF PHYSICS /////
 
 		///// GRAPHICS /////
-		DrawListSort(&gDrawList);
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
+		// Draw terrain first
+		Object* terrain = ArrayGet(&gObjects, 0);
+		if (terrain->ovrdGraphics) {
+			terrain->ovrdGraphics(terrain);
+		}
+		DrawListSort(&gDrawList);
 		for (size_t i = 0; i < DrawListLength(&gDrawList); i++) {
 			Object *obj = DrawListGet(&gDrawList, i);
 			if (obj->preGraphics) {
@@ -138,20 +140,6 @@ main_menu:
 			}
 			if (obj->ovrdGraphics) {
 				obj->ovrdGraphics(obj);
-			} else {
-				Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->pos, camera->pos);
-				Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, gPixelsPerMeter));
-				Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, obj->txOffset);
-				Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) {SCREEN_HALF_WIDTH, SCREEN_HALF_HEIGHT}, obj_gfx_origin_wrt_screen_center);
-				int obj_width_on_screen = round(obj->txSize.x) * gPixelsPerMeter;
-				int obj_height_on_screen = round(obj->txSize.y) * gPixelsPerMeter;
-				SDL_Rect dstrect = (SDL_Rect) {
-					obj_gfx_origin_wrt_screen_origin.x - obj_width_on_screen / 2, 
-					obj_gfx_origin_wrt_screen_origin.y - obj_height_on_screen / 2,
-					obj_width_on_screen,
-					obj_height_on_screen
-				};
-				SDL_RenderCopyEx(gRenderer, gTextureLUT, &obj->txSrc, &dstrect, obj->angle, NULL, SDL_FLIP_NONE);
 			}
 			if (obj->postGraphics) {
 				obj->postGraphics(obj);

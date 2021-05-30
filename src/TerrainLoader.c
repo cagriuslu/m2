@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "TerrainLoader.h"
 #include "Terrain.h"
+#include "Tile.h"
 #include "Array.h"
 #include "Error.h"
 #include <stdio.h>
@@ -8,7 +9,7 @@
 
 typedef struct _TileKV {
 	char key[4];
-	char value[28];
+	TileDef tileDef;
 } TileKV;
 
 Array MyGetline(FILE *file);
@@ -29,13 +30,12 @@ int LoadTerrain(Object *terrain, const char *tname) {
 			continue;
 		}
 		char* line = ArrayGet(&lineBuffer, 0);
-
 		if (line[0] == '%') {
 			ArrayDeinit(&lineBuffer);
 			break;
 		}
 
-		Array splits = MySplit(line, ' ');
+		Array splits = MySplit(line, '\t');
 		assert(2 <= ArrayLength(&splits));
 
 		char **keyPtr = ArrayGet(&splits, 0);
@@ -46,17 +46,17 @@ int LoadTerrain(Object *terrain, const char *tname) {
 		TileKV tileKV;
 		memset(&tileKV, 0, sizeof(TileKV));
 		strncpy(tileKV.key, *keyPtr, 3);
-		strncpy(tileKV.value, *valuePtr, 27);
+		tileKV.tileDef = TileLookup(*valuePtr);
 		ArrayAppend(&tileKVs, &tileKV);
 
 		ArrayDeinit(&splits);
 		ArrayDeinit(&lineBuffer);
 	}
 
-	// TODO verify all tile values are valid
-
 	// Read matirx data
-	size_t colCount = 0;
+	Array tiles;
+	ArrayInit(&tiles, sizeof(Tile));
+	size_t rowIndex = 0, colCount = 0;
 	while (true) {
 		Array lineBuffer = MyGetline(file);
 		if (ArrayLength(&lineBuffer) == 0) {
@@ -64,6 +64,10 @@ int LoadTerrain(Object *terrain, const char *tname) {
 			break;
 		}
 		char* line = ArrayGet(&lineBuffer, 0);
+		if (strlen(line) == 0) {
+			ArrayDeinit(&lineBuffer);
+			break;
+		}
 
 		Array splits = MySplit(line, '\t');
 		assert(ArrayLength(&splits));
@@ -71,10 +75,34 @@ int LoadTerrain(Object *terrain, const char *tname) {
 		if (colCount == 0) {
 			colCount = ArrayLength(&splits);
 		}
+		assert(ArrayLength(&splits) == colCount);
 
-		// TODO
+		for (size_t colIndex = 0; colIndex < colCount; colIndex++) {
+			char** colDataPtr = ArrayGet(&splits, colIndex);
+			char* colData = *colDataPtr;
+			// Lookup Tile from TileKV Array
+			TileDef tileDef = { 0 };
+			for (size_t j = 0; j < ArrayLength(&tileKVs); j++) {
+				TileKV* tileKV = ArrayGet(&tileKVs, j);
+				if (strcmp(*colDataPtr, tileKV->key) == 0) {
+					tileDef = tileKV->tileDef;
+					break;
+				}
+			}
+			// Save Tile
+			Tile tile;
+			TileInit(&tile, (Vec2I) { colIndex, rowIndex }, tileDef.txIndex, tileDef.colliderSize);
+			ArrayAppend(&tiles, &tile);
+		}
+
+		rowIndex++;
 	}
 
+	TerrainSetTiles(terrain, tiles, colCount);
+	TerrainGenerateTexture(terrain);
+	
+	ArrayDeinit(&tileKVs);
+	fclose(file);
 	return 0;
 }
 

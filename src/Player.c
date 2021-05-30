@@ -55,7 +55,7 @@ int PlayerInit(Object *obj) {
 	Box2DBodyDefDestroy(bodyDef);
 
 	Box2DCircleShape *circleShape = Box2DCircleShapeCreate();
-	Box2DCircleShapeSetRadius(circleShape, 0.25);
+	Box2DCircleShapeSetRadius(circleShape, 0.3125);
 
 	//Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
 	//Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.25, 0.125});

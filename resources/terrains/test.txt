@@ -1,11 +1,11 @@
-S Start
-0 Ground
-1 Wall
+0	Ground
+wh	WallHorizontal
+wv	WallVertical
 %
 0	0	0	0	0	0
-0	1	1	1	1	0
-0	1	0	0	1	0
-0	1	S	0	1	0
-0	1	0	0	1	0
-0	1	1	1	1	0
+0	0	wh	wh	0	0
+0	wv	0	0	wv	0
+0	wv	0	0	wv	0
+0	wv	0	0	wv	0
+0	0	wh	wh	0	0
 0	0	0	0	0	0
