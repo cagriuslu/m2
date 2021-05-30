@@ -9,8 +9,8 @@ void Wall_deinit(Object* obj) {
 int BlueprintWallInit(Object* obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->pos = position;
-	obj->txSrc = (SDL_Rect){ 128, 0, 16, 32 };
-	obj->txOffset = (Vec2F){ 0.0, -8.0 };
+	obj->txSrc = (SDL_Rect){ 8 * TILE_WIDTH, 0, TILE_WIDTH, 2 * TILE_WIDTH };
+	obj->txOffset = (Vec2F){ 0.0, -12.0 };
 
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);

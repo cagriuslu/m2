@@ -10,8 +10,8 @@ void StaticBox_deinit(Object* obj) {
 int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->pos = position;
-	obj->txSrc = (SDL_Rect) {16, 64, 16, 16};
-	obj->txOffset = (Vec2F){ 0.0, -3.0 };
+	obj->txSrc = (SDL_Rect) {TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
+	obj->txOffset = (Vec2F){ 0.0, -4.5 };
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);

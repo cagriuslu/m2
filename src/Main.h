@@ -12,6 +12,9 @@
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 
+#define TILE_WIDTH (24)
+#define TILE_WIDTH_STR "24"
+
 int CurrentScreenWidth();
 int CurrentScreenHeight();
 float CurrentPixelsPerMeter();

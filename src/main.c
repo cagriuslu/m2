@@ -18,11 +18,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#define TILE_WIDTH (16)
-#define TILE_WIDTH_STR "16"
-
 int gScreenWidth = 1280, gScreenHeight = 720;
-float gPixelsPerMeter = 40.0;
+float gPixelsPerMeter = 48.0;
 int gTileWidth = TILE_WIDTH;
 uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;

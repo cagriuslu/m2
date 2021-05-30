@@ -43,8 +43,8 @@ void Player_deinit(Object* obj) {
 int PlayerInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = Player_prePhysics;
-	obj->txSrc = (SDL_Rect) {48, 0, 16, 16};
-	obj->txOffset = (Vec2F) {0.5, -6.5};
+	obj->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
+	obj->txOffset = (Vec2F) {0.0, -9.75};
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetTypeDynamic(bodyDef);
