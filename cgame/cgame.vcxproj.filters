@@ -99,6 +99,9 @@
     <ClCompile Include="..\src\TerrainLoader.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Blueprints\BlueprintWall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Tile.h">

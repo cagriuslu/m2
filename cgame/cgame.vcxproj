@@ -151,6 +151,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
   <ItemGroup>
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Blueprints\BlueprintStaticBox.c" />
+    <ClCompile Include="..\src\Blueprints\BlueprintWall.c" />
     <ClCompile Include="..\src\Box2DWrapper.cpp" />
     <ClCompile Include="..\src\Camera.c" />
     <ClCompile Include="..\src\Controls.c" />

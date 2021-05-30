@@ -44,9 +44,7 @@ int PlayerInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = Player_prePhysics;
 	obj->txSrc = (SDL_Rect) {48, 0, 16, 16};
-	float screen_ppm_over_image_ppm = CurrentPixelsPerMeter() / 16;
-	obj->txOffset = (Vec2I) {0, -6 * screen_ppm_over_image_ppm};
-	obj->txSize = (Vec2F) {1.0, 1.0};
+	obj->txOffset = (Vec2F) {0.5, -6.5};
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetTypeDynamic(bodyDef);
@@ -55,17 +53,14 @@ int PlayerInit(Object *obj) {
 	Box2DBodyDefDestroy(bodyDef);
 
 	Box2DCircleShape *circleShape = Box2DCircleShapeCreate();
-	Box2DCircleShapeSetRadius(circleShape, 0.3125);
+	Box2DCircleShapeSetRadius(circleShape, 0.21875);
 
-	//Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
-	//Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.25, 0.125});
 	Box2DFixtureDef *fixtureDef = Box2DFixtureDefCreate();
 	Box2DFixtureDefSetShape(fixtureDef, circleShape);
-	Box2DFixtureDefSetDensity(fixtureDef, 10.0);
+	Box2DFixtureDefSetDensity(fixtureDef, 15.0);
 	Box2DFixtureDefSetFriction(fixtureDef, 0.05);
 	Box2DFixture *fixture = Box2DBodyCreateFixtureFromFixtureDef(body, fixtureDef);
 	Box2DFixtureDefDestroy(fixtureDef);
-	//Box2DPolygonShapeDestroy(boxShape);
 	Box2DCircleShapeDestroy(circleShape);
 
 	Box2DBodySetLinearDamping(body, 10.0);

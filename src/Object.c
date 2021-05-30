@@ -8,23 +8,18 @@ void Object_ovrdGraphics(Object* obj) {
 
 		Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->pos, camera->pos);
 		Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
-		Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, obj->txOffset);
+		Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, (Vec2I) {
+			obj->txOffset.x * CurrentPixelsPerMeter() / CurrentTileWidth(),
+			obj->txOffset.y * CurrentPixelsPerMeter() / CurrentTileWidth()
+		});
 		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) { CurrentScreenWidth() / 2, CurrentScreenHeight() / 2 }, obj_gfx_origin_wrt_screen_center);
-		int obj_width_on_screen = round(obj->txSize.x) * CurrentPixelsPerMeter();
-		int obj_height_on_screen = round(obj->txSize.y) * CurrentPixelsPerMeter();
 		SDL_Rect dstrect = (SDL_Rect){
-			obj_gfx_origin_wrt_screen_origin.x - obj_width_on_screen / 2,
-			obj_gfx_origin_wrt_screen_origin.y - obj_height_on_screen / 2,
-			obj_width_on_screen,
-			obj_height_on_screen
+			obj_gfx_origin_wrt_screen_origin.x - obj->txSrc.w * CurrentPixelsPerMeter() / CurrentTileWidth() / 2,
+			obj_gfx_origin_wrt_screen_origin.y - obj->txSrc.h * CurrentPixelsPerMeter() / CurrentTileWidth() / 2,
+			obj->txSrc.w * CurrentPixelsPerMeter() / CurrentTileWidth(),
+			obj->txSrc.h * CurrentPixelsPerMeter() / CurrentTileWidth()
 		};
-		// If txSrc size is zero, probably the object tx is overloaded
-		if (obj->txSrc.w == 0 && obj->txSrc.h == 0) {
-			SDL_RenderCopyEx(CurrentRenderer(), obj->tx, NULL, &dstrect, obj->angle, NULL, SDL_FLIP_NONE);
-		} else {
-			SDL_RenderCopyEx(CurrentRenderer(), obj->tx, &obj->txSrc, &dstrect, obj->angle, NULL, SDL_FLIP_NONE);
-		}
-		
+		SDL_RenderCopyEx(CurrentRenderer(), obj->tx, &obj->txSrc, &dstrect, obj->angle, NULL, SDL_FLIP_NONE);
 	}
 }
 

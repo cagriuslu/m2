@@ -57,10 +57,9 @@ int TerrainGenerateTexture(Object* obj) {
 	}
 	SDL_SetRenderTarget(CurrentRenderer(), NULL);
 
-	// Store texture width, height in txSize
-	obj->txOffset.x = terrainData->colCount * CurrentTileWidth();
-	obj->txOffset.y = rowCount * CurrentTileWidth();
-	obj->txSize.x = terrainData->colCount;
-	obj->txSize.y = rowCount;
+	// Texture source is the whole texture
+	obj->txSrc = (SDL_Rect) {0, 0, terrainData->colCount * CurrentTileWidth(), rowCount * CurrentTileWidth()};
+	obj->txOffset.x = (terrainData->colCount - 1) * CurrentTileWidth() / 2;
+	obj->txOffset.y = (rowCount - 1) * CurrentTileWidth() / 2;
 	return 0;
 }

@@ -18,8 +18,7 @@ typedef struct _Object {
 	// Graphics subsystem
 	SDL_Texture* tx;
 	SDL_Rect txSrc;
-	Vec2I txOffset;
-	Vec2F txSize;
+	Vec2F txOffset; // w.r.t source image, # of pixels
 	void (*preGraphics)(struct _Object*);
 	void (*ovrdGraphics)(struct _Object*);
 	void (*postGraphics)(struct _Object*);

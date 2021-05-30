@@ -11,7 +11,7 @@ int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect) {16, 64, 16, 16};
-	obj->txSize = (Vec2F) {1.0, 1.0};
+	obj->txOffset = (Vec2F){ 0.0, -3.0 };
 
 	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);
@@ -20,7 +20,7 @@ int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
 	Box2DBodyDefDestroy(bodyDef);
 
 	Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
-	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.4375, 0.28125});
+	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.4375, 0.0625});
 	Box2DFixture *fixture = Box2DBodyCreateFixtureFromShape(body, boxShape, 0.0);
 	Box2DPolygonShapeDestroy(boxShape);
 	obj->body = body;
