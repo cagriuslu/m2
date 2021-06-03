@@ -1,6 +1,7 @@
 #include "../Blueprint.h"
 #include "../Main.h"
 #include "../Box2DWrapper.h"
+#include "../Box2DUtils.h"
 
 void Wall_deinit(Object* obj) {
 	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
@@ -11,19 +12,7 @@ int BlueprintWallInit(Object* obj, Vec2F position) {
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect){ 8 * TILE_WIDTH, 0, TILE_WIDTH, 2 * TILE_WIDTH };
 	obj->txOffset = (Vec2F){ 0.0, -12.0 };
-
-	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
-	Box2DBodyDefSetPosition(bodyDef, position);
-	Box2DBodyDefSetAllowSleep(bodyDef, true);
-	Box2DBody* body = Box2DWorldCreateBody(CurrentWorld(), bodyDef);
-	Box2DBodyDefDestroy(bodyDef);
-
-	Box2DPolygonShape* boxShape = Box2DPolygonShapeCreate();
-	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) { 0.4375, 0.4375 });
-	Box2DFixture* fixture = Box2DBodyCreateFixtureFromShape(body, boxShape, 0.0);
-	Box2DPolygonShapeDestroy(boxShape);
-	obj->body = body;
-
+	obj->body = Box2DUtilsCreateStaticBox(position, ALLOW_SLEEP, NOT_SENSOR, (Vec2F) { 0.875, 0.875 });
 	obj->deinit = Wall_deinit;
 	return 0;
 }

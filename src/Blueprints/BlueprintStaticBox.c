@@ -1,6 +1,7 @@
 #include "../Blueprint.h"
 #include "../Main.h"
 #include "../Box2DWrapper.h"
+#include "../Box2DUtils.h"
 #include <stdio.h>
 
 void StaticBox_deinit(Object* obj) {
@@ -12,19 +13,7 @@ int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect) {TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
 	obj->txOffset = (Vec2F){ 0.0, -4.5 };
-
-	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
-	Box2DBodyDefSetPosition(bodyDef, position);
-	Box2DBodyDefSetAllowSleep(bodyDef, true);
-	Box2DBody *body = Box2DWorldCreateBody(CurrentWorld(), bodyDef);
-	Box2DBodyDefDestroy(bodyDef);
-
-	Box2DPolygonShape *boxShape = Box2DPolygonShapeCreate();
-	Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) {0.4375, 0.0625});
-	Box2DFixture *fixture = Box2DBodyCreateFixtureFromShape(body, boxShape, 0.0);
-	Box2DPolygonShapeDestroy(boxShape);
-	obj->body = body;
-
+	obj->body = Box2DUtilsCreateStaticBox(position, ALLOW_SLEEP, NOT_SENSOR, (Vec2F) { 0.875, 0.125 });
 	obj->deinit = StaticBox_deinit;
 	return 0;
 }

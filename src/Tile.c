@@ -1,5 +1,6 @@
 #include "Tile.h"
 #include "Main.h"
+#include "Box2DUtils.h"
 
 #define STREQ(str1, str2) (strcmp(str1, str2) == 0)
 
@@ -13,17 +14,7 @@ int TileInit(Tile* tile, Vec2I position, Vec2I txIndex, Vec2F colliderSize) {
 	};
 
 	if (0.0 < colliderSize.x && 0.0 < colliderSize.y) {
-		Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
-		Box2DBodyDefSetPosition(bodyDef, (Vec2F) { position.x, position.y });
-		Box2DBodyDefSetAllowSleep(bodyDef, true);
-		Box2DBody* body = Box2DWorldCreateBody(CurrentWorld(), bodyDef);
-		Box2DBodyDefDestroy(bodyDef);
-
-		Box2DPolygonShape* boxShape = Box2DPolygonShapeCreate();
-		Box2DPolygonShapeSetAsBox(boxShape, (Vec2F) { colliderSize.x / 2, colliderSize.y / 2 });
-		Box2DFixture* fixture = Box2DBodyCreateFixtureFromShape(body, boxShape, 0.0);
-		Box2DPolygonShapeDestroy(boxShape);
-		tile->body = body;
+		tile->body = Box2DUtilsCreateStaticBox((Vec2F) { position.x, position.y }, ALLOW_SLEEP, NOT_SENSOR, colliderSize);
 	} else {
 		tile->body = NULL;
 	}

@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Box2DUtils.h"
 #include "Main.h"
 #include "Event.h"
 #include <math.h>
@@ -44,30 +45,15 @@ int PlayerInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = Player_prePhysics;
 	obj->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
-	obj->txOffset = (Vec2F) {0.0, -9.75};
-
-	Box2DBodyDef *bodyDef = Box2DBodyDefCreate();
-	Box2DBodyDefSetTypeDynamic(bodyDef);
-	Box2DBodyDefSetPosition(bodyDef, (Vec2F) {0.0, 0.0});
-	Box2DBody *body = Box2DWorldCreateBody(CurrentWorld(), bodyDef);
-	Box2DBodyDefDestroy(bodyDef);
-
-	Box2DCircleShape *circleShape = Box2DCircleShapeCreate();
-	Box2DCircleShapeSetRadius(circleShape, 0.21875);
-
-	Box2DFixtureDef *fixtureDef = Box2DFixtureDefCreate();
-	Box2DFixtureDefSetShape(fixtureDef, circleShape);
-	Box2DFixtureDefSetDensity(fixtureDef, 15.0);
-	Box2DFixtureDefSetFriction(fixtureDef, 0.05);
-	Box2DFixture *fixture = Box2DBodyCreateFixtureFromFixtureDef(body, fixtureDef);
-	Box2DFixtureDefDestroy(fixtureDef);
-	Box2DCircleShapeDestroy(circleShape);
-
-	Box2DBodySetLinearDamping(body, 10.0);
-	Box2DBodySetAngularDamping(body, 0.0);
-	Box2DBodySetFixedRotation(body, true);
-	obj->body = body;
-
+	obj->txOffset = (Vec2F) {0.0, -6.5};
+	obj->body = Box2DUtilsCreateDynamicDisk(
+		(Vec2F) { 0, 0 }, // Position
+		DONT_SLEEP, // Allow sleep
+		NOT_SENSOR, // Is sensor?
+		0.229167, // Radius
+		15.0, // Density
+		10.0 // Linear Damping
+	);
 	obj->deinit = Player_deinit;
 	return 0;
 }
