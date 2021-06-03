@@ -31,6 +31,11 @@ int LevelTestLoad() {
 	BlueprintWallInit(wall3, (Vec2F) { 10.0, 6.0 });
 	DrawListInsert(drawList, wall3);
 
+	// Test enemy
+	Object* skeleton1 = ArrayAppend(objArray, NULL);
+	BlueprintSkeletonInit(skeleton1, (Vec2F) {-2, -2});
+	DrawListInsert(drawList, skeleton1);
+
 	LevelSetUnloader(LevelTestUnloader);
 	return 0;
 }
