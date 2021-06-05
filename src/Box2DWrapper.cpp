@@ -16,6 +16,17 @@
 #define AsShape(shape) ((b2Shape*) (shape))
 #define AsPolygonShape(polygonShape) ((b2PolygonShape*) (polygonShape))
 #define AsCircleShape(circleShape) ((b2CircleShape*) (circleShape))
+#define AsContactListener(contactListener) ((ContactListener*) (contactListener))
+
+class ContactListener : public b2ContactListener {
+	void (*m_cb)(Box2DContact*);
+public:
+	ContactListener(void (*cb)(Box2DContact*)) : m_cb(cb) { }
+
+	void BeginContact(b2Contact* contact) {
+		m_cb(contact);
+	}
+};
 
 Box2DWorld* Box2DWorldCreate(Vec2F gravity) {
 	return new b2World(ToVec2(gravity));
@@ -23,6 +34,10 @@ Box2DWorld* Box2DWorldCreate(Vec2F gravity) {
 
 Box2DBody* Box2DWorldCreateBody(Box2DWorld *world, Box2DBodyDef *bodyDef) {
 	return AsWorld(world)->CreateBody(AsBodyDef(bodyDef));
+}
+
+void Box2DWorldSetContactListener(Box2DWorld* world, Box2DContactListener* contactListener) {
+	AsWorld(world)->SetContactListener(AsContactListener(contactListener));
 }
 
 void Box2DWorldStep(Box2DWorld *world, float timeStep, int velocityIterations, int positionIterations) {
@@ -53,12 +68,16 @@ void Box2DBodyDefSetAllowSleep(Box2DBodyDef* bodyDef, bool flag) {
 	AsBodyDef(bodyDef)->allowSleep = flag;
 }
 
-void Box2DBodyDefDestroy(Box2DBodyDef *bodyDef) {
-	delete AsBodyDef(bodyDef);
+void Box2DBodyDefSetBullet(Box2DBodyDef* bodyDef, bool flag) {
+	AsBodyDef(bodyDef)->bullet = flag;
 }
 
-bool Box2DBodyIsAwake(Box2DBody* body) {
-	return AsBody(body)->IsAwake();
+void Box2DBodyDefSetUserData(Box2DBodyDef* bodyDef, void* ptr) {
+	AsBodyDef(bodyDef)->userData.pointer = reinterpret_cast<uintptr_t>(ptr);
+}
+
+void Box2DBodyDefDestroy(Box2DBodyDef *bodyDef) {
+	delete AsBodyDef(bodyDef);
 }
 
 Box2DFixture* Box2DBodyCreateFixtureFromFixtureDef(Box2DBody *body, Box2DFixtureDef *fixtureDef) {
@@ -103,6 +122,15 @@ void* Box2DBodyGetUserData(Box2DBody *body) {
 	return (void*) AsBody(body)->GetUserData().pointer;
 }
 
+bool Box2DBodyIsAwake(Box2DBody* body) {
+	return AsBody(body)->IsAwake();
+}
+
+void Box2DBodySetMassData(Box2DBody* body, float mass, Vec2F center, float inertia) {
+	b2MassData massData = { mass, {center.x, center.y}, inertia };
+	AsBody(body)->SetMassData(&massData);
+}
+
 Box2DFixtureDef* Box2DFixtureDefCreate() {
 	return new b2FixtureDef();
 }
@@ -117,6 +145,14 @@ void Box2DFixtureDefSetDensity(Box2DFixtureDef *fixtureDef, float density) {
 
 void Box2DFixtureDefSetFriction(Box2DFixtureDef *fixtureDef, float friction) {
 	AsFixtureDef(fixtureDef)->friction = friction;
+}
+
+void Box2DFixtureDefSetCategoryBits(Box2DFixtureDef* fixtureDef, uint16_t bits) {
+	AsFixtureDef(fixtureDef)->filter.categoryBits = bits;
+}
+
+void Box2DFixtureDefSetMaskBits(Box2DFixtureDef* fixtureDef, uint16_t bits) {
+	AsFixtureDef(fixtureDef)->filter.maskBits = bits;
 }
 
 void Box2DFixtureDefDestroy(Box2DFixtureDef *fixtureDef) {
@@ -149,4 +185,12 @@ void Box2DCircleShapeSetRadius(Box2DCircleShape *circleShape, float radius) {
 
 void Box2DCircleShapeDestroy(Box2DCircleShape *circleShape) {
 	delete AsCircleShape(circleShape);
+}
+
+Box2DContactListener* Box2DContactListenerRegister(void (*cb)(Box2DContact*)) {
+	return new ContactListener(cb);
+}
+
+void Box2DContactListenerDestroy(Box2DContactListener* contactListener) {
+	delete AsContactListener(contactListener);
 }

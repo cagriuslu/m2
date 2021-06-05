@@ -27,6 +27,7 @@ SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
 
 Box2DWorld *gWorld;
+Box2DContactListener* gContactListener;
 Array gObjects;
 DrawList gDrawList;
 
@@ -65,11 +66,15 @@ main_menu:
 			DrawListDeinit(&gDrawList);
 			ArrayDeinit(&gObjects);
 			Box2DWorldDestroy(gWorld);
+			Box2DContactListenerDestroy(gContactListener);
 		}
 		// Load level
 		gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
+		gContactListener = Box2DContactListenerRegister(ObjectContactCB);
+		Box2DWorldSetContactListener(gWorld, gContactListener);
 		ArrayInit(&gObjects, sizeof(Object));
 		DrawListInit(&gDrawList);
+
 		if (res == X_MAIN_MENU_NEW_GAME) {
 			PROPAGATE_ERROR(LevelTestLoad());
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {

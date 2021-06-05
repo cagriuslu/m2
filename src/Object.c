@@ -1,5 +1,6 @@
 #include "Object.h"
 #include "Main.h"
+#include <stdio.h>
 #include <string.h>
 
 void Object_ovrdGraphics(Object* obj) {
@@ -34,4 +35,8 @@ void ObjectDeinit(Object *obj) {
 	if (obj->deinit) {
 		obj->deinit(obj);
 	}
+}
+
+void ObjectContactCB(Box2DContact* contact) {
+	fprintf(stderr, "Contact beginned\n");
 }

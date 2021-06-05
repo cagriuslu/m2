@@ -32,4 +32,6 @@ typedef Object* ObjectPtr;
 int ObjectInit(Object *obj);
 void ObjectDeinit(Object *obj);
 
+void ObjectContactCB(Box2DContact* contact);
+
 #endif
