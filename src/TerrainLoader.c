@@ -6,6 +6,7 @@
 #include "Error.h"
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
 typedef struct _TileKV {
 	char key[4];

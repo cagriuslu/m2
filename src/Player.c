@@ -47,12 +47,13 @@ int PlayerInit(Object *obj) {
 	obj->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	obj->txOffset = (Vec2F) {0.0, -6.5};
 	obj->body = Box2DUtilsCreateDynamicDisk(
-		(Vec2F) { 0, 0 }, // Position
-		DONT_SLEEP, // Allow sleep
-		NOT_SENSOR, // Is sensor?
+		obj,
+		((Vec2F) {0, 0}), // Position
+		DONT_SLEEP,
+		PLAYER_CATEGORY,
 		0.229167, // Radius
-		15.0, // Density
-		10.0 // Linear Damping
+		4.0, // Mass
+		10.0 // Damping
 	);
 	obj->deinit = Player_deinit;
 	return 0;

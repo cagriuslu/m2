@@ -3,9 +3,11 @@
 
 #include "Vec2I.h"
 #include "Box2DWrapper.h"
+#include "ObjectType.h"
 #include <SDL.h>
 
 typedef struct _Tile {
+	ObjectType type;
 	Vec2I pos;
 	SDL_Rect txSrc;
 	Box2DBody* body;

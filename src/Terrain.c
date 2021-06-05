@@ -37,8 +37,8 @@ int TerrainGenerateTexture(Object* obj) {
 		CurrentRenderer(),
 		CurrentWindowPixelFormat(),
 		SDL_TEXTUREACCESS_TARGET,
-		terrainData->colCount * CurrentTileWidth(),
-		rowCount * CurrentTileWidth()
+		(int) (terrainData->colCount * CurrentTileWidth()),
+		(int) (rowCount * CurrentTileWidth())
 	);
 	assert(obj->tx);
 

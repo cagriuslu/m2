@@ -13,12 +13,13 @@ int BlueprintSkeletonInit(Object* obj, Vec2F position) {
 	obj->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	obj->txOffset = (Vec2F){ 0.0, -4.5 };
 	obj->body = Box2DUtilsCreateDynamicDisk(
-		position, // Position
-		ALLOW_SLEEP, // Allow sleep
-		NOT_SENSOR, // Is sensor?
+		obj,
+		position,
+		ALLOW_SLEEP,
+		ENEMY_CATEGORY,
 		0.2083, // Radius
-		15.0, // Density
-		10.0 // Linear Damping
+		10, // Mass
+		10.0 // Damping
 	);
 	obj->deinit = Skeleton_deinit;
 	return 0;

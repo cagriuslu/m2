@@ -13,7 +13,7 @@ int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect) {TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
 	obj->txOffset = (Vec2F){ 0.0, -4.5 };
-	obj->body = Box2DUtilsCreateStaticBox(position, ALLOW_SLEEP, NOT_SENSOR, (Vec2F) { 0.875, 0.125 });
+	obj->body = Box2DUtilsCreateStaticBox(obj, position, STATIC_CATEGORY, ((Vec2F) { 0.875, 0.125 }));
 	obj->deinit = StaticBox_deinit;
 	return 0;
 }

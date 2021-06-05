@@ -3,10 +3,12 @@
 
 #include "Box2DWrapper.h"
 #include "Vec2F.h"
+#include "ObjectType.h"
 #include "Error.h"
 #include <SDL.h>
 
 typedef struct _Object {
+	ObjectType type;
 	Vec2F pos;
 	float angle;
 	// Physics subsystem

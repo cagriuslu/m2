@@ -26,13 +26,14 @@ void God_deinit(Object* obj) {
 int GodInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->prePhysics = God_prePhysics;
-	obj->body = Box2DUtilsCreateDynamicDisk(
-		(Vec2F) {0, 0}, // Position
-		DONT_SLEEP, // Allow sleep
-		IS_SENSOR, // Is sensor?
+	obj->body = Box2DUtilsCreateDynamicDiskSensor(
+		obj,
+		((Vec2F) {0, 0}), // Position
+		DONT_SLEEP,
+		PLAYER_CATEGORY,
 		0.25, // Radius
-		10.0, // Density
-		10.0 // Linear Damping
+		10.0, // Mass
+		10.0 // Damping
 	);
 	obj->deinit = God_deinit;
 	return 0;

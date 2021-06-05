@@ -12,7 +12,7 @@ int BlueprintWallInit(Object* obj, Vec2F position) {
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect){ 8 * TILE_WIDTH, 0, TILE_WIDTH, 2 * TILE_WIDTH };
 	obj->txOffset = (Vec2F){ 0.0, -12.0 };
-	obj->body = Box2DUtilsCreateStaticBox(position, ALLOW_SLEEP, NOT_SENSOR, (Vec2F) { 0.875, 0.875 });
+	obj->body = Box2DUtilsCreateStaticBox(obj, position, STATIC_CATEGORY, ((Vec2F) { 0.875, 0.125 }));
 	obj->deinit = Wall_deinit;
 	return 0;
 }

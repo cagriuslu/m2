@@ -199,6 +199,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClInclude Include="..\src\Levels\LevelCommon.h" />
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\Object.h" />
+    <ClInclude Include="..\src\ObjectType.h" />
     <ClInclude Include="..\src\Player.h" />
     <ClInclude Include="..\src\Terrain.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />

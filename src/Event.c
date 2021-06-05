@@ -1,4 +1,5 @@
 #include "Event.h"
+#include <string.h>
 
 uint16_t gKeysPressed[_KEY_COUNT];
 uint16_t gKeysReleased[_KEY_COUNT];
@@ -36,10 +37,12 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 	memset(gButtonsReleased, 0, sizeof(gButtonsReleased));
 	memset(gButtonsState, 0, sizeof(gButtonsState));
 	// Handle events
+	bool quit = false;
 	SDL_Event e;
-	while ((*outQuit == false) && SDL_PollEvent(&e) != 0) {
+	while (quit == false && SDL_PollEvent(&e) != 0) {
 		switch (e.type) {
 		case SDL_QUIT:
+			quit = true;
 			if (outQuit) {
 				*outQuit = true;
 			}
