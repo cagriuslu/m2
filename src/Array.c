@@ -44,6 +44,16 @@ void* ArrayGet(Array *array, size_t index) {
 	}
 }
 
+size_t ArrayGetIndexOf(Array* array, void* item) {
+	intptr_t itemOffset = ((char*) item) - array->data;
+	intptr_t itemIndex = itemOffset / array->itemSize;
+	if ((uintptr_t) itemIndex < array->length) {
+		return itemIndex;
+	} else {
+		return (size_t)-1;
+	}
+}
+
 void* ArrayGetLast(Array *array) {
 	if (array->length) {
 		return ArrayGet(array, array->length - 1);

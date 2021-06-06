@@ -31,7 +31,9 @@ Box2DContactListener* gContactListener;
 Array gObjects;
 DrawList gDrawList;
 
-int main() {
+int main(int argc, char **argv) {
+	(void)argc;
+	(void)argv;
 	int res;
 
 	fprintf(stderr, "Hello, world!\n");
@@ -100,20 +102,21 @@ main_menu:
 		///// END OF EVENT HANDLING /////
 
 		///// PHYSICS /////
-		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
+		size_t objectCount = ArrayLength(&gObjects);
+		for (size_t i = 0; i < objectCount; i++) {
 			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->prePhysics) {
 				obj->prePhysics(obj);
 			}
 		}
 		Box2DWorldStep(gWorld, timeStep, velocityIterations, positionIterations);
-		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
+		for (size_t i = 0; i < objectCount; i++) {
 			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->body) {
 				obj->pos = Box2DBodyGetPosition(obj->body);
 			}
 		}
-		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
+		for (size_t i = 0; i < objectCount; i++) {
 			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->postPhysics) {
 				obj->postPhysics(obj);
@@ -130,7 +133,8 @@ main_menu:
 			terrain->ovrdGraphics(terrain);
 		}
 		DrawListSort(&gDrawList);
-		for (size_t i = 0; i < DrawListLength(&gDrawList); i++) {
+		size_t drawListSize = DrawListLength(&gDrawList);
+		for (size_t i = 0; i < drawListSize; i++) {
 			Object *obj = DrawListGet(&gDrawList, i);
 			if (obj->preGraphics) {
 				obj->preGraphics(obj);
@@ -144,6 +148,8 @@ main_menu:
 		}
 		SDL_RenderPresent(gRenderer);
 		///// END OF GRAPHICS /////
+
+		// TODO remove objects marked for deletion from array and drawlist
 
 		//unsigned end_ticks = SDL_GetTicks();
 		//fprintf(stderr, "Frame time: %u\n", end_ticks - start_ticks);
@@ -199,4 +205,15 @@ Array* CurrentObjectArray() {
 
 DrawList* CurrentDrawList() {
 	return &gDrawList;
+}
+
+Vec2F CurrentPointerPositionInWorld() {
+	Object* camera = ArrayGet(CurrentObjectArray(), CAMERA_INDEX);
+	Vec2F cameraPosition = camera->pos;
+
+	Vec2I pointerPosition = PointerPosition();
+	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (CurrentScreenWidth() / 2), pointerPosition.y - (CurrentScreenHeight() / 2) };
+	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / CurrentPixelsPerMeter(), pointerPositionWRTScreenCenter.y / CurrentPixelsPerMeter() };
+	Vec2F pointerPositionWRTWorld = Vec2FAdd(pointerPositionWRTCameraPos, cameraPosition);
+	return pointerPositionWRTWorld;
 }

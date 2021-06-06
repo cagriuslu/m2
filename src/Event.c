@@ -74,20 +74,16 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 			}
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			if (e.button.clicks == 1) {
-				if (outButton) {
-					*outButton = true;
-				}
-				gButtonsPressed[ButtonFromSDLButton(e.button.button)] += 1;
+			if (outButton) {
+				*outButton = true;
 			}
+			gButtonsPressed[ButtonFromSDLButton(e.button.button)] += 1;
 			break;
 		case SDL_MOUSEBUTTONUP:
-			if (e.button.clicks == 1) {
-				if (outButton) {
-					*outButton = true;
-				}
-				gButtonsReleased[ButtonFromSDLButton(e.button.button)] += 1;
+			if (outButton) {
+				*outButton = true;
 			}
+			gButtonsReleased[ButtonFromSDLButton(e.button.button)] += 1;
 			break;
 		case SDL_MOUSEWHEEL:
 			if (outWheel) {

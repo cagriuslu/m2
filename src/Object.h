@@ -27,6 +27,7 @@ typedef struct _Object {
 	void *privData;
 	// Deinit
 	void (*deinit)(struct _Object*);
+	bool markForDeletion;
 } Object;
 typedef Object* ObjectPtr;
 

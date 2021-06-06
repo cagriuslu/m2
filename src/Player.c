@@ -1,7 +1,9 @@
 #include "Player.h"
 #include "Box2DUtils.h"
+#include "Blueprint.h"
 #include "Main.h"
 #include "Object.h"
+#include "Debug.h"
 #include "Event.h"
 #include <math.h>
 
@@ -35,6 +37,15 @@ static void Player_prePhysics(Object *obj) {
 	}
 	if (IsKeyDown(KEY_RIGHT)) {
 		Box2DBodyApplyForceToCenter(obj->body, (Vec2F) {100.0, 0.0}, true);
+	}
+	if (IsButtonPressed(BUTTON_PRIMARY)) {
+		DebugVec2F("pointer in world", CurrentPointerPositionInWorld());
+		Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
+		Vec2F bulletDir = Vec2FSub(pointerPosInWorld, obj->pos);
+
+		Object* bullet1 = ArrayAppend(CurrentObjectArray(), NULL);
+		BlueprintBulletInit(bullet1, obj->pos, bulletDir);
+		DrawListInsert(CurrentDrawList(), bullet1);
 	}
 }
 

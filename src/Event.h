@@ -3,6 +3,7 @@
 
 #include "Controls.h"
 #include "Vec2I.h"
+#include "Vec2F.h"
 #include <stdbool.h>
 
 void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion, bool *outButton, bool *outWheel);

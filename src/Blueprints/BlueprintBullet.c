@@ -3,11 +3,17 @@
 #include "../Box2DUtils.h"
 #include <math.h>
 #include <stdio.h>
+#include <assert.h>
 
 #define ANGLE(v2fDir) atan2f((v2fDir).y, (v2fDir).x)
 
+typedef struct _BulletData {
+	Vec2F direction;
+} BulletData;
+#define AsBulletData(ptr) ((BulletData*) (ptr))
+
 static void Bullet_prePhysics(Object* obj) {
-	Box2DBodyApplyForceToCenter(obj->body, (Vec2F) {1,1}, true);
+	Box2DBodyApplyForceToCenter(obj->body, AsBulletData(obj->privData)->direction, true); // TODO adjust force
 }
 
 static void Bullet_onCollision(Object* obj, ObjectType* otherObjType) {
@@ -17,11 +23,20 @@ static void Bullet_onCollision(Object* obj, ObjectType* otherObjType) {
 }
 
 static void Bullet_deinit(Object* obj) {
-	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
+	if (obj->body) {
+		Box2DWorldDestroyBody(CurrentWorld(), obj->body);
+	}
+	if (obj->privData) {
+		free(obj->privData);
+	}
 }
 
 int BlueprintBulletInit(Object* obj, Vec2F position, Vec2F direction) {
 	PROPAGATE_ERROR(ObjectInit(obj));
+	obj->privData = malloc(sizeof(BulletData));
+	assert(obj->privData);
+	AsBulletData(obj->privData)->direction = direction;
+
 	obj->type = OBJECT_BULLET_BASIC;
 	obj->pos = position;
 	obj->angle = ANGLE(direction);
@@ -34,7 +49,7 @@ int BlueprintBulletInit(Object* obj, Vec2F position, Vec2F direction) {
 		PLAYER_BULLET_CATEGORY,
 		0.167f, // Radius
 		0.1f, // Mass
-		1.0f // Damping
+		3.0f // Damping
 	);
 	obj->deinit = Bullet_deinit;
 	return 0;
