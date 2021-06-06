@@ -1,9 +1,10 @@
 #include "Array.h"
 #include <math.h>
 #include <string.h>
+#include <stdint.h>
 #include <assert.h>
 
-#define INITIAL_CAPACITY (16)
+#define INITIAL_CAPACITY (1024)
 #define GROWTH_RATE (2.0)
 
 int ArrayInit(Array *array, size_t itemSize) {

@@ -1,6 +1,7 @@
 #include "Object.h"
 #include "Main.h"
 #include <stdio.h>
+#include <math.h>
 #include <string.h>
 
 void Object_ovrdGraphics(Object* obj) {
