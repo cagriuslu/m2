@@ -1,6 +1,7 @@
 #include "Controls.h"
 
 Key KeyFromSDLScancode(SDL_Scancode sc, SDL_Keymod mod) {
+	(void) mod;
 	switch (sc) {
 	case SDL_SCANCODE_ESCAPE:
 		return KEY_MENU;

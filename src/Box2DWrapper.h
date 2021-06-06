@@ -55,7 +55,8 @@ void             Box2DFixtureDefSetCategoryBits(Box2DFixtureDef* fixtureDef, uin
 void             Box2DFixtureDefSetMaskBits(Box2DFixtureDef* fixtureDef, uint16_t bits);
 void             Box2DFixtureDefDestroy(Box2DFixtureDef *fixtureDef);
 
-void Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag);
+void       Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag);
+Box2DBody* Box2DFixtureGetBody(Box2DFixture* fixture);
 
 Box2DPolygonShape* Box2DPolygonShapeCreate();
 void               Box2DPolygonShapeSetPosition(Box2DPolygonShape *polygonShape, Vec2F position);
@@ -65,6 +66,9 @@ void               Box2DPolygonShapeDestroy(Box2DPolygonShape *polygonShape);
 Box2DCircleShape* Box2DCircleShapeCreate();
 void              Box2DCircleShapeSetRadius(Box2DCircleShape *circleShape, float radius);
 void              Box2DCircleShapeDestroy(Box2DCircleShape *circleShape);
+
+Box2DFixture* Box2DContactGetFixtureA(Box2DContact* contact);
+Box2DFixture* Box2DContactGetFixtureB(Box2DContact* contact);
 
 Box2DContactListener* Box2DContactListenerRegister(void (*cb)(Box2DContact*));
 void                  Box2DContactListenerDestroy(Box2DContactListener* contactListener);

@@ -7,4 +7,5 @@ int UiInit(Ui *ui) {
 }
 
 void UiDeinit(Ui *ui) {
+	(void)ui;
 }

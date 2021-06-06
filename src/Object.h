@@ -10,12 +10,11 @@
 typedef struct _Object {
 	ObjectType type;
 	Vec2F pos;
-	float angle;
+	float angle; // Radians
 	// Physics subsystem
 	Box2DBody *body;
 	void (*prePhysics)(struct _Object*);
-	void (*onCollision)(struct _Object*);
-	void (*onTrigger)(struct _Object*);
+	void (*onCollision)(struct _Object*, ObjectType*);
 	void (*postPhysics)(struct _Object*);
 	// Graphics subsystem
 	SDL_Texture* tx;

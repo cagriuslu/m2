@@ -36,6 +36,11 @@ int LevelTestLoad() {
 	BlueprintSkeletonInit(skeleton1, (Vec2F) {-2, -2});
 	DrawListInsert(drawList, skeleton1);
 
+	// Test bullet
+	Object* bullet1 = ArrayAppend(objArray, NULL);
+	BlueprintBulletInit(bullet1, (Vec2F) {-4, -4}, (Vec2F) {1, 1});
+	DrawListInsert(drawList, bullet1);
+
 	LevelSetUnloader(LevelTestUnloader);
 	return 0;
 }

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Box2DUtils.h"
 #include "Main.h"
+#include "Object.h"
 #include "Event.h"
 #include <math.h>
 
@@ -43,6 +44,7 @@ void Player_deinit(Object* obj) {
 
 int PlayerInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
+	obj->type = OBJECT_PLAYER_BASIC;
 	obj->prePhysics = Player_prePhysics;
 	obj->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	obj->txOffset = (Vec2F) {0.0, -6.5};
@@ -51,9 +53,9 @@ int PlayerInit(Object *obj) {
 		((Vec2F) {0, 0}), // Position
 		DONT_SLEEP,
 		PLAYER_CATEGORY,
-		0.229167, // Radius
-		4.0, // Mass
-		10.0 // Damping
+		0.229167f, // Radius
+		4.0f, // Mass
+		10.0f // Damping
 	);
 	obj->deinit = Player_deinit;
 	return 0;

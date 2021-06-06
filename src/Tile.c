@@ -2,10 +2,12 @@
 #include "Main.h"
 #include "Box2DUtils.h"
 #include <string.h>
+#include <stdio.h>
 
 #define STREQ(str1, str2) (strcmp(str1, str2) == 0)
 
 int TileInit(Tile* tile, Vec2I position, Vec2I txIndex, Vec2F colliderSize) {
+	memset(tile, 0, sizeof(Tile));
 	tile->type = OBJTYP_TILE;
 	tile->pos = position;
 	tile->txSrc = (SDL_Rect) {
@@ -16,7 +18,7 @@ int TileInit(Tile* tile, Vec2I position, Vec2I txIndex, Vec2F colliderSize) {
 	};
 
 	if (0.0 < colliderSize.x && 0.0 < colliderSize.y) {
-		tile->body = Box2DUtilsCreateStaticBox(tile, ((Vec2F) { position.x, position.y }), STATIC_CATEGORY, colliderSize);
+		tile->body = Box2DUtilsCreateStaticBox(tile, ((Vec2F) { (float) position.x, (float) position.y }), STATIC_CATEGORY, colliderSize);
 	} else {
 		tile->body = NULL;
 	}

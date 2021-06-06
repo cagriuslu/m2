@@ -76,6 +76,7 @@ void UiButtonSetSize(Ui *ui, Vec2I size) {
 }
 
 void UiButtonDeinit(Ui *ui) {
+	(void)ui;
 	// TODO
 }
 

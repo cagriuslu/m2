@@ -36,7 +36,6 @@ int LevelLoadTerrainCameraPlayer() {
 
 int LevelLoadTerrainCameraGod() {
 	Array *objArray = CurrentObjectArray();
-	DrawList *drawList = CurrentDrawList();
 
 	// 0: Terrain
 	// 1: Camera

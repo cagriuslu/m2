@@ -85,15 +85,14 @@ int LoadTerrain(Object *terrain, const char *tname) {
 			TileDef tileDef = { 0 };
 			for (size_t j = 0; j < ArrayLength(&tileKVs); j++) {
 				TileKV* tileKV = ArrayGet(&tileKVs, j);
-				if (strcmp(*colDataPtr, tileKV->key) == 0) {
+				if (strcmp(colData, tileKV->key) == 0) {
 					tileDef = tileKV->tileDef;
 					break;
 				}
 			}
 			// Save Tile
-			Tile tile;
-			TileInit(&tile, (Vec2I) { colIndex, rowIndex }, tileDef.txIndex, tileDef.colliderSize);
-			ArrayAppend(&tiles, &tile);
+			Tile* tile = ArrayAppend(&tiles, NULL);
+			TileInit(tile, (Vec2I) { (int) colIndex, (int) rowIndex }, tileDef.txIndex, tileDef.colliderSize);
 		}
 
 		rowIndex++;
@@ -113,7 +112,7 @@ Array MyGetline(FILE *file) {
 
 	int c;
 	while ((c = fgetc(file)) != EOF && c != '\n') {
-		char ch = c;
+		char ch = (char) c;
 		ArrayAppend(&lineBuffer, &ch);
 	}
 	c = 0;

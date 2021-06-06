@@ -36,9 +36,7 @@ int main() {
 
 	fprintf(stderr, "Hello, world!\n");
 	
-	const int SCREEN_HALF_WIDTH = gScreenWidth / 2;
-	const int SCREEN_HALF_HEIGHT = gScreenHeight / 2;
-	const float timeStep = 1.0 / 60.0;
+	const float timeStep = 1.0f / 60.0f;
 	const int velocityIterations = 8;
 	const int positionIterations = 3;
 
@@ -86,11 +84,9 @@ main_menu:
 		levelLoaded = true;
 	}
 
-	Object *camera = ArrayGet(&gObjects, CAMERA_INDEX);
-
 	bool quit = false;
 	while (!quit) {
-		unsigned start_ticks = SDL_GetTicks();
+		//unsigned start_ticks = SDL_GetTicks();
 
 		///// EVENT HANDLING /////
 		bool key = false;
@@ -115,7 +111,6 @@ main_menu:
 			Object *obj = ArrayGet(&gObjects, i);
 			if (obj->body) {
 				obj->pos = Box2DBodyGetPosition(obj->body);
-				obj->angle = Box2DBodyGetAngle(obj->body);
 			}
 		}
 		for (size_t i = 0; i < ArrayLength(&gObjects); i++) {
@@ -150,7 +145,7 @@ main_menu:
 		SDL_RenderPresent(gRenderer);
 		///// END OF GRAPHICS /////
 
-		unsigned end_ticks = SDL_GetTicks();
+		//unsigned end_ticks = SDL_GetTicks();
 		//fprintf(stderr, "Frame time: %u\n", end_ticks - start_ticks);
 	}
 

@@ -7,5 +7,6 @@
 int BlueprintStaticBoxInit(Object *obj, Vec2F position);
 int BlueprintWallInit(Object* obj, Vec2F position);
 int BlueprintSkeletonInit(Object* obj, Vec2F position);
+int BlueprintBulletInit(Object* obj, Vec2F position, Vec2F direction);
 
 #endif

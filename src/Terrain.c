@@ -47,8 +47,8 @@ int TerrainGenerateTexture(Object* obj) {
 		for (size_t colIndex = 0; colIndex < terrainData->colCount; colIndex++) {
 			Tile* tile = ArrayGet(&terrainData->tiles, rowIndex * terrainData->colCount + colIndex);
 			SDL_Rect dstrect = (SDL_Rect){
-				colIndex * CurrentTileWidth(),
-				rowIndex * CurrentTileWidth(),
+				(int) colIndex * CurrentTileWidth(),
+				(int) rowIndex * CurrentTileWidth(),
 				CurrentTileWidth(),
 				CurrentTileWidth()
 			};
@@ -58,8 +58,8 @@ int TerrainGenerateTexture(Object* obj) {
 	SDL_SetRenderTarget(CurrentRenderer(), NULL);
 
 	// Texture source is the whole texture
-	obj->txSrc = (SDL_Rect) {0, 0, terrainData->colCount * CurrentTileWidth(), rowCount * CurrentTileWidth()};
-	obj->txOffset.x = (terrainData->colCount - 1) * CurrentTileWidth() / 2;
-	obj->txOffset.y = (rowCount - 1) * CurrentTileWidth() / 2;
+	obj->txSrc = (SDL_Rect) {0, 0, (int) terrainData->colCount * CurrentTileWidth(), (int) rowCount * CurrentTileWidth()};
+	obj->txOffset.x = (float) ((terrainData->colCount - 1) * CurrentTileWidth() / 2);
+	obj->txOffset.y = (float) ((rowCount - 1) * CurrentTileWidth() / 2);
 	return 0;
 }

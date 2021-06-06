@@ -5,6 +5,7 @@
 #include <b2_polygon_shape.h>
 #include <b2_circle_shape.h>
 #include <b2_fixture.h>
+#include <b2_contact.h>
 
 #define ToVec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})
 
@@ -16,6 +17,7 @@
 #define AsShape(shape) ((b2Shape*) (shape))
 #define AsPolygonShape(polygonShape) ((b2PolygonShape*) (polygonShape))
 #define AsCircleShape(circleShape) ((b2CircleShape*) (circleShape))
+#define AsContact(contact) ((b2Contact*) (contact))
 #define AsContactListener(contactListener) ((ContactListener*) (contactListener))
 
 class ContactListener : public b2ContactListener {
@@ -163,6 +165,10 @@ void Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag) {
 	AsFixture(fixture)->SetSensor(flag);
 }
 
+Box2DBody* Box2DFixtureGetBody(Box2DFixture* fixture) {
+	return AsFixture(fixture)->GetBody();
+}
+
 Box2DPolygonShape* Box2DPolygonShapeCreate() {
 	return new b2PolygonShape();
 }
@@ -185,6 +191,14 @@ void Box2DCircleShapeSetRadius(Box2DCircleShape *circleShape, float radius) {
 
 void Box2DCircleShapeDestroy(Box2DCircleShape *circleShape) {
 	delete AsCircleShape(circleShape);
+}
+
+Box2DFixture* Box2DContactGetFixtureA(Box2DContact* contact) {
+	return AsContact(contact)->GetFixtureA();
+}
+
+Box2DFixture* Box2DContactGetFixtureB(Box2DContact* contact) {
+	return AsContact(contact)->GetFixtureB();
 }
 
 Box2DContactListener* Box2DContactListenerRegister(void (*cb)(Box2DContact*)) {

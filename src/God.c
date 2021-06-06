@@ -25,6 +25,7 @@ void God_deinit(Object* obj) {
 
 int GodInit(Object *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
+	obj->type = OBJECT_PLAYER_GOD;
 	obj->prePhysics = God_prePhysics;
 	obj->body = Box2DUtilsCreateDynamicDiskSensor(
 		obj,

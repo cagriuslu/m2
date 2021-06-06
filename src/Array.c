@@ -27,7 +27,7 @@ void* ArrayAppend(Array *array, void *item) {
 		array->length++;
 		return ArrayGetLast(array);
 	} else {
-		size_t newCapacity = round(array->capacity * GROWTH_RATE);
+		size_t newCapacity = (size_t) round(array->capacity * GROWTH_RATE);
 		void *newData = realloc(array->data, newCapacity * array->itemSize);
 		assert(newData);
 		array->data = newData;

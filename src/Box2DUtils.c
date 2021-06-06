@@ -25,7 +25,7 @@ Box2DBody* Box2DUtilsCreateBody(void* obj, bool isDisk, bool isDynamic, Vec2F po
 	}
 	Box2DFixtureDef* fixtureDef = Box2DFixtureDefCreate();
 	Box2DFixtureDefSetShape(fixtureDef, shape);
-	Box2DFixtureDefSetFriction(fixtureDef, 0.05);
+	Box2DFixtureDefSetFriction(fixtureDef, 0.05f);
 	Box2DFixtureDefSetCategoryBits(fixtureDef, categoryBits);
 	// If mask is not provided, infer it
 	if (maskBits == 0) {
