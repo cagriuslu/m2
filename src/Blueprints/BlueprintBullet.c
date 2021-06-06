@@ -13,7 +13,7 @@ typedef struct _BulletData {
 #define AsBulletData(ptr) ((BulletData*) (ptr))
 
 static void Bullet_prePhysics(Object* obj) {
-	Box2DBodyApplyForceToCenter(obj->body, AsBulletData(obj->privData)->direction, true); // TODO adjust force
+	Box2DBodyApplyForceToCenter(obj->body, Vec2FMul(AsBulletData(obj->privData)->direction, 1.0f), true); // TODO adjust force
 }
 
 static void Bullet_onCollision(Object* obj, ObjectType* otherObjType) {
@@ -35,7 +35,7 @@ int BlueprintBulletInit(Object* obj, Vec2F position, Vec2F direction) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->privData = malloc(sizeof(BulletData));
 	assert(obj->privData);
-	AsBulletData(obj->privData)->direction = direction;
+	AsBulletData(obj->privData)->direction = Vec2FNormalize(direction);
 
 	obj->type = OBJECT_BULLET_BASIC;
 	obj->pos = position;
@@ -48,8 +48,8 @@ int BlueprintBulletInit(Object* obj, Vec2F position, Vec2F direction) {
 		position,
 		PLAYER_BULLET_CATEGORY,
 		0.167f, // Radius
-		0.1f, // Mass
-		3.0f // Damping
+		0.01f, // Mass
+		10.0f // Damping
 	);
 	obj->deinit = Bullet_deinit;
 	return 0;

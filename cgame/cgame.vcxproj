@@ -173,6 +173,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Levels\LevelTest.c" />
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\Object.c" />
+    <ClCompile Include="..\src\ObjectStore.c" />
     <ClCompile Include="..\src\Player.c" />
     <ClCompile Include="..\src\Terrain.c" />
     <ClCompile Include="..\src\TerrainLoader.c" />
@@ -203,6 +204,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClInclude Include="..\src\Levels\LevelCommon.h" />
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\Object.h" />
+    <ClInclude Include="..\src\ObjectStore.h" />
     <ClInclude Include="..\src\ObjectType.h" />
     <ClInclude Include="..\src\Player.h" />
     <ClInclude Include="..\src\Terrain.h" />

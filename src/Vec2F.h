@@ -10,6 +10,8 @@ typedef struct _Vec2F {
 Vec2F Vec2FAdd(Vec2F lhs, Vec2F rhs);
 Vec2F Vec2FSub(Vec2F lhs, Vec2F rhs);
 Vec2F Vec2FMul(Vec2F lhs, float rhs);
+float Vec2FLength(Vec2F in);
+Vec2F Vec2FNormalize(Vec2F in);
 
 Vec2I Vec2Fto2I(Vec2F v);
 
