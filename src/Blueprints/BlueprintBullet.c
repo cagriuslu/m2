@@ -23,11 +23,13 @@ static void Bullet_onCollision(Object* obj, ObjectType* otherObjType) {
 }
 
 static void Bullet_deinit(Object* obj) {
-	if (obj->body) {
-		Box2DWorldDestroyBody(CurrentWorld(), obj->body);
-	}
-	if (obj->privData) {
-		free(obj->privData);
+	if (obj) {
+		if (obj->body) {
+			Box2DWorldDestroyBody(CurrentWorld(), obj->body);
+		}
+		if (obj->privData) {
+			free(obj->privData);
+		}
 	}
 }
 

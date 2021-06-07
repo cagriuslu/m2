@@ -13,42 +13,24 @@ void LevelCallUnloader() {
 }
 
 int LevelLoadTerrainCameraPlayer() {
-	Array *objArray = CurrentObjectArray();
-	DrawList *drawList = CurrentDrawList();
-
-	// 0: Terrain
-	// 1: Camera
-	// 2: Player
-	Object *terrain = ArrayAppend(objArray, NULL); 
-	Object *camera = ArrayAppend(objArray, NULL);
-	Object *player = ArrayAppend(objArray, NULL);
-	// 0: Terrain
+	Object* terrain = CreateObject(); // 0
+	Object *camera = CreateObject(); // 1
+	Object *player = DrawObject(CreateObject()); // 2
 	TerrainInit(terrain);
-	// 2: Player, because Camera uses Player
-	PlayerInit(player);
-	DrawListInsert(drawList, player);
-	// 1: Camera
 	CameraInit(camera, player);
+	PlayerInit(player);
 
 	// TODO return proper error
 	return 0;
 }
 
 int LevelLoadTerrainCameraGod() {
-	Array *objArray = CurrentObjectArray();
-
-	// 0: Terrain
-	// 1: Camera
-	// 2: God
-	Object *terrain = ArrayAppend(objArray, NULL); 
-	Object *camera = ArrayAppend(objArray, NULL);
-	Object *god = ArrayAppend(objArray, NULL);
-	// 0: Terrain
+	Object *terrain = CreateObject(); // 0
+	Object *camera = CreateObject(); // 1
+	Object *god = CreateObject(); // 2
 	TerrainInit(terrain);
-	// 2: God, because Camera uses God
-	GodInit(god);
-	// 1: Camera
 	CameraInit(camera, god);
+	GodInit(god);
 
 	// TODO return proper error
 	return 0;

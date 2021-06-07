@@ -11,6 +11,7 @@
 #include "Level.h"
 #include "Dialog.h"
 #include "Debug.h"
+#include "ObjectStore.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -28,7 +29,7 @@ TTF_Font *gFont;
 
 Box2DWorld *gWorld;
 Box2DContactListener* gContactListener;
-Array gObjects;
+ObjectStore gObjectStore;
 DrawList gDrawList;
 
 int main(int argc, char **argv) {
@@ -50,6 +51,7 @@ int main(int argc, char **argv) {
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TILE_WIDTH_STR "x" TILE_WIDTH_STR ".png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
+	ObjectStoreInit(&gObjectStore);
 
 	bool levelLoaded = false;
 
@@ -64,7 +66,7 @@ main_menu:
 		if (levelLoaded) {
 			LevelUnload();
 			DrawListDeinit(&gDrawList);
-			ArrayDeinit(&gObjects);
+			ObjectStoreDestroyAllObjects(&gObjectStore);
 			Box2DWorldDestroy(gWorld);
 			Box2DContactListenerDestroy(gContactListener);
 		}
@@ -72,7 +74,6 @@ main_menu:
 		gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
 		gContactListener = Box2DContactListenerRegister(ObjectContactCB);
 		Box2DWorldSetContactListener(gWorld, gContactListener);
-		ArrayInit(&gObjects, sizeof(Object));
 		DrawListInit(&gDrawList);
 
 		if (res == X_MAIN_MENU_NEW_GAME) {
@@ -102,22 +103,18 @@ main_menu:
 		///// END OF EVENT HANDLING /////
 
 		///// PHYSICS /////
-		size_t objectCount = ArrayLength(&gObjects);
-		for (size_t i = 0; i < objectCount; i++) {
-			Object *obj = ArrayGet(&gObjects, i);
+		for (Object* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
 			if (obj->prePhysics) {
 				obj->prePhysics(obj);
 			}
 		}
 		Box2DWorldStep(gWorld, timeStep, velocityIterations, positionIterations);
-		for (size_t i = 0; i < objectCount; i++) {
-			Object *obj = ArrayGet(&gObjects, i);
+		for (Object* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
 			if (obj->body) {
 				obj->pos = Box2DBodyGetPosition(obj->body);
 			}
 		}
-		for (size_t i = 0; i < objectCount; i++) {
-			Object *obj = ArrayGet(&gObjects, i);
+		for (Object* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
 			if (obj->postPhysics) {
 				obj->postPhysics(obj);
 			}
@@ -128,7 +125,7 @@ main_menu:
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
 		// Draw terrain first
-		Object* terrain = ArrayGet(&gObjects, 0);
+		Object* terrain = ObjectStoreGetObjectByIndex(&gObjectStore, TERRAIN_INDEX);
 		if (terrain->ovrdGraphics) {
 			terrain->ovrdGraphics(terrain);
 		}
@@ -199,8 +196,8 @@ Box2DWorld* CurrentWorld() {
 	return gWorld;
 }
 
-Array* CurrentObjectArray() {
-	return &gObjects;
+ObjectStore* CurrentObjectStore() {
+	return &gObjectStore;
 }
 
 DrawList* CurrentDrawList() {
@@ -208,7 +205,7 @@ DrawList* CurrentDrawList() {
 }
 
 Vec2F CurrentPointerPositionInWorld() {
-	Object* camera = ArrayGet(CurrentObjectArray(), CAMERA_INDEX);
+	Object* camera = ObjectStoreGetObjectByIndex(CurrentObjectStore(), CAMERA_INDEX);
 	Vec2F cameraPosition = camera->pos;
 
 	Vec2I pointerPosition = PointerPosition();

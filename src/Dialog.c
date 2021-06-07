@@ -17,7 +17,7 @@ int DialogWaitForEvent(Array *uis) {
 		}
 		if (button) {
 			bool eventOccured = false;
-			for (size_t i = 0; i < ArrayLength(uis); i++) {
+			for (size_t i = 0; i < uis->length; i++) {
 				Ui *ui = ArrayGet(uis, i);
 				if (ui->onMouseButton) {
 					// Check if mouse is on top of Ui
@@ -38,7 +38,7 @@ int DialogWaitForEvent(Array *uis) {
 		///// GRAPHICS /////
 		SDL_SetRenderDrawColor(CurrentRenderer(), 0, 0, 0, 255);
 		SDL_RenderClear(CurrentRenderer());
-		for (size_t i = 0; i < ArrayLength(uis); i++) {
+		for (size_t i = 0; i < uis->length; i++) {
 			Ui *ui = ArrayGet(uis, i);
 			if (ui->draw) {
 				ui->draw(ui);

@@ -4,36 +4,37 @@
 #include <stdint.h>
 #include <assert.h>
 
-#define INITIAL_CAPACITY (1024)
 #define GROWTH_RATE (2.0)
 
-int ArrayInit(Array *array, size_t itemSize) {
-	array->data = malloc(itemSize * INITIAL_CAPACITY);
+int ArrayInit(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize) {
+	assert(initCapacity <= maxSize);
+	array->data = calloc(initCapacity, itemSize);
 	assert(array->data);
 	array->itemSize = itemSize;
 	array->length = 0;
-	array->capacity = INITIAL_CAPACITY;
+	array->capacity = initCapacity;
+	array->maxSize = maxSize;
 	return 0;
 }
 
-size_t ArrayLength(Array *array) {
-	return array->length;
-}
-
 void* ArrayAppend(Array *array, void *item) {
-	if (array->length < array->capacity) {
-		if (item) {
-			memcpy(array->data + array->length * array->itemSize, item, array->itemSize);
+	if (array->length < array->maxSize) {
+		if (array->length < array->capacity) {
+			if (item) {
+				memcpy(array->data + array->length * array->itemSize, item, array->itemSize);
+			}
+			array->length++;
+			return ArrayGetLast(array);
+		} else {
+			size_t newCapacity = (size_t)round(array->capacity * GROWTH_RATE);
+			void* newData = realloc(array->data, newCapacity * array->itemSize);
+			assert(newData);
+			array->data = newData;
+			array->capacity = newCapacity;
+			return ArrayAppend(array, item);
 		}
-		array->length++;
-		return ArrayGetLast(array);
 	} else {
-		size_t newCapacity = (size_t) round(array->capacity * GROWTH_RATE);
-		void *newData = realloc(array->data, newCapacity * array->itemSize);
-		assert(newData);
-		array->data = newData;
-		array->capacity = newCapacity;
-		return ArrayAppend(array, item);
+		return NULL;
 	}
 }
 

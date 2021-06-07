@@ -23,10 +23,10 @@ int LoadTerrain(Object *terrain, const char *tname) {
 
 	// Gather tile KV pairs until % character on a line
 	Array tileKVs;
-	ArrayInit(&tileKVs, sizeof(TileKV));
+	ArrayInit(&tileKVs, sizeof(TileKV), 16, SIZE_MAX);
 	while (true) {
 		Array lineBuffer = MyGetline(file);
-		if (ArrayLength(&lineBuffer) == 0) {
+		if (lineBuffer.length == 0) {
 			ArrayDeinit(&lineBuffer);
 			continue;
 		}
@@ -37,7 +37,7 @@ int LoadTerrain(Object *terrain, const char *tname) {
 		}
 
 		Array splits = MySplit(line, '\t');
-		assert(2 <= ArrayLength(&splits));
+		assert(2 <= splits.length);
 
 		char **keyPtr = ArrayGet(&splits, 0);
 		char **valuePtr = ArrayGet(&splits, 1);
@@ -56,11 +56,11 @@ int LoadTerrain(Object *terrain, const char *tname) {
 
 	// Read matirx data
 	Array tiles;
-	ArrayInit(&tiles, sizeof(Tile));
+	ArrayInit(&tiles, sizeof(Tile), 16, SIZE_MAX);
 	size_t rowIndex = 0, colCount = 0;
 	while (true) {
 		Array lineBuffer = MyGetline(file);
-		if (ArrayLength(&lineBuffer) == 0) {
+		if (lineBuffer.length == 0) {
 			ArrayDeinit(&lineBuffer);
 			break;
 		}
@@ -71,19 +71,19 @@ int LoadTerrain(Object *terrain, const char *tname) {
 		}
 
 		Array splits = MySplit(line, '\t');
-		assert(ArrayLength(&splits));
+		assert(splits.length);
 
 		if (colCount == 0) {
-			colCount = ArrayLength(&splits);
+			colCount = splits.length;
 		}
-		assert(ArrayLength(&splits) == colCount);
+		assert(splits.length == colCount);
 
 		for (size_t colIndex = 0; colIndex < colCount; colIndex++) {
 			char** colDataPtr = ArrayGet(&splits, colIndex);
 			char* colData = *colDataPtr;
 			// Lookup Tile from TileKV Array
 			TileDef tileDef = { 0 };
-			for (size_t j = 0; j < ArrayLength(&tileKVs); j++) {
+			for (size_t j = 0; j < tileKVs.length; j++) {
 				TileKV* tileKV = ArrayGet(&tileKVs, j);
 				if (strcmp(colData, tileKV->key) == 0) {
 					tileDef = tileKV->tileDef;
@@ -108,7 +108,7 @@ int LoadTerrain(Object *terrain, const char *tname) {
 
 Array MyGetline(FILE *file) {
 	Array lineBuffer;
-	ArrayInit(&lineBuffer, sizeof(char));
+	ArrayInit(&lineBuffer, sizeof(char), 1024, SIZE_MAX);
 
 	int c;
 	while ((c = fgetc(file)) != EOF && c != '\n') {
@@ -123,7 +123,7 @@ Array MyGetline(FILE *file) {
 
 Array MySplit(char *input, char delimiter) {
 	Array splitBuffer;
-	ArrayInit(&splitBuffer, sizeof(char*));
+	ArrayInit(&splitBuffer, sizeof(char*), 256, SIZE_MAX);
 
 	size_t totalSize = strlen(input);
 	for (size_t i = 0; i < totalSize; i++) {

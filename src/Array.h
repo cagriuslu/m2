@@ -9,10 +9,10 @@ typedef struct _Array {
 	size_t itemSize;
 	size_t length;
 	size_t capacity;
+	size_t maxSize;
 } Array;
 
-int ArrayInit(Array *array, size_t itemSize);
-size_t ArrayLength(Array *array);
+int ArrayInit(Array *array, size_t itemSize, size_t initCapacity, size_t maxSize);
 void* ArrayAppend(Array *array, void *item);
 void* ArrayGet(Array *array, size_t index);
 size_t ArrayGetIndexOf(Array* array, void* item);

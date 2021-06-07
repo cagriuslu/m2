@@ -4,24 +4,23 @@
 #define AsObjectPtr(objptr) ((ObjectPtr*) (objptr))
 
 int DrawListInit(DrawList *list) {
-	PROPAGATE_ERROR(ArrayInit(&list->objects, sizeof(ObjectPtr)));
+	PROPAGATE_ERROR(ArrayInit(&list->objects, sizeof(ObjectPtr), UINT16_MAX + 1, UINT16_MAX + 1));
 	return 0;
 }
 
 size_t DrawListLength(DrawList *list) {
-	return ArrayLength(&list->objects);
+	return list->objects.length;
 }
 
 ObjectPtr DrawListGet(DrawList *list, size_t i) {
 	return *AsObjectPtr(ArrayGet(&list->objects, i));
 }
 
-int DrawListInsert(DrawList *list, ObjectPtr objptr) {
+ObjectPtr DrawListInsert(DrawList *list, ObjectPtr objptr) {
 	ArrayAppend(&list->objects, &objptr);
-	DrawListSort(list);
 	// TODO this can be optimized with binary search
 	// ONLY if we can make sure that the list is already sorted
-	return 0;
+	return objptr;
 }
 
 void DrawListSort(DrawList *list) {

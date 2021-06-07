@@ -17,7 +17,7 @@ int TerrainInit(Object *obj) {
 	obj->tx = NULL;
 	obj->privData = malloc(sizeof(TerrainData));
 	assert(obj->privData);
-	ArrayInit(&AsTerrainData(obj->privData)->tiles, sizeof(Tile));
+	ArrayInit(&AsTerrainData(obj->privData)->tiles, sizeof(Tile), 16, SIZE_MAX);
 	AsTerrainData(obj->privData)->colCount = 0;
 	return 0;
 }
@@ -29,7 +29,7 @@ void TerrainSetTiles(Object* obj, Array tiles, size_t colCount) {
 
 int TerrainGenerateTexture(Object* obj) {
 	TerrainData* terrainData = obj->privData;
-	size_t rowCount = ArrayLength(&terrainData->tiles) / terrainData->colCount;
+	size_t rowCount = terrainData->tiles.length / terrainData->colCount;
 	if (obj->tx) {
 		SDL_DestroyTexture(obj->tx);
 	}

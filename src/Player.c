@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "ObjectStore.h"
 #include "Box2DUtils.h"
 #include "Blueprint.h"
 #include "Main.h"
@@ -43,9 +44,8 @@ static void Player_prePhysics(Object *obj) {
 		Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 		Vec2F bulletDir = Vec2FSub(pointerPosInWorld, obj->pos);
 
-		Object* bullet1 = ArrayAppend(CurrentObjectArray(), NULL);
-		BlueprintBulletInit(bullet1, obj->pos, bulletDir);
-		DrawListInsert(CurrentDrawList(), bullet1);
+		Object* bullet = DrawObject(CreateObject());
+		BlueprintBulletInit(bullet, obj->pos, bulletDir);
 	}
 }
 

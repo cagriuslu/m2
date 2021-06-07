@@ -3,6 +3,7 @@
 
 #include "Controls.h"
 #include "Box2DWrapper.h"
+#include "ObjectStore.h"
 #include "Array.h"
 #include "DrawList.h"
 #include <SDL.h>
@@ -35,7 +36,7 @@ SDL_Texture* CurrentTextureLUT();
 TTF_Font* CurrentFont();
 
 Box2DWorld* CurrentWorld();
-Array* CurrentObjectArray();
+ObjectStore* CurrentObjectStore();
 DrawList* CurrentDrawList();
 Vec2F CurrentPointerPositionInWorld();
 

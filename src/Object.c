@@ -6,7 +6,7 @@
 
 void Object_ovrdGraphics(Object* obj) {
 	if (obj->tx) {
-		Object* camera = ArrayGet(CurrentObjectArray(), CAMERA_INDEX);
+		Object* camera = ObjectStoreGetObjectByIndex(CurrentObjectStore(), CAMERA_INDEX);
 
 		Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->pos, camera->pos);
 		Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
