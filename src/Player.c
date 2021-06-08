@@ -44,8 +44,7 @@ static void Player_prePhysics(Object *obj) {
 		Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 		Vec2F bulletDir = Vec2FSub(pointerPosInWorld, obj->pos);
 
-		Object* bullet = DrawObject(CreateObject());
-		BlueprintBulletInit(bullet, obj->pos, bulletDir);
+		BlueprintBulletInit(DrawObject(CreateObject()), obj->pos, bulletDir);
 	}
 }
 

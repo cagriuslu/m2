@@ -1,11 +1,17 @@
 0	Ground
 wh	WallHorizontal
 wv	WallVertical
+s	Skeleton
 %
-0	0	0	0	0	0
-0	0	wh	wh	0	0
-0	wv	0	0	wv	0
-0	wv	0	0	wv	0
-0	wv	0	0	wv	0
-0	0	wh	wh	0	0
-0	0	0	0	0	0
+0	0	0	0	0	0	0	0	0	0	0	0
+0	0	wh	wh	wh	wh	wh	wh	wh	wh	0	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	wv	0 s	0	0	0	0	0	0	0	wv	0
+0	0	wh	wh	wh	wh	wh	wh	wh	wh	0	0
+0	0	0	0	0	0	0	0	0	0	0	0

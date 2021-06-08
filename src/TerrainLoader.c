@@ -30,14 +30,16 @@ int LoadTerrain(Object *terrain, const char *tname) {
 			ArrayDeinit(&lineBuffer);
 			continue;
 		}
+		// Break if % is encountered
 		char* line = ArrayGet(&lineBuffer, 0);
 		if (line[0] == '%') {
 			ArrayDeinit(&lineBuffer);
 			break;
 		}
 
+		// Split key and value
 		Array splits = MySplit(line, '\t');
-		assert(2 <= splits.length);
+		assert(2 == splits.length);
 
 		char **keyPtr = ArrayGet(&splits, 0);
 		char **valuePtr = ArrayGet(&splits, 1);

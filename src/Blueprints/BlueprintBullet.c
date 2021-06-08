@@ -16,10 +16,16 @@ static void Bullet_prePhysics(Object* obj) {
 	Box2DBodyApplyForceToCenter(obj->body, Vec2FMul(AsBulletData(obj->privData)->direction, 1.0f), true); // TODO adjust force
 }
 
-static void Bullet_onCollision(Object* obj, ObjectType* otherObjType) {
+static void Bullet_onCollision(Object* obj, ObjectType* otherObjTyp) {
 	(void)obj;
-	(void)otherObjType;
 	fprintf(stderr, "Hit something\n");
+
+	ObjectType objTyp = *otherObjTyp;
+	if (IS_TILE(objTyp)) {
+
+	} else if (IS_ENEMY(objTyp)) {
+
+	}
 }
 
 static void Bullet_deinit(Object* obj) {
