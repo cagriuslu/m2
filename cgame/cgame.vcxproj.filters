@@ -93,7 +93,7 @@
     <ClCompile Include="..\src\Uis\UiStringInput.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Tile.c">
+    <ClCompile Include="..\src\TileObject.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\TerrainLoader.c">
@@ -119,9 +119,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\Tile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -191,7 +188,7 @@
     <ClInclude Include="..\src\Box2DUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ObjectType.h">
+    <ClInclude Include="..\src\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ObjectStore.h">
@@ -201,6 +198,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Bucket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TileObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

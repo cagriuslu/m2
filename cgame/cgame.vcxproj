@@ -178,7 +178,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Player.c" />
     <ClCompile Include="..\src\Terrain.c" />
     <ClCompile Include="..\src\TerrainLoader.c" />
-    <ClCompile Include="..\src\Tile.c" />
+    <ClCompile Include="..\src\TileObject.c" />
     <ClCompile Include="..\src\Ui.c" />
     <ClCompile Include="..\src\Uis\UiBooleanInput.c" />
     <ClCompile Include="..\src\Uis\UiButton.c" />
@@ -208,11 +208,11 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\GameObject.h" />
     <ClInclude Include="..\src\ObjectStore.h" />
-    <ClInclude Include="..\src\ObjectType.h" />
+    <ClInclude Include="..\src\Object.h" />
     <ClInclude Include="..\src\Player.h" />
     <ClInclude Include="..\src\Terrain.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
-    <ClInclude Include="..\src\Tile.h" />
+    <ClInclude Include="..\src\TileObject.h" />
     <ClInclude Include="..\src\Ui.h" />
     <ClInclude Include="..\src\Vec2F.h" />
     <ClInclude Include="..\src\Vec2I.h" />

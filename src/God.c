@@ -25,7 +25,7 @@ void God_deinit(GameObject* obj) {
 
 int GodInit(GameObject *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
-	obj->type = OBJECT_PLAYER_GOD;
+	obj->super.type = OBJECT_PLAYER_GOD;
 	obj->prePhysics = God_prePhysics;
 	obj->body = Box2DUtilsCreateDynamicDiskSensor(
 		obj,

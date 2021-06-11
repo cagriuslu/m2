@@ -1,7 +1,7 @@
 #include "Terrain.h"
 #include "Main.h"
 #include "Array.h"
-#include "Tile.h"
+#include "TileObject.h"
 #include <SDL.h>
 #include <assert.h>
 
@@ -17,7 +17,7 @@ int TerrainInit(GameObject*obj) {
 	obj->tx = NULL;
 	obj->privData = malloc(sizeof(TerrainData));
 	assert(obj->privData);
-	ArrayInit(&AsTerrainData(obj->privData)->tiles, sizeof(Tile), 16, SIZE_MAX);
+	ArrayInit(&AsTerrainData(obj->privData)->tiles, sizeof(TileObject), 16, SIZE_MAX);
 	AsTerrainData(obj->privData)->colCount = 0;
 	return 0;
 }
@@ -45,7 +45,7 @@ int TerrainGenerateTexture(GameObject* obj) {
 	SDL_SetRenderTarget(CurrentRenderer(), obj->tx);
 	for (size_t rowIndex = 0; rowIndex < rowCount; rowIndex++) {
 		for (size_t colIndex = 0; colIndex < terrainData->colCount; colIndex++) {
-			Tile* tile = ArrayGet(&terrainData->tiles, rowIndex * terrainData->colCount + colIndex);
+			TileObject* tile = ArrayGet(&terrainData->tiles, rowIndex * terrainData->colCount + colIndex);
 			SDL_Rect dstrect = (SDL_Rect){
 				(int) colIndex * CurrentTileWidth(),
 				(int) rowIndex * CurrentTileWidth(),

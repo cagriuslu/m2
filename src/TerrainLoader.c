@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "TerrainLoader.h"
 #include "Terrain.h"
-#include "Tile.h"
+#include "TileObject.h"
 #include "Array.h"
 #include "Error.h"
 #include <stdio.h>
@@ -58,7 +58,7 @@ int LoadTerrain(GameObject*terrain, const char *tname) {
 
 	// Read matirx data
 	Array tiles;
-	ArrayInit(&tiles, sizeof(Tile), 16, SIZE_MAX);
+	ArrayInit(&tiles, sizeof(TileObject), 16, SIZE_MAX);
 	size_t rowIndex = 0, colCount = 0;
 	while (true) {
 		Array lineBuffer = MyGetline(file);
@@ -93,7 +93,7 @@ int LoadTerrain(GameObject*terrain, const char *tname) {
 				}
 			}
 			// Save Tile
-			Tile* tile = ArrayAppend(&tiles, NULL);
+			TileObject* tile = ArrayAppend(&tiles, NULL);
 			TileInit(tile, (Vec2I) { (int) colIndex, (int) rowIndex }, tileDef.txIndex, tileDef.colliderSize);
 		}
 

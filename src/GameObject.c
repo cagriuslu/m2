@@ -27,6 +27,7 @@ void Object_ovrdGraphics(GameObject* obj) {
 
 int ObjectInit(GameObject *obj) {
 	memset(obj, 0, sizeof(GameObject));
+	obj->super.type = OBJTYP_OBJECT;
 	obj->tx = CurrentTextureLUT();
 	obj->ovrdGraphics = Object_ovrdGraphics;
 	return 0;
@@ -42,20 +43,20 @@ void ObjectDeinit(GameObject *obj) {
 void ObjectContactCB(Box2DContact* contact) {
 	fprintf(stderr, "Contact beginned\n");
 	
-	ObjectType* aType = Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact)));
-	ObjectType* bType = Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact)));
+	Object* a = Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact)));
+	Object* b = Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact)));
 
-	if (IS_OBJECT(*aType)) {
-		GameObject* a = (GameObject*) aType;
-		if (a->onCollision) {
-			a->onCollision(a, bType);
+	if (IS_OBJECT(a->type)) {
+		GameObject* aGO = (GameObject*) a;
+		if (aGO->onCollision) {
+			aGO->onCollision(aGO, b);
 		}
 	}
 
-	if (IS_OBJECT(*bType)) {
-		GameObject* b = (GameObject*) bType;
-		if (b->onCollision) {
-			b->onCollision(b, aType);
+	if (IS_OBJECT(b->type)) {
+		GameObject* bGO = (GameObject*) b;
+		if (bGO->onCollision) {
+			bGO->onCollision(bGO, a);
 		}
 	}
 }

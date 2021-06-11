@@ -1,4 +1,4 @@
-#include "Tile.h"
+#include "TileObject.h"
 #include "Main.h"
 #include "Box2DUtils.h"
 #include <string.h>
@@ -6,9 +6,9 @@
 
 #define STREQ(str1, str2) (strcmp(str1, str2) == 0)
 
-int TileInit(Tile* tile, Vec2I position, Vec2I txIndex, Vec2F colliderSize) {
-	memset(tile, 0, sizeof(Tile));
-	tile->type = OBJTYP_TILE;
+int TileInit(TileObject* tile, Vec2I position, Vec2I txIndex, Vec2F colliderSize) {
+	memset(tile, 0, sizeof(TileObject));
+	tile->super.type = OBJTYP_TILE;
 	tile->pos = position;
 	tile->txSrc = (SDL_Rect) {
 		txIndex.x * CurrentTileWidth(),
@@ -26,7 +26,7 @@ int TileInit(Tile* tile, Vec2I position, Vec2I txIndex, Vec2F colliderSize) {
 	return 0;
 }
 
-void TileDeinit(Tile* tile) {
+void TileDeinit(TileObject* tile) {
 	if (tile->body) {
 		Box2DWorldDestroyBody(CurrentWorld(), tile->body);
 	}

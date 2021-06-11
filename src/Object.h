@@ -1,9 +1,13 @@
-#ifndef OBJECT_TYPE_H
-#define OBJECT_TYPE_H
+#ifndef OBJECT_H
+#define OBJECT_H
 
 #include <stdint.h>
 
-typedef uint32_t ObjectType;
+typedef struct _Object {
+	uint32_t type;
+} Object;
+
+// TODO get rid of these and switch to ECS
 
 // Definitions
 

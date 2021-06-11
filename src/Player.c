@@ -54,7 +54,7 @@ void Player_deinit(GameObject* obj) {
 
 int PlayerInit(GameObject *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
-	obj->type = OBJECT_PLAYER_BASIC;
+	obj->super.type = OBJECT_PLAYER_BASIC;
 	obj->prePhysics = Player_prePhysics;
 	obj->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	obj->txOffset = (Vec2F) {0.0, -6.5};

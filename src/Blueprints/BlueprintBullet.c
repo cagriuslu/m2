@@ -16,11 +16,11 @@ static void Bullet_prePhysics(GameObject* obj) {
 	Box2DBodyApplyForceToCenter(obj->body, Vec2FMul(AsBulletData(obj->privData)->direction, 1.0f), true); // TODO adjust force
 }
 
-static void Bullet_onCollision(GameObject* obj, ObjectType* otherObjTyp) {
+static void Bullet_onCollision(GameObject* obj, Object* otherObj) {
 	(void)obj;
 	fprintf(stderr, "Hit something\n");
 
-	ObjectType objTyp = *otherObjTyp;
+	int objTyp = otherObj->type;
 	if (IS_TILE(objTyp)) {
 
 	} else if (IS_ENEMY(objTyp)) {
@@ -45,7 +45,7 @@ int BlueprintBulletInit(GameObject* obj, Vec2F position, Vec2F direction) {
 	assert(obj->privData);
 	AsBulletData(obj->privData)->direction = Vec2FNormalize(direction);
 
-	obj->type = OBJECT_BULLET_BASIC;
+	obj->super.type = OBJECT_BULLET_BASIC;
 	obj->pos = position;
 	obj->angle = ANGLE(direction);
 	obj->prePhysics = Bullet_prePhysics;

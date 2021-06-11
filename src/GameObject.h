@@ -3,18 +3,18 @@
 
 #include "Box2DWrapper.h"
 #include "Vec2F.h"
-#include "ObjectType.h"
+#include "Object.h"
 #include "Error.h"
 #include <SDL.h>
 
 typedef struct _GameObject {
-	ObjectType type;
+	Object super;
 	Vec2F pos;
 	float angle; // Radians
 	// Physics subsystem
 	Box2DBody *body;
 	void (*prePhysics)(struct _GameObject*);
-	void (*onCollision)(struct _GameObject*, ObjectType*);
+	void (*onCollision)(struct _GameObject*, Object*);
 	void (*postPhysics)(struct _GameObject*);
 	// Graphics subsystem
 	SDL_Texture* tx;

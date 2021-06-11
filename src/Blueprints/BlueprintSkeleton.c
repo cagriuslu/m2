@@ -9,7 +9,7 @@ void Skeleton_deinit(GameObject* obj) {
 
 int BlueprintSkeletonInit(GameObject* obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
-	obj->type = OBJECT_ENEMY_SKELETON;
+	obj->super.type = OBJECT_ENEMY_SKELETON;
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	obj->txOffset = (Vec2F){ 0.0, -4.5 };
