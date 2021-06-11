@@ -159,6 +159,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Blueprints\BlueprintWall.c" />
     <ClCompile Include="..\src\Box2DUtils.c" />
     <ClCompile Include="..\src\Box2DWrapper.cpp" />
+    <ClCompile Include="..\src\Bucket.c" />
     <ClCompile Include="..\src\Camera.c" />
     <ClCompile Include="..\src\Controls.c" />
     <ClCompile Include="..\src\Debug.c" />
@@ -191,6 +192,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClInclude Include="..\src\Blueprint.h" />
     <ClInclude Include="..\src\Box2DUtils.h" />
     <ClInclude Include="..\src\Box2DWrapper.h" />
+    <ClInclude Include="..\src\Bucket.h" />
     <ClInclude Include="..\src\Camera.h" />
     <ClInclude Include="..\src\Constants.h" />
     <ClInclude Include="..\src\Controls.h" />

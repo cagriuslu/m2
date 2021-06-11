@@ -8,6 +8,7 @@
 #include "DrawList.h"
 #include "Event.h"
 #include "Terrain.h"
+#include "Bucket.h"
 #include "Level.h"
 #include "Dialog.h"
 #include "Debug.h"
