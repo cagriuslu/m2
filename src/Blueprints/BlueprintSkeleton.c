@@ -3,11 +3,11 @@
 #include "../Box2DWrapper.h"
 #include "../Box2DUtils.h"
 
-void Skeleton_deinit(Object* obj) {
+void Skeleton_deinit(GameObject* obj) {
 	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
 }
 
-int BlueprintSkeletonInit(Object* obj, Vec2F position) {
+int BlueprintSkeletonInit(GameObject* obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->type = OBJECT_ENEMY_SKELETON;
 	obj->pos = position;

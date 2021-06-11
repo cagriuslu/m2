@@ -16,7 +16,7 @@ typedef struct _TileKV {
 Array MyGetline(FILE *file);
 Array MySplit(char *input, char delimiter);
 
-int LoadTerrain(Object *terrain, const char *tname) {
+int LoadTerrain(GameObject*terrain, const char *tname) {
 	// Open file
 	FILE *file = fopen(tname, "r");
 	assert(file);

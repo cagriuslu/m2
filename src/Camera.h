@@ -1,9 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "Object.h"
+#include "GameObject.h"
 #include "Error.h"
 
-int CameraInit(Object *obj, Object *player);
+int CameraInit(GameObject *obj, GameObject *player);
 
 #endif

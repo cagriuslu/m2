@@ -1,7 +1,7 @@
 #ifndef DRAW_LIST_H
 #define DRAW_LIST_H
 
-#include "Object.h"
+#include "GameObject.h"
 #include "Array.h"
 
 #define DrawObject(object) (DrawListInsert(CurrentDrawList(), object))

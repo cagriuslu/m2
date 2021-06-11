@@ -48,7 +48,7 @@
     <ClCompile Include="..\src\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Object.c">
+    <ClCompile Include="..\src\GameObject.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Player.c">
@@ -167,7 +167,7 @@
     <ClInclude Include="..\src\Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Object.h">
+    <ClInclude Include="..\src\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Player.h">

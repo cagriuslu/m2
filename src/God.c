@@ -4,7 +4,7 @@
 #include "Event.h"
 #include "Box2DUtils.h"
 
-static void God_prePhysics(Object *obj) {
+static void God_prePhysics(GameObject *obj) {
 	if (IsKeyDown(KEY_UP)) {
 		Box2DBodyApplyForceToCenter(obj->body, (Vec2F) {0.0, -100.0}, true);
 	}
@@ -19,11 +19,11 @@ static void God_prePhysics(Object *obj) {
 	}
 }
 
-void God_deinit(Object* obj) {
+void God_deinit(GameObject* obj) {
 	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
 }
 
-int GodInit(Object *obj) {
+int GodInit(GameObject *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->type = OBJECT_PLAYER_GOD;
 	obj->prePhysics = God_prePhysics;

@@ -11,7 +11,7 @@ int ObjectStoreInit(ObjectStore* os) {
 	return 0;
 }
 
-Object* ObjectStoreCreateObject(ObjectStore* os, Object* copy, uint32_t* outId) {
+GameObject* ObjectStoreCreateObject(ObjectStore* os, GameObject* copy, uint32_t* outId) {
 	if (os->size < os->capacity) {
 		int indexToAllocate = os->nextFreeIndex;
 		ObjectStoreItem* itemToAllocate = &os->items[indexToAllocate];
@@ -34,7 +34,7 @@ Object* ObjectStoreCreateObject(ObjectStore* os, Object* copy, uint32_t* outId) 
 		}
 
 		if (copy) {
-			memcpy(&itemToAllocate->obj, copy, sizeof(Object));
+			memcpy(&itemToAllocate->obj, copy, sizeof(GameObject));
 		}
 		return &itemToAllocate->obj;
 	} else {
@@ -42,7 +42,7 @@ Object* ObjectStoreCreateObject(ObjectStore* os, Object* copy, uint32_t* outId) 
 	}
 }
 
-bool ObjectStoreIsOwnerOfObject(ObjectStore* os, Object* ref) {
+bool ObjectStoreIsOwnerOfObject(ObjectStore* os, GameObject* ref) {
 	ObjectStoreItem* itemRef = (ObjectStoreItem*)ref;
 	// Check if object resides in range
 	if ((itemRef < os->items + os->lowestAllocatedIndex) || (os->items + os->highestAllocatedIndex < itemRef)) {
@@ -52,21 +52,21 @@ bool ObjectStoreIsOwnerOfObject(ObjectStore* os, Object* ref) {
 	return itemRef->id & 0xFFFF0000;
 }
 
-Object* ObjectStoreGetFirstObject(ObjectStore* os) {
+GameObject* ObjectStoreGetFirstObject(ObjectStore* os) {
 	if (0 < os->size) {
 		return ObjectStoreGetObjectByIndex(os, os->lowestAllocatedIndex);
 	}
 	return NULL;
 }
 
-Object* ObjectStoreGetNextObject(ObjectStore* os, Object* ref) {
+GameObject* ObjectStoreGetNextObject(ObjectStore* os, GameObject* ref) {
 	uint32_t currId = ObjectStoreGetIdByObject(os, ref);
 	if (currId == 0) {
 		return NULL;
 	}
 	int currIdx = currId & 0xFFFF;
 	for (int i = currIdx + 1; i <= os->highestAllocatedIndex; i++) {
-		Object* candidate = ObjectStoreGetObjectByIndex(os, i);
+		GameObject* candidate = ObjectStoreGetObjectByIndex(os, i);
 		if (candidate) {
 			return candidate;
 		}
@@ -74,7 +74,7 @@ Object* ObjectStoreGetNextObject(ObjectStore* os, Object* ref) {
 	return NULL;
 }
 
-Object* ObjectStoreGetObjectByIndex(ObjectStore* os, int idx) {
+GameObject* ObjectStoreGetObjectByIndex(ObjectStore* os, int idx) {
 	ObjectStoreItem* candidateItem = &os->items[idx];
 	if (candidateItem->id & 0xFFFF0000) {
 		return &candidateItem->obj;
@@ -82,7 +82,7 @@ Object* ObjectStoreGetObjectByIndex(ObjectStore* os, int idx) {
 	return NULL;
 }
 
-Object* ObjectStoreGetObjectById(ObjectStore* os, uint32_t id) {
+GameObject* ObjectStoreGetObjectById(ObjectStore* os, uint32_t id) {
 	if (0 < os->size) {
 		int candidateIdx = id & 0xFFFF;
 		ObjectStoreItem* candidateItem = &os->items[candidateIdx];
@@ -93,11 +93,11 @@ Object* ObjectStoreGetObjectById(ObjectStore* os, uint32_t id) {
 	return NULL;
 }
 
-uint32_t ObjectStoreGetIdByObject(ObjectStore* os, Object* ref) {
+uint32_t ObjectStoreGetIdByObject(ObjectStore* os, GameObject* ref) {
 	return ObjectStoreIsOwnerOfObject(os, ref) ? ((ObjectStoreItem*)ref)->id : 0;
 }
 
-void ObjectStoreDestroyObject(ObjectStore* os, Object* ref) {
+void ObjectStoreDestroyObject(ObjectStore* os, GameObject* ref) {
 	if (!ObjectStoreIsOwnerOfObject(os, ref)) {
 		return;
 	}
@@ -133,7 +133,7 @@ void ObjectStoreDestroyObject(ObjectStore* os, Object* ref) {
 }
 
 void ObjectStoreDestroyObjectById(ObjectStore* os, uint32_t id) {
-	Object* obj = ObjectStoreGetObjectById(os, id);
+	GameObject* obj = ObjectStoreGetObjectById(os, id);
 	if (obj) {
 		ObjectStoreDestroyObject(os, obj);
 	}

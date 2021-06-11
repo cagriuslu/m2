@@ -1,12 +1,12 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include "Object.h"
+#include "GameObject.h"
 #include "Array.h"
 #include "Error.h"
 
-int TerrainInit(Object *obj);
-void TerrainSetTiles(Object* obj, Array tiles, size_t colCount);
-int TerrainGenerateTexture(Object* obj);
+int TerrainInit(GameObject*obj);
+void TerrainSetTiles(GameObject* obj, Array tiles, size_t colCount);
+int TerrainGenerateTexture(GameObject* obj);
 
 #endif

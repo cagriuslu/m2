@@ -3,7 +3,7 @@
 #include "Box2DUtils.h"
 #include "Blueprint.h"
 #include "Main.h"
-#include "Object.h"
+#include "GameObject.h"
 #include "Debug.h"
 #include "Event.h"
 #include <math.h>
@@ -14,7 +14,7 @@
 // Shift button is also used during combat
 // Ctrl and Alt should not be used during combat
 
-static void Player_prePhysics(Object *obj) {
+static void Player_prePhysics(GameObject *obj) {
 	// if (IsButtonDown(BUTTON_SECONDARY)) {
 	// 	Vec2I pos_wrt_screen_origin = PointerPosition();
 	// 	Vec2I pos_wrt_screen_center = (Vec2I) {
@@ -48,11 +48,11 @@ static void Player_prePhysics(Object *obj) {
 	}
 }
 
-void Player_deinit(Object* obj) {
+void Player_deinit(GameObject* obj) {
 	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
 }
 
-int PlayerInit(Object *obj) {
+int PlayerInit(GameObject *obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->type = OBJECT_PLAYER_BASIC;
 	obj->prePhysics = Player_prePhysics;

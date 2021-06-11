@@ -1,12 +1,12 @@
 #ifndef OBJECT_BLUEPRINT_H
 #define OBJECT_BLUEPRINT_H
 
-#include "Object.h"
+#include "GameObject.h"
 #include "Error.h"
 
-int BlueprintStaticBoxInit(Object *obj, Vec2F position);
-int BlueprintWallInit(Object* obj, Vec2F position);
-int BlueprintSkeletonInit(Object* obj, Vec2F position);
-int BlueprintBulletInit(Object* obj, Vec2F position, Vec2F direction);
+int BlueprintStaticBoxInit(GameObject *obj, Vec2F position);
+int BlueprintWallInit(GameObject* obj, Vec2F position);
+int BlueprintSkeletonInit(GameObject* obj, Vec2F position);
+int BlueprintBulletInit(GameObject* obj, Vec2F position, Vec2F direction);
 
 #endif

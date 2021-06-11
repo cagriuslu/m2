@@ -3,11 +3,11 @@
 #include "../Box2DWrapper.h"
 #include "../Box2DUtils.h"
 
-void Wall_deinit(Object* obj) {
+void Wall_deinit(GameObject* obj) {
 	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
 }
 
-int BlueprintWallInit(Object* obj, Vec2F position) {
+int BlueprintWallInit(GameObject* obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect){ 8 * TILE_WIDTH, 0, TILE_WIDTH, 2 * TILE_WIDTH };

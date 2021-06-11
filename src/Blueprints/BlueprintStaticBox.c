@@ -4,11 +4,11 @@
 #include "../Box2DUtils.h"
 #include <stdio.h>
 
-void StaticBox_deinit(Object* obj) {
+void StaticBox_deinit(GameObject* obj) {
 	Box2DWorldDestroyBody(CurrentWorld(), obj->body);
 }
 
-int BlueprintStaticBoxInit(Object *obj, Vec2F position) {
+int BlueprintStaticBoxInit(GameObject *obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->pos = position;
 	obj->txSrc = (SDL_Rect) {TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };

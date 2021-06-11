@@ -12,7 +12,7 @@ typedef struct _TerrainData {
 	size_t colCount;
 } TerrainData;
 
-int TerrainInit(Object *obj) {
+int TerrainInit(GameObject*obj) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->tx = NULL;
 	obj->privData = malloc(sizeof(TerrainData));
@@ -22,12 +22,12 @@ int TerrainInit(Object *obj) {
 	return 0;
 }
 
-void TerrainSetTiles(Object* obj, Array tiles, size_t colCount) {
+void TerrainSetTiles(GameObject* obj, Array tiles, size_t colCount) {
 	AsTerrainData(obj->privData)->tiles = tiles;
 	AsTerrainData(obj->privData)->colCount = colCount;
 }
 
-int TerrainGenerateTexture(Object* obj) {
+int TerrainGenerateTexture(GameObject* obj) {
 	TerrainData* terrainData = obj->privData;
 	size_t rowCount = terrainData->tiles.length / terrainData->colCount;
 	if (obj->tx) {

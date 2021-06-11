@@ -12,11 +12,11 @@ typedef struct _BulletData {
 } BulletData;
 #define AsBulletData(ptr) ((BulletData*) (ptr))
 
-static void Bullet_prePhysics(Object* obj) {
+static void Bullet_prePhysics(GameObject* obj) {
 	Box2DBodyApplyForceToCenter(obj->body, Vec2FMul(AsBulletData(obj->privData)->direction, 1.0f), true); // TODO adjust force
 }
 
-static void Bullet_onCollision(Object* obj, ObjectType* otherObjTyp) {
+static void Bullet_onCollision(GameObject* obj, ObjectType* otherObjTyp) {
 	(void)obj;
 	fprintf(stderr, "Hit something\n");
 
@@ -28,7 +28,7 @@ static void Bullet_onCollision(Object* obj, ObjectType* otherObjTyp) {
 	}
 }
 
-static void Bullet_deinit(Object* obj) {
+static void Bullet_deinit(GameObject* obj) {
 	if (obj) {
 		if (obj->body) {
 			Box2DWorldDestroyBody(CurrentWorld(), obj->body);
@@ -39,7 +39,7 @@ static void Bullet_deinit(Object* obj) {
 	}
 }
 
-int BlueprintBulletInit(Object* obj, Vec2F position, Vec2F direction) {
+int BlueprintBulletInit(GameObject* obj, Vec2F position, Vec2F direction) {
 	PROPAGATE_ERROR(ObjectInit(obj));
 	obj->privData = malloc(sizeof(BulletData));
 	assert(obj->privData);

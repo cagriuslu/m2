@@ -9,7 +9,7 @@ void LevelTestUnloader() {
 int LevelTestLoad() {
 	PROPAGATE_ERROR(LevelLoadTerrainCameraPlayer());
 
-	Object* terrain = ObjectStoreGetObjectByIndex(CurrentObjectStore(), TERRAIN_INDEX);
+	GameObject* terrain = ObjectStoreGetObjectByIndex(CurrentObjectStore(), TERRAIN_INDEX);
 	LoadTerrain(terrain, "resources/terrains/test.txt");
 
 	// Test object

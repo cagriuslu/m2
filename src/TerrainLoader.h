@@ -1,8 +1,8 @@
 #ifndef TERRAIN_LOADER_H
 #define TERRAIN_LOADER_H
 
-#include "Object.h"
+#include "GameObject.h"
 
-int LoadTerrain(Object *terrain, const char *tname);
+int LoadTerrain(GameObject* terrain, const char* tname);
 
 #endif

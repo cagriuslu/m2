@@ -2,7 +2,7 @@
 #define BOX2D_UTILS_H
 
 #include "Box2DWrapper.h"
-#include "Object.h"
+#include "GameObject.h"
 
 #define ALLOW_SLEEP (true)
 #define DONT_SLEEP (false)

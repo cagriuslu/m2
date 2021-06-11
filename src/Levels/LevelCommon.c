@@ -13,9 +13,9 @@ void LevelCallUnloader() {
 }
 
 int LevelLoadTerrainCameraPlayer() {
-	Object* terrain = CreateObject(); // 0
-	Object *camera = CreateObject(); // 1
-	Object *player = DrawObject(CreateObject()); // 2
+	GameObject* terrain = CreateObject(); // 0
+	GameObject *camera = CreateObject(); // 1
+	GameObject *player = DrawObject(CreateObject()); // 2
 	TerrainInit(terrain);
 	CameraInit(camera, player);
 	PlayerInit(player);
@@ -25,9 +25,9 @@ int LevelLoadTerrainCameraPlayer() {
 }
 
 int LevelLoadTerrainCameraGod() {
-	Object *terrain = CreateObject(); // 0
-	Object *camera = CreateObject(); // 1
-	Object *god = CreateObject(); // 2
+	GameObject *terrain = CreateObject(); // 0
+	GameObject *camera = CreateObject(); // 1
+	GameObject *god = CreateObject(); // 2
 	TerrainInit(terrain);
 	CameraInit(camera, god);
 	GodInit(god);

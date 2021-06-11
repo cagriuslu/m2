@@ -1,9 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "Object.h"
+#include "GameObject.h"
 #include "Error.h"
 
-int PlayerInit(Object *obj);
+int PlayerInit(GameObject *obj);
 
 #endif

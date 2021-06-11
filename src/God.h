@@ -1,8 +1,8 @@
 #ifndef GOD_H
 #define GOD_H
 
-#include "Object.h"
+#include "GameObject.h"
 
-int GodInit(Object *obj);
+int GodInit(GameObject *obj);
 
 #endif

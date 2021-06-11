@@ -1,12 +1,12 @@
-#include "Object.h"
+#include "GameObject.h"
 #include "Main.h"
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 
-void Object_ovrdGraphics(Object* obj) {
+void Object_ovrdGraphics(GameObject* obj) {
 	if (obj->tx) {
-		Object* camera = ObjectStoreGetObjectByIndex(CurrentObjectStore(), CAMERA_INDEX);
+		GameObject* camera = ObjectStoreGetObjectByIndex(CurrentObjectStore(), CAMERA_INDEX);
 
 		Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->pos, camera->pos);
 		Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
@@ -25,14 +25,14 @@ void Object_ovrdGraphics(Object* obj) {
 	}
 }
 
-int ObjectInit(Object *obj) {
-	memset(obj, 0, sizeof(Object));
+int ObjectInit(GameObject *obj) {
+	memset(obj, 0, sizeof(GameObject));
 	obj->tx = CurrentTextureLUT();
 	obj->ovrdGraphics = Object_ovrdGraphics;
 	return 0;
 }
 
-void ObjectDeinit(Object *obj) {
+void ObjectDeinit(GameObject *obj) {
 	if (obj->deinit) {
 		obj->deinit(obj);
 	}
@@ -46,14 +46,14 @@ void ObjectContactCB(Box2DContact* contact) {
 	ObjectType* bType = Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact)));
 
 	if (IS_OBJECT(*aType)) {
-		Object* a = (Object*) aType;
+		GameObject* a = (GameObject*) aType;
 		if (a->onCollision) {
 			a->onCollision(a, bType);
 		}
 	}
 
 	if (IS_OBJECT(*bType)) {
-		Object* b = (Object*) bType;
+		GameObject* b = (GameObject*) bType;
 		if (b->onCollision) {
 			b->onCollision(b, aType);
 		}

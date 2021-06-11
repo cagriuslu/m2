@@ -104,18 +104,18 @@ main_menu:
 		///// END OF EVENT HANDLING /////
 
 		///// PHYSICS /////
-		for (Object* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
+		for (GameObject* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
 			if (obj->prePhysics) {
 				obj->prePhysics(obj);
 			}
 		}
 		Box2DWorldStep(gWorld, timeStep, velocityIterations, positionIterations);
-		for (Object* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
+		for (GameObject* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
 			if (obj->body) {
 				obj->pos = Box2DBodyGetPosition(obj->body);
 			}
 		}
-		for (Object* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
+		for (GameObject* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
 			if (obj->postPhysics) {
 				obj->postPhysics(obj);
 			}
@@ -126,14 +126,14 @@ main_menu:
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
 		// Draw terrain first
-		Object* terrain = ObjectStoreGetObjectByIndex(&gObjectStore, TERRAIN_INDEX);
+		GameObject* terrain = ObjectStoreGetObjectByIndex(&gObjectStore, TERRAIN_INDEX);
 		if (terrain->ovrdGraphics) {
 			terrain->ovrdGraphics(terrain);
 		}
 		DrawListSort(&gDrawList);
 		size_t drawListSize = DrawListLength(&gDrawList);
 		for (size_t i = 0; i < drawListSize; i++) {
-			Object *obj = DrawListGet(&gDrawList, i);
+			GameObject *obj = DrawListGet(&gDrawList, i);
 			if (obj->preGraphics) {
 				obj->preGraphics(obj);
 			}
@@ -206,7 +206,7 @@ DrawList* CurrentDrawList() {
 }
 
 Vec2F CurrentPointerPositionInWorld() {
-	Object* camera = ObjectStoreGetObjectByIndex(CurrentObjectStore(), CAMERA_INDEX);
+	GameObject* camera = ObjectStoreGetObjectByIndex(CurrentObjectStore(), CAMERA_INDEX);
 	Vec2F cameraPosition = camera->pos;
 
 	Vec2I pointerPosition = PointerPosition();
