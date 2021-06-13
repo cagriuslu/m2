@@ -1,11 +1,22 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "Vec2F.h"
 #include <stdint.h>
 
 typedef struct _Object {
 	uint32_t type;
+	Vec2F position; // in world coordinates
+	// Components
+	uint32_t eventListener;
+	uint32_t physics;
+	uint32_t graphics;
+	// Private Data
+	void* privData;
 } Object;
+
+//int ObjectInit(Object* obj, Vec2F position);
+//void ObjectDeinit(Object* obj);
 
 // TODO get rid of these and switch to ECS
 

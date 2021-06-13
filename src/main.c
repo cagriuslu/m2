@@ -28,6 +28,8 @@ SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
 
+Level gLevel;
+
 Box2DWorld *gWorld;
 Box2DContactListener* gContactListener;
 ObjectStore gObjectStore;
@@ -52,7 +54,7 @@ int main(int argc, char **argv) {
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TILE_WIDTH_STR "x" TILE_WIDTH_STR ".png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
-	ObjectStoreInit(&gObjectStore);
+	ObjectStoreInit(&gObjectStore); // TODO remove
 
 	bool levelLoaded = false;
 
@@ -65,6 +67,7 @@ main_menu:
 	} else {
 		// Unload level
 		if (levelLoaded) {
+			// TODO remove
 			LevelUnload();
 			DrawListDeinit(&gDrawList);
 			ObjectStoreDestroyAllObjects(&gObjectStore);
@@ -191,6 +194,10 @@ SDL_Texture* CurrentTextureLUT() {
 
 TTF_Font* CurrentFont() {
 	return gFont;
+}
+
+Level* CurrentLevel() {
+	return &gLevel;
 }
 
 Box2DWorld* CurrentWorld() {

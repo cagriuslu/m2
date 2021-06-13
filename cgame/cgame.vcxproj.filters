@@ -93,9 +93,6 @@
     <ClCompile Include="..\src\Uis\UiStringInput.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\TileObject.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\TerrainLoader.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -115,6 +112,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Bucket.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\EventListenerComponent.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Component.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\InsertionList.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GraphicsComponent.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhysicsComponent.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Object.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TileObject.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -198,6 +216,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Bucket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\EventListenerComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\InsertionList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\GraphicsComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\PhysicsComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TileObject.h">

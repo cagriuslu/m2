@@ -5,6 +5,7 @@
 #include "Box2DWrapper.h"
 #include "ObjectStore.h"
 #include "Array.h"
+#include "Level.h"
 #include "DrawList.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -35,9 +36,11 @@ SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
 TTF_Font* CurrentFont();
 
-Box2DWorld* CurrentWorld();
-ObjectStore* CurrentObjectStore();
-DrawList* CurrentDrawList();
+Level* CurrentLevel();
+
+Box2DWorld* CurrentWorld(); // TODO remove
+ObjectStore* CurrentObjectStore(); // TODO remove
+DrawList* CurrentDrawList(); // TODO remove
 Vec2F CurrentPointerPositionInWorld();
 
 #endif
