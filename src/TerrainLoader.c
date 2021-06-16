@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "TerrainLoader.h"
-#include "Terrain.h"
+#include "Main.h"
 #include "TileObject.h"
 #include "Array.h"
 #include "Error.h"
@@ -16,7 +16,7 @@ typedef struct _TileKV {
 Array MyGetline(FILE *file);
 Array MySplit(char *input, char delimiter);
 
-int LoadTerrain(GameObject*terrain, const char *tname) {
+int TerrainLoad(const char *tname) {
 	// Open file
 	FILE *file = fopen(tname, "r");
 	assert(file);
@@ -57,8 +57,8 @@ int LoadTerrain(GameObject*terrain, const char *tname) {
 	}
 
 	// Read matirx data
-	Array tiles;
-	ArrayInit(&tiles, sizeof(TileObject), 16, SIZE_MAX);
+	//Array tiles;
+	//ArrayInit(&tiles, sizeof(TileObject), 16, SIZE_MAX);
 	size_t rowIndex = 0, colCount = 0;
 	while (true) {
 		Array lineBuffer = MyGetline(file);
@@ -93,15 +93,15 @@ int LoadTerrain(GameObject*terrain, const char *tname) {
 				}
 			}
 			// Save Tile
-			TileObject* tile = ArrayAppend(&tiles, NULL);
-			TileInit(tile, (Vec2I) { (int) colIndex, (int) rowIndex }, tileDef.txIndex, tileDef.colliderSize);
+			//TileObject* tile = ArrayAppend(&tiles, NULL);
+			//TileInit(tile, (Vec2I) { (int) colIndex, (int) rowIndex }, tileDef.txIndex, tileDef.colliderSize);
+
+			Object* tile = BucketMark(&CurrentLevel()->objects, NULL, NULL);
+			NewTileInit(tile, tileDef, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
 
 		rowIndex++;
 	}
-
-	TerrainSetTiles(terrain, tiles, colCount);
-	TerrainGenerateTexture(terrain);
 	
 	ArrayDeinit(&tileKVs);
 	fclose(file);

@@ -21,9 +21,6 @@
     <ClCompile Include="..\src\Box2DWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Camera.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Controls.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,28 +30,13 @@
     <ClCompile Include="..\src\Dialog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\DrawList.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Event.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\God.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Level.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\GameObject.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Player.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Terrain.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Ui.c">
@@ -66,19 +48,7 @@
     <ClCompile Include="..\src\Vec2I.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Blueprints\BlueprintStaticBox.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Dialogs\DialogMainMenu.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Levels\LevelCommon.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Levels\LevelEditor.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Levels\LevelTest.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Uis\UiBooleanInput.c">
@@ -96,19 +66,7 @@
     <ClCompile Include="..\src\TerrainLoader.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Blueprints\BlueprintWall.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Blueprints\BlueprintSkeleton.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Box2DUtils.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Blueprints\BlueprintBullet.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\ObjectStore.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Bucket.c">
@@ -135,18 +93,36 @@
     <ClCompile Include="..\src\TileObject.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\TileLookup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectCamera.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectPlayer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectGod.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectSkeleton.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectStaticBox.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectWall.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectBullet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Blueprint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Box2DWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Controls.h">
@@ -158,16 +134,10 @@
     <ClInclude Include="..\src\Dialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\DrawList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Event.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\God.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Hud.h">
@@ -176,19 +146,7 @@
     <ClInclude Include="..\src\Level.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Levels\LevelCommon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TerrainLoader.h">
@@ -207,9 +165,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\ObjectStore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Constants.h">
@@ -234,6 +189,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TileObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TileLookup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

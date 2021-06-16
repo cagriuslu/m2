@@ -3,10 +3,8 @@
 
 #include "Controls.h"
 #include "Box2DWrapper.h"
-#include "ObjectStore.h"
 #include "Array.h"
 #include "Level.h"
-#include "DrawList.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <stdbool.h>
@@ -38,9 +36,6 @@ TTF_Font* CurrentFont();
 
 Level* CurrentLevel();
 
-Box2DWorld* CurrentWorld(); // TODO remove
-ObjectStore* CurrentObjectStore(); // TODO remove
-DrawList* CurrentDrawList(); // TODO remove
 Vec2F CurrentPointerPositionInWorld();
 
 #endif

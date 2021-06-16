@@ -8,5 +8,5 @@ int ComponentInit(Component* component, uint32_t objectId) {
 }
 
 void ComponentDeinit(Component* component) {
-
+	memset(component, 0, sizeof(Component));
 }

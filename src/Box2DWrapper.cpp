@@ -110,6 +110,16 @@ void Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake) {
 	AsBody(body)->ApplyForceToCenter(ToVec2(force), wake);
 }
 
+void Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity) {
+	AsBody(body)->SetLinearVelocity(ToVec2(velocity));
+}
+
+Vec2F Box2DBodyGetLinearVelocity(Box2DBody* body) {
+	b2Vec2 v = AsBody(body)->GetLinearVelocity();
+	Vec2F vec2f = { v.x, v.y };
+	return vec2f;
+}
+
 Vec2F Box2DBodyGetPosition(Box2DBody *body) {
 	b2Vec2 v = AsBody(body)->GetPosition();
 	Vec2F vec2f = {v.x, v.y};

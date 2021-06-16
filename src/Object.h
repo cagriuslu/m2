@@ -1,57 +1,37 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "EventListenerComponent.h"
+#include "PhysicsComponent.h"
+#include "GraphicsComponent.h"
 #include "Vec2F.h"
 #include <stdint.h>
 
 typedef struct _Object {
-	uint32_t type;
 	Vec2F position; // in world coordinates
 	// Components
 	uint32_t eventListener;
 	uint32_t physics;
 	uint32_t graphics;
+	uint32_t terrainGraphics;
 	// Private Data
 	void* privData;
 } Object;
 
-//int ObjectInit(Object* obj, Vec2F position);
-//void ObjectDeinit(Object* obj);
+int ObjectInit(Object* obj, Vec2F position);
+void ObjectDeinit(Object* obj);
 
-// TODO get rid of these and switch to ECS
+EventListenerComponent* ObjectAddAndInitEventListener(Object* obj, uint32_t* outId);
+PhysicsComponent* ObjectAddAndInitPhysics(Object* obj, uint32_t* outId);
+GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint32_t* outId);
+GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint32_t* outId);
 
-// Definitions
-
-#define OBJTYP_OBJECT (0x01)
-#define OBJTYP_TILE   (0x02)
-
-#define OBJECT_PLAYER       ((0x000 << 8)  | OBJTYP_OBJECT)
-#define OBJECT_PLAYER_BASIC ((0x000 << 20) | OBJECT_PLAYER)
-#define OBJECT_PLAYER_GOD   ((0x001 << 20) | OBJECT_PLAYER)
-
-#define OBJECT_BULLET       ((0x001 << 8)  | OBJTYP_OBJECT)
-#define OBJECT_BULLET_BASIC ((0x000 << 20) | OBJECT_BULLET)
-
-#define OBJECT_ENEMY          ((0x002 << 8)  | OBJTYP_OBJECT)
-#define OBJECT_ENEMY_BASIC    ((0x000 << 20) | OBJECT_ENEMY)
-#define OBJECT_ENEMY_SKELETON ((0x001 << 20) | OBJECT_ENEMY)
-
-#define OBJECT_ENEMYBULLET ((0x003 << 8)  | OBJTYP_OBJECT)
-
-// Tests
-
-#define IS_OBJECT(objTyp) (((objTyp) & 0xFF) == OBJTYP_OBJECT)
-#define IS_TILE(objTyp)   (((objTyp) & 0xFF) == OBJTYP_TILE)
-
-#define IS_PLAYER(objTyp)        (((objTyp) & 0xFFFFF) == OBJECT_PLAYER)
-#define IS_PLAYER_BASIC(objType) (((objTyp) & 0xFFFFFFFF) == OBJECT_PLAYER_BASIC)
-#define IS_PLAYER_GOD(objType)   (((objTyp) & 0xFFFFFFFF) == OBJECT_PLAYER_GOD)
-
-#define IS_BULLET(objType)       (((objTyp) & 0xFFFFF) == OBJECT_BULLET)
-#define IS_BULLET_BASIC(objType) (((objTyp) & 0xFFFFFFFF) == OBJECT_BULLET_BASIC)
-
-#define IS_ENEMY(objTyp)           (((objTyp) & 0xFFFFF) == OBJECT_ENEMY)
-#define IS_ENEMY_BASIC(objType)    (((objTyp) & 0xFFFFFFFF) == OBJECT_ENEMY_BASIC)
-#define IS_ENEMY_SKELETON(objType) (((objTyp) & 0xFFFFFFFF) == OBJECT_ENEMY_SKELETON)
+int ObjectPlayerInit(Object* obj);
+int ObjectGodInit(Object* obj);
+int ObjectCameraInit(Object* obj);
+int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction);
+int ObjectSkeletonInit(Object* obj, Vec2F position);
+int ObjectWallInit(Object* obj, Vec2F position);
+int ObjectStaticBoxInit(Object* obj, Vec2F position);
 
 #endif

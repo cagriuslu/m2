@@ -1,18 +1,16 @@
 #include "Main.h"
-#include "Blueprint.h"
 #include "Box2DWrapper.h"
+#include "Object.h"
 #include "Array.h"
-#include "Player.h"
-#include "Camera.h"
 #include "Vec2I.h"
-#include "DrawList.h"
+#include "EventListenerComponent.h"
+#include "PhysicsComponent.h"
+#include "GraphicsComponent.h"
 #include "Event.h"
-#include "Terrain.h"
 #include "Bucket.h"
 #include "Level.h"
 #include "Dialog.h"
 #include "Debug.h"
-#include "ObjectStore.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -29,11 +27,6 @@ SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
 
 Level gLevel;
-
-Box2DWorld *gWorld;
-Box2DContactListener* gContactListener;
-ObjectStore gObjectStore;
-DrawList gDrawList;
 
 int main(int argc, char **argv) {
 	(void)argc;
@@ -54,7 +47,6 @@ int main(int argc, char **argv) {
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TILE_WIDTH_STR "x" TILE_WIDTH_STR ".png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
-	ObjectStoreInit(&gObjectStore); // TODO remove
 
 	bool levelLoaded = false;
 
@@ -67,23 +59,15 @@ main_menu:
 	} else {
 		// Unload level
 		if (levelLoaded) {
-			// TODO remove
-			LevelUnload();
-			DrawListDeinit(&gDrawList);
-			ObjectStoreDestroyAllObjects(&gObjectStore);
-			Box2DWorldDestroy(gWorld);
-			Box2DContactListenerDestroy(gContactListener);
+			LevelDeinit(&gLevel);
 		}
 		// Load level
-		gWorld = Box2DWorldCreate((Vec2F) {0.0, 0.0});
-		gContactListener = Box2DContactListenerRegister(ObjectContactCB);
-		Box2DWorldSetContactListener(gWorld, gContactListener);
-		DrawListInit(&gDrawList);
+		LevelInit(&gLevel);
 
 		if (res == X_MAIN_MENU_NEW_GAME) {
-			PROPAGATE_ERROR(LevelTestLoad());
+			PROPAGATE_ERROR(LevelLoadTest(&gLevel));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
-			PROPAGATE_ERROR(LevelEditorLoad());
+			PROPAGATE_ERROR(LevelLoadEditor(&gLevel));
 		} else {
 			fprintf(stderr, "Level not found\n");
 			return X_QUIT;
@@ -107,20 +91,25 @@ main_menu:
 		///// END OF EVENT HANDLING /////
 
 		///// PHYSICS /////
-		for (GameObject* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
-			if (obj->prePhysics) {
-				obj->prePhysics(obj);
+		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+			if (el->prePhysics) {
+				el->prePhysics(el);
 			}
 		}
-		Box2DWorldStep(gWorld, timeStep, velocityIterations, positionIterations);
-		for (GameObject* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
-			if (obj->body) {
-				obj->pos = Box2DBodyGetPosition(obj->body);
+		if (gLevel.world) {
+			Box2DWorldStep(gLevel.world, timeStep, velocityIterations, positionIterations);
+		}
+		for (PhysicsComponent* phy = BucketGetFirst(&gLevel.physics); phy; phy = BucketGetNext(&gLevel.physics, phy)) {
+			if (phy->body) {
+				Object* obj = BucketGetById(&gLevel.objects, phy->super.object);
+				if (obj) {
+					obj->position = Box2DBodyGetPosition(phy->body);
+				}
 			}
 		}
-		for (GameObject* obj = ObjectStoreGetFirstObject(&gObjectStore); obj; obj = ObjectStoreGetNextObject(&gObjectStore, obj)) {
-			if (obj->postPhysics) {
-				obj->postPhysics(obj);
+		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+			if (el->postPhysics) {
+				el->postPhysics(el);
 			}
 		}
 		///// END OF PHYSICS /////
@@ -128,29 +117,33 @@ main_menu:
 		///// GRAPHICS /////
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
-		// Draw terrain first
-		GameObject* terrain = ObjectStoreGetObjectByIndex(&gObjectStore, TERRAIN_INDEX);
-		if (terrain->ovrdGraphics) {
-			terrain->ovrdGraphics(terrain);
+		for (GraphicsComponent* gfx = BucketGetFirst(&gLevel.terrainGraphics); gfx; gfx = BucketGetNext(&gLevel.terrainGraphics, gfx)) {
+			if (gfx->draw) {
+				gfx->draw(gfx);
+			}
 		}
-		DrawListSort(&gDrawList);
-		size_t drawListSize = DrawListLength(&gDrawList);
-		for (size_t i = 0; i < drawListSize; i++) {
-			GameObject *obj = DrawListGet(&gDrawList, i);
-			if (obj->preGraphics) {
-				obj->preGraphics(obj);
+		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+			if (el->preGraphics) {
+				el->preGraphics(el);
 			}
-			if (obj->ovrdGraphics) {
-				obj->ovrdGraphics(obj);
+		}
+		InsertionListSort(&gLevel.drawList);
+		size_t insertionListSize = InsertionListLength(&gLevel.drawList);
+		for (size_t i = 0; i < insertionListSize; i++) {
+			uint32_t* graphicsIdPtr = InsertionListGet(&gLevel.drawList, i);
+			uint32_t graphicsId = *graphicsIdPtr;
+			GraphicsComponent* gfx = BucketGetById(&gLevel.graphics, graphicsId);
+			if (gfx && gfx->draw) {
+				gfx->draw(gfx);
 			}
-			if (obj->postGraphics) {
-				obj->postGraphics(obj);
+		}
+		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+			if (el->postGraphics) {
+				el->postGraphics(el);
 			}
 		}
 		SDL_RenderPresent(gRenderer);
 		///// END OF GRAPHICS /////
-
-		// TODO remove objects marked for deletion from array and drawlist
 
 		//unsigned end_ticks = SDL_GetTicks();
 		//fprintf(stderr, "Frame time: %u\n", end_ticks - start_ticks);
@@ -200,21 +193,9 @@ Level* CurrentLevel() {
 	return &gLevel;
 }
 
-Box2DWorld* CurrentWorld() {
-	return gWorld;
-}
-
-ObjectStore* CurrentObjectStore() {
-	return &gObjectStore;
-}
-
-DrawList* CurrentDrawList() {
-	return &gDrawList;
-}
-
 Vec2F CurrentPointerPositionInWorld() {
-	GameObject* camera = ObjectStoreGetObjectByIndex(CurrentObjectStore(), CAMERA_INDEX);
-	Vec2F cameraPosition = camera->pos;
+	Object* camera = BucketGetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
+	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = PointerPosition();
 	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (CurrentScreenWidth() / 2), pointerPosition.y - (CurrentScreenHeight() / 2) };

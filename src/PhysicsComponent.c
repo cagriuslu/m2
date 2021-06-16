@@ -1,4 +1,5 @@
 #include "PhysicsComponent.h"
+#include "Object.h"
 #include "Main.h"
 #include "Error.h"
 #include <stdio.h>
@@ -18,25 +19,18 @@ void PhysicsComponentDeinit(PhysicsComponent* phy) {
 }
 
 void PhysicsComponentContactCB(Box2DContact* contact) {
-	// TODO
-	/*
-	fprintf(stderr, "Contact begin\n");
-
-	Object* a = Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact)));
-	Object* b = Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact)));
-
-	if (IS_OBJECT(a->type)) {
-		GameObject* aGO = (GameObject*)a;
-		if (aGO->onCollision) {
-			aGO->onCollision(aGO, b);
+	fprintf(stderr, "PhysicsComponentContactCB\n");
+	Level* level = CurrentLevel();
+	uint32_t phyIdA = (uint32_t) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact))));
+	uint32_t phyIdB = (uint32_t) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact))));
+	PhysicsComponent* phyA = BucketGetById(&level->physics, phyIdA);
+	PhysicsComponent* phyB = BucketGetById(&level->physics, phyIdB);
+	if (phyA && phyB) {
+		if (phyA->onCollision) {
+			phyA->onCollision(phyA, phyB);
+		}
+		if (phyB->onCollision) {
+			phyB->onCollision(phyB, phyA);
 		}
 	}
-
-	if (IS_OBJECT(b->type)) {
-		GameObject* bGO = (GameObject*)b;
-		if (bGO->onCollision) {
-			bGO->onCollision(bGO, a);
-		}
-	}
-	*/
 }

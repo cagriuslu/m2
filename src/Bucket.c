@@ -33,7 +33,6 @@ void* BucketMark(Bucket* bucket, void* copy, uint32_t* outId) {
 
 
 		BucketItem* itemToAllocate = BucketItemData(bucket, indexToAllocate);
-		fprintf(stderr, "id before allocate %08x\n", itemToAllocate->id);
 		bucket->nextFreeIndex = (itemToAllocate->id) & 0xFFFF; // Extract next free index
 		itemToAllocate->id = (bucket->nextKey << 16) | (indexToAllocate & 0xFFFF); // Store new id of the item
 		if (outId) {

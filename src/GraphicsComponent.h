@@ -17,4 +17,6 @@ typedef struct _GraphicsComponent {
 int GraphicsComponentInit(GraphicsComponent* gfx, uint32_t objectId);
 void GraphicsComponentDeinit(GraphicsComponent* gfx);
 
+int GraphicsComponentYComparatorCB(void* gfxIdAPtr, void* gfxIdBPtr);
+
 #endif

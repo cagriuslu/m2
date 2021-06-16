@@ -16,7 +16,7 @@ void InsertionListDeinit(InsertionList* list) {
 }
 
 size_t InsertionListLength(InsertionList* list) {
-	return list->array->length;
+	return list->array.length;
 }
 
 void* InsertionListGet(InsertionList* list, size_t i) {
@@ -33,14 +33,14 @@ void InsertionListSort(InsertionList* list) {
 	if (1 < len) {
 		for (size_t i = 1; i < len; i++) {
 			void* currItemPtr = InsertionListGet(list, i);
-			memcpy(list->tmp, currItemPtr, list->array->itemSize); // Copy currItem into tmp
+			memcpy(list->tmp, currItemPtr, list->array.itemSize); // Copy currItem into tmp
 			for (size_t j = i; 0 < j--; ) {
 				void* iterItemPtr = InsertionListGet(list, j);
 				if (0 < list->comparator(currItemPtr, iterItemPtr)) {
 					// Copy iter into next item
-					memcpy(InsertionListGet(list, j + 1), iterItemPtr, list->array->itemSize);
+					memcpy(InsertionListGet(list, j + 1), iterItemPtr, list->array.itemSize);
 					// Put curr object in iter's place
-					memcpy(iterItemPtr, currItemPtr, list->array->itemSize);
+					memcpy(iterItemPtr, list->tmp, list->array.itemSize);
 					// TODO this can be optimized
 					// Don't copy the item in place every time
 				} else {

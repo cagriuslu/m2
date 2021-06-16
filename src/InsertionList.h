@@ -4,7 +4,7 @@
 #include "Array.h"
 
 typedef struct _InsertionList {
-	Array* array;
+	Array array;
 	int (*comparator)(void*, void*);
 	void* tmp;
 } InsertionList;

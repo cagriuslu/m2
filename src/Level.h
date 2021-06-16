@@ -11,9 +11,10 @@ typedef struct _Level {
 	Bucket eventListeners;
 	Bucket physics;
 	Bucket graphics;
+	Bucket terrainGraphics;
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
-	uint32_t terrainId, cameraId, playerId;
+	uint32_t cameraId, playerId;
 } Level;
 
 int LevelInit(Level* level);

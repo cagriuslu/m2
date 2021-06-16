@@ -41,6 +41,8 @@ void          Box2DBodySetAngularDamping(Box2DBody *body, float angularDamping);
 void          Box2DBodySetFixedRotation(Box2DBody *body, bool flag);
 void          Box2DBodySetUserData(Box2DBody *body, void *userData);
 void          Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake);
+void          Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity);
+Vec2F         Box2DBodyGetLinearVelocity(Box2DBody* body);
 Vec2F         Box2DBodyGetPosition(Box2DBody *body);
 float         Box2DBodyGetAngle(Box2DBody *body);
 void*         Box2DBodyGetUserData(Box2DBody *body);
