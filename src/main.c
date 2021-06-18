@@ -25,6 +25,7 @@ SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
 
 Level gLevel;
+unsigned gDeltaTicks;
 
 int main(int argc, char **argv) {
 	(void)argc;
@@ -75,7 +76,13 @@ main_menu:
 	}
 
 	float timeSinceLastWorldStep = 0.0f;
+	unsigned prevPrePhysicsTicks = SDL_GetTicks();
 	unsigned prevWorldStepTicks = SDL_GetTicks();
+	unsigned prevPostPhysicsTicks = SDL_GetTicks();
+	unsigned prevTerrainDrawGraphicsTicks = SDL_GetTicks();
+	unsigned prevPreGraphicsTicks = SDL_GetTicks();
+	unsigned prevDrawGraphicsTicks = SDL_GetTicks();
+	unsigned prevPostGraphicsTicks = SDL_GetTicks();
 	bool quit = false;
 	while (!quit) {
 		//unsigned start_ticks = SDL_GetTicks();
@@ -92,19 +99,21 @@ main_menu:
 		///// END OF EVENT HANDLING /////
 
 		///// PHYSICS /////
+		gDeltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
+		prevPrePhysicsTicks += gDeltaTicks;
 		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
 			if (el->prePhysics) {
 				el->prePhysics(el);
 			}
 		}
 		if (gLevel.world) {
-			unsigned currWorldStepTicks = SDL_GetTicks();
-			timeSinceLastWorldStep += (float)(currWorldStepTicks - prevWorldStepTicks) / 1000.0f;
+			gDeltaTicks = SDL_GetTicks() - prevWorldStepTicks;
+			timeSinceLastWorldStep += gDeltaTicks / 1000.0f;
 			while (physicsStepPeriod < timeSinceLastWorldStep) {
 				Box2DWorldStep(gLevel.world, physicsStepPeriod, velocityIterations, positionIterations);
 				timeSinceLastWorldStep -= physicsStepPeriod;
 			}
-			prevWorldStepTicks = currWorldStepTicks;
+			prevWorldStepTicks += gDeltaTicks;
 		}
 		for (PhysicsComponent* phy = BucketGetFirst(&gLevel.physics); phy; phy = BucketGetNext(&gLevel.physics, phy)) {
 			if (phy->body) {
@@ -114,6 +123,8 @@ main_menu:
 				}
 			}
 		}
+		gDeltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
+		prevPostPhysicsTicks += gDeltaTicks;
 		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
 			if (el->postPhysics) {
 				el->postPhysics(el);
@@ -125,17 +136,23 @@ main_menu:
 		///// GRAPHICS /////
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
+		gDeltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
+		prevTerrainDrawGraphicsTicks += gDeltaTicks;
 		for (GraphicsComponent* gfx = BucketGetFirst(&gLevel.terrainGraphics); gfx; gfx = BucketGetNext(&gLevel.terrainGraphics, gfx)) {
 			if (gfx->draw) {
 				gfx->draw(gfx);
 			}
 		}
+		gDeltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
+		prevPreGraphicsTicks += gDeltaTicks;
 		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
 			if (el->preGraphics) {
 				el->preGraphics(el);
 			}
 		}
 		InsertionListSort(&gLevel.drawList);
+		gDeltaTicks = SDL_GetTicks() - prevDrawGraphicsTicks;
+		prevDrawGraphicsTicks += gDeltaTicks;
 		size_t insertionListSize = InsertionListLength(&gLevel.drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
 			uint32_t graphicsId = InsertionListGet(&gLevel.drawList, i);
@@ -144,6 +161,8 @@ main_menu:
 				gfx->draw(gfx);
 			}
 		}
+		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
+		prevPostGraphicsTicks += gDeltaTicks;
 		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
 			if (el->postGraphics) {
 				el->postGraphics(el);
@@ -198,6 +217,10 @@ TTF_Font* CurrentFont() {
 
 Level* CurrentLevel() {
 	return &gLevel;
+}
+
+unsigned DeltaTicks() {
+	return gDeltaTicks;
 }
 
 Vec2F CurrentPointerPositionInWorld() {

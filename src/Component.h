@@ -54,6 +54,7 @@ void ComponentDefenseDeinit(ComponentDefense* def);
 typedef struct _ComponentOffense {
 	Component super;
 	uint32_t originator; // Object ID
+	int ticksLeft;
 	int hp;
 } ComponentOffense;
 int ComponentOffenseInit(ComponentOffense* def, uint32_t objId);

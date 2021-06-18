@@ -1,19 +1,27 @@
 #include "../Object.h"
 #include "../Main.h"
 #include "../Box2DUtils.h"
+#include "../Debug.h"
 #include <math.h>
 #include <stdio.h>
-#include <assert.h>
 
 #define ANGLE(v2fDir) atan2f((v2fDir).y, (v2fDir).x)
 
 static void Bullet_prePhysics(EventListenerComponent* el) {
-	Object* obj = BucketGetById(&CurrentLevel()->objects, el->super.objId);
+	Object* obj = FindObjectOfComponent(el);
 	if (obj && obj->physics) {
-		PhysicsComponent* phy = BucketGetById(&CurrentLevel()->physics, obj->physics);
+		PhysicsComponent* phy = FindPhysicsOfObject(obj);
 		if (phy && phy->body) {
-			Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
+			const Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
 			Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f));
+		}
+
+		ComponentOffense* offense = FindOffenseOfObject(obj);
+		if (offense) {
+			offense->ticksLeft -= DeltaTicks();
+			if (offense->ticksLeft <= 0) {
+				DeleteObject(obj);
+			}
 		}
 	}
 }
@@ -28,8 +36,8 @@ static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 		if (offense && defense) {
 			// Calculate damage
 			defense->hp -= offense->hp;
-			
-			Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
+
+			const Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
 			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 500.0f), true);
 			fprintf(stderr, "Defense HP %d\n", defense->hp);
 		}
@@ -51,8 +59,8 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 		position,
 		PLAYER_BULLET_CATEGORY,
 		0.167f, // Radius
-		0.01f, // Mass
-		10.0f // Damping
+		0.0f, // Mass
+		0.0f // Damping
 	);
 	Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f)); // Give initial velocity
 	phy->onCollision = Bullet_onCollision;

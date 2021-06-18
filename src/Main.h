@@ -35,6 +35,7 @@ SDL_Texture* CurrentTextureLUT();
 TTF_Font* CurrentFont();
 
 Level* CurrentLevel();
+unsigned DeltaTicks();
 
 Vec2F CurrentPointerPositionInWorld();
 

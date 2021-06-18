@@ -79,6 +79,7 @@ int ObjectPlayerInit(Object* obj) {
 	ComponentOffense* off = ObjectAddAndInitOffense(obj, NULL);
 	off->hp = 15;
 	off->originator = objId;
+	off->ticksLeft = 750;
 
 	return 0;
 }
