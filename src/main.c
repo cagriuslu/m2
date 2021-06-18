@@ -33,7 +33,8 @@ int main(int argc, char **argv) {
 
 	fprintf(stderr, "Hello, world!\n");
 	
-	const float timeStep = 1.0f / 60.0f;
+	const float physicsStepPerSecond = 80.0f;
+	const float physicsStepPeriod = 1.0f / physicsStepPerSecond;
 	const int velocityIterations = 8;
 	const int positionIterations = 3;
 
@@ -73,6 +74,8 @@ main_menu:
 		levelLoaded = true;
 	}
 
+	float timeSinceLastWorldStep = 0.0f;
+	unsigned prevWorldStepTicks = SDL_GetTicks();
 	bool quit = false;
 	while (!quit) {
 		//unsigned start_ticks = SDL_GetTicks();
@@ -95,7 +98,13 @@ main_menu:
 			}
 		}
 		if (gLevel.world) {
-			Box2DWorldStep(gLevel.world, timeStep, velocityIterations, positionIterations);
+			unsigned currWorldStepTicks = SDL_GetTicks();
+			timeSinceLastWorldStep += (float)(currWorldStepTicks - prevWorldStepTicks) / 1000.0f;
+			while (physicsStepPeriod < timeSinceLastWorldStep) {
+				Box2DWorldStep(gLevel.world, physicsStepPeriod, velocityIterations, positionIterations);
+				timeSinceLastWorldStep -= physicsStepPeriod;
+			}
+			prevWorldStepTicks = currWorldStepTicks;
 		}
 		for (PhysicsComponent* phy = BucketGetFirst(&gLevel.physics); phy; phy = BucketGetNext(&gLevel.physics, phy)) {
 			if (phy->body) {

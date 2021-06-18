@@ -1,4 +1,5 @@
 #include "InsertionList.h"
+#include "Debug.h"
 #include <string.h>
 
 #define AsUint32Ptr(ptr) ((uint32_t*) (ptr))
@@ -45,7 +46,7 @@ void InsertionListSort(InsertionList* list) {
 			uint32_t iterItem = InsertionListGet(list, j);
 			if (0 < list->comparator(currItem, iterItem)) {
 				// Copy iter into next item
-				* AsUint32Ptr(ArrayGet(&list->array, j + 1)) = iterItem;
+				*AsUint32Ptr(ArrayGet(&list->array, j + 1)) = iterItem;
 				// Put curr object in place of iter
 				*AsUint32Ptr(ArrayGet(&list->array, j)) = currItem;
 			} else {

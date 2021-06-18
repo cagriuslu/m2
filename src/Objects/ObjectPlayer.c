@@ -33,7 +33,6 @@ static void Player_prePhysics(EventListenerComponent* el) {
 			}
 		}
 		if (IsButtonPressed(BUTTON_PRIMARY)) {
-			DebugVec2F("pointer in world", CurrentPointerPositionInWorld());
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F bulletDir = Vec2FSub(pointerPosInWorld, obj->position);
 

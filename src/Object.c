@@ -21,6 +21,7 @@ void ObjectDeinit(Object* obj) {
 		BucketUnmark(&CurrentLevel()->physics, phy);
 	}
 	if (obj->graphics) {
+		InsertionListRemove(&CurrentLevel()->drawList, obj->graphics);
 		GraphicsComponent* gfx = BucketGetById(&CurrentLevel()->graphics, obj->graphics);
 		GraphicsComponentDeinit(gfx);
 		BucketUnmark(&CurrentLevel()->graphics, gfx);

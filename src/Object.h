@@ -12,6 +12,13 @@
 #define FindDefenseById(id)      ((ComponentDefense*) BucketGetById(&CurrentLevel()->defenses, (id)))
 #define FindDefenseOfObject(obj) (FindDefenseById((obj->defense)))
 
+#define DeleteObjectById(id)                                  \
+	do {                                                      \
+		uint32_t __id__ = (id);                               \
+		ArrayAppend(&CurrentLevel()->deleteList, &__id__);    \
+	} while (0)
+#define DeleteObject(obj)    DeleteObjectById(BucketGetId(&CurrentLevel()->objects, (obj)))
+
 typedef struct _Object {
 	Vec2F position; // in world coordinates
 	// Components

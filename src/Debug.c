@@ -101,3 +101,13 @@ void DebugButtons(const char *message, uint16_t *buttonsPressed, uint16_t *butto
 	}
 	fprintf(stderr, "\n");
 }
+
+void DebugIntArray(const char* message, Array* array) {
+	fprintf(stderr, "%s ", message);
+	fprintf(stderr, "ArrayLength=%zu {", array->length);
+	for (size_t i = 0; i < array->length; i++) {
+		int* ptr = ArrayGet(array, i);
+		fprintf(stderr, "%d, ", *ptr);
+	}
+	fprintf(stderr, "}\n");
+}

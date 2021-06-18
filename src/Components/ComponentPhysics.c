@@ -20,7 +20,6 @@ void PhysicsComponentDeinit(PhysicsComponent* phy) {
 }
 
 void PhysicsComponentContactCB(Box2DContact* contact) {
-	fprintf(stderr, "PhysicsComponentContactCB\n");
 	Level* level = CurrentLevel();
 	uint32_t phyIdA = (uint32_t) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact))));
 	uint32_t phyIdB = (uint32_t) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact))));

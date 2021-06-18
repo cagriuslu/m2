@@ -13,7 +13,7 @@ static void Bullet_prePhysics(EventListenerComponent* el) {
 		PhysicsComponent* phy = BucketGetById(&CurrentLevel()->physics, obj->physics);
 		if (phy && phy->body) {
 			Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
-			Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(direction, 1.0f), true); // TODO adjust force
+			Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f));
 		}
 	}
 }
@@ -26,11 +26,15 @@ static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 		ComponentOffense* offense = BucketGetById(&level->offenses, obj->offense);
 		ComponentDefense* defense = BucketGetById(&level->defenses, otherObj->defense);
 		if (offense && defense) {
+			// Calculate damage
 			defense->hp -= offense->hp;
+			
+			Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
+			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 500.0f), true);
 			fprintf(stderr, "Defense HP %d\n", defense->hp);
 		}
 	}
-	fprintf(stderr, "Hit something\n");
+	DeleteObject(obj);
 }
 
 int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffense** outOffense) {
@@ -50,7 +54,7 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 		0.01f, // Mass
 		10.0f // Damping
 	);
-	Box2DBodySetLinearVelocity(phy->body, direction); // Give initial velocity
+	Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f)); // Give initial velocity
 	phy->onCollision = Bullet_onCollision;
 	
 	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
