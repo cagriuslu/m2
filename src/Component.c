@@ -3,7 +3,7 @@
 
 int ComponentInit(Component* component, uint32_t objectId) {
 	memset(component, 0, sizeof(Component));
-	component->object = objectId;
+	component->objId = objectId;
 	return 0;
 }
 

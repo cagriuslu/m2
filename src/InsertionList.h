@@ -2,20 +2,21 @@
 #define INSERTION_LIST_H
 
 #include "Array.h"
+#include <stdint.h>
 
 typedef struct _InsertionList {
 	Array array;
-	int (*comparator)(void*, void*);
-	void* tmp;
+	int (*comparator)(uint32_t, uint32_t);
 } InsertionList;
 
-int InsertionListInit(InsertionList* list, size_t itemSize, size_t maxItemCount, int (*comparator)(void*, void*));
+int InsertionListInit(InsertionList* list, size_t maxItemCount, int (*comparator)(uint32_t, uint32_t));
 void InsertionListDeinit(InsertionList* list);
 
 size_t InsertionListLength(InsertionList* list);
-void* InsertionListGet(InsertionList* list, size_t i);
+uint32_t InsertionListGet(InsertionList* list, size_t i);
 
-void* InsertionListInsert(InsertionList* list, void* copy);
+void InsertionListInsert(InsertionList* list, uint32_t id);
+void InsertionListRemove(InsertionList* list, uint32_t id);
 void InsertionListSort(InsertionList* list);
 
 #endif

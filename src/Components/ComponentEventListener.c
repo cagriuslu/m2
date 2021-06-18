@@ -1,5 +1,5 @@
-#include "EventListenerComponent.h"
-#include "Error.h"
+#include "../Component.h"
+#include "../Error.h"
 #include <string.h>
 
 int EventListenerComponentInit(EventListenerComponent* evListener, uint32_t objectId) {
@@ -9,4 +9,5 @@ int EventListenerComponentInit(EventListenerComponent* evListener, uint32_t obje
 
 void EventListenerComponentDeinit(EventListenerComponent* evListener) {
 	ComponentDeinit((Component*)evListener);
+	memset(evListener, 0, sizeof(EventListenerComponent));
 }

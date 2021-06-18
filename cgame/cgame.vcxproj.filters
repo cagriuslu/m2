@@ -72,25 +72,13 @@
     <ClCompile Include="..\src\Bucket.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\EventListenerComponent.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Component.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\InsertionList.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\GraphicsComponent.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\PhysicsComponent.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Object.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\TileObject.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\TileLookup.c">
@@ -115,6 +103,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectBullet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectTile.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Components\ComponentEventListener.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Components\ComponentGraphics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Components\ComponentPhysics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Components\ComponentDefense.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Components\ComponentOffense.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -173,22 +179,10 @@
     <ClInclude Include="..\src\Bucket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\EventListenerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\InsertionList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\GraphicsComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\PhysicsComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\TileObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\TileLookup.h">

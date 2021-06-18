@@ -1,51 +1,55 @@
 #include "InsertionList.h"
 #include <string.h>
-#include <assert.h>
 
-int InsertionListInit(InsertionList* list, size_t itemSize, size_t maxItemCount, int (*comparator)(void*, void*)) {
-	PROPAGATE_ERROR(ArrayInit(&list->array, itemSize, maxItemCount, maxItemCount));
-	list->tmp = malloc(itemSize);
-	assert(list->tmp);
+#define AsUint32Ptr(ptr) ((uint32_t*) (ptr))
+
+int InsertionListInit(InsertionList* list, size_t maxItemCount, int (*comparator)(uint32_t, uint32_t)) {
+	PROPAGATE_ERROR(ArrayInit(&list->array, sizeof(uint32_t), maxItemCount, maxItemCount));
 	list->comparator = comparator;
 	return 0;
 }
 
 void InsertionListDeinit(InsertionList* list) {
 	ArrayDeinit(&list->array);
-	free(list->tmp);
 }
 
 size_t InsertionListLength(InsertionList* list) {
 	return list->array.length;
 }
 
-void* InsertionListGet(InsertionList* list, size_t i) {
-	return ArrayGet(&list->array, i);
+uint32_t InsertionListGet(InsertionList* list, size_t i) {
+	uint32_t* ptr = ArrayGet(&list->array, i);
+	return ptr ? *ptr : 0;
 }
 
-void* InsertionListInsert(InsertionList* list, void* copy) {
+void InsertionListInsert(InsertionList* list, uint32_t id) {
 	// TODO insert via binary search
-	return ArrayAppend(&list->array, copy);
+	ArrayAppend(&list->array, &id);
+}
+
+void InsertionListRemove(InsertionList* list, uint32_t id) {
+	// TODO find via binary search
+	for (size_t i = 0; i < list->array.length; i++) {
+		uint32_t* ptr = ArrayGet(&list->array, i);
+		if (ptr && id == *ptr) {
+			ArrayRemove(&list->array, i);
+			return;
+		}
+	}
 }
 
 void InsertionListSort(InsertionList* list) {
-	size_t len = InsertionListLength(list);
-	if (1 < len) {
-		for (size_t i = 1; i < len; i++) {
-			void* currItemPtr = InsertionListGet(list, i);
-			memcpy(list->tmp, currItemPtr, list->array.itemSize); // Copy currItem into tmp
-			for (size_t j = i; 0 < j--; ) {
-				void* iterItemPtr = InsertionListGet(list, j);
-				if (0 < list->comparator(currItemPtr, iterItemPtr)) {
-					// Copy iter into next item
-					memcpy(InsertionListGet(list, j + 1), iterItemPtr, list->array.itemSize);
-					// Put curr object in iter's place
-					memcpy(iterItemPtr, list->tmp, list->array.itemSize);
-					// TODO this can be optimized
-					// Don't copy the item in place every time
-				} else {
-					break;
-				}
+	for (size_t i = 1; i < list->array.length; i++) {
+		uint32_t currItem = InsertionListGet(list, i);
+		for (size_t j = i; 0 < j--; ) {
+			uint32_t iterItem = InsertionListGet(list, j);
+			if (0 < list->comparator(currItem, iterItem)) {
+				// Copy iter into next item
+				* AsUint32Ptr(ArrayGet(&list->array, j + 1)) = iterItem;
+				// Put curr object in place of iter
+				*AsUint32Ptr(ArrayGet(&list->array, j)) = currItem;
+			} else {
+				break;
 			}
 		}
 	}

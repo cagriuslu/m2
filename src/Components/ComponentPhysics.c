@@ -1,7 +1,7 @@
-#include "PhysicsComponent.h"
-#include "Object.h"
-#include "Main.h"
-#include "Error.h"
+#include "../Component.h"
+#include "../Object.h"
+#include "../Main.h"
+#include "../Error.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -16,6 +16,7 @@ void PhysicsComponentDeinit(PhysicsComponent* phy) {
 		Box2DWorldDestroyBody(CurrentLevel()->world, phy->body);
 	}
 	ComponentDeinit((Component*)phy);
+	memset(phy, 0, sizeof(PhysicsComponent));
 }
 
 void PhysicsComponentContactCB(Box2DContact* contact) {

@@ -1,7 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "TerrainLoader.h"
+#include "TileLookup.h"
+#include "Object.h"
 #include "Main.h"
-#include "TileObject.h"
 #include "Array.h"
 #include "Error.h"
 #include <stdio.h>
@@ -97,7 +98,7 @@ int TerrainLoad(const char *tname) {
 			//TileInit(tile, (Vec2I) { (int) colIndex, (int) rowIndex }, tileDef.txIndex, tileDef.colliderSize);
 
 			Object* tile = BucketMark(&CurrentLevel()->objects, NULL, NULL);
-			NewTileInit(tile, tileDef, (Vec2F) { (float)colIndex, (float)rowIndex });
+			ObjectTileInit(tile, tileDef, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
 
 		rowIndex++;

@@ -35,6 +35,7 @@ bool BucketIsMarked(Bucket* bucket, void* data);
 bool BucketIsMarkedByIndex(Bucket* bucket, int idx);
 bool BucketIsMarkedById(Bucket* bucket, uint32_t id);
 void* BucketGetFirst(Bucket* bucket);
+void* BucketGetLast(Bucket* bucket);
 void* BucketGetNext(Bucket* bucket, void* currData);
 void* BucketGetPrev(Bucket* bucket, void* data);
 void* BucketGetByIndex(Bucket* bucket, int idx);

@@ -1,5 +1,6 @@
 #include "Object.h"
 #include "Main.h"
+#include "Bucket.h"
 #include <string.h>
 
 int ObjectInit(Object* obj, Vec2F position) {
@@ -9,7 +10,36 @@ int ObjectInit(Object* obj, Vec2F position) {
 }
 
 void ObjectDeinit(Object* obj) {
-	// TODO look for components and delete them
+	if (obj->eventListener) {
+		EventListenerComponent* el = BucketGetById(&CurrentLevel()->eventListeners, obj->eventListener);
+		EventListenerComponentDeinit(el);
+		BucketUnmark(&CurrentLevel()->eventListeners, el);
+	}
+	if (obj->physics) {
+		PhysicsComponent* phy = BucketGetById(&CurrentLevel()->physics, obj->physics);
+		PhysicsComponentDeinit(phy);
+		BucketUnmark(&CurrentLevel()->physics, phy);
+	}
+	if (obj->graphics) {
+		GraphicsComponent* gfx = BucketGetById(&CurrentLevel()->graphics, obj->graphics);
+		GraphicsComponentDeinit(gfx);
+		BucketUnmark(&CurrentLevel()->graphics, gfx);
+	}
+	if (obj->terrainGraphics) {
+		GraphicsComponent* gfx = BucketGetById(&CurrentLevel()->terrainGraphics, obj->terrainGraphics);
+		GraphicsComponentDeinit(gfx);
+		BucketUnmark(&CurrentLevel()->terrainGraphics, gfx);
+	}
+	if (obj->defense) {
+		ComponentDefense* def = BucketGetById(&CurrentLevel()->defenses, obj->defense);
+		ComponentDefenseDeinit(def);
+		BucketUnmark(&CurrentLevel()->defenses, def);
+	}
+	if (obj->offense) {
+		ComponentOffense* off = BucketGetById(&CurrentLevel()->offenses, obj->offense);
+		ComponentOffenseDeinit(off);
+		BucketUnmark(&CurrentLevel()->offenses, off);
+	}
 	memset(obj, 0, sizeof(Object));
 }
 
@@ -37,7 +67,7 @@ GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint32_t* outId) {
 	uint32_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	GraphicsComponent* gfx = BucketMark(&CurrentLevel()->graphics, NULL, &obj->graphics);
 	GraphicsComponentInit(gfx, objectId);
-	InsertionListInsert(&CurrentLevel()->drawList, &obj->graphics);
+	InsertionListInsert(&CurrentLevel()->drawList, obj->graphics);
 	if (outId) {
 		outId[0] = obj->graphics;
 	}
@@ -52,4 +82,24 @@ GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint32_t* outId)
 		outId[0] = obj->terrainGraphics;
 	}
 	return gfx;
+}
+
+ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint32_t* outId) {
+	uint32_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
+	ComponentDefense* def = BucketMark(&CurrentLevel()->defenses, NULL, &obj->defense);
+	ComponentDefenseInit(def, objectId);
+	if (outId) {
+		outId[0] = obj->defense;
+	}
+	return def;
+}
+
+ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint32_t* outId) {
+	uint32_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
+	ComponentOffense* off = BucketMark(&CurrentLevel()->offenses, NULL, &obj->offense);
+	ComponentOffenseInit(off, objectId);
+	if (outId) {
+		outId[0] = obj->offense;
+	}
+	return off;
 }

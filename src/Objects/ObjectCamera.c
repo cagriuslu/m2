@@ -3,7 +3,7 @@
 
 void Camera_postPhysics(EventListenerComponent* el) {
 	Level* level = CurrentLevel();
-	Object* camera = BucketGetById(&level->objects, el->super.object);
+	Object* camera = BucketGetById(&level->objects, el->super.objId);
 	Object* player = BucketGetById(&level->objects, level->playerId);
 	if (camera && player) {
 		camera->position = player->position;

@@ -1,10 +1,11 @@
-#include "TileObject.h"
-#include "Main.h"
-#include "Box2DUtils.h"
+#include "../Object.h"
+#include "../Main.h"
+#include "../TileLookup.h"
+#include "../Box2DUtils.h"
 #include <string.h>
 #include <stdio.h>
 
-int NewTileInit(Object* obj, TileDef tileDef, Vec2F position) {
+int ObjectTileInit(Object* obj, TileDef tileDef, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj, position));
 
 	if (tileDef.colliderSize.x && tileDef.colliderSize.y) {

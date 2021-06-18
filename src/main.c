@@ -3,9 +3,7 @@
 #include "Object.h"
 #include "Array.h"
 #include "Vec2I.h"
-#include "EventListenerComponent.h"
-#include "PhysicsComponent.h"
-#include "GraphicsComponent.h"
+#include "Component.h"
 #include "Event.h"
 #include "Bucket.h"
 #include "Level.h"
@@ -101,7 +99,7 @@ main_menu:
 		}
 		for (PhysicsComponent* phy = BucketGetFirst(&gLevel.physics); phy; phy = BucketGetNext(&gLevel.physics, phy)) {
 			if (phy->body) {
-				Object* obj = BucketGetById(&gLevel.objects, phy->super.object);
+				Object* obj = BucketGetById(&gLevel.objects, phy->super.objId);
 				if (obj) {
 					obj->position = Box2DBodyGetPosition(phy->body);
 				}
@@ -112,6 +110,7 @@ main_menu:
 				el->postPhysics(el);
 			}
 		}
+		LevelDeleteObjects(&gLevel);
 		///// END OF PHYSICS /////
 
 		///// GRAPHICS /////
@@ -130,8 +129,7 @@ main_menu:
 		InsertionListSort(&gLevel.drawList);
 		size_t insertionListSize = InsertionListLength(&gLevel.drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
-			uint32_t* graphicsIdPtr = InsertionListGet(&gLevel.drawList, i);
-			uint32_t graphicsId = *graphicsIdPtr;
+			uint32_t graphicsId = InsertionListGet(&gLevel.drawList, i);
 			GraphicsComponent* gfx = BucketGetById(&gLevel.graphics, graphicsId);
 			if (gfx && gfx->draw) {
 				gfx->draw(gfx);

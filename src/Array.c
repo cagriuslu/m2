@@ -38,6 +38,22 @@ void* ArrayAppend(Array *array, void *item) {
 	}
 }
 
+void ArrayRemove(Array* array, size_t index) {
+	if (index < array->length) {
+		size_t nextIndex = index + 1;
+		for (; nextIndex < array->length; nextIndex++) {
+			memcpy(ArrayGet(array, nextIndex - 1), ArrayGet(array, nextIndex), array->itemSize);
+		}
+		memset(ArrayGet(array, nextIndex - 1), 0, array->itemSize);
+		array->length--;
+	}
+}
+
+void ArrayClear(Array* array) {
+	memset(array->data, 0, array->length * array->itemSize);
+	array->length = 0;
+}
+
 void* ArrayGet(Array *array, size_t index) {
 	if (index < array->length) {
 		return array->data + index * array->itemSize;

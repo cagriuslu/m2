@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 static void God_prePhysics(EventListenerComponent* el) {
-	Object* obj = BucketGetById(&CurrentLevel()->objects, el->super.object);
+	Object* obj = BucketGetById(&CurrentLevel()->objects, el->super.objId);
 	if (obj) {
 		PhysicsComponent* phy = BucketGetById(&CurrentLevel()->physics, obj->physics);
 		if (phy && phy->body) {

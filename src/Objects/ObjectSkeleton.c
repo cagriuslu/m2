@@ -3,8 +3,21 @@
 #include "../Box2DWrapper.h"
 #include "../Box2DUtils.h"
 
+void ObjectSkeleton_postPhysics(EventListenerComponent *el) {
+	Object* obj = FindObjectOfComponent(el);
+	if (obj) {
+		ComponentDefense* defense = FindDefenseOfObject(obj);
+		if (defense && defense->hp <= 0) {
+			ArrayAppend(&CurrentLevel()->deleteList, &el->super.objId);
+		}
+	}
+}
+
 int ObjectSkeletonInit(Object* obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj, position));
+
+	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
+	el->postGraphics = ObjectSkeleton_postPhysics;
 
 	uint32_t phyId = 0;
 	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
@@ -20,7 +33,11 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 
 	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
-	gfx->txOffset = (Vec2F){ 0.0, -4.5 };
+	gfx->txOffset = (Vec2F){ 0.0f, -4.5f };
+
+	ComponentDefense* defense = ObjectAddAndInitDefense(obj, NULL);
+	defense->hp = 100;
+	defense->maxHp = 100;
 	
 	return 0;
 }

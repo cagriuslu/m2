@@ -140,6 +140,13 @@ void* BucketGetFirst(Bucket* bucket) {
 	return NULL;
 }
 
+void* BucketGetLast(Bucket* bucket) {
+	if (bucket->size) {
+		return BucketGetByIndex(bucket, bucket->highestAllocatedIndex);
+	}
+	return NULL;
+}
+
 void* BucketGetNext(Bucket* bucket, void* currData) {
 	uint32_t currId = BucketGetId(bucket, currData);
 	if (currId == 0) {
