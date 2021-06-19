@@ -14,23 +14,24 @@
 
 static void Player_prePhysics(EventListenerComponent* el) {
 	Level* level = CurrentLevel();
-	//fprintf(stderr, "NewPlayer_prePhysics called for %u\n", el->super.object);
 	Object* obj = BucketGetById(&level->objects, el->super.objId);
 	if (obj) {
 		PhysicsComponent* phy = BucketGetById(&level->physics, obj->physics);
 		if (phy && phy->body) {
+			Vec2F moveDirection = (Vec2F) {0.0f, 0.0f};
 			if (IsKeyDown(KEY_UP)) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, -100.0 }, true);
+				moveDirection.y += -1.0f;
 			}
 			if (IsKeyDown(KEY_DOWN)) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, 100.0 }, true);
+				moveDirection.y += 1.0f;
 			}
 			if (IsKeyDown(KEY_LEFT)) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { -100.0, 0.0 }, true);
+				moveDirection.x += -1.0f;
 			}
 			if (IsKeyDown(KEY_RIGHT)) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 100.0, 0.0 }, true);
+				moveDirection.x += 1.0f;
 			}
+			Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(moveDirection), DeltaTicks() * 25.0f), true);
 		}
 		if (IsButtonPressed(BUTTON_PRIMARY)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();

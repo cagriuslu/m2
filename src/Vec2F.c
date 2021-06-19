@@ -14,10 +14,16 @@ Vec2F Vec2FMul(Vec2F lhs, float rhs) {
 }
 
 float Vec2FLength(Vec2F in) {
+	if (in.x == 0.0f && in.y == 0.0f) {
+		return 0.0f;
+	}
 	return sqrtf(powf(in.x, 2.0f) + powf(in.y, 2.0f));
 }
 
 Vec2F Vec2FNormalize(Vec2F in) {
+	if (in.x == 0.0f && in.y == 0.0f) {
+		return in;
+	}
 	float len = Vec2FLength(in);
 	return (Vec2F) { in.x / len, in.y / len };
 }
