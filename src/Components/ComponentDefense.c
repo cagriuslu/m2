@@ -1,7 +1,7 @@
 #include "../Component.h"
 #include <string.h>
 
-int ComponentDefenseInit(ComponentDefense* def, uint32_t objId) {
+int ComponentDefenseInit(ComponentDefense* def, uint64_t objId) {
 	memset(def, 0, sizeof(ComponentDefense));
 	return ComponentInit((Component*)def, objId);
 }

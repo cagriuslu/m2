@@ -2,16 +2,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
 #include <stdio.h>
 
 #define BucketItemData(bucket, index) ((BucketItem*) (((int8_t*) ((bucket)->items)) + ((bucket)->itemSize * (index))))
 #define BucketItemFromData(itemData) ((BucketItem*) (((int8_t*) (itemData)) - offsetof(BucketItem, data)))
+#define APPEND_BUCKET_ID(bucketId, id) (((uint64_t)(bucketId) << 48) |  (uint64_t)(id))
+
+uint16_t gBucketId = 1;
 
 int BucketInit(Bucket* bucket, size_t dataSize) {
 	bucket->capacity = UINT16_MAX + 1;
 	bucket->dataSize = dataSize;
 	bucket->itemSize = dataSize + sizeof(BucketItem);
+	bucket->bucketId = (uint64_t)gBucketId++ << 48;
 	bucket->items = malloc(bucket->capacity * bucket->itemSize);
 	assert(bucket->items);
 	BucketUnmarkAll(bucket);
@@ -26,17 +29,14 @@ void BucketDeinit(Bucket* bucket) {
 	memset(bucket, 0, sizeof(Bucket));
 }
 
-void* BucketMark(Bucket* bucket, void* copy, uint32_t* outId) {
+void* BucketMark(Bucket* bucket, void* copy, uint64_t* outId) {
 	if (bucket->size < bucket->capacity) {
 		int indexToAllocate = bucket->nextFreeIndex;
-
-
-
 		BucketItem* itemToAllocate = BucketItemData(bucket, indexToAllocate);
 		bucket->nextFreeIndex = (itemToAllocate->id) & 0xFFFF; // Extract next free index
 		itemToAllocate->id = (bucket->nextKey << 16) | (indexToAllocate & 0xFFFF); // Store new id of the item
 		if (outId) {
-			*outId = itemToAllocate->id; // Return id
+			*outId = bucket->bucketId | (uint64_t)itemToAllocate->id; // Return id
 		}
 
 		bucket->size++;
@@ -98,7 +98,7 @@ void BucketUnmarkByIndex(Bucket* bucket, int idx) {
 	}
 }
 
-void BucketUnmarkById(Bucket* bucket, uint32_t id) {
+void BucketUnmarkById(Bucket* bucket, uint64_t id) {
 	void* item = BucketGetById(bucket, id);
 	if (item) {
 		BucketUnmark(bucket, item);
@@ -128,7 +128,7 @@ bool BucketIsMarkedByIndex(Bucket* bucket, int idx) {
 	return data != NULL;
 }
 
-bool BucketIsMarkedById(Bucket* bucket, uint32_t id) {
+bool BucketIsMarkedById(Bucket* bucket, uint64_t id) {
 	void* data = BucketGetById(bucket, id);
 	return data != NULL;
 }
@@ -148,7 +148,7 @@ void* BucketGetLast(Bucket* bucket) {
 }
 
 void* BucketGetNext(Bucket* bucket, void* currData) {
-	uint32_t currId = BucketGetId(bucket, currData);
+	uint32_t currId = (uint32_t)BucketGetId(bucket, currData);
 	if (currId == 0) {
 		return NULL;
 	}
@@ -163,7 +163,7 @@ void* BucketGetNext(Bucket* bucket, void* currData) {
 }
 
 void* BucketGetPrev(Bucket* bucket, void* currData) {
-	uint32_t currId = BucketGetId(bucket, currData);
+	uint32_t currId = (uint32_t)BucketGetId(bucket, currData);
 	if (currId == 0) {
 		return NULL;
 	}
@@ -185,24 +185,27 @@ void* BucketGetByIndex(Bucket* bucket, int idx) {
 	return NULL;
 }
 
-void* BucketGetById(Bucket* bucket, uint32_t id) {
-	int candidateIdx = id & 0xFFFF;
+void* BucketGetById(Bucket* bucket, uint64_t id) {
+	if (bucket->bucketId != (id & 0xFFFF000000000000ull)) {
+		return NULL;
+	}
+	int candidateIdx = (uint32_t)id & 0xFFFFu;
 	BucketItem* candidateItem = BucketItemData(bucket, candidateIdx);
-	if (candidateItem->id == id) {
+	if (candidateItem->id == ((uint32_t)id & 0xFFFFFFFFu)) {
 		return &(candidateItem->data);
 	}
 	return NULL;
 }
 
-uint32_t BucketGetId(Bucket* bucket, void* data) {
+uint64_t BucketGetId(Bucket* bucket, void* data) {
 	BucketItem* itemToCheck = BucketItemFromData(data);
 	// Check if object resides in range
 	if ((itemToCheck < BucketItemData(bucket, bucket->lowestAllocatedIndex)) || (BucketItemData(bucket, bucket->highestAllocatedIndex + 1) < itemToCheck)) {
-		return false;
+		return 0;
 	}
 	// Check if object is allocated
 	if (itemToCheck->id & 0xFFFF0000) {
-		return itemToCheck->id;
+		return bucket->bucketId | (uint64_t)itemToCheck->id;
 	} else {
 		return 0;
 	}

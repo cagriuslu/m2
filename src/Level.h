@@ -16,7 +16,7 @@ typedef struct _Level {
 	Bucket offenses;
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
-	uint32_t cameraId, playerId;
+	uint64_t cameraId, playerId;
 	Array deleteList; // List of Object IDs
 } Level;
 

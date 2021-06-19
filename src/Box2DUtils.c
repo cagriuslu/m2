@@ -1,7 +1,7 @@
 #include "Box2DUtils.h"
 #include "Main.h"
 
-Box2DBody* Box2DUtilsCreateBody(uint32_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, float diskRadius, float mass, float linearDamping) {
+Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, float diskRadius, float mass, float linearDamping) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	if (isDynamic) {
 		Box2DBodyDefSetTypeDynamic(bodyDef);

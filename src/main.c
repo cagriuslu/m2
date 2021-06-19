@@ -155,7 +155,7 @@ main_menu:
 		prevDrawGraphicsTicks += gDeltaTicks;
 		size_t insertionListSize = InsertionListLength(&gLevel.drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
-			uint32_t graphicsId = InsertionListGet(&gLevel.drawList, i);
+			uint64_t graphicsId = InsertionListGet(&gLevel.drawList, i);
 			GraphicsComponent* gfx = BucketGetById(&gLevel.graphics, graphicsId);
 			if (gfx && gfx->draw) {
 				gfx->draw(gfx);

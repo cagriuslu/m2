@@ -16,7 +16,7 @@ int LevelInit(Level* level) {
 	PROPAGATE_ERROR(BucketInit(&level->terrainGraphics, sizeof(GraphicsComponent)));
 	PROPAGATE_ERROR(BucketInit(&level->defenses, sizeof(ComponentDefense)));
 	PROPAGATE_ERROR(BucketInit(&level->offenses, sizeof(ComponentOffense)));
-	PROPAGATE_ERROR(ArrayInit(&level->deleteList, sizeof(uint32_t), 16, UINT16_MAX + 1));
+	PROPAGATE_ERROR(ArrayInit(&level->deleteList, sizeof(uint64_t), 16, UINT16_MAX + 1));
 	level->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	level->contactListener = Box2DContactListenerRegister(PhysicsComponentContactCB);
 	Box2DWorldSetContactListener(level->world, level->contactListener);
@@ -26,9 +26,9 @@ int LevelInit(Level* level) {
 
 void LevelDeleteObjects(Level* level) {
 	for (size_t i = 0; i < level->deleteList.length; i++) {
-		uint32_t* objIdPtr = ArrayGet(&level->deleteList, i);
+		uint64_t* objIdPtr = ArrayGet(&level->deleteList, i);
 		if (objIdPtr) {
-			uint32_t objId = *objIdPtr;
+			uint64_t objId = *objIdPtr;
 			Object* obj = BucketGetById(&level->objects, objId);
 			if (obj) {
 				ObjectDeinit(obj);

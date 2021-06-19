@@ -52,7 +52,7 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
 	el->prePhysics = Bullet_prePhysics;
 
-	uint32_t phyId = 0;
+	uint64_t phyId = 0;
 	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateBulletSensor(
 		phyId,

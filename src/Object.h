@@ -23,29 +23,29 @@
 #define FindDefenseOfObject(obj)         (FindDefenseById((obj->defense)))
 #define FindOffenseOfObject(obj)         (FindOffenseById((obj->offense)))
 
-#define DeleteObjectById(id) do { uint32_t __id__ = (id); ArrayAppend(&CurrentLevel()->deleteList, &__id__); } while (0)
+#define DeleteObjectById(id) do { uint64_t __id__ = (id); ArrayAppend(&CurrentLevel()->deleteList, &__id__); } while (0)
 #define DeleteObject(obj)    DeleteObjectById(BucketGetId(&CurrentLevel()->objects, (obj)))
 
 typedef struct _Object {
 	Vec2F position; // in world coordinates
 	// Components
-	uint32_t eventListener;
-	uint32_t physics;
-	uint32_t graphics;
-	uint32_t terrainGraphics;
-	uint32_t defense;
-	uint32_t offense;
+	uint64_t eventListener;
+	uint64_t physics;
+	uint64_t graphics;
+	uint64_t terrainGraphics;
+	uint64_t defense;
+	uint64_t offense;
 } Object;
 
 int ObjectInit(Object* obj, Vec2F position);
 void ObjectDeinit(Object* obj);
 
-EventListenerComponent* ObjectAddAndInitEventListener(Object* obj, uint32_t* outId);
-PhysicsComponent* ObjectAddAndInitPhysics(Object* obj, uint32_t* outId);
-GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint32_t* outId);
-GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint32_t* outId);
-ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint32_t* outId);
-ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint32_t* outId);
+EventListenerComponent* ObjectAddAndInitEventListener(Object* obj, uint64_t* outId);
+PhysicsComponent* ObjectAddAndInitPhysics(Object* obj, uint64_t* outId);
+GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint64_t* outId);
+GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint64_t* outId);
+ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint64_t* outId);
+ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId);
 
 int ObjectTileInit(Object* obj, TileDef tileDef, Vec2F position);
 int ObjectPlayerInit(Object* obj);

@@ -51,12 +51,12 @@ static void Player_prePhysics(EventListenerComponent* el) {
 
 int ObjectPlayerInit(Object* obj) {
 	PROPAGATE_ERROR(ObjectInit(obj, (Vec2F) { 0.0f, 0.0f }));
-	uint32_t objId = BucketGetId(&CurrentLevel()->objects, obj);
+	uint64_t objId = BucketGetId(&CurrentLevel()->objects, obj);
 
 	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
 	el->prePhysics = Player_prePhysics;
 
-	uint32_t phyId = 0;
+	uint64_t phyId = 0;
 	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateDynamicDisk(
 		phyId,

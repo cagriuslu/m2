@@ -25,6 +25,6 @@
 #define Box2DUtilsCreateDynamicDiskSensor(phyId, position, sleep, category, radius, mass, damping) Box2DUtilsCreateBody((phyId), /* isDisk */ true,  /* isDynamic */ true,  (position), /* allowSleep */ (sleep), /* isBullet */ false, /* isSensor */ true, (category), /* mask */ 0, /* boxDims */ (Vec2F) {0.0f,0.0f},   /* diskRadius */ (radius), /* mass */ (mass), /* lineaDamping */ (damping))
 #define Box2DUtilsCreateBulletSensor(phyId, position, category, radius, mass, damping)             Box2DUtilsCreateBody((phyId), /* isDisk */ true,  /* isDynamic */ true,  (position), /* allowSleep */ false,   /* isBullet */ true,  /* isSensor */ true, (category), /* mask */ 0, /* boxDims */ (Vec2F) {0.0f,0.0f},   /* diskRadius */ (radius), /* mass */ (mass), /* lineaDamping */ (damping))
 
-Box2DBody* Box2DUtilsCreateBody(uint32_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, float diskRadius, float mass, float linearDamping);
+Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, float diskRadius, float mass, float linearDamping);
 
 #endif

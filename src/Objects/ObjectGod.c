@@ -34,7 +34,7 @@ int ObjectGodInit(Object* obj) {
 	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
 	el->prePhysics = God_prePhysics;
 
-	uint32_t phyId = 0;
+	uint64_t phyId = 0;
 	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateDynamicDisk(
 		phyId,

@@ -19,7 +19,7 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
 	el->postGraphics = ObjectSkeleton_postPhysics;
 
-	uint32_t phyId = 0;
+	uint64_t phyId = 0;
 	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateDynamicDisk(
 		phyId,

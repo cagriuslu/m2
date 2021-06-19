@@ -7,9 +7,9 @@
 #include <stdint.h>
 
 typedef struct _Component {
-	uint32_t objId;
+	uint64_t objId;
 } Component;
-int ComponentInit(Component* component, uint32_t objectId);
+int ComponentInit(Component* component, uint64_t objectId);
 void ComponentDeinit(Component* component);
 
 typedef struct _EventListenerComponent {
@@ -19,7 +19,7 @@ typedef struct _EventListenerComponent {
 	void (*preGraphics)(struct _EventListenerComponent*);
 	void (*postGraphics)(struct _EventListenerComponent*);
 } EventListenerComponent;
-int EventListenerComponentInit(EventListenerComponent* evListener, uint32_t objectId);
+int EventListenerComponentInit(EventListenerComponent* evListener, uint64_t objectId);
 void EventListenerComponentDeinit(EventListenerComponent* evListener);
 
 typedef struct _PhysicsComponent {
@@ -27,7 +27,7 @@ typedef struct _PhysicsComponent {
 	Box2DBody* body;
 	void (*onCollision)(struct _PhysicsComponent*, struct _PhysicsComponent*);
 } PhysicsComponent;
-int PhysicsComponentInit(PhysicsComponent* phy, uint32_t objectId);
+int PhysicsComponentInit(PhysicsComponent* phy, uint64_t objectId);
 void PhysicsComponentDeinit(PhysicsComponent* phy);
 void PhysicsComponentContactCB(Box2DContact* contact);
 
@@ -39,25 +39,25 @@ typedef struct _GraphicsComponent {
 	Vec2F txOffset; // w.r.t tx, # of pixels
 	void (*draw)(struct _GraphicsComponent*);
 } GraphicsComponent;
-int GraphicsComponentInit(GraphicsComponent* gfx, uint32_t objectId);
+int GraphicsComponentInit(GraphicsComponent* gfx, uint64_t objectId);
 void GraphicsComponentDeinit(GraphicsComponent* gfx);
-int GraphicsComponentYComparatorCB(uint32_t gfxIdA, uint32_t gfxIdB);
+int GraphicsComponentYComparatorCB(uint64_t gfxIdA, uint64_t gfxIdB);
 
 typedef struct _ComponentDefense {
 	Component super;
 	int maxHp;
 	int hp;
 } ComponentDefense;
-int ComponentDefenseInit(ComponentDefense* def, uint32_t objId);
+int ComponentDefenseInit(ComponentDefense* def, uint64_t objId);
 void ComponentDefenseDeinit(ComponentDefense* def);
 
 typedef struct _ComponentOffense {
 	Component super;
-	uint32_t originator; // Object ID
+	uint64_t originator; // Object ID
 	int ticksLeft;
 	int hp;
 } ComponentOffense;
-int ComponentOffenseInit(ComponentOffense* def, uint32_t objId);
+int ComponentOffenseInit(ComponentOffense* def, uint64_t objId);
 void ComponentOffenseCopyExceptSuper(ComponentOffense* dest, ComponentOffense* src);
 void ComponentOffenseDeinit(ComponentOffense* def);
 

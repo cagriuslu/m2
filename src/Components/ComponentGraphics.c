@@ -26,7 +26,7 @@ void GraphicsComponent_draw(GraphicsComponent* gfx) {
 	}
 }
 
-int GraphicsComponentInit(GraphicsComponent* gfx, uint32_t objectId) {
+int GraphicsComponentInit(GraphicsComponent* gfx, uint64_t objectId) {
 	memset(gfx, 0, sizeof(GraphicsComponent));
 	PROPAGATE_ERROR(ComponentInit((Component*)gfx, objectId));
 	gfx->tx = CurrentTextureLUT();
@@ -39,7 +39,7 @@ void GraphicsComponentDeinit(GraphicsComponent* gfx) {
 	memset(gfx, 0, sizeof(GraphicsComponent));
 }
 
-int GraphicsComponentYComparatorCB(uint32_t gfxIdA, uint32_t gfxIdB) {
+int GraphicsComponentYComparatorCB(uint64_t gfxIdA, uint64_t gfxIdB) {
 	Level* level = CurrentLevel();
 	GraphicsComponent* gfxA = BucketGetById(&level->graphics, gfxIdA);
 	GraphicsComponent* gfxB = BucketGetById(&level->graphics, gfxIdB);
