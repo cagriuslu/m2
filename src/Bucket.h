@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #pragma warning(disable : 4200)
 typedef struct _BucketItem {

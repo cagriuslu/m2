@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stddef.h>
 #include <stdio.h>
 
 #define BucketItemData(bucket, index) ((BucketItem*) (((int8_t*) ((bucket)->items)) + ((bucket)->itemSize * (index))))
