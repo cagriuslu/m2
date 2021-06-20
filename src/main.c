@@ -8,6 +8,7 @@
 #include "Bucket.h"
 #include "Level.h"
 #include "Dialog.h"
+#include "HashMap.h"
 #include "Debug.h"
 #include <SDL.h>
 #include <SDL_image.h>
@@ -30,9 +31,6 @@ unsigned gDeltaTicks;
 int main(int argc, char **argv) {
 	(void)argc;
 	(void)argv;
-	int res;
-
-	fprintf(stderr, "Hello, world!\n");
 	
 	const float physicsStepPerSecond = 80.0f;
 	const float physicsStepPeriod = 1.0f / physicsStepPerSecond;
@@ -51,7 +49,7 @@ int main(int argc, char **argv) {
 	bool levelLoaded = false;
 
 main_menu:
-	res = DialogMainMenu(levelLoaded);
+	int res = DialogMainMenu(levelLoaded);
 	if (res == X_QUIT) {
 		return 0;
 	} else if (res == X_MAIN_MENU_RESUME) {

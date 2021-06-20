@@ -167,8 +167,10 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Dialog.c" />
     <ClCompile Include="..\src\Dialogs\DialogMainMenu.c" />
     <ClCompile Include="..\src\Event.c" />
+    <ClCompile Include="..\src\HashMap.c" />
     <ClCompile Include="..\src\InsertionList.c" />
     <ClCompile Include="..\src\Level.c" />
+    <ClCompile Include="..\src\Pathfinder.c" />
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\Object.c" />
     <ClCompile Include="..\src\Objects\ObjectBullet.c" />
@@ -201,9 +203,11 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClInclude Include="..\src\Dialog.h" />
     <ClInclude Include="..\src\Error.h" />
     <ClInclude Include="..\src\Event.h" />
+    <ClInclude Include="..\src\HashMap.h" />
     <ClInclude Include="..\src\Hud.h" />
     <ClInclude Include="..\src\InsertionList.h" />
     <ClInclude Include="..\src\Level.h" />
+    <ClInclude Include="..\src\Pathfinder.h" />
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\Object.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
