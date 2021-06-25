@@ -129,6 +129,9 @@
     <ClCompile Include="..\src\HashMap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\List.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h">
@@ -198,6 +201,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\HashMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\List.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

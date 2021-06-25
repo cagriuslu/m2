@@ -27,4 +27,7 @@
 
 Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, float diskRadius, float mass, float linearDamping);
 
+bool Box2DUtilsCheckEyeSight(Vec2F from, Vec2F to, uint16_t categoryMask);
+bool Box2DUtilsCheckEyeSightWithWidth(Vec2F from, Vec2F to, uint16_t categoryMask, float shoulderWidth);
+
 #endif

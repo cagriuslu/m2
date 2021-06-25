@@ -8,6 +8,8 @@
 #include "Bucket.h"
 #include "Level.h"
 #include "Dialog.h"
+#include "List.h"
+#include "Pathfinder.h"
 #include "HashMap.h"
 #include "Debug.h"
 #include <SDL.h>
@@ -31,6 +33,7 @@ unsigned gDeltaTicks;
 int main(int argc, char **argv) {
 	(void)argc;
 	(void)argv;
+	int res;
 	
 	const float physicsStepPerSecond = 80.0f;
 	const float physicsStepPeriod = 1.0f / physicsStepPerSecond;
@@ -49,7 +52,7 @@ int main(int argc, char **argv) {
 	bool levelLoaded = false;
 
 main_menu:
-	int res = DialogMainMenu(levelLoaded);
+	res = DialogMainMenu(levelLoaded);
 	if (res == X_QUIT) {
 		return 0;
 	} else if (res == X_MAIN_MENU_RESUME) {
@@ -72,6 +75,7 @@ main_menu:
 		}
 		levelLoaded = true;
 	}
+	PathfinderMapInitFromLevel(&gLevel.pathfinderMap, &gLevel);
 
 	float timeSinceLastWorldStep = 0.0f;
 	unsigned prevPrePhysicsTicks = SDL_GetTicks();
@@ -128,7 +132,7 @@ main_menu:
 				el->postPhysics(el);
 			}
 		}
-		LevelDeleteObjects(&gLevel);
+		LevelDeleteMarkedObjects(&gLevel);
 		///// END OF PHYSICS /////
 
 		///// GRAPHICS /////

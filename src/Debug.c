@@ -102,12 +102,26 @@ void DebugButtons(const char *message, uint16_t *buttonsPressed, uint16_t *butto
 	fprintf(stderr, "\n");
 }
 
+void DebugBox2DAABB(const char* message, Box2DAABB aabb) {
+	fprintf(stderr, "%s Box2DAABB{lowerBound:{x:%f, y:%f}, upperBound:{x:%f, y:%f}}\n", message, aabb.lowerBound.x, aabb.lowerBound.y, aabb.upperBound.x, aabb.upperBound.y);
+}
+
 void DebugIntArray(const char* message, Array* array) {
 	fprintf(stderr, "%s ", message);
-	fprintf(stderr, "ArrayLength=%zu {", array->length);
+	fprintf(stderr, "Array{length:%zu, data:[", array->length);
 	for (size_t i = 0; i < array->length; i++) {
 		int* ptr = ArrayGet(array, i);
 		fprintf(stderr, "%d, ", *ptr);
 	}
-	fprintf(stderr, "}\n");
+	fprintf(stderr, "]}\n");
+}
+
+void DebugVec2IList(const char* message, List* list) {
+	fprintf(stderr, "%s ", message);
+	fprintf(stderr, "List{length:%zu, data:[", list->bucket.size);
+	for (uint64_t iterator = ListGetFirst(list); iterator; iterator = ListGetNext(list, iterator)) {
+		Vec2I* ptr = ListGetData(list, iterator);
+		fprintf(stderr, "{%d,%d}, ", ptr->x, ptr->y);
+	}
+	fprintf(stderr, "]}\n");
 }

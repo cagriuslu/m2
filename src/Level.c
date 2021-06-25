@@ -24,7 +24,7 @@ int LevelInit(Level* level) {
 	return 0;
 }
 
-void LevelDeleteObjects(Level* level) {
+void LevelDeleteMarkedObjects(Level* level) {
 	for (size_t i = 0; i < level->deleteList.length; i++) {
 		uint64_t* objIdPtr = ArrayGet(&level->deleteList, i);
 		if (objIdPtr) {
@@ -41,6 +41,7 @@ void LevelDeleteObjects(Level* level) {
 
 void LevelDeinit(Level* level) {
 	// TODO delete members in objects
+	PathfinderMapDeinit(&level->pathfinderMap);
 	Box2DContactListenerDestroy(level->contactListener);
 	Box2DWorldDestroy(level->world);
 	ArrayDeinit(&level->deleteList);

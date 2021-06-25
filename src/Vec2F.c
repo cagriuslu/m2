@@ -28,6 +28,14 @@ Vec2F Vec2FNormalize(Vec2F in) {
 	return (Vec2F) { in.x / len, in.y / len };
 }
 
-Vec2I Vec2Fto2I(Vec2F v) {
-	return (Vec2I) {(int32_t) round(v.x), (int32_t) round(v.y)};
+bool Vec2FEquals(Vec2F lhs, Vec2F rhs) {
+	return (lhs.x == rhs.x) && (lhs.y == rhs.y);
+}
+
+Vec2I Vec2FTo2I(Vec2F v) {
+	return (Vec2I) {(int32_t) roundf(v.x), (int32_t) roundf(v.y)};
+}
+
+Vec2F Vec2FFromVec2I(Vec2I v) {
+	return (Vec2F) { (float)v.x, (float)v.y };
 }

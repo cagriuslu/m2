@@ -13,6 +13,9 @@ Vec2F Vec2FMul(Vec2F lhs, float rhs);
 float Vec2FLength(Vec2F in);
 Vec2F Vec2FNormalize(Vec2F in);
 
-Vec2I Vec2Fto2I(Vec2F v);
+bool Vec2FEquals(Vec2F lhs, Vec2F rhs);
+
+Vec2I Vec2FTo2I(Vec2F v);
+Vec2F Vec2FFromVec2I(Vec2I v);
 
 #endif

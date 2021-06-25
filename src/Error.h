@@ -17,6 +17,7 @@
 		}                                          \
 	} while (0)
 
-#define X_QUIT (-1)
+#define X_QUIT            (-1)
+#define X_PATH_NOT_FOUND  (-2)
 
 #endif

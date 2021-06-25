@@ -70,3 +70,24 @@ Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec
 
 	return body;
 }
+
+float Box2DUtilsCheckEyeSight_RayCastCallback(Box2DFixture* fixture, Vec2F point, Vec2F normal, float fraction, void* userData) {
+	(void)fixture;
+	(void)point;
+	(void)normal;
+	(void)fraction;
+	*((bool*)userData) = false;
+	return 0.0f;
+}
+
+bool Box2DUtilsCheckEyeSight(Vec2F from, Vec2F to, uint16_t categoryMask) {
+	if (Vec2FEquals(from, to)) {
+		return true;
+	}
+	
+	bool result = true;
+	Box2DRayCastListener* rayCastListener = Box2DRayCastListenerCreate(Box2DUtilsCheckEyeSight_RayCastCallback, categoryMask, &result);
+	Box2DWorldRayCast(CurrentLevel()->world, rayCastListener, from, to);
+	Box2DRayCastListenerDestroy(rayCastListener);
+	return result;
+}

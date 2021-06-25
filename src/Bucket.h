@@ -16,12 +16,12 @@ typedef struct _Bucket {
 	size_t dataSize;
 	size_t itemSize;
 	uint64_t bucketId;
-	int capacity; // 65536
-	int size; // [0, 65536]
-	int nextKey; // [1, 65536]
-	int highestAllocatedIndex;
-	int lowestAllocatedIndex;
-	int nextFreeIndex;
+	size_t capacity; // 65536
+	size_t size; // [0, 65536]
+	size_t nextKey; // [1, 65536]
+	size_t highestAllocatedIndex;
+	size_t lowestAllocatedIndex;
+	size_t nextFreeIndex;
 } Bucket;
 
 int BucketInit(Bucket* bucket, size_t dataSize);
@@ -29,18 +29,18 @@ void BucketDeinit(Bucket* bucket);
 
 void* BucketMark(Bucket* bucket, void* copy, uint64_t* outId);
 void BucketUnmark(Bucket* bucket, void* data);
-void BucketUnmarkByIndex(Bucket* bucket, int idx);
+void BucketUnmarkByIndex(Bucket* bucket, size_t idx);
 void BucketUnmarkById(Bucket* bucket, uint64_t id);
 void BucketUnmarkAll(Bucket* bucket);
 
 bool BucketIsMarked(Bucket* bucket, void* data);
-bool BucketIsMarkedByIndex(Bucket* bucket, int idx);
+bool BucketIsMarkedByIndex(Bucket* bucket, size_t idx);
 bool BucketIsMarkedById(Bucket* bucket, uint64_t id);
 void* BucketGetFirst(Bucket* bucket);
 void* BucketGetLast(Bucket* bucket);
 void* BucketGetNext(Bucket* bucket, void* currData);
 void* BucketGetPrev(Bucket* bucket, void* data);
-void* BucketGetByIndex(Bucket* bucket, int idx);
+void* BucketGetByIndex(Bucket* bucket, size_t idx);
 void* BucketGetById(Bucket* bucket, uint64_t id);
 uint64_t BucketGetId(Bucket* bucket, void* data);
 

@@ -10,7 +10,7 @@ void GraphicsComponent_draw(GraphicsComponent* gfx) {
 	Object* camera = BucketGetById(&level->objects, level->cameraId);
 	if (obj && camera && gfx->tx) {
 		Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2Fto2I(Vec2FMul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
+		Vec2I obj_origin_wrt_screen_center = Vec2FTo2I(Vec2FMul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
 		Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, (Vec2I) {
 			(int)round(gfx->txOffset.x * CurrentPixelsPerMeter()) / CurrentTileWidth(),
 				(int)round(gfx->txOffset.y * CurrentPixelsPerMeter()) / CurrentTileWidth()

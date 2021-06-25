@@ -6,8 +6,12 @@
 #include <b2_circle_shape.h>
 #include <b2_fixture.h>
 #include <b2_contact.h>
+#include <b2_common.h>
+#include <cstdio>
+#include <cstdlib>
 
-#define ToVec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})
+#define Vec2FToB2Vec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})
+#define B2Vec2ToVec2F(b2vec2) (Vec2F{b2vec2.x, b2vec2.y})
 
 #define AsWorld(world) ((b2World*) (world))
 #define AsBodyDef(bodyDef) ((b2BodyDef*) (bodyDef))
@@ -18,20 +22,44 @@
 #define AsPolygonShape(polygonShape) ((b2PolygonShape*) (polygonShape))
 #define AsCircleShape(circleShape) ((b2CircleShape*) (circleShape))
 #define AsContact(contact) ((b2Contact*) (contact))
+#define AsAABB(aabb) ((b2AABB*) (aabb))
 #define AsContactListener(contactListener) ((ContactListener*) (contactListener))
+#define AsRayCastCallback(contactListener) ((RayCastCallback*) (contactListener))
 
 class ContactListener : public b2ContactListener {
 	void (*m_cb)(Box2DContact*);
 public:
-	ContactListener(void (*cb)(Box2DContact*)) : m_cb(cb) { }
+	ContactListener(void (*cb)(Box2DContact*)) : m_cb(cb) {}
 
-	void BeginContact(b2Contact* contact) {
+	void BeginContact(b2Contact* contact) override {
 		m_cb(contact);
 	}
 };
 
+class RayCastCallback : public b2RayCastCallback
+{
+	float (*m_cb)(Box2DFixture*, Vec2F point, Vec2F normal, float fraction, void* userData);
+	uint16_t m_categoryMask;
+	void* m_userData;
+public:
+	RayCastCallback(float (*cb)(Box2DFixture*, Vec2F point, Vec2F normal, float fraction, void* userData), uint16_t categoryMask, void* userData) : m_cb(cb), m_categoryMask(categoryMask), m_userData(userData) {}
+
+	float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override {
+		if (Box2DFixtureGetCategory(fixture) & m_categoryMask) {
+			return (*m_cb)(fixture, B2Vec2ToVec2F(point), B2Vec2ToVec2F(normal), fraction, m_userData);
+		} else {
+			return 1.0f;
+		}
+		
+	}
+};
+
 Box2DWorld* Box2DWorldCreate(Vec2F gravity) {
-	return new b2World(ToVec2(gravity));
+	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
+		fprintf(stderr, "Box2D Error: Version is not 2.4.0, box2d hacks may not work!");
+		abort();
+	}
+	return new b2World(Vec2FToB2Vec2(gravity));
 }
 
 Box2DBody* Box2DWorldCreateBody(Box2DWorld *world, Box2DBodyDef *bodyDef) {
@@ -44,6 +72,13 @@ void Box2DWorldSetContactListener(Box2DWorld* world, Box2DContactListener* conta
 
 void Box2DWorldStep(Box2DWorld *world, float timeStep, int velocityIterations, int positionIterations) {
 	AsWorld(world)->Step(timeStep, velocityIterations, positionIterations);
+}
+
+void Box2DWorldRayCast(Box2DWorld* world, Box2DRayCastListener* rayCastListener, Vec2F point1F, Vec2F point2F) {
+	assert(!Vec2FEquals(point1F, point2F));
+	const b2Vec2 point1 = Vec2FToB2Vec2(point1F);
+	const b2Vec2 point2 = Vec2FToB2Vec2(point2F);
+	AsWorld(world)->RayCast(AsRayCastCallback(rayCastListener), point1, point2);
 }
 
 void Box2DWorldDestroyBody(Box2DWorld *world, Box2DBody *body) {
@@ -107,11 +142,11 @@ void Box2DBodySetUserData(Box2DBody *body, void *userData) {
 }
 
 void Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake) {
-	AsBody(body)->ApplyForceToCenter(ToVec2(force), wake);
+	AsBody(body)->ApplyForceToCenter(Vec2FToB2Vec2(force), wake);
 }
 
 void Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity) {
-	AsBody(body)->SetLinearVelocity(ToVec2(velocity));
+	AsBody(body)->SetLinearVelocity(Vec2FToB2Vec2(velocity));
 }
 
 Vec2F Box2DBodyGetLinearVelocity(Box2DBody* body) {
@@ -141,6 +176,42 @@ bool Box2DBodyIsAwake(Box2DBody* body) {
 void Box2DBodySetMassData(Box2DBody* body, float mass, Vec2F center, float inertia) {
 	b2MassData massData = { mass, {center.x, center.y}, inertia };
 	AsBody(body)->SetMassData(&massData);
+}
+
+int32_t Box2DBodyGetFixtureCount(Box2DBody* body) {
+	// This is a hack to extract m_fixtureCount
+	class DummyBody
+	{
+	public:
+		b2BodyType m_type;
+		uint16 m_flags;
+		int32 m_islandIndex;
+		b2Transform m_xf;
+		b2Sweep m_sweep;
+		b2Vec2 m_linearVelocity;
+		float m_angularVelocity;
+		b2Vec2 m_force;
+		float m_torque;
+		b2World* m_world;
+		b2Body* m_prev;
+		b2Body* m_next;
+		b2Fixture* m_fixtureList;
+		int32 m_fixtureCount;
+		b2JointEdge* m_jointList;
+		b2ContactEdge* m_contactList;
+		float m_mass, m_invMass;
+		float m_I, m_invI;
+		float m_linearDamping;
+		float m_angularDamping;
+		float m_gravityScale;
+		float m_sleepTime;
+		b2BodyUserData m_userData;
+	};
+	return reinterpret_cast<DummyBody*>(AsBody(body))->m_fixtureCount;
+}
+
+Box2DFixture* Box2DBodyGetFixture(Box2DBody* body, int index) {
+	return AsBody(body)->GetFixtureList() + index;
 }
 
 Box2DFixtureDef* Box2DFixtureDefCreate() {
@@ -177,6 +248,39 @@ void Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag) {
 
 Box2DBody* Box2DFixtureGetBody(Box2DFixture* fixture) {
 	return AsFixture(fixture)->GetBody();
+}
+
+uint16_t Box2DFixtureGetCategory(Box2DFixture* fixture) {
+	return AsFixture(fixture)->GetFilterData().categoryBits;
+}
+
+int32_t Box2DFixtureGetProxyCount(Box2DFixture* fixture) {
+	class DummyFixture
+	{
+	public:
+		float m_density;
+		b2Fixture* m_next;
+		b2Body* m_body;
+		b2Shape* m_shape;
+		float m_friction;
+		float m_restitution;
+		float m_restitutionThreshold;
+		b2FixtureProxy* m_proxies;
+		int32 m_proxyCount;
+		b2Filter m_filter;
+		bool m_isSensor;
+		b2FixtureUserData m_userData;
+	};
+	return reinterpret_cast<DummyFixture*>(AsFixture(fixture))->m_proxyCount;
+}
+
+Box2DAABB Box2DFixtureGetAABB(Box2DFixture* fixture, int32_t proxyIndex) {
+	const auto& aabb = AsFixture(fixture)->GetAABB(proxyIndex);
+	return Box2DAABB{ Vec2F{aabb.lowerBound.x, aabb.lowerBound.y}, Vec2F{aabb.upperBound.x, aabb.upperBound.y}};
+}
+
+Box2DShape* Box2DFixtureGetShape(Box2DFixture* fixture) {
+	return AsFixture(fixture)->GetShape();
 }
 
 Box2DPolygonShape* Box2DPolygonShapeCreate() {
@@ -217,4 +321,12 @@ Box2DContactListener* Box2DContactListenerRegister(void (*cb)(Box2DContact*)) {
 
 void Box2DContactListenerDestroy(Box2DContactListener* contactListener) {
 	delete AsContactListener(contactListener);
+}
+
+Box2DRayCastListener* Box2DRayCastListenerCreate(float (*cb)(Box2DFixture*, Vec2F point, Vec2F normal, float fraction, void* userData), uint16_t categoryMask, void* userData) {
+	return new RayCastCallback(cb, categoryMask, userData);
+}
+
+void Box2DRayCastListenerDestroy(Box2DRayCastListener* rayCastListener) {
+	delete AsRayCastCallback(rayCastListener);
 }

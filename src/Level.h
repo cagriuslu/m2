@@ -4,6 +4,7 @@
 #include "Bucket.h"
 #include "InsertionList.h"
 #include "Box2DWrapper.h"
+#include "Pathfinder.h"
 
 typedef struct _Level {
 	Bucket objects;
@@ -18,10 +19,11 @@ typedef struct _Level {
 	Box2DContactListener* contactListener;
 	uint64_t cameraId, playerId;
 	Array deleteList; // List of Object IDs
+	PathfinderMap pathfinderMap;
 } Level;
 
 int LevelInit(Level* level);
-void LevelDeleteObjects(Level* level);
+void LevelDeleteMarkedObjects(Level* level);
 void LevelDeinit(Level* level);
 
 int LevelLoadTest(Level* level);

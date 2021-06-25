@@ -12,10 +12,11 @@
 uint16_t gBucketId = 1;
 
 int BucketInit(Bucket* bucket, size_t dataSize) {
+	memset(bucket, 0, sizeof(Bucket));
 	bucket->capacity = UINT16_MAX + 1;
 	bucket->dataSize = dataSize;
 	bucket->itemSize = dataSize + sizeof(BucketItem);
-	bucket->bucketId = (uint64_t)gBucketId++ << 48;
+	bucket->bucketId = ((uint64_t)gBucketId++) << 48;
 	bucket->items = malloc(bucket->capacity * bucket->itemSize);
 	assert(bucket->items);
 	BucketUnmarkAll(bucket);
@@ -32,10 +33,10 @@ void BucketDeinit(Bucket* bucket) {
 
 void* BucketMark(Bucket* bucket, void* copy, uint64_t* outId) {
 	if (bucket->size < bucket->capacity) {
-		int indexToAllocate = bucket->nextFreeIndex;
+		size_t indexToAllocate = bucket->nextFreeIndex;
 		BucketItem* itemToAllocate = BucketItemData(bucket, indexToAllocate);
 		bucket->nextFreeIndex = (itemToAllocate->id) & 0xFFFF; // Extract next free index
-		itemToAllocate->id = (bucket->nextKey << 16) | (indexToAllocate & 0xFFFF); // Store new id of the item
+		itemToAllocate->id = ((uint16_t)bucket->nextKey << 16) | ((uint16_t)indexToAllocate & 0xFFFF); // Store new id of the item
 		if (outId) {
 			*outId = bucket->bucketId | (uint64_t)itemToAllocate->id; // Return id
 		}
@@ -67,14 +68,14 @@ void BucketUnmark(Bucket* bucket, void* data) {
 	}
 
 	BucketItem* itemToDelete = BucketItemFromData(data);
-	int indexToDelete = itemToDelete->id & 0xFFFF;
+	size_t indexToDelete = itemToDelete->id & 0xFFFF;
 	itemToDelete->id = bucket->nextFreeIndex & 0xFFFF; // Set item as free
 	bucket->nextFreeIndex = indexToDelete; // Store next free index
 
 	bucket->size--;
 	if (bucket->highestAllocatedIndex == indexToDelete) {
 		// Search backwards until highest allocated index is found
-		for (int i = indexToDelete; i-- > 0; ) {
+		for (size_t i = indexToDelete; i-- > 0; ) {
 			bucket->highestAllocatedIndex = i;
 			if (BucketItemData(bucket, i)->id & 0xFFFF0000) {
 				break;
@@ -83,7 +84,7 @@ void BucketUnmark(Bucket* bucket, void* data) {
 	}
 	if (bucket->lowestAllocatedIndex == indexToDelete) {
 		// Search forward until lowest allocated index is found
-		for (int i = indexToDelete + 1; i < bucket->capacity; i++) {
+		for (size_t i = indexToDelete + 1; i < bucket->capacity; i++) {
 			bucket->lowestAllocatedIndex = i;
 			if (BucketItemData(bucket, i)->id & 0xFFFF0000) {
 				break;
@@ -92,7 +93,7 @@ void BucketUnmark(Bucket* bucket, void* data) {
 	}
 }
 
-void BucketUnmarkByIndex(Bucket* bucket, int idx) {
+void BucketUnmarkByIndex(Bucket* bucket, size_t idx) {
 	void* item = BucketGetByIndex(bucket, idx);
 	if (item) {
 		BucketUnmark(bucket, item);
@@ -124,7 +125,7 @@ bool BucketIsMarked(Bucket* bucket, void* data) {
 	return BucketGetId(bucket, data) != 0;
 }
 
-bool BucketIsMarkedByIndex(Bucket* bucket, int idx) {
+bool BucketIsMarkedByIndex(Bucket* bucket, size_t idx) {
 	void* data = BucketGetByIndex(bucket, idx);
 	return data != NULL;
 }
@@ -153,8 +154,8 @@ void* BucketGetNext(Bucket* bucket, void* currData) {
 	if (currId == 0) {
 		return NULL;
 	}
-	int currIdx = currId & 0xFFFF;
-	for (int i = currIdx + 1; i <= bucket->highestAllocatedIndex; i++) {
+	size_t currIdx = currId & 0xFFFF;
+	for (size_t i = currIdx + 1; i <= bucket->highestAllocatedIndex; i++) {
 		void* data = BucketGetByIndex(bucket, i);
 		if (data) {
 			return data;
@@ -168,8 +169,8 @@ void* BucketGetPrev(Bucket* bucket, void* currData) {
 	if (currId == 0) {
 		return NULL;
 	}
-	int currIdx = currId & 0xFFFF;
-	for (int i = currIdx; i-- > bucket->lowestAllocatedIndex; ) {
+	size_t currIdx = currId & 0xFFFF;
+	for (size_t i = currIdx; i-- > bucket->lowestAllocatedIndex; ) {
 		void* data = BucketGetByIndex(bucket, i);
 		if (data) {
 			return data;
@@ -178,7 +179,7 @@ void* BucketGetPrev(Bucket* bucket, void* currData) {
 	return NULL;
 }
 
-void* BucketGetByIndex(Bucket* bucket, int idx) {
+void* BucketGetByIndex(Bucket* bucket, size_t idx) {
 	BucketItem* candidateItem = BucketItemData(bucket, idx);
 	if (candidateItem->id & 0xFFFF0000) {
 		return &(candidateItem->data);
@@ -190,7 +191,7 @@ void* BucketGetById(Bucket* bucket, uint64_t id) {
 	if (bucket->bucketId != (id & 0xFFFF000000000000ull)) {
 		return NULL;
 	}
-	int candidateIdx = (uint32_t)id & 0xFFFFu;
+	size_t candidateIdx = (uint32_t)id & 0xFFFFu;
 	BucketItem* candidateItem = BucketItemData(bucket, candidateIdx);
 	if (candidateItem->id == ((uint32_t)id & 0xFFFFFFFFu)) {
 		return &(candidateItem->data);
