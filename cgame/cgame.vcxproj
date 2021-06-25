@@ -152,6 +152,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\AI.c" />
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Box2DUtils.c" />
     <ClCompile Include="..\src\Box2DWrapper.cpp" />
@@ -193,6 +194,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Vec2I.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\AI.h" />
     <ClInclude Include="..\src\Array.h" />
     <ClInclude Include="..\src\Box2DUtils.h" />
     <ClInclude Include="..\src\Box2DWrapper.h" />

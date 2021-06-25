@@ -3,6 +3,7 @@
 
 #include "Component.h"
 #include "TileLookup.h"
+#include "AI.h"
 #include "Vec2F.h"
 #include <stdint.h>
 
@@ -35,6 +36,7 @@ typedef struct _Object {
 	uint64_t terrainGraphics;
 	uint64_t defense;
 	uint64_t offense;
+	AI* ai;
 } Object;
 
 int ObjectInit(Object* obj, Vec2F position);

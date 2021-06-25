@@ -41,6 +41,9 @@ void ObjectDeinit(Object* obj) {
 		ComponentOffenseDeinit(off);
 		BucketUnmark(&CurrentLevel()->offenses, off);
 	}
+	if (obj->ai) {
+		AIDeinit(obj->ai);
+	}
 	memset(obj, 0, sizeof(Object));
 }
 

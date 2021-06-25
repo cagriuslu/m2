@@ -132,6 +132,9 @@
     <ClCompile Include="..\src\List.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\AI.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h">
@@ -204,6 +207,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\List.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

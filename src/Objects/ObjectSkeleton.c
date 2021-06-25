@@ -5,45 +5,40 @@
 #include "../Box2DUtils.h"
 #include "../Debug.h"
 #include <stdio.h>
+#include <assert.h>
 
 void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
-	static unsigned stopwatch = 0;
-	stopwatch += DeltaTicks();
-	if (1 < stopwatch) {
-		Object* me = FindObjectOfComponent(el);
+	Object* me = FindObjectOfComponent(el);
+	me->ai->waypointRecalculationStopwatch += DeltaTicks();
+	if (500 < me->ai->waypointRecalculationStopwatch) {
 		Object* player = FindObjectById(CurrentLevel()->playerId);
-		
+
 		List gridSteps;
 		ListInit(&gridSteps, sizeof(Vec2I));
 		int pathfinderResult = PathfinderMapFindGridSteps(&CurrentLevel()->pathfinderMap, me->position, player->position, &gridSteps);
-		//fprintf(stderr, "Pathfinder result: %d\n", pathfinderResult);
 		if (pathfinderResult == 0) {
-			DebugVec2IList("Grid Path", &gridSteps);
-
-			List anyAngleGridSteps;
-			ListInit(&anyAngleGridSteps, sizeof(Vec2I));
-			PathfinderMapGridStepsToAnyAngle(&gridSteps, 0.5f, &anyAngleGridSteps);
-			DebugVec2IList("Any Angle", &anyAngleGridSteps);
-
-			if (1 < anyAngleGridSteps.bucket.size) {
-				uint64_t myPositionIterator = ListGetLast(&anyAngleGridSteps);
-				uint64_t targetIterator = ListGetPrev(&anyAngleGridSteps, myPositionIterator);
-				Vec2I* targetPosition = ListGetData(&anyAngleGridSteps, targetIterator);
-				if (targetPosition) {
-					PhysicsComponent* phy = FindPhysicsOfObject(me);
-					Vec2F direction = Vec2FSub(Vec2FFromVec2I(*targetPosition), me->position);
-					Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(direction), DeltaTicks() * 12.5f), true);
-				}
-			}
-
-			ListDeinit(&anyAngleGridSteps);
+			PathfinderMapGridStepsToAnyAngle(&gridSteps, 0.5f, &me->ai->reversedVec2IWaypointList);
+		} else {
+			ListClear(&me->ai->reversedVec2IWaypointList);
 		}
 		ListDeinit(&gridSteps);
+		
+		me->ai->waypointRecalculationStopwatch -= 500;
+	}
 
-		stopwatch -= 1;
+	if (1 < me->ai->reversedVec2IWaypointList.bucket.size) {
+		uint64_t myPositionIterator = ListGetLast(&me->ai->reversedVec2IWaypointList);
+		uint64_t targetIterator = ListGetPrev(&me->ai->reversedVec2IWaypointList, myPositionIterator);
+		Vec2I* targetPosition = ListGetData(&me->ai->reversedVec2IWaypointList, targetIterator);
+		if (targetPosition) {
+			PhysicsComponent* phy = FindPhysicsOfObject(me);
+			Vec2F direction = Vec2FSub(Vec2FFromVec2I(*targetPosition), me->position);
+			Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(direction), DeltaTicks() * 12.5f), true);
+		}
 	}
 }
 
+// Move this to main loop
 void ObjectSkeleton_postPhysics(EventListenerComponent *el) {
 	Object* obj = FindObjectOfComponent(el);
 	if (obj) {
@@ -80,6 +75,10 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 	ComponentDefense* defense = ObjectAddAndInitDefense(obj, NULL);
 	defense->hp = 100;
 	defense->maxHp = 100;
+
+	obj->ai = malloc(sizeof(AI));
+	assert(obj->ai);
+	AIInit(obj->ai);
 	
 	return 0;
 }
