@@ -24,7 +24,6 @@ static void God_prePhysics(EventListenerComponent* el) {
 				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 100.0, 0.0 }, true);
 			}
 		}
-		fprintf(stderr, "NewPlayer position: %f, %f\n", obj->position.x, obj->position.y);
 	}
 }
 

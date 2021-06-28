@@ -19,12 +19,6 @@
 #define TILE_WIDTH (24)
 #define TILE_WIDTH_STR "24"
 
-// Indexes of Terrain, Camera, Player, and God in GameObject array
-#define TERRAIN_INDEX (0)
-#define CAMERA_INDEX (1)
-#define PLAYER_INDEX (2)
-#define GOD_INDEX (2)
-
 int CurrentScreenWidth();
 int CurrentScreenHeight();
 float CurrentPixelsPerMeter();

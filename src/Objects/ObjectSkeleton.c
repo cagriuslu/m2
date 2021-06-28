@@ -3,7 +3,6 @@
 #include "../Box2DWrapper.h"
 #include "../Pathfinder.h"
 #include "../Box2DUtils.h"
-#include "../Debug.h"
 #include <stdio.h>
 #include <assert.h>
 
@@ -33,7 +32,7 @@ void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
 		if (targetPosition) {
 			PhysicsComponent* phy = FindPhysicsOfObject(me);
 			Vec2F direction = Vec2FSub(Vec2FFromVec2I(*targetPosition), me->position);
-			Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(direction), DeltaTicks() * 12.5f), true);
+			Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(direction), DeltaTicks() * 20.0f), true);
 		}
 	}
 }

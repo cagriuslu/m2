@@ -5,6 +5,7 @@
 #include "InsertionList.h"
 #include "Box2DWrapper.h"
 #include "Pathfinder.h"
+#include "SpatialMap.h"
 
 typedef struct _Level {
 	Bucket objects;
@@ -20,6 +21,8 @@ typedef struct _Level {
 	uint64_t cameraId, playerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
+	Bucket lightSources;
+	SpatialMap lightSourceSpatialMap;
 } Level;
 
 int LevelInit(Level* level);

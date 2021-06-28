@@ -1,7 +1,7 @@
 #include "../Object.h"
 #include "../Main.h"
 #include "../Box2DUtils.h"
-#include "../Debug.h"
+#include "../Log.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -39,7 +39,7 @@ static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 
 			const Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
 			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 500.0f), true);
-			fprintf(stderr, "Defense HP %d\n", defense->hp);
+			LOG_DBG("Hit");
 		}
 	}
 	DeleteObject(obj);

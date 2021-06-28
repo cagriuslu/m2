@@ -36,6 +36,8 @@ typedef struct _Object {
 	uint64_t terrainGraphics;
 	uint64_t defense;
 	uint64_t offense;
+	uint64_t lightSource;
+	// Properties
 	AI* ai;
 } Object;
 
@@ -48,6 +50,7 @@ GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint64_t* outId);
 GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint64_t* outId);
 ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint64_t* outId);
 ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId);
+ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, uint64_t* outId);
 
 int ObjectTileInit(Object* obj, TileDef tileDef, Vec2F position);
 int ObjectPlayerInit(Object* obj);

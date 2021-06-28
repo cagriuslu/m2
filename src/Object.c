@@ -41,6 +41,11 @@ void ObjectDeinit(Object* obj) {
 		ComponentOffenseDeinit(off);
 		BucketUnmark(&CurrentLevel()->offenses, off);
 	}
+	if (obj->lightSource) {
+		ComponentLightSource* light = BucketGetById(&CurrentLevel()->lightSources, obj->lightSource);
+		ComponentLightSourceDeinit(light);
+		BucketUnmark(&CurrentLevel()->lightSources, light);
+	}
 	if (obj->ai) {
 		AIDeinit(obj->ai);
 	}
@@ -106,4 +111,14 @@ ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId) {
 		outId[0] = obj->offense;
 	}
 	return off;
+}
+
+ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, uint64_t* outId) {
+	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
+	ComponentLightSource* light = BucketMark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
+	ComponentLightSourceInit(light, objectId);
+	if (outId) {
+		outId[0] = obj->lightSource;
+	}
+	return light;
 }

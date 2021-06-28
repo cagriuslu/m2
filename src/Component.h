@@ -43,6 +43,17 @@ int GraphicsComponentInit(GraphicsComponent* gfx, uint64_t objectId);
 void GraphicsComponentDeinit(GraphicsComponent* gfx);
 int GraphicsComponentYComparatorCB(uint64_t gfxIdA, uint64_t gfxIdB);
 
+typedef struct _ComponentLightSource {
+	Component super;
+	uint64_t spatialIterator;
+	float power;
+	Vec2F offset;
+	Vec2F direction;
+} ComponentLightSource;
+int ComponentLightSourceInit(ComponentLightSource* light, uint64_t objectId);
+void ComponentLightSourceDeinit(ComponentLightSource* light);
+void ComponentLightSourceUpdatePosition(ComponentLightSource* light);
+
 typedef struct _ComponentDefense {
 	Component super;
 	int maxHp;

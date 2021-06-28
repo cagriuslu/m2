@@ -15,7 +15,7 @@ void HashMapDeinit(HashMap* hm);
 size_t HashMapSize(HashMap* hm);
 void HashMapClear(HashMap* hm);
 void* HashMapSetIntKey(HashMap* hm, int64_t key, void* copy);
-void* HashMapTrySetIntKey(HashMap* hm, int64_t key, void* copy);
+void* HashMapTrySetIntKey(HashMap* hm, int64_t key, void* copy); // Sets only if key not exists
 void* HashMapGetIntKey(HashMap* hm, int64_t key);
 void HashMapUnsetIntKey(HashMap* hm, int64_t key);
 

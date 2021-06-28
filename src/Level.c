@@ -16,11 +16,12 @@ int LevelInit(Level* level) {
 	PROPAGATE_ERROR(BucketInit(&level->terrainGraphics, sizeof(GraphicsComponent)));
 	PROPAGATE_ERROR(BucketInit(&level->defenses, sizeof(ComponentDefense)));
 	PROPAGATE_ERROR(BucketInit(&level->offenses, sizeof(ComponentOffense)));
-	PROPAGATE_ERROR(ArrayInit(&level->deleteList, sizeof(uint64_t), 16, UINT16_MAX + 1));
 	level->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	level->contactListener = Box2DContactListenerRegister(PhysicsComponentContactCB);
 	Box2DWorldSetContactListener(level->world, level->contactListener);
-	fprintf(stderr, "Level initialized\n");
+	PROPAGATE_ERROR(ArrayInit(&level->deleteList, sizeof(uint64_t), 16, UINT16_MAX + 1));
+	PROPAGATE_ERROR(BucketInit(&level->lightSources, sizeof(ComponentLightSource)));
+	PROPAGATE_ERROR(SpatialMapInit(&level->lightSourceSpatialMap, sizeof(uint64_t)));
 	return 0;
 }
 
@@ -41,6 +42,8 @@ void LevelDeleteMarkedObjects(Level* level) {
 
 void LevelDeinit(Level* level) {
 	// TODO delete members in objects
+	SpatialMapDeinit(&level->lightSourceSpatialMap);
+	BucketDeinit(&level->lightSources);
 	PathfinderMapDeinit(&level->pathfinderMap);
 	Box2DContactListenerDestroy(level->contactListener);
 	Box2DWorldDestroy(level->world);
@@ -54,7 +57,6 @@ void LevelDeinit(Level* level) {
 	InsertionListDeinit(&level->drawList);
 	BucketDeinit(&level->objects);
 	memset(level, 0, sizeof(Level));
-	fprintf(stderr, "Level deinitialized\n");
 }
 
 int LevelLoadTest(Level* level) {

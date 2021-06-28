@@ -3,7 +3,6 @@
 #include "Main.h"
 #include "Error.h"
 #include "Ui.h"
-#include "Debug.h"
 #include <stdbool.h>
 
 int DialogWaitForEvent(Array *uis) {

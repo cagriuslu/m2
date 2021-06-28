@@ -3,7 +3,6 @@
 #include "../Box2DUtils.h"
 #include "../Controls.h"
 #include "../Event.h"
-#include "../Debug.h"
 #include <stdio.h>
 
 // Shoot with mouse primary and secondary
@@ -81,6 +80,9 @@ int ObjectPlayerInit(Object* obj) {
 	off->hp = 15;
 	off->originator = objId;
 	off->ticksLeft = 750;
+
+	ComponentLightSource* light = ObjectAddAndInitLightSource(obj, NULL);
+	light->power = 3.0f;
 
 	return 0;
 }

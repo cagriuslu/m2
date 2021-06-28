@@ -24,9 +24,6 @@
     <ClCompile Include="..\src\Controls.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Debug.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Dialog.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,7 +33,7 @@
     <ClCompile Include="..\src\Level.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\main.c">
+    <ClCompile Include="..\src\Main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Ui.c">
@@ -135,6 +132,15 @@
     <ClCompile Include="..\src\AI.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Log.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Components\ComponentLightSource.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SpatialMap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h">
@@ -144,9 +150,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Controls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Dialog.h">
@@ -210,6 +213,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\AI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\AABB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SpatialMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

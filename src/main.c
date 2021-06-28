@@ -8,10 +8,10 @@
 #include "Bucket.h"
 #include "Level.h"
 #include "Dialog.h"
+#include "Log.h"
 #include "List.h"
 #include "Pathfinder.h"
 #include "HashMap.h"
-#include "Debug.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -31,6 +31,7 @@ Level gLevel;
 unsigned gDeltaTicks;
 
 int main(int argc, char **argv) {
+	LOG_TRC("main");
 	(void)argc;
 	(void)argv;
 	int res;
@@ -70,12 +71,14 @@ main_menu:
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
 			PROPAGATE_ERROR(LevelLoadEditor(&gLevel));
 		} else {
-			fprintf(stderr, "Level not found\n");
+			LOG_FTL("Unknown level is selected");
+			LOGTYP_FTL(LOGVAR_MENU_SELECTION, Int32, res);
 			return X_QUIT;
 		}
 		levelLoaded = true;
 	}
 	PathfinderMapInitFromLevel(&gLevel.pathfinderMap, &gLevel);
+	LOG_INF("Level loaded");
 
 	float timeSinceLastWorldStep = 0.0f;
 	unsigned prevPrePhysicsTicks = SDL_GetTicks();
@@ -124,6 +127,9 @@ main_menu:
 					obj->position = Box2DBodyGetPosition(phy->body);
 				}
 			}
+		}
+		for (ComponentLightSource* light = BucketGetFirst(&gLevel.lightSources); light; light = BucketGetNext(&gLevel.lightSources, light)) {
+			ComponentLightSourceUpdatePosition(light);
 		}
 		gDeltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
 		prevPostPhysicsTicks += gDeltaTicks;
