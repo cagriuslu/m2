@@ -10,6 +10,10 @@
 #include <cstdio>
 #include <cstdlib>
 
+extern "C" {
+#include "Log.h"
+}
+
 #define Vec2FToB2Vec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})
 #define B2Vec2ToVec2F(b2vec2) (Vec2F{b2vec2.x, b2vec2.y})
 
@@ -25,6 +29,7 @@
 #define AsAABB(aabb) ((b2AABB*) (aabb))
 #define AsContactListener(contactListener) ((ContactListener*) (contactListener))
 #define AsRayCastCallback(contactListener) ((RayCastCallback*) (contactListener))
+#define AsQueryCallback(queryListener) ((QueryCallback*) (queryListener))
 
 class ContactListener : public b2ContactListener {
 	void (*m_cb)(Box2DContact*);
@@ -36,8 +41,7 @@ public:
 	}
 };
 
-class RayCastCallback : public b2RayCastCallback
-{
+class RayCastCallback : public b2RayCastCallback {
 	float (*m_cb)(Box2DFixture*, Vec2F point, Vec2F normal, float fraction, void* userData);
 	uint16_t m_categoryMask;
 	void* m_userData;
@@ -54,9 +58,20 @@ public:
 	}
 };
 
+class QueryCallback : public b2QueryCallback {
+	bool (*m_cb)(Box2DFixture*, void* userData);
+	void* m_userData;
+public:
+	QueryCallback(bool (*cb)(Box2DFixture*, void* userData), void* userData) : m_cb(cb), m_userData(userData) {}
+
+	bool ReportFixture(b2Fixture* fixture) override {
+		return (*m_cb)(fixture, m_userData);
+	}
+};
+
 Box2DWorld* Box2DWorldCreate(Vec2F gravity) {
 	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
-		fprintf(stderr, "Box2D Error: Version is not 2.4.0, box2d hacks may not work!");
+		LOG_FTL("Box2D version mismatch");
 		abort();
 	}
 	return new b2World(Vec2FToB2Vec2(gravity));
@@ -79,6 +94,13 @@ void Box2DWorldRayCast(Box2DWorld* world, Box2DRayCastListener* rayCastListener,
 	const b2Vec2 point1 = Vec2FToB2Vec2(point1F);
 	const b2Vec2 point2 = Vec2FToB2Vec2(point2F);
 	AsWorld(world)->RayCast(AsRayCastCallback(rayCastListener), point1, point2);
+}
+
+void Box2DWorldQuery(Box2DWorld* world, Box2DQueryListener* queryListener, AABB aabb) {
+	b2AABB b2dAabb;
+	b2dAabb.lowerBound.Set(aabb.lowerBound.x, aabb.lowerBound.y);
+	b2dAabb.upperBound.Set(aabb.upperBound.x, aabb.upperBound.y);
+	AsWorld(world)->QueryAABB(AsQueryCallback(queryListener), b2dAabb);
 }
 
 void Box2DWorldDestroyBody(Box2DWorld *world, Box2DBody *body) {
@@ -139,6 +161,10 @@ void Box2DBodySetFixedRotation(Box2DBody *body, bool flag) {
 
 void Box2DBodySetUserData(Box2DBody *body, void *userData) {
 	AsBody(body)->GetUserData().pointer = (uintptr_t) userData;
+}
+
+void Box2DBodySetTransform(Box2DBody *body, Vec2F position, float angle) {
+	AsBody(body)->SetTransform(Vec2FToB2Vec2(position), angle);
 }
 
 void Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake) {
@@ -274,9 +300,9 @@ int32_t Box2DFixtureGetProxyCount(Box2DFixture* fixture) {
 	return reinterpret_cast<DummyFixture*>(AsFixture(fixture))->m_proxyCount;
 }
 
-Box2DAABB Box2DFixtureGetAABB(Box2DFixture* fixture, int32_t proxyIndex) {
+AABB Box2DFixtureGetAABB(Box2DFixture* fixture, int32_t proxyIndex) {
 	const auto& aabb = AsFixture(fixture)->GetAABB(proxyIndex);
-	return Box2DAABB{ Vec2F{aabb.lowerBound.x, aabb.lowerBound.y}, Vec2F{aabb.upperBound.x, aabb.upperBound.y}};
+	return AABB{ Vec2F{aabb.lowerBound.x, aabb.lowerBound.y}, Vec2F{aabb.upperBound.x, aabb.upperBound.y}};
 }
 
 Box2DShape* Box2DFixtureGetShape(Box2DFixture* fixture) {
@@ -329,4 +355,12 @@ Box2DRayCastListener* Box2DRayCastListenerCreate(float (*cb)(Box2DFixture*, Vec2
 
 void Box2DRayCastListenerDestroy(Box2DRayCastListener* rayCastListener) {
 	delete AsRayCastCallback(rayCastListener);
+}
+
+Box2DQueryListener* Box2DQueryListenerCreate(bool (*cb)(Box2DFixture*, void* userData), void* userData) {
+	return new QueryCallback(cb, userData);
+}
+
+void Box2DQueryListenerDestroy(Box2DQueryListener* queryListener) {
+	delete AsQueryCallback(queryListener);
 }

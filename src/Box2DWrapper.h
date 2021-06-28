@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include "Vec2F.h"
+#include "AABB.h"
 
 typedef void Box2DWorld;
 typedef void Box2DBodyDef;
@@ -18,17 +19,14 @@ typedef void Box2DCircleShape;
 typedef void Box2DContact;
 typedef void Box2DContactListener;
 typedef void Box2DRayCastListener;
-
-typedef struct _Box2DAABB {
-	Vec2F lowerBound;
-	Vec2F upperBound;
-} Box2DAABB;
+typedef void Box2DQueryListener;
 
 Box2DWorld*  Box2DWorldCreate(Vec2F gravity);
 Box2DBody*   Box2DWorldCreateBody(Box2DWorld *world, Box2DBodyDef *bodyDef);
 void         Box2DWorldSetContactListener(Box2DWorld* world, Box2DContactListener* contactListener);
 void         Box2DWorldStep(Box2DWorld *world, float timeStep, int velocityIterations, int positionIterations);
 void         Box2DWorldRayCast(Box2DWorld* world, Box2DRayCastListener* rayCastListener, Vec2F point1, Vec2F point2);
+void         Box2DWorldQuery(Box2DWorld* world, Box2DQueryListener* queryListener, AABB aabb);
 void         Box2DWorldDestroyBody(Box2DWorld *world, Box2DBody *body);
 void         Box2DWorldDestroy(Box2DWorld *world);
 
@@ -46,6 +44,7 @@ void          Box2DBodySetLinearDamping(Box2DBody *body, float linearDamping);
 void          Box2DBodySetAngularDamping(Box2DBody *body, float angularDamping);
 void          Box2DBodySetFixedRotation(Box2DBody *body, bool flag);
 void          Box2DBodySetUserData(Box2DBody *body, void *userData);
+void          Box2DBodySetTransform(Box2DBody* body, Vec2F position, float angle);
 void          Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake);
 void          Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity);
 Vec2F         Box2DBodyGetLinearVelocity(Box2DBody* body);
@@ -69,7 +68,7 @@ void        Box2DFixtureSetSensor(Box2DFixture *fixture, bool flag);
 Box2DBody*  Box2DFixtureGetBody(Box2DFixture* fixture);
 uint16_t    Box2DFixtureGetCategory(Box2DFixture* fixture);
 int32_t     Box2DFixtureGetProxyCount(Box2DFixture* fixture);
-Box2DAABB   Box2DFixtureGetAABB(Box2DFixture* fixture, int32_t proxyIndex);
+AABB        Box2DFixtureGetAABB(Box2DFixture* fixture, int32_t proxyIndex);
 Box2DShape* Box2DFixtureGetShape(Box2DFixture* fixture);
 
 Box2DPolygonShape* Box2DPolygonShapeCreate();
@@ -89,6 +88,9 @@ void                  Box2DContactListenerDestroy(Box2DContactListener* contactL
 
 Box2DRayCastListener* Box2DRayCastListenerCreate(float (*cb)(Box2DFixture*, Vec2F point, Vec2F normal, float fraction, void* userData), uint16_t categoryMask, void* userData);
 void                  Box2DRayCastListenerDestroy(Box2DRayCastListener* rayCastListener);
+
+Box2DQueryListener* Box2DQueryListenerCreate(bool (*cb)(Box2DFixture*, void* userData), void* userData);
+void                Box2DQueryListenerDestroy(Box2DQueryListener* queryListener);
 
 #ifdef __cplusplus
 }
