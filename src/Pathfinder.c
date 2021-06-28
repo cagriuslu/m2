@@ -4,7 +4,6 @@
 #include "Component.h"
 #include "Object.h"
 #include "Level.h"
-#include "Debug.h"
 #include <string.h>
 #include <stdbool.h>
 #include <float.h>
@@ -28,17 +27,16 @@ int PathfinderMapInitFromLevel(PathfinderMap* pm, Level* level) {
 				if (categoryBits & (STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY)) {
 					const int proxyCount = Box2DFixtureGetProxyCount(fixture);
 					for (int proxyIdx = 0; proxyIdx < proxyCount; proxyIdx++) {
-						Box2DAABB aabb = Box2DFixtureGetAABB(fixture, proxyIdx);
+						AABB aabb = Box2DFixtureGetAABB(fixture, proxyIdx);
 						// AABB is bigger 0.01 meters than the object at each side
 						// Decrease its size by 0.02 so that rounding can work						
-						Box2DAABB conservativeAabb = (Box2DAABB){Vec2FAdd(aabb.lowerBound, (Vec2F){ 0.02f, 0.02f}), Vec2FSub(aabb.upperBound, (Vec2F){ 0.02f, 0.02f})};
+						AABB conservativeAabb = (AABB){Vec2FAdd(aabb.lowerBound, (Vec2F){ 0.02f, 0.02f}), Vec2FSub(aabb.upperBound, (Vec2F){ 0.02f, 0.02f})};
 						int lowerX = (int) roundf(conservativeAabb.lowerBound.x);
 						int upperX = (int) roundf(conservativeAabb.upperBound.x);
 						int lowerY = (int) roundf(conservativeAabb.lowerBound.y);
 						int upperY = (int) roundf(conservativeAabb.upperBound.y);
 						for (int y = lowerY; y <= upperY; y++) {
 							for (int x = lowerX; x <= upperX; x++) {
-								fprintf(stderr, "Blocking %d,%d\n", x, y);
 								bool blocked = true;
 								HashMapSetIntKey(&pm->blockedLocations, XYToHashMapKey(x, y), &blocked); // TODO check result
 							}
