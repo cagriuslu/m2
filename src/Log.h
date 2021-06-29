@@ -35,6 +35,7 @@ typedef enum _LogLevel {
 void Log(LogLevel level, const char* file, int line, const char* message);
 
 void LogTyp_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var);
+void LogTyp_Float32(LogLevel level, const char* file, int line, const char* message, float var);
 void LogTyp_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var);
 void LogTyp_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var);
 void LogTyp_SDL_Rect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var);

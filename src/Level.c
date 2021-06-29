@@ -22,6 +22,7 @@ int LevelInit(Level* level) {
 	PROPAGATE_ERROR(ArrayInit(&level->deleteList, sizeof(uint64_t), 16, UINT16_MAX + 1));
 	PROPAGATE_ERROR(BucketInit(&level->lightSources, sizeof(ComponentLightSource)));
 	PROPAGATE_ERROR(SpatialMapInit(&level->lightSourceSpatialMap, sizeof(uint64_t)));
+	PROPAGATE_ERROR(BucketInit(&level->prePhysicsStopwatches, sizeof(Array)));
 	return 0;
 }
 
@@ -42,6 +43,7 @@ void LevelDeleteMarkedObjects(Level* level) {
 
 void LevelDeinit(Level* level) {
 	// TODO delete members in objects
+	BucketDeinit(&level->prePhysicsStopwatches);
 	SpatialMapDeinit(&level->lightSourceSpatialMap);
 	BucketDeinit(&level->lightSources);
 	PathfinderMapDeinit(&level->pathfinderMap);

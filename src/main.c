@@ -106,6 +106,11 @@ main_menu:
 		///// PHYSICS /////
 		gDeltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
 		prevPrePhysicsTicks += gDeltaTicks;
+		for (Array* stopwatches = BucketGetFirst(&gLevel.prePhysicsStopwatches); stopwatches; stopwatches = BucketGetNext(&gLevel.prePhysicsStopwatches, stopwatches)) {
+			for (size_t i = 0; i < stopwatches->length; i++) {
+				*(unsigned*)ArrayGet(stopwatches, i) += gDeltaTicks;
+			}
+		}
 		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
 			if (el->prePhysics) {
 				el->prePhysics(el);

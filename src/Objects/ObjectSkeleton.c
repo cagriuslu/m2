@@ -51,12 +51,12 @@ void ObjectSkeleton_postPhysics(EventListenerComponent *el) {
 int ObjectSkeletonInit(Object* obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj, position));
 
-	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
+	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->prePhysics = ObjectSkeleton_prePhysics;
 	el->postGraphics = ObjectSkeleton_postPhysics;
 
 	uint64_t phyId = 0;
-	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
+	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateDynamicDisk(
 		phyId,
 		position,
@@ -67,11 +67,11 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 		10.0f // Damping
 	);
 
-	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
+	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 
-	ComponentDefense* defense = ObjectAddAndInitDefense(obj, NULL);
+	ComponentDefense* defense = ObjectAddDefense(obj, NULL);
 	defense->hp = 100;
 	defense->maxHp = 100;
 

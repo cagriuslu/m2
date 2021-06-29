@@ -13,7 +13,7 @@ void Camera_postPhysics(EventListenerComponent* el) {
 int ObjectCameraInit(Object* obj) {
 	PROPAGATE_ERROR(ObjectInit(obj, (Vec2F) { 0.0f, 0.0f }));
 
-	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
+	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->postPhysics = Camera_postPhysics;
 
 	return 0;

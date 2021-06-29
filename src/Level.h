@@ -23,6 +23,7 @@ typedef struct _Level {
 	PathfinderMap pathfinderMap;
 	Bucket lightSources;
 	SpatialMap lightSourceSpatialMap;
+	Bucket prePhysicsStopwatches; // holds Arrays of unsigned's
 } Level;
 
 int LevelInit(Level* level);

@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "TileLookup.h"
 #include "AI.h"
+#include "Array.h"
 #include "Vec2F.h"
 #include <stdint.h>
 
@@ -39,18 +40,21 @@ typedef struct _Object {
 	uint64_t lightSource;
 	// Properties
 	AI* ai;
+	uint64_t prePhysicsStopwatches;
 } Object;
 
 int ObjectInit(Object* obj, Vec2F position);
 void ObjectDeinit(Object* obj);
 
-EventListenerComponent* ObjectAddAndInitEventListener(Object* obj, uint64_t* outId);
-PhysicsComponent* ObjectAddAndInitPhysics(Object* obj, uint64_t* outId);
-GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint64_t* outId);
-GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint64_t* outId);
-ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint64_t* outId);
-ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId);
-ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId);
+EventListenerComponent* ObjectAddEventListener(Object* obj, uint64_t* outId);
+PhysicsComponent* ObjectAddPhysics(Object* obj, uint64_t* outId);
+GraphicsComponent* ObjectAddGraphics(Object* obj, uint64_t* outId);
+GraphicsComponent* ObjectAddTerrainGraphics(Object* obj, uint64_t* outId);
+ComponentDefense* ObjectAddDefense(Object* obj, uint64_t* outId);
+ComponentOffense* ObjectAddOffense(Object* obj, uint64_t* outId);
+ComponentLightSource* ObjectAddLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId);
+
+Array* ObjectAddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount);
 
 int ObjectTileInit(Object* obj, TileDef tileDef, Vec2F position);
 int ObjectPlayerInit(Object* obj);
@@ -60,6 +64,6 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 int ObjectSkeletonInit(Object* obj, Vec2F position);
 int ObjectWallInit(Object* obj, Vec2F position);
 int ObjectStaticBoxInit(Object* obj, Vec2F position);
-int ObjectSwordInit(Object* obj, Vec2F position, float fromAngleDegrees, float toAngleDegrees, ComponentOffense** outOffense);
+int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, Vec2F direction, uint32_t ticks);
 
 #endif

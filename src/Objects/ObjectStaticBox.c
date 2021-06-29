@@ -8,10 +8,10 @@ int ObjectStaticBoxInit(Object *obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj, position));
 	
 	uint64_t phyId = 0;
-	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
+	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateStaticBox(phyId, position, STATIC_OBJECT_CATEGORY, ((Vec2F) { 0.875, 0.125 }));
 
-	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
+	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect) {TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ 0.0, 4.5 };
 	

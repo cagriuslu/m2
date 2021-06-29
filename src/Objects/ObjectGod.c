@@ -30,11 +30,11 @@ static void God_prePhysics(EventListenerComponent* el) {
 int ObjectGodInit(Object* obj) {
 	PROPAGATE_ERROR(ObjectInit(obj, (Vec2F) { 0.0f, 0.0f }));
 
-	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
+	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->prePhysics = God_prePhysics;
 
 	uint64_t phyId = 0;
-	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
+	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateDynamicDisk(
 		phyId,
 		obj->position,

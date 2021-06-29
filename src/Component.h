@@ -36,7 +36,6 @@ typedef struct _GraphicsComponent {
 	SDL_Texture* tx;
 	SDL_Rect txSrc;
 	float txAngle;
-	//Vec2F txOffset; // w.r.t texture center, # of pixels
 	Vec2F txCenter; // w.r.t. texture center in pixels, offsets the texture and the center for rotation
 	void (*draw)(struct _GraphicsComponent*);
 } GraphicsComponent;

@@ -49,10 +49,15 @@ void ObjectDeinit(Object* obj) {
 	if (obj->ai) {
 		AIDeinit(obj->ai);
 	}
+	if (obj->prePhysicsStopwatches) {
+		Array* stopwatches = BucketGetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
+		ArrayDeinit(stopwatches);
+		BucketUnmark(&CurrentLevel()->prePhysicsStopwatches, stopwatches);
+	}
 	memset(obj, 0, sizeof(Object));
 }
 
-EventListenerComponent* ObjectAddAndInitEventListener(Object* obj, uint64_t *outId) {
+EventListenerComponent* ObjectAddEventListener(Object* obj, uint64_t *outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	EventListenerComponent* el = BucketMark(&CurrentLevel()->eventListeners, NULL, &obj->eventListener);
 	EventListenerComponentInit(el, objectId);
@@ -62,7 +67,7 @@ EventListenerComponent* ObjectAddAndInitEventListener(Object* obj, uint64_t *out
 	return el;
 }
 
-PhysicsComponent* ObjectAddAndInitPhysics(Object* obj, uint64_t* outId) {
+PhysicsComponent* ObjectAddPhysics(Object* obj, uint64_t* outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	PhysicsComponent* phy = BucketMark(&CurrentLevel()->physics, NULL, &obj->physics);
 	PhysicsComponentInit(phy, objectId);
@@ -72,7 +77,7 @@ PhysicsComponent* ObjectAddAndInitPhysics(Object* obj, uint64_t* outId) {
 	return phy;
 }
 
-GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint64_t* outId) {
+GraphicsComponent* ObjectAddGraphics(Object* obj, uint64_t* outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	GraphicsComponent* gfx = BucketMark(&CurrentLevel()->graphics, NULL, &obj->graphics);
 	GraphicsComponentInit(gfx, objectId);
@@ -83,7 +88,7 @@ GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint64_t* outId) {
 	return gfx;
 }
 
-GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint64_t* outId) {
+GraphicsComponent* ObjectAddTerrainGraphics(Object* obj, uint64_t* outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	GraphicsComponent* gfx = BucketMark(&CurrentLevel()->terrainGraphics, NULL, &obj->terrainGraphics);
 	GraphicsComponentInit(gfx, objectId);
@@ -93,7 +98,7 @@ GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint64_t* outId)
 	return gfx;
 }
 
-ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint64_t* outId) {
+ComponentDefense* ObjectAddDefense(Object* obj, uint64_t* outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	ComponentDefense* def = BucketMark(&CurrentLevel()->defenses, NULL, &obj->defense);
 	ComponentDefenseInit(def, objectId);
@@ -103,7 +108,7 @@ ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint64_t* outId) {
 	return def;
 }
 
-ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId) {
+ComponentOffense* ObjectAddOffense(Object* obj, uint64_t* outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	ComponentOffense* off = BucketMark(&CurrentLevel()->offenses, NULL, &obj->offense);
 	ComponentOffenseInit(off, objectId);
@@ -113,7 +118,7 @@ ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId) {
 	return off;
 }
 
-ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId) {
+ComponentLightSource* ObjectAddLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	ComponentLightSource* light = BucketMark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
 	ComponentLightSourceInit(light, objectId, lightBoundaryRadius);
@@ -121,4 +126,14 @@ ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, float lightBounda
 		outId[0] = obj->lightSource;
 	}
 	return light;
+}
+
+Array* ObjectAddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount) {
+	Array* array = BucketMark(&CurrentLevel()->prePhysicsStopwatches, NULL, &obj->prePhysicsStopwatches);
+	ArrayInit(array, sizeof(unsigned), stopwatchCount, stopwatchCount);
+	for (unsigned i = 0; i < stopwatchCount; i++) {
+		unsigned initialValue = 0;
+		ArrayAppend(array, &initialValue);
+	}
+	return array;
 }

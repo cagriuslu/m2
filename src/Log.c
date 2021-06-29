@@ -90,6 +90,12 @@ void LogTyp_Int32(LogLevel level, const char* file, int line, const char* messag
 	LogNewLine();
 }
 
+void LogTyp_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
+	LogHeader(level, file, line);
+	fprintf(stderr, "{\"%s\": %.4f}", message, var);
+	LogNewLine();
+}
+
 void LogTyp_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": {\"x\":%f, \"y\":%f}}", message, var.x, var.y);

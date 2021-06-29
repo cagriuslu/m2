@@ -1,17 +1,17 @@
 #include "../Object.h"
+#include "../Log.h"
 #include "../Main.h"
 #include "../Error.h"
 #include "../Box2DUtils.h"
 
-#define ANGLE(v2fDir) atan2f((v2fDir).y, (v2fDir).x)
+#define SWING_SPEED (15.0f)
 
 void Sword_prePhysics(EventListenerComponent* el) {
 	Object* obj = FindObjectOfComponent(el);
-	if (obj && obj->physics) {
-		PhysicsComponent* phy = FindPhysicsOfObject(obj);
-		if (phy && phy->body) {
-			Box2DBodySetAngularVelocity(phy->body, -15.0f);
-		}
+	ComponentOffense* offense = FindOffenseOfObject(obj);
+	offense->ticksLeft -= DeltaTicks();
+	if (offense->ticksLeft <= 0) {
+		DeleteObject(obj);
 	}
 }
 
@@ -28,24 +28,26 @@ void Sword_postPhysics(EventListenerComponent* el) {
 			}
 			gfx->txAngle = Box2DBodyGetAngle(phy->body);
 		}
-		
 	}
 }
 
-int ObjectSwordInit(Object* obj, Vec2F position, float fromAngleDegrees, float toAngleDegrees, ComponentOffense** outOffense) {
-	PROPAGATE_ERROR(ObjectInit(obj, position));
+int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, Vec2F direction, uint32_t ticks) {
+	PROPAGATE_ERROR(ObjectInit(obj, originatorPosition));
 
-	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
+	const float theta = Vec2FAngleRads(direction); // Convert direction to angle
+	const float startAngle = theta + SWING_SPEED * (ticks / 1000.0f / 2.0f);
+
+	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->prePhysics = Sword_prePhysics;
 	el->postPhysics = Sword_postPhysics;
 
 	uint64_t phyId = 0;
-	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
+	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateBody(
 		phyId,
 		false, // isDisk
 		true, // isDynamic
-		position,
+		originatorPosition,
 		false, // allowSleep
 		false, // isBullet
 		true, // isSensor
@@ -59,17 +61,17 @@ int ObjectSwordInit(Object* obj, Vec2F position, float fromAngleDegrees, float t
 		0.0f, // linearDamping
 		false // fixedRotation
 	);
+	Box2DBodySetTransform(phy->body, originatorPosition, startAngle);
+	Box2DBodySetAngularVelocity(phy->body, -SWING_SPEED);
 
-	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
-	gfx->txAngle = 0.0f;
+	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
+	gfx->txAngle = Box2DBodyGetAngle(phy->body);
 	gfx->txSrc = (SDL_Rect){ 6 * TILE_WIDTH, 4 * TILE_WIDTH, 2 * TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ -14.0f, 0.0f };
 
-	ComponentOffense* off = ObjectAddAndInitOffense(obj, NULL);
-	if (outOffense) {
-		*outOffense = off;
-	}
-	// TODO do not return to be copied after, Receive it so that you can copy here
+	ComponentOffense* off = ObjectAddOffense(obj, NULL);
+	ComponentOffenseCopyExceptSuper(off, originatorOffense);
+	off->ticksLeft = ticks;
 	
 	return 0;
 }

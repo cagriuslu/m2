@@ -49,11 +49,11 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 	direction = Vec2FNormalize(direction);
 	PROPAGATE_ERROR(ObjectInit(obj, position));
 
-	EventListenerComponent* el = ObjectAddAndInitEventListener(obj, NULL);
+	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->prePhysics = Bullet_prePhysics;
 
 	uint64_t phyId = 0;
-	PhysicsComponent* phy = ObjectAddAndInitPhysics(obj, &phyId);
+	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
 	phy->body = Box2DUtilsCreateBulletSensor(
 		phyId,
 		position,
@@ -65,11 +65,11 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 	Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f)); // Give initial velocity
 	phy->onCollision = Bullet_onCollision;
 	
-	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
+	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
 	gfx->txAngle = ANGLE(direction);
 	gfx->txSrc = (SDL_Rect){ 4 * TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
 
-	ComponentOffense* off = ObjectAddAndInitOffense(obj, NULL);
+	ComponentOffense* off = ObjectAddOffense(obj, NULL);
 	if (outOffense) {
 		*outOffense = off;
 	}

@@ -28,6 +28,10 @@ Vec2F Vec2FNormalize(Vec2F in) {
 	return (Vec2F) { in.x / len, in.y / len };
 }
 
+float Vec2FAngleRads(Vec2F vector) {
+	return atan2f(vector.y, vector.x);
+}
+
 bool Vec2FEquals(Vec2F lhs, Vec2F rhs) {
 	return (lhs.x == rhs.x) && (lhs.y == rhs.y);
 }
