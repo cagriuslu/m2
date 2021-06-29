@@ -175,6 +175,10 @@ void Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity) {
 	AsBody(body)->SetLinearVelocity(Vec2FToB2Vec2(velocity));
 }
 
+void Box2DBodySetAngularVelocity(Box2DBody* body, float omega) {
+	AsBody(body)->SetAngularVelocity(omega);
+}
+
 Vec2F Box2DBodyGetLinearVelocity(Box2DBody* body) {
 	b2Vec2 v = AsBody(body)->GetLinearVelocity();
 	Vec2F vec2f = { v.x, v.y };
@@ -315,6 +319,10 @@ Box2DPolygonShape* Box2DPolygonShapeCreate() {
 
 void Box2DPolygonShapeSetAsBox(Box2DPolygonShape *polygonShape, Vec2F halfdims) {
 	AsPolygonShape(polygonShape)->SetAsBox(halfdims.x, halfdims.y);
+}
+
+void Box2DPolygonShapeSetAsBoxEx(Box2DPolygonShape* polygonShape, Vec2F halfDims, Vec2F center, float angle) {
+	AsPolygonShape(polygonShape)->SetAsBox(halfDims.x, halfDims.y, b2Vec2{center.x, center.y}, angle);
 }
 
 void Box2DPolygonShapeDestroy(Box2DPolygonShape *polygonShape) {

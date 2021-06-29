@@ -47,6 +47,7 @@ void          Box2DBodySetUserData(Box2DBody *body, void *userData);
 void          Box2DBodySetTransform(Box2DBody* body, Vec2F position, float angle);
 void          Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake);
 void          Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity);
+void          Box2DBodySetAngularVelocity(Box2DBody* body, float omega);
 Vec2F         Box2DBodyGetLinearVelocity(Box2DBody* body);
 Vec2F         Box2DBodyGetPosition(Box2DBody *body);
 float         Box2DBodyGetAngle(Box2DBody *body);
@@ -74,6 +75,7 @@ Box2DShape* Box2DFixtureGetShape(Box2DFixture* fixture);
 Box2DPolygonShape* Box2DPolygonShapeCreate();
 void               Box2DPolygonShapeSetPosition(Box2DPolygonShape *polygonShape, Vec2F position);
 void               Box2DPolygonShapeSetAsBox(Box2DPolygonShape *polygonShape, Vec2F halfdims);
+void               Box2DPolygonShapeSetAsBoxEx(Box2DPolygonShape* polygonShape, Vec2F halfDims, Vec2F center, float angle);
 void               Box2DPolygonShapeDestroy(Box2DPolygonShape *polygonShape);
 
 Box2DCircleShape* Box2DCircleShapeCreate();

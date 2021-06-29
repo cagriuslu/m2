@@ -12,7 +12,7 @@ int ObjectWallInit(Object* obj, Vec2F position) {
 
 	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){ 8 * TILE_WIDTH, 0, TILE_WIDTH, 2 * TILE_WIDTH };
-	gfx->txOffset = (Vec2F){ 0.0, -12.0 };
+	gfx->txCenter = (Vec2F){ 0.0, 12.0 };
 
 	return 0;
 }

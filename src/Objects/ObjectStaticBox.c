@@ -13,7 +13,7 @@ int ObjectStaticBoxInit(Object *obj, Vec2F position) {
 
 	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect) {TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
-	gfx->txOffset = (Vec2F){ 0.0, -4.5 };
+	gfx->txCenter = (Vec2F){ 0.0, 4.5 };
 	
 	return 0;
 }

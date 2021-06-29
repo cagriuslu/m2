@@ -68,8 +68,8 @@ int LevelLoadTest(Level* level) {
 	Object* camera = BucketMark(&level->objects, NULL, &level->cameraId);
 	ObjectCameraInit(camera);
 
-	Object* skeleton = BucketMark(&level->objects, NULL, NULL);
-	ObjectSkeletonInit(skeleton, (Vec2F) { -2.0f, -2.0f });
+	/*Object* skeleton = BucketMark(&level->objects, NULL, NULL);
+	ObjectSkeletonInit(skeleton, (Vec2F) { -2.0f, -2.0f });*/
 
 	Object* wall = BucketMark(&level->objects, NULL, NULL);
 	ObjectWallInit(wall, (Vec2F) { 0.0f, -2.0f });

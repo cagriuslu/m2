@@ -46,6 +46,20 @@ static void Player_prePhysics(EventListenerComponent* el) {
 				}
 			}
 		}
+		if (IsButtonPressed(BUTTON_SECONDARY)) {
+			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
+			Vec2F swordDir = Vec2FSub(pointerPosInWorld, obj->position);
+
+			Object* sword = BucketMark(&level->objects, NULL, NULL);
+			ComponentOffense* swordOffense = NULL;
+			ObjectSwordInit(sword, obj->position, 0.0f, 0.0f, &swordOffense);
+			if (swordOffense) {
+				ComponentOffense* playerOffense = BucketGetById(&level->offenses, obj->offense);
+				if (playerOffense) {
+					ComponentOffenseCopyExceptSuper(swordOffense, playerOffense);
+				}
+			}
+		}
 	}
 }
 
@@ -70,7 +84,7 @@ int ObjectPlayerInit(Object* obj) {
 
 	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
-	gfx->txOffset = (Vec2F){ 0.0, -6.5 };
+	gfx->txCenter = (Vec2F){ 0.0, 6.5 };
 
 	ComponentDefense* def = ObjectAddAndInitDefense(obj, NULL);
 	def->hp = 100;
@@ -81,7 +95,7 @@ int ObjectPlayerInit(Object* obj) {
 	off->originator = objId;
 	off->ticksLeft = 750;
 
-	ComponentLightSource* light = ObjectAddAndInitLightSource(obj, NULL);
+	ComponentLightSource* light = ObjectAddAndInitLightSource(obj, 4.0f, NULL);
 	light->power = 3.0f;
 
 	return 0;

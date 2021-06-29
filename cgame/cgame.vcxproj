@@ -173,6 +173,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Level.c" />
     <ClCompile Include="..\src\List.c" />
     <ClCompile Include="..\src\Log.c" />
+    <ClCompile Include="..\src\Objects\ObjectSword.c" />
     <ClCompile Include="..\src\Pathfinder.c" />
     <ClCompile Include="..\src\Main.c" />
     <ClCompile Include="..\src\Object.c" />
@@ -184,6 +185,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClCompile Include="..\src\Objects\ObjectStaticBox.c" />
     <ClCompile Include="..\src\Objects\ObjectTile.c" />
     <ClCompile Include="..\src\Objects\ObjectWall.c" />
+    <ClCompile Include="..\src\SDLUtils.c" />
     <ClCompile Include="..\src\SpatialMap.c" />
     <ClCompile Include="..\src\TerrainLoader.c" />
     <ClCompile Include="..\src\TileLookup.c" />
@@ -217,6 +219,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
     <ClInclude Include="..\src\Pathfinder.h" />
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\Object.h" />
+    <ClInclude Include="..\src\SDLUtils.h" />
     <ClInclude Include="..\src\SpatialMap.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
     <ClInclude Include="..\src\TileLookup.h" />

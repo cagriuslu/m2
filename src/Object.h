@@ -50,7 +50,7 @@ GraphicsComponent* ObjectAddAndInitGraphics(Object* obj, uint64_t* outId);
 GraphicsComponent* ObjectAddAndInitTerrainGraphics(Object* obj, uint64_t* outId);
 ComponentDefense* ObjectAddAndInitDefense(Object* obj, uint64_t* outId);
 ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId);
-ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, uint64_t* outId);
+ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId);
 
 int ObjectTileInit(Object* obj, TileDef tileDef, Vec2F position);
 int ObjectPlayerInit(Object* obj);
@@ -60,5 +60,6 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 int ObjectSkeletonInit(Object* obj, Vec2F position);
 int ObjectWallInit(Object* obj, Vec2F position);
 int ObjectStaticBoxInit(Object* obj, Vec2F position);
+int ObjectSwordInit(Object* obj, Vec2F position, float fromAngleDegrees, float toAngleDegrees, ComponentOffense** outOffense);
 
 #endif

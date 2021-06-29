@@ -69,7 +69,7 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 
 	GraphicsComponent* gfx = ObjectAddAndInitGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
-	gfx->txOffset = (Vec2F){ 0.0f, -4.5f };
+	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 
 	ComponentDefense* defense = ObjectAddAndInitDefense(obj, NULL);
 	defense->hp = 100;

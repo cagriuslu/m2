@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, uint64_t iterator) {
+static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, float boundaryRadius, uint64_t iterator) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);
 	Box2DBodyDefSetUserData(bodyDef, (void*)((uintptr_t)iterator));
@@ -12,7 +12,7 @@ static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, uint64_t iterato
 
 	Box2DFixtureDef* fixtureDef = Box2DFixtureDefCreate();
 	Box2DCircleShape* circleShape = Box2DCircleShapeCreate();
-	Box2DCircleShapeSetRadius(circleShape, 0.005f); // Disk of circumference 1cm
+	Box2DCircleShapeSetRadius(circleShape, boundaryRadius); // Disk of circumference 1cm
 	Box2DFixtureDefSetShape(fixtureDef, circleShape);
 	Box2DBodyCreateFixtureFromFixtureDef(body, fixtureDef);
 	Box2DFixtureDefDestroy(fixtureDef);
@@ -52,10 +52,10 @@ void SpatialMapClear(SpatialMap* sm) {
 	assert(sm->world);
 }
 
-uint64_t SpatialMapAdd(SpatialMap* sm, Vec2F position, void* copy) {
+uint64_t SpatialMapAdd(SpatialMap* sm, Vec2F position, float boundaryRadius, void* copy) {
 	uint64_t iterator = 0;
 	SpatialMapItem* item = BucketMark(&sm->bucket, NULL, &iterator);
-	item->body = CreateBody(sm->world, position, iterator);
+	item->body = CreateBody(sm->world, position, boundaryRadius, iterator);
 	if (copy) {
 		memcpy(item->data, copy, sm->dataSize);
 	} else {

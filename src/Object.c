@@ -113,10 +113,10 @@ ComponentOffense* ObjectAddAndInitOffense(Object* obj, uint64_t* outId) {
 	return off;
 }
 
-ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, uint64_t* outId) {
+ComponentLightSource* ObjectAddAndInitLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId) {
 	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
 	ComponentLightSource* light = BucketMark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
-	ComponentLightSourceInit(light, objectId);
+	ComponentLightSourceInit(light, objectId, lightBoundaryRadius);
 	if (outId) {
 		outId[0] = obj->lightSource;
 	}

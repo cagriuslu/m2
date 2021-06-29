@@ -17,7 +17,7 @@ void SpatialMapDeinit(SpatialMap* sm);
 
 size_t SpatialMapSize(SpatialMap* sm);
 void SpatialMapClear(SpatialMap* sm);
-uint64_t SpatialMapAdd(SpatialMap* sm, Vec2F position, void* copy); // Returns iterator
+uint64_t SpatialMapAdd(SpatialMap* sm, Vec2F position, float boundaryRadius, void* copy); // Returns iterator
 void SpatialMapRemove(SpatialMap* sm, uint64_t iterator);
 void SpatialMapSetPosition(SpatialMap* sm, uint64_t iterator, Vec2F position);
 void SpatialMapGet(SpatialMap* sm, AABB bounds, Array* outIterators);

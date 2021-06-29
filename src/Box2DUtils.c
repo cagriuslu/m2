@@ -1,7 +1,7 @@
 #include "Box2DUtils.h"
 #include "Main.h"
 
-Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, float diskRadius, float mass, float linearDamping) {
+Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, Vec2F boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	if (isDynamic) {
 		Box2DBodyDefSetTypeDynamic(bodyDef);
@@ -20,7 +20,7 @@ Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec
 		shape = circleShape;
 	} else {
 		Box2DPolygonShape* boxShape = Box2DPolygonShapeCreate();
-		Box2DPolygonShapeSetAsBox(boxShape, Vec2FMul(boxDims, 0.5)); // convert to half dims
+		Box2DPolygonShapeSetAsBoxEx(boxShape, Vec2FMul(boxDims, 0.5), boxCenterOffset, boxAngle); // convert to half dims
 		shape = boxShape;
 	}
 	Box2DFixtureDef* fixtureDef = Box2DFixtureDefCreate();
@@ -43,11 +43,17 @@ Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec
 			case PLAYER_BULLET_CATEGORY:
 				maskBits = STATIC_OBJECT_CATEGORY | ENEMY_CATEGORY;
 				break;
+			case PLAYER_MELEE_WEAPON_CATEGORY:
+				maskBits = ENEMY_CATEGORY;
+				break;
 			case ENEMY_CATEGORY:
 				maskBits = STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY | PLAYER_CATEGORY | PLAYER_BULLET_CATEGORY | ENEMY_CATEGORY;
 				break;
 			case ENEMY_BULLET_CATEGORY:
 				maskBits = STATIC_OBJECT_CATEGORY | PLAYER_CATEGORY;
+				break;
+			case ENEMY_MELEE_WEAPON_CATEGORY:
+				maskBits = PLAYER_CATEGORY;
 				break;
 		}
 	}
@@ -64,7 +70,7 @@ Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec
 	if (isDynamic) {
 		Box2DBodySetLinearDamping(body, linearDamping);
 		Box2DBodySetAngularDamping(body, 0.0);
-		Box2DBodySetFixedRotation(body, true);
+		Box2DBodySetFixedRotation(body, fixedRotation);
 		Box2DBodySetMassData(body, mass, (Vec2F) { 0.0, 0.0 }, 0.0);
 	}
 

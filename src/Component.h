@@ -36,7 +36,8 @@ typedef struct _GraphicsComponent {
 	SDL_Texture* tx;
 	SDL_Rect txSrc;
 	float txAngle;
-	Vec2F txOffset; // w.r.t tx, # of pixels
+	//Vec2F txOffset; // w.r.t texture center, # of pixels
+	Vec2F txCenter; // w.r.t. texture center in pixels, offsets the texture and the center for rotation
 	void (*draw)(struct _GraphicsComponent*);
 } GraphicsComponent;
 int GraphicsComponentInit(GraphicsComponent* gfx, uint64_t objectId);
@@ -50,7 +51,7 @@ typedef struct _ComponentLightSource {
 	Vec2F offset;
 	Vec2F direction;
 } ComponentLightSource;
-int ComponentLightSourceInit(ComponentLightSource* light, uint64_t objectId);
+int ComponentLightSourceInit(ComponentLightSource* light, uint64_t objectId, float lightBoundaryRadius);
 void ComponentLightSourceDeinit(ComponentLightSource* light);
 void ComponentLightSourceUpdatePosition(ComponentLightSource* light);
 
