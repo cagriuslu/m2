@@ -38,7 +38,7 @@ static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 			defense->hp -= offense->hp;
 
 			const Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
-			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 500.0f), true);
+			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 5000.0f), true);
 			LOG_DBG("Hit");
 		}
 	}

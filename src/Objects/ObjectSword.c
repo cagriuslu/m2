@@ -6,7 +6,7 @@
 
 #define SWING_SPEED (15.0f)
 
-void Sword_prePhysics(EventListenerComponent* el) {
+static void Sword_prePhysics(EventListenerComponent* el) {
 	Object* obj = FindObjectOfComponent(el);
 	ComponentOffense* offense = FindOffenseOfObject(obj);
 	offense->ticksLeft -= DeltaTicks();
@@ -15,7 +15,7 @@ void Sword_prePhysics(EventListenerComponent* el) {
 	}
 }
 
-void Sword_postPhysics(EventListenerComponent* el) {
+static void Sword_postPhysics(EventListenerComponent* el) {
 	Object* obj = FindObjectOfComponent(el);
 	if (obj && obj->physics && obj->graphics && obj->offense) {
 		PhysicsComponent* phy = FindPhysicsOfObject(obj);
@@ -27,6 +27,24 @@ void Sword_postPhysics(EventListenerComponent* el) {
 				Box2DBodySetTransform(phy->body, originator->position, Box2DBodyGetAngle(phy->body));
 			}
 			gfx->txAngle = Box2DBodyGetAngle(phy->body);
+		}
+	}
+}
+
+static void Sword_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
+	Level* level = CurrentLevel();
+	Object* obj = BucketGetById(&level->objects, phy->super.objId);
+	Object* otherObj = BucketGetById(&level->objects, other->super.objId);
+	if (obj && obj->offense && otherObj && otherObj->defense) {
+		ComponentOffense* offense = BucketGetById(&level->offenses, obj->offense);
+		ComponentDefense* defense = BucketGetById(&level->defenses, otherObj->defense);
+		if (offense && defense) {
+			// Calculate damage
+			defense->hp -= 3 * offense->hp;
+
+			const Vec2F direction = Vec2FNormalize(Vec2FSub(otherObj->position, obj->position));
+			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 15000.0f), true);
+			LOG_DBG("Hit");
 		}
 	}
 }
@@ -49,7 +67,7 @@ int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* ori
 		true, // isDynamic
 		originatorPosition,
 		false, // allowSleep
-		false, // isBullet
+		true, // isBullet
 		true, // isSensor
 		PLAYER_MELEE_WEAPON_CATEGORY, // category
 		0, // mask
@@ -63,6 +81,7 @@ int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* ori
 	);
 	Box2DBodySetTransform(phy->body, originatorPosition, startAngle);
 	Box2DBodySetAngularVelocity(phy->body, -SWING_SPEED);
+	phy->onCollision = Sword_onCollision;
 
 	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
 	gfx->txAngle = Box2DBodyGetAngle(phy->body);

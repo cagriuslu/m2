@@ -9,7 +9,7 @@
 void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
 	Object* me = FindObjectOfComponent(el);
 	me->ai->waypointRecalculationStopwatch += DeltaTicks();
-	if (500 < me->ai->waypointRecalculationStopwatch) {
+	if (1000 < me->ai->waypointRecalculationStopwatch) {
 		Object* player = FindObjectById(CurrentLevel()->playerId);
 
 		List gridSteps;
@@ -22,7 +22,7 @@ void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
 		}
 		ListDeinit(&gridSteps);
 		
-		me->ai->waypointRecalculationStopwatch -= 500;
+		me->ai->waypointRecalculationStopwatch -= 1000;
 	}
 
 	if (1 < me->ai->reversedVec2IWaypointList.bucket.size) {
@@ -78,6 +78,7 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 	obj->ai = malloc(sizeof(AI));
 	assert(obj->ai);
 	AIInit(obj->ai);
+	obj->ai->waypointRecalculationStopwatch = 1000 + rand() % 1000;
 	
 	return 0;
 }

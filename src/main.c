@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 	TTF_Init();
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
 	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
-	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TILE_WIDTH_STR "x" TILE_WIDTH_STR ".png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 
@@ -88,9 +88,12 @@ main_menu:
 	unsigned prevPreGraphicsTicks = SDL_GetTicks();
 	unsigned prevDrawGraphicsTicks = SDL_GetTicks();
 	unsigned prevPostGraphicsTicks = SDL_GetTicks();
+
+	unsigned frameTimeAccumulator = 0;
+	unsigned frameCount = 0;
 	bool quit = false;
 	while (!quit) {
-		//unsigned start_ticks = SDL_GetTicks();
+		unsigned start_ticks = SDL_GetTicks();
 
 		///// EVENT HANDLING /////
 		bool key = false;
@@ -184,8 +187,14 @@ main_menu:
 		SDL_RenderPresent(gRenderer);
 		///// END OF GRAPHICS /////
 
-		//unsigned end_ticks = SDL_GetTicks();
-		//fprintf(stderr, "Frame time: %u\n", end_ticks - start_ticks);
+		unsigned end_ticks = SDL_GetTicks();
+		frameTimeAccumulator += end_ticks - start_ticks;
+		frameCount++;
+		if (2000 < frameTimeAccumulator) {
+			frameTimeAccumulator -= 2000;
+			LOGTYP_DBG("fps", Int32, frameCount / 2);
+			frameCount = 0;
+		}
 	}
 
 	SDL_DestroyRenderer(gRenderer);

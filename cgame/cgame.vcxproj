@@ -83,6 +83,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\include\box2d;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -137,19 +138,28 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\x64\Release;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;box2d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y ..\libs\SDL2-2.0.14\lib\x64\*.dll "$(OutDir)"
+xcopy /y ..\libs\SDL2_ttf-2.0.15\lib\x64\*.dll "$(OutDir)"
+xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
+xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\AI.c" />

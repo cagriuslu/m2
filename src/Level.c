@@ -70,14 +70,17 @@ int LevelLoadTest(Level* level) {
 	Object* camera = BucketMark(&level->objects, NULL, &level->cameraId);
 	ObjectCameraInit(camera);
 
-	/*Object* skeleton = BucketMark(&level->objects, NULL, NULL);
-	ObjectSkeletonInit(skeleton, (Vec2F) { -2.0f, -2.0f });*/
+	const unsigned skeletonCount = 100;
+	for (unsigned i = 0; i < skeletonCount; i++) {
+		Object* skeleton = BucketMark(&level->objects, NULL, NULL);
+		ObjectSkeletonInit(skeleton, (Vec2F) { (float)i, -10.0f });
+	}
 
-	Object* wall = BucketMark(&level->objects, NULL, NULL);
+	/*Object* wall = BucketMark(&level->objects, NULL, NULL);
 	ObjectWallInit(wall, (Vec2F) { 0.0f, -2.0f });
 
 	Object* box = BucketMark(&level->objects, NULL, NULL);
-	ObjectStaticBoxInit(box, (Vec2F) { -2.0f, 0.0f });
+	ObjectStaticBoxInit(box, (Vec2F) { -2.0f, 0.0f });*/
 
 	return 0;
 }
