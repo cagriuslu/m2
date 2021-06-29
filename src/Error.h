@@ -1,6 +1,8 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#include <stdint.h>
+
 #define PROPAGATE_ERROR(fcall)  \
 	do {                        \
 		int __result = (fcall); \
@@ -17,7 +19,9 @@
 		}                                          \
 	} while (0)
 
-#define X_QUIT            (-1)
-#define X_PATH_NOT_FOUND  (-2)
+#define XERR_QUIT            (-1)
+#define XERR_PATH_NOT_FOUND  (-2)
+
+typedef int32_t XErr;
 
 #endif

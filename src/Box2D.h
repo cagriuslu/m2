@@ -1,5 +1,5 @@
-#ifndef BOX2D_WRAPPER_H
-#define BOX2D_WRAPPER_H
+#ifndef BOX2D_H
+#define BOX2D_H
 
 #ifdef __cplusplus
 extern "C" {

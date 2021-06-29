@@ -118,7 +118,7 @@ void LogTyp_ArrayInt32(LogLevel level, const char* file, int line, const char* m
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": [", message);
 	for (size_t i = 0; i < var->length; i++) {
-		fprintf(stderr, "%d", *(int32_t*)ArrayGet(var, i));
+		fprintf(stderr, "%d", *(int32_t*)Array_Get(var, i));
 		if (i + 1 < var->length) {
 			fprintf(stderr, ", ");
 		}

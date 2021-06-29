@@ -1,4 +1,4 @@
-#include "Box2DWrapper.h"
+#include "Box2D.h"
 #include <b2_world.h>
 #include <b2_body.h>
 #include <b2_math.h>

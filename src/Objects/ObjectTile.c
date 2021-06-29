@@ -9,9 +9,9 @@ int ObjectTileInit(Object* obj, TileDef tileDef, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj, position));
 
 	if (tileDef.colliderSize.x && tileDef.colliderSize.y) {
-		uint64_t phyId = 0;
+		ID phyId = 0;
 		PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
-		phy->body = Box2DUtilsCreateStaticBox(phyId, position, STATIC_CLIFF_CATEGORY, tileDef.colliderSize);
+		phy->body = Box2DUtils_CreateStaticBox(phyId, position, CATEGORY_STATIC_CLIFF, tileDef.colliderSize);
 	}
 	
 	GraphicsComponent* gfx = ObjectAddTerrainGraphics(obj, NULL);

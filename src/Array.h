@@ -12,13 +12,13 @@ typedef struct _Array {
 	size_t maxSize;
 } Array;
 
-int ArrayInit(Array *array, size_t itemSize, size_t initCapacity, size_t maxSize);
-void* ArrayAppend(Array *array, void *item);
-void ArrayRemove(Array* array, size_t index);
-void ArrayClear(Array* array);
-void* ArrayGet(Array *array, size_t index);
-size_t ArrayGetIndexOf(Array* array, void* item);
-void* ArrayGetLast(Array *array);
-void ArrayDeinit(Array *array);
+XErr Array_Init(Array *array, size_t itemSize, size_t initCapacity, size_t maxSize);
+void* Array_Append(Array *array, void *item);
+void Array_Remove(Array* array, size_t index);
+void Array_Clear(Array* array);
+void* Array_Get(Array *array, size_t index);
+size_t Array_GetIndexOf(Array* array, void* item);
+void* Array_GetLast(Array *array);
+void Array_Term(Array *array);
 
 #endif

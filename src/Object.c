@@ -11,55 +11,55 @@ int ObjectInit(Object* obj, Vec2F position) {
 
 void ObjectDeinit(Object* obj) {
 	if (obj->eventListener) {
-		EventListenerComponent* el = BucketGetById(&CurrentLevel()->eventListeners, obj->eventListener);
+		EventListenerComponent* el = Bucket_GetById(&CurrentLevel()->eventListeners, obj->eventListener);
 		EventListenerComponentDeinit(el);
-		BucketUnmark(&CurrentLevel()->eventListeners, el);
+		Bucket_Unmark(&CurrentLevel()->eventListeners, el);
 	}
 	if (obj->physics) {
-		PhysicsComponent* phy = BucketGetById(&CurrentLevel()->physics, obj->physics);
+		PhysicsComponent* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
 		PhysicsComponentDeinit(phy);
-		BucketUnmark(&CurrentLevel()->physics, phy);
+		Bucket_Unmark(&CurrentLevel()->physics, phy);
 	}
 	if (obj->graphics) {
 		InsertionListRemove(&CurrentLevel()->drawList, obj->graphics);
-		GraphicsComponent* gfx = BucketGetById(&CurrentLevel()->graphics, obj->graphics);
+		GraphicsComponent* gfx = Bucket_GetById(&CurrentLevel()->graphics, obj->graphics);
 		GraphicsComponentDeinit(gfx);
-		BucketUnmark(&CurrentLevel()->graphics, gfx);
+		Bucket_Unmark(&CurrentLevel()->graphics, gfx);
 	}
 	if (obj->terrainGraphics) {
-		GraphicsComponent* gfx = BucketGetById(&CurrentLevel()->terrainGraphics, obj->terrainGraphics);
+		GraphicsComponent* gfx = Bucket_GetById(&CurrentLevel()->terrainGraphics, obj->terrainGraphics);
 		GraphicsComponentDeinit(gfx);
-		BucketUnmark(&CurrentLevel()->terrainGraphics, gfx);
+		Bucket_Unmark(&CurrentLevel()->terrainGraphics, gfx);
 	}
 	if (obj->defense) {
-		ComponentDefense* def = BucketGetById(&CurrentLevel()->defenses, obj->defense);
+		ComponentDefense* def = Bucket_GetById(&CurrentLevel()->defenses, obj->defense);
 		ComponentDefenseDeinit(def);
-		BucketUnmark(&CurrentLevel()->defenses, def);
+		Bucket_Unmark(&CurrentLevel()->defenses, def);
 	}
 	if (obj->offense) {
-		ComponentOffense* off = BucketGetById(&CurrentLevel()->offenses, obj->offense);
+		ComponentOffense* off = Bucket_GetById(&CurrentLevel()->offenses, obj->offense);
 		ComponentOffenseDeinit(off);
-		BucketUnmark(&CurrentLevel()->offenses, off);
+		Bucket_Unmark(&CurrentLevel()->offenses, off);
 	}
 	if (obj->lightSource) {
-		ComponentLightSource* light = BucketGetById(&CurrentLevel()->lightSources, obj->lightSource);
+		ComponentLightSource* light = Bucket_GetById(&CurrentLevel()->lightSources, obj->lightSource);
 		ComponentLightSourceDeinit(light);
-		BucketUnmark(&CurrentLevel()->lightSources, light);
+		Bucket_Unmark(&CurrentLevel()->lightSources, light);
 	}
 	if (obj->ai) {
-		AIDeinit(obj->ai);
+		AI_Term(obj->ai);
 	}
 	if (obj->prePhysicsStopwatches) {
-		Array* stopwatches = BucketGetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
-		ArrayDeinit(stopwatches);
-		BucketUnmark(&CurrentLevel()->prePhysicsStopwatches, stopwatches);
+		Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
+		Array_Term(stopwatches);
+		Bucket_Unmark(&CurrentLevel()->prePhysicsStopwatches, stopwatches);
 	}
 	memset(obj, 0, sizeof(Object));
 }
 
-EventListenerComponent* ObjectAddEventListener(Object* obj, uint64_t *outId) {
-	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
-	EventListenerComponent* el = BucketMark(&CurrentLevel()->eventListeners, NULL, &obj->eventListener);
+EventListenerComponent* ObjectAddEventListener(Object* obj, ID *outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	EventListenerComponent* el = Bucket_Mark(&CurrentLevel()->eventListeners, NULL, &obj->eventListener);
 	EventListenerComponentInit(el, objectId);
 	if (outId) {
 		outId[0] = obj->eventListener;
@@ -67,9 +67,9 @@ EventListenerComponent* ObjectAddEventListener(Object* obj, uint64_t *outId) {
 	return el;
 }
 
-PhysicsComponent* ObjectAddPhysics(Object* obj, uint64_t* outId) {
-	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
-	PhysicsComponent* phy = BucketMark(&CurrentLevel()->physics, NULL, &obj->physics);
+PhysicsComponent* ObjectAddPhysics(Object* obj, ID* outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	PhysicsComponent* phy = Bucket_Mark(&CurrentLevel()->physics, NULL, &obj->physics);
 	PhysicsComponentInit(phy, objectId);
 	if (outId) {
 		outId[0] = obj->physics;
@@ -77,9 +77,9 @@ PhysicsComponent* ObjectAddPhysics(Object* obj, uint64_t* outId) {
 	return phy;
 }
 
-GraphicsComponent* ObjectAddGraphics(Object* obj, uint64_t* outId) {
-	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
-	GraphicsComponent* gfx = BucketMark(&CurrentLevel()->graphics, NULL, &obj->graphics);
+GraphicsComponent* ObjectAddGraphics(Object* obj, ID* outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	GraphicsComponent* gfx = Bucket_Mark(&CurrentLevel()->graphics, NULL, &obj->graphics);
 	GraphicsComponentInit(gfx, objectId);
 	InsertionListInsert(&CurrentLevel()->drawList, obj->graphics);
 	if (outId) {
@@ -88,9 +88,9 @@ GraphicsComponent* ObjectAddGraphics(Object* obj, uint64_t* outId) {
 	return gfx;
 }
 
-GraphicsComponent* ObjectAddTerrainGraphics(Object* obj, uint64_t* outId) {
-	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
-	GraphicsComponent* gfx = BucketMark(&CurrentLevel()->terrainGraphics, NULL, &obj->terrainGraphics);
+GraphicsComponent* ObjectAddTerrainGraphics(Object* obj, ID* outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	GraphicsComponent* gfx = Bucket_Mark(&CurrentLevel()->terrainGraphics, NULL, &obj->terrainGraphics);
 	GraphicsComponentInit(gfx, objectId);
 	if (outId) {
 		outId[0] = obj->terrainGraphics;
@@ -98,9 +98,9 @@ GraphicsComponent* ObjectAddTerrainGraphics(Object* obj, uint64_t* outId) {
 	return gfx;
 }
 
-ComponentDefense* ObjectAddDefense(Object* obj, uint64_t* outId) {
-	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
-	ComponentDefense* def = BucketMark(&CurrentLevel()->defenses, NULL, &obj->defense);
+ComponentDefense* ObjectAddDefense(Object* obj, ID* outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	ComponentDefense* def = Bucket_Mark(&CurrentLevel()->defenses, NULL, &obj->defense);
 	ComponentDefenseInit(def, objectId);
 	if (outId) {
 		outId[0] = obj->defense;
@@ -108,9 +108,9 @@ ComponentDefense* ObjectAddDefense(Object* obj, uint64_t* outId) {
 	return def;
 }
 
-ComponentOffense* ObjectAddOffense(Object* obj, uint64_t* outId) {
-	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
-	ComponentOffense* off = BucketMark(&CurrentLevel()->offenses, NULL, &obj->offense);
+ComponentOffense* ObjectAddOffense(Object* obj, ID* outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	ComponentOffense* off = Bucket_Mark(&CurrentLevel()->offenses, NULL, &obj->offense);
 	ComponentOffenseInit(off, objectId);
 	if (outId) {
 		outId[0] = obj->offense;
@@ -118,9 +118,9 @@ ComponentOffense* ObjectAddOffense(Object* obj, uint64_t* outId) {
 	return off;
 }
 
-ComponentLightSource* ObjectAddLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId) {
-	uint64_t objectId = BucketGetId(&CurrentLevel()->objects, obj);
-	ComponentLightSource* light = BucketMark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
+ComponentLightSource* ObjectAddLightSource(Object* obj, float lightBoundaryRadius, ID* outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	ComponentLightSource* light = Bucket_Mark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
 	ComponentLightSourceInit(light, objectId, lightBoundaryRadius);
 	if (outId) {
 		outId[0] = obj->lightSource;
@@ -129,11 +129,11 @@ ComponentLightSource* ObjectAddLightSource(Object* obj, float lightBoundaryRadiu
 }
 
 Array* ObjectAddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount) {
-	Array* array = BucketMark(&CurrentLevel()->prePhysicsStopwatches, NULL, &obj->prePhysicsStopwatches);
-	ArrayInit(array, sizeof(unsigned), stopwatchCount, stopwatchCount);
+	Array* array = Bucket_Mark(&CurrentLevel()->prePhysicsStopwatches, NULL, &obj->prePhysicsStopwatches);
+	Array_Init(array, sizeof(unsigned), stopwatchCount, stopwatchCount);
 	for (unsigned i = 0; i < stopwatchCount; i++) {
 		unsigned initialValue = 0;
-		ArrayAppend(array, &initialValue);
+		Array_Append(array, &initialValue);
 	}
 	return array;
 }

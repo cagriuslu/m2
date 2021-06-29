@@ -17,14 +17,14 @@ int PathfinderMapInitFromLevel(PathfinderMap* pm, Level* level) {
 	memset(pm, 0, sizeof(PathfinderMap));
 	PROPAGATE_ERROR(HashMapInit(&pm->blockedLocations, sizeof(bool)));
 
-	for (PhysicsComponent* phy = BucketGetFirst(&level->physics); phy; phy = BucketGetNext(&level->physics, phy)) {
-		Object* obj = BucketGetById(&level->objects, phy->super.objId);
+	for (PhysicsComponent* phy = Bucket_GetFirst(&level->physics); phy; phy = Bucket_GetNext(&level->physics, phy)) {
+		Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
 		if (obj && phy->body) {
 			const int fixtureCount = Box2DBodyGetFixtureCount(phy->body);
 			for (int i = 0; i < fixtureCount; i++) {
 				Box2DFixture* fixture = Box2DBodyGetFixture(phy->body, i);
 				const uint16_t categoryBits = Box2DFixtureGetCategory(fixture);
-				if (categoryBits & (STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY)) {
+				if (categoryBits & (CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF)) {
 					const int proxyCount = Box2DFixtureGetProxyCount(fixture);
 					for (int proxyIdx = 0; proxyIdx < proxyCount; proxyIdx++) {
 						AABB aabb = Box2DFixtureGetAABB(fixture, proxyIdx);
@@ -85,7 +85,7 @@ int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* 
 	HashMapSetIntKey(&costSoFar, Vec2IToHashMapKey(from), &tmpCostSoFar);
 
 	while (0 < frontiers.bucket.size) {
-		const uint64_t frontierIterator = ListGetFirst(&frontiers);
+		const ID frontierIterator = ListGetFirst(&frontiers);
 		PriorityListItem* frontierItem = ListGetData(&frontiers, frontierIterator);
 
 		// If next location to discover is the destination, stop
@@ -142,7 +142,7 @@ int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* 
 				tmpPrioListItem.position = neighbor;
 				// Insert neighbor into frontiers
 				bool inserted = false;
-				for (uint64_t priorityCheckIterator = ListGetFirst(&frontiers); priorityCheckIterator; priorityCheckIterator = ListGetNext(&frontiers, priorityCheckIterator)) {
+				for (ID priorityCheckIterator = ListGetFirst(&frontiers); priorityCheckIterator; priorityCheckIterator = ListGetNext(&frontiers, priorityCheckIterator)) {
 					PriorityListItem* item = ListGetData(&frontiers, priorityCheckIterator);
 					if (tmpPrioListItem.priority < item->priority) {
 						ListInsertBefore(&frontiers, priorityCheckIterator, &tmpPrioListItem, NULL);
@@ -167,7 +167,7 @@ int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* 
 	// Check if there is a path
 	Vec2I* currentCameFrom = HashMapGetIntKey(&cameFrom, Vec2IToHashMapKey(to));
 	if (currentCameFrom == NULL) {
-		result = X_PATH_NOT_FOUND;
+		result = XERR_PATH_NOT_FOUND;
 	} else {
 		result = 0;
 
@@ -192,10 +192,10 @@ int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* 
 	return result;
 }
 
-void PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, float shoulderWidth, List* outListOfVec2Is) {
+void PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2Is) {
 	ListClear(outListOfVec2Is);
 
-	const uint64_t point1Iterator = ListGetFirst(listOfVec2Is);
+	const ID point1Iterator = ListGetFirst(listOfVec2Is);
 	Vec2I* point1 = ListGetData(listOfVec2Is, point1Iterator);
 	// Add first point
 	if (point1) {
@@ -207,10 +207,10 @@ void PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, float shoulderWidth, L
 	}
 
 	Vec2I* prevPoint2 = NULL;
-	for (uint64_t point2Iterator = ListGetNext(listOfVec2Is, point1Iterator); point2Iterator; point2Iterator = ListGetNext(listOfVec2Is, point2Iterator)) {
+	for (ID point2Iterator = ListGetNext(listOfVec2Is, point1Iterator); point2Iterator; point2Iterator = ListGetNext(listOfVec2Is, point2Iterator)) {
 		Vec2I* point2 = ListGetData(listOfVec2Is, point2Iterator);
 
-		const bool eyeSight = Box2DUtilsCheckEyeSight(Vec2FFromVec2I(*point1), Vec2FFromVec2I(*point2), STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY);
+		const bool eyeSight = Box2DUtils_CheckEyeSight(Vec2FFromVec2I(*point1), Vec2FFromVec2I(*point2), CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF);
 		if (ListGetLast(listOfVec2Is) == point2Iterator && eyeSight) {
 			// If we are processing the last point and there is an eye sight, add the last point
 			ListAppend(outListOfVec2Is, point2, NULL);

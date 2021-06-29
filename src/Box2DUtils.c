@@ -1,7 +1,7 @@
 #include "Box2DUtils.h"
 #include "Main.h"
 
-Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, Vec2F boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
+Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, Vec2F boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	if (isDynamic) {
 		Box2DBodyDefSetTypeDynamic(bodyDef);
@@ -31,29 +31,29 @@ Box2DBody* Box2DUtilsCreateBody(uint64_t phyId, bool isDisk, bool isDynamic, Vec
 	if (maskBits == 0) {
 		switch (categoryBits)
 		{
-			case STATIC_OBJECT_CATEGORY:
-				maskBits = STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY | PLAYER_CATEGORY | PLAYER_BULLET_CATEGORY | ENEMY_CATEGORY | ENEMY_BULLET_CATEGORY;
+			case CATEGORY_STATIC_OBJECT:
+				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_PLAYER_BULLET | CATEGORY_ENEMY | CATEGORY_ENEMY_BULLET;
 				break;
-			case STATIC_CLIFF_CATEGORY:
-				maskBits = STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY | PLAYER_CATEGORY | ENEMY_CATEGORY;
+			case CATEGORY_STATIC_CLIFF:
+				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_ENEMY;
 				break;
-			case PLAYER_CATEGORY:
-				maskBits = STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY | PLAYER_CATEGORY | ENEMY_CATEGORY | ENEMY_BULLET_CATEGORY;
+			case CATEGORY_PLAYER:
+				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENEMY_BULLET;
 				break;
-			case PLAYER_BULLET_CATEGORY:
-				maskBits = STATIC_OBJECT_CATEGORY | ENEMY_CATEGORY;
+			case CATEGORY_PLAYER_BULLET:
+				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_ENEMY;
 				break;
-			case PLAYER_MELEE_WEAPON_CATEGORY:
-				maskBits = ENEMY_CATEGORY;
+			case CATEGORY_PLAYER_MELEE_WEAPON:
+				maskBits = CATEGORY_ENEMY;
 				break;
-			case ENEMY_CATEGORY:
-				maskBits = STATIC_OBJECT_CATEGORY | STATIC_CLIFF_CATEGORY | PLAYER_CATEGORY | PLAYER_BULLET_CATEGORY | PLAYER_MELEE_WEAPON_CATEGORY | ENEMY_CATEGORY;
+			case CATEGORY_ENEMY:
+				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_PLAYER_BULLET | CATEGORY_PLAYER_MELEE_WEAPON | CATEGORY_ENEMY;
 				break;
-			case ENEMY_BULLET_CATEGORY:
-				maskBits = STATIC_OBJECT_CATEGORY | PLAYER_CATEGORY;
+			case CATEGORY_ENEMY_BULLET:
+				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_PLAYER;
 				break;
-			case ENEMY_MELEE_WEAPON_CATEGORY:
-				maskBits = PLAYER_CATEGORY;
+			case CATEGORY_ENEMY_MELEE_WEAPON:
+				maskBits = CATEGORY_PLAYER;
 				break;
 		}
 	}
@@ -86,7 +86,7 @@ float Box2DUtilsCheckEyeSight_RayCastCallback(Box2DFixture* fixture, Vec2F point
 	return 0.0f;
 }
 
-bool Box2DUtilsCheckEyeSight(Vec2F from, Vec2F to, uint16_t categoryMask) {
+bool Box2DUtils_CheckEyeSight(Vec2F from, Vec2F to, uint16_t categoryMask) {
 	if (Vec2FEquals(from, to)) {
 		return true;
 	}

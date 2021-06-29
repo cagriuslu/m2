@@ -26,22 +26,22 @@ void LevelEditorButton_onMouseButton(Ui *ui) {
 
 int DialogMainMenu(bool levelLoaded) {
 	Array uis;
-	ArrayInit(&uis, sizeof(Ui), 16, SIZE_MAX);
+	Array_Init(&uis, sizeof(Ui), 16, SIZE_MAX);
 
 	int pressedButton = 0;
 
 	Ui *resumeButton = NULL;
 	if (levelLoaded) {
-		resumeButton = ArrayAppend(&uis, NULL);
+		resumeButton = Array_Append(&uis, NULL);
 		UiButtonInit(resumeButton, (Vec2I) {0, -105}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Resume");
 		resumeButton->eventData = &pressedButton;
 		resumeButton->onMouseButton = ResumeButton_onMouseButton;
 	}
-	Ui *newGameButton = ArrayAppend(&uis, NULL);
+	Ui *newGameButton = Array_Append(&uis, NULL);
 	UiButtonInit(newGameButton, (Vec2I) {0, -35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "New Game");
 	newGameButton->eventData = &pressedButton;
 	newGameButton->onMouseButton = NewGameButton_onMouseButton;
-	Ui *levelEditorButton = ArrayAppend(&uis, NULL);
+	Ui *levelEditorButton = Array_Append(&uis, NULL);
 	UiButtonInit(levelEditorButton, (Vec2I) {0, +35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Level Editor");
 	levelEditorButton->eventData = &pressedButton;
 	levelEditorButton->onMouseButton = LevelEditorButton_onMouseButton;
@@ -65,6 +65,6 @@ int DialogMainMenu(bool levelLoaded) {
 	if (levelLoaded) {
 		UiButtonDeinit(resumeButton);
 	}
-	ArrayDeinit(&uis);
+	Array_Term(&uis);
 	return pressedButton;
 }

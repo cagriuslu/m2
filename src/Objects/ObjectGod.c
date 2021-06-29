@@ -7,9 +7,9 @@
 #include <stdio.h>
 
 static void God_prePhysics(EventListenerComponent* el) {
-	Object* obj = BucketGetById(&CurrentLevel()->objects, el->super.objId);
+	Object* obj = Bucket_GetById(&CurrentLevel()->objects, el->super.objId);
 	if (obj) {
-		PhysicsComponent* phy = BucketGetById(&CurrentLevel()->physics, obj->physics);
+		PhysicsComponent* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
 		if (phy && phy->body) {
 			if (IsKeyDown(KEY_UP)) {
 				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, -100.0 }, true);
@@ -33,12 +33,12 @@ int ObjectGodInit(Object* obj) {
 	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->prePhysics = God_prePhysics;
 
-	uint64_t phyId = 0;
+	ID phyId = 0;
 	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
-	phy->body = Box2DUtilsCreateDynamicDisk(
+	phy->body = Box2DUtils_CreateDynamicDisk(
 		phyId,
 		obj->position,
-		DONT_SLEEP,
+		false, // allow sleep
 		0,
 		0.229167f, // Radius
 		4.0f, // Mass

@@ -2,7 +2,7 @@
 #define MAIN_H
 
 #include "Controls.h"
-#include "Box2DWrapper.h"
+#include "Box2D.h"
 #include "Array.h"
 #include "Level.h"
 #include <SDL.h>

@@ -1,4 +1,5 @@
 #include "HashMap.h"
+#include "Array.h"
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -16,7 +17,7 @@ int HashMapInit(HashMap* hm, size_t itemSize) {
 	hm->arrays = calloc(HM_BUCKET_COUNT, sizeof(Array));
 	assert(hm->arrays);
 	for (unsigned i = 0; i < HM_BUCKET_COUNT; i++) {
-		PROPAGATE_ERROR(ArrayInit(hm->arrays + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1));
+		PROPAGATE_ERROR(Array_Init(hm->arrays + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1));
 	}
 	hm->itemSize = itemSize;
 	return 0;
@@ -24,7 +25,7 @@ int HashMapInit(HashMap* hm, size_t itemSize) {
 
 void HashMapDeinit(HashMap* hm) {
 	for (unsigned i = 0; i < HM_BUCKET_COUNT; i++) {
-		ArrayDeinit(hm->arrays + i);
+		Array_Term(hm->arrays + i);
 	}
 	free(hm->arrays);
 	memset(hm, 0, sizeof(HashMap));
@@ -40,7 +41,7 @@ size_t HashMapSize(HashMap* hm) {
 
 void HashMapClear(HashMap* hm) {
 	for (unsigned i = 0; i < HM_BUCKET_COUNT; i++) {
-		ArrayClear(hm->arrays + i);
+		Array_Clear(hm->arrays + i);
 	}
 }
 
@@ -70,7 +71,7 @@ void* _HashMapSet(HashMap* hm, void* key, void* copy) {
 	} else {
 		Array* array = hm->arrays + HashMapHash(key);
 
-		HashMapItem* newItem = ArrayAppend(array, NULL);
+		HashMapItem* newItem = Array_Append(array, NULL);
 		if (newItem) {
 			memcpy(newItem->key, key, HM_KEY_SIZE);
 			if (copy) {
@@ -89,7 +90,7 @@ void* _HashMapTrySet(HashMap* hm, void* key, void* copy) {
 	} else {
 		Array* array = hm->arrays + HashMapHash(key);
 
-		HashMapItem* newItem = ArrayAppend(array, NULL);
+		HashMapItem* newItem = Array_Append(array, NULL);
 		if (newItem) {
 			memcpy(newItem->key, key, HM_KEY_SIZE);
 			if (copy) {
@@ -106,7 +107,7 @@ void* _HashMapGet(HashMap* hm, void* key) {
 	
 	HashMapItem* mapItem = NULL;
 	for (size_t i = 0; i < array->length; i++) {
-		HashMapItem* iter = ArrayGet(array, i);
+		HashMapItem* iter = Array_Get(array, i);
 		if (iter && memcmp(iter->key, key, HM_KEY_SIZE) == 0) {
 			mapItem = iter;
 		}
@@ -119,9 +120,9 @@ void _HashMapUnset(HashMap* hm, void* key) {
 	Array* array = hm->arrays + HashMapHash(key);
 	
 	for (size_t i = 0; i < array->length; i++) {
-		HashMapItem* iter = ArrayGet(array, i);
+		HashMapItem* iter = Array_Get(array, i);
 		if (iter && memcmp(iter->key, key, HM_KEY_SIZE) == 0) {
-			ArrayRemove(array, i);
+			Array_Remove(array, i);
 			return;
 		}
 	}

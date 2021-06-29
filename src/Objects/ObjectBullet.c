@@ -28,11 +28,11 @@ static void Bullet_prePhysics(EventListenerComponent* el) {
 
 static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 	Level* level = CurrentLevel();
-	Object* obj = BucketGetById(&level->objects, phy->super.objId);
-	Object* otherObj = BucketGetById(&level->objects, other->super.objId);
+	Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
+	Object* otherObj = Bucket_GetById(&level->objects, other->super.objId);
 	if (obj && obj->offense && otherObj && otherObj->defense) {
-		ComponentOffense* offense = BucketGetById(&level->offenses, obj->offense);
-		ComponentDefense* defense = BucketGetById(&level->defenses, otherObj->defense);
+		ComponentOffense* offense = Bucket_GetById(&level->offenses, obj->offense);
+		ComponentDefense* defense = Bucket_GetById(&level->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
 			defense->hp -= offense->hp;
@@ -52,12 +52,12 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->prePhysics = Bullet_prePhysics;
 
-	uint64_t phyId = 0;
+	ID phyId = 0;
 	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
-	phy->body = Box2DUtilsCreateBulletSensor(
+	phy->body = Box2DUtils_CreateBulletSensor(
 		phyId,
 		position,
-		PLAYER_BULLET_CATEGORY,
+		CATEGORY_PLAYER_BULLET,
 		0.167f, // Radius
 		0.0f, // Mass
 		0.0f // Damping

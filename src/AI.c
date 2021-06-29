@@ -1,15 +1,14 @@
 #include "AI.h"
 #include "Vec2I.h"
-#include "Error.h"
 #include <string.h>
 
-int AIInit(AI* ai) {
+XErr AI_Init(AI* ai) {
 	memset(ai, 0, sizeof(AI));
-	PROPAGATE_ERROR(ListInit(&ai->reversedVec2IWaypointList, sizeof(Vec2I)));
+	PROPAGATE_ERROR(ListInit(&ai->reversedWaypointList, sizeof(Vec2I)));
 	return 0;
 }
 
-void AIDeinit(AI* ai) {
-	ListDeinit(&ai->reversedVec2IWaypointList);
+void AI_Term(AI* ai) {
+	ListDeinit(&ai->reversedWaypointList);
 	memset(ai, 0, sizeof(AI));
 }

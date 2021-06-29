@@ -6,7 +6,7 @@
 
 #define GROWTH_RATE (2.0)
 
-int ArrayInit(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize) {
+XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize) {
 	assert(initCapacity <= maxSize);
 	array->data = calloc(initCapacity, itemSize);
 	assert(array->data);
@@ -17,44 +17,44 @@ int ArrayInit(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize
 	return 0;
 }
 
-void* ArrayAppend(Array *array, void *item) {
+void* Array_Append(Array *array, void *item) {
 	if (array->length < array->maxSize) {
 		if (array->length < array->capacity) {
 			if (item) {
 				memcpy(array->data + array->length * array->itemSize, item, array->itemSize);
 			}
 			array->length++;
-			return ArrayGetLast(array);
+			return Array_GetLast(array);
 		} else {
 			size_t newCapacity = (size_t)round(array->capacity * GROWTH_RATE);
 			void* newData = realloc(array->data, newCapacity * array->itemSize);
 			assert(newData);
 			array->data = newData;
 			array->capacity = newCapacity;
-			return ArrayAppend(array, item);
+			return Array_Append(array, item);
 		}
 	} else {
 		return NULL;
 	}
 }
 
-void ArrayRemove(Array* array, size_t index) {
+void Array_Remove(Array* array, size_t index) {
 	if (index < array->length) {
 		size_t nextIndex = index + 1;
 		for (; nextIndex < array->length; nextIndex++) {
-			memcpy(ArrayGet(array, nextIndex - 1), ArrayGet(array, nextIndex), array->itemSize);
+			memcpy(Array_Get(array, nextIndex - 1), Array_Get(array, nextIndex), array->itemSize);
 		}
-		memset(ArrayGet(array, nextIndex - 1), 0, array->itemSize);
+		memset(Array_Get(array, nextIndex - 1), 0, array->itemSize);
 		array->length--;
 	}
 }
 
-void ArrayClear(Array* array) {
+void Array_Clear(Array* array) {
 	memset(array->data, 0, array->length * array->itemSize);
 	array->length = 0;
 }
 
-void* ArrayGet(Array *array, size_t index) {
+void* Array_Get(Array *array, size_t index) {
 	if (index < array->length) {
 		return array->data + index * array->itemSize;
 	} else {
@@ -62,7 +62,7 @@ void* ArrayGet(Array *array, size_t index) {
 	}
 }
 
-size_t ArrayGetIndexOf(Array* array, void* item) {
+size_t Array_GetIndexOf(Array* array, void* item) {
 	intptr_t itemOffset = ((char*) item) - array->data;
 	intptr_t itemIndex = itemOffset / array->itemSize;
 	if ((uintptr_t) itemIndex < array->length) {
@@ -72,14 +72,14 @@ size_t ArrayGetIndexOf(Array* array, void* item) {
 	}
 }
 
-void* ArrayGetLast(Array *array) {
+void* Array_GetLast(Array *array) {
 	if (array->length) {
-		return ArrayGet(array, array->length - 1);
+		return Array_Get(array, array->length - 1);
 	} else {
 		return NULL;
 	}
 }
 
-void ArrayDeinit(Array *array) {
+void Array_Term(Array *array) {
 	free(array->data);
 }

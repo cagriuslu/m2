@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, float boundaryRadius, uint64_t iterator) {
+static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, float boundaryRadius, ID iterator) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);
 	Box2DBodyDefSetUserData(bodyDef, (void*)((uintptr_t)iterator));
@@ -29,7 +29,7 @@ typedef struct _SpatialMapItem {
 int SpatialMapInit(SpatialMap* sm, size_t dataSize) {
 	memset(sm, 0, sizeof(SpatialMap));
 	sm->dataSize = dataSize;
-	PROPAGATE_ERROR(BucketInit(&sm->bucket, sizeof(SpatialMapItem) + dataSize));
+	PROPAGATE_ERROR(Bucket_Init(&sm->bucket, sizeof(SpatialMapItem) + dataSize));
 	sm->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	assert(sm->world);
 	return 0;
@@ -37,7 +37,7 @@ int SpatialMapInit(SpatialMap* sm, size_t dataSize) {
 
 void SpatialMapDeinit(SpatialMap* sm) {
 	Box2DWorldDestroy(sm->world);
-	BucketDeinit(&sm->bucket);
+	Bucket_Term(&sm->bucket);
 	memset(sm, 0, sizeof(SpatialMap));
 }
 
@@ -46,15 +46,15 @@ size_t SpatialMapSize(SpatialMap* sm) {
 }
 
 void SpatialMapClear(SpatialMap* sm) {
-	BucketUnmarkAll(&sm->bucket);
+	Bucket_UnmarkAll(&sm->bucket);
 	Box2DWorldDestroy(sm->world);
 	sm->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	assert(sm->world);
 }
 
-uint64_t SpatialMapAdd(SpatialMap* sm, Vec2F position, float boundaryRadius, void* copy) {
-	uint64_t iterator = 0;
-	SpatialMapItem* item = BucketMark(&sm->bucket, NULL, &iterator);
+ID SpatialMapAdd(SpatialMap* sm, Vec2F position, float boundaryRadius, void* copy) {
+	ID iterator = 0;
+	SpatialMapItem* item = Bucket_Mark(&sm->bucket, NULL, &iterator);
 	item->body = CreateBody(sm->world, position, boundaryRadius, iterator);
 	if (copy) {
 		memcpy(item->data, copy, sm->dataSize);
@@ -64,17 +64,17 @@ uint64_t SpatialMapAdd(SpatialMap* sm, Vec2F position, float boundaryRadius, voi
 	return iterator;
 }
 
-void SpatialMapRemove(SpatialMap* sm, uint64_t iterator) {
-	SpatialMapItem* item = BucketGetById(&sm->bucket, iterator);
+void SpatialMapRemove(SpatialMap* sm, ID iterator) {
+	SpatialMapItem* item = Bucket_GetById(&sm->bucket, iterator);
 	if (item) {
 		Box2DWorldDestroyBody(sm->world, item->body);
 		memset(item->data, 0, sm->dataSize);
-		BucketUnmarkById(&sm->bucket, iterator);
+		Bucket_UnmarkById(&sm->bucket, iterator);
 	}
 }
 
-void SpatialMapSetPosition(SpatialMap* sm, uint64_t iterator, Vec2F position) {
-	SpatialMapItem* item = BucketGetById(&sm->bucket, iterator);
+void SpatialMapSetPosition(SpatialMap* sm, ID iterator, Vec2F position) {
+	SpatialMapItem* item = Bucket_GetById(&sm->bucket, iterator);
 	if (item) {
 		Box2DBodySetTransform(item->body, position, 0.0f);
 	}
@@ -82,21 +82,21 @@ void SpatialMapSetPosition(SpatialMap* sm, uint64_t iterator, Vec2F position) {
 
 static bool StaticMapQueryCB(Box2DFixture* fixture, void* userDataArrayOfIterators) {
 	Box2DBody* body = Box2DFixtureGetBody(fixture);
-	uint64_t iterator = (uint64_t)((uintptr_t)Box2DBodyGetUserData(body));
+	ID iterator = (ID)((uintptr_t)Box2DBodyGetUserData(body));
 	if (userDataArrayOfIterators) {
-		ArrayAppend((Array*)userDataArrayOfIterators, &iterator);
+		Array_Append((Array*)userDataArrayOfIterators, &iterator);
 	}
 	return true;
 }
 
 void SpatialMapGet(SpatialMap* sm, AABB bounds, Array* outIterators) {
-	ArrayClear(outIterators);
+	Array_Clear(outIterators);
 	Box2DQueryListener* queryListener = Box2DQueryListenerCreate(StaticMapQueryCB, outIterators);
 	Box2DWorldQuery(sm->world, queryListener, bounds);
 	Box2DQueryListenerDestroy(queryListener);
 }
 
-void* SpatialMapGetData(SpatialMap* sm, uint64_t iterator) {
-	SpatialMapItem* item = BucketGetById(&sm->bucket, iterator);
+void* SpatialMapGetData(SpatialMap* sm, ID iterator) {
+	SpatialMapItem* item = Bucket_GetById(&sm->bucket, iterator);
 	return item ? item->data : NULL;
 }

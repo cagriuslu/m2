@@ -8,15 +8,15 @@
 #include "Vec2F.h"
 #include <stdint.h>
 
-#define FindObjectById(id)               ((Object*) BucketGetById(&CurrentLevel()->objects, (id)))
+#define FindObjectById(id)               ((Object*) Bucket_GetById(&CurrentLevel()->objects, (id)))
 #define FindObjectOfComponent(component) (FindObjectById((component)->super.objId))
 
-#define FindEventListenerById(id)   ((EventListenerComponent*) BucketGetById(&CurrentLevel()->eventListeners, (id)))
-#define FindPhysicsById(id)         ((PhysicsComponent*)       BucketGetById(&CurrentLevel()->physics, (id)))
-#define FindGraphicsById(id)        ((GraphicsComponent*)      BucketGetById(&CurrentLevel()->graphics, (id)))
-#define FindTerrainGraphicsById(id) ((GraphicsComponent*)      BucketGetById(&CurrentLevel()->terrainGraphics, (id)))
-#define FindDefenseById(id)         ((ComponentDefense*)       BucketGetById(&CurrentLevel()->defenses, (id)))
-#define FindOffenseById(id)         ((ComponentOffense*)       BucketGetById(&CurrentLevel()->offenses, (id)))
+#define FindEventListenerById(id)   ((EventListenerComponent*) Bucket_GetById(&CurrentLevel()->eventListeners, (id)))
+#define FindPhysicsById(id)         ((PhysicsComponent*)       Bucket_GetById(&CurrentLevel()->physics, (id)))
+#define FindGraphicsById(id)        ((GraphicsComponent*)      Bucket_GetById(&CurrentLevel()->graphics, (id)))
+#define FindTerrainGraphicsById(id) ((GraphicsComponent*)      Bucket_GetById(&CurrentLevel()->terrainGraphics, (id)))
+#define FindDefenseById(id)         ((ComponentDefense*)       Bucket_GetById(&CurrentLevel()->defenses, (id)))
+#define FindOffenseById(id)         ((ComponentOffense*)       Bucket_GetById(&CurrentLevel()->offenses, (id)))
 
 #define FindEventListenerOfObject(obj)   (FindEventListenerById((obj->eventListener)))
 #define FindPhysicsOfObject(obj)         (FindPhysicsById((obj->physics)))
@@ -25,34 +25,34 @@
 #define FindDefenseOfObject(obj)         (FindDefenseById((obj->defense)))
 #define FindOffenseOfObject(obj)         (FindOffenseById((obj->offense)))
 
-#define DeleteObjectById(id) do { uint64_t __id__ = (id); ArrayAppend(&CurrentLevel()->deleteList, &__id__); } while (0)
-#define DeleteObject(obj)    DeleteObjectById(BucketGetId(&CurrentLevel()->objects, (obj)))
+#define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&CurrentLevel()->deleteList, &__id__); } while (0)
+#define DeleteObject(obj)    DeleteObjectById(Bucket_GetId(&CurrentLevel()->objects, (obj)))
 
 typedef struct _Object {
 	Vec2F position; // in world coordinates
 	// Components
-	uint64_t eventListener;
-	uint64_t physics;
-	uint64_t graphics;
-	uint64_t terrainGraphics;
-	uint64_t defense;
-	uint64_t offense;
-	uint64_t lightSource;
+	ID eventListener;
+	ID physics;
+	ID graphics;
+	ID terrainGraphics;
+	ID defense;
+	ID offense;
+	ID lightSource;
 	// Properties
 	AI* ai;
-	uint64_t prePhysicsStopwatches;
+	ID prePhysicsStopwatches;
 } Object;
 
 int ObjectInit(Object* obj, Vec2F position);
 void ObjectDeinit(Object* obj);
 
-EventListenerComponent* ObjectAddEventListener(Object* obj, uint64_t* outId);
-PhysicsComponent* ObjectAddPhysics(Object* obj, uint64_t* outId);
-GraphicsComponent* ObjectAddGraphics(Object* obj, uint64_t* outId);
-GraphicsComponent* ObjectAddTerrainGraphics(Object* obj, uint64_t* outId);
-ComponentDefense* ObjectAddDefense(Object* obj, uint64_t* outId);
-ComponentOffense* ObjectAddOffense(Object* obj, uint64_t* outId);
-ComponentLightSource* ObjectAddLightSource(Object* obj, float lightBoundaryRadius, uint64_t* outId);
+EventListenerComponent* ObjectAddEventListener(Object* obj, ID* outId);
+PhysicsComponent* ObjectAddPhysics(Object* obj, ID* outId);
+GraphicsComponent* ObjectAddGraphics(Object* obj, ID* outId);
+GraphicsComponent* ObjectAddTerrainGraphics(Object* obj, ID* outId);
+ComponentDefense* ObjectAddDefense(Object* obj, ID* outId);
+ComponentOffense* ObjectAddOffense(Object* obj, ID* outId);
+ComponentLightSource* ObjectAddLightSource(Object* obj, float lightBoundaryRadius, ID* outId);
 
 Array* ObjectAddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount);
 

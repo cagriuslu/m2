@@ -16,6 +16,6 @@ int PathfinderMapInitFromLevel(PathfinderMap* pm, Level* level);
 void PathfinderMapDeinit(PathfinderMap* pm);
 
 int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
-void PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, float shoulderWidth, List* outListOfVec2Is);
+void PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2Is);
 
 #endif

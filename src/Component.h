@@ -2,14 +2,15 @@
 #define COMPONENT_H
 
 #include "Vec2F.h"
-#include "Box2DWrapper.h"
+#include "Box2D.h"
+#include "Bucket.h"
 #include <SDL.h>
 #include <stdint.h>
 
 typedef struct _Component {
-	uint64_t objId;
+	ID objId;
 } Component;
-int ComponentInit(Component* component, uint64_t objectId);
+int ComponentInit(Component* component, ID objectId);
 void ComponentDeinit(Component* component);
 
 typedef struct _EventListenerComponent {
@@ -19,7 +20,7 @@ typedef struct _EventListenerComponent {
 	void (*preGraphics)(struct _EventListenerComponent*);
 	void (*postGraphics)(struct _EventListenerComponent*);
 } EventListenerComponent;
-int EventListenerComponentInit(EventListenerComponent* evListener, uint64_t objectId);
+int EventListenerComponentInit(EventListenerComponent* evListener, ID objectId);
 void EventListenerComponentDeinit(EventListenerComponent* evListener);
 
 typedef struct _PhysicsComponent {
@@ -27,7 +28,7 @@ typedef struct _PhysicsComponent {
 	Box2DBody* body;
 	void (*onCollision)(struct _PhysicsComponent*, struct _PhysicsComponent*);
 } PhysicsComponent;
-int PhysicsComponentInit(PhysicsComponent* phy, uint64_t objectId);
+int PhysicsComponentInit(PhysicsComponent* phy, ID objectId);
 void PhysicsComponentDeinit(PhysicsComponent* phy);
 void PhysicsComponentContactCB(Box2DContact* contact);
 
@@ -39,18 +40,18 @@ typedef struct _GraphicsComponent {
 	Vec2F txCenter; // w.r.t. texture center in pixels, offsets the texture and the center for rotation
 	void (*draw)(struct _GraphicsComponent*);
 } GraphicsComponent;
-int GraphicsComponentInit(GraphicsComponent* gfx, uint64_t objectId);
+int GraphicsComponentInit(GraphicsComponent* gfx, ID objectId);
 void GraphicsComponentDeinit(GraphicsComponent* gfx);
-int GraphicsComponentYComparatorCB(uint64_t gfxIdA, uint64_t gfxIdB);
+int GraphicsComponentYComparatorCB(ID gfxIdA, ID gfxIdB);
 
 typedef struct _ComponentLightSource {
 	Component super;
-	uint64_t spatialIterator;
+	ID spatialIterator;
 	float power;
 	Vec2F offset;
 	Vec2F direction;
 } ComponentLightSource;
-int ComponentLightSourceInit(ComponentLightSource* light, uint64_t objectId, float lightBoundaryRadius);
+int ComponentLightSourceInit(ComponentLightSource* light, ID objectId, float lightBoundaryRadius);
 void ComponentLightSourceDeinit(ComponentLightSource* light);
 void ComponentLightSourceUpdatePosition(ComponentLightSource* light);
 
@@ -59,16 +60,16 @@ typedef struct _ComponentDefense {
 	int maxHp;
 	int hp;
 } ComponentDefense;
-int ComponentDefenseInit(ComponentDefense* def, uint64_t objId);
+int ComponentDefenseInit(ComponentDefense* def, ID objId);
 void ComponentDefenseDeinit(ComponentDefense* def);
 
 typedef struct _ComponentOffense {
 	Component super;
-	uint64_t originator; // Object ID
+	ID originator; // Object ID
 	int ticksLeft;
 	int hp;
 } ComponentOffense;
-int ComponentOffenseInit(ComponentOffense* def, uint64_t objId);
+int ComponentOffenseInit(ComponentOffense* def, ID objId);
 void ComponentOffenseCopyExceptSuper(ComponentOffense* dest, ComponentOffense* src);
 void ComponentOffenseDeinit(ComponentOffense* def);
 

@@ -7,8 +7,8 @@
 
 void GraphicsComponent_draw(GraphicsComponent* gfx) {
 	Level* level = CurrentLevel();
-	Object* obj = BucketGetById(&level->objects, gfx->super.objId);
-	Object* camera = BucketGetById(&level->objects, level->cameraId);
+	Object* obj = Bucket_GetById(&level->objects, gfx->super.objId);
+	Object* camera = Bucket_GetById(&level->objects, level->cameraId);
 	if (obj && camera && gfx->tx) {
 		float scale = CurrentPixelsPerMeter() / CurrentTileWidth();
 		Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->position, camera->position);
@@ -32,7 +32,7 @@ void GraphicsComponent_draw(GraphicsComponent* gfx) {
 	}
 }
 
-int GraphicsComponentInit(GraphicsComponent* gfx, uint64_t objectId) {
+int GraphicsComponentInit(GraphicsComponent* gfx, ID objectId) {
 	memset(gfx, 0, sizeof(GraphicsComponent));
 	PROPAGATE_ERROR(ComponentInit((Component*)gfx, objectId));
 	gfx->tx = CurrentTextureLUT();
@@ -45,13 +45,13 @@ void GraphicsComponentDeinit(GraphicsComponent* gfx) {
 	memset(gfx, 0, sizeof(GraphicsComponent));
 }
 
-int GraphicsComponentYComparatorCB(uint64_t gfxIdA, uint64_t gfxIdB) {
+int GraphicsComponentYComparatorCB(ID gfxIdA, ID gfxIdB) {
 	Level* level = CurrentLevel();
-	GraphicsComponent* gfxA = BucketGetById(&level->graphics, gfxIdA);
-	GraphicsComponent* gfxB = BucketGetById(&level->graphics, gfxIdB);
+	GraphicsComponent* gfxA = Bucket_GetById(&level->graphics, gfxIdA);
+	GraphicsComponent* gfxB = Bucket_GetById(&level->graphics, gfxIdB);
 	if (gfxA && gfxB) {
-		Object* a = BucketGetById(&level->objects, gfxA->super.objId);
-		Object* b = BucketGetById(&level->objects, gfxB->super.objId);
+		Object* a = Bucket_GetById(&level->objects, gfxA->super.objId);
+		Object* b = Bucket_GetById(&level->objects, gfxB->super.objId);
 		if (a && b) {
 			float diff = b->position.y - a->position.y;
 			if (0 < diff) {

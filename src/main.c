@@ -1,5 +1,5 @@
 #include "Main.h"
-#include "Box2DWrapper.h"
+#include "Box2D.h"
 #include "Object.h"
 #include "Array.h"
 #include "Vec2I.h"
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 
 main_menu:
 	res = DialogMainMenu(levelLoaded);
-	if (res == X_QUIT) {
+	if (res == XERR_QUIT) {
 		return 0;
 	} else if (res == X_MAIN_MENU_RESUME) {
 		// Do nothing
@@ -73,7 +73,7 @@ main_menu:
 		} else {
 			LOG_FTL("Unknown level is selected");
 			LOGTYP_FTL(LOGVAR_MENU_SELECTION, Int32, res);
-			return X_QUIT;
+			return XERR_QUIT;
 		}
 		levelLoaded = true;
 	}
@@ -109,12 +109,12 @@ main_menu:
 		///// PHYSICS /////
 		gDeltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
 		prevPrePhysicsTicks += gDeltaTicks;
-		for (Array* stopwatches = BucketGetFirst(&gLevel.prePhysicsStopwatches); stopwatches; stopwatches = BucketGetNext(&gLevel.prePhysicsStopwatches, stopwatches)) {
+		for (Array* stopwatches = Bucket_GetFirst(&gLevel.prePhysicsStopwatches); stopwatches; stopwatches = Bucket_GetNext(&gLevel.prePhysicsStopwatches, stopwatches)) {
 			for (size_t i = 0; i < stopwatches->length; i++) {
-				*(unsigned*)ArrayGet(stopwatches, i) += gDeltaTicks;
+				*(unsigned*)Array_Get(stopwatches, i) += gDeltaTicks;
 			}
 		}
-		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+		for (EventListenerComponent* el = Bucket_GetFirst(&gLevel.eventListeners); el; el = Bucket_GetNext(&gLevel.eventListeners, el)) {
 			if (el->prePhysics) {
 				el->prePhysics(el);
 			}
@@ -128,20 +128,20 @@ main_menu:
 			}
 			prevWorldStepTicks += gDeltaTicks;
 		}
-		for (PhysicsComponent* phy = BucketGetFirst(&gLevel.physics); phy; phy = BucketGetNext(&gLevel.physics, phy)) {
+		for (PhysicsComponent* phy = Bucket_GetFirst(&gLevel.physics); phy; phy = Bucket_GetNext(&gLevel.physics, phy)) {
 			if (phy->body) {
-				Object* obj = BucketGetById(&gLevel.objects, phy->super.objId);
+				Object* obj = Bucket_GetById(&gLevel.objects, phy->super.objId);
 				if (obj) {
 					obj->position = Box2DBodyGetPosition(phy->body);
 				}
 			}
 		}
-		for (ComponentLightSource* light = BucketGetFirst(&gLevel.lightSources); light; light = BucketGetNext(&gLevel.lightSources, light)) {
+		for (ComponentLightSource* light = Bucket_GetFirst(&gLevel.lightSources); light; light = Bucket_GetNext(&gLevel.lightSources, light)) {
 			ComponentLightSourceUpdatePosition(light);
 		}
 		gDeltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
 		prevPostPhysicsTicks += gDeltaTicks;
-		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+		for (EventListenerComponent* el = Bucket_GetFirst(&gLevel.eventListeners); el; el = Bucket_GetNext(&gLevel.eventListeners, el)) {
 			if (el->postPhysics) {
 				el->postPhysics(el);
 			}
@@ -154,14 +154,14 @@ main_menu:
 		SDL_RenderClear(gRenderer);
 		gDeltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
 		prevTerrainDrawGraphicsTicks += gDeltaTicks;
-		for (GraphicsComponent* gfx = BucketGetFirst(&gLevel.terrainGraphics); gfx; gfx = BucketGetNext(&gLevel.terrainGraphics, gfx)) {
+		for (GraphicsComponent* gfx = Bucket_GetFirst(&gLevel.terrainGraphics); gfx; gfx = Bucket_GetNext(&gLevel.terrainGraphics, gfx)) {
 			if (gfx->draw) {
 				gfx->draw(gfx);
 			}
 		}
 		gDeltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
 		prevPreGraphicsTicks += gDeltaTicks;
-		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+		for (EventListenerComponent* el = Bucket_GetFirst(&gLevel.eventListeners); el; el = Bucket_GetNext(&gLevel.eventListeners, el)) {
 			if (el->preGraphics) {
 				el->preGraphics(el);
 			}
@@ -171,15 +171,15 @@ main_menu:
 		prevDrawGraphicsTicks += gDeltaTicks;
 		size_t insertionListSize = InsertionListLength(&gLevel.drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
-			uint64_t graphicsId = InsertionListGet(&gLevel.drawList, i);
-			GraphicsComponent* gfx = BucketGetById(&gLevel.graphics, graphicsId);
+			ID graphicsId = InsertionListGet(&gLevel.drawList, i);
+			GraphicsComponent* gfx = Bucket_GetById(&gLevel.graphics, graphicsId);
 			if (gfx && gfx->draw) {
 				gfx->draw(gfx);
 			}
 		}
 		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += gDeltaTicks;
-		for (EventListenerComponent* el = BucketGetFirst(&gLevel.eventListeners); el; el = BucketGetNext(&gLevel.eventListeners, el)) {
+		for (EventListenerComponent* el = Bucket_GetFirst(&gLevel.eventListeners); el; el = Bucket_GetNext(&gLevel.eventListeners, el)) {
 			if (el->postGraphics) {
 				el->postGraphics(el);
 			}
@@ -246,7 +246,7 @@ unsigned DeltaTicks() {
 }
 
 Vec2F CurrentPointerPositionInWorld() {
-	Object* camera = BucketGetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
+	Object* camera = Bucket_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = PointerPosition();

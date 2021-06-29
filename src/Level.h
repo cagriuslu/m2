@@ -3,7 +3,7 @@
 
 #include "Bucket.h"
 #include "InsertionList.h"
-#include "Box2DWrapper.h"
+#include "Box2D.h"
 #include "Pathfinder.h"
 #include "SpatialMap.h"
 
@@ -18,7 +18,7 @@ typedef struct _Level {
 	Bucket offenses;
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
-	uint64_t cameraId, playerId;
+	ID cameraId, playerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
 	Bucket lightSources;

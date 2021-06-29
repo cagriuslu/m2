@@ -3,11 +3,11 @@
 #include "../Object.h"
 #include <string.h>
 
-int ComponentLightSourceInit(ComponentLightSource* light, uint64_t objectId, float lightBoundaryRadius) {
+int ComponentLightSourceInit(ComponentLightSource* light, ID objectId, float lightBoundaryRadius) {
 	memset(light, 0, sizeof(ComponentLightSource));
 	PROPAGATE_ERROR(ComponentInit(&light->super, objectId));
-	Object* obj = BucketGetById(&CurrentLevel()->objects, objectId);
-	uint64_t myId = BucketGetId(&CurrentLevel()->lightSources, light);
+	Object* obj = Bucket_GetById(&CurrentLevel()->objects, objectId);
+	ID myId = Bucket_GetId(&CurrentLevel()->lightSources, light);
 	light->spatialIterator = SpatialMapAdd(&CurrentLevel()->lightSourceSpatialMap, obj->position, lightBoundaryRadius, &myId);
 	return 0;
 }
@@ -19,6 +19,6 @@ void ComponentLightSourceDeinit(ComponentLightSource* light) {
 }
 
 void ComponentLightSourceUpdatePosition(ComponentLightSource* light) {
-	Object* obj = BucketGetById(&CurrentLevel()->objects, light->super.objId);
+	Object* obj = Bucket_GetById(&CurrentLevel()->objects, light->super.objId);
 	SpatialMapSetPosition(&CurrentLevel()->lightSourceSpatialMap, light->spatialIterator, obj->position);
 }

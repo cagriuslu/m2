@@ -1,6 +1,6 @@
 #include "../Object.h"
 #include "../Main.h"
-#include "../Box2DWrapper.h"
+#include "../Box2D.h"
 #include "../Pathfinder.h"
 #include "../Box2DUtils.h"
 #include <stdio.h>
@@ -16,19 +16,19 @@ void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
 		ListInit(&gridSteps, sizeof(Vec2I));
 		int pathfinderResult = PathfinderMapFindGridSteps(&CurrentLevel()->pathfinderMap, me->position, player->position, &gridSteps);
 		if (pathfinderResult == 0) {
-			PathfinderMapGridStepsToAnyAngle(&gridSteps, 0.5f, &me->ai->reversedVec2IWaypointList);
+			PathfinderMapGridStepsToAnyAngle(&gridSteps, &me->ai->reversedWaypointList);
 		} else {
-			ListClear(&me->ai->reversedVec2IWaypointList);
+			ListClear(&me->ai->reversedWaypointList);
 		}
 		ListDeinit(&gridSteps);
 		
 		me->ai->waypointRecalculationStopwatch -= 1000;
 	}
 
-	if (1 < me->ai->reversedVec2IWaypointList.bucket.size) {
-		uint64_t myPositionIterator = ListGetLast(&me->ai->reversedVec2IWaypointList);
-		uint64_t targetIterator = ListGetPrev(&me->ai->reversedVec2IWaypointList, myPositionIterator);
-		Vec2I* targetPosition = ListGetData(&me->ai->reversedVec2IWaypointList, targetIterator);
+	if (1 < me->ai->reversedWaypointList.bucket.size) {
+		ID myPositionIterator = ListGetLast(&me->ai->reversedWaypointList);
+		ID targetIterator = ListGetPrev(&me->ai->reversedWaypointList, myPositionIterator);
+		Vec2I* targetPosition = ListGetData(&me->ai->reversedWaypointList, targetIterator);
 		if (targetPosition) {
 			PhysicsComponent* phy = FindPhysicsOfObject(me);
 			Vec2F direction = Vec2FSub(Vec2FFromVec2I(*targetPosition), me->position);
@@ -43,7 +43,7 @@ void ObjectSkeleton_postPhysics(EventListenerComponent *el) {
 	if (obj) {
 		ComponentDefense* defense = FindDefenseOfObject(obj);
 		if (defense && defense->hp <= 0) {
-			ArrayAppend(&CurrentLevel()->deleteList, &el->super.objId);
+			Array_Append(&CurrentLevel()->deleteList, &el->super.objId);
 		}
 	}
 }
@@ -55,13 +55,13 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 	el->prePhysics = ObjectSkeleton_prePhysics;
 	el->postGraphics = ObjectSkeleton_postPhysics;
 
-	uint64_t phyId = 0;
+	ID phyId = 0;
 	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
-	phy->body = Box2DUtilsCreateDynamicDisk(
+	phy->body = Box2DUtils_CreateDynamicDisk(
 		phyId,
 		position,
-		ALLOW_SLEEP,
-		ENEMY_CATEGORY,
+		true, // allowSleep
+		CATEGORY_ENEMY,
 		0.2083f, // Radius
 		10.0f, // Mass
 		10.0f // Damping
@@ -77,7 +77,7 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 
 	obj->ai = malloc(sizeof(AI));
 	assert(obj->ai);
-	AIInit(obj->ai);
+	AI_Init(obj->ai);
 	obj->ai->waypointRecalculationStopwatch = 1000 + rand() % 1000;
 	
 	return 0;

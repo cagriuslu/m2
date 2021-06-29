@@ -165,7 +165,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\AI.c" />
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Box2DUtils.c" />
-    <ClCompile Include="..\src\Box2DWrapper.cpp" />
+    <ClCompile Include="..\src\Box2D.cpp" />
     <ClCompile Include="..\src\Bucket.c" />
     <ClCompile Include="..\src\Component.c" />
     <ClCompile Include="..\src\Components\ComponentDefense.c" />
@@ -212,7 +212,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\AI.h" />
     <ClInclude Include="..\src\Array.h" />
     <ClInclude Include="..\src\Box2DUtils.h" />
-    <ClInclude Include="..\src\Box2DWrapper.h" />
+    <ClInclude Include="..\src\Box2D.h" />
     <ClInclude Include="..\src\Bucket.h" />
     <ClInclude Include="..\src\Component.h" />
     <ClInclude Include="..\src\Constants.h" />
@@ -231,6 +231,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\Object.h" />
     <ClInclude Include="..\src\SDLUtils.h" />
     <ClInclude Include="..\src\SpatialMap.h" />
+    <ClInclude Include="..\src\Stopwatch.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
     <ClInclude Include="..\src\TileLookup.h" />
     <ClInclude Include="..\src\Ui.h" />

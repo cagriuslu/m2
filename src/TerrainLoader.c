@@ -24,17 +24,17 @@ int TerrainLoad(const char *tname) {
 
 	// Gather tile KV pairs until % character on a line
 	Array tileKVs;
-	ArrayInit(&tileKVs, sizeof(TileKV), 16, SIZE_MAX);
+	Array_Init(&tileKVs, sizeof(TileKV), 16, SIZE_MAX);
 	while (true) {
 		Array lineBuffer = MyGetline(file);
 		if (lineBuffer.length == 0) {
-			ArrayDeinit(&lineBuffer);
+			Array_Term(&lineBuffer);
 			continue;
 		}
 		// Break if % is encountered
-		char* line = ArrayGet(&lineBuffer, 0);
+		char* line = Array_Get(&lineBuffer, 0);
 		if (line[0] == '%') {
-			ArrayDeinit(&lineBuffer);
+			Array_Term(&lineBuffer);
 			break;
 		}
 
@@ -42,8 +42,8 @@ int TerrainLoad(const char *tname) {
 		Array splits = MySplit(line, '\t');
 		assert(2 == splits.length);
 
-		char **keyPtr = ArrayGet(&splits, 0);
-		char **valuePtr = ArrayGet(&splits, 1);
+		char **keyPtr = Array_Get(&splits, 0);
+		char **valuePtr = Array_Get(&splits, 1);
 		assert(strlen(*keyPtr));
 		assert(strlen(*valuePtr));
 
@@ -51,25 +51,25 @@ int TerrainLoad(const char *tname) {
 		memset(&tileKV, 0, sizeof(TileKV));
 		strncpy(tileKV.key, *keyPtr, 3);
 		tileKV.tileDef = TileLookup(*valuePtr);
-		ArrayAppend(&tileKVs, &tileKV);
+		Array_Append(&tileKVs, &tileKV);
 
-		ArrayDeinit(&splits);
-		ArrayDeinit(&lineBuffer);
+		Array_Term(&splits);
+		Array_Term(&lineBuffer);
 	}
 
 	// Read matirx data
 	//Array tiles;
-	//ArrayInit(&tiles, sizeof(TileObject), 16, SIZE_MAX);
+	//Array_Init(&tiles, sizeof(TileObject), 16, SIZE_MAX);
 	size_t rowIndex = 0, colCount = 0;
 	while (true) {
 		Array lineBuffer = MyGetline(file);
 		if (lineBuffer.length == 0) {
-			ArrayDeinit(&lineBuffer);
+			Array_Term(&lineBuffer);
 			break;
 		}
-		char* line = ArrayGet(&lineBuffer, 0);
+		char* line = Array_Get(&lineBuffer, 0);
 		if (strlen(line) == 0) {
-			ArrayDeinit(&lineBuffer);
+			Array_Term(&lineBuffer);
 			break;
 		}
 
@@ -82,57 +82,57 @@ int TerrainLoad(const char *tname) {
 		assert(splits.length == colCount);
 
 		for (size_t colIndex = 0; colIndex < colCount; colIndex++) {
-			char** colDataPtr = ArrayGet(&splits, colIndex);
+			char** colDataPtr = Array_Get(&splits, colIndex);
 			char* colData = *colDataPtr;
 			// Lookup Tile from TileKV Array
 			TileDef tileDef = { 0 };
 			for (size_t j = 0; j < tileKVs.length; j++) {
-				TileKV* tileKV = ArrayGet(&tileKVs, j);
+				TileKV* tileKV = Array_Get(&tileKVs, j);
 				if (strcmp(colData, tileKV->key) == 0) {
 					tileDef = tileKV->tileDef;
 					break;
 				}
 			}
 			// Save Tile
-			//TileObject* tile = ArrayAppend(&tiles, NULL);
+			//TileObject* tile = Array_Append(&tiles, NULL);
 			//TileInit(tile, (Vec2I) { (int) colIndex, (int) rowIndex }, tileDef.txIndex, tileDef.colliderSize);
 
-			Object* tile = BucketMark(&CurrentLevel()->objects, NULL, NULL);
+			Object* tile = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
 			ObjectTileInit(tile, tileDef, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
 
 		rowIndex++;
 	}
 	
-	ArrayDeinit(&tileKVs);
+	Array_Term(&tileKVs);
 	fclose(file);
 	return 0;
 }
 
 Array MyGetline(FILE *file) {
 	Array lineBuffer;
-	ArrayInit(&lineBuffer, sizeof(char), 1024, SIZE_MAX);
+	Array_Init(&lineBuffer, sizeof(char), 1024, SIZE_MAX);
 
 	int c;
 	while ((c = fgetc(file)) != EOF && c != '\n') {
 		char ch = (char) c;
-		ArrayAppend(&lineBuffer, &ch);
+		Array_Append(&lineBuffer, &ch);
 	}
 	c = 0;
-	ArrayAppend(&lineBuffer, &c);
+	Array_Append(&lineBuffer, &c);
 
 	return lineBuffer;
 }
 
 Array MySplit(char *input, char delimiter) {
 	Array splitBuffer;
-	ArrayInit(&splitBuffer, sizeof(char*), 256, SIZE_MAX);
+	Array_Init(&splitBuffer, sizeof(char*), 256, SIZE_MAX);
 
 	size_t totalSize = strlen(input);
 	for (size_t i = 0; i < totalSize; i++) {
 		if (input[i] != delimiter) {
 			char *startOfPhrase = input + i;
-			ArrayAppend(&splitBuffer, &startOfPhrase);
+			Array_Append(&splitBuffer, &startOfPhrase);
 			while (input[i] != delimiter && input[i] != 0) {
 				i++;
 			}

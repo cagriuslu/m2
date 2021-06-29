@@ -2,13 +2,15 @@
 #define AI_H
 
 #include "List.h"
+#include "Stopwatch.h"
+#include "Error.h"
 
 typedef struct _AI {
-	List reversedVec2IWaypointList;
-	unsigned waypointRecalculationStopwatch;
+	ListOfVec2I reversedWaypointList;
+	Stopwatch waypointRecalculationStopwatch;
 } AI;
 
-int AIInit(AI* ai);
-void AIDeinit(AI* ai);
+XErr AI_Init(AI* ai);
+void AI_Term(AI* ai);
 
 #endif

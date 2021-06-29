@@ -1,6 +1,7 @@
 #ifndef BUCKET_H
 #define BUCKET_H
 
+#include "Error.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -24,24 +25,26 @@ typedef struct _Bucket {
 	size_t nextFreeIndex;
 } Bucket;
 
-int BucketInit(Bucket* bucket, size_t dataSize);
-void BucketDeinit(Bucket* bucket);
+typedef uint64_t ID;
 
-void* BucketMark(Bucket* bucket, void* copy, uint64_t* outId);
-void BucketUnmark(Bucket* bucket, void* data);
-void BucketUnmarkByIndex(Bucket* bucket, size_t idx);
-void BucketUnmarkById(Bucket* bucket, uint64_t id);
-void BucketUnmarkAll(Bucket* bucket);
+XErr Bucket_Init(Bucket* bucket, size_t dataSize);
+void Bucket_Term(Bucket* bucket);
 
-bool BucketIsMarked(Bucket* bucket, void* data);
-bool BucketIsMarkedByIndex(Bucket* bucket, size_t idx);
-bool BucketIsMarkedById(Bucket* bucket, uint64_t id);
-void* BucketGetFirst(Bucket* bucket);
-void* BucketGetLast(Bucket* bucket);
-void* BucketGetNext(Bucket* bucket, void* currData);
-void* BucketGetPrev(Bucket* bucket, void* data);
-void* BucketGetByIndex(Bucket* bucket, size_t idx);
-void* BucketGetById(Bucket* bucket, uint64_t id);
-uint64_t BucketGetId(Bucket* bucket, void* data);
+void* Bucket_Mark(Bucket* bucket, void* copy, ID* outId);
+void Bucket_Unmark(Bucket* bucket, void* data);
+void Bucket_UnmarkByIndex(Bucket* bucket, size_t idx);
+void Bucket_UnmarkById(Bucket* bucket, ID id);
+void Bucket_UnmarkAll(Bucket* bucket);
+
+bool Bucket_IsMarked(Bucket* bucket, void* data);
+bool Bucket_IsMarkedByIndex(Bucket* bucket, size_t idx);
+bool Bucket_IsMarkedById(Bucket* bucket, ID id);
+void* Bucket_GetFirst(Bucket* bucket);
+void* Bucket_GetLast(Bucket* bucket);
+void* Bucket_GetNext(Bucket* bucket, void* currData);
+void* Bucket_GetPrev(Bucket* bucket, void* data);
+void* Bucket_GetByIndex(Bucket* bucket, size_t idx);
+void* Bucket_GetById(Bucket* bucket, ID id);
+ID Bucket_GetId(Bucket* bucket, void* data);
 
 #endif

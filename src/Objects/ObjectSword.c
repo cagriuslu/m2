@@ -22,7 +22,7 @@ static void Sword_postPhysics(EventListenerComponent* el) {
 		GraphicsComponent* gfx = FindGraphicsOfObject(obj);
 		ComponentOffense* off = FindOffenseOfObject(obj);
 		if (phy && phy->body && gfx && off && off->originator) {
-			Object* originator = BucketGetById(&CurrentLevel()->objects, off->originator);
+			Object* originator = Bucket_GetById(&CurrentLevel()->objects, off->originator);
 			if (originator) {
 				Box2DBodySetTransform(phy->body, originator->position, Box2DBodyGetAngle(phy->body));
 			}
@@ -33,11 +33,11 @@ static void Sword_postPhysics(EventListenerComponent* el) {
 
 static void Sword_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 	Level* level = CurrentLevel();
-	Object* obj = BucketGetById(&level->objects, phy->super.objId);
-	Object* otherObj = BucketGetById(&level->objects, other->super.objId);
+	Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
+	Object* otherObj = Bucket_GetById(&level->objects, other->super.objId);
 	if (obj && obj->offense && otherObj && otherObj->defense) {
-		ComponentOffense* offense = BucketGetById(&level->offenses, obj->offense);
-		ComponentDefense* defense = BucketGetById(&level->defenses, otherObj->defense);
+		ComponentOffense* offense = Bucket_GetById(&level->offenses, obj->offense);
+		ComponentDefense* defense = Bucket_GetById(&level->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
 			defense->hp -= 3 * offense->hp;
@@ -59,9 +59,9 @@ int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* ori
 	el->prePhysics = Sword_prePhysics;
 	el->postPhysics = Sword_postPhysics;
 
-	uint64_t phyId = 0;
+	ID phyId = 0;
 	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
-	phy->body = Box2DUtilsCreateBody(
+	phy->body = Box2DUtils_CreateBody(
 		phyId,
 		false, // isDisk
 		true, // isDynamic
@@ -69,7 +69,7 @@ int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* ori
 		false, // allowSleep
 		true, // isBullet
 		true, // isSensor
-		PLAYER_MELEE_WEAPON_CATEGORY, // category
+		CATEGORY_PLAYER_MELEE_WEAPON, // category
 		0, // mask
 		(Vec2F) {1.25f, 0.1667f}, // boxDims
 		(Vec2F) {0.5833f, 0.0f}, // boxCenterOffset

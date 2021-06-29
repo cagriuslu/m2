@@ -18,7 +18,7 @@
     <ClCompile Include="..\src\Array.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Box2DWrapper.cpp">
+    <ClCompile Include="..\src\Box2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Controls.c">
@@ -152,7 +152,7 @@
     <ClInclude Include="..\src\Array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Box2DWrapper.h">
+    <ClInclude Include="..\src\Box2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Controls.h">
@@ -231,6 +231,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\SDLUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Stopwatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
