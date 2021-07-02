@@ -140,6 +140,10 @@ void ListClear(List* list) {
 	list->lastId = 0;
 }
 
+size_t ListLength(List* list) {
+	return list->bucket.size;
+}
+
 ID ListGetFirst(List* list) {
 	return list->firstId;
 }

@@ -28,6 +28,10 @@ Vec2F Vec2FNormalize(Vec2F in) {
 	return (Vec2F) { in.x / len, in.y / len };
 }
 
+float Vec2FDistance(Vec2F lhs, Vec2F rhs) {
+	return Vec2FLength(Vec2FSub(lhs, rhs));
+}
+
 float Vec2FAngleRads(Vec2F vector) {
 	return atan2f(vector.y, vector.x);
 }

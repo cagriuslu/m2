@@ -15,7 +15,9 @@ typedef struct _PathfinderMap {
 int PathfinderMapInitFromLevel(PathfinderMap* pm, Level* level);
 void PathfinderMapDeinit(PathfinderMap* pm);
 
-int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
-void PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2Is);
+int PathfinderMapFindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
+int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
+void _PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2Is);
+
 
 #endif

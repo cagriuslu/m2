@@ -54,12 +54,25 @@ void PathfinderMapDeinit(PathfinderMap* pm) {
 	memset(pm, 0, sizeof(PathfinderMap));
 }
 
+int PathfinderMapFindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is) {
+	List gridSteps;
+	ListInit(&gridSteps, sizeof(Vec2I));
+	const int pathfinderResult = _PathfinderMapFindGridSteps(pm, from, to, &gridSteps);
+	if (pathfinderResult == 0) {
+		_PathfinderMapGridStepsToAnyAngle(&gridSteps, outReverseListOfVec2Is);
+	} else {
+		ListClear(outReverseListOfVec2Is);
+	}
+	ListDeinit(&gridSteps);
+	return pathfinderResult;
+}
+
 typedef struct _PriorityListItem {
 	float priority;
 	Vec2I position;
 } PriorityListItem;
 
-int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
+int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
 	Vec2I from = Vec2FTo2I(fromF);
 	Vec2I to = Vec2FTo2I(toF);
 
@@ -192,7 +205,7 @@ int PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* 
 	return result;
 }
 
-void PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2Is) {
+void _PathfinderMapGridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2Is) {
 	ListClear(outListOfVec2Is);
 
 	const ID point1Iterator = ListGetFirst(listOfVec2Is);

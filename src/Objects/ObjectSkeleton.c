@@ -8,28 +8,66 @@
 
 void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
 	Object* me = FindObjectOfComponent(el);
+	Object* player = FindObjectById(CurrentLevel()->playerId);
+	
+	bool recalculate = false;
 	me->ai->waypointRecalculationStopwatch += DeltaTicks();
-	if (1000 < me->ai->waypointRecalculationStopwatch) {
-		Object* player = FindObjectById(CurrentLevel()->playerId);
-
-		List gridSteps;
-		ListInit(&gridSteps, sizeof(Vec2I));
-		int pathfinderResult = PathfinderMapFindGridSteps(&CurrentLevel()->pathfinderMap, me->position, player->position, &gridSteps);
-		if (pathfinderResult == 0) {
-			PathfinderMapGridStepsToAnyAngle(&gridSteps, &me->ai->reversedWaypointList);
-		} else {
-			ListClear(&me->ai->reversedWaypointList);
-		}
-		ListDeinit(&gridSteps);
-		
-		me->ai->waypointRecalculationStopwatch -= 1000;
+	if (me->ai->recalculationPeriod < me->ai->waypointRecalculationStopwatch) {
+		recalculate = true;
+		me->ai->waypointRecalculationStopwatch -= me->ai->recalculationPeriod;
 	}
 
-	if (1 < me->ai->reversedWaypointList.bucket.size) {
+	if (recalculate) {
+		switch (me->ai->mode) {
+			case AI_IDLE:
+				// If player is close
+				if (Vec2FDistance(me->position, player->position) < me->ai->triggerDistance) {
+					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
+					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+						me->ai->mode = AI_GOING_AFTER_PLAYER;
+					}
+				}
+				break;
+			case AI_GOING_AFTER_PLAYER:
+				if (Vec2FDistance(me->position, player->position) < me->ai->triggerDistance) {
+					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
+					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+						me->ai->mode = AI_GOING_AFTER_PLAYER;
+					} else {
+						me->ai->mode = AI_GOING_BACK_TO_HOME;
+					}
+				} else {
+					me->ai->mode = AI_GOING_BACK_TO_HOME;
+				}
+				break;
+			case AI_GOING_BACK_TO_HOME:
+				if (Vec2FDistance(me->position, player->position) < me->ai->triggerDistance) {
+					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
+					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+						me->ai->mode = AI_GOING_AFTER_PLAYER;
+					} else {
+						me->ai->mode = AI_GOING_BACK_TO_HOME;
+					}
+				} else {
+					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, me->ai->homePosition, &me->ai->reversedWaypointList);
+					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+						me->ai->mode = AI_GOING_BACK_TO_HOME;
+					} else {
+						me->ai->mode = AI_IDLE;
+					}
+				}
+				break;
+		}
+	}
+
+	if (1 < ListLength(&me->ai->reversedWaypointList)) {
 		ID myPositionIterator = ListGetLast(&me->ai->reversedWaypointList);
+		Vec2I* myPosition = ListGetData(&me->ai->reversedWaypointList, myPositionIterator);
+		
 		ID targetIterator = ListGetPrev(&me->ai->reversedWaypointList, myPositionIterator);
 		Vec2I* targetPosition = ListGetData(&me->ai->reversedWaypointList, targetIterator);
-		if (targetPosition) {
+		
+		if (myPosition && targetPosition && !Vec2IEquals(*myPosition, *targetPosition)) {
 			PhysicsComponent* phy = FindPhysicsOfObject(me);
 			Vec2F direction = Vec2FSub(Vec2FFromVec2I(*targetPosition), me->position);
 			Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(direction), DeltaTicks() * 20.0f), true);
@@ -78,7 +116,10 @@ int ObjectSkeletonInit(Object* obj, Vec2F position) {
 	obj->ai = malloc(sizeof(AI));
 	assert(obj->ai);
 	AI_Init(obj->ai);
-	obj->ai->waypointRecalculationStopwatch = 1000 + rand() % 1000;
+	obj->ai->recalculationPeriod = 500;
+	obj->ai->homePosition = position;
+	obj->ai->triggerDistance = 8.0f;
+	obj->ai->waypointRecalculationStopwatch = rand() % obj->ai->recalculationPeriod;
 	
 	return 0;
 }

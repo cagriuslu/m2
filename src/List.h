@@ -21,6 +21,7 @@ void* ListInsertBefore(List* list, ID beforeIterator, void* copy, ID* outIterato
 void ListRemove(List* list, ID iterator);
 void ListClear(List* list);
 
+size_t ListLength(List* list);
 ID ListGetFirst(List* list);
 ID ListGetByIndex(List* list, size_t index);
 ID ListGetNext(List* list, ID iterator);

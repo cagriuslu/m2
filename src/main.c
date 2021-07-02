@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <math.h>
 
-int gScreenWidth = 1280, gScreenHeight = 720;
+int gScreenWidth = 1600, gScreenHeight = 900;
 float gPixelsPerMeter = 48.0;
 int gTileWidth = TILE_WIDTH;
 uint32_t gWindowPixelFormat;
