@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
+void ObjectEnemy_prePhysics(EventListenerComponent* el) {
 	Object* me = FindObjectOfComponent(el);
 	Object* player = FindObjectById(CurrentLevel()->playerId);
 	
@@ -76,7 +76,7 @@ void ObjectSkeleton_prePhysics(EventListenerComponent* el) {
 }
 
 // Move this to main loop
-void ObjectSkeleton_postPhysics(EventListenerComponent *el) {
+void ObjectEnemy_postPhysics(EventListenerComponent *el) {
 	Object* obj = FindObjectOfComponent(el);
 	if (obj) {
 		ComponentDefense* defense = FindDefenseOfObject(obj);
@@ -86,12 +86,12 @@ void ObjectSkeleton_postPhysics(EventListenerComponent *el) {
 	}
 }
 
-int ObjectSkeletonInit(Object* obj, Vec2F position) {
+int ObjectEnemyInit(Object* obj, Vec2F position) {
 	PROPAGATE_ERROR(ObjectInit(obj, position));
 
 	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
-	el->prePhysics = ObjectSkeleton_prePhysics;
-	el->postGraphics = ObjectSkeleton_postPhysics;
+	el->prePhysics = ObjectEnemy_prePhysics;
+	el->postGraphics = ObjectEnemy_postPhysics;
 
 	ID phyId = 0;
 	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);

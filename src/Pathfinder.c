@@ -15,7 +15,7 @@
 
 int PathfinderMapInitFromLevel(PathfinderMap* pm, Level* level) {
 	memset(pm, 0, sizeof(PathfinderMap));
-	PROPAGATE_ERROR(HashMapInit(&pm->blockedLocations, sizeof(bool)));
+	PROPAGATE_ERROR(HashMap_Init(&pm->blockedLocations, sizeof(bool)));
 
 	for (PhysicsComponent* phy = Bucket_GetFirst(&level->physics); phy; phy = Bucket_GetNext(&level->physics, phy)) {
 		Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
@@ -38,7 +38,7 @@ int PathfinderMapInitFromLevel(PathfinderMap* pm, Level* level) {
 						for (int y = lowerY; y <= upperY; y++) {
 							for (int x = lowerX; x <= upperX; x++) {
 								bool blocked = true;
-								HashMapSetIntKey(&pm->blockedLocations, XYToHashMapKey(x, y), &blocked); // TODO check result
+								HashMap_SetInt64Key(&pm->blockedLocations, XYToHashMapKey(x, y), &blocked); // TODO check result
 							}
 						}
 					}
@@ -50,7 +50,7 @@ int PathfinderMapInitFromLevel(PathfinderMap* pm, Level* level) {
 }
 
 void PathfinderMapDeinit(PathfinderMap* pm) {
-	HashMapDeinit(&pm->blockedLocations);
+	HashMap_Term(&pm->blockedLocations);
 	memset(pm, 0, sizeof(PathfinderMap));
 }
 
@@ -88,14 +88,14 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 
 	// Holds from which position should you approach a certain position
 	HashMap cameFrom;
-	HashMapInit(&cameFrom, sizeof(Vec2I));
+	HashMap_Init(&cameFrom, sizeof(Vec2I));
 	tmpCameFrom = from;
-	HashMapSetIntKey(&cameFrom, Vec2IToHashMapKey(from), &tmpCameFrom);
+	HashMap_SetInt64Key(&cameFrom, Vec2IToHashMapKey(from), &tmpCameFrom);
 
 	HashMap costSoFar;
-	HashMapInit(&costSoFar, sizeof(float));
+	HashMap_Init(&costSoFar, sizeof(float));
 	tmpCostSoFar = 0.0f;
-	HashMapSetIntKey(&costSoFar, Vec2IToHashMapKey(from), &tmpCostSoFar);
+	HashMap_SetInt64Key(&costSoFar, Vec2IToHashMapKey(from), &tmpCostSoFar);
 
 	while (0 < frontiers.bucket.size) {
 		const ID frontierIterator = ListGetFirst(&frontiers);
@@ -107,7 +107,7 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 		}
 
 		// Find cost to current location
-		float* costToCurrentFrontierPtr = HashMapGetIntKey(&costSoFar, Vec2IToHashMapKey(frontierItem->position));
+		float* costToCurrentFrontierPtr = HashMap_GetInt64Key(&costSoFar, Vec2IToHashMapKey(frontierItem->position));
 		const float costToCurrentFrontier = *costToCurrentFrontierPtr;
 
 		// Gather neighbors of frontierItem
@@ -115,22 +115,22 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 		float frontierToNeighborCosts[4];
 		uint32_t neighborCount = 0;
 		Vec2I topNeighbor = Vec2IAdd(frontierItem->position, (Vec2I) {0, -1});
-		if (HashMapGetIntKey(&pm->blockedLocations, Vec2IToHashMapKey(topNeighbor)) == NULL || Vec2IEquals(to, topNeighbor)) {
+		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(topNeighbor)) == NULL || Vec2IEquals(to, topNeighbor)) {
 			neighbors[neighborCount] = topNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		Vec2I rightNeighbor = Vec2IAdd(frontierItem->position, (Vec2I) { +1, 0 });
-		if (HashMapGetIntKey(&pm->blockedLocations, Vec2IToHashMapKey(rightNeighbor)) == NULL || Vec2IEquals(to, rightNeighbor)) {
+		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(rightNeighbor)) == NULL || Vec2IEquals(to, rightNeighbor)) {
 			neighbors[neighborCount] = rightNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		Vec2I bottomNeighbor = Vec2IAdd(frontierItem->position, (Vec2I) { 0, +1 });
-		if (HashMapGetIntKey(&pm->blockedLocations, Vec2IToHashMapKey(bottomNeighbor)) == NULL || Vec2IEquals(to, bottomNeighbor)) {
+		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(bottomNeighbor)) == NULL || Vec2IEquals(to, bottomNeighbor)) {
 			neighbors[neighborCount] = bottomNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		Vec2I leftNeighbor = Vec2IAdd(frontierItem->position, (Vec2I) { -1, 0 });
-		if (HashMapGetIntKey(&pm->blockedLocations, Vec2IToHashMapKey(leftNeighbor)) == NULL || Vec2IEquals(to, leftNeighbor)) {
+		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(leftNeighbor)) == NULL || Vec2IEquals(to, leftNeighbor)) {
 			neighbors[neighborCount] = leftNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
@@ -143,13 +143,13 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 			// Calculate the cost of traveling to neighbor from current location
 			float newCostToNeighbor = costToCurrentFrontier + frontierToNeighborCost;
 			// Find the previous cost of traveling to neighbor
-			float* oldCostToNeighborPtr = HashMapGetIntKey(&costSoFar, Vec2IToHashMapKey(neighbor));
+			float* oldCostToNeighborPtr = HashMap_GetInt64Key(&costSoFar, Vec2IToHashMapKey(neighbor));
 			const float oldCostToNeighbor = oldCostToNeighborPtr ? *oldCostToNeighborPtr : FLT_MAX;
 
 			// If new path to neighbor is cheaper than the old path
 			if (newCostToNeighbor < oldCostToNeighbor) {
 				// Save new cost
-				HashMapSetIntKey(&costSoFar, Vec2IToHashMapKey(neighbor), &newCostToNeighbor);
+				HashMap_SetInt64Key(&costSoFar, Vec2IToHashMapKey(neighbor), &newCostToNeighbor);
 				// Calculate priority of neighbor with heuristic parameter (which is Manhattan distance to `to`)
 				tmpPrioListItem.priority = newCostToNeighbor + ManhattanDistance(to, neighbor);
 				tmpPrioListItem.position = neighbor;
@@ -168,7 +168,7 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 				}
 				// Set the previous position of neighbor as the current position
 				tmpCameFrom = frontierItem->position;
-				HashMapSetIntKey(&cameFrom, Vec2IToHashMapKey(neighbor), &tmpCameFrom);
+				HashMap_SetInt64Key(&cameFrom, Vec2IToHashMapKey(neighbor), &tmpCameFrom);
 			}
 		}
 
@@ -178,7 +178,7 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 
 	int result;
 	// Check if there is a path
-	Vec2I* currentCameFrom = HashMapGetIntKey(&cameFrom, Vec2IToHashMapKey(to));
+	Vec2I* currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(to));
 	if (currentCameFrom == NULL) {
 		result = XERR_PATH_NOT_FOUND;
 	} else {
@@ -190,7 +190,7 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 		// Built outReverseListOfVec2Is
 		while (currentCameFrom && Vec2IEquals(from, *currentCameFrom) == false) {
 			ListAppend(outReverseListOfVec2Is, currentCameFrom, NULL);
-			currentCameFrom = HashMapGetIntKey(&cameFrom, Vec2IToHashMapKey(*currentCameFrom));
+			currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(*currentCameFrom));
 		}
 		// Add `from` to list as well
 		if (currentCameFrom) {
@@ -199,8 +199,8 @@ int _PathfinderMapFindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List*
 	}
 
 	// Cleanup
-	HashMapDeinit(&costSoFar);
-	HashMapDeinit(&cameFrom);
+	HashMap_Term(&costSoFar);
+	HashMap_Term(&cameFrom);
 	ListDeinit(&frontiers);
 	return result;
 }

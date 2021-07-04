@@ -9,7 +9,7 @@ typedef struct _List {
 	ID lastId;
 	size_t dataSize;
 } List;
-typedef List ListOfVec2I;
+typedef List ListOfVec2Is;
 
 int ListInit(List* list, size_t itemSize);
 void ListDeinit(List* list);

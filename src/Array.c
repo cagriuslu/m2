@@ -54,6 +54,10 @@ void Array_Clear(Array* array) {
 	array->length = 0;
 }
 
+size_t Array_Length(Array* array) {
+	return array->length;
+}
+
 void* Array_Get(Array *array, size_t index) {
 	if (index < array->length) {
 		return array->data + index * array->itemSize;

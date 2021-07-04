@@ -61,7 +61,7 @@ int ObjectPlayerInit(Object* obj);
 int ObjectGodInit(Object* obj);
 int ObjectCameraInit(Object* obj);
 int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffense** outOffense);
-int ObjectSkeletonInit(Object* obj, Vec2F position);
+int ObjectEnemyInit(Object* obj, Vec2F position);
 int ObjectWallInit(Object* obj, Vec2F position);
 int ObjectStaticBoxInit(Object* obj, Vec2F position);
 int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, Vec2F direction, uint32_t ticks);

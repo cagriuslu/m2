@@ -12,6 +12,7 @@
 #include "List.h"
 #include "Pathfinder.h"
 #include "HashMap.h"
+#include "Txt.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>

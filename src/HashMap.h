@@ -8,23 +8,28 @@ typedef struct _HashMap {
 	Array* arrays; // 256
 	size_t itemSize;
 } HashMap;
+typedef HashMap HashMapOfInt32s;
 
-int HashMapInit(HashMap *hm, size_t itemSize);
-void HashMapDeinit(HashMap* hm);
+int HashMap_Init(HashMap *hm, size_t itemSize);
+void HashMap_Term(HashMap* hm);
 
-size_t HashMapSize(HashMap* hm);
-void HashMapClear(HashMap* hm);
-void* HashMapSetIntKey(HashMap* hm, int64_t key, void* copy);
-void* HashMapTrySetIntKey(HashMap* hm, int64_t key, void* copy); // Sets only if key not exists
-void* HashMapGetIntKey(HashMap* hm, int64_t key);
-void HashMapUnsetIntKey(HashMap* hm, int64_t key);
+size_t HashMap_Size(HashMap* hm);
+void HashMap_Clear(HashMap* hm);
 
-// Key must be AT LEAST 8 bytes
-void* _HashMapSet(HashMap* hm, void* key, void* copy);
-void* _HashMapTrySet(HashMap* hm, void* key, void* copy);
-void* _HashMapGet(HashMap* hm, void* key);
-void _HashMapUnset(HashMap* hm, void* key);
-
-uint8_t HashMapHash(void* key);
+// with Int32 keys
+void* HashMap_SetInt32Keys(HashMap* hm, int32_t keyX, int32_t keyY, void* copy);
+void* HashMap_TrySetInt32Keys(HashMap* hm, int32_t keyX, int32_t keyY, void* copy);
+void* HashMap_GetInt32Keys(HashMap* hm, int32_t keyX, int32_t keyY);
+void HashMap_UnsetInt32Keys(HashMap* hm, int32_t keyX, int32_t keyY);
+// with Int64 key
+void* HashMap_SetInt64Key(HashMap* hm, int64_t key, void* copy);
+void* HashMap_TrySetInt64Key(HashMap* hm, int64_t key, void* copy);
+void* HashMap_GetInt64Key(HashMap* hm, int64_t key);
+void HashMap_UnsetInt64Key(HashMap* hm, int64_t key);
+// Key must be 8 bytes
+void* HashMap_Set(HashMap* hm, void* key, void* copy);
+void* HashMap_TrySet(HashMap* hm, void* key, void* copy); // Sets only if key not exists
+void* HashMap_Get(HashMap* hm, void* key);
+void HashMap_Unset(HashMap* hm, void* key);
 
 #endif

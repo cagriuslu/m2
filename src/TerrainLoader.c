@@ -14,8 +14,8 @@ typedef struct _TileKV {
 	TileDef tileDef;
 } TileKV;
 
-Array MyGetline(FILE *file);
-Array MySplit(char *input, char delimiter);
+static Array MyGetline(FILE *file);
+static Array MySplit(char *input, char delimiter);
 
 int TerrainLoad(const char *tname) {
 	// Open file
@@ -58,8 +58,6 @@ int TerrainLoad(const char *tname) {
 	}
 
 	// Read matirx data
-	//Array tiles;
-	//Array_Init(&tiles, sizeof(TileObject), 16, SIZE_MAX);
 	size_t rowIndex = 0, colCount = 0;
 	while (true) {
 		Array lineBuffer = MyGetline(file);
@@ -93,10 +91,6 @@ int TerrainLoad(const char *tname) {
 					break;
 				}
 			}
-			// Save Tile
-			//TileObject* tile = Array_Append(&tiles, NULL);
-			//TileInit(tile, (Vec2I) { (int) colIndex, (int) rowIndex }, tileDef.txIndex, tileDef.colliderSize);
-
 			Object* tile = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
 			ObjectTileInit(tile, tileDef, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
@@ -109,7 +103,7 @@ int TerrainLoad(const char *tname) {
 	return 0;
 }
 
-Array MyGetline(FILE *file) {
+static Array MyGetline(FILE *file) {
 	Array lineBuffer;
 	Array_Init(&lineBuffer, sizeof(char), 1024, SIZE_MAX);
 
@@ -124,7 +118,7 @@ Array MyGetline(FILE *file) {
 	return lineBuffer;
 }
 
-Array MySplit(char *input, char delimiter) {
+static Array MySplit(char *input, char delimiter) {
 	Array splitBuffer;
 	Array_Init(&splitBuffer, sizeof(char*), 256, SIZE_MAX);
 

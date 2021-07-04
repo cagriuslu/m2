@@ -90,9 +90,15 @@ void LogTyp_Int32(LogLevel level, const char* file, int line, const char* messag
 	LogNewLine();
 }
 
+void LogTyp_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
+	LogHeader(level, file, line);
+	fprintf(stderr, "{\"%s\": \"%s\"}", message, var);
+	LogNewLine();
+}
+
 void LogTyp_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": %.4f}", message, var);
+	fprintf(stderr, "{\"%s\": %f}", message, var);
 	LogNewLine();
 }
 
@@ -114,7 +120,7 @@ void LogTyp_SDL_Rect(LogLevel level, const char* file, int line, const char* mes
 	LogNewLine();
 }
 
-void LogTyp_ArrayInt32(LogLevel level, const char* file, int line, const char* message, Array* var) {
+void LogTyp_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": [", message);
 	for (size_t i = 0; i < var->length; i++) {

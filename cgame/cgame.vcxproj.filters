@@ -90,7 +90,7 @@
     <ClCompile Include="..\src\Objects\ObjectGod.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Objects\ObjectSkeleton.c">
+    <ClCompile Include="..\src\Objects\ObjectEnemy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectStaticBox.c">
@@ -145,6 +145,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectSword.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LevelGenerator.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Txt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SparseArray2.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -234,6 +243,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Stopwatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LevelGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Txt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SparseArray2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

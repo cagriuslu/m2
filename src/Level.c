@@ -73,7 +73,7 @@ int LevelLoadTest(Level* level) {
 	const unsigned skeletonCount = 100;
 	for (unsigned i = 0; i < skeletonCount; i++) {
 		Object* skeleton = Bucket_Mark(&level->objects, NULL, NULL);
-		ObjectSkeletonInit(skeleton, (Vec2F) { (float)i, -10.0f });
+		ObjectEnemyInit(skeleton, (Vec2F) { (float)i, -10.0f });
 	}
 
 	/*Object* wall = Bucket_Mark(&level->objects, NULL, NULL);
@@ -95,7 +95,7 @@ int LevelLoadEditor(Level* level) {
 	ObjectCameraInit(camera);
 
 	Object* skeleton = Bucket_Mark(&level->objects, NULL, NULL);
-	ObjectSkeletonInit(skeleton, (Vec2F) { -2.0f, -2.0f });
+	ObjectEnemyInit(skeleton, (Vec2F) { -2.0f, -2.0f });
 
 	Object* wall = Bucket_Mark(&level->objects, NULL, NULL);
 	ObjectWallInit(wall, (Vec2F) { 0.0f, -2.0f });
