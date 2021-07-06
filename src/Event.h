@@ -8,6 +8,8 @@
 
 void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion, bool *outButton, bool *outWheel);
 
+Vec2I IsScreenResized();
+
 uint16_t IsKeyPressed(Key key);
 uint16_t IsKeyReleased(Key key);
 bool IsKeyDown(Key key);

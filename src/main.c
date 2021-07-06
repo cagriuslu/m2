@@ -21,7 +21,8 @@
 #include <math.h>
 
 int gScreenWidth = 1600, gScreenHeight = 900;
-float gPixelsPerMeter = 48.0;
+const float gGameAreaAspectRatio = 5.0f / 4.0f;
+float gPixelsPerMeter;
 int gTileWidth = TILE_WIDTH;
 uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
@@ -30,6 +31,12 @@ TTF_Font *gFont;
 
 Level gLevel;
 unsigned gDeltaTicks;
+
+void SetWindowSizeAndPPM(int width, int height) {
+	gScreenWidth = width;
+	gScreenHeight = height;
+	gPixelsPerMeter = height / 16.0f;
+}
 
 int main(int argc, char **argv) {
 	LOG_TRC("main");
@@ -45,7 +52,9 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
-	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
+	SetWindowSizeAndPPM(gScreenWidth, gScreenHeight);
+	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	SDL_SetWindowMinimumSize(window, 800, 450);
 	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TILE_WIDTH_STR "x" TILE_WIDTH_STR ".png"));
@@ -97,10 +106,14 @@ main_menu:
 		unsigned start_ticks = SDL_GetTicks();
 
 		///// EVENT HANDLING /////
+		bool windowEvent = false;
 		bool key = false;
-		GatherEvents(&quit, NULL, &key, NULL, NULL, NULL);
+		GatherEvents(&quit, &windowEvent, &key, NULL, NULL, NULL);
 		if (quit) {
 			break;
+		}
+		if (windowEvent && IsScreenResized().x && IsScreenResized().y) {
+			SetWindowSizeAndPPM(IsScreenResized().x, IsScreenResized().y);
 		}
 		if (key && IsKeyPressed(KEY_MENU)) {
 			goto main_menu;

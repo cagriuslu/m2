@@ -1,6 +1,9 @@
 #include "Event.h"
 #include <string.h>
 
+int gNewScreenWidth;
+int gNewScreenHeight;
+
 uint16_t gKeysPressed[_KEY_COUNT];
 uint16_t gKeysReleased[_KEY_COUNT];
 uint8_t gKeysState[_KEY_COUNT];
@@ -30,6 +33,8 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 		*outWheel = false;
 	}
 	// Clear events
+	gNewScreenWidth = 0;
+	gNewScreenHeight = 0;
 	memset(gKeysPressed, 0, sizeof(gKeysPressed));
 	memset(gKeysReleased, 0, sizeof(gKeysReleased));
 	memset(gKeysState, 0, sizeof(gKeysState));
@@ -50,6 +55,13 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 		case SDL_WINDOWEVENT:
 			if (outWindow) {
 				*outWindow = true;
+			}
+			switch (e.window.event) {
+				case SDL_WINDOWEVENT_RESIZED:
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+					gNewScreenWidth = e.window.data1;
+					gNewScreenHeight = e.window.data2;
+					break;
 			}
 			break;
 		case SDL_KEYDOWN:
@@ -96,6 +108,10 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 	}
 	KeyStateArrayFillFromSDLKeyboardStateArray(gKeysState, SDL_GetKeyboardState(NULL));
 	ButtonStateArrayFillFromSDLMouseState(gButtonsState, SDL_GetMouseState(&gPointerPosition.x, &gPointerPosition.y));
+}
+
+Vec2I IsScreenResized() {
+	return (Vec2I) { gNewScreenWidth, gNewScreenHeight };
 }
 
 uint16_t IsKeyPressed(Key key) {
