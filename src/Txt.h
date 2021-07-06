@@ -18,7 +18,7 @@ void TxtKV_SetValue(TxtKV* kv, const char* value, bool isDynamic);
 void TxtKV_Term(TxtKV* kv);
 
 typedef struct _Txt {
-	ArrayOfTxtKVs txtKVPairs;
+	ArrayOfTxtKVs txtKVPairs; // TODO turn this into HashMap
 	HashMapOfInt32s txtKVIndexes;
 } Txt;
 

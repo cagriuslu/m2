@@ -2,6 +2,7 @@
 #include "TerrainLoader.h"
 #include "TileLookup.h"
 #include "Object.h"
+#include "Txt.h"
 #include "Main.h"
 #include "Array.h"
 #include "Error.h"
@@ -10,128 +11,34 @@
 #include <string.h>
 
 typedef struct _TileKV {
-	char key[4];
+	uint32_t txtKVIndex;
 	TileDef tileDef;
 } TileKV;
 
-static Array MyGetline(FILE *file);
-static Array MySplit(char *input, char delimiter);
-
 int TerrainLoad(const char *tname) {
-	// Open file
-	FILE *file = fopen(tname, "r");
-	assert(file);
+	Txt txt;
+	PROPAGATE_ERROR(Txt_InitFromFile(&txt, tname));
 
-	// Gather tile KV pairs until % character on a line
-	Array tileKVs;
-	Array_Init(&tileKVs, sizeof(TileKV), 16, SIZE_MAX);
-	while (true) {
-		Array lineBuffer = MyGetline(file);
-		if (lineBuffer.length == 0) {
-			Array_Term(&lineBuffer);
-			continue;
-		}
-		// Break if % is encountered
-		char* line = Array_Get(&lineBuffer, 0);
-		if (line[0] == '%') {
-			Array_Term(&lineBuffer);
-			break;
-		}
+	HashMap tileDefs;
+	HashMap_Init(&tileDefs, sizeof(TileDef));
 
-		// Split key and value
-		Array splits = MySplit(line, '\t');
-		assert(2 == splits.length);
-
-		char **keyPtr = Array_Get(&splits, 0);
-		char **valuePtr = Array_Get(&splits, 1);
-		assert(strlen(*keyPtr));
-		assert(strlen(*valuePtr));
-
-		TileKV tileKV;
-		memset(&tileKV, 0, sizeof(TileKV));
-		strncpy(tileKV.key, *keyPtr, 3);
-		tileKV.tileDef = TileLookup(*valuePtr);
-		Array_Append(&tileKVs, &tileKV);
-
-		Array_Term(&splits);
-		Array_Term(&lineBuffer);
+	for (uint32_t txtKVIndex = 0; txtKVIndex < Array_Length(&txt.txtKVPairs); txtKVIndex++) {
+		TxtKV* txtKV = Array_Get(&txt.txtKVPairs, txtKVIndex);
+		TileDef tileDef = TileLookup(txtKV->value);
+		HashMap_SetInt64Key(&tileDefs, txtKVIndex, &tileDef);
 	}
 
-	// Read matirx data
-	size_t rowIndex = 0, colCount = 0;
-	while (true) {
-		Array lineBuffer = MyGetline(file);
-		if (lineBuffer.length == 0) {
-			Array_Term(&lineBuffer);
-			break;
-		}
-		char* line = Array_Get(&lineBuffer, 0);
-		if (strlen(line) == 0) {
-			Array_Term(&lineBuffer);
-			break;
-		}
+	for (uint32_t rowIndex = 0, *rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex); rowPtr; ++rowIndex, rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex)) {
+		for (uint32_t colIndex = 0, *txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex); txtKVIndexPtr; ++colIndex, txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex)) {
+			// TODO
+			TileDef* tileDefPtr = HashMap_GetInt64Key(&tileDefs, *txtKVIndexPtr);
 
-		Array splits = MySplit(line, '\t');
-		assert(splits.length);
-
-		if (colCount == 0) {
-			colCount = splits.length;
-		}
-		assert(splits.length == colCount);
-
-		for (size_t colIndex = 0; colIndex < colCount; colIndex++) {
-			char** colDataPtr = Array_Get(&splits, colIndex);
-			char* colData = *colDataPtr;
-			// Lookup Tile from TileKV Array
-			TileDef tileDef = { 0 };
-			for (size_t j = 0; j < tileKVs.length; j++) {
-				TileKV* tileKV = Array_Get(&tileKVs, j);
-				if (strcmp(colData, tileKV->key) == 0) {
-					tileDef = tileKV->tileDef;
-					break;
-				}
-			}
 			Object* tile = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ObjectTileInit(tile, tileDef, (Vec2F) { (float)colIndex, (float)rowIndex });
+			ObjectTileInit(tile, *tileDefPtr, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
-
-		rowIndex++;
 	}
-	
-	Array_Term(&tileKVs);
-	fclose(file);
+
+	HashMap_Term(&tileDefs);
+	Txt_Term(&txt);
 	return 0;
-}
-
-static Array MyGetline(FILE *file) {
-	Array lineBuffer;
-	Array_Init(&lineBuffer, sizeof(char), 1024, SIZE_MAX);
-
-	int c;
-	while ((c = fgetc(file)) != EOF && c != '\n') {
-		char ch = (char) c;
-		Array_Append(&lineBuffer, &ch);
-	}
-	c = 0;
-	Array_Append(&lineBuffer, &c);
-
-	return lineBuffer;
-}
-
-static Array MySplit(char *input, char delimiter) {
-	Array splitBuffer;
-	Array_Init(&splitBuffer, sizeof(char*), 256, SIZE_MAX);
-
-	size_t totalSize = strlen(input);
-	for (size_t i = 0; i < totalSize; i++) {
-		if (input[i] != delimiter) {
-			char *startOfPhrase = input + i;
-			Array_Append(&splitBuffer, &startOfPhrase);
-			while (input[i] != delimiter && input[i] != 0) {
-				i++;
-			}
-			input[i] = 0;
-		}
-	}
-	return splitBuffer;
 }
