@@ -97,7 +97,7 @@ int ObjectPlayerInit(Object* obj) {
 	ComponentOffense* off = ObjectAddOffense(obj, NULL);
 	off->hp = 15;
 	off->originator = objId;
-	off->ticksLeft = 750;
+	off->projectileTicksLeft = 750;
 
 	ComponentLightSource* light = ObjectAddLightSource(obj, 4.0f, NULL);
 	light->power = 3.0f;

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "Txt.h"
+
 #define HM_KEY_SIZE (8)
 #define HM_BUCKET_COUNT (256)
 
@@ -22,6 +24,45 @@ int HashMap_Init(HashMap* hm, size_t itemSize) {
 		PROPAGATE_ERROR(Array_Init(hm->arrays + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1));
 	}
 	hm->itemSize = itemSize;
+	return 0;
+}
+
+XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath) {
+	PROPAGATE_ERROR(HashMap_Init(hm, sizeof(char*)));
+	Txt txt;
+	PROPAGATE_ERROR(Txt_InitFromFile(&txt, fpath));
+	// Iterate over columns of the first row
+	for (uint32_t colIndex = 0, *txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, 0); txtKVIndexPtr; ++colIndex, txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, 0)) {
+		// Get TxtKV from Txt array
+		TxtKV* txtKV = Array_Get(&txt.txtKVPairs, *txtKVIndexPtr);
+		// Duplicate string
+		const char* dupValue = _strdup(txtKV->value);
+		HashMap_Set(hm, txtKV->key, &dupValue);
+	}
+	Txt_Term(&txt);
+	return 0;
+}
+
+XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
+	Txt txt;
+	PROPAGATE_ERROR(Txt_Init(&txt));
+	uint32_t insertedIdx = 0;
+	// Iterate over arrays
+	for (unsigned arrayIdx = 0; arrayIdx < HM_BUCKET_COUNT; arrayIdx++) {
+		// Iterate over items in the array
+		for (unsigned itemIdx = 0; itemIdx < Array_Length(hm->arrays + arrayIdx); itemIdx++) {
+			// Add new TxtKV to Txt
+			HashMapItem* item = Array_Get(hm->arrays + arrayIdx, itemIdx);
+			TxtKV* newKV = Array_Append(&txt.txtKVPairs, NULL);
+			TxtKV_SetKey(newKV, item->key);
+			TxtKV_SetValue(newKV, ((char**)item->data)[0], false);
+			// Add an instance of the value into the HashMap
+			HashMap_SetInt32Keys(&txt.txtKVIndexes, insertedIdx, 0, &insertedIdx);
+			insertedIdx++;
+		}
+	}
+	Txt_SaveToFile(&txt, fpath);
+	Txt_Term(&txt);
 	return 0;
 }
 

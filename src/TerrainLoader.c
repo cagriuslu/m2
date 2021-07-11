@@ -30,7 +30,6 @@ int TerrainLoad(const char *tname) {
 
 	for (uint32_t rowIndex = 0, *rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex); rowPtr; ++rowIndex, rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex)) {
 		for (uint32_t colIndex = 0, *txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex); txtKVIndexPtr; ++colIndex, txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex)) {
-			// TODO
 			TileDef* tileDefPtr = HashMap_GetInt64Key(&tileDefs, *txtKVIndexPtr);
 
 			Object* tile = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);

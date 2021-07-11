@@ -9,8 +9,8 @@
 static void Sword_prePhysics(EventListenerComponent* el) {
 	Object* obj = FindObjectOfComponent(el);
 	ComponentOffense* offense = FindOffenseOfObject(obj);
-	offense->ticksLeft -= DeltaTicks();
-	if (offense->ticksLeft <= 0) {
+	offense->projectileTicksLeft -= DeltaTicks();
+	if (offense->projectileTicksLeft <= 0) {
 		DeleteObject(obj);
 	}
 }
@@ -90,7 +90,7 @@ int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* ori
 
 	ComponentOffense* off = ObjectAddOffense(obj, NULL);
 	ComponentOffenseCopyExceptSuper(off, originatorOffense);
-	off->ticksLeft = ticks;
+	off->projectileTicksLeft = ticks;
 	
 	return 0;
 }

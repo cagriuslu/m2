@@ -18,8 +18,8 @@ static void Bullet_prePhysics(EventListenerComponent* el) {
 
 		ComponentOffense* offense = FindOffenseOfObject(obj);
 		if (offense) {
-			offense->ticksLeft -= DeltaTicks();
-			if (offense->ticksLeft <= 0) {
+			offense->projectileTicksLeft -= DeltaTicks();
+			if (offense->projectileTicksLeft <= 0) {
 				DeleteObject(obj);
 			}
 		}

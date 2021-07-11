@@ -9,6 +9,7 @@
 #include "Level.h"
 #include "Dialog.h"
 #include "Log.h"
+#include "Character.h"
 #include "List.h"
 #include "Pathfinder.h"
 #include "HashMap.h"
@@ -31,6 +32,7 @@ TTF_Font *gFont;
 
 Level gLevel;
 unsigned gDeltaTicks;
+Character gCharacter;
 
 void SetWindowSizeAndPPM(int width, int height) {
 	gScreenWidth = width;
@@ -77,6 +79,7 @@ main_menu:
 		LevelInit(&gLevel);
 
 		if (res == X_MAIN_MENU_NEW_GAME) {
+			//PROPAGATE_ERROR(Character_Init())
 			PROPAGATE_ERROR(LevelLoadTest(&gLevel));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
 			PROPAGATE_ERROR(LevelLoadEditor(&gLevel));
