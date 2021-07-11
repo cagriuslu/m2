@@ -79,11 +79,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\include\box2d;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\include\box2d;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\sqlite-3.36.0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\include\box2d;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\lua-5.4.3\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\include\box2d;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\include;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\sqlite-3.36.0\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -125,8 +125,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\x64\Release;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;box2d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\x64\Release;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\sqlite-3.36.0\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;box2d.lib;sqlite-3.36.0.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y ..\libs\SDL2-2.0.14\lib\x64\*.dll "$(OutDir)"
@@ -151,8 +151,8 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\x64\Release;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;box2d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\lua-5.4.3\x64\Release;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\box2d-2.4.1\x64\Release;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_image-2.0.5\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2_ttf-2.0.15\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\SDL2-2.0.14\lib\x64;C:\Users\uslu\Dropbox\LAPTOP-98H62CRA\Desktop\cgame\libs\sqlite-3.36.0\lib\x64\Release</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lua-5.4.3.lib;SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;box2d.lib;sqlite-3.36.0.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y ..\libs\SDL2-2.0.14\lib\x64\*.dll "$(OutDir)"
@@ -167,6 +167,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Box2DUtils.c" />
     <ClCompile Include="..\src\Box2D.cpp" />
     <ClCompile Include="..\src\Bucket.c" />
+    <ClCompile Include="..\src\Character.c" />
     <ClCompile Include="..\src\Component.c" />
     <ClCompile Include="..\src\Components\ComponentDefense.c" />
     <ClCompile Include="..\src\Components\ComponentEventListener.c" />
@@ -180,6 +181,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Event.c" />
     <ClCompile Include="..\src\HashMap.c" />
     <ClCompile Include="..\src\InsertionList.c" />
+    <ClCompile Include="..\src\Item.c" />
     <ClCompile Include="..\src\Level.c" />
     <ClCompile Include="..\src\LevelGenerator.c" />
     <ClCompile Include="..\src\List.c" />
@@ -199,6 +201,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\SDLUtils.c" />
     <ClCompile Include="..\src\SparseArray2.c" />
     <ClCompile Include="..\src\SpatialMap.c" />
+    <ClCompile Include="..\src\Sqlite.c" />
     <ClCompile Include="..\src\TerrainLoader.c" />
     <ClCompile Include="..\src\TileLookup.c" />
     <ClCompile Include="..\src\Txt.c" />
@@ -217,6 +220,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\Box2DUtils.h" />
     <ClInclude Include="..\src\Box2D.h" />
     <ClInclude Include="..\src\Bucket.h" />
+    <ClInclude Include="..\src\Character.h" />
     <ClInclude Include="..\src\Component.h" />
     <ClInclude Include="..\src\Constants.h" />
     <ClInclude Include="..\src\Controls.h" />
@@ -226,6 +230,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\HashMap.h" />
     <ClInclude Include="..\src\Hud.h" />
     <ClInclude Include="..\src\InsertionList.h" />
+    <ClInclude Include="..\src\Item.h" />
     <ClInclude Include="..\src\Level.h" />
     <ClInclude Include="..\src\LevelGenerator.h" />
     <ClInclude Include="..\src\List.h" />
@@ -236,6 +241,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\SDLUtils.h" />
     <ClInclude Include="..\src\SparseArray2.h" />
     <ClInclude Include="..\src\SpatialMap.h" />
+    <ClInclude Include="..\src\Sqlite.h" />
     <ClInclude Include="..\src\Stopwatch.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
     <ClInclude Include="..\src\TileLookup.h" />
