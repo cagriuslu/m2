@@ -31,6 +31,7 @@ typedef struct _Item {
 	int flags;
 	// OFFENSE
 	unsigned offenseHitPoints;
+	unsigned offenseTTL;
 	// DEFENSE
 	unsigned defenseHitPoints;
 } Item;

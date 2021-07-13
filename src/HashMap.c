@@ -54,7 +54,7 @@ XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 			// Add new TxtKV to Txt
 			HashMapItem* item = Array_Get(hm->arrays + arrayIdx, itemIdx);
 			TxtKV* newKV = Array_Append(&txt.txtKVPairs, NULL);
-			TxtKV_SetKey(newKV, item->key);
+			TxtKV_SetKey(newKV, (char*)item->key);
 			TxtKV_SetValue(newKV, ((char**)item->data)[0], false);
 			// Add an instance of the value into the HashMap
 			HashMap_SetInt32Keys(&txt.txtKVIndexes, insertedIdx, 0, &insertedIdx);

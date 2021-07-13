@@ -45,24 +45,18 @@ static void Player_prePhysics(EventListenerComponent* el) {
 		ComponentOffense* bulletOffense = NULL;
 		ObjectBulletInit(bullet, obj->position, bulletDir, &bulletOffense);
 		if (bulletOffense) {
-			ComponentOffense* playerOffense = Bucket_GetById(&CurrentLevel()->offenses, obj->offense);
-			if (playerOffense) {
-				ComponentOffenseCopyExceptSuper(bulletOffense, playerOffense);
-			}
+			ComponentOffenseCopyExceptSuper(bulletOffense, &CurrentCharacter()->projectileOffense);
 		}
 		*rangedAttackStopwatch = 0;
 	}
 	
 	unsigned* meleeAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_MELEE_ATTACK);
 	if (IsButtonDown(BUTTON_SECONDARY) && (333 < *meleeAttackStopwatch)) {
-		ComponentOffense* playerOffense = Bucket_GetById(&CurrentLevel()->offenses, obj->offense);
-		if (playerOffense) {
-			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
-			Vec2F swordDir = Vec2FSub(pointerPosInWorld, obj->position);
+		Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
+		Vec2F swordDir = Vec2FSub(pointerPosInWorld, obj->position);
 
-			Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ObjectSwordInit(sword, obj->position, playerOffense, swordDir, 150);
-		}
+		Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
+		ObjectSwordInit(sword, obj->position, &CurrentCharacter()->meleeOffense, swordDir, 150);
 		*meleeAttackStopwatch = 0;
 	}
 }
@@ -70,6 +64,9 @@ static void Player_prePhysics(EventListenerComponent* el) {
 int ObjectPlayerInit(Object* obj) {
 	PROPAGATE_ERROR(ObjectInit(obj, (Vec2F) { 0.0f, 0.0f }));
 	ID objId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	// Write-back originator ID of Character Offenses
+	CurrentCharacter()->charOffense.originator = objId;
+	Character_Preprocess(CurrentCharacter());
 
 	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
 	el->prePhysics = Player_prePhysics;
@@ -91,13 +88,8 @@ int ObjectPlayerInit(Object* obj) {
 	gfx->txCenter = (Vec2F){ 0.0, 6.5 };
 
 	ComponentDefense* def = ObjectAddDefense(obj, NULL);
-	def->hp = 100;
-	def->maxHp = 100;
-
-	ComponentOffense* off = ObjectAddOffense(obj, NULL);
-	off->hp = 15;
-	off->originator = objId;
-	off->projectileTicksLeft = 750;
+	ComponentDefenseCopyExceptSuper(def, &CurrentCharacter()->defense);
+	def->hp = def->maxHp;
 
 	ComponentLightSource* light = ObjectAddLightSource(obj, 4.0f, NULL);
 	light->power = 3.0f;

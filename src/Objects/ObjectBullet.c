@@ -16,10 +16,10 @@ static void Bullet_prePhysics(EventListenerComponent* el) {
 			Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f));
 		}
 
-		ComponentOffense* offense = FindOffenseOfObject(obj);
+		ComponentOffense* offense = FindOffenseProjectileOfObject(obj);
 		if (offense) {
-			offense->projectileTicksLeft -= DeltaTicks();
-			if (offense->projectileTicksLeft <= 0) {
+			offense->ttl -= DeltaTicks();
+			if (offense->ttl <= 0) {
 				DeleteObject(obj);
 			}
 		}
@@ -30,8 +30,8 @@ static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 	Level* level = CurrentLevel();
 	Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
 	Object* otherObj = Bucket_GetById(&level->objects, other->super.objId);
-	if (obj && obj->offense && otherObj && otherObj->defense) {
-		ComponentOffense* offense = Bucket_GetById(&level->offenses, obj->offense);
+	if (obj && obj->offenseProjectile && otherObj && otherObj->defense) {
+		ComponentOffense* offense = Bucket_GetById(&level->offenses, obj->offenseProjectile);
 		ComponentDefense* defense = Bucket_GetById(&level->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
@@ -69,7 +69,7 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 	gfx->txAngle = ANGLE(direction);
 	gfx->txSrc = (SDL_Rect){ 4 * TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
 
-	ComponentOffense* off = ObjectAddOffense(obj, NULL);
+	ComponentOffense* off = ObjectAddOffenseProjectile(obj, NULL);
 	if (outOffense) {
 		*outOffense = off;
 	}

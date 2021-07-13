@@ -8,19 +8,19 @@
 
 static void Sword_prePhysics(EventListenerComponent* el) {
 	Object* obj = FindObjectOfComponent(el);
-	ComponentOffense* offense = FindOffenseOfObject(obj);
-	offense->projectileTicksLeft -= DeltaTicks();
-	if (offense->projectileTicksLeft <= 0) {
+	ComponentOffense* offense = FindOffenseMeleeOfObject(obj);
+	offense->ttl -= DeltaTicks();
+	if (offense->ttl <= 0) {
 		DeleteObject(obj);
 	}
 }
 
 static void Sword_postPhysics(EventListenerComponent* el) {
 	Object* obj = FindObjectOfComponent(el);
-	if (obj && obj->physics && obj->graphics && obj->offense) {
+	if (obj && obj->physics && obj->graphics && obj->offenseMelee) {
 		PhysicsComponent* phy = FindPhysicsOfObject(obj);
 		GraphicsComponent* gfx = FindGraphicsOfObject(obj);
-		ComponentOffense* off = FindOffenseOfObject(obj);
+		ComponentOffense* off = FindOffenseMeleeOfObject(obj);
 		if (phy && phy->body && gfx && off && off->originator) {
 			Object* originator = Bucket_GetById(&CurrentLevel()->objects, off->originator);
 			if (originator) {
@@ -35,12 +35,12 @@ static void Sword_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 	Level* level = CurrentLevel();
 	Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
 	Object* otherObj = Bucket_GetById(&level->objects, other->super.objId);
-	if (obj && obj->offense && otherObj && otherObj->defense) {
-		ComponentOffense* offense = Bucket_GetById(&level->offenses, obj->offense);
+	if (obj && obj->offenseMelee && otherObj && otherObj->defense) {
+		ComponentOffense* offense = Bucket_GetById(&level->offenses, obj->offenseMelee);
 		ComponentDefense* defense = Bucket_GetById(&level->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
-			defense->hp -= 3 * offense->hp;
+			defense->hp -= offense->hp;
 
 			const Vec2F direction = Vec2FNormalize(Vec2FSub(otherObj->position, obj->position));
 			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 15000.0f), true);
@@ -88,9 +88,9 @@ int ObjectSwordInit(Object* obj, Vec2F originatorPosition, ComponentOffense* ori
 	gfx->txSrc = (SDL_Rect){ 6 * TILE_WIDTH, 4 * TILE_WIDTH, 2 * TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ -14.0f, 0.0f };
 
-	ComponentOffense* off = ObjectAddOffense(obj, NULL);
+	ComponentOffense* off = ObjectAddOffenseMelee(obj, NULL);
 	ComponentOffenseCopyExceptSuper(off, originatorOffense);
-	off->projectileTicksLeft = ticks;
+	off->ttl = ticks;
 	
 	return 0;
 }

@@ -36,8 +36,13 @@ void ObjectDeinit(Object* obj) {
 		ComponentDefenseDeinit(def);
 		Bucket_Unmark(&CurrentLevel()->defenses, def);
 	}
-	if (obj->offense) {
-		ComponentOffense* off = Bucket_GetById(&CurrentLevel()->offenses, obj->offense);
+	if (obj->offenseProjectile) {
+		ComponentOffense* off = Bucket_GetById(&CurrentLevel()->offenses, obj->offenseProjectile);
+		ComponentOffenseDeinit(off);
+		Bucket_Unmark(&CurrentLevel()->offenses, off);
+	}
+	if (obj->offenseMelee) {
+		ComponentOffense* off = Bucket_GetById(&CurrentLevel()->offenses, obj->offenseMelee);
 		ComponentOffenseDeinit(off);
 		Bucket_Unmark(&CurrentLevel()->offenses, off);
 	}
@@ -108,12 +113,22 @@ ComponentDefense* ObjectAddDefense(Object* obj, ID* outId) {
 	return def;
 }
 
-ComponentOffense* ObjectAddOffense(Object* obj, ID* outId) {
+ComponentOffense* ObjectAddOffenseProjectile(Object* obj, ID* outId) {
 	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentOffense* off = Bucket_Mark(&CurrentLevel()->offenses, NULL, &obj->offense);
+	ComponentOffense* off = Bucket_Mark(&CurrentLevel()->offenses, NULL, &obj->offenseProjectile);
 	ComponentOffenseInit(off, objectId);
 	if (outId) {
-		outId[0] = obj->offense;
+		outId[0] = obj->offenseProjectile;
+	}
+	return off;
+}
+
+ComponentOffense* ObjectAddOffenseMelee(Object* obj, ID* outId) {
+	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	ComponentOffense* off = Bucket_Mark(&CurrentLevel()->offenses, NULL, &obj->offenseMelee);
+	ComponentOffenseInit(off, objectId);
+	if (outId) {
+		outId[0] = obj->offenseMelee;
 	}
 	return off;
 }

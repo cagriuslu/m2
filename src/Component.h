@@ -61,12 +61,13 @@ typedef struct _ComponentDefense {
 	int hp;
 } ComponentDefense;
 int ComponentDefenseInit(ComponentDefense* def, ID objId);
+void ComponentDefenseCopyExceptSuper(ComponentDefense* dest, ComponentDefense* src);
 void ComponentDefenseDeinit(ComponentDefense* def);
 
 typedef struct _ComponentOffense {
 	Component super;
 	ID originator; // Object ID
-	int projectileTicksLeft;
+	int ttl;
 	int hp;
 } ComponentOffense;
 int ComponentOffenseInit(ComponentOffense* def, ID objId);

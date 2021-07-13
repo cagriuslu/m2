@@ -17,13 +17,14 @@ typedef struct _Character {
 	ComponentDefense charDefense;
 	ComponentOffense charOffense;
 	// Preprocessed Values
-	ComponentDefense projectileDefense;
-	ComponentDefense meleeDefense;
+	ComponentDefense defense;
 	ComponentOffense projectileOffense;
 	ComponentOffense meleeOffense;
 } Character;
 
 XErr Character_Init(Character* char_, CharacterClass class_, unsigned level, Array itemArray);
-void Character_Term(Character* chr);
+XErr Character_Preprocess(Character* char_);
+XErr Character_ClearPreprocessed(Character* char_);
+void Character_Term(Character* char_);
 
 #endif

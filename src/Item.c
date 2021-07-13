@@ -27,3 +27,25 @@ XErr Item_Init(Item* item, ItemType type, int variant) {
 void Item_Term(Item* item) {
 	memset(item, 0, sizeof(Item));
 }
+
+XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
+	Array_Clear(arrayOfItems);
+
+	Item* stockGun = Array_Append(arrayOfItems, NULL);
+	stockGun->type = ITEMTYP_GUN;
+	stockGun->variant = 0;
+	stockGun->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_EQUIPPED;
+	stockGun->offenseHitPoints = 15;
+	stockGun->offenseTTL = 1250;
+	stockGun->defenseHitPoints = 0;
+
+	Item* stockSword = Array_Append(arrayOfItems, NULL);
+	stockSword->type = ITEMTYP_SWORD;
+	stockSword->variant = 0;
+	stockSword->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_EQUIPPED;
+	stockSword->offenseHitPoints = 45;
+	stockSword->offenseTTL = 150;
+	stockSword->defenseHitPoints = 0;
+
+	return 0;
+}

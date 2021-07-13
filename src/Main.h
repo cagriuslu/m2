@@ -5,6 +5,7 @@
 #include "Box2D.h"
 #include "Array.h"
 #include "Level.h"
+#include "Character.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <stdbool.h>
@@ -30,6 +31,7 @@ TTF_Font* CurrentFont();
 
 Level* CurrentLevel();
 unsigned DeltaTicks();
+Character* CurrentCharacter();
 
 Vec2F CurrentPointerPositionInWorld();
 

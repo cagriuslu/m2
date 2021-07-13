@@ -7,6 +7,7 @@
 #include "Event.h"
 #include "Bucket.h"
 #include "Level.h"
+#include "Item.h"
 #include "Dialog.h"
 #include "Log.h"
 #include "Character.h"
@@ -79,7 +80,11 @@ main_menu:
 		LevelInit(&gLevel);
 
 		if (res == X_MAIN_MENU_NEW_GAME) {
-			//PROPAGATE_ERROR(Character_Init())
+			Array standardItemSet;
+			PROPAGATE_ERROR(Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX));
+			PROPAGATE_ERROR(Item_GenerateStandardItemSet(&standardItemSet));
+			PROPAGATE_ERROR(Character_Init(&gCharacter, CHARTYP_HUMAN, 1, standardItemSet));
+			PROPAGATE_ERROR(Character_Preprocess(&gCharacter));
 			PROPAGATE_ERROR(LevelLoadTest(&gLevel));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
 			PROPAGATE_ERROR(LevelLoadEditor(&gLevel));
@@ -260,6 +265,10 @@ Level* CurrentLevel() {
 
 unsigned DeltaTicks() {
 	return gDeltaTicks;
+}
+
+Character* CurrentCharacter() {
+	return &gCharacter;
 }
 
 Vec2F CurrentPointerPositionInWorld() {
