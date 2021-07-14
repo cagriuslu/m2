@@ -135,6 +135,9 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
 xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"
 </Command>
     </PostBuildEvent>
+    <PreLinkEvent>
+      <Command>xcopy /y ..\libs\box2d-2.4.1\x64\Release\*.pdb "$(OutDir)"</Command>
+    </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
