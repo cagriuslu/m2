@@ -13,6 +13,9 @@ Key KeyFromSDLScancode(SDL_Scancode sc, SDL_Keymod mod) {
 		return KEY_LEFT;
 	case SDL_SCANCODE_D:
 		return KEY_RIGHT;
+	case SDL_SCANCODE_LSHIFT:
+	case SDL_SCANCODE_RSHIFT:
+		return KEY_MODIFIER_SHIFT;
 	default:
 		return KEY_NONE;
 	}
@@ -39,6 +42,9 @@ void KeyStateArrayFillFromSDLKeyboardStateArray(uint8_t *keyState, const uint8_t
 	}
 	if (keyboardState[SDL_SCANCODE_D]) {
 		keyState[KEY_RIGHT] = 1;
+	}
+	if (keyboardState[SDL_SCANCODE_LSHIFT] || keyboardState[SDL_SCANCODE_RSHIFT]) {
+		keyState[KEY_MODIFIER_SHIFT] = 1;
 	}
 }
 

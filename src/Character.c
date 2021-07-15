@@ -36,13 +36,13 @@ XErr Character_Preprocess(Character* char_) {
 			switch (item->type) {
 			case ITEMTYP_GUN:
 			case ITEMTYP_RIFLE:
-			case ITEMTYP_CROSSBOW:
 			case ITEMTYP_BOW:
 				char_->projectileOffense.hp += item->offenseHitPoints;
 				char_->projectileOffense.ttl += item->offenseTTL;
 				break;
 			case ITEMTYP_SWORD:
 			case ITEMTYP_SPEAR:
+			case ITEMTYP_DAGGER:
 				char_->meleeOffense.hp += item->offenseHitPoints;
 				char_->meleeOffense.ttl += item->offenseTTL;
 				break;

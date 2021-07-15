@@ -1,8 +1,10 @@
 #include "../Object.h"
 #include "../Main.h"
+#include "../Item.h"
 #include "../Box2DUtils.h"
 #include "../Controls.h"
 #include "../Event.h"
+#include "../Log.h"
 #include <stdio.h>
 
 // Shoot with mouse primary and secondary
@@ -35,29 +37,71 @@ static void Player_prePhysics(EventListenerComponent* el) {
 		Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(moveDirection), DeltaTicks() * 25.0f), true);
 	}
 
-	Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
-	unsigned* rangedAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_RANGED_ATTACK);
-	if (IsButtonDown(BUTTON_PRIMARY) && (100 < *rangedAttackStopwatch)) {
-		Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
-		Vec2F bulletDir = Vec2FSub(pointerPosInWorld, obj->position);
-
-		Object* bullet = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-		ComponentOffense* bulletOffense = NULL;
-		ObjectBulletInit(bullet, obj->position, bulletDir, &bulletOffense);
-		if (bulletOffense) {
-			ComponentOffenseCopyExceptSuper(bulletOffense, &CurrentCharacter()->projectileOffense);
+	if (IsButtonPressed(BUTTON_SCROLL_DOWN)) {
+		Item* curr, * next, * prev;
+		if (IsKeyDown(KEY_MODIFIER_SHIFT)) {
+			LOG_INF("Switched to next secondary weapon");
+			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
+		} else {
+			LOG_INF("Switched to next primary weapon");
+			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
 		}
-		*rangedAttackStopwatch = 0;
-	}
-	
-	unsigned* meleeAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_MELEE_ATTACK);
-	if (IsButtonDown(BUTTON_SECONDARY) && (333 < *meleeAttackStopwatch)) {
-		Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
-		Vec2F swordDir = Vec2FSub(pointerPosInWorld, obj->position);
+		curr->flags &= ~ITEMFLAG_EQUIPPED;
+		curr->flags |= ITEMFLAG_PREEQUIPPED_PREV;
+		next->flags &= ~ITEMFLAG_PREEQUIPPED_NEXT;
+		next->flags |= ITEMFLAG_EQUIPPED;
+		prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
+		prev->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
+		Character_Preprocess(CurrentCharacter());
+	} else if (IsButtonPressed(BUTTON_SCROLL_UP)) {
+		Item* curr, * next, * prev;
+		if (IsKeyDown(KEY_MODIFIER_SHIFT)) {
+			LOG_INF("Switched to previous secondary weapon");
+			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
+		} else {
+			LOG_INF("Switched to previous primary weapon");
+			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
+		}
+		curr->flags &= ~ITEMFLAG_EQUIPPED;
+		curr->flags |= ITEMFLAG_PREEQUIPPED_PREV;
+		next->flags &= ~ITEMFLAG_PREEQUIPPED_NEXT;
+		next->flags |= ITEMFLAG_EQUIPPED;
+		prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
+		prev->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
+		Character_Preprocess(CurrentCharacter());
+	} else {
+		Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
+		unsigned* rangedAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_RANGED_ATTACK);
+		if (IsButtonDown(BUTTON_PRIMARY) && (100 < *rangedAttackStopwatch)) {
+			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
+			Vec2F bulletDir = Vec2FSub(pointerPosInWorld, obj->position);
 
-		Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-		ObjectSwordInit(sword, obj->position, &CurrentCharacter()->meleeOffense, swordDir, 150);
-		*meleeAttackStopwatch = 0;
+			Object* bullet = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
+			ComponentOffense* bulletOffense = NULL;
+			ObjectBulletInit(bullet, obj->position, bulletDir, &bulletOffense);
+			if (bulletOffense) {
+				ComponentOffenseCopyExceptSuper(bulletOffense, &CurrentCharacter()->projectileOffense);
+			}
+			*rangedAttackStopwatch = 0;
+		}
+
+		unsigned* meleeAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_MELEE_ATTACK);
+		if (IsButtonDown(BUTTON_SECONDARY) && (333 < *meleeAttackStopwatch)) {
+			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
+			Vec2F swordDir = Vec2FSub(pointerPosInWorld, obj->position);
+
+			Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
+			ObjectSwordInit(sword, obj->position, &CurrentCharacter()->meleeOffense, swordDir, 150);
+			*meleeAttackStopwatch = 0;
+		}
 	}
 }
 

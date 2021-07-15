@@ -8,10 +8,10 @@ XErr Item_Init(Item* item, ItemType type, int variant) {
 	switch (type) {
 	case ITEMTYP_GUN:
 	case ITEMTYP_RIFLE:
-	case ITEMTYP_CROSSBOW:
 	case ITEMTYP_BOW:
 	case ITEMTYP_SWORD:
 	case ITEMTYP_SPEAR:
+	case ITEMTYP_DAGGER:
 	case ITEMTYP_PANTS:
 	case ITEMTYP_SHIRT:
 	case ITEMTYP_AMULET:
@@ -39,6 +39,22 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 	stockGun->offenseTTL = 1250;
 	stockGun->defenseHitPoints = 0;
 
+	Item* stockRifle = Array_Append(arrayOfItems, NULL);
+	stockRifle->type = ITEMTYP_RIFLE;
+	stockRifle->variant = 0;
+	stockRifle->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_NEXT;
+	stockRifle->offenseHitPoints = 45;
+	stockRifle->offenseTTL = 2000;
+	stockRifle->defenseHitPoints = 0;
+
+	Item* stockBow = Array_Append(arrayOfItems, NULL);
+	stockBow->type = ITEMTYP_BOW;
+	stockBow->variant = 0;
+	stockBow->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_PREV;
+	stockBow->offenseHitPoints = 35;
+	stockBow->offenseTTL = 1500;
+	stockBow->defenseHitPoints = 0;
+
 	Item* stockSword = Array_Append(arrayOfItems, NULL);
 	stockSword->type = ITEMTYP_SWORD;
 	stockSword->variant = 0;
@@ -47,5 +63,31 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 	stockSword->offenseTTL = 150;
 	stockSword->defenseHitPoints = 0;
 
+	Item* stockSpear = Array_Append(arrayOfItems, NULL);
+	stockSpear->type = ITEMTYP_SPEAR;
+	stockSpear->variant = 0;
+	stockSpear->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_NEXT;
+	stockSpear->offenseHitPoints = 85;
+	stockSpear->offenseTTL = 250;
+	stockSpear->defenseHitPoints = 0;
+
+	Item* stockDagger = Array_Append(arrayOfItems, NULL);
+	stockDagger->type = ITEMTYP_DAGGER;
+	stockDagger->variant = 0;
+	stockDagger->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_PREV;
+	stockDagger->offenseHitPoints = 25;
+	stockDagger->offenseTTL = 100;
+	stockDagger->defenseHitPoints = 0;
+
 	return 0;
+}
+
+Item* Item_FindItemByTypeByFlags(Array* arrayOfItems, ItemType type, int flags) {
+	for (size_t i = 0; i < Array_Length(arrayOfItems); i++) {
+		Item* item = Array_Get(arrayOfItems, i);
+		if ((item->type & type) && (item->flags & flags)) {
+			return item;
+		}
+	}
+	return NULL;
 }

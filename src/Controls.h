@@ -24,7 +24,7 @@ typedef enum _Key {
 	KEY_LEFT,
 	KEY_RIGHT,
 
-	KEY_LEVELEDITOR_BRUSH_WALL,
+	KEY_MODIFIER_SHIFT,
 
 	_KEY_COUNT
 } Key;
@@ -34,6 +34,8 @@ typedef enum _Button {
 
 	BUTTON_PRIMARY,
 	BUTTON_SECONDARY,
+	BUTTON_SCROLL_DOWN,
+	BUTTON_SCROLL_UP,
 
 	_BUTTON_COUNT
 } MouseButton;
