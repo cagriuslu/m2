@@ -33,37 +33,37 @@ int DialogMainMenu(bool levelLoaded) {
 	Ui *resumeButton = NULL;
 	if (levelLoaded) {
 		resumeButton = Array_Append(&uis, NULL);
-		UiButtonInit(resumeButton, (Vec2I) {0, -105}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Resume");
+		UiButton_Init(resumeButton, (Vec2I) {0, -105}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Resume");
 		resumeButton->eventData = &pressedButton;
 		resumeButton->onMouseButton = ResumeButton_onMouseButton;
 	}
 	Ui *newGameButton = Array_Append(&uis, NULL);
-	UiButtonInit(newGameButton, (Vec2I) {0, -35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "New Game");
+	UiButton_Init(newGameButton, (Vec2I) {0, -35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "New Game");
 	newGameButton->eventData = &pressedButton;
 	newGameButton->onMouseButton = NewGameButton_onMouseButton;
 	Ui *levelEditorButton = Array_Append(&uis, NULL);
-	UiButtonInit(levelEditorButton, (Vec2I) {0, +35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Level Editor");
+	UiButton_Init(levelEditorButton, (Vec2I) {0, +35}, (Vec2I) {0, 0}, (Vec2I) {15, 15}, 0, "Level Editor");
 	levelEditorButton->eventData = &pressedButton;
 	levelEditorButton->onMouseButton = LevelEditorButton_onMouseButton;
 	
 	Vec2I maxButtonSize = levelLoaded ?
-		UiButtonMaxSizeOfButtons(3, newGameButton, levelEditorButton, resumeButton) :
-		UiButtonMaxSizeOfButtons(2, newGameButton, levelEditorButton);
+		UiButton_MaxSizeOfButtons(3, newGameButton, levelEditorButton, resumeButton) :
+		UiButton_MaxSizeOfButtons(2, newGameButton, levelEditorButton);
 	if (levelLoaded) {
-		UiButtonSetSize(resumeButton, maxButtonSize);
+		UiButton_SetSize(resumeButton, maxButtonSize);
 	}
-	UiButtonSetSize(newGameButton, maxButtonSize);
-	UiButtonSetSize(levelEditorButton, maxButtonSize);
+	UiButton_SetSize(newGameButton, maxButtonSize);
+	UiButton_SetSize(levelEditorButton, maxButtonSize);
 
 	while (pressedButton == 0) {
 		int res = DialogWaitForEvent(&uis);
 		PROPAGATE_ERROR(res);
 	}
 
-	UiButtonDeinit(levelEditorButton);
-	UiButtonDeinit(newGameButton);
+	UiButton_Term(levelEditorButton);
+	UiButton_Term(newGameButton);
 	if (levelLoaded) {
-		UiButtonDeinit(resumeButton);
+		UiButton_Term(resumeButton);
 	}
 	Array_Term(&uis);
 	return pressedButton;

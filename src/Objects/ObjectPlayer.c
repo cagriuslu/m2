@@ -17,9 +17,9 @@
 #define STOPWATCH_IDX_MELEE_ATTACK (1)
 #define STOPWATCH_COUNT (2)
 
-static void Player_prePhysics(EventListenerComponent* el) {
+static void Player_prePhysics(ComponentEventListener* el) {
 	Object* obj = Bucket_GetById(&CurrentLevel()->objects, el->super.objId);
-	PhysicsComponent* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
+	ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
 	if (phy && phy->body) {
 		Vec2F moveDirection = (Vec2F) {0.0f, 0.0f};
 		if (IsKeyDown(KEY_UP)) {
@@ -34,7 +34,7 @@ static void Player_prePhysics(EventListenerComponent* el) {
 		if (IsKeyDown(KEY_RIGHT)) {
 			moveDirection.x += 1.0f;
 		}
-		Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(moveDirection), DeltaTicks() * 25.0f), true);
+		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), DeltaTicks() * 25.0f), true);
 	}
 
 	if (IsButtonPressed(BUTTON_SCROLL_DOWN)) {
@@ -71,52 +71,49 @@ static void Player_prePhysics(EventListenerComponent* el) {
 			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
 		}
 		curr->flags &= ~ITEMFLAG_EQUIPPED;
-		curr->flags |= ITEMFLAG_PREEQUIPPED_PREV;
+		curr->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
 		next->flags &= ~ITEMFLAG_PREEQUIPPED_NEXT;
-		next->flags |= ITEMFLAG_EQUIPPED;
+		next->flags |= ITEMFLAG_PREEQUIPPED_PREV;
 		prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
-		prev->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
+		prev->flags |= ITEMFLAG_EQUIPPED;
 		Character_Preprocess(CurrentCharacter());
 	} else {
 		Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
 		unsigned* rangedAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_RANGED_ATTACK);
 		if (IsButtonDown(BUTTON_PRIMARY) && (100 < *rangedAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
-			Vec2F bulletDir = Vec2FSub(pointerPosInWorld, obj->position);
+			Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* bullet = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ComponentOffense* bulletOffense = NULL;
-			ObjectBulletInit(bullet, obj->position, bulletDir, &bulletOffense);
-			if (bulletOffense) {
-				ComponentOffenseCopyExceptSuper(bulletOffense, &CurrentCharacter()->projectileOffense);
-			}
+			Item* projectileWeapon = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
+			ObjectBullet_Init(bullet, obj->position, bulletDir, projectileWeapon->type, &CurrentCharacter()->projectileOffense);
 			*rangedAttackStopwatch = 0;
 		}
 
 		unsigned* meleeAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_MELEE_ATTACK);
 		if (IsButtonDown(BUTTON_SECONDARY) && (333 < *meleeAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
-			Vec2F swordDir = Vec2FSub(pointerPosInWorld, obj->position);
+			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ObjectSwordInit(sword, obj->position, &CurrentCharacter()->meleeOffense, swordDir, 150);
+			ObjectSword_Init(sword, obj->position, &CurrentCharacter()->meleeOffense, swordDir, 150);
 			*meleeAttackStopwatch = 0;
 		}
 	}
 }
 
-int ObjectPlayerInit(Object* obj) {
-	PROPAGATE_ERROR(ObjectInit(obj, (Vec2F) { 0.0f, 0.0f }));
+int ObjectPlayer_Init(Object* obj) {
+	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }));
 	ID objId = Bucket_GetId(&CurrentLevel()->objects, obj);
 	// Write-back originator ID of Character Offenses
 	CurrentCharacter()->charOffense.originator = objId;
 	Character_Preprocess(CurrentCharacter());
 
-	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
+	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = Player_prePhysics;
 
 	ID phyId = 0;
-	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
+	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
 	phy->body = Box2DUtils_CreateDynamicDisk(
 		phyId,
 		obj->position,
@@ -127,18 +124,18 @@ int ObjectPlayerInit(Object* obj) {
 		10.0f // Damping
 	);
 
-	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ 0.0, 6.5 };
 
-	ComponentDefense* def = ObjectAddDefense(obj, NULL);
-	ComponentDefenseCopyExceptSuper(def, &CurrentCharacter()->defense);
+	ComponentDefense* def = Object_AddDefense(obj, NULL);
+	ComponentDefense_CopyExceptSuper(def, &CurrentCharacter()->defense);
 	def->hp = def->maxHp;
 
-	ComponentLightSource* light = ObjectAddLightSource(obj, 4.0f, NULL);
+	ComponentLightSource* light = Object_AddLightSource(obj, 4.0f, NULL);
 	light->power = 3.0f;
 
-	ObjectAddPrePhysicsStopwatches(obj, STOPWATCH_COUNT);
+	Object_AddPrePhysicsStopwatches(obj, STOPWATCH_COUNT);
 
 	return 0;
 }

@@ -4,11 +4,11 @@
 
 XErr AI_Init(AI* ai) {
 	memset(ai, 0, sizeof(AI));
-	PROPAGATE_ERROR(ListInit(&ai->reversedWaypointList, sizeof(Vec2I)));
+	PROPAGATE_ERROR(List_Init(&ai->reversedWaypointList, sizeof(Vec2I)));
 	return 0;
 }
 
 void AI_Term(AI* ai) {
-	ListDeinit(&ai->reversedWaypointList);
+	List_Term(&ai->reversedWaypointList);
 	memset(ai, 0, sizeof(AI));
 }

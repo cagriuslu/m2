@@ -43,8 +43,8 @@ void UiButton_draw(Ui* ui) {
 	SDL_RenderCopy(CurrentRenderer(), AsUiButtonData(ui->privData)->texture, NULL, &textRect);
 }
 
-int UiButtonInit(Ui *ui, Vec2I position, Vec2I minSize, Vec2I pad, int alignment, const char *text) {
-	PROPAGATE_ERROR(UiInit(ui));
+int UiButton_Init(Ui *ui, Vec2I position, Vec2I minSize, Vec2I pad, int alignment, const char *text) {
+	PROPAGATE_ERROR(Ui_Init(ui));
 	
 	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(CurrentFont(), text, (SDL_Color) {255, 255, 255, 255});
 	Vec2I size = (Vec2I) {MAX(textSurf->w + 2 * pad.x, minSize.x), MAX(textSurf->h + 2 * pad.y, minSize.y)};
@@ -65,22 +65,22 @@ int UiButtonInit(Ui *ui, Vec2I position, Vec2I minSize, Vec2I pad, int alignment
 	return 0;
 }
 
-Vec2I UiButtonSize(Ui *ui) {
+Vec2I UiButton_Size(Ui *ui) {
 	UiButtonData *uiButtonData = ui->privData;
 	return (Vec2I) {uiButtonData->size.x, uiButtonData->size.y};
 }
 
-void UiButtonSetSize(Ui *ui, Vec2I size) {
+void UiButton_SetSize(Ui *ui, Vec2I size) {
 	UiButtonData *uiButtonData = ui->privData;
 	uiButtonData->size = size;
 }
 
-void UiButtonDeinit(Ui *ui) {
+void UiButton_Term(Ui *ui) {
 	(void)ui;
 	// TODO
 }
 
-Vec2I UiButtonMaxSizeOfButtons(unsigned n, ...) {
+Vec2I UiButton_MaxSizeOfButtons(unsigned n, ...) {
     va_list args;
     va_start(args, n);
 
@@ -88,8 +88,8 @@ Vec2I UiButtonMaxSizeOfButtons(unsigned n, ...) {
     for (unsigned i = 0; i < n; i++) {
     	Ui *ui = va_arg(args, Ui*);
     	maxSize = (Vec2I) {
-			MAX(maxSize.x, UiButtonSize(ui).x),
-			MAX(maxSize.y, UiButtonSize(ui).y)	
+			MAX(maxSize.x, UiButton_Size(ui).x),
+			MAX(maxSize.y, UiButton_Size(ui).y)	
 		};
     }
 

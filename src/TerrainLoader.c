@@ -33,7 +33,7 @@ int TerrainLoad(const char *tname) {
 			TileDef* tileDefPtr = HashMap_GetInt64Key(&tileDefs, *txtKVIndexPtr);
 
 			Object* tile = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ObjectTileInit(tile, *tileDefPtr, (Vec2F) { (float)colIndex, (float)rowIndex });
+			ObjectTile_Init(tile, *tileDefPtr, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
 	}
 

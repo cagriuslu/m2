@@ -10,39 +10,39 @@
 typedef struct _Component {
 	ID objId;
 } Component;
-int ComponentInit(Component* component, ID objectId);
-void ComponentDeinit(Component* component);
+int Component_Init(Component* component, ID objectId);
+void Component_Term(Component* component);
 
-typedef struct _EventListenerComponent {
+typedef struct _ComponentEventListener {
 	Component super;
-	void (*prePhysics)(struct _EventListenerComponent*);
-	void (*postPhysics)(struct _EventListenerComponent*);
-	void (*preGraphics)(struct _EventListenerComponent*);
-	void (*postGraphics)(struct _EventListenerComponent*);
-} EventListenerComponent;
-int EventListenerComponentInit(EventListenerComponent* evListener, ID objectId);
-void EventListenerComponentDeinit(EventListenerComponent* evListener);
+	void (*prePhysics)(struct _ComponentEventListener*);
+	void (*postPhysics)(struct _ComponentEventListener*);
+	void (*preGraphics)(struct _ComponentEventListener*);
+	void (*postGraphics)(struct _ComponentEventListener*);
+} ComponentEventListener;
+int EventListenerComponent_Init(ComponentEventListener* evListener, ID objectId);
+void EventListenerComponent_Term(ComponentEventListener* evListener);
 
-typedef struct _PhysicsComponent {
+typedef struct _ComponentPhysics {
 	Component super;
 	Box2DBody* body;
-	void (*onCollision)(struct _PhysicsComponent*, struct _PhysicsComponent*);
-} PhysicsComponent;
-int PhysicsComponentInit(PhysicsComponent* phy, ID objectId);
-void PhysicsComponentDeinit(PhysicsComponent* phy);
-void PhysicsComponentContactCB(Box2DContact* contact);
+	void (*onCollision)(struct _ComponentPhysics*, struct _ComponentPhysics*);
+} ComponentPhysics;
+int PhysicsComponent_Init(ComponentPhysics* phy, ID objectId);
+void PhysicsComponent_Term(ComponentPhysics* phy);
+void PhysicsComponent_ContactCB(Box2DContact* contact);
 
-typedef struct _GraphicsComponent {
+typedef struct _ComponentGraphics {
 	Component super;
 	SDL_Texture* tx;
 	SDL_Rect txSrc;
 	float txAngle;
 	Vec2F txCenter; // w.r.t. texture center in pixels, offsets the texture and the center for rotation
-	void (*draw)(struct _GraphicsComponent*);
-} GraphicsComponent;
-int GraphicsComponentInit(GraphicsComponent* gfx, ID objectId);
-void GraphicsComponentDeinit(GraphicsComponent* gfx);
-int GraphicsComponentYComparatorCB(ID gfxIdA, ID gfxIdB);
+	void (*draw)(struct _ComponentGraphics*);
+} ComponentGraphics;
+int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId);
+void GraphicsComponent_Term(ComponentGraphics* gfx);
+int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB);
 
 typedef struct _ComponentLightSource {
 	Component super;
@@ -51,18 +51,18 @@ typedef struct _ComponentLightSource {
 	Vec2F offset;
 	Vec2F direction;
 } ComponentLightSource;
-int ComponentLightSourceInit(ComponentLightSource* light, ID objectId, float lightBoundaryRadius);
-void ComponentLightSourceDeinit(ComponentLightSource* light);
-void ComponentLightSourceUpdatePosition(ComponentLightSource* light);
+int ComponentLightSource_Init(ComponentLightSource* light, ID objectId, float lightBoundaryRadius);
+void ComponentLightSource_Term(ComponentLightSource* light);
+void ComponentLightSource_UpdatePosition(ComponentLightSource* light);
 
 typedef struct _ComponentDefense {
 	Component super;
 	int maxHp;
 	int hp;
 } ComponentDefense;
-int ComponentDefenseInit(ComponentDefense* def, ID objId);
-void ComponentDefenseCopyExceptSuper(ComponentDefense* dest, ComponentDefense* src);
-void ComponentDefenseDeinit(ComponentDefense* def);
+int ComponentDefense_Init(ComponentDefense* def, ID objId);
+void ComponentDefense_CopyExceptSuper(ComponentDefense* dest, ComponentDefense* src);
+void ComponentDefense_Term(ComponentDefense* def);
 
 typedef struct _ComponentOffense {
 	Component super;
@@ -70,8 +70,8 @@ typedef struct _ComponentOffense {
 	int ttl;
 	int hp;
 } ComponentOffense;
-int ComponentOffenseInit(ComponentOffense* def, ID objId);
-void ComponentOffenseCopyExceptSuper(ComponentOffense* dest, ComponentOffense* src);
-void ComponentOffenseDeinit(ComponentOffense* def);
+int ComponentOffense_Init(ComponentOffense* def, ID objId);
+void ComponentOffense_CopyExceptSuper(ComponentOffense* dest, ComponentOffense* src);
+void ComponentOffense_Term(ComponentOffense* def);
 
 #endif

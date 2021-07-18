@@ -8,27 +8,27 @@ typedef struct _ListItem {
 	char data[0];
 } ListItem;
 
-int ListInit(List* list, size_t itemSize) {
+int List_Init(List* list, size_t itemSize) {
 	memset(list, 0, sizeof(List));
 	PROPAGATE_ERROR(Bucket_Init(&list->bucket, sizeof(ListItem) + itemSize));
 	list->dataSize = itemSize;
 	return 0;
 }
 
-void ListDeinit(List* list) {
+void List_Term(List* list) {
 	Bucket_Term(&list->bucket);
 	memset(list, 0, sizeof(List));
 }
 
-void* ListAppend(List* list, void* copy, ID* outIterator) {
-	return ListInsertAfter(list, list->lastId, copy, outIterator);
+void* List_Append(List* list, void* copy, ID* outIterator) {
+	return List_InsertAfter(list, list->lastId, copy, outIterator);
 }
 
-void* ListPrepend(List* list, void* copy, ID* outIterator) {
-	return ListInsertAfter(list, 0, copy, outIterator);
+void* List_Prepend(List* list, void* copy, ID* outIterator) {
+	return List_InsertAfter(list, 0, copy, outIterator);
 }
 
-void* ListInsertAfter(List* list, ID afterIterator, void* copy, ID* outIterator) {
+void* List_InsertAfter(List* list, ID afterIterator, void* copy, ID* outIterator) {
 	if (afterIterator == 0) {
 		if (list->firstId == 0) {
 			ID newItemId = 0;
@@ -100,19 +100,19 @@ void* ListInsertAfter(List* list, ID afterIterator, void* copy, ID* outIterator)
 	}
 }
 
-void* ListInsertBefore(List* list, ID beforeIterator, void* copy, ID* outIterator) {
+void* List_InsertBefore(List* list, ID beforeIterator, void* copy, ID* outIterator) {
 	if (beforeIterator == 0) {
-		return ListInsertAfter(list, list->lastId, copy, outIterator);
+		return List_InsertAfter(list, list->lastId, copy, outIterator);
 	} else {
 		ListItem* iteratorItem = Bucket_GetById(&list->bucket, beforeIterator);
 		if (!iteratorItem) {
 			return NULL;
 		}
-		return ListInsertAfter(list, iteratorItem->prevId, copy, outIterator);
+		return List_InsertAfter(list, iteratorItem->prevId, copy, outIterator);
 	}
 }
 
-void ListRemove(List* list, ID iterator) {
+void List_Remove(List* list, ID iterator) {
 	ListItem* item = Bucket_GetById(&list->bucket, iterator);
 	if (!item) {
 		return;
@@ -134,21 +134,21 @@ void ListRemove(List* list, ID iterator) {
 	Bucket_UnmarkById(&list->bucket, iterator);
 }
 
-void ListClear(List* list) {
+void List_Clear(List* list) {
 	Bucket_UnmarkAll(&list->bucket);
 	list->firstId = 0;
 	list->lastId = 0;
 }
 
-size_t ListLength(List* list) {
+size_t List_Length(List* list) {
 	return list->bucket.size;
 }
 
-ID ListGetFirst(List* list) {
+ID List_GetFirst(List* list) {
 	return list->firstId;
 }
 
-ID ListGetByIndex(List* list, size_t index) {
+ID List_GetByIndex(List* list, size_t index) {
 	ID iterator = list->firstId;
 	for (size_t i = 0; i < index; i++) {
 		ListItem* item = Bucket_GetById(&list->bucket, iterator);
@@ -161,21 +161,21 @@ ID ListGetByIndex(List* list, size_t index) {
 	return iterator;
 }
 
-ID ListGetNext(List* list, ID iterator) {
+ID List_GetNext(List* list, ID iterator) {
 	ListItem* item = Bucket_GetById(&list->bucket, iterator);
 	return item ? item->nextId : 0;
 }
 
-ID ListGetPrev(List* list, ID iterator) {
+ID List_GetPrev(List* list, ID iterator) {
 	ListItem* item = Bucket_GetById(&list->bucket, iterator);
 	return item ? item->prevId : 0;
 }
 
-ID ListGetLast(List* list) {
+ID List_GetLast(List* list) {
 	return list->lastId;
 }
 
-void* ListGetData(List* list, ID iterator) {
+void* List_GetData(List* list, ID iterator) {
 	ListItem* item = Bucket_GetById(&list->bucket, iterator);
 	return item ? item->data : NULL;
 }

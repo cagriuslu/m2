@@ -26,11 +26,11 @@ typedef struct _Level {
 	Bucket prePhysicsStopwatches; // holds Arrays of unsigned's
 } Level;
 
-int LevelInit(Level* level);
-void LevelDeleteMarkedObjects(Level* level);
-void LevelDeinit(Level* level);
+int Level_Init(Level* level);
+void Level_DeleteMarkedObjects(Level* level);
+void Level_Term(Level* level);
 
-int LevelLoadTest(Level* level);
-int LevelLoadEditor(Level* level);
+int Level_LoadTest(Level* level);
+int Level_LoadEditor(Level* level);
 
 #endif

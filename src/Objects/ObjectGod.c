@@ -6,10 +6,10 @@
 #include "../Error.h"
 #include <stdio.h>
 
-static void God_prePhysics(EventListenerComponent* el) {
+static void God_prePhysics(ComponentEventListener* el) {
 	Object* obj = Bucket_GetById(&CurrentLevel()->objects, el->super.objId);
 	if (obj) {
-		PhysicsComponent* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
+		ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
 		if (phy && phy->body) {
 			if (IsKeyDown(KEY_UP)) {
 				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, -100.0 }, true);
@@ -27,14 +27,14 @@ static void God_prePhysics(EventListenerComponent* el) {
 	}
 }
 
-int ObjectGodInit(Object* obj) {
-	PROPAGATE_ERROR(ObjectInit(obj, (Vec2F) { 0.0f, 0.0f }));
+int ObjectGod_Init(Object* obj) {
+	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }));
 
-	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
+	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = God_prePhysics;
 
 	ID phyId = 0;
-	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
+	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
 	phy->body = Box2DUtils_CreateDynamicDisk(
 		phyId,
 		obj->position,

@@ -14,13 +14,13 @@ typedef struct _Ui {
 	void *privData;
 } Ui;
 
-int UiInit(Ui *ui);
-void UiDeinit(Ui *ui);
+int Ui_Init(Ui *ui);
+void Ui_Term(Ui *ui);
 
-int UiButtonInit(Ui *ui, Vec2I position, Vec2I minSize, Vec2I padding, int alignment, const char *text);
-Vec2I UiButtonSize(Ui *ui);
-void UiButtonSetSize(Ui *ui, Vec2I size);
-void UiButtonDeinit(Ui *ui);
-Vec2I UiButtonMaxSizeOfButtons(unsigned n, ...);
+int UiButton_Init(Ui *ui, Vec2I position, Vec2I minSize, Vec2I padding, int alignment, const char *text);
+Vec2I UiButton_Size(Ui *ui);
+void UiButton_SetSize(Ui *ui, Vec2I size);
+void UiButton_Term(Ui *ui);
+Vec2I UiButton_MaxSizeOfButtons(unsigned n, ...);
 
 #endif

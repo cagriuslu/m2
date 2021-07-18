@@ -20,7 +20,7 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 		shape = circleShape;
 	} else {
 		Box2DPolygonShape* boxShape = Box2DPolygonShapeCreate();
-		Box2DPolygonShapeSetAsBoxEx(boxShape, Vec2FMul(boxDims, 0.5), boxCenterOffset, boxAngle); // convert to half dims
+		Box2DPolygonShapeSetAsBoxEx(boxShape, Vec2F_Mul(boxDims, 0.5), boxCenterOffset, boxAngle); // convert to half dims
 		shape = boxShape;
 	}
 	Box2DFixtureDef* fixtureDef = Box2DFixtureDefCreate();
@@ -87,7 +87,7 @@ float Box2DUtilsCheckEyeSight_RayCastCallback(Box2DFixture* fixture, Vec2F point
 }
 
 bool Box2DUtils_CheckEyeSight(Vec2F from, Vec2F to, uint16_t categoryMask) {
-	if (Vec2FEquals(from, to)) {
+	if (Vec2F_Equals(from, to)) {
 		return true;
 	}
 	

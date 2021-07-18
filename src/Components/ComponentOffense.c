@@ -1,16 +1,16 @@
 #include "../Component.h"
 #include <string.h>
 
-int ComponentOffenseInit(ComponentOffense* def, ID objId) {
+int ComponentOffense_Init(ComponentOffense* def, ID objId) {
 	memset(def, 0, sizeof(ComponentOffense));
-	return ComponentInit((Component*)def, objId);
+	return Component_Init((Component*)def, objId);
 }
 
-void ComponentOffenseCopyExceptSuper(ComponentOffense* dest, ComponentOffense* src) {
+void ComponentOffense_CopyExceptSuper(ComponentOffense* dest, ComponentOffense* src) {
 	memcpy((Component*)dest + 1, (Component*)src + 1, sizeof(ComponentOffense) - sizeof(Component));
 }
 
-void ComponentOffenseDeinit(ComponentOffense* off) {
-	ComponentDeinit((Component*)off);
+void ComponentOffense_Term(ComponentOffense* off) {
+	Component_Term((Component*)off);
 	memset(off, 0, sizeof(ComponentOffense));
 }

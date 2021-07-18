@@ -5,16 +5,16 @@
 #include <string.h>
 #include <stdio.h>
 
-int ObjectTileInit(Object* obj, TileDef tileDef, Vec2F position) {
-	PROPAGATE_ERROR(ObjectInit(obj, position));
+int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position) {
+	PROPAGATE_ERROR(Object_Init(obj, position));
 
 	if (tileDef.colliderSize.x && tileDef.colliderSize.y) {
 		ID phyId = 0;
-		PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
+		ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
 		phy->body = Box2DUtils_CreateStaticBox(phyId, position, CATEGORY_STATIC_CLIFF, tileDef.colliderSize);
 	}
 	
-	GraphicsComponent* gfx = ObjectAddTerrainGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddTerrainGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){
 		tileDef.txIndex.x * CurrentTileWidth(),
 		tileDef.txIndex.y * CurrentTileWidth(),

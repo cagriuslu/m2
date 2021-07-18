@@ -10,14 +10,14 @@ typedef struct _InsertionList {
 	int (*comparator)(ID, ID);
 } InsertionList;
 
-int InsertionListInit(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID));
-void InsertionListDeinit(InsertionList* list);
+int InsertionList_Init(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID));
+void InsertionList_Term(InsertionList* list);
 
-size_t InsertionListLength(InsertionList* list);
-ID InsertionListGet(InsertionList* list, size_t i);
+size_t InsertionList_Length(InsertionList* list);
+ID InsertionList_Get(InsertionList* list, size_t i);
 
-void InsertionListInsert(InsertionList* list, ID id);
-void InsertionListRemove(InsertionList* list, ID id);
-void InsertionListSort(InsertionList* list);
+void InsertionList_Insert(InsertionList* list, ID id);
+void InsertionList_Remove(InsertionList* list, ID id);
+void InsertionList_Sort(InsertionList* list);
 
 #endif

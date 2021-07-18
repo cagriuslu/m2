@@ -7,8 +7,8 @@ XErr Character_Init(Character* char_, CharacterClass class_, unsigned level, Arr
 	char_->class_ = class_;
 	char_->level;
 	char_->itemArray = itemArray;
-	ComponentDefenseInit(&char_->charDefense, 0);
-	ComponentOffenseInit(&char_->charOffense, 0);
+	ComponentDefense_Init(&char_->charDefense, 0);
+	ComponentOffense_Init(&char_->charOffense, 0);
 	switch (class_) {
 		case CHARTYP_HUMAN:
 			switch (level) {
@@ -18,9 +18,9 @@ XErr Character_Init(Character* char_, CharacterClass class_, unsigned level, Arr
 			}
 			break;
 	}
-	ComponentDefenseInit(&char_->defense, 0);
-	ComponentOffenseInit(&char_->projectileOffense, 0);
-	ComponentOffenseInit(&char_->meleeOffense, 0);
+	ComponentDefense_Init(&char_->defense, 0);
+	ComponentOffense_Init(&char_->projectileOffense, 0);
+	ComponentOffense_Init(&char_->meleeOffense, 0);
 	return Character_Preprocess(char_);
 }
 
@@ -65,21 +65,21 @@ XErr Character_Preprocess(Character* char_) {
 }
 
 XErr Character_ClearPreprocessed(Character* char_) {
-	ComponentOffenseDeinit(&char_->meleeOffense);
-	ComponentOffenseDeinit(&char_->projectileOffense);
-	ComponentDefenseDeinit(&char_->defense);
-	ComponentDefenseInit(&char_->defense, 0);
-	ComponentOffenseInit(&char_->projectileOffense, 0);
-	ComponentOffenseInit(&char_->meleeOffense, 0);
+	ComponentOffense_Term(&char_->meleeOffense);
+	ComponentOffense_Term(&char_->projectileOffense);
+	ComponentDefense_Term(&char_->defense);
+	ComponentDefense_Init(&char_->defense, 0);
+	ComponentOffense_Init(&char_->projectileOffense, 0);
+	ComponentOffense_Init(&char_->meleeOffense, 0);
 	return 0;
 }
 
 void Character_Term(Character* char_) {
-	ComponentOffenseDeinit(&char_->meleeOffense);
-	ComponentOffenseDeinit(&char_->projectileOffense);
-	ComponentDefenseDeinit(&char_->defense);
-	ComponentOffenseDeinit(&char_->charOffense);
-	ComponentDefenseDeinit(&char_->charDefense);
+	ComponentOffense_Term(&char_->meleeOffense);
+	ComponentOffense_Term(&char_->projectileOffense);
+	ComponentDefense_Term(&char_->defense);
+	ComponentOffense_Term(&char_->charOffense);
+	ComponentDefense_Term(&char_->charDefense);
 	Array_Term(&char_->itemArray);
 	memset(char_, 0, sizeof(Character));
 }

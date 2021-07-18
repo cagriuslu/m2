@@ -4,31 +4,31 @@
 
 #define AsUint64Ptr(ptr) ((ID*) (ptr))
 
-int InsertionListInit(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID)) {
+int InsertionList_Init(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID)) {
 	PROPAGATE_ERROR(Array_Init(&list->array, sizeof(ID), maxItemCount, maxItemCount));
 	list->comparator = comparator;
 	return 0;
 }
 
-void InsertionListDeinit(InsertionList* list) {
+void InsertionList_Term(InsertionList* list) {
 	Array_Term(&list->array);
 }
 
-size_t InsertionListLength(InsertionList* list) {
+size_t InsertionList_Length(InsertionList* list) {
 	return list->array.length;
 }
 
-ID InsertionListGet(InsertionList* list, size_t i) {
+ID InsertionList_Get(InsertionList* list, size_t i) {
 	ID* ptr = Array_Get(&list->array, i);
 	return ptr ? *ptr : 0;
 }
 
-void InsertionListInsert(InsertionList* list, ID id) {
+void InsertionList_Insert(InsertionList* list, ID id) {
 	// TODO insert via binary search
 	Array_Append(&list->array, &id);
 }
 
-void InsertionListRemove(InsertionList* list, ID id) {
+void InsertionList_Remove(InsertionList* list, ID id) {
 	// TODO find via binary search
 	for (size_t i = 0; i < list->array.length; i++) {
 		ID* ptr = Array_Get(&list->array, i);
@@ -39,11 +39,11 @@ void InsertionListRemove(InsertionList* list, ID id) {
 	}
 }
 
-void InsertionListSort(InsertionList* list) {
+void InsertionList_Sort(InsertionList* list) {
 	for (size_t i = 1; i < list->array.length; i++) {
-		ID currItem = InsertionListGet(list, i);
+		ID currItem = InsertionList_Get(list, i);
 		for (size_t j = i; 0 < j--; ) {
-			ID iterItem = InsertionListGet(list, j);
+			ID iterItem = InsertionList_Get(list, j);
 			if (0 < list->comparator(currItem, iterItem)) {
 				// Copy iter into next item
 				*AsUint64Ptr(Array_Get(&list->array, j + 1)) = iterItem;

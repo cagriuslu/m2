@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-void ObjectEnemy_prePhysics(EventListenerComponent* el) {
+void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 	Object* me = FindObjectOfComponent(el);
 	Object* player = FindObjectById(CurrentLevel()->playerId);
 	
@@ -21,17 +21,17 @@ void ObjectEnemy_prePhysics(EventListenerComponent* el) {
 		switch (me->ai->mode) {
 			case AI_IDLE:
 				// If player is close
-				if (Vec2FDistance(me->position, player->position) < me->ai->triggerDistance) {
-					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
-					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+				if (Vec2F_Distance(me->position, player->position) < me->ai->triggerDistance) {
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
+					if (1 < List_Length(&me->ai->reversedWaypointList)) {
 						me->ai->mode = AI_GOING_AFTER_PLAYER;
 					}
 				}
 				break;
 			case AI_GOING_AFTER_PLAYER:
-				if (Vec2FDistance(me->position, player->position) < me->ai->triggerDistance) {
-					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
-					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+				if (Vec2F_Distance(me->position, player->position) < me->ai->triggerDistance) {
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
+					if (1 < List_Length(&me->ai->reversedWaypointList)) {
 						me->ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
 						me->ai->mode = AI_GOING_BACK_TO_HOME;
@@ -41,16 +41,16 @@ void ObjectEnemy_prePhysics(EventListenerComponent* el) {
 				}
 				break;
 			case AI_GOING_BACK_TO_HOME:
-				if (Vec2FDistance(me->position, player->position) < me->ai->triggerDistance) {
-					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
-					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+				if (Vec2F_Distance(me->position, player->position) < me->ai->triggerDistance) {
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, me->position, player->position, &me->ai->reversedWaypointList);
+					if (1 < List_Length(&me->ai->reversedWaypointList)) {
 						me->ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
 						me->ai->mode = AI_GOING_BACK_TO_HOME;
 					}
 				} else {
-					PathfinderMapFindPath(&CurrentLevel()->pathfinderMap, me->position, me->ai->homePosition, &me->ai->reversedWaypointList);
-					if (1 < ListLength(&me->ai->reversedWaypointList)) {
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, me->position, me->ai->homePosition, &me->ai->reversedWaypointList);
+					if (1 < List_Length(&me->ai->reversedWaypointList)) {
 						me->ai->mode = AI_GOING_BACK_TO_HOME;
 					} else {
 						me->ai->mode = AI_IDLE;
@@ -60,23 +60,23 @@ void ObjectEnemy_prePhysics(EventListenerComponent* el) {
 		}
 	}
 
-	if (1 < ListLength(&me->ai->reversedWaypointList)) {
-		ID myPositionIterator = ListGetLast(&me->ai->reversedWaypointList);
-		Vec2I* myPosition = ListGetData(&me->ai->reversedWaypointList, myPositionIterator);
+	if (1 < List_Length(&me->ai->reversedWaypointList)) {
+		ID myPositionIterator = List_GetLast(&me->ai->reversedWaypointList);
+		Vec2I* myPosition = List_GetData(&me->ai->reversedWaypointList, myPositionIterator);
 		
-		ID targetIterator = ListGetPrev(&me->ai->reversedWaypointList, myPositionIterator);
-		Vec2I* targetPosition = ListGetData(&me->ai->reversedWaypointList, targetIterator);
+		ID targetIterator = List_GetPrev(&me->ai->reversedWaypointList, myPositionIterator);
+		Vec2I* targetPosition = List_GetData(&me->ai->reversedWaypointList, targetIterator);
 		
-		if (myPosition && targetPosition && !Vec2IEquals(*myPosition, *targetPosition)) {
-			PhysicsComponent* phy = FindPhysicsOfObject(me);
-			Vec2F direction = Vec2FSub(Vec2FFromVec2I(*targetPosition), me->position);
-			Box2DBodyApplyForceToCenter(phy->body, Vec2FMul(Vec2FNormalize(direction), DeltaTicks() * 20.0f), true);
+		if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
+			ComponentPhysics* phy = FindPhysicsOfObject(me);
+			Vec2F direction = Vec2F_Sub(Vec2F_FromVec2I(*targetPosition), me->position);
+			Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), DeltaTicks() * 20.0f), true);
 		}
 	}
 }
 
 // Move this to main loop
-void ObjectEnemy_postPhysics(EventListenerComponent *el) {
+void ObjectEnemy_postPhysics(ComponentEventListener *el) {
 	Object* obj = FindObjectOfComponent(el);
 	if (obj) {
 		ComponentDefense* defense = FindDefenseOfObject(obj);
@@ -86,15 +86,15 @@ void ObjectEnemy_postPhysics(EventListenerComponent *el) {
 	}
 }
 
-int ObjectEnemyInit(Object* obj, Vec2F position) {
-	PROPAGATE_ERROR(ObjectInit(obj, position));
+int ObjectEnemy_Init(Object* obj, Vec2F position) {
+	PROPAGATE_ERROR(Object_Init(obj, position));
 
-	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
+	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = ObjectEnemy_prePhysics;
 	el->postGraphics = ObjectEnemy_postPhysics;
 
 	ID phyId = 0;
-	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
+	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
 	phy->body = Box2DUtils_CreateDynamicDisk(
 		phyId,
 		position,
@@ -105,11 +105,11 @@ int ObjectEnemyInit(Object* obj, Vec2F position) {
 		10.0f // Damping
 	);
 
-	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 
-	ComponentDefense* defense = ObjectAddDefense(obj, NULL);
+	ComponentDefense* defense = Object_AddDefense(obj, NULL);
 	defense->hp = 100;
 	defense->maxHp = 100;
 

@@ -5,19 +5,19 @@
 #include "../Log.h"
 #include <string.h>
 
-void GraphicsComponent_draw(GraphicsComponent* gfx) {
+void GraphicsComponent_draw(ComponentGraphics* gfx) {
 	Level* level = CurrentLevel();
 	Object* obj = Bucket_GetById(&level->objects, gfx->super.objId);
 	Object* camera = Bucket_GetById(&level->objects, level->cameraId);
 	if (obj && camera && gfx->tx) {
 		float scale = CurrentPixelsPerMeter() / CurrentTileWidth();
-		Vec2F obj_origin_wrt_camera_obj = Vec2FSub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2FTo2I(Vec2FMul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
-		Vec2I obj_gfx_origin_wrt_screen_center = Vec2IAdd(obj_origin_wrt_screen_center, (Vec2I) {
+		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
+		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
+		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
 			-(int)round(gfx->txCenter.x * scale),
 			-(int)round(gfx->txCenter.y * scale)
 		});
-		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2IAdd((Vec2I) { CurrentScreenWidth() / 2, CurrentScreenHeight() / 2 }, obj_gfx_origin_wrt_screen_center);
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { CurrentScreenWidth() / 2, CurrentScreenHeight() / 2 }, obj_gfx_origin_wrt_screen_center);
 		SDL_Rect dstrect = (SDL_Rect){
 			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),
@@ -32,23 +32,23 @@ void GraphicsComponent_draw(GraphicsComponent* gfx) {
 	}
 }
 
-int GraphicsComponentInit(GraphicsComponent* gfx, ID objectId) {
-	memset(gfx, 0, sizeof(GraphicsComponent));
-	PROPAGATE_ERROR(ComponentInit((Component*)gfx, objectId));
+int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId) {
+	memset(gfx, 0, sizeof(ComponentGraphics));
+	PROPAGATE_ERROR(Component_Init((Component*)gfx, objectId));
 	gfx->tx = CurrentTextureLUT();
 	gfx->draw = GraphicsComponent_draw;
 	return 0;
 }
 
-void GraphicsComponentDeinit(GraphicsComponent* gfx) {
-	ComponentDeinit((Component*)gfx);
-	memset(gfx, 0, sizeof(GraphicsComponent));
+void GraphicsComponent_Term(ComponentGraphics* gfx) {
+	Component_Term((Component*)gfx);
+	memset(gfx, 0, sizeof(ComponentGraphics));
 }
 
-int GraphicsComponentYComparatorCB(ID gfxIdA, ID gfxIdB) {
+int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB) {
 	Level* level = CurrentLevel();
-	GraphicsComponent* gfxA = Bucket_GetById(&level->graphics, gfxIdA);
-	GraphicsComponent* gfxB = Bucket_GetById(&level->graphics, gfxIdB);
+	ComponentGraphics* gfxA = Bucket_GetById(&level->graphics, gfxIdA);
+	ComponentGraphics* gfxB = Bucket_GetById(&level->graphics, gfxIdB);
 	if (gfxA && gfxB) {
 		Object* a = Bucket_GetById(&level->objects, gfxA->super.objId);
 		Object* b = Bucket_GetById(&level->objects, gfxB->super.objId);

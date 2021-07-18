@@ -90,7 +90,7 @@ void Box2DWorldStep(Box2DWorld *world, float timeStep, int velocityIterations, i
 }
 
 void Box2DWorldRayCast(Box2DWorld* world, Box2DRayCastListener* rayCastListener, Vec2F point1F, Vec2F point2F) {
-	assert(!Vec2FEquals(point1F, point2F));
+	assert(!Vec2F_Equals(point1F, point2F));
 	const b2Vec2 point1 = Vec2FToB2Vec2(point1F);
 	const b2Vec2 point2 = Vec2FToB2Vec2(point2F);
 	AsWorld(world)->RayCast(AsRayCastCallback(rayCastListener), point1, point2);

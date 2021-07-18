@@ -1,19 +1,20 @@
 #include "../Object.h"
 #include "../Main.h"
 #include "../Box2DUtils.h"
+#include "../Item.h"
 #include "../Log.h"
 #include <math.h>
 #include <stdio.h>
 
 #define ANGLE(v2fDir) atan2f((v2fDir).y, (v2fDir).x)
 
-static void Bullet_prePhysics(EventListenerComponent* el) {
+static void Bullet_prePhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
 	if (obj && obj->physics) {
-		PhysicsComponent* phy = FindPhysicsOfObject(obj);
+		ComponentPhysics* phy = FindPhysicsOfObject(obj);
 		if (phy && phy->body) {
-			const Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
-			Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f));
+			const Vec2F direction = Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body));
+			Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 20.0f));
 		}
 
 		ComponentOffense* offense = FindOffenseProjectileOfObject(obj);
@@ -26,7 +27,7 @@ static void Bullet_prePhysics(EventListenerComponent* el) {
 	}
 }
 
-static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
+static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	Level* level = CurrentLevel();
 	Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
 	Object* otherObj = Bucket_GetById(&level->objects, other->super.objId);
@@ -37,23 +38,23 @@ static void Bullet_onCollision(PhysicsComponent* phy, PhysicsComponent* other) {
 			// Calculate damage
 			defense->hp -= offense->hp;
 
-			const Vec2F direction = Vec2FNormalize(Box2DBodyGetLinearVelocity(phy->body));
-			Box2DBodyApplyForceToCenter(other->body, Vec2FMul(direction, 5000.0f), true);
+			const Vec2F direction = Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body));
+			Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(direction, 5000.0f), true);
 			LOG_DBG("Hit");
 		}
 	}
 	DeleteObject(obj);
 }
 
-int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffense** outOffense) {
-	direction = Vec2FNormalize(direction);
-	PROPAGATE_ERROR(ObjectInit(obj, position));
+int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense) {
+	direction = Vec2F_Normalize(direction);
+	PROPAGATE_ERROR(Object_Init(obj, position));
 
-	EventListenerComponent* el = ObjectAddEventListener(obj, NULL);
+	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = Bullet_prePhysics;
 
 	ID phyId = 0;
-	PhysicsComponent* phy = ObjectAddPhysics(obj, &phyId);
+	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
 	phy->body = Box2DUtils_CreateBulletSensor(
 		phyId,
 		position,
@@ -62,17 +63,28 @@ int ObjectBulletInit(Object* obj, Vec2F position, Vec2F direction, ComponentOffe
 		0.0f, // Mass
 		0.0f // Damping
 	);
-	Box2DBodySetLinearVelocity(phy->body, Vec2FMul(direction, 10.0f)); // Give initial velocity
+	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 10.0f)); // Give initial velocity
 	phy->onCollision = Bullet_onCollision;
 	
-	GraphicsComponent* gfx = ObjectAddGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
 	gfx->txAngle = ANGLE(direction);
-	gfx->txSrc = (SDL_Rect){ 4 * TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
-
-	ComponentOffense* off = ObjectAddOffenseProjectile(obj, NULL);
-	if (outOffense) {
-		*outOffense = off;
+	switch (projectileType) {
+		case ITEMTYP_GUN:
+			gfx->txSrc = (SDL_Rect){ 4 * TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
+			gfx->txCenter = (Vec2F){ 1.5f, 0.5f };
+			break;
+		case ITEMTYP_RIFLE:
+			gfx->txSrc = (SDL_Rect){ 5 * TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
+			gfx->txCenter = (Vec2F){ 3.5f, 0.5f };
+			break;
+		case ITEMTYP_BOW:
+			gfx->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
+			gfx->txCenter = (Vec2F){ 2.5f, 0.5f };
+			break;
 	}
+
+	ComponentOffense* off = Object_AddOffenseProjectile(obj, NULL);
+	ComponentOffense_CopyExceptSuper(off, copyOffense);
 
 	return 0;
 }
