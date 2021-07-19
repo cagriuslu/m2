@@ -1,11 +1,11 @@
-0	Ground
-wh	WallHorizontal
-wv	WallVertical
-s	Skeleton
+0	Tile=Ground
+wh	Tile=WallHorizontal
+wv	Tile=WallVertical
+s	Tile=Ground&Enemy=Skeleton
 %
 0	0	0	0	0	0	0	0	0	0	0	0	
 0	wh	wh	wh	wh	wh	wh	wh	wh	wh	wh	0	
-0	wh	0	0	0	0	0	0	0	0	0	0	
+0	wh	s	0	0	0	0	0	0	0	0	0	
 0	wh	0	wh	wh	wh	wh	wh	wh	wh	wh	0	
 0	wh	0	0	0	0	0	0	0	0	wh	0	
 0	wh	0	0	0	0	0	0	0	0	wh	0	
@@ -14,37 +14,4 @@ s	Skeleton
 0	wh	0	wh	wh	wh	wh	wh	wh	wh	wh	0	
 0	wh	0	0	0	0	0	0	0	0	0	0	
 0	wh	wh	wh	wh	wh	wh	wh	wh	wh	wh	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	0	0	0	0	0	0	0	0	0	0	
-0	0	wh	0	0	0	0	0	0	0	0	0	
-0	0	0	wh	0	0	0	0	0	0	0	0	
-0	0	0	0	wh	0	0	0	0	0	0	0	
-0	0	0	0	0	wh	0	0	0	0	0	0	
-0	0	0	0	0	0	wh	0	0	0	0	0	
-0	0	0	0	0	0	0	wh	0	0	0	0	
-wh	wh	0	0	0	0	0	0	wh	0	0	0	
-0	0	wh	wh	0	0	0	0	0	wh	0	0	
-0	0	0	0	wh	wh	0	0	0	0	0	0	
-0	0	0	0	0	0	wh	wh	0	0	0	0	
-0	0	0	0	0	0	0	0	wh	wh	0	0	
-0	wh	wh	wh	0	0	0	0	0	0	0	0	
-0	0	0	0	wh	wh	wh	0	0	0	0	0	
-0	0	0	0	0	0	0	wh	wh	wh	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	

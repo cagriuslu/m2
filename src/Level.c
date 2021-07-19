@@ -62,10 +62,10 @@ void Level_Term(Level* level) {
 }
 
 int Level_LoadTest(Level* level) {
-	TerrainLoad("resources/terrains/test.txt");
+	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
 
 	Object* player = Bucket_Mark(&level->objects, NULL, &level->playerId);
-	ObjectPlayer_Init(player); // TODO check return value
+	ObjectPlayer_Init(player);
 
 	Object* camera = Bucket_Mark(&level->objects, NULL, &level->cameraId);
 	ObjectCamera_Init(camera);
@@ -73,7 +73,7 @@ int Level_LoadTest(Level* level) {
 	const unsigned skeletonCount = 100;
 	for (unsigned i = 0; i < skeletonCount; i++) {
 		Object* skeleton = Bucket_Mark(&level->objects, NULL, NULL);
-		ObjectEnemy_Init(skeleton, (Vec2F) { (float)i, -10.0f });
+		ObjectEnemy_Init(skeleton, (Vec2F) { (float)i, -10.0f }, NULL);
 	}
 
 	/*Object* wall = Bucket_Mark(&level->objects, NULL, NULL);
@@ -82,11 +82,13 @@ int Level_LoadTest(Level* level) {
 	Object* box = Bucket_Mark(&level->objects, NULL, NULL);
 	ObjectStaticBox_Init(box, (Vec2F) { -2.0f, 0.0f });*/
 
+	TerrainLoader_LoadEnemies(level, "resources/terrains/test.txt");
+
 	return 0;
 }
 
 int Level_LoadEditor(Level* level) {
-	TerrainLoad("resources/terrains/test.txt");
+	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
 
 	Object* god = Bucket_Mark(&level->objects, NULL, &level->playerId);
 	ObjectGod_Init(god); // TODO check return value
@@ -95,7 +97,7 @@ int Level_LoadEditor(Level* level) {
 	ObjectCamera_Init(camera);
 
 	Object* skeleton = Bucket_Mark(&level->objects, NULL, NULL);
-	ObjectEnemy_Init(skeleton, (Vec2F) { -2.0f, -2.0f });
+	ObjectEnemy_Init(skeleton, (Vec2F) { -2.0f, -2.0f }, NULL);
 
 	Object* wall = Bucket_Mark(&level->objects, NULL, NULL);
 	ObjectWall_Init(wall, (Vec2F) { 0.0f, -2.0f });

@@ -1,6 +1,5 @@
 #include "../Object.h"
 #include "../Main.h"
-#include "../TileLookup.h"
 #include "../Box2DUtils.h"
 #include <string.h>
 #include <stdio.h>

@@ -1,26 +1,17 @@
 #include "HashMap.h"
+#include "Txt.h"
 #include "Array.h"
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
 
-#include "Txt.h"
-
-#define HM_KEY_SIZE (8)
-#define HM_BUCKET_COUNT (256)
-
-typedef struct _HashMapItem {
-	uint8_t key[HM_KEY_SIZE];
-	char data[0];
-} HashMapItem;
-
 uint8_t HashMap_Hash(void* key);
 
 int HashMap_Init(HashMap* hm, size_t itemSize) {
 	memset(hm, 0, sizeof(HashMap));
-	hm->arrays = calloc(HM_BUCKET_COUNT, sizeof(Array));
+	hm->arrays = calloc(HASHMAP_BUCKET_COUNT, sizeof(Array));
 	assert(hm->arrays);
-	for (unsigned i = 0; i < HM_BUCKET_COUNT; i++) {
+	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
 		PROPAGATE_ERROR(Array_Init(hm->arrays + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1));
 	}
 	hm->itemSize = itemSize;
@@ -48,7 +39,7 @@ XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 	PROPAGATE_ERROR(Txt_Init(&txt));
 	uint32_t insertedIdx = 0;
 	// Iterate over arrays
-	for (unsigned arrayIdx = 0; arrayIdx < HM_BUCKET_COUNT; arrayIdx++) {
+	for (unsigned arrayIdx = 0; arrayIdx < HASHMAP_BUCKET_COUNT; arrayIdx++) {
 		// Iterate over items in the array
 		for (unsigned itemIdx = 0; itemIdx < Array_Length(hm->arrays + arrayIdx); itemIdx++) {
 			// Add new TxtKV to Txt
@@ -67,7 +58,7 @@ XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 }
 
 void HashMap_Term(HashMap* hm) {
-	for (unsigned i = 0; i < HM_BUCKET_COUNT; i++) {
+	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
 		Array_Term(hm->arrays + i);
 	}
 	free(hm->arrays);
@@ -76,14 +67,14 @@ void HashMap_Term(HashMap* hm) {
 
 size_t HashMap_Size(HashMap* hm) {
 	size_t count = 0;
-	for (unsigned i = 0; i < HM_BUCKET_COUNT; i++) {
+	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
 		count += hm->arrays[i].length;
 	}
 	return count;
 }
 
 void HashMap_Clear(HashMap* hm) {
-	for (unsigned i = 0; i < HM_BUCKET_COUNT; i++) {
+	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
 		Array_Clear(hm->arrays + i);
 	}
 }
@@ -136,7 +127,7 @@ void* HashMap_Set(HashMap* hm, void* key, void* copy) {
 
 		HashMapItem* newItem = Array_Append(array, NULL);
 		if (newItem) {
-			memcpy(newItem->key, key, HM_KEY_SIZE);
+			memcpy(newItem->key, key, HASHMAP_KEY_SIZE);
 			if (copy) {
 				memcpy(newItem->data, copy, hm->itemSize);
 			}
@@ -155,7 +146,7 @@ void* HashMap_TrySet(HashMap* hm, void* key, void* copy) {
 
 		HashMapItem* newItem = Array_Append(array, NULL);
 		if (newItem) {
-			memcpy(newItem->key, key, HM_KEY_SIZE);
+			memcpy(newItem->key, key, HASHMAP_KEY_SIZE);
 			if (copy) {
 				memcpy(newItem->data, copy, hm->itemSize);
 			}
@@ -171,7 +162,7 @@ void* HashMap_Get(HashMap* hm, void* key) {
 	HashMapItem* mapItem = NULL;
 	for (size_t i = 0; i < array->length; i++) {
 		HashMapItem* iter = Array_Get(array, i);
-		if (iter && memcmp(iter->key, key, HM_KEY_SIZE) == 0) {
+		if (iter && memcmp(iter->key, key, HASHMAP_KEY_SIZE) == 0) {
 			mapItem = iter;
 		}
 	}
@@ -184,7 +175,7 @@ void HashMap_Unset(HashMap* hm, void* key) {
 	
 	for (size_t i = 0; i < array->length; i++) {
 		HashMapItem* iter = Array_Get(array, i);
-		if (iter && memcmp(iter->key, key, HM_KEY_SIZE) == 0) {
+		if (iter && memcmp(iter->key, key, HASHMAP_KEY_SIZE) == 0) {
 			Array_Remove(array, i);
 			return;
 		}

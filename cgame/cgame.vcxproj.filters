@@ -78,9 +78,6 @@
     <ClCompile Include="..\src\Object.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\TileLookup.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectCamera.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -222,9 +219,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\InsertionList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\TileLookup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Pathfinder.h">

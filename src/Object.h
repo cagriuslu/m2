@@ -2,7 +2,6 @@
 #define OBJECT_H
 
 #include "Component.h"
-#include "TileLookup.h"
 #include "AI.h"
 #include "Array.h"
 #include "Item.h"
@@ -60,12 +59,18 @@ ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId);
 ComponentLightSource* Object_AddLightSource(Object* obj, float lightBoundaryRadius, ID* outId);
 Array* Object_AddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount);
 
+typedef struct _TileDef {
+	Vec2I txIndex;
+	Vec2F colliderSize;
+	Vec2F colliderOffset;
+} TileDef;
+
 int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position);
 int ObjectPlayer_Init(Object* obj);
 int ObjectGod_Init(Object* obj);
 int ObjectCamera_Init(Object* obj);
 int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense);
-int ObjectEnemy_Init(Object* obj, Vec2F position);
+int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor);
 int ObjectWall_Init(Object* obj, Vec2F position);
 int ObjectStaticBox_Init(Object* obj, Vec2F position);
 int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, Vec2F direction, uint32_t ticks);

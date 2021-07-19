@@ -24,6 +24,20 @@ void TxtKV_SetValue(TxtKV* kv, const char* value, bool isDynamic) {
 	kv->isValueDynamic = isDynamic;
 }
 
+char* TxtKV_DuplicateUrlEncodedValue(TxtKV* kv, const char* key) {
+	char* keyPtr = strstr(kv->value, key);
+	if (!keyPtr) {
+		return NULL;
+	}
+	char* valuePtr = keyPtr + strlen(key);
+	char* ampersandPtr = strchr(valuePtr, '&');
+	uintptr_t valueLen = ampersandPtr ? ampersandPtr - valuePtr : strlen(valuePtr);
+	char* value = malloc(valueLen + 1);
+	strncpy(value, valuePtr, valueLen);
+	value[valueLen] = 0;
+	return value;
+}
+
 void TxtKV_Term(TxtKV* kv) {
 	if (kv->isValueDynamic && kv->value) {
 		free(kv->value);

@@ -15,6 +15,7 @@ typedef struct _TxtKV {
 XErr TxtKV_Init(TxtKV* kv);
 void TxtKV_SetKey(TxtKV* kv, const char* key);
 void TxtKV_SetValue(TxtKV* kv, const char* value, bool isDynamic);
+char* TxtKV_DuplicateUrlEncodedValue(TxtKV* kv, const char* key); // example key: "Tile=", "Enemy="
 void TxtKV_Term(TxtKV* kv);
 
 typedef struct _Txt {

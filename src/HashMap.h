@@ -4,10 +4,17 @@
 #include "Array.h"
 #include <stdint.h>
 
+#define HASHMAP_KEY_SIZE (8)
+#define HASHMAP_BUCKET_COUNT (256)
+
 typedef struct _HashMap {
-	Array* arrays; // 256
+	Array* arrays; // HASHMAP_BUCKET_COUNT arrays
 	size_t itemSize;
 } HashMap;
+typedef struct _HashMapItem {
+	uint8_t key[HASHMAP_KEY_SIZE];
+	char data[0];
+} HashMapItem;
 typedef HashMap HashMapOfInt32s;
 
 int HashMap_Init(HashMap *hm, size_t itemSize);

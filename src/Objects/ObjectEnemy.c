@@ -86,7 +86,7 @@ void ObjectEnemy_postPhysics(ComponentEventListener *el) {
 	}
 }
 
-int ObjectEnemy_Init(Object* obj, Vec2F position) {
+int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	PROPAGATE_ERROR(Object_Init(obj, position));
 
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
