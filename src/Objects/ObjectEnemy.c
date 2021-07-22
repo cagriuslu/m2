@@ -86,6 +86,16 @@ void ObjectEnemy_postPhysics(ComponentEventListener *el) {
 	}
 }
 
+void ObjectEnemy_Draw(ComponentGraphics* gfx) {
+	GraphicsComponent_DefaultDraw(gfx);
+
+	Object* obj = FindObjectOfComponent(gfx);
+	ComponentDefense* defense = FindDefenseOfObject(obj);	
+	if (obj && defense) {
+		GraphicsComponent_DefaultDrawHealthBar(gfx, (float)defense->hp / defense->maxHp);
+	}
+}
+
 int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	PROPAGATE_ERROR(Object_Init(obj, position));
 
@@ -108,6 +118,7 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
+	gfx->draw = ObjectEnemy_Draw;
 
 	ComponentDefense* defense = Object_AddDefense(obj, NULL);
 	defense->hp = 100;

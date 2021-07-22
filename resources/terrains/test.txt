@@ -8,10 +8,10 @@ s	Tile=Ground&Enemy=Skeleton
 0	wh	s	0	0	0	0	0	0	0	0	0	
 0	wh	0	wh	wh	wh	wh	wh	wh	wh	wh	0	
 0	wh	0	0	0	0	0	0	0	0	wh	0	
-0	wh	0	0	0	0	0	0	0	0	wh	0	
+0	wh	0	s	0	0	0	0	0	0	wh	0	
 0	wh	wh	wh	wh	wh	wh	0	0	0	wh	0	
 0	wh	0	0	0	0	0	0	0	0	wh	0	
-0	wh	0	wh	wh	wh	wh	wh	wh	wh	wh	0	
+0	wh	s	wh	wh	wh	wh	wh	wh	wh	wh	0	
 0	wh	0	0	0	0	0	0	0	0	0	0	
 0	wh	wh	wh	wh	wh	wh	wh	wh	wh	wh	0	
 0	0	0	0	0	0	0	0	0	0	0	0	

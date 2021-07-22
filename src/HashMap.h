@@ -18,8 +18,8 @@ typedef struct _HashMapItem {
 typedef HashMap HashMapOfInt32s;
 
 int HashMap_Init(HashMap *hm, size_t itemSize);
-XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath);
-XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath); // Char pointers must be freed
+XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath); // Char pointers must be freed
+XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath);
 void HashMap_Term(HashMap* hm);
 
 size_t HashMap_Size(HashMap* hm);

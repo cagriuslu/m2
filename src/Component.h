@@ -42,6 +42,8 @@ typedef struct _ComponentGraphics {
 } ComponentGraphics;
 int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId);
 void GraphicsComponent_Term(ComponentGraphics* gfx);
+void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx);
+void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio);
 int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB);
 
 typedef struct _ComponentLightSource {

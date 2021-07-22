@@ -5,7 +5,7 @@
 #include "../Log.h"
 #include <string.h>
 
-void GraphicsComponent_draw(ComponentGraphics* gfx) {
+void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 	Level* level = CurrentLevel();
 	Object* obj = Bucket_GetById(&level->objects, gfx->super.objId);
 	Object* camera = Bucket_GetById(&level->objects, level->cameraId);
@@ -32,11 +32,52 @@ void GraphicsComponent_draw(ComponentGraphics* gfx) {
 	}
 }
 
+void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio) {
+	Object* obj = FindObjectOfComponent(gfx);
+	Object* camera = Bucket_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
+	if (obj && camera) {
+		float scale = CurrentPixelsPerMeter() / CurrentTileWidth();
+		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
+		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, CurrentPixelsPerMeter()));
+		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
+			-(int)round(gfx->txCenter.x * scale),
+				-(int)round(gfx->txCenter.y * scale)
+		});
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { CurrentScreenWidth() / 2, CurrentScreenHeight() / 2 }, obj_gfx_origin_wrt_screen_center);
+		SDL_Rect obj_gfx_dstrect = (SDL_Rect){
+			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
+			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),
+			(int)round(gfx->txSrc.w * scale),
+			(int)round(gfx->txSrc.h * scale)
+		};
+
+		int healthBarWidth = obj_gfx_dstrect.w * 8 / 10;
+
+		SDL_Rect filled_dstrect = (SDL_Rect){
+			obj_gfx_dstrect.x + (obj_gfx_dstrect.w - healthBarWidth) / 2,
+			obj_gfx_dstrect.y + obj_gfx_dstrect.h,
+			(int)round(healthBarWidth * healthRatio),
+			TILE_WIDTH / 6
+		};
+		SDL_SetRenderDrawColor(CurrentRenderer(), 255, 0, 0, 200);
+		SDL_RenderFillRect(CurrentRenderer(), &filled_dstrect);
+
+		SDL_Rect empty_dstrect = (SDL_Rect){
+			filled_dstrect.x + filled_dstrect.w,
+			filled_dstrect.y,
+			healthBarWidth - filled_dstrect.w,
+			filled_dstrect.h
+		};
+		SDL_SetRenderDrawColor(CurrentRenderer(), 127, 0, 0, 200);
+		SDL_RenderFillRect(CurrentRenderer(), &empty_dstrect);
+	}
+}
+
 int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId) {
 	memset(gfx, 0, sizeof(ComponentGraphics));
 	PROPAGATE_ERROR(Component_Init((Component*)gfx, objectId));
 	gfx->tx = CurrentTextureLUT();
-	gfx->draw = GraphicsComponent_draw;
+	gfx->draw = GraphicsComponent_DefaultDraw;
 	return 0;
 }
 
