@@ -152,3 +152,13 @@ Array* Object_AddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount) {
 	}
 	return array;
 }
+
+Stopwatch* Object_GetPrePhysicsStopwatchPtr(Object* obj, unsigned stopwatchIdx) {
+	if (obj->prePhysicsStopwatches) {
+		Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
+		if (stopwatches) {
+			return Array_Get(stopwatches, stopwatchIdx);
+		}
+	}
+	return NULL;
+}

@@ -23,11 +23,12 @@ typedef enum _AIMode {
 
 typedef struct _AI {
 	AIMode mode;
-	unsigned recalculationPeriod;
+	Stopwatch recalculationPeriod;
+	
 	Vec2F homePosition;
 	float triggerDistance;
+	
 	ListOfVec2Is reversedWaypointList;
-	Stopwatch waypointRecalculationStopwatch;
 } AI;
 
 XErr AI_Init(AI* ai);

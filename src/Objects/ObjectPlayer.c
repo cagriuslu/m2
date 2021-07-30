@@ -78,8 +78,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 		prev->flags |= ITEMFLAG_EQUIPPED;
 		Character_Preprocess(CurrentCharacter());
 	} else {
-		Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
-		unsigned* rangedAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_RANGED_ATTACK);
+		Stopwatch* rangedAttackStopwatch = Object_GetPrePhysicsStopwatchPtr(obj, STOPWATCH_IDX_RANGED_ATTACK);
 		if (IsButtonDown(BUTTON_PRIMARY) && (100 < *rangedAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
@@ -90,7 +89,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 			*rangedAttackStopwatch = 0;
 		}
 
-		unsigned* meleeAttackStopwatch = Array_Get(stopwatches, STOPWATCH_IDX_MELEE_ATTACK);
+		Stopwatch* meleeAttackStopwatch = Object_GetPrePhysicsStopwatchPtr(obj, STOPWATCH_IDX_MELEE_ATTACK);
 		if (IsButtonDown(BUTTON_SECONDARY) && (333 < *meleeAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);

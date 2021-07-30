@@ -59,6 +59,8 @@ ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId);
 ComponentLightSource* Object_AddLightSource(Object* obj, float lightBoundaryRadius, ID* outId);
 Array* Object_AddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount);
 
+Stopwatch* Object_GetPrePhysicsStopwatchPtr(Object* obj, unsigned stopwatchIdx);
+
 typedef struct _TileDef {
 	Vec2I txIndex;
 	Vec2F colliderSize;
