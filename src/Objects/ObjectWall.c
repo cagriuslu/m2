@@ -4,7 +4,7 @@
 #include "../Box2DUtils.h"
 
 int ObjectWall_Init(Object* obj, Vec2F position) {
-	PROPAGATE_ERROR(Object_Init(obj, position));
+	PROPAGATE_ERROR(Object_Init(obj, position, false));
 	
 	ID phyId = 0;
 	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);

@@ -11,7 +11,7 @@ void Camera_postPhysics(ComponentEventListener* el) {
 }
 
 int ObjectCamera_Init(Object* obj) {
-	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }));
+	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, false));
 
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->postPhysics = Camera_postPhysics;

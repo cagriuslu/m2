@@ -5,6 +5,7 @@
 #include "AI.h"
 #include "Array.h"
 #include "Item.h"
+#include "Character.h"
 #include "Vec2F.h"
 #include <stdint.h>
 
@@ -30,6 +31,21 @@
 #define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&CurrentLevel()->deleteList, &__id__); } while (0)
 #define DeleteObject(obj)    DeleteObjectById(Bucket_GetId(&CurrentLevel()->objects, (obj)))
 
+typedef struct _ObjectProperties {
+	// Used only by the player
+	Character* character;
+} ObjectProperties;
+
+int ObjectProperties_Init(ObjectProperties* props);
+void ObjectProperties_Term(ObjectProperties* props);
+
+/// Basis of all objects in the game.
+/// 
+/// How to decide if a component should reside in Bucket or be held as a property?
+/// If the component is accessed by the Main Game Loop => Bucket
+/// If the component is created and destroyed rapidly => Bucket
+/// Others => Property
+/// 
 typedef struct _Object {
 	Vec2F position; // in world coordinates
 	// Components
@@ -44,9 +60,10 @@ typedef struct _Object {
 	// Properties
 	AI* ai;
 	ID prePhysicsStopwatches;
+	ObjectProperties* properties;
 } Object;
 
-int Object_Init(Object* obj, Vec2F position);
+int Object_Init(Object* obj, Vec2F position, bool initProperties);
 void Object_Term(Object* obj);
 
 ComponentEventListener* Object_AddEventListener(Object* obj, ID* outId);

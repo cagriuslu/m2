@@ -102,7 +102,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 }
 
 int ObjectPlayer_Init(Object* obj) {
-	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }));
+	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, false));
 	ID objId = Bucket_GetId(&CurrentLevel()->objects, obj);
 	// Write-back originator ID of Character Offenses
 	CurrentCharacter()->charOffense.originator = objId;

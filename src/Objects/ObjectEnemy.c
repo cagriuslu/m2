@@ -93,7 +93,7 @@ void ObjectEnemy_Draw(ComponentGraphics* gfx) {
 }
 
 int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
-	PROPAGATE_ERROR(Object_Init(obj, position));
+	PROPAGATE_ERROR(Object_Init(obj, position, false));
 
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = ObjectEnemy_prePhysics;

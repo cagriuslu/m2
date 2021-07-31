@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position) {
-	PROPAGATE_ERROR(Object_Init(obj, position));
+	PROPAGATE_ERROR(Object_Init(obj, position, false));
 
 	if (tileDef.colliderSize.x && tileDef.colliderSize.y) {
 		ID phyId = 0;
