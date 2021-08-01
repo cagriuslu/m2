@@ -65,13 +65,14 @@ void Object_Term(Object* obj) {
 		ComponentLightSource_Term(light);
 		Bucket_Unmark(&CurrentLevel()->lightSources, light);
 	}
-	if (obj->ai) {
-		AI_Term(obj->ai);
-	}
-	if (obj->prePhysicsStopwatches) {
-		Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
-		Array_Term(stopwatches);
-		Bucket_Unmark(&CurrentLevel()->prePhysicsStopwatches, stopwatches);
+	if (obj->properties) {
+		if (obj->properties->character) {
+			// TODO: who should terminate the Character?
+		}
+		if (obj->properties->ai) {
+			AI_Term(obj->properties->ai);
+			free(obj->properties->ai);
+		}
 	}
 	memset(obj, 0, sizeof(Object));
 }
@@ -155,24 +156,4 @@ ComponentLightSource* Object_AddLightSource(Object* obj, float lightBoundaryRadi
 		outId[0] = obj->lightSource;
 	}
 	return light;
-}
-
-Array* Object_AddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount) {
-	Array* array = Bucket_Mark(&CurrentLevel()->prePhysicsStopwatches, NULL, &obj->prePhysicsStopwatches);
-	Array_Init(array, sizeof(unsigned), stopwatchCount, stopwatchCount);
-	for (unsigned i = 0; i < stopwatchCount; i++) {
-		unsigned initialValue = 0;
-		Array_Append(array, &initialValue);
-	}
-	return array;
-}
-
-Stopwatch* Object_GetPrePhysicsStopwatchPtr(Object* obj, unsigned stopwatchIdx) {
-	if (obj->prePhysicsStopwatches) {
-		Array* stopwatches = Bucket_GetById(&CurrentLevel()->prePhysicsStopwatches, obj->prePhysicsStopwatches);
-		if (stopwatches) {
-			return Array_Get(stopwatches, stopwatchIdx);
-		}
-	}
-	return NULL;
 }

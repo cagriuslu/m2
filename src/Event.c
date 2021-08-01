@@ -102,9 +102,9 @@ void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion,
 				*outWheel = true;
 			}
 			if (0 < e.wheel.y) {
-				gButtonsPressed[BUTTON_SCROLL_UP] += e.wheel.y;
+				gButtonsPressed[BUTTON_SCROLL_UP] += (int16_t)e.wheel.y;
 			} else {
-				gButtonsPressed[BUTTON_SCROLL_DOWN] += -e.wheel.y;
+				gButtonsPressed[BUTTON_SCROLL_DOWN] += -(int16_t)e.wheel.y;
 			}
 			break;
 		default:

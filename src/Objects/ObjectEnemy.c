@@ -10,58 +10,58 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
 	Object* player = FindObjectById(CurrentLevel()->playerId);
 
-	Stopwatch* recalculationStopwatchPtr = Object_GetPrePhysicsStopwatchPtr(obj, 0);
-	if (obj->ai->recalculationPeriod < *recalculationStopwatchPtr) {
-		switch (obj->ai->mode) {
+	obj->properties->ai->recalculationStopwatch += DeltaTicks();
+	if (obj->properties->ai->recalculationPeriod < obj->properties->ai->recalculationStopwatch) {
+		switch (obj->properties->ai->mode) {
 			case AI_IDLE:
 				// If player is close
-				if (Vec2F_Distance(obj->position, player->position) < obj->ai->triggerDistance) {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->ai->reversedWaypointList)) {
-						obj->ai->mode = AI_GOING_AFTER_PLAYER;
+				if (Vec2F_Distance(obj->position, player->position) < obj->properties->ai->triggerDistance) {
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
+					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
+						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
 					}
 				}
 				break;
 			case AI_GOING_AFTER_PLAYER:
-				if (Vec2F_Distance(obj->position, player->position) < 2 * obj->ai->triggerDistance) {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->ai->reversedWaypointList)) {
-						obj->ai->mode = AI_GOING_AFTER_PLAYER;
+				if (Vec2F_Distance(obj->position, player->position) < 2 * obj->properties->ai->triggerDistance) {
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
+					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
+						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
-						obj->ai->mode = AI_GOING_BACK_TO_HOME;
+						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
 					}
 				} else {
-					obj->ai->mode = AI_GOING_BACK_TO_HOME;
+					obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
 				}
 				break;
 			case AI_GOING_BACK_TO_HOME:
-				if (Vec2F_Distance(obj->position, player->position) < obj->ai->triggerDistance) {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->ai->reversedWaypointList)) {
-						obj->ai->mode = AI_GOING_AFTER_PLAYER;
+				if (Vec2F_Distance(obj->position, player->position) < obj->properties->ai->triggerDistance) {
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
+					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
+						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
-						obj->ai->mode = AI_GOING_BACK_TO_HOME;
+						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
 					}
 				} else {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, obj->ai->homePosition, &obj->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->ai->reversedWaypointList)) {
-						obj->ai->mode = AI_GOING_BACK_TO_HOME;
+					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, obj->properties->ai->homePosition, &obj->properties->ai->reversedWaypointList);
+					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
+						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
 					} else {
-						obj->ai->mode = AI_IDLE;
+						obj->properties->ai->mode = AI_IDLE;
 					}
 				}
 				break;
 		}
 
-		*recalculationStopwatchPtr = 0;
+		obj->properties->ai->recalculationStopwatch = 0;
 	}
 
-	if (1 < List_Length(&obj->ai->reversedWaypointList)) {
-		ID myPositionIterator = List_GetLast(&obj->ai->reversedWaypointList);
-		Vec2I* myPosition = List_GetData(&obj->ai->reversedWaypointList, myPositionIterator);
+	if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
+		ID myPositionIterator = List_GetLast(&obj->properties->ai->reversedWaypointList);
+		Vec2I* myPosition = List_GetData(&obj->properties->ai->reversedWaypointList, myPositionIterator);
 		
-		ID targetIterator = List_GetPrev(&obj->ai->reversedWaypointList, myPositionIterator);
-		Vec2I* targetPosition = List_GetData(&obj->ai->reversedWaypointList, targetIterator);
+		ID targetIterator = List_GetPrev(&obj->properties->ai->reversedWaypointList, myPositionIterator);
+		Vec2I* targetPosition = List_GetData(&obj->properties->ai->reversedWaypointList, targetIterator);
 		
 		if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
 			ComponentPhysics* phy = FindPhysicsOfObject(obj);
@@ -93,7 +93,15 @@ void ObjectEnemy_Draw(ComponentGraphics* gfx) {
 }
 
 int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
-	PROPAGATE_ERROR(Object_Init(obj, position, false));
+	PROPAGATE_ERROR(Object_Init(obj, position, true));
+	
+	obj->properties->ai = malloc(sizeof(AI));
+	assert(obj->properties->ai);
+	AI_Init(obj->properties->ai);
+	obj->properties->ai->recalculationPeriod = 500;
+	obj->properties->ai->recalculationStopwatch = rand() % obj->properties->ai->recalculationPeriod;
+	obj->properties->ai->homePosition = position;
+	obj->properties->ai->triggerDistance = 6.0f;
 
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = ObjectEnemy_prePhysics;
@@ -119,17 +127,6 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	ComponentDefense* defense = Object_AddDefense(obj, NULL);
 	defense->hp = 100;
 	defense->maxHp = 100;
-
-	obj->ai = malloc(sizeof(AI));
-	assert(obj->ai);
-	AI_Init(obj->ai);
-	obj->ai->recalculationPeriod = 500;
-	obj->ai->homePosition = position;
-	obj->ai->triggerDistance = 6.0f;
-
-	Object_AddPrePhysicsStopwatches(obj, 1);
-	Stopwatch* recalculationStopwatchPtr = Object_GetPrePhysicsStopwatchPtr(obj, 0);
-	*recalculationStopwatchPtr = rand() % obj->ai->recalculationPeriod;
 	
 	return 0;
 }

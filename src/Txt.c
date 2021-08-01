@@ -33,14 +33,17 @@ char* TxtKV_DuplicateUrlEncodedValue(TxtKV* kv, const char* key) {
 	char* ampersandPtr = strchr(valuePtr, '&');
 	uintptr_t valueLen = ampersandPtr ? ampersandPtr - valuePtr : strlen(valuePtr);
 	char* value = malloc(valueLen + 1);
-	strncpy(value, valuePtr, valueLen);
-	value[valueLen] = 0;
+	assert(value);
+	if (value) {
+		strncpy(value, valuePtr, valueLen);
+		value[valueLen] = 0;
+	}
 	return value;
 }
 
 void TxtKV_Term(TxtKV* kv) {
 	if (kv->isValueDynamic && kv->value) {
-		free(kv->value);
+		free((void*)kv->value);
 	}
 	memset(kv, 0, sizeof(TxtKV));
 }

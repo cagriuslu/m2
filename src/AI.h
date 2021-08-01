@@ -23,7 +23,8 @@ typedef enum _AIMode {
 
 typedef struct _AI {
 	AIMode mode;
-	Stopwatch recalculationPeriod;
+	unsigned recalculationPeriod;
+	Stopwatch recalculationStopwatch;
 	
 	Vec2F homePosition;
 	float triggerDistance;

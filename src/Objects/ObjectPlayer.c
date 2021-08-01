@@ -19,6 +19,9 @@
 
 static void Player_prePhysics(ComponentEventListener* el) {
 	Object* obj = Bucket_GetById(&CurrentLevel()->objects, el->super.objId);
+	obj->properties->rangedAttackStopwatch += DeltaTicks();
+	obj->properties->meleeAttackStopwatch += DeltaTicks();
+	
 	ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
 	if (phy && phy->body) {
 		Vec2F moveDirection = (Vec2F) {0.0f, 0.0f};
@@ -78,31 +81,29 @@ static void Player_prePhysics(ComponentEventListener* el) {
 		prev->flags |= ITEMFLAG_EQUIPPED;
 		Character_Preprocess(CurrentCharacter());
 	} else {
-		Stopwatch* rangedAttackStopwatch = Object_GetPrePhysicsStopwatchPtr(obj, STOPWATCH_IDX_RANGED_ATTACK);
-		if (IsButtonDown(BUTTON_PRIMARY) && (100 < *rangedAttackStopwatch)) {
+		if (IsButtonDown(BUTTON_PRIMARY) && (100 < obj->properties->rangedAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* bullet = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
 			Item* projectileWeapon = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
 			ObjectBullet_Init(bullet, obj->position, bulletDir, projectileWeapon->type, &CurrentCharacter()->projectileOffense);
-			*rangedAttackStopwatch = 0;
+			obj->properties->rangedAttackStopwatch = 0;
 		}
 
-		Stopwatch* meleeAttackStopwatch = Object_GetPrePhysicsStopwatchPtr(obj, STOPWATCH_IDX_MELEE_ATTACK);
-		if (IsButtonDown(BUTTON_SECONDARY) && (333 < *meleeAttackStopwatch)) {
+		if (IsButtonDown(BUTTON_SECONDARY) && (333 < obj->properties->meleeAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
 			ObjectSword_Init(sword, obj->position, &CurrentCharacter()->meleeOffense, swordDir, 150);
-			*meleeAttackStopwatch = 0;
+			obj->properties->meleeAttackStopwatch = 0;
 		}
 	}
 }
 
 int ObjectPlayer_Init(Object* obj) {
-	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, false));
+	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
 	ID objId = Bucket_GetId(&CurrentLevel()->objects, obj);
 	// Write-back originator ID of Character Offenses
 	CurrentCharacter()->charOffense.originator = objId;
@@ -134,7 +135,6 @@ int ObjectPlayer_Init(Object* obj) {
 	ComponentLightSource* light = Object_AddLightSource(obj, 4.0f, NULL);
 	light->power = 3.0f;
 
-	Object_AddPrePhysicsStopwatches(obj, STOPWATCH_COUNT);
 
 	return 0;
 }

@@ -27,7 +27,7 @@ XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 		// Get TxtKV from Txt array
 		TxtKV* txtKV = Array_Get(&txt.txtKVPairs, *txtKVIndexPtr);
 		// Duplicate string
-		const char* dupValue = _strdup(txtKV->value);
+		char* dupValue = _strdup(txtKV->value);
 		HashMap_Set(hm, txtKV->key, &dupValue);
 	}
 	Txt_Term(&txt);

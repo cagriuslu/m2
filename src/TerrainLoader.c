@@ -84,7 +84,7 @@ int TerrainLoader_LoadEnemies(Level* level, const char* tname) {
 		Array* array = enemyDescriptors.arrays + arrayIdx;
 		for (unsigned idx = 0; idx < Array_Length(array); idx++) {
 			HashMapItem *hmItem = Array_Get(array, idx);
-			char** valuePtr = hmItem->data;
+			char** valuePtr = (char**)hmItem->data;
 			free(*valuePtr);
 		}
 	}

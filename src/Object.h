@@ -32,8 +32,12 @@
 #define DeleteObject(obj)    DeleteObjectById(Bucket_GetId(&CurrentLevel()->objects, (obj)))
 
 typedef struct _ObjectProperties {
-	// Used only by the player
+	// Used by Player
 	Character* character;
+	Stopwatch rangedAttackStopwatch;
+	Stopwatch meleeAttackStopwatch;
+	// Used by Enemy
+	AI* ai;
 } ObjectProperties;
 
 int ObjectProperties_Init(ObjectProperties* props);
@@ -57,9 +61,6 @@ typedef struct _Object {
 	ID offenseProjectile;
 	ID offenseMelee;
 	ID lightSource;
-	// Properties
-	AI* ai;
-	ID prePhysicsStopwatches;
 	ObjectProperties* properties;
 } Object;
 
@@ -74,9 +75,6 @@ ComponentDefense* Object_AddDefense(Object* obj, ID* outId);
 ComponentOffense* Object_AddOffenseProjectile(Object* obj, ID* outId);
 ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId);
 ComponentLightSource* Object_AddLightSource(Object* obj, float lightBoundaryRadius, ID* outId);
-Array* Object_AddPrePhysicsStopwatches(Object* obj, unsigned stopwatchCount);
-
-Stopwatch* Object_GetPrePhysicsStopwatchPtr(Object* obj, unsigned stopwatchIdx);
 
 typedef struct _TileDef {
 	Vec2I txIndex;
