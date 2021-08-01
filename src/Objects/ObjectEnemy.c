@@ -1,6 +1,7 @@
 #include "../Object.h"
 #include "../Main.h"
 #include "../Box2D.h"
+#include "../Log.h"
 #include "../Pathfinder.h"
 #include "../Box2DUtils.h"
 #include <stdio.h>
@@ -10,7 +11,11 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
 	Object* player = FindObjectById(CurrentLevel()->playerId);
 
+	float distanceToPlayer = 0.0f;
+
 	obj->properties->ai->recalculationStopwatch += DeltaTicks();
+	obj->properties->ai->attackStopwatch += DeltaTicks();
+	
 	if (obj->properties->ai->recalculationPeriod < obj->properties->ai->recalculationStopwatch) {
 		switch (obj->properties->ai->mode) {
 			case AI_IDLE:
@@ -23,7 +28,18 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 				}
 				break;
 			case AI_GOING_AFTER_PLAYER:
-				if (Vec2F_Distance(obj->position, player->position) < 2 * obj->properties->ai->triggerDistance) {
+				distanceToPlayer = Vec2F_Distance(obj->position, player->position);
+				if (distanceToPlayer < 1.2f) {
+					if (obj->properties->ai->attackPeriod < obj->properties->ai->attackStopwatch) {
+						// If enough time passed for the next attack
+						Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
+						ObjectSword_Init(sword, obj->position, FindOffenseMeleeOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
+						LOG_INF("Attacking player with melee");
+						
+						obj->properties->ai->attackStopwatch = 0;
+					}
+					obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
+				} else if (distanceToPlayer < 2 * obj->properties->ai->triggerDistance) {
 					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
 					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
 						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
@@ -100,6 +116,8 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	AI_Init(obj->properties->ai);
 	obj->properties->ai->recalculationPeriod = 500;
 	obj->properties->ai->recalculationStopwatch = rand() % obj->properties->ai->recalculationPeriod;
+	obj->properties->ai->attackPeriod = 500;
+	obj->properties->ai->attackStopwatch = rand() % obj->properties->ai->attackPeriod;
 	obj->properties->ai->homePosition = position;
 	obj->properties->ai->triggerDistance = 6.0f;
 
@@ -127,6 +145,11 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	ComponentDefense* defense = Object_AddDefense(obj, NULL);
 	defense->hp = 100;
 	defense->maxHp = 100;
+
+	ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
+	offense->originator = Bucket_GetId(&CurrentLevel()->objects, obj);
+	offense->hp = 10;
+	offense->ttl = 100;
 	
 	return 0;
 }

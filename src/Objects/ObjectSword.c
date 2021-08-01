@@ -49,7 +49,7 @@ static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	}
 }
 
-int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, Vec2F direction, uint32_t ticks) {
+int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks) {
 	PROPAGATE_ERROR(Object_Init(obj, originatorPosition, false));
 
 	const float theta = Vec2F_AngleRads(direction); // Convert direction to angle
@@ -69,7 +69,7 @@ int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* or
 		false, // allowSleep
 		true, // isBullet
 		true, // isSensor
-		CATEGORY_PLAYER_MELEE_WEAPON, // category
+		isEnemy ? CATEGORY_ENEMY_MELEE_WEAPON : CATEGORY_PLAYER_MELEE_WEAPON, // category
 		0, // mask
 		(Vec2F) {1.25f, 0.1667f}, // boxDims
 		(Vec2F) {0.5833f, 0.0f}, // boxCenterOffset

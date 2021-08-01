@@ -90,6 +90,6 @@ int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType pro
 int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor);
 int ObjectWall_Init(Object* obj, Vec2F position);
 int ObjectStaticBox_Init(Object* obj, Vec2F position);
-int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, Vec2F direction, uint32_t ticks);
+int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks);
 
 #endif

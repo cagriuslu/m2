@@ -25,6 +25,8 @@ typedef struct _AI {
 	AIMode mode;
 	unsigned recalculationPeriod;
 	Stopwatch recalculationStopwatch;
+	unsigned attackPeriod;
+	Stopwatch attackStopwatch;
 	
 	Vec2F homePosition;
 	float triggerDistance;

@@ -96,7 +96,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ObjectSword_Init(sword, obj->position, &obj->properties->character->meleeOffense, swordDir, 150);
+			ObjectSword_Init(sword, obj->position, &obj->properties->character->meleeOffense, false, swordDir, 150);
 			obj->properties->meleeAttackStopwatch = 0;
 		}
 	}
