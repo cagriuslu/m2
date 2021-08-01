@@ -5,6 +5,7 @@
 #include "TerrainLoader.h"
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 int Level_Init(Level* level) {
 	memset(level, 0, sizeof(Level));
@@ -62,8 +63,16 @@ void Level_Term(Level* level) {
 int Level_LoadTest(Level* level) {
 	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
 
+	Array standardItemSet;
+	Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX);
+	Item_GenerateStandardItemSet(&standardItemSet);
+	Character* character = malloc(sizeof(Character));
+	assert(character);
+	Character_Init(character, CHARTYP_HUMAN, 1, standardItemSet);
+	Character_Preprocess(character);
+
 	Object* player = Bucket_Mark(&level->objects, NULL, &level->playerId);
-	ObjectPlayer_Init(player);
+	ObjectPlayer_Init(player, character);
 
 	Object* camera = Bucket_Mark(&level->objects, NULL, &level->cameraId);
 	ObjectCamera_Init(camera);

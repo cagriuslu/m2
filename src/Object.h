@@ -83,7 +83,7 @@ typedef struct _TileDef {
 } TileDef;
 
 int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position);
-int ObjectPlayer_Init(Object* obj);
+int ObjectPlayer_Init(Object* obj, Character* character);
 int ObjectGod_Init(Object* obj);
 int ObjectCamera_Init(Object* obj);
 int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense);

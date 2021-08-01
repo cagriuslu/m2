@@ -31,7 +31,6 @@ TTF_Font* CurrentFont();
 
 Level* CurrentLevel();
 unsigned DeltaTicks();
-Character* CurrentCharacter();
 
 Vec2F CurrentPointerPositionInWorld();
 

@@ -44,14 +44,14 @@ static void Player_prePhysics(ComponentEventListener* el) {
 		Item* curr, * next, * prev;
 		if (IsKeyDown(KEY_MODIFIER_SHIFT)) {
 			LOG_INF("Switched to next secondary weapon");
-			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
-			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
-			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
+			curr = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
 		} else {
 			LOG_INF("Switched to next primary weapon");
-			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
-			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
-			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
+			curr = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
 		}
 		curr->flags &= ~ITEMFLAG_EQUIPPED;
 		curr->flags |= ITEMFLAG_PREEQUIPPED_PREV;
@@ -59,19 +59,19 @@ static void Player_prePhysics(ComponentEventListener* el) {
 		next->flags |= ITEMFLAG_EQUIPPED;
 		prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
 		prev->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
-		Character_Preprocess(CurrentCharacter());
+		Character_Preprocess(obj->properties->character);
 	} else if (IsButtonPressed(BUTTON_SCROLL_UP)) {
 		Item* curr, * next, * prev;
 		if (IsKeyDown(KEY_MODIFIER_SHIFT)) {
 			LOG_INF("Switched to previous secondary weapon");
-			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
-			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
-			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
+			curr = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
 		} else {
 			LOG_INF("Switched to previous primary weapon");
-			curr = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
-			next = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
-			prev = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
+			curr = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
+			next = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
+			prev = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
 		}
 		curr->flags &= ~ITEMFLAG_EQUIPPED;
 		curr->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
@@ -79,15 +79,15 @@ static void Player_prePhysics(ComponentEventListener* el) {
 		next->flags |= ITEMFLAG_PREEQUIPPED_PREV;
 		prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
 		prev->flags |= ITEMFLAG_EQUIPPED;
-		Character_Preprocess(CurrentCharacter());
+		Character_Preprocess(obj->properties->character);
 	} else {
 		if (IsButtonDown(BUTTON_PRIMARY) && (100 < obj->properties->rangedAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* bullet = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			Item* projectileWeapon = Item_FindItemByTypeByFlags(&CurrentCharacter()->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
-			ObjectBullet_Init(bullet, obj->position, bulletDir, projectileWeapon->type, &CurrentCharacter()->projectileOffense);
+			Item* projectileWeapon = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
+			ObjectBullet_Init(bullet, obj->position, bulletDir, projectileWeapon->type, &obj->properties->character->projectileOffense);
 			obj->properties->rangedAttackStopwatch = 0;
 		}
 
@@ -96,18 +96,19 @@ static void Player_prePhysics(ComponentEventListener* el) {
 			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ObjectSword_Init(sword, obj->position, &CurrentCharacter()->meleeOffense, swordDir, 150);
+			ObjectSword_Init(sword, obj->position, &obj->properties->character->meleeOffense, swordDir, 150);
 			obj->properties->meleeAttackStopwatch = 0;
 		}
 	}
 }
 
-int ObjectPlayer_Init(Object* obj) {
+int ObjectPlayer_Init(Object* obj, Character* character) {
 	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
 	ID objId = Bucket_GetId(&CurrentLevel()->objects, obj);
 	// Write-back originator ID of Character Offenses
-	CurrentCharacter()->charOffense.originator = objId;
-	Character_Preprocess(CurrentCharacter());
+	obj->properties->character = character;
+	obj->properties->character->charOffense.originator = objId;
+	Character_Preprocess(obj->properties->character);
 
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = Player_prePhysics;
@@ -129,12 +130,11 @@ int ObjectPlayer_Init(Object* obj) {
 	gfx->txCenter = (Vec2F){ 0.0, 6.5 };
 
 	ComponentDefense* def = Object_AddDefense(obj, NULL);
-	ComponentDefense_CopyExceptSuper(def, &CurrentCharacter()->defense);
+	ComponentDefense_CopyExceptSuper(def, &obj->properties->character->defense);
 	def->hp = def->maxHp;
 
 	ComponentLightSource* light = Object_AddLightSource(obj, 4.0f, NULL);
 	light->power = 3.0f;
-
 
 	return 0;
 }
