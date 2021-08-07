@@ -29,7 +29,7 @@ int TerrainLoader_LoadTiles(Level* level, const char *tname) {
 	Txt txt;
 	PROPAGATE_ERROR(Txt_InitFromFile(&txt, tname));
 	HashMap tileDefs;
-	PROPAGATE_ERROR(HashMap_Init(&tileDefs, sizeof(TileDef)));
+	PROPAGATE_ERROR(HashMap_Init(&tileDefs, sizeof(TileDef), NULL));
 
 	for (uint32_t txtKVIndex = 0; txtKVIndex < Array_Length(&txt.txtKVPairs); txtKVIndex++) {
 		TxtKV* txtKV = Array_Get(&txt.txtKVPairs, txtKVIndex);
@@ -55,19 +55,24 @@ int TerrainLoader_LoadTiles(Level* level, const char *tname) {
 	return 0;
 }
 
+void TerrainLoader_LoadEnemies_ItemTerm(void* opaqueItemPtr) {
+	char** itemPtr = (char**)opaqueItemPtr;
+	char* item = *itemPtr;
+	free(item);
+}
+
 int TerrainLoader_LoadEnemies(Level* level, const char* tname) {
 	Txt txt;
 	PROPAGATE_ERROR(Txt_InitFromFile(&txt, tname));
 	HashMap enemyDescriptors;
-	HashMap_Init(&enemyDescriptors, sizeof(char*));
+	HashMap_Init(&enemyDescriptors, sizeof(char*), TerrainLoader_LoadEnemies_ItemTerm);
 
 	for (uint32_t txtKVIndex = 0; txtKVIndex < Array_Length(&txt.txtKVPairs); txtKVIndex++) {
 		TxtKV* txtKV = Array_Get(&txt.txtKVPairs, txtKVIndex);
 		char* value = TxtKV_DuplicateUrlEncodedValue(txtKV, "Enemy=");
-		if (!value) {
-			continue;
+		if (value) {
+			HashMap_SetInt64Key(&enemyDescriptors, txtKVIndex, &value);
 		}
-		HashMap_SetInt64Key(&enemyDescriptors, txtKVIndex, &value);
 	}
 
 	for (uint32_t rowIndex = 0, *rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex); rowPtr; ++rowIndex, rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex)) {
@@ -80,14 +85,6 @@ int TerrainLoader_LoadEnemies(Level* level, const char* tname) {
 		}
 	}
 
-	for (unsigned arrayIdx = 0; arrayIdx < 256; arrayIdx++) {
-		Array* array = enemyDescriptors.arrays + arrayIdx;
-		for (unsigned idx = 0; idx < Array_Length(array); idx++) {
-			HashMapItem *hmItem = Array_Get(array, idx);
-			char** valuePtr = (char**)hmItem->data;
-			free(*valuePtr);
-		}
-	}
 	HashMap_Term(&enemyDescriptors);
 	Txt_Term(&txt);
 	return 0;

@@ -7,19 +7,26 @@
 
 uint8_t HashMap_Hash(void* key);
 
-int HashMap_Init(HashMap* hm, size_t itemSize) {
+int HashMap_Init(HashMap* hm, size_t itemSize, void (*itemTerm)(void*)) {
 	memset(hm, 0, sizeof(HashMap));
 	hm->arrays = calloc(HASHMAP_BUCKET_COUNT, sizeof(Array));
 	assert(hm->arrays);
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		PROPAGATE_ERROR(Array_Init(hm->arrays + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1));
+		PROPAGATE_ERROR(Array_Init(hm->arrays + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
 	}
 	hm->itemSize = itemSize;
+	hm->itemTerm = itemTerm;
 	return 0;
 }
 
+static void HashMap_InitFromFile_StringToCharPtr_ItemTerm(void* opaqueItemPtr) {
+	char** itemPtr = (char**)opaqueItemPtr;
+	char* item = *itemPtr;
+	free(item);
+}
+
 XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath) {
-	PROPAGATE_ERROR(HashMap_Init(hm, sizeof(char*)));
+	PROPAGATE_ERROR(HashMap_Init(hm, sizeof(char*), HashMap_InitFromFile_StringToCharPtr_ItemTerm));
 	Txt txt;
 	PROPAGATE_ERROR(Txt_InitFromFile(&txt, fpath));
 	// Iterate over columns of the first row
@@ -43,10 +50,11 @@ XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 		// Iterate over items in the array
 		for (unsigned itemIdx = 0; itemIdx < Array_Length(hm->arrays + arrayIdx); itemIdx++) {
 			// Add new TxtKV to Txt
-			HashMapItem* item = Array_Get(hm->arrays + arrayIdx, itemIdx);
+			Array* array = hm->arrays + arrayIdx;
+			HashMapItem* item = Array_Get(array, itemIdx);
 			TxtKV* newKV = Array_Append(&txt.txtKVPairs, NULL);
 			TxtKV_SetKey(newKV, (char*)item->key);
-			TxtKV_SetValue(newKV, ((char**)item->data)[0], false);
+			TxtKV_SetValue(newKV, *((char**)item->data));
 			// Add an instance of the value into the HashMap
 			HashMap_SetInt32Keys(&txt.txtKVIndexes, insertedIdx, 0, &insertedIdx);
 			insertedIdx++;
@@ -59,7 +67,14 @@ XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 
 void HashMap_Term(HashMap* hm) {
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		Array_Term(hm->arrays + i);
+		Array* array = hm->arrays + i;
+		if (hm->itemTerm) {
+			for (size_t j = 0; j < Array_Length(array); j++) {
+				HashMapItem* item = Array_Get(array, j);
+				hm->itemTerm(item->data);
+			}
+		}
+		Array_Term(array);
 	}
 	free(hm->arrays);
 	memset(hm, 0, sizeof(HashMap));

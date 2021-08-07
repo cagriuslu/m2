@@ -15,13 +15,13 @@ XErr TxtKV_Init(TxtKV* kv) {
 }
 
 void TxtKV_SetKey(TxtKV* kv, const char* key) {
+	memset(kv->key, 0, sizeof(kv->key));
 	strncpy(kv->key, key, 7);
-	kv->key[7] = 0;
 }
 
-void TxtKV_SetValue(TxtKV* kv, const char* value, bool isDynamic) {
-	kv->value = value;
-	kv->isValueDynamic = isDynamic;
+void TxtKV_SetValue(TxtKV* kv, const char* value) {
+	kv->value = _strdup(value);
+	assert(kv->value);
 }
 
 char* TxtKV_DuplicateUrlEncodedValue(TxtKV* kv, const char* key) {
@@ -30,8 +30,8 @@ char* TxtKV_DuplicateUrlEncodedValue(TxtKV* kv, const char* key) {
 		return NULL;
 	}
 	char* valuePtr = keyPtr + strlen(key);
-	char* ampersandPtr = strchr(valuePtr, '&');
-	uintptr_t valueLen = ampersandPtr ? ampersandPtr - valuePtr : strlen(valuePtr);
+	char* nextAmpersandPtr = strchr(valuePtr, '&');
+	uintptr_t valueLen = nextAmpersandPtr ? nextAmpersandPtr - valuePtr : strlen(valuePtr);
 	char* value = malloc(valueLen + 1);
 	assert(value);
 	if (value) {
@@ -42,16 +42,14 @@ char* TxtKV_DuplicateUrlEncodedValue(TxtKV* kv, const char* key) {
 }
 
 void TxtKV_Term(TxtKV* kv) {
-	if (kv->isValueDynamic && kv->value) {
-		free((void*)kv->value);
-	}
+	free((void*)kv->value);
 	memset(kv, 0, sizeof(TxtKV));
 }
 
 XErr Txt_Init(Txt* txt) {
 	memset(txt, 0, sizeof(Txt));
-	PROPAGATE_ERROR(Array_Init(&txt->txtKVPairs, sizeof(TxtKV), 16, UINT32_MAX));
-	PROPAGATE_ERROR(HashMap_Init(&txt->txtKVIndexes, sizeof(uint32_t)));
+	PROPAGATE_ERROR(Array_Init(&txt->txtKVPairs, sizeof(TxtKV), 16, UINT32_MAX, TO_ARRAY_ITEM_TERM(TxtKV_Term)));
+	PROPAGATE_ERROR(HashMap_Init(&txt->txtKVIndexes, sizeof(uint32_t), NULL));
 	return 0;
 }
 
@@ -92,13 +90,11 @@ XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
 		}
 		char** keyPtr = Array_Get(&split, 0);
 		char** valuePtr = Array_Get(&split, 1);
-		char* valueDup = _strdup(*valuePtr);
-		assert(valueDup);
 		
-		TxtKV* txtKV = Array_Append(&txt->txtKVPairs, NULL);;
+		TxtKV* txtKV = Array_Append(&txt->txtKVPairs, NULL);
 		TxtKV_Init(txtKV);
 		TxtKV_SetKey(txtKV, *keyPtr);
-		TxtKV_SetValue(txtKV, valueDup, true);
+		TxtKV_SetValue(txtKV, *valuePtr);
 
 		Array_Term(&split);
 		Array_Term(&lineBuffer);
@@ -169,7 +165,7 @@ void Txt_Term(Txt* txt) {
 
 static Array MyGetline(FILE* file) {
 	Array lineBuffer;
-	Array_Init(&lineBuffer, sizeof(char), 256, SIZE_MAX);
+	Array_Init(&lineBuffer, sizeof(char), 256, SIZE_MAX, NULL);
 
 	int c;
 	char ch;
@@ -187,7 +183,7 @@ static Array MyGetline(FILE* file) {
 
 static Array MySplit(char* input, char delimiter) {
 	Array splitBuffer;
-	Array_Init(&splitBuffer, sizeof(char*), 256, SIZE_MAX);
+	Array_Init(&splitBuffer, sizeof(char*), 256, SIZE_MAX, NULL);
 
 	size_t totalSize = strlen(input);
 	for (size_t i = 0; i < totalSize; i++) {

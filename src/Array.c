@@ -6,7 +6,8 @@
 
 #define GROWTH_RATE (2.0)
 
-XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize) {
+XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize, void (*itemTerm)(void*)) {
+	memset(array, 0, sizeof(Array));
 	assert(initCapacity <= maxSize);
 	array->data = calloc(initCapacity, itemSize);
 	assert(array->data);
@@ -14,6 +15,7 @@ XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSi
 	array->length = 0;
 	array->capacity = initCapacity;
 	array->maxSize = maxSize;
+	array->itemTerm = itemTerm;
 	return 0;
 }
 
@@ -85,5 +87,12 @@ void* Array_GetLast(Array *array) {
 }
 
 void Array_Term(Array *array) {
+	if (array->itemTerm) {
+		for (size_t i = 0; i < array->length; i++) {
+			void* item = Array_Get(array, i);
+			array->itemTerm(item);
+		}
+	}
 	free(array->data);
+	memset(array, 0, sizeof(Array));
 }

@@ -26,7 +26,7 @@ void LevelEditorButton_onMouseButton(Ui *ui) {
 
 int DialogMainMenu(bool levelLoaded) {
 	Array uis;
-	Array_Init(&uis, sizeof(Ui), 16, SIZE_MAX);
+	Array_Init(&uis, sizeof(Ui), 16, SIZE_MAX, NULL);
 
 	int pressedButton = 0;
 

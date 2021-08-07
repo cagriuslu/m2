@@ -20,7 +20,7 @@ int Level_Init(Level* level) {
 	level->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	level->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
 	Box2DWorldSetContactListener(level->world, level->contactListener);
-	PROPAGATE_ERROR(Array_Init(&level->deleteList, sizeof(ID), 16, UINT16_MAX + 1));
+	PROPAGATE_ERROR(Array_Init(&level->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
 	PROPAGATE_ERROR(Bucket_Init(&level->lightSources, sizeof(ComponentLightSource)));
 	PROPAGATE_ERROR(SpatialMap_Init(&level->lightSourceSpatialMap, sizeof(ID)));
 	return 0;
@@ -64,7 +64,7 @@ int Level_LoadTest(Level* level) {
 	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
 
 	Array standardItemSet;
-	Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX);
+	Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX, NULL);
 	Item_GenerateStandardItemSet(&standardItemSet);
 	Character* character = malloc(sizeof(Character));
 	assert(character);

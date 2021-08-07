@@ -42,7 +42,9 @@ void LogTyp_Vec2I(LogLevel level, const char* file, int line, const char* messag
 void LogTyp_SDL_Rect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var);
 void LogTyp_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var);
 
-// Fixed variable names
+// Fixed variable names for LOGTYP_ family of functions
+#define LOGVAR_FPS "FPS"
 #define LOGVAR_MENU_SELECTION "MenuSelection"
+#define LOGVAR_FILE_PATH "FilePath"
 
 #endif

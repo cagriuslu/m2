@@ -1,19 +1,18 @@
 #ifndef AI_H
 #define AI_H
 
+#include "Array.h"
 #include "List.h"
 #include "Stopwatch.h"
 #include "Error.h"
 #include "Vec2F.h"
 
-#define AI_CAPABILITY_ATTACK_PLAYER_RANGED (1 << 0)
-#define AI_CAPABILITY_ATTACK_PLAYER_MELEE  (1 << 1)
-#define AI_CAPABILITY_GIVE_UP_ON_PLAYER    (1 << 2)
-#define AI_CAPABILITY_WANDER_AROUND_HOME   (1 << 3)
-#define AI_CAPABILITY_PATROL_AREA          (1 << 4)
-#define AI_CAPABILITY_PATROL_WAYPOINTS     (1 << 5)
-#define AI_CAPABILITY_HARASS_PLAYER_RANGED (1 << 6) // hit and run
-#define AI_CAPABILITY_HARASS_PLAYER_MELEE  (1 << 7) // hit and run
+#define AI_CAPABILITY_RANGED_ATTACK        (1 << 0) // Ranged
+#define AI_CAPABILITY_MELEE_ATTACK         (1 << 1) // Melee
+#define AI_CAPABILITY_WANDER_AROUND_HOME   (1 << 2) // WanderHome
+#define AI_CAPABILITY_PATROL_AREA          (1 << 3) // PatrolArea
+#define AI_CAPABILITY_PATROL_WAYPOINTS     (1 << 4) // PatrolPoints
+#define AI_CAPABILITY_HARASS               (1 << 5) // Harass
 
 typedef enum _AIMode {
 	AI_IDLE = 0,
@@ -22,6 +21,8 @@ typedef enum _AIMode {
 } AIMode;
 
 typedef struct _AI {
+	uint32_t capabilities;
+	
 	AIMode mode;
 	unsigned recalculationPeriod;
 	Stopwatch recalculationStopwatch;
@@ -29,6 +30,10 @@ typedef struct _AI {
 	Stopwatch attackStopwatch;
 	
 	Vec2F homePosition;
+	// If there is only one point, it is the home position
+	// If there are more than one points, they are either waypoints,
+	// or corners of a concave area.
+	ArrayOfVec2Fs interestPoints;
 	float triggerDistance;
 	
 	ListOfVec2Is reversedWaypointList;

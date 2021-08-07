@@ -15,7 +15,7 @@
 
 int PathfinderMap_InitFromLevel(PathfinderMap* pm, Level* level) {
 	memset(pm, 0, sizeof(PathfinderMap));
-	PROPAGATE_ERROR(HashMap_Init(&pm->blockedLocations, sizeof(bool)));
+	PROPAGATE_ERROR(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
 
 	for (ComponentPhysics* phy = Bucket_GetFirst(&level->physics); phy; phy = Bucket_GetNext(&level->physics, phy)) {
 		Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
@@ -88,12 +88,12 @@ int _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List
 
 	// Holds from which position should you approach a certain position
 	HashMap cameFrom;
-	HashMap_Init(&cameFrom, sizeof(Vec2I));
+	HashMap_Init(&cameFrom, sizeof(Vec2I), NULL);
 	tmpCameFrom = from;
 	HashMap_SetInt64Key(&cameFrom, Vec2IToHashMapKey(from), &tmpCameFrom);
 
 	HashMap costSoFar;
-	HashMap_Init(&costSoFar, sizeof(float));
+	HashMap_Init(&costSoFar, sizeof(float), NULL);
 	tmpCostSoFar = 0.0f;
 	HashMap_SetInt64Key(&costSoFar, Vec2IToHashMapKey(from), &tmpCostSoFar);
 

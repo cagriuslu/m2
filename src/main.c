@@ -203,7 +203,7 @@ main_menu:
 		frameCount++;
 		if (2000 < frameTimeAccumulator) {
 			frameTimeAccumulator -= 2000;
-			LOGTYP_DBG("fps", Int32, frameCount / 2);
+			LOGTYP_DBG(LOGVAR_FPS, Int32, frameCount / 2);
 			frameCount = 0;
 		}
 	}

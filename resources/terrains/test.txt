@@ -1,7 +1,7 @@
 0	Tile=Ground
 wh	Tile=WallHorizontal
 wv	Tile=WallVertical
-s	Tile=Ground&Enemy=Skeleton
+s	Tile=Ground&Enemy=Skeleton-Melee
 %
 0	0	0	0	0	0	0	0	0	0	0	0	
 0	wh	wh	wh	wh	wh	wh	wh	wh	wh	wh	0	

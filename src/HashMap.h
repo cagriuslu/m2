@@ -10,15 +10,17 @@
 typedef struct _HashMap {
 	Array* arrays; // HASHMAP_BUCKET_COUNT arrays
 	size_t itemSize;
+	void (*itemTerm)(void*);
 } HashMap;
 typedef struct _HashMapItem {
 	uint8_t key[HASHMAP_KEY_SIZE];
 	char data[0];
 } HashMapItem;
 typedef HashMap HashMapOfInt32s;
+typedef HashMap HashMapOfTextures;
 
-int HashMap_Init(HashMap *hm, size_t itemSize);
-XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath); // Char pointers must be freed
+int HashMap_Init(HashMap *hm, size_t itemSize, void (*itemTerm)(void*));
+XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath);
 XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath);
 void HashMap_Term(HashMap* hm);
 
@@ -40,5 +42,7 @@ void* HashMap_Set(HashMap* hm, void* key, void* copy);
 void* HashMap_TrySet(HashMap* hm, void* key, void* copy); // Sets only if key not exists
 void* HashMap_Get(HashMap* hm, void* key);
 void HashMap_Unset(HashMap* hm, void* key);
+
+#define TO_HASHMAP_ITEM_TERM(funcptr) ((void (*)(void*))(funcptr))
 
 #endif
