@@ -9,7 +9,6 @@
 typedef struct _TxtKV {
 	char key[8]; // 7 chars + nil
 	const char* value;
-	bool isValueDynamic;
 } TxtKV;
 
 XErr TxtKV_Init(TxtKV* kv);

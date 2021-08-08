@@ -4,6 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define VEC2I_ZERO ((Vec2I){0, 0})
+#define VEC2I_TO2F(v2i) ((Vec2F) { (float)((v2i).x), (float)((v2i).y) })
+
+// Forward declarations
+typedef struct _Vec2F Vec2F;
+
 typedef struct _Vec2I {
 	int32_t x, y;
 } Vec2I;

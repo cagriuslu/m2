@@ -113,6 +113,9 @@ int ObjectPlayer_Init(Object* obj, Character* character) {
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = Player_prePhysics;
 
+	TextureMap* textureMap = CurrentTextureMap();
+	Texture* texture = HashMap_GetStringKey(&textureMap->lut, "playr00");
+
 	ID phyId = 0;
 	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
 	phy->body = Box2DUtils_CreateDynamicDisk(
@@ -120,14 +123,15 @@ int ObjectPlayer_Init(Object* obj, Character* character) {
 		obj->position,
 		false, // allowSleep
 		CATEGORY_PLAYER,
-		0.229167f, // Radius
+		texture->diskRadius,
 		4.0f, // Mass
 		10.0f // Damping
 	);
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
-	gfx->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
-	gfx->txCenter = (Vec2F){ 0.0, 6.5 };
+	gfx->tx = texture->map;
+	gfx->txSrc = texture->rect;
+	gfx->txCenter = texture->center;
 
 	ComponentDefense* def = Object_AddDefense(obj, NULL);
 	ComponentDefense_CopyExceptSuper(def, &obj->properties->character->defense);

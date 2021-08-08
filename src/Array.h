@@ -15,6 +15,7 @@ typedef struct _Array {
 
 // Specializations
 typedef Array ArrayOfTxtKVs;
+typedef Array ArrayOfVec2Is;
 typedef Array ArrayOfVec2Fs;
 
 // Constructors

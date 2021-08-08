@@ -13,6 +13,10 @@ Vec2F Vec2F_Mul(Vec2F lhs, float rhs) {
 	return (Vec2F) {lhs.x * rhs, lhs.y * rhs};
 }
 
+Vec2F Vec2F_Div(Vec2F lhs, float rhs) {
+	return (Vec2F) { lhs.x / rhs, lhs.y / rhs };
+}
+
 float Vec2F_Length(Vec2F in) {
 	if (in.x == 0.0f && in.y == 0.0f) {
 		return 0.0f;
@@ -30,6 +34,11 @@ Vec2F Vec2F_Normalize(Vec2F in) {
 
 float Vec2F_Distance(Vec2F lhs, Vec2F rhs) {
 	return Vec2F_Length(Vec2F_Sub(lhs, rhs));
+}
+
+Vec2F Vec2F_Distance2(Vec2F lhs, Vec2F rhs) {
+	Vec2F difference = Vec2F_Sub(lhs, rhs);
+	return (Vec2F) { fabsf(difference.x), fabsf(difference.y) };
 }
 
 float Vec2F_AngleRads(Vec2F vector) {

@@ -1,4 +1,5 @@
 #include "Vec2I.h"
+#include "Vec2F.h"
 
 Vec2I Vec2I_Add(Vec2I lhs, Vec2I rhs) {
 	return (Vec2I) {lhs.x + rhs.x, lhs.y + rhs.y};

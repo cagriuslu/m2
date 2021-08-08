@@ -37,6 +37,11 @@ void* HashMap_SetInt64Key(HashMap* hm, int64_t key, void* copy);
 void* HashMap_TrySetInt64Key(HashMap* hm, int64_t key, void* copy);
 void* HashMap_GetInt64Key(HashMap* hm, int64_t key);
 void HashMap_UnsetInt64Key(HashMap* hm, int64_t key);
+// with String key
+void* HashMap_SetStringKey(HashMap* hm, const char* key, void* copy);
+void* HashMap_TrySetStringKey(HashMap* hm, const char* key, void* copy);
+void* HashMap_GetStringKey(HashMap* hm, const char* key);
+void HashMap_UnsetStringKey(HashMap* hm, const char* key);
 // Key must be 8 bytes
 void* HashMap_Set(HashMap* hm, void* key, void* copy);
 void* HashMap_TrySet(HashMap* hm, void* key, void* copy); // Sets only if key not exists

@@ -7,20 +7,16 @@
 #include "Event.h"
 #include "Bucket.h"
 #include "Level.h"
-#include "Item.h"
 #include "Dialog.h"
 #include "Log.h"
-#include "Character.h"
-#include "List.h"
 #include "Pathfinder.h"
-#include "HashMap.h"
+#include "TextureMap.h"
 #include "Txt.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <math.h>
 
 int gScreenWidth = 1600, gScreenHeight = 900;
 const float gGameAreaAspectRatio = 5.0f / 4.0f;
@@ -30,6 +26,7 @@ uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
+TextureMap gTextureMap;
 
 Level gLevel;
 unsigned gDeltaTicks;
@@ -59,8 +56,9 @@ int main(int argc, char **argv) {
 	SDL_SetWindowMinimumSize(window, 800, 450);
 	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
-	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TILE_WIDTH_STR "x" TILE_WIDTH_STR ".png"));
+	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TEXTURE_FILE_KEY ".png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
+	TextureMap_Init(&gTextureMap, TILE_WIDTH, "resources/" TEXTURE_FILE_KEY ".png", "resources/" TEXTURE_FILE_KEY "_META.png", "resources/" TEXTURE_FILE_KEY "_META.txt");
 
 	bool levelLoaded = false;
 
@@ -246,6 +244,10 @@ SDL_Texture* CurrentTextureLUT() {
 
 TTF_Font* CurrentFont() {
 	return gFont;
+}
+
+TextureMap* CurrentTextureMap() {
+	return &gTextureMap;
 }
 
 Level* CurrentLevel() {

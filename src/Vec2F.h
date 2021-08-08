@@ -3,6 +3,8 @@
 
 #include "Vec2I.h"
 
+#define VEC2F_ZERO ((Vec2F){0.0f, 0.0f})
+
 typedef struct _Vec2F {
 	float x, y;
 } Vec2F;
@@ -10,9 +12,11 @@ typedef struct _Vec2F {
 Vec2F Vec2F_Add(Vec2F lhs, Vec2F rhs);
 Vec2F Vec2F_Sub(Vec2F lhs, Vec2F rhs);
 Vec2F Vec2F_Mul(Vec2F lhs, float rhs);
+Vec2F Vec2F_Div(Vec2F lhs, float rhs);
 float Vec2F_Length(Vec2F in);
 Vec2F Vec2F_Normalize(Vec2F in);
 float Vec2F_Distance(Vec2F lhs, Vec2F rhs);
+Vec2F Vec2F_Distance2(Vec2F lhs, Vec2F rhs);
 float Vec2F_AngleRads(Vec2F vector);
 
 bool Vec2F_Equals(Vec2F lhs, Vec2F rhs);

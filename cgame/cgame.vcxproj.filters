@@ -162,6 +162,9 @@
     <ClCompile Include="..\src\Sqlite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\TextureMap.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h">
@@ -264,6 +267,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Sqlite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TextureMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

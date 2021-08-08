@@ -130,6 +130,22 @@ void HashMap_UnsetInt64Key(HashMap* hm, int64_t key) {
 	HashMap_Unset(hm, &key);
 }
 
+void* HashMap_SetStringKey(HashMap* hm, const char* key, void* copy) {
+	return HashMap_Set(hm, (void*)key, copy);
+}
+
+void* HashMap_TrySetStringKey(HashMap* hm, const char* key, void* copy) {
+	return HashMap_TrySet(hm, (void*)key, copy);
+}
+
+void* HashMap_GetStringKey(HashMap* hm, const char* key) {
+	return HashMap_Get(hm, (void*)key);
+}
+
+void HashMap_UnsetStringKey(HashMap* hm, const char* key) {
+	HashMap_Unset(hm, (void*)key);
+}
+
 void* HashMap_Set(HashMap* hm, void* key, void* copy) {
 	void* collision = HashMap_Get(hm, key);
 	if (collision) {
@@ -148,7 +164,7 @@ void* HashMap_Set(HashMap* hm, void* key, void* copy) {
 			}
 		}
 
-		return newItem;
+		return newItem ? newItem->data : NULL;
 	}
 }
 
@@ -167,7 +183,7 @@ void* HashMap_TrySet(HashMap* hm, void* key, void* copy) {
 			}
 		}
 
-		return newItem;
+		return newItem ? newItem->data : NULL;
 	}
 }
 
@@ -179,6 +195,7 @@ void* HashMap_Get(HashMap* hm, void* key) {
 		HashMapItem* iter = Array_Get(array, i);
 		if (iter && memcmp(iter->key, key, HASHMAP_KEY_SIZE) == 0) {
 			mapItem = iter;
+			break;
 		}
 	}
 	
