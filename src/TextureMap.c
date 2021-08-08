@@ -2,12 +2,12 @@
 #include "Log.h"
 #include "Main.h"
 #include "Txt.h"
+#include "SDLUtils.h"
 #include <SDL_image.h>
 #include <string.h>
 
 ArrayOfVec2Is FindPixels(SDL_Surface* surf, SDL_Rect rect, uint8_t r, uint8_t g, uint8_t b);
-Vec2F FindCenterOfPixels(ArrayOfVec2Is* pixels);
-Vec2I FindCenterOfSDLRect(SDL_Rect rect);
+Vec2F FindCenterOfPixels(ArrayOfVec2Is* points);
 
 XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageFile, const char* metaImageFile, const char* metaFile) {
 	memset(tm, 0, sizeof(TextureMap));
@@ -69,7 +69,7 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 		free(yStr);
 		free(xStr);
 
-		const Vec2F originPoint = VEC2I_TO2F(FindCenterOfSDLRect(texture->rect));
+		const Vec2F originPoint = VEC2I_TO2F(SDLUtils_CenterOfRect(texture->rect));
 
 		// Look for red pixels for center
 		ArrayOfVec2Is redPixels = FindPixels(metaImage, texture->rect, 255, 0, 0);
@@ -153,8 +153,4 @@ Vec2F FindCenterOfPixels(ArrayOfVec2Is* points) {
 		center = Vec2F_Add(center, VEC2I_TO2F(*point));
 	}
 	return Vec2F_Div(center, (float)Array_Length(points));
-}
-
-Vec2I FindCenterOfSDLRect(SDL_Rect rect) {
-	return (Vec2I) { rect.x + rect.w / 2, rect.y + rect.h / 2 };
 }
