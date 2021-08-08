@@ -6,4 +6,6 @@
 
 Vec2I SDLUtils_CenterOfRect(SDL_Rect rect);
 
+SDL_Cursor* SDLUtils_CreateCursor();
+
 #endif

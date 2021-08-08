@@ -8,6 +8,7 @@
 #include "Bucket.h"
 #include "Level.h"
 #include "Dialog.h"
+#include "SDLUtils.h"
 #include "Log.h"
 #include "Pathfinder.h"
 #include "TextureMap.h"
@@ -54,6 +55,8 @@ int main(int argc, char **argv) {
 	SetWindowSizeAndPPM(gScreenWidth, gScreenHeight);
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	SDL_SetWindowMinimumSize(window, 800, 450);
+	SDL_Cursor* cursor = SDLUtils_CreateCursor();
+	SDL_SetCursor(cursor);
 	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
 	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TEXTURE_FILE_KEY ".png"));
@@ -207,6 +210,7 @@ main_menu:
 	}
 
 	SDL_DestroyRenderer(gRenderer);
+	SDL_FreeCursor(cursor);
 	SDL_DestroyWindow(window);
 	TTF_Quit();
 	IMG_Quit();
