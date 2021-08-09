@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
 	TTF_Init();
 	SetWindowSizeAndPPM(gScreenWidth, gScreenHeight);
 	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	SDL_SetWindowMinimumSize(window, 711, 400);
+	SDL_SetWindowMinimumSize(window, 712, 400);
 	SDL_Cursor* cursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(cursor);
 	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
