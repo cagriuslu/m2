@@ -7,42 +7,57 @@ Vec2I SDLUtils_CenterOfRect(SDL_Rect rect) {
 }
 
 SDL_Cursor* SDLUtils_CreateCursor() {
-    const uint8_t data[] = {
-    	0xFF, 0xFF, // 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-    	0x80, 0x01, // 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
-    	0x80, 0x01, // 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
-    	0x9F, 0xFF, // 1 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0x90, 0x00, // 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-    };
-    const uint8_t mask[] = {
-        0xFF, 0xFF, // 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        0xFF, 0xFF, // 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        0xFF, 0xFF, // 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        0xFF, 0xFF, // 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-        0xF0, 0x00, // 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0
-    };
+    const char* str =
+		"                                "
+		"            X     X             "
+		"           X.X   X.X            "
+		"           X..X X..X            "
+		"           X...X...X            "
+		"            X.....X             "
+		"            X.....X             "
+		"             X...X              "
+		"             X...X              "
+		"              X.X               "
+		"              X.X               "
+		"  XXX          X          XXX   "
+		" X...XX                 XX...X  "
+		"  X....XX             XX....X   "
+		"   X.....XX   XXX   XX.....X    "
+		"    X......X  X.X  X......X     "
+		"   X.....XX   XXX   XX.....X    "
+		"  X....XX             XX....X   "
+		" X...XX                 XX...X  "
+		"  XXX          X          XXX   "
+		"              X.X               "
+		"              X.X               "
+		"             X...X              "
+		"             X...X              "
+		"            X.....X             "
+		"            X.....X             "
+		"           X...X...X            "
+		"           X..X X..X            "
+		"           X.X   X.X            "
+		"            X     X             "
+		"                                "
+		"                                "
+	;
 
-    return SDL_CreateCursor(data, mask, 16, 16, 0, 0);
+    uint8_t data[128] = { 0 };
+    uint8_t mask[128] = { 0 };
+    const unsigned side_size = 32;
+
+	for (int y = 0; y < side_size; y++) {
+		for (int x = 0; x < side_size; x++) {
+            int index = y * side_size + x;
+            char c = str[index];
+			if (c == 'X') {
+                data[index / 8] |= 0x80 >> (index % 8);
+                mask[index / 8] |= 0x80 >> (index % 8);
+			} else if (c == '.') {
+                mask[index / 8] |= 0x80 >> (index % 8);
+			}
+		}
+	}
+
+	return SDL_CreateCursor(data, mask, side_size, side_size, side_size / 2 - 1, side_size / 2 - 1);
 }
