@@ -74,6 +74,8 @@ int Level_LoadTest(Level* level) {
 	Object* player = Bucket_Mark(&level->objects, NULL, &level->playerId);
 	ObjectPlayer_Init(player, character);
 
+	Hud_Init(&level->hud, level->playerId);
+
 	Object* camera = Bucket_Mark(&level->objects, NULL, &level->cameraId);
 	ObjectCamera_Init(camera);
 

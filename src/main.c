@@ -20,8 +20,10 @@
 #include <stdio.h>
 
 int gScreenWidth = 1600, gScreenHeight = 900;
-const float gGameAreaAspectRatio = 5.0f / 4.0f;
 float gPixelsPerMeter;
+float gAspectRatioDiff;
+float gEnvelopeWidth;
+float gRealScreenWidth, gRealScreenHeight;
 int gTileWidth = TILE_WIDTH;
 uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
@@ -35,7 +37,23 @@ unsigned gDeltaTicks;
 void SetWindowSizeAndPPM(int width, int height) {
 	gScreenWidth = width;
 	gScreenHeight = height;
-	gPixelsPerMeter = height / 16.0f;
+	gAspectRatioDiff = ((float)gScreenWidth / (float)gScreenHeight) - SCREEN_ASPECT_RATIO;
+	if (0.001f < gAspectRatioDiff) {
+		// Screen is wider than expected, we need envelope on left & right
+		gRealScreenWidth = (float)gScreenHeight * SCREEN_ASPECT_RATIO;
+		gRealScreenHeight = (float)gScreenHeight;
+		gEnvelopeWidth = ((float)gScreenWidth - gRealScreenWidth) / 2.0f;
+	} else if (gAspectRatioDiff < -0.001f) {
+		// Screen is taller than expected, we need envelope on top & bottom
+		gRealScreenWidth = (float)gScreenWidth;
+		gRealScreenHeight = (float)gScreenWidth / SCREEN_ASPECT_RATIO;
+		gEnvelopeWidth = ((float)gScreenHeight - gRealScreenHeight) / 2.0f;
+	} else {
+		gRealScreenWidth = (float)gScreenWidth;
+		gRealScreenHeight = (float)gScreenHeight;
+		gEnvelopeWidth = 0.0f;
+	}
+	gPixelsPerMeter = gRealScreenHeight / 16.0f;
 }
 
 int main(int argc, char **argv) {
@@ -189,11 +207,29 @@ main_menu:
 				gfx->draw(gfx);
 			}
 		}
+		Hud_Draw(&gLevel.hud);
 		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += gDeltaTicks;
 		for (ComponentEventListener* el = Bucket_GetFirst(&gLevel.eventListeners); el; el = Bucket_GetNext(&gLevel.eventListeners, el)) {
 			if (el->postGraphics) {
 				el->postGraphics(el);
+			}
+		}
+		if (gEnvelopeWidth != 0.0f) {
+			// Draw envelope
+			SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+			if (0.001f < gAspectRatioDiff) {
+				// Screen is wider than expected, we need envelope on left & right
+				SDL_Rect leftEnvelope = (SDL_Rect){ 0, 0, (int)gEnvelopeWidth, gScreenHeight };
+				SDL_Rect rightEnvelope = (SDL_Rect){ gScreenWidth - (int)gEnvelopeWidth, 0, (int)gEnvelopeWidth, gScreenHeight };
+				SDL_RenderFillRect(gRenderer, &leftEnvelope);
+				SDL_RenderFillRect(gRenderer, &rightEnvelope);
+			} else if (gAspectRatioDiff < -0.001f) {
+				// Screen is taller than expected, we need envelope on top & bottom
+				SDL_Rect topEnvelope = (SDL_Rect){ 0, 0, gScreenWidth, (int)gEnvelopeWidth };
+				SDL_Rect bottomEnvelope = (SDL_Rect){ 0, gScreenHeight - (int)gEnvelopeWidth, gScreenWidth, (int)gEnvelopeWidth };
+				SDL_RenderFillRect(gRenderer, &topEnvelope);
+				SDL_RenderFillRect(gRenderer, &bottomEnvelope);
 			}
 		}
 		SDL_RenderPresent(gRenderer);
@@ -262,7 +298,7 @@ unsigned DeltaTicks() {
 	return gDeltaTicks;
 }
 
-Vec2F CurrentPointerPositionInWorld() {
+Vec2F CurrentPointerPositionInWorld(void) {
 	Object* camera = Bucket_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	Vec2F cameraPosition = camera->position;
 

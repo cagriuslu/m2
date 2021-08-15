@@ -4,6 +4,7 @@
 #include "Bucket.h"
 #include "InsertionList.h"
 #include "Box2D.h"
+#include "Hud.h"
 #include "Pathfinder.h"
 #include "SpatialMap.h"
 
@@ -21,6 +22,8 @@ typedef struct _Level {
 	ID cameraId, playerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
+	Hud hud;
+	// Not used
 	Bucket lightSources;
 	SpatialMap lightSourceSpatialMap;
 } Level;

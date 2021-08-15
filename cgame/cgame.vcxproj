@@ -183,6 +183,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Dialogs\DialogMainMenu.c" />
     <ClCompile Include="..\src\Event.c" />
     <ClCompile Include="..\src\HashMap.c" />
+    <ClCompile Include="..\src\Hud.c" />
     <ClCompile Include="..\src\InsertionList.c" />
     <ClCompile Include="..\src\Item.c" />
     <ClCompile Include="..\src\Level.c" />

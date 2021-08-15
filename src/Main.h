@@ -24,6 +24,10 @@
 #define TILE_HEIGHT_STR "24"
 #define TEXTURE_FILE_KEY TILE_WIDTH_STR "x" TILE_HEIGHT_STR
 
+#define GAME_ASPECT_RATIO (5.0f / 4.0f)
+#define SCREEN_ASPECT_RATIO (16.0f / 9.0f)
+#define HUD_ASPECT_RATIO ((SCREEN_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f)
+
 int CurrentScreenWidth();
 int CurrentScreenHeight();
 float CurrentPixelsPerMeter();
@@ -37,6 +41,6 @@ TextureMap* CurrentTextureMap();
 Level* CurrentLevel();
 unsigned DeltaTicks();
 
-Vec2F CurrentPointerPositionInWorld();
+Vec2F CurrentPointerPositionInWorld(void);
 
 #endif
