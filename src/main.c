@@ -21,9 +21,10 @@
 
 int gScreenWidth = 1600, gScreenHeight = 900;
 float gPixelsPerMeter;
-float gAspectRatioDiff;
-float gEnvelopeWidth;
-float gRealScreenWidth, gRealScreenHeight;
+int gGameAndHudScreenWidth, gGameAndHudScreenHeight;
+SDL_Rect gFirstEnvelopeRect, gSecondEnvelopeRect;
+SDL_Rect gLeftHudRect, gRightHudRect;
+float gHudScreenWidth, gHudScreenHeight;
 int gTileWidth = TILE_WIDTH;
 uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
@@ -37,23 +38,37 @@ unsigned gDeltaTicks;
 void SetWindowSizeAndPPM(int width, int height) {
 	gScreenWidth = width;
 	gScreenHeight = height;
-	gAspectRatioDiff = ((float)gScreenWidth / (float)gScreenHeight) - SCREEN_ASPECT_RATIO;
-	if (0.001f < gAspectRatioDiff) {
+	float aspectRatioDiff = ((float)gScreenWidth / (float)gScreenHeight) - GAME_AND_HUD_ASPECT_RATIO;
+	if (0.001f < aspectRatioDiff) {
 		// Screen is wider than expected, we need envelope on left & right
-		gRealScreenWidth = (float)gScreenHeight * SCREEN_ASPECT_RATIO;
-		gRealScreenHeight = (float)gScreenHeight;
-		gEnvelopeWidth = ((float)gScreenWidth - gRealScreenWidth) / 2.0f;
-	} else if (gAspectRatioDiff < -0.001f) {
+		gGameAndHudScreenWidth = (int)roundf((float)gScreenHeight * GAME_AND_HUD_ASPECT_RATIO);
+		gGameAndHudScreenHeight = gScreenHeight;
+		int envelopeWidth = (gScreenWidth - gGameAndHudScreenWidth) / 2;
+		gFirstEnvelopeRect = (SDL_Rect){ 0, 0, envelopeWidth, gScreenHeight };
+		gSecondEnvelopeRect = (SDL_Rect){ gScreenWidth - envelopeWidth, 0, envelopeWidth, gScreenHeight };
+		int hudWidth = (int)roundf((float)gGameAndHudScreenHeight * HUD_ASPECT_RATIO);
+		gLeftHudRect = (SDL_Rect){ envelopeWidth, 0, hudWidth, gGameAndHudScreenHeight };
+		gRightHudRect = (SDL_Rect){ gScreenWidth - envelopeWidth - hudWidth, 0, hudWidth, gGameAndHudScreenHeight };
+	} else if (aspectRatioDiff < -0.001f) {
 		// Screen is taller than expected, we need envelope on top & bottom
-		gRealScreenWidth = (float)gScreenWidth;
-		gRealScreenHeight = (float)gScreenWidth / SCREEN_ASPECT_RATIO;
-		gEnvelopeWidth = ((float)gScreenHeight - gRealScreenHeight) / 2.0f;
+		gGameAndHudScreenWidth = gScreenWidth;
+		gGameAndHudScreenHeight = (int)roundf((float)gScreenWidth / GAME_AND_HUD_ASPECT_RATIO);
+		int envelopeWidth = (gScreenHeight - gGameAndHudScreenHeight) / 2;
+		gFirstEnvelopeRect = (SDL_Rect){ 0, 0, gScreenWidth, envelopeWidth };
+		gSecondEnvelopeRect = (SDL_Rect){ 0, gScreenHeight - envelopeWidth, gScreenWidth, envelopeWidth };
+		int hudWidth = (int)roundf((float)gGameAndHudScreenHeight * HUD_ASPECT_RATIO);
+		gLeftHudRect = (SDL_Rect){ 0, envelopeWidth, hudWidth, gGameAndHudScreenHeight };
+		gRightHudRect = (SDL_Rect){ gScreenWidth - hudWidth, envelopeWidth, hudWidth, gGameAndHudScreenHeight };
 	} else {
-		gRealScreenWidth = (float)gScreenWidth;
-		gRealScreenHeight = (float)gScreenHeight;
-		gEnvelopeWidth = 0.0f;
+		gGameAndHudScreenWidth = (float)gScreenWidth;
+		gGameAndHudScreenHeight = (float)gScreenHeight;
+		gFirstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
+		gSecondEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
+		int hudWidth = (int)roundf((float)gGameAndHudScreenHeight * HUD_ASPECT_RATIO);
+		gLeftHudRect = (SDL_Rect){ 0, 0, hudWidth, gGameAndHudScreenHeight };
+		gRightHudRect = (SDL_Rect){ gScreenWidth - hudWidth, 0, hudWidth, gGameAndHudScreenHeight };
 	}
-	gPixelsPerMeter = gRealScreenHeight / 16.0f;
+	gPixelsPerMeter = gGameAndHudScreenHeight / 16.0f;
 }
 
 int main(int argc, char **argv) {
@@ -207,6 +222,11 @@ main_menu:
 				gfx->draw(gfx);
 			}
 		}
+		// Draw HUD background
+		SDL_SetRenderDrawColor(gRenderer, 5, 5, 5, 255);
+		SDL_RenderFillRect(gRenderer, &gLeftHudRect);
+		SDL_RenderFillRect(gRenderer, &gRightHudRect);
+		// Draw HUD
 		Hud_Draw(&gLevel.hud);
 		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += gDeltaTicks;
@@ -215,23 +235,11 @@ main_menu:
 				el->postGraphics(el);
 			}
 		}
-		if (gEnvelopeWidth != 0.0f) {
-			// Draw envelope
-			SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-			if (0.001f < gAspectRatioDiff) {
-				// Screen is wider than expected, we need envelope on left & right
-				SDL_Rect leftEnvelope = (SDL_Rect){ 0, 0, (int)gEnvelopeWidth, gScreenHeight };
-				SDL_Rect rightEnvelope = (SDL_Rect){ gScreenWidth - (int)gEnvelopeWidth, 0, (int)gEnvelopeWidth, gScreenHeight };
-				SDL_RenderFillRect(gRenderer, &leftEnvelope);
-				SDL_RenderFillRect(gRenderer, &rightEnvelope);
-			} else if (gAspectRatioDiff < -0.001f) {
-				// Screen is taller than expected, we need envelope on top & bottom
-				SDL_Rect topEnvelope = (SDL_Rect){ 0, 0, gScreenWidth, (int)gEnvelopeWidth };
-				SDL_Rect bottomEnvelope = (SDL_Rect){ 0, gScreenHeight - (int)gEnvelopeWidth, gScreenWidth, (int)gEnvelopeWidth };
-				SDL_RenderFillRect(gRenderer, &topEnvelope);
-				SDL_RenderFillRect(gRenderer, &bottomEnvelope);
-			}
-		}
+		// Draw envelope
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+		SDL_RenderFillRect(gRenderer, &gFirstEnvelopeRect);
+		SDL_RenderFillRect(gRenderer, &gSecondEnvelopeRect);
+		// Present
 		SDL_RenderPresent(gRenderer);
 		///// END OF GRAPHICS /////
 
