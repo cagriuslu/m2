@@ -6,24 +6,33 @@
 #include "Vec2F.h"
 #include <stdbool.h>
 
-void GatherEvents(bool *outQuit, bool *outWindow, bool *outKey, bool *outMotion, bool *outButton, bool *outWheel);
+typedef struct _Events {
+	bool quitEvent;
+	
+	bool windowResizeEvent;
+	Vec2I windowDims;
+	
+	bool keyDownEvent;
+	uint16_t keysPressed[_KEY_COUNT];
+	
+	bool keyUpEvent;
+	uint16_t keysReleased[_KEY_COUNT];
+	
+	bool mouseMotionEvent;
+	
+	bool mouseButtonDownEvent;
+	bool mouseWheelEvent;
+	uint16_t buttonsPressed[_BUTTON_COUNT];
 
-Vec2I IsScreenResized();
+	bool mouseButtonUpEvent;
+	uint16_t buttonsReleased[_BUTTON_COUNT];
 
-uint16_t IsKeyPressed(Key key);
-uint16_t IsKeyReleased(Key key);
-bool IsKeyDown(Key key);
+	// Persistent states
+	uint8_t keyStates[_KEY_COUNT];
+	uint8_t buttonStates[_BUTTON_COUNT];
+	Vec2I mousePosition;
+} Events;
 
-uint16_t IsButtonPressed(MouseButton button);
-uint16_t IsButtonReleased(MouseButton button);
-bool IsButtonDown(MouseButton button);
-Vec2I PointerPosition();
-
-uint16_t* KeysPressedArray();
-uint16_t* KeysReleasedArray();
-uint8_t* KeysStateArray();
-uint16_t* ButtonsPressedArray();
-uint16_t* ButtonsReleasedArray();
-uint8_t* ButtonsStateArray();
+bool Events_Gather(Events* evs);
 
 #endif

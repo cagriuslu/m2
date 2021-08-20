@@ -46,9 +46,9 @@ SDL_Cursor* SDLUtils_CreateCursor() {
     uint8_t mask[128] = { 0 };
     const unsigned side_size = 32;
 
-	for (int y = 0; y < side_size; y++) {
-		for (int x = 0; x < side_size; x++) {
-            int index = y * side_size + x;
+	for (unsigned y = 0; y < side_size; y++) {
+		for (unsigned x = 0; x < side_size; x++) {
+            unsigned index = y * side_size + x;
             char c = str[index];
 			if (c == 'X') {
                 data[index / 8] |= 0x80 >> (index % 8);

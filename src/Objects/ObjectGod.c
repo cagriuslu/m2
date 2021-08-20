@@ -11,16 +11,16 @@ static void God_prePhysics(ComponentEventListener* el) {
 	if (obj) {
 		ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
 		if (phy && phy->body) {
-			if (IsKeyDown(KEY_UP)) {
+			if (CurrentEvents()->keyStates[KEY_UP]) {
 				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, -100.0 }, true);
 			}
-			if (IsKeyDown(KEY_DOWN)) {
+			if (CurrentEvents()->keyStates[KEY_DOWN]) {
 				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, 100.0 }, true);
 			}
-			if (IsKeyDown(KEY_LEFT)) {
+			if (CurrentEvents()->keyStates[KEY_LEFT]) {
 				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { -100.0, 0.0 }, true);
 			}
-			if (IsKeyDown(KEY_RIGHT)) {
+			if (CurrentEvents()->keyStates[KEY_RIGHT]) {
 				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 100.0, 0.0 }, true);
 			}
 		}

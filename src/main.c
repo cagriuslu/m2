@@ -33,6 +33,7 @@ TTF_Font *gFont;
 TextureMap gTextureMap;
 
 Level gLevel;
+Events gEvents;
 unsigned gDeltaTicks;
 
 void SetWindowSizeAndPPM(int width, int height) {
@@ -60,8 +61,8 @@ void SetWindowSizeAndPPM(int width, int height) {
 		gLeftHudRect = (SDL_Rect){ 0, envelopeWidth, hudWidth, gGameAndHudScreenHeight };
 		gRightHudRect = (SDL_Rect){ gScreenWidth - hudWidth, envelopeWidth, hudWidth, gGameAndHudScreenHeight };
 	} else {
-		gGameAndHudScreenWidth = (float)gScreenWidth;
-		gGameAndHudScreenHeight = (float)gScreenHeight;
+		gGameAndHudScreenWidth = gScreenWidth;
+		gGameAndHudScreenHeight = gScreenHeight;
 		gFirstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
 		gSecondEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
 		int hudWidth = (int)roundf((float)gGameAndHudScreenHeight * HUD_ASPECT_RATIO);
@@ -137,22 +138,20 @@ main_menu:
 
 	unsigned frameTimeAccumulator = 0;
 	unsigned frameCount = 0;
-	bool quit = false;
-	while (!quit) {
+	while (true) {
 		unsigned start_ticks = SDL_GetTicks();
 
 		///// EVENT HANDLING /////
-		bool windowEvent = false;
-		bool key = false;
-		GatherEvents(&quit, &windowEvent, &key, NULL, NULL, NULL);
-		if (quit) {
-			break;
-		}
-		if (windowEvent && IsScreenResized().x && IsScreenResized().y) {
-			SetWindowSizeAndPPM(IsScreenResized().x, IsScreenResized().y);
-		}
-		if (key && IsKeyPressed(KEY_MENU)) {
-			goto main_menu;
+		if (Events_Gather(&gEvents)) {
+			if (gEvents.quitEvent) {
+				break;
+			}
+			if (gEvents.windowResizeEvent) {
+				SetWindowSizeAndPPM(gEvents.windowDims.x, gEvents.windowDims.y);
+			}
+			if (gEvents.keysPressed[KEY_MENU]) {
+				goto main_menu;
+			}
 		}
 		///// END OF EVENT HANDLING /////
 
@@ -302,6 +301,10 @@ Level* CurrentLevel() {
 	return &gLevel;
 }
 
+Events* CurrentEvents() {
+	return &gEvents;
+}
+
 unsigned DeltaTicks() {
 	return gDeltaTicks;
 }
@@ -310,7 +313,7 @@ Vec2F CurrentPointerPositionInWorld(void) {
 	Object* camera = Bucket_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	Vec2F cameraPosition = camera->position;
 
-	Vec2I pointerPosition = PointerPosition();
+	Vec2I pointerPosition = gEvents.mousePosition;
 	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (CurrentScreenWidth() / 2), pointerPosition.y - (CurrentScreenHeight() / 2) };
 	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / CurrentPixelsPerMeter(), pointerPositionWRTScreenCenter.y / CurrentPixelsPerMeter() };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);

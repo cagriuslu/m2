@@ -4,6 +4,7 @@
 #include "Controls.h"
 #include "Box2D.h"
 #include "Array.h"
+#include "Event.h"
 #include "Level.h"
 #include "Character.h"
 #include "TextureMap.h"
@@ -39,6 +40,7 @@ TTF_Font* CurrentFont();
 TextureMap* CurrentTextureMap();
 
 Level* CurrentLevel();
+Events* CurrentEvents();
 unsigned DeltaTicks();
 
 Vec2F CurrentPointerPositionInWorld(void);

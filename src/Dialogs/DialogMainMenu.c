@@ -7,21 +7,15 @@
 #define AsInt(i) ((int*) (i))
 
 void ResumeButton_onMouseButton(Ui *ui) {
-	if (IsButtonPressed(BUTTON_PRIMARY)) {
-		*AsInt(ui->eventData) = X_MAIN_MENU_RESUME;
-	}
+	*AsInt(ui->eventData) = X_MAIN_MENU_RESUME;
 }
 
 void NewGameButton_onMouseButton(Ui *ui) {
-	if (IsButtonPressed(BUTTON_PRIMARY)) {
-		*AsInt(ui->eventData) = X_MAIN_MENU_NEW_GAME;
-	}
+	*AsInt(ui->eventData) = X_MAIN_MENU_NEW_GAME;
 }
 
 void LevelEditorButton_onMouseButton(Ui *ui) {
-	if (IsButtonPressed(BUTTON_PRIMARY)) {
-		*AsInt(ui->eventData) = X_MAIN_MENU_LEVEL_EDITOR;
-	}
+	*AsInt(ui->eventData) = X_MAIN_MENU_LEVEL_EDITOR;
 }
 
 int DialogMainMenu(bool levelLoaded) {

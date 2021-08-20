@@ -25,24 +25,24 @@ static void Player_prePhysics(ComponentEventListener* el) {
 	ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
 	if (phy && phy->body) {
 		Vec2F moveDirection = (Vec2F) {0.0f, 0.0f};
-		if (IsKeyDown(KEY_UP)) {
+		if (CurrentEvents()->keyStates[KEY_UP]) {
 			moveDirection.y += -1.0f;
 		}
-		if (IsKeyDown(KEY_DOWN)) {
+		if (CurrentEvents()->keyStates[KEY_DOWN]) {
 			moveDirection.y += 1.0f;
 		}
-		if (IsKeyDown(KEY_LEFT)) {
+		if (CurrentEvents()->keyStates[KEY_LEFT]) {
 			moveDirection.x += -1.0f;
 		}
-		if (IsKeyDown(KEY_RIGHT)) {
+		if (CurrentEvents()->keyStates[KEY_RIGHT]) {
 			moveDirection.x += 1.0f;
 		}
 		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), DeltaTicks() * 25.0f), true);
 	}
 
-	if (IsButtonPressed(BUTTON_SCROLL_DOWN)) {
+	if (CurrentEvents()->buttonsPressed[BUTTON_SCROLL_DOWN]) {
 		Item* curr, * next, * prev;
-		if (IsKeyDown(KEY_MODIFIER_SHIFT)) {
+		if (CurrentEvents()->keyStates[KEY_MODIFIER_SHIFT]) {
 			LOG_INF("Switched to next secondary weapon");
 			curr = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
 			next = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
@@ -60,9 +60,9 @@ static void Player_prePhysics(ComponentEventListener* el) {
 		prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
 		prev->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
 		Character_Preprocess(obj->properties->character);
-	} else if (IsButtonPressed(BUTTON_SCROLL_UP)) {
+	} else if (CurrentEvents()->buttonsPressed[BUTTON_SCROLL_UP]) {
 		Item* curr, * next, * prev;
-		if (IsKeyDown(KEY_MODIFIER_SHIFT)) {
+		if (CurrentEvents()->keyStates[KEY_MODIFIER_SHIFT]) {
 			LOG_INF("Switched to previous secondary weapon");
 			curr = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
 			next = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
@@ -81,7 +81,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 		prev->flags |= ITEMFLAG_EQUIPPED;
 		Character_Preprocess(obj->properties->character);
 	} else {
-		if (IsButtonDown(BUTTON_PRIMARY) && (100 < obj->properties->rangedAttackStopwatch)) {
+		if (CurrentEvents()->buttonStates[BUTTON_PRIMARY] && (100 < obj->properties->rangedAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
@@ -91,7 +91,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 			obj->properties->rangedAttackStopwatch = 0;
 		}
 
-		if (IsButtonDown(BUTTON_SECONDARY) && (333 < obj->properties->meleeAttackStopwatch)) {
+		if (CurrentEvents()->buttonStates[BUTTON_SECONDARY] && (333 < obj->properties->meleeAttackStopwatch)) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 

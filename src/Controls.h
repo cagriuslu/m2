@@ -40,10 +40,9 @@ typedef enum _Button {
 	_BUTTON_COUNT
 } MouseButton;
 
-Key KeyFromSDLScancode(SDL_Scancode sc, SDL_Keymod mod);
-void KeyStateArrayFillFromSDLKeyboardStateArray(uint8_t *keyState, const uint8_t *keyboardState);
+Key KeyFromSDLScancode(SDL_Scancode sc);
+SDL_Scancode SDLScancodeFromKey(Key k);
 
 MouseButton ButtonFromSDLButton(int button);
-void ButtonStateArrayFillFromSDLMouseState(uint8_t *buttonState, const uint32_t bitmask);
 
 #endif
