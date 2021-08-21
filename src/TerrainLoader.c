@@ -15,13 +15,38 @@ static TileDef TileLookup(const char* tileName) {
 #define STREQ(str1, str2) (strcmp(str1, str2) == 0)
 	if (STREQ(tileName, "Ground")) {
 		return (TileDef) { {0, 0}, { 0.0, 0.0 }, { 0.0, 0.0 } };
-	} else if (STREQ(tileName, "WallHorizontal")) {
-		return (TileDef) { {1, 0}, { 1.0, 1.0 }, { 0.0, 0.0 } };
-	} else if (STREQ(tileName, "WallVertical")) {
-		return (TileDef) { {0, 1}, { 1.0, 1.0 }, { 0.0, 0.0 } };
-	} else {
-		return (TileDef) { {0, 0}, { 1.0, 1.0 }, { 0.0, 0.0 } };
 	}
+	if (STREQ(tileName, "WallHorizontal")) {
+		return (TileDef) { {1, 0}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "WallVertical")) {
+		return (TileDef) { {0, 1}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffTop")) {
+		return (TileDef) { {0, 2}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffRight")) {
+		return (TileDef) { {1, 2}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffBottom")) {
+		return (TileDef) { {1, 3}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffLeft")) {
+		return (TileDef) { {0, 3}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffTopRight")) {
+		return (TileDef) { {2, 2}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffBottomRight")) {
+		return (TileDef) { {2, 3}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffBottomLeft")) {
+		return (TileDef) { {3, 2}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	if (STREQ(tileName, "CliffTopLeft")) {
+		return (TileDef) { {3, 3}, { 1.0, 1.0 }, { 0.0, 0.0 } };
+	}
+	return (TileDef) { {0, 0}, { 1.0, 1.0 }, { 0.0, 0.0 } };
 #undef STREQ
 }
 

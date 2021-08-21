@@ -15,7 +15,6 @@ typedef enum _LevelType {
 } LevelType;
 
 typedef struct _Level {
-	LevelType levelType;
 	Bucket objects;
 	InsertionList drawList;
 	Bucket eventListeners;
@@ -26,6 +25,7 @@ typedef struct _Level {
 	Bucket offenses;
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
+	LevelType levelType;
 	ID cameraId, playerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
