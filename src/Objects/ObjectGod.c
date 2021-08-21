@@ -8,22 +8,22 @@
 
 static void God_prePhysics(ComponentEventListener* el) {
 	Object* obj = Bucket_GetById(&CurrentLevel()->objects, el->super.objId);
-	if (obj) {
-		ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
-		if (phy && phy->body) {
-			if (CurrentEvents()->keyStates[KEY_UP]) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, -100.0 }, true);
-			}
-			if (CurrentEvents()->keyStates[KEY_DOWN]) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 0.0, 100.0 }, true);
-			}
-			if (CurrentEvents()->keyStates[KEY_LEFT]) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { -100.0, 0.0 }, true);
-			}
-			if (CurrentEvents()->keyStates[KEY_RIGHT]) {
-				Box2DBodyApplyForceToCenter(phy->body, (Vec2F) { 100.0, 0.0 }, true);
-			}
+	ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
+	if (phy && phy->body) {
+		Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
+		if (CurrentEvents()->keyStates[KEY_UP]) {
+			moveDirection.y += -1.0f;
 		}
+		if (CurrentEvents()->keyStates[KEY_DOWN]) {
+			moveDirection.y += 1.0f;
+		}
+		if (CurrentEvents()->keyStates[KEY_LEFT]) {
+			moveDirection.x += -1.0f;
+		}
+		if (CurrentEvents()->keyStates[KEY_RIGHT]) {
+			moveDirection.x += 1.0f;
+		}
+		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), DeltaTicks() * 25.0f), true);
 	}
 }
 

@@ -8,7 +8,14 @@
 #include "Pathfinder.h"
 #include "SpatialMap.h"
 
+typedef enum _LevelType {
+	LEVEL_TYPE_INVALID = 0,
+	LEVEL_TYPE_SINGLE_PLAYER,
+	LEVEL_TYPE_LEVEL_EDITOR,
+} LevelType;
+
 typedef struct _Level {
+	LevelType levelType;
 	Bucket objects;
 	InsertionList drawList;
 	Bucket eventListeners;

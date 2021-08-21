@@ -61,6 +61,8 @@ void Level_Term(Level* level) {
 }
 
 int Level_LoadTest(Level* level) {
+	level->levelType = LEVEL_TYPE_SINGLE_PLAYER;
+	
 	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
 
 	Array standardItemSet;
@@ -97,6 +99,8 @@ int Level_LoadTest(Level* level) {
 }
 
 int Level_LoadEditor(Level* level) {
+	level->levelType = LEVEL_TYPE_LEVEL_EDITOR;
+	
 	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
 
 	Object* god = Bucket_Mark(&level->objects, NULL, &level->playerId);

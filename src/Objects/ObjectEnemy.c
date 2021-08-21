@@ -110,46 +110,48 @@ void ObjectEnemy_Draw(ComponentGraphics* gfx) {
 
 int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	PROPAGATE_ERROR(Object_Init(obj, position, true));
-	
-	obj->properties->ai = malloc(sizeof(AI));
-	assert(obj->properties->ai);
-	AI_Init(obj->properties->ai);
-	obj->properties->ai->recalculationPeriod = 500;
-	obj->properties->ai->recalculationStopwatch = rand() % obj->properties->ai->recalculationPeriod;
-	obj->properties->ai->attackPeriod = 500;
-	obj->properties->ai->attackStopwatch = rand() % obj->properties->ai->attackPeriod;
-	obj->properties->ai->homePosition = position;
-	obj->properties->ai->triggerDistance = 6.0f;
-
-	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
-	el->prePhysics = ObjectEnemy_prePhysics;
-	el->postGraphics = ObjectEnemy_postPhysics;
-
-	ID phyId = 0;
-	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
-	phy->body = Box2DUtils_CreateDynamicDisk(
-		phyId,
-		position,
-		true, // allowSleep
-		CATEGORY_ENEMY,
-		0.2083f, // Radius
-		10.0f, // Mass
-		10.0f // Damping
-	);
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
-	gfx->txSrc = (SDL_Rect){2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
+	gfx->txSrc = (SDL_Rect){ 2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 	gfx->draw = ObjectEnemy_Draw;
 
-	ComponentDefense* defense = Object_AddDefense(obj, NULL);
-	defense->hp = 100;
-	defense->maxHp = 100;
+	if (CurrentLevel()->levelType != LEVEL_TYPE_LEVEL_EDITOR) {
+		obj->properties->ai = malloc(sizeof(AI));
+		assert(obj->properties->ai);
+		AI_Init(obj->properties->ai);
+		obj->properties->ai->recalculationPeriod = 500;
+		obj->properties->ai->recalculationStopwatch = rand() % obj->properties->ai->recalculationPeriod;
+		obj->properties->ai->attackPeriod = 500;
+		obj->properties->ai->attackStopwatch = rand() % obj->properties->ai->attackPeriod;
+		obj->properties->ai->homePosition = position;
+		obj->properties->ai->triggerDistance = 6.0f;
 
-	ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
-	offense->originator = Bucket_GetId(&CurrentLevel()->objects, obj);
-	offense->hp = 10;
-	offense->ttl = 100;
+		ComponentEventListener* el = Object_AddEventListener(obj, NULL);
+		el->prePhysics = ObjectEnemy_prePhysics;
+		el->postGraphics = ObjectEnemy_postPhysics;
+
+		ID phyId = 0;
+		ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
+		phy->body = Box2DUtils_CreateDynamicDisk(
+			phyId,
+			position,
+			true, // allowSleep
+			CATEGORY_ENEMY,
+			0.2083f, // Radius
+			10.0f, // Mass
+			10.0f // Damping
+		);
+
+		ComponentDefense* defense = Object_AddDefense(obj, NULL);
+		defense->hp = 100;
+		defense->maxHp = 100;
+
+		ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
+		offense->originator = Bucket_GetId(&CurrentLevel()->objects, obj);
+		offense->hp = 10;
+		offense->ttl = 100;
+	}
 	
 	return 0;
 }
