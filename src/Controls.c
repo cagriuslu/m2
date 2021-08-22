@@ -14,6 +14,10 @@ Key KeyFromSDLScancode(SDL_Scancode sc) {
 		return KEY_RIGHT;
 	case SDL_SCANCODE_LSHIFT:
 		return KEY_MODIFIER_SHIFT;
+	case SDL_SCANCODE_GRAVE:
+		return KEY_CONSOLE;
+	case SDL_SCANCODE_RETURN:
+		return KEY_ENTER;
 	default:
 		return KEY_NONE;
 	}
@@ -33,6 +37,10 @@ SDL_Scancode SDLScancodeFromKey(Key k) {
 			return SDL_SCANCODE_D;
 		case KEY_MODIFIER_SHIFT:
 			return SDL_SCANCODE_LSHIFT;
+		case KEY_CONSOLE:
+			return SDL_SCANCODE_GRAVE;
+		case KEY_ENTER:
+			return SDL_SCANCODE_RETURN;
 		default:
 			return SDL_SCANCODE_UNKNOWN;
 	}

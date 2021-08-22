@@ -26,6 +26,9 @@ typedef enum _Key {
 
 	KEY_MODIFIER_SHIFT,
 
+	KEY_CONSOLE,
+	KEY_ENTER,
+
 	_KEY_COUNT
 } Key;
 

@@ -1,4 +1,5 @@
 #include "Hud.h"
+#include "Main.h"
 #include <string.h>
 
 XErr Hud_Init(Hud* hud, ID playerId) {
@@ -13,4 +14,13 @@ void Hud_Term(Hud* hud) {
 
 void Hud_Draw(Hud* hud) {
 	
+	
+	Level* level = CurrentLevel();
+	if (level->levelType == LEVEL_TYPE_SINGLE_PLAYER) {
+		// Draw player health
+		
+		return;
+	} else if (level->levelType == LEVEL_TYPE_LEVEL_EDITOR) {
+		return;
+	}
 }

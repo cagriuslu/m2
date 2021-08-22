@@ -27,6 +27,9 @@ typedef struct _Events {
 	bool mouseButtonUpEvent;
 	uint16_t buttonsReleased[_BUTTON_COUNT];
 
+	bool textInputEvent;
+	char textInput[32];
+
 	// Persistent states
 	uint8_t keyStates[_KEY_COUNT];
 	uint8_t buttonStates[_BUTTON_COUNT];

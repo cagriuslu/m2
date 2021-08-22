@@ -12,24 +12,13 @@ clfbl	Tile=CliffBottomLeft
 clftl	Tile=CliffTopLeft
 %
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	wh	wh	wh	wh	wh	wh	wh	wh	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	s	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	0	wh	wh	wh	wh	wh	wh	wh	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	0	0	0	0	0	0	0	0	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	0	s	0	0	0	0	0	0	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	wh	wh	wh	wh	wh	0	0	0	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	0	0	0	0	0	0	0	0	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	s	wh	wh	wh	wh	wh	wh	wh	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	wh	wh	wh	wh	wh	wh	wh	wh	wh	wh	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	clft	clft	clft	clft	clft	clft	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	clfb	clfb	clfb	clfbl	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	clfl	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	clfl	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+0	0	clft	clft	clft	clft	clft	clft	clft	clft	clft	clft	0	0	0	0	0	0	0	0	0	0	0	0	
+0	0	0	0	0	0	0	0	0	0	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	
+0	0	0	0	0	0	0	0	0	0	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	
+0	0	clfb	clfb	clfb	clfbl	0	0	clfbr	clfbl	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	
+0	0	0	0	0	clfl	0	0	clfr	clfl	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	
+0	0	0	0	0	clfl	0	0	clfr	clfl	0	0	clfr	0	0	0	0	0	0	0	0	0	0	0	
+0	0	clft	clft	clft	clftl	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	

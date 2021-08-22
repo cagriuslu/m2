@@ -216,6 +216,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Uis\UiStringInput.c" />
     <ClCompile Include="..\src\Vec2F.c" />
     <ClCompile Include="..\src\Vec2I.c" />
+    <ClCompile Include="..\src\Window.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\AABB.h" />
@@ -253,6 +254,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\Ui.h" />
     <ClInclude Include="..\src\Vec2F.h" />
     <ClInclude Include="..\src\Vec2I.h" />
+    <ClInclude Include="..\src\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

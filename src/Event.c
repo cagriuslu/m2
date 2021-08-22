@@ -1,5 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "Event.h"
+#include "Log.h"
 #include <string.h>
+#include <stdio.h>
 
 bool Events_Gather(Events* evs) {
 	memset(evs, 0, sizeof(Events));
@@ -7,53 +10,60 @@ bool Events_Gather(Events* evs) {
 	SDL_Event e;
 	while (evs->quitEvent == false && SDL_PollEvent(&e) != 0) {
 		switch (e.type) {
-			case SDL_QUIT:
-				evs->quitEvent = true;
-				break;
-			case SDL_WINDOWEVENT:
-				switch (e.window.event) {
-					case SDL_WINDOWEVENT_RESIZED:
-					case SDL_WINDOWEVENT_SIZE_CHANGED:
-						evs->windowResizeEvent = true;
-						evs->windowDims = (Vec2I){ e.window.data1 , e.window.data2 };
-						break;
-					default:
-						break;
-				}
-				break;
-			case SDL_KEYDOWN:
-				if (e.key.repeat == 0) {
-					evs->keyDownEvent = true;
-					evs->keysPressed[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
-				}
-				break;
-			case SDL_KEYUP:
-				if (e.key.repeat == 0) {
-					evs->keyUpEvent = true;
-					evs->keysReleased[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
-				}
-				break;
-			case SDL_MOUSEMOTION:
-				evs->mouseMotionEvent = true;
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				evs->mouseButtonDownEvent = true;
-				evs->buttonsPressed[ButtonFromSDLButton(e.button.button)] += 1;
-				break;
-			case SDL_MOUSEBUTTONUP:
-				evs->mouseButtonUpEvent = true;
-				evs->buttonsReleased[ButtonFromSDLButton(e.button.button)] += 1;
-				break;
-			case SDL_MOUSEWHEEL:
-				evs->mouseWheelEvent = true;
-				if (0 < e.wheel.y) {
-					evs->buttonsPressed[BUTTON_SCROLL_UP] += (int16_t)e.wheel.y;
-				} else {
-					evs->buttonsPressed[BUTTON_SCROLL_DOWN] += -(int16_t)e.wheel.y;
-				}
+		case SDL_QUIT:
+			evs->quitEvent = true;
+			break;
+		case SDL_WINDOWEVENT:
+			switch (e.window.event) {
+			case SDL_WINDOWEVENT_RESIZED:
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				evs->windowResizeEvent = true;
+				evs->windowDims = (Vec2I){ e.window.data1 , e.window.data2 };
 				break;
 			default:
 				break;
+			}
+			break;
+		case SDL_KEYDOWN:
+			if (e.key.repeat == 0) {
+				evs->keyDownEvent = true;
+				evs->keysPressed[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
+			}
+			//LOGTYP_DBG("Pressed SDL_Scancode", Int32, e.key.keysym.scancode);
+			break;
+		case SDL_KEYUP:
+			if (e.key.repeat == 0) {
+				evs->keyUpEvent = true;
+				evs->keysReleased[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
+			}
+			break;
+		case SDL_MOUSEMOTION:
+			evs->mouseMotionEvent = true;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			evs->mouseButtonDownEvent = true;
+			evs->buttonsPressed[ButtonFromSDLButton(e.button.button)] += 1;
+			break;
+		case SDL_MOUSEBUTTONUP:
+			evs->mouseButtonUpEvent = true;
+			evs->buttonsReleased[ButtonFromSDLButton(e.button.button)] += 1;
+			break;
+		case SDL_MOUSEWHEEL:
+			evs->mouseWheelEvent = true;
+			if (0 < e.wheel.y) {
+				evs->buttonsPressed[BUTTON_SCROLL_UP] += (int16_t)e.wheel.y;
+			} else {
+				evs->buttonsPressed[BUTTON_SCROLL_DOWN] += -(int16_t)e.wheel.y;
+			}
+			break;
+		case SDL_TEXTINPUT:
+			if (SDL_IsTextInputActive()) {
+				evs->textInputEvent = true;
+				strcat(evs->textInput, e.text.text);
+			}
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -73,5 +83,5 @@ bool Events_Gather(Events* evs) {
 		evs->buttonStates[BUTTON_SECONDARY] = 1;
 	}
 
-	return evs->quitEvent || evs->windowResizeEvent || evs->keyDownEvent || evs->keyUpEvent || evs->mouseMotionEvent || evs->mouseButtonDownEvent || evs->mouseWheelEvent || evs->mouseButtonUpEvent;
+	return evs->quitEvent || evs->windowResizeEvent || evs->keyDownEvent || evs->keyUpEvent || evs->mouseMotionEvent || evs->mouseButtonDownEvent || evs->mouseWheelEvent || evs->mouseButtonUpEvent || evs->textInputEvent;
 }

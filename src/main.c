@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "Main.h"
 #include "Box2D.h"
 #include "Object.h"
@@ -18,13 +19,9 @@
 #include <SDL_ttf.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
-int gScreenWidth = 1600, gScreenHeight = 900;
-float gPixelsPerMeter;
-int gGameAndHudScreenWidth, gGameAndHudScreenHeight;
-SDL_Rect gFirstEnvelopeRect, gSecondEnvelopeRect;
-SDL_Rect gLeftHudRect, gRightHudRect;
-float gHudScreenWidth, gHudScreenHeight;
+Window gWindow = { .windowWidth = 1600, .windowHeight = 900 };
 int gTileWidth = TILE_WIDTH;
 uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
@@ -35,42 +32,7 @@ TextureMap gTextureMap;
 Level gLevel;
 Events gEvents;
 unsigned gDeltaTicks;
-
-void SetWindowSizeAndPPM(int width, int height) {
-	gScreenWidth = width;
-	gScreenHeight = height;
-	float aspectRatioDiff = ((float)gScreenWidth / (float)gScreenHeight) - GAME_AND_HUD_ASPECT_RATIO;
-	if (0.001f < aspectRatioDiff) {
-		// Screen is wider than expected, we need envelope on left & right
-		gGameAndHudScreenWidth = (int)roundf((float)gScreenHeight * GAME_AND_HUD_ASPECT_RATIO);
-		gGameAndHudScreenHeight = gScreenHeight;
-		int envelopeWidth = (gScreenWidth - gGameAndHudScreenWidth) / 2;
-		gFirstEnvelopeRect = (SDL_Rect){ 0, 0, envelopeWidth, gScreenHeight };
-		gSecondEnvelopeRect = (SDL_Rect){ gScreenWidth - envelopeWidth, 0, envelopeWidth, gScreenHeight };
-		int hudWidth = (int)roundf((float)gGameAndHudScreenHeight * HUD_ASPECT_RATIO);
-		gLeftHudRect = (SDL_Rect){ envelopeWidth, 0, hudWidth, gGameAndHudScreenHeight };
-		gRightHudRect = (SDL_Rect){ gScreenWidth - envelopeWidth - hudWidth, 0, hudWidth, gGameAndHudScreenHeight };
-	} else if (aspectRatioDiff < -0.001f) {
-		// Screen is taller than expected, we need envelope on top & bottom
-		gGameAndHudScreenWidth = gScreenWidth;
-		gGameAndHudScreenHeight = (int)roundf((float)gScreenWidth / GAME_AND_HUD_ASPECT_RATIO);
-		int envelopeWidth = (gScreenHeight - gGameAndHudScreenHeight) / 2;
-		gFirstEnvelopeRect = (SDL_Rect){ 0, 0, gScreenWidth, envelopeWidth };
-		gSecondEnvelopeRect = (SDL_Rect){ 0, gScreenHeight - envelopeWidth, gScreenWidth, envelopeWidth };
-		int hudWidth = (int)roundf((float)gGameAndHudScreenHeight * HUD_ASPECT_RATIO);
-		gLeftHudRect = (SDL_Rect){ 0, envelopeWidth, hudWidth, gGameAndHudScreenHeight };
-		gRightHudRect = (SDL_Rect){ gScreenWidth - hudWidth, envelopeWidth, hudWidth, gGameAndHudScreenHeight };
-	} else {
-		gGameAndHudScreenWidth = gScreenWidth;
-		gGameAndHudScreenHeight = gScreenHeight;
-		gFirstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
-		gSecondEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
-		int hudWidth = (int)roundf((float)gGameAndHudScreenHeight * HUD_ASPECT_RATIO);
-		gLeftHudRect = (SDL_Rect){ 0, 0, hudWidth, gGameAndHudScreenHeight };
-		gRightHudRect = (SDL_Rect){ gScreenWidth - hudWidth, 0, hudWidth, gGameAndHudScreenHeight };
-	}
-	gPixelsPerMeter = gGameAndHudScreenHeight / 16.0f;
-}
+char gConsoleInput[1024];
 
 int main(int argc, char **argv) {
 	LOG_TRC("main");
@@ -86,13 +48,14 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
-	SetWindowSizeAndPPM(gScreenWidth, gScreenHeight);
-	SDL_Window *window = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	SDL_SetWindowMinimumSize(window, 712, 400);
+	Window_SetWidthHeight(&gWindow, gWindow.windowWidth, gWindow.windowHeight);
+	SDL_Window *sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gWindow.windowWidth, gWindow.windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	SDL_SetWindowMinimumSize(sdlWindow, 712, 400);
+	SDL_StopTextInput(); // Text input begins activated (sometimes)
 	SDL_Cursor* cursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(cursor);
-	gWindowPixelFormat = SDL_GetWindowPixelFormat(window);
-	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
+	gWindowPixelFormat = SDL_GetWindowPixelFormat(sdlWindow);
+	gRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TEXTURE_FILE_KEY ".png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 	TextureMap_Init(&gTextureMap, TILE_WIDTH, "resources/" TEXTURE_FILE_KEY ".png", "resources/" TEXTURE_FILE_KEY "_META.png", "resources/" TEXTURE_FILE_KEY "_META.txt");
@@ -147,10 +110,30 @@ main_menu:
 				break;
 			}
 			if (gEvents.windowResizeEvent) {
-				SetWindowSizeAndPPM(gEvents.windowDims.x, gEvents.windowDims.y);
+				Window_SetWidthHeight(&gWindow, gEvents.windowDims.x, gEvents.windowDims.y);
 			}
-			if (gEvents.keysPressed[KEY_MENU]) {
-				goto main_menu;
+			if (!SDL_IsTextInputActive()) {
+				if (gEvents.keysPressed[KEY_MENU]) {
+					goto main_menu;
+				}
+				if (gEvents.keysPressed[KEY_CONSOLE]) {
+					memset(gConsoleInput, 0, sizeof(gConsoleInput));
+					SDL_StartTextInput();
+					LOG_INF("SDL text input activated");
+				}
+			} else {
+				if (gEvents.keysPressed[KEY_MENU]) {
+					SDL_StopTextInput();
+					LOG_INF("SDL text input deactivated");
+				} else if (gEvents.keysPressed[KEY_ENTER]) {
+					// TODO Execute console command
+					LOGTYP_INF("Console command", String, gConsoleInput);
+					SDL_StopTextInput();
+					LOG_INF("SDL text input deactivated");
+				} else if (gEvents.textInputEvent) {
+					strcat(gConsoleInput, gEvents.textInput);
+					LOGTYP_INF("Console buffer", String, gConsoleInput);
+				}
 			}
 		}
 		///// END OF EVENT HANDLING /////
@@ -223,8 +206,8 @@ main_menu:
 		}
 		// Draw HUD background
 		SDL_SetRenderDrawColor(gRenderer, 5, 5, 5, 255);
-		SDL_RenderFillRect(gRenderer, &gLeftHudRect);
-		SDL_RenderFillRect(gRenderer, &gRightHudRect);
+		SDL_RenderFillRect(gRenderer, &gWindow.leftHudRect);
+		SDL_RenderFillRect(gRenderer, &gWindow.rightHudRect);
 		// Draw HUD
 		Hud_Draw(&gLevel.hud);
 		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
@@ -236,8 +219,8 @@ main_menu:
 		}
 		// Draw envelope
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(gRenderer, &gFirstEnvelopeRect);
-		SDL_RenderFillRect(gRenderer, &gSecondEnvelopeRect);
+		SDL_RenderFillRect(gRenderer, &gWindow.firstEnvelopeRect);
+		SDL_RenderFillRect(gRenderer, &gWindow.secondEnvelopeRect);
 		// Present
 		SDL_RenderPresent(gRenderer);
 		///// END OF GRAPHICS /////
@@ -254,23 +237,15 @@ main_menu:
 
 	SDL_DestroyRenderer(gRenderer);
 	SDL_FreeCursor(cursor);
-	SDL_DestroyWindow(window);
+	SDL_DestroyWindow(sdlWindow);
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
 }
 
-int CurrentScreenWidth() {
-	return gScreenWidth;
-}
-
-int CurrentScreenHeight(){
-	return gScreenHeight;
-}
-
-float CurrentPixelsPerMeter() {
-	return gPixelsPerMeter;
+Window* CurrentWindow() {
+	return &gWindow;
 }
 
 int CurrentTileWidth() {
@@ -309,13 +284,17 @@ unsigned DeltaTicks() {
 	return gDeltaTicks;
 }
 
+char* ConsoleInputBuffer() {
+	return gConsoleInput;
+}
+
 Vec2F CurrentPointerPositionInWorld(void) {
 	Object* camera = Bucket_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = gEvents.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (CurrentScreenWidth() / 2), pointerPosition.y - (CurrentScreenHeight() / 2) };
-	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / CurrentPixelsPerMeter(), pointerPositionWRTScreenCenter.y / CurrentPixelsPerMeter() };
+	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (gWindow.windowWidth / 2), pointerPosition.y - (gWindow.windowHeight / 2) };
+	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / gWindow.pixelsPerMeter, pointerPositionWRTScreenCenter.y / gWindow.pixelsPerMeter };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
 	return pointerPositionWRTWorld;
 }
