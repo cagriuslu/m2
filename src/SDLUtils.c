@@ -1,7 +1,5 @@
 #include "SDLUtils.h"
 
-#include <stdio.h>
-
 Vec2I SDLUtils_CenterOfRect(SDL_Rect rect) {
 	return (Vec2I) { rect.x + rect.w / 2, rect.y + rect.h / 2 };
 }
@@ -60,4 +58,14 @@ SDL_Cursor* SDLUtils_CreateCursor() {
 	}
 
 	return SDL_CreateCursor(data, mask, side_size, side_size, side_size / 2 - 1, side_size / 2 - 1);
+}
+
+SDL_Rect SDLUtils_ShrinkRect(SDL_Rect rect, int xShrinkAmount, int yShrinkAmount) {
+	return (SDL_Rect) { rect.x + xShrinkAmount, rect.y + yShrinkAmount, rect.w - 2 * xShrinkAmount, rect.h - 2 * yShrinkAmount };
+}
+
+SDL_Rect SDLUtils_SplitRect(SDL_Rect rect, unsigned horSplitCount, unsigned verSplitCount, unsigned horReturnIdx, unsigned horReturnLen, unsigned verReturnIdx, unsigned verReturnLen) {
+	float horStep = (float)rect.w / (float)horSplitCount;
+	float verStep = (float)rect.h / (float)verSplitCount;
+	return (SDL_Rect) { rect.x + horStep * horReturnIdx, rect.y + verStep * verReturnIdx, horStep* horReturnLen, verStep* verReturnLen };
 }
