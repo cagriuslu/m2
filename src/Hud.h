@@ -4,6 +4,12 @@
 #include "Bucket.h"
 #include "Error.h"
 
+typedef struct _Hud Hud;
+
+typedef struct _HudComplication {
+	Hud* hud;
+} HudComplication;
+
 typedef struct _Hud {
 	ID playerId;
 } Hud;

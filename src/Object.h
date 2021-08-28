@@ -24,7 +24,7 @@
 #define FindPhysicsOfObject(obj)           (FindPhysicsById((obj->physics)))
 #define FindGraphicsOfObject(obj)          (FindGraphicsById((obj->graphics)))
 #define FindTerrainGraphicsOfObject(obj)   (FindTerrainGraphicsById((obj->terrainGraphics)))
-#define FindDefenseOfObject(obj) (FindDefenseById((obj->defense)))
+#define FindDefenseOfObject(obj)           (FindDefenseById((obj->defense)))
 #define FindOffenseProjectileOfObject(obj) (FindOffenseProjectileById((obj->offenseProjectile)))
 #define FindOffenseMeleeOfObject(obj)      (FindOffenseMeleeById((obj->offenseMelee)))
 

@@ -64,6 +64,10 @@ SDL_Rect SDLUtils_ShrinkRect(SDL_Rect rect, int xShrinkAmount, int yShrinkAmount
 	return (SDL_Rect) { rect.x + xShrinkAmount, rect.y + yShrinkAmount, rect.w - 2 * xShrinkAmount, rect.h - 2 * yShrinkAmount };
 }
 
+SDL_Rect SDLUtils_ShrinkRect2(SDL_Rect rect, int top, int right, int bottom, int left) {
+	return (SDL_Rect) { rect.x + left, rect.y + top, rect.w - left - right, rect.h - top - bottom };
+}
+
 SDL_Rect SDLUtils_SplitRect(SDL_Rect rect, unsigned horSplitCount, unsigned verSplitCount, unsigned horReturnIdx, unsigned horReturnLen, unsigned verReturnIdx, unsigned verReturnLen) {
 	float horStep = (float)rect.w / (float)horSplitCount;
 	float verStep = (float)rect.h / (float)verSplitCount;

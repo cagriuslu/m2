@@ -29,8 +29,7 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 	Box2DFixtureDefSetCategoryBits(fixtureDef, categoryBits);
 	// If mask is not provided, infer it
 	if (maskBits == 0) {
-		switch (categoryBits)
-		{
+		switch (categoryBits) {
 			case CATEGORY_STATIC_OBJECT:
 				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_PLAYER_BULLET | CATEGORY_ENEMY | CATEGORY_ENEMY_BULLET;
 				break;
@@ -38,7 +37,7 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_ENEMY;
 				break;
 			case CATEGORY_PLAYER:
-				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENEMY_BULLET;
+				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENEMY_BULLET | CATEGORY_ENEMY_MELEE_WEAPON;
 				break;
 			case CATEGORY_PLAYER_BULLET:
 				maskBits = CATEGORY_STATIC_OBJECT | CATEGORY_ENEMY;

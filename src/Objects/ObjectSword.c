@@ -32,6 +32,7 @@ static void Sword_postPhysics(ComponentEventListener* el) {
 }
 
 static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
+	LOG_DBG("Collision");
 	Level* level = CurrentLevel();
 	Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
 	Object* otherObj = Bucket_GetById(&level->objects, other->super.objId);
