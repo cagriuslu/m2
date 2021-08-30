@@ -81,6 +81,8 @@ int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType pro
 			gfx->txSrc = (SDL_Rect){ 3 * TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
 			gfx->txCenter = (Vec2F){ 2.5f, 0.5f };
 			break;
+		default:
+			break;
 	}
 
 	ComponentOffense* off = Object_AddOffenseProjectile(obj, NULL);

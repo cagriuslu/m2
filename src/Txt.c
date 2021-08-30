@@ -20,7 +20,7 @@ void TxtKV_SetKey(TxtKV* kv, const char* key) {
 }
 
 void TxtKV_SetValue(TxtKV* kv, const char* value) {
-	kv->value = _strdup(value);
+	kv->value = strdup(value);
 	assert(kv->value);
 }
 

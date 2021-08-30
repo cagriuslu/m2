@@ -20,6 +20,8 @@ XErr Item_Init(Item* item, ItemType type, int variant) {
 	case ITEMTYP_RIGHTRING:
 		item->flags |= ITEMFLAG_EQUIPABLE;
 		break;
+	default:
+		break;
 	}
 	return 0;
 }

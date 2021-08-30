@@ -6,7 +6,7 @@
 
 static void LogHeader(LogLevel level, const char* file, int line) {
 	time_t now = time(NULL) - 1577833200; // Epoch is 2020-01-01T00:00:00
-	fprintf(stderr, "[%09llu:", now);
+	fprintf(stderr, "[%09llu:", (unsigned long long)now);
 
 	const char* levelStr = " :";
 	switch (level) {
@@ -29,7 +29,7 @@ static void LogHeader(LogLevel level, const char* file, int line) {
 			levelStr = "F:";
 			break;
 	}
-	fprintf(stderr, levelStr);
+	fprintf(stderr, "%s", levelStr);
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
 	const char* nodirFile = strrchr(file, '\\');

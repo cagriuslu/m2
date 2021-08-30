@@ -3,7 +3,7 @@
 
 #include "Vec2I.h"
 #include "Vec2F.h"
-#include <SDL_rect.h>
+#include <SDL.h>
 #include <stddef.h>
 #include <stdint.h>
 
