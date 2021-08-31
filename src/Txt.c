@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "Txt.h"
 #include "Log.h"
+#include "Defs.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -20,7 +21,7 @@ void TxtKV_SetKey(TxtKV* kv, const char* key) {
 }
 
 void TxtKV_SetValue(TxtKV* kv, const char* value) {
-	kv->value = strdup(value);
+	kv->value = STRDUP(value);
 	assert(kv->value);
 }
 

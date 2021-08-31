@@ -32,7 +32,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 				if (distanceToPlayer < 1.2f) {
 					if (obj->properties->ai->attackPeriod < obj->properties->ai->attackStopwatch) {
 						// If enough time passed for the next attack
-						Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
+						Object* sword = Pool_Mark(&CurrentLevel()->objects, NULL, NULL);
 						ObjectSword_Init(sword, obj->position, FindOffenseMeleeOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
 						LOG_INF("Attacking player with melee");
 						
@@ -148,7 +148,7 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 		defense->maxHp = 100;
 
 		ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
-		offense->originator = Bucket_GetId(&CurrentLevel()->objects, obj);
+		offense->originator = Pool_GetId(&CurrentLevel()->objects, obj);
 		offense->hp = 10;
 		offense->ttl = 100;
 	}

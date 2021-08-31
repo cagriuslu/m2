@@ -2,7 +2,7 @@
 #define INSERTION_LIST_H
 
 #include "Array.h"
-#include "Bucket.h"
+#include "Pool.h"
 #include <stdint.h>
 
 typedef struct _InsertionList {

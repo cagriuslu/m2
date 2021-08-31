@@ -1,10 +1,10 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include "Bucket.h"
+#include "Pool.h"
 
 typedef struct _List {
-	Bucket bucket;
+	Pool bucket;
 	ID firstId;
 	ID lastId;
 	size_t dataSize;

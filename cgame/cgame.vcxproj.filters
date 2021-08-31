@@ -66,7 +66,7 @@
     <ClCompile Include="..\src\Box2DUtils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Bucket.c">
+    <ClCompile Include="..\src\Pool.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Component.c">
@@ -221,7 +221,7 @@
     <ClInclude Include="..\src\Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Bucket.h">
+    <ClInclude Include="..\src\Pool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Component.h">
@@ -279,6 +279,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,13 +1,13 @@
 #ifndef SPATIAL_MAP_H
 #define SPATIAL_MAP_H
 
-#include "Bucket.h"
+#include "Pool.h"
 #include "Box2D.h"
 #include "AABB.h"
 #include "Array.h"
 
 typedef struct _SpatialMap {
-	Bucket bucket;
+	Pool bucket;
 	Box2DWorld* world;
 	size_t dataSize;
 } SpatialMap;

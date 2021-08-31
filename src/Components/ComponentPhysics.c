@@ -23,8 +23,8 @@ void PhysicsComponent_ContactCB(Box2DContact* contact) {
 	Level* level = CurrentLevel();
 	ID phyIdA = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact))));
 	ID phyIdB = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact))));
-	ComponentPhysics* phyA = Bucket_GetById(&level->physics, phyIdA);
-	ComponentPhysics* phyB = Bucket_GetById(&level->physics, phyIdB);
+	ComponentPhysics* phyA = Pool_GetById(&level->physics, phyIdA);
+	ComponentPhysics* phyB = Pool_GetById(&level->physics, phyIdB);
 	if (phyA && phyB) {
 		if (phyA->onCollision) {
 			phyA->onCollision(phyA, phyB);

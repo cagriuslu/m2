@@ -17,8 +17,8 @@ int PathfinderMap_InitFromLevel(PathfinderMap* pm, Level* level) {
 	memset(pm, 0, sizeof(PathfinderMap));
 	PROPAGATE_ERROR(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
 
-	for (ComponentPhysics* phy = Bucket_GetFirst(&level->physics); phy; phy = Bucket_GetNext(&level->physics, phy)) {
-		Object* obj = Bucket_GetById(&level->objects, phy->super.objId);
+	for (ComponentPhysics* phy = Pool_GetFirst(&level->physics); phy; phy = Pool_GetNext(&level->physics, phy)) {
+		Object* obj = Pool_GetById(&level->objects, phy->super.objId);
 		if (obj && phy->body) {
 			const int fixtureCount = Box2DBodyGetFixtureCount(phy->body);
 			for (int i = 0; i < fixtureCount; i++) {

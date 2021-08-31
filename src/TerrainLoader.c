@@ -70,7 +70,7 @@ int TerrainLoader_LoadTiles(Level* level, const char *tname) {
 	for (uint32_t rowIndex = 0, *rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex); rowPtr; ++rowIndex, rowPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, 0, rowIndex)) {
 		for (uint32_t colIndex = 0, *txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex); txtKVIndexPtr; ++colIndex, txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex)) {
 			TileDef* tileDefPtr = HashMap_GetInt64Key(&tileDefs, *txtKVIndexPtr);
-			Object* tile = Bucket_Mark(&level->objects, NULL, NULL);
+			Object* tile = Pool_Mark(&level->objects, NULL, NULL);
 			ObjectTile_Init(tile, *tileDefPtr, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
 	}
@@ -104,7 +104,7 @@ int TerrainLoader_LoadEnemies(Level* level, const char* tname) {
 		for (uint32_t colIndex = 0, *txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex); txtKVIndexPtr; ++colIndex, txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex)) {
 			char** enemyDescriptor = HashMap_GetInt64Key(&enemyDescriptors, *txtKVIndexPtr);
 			if (enemyDescriptor) {
-				Object* enemy = Bucket_Mark(&level->objects, NULL, NULL);
+				Object* enemy = Pool_Mark(&level->objects, NULL, NULL);
 				ObjectEnemy_Init(enemy, (Vec2F) { (float)colIndex, (float)rowIndex }, *enemyDescriptor);
 			}
 		}

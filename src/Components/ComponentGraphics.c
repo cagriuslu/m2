@@ -7,8 +7,8 @@
 
 void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 	Level* level = CurrentLevel();
-	Object* obj = Bucket_GetById(&level->objects, gfx->super.objId);
-	Object* camera = Bucket_GetById(&level->objects, level->cameraId);
+	Object* obj = Pool_GetById(&level->objects, gfx->super.objId);
+	Object* camera = Pool_GetById(&level->objects, level->cameraId);
 	if (obj && camera && gfx->tx) {
 		float scale = CurrentWindow()->pixelsPerMeter / CurrentTileWidth();
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
@@ -34,7 +34,7 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 
 void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio) {
 	Object* obj = FindObjectOfComponent(gfx);
-	Object* camera = Bucket_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
+	Object* camera = Pool_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	if (obj && camera) {
 		float scale = CurrentWindow()->pixelsPerMeter / CurrentTileWidth();
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
@@ -88,11 +88,11 @@ void GraphicsComponent_Term(ComponentGraphics* gfx) {
 
 int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB) {
 	Level* level = CurrentLevel();
-	ComponentGraphics* gfxA = Bucket_GetById(&level->graphics, gfxIdA);
-	ComponentGraphics* gfxB = Bucket_GetById(&level->graphics, gfxIdB);
+	ComponentGraphics* gfxA = Pool_GetById(&level->graphics, gfxIdA);
+	ComponentGraphics* gfxB = Pool_GetById(&level->graphics, gfxIdB);
 	if (gfxA && gfxB) {
-		Object* a = Bucket_GetById(&level->objects, gfxA->super.objId);
-		Object* b = Bucket_GetById(&level->objects, gfxB->super.objId);
+		Object* a = Pool_GetById(&level->objects, gfxA->super.objId);
+		Object* b = Pool_GetById(&level->objects, gfxB->super.objId);
 		if (a && b) {
 			float diff = b->position.y - a->position.y;
 			if (0 < diff) {

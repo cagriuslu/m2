@@ -1,6 +1,6 @@
 #include "Object.h"
 #include "Main.h"
-#include "Bucket.h"
+#include "Pool.h"
 #include <string.h>
 
 int ObjectProperties_Init(ObjectProperties* props) {
@@ -25,45 +25,45 @@ int Object_Init(Object* obj, Vec2F position, bool initProperties) {
 
 void Object_Term(Object* obj) {
 	if (obj->eventListener) {
-		ComponentEventListener* el = Bucket_GetById(&CurrentLevel()->eventListeners, obj->eventListener);
+		ComponentEventListener* el = Pool_GetById(&CurrentLevel()->eventListeners, obj->eventListener);
 		EventListenerComponent_Term(el);
-		Bucket_Unmark(&CurrentLevel()->eventListeners, el);
+		Pool_Unmark(&CurrentLevel()->eventListeners, el);
 	}
 	if (obj->physics) {
-		ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
+		ComponentPhysics* phy = Pool_GetById(&CurrentLevel()->physics, obj->physics);
 		PhysicsComponent_Term(phy);
-		Bucket_Unmark(&CurrentLevel()->physics, phy);
+		Pool_Unmark(&CurrentLevel()->physics, phy);
 	}
 	if (obj->graphics) {
 		InsertionList_Remove(&CurrentLevel()->drawList, obj->graphics);
-		ComponentGraphics* gfx = Bucket_GetById(&CurrentLevel()->graphics, obj->graphics);
+		ComponentGraphics* gfx = Pool_GetById(&CurrentLevel()->graphics, obj->graphics);
 		GraphicsComponent_Term(gfx);
-		Bucket_Unmark(&CurrentLevel()->graphics, gfx);
+		Pool_Unmark(&CurrentLevel()->graphics, gfx);
 	}
 	if (obj->terrainGraphics) {
-		ComponentGraphics* gfx = Bucket_GetById(&CurrentLevel()->terrainGraphics, obj->terrainGraphics);
+		ComponentGraphics* gfx = Pool_GetById(&CurrentLevel()->terrainGraphics, obj->terrainGraphics);
 		GraphicsComponent_Term(gfx);
-		Bucket_Unmark(&CurrentLevel()->terrainGraphics, gfx);
+		Pool_Unmark(&CurrentLevel()->terrainGraphics, gfx);
 	}
 	if (obj->defense) {
-		ComponentDefense* def = Bucket_GetById(&CurrentLevel()->defenses, obj->defense);
+		ComponentDefense* def = Pool_GetById(&CurrentLevel()->defenses, obj->defense);
 		ComponentDefense_Term(def);
-		Bucket_Unmark(&CurrentLevel()->defenses, def);
+		Pool_Unmark(&CurrentLevel()->defenses, def);
 	}
 	if (obj->offenseProjectile) {
-		ComponentOffense* off = Bucket_GetById(&CurrentLevel()->offenses, obj->offenseProjectile);
+		ComponentOffense* off = Pool_GetById(&CurrentLevel()->offenses, obj->offenseProjectile);
 		ComponentOffense_Term(off);
-		Bucket_Unmark(&CurrentLevel()->offenses, off);
+		Pool_Unmark(&CurrentLevel()->offenses, off);
 	}
 	if (obj->offenseMelee) {
-		ComponentOffense* off = Bucket_GetById(&CurrentLevel()->offenses, obj->offenseMelee);
+		ComponentOffense* off = Pool_GetById(&CurrentLevel()->offenses, obj->offenseMelee);
 		ComponentOffense_Term(off);
-		Bucket_Unmark(&CurrentLevel()->offenses, off);
+		Pool_Unmark(&CurrentLevel()->offenses, off);
 	}
 	if (obj->lightSource) {
-		ComponentLightSource* light = Bucket_GetById(&CurrentLevel()->lightSources, obj->lightSource);
+		ComponentLightSource* light = Pool_GetById(&CurrentLevel()->lightSources, obj->lightSource);
 		ComponentLightSource_Term(light);
-		Bucket_Unmark(&CurrentLevel()->lightSources, light);
+		Pool_Unmark(&CurrentLevel()->lightSources, light);
 	}
 	if (obj->properties) {
 		if (obj->properties->character) {
@@ -78,8 +78,8 @@ void Object_Term(Object* obj) {
 }
 
 ComponentEventListener* Object_AddEventListener(Object* obj, ID *outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentEventListener* el = Bucket_Mark(&CurrentLevel()->eventListeners, NULL, &obj->eventListener);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentEventListener* el = Pool_Mark(&CurrentLevel()->eventListeners, NULL, &obj->eventListener);
 	EventListenerComponent_Init(el, objectId);
 	if (outId) {
 		outId[0] = obj->eventListener;
@@ -88,8 +88,8 @@ ComponentEventListener* Object_AddEventListener(Object* obj, ID *outId) {
 }
 
 ComponentPhysics* Object_AddPhysics(Object* obj, ID* outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentPhysics* phy = Bucket_Mark(&CurrentLevel()->physics, NULL, &obj->physics);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentPhysics* phy = Pool_Mark(&CurrentLevel()->physics, NULL, &obj->physics);
 	PhysicsComponent_Init(phy, objectId);
 	if (outId) {
 		outId[0] = obj->physics;
@@ -98,8 +98,8 @@ ComponentPhysics* Object_AddPhysics(Object* obj, ID* outId) {
 }
 
 ComponentGraphics* Object_AddGraphics(Object* obj, ID* outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentGraphics* gfx = Bucket_Mark(&CurrentLevel()->graphics, NULL, &obj->graphics);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentGraphics* gfx = Pool_Mark(&CurrentLevel()->graphics, NULL, &obj->graphics);
 	GraphicsComponent_Init(gfx, objectId);
 	InsertionList_Insert(&CurrentLevel()->drawList, obj->graphics);
 	if (outId) {
@@ -109,8 +109,8 @@ ComponentGraphics* Object_AddGraphics(Object* obj, ID* outId) {
 }
 
 ComponentGraphics* Object_AddTerrainGraphics(Object* obj, ID* outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentGraphics* gfx = Bucket_Mark(&CurrentLevel()->terrainGraphics, NULL, &obj->terrainGraphics);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentGraphics* gfx = Pool_Mark(&CurrentLevel()->terrainGraphics, NULL, &obj->terrainGraphics);
 	GraphicsComponent_Init(gfx, objectId);
 	if (outId) {
 		outId[0] = obj->terrainGraphics;
@@ -119,8 +119,8 @@ ComponentGraphics* Object_AddTerrainGraphics(Object* obj, ID* outId) {
 }
 
 ComponentDefense* Object_AddDefense(Object* obj, ID* outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentDefense* def = Bucket_Mark(&CurrentLevel()->defenses, NULL, &obj->defense);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentDefense* def = Pool_Mark(&CurrentLevel()->defenses, NULL, &obj->defense);
 	ComponentDefense_Init(def, objectId);
 	if (outId) {
 		outId[0] = obj->defense;
@@ -129,8 +129,8 @@ ComponentDefense* Object_AddDefense(Object* obj, ID* outId) {
 }
 
 ComponentOffense* Object_AddOffenseProjectile(Object* obj, ID* outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentOffense* off = Bucket_Mark(&CurrentLevel()->offenses, NULL, &obj->offenseProjectile);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentOffense* off = Pool_Mark(&CurrentLevel()->offenses, NULL, &obj->offenseProjectile);
 	ComponentOffense_Init(off, objectId);
 	if (outId) {
 		outId[0] = obj->offenseProjectile;
@@ -139,8 +139,8 @@ ComponentOffense* Object_AddOffenseProjectile(Object* obj, ID* outId) {
 }
 
 ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentOffense* off = Bucket_Mark(&CurrentLevel()->offenses, NULL, &obj->offenseMelee);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentOffense* off = Pool_Mark(&CurrentLevel()->offenses, NULL, &obj->offenseMelee);
 	ComponentOffense_Init(off, objectId);
 	if (outId) {
 		outId[0] = obj->offenseMelee;
@@ -149,8 +149,8 @@ ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId) {
 }
 
 ComponentLightSource* Object_AddLightSource(Object* obj, float lightBoundaryRadius, ID* outId) {
-	ID objectId = Bucket_GetId(&CurrentLevel()->objects, obj);
-	ComponentLightSource* light = Bucket_Mark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
+	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
+	ComponentLightSource* light = Pool_Mark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
 	ComponentLightSource_Init(light, objectId, lightBoundaryRadius);
 	if (outId) {
 		outId[0] = obj->lightSource;

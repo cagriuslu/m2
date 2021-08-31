@@ -9,16 +9,16 @@
 #include "Vec2F.h"
 #include <stdint.h>
 
-#define FindObjectById(id)               ((Object*) Bucket_GetById(&CurrentLevel()->objects, (id)))
+#define FindObjectById(id)               ((Object*) Pool_GetById(&CurrentLevel()->objects, (id)))
 #define FindObjectOfComponent(component) (FindObjectById((component)->super.objId))
 
-#define FindEventListenerById(id)     ((ComponentEventListener*) Bucket_GetById(&CurrentLevel()->eventListeners, (id)))
-#define FindPhysicsById(id)           ((ComponentPhysics*)       Bucket_GetById(&CurrentLevel()->physics, (id)))
-#define FindGraphicsById(id)          ((ComponentGraphics*)      Bucket_GetById(&CurrentLevel()->graphics, (id)))
-#define FindTerrainGraphicsById(id)   ((ComponentGraphics*)      Bucket_GetById(&CurrentLevel()->terrainGraphics, (id)))
-#define FindDefenseById(id)           ((ComponentDefense*)       Bucket_GetById(&CurrentLevel()->defenses, (id)))
-#define FindOffenseProjectileById(id) ((ComponentOffense*)       Bucket_GetById(&CurrentLevel()->offenses, (id)))
-#define FindOffenseMeleeById(id)      ((ComponentOffense*)       Bucket_GetById(&CurrentLevel()->offenses, (id)))
+#define FindEventListenerById(id)     ((ComponentEventListener*) Pool_GetById(&CurrentLevel()->eventListeners, (id)))
+#define FindPhysicsById(id)           ((ComponentPhysics*)       Pool_GetById(&CurrentLevel()->physics, (id)))
+#define FindGraphicsById(id)          ((ComponentGraphics*)      Pool_GetById(&CurrentLevel()->graphics, (id)))
+#define FindTerrainGraphicsById(id)   ((ComponentGraphics*)      Pool_GetById(&CurrentLevel()->terrainGraphics, (id)))
+#define FindDefenseById(id)           ((ComponentDefense*)       Pool_GetById(&CurrentLevel()->defenses, (id)))
+#define FindOffenseProjectileById(id) ((ComponentOffense*)       Pool_GetById(&CurrentLevel()->offenses, (id)))
+#define FindOffenseMeleeById(id)      ((ComponentOffense*)       Pool_GetById(&CurrentLevel()->offenses, (id)))
 
 #define FindEventListenerOfObject(obj)     (FindEventListenerById((obj->eventListener)))
 #define FindPhysicsOfObject(obj)           (FindPhysicsById((obj->physics)))
@@ -29,7 +29,7 @@
 #define FindOffenseMeleeOfObject(obj)      (FindOffenseMeleeById((obj->offenseMelee)))
 
 #define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&CurrentLevel()->deleteList, &__id__); } while (0)
-#define DeleteObject(obj)    DeleteObjectById(Bucket_GetId(&CurrentLevel()->objects, (obj)))
+#define DeleteObject(obj)    DeleteObjectById(Pool_GetId(&CurrentLevel()->objects, (obj)))
 
 typedef struct _ObjectProperties {
 	// Used by Player
@@ -45,9 +45,9 @@ void ObjectProperties_Term(ObjectProperties* props);
 
 /// Basis of all objects in the game.
 /// 
-/// How to decide if a component should reside in Bucket or be held as a property?
-/// If the component is accessed by the Main Game Loop => Bucket
-/// If the component is created and destroyed rapidly => Bucket
+/// How to decide if a component should reside in Pool or be held as a property?
+/// If the component is accessed by the Main Game Loop => Pool
+/// If the component is created and destroyed rapidly => Pool
 /// Others => Property
 /// 
 typedef struct _Object {

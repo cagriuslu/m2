@@ -18,11 +18,11 @@
 #define STOPWATCH_COUNT (2)
 
 static void Player_prePhysics(ComponentEventListener* el) {
-	Object* obj = Bucket_GetById(&CurrentLevel()->objects, el->super.objId);
+	Object* obj = Pool_GetById(&CurrentLevel()->objects, el->super.objId);
 	obj->properties->rangedAttackStopwatch += DeltaTicks();
 	obj->properties->meleeAttackStopwatch += DeltaTicks();
 	
-	ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
+	ComponentPhysics* phy = Pool_GetById(&CurrentLevel()->physics, obj->physics);
 	if (phy && phy->body) {
 		Vec2F moveDirection = (Vec2F) {0.0f, 0.0f};
 		if (CurrentEvents()->keyStates[KEY_UP]) {
@@ -85,7 +85,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
-			Object* bullet = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
+			Object* bullet = Pool_Mark(&CurrentLevel()->objects, NULL, NULL);
 			Item* projectileWeapon = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
 			ObjectBullet_Init(bullet, obj->position, bulletDir, projectileWeapon->type, &obj->properties->character->projectileOffense);
 			obj->properties->rangedAttackStopwatch = 0;
@@ -95,7 +95,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
-			Object* sword = Bucket_Mark(&CurrentLevel()->objects, NULL, NULL);
+			Object* sword = Pool_Mark(&CurrentLevel()->objects, NULL, NULL);
 			ObjectSword_Init(sword, obj->position, &obj->properties->character->meleeOffense, false, swordDir, 150);
 			obj->properties->meleeAttackStopwatch = 0;
 		}
@@ -104,7 +104,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 
 int ObjectPlayer_Init(Object* obj, Character* character) {
 	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
-	ID objId = Bucket_GetId(&CurrentLevel()->objects, obj);
+	ID objId = Pool_GetId(&CurrentLevel()->objects, obj);
 	// Write-back originator ID of Character Offenses
 	obj->properties->character = character;
 	obj->properties->character->charOffense.originator = objId;

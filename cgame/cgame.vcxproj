@@ -170,7 +170,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Box2DUtils.c" />
     <ClCompile Include="..\src\Box2D.cpp" />
-    <ClCompile Include="..\src\Bucket.c" />
+    <ClCompile Include="..\src\Pool.c" />
     <ClCompile Include="..\src\Character.c" />
     <ClCompile Include="..\src\Component.c" />
     <ClCompile Include="..\src\Components\ComponentDefense.c" />
@@ -225,11 +225,12 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\Array.h" />
     <ClInclude Include="..\src\Box2DUtils.h" />
     <ClInclude Include="..\src\Box2D.h" />
-    <ClInclude Include="..\src\Bucket.h" />
+    <ClInclude Include="..\src\Pool.h" />
     <ClInclude Include="..\src\Character.h" />
     <ClInclude Include="..\src\Component.h" />
     <ClInclude Include="..\src\Constants.h" />
     <ClInclude Include="..\src\Controls.h" />
+    <ClInclude Include="..\src\Defs.h" />
     <ClInclude Include="..\src\Dialog.h" />
     <ClInclude Include="..\src\Error.h" />
     <ClInclude Include="..\src\Event.h" />

@@ -1,6 +1,7 @@
 #include "HashMap.h"
 #include "Txt.h"
 #include "Array.h"
+#include "Defs.h"
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -34,7 +35,7 @@ XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 		// Get TxtKV from Txt array
 		TxtKV* txtKV = Array_Get(&txt.txtKVPairs, *txtKVIndexPtr);
 		// Duplicate string
-		char* dupValue = strdup(txtKV->value);
+		char* dupValue = STRDUP(txtKV->value);
 		HashMap_Set(hm, txtKV->key, &dupValue);
 	}
 	Txt_Term(&txt);

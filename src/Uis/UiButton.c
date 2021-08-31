@@ -1,6 +1,7 @@
 #include "../Ui.h"
 #include "../Main.h"
 #include "../Error.h"
+#include "../Defs.h"
 #include <SDL.h>
 #include <stdarg.h>
 #include <assert.h>

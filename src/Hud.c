@@ -28,7 +28,7 @@ void Hud_Draw(Hud* hud) {
 	Level* level = CurrentLevel();
 	if (level->levelType == LEVEL_TYPE_SINGLE_PLAYER) {
 		// Draw player health
-		Object* player = (Object*)Bucket_GetById(&level->objects, hud->playerId);
+		Object* player = (Object*)Pool_GetById(&level->objects, hud->playerId);
 		if (player) {
 			ComponentDefense* defense = FindDefenseOfObject(player);
 			if (defense) {

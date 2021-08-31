@@ -1,7 +1,7 @@
 #ifndef HUD_H
 #define HUD_H
 
-#include "Bucket.h"
+#include "Pool.h"
 #include "Error.h"
 
 typedef struct _Hud Hud;

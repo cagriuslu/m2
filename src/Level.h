@@ -1,7 +1,7 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include "Bucket.h"
+#include "Pool.h"
 #include "InsertionList.h"
 #include "Box2D.h"
 #include "Hud.h"
@@ -15,14 +15,14 @@ typedef enum _LevelType {
 } LevelType;
 
 typedef struct _Level {
-	Bucket objects;
+	Pool objects;
 	InsertionList drawList;
-	Bucket eventListeners;
-	Bucket physics;
-	Bucket graphics;
-	Bucket terrainGraphics;
-	Bucket defenses;
-	Bucket offenses;
+	Pool eventListeners;
+	Pool physics;
+	Pool graphics;
+	Pool terrainGraphics;
+	Pool defenses;
+	Pool offenses;
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
 	LevelType levelType;
@@ -31,7 +31,7 @@ typedef struct _Level {
 	PathfinderMap pathfinderMap;
 	Hud hud;
 	// Not used
-	Bucket lightSources;
+	Pool lightSources;
 	SpatialMap lightSourceSpatialMap;
 } Level;
 

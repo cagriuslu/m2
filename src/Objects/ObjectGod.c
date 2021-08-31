@@ -7,8 +7,8 @@
 #include <stdio.h>
 
 static void God_prePhysics(ComponentEventListener* el) {
-	Object* obj = Bucket_GetById(&CurrentLevel()->objects, el->super.objId);
-	ComponentPhysics* phy = Bucket_GetById(&CurrentLevel()->physics, obj->physics);
+	Object* obj = Pool_GetById(&CurrentLevel()->objects, el->super.objId);
+	ComponentPhysics* phy = Pool_GetById(&CurrentLevel()->physics, obj->physics);
 	if (phy && phy->body) {
 		Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
 		if (CurrentEvents()->keyStates[KEY_UP]) {
