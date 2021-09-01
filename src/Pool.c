@@ -7,16 +7,16 @@
 
 #define PoolItemData(pool, index) ((PoolItem*) (((int8_t*) ((pool)->items)) + ((pool)->itemSize * (index))))
 #define PoolItemFromData(itemData) ((PoolItem*) (((int8_t*) (itemData)) - offsetof(PoolItem, data)))
-#define APPEND_BUCKET_ID(poolId, id) (((uint64_t)(poolId) << 48) |  (uint64_t)(id))
 
 uint16_t gPoolId = 1;
 
-XErr Pool_Init(Pool* pool, size_t dataSize) {
+XErr Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize) {
 	memset(pool, 0, sizeof(Pool));
-	pool->capacity = UINT16_MAX + 1;
+	pool->poolCapacityInBits = poolCapacityInBits;
+	pool->capacity = (size_t)1 << pool->poolCapacityInBits;
 	pool->dataSize = dataSize;
 	pool->itemSize = dataSize + sizeof(PoolItem);
-	pool->poolId = ((uint64_t)gPoolId++) << 48;
+	pool->shiftedPoolId = ((uint64_t)gPoolId++) << 48;
 	pool->items = malloc(pool->capacity * pool->itemSize);
 	assert(pool->items);
 	Pool_UnmarkAll(pool);
@@ -33,17 +33,17 @@ void Pool_Term(Pool* pool) {
 
 void* Pool_Mark(Pool* pool, void* copy, ID* outId) {
 	if (pool->size < pool->capacity) {
-		size_t indexToAllocate = pool->nextFreeIndex;
+		const size_t indexToAllocate = pool->nextFreeIndex;
 		PoolItem* itemToAllocate = PoolItemData(pool, indexToAllocate);
-		pool->nextFreeIndex = (itemToAllocate->id) & 0xFFFF; // Extract next free index
+		pool->nextFreeIndex = itemToAllocate->id & 0xFFFF; // Extract next nextFreeIndex
 		itemToAllocate->id = ((uint16_t)pool->nextKey << 16) | ((uint16_t)indexToAllocate & 0xFFFF); // Store new id of the item
 		if (outId) {
-			*outId = pool->poolId | (uint64_t)itemToAllocate->id; // Return id
+			*outId = pool->shiftedPoolId | (uint64_t)itemToAllocate->id; // Return id
 		}
 
 		pool->size++;
 		pool->nextKey++;
-		if (pool->nextKey > UINT16_MAX) {
+		if (pool->nextKey > pool->capacity) {
 			pool->nextKey = 1; // Rewind key to beginning
 		}
 		if (pool->highestAllocatedIndex < indexToAllocate) {
@@ -68,7 +68,7 @@ void Pool_Unmark(Pool* pool, void* data) {
 	}
 
 	PoolItem* itemToDelete = PoolItemFromData(data);
-	size_t indexToDelete = itemToDelete->id & 0xFFFF;
+	const size_t indexToDelete = itemToDelete->id & 0xFFFF;
 	itemToDelete->id = pool->nextFreeIndex & 0xFFFF; // Set item as free
 	pool->nextFreeIndex = indexToDelete; // Store next free index
 
@@ -150,11 +150,11 @@ void* Pool_GetLast(Pool* pool) {
 }
 
 void* Pool_GetNext(Pool* pool, void* currData) {
-	uint32_t currId = (uint32_t)Pool_GetId(pool, currData);
+	const uint32_t currId = (uint32_t)Pool_GetId(pool, currData);
 	if (currId == 0) {
 		return NULL;
 	}
-	size_t currIdx = currId & 0xFFFF;
+	const size_t currIdx = currId & 0xFFFF;
 	for (size_t i = currIdx + 1; i <= pool->highestAllocatedIndex; i++) {
 		void* data = Pool_GetByIndex(pool, i);
 		if (data) {
@@ -165,11 +165,11 @@ void* Pool_GetNext(Pool* pool, void* currData) {
 }
 
 void* Pool_GetPrev(Pool* pool, void* currData) {
-	uint32_t currId = (uint32_t)Pool_GetId(pool, currData);
+	const uint32_t currId = (uint32_t)Pool_GetId(pool, currData);
 	if (currId == 0) {
 		return NULL;
 	}
-	size_t currIdx = currId & 0xFFFF;
+	const size_t currIdx = currId & 0xFFFF;
 	for (size_t i = currIdx; i-- > pool->lowestAllocatedIndex; ) {
 		void* data = Pool_GetByIndex(pool, i);
 		if (data) {
@@ -188,10 +188,10 @@ void* Pool_GetByIndex(Pool* pool, size_t idx) {
 }
 
 void* Pool_GetById(Pool* pool, ID id) {
-	if (pool->poolId != (id & 0xFFFF000000000000ull)) {
+	if (pool->shiftedPoolId != (id & 0xFFFF000000000000ull)) {
 		return NULL;
 	}
-	size_t candidateIdx = (uint32_t)id & 0xFFFFu;
+	const size_t candidateIdx = (uint32_t)id & 0xFFFFu;
 	PoolItem* candidateItem = PoolItemData(pool, candidateIdx);
 	if (candidateItem->id == ((uint32_t)id & 0xFFFFFFFFu)) {
 		return &(candidateItem->data);
@@ -207,7 +207,7 @@ ID Pool_GetId(Pool* pool, void* data) {
 	}
 	// Check if object is allocated
 	if (itemToCheck->id & 0xFFFF0000) {
-		return pool->poolId | (uint64_t)itemToCheck->id;
+		return pool->shiftedPoolId | (uint64_t)itemToCheck->id;
 	} else {
 		return 0;
 	}

@@ -9,19 +9,19 @@
 
 int Level_Init(Level* level) {
 	memset(level, 0, sizeof(Level));
-	PROPAGATE_ERROR(Pool_Init(&level->objects, sizeof(Object)));
+	PROPAGATE_ERROR(Pool_Init(&level->objects, 16, sizeof(Object)));
 	PROPAGATE_ERROR(InsertionList_Init(&level->drawList, UINT16_MAX + 1, GraphicsComponent_YComparatorCB));
-	PROPAGATE_ERROR(Pool_Init(&level->eventListeners, sizeof(ComponentEventListener)));
-	PROPAGATE_ERROR(Pool_Init(&level->physics, sizeof(ComponentPhysics)));
-	PROPAGATE_ERROR(Pool_Init(&level->graphics, sizeof(ComponentGraphics)));
-	PROPAGATE_ERROR(Pool_Init(&level->terrainGraphics, sizeof(ComponentGraphics)));
-	PROPAGATE_ERROR(Pool_Init(&level->defenses, sizeof(ComponentDefense)));
-	PROPAGATE_ERROR(Pool_Init(&level->offenses, sizeof(ComponentOffense)));
+	PROPAGATE_ERROR(Pool_Init(&level->eventListeners, 16, sizeof(ComponentEventListener)));
+	PROPAGATE_ERROR(Pool_Init(&level->physics, 16, sizeof(ComponentPhysics)));
+	PROPAGATE_ERROR(Pool_Init(&level->graphics, 16, sizeof(ComponentGraphics)));
+	PROPAGATE_ERROR(Pool_Init(&level->terrainGraphics, 16, sizeof(ComponentGraphics)));
+	PROPAGATE_ERROR(Pool_Init(&level->defenses, 16, sizeof(ComponentDefense)));
+	PROPAGATE_ERROR(Pool_Init(&level->offenses, 16, sizeof(ComponentOffense)));
 	level->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	level->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
 	Box2DWorldSetContactListener(level->world, level->contactListener);
 	PROPAGATE_ERROR(Array_Init(&level->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
-	PROPAGATE_ERROR(Pool_Init(&level->lightSources, sizeof(ComponentLightSource)));
+	PROPAGATE_ERROR(Pool_Init(&level->lightSources, 16, sizeof(ComponentLightSource)));
 	PROPAGATE_ERROR(SpatialMap_Init(&level->lightSourceSpatialMap, sizeof(ID)));
 	return 0;
 }

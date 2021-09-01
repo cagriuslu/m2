@@ -10,7 +10,7 @@ typedef struct _ListItem {
 
 int List_Init(List* list, size_t itemSize) {
 	memset(list, 0, sizeof(List));
-	PROPAGATE_ERROR(Pool_Init(&list->bucket, sizeof(ListItem) + itemSize));
+	PROPAGATE_ERROR(Pool_Init(&list->bucket, 16, sizeof(ListItem) + itemSize));
 	list->dataSize = itemSize;
 	return 0;
 }

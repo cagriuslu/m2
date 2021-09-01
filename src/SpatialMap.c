@@ -29,7 +29,7 @@ typedef struct _SpatialMapItem {
 int SpatialMap_Init(SpatialMap* sm, size_t dataSize) {
 	memset(sm, 0, sizeof(SpatialMap));
 	sm->dataSize = dataSize;
-	PROPAGATE_ERROR(Pool_Init(&sm->bucket, sizeof(SpatialMapItem) + dataSize));
+	PROPAGATE_ERROR(Pool_Init(&sm->bucket, 16, sizeof(SpatialMapItem) + dataSize));
 	sm->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	assert(sm->world);
 	return 0;

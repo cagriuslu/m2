@@ -16,18 +16,19 @@ typedef struct _Pool {
 	PoolItem* items;
 	size_t dataSize;
 	size_t itemSize;
-	uint64_t poolId;
+	uint64_t shiftedPoolId;
 	size_t capacity; // 65536
 	size_t size; // [0, 65536]
 	size_t nextKey; // [1, 65536]
 	size_t highestAllocatedIndex;
 	size_t lowestAllocatedIndex;
 	size_t nextFreeIndex;
+	unsigned poolCapacityInBits; // max:16 -> 65536
 } Pool;
 
 typedef uint64_t ID;
 
-XErr Pool_Init(Pool* pool, size_t dataSize);
+XErr Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize);
 void Pool_Term(Pool* pool);
 
 void* Pool_Mark(Pool* pool, void* copy, ID* outId);
