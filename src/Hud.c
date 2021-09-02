@@ -1,12 +1,16 @@
 #include "Hud.h"
 #include "Main.h"
+#include "Level.h"
 #include "Object.h"
 #include "SDLUtils.h"
 #include <string.h>
 
-XErr Hud_Init(Hud* hud, ID playerId) {
+#define AS_LEVEL(ptr) ((Level*)(ptr))
+
+XErr Hud_Init(Hud* hud, void* level) {
 	memset(hud, 0, sizeof(Hud));
-	hud->playerId = playerId;
+	hud->levelBackPtr = level;
+	// TODO
 	return 0;
 }
 
@@ -28,7 +32,8 @@ void Hud_Draw(Hud* hud) {
 	Level* level = CurrentLevel();
 	if (level->levelType == LEVEL_TYPE_SINGLE_PLAYER) {
 		// Draw player health
-		Object* player = (Object*)Pool_GetById(&level->objects, hud->playerId);
+		Object* player = (Object*)Pool_GetById(&level->objects, AS_LEVEL(hud->levelBackPtr)->playerId);
+		
 		if (player) {
 			ComponentDefense* defense = FindDefenseOfObject(player);
 			if (defense) {

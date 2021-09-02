@@ -170,6 +170,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Box2DUtils.c" />
     <ClCompile Include="..\src\Box2D.cpp" />
+    <ClCompile Include="..\src\HudComplications\HudComplicationHealthPoints.c" />
     <ClCompile Include="..\src\Pool.c" />
     <ClCompile Include="..\src\Character.c" />
     <ClCompile Include="..\src\Component.c" />
@@ -225,6 +226,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\Array.h" />
     <ClInclude Include="..\src\Box2DUtils.h" />
     <ClInclude Include="..\src\Box2D.h" />
+    <ClInclude Include="..\src\HudComplication.h" />
     <ClInclude Include="..\src\Pool.h" />
     <ClInclude Include="..\src\Character.h" />
     <ClInclude Include="..\src\Component.h" />

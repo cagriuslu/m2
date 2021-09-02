@@ -171,6 +171,9 @@
     <ClCompile Include="..\src\Window.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\HudComplications\HudComplicationHealthPoints.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h">
@@ -282,6 +285,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HudComplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

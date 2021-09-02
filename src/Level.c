@@ -76,7 +76,7 @@ int Level_LoadTest(Level* level) {
 	Object* player = Pool_Mark(&level->objects, NULL, &level->playerId);
 	ObjectPlayer_Init(player, character);
 
-	Hud_Init(&level->hud, level->playerId);
+	Hud_Init(&level->hud, level);
 
 	Object* camera = Pool_Mark(&level->objects, NULL, &level->cameraId);
 	ObjectCamera_Init(camera);
