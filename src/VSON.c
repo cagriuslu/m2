@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#define ISPLAIN(c) (isalnum(c) || (c) == '_')
+
 XErr VSON_InitObject(VSON* vson) {
 	memset(vson, 0, sizeof(VSON));
 	vson->type = VSON_VALUE_TYPE_OBJECT;
@@ -47,7 +49,7 @@ XErr _VSON_ParseFile_FetchPlainString(Array* buffer, FILE* f) {
 	int c;
 	char ch;
 	while ((c = fgetc(f)) != EOF) {
-		if (isalnum(c)) {
+		if (ISPLAIN(c)) {
 			ch = (char)c;
 			if (!Array_Append(buffer, &ch)) {
 				// out of memory, or max size reached
@@ -84,7 +86,7 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 	const int EXPECT_KEY = 0;
 	const int EXPECT_COLON = 1;
 	const int EXPECT_VALUE = 2;
-	const int EXPECT_SPACE = 3;
+	const int EXPECT_COMMA_OR_SPACE = 3;
 
 	int c, braceClosed = 0, state = EXPECT_KEY;
 	while ((c = fgetc(f)) != EOF) {
@@ -94,7 +96,7 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				break;
 			} else if (isspace(c)) {
 				// Do nothing
-			} else if (isalnum(c)) {
+			} else if (ISPLAIN(c)) {
 				// Create key-value pair
 				currentObjectKeyValue = calloc(1, sizeof(VSONObjectKeyValue));
 				if (!currentObjectKeyValue) {
@@ -135,13 +137,14 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 					return XERR_CORRUPTED_FILE;
 				}
 				// Next state
-				state = EXPECT_SPACE;
+				state = EXPECT_COMMA_OR_SPACE;
 			}
 		} else {
 			if (c == '}') {
 				braceClosed = 1;
 				break;
-			} else if (isspace(c)) {
+			} else if (c == ',' || isspace(c)) {
+				// Next state
 				state = EXPECT_KEY;
 			} else {
 				return XERR_CORRUPTED_FILE;
@@ -163,7 +166,7 @@ XErr _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
 	VSONArrayValue** nextArrayValuePointerLocation = &(vson->value.arrayFirstChild);
 
 	const int EXPECT_VALUE = 0;
-	const int EXPECT_SPACE = 1;
+	const int EXPECT_COMMA_OR_SPACE = 1;
 	
 	int c, bracketClosed = 0, state = EXPECT_VALUE;
 	while ((c = fgetc(f)) != EOF) {
@@ -188,13 +191,14 @@ XErr _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
 					return XERR_CORRUPTED_FILE;
 				}
 				
-				state = EXPECT_SPACE;
+				state = EXPECT_COMMA_OR_SPACE;
 			}
 		} else {
 			if (c == ']') {
 				bracketClosed = 1;
 				break;
-			} else if (isspace(c)) {
+			} else if (c == ',' || isspace(c)) {
+				// Next state
 				state = EXPECT_VALUE;
 			} else {
 				return XERR_CORRUPTED_FILE;
@@ -293,7 +297,7 @@ XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
 			} else if (c == '"') {
 				// Quoted string
 				result = _VSON_ParseFile_QuoteStringValue(vson, f);
-			} else if (isalnum(c)) {
+			} else if (ISPLAIN(c)) {
 				// Plain string
 				ungetc(c, f);
 				result = _VSON_ParseFile_PlainStringValue(vson, f);
@@ -337,7 +341,7 @@ VSON* VSON_Get(VSON* vson, const char* path) {
 	Array pathPieces;
 	XErr result = String_Split(path, '/', &pathPieces);
 	if (result) {
-		return result;
+		return NULL;
 	}
 
 	for (size_t i = 0; i < Array_Length(&pathPieces) && vson; i++) {
