@@ -9,6 +9,7 @@
 #include "Pool.h"
 #include "Level.h"
 #include "Dialog.h"
+#include "Game.h"
 #include "SDLUtils.h"
 #include "Log.h"
 #include "Pathfinder.h"
@@ -23,9 +24,6 @@
 #include <stdio.h>
 #include <string.h>
 
-Window gWindow = { .windowWidth = 1600, .windowHeight = 900 };
-int gTileWidth = TILE_WIDTH;
-uint32_t gWindowPixelFormat;
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
@@ -40,32 +38,39 @@ int main(int argc, char **argv) {
 	LOG_TRC("main");
 	(void)argc;
 	(void)argv;
-	int res;
-	
-	const float physicsStepPerSecond = 80.0f;
-	const float physicsStepPeriod = 1.0f / physicsStepPerSecond;
-	const int velocityIterations = 8;
-	const int positionIterations = 3;
+	XErr res;
+
+	Game *game = calloc(1, sizeof(Game));
+	game->tileWidth = 24;
+	game->textureImageFilePath = "resources/24x24.png";
+	game->textureMetaImageFilePath = "resources/24x24_META.png";
+	game->textureMetaFilePath = "resources/24x24_META.txt";
+	game->window.windowWidth = 1600;
+	game->window.windowHeight = 900;
+	game->physicsStepPerSecond = 80.0f;
+	game->physicsStepPeriod = 1.0f / game->physicsStepPerSecond;
+	game->velocityIterations = 8;
+	game->positionIterations = 3;
 
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
-	Window_SetWidthHeight(&gWindow, gWindow.windowWidth, gWindow.windowHeight);
-	SDL_Window *sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gWindow.windowWidth, gWindow.windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	SDL_SetWindowMinimumSize(sdlWindow, 712, 400);
+	Window_SetWidthHeight(&game->window, game->window.windowWidth, game->window.windowHeight);
+	game->window.sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, game->window.windowWidth, game->window.windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	SDL_SetWindowMinimumSize(game->window.sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
-	SDL_Cursor* cursor = SDLUtils_CreateCursor();
-	SDL_SetCursor(cursor);
-	gWindowPixelFormat = SDL_GetWindowPixelFormat(sdlWindow);
-	gRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
-	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/" TEXTURE_FILE_KEY ".png"));
+	game->window.cursor = SDLUtils_CreateCursor();
+	SDL_SetCursor(game->window.cursor);
+	game->window.pixelFormat = SDL_GetWindowPixelFormat(game->window.sdlWindow);
+	gRenderer = SDL_CreateRenderer(game->window.sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
+	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/24x24.png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
-	TextureMap_Init(&gTextureMap, TILE_WIDTH, "resources/" TEXTURE_FILE_KEY ".png", "resources/" TEXTURE_FILE_KEY "_META.png", "resources/" TEXTURE_FILE_KEY "_META.txt");
+	TextureMap_Init(&gTextureMap, game->tileWidth, game->textureImageFilePath, game->textureMetaImageFilePath, game->textureMetaFilePath);
 
 	bool levelLoaded = false;
 
 main_menu:
-	res = DialogMainMenu(levelLoaded);
+	res = DialogMainMenu(game, levelLoaded);
 	if (res == XERR_QUIT) {
 		return 0;
 	} else if (res == X_MAIN_MENU_RESUME) {
@@ -79,9 +84,9 @@ main_menu:
 		Level_Init(&gLevel);
 
 		if (res == X_MAIN_MENU_NEW_GAME) {
-			PROPAGATE_ERROR(Level_LoadTest(&gLevel));
+			PROPAGATE_ERROR(Level_LoadTest(&gLevel, game));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
-			PROPAGATE_ERROR(Level_LoadEditor(&gLevel));
+			PROPAGATE_ERROR(Level_LoadEditor(&gLevel, game));
 		} else {
 			LOG_FTL("Unknown level is selected");
 			LOGOBJ_FTL(LOGVAR_MENU_SELECTION, Int32, res);
@@ -114,7 +119,7 @@ main_menu:
 				break;
 			}
 			if (gEvents.windowResizeEvent) {
-				Window_SetWidthHeight(&gWindow, gEvents.windowDims.x, gEvents.windowDims.y);
+				Window_SetWidthHeight(&game->window, gEvents.windowDims.x, gEvents.windowDims.y);
 			}
 			if (!SDL_IsTextInputActive()) {
 				if (gEvents.keysPressed[KEY_MENU]) {
@@ -150,15 +155,15 @@ main_menu:
 		prevPrePhysicsTicks += gDeltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
 			if (el->prePhysics) {
-				el->prePhysics(el);
+				el->prePhysics(el, game);
 			}
 		}
 		if (gLevel.world) {
 			gDeltaTicks = SDL_GetTicks() - prevWorldStepTicks;
 			timeSinceLastWorldStep += gDeltaTicks / 1000.0f;
-			while (physicsStepPeriod < timeSinceLastWorldStep) {
-				Box2DWorldStep(gLevel.world, physicsStepPeriod, velocityIterations, positionIterations);
-				timeSinceLastWorldStep -= physicsStepPeriod;
+			while (game->physicsStepPeriod < timeSinceLastWorldStep) {
+				Box2DWorldStep(gLevel.world, game->physicsStepPeriod, game->velocityIterations, game->positionIterations);
+				timeSinceLastWorldStep -= game->physicsStepPeriod;
 			}
 			prevWorldStepTicks += gDeltaTicks;
 		}
@@ -195,7 +200,7 @@ main_menu:
 		prevTerrainDrawGraphicsTicks += gDeltaTicks;
 		for (ComponentGraphics* gfx = Pool_GetFirst(&gLevel.terrainGraphics); gfx; gfx = Pool_GetNext(&gLevel.terrainGraphics, gfx)) {
 			if (gfx->draw) {
-				gfx->draw(gfx);
+				gfx->draw(gfx, game);
 			}
 		}
 		// Pre-graphics
@@ -215,15 +220,15 @@ main_menu:
 			ID graphicsId = InsertionList_Get(&gLevel.drawList, i);
 			ComponentGraphics* gfx = Pool_GetById(&gLevel.graphics, graphicsId);
 			if (gfx && gfx->draw) {
-				gfx->draw(gfx);
+				gfx->draw(gfx, game);
 			}
 		}
 		// Draw HUD background
 		SDL_SetRenderDrawColor(gRenderer, 5, 5, 5, 255);
-		SDL_RenderFillRect(gRenderer, &gWindow.leftHudRect);
-		SDL_RenderFillRect(gRenderer, &gWindow.rightHudRect);
+		SDL_RenderFillRect(gRenderer, &game->window.leftHudRect);
+		SDL_RenderFillRect(gRenderer, &game->window.rightHudRect);
 		// Draw HUD
-		Hud_Draw(&gLevel.hud);
+		Hud_Draw(&gLevel.hud, game);
 		// Post-graphics
 		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += gDeltaTicks;
@@ -234,8 +239,8 @@ main_menu:
 		}
 		// Draw envelope
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(gRenderer, &gWindow.firstEnvelopeRect);
-		SDL_RenderFillRect(gRenderer, &gWindow.secondEnvelopeRect);
+		SDL_RenderFillRect(gRenderer, &game->window.firstEnvelopeRect);
+		SDL_RenderFillRect(gRenderer, &game->window.secondEnvelopeRect);
 		// Present
 		SDL_RenderPresent(gRenderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
@@ -252,24 +257,12 @@ main_menu:
 	}
 
 	SDL_DestroyRenderer(gRenderer);
-	SDL_FreeCursor(cursor);
-	SDL_DestroyWindow(sdlWindow);
+	SDL_FreeCursor(game->window.cursor);
+	SDL_DestroyWindow(game->window.sdlWindow);
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
-}
-
-Window* CurrentWindow() {
-	return &gWindow;
-}
-
-int CurrentTileWidth() {
-	return gTileWidth;
-}
-
-uint32_t CurrentWindowPixelFormat() {
-	return gWindowPixelFormat;
 }
 
 SDL_Renderer* CurrentRenderer() {
@@ -304,13 +297,13 @@ char* ConsoleInputBuffer() {
 	return gConsoleInput;
 }
 
-Vec2F CurrentPointerPositionInWorld(void) {
+Vec2F CurrentPointerPositionInWorld(Game *game) {
 	Object* camera = Pool_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = gEvents.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (gWindow.windowWidth / 2), pointerPosition.y - (gWindow.windowHeight / 2) };
-	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / gWindow.pixelsPerMeter, pointerPositionWRTScreenCenter.y / gWindow.pixelsPerMeter };
+	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (game->window.windowWidth / 2), pointerPosition.y - (game->window.windowHeight / 2) };
+	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / game->window.pixelsPerMeter, pointerPositionWRTScreenCenter.y / game->window.pixelsPerMeter };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
 	return pointerPositionWRTWorld;
 }

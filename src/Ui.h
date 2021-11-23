@@ -1,6 +1,7 @@
 #ifndef UI_H
 #define UI_H
 
+#include "Game.h"
 #include "Vec2F.h"
 #include "Vec2I.h"
 #include <SDL.h>
@@ -10,7 +11,7 @@ typedef struct _Ui {
 	SDL_Rect trigZone;
 	void *eventData;
 	void (*onMouseButton)(struct _Ui*);
-	void (*draw)(struct _Ui*);
+	void (*draw)(struct _Ui*, Game *game);
 	void *privData;
 } Ui;
 

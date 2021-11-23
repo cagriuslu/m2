@@ -1,5 +1,6 @@
 #include "../Ui.h"
 #include "../Main.h"
+#include "../Game.h"
 #include "../Error.h"
 #include "../Defs.h"
 #include <SDL.h>
@@ -16,13 +17,13 @@ typedef struct _UiButtonData {
 	SDL_Texture *texture;
 } UiButtonData;
 
-void UiButton_draw(Ui* ui) {
+void UiButton_draw(Ui* ui, Game *game) {
 	UiButtonData *uiButtonData = ui->privData;
 
 	Vec2I size = uiButtonData->size;
 	SDL_Rect outlineRect = (SDL_Rect) {
-		CurrentWindow()->windowWidth / 2 - size.x / 2 + uiButtonData->position.x,
-		CurrentWindow()->windowHeight / 2 - size.y / 2 + uiButtonData->position.y,
+		game->window.windowWidth / 2 - size.x / 2 + uiButtonData->position.x,
+		game->window.windowHeight / 2 - size.y / 2 + uiButtonData->position.y,
 		size.x,
 		size.y
 	};
@@ -36,8 +37,8 @@ void UiButton_draw(Ui* ui) {
 	int textW = uiButtonData->textSize.x;
 	int textH = uiButtonData->textSize.y;
 	SDL_Rect textRect = (SDL_Rect) {
-		CurrentWindow()->windowWidth / 2 - textW / 2 + uiButtonData->position.x,
-		CurrentWindow()->windowHeight / 2 - textH / 2 + uiButtonData->position.y,
+		game->window.windowWidth / 2 - textW / 2 + uiButtonData->position.x,
+		game->window.windowHeight / 2 - textH / 2 + uiButtonData->position.y,
 		textW,
 		textH
 	};

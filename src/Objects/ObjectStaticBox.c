@@ -4,7 +4,7 @@
 #include "../Box2DUtils.h"
 #include <stdio.h>
 
-int ObjectStaticBox_Init(Object *obj, Vec2F position) {
+int ObjectStaticBox_Init(Object *obj, Game *game, Vec2F position) {
 	PROPAGATE_ERROR(Object_Init(obj, position, false));
 	
 	ID phyId = 0;
@@ -12,7 +12,7 @@ int ObjectStaticBox_Init(Object *obj, Vec2F position) {
 	phy->body = Box2DUtils_CreateStaticBox(phyId, position, CATEGORY_STATIC_OBJECT, ((Vec2F) { 0.875, 0.125 }));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
-	gfx->txSrc = (SDL_Rect) {TILE_WIDTH, 4 * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH };
+	gfx->txSrc = (SDL_Rect) {game->tileWidth, 4 * game->tileWidth, game->tileWidth, game->tileWidth };
 	gfx->txCenter = (Vec2F){ 0.0, 4.5 };
 	
 	return 0;

@@ -13,15 +13,6 @@
 #include <SDL_ttf.h>
 #include <stdbool.h>
 
-#define TILE_WIDTH (24)
-#define TILE_WIDTH_STR "24"
-#define TILE_HEIGHT (24)
-#define TILE_HEIGHT_STR "24"
-#define TEXTURE_FILE_KEY TILE_WIDTH_STR "x" TILE_HEIGHT_STR
-
-Window* CurrentWindow();
-int CurrentTileWidth();
-uint32_t CurrentWindowPixelFormat();
 SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
 TTF_Font* CurrentFont();
@@ -31,6 +22,6 @@ Level* CurrentLevel();
 Events* CurrentEvents();
 unsigned DeltaTicks();
 
-Vec2F CurrentPointerPositionInWorld(void);
+Vec2F CurrentPointerPositionInWorld(Game *game);
 
 #endif

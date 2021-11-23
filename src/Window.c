@@ -9,6 +9,8 @@ void Window_SetWidthHeight(Window* window, int width, int height) {
 	float aspectRatioDiff = (fw / fh) - GAME_AND_HUD_ASPECT_RATIO;
 	if (0.001f < aspectRatioDiff) {
 		// Screen is wider than expected, we need envelope on left & right
+		window->gameWidth = (int)roundf(fh * GAME_ASPECT_RATIO);
+		window->gameHeight = height;
 		window->gameAndHudWidth = (int)roundf(fh * GAME_AND_HUD_ASPECT_RATIO);
 		window->gameAndHudHeight = height;
 		int envelopeWidth = (width - window->gameAndHudWidth) / 2;
@@ -19,6 +21,8 @@ void Window_SetWidthHeight(Window* window, int width, int height) {
 		window->rightHudRect = (SDL_Rect){ width - envelopeWidth - hudWidth, 0, hudWidth, window->gameAndHudHeight };
 	} else if (aspectRatioDiff < -0.001f) {
 		// Screen is taller than expected, we need envelope on top & bottom
+		window->gameWidth = width;
+		window->gameHeight = (int)roundf(fw / GAME_ASPECT_RATIO);
 		window->gameAndHudWidth = width;
 		window->gameAndHudHeight = (int)roundf(fw / GAME_AND_HUD_ASPECT_RATIO);
 		int envelopeWidth = (height - window->gameAndHudHeight) / 2;
@@ -28,6 +32,8 @@ void Window_SetWidthHeight(Window* window, int width, int height) {
 		window->leftHudRect = (SDL_Rect){ 0, envelopeWidth, hudWidth, window->gameAndHudHeight };
 		window->rightHudRect = (SDL_Rect){ width - hudWidth, envelopeWidth, hudWidth, window->gameAndHudHeight };
 	} else {
+		window->gameWidth = width;
+		window->gameHeight = height;
 		window->gameAndHudWidth = width;
 		window->gameAndHudHeight = height;
 		window->firstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };

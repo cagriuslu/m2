@@ -6,7 +6,7 @@
 
 #define SWING_SPEED (15.0f)
 
-static void Sword_prePhysics(ComponentEventListener* el) {
+static void Sword_prePhysics(ComponentEventListener* el, Game *game) {
 	Object* obj = FindObjectOfComponent(el);
 	ComponentOffense* offense = FindOffenseMeleeOfObject(obj);
 	offense->ttl -= DeltaTicks();
@@ -50,7 +50,7 @@ static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	}
 }
 
-int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks) {
+int ObjectSword_Init(Object* obj, Game *game, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks) {
 	PROPAGATE_ERROR(Object_Init(obj, originatorPosition, false));
 
 	const float theta = Vec2F_AngleRads(direction); // Convert direction to angle
@@ -86,7 +86,7 @@ int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* or
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
 	gfx->txAngle = Box2DBodyGetAngle(phy->body);
-	gfx->txSrc = (SDL_Rect){ 6 * TILE_WIDTH, 4 * TILE_WIDTH, 2 * TILE_WIDTH, TILE_WIDTH };
+	gfx->txSrc = (SDL_Rect){ 6 * game->tileWidth, 4 * game->tileWidth, 2 * game->tileWidth, game->tileWidth };
 	gfx->txCenter = (Vec2F){ -14.0f, 0.0f };
 
 	ComponentOffense* off = Object_AddOffenseMelee(obj, NULL);

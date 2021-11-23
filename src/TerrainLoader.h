@@ -3,7 +3,7 @@
 
 #include "Level.h"
 
-int TerrainLoader_LoadTiles(Level* level, const char* tname);
-int TerrainLoader_LoadEnemies(Level* level, const char* tname);
+int TerrainLoader_LoadTiles(Game *game, Level* level, const char* tname);
+int TerrainLoader_LoadEnemies(Game *game, Level* level, const char* tname);
 
 #endif

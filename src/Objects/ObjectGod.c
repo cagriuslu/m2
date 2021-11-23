@@ -6,7 +6,7 @@
 #include "../Error.h"
 #include <stdio.h>
 
-static void God_prePhysics(ComponentEventListener* el) {
+static void God_prePhysics(ComponentEventListener* el, Game *game) {
 	Object* obj = Pool_GetById(&CurrentLevel()->objects, el->super.objId);
 	ComponentPhysics* phy = Pool_GetById(&CurrentLevel()->physics, obj->physics);
 	if (phy && phy->body) {

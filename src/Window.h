@@ -8,11 +8,21 @@
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f)
 
 typedef struct _Window {
-	int windowWidth, windowHeight;
+	SDL_Window *sdlWindow;
+	SDL_Cursor *cursor;
+	uint32_t pixelFormat;
+
+	int windowWidth;
+	int windowHeight;
+	int gameWidth;
+	int gameHeight;
+	int gameAndHudWidth;
+	int gameAndHudHeight;
+	SDL_Rect firstEnvelopeRect;
+	SDL_Rect secondEnvelopeRect;
+	SDL_Rect leftHudRect;
+	SDL_Rect rightHudRect;
 	float pixelsPerMeter;
-	int gameAndHudWidth, gameAndHudHeight;
-	SDL_Rect firstEnvelopeRect, secondEnvelopeRect;
-	SDL_Rect leftHudRect, rightHudRect;
 } Window;
 
 void Window_SetWidthHeight(Window* window, int width, int height);

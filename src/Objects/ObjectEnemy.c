@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-void ObjectEnemy_prePhysics(ComponentEventListener* el) {
+void ObjectEnemy_prePhysics(ComponentEventListener* el, Game *game) {
 	Object* obj = FindObjectOfComponent(el);
 	Object* player = FindObjectById(CurrentLevel()->playerId);
 
@@ -33,7 +33,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 					if (obj->properties->ai->attackPeriod < obj->properties->ai->attackStopwatch) {
 						// If enough time passed for the next attack
 						Object* sword = Pool_Mark(&CurrentLevel()->objects, NULL, NULL);
-						ObjectSword_Init(sword, obj->position, FindOffenseMeleeOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
+						ObjectSword_Init(sword, game, obj->position, FindOffenseMeleeOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
 						LOG_INF("Attacking player with melee");
 						
 						obj->properties->ai->attackStopwatch = 0;
@@ -98,21 +98,21 @@ void ObjectEnemy_postPhysics(ComponentEventListener *el) {
 	}
 }
 
-void ObjectEnemy_Draw(ComponentGraphics* gfx) {
-	GraphicsComponent_DefaultDraw(gfx);
+void ObjectEnemy_Draw(ComponentGraphics* gfx, Game *game) {
+	GraphicsComponent_DefaultDraw(gfx, game);
 
 	Object* obj = FindObjectOfComponent(gfx);
 	ComponentDefense* defense = FindDefenseOfObject(obj);	
 	if (obj && defense) {
-		GraphicsComponent_DefaultDrawHealthBar(gfx, (float)defense->hp / defense->maxHp);
+		GraphicsComponent_DefaultDrawHealthBar(gfx, game, (float)defense->hp / defense->maxHp);
 	}
 }
 
-int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
+int ObjectEnemy_Init(Object* obj, Game *game, Vec2F position, const char* descriptor) {
 	PROPAGATE_ERROR(Object_Init(obj, position, true));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
-	gfx->txSrc = (SDL_Rect){ 2 * TILE_WIDTH, 0, TILE_WIDTH, TILE_WIDTH };
+	gfx->txSrc = (SDL_Rect){ 2 * game->tileWidth, 0, game->tileWidth, game->tileWidth };
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 	gfx->draw = ObjectEnemy_Draw;
 

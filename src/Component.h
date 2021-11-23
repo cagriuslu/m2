@@ -1,6 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include "Game.h"
 #include "Vec2F.h"
 #include "Box2D.h"
 #include "Pool.h"
@@ -15,7 +16,7 @@ void Component_Term(Component* component);
 
 typedef struct _ComponentEventListener {
 	Component super;
-	void (*prePhysics)(struct _ComponentEventListener*);
+	void (*prePhysics)(struct _ComponentEventListener*, Game *game);
 	void (*postPhysics)(struct _ComponentEventListener*);
 	void (*preGraphics)(struct _ComponentEventListener*);
 	void (*postGraphics)(struct _ComponentEventListener*);
@@ -38,12 +39,12 @@ typedef struct _ComponentGraphics {
 	SDL_Rect txSrc;
 	float txAngle;
 	Vec2F txCenter; // w.r.t. texture center in pixels, offsets the texture and the center for rotation
-	void (*draw)(struct _ComponentGraphics*);
+	void (*draw)(struct _ComponentGraphics*, Game *game);
 } ComponentGraphics;
 int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId);
 void GraphicsComponent_Term(ComponentGraphics* gfx);
-void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx);
-void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio);
+void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx, Game *game);
+void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, Game *game, float healthRatio);
 int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB);
 
 typedef struct _ComponentLightSource {

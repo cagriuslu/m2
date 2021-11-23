@@ -39,7 +39,7 @@ int Level_Init(Level* level);
 void Level_DeleteMarkedObjects(Level* level);
 void Level_Term(Level* level);
 
-int Level_LoadTest(Level* level);
-int Level_LoadEditor(Level* level);
+int Level_LoadTest(Level* level, Game *game);
+int Level_LoadEditor(Level* level, Game *game);
 
 #endif

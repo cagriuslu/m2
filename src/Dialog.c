@@ -5,7 +5,7 @@
 #include "Ui.h"
 #include <stdbool.h>
 
-int DialogWaitForEvent(Array *uis) {
+int DialogWaitForEvent(Game *game, Array *uis) {
 	while (true) {
 		///// EVENT HANDLING /////
 		Events events;
@@ -40,7 +40,7 @@ int DialogWaitForEvent(Array *uis) {
 		for (size_t i = 0; i < uis->length; i++) {
 			Ui *ui = Array_Get(uis, i);
 			if (ui->draw) {
-				ui->draw(ui);
+				ui->draw(ui, game);
 			}
 		}
 		SDL_RenderPresent(CurrentRenderer());

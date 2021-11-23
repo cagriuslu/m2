@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 
-int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position) {
+int ObjectTile_Init(Object* obj, Game *game, TileDef tileDef, Vec2F position) {
 	PROPAGATE_ERROR(Object_Init(obj, position, false));
 
 	if (tileDef.colliderSize.x && tileDef.colliderSize.y) {
@@ -15,10 +15,10 @@ int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position) {
 	
 	ComponentGraphics* gfx = Object_AddTerrainGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){
-		tileDef.txIndex.x * CurrentTileWidth(),
-		tileDef.txIndex.y * CurrentTileWidth(),
-		CurrentTileWidth(),
-		CurrentTileWidth()
+		tileDef.txIndex.x * game->tileWidth,
+		tileDef.txIndex.y * game->tileWidth,
+		game->tileWidth,
+		game->tileWidth
 	};
 	
 	return 0;

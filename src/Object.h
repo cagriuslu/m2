@@ -82,14 +82,14 @@ typedef struct _TileDef {
 	Vec2F colliderOffset;
 } TileDef;
 
-int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position);
+int ObjectTile_Init(Object* obj, Game *game, TileDef tileDef, Vec2F position);
 int ObjectPlayer_Init(Object* obj, Character* character);
 int ObjectGod_Init(Object* obj);
 int ObjectCamera_Init(Object* obj);
-int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense);
-int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor);
-int ObjectWall_Init(Object* obj, Vec2F position);
-int ObjectStaticBox_Init(Object* obj, Vec2F position);
-int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks);
+int ObjectBullet_Init(Object* obj, Game *game, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense);
+int ObjectEnemy_Init(Object* obj, Game *game, Vec2F position, const char* descriptor);
+int ObjectWall_Init(Object* obj, Game *game, Vec2F position);
+int ObjectStaticBox_Init(Object* obj, Game *game, Vec2F position);
+int ObjectSword_Init(Object* obj, Game *game, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks);
 
 #endif

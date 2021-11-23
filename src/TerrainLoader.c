@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "TerrainLoader.h"
 #include "Object.h"
+#include "Game.h"
 #include "Txt.h"
 #include "Array.h"
 #include "Vec2I.h"
@@ -50,7 +51,7 @@ static TileDef TileLookup(const char* tileName) {
 #undef STREQ
 }
 
-int TerrainLoader_LoadTiles(Level* level, const char *tname) {
+int TerrainLoader_LoadTiles(Game *game, Level* level, const char *tname) {
 	Txt txt;
 	PROPAGATE_ERROR(Txt_InitFromFile(&txt, tname));
 	HashMap tileDefs;
@@ -71,7 +72,7 @@ int TerrainLoader_LoadTiles(Level* level, const char *tname) {
 		for (uint32_t colIndex = 0, *txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex); txtKVIndexPtr; ++colIndex, txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, rowIndex)) {
 			TileDef* tileDefPtr = HashMap_GetInt64Key(&tileDefs, *txtKVIndexPtr);
 			Object* tile = Pool_Mark(&level->objects, NULL, NULL);
-			ObjectTile_Init(tile, *tileDefPtr, (Vec2F) { (float)colIndex, (float)rowIndex });
+			ObjectTile_Init(tile, game, *tileDefPtr, (Vec2F) { (float)colIndex, (float)rowIndex });
 		}
 	}
 
@@ -86,7 +87,7 @@ void TerrainLoader_LoadEnemies_ItemTerm(void* opaqueItemPtr) {
 	free(item);
 }
 
-int TerrainLoader_LoadEnemies(Level* level, const char* tname) {
+int TerrainLoader_LoadEnemies(Game *game, Level* level, const char* tname) {
 	Txt txt;
 	PROPAGATE_ERROR(Txt_InitFromFile(&txt, tname));
 	HashMap enemyDescriptors;
@@ -105,7 +106,7 @@ int TerrainLoader_LoadEnemies(Level* level, const char* tname) {
 			char** enemyDescriptor = HashMap_GetInt64Key(&enemyDescriptors, *txtKVIndexPtr);
 			if (enemyDescriptor) {
 				Object* enemy = Pool_Mark(&level->objects, NULL, NULL);
-				ObjectEnemy_Init(enemy, (Vec2F) { (float)colIndex, (float)rowIndex }, *enemyDescriptor);
+				ObjectEnemy_Init(enemy, game, (Vec2F) { (float)colIndex, (float)rowIndex }, *enemyDescriptor);
 			}
 		}
 	}

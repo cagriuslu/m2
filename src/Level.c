@@ -60,10 +60,10 @@ void Level_Term(Level* level) {
 	memset(level, 0, sizeof(Level));
 }
 
-int Level_LoadTest(Level* level) {
+int Level_LoadTest(Level* level, Game *game) {
 	level->levelType = LEVEL_TYPE_SINGLE_PLAYER;
 	
-	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
+	TerrainLoader_LoadTiles(game, level, "resources/terrains/test.txt");
 
 	Array standardItemSet;
 	Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX, NULL);
@@ -84,7 +84,7 @@ int Level_LoadTest(Level* level) {
 	const unsigned skeletonCount = 100;
 	for (unsigned i = 0; i < skeletonCount; i++) {
 		Object* skeleton = Pool_Mark(&level->objects, NULL, NULL);
-		ObjectEnemy_Init(skeleton, (Vec2F) { (float)i, -10.0f }, NULL);
+		ObjectEnemy_Init(skeleton, game, (Vec2F) { (float)i, -10.0f }, NULL);
 	}
 
 	/*Object* wall = Pool_Mark(&level->objects, NULL, NULL);
@@ -93,15 +93,15 @@ int Level_LoadTest(Level* level) {
 	Object* box = Pool_Mark(&level->objects, NULL, NULL);
 	ObjectStaticBox_Init(box, (Vec2F) { -2.0f, 0.0f });*/
 
-	TerrainLoader_LoadEnemies(level, "resources/terrains/test.txt");
+	TerrainLoader_LoadEnemies(game, level, "resources/terrains/test.txt");
 
 	return 0;
 }
 
-int Level_LoadEditor(Level* level) {
+int Level_LoadEditor(Level* level, Game *game) {
 	level->levelType = LEVEL_TYPE_LEVEL_EDITOR;
 	
-	TerrainLoader_LoadTiles(level, "resources/terrains/test.txt");
+	TerrainLoader_LoadTiles(game, level, "resources/terrains/test.txt");
 
 	Object* god = Pool_Mark(&level->objects, NULL, &level->playerId);
 	ObjectGod_Init(god); // TODO check return value
@@ -110,13 +110,13 @@ int Level_LoadEditor(Level* level) {
 	ObjectCamera_Init(camera);
 
 	Object* skeleton = Pool_Mark(&level->objects, NULL, NULL);
-	ObjectEnemy_Init(skeleton, (Vec2F) { -2.0f, -2.0f }, NULL);
+	ObjectEnemy_Init(skeleton, game, (Vec2F) { -2.0f, -2.0f }, NULL);
 
 	Object* wall = Pool_Mark(&level->objects, NULL, NULL);
-	ObjectWall_Init(wall, (Vec2F) { 0.0f, -2.0f });
+	ObjectWall_Init(wall, game, (Vec2F) { 0.0f, -2.0f });
 
 	Object* box = Pool_Mark(&level->objects, NULL, NULL);
-	ObjectStaticBox_Init(box, (Vec2F) { -2.0f, 0.0f });
+	ObjectStaticBox_Init(box, game, (Vec2F) { -2.0f, 0.0f });
 
 	return 0;
 }
