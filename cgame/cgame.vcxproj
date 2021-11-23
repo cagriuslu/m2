@@ -208,6 +208,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\SparseArray2.c" />
     <ClCompile Include="..\src\SpatialMap.c" />
     <ClCompile Include="..\src\Sqlite.c" />
+    <ClCompile Include="..\src\String.c" />
     <ClCompile Include="..\src\TerrainLoader.c" />
     <ClCompile Include="..\src\TextureMap.c" />
     <ClCompile Include="..\src\Txt.c" />
@@ -218,6 +219,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Uis\UiStringInput.c" />
     <ClCompile Include="..\src\Vec2F.c" />
     <ClCompile Include="..\src\Vec2I.c" />
+    <ClCompile Include="..\src\VSON.c" />
     <ClCompile Include="..\src\Window.c" />
   </ItemGroup>
   <ItemGroup>
@@ -252,12 +254,14 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\SpatialMap.h" />
     <ClInclude Include="..\src\Sqlite.h" />
     <ClInclude Include="..\src\Stopwatch.h" />
+    <ClInclude Include="..\src\String.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
     <ClInclude Include="..\src\TextureMap.h" />
     <ClInclude Include="..\src\Txt.h" />
     <ClInclude Include="..\src\Ui.h" />
     <ClInclude Include="..\src\Vec2F.h" />
     <ClInclude Include="..\src\Vec2I.h" />
+    <ClInclude Include="..\src\VSON.h" />
     <ClInclude Include="..\src\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

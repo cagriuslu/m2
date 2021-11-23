@@ -19,12 +19,13 @@ typedef Array ArrayOfVec2Is;
 typedef Array ArrayOfVec2Fs;
 
 // Constructors
-XErr Array_Init(Array *array, size_t itemSize, size_t initCapacity, size_t maxSize, void (*itemTerm)(void*));
+XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize, void (*itemTerm)(void*));
 
 // Modifiers
 void* Array_Append(Array* array, void* item);
 void Array_Remove(Array* array, size_t index);
 void Array_Clear(Array* array);
+XErr Array_Shrink(Array* array);
 
 // Accessors
 size_t Array_Length(Array* array);
@@ -33,7 +34,8 @@ size_t Array_GetIndexOf(Array* array, void* item);
 void* Array_GetLast(Array* array);
 
 // Destructor
-void Array_Term(Array *array);
+void Array_Term(Array* array);
+void* Array_TermNoFree(Array* array);
 
 #define TO_ARRAY_ITEM_TERM(funcptr) ((void (*)(void*))(funcptr))
 

@@ -1,0 +1,25 @@
+{
+	key1: value1
+	key2: value2
+	array1: [a b c]
+	key3: value3
+	obj1: {
+		keyA: valueA
+		keyB: valueB
+	}
+	key4: value4
+	key6: "value with spaces"
+	key7: "value with weird data \" \\"
+	obj2: {
+		obj3: {}
+		array1: [
+			{}
+			abcd
+			[
+				row data col 67 [
+					yuck haha
+				]
+			]
+		]
+	}
+}

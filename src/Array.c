@@ -56,6 +56,19 @@ void Array_Clear(Array* array) {
 	array->length = 0;
 }
 
+XErr Array_Shrink(Array* array) {
+	if (array->length < array->capacity) {
+		size_t newCapacity = array->length;
+		void* newData = realloc(array->data, newCapacity * array->itemSize);
+		if (!newData) {
+			return XERR_OUT_OF_MEMORY;
+		}
+		array->data = newData;
+		array->capacity = newCapacity;
+	}
+	return 0;
+}
+
 size_t Array_Length(Array* array) {
 	return array->length;
 }
@@ -95,4 +108,8 @@ void Array_Term(Array *array) {
 	}
 	free(array->data);
 	memset(array, 0, sizeof(Array));
+}
+
+void* Array_TermNoFree(Array* array) {
+	return array->data;
 }

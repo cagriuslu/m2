@@ -14,6 +14,8 @@
 #include "Pathfinder.h"
 #include "TextureMap.h"
 #include "Txt.h"
+#include "String.h"
+#include "VSON.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
