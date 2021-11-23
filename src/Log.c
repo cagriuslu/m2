@@ -5,78 +5,80 @@
 #include <string.h>
 
 static void LogHeader(LogLevel level, const char* file, int line) {
-	time_t now = time(NULL) - 1577833200; // Epoch is 2020-01-01T00:00:00
-	fprintf(stderr, "[%09llu:", (unsigned long long)now);
+	// Get time
+	time_t now = time(NULL);
 
-	const char* levelStr = " :";
+	// Convert log level into char
+	char levelChar = ' ';
 	switch (level) {
 		case LogLevelTrace:
-			levelStr = "T:";
+			levelChar = 'T';
 			break;
 		case LogLevelDebug:
-			levelStr = "D:";
+			levelChar = 'D';
 			break;
 		case LogLevelInfo:
-			levelStr = "I:";
+			levelChar = 'I';
 			break;
 		case LogLevelWarn:
-			levelStr = "W:";
+			levelChar = 'W';
 			break;
 		case LogLevelError:
-			levelStr = "E:";
+			levelChar = 'E';
 			break;
 		case LogLevelFatal:
-			levelStr = "F:";
+			levelChar = 'F';
+			break;
+		default:
 			break;
 	}
-	fprintf(stderr, "%s", levelStr);
 
+	// Get file name
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__TOS_WIN__) || defined(__WINDOWS__)
-	const char* nodirFile = strrchr(file, '\\');
+	const char* fileNameWithoutDirs = strrchr(file, '\\');
 #else
-	const char* nodirFile = strrchr(file, '/');
+	const char* fileNameWithoutDirs = strrchr(file, '/');
 #endif
-	const char* searchString = nodirFile == NULL ? file : nodirFile;
+	const char* fileName = (fileNameWithoutDirs == NULL) ? file : fileNameWithoutDirs;
 	
-	char shortFile[6] = { 0 };
-	int shortFileLen = 0;
-	for (size_t i = 0; i < strlen(searchString); i++) {
-		char c = searchString[i];
+	// Simplify file name
+	char fileNameCapitals[6] = { 0 };
+	int fileNameCapitalsLen = 0;
+	for (size_t i = 0; i < strlen(fileName) && fileNameCapitalsLen < 5; i++) {
+		char c = fileName[i];
 		if (isupper(c) || isdigit(c)) {
-			shortFile[shortFileLen++] = searchString[i];
-			if (5 == shortFileLen) {
-				break;
-			}
+			fileNameCapitals[fileNameCapitalsLen++] = c;
 		}
 	}
-	const char* placeholders = "";
-	switch (shortFileLen) {
+	const char* fileNameCapitalsPadding = "";
+	switch (fileNameCapitalsLen) {
 		case 0:
-			placeholders = "00000";
+			fileNameCapitalsPadding = "-----";
 			break;
 		case 1:
-			placeholders = "0000";
+			fileNameCapitalsPadding = "----";
 			break;
 		case 2:
-			placeholders = "000";
+			fileNameCapitalsPadding = "---";
 			break;
 		case 3:
-			placeholders = "00";
+			fileNameCapitalsPadding = "--";
 			break;
 		case 4:
-			placeholders = "0";
+			fileNameCapitalsPadding = "-";
+			break;
+		default:
 			break;
 	}
-	fprintf(stderr, "%s%s:", placeholders, shortFile);
 	
-	fprintf(stderr, "%05d] ", line);
+	fprintf(stderr, "[%010llu:%c:%s%s:%05d] ", (unsigned long long)now, levelChar, fileNameCapitalsPadding, fileNameCapitals, line);
 }
 
 static void LogNewLine() {
 	fprintf(stderr, "\n");
 }
 
-void Log(LogLevel level, const char* file, int line, const char* message) {
+void _Log(LogLevel level, const char* file, int line, const char* message) {
 	LogHeader(level, file, line);
 	if (message) {
 		fprintf(stderr, "%s", message);
@@ -84,43 +86,43 @@ void Log(LogLevel level, const char* file, int line, const char* message) {
 	LogNewLine();
 }
 
-void LogObj_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var) {
+void _LogObj_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": %d}", message, var);
 	LogNewLine();
 }
 
-void LogObj_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
+void _LogObj_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": \"%s\"}", message, var);
 	LogNewLine();
 }
 
-void LogObj_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
+void _LogObj_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": %f}", message, var);
 	LogNewLine();
 }
 
-void LogObj_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
+void _LogObj_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": {\"x\":%f, \"y\":%f}}", message, var.x, var.y);
 	LogNewLine();
 }
 
-void LogObj_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var) {
+void _LogObj_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": {\"x\":%d, \"y\":%d}}", message, var.x, var.y);
 	LogNewLine();
 }
 
-void LogObj_SDL_Rect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var) {
+void _LogObj_SdlRect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": {\"x\":%d, \"y\":%d, \"w\":%d, \"h\":%d}}", message, var.x, var.y, var.w, var.h);
 	LogNewLine();
 }
 
-void LogObj_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
+void _LogObj_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": [", message);
 	for (size_t i = 0; i < var->length; i++) {
