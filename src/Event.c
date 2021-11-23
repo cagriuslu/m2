@@ -29,7 +29,7 @@ bool Events_Gather(Events* evs) {
 				evs->keyDownEvent = true;
 				evs->keysPressed[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
 			}
-			//LOGTYP_DBG("Pressed SDL_Scancode", Int32, e.key.keysym.scancode);
+			//LOGOBJ_DBG("Pressed SDL_Scancode", Int32, e.key.keysym.scancode);
 			break;
 		case SDL_KEYUP:
 			if (e.key.repeat == 0) {

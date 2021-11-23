@@ -84,43 +84,43 @@ void Log(LogLevel level, const char* file, int line, const char* message) {
 	LogNewLine();
 }
 
-void LogTyp_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var) {
+void LogObj_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": %d}", message, var);
 	LogNewLine();
 }
 
-void LogTyp_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
+void LogObj_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": \"%s\"}", message, var);
 	LogNewLine();
 }
 
-void LogTyp_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
+void LogObj_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": %f}", message, var);
 	LogNewLine();
 }
 
-void LogTyp_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
+void LogObj_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": {\"x\":%f, \"y\":%f}}", message, var.x, var.y);
 	LogNewLine();
 }
 
-void LogTyp_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var) {
+void LogObj_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": {\"x\":%d, \"y\":%d}}", message, var.x, var.y);
 	LogNewLine();
 }
 
-void LogTyp_SDL_Rect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var) {
+void LogObj_SDL_Rect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": {\"x\":%d, \"y\":%d, \"w\":%d, \"h\":%d}}", message, var.x, var.y, var.w, var.h);
 	LogNewLine();
 }
 
-void LogTyp_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
+void LogObj_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": [", message);
 	for (size_t i = 0; i < var->length; i++) {

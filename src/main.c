@@ -84,7 +84,7 @@ main_menu:
 			PROPAGATE_ERROR(Level_LoadEditor(&gLevel));
 		} else {
 			LOG_FTL("Unknown level is selected");
-			LOGTYP_FTL(LOGVAR_MENU_SELECTION, Int32, res);
+			LOGOBJ_FTL(LOGVAR_MENU_SELECTION, Int32, res);
 			return XERR_QUIT;
 		}
 		levelLoaded = true;
@@ -106,7 +106,9 @@ main_menu:
 	while (true) {
 		unsigned start_ticks = SDL_GetTicks();
 
-		///// EVENT HANDLING /////
+		////////////////////////////////////////////////////////////////////////
+		//////////////////////////// EVENT HANDLING ////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 		if (Events_Gather(&gEvents)) {
 			if (gEvents.quitEvent) {
 				break;
@@ -129,18 +131,21 @@ main_menu:
 					LOG_INF("SDL text input deactivated");
 				} else if (gEvents.keysPressed[KEY_ENTER]) {
 					// TODO Execute console command
-					LOGTYP_INF("Console command", String, gConsoleInput);
+					LOGOBJ_INF("Console command", String, gConsoleInput);
 					SDL_StopTextInput();
 					LOG_INF("SDL text input deactivated");
 				} else if (gEvents.textInputEvent) {
 					strcat(gConsoleInput, gEvents.textInput);
-					LOGTYP_INF("Console buffer", String, gConsoleInput);
+					LOGOBJ_INF("Console buffer", String, gConsoleInput);
 				}
 			}
 		}
-		///// END OF EVENT HANDLING /////
+		//////////////////////// END OF EVENT HANDLING /////////////////////////
+		////////////////////////////////////////////////////////////////////////
 
-		///// PHYSICS /////
+		////////////////////////////////////////////////////////////////////////
+		/////////////////////////////// PHYSICS ////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 		gDeltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
 		prevPrePhysicsTicks += gDeltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
@@ -176,11 +181,16 @@ main_menu:
 			}
 		}
 		Level_DeleteMarkedObjects(&gLevel);
-		///// END OF PHYSICS /////
+		//////////////////////////// END OF PHYSICS ////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 
-		///// GRAPHICS /////
+		////////////////////////////////////////////////////////////////////////
+		/////////////////////////////// GRAPHICS ///////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		// Clear screen
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(gRenderer);
+		// Draw terrain
 		gDeltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
 		prevTerrainDrawGraphicsTicks += gDeltaTicks;
 		for (ComponentGraphics* gfx = Pool_GetFirst(&gLevel.terrainGraphics); gfx; gfx = Pool_GetNext(&gLevel.terrainGraphics, gfx)) {
@@ -188,6 +198,7 @@ main_menu:
 				gfx->draw(gfx);
 			}
 		}
+		// Pre-graphics
 		gDeltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
 		prevPreGraphicsTicks += gDeltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
@@ -195,6 +206,7 @@ main_menu:
 				el->preGraphics(el);
 			}
 		}
+		// Draw
 		InsertionList_Sort(&gLevel.drawList);
 		gDeltaTicks = SDL_GetTicks() - prevDrawGraphicsTicks;
 		prevDrawGraphicsTicks += gDeltaTicks;
@@ -212,6 +224,7 @@ main_menu:
 		SDL_RenderFillRect(gRenderer, &gWindow.rightHudRect);
 		// Draw HUD
 		Hud_Draw(&gLevel.hud);
+		// Post-graphics
 		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += gDeltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
@@ -225,14 +238,15 @@ main_menu:
 		SDL_RenderFillRect(gRenderer, &gWindow.secondEnvelopeRect);
 		// Present
 		SDL_RenderPresent(gRenderer);
-		///// END OF GRAPHICS /////
+		/////////////////////////// END OF GRAPHICS ////////////////////////////
+		////////////////////////////////////////////////////////////////////////
 
 		unsigned end_ticks = SDL_GetTicks();
 		frameTimeAccumulator += end_ticks - start_ticks;
 		frameCount++;
 		if (2000 < frameTimeAccumulator) {
 			frameTimeAccumulator -= 2000;
-			LOGTYP_DBG(LOGVAR_FPS, Int32, frameCount / 2);
+			LOGOBJ_DBG(LOGVAR_FPS, Int32, frameCount / 2);
 			frameCount = 0;
 		}
 	}

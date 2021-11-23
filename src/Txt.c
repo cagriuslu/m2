@@ -64,7 +64,7 @@ XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
 	while (true) {
 		Array lineBuffer = MyGetline(file);
 		if (Array_Length(&lineBuffer) == 0) {
-			LOGTYP_ERR("CorruptedTxtFile", String, fpath);
+			LOGOBJ_ERR("CorruptedTxtFile", String, fpath);
 			Array_Term(&lineBuffer);
 			fclose(file);
 			return XERR_CORRUPTED_FILE;
@@ -83,7 +83,7 @@ XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
 		// Split key and value
 		Array split = MySplit(line, '\t');
 		if (Array_Length(&split) != 2) {
-			LOGTYP_ERR("CorruptedTxtFile", String, fpath);
+			LOGOBJ_ERR("CorruptedTxtFile", String, fpath);
 			Array_Term(&split);
 			Array_Term(&lineBuffer);
 			fclose(file);
