@@ -19,11 +19,11 @@ void Hud_Term(Hud* hud) {
 }
 
 void Hud_Draw(Hud* hud, Game *game) {
-	int paddingSize = (int)roundf((float)game->window.leftHudRect.w / 12.0f);
+	int paddingSize = (int)roundf((float)game->leftHudRect.w / 12.0f);
 	
-	SDL_Rect leftHudDrawingArea = SDLUtils_ShrinkRect(game->window.leftHudRect, paddingSize, paddingSize);
-	SDL_Rect rightHudDrawingArea = SDLUtils_ShrinkRect(game->window.rightHudRect, paddingSize, paddingSize);
-	//SDLUtils_SplitRect(game->window.leftHudRect, 10, 10, 1, 8, 1, 8);
+	SDL_Rect leftHudDrawingArea = SDLUtils_ShrinkRect(game->leftHudRect, paddingSize, paddingSize);
+	SDL_Rect rightHudDrawingArea = SDLUtils_ShrinkRect(game->rightHudRect, paddingSize, paddingSize);
+	//SDLUtils_SplitRect(game->leftHudRect, 10, 10, 1, 8, 1, 8);
 
 	SDL_SetRenderDrawColor(CurrentRenderer(), 50, 50, 50, 255);
 	SDL_RenderFillRect(CurrentRenderer(), &leftHudDrawingArea);

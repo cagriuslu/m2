@@ -45,8 +45,8 @@ int main(int argc, char **argv) {
 	game->textureImageFilePath = "resources/24x24.png";
 	game->textureMetaImageFilePath = "resources/24x24_META.png";
 	game->textureMetaFilePath = "resources/24x24_META.txt";
-	game->window.windowWidth = 1600;
-	game->window.windowHeight = 900;
+	game->windowWidth = 1600;
+	game->windowHeight = 900;
 	game->physicsStepPerSecond = 80.0f;
 	game->physicsStepPeriod = 1.0f / game->physicsStepPerSecond;
 	game->velocityIterations = 8;
@@ -55,14 +55,14 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
-	Window_SetWidthHeight(&game->window, game->window.windowWidth, game->window.windowHeight);
-	game->window.sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, game->window.windowWidth, game->window.windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	SDL_SetWindowMinimumSize(game->window.sdlWindow, 712, 400);
+	Game_SetWidthHeight(game, game->windowWidth, game->windowHeight);
+	game->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, game->windowWidth, game->windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	SDL_SetWindowMinimumSize(game->sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
-	game->window.cursor = SDLUtils_CreateCursor();
-	SDL_SetCursor(game->window.cursor);
-	game->window.pixelFormat = SDL_GetWindowPixelFormat(game->window.sdlWindow);
-	gRenderer = SDL_CreateRenderer(game->window.sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
+	game->sdlCursor = SDLUtils_CreateCursor();
+	SDL_SetCursor(game->sdlCursor);
+	game->pixelFormat = SDL_GetWindowPixelFormat(game->sdlWindow);
+	gRenderer = SDL_CreateRenderer(game->sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
 	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/24x24.png"));
 	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 	TextureMap_Init(&gTextureMap, game->tileWidth, game->textureImageFilePath, game->textureMetaImageFilePath, game->textureMetaFilePath);
@@ -119,7 +119,7 @@ main_menu:
 				break;
 			}
 			if (gEvents.windowResizeEvent) {
-				Window_SetWidthHeight(&game->window, gEvents.windowDims.x, gEvents.windowDims.y);
+				Game_SetWidthHeight(game, gEvents.windowDims.x, gEvents.windowDims.y);
 			}
 			if (!SDL_IsTextInputActive()) {
 				if (gEvents.keysPressed[KEY_MENU]) {
@@ -225,8 +225,8 @@ main_menu:
 		}
 		// Draw HUD background
 		SDL_SetRenderDrawColor(gRenderer, 5, 5, 5, 255);
-		SDL_RenderFillRect(gRenderer, &game->window.leftHudRect);
-		SDL_RenderFillRect(gRenderer, &game->window.rightHudRect);
+		SDL_RenderFillRect(gRenderer, &game->leftHudRect);
+		SDL_RenderFillRect(gRenderer, &game->rightHudRect);
 		// Draw HUD
 		Hud_Draw(&gLevel.hud, game);
 		// Post-graphics
@@ -239,8 +239,8 @@ main_menu:
 		}
 		// Draw envelope
 		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(gRenderer, &game->window.firstEnvelopeRect);
-		SDL_RenderFillRect(gRenderer, &game->window.secondEnvelopeRect);
+		SDL_RenderFillRect(gRenderer, &game->firstEnvelopeRect);
+		SDL_RenderFillRect(gRenderer, &game->secondEnvelopeRect);
 		// Present
 		SDL_RenderPresent(gRenderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
@@ -257,8 +257,8 @@ main_menu:
 	}
 
 	SDL_DestroyRenderer(gRenderer);
-	SDL_FreeCursor(game->window.cursor);
-	SDL_DestroyWindow(game->window.sdlWindow);
+	SDL_FreeCursor(game->sdlCursor);
+	SDL_DestroyWindow(game->sdlWindow);
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -302,8 +302,8 @@ Vec2F CurrentPointerPositionInWorld(Game *game) {
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = gEvents.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (game->window.windowWidth / 2), pointerPosition.y - (game->window.windowHeight / 2) };
-	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / game->window.pixelsPerMeter, pointerPositionWRTScreenCenter.y / game->window.pixelsPerMeter };
+	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (game->windowWidth / 2), pointerPosition.y - (game->windowHeight / 2) };
+	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / game->pixelsPerMeter, pointerPositionWRTScreenCenter.y / game->pixelsPerMeter };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
 	return pointerPositionWRTWorld;
 }

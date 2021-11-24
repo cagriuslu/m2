@@ -6,7 +6,6 @@
 #include "Array.h"
 #include "Event.h"
 #include "Level.h"
-#include "Window.h"
 #include "Character.h"
 #include "TextureMap.h"
 #include <SDL.h>

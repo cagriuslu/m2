@@ -10,14 +10,14 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx, Game *game) {
 	Object* obj = Pool_GetById(&level->objects, gfx->super.objId);
 	Object* camera = Pool_GetById(&level->objects, level->cameraId);
 	if (obj && camera && gfx->tx) {
-		float scale = game->window.pixelsPerMeter / game->tileWidth;
+		float scale = game->pixelsPerMeter / game->tileWidth;
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, game->window.pixelsPerMeter));
+		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, game->pixelsPerMeter));
 		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
 			-(int)round(gfx->txCenter.x * scale),
 			-(int)round(gfx->txCenter.y * scale)
 		});
-		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { game->window.windowWidth / 2, game->window.windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { game->windowWidth / 2, game->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
 		SDL_Rect dstrect = (SDL_Rect){
 			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),
@@ -36,14 +36,14 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, Game *game, 
 	Object* obj = FindObjectOfComponent(gfx);
 	Object* camera = Pool_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	if (obj && camera) {
-		float scale = game->window.pixelsPerMeter / game->tileWidth;
+		float scale = game->pixelsPerMeter / game->tileWidth;
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, game->window.pixelsPerMeter));
+		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, game->pixelsPerMeter));
 		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
 			-(int)round(gfx->txCenter.x * scale),
 				-(int)round(gfx->txCenter.y * scale)
 		});
-		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { game->window.windowWidth / 2, game->window.windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { game->windowWidth / 2, game->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
 		SDL_Rect obj_gfx_dstrect = (SDL_Rect){
 			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),

@@ -22,8 +22,8 @@ void UiButton_draw(Ui* ui, Game *game) {
 
 	Vec2I size = uiButtonData->size;
 	SDL_Rect outlineRect = (SDL_Rect) {
-		game->window.windowWidth / 2 - size.x / 2 + uiButtonData->position.x,
-		game->window.windowHeight / 2 - size.y / 2 + uiButtonData->position.y,
+		game->windowWidth / 2 - size.x / 2 + uiButtonData->position.x,
+		game->windowHeight / 2 - size.y / 2 + uiButtonData->position.y,
 		size.x,
 		size.y
 	};
@@ -37,8 +37,8 @@ void UiButton_draw(Ui* ui, Game *game) {
 	int textW = uiButtonData->textSize.x;
 	int textH = uiButtonData->textSize.y;
 	SDL_Rect textRect = (SDL_Rect) {
-		game->window.windowWidth / 2 - textW / 2 + uiButtonData->position.x,
-		game->window.windowHeight / 2 - textH / 2 + uiButtonData->position.y,
+		game->windowWidth / 2 - textW / 2 + uiButtonData->position.x,
+		game->windowHeight / 2 - textH / 2 + uiButtonData->position.y,
 		textW,
 		textH
 	};
