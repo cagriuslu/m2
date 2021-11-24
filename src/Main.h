@@ -3,6 +3,7 @@
 
 #include "Controls.h"
 #include "Box2D.h"
+#include "Game.h"
 #include "Array.h"
 #include "Event.h"
 #include "Level.h"
@@ -11,6 +12,8 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <stdbool.h>
+
+Game* CurrentGame();
 
 SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
@@ -21,6 +24,6 @@ Level* CurrentLevel();
 Events* CurrentEvents();
 unsigned DeltaTicks();
 
-Vec2F CurrentPointerPositionInWorld(Game *game);
+Vec2F CurrentPointerPositionInWorld();
 
 #endif

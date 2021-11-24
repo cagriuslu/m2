@@ -11,7 +11,7 @@ typedef struct _Ui {
 	SDL_Rect trigZone;
 	void *eventData;
 	void (*onMouseButton)(struct _Ui*);
-	void (*draw)(struct _Ui*, Game *game);
+	void (*draw)(struct _Ui*);
 	void *privData;
 } Ui;
 

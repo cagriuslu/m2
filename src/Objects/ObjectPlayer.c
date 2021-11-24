@@ -17,7 +17,7 @@
 #define STOPWATCH_IDX_MELEE_ATTACK (1)
 #define STOPWATCH_COUNT (2)
 
-static void Player_prePhysics(ComponentEventListener* el, Game *game) {
+static void Player_prePhysics(ComponentEventListener* el) {
 	Object* obj = Pool_GetById(&CurrentLevel()->objects, el->super.objId);
 	obj->properties->rangedAttackStopwatch += DeltaTicks();
 	obj->properties->meleeAttackStopwatch += DeltaTicks();
@@ -82,21 +82,21 @@ static void Player_prePhysics(ComponentEventListener* el, Game *game) {
 		Character_Preprocess(obj->properties->character);
 	} else {
 		if (CurrentEvents()->buttonStates[BUTTON_PRIMARY] && (100 < obj->properties->rangedAttackStopwatch)) {
-			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld(game);
+			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* bullet = Pool_Mark(&CurrentLevel()->objects, NULL, NULL);
 			Item* projectileWeapon = Item_FindItemByTypeByFlags(&obj->properties->character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
-			ObjectBullet_Init(bullet, game, obj->position, bulletDir, projectileWeapon->type, &obj->properties->character->projectileOffense);
+			ObjectBullet_Init(bullet, obj->position, bulletDir, projectileWeapon->type, &obj->properties->character->projectileOffense);
 			obj->properties->rangedAttackStopwatch = 0;
 		}
 
 		if (CurrentEvents()->buttonStates[BUTTON_SECONDARY] && (333 < obj->properties->meleeAttackStopwatch)) {
-			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld(game);
+			Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
 			Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
 			Object* sword = Pool_Mark(&CurrentLevel()->objects, NULL, NULL);
-			ObjectSword_Init(sword, game, obj->position, &obj->properties->character->meleeOffense, false, swordDir, 150);
+			ObjectSword_Init(sword, obj->position, &obj->properties->character->meleeOffense, false, swordDir, 150);
 			obj->properties->meleeAttackStopwatch = 0;
 		}
 	}

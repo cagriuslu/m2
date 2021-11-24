@@ -18,7 +18,7 @@ void LevelEditorButton_onMouseButton(Ui *ui) {
 	*AsInt(ui->eventData) = X_MAIN_MENU_LEVEL_EDITOR;
 }
 
-int DialogMainMenu(Game *game, bool levelLoaded) {
+int DialogMainMenu(bool levelLoaded) {
 	Array uis;
 	Array_Init(&uis, sizeof(Ui), 16, SIZE_MAX, NULL);
 
@@ -50,7 +50,7 @@ int DialogMainMenu(Game *game, bool levelLoaded) {
 	UiButton_SetSize(levelEditorButton, maxButtonSize);
 
 	while (pressedButton == 0) {
-		int res = DialogWaitForEvent(game, &uis);
+		int res = DialogWaitForEvent(&uis);
 		PROPAGATE_ERROR(res);
 	}
 

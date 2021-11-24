@@ -8,7 +8,7 @@
 
 #define ANGLE(v2fDir) atan2f((v2fDir).y, (v2fDir).x)
 
-static void Bullet_prePhysics(ComponentEventListener* el, Game *game) {
+static void Bullet_prePhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
 	if (obj && obj->physics) {
 		ComponentPhysics* phy = FindPhysicsOfObject(obj);
@@ -46,7 +46,7 @@ static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	DeleteObject(obj);
 }
 
-int ObjectBullet_Init(Object* obj, Game *game, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense) {
+int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense) {
 	direction = Vec2F_Normalize(direction);
 	PROPAGATE_ERROR(Object_Init(obj, position, false));
 
@@ -70,15 +70,15 @@ int ObjectBullet_Init(Object* obj, Game *game, Vec2F position, Vec2F direction, 
 	gfx->txAngle = ANGLE(direction);
 	switch (projectileType) {
 		case ITEMTYP_GUN:
-			gfx->txSrc = (SDL_Rect){ 4 * game->tileWidth, 4 * game->tileWidth, game->tileWidth, game->tileWidth };
+			gfx->txSrc = (SDL_Rect){ 4 * CurrentGame()->tileWidth, 4 * CurrentGame()->tileWidth, CurrentGame()->tileWidth, CurrentGame()->tileWidth };
 			gfx->txCenter = (Vec2F){ 1.5f, 0.5f };
 			break;
 		case ITEMTYP_RIFLE:
-			gfx->txSrc = (SDL_Rect){ 5 * game->tileWidth, 4 * game->tileWidth, game->tileWidth, game->tileWidth };
+			gfx->txSrc = (SDL_Rect){ 5 * CurrentGame()->tileWidth, 4 * CurrentGame()->tileWidth, CurrentGame()->tileWidth, CurrentGame()->tileWidth };
 			gfx->txCenter = (Vec2F){ 3.5f, 0.5f };
 			break;
 		case ITEMTYP_BOW:
-			gfx->txSrc = (SDL_Rect){ 3 * game->tileWidth, 4 * game->tileWidth, game->tileWidth, game->tileWidth };
+			gfx->txSrc = (SDL_Rect){ 3 * CurrentGame()->tileWidth, 4 * CurrentGame()->tileWidth, CurrentGame()->tileWidth, CurrentGame()->tileWidth };
 			gfx->txCenter = (Vec2F){ 2.5f, 0.5f };
 			break;
 		default:

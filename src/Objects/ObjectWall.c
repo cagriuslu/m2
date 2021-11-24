@@ -3,7 +3,7 @@
 #include "../Box2D.h"
 #include "../Box2DUtils.h"
 
-int ObjectWall_Init(Object* obj, Game *game, Vec2F position) {
+int ObjectWall_Init(Object* obj, Vec2F position) {
 	PROPAGATE_ERROR(Object_Init(obj, position, false));
 	
 	ID phyId = 0;
@@ -11,7 +11,7 @@ int ObjectWall_Init(Object* obj, Game *game, Vec2F position) {
 	phy->body = Box2DUtils_CreateStaticBox(phyId, position, CATEGORY_STATIC_OBJECT, ((Vec2F) { 0.875, 0.125 }));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
-	gfx->txSrc = (SDL_Rect){ 8 * game->tileWidth, 0, game->tileWidth, 2 * game->tileWidth };
+	gfx->txSrc = (SDL_Rect){ 8 * CurrentGame()->tileWidth, 0, CurrentGame()->tileWidth, 2 * CurrentGame()->tileWidth };
 	gfx->txCenter = (Vec2F){ 0.0, 12.0 };
 
 	return 0;

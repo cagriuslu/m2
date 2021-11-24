@@ -5,19 +5,19 @@
 #include "../Log.h"
 #include <string.h>
 
-void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx, Game *game) {
+void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 	Level* level = CurrentLevel();
 	Object* obj = Pool_GetById(&level->objects, gfx->super.objId);
 	Object* camera = Pool_GetById(&level->objects, level->cameraId);
 	if (obj && camera && gfx->tx) {
-		float scale = game->pixelsPerMeter / game->tileWidth;
+		float scale = CurrentGame()->pixelsPerMeter / CurrentGame()->tileWidth;
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, game->pixelsPerMeter));
+		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, CurrentGame()->pixelsPerMeter));
 		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
 			-(int)round(gfx->txCenter.x * scale),
 			-(int)round(gfx->txCenter.y * scale)
 		});
-		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { game->windowWidth / 2, game->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { CurrentGame()->windowWidth / 2, CurrentGame()->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
 		SDL_Rect dstrect = (SDL_Rect){
 			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),
@@ -32,18 +32,18 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx, Game *game) {
 	}
 }
 
-void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, Game *game, float healthRatio) {
+void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio) {
 	Object* obj = FindObjectOfComponent(gfx);
 	Object* camera = Pool_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	if (obj && camera) {
-		float scale = game->pixelsPerMeter / game->tileWidth;
+		float scale = CurrentGame()->pixelsPerMeter / CurrentGame()->tileWidth;
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, game->pixelsPerMeter));
+		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, CurrentGame()->pixelsPerMeter));
 		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
 			-(int)round(gfx->txCenter.x * scale),
 				-(int)round(gfx->txCenter.y * scale)
 		});
-		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { game->windowWidth / 2, game->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { CurrentGame()->windowWidth / 2, CurrentGame()->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
 		SDL_Rect obj_gfx_dstrect = (SDL_Rect){
 			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),
@@ -57,7 +57,7 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, Game *game, 
 			obj_gfx_dstrect.x + (obj_gfx_dstrect.w - healthBarWidth) / 2,
 			obj_gfx_dstrect.y + obj_gfx_dstrect.h,
 			(int)round(healthBarWidth * healthRatio),
-			game->tileWidth / 6
+			CurrentGame()->tileWidth / 6
 		};
 		SDL_SetRenderDrawColor(CurrentRenderer(), 255, 0, 0, 200);
 		SDL_RenderFillRect(CurrentRenderer(), &filled_dstrect);

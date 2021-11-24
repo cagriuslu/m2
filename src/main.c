@@ -24,6 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 
+Game *game;
+
 SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
 TTF_Font *gFont;
@@ -40,7 +42,7 @@ int main(int argc, char **argv) {
 	(void)argv;
 	XErr res;
 
-	Game *game = calloc(1, sizeof(Game));
+	game = calloc(1, sizeof(Game));
 	game->tileWidth = 24;
 	game->textureImageFilePath = "resources/24x24.png";
 	game->textureMetaImageFilePath = "resources/24x24_META.png";
@@ -70,7 +72,7 @@ int main(int argc, char **argv) {
 	bool levelLoaded = false;
 
 main_menu:
-	res = DialogMainMenu(game, levelLoaded);
+	res = DialogMainMenu(levelLoaded);
 	if (res == XERR_QUIT) {
 		return 0;
 	} else if (res == X_MAIN_MENU_RESUME) {
@@ -84,9 +86,9 @@ main_menu:
 		Level_Init(&gLevel);
 
 		if (res == X_MAIN_MENU_NEW_GAME) {
-			PROPAGATE_ERROR(Level_LoadTest(&gLevel, game));
+			PROPAGATE_ERROR(Level_LoadTest(&gLevel));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
-			PROPAGATE_ERROR(Level_LoadEditor(&gLevel, game));
+			PROPAGATE_ERROR(Level_LoadEditor(&gLevel));
 		} else {
 			LOG_FTL("Unknown level is selected");
 			LOGOBJ_FTL(LOGVAR_MENU_SELECTION, Int32, res);
@@ -155,7 +157,7 @@ main_menu:
 		prevPrePhysicsTicks += gDeltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
 			if (el->prePhysics) {
-				el->prePhysics(el, game);
+				el->prePhysics(el);
 			}
 		}
 		if (gLevel.world) {
@@ -200,7 +202,7 @@ main_menu:
 		prevTerrainDrawGraphicsTicks += gDeltaTicks;
 		for (ComponentGraphics* gfx = Pool_GetFirst(&gLevel.terrainGraphics); gfx; gfx = Pool_GetNext(&gLevel.terrainGraphics, gfx)) {
 			if (gfx->draw) {
-				gfx->draw(gfx, game);
+				gfx->draw(gfx);
 			}
 		}
 		// Pre-graphics
@@ -220,7 +222,7 @@ main_menu:
 			ID graphicsId = InsertionList_Get(&gLevel.drawList, i);
 			ComponentGraphics* gfx = Pool_GetById(&gLevel.graphics, graphicsId);
 			if (gfx && gfx->draw) {
-				gfx->draw(gfx, game);
+				gfx->draw(gfx);
 			}
 		}
 		// Draw HUD background
@@ -228,7 +230,7 @@ main_menu:
 		SDL_RenderFillRect(gRenderer, &game->leftHudRect);
 		SDL_RenderFillRect(gRenderer, &game->rightHudRect);
 		// Draw HUD
-		Hud_Draw(&gLevel.hud, game);
+		Hud_Draw(&gLevel.hud);
 		// Post-graphics
 		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += gDeltaTicks;
@@ -265,6 +267,10 @@ main_menu:
 	return 0;
 }
 
+Game* CurrentGame() {
+	return game;
+}
+
 SDL_Renderer* CurrentRenderer() {
 	return gRenderer;
 }
@@ -297,13 +303,13 @@ char* ConsoleInputBuffer() {
 	return gConsoleInput;
 }
 
-Vec2F CurrentPointerPositionInWorld(Game *game) {
+Vec2F CurrentPointerPositionInWorld() {
 	Object* camera = Pool_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = gEvents.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (game->windowWidth / 2), pointerPosition.y - (game->windowHeight / 2) };
-	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / game->pixelsPerMeter, pointerPositionWRTScreenCenter.y / game->pixelsPerMeter };
+	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (CurrentGame()->windowWidth / 2), pointerPosition.y - (CurrentGame()->windowHeight / 2) };
+	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / CurrentGame()->pixelsPerMeter, pointerPositionWRTScreenCenter.y / CurrentGame()->pixelsPerMeter };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
 	return pointerPositionWRTWorld;
 }
