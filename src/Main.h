@@ -15,9 +15,7 @@
 
 Game* CurrentGame();
 
-SDL_Renderer* CurrentRenderer();
 SDL_Texture* CurrentTextureLUT();
-TTF_Font* CurrentFont();
 TextureMap* CurrentTextureMap();
 
 Level* CurrentLevel();

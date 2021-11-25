@@ -170,7 +170,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Box2DUtils.c" />
     <ClCompile Include="..\src\Box2D.cpp" />
-    <ClCompile Include="..\src\HudComplications\HudComplicationHealthPoints.c" />
+    <ClCompile Include="..\src\Game.c" />
     <ClCompile Include="..\src\Pool.c" />
     <ClCompile Include="..\src\Character.c" />
     <ClCompile Include="..\src\Component.c" />
@@ -220,7 +220,6 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Vec2F.c" />
     <ClCompile Include="..\src\Vec2I.c" />
     <ClCompile Include="..\src\VSON.c" />
-    <ClCompile Include="..\src\Window.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\AABB.h" />
@@ -228,6 +227,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\Array.h" />
     <ClInclude Include="..\src\Box2DUtils.h" />
     <ClInclude Include="..\src\Box2D.h" />
+    <ClInclude Include="..\src\Game.h" />
     <ClInclude Include="..\src\HudComplication.h" />
     <ClInclude Include="..\src\Pool.h" />
     <ClInclude Include="..\src\Character.h" />

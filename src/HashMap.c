@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "HashMap.h"
 #include "Txt.h"
 #include "Array.h"
@@ -132,19 +133,27 @@ void HashMap_UnsetInt64Key(HashMap* hm, int64_t key) {
 }
 
 void* HashMap_SetStringKey(HashMap* hm, const char* key, void* copy) {
-	return HashMap_Set(hm, (void*)key, copy);
+	char actualKey[HASHMAP_KEY_SIZE] = { 0 };
+	strncpy(actualKey, key, HASHMAP_KEY_SIZE);
+	return HashMap_Set(hm, actualKey, copy);
 }
 
 void* HashMap_TrySetStringKey(HashMap* hm, const char* key, void* copy) {
-	return HashMap_TrySet(hm, (void*)key, copy);
+	char actualKey[HASHMAP_KEY_SIZE] = { 0 };
+	strncpy(actualKey, key, HASHMAP_KEY_SIZE);
+	return HashMap_TrySet(hm, actualKey, copy);
 }
 
 void* HashMap_GetStringKey(HashMap* hm, const char* key) {
-	return HashMap_Get(hm, (void*)key);
+	char actualKey[HASHMAP_KEY_SIZE] = { 0 };
+	strncpy(actualKey, key, HASHMAP_KEY_SIZE);
+	return HashMap_Get(hm, actualKey);
 }
 
 void HashMap_UnsetStringKey(HashMap* hm, const char* key) {
-	HashMap_Unset(hm, (void*)key);
+	char actualKey[HASHMAP_KEY_SIZE] = { 0 };
+	strncpy(actualKey, key, HASHMAP_KEY_SIZE);
+	HashMap_Unset(hm, actualKey);
 }
 
 void* HashMap_Set(HashMap* hm, void* key, void* copy) {

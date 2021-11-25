@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
@@ -15,6 +16,7 @@ typedef struct _Game {
 	
 	SDL_Window *sdlWindow;
 	SDL_Cursor *sdlCursor;
+	SDL_Renderer* sdlRenderer;
 	uint32_t pixelFormat;
 	int windowWidth;
 	int windowHeight;
@@ -27,6 +29,8 @@ typedef struct _Game {
 	SDL_Rect leftHudRect;
 	SDL_Rect rightHudRect;
 	float pixelsPerMeter;
+
+	TTF_Font* ttfFont;
 
 	float physicsStepPerSecond;
 	float physicsStepPeriod;

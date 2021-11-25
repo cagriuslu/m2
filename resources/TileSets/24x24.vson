@@ -1,0 +1,22 @@
+{
+	Terrains: {
+		Grnd0000: {x:0  y:0  w:24 h:24},
+		Clf000T:  {x:0  y:48 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+		Clf000R:  {x:24 y:48 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+		Clf000B:  {x:24 y:72 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+		Clf000L:  {x:0  y:72 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+		Clf000TR: {x:48 y:48 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+		Clf000TL: {x:72 y:72 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+		Clf000BR: {x:48 y:72 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+		Clf000BL: {x:72 y:48 w:24 h:24 RectangleCollider:{x:-12 y:-12 w:24 h:24}},
+	},
+	Objects: {
+		Box000:   {x:24  y:96 w:24 h:24 Center:{x:0   y:2}   RectangleCollider:{x:-11 y:-2 w:22 h:9}},
+		Sword000: {x:144 y:96 w:48 h:24 Center:{x:-14 y:0}   RectangleCollider:{x:1.5 y:0  w:25 h:4}},
+		Skltn000: {x:48  y:0  w:24 h:24 Center:{x:0   y:5}   CircleCollider:{x:0 y:5 r:6}},
+		Playr000: {x:72  y:0  w:24 h:24 Center:{x:0   y:6}   CircleCollider:{x:0 y:6 r:6}},
+		Arrow000: {x:72  y:96 w:24 h:24 Center:{x:2.5 y:0.5} CircleCollider:{x:2.5 y:0.5 r:1.5}},
+		Bullt000: {x:96  y:96 w:24 h:24 Center:{x:1.5 y:0.5} CircleCollider:{x:1.5 y:0.5 r:1.5}},
+		Bullt001: {x:120 y:96 w:24 h:24 Center:{x:3.5 y:0.5} CircleCollider:{x:3.5 y:0.5 r:1.5}},
+	}
+}

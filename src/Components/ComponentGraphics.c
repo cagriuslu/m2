@@ -28,7 +28,7 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 			(int)round(gfx->txCenter.x * scale) + dstrect.w/2 ,
 			(int)round(gfx->txCenter.y * scale) + dstrect.h/2
 		};
-		SDL_RenderCopyEx(CurrentRenderer(), gfx->tx, &gfx->txSrc, &dstrect, gfx->txAngle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(CurrentGame()->sdlRenderer, gfx->tx, &gfx->txSrc, &dstrect, gfx->txAngle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
 	}
 }
 
@@ -59,8 +59,8 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float health
 			(int)round(healthBarWidth * healthRatio),
 			CurrentGame()->tileWidth / 6
 		};
-		SDL_SetRenderDrawColor(CurrentRenderer(), 255, 0, 0, 200);
-		SDL_RenderFillRect(CurrentRenderer(), &filled_dstrect);
+		SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 255, 0, 0, 200);
+		SDL_RenderFillRect(CurrentGame()->sdlRenderer, &filled_dstrect);
 
 		SDL_Rect empty_dstrect = (SDL_Rect){
 			filled_dstrect.x + filled_dstrect.w,
@@ -68,8 +68,8 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float health
 			healthBarWidth - filled_dstrect.w,
 			filled_dstrect.h
 		};
-		SDL_SetRenderDrawColor(CurrentRenderer(), 127, 0, 0, 200);
-		SDL_RenderFillRect(CurrentRenderer(), &empty_dstrect);
+		SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 127, 0, 0, 200);
+		SDL_RenderFillRect(CurrentGame()->sdlRenderer, &empty_dstrect);
 	}
 }
 

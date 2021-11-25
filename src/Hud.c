@@ -25,9 +25,9 @@ void Hud_Draw(Hud* hud) {
 	SDL_Rect rightHudDrawingArea = SDLUtils_ShrinkRect(CurrentGame()->rightHudRect, paddingSize, paddingSize);
 	//SDLUtils_SplitRect(CurrentGame()->leftHudRect, 10, 10, 1, 8, 1, 8);
 
-	SDL_SetRenderDrawColor(CurrentRenderer(), 50, 50, 50, 255);
-	SDL_RenderFillRect(CurrentRenderer(), &leftHudDrawingArea);
-	SDL_RenderFillRect(CurrentRenderer(), &rightHudDrawingArea);
+	SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 50, 50, 50, 255);
+	SDL_RenderFillRect(CurrentGame()->sdlRenderer, &leftHudDrawingArea);
+	SDL_RenderFillRect(CurrentGame()->sdlRenderer, &rightHudDrawingArea);
 	
 	Level* level = CurrentLevel();
 	if (level->levelType == LEVEL_TYPE_SINGLE_PLAYER) {
@@ -38,14 +38,14 @@ void Hud_Draw(Hud* hud) {
 			ComponentDefense* defense = FindDefenseOfObject(player);
 			if (defense) {
 				SDL_Rect hpBorderRect = SDLUtils_SplitRect(leftHudDrawingArea, 1, 4, 0, 1, 3, 1);
-				SDL_SetRenderDrawColor(CurrentRenderer(), 255, 255, 255, 255);
-				SDL_RenderFillRect(CurrentRenderer(), &hpBorderRect);
+				SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 255, 255, 255, 255);
+				SDL_RenderFillRect(CurrentGame()->sdlRenderer, &hpBorderRect);
 				SDL_Rect hpPaddingRect = SDLUtils_ShrinkRect(hpBorderRect, 2, 2);
-				SDL_SetRenderDrawColor(CurrentRenderer(), 0, 0, 0, 255);
-				SDL_RenderFillRect(CurrentRenderer(), &hpPaddingRect);
+				SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 0, 0, 0, 255);
+				SDL_RenderFillRect(CurrentGame()->sdlRenderer, &hpPaddingRect);
 				SDL_Rect hpRect = SDLUtils_ShrinkRect2(hpPaddingRect, 2 + ((hpPaddingRect.h - 4) - (hpPaddingRect.h - 4) * defense->hp / defense->maxHp), 2, 2, 2);
-				SDL_SetRenderDrawColor(CurrentRenderer(), 255, 0, 0, 255);
-				SDL_RenderFillRect(CurrentRenderer(), &hpRect);
+				SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 255, 0, 0, 255);
+				SDL_RenderFillRect(CurrentGame()->sdlRenderer, &hpRect);
 			}
 		}
 		

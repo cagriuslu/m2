@@ -26,9 +26,7 @@
 
 Game *game;
 
-SDL_Renderer *gRenderer;
 SDL_Texture *gTextureLUT;
-TTF_Font *gFont;
 TextureMap gTextureMap;
 
 Level gLevel;
@@ -64,9 +62,9 @@ int main(int argc, char **argv) {
 	game->sdlCursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(game->sdlCursor);
 	game->pixelFormat = SDL_GetWindowPixelFormat(game->sdlWindow);
-	gRenderer = SDL_CreateRenderer(game->sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
-	gTextureLUT = SDL_CreateTextureFromSurface(gRenderer, IMG_Load("resources/24x24.png"));
-	gFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
+	game->sdlRenderer = SDL_CreateRenderer(game->sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
+	gTextureLUT = SDL_CreateTextureFromSurface(game->sdlRenderer, IMG_Load("resources/24x24.png"));
+	game->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 	TextureMap_Init(&gTextureMap, game->tileWidth, game->textureImageFilePath, game->textureMetaImageFilePath, game->textureMetaFilePath);
 
 	bool levelLoaded = false;
@@ -195,8 +193,8 @@ main_menu:
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Clear screen
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-		SDL_RenderClear(gRenderer);
+		SDL_SetRenderDrawColor(game->sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderClear(game->sdlRenderer);
 		// Draw terrain
 		gDeltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
 		prevTerrainDrawGraphicsTicks += gDeltaTicks;
@@ -226,9 +224,9 @@ main_menu:
 			}
 		}
 		// Draw HUD background
-		SDL_SetRenderDrawColor(gRenderer, 5, 5, 5, 255);
-		SDL_RenderFillRect(gRenderer, &game->leftHudRect);
-		SDL_RenderFillRect(gRenderer, &game->rightHudRect);
+		SDL_SetRenderDrawColor(game->sdlRenderer, 5, 5, 5, 255);
+		SDL_RenderFillRect(game->sdlRenderer, &game->leftHudRect);
+		SDL_RenderFillRect(game->sdlRenderer, &game->rightHudRect);
 		// Draw HUD
 		Hud_Draw(&gLevel.hud);
 		// Post-graphics
@@ -240,11 +238,11 @@ main_menu:
 			}
 		}
 		// Draw envelope
-		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(gRenderer, &game->firstEnvelopeRect);
-		SDL_RenderFillRect(gRenderer, &game->secondEnvelopeRect);
+		SDL_SetRenderDrawColor(game->sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderFillRect(game->sdlRenderer, &game->firstEnvelopeRect);
+		SDL_RenderFillRect(game->sdlRenderer, &game->secondEnvelopeRect);
 		// Present
-		SDL_RenderPresent(gRenderer);
+		SDL_RenderPresent(game->sdlRenderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 
@@ -258,7 +256,7 @@ main_menu:
 		}
 	}
 
-	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyRenderer(game->sdlRenderer);
 	SDL_FreeCursor(game->sdlCursor);
 	SDL_DestroyWindow(game->sdlWindow);
 	TTF_Quit();
@@ -271,16 +269,8 @@ Game* CurrentGame() {
 	return game;
 }
 
-SDL_Renderer* CurrentRenderer() {
-	return gRenderer;
-}
-
 SDL_Texture* CurrentTextureLUT() {
 	return gTextureLUT;
-}
-
-TTF_Font* CurrentFont() {
-	return gFont;
 }
 
 TextureMap* CurrentTextureMap() {

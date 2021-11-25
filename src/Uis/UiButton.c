@@ -29,10 +29,10 @@ void UiButton_draw(Ui* ui) {
 	};
 	ui->trigZone = outlineRect;
 
-	SDL_SetRenderDrawColor(CurrentRenderer(), 0, 0, 0, 255);
-	SDL_RenderFillRect(CurrentRenderer(), &outlineRect);
-	SDL_SetRenderDrawColor(CurrentRenderer(), 255, 255, 255, 255);
-	SDL_RenderDrawRect(CurrentRenderer(), &outlineRect);
+	SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(CurrentGame()->sdlRenderer, &outlineRect);
+	SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 255, 255, 255, 255);
+	SDL_RenderDrawRect(CurrentGame()->sdlRenderer, &outlineRect);
 
 	int textW = uiButtonData->textSize.x;
 	int textH = uiButtonData->textSize.y;
@@ -42,16 +42,16 @@ void UiButton_draw(Ui* ui) {
 		textW,
 		textH
 	};
-	SDL_RenderCopy(CurrentRenderer(), AsUiButtonData(ui->privData)->texture, NULL, &textRect);
+	SDL_RenderCopy(CurrentGame()->sdlRenderer, AsUiButtonData(ui->privData)->texture, NULL, &textRect);
 }
 
 int UiButton_Init(Ui *ui, Vec2I position, Vec2I minSize, Vec2I pad, int alignment, const char *text) {
 	PROPAGATE_ERROR(Ui_Init(ui));
 	
-	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(CurrentFont(), text, (SDL_Color) {255, 255, 255, 255});
+	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(CurrentGame()->ttfFont, text, (SDL_Color) {255, 255, 255, 255});
 	Vec2I size = (Vec2I) {MAX(textSurf->w + 2 * pad.x, minSize.x), MAX(textSurf->h + 2 * pad.y, minSize.y)};
 	Vec2I textSize = (Vec2I) {textSurf->w, textSurf->h};
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(CurrentRenderer(), textSurf);
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(CurrentGame()->sdlRenderer, textSurf);
 	SDL_FreeSurface(textSurf);
 
 	UiButtonData *uiButtonData = malloc(sizeof(UiButtonData));

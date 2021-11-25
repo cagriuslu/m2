@@ -168,16 +168,13 @@
     <ClCompile Include="..\src\Hud.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Window.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\HudComplications\HudComplicationHealthPoints.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\VSON.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\String.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -300,6 +297,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\String.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
