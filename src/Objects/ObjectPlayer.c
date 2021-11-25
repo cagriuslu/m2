@@ -137,8 +137,5 @@ int ObjectPlayer_Init(Object* obj, Character* character) {
 	ComponentDefense_CopyExceptSuper(def, &obj->properties->character->defense);
 	def->hp = def->maxHp;
 
-	ComponentLightSource* light = Object_AddLightSource(obj, 4.0f, NULL);
-	light->power = 3.0f;
-
 	return 0;
 }

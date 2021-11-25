@@ -46,17 +46,6 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx);
 void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio);
 int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB);
 
-typedef struct _ComponentLightSource {
-	Component super;
-	ID spatialIterator;
-	float power;
-	Vec2F offset;
-	Vec2F direction;
-} ComponentLightSource;
-int ComponentLightSource_Init(ComponentLightSource* light, ID objectId, float lightBoundaryRadius);
-void ComponentLightSource_Term(ComponentLightSource* light);
-void ComponentLightSource_UpdatePosition(ComponentLightSource* light);
-
 typedef struct _ComponentDefense {
 	Component super;
 	int maxHp;

@@ -175,9 +175,6 @@ main_menu:
 				}
 			}
 		}
-		for (ComponentLightSource* light = Pool_GetFirst(&gLevel.lightSources); light; light = Pool_GetNext(&gLevel.lightSources, light)) {
-			ComponentLightSource_UpdatePosition(light);
-		}
 		gDeltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
 		prevPostPhysicsTicks += gDeltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {

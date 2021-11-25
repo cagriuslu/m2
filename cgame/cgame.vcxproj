@@ -177,7 +177,6 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Components\ComponentDefense.c" />
     <ClCompile Include="..\src\Components\ComponentEventListener.c" />
     <ClCompile Include="..\src\Components\ComponentGraphics.c" />
-    <ClCompile Include="..\src\Components\ComponentLightSource.c" />
     <ClCompile Include="..\src\Components\ComponentOffense.c" />
     <ClCompile Include="..\src\Components\ComponentPhysics.c" />
     <ClCompile Include="..\src\Controls.c" />

@@ -60,11 +60,6 @@ void Object_Term(Object* obj) {
 		ComponentOffense_Term(off);
 		Pool_Unmark(&CurrentLevel()->offenses, off);
 	}
-	if (obj->lightSource) {
-		ComponentLightSource* light = Pool_GetById(&CurrentLevel()->lightSources, obj->lightSource);
-		ComponentLightSource_Term(light);
-		Pool_Unmark(&CurrentLevel()->lightSources, light);
-	}
 	if (obj->properties) {
 		if (obj->properties->character) {
 			// TODO: who should terminate the Character?
@@ -146,14 +141,4 @@ ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId) {
 		outId[0] = obj->offenseMelee;
 	}
 	return off;
-}
-
-ComponentLightSource* Object_AddLightSource(Object* obj, float lightBoundaryRadius, ID* outId) {
-	ID objectId = Pool_GetId(&CurrentLevel()->objects, obj);
-	ComponentLightSource* light = Pool_Mark(&CurrentLevel()->lightSources, NULL, &obj->lightSource);
-	ComponentLightSource_Init(light, objectId, lightBoundaryRadius);
-	if (outId) {
-		outId[0] = obj->lightSource;
-	}
-	return light;
 }

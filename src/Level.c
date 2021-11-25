@@ -21,8 +21,6 @@ int Level_Init(Level* level) {
 	level->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
 	Box2DWorldSetContactListener(level->world, level->contactListener);
 	PROPAGATE_ERROR(Array_Init(&level->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
-	PROPAGATE_ERROR(Pool_Init(&level->lightSources, 16, sizeof(ComponentLightSource)));
-	PROPAGATE_ERROR(SpatialMap_Init(&level->lightSourceSpatialMap, sizeof(ID)));
 	return 0;
 }
 
@@ -43,8 +41,6 @@ void Level_DeleteMarkedObjects(Level* level) {
 
 void Level_Term(Level* level) {
 	// TODO delete members in objects
-	SpatialMap_Term(&level->lightSourceSpatialMap);
-	Pool_Term(&level->lightSources);
 	PathfinderMap_Term(&level->pathfinderMap);
 	Box2DContactListenerDestroy(level->contactListener);
 	Box2DWorldDestroy(level->world);

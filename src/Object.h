@@ -60,7 +60,6 @@ typedef struct _Object {
 	ID defense;
 	ID offenseProjectile;
 	ID offenseMelee;
-	ID lightSource;
 	ObjectProperties* properties;
 } Object;
 
@@ -74,7 +73,6 @@ ComponentGraphics* Object_AddTerrainGraphics(Object* obj, ID* outId);
 ComponentDefense* Object_AddDefense(Object* obj, ID* outId);
 ComponentOffense* Object_AddOffenseProjectile(Object* obj, ID* outId);
 ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId);
-ComponentLightSource* Object_AddLightSource(Object* obj, float lightBoundaryRadius, ID* outId);
 
 typedef struct _TileDef {
 	Vec2I txIndex;

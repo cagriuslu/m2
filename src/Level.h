@@ -30,9 +30,6 @@ typedef struct _Level {
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
 	Hud hud;
-	// Not used
-	Pool lightSources;
-	SpatialMap lightSourceSpatialMap;
 } Level;
 
 int Level_Init(Level* level);

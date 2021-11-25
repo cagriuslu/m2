@@ -132,9 +132,6 @@
     <ClCompile Include="..\src\Log.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Components\ComponentLightSource.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\SpatialMap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
