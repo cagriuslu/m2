@@ -9,7 +9,7 @@
 static void Sword_prePhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
 	ComponentOffense* offense = FindOffenseMeleeOfObject(obj);
-	offense->ttl -= DeltaTicks();
+	offense->ttl -= GAME->deltaTicks;
 	if (offense->ttl <= 0) {
 		DeleteObject(obj);
 	}
@@ -86,7 +86,7 @@ int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* or
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
 	gfx->txAngle = Box2DBodyGetAngle(phy->body);
-	gfx->txSrc = (SDL_Rect){ 6 * CurrentGame()->tileWidth, 4 * CurrentGame()->tileWidth, 2 * CurrentGame()->tileWidth, CurrentGame()->tileWidth };
+	gfx->txSrc = (SDL_Rect){ 6 * GAME->tileWidth, 4 * GAME->tileWidth, 2 * GAME->tileWidth, GAME->tileWidth };
 	gfx->txCenter = (Vec2F){ -14.0f, 0.0f };
 
 	ComponentOffense* off = Object_AddOffenseMelee(obj, NULL);

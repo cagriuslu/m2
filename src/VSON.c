@@ -360,7 +360,7 @@ VSON* VSON_Get(VSON* vson, const char* path) {
 			// Look for int(pathPiece)
 			const long index = strtol(*pathPiecePtr, NULL, 10);
 			VSONArrayValue* arrV = vson->value.arrayFirstChild;
-			for (long i = 0; i < index && arrV; i++) {
+			for (long ii = 0; ii < index && arrV; ii++) {
 				arrV = arrV->next;
 			}
 			vson = arrV ? &(arrV->value) : NULL;

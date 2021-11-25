@@ -13,8 +13,8 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 
 	float distanceToPlayer = 0.0f;
 
-	obj->properties->ai->recalculationStopwatch += DeltaTicks();
-	obj->properties->ai->attackStopwatch += DeltaTicks();
+	obj->properties->ai->recalculationStopwatch += GAME->deltaTicks;
+	obj->properties->ai->attackStopwatch += GAME->deltaTicks;
 	
 	if (obj->properties->ai->recalculationPeriod < obj->properties->ai->recalculationStopwatch) {
 		switch (obj->properties->ai->mode) {
@@ -82,7 +82,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 		if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
 			ComponentPhysics* phy = FindPhysicsOfObject(obj);
 			Vec2F direction = Vec2F_Sub(Vec2F_FromVec2I(*targetPosition), obj->position);
-			Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), DeltaTicks() * 20.0f), true);
+			Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), GAME->deltaTicks * 20.0f), true);
 		}
 	}
 }
@@ -112,7 +112,7 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	PROPAGATE_ERROR(Object_Init(obj, position, true));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
-	gfx->txSrc = (SDL_Rect){ 2 * CurrentGame()->tileWidth, 0, CurrentGame()->tileWidth, CurrentGame()->tileWidth };
+	gfx->txSrc = (SDL_Rect){ 2 * GAME->tileWidth, 0, GAME->tileWidth, GAME->tileWidth };
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 	gfx->draw = ObjectEnemy_Draw;
 

@@ -35,15 +35,15 @@ int DialogWaitForEvent(Array *uis) {
 		///// END OF EVENT HANDLING /////
 
 		///// GRAPHICS /////
-		SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderClear(CurrentGame()->sdlRenderer);
+		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderClear(GAME->sdlRenderer);
 		for (size_t i = 0; i < uis->length; i++) {
 			Ui *ui = Array_Get(uis, i);
 			if (ui->draw) {
 				ui->draw(ui);
 			}
 		}
-		SDL_RenderPresent(CurrentGame()->sdlRenderer);
+		SDL_RenderPresent(GAME->sdlRenderer);
 		///// END OF GRAPHICS /////
 	}
 }

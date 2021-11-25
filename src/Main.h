@@ -13,14 +13,10 @@
 #include <SDL_ttf.h>
 #include <stdbool.h>
 
-Game* CurrentGame();
-
 SDL_Texture* CurrentTextureLUT();
 TextureMap* CurrentTextureMap();
 
 Level* CurrentLevel();
-Events* CurrentEvents();
-unsigned DeltaTicks();
 
 Vec2F CurrentPointerPositionInWorld();
 

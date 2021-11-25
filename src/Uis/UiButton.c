@@ -22,36 +22,36 @@ void UiButton_draw(Ui* ui) {
 
 	Vec2I size = uiButtonData->size;
 	SDL_Rect outlineRect = (SDL_Rect) {
-		CurrentGame()->windowWidth / 2 - size.x / 2 + uiButtonData->position.x,
-		CurrentGame()->windowHeight / 2 - size.y / 2 + uiButtonData->position.y,
+		GAME->windowWidth / 2 - size.x / 2 + uiButtonData->position.x,
+		GAME->windowHeight / 2 - size.y / 2 + uiButtonData->position.y,
 		size.x,
 		size.y
 	};
 	ui->trigZone = outlineRect;
 
-	SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 0, 0, 0, 255);
-	SDL_RenderFillRect(CurrentGame()->sdlRenderer, &outlineRect);
-	SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 255, 255, 255, 255);
-	SDL_RenderDrawRect(CurrentGame()->sdlRenderer, &outlineRect);
+	SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(GAME->sdlRenderer, &outlineRect);
+	SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 255, 255, 255);
+	SDL_RenderDrawRect(GAME->sdlRenderer, &outlineRect);
 
 	int textW = uiButtonData->textSize.x;
 	int textH = uiButtonData->textSize.y;
 	SDL_Rect textRect = (SDL_Rect) {
-		CurrentGame()->windowWidth / 2 - textW / 2 + uiButtonData->position.x,
-		CurrentGame()->windowHeight / 2 - textH / 2 + uiButtonData->position.y,
+		GAME->windowWidth / 2 - textW / 2 + uiButtonData->position.x,
+		GAME->windowHeight / 2 - textH / 2 + uiButtonData->position.y,
 		textW,
 		textH
 	};
-	SDL_RenderCopy(CurrentGame()->sdlRenderer, AsUiButtonData(ui->privData)->texture, NULL, &textRect);
+	SDL_RenderCopy(GAME->sdlRenderer, AsUiButtonData(ui->privData)->texture, NULL, &textRect);
 }
 
 int UiButton_Init(Ui *ui, Vec2I position, Vec2I minSize, Vec2I pad, int alignment, const char *text) {
 	PROPAGATE_ERROR(Ui_Init(ui));
 	
-	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(CurrentGame()->ttfFont, text, (SDL_Color) {255, 255, 255, 255});
+	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME->ttfFont, text, (SDL_Color) {255, 255, 255, 255});
 	Vec2I size = (Vec2I) {MAX(textSurf->w + 2 * pad.x, minSize.x), MAX(textSurf->h + 2 * pad.y, minSize.y)};
 	Vec2I textSize = (Vec2I) {textSurf->w, textSurf->h};
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(CurrentGame()->sdlRenderer, textSurf);
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textSurf);
 	SDL_FreeSurface(textSurf);
 
 	UiButtonData *uiButtonData = malloc(sizeof(UiButtonData));

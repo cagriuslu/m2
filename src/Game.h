@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "Event.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -9,11 +10,12 @@
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f)
 
 typedef struct _Game {
+	// Tile-set related
 	int tileWidth;
 	const char* textureImageFilePath;
 	const char* textureMetaImageFilePath;
 	const char* textureMetaFilePath;
-	
+	// Window related
 	SDL_Window *sdlWindow;
 	SDL_Cursor *sdlCursor;
 	SDL_Renderer* sdlRenderer;
@@ -29,14 +31,22 @@ typedef struct _Game {
 	SDL_Rect leftHudRect;
 	SDL_Rect rightHudRect;
 	float pixelsPerMeter;
-
 	TTF_Font* ttfFont;
-
+	// Box2D related
 	float physicsStepPerSecond;
 	float physicsStepPeriod;
 	int velocityIterations;
 	int positionIterations;
+	// Level related
+	// TODO
+	// Game related
+	Events events;
+	unsigned deltaTicks;
+	char consoleInput[1024];
 } Game;
+
+#define GAME (gCurrentGame)
+extern Game* gCurrentGame;
 
 void Game_SetWidthHeight(Game* game, int width, int height);
 

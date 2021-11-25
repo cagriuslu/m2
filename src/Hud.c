@@ -19,15 +19,15 @@ void Hud_Term(Hud* hud) {
 }
 
 void Hud_Draw(Hud* hud) {
-	int paddingSize = (int)roundf((float)CurrentGame()->leftHudRect.w / 12.0f);
+	int paddingSize = (int)roundf((float)GAME->leftHudRect.w / 12.0f);
 	
-	SDL_Rect leftHudDrawingArea = SDLUtils_ShrinkRect(CurrentGame()->leftHudRect, paddingSize, paddingSize);
-	SDL_Rect rightHudDrawingArea = SDLUtils_ShrinkRect(CurrentGame()->rightHudRect, paddingSize, paddingSize);
-	//SDLUtils_SplitRect(CurrentGame()->leftHudRect, 10, 10, 1, 8, 1, 8);
+	SDL_Rect leftHudDrawingArea = SDLUtils_ShrinkRect(GAME->leftHudRect, paddingSize, paddingSize);
+	SDL_Rect rightHudDrawingArea = SDLUtils_ShrinkRect(GAME->rightHudRect, paddingSize, paddingSize);
+	//SDLUtils_SplitRect(GAME->leftHudRect, 10, 10, 1, 8, 1, 8);
 
-	SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 50, 50, 50, 255);
-	SDL_RenderFillRect(CurrentGame()->sdlRenderer, &leftHudDrawingArea);
-	SDL_RenderFillRect(CurrentGame()->sdlRenderer, &rightHudDrawingArea);
+	SDL_SetRenderDrawColor(GAME->sdlRenderer, 50, 50, 50, 255);
+	SDL_RenderFillRect(GAME->sdlRenderer, &leftHudDrawingArea);
+	SDL_RenderFillRect(GAME->sdlRenderer, &rightHudDrawingArea);
 	
 	Level* level = CurrentLevel();
 	if (level->levelType == LEVEL_TYPE_SINGLE_PLAYER) {
@@ -38,14 +38,14 @@ void Hud_Draw(Hud* hud) {
 			ComponentDefense* defense = FindDefenseOfObject(player);
 			if (defense) {
 				SDL_Rect hpBorderRect = SDLUtils_SplitRect(leftHudDrawingArea, 1, 4, 0, 1, 3, 1);
-				SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 255, 255, 255, 255);
-				SDL_RenderFillRect(CurrentGame()->sdlRenderer, &hpBorderRect);
+				SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 255, 255, 255);
+				SDL_RenderFillRect(GAME->sdlRenderer, &hpBorderRect);
 				SDL_Rect hpPaddingRect = SDLUtils_ShrinkRect(hpBorderRect, 2, 2);
-				SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 0, 0, 0, 255);
-				SDL_RenderFillRect(CurrentGame()->sdlRenderer, &hpPaddingRect);
+				SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
+				SDL_RenderFillRect(GAME->sdlRenderer, &hpPaddingRect);
 				SDL_Rect hpRect = SDLUtils_ShrinkRect2(hpPaddingRect, 2 + ((hpPaddingRect.h - 4) - (hpPaddingRect.h - 4) * defense->hp / defense->maxHp), 2, 2, 2);
-				SDL_SetRenderDrawColor(CurrentGame()->sdlRenderer, 255, 0, 0, 255);
-				SDL_RenderFillRect(CurrentGame()->sdlRenderer, &hpRect);
+				SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 0, 0, 255);
+				SDL_RenderFillRect(GAME->sdlRenderer, &hpRect);
 			}
 		}
 		

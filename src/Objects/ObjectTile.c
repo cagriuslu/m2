@@ -15,10 +15,10 @@ int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position) {
 	
 	ComponentGraphics* gfx = Object_AddTerrainGraphics(obj, NULL);
 	gfx->txSrc = (SDL_Rect){
-		tileDef.txIndex.x * CurrentGame()->tileWidth,
-		tileDef.txIndex.y * CurrentGame()->tileWidth,
-		CurrentGame()->tileWidth,
-		CurrentGame()->tileWidth
+		tileDef.txIndex.x * GAME->tileWidth,
+		tileDef.txIndex.y * GAME->tileWidth,
+		GAME->tileWidth,
+		GAME->tileWidth
 	};
 	
 	return 0;

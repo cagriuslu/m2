@@ -19,7 +19,7 @@ static void Bullet_prePhysics(ComponentEventListener* el) {
 
 		ComponentOffense* offense = FindOffenseProjectileOfObject(obj);
 		if (offense) {
-			offense->ttl -= DeltaTicks();
+			offense->ttl -= GAME->deltaTicks;
 			if (offense->ttl <= 0) {
 				DeleteObject(obj);
 			}
@@ -70,15 +70,15 @@ int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType pro
 	gfx->txAngle = ANGLE(direction);
 	switch (projectileType) {
 		case ITEMTYP_GUN:
-			gfx->txSrc = (SDL_Rect){ 4 * CurrentGame()->tileWidth, 4 * CurrentGame()->tileWidth, CurrentGame()->tileWidth, CurrentGame()->tileWidth };
+			gfx->txSrc = (SDL_Rect){ 4 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
 			gfx->txCenter = (Vec2F){ 1.5f, 0.5f };
 			break;
 		case ITEMTYP_RIFLE:
-			gfx->txSrc = (SDL_Rect){ 5 * CurrentGame()->tileWidth, 4 * CurrentGame()->tileWidth, CurrentGame()->tileWidth, CurrentGame()->tileWidth };
+			gfx->txSrc = (SDL_Rect){ 5 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
 			gfx->txCenter = (Vec2F){ 3.5f, 0.5f };
 			break;
 		case ITEMTYP_BOW:
-			gfx->txSrc = (SDL_Rect){ 3 * CurrentGame()->tileWidth, 4 * CurrentGame()->tileWidth, CurrentGame()->tileWidth, CurrentGame()->tileWidth };
+			gfx->txSrc = (SDL_Rect){ 3 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
 			gfx->txCenter = (Vec2F){ 2.5f, 0.5f };
 			break;
 		default:

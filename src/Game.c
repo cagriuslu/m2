@@ -1,5 +1,7 @@
 #include "Game.h"
 
+Game* gCurrentGame;
+
 void Game_SetWidthHeight(Game* game, int width, int height) {
 	float fw = (float)width;
 	float fh = (float)height;

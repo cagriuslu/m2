@@ -11,19 +11,19 @@ static void God_prePhysics(ComponentEventListener* el) {
 	ComponentPhysics* phy = Pool_GetById(&CurrentLevel()->physics, obj->physics);
 	if (phy && phy->body) {
 		Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
-		if (CurrentEvents()->keyStates[KEY_UP]) {
+		if (GAME->events.keyStates[KEY_UP]) {
 			moveDirection.y += -1.0f;
 		}
-		if (CurrentEvents()->keyStates[KEY_DOWN]) {
+		if (GAME->events.keyStates[KEY_DOWN]) {
 			moveDirection.y += 1.0f;
 		}
-		if (CurrentEvents()->keyStates[KEY_LEFT]) {
+		if (GAME->events.keyStates[KEY_LEFT]) {
 			moveDirection.x += -1.0f;
 		}
-		if (CurrentEvents()->keyStates[KEY_RIGHT]) {
+		if (GAME->events.keyStates[KEY_RIGHT]) {
 			moveDirection.x += 1.0f;
 		}
-		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), DeltaTicks() * 25.0f), true);
+		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
 	}
 }
 

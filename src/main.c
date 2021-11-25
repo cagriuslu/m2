@@ -24,15 +24,10 @@
 #include <stdio.h>
 #include <string.h>
 
-Game *game;
-
 SDL_Texture *gTextureLUT;
 TextureMap gTextureMap;
 
 Level gLevel;
-Events gEvents;
-unsigned gDeltaTicks;
-char gConsoleInput[1024];
 
 int main(int argc, char **argv) {
 	LOG_TRC("main");
@@ -40,32 +35,32 @@ int main(int argc, char **argv) {
 	(void)argv;
 	XErr res;
 
-	game = calloc(1, sizeof(Game));
-	game->tileWidth = 24;
-	game->textureImageFilePath = "resources/24x24.png";
-	game->textureMetaImageFilePath = "resources/24x24_META.png";
-	game->textureMetaFilePath = "resources/24x24_META.txt";
-	game->windowWidth = 1600;
-	game->windowHeight = 900;
-	game->physicsStepPerSecond = 80.0f;
-	game->physicsStepPeriod = 1.0f / game->physicsStepPerSecond;
-	game->velocityIterations = 8;
-	game->positionIterations = 3;
+	GAME = calloc(1, sizeof(Game));
+	GAME->tileWidth = 24;
+	GAME->textureImageFilePath = "resources/24x24.png";
+	GAME->textureMetaImageFilePath = "resources/24x24_META.png";
+	GAME->textureMetaFilePath = "resources/24x24_META.txt";
+	GAME->windowWidth = 1600;
+	GAME->windowHeight = 900;
+	GAME->physicsStepPerSecond = 80.0f;
+	GAME->physicsStepPeriod = 1.0f / GAME->physicsStepPerSecond;
+	GAME->velocityIterations = 8;
+	GAME->positionIterations = 3;
 
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
-	Game_SetWidthHeight(game, game->windowWidth, game->windowHeight);
-	game->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, game->windowWidth, game->windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-	SDL_SetWindowMinimumSize(game->sdlWindow, 712, 400);
+	Game_SetWidthHeight(GAME, GAME->windowWidth, GAME->windowHeight);
+	GAME->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowWidth, GAME->windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	SDL_SetWindowMinimumSize(GAME->sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
-	game->sdlCursor = SDLUtils_CreateCursor();
-	SDL_SetCursor(game->sdlCursor);
-	game->pixelFormat = SDL_GetWindowPixelFormat(game->sdlWindow);
-	game->sdlRenderer = SDL_CreateRenderer(game->sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
-	gTextureLUT = SDL_CreateTextureFromSurface(game->sdlRenderer, IMG_Load("resources/24x24.png"));
-	game->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
-	TextureMap_Init(&gTextureMap, game->tileWidth, game->textureImageFilePath, game->textureMetaImageFilePath, game->textureMetaFilePath);
+	GAME->sdlCursor = SDLUtils_CreateCursor();
+	SDL_SetCursor(GAME->sdlCursor);
+	GAME->pixelFormat = SDL_GetWindowPixelFormat(GAME->sdlWindow);
+	GAME->sdlRenderer = SDL_CreateRenderer(GAME->sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
+	gTextureLUT = SDL_CreateTextureFromSurface(GAME->sdlRenderer, IMG_Load("resources/24x24.png"));
+	GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
+	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 
 	bool levelLoaded = false;
 
@@ -114,34 +109,34 @@ main_menu:
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		if (Events_Gather(&gEvents)) {
-			if (gEvents.quitEvent) {
+		if (Events_Gather(&GAME->events)) {
+			if (GAME->events.quitEvent) {
 				break;
 			}
-			if (gEvents.windowResizeEvent) {
-				Game_SetWidthHeight(game, gEvents.windowDims.x, gEvents.windowDims.y);
+			if (GAME->events.windowResizeEvent) {
+				Game_SetWidthHeight(GAME, GAME->events.windowDims.x, GAME->events.windowDims.y);
 			}
 			if (!SDL_IsTextInputActive()) {
-				if (gEvents.keysPressed[KEY_MENU]) {
+				if (GAME->events.keysPressed[KEY_MENU]) {
 					goto main_menu;
 				}
-				if (gEvents.keysPressed[KEY_CONSOLE]) {
-					memset(gConsoleInput, 0, sizeof(gConsoleInput));
+				if (GAME->events.keysPressed[KEY_CONSOLE]) {
+					memset(GAME->consoleInput, 0, sizeof(GAME->consoleInput));
 					SDL_StartTextInput();
 					LOG_INF("SDL text input activated");
 				}
 			} else {
-				if (gEvents.keysPressed[KEY_MENU]) {
+				if (GAME->events.keysPressed[KEY_MENU]) {
 					SDL_StopTextInput();
 					LOG_INF("SDL text input deactivated");
-				} else if (gEvents.keysPressed[KEY_ENTER]) {
+				} else if (GAME->events.keysPressed[KEY_ENTER]) {
 					// TODO Execute console command
-					LOGOBJ_INF("Console command", String, gConsoleInput);
+					LOGOBJ_INF("Console command", String, GAME->consoleInput);
 					SDL_StopTextInput();
 					LOG_INF("SDL text input deactivated");
-				} else if (gEvents.textInputEvent) {
-					strcat(gConsoleInput, gEvents.textInput);
-					LOGOBJ_INF("Console buffer", String, gConsoleInput);
+				} else if (GAME->events.textInputEvent) {
+					strcat(GAME->consoleInput, GAME->events.textInput);
+					LOGOBJ_INF("Console buffer", String, GAME->consoleInput);
 				}
 			}
 		}
@@ -151,21 +146,21 @@ main_menu:
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		gDeltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
-		prevPrePhysicsTicks += gDeltaTicks;
+		GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
+		prevPrePhysicsTicks += GAME->deltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
 			if (el->prePhysics) {
 				el->prePhysics(el);
 			}
 		}
 		if (gLevel.world) {
-			gDeltaTicks = SDL_GetTicks() - prevWorldStepTicks;
-			timeSinceLastWorldStep += gDeltaTicks / 1000.0f;
-			while (game->physicsStepPeriod < timeSinceLastWorldStep) {
-				Box2DWorldStep(gLevel.world, game->physicsStepPeriod, game->velocityIterations, game->positionIterations);
-				timeSinceLastWorldStep -= game->physicsStepPeriod;
+			GAME->deltaTicks = SDL_GetTicks() - prevWorldStepTicks;
+			timeSinceLastWorldStep += GAME->deltaTicks / 1000.0f;
+			while (GAME->physicsStepPeriod < timeSinceLastWorldStep) {
+				Box2DWorldStep(gLevel.world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
+				timeSinceLastWorldStep -= GAME->physicsStepPeriod;
 			}
-			prevWorldStepTicks += gDeltaTicks;
+			prevWorldStepTicks += GAME->deltaTicks;
 		}
 		for (ComponentPhysics* phy = Pool_GetFirst(&gLevel.physics); phy; phy = Pool_GetNext(&gLevel.physics, phy)) {
 			if (phy->body) {
@@ -175,8 +170,8 @@ main_menu:
 				}
 			}
 		}
-		gDeltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
-		prevPostPhysicsTicks += gDeltaTicks;
+		GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
+		prevPostPhysicsTicks += GAME->deltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
 			if (el->postPhysics) {
 				el->postPhysics(el);
@@ -190,19 +185,19 @@ main_menu:
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Clear screen
-		SDL_SetRenderDrawColor(game->sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderClear(game->sdlRenderer);
+		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderClear(GAME->sdlRenderer);
 		// Draw terrain
-		gDeltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
-		prevTerrainDrawGraphicsTicks += gDeltaTicks;
+		GAME->deltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
+		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
 		for (ComponentGraphics* gfx = Pool_GetFirst(&gLevel.terrainGraphics); gfx; gfx = Pool_GetNext(&gLevel.terrainGraphics, gfx)) {
 			if (gfx->draw) {
 				gfx->draw(gfx);
 			}
 		}
 		// Pre-graphics
-		gDeltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
-		prevPreGraphicsTicks += gDeltaTicks;
+		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
+		prevPreGraphicsTicks += GAME->deltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
 			if (el->preGraphics) {
 				el->preGraphics(el);
@@ -210,8 +205,8 @@ main_menu:
 		}
 		// Draw
 		InsertionList_Sort(&gLevel.drawList);
-		gDeltaTicks = SDL_GetTicks() - prevDrawGraphicsTicks;
-		prevDrawGraphicsTicks += gDeltaTicks;
+		GAME->deltaTicks = SDL_GetTicks() - prevDrawGraphicsTicks;
+		prevDrawGraphicsTicks += GAME->deltaTicks;
 		size_t insertionListSize = InsertionList_Length(&gLevel.drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
 			ID graphicsId = InsertionList_Get(&gLevel.drawList, i);
@@ -221,25 +216,25 @@ main_menu:
 			}
 		}
 		// Draw HUD background
-		SDL_SetRenderDrawColor(game->sdlRenderer, 5, 5, 5, 255);
-		SDL_RenderFillRect(game->sdlRenderer, &game->leftHudRect);
-		SDL_RenderFillRect(game->sdlRenderer, &game->rightHudRect);
+		SDL_SetRenderDrawColor(GAME->sdlRenderer, 5, 5, 5, 255);
+		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->leftHudRect);
+		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->rightHudRect);
 		// Draw HUD
 		Hud_Draw(&gLevel.hud);
 		// Post-graphics
-		gDeltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
-		prevPostGraphicsTicks += gDeltaTicks;
+		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
+		prevPostGraphicsTicks += GAME->deltaTicks;
 		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
 			if (el->postGraphics) {
 				el->postGraphics(el);
 			}
 		}
 		// Draw envelope
-		SDL_SetRenderDrawColor(game->sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(game->sdlRenderer, &game->firstEnvelopeRect);
-		SDL_RenderFillRect(game->sdlRenderer, &game->secondEnvelopeRect);
+		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->firstEnvelopeRect);
+		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->secondEnvelopeRect);
 		// Present
-		SDL_RenderPresent(game->sdlRenderer);
+		SDL_RenderPresent(GAME->sdlRenderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 
@@ -253,17 +248,13 @@ main_menu:
 		}
 	}
 
-	SDL_DestroyRenderer(game->sdlRenderer);
-	SDL_FreeCursor(game->sdlCursor);
-	SDL_DestroyWindow(game->sdlWindow);
+	SDL_DestroyRenderer(GAME->sdlRenderer);
+	SDL_FreeCursor(GAME->sdlCursor);
+	SDL_DestroyWindow(GAME->sdlWindow);
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
-}
-
-Game* CurrentGame() {
-	return game;
 }
 
 SDL_Texture* CurrentTextureLUT() {
@@ -278,25 +269,13 @@ Level* CurrentLevel() {
 	return &gLevel;
 }
 
-Events* CurrentEvents() {
-	return &gEvents;
-}
-
-unsigned DeltaTicks() {
-	return gDeltaTicks;
-}
-
-char* ConsoleInputBuffer() {
-	return gConsoleInput;
-}
-
 Vec2F CurrentPointerPositionInWorld() {
 	Object* camera = Pool_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
 	Vec2F cameraPosition = camera->position;
 
-	Vec2I pointerPosition = gEvents.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (CurrentGame()->windowWidth / 2), pointerPosition.y - (CurrentGame()->windowHeight / 2) };
-	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / CurrentGame()->pixelsPerMeter, pointerPositionWRTScreenCenter.y / CurrentGame()->pixelsPerMeter };
+	Vec2I pointerPosition = GAME->events.mousePosition;
+	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (GAME->windowWidth / 2), pointerPosition.y - (GAME->windowHeight / 2) };
+	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter.y / GAME->pixelsPerMeter };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
 	return pointerPositionWRTWorld;
 }

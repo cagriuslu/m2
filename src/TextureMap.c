@@ -17,7 +17,7 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 		LOGOBJ_ERR(LOGVAR_FILE_PATH, String, imageFile);
 		return XERR_FILE_NOT_FOUND;
 	}
-	tm->map = SDL_CreateTextureFromSurface(CurrentGame()->sdlRenderer, image);
+	tm->map = SDL_CreateTextureFromSurface(GAME->sdlRenderer, image);
 	if (!tm->map) {
 		LOG_ERR("Unable to convert surface to texture");
 		SDL_FreeSurface(image);
