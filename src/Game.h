@@ -50,6 +50,7 @@ typedef struct _Game {
 	int velocityIterations;
 	int positionIterations;
 	// Level related
+	bool levelLoaded;
 	Pool objects;
 	InsertionList drawList;
 	Pool eventListeners;

@@ -55,6 +55,9 @@ void Game_SetWidthHeight(Game* game, int width, int height) {
 }
 
 int Game_Level_Init(Game* game) {
+	if (game->levelLoaded) {
+		Game_Level_Term(game);
+	}
 	PROPAGATE_ERROR(Pool_Init(&game->objects, 16, sizeof(Object)));
 	PROPAGATE_ERROR(InsertionList_Init(&game->drawList, UINT16_MAX + 1, GraphicsComponent_YComparatorCB));
 	PROPAGATE_ERROR(Pool_Init(&game->eventListeners, 16, sizeof(ComponentEventListener)));
@@ -67,6 +70,7 @@ int Game_Level_Init(Game* game) {
 	game->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
 	Box2DWorldSetContactListener(game->world, game->contactListener);
 	PROPAGATE_ERROR(Array_Init(&game->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
+	game->levelLoaded = true;
 	return 0;
 }
 
@@ -160,6 +164,7 @@ void Game_Level_Term(Game* game) {
 	Pool_Term(&game->eventListeners);
 	InsertionList_Term(&game->drawList);
 	Pool_Term(&game->objects);
+	game->levelLoaded = false;
 }
 
 Vec2F CurrentPointerPositionInWorld() {

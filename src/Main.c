@@ -59,22 +59,14 @@ int main(int argc, char **argv) {
 	GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 
-	bool levelLoaded = false;
-
 	main_menu:
-	res = DialogMainMenu(levelLoaded);
+	res = DialogMainMenu(GAME->levelLoaded);
 	if (res == XERR_QUIT) {
 		return 0;
 	} else if (res == X_MAIN_MENU_RESUME) {
 		// Do nothing
 	} else {
-		// Unload level
-		if (levelLoaded) {
-			Game_Level_Term(GAME);
-		}
-		// Load level
 		Game_Level_Init(GAME);
-
 		if (res == X_MAIN_MENU_NEW_GAME) {
 			PROPAGATE_ERROR(Game_Level_LoadTest(GAME));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
@@ -84,7 +76,6 @@ int main(int argc, char **argv) {
 			LOGOBJ_FTL(LOGVAR_MENU_SELECTION, Int32, res);
 			return XERR_QUIT;
 		}
-		levelLoaded = true;
 	}
 	PathfinderMap_Init(&GAME->pathfinderMap);
 	LOG_INF("Level loaded");

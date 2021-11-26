@@ -187,8 +187,6 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\Hud.c" />
     <ClCompile Include="..\src\InsertionList.c" />
     <ClCompile Include="..\src\Item.c" />
-    <ClCompile Include="..\src\Level.c" />
-    <ClCompile Include="..\src\LevelGenerator.c" />
     <ClCompile Include="..\src\List.c" />
     <ClCompile Include="..\src\Log.c" />
     <ClCompile Include="..\src\Objects\ObjectSword.c" />
@@ -241,7 +239,6 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\Hud.h" />
     <ClInclude Include="..\src\InsertionList.h" />
     <ClInclude Include="..\src\Item.h" />
-    <ClInclude Include="..\src\Level.h" />
     <ClInclude Include="..\src\LevelGenerator.h" />
     <ClInclude Include="..\src\List.h" />
     <ClInclude Include="..\src\Log.h" />

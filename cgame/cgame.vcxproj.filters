@@ -30,9 +30,6 @@
     <ClCompile Include="..\src\Event.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Level.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -141,9 +138,6 @@
     <ClCompile Include="..\src\Objects\ObjectSword.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\LevelGenerator.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Txt.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -195,9 +189,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Hud.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Level.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Main.h">
