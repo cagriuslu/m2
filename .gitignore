@@ -4,3 +4,4 @@ bin/
 */.DS_Store
 cgame/.vs
 cgame/x64
+build/
