@@ -6,11 +6,10 @@
 #include "Error.h"
 
 typedef struct _Hud {
-	void* levelBackPtr;
 	Pool complications;
 } Hud;
 
-XErr Hud_Init(Hud *hud, void* level);
+XErr Hud_Init(Hud *hud);
 
 void Hud_Draw(Hud* hud);
 

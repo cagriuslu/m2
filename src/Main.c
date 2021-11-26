@@ -7,7 +7,6 @@
 #include "Component.h"
 #include "Event.h"
 #include "Pool.h"
-#include "Level.h"
 #include "Dialog.h"
 #include "Game.h"
 #include "SDLUtils.h"
@@ -26,8 +25,6 @@
 
 SDL_Texture *gTextureLUT;
 TextureMap gTextureMap;
-
-Level gLevel;
 
 int main(int argc, char **argv) {
 	LOG_TRC("main");
@@ -64,7 +61,7 @@ int main(int argc, char **argv) {
 
 	bool levelLoaded = false;
 
-main_menu:
+	main_menu:
 	res = DialogMainMenu(levelLoaded);
 	if (res == XERR_QUIT) {
 		return 0;
@@ -73,15 +70,15 @@ main_menu:
 	} else {
 		// Unload level
 		if (levelLoaded) {
-			Level_Term(&gLevel);
+			Game_Level_Term(GAME);
 		}
 		// Load level
-		Level_Init(&gLevel);
+		Game_Level_Init(GAME);
 
 		if (res == X_MAIN_MENU_NEW_GAME) {
-			PROPAGATE_ERROR(Level_LoadTest(&gLevel));
+			PROPAGATE_ERROR(Game_Level_LoadTest(GAME));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
-			PROPAGATE_ERROR(Level_LoadEditor(&gLevel));
+			PROPAGATE_ERROR(Game_Level_LoadEditor(GAME));
 		} else {
 			LOG_FTL("Unknown level is selected");
 			LOGOBJ_FTL(LOGVAR_MENU_SELECTION, Int32, res);
@@ -89,7 +86,7 @@ main_menu:
 		}
 		levelLoaded = true;
 	}
-	PathfinderMap_InitFromLevel(&gLevel.pathfinderMap, &gLevel);
+	PathfinderMap_Init(&GAME->pathfinderMap);
 	LOG_INF("Level loaded");
 
 	float timeSinceLastWorldStep = 0.0f;
@@ -148,23 +145,23 @@ main_menu:
 		////////////////////////////////////////////////////////////////////////
 		GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
 		prevPrePhysicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
+		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
 			if (el->prePhysics) {
 				el->prePhysics(el);
 			}
 		}
-		if (gLevel.world) {
+		if (GAME->world) {
 			GAME->deltaTicks = SDL_GetTicks() - prevWorldStepTicks;
 			timeSinceLastWorldStep += GAME->deltaTicks / 1000.0f;
 			while (GAME->physicsStepPeriod < timeSinceLastWorldStep) {
-				Box2DWorldStep(gLevel.world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
+				Box2DWorldStep(GAME->world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
 				timeSinceLastWorldStep -= GAME->physicsStepPeriod;
 			}
 			prevWorldStepTicks += GAME->deltaTicks;
 		}
-		for (ComponentPhysics* phy = Pool_GetFirst(&gLevel.physics); phy; phy = Pool_GetNext(&gLevel.physics, phy)) {
+		for (ComponentPhysics* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
 			if (phy->body) {
-				Object* obj = Pool_GetById(&gLevel.objects, phy->super.objId);
+				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
 				if (obj) {
 					obj->position = Box2DBodyGetPosition(phy->body);
 				}
@@ -172,12 +169,12 @@ main_menu:
 		}
 		GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
 		prevPostPhysicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
+		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
 			if (el->postPhysics) {
 				el->postPhysics(el);
 			}
 		}
-		Level_DeleteMarkedObjects(&gLevel);
+		Game_Level_DeleteMarkedObjects(GAME);
 		//////////////////////////// END OF PHYSICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 
@@ -190,7 +187,7 @@ main_menu:
 		// Draw terrain
 		GAME->deltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
-		for (ComponentGraphics* gfx = Pool_GetFirst(&gLevel.terrainGraphics); gfx; gfx = Pool_GetNext(&gLevel.terrainGraphics, gfx)) {
+		for (ComponentGraphics* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
 			if (gfx->draw) {
 				gfx->draw(gfx);
 			}
@@ -198,19 +195,19 @@ main_menu:
 		// Pre-graphics
 		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
 		prevPreGraphicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
+		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
 			if (el->preGraphics) {
 				el->preGraphics(el);
 			}
 		}
 		// Draw
-		InsertionList_Sort(&gLevel.drawList);
+		InsertionList_Sort(&GAME->drawList);
 		GAME->deltaTicks = SDL_GetTicks() - prevDrawGraphicsTicks;
 		prevDrawGraphicsTicks += GAME->deltaTicks;
-		size_t insertionListSize = InsertionList_Length(&gLevel.drawList);
+		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
-			ID graphicsId = InsertionList_Get(&gLevel.drawList, i);
-			ComponentGraphics* gfx = Pool_GetById(&gLevel.graphics, graphicsId);
+			ID graphicsId = InsertionList_Get(&GAME->drawList, i);
+			ComponentGraphics* gfx = Pool_GetById(&GAME->graphics, graphicsId);
 			if (gfx && gfx->draw) {
 				gfx->draw(gfx);
 			}
@@ -220,11 +217,11 @@ main_menu:
 		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->leftHudRect);
 		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->rightHudRect);
 		// Draw HUD
-		Hud_Draw(&gLevel.hud);
+		Hud_Draw(&GAME->hud);
 		// Post-graphics
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&gLevel.eventListeners); el; el = Pool_GetNext(&gLevel.eventListeners, el)) {
+		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
 			if (el->postGraphics) {
 				el->postGraphics(el);
 			}
@@ -263,19 +260,4 @@ SDL_Texture* CurrentTextureLUT() {
 
 TextureMap* CurrentTextureMap() {
 	return &gTextureMap;
-}
-
-Level* CurrentLevel() {
-	return &gLevel;
-}
-
-Vec2F CurrentPointerPositionInWorld() {
-	Object* camera = Pool_GetById(&CurrentLevel()->objects, CurrentLevel()->cameraId);
-	Vec2F cameraPosition = camera->position;
-
-	Vec2I pointerPosition = GAME->events.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (GAME->windowWidth / 2), pointerPosition.y - (GAME->windowHeight / 2) };
-	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter.y / GAME->pixelsPerMeter };
-	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
-	return pointerPositionWRTWorld;
 }

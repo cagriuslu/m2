@@ -1,15 +1,13 @@
 #include "Hud.h"
 #include "Main.h"
-#include "Level.h"
 #include "Object.h"
 #include "SDLUtils.h"
 #include <string.h>
 
-#define AS_LEVEL(ptr) ((Level*)(ptr))
+#define AS_GAME(ptr) ((Game*)(ptr))
 
-XErr Hud_Init(Hud* hud, void* level) {
+XErr Hud_Init(Hud* hud) {
 	memset(hud, 0, sizeof(Hud));
-	hud->levelBackPtr = level;
 	// TODO
 	return 0;
 }
@@ -29,10 +27,9 @@ void Hud_Draw(Hud* hud) {
 	SDL_RenderFillRect(GAME->sdlRenderer, &leftHudDrawingArea);
 	SDL_RenderFillRect(GAME->sdlRenderer, &rightHudDrawingArea);
 	
-	Level* level = CurrentLevel();
-	if (level->levelType == LEVEL_TYPE_SINGLE_PLAYER) {
+	if (GAME->levelType == LEVEL_TYPE_SINGLE_PLAYER) {
 		// Draw player health
-		Object* player = (Object*)Pool_GetById(&level->objects, AS_LEVEL(hud->levelBackPtr)->playerId);
+		Object* player = (Object*)Pool_GetById(&GAME->objects, GAME->playerId);
 		
 		if (player) {
 			ComponentDefense* defense = FindDefenseOfObject(player);
@@ -50,7 +47,7 @@ void Hud_Draw(Hud* hud) {
 		}
 		
 		return;
-	} else if (level->levelType == LEVEL_TYPE_LEVEL_EDITOR) {
+	} else if (GAME->levelType == LEVEL_TYPE_LEVEL_EDITOR) {
 		return;
 	}
 }

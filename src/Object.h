@@ -9,16 +9,16 @@
 #include "Vec2F.h"
 #include <stdint.h>
 
-#define FindObjectById(id)               ((Object*) Pool_GetById(&CurrentLevel()->objects, (id)))
+#define FindObjectById(id)               ((Object*) Pool_GetById(&GAME->objects, (id)))
 #define FindObjectOfComponent(component) (FindObjectById((component)->super.objId))
 
-#define FindEventListenerById(id)     ((ComponentEventListener*) Pool_GetById(&CurrentLevel()->eventListeners, (id)))
-#define FindPhysicsById(id)           ((ComponentPhysics*)       Pool_GetById(&CurrentLevel()->physics, (id)))
-#define FindGraphicsById(id)          ((ComponentGraphics*)      Pool_GetById(&CurrentLevel()->graphics, (id)))
-#define FindTerrainGraphicsById(id)   ((ComponentGraphics*)      Pool_GetById(&CurrentLevel()->terrainGraphics, (id)))
-#define FindDefenseById(id)           ((ComponentDefense*)       Pool_GetById(&CurrentLevel()->defenses, (id)))
-#define FindOffenseProjectileById(id) ((ComponentOffense*)       Pool_GetById(&CurrentLevel()->offenses, (id)))
-#define FindOffenseMeleeById(id)      ((ComponentOffense*)       Pool_GetById(&CurrentLevel()->offenses, (id)))
+#define FindEventListenerById(id)     ((ComponentEventListener*) Pool_GetById(&GAME->eventListeners, (id)))
+#define FindPhysicsById(id)           ((ComponentPhysics*)       Pool_GetById(&GAME->physics, (id)))
+#define FindGraphicsById(id)          ((ComponentGraphics*)      Pool_GetById(&GAME->graphics, (id)))
+#define FindTerrainGraphicsById(id)   ((ComponentGraphics*)      Pool_GetById(&GAME->terrainGraphics, (id)))
+#define FindDefenseById(id)           ((ComponentDefense*)       Pool_GetById(&GAME->defenses, (id)))
+#define FindOffenseProjectileById(id) ((ComponentOffense*)       Pool_GetById(&GAME->offenses, (id)))
+#define FindOffenseMeleeById(id)      ((ComponentOffense*)       Pool_GetById(&GAME->offenses, (id)))
 
 #define FindEventListenerOfObject(obj)     (FindEventListenerById((obj->eventListener)))
 #define FindPhysicsOfObject(obj)           (FindPhysicsById((obj->physics)))
@@ -28,8 +28,8 @@
 #define FindOffenseProjectileOfObject(obj) (FindOffenseProjectileById((obj->offenseProjectile)))
 #define FindOffenseMeleeOfObject(obj)      (FindOffenseMeleeById((obj->offenseMelee)))
 
-#define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&CurrentLevel()->deleteList, &__id__); } while (0)
-#define DeleteObject(obj)    DeleteObjectById(Pool_GetId(&CurrentLevel()->objects, (obj)))
+#define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&GAME->deleteList, &__id__); } while (0)
+#define DeleteObject(obj)    DeleteObjectById(Pool_GetId(&GAME->objects, (obj)))
 
 typedef struct _ObjectProperties {
 	// Used by Player

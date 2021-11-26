@@ -10,7 +10,7 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 	Box2DBodyDefSetAllowSleep(bodyDef, allowSleep);
 	Box2DBodyDefSetUserData(bodyDef, (void*) ((uintptr_t) phyId));
 	Box2DBodyDefSetBullet(bodyDef, isBullet);
-	Box2DBody* body = Box2DWorldCreateBody(CurrentLevel()->world, bodyDef);
+	Box2DBody* body = Box2DWorldCreateBody(GAME->world, bodyDef);
 	Box2DBodyDefDestroy(bodyDef);
 
 	Box2DShape* shape = NULL;
@@ -92,7 +92,7 @@ bool Box2DUtils_CheckEyeSight(Vec2F from, Vec2F to, uint16_t categoryMask) {
 	
 	bool result = true;
 	Box2DRayCastListener* rayCastListener = Box2DRayCastListenerCreate(Box2DUtilsCheckEyeSight_RayCastCallback, categoryMask, &result);
-	Box2DWorldRayCast(CurrentLevel()->world, rayCastListener, from, to);
+	Box2DWorldRayCast(GAME->world, rayCastListener, from, to);
 	Box2DRayCastListenerDestroy(rayCastListener);
 	return result;
 }

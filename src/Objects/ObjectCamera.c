@@ -2,9 +2,8 @@
 #include "../Main.h"
 
 void Camera_postPhysics(ComponentEventListener* el) {
-	Level* level = CurrentLevel();
-	Object* camera = Pool_GetById(&level->objects, el->super.objId);
-	Object* player = Pool_GetById(&level->objects, level->playerId);
+	Object* camera = Pool_GetById(&GAME->objects, el->super.objId);
+	Object* player = Pool_GetById(&GAME->objects, GAME->playerId);
 	if (camera && player) {
 		camera->position = player->position;
 	}

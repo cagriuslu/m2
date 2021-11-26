@@ -5,14 +5,11 @@
 #include "List.h"
 #include "Vec2F.h"
 
-// Forward declarations
-typedef struct _Level Level;
-
 typedef struct _PathfinderMap {
 	HashMap blockedLocations;
 } PathfinderMap;
 
-int PathfinderMap_InitFromLevel(PathfinderMap* pm, Level* level);
+int PathfinderMap_Init(PathfinderMap* pm);
 void PathfinderMap_Term(PathfinderMap* pm);
 
 int PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);

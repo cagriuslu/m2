@@ -3,7 +3,7 @@
 #include "Box2DUtils.h"
 #include "Component.h"
 #include "Object.h"
-#include "Level.h"
+#include "Game.h"
 #include <string.h>
 #include <stdbool.h>
 #include <float.h>
@@ -13,12 +13,12 @@
 #define Vec2IToHashMapKey(vec2i) XYToHashMapKey((vec2i).x, (vec2i).y)
 #define ManhattanDistance(a, b) (abs((a).x - (b).x) + abs((a).y - (b).y))
 
-int PathfinderMap_InitFromLevel(PathfinderMap* pm, Level* level) {
+int PathfinderMap_Init(PathfinderMap* pm) {
 	memset(pm, 0, sizeof(PathfinderMap));
 	PROPAGATE_ERROR(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
 
-	for (ComponentPhysics* phy = Pool_GetFirst(&level->physics); phy; phy = Pool_GetNext(&level->physics, phy)) {
-		Object* obj = Pool_GetById(&level->objects, phy->super.objId);
+	for (ComponentPhysics* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
+		Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
 		if (obj && phy->body) {
 			const int fixtureCount = Box2DBodyGetFixtureCount(phy->body);
 			for (int i = 0; i < fixtureCount; i++) {

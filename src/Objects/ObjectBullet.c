@@ -28,12 +28,11 @@ static void Bullet_prePhysics(ComponentEventListener* el) {
 }
 
 static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
-	Level* level = CurrentLevel();
-	Object* obj = Pool_GetById(&level->objects, phy->super.objId);
-	Object* otherObj = Pool_GetById(&level->objects, other->super.objId);
+	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
+	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId);
 	if (obj && obj->offenseProjectile && otherObj && otherObj->defense) {
-		ComponentOffense* offense = Pool_GetById(&level->offenses, obj->offenseProjectile);
-		ComponentDefense* defense = Pool_GetById(&level->defenses, otherObj->defense);
+		ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offenseProjectile);
+		ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
 			defense->hp -= offense->hp;

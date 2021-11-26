@@ -9,7 +9,7 @@
 
 void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
-	Object* player = FindObjectById(CurrentLevel()->playerId);
+	Object* player = FindObjectById(GAME->playerId);
 
 	float distanceToPlayer = 0.0f;
 
@@ -21,7 +21,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 			case AI_IDLE:
 				// If player is close
 				if (Vec2F_Distance(obj->position, player->position) < obj->properties->ai->triggerDistance) {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
 					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
 						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
 					}
@@ -32,7 +32,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 				if (distanceToPlayer < 1.2f) {
 					if (obj->properties->ai->attackPeriod < obj->properties->ai->attackStopwatch) {
 						// If enough time passed for the next attack
-						Object* sword = Pool_Mark(&CurrentLevel()->objects, NULL, NULL);
+						Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
 						ObjectSword_Init(sword, obj->position, FindOffenseMeleeOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
 						LOG_INF("Attacking player with melee");
 						
@@ -40,7 +40,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 					}
 					obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
 				} else if (distanceToPlayer < 2 * obj->properties->ai->triggerDistance) {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
 					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
 						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
@@ -52,14 +52,14 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 				break;
 			case AI_GOING_BACK_TO_HOME:
 				if (Vec2F_Distance(obj->position, player->position) < obj->properties->ai->triggerDistance) {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
 					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
 						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
 						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
 					}
 				} else {
-					PathfinderMap_FindPath(&CurrentLevel()->pathfinderMap, obj->position, obj->properties->ai->homePosition, &obj->properties->ai->reversedWaypointList);
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, obj->properties->ai->homePosition, &obj->properties->ai->reversedWaypointList);
 					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
 						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
 					} else {
@@ -93,7 +93,7 @@ void ObjectEnemy_postPhysics(ComponentEventListener *el) {
 	if (obj) {
 		ComponentDefense* defense = FindDefenseOfObject(obj);
 		if (defense && defense->hp <= 0) {
-			Array_Append(&CurrentLevel()->deleteList, &el->super.objId);
+			Array_Append(&GAME->deleteList, &el->super.objId);
 		}
 	}
 }
@@ -116,7 +116,7 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 	gfx->draw = ObjectEnemy_Draw;
 
-	if (CurrentLevel()->levelType != LEVEL_TYPE_LEVEL_EDITOR) {
+	if (GAME->levelType != LEVEL_TYPE_LEVEL_EDITOR) {
 		obj->properties->ai = malloc(sizeof(AI));
 		assert(obj->properties->ai);
 		AI_Init(obj->properties->ai);
@@ -148,7 +148,7 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 		defense->maxHp = 100;
 
 		ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
-		offense->originator = Pool_GetId(&CurrentLevel()->objects, obj);
+		offense->originator = Pool_GetId(&GAME->objects, obj);
 		offense->hp = 10;
 		offense->ttl = 100;
 	}

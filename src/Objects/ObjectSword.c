@@ -22,7 +22,7 @@ static void Sword_postPhysics(ComponentEventListener* el) {
 		ComponentGraphics* gfx = FindGraphicsOfObject(obj);
 		ComponentOffense* off = FindOffenseMeleeOfObject(obj);
 		if (phy && phy->body && gfx && off && off->originator) {
-			Object* originator = Pool_GetById(&CurrentLevel()->objects, off->originator);
+			Object* originator = Pool_GetById(&GAME->objects, off->originator);
 			if (originator) {
 				Box2DBodySetTransform(phy->body, originator->position, Box2DBodyGetAngle(phy->body));
 			}
@@ -33,12 +33,11 @@ static void Sword_postPhysics(ComponentEventListener* el) {
 
 static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	LOG_DBG("Collision");
-	Level* level = CurrentLevel();
-	Object* obj = Pool_GetById(&level->objects, phy->super.objId);
-	Object* otherObj = Pool_GetById(&level->objects, other->super.objId);
+	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
+	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId);
 	if (obj && obj->offenseMelee && otherObj && otherObj->defense) {
-		ComponentOffense* offense = Pool_GetById(&level->offenses, obj->offenseMelee);
-		ComponentDefense* defense = Pool_GetById(&level->defenses, otherObj->defense);
+		ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offenseMelee);
+		ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
 			defense->hp -= offense->hp;
