@@ -337,6 +337,8 @@ XErr VSON_InitParseFile(VSON* vson, const char* path) {
 	return result;
 }
 
+XErr VSON_Object_CreateHashMap(VSON* vson, HashMap* outHashMap);
+
 VSON* VSON_Get(VSON* vson, const char* path) {
 	Array pathPieces;
 	XErr result = String_Split(path, '/', &pathPieces);

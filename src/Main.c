@@ -27,10 +27,39 @@ SDL_Texture *gTextureLUT;
 TextureMap gTextureMap;
 
 int main(int argc, char **argv) {
-	LOG_TRC("main");
-	(void)argc;
-	(void)argv;
+	LOGFN_DBG();
 	XErr res;
+
+	// Process command line arguments
+	for (int i = 1; i < argc; i++) {
+		const char* loglevel = "--loglevel=";
+		size_t loglevelStrlen = strlen(loglevel);
+		if (strncmp(argv[i], loglevel, loglevelStrlen) == 0) {
+			if (strcmp(argv[i] + loglevelStrlen, "trace") == 0) {
+				gCurrentLogLevel = LogLevelTrace;
+				LOGOBJ_INF(LOGOBJ_LOG_LEVEL, Int32, LogLevelTrace);
+			} else if (strcmp(argv[i] + loglevelStrlen, "debug") == 0) {
+				gCurrentLogLevel = LogLevelDebug;
+				LOGOBJ_INF(LOGOBJ_LOG_LEVEL, Int32, LogLevelDebug);
+			} else if (strcmp(argv[i] + loglevelStrlen, "info") == 0) {
+				gCurrentLogLevel = LogLevelInfo;
+				LOGOBJ_INF(LOGOBJ_LOG_LEVEL, Int32, LogLevelInfo);
+			} else if (strcmp(argv[i] + loglevelStrlen, "warning") == 0) {
+				gCurrentLogLevel = LogLevelWarn;
+				LOGOBJ_INF(LOGOBJ_LOG_LEVEL, Int32, LogLevelWarn);
+			} else if (strcmp(argv[i] + loglevelStrlen, "error") == 0) {
+				gCurrentLogLevel = LogLevelError;
+				LOGOBJ_INF(LOGOBJ_LOG_LEVEL, Int32, LogLevelError);
+			} else if (strcmp(argv[i] + loglevelStrlen, "fatal") == 0) {
+				gCurrentLogLevel = LogLevelFatal;
+				LOGOBJ_INF(LOGOBJ_LOG_LEVEL, Int32, LogLevelFatal);
+			} else {
+				LOG_WRN("Invalid log level");
+			}
+		} else {
+			LOG_WRN("Invalid command line argument");
+		}
+	}
 
 	GAME = calloc(1, sizeof(Game));
 	GAME->tileWidth = 24;
@@ -71,7 +100,7 @@ int main(int argc, char **argv) {
 			PROPAGATE_ERROR(Game_Level_LoadEditor(GAME));
 		} else {
 			LOG_FTL("Unknown level is selected");
-			LOGOBJ_FTL(LOGVAR_MENU_SELECTION, Int32, res);
+			LOGOBJ_FTL(LOGOBJ_MENU_SELECTION, Int32, res);
 			return XERR_QUIT;
 		}
 	}
@@ -229,7 +258,7 @@ int main(int argc, char **argv) {
 		frameCount++;
 		if (2000 < frameTimeAccumulator) {
 			frameTimeAccumulator -= 2000;
-			LOGOBJ_DBG(LOGVAR_FPS, Int32, frameCount / 2);
+			LOGOBJ_DBG(LOGOBJ_FPS, Int32, frameCount / 2);
 			frameCount = 0;
 		}
 	}

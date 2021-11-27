@@ -1,4 +1,6 @@
 {
+	TileWidth: 24,
+	Texture: "resources/TileSets/24.png",
 	Terrains: {
 		Grnd0000: {x:0  y:0  w:24 h:24},
 		Clf000T:  {x:0  y:48 w:24 h:24 RectCollider:{x:0 y:0 w:24 h:24}},

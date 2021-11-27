@@ -46,4 +46,6 @@ typedef struct _TileSet {
 	int tileWidth;
 } TileSet;
 
+XErr TileSet_InitFromFile(TileSet* ts, const char* fpath);
+
 #endif

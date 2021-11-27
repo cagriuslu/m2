@@ -14,7 +14,7 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 	SDL_Surface* image = IMG_Load(imageFile);
 	if (!image) {
 		LOG_ERR("Image file not found");
-		LOGOBJ_ERR(LOGVAR_FILE_PATH, String, imageFile);
+		LOGOBJ_ERR(LOGOBJ_FILE_PATH, String, imageFile);
 		return XERR_FILE_NOT_FOUND;
 	}
 	tm->map = SDL_CreateTextureFromSurface(GAME->sdlRenderer, image);
@@ -26,7 +26,7 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 	SDL_Surface* metaImage = IMG_Load(metaImageFile);
 	if (!metaImage) {
 		LOG_ERR("Meta image file not found");
-		LOGOBJ_ERR(LOGVAR_FILE_PATH, String, metaImageFile);
+		LOGOBJ_ERR(LOGOBJ_FILE_PATH, String, metaImageFile);
 		SDL_DestroyTexture(tm->map);
 		SDL_FreeSurface(image);
 		return XERR_FILE_NOT_FOUND;
