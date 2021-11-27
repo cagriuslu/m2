@@ -374,9 +374,19 @@ VSON* VSON_Get(VSON* vson, const char* path) {
 }
 
 XErr VSON_Object_CreateHashMap(VSON* vson, HashMap* outHashMap) {
-
+	ASSERT_TRUE(vson->type == VSON_VALUE_TYPE_OBJECT, XERR_ARG);
+	REFLECT_ERROR(HashMap_Init(outHashMap, sizeof(VSON*), NULL));
+	VSON_OBJECT_ITERATE(vson, objKV) {
+		VSON* valuePtr = &objKV->value;
+		if (!HashMap_SetStringKey(outHashMap, objKV->key, &valuePtr)) {
+			HashMap_Term(outHashMap);
+			return XERR_MEMORY;
+		}
+	}
+	return XOK;
 }
 
 void VSON_Term(VSON* vson) {
+	(void)vson;
 	// TODO
 }

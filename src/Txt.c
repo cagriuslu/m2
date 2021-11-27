@@ -49,13 +49,13 @@ void TxtKV_Term(TxtKV* kv) {
 
 XErr Txt_Init(Txt* txt) {
 	memset(txt, 0, sizeof(Txt));
-	PROPAGATE_ERROR(Array_Init(&txt->txtKVPairs, sizeof(TxtKV), 16, UINT32_MAX, TO_ARRAY_ITEM_TERM(TxtKV_Term)));
-	PROPAGATE_ERROR(HashMap_Init(&txt->txtKVIndexes, sizeof(uint32_t), NULL));
+	REFLECT_ERROR(Array_Init(&txt->txtKVPairs, sizeof(TxtKV), 16, UINT32_MAX, TO_ARRAY_ITEM_TERM(TxtKV_Term)));
+	REFLECT_ERROR(HashMap_Init(&txt->txtKVIndexes, sizeof(uint32_t), NULL));
 	return 0;
 }
 
 XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
-	PROPAGATE_ERROR(Txt_Init(txt));
+	REFLECT_ERROR(Txt_Init(txt));
 	
 	FILE* file = fopen(fpath, "r");
 	assert(file);

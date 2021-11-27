@@ -3,20 +3,23 @@
 
 #include <stdint.h>
 
-#define PROPAGATE_ERROR(fcall)   \
+#define ASSERT_TRUE(condition, err) \
+	do {                            \
+		if (!(condition))           \
+			return (err);           \
+	} while (0)
+
+#define ASSERT_FALSE(condition, err) \
+	do {                             \
+		if ((condition))             \
+			return (err);            \
+	} while (0)
+
+#define REFLECT_ERROR(fcall)     \
 	do {                         \
 		XErr __result = (fcall); \
 		if (__result < 0)        \
 			return __result;     \
-	} while (0)
-
-#define PROPAGATE_ERROR_AFTER(fcall, cleanup_code) \
-	do {                                           \
-		XErr __result = (fcall);                   \
-		if (__result < 0) {                        \
-			{cleanup_code}                         \
-			return __result;                       \
-		}                                          \
 	} while (0)
 
 // Functions are not allowed to return positive values
@@ -27,6 +30,7 @@
 #define XERR_SDL       (-4)
 #define XERR_MEMORY    (-5)
 #define XERR_LIMIT     (-6)
+#define XERR_ARG       (-7)
 
 typedef int32_t XErr;
 

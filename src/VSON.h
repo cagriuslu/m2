@@ -45,4 +45,7 @@ XErr VSON_Object_CreateHashMap(VSON* vson, HashMap* outHashMap);
 
 void VSON_Term(VSON* vson);
 
+// Convenience macros
+#define VSON_OBJECT_ITERATE(vson, objectKeyValuePtrName) for(VSONObjectKeyValue* objectKeyValuePtrName = vson->value.objectFirstChild; (vson->type == VSON_VALUE_TYPE_OBJECT) && objectKeyValuePtrName; objectKeyValuePtrName = objectKeyValuePtrName->next)
+
 #endif

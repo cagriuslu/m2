@@ -53,9 +53,9 @@ static TileDef TileLookup(const char* tileName) {
 
 int TerrainLoader_LoadTiles(Game* game, const char *tname) {
 	Txt txt;
-	PROPAGATE_ERROR(Txt_InitFromFile(&txt, tname));
+	REFLECT_ERROR(Txt_InitFromFile(&txt, tname));
 	HashMap tileDefs;
-	PROPAGATE_ERROR(HashMap_Init(&tileDefs, sizeof(TileDef), NULL));
+	REFLECT_ERROR(HashMap_Init(&tileDefs, sizeof(TileDef), NULL));
 
 	for (uint32_t txtKVIndex = 0; txtKVIndex < Array_Length(&txt.txtKVPairs); txtKVIndex++) {
 		TxtKV* txtKV = Array_Get(&txt.txtKVPairs, txtKVIndex);
@@ -89,7 +89,7 @@ void TerrainLoader_LoadEnemies_ItemTerm(void* opaqueItemPtr) {
 
 int TerrainLoader_LoadEnemies(Game* game, const char* tname) {
 	Txt txt;
-	PROPAGATE_ERROR(Txt_InitFromFile(&txt, tname));
+	REFLECT_ERROR(Txt_InitFromFile(&txt, tname));
 	HashMap enemyDescriptors;
 	HashMap_Init(&enemyDescriptors, sizeof(char*), TerrainLoader_LoadEnemies_ItemTerm);
 

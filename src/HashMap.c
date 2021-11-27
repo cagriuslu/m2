@@ -12,7 +12,7 @@ uint8_t HashMap_Hash(void* key);
 int HashMap_Init(HashMap* hm, size_t itemSize, void (*itemTerm)(void*)) {
 	memset(hm, 0, sizeof(HashMap));
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		PROPAGATE_ERROR(Array_Init(hm->buckets + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
+		REFLECT_ERROR(Array_Init(hm->buckets + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
 	}
 	hm->itemSize = itemSize;
 	hm->itemTerm = itemTerm;
@@ -26,9 +26,9 @@ static void HashMap_InitFromFile_StringToCharPtr_ItemTerm(void* opaqueItemPtr) {
 }
 
 XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath) {
-	PROPAGATE_ERROR(HashMap_Init(hm, sizeof(char*), HashMap_InitFromFile_StringToCharPtr_ItemTerm));
+	REFLECT_ERROR(HashMap_Init(hm, sizeof(char*), HashMap_InitFromFile_StringToCharPtr_ItemTerm));
 	Txt txt;
-	PROPAGATE_ERROR(Txt_InitFromFile(&txt, fpath));
+	REFLECT_ERROR(Txt_InitFromFile(&txt, fpath));
 	// Iterate over columns of the first row
 	for (uint32_t colIndex = 0, *txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, 0); txtKVIndexPtr; ++colIndex, txtKVIndexPtr = HashMap_GetInt32Keys(&txt.txtKVIndexes, colIndex, 0)) {
 		// Get TxtKV from Txt array
@@ -43,7 +43,7 @@ XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 
 XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 	Txt txt;
-	PROPAGATE_ERROR(Txt_Init(&txt));
+	REFLECT_ERROR(Txt_Init(&txt));
 	uint32_t insertedIdx = 0;
 	// Iterate over buckets
 	for (unsigned arrayIdx = 0; arrayIdx < HASHMAP_BUCKET_COUNT; arrayIdx++) {

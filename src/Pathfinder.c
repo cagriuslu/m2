@@ -15,7 +15,7 @@
 
 int PathfinderMap_Init(PathfinderMap* pm) {
 	memset(pm, 0, sizeof(PathfinderMap));
-	PROPAGATE_ERROR(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
+	REFLECT_ERROR(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
 
 	for (ComponentPhysics* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
 		Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);

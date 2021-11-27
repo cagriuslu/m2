@@ -7,7 +7,7 @@
 
 int PhysicsComponent_Init(ComponentPhysics* phy, ID objectId) {
 	memset(phy, 0, sizeof(ComponentPhysics));
-	PROPAGATE_ERROR(Component_Init((Component*)phy, objectId));
+	REFLECT_ERROR(Component_Init((Component*)phy, objectId));
 	return 0;
 }
 

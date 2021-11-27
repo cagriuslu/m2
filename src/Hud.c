@@ -17,6 +17,7 @@ void Hud_Term(Hud* hud) {
 }
 
 void Hud_Draw(Hud* hud) {
+	(void)hud;
 	int paddingSize = (int)roundf((float)GAME->leftHudRect.w / 12.0f);
 	
 	SDL_Rect leftHudDrawingArea = SDLUtils_ShrinkRect(GAME->leftHudRect, paddingSize, paddingSize);

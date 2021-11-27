@@ -51,7 +51,7 @@ int DialogMainMenu(bool levelLoaded) {
 
 	while (pressedButton == 0) {
 		int res = DialogWaitForEvent(&uis);
-		PROPAGATE_ERROR(res);
+		REFLECT_ERROR(res);
 	}
 
 	UiButton_Term(levelEditorButton);

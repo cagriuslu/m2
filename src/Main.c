@@ -95,9 +95,9 @@ int main(int argc, char **argv) {
 	} else {
 		Game_Level_Init(GAME);
 		if (res == X_MAIN_MENU_NEW_GAME) {
-			PROPAGATE_ERROR(Game_Level_LoadTest(GAME));
+			REFLECT_ERROR(Game_Level_LoadTest(GAME));
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
-			PROPAGATE_ERROR(Game_Level_LoadEditor(GAME));
+			REFLECT_ERROR(Game_Level_LoadEditor(GAME));
 		} else {
 			LOG_FTL("Unknown level is selected");
 			LOGOBJ_FTL(LOGOBJ_MENU_SELECTION, Int32, res);

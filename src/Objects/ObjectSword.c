@@ -50,7 +50,7 @@ static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 }
 
 int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks) {
-	PROPAGATE_ERROR(Object_Init(obj, originatorPosition, false));
+	REFLECT_ERROR(Object_Init(obj, originatorPosition, false));
 
 	const float theta = Vec2F_AngleRads(direction); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (ticks / 1000.0f / 2.0f);

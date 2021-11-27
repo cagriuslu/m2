@@ -74,7 +74,7 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float health
 
 int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId) {
 	memset(gfx, 0, sizeof(ComponentGraphics));
-	PROPAGATE_ERROR(Component_Init((Component*)gfx, objectId));
+	REFLECT_ERROR(Component_Init((Component*)gfx, objectId));
 	gfx->tx = CurrentTextureLUT();
 	gfx->draw = GraphicsComponent_DefaultDraw;
 	return 0;

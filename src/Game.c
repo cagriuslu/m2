@@ -58,18 +58,18 @@ int Game_Level_Init() {
 	if (GAME->levelLoaded) {
 		Game_Level_Term(GAME);
 	}
-	PROPAGATE_ERROR(Pool_Init(&GAME->objects, 16, sizeof(Object)));
-	PROPAGATE_ERROR(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, GraphicsComponent_YComparatorCB));
-	PROPAGATE_ERROR(Pool_Init(&GAME->eventListeners, 16, sizeof(ComponentEventListener)));
-	PROPAGATE_ERROR(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysics)));
-	PROPAGATE_ERROR(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphics)));
-	PROPAGATE_ERROR(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphics)));
-	PROPAGATE_ERROR(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
-	PROPAGATE_ERROR(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
+	REFLECT_ERROR(Pool_Init(&GAME->objects, 16, sizeof(Object)));
+	REFLECT_ERROR(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, GraphicsComponent_YComparatorCB));
+	REFLECT_ERROR(Pool_Init(&GAME->eventListeners, 16, sizeof(ComponentEventListener)));
+	REFLECT_ERROR(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysics)));
+	REFLECT_ERROR(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphics)));
+	REFLECT_ERROR(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphics)));
+	REFLECT_ERROR(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
+	REFLECT_ERROR(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
 	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	GAME->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
-	PROPAGATE_ERROR(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
+	REFLECT_ERROR(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
 	GAME->levelLoaded = true;
 	return 0;
 }

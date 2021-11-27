@@ -47,7 +47,7 @@ static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 
 int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense) {
 	direction = Vec2F_Normalize(direction);
-	PROPAGATE_ERROR(Object_Init(obj, position, false));
+	REFLECT_ERROR(Object_Init(obj, position, false));
 
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = Bullet_prePhysics;

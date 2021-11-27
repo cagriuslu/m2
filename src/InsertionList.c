@@ -5,7 +5,7 @@
 #define AsUint64Ptr(ptr) ((ID*) (ptr))
 
 int InsertionList_Init(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID)) {
-	PROPAGATE_ERROR(Array_Init(&list->array, sizeof(ID), maxItemCount, maxItemCount, NULL));
+	REFLECT_ERROR(Array_Init(&list->array, sizeof(ID), maxItemCount, maxItemCount, NULL));
 	list->comparator = comparator;
 	return 0;
 }

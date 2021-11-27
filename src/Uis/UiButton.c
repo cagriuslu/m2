@@ -46,7 +46,7 @@ void UiButton_draw(Ui* ui) {
 }
 
 int UiButton_Init(Ui *ui, Vec2I position, Vec2I minSize, Vec2I pad, int alignment, const char *text) {
-	PROPAGATE_ERROR(Ui_Init(ui));
+	REFLECT_ERROR(Ui_Init(ui));
 	
 	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME->ttfFont, text, (SDL_Color) {255, 255, 255, 255});
 	Vec2I size = (Vec2I) {MAX(textSurf->w + 2 * pad.x, minSize.x), MAX(textSurf->h + 2 * pad.y, minSize.y)};

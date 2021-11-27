@@ -103,7 +103,7 @@ static void Player_prePhysics(ComponentEventListener* el) {
 }
 
 int ObjectPlayer_Init(Object* obj, Character* character) {
-	PROPAGATE_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
+	REFLECT_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
 	ID objId = Pool_GetId(&GAME->objects, obj);
 	// Write-back originator ID of Character Offenses
 	obj->properties->character = character;
