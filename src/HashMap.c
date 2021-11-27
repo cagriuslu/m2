@@ -11,10 +11,8 @@ uint8_t HashMap_Hash(void* key);
 
 int HashMap_Init(HashMap* hm, size_t itemSize, void (*itemTerm)(void*)) {
 	memset(hm, 0, sizeof(HashMap));
-	hm->arrays = calloc(HASHMAP_BUCKET_COUNT, sizeof(Array));
-	assert(hm->arrays);
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		PROPAGATE_ERROR(Array_Init(hm->arrays + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
+		PROPAGATE_ERROR(Array_Init(hm->buckets + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
 	}
 	hm->itemSize = itemSize;
 	hm->itemTerm = itemTerm;
@@ -47,12 +45,12 @@ XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 	Txt txt;
 	PROPAGATE_ERROR(Txt_Init(&txt));
 	uint32_t insertedIdx = 0;
-	// Iterate over arrays
+	// Iterate over buckets
 	for (unsigned arrayIdx = 0; arrayIdx < HASHMAP_BUCKET_COUNT; arrayIdx++) {
 		// Iterate over items in the array
-		for (unsigned itemIdx = 0; itemIdx < Array_Length(hm->arrays + arrayIdx); itemIdx++) {
+		for (unsigned itemIdx = 0; itemIdx < Array_Length(hm->buckets + arrayIdx); itemIdx++) {
 			// Add new TxtKV to Txt
-			Array* array = hm->arrays + arrayIdx;
+			Array* array = hm->buckets + arrayIdx;
 			HashMapItem* item = Array_Get(array, itemIdx);
 			TxtKV* newKV = Array_Append(&txt.txtKVPairs, NULL);
 			TxtKV_SetKey(newKV, (char*)item->key);
@@ -69,7 +67,7 @@ XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath) {
 
 void HashMap_Term(HashMap* hm) {
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		Array* array = hm->arrays + i;
+		Array* array = hm->buckets + i;
 		if (hm->itemTerm) {
 			for (size_t j = 0; j < Array_Length(array); j++) {
 				HashMapItem* item = Array_Get(array, j);
@@ -78,21 +76,20 @@ void HashMap_Term(HashMap* hm) {
 		}
 		Array_Term(array);
 	}
-	free(hm->arrays);
 	memset(hm, 0, sizeof(HashMap));
 }
 
 size_t HashMap_Size(HashMap* hm) {
 	size_t count = 0;
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		count += hm->arrays[i].length;
+		count += hm->buckets[i].length;
 	}
 	return count;
 }
 
 void HashMap_Clear(HashMap* hm) {
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		Array_Clear(hm->arrays + i);
+		Array_Clear(hm->buckets + i);
 	}
 }
 
@@ -164,7 +161,7 @@ void* HashMap_Set(HashMap* hm, void* key, void* copy) {
 		}
 		return collision;
 	} else {
-		Array* array = hm->arrays + HashMap_Hash(key);
+		Array* array = hm->buckets + HashMap_Hash(key);
 
 		HashMapItem* newItem = Array_Append(array, NULL);
 		if (newItem) {
@@ -183,7 +180,7 @@ void* HashMap_TrySet(HashMap* hm, void* key, void* copy) {
 	if (collision) {
 		return NULL;
 	} else {
-		Array* array = hm->arrays + HashMap_Hash(key);
+		Array* array = hm->buckets + HashMap_Hash(key);
 
 		HashMapItem* newItem = Array_Append(array, NULL);
 		if (newItem) {
@@ -198,7 +195,7 @@ void* HashMap_TrySet(HashMap* hm, void* key, void* copy) {
 }
 
 void* HashMap_Get(HashMap* hm, void* key) {
-	Array* array = hm->arrays + HashMap_Hash(key);
+	Array* array = hm->buckets + HashMap_Hash(key);
 	
 	HashMapItem* mapItem = NULL;
 	for (size_t i = 0; i < array->length; i++) {
@@ -213,7 +210,7 @@ void* HashMap_Get(HashMap* hm, void* key) {
 }
 
 void HashMap_Unset(HashMap* hm, void* key) {
-	Array* array = hm->arrays + HashMap_Hash(key);
+	Array* array = hm->buckets + HashMap_Hash(key);
 	
 	for (size_t i = 0; i < array->length; i++) {
 		HashMapItem* iter = Array_Get(array, i);

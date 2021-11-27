@@ -109,6 +109,7 @@ void ObjectEnemy_Draw(ComponentGraphics* gfx) {
 }
 
 int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
+	(void)descriptor;
 	PROPAGATE_ERROR(Object_Init(obj, position, true));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);

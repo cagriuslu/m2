@@ -9,75 +9,75 @@
 
 Game* gCurrentGame;
 
-void Game_SetWidthHeight(Game* game, int width, int height) {
+void Game_UpdateWindowDimensions(int width, int height) {
 	float fw = (float)width;
 	float fh = (float)height;
 	
-	game->windowWidth = width;
-	game->windowHeight = height;
+	GAME->windowWidth = width;
+	GAME->windowHeight = height;
 	float aspectRatioDiff = (fw / fh) - GAME_AND_HUD_ASPECT_RATIO;
 	if (0.001f < aspectRatioDiff) {
 		// Screen is wider than expected, we need envelope on left & right
-		game->gameWidth = (int)roundf(fh * GAME_ASPECT_RATIO);
-		game->gameHeight = height;
-		game->gameAndHudWidth = (int)roundf(fh * GAME_AND_HUD_ASPECT_RATIO);
-		game->gameAndHudHeight = height;
-		int envelopeWidth = (width - game->gameAndHudWidth) / 2;
-		game->firstEnvelopeRect = (SDL_Rect){ 0, 0, envelopeWidth, height };
-		game->secondEnvelopeRect = (SDL_Rect){ width - envelopeWidth, 0, envelopeWidth, height };
-		int hudWidth = (int)roundf((float)game->gameAndHudHeight * HUD_ASPECT_RATIO);
-		game->leftHudRect = (SDL_Rect){ envelopeWidth, 0, hudWidth, game->gameAndHudHeight };
-		game->rightHudRect = (SDL_Rect){ width - envelopeWidth - hudWidth, 0, hudWidth, game->gameAndHudHeight };
+		GAME->gameWidth = (int)roundf(fh * GAME_ASPECT_RATIO);
+		GAME->gameHeight = height;
+		GAME->gameAndHudWidth = (int)roundf(fh * GAME_AND_HUD_ASPECT_RATIO);
+		GAME->gameAndHudHeight = height;
+		int envelopeWidth = (width - GAME->gameAndHudWidth) / 2;
+		GAME->firstEnvelopeRect = (SDL_Rect){ 0, 0, envelopeWidth, height };
+		GAME->secondEnvelopeRect = (SDL_Rect){ width - envelopeWidth, 0, envelopeWidth, height };
+		int hudWidth = (int)roundf((float)GAME->gameAndHudHeight * HUD_ASPECT_RATIO);
+		GAME->leftHudRect = (SDL_Rect){ envelopeWidth, 0, hudWidth, GAME->gameAndHudHeight };
+		GAME->rightHudRect = (SDL_Rect){ width - envelopeWidth - hudWidth, 0, hudWidth, GAME->gameAndHudHeight };
 	} else if (aspectRatioDiff < -0.001f) {
 		// Screen is taller than expected, we need envelope on top & bottom
-		game->gameWidth = width;
-		game->gameHeight = (int)roundf(fw / GAME_ASPECT_RATIO);
-		game->gameAndHudWidth = width;
-		game->gameAndHudHeight = (int)roundf(fw / GAME_AND_HUD_ASPECT_RATIO);
-		int envelopeWidth = (height - game->gameAndHudHeight) / 2;
-		game->firstEnvelopeRect = (SDL_Rect){ 0, 0, width, envelopeWidth };
-		game->secondEnvelopeRect = (SDL_Rect){ 0, height - envelopeWidth, width, envelopeWidth };
-		int hudWidth = (int)roundf((float)game->gameAndHudHeight * HUD_ASPECT_RATIO);
-		game->leftHudRect = (SDL_Rect){ 0, envelopeWidth, hudWidth, game->gameAndHudHeight };
-		game->rightHudRect = (SDL_Rect){ width - hudWidth, envelopeWidth, hudWidth, game->gameAndHudHeight };
+		GAME->gameWidth = width;
+		GAME->gameHeight = (int)roundf(fw / GAME_ASPECT_RATIO);
+		GAME->gameAndHudWidth = width;
+		GAME->gameAndHudHeight = (int)roundf(fw / GAME_AND_HUD_ASPECT_RATIO);
+		int envelopeWidth = (height - GAME->gameAndHudHeight) / 2;
+		GAME->firstEnvelopeRect = (SDL_Rect){ 0, 0, width, envelopeWidth };
+		GAME->secondEnvelopeRect = (SDL_Rect){ 0, height - envelopeWidth, width, envelopeWidth };
+		int hudWidth = (int)roundf((float)GAME->gameAndHudHeight * HUD_ASPECT_RATIO);
+		GAME->leftHudRect = (SDL_Rect){ 0, envelopeWidth, hudWidth, GAME->gameAndHudHeight };
+		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, envelopeWidth, hudWidth, GAME->gameAndHudHeight };
 	} else {
-		game->gameWidth = width;
-		game->gameHeight = height;
-		game->gameAndHudWidth = width;
-		game->gameAndHudHeight = height;
-		game->firstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
-		game->secondEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
-		int hudWidth = (int)roundf((float)game->gameAndHudHeight * HUD_ASPECT_RATIO);
-		game->leftHudRect = (SDL_Rect){ 0, 0, hudWidth, game->gameAndHudHeight };
-		game->rightHudRect = (SDL_Rect){ width - hudWidth, 0, hudWidth, game->gameAndHudHeight };
+		GAME->gameWidth = width;
+		GAME->gameHeight = height;
+		GAME->gameAndHudWidth = width;
+		GAME->gameAndHudHeight = height;
+		GAME->firstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
+		GAME->secondEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
+		int hudWidth = (int)roundf((float)GAME->gameAndHudHeight * HUD_ASPECT_RATIO);
+		GAME->leftHudRect = (SDL_Rect){ 0, 0, hudWidth, GAME->gameAndHudHeight };
+		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, 0, hudWidth, GAME->gameAndHudHeight };
 	}
-	game->pixelsPerMeter = (float)game->gameAndHudHeight / 16.0f;
+	GAME->pixelsPerMeter = (float)GAME->gameAndHudHeight / 16.0f;
 }
 
-int Game_Level_Init(Game* game) {
-	if (game->levelLoaded) {
-		Game_Level_Term(game);
+int Game_Level_Init() {
+	if (GAME->levelLoaded) {
+		Game_Level_Term(GAME);
 	}
-	PROPAGATE_ERROR(Pool_Init(&game->objects, 16, sizeof(Object)));
-	PROPAGATE_ERROR(InsertionList_Init(&game->drawList, UINT16_MAX + 1, GraphicsComponent_YComparatorCB));
-	PROPAGATE_ERROR(Pool_Init(&game->eventListeners, 16, sizeof(ComponentEventListener)));
-	PROPAGATE_ERROR(Pool_Init(&game->physics, 16, sizeof(ComponentPhysics)));
-	PROPAGATE_ERROR(Pool_Init(&game->graphics, 16, sizeof(ComponentGraphics)));
-	PROPAGATE_ERROR(Pool_Init(&game->terrainGraphics, 16, sizeof(ComponentGraphics)));
-	PROPAGATE_ERROR(Pool_Init(&game->defenses, 16, sizeof(ComponentDefense)));
-	PROPAGATE_ERROR(Pool_Init(&game->offenses, 16, sizeof(ComponentOffense)));
-	game->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
-	game->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
-	Box2DWorldSetContactListener(game->world, game->contactListener);
-	PROPAGATE_ERROR(Array_Init(&game->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
-	game->levelLoaded = true;
+	PROPAGATE_ERROR(Pool_Init(&GAME->objects, 16, sizeof(Object)));
+	PROPAGATE_ERROR(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, GraphicsComponent_YComparatorCB));
+	PROPAGATE_ERROR(Pool_Init(&GAME->eventListeners, 16, sizeof(ComponentEventListener)));
+	PROPAGATE_ERROR(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysics)));
+	PROPAGATE_ERROR(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphics)));
+	PROPAGATE_ERROR(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphics)));
+	PROPAGATE_ERROR(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
+	PROPAGATE_ERROR(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
+	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
+	GAME->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
+	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
+	PROPAGATE_ERROR(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
+	GAME->levelLoaded = true;
 	return 0;
 }
 
-int Game_Level_LoadTest(Game* game) {
-	game->levelType = LEVEL_TYPE_SINGLE_PLAYER;
+int Game_Level_LoadTest() {
+	GAME->levelType = LEVEL_TYPE_SINGLE_PLAYER;
 	
-	TerrainLoader_LoadTiles(game, "resources/terrains/test.txt");
+	TerrainLoader_LoadTiles(GAME, "resources/terrains/test.txt");
 
 	Array standardItemSet;
 	Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX, NULL);
@@ -87,84 +87,84 @@ int Game_Level_LoadTest(Game* game) {
 	Character_Init(character, CHARTYP_HUMAN, 1, standardItemSet);
 	Character_Preprocess(character);
 
-	Object* player = Pool_Mark(&game->objects, NULL, &game->playerId);
+	Object* player = Pool_Mark(&GAME->objects, NULL, &GAME->playerId);
 	ObjectPlayer_Init(player, character);
 
-	Hud_Init(&game->hud);
+	Hud_Init(&GAME->hud);
 
-	Object* camera = Pool_Mark(&game->objects, NULL, &game->cameraId);
+	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
 	ObjectCamera_Init(camera);
 
 	const unsigned skeletonCount = 100;
 	for (unsigned i = 0; i < skeletonCount; i++) {
-		Object* skeleton = Pool_Mark(&game->objects, NULL, NULL);
+		Object* skeleton = Pool_Mark(&GAME->objects, NULL, NULL);
 		ObjectEnemy_Init(skeleton, (Vec2F) { (float)i, -10.0f }, NULL);
 	}
 
-	/*Object* wall = Pool_Mark(&game->objects, NULL, NULL);
+	/*Object* wall = Pool_Mark(&GAME->objects, NULL, NULL);
 	ObjectWall_Init(wall, (Vec2F) { 0.0f, -2.0f });
 
-	Object* box = Pool_Mark(&game->objects, NULL, NULL);
+	Object* box = Pool_Mark(&GAME->objects, NULL, NULL);
 	ObjectStaticBox_Init(box, (Vec2F) { -2.0f, 0.0f });*/
 
-	TerrainLoader_LoadEnemies(game, "resources/terrains/test.txt");
+	TerrainLoader_LoadEnemies(GAME, "resources/terrains/test.txt");
 
 	return 0;
 }
 
-int Game_Level_LoadEditor(Game* game) {
-	game->levelType = LEVEL_TYPE_LEVEL_EDITOR;
+int Game_Level_LoadEditor() {
+	GAME->levelType = LEVEL_TYPE_LEVEL_EDITOR;
 	
-	TerrainLoader_LoadTiles(game, "resources/terrains/test.txt");
+	TerrainLoader_LoadTiles(GAME, "resources/terrains/test.txt");
 
-	Object* god = Pool_Mark(&game->objects, NULL, &game->playerId);
+	Object* god = Pool_Mark(&GAME->objects, NULL, &GAME->playerId);
 	ObjectGod_Init(god); // TODO check return value
 
-	Object* camera = Pool_Mark(&game->objects, NULL, &game->cameraId);
+	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
 	ObjectCamera_Init(camera);
 
-	Object* skeleton = Pool_Mark(&game->objects, NULL, NULL);
+	Object* skeleton = Pool_Mark(&GAME->objects, NULL, NULL);
 	ObjectEnemy_Init(skeleton, (Vec2F) { -2.0f, -2.0f }, NULL);
 
-	Object* wall = Pool_Mark(&game->objects, NULL, NULL);
+	Object* wall = Pool_Mark(&GAME->objects, NULL, NULL);
 	ObjectWall_Init(wall, (Vec2F) { 0.0f, -2.0f });
 
-	Object* box = Pool_Mark(&game->objects, NULL, NULL);
+	Object* box = Pool_Mark(&GAME->objects, NULL, NULL);
 	ObjectStaticBox_Init(box, (Vec2F) { -2.0f, 0.0f });
 
 	return 0;
 }
 
-void Game_Level_DeleteMarkedObjects(Game* game) {
-	for (size_t i = 0; i < game->deleteList.length; i++) {
-		ID* objIdPtr = Array_Get(&game->deleteList, i);
+void Game_Level_DeleteMarkedObjects() {
+	for (size_t i = 0; i < GAME->deleteList.length; i++) {
+		ID* objIdPtr = Array_Get(&GAME->deleteList, i);
 		if (objIdPtr) {
 			ID objId = *objIdPtr;
-			Object* obj = Pool_GetById(&game->objects, objId);
+			Object* obj = Pool_GetById(&GAME->objects, objId);
 			if (obj) {
 				Object_Term(obj);
-				Pool_Unmark(&game->objects, obj);
+				Pool_Unmark(&GAME->objects, obj);
 			}
 		}
 	}
-	Array_Clear(&game->deleteList);
+	Array_Clear(&GAME->deleteList);
 }
 
-void Game_Level_Term(Game* game) {
+void Game_Level_Term() {
 	// TODO delete members in objects
-	PathfinderMap_Term(&game->pathfinderMap);
-	Box2DContactListenerDestroy(game->contactListener);
-	Box2DWorldDestroy(game->world);
-	Array_Term(&game->deleteList);
-	Pool_Term(&game->offenses);
-	Pool_Term(&game->defenses);
-	Pool_Term(&game->terrainGraphics);
-	Pool_Term(&game->graphics);
-	Pool_Term(&game->physics);
-	Pool_Term(&game->eventListeners);
-	InsertionList_Term(&game->drawList);
-	Pool_Term(&game->objects);
-	game->levelLoaded = false;
+	PathfinderMap_Term(&GAME->pathfinderMap);
+	Box2DContactListenerDestroy(GAME->contactListener);
+	Box2DWorldDestroy(GAME->world);
+	Array_Term(&GAME->deleteList);
+	Pool_Term(&GAME->offenses);
+	Pool_Term(&GAME->defenses);
+	Pool_Term(&GAME->terrainGraphics);
+	Pool_Term(&GAME->graphics);
+	Pool_Term(&GAME->physics);
+	Pool_Term(&GAME->eventListeners);
+	InsertionList_Term(&GAME->drawList);
+	Pool_Term(&GAME->objects);
+	GAME->levelLoaded = false;
 }
 
 Vec2F CurrentPointerPositionInWorld() {

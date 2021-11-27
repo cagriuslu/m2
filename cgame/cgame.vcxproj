@@ -208,6 +208,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClCompile Include="..\src\String.c" />
     <ClCompile Include="..\src\TerrainLoader.c" />
     <ClCompile Include="..\src\TextureMap.c" />
+    <ClCompile Include="..\src\TileSet.c" />
     <ClCompile Include="..\src\Txt.c" />
     <ClCompile Include="..\src\Ui.c" />
     <ClCompile Include="..\src\Uis\UiBooleanInput.c" />
@@ -253,6 +254,7 @@ xcopy /y ..\libs\SDL2_image-2.0.5\lib\x64\*.dll "$(OutDir)"</Command>
     <ClInclude Include="..\src\String.h" />
     <ClInclude Include="..\src\TerrainLoader.h" />
     <ClInclude Include="..\src\TextureMap.h" />
+    <ClInclude Include="..\src\TileSet.h" />
     <ClInclude Include="..\src\Txt.h" />
     <ClInclude Include="..\src\Ui.h" />
     <ClInclude Include="..\src\Vec2F.h" />

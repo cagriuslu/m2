@@ -168,6 +168,9 @@
     <ClCompile Include="..\src\Game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\TileSet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h">
@@ -288,6 +291,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\TileSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

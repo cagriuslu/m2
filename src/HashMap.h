@@ -8,7 +8,7 @@
 #define HASHMAP_BUCKET_COUNT (256)
 
 typedef struct _HashMap {
-	Array* arrays; // HASHMAP_BUCKET_COUNT arrays
+	Array buckets[HASHMAP_BUCKET_COUNT];
 	size_t itemSize;
 	void (*itemTerm)(void*);
 } HashMap;

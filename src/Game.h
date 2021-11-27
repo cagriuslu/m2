@@ -75,13 +75,13 @@ typedef struct _Game {
 #define GAME (gCurrentGame)
 extern Game* gCurrentGame;
 
-void Game_SetWidthHeight(Game* game, int width, int height);
+void Game_UpdateWindowDimensions(int width, int height);
 
-int Game_Level_Init(Game* game);
-int Game_Level_LoadTest(Game* game);
-int Game_Level_LoadEditor(Game* game);
-void Game_Level_DeleteMarkedObjects(Game* game);
-void Game_Level_Term(Game* game);
+int Game_Level_Init();
+int Game_Level_LoadTest();
+int Game_Level_LoadEditor();
+void Game_Level_DeleteMarkedObjects();
+void Game_Level_Term();
 
 Vec2F CurrentPointerPositionInWorld();
 

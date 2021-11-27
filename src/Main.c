@@ -37,8 +37,6 @@ int main(int argc, char **argv) {
 	GAME->textureImageFilePath = "resources/24x24.png";
 	GAME->textureMetaImageFilePath = "resources/24x24_META.png";
 	GAME->textureMetaFilePath = "resources/24x24_META.txt";
-	GAME->windowWidth = 1600;
-	GAME->windowHeight = 900;
 	GAME->physicsStepPerSecond = 80.0f;
 	GAME->physicsStepPeriod = 1.0f / GAME->physicsStepPerSecond;
 	GAME->velocityIterations = 8;
@@ -47,7 +45,7 @@ int main(int argc, char **argv) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
-	Game_SetWidthHeight(GAME, GAME->windowWidth, GAME->windowHeight);
+	Game_UpdateWindowDimensions(1600, 900);
 	GAME->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowWidth, GAME->windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	SDL_SetWindowMinimumSize(GAME->sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
@@ -55,7 +53,7 @@ int main(int argc, char **argv) {
 	SDL_SetCursor(GAME->sdlCursor);
 	GAME->pixelFormat = SDL_GetWindowPixelFormat(GAME->sdlWindow);
 	GAME->sdlRenderer = SDL_CreateRenderer(GAME->sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
-	gTextureLUT = SDL_CreateTextureFromSurface(GAME->sdlRenderer, IMG_Load("resources/24x24.png"));
+	gTextureLUT = SDL_CreateTextureFromSurface(GAME->sdlRenderer, IMG_Load("resources/TileSets/24x24.png"));
 	GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 
@@ -102,7 +100,7 @@ int main(int argc, char **argv) {
 				break;
 			}
 			if (GAME->events.windowResizeEvent) {
-				Game_SetWidthHeight(GAME, GAME->events.windowDims.x, GAME->events.windowDims.y);
+				Game_UpdateWindowDimensions(GAME->events.windowDims.x, GAME->events.windowDims.y);
 			}
 			if (!SDL_IsTextInputActive()) {
 				if (GAME->events.keysPressed[KEY_MENU]) {
