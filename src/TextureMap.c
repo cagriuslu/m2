@@ -15,13 +15,13 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 	if (!image) {
 		LOG_ERR("Image file not found");
 		LOGOBJ_ERR(LOGOBJ_FILE_PATH, String, imageFile);
-		return XERR_FILE_NOT_FOUND;
+		return XERR_NOT_FOUND;
 	}
 	tm->map = SDL_CreateTextureFromSurface(GAME->sdlRenderer, image);
 	if (!tm->map) {
 		LOG_ERR("Unable to convert surface to texture");
 		SDL_FreeSurface(image);
-		return XERR_SDL_ERROR;
+		return XERR_SDL;
 	}
 	SDL_Surface* metaImage = IMG_Load(metaImageFile);
 	if (!metaImage) {
@@ -29,7 +29,7 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 		LOGOBJ_ERR(LOGOBJ_FILE_PATH, String, metaImageFile);
 		SDL_DestroyTexture(tm->map);
 		SDL_FreeSurface(image);
-		return XERR_FILE_NOT_FOUND;
+		return XERR_NOT_FOUND;
 	}
 	Txt meta;
 	XErr result = Txt_InitFromFile(&meta, metaFile);

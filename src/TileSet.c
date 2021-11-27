@@ -1,5 +1,6 @@
 #include "TileSet.h"
 #include "VSON.h"
+#include <string.h>
 
 XErr TileSet_InitFromFile(TileSet* ts, const char* fpath) {
 	memset(ts, 0, sizeof(TileSet));
@@ -9,7 +10,7 @@ XErr TileSet_InitFromFile(TileSet* ts, const char* fpath) {
 		return result;
 	}
 	if (vson.type != VSON_VALUE_TYPE_OBJECT) {
-		return XERR_CORRUPTED_FILE;
+		return XERR_CORRUPTED;
 	}
 	
 }

@@ -180,7 +180,7 @@ int _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List
 	// Check if there is a path
 	Vec2I* currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(to));
 	if (currentCameFrom == NULL) {
-		result = XERR_PATH_NOT_FOUND;
+		result = XERR_NOT_FOUND;
 	} else {
 		result = 0;
 

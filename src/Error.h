@@ -20,14 +20,13 @@
 	} while (0)
 
 // Functions are not allowed to return positive values
-#define XOK                  (0)
-#define XERR_QUIT            (-1)
-#define XERR_PATH_NOT_FOUND  (-2)
-#define XERR_CORRUPTED_FILE  (-3)
-#define XERR_FILE_NOT_FOUND  (-4)
-#define XERR_SDL_ERROR       (-5)
-#define XERR_OUT_OF_MEMORY   (-6)
-#define XERR_LIMIT_EXCEEDED  (-7)
+#define XOK            (0)
+#define XERR_QUIT      (-1)
+#define XERR_NOT_FOUND (-2)
+#define XERR_CORRUPTED (-3)
+#define XERR_SDL       (-4)
+#define XERR_MEMORY    (-5)
+#define XERR_LIMIT     (-6)
 
 typedef int32_t XErr;
 

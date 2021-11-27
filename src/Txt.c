@@ -67,7 +67,7 @@ XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
 			LOGOBJ_ERR("CorruptedTxtFile", String, fpath);
 			Array_Term(&lineBuffer);
 			fclose(file);
-			return XERR_CORRUPTED_FILE;
+			return XERR_CORRUPTED;
 		}
 		if (Array_Length(&lineBuffer) == 1) {
 			// Empty line
@@ -87,7 +87,7 @@ XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
 			Array_Term(&split);
 			Array_Term(&lineBuffer);
 			fclose(file);
-			return XERR_CORRUPTED_FILE;
+			return XERR_CORRUPTED;
 		}
 		char** keyPtr = Array_Get(&split, 0);
 		char** valuePtr = Array_Get(&split, 1);
