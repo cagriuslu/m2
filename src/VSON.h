@@ -40,8 +40,11 @@ XErr VSON_InitStringNoCopy(VSON* vson, const char* string);
 XErr VSON_InitParseFile(VSON* vson, const char* path);
 
 VSON* VSON_Get(VSON* vson, const char* path);
+VSON* VSON_GetObject(VSON* vson, const char* path);
+VSON* VSON_GetArray(VSON* vson, const char* path);
+const char* VSON_GetString(VSON* vson, const char* path);
 
-XErr VSON_Object_CreateHashMap(VSON* vson, HashMap* outHashMap);
+XErr VSON_Object_CreateVsonPtrHashMap(VSON* vson, HashMap* outHashMap);
 
 void VSON_Term(VSON* vson);
 

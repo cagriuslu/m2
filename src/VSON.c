@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#define ISPLAIN(c) (isalnum(c) || (c) == '_')
+#define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
 
 XErr VSON_InitObject(VSON* vson) {
 	memset(vson, 0, sizeof(VSON));
@@ -373,15 +373,27 @@ VSON* VSON_Get(VSON* vson, const char* path) {
 	return vson;
 }
 
-XErr VSON_Object_CreateHashMap(VSON* vson, HashMap* outHashMap) {
+VSON* VSON_GetObject(VSON* vson, const char* path) {
+	VSON* objPtr = VSON_Get(vson, path);
+	return (objPtr && objPtr->type == VSON_VALUE_TYPE_OBJECT) ? objPtr : NULL;
+}
+
+VSON* VSON_GetArray(VSON* vson, const char* path) {
+	VSON* arrayPtr = VSON_Get(vson, path);
+	return (arrayPtr && arrayPtr->type == VSON_VALUE_TYPE_ARRAY) ? arrayPtr : NULL;
+}
+
+const char* VSON_GetString(VSON* vson, const char* path) {
+	VSON* strPtr = VSON_Get(vson, path);
+	return (strPtr && strPtr->type == VSON_VALUE_TYPE_STRING) ? strPtr->value.string : NULL;
+}
+
+XErr VSON_Object_CreateVsonPtrHashMap(VSON* vson, HashMap* outHashMap) {
 	ASSERT_TRUE(vson->type == VSON_VALUE_TYPE_OBJECT, XERR_ARG);
 	REFLECT_ERROR(HashMap_Init(outHashMap, sizeof(VSON*), NULL));
 	VSON_OBJECT_ITERATE(vson, objKV) {
 		VSON* valuePtr = &objKV->value;
-		if (!HashMap_SetStringKey(outHashMap, objKV->key, &valuePtr)) {
-			HashMap_Term(outHashMap);
-			return XERR_MEMORY;
-		}
+		ASSERT_TRUE_CLEANUP(HashMap_SetStringKey(outHashMap, objKV->key, &valuePtr), XERR_MEMORY, HashMap_Term(outHashMap));
 	}
 	return XOK;
 }
