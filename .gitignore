@@ -5,3 +5,6 @@ bin/
 cgame/.vs
 cgame/x64
 build/
+*.sublime-workspace
+cmake-build*
+.idea

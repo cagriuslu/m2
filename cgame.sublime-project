@@ -4,8 +4,10 @@
 			"path": "src"
 		},
 		{
-			"path": "resources",
-			"name": "resources"
+			"path": "resources"
+		},
+		{
+			"path": "scripts"
 		}
 	]
 }

@@ -86,14 +86,6 @@ int main(int argc, char **argv) {
 	gTextureLUT = SDL_CreateTextureFromSurface(GAME->sdlRenderer, IMG_Load("resources/TileSets/24.png"));
 	GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
 	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
-
-	TileSet tileSet;
-	res = TileSet_InitFromFile(&tileSet, "resources/TileSets/24.vson");
-	if (res) {
-		fprintf(stderr, "TileSet_InitFromFile failed with %d\n", res);
-	} else {
-		fprintf(stderr, "TileSet_InitFromFile succeeded\n");
-	}
 	
 	main_menu:
 	res = DialogMainMenu(GAME->levelLoaded);

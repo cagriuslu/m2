@@ -43,8 +43,8 @@ VSON* VSON_Get(VSON* vson, const char* path);
 VSON* VSON_GetObject(VSON* vson, const char* path);
 VSON* VSON_GetArray(VSON* vson, const char* path);
 const char* VSON_GetString(VSON* vson, const char* path);
-
-XErr VSON_Object_CreateVsonPtrHashMap(VSON* vson, HashMap* outHashMap);
+long VSON_GetLong(VSON* vson, const char* path, long defaultValue);
+float VSON_GetFloat(VSON* vson, const char* path, float defaultValue);
 
 void VSON_Term(VSON* vson);
 

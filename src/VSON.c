@@ -388,14 +388,28 @@ const char* VSON_GetString(VSON* vson, const char* path) {
 	return (strPtr && strPtr->type == VSON_VALUE_TYPE_STRING) ? strPtr->value.string : NULL;
 }
 
-XErr VSON_Object_CreateVsonPtrHashMap(VSON* vson, HashMap* outHashMap) {
-	ASSERT_TRUE(vson->type == VSON_VALUE_TYPE_OBJECT, XERR_ARG);
-	REFLECT_ERROR(HashMap_Init(outHashMap, sizeof(VSON*), NULL));
-	VSON_OBJECT_ITERATE(vson, objKV) {
-		VSON* valuePtr = &objKV->value;
-		ASSERT_TRUE_CLEANUP(HashMap_SetStringKey(outHashMap, objKV->key, &valuePtr), XERR_MEMORY, HashMap_Term(outHashMap));
+long VSON_GetLong(VSON* vson, const char* path, long defaultValue) {
+	const char* str = VSON_GetString(vson, path);
+	if (str) {
+		char* str_end = NULL;
+		long value = strtol(str, &str_end, 0);
+		if (str != str_end) {
+			return value;
+		}
 	}
-	return XOK;
+	return defaultValue;
+}
+
+float VSON_GetFloat(VSON* vson, const char* path, float defaultValue) {
+	const char* str = VSON_GetString(vson, path);
+	if (str) {
+		char* str_end = NULL;
+		float value = strtof(str, &str_end);
+		if (str != str_end) {
+			return value;
+		}
+	}
+	return defaultValue;
 }
 
 void VSON_Term(VSON* vson) {

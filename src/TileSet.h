@@ -1,6 +1,7 @@
 #ifndef TILESET_H
 #define TILESET_H
 
+#include "VSON.h"
 #include "HashMap.h"
 #include "Vec2F.h"
 #include <SDL.h>
@@ -21,21 +22,22 @@ typedef struct _CircleColliderDef {
 	float radius;
 } CircleColliderDef;
 
-typedef union _ColliderDef {
-	RectangleColliderDef rectangle;
-	CircleColliderDef circle;
+typedef struct _ColliderDef {
+	ColliderType colliderType;
+	union _ColliderUnion {
+		RectangleColliderDef rectangle;
+		CircleColliderDef circle;
+	} colliderUnion;
 } ColliderDef;
 
 typedef struct _TerrainDef {
 	SDL_Rect textureRect;
-	ColliderType colliderType;
 	ColliderDef colliderDef;
 } TerrainDef;
 
 typedef struct _ObjectDef {
 	SDL_Rect textureRect;
 	Vec2F center; // wrt center of the texture
-	ColliderType colliderType;
 	ColliderDef colliderDef;
 } ObjectDef;
 
@@ -47,5 +49,8 @@ typedef struct _TileSet {
 } TileSet;
 
 XErr TileSet_InitFromFile(TileSet* ts, const char* fpath);
+XErr TileSet_InitFromVson(TileSet* ts, VSON* vson);
+
+void TileSet_Term(TileSet* ts);
 
 #endif

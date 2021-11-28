@@ -22,7 +22,7 @@ typedef int32_t XErr;
 			return (err); \
 	} while (0)
 
-#define ASSERT_TRUE_CLEANUP(condition, err, cleanup) \
+#define ASSERT_TRUE_CLEANUP(condition, cleanup, err) \
 	do {                    \
 		if (!(condition)) { \
 			{cleanup;}      \
@@ -36,7 +36,7 @@ typedef int32_t XErr;
 			return (err); \
 	} while (0)
 
-#define ASSERT_FALSE_CLEANUP(condition, err, cleanup) \
+#define ASSERT_FALSE_CLEANUP(condition, cleanup, err) \
 	do {                   \
 		if ((condition)) { \
 			{cleanup;}     \

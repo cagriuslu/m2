@@ -80,7 +80,7 @@ static void LogNewLine() {
 	fprintf(stderr, "\n");
 }
 
-void _Log(LogLevel level, const char* file, int line, const char* message) {
+void Log(LogLevel level, const char* file, int line, const char* message) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -91,7 +91,7 @@ void _Log(LogLevel level, const char* file, int line, const char* message) {
 	LogNewLine();
 }
 
-void _LogObj_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var) {
+void LogObj_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -100,7 +100,7 @@ void _LogObj_Int32(LogLevel level, const char* file, int line, const char* messa
 	LogNewLine();
 }
 
-void _LogObj_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
+void LogObj_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -109,7 +109,7 @@ void _LogObj_String(LogLevel level, const char* file, int line, const char* mess
 	LogNewLine();
 }
 
-void _LogObj_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
+void LogObj_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -118,7 +118,7 @@ void _LogObj_Float32(LogLevel level, const char* file, int line, const char* mes
 	LogNewLine();
 }
 
-void _LogObj_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
+void LogObj_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -127,7 +127,7 @@ void _LogObj_Vec2F(LogLevel level, const char* file, int line, const char* messa
 	LogNewLine();
 }
 
-void _LogObj_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var) {
+void LogObj_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -136,7 +136,7 @@ void _LogObj_Vec2I(LogLevel level, const char* file, int line, const char* messa
 	LogNewLine();
 }
 
-void _LogObj_SdlRect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var) {
+void LogObj_SdlRect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -145,7 +145,7 @@ void _LogObj_SdlRect(LogLevel level, const char* file, int line, const char* mes
 	LogNewLine();
 }
 
-void _LogObj_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
+void LogObj_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
