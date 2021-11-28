@@ -20,5 +20,6 @@
 		Arrow000: {x:72  y:96 w:24 h:24 Center:{x:2.5 y:0.5} CircCollider:{x:0 y:0 r:1.5}},
 		Bullt000: {x:96  y:96 w:24 h:24 Center:{x:1.5 y:0.5} CircCollider:{x:0 y:0 r:1.5}},
 		Bullt001: {x:120 y:96 w:24 h:24 Center:{x:3.5 y:0.5} CircCollider:{x:0 y:0 r:1.5}},
-	}
+	},
+	Comments: "All units are in pixels"
 }

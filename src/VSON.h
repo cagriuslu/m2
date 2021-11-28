@@ -49,6 +49,6 @@ float VSON_GetFloat(VSON* vson, const char* path, float defaultValue);
 void VSON_Term(VSON* vson);
 
 // Convenience macros
-#define VSON_OBJECT_ITERATE(vson, objectKeyValuePtrName) for(VSONObjectKeyValue* objectKeyValuePtrName = vson->value.objectFirstChild; (vson->type == VSON_VALUE_TYPE_OBJECT) && objectKeyValuePtrName; objectKeyValuePtrName = objectKeyValuePtrName->next)
+#define VSON_OBJECT_ITERATE(vson, objectKeyValuePtrName) for(VSONObjectKeyValue* objectKeyValuePtrName = (vson) ? (vson)->value.objectFirstChild : NULL; objectKeyValuePtrName && (vson)->type == VSON_VALUE_TYPE_OBJECT; objectKeyValuePtrName = objectKeyValuePtrName->next)
 
 #endif

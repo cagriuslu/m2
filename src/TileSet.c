@@ -29,23 +29,31 @@ static XErr TileSet_InitFromVson_InitTextureRect(SDL_Rect* textureRect, VSON* te
 	return XOK;
 }
 
-static XErr TileSet_InitFromVson_InitCollider(ColliderDef* colliderDef, VSON* terrainOrObjectVson) {
+static XErr TileSet_InitFromVson_InitCollider(ColliderDef* colliderDef, VSON* terrainOrObjectVson, int tileWidth) {
 	VSON* colliderVson = NULL;
 	if ((colliderVson = VSON_GetObject(terrainOrObjectVson, "RectCollider"))) {
 		colliderDef->colliderType = COLLIDER_TYPE_RECTANGLE;
-		colliderDef->colliderUnion.rectangle.center.x = VSON_GetFloat(colliderVson, "x", 0.0f);
-		colliderDef->colliderUnion.rectangle.center.y = VSON_GetFloat(colliderVson, "y", 0.0f);
-		colliderDef->colliderUnion.rectangle.dims.x = VSON_GetFloat(colliderVson, "w", 0.0f);
-		colliderDef->colliderUnion.rectangle.dims.y = VSON_GetFloat(colliderVson, "h", 0.0f);
-		ASSERT_TRUE_CLEANUP(colliderDef->colliderUnion.rectangle.dims.x && colliderDef->colliderUnion.rectangle.dims.y,
+		colliderDef->colliderUnion.rectangle.center_px.x = VSON_GetFloat(colliderVson, "x", 0.0f);
+		colliderDef->colliderUnion.rectangle.center_px.y = VSON_GetFloat(colliderVson, "y", 0.0f);
+		colliderDef->colliderUnion.rectangle.dims_px.x = VSON_GetFloat(colliderVson, "w", 0.0f);
+		colliderDef->colliderUnion.rectangle.dims_px.y = VSON_GetFloat(colliderVson, "h", 0.0f);
+		colliderDef->colliderUnion.rectangle.center_m.x = colliderDef->colliderUnion.rectangle.center_px.x / (float)tileWidth;
+		colliderDef->colliderUnion.rectangle.center_m.y = colliderDef->colliderUnion.rectangle.center_px.y / (float)tileWidth;
+		colliderDef->colliderUnion.rectangle.dims_m.x = colliderDef->colliderUnion.rectangle.dims_px.x / (float)tileWidth;
+		colliderDef->colliderUnion.rectangle.dims_m.y = colliderDef->colliderUnion.rectangle.dims_px.y / (float)tileWidth;
+		ASSERT_TRUE_CLEANUP(colliderDef->colliderUnion.rectangle.dims_px.x && colliderDef->colliderUnion.rectangle.dims_px.y,
 			LOG_ERR("invalid rectangle collider"),
 			XERR_CORRUPTED);
+
 	} else if ((colliderVson = VSON_GetObject(terrainOrObjectVson, "CircCollider"))) {
 		colliderDef->colliderType = COLLIDER_TYPE_CIRCLE;
-		colliderDef->colliderUnion.circle.center.x = VSON_GetFloat(colliderVson, "x", 0.0f);
-		colliderDef->colliderUnion.circle.center.y = VSON_GetFloat(colliderVson, "y", 0.0f);
-		colliderDef->colliderUnion.circle.radius = VSON_GetFloat(colliderVson, "r", 0.0f);
-		ASSERT_TRUE_CLEANUP(colliderDef->colliderUnion.circle.radius,
+		colliderDef->colliderUnion.circle.center_px.x = VSON_GetFloat(colliderVson, "x", 0.0f);
+		colliderDef->colliderUnion.circle.center_px.y = VSON_GetFloat(colliderVson, "y", 0.0f);
+		colliderDef->colliderUnion.circle.radius_px = VSON_GetFloat(colliderVson, "r", 0.0f);
+		colliderDef->colliderUnion.circle.center_m.x = colliderDef->colliderUnion.circle.center_px.x / (float)tileWidth;
+		colliderDef->colliderUnion.circle.center_m.y = colliderDef->colliderUnion.circle.center_px.y / (float)tileWidth;
+		colliderDef->colliderUnion.circle.radius_m = colliderDef->colliderUnion.circle.radius_px / (float)tileWidth;
+		ASSERT_TRUE_CLEANUP(colliderDef->colliderUnion.circle.radius_px,
 			LOG_ERR("invalid circle collider"),
 			XERR_CORRUPTED);
 	}
@@ -82,18 +90,12 @@ XErr TileSet_InitFromVson(TileSet* ts, VSON* vson) {
 	REFLECT_ERROR_CLEANUP(HashMap_Init(&ts->terrainDefs, sizeof(TerrainDef), NULL),
 		TileSet_Term(ts));
 	VSON* terrainsVson = VSON_GetObject(vson, "Terrains");
-	ASSERT_TRUE_CLEANUP(terrainsVson,
-		LOG_ERR("invalid terrains");
-		TileSet_Term(ts),
-		XERR_CORRUPTED);
 	VSON_OBJECT_ITERATE(terrainsVson, terrainKeyValuePtr) {
 		TerrainDef* terrainDef = HashMap_SetStringKey(&ts->terrainDefs, terrainKeyValuePtr->key, NULL);
-
 		REFLECT_ERROR_CLEANUP(TileSet_InitFromVson_InitTextureRect(&terrainDef->textureRect, &terrainKeyValuePtr->value),
 			LOG_ERR("invalid terrain texture rect");
 			TileSet_Term(ts));
-
-		REFLECT_ERROR_CLEANUP(TileSet_InitFromVson_InitCollider(&terrainDef->colliderDef, &terrainKeyValuePtr->value),
+		REFLECT_ERROR_CLEANUP(TileSet_InitFromVson_InitCollider(&terrainDef->colliderDef, &terrainKeyValuePtr->value, ts->tileWidth),
 			LOG_ERR("invalid terrain collider");
 			TileSet_Term(ts));
 	}
@@ -101,24 +103,19 @@ XErr TileSet_InitFromVson(TileSet* ts, VSON* vson) {
 	REFLECT_ERROR_CLEANUP(HashMap_Init(&ts->objectDefs, sizeof(ObjectDef), NULL),
 		TileSet_Term(ts));
 	VSON* objectsVson = VSON_GetObject(vson, "Objects");
-	ASSERT_TRUE_CLEANUP(objectsVson,
-		LOG_ERR("invalid objects");
-		TileSet_Term(ts),
-		XERR_CORRUPTED);
 	VSON_OBJECT_ITERATE(objectsVson, objectKeyValuePtr) {
 		ObjectDef* objectDef = HashMap_SetStringKey(&ts->objectDefs, objectKeyValuePtr->key, NULL);
-
 		REFLECT_ERROR_CLEANUP(TileSet_InitFromVson_InitTextureRect(&objectDef->textureRect, &objectKeyValuePtr->value),
 			LOG_ERR("invalid object texture rect");
 			TileSet_Term(ts));
-
 		VSON* centerVson = VSON_GetObject(&objectKeyValuePtr->value, "Center");
 		if (centerVson) {
-			objectDef->center.x = VSON_GetFloat(centerVson, "x", 0.0f);
-			objectDef->center.y = VSON_GetFloat(centerVson, "y", 0.0f);
+			objectDef->center_px.x = VSON_GetFloat(centerVson, "x", 0.0f);
+			objectDef->center_px.y = VSON_GetFloat(centerVson, "y", 0.0f);
+			objectDef->center_m.x = objectDef->center_px.x / (float)ts->tileWidth;
+			objectDef->center_m.y = objectDef->center_px.y / (float)ts->tileWidth;
 		}
-
-		REFLECT_ERROR_CLEANUP(TileSet_InitFromVson_InitCollider(&objectDef->colliderDef, &objectKeyValuePtr->value),
+		REFLECT_ERROR_CLEANUP(TileSet_InitFromVson_InitCollider(&objectDef->colliderDef, &objectKeyValuePtr->value, ts->tileWidth),
 			LOG_ERR("invalid object collider");
 			TileSet_Term(ts));
 	}

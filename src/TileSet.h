@@ -13,13 +13,17 @@ typedef enum _ColliderType {
 } ColliderType;
 
 typedef struct _RectangleColliderDef {
-	Vec2F center; // wrt object center
-	Vec2F dims;
+	Vec2F center_px;
+	Vec2F center_m;
+	Vec2F dims_px;
+	Vec2F dims_m;
 } RectangleColliderDef;
 
 typedef struct _CircleColliderDef {
-	Vec2F center; // wrt object center
-	float radius;
+	Vec2F center_px;
+	Vec2F center_m;
+	float radius_px;
+	float radius_m;
 } CircleColliderDef;
 
 typedef struct _ColliderDef {
@@ -37,7 +41,8 @@ typedef struct _TerrainDef {
 
 typedef struct _ObjectDef {
 	SDL_Rect textureRect;
-	Vec2F center; // wrt center of the texture
+	Vec2F center_px;
+	Vec2F center_m;
 	ColliderDef colliderDef;
 } ObjectDef;
 
