@@ -1,5 +1,5 @@
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef CFG_H
+#define CFG_H
 
 #include "Vec2F.h"
 #include <SDL.h>
@@ -36,11 +36,6 @@ typedef struct _CfgObject {
 	CfgCollider collider;
 } CfgObject;
 
-typedef struct _CfgGroundTile {
-	SDL_Rect textureRect;
-	CfgCollider collider;
-} CfgGroundTile;
-
 extern const CfgObject CFG_OBJ_BOX000;
 extern const CfgObject CFG_OBJ_SWORD000;
 extern const CfgObject CFG_OBJ_SKELETON000;
@@ -48,6 +43,11 @@ extern const CfgObject CFG_OBJ_PLAYER000;
 extern const CfgObject CFG_OBJ_ARROW000;
 extern const CfgObject CFG_OBJ_BULLET000;
 extern const CfgObject CFG_OBJ_BULLET001;
+
+typedef struct _CfgGroundTile {
+	SDL_Rect textureRect;
+	CfgCollider collider;
+} CfgGroundTile;
 
 extern const CfgGroundTile CFG_GNDTILE_GROUND000;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000T;
@@ -58,5 +58,17 @@ extern const CfgGroundTile CFG_GNDTILE_CLIFF000TR;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000TL;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000BR;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000BL;
+
+typedef struct _LevelTile {
+	const CfgGroundTile *gndTile;
+	const CfgObject *obj;
+} LevelTile;
+
+typedef struct _CfgLevel {
+	const LevelTile *tiles;
+	int w, h;
+} CfgLevel;
+
+extern const CfgLevel CFG_LVL_SP000;
 
 #endif
