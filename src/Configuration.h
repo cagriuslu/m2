@@ -5,29 +5,58 @@
 #include <SDL.h>
 
 #define CFG_TILE_SIZE (24)
+#define CFG_TEXTURE_FILE "resources/24.png"
 
-typedef enum _ColliderType {
-	COLLIDER_TYPE_NONE = 0,
-	COLLIDER_TYPE_RECTANGLE,
-	COLLIDER_TYPE_CIRCLE
-} ColliderType;
-typedef struct _ColliderConfiguration {
-	ColliderType colliderType;
+typedef struct _CfgCollider {
+	enum {
+		COLLIDER_TYPE_NONE = 0,
+		COLLIDER_TYPE_RECTANGLE,
+		COLLIDER_TYPE_CIRCLE
+	} type;
 	union {
-		RectangleColliderDef rectangle;
-		CircleColliderDef circle;
+		struct {
+			Vec2F center_px;
+			Vec2F center_m;
+			Vec2F dims_px;
+			Vec2F dims_m;
+		} rect;
+		struct {
+			Vec2F center_px;
+			Vec2F center_m;
+			float radius_px;
+			float radius_m;
+		} circ;
 	} colliderUnion;
-} ColliderConfiguration;
+} CfgCollider;
 
-typedef struct _ObjectConfiguration {
+typedef struct _CfgObject {
 	SDL_Rect textureRect;
-	Vec2F objectCenter_px; // wrt the center of textureRect
-	Vec2F objectCenter_m; // wrt the center of textureRect
+	Vec2F objCenter_px;
+	Vec2F objCenter_m;
+	CfgCollider collider;
+} CfgObject;
 
-} ObjectConfiguration;
+typedef struct _CfgGroundTile {
+	SDL_Rect textureRect;
+	CfgCollider collider;
+} CfgGroundTile;
 
-typedef struct _GroundTileConfiguration {
+extern const CfgObject CFG_OBJ_BOX000;
+extern const CfgObject CFG_OBJ_SWORD000;
+extern const CfgObject CFG_OBJ_SKELETON000;
+extern const CfgObject CFG_OBJ_PLAYER000;
+extern const CfgObject CFG_OBJ_ARROW000;
+extern const CfgObject CFG_OBJ_BULLET000;
+extern const CfgObject CFG_OBJ_BULLET001;
 
-} GroundTileConfiguration;
+extern const CfgGroundTile CFG_GNDTILE_GROUND000;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000T;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000R;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000B;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000L;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000TR;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000TL;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000BR;
+extern const CfgGroundTile CFG_GNDTILE_CLIFF000BL;
 
 #endif
