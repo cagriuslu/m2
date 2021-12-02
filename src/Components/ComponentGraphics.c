@@ -8,7 +8,7 @@
 void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 	Object* obj = Pool_GetById(&GAME->objects, gfx->super.objId);
 	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId);
-	if (obj && camera && gfx->tx) {
+	if (obj && camera && GAME->sdlTexture) {
 		float scale = GAME->pixelsPerMeter / GAME->tileWidth;
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
 		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, GAME->pixelsPerMeter));
@@ -27,7 +27,7 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 			(int)round(gfx->txCenter.x * scale) + dstrect.w/2 ,
 			(int)round(gfx->txCenter.y * scale) + dstrect.h/2
 		};
-		SDL_RenderCopyEx(GAME->sdlRenderer, gfx->tx, &gfx->txSrc, &dstrect, gfx->txAngle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(GAME->sdlRenderer, GAME->sdlTexture, &gfx->txSrc, &dstrect, gfx->txAngle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
 	}
 }
 
@@ -75,7 +75,6 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float health
 int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId) {
 	memset(gfx, 0, sizeof(ComponentGraphics));
 	REFLECT_ERROR(Component_Init((Component*)gfx, objectId));
-	gfx->tx = CurrentTextureLUT();
 	gfx->draw = GraphicsComponent_DefaultDraw;
 	return 0;
 }

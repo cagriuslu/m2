@@ -12,7 +12,6 @@
 #include <SDL_ttf.h>
 #include <stdbool.h>
 
-SDL_Texture* CurrentTextureLUT();
 TextureMap* CurrentTextureMap();
 
 #endif

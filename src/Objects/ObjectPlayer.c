@@ -129,7 +129,6 @@ int ObjectPlayer_Init(Object* obj, Character* character) {
 	);
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
-	gfx->tx = texture->map;
 	gfx->txSrc = texture->rect;
 	gfx->txCenter = texture->center;
 

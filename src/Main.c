@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "SDLUtils.h"
 #include "Log.h"
+#include "Cfg.h"
 #include "Pathfinder.h"
 #include "TextureMap.h"
 #include "Txt.h"
@@ -23,7 +24,6 @@
 #include <stdio.h>
 #include <string.h>
 
-SDL_Texture *gTextureLUT;
 TextureMap gTextureMap;
 
 int main(int argc, char **argv) {
@@ -71,19 +71,49 @@ int main(int argc, char **argv) {
 	GAME->velocityIterations = 8;
 	GAME->positionIterations = 3;
 
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER);
-	IMG_Init(IMG_INIT_PNG);
-	TTF_Init();
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, SDL_GetError());
+		return -1;
+	}
+	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, IMG_GetError());
+		return -1;
+	}
+	if (TTF_Init() != 0) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, TTF_GetError());
+		return -1;
+	}
 	Game_UpdateWindowDimensions(1600, 900);
-	GAME->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowWidth, GAME->windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	if ((GAME->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowWidth, GAME->windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, SDL_GetError());
+		return -1;
+	}
 	SDL_SetWindowMinimumSize(GAME->sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
 	GAME->sdlCursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(GAME->sdlCursor);
-	GAME->pixelFormat = SDL_GetWindowPixelFormat(GAME->sdlWindow);
-	GAME->sdlRenderer = SDL_CreateRenderer(GAME->sdlWindow, -1, SDL_RENDERER_ACCELERATED); // SDL_RENDERER_PRESENTVSYNC
-	gTextureLUT = SDL_CreateTextureFromSurface(GAME->sdlRenderer, IMG_Load("resources/TileSets/24.png"));
-	GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix monospace.ttf", 16);
+	if ((GAME->pixelFormat = SDL_GetWindowPixelFormat(GAME->sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, SDL_GetError());
+		return -1;
+	}
+	if ((GAME->sdlRenderer = SDL_CreateRenderer(GAME->sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == NULL) { // SDL_RENDERER_PRESENTVSYNC
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, SDL_GetError());
+		return -1;
+	}
+	SDL_Surface* textureMapSurface = IMG_Load(CFG_TEXTURE_FILE);
+	if (textureMapSurface == NULL) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, IMG_GetError());
+		return -1;
+	}
+	if ((GAME->sdlTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMapSurface)) == NULL) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, SDL_GetError());
+		return -1;
+	}
+	SDL_FreeSurface(textureMapSurface);
+	if ((GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
+		LOGOBJ_FTL(LOGOBJ_SDL_ERROR, String, TTF_GetError());
+		return -1;
+	}
 	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 	
 	main_menu:
@@ -93,11 +123,11 @@ int main(int argc, char **argv) {
 	} else if (res == X_MAIN_MENU_RESUME) {
 		// Do nothing
 	} else {
-		Game_Level_Init(GAME);
+		Game_Level_Init();
 		if (res == X_MAIN_MENU_NEW_GAME) {
-			REFLECT_ERROR(Game_Level_LoadTest(GAME));
+			REFLECT_ERROR(Game_Level_LoadTest());
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
-			REFLECT_ERROR(Game_Level_LoadEditor(GAME));
+			REFLECT_ERROR(Game_Level_LoadEditor());
 		} else {
 			LOG_FTL("Unknown level is selected");
 			LOGOBJ_FTL(LOGOBJ_MENU_SELECTION, Int32, res);
@@ -270,10 +300,6 @@ int main(int argc, char **argv) {
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
-}
-
-SDL_Texture* CurrentTextureLUT() {
-	return gTextureLUT;
 }
 
 TextureMap* CurrentTextureMap() {

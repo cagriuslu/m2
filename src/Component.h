@@ -34,7 +34,6 @@ void PhysicsComponent_ContactCB(Box2DContact* contact);
 
 typedef struct _ComponentGraphics {
 	Component super;
-	SDL_Texture* tx;
 	SDL_Rect txSrc;
 	float txAngle;
 	Vec2F txCenter; // w.r.t. texture center in pixels, offsets the texture and the center for rotation
