@@ -130,7 +130,7 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 
 		ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 		el->prePhysics = ObjectEnemy_prePhysics;
-		el->postGraphics = ObjectEnemy_postPhysics;
+		el->postPhysics = ObjectEnemy_postPhysics;
 
 		ID phyId = 0;
 		ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
