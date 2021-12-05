@@ -6,6 +6,7 @@
 #include <stdint.h>
 
 typedef struct _InsertionList {
+	// TODO deque might be faster
 	Array array;
 	int (*comparator)(ID, ID);
 } InsertionList;
