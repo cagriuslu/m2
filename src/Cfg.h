@@ -29,21 +29,6 @@ typedef struct _CfgCollider {
 	} colliderUnion;
 } CfgCollider;
 
-typedef struct _CfgObject {
-	SDL_Rect textureRect;
-	Vec2F objCenter_px;
-	Vec2F objCenter_m;
-	CfgCollider collider;
-} CfgObject;
-
-extern const CfgObject CFG_OBJ_BOX000;
-extern const CfgObject CFG_OBJ_SWORD000;
-extern const CfgObject CFG_OBJ_SKELETON000;
-extern const CfgObject CFG_OBJ_PLAYER000;
-extern const CfgObject CFG_OBJ_ARROW000;
-extern const CfgObject CFG_OBJ_BULLET000;
-extern const CfgObject CFG_OBJ_BULLET001;
-
 typedef struct _CfgGroundTile {
 	SDL_Rect textureRect;
 	CfgCollider collider;
@@ -58,6 +43,21 @@ extern const CfgGroundTile CFG_GNDTILE_CLIFF000TR;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000TL;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000BR;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000BL;
+
+typedef struct _CfgObject {
+	SDL_Rect textureRect;
+	Vec2F objCenter_px;
+	Vec2F objCenter_m;
+	CfgCollider collider;
+} CfgObject;
+
+extern const CfgObject CFG_OBJ_BOX000;
+extern const CfgObject CFG_OBJ_SWORD000;
+extern const CfgObject CFG_OBJ_SKELETON000;
+extern const CfgObject CFG_OBJ_PLAYER000;
+extern const CfgObject CFG_OBJ_ARROW000;
+extern const CfgObject CFG_OBJ_BULLET000;
+extern const CfgObject CFG_OBJ_BULLET001;
 
 typedef struct _LevelTile {
 	const CfgGroundTile *gndTile;
