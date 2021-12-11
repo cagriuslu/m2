@@ -77,6 +77,7 @@
     <ClCompile Include="..\src\Controls.c" />
     <ClCompile Include="..\src\Dialog.c" />
     <ClCompile Include="..\src\Dialogs\DialogMainMenu.c" />
+    <ClCompile Include="..\src\Error.c" />
     <ClCompile Include="..\src\Event.c" />
     <ClCompile Include="..\src\Game.c" />
     <ClCompile Include="..\src\HashMap.c" />
@@ -90,8 +91,8 @@
     <ClCompile Include="..\src\Object.c" />
     <ClCompile Include="..\src\Objects\ObjectBullet.c" />
     <ClCompile Include="..\src\Objects\ObjectCamera.c" />
+    <ClCompile Include="..\src\Objects\ObjectCommon.c" />
     <ClCompile Include="..\src\Objects\ObjectEnemy.c" />
-    <ClCompile Include="..\src\Objects\ObjectGod.c" />
     <ClCompile Include="..\src\Objects\ObjectPlayer.c" />
     <ClCompile Include="..\src\Objects\ObjectStaticBox.c" />
     <ClCompile Include="..\src\Objects\ObjectSword.c" />
@@ -104,7 +105,6 @@
     <ClCompile Include="..\src\SpatialMap.c" />
     <ClCompile Include="..\src\Sqlite.c" />
     <ClCompile Include="..\src\String.c" />
-    <ClCompile Include="..\src\TerrainLoader.c" />
     <ClCompile Include="..\src\TextureMap.c" />
     <ClCompile Include="..\src\Txt.c" />
     <ClCompile Include="..\src\Ui.c" />

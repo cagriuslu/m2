@@ -225,7 +225,7 @@ int main(int argc, char **argv) {
 				el->postPhysics(el);
 			}
 		}
-		Game_Level_DeleteMarkedObjects(GAME);
+		Game_Level_DeleteMarkedObjects();
 		//////////////////////////// END OF PHYSICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 

@@ -209,9 +209,6 @@
     <ClCompile Include="..\src\String.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\TerrainLoader.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\TextureMap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -269,9 +266,6 @@
     <ClCompile Include="..\src\Objects\ObjectEnemy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Objects\ObjectGod.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectPlayer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -297,6 +291,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Uis\UiStringInput.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Error.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectCommon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
