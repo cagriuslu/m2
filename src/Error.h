@@ -3,17 +3,21 @@
 
 #include <stdint.h>
 
-// Functions are not allowed to return positive values
-#define XOK            (0)
-#define XERR_QUIT      (-1)
-#define XERR_NOT_FOUND (-2)
-#define XERR_CORRUPTED (-3)
-#define XERR_SDL       (-4)
-#define XERR_MEMORY    (-5)
-#define XERR_LIMIT     (-6)
-#define XERR_ARG       (-7)
+#define XOK_QUIT            (4)
+#define XOK_FPS             (3)
+#define XOK_LOG_LEVEL       (2)
+#define XOK_FN              (1)
+#define XOK                 (0)
+#define XERR_FILE_NOT_FOUND (-1)
+#define XERR_PATH_NOT_FOUND (-2)
+#define XERR_FILE_CORRUPTED (-3)
+#define XERR_SDL_ERROR      (-4)
+#define XERR_OUT_OF_MEMORY  (-5)
+#define XERR_LIMIT_EXCEEDED (-6)
 
 typedef int32_t XErr;
+
+const char* XErr_ToString(XErr e);
 
 // Convenience macros
 #define ASSERT_TRUE(condition, err) \

@@ -11,7 +11,7 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 	if (obj && camera && GAME->sdlTexture) {
 		float scale = GAME->pixelsPerMeter / GAME->tileWidth;
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, GAME->pixelsPerMeter));
+		Vec2I obj_origin_wrt_screen_center = Vec2I_From2F(Vec2F_Mul(obj_origin_wrt_camera_obj, GAME->pixelsPerMeter));
 		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
 			-(int)round(gfx->txCenter.x * scale),
 			-(int)round(gfx->txCenter.y * scale)
@@ -37,7 +37,7 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float health
 	if (obj && camera) {
 		float scale = GAME->pixelsPerMeter / GAME->tileWidth;
 		Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
-		Vec2I obj_origin_wrt_screen_center = Vec2F_To2I(Vec2F_Mul(obj_origin_wrt_camera_obj, GAME->pixelsPerMeter));
+		Vec2I obj_origin_wrt_screen_center = Vec2I_From2F(Vec2F_Mul(obj_origin_wrt_camera_obj, GAME->pixelsPerMeter));
 		Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, (Vec2I) {
 			-(int)round(gfx->txCenter.x * scale),
 				-(int)round(gfx->txCenter.y * scale)

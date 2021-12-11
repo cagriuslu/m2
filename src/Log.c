@@ -2,9 +2,10 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 #include <string.h>
 
-LogLevel gCurrentLogLevel = 0;
+LogLevel gCurrentLogLevel = LogLevelDebug;
 
 static void LogHeader(LogLevel level, const char* file, int line) {
 	// Get time
@@ -76,6 +77,26 @@ static void LogHeader(LogLevel level, const char* file, int line) {
 	fprintf(stderr, "[%010llu:%c:%s%s:%05d] ", (unsigned long long)now, levelChar, fileNameCapitalsPadding, fileNameCapitals, line);
 }
 
+#ifndef _WIN32
+#include <execinfo.h>
+#endif
+
+static void LogFooter(LogLevel level) {
+	if (LogLevelWarn <= level) {
+#ifdef _WIN32
+		// Not supported yet
+#else
+		void* callstack[128];
+		int frames = backtrace(callstack, 128);
+		char** strs = backtrace_symbols(callstack, frames);
+		for (int i = 0; i < frames; ++i) {
+			fprintf(stderr, "%s\n", strs[i]);
+		}
+		free(strs);
+#endif
+	}
+}
+
 static void LogNewLine() {
 	fprintf(stderr, "\n");
 }
@@ -89,74 +110,35 @@ void Log(LogLevel level, const char* file, int line, const char* message) {
 		fprintf(stderr, "%s", message);
 	}
 	LogNewLine();
+	LogFooter(level);
 }
 
-void LogObj_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var) {
+void LogX(LogLevel level, const char* file, int line, XErr x) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": %d}", message, var);
+	fprintf(stderr, "{\"X\": \"%s\"}", XErr_ToString(x));
 	LogNewLine();
+	LogFooter(level);
 }
 
-void LogObj_String(LogLevel level, const char* file, int line, const char* message, const char* var) {
+void LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": \"%s\"}", message, var);
+	fprintf(stderr, "{\"%s\": %d}", XErr_ToString(x), var);
 	LogNewLine();
+	LogFooter(level);
 }
 
-void LogObj_Float32(LogLevel level, const char* file, int line, const char* message, float var) {
+void LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": %f}", message, var);
+	fprintf(stderr, "{\"%s\": \"%s\"}", XErr_ToString(x), var);
 	LogNewLine();
-}
-
-void LogObj_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var) {
-	if (level < gCurrentLogLevel) {
-		return;
-	}
-	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": {\"x\":%f, \"y\":%f}}", message, var.x, var.y);
-	LogNewLine();
-}
-
-void LogObj_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var) {
-	if (level < gCurrentLogLevel) {
-		return;
-	}
-	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": {\"x\":%d, \"y\":%d}}", message, var.x, var.y);
-	LogNewLine();
-}
-
-void LogObj_SdlRect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var) {
-	if (level < gCurrentLogLevel) {
-		return;
-	}
-	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": {\"x\":%d, \"y\":%d, \"w\":%d, \"h\":%d}}", message, var.x, var.y, var.w, var.h);
-	LogNewLine();
-}
-
-void LogObj_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var) {
-	if (level < gCurrentLogLevel) {
-		return;
-	}
-	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": [", message);
-	for (size_t i = 0; i < var->length; i++) {
-		fprintf(stderr, "%d", *(int32_t*)Array_Get(var, i));
-		if (i + 1 < var->length) {
-			fprintf(stderr, ", ");
-		}
-	}
-	fprintf(stderr, "]}");
-	LogNewLine();
+	LogFooter(level);
 }

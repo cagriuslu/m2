@@ -61,7 +61,7 @@ XErr Array_Shrink(Array* array) {
 		size_t newCapacity = array->length;
 		void* newData = realloc(array->data, newCapacity * array->itemSize);
 		if (!newData) {
-			return XERR_MEMORY;
+			return XERR_OUT_OF_MEMORY;
 		}
 		array->data = newData;
 		array->capacity = newCapacity;

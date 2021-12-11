@@ -1,10 +1,7 @@
 #ifndef LOG_H
 #define LOG_H
 
-#include "Array.h"
-#include "Vec2I.h"
-#include "Vec2F.h"
-#include <SDL.h>
+#include "Error.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -26,32 +23,27 @@ extern LogLevel gCurrentLogLevel;
 #define LOG_ERR(msg) Log(LogLevelError, __FILE__, __LINE__, msg)
 #define LOG_FTL(msg) Log(LogLevelFatal, __FILE__, __LINE__, msg)
 
-// Fixed variable names for LOGOBJ_ family of functions
-#define LOGOBJ_FN "Fn"
-#define LOGOBJ_FPS "FPS"
-#define LOGOBJ_MENU_SELECTION "MenuSelection"
-#define LOGOBJ_FILE_PATH "FilePath"
-#define LOGOBJ_LOG_LEVEL "LogLevel"
-#define LOGOBJ_SDL_ERROR "SdlError"
+#define LOGX_TRC(x) LogX(LogLevelTrace, __FILE__, __LINE__, x)
+#define LOGX_DBG(x) LogX(LogLevelDebug, __FILE__, __LINE__, x)
+#define LOGX_INF(x) LogX(LogLevelInfo,  __FILE__, __LINE__, x)
+#define LOGX_WRN(x) LogX(LogLevelWarn,  __FILE__, __LINE__, x)
+#define LOGX_ERR(x) LogX(LogLevelError, __FILE__, __LINE__, x)
+#define LOGX_FTL(x) LogX(LogLevelFatal, __FILE__, __LINE__, x)
 
-#define LOGOBJ_TRC(msg, typ, var) LogObj_##typ(LogLevelTrace, __FILE__, __LINE__, msg, var)
-#define LOGOBJ_DBG(msg, typ, var) LogObj_##typ(LogLevelDebug, __FILE__, __LINE__, msg, var)
-#define LOGOBJ_INF(msg, typ, var) LogObj_##typ(LogLevelInfo,  __FILE__, __LINE__, msg, var)
-#define LOGOBJ_WRN(msg, typ, var) LogObj_##typ(LogLevelWarn,  __FILE__, __LINE__, msg, var)
-#define LOGOBJ_ERR(msg, typ, var) LogObj_##typ(LogLevelError, __FILE__, __LINE__, msg, var)
-#define LOGOBJ_FTL(msg, typ, var) LogObj_##typ(LogLevelFatal, __FILE__, __LINE__, msg, var)
+#define LOGXV_TRC(x, typ, var) LogX_##typ(LogLevelTrace, __FILE__, __LINE__, x, var)
+#define LOGXV_DBG(x, typ, var) LogX_##typ(LogLevelDebug, __FILE__, __LINE__, x, var)
+#define LOGXV_INF(x, typ, var) LogX_##typ(LogLevelInfo,  __FILE__, __LINE__, x, var)
+#define LOGXV_WRN(x, typ, var) LogX_##typ(LogLevelWarn,  __FILE__, __LINE__, x, var)
+#define LOGXV_ERR(x, typ, var) LogX_##typ(LogLevelError, __FILE__, __LINE__, x, var)
+#define LOGXV_FTL(x, typ, var) LogX_##typ(LogLevelFatal, __FILE__, __LINE__, x, var)
 
 void Log(LogLevel level, const char* file, int line, const char* message);
-void LogObj_Int32(LogLevel level, const char* file, int line, const char* message, int32_t var);
-void LogObj_Float32(LogLevel level, const char* file, int line, const char* message, float var);
-void LogObj_String(LogLevel level, const char* file, int line, const char* message, const char* var);
-void LogObj_Vec2F(LogLevel level, const char* file, int line, const char* message, Vec2F var);
-void LogObj_Vec2I(LogLevel level, const char* file, int line, const char* message, Vec2I var);
-void LogObj_SdlRect(LogLevel level, const char* file, int line, const char* message, SDL_Rect var);
-void LogObj_ArrayOfInt32s(LogLevel level, const char* file, int line, const char* message, Array* var);
+void LogX(LogLevel level, const char* file, int line, XErr x);
+void LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var);
+void LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var);
 
 // Convenience macros
-#define LOGFN_TRC() LOGOBJ_TRC(LOGOBJ_FN, String, __FUNCTION__)
-#define LOGFN_DBG() LOGOBJ_DBG(LOGOBJ_FN, String, __FUNCTION__)
+#define LOGFN_TRC() LOGXV_TRC(XOK_FN, String, __FUNCTION__)
+#define LOGFN_DBG() LOGXV_DBG(XOK_FN, String, __FUNCTION__)
 
 #endif

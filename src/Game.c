@@ -2,7 +2,8 @@
 #include "Object.h"
 #include "Component.h"
 #include "Box2D.h"
-#include "TerrainLoader.h"
+#include "Cfg.h"
+#include "Log.h"
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -74,11 +75,27 @@ int Game_Level_Init() {
 	return 0;
 }
 
-int Game_Level_LoadTest() {
-	GAME->levelType = LEVEL_TYPE_SINGLE_PLAYER;
-	
-	TerrainLoader_LoadTiles(GAME, "resources/terrains/test.txt");
+XErr Game_Level_Load(const CfgLevel *cfg) {
+	for (int y = 0; y < cfg->h; y++) {
+		for (int x = 0; x < cfg->w; x++) {
+			const LevelTile *lvlTile = cfg->tiles + y * cfg->w + x;
+			if (lvlTile->gndTile) {
+				Object *tile = Pool_Mark(&GAME->objects, NULL, NULL);
+				REFLECT_ERROR(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
+			}
+			if (lvlTile->obj) {
+				Object *obj = Pool_Mark(&GAME->objects, NULL, NULL);
+				REFLECT_ERROR(Object_InitFromCfg(obj, lvlTile->obj, VEC2F(x, y)));
+			}
+		}
+	}
 
+	// TODO
+
+	return XOK;
+}
+
+int Game_Level_LoadTest() {
 	Array standardItemSet;
 	Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX, NULL);
 	Item_GenerateStandardItemSet(&standardItemSet);
@@ -94,43 +111,6 @@ int Game_Level_LoadTest() {
 
 	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
 	ObjectCamera_Init(camera);
-
-	const unsigned skeletonCount = 100;
-	for (unsigned i = 0; i < skeletonCount; i++) {
-		Object* skeleton = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectEnemy_Init(skeleton, (Vec2F) { (float)i, -10.0f }, NULL);
-	}
-
-	/*Object* wall = Pool_Mark(&GAME->objects, NULL, NULL);
-	ObjectWall_Init(wall, (Vec2F) { 0.0f, -2.0f });
-
-	Object* box = Pool_Mark(&GAME->objects, NULL, NULL);
-	ObjectStaticBox_Init(box, (Vec2F) { -2.0f, 0.0f });*/
-
-	TerrainLoader_LoadEnemies(GAME, "resources/terrains/test.txt");
-
-	return 0;
-}
-
-int Game_Level_LoadEditor() {
-	GAME->levelType = LEVEL_TYPE_LEVEL_EDITOR;
-	
-	TerrainLoader_LoadTiles(GAME, "resources/terrains/test.txt");
-
-	Object* god = Pool_Mark(&GAME->objects, NULL, &GAME->playerId);
-	ObjectGod_Init(god); // TODO check return value
-
-	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
-	ObjectCamera_Init(camera);
-
-	Object* skeleton = Pool_Mark(&GAME->objects, NULL, NULL);
-	ObjectEnemy_Init(skeleton, (Vec2F) { -2.0f, -2.0f }, NULL);
-
-	Object* wall = Pool_Mark(&GAME->objects, NULL, NULL);
-	ObjectWall_Init(wall, (Vec2F) { 0.0f, -2.0f });
-
-	Object* box = Pool_Mark(&GAME->objects, NULL, NULL);
-	ObjectStaticBox_Init(box, (Vec2F) { -2.0f, 0.0f });
 
 	return 0;
 }

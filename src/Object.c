@@ -3,21 +3,12 @@
 #include "Pool.h"
 #include <string.h>
 
-int ObjectProperties_Init(ObjectProperties* props) {
-	memset(props, 0, sizeof(ObjectProperties));
-	return 0;
-}
-
-void ObjectProperties_Term(ObjectProperties* props) {
-	memset(props, 0, sizeof(ObjectProperties));
-}
-
 int Object_Init(Object* obj, Vec2F position, bool initProperties) {
 	memset(obj, 0, sizeof(Object));
 	obj->position = position;
 	if (initProperties) {
-		obj->properties = malloc(sizeof(ObjectProperties));
-		return ObjectProperties_Init(obj->properties);
+		obj->properties = calloc(1, sizeof(ObjectProperties));
+		return 0;
 	} else {
 		return 0;
 	}

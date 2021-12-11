@@ -1,25 +1,20 @@
 #include "../Object.h"
-#include "../Main.h"
+#include "../Log.h"
 #include "../Box2DUtils.h"
-#include <string.h>
-#include <stdio.h>
 
-int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position) {
+int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTile *cfg, Vec2F position) {
+	LOGFN_TRC();
+
 	REFLECT_ERROR(Object_Init(obj, position, false));
 
-	if (tileDef.colliderSize.x && tileDef.colliderSize.y) {
+	if (cfg->collider.type == COLLIDER_TYPE_RECTANGLE) {
 		ID phyId = 0;
-		ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
-		phy->body = Box2DUtils_CreateStaticBox(phyId, position, CATEGORY_STATIC_CLIFF, tileDef.colliderSize);
+		ComponentPhysics *phy = Object_AddPhysics(obj, &phyId);
+		phy->body = Box2DUtils_CreateStaticBox(phyId, position, CATEGORY_STATIC_CLIFF, cfg->collider.colliderUnion.rect.dims_m);
 	}
-	
-	ComponentGraphics* gfx = Object_AddTerrainGraphics(obj, NULL);
-	gfx->txSrc = (SDL_Rect){
-		tileDef.txIndex.x * GAME->tileWidth,
-		tileDef.txIndex.y * GAME->tileWidth,
-		GAME->tileWidth,
-		GAME->tileWidth
-	};
-	
+
+	ComponentGraphics *gfx = Object_AddTerrainGraphics(obj, NULL);
+	gfx->txSrc = cfg->textureRect;
+
 	return 0;
 }

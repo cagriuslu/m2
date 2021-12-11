@@ -11,7 +11,7 @@ int DialogWaitForEvent(Array *uis) {
 		Events events;
 		if (Events_Gather(&events)) {
 			if (events.quitEvent) {
-				return XERR_QUIT;
+				return XOK_QUIT;
 			}
 			if (events.buttonsPressed[BUTTON_PRIMARY]) {
 				bool eventOccured = false;

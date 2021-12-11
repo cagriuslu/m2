@@ -73,8 +73,8 @@ typedef struct _PriorityListItem {
 } PriorityListItem;
 
 int _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
-	Vec2I from = Vec2F_To2I(fromF);
-	Vec2I to = Vec2F_To2I(toF);
+	Vec2I from = Vec2I_From2F(fromF);
+	Vec2I to = Vec2I_From2F(toF);
 
 	PriorityListItem tmpPrioListItem;
 	Vec2I tmpCameFrom;
@@ -180,7 +180,7 @@ int _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List
 	// Check if there is a path
 	Vec2I* currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(to));
 	if (currentCameFrom == NULL) {
-		result = XERR_NOT_FOUND;
+		result = XERR_PATH_NOT_FOUND;
 	} else {
 		result = 0;
 

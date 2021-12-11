@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "AI.h"
 #include "Array.h"
+#include "Cfg.h"
 #include "Item.h"
 #include "Character.h"
 #include "Vec2F.h"
@@ -39,9 +40,6 @@ typedef struct _ObjectProperties {
 	// Used by Enemy
 	AI* ai;
 } ObjectProperties;
-
-int ObjectProperties_Init(ObjectProperties* props);
-void ObjectProperties_Term(ObjectProperties* props);
 
 /// Basis of all objects in the game.
 /// 
@@ -80,12 +78,12 @@ typedef struct _TileDef {
 	Vec2F colliderOffset;
 } TileDef;
 
-int ObjectTile_Init(Object* obj, TileDef tileDef, Vec2F position);
+int Object_InitFromCfg(Object *obj, const CfgObject *cfg, Vec2F position);
+int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTile *cfg, Vec2F position);
 int ObjectPlayer_Init(Object* obj, Character* character);
-int ObjectGod_Init(Object* obj);
 int ObjectCamera_Init(Object* obj);
 int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense);
-int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor);
+int ObjectEnemy_InitFromCfg(Object* obj, const CfgObject *cfg, Vec2F position);
 int ObjectWall_Init(Object* obj, Vec2F position);
 int ObjectStaticBox_Init(Object* obj, Vec2F position);
 int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks);

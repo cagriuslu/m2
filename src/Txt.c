@@ -64,10 +64,10 @@ XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
 	while (true) {
 		Array lineBuffer = MyGetline(file);
 		if (Array_Length(&lineBuffer) == 0) {
-			LOGOBJ_ERR("CorruptedTxtFile", String, fpath);
+			LOGXV_ERR(XERR_FILE_CORRUPTED, String, fpath);
 			Array_Term(&lineBuffer);
 			fclose(file);
-			return XERR_CORRUPTED;
+			return XERR_FILE_CORRUPTED;
 		}
 		if (Array_Length(&lineBuffer) == 1) {
 			// Empty line
@@ -83,11 +83,11 @@ XErr Txt_InitFromFile(Txt* txt, const char* fpath) {
 		// Split key and value
 		Array split = MySplit(line, '\t');
 		if (Array_Length(&split) != 2) {
-			LOGOBJ_ERR("CorruptedTxtFile", String, fpath);
+			LOGXV_ERR(XERR_FILE_CORRUPTED, String, fpath);
 			Array_Term(&split);
 			Array_Term(&lineBuffer);
 			fclose(file);
-			return XERR_CORRUPTED;
+			return XERR_FILE_CORRUPTED;
 		}
 		char** keyPtr = Array_Get(&split, 0);
 		char** valuePtr = Array_Get(&split, 1);

@@ -34,6 +34,7 @@ typedef struct _CfgGroundTile {
 	CfgCollider collider;
 } CfgGroundTile;
 
+extern const CfgGroundTile CFG_GNDTILE_DEFAULT;
 extern const CfgGroundTile CFG_GNDTILE_GROUND000;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000T;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000R;
@@ -44,7 +45,11 @@ extern const CfgGroundTile CFG_GNDTILE_CLIFF000TL;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000BR;
 extern const CfgGroundTile CFG_GNDTILE_CLIFF000BL;
 
+#define CFG_OBJ_ID_PLAYER (1)
+#define CFG_OBJ_ID_ENEMY  (2)
+
 typedef struct _CfgObject {
+	int id;
 	SDL_Rect textureRect;
 	Vec2F objCenter_px;
 	Vec2F objCenter_m;

@@ -6,6 +6,7 @@
 #include "InsertionList.h"
 #include "Box2D.h"
 #include "Hud.h"
+#include "Cfg.h"
 #include "Pathfinder.h"
 #include "SpatialMap.h"
 #include <SDL.h>
@@ -18,7 +19,6 @@
 typedef enum _LevelType {
 	LEVEL_TYPE_INVALID = 0,
 	LEVEL_TYPE_SINGLE_PLAYER,
-	LEVEL_TYPE_LEVEL_EDITOR,
 } LevelType;
 
 typedef struct _Game {
@@ -63,10 +63,11 @@ typedef struct _Game {
 	//////////////////////////////// LEVEL /////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
 	bool levelLoaded;
-	// Objects are not meant to be iterated over, as it holds all types of objects
-	// If a certain type of object needs to be iterated over, create a component,
-	// attach the component to an object, put component in separate pool,
-	// and iterate over that pool.
+	// Objects are not meant to be iterated over, as it holds all types of objects. If a certain type of object needs to
+	// be iterated over, create a component, attach the component to an object, put component in separate pool, and
+	// iterate over that pool.
+	// Another reason to put a component inside a Pool: if the type of object that is using that component is
+	// created/destroyed very rapidly.
 	Pool objects;
 	InsertionList drawList;
 	Pool eventListeners;
@@ -77,7 +78,6 @@ typedef struct _Game {
 	Pool offenses;
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
-	LevelType levelType;
 	ID cameraId, playerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
@@ -97,8 +97,8 @@ extern Game* gCurrentGame;
 void Game_UpdateWindowDimensions(int width, int height);
 
 int Game_Level_Init();
+XErr Game_Level_Load(const CfgLevel *cfg);
 int Game_Level_LoadTest();
-int Game_Level_LoadEditor();
 void Game_Level_DeleteMarkedObjects();
 void Game_Level_Term();
 

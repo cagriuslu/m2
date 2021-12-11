@@ -108,8 +108,7 @@ void ObjectEnemy_Draw(ComponentGraphics* gfx) {
 	}
 }
 
-int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
-	(void)descriptor;
+int ObjectEnemy_InitFromCfg(Object* obj, const CfgObject *cfg, Vec2F position) {
 	REFLECT_ERROR(Object_Init(obj, position, true));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
@@ -117,24 +116,23 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 	gfx->draw = ObjectEnemy_Draw;
 
-	if (GAME->levelType != LEVEL_TYPE_LEVEL_EDITOR) {
-		obj->properties->ai = malloc(sizeof(AI));
-		assert(obj->properties->ai);
-		AI_Init(obj->properties->ai);
-		obj->properties->ai->recalculationPeriod = 500;
-		obj->properties->ai->recalculationStopwatch = rand() % obj->properties->ai->recalculationPeriod;
-		obj->properties->ai->attackPeriod = 500;
-		obj->properties->ai->attackStopwatch = rand() % obj->properties->ai->attackPeriod;
-		obj->properties->ai->homePosition = position;
-		obj->properties->ai->triggerDistance = 6.0f;
+	obj->properties->ai = malloc(sizeof(AI));
+	assert(obj->properties->ai);
+	AI_Init(obj->properties->ai);
+	obj->properties->ai->recalculationPeriod = 500;
+	obj->properties->ai->recalculationStopwatch = rand() % obj->properties->ai->recalculationPeriod;
+	obj->properties->ai->attackPeriod = 500;
+	obj->properties->ai->attackStopwatch = rand() % obj->properties->ai->attackPeriod;
+	obj->properties->ai->homePosition = position;
+	obj->properties->ai->triggerDistance = 6.0f;
 
-		ComponentEventListener* el = Object_AddEventListener(obj, NULL);
-		el->prePhysics = ObjectEnemy_prePhysics;
-		el->postPhysics = ObjectEnemy_postPhysics;
+	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
+	el->prePhysics = ObjectEnemy_prePhysics;
+	el->postPhysics = ObjectEnemy_postPhysics;
 
-		ID phyId = 0;
-		ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
-		phy->body = Box2DUtils_CreateDynamicDisk(
+	ID phyId = 0;
+	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
+	phy->body = Box2DUtils_CreateDynamicDisk(
 			phyId,
 			position,
 			true, // allowSleep
@@ -142,17 +140,16 @@ int ObjectEnemy_Init(Object* obj, Vec2F position, const char* descriptor) {
 			0.2083f, // Radius
 			10.0f, // Mass
 			10.0f // Damping
-		);
+	);
 
-		ComponentDefense* defense = Object_AddDefense(obj, NULL);
-		defense->hp = 100;
-		defense->maxHp = 100;
+	ComponentDefense* defense = Object_AddDefense(obj, NULL);
+	defense->hp = 100;
+	defense->maxHp = 100;
 
-		ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
-		offense->originator = Pool_GetId(&GAME->objects, obj);
-		offense->hp = 10;
-		offense->ttl = 100;
-	}
-	
+	ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
+	offense->originator = Pool_GetId(&GAME->objects, obj);
+	offense->hp = 10;
+	offense->ttl = 100;
+
 	return 0;
 }

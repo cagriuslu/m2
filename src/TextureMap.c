@@ -13,23 +13,21 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 	memset(tm, 0, sizeof(TextureMap));
 	SDL_Surface* image = IMG_Load(imageFile);
 	if (!image) {
-		LOG_ERR("Image file not found");
-		LOGOBJ_ERR(LOGOBJ_FILE_PATH, String, imageFile);
-		return XERR_NOT_FOUND;
+		LOGXV_ERR(XERR_FILE_NOT_FOUND, String, imageFile);
+		return XERR_FILE_NOT_FOUND;
 	}
 	tm->map = SDL_CreateTextureFromSurface(GAME->sdlRenderer, image);
 	if (!tm->map) {
 		LOG_ERR("Unable to convert surface to texture");
 		SDL_FreeSurface(image);
-		return XERR_SDL;
+		return XERR_SDL_ERROR;
 	}
 	SDL_Surface* metaImage = IMG_Load(metaImageFile);
 	if (!metaImage) {
-		LOG_ERR("Meta image file not found");
-		LOGOBJ_ERR(LOGOBJ_FILE_PATH, String, metaImageFile);
+		LOGXV_ERR(XERR_FILE_NOT_FOUND, String, metaImageFile);
 		SDL_DestroyTexture(tm->map);
 		SDL_FreeSurface(image);
-		return XERR_NOT_FOUND;
+		return XERR_FILE_NOT_FOUND;
 	}
 	Txt meta;
 	XErr result = Txt_InitFromFile(&meta, metaFile);
@@ -69,7 +67,7 @@ XErr TextureMap_Init(TextureMap* tm, unsigned pixelsPerMeter, const char* imageF
 		free(yStr);
 		free(xStr);
 
-		const Vec2F originPoint = VEC2I_TO2F(SDLUtils_CenterOfRect(texture->rect));
+		const Vec2F originPoint = Vec2F_FromVec2I(SDLUtils_CenterOfRect(texture->rect));
 
 		// Look for red pixels for center
 		ArrayOfVec2Is redPixels = FindPixels(metaImage, texture->rect, 255, 0, 0);
@@ -150,7 +148,7 @@ Vec2F FindCenterOfPixels(ArrayOfVec2Is* points) {
 	Vec2F center = VEC2F_ZERO;
 	for (size_t i = 0; i < Array_Length(points); i++) {
 		Vec2I* point = Array_Get(points, i);
-		center = Vec2F_Add(center, VEC2I_TO2F(*point));
+		center = Vec2F_Add(center, Vec2F_FromVec2I(*point));
 	}
 	return Vec2F_Div(center, (float)Array_Length(points));
 }
