@@ -8,7 +8,7 @@
 
 static void Sword_prePhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
-	ComponentOffense* offense = FindOffenseMeleeOfObject(obj);
+	ComponentOffense* offense = FindOffenseOfObject(obj);
 	offense->ttl -= GAME->deltaTicks;
 	if (offense->ttl <= 0) {
 		DeleteObject(obj);
@@ -17,10 +17,10 @@ static void Sword_prePhysics(ComponentEventListener* el) {
 
 static void Sword_postPhysics(ComponentEventListener* el) {
 	Object* obj = FindObjectOfComponent(el);
-	if (obj && obj->physics && obj->graphics && obj->offenseMelee) {
+	if (obj && obj->physics && obj->graphics && obj->offense) {
 		ComponentPhysics* phy = FindPhysicsOfObject(obj);
 		ComponentGraphics* gfx = FindGraphicsOfObject(obj);
-		ComponentOffense* off = FindOffenseMeleeOfObject(obj);
+		ComponentOffense* off = FindOffenseOfObject(obj);
 		if (phy && phy->body && gfx && off && off->originator) {
 			Object* originator = Pool_GetById(&GAME->objects, off->originator);
 			if (originator) {
@@ -35,8 +35,8 @@ static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	LOG_DBG("Collision");
 	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
 	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId);
-	if (obj && obj->offenseMelee && otherObj && otherObj->defense) {
-		ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offenseMelee);
+	if (obj && obj->offense && otherObj && otherObj->defense) {
+		ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offense);
 		ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
@@ -88,7 +88,7 @@ int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* or
 	gfx->txSrc = (SDL_Rect){ 6 * GAME->tileWidth, 4 * GAME->tileWidth, 2 * GAME->tileWidth, GAME->tileWidth };
 	gfx->txCenter = (Vec2F){ -14.0f, 0.0f };
 
-	ComponentOffense* off = Object_AddOffenseMelee(obj, NULL);
+	ComponentOffense* off = Object_AddOffense(obj, NULL);
 	ComponentOffense_CopyExceptSuper(off, originatorOffense);
 	off->ttl = ticks;
 	

@@ -18,16 +18,14 @@
 #define FindGraphicsById(id)          ((ComponentGraphics*)      Pool_GetById(&GAME->graphics, (id)))
 #define FindTerrainGraphicsById(id)   ((ComponentGraphics*)      Pool_GetById(&GAME->terrainGraphics, (id)))
 #define FindDefenseById(id)           ((ComponentDefense*)       Pool_GetById(&GAME->defenses, (id)))
-#define FindOffenseProjectileById(id) ((ComponentOffense*)       Pool_GetById(&GAME->offenses, (id)))
-#define FindOffenseMeleeById(id)      ((ComponentOffense*)       Pool_GetById(&GAME->offenses, (id)))
+#define FindOffenseById(id)           ((ComponentOffense*)       Pool_GetById(&GAME->offenses, (id)))
 
 #define FindEventListenerOfObject(obj)     (FindEventListenerById((obj->eventListener)))
 #define FindPhysicsOfObject(obj)           (FindPhysicsById((obj->physics)))
 #define FindGraphicsOfObject(obj)          (FindGraphicsById((obj->graphics)))
 #define FindTerrainGraphicsOfObject(obj)   (FindTerrainGraphicsById((obj->terrainGraphics)))
 #define FindDefenseOfObject(obj)           (FindDefenseById((obj->defense)))
-#define FindOffenseProjectileOfObject(obj) (FindOffenseProjectileById((obj->offenseProjectile)))
-#define FindOffenseMeleeOfObject(obj)      (FindOffenseMeleeById((obj->offenseMelee)))
+#define FindOffenseOfObject(obj)           (FindOffenseById((obj->offense)))
 
 #define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&GAME->deleteList, &__id__); } while (0)
 #define DeleteObject(obj)    DeleteObjectById(Pool_GetId(&GAME->objects, (obj)))
@@ -56,8 +54,7 @@ typedef struct _Object {
 	ID graphics;
 	ID terrainGraphics;
 	ID defense;
-	ID offenseProjectile;
-	ID offenseMelee;
+	ID offense;
 	ObjectProperties* properties;
 } Object;
 
@@ -69,8 +66,7 @@ ComponentPhysics* Object_AddPhysics(Object* obj, ID* outId);
 ComponentGraphics* Object_AddGraphics(Object* obj, ID* outId);
 ComponentGraphics* Object_AddTerrainGraphics(Object* obj, ID* outId);
 ComponentDefense* Object_AddDefense(Object* obj, ID* outId);
-ComponentOffense* Object_AddOffenseProjectile(Object* obj, ID* outId);
-ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId);
+ComponentOffense* Object_AddOffense(Object* obj, ID* outId);
 
 typedef struct _TileDef {
 	Vec2I txIndex;

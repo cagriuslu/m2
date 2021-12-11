@@ -17,7 +17,7 @@ static void Bullet_prePhysics(ComponentEventListener* el) {
 			Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 20.0f));
 		}
 
-		ComponentOffense* offense = FindOffenseProjectileOfObject(obj);
+		ComponentOffense* offense = FindOffenseOfObject(obj);
 		if (offense) {
 			offense->ttl -= GAME->deltaTicks;
 			if (offense->ttl <= 0) {
@@ -30,8 +30,8 @@ static void Bullet_prePhysics(ComponentEventListener* el) {
 static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
 	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId);
-	if (obj && obj->offenseProjectile && otherObj && otherObj->defense) {
-		ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offenseProjectile);
+	if (obj && obj->offense && otherObj && otherObj->defense) {
+		ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offense);
 		ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
@@ -84,7 +84,7 @@ int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType pro
 			break;
 	}
 
-	ComponentOffense* off = Object_AddOffenseProjectile(obj, NULL);
+	ComponentOffense* off = Object_AddOffense(obj, NULL);
 	ComponentOffense_CopyExceptSuper(off, copyOffense);
 
 	return 0;

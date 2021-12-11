@@ -33,7 +33,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 					if (obj->properties->ai->attackPeriod < obj->properties->ai->attackStopwatch) {
 						// If enough time passed for the next attack
 						Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
-						ObjectSword_Init(sword, obj->position, FindOffenseMeleeOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
+						ObjectSword_Init(sword, obj->position, FindOffenseOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
 						LOG_INF("Attacking player with melee");
 						
 						obj->properties->ai->attackStopwatch = 0;
@@ -146,7 +146,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgObject *cfg, Vec2F position) {
 	defense->hp = 100;
 	defense->maxHp = 100;
 
-	ComponentOffense* offense = Object_AddOffenseMelee(obj, NULL);
+	ComponentOffense* offense = Object_AddOffense(obj, NULL);
 	offense->originator = Pool_GetId(&GAME->objects, obj);
 	offense->hp = 10;
 	offense->ttl = 100;

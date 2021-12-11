@@ -41,13 +41,8 @@ void Object_Term(Object* obj) {
 		ComponentDefense_Term(def);
 		Pool_Unmark(&GAME->defenses, def);
 	}
-	if (obj->offenseProjectile) {
-		ComponentOffense* off = Pool_GetById(&GAME->offenses, obj->offenseProjectile);
-		ComponentOffense_Term(off);
-		Pool_Unmark(&GAME->offenses, off);
-	}
-	if (obj->offenseMelee) {
-		ComponentOffense* off = Pool_GetById(&GAME->offenses, obj->offenseMelee);
+	if (obj->offense) {
+		ComponentOffense* off = Pool_GetById(&GAME->offenses, obj->offense);
 		ComponentOffense_Term(off);
 		Pool_Unmark(&GAME->offenses, off);
 	}
@@ -114,22 +109,12 @@ ComponentDefense* Object_AddDefense(Object* obj, ID* outId) {
 	return def;
 }
 
-ComponentOffense* Object_AddOffenseProjectile(Object* obj, ID* outId) {
+ComponentOffense* Object_AddOffense(Object* obj, ID* outId) {
 	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentOffense* off = Pool_Mark(&GAME->offenses, NULL, &obj->offenseProjectile);
+	ComponentOffense* off = Pool_Mark(&GAME->offenses, NULL, &obj->offense);
 	ComponentOffense_Init(off, objectId);
 	if (outId) {
-		outId[0] = obj->offenseProjectile;
-	}
-	return off;
-}
-
-ComponentOffense* Object_AddOffenseMelee(Object* obj, ID* outId) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentOffense* off = Pool_Mark(&GAME->offenses, NULL, &obj->offenseMelee);
-	ComponentOffense_Init(off, objectId);
-	if (outId) {
-		outId[0] = obj->offenseMelee;
+		outId[0] = obj->offense;
 	}
 	return off;
 }

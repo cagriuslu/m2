@@ -56,7 +56,7 @@ void ComponentDefense_Term(ComponentDefense* def);
 
 typedef struct _ComponentOffense {
 	Component super;
-	ID originator; // Object ID
+	ID originator;
 	int ttl;
 	int hp;
 } ComponentOffense;
