@@ -101,7 +101,7 @@ int Game_Level_LoadTest() {
 	Item_GenerateStandardItemSet(&standardItemSet);
 	Character* character = malloc(sizeof(Character));
 	assert(character);
-	Character_Init(character, CHARTYP_HUMAN, 1, standardItemSet);
+	Character_Init(character, standardItemSet);
 	Character_Preprocess(character);
 
 	Object* player = Pool_Mark(&GAME->objects, NULL, &GAME->playerId);
