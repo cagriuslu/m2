@@ -2,26 +2,12 @@
 #include "Item.h"
 #include <string.h>
 
-XErr Character_Init(Character* char_, CharacterClass class_, unsigned level, Array itemArray) {
+XErr Character_Init(Character* char_, Array itemArray) {
 	memset(char_, 0, sizeof(Character));
-	char_->class_ = class_;
-	char_->level = level;
 	char_->itemArray = itemArray;
 	ComponentDefense_Init(&char_->charDefense, 0);
 	ComponentOffense_Init(&char_->charOffense, 0);
-	switch (class_) {
-		case CHARTYP_HUMAN:
-			switch (level) {
-				case 1:
-					char_->charDefense.maxHp = 100;
-					break;
-				default:
-					break;
-			}
-			break;
-		default:
-			break;
-	}
+	char_->charDefense.maxHp = 100;
 	ComponentDefense_Init(&char_->defense, 0);
 	ComponentOffense_Init(&char_->projectileOffense, 0);
 	ComponentOffense_Init(&char_->meleeOffense, 0);

@@ -29,7 +29,6 @@ typedef enum _ItemFlags {
 
 typedef struct _Item {
 	ItemType type;
-	int variant;
 	int flags;
 	// OFFENSE
 	unsigned offenseHitPoints;
@@ -38,7 +37,7 @@ typedef struct _Item {
 	unsigned defenseHitPoints;
 } Item;
 
-XErr Item_Init(Item* item, ItemType type, int variant);
+XErr Item_Init(Item* item, ItemType type);
 void Item_Term(Item* item);
 
 XErr Item_GenerateStandardItemSet(Array* arrayOfItems);

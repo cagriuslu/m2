@@ -7,11 +7,11 @@
 #include "../Log.h"
 #include <stdio.h>
 
-// Shoot with mouse primary and secondary
-// Change primary skill with wheel
-// Change secondary skill with middle button
-// Shift button is also used during combat
-// Ctrl and Alt should not be used during combat
+// Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
+// Mouse secondary button: melee weapon (player can only carry one melee weapon)
+// Mouse middle button: explosive weapon (player can only carry one explosive weapon)
+// Mouse middle scroll: change primary projectile weapon
+// Double tap directional buttons to dodge
 
 #define STOPWATCH_IDX_RANGED_ATTACK (0)
 #define STOPWATCH_IDX_MELEE_ATTACK (1)

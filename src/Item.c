@@ -1,10 +1,9 @@
 #include "Item.h"
 #include <string.h>
 
-XErr Item_Init(Item* item, ItemType type, int variant) {
+XErr Item_Init(Item* item, ItemType type) {
 	memset(item, 0, sizeof(Item));
 	item->type = type;
-	item->variant = variant;
 	switch (type) {
 	case ITEMTYP_GUN:
 	case ITEMTYP_RIFLE:
@@ -35,7 +34,6 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 
 	Item* stockGun = Array_Append(arrayOfItems, NULL);
 	stockGun->type = ITEMTYP_GUN;
-	stockGun->variant = 0;
 	stockGun->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_EQUIPPED;
 	stockGun->offenseHitPoints = 15;
 	stockGun->offenseTTL = 1250;
@@ -43,7 +41,6 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 
 	Item* stockRifle = Array_Append(arrayOfItems, NULL);
 	stockRifle->type = ITEMTYP_RIFLE;
-	stockRifle->variant = 0;
 	stockRifle->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_NEXT;
 	stockRifle->offenseHitPoints = 45;
 	stockRifle->offenseTTL = 2000;
@@ -51,7 +48,6 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 
 	Item* stockBow = Array_Append(arrayOfItems, NULL);
 	stockBow->type = ITEMTYP_BOW;
-	stockBow->variant = 0;
 	stockBow->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_PREV;
 	stockBow->offenseHitPoints = 35;
 	stockBow->offenseTTL = 1500;
@@ -59,7 +55,6 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 
 	Item* stockSword = Array_Append(arrayOfItems, NULL);
 	stockSword->type = ITEMTYP_SWORD;
-	stockSword->variant = 0;
 	stockSword->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_EQUIPPED;
 	stockSword->offenseHitPoints = 45;
 	stockSword->offenseTTL = 150;
@@ -67,7 +62,6 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 
 	Item* stockSpear = Array_Append(arrayOfItems, NULL);
 	stockSpear->type = ITEMTYP_SPEAR;
-	stockSpear->variant = 0;
 	stockSpear->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_NEXT;
 	stockSpear->offenseHitPoints = 85;
 	stockSpear->offenseTTL = 250;
@@ -75,7 +69,6 @@ XErr Item_GenerateStandardItemSet(Array* arrayOfItems) {
 
 	Item* stockDagger = Array_Append(arrayOfItems, NULL);
 	stockDagger->type = ITEMTYP_DAGGER;
-	stockDagger->variant = 0;
 	stockDagger->flags = ITEMFLAG_EQUIPABLE | ITEMFLAG_PREEQUIPPED_PREV;
 	stockDagger->offenseHitPoints = 25;
 	stockDagger->offenseTTL = 100;
