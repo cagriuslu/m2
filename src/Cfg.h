@@ -29,44 +29,61 @@ typedef struct _CfgCollider {
 	} colliderUnion;
 } CfgCollider;
 
-typedef struct _CfgGroundTile {
+typedef struct _CfgGroundTexture {
 	SDL_Rect textureRect;
 	CfgCollider collider;
-} CfgGroundTile;
+} CfgGroundTexture;
 
-extern const CfgGroundTile CFG_GNDTILE_DEFAULT;
-extern const CfgGroundTile CFG_GNDTILE_GROUND000;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000T;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000R;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000B;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000L;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000TR;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000TL;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000BR;
-extern const CfgGroundTile CFG_GNDTILE_CLIFF000BL;
+extern const CfgGroundTexture CFG_GNDTXTR_DEFAULT;
+extern const CfgGroundTexture CFG_GNDTXTR_GROUND000;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000T;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000R;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000B;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000L;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000TR;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000TL;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000BR;
+extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000BL;
 
 #define CFG_OBJ_ID_PLAYER (1)
 #define CFG_OBJ_ID_ENEMY  (2)
 
-typedef struct _CfgObject {
+typedef struct _CfgObjectTexture {
 	int id;
 	SDL_Rect textureRect;
 	Vec2F objCenter_px;
 	Vec2F objCenter_m;
 	CfgCollider collider;
-} CfgObject;
+} CfgObjectTexture;
 
-extern const CfgObject CFG_OBJ_BOX000;
-extern const CfgObject CFG_OBJ_SWORD000;
-extern const CfgObject CFG_OBJ_SKELETON000;
-extern const CfgObject CFG_OBJ_PLAYER000;
-extern const CfgObject CFG_OBJ_ARROW000;
-extern const CfgObject CFG_OBJ_BULLET000;
-extern const CfgObject CFG_OBJ_BULLET001;
+extern const CfgObjectTexture CFG_OBJTXTR_BOX000;
+extern const CfgObjectTexture CFG_OBJTXTR_SWORD000;
+extern const CfgObjectTexture CFG_OBJTXTR_SKELETON000;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER000;
+extern const CfgObjectTexture CFG_OBJTXTR_ARROW000;
+extern const CfgObjectTexture CFG_OBJTXTR_BULLET000;
+extern const CfgObjectTexture CFG_OBJTXTR_BULLET001;
+
+typedef struct _CfgRangedWeapon {
+	
+} CfgRangedWeapon;
+
+typedef struct _CfgMeleeWeapon {
+
+} CfgMeleeWeapon;
+
+typedef struct _CfgExplosiveWeapon {
+
+} CfgExplosiveWeapon;
+
+// Character
+// Weapon
+// Projectile
+// Explosive
 
 typedef struct _LevelTile {
-	const CfgGroundTile *gndTile;
-	const CfgObject *obj;
+	const CfgGroundTexture *gndTile;
+	const CfgObjectTexture *obj;
 } LevelTile;
 
 typedef struct _CfgLevel {

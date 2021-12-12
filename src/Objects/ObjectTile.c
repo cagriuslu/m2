@@ -2,7 +2,7 @@
 #include "../Log.h"
 #include "../Box2DUtils.h"
 
-int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTile *cfg, Vec2F position) {
+int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F position) {
 	LOGFN_TRC();
 
 	REFLECT_ERROR(Object_Init(obj, position, false));

@@ -108,7 +108,7 @@ void ObjectEnemy_Draw(ComponentGraphics* gfx) {
 	}
 }
 
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgObject *cfg, Vec2F position) {
+int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F position) {
 	REFLECT_ERROR(Object_Init(obj, position, true));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);

@@ -74,12 +74,12 @@ typedef struct _TileDef {
 	Vec2F colliderOffset;
 } TileDef;
 
-int Object_InitFromCfg(Object *obj, const CfgObject *cfg, Vec2F position);
-int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTile *cfg, Vec2F position);
+int Object_InitFromCfg(Object *obj, const CfgObjectTexture *cfg, Vec2F position);
+int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F position);
 int ObjectPlayer_Init(Object* obj, Character* character);
 int ObjectCamera_Init(Object* obj);
 int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense);
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgObject *cfg, Vec2F position);
+int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F position);
 int ObjectWall_Init(Object* obj, Vec2F position);
 int ObjectStaticBox_Init(Object* obj, Vec2F position);
 int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks);
