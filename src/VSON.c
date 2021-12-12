@@ -3,12 +3,40 @@
 #include "Array.h"
 #include "String.h"
 #include "Defs.h"
+#include "Log.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <ctype.h>
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
+
+XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f);
+void _VSON_Serialize_ToFile_AnyValue(VSON* vson, FILE* file);
+
+XErr VSON_Init_ParseFile(VSON* vson, const char* path) {
+	memset(vson, 0, sizeof(VSON));
+	FILE* f = fopen(path, "r");
+	if (!f) {
+		return XERR_FILE_NOT_FOUND;
+	}
+
+	XErr result = _VSON_ParseFile_UnknownValue(vson, f);
+	if (result == 0 && !feof(f)) {
+		// Check if anything left in file
+		int c;
+		while ((c = fgetc(f)) != EOF) {
+			if (!isspace(c)) {
+				result = XERR_FILE_CORRUPTED;
+				break;
+			}
+		}
+	}
+
+	fclose(f);
+	return result;
+}
 
 XErr VSON_InitObject(VSON* vson) {
 	memset(vson, 0, sizeof(VSON));
@@ -31,7 +59,7 @@ XErr VSON_InitString(VSON* vson, const char* string) {
 	return 0;
 }
 
-XErr VSON_InitStringNoCopy(VSON* vson, const char* string) {
+XErr VSON_InitString_NoCopy(VSON* vson, const char* string) {
 	memset(vson, 0, sizeof(VSON));
 	vson->type = VSON_VALUE_TYPE_STRING;
 	if ((vson->value.string = string ? string : calloc(1, 1)) == NULL) {
@@ -72,8 +100,6 @@ XErr _VSON_ParseFile_FetchPlainString(Array* buffer, FILE* f) {
 	
 	return 0;
 }
-
-XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f);
 
 XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 	XErr result = VSON_InitObject(vson);
@@ -279,7 +305,7 @@ XErr _VSON_ParseFile_PlainStringValue(VSON* vson, FILE* f) {
 	if (result) {
 		return result;
 	}
-	return VSON_InitStringNoCopy(vson, Array_TermNoFree(&buffer));
+	return VSON_InitString_NoCopy(vson, Array_TermNoFree(&buffer));
 }
 
 XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
@@ -311,29 +337,6 @@ XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
 		// Empty file
 		result = VSON_InitString(vson, NULL);
 	}
-	return result;
-}
-
-XErr VSON_InitParseFile(VSON* vson, const char* path) {
-	memset(vson, 0, sizeof(VSON));
-	FILE* f = fopen(path, "r");
-	if (!f) {
-		return XERR_FILE_NOT_FOUND;
-	}
-	
-	XErr result = _VSON_ParseFile_UnknownValue(vson, f);
-	if (result == 0 && !feof(f)) {
-		// Check if anything left in file
-		int c;
-		while ((c = fgetc(f)) != EOF) {
-			if (!isspace(c)) {
-				result = XERR_FILE_CORRUPTED;
-				break;
-			}
-		}
-	}
-	
-	fclose(f);
 	return result;
 }
 
@@ -372,22 +375,10 @@ VSON* VSON_Get(VSON* vson, const char* path) {
 	Array_Term(&pathPieces);
 	return vson;
 }
-
-VSON* VSON_GetObject(VSON* vson, const char* path) {
-	VSON* objPtr = VSON_Get(vson, path);
-	return (objPtr && objPtr->type == VSON_VALUE_TYPE_OBJECT) ? objPtr : NULL;
-}
-
-VSON* VSON_GetArray(VSON* vson, const char* path) {
-	VSON* arrayPtr = VSON_Get(vson, path);
-	return (arrayPtr && arrayPtr->type == VSON_VALUE_TYPE_ARRAY) ? arrayPtr : NULL;
-}
-
 const char* VSON_GetString(VSON* vson, const char* path) {
 	VSON* strPtr = VSON_Get(vson, path);
 	return (strPtr && strPtr->type == VSON_VALUE_TYPE_STRING) ? strPtr->value.string : NULL;
 }
-
 long VSON_GetLong(VSON* vson, const char* path, long defaultValue) {
 	const char* str = VSON_GetString(vson, path);
 	if (str) {
@@ -399,7 +390,6 @@ long VSON_GetLong(VSON* vson, const char* path, long defaultValue) {
 	}
 	return defaultValue;
 }
-
 float VSON_GetFloat(VSON* vson, const char* path, float defaultValue) {
 	const char* str = VSON_GetString(vson, path);
 	if (str) {
@@ -410,6 +400,71 @@ float VSON_GetFloat(VSON* vson, const char* path, float defaultValue) {
 		}
 	}
 	return defaultValue;
+}
+
+void _VSON_Serialize_ToFile_PrintString(FILE* file, const char* str) {
+	fprintf(file, "\"");
+	for (size_t i = 0; str[i] != 0; i++) {
+		char c = str[i];
+		if (c == '\\') {
+			fprintf(file, "\\\\");
+		} else if (c == '"') {
+			fprintf(file, "\\\"");
+		} else {
+			fprintf(file, "%c", c);
+		}
+	}
+	fprintf(file, "\"");
+}
+
+void _VSON_Serialize_ToFile_ObjectValue(VSON* vson, FILE* file) {
+	fprintf(file, "{");
+	VSON_OBJECT_ITERATE(vson, objKeyValuePtr) {
+		_VSON_Serialize_ToFile_PrintString(file, objKeyValuePtr->key);
+		fprintf(file, ":");
+		_VSON_Serialize_ToFile_AnyValue(&objKeyValuePtr->value, file);
+		fprintf(file, ",");
+	}
+	fprintf(file, "}");
+}
+
+void _VSON_Serialize_ToFile_ArrayValue(VSON* vson, FILE* file) {
+	fprintf(file, "[");
+	VSON_ARRAY_ITERATE(vson, arrayValuePtrName) {
+		_VSON_Serialize_ToFile_AnyValue(&arrayValuePtrName->value, file);
+		fprintf(file, ",");
+	}
+	fprintf(file, "]");
+}
+
+void _VSON_Serialize_ToFile_StringValue(VSON* vson, FILE* file) {
+	_VSON_Serialize_ToFile_PrintString(file, vson->value.string);
+}
+
+void _VSON_Serialize_ToFile_AnyValue(VSON* vson, FILE* file) {
+	switch (vson->type) {
+		case VSON_VALUE_TYPE_OBJECT:
+			return _VSON_Serialize_ToFile_ObjectValue(vson, file);
+		case VSON_VALUE_TYPE_ARRAY:
+			return _VSON_Serialize_ToFile_ArrayValue(vson, file);
+		case VSON_VALUE_TYPE_STRING:
+			return _VSON_Serialize_ToFile_StringValue(vson, file);
+		default:
+			break;
+	}
+}
+
+XErr VSON_Serialize_ToFile(VSON* vson, const char* path) {
+	FILE* file = fopen(path, "w");
+	if (!file) {
+		LOGXV_ERR(XERR_ERRNO, String, strerror(errno));
+		LOGXV_ERR(XERR_FILE_INACCESSIBLE, String, path);
+		return XERR_FILE_INACCESSIBLE;
+	}
+
+	_VSON_Serialize_ToFile_AnyValue(vson, file);
+	fclose(file);
+	return XOK;
 }
 
 void VSON_Term(VSON* vson) {

@@ -3,17 +3,19 @@
 
 #include <stdint.h>
 
-#define XOK_QUIT            (4)
-#define XOK_FPS             (3)
-#define XOK_LOG_LEVEL       (2)
-#define XOK_FN              (1)
-#define XOK                 (0)
-#define XERR_FILE_NOT_FOUND (-1)
-#define XERR_PATH_NOT_FOUND (-2)
-#define XERR_FILE_CORRUPTED (-3)
-#define XERR_SDL_ERROR      (-4)
-#define XERR_OUT_OF_MEMORY  (-5)
-#define XERR_LIMIT_EXCEEDED (-6)
+#define XOK_QUIT               (4)
+#define XOK_FPS                (3)
+#define XOK_LOG_LEVEL          (2)
+#define XOK_FN                 (1)
+#define XOK                    (0)
+#define XERR_FILE_NOT_FOUND    (-1)
+#define XERR_PATH_NOT_FOUND    (-2)
+#define XERR_FILE_CORRUPTED    (-3)
+#define XERR_SDL_ERROR         (-4)
+#define XERR_OUT_OF_MEMORY     (-5)
+#define XERR_LIMIT_EXCEEDED    (-6)
+#define XERR_ERRNO             (-7)
+#define XERR_FILE_INACCESSIBLE (-8)
 
 typedef int32_t XErr;
 
