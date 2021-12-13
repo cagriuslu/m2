@@ -67,45 +67,47 @@ typedef struct _CfgRangedWeapon {
 	float projectileDamage;
 	int projectileCount;
 	float rateOfFire;
+	int projectileTtl;
 } CfgRangedWeapon;
-extern const CfgRangedWeapon CFG_RANGEDWPN_GUN;
-extern const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN;
-extern const CfgRangedWeapon CFG_RANGEDWPN_SHOTGUN;
-extern const CfgRangedWeapon CFG_RANGEDWPN_BOWNARRAY;
+extern const CfgRangedWeapon CFG_RANGEDWPN_GUN; // Default
+extern const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN; // Fast, thus powerful
+extern const CfgRangedWeapon CFG_RANGEDWPN_SHOTGUN; // Slow but powerful
+extern const CfgRangedWeapon CFG_RANGEDWPN_BOWNARRAY; // Slow, but piercing, thus default
 
 typedef struct _CfgMeleeWeapon {
 	CfgObjectTexture* texture;
 	float meleeDamage;
 	float rateOfFire;
+	enum _CfgMeleeWeaponMotion {
+		MELEE_MOTION_SWING,
+		MELEE_MOTION_STAB,
+	} meleeMotion;
 } CfgMeleeWeapon;
-extern const CfgMeleeWeapon CFG_RANGEDWPN_BAT; // Default
-extern const CfgMeleeWeapon CFG_RANGEDWPN_SWORD; // Slow but powerful
-extern const CfgMeleeWeapon CFG_RANGEDWPN_SPEAR; // High damage and pierce
-extern const CfgMeleeWeapon CFG_RANGEDWPN_DAGGER; // Fast, thus powerful
+extern const CfgMeleeWeapon CFG_MELEEWPN_BAT; // Default
+extern const CfgMeleeWeapon CFG_MELEEWPN_SWORD; // Slow but powerful
+extern const CfgMeleeWeapon CFG_MELEEWPN_SPEAR; // Slow, High damage and pierce
+extern const CfgMeleeWeapon CFG_MELEEWPN_DAGGER; // Fast, thus powerful
 
 typedef struct _CfgExplosiveWeapon {
 	CfgObjectTexture* projectileTexture;
 	float projectileSpeed; // m/s
-	float projectileDamage;
+	float projectileDamageMax;
+	float projectileDamageMin;
 	float projectileDamageRadius;
 	float rateOfFire;
 } CfgExplosiveWeapon;
-extern const CfgRangedWeapon CFG_RANGEDWPN_GRENADE;
-extern const CfgRangedWeapon CFG_RANGEDWPN_GRENADELAUNCHER;
+extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
+extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
 
 typedef struct _CfgCharacter {
 	CfgObjectTexture* texture;
-	
+	float walkSpeed; // m/s
+	float hp;
+	CfgRangedWeapon* defaultRangedWeapon;
+	CfgMeleeWeapon* defaultMeleeWeapon;
+	CfgExplosiveWeapon* defaultExplosiveWeapon;
 } CfgCharacter;
-
-typedef struct _CfgPlayer {
-	CfgCharacter character;
-} CfgPlayer;
-
-// Character
-// Weapon
-// Projectile
-// Explosive
+extern const CfgCharacter CFG_CHARACTER_PLAYER;
 
 typedef struct _LevelTile {
 	const CfgGroundTexture *gndTile;
