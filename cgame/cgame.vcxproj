@@ -64,9 +64,10 @@
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Box2D.cpp" />
     <ClCompile Include="..\src\Box2DUtils.c" />
-    <ClCompile Include="..\src\Cfgs\CfgGroundTile.c" />
+    <ClCompile Include="..\src\Cfgs\CfgGroundTexture.c" />
     <ClCompile Include="..\src\Cfgs\CfgLevel.c" />
-    <ClCompile Include="..\src\Cfgs\CfgObject.c" />
+    <ClCompile Include="..\src\Cfgs\CfgObjectTexture.c" />
+    <ClCompile Include="..\src\Cfgs\CfgWeapon.c" />
     <ClCompile Include="..\src\Character.c" />
     <ClCompile Include="..\src\Component.c" />
     <ClCompile Include="..\src\Components\ComponentDefense.c" />

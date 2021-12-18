@@ -227,13 +227,13 @@
     <ClCompile Include="..\src\VSON.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Cfgs\CfgGroundTile.c">
+    <ClCompile Include="..\src\Cfgs\CfgGroundTexture.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Cfgs\CfgLevel.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Cfgs\CfgObject.c">
+    <ClCompile Include="..\src\Cfgs\CfgObjectTexture.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Components\ComponentDefense.c">
@@ -297,6 +297,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectCommon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Cfgs\CfgWeapon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
