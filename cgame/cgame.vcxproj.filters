@@ -302,5 +302,8 @@
     <ClCompile Include="..\src\Cfgs\CfgWeapon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Cfgs\CfgCharacter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
