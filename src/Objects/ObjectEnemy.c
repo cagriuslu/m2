@@ -13,76 +13,80 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 
 	float distanceToPlayer = 0.0f;
 
-	obj->properties->ai->recalculationStopwatch += GAME->deltaTicks;
-	obj->properties->ai->attackStopwatch += GAME->deltaTicks;
-	
-	if (obj->properties->ai->recalculationPeriod < obj->properties->ai->recalculationStopwatch) {
-		switch (obj->properties->ai->mode) {
-			case AI_IDLE:
-				// If player is close
-				if (Vec2F_Distance(obj->position, player->position) < obj->properties->ai->triggerDistance) {
-					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
-						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
+	if (obj->ex && obj->ex->type == CFG_OBJTYP_ENEMY) {
+		AI* ai = obj->ex->value.enemy.ai;
+		
+		ai->recalculationStopwatch += GAME->deltaTicks;
+		ai->attackStopwatch += GAME->deltaTicks;
+
+		if (ai->recalculationPeriod < ai->recalculationStopwatch) {
+			switch (ai->mode) {
+				case AI_IDLE:
+					// If player is close
+					if (Vec2F_Distance(obj->position, player->position) < ai->triggerDistance) {
+						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
+						if (1 < List_Length(&ai->reversedWaypointList)) {
+							ai->mode = AI_GOING_AFTER_PLAYER;
+						}
 					}
-				}
-				break;
-			case AI_GOING_AFTER_PLAYER:
-				distanceToPlayer = Vec2F_Distance(obj->position, player->position);
-				if (distanceToPlayer < 1.2f) {
-					if (obj->properties->ai->attackPeriod < obj->properties->ai->attackStopwatch) {
-						// If enough time passed for the next attack
-						Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
-						ObjectSword_Init(sword, obj->position, FindOffenseOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
-						LOG_INF("Attacking player with melee");
-						
-						obj->properties->ai->attackStopwatch = 0;
-					}
-					obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
-				} else if (distanceToPlayer < 2 * obj->properties->ai->triggerDistance) {
-					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
-						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
+					break;
+				case AI_GOING_AFTER_PLAYER:
+					distanceToPlayer = Vec2F_Distance(obj->position, player->position);
+					if (distanceToPlayer < 1.2f) {
+						if (ai->attackPeriod < ai->attackStopwatch) {
+							// If enough time passed for the next attack
+							Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
+							ObjectSword_Init(sword, obj->position, FindOffenseOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
+							LOG_INF("Attacking player with melee");
+
+							ai->attackStopwatch = 0;
+						}
+						ai->mode = AI_GOING_AFTER_PLAYER;
+					} else if (distanceToPlayer < 2 * ai->triggerDistance) {
+						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
+						if (1 < List_Length(&ai->reversedWaypointList)) {
+							ai->mode = AI_GOING_AFTER_PLAYER;
+						} else {
+							ai->mode = AI_GOING_BACK_TO_HOME;
+						}
 					} else {
-						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
+						ai->mode = AI_GOING_BACK_TO_HOME;
 					}
-				} else {
-					obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
-				}
-				break;
-			case AI_GOING_BACK_TO_HOME:
-				if (Vec2F_Distance(obj->position, player->position) < obj->properties->ai->triggerDistance) {
-					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &obj->properties->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
-						obj->properties->ai->mode = AI_GOING_AFTER_PLAYER;
+					break;
+				case AI_GOING_BACK_TO_HOME:
+					if (Vec2F_Distance(obj->position, player->position) < ai->triggerDistance) {
+						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
+						if (1 < List_Length(&ai->reversedWaypointList)) {
+							ai->mode = AI_GOING_AFTER_PLAYER;
+						} else {
+							ai->mode = AI_GOING_BACK_TO_HOME;
+						}
 					} else {
-						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
+						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, ai->homePosition, &ai->reversedWaypointList);
+						if (1 < List_Length(&ai->reversedWaypointList)) {
+							ai->mode = AI_GOING_BACK_TO_HOME;
+						} else {
+							ai->mode = AI_IDLE;
+						}
 					}
-				} else {
-					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, obj->properties->ai->homePosition, &obj->properties->ai->reversedWaypointList);
-					if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
-						obj->properties->ai->mode = AI_GOING_BACK_TO_HOME;
-					} else {
-						obj->properties->ai->mode = AI_IDLE;
-					}
-				}
-				break;
+					break;
+			}
+
+			ai->recalculationStopwatch = 0;
 		}
 
-		obj->properties->ai->recalculationStopwatch = 0;
-	}
+		if (1 < List_Length(&ai->reversedWaypointList)) {
+			ID myPositionIterator = List_GetLast(&ai->reversedWaypointList);
+			Vec2I* myPosition = List_GetData(&ai->reversedWaypointList, myPositionIterator);
 
-	if (1 < List_Length(&obj->properties->ai->reversedWaypointList)) {
-		ID myPositionIterator = List_GetLast(&obj->properties->ai->reversedWaypointList);
-		Vec2I* myPosition = List_GetData(&obj->properties->ai->reversedWaypointList, myPositionIterator);
-		
-		ID targetIterator = List_GetPrev(&obj->properties->ai->reversedWaypointList, myPositionIterator);
-		Vec2I* targetPosition = List_GetData(&obj->properties->ai->reversedWaypointList, targetIterator);
-		
-		if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
-			ComponentPhysics* phy = FindPhysicsOfObject(obj);
-			Vec2F direction = Vec2F_Sub(Vec2F_FromVec2I(*targetPosition), obj->position);
-			Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), GAME->deltaTicks * 20.0f), true);
+			ID targetIterator = List_GetPrev(&ai->reversedWaypointList, myPositionIterator);
+			Vec2I* targetPosition = List_GetData(&ai->reversedWaypointList, targetIterator);
+
+			if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
+				ComponentPhysics* phy = FindPhysicsOfObject(obj);
+				Vec2F direction = Vec2F_Sub(Vec2F_FromVec2I(*targetPosition), obj->position);
+				Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), GAME->deltaTicks * 20.0f), true);
+			}
 		}
 	}
 }
@@ -116,15 +120,17 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F posi
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 	gfx->draw = ObjectEnemy_Draw;
 
-	obj->properties->ai = malloc(sizeof(AI));
-	assert(obj->properties->ai);
-	AI_Init(obj->properties->ai);
-	obj->properties->ai->recalculationPeriod = 500;
-	obj->properties->ai->recalculationStopwatch = rand() % obj->properties->ai->recalculationPeriod;
-	obj->properties->ai->attackPeriod = 500;
-	obj->properties->ai->attackStopwatch = rand() % obj->properties->ai->attackPeriod;
-	obj->properties->ai->homePosition = position;
-	obj->properties->ai->triggerDistance = 6.0f;
+	obj->ex->type = CFG_OBJTYP_ENEMY;
+	AI* ai = malloc(sizeof(AI));
+	assert(ai);
+	AI_Init(ai);
+	ai->recalculationPeriod = 500;
+	ai->recalculationStopwatch = rand() % ai->recalculationPeriod;
+	ai->attackPeriod = 500;
+	ai->attackStopwatch = rand() % ai->attackPeriod;
+	ai->homePosition = position;
+	ai->triggerDistance = 6.0f;
+	obj->ex->value.enemy.ai = ai;
 
 	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
 	el->prePhysics = ObjectEnemy_prePhysics;
@@ -133,13 +139,13 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F posi
 	ID phyId = 0;
 	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
 	phy->body = Box2DUtils_CreateDynamicDisk(
-			phyId,
-			position,
-			true, // allowSleep
-			CATEGORY_ENEMY,
-			0.2083f, // Radius
-			10.0f, // Mass
-			10.0f // Damping
+		phyId,
+		position,
+		true, // allowSleep
+		CATEGORY_ENEMY,
+		0.2083f, // Radius
+		10.0f, // Mass
+		10.0f // Damping
 	);
 
 	ComponentDefense* defense = Object_AddDefense(obj, NULL);

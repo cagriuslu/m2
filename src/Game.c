@@ -83,10 +83,7 @@ XErr Game_Level_Load(const CfgLevel *cfg) {
 				Object *tile = Pool_Mark(&GAME->objects, NULL, NULL);
 				REFLECT_ERROR(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
 			}
-			if (lvlTile->obj) {
-				Object *obj = Pool_Mark(&GAME->objects, NULL, NULL);
-				REFLECT_ERROR(Object_InitFromCfg(obj, lvlTile->obj, VEC2F(x, y)));
-			}
+			// TODO init characters and objects
 		}
 	}
 

@@ -2,6 +2,7 @@
 
 const CfgCharacter CFG_CHARACTER_PLAYER = {
 	.texture = &CFG_OBJTXTR_PLAYER000,
+	.objType = CFG_OBJTYP_PLAYER,
 	.walkSpeed = 0.8f,
 	.hp = 100.0f,
 	.defaultRangedWeapon = &CFG_RANGEDWPN_GUN,
@@ -11,6 +12,7 @@ const CfgCharacter CFG_CHARACTER_PLAYER = {
 };
 const CfgCharacter CFG_CHARACTER_SKELETON000 = {
 	.texture = &CFG_OBJTXTR_SKELETON000,
+	.objType = CFG_OBJTYP_ENEMY,
 	.walkSpeed = 0.55f,
 	.hp = 100.0f,
 	.defaultRangedWeapon = NULL,

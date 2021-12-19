@@ -96,8 +96,15 @@ typedef struct _CfgExplosiveWeapon {
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
 
+typedef enum _CfgObjectType {
+	CFG_OBJTYP_NONE = 0,
+	CFG_OBJTYP_PLAYER,
+	CFG_OBJTYP_ENEMY
+} CfgObjectType;
+
 typedef struct _CfgCharacter {
 	const CfgObjectTexture* texture;
+	CfgObjectType objType;
 	float walkSpeed; // m/s
 	float hp;
 	const CfgRangedWeapon* defaultRangedWeapon;
@@ -115,6 +122,7 @@ typedef struct _CfgLevel {
 	} *tiles;
 	int w, h;
 } CfgLevel;
+typedef struct _LevelTile LevelTile;
 extern const CfgLevel CFG_LVL_SP000;
 
 #endif

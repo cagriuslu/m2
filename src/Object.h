@@ -30,14 +30,19 @@
 #define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&GAME->deleteList, &__id__); } while (0)
 #define DeleteObject(obj)    DeleteObjectById(Pool_GetId(&GAME->objects, (obj)))
 
-typedef struct _ObjectProperties {
-	// Used by Player
-	Character* character;
-	Stopwatch rangedAttackStopwatch;
-	Stopwatch meleeAttackStopwatch;
-	// Used by Enemy
-	AI* ai;
-} ObjectProperties;
+typedef struct _ObjectEx {
+	CfgObjectType type;
+	union {
+		struct {
+			Character* character;
+			Stopwatch rangedAttackStopwatch;
+			Stopwatch meleeAttackStopwatch;
+		} player;
+		struct {
+			AI* ai;
+		} enemy;
+	} value;
+} ObjectEx;
 
 /// Basis of all objects in the game.
 /// 
@@ -55,7 +60,7 @@ typedef struct _Object {
 	ID terrainGraphics;
 	ID defense;
 	ID offense;
-	ObjectProperties* properties;
+	ObjectEx* ex;
 } Object;
 
 int Object_Init(Object* obj, Vec2F position, bool initProperties);
@@ -74,7 +79,6 @@ typedef struct _TileDef {
 	Vec2F colliderOffset;
 } TileDef;
 
-int Object_InitFromCfg(Object *obj, const CfgObjectTexture *cfg, Vec2F position);
 int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F position);
 int ObjectPlayer_Init(Object* obj, Character* character);
 int ObjectCamera_Init(Object* obj);

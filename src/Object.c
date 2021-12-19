@@ -7,7 +7,7 @@ int Object_Init(Object* obj, Vec2F position, bool initProperties) {
 	memset(obj, 0, sizeof(Object));
 	obj->position = position;
 	if (initProperties) {
-		obj->properties = calloc(1, sizeof(ObjectProperties));
+		obj->ex = calloc(1, sizeof(ObjectEx));
 		return 0;
 	} else {
 		return 0;
@@ -46,14 +46,8 @@ void Object_Term(Object* obj) {
 		ComponentOffense_Term(off);
 		Pool_Unmark(&GAME->offenses, off);
 	}
-	if (obj->properties) {
-		if (obj->properties->character) {
-			// TODO: who should terminate the Character?
-		}
-		if (obj->properties->ai) {
-			AI_Term(obj->properties->ai);
-			free(obj->properties->ai);
-		}
+	if (obj->ex) {
+		// TODO
 	}
 	memset(obj, 0, sizeof(Object));
 }
