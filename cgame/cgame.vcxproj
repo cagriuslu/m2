@@ -25,7 +25,6 @@
     <ClInclude Include="..\src\Box2D.h" />
     <ClInclude Include="..\src\Box2DUtils.h" />
     <ClInclude Include="..\src\Cfg.h" />
-    <ClInclude Include="..\src\Character.h" />
     <ClInclude Include="..\src\Component.h" />
     <ClInclude Include="..\src\Constants.h" />
     <ClInclude Include="..\src\Controls.h" />
@@ -38,7 +37,6 @@
     <ClInclude Include="..\src\Hud.h" />
     <ClInclude Include="..\src\HudWidget.h" />
     <ClInclude Include="..\src\InsertionList.h" />
-    <ClInclude Include="..\src\Item.h" />
     <ClInclude Include="..\src\List.h" />
     <ClInclude Include="..\src\Log.h" />
     <ClInclude Include="..\src\Main.h" />
@@ -69,7 +67,6 @@
     <ClCompile Include="..\src\Cfgs\CfgLevel.c" />
     <ClCompile Include="..\src\Cfgs\CfgObjectTexture.c" />
     <ClCompile Include="..\src\Cfgs\CfgWeapon.c" />
-    <ClCompile Include="..\src\Character.c" />
     <ClCompile Include="..\src\Component.c" />
     <ClCompile Include="..\src\Components\ComponentDefense.c" />
     <ClCompile Include="..\src\Components\ComponentEventListener.c" />
@@ -86,18 +83,17 @@
     <ClCompile Include="..\src\Hud.c" />
     <ClCompile Include="..\src\HudWidgets\HudWidgetHealthPoints.c" />
     <ClCompile Include="..\src\InsertionList.c" />
-    <ClCompile Include="..\src\Item.c" />
     <ClCompile Include="..\src\List.c" />
     <ClCompile Include="..\src\Log.c" />
     <ClCompile Include="..\src\Main.c" />
     <ClCompile Include="..\src\Object.c" />
-    <ClCompile Include="..\src\Objects\ObjectBullet.c" />
     <ClCompile Include="..\src\Objects\ObjectCamera.c" />
     <ClCompile Include="..\src\Objects\ObjectCommon.c" />
     <ClCompile Include="..\src\Objects\ObjectEnemy.c" />
+    <ClCompile Include="..\src\Objects\ObjectMelee.c" />
     <ClCompile Include="..\src\Objects\ObjectPlayer.c" />
+    <ClCompile Include="..\src\Objects\ObjectProjectile.c" />
     <ClCompile Include="..\src\Objects\ObjectStaticBox.c" />
-    <ClCompile Include="..\src\Objects\ObjectSword.c" />
     <ClCompile Include="..\src\Objects\ObjectTile.c" />
     <ClCompile Include="..\src\Objects\ObjectWall.c" />
     <ClCompile Include="..\src\Pathfinder.c" />

@@ -33,9 +33,6 @@
     <ClInclude Include="..\src\Cfg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Character.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\InsertionList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\List.h">
@@ -146,9 +140,6 @@
     <ClCompile Include="..\src\Box2DUtils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Character.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Component.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -171,9 +162,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\InsertionList.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Item.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\List.c">
@@ -257,9 +245,6 @@
     <ClCompile Include="..\src\HudWidgets\HudWidgetHealthPoints.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Objects\ObjectBullet.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectCamera.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -270,9 +255,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectStaticBox.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Objects\ObjectSword.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectTile.c">
@@ -303,6 +285,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Cfgs\CfgCharacter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectMelee.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Objects\ObjectProjectile.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
