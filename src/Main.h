@@ -6,7 +6,6 @@
 #include "Game.h"
 #include "Array.h"
 #include "Event.h"
-#include "Character.h"
 #include "TextureMap.h"
 #include <SDL.h>
 #include <SDL_ttf.h>

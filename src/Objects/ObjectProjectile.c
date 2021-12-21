@@ -1,7 +1,6 @@
 #include "../Object.h"
 #include "../Main.h"
 #include "../Box2DUtils.h"
-#include "../Item.h"
 #include "../Log.h"
 #include <math.h>
 #include <stdio.h>
@@ -19,7 +18,7 @@ static void Bullet_prePhysics(ComponentEventListener* el) {
 
 		ComponentOffense* offense = FindOffenseOfObject(obj);
 		if (offense) {
-			offense->ttl -= GAME->deltaTicks;
+			offense->ttl -= GAME->deltaTicks / 1000.0f;
 			if (offense->ttl <= 0) {
 				DeleteObject(obj);
 			}
@@ -45,17 +44,16 @@ static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 	DeleteObject(obj);
 }
 
-int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense) {
+int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction) {
 	direction = Vec2F_Normalize(direction);
 	REFLECT_ERROR(Object_Init(obj, position, false));
 
-	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
+	ComponentEventListener* el = Object_AddEventListener(obj);
 	el->prePhysics = Bullet_prePhysics;
 
-	ID phyId = 0;
-	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
+	ComponentPhysics* phy = Object_AddPhysics(obj);
 	phy->body = Box2DUtils_CreateBulletSensor(
-		phyId,
+		Pool_GetId(&GAME->physics, phy),
 		position,
 		CATEGORY_PLAYER_BULLET,
 		0.167f, // Radius
@@ -65,27 +63,15 @@ int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType pro
 	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 10.0f)); // Give initial velocity
 	phy->onCollision = Bullet_onCollision;
 	
-	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddGraphics(obj);
 	gfx->txAngle = ANGLE(direction);
-	switch (projectileType) {
-		case ITEMTYP_GUN:
-			gfx->txSrc = (SDL_Rect){ 4 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
-			gfx->txCenter = (Vec2F){ 1.5f, 0.5f };
-			break;
-		case ITEMTYP_RIFLE:
-			gfx->txSrc = (SDL_Rect){ 5 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
-			gfx->txCenter = (Vec2F){ 3.5f, 0.5f };
-			break;
-		case ITEMTYP_BOW:
-			gfx->txSrc = (SDL_Rect){ 3 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
-			gfx->txCenter = (Vec2F){ 2.5f, 0.5f };
-			break;
-		default:
-			break;
-	}
+	gfx->txSrc = (SDL_Rect){ 4 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
+	gfx->txCenter = (Vec2F){ 1.5f, 0.5f };
 
-	ComponentOffense* off = Object_AddOffense(obj, NULL);
-	ComponentOffense_CopyExceptSuper(off, copyOffense);
+	ComponentOffense* off = Object_AddOffense(obj);
+	off->originator = originatorId;
+	off->hp = cfg->damage;
+	off->ttl = cfg->ttl;
 
 	return 0;
 }

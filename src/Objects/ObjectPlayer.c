@@ -1,6 +1,5 @@
 #include "../Object.h"
 #include "../Main.h"
-#include "../Item.h"
 #include "../Box2DUtils.h"
 #include "../Controls.h"
 #include "../Event.h"
@@ -12,10 +11,6 @@
 // Mouse middle button: explosive weapon (player can only carry one explosive weapon)
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
-
-#define STOPWATCH_IDX_RANGED_ATTACK (0)
-#define STOPWATCH_IDX_MELEE_ATTACK (1)
-#define STOPWATCH_COUNT (2)
 
 static void Player_prePhysics(ComponentEventListener* el) {
 	Object* obj = Pool_GetById(&GAME->objects, el->super.objId);
@@ -41,106 +36,49 @@ static void Player_prePhysics(ComponentEventListener* el) {
 			}
 			Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
 		}
-		
-		Character* character = obj->ex->value.player.character;
-		if (GAME->events.buttonsPressed[BUTTON_SCROLL_DOWN]) {
-			Item* curr, * next, * prev;
-			if (GAME->events.keyStates[KEY_MODIFIER_SHIFT]) {
-				LOG_INF("Switched to next secondary weapon");
-				curr = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
-				next = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
-				prev = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
-			} else {
-				LOG_INF("Switched to next primary weapon");
-				curr = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
-				next = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
-				prev = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
-			}
-			curr->flags &= ~ITEMFLAG_EQUIPPED;
-			curr->flags |= ITEMFLAG_PREEQUIPPED_PREV;
-			next->flags &= ~ITEMFLAG_PREEQUIPPED_NEXT;
-			next->flags |= ITEMFLAG_EQUIPPED;
-			prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
-			prev->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
-			Character_Preprocess(character);
-		} else if (GAME->events.buttonsPressed[BUTTON_SCROLL_UP]) {
-			Item* curr, * next, * prev;
-			if (GAME->events.keyStates[KEY_MODIFIER_SHIFT]) {
-				LOG_INF("Switched to previous secondary weapon");
-				curr = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_EQUIPPED);
-				next = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_NEXT);
-				prev = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_SWORD | ITEMTYP_SPEAR | ITEMTYP_DAGGER, ITEMFLAG_PREEQUIPPED_PREV);
-			} else {
-				LOG_INF("Switched to previous primary weapon");
-				curr = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
-				next = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_NEXT);
-				prev = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_PREEQUIPPED_PREV);
-			}
-			curr->flags &= ~ITEMFLAG_EQUIPPED;
-			curr->flags |= ITEMFLAG_PREEQUIPPED_NEXT;
-			next->flags &= ~ITEMFLAG_PREEQUIPPED_NEXT;
-			next->flags |= ITEMFLAG_PREEQUIPPED_PREV;
-			prev->flags &= ~ITEMFLAG_PREEQUIPPED_PREV;
-			prev->flags |= ITEMFLAG_EQUIPPED;
-			Character_Preprocess(character);
-		} else {
-			if (GAME->events.buttonStates[BUTTON_PRIMARY] && (100 < obj->ex->value.player.rangedAttackStopwatch)) {
-				Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
-				Vec2F bulletDir = Vec2F_Sub(pointerPosInWorld, obj->position);
 
-				Object* bullet = Pool_Mark(&GAME->objects, NULL, NULL);
-				Item* projectileWeapon = Item_FindItemByTypeByFlags(&character->itemArray, ITEMTYP_GUN | ITEMTYP_RIFLE | ITEMTYP_BOW, ITEMFLAG_EQUIPPED);
-				ObjectBullet_Init(bullet, obj->position, bulletDir, projectileWeapon->type, &character->projectileOffense);
-				obj->ex->value.player.rangedAttackStopwatch = 0;
-			}
-
-			if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->value.player.meleeAttackStopwatch)) {
-				Vec2F pointerPosInWorld = CurrentPointerPositionInWorld();
-				Vec2F swordDir = Vec2F_Sub(pointerPosInWorld, obj->position);
-
-				Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
-				ObjectSword_Init(sword, obj->position, &character->meleeOffense, false, swordDir, 150);
-				obj->ex->value.player.meleeAttackStopwatch = 0;
-			}
+		if (GAME->events.buttonStates[BUTTON_PRIMARY] && (100 < obj->ex->value.player.rangedAttackStopwatch)) {
+			Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
+			ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
+			obj->ex->value.player.rangedAttackStopwatch = 0;
+		}
+		if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->value.player.meleeAttackStopwatch)) {
+			Object* melee = Pool_Mark(&GAME->objects, NULL, NULL);
+			ObjectMelee_InitFromCfg(melee, &obj->ex->value.player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
+			obj->ex->value.player.meleeAttackStopwatch = 0;
 		}
 	}
 }
 
-int ObjectPlayer_Init(Object* obj, Character* character) {
+int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	REFLECT_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
-	ID objId = Pool_GetId(&GAME->objects, obj);
-
 	obj->ex->type = CFG_OBJTYP_PLAYER;
-	// Write-back originator ID of Character Offenses
-	obj->ex->value.player.character = character;
-	obj->ex->value.player.character->charOffense.originator = objId;
-	Character_Preprocess(obj->ex->value.player.character);
+	obj->ex->value.player.chr = cfg;
 
-	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
+	ComponentEventListener* el = Object_AddEventListener(obj);
 	el->prePhysics = Player_prePhysics;
 
 	TextureMap* textureMap = CurrentTextureMap();
 	Texture* texture = HashMap_GetStringKey(&textureMap->lut, "playr00");
 
-	ID phyId = 0;
-	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
+	ComponentPhysics* phy = Object_AddPhysics(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
-		phyId,
+		Pool_GetId(&GAME->physics, phy),
 		obj->position,
 		false, // allowSleep
 		CATEGORY_PLAYER,
-		texture->diskRadius,
+		cfg->texture->collider.colliderUnion.circ.radius_m,
 		4.0f, // Mass
 		10.0f // Damping
 	);
 
-	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddGraphics(obj);
 	gfx->txSrc = texture->rect;
 	gfx->txCenter = texture->center;
 
-	ComponentDefense* def = Object_AddDefense(obj, NULL);
-	ComponentDefense_CopyExceptSuper(def, &obj->ex->value.player.character->defense);
-	def->hp = def->maxHp;
+	ComponentDefense* def = Object_AddDefense(obj);
+	def->maxHp = def->hp = cfg->hp;
 
-	return 0;
+	GAME->playerId = Pool_GetId(&GAME->objects, obj);
+	return XOK;
 }

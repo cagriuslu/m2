@@ -16,6 +16,7 @@
 #define XERR_LIMIT_EXCEEDED    (-6)
 #define XERR_ERRNO             (-7)
 #define XERR_FILE_INACCESSIBLE (-8)
+#define XERR_OBJTYP_NOT_FOUND  (-9)
 
 typedef int32_t XErr;
 

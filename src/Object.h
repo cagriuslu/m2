@@ -5,8 +5,6 @@
 #include "AI.h"
 #include "Array.h"
 #include "Cfg.h"
-#include "Item.h"
-#include "Character.h"
 #include "Vec2F.h"
 #include <stdint.h>
 
@@ -30,20 +28,6 @@
 #define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&GAME->deleteList, &__id__); } while (0)
 #define DeleteObject(obj)    DeleteObjectById(Pool_GetId(&GAME->objects, (obj)))
 
-typedef struct _ObjectEx {
-	CfgObjectType type;
-	union {
-		struct {
-			Character* character;
-			Stopwatch rangedAttackStopwatch;
-			Stopwatch meleeAttackStopwatch;
-		} player;
-		struct {
-			AI* ai;
-		} enemy;
-	} value;
-} ObjectEx;
-
 /// Basis of all objects in the game.
 /// 
 /// How to decide if a component should reside in Pool or be held as a property?
@@ -60,32 +44,40 @@ typedef struct _Object {
 	ID terrainGraphics;
 	ID defense;
 	ID offense;
-	ObjectEx* ex;
+	struct _ObjectEx {
+		CfgObjectType type;
+		union {
+			struct {
+				const CfgCharacter *chr;
+				Stopwatch rangedAttackStopwatch;
+				Stopwatch meleeAttackStopwatch;
+			} player;
+			struct {
+				AI* ai;
+			} enemy;
+		} value;
+	}* ex;
 } Object;
+typedef struct _ObjectEx ObjectEx;
 
 int Object_Init(Object* obj, Vec2F position, bool initProperties);
 void Object_Term(Object* obj);
 
-ComponentEventListener* Object_AddEventListener(Object* obj, ID* outId);
-ComponentPhysics* Object_AddPhysics(Object* obj, ID* outId);
-ComponentGraphics* Object_AddGraphics(Object* obj, ID* outId);
-ComponentGraphics* Object_AddTerrainGraphics(Object* obj, ID* outId);
-ComponentDefense* Object_AddDefense(Object* obj, ID* outId);
-ComponentOffense* Object_AddOffense(Object* obj, ID* outId);
-
-typedef struct _TileDef {
-	Vec2I txIndex;
-	Vec2F colliderSize;
-	Vec2F colliderOffset;
-} TileDef;
+ComponentEventListener* Object_AddEventListener(Object* obj);
+ComponentPhysics* Object_AddPhysics(Object* obj);
+ComponentGraphics* Object_AddGraphics(Object* obj);
+ComponentGraphics* Object_AddTerrainGraphics(Object* obj);
+ComponentDefense* Object_AddDefense(Object* obj);
+ComponentOffense* Object_AddOffense(Object* obj);
 
 int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F position);
-int ObjectPlayer_Init(Object* obj, Character* character);
+int ObjectCharacter_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position);
 int ObjectCamera_Init(Object* obj);
-int ObjectBullet_Init(Object* obj, Vec2F position, Vec2F direction, ItemType projectileType, ComponentOffense* copyOffense);
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F position);
+int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction);
+int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, Vec2F position, Vec2F direction);
+int ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive *cfg, ID originatorId, Vec2F position, Vec2F direction);
+
 int ObjectWall_Init(Object* obj, Vec2F position);
 int ObjectStaticBox_Init(Object* obj, Vec2F position);
-int ObjectSword_Init(Object* obj, Vec2F originatorPosition, ComponentOffense* originatorOffense, bool isEnemy, Vec2F direction, uint32_t ticks);
 
 #endif

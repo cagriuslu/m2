@@ -38,9 +38,9 @@ extern LogLevel gCurrentLogLevel;
 #define LOGXV_FTL(x, typ, var) LogX_##typ(LogLevelFatal, __FILE__, __LINE__, x, var)
 
 void Log(LogLevel level, const char* file, int line, const char* message);
-void LogX(LogLevel level, const char* file, int line, XErr x);
-void LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var);
-void LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var);
+XErr LogX(LogLevel level, const char* file, int line, XErr x);
+XErr LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var);
+XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var);
 
 // Convenience macros
 #define LOGFN_TRC() LOGXV_TRC(XOK_FN, String, __FUNCTION__)

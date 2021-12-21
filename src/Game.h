@@ -98,7 +98,6 @@ void Game_UpdateWindowDimensions(int width, int height);
 
 int Game_Level_Init();
 XErr Game_Level_Load(const CfgLevel *cfg);
-int Game_Level_LoadTest();
 void Game_Level_DeleteMarkedObjects();
 void Game_Level_Term();
 

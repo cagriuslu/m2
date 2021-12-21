@@ -47,21 +47,19 @@ int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB);
 
 typedef struct _ComponentDefense {
 	Component super;
-	int maxHp;
-	int hp;
+	float maxHp;
+	float hp;
 } ComponentDefense;
 int ComponentDefense_Init(ComponentDefense* def, ID objId);
-void ComponentDefense_CopyExceptSuper(ComponentDefense* dest, ComponentDefense* src);
 void ComponentDefense_Term(ComponentDefense* def);
 
 typedef struct _ComponentOffense {
 	Component super;
 	ID originator;
-	int ttl;
-	int hp;
+	float ttl;
+	float hp;
 } ComponentOffense;
 int ComponentOffense_Init(ComponentOffense* def, ID objId);
-void ComponentOffense_CopyExceptSuper(ComponentOffense* dest, ComponentOffense* src);
 void ComponentOffense_Term(ComponentOffense* def);
 
 #endif

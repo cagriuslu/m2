@@ -52,63 +52,45 @@ void Object_Term(Object* obj) {
 	memset(obj, 0, sizeof(Object));
 }
 
-ComponentEventListener* Object_AddEventListener(Object* obj, ID *outId) {
+ComponentEventListener* Object_AddEventListener(Object* obj) {
 	ID objectId = Pool_GetId(&GAME->objects, obj);
 	ComponentEventListener* el = Pool_Mark(&GAME->eventListeners, NULL, &obj->eventListener);
 	EventListenerComponent_Init(el, objectId);
-	if (outId) {
-		outId[0] = obj->eventListener;
-	}
 	return el;
 }
 
-ComponentPhysics* Object_AddPhysics(Object* obj, ID* outId) {
+ComponentPhysics* Object_AddPhysics(Object* obj) {
 	ID objectId = Pool_GetId(&GAME->objects, obj);
 	ComponentPhysics* phy = Pool_Mark(&GAME->physics, NULL, &obj->physics);
 	PhysicsComponent_Init(phy, objectId);
-	if (outId) {
-		outId[0] = obj->physics;
-	}
 	return phy;
 }
 
-ComponentGraphics* Object_AddGraphics(Object* obj, ID* outId) {
+ComponentGraphics* Object_AddGraphics(Object* obj) {
 	ID objectId = Pool_GetId(&GAME->objects, obj);
 	ComponentGraphics* gfx = Pool_Mark(&GAME->graphics, NULL, &obj->graphics);
 	GraphicsComponent_Init(gfx, objectId);
 	InsertionList_Insert(&GAME->drawList, obj->graphics);
-	if (outId) {
-		outId[0] = obj->graphics;
-	}
 	return gfx;
 }
 
-ComponentGraphics* Object_AddTerrainGraphics(Object* obj, ID* outId) {
+ComponentGraphics* Object_AddTerrainGraphics(Object* obj) {
 	ID objectId = Pool_GetId(&GAME->objects, obj);
 	ComponentGraphics* gfx = Pool_Mark(&GAME->terrainGraphics, NULL, &obj->terrainGraphics);
 	GraphicsComponent_Init(gfx, objectId);
-	if (outId) {
-		outId[0] = obj->terrainGraphics;
-	}
 	return gfx;
 }
 
-ComponentDefense* Object_AddDefense(Object* obj, ID* outId) {
+ComponentDefense* Object_AddDefense(Object* obj) {
 	ID objectId = Pool_GetId(&GAME->objects, obj);
 	ComponentDefense* def = Pool_Mark(&GAME->defenses, NULL, &obj->defense);
 	ComponentDefense_Init(def, objectId);
-	if (outId) {
-		outId[0] = obj->defense;
-	}
 	return def;
 }
 
-ComponentOffense* Object_AddOffense(Object* obj, ID* outId) {
+ComponentOffense* Object_AddOffense(Object* obj) {
 	ID objectId = Pool_GetId(&GAME->objects, obj);
 	ComponentOffense* off = Pool_Mark(&GAME->offenses, NULL, &obj->offense);
 	ComponentOffense_Init(off, objectId);
-	if (outId) {
-		outId[0] = obj->offense;
-	}
 	return off;
 }

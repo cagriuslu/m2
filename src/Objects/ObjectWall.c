@@ -6,13 +6,12 @@
 int ObjectWall_Init(Object* obj, Vec2F position) {
 	REFLECT_ERROR(Object_Init(obj, position, false));
 	
-	ID phyId = 0;
-	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
-	phy->body = Box2DUtils_CreateStaticBox(phyId, position, CATEGORY_STATIC_OBJECT, ((Vec2F) { 0.875, 0.125 }));
+	ComponentPhysics* phy = Object_AddPhysics(obj);
+	phy->body = Box2DUtils_CreateStaticBox(Pool_GetId(&GAME->physics, phy), position, CATEGORY_STATIC_OBJECT, ((Vec2F) { 0.875, 0.125 }));
 
-	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddGraphics(obj);
 	gfx->txSrc = (SDL_Rect){ 8 * GAME->tileWidth, 0, GAME->tileWidth, 2 * GAME->tileWidth };
-	gfx->txCenter = (Vec2F){ 0.0, 12.0 };
+	gfx->txCenter = (Vec2F){ 0.0f, 12.0f };
 
 	return 0;
 }

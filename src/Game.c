@@ -78,38 +78,23 @@ int Game_Level_Init() {
 XErr Game_Level_Load(const CfgLevel *cfg) {
 	for (int y = 0; y < cfg->h; y++) {
 		for (int x = 0; x < cfg->w; x++) {
-			const LevelTile *lvlTile = cfg->tiles + y * cfg->w + x;
+			const CfgLevelTile *lvlTile = cfg->tiles + y * cfg->w + x;
 			if (lvlTile->gndTile) {
 				Object *tile = Pool_Mark(&GAME->objects, NULL, NULL);
 				REFLECT_ERROR(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
 			}
-			// TODO init characters and objects
+			if (lvlTile->chr) {
+				Object *obj = Pool_Mark(&GAME->objects, NULL, NULL);
+				REFLECT_ERROR(ObjectCharacter_InitFromCfg(obj, lvlTile->chr, VEC2F(x, y)));
+			}
 		}
 	}
-
-	// TODO
-
-	return XOK;
-}
-
-int Game_Level_LoadTest() {
-	Array standardItemSet;
-	Array_Init(&standardItemSet, sizeof(Item), 16, UINT32_MAX, NULL);
-	Item_GenerateStandardItemSet(&standardItemSet);
-	Character* character = malloc(sizeof(Character));
-	assert(character);
-	Character_Init(character, standardItemSet);
-	Character_Preprocess(character);
-
-	Object* player = Pool_Mark(&GAME->objects, NULL, &GAME->playerId);
-	ObjectPlayer_Init(player, character);
-
-	Hud_Init(&GAME->hud);
-
 	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
 	ObjectCamera_Init(camera);
 
-	return 0;
+	Hud_Init(&GAME->hud);
+
+	return XOK;
 }
 
 void Game_Level_DeleteMarkedObjects() {

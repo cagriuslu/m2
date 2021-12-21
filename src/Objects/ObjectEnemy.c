@@ -36,7 +36,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 						if (ai->attackPeriod < ai->attackStopwatch) {
 							// If enough time passed for the next attack
 							Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
-							ObjectSword_Init(sword, obj->position, FindOffenseOfObject(obj), true, Vec2F_Sub(player->position, obj->position), 150);
+							ObjectMelee_InitFromCfg(sword, &CFG_MELEEWPN_SWORD.melee, el->super.objId, obj->position, Vec2F_Sub(player->position, obj->position));
 							LOG_INF("Attacking player with melee");
 
 							ai->attackStopwatch = 0;
@@ -112,10 +112,10 @@ void ObjectEnemy_Draw(ComponentGraphics* gfx) {
 	}
 }
 
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F position) {
+int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	REFLECT_ERROR(Object_Init(obj, position, true));
 
-	ComponentGraphics* gfx = Object_AddGraphics(obj, NULL);
+	ComponentGraphics* gfx = Object_AddGraphics(obj);
 	gfx->txSrc = (SDL_Rect){ 2 * GAME->tileWidth, 0, GAME->tileWidth, GAME->tileWidth };
 	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
 	gfx->draw = ObjectEnemy_Draw;
@@ -132,14 +132,13 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F posi
 	ai->triggerDistance = 6.0f;
 	obj->ex->value.enemy.ai = ai;
 
-	ComponentEventListener* el = Object_AddEventListener(obj, NULL);
+	ComponentEventListener* el = Object_AddEventListener(obj);
 	el->prePhysics = ObjectEnemy_prePhysics;
 	el->postPhysics = ObjectEnemy_postPhysics;
 
-	ID phyId = 0;
-	ComponentPhysics* phy = Object_AddPhysics(obj, &phyId);
+	ComponentPhysics* phy = Object_AddPhysics(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
-		phyId,
+		Pool_GetId(&GAME->physics, phy),
 		position,
 		true, // allowSleep
 		CATEGORY_ENEMY,
@@ -148,11 +147,11 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgObjectTexture *cfg, Vec2F posi
 		10.0f // Damping
 	);
 
-	ComponentDefense* defense = Object_AddDefense(obj, NULL);
+	ComponentDefense* defense = Object_AddDefense(obj);
 	defense->hp = 100;
 	defense->maxHp = 100;
 
-	ComponentOffense* offense = Object_AddOffense(obj, NULL);
+	ComponentOffense* offense = Object_AddOffense(obj);
 	offense->originator = Pool_GetId(&GAME->objects, obj);
 	offense->hp = 10;
 	offense->ttl = 100;

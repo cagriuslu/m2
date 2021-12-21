@@ -113,32 +113,35 @@ void Log(LogLevel level, const char* file, int line, const char* message) {
 	LogFooter(level);
 }
 
-void LogX(LogLevel level, const char* file, int line, XErr x) {
+XErr LogX(LogLevel level, const char* file, int line, XErr x) {
 	if (level < gCurrentLogLevel) {
-		return;
+		return x;
 	}
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"X\": \"%s\"}", XErr_ToString(x));
 	LogNewLine();
 	LogFooter(level);
+	return x;
 }
 
-void LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var) {
+XErr LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var) {
 	if (level < gCurrentLogLevel) {
-		return;
+		return x;
 	}
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": %d}", XErr_ToString(x), var);
 	LogNewLine();
 	LogFooter(level);
+	return x;
 }
 
-void LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var) {
+XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var) {
 	if (level < gCurrentLogLevel) {
-		return;
+		return x;
 	}
 	LogHeader(level, file, line);
 	fprintf(stderr, "{\"%s\": \"%s\"}", XErr_ToString(x), var);
 	LogNewLine();
 	LogFooter(level);
+	return x;
 }

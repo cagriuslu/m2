@@ -126,7 +126,6 @@ int main(int argc, char **argv) {
 		Game_Level_Init();
 		if (res == X_MAIN_MENU_NEW_GAME) {
 			REFLECT_ERROR(Game_Level_Load(&CFG_LVL_SP000));
-			REFLECT_ERROR(Game_Level_LoadTest());
 		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
 			LOG_FTL("Editor is selected but it will not be implemented");
 			return XOK_QUIT;
