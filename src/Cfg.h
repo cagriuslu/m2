@@ -72,6 +72,9 @@ extern const CfgRangedWeapon CFG_RANGEDWPN_GUN; // Default
 extern const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN; // Fast, thus powerful
 extern const CfgRangedWeapon CFG_RANGEDWPN_SHOTGUN; // Slow but powerful
 extern const CfgRangedWeapon CFG_RANGEDWPN_BOW; // Slow, but piercing, thus default
+typedef struct _RangedWeaponState {
+	float cooldownStopwatch;
+} RangedWeaponState;
 
 typedef struct _CfgMeleeWeapon {
 	struct _CfgMelee {
@@ -90,6 +93,9 @@ extern const CfgMeleeWeapon CFG_MELEEWPN_BAT; // Default
 extern const CfgMeleeWeapon CFG_MELEEWPN_SWORD; // Slow but powerful
 extern const CfgMeleeWeapon CFG_MELEEWPN_SPEAR; // Slow, High damage and pierce
 extern const CfgMeleeWeapon CFG_MELEEWPN_DAGGER; // Fast, thus powerful
+typedef struct _MeleeWeaponState {
+	float cooldownStopwatch;
+} MeleeWeaponState;
 
 typedef struct _CfgExplosiveWeapon {
 	struct _CfgExplosive {
@@ -104,6 +110,9 @@ typedef struct _CfgExplosiveWeapon {
 typedef struct _CfgExplosive CfgExplosive;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
+typedef struct _ExplosiveWeaponState {
+	float cooldownStopwatch;
+} ExplosiveWeaponState;
 
 typedef struct _CfgCharacter {
 	const CfgObjectTexture* texture;
@@ -113,7 +122,7 @@ typedef struct _CfgCharacter {
 		CFG_OBJTYP_ENEMY
 	} objType;
 	float walkSpeed; // m/s
-	float hp;
+	float maxHp;
 	const CfgRangedWeapon* defaultRangedWeapon;
 	const CfgMeleeWeapon* defaultMeleeWeapon;
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
@@ -122,6 +131,13 @@ typedef struct _CfgCharacter {
 typedef enum _CfgObjectType CfgObjectType;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;
 extern const CfgCharacter CFG_CHARACTER_SKELETON000;
+typedef struct CharacterState {
+	float hp;
+	RangedWeaponState rangedWeaponState;
+	MeleeWeaponState meleeWeaponState;
+	ExplosiveWeaponState explosiveWeaponState;
+	unsigned explosiveCount;
+} CharacterState;
 
 typedef struct _CfgLevel {
 	const struct _CfgLevelTile {

@@ -77,7 +77,7 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 	gfx->txCenter = texture->center;
 
 	ComponentDefense* def = Object_AddDefense(obj);
-	def->maxHp = def->hp = cfg->hp;
+	def->maxHp = def->hp = cfg->maxHp;
 
 	GAME->playerId = Pool_GetId(&GAME->objects, obj);
 	return XOK;
