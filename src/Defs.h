@@ -14,4 +14,9 @@
 #define STRDUP strdup
 #endif
 
+#define DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
+	size_t SiblingListLength_##typeName(const typeName *ptr)
+#define DEFINE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
+	DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) { size_t len; for (len = 0; ptr; len++, ptr = ptr->next); return len; }
+
 #endif

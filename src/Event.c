@@ -20,8 +20,6 @@ bool Events_Gather(Events* evs) {
 				evs->windowResizeEvent = true;
 				evs->windowDims = (Vec2I){ e.window.data1 , e.window.data2 };
 				break;
-			default:
-				break;
 			}
 			break;
 		case SDL_KEYDOWN:

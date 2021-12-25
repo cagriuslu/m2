@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "Array.h"
 #include "Vec2I.h"
+#include "Markup.h"
 #include "Component.h"
 #include "Event.h"
 #include "Pool.h"
@@ -115,7 +116,10 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
-	
+
+	Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU);
+	return 0;
+
 	main_menu:
 	res = DialogMainMenu(GAME->levelLoaded);
 	if (res == XOK_QUIT) {

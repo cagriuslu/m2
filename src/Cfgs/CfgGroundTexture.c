@@ -3,7 +3,7 @@
 const CfgGroundTexture CFG_GNDTXTR_DEFAULT = {
 	.textureRect = {0, 0, 0, 0},
 	.collider = {
-		.type = CFG_COLLIDER_TYPE_NONE
+		.type = CFG_COLLIDER_TYPE_INVALID
 	}
 };
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000T = {

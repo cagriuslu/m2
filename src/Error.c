@@ -8,15 +8,17 @@ static const char* XErr_PositiveStrings[] = {
 	"Quit"      // XOK_QUIT
 };
 static const char* XErr_NegativeStrings[] = {
-	"OK",               // XOK
-	"FileNotFound",     // XERR_FILE_NOT_FOUND
-	"PathNotFound",     // XERR_PATH_NOT_FOUND
-	"FileCorrupted",    // XERR_FILE_CORRUPTED
-	"SdlError",         // XERR_SDL_ERROR
-	"OutOfMemory",      // XERR_OUT_OF_MEMORY
-	"LimitExceeded",    // XERR_LIMIT_EXCEEDED
-	"Errno",            // XERR_ERRNO
-	"FileInaccessible", // XERR_FILE_INACCESSIBLE
+	"OK",                 // XOK
+	"FileNotFound",       // XERR_FILE_NOT_FOUND
+	"PathNotFound",       // XERR_PATH_NOT_FOUND
+	"FileCorrupted",      // XERR_FILE_CORRUPTED
+	"SdlError",           // XERR_SDL_ERROR
+	"OutOfMemory",        // XERR_OUT_OF_MEMORY
+	"LimitExceeded",      // XERR_LIMIT_EXCEEDED
+	"Errno",              // XERR_ERRNO
+	"FileInaccessible",   // XERR_FILE_INACCESSIBLE
+	"ObjectTypeNotFound", // XERR_OBJTYP_NOT_FOUND
+	"Interrupted",        // XERR_INTERRUPTED
 };
 
 const char* XErr_ToString(XErr e) {
