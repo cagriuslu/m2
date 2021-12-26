@@ -16,7 +16,7 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 			-(int)round(gfx->txCenter.x * scale),
 			-(int)round(gfx->txCenter.y * scale)
 		});
-		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { GAME->windowWidth / 2, GAME->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_gfx_origin_wrt_screen_center);
 		SDL_Rect dstrect = (SDL_Rect){
 			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),
@@ -42,7 +42,7 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float health
 			-(int)round(gfx->txCenter.x * scale),
 				-(int)round(gfx->txCenter.y * scale)
 		});
-		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { GAME->windowWidth / 2, GAME->windowHeight / 2 }, obj_gfx_origin_wrt_screen_center);
+		Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_gfx_origin_wrt_screen_center);
 		SDL_Rect obj_gfx_dstrect = (SDL_Rect){
 			obj_gfx_origin_wrt_screen_origin.x - (int)round(gfx->txSrc.w * scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)round(gfx->txSrc.h * scale / 2.0f),

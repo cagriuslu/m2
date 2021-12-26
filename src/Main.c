@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 	Game_UpdateWindowDimensions(1600, 900);
-	if ((GAME->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowWidth, GAME->windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
+	if ((GAME->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowRect.w, GAME->windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}

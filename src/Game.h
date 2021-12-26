@@ -38,12 +38,9 @@ typedef struct _Game {
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* sdlTexture;
 	uint32_t pixelFormat;
-	int windowWidth;
-	int windowHeight;
-	int gameWidth;
-	int gameHeight;
-	int gameAndHudWidth;
-	int gameAndHudHeight;
+	SDL_Rect windowRect;
+	SDL_Rect gameRect;
+	SDL_Rect gameAndHudRect;
 	SDL_Rect firstEnvelopeRect;
 	SDL_Rect secondEnvelopeRect;
 	SDL_Rect leftHudRect;

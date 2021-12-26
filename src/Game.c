@@ -11,48 +11,68 @@
 Game* gCurrentGame;
 
 void Game_UpdateWindowDimensions(int width, int height) {
+	GAME->windowRect = (SDL_Rect){0, 0, width, height};
+
 	float fw = (float)width;
 	float fh = (float)height;
-	
-	GAME->windowWidth = width;
-	GAME->windowHeight = height;
 	float aspectRatioDiff = (fw / fh) - GAME_AND_HUD_ASPECT_RATIO;
 	if (0.001f < aspectRatioDiff) {
 		// Screen is wider than expected, we need envelope on left & right
-		GAME->gameWidth = (int)roundf(fh * GAME_ASPECT_RATIO);
-		GAME->gameHeight = height;
-		GAME->gameAndHudWidth = (int)roundf(fh * GAME_AND_HUD_ASPECT_RATIO);
-		GAME->gameAndHudHeight = height;
-		int envelopeWidth = (width - GAME->gameAndHudWidth) / 2;
+		GAME->gameRect.w = (int)roundf(fh * GAME_ASPECT_RATIO);
+		GAME->gameRect.h = height;
+
+		GAME->gameAndHudRect.w = (int)roundf(fh * GAME_AND_HUD_ASPECT_RATIO);
+		GAME->gameAndHudRect.h = height;
+
+		int envelopeWidth = (width - GAME->gameAndHudRect.w) / 2;
 		GAME->firstEnvelopeRect = (SDL_Rect){ 0, 0, envelopeWidth, height };
 		GAME->secondEnvelopeRect = (SDL_Rect){ width - envelopeWidth, 0, envelopeWidth, height };
-		int hudWidth = (int)roundf((float)GAME->gameAndHudHeight * HUD_ASPECT_RATIO);
-		GAME->leftHudRect = (SDL_Rect){ envelopeWidth, 0, hudWidth, GAME->gameAndHudHeight };
-		GAME->rightHudRect = (SDL_Rect){ width - envelopeWidth - hudWidth, 0, hudWidth, GAME->gameAndHudHeight };
+		GAME->gameAndHudRect.x = envelopeWidth;
+		GAME->gameAndHudRect.y = 0;
+
+		int hudWidth = (int)roundf((float)GAME->gameAndHudRect.h * HUD_ASPECT_RATIO);
+		GAME->leftHudRect = (SDL_Rect){ envelopeWidth, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->rightHudRect = (SDL_Rect){ width - envelopeWidth - hudWidth, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->gameRect.x = envelopeWidth + hudWidth;
+		GAME->gameRect.y = 0;
 	} else if (aspectRatioDiff < -0.001f) {
 		// Screen is taller than expected, we need envelope on top & bottom
-		GAME->gameWidth = width;
-		GAME->gameHeight = (int)roundf(fw / GAME_ASPECT_RATIO);
-		GAME->gameAndHudWidth = width;
-		GAME->gameAndHudHeight = (int)roundf(fw / GAME_AND_HUD_ASPECT_RATIO);
-		int envelopeWidth = (height - GAME->gameAndHudHeight) / 2;
-		GAME->firstEnvelopeRect = (SDL_Rect){ 0, 0, width, envelopeWidth };
-		GAME->secondEnvelopeRect = (SDL_Rect){ 0, height - envelopeWidth, width, envelopeWidth };
-		int hudWidth = (int)roundf((float)GAME->gameAndHudHeight * HUD_ASPECT_RATIO);
-		GAME->leftHudRect = (SDL_Rect){ 0, envelopeWidth, hudWidth, GAME->gameAndHudHeight };
-		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, envelopeWidth, hudWidth, GAME->gameAndHudHeight };
+		GAME->gameRect.w = width;
+		GAME->gameRect.h = (int)roundf(fw / GAME_ASPECT_RATIO);
+
+		GAME->gameAndHudRect.w = width;
+		GAME->gameAndHudRect.h = (int)roundf(fw / GAME_AND_HUD_ASPECT_RATIO);
+
+		int envelopeHeight = (height - GAME->gameAndHudRect.h) / 2;
+		GAME->firstEnvelopeRect = (SDL_Rect){0, 0, width, envelopeHeight };
+		GAME->secondEnvelopeRect = (SDL_Rect){0, height - envelopeHeight, width, envelopeHeight };
+		GAME->gameAndHudRect.x = 0;
+		GAME->gameAndHudRect.y = envelopeHeight;
+
+		int hudWidth = (int)roundf((float)GAME->gameAndHudRect.h * HUD_ASPECT_RATIO);
+		GAME->leftHudRect = (SDL_Rect){0, envelopeHeight, hudWidth, GAME->gameAndHudRect.h };
+		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, envelopeHeight, hudWidth, GAME->gameAndHudRect.h };
+		GAME->gameRect.x = hudWidth;
+		GAME->gameRect.y = envelopeHeight;
 	} else {
-		GAME->gameWidth = width;
-		GAME->gameHeight = height;
-		GAME->gameAndHudWidth = width;
-		GAME->gameAndHudHeight = height;
+		GAME->gameRect.w = width;
+		GAME->gameRect.h = height;
+
+		GAME->gameAndHudRect.w = width;
+		GAME->gameAndHudRect.h = height;
+
 		GAME->firstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
 		GAME->secondEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
-		int hudWidth = (int)roundf((float)GAME->gameAndHudHeight * HUD_ASPECT_RATIO);
-		GAME->leftHudRect = (SDL_Rect){ 0, 0, hudWidth, GAME->gameAndHudHeight };
-		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, 0, hudWidth, GAME->gameAndHudHeight };
+		GAME->gameAndHudRect.x = 0;
+		GAME->gameAndHudRect.y = 0;
+
+		int hudWidth = (int)roundf((float)GAME->gameAndHudRect.h * HUD_ASPECT_RATIO);
+		GAME->leftHudRect = (SDL_Rect){ 0, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->gameRect.x = hudWidth;
+		GAME->gameRect.y = 0;
 	}
-	GAME->pixelsPerMeter = (float)GAME->gameAndHudHeight / 16.0f;
+	GAME->pixelsPerMeter = (float)GAME->gameAndHudRect.h / 16.0f;
 }
 
 int Game_Level_Init() {
@@ -134,7 +154,7 @@ Vec2F CurrentPointerPositionInWorld() {
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = GAME->events.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (GAME->windowWidth / 2), pointerPosition.y - (GAME->windowHeight / 2) };
+	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
 	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter.y / GAME->pixelsPerMeter };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
 	return pointerPositionWRTWorld;

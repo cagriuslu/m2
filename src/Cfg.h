@@ -186,9 +186,7 @@ typedef struct _CfgMarkup {
 			CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON,
 		} type;
 		union {
-			struct {
-				const struct _CfgMarkup *markup;
-			} markup;
+			const struct _CfgMarkup* markup;
 			struct {
 				const char* text;
 			} staticText;
@@ -204,6 +202,8 @@ typedef struct _CfgMarkup {
 				CfgMarkupButtonType buttonType;
 			} staticImageButton;
 			struct {
+				// TODO dynamic text generator should return a text and TTL
+				// TODO TTL can be milliseconds, TTL can be zero, so that every frame it is repainted
 				CfgMarkupDynamicTextType textType;
 			} dynamicText;
 			struct {
@@ -224,5 +224,42 @@ typedef struct _CfgMarkup {
 typedef struct _CfgMarkupElement CfgMarkupElement;
 DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgMarkupElement);
 extern const CfgMarkup CFG_MARKUP_START_MENU;
+typedef struct _MarkupState {
+	const CfgMarkup *cfg;
+	SDL_Rect rect;
+	struct _MarkupElementState {
+		const CfgMarkupElement* cfg;
+		SDL_Rect rect;
+		union {
+			struct _MarkupState* markup;
+			struct {
+				SDL_Texture *textTexture;
+			} staticText;
+			struct {
+				SDL_Texture *textTexture;
+				bool depressed;
+			} staticTextButton;
+			struct {
+				bool depressed;
+			} staticImageButton;
+			struct {
+				SDL_Texture *textTexture;
+			} dynamicText;
+			struct {
+				SDL_Texture *textTexture;
+				bool depressed;
+			} dynamicTextButton;
+			struct {
+				const CfgObjectTexture *texture;
+			} dynamicImage;
+			struct {
+				const CfgObjectTexture *texture;
+				bool depressed;
+			} dynamicImageButton;
+		} elementUnion;
+		struct _MarkupElementState *next;
+	} *firstElement;
+} MarkupState;
+typedef struct _MarkupElementState MarkupElementState;
 
 #endif

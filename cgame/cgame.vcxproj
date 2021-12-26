@@ -40,6 +40,7 @@
     <ClInclude Include="..\src\List.h" />
     <ClInclude Include="..\src\Log.h" />
     <ClInclude Include="..\src\Main.h" />
+    <ClInclude Include="..\src\Markup.h" />
     <ClInclude Include="..\src\Object.h" />
     <ClInclude Include="..\src\Pathfinder.h" />
     <ClInclude Include="..\src\Pool.h" />
@@ -62,9 +63,11 @@
     <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Box2D.cpp" />
     <ClCompile Include="..\src\Box2DUtils.c" />
+    <ClCompile Include="..\src\Cfg.c" />
     <ClCompile Include="..\src\Cfgs\CfgCharacter.c" />
     <ClCompile Include="..\src\Cfgs\CfgGroundTexture.c" />
     <ClCompile Include="..\src\Cfgs\CfgLevel.c" />
+    <ClCompile Include="..\src\Cfgs\CfgMarkup.c" />
     <ClCompile Include="..\src\Cfgs\CfgObjectTexture.c" />
     <ClCompile Include="..\src\Cfgs\CfgWeapon.c" />
     <ClCompile Include="..\src\Component.c" />
@@ -86,6 +89,7 @@
     <ClCompile Include="..\src\List.c" />
     <ClCompile Include="..\src\Log.c" />
     <ClCompile Include="..\src\Main.c" />
+    <ClCompile Include="..\src\Markup.c" />
     <ClCompile Include="..\src\Object.c" />
     <ClCompile Include="..\src\Objects\ObjectCamera.c" />
     <ClCompile Include="..\src\Objects\ObjectCommon.c" />

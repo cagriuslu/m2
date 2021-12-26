@@ -5,10 +5,16 @@
 #include "Error.h"
 #include <SDL.h>
 
-XErr Markup_ExecuteBlocking(const CfgMarkup *markup);
-XErr Markup_Draw_NoPresent(const CfgMarkup *markup, SDL_Rect rect);
+XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg);
 
-// Utilities
-SDL_Rect Markup_CalculateElementRect(SDL_Rect parentRect, unsigned parentW, unsigned parentH, unsigned childX, unsigned childY, unsigned childW, unsigned childH);
+MarkupElementState* MarkupState_FindElementByPixel(MarkupState *state, Vec2I mousePosition);
+XErr MarkupState_Update(MarkupState *state, SDL_Rect rootRect);
+void MarkupState_ResetDepressedButtons(MarkupState *state);
+bool MarkupState_GetButtonState(MarkupElementState *elementState);
+
+void MarkupState_Term(MarkupState *state);
+
+// High-level functions
+XErr Markup_ExecuteBlocking(const CfgMarkup *markup);
 
 #endif //CGAME_MARKUP_H
