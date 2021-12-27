@@ -12,7 +12,7 @@ const CfgMarkupElement CFG_MARKUP_START_MENU_ELEMENT_NEW_GAME_BUTTON = {
 	.borderWidth_px = 1,
 	.type = CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 	.elementUnion.staticTextButton = {
-			.text = "!NEW GAME",
+			.text = "NEW GAME",
 			.buttonType = CFG_MARKUP_BUTTON_TYPE_NEW_GAME
 	},
 	.next = &CFG_MARKUP_START_MENU_ELEMENT_QUIT_BUTTON
@@ -22,7 +22,7 @@ const CfgMarkupElement CFG_MARKUP_START_MENU_ELEMENT_QUIT_BUTTON = {
 	.borderWidth_px = 1,
 	.type = CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 	.elementUnion.staticTextButton = {
-			.text = "!QUIT",
+			.text = "QUIT",
 			.buttonType = CFG_MARKUP_BUTTON_TYPE_QUIT
 	},
 	.next = NULL
