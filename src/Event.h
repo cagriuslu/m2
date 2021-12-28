@@ -34,6 +34,8 @@ typedef struct _Events {
 	uint8_t keyStates[_KEY_COUNT];
 	uint8_t buttonStates[_BUTTON_COUNT];
 	Vec2I mousePosition;
+
+	uint8_t rawKeyStates[SDL_NUM_SCANCODES];
 } Events;
 
 bool Events_Gather(Events* evs);

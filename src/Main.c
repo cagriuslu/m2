@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 	}
 	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 
-	Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU);
+	Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, NULL);
 	return 0;
 
 	main_menu:

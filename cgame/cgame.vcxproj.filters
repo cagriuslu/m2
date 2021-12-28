@@ -266,16 +266,7 @@
     <ClCompile Include="..\src\Objects\ObjectWall.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Uis\UiBooleanInput.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Uis\UiButton.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Uis\UiLabel.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Uis\UiStringInput.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Error.c">

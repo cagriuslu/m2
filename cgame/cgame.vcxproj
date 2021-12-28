@@ -110,10 +110,7 @@
     <ClCompile Include="..\src\TextureMap.c" />
     <ClCompile Include="..\src\Txt.c" />
     <ClCompile Include="..\src\Ui.c" />
-    <ClCompile Include="..\src\Uis\UiBooleanInput.c" />
     <ClCompile Include="..\src\Uis\UiButton.c" />
-    <ClCompile Include="..\src\Uis\UiLabel.c" />
-    <ClCompile Include="..\src\Uis\UiStringInput.c" />
     <ClCompile Include="..\src\Vec2F.c" />
     <ClCompile Include="..\src\Vec2I.c" />
     <ClCompile Include="..\src\VSON.c" />

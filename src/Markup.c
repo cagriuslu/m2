@@ -95,18 +95,55 @@ XErr MarkupState_Update(MarkupState *state, SDL_Rect rootRect) {
 }
 
 MarkupElementState* MarkupState_FindElementByPixel(MarkupState *state, Vec2I mousePosition) {
-	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
-		SDL_Point p = (SDL_Point){mousePosition.x, mousePosition.y};
-		if (SDL_PointInRect(&p, &elementState->rect)) {
-			return elementState;
+	MarkupElementState* foundElement = NULL;
+	for (MarkupElementState* elementState = state->firstElement; elementState && (foundElement == NULL); elementState = elementState->next) {
+		if (elementState->cfg->type == CFG_MARKUP_ELEMENT_TYPE_MARKUP) {
+			foundElement = MarkupState_FindElementByPixel(elementState->elementUnion.markup, mousePosition);
+		} else {
+			SDL_Point p = (SDL_Point){ mousePosition.x, mousePosition.y };
+			foundElement = SDL_PointInRect(&p, &elementState->rect) ? elementState : NULL;
 		}
 	}
-	return NULL;
+	return foundElement;
+}
+
+MarkupElementState* MarkupState_FindElementByKeyboardShortcut(MarkupState* state, const uint8_t* rawKeyboardState) {
+	SDL_Scancode keyboardShortcut = 0;
+	MarkupElementState* foundElement = NULL;
+	for (MarkupElementState* elementState = state->firstElement; elementState && (foundElement == NULL); elementState = elementState->next) {
+		switch (elementState->cfg->type) {
+			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
+				foundElement = MarkupState_FindElementByKeyboardShortcut(elementState->elementUnion.markup, rawKeyboardState);
+				break;
+			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
+				keyboardShortcut = elementState->cfg->elementUnion.staticTextButton.keyboardShortcut;
+				foundElement = keyboardShortcut && rawKeyboardState[keyboardShortcut] ? elementState : NULL;
+				break;
+			case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON:
+				keyboardShortcut = elementState->cfg->elementUnion.staticImageButton.keyboardShortcut;
+				foundElement = keyboardShortcut && rawKeyboardState[keyboardShortcut] ? elementState : NULL;
+				break;
+			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
+				keyboardShortcut = elementState->cfg->elementUnion.dynamicTextButton.keyboardShortcut;
+				foundElement = keyboardShortcut && rawKeyboardState[keyboardShortcut] ? elementState : NULL;
+				break;
+			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
+				keyboardShortcut = elementState->cfg->elementUnion.dynamicImageButton.keyboardShortcut;
+				foundElement = keyboardShortcut && rawKeyboardState[keyboardShortcut] ? elementState : NULL;
+				break;
+			default:
+				break;
+		}
+	}
+	return foundElement;
 }
 
 void MarkupState_ResetDepressedButtons(MarkupState *state) {
 	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
 		switch (elementState->cfg->type) {
+			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
+				MarkupState_ResetDepressedButtons(elementState->elementUnion.markup);
+				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
 				elementState->elementUnion.staticTextButton.depressed = false;
 				break;
@@ -216,7 +253,7 @@ XErr Markup_Draw_NoPresent(MarkupState *state) {
 	return XOK;
 }
 
-XErr Markup_ExecuteBlocking(const CfgMarkup *markup) {
+XErr Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPressedButton) {
 	MarkupState state;
 	MarkupState_Init(&state, markup);
 	MarkupState_Update(&state, GAME->windowRect);
@@ -284,6 +321,12 @@ XErr Markup_ExecuteBlocking(const CfgMarkup *markup) {
 					}
 				}
 				MarkupState_ResetDepressedButtons(&state);
+			}
+			{
+				MarkupElementState* keyboardShortcutPressedElement = MarkupState_FindElementByKeyboardShortcut(&state, evs.rawKeyStates);
+				if (keyboardShortcutPressedElement) {
+					LOG_INF("Keyboard shortcut pressed");
+				}
 			}
 		}
 		//////////////////////// END OF EVENT HANDLING /////////////////////////

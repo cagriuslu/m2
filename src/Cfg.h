@@ -193,6 +193,7 @@ typedef struct _CfgMarkup {
 			struct {
 				const char* text;
 				CfgMarkupButtonType buttonType;
+				SDL_Scancode keyboardShortcut;
 			} staticTextButton;
 			struct {
 				const CfgObjectTexture *texture;
@@ -200,6 +201,7 @@ typedef struct _CfgMarkup {
 			struct {
 				const CfgObjectTexture *texture;
 				CfgMarkupButtonType buttonType;
+				SDL_Scancode keyboardShortcut;
 			} staticImageButton;
 			struct {
 				// TODO dynamic text generator should return a text and TTL
@@ -209,6 +211,7 @@ typedef struct _CfgMarkup {
 			struct {
 				CfgMarkupDynamicTextType textType;
 				CfgMarkupButtonType buttonType;
+				SDL_Scancode keyboardShortcut;
 			} dynamicTextButton;
 			struct {
 				CfgMarkupDynamicImageType imageType;
@@ -216,6 +219,7 @@ typedef struct _CfgMarkup {
 			struct {
 				CfgMarkupDynamicImageType imageType;
 				CfgMarkupButtonType buttonType;
+				SDL_Scancode keyboardShortcut;
 			} dynamicImageButton;
 		} elementUnion;
 		const struct _CfgMarkupElement *next;

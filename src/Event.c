@@ -27,7 +27,6 @@ bool Events_Gather(Events* evs) {
 				evs->keyDownEvent = true;
 				evs->keysPressed[KeyFromSDLScancode(e.key.keysym.scancode)] += 1;
 			}
-			//LOGOBJ_DBG("Pressed SDL_Scancode", Int32, e.key.keysym.scancode);
 			break;
 		case SDL_KEYUP:
 			if (e.key.repeat == 0) {
@@ -65,12 +64,16 @@ bool Events_Gather(Events* evs) {
 		}
 	}
 
-	const uint8_t* keyboardState = SDL_GetKeyboardState(NULL);
+	int keyCount = 0;
+	const uint8_t* keyboardState = SDL_GetKeyboardState(&keyCount);
 	for (int i = 0; i < _KEY_COUNT; i++) {
 		const SDL_Scancode scancode = SDLScancodeFromKey(i);
 		if (scancode != SDL_SCANCODE_UNKNOWN) {
 			evs->keyStates[i] = keyboardState[scancode];
 		}
+	}
+	for (int i = 0; i < keyCount; i++) {
+		evs->rawKeyStates[i] = keyboardState[i];
 	}
 
 	const uint32_t mouseStateBitmask = SDL_GetMouseState(&evs->mousePosition.x, &evs->mousePosition.y);
