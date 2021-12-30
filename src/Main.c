@@ -117,29 +117,26 @@ int main(int argc, char **argv) {
 	}
 	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 
-	Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, NULL);
-	return 0;
-
-	main_menu:
-	res = DialogMainMenu(GAME->levelLoaded);
-	if (res == XOK_QUIT) {
+	CfgMarkupButtonType startMenuPressedButtonType;
+	XErr startMenuResult = Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, &startMenuPressedButtonType);
+	if (startMenuResult == XERR_QUIT) {
 		return 0;
-	} else if (res == X_MAIN_MENU_RESUME) {
-		// Do nothing
-	} else {
-		Game_Level_Init();
-		if (res == X_MAIN_MENU_NEW_GAME) {
+	} else if (!startMenuResult) {
+		if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_NEW_GAME) {
+			REFLECT_ERROR(Game_Level_Init());
 			REFLECT_ERROR(Game_Level_Load(&CFG_LVL_SP000));
-		} else if (res == X_MAIN_MENU_LEVEL_EDITOR) {
-			LOG_FTL("Editor is selected but it will not be implemented");
-			return XOK_QUIT;
+			REFLECT_ERROR(PathfinderMap_Init(&GAME->pathfinderMap));
+			LOG_INF("Level loaded");
+		} else if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_QUIT) {
+			return 0;
 		} else {
-			LOG_FTL("Unknown level is selected");
-			return XOK_QUIT;
+			// Unknown button
+			return 0;
 		}
+	} else {
+		// No specific errors are defined yet
+		return 0;
 	}
-	PathfinderMap_Init(&GAME->pathfinderMap);
-	LOG_INF("Level loaded");
 
 	float timeSinceLastWorldStep = 0.0f;
 	unsigned prevPrePhysicsTicks = SDL_GetTicks();
@@ -167,7 +164,8 @@ int main(int argc, char **argv) {
 			}
 			if (!SDL_IsTextInputActive()) {
 				if (GAME->events.keysPressed[KEY_MENU]) {
-					goto main_menu;
+					// TODO
+					//goto main_menu;
 				}
 				if (GAME->events.keysPressed[KEY_CONSOLE]) {
 					memset(GAME->consoleInput, 0, sizeof(GAME->consoleInput));

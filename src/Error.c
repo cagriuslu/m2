@@ -5,7 +5,7 @@ static const char* XErr_PositiveStrings[] = {
 	"Fn",       // XOK_FN
 	"LogLevel", // XOK_LOG_LEVEL
 	"FPS",      // XOK_FPS
-	"Quit"      // XOK_QUIT
+	"Button"    // XOK_BUTTON
 };
 static const char* XErr_NegativeStrings[] = {
 	"OK",                 // XOK
@@ -18,7 +18,7 @@ static const char* XErr_NegativeStrings[] = {
 	"Errno",              // XERR_ERRNO
 	"FileInaccessible",   // XERR_FILE_INACCESSIBLE
 	"ObjectTypeNotFound", // XERR_OBJTYP_NOT_FOUND
-	"Interrupted",        // XERR_INTERRUPTED
+	"Quit",               // XERR_QUIT
 };
 
 const char* XErr_ToString(XErr e) {

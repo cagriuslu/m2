@@ -3,7 +3,10 @@
 
 #include <stdint.h>
 
-#define XOK_QUIT               (  4)
+// TODO remove this later, it should be necessary
+#define XEVENT_QUIT               (999)
+
+#define XOK_BUTTON             (  4)
 #define XOK_FPS                (  3)
 #define XOK_LOG_LEVEL          (  2)
 #define XOK_FN                 (  1)
@@ -17,7 +20,7 @@
 #define XERR_ERRNO             ( -7)
 #define XERR_FILE_INACCESSIBLE ( -8)
 #define XERR_OBJTYP_NOT_FOUND  ( -9)
-#define XERR_INTERRUPTED       (-10)
+#define XERR_QUIT              (-10)
 
 typedef int32_t XErr;
 
