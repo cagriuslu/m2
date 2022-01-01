@@ -156,13 +156,17 @@ int main(int argc, char **argv) {
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		if (Events_Gather(&GAME->events)) {
+			// Handle quit event
 			if (GAME->events.quitEvent) {
 				break;
 			}
+			// Handle window resize event
 			if (GAME->events.windowResizeEvent) {
 				Game_UpdateWindowDimensions(GAME->events.windowDims.x, GAME->events.windowDims.y);
+				MarkupState_UpdatePositions(&GAME->leftHudMarkupState, GAME->leftHudRect);
 			}
 			if (!SDL_IsTextInputActive()) {
+				// Handle key events
 				if (GAME->events.keysPressed[KEY_MENU]) {
 					// TODO
 					//goto main_menu;
@@ -172,7 +176,14 @@ int main(int argc, char **argv) {
 					SDL_StartTextInput();
 					LOG_INF("SDL text input activated");
 				}
+				// Handle HUD events (mouse and key)
+				CfgMarkupButtonType pressedButton;
+				if (MarkupState_HandleEvents(&GAME->leftHudMarkupState, &GAME->events, &pressedButton)) {
+					LOGXV_INF(XOK_BUTTON, Int32, pressedButton);
+					// There are no hud buttons yet that we care about
+				}
 			} else {
+				// Handle text input
 				if (GAME->events.keysPressed[KEY_MENU]) {
 					SDL_StopTextInput();
 					LOG_INF("SDL text input deactivated");
@@ -265,11 +276,14 @@ int main(int argc, char **argv) {
 			}
 		}
 		// Draw HUD background
-		SDL_SetRenderDrawColor(GAME->sdlRenderer, 5, 5, 5, 255);
-		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->leftHudRect);
-		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->rightHudRect);
+		//SDL_SetRenderDrawColor(GAME->sdlRenderer, 5, 5, 5, 255);
+		//SDL_RenderFillRect(GAME->sdlRenderer, &GAME->leftHudRect);
+		//SDL_RenderFillRect(GAME->sdlRenderer, &GAME->rightHudRect);
 		// Draw HUD
-		Hud_Draw(&GAME->hud);
+		//Hud_Draw(&GAME->hud);
+		// Draw Markup HUD
+		MarkupState_UpdateElements(&GAME->leftHudMarkupState);
+		MarkupState_Draw(&GAME->leftHudMarkupState);
 		// Post-graphics
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += GAME->deltaTicks;

@@ -54,6 +54,7 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 	REFLECT_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
 	obj->ex->type = CFG_OBJTYP_PLAYER;
 	obj->ex->value.player.chr = cfg;
+	// TODO implement CharacterState
 
 	ComponentEventListener* el = Object_AddEventListener(obj);
 	el->prePhysics = Player_prePhysics;

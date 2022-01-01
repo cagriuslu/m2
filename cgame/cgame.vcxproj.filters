@@ -60,12 +60,6 @@
     <ClInclude Include="..\src\HashMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Hud.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\HudWidget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\InsertionList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -129,6 +123,9 @@
     <ClInclude Include="..\src\Markup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\MarkupElement.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\AI.c">
@@ -159,9 +156,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\HashMap.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Hud.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\InsertionList.c">
@@ -245,9 +239,6 @@
     <ClCompile Include="..\src\Dialogs\DialogMainMenu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\HudWidgets\HudWidgetHealthPoints.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\Objects\ObjectCamera.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -294,6 +285,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Markup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MarkupElements\MarkupElementCommon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MarkupElements\MarkupElementHP.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

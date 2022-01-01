@@ -11,6 +11,6 @@ int ObjectCharacter_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F posi
 		case CFG_OBJTYP_ENEMY:
 			return ObjectEnemy_InitFromCfg(obj, cfg, position);
 		default:
-			return LOGXV_ERR(XERR_OBJTYP_NOT_FOUND, Int32, cfg->objType);
+			return LOGXV_ERR(XERR_INVALID_CFG_OBJTYP, Int32, cfg->objType);
 	}
 }

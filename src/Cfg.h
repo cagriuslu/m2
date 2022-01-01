@@ -10,6 +10,8 @@
 #define CFG_TEXTURE_FILE "resources/24.png"
 
 typedef struct _CfgCollider {
+	Vec2F center_px;
+	Vec2F center_m;
 	enum {
 		CFG_COLLIDER_TYPE_INVALID = 0,
 		CFG_COLLIDER_TYPE_RECTANGLE,
@@ -17,14 +19,10 @@ typedef struct _CfgCollider {
 	} type;
 	union {
 		struct {
-			Vec2F center_px;
-			Vec2F center_m;
 			Vec2F dims_px;
 			Vec2F dims_m;
 		} rect;
 		struct {
-			Vec2F center_px;
-			Vec2F center_m;
 			float radius_px;
 			float radius_m;
 		} circ;
@@ -59,17 +57,17 @@ extern const CfgObjectTexture CFG_OBJTXTR_ARROW000;
 extern const CfgObjectTexture CFG_OBJTXTR_BULLET000;
 extern const CfgObjectTexture CFG_OBJTXTR_BULLET001;
 
+typedef struct _CfgProjectile {
+	const CfgObjectTexture* texture;
+	float speed;
+	float damage;
+	float ttl;
+} CfgProjectile;
 typedef struct _CfgRangedWeapon {
-	struct _CfgProjectile {
-		const CfgObjectTexture *texture;
-		float speed;
-		float damage;
-		float ttl;
-	} projectile;
+	CfgProjectile projectile;
 	unsigned projectileCount;
 	float rateOfFire;
 } CfgRangedWeapon;
-typedef struct _CfgProjectile CfgProjectile;
 extern const CfgRangedWeapon CFG_RANGEDWPN_GUN; // Default
 extern const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN; // Fast, thus powerful
 extern const CfgRangedWeapon CFG_RANGEDWPN_SHOTGUN; // Slow but powerful
@@ -79,19 +77,20 @@ typedef struct _RangedWeaponState {
 	float cooldownStopwatch;
 } RangedWeaponState;
 
+typedef enum _CfgMeleeMotion {
+	CFG_MELEE_MOTION_INVALID = 0,
+	CFG_MELEE_MOTION_SWING,
+	CFG_MELEE_MOTION_STAB,
+} CfgMeleeMotion;
+typedef struct _CfgMelee {
+	const CfgObjectTexture* texture;
+	float damage;
+	CfgMeleeMotion motion;
+} CfgMelee;
 typedef struct _CfgMeleeWeapon {
-	struct _CfgMelee {
-		const CfgObjectTexture* texture;
-		float damage;
-		enum _CfgMeleeMotion {
-			CFG_MELEE_MOTION_INVALID = 0,
-			CFG_MELEE_MOTION_SWING,
-			CFG_MELEE_MOTION_STAB,
-		} motion;
-	} melee;
+	CfgMelee melee;
 	float rateOfFire;
 } CfgMeleeWeapon;
-typedef struct _CfgMelee CfgMelee;
 typedef enum _CfgMeleeMotion CfgMeleeMotion;
 extern const CfgMeleeWeapon CFG_MELEEWPN_BAT; // Default
 extern const CfgMeleeWeapon CFG_MELEEWPN_SWORD; // Slow but powerful
@@ -102,17 +101,17 @@ typedef struct _MeleeWeaponState {
 	float cooldownStopwatch;
 } MeleeWeaponState;
 
+typedef struct _CfgExplosive {
+	const CfgObjectTexture* texture;
+	float speed;
+	float damageMax;
+	float damageMin;
+	float damageRadius;
+} CfgExplosive;
 typedef struct _CfgExplosiveWeapon {
-	struct _CfgExplosive {
-		const CfgObjectTexture* texture;
-		float speed;
-		float damageMax;
-		float damageMin;
-		float damageRadius;
-	} explosive;
+	CfgExplosive explosive;
 	float rateOfFire;
 } CfgExplosiveWeapon;
-typedef struct _CfgExplosive CfgExplosive;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
 typedef struct _ExplosiveWeaponState {
@@ -120,13 +119,14 @@ typedef struct _ExplosiveWeaponState {
 	float cooldownStopwatch;
 } ExplosiveWeaponState;
 
+typedef enum _CfgObjectType {
+	CFG_OBJTYP_INVALID = 0,
+	CFG_OBJTYP_PLAYER,
+	CFG_OBJTYP_ENEMY
+} CfgObjectType;
 typedef struct _CfgCharacter {
 	const CfgObjectTexture* texture;
-	enum _CfgObjectType {
-		CFG_OBJTYP_INVALID = 0,
-		CFG_OBJTYP_PLAYER,
-		CFG_OBJTYP_ENEMY
-	} objType;
+	CfgObjectType objType;
 	float walkSpeed; // m/s
 	float maxHp;
 	const CfgRangedWeapon* defaultRangedWeapon;
@@ -134,12 +134,10 @@ typedef struct _CfgCharacter {
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
 	int defaultExplosiveCount;
 } CfgCharacter;
-typedef enum _CfgObjectType CfgObjectType;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;
 extern const CfgCharacter CFG_CHARACTER_SKELETON000;
 typedef struct CharacterState {
 	const CfgCharacter *cfg;
-	float hp;
 	RangedWeaponState rangedWeaponState;
 	MeleeWeaponState meleeWeaponState;
 	ExplosiveWeaponState explosiveWeaponState;
@@ -163,107 +161,74 @@ typedef enum _CfgMarkupButtonType {
 } CfgMarkupButtonType;
 typedef enum _CfgMarkupDynamicTextType {
 	CFG_MARKUP_DYNAMIC_TEXT_TYPE_INVALID = 0,
+	CFG_MARKUP_DYNAMIC_TEXT_TYPE_HP
 } CfgMarkupDynamicTextType;
 typedef enum _CfgMarkupDynamicImageType {
 	CFG_MARKUP_DYNAMIC_IMAGE_TYPE_INVALID = 0,
 } CfgMarkupDynamicImageType;
+typedef enum _CfgMarkupElementType {
+	CFG_MARKUP_ELEMENT_TYPE_INVALID = 0,
+	CFG_MARKUP_ELEMENT_TYPE_MARKUP,
+	CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT,
+	CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON,
+	CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE,
+	CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON,
+	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT,
+	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON,
+	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE,
+	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON,
+} CfgMarkupElementType;
+struct _CfgMarkup;
+typedef struct _CfgMarkupElement {
+	unsigned x, y, w, h; // unitless
+	unsigned borderWidth_px;
+	SDL_Color backgroundColor;
+	
+	CfgMarkupElementType type;
+	// Exists for MARKUP
+	const struct _CfgMarkup* child;
+	// Exists for STATIC_TEXT, STATIC_TEXT_BUTTON
+	const char* text;
+	// Exists for STATIC_TEXT_BUTTON, STATIC_IMAGE_BUTTON, DYNAMIC_TEXT_BUTTON, DYNAMIC_IMAGE_BUTTON
+	CfgMarkupButtonType buttonType;
+	SDL_Scancode keyboardShortcut;
+	// Exists for STATIC_IMAGE, STATIC_IMAGE_BUTTON
+	const CfgObjectTexture* texture;
+	// Exists for DYNAMIC_TEXT, DYNAMIC_TEXT_BUTTON
+	CfgMarkupDynamicTextType textType;
+	// Exists for DYNAMIC_IMAGE, DYNAMIC_IMAGE_BUTTON
+	CfgMarkupDynamicImageType imageType;
+	
+	const struct _CfgMarkupElement* next;
+} CfgMarkupElement;
 typedef struct _CfgMarkup {
 	unsigned w, h; // unitless
 	unsigned borderWidth_px;
-	const struct _CfgMarkupElement {
-		unsigned x, y, w, h; // unitless
-		unsigned borderWidth_px;
-		enum _CfgMarkupElementType {
-			CFG_MARKUP_ELEMENT_TYPE_INVALID = 0,
-			CFG_MARKUP_ELEMENT_TYPE_MARKUP,
-			CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT,
-			CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON,
-			CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE,
-			CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON,
-			CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT,
-			CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON,
-			CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE,
-			CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON,
-		} type;
-		union {
-			const struct _CfgMarkup* markup;
-			struct {
-				const char* text;
-			} staticText;
-			struct {
-				const char* text;
-				CfgMarkupButtonType buttonType;
-				SDL_Scancode keyboardShortcut;
-			} staticTextButton;
-			struct {
-				const CfgObjectTexture *texture;
-			} staticImage;
-			struct {
-				const CfgObjectTexture *texture;
-				CfgMarkupButtonType buttonType;
-				SDL_Scancode keyboardShortcut;
-			} staticImageButton;
-			struct {
-				// TODO dynamic text generator should return a text and TTL
-				// TODO TTL can be milliseconds, TTL can be zero, so that every frame it is repainted
-				CfgMarkupDynamicTextType textType;
-			} dynamicText;
-			struct {
-				CfgMarkupDynamicTextType textType;
-				CfgMarkupButtonType buttonType;
-				SDL_Scancode keyboardShortcut;
-			} dynamicTextButton;
-			struct {
-				CfgMarkupDynamicImageType imageType;
-			} dynamicImage;
-			struct {
-				CfgMarkupDynamicImageType imageType;
-				CfgMarkupButtonType buttonType;
-				SDL_Scancode keyboardShortcut;
-			} dynamicImageButton;
-		} elementUnion;
-		const struct _CfgMarkupElement *next;
-	} *firstElement;
+	SDL_Color backgroundColor;
+	const CfgMarkupElement* firstElement;
 } CfgMarkup;
-typedef struct _CfgMarkupElement CfgMarkupElement;
 DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgMarkupElement);
 extern const CfgMarkup CFG_MARKUP_START_MENU;
+extern const CfgMarkup CFG_MARKUP_HUD_LEFT;
+typedef struct _MarkupElementState {
+	SDL_Rect rect;
+	const CfgMarkupElement* cfg;
+
+	// Exists for MARKUP
+	struct _MarkupState* child;
+	// Exists for STATIC_TEXT, STATIC_TEXT_BUTTON, DYNAMIC_TEXT, DYNAMIC_TEXT_BUTTON
+	SDL_Texture* textTexture;
+	// Exists for STATIC_TEXT_BUTTON, STATIC_IMAGE_BUTTON, DYNAMIC_TEXT_BUTTON, DYNAMIC_IMAGE_BUTTON
+	bool depressed;
+	// Exists for DYNAMIC_IMAGE, DYNAMIC_IMAGE_BUTTON
+	const CfgObjectTexture* texture;
+	
+	struct _MarkupElementState* next;
+} MarkupElementState;
 typedef struct _MarkupState {
 	const CfgMarkup *cfg;
 	SDL_Rect rect;
-	struct _MarkupElementState {
-		const CfgMarkupElement* cfg;
-		SDL_Rect rect;
-		union {
-			struct _MarkupState* markup;
-			struct {
-				SDL_Texture *textTexture;
-			} staticText;
-			struct {
-				SDL_Texture *textTexture;
-				bool depressed;
-			} staticTextButton;
-			struct {
-				bool depressed;
-			} staticImageButton;
-			struct {
-				SDL_Texture *textTexture;
-			} dynamicText;
-			struct {
-				SDL_Texture *textTexture;
-				bool depressed;
-			} dynamicTextButton;
-			struct {
-				const CfgObjectTexture *texture;
-			} dynamicImage;
-			struct {
-				const CfgObjectTexture *texture;
-				bool depressed;
-			} dynamicImageButton;
-		} elementUnion;
-		struct _MarkupElementState *next;
-	} *firstElement;
+	MarkupElementState* firstElement;
 } MarkupState;
-typedef struct _MarkupElementState MarkupElementState;
 
 #endif

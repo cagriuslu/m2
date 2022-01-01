@@ -52,7 +52,7 @@ const CfgMeleeWeapon CFG_MELEEWPN_BAT = {
 const CfgMeleeWeapon CFG_MELEEWPN_SWORD = {
 	.melee = {
 		.texture = &CFG_OBJTXTR_SWORD000,
-		.damage = 90.0f,
+		.damage = 45.0f, // TODO normally 90
 		.motion = CFG_MELEE_MOTION_SWING
 	},
 	.rateOfFire = 1.0f

@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "Box2D.h"
 #include "Cfg.h"
+#include "Markup.h"
 #include "Log.h"
 #include <stdio.h>
 #include <string.h>
@@ -112,7 +113,9 @@ XErr Game_Level_Load(const CfgLevel *cfg) {
 	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
 	ObjectCamera_Init(camera);
 
-	Hud_Init(&GAME->hud);
+	MarkupState_Init(&GAME->leftHudMarkupState, &CFG_MARKUP_HUD_LEFT);
+	MarkupState_UpdatePositions(&GAME->leftHudMarkupState, GAME->leftHudRect);
+	MarkupState_UpdateElements(&GAME->leftHudMarkupState);
 
 	return XOK;
 }

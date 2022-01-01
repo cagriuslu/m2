@@ -28,6 +28,20 @@
 #define DeleteObjectById(id) do { ID __id__ = (id); Array_Append(&GAME->deleteList, &__id__); } while (0)
 #define DeleteObject(obj)    DeleteObjectById(Pool_GetId(&GAME->objects, (obj)))
 
+typedef struct _ObjectEx {
+	CfgObjectType type;
+	union {
+		struct {
+			CharacterState characterState;
+			const CfgCharacter* chr;
+			Stopwatch rangedAttackStopwatch;
+			Stopwatch meleeAttackStopwatch;
+		} player;
+		struct {
+			AI* ai;
+		} enemy;
+	} value;
+} ObjectEx;
 /// Basis of all objects in the game.
 /// 
 /// How to decide if a component should reside in Pool or be held as a property?
@@ -44,21 +58,8 @@ typedef struct _Object {
 	ID terrainGraphics;
 	ID defense;
 	ID offense;
-	struct _ObjectEx {
-		CfgObjectType type;
-		union {
-			struct {
-				const CfgCharacter *chr;
-				Stopwatch rangedAttackStopwatch;
-				Stopwatch meleeAttackStopwatch;
-			} player;
-			struct {
-				AI* ai;
-			} enemy;
-		} value;
-	}* ex;
+	ObjectEx* ex;
 } Object;
-typedef struct _ObjectEx ObjectEx;
 
 int Object_Init(Object* obj, Vec2F position, bool initProperties);
 void Object_Term(Object* obj);

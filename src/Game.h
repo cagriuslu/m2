@@ -5,7 +5,6 @@
 #include "Pool.h"
 #include "InsertionList.h"
 #include "Box2D.h"
-#include "Hud.h"
 #include "Cfg.h"
 #include "Pathfinder.h"
 #include "SpatialMap.h"
@@ -14,12 +13,7 @@
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
-#define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f)
-
-typedef enum _LevelType {
-	LEVEL_TYPE_INVALID = 0,
-	LEVEL_TYPE_SINGLE_PLAYER,
-} LevelType;
+#define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
 
 typedef struct _Game {
 	////////////////////////////////////////////////////////////////////////
@@ -78,7 +72,7 @@ typedef struct _Game {
 	ID cameraId, playerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
-	Hud hud;
+	MarkupState leftHudMarkupState, rightHudMarkupState;
 
 	////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// GAME /////////////////////////////////

@@ -444,11 +444,14 @@ void _VSON_Serialize_ToFile_StringValue(VSON* vson, FILE* file) {
 void _VSON_Serialize_ToFile_AnyValue(VSON* vson, FILE* file) {
 	switch (vson->type) {
 		case VSON_VALUE_TYPE_OBJECT:
-			return _VSON_Serialize_ToFile_ObjectValue(vson, file);
+			_VSON_Serialize_ToFile_ObjectValue(vson, file);
+			break;
 		case VSON_VALUE_TYPE_ARRAY:
-			return _VSON_Serialize_ToFile_ArrayValue(vson, file);
+			_VSON_Serialize_ToFile_ArrayValue(vson, file);
+			break;
 		case VSON_VALUE_TYPE_STRING:
-			return _VSON_Serialize_ToFile_StringValue(vson, file);
+			_VSON_Serialize_ToFile_StringValue(vson, file);
+			break;
 		default:
 			break;
 	}

@@ -1,8 +1,11 @@
 #include "Markup.h"
 #include "Event.h"
 #include "Log.h"
+#include "MarkupElement.h"
 #include "HashMap.h"
 #include "Game.h"
+
+// Helper functions
 
 SDL_Rect _Markup_CalculateElementRect(SDL_Rect parentRect, unsigned parentW, unsigned parentH, unsigned childX, unsigned childY, unsigned childW, unsigned childH) {
 	float pixelsPreUnitW = (float)parentRect.w / (float)parentW;
@@ -15,33 +18,40 @@ SDL_Rect _Markup_CalculateElementRect(SDL_Rect parentRect, unsigned parentW, uns
 	};
 }
 
-SDL_Texture* _Markup_GenerateFontTexture(const char *text) {
+SDL_Texture* Markup_GenerateFontTexture(const char *text) {
 	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME->ttfFont, text, (SDL_Color){255, 255, 255, 255});
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textSurf);
 	SDL_FreeSurface(textSurf);
 	return texture;
 }
 
-CfgMarkupButtonType _Markup_GetButtonType(const CfgMarkupElement *element) {
-	switch (element->type) {
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
-			return element->elementUnion.staticTextButton.buttonType;
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON:
-			return element->elementUnion.staticImageButton.buttonType;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
-			return element->elementUnion.dynamicTextButton.buttonType;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-			return element->elementUnion.dynamicImageButton.buttonType;
-		default:
-			return CFG_MARKUP_BUTTON_TYPE_INVALID;
+XErr _Markup_Draw_BackgroundColor(SDL_Rect rect, SDL_Color color) {
+	if (color.a == 0) {
+		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
+	} else {
+		SDL_SetRenderDrawColor(GAME->sdlRenderer, color.r, color.g, color.b, color.a);
 	}
+	SDL_RenderFillRect(GAME->sdlRenderer, &rect);
+	return XOK;
+}
+XErr _Markup_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
+	int textW = 0, textH = 0;
+	SDL_QueryTexture(texture, NULL, NULL, &textW, &textH);
+	SDL_Rect textRect = (SDL_Rect) {
+			rect.x + rect.w / 2 - textW / 2,
+			rect.y + rect.h / 2 - textH / 2,
+			textW,
+			textH
+	};
+	SDL_RenderCopy(GAME->sdlRenderer, texture, NULL, &textRect);
+	return XOK;
 }
 
 MarkupElementState* _MarkupState_FindElementByPixel(MarkupState *state, Vec2I mousePosition) {
 	MarkupElementState* foundElement = NULL;
 	for (MarkupElementState* elementState = state->firstElement; elementState && (foundElement == NULL); elementState = elementState->next) {
 		if (elementState->cfg->type == CFG_MARKUP_ELEMENT_TYPE_MARKUP) {
-			foundElement = _MarkupState_FindElementByPixel(elementState->elementUnion.markup, mousePosition);
+			foundElement = _MarkupState_FindElementByPixel(elementState->child, mousePosition);
 		} else {
 			SDL_Point p = (SDL_Point){ mousePosition.x, mousePosition.y };
 			foundElement = SDL_PointInRect(&p, &elementState->rect) ? elementState : NULL;
@@ -50,66 +60,19 @@ MarkupElementState* _MarkupState_FindElementByPixel(MarkupState *state, Vec2I mo
 	return foundElement;
 }
 
-bool _MarkupState_GetButtonState(MarkupElementState *elementState) {
-	switch (elementState->cfg->type) {
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
-			return elementState->elementUnion.staticTextButton.depressed;
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON:
-			return elementState->elementUnion.staticImageButton.depressed;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
-			return elementState->elementUnion.dynamicTextButton.depressed;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-			return elementState->elementUnion.dynamicImageButton.depressed;
-		default:
-			return false;
-	}
-}
-void _MarkupState_SetButtonState(MarkupElementState* elementState, bool depressed) {
-	switch (elementState->cfg->type) {
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
-			elementState->elementUnion.staticTextButton.depressed = depressed;
-			break;
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON:
-			elementState->elementUnion.staticImageButton.depressed = depressed;
-			break;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
-			elementState->elementUnion.dynamicTextButton.depressed = depressed;
-			break;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-			elementState->elementUnion.dynamicImageButton.depressed = depressed;
-			break;
-		default:
-			break;
-	}
-}
-SDL_Scancode _MarkupState_GetButtonKeyboardShortcut(MarkupElementState* elementState) {
-	switch (elementState->cfg->type) {
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
-			return elementState->cfg->elementUnion.staticTextButton.keyboardShortcut;
-		case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON:
-			return elementState->cfg->elementUnion.staticImageButton.keyboardShortcut;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
-			return elementState->cfg->elementUnion.dynamicTextButton.keyboardShortcut;
-		case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-			return elementState->cfg->elementUnion.dynamicImageButton.keyboardShortcut;
-		default:
-			return 0;
-	}
-}
-
 MarkupElementState* _MarkupState_FindElementByKeyboardShortcut(MarkupState* state, const uint8_t* rawKeyboardState) {
 	SDL_Scancode keyboardShortcut = 0;
 	MarkupElementState* foundElement = NULL;
 	for (MarkupElementState* elementState = state->firstElement; elementState && (foundElement == NULL); elementState = elementState->next) {
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				foundElement = _MarkupState_FindElementByKeyboardShortcut(elementState->elementUnion.markup, rawKeyboardState);
+				foundElement = _MarkupState_FindElementByKeyboardShortcut(elementState->child, rawKeyboardState);
 				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON:
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-				keyboardShortcut = _MarkupState_GetButtonKeyboardShortcut(elementState);
+				keyboardShortcut = elementState->cfg->keyboardShortcut;
 				foundElement = keyboardShortcut && rawKeyboardState[keyboardShortcut] ? elementState : NULL;
 				break;
 			default:
@@ -123,14 +86,16 @@ void _MarkupState_ResetDepressedButtons(MarkupState *state) {
 	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				_MarkupState_ResetDepressedButtons(elementState->elementUnion.markup);
+				_MarkupState_ResetDepressedButtons(elementState->child);
 				break;
 			default:
-				_MarkupState_SetButtonState(elementState, false);
+				elementState->depressed = false;
 				break;
 		}
 	}
 }
+
+// MarkupState methods
 
 XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg) {
 	state->cfg = cfg;
@@ -142,14 +107,13 @@ XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg) {
 			// Create MarkupElementState
 			MarkupElementState* elementState = calloc(1, sizeof(MarkupElementState));
 			if (elementState) {
-				// Store a pointer to Cfg
 				elementState->cfg = cfgMarkupElement;
 				// Create child MarkupState if the type fits
 				if (cfgMarkupElement->type == CFG_MARKUP_ELEMENT_TYPE_MARKUP) {
 					MarkupState* childMarkupState = calloc(1, sizeof(MarkupState));
 					if (childMarkupState) {
-						MarkupState_Init(childMarkupState, cfgMarkupElement->elementUnion.markup);
-						elementState->elementUnion.markup = childMarkupState;
+						MarkupState_Init(childMarkupState, cfgMarkupElement->child);
+						elementState->child = childMarkupState;
 					} else {
 						return XERR_OUT_OF_MEMORY;
 					}
@@ -165,7 +129,7 @@ XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg) {
 	return XOK;
 }
 
-XErr MarkupState_Update(MarkupState *state, SDL_Rect rootRect) {
+XErr MarkupState_UpdatePositions(MarkupState *state, SDL_Rect rootRect) {
 	state->rect = rootRect;
 	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
 		// Update rect
@@ -173,29 +137,33 @@ XErr MarkupState_Update(MarkupState *state, SDL_Rect rootRect) {
 		// Update individual element
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				REFLECT_ERROR(MarkupState_Update(elementState->elementUnion.markup, elementState->rect));
+				REFLECT_ERROR(MarkupState_UpdatePositions(elementState->child, elementState->rect));
+				break;
+			default:
+				break;
+		}
+	}
+	return XOK;
+}
+
+XErr MarkupState_UpdateElements(MarkupState* state) {
+	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
+		// Update individual element
+		switch (elementState->cfg->type) {
+			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
+				REFLECT_ERROR(MarkupState_UpdateElements(elementState->child));
 				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT:
-				if (!elementState->elementUnion.staticText.textTexture) {
-					elementState->elementUnion.staticText.textTexture = _Markup_GenerateFontTexture(elementState->cfg->elementUnion.staticText.text);
-				}
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
-				if (!elementState->elementUnion.staticTextButton.textTexture) {
-					elementState->elementUnion.staticTextButton.textTexture = _Markup_GenerateFontTexture(elementState->cfg->elementUnion.staticTextButton.text);
+				if (!elementState->textTexture) {
+					elementState->textTexture = Markup_GenerateFontTexture(elementState->cfg->text);
 				}
 				break;
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT:
-				// TODO
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
-				// TODO
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE:
-				// TODO
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-				// TODO
+				MarkupElement_UpdateDynamic(elementState);
 				break;
 			default:
 				break;
@@ -211,17 +179,17 @@ bool MarkupState_HandleEvents(MarkupState *state, Events *evs, CfgMarkupButtonTy
 	if (evs->buttonsPressed[BUTTON_PRIMARY] && SDL_PointInRect(&mousePosition, &state->rect)) {
 		MarkupElementState* elementUnderMouse = _MarkupState_FindElementByPixel(state, evs->mousePosition);
 		if (elementUnderMouse) {
-			_MarkupState_SetButtonState(elementUnderMouse, true);
+			elementUnderMouse->depressed = true;
 		}
 	}
 
 	if (evs->buttonsReleased[BUTTON_PRIMARY]) {
 		if (SDL_PointInRect(&mousePosition, &state->rect)) {
 			MarkupElementState* elementUnderMouse = _MarkupState_FindElementByPixel(state, evs->mousePosition);
-			if (elementUnderMouse && _MarkupState_GetButtonState(elementUnderMouse)) {
+			if (elementUnderMouse && elementUnderMouse->depressed) {
 				eventOccurred = true;
 				if (outPressedButton) {
-					*outPressedButton = _Markup_GetButtonType(elementUnderMouse->cfg);
+					*outPressedButton = elementUnderMouse->cfg->buttonType;
 				}
 			}
 		}
@@ -233,7 +201,7 @@ bool MarkupState_HandleEvents(MarkupState *state, Events *evs, CfgMarkupButtonTy
 		if (keyboardShortcutPressedElement) {
 			eventOccurred = true;
 			if (outPressedButton) {
-				*outPressedButton = _Markup_GetButtonType(keyboardShortcutPressedElement->cfg);
+				*outPressedButton = keyboardShortcutPressedElement->cfg->buttonType;
 			}
 		}
 	}
@@ -241,64 +209,25 @@ bool MarkupState_HandleEvents(MarkupState *state, Events *evs, CfgMarkupButtonTy
 	return eventOccurred;
 }
 
-void MarkupState_Term(MarkupState *state) {
-	// TODO
-}
-
-XErr Markup_Draw_NoPresent_Text(SDL_Texture* texture, SDL_Rect rect) {
-	int textW = 0, textH = 0;
-	SDL_QueryTexture(texture, NULL, NULL, &textW, &textH);
-	SDL_Rect textRect = (SDL_Rect) {
-		rect.x + rect.w / 2 - textW / 2,
-		rect.y + rect.h / 2 - textH / 2,
-		textW,
-		textH
-	};
-	SDL_RenderCopy(GAME->sdlRenderer, texture, NULL, &textRect);
-	return XOK;
-}
-
-XErr _MarkupState_Clear_NoPresent(MarkupState *state) {
-	SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
-	SDL_RenderFillRect(GAME->sdlRenderer, &state->rect);
-	return XOK;
-}
-
-XErr _MarkupState_Draw_NoPresent(MarkupState *state) {
-	// Clear rect
-	SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
-	SDL_RenderFillRect(GAME->sdlRenderer, &state->rect);
+XErr MarkupState_Draw(MarkupState *state) {
+	_Markup_Draw_BackgroundColor(state->rect, state->cfg->backgroundColor);
 	// Draw elements
 	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
-		// Clear rect
-		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(GAME->sdlRenderer, &elementState->rect);
+		_Markup_Draw_BackgroundColor(elementState->rect, elementState->cfg->backgroundColor);
 		// Draw element
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				_MarkupState_Draw_NoPresent(elementState->elementUnion.markup);
+				MarkupState_Draw(elementState->child);
 				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT:
-				Markup_Draw_NoPresent_Text(elementState->elementUnion.staticText.textTexture, elementState->rect);
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
-				Markup_Draw_NoPresent_Text(elementState->elementUnion.staticTextButton.textTexture, elementState->rect);
+			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT:
+			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
+				_Markup_Draw_Text(elementState->textTexture, elementState->rect);
 				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE:
-				// TODO
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON:
-				// TODO
-				break;
-			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT:
-				// TODO
-				break;
-			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
-				// TODO
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE:
-				// TODO
-				break;
 			case CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
 				// TODO
 				break;
@@ -307,7 +236,7 @@ XErr _MarkupState_Draw_NoPresent(MarkupState *state) {
 		}
 		// Draw element border
 		if (elementState->cfg->borderWidth_px) {
-			if (_MarkupState_GetButtonState(elementState) == false) {
+			if (elementState->depressed == false) {
 				SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 255, 255, 255);
 			} else {
 				SDL_SetRenderDrawColor(GAME->sdlRenderer, 127, 127, 127, 255);
@@ -323,10 +252,15 @@ XErr _MarkupState_Draw_NoPresent(MarkupState *state) {
 	return XOK;
 }
 
+void MarkupState_Term(MarkupState *state) {
+	// TODO
+}
+
 XErr Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPressedButton) {
 	MarkupState state;
 	MarkupState_Init(&state, markup);
-	MarkupState_Update(&state, GAME->windowRect);
+	MarkupState_UpdatePositions(&state, GAME->windowRect);
+	MarkupState_UpdateElements(&state);
 
 	XErr result = XOK;
 	Events evs;
@@ -341,7 +275,7 @@ XErr Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPre
 			}
 			if (evs.windowResizeEvent) {
 				Game_UpdateWindowDimensions(evs.windowDims.x, evs.windowDims.y);
-				MarkupState_Update(&state, GAME->windowRect);
+				MarkupState_UpdatePositions(&state, GAME->windowRect);
 			}
 			CfgMarkupButtonType pressedButton;
 			if (MarkupState_HandleEvents(&state, &evs, &pressedButton)) {
@@ -359,10 +293,9 @@ XErr Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPre
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		// Clear screen
-		_MarkupState_Clear_NoPresent(&state);
 		// Draw markup
-		_MarkupState_Draw_NoPresent(&state);
+		MarkupState_UpdateElements(&state);
+		MarkupState_Draw(&state);
 		// Present
 		SDL_RenderPresent(GAME->sdlRenderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
