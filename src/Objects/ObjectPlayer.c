@@ -1,5 +1,5 @@
 #include "../Object.h"
-#include "../Main.h"
+#include "../Game.h"
 #include "../Box2DUtils.h"
 #include "../Controls.h"
 #include "../Event.h"
@@ -51,16 +51,13 @@ static void Player_prePhysics(ComponentEventListener* el) {
 }
 
 int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
-	REFLECT_ERROR(Object_Init(obj, (Vec2F) { 0.0f, 0.0f }, true));
+	REFLECT_ERROR(Object_Init(obj, position, true));
 	obj->ex->type = CFG_OBJTYP_PLAYER;
 	obj->ex->value.player.chr = cfg;
 	// TODO implement CharacterState
 
 	ComponentEventListener* el = Object_AddEventListener(obj);
 	el->prePhysics = Player_prePhysics;
-
-	TextureMap* textureMap = CurrentTextureMap();
-	Texture* texture = HashMap_GetStringKey(&textureMap->lut, "playr00");
 
 	ComponentPhysics* phy = Object_AddPhysics(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
@@ -74,8 +71,8 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 	);
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj);
-	gfx->txSrc = texture->rect;
-	gfx->txCenter = texture->center;
+	gfx->textureRect = cfg->texture->textureRect;
+	gfx->center_px = cfg->texture->objCenter_px;
 
 	ComponentDefense* def = Object_AddDefense(obj);
 	def->maxHp = def->hp = cfg->maxHp;

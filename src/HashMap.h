@@ -20,8 +20,6 @@ typedef HashMap HashMapOfInt32s;
 typedef HashMap HashMapOfTextures;
 
 int HashMap_Init(HashMap *hm, size_t itemSize, void (*itemTerm)(void*));
-XErr HashMap_InitFromFile_StringToCharPtr(HashMap* hm, const char* fpath);
-XErr HashMap_SaveToFile_StringToCharPtr(HashMap* hm, const char* fpath);
 void HashMap_Term(HashMap* hm);
 
 size_t HashMap_Size(HashMap* hm);

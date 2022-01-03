@@ -1,5 +1,5 @@
 #include "../Object.h"
-#include "../Main.h"
+#include "../Game.h"
 
 void Camera_postPhysics(ComponentEventListener* el) {
 	Object* camera = Pool_GetById(&GAME->objects, el->super.objId);

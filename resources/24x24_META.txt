@@ -1,9 +1,0 @@
-skltn00	x=48&y=0&w=24&h=24
-playr00	x=72&y=0&w=24&h=24
-box00	x=24&y=96&w=24&h=24
-arrow00	x=72&y=96&w=24&h=24
-bullt00	x=96&y=96&w=24&h=24
-bullt01	x=120&y=96&w=24&h=24
-sword00	x=144&y=96&w=48&h=24
-%
-skltn00	playr00	box00	arrow00	bullt00	bullt01	sword00	

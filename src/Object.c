@@ -1,5 +1,5 @@
 #include "Object.h"
-#include "Main.h"
+#include "Game.h"
 #include "Pool.h"
 #include <string.h>
 

@@ -1,9 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "Main.h"
 #include "Box2D.h"
 #include "Object.h"
 #include "Array.h"
-#include "Vec2I.h"
 #include "Markup.h"
 #include "Component.h"
 #include "Event.h"
@@ -13,18 +11,11 @@
 #include "Log.h"
 #include "Cfg.h"
 #include "Pathfinder.h"
-#include "TextureMap.h"
-#include "Txt.h"
-#include "String.h"
-#include "VSON.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <string.h>
-
-TextureMap gTextureMap;
 
 int main(int argc, char **argv) {
 	LOGFN_DBG();
@@ -114,7 +105,7 @@ int main(int argc, char **argv) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
 		return -1;
 	}
-	TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
+	//TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 
 	CfgMarkupButtonType startMenuPressedButtonType;
 	XErr startMenuResult = Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, &startMenuPressedButtonType);
@@ -317,8 +308,4 @@ int main(int argc, char **argv) {
 	IMG_Quit();
 	SDL_Quit();
 	return 0;
-}
-
-TextureMap* CurrentTextureMap() {
-	return &gTextureMap;
 }

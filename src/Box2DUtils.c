@@ -1,5 +1,5 @@
 #include "Box2DUtils.h"
-#include "Main.h"
+#include "Game.h"
 
 Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, Vec2F boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();

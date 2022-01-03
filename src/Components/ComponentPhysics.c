@@ -1,6 +1,6 @@
 #include "../Component.h"
 #include "../Object.h"
-#include "../Main.h"
+#include "../Game.h"
 #include "../Error.h"
 #include <stdio.h>
 #include <string.h>

@@ -1,5 +1,5 @@
 #include "../Object.h"
-#include "../Main.h"
+#include "../Game.h"
 #include "../Box2D.h"
 #include "../Log.h"
 #include "../Pathfinder.h"
@@ -116,8 +116,8 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	REFLECT_ERROR(Object_Init(obj, position, true));
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj);
-	gfx->txSrc = (SDL_Rect){ 2 * GAME->tileWidth, 0, GAME->tileWidth, GAME->tileWidth };
-	gfx->txCenter = (Vec2F){ 0.0f, 4.5f };
+	gfx->textureRect = cfg->texture->textureRect;
+	gfx->center_px = cfg->texture->objCenter_px;
 	gfx->draw = ObjectEnemy_Draw;
 
 	obj->ex->type = CFG_OBJTYP_ENEMY;

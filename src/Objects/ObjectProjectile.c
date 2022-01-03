@@ -1,5 +1,5 @@
 #include "../Object.h"
-#include "../Main.h"
+#include "../Game.h"
 #include "../Box2DUtils.h"
 #include "../Log.h"
 #include <math.h>
@@ -64,9 +64,9 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 	phy->onCollision = Bullet_onCollision;
 	
 	ComponentGraphics* gfx = Object_AddGraphics(obj);
-	gfx->txAngle = ANGLE(direction);
-	gfx->txSrc = (SDL_Rect){ 4 * GAME->tileWidth, 4 * GAME->tileWidth, GAME->tileWidth, GAME->tileWidth };
-	gfx->txCenter = (Vec2F){ 1.5f, 0.5f };
+	gfx->textureRect = cfg->texture->textureRect;
+	gfx->center_px = cfg->texture->objCenter_px;
+	gfx->angle = ANGLE(direction);
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;

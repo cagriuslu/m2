@@ -1,6 +1,6 @@
 #include "../Object.h"
 #include "../Log.h"
-#include "../Main.h"
+#include "../Game.h"
 #include "../Error.h"
 #include "../Box2DUtils.h"
 
@@ -26,7 +26,7 @@ static void Sword_postPhysics(ComponentEventListener* el) {
 			if (originator) {
 				Box2DBodySetTransform(phy->body, originator->position, Box2DBodyGetAngle(phy->body));
 			}
-			gfx->txAngle = Box2DBodyGetAngle(phy->body);
+			gfx->angle = Box2DBodyGetAngle(phy->body);
 		}
 	}
 }
@@ -83,9 +83,9 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, V
 	phy->onCollision = Sword_onCollision;
 
 	ComponentGraphics* gfx = Object_AddGraphics(obj);
-	gfx->txAngle = Box2DBodyGetAngle(phy->body);
-	gfx->txSrc = (SDL_Rect){ 6 * GAME->tileWidth, 4 * GAME->tileWidth, 2 * GAME->tileWidth, GAME->tileWidth };
-	gfx->txCenter = (Vec2F){ -14.0f, 0.0f };
+	gfx->textureRect = cfg->texture->textureRect;
+	gfx->center_px = cfg->texture->objCenter_px;
+	gfx->angle = Box2DBodyGetAngle(phy->body);
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;

@@ -14,7 +14,7 @@ int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F posit
 	}
 
 	ComponentGraphics *gfx = Object_AddTerrainGraphics(obj);
-	gfx->txSrc = cfg->textureRect;
+	gfx->textureRect = cfg->textureRect;
 
 	return 0;
 }
