@@ -158,6 +158,7 @@ typedef enum _CfgMarkupButtonType {
 	CFG_MARKUP_BUTTON_TYPE_INVALID = 0,
 	CFG_MARKUP_BUTTON_TYPE_NEW_GAME,
 	CFG_MARKUP_BUTTON_TYPE_QUIT,
+	CFG_MARKUP_BUTTON_TYPE_RESUME,
 } CfgMarkupButtonType;
 typedef enum _CfgMarkupDynamicTextType {
 	CFG_MARKUP_DYNAMIC_TEXT_TYPE_INVALID = 0,
@@ -209,6 +210,7 @@ typedef struct _CfgMarkup {
 } CfgMarkup;
 DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgMarkupElement);
 extern const CfgMarkup CFG_MARKUP_START_MENU;
+extern const CfgMarkup CFG_MARKUP_PAUSE_MENU;
 extern const CfgMarkup CFG_MARKUP_HUD_LEFT;
 typedef struct _MarkupElementState {
 	SDL_Rect rect;

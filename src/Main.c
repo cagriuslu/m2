@@ -8,7 +8,6 @@
 #include "Component.h"
 #include "Event.h"
 #include "Pool.h"
-#include "Dialog.h"
 #include "Game.h"
 #include "SDLUtils.h"
 #include "Log.h"

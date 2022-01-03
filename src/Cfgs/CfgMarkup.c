@@ -25,6 +25,21 @@ const CfgMarkupElement CFG_MARKUP_START_MENU_ELEMENT_QUIT_BUTTON = {
 	.next = NULL
 };
 
+extern const CfgMarkupElement CFG_MARKUP_PAUSE_MENU_ELEMENT_RESUME_BUTTON;
+const CfgMarkup CFG_MARKUP_PAUSE_MENU = {
+		.w = 100, .h = 100,
+		.firstElement = &CFG_MARKUP_PAUSE_MENU_ELEMENT_RESUME_BUTTON
+};
+const CfgMarkupElement CFG_MARKUP_PAUSE_MENU_ELEMENT_RESUME_BUTTON = {
+		.x = 45, .y = 25, .w = 10, .h = 10,
+		.borderWidth_px = 1,
+		.type = CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON,
+		.text = "RESUME",
+		.buttonType = CFG_MARKUP_BUTTON_TYPE_RESUME,
+		.keyboardShortcut = SDL_SCANCODE_R,
+		.next = &CFG_MARKUP_START_MENU_ELEMENT_NEW_GAME_BUTTON
+};
+
 extern const CfgMarkupElement CFG_MARKUP_HUD_LEFT_ELEMENT_LABEL_HP;
 extern const CfgMarkupElement CFG_MARKUP_HUD_LEFT_ELEMENT_HP;
 const CfgMarkup CFG_MARKUP_HUD_LEFT = {
