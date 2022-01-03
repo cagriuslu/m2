@@ -19,7 +19,6 @@
 
 int main(int argc, char **argv) {
 	LOGFN_DBG();
-	XErr res;
 
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {
@@ -105,7 +104,6 @@ int main(int argc, char **argv) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
 		return -1;
 	}
-	//TextureMap_Init(&gTextureMap, GAME->tileWidth, GAME->textureImageFilePath, GAME->textureMetaImageFilePath, GAME->textureMetaFilePath);
 
 	CfgMarkupButtonType startMenuPressedButtonType;
 	XErr startMenuResult = Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, &startMenuPressedButtonType);
@@ -121,11 +119,11 @@ int main(int argc, char **argv) {
 			return 0;
 		} else {
 			// Unknown button
-			return 0;
+			return 1;
 		}
 	} else {
 		// No specific errors are defined yet
-		return 0;
+		return 1;
 	}
 
 	float timeSinceLastWorldStep = 0.0f;
