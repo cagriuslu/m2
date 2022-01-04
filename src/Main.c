@@ -292,9 +292,9 @@ int main(int argc, char **argv) {
 		unsigned end_ticks = SDL_GetTicks();
 		frameTimeAccumulator += end_ticks - start_ticks;
 		frameCount++;
-		if (2000 < frameTimeAccumulator) {
-			frameTimeAccumulator -= 2000;
-			LOGXV_DBG(XOK_FPS, Int32, frameCount / 2);
+		if (1000 < frameTimeAccumulator) {
+			frameTimeAccumulator -= 1000;
+			LOGXV_TRC(XOK_FPS, Int32, frameCount);
 			frameCount = 0;
 		}
 	}

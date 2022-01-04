@@ -49,6 +49,7 @@ typedef struct _ComponentDefense {
 	Component super;
 	float maxHp;
 	float hp;
+	void (*onDeath)(struct _ComponentDefense*);
 } ComponentDefense;
 int ComponentDefense_Init(ComponentDefense* def, ID objId);
 void ComponentDefense_Term(ComponentDefense* def);

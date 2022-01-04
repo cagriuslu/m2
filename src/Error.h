@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 
-// TODO remove this later, it should be necessary
-#define XEVENT_QUIT               (999)
-
+#define XOK_PROJECTILE_DMG         (  8)
+#define XOK_PROJECTILE_DEATH       (  7)
+#define XOK_HP                     (  6)
+#define XOK_ID                     (  5)
 #define XOK_BUTTON                 (  4)
 #define XOK_FPS                    (  3)
 #define XOK_LOG_LEVEL              (  2)

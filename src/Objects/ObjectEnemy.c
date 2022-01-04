@@ -91,15 +91,8 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 	}
 }
 
-// Move this to main loop
-void ObjectEnemy_postPhysics(ComponentEventListener *el) {
-	Object* obj = FindObjectOfComponent(el);
-	if (obj) {
-		ComponentDefense* defense = FindDefenseOfObject(obj);
-		if (defense && defense->hp <= 0) {
-			Array_Append(&GAME->deleteList, &el->super.objId);
-		}
-	}
+void ObjectEnemy_onDeath(ComponentDefense* def) {
+	DeleteObjectById(def->super.objId);
 }
 
 void ObjectEnemy_Draw(ComponentGraphics* gfx) {
@@ -134,7 +127,6 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 
 	ComponentEventListener* el = Object_AddEventListener(obj);
 	el->prePhysics = ObjectEnemy_prePhysics;
-	el->postPhysics = ObjectEnemy_postPhysics;
 
 	ComponentPhysics* phy = Object_AddPhysics(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
@@ -150,6 +142,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	ComponentDefense* defense = Object_AddDefense(obj);
 	defense->hp = 100;
 	defense->maxHp = 100;
+	defense->onDeath = ObjectEnemy_onDeath;
 
 	ComponentOffense* offense = Object_AddOffense(obj);
 	offense->originator = Pool_GetId(&GAME->objects, obj);

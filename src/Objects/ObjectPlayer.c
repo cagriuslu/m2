@@ -50,6 +50,10 @@ static void Player_prePhysics(ComponentEventListener* el) {
 	}
 }
 
+static void Player_onDeath(ComponentDefense *def) {
+	LOG_INF("Player died");
+}
+
 int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	REFLECT_ERROR(Object_Init(obj, position, true));
 	obj->ex->type = CFG_OBJTYP_PLAYER;
@@ -76,6 +80,7 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 
 	ComponentDefense* def = Object_AddDefense(obj);
 	def->maxHp = def->hp = cfg->maxHp;
+	def->onDeath = Player_onDeath;
 
 	GAME->playerId = Pool_GetId(&GAME->objects, obj);
 	return XOK;

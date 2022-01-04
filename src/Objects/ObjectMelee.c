@@ -41,10 +41,13 @@ static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 		if (offense && defense) {
 			// Calculate damage
 			defense->hp -= offense->hp;
-
-			const Vec2F direction = Vec2F_Normalize(Vec2F_Sub(otherObj->position, obj->position));
-			Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(direction, 15000.0f), true);
-			LOG_DBG("Hit");
+			if (defense->hp <= 0.0001f && defense->onDeath) {
+				LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, offense->super.objId, XOK_ID, ID, defense->super.objId);
+				defense->onDeath(defense);
+			} else {
+				LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, offense->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
+				Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Vec2F_Sub(otherObj->position, obj->position)), 15000.0f), true);
+			}
 		}
 	}
 }
