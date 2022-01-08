@@ -9,8 +9,8 @@
 static void Sword_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId);
 	ComponentOffense* offense = Object_GetOffense(obj);
-	offense->ttl -= GAME->deltaTicks;
-	if (offense->ttl <= 0) {
+	offense->state.melee.ttl -= GAME->deltaTicks / 1000.0f;
+	if (offense->state.melee.ttl <= 0) {
 		Game_DeleteList_Add(el->super.objId);
 	}
 }
@@ -40,7 +40,7 @@ static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) 
 		ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
-			defense->hp -= offense->hp;
+			defense->hp -= offense->state.melee.cfg->damage;
 			if (defense->hp <= 0.0001f && defense->onDeath) {
 				LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, offense->super.objId, XOK_ID, ID, defense->super.objId);
 				defense->onDeath(defense);
@@ -92,8 +92,8 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, V
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;
-	off->hp = cfg->damage;
-	off->ttl = 150;
+	off->state.melee.cfg = cfg;
+	off->state.melee.ttl = cfg->ttl;
 	
 	return 0;
 }

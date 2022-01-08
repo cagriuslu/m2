@@ -47,6 +47,7 @@ void          Box2DBodySetUserData(Box2DBody *body, void *userData);
 void          Box2DBodySetTransform(Box2DBody* body, Vec2F position, float angle);
 void          Box2DBodyApplyForceToCenter(Box2DBody *body, Vec2F force, bool wake);
 void          Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity);
+void          Box2DBodySetLinearSpeed(Box2DBody* body, float speed); // utility
 void          Box2DBodySetAngularVelocity(Box2DBody* body, float omega);
 Vec2F         Box2DBodyGetLinearVelocity(Box2DBody* body);
 Vec2F         Box2DBodyGetPosition(Box2DBody *body);

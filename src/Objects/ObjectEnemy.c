@@ -144,10 +144,5 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	defense->maxHp = 100;
 	defense->onDeath = ObjectEnemy_onDeath;
 
-	ComponentOffense* offense = Object_AddOffense(obj);
-	offense->originator = Pool_GetId(&GAME->objects, obj);
-	offense->hp = 10;
-	offense->ttl = 100;
-
 	return 0;
 }

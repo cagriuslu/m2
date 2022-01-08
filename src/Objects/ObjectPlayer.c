@@ -47,6 +47,9 @@ static void Player_prePhysics(ComponentMonitor* el) {
 			ObjectMelee_InitFromCfg(melee, &obj->ex->value.player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
 			obj->ex->value.player.meleeAttackStopwatch = 0;
 		}
+		if (GAME->events.buttonStates[BUTTON_MIDDLE]) {
+			LOG_INF("Middle button");
+		}
 	}
 }
 

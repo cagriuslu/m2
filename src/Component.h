@@ -1,6 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
+#include "Cfg.h"
 #include "Vec2F.h"
 #include "Box2D.h"
 #include "Pool.h"
@@ -57,8 +58,11 @@ void ComponentDefense_Term(ComponentDefense* def);
 typedef struct _ComponentOffense {
 	Component super;
 	ID originator;
-	float ttl;
-	float hp;
+	union {
+		ProjectileState projectile;
+		MeleeState melee;
+		ExplosiveState explosive;
+	} state;
 } ComponentOffense;
 int ComponentOffense_Init(ComponentOffense* def, ID objId);
 void ComponentOffense_Term(ComponentOffense* def);

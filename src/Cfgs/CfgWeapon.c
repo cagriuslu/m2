@@ -45,7 +45,8 @@ const CfgMeleeWeapon CFG_MELEEWPN_BAT = {
 	.melee = {
 		.texture = &CFG_OBJTXTR_SWORD000,
 		.damage = 60.0f,
-		.motion = CFG_MELEE_MOTION_SWING
+		.motion = CFG_MELEE_MOTION_SWING,
+		.ttl = 0.150f
 	},
 	.rateOfFire = 1.0f
 };
@@ -53,7 +54,8 @@ const CfgMeleeWeapon CFG_MELEEWPN_SWORD = {
 	.melee = {
 		.texture = &CFG_OBJTXTR_SWORD000,
 		.damage = 45.0f, // TODO normally 90
-		.motion = CFG_MELEE_MOTION_SWING
+		.motion = CFG_MELEE_MOTION_SWING,
+		.ttl = 0.150f
 	},
 	.rateOfFire = 1.0f
 };
@@ -61,7 +63,8 @@ const CfgMeleeWeapon CFG_MELEEWPN_SPEAR = {
 	.melee = {
 		.texture = &CFG_OBJTXTR_SWORD000,
 		.damage = 120.0f,
-		.motion = CFG_MELEE_MOTION_STAB
+		.motion = CFG_MELEE_MOTION_STAB,
+		.ttl = 0.150f
 	},
 	.rateOfFire = 1.0f
 };
@@ -69,7 +72,8 @@ const CfgMeleeWeapon CFG_MELEEWPN_DAGGER = {
 	.melee = {
 		.texture = &CFG_OBJTXTR_SWORD000,
 		.damage = 60.0f,
-		.motion = CFG_MELEE_MOTION_STAB
+		.motion = CFG_MELEE_MOTION_STAB,
+		.ttl = 0.150f
 	},
 	.rateOfFire = 2.0f
 };
@@ -78,6 +82,7 @@ const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE = {
 	.explosive = {
 		.texture = &CFG_OBJTXTR_BULLET001,
 		.projectileSpeed = 1.5f,
+		.projectileTtl = 4.0f,
 		.projectileRadius = 0.25f,
 		.damageMax = 100.0f,
 		.damageMin = 15.0f,
@@ -89,6 +94,7 @@ const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER = {
 	.explosive = {
 		.texture = &CFG_OBJTXTR_BULLET000,
 		.projectileSpeed = 2.5f,
+		.projectileTtl = 2.0f,
 		.projectileRadius = 0.25f,
 		.damageMax = 80.0f,
 		.damageMin = 35.0f,

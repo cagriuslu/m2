@@ -52,6 +52,8 @@ MouseButton ButtonFromSDLButton(int button) {
 		return BUTTON_PRIMARY;
 	case SDL_BUTTON_RIGHT:
 		return BUTTON_SECONDARY;
+	case SDL_BUTTON_MIDDLE:
+			return BUTTON_MIDDLE;
 	default:
 		return BUTTON_NONE;
 	}

@@ -175,6 +175,18 @@ void Box2DBodySetLinearVelocity(Box2DBody* body, Vec2F velocity) {
 	AsBody(body)->SetLinearVelocity(Vec2FToB2Vec2(velocity));
 }
 
+void Box2DBodySetLinearSpeed(Box2DBody* body, float speed) {
+	Box2DBodySetLinearVelocity(
+		body,
+		Vec2F_Mul(
+			Vec2F_Normalize(
+				Box2DBodyGetLinearVelocity(body)
+			),
+			speed
+		)
+	);
+}
+
 void Box2DBodySetAngularVelocity(Box2DBody* body, float omega) {
 	AsBody(body)->SetAngularVelocity(omega);
 }

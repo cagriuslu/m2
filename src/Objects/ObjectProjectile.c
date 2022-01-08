@@ -11,12 +11,11 @@ static void Bullet_prePhysics(ComponentMonitor* el) {
 	ComponentOffense* offense;
 	if (obj && (phy = Object_GetPhysique(obj)) && (offense = Object_GetOffense(obj))) {
 		if (phy->body) {
-			const Vec2F direction = Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body));
-			Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 20.0f));
+			Box2DBodySetLinearSpeed(phy->body, offense->state.projectile.cfg->speed);
 		}
 
-		offense->ttl -= GAME->deltaTicks / 1000.0f;
-		if (offense->ttl <= 0) {
+		offense->state.projectile.ttl -= GAME->deltaTicks / 1000.0f;
+		if (offense->state.projectile.ttl <= 0) {
 			Game_DeleteList_Add(el->super.objId);
 		}
 	}
@@ -30,12 +29,12 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 		ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense);
 		if (offense && defense) {
 			// Calculate damage
-			defense->hp -= offense->hp;
+			defense->hp -= offense->state.projectile.cfg->damage;
 			if (defense->hp <= 0.0001f && defense->onDeath) {
-				LOG2XV_TRC(XOK_PROJECTILE_DEATH,ID,offense->super.objId,    XOK_ID,ID,defense->super.objId);
+				LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, offense->super.objId, XOK_ID, ID, defense->super.objId);
 				defense->onDeath(defense);
 			} else {
-				LOG3XV_TRC(XOK_PROJECTILE_DMG,ID,offense->super.objId,    XOK_ID,ID,defense->super.objId,    XOK_HP,Float32,defense->hp);
+				LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, offense->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
 				Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
 			}
 		}
@@ -59,7 +58,7 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 		0.0f, // Mass
 		0.0f // Damping
 	);
-	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 10.0f)); // Give initial velocity
+	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, cfg->speed));
 	phy->onCollision = Bullet_onCollision;
 	
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
@@ -69,8 +68,8 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;
-	off->hp = cfg->damage;
-	off->ttl = cfg->ttl;
+	off->state.projectile.cfg = cfg;
+	off->state.projectile.ttl = cfg->ttl;
 
 	return 0;
 }
