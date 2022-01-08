@@ -77,7 +77,8 @@ const CfgMeleeWeapon CFG_MELEEWPN_DAGGER = {
 const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE = {
 	.explosive = {
 		.texture = &CFG_OBJTXTR_BULLET001,
-		.speed = 1.5f,
+		.projectileSpeed = 1.5f,
+		.projectileRadius = 0.25f,
 		.damageMax = 100.0f,
 		.damageMin = 15.0f,
 		.damageRadius = 2.0f
@@ -86,11 +87,12 @@ const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE = {
 };
 const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER = {
 	.explosive = {
-			.texture = &CFG_OBJTXTR_BULLET000,
-			.speed = 2.5f,
-			.damageMax = 80.0f,
-			.damageMin = 35.0f,
-			.damageRadius = 0.75f
+		.texture = &CFG_OBJTXTR_BULLET000,
+		.projectileSpeed = 2.5f,
+		.projectileRadius = 0.25f,
+		.damageMax = 80.0f,
+		.damageMin = 35.0f,
+		.damageRadius = 0.75f
 	},
 	.rateOfFire = 1.0f
 };

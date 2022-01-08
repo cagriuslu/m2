@@ -2,12 +2,12 @@
 #include "../Error.h"
 #include <string.h>
 
-int EventListenerComponent_Init(ComponentEventListener* evListener, ID objectId) {
-	memset(evListener, 0, sizeof(ComponentEventListener));
+int ComponentMonitor_Init(ComponentMonitor* evListener, ID objectId) {
+	memset(evListener, 0, sizeof(ComponentMonitor));
 	return Component_Init((Component*)evListener, objectId);
 }
 
-void EventListenerComponent_Term(ComponentEventListener* evListener) {
+void ComponentMonitor_Term(ComponentMonitor* evListener) {
 	Component_Term((Component*)evListener);
-	memset(evListener, 0, sizeof(ComponentEventListener));
+	memset(evListener, 0, sizeof(ComponentMonitor));
 }

@@ -5,7 +5,7 @@
 #include "../Log.h"
 #include <string.h>
 
-void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
+void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 	Object* obj = Pool_GetById(&GAME->objects, gfx->super.objId);
 	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId);
 	if (obj && camera && GAME->sdlTexture) {
@@ -31,8 +31,8 @@ void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx) {
 	}
 }
 
-void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio) {
-	Object* obj = FindObjectOfComponent(gfx);
+void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio) {
+	Object* obj = Game_FindObjectById(gfx->super.objId);
 	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId);
 	if (obj && camera) {
 		float scale = GAME->pixelsPerMeter / GAME->tileWidth;
@@ -72,21 +72,21 @@ void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float health
 	}
 }
 
-int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId) {
-	memset(gfx, 0, sizeof(ComponentGraphics));
+int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId) {
+	memset(gfx, 0, sizeof(ComponentGraphic));
 	REFLECT_ERROR(Component_Init((Component*)gfx, objectId));
-	gfx->draw = GraphicsComponent_DefaultDraw;
+	gfx->draw = ComponentGraphic_DefaultDraw;
 	return 0;
 }
 
-void GraphicsComponent_Term(ComponentGraphics* gfx) {
+void ComponentGraphic_Term(ComponentGraphic* gfx) {
 	Component_Term((Component*)gfx);
-	memset(gfx, 0, sizeof(ComponentGraphics));
+	memset(gfx, 0, sizeof(ComponentGraphic));
 }
 
-int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB) {
-	ComponentGraphics* gfxA = Pool_GetById(&GAME->graphics, gfxIdA);
-	ComponentGraphics* gfxB = Pool_GetById(&GAME->graphics, gfxIdB);
+int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB) {
+	ComponentGraphic* gfxA = Pool_GetById(&GAME->graphics, gfxIdA);
+	ComponentGraphic* gfxB = Pool_GetById(&GAME->graphics, gfxIdB);
 	if (gfxA && gfxB) {
 		Object* a = Pool_GetById(&GAME->objects, gfxA->super.objId);
 		Object* b = Pool_GetById(&GAME->objects, gfxB->super.objId);

@@ -12,14 +12,14 @@
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
 
-static void Player_prePhysics(ComponentEventListener* el) {
+static void Player_prePhysics(ComponentMonitor* el) {
 	Object* obj = Pool_GetById(&GAME->objects, el->super.objId);
 
 	if (obj->ex && obj->ex->type == CFG_OBJTYP_PLAYER) {
 		obj->ex->value.player.rangedAttackStopwatch += GAME->deltaTicks;
 		obj->ex->value.player.meleeAttackStopwatch += GAME->deltaTicks;
 
-		ComponentPhysics* phy = Pool_GetById(&GAME->physics, obj->physics);
+		ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique);
 		if (phy && phy->body) {
 			Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
 			if (GAME->events.keyStates[KEY_UP]) {
@@ -60,10 +60,10 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 	obj->ex->value.player.chr = cfg;
 	// TODO implement CharacterState
 
-	ComponentEventListener* el = Object_AddEventListener(obj);
+	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Player_prePhysics;
 
-	ComponentPhysics* phy = Object_AddPhysics(obj);
+	ComponentPhysique* phy = Object_AddPhysique(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
 		Pool_GetId(&GAME->physics, phy),
 		obj->position,
@@ -74,7 +74,7 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 		10.0f // Damping
 	);
 
-	ComponentGraphics* gfx = Object_AddGraphics(obj);
+	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = cfg->texture->textureRect;
 	gfx->center_px = cfg->texture->objCenter_px;
 

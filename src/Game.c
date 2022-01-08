@@ -81,15 +81,15 @@ int Game_Level_Init() {
 		Game_Level_Term(GAME);
 	}
 	REFLECT_ERROR(Pool_Init(&GAME->objects, 16, sizeof(Object)));
-	REFLECT_ERROR(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, GraphicsComponent_YComparatorCB));
-	REFLECT_ERROR(Pool_Init(&GAME->eventListeners, 16, sizeof(ComponentEventListener)));
-	REFLECT_ERROR(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysics)));
-	REFLECT_ERROR(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphics)));
-	REFLECT_ERROR(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphics)));
+	REFLECT_ERROR(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
+	REFLECT_ERROR(Pool_Init(&GAME->monitors, 16, sizeof(ComponentMonitor)));
+	REFLECT_ERROR(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysique)));
+	REFLECT_ERROR(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphic)));
+	REFLECT_ERROR(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphic)));
 	REFLECT_ERROR(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
 	REFLECT_ERROR(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
 	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
-	GAME->contactListener = Box2DContactListenerRegister(PhysicsComponent_ContactCB);
+	GAME->contactListener = Box2DContactListenerRegister(ComponentPhysique_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
 	REFLECT_ERROR(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
 	GAME->levelLoaded = true;
@@ -120,7 +120,32 @@ XErr Game_Level_Load(const CfgLevel *cfg) {
 	return XOK;
 }
 
-void Game_Level_DeleteMarkedObjects() {
+void Game_Level_Term() {
+	// TODO delete members in objects
+	PathfinderMap_Term(&GAME->pathfinderMap);
+	Box2DContactListenerDestroy(GAME->contactListener);
+	Box2DWorldDestroy(GAME->world);
+	Array_Term(&GAME->deleteList);
+	Pool_Term(&GAME->offenses);
+	Pool_Term(&GAME->defenses);
+	Pool_Term(&GAME->terrainGraphics);
+	Pool_Term(&GAME->graphics);
+	Pool_Term(&GAME->physics);
+	Pool_Term(&GAME->monitors);
+	InsertionList_Term(&GAME->drawList);
+	Pool_Term(&GAME->objects);
+	GAME->levelLoaded = false;
+}
+
+Object* Game_FindObjectById(ID id) {
+	return Pool_GetById(&GAME->objects, (id));
+}
+
+void Game_DeleteList_Add(ID id) {
+	Array_Append(&GAME->deleteList, &id);
+}
+
+void Game_DeleteList_DeleteAll() {
 	for (size_t i = 0; i < GAME->deleteList.length; i++) {
 		ID* objIdPtr = Array_Get(&GAME->deleteList, i);
 		if (objIdPtr) {
@@ -133,23 +158,6 @@ void Game_Level_DeleteMarkedObjects() {
 		}
 	}
 	Array_Clear(&GAME->deleteList);
-}
-
-void Game_Level_Term() {
-	// TODO delete members in objects
-	PathfinderMap_Term(&GAME->pathfinderMap);
-	Box2DContactListenerDestroy(GAME->contactListener);
-	Box2DWorldDestroy(GAME->world);
-	Array_Term(&GAME->deleteList);
-	Pool_Term(&GAME->offenses);
-	Pool_Term(&GAME->defenses);
-	Pool_Term(&GAME->terrainGraphics);
-	Pool_Term(&GAME->graphics);
-	Pool_Term(&GAME->physics);
-	Pool_Term(&GAME->eventListeners);
-	InsertionList_Term(&GAME->drawList);
-	Pool_Term(&GAME->objects);
-	GAME->levelLoaded = false;
 }
 
 Vec2F CurrentPointerPositionInWorld() {

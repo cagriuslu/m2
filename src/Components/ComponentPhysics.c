@@ -5,25 +5,25 @@
 #include <stdio.h>
 #include <string.h>
 
-int PhysicsComponent_Init(ComponentPhysics* phy, ID objectId) {
-	memset(phy, 0, sizeof(ComponentPhysics));
+int ComponentPhysique_Init(ComponentPhysique* phy, ID objectId) {
+	memset(phy, 0, sizeof(ComponentPhysique));
 	REFLECT_ERROR(Component_Init((Component*)phy, objectId));
 	return 0;
 }
 
-void PhysicsComponent_Term(ComponentPhysics* phy) {
+void ComponentPhysique_Term(ComponentPhysique* phy) {
 	if (phy->body) {
 		Box2DWorldDestroyBody(GAME->world, phy->body);
 	}
 	Component_Term((Component*)phy);
-	memset(phy, 0, sizeof(ComponentPhysics));
+	memset(phy, 0, sizeof(ComponentPhysique));
 }
 
-void PhysicsComponent_ContactCB(Box2DContact* contact) {
+void ComponentPhysique_ContactCB(Box2DContact* contact) {
 	ID phyIdA = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact))));
 	ID phyIdB = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact))));
-	ComponentPhysics* phyA = Pool_GetById(&GAME->physics, phyIdA);
-	ComponentPhysics* phyB = Pool_GetById(&GAME->physics, phyIdB);
+	ComponentPhysique* phyA = Pool_GetById(&GAME->physics, phyIdA);
+	ComponentPhysique* phyB = Pool_GetById(&GAME->physics, phyIdB);
 	if (phyA && phyB) {
 		if (phyA->onCollision) {
 			phyA->onCollision(phyA, phyB);

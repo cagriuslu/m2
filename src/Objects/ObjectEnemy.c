@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <assert.h>
 
-void ObjectEnemy_prePhysics(ComponentEventListener* el) {
-	Object* obj = FindObjectOfComponent(el);
-	Object* player = FindObjectById(GAME->playerId);
+void ObjectEnemy_prePhysics(ComponentMonitor* el) {
+	Object* obj = Game_FindObjectById(el->super.objId);
+	Object* player = Game_FindObjectById(GAME->playerId);
 
 	float distanceToPlayer = 0.0f;
 
@@ -83,7 +83,7 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 			Vec2I* targetPosition = List_GetData(&ai->reversedWaypointList, targetIterator);
 
 			if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
-				ComponentPhysics* phy = FindPhysicsOfObject(obj);
+				ComponentPhysique* phy = Object_GetPhysique(obj);
 				Vec2F direction = Vec2F_Sub(Vec2F_FromVec2I(*targetPosition), obj->position);
 				Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), GAME->deltaTicks * 20.0f), true);
 			}
@@ -92,23 +92,23 @@ void ObjectEnemy_prePhysics(ComponentEventListener* el) {
 }
 
 void ObjectEnemy_onDeath(ComponentDefense* def) {
-	DeleteObjectById(def->super.objId);
+	Game_DeleteList_Add(def->super.objId);
 }
 
-void ObjectEnemy_Draw(ComponentGraphics* gfx) {
-	GraphicsComponent_DefaultDraw(gfx);
+void ObjectEnemy_Draw(ComponentGraphic* gfx) {
+	ComponentGraphic_DefaultDraw(gfx);
 
-	Object* obj = FindObjectOfComponent(gfx);
-	ComponentDefense* defense = FindDefenseOfObject(obj);	
+	Object* obj = Game_FindObjectById(gfx->super.objId);
+	ComponentDefense* defense = Object_GetDefense(obj);
 	if (obj && defense) {
-		GraphicsComponent_DefaultDrawHealthBar(gfx, (float)defense->hp / defense->maxHp);
+		ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defense->hp / defense->maxHp);
 	}
 }
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	REFLECT_ERROR(Object_Init(obj, position, true));
 
-	ComponentGraphics* gfx = Object_AddGraphics(obj);
+	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = cfg->texture->textureRect;
 	gfx->center_px = cfg->texture->objCenter_px;
 	gfx->draw = ObjectEnemy_Draw;
@@ -125,10 +125,10 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	ai->triggerDistance = 6.0f;
 	obj->ex->value.enemy.ai = ai;
 
-	ComponentEventListener* el = Object_AddEventListener(obj);
+	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = ObjectEnemy_prePhysics;
 
-	ComponentPhysics* phy = Object_AddPhysics(obj);
+	ComponentPhysique* phy = Object_AddPhysique(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
 		Pool_GetId(&GAME->physics, phy),
 		position,

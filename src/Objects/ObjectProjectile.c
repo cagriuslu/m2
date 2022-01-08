@@ -5,28 +5,24 @@
 #include <math.h>
 #include <stdio.h>
 
-#define ANGLE(v2fDir) atan2f((v2fDir).y, (v2fDir).x)
-
-static void Bullet_prePhysics(ComponentEventListener* el) {
-	Object* obj = FindObjectOfComponent(el);
-	if (obj && obj->physics) {
-		ComponentPhysics* phy = FindPhysicsOfObject(obj);
-		if (phy && phy->body) {
+static void Bullet_prePhysics(ComponentMonitor* el) {
+	Object* obj = Game_FindObjectById(el->super.objId);
+	ComponentPhysique* phy;
+	ComponentOffense* offense;
+	if (obj && (phy = Object_GetPhysique(obj)) && (offense = Object_GetOffense(obj))) {
+		if (phy->body) {
 			const Vec2F direction = Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body));
 			Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 20.0f));
 		}
 
-		ComponentOffense* offense = FindOffenseOfObject(obj);
-		if (offense) {
-			offense->ttl -= GAME->deltaTicks / 1000.0f;
-			if (offense->ttl <= 0) {
-				DeleteObject(obj);
-			}
+		offense->ttl -= GAME->deltaTicks / 1000.0f;
+		if (offense->ttl <= 0) {
+			Game_DeleteList_Add(el->super.objId);
 		}
 	}
 }
 
-static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
+static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
 	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
 	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId);
 	if (obj && obj->offense && otherObj && otherObj->defense) {
@@ -44,17 +40,17 @@ static void Bullet_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
 			}
 		}
 	}
-	DeleteObject(obj);
+	Game_DeleteList_Add(phy->super.objId);
 }
 
 int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction) {
 	direction = Vec2F_Normalize(direction);
 	REFLECT_ERROR(Object_Init(obj, position, false));
 
-	ComponentEventListener* el = Object_AddEventListener(obj);
+	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Bullet_prePhysics;
 
-	ComponentPhysics* phy = Object_AddPhysics(obj);
+	ComponentPhysique* phy = Object_AddPhysique(obj);
 	phy->body = Box2DUtils_CreateBulletSensor(
 		Pool_GetId(&GAME->physics, phy),
 		position,
@@ -66,10 +62,10 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, 10.0f)); // Give initial velocity
 	phy->onCollision = Bullet_onCollision;
 	
-	ComponentGraphics* gfx = Object_AddGraphics(obj);
+	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = cfg->texture->textureRect;
 	gfx->center_px = cfg->texture->objCenter_px;
-	gfx->angle = ANGLE(direction);
+	gfx->angle = Vec2F_AngleRads(direction);
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;

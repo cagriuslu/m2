@@ -4,6 +4,7 @@
 #include "Event.h"
 #include "Pool.h"
 #include "InsertionList.h"
+#include "Object.h"
 #include "Box2D.h"
 #include "Cfg.h"
 #include "Pathfinder.h"
@@ -61,7 +62,7 @@ typedef struct _Game {
 	// created/destroyed very rapidly.
 	Pool objects;
 	InsertionList drawList;
-	Pool eventListeners;
+	Pool monitors;
 	Pool physics;
 	Pool graphics;
 	Pool terrainGraphics;
@@ -89,8 +90,11 @@ void Game_UpdateWindowDimensions(int width, int height);
 
 int Game_Level_Init();
 XErr Game_Level_Load(const CfgLevel *cfg);
-void Game_Level_DeleteMarkedObjects();
 void Game_Level_Term();
+
+Object* Game_FindObjectById(ID id);
+void Game_DeleteList_Add(ID id);
+void Game_DeleteList_DeleteAll();
 
 Vec2F CurrentPointerPositionInWorld();
 

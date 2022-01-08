@@ -196,7 +196,7 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
 		prevPrePhysicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
+		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->prePhysics) {
 				el->prePhysics(el);
 			}
@@ -210,7 +210,7 @@ int main(int argc, char **argv) {
 			}
 			prevWorldStepTicks += GAME->deltaTicks;
 		}
-		for (ComponentPhysics* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
+		for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
 			if (phy->body) {
 				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
 				if (obj) {
@@ -220,12 +220,12 @@ int main(int argc, char **argv) {
 		}
 		GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
 		prevPostPhysicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
+		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->postPhysics) {
 				el->postPhysics(el);
 			}
 		}
-		Game_Level_DeleteMarkedObjects();
+		Game_DeleteList_DeleteAll();
 		//////////////////////////// END OF PHYSICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 
@@ -238,15 +238,15 @@ int main(int argc, char **argv) {
 		// Draw terrain
 		GAME->deltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
-		for (ComponentGraphics* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
+		for (ComponentGraphic* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
 			if (gfx->draw) {
 				gfx->draw(gfx);
 			}
 		}
-		// Pre-graphics
+		// Pre-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
 		prevPreGraphicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
+		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->preGraphics) {
 				el->preGraphics(el);
 			}
@@ -258,7 +258,7 @@ int main(int argc, char **argv) {
 		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
 			ID graphicsId = InsertionList_Get(&GAME->drawList, i);
-			ComponentGraphics* gfx = Pool_GetById(&GAME->graphics, graphicsId);
+			ComponentGraphic* gfx = Pool_GetById(&GAME->graphics, graphicsId);
 			if (gfx && gfx->draw) {
 				gfx->draw(gfx);
 			}
@@ -272,10 +272,10 @@ int main(int argc, char **argv) {
 		// Draw Markup HUD
 		MarkupState_UpdateElements(&GAME->leftHudMarkupState);
 		MarkupState_Draw(&GAME->leftHudMarkupState);
-		// Post-graphics
+		// Post-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += GAME->deltaTicks;
-		for (ComponentEventListener* el = Pool_GetFirst(&GAME->eventListeners); el; el = Pool_GetNext(&GAME->eventListeners, el)) {
+		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->postGraphics) {
 				el->postGraphics(el);
 			}

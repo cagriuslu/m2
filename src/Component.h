@@ -13,37 +13,37 @@ typedef struct _Component {
 int Component_Init(Component* component, ID objectId);
 void Component_Term(Component* component);
 
-typedef struct _ComponentEventListener {
+typedef struct _ComponentMonitor {
 	Component super;
-	void (*prePhysics)(struct _ComponentEventListener*);
-	void (*postPhysics)(struct _ComponentEventListener*);
-	void (*preGraphics)(struct _ComponentEventListener*);
-	void (*postGraphics)(struct _ComponentEventListener*);
-} ComponentEventListener;
-int EventListenerComponent_Init(ComponentEventListener* evListener, ID objectId);
-void EventListenerComponent_Term(ComponentEventListener* evListener);
+	void (*prePhysics)(struct _ComponentMonitor*);
+	void (*postPhysics)(struct _ComponentMonitor*);
+	void (*preGraphics)(struct _ComponentMonitor*);
+	void (*postGraphics)(struct _ComponentMonitor*);
+} ComponentMonitor;
+int ComponentMonitor_Init(ComponentMonitor* evListener, ID objectId);
+void ComponentMonitor_Term(ComponentMonitor* evListener);
 
-typedef struct _ComponentPhysics {
+typedef struct _ComponentPhysique {
 	Component super;
 	Box2DBody* body;
-	void (*onCollision)(struct _ComponentPhysics*, struct _ComponentPhysics*);
-} ComponentPhysics;
-int PhysicsComponent_Init(ComponentPhysics* phy, ID objectId);
-void PhysicsComponent_Term(ComponentPhysics* phy);
-void PhysicsComponent_ContactCB(Box2DContact* contact);
+	void (*onCollision)(struct _ComponentPhysique*, struct _ComponentPhysique*);
+} ComponentPhysique;
+int ComponentPhysique_Init(ComponentPhysique* phy, ID objectId);
+void ComponentPhysique_Term(ComponentPhysique* phy);
+void ComponentPhysique_ContactCB(Box2DContact* contact);
 
-typedef struct _ComponentGraphics {
+typedef struct _ComponentGraphic {
 	Component super;
 	SDL_Rect textureRect;
 	Vec2F center_px;
 	float angle;
-	void (*draw)(struct _ComponentGraphics*);
-} ComponentGraphics;
-int GraphicsComponent_Init(ComponentGraphics* gfx, ID objectId);
-void GraphicsComponent_Term(ComponentGraphics* gfx);
-void GraphicsComponent_DefaultDraw(ComponentGraphics* gfx);
-void GraphicsComponent_DefaultDrawHealthBar(ComponentGraphics* gfx, float healthRatio);
-int GraphicsComponent_YComparatorCB(ID gfxIdA, ID gfxIdB);
+	void (*draw)(struct _ComponentGraphic*);
+} ComponentGraphic;
+int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId);
+void ComponentGraphic_Term(ComponentGraphic* gfx);
+void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx);
+void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio);
+int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB);
 
 typedef struct _ComponentDefense {
 	Component super;

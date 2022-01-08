@@ -103,7 +103,8 @@ typedef struct _MeleeWeaponState {
 
 typedef struct _CfgExplosive {
 	const CfgObjectTexture* texture;
-	float speed;
+	float projectileSpeed;
+	float projectileRadius;
 	float damageMax;
 	float damageMin;
 	float damageRadius;

@@ -3,37 +3,108 @@
 #include "Pool.h"
 #include <string.h>
 
-int Object_Init(Object* obj, Vec2F position, bool initProperties) {
+XErr Object_Init(Object* obj, Vec2F position, bool initExtra) {
 	memset(obj, 0, sizeof(Object));
 	obj->position = position;
-	if (initProperties) {
-		obj->ex = calloc(1, sizeof(ObjectEx));
-		return 0;
+	if (initExtra) {
+		if ((obj->ex = calloc(1, sizeof(ObjectEx))) != NULL) {
+			return XOK;
+		} else {
+			// TODO print error message
+			return XERR_OUT_OF_MEMORY;
+		}
 	} else {
-		return 0;
+		return XOK;
 	}
 }
 
+ComponentMonitor* Object_GetMonitor(Object* obj) {
+	return Pool_GetById(&GAME->monitors, obj->monitor);
+}
+
+ComponentPhysique* Object_GetPhysique(Object* obj) {
+	return Pool_GetById(&GAME->physics, obj->physique);
+}
+
+ComponentGraphic* Object_GetGraphic(Object* obj) {
+	return Pool_GetById(&GAME->graphics, obj->graphic);
+}
+
+ComponentGraphic* Object_GetTerrainGraphic(Object* obj) {
+	return Pool_GetById(&GAME->terrainGraphics, obj->terrainGraphic);
+}
+
+ComponentDefense* Object_GetDefense(Object* obj) {
+	return Pool_GetById(&GAME->defenses, obj->defense);
+}
+
+ComponentOffense* Object_GetOffense(Object* obj) {
+	return Pool_GetById(&GAME->offenses, obj->offense);
+}
+
+ComponentMonitor* Object_AddMonitor(Object* obj) {
+	ID objectId = Pool_GetId(&GAME->objects, obj);
+	ComponentMonitor* el = Pool_Mark(&GAME->monitors, NULL, &obj->monitor);
+	ComponentMonitor_Init(el, objectId);
+	return el;
+}
+
+ComponentPhysique* Object_AddPhysique(Object* obj) {
+	ID objectId = Pool_GetId(&GAME->objects, obj);
+	ComponentPhysique* phy = Pool_Mark(&GAME->physics, NULL, &obj->physique);
+	ComponentPhysique_Init(phy, objectId);
+	return phy;
+}
+
+ComponentGraphic* Object_AddGraphic(Object* obj) {
+	ID objectId = Pool_GetId(&GAME->objects, obj);
+	ComponentGraphic* gfx = Pool_Mark(&GAME->graphics, NULL, &obj->graphic);
+	ComponentGraphic_Init(gfx, objectId);
+	InsertionList_Insert(&GAME->drawList, obj->graphic);
+	return gfx;
+}
+
+ComponentGraphic* Object_AddTerrainGraphic(Object* obj) {
+	ID objectId = Pool_GetId(&GAME->objects, obj);
+	ComponentGraphic* gfx = Pool_Mark(&GAME->terrainGraphics, NULL, &obj->terrainGraphic);
+	ComponentGraphic_Init(gfx, objectId);
+	return gfx;
+}
+
+ComponentDefense* Object_AddDefense(Object* obj) {
+	ID objectId = Pool_GetId(&GAME->objects, obj);
+	ComponentDefense* def = Pool_Mark(&GAME->defenses, NULL, &obj->defense);
+	ComponentDefense_Init(def, objectId);
+	return def;
+}
+
+ComponentOffense* Object_AddOffense(Object* obj) {
+	ID objectId = Pool_GetId(&GAME->objects, obj);
+	ComponentOffense* off = Pool_Mark(&GAME->offenses, NULL, &obj->offense);
+	ComponentOffense_Init(off, objectId);
+	return off;
+}
+
 void Object_Term(Object* obj) {
-	if (obj->eventListener) {
-		ComponentEventListener* el = Pool_GetById(&GAME->eventListeners, obj->eventListener);
-		EventListenerComponent_Term(el);
-		Pool_Unmark(&GAME->eventListeners, el);
+	if (obj->monitor) {
+		ComponentMonitor* el = Pool_GetById(&GAME->monitors, obj->monitor);
+		ComponentMonitor_Term(el);
+		Pool_Unmark(&GAME->monitors, el);
 	}
-	if (obj->physics) {
-		ComponentPhysics* phy = Pool_GetById(&GAME->physics, obj->physics);
-		PhysicsComponent_Term(phy);
+	if (obj->physique) {
+		ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique);
+		ComponentPhysique_Term(phy);
 		Pool_Unmark(&GAME->physics, phy);
 	}
-	if (obj->graphics) {
-		InsertionList_Remove(&GAME->drawList, obj->graphics);
-		ComponentGraphics* gfx = Pool_GetById(&GAME->graphics, obj->graphics);
-		GraphicsComponent_Term(gfx);
+	if (obj->graphic) {
+		InsertionList_Remove(&GAME->drawList, obj->graphic);
+		ComponentGraphic* gfx = Pool_GetById(&GAME->graphics, obj->graphic);
+		ComponentGraphic_Term(gfx);
 		Pool_Unmark(&GAME->graphics, gfx);
 	}
-	if (obj->terrainGraphics) {
-		ComponentGraphics* gfx = Pool_GetById(&GAME->terrainGraphics, obj->terrainGraphics);
-		GraphicsComponent_Term(gfx);
+	if (obj->terrainGraphic) {
+		ComponentGraphic* gfx = Pool_GetById(&GAME->terrainGraphics, obj->terrainGraphic);
+		ComponentGraphic_Term(gfx);
 		Pool_Unmark(&GAME->terrainGraphics, gfx);
 	}
 	if (obj->defense) {
@@ -50,47 +121,4 @@ void Object_Term(Object* obj) {
 		// TODO
 	}
 	memset(obj, 0, sizeof(Object));
-}
-
-ComponentEventListener* Object_AddEventListener(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentEventListener* el = Pool_Mark(&GAME->eventListeners, NULL, &obj->eventListener);
-	EventListenerComponent_Init(el, objectId);
-	return el;
-}
-
-ComponentPhysics* Object_AddPhysics(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentPhysics* phy = Pool_Mark(&GAME->physics, NULL, &obj->physics);
-	PhysicsComponent_Init(phy, objectId);
-	return phy;
-}
-
-ComponentGraphics* Object_AddGraphics(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentGraphics* gfx = Pool_Mark(&GAME->graphics, NULL, &obj->graphics);
-	GraphicsComponent_Init(gfx, objectId);
-	InsertionList_Insert(&GAME->drawList, obj->graphics);
-	return gfx;
-}
-
-ComponentGraphics* Object_AddTerrainGraphics(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentGraphics* gfx = Pool_Mark(&GAME->terrainGraphics, NULL, &obj->terrainGraphics);
-	GraphicsComponent_Init(gfx, objectId);
-	return gfx;
-}
-
-ComponentDefense* Object_AddDefense(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentDefense* def = Pool_Mark(&GAME->defenses, NULL, &obj->defense);
-	ComponentDefense_Init(def, objectId);
-	return def;
-}
-
-ComponentOffense* Object_AddOffense(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentOffense* off = Pool_Mark(&GAME->offenses, NULL, &obj->offense);
-	ComponentOffense_Init(off, objectId);
-	return off;
 }

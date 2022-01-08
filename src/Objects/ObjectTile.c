@@ -9,11 +9,11 @@ int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F posit
 	REFLECT_ERROR(Object_Init(obj, position, false));
 
 	if (cfg->collider.type == CFG_COLLIDER_TYPE_RECTANGLE) {
-		ComponentPhysics *phy = Object_AddPhysics(obj);
+		ComponentPhysique *phy = Object_AddPhysique(obj);
 		phy->body = Box2DUtils_CreateStaticBox(Pool_GetId(&GAME->physics, phy), position, CATEGORY_STATIC_CLIFF, cfg->collider.colliderUnion.rect.dims_m);
 	}
 
-	ComponentGraphics *gfx = Object_AddTerrainGraphics(obj);
+	ComponentGraphic *gfx = Object_AddTerrainGraphic(obj);
 	gfx->textureRect = cfg->textureRect;
 
 	return 0;

@@ -6,21 +6,21 @@
 
 #define SWING_SPEED (15.0f)
 
-static void Sword_prePhysics(ComponentEventListener* el) {
-	Object* obj = FindObjectOfComponent(el);
-	ComponentOffense* offense = FindOffenseOfObject(obj);
+static void Sword_prePhysics(ComponentMonitor* el) {
+	Object* obj = Game_FindObjectById(el->super.objId);
+	ComponentOffense* offense = Object_GetOffense(obj);
 	offense->ttl -= GAME->deltaTicks;
 	if (offense->ttl <= 0) {
-		DeleteObject(obj);
+		Game_DeleteList_Add(el->super.objId);
 	}
 }
 
-static void Sword_postPhysics(ComponentEventListener* el) {
-	Object* obj = FindObjectOfComponent(el);
-	if (obj && obj->physics && obj->graphics && obj->offense) {
-		ComponentPhysics* phy = FindPhysicsOfObject(obj);
-		ComponentGraphics* gfx = FindGraphicsOfObject(obj);
-		ComponentOffense* off = FindOffenseOfObject(obj);
+static void Sword_postPhysics(ComponentMonitor* el) {
+	Object* obj = Game_FindObjectById(el->super.objId);
+	if (obj && obj->physique && obj->graphic && obj->offense) {
+		ComponentPhysique* phy = Object_GetPhysique(obj);
+		ComponentGraphic* gfx = Object_GetGraphic(obj);
+		ComponentOffense* off = Object_GetOffense(obj);
 		if (phy && phy->body && gfx && off && off->originator) {
 			Object* originator = Pool_GetById(&GAME->objects, off->originator);
 			if (originator) {
@@ -31,7 +31,7 @@ static void Sword_postPhysics(ComponentEventListener* el) {
 	}
 }
 
-static void Sword_onCollision(ComponentPhysics* phy, ComponentPhysics* other) {
+static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
 	LOG_DBG("Collision");
 	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
 	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId);
@@ -58,11 +58,11 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, V
 	const float theta = Vec2F_AngleRads(direction); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
 
-	ComponentEventListener* el = Object_AddEventListener(obj);
+	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Sword_prePhysics;
 	el->postPhysics = Sword_postPhysics;
 
-	ComponentPhysics* phy = Object_AddPhysics(obj);
+	ComponentPhysique* phy = Object_AddPhysique(obj);
 	phy->body = Box2DUtils_CreateBody(
 		Pool_GetId(&GAME->physics, phy),
 		false, // isDisk
@@ -85,7 +85,7 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, V
 	Box2DBodySetAngularVelocity(phy->body, -SWING_SPEED);
 	phy->onCollision = Sword_onCollision;
 
-	ComponentGraphics* gfx = Object_AddGraphics(obj);
+	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = cfg->texture->textureRect;
 	gfx->center_px = cfg->texture->objCenter_px;
 	gfx->angle = Box2DBodyGetAngle(phy->body);

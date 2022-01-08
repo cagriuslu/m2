@@ -224,16 +224,16 @@
     <ClCompile Include="..\src\Components\ComponentDefense.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Components\ComponentEventListener.c">
+    <ClCompile Include="..\src\Components\ComponentMonitor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Components\ComponentGraphics.c">
+    <ClCompile Include="..\src\Components\ComponentGraphic.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Components\ComponentOffense.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Components\ComponentPhysics.c">
+    <ClCompile Include="..\src\Components\ComponentPhysique.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\Dialogs\DialogMainMenu.c">
