@@ -83,6 +83,9 @@ bool Events_Gather(Events* evs) {
 	if (mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
 		evs->buttonStates[BUTTON_SECONDARY] = 1;
 	}
+	if (mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+		evs->buttonStates[BUTTON_MIDDLE] = 1;
+	}
 
 	return evs->quitEvent || evs->windowResizeEvent || evs->keyDownEvent || evs->keyUpEvent || evs->mouseMotionEvent || evs->mouseButtonDownEvent || evs->mouseWheelEvent || evs->mouseButtonUpEvent || evs->textInputEvent;
 }

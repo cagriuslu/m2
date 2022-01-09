@@ -128,6 +128,7 @@ extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
 typedef struct _ExplosiveState {
 	const CfgExplosive* cfg;
 	float projectileTtl;
+	bool inFlight;
 } ExplosiveState;
 typedef struct _ExplosiveWeaponState {
 	const CfgExplosiveWeapon *cfg;

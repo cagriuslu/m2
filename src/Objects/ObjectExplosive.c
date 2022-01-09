@@ -50,6 +50,7 @@ XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origin
 	off->originator = originatorId;
 	off->state.explosive.cfg = cfg;
 	off->state.explosive.projectileTtl = cfg->projectileTtl;
+	off->state.explosive.inFlight = true;
 
 	return XOK;
 }

@@ -194,38 +194,40 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
-		prevPrePhysicsTicks += GAME->deltaTicks;
-		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
-			if (el->prePhysics) {
-				el->prePhysics(el);
-			}
-		}
-		if (GAME->world) {
-			GAME->deltaTicks = SDL_GetTicks() - prevWorldStepTicks;
-			timeSinceLastWorldStep += GAME->deltaTicks / 1000.0f;
-			while (GAME->physicsStepPeriod < timeSinceLastWorldStep) {
-				Box2DWorldStep(GAME->world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
-				timeSinceLastWorldStep -= GAME->physicsStepPeriod;
-			}
-			prevWorldStepTicks += GAME->deltaTicks;
-		}
-		for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
-			if (phy->body) {
-				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
-				if (obj) {
-					obj->position = Box2DBodyGetPosition(phy->body);
+		uint32_t ticksSinceLastWorldStep = SDL_GetTicks() - prevWorldStepTicks;
+		prevWorldStepTicks += ticksSinceLastWorldStep;
+		timeSinceLastWorldStep += ticksSinceLastWorldStep / 1000.0f;
+		while (GAME->physicsStepPeriod < timeSinceLastWorldStep) {
+			// Pre-physics
+			GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
+			prevPrePhysicsTicks += GAME->deltaTicks;
+			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
+				if (el->prePhysics) {
+					el->prePhysics(el);
 				}
 			}
-		}
-		GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
-		prevPostPhysicsTicks += GAME->deltaTicks;
-		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
-			if (el->postPhysics) {
-				el->postPhysics(el);
+			// Physics
+			Box2DWorldStep(GAME->world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
+			for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
+				if (phy->body) {
+					Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
+					if (obj) {
+						obj->position = Box2DBodyGetPosition(phy->body);
+					}
+				}
 			}
+			// Post-physics
+			GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
+			prevPostPhysicsTicks += GAME->deltaTicks;
+			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
+				if (el->postPhysics) {
+					el->postPhysics(el);
+				}
+			}
+			Game_DeleteList_DeleteAll();
+			// Update loop condition
+			timeSinceLastWorldStep -= GAME->physicsStepPeriod;
 		}
-		Game_DeleteList_DeleteAll();
 		//////////////////////////// END OF PHYSICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 
@@ -263,15 +265,6 @@ int main(int argc, char **argv) {
 				gfx->draw(gfx);
 			}
 		}
-		// Draw HUD background
-		//SDL_SetRenderDrawColor(GAME->sdlRenderer, 5, 5, 5, 255);
-		//SDL_RenderFillRect(GAME->sdlRenderer, &GAME->leftHudRect);
-		//SDL_RenderFillRect(GAME->sdlRenderer, &GAME->rightHudRect);
-		// Draw HUD
-		//Hud_Draw(&GAME->hud);
-		// Draw Markup HUD
-		MarkupState_UpdateElements(&GAME->leftHudMarkupState);
-		MarkupState_Draw(&GAME->leftHudMarkupState);
 		// Post-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += GAME->deltaTicks;
@@ -280,6 +273,9 @@ int main(int argc, char **argv) {
 				el->postGraphics(el);
 			}
 		}
+		// Draw Markup HUD
+		MarkupState_UpdateElements(&GAME->leftHudMarkupState);
+		MarkupState_Draw(&GAME->leftHudMarkupState);
 		// Draw envelope
 		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->firstEnvelopeRect);

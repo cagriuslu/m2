@@ -41,6 +41,7 @@ XErr LogX(LogLevel level, const char* file, int line, XErr x);
 #define LOGXV_FTL(x, typ, var) LogX_##typ(LogLevelFatal, __FILE__, __LINE__, (x), (var))
 XErr LogX_ID(LogLevel level, const char* file, int line, XErr x, ID var);
 XErr LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var);
+XErr LogX_Float32(LogLevel level, const char* file, int line, XErr x, float var);
 XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var);
 
 #define LOG2XV_TRC(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2))

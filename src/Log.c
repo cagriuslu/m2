@@ -146,6 +146,17 @@ XErr LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var)
 	return x;
 }
 
+XErr LogX_Float32(LogLevel level, const char* file, int line, XErr x, float var) {
+	if (level < gCurrentLogLevel) {
+		return x;
+	}
+	LogHeader(level, file, line);
+	fprintf(stderr, "{\"%s\": %.3f}", XErr_ToString(x), var);
+	LogNewLine();
+	LogFooter(level);
+	return x;
+}
+
 XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var) {
 	if (level < gCurrentLogLevel) {
 		return x;
@@ -172,7 +183,7 @@ void LogX_ID_ID_Float32(LogLevel level, const char* file, int line, XErr x1, ID 
 		return;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": 0x%016llX, \"%s\": 0x%016llX, \"%s\": %.2f}", XErr_ToString(x1), var1, XErr_ToString(x2), var2, XErr_ToString(x3), var3);
+	fprintf(stderr, "{\"%s\": 0x%016llX, \"%s\": 0x%016llX, \"%s\": %.3f}", XErr_ToString(x1), var1, XErr_ToString(x2), var2, XErr_ToString(x3), var3);
 	LogNewLine();
 	LogFooter(level);
 }

@@ -8,7 +8,7 @@ static const char* XErr_PositiveStrings[] = {
 	"Bttn",     // XOK_BUTTON
 	"ID",       // XOK_ID
 	"HP",       // XOK_HP
-	"ProjDth", // XOK_PROJECTILE_DEATH
+	"ProjDth",  // XOK_PROJECTILE_DEATH
 	"ProjDmg",  // XOK_PROJECTILE_DMG
 };
 static const char* XErr_NegativeStrings[] = {
