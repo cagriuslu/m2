@@ -17,6 +17,12 @@
 #include <stdbool.h>
 #include <string.h>
 
+//void AudioCallback(void* userdata, uint8_t* stream, int len) {
+//	for (int i = 0; i < len; i++) {
+//		stream[i] = (i % 384) < 192 ? 127 : -128;
+//	}
+//}
+
 int main(int argc, char **argv) {
 	LOGFN_DBG();
 
@@ -61,7 +67,7 @@ int main(int argc, char **argv) {
 	GAME->velocityIterations = 8;
 	GAME->positionIterations = 3;
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
@@ -104,6 +110,39 @@ int main(int argc, char **argv) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
 		return -1;
 	}
+
+//	int audioDriverCount = SDL_GetNumAudioDrivers();
+//	fprintf(stderr, "SDL_GetNumAudioDrivers: %d\n", audioDriverCount);
+//	for (int i = 0; i < audioDriverCount; i++) {
+//		fprintf(stderr, "AudioDriver: %s\n", SDL_GetAudioDriver(i));
+//	}
+//	fprintf(stderr, "SDL_GetCurrentAudioDriver: %s\n", SDL_GetCurrentAudioDriver());
+//
+//	int audioDeviceCount = SDL_GetNumAudioDevices(0);
+//	fprintf(stderr, "SDL_GetNumAudioDevices: %d\n", audioDeviceCount);
+//	for (int i = 0; i < audioDeviceCount; i++) {
+//		fprintf(stderr, "AudioDevice: %s\n", SDL_GetAudioDeviceName(i, 0));
+//	}
+
+//	SDL_AudioSpec want, have;
+//	SDL_memset(&want, 0, sizeof(want));
+//	want.freq = 48000;
+//	want.format = AUDIO_S8;
+//	want.channels = 1;
+//	want.samples = 4096;
+//	want.callback = AudioCallback;
+//	SDL_AudioDeviceID audioDeviceId = SDL_OpenAudioDevice(NULL, 0, &want, &have, SDL_AUDIO_ALLOW_ANY_CHANGE);
+//	if (audioDeviceId == 0) {
+//		fprintf(stderr, "Failed to open audio: %s\n", SDL_GetError());
+//	} else {
+//		fprintf(stderr, "want.freq=%d have.freq=%d\n", want.freq, have.freq);
+//		fprintf(stderr, "want.format=%d have.format=%d\n", want.format, have.format);
+//		fprintf(stderr, "want.channels=%d have.channels=%d\n", want.channels, have.channels);
+//		fprintf(stderr, "want.samples=%d have.samples=%d\n", want.samples, have.samples);
+//		SDL_PauseAudioDevice(audioDeviceId, 0);
+//		SDL_Delay(5000);
+//		SDL_PauseAudioDevice(audioDeviceId, 1);
+//	}
 
 	CfgMarkupButtonType startMenuPressedButtonType;
 	XErr startMenuResult = Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, &startMenuPressedButtonType);
