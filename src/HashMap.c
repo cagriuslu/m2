@@ -18,12 +18,6 @@ int HashMap_Init(HashMap* hm, size_t itemSize, void (*itemTerm)(void*)) {
 	return 0;
 }
 
-static void HashMap_InitFromFile_StringToCharPtr_ItemTerm(void* opaqueItemPtr) {
-	char** itemPtr = (char**)opaqueItemPtr;
-	char* item = *itemPtr;
-	free(item);
-}
-
 void HashMap_Term(HashMap* hm) {
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
 		Array* array = hm->buckets + i;
@@ -129,7 +123,6 @@ void* HashMap_Set(HashMap* hm, void* key, void* copy) {
 				memcpy(newItem->data, copy, hm->itemSize);
 			}
 		}
-
 		return newItem ? newItem->data : NULL;
 	}
 }

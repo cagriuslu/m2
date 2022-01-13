@@ -14,13 +14,13 @@ XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSi
 	array->itemSize = itemSize;
 	array->length = 0;
 	array->capacity = initCapacity;
-	array->maxSize = maxSize;
+	array->maxLength = maxSize;
 	array->itemTerm = itemTerm;
 	return 0;
 }
 
 void* Array_Append(Array *array, void *item) {
-	if (array->length < array->maxSize) {
+	if (array->length < array->maxLength) {
 		if (array->length < array->capacity) {
 			if (item) {
 				memcpy(array->data + array->length * array->itemSize, item, array->itemSize);

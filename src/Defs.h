@@ -7,6 +7,7 @@
 
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
+#define LERP(min,max,t) ((min) + (t) * ((max) - (min)))
 
 #ifdef _WIN32
 #define STRDUP _strdup

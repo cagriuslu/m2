@@ -2,6 +2,7 @@
 #define CFG_H
 
 #include "Error.h"
+#include "TinySet.h"
 #include "Vec2F.h"
 #include "Defs.h"
 #include <SDL.h>
@@ -125,10 +126,17 @@ typedef struct _CfgExplosiveWeapon {
 } CfgExplosiveWeapon;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
+typedef enum _ExplosiveStatus {
+	EXPLOSIVE_STATUS_INVALID = 0,
+	EXPLOSIVE_STATUS_IN_FLIGHT,
+	EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP,
+	EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP
+} ExplosiveStatus;
 typedef struct _ExplosiveState {
 	const CfgExplosive* cfg;
 	float projectileTtl;
-	bool inFlight;
+	ExplosiveStatus explosiveStatus;
+	TinySetOfIDs damagedObjs;
 } ExplosiveState;
 typedef struct _ExplosiveWeaponState {
 	const CfgExplosiveWeapon *cfg;

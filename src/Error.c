@@ -25,7 +25,9 @@ static const char* XErr_NegativeStrings[] = {
 	"Quit",                       // XERR_QUIT
 	"InvalidCfgDynamicTextType",  // XERR_INVALID_CFG_DYNTXTTYP
 	"InvalidCfgDynamicImageType", // XERR_INVALID_CFG_DYNIMGTYP
-	"ImplementationError"         // XERR_IMPLEMENTATION
+	"ImplementationError",        // XERR_IMPLEMENTATION
+	"TinyObjectLimitExceeded",    // XERR_TINYOBJ_LIMIT_EXCEEDED
+	"OutOfBounds",                // XERR_OUT_OF_BOUNDS
 };
 
 const char* XErr_ToString(XErr e) {

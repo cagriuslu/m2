@@ -17,7 +17,7 @@ typedef struct _Pool {
 	size_t dataSize;
 	size_t itemSize;
 	uint64_t shiftedPoolId;
-	size_t capacity; // 65536
+	size_t capacity; // max 65536
 	size_t size; // [0, 65536]
 	size_t nextKey; // [1, 65536]
 	size_t highestAllocatedIndex;
@@ -37,6 +37,7 @@ void Pool_UnmarkByIndex(Pool* pool, size_t idx);
 void Pool_UnmarkById(Pool* pool, ID id);
 void Pool_UnmarkAll(Pool* pool);
 
+size_t Pool_Size(Pool* pool);
 bool Pool_IsMarked(Pool* pool, void* data);
 bool Pool_IsMarkedByIndex(Pool* pool, size_t idx);
 bool Pool_IsMarkedById(Pool* pool, ID id);
@@ -47,5 +48,6 @@ void* Pool_GetPrev(Pool* pool, void* data);
 void* Pool_GetByIndex(Pool* pool, size_t idx);
 void* Pool_GetById(Pool* pool, ID id);
 ID Pool_GetId(Pool* pool, void* data);
+uint32_t Pool_GetIndex(Pool* pool, ID id);
 
 #endif

@@ -121,6 +121,10 @@ void Pool_UnmarkAll(Pool* pool) {
 	}
 }
 
+size_t Pool_Size(Pool* pool) {
+	return pool->size;
+}
+
 bool Pool_IsMarked(Pool* pool, void* data) {
 	return Pool_GetId(pool, data) != 0;
 }
@@ -210,5 +214,13 @@ ID Pool_GetId(Pool* pool, void* data) {
 		return pool->shiftedPoolId | (uint64_t)itemToCheck->id;
 	} else {
 		return 0;
+	}
+}
+
+uint32_t Pool_GetIndex(Pool* pool, ID id) {
+	if (Pool_IsMarkedById(pool, id)) {
+		return (uint32_t)id & 0xFFFF;
+	} else {
+		return -1;
 	}
 }

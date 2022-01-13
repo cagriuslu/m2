@@ -9,7 +9,7 @@ typedef struct _Array {
 	size_t itemSize;
 	size_t length;
 	size_t capacity;
-	size_t maxSize;
+	size_t maxLength;
 	void (*itemTerm)(void*);
 } Array;
 
