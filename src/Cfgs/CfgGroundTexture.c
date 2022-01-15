@@ -1,88 +1,80 @@
 #include "../Cfg.h"
 
 const CfgGroundTexture CFG_GNDTXTR_DEFAULT = {
-	.textureRect = {0, 0, 0, 0},
+	.textureRect = {96, 384, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {
 		.type = CFG_COLLIDER_TYPE_INVALID
 	}
 };
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000T = {
-	.textureRect = {0, 48, 24, 24},
+	.textureRect = {96, 0, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
 		.type = CFG_COLLIDER_TYPE_RECTANGLE,
 		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
+			.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
 		}
 	}
 };
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000R = {
-	.textureRect = {24, 48, 24, 24},
+	.textureRect = {96, 48, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
 		.type = CFG_COLLIDER_TYPE_RECTANGLE,
 		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
+			.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
 		}
 	}
 };
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000B = {
-	.textureRect = {24, 72, 24, 24},
+	.textureRect = {96, 96, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
 		.type = CFG_COLLIDER_TYPE_RECTANGLE,
 		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
+			.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
 		}
 	}
 };
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000L = {
-	.textureRect = {0, 72, 24, 24},
+	.textureRect = {96, 144, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
 		.type = CFG_COLLIDER_TYPE_RECTANGLE,
 		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
+			.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
 		}
 	}
 };
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000TR = {
-	.textureRect = {48, 48, 24, 24},
+	.textureRect = {96, 192, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
 		.type = CFG_COLLIDER_TYPE_RECTANGLE,
 		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
-		}
-	}
-};
-const CfgGroundTexture CFG_GNDTXTR_CLIFF000TL = {
-	.textureRect = {72, 72, 24, 24},
-	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
-		.type = CFG_COLLIDER_TYPE_RECTANGLE,
-		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
-		}
-	}
-};
-const CfgGroundTexture CFG_GNDTXTR_CLIFF000BR = {
-	.textureRect = {48, 72, 24, 24},
-	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
-		.type = CFG_COLLIDER_TYPE_RECTANGLE,
-		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
+			.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
 		}
 	}
 };
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000BL = {
-	.textureRect = {72, 48, 24, 24},
+		.textureRect = {96, 240, CFG_TILE_SIZE, CFG_TILE_SIZE},
+		.collider = {
+				.type = CFG_COLLIDER_TYPE_RECTANGLE,
+				.colliderUnion.rect = {
+						.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
+				}
+		}
+};
+const CfgGroundTexture CFG_GNDTXTR_CLIFF000TL = {
+	.textureRect = {96, 288, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {
-		.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
 		.type = CFG_COLLIDER_TYPE_RECTANGLE,
 		.colliderUnion.rect = {
-			.dims_px = {24.0f, 24.0f}, {24.0f / CFG_TILE_SIZE, 24.0f / CFG_TILE_SIZE}
+			.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
+		}
+	}
+};
+const CfgGroundTexture CFG_GNDTXTR_CLIFF000BR = {
+	.textureRect = {96, 336, CFG_TILE_SIZE, CFG_TILE_SIZE},
+	.collider = {
+		.type = CFG_COLLIDER_TYPE_RECTANGLE,
+		.colliderUnion.rect = {
+			.dims_px = {CFG_TILE_SIZE_F, CFG_TILE_SIZE_F}, {1.0f, 1.0f}
 		}
 	}
 };

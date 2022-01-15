@@ -58,10 +58,7 @@ int main(int argc, char **argv) {
 	}
 
 	GAME = calloc(1, sizeof(Game));
-	GAME->tileWidth = 24;
-	GAME->textureImageFilePath = "resources/24x24.png";
-	GAME->textureMetaImageFilePath = "resources/24x24_META.png";
-	GAME->textureMetaFilePath = "resources/24x24_META.txt";
+	GAME->tileWidth = CFG_TILE_SIZE;
 	GAME->physicsStepPerSecond = 80.0f;
 	GAME->physicsStepPeriod = 1.0f / GAME->physicsStepPerSecond;
 	GAME->velocityIterations = 8;

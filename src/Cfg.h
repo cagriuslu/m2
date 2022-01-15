@@ -7,8 +7,9 @@
 #include "Defs.h"
 #include <SDL.h>
 
-#define CFG_TILE_SIZE (24)
-#define CFG_TEXTURE_FILE "resources/24.png"
+#define CFG_TILE_SIZE (48)
+#define CFG_TILE_SIZE_F (48.0f)
+#define CFG_TEXTURE_FILE "resources/48.png"
 
 typedef struct _CfgCollider {
 	Vec2F center_px;
@@ -50,13 +51,34 @@ typedef struct _CfgObjectTexture {
 	Vec2F objCenter_m;
 	CfgCollider collider;
 } CfgObjectTexture;
-extern const CfgObjectTexture CFG_OBJTXTR_BOX000;
-extern const CfgObjectTexture CFG_OBJTXTR_SWORD000;
-extern const CfgObjectTexture CFG_OBJTXTR_SKELETON000;
-extern const CfgObjectTexture CFG_OBJTXTR_PLAYER000;
-extern const CfgObjectTexture CFG_OBJTXTR_ARROW000;
-extern const CfgObjectTexture CFG_OBJTXTR_BULLET000;
-extern const CfgObjectTexture CFG_OBJTXTR_BULLET001;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKDOWN_00;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKDOWN_01;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKDOWN_02;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKLEFT_00;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKLEFT_01;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKLEFT_02;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKRIGHT_00;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKRIGHT_01;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKRIGHT_02;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKUP_00;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKUP_01;
+extern const CfgObjectTexture CFG_OBJTXTR_PLAYER_LOOKUP_02;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKDOWN_00;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKDOWN_01;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKDOWN_02;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKLEFT_00;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKLEFT_01;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKLEFT_02;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKRIGHT_00;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKRIGHT_01;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKRIGHT_02;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKUP_00;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKUP_01;
+extern const CfgObjectTexture CFG_OBJTXTR_ENEMY_LOOKUP_02;
+extern const CfgObjectTexture CFG_OBJTXTR_BULLET_00;
+extern const CfgObjectTexture CFG_OBJTXTR_BULLET_01;
+extern const CfgObjectTexture CFG_OBJTXTR_SWORD_00;
+extern const CfgObjectTexture CFG_OBJTXTR_BOMB_00;
 
 typedef struct _CfgProjectile {
 	const CfgObjectTexture* texture;

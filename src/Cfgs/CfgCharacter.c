@@ -1,7 +1,7 @@
 #include "../Cfg.h"
 
 const CfgCharacter CFG_CHARACTER_PLAYER = {
-	.texture = &CFG_OBJTXTR_PLAYER000,
+	.texture = &CFG_OBJTXTR_PLAYER_LOOKDOWN_00,
 	.objType = CFG_OBJTYP_PLAYER,
 	.walkSpeed = 0.8f,
 	.maxHp = 100.0f,
@@ -11,7 +11,7 @@ const CfgCharacter CFG_CHARACTER_PLAYER = {
 	.defaultExplosiveCount = 4,
 };
 const CfgCharacter CFG_CHARACTER_SKELETON000 = {
-	.texture = &CFG_OBJTXTR_SKELETON000,
+	.texture = &CFG_OBJTXTR_ENEMY_LOOKDOWN_00,
 	.objType = CFG_OBJTYP_ENEMY,
 	.walkSpeed = 0.55f,
 	.maxHp = 100.0f,

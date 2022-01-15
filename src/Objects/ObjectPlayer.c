@@ -47,10 +47,9 @@ static void Player_prePhysics(ComponentMonitor* el) {
 			ObjectMelee_InitFromCfg(melee, &obj->ex->value.player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
 			obj->ex->value.player.meleeAttackStopwatch = 0;
 		}
-		if (GAME->events.buttonStates[BUTTON_MIDDLE]) {
+		if (GAME->events.buttonsPressed[BUTTON_MIDDLE]) {
 			Object* explosive = Pool_Mark(&GAME->objects, NULL, NULL);
 			ObjectExplosive_InitFromCfg(explosive, &obj->ex->value.player.chr->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
-			LOG_INF("Middle button");
 		}
 	}
 }
