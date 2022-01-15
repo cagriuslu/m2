@@ -1,10 +1,7 @@
 #ifndef POLL_H
 #define POLL_H
 
-#include "Error.h"
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include "Def.h"
 
 #pragma warning(disable : 4200)
 typedef struct _PoolItem {
@@ -25,8 +22,6 @@ typedef struct _Pool {
 	size_t nextFreeIndex;
 	unsigned poolCapacityInBits; // max:16 -> 65536
 } Pool;
-
-typedef uint64_t ID;
 
 XErr Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize);
 void Pool_Term(Pool* pool);

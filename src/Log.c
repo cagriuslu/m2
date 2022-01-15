@@ -1,4 +1,4 @@
-#include "Log.h"
+#include "Def.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>

@@ -1,9 +1,7 @@
 #include "../Object.h"
 #include "../Game.h"
 #include "../Box2DUtils.h"
-#include "../Log.h"
-#include <math.h>
-#include <stdio.h>
+#include "../Def.h"
 
 static void Bullet_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId);
@@ -44,7 +42,7 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 
 int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction) {
 	direction = Vec2F_Normalize(direction);
-	REFLECT_ERROR(Object_Init(obj, position, false));
+	XERR_REFLECT(Object_Init(obj, position, false));
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Bullet_prePhysics;

@@ -1,7 +1,6 @@
 #include "TinyArray.h"
 #include "Pool.h"
-#include "Log.h"
-#include <string.h>
+#include "Def.h"
 
 uint64_t TinyArray_Heap[TINY_ARRAY_MAX_INSTANCE_COUNT * TINY_ARRAY_MAX_LENGTH];
 Pool TinyArray_UsedArrays;
@@ -11,7 +10,7 @@ XErr TinyArray_Init(TinyArray* array) {
 
 	// Init TinyArray_UsedArrays lazily
 	if (TinyArray_UsedArrays.items == NULL) {
-		REFLECT_ERROR(Pool_Init(&TinyArray_UsedArrays, TINY_ARRAY_MAX_INSTANCE_COUNT_BITS, sizeof(uint64_t*)));
+		XERR_REFLECT(Pool_Init(&TinyArray_UsedArrays, TINY_ARRAY_MAX_INSTANCE_COUNT_BITS, sizeof(uint64_t*)));
 	}
 
 	ID poolItemId;

@@ -1,6 +1,5 @@
 #include "../Component.h"
-#include "../Error.h"
-#include <string.h>
+#include "../Def.h"
 
 int ComponentMonitor_Init(ComponentMonitor* evListener, ID objectId) {
 	memset(evListener, 0, sizeof(ComponentMonitor));

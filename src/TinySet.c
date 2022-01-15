@@ -14,7 +14,7 @@ static uint8_t TinySet_Hash(const uint8_t* key) {
 XErr TinySet_Init(TinySet* ts) {
 	memset(ts, 0, sizeof(TinySet));
 	for (int i = 0; i < TINY_SET_BUCKET_COUNT; i++) {
-		REFLECT_ERROR(TinyArray_Init(ts->buckets + i));
+		XERR_REFLECT(TinyArray_Init(ts->buckets + i));
 	}
 	return XOK;
 }

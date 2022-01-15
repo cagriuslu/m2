@@ -8,14 +8,12 @@
 #include "Pool.h"
 #include "Game.h"
 #include "SDLUtils.h"
-#include "Log.h"
+#include "Def.h"
 #include "Cfg.h"
 #include "Pathfinder.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
-#include <stdbool.h>
-#include <string.h>
 
 //void AudioCallback(void* userdata, uint8_t* stream, int len) {
 //	for (int i = 0; i < len; i++) {
@@ -147,9 +145,9 @@ int main(int argc, char **argv) {
 		return 0;
 	} else if (!startMenuResult) {
 		if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_NEW_GAME) {
-			REFLECT_ERROR(Game_Level_Init());
-			REFLECT_ERROR(Game_Level_Load(&CFG_LVL_SP000));
-			REFLECT_ERROR(PathfinderMap_Init(&GAME->pathfinderMap));
+			XERR_REFLECT(Game_Level_Init());
+			XERR_REFLECT(Game_Level_Load(&CFG_LVL_SP000));
+			XERR_REFLECT(PathfinderMap_Init(&GAME->pathfinderMap));
 			LOG_INF("Level loaded");
 		} else if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_QUIT) {
 			return 0;

@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "String.h"
-#include "Defs.h"
+#include "Def.h"
 #include <string.h>
 
 void String_Split_OutItemTerm(void* item) {

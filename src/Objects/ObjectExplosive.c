@@ -1,8 +1,7 @@
 #include "../Object.h"
 #include "../Box2DUtils.h"
 #include "../Game.h"
-#include "../Error.h"
-#include "../Log.h"
+#include "../Def.h"
 
 static Box2DBody* ObjectExplosive_CreateCollisionCircleBody(ID phyId, Vec2F position, const CfgExplosive *cfg) {
 	return Box2DUtils_CreateBulletSensor(
@@ -108,7 +107,7 @@ static void ObjectExplosive_postPhysics(ComponentMonitor* el) {
 
 XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID originatorId, Vec2F position, Vec2F direction) {
 	direction = Vec2F_Normalize(direction);
-	REFLECT_ERROR(Object_Init(obj, position, false));
+	XERR_REFLECT(Object_Init(obj, position, false));
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = ObjectExplosive_prePhysics;
@@ -136,7 +135,7 @@ XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origin
 	off->state.explosive.cfg = cfg;
 	off->state.explosive.projectileTtl = cfg->projectileTtl;
 	off->state.explosive.explosiveStatus = EXPLOSIVE_STATUS_IN_FLIGHT;
-	REFLECT_ERROR(TinySet_Init(&off->state.explosive.damagedObjs));
+	XERR_REFLECT(TinySet_Init(&off->state.explosive.damagedObjs));
 
 	return XOK;
 }

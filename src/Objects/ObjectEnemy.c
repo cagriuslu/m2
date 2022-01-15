@@ -1,11 +1,9 @@
 #include "../Object.h"
 #include "../Game.h"
 #include "../Box2D.h"
-#include "../Log.h"
+#include "../Def.h"
 #include "../Pathfinder.h"
 #include "../Box2DUtils.h"
-#include <stdio.h>
-#include <assert.h>
 
 void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId);
@@ -106,7 +104,7 @@ void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 }
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
-	REFLECT_ERROR(Object_Init(obj, position, true));
+	XERR_REFLECT(Object_Init(obj, position, true));
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = cfg->texture->textureRect;
@@ -114,8 +112,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	gfx->draw = ObjectEnemy_Draw;
 
 	obj->ex->type = CFG_OBJTYP_ENEMY;
-	AI* ai = malloc(sizeof(AI));
-	assert(ai);
+	AI* ai = malloc(sizeof(AI)); // TODO error check, who uses malloc anyways
 	AI_Init(ai);
 	ai->recalculationPeriod = 500;
 	ai->recalculationStopwatch = rand() % ai->recalculationPeriod;

@@ -2,13 +2,7 @@
 #include "VSON.h"
 #include "Array.h"
 #include "String.h"
-#include "Defs.h"
-#include "Log.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <ctype.h>
+#include "Def.h"
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
 

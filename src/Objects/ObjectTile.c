@@ -1,12 +1,12 @@
 #include "../Object.h"
-#include "../Log.h"
+#include "../Def.h"
 #include "../Box2DUtils.h"
 #include "../Game.h"
 
 int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F position) {
 	LOGFN_TRC();
 
-	REFLECT_ERROR(Object_Init(obj, position, false));
+	XERR_REFLECT(Object_Init(obj, position, false));
 
 	if (cfg->collider.type == CFG_COLLIDER_TYPE_RECTANGLE) {
 		ComponentPhysique *phy = Object_AddPhysique(obj);

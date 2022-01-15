@@ -2,8 +2,7 @@
 #define VSON_H
 
 #include "HashMap.h"
-#include "Error.h"
-#include <stdbool.h>
+#include "Def.h"
 
 typedef enum _VSONValueType {
 	VSON_VALUE_TYPE_NIL = 0,

@@ -1,10 +1,89 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef DEFS_H
+#define DEFS_H
 
-#include "Pool.h"
-#include "Error.h"
-#include <stddef.h>
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include <errno.h>
+#include <stddef.h>
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////// Definitions /////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+typedef uint64_t ID;
+
+////////////////////////////////////////////////////////////////////////
+///////////////////////////////// XERR /////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+#define XOK_PROJECTILE_DMG          (  8)
+#define XOK_PROJECTILE_DEATH        (  7)
+#define XOK_HP                      (  6)
+#define XOK_ID                      (  5)
+#define XOK_BUTTON                  (  4)
+#define XOK_FPS                     (  3)
+#define XOK_LOG_LEVEL               (  2)
+#define XOK_FN                      (  1)
+#define XOK                         (  0)
+#define XERR_FILE_NOT_FOUND         ( -1)
+#define XERR_PATH_NOT_FOUND         ( -2)
+#define XERR_FILE_CORRUPTED         ( -3)
+#define XERR_SDL_ERROR              ( -4)
+#define XERR_OUT_OF_MEMORY          ( -5)
+#define XERR_LIMIT_EXCEEDED         ( -6)
+#define XERR_ERRNO                  ( -7)
+#define XERR_FILE_INACCESSIBLE      ( -8)
+#define XERR_INVALID_CFG_OBJTYP     ( -9)
+#define XERR_QUIT                   (-10)
+#define XERR_INVALID_CFG_DYNTXTTYP  (-11)
+#define XERR_INVALID_CFG_DYNIMGTYP  (-12)
+#define XERR_IMPLEMENTATION         (-13)
+#define XERR_TINYOBJ_LIMIT_EXCEEDED (-14)
+#define XERR_OUT_OF_BOUNDS          (-15)
+typedef int32_t XErr;
+
+const char* XErr_ToString(XErr e);
+
+#define XASSERT(cond) do { if (!(cond)) { LOG_FTL("Abort"); abort(); } } while (0);
+#define XERR_ASSERT(condition, err) \
+	do {                  \
+		if (!(condition)) \
+			return (err); \
+	} while (0)
+#define XERR_ASSERT_CLEANUP(condition, cleanup, err) \
+	do {                    \
+		if (!(condition)) { \
+			{cleanup;}      \
+			return (err);   \
+		}                   \
+	} while (0)
+#define XERR_REFLECT(fcall)     \
+	do {                         \
+		XErr __result = (fcall); \
+		if (__result < 0)        \
+			return __result;     \
+	} while (0)
+#define XERR_REFLECT_CLEANUP(fcall, cleanup) \
+	do {                         \
+		XErr __result = (fcall); \
+		if (__result < 0) {      \
+			{cleanup;}           \
+			return __result;     \
+		}                        \
+	} while (0)
+
+////////////////////////////////////////////////////////////////////////
+///////////////////////////////// LOG //////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 typedef enum _LogLevel {
 	LogLevelTrace = 0,
@@ -63,5 +142,28 @@ void LogX_ID_ID_Float32(LogLevel level, const char* file, int line, XErr x1, ID 
 // Convenience macros
 #define LOGFN_TRC() LOGXV_TRC(XOK_FN, String, __FUNCTION__)
 #define LOGFN_DBG() LOGXV_DBG(XOK_FN, String, __FUNCTION__)
+
+////////////////////////////////////////////////////////////////////////
+///////////////////////// Platform Abstraction /////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+#ifdef _WIN32
+#define STRDUP _strdup
+#else
+#define STRDUP strdup
+#endif
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////// Convenience Macros //////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+#define MIN(a,b) ((a) < (b) ? (a) : (b))
+#define MAX(a,b) ((a) < (b) ? (b) : (a))
+#define LERP(min,max,t) ((min) + (t) * ((max) - (min)))
+
+#define DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
+	size_t SiblingListLength_##typeName(const typeName *ptr)
+#define DEFINE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
+	DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) { size_t len; for (len = 0; ptr; len++, ptr = ptr->next); return len; }
 
 #endif

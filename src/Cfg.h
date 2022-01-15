@@ -1,10 +1,9 @@
 #ifndef CFG_H
 #define CFG_H
 
-#include "Error.h"
 #include "TinySet.h"
 #include "Vec2F.h"
-#include "Defs.h"
+#include "Def.h"
 #include <SDL.h>
 
 #define CFG_TILE_SIZE (48)

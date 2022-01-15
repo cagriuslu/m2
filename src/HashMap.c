@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "HashMap.h"
 #include "Array.h"
-#include "Defs.h"
+#include "Def.h"
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -11,7 +11,7 @@ uint8_t HashMap_Hash(void* key);
 int HashMap_Init(HashMap* hm, size_t itemSize, void (*itemTerm)(void*)) {
 	memset(hm, 0, sizeof(HashMap));
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		REFLECT_ERROR(Array_Init(hm->buckets + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
+		XERR_REFLECT(Array_Init(hm->buckets + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
 	}
 	hm->itemSize = itemSize;
 	hm->itemTerm = itemTerm;

@@ -1,8 +1,7 @@
 #ifndef TINYARRAY_H
 #define TINYARRAY_H
 
-#include "Error.h"
-#include <stdint.h>
+#include "Def.h"
 
 #define TINY_ARRAY_MAX_INSTANCE_COUNT_BITS (12)
 #define TINY_ARRAY_MAX_INSTANCE_COUNT (1 << (TINY_ARRAY_MAX_INSTANCE_COUNT_BITS - 1)) // 4096

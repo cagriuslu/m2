@@ -1,6 +1,6 @@
 #include "Markup.h"
 #include "Event.h"
-#include "Log.h"
+#include "Def.h"
 #include "MarkupElement.h"
 #include "HashMap.h"
 #include "Game.h"
@@ -137,7 +137,7 @@ XErr MarkupState_UpdatePositions(MarkupState *state, SDL_Rect rootRect) {
 		// Update individual element
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				REFLECT_ERROR(MarkupState_UpdatePositions(elementState->child, elementState->rect));
+				XERR_REFLECT(MarkupState_UpdatePositions(elementState->child, elementState->rect));
 				break;
 			default:
 				break;
@@ -151,7 +151,7 @@ XErr MarkupState_UpdateElements(MarkupState* state) {
 		// Update individual element
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				REFLECT_ERROR(MarkupState_UpdateElements(elementState->child));
+				XERR_REFLECT(MarkupState_UpdateElements(elementState->child));
 				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT:
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:

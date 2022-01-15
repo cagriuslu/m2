@@ -3,8 +3,7 @@
 #include "../Box2DUtils.h"
 #include "../Controls.h"
 #include "../Event.h"
-#include "../Log.h"
-#include <stdio.h>
+#include "../Def.h"
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -59,7 +58,7 @@ static void Player_onDeath(ComponentDefense *def) {
 }
 
 int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
-	REFLECT_ERROR(Object_Init(obj, position, true));
+	XERR_REFLECT(Object_Init(obj, position, true));
 	obj->ex->type = CFG_OBJTYP_PLAYER;
 	obj->ex->value.player.chr = cfg;
 	// TODO implement CharacterState

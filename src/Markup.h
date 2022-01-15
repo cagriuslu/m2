@@ -3,7 +3,7 @@
 
 #include "Event.h"
 #include "Cfg.h"
-#include "Error.h"
+#include "Def.h"
 #include <SDL.h>
 
 XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg);

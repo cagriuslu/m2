@@ -4,7 +4,7 @@
 #include "Array.h"
 #include "List.h"
 #include "Stopwatch.h"
-#include "Error.h"
+#include "Def.h"
 #include "Vec2F.h"
 
 #define AI_CAPABILITY_RANGED_ATTACK        (1 << 0) // Ranged

@@ -1,13 +1,11 @@
 #include "../Component.h"
 #include "../Object.h"
 #include "../Game.h"
-#include "../Error.h"
-#include <stdio.h>
-#include <string.h>
+#include "../Def.h"
 
 int ComponentPhysique_Init(ComponentPhysique* phy, ID objectId) {
 	memset(phy, 0, sizeof(ComponentPhysique));
-	REFLECT_ERROR(Component_Init((Component*)phy, objectId));
+	XERR_REFLECT(Component_Init((Component*)phy, objectId));
 	return 0;
 }
 

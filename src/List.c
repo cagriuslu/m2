@@ -1,6 +1,5 @@
 #include "List.h"
-#include "Error.h"
-#include <string.h>
+#include "Def.h"
 
 typedef struct _ListItem {
 	ID nextId;
@@ -10,7 +9,7 @@ typedef struct _ListItem {
 
 int List_Init(List* list, size_t itemSize) {
 	memset(list, 0, sizeof(List));
-	REFLECT_ERROR(Pool_Init(&list->bucket, 16, sizeof(ListItem) + itemSize));
+	XERR_REFLECT(Pool_Init(&list->bucket, 16, sizeof(ListItem) + itemSize));
 	list->dataSize = itemSize;
 	return 0;
 }

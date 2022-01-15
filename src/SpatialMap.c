@@ -1,7 +1,5 @@
 #include "SpatialMap.h"
-#include "Error.h"
-#include <string.h>
-#include <assert.h>
+#include "Def.h"
 
 static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, float boundaryRadius, ID iterator) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
@@ -29,9 +27,9 @@ typedef struct _SpatialMapItem {
 int SpatialMap_Init(SpatialMap* sm, size_t dataSize) {
 	memset(sm, 0, sizeof(SpatialMap));
 	sm->dataSize = dataSize;
-	REFLECT_ERROR(Pool_Init(&sm->bucket, 16, sizeof(SpatialMapItem) + dataSize));
+	XERR_REFLECT(Pool_Init(&sm->bucket, 16, sizeof(SpatialMapItem) + dataSize));
 	sm->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
-	assert(sm->world);
+	// TODO proper error check
 	return 0;
 }
 
@@ -49,7 +47,7 @@ void SpatialMap_Clear(SpatialMap* sm) {
 	Pool_UnmarkAll(&sm->bucket);
 	Box2DWorldDestroy(sm->world);
 	sm->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
-	assert(sm->world);
+	// TODO proper error check
 }
 
 ID SpatialMap_Add(SpatialMap* sm, Vec2F position, float boundaryRadius, void* copy) {

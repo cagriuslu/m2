@@ -11,7 +11,7 @@
 #include <cstdlib>
 
 extern "C" {
-#include "Log.h"
+#include "Def.h"
 }
 
 #define Vec2FToB2Vec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})

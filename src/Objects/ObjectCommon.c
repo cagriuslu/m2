@@ -1,5 +1,5 @@
 #include "../Object.h"
-#include "../Log.h"
+#include "../Def.h"
 
 int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position);
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position);

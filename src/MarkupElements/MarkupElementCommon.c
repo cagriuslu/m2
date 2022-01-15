@@ -1,5 +1,5 @@
 #include "../MarkupElement.h"
-#include "../Log.h"
+#include "../Def.h"
 
 XErr MarkupElementHP_UpdateDynamicText(MarkupElementState *state);
 

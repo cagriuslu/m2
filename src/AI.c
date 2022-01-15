@@ -4,7 +4,7 @@
 
 XErr AI_Init(AI* ai) {
 	memset(ai, 0, sizeof(AI));
-	REFLECT_ERROR(List_Init(&ai->reversedWaypointList, sizeof(Vec2I)));
+	XERR_REFLECT(List_Init(&ai->reversedWaypointList, sizeof(Vec2I)));
 	return 0;
 }
 

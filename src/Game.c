@@ -4,10 +4,7 @@
 #include "Box2D.h"
 #include "Cfg.h"
 #include "Markup.h"
-#include "Log.h"
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
+#include "Def.h"
 
 Game* gCurrentGame;
 
@@ -80,18 +77,18 @@ int Game_Level_Init() {
 	if (GAME->levelLoaded) {
 		Game_Level_Term(GAME);
 	}
-	REFLECT_ERROR(Pool_Init(&GAME->objects, 16, sizeof(Object)));
-	REFLECT_ERROR(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
-	REFLECT_ERROR(Pool_Init(&GAME->monitors, 16, sizeof(ComponentMonitor)));
-	REFLECT_ERROR(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysique)));
-	REFLECT_ERROR(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphic)));
-	REFLECT_ERROR(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphic)));
-	REFLECT_ERROR(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
-	REFLECT_ERROR(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
+	XERR_REFLECT(Pool_Init(&GAME->objects, 16, sizeof(Object)));
+	XERR_REFLECT(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
+	XERR_REFLECT(Pool_Init(&GAME->monitors, 16, sizeof(ComponentMonitor)));
+	XERR_REFLECT(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysique)));
+	XERR_REFLECT(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphic)));
+	XERR_REFLECT(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphic)));
+	XERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
+	XERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
 	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	GAME->contactListener = Box2DContactListenerRegister(ComponentPhysique_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
-	REFLECT_ERROR(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
+	XERR_REFLECT(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
 	GAME->levelLoaded = true;
 	return 0;
 }
@@ -102,11 +99,11 @@ XErr Game_Level_Load(const CfgLevel *cfg) {
 			const CfgLevelTile *lvlTile = cfg->tiles + y * cfg->w + x;
 			if (lvlTile->gndTile) {
 				Object *tile = Pool_Mark(&GAME->objects, NULL, NULL);
-				REFLECT_ERROR(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
+				XERR_REFLECT(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
 			}
 			if (lvlTile->chr) {
 				Object *obj = Pool_Mark(&GAME->objects, NULL, NULL);
-				REFLECT_ERROR(ObjectCharacter_InitFromCfg(obj, lvlTile->chr, VEC2F(x, y)));
+				XERR_REFLECT(ObjectCharacter_InitFromCfg(obj, lvlTile->chr, VEC2F(x, y)));
 			}
 		}
 	}

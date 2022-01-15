@@ -1,9 +1,7 @@
 #include "../Component.h"
 #include "../Object.h"
 #include "../Game.h"
-#include "../Error.h"
-#include "../Log.h"
-#include <string.h>
+#include "../Def.h"
 
 void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 	Object* obj = Pool_GetById(&GAME->objects, gfx->super.objId);
@@ -74,7 +72,7 @@ void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRa
 
 int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId) {
 	memset(gfx, 0, sizeof(ComponentGraphic));
-	REFLECT_ERROR(Component_Init((Component*)gfx, objectId));
+	XERR_REFLECT(Component_Init((Component*)gfx, objectId));
 	gfx->draw = ComponentGraphic_DefaultDraw;
 	return 0;
 }

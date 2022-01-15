@@ -1,7 +1,6 @@
 #include "../Object.h"
-#include "../Log.h"
+#include "../Def.h"
 #include "../Game.h"
-#include "../Error.h"
 #include "../Box2DUtils.h"
 
 #define SWING_SPEED (15.0f)
@@ -53,7 +52,7 @@ static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) 
 }
 
 int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, Vec2F position, Vec2F direction) {
-	REFLECT_ERROR(Object_Init(obj, position, false));
+	XERR_REFLECT(Object_Init(obj, position, false));
 
 	const float theta = Vec2F_AngleRads(direction); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
