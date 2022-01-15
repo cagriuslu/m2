@@ -53,7 +53,14 @@ typedef int32_t XErr;
 
 const char* XErr_ToString(XErr e);
 
+// XASSERT policy: In game engine code, try not to crash, but return error instead
+// You can crash in game engine code as well, if the error is definitely implementation error
+// In game code, assert and crash if the cause is implementation error.
+#ifdef DEBUG
 #define XASSERT(cond) do { if (!(cond)) { LOG_FTL("Abort"); abort(); } } while (0);
+#else
+#define XASSERT(cond)
+#endif
 #define XERR_ASSERT(condition, err) \
 	do {                  \
 		if (!(condition)) \

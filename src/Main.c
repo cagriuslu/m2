@@ -179,9 +179,7 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		if (Events_Gather(&GAME->events)) {
 			// Handle quit event
-			if (GAME->events.quitEvent) {
-				break;
-			}
+			if (GAME->events.quitEvent) { break; }
 			// Handle window resize event
 			if (GAME->events.windowResizeEvent) {
 				Game_UpdateWindowDimensions(GAME->events.windowDims.x, GAME->events.windowDims.y);
@@ -236,27 +234,19 @@ int main(int argc, char **argv) {
 			GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
 			prevPrePhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
-				if (el->prePhysics) {
-					el->prePhysics(el);
-				}
+				if (el->prePhysics) { el->prePhysics(el); }
 			}
 			// Physics
 			Box2DWorldStep(GAME->world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
-			for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
-				if (phy->body) {
-					Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
-					if (obj) {
-						obj->position = Box2DBodyGetPosition(phy->body);
-					}
-				}
+			for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy && phy->body; phy = Pool_GetNext(&GAME->physics, phy)) {
+				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); XASSERT(obj);
+				obj->position = Box2DBodyGetPosition(phy->body);
 			}
 			// Post-physics
 			GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
 			prevPostPhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
-				if (el->postPhysics) {
-					el->postPhysics(el);
-				}
+				if (el->postPhysics) { el->postPhysics(el); }
 			}
 			Game_DeleteList_DeleteAll();
 			// Update loop condition
@@ -275,17 +265,13 @@ int main(int argc, char **argv) {
 		GAME->deltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
 		for (ComponentGraphic* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
-			if (gfx->draw) {
-				gfx->draw(gfx);
-			}
+			if (gfx->draw) { gfx->draw(gfx); }
 		}
 		// Pre-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
 		prevPreGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
-			if (el->preGraphics) {
-				el->preGraphics(el);
-			}
+			if (el->preGraphics) { el->preGraphics(el); }
 		}
 		// Draw
 		InsertionList_Sort(&GAME->drawList);
@@ -293,19 +279,14 @@ int main(int argc, char **argv) {
 		prevDrawGraphicsTicks += GAME->deltaTicks;
 		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
-			ID graphicsId = InsertionList_Get(&GAME->drawList, i);
-			ComponentGraphic* gfx = Pool_GetById(&GAME->graphics, graphicsId);
-			if (gfx && gfx->draw) {
-				gfx->draw(gfx);
-			}
+			ComponentGraphic* gfx = Pool_GetById(&GAME->graphics, InsertionList_Get(&GAME->drawList, i));
+			if (gfx && gfx->draw) { gfx->draw(gfx); }
 		}
 		// Post-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
 		prevPostGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
-			if (el->postGraphics) {
-				el->postGraphics(el);
-			}
+			if (el->postGraphics) { el->postGraphics(el); }
 		}
 		// Draw Markup HUD
 		MarkupState_UpdateElements(&GAME->leftHudMarkupState);

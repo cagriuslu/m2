@@ -6,85 +6,81 @@
 #include "../Box2DUtils.h"
 
 void ObjectEnemy_prePhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId);
-	Object* player = Game_FindObjectById(GAME->playerId);
+	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
+	Object* player = Game_FindObjectById(GAME->playerId); XASSERT(player);
 
 	float distanceToPlayer = 0.0f;
 
-	if (obj->ex && obj->ex->type == CFG_OBJTYP_ENEMY) {
-		AI* ai = obj->ex->value.enemy.ai;
-		
-		ai->recalculationStopwatch += GAME->deltaTicks;
-		ai->attackStopwatch += GAME->deltaTicks;
-
-		if (ai->recalculationPeriod < ai->recalculationStopwatch) {
-			switch (ai->mode) {
-				case AI_IDLE:
-					// If player is close
-					if (Vec2F_Distance(obj->position, player->position) < ai->triggerDistance) {
-						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
-						if (1 < List_Length(&ai->reversedWaypointList)) {
-							ai->mode = AI_GOING_AFTER_PLAYER;
-						}
-					}
-					break;
-				case AI_GOING_AFTER_PLAYER:
-					distanceToPlayer = Vec2F_Distance(obj->position, player->position);
-					if (distanceToPlayer < 1.2f) {
-						if (ai->attackPeriod < ai->attackStopwatch) {
-							// If enough time passed for the next attack
-							Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
-							ObjectMelee_InitFromCfg(sword, &CFG_MELEEWPN_SWORD.melee, el->super.objId, obj->position, Vec2F_Sub(player->position, obj->position));
-							LOG_INF("Attacking player with melee");
-
-							ai->attackStopwatch = 0;
-						}
+	AI* ai = obj->ex->value.enemy.ai;
+	ai->recalculationStopwatch += GAME->deltaTicks;
+	ai->attackStopwatch += GAME->deltaTicks;
+	if (ai->recalculationPeriod < ai->recalculationStopwatch) {
+		switch (ai->mode) {
+			case AI_IDLE:
+				// If player is close
+				if (Vec2F_Distance(obj->position, player->position) < ai->triggerDistance) {
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
+					if (1 < List_Length(&ai->reversedWaypointList)) {
 						ai->mode = AI_GOING_AFTER_PLAYER;
-					} else if (distanceToPlayer < 2 * ai->triggerDistance) {
-						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
-						if (1 < List_Length(&ai->reversedWaypointList)) {
-							ai->mode = AI_GOING_AFTER_PLAYER;
-						} else {
-							ai->mode = AI_GOING_BACK_TO_HOME;
-						}
+					}
+				}
+				break;
+			case AI_GOING_AFTER_PLAYER:
+				distanceToPlayer = Vec2F_Distance(obj->position, player->position);
+				if (distanceToPlayer < 1.2f) {
+					if (ai->attackPeriod < ai->attackStopwatch) {
+						// If enough time passed for the next attack
+						Object* sword = Pool_Mark(&GAME->objects, NULL, NULL);
+						ObjectMelee_InitFromCfg(sword, &CFG_MELEEWPN_SWORD.melee, el->super.objId, obj->position, Vec2F_Sub(player->position, obj->position));
+						LOG_INF("Attacking player with melee");
+
+						ai->attackStopwatch = 0;
+					}
+					ai->mode = AI_GOING_AFTER_PLAYER;
+				} else if (distanceToPlayer < 2 * ai->triggerDistance) {
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
+					if (1 < List_Length(&ai->reversedWaypointList)) {
+						ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
 						ai->mode = AI_GOING_BACK_TO_HOME;
 					}
-					break;
-				case AI_GOING_BACK_TO_HOME:
-					if (Vec2F_Distance(obj->position, player->position) < ai->triggerDistance) {
-						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
-						if (1 < List_Length(&ai->reversedWaypointList)) {
-							ai->mode = AI_GOING_AFTER_PLAYER;
-						} else {
-							ai->mode = AI_GOING_BACK_TO_HOME;
-						}
+				} else {
+					ai->mode = AI_GOING_BACK_TO_HOME;
+				}
+				break;
+			case AI_GOING_BACK_TO_HOME:
+				if (Vec2F_Distance(obj->position, player->position) < ai->triggerDistance) {
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &ai->reversedWaypointList);
+					if (1 < List_Length(&ai->reversedWaypointList)) {
+						ai->mode = AI_GOING_AFTER_PLAYER;
 					} else {
-						PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, ai->homePosition, &ai->reversedWaypointList);
-						if (1 < List_Length(&ai->reversedWaypointList)) {
-							ai->mode = AI_GOING_BACK_TO_HOME;
-						} else {
-							ai->mode = AI_IDLE;
-						}
+						ai->mode = AI_GOING_BACK_TO_HOME;
 					}
-					break;
-			}
-
-			ai->recalculationStopwatch = 0;
+				} else {
+					PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, ai->homePosition, &ai->reversedWaypointList);
+					if (1 < List_Length(&ai->reversedWaypointList)) {
+						ai->mode = AI_GOING_BACK_TO_HOME;
+					} else {
+						ai->mode = AI_IDLE;
+					}
+				}
+				break;
 		}
 
-		if (1 < List_Length(&ai->reversedWaypointList)) {
-			ID myPositionIterator = List_GetLast(&ai->reversedWaypointList);
-			Vec2I* myPosition = List_GetData(&ai->reversedWaypointList, myPositionIterator);
+		ai->recalculationStopwatch = 0;
+	}
 
-			ID targetIterator = List_GetPrev(&ai->reversedWaypointList, myPositionIterator);
-			Vec2I* targetPosition = List_GetData(&ai->reversedWaypointList, targetIterator);
+	if (1 < List_Length(&ai->reversedWaypointList)) {
+		ID myPositionIterator = List_GetLast(&ai->reversedWaypointList);
+		Vec2I* myPosition = List_GetData(&ai->reversedWaypointList, myPositionIterator);
 
-			if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
-				ComponentPhysique* phy = Object_GetPhysique(obj);
-				Vec2F direction = Vec2F_Sub(Vec2F_FromVec2I(*targetPosition), obj->position);
-				Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), GAME->deltaTicks * 20.0f), true);
-			}
+		ID targetIterator = List_GetPrev(&ai->reversedWaypointList, myPositionIterator);
+		Vec2I* targetPosition = List_GetData(&ai->reversedWaypointList, targetIterator);
+
+		if (myPosition && targetPosition && !Vec2I_Equals(*myPosition, *targetPosition)) {
+			ComponentPhysique* phy = Object_GetPhysique(obj);
+			Vec2F direction = Vec2F_Sub(Vec2F_FromVec2I(*targetPosition), obj->position);
+			Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(direction), GAME->deltaTicks * 20.0f), true);
 		}
 	}
 }
@@ -96,11 +92,9 @@ void ObjectEnemy_onDeath(ComponentDefense* def) {
 void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 	ComponentGraphic_DefaultDraw(gfx);
 
-	Object* obj = Game_FindObjectById(gfx->super.objId);
-	ComponentDefense* defense = Object_GetDefense(obj);
-	if (obj && defense) {
-		ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defense->hp / defense->maxHp);
-	}
+	Object* obj = Game_FindObjectById(gfx->super.objId); XASSERT(obj);
+	ComponentDefense* defense = Object_GetDefense(obj); XASSERT(defense);
+	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defense->hp / defense->maxHp);
 }
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {

@@ -144,15 +144,10 @@ void Game_DeleteList_Add(ID id) {
 
 void Game_DeleteList_DeleteAll() {
 	for (size_t i = 0; i < GAME->deleteList.length; i++) {
-		ID* objIdPtr = Array_Get(&GAME->deleteList, i);
-		if (objIdPtr) {
-			ID objId = *objIdPtr;
-			Object* obj = Pool_GetById(&GAME->objects, objId);
-			if (obj) {
-				Object_Term(obj);
-				Pool_Unmark(&GAME->objects, obj);
-			}
-		}
+		ID* objIdPtr = Array_Get(&GAME->deleteList, i); XASSERT(objIdPtr);
+		Object* obj = Pool_GetById(&GAME->objects, *objIdPtr); XASSERT(obj);
+		Object_Term(obj);
+		Pool_Unmark(&GAME->objects, obj);
 	}
 	Array_Clear(&GAME->deleteList);
 }

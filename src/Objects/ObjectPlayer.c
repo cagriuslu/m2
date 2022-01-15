@@ -12,44 +12,40 @@
 // Double tap directional buttons to dodge
 
 static void Player_prePhysics(ComponentMonitor* el) {
-	Object* obj = Pool_GetById(&GAME->objects, el->super.objId);
+	Object* obj = Pool_GetById(&GAME->objects, el->super.objId); XASSERT(obj);
 
-	if (obj->ex && obj->ex->type == CFG_OBJTYP_PLAYER) {
-		obj->ex->value.player.rangedAttackStopwatch += GAME->deltaTicks;
-		obj->ex->value.player.meleeAttackStopwatch += GAME->deltaTicks;
+	obj->ex->value.player.rangedAttackStopwatch += GAME->deltaTicks;
+	obj->ex->value.player.meleeAttackStopwatch += GAME->deltaTicks;
 
-		ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique);
-		if (phy && phy->body) {
-			Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
-			if (GAME->events.keyStates[KEY_UP]) {
-				moveDirection.y += -1.0f;
-			}
-			if (GAME->events.keyStates[KEY_DOWN]) {
-				moveDirection.y += 1.0f;
-			}
-			if (GAME->events.keyStates[KEY_LEFT]) {
-				moveDirection.x += -1.0f;
-			}
-			if (GAME->events.keyStates[KEY_RIGHT]) {
-				moveDirection.x += 1.0f;
-			}
-			Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
-		}
+	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
+	Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
+	if (GAME->events.keyStates[KEY_UP]) {
+		moveDirection.y += -1.0f;
+	}
+	if (GAME->events.keyStates[KEY_DOWN]) {
+		moveDirection.y += 1.0f;
+	}
+	if (GAME->events.keyStates[KEY_LEFT]) {
+		moveDirection.x += -1.0f;
+	}
+	if (GAME->events.keyStates[KEY_RIGHT]) {
+		moveDirection.x += 1.0f;
+	}
+	Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
 
-		if (GAME->events.buttonStates[BUTTON_PRIMARY] && (100 < obj->ex->value.player.rangedAttackStopwatch)) {
-			Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
-			ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
-			obj->ex->value.player.rangedAttackStopwatch = 0;
-		}
-		if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->value.player.meleeAttackStopwatch)) {
-			Object* melee = Pool_Mark(&GAME->objects, NULL, NULL);
-			ObjectMelee_InitFromCfg(melee, &obj->ex->value.player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
-			obj->ex->value.player.meleeAttackStopwatch = 0;
-		}
-		if (GAME->events.buttonsPressed[BUTTON_MIDDLE]) {
-			Object* explosive = Pool_Mark(&GAME->objects, NULL, NULL);
-			ObjectExplosive_InitFromCfg(explosive, &obj->ex->value.player.chr->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
-		}
+	if (GAME->events.buttonStates[BUTTON_PRIMARY] && (100 < obj->ex->value.player.rangedAttackStopwatch)) {
+		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
+		ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
+		obj->ex->value.player.rangedAttackStopwatch = 0;
+	}
+	if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->value.player.meleeAttackStopwatch)) {
+		Object* melee = Pool_Mark(&GAME->objects, NULL, NULL);
+		ObjectMelee_InitFromCfg(melee, &obj->ex->value.player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
+		obj->ex->value.player.meleeAttackStopwatch = 0;
+	}
+	if (GAME->events.buttonsPressed[BUTTON_MIDDLE]) {
+		Object* explosive = Pool_Mark(&GAME->objects, NULL, NULL);
+		ObjectExplosive_InitFromCfg(explosive, &obj->ex->value.player.chr->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(CurrentPointerPositionInWorld(), obj->position));
 	}
 }
 

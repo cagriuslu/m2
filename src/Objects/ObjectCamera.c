@@ -2,11 +2,9 @@
 #include "../Game.h"
 
 void Camera_postPhysics(ComponentMonitor* el) {
-	Object* camera = Pool_GetById(&GAME->objects, el->super.objId);
-	Object* player = Pool_GetById(&GAME->objects, GAME->playerId);
-	if (camera && player) {
-		camera->position = player->position;
-	}
+	Object* camera = Pool_GetById(&GAME->objects, el->super.objId); XASSERT(camera);
+	Object* player = Pool_GetById(&GAME->objects, GAME->playerId); XASSERT(player);
+	camera->position = player->position;
 }
 
 int ObjectCamera_Init(Object* obj) {

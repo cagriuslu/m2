@@ -20,14 +20,8 @@ void ComponentPhysique_Term(ComponentPhysique* phy) {
 void ComponentPhysique_ContactCB(Box2DContact* contact) {
 	ID phyIdA = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact))));
 	ID phyIdB = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact))));
-	ComponentPhysique* phyA = Pool_GetById(&GAME->physics, phyIdA);
-	ComponentPhysique* phyB = Pool_GetById(&GAME->physics, phyIdB);
-	if (phyA && phyB) {
-		if (phyA->onCollision) {
-			phyA->onCollision(phyA, phyB);
-		}
-		if (phyB->onCollision) {
-			phyB->onCollision(phyB, phyA);
-		}
-	}
+	ComponentPhysique* phyA = Pool_GetById(&GAME->physics, phyIdA); XASSERT(phyA);
+	ComponentPhysique* phyB = Pool_GetById(&GAME->physics, phyIdB); XASSERT(phyB);
+	if (phyA->onCollision) { phyA->onCollision(phyA, phyB); }
+	if (phyB->onCollision) { phyB->onCollision(phyB, phyA); }
 }
