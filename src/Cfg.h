@@ -96,6 +96,7 @@ extern const CfgRangedWeapon CFG_RANGEDWPN_SHOTGUN; // Slow but powerful
 extern const CfgRangedWeapon CFG_RANGEDWPN_BOW; // Slow, but piercing, thus default
 typedef struct _ProjectileState {
 	const CfgProjectile* cfg;
+	bool alreadyCollidedThisStep;
 	float ttl;
 } ProjectileState;
 typedef struct _RangedWeaponState {
@@ -157,7 +158,6 @@ typedef struct _ExplosiveState {
 	const CfgExplosive* cfg;
 	float projectileTtl;
 	ExplosiveStatus explosiveStatus;
-	TinySetOfIDs damagedObjs;
 } ExplosiveState;
 typedef struct _ExplosiveWeaponState {
 	const CfgExplosiveWeapon *cfg;

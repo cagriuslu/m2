@@ -37,9 +37,8 @@ void* Pool_Mark(Pool* pool, void* copy, ID* outId) {
 		PoolItem* itemToAllocate = PoolItemData(pool, indexToAllocate);
 		pool->nextFreeIndex = itemToAllocate->id & 0xFFFF; // Extract next nextFreeIndex
 		itemToAllocate->id = ((uint16_t)pool->nextKey << 16) | ((uint16_t)indexToAllocate & 0xFFFF); // Store new id of the item
-		if (outId) {
-			*outId = pool->shiftedPoolId | (uint64_t)itemToAllocate->id; // Return id
-		}
+		ID id = pool->shiftedPoolId | (uint64_t)itemToAllocate->id;
+		if (outId) { *outId = id; }
 
 		pool->size++;
 		pool->nextKey++;

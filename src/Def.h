@@ -150,6 +150,9 @@ void LogX_ID_ID_Float32(LogLevel level, const char* file, int line, XErr x1, ID 
 #define LOGFN_TRC() LOGXV_TRC(XOK_FN, String, __FUNCTION__)
 #define LOGFN_DBG() LOGXV_DBG(XOK_FN, String, __FUNCTION__)
 
+// Helper functions
+void LogStackTrace();
+
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////// Platform Abstraction /////////////////////////
 ////////////////////////////////////////////////////////////////////////

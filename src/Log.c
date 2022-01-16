@@ -81,19 +81,23 @@ static void LogHeader(LogLevel level, const char* file, int line) {
 #include <execinfo.h>
 #endif
 
+void LogStackTrace() {
+#ifdef _WIN32
+	// Not supported yet
+#else
+	void* callstack[128];
+	int frames = backtrace(callstack, 128);
+	char** strs = backtrace_symbols(callstack, frames);
+	for (int i = 0; i < frames; ++i) {
+		fprintf(stderr, "%s\n", strs[i]);
+	}
+	free(strs);
+#endif
+}
+
 static void LogFooter(LogLevel level) {
 	if (LogLevelWarn <= level) {
-#ifdef _WIN32
-		// Not supported yet
-#else
-		void* callstack[128];
-		int frames = backtrace(callstack, 128);
-		char** strs = backtrace_symbols(callstack, frames);
-		for (int i = 0; i < frames; ++i) {
-			fprintf(stderr, "%s\n", strs[i]);
-		}
-		free(strs);
-#endif
+		LogStackTrace();
 	}
 }
 

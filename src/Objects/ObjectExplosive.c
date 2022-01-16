@@ -43,38 +43,35 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 
 	switch (off->state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_IN_FLIGHT:
+			// The object can collide with multiple targets during flight, thus this branch can be executed for multiple
+			// other objects. This is not a problem since we only set the next state
 			off->state.explosive.explosiveStatus = EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP;
 			break;
-		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
-			// Explosive collides with the same object multiple times in one step
-			// We must check the TinySet before applying damage
-			if (TinySet_Check(&off->state.explosive.damagedObjs, other->super.objId) == false) {
-				TinySet_Set(&off->state.explosive.damagedObjs, other->super.objId);
-
-				Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); XASSERT(otherObj);
-				if (otherObj->defense) {
-					ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); XASSERT(defense);
-					// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
-					float distance = Vec2F_Distance(otherObj->position, obj->position);
-					float damageRadius = off->state.explosive.cfg->damageRadius;
-					if (distance < damageRadius) {
-						// Calculate damage
-						float minDamage = off->state.explosive.cfg->damageMin;
-						float maxDamage = off->state.explosive.cfg->damageMax;
-						float damage = LERP(maxDamage, minDamage, distance / damageRadius);
-						defense->hp -= damage;
-						if (defense->hp <= 0.0001f && defense->onDeath) {
-							// TODO fix XOK message
-							LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, off->super.objId, XOK_ID, ID, defense->super.objId);
-							defense->onDeath(defense);
-						} else {
-							LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, off->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
-							Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
-						}
+		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
+			Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); XASSERT(otherObj);
+			if (otherObj->defense) {
+				ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); XASSERT(defense);
+				// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
+				float distance = Vec2F_Distance(otherObj->position, obj->position);
+				float damageRadius = off->state.explosive.cfg->damageRadius;
+				if (distance < damageRadius) {
+					// Calculate damage
+					float minDamage = off->state.explosive.cfg->damageMin;
+					float maxDamage = off->state.explosive.cfg->damageMax;
+					float damage = LERP(maxDamage, minDamage, distance / damageRadius);
+					defense->hp -= damage;
+					if (defense->hp <= 0.0001f && defense->onDeath) {
+						// TODO fix XOK message
+						LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, off->super.objId, XOK_ID, ID, defense->super.objId);
+						defense->onDeath(defense);
+					} else {
+						LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, off->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
+						Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
 					}
 				}
 			}
 			break;
+		}
 		default:
 			break;
 	}
@@ -128,7 +125,6 @@ XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origin
 	off->state.explosive.cfg = cfg;
 	off->state.explosive.projectileTtl = cfg->projectileTtl;
 	off->state.explosive.explosiveStatus = EXPLOSIVE_STATUS_IN_FLIGHT;
-	XERR_REFLECT(TinySet_Init(&off->state.explosive.damagedObjs));
 
 	return XOK;
 }

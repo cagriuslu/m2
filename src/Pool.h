@@ -16,6 +16,10 @@ typedef struct _Pool {
 	uint64_t shiftedPoolId;
 	size_t capacity; // max 65536
 	size_t size; // [0, 65536]
+	// What is the purpose of having a key?
+	// Key is monotonically increasing, and it is a part of the ID
+	// This means if an object is deallocated, and some other object is allocated at the same location,
+	// they will have different IDs.
 	size_t nextKey; // [1, 65536]
 	size_t highestAllocatedIndex;
 	size_t lowestAllocatedIndex;

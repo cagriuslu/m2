@@ -18,17 +18,22 @@ static void Bullet_prePhysics(ComponentMonitor* el) {
 static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
 	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); XASSERT(obj);
 	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); XASSERT(otherObj);
-	ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offense); XASSERT(offense);
+	ComponentOffense* off = Pool_GetById(&GAME->offenses, obj->offense); XASSERT(off);
 	ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); XASSERT(defense);
+	// Check if already collided
+	if (off->state.projectile.alreadyCollidedThisStep) {
+		return;
+	}
 	// Calculate damage
-	defense->hp -= offense->state.projectile.cfg->damage;
+	defense->hp -= off->state.projectile.cfg->damage;
 	if (defense->hp <= 0.0001f && defense->onDeath) {
-		LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, offense->super.objId, XOK_ID, ID, defense->super.objId);
+		LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, off->super.objId, XOK_ID, ID, defense->super.objId);
 		defense->onDeath(defense);
 	} else {
-		LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, offense->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
+		LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, off->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
 		Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
 	}
+	off->state.projectile.alreadyCollidedThisStep = true;
 	Game_DeleteList_Add(phy->super.objId);
 }
 
@@ -60,6 +65,7 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 	off->originator = originatorId;
 	off->state.projectile.cfg = cfg;
 	off->state.projectile.ttl = cfg->ttl;
+	off->state.projectile.alreadyCollidedThisStep = false;
 
 	return 0;
 }

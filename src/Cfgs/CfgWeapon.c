@@ -3,9 +3,9 @@
 const CfgRangedWeapon CFG_RANGEDWPN_GUN = {
 	.projectile = {
 		.texture = &CFG_OBJTXTR_BULLET_00,
-		.speed = 2.0f,
+		.speed = 10.0f,
 		.damage = 35.0f,
-		.ttl = 2.5f
+		.ttl = 1.0f
 	},
 	.projectileCount = 1,
 	.rateOfFire = 3.0f
