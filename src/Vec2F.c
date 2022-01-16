@@ -49,6 +49,10 @@ bool Vec2F_Equals(Vec2F lhs, Vec2F rhs) {
 	return (lhs.x == rhs.x) && (lhs.y == rhs.y);
 }
 
+bool Vec2F_IsNan(Vec2F in) {
+	return isnan(in.x) || isnan(in.y);
+}
+
 Vec2F Vec2F_FromVec2I(Vec2I v) {
 	return (Vec2F) { (float)v.x, (float)v.y };
 }

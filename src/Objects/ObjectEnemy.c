@@ -104,6 +104,8 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	gfx->textureRect = cfg->texture->textureRect;
 	gfx->center_px = cfg->texture->objCenter_px;
 	gfx->draw = ObjectEnemy_Draw;
+	gfx->motionBlurEnabled = true;
+	gfx->prevDrawPosition = position;
 
 	obj->ex->type = CFG_OBJTYP_ENEMY;
 	AI* ai = malloc(sizeof(AI)); // TODO error check, who uses malloc anyways

@@ -2,12 +2,14 @@
 #define VEC2F_H
 
 #include "Vec2I.h"
+#include <math.h>
 
 typedef struct _Vec2F {
 	float x, y;
 } Vec2F;
 
 #define VEC2F_ZERO ((Vec2F){0.0f, 0.0f})
+#define VEC2F_NAN ((Vec2F){NAN, NAN})
 #define VEC2F(x,y) ((Vec2F){(float)(x), (float)(y)})
 
 Vec2F Vec2F_Add(Vec2F lhs, Vec2F rhs);
@@ -21,6 +23,7 @@ Vec2F Vec2F_Distance2(Vec2F lhs, Vec2F rhs);
 float Vec2F_AngleRads(Vec2F vector);
 
 bool Vec2F_Equals(Vec2F lhs, Vec2F rhs);
+bool Vec2F_IsNan(Vec2F in);
 
 Vec2F Vec2F_FromVec2I(Vec2I v);
 

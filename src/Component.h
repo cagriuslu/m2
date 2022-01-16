@@ -39,6 +39,9 @@ typedef struct _ComponentGraphic {
 	Vec2F center_px;
 	float angle;
 	void (*draw)(struct _ComponentGraphic*);
+	bool motionBlurEnabled;
+	Vec2F prevDrawPosition;
+	float prevDrawAngle;
 } ComponentGraphic;
 int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId);
 void ComponentGraphic_Term(ComponentGraphic* gfx);

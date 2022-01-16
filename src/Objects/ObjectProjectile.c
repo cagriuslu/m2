@@ -60,6 +60,8 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 	gfx->textureRect = cfg->texture->textureRect;
 	gfx->center_px = cfg->texture->objCenter_px;
 	gfx->angle = Vec2F_AngleRads(direction);
+	gfx->motionBlurEnabled = true;
+	gfx->prevDrawPosition = position;
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;
