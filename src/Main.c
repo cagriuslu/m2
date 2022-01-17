@@ -236,12 +236,14 @@ int main(int argc, char **argv) {
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 				if (el->prePhysics) { el->prePhysics(el); }
 			}
+			Game_DeleteList_DeleteAll();
 			// Physics
 			Box2DWorldStep(GAME->world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
 			for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy && phy->body; phy = Pool_GetNext(&GAME->physics, phy)) {
 				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); XASSERT(obj);
 				obj->position = Box2DBodyGetPosition(phy->body);
 			}
+			Game_DeleteList_DeleteAll();
 			// Post-physics
 			GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
 			prevPostPhysicsTicks += GAME->deltaTicks;

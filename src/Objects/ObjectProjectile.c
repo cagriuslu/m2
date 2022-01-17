@@ -24,6 +24,7 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 	if (off->state.projectile.alreadyCollidedThisStep) {
 		return;
 	}
+	off->state.projectile.alreadyCollidedThisStep = true;
 	// Calculate damage
 	defense->hp -= off->state.projectile.cfg->damage;
 	if (defense->hp <= 0.0001f && defense->onDeath) {
@@ -33,7 +34,6 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 		LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, off->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
 		Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
 	}
-	off->state.projectile.alreadyCollidedThisStep = true;
 	Game_DeleteList_Add(phy->super.objId);
 }
 
