@@ -40,13 +40,14 @@ typedef struct _ComponentGraphic {
 	float angle;
 	void (*draw)(struct _ComponentGraphic*);
 	bool motionBlurEnabled;
-	Vec2F prevDrawPosition;
+	Vec2I prevObjGfxOriginWRTScreenCenter_px;
 	float prevDrawAngle;
 } ComponentGraphic;
 int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId);
 void ComponentGraphic_Term(ComponentGraphic* gfx);
 void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx);
 void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio);
+Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F objGfxCenterPx);
 int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB);
 
 typedef struct _ComponentDefense {

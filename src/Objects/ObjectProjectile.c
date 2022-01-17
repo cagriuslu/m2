@@ -61,7 +61,7 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 	gfx->center_px = cfg->texture->objCenter_px;
 	gfx->angle = Vec2F_AngleRads(direction);
 	gfx->motionBlurEnabled = true;
-	gfx->prevDrawPosition = position;
+	gfx->prevObjGfxOriginWRTScreenCenter_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(position, cfg->texture->objCenter_px);
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;

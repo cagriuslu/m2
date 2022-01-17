@@ -71,6 +71,7 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME->gameRect.y = 0;
 	}
 	GAME->pixelsPerMeter = (float)GAME->gameAndHudRect.h / 16.0f;
+	GAME->scale = GAME->pixelsPerMeter / GAME->tileWidth;
 }
 
 int Game_Level_Init() {

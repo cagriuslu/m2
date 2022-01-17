@@ -38,6 +38,7 @@ typedef struct _Game {
 	SDL_Rect leftHudRect;
 	SDL_Rect rightHudRect;
 	float pixelsPerMeter;
+	float scale;
 	TTF_Font* ttfFont;
 
 	////////////////////////////////////////////////////////////////////////

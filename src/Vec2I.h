@@ -12,6 +12,8 @@ typedef struct _Vec2I {
 } Vec2I;
 
 #define VEC2I_ZERO ((Vec2I){0, 0})
+#define VEC2I_MIN ((Vec2I){INT32_MIN, INT32_MIN})
+#define VEC2I_MAX ((Vec2I){INT32_MAX, INT32_MAX})
 #define VEC2I(x,y) ((Vec2I){(int32_t)(x), (int32_t)(y)})
 
 Vec2I Vec2I_Add(Vec2I lhs, Vec2I rhs);
