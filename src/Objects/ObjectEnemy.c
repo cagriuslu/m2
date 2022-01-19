@@ -89,6 +89,29 @@ void ObjectEnemy_onDeath(ComponentDefense* def) {
 	Game_DeleteList_Add(def->super.objId);
 }
 
+static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
+	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); XASSERT(obj);
+	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
+	// We must call time before other signals
+	StateMachine_ProcessTime(&obj->ex->value.enemy.stateMachineCharacterAnimation, GAME->deltaTicks / 1000.0f);
+	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
+	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
+		StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_STOP);
+	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
+		if (0 < velocity.y) {
+			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
+		} else {
+			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
+		}
+	} else {
+		if (0 < velocity.x) {
+			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
+		} else {
+			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
+		}
+	}
+}
+
 void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 	ComponentGraphic_DefaultDraw(gfx);
 
@@ -99,15 +122,17 @@ void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	XERR_REFLECT(Object_Init(obj, position, true));
+	obj->ex->type = CFG_OBJTYP_ENEMY;
+	obj->ex->value.enemy.chr = cfg;
+	// TODO implement CharacterState
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
-	gfx->textureRect = cfg->texture->textureRect;
-	gfx->center_px = cfg->texture->objCenter_px;
+	gfx->textureRect = cfg->mainTexture->textureRect;
+	gfx->center_px = cfg->mainTexture->objCenter_px;
 	gfx->draw = ObjectEnemy_Draw;
 	gfx->motionBlurEnabled = true;
-	gfx->prevObjGfxOriginWRTScreenCenter_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(position, cfg->texture->objCenter_px);
+	gfx->prevObjGfxOriginWRTScreenCenter_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(position, cfg->mainTexture->objCenter_px);
 
-	obj->ex->type = CFG_OBJTYP_ENEMY;
 	AI* ai = malloc(sizeof(AI)); // TODO error check, who uses malloc anyways
 	AI_Init(ai);
 	ai->recalculationPeriod = 500;
@@ -120,6 +145,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = ObjectEnemy_prePhysics;
+	el->postPhysics = ObjectEnemy_postPhysics;
 
 	ComponentPhysique* phy = Object_AddPhysique(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
@@ -136,6 +162,8 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	defense->hp = 100;
 	defense->maxHp = 100;
 	defense->onDeath = ObjectEnemy_onDeath;
+
+	StateMachineCharacterAnimation_Init(&obj->ex->value.enemy.stateMachineCharacterAnimation, cfg, gfx);
 
 	return 0;
 }

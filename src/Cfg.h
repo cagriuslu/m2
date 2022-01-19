@@ -169,8 +169,23 @@ typedef enum _CfgObjectType {
 	CFG_OBJTYP_PLAYER,
 	CFG_OBJTYP_ENEMY
 } CfgObjectType;
+typedef enum _CfgCharacterTextureType {
+	CFG_CHARTEXTURETYP_LOOKDOWN_00 = 0,
+	CFG_CHARTEXTURETYP_LOOKDOWN_01,
+	CFG_CHARTEXTURETYP_LOOKDOWN_02,
+	CFG_CHARTEXTURETYP_LOOKLEFT_00,
+	CFG_CHARTEXTURETYP_LOOKLEFT_01,
+	CFG_CHARTEXTURETYP_LOOKLEFT_02,
+	CFG_CHARTEXTURETYP_LOOKRIGHT_00,
+	CFG_CHARTEXTURETYP_LOOKRIGHT_01,
+	CFG_CHARTEXTURETYP_LOOKRIGHT_02,
+	CFG_CHARTEXTURETYP_LOOKUP_00,
+	CFG_CHARTEXTURETYP_LOOKUP_01,
+	CFG_CHARTEXTURETYP_LOOKUP_02,
+	CFG_CHARTEXTURETYP_N
+} CfgCharacterTextureType;
 typedef struct _CfgCharacter {
-	const CfgObjectTexture* texture;
+	const CfgObjectTexture* mainTexture;
 	CfgObjectType objType;
 	float walkSpeed; // m/s
 	float maxHp;
@@ -178,6 +193,7 @@ typedef struct _CfgCharacter {
 	const CfgMeleeWeapon* defaultMeleeWeapon;
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
 	int defaultExplosiveCount;
+	const CfgObjectTexture* textures[CFG_CHARTEXTURETYP_N];
 } CfgCharacter;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;
 extern const CfgCharacter CFG_CHARACTER_SKELETON000;

@@ -53,6 +53,29 @@ static void Player_onDeath(ComponentDefense *def) {
 	LOG_INF("Player died");
 }
 
+static void Player_postPhysics(ComponentMonitor* monitor) {
+	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); XASSERT(obj);
+	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
+	// We must call time before other signals
+	StateMachine_ProcessTime(&obj->ex->value.player.stateMachineCharacterAnimation, GAME->deltaTicks / 1000.0f);
+	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
+	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
+		StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_STOP);
+	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
+		if (0 < velocity.y) {
+			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
+		} else {
+			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
+		}
+	} else {
+		if (0 < velocity.x) {
+			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
+		} else {
+			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
+		}
+	}
+}
+
 int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	XERR_REFLECT(Object_Init(obj, position, true));
 	obj->ex->type = CFG_OBJTYP_PLAYER;
@@ -61,6 +84,7 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Player_prePhysics;
+	el->postPhysics = Player_postPhysics;
 
 	ComponentPhysique* phy = Object_AddPhysique(obj);
 	phy->body = Box2DUtils_CreateDynamicDisk(
@@ -68,18 +92,20 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 		obj->position,
 		false, // allowSleep
 		CATEGORY_PLAYER,
-		cfg->texture->collider.colliderUnion.circ.radius_m,
+		cfg->mainTexture->collider.colliderUnion.circ.radius_m,
 		4.0f, // Mass
 		10.0f // Damping
 	);
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
-	gfx->textureRect = cfg->texture->textureRect;
-	gfx->center_px = cfg->texture->objCenter_px;
+	gfx->textureRect = cfg->mainTexture->textureRect;
+	gfx->center_px = cfg->mainTexture->objCenter_px;
 
 	ComponentDefense* def = Object_AddDefense(obj);
 	def->maxHp = def->hp = cfg->maxHp;
 	def->onDeath = Player_onDeath;
+
+	StateMachineCharacterAnimation_Init(&obj->ex->value.player.stateMachineCharacterAnimation, cfg, gfx);
 
 	GAME->playerId = Pool_GetId(&GAME->objects, obj);
 	return XOK;

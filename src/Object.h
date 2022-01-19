@@ -2,6 +2,7 @@
 #define OBJECT_H
 
 #include "Component.h"
+#include "StateMachine.h"
 #include "AI.h"
 #include "Array.h"
 #include "Cfg.h"
@@ -16,9 +17,13 @@ typedef struct _ObjectEx {
 			const CfgCharacter* chr;
 			Stopwatch rangedAttackStopwatch;
 			Stopwatch meleeAttackStopwatch;
+			StateMachine stateMachineCharacterAnimation;
 		} player;
 		struct {
 			AI* ai;
+			CharacterState characterState; // not yet implemented
+			const CfgCharacter* chr; // not yet implemented
+			StateMachine stateMachineCharacterAnimation;
 		} enemy;
 	} value;
 } ObjectEx;
