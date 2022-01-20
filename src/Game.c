@@ -153,7 +153,7 @@ void Game_DeleteList_DeleteAll() {
 	Array_Clear(&GAME->deleteList);
 }
 
-Vec2F CurrentPointerPositionInWorld() {
+void Game_UpdateMousePosition() {
 	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId);
 	Vec2F cameraPosition = camera->position;
 
@@ -161,5 +161,5 @@ Vec2F CurrentPointerPositionInWorld() {
 	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
 	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter.y / GAME->pixelsPerMeter };
 	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
-	return pointerPositionWRTWorld;
+	GAME->mousePosition = pointerPositionWRTWorld;
 }

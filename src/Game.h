@@ -78,6 +78,7 @@ typedef struct _Game {
 	////////////////////////////////////////////////////////////////////////
 	Events events;
 	unsigned deltaTicks;
+	Vec2F mousePosition; // in world coordinates
 	char consoleInput[1024];
 } Game;
 
@@ -85,6 +86,7 @@ typedef struct _Game {
 extern Game* gCurrentGame;
 
 void Game_UpdateWindowDimensions(int width, int height);
+void Game_UpdateMousePosition();
 
 int Game_Level_Init();
 XErr Game_Level_Load(const CfgLevel *cfg);
@@ -93,7 +95,5 @@ void Game_Level_Term();
 Object* Game_FindObjectById(ID id);
 void Game_DeleteList_Add(ID id);
 void Game_DeleteList_DeleteAll();
-
-Vec2F CurrentPointerPositionInWorld();
 
 #endif
