@@ -13,6 +13,9 @@ typedef struct _ObjectEx {
 	CfgObjectType type;
 	union {
 		struct {
+			Vec2F offset;
+		} camera;
+		struct {
 			CharacterState characterState;
 			const CfgCharacter* chr;
 			Stopwatch rangedAttackStopwatch;

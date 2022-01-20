@@ -158,8 +158,7 @@ void Game_UpdateMousePosition() {
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = GAME->events.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter = (Vec2I){ pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
-	Vec2F pointerPositionWRTCameraPos = (Vec2F){ pointerPositionWRTScreenCenter.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter.y / GAME->pixelsPerMeter };
-	Vec2F pointerPositionWRTWorld = Vec2F_Add(pointerPositionWRTCameraPos, cameraPosition);
-	GAME->mousePosition = pointerPositionWRTWorld;
+	Vec2I pointerPositionWRTScreenCenter_px = (Vec2I){pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
+	GAME->mousePositionWRTScreenCenter_m = (Vec2F){pointerPositionWRTScreenCenter_px.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME->pixelsPerMeter };
+	GAME->mousePositionInWorld = Vec2F_Add(GAME->mousePositionWRTScreenCenter_m, cameraPosition);
 }

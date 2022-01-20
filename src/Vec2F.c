@@ -24,6 +24,21 @@ float Vec2F_Length(Vec2F in) {
 	return sqrtf(powf(in.x, 2.0f) + powf(in.y, 2.0f));
 }
 
+Vec2F Vec2F_SetLength(Vec2F in, float len) {
+	Vec2F normalized = Vec2F_Normalize(in);
+	return Vec2F_Mul(normalized, len);
+}
+
+Vec2F Vec2F_FloorLength(Vec2F in, float len) {
+	float inLen = Vec2F_Length(in);
+	return Vec2F_SetLength(in, inLen < len ? len : inLen);
+}
+
+Vec2F Vec2F_CeilLength(Vec2F in, float len) {
+	float inLen = Vec2F_Length(in);
+	return Vec2F_SetLength(in, len < inLen ? len : inLen);
+}
+
 Vec2F Vec2F_Normalize(Vec2F in) {
 	if (in.x == 0.0f && in.y == 0.0f) {
 		return in;
@@ -36,9 +51,10 @@ float Vec2F_Distance(Vec2F lhs, Vec2F rhs) {
 	return Vec2F_Length(Vec2F_Sub(lhs, rhs));
 }
 
-Vec2F Vec2F_Distance2(Vec2F lhs, Vec2F rhs) {
-	Vec2F difference = Vec2F_Sub(lhs, rhs);
-	return (Vec2F) { fabsf(difference.x), fabsf(difference.y) };
+Vec2F Vec2F_Lerp(Vec2F from, Vec2F to, float ratio) {
+	Vec2F diffVec = Vec2F_Sub(to, from);
+	return Vec2F_Add(from, Vec2F_Mul(diffVec, ratio));
+
 }
 
 float Vec2F_AngleRads(Vec2F vector) {

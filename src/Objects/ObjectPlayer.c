@@ -35,17 +35,17 @@ static void Player_prePhysics(ComponentMonitor* el) {
 
 	if (GAME->events.buttonStates[BUTTON_PRIMARY] && (100 < obj->ex->value.player.rangedAttackStopwatch)) {
 		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePosition, obj->position));
+		ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
 		obj->ex->value.player.rangedAttackStopwatch = 0;
 	}
 	if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->value.player.meleeAttackStopwatch)) {
 		Object* melee = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectMelee_InitFromCfg(melee, &obj->ex->value.player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePosition, obj->position));
+		ObjectMelee_InitFromCfg(melee, &obj->ex->value.player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
 		obj->ex->value.player.meleeAttackStopwatch = 0;
 	}
 	if (GAME->events.buttonsPressed[BUTTON_MIDDLE]) {
 		Object* explosive = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectExplosive_InitFromCfg(explosive, &obj->ex->value.player.chr->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePosition, obj->position));
+		ObjectExplosive_InitFromCfg(explosive, &obj->ex->value.player.chr->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
 	}
 }
 
