@@ -29,6 +29,7 @@ typedef struct _Game {
 	SDL_Cursor *sdlCursor;
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* sdlTexture;
+	SDL_Texture* sdlTextureMask;
 	uint32_t pixelFormat;
 	SDL_Rect windowRect;
 	SDL_Rect gameRect;

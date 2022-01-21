@@ -100,6 +100,15 @@ int main(int argc, char **argv) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
+	SDL_Surface* textureMaskSurface = IMG_Load(CFG_TEXTURE_MASK_FILE);
+	if (textureMaskSurface == NULL) {
+		LOGXV_FTL(XERR_SDL_ERROR, String, IMG_GetError());
+		return -1;
+	}
+	if ((GAME->sdlTextureMask = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMaskSurface)) == NULL) {
+		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		return -1;
+	}
 	SDL_FreeSurface(textureMapSurface);
 	if ((GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
@@ -268,7 +277,7 @@ int main(int argc, char **argv) {
 		GAME->deltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
 		for (ComponentGraphic* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
-			if (gfx->draw) { gfx->draw(gfx); }
+			if (gfx->draw) { gfx->draw(gfx, NULL); }
 		}
 		// Pre-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
@@ -283,7 +292,7 @@ int main(int argc, char **argv) {
 		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
 			ComponentGraphic* gfx = Pool_GetById(&GAME->graphics, InsertionList_Get(&GAME->drawList, i));
-			if (gfx && gfx->draw) { gfx->draw(gfx); }
+			if (gfx && gfx->draw) { gfx->draw(gfx, NULL); }
 		}
 		// Post-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;

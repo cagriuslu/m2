@@ -32,8 +32,16 @@ Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F
 	return obj_gfx_origin_wrt_screen_center_px;
 }
 
-void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
+void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx, SDL_Color* colorMod) {
 	Object* obj = Pool_GetById(&GAME->objects, gfx->super.objId); XASSERT(obj);
+
+	SDL_Texture *texture;
+	if (colorMod) {
+		texture = GAME->sdlTextureMask;
+		SDL_SetTextureColorMod(GAME->sdlTextureMask, colorMod->r, colorMod->g, colorMod->b);
+	} else {
+		texture = GAME->sdlTexture;
+	}
 
 	Vec2I obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj->position, gfx->center_px);
 	if (IsMotionBlurEnabled() == false ||
@@ -52,7 +60,7 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 				(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
 				(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
 		};
-		SDL_RenderCopyEx(GAME->sdlRenderer, GAME->sdlTexture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(GAME->sdlRenderer, texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
 	} else {
 		Vec2I obj_displacement_on_screen = Vec2I_Sub(obj_gfx_origin_wrt_screen_center_px, gfx->prevObjGfxOriginWRTScreenCenter_px);
 		Vec2F obj_displacement_on_screen_f = Vec2F_FromVec2I(obj_displacement_on_screen);
@@ -60,7 +68,7 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 		int samplesToDraw = MAX(abs(obj_displacement_on_screen.x), abs(obj_displacement_on_screen.y));
 		samplesToDraw = samplesToDraw == 0 ? 1 : samplesToDraw;
 		Vec2F obj_displacement_step = Vec2F_Div(obj_displacement_on_screen_f, (float)samplesToDraw);
-		SDL_SetTextureAlphaMod(GAME->sdlTexture, (uint8_t)roundf(255.0f / sqrtf((float)samplesToDraw))); // sqrt: relation between time and light intensity seems like sqrt, not sure
+		SDL_SetTextureAlphaMod(texture, (uint8_t)roundf(255.0f / sqrtf((float)samplesToDraw))); // sqrt: relation between time and light intensity seems like sqrt, not sure
 		for (int i = 0; i < samplesToDraw; i++) {
 			Vec2F prev_obj_gfx_origin_wrt_screen_center_px_f = Vec2F_FromVec2I(gfx->prevObjGfxOriginWRTScreenCenter_px);
 			Vec2F motion_obj_gfx_origin_wrt_screen_center_px_f = Vec2F_Add(prev_obj_gfx_origin_wrt_screen_center_px_f, Vec2F_Mul(obj_displacement_step, (float)i + 1));
@@ -79,11 +87,15 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 					(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
 					(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
 			};
-			SDL_RenderCopyEx(GAME->sdlRenderer, GAME->sdlTexture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(GAME->sdlRenderer, texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
 		}
-		SDL_SetTextureAlphaMod(GAME->sdlTexture, 255);
+		SDL_SetTextureAlphaMod(texture, 255);
 	}
 	gfx->prevObjGfxOriginWRTScreenCenter_px = obj_gfx_origin_wrt_screen_center_px;
+
+	if (colorMod) {
+		SDL_SetTextureColorMod(GAME->sdlTextureMask, 255, 255, 255);
+	}
 }
 
 void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio) {

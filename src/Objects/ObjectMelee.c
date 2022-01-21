@@ -42,6 +42,9 @@ static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) 
 	} else {
 		LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, offense->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
 		Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Vec2F_Sub(otherObj->position, obj->position)), 15000.0f), true);
+		if (defense->onHit) {
+			defense->onHit(defense);
+		}
 	}
 }
 

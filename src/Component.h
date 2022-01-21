@@ -38,14 +38,14 @@ typedef struct _ComponentGraphic {
 	SDL_Rect textureRect;
 	Vec2F center_px;
 	float angle;
-	void (*draw)(struct _ComponentGraphic*);
+	void (*draw)(struct _ComponentGraphic*, SDL_Color* colorMod);
 	bool motionBlurEnabled;
 	Vec2I prevObjGfxOriginWRTScreenCenter_px;
 	float prevDrawAngle;
 } ComponentGraphic;
 int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId);
 void ComponentGraphic_Term(ComponentGraphic* gfx);
-void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx);
+void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx, SDL_Color* colorMod);
 void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio);
 Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F objGfxCenterPx);
 int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB);
@@ -54,6 +54,7 @@ typedef struct _ComponentDefense {
 	Component super;
 	float maxHp;
 	float hp;
+	void (*onHit)(struct _ComponentDefense*);
 	void (*onDeath)(struct _ComponentDefense*);
 } ComponentDefense;
 int ComponentDefense_Init(ComponentDefense* def, ID objId);

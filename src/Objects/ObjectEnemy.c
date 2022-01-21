@@ -85,6 +85,11 @@ void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 	}
 }
 
+void ObjectEnemy_onHit(ComponentDefense* def) {
+	Object* obj = Pool_GetById(&GAME->objects, def->super.objId); XASSERT(obj);
+	obj->ex->value.enemy.onHitColorModTtl = 0.10f;
+}
+
 void ObjectEnemy_onDeath(ComponentDefense* def) {
 	Game_DeleteList_Add(def->super.objId);
 }
@@ -112,10 +117,15 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 	}
 }
 
-void ObjectEnemy_Draw(ComponentGraphic* gfx) {
-	ComponentGraphic_DefaultDraw(gfx);
-
+void ObjectEnemy_Draw(ComponentGraphic* gfx, SDL_Color* mod) {
 	Object* obj = Game_FindObjectById(gfx->super.objId); XASSERT(obj);
+	if (0.0f < obj->ex->value.enemy.onHitColorModTtl) {
+		SDL_Color hitMod = {255, 255, 255};
+		ComponentGraphic_DefaultDraw(gfx, &hitMod);
+		obj->ex->value.enemy.onHitColorModTtl -= GAME->deltaTicks / 1000.0f;
+	} else {
+		ComponentGraphic_DefaultDraw(gfx, NULL);
+	}
 	ComponentDefense* defense = Object_GetDefense(obj); XASSERT(defense);
 	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defense->hp / defense->maxHp);
 }
@@ -161,6 +171,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	ComponentDefense* defense = Object_AddDefense(obj);
 	defense->hp = 100;
 	defense->maxHp = 100;
+	defense->onHit = ObjectEnemy_onHit;
 	defense->onDeath = ObjectEnemy_onDeath;
 
 	StateMachineCharacterAnimation_Init(&obj->ex->value.enemy.stateMachineCharacterAnimation, cfg, gfx);

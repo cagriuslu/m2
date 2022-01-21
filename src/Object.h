@@ -27,6 +27,7 @@ typedef struct _ObjectEx {
 			CharacterState characterState; // not yet implemented
 			const CfgCharacter* chr; // not yet implemented
 			StateMachine stateMachineCharacterAnimation;
+			float onHitColorModTtl;
 		} enemy;
 	} value;
 } ObjectEx;

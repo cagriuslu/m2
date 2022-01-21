@@ -9,6 +9,7 @@
 #define CFG_TILE_SIZE (48)
 #define CFG_TILE_SIZE_F (48.0f)
 #define CFG_TEXTURE_FILE "resources/48.png"
+#define CFG_TEXTURE_MASK_FILE "resources/48-Mask.png"
 
 typedef struct _CfgCollider {
 	Vec2F center_px;
