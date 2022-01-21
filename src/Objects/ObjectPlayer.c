@@ -21,15 +21,19 @@ static void Player_prePhysics(ComponentMonitor* el) {
 	Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
 	if (GAME->events.keyStates[KEY_UP]) {
 		moveDirection.y += -1.0f;
+		StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
 	}
 	if (GAME->events.keyStates[KEY_DOWN]) {
 		moveDirection.y += 1.0f;
+		StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
 	}
 	if (GAME->events.keyStates[KEY_LEFT]) {
 		moveDirection.x += -1.0f;
+		StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
 	}
 	if (GAME->events.keyStates[KEY_RIGHT]) {
 		moveDirection.x += 1.0f;
+		StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
 	}
 	Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
 
@@ -37,8 +41,10 @@ static void Player_prePhysics(ComponentMonitor* el) {
 		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
 		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
 		float accuracy = obj->ex->value.player.chr->defaultRangedWeapon->accuracy;
-		float angle = Vec2F_AngleRads(direction) + ((float)M_PI * RANDF * (1 - accuracy)) - ((float)M_PI * ((1 - accuracy) / 2.0f));
+		float angle = Vec2F_AngleRads(direction) + (X_PI * RANDF * (1 - accuracy)) - (X_PI * ((1 - accuracy) / 2.0f));
 		ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
+		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_FromAngle(angle + X_PI), 500.0f), true);
+		// TODO set looking direction here as well
 		obj->ex->value.player.rangedAttackStopwatch = 0;
 	}
 	if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->value.player.meleeAttackStopwatch)) {
@@ -66,15 +72,15 @@ static void Player_postPhysics(ComponentMonitor* monitor) {
 		StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_STOP);
 	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
 		if (0 < velocity.y) {
-			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
+			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
 		} else {
-			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
+			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
 		}
 	} else {
 		if (0 < velocity.x) {
-			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
+			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
 		} else {
-			StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
+			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
 		}
 	}
 }

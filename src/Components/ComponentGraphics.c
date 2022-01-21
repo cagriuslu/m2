@@ -60,7 +60,7 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx, SDL_Color* colorMod) {
 				(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
 				(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
 		};
-		SDL_RenderCopyEx(GAME->sdlRenderer, texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(GAME->sdlRenderer, texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / X_PI, &centerPoint, SDL_FLIP_NONE);
 	} else {
 		Vec2I obj_displacement_on_screen = Vec2I_Sub(obj_gfx_origin_wrt_screen_center_px, gfx->prevObjGfxOriginWRTScreenCenter_px);
 		Vec2F obj_displacement_on_screen_f = Vec2F_FromVec2I(obj_displacement_on_screen);
@@ -87,7 +87,7 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx, SDL_Color* colorMod) {
 					(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
 					(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
 			};
-			SDL_RenderCopyEx(GAME->sdlRenderer, texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M_PI, &centerPoint, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(GAME->sdlRenderer, texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / X_PI, &centerPoint, SDL_FLIP_NONE);
 		}
 		SDL_SetTextureAlphaMod(texture, 255);
 	}

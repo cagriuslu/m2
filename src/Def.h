@@ -15,9 +15,11 @@
 ////////////////////////////// Definitions /////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+#define X_2PI  6.283185307179586f // 2pi
+#define X_PI   3.141592653589793f // pi
+#define X_PI2  1.570796326794897f // pi/2
+#define X_PI4  0.785398163397448f // pi/4
+#define X_3PI4 2.356194490192345f // 3pi/4
 
 typedef uint64_t ID;
 
@@ -174,6 +176,7 @@ void LogStackTrace();
 // Random number between 0.0 and 1.0
 #define RANDF ((float)RAND/(float)RAND_MAX)
 #define ACCURACY(value, accuracy) ((value) + ((value) * RANDF * (1 - (accuracy))) - ((value) * (1 - (accuracy)) / 2.0f))
+float NORMALIZE_2PI(float angle);
 
 #define DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
 	size_t SiblingListLength_##typeName(const typeName *ptr)
