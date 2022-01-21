@@ -26,7 +26,7 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 	}
 	off->state.projectile.alreadyCollidedThisStep = true;
 	// Calculate damage
-	defense->hp -= off->state.projectile.cfg->damage;
+	defense->hp -= ACCURACY(off->state.projectile.cfg->damage, off->state.projectile.cfg->damageAccuracy);
 	if (defense->hp <= 0.0001f && defense->onDeath) {
 		LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, off->super.objId, XOK_ID, ID, defense->super.objId);
 		defense->onDeath(defense);
@@ -66,7 +66,7 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;
 	off->state.projectile.cfg = cfg;
-	off->state.projectile.ttl = cfg->ttl;
+	off->state.projectile.ttl = ACCURACY(cfg->ttl, cfg->ttlAccuracy);
 	off->state.projectile.alreadyCollidedThisStep = false;
 
 	return 0;

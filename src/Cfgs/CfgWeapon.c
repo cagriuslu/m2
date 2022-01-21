@@ -5,40 +5,52 @@ const CfgRangedWeapon CFG_RANGEDWPN_GUN = {
 		.texture = &CFG_OBJTXTR_BULLET_00,
 		.speed = 20.0f,
 		.damage = 35.0f,
-		.ttl = 0.6f
+		.ttl = 0.6f,
+		.damageAccuracy = 0.8f,
+		.ttlAccuracy = 0.90f
 	},
 	.projectileCount = 1,
-	.rateOfFire = 3.0f
+	.rateOfFire = 3.0f,
+	.accuracy = 0.95f
 };
 const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN = {
 	.projectile = {
 		.texture = &CFG_OBJTXTR_BULLET_00,
 		.speed = 2.5f,
 		.damage = 35.0f,
-		.ttl = 3.0f
+		.ttl = 3.0f,
+		.damageAccuracy = 0.8f,
+		.ttlAccuracy = 0.95f
 	},
 	.projectileCount = 1,
-	.rateOfFire = 12.0f
+	.rateOfFire = 12.0f,
+	.accuracy = 0.9f
 };
 const CfgRangedWeapon CFG_RANGEDWPN_SHOTGUN = {
 	.projectile = {
 		.texture = &CFG_OBJTXTR_BULLET_01,
 		.speed = 2.0f,
 		.damage = 20.0f,
-		.ttl = 3.0f
+		.ttl = 3.0f,
+		.damageAccuracy = 0.8f,
+		.ttlAccuracy = 0.95f
 	},
 	.projectileCount = 5,
-	.rateOfFire = 1.0f
+	.rateOfFire = 1.0f,
+	.accuracy = 0.9f
 };
 const CfgRangedWeapon CFG_RANGEDWPN_BOW = {
 	.projectile = {
 		.texture = &CFG_OBJTXTR_BULLET_01,
 		.speed = 1.5f,
 		.damage = 70.0f,
-		.ttl = 5.0f
+		.ttl = 5.0f,
+		.damageAccuracy = 0.8f,
+		.ttlAccuracy = 0.95f
 	},
 	.projectileCount = 1,
-	.rateOfFire = 1.0f
+	.rateOfFire = 1.0f,
+	.accuracy = 0.9f
 };
 
 const CfgMeleeWeapon CFG_MELEEWPN_BAT = {

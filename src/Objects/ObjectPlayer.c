@@ -35,7 +35,10 @@ static void Player_prePhysics(ComponentMonitor* el) {
 
 	if (GAME->events.buttonStates[BUTTON_PRIMARY] && (100 < obj->ex->value.player.rangedAttackStopwatch)) {
 		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		float accuracy = obj->ex->value.player.chr->defaultRangedWeapon->accuracy;
+		float angle = Vec2F_AngleRads(direction) + ((float)M_PI * RANDF * (1 - accuracy)) - ((float)M_PI * ((1 - accuracy) / 2.0f));
+		ObjectProjectile_InitFromCfg(projectile, &obj->ex->value.player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
 		obj->ex->value.player.rangedAttackStopwatch = 0;
 	}
 	if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->value.player.meleeAttackStopwatch)) {

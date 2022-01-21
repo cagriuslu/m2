@@ -84,11 +84,14 @@ typedef struct _CfgProjectile {
 	float speed;
 	float damage;
 	float ttl;
+	float damageAccuracy;
+	float ttlAccuracy;
 } CfgProjectile;
 typedef struct _CfgRangedWeapon {
 	CfgProjectile projectile;
 	unsigned projectileCount;
 	float rateOfFire;
+	float accuracy;
 } CfgRangedWeapon;
 extern const CfgRangedWeapon CFG_RANGEDWPN_GUN; // Default
 extern const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN; // Fast, thus powerful

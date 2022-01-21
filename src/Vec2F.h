@@ -24,6 +24,7 @@ Vec2F Vec2F_Normalize(Vec2F in);
 float Vec2F_Distance(Vec2F lhs, Vec2F rhs);
 Vec2F Vec2F_Lerp(Vec2F from, Vec2F to, float ratio);
 float Vec2F_AngleRads(Vec2F vector);
+Vec2F Vec2F_FromAngle(float rads);
 
 bool Vec2F_Equals(Vec2F lhs, Vec2F rhs);
 bool Vec2F_IsNan(Vec2F in);

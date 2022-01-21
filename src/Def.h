@@ -170,6 +170,10 @@ void LogStackTrace();
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 #define LERP(min,max,t) ((min) + (t) * ((max) - (min)))
+#define RAND (rand())
+// Random number between 0.0 and 1.0
+#define RANDF ((float)RAND/(float)RAND_MAX)
+#define ACCURACY(value, accuracy) ((value) + ((value) * RANDF * (1 - (accuracy))) - ((value) * (1 - (accuracy)) / 2.0f))
 
 #define DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
 	size_t SiblingListLength_##typeName(const typeName *ptr)

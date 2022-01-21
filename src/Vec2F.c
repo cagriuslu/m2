@@ -61,6 +61,10 @@ float Vec2F_AngleRads(Vec2F vector) {
 	return atan2f(vector.y, vector.x);
 }
 
+Vec2F Vec2F_FromAngle(float rads) {
+	return (Vec2F){cosf(rads), sinf(rads)};
+}
+
 bool Vec2F_Equals(Vec2F lhs, Vec2F rhs) {
 	return (lhs.x == rhs.x) && (lhs.y == rhs.y);
 }
