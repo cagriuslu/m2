@@ -242,6 +242,7 @@ int main(int argc, char **argv) {
 		while (GAME->physicsStepPeriod < timeSinceLastWorldStep) {
 			// Pre-physics
 			GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
+			GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 			prevPrePhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 				if (el->prePhysics) { el->prePhysics(el); }
@@ -256,6 +257,7 @@ int main(int argc, char **argv) {
 			Game_DeleteList_DeleteAll();
 			// Post-physics
 			GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
+			GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 			prevPostPhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 				if (el->postPhysics) { el->postPhysics(el); }
@@ -275,12 +277,14 @@ int main(int argc, char **argv) {
 		SDL_RenderClear(GAME->sdlRenderer);
 		// Draw terrain
 		GAME->deltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
+		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
 		for (ComponentGraphic* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
 			if (gfx->draw) { gfx->draw(gfx, NULL); }
 		}
 		// Pre-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
+		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevPreGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->preGraphics) { el->preGraphics(el); }
@@ -288,6 +292,7 @@ int main(int argc, char **argv) {
 		// Draw
 		InsertionList_Sort(&GAME->drawList);
 		GAME->deltaTicks = SDL_GetTicks() - prevDrawGraphicsTicks;
+		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevDrawGraphicsTicks += GAME->deltaTicks;
 		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
@@ -296,6 +301,7 @@ int main(int argc, char **argv) {
 		}
 		// Post-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
+		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevPostGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->postGraphics) { el->postGraphics(el); }

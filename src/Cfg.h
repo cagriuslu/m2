@@ -11,6 +11,9 @@
 #define CFG_TEXTURE_FILE "resources/48.png"
 #define CFG_TEXTURE_MASK_FILE "resources/48-Mask.png"
 
+////////////////////////////////////////////////////////////////////////
+//////////////////////////// GROUND TEXTURE ////////////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef struct _CfgCollider {
 	Vec2F center_px;
 	Vec2F center_m;
@@ -45,6 +48,9 @@ extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000TL;
 extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000BR;
 extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000BL;
 
+////////////////////////////////////////////////////////////////////////
+//////////////////////////// OBJECT TEXTURE ////////////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef struct _CfgObjectTexture {
 	SDL_Rect textureRect;
 	Vec2F objCenter_px;
@@ -80,6 +86,9 @@ extern const CfgObjectTexture CFG_OBJTXTR_BULLET_01;
 extern const CfgObjectTexture CFG_OBJTXTR_SWORD_00;
 extern const CfgObjectTexture CFG_OBJTXTR_BOMB_00;
 
+////////////////////////////////////////////////////////////////////////
+///////////////////// RANGED WEAPON AND PROJECTILE /////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef struct _CfgProjectile {
 	const CfgObjectTexture* texture;
 	float speed_mps;
@@ -88,6 +97,13 @@ typedef struct _CfgProjectile {
 	float damageAccuracy;
 	float ttlAccuracy;
 } CfgProjectile;
+typedef struct _ProjectileState {
+	const CfgProjectile* cfg;
+	bool alreadyCollidedThisStep;
+	float ttl_s;
+} ProjectileState;
+XErr ProjectileState_Init(ProjectileState* state, const CfgProjectile* cfg);
+
 typedef struct _CfgRangedWeapon {
 	CfgProjectile projectile;
 	unsigned projectileCount;
@@ -98,16 +114,15 @@ extern const CfgRangedWeapon CFG_RANGEDWPN_GUN; // Default
 extern const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN; // Fast, thus powerful
 extern const CfgRangedWeapon CFG_RANGEDWPN_SHOTGUN; // Slow but powerful
 extern const CfgRangedWeapon CFG_RANGEDWPN_BOW; // Slow, but piercing, thus default
-typedef struct _ProjectileState {
-	const CfgProjectile* cfg;
-	bool alreadyCollidedThisStep;
-	float ttl_s;
-} ProjectileState;
 typedef struct _RangedWeaponState {
 	const CfgRangedWeapon *cfg;
 	float cooldownCounter_s;
 } RangedWeaponState;
+XErr RangedWeaponState_Init(RangedWeaponState* state, const CfgRangedWeapon* cfg);
 
+////////////////////////////////////////////////////////////////////////
+//////////////////////// MELEE WEAPON AND MELEE ////////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef enum _CfgMeleeMotion {
 	CFG_MELEE_MOTION_INVALID = 0,
 	CFG_MELEE_MOTION_SWING,
@@ -119,6 +134,12 @@ typedef struct _CfgMelee {
 	CfgMeleeMotion motion;
 	float ttl_s;
 } CfgMelee;
+typedef struct _MeleeState {
+	const CfgMelee* cfg;
+	float ttl_s;
+} MeleeState;
+XErr MeleeState_Init(MeleeState* state, const CfgMelee* cfg);
+
 typedef struct _CfgMeleeWeapon {
 	CfgMelee melee;
 	float cooldown_s;
@@ -128,15 +149,15 @@ extern const CfgMeleeWeapon CFG_MELEEWPN_BAT; // Default
 extern const CfgMeleeWeapon CFG_MELEEWPN_SWORD; // Slow but powerful
 extern const CfgMeleeWeapon CFG_MELEEWPN_SPEAR; // Slow, High damage and pierce
 extern const CfgMeleeWeapon CFG_MELEEWPN_DAGGER; // Fast, thus powerful
-typedef struct _MeleeState {
-	const CfgMelee* cfg;
-	float ttl_s;
-} MeleeState;
 typedef struct _MeleeWeaponState {
 	const CfgMeleeWeapon *cfg;
 	float cooldownCounter_s;
 } MeleeWeaponState;
+XErr MeleeWeaponState_Init(MeleeWeaponState* state, const CfgMeleeWeapon* cfg);
 
+////////////////////////////////////////////////////////////////////////
+//////////////////// EXPLOSIVE WEAPON AND EXPLOSIVE ////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef struct _CfgExplosive {
 	const CfgObjectTexture* texture;
 	float projectileSpeed_mps;
@@ -146,12 +167,6 @@ typedef struct _CfgExplosive {
 	float damageMin;
 	float damageRadius_m;
 } CfgExplosive;
-typedef struct _CfgExplosiveWeapon {
-	CfgExplosive explosive;
-	float cooldown_s;
-} CfgExplosiveWeapon;
-extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
-extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
 typedef enum _ExplosiveStatus {
 	EXPLOSIVE_STATUS_INVALID = 0,
 	EXPLOSIVE_STATUS_IN_FLIGHT,
@@ -163,11 +178,23 @@ typedef struct _ExplosiveState {
 	float projectileTtl_s;
 	ExplosiveStatus explosiveStatus;
 } ExplosiveState;
+XErr ExplosiveState_Init(ExplosiveState* state, const CfgExplosive* cfg);
+
+typedef struct _CfgExplosiveWeapon {
+	CfgExplosive explosive;
+	float cooldown_s;
+} CfgExplosiveWeapon;
+extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
+extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
 typedef struct _ExplosiveWeaponState {
 	const CfgExplosiveWeapon *cfg;
 	float cooldownCounter_s;
 } ExplosiveWeaponState;
+XErr ExplosiveWeaponState_Init(ExplosiveWeaponState* state, const CfgExplosiveWeapon* cfg);
 
+////////////////////////////////////////////////////////////////////////
+/////////////////////////////// CHARACTER //////////////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef enum _CfgObjectType {
 	CFG_OBJTYP_INVALID = 0,
 	CFG_OBJTYP_PLAYER,
@@ -196,7 +223,7 @@ typedef struct _CfgCharacter {
 	const CfgRangedWeapon* defaultRangedWeapon;
 	const CfgMeleeWeapon* defaultMeleeWeapon;
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
-	int defaultExplosiveCount;
+	unsigned defaultExplosiveCount;
 	const CfgObjectTexture* textures[CFG_CHARTEXTURETYP_N];
 } CfgCharacter;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;
@@ -208,7 +235,11 @@ typedef struct CharacterState {
 	ExplosiveWeaponState explosiveWeaponState;
 	unsigned explosiveCount;
 } CharacterState;
+XErr CharacterState_Init(CharacterState* state, const CfgCharacter* cfg);
 
+////////////////////////////////////////////////////////////////////////
+///////////////////////////////// LEVEL ////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef struct _CfgLevel {
 	const struct _CfgLevelTile {
 		const CfgGroundTexture* gndTile;
@@ -219,6 +250,9 @@ typedef struct _CfgLevel {
 typedef struct _CfgLevelTile CfgLevelTile;
 extern const CfgLevel CFG_LVL_SP000;
 
+////////////////////////////////////////////////////////////////////////
+//////////////////////////////// MARKUP ////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 typedef enum _CfgMarkupButtonType {
 	CFG_MARKUP_BUTTON_TYPE_INVALID = 0,
 	CFG_MARKUP_BUTTON_TYPE_NEW_GAME,

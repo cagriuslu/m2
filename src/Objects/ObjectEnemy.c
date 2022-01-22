@@ -132,8 +132,7 @@ void ObjectEnemy_Draw(ComponentGraphic* gfx, SDL_Color* mod) {
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	XERR_REFLECT(Object_Init(obj, position, true));
-	obj->ex->enemy.chr = cfg;
-	// TODO implement CharacterState
+	XERR_REFLECT(CharacterState_Init(&obj->ex->enemy.characterState, cfg));
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = cfg->mainTexture->textureRect;

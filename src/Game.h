@@ -79,6 +79,7 @@ typedef struct _Game {
 	////////////////////////////////////////////////////////////////////////
 	Events events;
 	unsigned deltaTicks;
+	float deltaTime;
 	Vec2F mousePositionInWorld; // in world coordinates
 	Vec2F mousePositionWRTScreenCenter_m;
 	char consoleInput[1024];

@@ -5,6 +5,7 @@
 #define AsUint64Ptr(ptr) ((ID*) (ptr))
 
 int InsertionList_Init(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID)) {
+	memset(list, 0, sizeof(InsertionList));
 	XERR_REFLECT(Array_Init(&list->array, sizeof(ID), maxItemCount, maxItemCount, NULL));
 	list->comparator = comparator;
 	return 0;

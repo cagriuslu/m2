@@ -98,6 +98,7 @@ void _MarkupState_ResetDepressedButtons(MarkupState *state) {
 // MarkupState methods
 
 XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg) {
+	memset(state, 0, sizeof(MarkupState));
 	state->cfg = cfg;
 	if (cfg && cfg->firstElement) {
 		// Address of the variable to store the MarkupElementState

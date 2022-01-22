@@ -14,9 +14,6 @@
 static void Player_prePhysics(ComponentMonitor* el) {
 	Object* obj = Pool_GetById(&GAME->objects, el->super.objId); XASSERT(obj);
 
-	obj->ex->player.rangedAttackStopwatch += GAME->deltaTicks;
-	obj->ex->player.meleeAttackStopwatch += GAME->deltaTicks;
-
 	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
 	Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
 	if (GAME->events.keyStates[KEY_UP]) {
@@ -37,24 +34,30 @@ static void Player_prePhysics(ComponentMonitor* el) {
 	}
 	Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
 
-	if (GAME->events.buttonStates[BUTTON_PRIMARY] && (100 < obj->ex->player.rangedAttackStopwatch)) {
+	obj->ex->player.characterState.rangedWeaponState.cooldownCounter_s += GAME->deltaTime;
+	obj->ex->player.characterState.meleeWeaponState.cooldownCounter_s += GAME->deltaTime;
+	obj->ex->player.characterState.explosiveWeaponState.cooldownCounter_s += GAME->deltaTime;
+
+	if (GAME->events.buttonStates[BUTTON_PRIMARY] && obj->ex->player.characterState.rangedWeaponState.cfg->cooldown_s < obj->ex->player.characterState.rangedWeaponState.cooldownCounter_s) {
 		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
 		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
-		float accuracy = obj->ex->player.chr->defaultRangedWeapon->accuracy;
+		float accuracy = obj->ex->player.characterState.cfg->defaultRangedWeapon->accuracy;
 		float angle = Vec2F_AngleRads(direction) + (X_PI * RANDF * (1 - accuracy)) - (X_PI * ((1 - accuracy) / 2.0f));
-		ObjectProjectile_InitFromCfg(projectile, &obj->ex->player.chr->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
+		ObjectProjectile_InitFromCfg(projectile, &obj->ex->player.characterState.cfg->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
+		// Knockback
 		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_FromAngle(angle + X_PI), 500.0f), true);
 		// TODO set looking direction here as well
-		obj->ex->player.rangedAttackStopwatch = 0;
+		obj->ex->player.characterState.rangedWeaponState.cooldownCounter_s = 0;
 	}
-	if (GAME->events.buttonStates[BUTTON_SECONDARY] && (333 < obj->ex->player.meleeAttackStopwatch)) {
+	if (GAME->events.buttonStates[BUTTON_SECONDARY] && obj->ex->player.characterState.meleeWeaponState.cfg->cooldown_s < obj->ex->player.characterState.meleeWeaponState.cooldownCounter_s) {
 		Object* melee = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectMelee_InitFromCfg(melee, &obj->ex->player.chr->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
-		obj->ex->player.meleeAttackStopwatch = 0;
+		ObjectMelee_InitFromCfg(melee, &obj->ex->player.characterState.cfg->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		obj->ex->player.characterState.meleeWeaponState.cooldownCounter_s = 0;
 	}
-	if (GAME->events.buttonsPressed[BUTTON_MIDDLE]) {
+	if (GAME->events.buttonStates[BUTTON_MIDDLE] && obj->ex->player.characterState.explosiveWeaponState.cfg->cooldown_s < obj->ex->player.characterState.explosiveWeaponState.cooldownCounter_s) {
 		Object* explosive = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectExplosive_InitFromCfg(explosive, &obj->ex->player.chr->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		ObjectExplosive_InitFromCfg(explosive, &obj->ex->player.characterState.cfg->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		obj->ex->player.characterState.explosiveWeaponState.cooldownCounter_s = 0;
 	}
 }
 
@@ -87,8 +90,7 @@ static void Player_postPhysics(ComponentMonitor* monitor) {
 
 int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	XERR_REFLECT(Object_Init(obj, position, true));
-	obj->ex->player.chr = cfg;
-	// TODO implement CharacterState
+	XERR_REFLECT(CharacterState_Init(&obj->ex->player.characterState, cfg));
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Player_prePhysics;

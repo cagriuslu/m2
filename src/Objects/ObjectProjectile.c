@@ -41,8 +41,8 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 }
 
 int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction) {
-	direction = Vec2F_Normalize(direction);
 	XERR_REFLECT(Object_Init(obj, position, false));
+	direction = Vec2F_Normalize(direction);
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Bullet_prePhysics;

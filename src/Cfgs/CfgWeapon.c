@@ -10,7 +10,7 @@ const CfgRangedWeapon CFG_RANGEDWPN_GUN = {
 		.ttlAccuracy = 0.90f
 	},
 	.projectileCount = 1,
-	.cooldown_s = 0.33f,
+	.cooldown_s = 0.10f,
 	.accuracy = 0.95f
 };
 const CfgRangedWeapon CFG_RANGEDWPN_MACHINEGUN = {
@@ -60,7 +60,7 @@ const CfgMeleeWeapon CFG_MELEEWPN_BAT = {
 		.motion = CFG_MELEE_MOTION_SWING,
 		.ttl_s = 0.150f
 	},
-	.cooldown_s = 1.0f
+	.cooldown_s = 0.33f
 };
 const CfgMeleeWeapon CFG_MELEEWPN_SWORD = {
 	.melee = {
@@ -69,7 +69,7 @@ const CfgMeleeWeapon CFG_MELEEWPN_SWORD = {
 		.motion = CFG_MELEE_MOTION_SWING,
 		.ttl_s = 0.150f
 	},
-	.cooldown_s = 1.0f
+	.cooldown_s = 0.33f
 };
 const CfgMeleeWeapon CFG_MELEEWPN_SPEAR = {
 	.melee = {

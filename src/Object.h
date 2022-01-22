@@ -15,17 +15,13 @@ typedef union _ObjectEx {
 	} camera;
 	struct {
 		CharacterState characterState;
-		const CfgCharacter* chr; // TODO this should be held via characterState
-		Stopwatch rangedAttackStopwatch;
-		Stopwatch meleeAttackStopwatch;
 		StateMachine stateMachineCharacterAnimation;
 	} player;
 	struct {
-		AI* ai;
-		CharacterState characterState; // not yet implemented
-		const CfgCharacter* chr; // not yet implemented // TODO this should be held via characterState
+		CharacterState characterState;
 		StateMachine stateMachineCharacterAnimation;
 		float onHitColorModTtl;
+		AI* ai;
 	} enemy;
 } ObjectEx;
 /// Basis of all objects in the game.
