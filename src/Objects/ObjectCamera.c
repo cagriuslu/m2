@@ -10,8 +10,8 @@ void Camera_postPhysics(ComponentMonitor* el) {
 	Object* player = Pool_GetById(&GAME->objects, GAME->playerId); XASSERT(player);
 	// Give an offset to the camera's location based on the position of the mouse
 	Vec2F offsetWRTScreenCenter = Vec2F_CeilLength(GAME->mousePositionWRTScreenCenter_m, OFFSET_LIMIT);
-	camera->ex->value.camera.offset = Vec2F_Lerp(camera->ex->value.camera.offset, offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
-	camera->position = Vec2F_Lerp(camera->position, Vec2F_Add(player->position, camera->ex->value.camera.offset), CAMERA_JUMP_RATIO);
+	camera->ex->camera.offset = Vec2F_Lerp(camera->ex->camera.offset, offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
+	camera->position = Vec2F_Lerp(camera->position, Vec2F_Add(player->position, camera->ex->camera.offset), CAMERA_JUMP_RATIO);
 }
 
 int ObjectCamera_Init(Object* obj) {

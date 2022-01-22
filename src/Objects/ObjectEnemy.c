@@ -11,7 +11,7 @@ void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 
 	float distanceToPlayer = 0.0f;
 
-	AI* ai = obj->ex->value.enemy.ai;
+	AI* ai = obj->ex->enemy.ai;
 	ai->recalculationStopwatch += GAME->deltaTicks;
 	ai->attackStopwatch += GAME->deltaTicks;
 	if (ai->recalculationPeriod < ai->recalculationStopwatch) {
@@ -87,7 +87,7 @@ void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 
 void ObjectEnemy_onHit(ComponentDefense* def) {
 	Object* obj = Pool_GetById(&GAME->objects, def->super.objId); XASSERT(obj);
-	obj->ex->value.enemy.onHitColorModTtl = 0.10f;
+	obj->ex->enemy.onHitColorModTtl = 0.10f;
 }
 
 void ObjectEnemy_onDeath(ComponentDefense* def) {
@@ -98,31 +98,31 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); XASSERT(obj);
 	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
 	// We must call time before other signals
-	StateMachine_ProcessTime(&obj->ex->value.enemy.stateMachineCharacterAnimation, GAME->deltaTicks / 1000.0f);
+	StateMachine_ProcessTime(&obj->ex->enemy.stateMachineCharacterAnimation, GAME->deltaTicks / 1000.0f);
 	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-		StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_STOP);
+		StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_STOP);
 	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
 		if (0 < velocity.y) {
-			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
+			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
 		} else {
-			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
+			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
 		}
 	} else {
 		if (0 < velocity.x) {
-			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
+			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
 		} else {
-			StateMachine_ProcessSignal(&obj->ex->value.enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
+			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
 		}
 	}
 }
 
 void ObjectEnemy_Draw(ComponentGraphic* gfx, SDL_Color* mod) {
 	Object* obj = Game_FindObjectById(gfx->super.objId); XASSERT(obj);
-	if (0.0f < obj->ex->value.enemy.onHitColorModTtl) {
+	if (0.0f < obj->ex->enemy.onHitColorModTtl) {
 		SDL_Color hitMod = {255, 255, 255};
 		ComponentGraphic_DefaultDraw(gfx, &hitMod);
-		obj->ex->value.enemy.onHitColorModTtl -= GAME->deltaTicks / 1000.0f;
+		obj->ex->enemy.onHitColorModTtl -= GAME->deltaTicks / 1000.0f;
 	} else {
 		ComponentGraphic_DefaultDraw(gfx, NULL);
 	}
@@ -132,8 +132,7 @@ void ObjectEnemy_Draw(ComponentGraphic* gfx, SDL_Color* mod) {
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
 	XERR_REFLECT(Object_Init(obj, position, true));
-	obj->ex->type = CFG_OBJTYP_ENEMY;
-	obj->ex->value.enemy.chr = cfg;
+	obj->ex->enemy.chr = cfg;
 	// TODO implement CharacterState
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
@@ -151,7 +150,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	ai->attackStopwatch = rand() % ai->attackPeriod;
 	ai->homePosition = position;
 	ai->triggerDistance = 6.0f;
-	obj->ex->value.enemy.ai = ai;
+	obj->ex->enemy.ai = ai;
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = ObjectEnemy_prePhysics;
@@ -174,7 +173,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	defense->onHit = ObjectEnemy_onHit;
 	defense->onDeath = ObjectEnemy_onDeath;
 
-	StateMachineCharacterAnimation_Init(&obj->ex->value.enemy.stateMachineCharacterAnimation, cfg, gfx);
+	StateMachineCharacterAnimation_Init(&obj->ex->enemy.stateMachineCharacterAnimation, cfg, gfx);
 
 	return 0;
 }

@@ -9,27 +9,24 @@
 #include "Vec2F.h"
 #include <stdint.h>
 
-typedef struct _ObjectEx {
-	CfgObjectType type;
-	union {
-		struct {
-			Vec2F offset;
-		} camera;
-		struct {
-			CharacterState characterState;
-			const CfgCharacter* chr;
-			Stopwatch rangedAttackStopwatch;
-			Stopwatch meleeAttackStopwatch;
-			StateMachine stateMachineCharacterAnimation;
-		} player;
-		struct {
-			AI* ai;
-			CharacterState characterState; // not yet implemented
-			const CfgCharacter* chr; // not yet implemented
-			StateMachine stateMachineCharacterAnimation;
-			float onHitColorModTtl;
-		} enemy;
-	} value;
+typedef union _ObjectEx {
+	struct {
+		Vec2F offset;
+	} camera;
+	struct {
+		CharacterState characterState;
+		const CfgCharacter* chr; // TODO this should be held via characterState
+		Stopwatch rangedAttackStopwatch;
+		Stopwatch meleeAttackStopwatch;
+		StateMachine stateMachineCharacterAnimation;
+	} player;
+	struct {
+		AI* ai;
+		CharacterState characterState; // not yet implemented
+		const CfgCharacter* chr; // not yet implemented // TODO this should be held via characterState
+		StateMachine stateMachineCharacterAnimation;
+		float onHitColorModTtl;
+	} enemy;
 } ObjectEx;
 /// Basis of all objects in the game.
 /// 
