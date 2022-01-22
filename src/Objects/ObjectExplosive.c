@@ -8,7 +8,7 @@ static Box2DBody* ObjectExplosive_CreateCollisionCircleBody(ID phyId, Vec2F posi
 			phyId,
 			position,
 			CATEGORY_PLAYER_BULLET,
-			cfg->damageRadius,
+			cfg->damageRadius_m,
 			0.0f, // Mass
 			0.0f // Damping
 	);
@@ -21,9 +21,9 @@ static void ObjectExplosive_prePhysics(ComponentMonitor* el) {
 
 	switch (off->state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_IN_FLIGHT:
-			Box2DBodySetLinearSpeed(phy->body, off->state.explosive.cfg->projectileSpeed);
-			off->state.explosive.projectileTtl -= GAME->deltaTicks / 1000.0f;
-			if (off->state.explosive.projectileTtl <= 0) {
+			Box2DBodySetLinearSpeed(phy->body, off->state.explosive.cfg->projectileSpeed_mps);
+			off->state.explosive.projectileTtl_s -= GAME->deltaTicks / 1000.0f;
+			if (off->state.explosive.projectileTtl_s <= 0) {
 				Box2DWorldDestroyBody(GAME->world, phy->body);
 				phy->body = ObjectExplosive_CreateCollisionCircleBody(obj->physique, obj->position, off->state.explosive.cfg);
 				off->state.explosive.explosiveStatus = EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
@@ -53,7 +53,7 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 				ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); XASSERT(defense);
 				// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
 				float distance = Vec2F_Distance(otherObj->position, obj->position);
-				float damageRadius = off->state.explosive.cfg->damageRadius;
+				float damageRadius = off->state.explosive.cfg->damageRadius_m;
 				if (distance < damageRadius) {
 					// Calculate damage
 					float minDamage = off->state.explosive.cfg->damageMin;
@@ -111,11 +111,11 @@ XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origin
 		Pool_GetId(&GAME->physics, phy),
 		position,
 		CATEGORY_PLAYER_BULLET,
-		cfg->projectileRadius,
+		cfg->projectileRadius_m,
 		0.0f, // Mass
 		0.0f // Damping
 	);
-	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, cfg->projectileSpeed));
+	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, cfg->projectileSpeed_mps));
 	phy->onCollision = ObjectExplosive_onCollision;
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
@@ -126,7 +126,7 @@ XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origin
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;
 	off->state.explosive.cfg = cfg;
-	off->state.explosive.projectileTtl = cfg->projectileTtl;
+	off->state.explosive.projectileTtl_s = cfg->projectileTtl_s;
 	off->state.explosive.explosiveStatus = EXPLOSIVE_STATUS_IN_FLIGHT;
 
 	return XOK;

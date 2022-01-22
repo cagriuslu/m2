@@ -82,16 +82,16 @@ extern const CfgObjectTexture CFG_OBJTXTR_BOMB_00;
 
 typedef struct _CfgProjectile {
 	const CfgObjectTexture* texture;
-	float speed;
+	float speed_mps;
 	float damage;
-	float ttl;
+	float ttl_s;
 	float damageAccuracy;
 	float ttlAccuracy;
 } CfgProjectile;
 typedef struct _CfgRangedWeapon {
 	CfgProjectile projectile;
 	unsigned projectileCount;
-	float rateOfFire;
+	float cooldown_s;
 	float accuracy;
 } CfgRangedWeapon;
 extern const CfgRangedWeapon CFG_RANGEDWPN_GUN; // Default
@@ -101,11 +101,11 @@ extern const CfgRangedWeapon CFG_RANGEDWPN_BOW; // Slow, but piercing, thus defa
 typedef struct _ProjectileState {
 	const CfgProjectile* cfg;
 	bool alreadyCollidedThisStep;
-	float ttl;
+	float ttl_s;
 } ProjectileState;
 typedef struct _RangedWeaponState {
 	const CfgRangedWeapon *cfg;
-	float cooldownStopwatch;
+	float cooldownCounter_s;
 } RangedWeaponState;
 
 typedef enum _CfgMeleeMotion {
@@ -117,11 +117,11 @@ typedef struct _CfgMelee {
 	const CfgObjectTexture* texture;
 	float damage;
 	CfgMeleeMotion motion;
-	float ttl;
+	float ttl_s;
 } CfgMelee;
 typedef struct _CfgMeleeWeapon {
 	CfgMelee melee;
-	float rateOfFire;
+	float cooldown_s;
 } CfgMeleeWeapon;
 typedef enum _CfgMeleeMotion CfgMeleeMotion;
 extern const CfgMeleeWeapon CFG_MELEEWPN_BAT; // Default
@@ -130,25 +130,25 @@ extern const CfgMeleeWeapon CFG_MELEEWPN_SPEAR; // Slow, High damage and pierce
 extern const CfgMeleeWeapon CFG_MELEEWPN_DAGGER; // Fast, thus powerful
 typedef struct _MeleeState {
 	const CfgMelee* cfg;
-	float ttl;
+	float ttl_s;
 } MeleeState;
 typedef struct _MeleeWeaponState {
 	const CfgMeleeWeapon *cfg;
-	float cooldownStopwatch;
+	float cooldownCounter_s;
 } MeleeWeaponState;
 
 typedef struct _CfgExplosive {
 	const CfgObjectTexture* texture;
-	float projectileSpeed;
-	float projectileTtl;
-	float projectileRadius;
+	float projectileSpeed_mps;
+	float projectileTtl_s;
+	float projectileRadius_m;
 	float damageMax;
 	float damageMin;
-	float damageRadius;
+	float damageRadius_m;
 } CfgExplosive;
 typedef struct _CfgExplosiveWeapon {
 	CfgExplosive explosive;
-	float rateOfFire;
+	float cooldown_s;
 } CfgExplosiveWeapon;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
@@ -160,12 +160,12 @@ typedef enum _ExplosiveStatus {
 } ExplosiveStatus;
 typedef struct _ExplosiveState {
 	const CfgExplosive* cfg;
-	float projectileTtl;
+	float projectileTtl_s;
 	ExplosiveStatus explosiveStatus;
 } ExplosiveState;
 typedef struct _ExplosiveWeaponState {
 	const CfgExplosiveWeapon *cfg;
-	float cooldownStopwatch;
+	float cooldownCounter_s;
 } ExplosiveWeaponState;
 
 typedef enum _CfgObjectType {
@@ -191,7 +191,7 @@ typedef enum _CfgCharacterTextureType {
 typedef struct _CfgCharacter {
 	const CfgObjectTexture* mainTexture;
 	CfgObjectType objType;
-	float walkSpeed; // m/s
+	float walkSpeed_mps;
 	float maxHp;
 	const CfgRangedWeapon* defaultRangedWeapon;
 	const CfgMeleeWeapon* defaultMeleeWeapon;

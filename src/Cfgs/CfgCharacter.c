@@ -3,7 +3,7 @@
 const CfgCharacter CFG_CHARACTER_PLAYER = {
 	.mainTexture = &CFG_OBJTXTR_PLAYER_LOOKDOWN_00,
 	.objType = CFG_OBJTYP_PLAYER,
-	.walkSpeed = 0.8f,
+	.walkSpeed_mps = 0.8f,
 	.maxHp = 100.0f,
 	.defaultRangedWeapon = &CFG_RANGEDWPN_GUN,
 	.defaultMeleeWeapon = &CFG_MELEEWPN_BAT,
@@ -27,7 +27,7 @@ const CfgCharacter CFG_CHARACTER_PLAYER = {
 const CfgCharacter CFG_CHARACTER_SKELETON000 = {
 	.mainTexture = &CFG_OBJTXTR_ENEMY_LOOKDOWN_00,
 	.objType = CFG_OBJTYP_ENEMY,
-	.walkSpeed = 0.55f,
+	.walkSpeed_mps = 0.55f,
 	.maxHp = 100.0f,
 	.defaultRangedWeapon = NULL,
 	.defaultMeleeWeapon = &CFG_MELEEWPN_SWORD,

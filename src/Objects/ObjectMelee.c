@@ -8,8 +8,8 @@
 static void Sword_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
 	ComponentOffense* offense = Object_GetOffense(obj); XASSERT(offense);
-	offense->state.melee.ttl -= GAME->deltaTicks / 1000.0f;
-	if (offense->state.melee.ttl <= 0) {
+	offense->state.melee.ttl_s -= GAME->deltaTicks / 1000.0f;
+	if (offense->state.melee.ttl_s <= 0) {
 		Game_DeleteList_Add(el->super.objId);
 	}
 }
@@ -89,7 +89,7 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, V
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;
 	off->state.melee.cfg = cfg;
-	off->state.melee.ttl = cfg->ttl;
+	off->state.melee.ttl_s = cfg->ttl_s;
 	
 	return 0;
 }

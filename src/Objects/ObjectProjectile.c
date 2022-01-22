@@ -7,10 +7,10 @@ static void Bullet_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
 	ComponentPhysique* phy = Object_GetPhysique(obj); XASSERT(phy);
 	ComponentOffense* offense = Object_GetOffense(obj); XASSERT(offense);
-	Box2DBodySetLinearSpeed(phy->body, offense->state.projectile.cfg->speed);
+	Box2DBodySetLinearSpeed(phy->body, offense->state.projectile.cfg->speed_mps);
 
-	offense->state.projectile.ttl -= GAME->deltaTicks / 1000.0f;
-	if (offense->state.projectile.ttl <= 0) {
+	offense->state.projectile.ttl_s -= GAME->deltaTicks / 1000.0f;
+	if (offense->state.projectile.ttl_s <= 0) {
 		Game_DeleteList_Add(el->super.objId);
 	}
 }
@@ -56,7 +56,7 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 		0.0f, // Mass
 		0.0f // Damping
 	);
-	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, cfg->speed));
+	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, cfg->speed_mps));
 	phy->onCollision = Bullet_onCollision;
 	
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
@@ -69,7 +69,7 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 	ComponentOffense* off = Object_AddOffense(obj);
 	off->originator = originatorId;
 	off->state.projectile.cfg = cfg;
-	off->state.projectile.ttl = ACCURACY(cfg->ttl, cfg->ttlAccuracy);
+	off->state.projectile.ttl_s = ACCURACY(cfg->ttl_s, cfg->ttlAccuracy);
 	off->state.projectile.alreadyCollidedThisStep = false;
 
 	return 0;
