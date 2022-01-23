@@ -100,6 +100,8 @@ int main(int argc, char **argv) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
+	SDL_SetTextureColorMod(GAME->sdlTexture, 127, 127, 127);
+	SDL_FreeSurface(textureMapSurface);
 	SDL_Surface* textureMaskSurface = IMG_Load(CFG_TEXTURE_MASK_FILE);
 	if (textureMaskSurface == NULL) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, IMG_GetError());
@@ -109,7 +111,20 @@ int main(int argc, char **argv) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
-	SDL_FreeSurface(textureMapSurface);
+	SDL_FreeSurface(textureMaskSurface);
+	SDL_Surface* lightSurface = IMG_Load("resources/RadialGradient-WhiteBlack.png");
+	if (lightSurface == NULL) {
+		LOGXV_FTL(XERR_SDL_ERROR, String, IMG_GetError());
+		return -1;
+	}
+	if ((GAME->sdlLightTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, lightSurface)) == NULL) {
+		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		return -1;
+	}
+	SDL_FreeSurface(lightSurface);
+	SDL_SetTextureBlendMode(GAME->sdlLightTexture, SDL_BLENDMODE_MUL);
+	SDL_SetTextureAlphaMod(GAME->sdlLightTexture, 0);
+	SDL_SetTextureColorMod(GAME->sdlLightTexture, 255, 255, 255);
 	if ((GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
 		return -1;
@@ -175,7 +190,8 @@ int main(int argc, char **argv) {
 	unsigned prevPostPhysicsTicks = SDL_GetTicks();
 	unsigned prevTerrainDrawGraphicsTicks = SDL_GetTicks();
 	unsigned prevPreGraphicsTicks = SDL_GetTicks();
-	unsigned prevDrawGraphicsTicks = SDL_GetTicks();
+	unsigned prevDrawTicks = SDL_GetTicks();
+	unsigned prevDrawLightsTicks = SDL_GetTicks();
 	unsigned prevPostGraphicsTicks = SDL_GetTicks();
 
 	unsigned frameTimeAccumulator = 0;
@@ -280,7 +296,7 @@ int main(int argc, char **argv) {
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
 		for (ComponentGraphic* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
-			if (gfx->draw) { gfx->draw(gfx, NULL); }
+			if (gfx->draw) { gfx->draw(gfx); }
 		}
 		// Pre-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
@@ -291,13 +307,20 @@ int main(int argc, char **argv) {
 		}
 		// Draw
 		InsertionList_Sort(&GAME->drawList);
-		GAME->deltaTicks = SDL_GetTicks() - prevDrawGraphicsTicks;
+		GAME->deltaTicks = SDL_GetTicks() - prevDrawTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
-		prevDrawGraphicsTicks += GAME->deltaTicks;
+		prevDrawTicks += GAME->deltaTicks;
 		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
 			ComponentGraphic* gfx = Pool_GetById(&GAME->graphics, InsertionList_Get(&GAME->drawList, i));
-			if (gfx && gfx->draw) { gfx->draw(gfx, NULL); }
+			if (gfx && gfx->draw) { gfx->draw(gfx); }
+		}
+		// Draw lights
+		GAME->deltaTicks = SDL_GetTicks() - prevDrawLightsTicks;
+		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
+		prevDrawLightsTicks += GAME->deltaTicks;
+		for (ComponentLight* lig = Pool_GetFirst(&GAME->lights); lig; lig = Pool_GetNext(&GAME->lights, lig)) {
+			if (lig->draw) { lig->draw(lig); }
 		}
 		// Post-graphic
 		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;

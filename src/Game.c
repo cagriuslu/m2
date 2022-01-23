@@ -84,6 +84,7 @@ int Game_Level_Init() {
 	XERR_REFLECT(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysique)));
 	XERR_REFLECT(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphic)));
 	XERR_REFLECT(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphic)));
+	XERR_REFLECT(Pool_Init(&GAME->lights, 16, sizeof(ComponentLight)));
 	XERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
 	XERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
 	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
@@ -110,6 +111,8 @@ XErr Game_Level_Load(const CfgLevel *cfg) {
 	}
 	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
 	ObjectCamera_Init(camera);
+	Object* pointer = Pool_Mark(&GAME->objects, NULL, &GAME->pointerId);
+	ObjectPointer_Init(pointer);
 
 	MarkupState_Init(&GAME->leftHudMarkupState, &CFG_MARKUP_HUD_LEFT);
 	MarkupState_UpdatePositions(&GAME->leftHudMarkupState, GAME->leftHudRect);

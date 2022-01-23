@@ -111,6 +111,9 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 	gfx->textureRect = cfg->mainTexture->textureRect;
 	gfx->center_px = cfg->mainTexture->objCenter_px;
 
+	ComponentLight* light = Object_AddLight(obj);
+	light->radius_m = 4.0f;
+
 	ComponentDefense* def = Object_AddDefense(obj);
 	def->maxHp = def->hp = cfg->maxHp;
 	def->onDeath = Player_onDeath;

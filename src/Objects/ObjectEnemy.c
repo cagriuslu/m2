@@ -117,14 +117,16 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 	}
 }
 
-void ObjectEnemy_Draw(ComponentGraphic* gfx, SDL_Color* mod) {
+void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 	Object* obj = Game_FindObjectById(gfx->super.objId); XASSERT(obj);
 	if (0.0f < obj->ex->enemy.onHitColorModTtl) {
-		SDL_Color hitMod = {255, 255, 255};
-		ComponentGraphic_DefaultDraw(gfx, &hitMod);
+		SDL_Texture *defaultTexture = gfx->texture;
+		gfx->texture = GAME->sdlTextureMask;
+		ComponentGraphic_DefaultDraw(gfx);
+		gfx->texture = defaultTexture;
 		obj->ex->enemy.onHitColorModTtl -= GAME->deltaTicks / 1000.0f;
 	} else {
-		ComponentGraphic_DefaultDraw(gfx, NULL);
+		ComponentGraphic_DefaultDraw(gfx);
 	}
 	ComponentDefense* defense = Object_GetDefense(obj); XASSERT(defense);
 	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defense->hp / defense->maxHp);

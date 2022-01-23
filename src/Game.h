@@ -30,6 +30,7 @@ typedef struct _Game {
 	SDL_Renderer* sdlRenderer;
 	SDL_Texture* sdlTexture;
 	SDL_Texture* sdlTextureMask;
+	SDL_Texture* sdlLightTexture;
 	uint32_t pixelFormat;
 	SDL_Rect windowRect;
 	SDL_Rect gameRect;
@@ -65,11 +66,12 @@ typedef struct _Game {
 	Pool physics;
 	Pool graphics;
 	Pool terrainGraphics;
+	Pool lights;
 	Pool defenses;
 	Pool offenses;
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
-	ID cameraId, playerId;
+	ID cameraId, playerId, pointerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
 	MarkupState leftHudMarkupState, rightHudMarkupState;

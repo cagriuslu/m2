@@ -34,6 +34,10 @@ ComponentGraphic* Object_GetTerrainGraphic(Object* obj) {
 	return Pool_GetById(&GAME->terrainGraphics, obj->terrainGraphic);
 }
 
+ComponentLight* Object_GetLight(Object* obj) {
+	return Pool_GetById(&GAME->lights, obj->light);
+}
+
 ComponentDefense* Object_GetDefense(Object* obj) {
 	return Pool_GetById(&GAME->defenses, obj->defense);
 }
@@ -69,6 +73,13 @@ ComponentGraphic* Object_AddTerrainGraphic(Object* obj) {
 	ComponentGraphic* gfx = Pool_Mark(&GAME->terrainGraphics, NULL, &obj->terrainGraphic);
 	ComponentGraphic_Init(gfx, objectId);
 	return gfx;
+}
+
+ComponentLight* Object_AddLight(Object* obj) {
+	ID objectId = Pool_GetId(&GAME->objects, obj);
+	ComponentLight* lig = Pool_Mark(&GAME->lights, NULL, &obj->light);
+	ComponentLight_Init(lig, objectId);
+	return lig;
 }
 
 ComponentDefense* Object_AddDefense(Object* obj) {

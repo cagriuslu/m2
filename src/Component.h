@@ -35,20 +35,30 @@ void ComponentPhysique_ContactCB(Box2DContact* contact);
 
 typedef struct _ComponentGraphic {
 	Component super;
+	SDL_Texture *texture;
 	SDL_Rect textureRect;
 	Vec2F center_px;
 	float angle;
-	void (*draw)(struct _ComponentGraphic*, SDL_Color* colorMod);
+	void (*draw)(struct _ComponentGraphic*);
 	bool motionBlurEnabled;
 	Vec2I prevObjGfxOriginWRTScreenCenter_px;
 	float prevDrawAngle;
 } ComponentGraphic;
 int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId);
 void ComponentGraphic_Term(ComponentGraphic* gfx);
-void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx, SDL_Color* colorMod);
+void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx);
 void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio);
 Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F objGfxCenterPx);
 int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB);
+
+typedef struct _ComponentLight {
+	Component super;
+	float radius_m;
+	void (*draw)(struct _ComponentLight*);
+} ComponentLight;
+XErr ComponentLight_Init(ComponentLight* lig, ID objectId);
+void ComponentLight_Term(ComponentLight* lig);
+void ComponentLight_DefaultDraw(ComponentLight* lig);
 
 typedef struct _ComponentDefense {
 	Component super;

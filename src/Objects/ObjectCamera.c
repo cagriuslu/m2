@@ -15,7 +15,7 @@ void Camera_postPhysics(ComponentMonitor* el) {
 }
 
 int ObjectCamera_Init(Object* obj) {
-	XERR_REFLECT(Object_Init(obj, (Vec2F) {0.0f, 0.0f }, true));
+	XERR_REFLECT(Object_Init(obj, (Vec2F) {0.0f, 0.0f}, true));
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->postPhysics = Camera_postPhysics;
