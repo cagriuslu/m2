@@ -1,6 +1,7 @@
 #ifndef DEFS_H
 #define DEFS_H
 
+#include "Vec2F.h"
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -10,6 +11,10 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <stddef.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Definitions /////////////////////////////
@@ -131,6 +136,7 @@ XErr LogX_ID(LogLevel level, const char* file, int line, XErr x, ID var);
 XErr LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var);
 XErr LogX_Float32(LogLevel level, const char* file, int line, XErr x, float var);
 XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var);
+XErr LogX_Vec2F(LogLevel level, const char* file, int line, XErr x, Vec2F var);
 
 #define LOG2XV_TRC(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
 #define LOG2XV_DBG(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelDebug, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
@@ -172,15 +178,18 @@ void LogStackTrace();
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) < (b) ? (b) : (a))
 #define LERP(min,max,t) ((min) + (t) * ((max) - (min)))
-#define RAND (rand())
-// Random number between 0.0 and 1.0
-#define RANDF ((float)RAND/(float)RAND_MAX)
-#define ACCURACY(value, accuracy) ((value) + ((value) * RANDF * (1 - (accuracy))) - ((value) * (1 - (accuracy)) / 2.0f))
+#define ACCURACY(value, accuracy) ((value) + ((value) * randf() * (1 - (accuracy))) - ((value) * (1 - (accuracy)) / 2.0f))
 float NORMALIZE_2PI(float angle);
+/// Generate a random number between 0.0f and 1.0f
+float randf();
 
 #define DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
 	size_t SiblingListLength_##typeName(const typeName *ptr)
 #define DEFINE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
 	DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) { size_t len; for (len = 0; ptr; len++, ptr = ptr->next); return len; }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

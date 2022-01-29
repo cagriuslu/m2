@@ -111,7 +111,7 @@ XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origin
 		Pool_GetId(&GAME->physics, phy),
 		position,
 		CATEGORY_PLAYER_BULLET,
-		cfg->projectileRadius_m,
+		cfg->projectileBodyRadius_m,
 		0.0f, // Mass
 		0.0f // Damping
 	);

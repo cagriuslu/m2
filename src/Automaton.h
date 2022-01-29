@@ -41,6 +41,9 @@ typedef enum _AutomatonCharAnimation_Signal {
 } AutomatonCharAnimation_Signal;
 XErr AutomatonCharAnimation_Init(Automaton *sm, const void* cfgCharacter, void* gfx);
 
+typedef enum _AutomatonAi_Signal {
+	SIG_AI_PREPHYSICS = SIG_N,
+} AutomatonAi_Signal;
 XErr AutomatonAiChase_Init(Automaton *am, void* obj, void* phy);
 XErr AutomatonAiKeepDistance_Init(Automaton *am, void* obj, void* phy);
 XErr AutomatonAiHitNRun_Init(Automaton *am, void* obj, void* phy);

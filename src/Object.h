@@ -26,6 +26,7 @@ typedef union _ObjectEx {
 		AI* ai;
 	} enemy;
 } ObjectEx;
+
 /// Basis of all objects in the game.
 /// 
 /// How to decide if a component should reside in Pool or be held as a property?

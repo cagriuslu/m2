@@ -95,22 +95,24 @@ const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE = {
 		.texture = &CFG_OBJTXTR_BOMB_00,
 		.projectileSpeed_mps = 1.5f,
 		.projectileTtl_s = 4.0f,
-		.projectileRadius_m = 0.25f,
+		.projectileBodyRadius_m = 0.25f,
 		.damageMax = 100.0f,
 		.damageMin = 15.0f,
 		.damageRadius_m = 2.0f
 	},
-	.cooldown_s = 1.0f
+	.cooldown_s = 1.0f,
+	.initialExplosiveCount = 5
 };
 const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER = {
 	.explosive = {
 		.texture = &CFG_OBJTXTR_BOMB_00,
 		.projectileSpeed_mps = 2.5f,
 		.projectileTtl_s = 2.0f,
-		.projectileRadius_m = 0.25f,
+		.projectileBodyRadius_m = 0.25f,
 		.damageMax = 80.0f,
 		.damageMin = 35.0f,
 		.damageRadius_m = 0.75f
 	},
-	.cooldown_s = 1.0f
+	.cooldown_s = 1.0f,
+	.initialExplosiveCount = 5
 };

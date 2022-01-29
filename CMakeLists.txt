@@ -12,7 +12,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDEBUG")
 endif()
 
-file(GLOB cgame_SOURCES "src/*.h" "src/*.c" "src/Box2D.cpp" "src/*/*.c")
+file(GLOB cgame_SOURCES "src/*.h" "src/*.c" "src/*/*.c" "src/*.cpp")
 add_executable(cgame ${cgame_SOURCES})
 target_include_directories(cgame PUBLIC /usr/local/include/box2d /usr/local/include/SDL2)
 target_link_directories(cgame PUBLIC /usr/local/lib)

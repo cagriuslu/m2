@@ -54,17 +54,23 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 	memset(pm, 0, sizeof(PathfinderMap));
 }
 
-int PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is) {
+XErr PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is) {
 	List gridSteps;
 	List_Init(&gridSteps, sizeof(Vec2I));
-	const int pathfinderResult = _PathfinderMap_FindGridSteps(pm, from, to, &gridSteps);
-	if (pathfinderResult == 0) {
+
+	XErr pathfinderResult = _PathfinderMap_FindGridSteps(pm, from, to, &gridSteps);
+	XErr anyAngleResult = XERR_PATH_NOT_FOUND;
+	if (pathfinderResult == XOK) {
 		_PathfinderMap_GridStepsToAnyAngle(&gridSteps, outReverseListOfVec2Is);
+		if (1 < List_Length(outReverseListOfVec2Is)) {
+			anyAngleResult = XOK;
+		}
 	} else {
 		List_Clear(outReverseListOfVec2Is);
 	}
+
 	List_Term(&gridSteps);
-	return pathfinderResult;
+	return anyAngleResult;
 }
 
 typedef struct _PriorityListItem {
@@ -72,7 +78,7 @@ typedef struct _PriorityListItem {
 	Vec2I position;
 } PriorityListItem;
 
-int _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
+XErr _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
 	Vec2I from = Vec2I_From2F(fromF);
 	Vec2I to = Vec2I_From2F(toF);
 
@@ -176,13 +182,13 @@ int _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List
 		List_Remove(&frontiers, frontierIterator);
 	}
 
-	int result;
+	XErr result;
 	// Check if there is a path
 	Vec2I* currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(to));
 	if (currentCameFrom == NULL) {
 		result = XERR_PATH_NOT_FOUND;
 	} else {
-		result = 0;
+		result = XOK;
 
 		List_Clear(outReverseListOfVec2Is);
 		// Add `to` to list

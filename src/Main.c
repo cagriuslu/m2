@@ -194,6 +194,7 @@ int main(int argc, char **argv) {
 	unsigned prevDrawTicks = SDL_GetTicks();
 	unsigned prevDrawLightsTicks = SDL_GetTicks();
 	unsigned prevPostGraphicsTicks = SDL_GetTicks();
+	SDL_Delay(1); // Make sure SDL_GetTicks() doesn't return 0
 
 	unsigned frameTimeAccumulator = 0;
 	unsigned frameCount = 0;
@@ -253,12 +254,12 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		uint32_t ticksSinceLastWorldStep = SDL_GetTicks() - prevWorldStepTicks;
+		uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks) - prevWorldStepTicks;
 		prevWorldStepTicks += ticksSinceLastWorldStep;
 		timeSinceLastWorldStep += ticksSinceLastWorldStep / 1000.0f;
 		while (GAME->physicsStepPeriod < timeSinceLastWorldStep) {
 			// Pre-physics
-			GAME->deltaTicks = SDL_GetTicks() - prevPrePhysicsTicks;
+			GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks) - prevPrePhysicsTicks;
 			GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 			prevPrePhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
@@ -273,7 +274,7 @@ int main(int argc, char **argv) {
 			}
 			Game_DeleteList_DeleteAll();
 			// Post-physics
-			GAME->deltaTicks = SDL_GetTicks() - prevPostPhysicsTicks;
+			GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks) - prevPostPhysicsTicks;
 			GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 			prevPostPhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
@@ -293,14 +294,14 @@ int main(int argc, char **argv) {
 		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(GAME->sdlRenderer);
 		// Draw terrain
-		GAME->deltaTicks = SDL_GetTicks() - prevTerrainDrawGraphicsTicks;
+		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevTerrainDrawGraphicsTicks) - prevTerrainDrawGraphicsTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
 		for (ComponentGraphic* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
 			if (gfx->draw) { gfx->draw(gfx); }
 		}
 		// Pre-graphic
-		GAME->deltaTicks = SDL_GetTicks() - prevPreGraphicsTicks;
+		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks) - prevPreGraphicsTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevPreGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
@@ -308,7 +309,7 @@ int main(int argc, char **argv) {
 		}
 		// Draw
 		InsertionList_Sort(&GAME->drawList);
-		GAME->deltaTicks = SDL_GetTicks() - prevDrawTicks;
+		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks) - prevDrawTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevDrawTicks += GAME->deltaTicks;
 		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
@@ -317,14 +318,14 @@ int main(int argc, char **argv) {
 			if (gfx && gfx->draw) { gfx->draw(gfx); }
 		}
 		// Draw lights
-		GAME->deltaTicks = SDL_GetTicks() - prevDrawLightsTicks;
+		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks) - prevDrawLightsTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevDrawLightsTicks += GAME->deltaTicks;
 		for (ComponentLight* lig = Pool_GetFirst(&GAME->lights); lig; lig = Pool_GetNext(&GAME->lights, lig)) {
 			if (lig->draw) { lig->draw(lig); }
 		}
 		// Post-graphic
-		GAME->deltaTicks = SDL_GetTicks() - prevPostGraphicsTicks;
+		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks) - prevPostGraphicsTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevPostGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {

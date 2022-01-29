@@ -18,6 +18,13 @@ XErr RangedWeaponState_Init(RangedWeaponState* state, const CfgRangedWeapon* cfg
 	return XOK;
 }
 
+void RangedWeaponState_ProcessTime(RangedWeaponState* state, float timePassed) {
+	state->cooldownCounter_s += timePassed;
+	if (state->cfg->cooldown_s < state->cooldownCounter_s) {
+		state->cooldownCounter_s = state->cfg->cooldown_s + timePassed;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////
 //////////////////////// MELEE WEAPON AND MELEE ////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -32,7 +39,15 @@ XErr MeleeState_Init(MeleeState* state, const CfgMelee* cfg) {
 XErr MeleeWeaponState_Init(MeleeWeaponState* state, const CfgMeleeWeapon* cfg) {
 	memset(state, 0, sizeof(MeleeWeaponState));
 	state->cfg = cfg;
+	state->cooldownCounter_s = cfg->cooldown_s;
 	return XOK;
+}
+
+void MeleeWeaponState_ProcessTime(MeleeWeaponState* state, float timePassed) {
+	state->cooldownCounter_s += timePassed;
+	if (state->cfg->cooldown_s < state->cooldownCounter_s) {
+		state->cooldownCounter_s = state->cfg->cooldown_s + timePassed;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -49,16 +64,26 @@ XErr ExplosiveState_Init(ExplosiveState* state, const CfgExplosive* cfg) {
 XErr ExplosiveWeaponState_Init(ExplosiveWeaponState* state, const CfgExplosiveWeapon* cfg) {
 	memset(state, 0, sizeof(ExplosiveWeaponState));
 	state->cfg = cfg;
+	state->cooldownCounter_s = cfg->cooldown_s;
+	state->explosiveCount = cfg->initialExplosiveCount;
 	return XOK;
+}
+
+void ExplosiveWeaponState_ProcessTime(ExplosiveWeaponState* state, float timePassed) {
+	state->cooldownCounter_s += timePassed;
+	if (state->cfg->cooldown_s < state->cooldownCounter_s) {
+		state->cooldownCounter_s = state->cfg->cooldown_s + timePassed;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// AI //////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-XErr AiState_Init(AiState *state, const CfgAi* cfg) {
+XErr AiState_Init(AiState *state, const CfgAi* cfg, Vec2F homePosition) {
 	memset(state, 0, sizeof(AiState));
 	state->cfg = cfg;
+	state->homePosition = homePosition;
 	XERR_REFLECT(List_Init(&state->reversedWaypointList, sizeof(Vec2I)));
 	return XOK;
 }
@@ -79,8 +104,19 @@ XErr CharacterState_Init(CharacterState* state, const CfgCharacter* cfg) {
 	if (cfg->defaultExplosiveWeapon) {
 		XERR_REFLECT(ExplosiveWeaponState_Init(&state->explosiveWeaponState, cfg->defaultExplosiveWeapon));
 	}
-	state->explosiveCount = cfg->defaultExplosiveCount;
 	return XOK;
+}
+
+void CharacterState_ProcessTime(CharacterState* state, float timePassed) {
+	if (state->rangedWeaponState.cfg) {
+		RangedWeaponState_ProcessTime(&state->rangedWeaponState, timePassed);
+	}
+	if (state->meleeWeaponState.cfg) {
+		MeleeWeaponState_ProcessTime(&state->meleeWeaponState, timePassed);
+	}
+	if (state->explosiveWeaponState.cfg) {
+		ExplosiveWeaponState_ProcessTime(&state->explosiveWeaponState, timePassed);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////

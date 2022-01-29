@@ -172,6 +172,17 @@ XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char*
 	return x;
 }
 
+XErr LogX_Vec2F(LogLevel level, const char* file, int line, XErr x, Vec2F var) {
+	if (level < gCurrentLogLevel) {
+		return x;
+	}
+	LogHeader(level, file, line);
+	fprintf(stderr, "{\"%s\": {\"x\": %.3f, \"y\": %.3f}}", XErr_ToString(x), var.x, var.y);
+	LogNewLine();
+	LogFooter(level);
+	return x;
+}
+
 void LogX_ID_ID(LogLevel level, const char* file, int line, XErr x1, ID var1, XErr x2, ID var2) {
 	if (level < gCurrentLogLevel) {
 		return;

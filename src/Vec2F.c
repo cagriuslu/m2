@@ -1,6 +1,14 @@
 #include "Vec2F.h"
 #include <math.h>
 
+static float _Vec2F_Length(Vec2F in) {
+	return sqrtf(in.x * in.x + in.y * in.y);
+}
+
+static float _Vec2F_LengthSquared(Vec2F in) {
+	return in.x * in.x + in.y * in.y;
+}
+
 Vec2F Vec2F_Add(Vec2F lhs, Vec2F rhs) {
 	return (Vec2F) {lhs.x + rhs.x, lhs.y + rhs.y};
 }
@@ -17,11 +25,15 @@ Vec2F Vec2F_Div(Vec2F lhs, float rhs) {
 	return (Vec2F) { lhs.x / rhs, lhs.y / rhs };
 }
 
-float Vec2F_Length(Vec2F in) {
+Vec2F Vec2F_Normalize(Vec2F in) {
 	if (in.x == 0.0f && in.y == 0.0f) {
-		return 0.0f;
+		return VEC2F_ZERO;
 	}
-	return sqrtf(powf(in.x, 2.0f) + powf(in.y, 2.0f));
+	float len = _Vec2F_Length(in);
+	if (len == 0.0f) {
+		return VEC2F_ZERO;
+	}
+	return (Vec2F) { in.x / len, in.y / len };
 }
 
 Vec2F Vec2F_SetLength(Vec2F in, float len) {
@@ -30,31 +42,26 @@ Vec2F Vec2F_SetLength(Vec2F in, float len) {
 }
 
 Vec2F Vec2F_FloorLength(Vec2F in, float len) {
-	float inLen = Vec2F_Length(in);
+	float inLen = _Vec2F_Length(in);
 	return Vec2F_SetLength(in, inLen < len ? len : inLen);
 }
 
 Vec2F Vec2F_CeilLength(Vec2F in, float len) {
-	float inLen = Vec2F_Length(in);
+	float inLen = _Vec2F_Length(in);
 	return Vec2F_SetLength(in, len < inLen ? len : inLen);
 }
 
-Vec2F Vec2F_Normalize(Vec2F in) {
-	if (in.x == 0.0f && in.y == 0.0f) {
-		return in;
-	}
-	float len = Vec2F_Length(in);
-	return (Vec2F) { in.x / len, in.y / len };
+float Vec2F_Distance(Vec2F lhs, Vec2F rhs) {
+	return _Vec2F_Length(Vec2F_Sub(lhs, rhs));
 }
 
-float Vec2F_Distance(Vec2F lhs, Vec2F rhs) {
-	return Vec2F_Length(Vec2F_Sub(lhs, rhs));
+float Vec2F_DistanceSquared(Vec2F lhs, Vec2F rhs) {
+	return _Vec2F_LengthSquared(Vec2F_Sub(lhs, rhs));
 }
 
 Vec2F Vec2F_Lerp(Vec2F from, Vec2F to, float ratio) {
 	Vec2F diffVec = Vec2F_Sub(to, from);
 	return Vec2F_Add(from, Vec2F_Mul(diffVec, ratio));
-
 }
 
 float Vec2F_AngleRads(Vec2F vector) {

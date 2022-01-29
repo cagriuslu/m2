@@ -42,7 +42,7 @@ static void Player_prePhysics(ComponentMonitor* el) {
 		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
 		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
 		float accuracy = obj->ex->player.characterState.cfg->defaultRangedWeapon->accuracy;
-		float angle = Vec2F_AngleRads(direction) + (X_PI * RANDF * (1 - accuracy)) - (X_PI * ((1 - accuracy) / 2.0f));
+		float angle = Vec2F_AngleRads(direction) + (X_PI * randf() * (1 - accuracy)) - (X_PI * ((1 - accuracy) / 2.0f));
 		ObjectProjectile_InitFromCfg(projectile, &obj->ex->player.characterState.cfg->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
 		// Knockback
 		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_FromAngle(angle + X_PI), 500.0f), true);

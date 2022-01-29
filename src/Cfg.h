@@ -121,6 +121,7 @@ typedef struct _RangedWeaponState {
 	float cooldownCounter_s;
 } RangedWeaponState;
 XErr RangedWeaponState_Init(RangedWeaponState* state, const CfgRangedWeapon* cfg);
+void RangedWeaponState_ProcessTime(RangedWeaponState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
 //////////////////////// MELEE WEAPON AND MELEE ////////////////////////
@@ -156,6 +157,7 @@ typedef struct _MeleeWeaponState {
 	float cooldownCounter_s;
 } MeleeWeaponState;
 XErr MeleeWeaponState_Init(MeleeWeaponState* state, const CfgMeleeWeapon* cfg);
+void MeleeWeaponState_ProcessTime(MeleeWeaponState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
 //////////////////// EXPLOSIVE WEAPON AND EXPLOSIVE ////////////////////
@@ -164,7 +166,7 @@ typedef struct _CfgExplosive {
 	const CfgObjectTexture* texture;
 	float projectileSpeed_mps;
 	float projectileTtl_s;
-	float projectileRadius_m;
+	float projectileBodyRadius_m;
 	float damageMax;
 	float damageMin;
 	float damageRadius_m;
@@ -185,14 +187,17 @@ XErr ExplosiveState_Init(ExplosiveState* state, const CfgExplosive* cfg);
 typedef struct _CfgExplosiveWeapon {
 	CfgExplosive explosive;
 	float cooldown_s;
+	unsigned initialExplosiveCount;
 } CfgExplosiveWeapon;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADE;
 extern const CfgExplosiveWeapon CFG_EXPLOSIVEWPN_GRENADELAUNCHER;
 typedef struct _ExplosiveWeaponState {
 	const CfgExplosiveWeapon *cfg;
 	float cooldownCounter_s;
+	unsigned explosiveCount;
 } ExplosiveWeaponState;
 XErr ExplosiveWeaponState_Init(ExplosiveWeaponState* state, const CfgExplosiveWeapon* cfg);
+void ExplosiveWeaponState_ProcessTime(ExplosiveWeaponState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// AI //////////////////////////////////
@@ -217,21 +222,21 @@ typedef struct _CfgAiDescriptor {
 	CfgAiBehavior behavior;
 	CfgAiCapability capability;
 	/// Distance AI becomes active
-	float triggerDistance_m;
+	float triggerDistanceSquared_m;
 	/// Distance AI is clear to attack player
-	float attackDistance_m;
+	float attackDistanceSquared_m;
 	/// Distance AI gives up and returns home
-	float giveUpDistance_m;
-	/// Period after which AI recalculates waypoints
+	float giveUpDistanceSquared_m;
+	/// Period after which AI recalculates waypoints (formula: random(s/2, 3s/2))
 	float recalculationPeriod_s;
 	/// If behavior=KEEP_DISTANCE, distance AI tries to keep
-	float keepDistanceDistance_m;
+	float keepDistanceDistanceSquared_m;
 	/// If behavior=HIT_N_RUN, distance AI tries to achieve during Hit period
-	float hitNRunHitDistance_m;
+	float hitNRunHitDistanceSquared_m;
 	/// If behavior=HIT_N_RUN, duration AI stays in Hit period
 	float hitNRunHitDuration_s;
 	/// If behavior=HIT_N_RUN, distance AI tries to achieve during Run period
-	float hitNRunRunDistance_m;
+	float hitNRunRunDistanceSquared_m;
 	/// If behavior=HIT_N_RUN, duration AI stays in Run period
 	float hitNRunRunDuration_s;
 	/// If behavior=PATROL, top-left of patrol area while idling
@@ -249,10 +254,9 @@ extern const CfgAi CFG_AI_HIT_N_RUN_00;
 typedef struct _AiState {
 	const CfgAi* cfg;
 	Vec2F homePosition;
-	float recalculationCounter_s;
 	ListOfVec2Is reversedWaypointList;
 } AiState;
-XErr AiState_Init(AiState *state, const CfgAi* cfg);
+XErr AiState_Init(AiState *state, const CfgAi* cfg, Vec2F homePosition);
 
 ////////////////////////////////////////////////////////////////////////
 /////////////////////////////// CHARACTER //////////////////////////////
@@ -280,12 +284,12 @@ typedef enum _CfgCharacterTextureType {
 typedef struct _CfgCharacter {
 	const CfgObjectTexture* mainTexture;
 	CfgObjectType objType;
+	float mass_kg;
 	float walkSpeed_mps;
 	float maxHp;
 	const CfgRangedWeapon* defaultRangedWeapon;
 	const CfgMeleeWeapon* defaultMeleeWeapon;
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
-	unsigned defaultExplosiveCount;
 	const CfgObjectTexture* textures[CFG_CHARTEXTURETYP_N];
 	const CfgAi* ai;
 } CfgCharacter;
@@ -298,9 +302,9 @@ typedef struct CharacterState {
 	RangedWeaponState rangedWeaponState;
 	MeleeWeaponState meleeWeaponState;
 	ExplosiveWeaponState explosiveWeaponState;
-	unsigned explosiveCount;
 } CharacterState;
 XErr CharacterState_Init(CharacterState* state, const CfgCharacter* cfg);
+void CharacterState_ProcessTime(CharacterState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// LEVEL ////////////////////////////////
