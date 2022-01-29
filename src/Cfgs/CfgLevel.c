@@ -11,7 +11,7 @@
 #define cBotLef {.gndTile = &CFG_GNDTXTR_CLIFF000BL, .chr = NULL}
 
 #define _plyr {.gndTile = &CFG_GNDTXTR_DEFAULT, .chr = &CFG_CHARACTER_PLAYER }
-#define _skl  {.gndTile = &CFG_GNDTXTR_DEFAULT, .chr = &CFG_CHARACTER_SKELETON000}
+#define _skl  {.gndTile = &CFG_GNDTXTR_DEFAULT, .chr = &CFG_CHARACTER_SKELETON_000_CHASE}
 
 const CfgLevelTile sp000_tiles[] = {
 	_,		clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,

@@ -2,6 +2,8 @@
 #define CFG_H
 
 #include "TinySet.h"
+#include "Automaton.h"
+#include "List.h"
 #include "Vec2F.h"
 #include "Def.h"
 #include <SDL.h>
@@ -193,6 +195,66 @@ typedef struct _ExplosiveWeaponState {
 XErr ExplosiveWeaponState_Init(ExplosiveWeaponState* state, const CfgExplosiveWeapon* cfg);
 
 ////////////////////////////////////////////////////////////////////////
+////////////////////////////////// AI //////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+// Behavior corresponds to the state machine that is used
+typedef enum _CfgAiBehavior {
+	CFG_AI_BEHAVIOR_INVALID = 0,
+	CFG_AI_BEHAVIOR_CHASE,
+	CFG_AI_BEHAVIOR_KEEP_DISTANCE,
+	CFG_AI_BEHAVIOR_HIT_N_RUN,
+	CFG_AI_BEHAVIOR_PATROL, // Chases the player when triggered
+	CFG_AI_BEHAVIOR_CIRCLE_AROUND
+} CfgAiBehavior;
+typedef enum _CfgAiCapability {
+	CFG_AI_CAPABILITY_INVALID = 0,
+	CFG_AI_CAPABILITY_RANGED,
+	CFG_AI_CAPABILITY_MELEE,
+	CFG_AI_CAPABILITY_EXPLOSIVE,
+	CFG_AI_CAPABILITY_KAMIKAZE
+} CfgAiCapability;
+typedef struct _CfgAiDescriptor {
+	CfgAiBehavior behavior;
+	CfgAiCapability capability;
+	/// Distance AI becomes active
+	float triggerDistance_m;
+	/// Distance AI is clear to attack player
+	float attackDistance_m;
+	/// Distance AI gives up and returns home
+	float giveUpDistance_m;
+	/// Period after which AI recalculates waypoints
+	float recalculationPeriod_s;
+	/// If behavior=KEEP_DISTANCE, distance AI tries to keep
+	float keepDistanceDistance_m;
+	/// If behavior=HIT_N_RUN, distance AI tries to achieve during Hit period
+	float hitNRunHitDistance_m;
+	/// If behavior=HIT_N_RUN, duration AI stays in Hit period
+	float hitNRunHitDuration_s;
+	/// If behavior=HIT_N_RUN, distance AI tries to achieve during Run period
+	float hitNRunRunDistance_m;
+	/// If behavior=HIT_N_RUN, duration AI stays in Run period
+	float hitNRunRunDuration_s;
+	/// If behavior=PATROL, top-left of patrol area while idling
+	Vec2F patrolAreaTopLeft;
+	/// If behavior=PATROL, bottom-right of patrol area while idling
+	Vec2F patrolAreaBottomRight;
+	/// If behavior=PATROL, patrol speed
+	float patrolSpeed_mps;
+	// Circle around parameters
+	// TODO
+} CfgAi;
+extern const CfgAi CFG_AI_CHASE_00;
+extern const CfgAi CFG_AI_KEEP_DISTANCE_00;
+extern const CfgAi CFG_AI_HIT_N_RUN_00;
+typedef struct _AiState {
+	const CfgAi* cfg;
+	Vec2F homePosition;
+	float recalculationCounter_s;
+	ListOfVec2Is reversedWaypointList;
+} AiState;
+XErr AiState_Init(AiState *state, const CfgAi* cfg);
+
+////////////////////////////////////////////////////////////////////////
 /////////////////////////////// CHARACTER //////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 typedef enum _CfgObjectType {
@@ -225,9 +287,12 @@ typedef struct _CfgCharacter {
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
 	unsigned defaultExplosiveCount;
 	const CfgObjectTexture* textures[CFG_CHARTEXTURETYP_N];
+	const CfgAi* ai;
 } CfgCharacter;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;
-extern const CfgCharacter CFG_CHARACTER_SKELETON000;
+extern const CfgCharacter CFG_CHARACTER_SKELETON_000_CHASE;
+extern const CfgCharacter CFG_CHARACTER_SKELETON_000_KEEP_DISTANCE;
+extern const CfgCharacter CFG_CHARACTER_SKELETON_000_HIT_N_RUN;
 typedef struct CharacterState {
 	const CfgCharacter *cfg;
 	RangedWeaponState rangedWeaponState;

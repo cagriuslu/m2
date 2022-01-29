@@ -18,19 +18,19 @@ static void Player_prePhysics(ComponentMonitor* el) {
 	Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
 	if (GAME->events.keyStates[KEY_UP]) {
 		moveDirection.y += -1.0f;
-		StateMachine_ProcessSignal(&obj->ex->player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
+		Automaton_ProcessSignal(&obj->ex->player.charAnimationAutomaton, SIG_CHARANIM_WALKUP);
 	}
 	if (GAME->events.keyStates[KEY_DOWN]) {
 		moveDirection.y += 1.0f;
-		StateMachine_ProcessSignal(&obj->ex->player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
+		Automaton_ProcessSignal(&obj->ex->player.charAnimationAutomaton, SIG_CHARANIM_WALKDOWN);
 	}
 	if (GAME->events.keyStates[KEY_LEFT]) {
 		moveDirection.x += -1.0f;
-		StateMachine_ProcessSignal(&obj->ex->player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
+		Automaton_ProcessSignal(&obj->ex->player.charAnimationAutomaton, SIG_CHARANIM_WALKLEFT);
 	}
 	if (GAME->events.keyStates[KEY_RIGHT]) {
 		moveDirection.x += 1.0f;
-		StateMachine_ProcessSignal(&obj->ex->player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
+		Automaton_ProcessSignal(&obj->ex->player.charAnimationAutomaton, SIG_CHARANIM_WALKRIGHT);
 	}
 	Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
 
@@ -69,22 +69,10 @@ static void Player_postPhysics(ComponentMonitor* monitor) {
 	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); XASSERT(obj);
 	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
 	// We must call time before other signals
-	StateMachine_ProcessTime(&obj->ex->player.stateMachineCharacterAnimation, GAME->deltaTicks / 1000.0f);
+	Automaton_ProcessTime(&obj->ex->player.charAnimationAutomaton, GAME->deltaTime);
 	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-		StateMachine_ProcessSignal(&obj->ex->player.stateMachineCharacterAnimation, SIG_CHARANIM_STOP);
-	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
-		if (0 < velocity.y) {
-			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
-		} else {
-			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
-		}
-	} else {
-		if (0 < velocity.x) {
-			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
-		} else {
-			//StateMachine_ProcessSignal(&obj->ex->value.player.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
-		}
+		Automaton_ProcessSignal(&obj->ex->player.charAnimationAutomaton, SIG_CHARANIM_STOP);
 	}
 }
 
@@ -118,7 +106,7 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 	def->maxHp = def->hp = cfg->maxHp;
 	def->onDeath = Player_onDeath;
 
-	StateMachineCharacterAnimation_Init(&obj->ex->player.stateMachineCharacterAnimation, cfg, gfx);
+	AutomatonCharAnimation_Init(&obj->ex->player.charAnimationAutomaton, cfg, gfx);
 
 	GAME->playerId = Pool_GetId(&GAME->objects, obj);
 	return XOK;

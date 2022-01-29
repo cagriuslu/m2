@@ -62,6 +62,10 @@ void ComponentLight_DefaultDraw(ComponentLight* lig);
 
 typedef struct _ComponentDefense {
 	Component super;
+	/// Non-zero group ID, if object belongs to a group
+	uint16_t groupId;
+	/// Index in group, if object belongs to a group
+	uint16_t groupIdx;
 	float maxHp;
 	float hp;
 	void (*onHit)(struct _ComponentDefense*);

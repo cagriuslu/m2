@@ -2,7 +2,7 @@
 #define OBJECT_H
 
 #include "Component.h"
-#include "StateMachine.h"
+#include "Automaton.h"
 #include "AI.h"
 #include "Array.h"
 #include "Cfg.h"
@@ -15,11 +15,13 @@ typedef union _ObjectEx {
 	} camera;
 	struct {
 		CharacterState characterState;
-		StateMachine stateMachineCharacterAnimation;
+		Automaton charAnimationAutomaton;
 	} player;
 	struct {
 		CharacterState characterState;
-		StateMachine stateMachineCharacterAnimation;
+		Automaton charAnimationAutomaton;
+		AiState aiState;
+		Automaton aiAutomaton;
 		float onHitColorModTtl;
 		AI* ai;
 	} enemy;

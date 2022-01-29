@@ -14,6 +14,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <stdlib.h>
 
 //void AudioCallback(void* userdata, uint8_t* stream, int len) {
 //	for (int i = 0; i < len; i++) {

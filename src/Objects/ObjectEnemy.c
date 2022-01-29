@@ -98,21 +98,21 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); XASSERT(obj);
 	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
 	// We must call time before other signals
-	StateMachine_ProcessTime(&obj->ex->enemy.stateMachineCharacterAnimation, GAME->deltaTicks / 1000.0f);
+	Automaton_ProcessTime(&obj->ex->enemy.charAnimationAutomaton, GAME->deltaTicks / 1000.0f);
 	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-		StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_STOP);
+		Automaton_ProcessSignal(&obj->ex->enemy.charAnimationAutomaton, SIG_CHARANIM_STOP);
 	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
 		if (0 < velocity.y) {
-			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKDOWN);
+			Automaton_ProcessSignal(&obj->ex->enemy.charAnimationAutomaton, SIG_CHARANIM_WALKDOWN);
 		} else {
-			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKUP);
+			Automaton_ProcessSignal(&obj->ex->enemy.charAnimationAutomaton, SIG_CHARANIM_WALKUP);
 		}
 	} else {
 		if (0 < velocity.x) {
-			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKRIGHT);
+			Automaton_ProcessSignal(&obj->ex->enemy.charAnimationAutomaton, SIG_CHARANIM_WALKRIGHT);
 		} else {
-			StateMachine_ProcessSignal(&obj->ex->enemy.stateMachineCharacterAnimation, SIG_CHARANIM_WALKLEFT);
+			Automaton_ProcessSignal(&obj->ex->enemy.charAnimationAutomaton, SIG_CHARANIM_WALKLEFT);
 		}
 	}
 }
@@ -174,7 +174,21 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	defense->onHit = ObjectEnemy_onHit;
 	defense->onDeath = ObjectEnemy_onDeath;
 
-	StateMachineCharacterAnimation_Init(&obj->ex->enemy.stateMachineCharacterAnimation, cfg, gfx);
+	// Initialise character state after components
+	// Character states may access components during initialisation
+	AutomatonCharAnimation_Init(&obj->ex->enemy.charAnimationAutomaton, cfg, gfx);
+	AiState_Init(&obj->ex->enemy.aiState, cfg->ai);
+	switch (cfg->ai ? cfg->ai->behavior : CFG_AI_BEHAVIOR_INVALID) {
+		case CFG_AI_BEHAVIOR_CHASE:
+			XERR_REFLECT(AutomatonAiChase_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
+			break;
+		case CFG_AI_BEHAVIOR_KEEP_DISTANCE:
+			XERR_REFLECT(AutomatonAiKeepDistance_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
+			break;
+		case CFG_AI_BEHAVIOR_HIT_N_RUN:
+			XERR_REFLECT(AutomatonAiHitNRun_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
+			break;
+	}
 
 	return 0;
 }
