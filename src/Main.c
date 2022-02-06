@@ -125,7 +125,7 @@ int main(int argc, char **argv) {
 	SDL_FreeSurface(lightSurface);
 	SDL_SetTextureBlendMode(GAME->sdlLightTexture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(GAME->sdlLightTexture, 0);
-	SDL_SetTextureColorMod(GAME->sdlLightTexture, 255, 255, 255);
+	SDL_SetTextureColorMod(GAME->sdlLightTexture, 127, 127, 127);
 	if ((GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
 		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
 		return -1;

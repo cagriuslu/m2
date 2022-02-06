@@ -1,6 +1,6 @@
 #include "../Cfg.h"
 
-#define _ {.gndTile = &CFG_GNDTXTR_DEFAULT, .chr = NULL}
+#define _ {.gndTile = &CFG_GNDTXTR_GRASS, .chr = NULL}
 #define clfTop {.gndTile = &CFG_GNDTXTR_CLIFF000T, .chr = NULL}
 #define clfRig {.gndTile = &CFG_GNDTXTR_CLIFF000R, .chr = NULL}
 #define clfBot {.gndTile = &CFG_GNDTXTR_CLIFF000B, .chr = NULL}
@@ -10,8 +10,8 @@
 #define cBotRig {.gndTile = &CFG_GNDTXTR_CLIFF000BR, .chr = NULL}
 #define cBotLef {.gndTile = &CFG_GNDTXTR_CLIFF000BL, .chr = NULL}
 
-#define _plyr {.gndTile = &CFG_GNDTXTR_DEFAULT, .chr = &CFG_CHARACTER_PLAYER }
-#define _skl  {.gndTile = &CFG_GNDTXTR_DEFAULT, .chr = &CFG_CHARACTER_SKELETON_000_CHASE}
+#define _plyr {.gndTile = &CFG_GNDTXTR_GRASS, .chr = &CFG_CHARACTER_PLAYER }
+#define _skl  {.gndTile = &CFG_GNDTXTR_GRASS, .chr = &CFG_CHARACTER_SKELETON_000_CHASE}
 
 const CfgLevelTile sp000_tiles[] = {
 	_,		clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,	clfTop,

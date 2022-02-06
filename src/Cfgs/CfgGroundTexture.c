@@ -6,6 +6,12 @@ const CfgGroundTexture CFG_GNDTXTR_DEFAULT = {
 		.type = CFG_COLLIDER_TYPE_INVALID
 	}
 };
+const CfgGroundTexture CFG_GNDTXTR_GRASS = {
+	.textureRect = {336, 0, CFG_TILE_SIZE, CFG_TILE_SIZE},
+	.collider = {
+		.type = CFG_COLLIDER_TYPE_INVALID
+	}
+};
 const CfgGroundTexture CFG_GNDTXTR_CLIFF000T = {
 	.textureRect = {96, 0, CFG_TILE_SIZE, CFG_TILE_SIZE},
 	.collider = {

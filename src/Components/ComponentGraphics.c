@@ -43,10 +43,10 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 		// Screen origin is top-left corner
 		Vec2I obj_gfx_origin_wrt_screen_origin_px = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_gfx_origin_wrt_screen_center_px);
 		SDL_Rect dstrect = (SDL_Rect){
-				obj_gfx_origin_wrt_screen_origin_px.x - (int)roundf((float)gfx->textureRect.w * GAME->scale / 2.0f),
-				obj_gfx_origin_wrt_screen_origin_px.y - (int)roundf((float)gfx->textureRect.h * GAME->scale / 2.0f),
-				(int)roundf((float)gfx->textureRect.w * GAME->scale),
-				(int)roundf((float)gfx->textureRect.h * GAME->scale)
+				obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx->textureRect.w * GAME->scale / 2.0f),
+				obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx->textureRect.h * GAME->scale / 2.0f),
+				(int)ceilf((float)gfx->textureRect.w * GAME->scale),
+				(int)ceilf((float)gfx->textureRect.h * GAME->scale)
 		};
 		SDL_Point centerPoint = (SDL_Point){
 				(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
@@ -70,10 +70,10 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 			// Screen origin is top-left corner
 			Vec2I obj_gfx_origin_wrt_screen_origin_px = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, motion_obj_gfx_origin_wrt_screen_center_px);
 			SDL_Rect dstrect = (SDL_Rect){
-					obj_gfx_origin_wrt_screen_origin_px.x - (int)roundf((float)gfx->textureRect.w * GAME->scale / 2.0f),
-					obj_gfx_origin_wrt_screen_origin_px.y - (int)roundf((float)gfx->textureRect.h * GAME->scale / 2.0f),
-					(int)roundf((float)gfx->textureRect.w * GAME->scale),
-					(int)roundf((float)gfx->textureRect.h * GAME->scale)
+					obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx->textureRect.w * GAME->scale / 2.0f),
+					obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx->textureRect.h * GAME->scale / 2.0f),
+					(int)ceilf((float)gfx->textureRect.w * GAME->scale),
+					(int)ceilf((float)gfx->textureRect.h * GAME->scale)
 			};
 			SDL_Point centerPoint = (SDL_Point){
 					(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,

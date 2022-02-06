@@ -41,6 +41,7 @@ typedef struct _CfgGroundTexture {
 	CfgCollider collider;
 } CfgGroundTexture;
 extern const CfgGroundTexture CFG_GNDTXTR_DEFAULT;
+extern const CfgGroundTexture CFG_GNDTXTR_GRASS;
 extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000T;
 extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000R;
 extern const CfgGroundTexture CFG_GNDTXTR_CLIFF000B;
