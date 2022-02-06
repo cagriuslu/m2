@@ -59,3 +59,9 @@ const CfgMarkupElement CFG_MARKUP_HUD_LEFT_ELEMENT_HP = {
 	.textType = CFG_MARKUP_DYNAMIC_TEXT_TYPE_HP,
 	.next = NULL
 };
+
+const CfgMarkup CFG_MARKUP_HUD_RIGHT = {
+	.w = 19, .h = 72,
+	.backgroundColor = {50, 50, 50, 255},
+	.firstElement = NULL
+};

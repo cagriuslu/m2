@@ -76,7 +76,7 @@ void Game_UpdateWindowDimensions(int width, int height) {
 
 int Game_Level_Init() {
 	if (GAME->levelLoaded) {
-		Game_Level_Term(GAME);
+		Game_Level_Term();
 	}
 	XERR_REFLECT(Pool_Init(&GAME->objects, 16, sizeof(Object)));
 	XERR_REFLECT(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
@@ -117,6 +117,10 @@ XErr Game_Level_Load(const CfgLevel *cfg) {
 	MarkupState_Init(&GAME->leftHudMarkupState, &CFG_MARKUP_HUD_LEFT);
 	MarkupState_UpdatePositions(&GAME->leftHudMarkupState, GAME->leftHudRect);
 	MarkupState_UpdateElements(&GAME->leftHudMarkupState);
+
+	MarkupState_Init(&GAME->rightHudMarkupState, &CFG_MARKUP_HUD_RIGHT);
+	MarkupState_UpdatePositions(&GAME->rightHudMarkupState, GAME->rightHudRect);
+	MarkupState_UpdateElements(&GAME->rightHudMarkupState);
 
 	return XOK;
 }

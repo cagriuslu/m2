@@ -380,6 +380,7 @@ DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgMarkupElement);
 extern const CfgMarkup CFG_MARKUP_START_MENU;
 extern const CfgMarkup CFG_MARKUP_PAUSE_MENU;
 extern const CfgMarkup CFG_MARKUP_HUD_LEFT;
+extern const CfgMarkup CFG_MARKUP_HUD_RIGHT;
 typedef struct _MarkupElementState {
 	SDL_Rect rect;
 	const CfgMarkupElement* cfg;
