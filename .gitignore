@@ -1,10 +1,4 @@
-bin/
-*.o
 .DS_Store
-*/.DS_Store
-cgame/.vs
-cgame/x64
-build/
-*.sublime-workspace
-cmake-build*
+/build/
+/cmake-build*
 .idea
