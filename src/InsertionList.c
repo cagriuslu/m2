@@ -41,6 +41,7 @@ void InsertionList_Remove(InsertionList* list, ID id) {
 }
 
 void InsertionList_Sort(InsertionList* list) {
+	// TODO employ binary search?
 	for (size_t i = 1; i < list->array.length; i++) {
 		ID currItem = InsertionList_Get(list, i);
 		for (size_t j = i; 0 < j--; ) {

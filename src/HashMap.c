@@ -37,6 +37,7 @@ size_t HashMap_Size(HashMap* hm) {
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
 		count += hm->buckets[i].length;
 	}
+	// TODO Optimize, get rid of for loop
 	return count;
 }
 

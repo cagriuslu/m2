@@ -269,14 +269,14 @@ int main(int argc, char **argv) {
 			prevPrePhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 				if (el->prePhysics) { el->prePhysics(el); }
-			}
+			} // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
 			// Physics
 			Box2DWorldStep(GAME->world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
 			for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy && phy->body; phy = Pool_GetNext(&GAME->physics, phy)) {
 				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); XASSERT(obj);
 				obj->position = Box2DBodyGetPosition(phy->body);
-			}
+			} // TODO Easy to parallelize
 			Game_DeleteList_DeleteAll();
 			// Post-physics
 			GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks) - prevPostPhysicsTicks;
@@ -284,7 +284,7 @@ int main(int argc, char **argv) {
 			prevPostPhysicsTicks += GAME->deltaTicks;
 			for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 				if (el->postPhysics) { el->postPhysics(el); }
-			}
+			} // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
 			// Update loop condition
 			timeSinceLastWorldStep -= GAME->physicsStepPeriod;
@@ -304,14 +304,14 @@ int main(int argc, char **argv) {
 		prevTerrainDrawGraphicsTicks += GAME->deltaTicks;
 		for (ComponentGraphic* gfx = Pool_GetFirst(&GAME->terrainGraphics); gfx; gfx = Pool_GetNext(&GAME->terrainGraphics, gfx)) {
 			if (gfx->draw) { gfx->draw(gfx); }
-		}
+		} // TODO Easy to parallelize
 		// Pre-graphic
 		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks) - prevPreGraphicsTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevPreGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->preGraphics) { el->preGraphics(el); }
-		}
+		} // TODO Hard to parallelize
 		// Draw
 		InsertionList_Sort(&GAME->drawList);
 		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks) - prevDrawTicks;
@@ -321,21 +321,21 @@ int main(int argc, char **argv) {
 		for (size_t i = 0; i < insertionListSize; i++) {
 			ComponentGraphic* gfx = Pool_GetById(&GAME->graphics, InsertionList_Get(&GAME->drawList, i));
 			if (gfx && gfx->draw) { gfx->draw(gfx); }
-		}
+		} // TODO Hard to parallelize
 		// Draw lights
 		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks) - prevDrawLightsTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevDrawLightsTicks += GAME->deltaTicks;
 		for (ComponentLight* lig = Pool_GetFirst(&GAME->lights); lig; lig = Pool_GetNext(&GAME->lights, lig)) {
 			if (lig->draw) { lig->draw(lig); }
-		}
+		} // TODO Hard to parallelize
 		// Post-graphic
 		GAME->deltaTicks = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks) - prevPostGraphicsTicks;
 		GAME->deltaTime = GAME->deltaTicks / 1000.0f;
 		prevPostGraphicsTicks += GAME->deltaTicks;
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->postGraphics) { el->postGraphics(el); }
-		}
+		} // TODO Hard to parallelize
 		// Draw Markup HUD
 		MarkupState_UpdateElements(&GAME->leftHudMarkupState);
 		MarkupState_UpdateElements(&GAME->rightHudMarkupState);
