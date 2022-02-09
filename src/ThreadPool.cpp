@@ -2,6 +2,7 @@
 #include <thread>
 #include <queue>
 #include <array>
+#include <condition_variable>
 
 class CountingSemaphore {
 	unsigned state;
