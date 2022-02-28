@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {
 		const char* loglevel = "--log-level=";
-		size_t loglevelStrlen = strlen(loglevel);
+		const size_t loglevelStrlen = strlen(loglevel);
 		if (strncmp(argv[i], loglevel, loglevelStrlen) == 0) {
 			if (strcmp(argv[i] + loglevelStrlen, "trace") == 0) {
 				gCurrentLogLevel = LogLevelTrace;
