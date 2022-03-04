@@ -16,8 +16,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_link_directories(cgame PUBLIC /usr/local/lib)
     target_link_libraries(cgame box2d SDL2_image SDL2_ttf SDL2 m)
 elseif(WIN32)
-    target_link_libraries(cgame debug box2d-debug)
-    target_link_libraries(cgame optimized box2d)
+    target_link_libraries(cgame debug     box2d-debug SDL_gpu-debug)
+    target_link_libraries(cgame optimized box2d       SDL_gpu)
     target_link_libraries(cgame SDL2 SDL2_image SDL2_ttf)
 
     # Copy DLLs
