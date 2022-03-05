@@ -6,7 +6,7 @@
 
 #define GROWTH_RATE (2.0)
 
-XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize, void (*itemTerm)(void*)) {
+M2Err Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize, void (*itemTerm)(void*)) {
 	memset(array, 0, sizeof(Array));
 	assert(initCapacity <= maxSize);
 	array->data = calloc(initCapacity, itemSize);
@@ -56,12 +56,12 @@ void Array_Clear(Array* array) {
 	array->length = 0;
 }
 
-XErr Array_Shrink(Array* array) {
+M2Err Array_Shrink(Array* array) {
 	if (array->length < array->capacity) {
 		size_t newCapacity = array->length;
 		void* newData = realloc(array->data, newCapacity * array->itemSize);
 		if (!newData) {
-			return XERR_OUT_OF_MEMORY;
+			return M2ERR_OUT_OF_MEMORY;
 		}
 		array->data = newData;
 		array->capacity = newCapacity;

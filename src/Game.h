@@ -94,7 +94,7 @@ void Game_UpdateWindowDimensions(int width, int height);
 void Game_UpdateMousePosition();
 
 int Game_Level_Init();
-XErr Game_Level_Load(const CfgLevel *cfg);
+M2Err Game_Level_Load(const CfgLevel *cfg);
 void Game_Level_Term();
 
 Object* Game_FindObjectById(ID id);

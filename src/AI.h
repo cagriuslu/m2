@@ -39,7 +39,7 @@ typedef struct _AI {
 	ListOfVec2Is reversedWaypointList;
 } AI;
 
-XErr AI_Init(AI* ai);
+M2Err AI_Init(AI* ai);
 void AI_Term(AI* ai);
 
 #endif

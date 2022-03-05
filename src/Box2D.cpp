@@ -71,7 +71,7 @@ public:
 
 Box2DWorld* Box2DWorldCreate(Vec2F gravity) {
 	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
-		LOG_FTL("Box2D version mismatch");
+		LOG_FATAL("Box2D version mismatch");
 		abort();
 	}
 	return new b2World(Vec2FToB2Vec2(gravity));

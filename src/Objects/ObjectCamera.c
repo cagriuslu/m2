@@ -6,8 +6,8 @@
 #define OFFSET_LIMIT (1.0f)
 
 void Camera_postPhysics(ComponentMonitor* el) {
-	Object* camera = Pool_GetById(&GAME->objects, el->super.objId); XASSERT(camera);
-	Object* player = Pool_GetById(&GAME->objects, GAME->playerId); XASSERT(player);
+	Object* camera = Pool_GetById(&GAME->objects, el->super.objId); M2ASSERT(camera);
+	Object* player = Pool_GetById(&GAME->objects, GAME->playerId); M2ASSERT(player);
 	// Give an offset to the camera's location based on the position of the mouse
 	Vec2F offsetWRTScreenCenter = Vec2F_CeilLength(GAME->mousePositionWRTScreenCenter_m, OFFSET_LIMIT);
 	camera->ex->camera.offset = Vec2F_Lerp(camera->ex->camera.offset, offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
@@ -15,7 +15,7 @@ void Camera_postPhysics(ComponentMonitor* el) {
 }
 
 int ObjectCamera_Init(Object* obj) {
-	XERR_REFLECT(Object_Init(obj, (Vec2F) {0.0f, 0.0f}, true));
+	M2ERR_REFLECT(Object_Init(obj, (Vec2F) {0.0f, 0.0f}, true));
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->postPhysics = Camera_postPhysics;

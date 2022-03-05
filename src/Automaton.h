@@ -23,7 +23,7 @@ typedef struct _Automaton {
 	void* userData_gfx;
 } Automaton;
 
-XErr Automaton_Init(Automaton* sm);
+M2Err Automaton_Init(Automaton* sm);
 void Automaton_ArmAlarm(Automaton* sm, float duration);
 void Automaton_DisarmAlarm(Automaton* sm);
 void Automaton_ProcessSignal(Automaton* sm, int signal);
@@ -39,13 +39,13 @@ typedef enum _AutomatonCharAnimation_Signal {
 	SIG_CHARANIM_WALKUP,
 	SIG_CHARANIM_WALKLEFT,
 } AutomatonCharAnimation_Signal;
-XErr AutomatonCharAnimation_Init(Automaton *sm, const void* cfgCharacter, void* gfx);
+M2Err AutomatonCharAnimation_Init(Automaton *sm, const void* cfgCharacter, void* gfx);
 
 typedef enum _AutomatonAi_Signal {
 	SIG_AI_PREPHYSICS = SIG_N,
 } AutomatonAi_Signal;
-XErr AutomatonAiChase_Init(Automaton *am, void* obj, void* phy);
-XErr AutomatonAiKeepDistance_Init(Automaton *am, void* obj, void* phy);
-XErr AutomatonAiHitNRun_Init(Automaton *am, void* obj, void* phy);
+M2Err AutomatonAiChase_Init(Automaton *am, void* obj, void* phy);
+M2Err AutomatonAiKeepDistance_Init(Automaton *am, void* obj, void* phy);
+M2Err AutomatonAiHitNRun_Init(Automaton *am, void* obj, void* phy);
 
 #endif //AUTOMATON_H

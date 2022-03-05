@@ -10,7 +10,7 @@
 
 uint16_t gPoolId = 1;
 
-XErr Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize) {
+M2Err Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize) {
 	memset(pool, 0, sizeof(Pool));
 	pool->poolCapacityInBits = poolCapacityInBits;
 	pool->capacity = (size_t)1 << pool->poolCapacityInBits;

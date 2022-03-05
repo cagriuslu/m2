@@ -15,8 +15,8 @@ void PathfinderMap_Term(PathfinderMap* pm);
 
 /// Returns XOK if outReverseListOfVec2Is has more than one points
 /// Otherwise, returns XERR_PATH_NOT_FOUND.
-XErr PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
-XErr _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
+M2Err PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
+M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is);
 void _PathfinderMap_GridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2Is);
 
 

@@ -20,11 +20,11 @@ extern "C" {
 ////////////////////////////// Definitions /////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-#define X_2PI  6.283185307179586f // 2pi
-#define X_PI   3.141592653589793f // pi
-#define X_PI2  1.570796326794897f // pi/2
-#define X_PI4  0.785398163397448f // pi/4
-#define X_3PI4 2.356194490192345f // 3pi/4
+#define M2_2PI  6.283185307179586f // 2pi
+#define M2_PI   3.141592653589793f // pi
+#define M2_PI2  1.570796326794897f // pi/2
+#define M2_PI4  0.785398163397448f // pi/4
+#define M2_3PI4 2.356194490192345f // 3pi/4
 
 typedef uint64_t ID;
 
@@ -32,61 +32,61 @@ typedef uint64_t ID;
 ///////////////////////////////// XERR /////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-#define XOK_PROJECTILE_DMG          (  8)
-#define XOK_PROJECTILE_DEATH        (  7)
-#define XOK_HP                      (  6)
-#define XOK_ID                      (  5)
-#define XOK_BUTTON                  (  4)
-#define XOK_FPS                     (  3)
-#define XOK_LOG_LEVEL               (  2)
-#define XOK_FN                      (  1)
-#define XOK                         (  0)
-#define XERR_FILE_NOT_FOUND         ( -1)
-#define XERR_PATH_NOT_FOUND         ( -2)
-#define XERR_FILE_CORRUPTED         ( -3)
-#define XERR_SDL_ERROR              ( -4)
-#define XERR_OUT_OF_MEMORY          ( -5)
-#define XERR_LIMIT_EXCEEDED         ( -6)
-#define XERR_ERRNO                  ( -7)
-#define XERR_FILE_INACCESSIBLE      ( -8)
-#define XERR_INVALID_CFG_OBJTYP     ( -9)
-#define XERR_QUIT                   (-10)
-#define XERR_INVALID_CFG_DYNTXTTYP  (-11)
-#define XERR_INVALID_CFG_DYNIMGTYP  (-12)
-#define XERR_IMPLEMENTATION         (-13)
-#define XERR_TINYOBJ_LIMIT_EXCEEDED (-14)
-#define XERR_OUT_OF_BOUNDS          (-15)
-typedef int32_t XErr;
+#define M2_PROJECTILE_DMG            (  8)
+#define M2_PROJECTILE_DEATH          (  7)
+#define M2_HP                        (  6)
+#define M2_ID                        (  5)
+#define M2_BUTTON                    (  4)
+#define M2_FPS                       (  3)
+#define M2_LOG_LEVEL                 (  2)
+#define M2_FN                        (  1)
+#define M2OK                         (  0)
+#define M2ERR_FILE_NOT_FOUND         ( -1)
+#define M2ERR_PATH_NOT_FOUND         ( -2)
+#define M2ERR_FILE_CORRUPTED         ( -3)
+#define M2ERR_SDL_ERROR              ( -4)
+#define M2ERR_OUT_OF_MEMORY          ( -5)
+#define M2ERR_LIMIT_EXCEEDED         ( -6)
+#define M2ERR_ERRNO                  ( -7)
+#define M2ERR_FILE_INACCESSIBLE      ( -8)
+#define M2ERR_INVALID_CFG_OBJTYP     ( -9)
+#define M2ERR_QUIT                   (-10)
+#define M2ERR_INVALID_CFG_DYNTXTTYP  (-11)
+#define M2ERR_INVALID_CFG_DYNIMGTYP  (-12)
+#define M2ERR_IMPLEMENTATION         (-13)
+#define M2ERR_TINYOBJ_LIMIT_EXCEEDED (-14)
+#define M2ERR_OUT_OF_BOUNDS          (-15)
+typedef int32_t M2Err;
 
-const char* XErr_ToString(XErr e);
+const char* M2Err_ToString(M2Err e);
 
-// XASSERT policy: In game engine code, try not to crash, but return error instead
+// M2ASSERT policy: In game engine code, try not to crash, but return error instead
 // You can crash in game engine code as well, if the error is definitely implementation error
 // In game code, assert and crash if the cause is implementation error.
 #ifdef DEBUG
-#define XASSERT(cond) do { if (!(cond)) { LOG_FTL("Abort"); abort(); } } while (0);
+#define M2ASSERT(cond) do { if (!(cond)) { LOG_FTL("Abort"); abort(); } } while (0);
 #else
-#define XASSERT(cond)
+#define M2ASSERT(cond)
 #endif
-#define XERR_ASSERT(condition, err) \
+#define M2ERR_ASSERT(condition, err) \
 	do {                  \
 		if (!(condition)) \
 			return (err); \
 	} while (0)
-#define XERR_ASSERT_CLEANUP(condition, cleanup, err) \
+#define M2ERR_ASSERT_CLEANUP(condition, cleanup, err) \
 	do {                    \
 		if (!(condition)) { \
 			{cleanup;}      \
 			return (err);   \
 		}                   \
 	} while (0)
-#define XERR_REFLECT(fcall)     \
+#define M2ERR_REFLECT(fcall)     \
 	do {                         \
-		XErr __result = (fcall); \
+		M2Err __result = (fcall); \
 		if (__result < 0)        \
 			return __result;     \
 	} while (0)
-#define XERR_REFLECT_CLEANUP(fcall, cleanup) \
+#define M2ERR_REFLECT_CLEANUP(fcall, cleanup) \
 	do {                         \
 		XErr __result = (fcall); \
 		if (__result < 0) {      \
@@ -110,56 +110,56 @@ typedef enum _LogLevel {
 
 extern LogLevel gCurrentLogLevel;
 
-#define LOG_TRC(msg) Log(LogLevelTrace, __FILE__, __LINE__, (msg))
-#define LOG_DBG(msg) Log(LogLevelDebug, __FILE__, __LINE__, (msg))
-#define LOG_INF(msg) Log(LogLevelInfo,  __FILE__, __LINE__, (msg))
-#define LOG_WRN(msg) Log(LogLevelWarn,  __FILE__, __LINE__, (msg))
-#define LOG_ERR(msg) Log(LogLevelError, __FILE__, __LINE__, (msg))
-#define LOG_FTL(msg) Log(LogLevelFatal, __FILE__, __LINE__, (msg))
+#define LOG_TRACE(msg)   Log(LogLevelTrace, __FILE__, __LINE__, (msg))
+#define LOG_DEBUG(msg)   Log(LogLevelDebug, __FILE__, __LINE__, (msg))
+#define LOG_INFO(msg)    Log(LogLevelInfo,  __FILE__, __LINE__, (msg))
+#define LOG_WARNING(msg) Log(LogLevelWarn,  __FILE__, __LINE__, (msg))
+#define LOG_ERROR(msg)   Log(LogLevelError, __FILE__, __LINE__, (msg))
+#define LOG_FATAL(msg)   Log(LogLevelFatal, __FILE__, __LINE__, (msg))
 void Log(LogLevel level, const char* file, int line, const char* message);
 
-#define LOGX_TRC(x) LogX(LogLevelTrace, __FILE__, __LINE__, (x))
-#define LOGX_DBG(x) LogX(LogLevelDebug, __FILE__, __LINE__, (x))
-#define LOGX_INF(x) LogX(LogLevelInfo,  __FILE__, __LINE__, (x))
-#define LOGX_WRN(x) LogX(LogLevelWarn,  __FILE__, __LINE__, (x))
-#define LOGX_ERR(x) LogX(LogLevelError, __FILE__, __LINE__, (x))
-#define LOGX_FTL(x) LogX(LogLevelFatal, __FILE__, __LINE__, (x))
-XErr LogX(LogLevel level, const char* file, int line, XErr x);
+#define LOG_TRACE_M2(x)   Log_M2(LogLevelTrace, __FILE__, __LINE__, (x))
+#define LOG_DEBUG_M2(x)   Log_M2(LogLevelDebug, __FILE__, __LINE__, (x))
+#define LOG_INFO_M2(x)    Log_M2(LogLevelInfo,  __FILE__, __LINE__, (x))
+#define LOG_WARNING_M2(x) Log_M2(LogLevelWarn,  __FILE__, __LINE__, (x))
+#define LOG_ERROR_M2(x)   Log_M2(LogLevelError, __FILE__, __LINE__, (x))
+#define LOG_FATAL_M2(x)   Log_M2(LogLevelFatal, __FILE__, __LINE__, (x))
+M2Err Log_M2(LogLevel level, const char* file, int line, M2Err x);
 
-#define LOGXV_TRC(x, typ, var) LogX_##typ(LogLevelTrace, __FILE__, __LINE__, (x), (var))
-#define LOGXV_DBG(x, typ, var) LogX_##typ(LogLevelDebug, __FILE__, __LINE__, (x), (var))
-#define LOGXV_INF(x, typ, var) LogX_##typ(LogLevelInfo,  __FILE__, __LINE__, (x), (var))
-#define LOGXV_WRN(x, typ, var) LogX_##typ(LogLevelWarn,  __FILE__, __LINE__, (x), (var))
-#define LOGXV_ERR(x, typ, var) LogX_##typ(LogLevelError, __FILE__, __LINE__, (x), (var))
-#define LOGXV_FTL(x, typ, var) LogX_##typ(LogLevelFatal, __FILE__, __LINE__, (x), (var))
-XErr LogX_ID(LogLevel level, const char* file, int line, XErr x, ID var);
-XErr LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var);
-XErr LogX_Float32(LogLevel level, const char* file, int line, XErr x, float var);
-XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var);
-XErr LogX_Vec2F(LogLevel level, const char* file, int line, XErr x, Vec2F var);
+#define LOG_TRACE_M2V(x, typ, var)   Log_M2V_##typ(LogLevelTrace, __FILE__, __LINE__, (x), (var))
+#define LOG_DEBUG_M2V(x, typ, var)   Log_M2V_##typ(LogLevelDebug, __FILE__, __LINE__, (x), (var))
+#define LOG_INFO_M2V(x, typ, var)    Log_M2V_##typ(LogLevelInfo,  __FILE__, __LINE__, (x), (var))
+#define LOG_WARNING_M2V(x, typ, var) Log_M2V_##typ(LogLevelWarn,  __FILE__, __LINE__, (x), (var))
+#define LOG_ERROR_M2V(x, typ, var)   Log_M2V_##typ(LogLevelError, __FILE__, __LINE__, (x), (var))
+#define LOG_FATAL_M2V(x, typ, var)   Log_M2V_##typ(LogLevelFatal, __FILE__, __LINE__, (x), (var))
+M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, ID var);
+M2Err Log_M2V_Int32(LogLevel level, const char* file, int line, M2Err x, int32_t var);
+M2Err Log_M2V_Float32(LogLevel level, const char* file, int line, M2Err x, float var);
+M2Err Log_M2V_String(LogLevel level, const char* file, int line, M2Err x, const char* var);
+M2Err Log_M2V_Vec2F(LogLevel level, const char* file, int line, M2Err x, Vec2F var);
 
-#define LOG2XV_TRC(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
-#define LOG2XV_DBG(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelDebug, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
-#define LOG2XV_INF(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelInfo,  __FILE__, __LINE__, (x1), (var1), (x2), (var2))
-#define LOG2XV_WRN(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelWarn,  __FILE__, __LINE__, (x1), (var1), (x2), (var2))
-#define LOG2XV_ERR(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelError, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
-#define LOG2XV_FTL(x1, typ1, var1, x2, typ2, var2) LogX_##typ1##_##typ2(LogLevelFatal, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
-void LogX_ID_ID(LogLevel level, const char* file, int line, XErr x1, ID var1, XErr x2, ID var2);
+#define LOG_TRACE_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
+#define LOG_DEBUG_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelDebug, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
+#define LOG_INFO_M2VV(x1, typ1, var1, x2, typ2, var2)    Log_M2V_##typ1##_##typ2(LogLevelInfo,  __FILE__, __LINE__, (x1), (var1), (x2), (var2))
+#define LOG_WARNING_M2VV(x1, typ1, var1, x2, typ2, var2) Log_M2V_##typ1##_##typ2(LogLevelWarn,  __FILE__, __LINE__, (x1), (var1), (x2), (var2))
+#define LOG_ERROR_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelError, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
+#define LOG_FATAL_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelFatal, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
+void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2);
 
-#define LOG3XV_TRC(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) LogX_##typ1##_##typ2##_##typ3(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
-#define LOG3XV_DBG(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) LogX_##typ1##_##typ2##_##typ3(LogLevelDebug, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
-#define LOG3XV_INF(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) LogX_##typ1##_##typ2##_##typ3(LogLevelInfo,  __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
-#define LOG3XV_WRN(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) LogX_##typ1##_##typ2##_##typ3(LogLevelWarn,  __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
-#define LOG3XV_ERR(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) LogX_##typ1##_##typ2##_##typ3(LogLevelError, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
-#define LOG3XV_FTL(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) LogX_##typ1##_##typ2##_##typ3(LogLevelFatal, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
-void LogX_ID_ID_Float32(LogLevel level, const char* file, int line, XErr x1, ID var1, XErr x2, ID var2, XErr x3, float var3);
+#define LOG_TRACE_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
+#define LOG_DEBUG_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelDebug, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
+#define LOG_INFO_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)    Log_M2V_##typ1##_##typ2##_##typ3(LogLevelInfo,  __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
+#define LOG_WARNING_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) Log_M2V_##typ1##_##typ2##_##typ3(LogLevelWarn,  __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
+#define LOG_ERROR_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelError, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
+#define LOG_FATAL_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelFatal, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
+void Log_M2V_ID_ID_Float32(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2, M2Err x3, float var3);
 
 // Convenience macros
-#define LOGFN_TRC() LOGXV_TRC(XOK_FN, String, __FUNCTION__)
-#define LOGFN_DBG() LOGXV_DBG(XOK_FN, String, __FUNCTION__)
+#define LOG_TRACE_FN() LOG_TRACE_M2V(M2_FN, String, __FUNCTION__)
+#define LOG_DEBUG_FN() LOG_DEBUG_M2V(M2_FN, String, __FUNCTION__)
 
 // Helper functions
-void LogStackTrace();
+void Log_StackTrace();
 
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////// Platform Abstraction /////////////////////////

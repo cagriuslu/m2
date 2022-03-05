@@ -11,7 +11,7 @@ uint8_t HashMap_Hash(void* key);
 int HashMap_Init(HashMap* hm, size_t itemSize, void (*itemTerm)(void*)) {
 	memset(hm, 0, sizeof(HashMap));
 	for (unsigned i = 0; i < HASHMAP_BUCKET_COUNT; i++) {
-		XERR_REFLECT(Array_Init(hm->buckets + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
+		M2ERR_REFLECT(Array_Init(hm->buckets + i, sizeof(HashMapItem) + itemSize, 16, (size_t)-1, NULL));
 	}
 	hm->itemSize = itemSize;
 	hm->itemTerm = itemTerm;

@@ -81,7 +81,7 @@ static void LogHeader(LogLevel level, const char* file, int line) {
 #include <execinfo.h>
 #endif
 
-void LogStackTrace() {
+void Log_StackTrace() {
 #ifdef _WIN32
 	// Not supported yet
 #else
@@ -97,7 +97,7 @@ void LogStackTrace() {
 
 static void LogFooter(LogLevel level) {
 	if (LogLevelWarn <= level) {
-		LogStackTrace();
+		Log_StackTrace();
 	}
 }
 
@@ -117,88 +117,89 @@ void Log(LogLevel level, const char* file, int line, const char* message) {
 	LogFooter(level);
 }
 
-XErr LogX(LogLevel level, const char* file, int line, XErr x) {
+M2Err Log_M2(LogLevel level, const char* file, int line, M2Err x) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"X\": \"%s\"}", XErr_ToString(x));
+	fprintf(stderr, "{\"X\": \"%s\"}", M2Err_ToString(x));
 	LogNewLine();
 	LogFooter(level);
 	return x;
 }
 
-XErr LogX_ID(LogLevel level, const char* file, int line, XErr x, ID var) {
+M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, ID var) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": %016llX}", XErr_ToString(x), var);
+	fprintf(stderr, "{\"%s\": %016llX}", M2Err_ToString(x), var);
 	LogNewLine();
 	LogFooter(level);
 	return x;
 }
 
-XErr LogX_Int32(LogLevel level, const char* file, int line, XErr x, int32_t var) {
+M2Err Log_M2V_Int32(LogLevel level, const char* file, int line, M2Err x, int32_t var) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": %d}", XErr_ToString(x), var);
+	fprintf(stderr, "{\"%s\": %d}", M2Err_ToString(x), var);
 	LogNewLine();
 	LogFooter(level);
 	return x;
 }
 
-XErr LogX_Float32(LogLevel level, const char* file, int line, XErr x, float var) {
+M2Err Log_M2V_Float32(LogLevel level, const char* file, int line, M2Err x, float var) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": %.3f}", XErr_ToString(x), var);
+	fprintf(stderr, "{\"%s\": %.3f}", M2Err_ToString(x), var);
 	LogNewLine();
 	LogFooter(level);
 	return x;
 }
 
-XErr LogX_String(LogLevel level, const char* file, int line, XErr x, const char* var) {
+M2Err Log_M2V_String(LogLevel level, const char* file, int line, M2Err x, const char* var) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": \"%s\"}", XErr_ToString(x), var);
+	fprintf(stderr, "{\"%s\": \"%s\"}", M2Err_ToString(x), var);
 	LogNewLine();
 	LogFooter(level);
 	return x;
 }
 
-XErr LogX_Vec2F(LogLevel level, const char* file, int line, XErr x, Vec2F var) {
+M2Err Log_M2V_Vec2F(LogLevel level, const char* file, int line, M2Err x, Vec2F var) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": {\"x\": %.3f, \"y\": %.3f}}", XErr_ToString(x), var.x, var.y);
+	fprintf(stderr, "{\"%s\": {\"x\": %.3f, \"y\": %.3f}}", M2Err_ToString(x), var.x, var.y);
 	LogNewLine();
 	LogFooter(level);
 	return x;
 }
 
-void LogX_ID_ID(LogLevel level, const char* file, int line, XErr x1, ID var1, XErr x2, ID var2) {
+void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": 0x%016llX, \"%s\": 0x%016llX}", XErr_ToString(x1), var1, XErr_ToString(x2), var2);
+	fprintf(stderr, "{\"%s\": 0x%016llX, \"%s\": 0x%016llX}", M2Err_ToString(x1), var1, M2Err_ToString(x2), var2);
 	LogNewLine();
 	LogFooter(level);
 }
 
-void LogX_ID_ID_Float32(LogLevel level, const char* file, int line, XErr x1, ID var1, XErr x2, ID var2, XErr x3, float var3) {
+void Log_M2V_ID_ID_Float32(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2, M2Err x3, float var3) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
 	LogHeader(level, file, line);
-	fprintf(stderr, "{\"%s\": 0x%016llX, \"%s\": 0x%016llX, \"%s\": %.3f}", XErr_ToString(x1), var1, XErr_ToString(x2), var2, XErr_ToString(x3), var3);
+	fprintf(stderr, "{\"%s\": 0x%016llX, \"%s\": 0x%016llX, \"%s\": %.3f}", M2Err_ToString(x1), var1, M2Err_ToString(x2), var2,
+			M2Err_ToString(x3), var3);
 	LogNewLine();
 	LogFooter(level);
 }

@@ -56,7 +56,7 @@ typedef struct _ComponentLight {
 	float radius_m;
 	void (*draw)(struct _ComponentLight*);
 } ComponentLight;
-XErr ComponentLight_Init(ComponentLight* lig, ID objectId);
+M2Err ComponentLight_Init(ComponentLight* lig, ID objectId);
 void ComponentLight_Term(ComponentLight* lig);
 void ComponentLight_DefaultDraw(ComponentLight* lig);
 

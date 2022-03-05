@@ -3,18 +3,18 @@
 #include "Pool.h"
 #include <string.h>
 
-XErr Object_Init(Object* obj, Vec2F position, bool initExtra) {
+M2Err Object_Init(Object* obj, Vec2F position, bool initExtra) {
 	memset(obj, 0, sizeof(Object));
 	obj->position = position;
 	if (initExtra) {
 		if ((obj->ex = calloc(1, sizeof(ObjectEx))) != NULL) {
-			return XOK;
+			return M2OK;
 		} else {
 			// TODO print error message
-			return XERR_OUT_OF_MEMORY;
+			return M2ERR_OUT_OF_MEMORY;
 		}
 	} else {
-		return XOK;
+		return M2OK;
 	}
 }
 

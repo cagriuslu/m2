@@ -4,6 +4,6 @@
 #include "Markup.h"
 #include "Cfg.h"
 
-XErr MarkupElement_UpdateDynamic(MarkupElementState *state);
+M2Err MarkupElement_UpdateDynamic(MarkupElementState *state);
 
 #endif //CGAME_MARKUPELEMENT_H

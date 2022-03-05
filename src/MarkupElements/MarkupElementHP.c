@@ -3,7 +3,7 @@
 #include "../Object.h"
 #include <stdio.h>
 
-XErr MarkupElementHP_UpdateDynamicText(MarkupElementState* state) {
+M2Err MarkupElementHP_UpdateDynamicText(MarkupElementState* state) {
 	if (state->textTexture) {
 		SDL_DestroyTexture(state->textTexture);
 		state->textTexture = NULL;
@@ -21,5 +21,5 @@ XErr MarkupElementHP_UpdateDynamicText(MarkupElementState* state) {
 		}
 	}
 	
-	return XOK;
+	return M2OK;
 }

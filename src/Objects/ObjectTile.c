@@ -4,9 +4,9 @@
 #include "../Game.h"
 
 int ObjectTile_InitFromCfg(Object* obj, const CfgGroundTexture *cfg, Vec2F position) {
-	LOGFN_TRC();
+	LOG_TRACE_FN();
 
-	XERR_REFLECT(Object_Init(obj, position, false));
+	M2ERR_REFLECT(Object_Init(obj, position, false));
 
 	if (cfg->collider.type == CFG_COLLIDER_TYPE_RECTANGLE) {
 		ComponentPhysique *phy = Object_AddPhysique(obj);

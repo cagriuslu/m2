@@ -3,11 +3,11 @@
 #include "../Game.h"
 #include "../Def.h"
 
-XErr ComponentLight_Init(ComponentLight* lig, ID objectId) {
+M2Err ComponentLight_Init(ComponentLight* lig, ID objectId) {
 	memset(lig, 0, sizeof(ComponentLight));
-	XERR_REFLECT(Component_Init((Component*)lig, objectId));
+	M2ERR_REFLECT(Component_Init((Component*)lig, objectId));
 	lig->draw = ComponentLight_DefaultDraw;
-	return XOK;
+	return M2OK;
 }
 
 void ComponentLight_Term(ComponentLight* lig) {
@@ -20,7 +20,7 @@ Vec2I ComponentLight_ObjectOriginWRTScreenCenter_px(Vec2F objPosition) {
 	static Object* cameraObj = NULL;
 	if (GAME->cameraId && cameraId != GAME->cameraId) {
 		cameraId = GAME->cameraId;
-		cameraObj = Pool_GetById(&GAME->objects, GAME->cameraId); XASSERT(cameraObj);
+		cameraObj = Pool_GetById(&GAME->objects, GAME->cameraId); M2ASSERT(cameraObj);
 	}
 	Vec2F cameraPosition = cameraObj ? cameraObj->position : VEC2F_ZERO; // cameraObj is NULL while level is loading
 	Vec2F obj_origin_wrt_camera_obj_m = Vec2F_Sub(objPosition, cameraPosition);
@@ -30,7 +30,7 @@ Vec2I ComponentLight_ObjectOriginWRTScreenCenter_px(Vec2F objPosition) {
 }
 
 void ComponentLight_DefaultDraw(ComponentLight* lig) {
-	Object* obj = Pool_GetById(&GAME->objects, lig->super.objId); XASSERT(obj);
+	Object* obj = Pool_GetById(&GAME->objects, lig->super.objId); M2ASSERT(obj);
 
 	Vec2I obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj->position);
 	// Screen origin is top-left corner

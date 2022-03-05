@@ -33,18 +33,18 @@ typedef struct _VSONArrayValue {
 	struct _VSONArrayValue* next;
 } VSONArrayValue;
 
-XErr VSON_Init_ParseFile(VSON* vson, const char* path);
-XErr VSON_InitObject(VSON* vson);
-XErr VSON_InitArray(VSON* vson);
-XErr VSON_InitString(VSON* vson, const char* string);
-XErr VSON_InitString_NoCopy(VSON* vson, const char* string);
+M2Err VSON_Init_ParseFile(VSON* vson, const char* path);
+M2Err VSON_InitObject(VSON* vson);
+M2Err VSON_InitArray(VSON* vson);
+M2Err VSON_InitString(VSON* vson, const char* string);
+M2Err VSON_InitString_NoCopy(VSON* vson, const char* string);
 
 VSON* VSON_Get(VSON* vson, const char* path);
 const char* VSON_GetString(VSON* vson, const char* path);
 long VSON_GetLong(VSON* vson, const char* path, long defaultValue);
 float VSON_GetFloat(VSON* vson, const char* path, float defaultValue);
 
-XErr VSON_Serialize_ToFile(VSON* vson, const char* path);
+M2Err VSON_Serialize_ToFile(VSON* vson, const char* path);
 
 void VSON_Term(VSON* vson);
 

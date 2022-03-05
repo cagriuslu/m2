@@ -6,23 +6,23 @@
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
 
-XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f);
+M2Err _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f);
 void _VSON_Serialize_ToFile_AnyValue(VSON* vson, FILE* file);
 
-XErr VSON_Init_ParseFile(VSON* vson, const char* path) {
+M2Err VSON_Init_ParseFile(VSON* vson, const char* path) {
 	memset(vson, 0, sizeof(VSON));
 	FILE* f = fopen(path, "r");
 	if (!f) {
-		return XERR_FILE_NOT_FOUND;
+		return M2ERR_FILE_NOT_FOUND;
 	}
 
-	XErr result = _VSON_ParseFile_UnknownValue(vson, f);
+	M2Err result = _VSON_ParseFile_UnknownValue(vson, f);
 	if (result == 0 && !feof(f)) {
 		// Check if anything left in file
 		int c;
 		while ((c = fgetc(f)) != EOF) {
 			if (!isspace(c)) {
-				result = XERR_FILE_CORRUPTED;
+				result = M2ERR_FILE_CORRUPTED;
 				break;
 			}
 		}
@@ -32,38 +32,38 @@ XErr VSON_Init_ParseFile(VSON* vson, const char* path) {
 	return result;
 }
 
-XErr VSON_InitObject(VSON* vson) {
+M2Err VSON_InitObject(VSON* vson) {
 	memset(vson, 0, sizeof(VSON));
 	vson->type = VSON_VALUE_TYPE_OBJECT;
 	return 0;
 }
 
-XErr VSON_InitArray(VSON* vson) {
+M2Err VSON_InitArray(VSON* vson) {
 	memset(vson, 0, sizeof(VSON));
 	vson->type = VSON_VALUE_TYPE_ARRAY;
 	return 0;
 }
 
-XErr VSON_InitString(VSON* vson, const char* string) {
+M2Err VSON_InitString(VSON* vson, const char* string) {
 	memset(vson, 0, sizeof(VSON));
 	vson->type = VSON_VALUE_TYPE_STRING;
 	if ((vson->value.string = string ? STRDUP(string) : calloc(1, 1)) == NULL) {
-		return XERR_OUT_OF_MEMORY;
+		return M2ERR_OUT_OF_MEMORY;
 	}
 	return 0;
 }
 
-XErr VSON_InitString_NoCopy(VSON* vson, const char* string) {
+M2Err VSON_InitString_NoCopy(VSON* vson, const char* string) {
 	memset(vson, 0, sizeof(VSON));
 	vson->type = VSON_VALUE_TYPE_STRING;
 	if ((vson->value.string = string ? string : calloc(1, 1)) == NULL) {
-		return XERR_OUT_OF_MEMORY;
+		return M2ERR_OUT_OF_MEMORY;
 	}
 	return 0;
 }
 
-XErr _VSON_ParseFile_FetchPlainString(Array* buffer, FILE* f) {
-	XErr result = Array_Init(buffer, sizeof(char), 16, INT32_MAX, NULL);
+M2Err _VSON_ParseFile_FetchPlainString(Array* buffer, FILE* f) {
+	M2Err result = Array_Init(buffer, sizeof(char), 16, INT32_MAX, NULL);
 	if (result) {
 		return result;
 	}
@@ -76,7 +76,7 @@ XErr _VSON_ParseFile_FetchPlainString(Array* buffer, FILE* f) {
 			if (!Array_Append(buffer, &ch)) {
 				// out of memory, or max size reached
 				Array_Term(buffer);
-				return XERR_FILE_CORRUPTED;
+				return M2ERR_FILE_CORRUPTED;
 			}
 		} else {
 			// plain string finished
@@ -89,14 +89,14 @@ XErr _VSON_ParseFile_FetchPlainString(Array* buffer, FILE* f) {
 	if (!Array_Append(buffer, &ch)) {
 		// out of memory, or max size reached
 		Array_Term(buffer);
-		return XERR_FILE_CORRUPTED;
+		return M2ERR_FILE_CORRUPTED;
 	}
 	
 	return 0;
 }
 
-XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
-	XErr result = VSON_InitObject(vson);
+M2Err _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
+	M2Err result = VSON_InitObject(vson);
 	if (result) {
 		return result;
 	}
@@ -120,7 +120,7 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				// Create key-value pair
 				currentObjectKeyValue = calloc(1, sizeof(VSONObjectKeyValue));
 				if (!currentObjectKeyValue) {
-					return XERR_OUT_OF_MEMORY;
+					return M2ERR_OUT_OF_MEMORY;
 				}
 				nextObjectKeyValuePointerLocation[0] = currentObjectKeyValue;
 				nextObjectKeyValuePointerLocation = &(currentObjectKeyValue->next);
@@ -135,7 +135,7 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				// Next state
 				state = EXPECT_COLON;
 			} else {
-				return XERR_FILE_CORRUPTED;
+				return M2ERR_FILE_CORRUPTED;
 			}
 		} else if (state == EXPECT_COLON) {
 			if (isspace(c)) {
@@ -144,7 +144,7 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				// Next state
 				state = EXPECT_VALUE;
 			} else {
-				return XERR_FILE_CORRUPTED;
+				return M2ERR_FILE_CORRUPTED;
 			}
 		} else if (state == EXPECT_VALUE) {
 			if (isspace(c)) {
@@ -154,7 +154,7 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				ungetc(c, f);
 				result = _VSON_ParseFile_UnknownValue(&currentObjectKeyValue->value, f);
 				if (result) {
-					return XERR_FILE_CORRUPTED;
+					return M2ERR_FILE_CORRUPTED;
 				}
 				// Next state
 				state = EXPECT_COMMA_OR_SPACE;
@@ -167,19 +167,19 @@ XErr _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				// Next state
 				state = EXPECT_KEY;
 			} else {
-				return XERR_FILE_CORRUPTED;
+				return M2ERR_FILE_CORRUPTED;
 			}
 		}
 	}
 
 	if (!braceClosed) {
-		return XERR_FILE_CORRUPTED;
+		return M2ERR_FILE_CORRUPTED;
 	}
 	return 0;
 }
 
-XErr _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
-	XErr result = VSON_InitArray(vson);
+M2Err _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
+	M2Err result = VSON_InitArray(vson);
 	if (result) {
 		return result;
 	}
@@ -199,7 +199,7 @@ XErr _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
 			} else {
 				VSONArrayValue* arrayValue = calloc(1, sizeof(VSONArrayValue));
 				if (!arrayValue) {
-					return XERR_OUT_OF_MEMORY;
+					return M2ERR_OUT_OF_MEMORY;
 				}
 
 				nextArrayValuePointerLocation[0] = arrayValue;
@@ -208,7 +208,7 @@ XErr _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
 				ungetc(c, f);
 				result = _VSON_ParseFile_UnknownValue(&arrayValue->value, f);
 				if (result) {
-					return XERR_FILE_CORRUPTED;
+					return M2ERR_FILE_CORRUPTED;
 				}
 				
 				state = EXPECT_COMMA_OR_SPACE;
@@ -221,20 +221,20 @@ XErr _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
 				// Next state
 				state = EXPECT_VALUE;
 			} else {
-				return XERR_FILE_CORRUPTED;
+				return M2ERR_FILE_CORRUPTED;
 			}
 		}
 	}
 
 	if (!bracketClosed) {
-		return XERR_FILE_CORRUPTED;
+		return M2ERR_FILE_CORRUPTED;
 	}
 	return 0;
 }
 
-XErr _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
+M2Err _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
 	Array buffer;
-	XErr result = Array_Init(&buffer, sizeof(char), 32, INT32_MAX, NULL);
+	M2Err result = Array_Init(&buffer, sizeof(char), 32, INT32_MAX, NULL);
 	if (result) {
 		return result;
 	}
@@ -246,13 +246,13 @@ XErr _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
 				if (Array_Append(&buffer, &c) == NULL) {
 					// out of memory, or max size reached
 					Array_Term(&buffer);
-					return XERR_FILE_CORRUPTED;
+					return M2ERR_FILE_CORRUPTED;
 				}
 				escaping = 0;
 			} else {
 				// unexpected character
 				Array_Term(&buffer);
-				return XERR_FILE_CORRUPTED;
+				return M2ERR_FILE_CORRUPTED;
 			}
 		} else {
 			if (c == '"') {
@@ -265,12 +265,12 @@ XErr _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
 				if (Array_Append(&buffer, &c) == NULL) {
 					// out of memory, or max size reached
 					Array_Term(&buffer);
-					return XERR_FILE_CORRUPTED;
+					return M2ERR_FILE_CORRUPTED;
 				}
 			} else {
 				// unexpected character
 				Array_Term(&buffer);
-				return XERR_FILE_CORRUPTED;
+				return M2ERR_FILE_CORRUPTED;
 			}
 		}
 	}
@@ -278,14 +278,14 @@ XErr _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
 	if (!quoteClosed) {
 		// Quote not closed
 		Array_Term(&buffer);
-		return XERR_FILE_CORRUPTED;
+		return M2ERR_FILE_CORRUPTED;
 	}
 
 	c = 0;
 	if (Array_Append(&buffer, &c) == NULL) {
 		// out of memory, or max size reached
 		Array_Term(&buffer);
-		return XERR_FILE_CORRUPTED;
+		return M2ERR_FILE_CORRUPTED;
 	}
 
 	result = VSON_InitString(vson, Array_Get(&buffer, 0));
@@ -293,16 +293,16 @@ XErr _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
 	return result;
 }
 
-XErr _VSON_ParseFile_PlainStringValue(VSON* vson, FILE* f) {
+M2Err _VSON_ParseFile_PlainStringValue(VSON* vson, FILE* f) {
 	Array buffer;
-	XErr result = _VSON_ParseFile_FetchPlainString(&buffer, f);
+	M2Err result = _VSON_ParseFile_FetchPlainString(&buffer, f);
 	if (result) {
 		return result;
 	}
 	return VSON_InitString_NoCopy(vson, Array_TermNoFree(&buffer));
 }
 
-XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
+M2Err _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
 	int c, result = 1;
 	while ((c = fgetc(f)) != EOF) {
 		if (isspace(c)) {
@@ -322,7 +322,7 @@ XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
 				ungetc(c, f);
 				result = _VSON_ParseFile_PlainStringValue(vson, f);
 			} else {
-				result = XERR_FILE_CORRUPTED;
+				result = M2ERR_FILE_CORRUPTED;
 			}
 			break;
 		}
@@ -336,7 +336,7 @@ XErr _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
 
 VSON* VSON_Get(VSON* vson, const char* path) {
 	Array pathPieces;
-	XErr result = String_Split(path, '/', &pathPieces);
+	M2Err result = String_Split(path, '/', &pathPieces);
 	if (result) {
 		return NULL;
 	}
@@ -451,17 +451,17 @@ void _VSON_Serialize_ToFile_AnyValue(VSON* vson, FILE* file) {
 	}
 }
 
-XErr VSON_Serialize_ToFile(VSON* vson, const char* path) {
+M2Err VSON_Serialize_ToFile(VSON* vson, const char* path) {
 	FILE* file = fopen(path, "w");
 	if (!file) {
-		LOGXV_ERR(XERR_ERRNO, String, strerror(errno));
-		LOGXV_ERR(XERR_FILE_INACCESSIBLE, String, path);
-		return XERR_FILE_INACCESSIBLE;
+		LOG_ERROR_M2V(M2ERR_ERRNO, String, strerror(errno));
+		LOG_ERROR_M2V(M2ERR_FILE_INACCESSIBLE, String, path);
+		return M2ERR_FILE_INACCESSIBLE;
 	}
 
 	_VSON_Serialize_ToFile_AnyValue(vson, file);
 	fclose(file);
-	return XOK;
+	return M2OK;
 }
 
 void VSON_Term(VSON* vson) {

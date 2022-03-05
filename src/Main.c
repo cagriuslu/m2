@@ -23,7 +23,7 @@
 //}
 
 int main(int argc, char **argv) {
-	LOGFN_DBG();
+	LOG_DEBUG_FN();
 
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {
@@ -32,27 +32,27 @@ int main(int argc, char **argv) {
 		if (strncmp(argv[i], loglevel, loglevelStrlen) == 0) {
 			if (strcmp(argv[i] + loglevelStrlen, "trace") == 0) {
 				gCurrentLogLevel = LogLevelTrace;
-				LOGXV_INF(XOK_LOG_LEVEL, Int32, LogLevelTrace);
+				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelTrace);
 			} else if (strcmp(argv[i] + loglevelStrlen, "debug") == 0) {
 				gCurrentLogLevel = LogLevelDebug;
-				LOGXV_INF(XOK_LOG_LEVEL, Int32, LogLevelDebug);
+				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelDebug);
 			} else if (strcmp(argv[i] + loglevelStrlen, "info") == 0) {
 				gCurrentLogLevel = LogLevelInfo;
-				LOGXV_INF(XOK_LOG_LEVEL, Int32, LogLevelInfo);
+				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelInfo);
 			} else if (strcmp(argv[i] + loglevelStrlen, "warning") == 0) {
 				gCurrentLogLevel = LogLevelWarn;
-				LOGXV_INF(XOK_LOG_LEVEL, Int32, LogLevelWarn);
+				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelWarn);
 			} else if (strcmp(argv[i] + loglevelStrlen, "error") == 0) {
 				gCurrentLogLevel = LogLevelError;
-				LOGXV_INF(XOK_LOG_LEVEL, Int32, LogLevelError);
+				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelError);
 			} else if (strcmp(argv[i] + loglevelStrlen, "fatal") == 0) {
 				gCurrentLogLevel = LogLevelFatal;
-				LOGXV_INF(XOK_LOG_LEVEL, Int32, LogLevelFatal);
+				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelFatal);
 			} else {
-				LOG_WRN("Invalid log level");
+				LOG_WARNING("Invalid log level");
 			}
 		} else {
-			LOG_WRN("Invalid command line argument");
+			LOG_WARNING("Invalid command line argument");
 		}
 	}
 
@@ -64,20 +64,20 @@ int main(int argc, char **argv) {
 	GAME->positionIterations = 3;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
 	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, IMG_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
 		return -1;
 	}
 	if (TTF_Init() != 0) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, TTF_GetError());
 		return -1;
 	}
 	Game_UpdateWindowDimensions(1600, 900);
 	if ((GAME->sdlWindow = SDL_CreateWindow("cgame", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowRect.w, GAME->windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
 	SDL_SetWindowMinimumSize(GAME->sdlWindow, 712, 400);
@@ -85,41 +85,41 @@ int main(int argc, char **argv) {
 	GAME->sdlCursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(GAME->sdlCursor);
 	if ((GAME->pixelFormat = SDL_GetWindowPixelFormat(GAME->sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
 	if ((GAME->sdlRenderer = SDL_CreateRenderer(GAME->sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == NULL) { // SDL_RENDERER_PRESENTVSYNC
-		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
 	SDL_Surface* textureMapSurface = IMG_Load(CFG_TEXTURE_FILE);
 	if (textureMapSurface == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, IMG_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
 		return -1;
 	}
 	if ((GAME->sdlTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMapSurface)) == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
 	SDL_SetTextureColorMod(GAME->sdlTexture, 127, 127, 127);
 	SDL_FreeSurface(textureMapSurface);
 	SDL_Surface* textureMaskSurface = IMG_Load(CFG_TEXTURE_MASK_FILE);
 	if (textureMaskSurface == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, IMG_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
 		return -1;
 	}
 	if ((GAME->sdlTextureMask = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMaskSurface)) == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
 	SDL_FreeSurface(textureMaskSurface);
 	SDL_Surface* lightSurface = IMG_Load("resources/RadialGradient-WhiteBlack.png");
 	if (lightSurface == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, IMG_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
 		return -1;
 	}
 	if ((GAME->sdlLightTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, lightSurface)) == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
 	SDL_FreeSurface(lightSurface);
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 	SDL_SetTextureAlphaMod(GAME->sdlLightTexture, 0);
 	SDL_SetTextureColorMod(GAME->sdlLightTexture, 127, 127, 127);
 	if ((GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
-		LOGXV_FTL(XERR_SDL_ERROR, String, TTF_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, TTF_GetError());
 		return -1;
 	}
 
@@ -165,15 +165,15 @@ int main(int argc, char **argv) {
 //	}
 
 	CfgMarkupButtonType startMenuPressedButtonType;
-	XErr startMenuResult = Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, &startMenuPressedButtonType);
-	if (startMenuResult == XERR_QUIT) {
+	M2Err startMenuResult = Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, &startMenuPressedButtonType);
+	if (startMenuResult == M2ERR_QUIT) {
 		return 0;
 	} else if (!startMenuResult) {
 		if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_NEW_GAME) {
-			XERR_REFLECT(Game_Level_Init());
-			XERR_REFLECT(Game_Level_Load(&CFG_LVL_SP000));
-			XERR_REFLECT(PathfinderMap_Init(&GAME->pathfinderMap));
-			LOG_INF("Level loaded");
+			M2ERR_REFLECT(Game_Level_Init());
+			M2ERR_REFLECT(Game_Level_Load(&CFG_LVL_SP000));
+			M2ERR_REFLECT(PathfinderMap_Init(&GAME->pathfinderMap));
+			LOG_INFO("Level loaded");
 		} else if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_QUIT) {
 			return 0;
 		} else {
@@ -222,33 +222,33 @@ int main(int argc, char **argv) {
 				if (GAME->events.keysPressed[KEY_CONSOLE]) {
 					memset(GAME->consoleInput, 0, sizeof(GAME->consoleInput));
 					SDL_StartTextInput();
-					LOG_INF("SDL text input activated");
+					LOG_INFO("SDL text input activated");
 				}
 				// Handle HUD events (mouse and key)
 				CfgMarkupButtonType pressedButton;
 				if (MarkupState_HandleEvents(&GAME->leftHudMarkupState, &GAME->events, &pressedButton)) {
-					LOGXV_INF(XOK_BUTTON, Int32, pressedButton);
+					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
 					// There are no hud buttons yet that we care about
 				}
 				if (MarkupState_HandleEvents(&GAME->rightHudMarkupState, &GAME->events, &pressedButton)) {
-					LOGXV_INF(XOK_BUTTON, Int32, pressedButton);
+					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
 					// There are no hud buttons yet that we care about
 				}
 			} else {
 				// Handle text input
 				if (GAME->events.keysPressed[KEY_MENU]) {
 					SDL_StopTextInput();
-					LOG_INF("SDL text input deactivated");
+					LOG_INFO("SDL text input deactivated");
 				} else if (GAME->events.keysPressed[KEY_ENTER]) {
 					// TODO Execute console command
-					LOG_INF("Console command");
-					LOG_INF(GAME->consoleInput);
+					LOG_INFO("Console command");
+					LOG_INFO(GAME->consoleInput);
 					SDL_StopTextInput();
-					LOG_INF("SDL text input deactivated");
+					LOG_INFO("SDL text input deactivated");
 				} else if (GAME->events.textInputEvent) {
 					strcat(GAME->consoleInput, GAME->events.textInput);
-					LOG_INF("Console buffer");
-					LOG_INF(GAME->consoleInput);
+					LOG_INFO("Console buffer");
+					LOG_INFO(GAME->consoleInput);
 				}
 			}
 		}
@@ -274,7 +274,7 @@ int main(int argc, char **argv) {
 			// Physics
 			Box2DWorldStep(GAME->world, GAME->physicsStepPeriod, GAME->velocityIterations, GAME->positionIterations);
 			for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy && phy->body; phy = Pool_GetNext(&GAME->physics, phy)) {
-				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); XASSERT(obj);
+				Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); M2ASSERT(obj);
 				obj->position = Box2DBodyGetPosition(phy->body);
 			} // TODO Easy to parallelize
 			Game_DeleteList_DeleteAll();
@@ -355,7 +355,7 @@ int main(int argc, char **argv) {
 		frameCount++;
 		if (1000 < frameTimeAccumulator) {
 			frameTimeAccumulator -= 1000;
-			LOGXV_TRC(XOK_FPS, Int32, frameCount);
+			LOG_TRACE_M2V(M2_FPS, Int32, frameCount);
 			frameCount = 0;
 		}
 	}

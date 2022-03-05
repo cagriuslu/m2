@@ -4,6 +4,6 @@
 #include "Array.h"
 #include "Def.h"
 
-XErr String_Split(const char* string, char delimiter, Array* out);
+M2Err String_Split(const char* string, char delimiter, Array* out);
 
 #endif

@@ -5,12 +5,12 @@
 uint64_t TinyArray_Heap[TINY_ARRAY_MAX_INSTANCE_COUNT * TINY_ARRAY_MAX_LENGTH];
 Pool TinyArray_UsedArrays;
 
-XErr TinyArray_Init(TinyArray* array) {
+M2Err TinyArray_Init(TinyArray* array) {
 	memset(array, 0, sizeof(TinyArray));
 
 	// Init TinyArray_UsedArrays lazily
 	if (TinyArray_UsedArrays.items == NULL) {
-		XERR_REFLECT(Pool_Init(&TinyArray_UsedArrays, TINY_ARRAY_MAX_INSTANCE_COUNT_BITS, sizeof(uint64_t*)));
+		M2ERR_REFLECT(Pool_Init(&TinyArray_UsedArrays, TINY_ARRAY_MAX_INSTANCE_COUNT_BITS, sizeof(uint64_t*)));
 	}
 
 	ID poolItemId;
@@ -18,42 +18,42 @@ XErr TinyArray_Init(TinyArray* array) {
 	if (poolItemDataPtr) {
 		array->tinyArrayId = Pool_GetIndex(&TinyArray_UsedArrays, poolItemId);
 		*poolItemDataPtr = TinyArray_Heap + (TINY_ARRAY_MAX_LENGTH * sizeof(uint64_t)) * array->tinyArrayId;
-		return XOK;
+		return M2OK;
 	} else {
-		return LOGX_WRN(XERR_TINYOBJ_LIMIT_EXCEEDED);
+		return LOG_WARNING_M2(M2ERR_TINYOBJ_LIMIT_EXCEEDED);
 	}
 }
 
-XErr TinyArray_Append(TinyArray* array, uint64_t item) {
+M2Err TinyArray_Append(TinyArray* array, uint64_t item) {
 	if (array->length < TINY_ARRAY_MAX_LENGTH) {
 		uint64_t** poolItemDataPtr = Pool_GetByIndex(&TinyArray_UsedArrays, array->tinyArrayId);
 		if (poolItemDataPtr) {
 			(*poolItemDataPtr)[array->length] = item;
 			array->length++;
-			return XOK;
+			return M2OK;
 		} else {
-			return LOGXV_ERR(XERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
+			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
 		}
 	} else {
-		return XERR_LIMIT_EXCEEDED;
+		return M2ERR_LIMIT_EXCEEDED;
 	}
 }
 
-XErr TinyArray_Set(TinyArray* array, uint16_t index, uint64_t item) {
+M2Err TinyArray_Set(TinyArray* array, uint16_t index, uint64_t item) {
 	if (index < array->length) {
 		uint64_t** poolItemDataPtr = Pool_GetByIndex(&TinyArray_UsedArrays, array->tinyArrayId);
 		if (poolItemDataPtr) {
 			(*poolItemDataPtr)[index] = item;
-			return XOK;
+			return M2OK;
 		} else {
-			return LOGXV_ERR(XERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
+			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
 		}
 	} else {
-		return XERR_OUT_OF_BOUNDS;
+		return M2ERR_OUT_OF_BOUNDS;
 	}
 }
 
-XErr TinyArray_Remove(TinyArray* array, uint16_t index) {
+M2Err TinyArray_Remove(TinyArray* array, uint16_t index) {
 	if (index < array->length) {
 		uint64_t** poolItemDataPtr = Pool_GetByIndex(&TinyArray_UsedArrays, array->tinyArrayId);
 		if (poolItemDataPtr) {
@@ -65,12 +65,12 @@ XErr TinyArray_Remove(TinyArray* array, uint16_t index) {
 			}
 			arrayPtr[nextIndex - 1] = 0;
 			array->length--;
-			return XOK;
+			return M2OK;
 		} else {
-			return LOGXV_ERR(XERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
+			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
 		}
 	} else {
-		return XERR_OUT_OF_BOUNDS;
+		return M2ERR_OUT_OF_BOUNDS;
 	}
 }
 

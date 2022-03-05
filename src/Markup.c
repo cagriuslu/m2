@@ -25,16 +25,16 @@ SDL_Texture* Markup_GenerateFontTexture(const char *text) {
 	return texture;
 }
 
-XErr _Markup_Draw_BackgroundColor(SDL_Rect rect, SDL_Color color) {
+M2Err _Markup_Draw_BackgroundColor(SDL_Rect rect, SDL_Color color) {
 	if (color.a == 0) {
 		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
 	} else {
 		SDL_SetRenderDrawColor(GAME->sdlRenderer, color.r, color.g, color.b, color.a);
 	}
 	SDL_RenderFillRect(GAME->sdlRenderer, &rect);
-	return XOK;
+	return M2OK;
 }
-XErr _Markup_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
+M2Err _Markup_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
 	int textW = 0, textH = 0;
 	SDL_QueryTexture(texture, NULL, NULL, &textW, &textH);
 	SDL_Rect textRect = (SDL_Rect) {
@@ -44,7 +44,7 @@ XErr _Markup_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
 			textH
 	};
 	SDL_RenderCopy(GAME->sdlRenderer, texture, NULL, &textRect);
-	return XOK;
+	return M2OK;
 }
 
 MarkupElementState* _MarkupState_FindElementByPixel(MarkupState *state, Vec2I mousePosition) {
@@ -97,7 +97,7 @@ void _MarkupState_ResetDepressedButtons(MarkupState *state) {
 
 // MarkupState methods
 
-XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg) {
+M2Err MarkupState_Init(MarkupState *state, const CfgMarkup* cfg) {
 	memset(state, 0, sizeof(MarkupState));
 	state->cfg = cfg;
 	if (cfg && cfg->firstElement) {
@@ -116,21 +116,21 @@ XErr MarkupState_Init(MarkupState *state, const CfgMarkup* cfg) {
 						MarkupState_Init(childMarkupState, cfgMarkupElement->child);
 						elementState->child = childMarkupState;
 					} else {
-						return XERR_OUT_OF_MEMORY;
+						return M2ERR_OUT_OF_MEMORY;
 					}
 				}
 				// Store MarkupElementState back to the address
 				*elementStatePtrAddress = elementState;
 				elementStatePtrAddress = &elementState->next;
 			} else {
-				return XERR_OUT_OF_MEMORY;
+				return M2ERR_OUT_OF_MEMORY;
 			}
 		}
 	}
-	return XOK;
+	return M2OK;
 }
 
-XErr MarkupState_UpdatePositions(MarkupState *state, SDL_Rect rootRect) {
+M2Err MarkupState_UpdatePositions(MarkupState *state, SDL_Rect rootRect) {
 	state->rect = rootRect;
 	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
 		// Update rect
@@ -138,21 +138,21 @@ XErr MarkupState_UpdatePositions(MarkupState *state, SDL_Rect rootRect) {
 		// Update individual element
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				XERR_REFLECT(MarkupState_UpdatePositions(elementState->child, elementState->rect));
+				M2ERR_REFLECT(MarkupState_UpdatePositions(elementState->child, elementState->rect));
 				break;
 			default:
 				break;
 		}
 	}
-	return XOK;
+	return M2OK;
 }
 
-XErr MarkupState_UpdateElements(MarkupState* state) {
+M2Err MarkupState_UpdateElements(MarkupState* state) {
 	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
 		// Update individual element
 		switch (elementState->cfg->type) {
 			case CFG_MARKUP_ELEMENT_TYPE_MARKUP:
-				XERR_REFLECT(MarkupState_UpdateElements(elementState->child));
+				M2ERR_REFLECT(MarkupState_UpdateElements(elementState->child));
 				break;
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT:
 			case CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON:
@@ -170,7 +170,7 @@ XErr MarkupState_UpdateElements(MarkupState* state) {
 				break;
 		}
 	}
-	return XOK;
+	return M2OK;
 }
 
 bool MarkupState_HandleEvents(MarkupState *state, Events *evs, CfgMarkupButtonType *outPressedButton) {
@@ -210,7 +210,7 @@ bool MarkupState_HandleEvents(MarkupState *state, Events *evs, CfgMarkupButtonTy
 	return eventOccurred;
 }
 
-XErr MarkupState_Draw(MarkupState *state) {
+M2Err MarkupState_Draw(MarkupState *state) {
 	_Markup_Draw_BackgroundColor(state->rect, state->cfg->backgroundColor);
 	// Draw elements
 	for (MarkupElementState* elementState = state->firstElement; elementState; elementState = elementState->next) {
@@ -250,20 +250,20 @@ XErr MarkupState_Draw(MarkupState *state) {
 		SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 255, 255, 255);
 		SDL_RenderDrawRect(GAME->sdlRenderer, &state->rect);
 	}
-	return XOK;
+	return M2OK;
 }
 
 void MarkupState_Term(MarkupState *state) {
 	// TODO
 }
 
-XErr Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPressedButton) {
+M2Err Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPressedButton) {
 	MarkupState state;
 	MarkupState_Init(&state, markup);
 	MarkupState_UpdatePositions(&state, GAME->windowRect);
 	MarkupState_UpdateElements(&state);
 
-	XErr result = XOK;
+	M2Err result = M2OK;
 	Events evs;
 	while (true) {
 		////////////////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ XErr Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPre
 		////////////////////////////////////////////////////////////////////////
 		if (Events_Gather(&evs)) {
 			if (evs.quitEvent) {
-				result = XERR_QUIT;
+				result = M2ERR_QUIT;
 				break;
 			}
 			if (evs.windowResizeEvent) {
@@ -280,11 +280,11 @@ XErr Markup_ExecuteBlocking(const CfgMarkup *markup, CfgMarkupButtonType* outPre
 			}
 			CfgMarkupButtonType pressedButton;
 			if (MarkupState_HandleEvents(&state, &evs, &pressedButton)) {
-				LOGXV_INF(XOK_BUTTON, Int32, pressedButton);
+				LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
 				if (outPressedButton) {
 					*outPressedButton = pressedButton;
 				}
-				result = XOK;
+				result = M2OK;
 				break;
 			}
 		}

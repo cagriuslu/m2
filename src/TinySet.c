@@ -11,17 +11,17 @@ static uint8_t TinySet_Hash(const uint8_t* key) {
 	return hash & 0x3;
 }
 
-XErr TinySet_Init(TinySet* ts) {
+M2Err TinySet_Init(TinySet* ts) {
 	memset(ts, 0, sizeof(TinySet));
 	for (int i = 0; i < TINY_SET_BUCKET_COUNT; i++) {
-		XERR_REFLECT(TinyArray_Init(ts->buckets + i));
+		M2ERR_REFLECT(TinyArray_Init(ts->buckets + i));
 	}
-	return XOK;
+	return M2OK;
 }
 
-XErr TinySet_Set(TinySet* ts, uint64_t key) {
+M2Err TinySet_Set(TinySet* ts, uint64_t key) {
 	if (TinySet_Check(ts, key)) {
-		return XOK;
+		return M2OK;
 	} else {
 		TinyArray* ta = ts->buckets + TinySet_Hash((uint8_t*) &key);
 		return TinyArray_Append(ta, key);

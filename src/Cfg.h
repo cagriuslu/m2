@@ -105,7 +105,7 @@ typedef struct _ProjectileState {
 	bool alreadyCollidedThisStep;
 	float ttl_s;
 } ProjectileState;
-XErr ProjectileState_Init(ProjectileState* state, const CfgProjectile* cfg);
+M2Err ProjectileState_Init(ProjectileState* state, const CfgProjectile* cfg);
 
 typedef struct _CfgRangedWeapon {
 	CfgProjectile projectile;
@@ -121,7 +121,7 @@ typedef struct _RangedWeaponState {
 	const CfgRangedWeapon *cfg;
 	float cooldownCounter_s;
 } RangedWeaponState;
-XErr RangedWeaponState_Init(RangedWeaponState* state, const CfgRangedWeapon* cfg);
+M2Err RangedWeaponState_Init(RangedWeaponState* state, const CfgRangedWeapon* cfg);
 void RangedWeaponState_ProcessTime(RangedWeaponState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ typedef struct _MeleeState {
 	const CfgMelee* cfg;
 	float ttl_s;
 } MeleeState;
-XErr MeleeState_Init(MeleeState* state, const CfgMelee* cfg);
+M2Err MeleeState_Init(MeleeState* state, const CfgMelee* cfg);
 
 typedef struct _CfgMeleeWeapon {
 	CfgMelee melee;
@@ -157,7 +157,7 @@ typedef struct _MeleeWeaponState {
 	const CfgMeleeWeapon *cfg;
 	float cooldownCounter_s;
 } MeleeWeaponState;
-XErr MeleeWeaponState_Init(MeleeWeaponState* state, const CfgMeleeWeapon* cfg);
+M2Err MeleeWeaponState_Init(MeleeWeaponState* state, const CfgMeleeWeapon* cfg);
 void MeleeWeaponState_ProcessTime(MeleeWeaponState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ typedef struct _ExplosiveState {
 	float projectileTtl_s;
 	ExplosiveStatus explosiveStatus;
 } ExplosiveState;
-XErr ExplosiveState_Init(ExplosiveState* state, const CfgExplosive* cfg);
+M2Err ExplosiveState_Init(ExplosiveState* state, const CfgExplosive* cfg);
 
 typedef struct _CfgExplosiveWeapon {
 	CfgExplosive explosive;
@@ -197,7 +197,7 @@ typedef struct _ExplosiveWeaponState {
 	float cooldownCounter_s;
 	unsigned explosiveCount;
 } ExplosiveWeaponState;
-XErr ExplosiveWeaponState_Init(ExplosiveWeaponState* state, const CfgExplosiveWeapon* cfg);
+M2Err ExplosiveWeaponState_Init(ExplosiveWeaponState* state, const CfgExplosiveWeapon* cfg);
 void ExplosiveWeaponState_ProcessTime(ExplosiveWeaponState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
@@ -257,7 +257,7 @@ typedef struct _AiState {
 	Vec2F homePosition;
 	ListOfVec2Is reversedWaypointList;
 } AiState;
-XErr AiState_Init(AiState *state, const CfgAi* cfg, Vec2F homePosition);
+M2Err AiState_Init(AiState *state, const CfgAi* cfg, Vec2F homePosition);
 
 ////////////////////////////////////////////////////////////////////////
 /////////////////////////////// CHARACTER //////////////////////////////
@@ -304,7 +304,7 @@ typedef struct CharacterState {
 	MeleeWeaponState meleeWeaponState;
 	ExplosiveWeaponState explosiveWeaponState;
 } CharacterState;
-XErr CharacterState_Init(CharacterState* state, const CfgCharacter* cfg);
+M2Err CharacterState_Init(CharacterState* state, const CfgCharacter* cfg);
 void CharacterState_ProcessTime(CharacterState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////

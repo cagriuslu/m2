@@ -4,9 +4,9 @@
 #include "../Def.h"
 
 static void Bullet_prePhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
-	ComponentPhysique* phy = Object_GetPhysique(obj); XASSERT(phy);
-	ComponentOffense* offense = Object_GetOffense(obj); XASSERT(offense);
+	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
+	ComponentPhysique* phy = Object_GetPhysique(obj); M2ASSERT(phy);
+	ComponentOffense* offense = Object_GetOffense(obj); M2ASSERT(offense);
 	Box2DBodySetLinearSpeed(phy->body, offense->state.projectile.cfg->speed_mps);
 
 	offense->state.projectile.ttl_s -= GAME->deltaTicks / 1000.0f;
@@ -16,10 +16,10 @@ static void Bullet_prePhysics(ComponentMonitor* el) {
 }
 
 static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
-	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); XASSERT(obj);
-	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); XASSERT(otherObj);
-	ComponentOffense* off = Pool_GetById(&GAME->offenses, obj->offense); XASSERT(off);
-	ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); XASSERT(defense);
+	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); M2ASSERT(obj);
+	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); M2ASSERT(otherObj);
+	ComponentOffense* off = Pool_GetById(&GAME->offenses, obj->offense); M2ASSERT(off);
+	ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); M2ASSERT(defense);
 	// Check if already collided
 	if (off->state.projectile.alreadyCollidedThisStep) {
 		return;
@@ -28,10 +28,10 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 	// Calculate damage
 	defense->hp -= ACCURACY(off->state.projectile.cfg->damage, off->state.projectile.cfg->damageAccuracy);
 	if (defense->hp <= 0.0001f && defense->onDeath) {
-		LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, off->super.objId, XOK_ID, ID, defense->super.objId);
+		LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off->super.objId, M2_ID, ID, defense->super.objId);
 		defense->onDeath(defense);
 	} else {
-		LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, off->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
+		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off->super.objId, M2_ID, ID, defense->super.objId, M2_HP, Float32, defense->hp);
 		Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
 		if (defense->onHit) {
 			defense->onHit(defense);
@@ -41,7 +41,7 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 }
 
 int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction) {
-	XERR_REFLECT(Object_Init(obj, position, false));
+	M2ERR_REFLECT(Object_Init(obj, position, false));
 	direction = Vec2F_Normalize(direction);
 
 	ComponentMonitor* el = Object_AddMonitor(obj);

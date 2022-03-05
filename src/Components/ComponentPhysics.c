@@ -5,7 +5,7 @@
 
 int ComponentPhysique_Init(ComponentPhysique* phy, ID objectId) {
 	memset(phy, 0, sizeof(ComponentPhysique));
-	XERR_REFLECT(Component_Init((Component*)phy, objectId));
+	M2ERR_REFLECT(Component_Init((Component*)phy, objectId));
 	return 0;
 }
 
@@ -20,8 +20,8 @@ void ComponentPhysique_Term(ComponentPhysique* phy) {
 void ComponentPhysique_ContactCB(Box2DContact* contact) {
 	ID phyIdA = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureA(contact))));
 	ID phyIdB = (ID) ((uintptr_t) Box2DBodyGetUserData(Box2DFixtureGetBody(Box2DContactGetFixtureB(contact))));
-	ComponentPhysique* phyA = Pool_GetById(&GAME->physics, phyIdA); XASSERT(phyA);
-	ComponentPhysique* phyB = Pool_GetById(&GAME->physics, phyIdB); XASSERT(phyB);
+	ComponentPhysique* phyA = Pool_GetById(&GAME->physics, phyIdA); M2ASSERT(phyA);
+	ComponentPhysique* phyB = Pool_GetById(&GAME->physics, phyIdB); M2ASSERT(phyB);
 	if (phyA->onCollision) { phyA->onCollision(phyA, phyB); }
 	if (phyB->onCollision) { phyB->onCollision(phyB, phyA); }
 }

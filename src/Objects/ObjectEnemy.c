@@ -6,8 +6,8 @@
 #include "../Box2DUtils.h"
 
 void ObjectEnemy_prePhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
-	Object* player = Game_FindObjectById(GAME->playerId); XASSERT(player);
+	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
+	Object* player = Game_FindObjectById(GAME->playerId); M2ASSERT(player);
 
 	CharacterState_ProcessTime(&obj->ex->enemy.characterState, GAME->deltaTime);
 	Automaton_ProcessTime(&obj->ex->enemy.aiAutomaton, GAME->deltaTime);
@@ -15,7 +15,7 @@ void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 }
 
 void ObjectEnemy_onHit(ComponentDefense* def) {
-	Object* obj = Pool_GetById(&GAME->objects, def->super.objId); XASSERT(obj);
+	Object* obj = Pool_GetById(&GAME->objects, def->super.objId); M2ASSERT(obj);
 	obj->ex->enemy.onHitColorModTtl = 0.10f;
 }
 
@@ -24,8 +24,8 @@ void ObjectEnemy_onDeath(ComponentDefense* def) {
 }
 
 static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
-	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); XASSERT(obj);
-	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
+	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); M2ASSERT(obj);
+	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); M2ASSERT(phy);
 	// We must call time before other signals
 	Automaton_ProcessTime(&obj->ex->enemy.charAnimationAutomaton, GAME->deltaTicks / 1000.0f);
 	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
@@ -47,7 +47,7 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 }
 
 void ObjectEnemy_Draw(ComponentGraphic* gfx) {
-	Object* obj = Game_FindObjectById(gfx->super.objId); XASSERT(obj);
+	Object* obj = Game_FindObjectById(gfx->super.objId); M2ASSERT(obj);
 	if (0.0f < obj->ex->enemy.onHitColorModTtl) {
 		SDL_Texture *defaultTexture = gfx->texture;
 		gfx->texture = GAME->sdlTextureMask;
@@ -57,13 +57,13 @@ void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 	} else {
 		ComponentGraphic_DefaultDraw(gfx);
 	}
-	ComponentDefense* defense = Object_GetDefense(obj); XASSERT(defense);
+	ComponentDefense* defense = Object_GetDefense(obj); M2ASSERT(defense);
 	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defense->hp / defense->maxHp);
 }
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
-	XERR_REFLECT(Object_Init(obj, position, true));
-	XERR_REFLECT(CharacterState_Init(&obj->ex->enemy.characterState, cfg));
+	M2ERR_REFLECT(Object_Init(obj, position, true));
+	M2ERR_REFLECT(CharacterState_Init(&obj->ex->enemy.characterState, cfg));
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = cfg->mainTexture->textureRect;
@@ -112,13 +112,13 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 		AiState_Init(&obj->ex->enemy.aiState, cfg->ai, position);
 		switch (cfg->ai->behavior) {
 			case CFG_AI_BEHAVIOR_CHASE:
-				XERR_REFLECT(AutomatonAiChase_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
+				M2ERR_REFLECT(AutomatonAiChase_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
 				break;
 			case CFG_AI_BEHAVIOR_KEEP_DISTANCE:
-				XERR_REFLECT(AutomatonAiKeepDistance_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
+				M2ERR_REFLECT(AutomatonAiKeepDistance_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
 				break;
 			case CFG_AI_BEHAVIOR_HIT_N_RUN:
-				XERR_REFLECT(AutomatonAiHitNRun_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
+				M2ERR_REFLECT(AutomatonAiHitNRun_Init(&obj->ex->enemy.aiAutomaton, obj, phy));
 				break;
 			default:
 				break;

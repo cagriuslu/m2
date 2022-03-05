@@ -16,12 +16,12 @@ typedef struct _TinyArray {
 typedef TinyArray TinyArrayOfIDs;
 
 // Constructors
-XErr TinyArray_Init(TinyArray* array);
+M2Err TinyArray_Init(TinyArray* array);
 
 // Modifiers
-XErr TinyArray_Append(TinyArray* array, uint64_t item);
-XErr TinyArray_Set(TinyArray* array, uint16_t index, uint64_t item);
-XErr TinyArray_Remove(TinyArray* array, uint16_t index);
+M2Err TinyArray_Append(TinyArray* array, uint64_t item);
+M2Err TinyArray_Set(TinyArray* array, uint16_t index, uint64_t item);
+M2Err TinyArray_Remove(TinyArray* array, uint16_t index);
 void TinyArray_Clear(TinyArray* array);
 
 // Accessors

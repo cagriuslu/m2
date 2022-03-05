@@ -1,9 +1,9 @@
 #include "Automaton.h"
 
-XErr Automaton_Init(Automaton* sm) {
+M2Err Automaton_Init(Automaton* sm) {
 	memset(sm, 0, sizeof(Automaton));
 	sm->alarm = NAN;
-	return XOK;
+	return M2OK;
 }
 
 void Automaton_ArmAlarm(Automaton* sm, float duration) {
@@ -15,7 +15,7 @@ void Automaton_DisarmAlarm(Automaton* sm) {
 }
 
 void Automaton_ProcessSignal(Automaton* sm, int signal) {
-	XASSERT(sm && sm->currState);
+	M2ASSERT(sm && sm->currState);
 	void* nextState = (*sm->currState)(sm, signal);
 	if (nextState) {
 		Automaton_ProcessSignal(sm, SIG_EXIT);

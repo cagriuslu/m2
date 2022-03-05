@@ -78,34 +78,34 @@ int Game_Level_Init() {
 	if (GAME->levelLoaded) {
 		Game_Level_Term();
 	}
-	XERR_REFLECT(Pool_Init(&GAME->objects, 16, sizeof(Object)));
-	XERR_REFLECT(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
-	XERR_REFLECT(Pool_Init(&GAME->monitors, 16, sizeof(ComponentMonitor)));
-	XERR_REFLECT(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysique)));
-	XERR_REFLECT(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphic)));
-	XERR_REFLECT(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphic)));
-	XERR_REFLECT(Pool_Init(&GAME->lights, 16, sizeof(ComponentLight)));
-	XERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
-	XERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
+	M2ERR_REFLECT(Pool_Init(&GAME->objects, 16, sizeof(Object)));
+	M2ERR_REFLECT(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
+	M2ERR_REFLECT(Pool_Init(&GAME->monitors, 16, sizeof(ComponentMonitor)));
+	M2ERR_REFLECT(Pool_Init(&GAME->physics, 16, sizeof(ComponentPhysique)));
+	M2ERR_REFLECT(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphic)));
+	M2ERR_REFLECT(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphic)));
+	M2ERR_REFLECT(Pool_Init(&GAME->lights, 16, sizeof(ComponentLight)));
+	M2ERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
+	M2ERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
 	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	GAME->contactListener = Box2DContactListenerRegister(ComponentPhysique_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
-	XERR_REFLECT(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
+	M2ERR_REFLECT(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
 	GAME->levelLoaded = true;
 	return 0;
 }
 
-XErr Game_Level_Load(const CfgLevel *cfg) {
+M2Err Game_Level_Load(const CfgLevel *cfg) {
 	for (int y = 0; y < cfg->h; y++) {
 		for (int x = 0; x < cfg->w; x++) {
 			const CfgLevelTile *lvlTile = cfg->tiles + y * cfg->w + x;
 			if (lvlTile->gndTile) {
 				Object *tile = Pool_Mark(&GAME->objects, NULL, NULL);
-				XERR_REFLECT(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
+				M2ERR_REFLECT(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
 			}
 			if (lvlTile->chr) {
 				Object *obj = Pool_Mark(&GAME->objects, NULL, NULL);
-				XERR_REFLECT(ObjectCharacter_InitFromCfg(obj, lvlTile->chr, VEC2F(x, y)));
+				M2ERR_REFLECT(ObjectCharacter_InitFromCfg(obj, lvlTile->chr, VEC2F(x, y)));
 			}
 		}
 	}
@@ -122,7 +122,7 @@ XErr Game_Level_Load(const CfgLevel *cfg) {
 	MarkupState_UpdatePositions(&GAME->rightHudMarkupState, GAME->rightHudRect);
 	MarkupState_UpdateElements(&GAME->rightHudMarkupState);
 
-	return XOK;
+	return M2OK;
 }
 
 void Game_Level_Term() {
@@ -152,8 +152,8 @@ void Game_DeleteList_Add(ID id) {
 
 void Game_DeleteList_DeleteAll() {
 	for (size_t i = 0; i < GAME->deleteList.length; i++) {
-		ID* objIdPtr = Array_Get(&GAME->deleteList, i); XASSERT(objIdPtr);
-		Object* obj = Pool_GetById(&GAME->objects, *objIdPtr); XASSERT(obj);
+		ID* objIdPtr = Array_Get(&GAME->deleteList, i); M2ASSERT(objIdPtr);
+		Object* obj = Pool_GetById(&GAME->objects, *objIdPtr); M2ASSERT(obj);
 		Object_Term(obj);
 		Pool_Unmark(&GAME->objects, obj);
 	}

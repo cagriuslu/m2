@@ -18,7 +18,7 @@ Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F
 	static Object* cameraObj = NULL;
 	if (GAME->cameraId && cameraId != GAME->cameraId) {
 		cameraId = GAME->cameraId;
-		cameraObj = Pool_GetById(&GAME->objects, GAME->cameraId); XASSERT(cameraObj);
+		cameraObj = Pool_GetById(&GAME->objects, GAME->cameraId); M2ASSERT(cameraObj);
 	}
 
 	Vec2F cameraPosition = cameraObj ? cameraObj->position : VEC2F_ZERO; // cameraObj is NULL while level is loading
@@ -33,7 +33,7 @@ Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F
 }
 
 void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
-	Object* obj = Pool_GetById(&GAME->objects, gfx->super.objId); XASSERT(obj);
+	Object* obj = Pool_GetById(&GAME->objects, gfx->super.objId); M2ASSERT(obj);
 
 	Vec2I obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj->position, gfx->center_px);
 	if (IsMotionBlurEnabled() == false ||
@@ -52,7 +52,7 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 				(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
 				(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
 		};
-		SDL_RenderCopyEx(GAME->sdlRenderer, gfx->texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / X_PI, &centerPoint, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(GAME->sdlRenderer, gfx->texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
 	} else {
 		Vec2I obj_displacement_on_screen = Vec2I_Sub(obj_gfx_origin_wrt_screen_center_px, gfx->prevObjGfxOriginWRTScreenCenter_px);
 		Vec2F obj_displacement_on_screen_f = Vec2F_FromVec2I(obj_displacement_on_screen);
@@ -79,7 +79,7 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 					(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
 					(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
 			};
-			SDL_RenderCopyEx(GAME->sdlRenderer, gfx->texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / X_PI, &centerPoint, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(GAME->sdlRenderer, gfx->texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
 		}
 		SDL_SetTextureAlphaMod(gfx->texture, 255);
 	}
@@ -87,8 +87,8 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 }
 
 void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio) {
-	Object* obj = Game_FindObjectById(gfx->super.objId); XASSERT(obj);
-	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId); XASSERT(camera);
+	Object* obj = Game_FindObjectById(gfx->super.objId); M2ASSERT(obj);
+	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId); M2ASSERT(camera);
 
 	Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
 	Vec2I obj_origin_wrt_screen_center = Vec2I_From2F(Vec2F_Mul(obj_origin_wrt_camera_obj, GAME->pixelsPerMeter));
@@ -127,7 +127,7 @@ void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRa
 
 int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId) {
 	memset(gfx, 0, sizeof(ComponentGraphic));
-	XERR_REFLECT(Component_Init((Component*)gfx, objectId));
+	M2ERR_REFLECT(Component_Init((Component*)gfx, objectId));
 	gfx->texture = GAME->sdlTexture;
 	gfx->draw = ComponentGraphic_DefaultDraw;
 	gfx->prevObjGfxOriginWRTScreenCenter_px = VEC2I_MIN;
@@ -141,11 +141,11 @@ void ComponentGraphic_Term(ComponentGraphic* gfx) {
 }
 
 int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB) {
-	ComponentGraphic* gfxA = Pool_GetById(&GAME->graphics, gfxIdA); XASSERT(gfxA);
-	ComponentGraphic* gfxB = Pool_GetById(&GAME->graphics, gfxIdB); XASSERT(gfxB);
+	ComponentGraphic* gfxA = Pool_GetById(&GAME->graphics, gfxIdA); M2ASSERT(gfxA);
+	ComponentGraphic* gfxB = Pool_GetById(&GAME->graphics, gfxIdB); M2ASSERT(gfxB);
 
-	Object* a = Pool_GetById(&GAME->objects, gfxA->super.objId); XASSERT(a);
-	Object* b = Pool_GetById(&GAME->objects, gfxB->super.objId); XASSERT(b);
+	Object* a = Pool_GetById(&GAME->objects, gfxA->super.objId); M2ASSERT(a);
+	Object* b = Pool_GetById(&GAME->objects, gfxB->super.objId); M2ASSERT(b);
 
 	float diff = b->position.y - a->position.y;
 	if (0 < diff) {

@@ -16,10 +16,10 @@ typedef struct _TinySet {
 typedef TinySet TinySetOfIDs;
 
 // Constructors
-XErr TinySet_Init(TinySet* ts);
+M2Err TinySet_Init(TinySet* ts);
 
 // Modifiers
-XErr TinySet_Set(TinySet* ts, uint64_t key);
+M2Err TinySet_Set(TinySet* ts, uint64_t key);
 void TinySet_Unset(TinySet* ts, uint64_t key);
 void TinySet_Clear(TinySet* ts);
 

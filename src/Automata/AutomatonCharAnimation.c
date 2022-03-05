@@ -25,13 +25,13 @@ void* CharAnimation_Up01State(struct _Automaton* sm, int signal);
 void* CharAnimation_Up02State(struct _Automaton* sm, int signal);
 void* CharAnimation_Up03State(struct _Automaton* sm, int signal);
 
-XErr AutomatonCharAnimation_Init(Automaton *sm, const void* cfgCharacter, void* gfx) {
-	XERR_REFLECT(Automaton_Init(sm));
+M2Err AutomatonCharAnimation_Init(Automaton *sm, const void* cfgCharacter, void* gfx) {
+	M2ERR_REFLECT(Automaton_Init(sm));
 	sm->currState = CharAnimation_IdleState;
 	sm->userData_cfg = cfgCharacter;
 	sm->userData_gfx = gfx;
 	Automaton_ProcessSignal(sm, SIG_ENTER);
-	return XOK;
+	return M2OK;
 }
 
 void* CharAnimation_IdleState(struct _Automaton* sm, int signal) {

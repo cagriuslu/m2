@@ -15,9 +15,9 @@ static Box2DBody* ObjectExplosive_CreateCollisionCircleBody(ID phyId, Vec2F posi
 }
 
 static void ObjectExplosive_prePhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
-	ComponentPhysique* phy = Object_GetPhysique(obj); XASSERT(phy && phy->body);
-	ComponentOffense* off = Object_GetOffense(obj); XASSERT(off);
+	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
+	ComponentPhysique* phy = Object_GetPhysique(obj); M2ASSERT(phy && phy->body);
+	ComponentOffense* off = Object_GetOffense(obj); M2ASSERT(off);
 
 	switch (off->state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_IN_FLIGHT:
@@ -38,8 +38,8 @@ static void ObjectExplosive_prePhysics(ComponentMonitor* el) {
 }
 
 static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
-	Object* obj = Game_FindObjectById(phy->super.objId); XASSERT(obj);
-	ComponentOffense* off = Object_GetOffense(obj); XASSERT(off);
+	Object* obj = Game_FindObjectById(phy->super.objId); M2ASSERT(obj);
+	ComponentOffense* off = Object_GetOffense(obj); M2ASSERT(off);
 
 	switch (off->state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_IN_FLIGHT:
@@ -48,9 +48,9 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 			off->state.explosive.explosiveStatus = EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP;
 			break;
 		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
-			Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); XASSERT(otherObj);
+			Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); M2ASSERT(otherObj);
 			if (otherObj->defense) {
-				ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); XASSERT(defense);
+				ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); M2ASSERT(defense);
 				// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
 				float distance = Vec2F_Distance(otherObj->position, obj->position);
 				float damageRadius = off->state.explosive.cfg->damageRadius_m;
@@ -62,10 +62,10 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 					defense->hp -= damage;
 					if (defense->hp <= 0.0001f && defense->onDeath) {
 						// TODO fix XOK message
-						LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, off->super.objId, XOK_ID, ID, defense->super.objId);
+						LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off->super.objId, M2_ID, ID, defense->super.objId);
 						defense->onDeath(defense);
 					} else {
-						LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, off->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
+						LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off->super.objId, M2_ID, ID, defense->super.objId, M2_HP, Float32, defense->hp);
 						Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
 						if (defense->onHit) {
 							defense->onHit(defense);
@@ -81,9 +81,9 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 }
 
 static void ObjectExplosive_postPhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
-	ComponentPhysique* phy = Object_GetPhysique(obj); XASSERT(phy);
-	ComponentOffense* off = Object_GetOffense(obj); XASSERT(off);
+	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
+	ComponentPhysique* phy = Object_GetPhysique(obj); M2ASSERT(phy);
+	ComponentOffense* off = Object_GetOffense(obj); M2ASSERT(off);
 
 	switch (off->state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
@@ -98,8 +98,8 @@ static void ObjectExplosive_postPhysics(ComponentMonitor* el) {
 	}
 }
 
-XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID originatorId, Vec2F position, Vec2F direction) {
-	XERR_REFLECT(Object_Init(obj, position, false));
+M2Err ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID originatorId, Vec2F position, Vec2F direction) {
+	M2ERR_REFLECT(Object_Init(obj, position, false));
 	direction = Vec2F_Normalize(direction);
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
@@ -129,5 +129,5 @@ XErr ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origin
 	off->state.explosive.projectileTtl_s = cfg->projectileTtl_s;
 	off->state.explosive.explosiveStatus = EXPLOSIVE_STATUS_IN_FLIGHT;
 
-	return XOK;
+	return M2OK;
 }

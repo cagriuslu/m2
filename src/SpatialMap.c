@@ -27,7 +27,7 @@ typedef struct _SpatialMapItem {
 int SpatialMap_Init(SpatialMap* sm, size_t dataSize) {
 	memset(sm, 0, sizeof(SpatialMap));
 	sm->dataSize = dataSize;
-	XERR_REFLECT(Pool_Init(&sm->bucket, 16, sizeof(SpatialMapItem) + dataSize));
+	M2ERR_REFLECT(Pool_Init(&sm->bucket, 16, sizeof(SpatialMapItem) + dataSize));
 	sm->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	// TODO proper error check
 	return 0;

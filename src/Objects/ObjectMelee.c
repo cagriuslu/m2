@@ -6,8 +6,8 @@
 #define SWING_SPEED (15.0f)
 
 static void Sword_prePhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
-	ComponentOffense* offense = Object_GetOffense(obj); XASSERT(offense);
+	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
+	ComponentOffense* offense = Object_GetOffense(obj); M2ASSERT(offense);
 	offense->state.melee.ttl_s -= GAME->deltaTicks / 1000.0f;
 	if (offense->state.melee.ttl_s <= 0) {
 		Game_DeleteList_Add(el->super.objId);
@@ -15,10 +15,10 @@ static void Sword_prePhysics(ComponentMonitor* el) {
 }
 
 static void Sword_postPhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId); XASSERT(obj);
-	ComponentPhysique* phy = Object_GetPhysique(obj); XASSERT(phy);
-	ComponentGraphic* gfx = Object_GetGraphic(obj); XASSERT(gfx);
-	ComponentOffense* off = Object_GetOffense(obj); XASSERT(off);
+	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
+	ComponentPhysique* phy = Object_GetPhysique(obj); M2ASSERT(phy);
+	ComponentGraphic* gfx = Object_GetGraphic(obj); M2ASSERT(gfx);
+	ComponentOffense* off = Object_GetOffense(obj); M2ASSERT(off);
 	Object* originator = Pool_GetById(&GAME->objects, off->originator);
 	// Make sure originator is still alive
 	// TODO what if an object is destroyed, then a new one is created with the same ID?
@@ -29,18 +29,18 @@ static void Sword_postPhysics(ComponentMonitor* el) {
 }
 
 static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
-	LOG_DBG("Collision");
-	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); XASSERT(obj);
-	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); XASSERT(otherObj);
-	ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offense); XASSERT(offense);
-	ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); XASSERT(defense);
+	LOG_DEBUG("Collision");
+	Object* obj = Pool_GetById(&GAME->objects, phy->super.objId); M2ASSERT(obj);
+	Object* otherObj = Pool_GetById(&GAME->objects, other->super.objId); M2ASSERT(otherObj);
+	ComponentOffense* offense = Pool_GetById(&GAME->offenses, obj->offense); M2ASSERT(offense);
+	ComponentDefense* defense = Pool_GetById(&GAME->defenses, otherObj->defense); M2ASSERT(defense);
 	// Calculate damage
 	defense->hp -= offense->state.melee.cfg->damage;
 	if (defense->hp <= 0.0001f && defense->onDeath) {
-		LOG2XV_TRC(XOK_PROJECTILE_DEATH, ID, offense->super.objId, XOK_ID, ID, defense->super.objId);
+		LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, offense->super.objId, M2_ID, ID, defense->super.objId);
 		defense->onDeath(defense);
 	} else {
-		LOG3XV_TRC(XOK_PROJECTILE_DMG, ID, offense->super.objId, XOK_ID, ID, defense->super.objId, XOK_HP, Float32, defense->hp);
+		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, offense->super.objId, M2_ID, ID, defense->super.objId, M2_HP, Float32, defense->hp);
 		Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Vec2F_Sub(otherObj->position, obj->position)), 15000.0f), true);
 		if (defense->onHit) {
 			defense->onHit(defense);
@@ -49,7 +49,7 @@ static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) 
 }
 
 int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, Vec2F position, Vec2F direction) {
-	XERR_REFLECT(Object_Init(obj, position, false));
+	M2ERR_REFLECT(Object_Init(obj, position, false));
 
 	const float theta = Vec2F_AngleRads(direction); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);

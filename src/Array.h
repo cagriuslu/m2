@@ -19,13 +19,13 @@ typedef Array ArrayOfVec2Is;
 typedef Array ArrayOfVec2Fs;
 
 // Constructors
-XErr Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize, void (*itemTerm)(void*));
+M2Err Array_Init(Array* array, size_t itemSize, size_t initCapacity, size_t maxSize, void (*itemTerm)(void*));
 
 // Modifiers
 void* Array_Append(Array* array, void* item);
 void Array_Remove(Array* array, size_t index);
 void Array_Clear(Array* array);
-XErr Array_Shrink(Array* array);
+M2Err Array_Shrink(Array* array);
 
 // Accessors
 size_t Array_Length(Array* array);

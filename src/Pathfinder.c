@@ -15,7 +15,7 @@
 
 int PathfinderMap_Init(PathfinderMap* pm) {
 	memset(pm, 0, sizeof(PathfinderMap));
-	XERR_REFLECT(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
+	M2ERR_REFLECT(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
 
 	for (ComponentPhysique* phy = Pool_GetFirst(&GAME->physics); phy; phy = Pool_GetNext(&GAME->physics, phy)) {
 		Object* obj = Pool_GetById(&GAME->objects, phy->super.objId);
@@ -54,16 +54,16 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 	memset(pm, 0, sizeof(PathfinderMap));
 }
 
-XErr PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is) {
+M2Err PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is) {
 	List gridSteps;
 	List_Init(&gridSteps, sizeof(Vec2I));
 
-	XErr pathfinderResult = _PathfinderMap_FindGridSteps(pm, from, to, &gridSteps);
-	XErr anyAngleResult = XERR_PATH_NOT_FOUND;
-	if (pathfinderResult == XOK) {
+	M2Err pathfinderResult = _PathfinderMap_FindGridSteps(pm, from, to, &gridSteps);
+	M2Err anyAngleResult = M2ERR_PATH_NOT_FOUND;
+	if (pathfinderResult == M2OK) {
 		_PathfinderMap_GridStepsToAnyAngle(&gridSteps, outReverseListOfVec2Is);
 		if (1 < List_Length(outReverseListOfVec2Is)) {
-			anyAngleResult = XOK;
+			anyAngleResult = M2OK;
 		}
 	} else {
 		List_Clear(outReverseListOfVec2Is);
@@ -78,7 +78,7 @@ typedef struct _PriorityListItem {
 	Vec2I position;
 } PriorityListItem;
 
-XErr _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
+M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
 	Vec2I from = Vec2I_From2F(fromF);
 	Vec2I to = Vec2I_From2F(toF);
 
@@ -182,13 +182,13 @@ XErr _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Lis
 		List_Remove(&frontiers, frontierIterator);
 	}
 
-	XErr result;
+	M2Err result;
 	// Check if there is a path
 	Vec2I* currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(to));
 	if (currentCameFrom == NULL) {
-		result = XERR_PATH_NOT_FOUND;
+		result = M2ERR_PATH_NOT_FOUND;
 	} else {
-		result = XOK;
+		result = M2OK;
 
 		List_Clear(outReverseListOfVec2Is);
 		// Add `to` to list

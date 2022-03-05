@@ -12,9 +12,9 @@
 // Double tap directional buttons to dodge
 
 static void Player_prePhysics(ComponentMonitor* el) {
-	Object* obj = Pool_GetById(&GAME->objects, el->super.objId); XASSERT(obj);
+	Object* obj = Pool_GetById(&GAME->objects, el->super.objId); M2ASSERT(obj);
 
-	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
+	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); M2ASSERT(phy);
 	Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
 	if (GAME->events.keyStates[KEY_UP]) {
 		moveDirection.y += -1.0f;
@@ -42,10 +42,10 @@ static void Player_prePhysics(ComponentMonitor* el) {
 		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
 		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
 		float accuracy = obj->ex->player.characterState.cfg->defaultRangedWeapon->accuracy;
-		float angle = Vec2F_AngleRads(direction) + (X_PI * randf() * (1 - accuracy)) - (X_PI * ((1 - accuracy) / 2.0f));
+		float angle = Vec2F_AngleRads(direction) + (M2_PI * randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
 		ObjectProjectile_InitFromCfg(projectile, &obj->ex->player.characterState.cfg->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
 		// Knockback
-		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_FromAngle(angle + X_PI), 500.0f), true);
+		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_FromAngle(angle + M2_PI), 500.0f), true);
 		// TODO set looking direction here as well
 		obj->ex->player.characterState.rangedWeaponState.cooldownCounter_s = 0;
 	}
@@ -62,12 +62,12 @@ static void Player_prePhysics(ComponentMonitor* el) {
 }
 
 static void Player_onDeath(ComponentDefense *def) {
-	LOG_INF("Player died");
+	LOG_INFO("Player died");
 }
 
 static void Player_postPhysics(ComponentMonitor* monitor) {
-	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); XASSERT(obj);
-	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); XASSERT(phy);
+	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); M2ASSERT(obj);
+	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); M2ASSERT(phy);
 	// We must call time before other signals
 	Automaton_ProcessTime(&obj->ex->player.charAnimationAutomaton, GAME->deltaTime);
 	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
@@ -77,8 +77,8 @@ static void Player_postPhysics(ComponentMonitor* monitor) {
 }
 
 int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
-	XERR_REFLECT(Object_Init(obj, position, true));
-	XERR_REFLECT(CharacterState_Init(&obj->ex->player.characterState, cfg));
+	M2ERR_REFLECT(Object_Init(obj, position, true));
+	M2ERR_REFLECT(CharacterState_Init(&obj->ex->player.characterState, cfg));
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Player_prePhysics;
@@ -109,5 +109,5 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 	AutomatonCharAnimation_Init(&obj->ex->player.charAnimationAutomaton, cfg, gfx);
 
 	GAME->playerId = Pool_GetId(&GAME->objects, obj);
-	return XOK;
+	return M2OK;
 }

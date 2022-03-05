@@ -27,7 +27,7 @@ typedef struct _Pool {
 	unsigned poolCapacityInBits; // max:16 -> 65536
 } Pool;
 
-XErr Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize);
+M2Err Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize);
 void Pool_Term(Pool* pool);
 
 void* Pool_Mark(Pool* pool, void* copy, ID* outId);

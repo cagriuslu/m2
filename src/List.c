@@ -9,7 +9,7 @@ typedef struct _ListItem {
 
 int List_Init(List* list, size_t itemSize) {
 	memset(list, 0, sizeof(List));
-	XERR_REFLECT(Pool_Init(&list->bucket, 16, sizeof(ListItem) + itemSize));
+	M2ERR_REFLECT(Pool_Init(&list->bucket, 16, sizeof(ListItem) + itemSize));
 	list->dataSize = itemSize;
 	return 0;
 }

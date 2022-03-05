@@ -46,7 +46,7 @@ typedef struct _Object {
 	ObjectEx* ex;
 } Object;
 
-XErr Object_Init(Object* obj, Vec2F position, bool initExtra);
+M2Err Object_Init(Object* obj, Vec2F position, bool initExtra);
 
 ComponentMonitor* Object_GetMonitor(Object* obj);
 ComponentPhysique* Object_GetPhysique(Object* obj);
