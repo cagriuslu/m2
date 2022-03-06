@@ -74,7 +74,7 @@ typedef struct _Game {
 	ID cameraId, playerId, pointerId;
 	Array deleteList; // List of Object IDs
 	PathfinderMap pathfinderMap;
-	MarkupState leftHudMarkupState, rightHudMarkupState;
+	UIState leftHudUIState, rightHudUIState;
 
 	////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// GAME /////////////////////////////////

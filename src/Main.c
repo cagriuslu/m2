@@ -2,7 +2,7 @@
 #include "Box2D.h"
 #include "Object.h"
 #include "Array.h"
-#include "Markup.h"
+#include "UI.h"
 #include "Component.h"
 #include "Event.h"
 #include "Pool.h"
@@ -164,17 +164,17 @@ int main(int argc, char **argv) {
 //		SDL_PauseAudioDevice(audioDeviceId, 1);
 //	}
 
-	CfgMarkupButtonType startMenuPressedButtonType;
-	M2Err startMenuResult = Markup_ExecuteBlocking(&CFG_MARKUP_START_MENU, &startMenuPressedButtonType);
+	CfgUIButtonType startMenuPressedButtonType;
+	M2Err startMenuResult = UI_ExecuteBlocking(&CFG_UI_STARTMENU, &startMenuPressedButtonType);
 	if (startMenuResult == M2ERR_QUIT) {
 		return 0;
 	} else if (!startMenuResult) {
-		if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_NEW_GAME) {
+		if (startMenuPressedButtonType == CFG_UI_BUTTON_TYPE_NEW_GAME) {
 			M2ERR_REFLECT(Game_Level_Init());
 			M2ERR_REFLECT(Game_Level_Load(&CFG_LVL_SP000));
 			M2ERR_REFLECT(PathfinderMap_Init(&GAME->pathfinderMap));
 			LOG_INFO("Level loaded");
-		} else if (startMenuPressedButtonType == CFG_MARKUP_BUTTON_TYPE_QUIT) {
+		} else if (startMenuPressedButtonType == CFG_UI_BUTTON_TYPE_QUIT) {
 			return 0;
 		} else {
 			// Unknown button
@@ -210,8 +210,8 @@ int main(int argc, char **argv) {
 			// Handle window resize event
 			if (GAME->events.windowResizeEvent) {
 				Game_UpdateWindowDimensions(GAME->events.windowDims.x, GAME->events.windowDims.y);
-				MarkupState_UpdatePositions(&GAME->leftHudMarkupState, GAME->leftHudRect);
-				MarkupState_UpdatePositions(&GAME->rightHudMarkupState, GAME->rightHudRect);
+				UIState_UpdatePositions(&GAME->leftHudUIState, GAME->leftHudRect);
+				UIState_UpdatePositions(&GAME->rightHudUIState, GAME->rightHudRect);
 			}
 			if (!SDL_IsTextInputActive()) {
 				// Handle key events
@@ -225,12 +225,12 @@ int main(int argc, char **argv) {
 					LOG_INFO("SDL text input activated");
 				}
 				// Handle HUD events (mouse and key)
-				CfgMarkupButtonType pressedButton;
-				if (MarkupState_HandleEvents(&GAME->leftHudMarkupState, &GAME->events, &pressedButton)) {
+				CfgUIButtonType pressedButton;
+				if (UIState_HandleEvents(&GAME->leftHudUIState, &GAME->events, &pressedButton)) {
 					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
 					// There are no hud buttons yet that we care about
 				}
-				if (MarkupState_HandleEvents(&GAME->rightHudMarkupState, &GAME->events, &pressedButton)) {
+				if (UIState_HandleEvents(&GAME->rightHudUIState, &GAME->events, &pressedButton)) {
 					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
 					// There are no hud buttons yet that we care about
 				}
@@ -336,11 +336,11 @@ int main(int argc, char **argv) {
 		for (ComponentMonitor* el = Pool_GetFirst(&GAME->monitors); el; el = Pool_GetNext(&GAME->monitors, el)) {
 			if (el->postGraphics) { el->postGraphics(el); }
 		} // TODO Hard to parallelize
-		// Draw Markup HUD
-		MarkupState_UpdateElements(&GAME->leftHudMarkupState);
-		MarkupState_UpdateElements(&GAME->rightHudMarkupState);
-		MarkupState_Draw(&GAME->leftHudMarkupState);
-		MarkupState_Draw(&GAME->rightHudMarkupState);
+		// Draw HUD
+		UIState_UpdateElements(&GAME->leftHudUIState);
+		UIState_UpdateElements(&GAME->rightHudUIState);
+		UIState_Draw(&GAME->leftHudUIState);
+		UIState_Draw(&GAME->rightHudUIState);
 		// Draw envelope
 		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->firstEnvelopeRect);

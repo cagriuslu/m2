@@ -321,73 +321,73 @@ typedef struct _CfgLevelTile CfgLevelTile;
 extern const CfgLevel CFG_LVL_SP000;
 
 ////////////////////////////////////////////////////////////////////////
-//////////////////////////////// MARKUP ////////////////////////////////
+////////////////////////////////// UI //////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
-typedef enum _CfgMarkupButtonType {
-	CFG_MARKUP_BUTTON_TYPE_INVALID = 0,
-	CFG_MARKUP_BUTTON_TYPE_NEW_GAME,
-	CFG_MARKUP_BUTTON_TYPE_QUIT,
-	CFG_MARKUP_BUTTON_TYPE_RESUME,
-} CfgMarkupButtonType;
-typedef enum _CfgMarkupDynamicTextType {
-	CFG_MARKUP_DYNAMIC_TEXT_TYPE_INVALID = 0,
-	CFG_MARKUP_DYNAMIC_TEXT_TYPE_HP
-} CfgMarkupDynamicTextType;
-typedef enum _CfgMarkupDynamicImageType {
-	CFG_MARKUP_DYNAMIC_IMAGE_TYPE_INVALID = 0,
-} CfgMarkupDynamicImageType;
-typedef enum _CfgMarkupElementType {
-	CFG_MARKUP_ELEMENT_TYPE_INVALID = 0,
-	CFG_MARKUP_ELEMENT_TYPE_MARKUP,
-	CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT,
-	CFG_MARKUP_ELEMENT_TYP_STATIC_TEXT_BUTTON,
-	CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE,
-	CFG_MARKUP_ELEMENT_TYP_STATIC_IMAGE_BUTTON,
-	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT,
-	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON,
-	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE,
-	CFG_MARKUP_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON,
-} CfgMarkupElementType;
-struct _CfgMarkup;
-typedef struct _CfgMarkupElement {
+typedef enum _CfgUIButtonType {
+	CFG_UI_BUTTON_TYPE_INVALID = 0,
+	CFG_UI_BUTTON_TYPE_NEW_GAME,
+	CFG_UI_BUTTON_TYPE_QUIT,
+	CFG_UI_BUTTON_TYPE_RESUME,
+} CfgUIButtonType;
+typedef enum _CfgUIDynamicTextType {
+	CFG_UI_DYNAMIC_TEXT_TYPE_INVALID = 0,
+	CFG_UI_DYNAMIC_TEXT_TYPE_HP
+} CfgUIDynamicTextType;
+typedef enum _CfgUIDynamicImageType {
+	CFG_UI_DYNAMIC_IMAGE_TYPE_INVALID = 0,
+} CfgUIDynamicImageType;
+typedef enum _CfgUIElementType {
+	CFG_UI_ELEMENT_TYPE_INVALID = 0,
+	CFG_UI_ELEMENT_TYP_UI,
+	CFG_UI_ELEMENT_TYP_STATIC_TEXT,
+	CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
+	CFG_UI_ELEMENT_TYP_STATIC_IMAGE,
+	CFG_UI_ELEMENT_TYP_STATIC_IMAGE_BUTTON,
+	CFG_UI_ELEMENT_TYP_DYNAMIC_TEXT,
+	CFG_UI_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON,
+	CFG_UI_ELEMENT_TYP_DYNAMIC_IMAGE,
+	CFG_UI_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON,
+} CfgUIElementType;
+struct _CfgUI;
+typedef struct _CfgUIElement {
 	unsigned x, y, w, h; // unitless
 	unsigned borderWidth_px;
 	SDL_Color backgroundColor;
 	
-	CfgMarkupElementType type;
-	// Exists for MARKUP
-	const struct _CfgMarkup* child;
+	CfgUIElementType type;
+	// Exists for UI
+	const struct _CfgUI* child;
 	// Exists for STATIC_TEXT, STATIC_TEXT_BUTTON
 	const char* text;
 	// Exists for STATIC_TEXT_BUTTON, STATIC_IMAGE_BUTTON, DYNAMIC_TEXT_BUTTON, DYNAMIC_IMAGE_BUTTON
-	CfgMarkupButtonType buttonType;
+	CfgUIButtonType buttonType;
 	SDL_Scancode keyboardShortcut;
 	// Exists for STATIC_IMAGE, STATIC_IMAGE_BUTTON
 	const CfgObjectTexture* texture;
 	// Exists for DYNAMIC_TEXT, DYNAMIC_TEXT_BUTTON
-	CfgMarkupDynamicTextType textType;
+	CfgUIDynamicTextType textType;
 	// Exists for DYNAMIC_IMAGE, DYNAMIC_IMAGE_BUTTON
-	CfgMarkupDynamicImageType imageType;
+	CfgUIDynamicImageType imageType;
 	
-	const struct _CfgMarkupElement* next;
-} CfgMarkupElement;
-typedef struct _CfgMarkup {
+	const struct _CfgUIElement* next;
+} CfgUIElement;
+typedef struct _CfgUI {
 	unsigned w, h; // unitless
 	unsigned borderWidth_px;
 	SDL_Color backgroundColor;
-	const CfgMarkupElement* firstElement;
-} CfgMarkup;
-DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgMarkupElement);
-extern const CfgMarkup CFG_MARKUP_START_MENU;
-extern const CfgMarkup CFG_MARKUP_PAUSE_MENU;
-extern const CfgMarkup CFG_MARKUP_HUD_LEFT;
-extern const CfgMarkup CFG_MARKUP_HUD_RIGHT;
-typedef struct _MarkupElementState {
+	const CfgUIElement* firstElement;
+} CfgUI;
+DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgUIElement);
+extern const CfgUI CFG_UI_STARTMENU;
+extern const CfgUI CFG_UI_PAUSEMENU;
+extern const CfgUI CFG_UI_HUDLEFT;
+extern const CfgUI CFG_UI_HUDRIGHT;
+typedef struct _UIElementState {
 	SDL_Rect rect;
-	const CfgMarkupElement* cfg;
+	const CfgUIElement* cfg;
 
-	// Exists for MARKUP
-	struct _MarkupState* child;
+	// Exists for UI
+	struct _UIState* child;
 	// Exists for STATIC_TEXT, STATIC_TEXT_BUTTON, DYNAMIC_TEXT, DYNAMIC_TEXT_BUTTON
 	SDL_Texture* textTexture;
 	// Exists for STATIC_TEXT_BUTTON, STATIC_IMAGE_BUTTON, DYNAMIC_TEXT_BUTTON, DYNAMIC_IMAGE_BUTTON
@@ -395,12 +395,12 @@ typedef struct _MarkupElementState {
 	// Exists for DYNAMIC_IMAGE, DYNAMIC_IMAGE_BUTTON
 	const CfgObjectTexture* texture;
 	
-	struct _MarkupElementState* next;
-} MarkupElementState;
-typedef struct _MarkupState {
-	const CfgMarkup *cfg;
+	struct _UIElementState* next;
+} UIElementState;
+typedef struct _UIState {
+	const CfgUI *cfg;
 	SDL_Rect rect;
-	MarkupElementState* firstElement;
-} MarkupState;
+	UIElementState* firstElement;
+} UIState;
 
 #endif

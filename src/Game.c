@@ -3,7 +3,7 @@
 #include "Component.h"
 #include "Box2D.h"
 #include "Cfg.h"
-#include "Markup.h"
+#include "UI.h"
 #include "Def.h"
 
 Game* gCurrentGame;
@@ -114,13 +114,13 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 	Object* pointer = Pool_Mark(&GAME->objects, NULL, &GAME->pointerId);
 	ObjectPointer_Init(pointer);
 
-	MarkupState_Init(&GAME->leftHudMarkupState, &CFG_MARKUP_HUD_LEFT);
-	MarkupState_UpdatePositions(&GAME->leftHudMarkupState, GAME->leftHudRect);
-	MarkupState_UpdateElements(&GAME->leftHudMarkupState);
+	UIState_Init(&GAME->leftHudUIState, &CFG_UI_HUDLEFT);
+	UIState_UpdatePositions(&GAME->leftHudUIState, GAME->leftHudRect);
+	UIState_UpdateElements(&GAME->leftHudUIState);
 
-	MarkupState_Init(&GAME->rightHudMarkupState, &CFG_MARKUP_HUD_RIGHT);
-	MarkupState_UpdatePositions(&GAME->rightHudMarkupState, GAME->rightHudRect);
-	MarkupState_UpdateElements(&GAME->rightHudMarkupState);
+	UIState_Init(&GAME->rightHudUIState, &CFG_UI_HUDRIGHT);
+	UIState_UpdatePositions(&GAME->rightHudUIState, GAME->rightHudRect);
+	UIState_UpdateElements(&GAME->rightHudUIState);
 
 	return M2OK;
 }
