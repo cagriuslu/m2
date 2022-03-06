@@ -325,9 +325,10 @@ extern const CfgLevel CFG_LVL_SP000;
 ////////////////////////////////////////////////////////////////////////
 typedef enum _CfgUIButtonType {
 	CFG_UI_BUTTON_TYPE_INVALID = 0,
-	CFG_UI_BUTTON_TYPE_NEW_GAME,
 	CFG_UI_BUTTON_TYPE_QUIT,
-	CFG_UI_BUTTON_TYPE_RESUME,
+	CFG_UI_BUTTON_TYPE_NEW_GAME, // TODO get rid of
+	CFG_UI_BUTTON_TYPE_RESUME,   // TODO get rid of
+	CFG_UI_BUTTON_TYPE_N
 } CfgUIButtonType;
 typedef enum _CfgUIDynamicTextType {
 	CFG_UI_DYNAMIC_TEXT_TYPE_INVALID = 0,
@@ -353,8 +354,9 @@ typedef struct _CfgUIElement {
 	unsigned x, y, w, h; // unitless
 	unsigned borderWidth_px;
 	SDL_Color backgroundColor;
-	
+
 	CfgUIElementType type;
+
 	// Exists for UI
 	const struct _CfgUI* child;
 	// Exists for STATIC_TEXT, STATIC_TEXT_BUTTON

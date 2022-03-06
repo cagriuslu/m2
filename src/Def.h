@@ -80,11 +80,11 @@ const char* M2Err_ToString(M2Err e);
 			return (err);   \
 		}                   \
 	} while (0)
-#define M2ERR_REFLECT(fcall)     \
-	do {                         \
+#define M2ERR_REFLECT(fcall)      \
+	do {                          \
 		M2Err __result = (fcall); \
-		if (__result < 0)        \
-			return __result;     \
+		if (__result < 0)         \
+			return __result;      \
 	} while (0)
 #define M2ERR_REFLECT_CLEANUP(fcall, cleanup) \
 	do {                         \
