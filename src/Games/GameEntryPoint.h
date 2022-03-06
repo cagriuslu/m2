@@ -5,6 +5,10 @@
 
 typedef struct _GameEntryPoint {
 	const CfgUI* entryUi;
+	M2Err(*entryUiButtonHandler)(CfgUIButtonType);
+	const CfgUI* pauseUi;
+	M2Err(*pauseUiButtonHandler)(CfgUIButtonType);
+	
 	void (*destructor)(struct _GameEntryPoint*);
 } GameEntryPoint;
 

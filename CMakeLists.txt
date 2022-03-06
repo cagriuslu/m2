@@ -9,7 +9,11 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-file(GLOB m2_SOURCES "src/*.h" "src/*.c" "src/*/*.c" "src/*/*/*.c" "src/*.cpp")
+file(GLOB m2_SOURCES
+    "src/*.h" "src/*.c"
+    "src/*/*.h" "src/*/*.c"
+    "src/*/*/*.h" "src/*/*/*.c"
+    "src/*.cpp")
 add_executable(m2 WIN32 ${m2_SOURCES})
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_include_directories(m2 PUBLIC /usr/local/include/box2d /usr/local/include/SDL2)
