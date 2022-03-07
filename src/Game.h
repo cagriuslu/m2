@@ -9,6 +9,7 @@
 #include "Cfg.h"
 #include "Pathfinder.h"
 #include "SpatialMap.h"
+#include "Games/GameEntryPoint.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 
@@ -85,6 +86,7 @@ typedef struct _Game {
 	Vec2F mousePositionInWorld; // in world coordinates
 	Vec2F mousePositionWRTScreenCenter_m;
 	char consoleInput[1024];
+	GameEntryPoint gameEntryPoint;
 } Game;
 
 #define GAME (gCurrentGame)

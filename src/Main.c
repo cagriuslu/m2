@@ -164,6 +164,24 @@ int main(int argc, char **argv) {
 //		SDL_PauseAudioDevice(audioDeviceId, 1);
 //	}
 
+	M2Err result = GameEntryPoint_InitLauncher(&GAME->gameEntryPoint);
+	if (result) {
+		LOG_FATAL_M2(result);
+		return 1;
+	}
+	CfgUIButtonType launcherButton;
+	result = UI_ExecuteBlocking(GAME->gameEntryPoint.entryUi, &launcherButton);
+	if (result == M2ERR_QUIT) {
+		return 0;
+	} else if (result) {
+		LOG_FATAL_M2(result);
+		return 1;
+	}
+	M2Err handlerResult = GAME->gameEntryPoint.entryUiButtonHandler(launcherButton);
+	if (handlerResult) {
+		LOG_ERROR_M2(handlerResult);
+	}
+
 	CfgUIButtonType startMenuPressedButtonType;
 	M2Err startMenuResult = UI_ExecuteBlocking(&CFG_UI_STARTMENU, &startMenuPressedButtonType);
 	if (startMenuResult == M2ERR_QUIT) {
