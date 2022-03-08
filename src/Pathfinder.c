@@ -53,22 +53,38 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 }
 
 M2Err PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is) {
-	List gridSteps;
-	List_Init(&gridSteps, sizeof(Vec2I));
+	// Check if there is direct eyesight
+	if (Box2DUtils_CheckEyeSight(from, to, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF)) {
+		Vec2I fromI = Vec2I_From2F(from);
+		Vec2I toI = Vec2I_From2F(to);
 
-	M2Err pathfinderResult = _PathfinderMap_FindGridSteps(pm, from, to, &gridSteps);
-	M2Err anyAngleResult = M2ERR_PATH_NOT_FOUND;
-	if (pathfinderResult == M2OK) {
-		_PathfinderMap_GridStepsToAnyAngle(&gridSteps, outReverseListOfVec2Is);
-		if (1 < List_Length(outReverseListOfVec2Is)) {
-			anyAngleResult = M2OK;
+		List_Clear(outReverseListOfVec2Is);
+		// Add `to` to list
+		List_Append(outReverseListOfVec2Is, &toI, NULL);
+		// Add `from` to list, if it is different than `to`
+		if (Vec2I_Equals(fromI, toI)) {
+			return M2ERR_PATH_NOT_FOUND;
+		} else {
+			List_Append(outReverseListOfVec2Is, &fromI, NULL);
+			return M2OK;
 		}
 	} else {
-		List_Clear(outReverseListOfVec2Is);
-	}
+		List gridSteps;
+		List_Init(&gridSteps, sizeof(Vec2I));
 
-	List_Term(&gridSteps);
-	return anyAngleResult;
+		M2Err anyAngleResult = M2ERR_PATH_NOT_FOUND;
+		if (_PathfinderMap_FindGridSteps(pm, from, to, &gridSteps) == M2OK) {
+			_PathfinderMap_GridStepsToAnyAngle(&gridSteps, outReverseListOfVec2Is);
+			if (1 < List_Length(outReverseListOfVec2Is)) {
+				anyAngleResult = M2OK;
+			}
+		} else {
+			List_Clear(outReverseListOfVec2Is);
+		}
+
+		List_Term(&gridSteps);
+		return anyAngleResult;
+	}
 }
 
 typedef struct _PriorityListItem {
