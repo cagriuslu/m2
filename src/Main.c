@@ -164,42 +164,16 @@ int main(int argc, char **argv) {
 //		SDL_PauseAudioDevice(audioDeviceId, 1);
 //	}
 
+	// Load Launcher
 	M2Err result = GameEntryPoint_InitLauncher(&GAME->gameEntryPoint);
 	if (result) {
 		LOG_FATAL_M2(result);
 		return 1;
 	}
-	CfgUIButtonType launcherButton;
-	result = UI_ExecuteBlocking(GAME->gameEntryPoint.entryUi, &launcherButton);
+	result = GameEntryPoint_ExecuteEntryUI(&GAME->gameEntryPoint);
 	if (result == M2ERR_QUIT) {
 		return 0;
 	} else if (result) {
-		LOG_FATAL_M2(result);
-		return 1;
-	}
-	M2Err handlerResult = GAME->gameEntryPoint.entryUiButtonHandler(launcherButton);
-	if (handlerResult) {
-		LOG_ERROR_M2(handlerResult);
-	}
-
-	CfgUIButtonType startMenuPressedButtonType;
-	M2Err startMenuResult = UI_ExecuteBlocking(&CFG_UI_STARTMENU, &startMenuPressedButtonType);
-	if (startMenuResult == M2ERR_QUIT) {
-		return 0;
-	} else if (!startMenuResult) {
-		if (startMenuPressedButtonType == CFG_UI_BUTTON_TYPE_NEW_GAME) {
-			M2ERR_REFLECT(Game_Level_Init());
-			M2ERR_REFLECT(Game_Level_Load(&CFG_LVL_SP000));
-			M2ERR_REFLECT(PathfinderMap_Init(&GAME->pathfinderMap));
-			LOG_INFO("Level loaded");
-		} else if (startMenuPressedButtonType == CFG_UI_BUTTON_TYPE_QUIT) {
-			return 0;
-		} else {
-			// Unknown button
-			return 1;
-		}
-	} else {
-		// No specific errors are defined yet
 		return 1;
 	}
 

@@ -324,11 +324,11 @@ extern const CfgLevel CFG_LVL_SP000;
 ////////////////////////////////// UI //////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 typedef enum _CfgUIButtonType {
-	CFG_UI_BUTTON_TYPE_INVALID = 0,
-	CFG_UI_BUTTON_TYPE_QUIT,
-	CFG_UI_BUTTON_TYPE_NEW_GAME, // TODO get rid of
-	CFG_UI_BUTTON_TYPE_RESUME,   // TODO get rid of
-	CFG_UI_BUTTON_TYPE_N
+	CFG_UI_BUTTONTYP_INVALID = 0,
+	CFG_UI_BUTTONTYP_QUIT,
+	CFG_UI_BUTTONTYP_NEW_GAME, // TODO get rid of
+	CFG_UI_BUTTONTYP_RESUME,   // TODO get rid of
+	CFG_UI_BUTTONTYP_N
 } CfgUIButtonType;
 typedef enum _CfgUIDynamicTextType {
 	CFG_UI_DYNAMIC_TEXT_TYPE_INVALID = 0,

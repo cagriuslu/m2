@@ -18,7 +18,7 @@ static const CfgUIElement LAUNCHER_CFG_UI_ENTRYPOINT_ELEMENT_ARPGBUTTON = {
 	.backgroundColor = {.r = 0, .g = 255, .b = 0, .a = 255},
 	.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 	.text = "ARPG",
-	.buttonType = (CfgUIButtonType)LAUNCHER_CFG_UI_BUTTON_TYPE_ARPG,
+	.buttonType = (CfgUIButtonType)LAUNCHER_CFG_UI_BUTTONTYP_ARPG,
 	.keyboardShortcut = SDL_SCANCODE_A,
 	.next = &LAUNCHER_CFG_UI_ENTRYPOINT_ELEMENT_RTSBUTTON
 };
@@ -28,7 +28,7 @@ static const CfgUIElement LAUNCHER_CFG_UI_ENTRYPOINT_ELEMENT_RTSBUTTON = {
 	.backgroundColor = {.r = 0, .g = 0, .b = 255, .a = 255},
 	.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 	.text = "RTS",
-	.buttonType = (CfgUIButtonType)LAUNCHER_CFG_UI_BUTTON_TYPE_RTS,
+	.buttonType = (CfgUIButtonType)LAUNCHER_CFG_UI_BUTTONTYP_RTS,
 	.keyboardShortcut = SDL_SCANCODE_S,
 	.next = &LAUNCHER_CFG_UI_ENTRYPOINT_ELEMENT_QUITBUTTON
 };
@@ -38,6 +38,6 @@ static const CfgUIElement LAUNCHER_CFG_UI_ENTRYPOINT_ELEMENT_QUITBUTTON = {
 	.backgroundColor = {.r = 0, .g = 0, .b = 0, .a = 255},
 	.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 	.text = "QUIT",
-	.buttonType = CFG_UI_BUTTON_TYPE_QUIT,
+	.buttonType = CFG_UI_BUTTONTYP_QUIT,
 	.keyboardShortcut = SDL_SCANCODE_Q
 };

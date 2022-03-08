@@ -14,6 +14,9 @@ typedef struct _GameEntryPoint {
 
 M2Err GameEntryPoint_Init(GameEntryPoint*);
 M2Err GameEntryPoint_InitLauncher(GameEntryPoint*);
+M2Err GameEntryPoint_InitARPG(GameEntryPoint*);
+
+M2Err GameEntryPoint_ExecuteEntryUI(GameEntryPoint*);
 
 void GameEntryPoint_Term(GameEntryPoint*);
 

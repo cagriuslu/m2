@@ -14,7 +14,7 @@ const CfgUIElement CFG_UI_STARTMENU_ELEMENT_NEWGAMEBUTTON = {
 	.borderWidth_px = 1,
 	.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 	.text = "NEW GAME",
-	.buttonType = CFG_UI_BUTTON_TYPE_NEW_GAME,
+	.buttonType = CFG_UI_BUTTONTYP_NEW_GAME,
 	.keyboardShortcut = SDL_SCANCODE_N,
 	.next = &CFG_UI_STARTMENU_ELEMENT_QUITBUTTON
 };
@@ -23,7 +23,7 @@ const CfgUIElement CFG_UI_STARTMENU_ELEMENT_QUITBUTTON = {
 	.borderWidth_px = 1,
 	.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 	.text = "QUIT",
-	.buttonType = CFG_UI_BUTTON_TYPE_QUIT,
+	.buttonType = CFG_UI_BUTTONTYP_QUIT,
 	.keyboardShortcut = SDL_SCANCODE_Q,
 	.next = NULL
 };
@@ -41,7 +41,7 @@ const CfgUIElement CFG_UI_PAUSEMENU_ELEMENT_RESUMEBUTTON = {
 		.borderWidth_px = 1,
 		.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
 		.text = "RESUME",
-		.buttonType = CFG_UI_BUTTON_TYPE_RESUME,
+		.buttonType = CFG_UI_BUTTONTYP_RESUME,
 		.keyboardShortcut = SDL_SCANCODE_R,
 		.next = &CFG_UI_STARTMENU_ELEMENT_NEWGAMEBUTTON
 };
