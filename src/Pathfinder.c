@@ -9,8 +9,6 @@
 #include <float.h>
 #include <stdio.h>
 
-#define XYToHashMapKey(x, y) (((int64_t)(y) << 32) | ((int64_t)(x) & 0x00000000FFFFFFFF))
-#define Vec2IToHashMapKey(vec2i) XYToHashMapKey((vec2i).x, (vec2i).y)
 #define ManhattanDistance(a, b) (abs((a).x - (b).x) + abs((a).y - (b).y))
 
 int PathfinderMap_Init(PathfinderMap* pm) {
@@ -38,7 +36,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 						for (int y = lowerY; y <= upperY; y++) {
 							for (int x = lowerX; x <= upperX; x++) {
 								bool blocked = true;
-								HashMap_SetInt64Key(&pm->blockedLocations, XYToHashMapKey(x, y), &blocked); // TODO check result
+								HashMap_SetVec2IKey(&pm->blockedLocations, VEC2I(x, y), &blocked); // TODO check result
 							}
 						}
 					}
@@ -96,12 +94,12 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 	HashMap cameFrom;
 	HashMap_Init(&cameFrom, sizeof(Vec2I), NULL);
 	tmpCameFrom = from;
-	HashMap_SetInt64Key(&cameFrom, Vec2IToHashMapKey(from), &tmpCameFrom);
+	HashMap_SetVec2IKey(&cameFrom, from, &tmpCameFrom);
 
 	HashMap costSoFar;
 	HashMap_Init(&costSoFar, sizeof(float), NULL);
 	tmpCostSoFar = 0.0f;
-	HashMap_SetInt64Key(&costSoFar, Vec2IToHashMapKey(from), &tmpCostSoFar);
+	HashMap_SetVec2IKey(&costSoFar, from, &tmpCostSoFar);
 
 	while (0 < frontiers.bucket.size) {
 		const ID frontierIterator = List_GetFirst(&frontiers);
@@ -113,7 +111,7 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 		}
 
 		// Find cost to current location
-		float* costToCurrentFrontierPtr = HashMap_GetInt64Key(&costSoFar, Vec2IToHashMapKey(frontierItem->position));
+		float* costToCurrentFrontierPtr = HashMap_GetVec2IKey(&costSoFar, frontierItem->position);
 		const float costToCurrentFrontier = *costToCurrentFrontierPtr;
 
 		// Gather neighbors of frontierItem
@@ -121,22 +119,22 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 		float frontierToNeighborCosts[4];
 		uint32_t neighborCount = 0;
 		Vec2I topNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) {0, -1});
-		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(topNeighbor)) == NULL || Vec2I_Equals(to, topNeighbor)) {
+		if (HashMap_GetVec2IKey(&pm->blockedLocations, topNeighbor) == NULL || Vec2I_Equals(to, topNeighbor)) {
 			neighbors[neighborCount] = topNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		Vec2I rightNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) { +1, 0 });
-		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(rightNeighbor)) == NULL || Vec2I_Equals(to, rightNeighbor)) {
+		if (HashMap_GetVec2IKey(&pm->blockedLocations, rightNeighbor) == NULL || Vec2I_Equals(to, rightNeighbor)) {
 			neighbors[neighborCount] = rightNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		Vec2I bottomNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) { 0, +1 });
-		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(bottomNeighbor)) == NULL || Vec2I_Equals(to, bottomNeighbor)) {
+		if (HashMap_GetVec2IKey(&pm->blockedLocations, bottomNeighbor) == NULL || Vec2I_Equals(to, bottomNeighbor)) {
 			neighbors[neighborCount] = bottomNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		Vec2I leftNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) { -1, 0 });
-		if (HashMap_GetInt64Key(&pm->blockedLocations, Vec2IToHashMapKey(leftNeighbor)) == NULL || Vec2I_Equals(to, leftNeighbor)) {
+		if (HashMap_GetVec2IKey(&pm->blockedLocations, leftNeighbor) == NULL || Vec2I_Equals(to, leftNeighbor)) {
 			neighbors[neighborCount] = leftNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
@@ -149,13 +147,13 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 			// Calculate the cost of traveling to neighbor from current location
 			float newCostToNeighbor = costToCurrentFrontier + frontierToNeighborCost;
 			// Find the previous cost of traveling to neighbor
-			float* oldCostToNeighborPtr = HashMap_GetInt64Key(&costSoFar, Vec2IToHashMapKey(neighbor));
+			float* oldCostToNeighborPtr = HashMap_GetVec2IKey(&costSoFar, neighbor);
 			const float oldCostToNeighbor = oldCostToNeighborPtr ? *oldCostToNeighborPtr : FLT_MAX;
 
 			// If new path to neighbor is cheaper than the old path
 			if (newCostToNeighbor < oldCostToNeighbor) {
 				// Save new cost
-				HashMap_SetInt64Key(&costSoFar, Vec2IToHashMapKey(neighbor), &newCostToNeighbor);
+				HashMap_SetVec2IKey(&costSoFar, neighbor, &newCostToNeighbor);
 				// Calculate priority of neighbor with heuristic parameter (which is Manhattan distance to `to`)
 				tmpPrioListItem.priority = newCostToNeighbor + ManhattanDistance(to, neighbor);
 				tmpPrioListItem.position = neighbor;
@@ -174,7 +172,7 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 				}
 				// Set the previous position of neighbor as the current position
 				tmpCameFrom = frontierItem->position;
-				HashMap_SetInt64Key(&cameFrom, Vec2IToHashMapKey(neighbor), &tmpCameFrom);
+				HashMap_SetVec2IKey(&cameFrom, neighbor, &tmpCameFrom);
 			}
 		}
 
@@ -184,7 +182,7 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 
 	M2Err result;
 	// Check if there is a path
-	Vec2I* currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(to));
+	Vec2I* currentCameFrom = HashMap_GetVec2IKey(&cameFrom, to);
 	if (currentCameFrom == NULL) {
 		result = M2ERR_PATH_NOT_FOUND;
 	} else {
@@ -196,7 +194,7 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 		// Built outReverseListOfVec2Is
 		while (currentCameFrom && Vec2I_Equals(from, *currentCameFrom) == false) {
 			List_Append(outReverseListOfVec2Is, currentCameFrom, NULL);
-			currentCameFrom = HashMap_GetInt64Key(&cameFrom, Vec2IToHashMapKey(*currentCameFrom));
+			currentCameFrom = HashMap_GetVec2IKey(&cameFrom, *currentCameFrom);
 		}
 		// Add `from` to list as well
 		if (currentCameFrom) {

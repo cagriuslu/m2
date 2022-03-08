@@ -2,6 +2,7 @@
 #define HASH_MAP_H
 
 #include "Array.h"
+#include "Vec2I.h"
 #include <stdint.h>
 
 #define HASHMAP_KEY_SIZE (8)
@@ -35,6 +36,11 @@ void* HashMap_SetInt64Key(HashMap* hm, int64_t key, void* copy);
 void* HashMap_TrySetInt64Key(HashMap* hm, int64_t key, void* copy);
 void* HashMap_GetInt64Key(HashMap* hm, int64_t key);
 void HashMap_UnsetInt64Key(HashMap* hm, int64_t key);
+// with Vec2I key
+void* HashMap_SetVec2IKey(HashMap* hm, Vec2I key, void* copy);
+void* HashMap_TrySetVec2IKey(HashMap* hm, Vec2I key, void* copy);
+void* HashMap_GetVec2IKey(HashMap* hm, Vec2I key);
+void HashMap_UnsetVec2IKey(HashMap* hm, Vec2I key);
 // with String key
 void* HashMap_SetStringKey(HashMap* hm, const char* key, void* copy);
 void* HashMap_TrySetStringKey(HashMap* hm, const char* key, void* copy);

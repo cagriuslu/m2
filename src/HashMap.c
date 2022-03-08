@@ -83,6 +83,22 @@ void HashMap_UnsetInt64Key(HashMap* hm, int64_t key) {
 	HashMap_Unset(hm, &key);
 }
 
+void* HashMap_SetVec2IKey(HashMap* hm, Vec2I key, void* copy) {
+	return HashMap_SetInt32Keys(hm, key.x, key.y, copy);
+}
+
+void* HashMap_TrySetVec2IKey(HashMap* hm, Vec2I key, void* copy) {
+	return HashMap_TrySetInt32Keys(hm, key.x, key.y, copy);
+}
+
+void* HashMap_GetVec2IKey(HashMap* hm, Vec2I key) {
+	return HashMap_GetInt32Keys(hm, key.x, key.y);
+}
+
+void HashMap_UnsetVec2IKey(HashMap* hm, Vec2I key) {
+	HashMap_UnsetInt32Keys(hm, key.x, key.y);
+}
+
 void* HashMap_SetStringKey(HashMap* hm, const char* key, void* copy) {
 	char actualKey[HASHMAP_KEY_SIZE] = { 0 };
 	strncpy(actualKey, key, HASHMAP_KEY_SIZE);
