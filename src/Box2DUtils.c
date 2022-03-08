@@ -20,7 +20,7 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 		shape = circleShape;
 	} else {
 		Box2DPolygonShape* boxShape = Box2DPolygonShapeCreate();
-		Box2DPolygonShapeSetAsBoxEx(boxShape, Vec2F_Mul(boxDims, 0.5), boxCenterOffset, boxAngle); // convert to half dims
+		Box2DPolygonShapeSetAsBoxEx(boxShape, Vec2F_Mul(boxDims, 0.5f), boxCenterOffset, boxAngle); // convert to half dims
 		shape = boxShape;
 	}
 	Box2DFixtureDef* fixtureDef = Box2DFixtureDefCreate();
@@ -54,6 +54,8 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 			case CATEGORY_ENEMY_MELEE_WEAPON:
 				maskBits = CATEGORY_PLAYER;
 				break;
+			default:
+				break;
 		}
 	}
 	Box2DFixtureDefSetMaskBits(fixtureDef, maskBits);
@@ -68,9 +70,9 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 	
 	if (isDynamic) {
 		Box2DBodySetLinearDamping(body, linearDamping);
-		Box2DBodySetAngularDamping(body, 0.0);
+		Box2DBodySetAngularDamping(body, 0.0f);
 		Box2DBodySetFixedRotation(body, fixedRotation);
-		Box2DBodySetMassData(body, mass, (Vec2F) { 0.0, 0.0 }, 0.0);
+		Box2DBodySetMassData(body, mass, (Vec2F) { 0.0f, 0.0f }, 0.0f);
 	}
 
 	return body;
