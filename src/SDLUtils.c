@@ -57,9 +57,10 @@ SDL_Cursor* SDLUtils_CreateCursor() {
 }
 
 uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks) {
-	uint32_t ticks = 0;
-	do {
+	uint32_t ticks = SDL_GetTicks();
+	while (ticks == lastTicks) {
+		SDL_Delay(1);
 		ticks = SDL_GetTicks();
-	} while (ticks == lastTicks);
+	}
 	return ticks;
 }

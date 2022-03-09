@@ -91,8 +91,8 @@ int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F positio
 		false, // allowSleep
 		CATEGORY_PLAYER,
 		cfg->mainTexture->collider.colliderUnion.circ.radius_m,
-		4.0f, // Mass
-		10.0f // Damping
+		cfg->mass_kg,
+		cfg->linearDamping
 	);
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);

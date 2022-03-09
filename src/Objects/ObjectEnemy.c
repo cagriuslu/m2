@@ -92,9 +92,9 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 		position,
 		true, // allowSleep
 		CATEGORY_ENEMY,
-		0.2083f, // Radius
-		10.0f, // Mass
-		10.0f // Damping
+		cfg->mainTexture->collider.colliderUnion.circ.radius_m,
+		cfg->mass_kg,
+		cfg->linearDamping
 	);
 
 	ComponentDefense* defense = Object_AddDefense(obj);

@@ -286,7 +286,8 @@ typedef struct _CfgCharacter {
 	const CfgObjectTexture* mainTexture;
 	CfgObjectType objType;
 	float mass_kg;
-	float walkSpeed_mps;
+	float linearDamping;
+	float walkSpeed;
 	float maxHp;
 	const CfgRangedWeapon* defaultRangedWeapon;
 	const CfgMeleeWeapon* defaultMeleeWeapon;
