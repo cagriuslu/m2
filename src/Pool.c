@@ -10,10 +10,9 @@
 
 uint16_t gPoolId = 1;
 
-M2Err Pool_Init(Pool* pool, unsigned poolCapacityInBits, size_t dataSize) {
+M2Err Pool_Init(Pool* pool, unsigned capacityInBitsMax16, size_t dataSize) {
 	memset(pool, 0, sizeof(Pool));
-	pool->poolCapacityInBits = poolCapacityInBits;
-	pool->capacity = (size_t)1 << pool->poolCapacityInBits;
+	pool->capacity = (size_t)1 << capacityInBitsMax16;
 	pool->dataSize = dataSize;
 	pool->itemSize = dataSize + sizeof(PoolItem);
 	pool->shiftedPoolId = ((uint64_t)gPoolId++) << 48;

@@ -11,7 +11,7 @@ typedef struct _List {
 } List;
 typedef List ListOfVec2Is;
 
-int List_Init(List* list, size_t itemSize);
+int List_Init(List* list, unsigned capacityInBitsMax16, size_t itemSize);
 void List_Term(List* list);
 
 void* List_Append(List* list, void* copy, ID* outIterator);

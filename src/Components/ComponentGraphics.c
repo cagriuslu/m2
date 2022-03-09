@@ -3,7 +3,7 @@
 #include "../Game.h"
 #include "../Def.h"
 
-#define MOTION_BLUR
+//#define MOTION_BLUR
 
 static bool IsMotionBlurEnabled() {
 #ifdef MOTION_BLUR

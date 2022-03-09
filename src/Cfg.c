@@ -84,7 +84,7 @@ M2Err AiState_Init(AiState *state, const CfgAi* cfg, Vec2F homePosition) {
 	memset(state, 0, sizeof(AiState));
 	state->cfg = cfg;
 	state->homePosition = homePosition;
-	M2ERR_REFLECT(List_Init(&state->reversedWaypointList, sizeof(Vec2I)));
+	M2ERR_REFLECT(List_Init(&state->reversedWaypointList, 10, sizeof(Vec2I)));
 	return M2OK;
 }
 

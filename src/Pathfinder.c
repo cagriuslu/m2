@@ -70,7 +70,7 @@ M2Err PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outR
 		}
 	} else {
 		List gridSteps;
-		List_Init(&gridSteps, sizeof(Vec2I));
+		List_Init(&gridSteps, 10, sizeof(Vec2I));
 
 		M2Err anyAngleResult = M2ERR_PATH_NOT_FOUND;
 		if (_PathfinderMap_FindGridSteps(pm, from, to, &gridSteps) == M2OK) {
@@ -102,7 +102,7 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 
 	// Holds the positions where will be explored next
 	List frontiers;
-	List_Init(&frontiers, sizeof(PriorityListItem));
+	List_Init(&frontiers, 10, sizeof(PriorityListItem));
 	tmpPrioListItem = (PriorityListItem){0.0f, from};
 	List_Prepend(&frontiers, &tmpPrioListItem, NULL);
 
