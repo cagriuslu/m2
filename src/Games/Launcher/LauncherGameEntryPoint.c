@@ -1,19 +1,19 @@
-#include "../GameEntryPoint.h"
+#include "../GameProxy.h"
 #include "LauncherCfg.h"
 #include "../../Game.h"
 
 M2Err Launcher_EntryUIButtonHandler(CfgUIButtonType button) {
 	if (button == LAUNCHER_CFG_UI_BUTTONTYP_ARPG) {
 		// Terminate yourself
-		GameEntryPoint_Term(&GAME->gameEntryPoint);
+		GameProxy_Term(&GAME->proxy);
 		// Load ARPG
-		M2Err result = GameEntryPoint_InitARPG(&GAME->gameEntryPoint);
+		M2Err result = GameProxy_InitARPG(&GAME->proxy);
 		if (result) {
 			LOG_ERROR_M2(result);
 			return result;
 		}
 		// Execute Entry UI
-		result = GameEntryPoint_ExecuteEntryUI(&GAME->gameEntryPoint);
+		result = GameProxy_ExecuteEntryUI(&GAME->proxy);
 		if (result) {
 			LOG_ERROR_M2(result);
 			return result;
@@ -27,10 +27,10 @@ M2Err Launcher_EntryUIButtonHandler(CfgUIButtonType button) {
 	}
 }
 
-M2Err GameEntryPoint_InitLauncher(GameEntryPoint *gep) {
-	M2ERR_REFLECT(GameEntryPoint_Init(gep));
-	gep->entryUi = &LAUNCHER_CFG_UI_ENTRYPOINT;
-	gep->entryUiButtonHandler = Launcher_EntryUIButtonHandler;
+M2Err GameProxy_InitLauncher(GameProxy *gp) {
+	M2ERR_REFLECT(GameProxy_Init(gp));
+	gp->entryUi = &LAUNCHER_CFG_UI_ENTRYPOINT;
+	gp->entryUiButtonHandler = Launcher_EntryUIButtonHandler;
 	return M2OK;
 }
 

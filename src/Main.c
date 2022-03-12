@@ -165,12 +165,12 @@ int main(int argc, char **argv) {
 //	}
 
 	// Load Launcher
-	M2Err result = GameEntryPoint_InitLauncher(&GAME->gameEntryPoint);
+	M2Err result = GameProxy_InitLauncher(&GAME->proxy);
 	if (result) {
 		LOG_FATAL_M2(result);
 		return 1;
 	}
-	result = GameEntryPoint_ExecuteEntryUI(&GAME->gameEntryPoint);
+	result = GameProxy_ExecuteEntryUI(&GAME->proxy);
 	if (result == M2ERR_QUIT) {
 		return 0;
 	} else if (result) {
@@ -208,7 +208,7 @@ int main(int argc, char **argv) {
 			if (!SDL_IsTextInputActive()) {
 				// Handle key events
 				if (GAME->events.keysPressed[KEY_MENU]) {
-					result = GameEntryPoint_ExecutePauseUI(&GAME->gameEntryPoint);
+					result = GameProxy_ExecutePauseUI(&GAME->proxy);
 					if (result == M2ERR_QUIT) {
 						return 0;
 					} else if (result) {

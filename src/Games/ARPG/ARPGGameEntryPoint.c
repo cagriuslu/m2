@@ -1,4 +1,4 @@
-#include "../GameEntryPoint.h"
+#include "../GameProxy.h"
 #include "ARPGCfg.h"
 #include "../../Game.h"
 
@@ -21,11 +21,11 @@ static M2Err ARPG_PauseUIButtonHandler(CfgUIButtonType button) {
 	}
 }
 
-M2Err GameEntryPoint_InitARPG(GameEntryPoint *gep) {
-	M2ERR_REFLECT(GameEntryPoint_Init(gep));
-	gep->entryUi = &ARPG_CFG_UI_ENTRYUI;
-	gep->entryUiButtonHandler = ARPG_EntryUIButtonHandler;
-	gep->pauseUi = &ARPG_CFG_UI_PAUSEUI;
-	gep->pauseUiButtonHandler = ARPG_PauseUIButtonHandler;
+M2Err GameProxy_InitARPG(GameProxy *gp) {
+	M2ERR_REFLECT(GameProxy_Init(gp));
+	gp->entryUi = &ARPG_CFG_UI_ENTRYUI;
+	gp->entryUiButtonHandler = ARPG_EntryUIButtonHandler;
+	gp->pauseUi = &ARPG_CFG_UI_PAUSEUI;
+	gp->pauseUiButtonHandler = ARPG_PauseUIButtonHandler;
 	return M2OK;
 }

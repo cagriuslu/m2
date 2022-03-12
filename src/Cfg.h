@@ -36,6 +36,14 @@ typedef struct _CfgCollider {
 	} colliderUnion;
 } CfgCollider;
 
+typedef uint32_t BackgroundTileType;
+
+typedef struct _BackgroundTile {
+	BackgroundTileType type;
+	SDL_Rect textureRect;
+	CfgCollider collider;
+} BackgroundTile;
+
 typedef struct _CfgGroundTexture {
 	SDL_Rect textureRect;
 	CfgCollider collider;
