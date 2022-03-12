@@ -7,16 +7,38 @@ M2Err GameEntryPoint_Init(GameEntryPoint *gep) {
 }
 
 M2Err GameEntryPoint_ExecuteEntryUI(GameEntryPoint *gep) {
-	CfgUIButtonType launcherButton;
-	M2Err result = UI_ExecuteBlocking(gep->entryUi, &launcherButton);
+	CfgUIButtonType button;
+	M2Err result = UI_ExecuteBlocking(gep->entryUi, &button);
 	if (result) {
 		LOG_ERROR_M2(result);
 		return result;
 	}
-	M2Err handlerResult = gep->entryUiButtonHandler(launcherButton);
-	if (handlerResult) {
+	M2Err handlerResult = gep->entryUiButtonHandler(button);
+	if (handlerResult == M2ERR_QUIT) {
+		LOG_INFO_M2(handlerResult);
+	} else if (handlerResult) {
 		LOG_ERROR_M2(handlerResult);
-		return result;
+	}
+	return handlerResult;
+}
+
+M2Err GameEntryPoint_ExecutePauseUI(GameEntryPoint *gep) {
+	if (gep->pauseUi) {
+		CfgUIButtonType button;
+		M2Err result = UI_ExecuteBlocking(gep->pauseUi, &button);
+		if (result) {
+			LOG_ERROR_M2(result);
+			return result;
+		}
+		if (gep->pauseUiButtonHandler) {
+			M2Err handlerResult = gep->pauseUiButtonHandler(button);
+			if (handlerResult == M2ERR_QUIT) {
+				LOG_INFO_M2(handlerResult);
+			} else if (handlerResult) {
+				LOG_ERROR_M2(handlerResult);
+			}
+			return handlerResult;
+		}
 	}
 	return M2OK;
 }

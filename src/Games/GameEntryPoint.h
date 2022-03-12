@@ -17,6 +17,7 @@ M2Err GameEntryPoint_InitLauncher(GameEntryPoint*);
 M2Err GameEntryPoint_InitARPG(GameEntryPoint*);
 
 M2Err GameEntryPoint_ExecuteEntryUI(GameEntryPoint*);
+M2Err GameEntryPoint_ExecutePauseUI(GameEntryPoint*);
 
 void GameEntryPoint_Term(GameEntryPoint*);
 

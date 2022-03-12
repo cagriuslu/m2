@@ -208,8 +208,12 @@ int main(int argc, char **argv) {
 			if (!SDL_IsTextInputActive()) {
 				// Handle key events
 				if (GAME->events.keysPressed[KEY_MENU]) {
-					// TODO
-					//goto main_menu;
+					result = GameEntryPoint_ExecutePauseUI(&GAME->gameEntryPoint);
+					if (result == M2ERR_QUIT) {
+						return 0;
+					} else if (result) {
+						return 1;
+					}
 				}
 				if (GAME->events.keysPressed[KEY_CONSOLE]) {
 					memset(GAME->consoleInput, 0, sizeof(GAME->consoleInput));
