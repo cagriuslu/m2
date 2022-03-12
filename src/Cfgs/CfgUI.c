@@ -1,52 +1,6 @@
 #include "../Cfg.h"
 
 ////////////////////////////////////////////////////////////////////////
-////////////////////////////// START MENU //////////////////////////////
-////////////////////////////////////////////////////////////////////////
-extern const CfgUIElement CFG_UI_STARTMENU_ELEMENT_NEWGAMEBUTTON;
-extern const CfgUIElement CFG_UI_STARTMENU_ELEMENT_QUITBUTTON;
-const CfgUI CFG_UI_STARTMENU = {
-	.w = 100, .h = 100,
-	.firstElement = &CFG_UI_STARTMENU_ELEMENT_NEWGAMEBUTTON
-};
-const CfgUIElement CFG_UI_STARTMENU_ELEMENT_NEWGAMEBUTTON = {
-	.x = 45, .y = 40, .w = 10, .h = 10,
-	.borderWidth_px = 1,
-	.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
-	.text = "NEW GAME",
-	.buttonType = CFG_UI_BUTTONTYP_NEW_GAME,
-	.keyboardShortcut = SDL_SCANCODE_N,
-	.next = &CFG_UI_STARTMENU_ELEMENT_QUITBUTTON
-};
-const CfgUIElement CFG_UI_STARTMENU_ELEMENT_QUITBUTTON = {
-	.x = 45, .y = 55, .w = 10, .h = 10,
-	.borderWidth_px = 1,
-	.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
-	.text = "QUIT",
-	.buttonType = CFG_UI_BUTTONTYP_QUIT,
-	.keyboardShortcut = SDL_SCANCODE_Q,
-	.next = NULL
-};
-
-////////////////////////////////////////////////////////////////////////
-////////////////////////////// PAUSE MENU //////////////////////////////
-////////////////////////////////////////////////////////////////////////
-extern const CfgUIElement CFG_UI_PAUSEMENU_ELEMENT_RESUMEBUTTON;
-const CfgUI CFG_UI_PAUSEMENU = {
-		.w = 100, .h = 100,
-		.firstElement = &CFG_UI_PAUSEMENU_ELEMENT_RESUMEBUTTON
-};
-const CfgUIElement CFG_UI_PAUSEMENU_ELEMENT_RESUMEBUTTON = {
-		.x = 45, .y = 25, .w = 10, .h = 10,
-		.borderWidth_px = 1,
-		.type = CFG_UI_ELEMENT_TYP_STATIC_TEXT_BUTTON,
-		.text = "RESUME",
-		.buttonType = CFG_UI_BUTTONTYP_RESUME,
-		.keyboardShortcut = SDL_SCANCODE_R,
-		.next = &CFG_UI_STARTMENU_ELEMENT_NEWGAMEBUTTON
-};
-
-////////////////////////////////////////////////////////////////////////
 /////////////////////////////// HUD LEFT ///////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 extern const CfgUIElement CFG_UI_HUDLEFT_ELEMENT_HPLABEL;

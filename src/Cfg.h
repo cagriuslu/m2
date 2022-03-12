@@ -327,8 +327,6 @@ extern const CfgLevel CFG_LVL_SP000;
 typedef enum _CfgUIButtonType {
 	CFG_UI_BUTTONTYP_INVALID = 0,
 	CFG_UI_BUTTONTYP_QUIT,
-	CFG_UI_BUTTONTYP_NEW_GAME, // TODO get rid of
-	CFG_UI_BUTTONTYP_RESUME,   // TODO get rid of
 	CFG_UI_BUTTONTYP_N
 } CfgUIButtonType;
 typedef enum _CfgUIDynamicTextType {
@@ -381,8 +379,6 @@ typedef struct _CfgUI {
 	const CfgUIElement* firstElement;
 } CfgUI;
 DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgUIElement);
-extern const CfgUI CFG_UI_STARTMENU;
-extern const CfgUI CFG_UI_PAUSEMENU;
 extern const CfgUI CFG_UI_HUDLEFT;
 extern const CfgUI CFG_UI_HUDRIGHT;
 typedef struct _UIElementState {
