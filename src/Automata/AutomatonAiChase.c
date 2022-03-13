@@ -147,7 +147,7 @@ void* AiChaseState_Triggered(struct _Automaton* am, int signal) {
 					Vec2F objPositionF = Vec2F_FromVec2I(*objPosition);
 					Vec2F targetPositionF = Vec2F_FromVec2I(*targetPosition);
 					Vec2F direction = Vec2F_Normalize(Vec2F_Sub(targetPositionF, objPositionF));
-					Vec2F force = Vec2F_Mul(direction, GAME->deltaTicks * obj->ex->enemy.characterState.cfg->walkSpeed);
+					Vec2F force = Vec2F_Mul(direction, GAME->deltaTicks_ms * obj->ex->enemy.characterState.cfg->walkSpeed);
 					Box2DBodyApplyForceToCenter(phy->body, force, true);
 				}
 			}
@@ -197,7 +197,7 @@ void* AiChaseState_GaveUp(struct _Automaton* am, int signal) {
 					Vec2F objPositionF = Vec2F_FromVec2I(*objPosition);
 					Vec2F targetPositionF = Vec2F_FromVec2I(*targetPosition);
 					Vec2F direction = Vec2F_Normalize(Vec2F_Sub(targetPositionF, objPositionF));
-					Vec2F force = Vec2F_Mul(direction, GAME->deltaTicks * obj->ex->enemy.characterState.cfg->walkSpeed);
+					Vec2F force = Vec2F_Mul(direction, GAME->deltaTicks_ms * obj->ex->enemy.characterState.cfg->walkSpeed);
 					Box2DBodyApplyForceToCenter(phy->body, force, true);
 				}
 			}

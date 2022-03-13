@@ -9,8 +9,8 @@ void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
 	Object* player = Game_FindObjectById(GAME->playerId); M2ASSERT(player);
 
-	CharacterState_ProcessTime(&obj->ex->enemy.characterState, GAME->deltaTime);
-	Automaton_ProcessTime(&obj->ex->enemy.aiAutomaton, GAME->deltaTime);
+	CharacterState_ProcessTime(&obj->ex->enemy.characterState, GAME->deltaTime_s);
+	Automaton_ProcessTime(&obj->ex->enemy.aiAutomaton, GAME->deltaTime_s);
 	Automaton_ProcessSignal(&obj->ex->enemy.aiAutomaton, SIG_AI_PREPHYSICS);
 }
 
@@ -27,7 +27,7 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); M2ASSERT(obj);
 	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); M2ASSERT(phy);
 	// We must call time before other signals
-	Automaton_ProcessTime(&obj->ex->enemy.charAnimationAutomaton, GAME->deltaTicks / 1000.0f);
+	Automaton_ProcessTime(&obj->ex->enemy.charAnimationAutomaton, GAME->deltaTicks_ms / 1000.0f);
 	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 		Automaton_ProcessSignal(&obj->ex->enemy.charAnimationAutomaton, SIG_CHARANIM_STOP);
@@ -53,7 +53,7 @@ void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 		gfx->texture = GAME->sdlTextureMask;
 		ComponentGraphic_DefaultDraw(gfx);
 		gfx->texture = defaultTexture;
-		obj->ex->enemy.onHitColorModTtl -= GAME->deltaTicks / 1000.0f;
+		obj->ex->enemy.onHitColorModTtl -= GAME->deltaTicks_ms / 1000.0f;
 	} else {
 		ComponentGraphic_DefaultDraw(gfx);
 	}

@@ -110,7 +110,7 @@ void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRa
 		obj_gfx_dstrect.x + (obj_gfx_dstrect.w - healthBarWidth) / 2,
 		obj_gfx_dstrect.y + obj_gfx_dstrect.h,
 		(int)roundf((float)healthBarWidth * healthRatio),
-		GAME->tileWidth / 6
+		GAME->proxy.tileSize / 6
 	};
 	SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 0, 0, 200);
 	SDL_RenderFillRect(GAME->sdlRenderer, &filled_dstrect);

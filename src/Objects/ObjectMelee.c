@@ -8,7 +8,7 @@
 static void Sword_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId); M2ASSERT(obj);
 	ComponentOffense* offense = Object_GetOffense(obj); M2ASSERT(offense);
-	offense->state.melee.ttl_s -= GAME->deltaTicks / 1000.0f;
+	offense->state.melee.ttl_s -= GAME->deltaTicks_ms / 1000.0f;
 	if (offense->state.melee.ttl_s <= 0) {
 		Game_DeleteList_Add(el->super.objId);
 	}

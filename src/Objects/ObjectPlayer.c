@@ -32,15 +32,15 @@ static void Player_prePhysics(ComponentMonitor* el) {
 		moveDirection.x += 1.0f;
 		Automaton_ProcessSignal(&obj->ex->player.charAnimationAutomaton, SIG_CHARANIM_WALKRIGHT);
 	}
-	Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks * 25.0f), true);
+	Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks_ms * 25.0f), true);
 
-	obj->ex->player.characterState.rangedWeaponState.cooldownCounter_s += GAME->deltaTime;
-	obj->ex->player.characterState.meleeWeaponState.cooldownCounter_s += GAME->deltaTime;
-	obj->ex->player.characterState.explosiveWeaponState.cooldownCounter_s += GAME->deltaTime;
+	obj->ex->player.characterState.rangedWeaponState.cooldownCounter_s += GAME->deltaTime_s;
+	obj->ex->player.characterState.meleeWeaponState.cooldownCounter_s += GAME->deltaTime_s;
+	obj->ex->player.characterState.explosiveWeaponState.cooldownCounter_s += GAME->deltaTime_s;
 
 	if (GAME->events.buttonStates[BUTTON_PRIMARY] && obj->ex->player.characterState.rangedWeaponState.cfg->cooldown_s < obj->ex->player.characterState.rangedWeaponState.cooldownCounter_s) {
 		Object* projectile = Pool_Mark(&GAME->objects, NULL, NULL);
-		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld_m, obj->position));
 		float accuracy = obj->ex->player.characterState.cfg->defaultRangedWeapon->accuracy;
 		float angle = Vec2F_AngleRads(direction) + (M2_PI * randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
 		ObjectProjectile_InitFromCfg(projectile, &obj->ex->player.characterState.cfg->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
@@ -51,12 +51,12 @@ static void Player_prePhysics(ComponentMonitor* el) {
 	}
 	if (GAME->events.buttonStates[BUTTON_SECONDARY] && obj->ex->player.characterState.meleeWeaponState.cfg->cooldown_s < obj->ex->player.characterState.meleeWeaponState.cooldownCounter_s) {
 		Object* melee = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectMelee_InitFromCfg(melee, &obj->ex->player.characterState.cfg->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		ObjectMelee_InitFromCfg(melee, &obj->ex->player.characterState.cfg->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld_m, obj->position));
 		obj->ex->player.characterState.meleeWeaponState.cooldownCounter_s = 0;
 	}
 	if (GAME->events.buttonStates[BUTTON_MIDDLE] && obj->ex->player.characterState.explosiveWeaponState.cfg->cooldown_s < obj->ex->player.characterState.explosiveWeaponState.cooldownCounter_s) {
 		Object* explosive = Pool_Mark(&GAME->objects, NULL, NULL);
-		ObjectExplosive_InitFromCfg(explosive, &obj->ex->player.characterState.cfg->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld, obj->position));
+		ObjectExplosive_InitFromCfg(explosive, &obj->ex->player.characterState.cfg->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld_m, obj->position));
 		obj->ex->player.characterState.explosiveWeaponState.cooldownCounter_s = 0;
 	}
 }
@@ -69,7 +69,7 @@ static void Player_postPhysics(ComponentMonitor* monitor) {
 	Object* obj = Pool_GetById(&GAME->objects, monitor->super.objId); M2ASSERT(obj);
 	ComponentPhysique* phy = Pool_GetById(&GAME->physics, obj->physique); M2ASSERT(phy);
 	// We must call time before other signals
-	Automaton_ProcessTime(&obj->ex->player.charAnimationAutomaton, GAME->deltaTime);
+	Automaton_ProcessTime(&obj->ex->player.charAnimationAutomaton, GAME->deltaTime_s);
 	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 		Automaton_ProcessSignal(&obj->ex->player.charAnimationAutomaton, SIG_CHARANIM_STOP);

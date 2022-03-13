@@ -1,8 +1,14 @@
 #include "GameProxy.h"
 #include "../UI.h"
+#include "../Game.h"
 
 M2Err GameProxy_Init(GameProxy *gp) {
 	memset(gp, 0, sizeof(GameProxy));
+	return M2OK;
+}
+
+M2Err GameProxy_Activate(GameProxy *gp) {
+	Game_UpdateWindowDimensions(GAME->windowRect.w, GAME->windowRect.h);
 	return M2OK;
 }
 
@@ -14,7 +20,7 @@ M2Err GameProxy_ExecuteEntryUI(GameProxy *gp) {
 		return result;
 	}
 	M2Err handlerResult = gp->entryUiButtonHandler(button);
-	if (handlerResult == M2ERR_QUIT) {
+	if (handlerResult == M2ERR_QUIT || handlerResult == M2ERR_PROXY_CHANGED) {
 		LOG_INFO_M2(handlerResult);
 	} else if (handlerResult) {
 		LOG_ERROR_M2(handlerResult);
@@ -32,7 +38,7 @@ M2Err GameProxy_ExecutePauseUI(GameProxy *gp) {
 		}
 		if (gp->pauseUiButtonHandler) {
 			M2Err handlerResult = gp->pauseUiButtonHandler(button);
-			if (handlerResult == M2ERR_QUIT) {
+			if (handlerResult == M2ERR_QUIT || handlerResult == M2ERR_PROXY_CHANGED) {
 				LOG_INFO_M2(handlerResult);
 			} else if (handlerResult) {
 				LOG_ERROR_M2(handlerResult);

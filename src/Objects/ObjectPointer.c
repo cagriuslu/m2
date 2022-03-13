@@ -4,7 +4,7 @@
 
 void Pointer_preGraphics(ComponentMonitor* mon) {
 	Object* obj = Pool_GetById(&GAME->objects, mon->super.objId); M2ASSERT(obj);
-	obj->position = GAME->mousePositionInWorld;
+	obj->position = GAME->mousePositionInWorld_m;
 }
 
 int ObjectPointer_Init(Object* obj) {

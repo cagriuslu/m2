@@ -1,5 +1,5 @@
 #include "../GameProxy.h"
-#include "ARPGCfg.h"
+#include "ARPG_Cfg.h"
 #include "../../Game.h"
 
 static M2Err ARPG_EntryUIButtonHandler(CfgUIButtonType button) {
@@ -25,6 +25,7 @@ M2Err GameProxy_InitARPG(GameProxy *gp) {
 	M2ERR_REFLECT(GameProxy_Init(gp));
 	gp->entryUi = &ARPG_CFG_UI_ENTRYUI;
 	gp->entryUiButtonHandler = ARPG_EntryUIButtonHandler;
+	gp->tileSize = ARPG_CFG_TILE_SIZE;
 	gp->pauseUi = &ARPG_CFG_UI_PAUSEUI;
 	gp->pauseUiButtonHandler = ARPG_PauseUIButtonHandler;
 	return M2OK;

@@ -5,8 +5,23 @@
 #include "Cfg.h"
 #include "UI.h"
 #include "Def.h"
+#include "Games/GameLauncher.h"
 
-Game* gCurrentGame;
+// Initialize with default values
+Game gCurrentGame = {
+	.physicsStep_s = 1.0f / 80.0f,
+	.velocityIterations = 8,
+	.positionIterations = 3,
+	.proxy = {
+		.entryUi = &LAUNCHER_CFG_UI_ENTRYPOINT,
+		.entryUiButtonHandler = Launcher_EntryUIButtonHandler,
+		.tileSize = 16
+	}
+};
+
+Game* Game_GetCurrent() {
+	return &gCurrentGame;
+}
 
 void Game_UpdateWindowDimensions(int width, int height) {
 	GAME->windowRect = (SDL_Rect){0, 0, width, height};
@@ -71,7 +86,17 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME->gameRect.y = 0;
 	}
 	GAME->pixelsPerMeter = (float)GAME->gameAndHudRect.h / 16.0f;
-	GAME->scale = GAME->pixelsPerMeter / GAME->tileWidth;
+	GAME->scale = GAME->pixelsPerMeter / GAME->proxy.tileSize;
+}
+
+void Game_UpdateMousePosition() {
+	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId);
+	Vec2F cameraPosition = camera->position;
+
+	Vec2I pointerPosition = GAME->events.mousePosition;
+	Vec2I pointerPositionWRTScreenCenter_px = (Vec2I){pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
+	GAME->mousePositionWRTScreenCenter_m = (Vec2F){pointerPositionWRTScreenCenter_px.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME->pixelsPerMeter };
+	GAME->mousePositionInWorld_m = Vec2F_Add(GAME->mousePositionWRTScreenCenter_m, cameraPosition);
 }
 
 int Game_Level_Init() {
@@ -158,14 +183,4 @@ void Game_DeleteList_DeleteAll() {
 		Pool_Unmark(&GAME->objects, obj);
 	}
 	Array_Clear(&GAME->deleteList);
-}
-
-void Game_UpdateMousePosition() {
-	Object* camera = Pool_GetById(&GAME->objects, GAME->cameraId);
-	Vec2F cameraPosition = camera->position;
-
-	Vec2I pointerPosition = GAME->events.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter_px = (Vec2I){pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
-	GAME->mousePositionWRTScreenCenter_m = (Vec2F){pointerPositionWRTScreenCenter_px.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME->pixelsPerMeter };
-	GAME->mousePositionInWorld = Vec2F_Add(GAME->mousePositionWRTScreenCenter_m, cameraPosition);
 }

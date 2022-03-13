@@ -9,7 +9,7 @@ static void Bullet_prePhysics(ComponentMonitor* el) {
 	ComponentOffense* offense = Object_GetOffense(obj); M2ASSERT(offense);
 	Box2DBodySetLinearSpeed(phy->body, offense->state.projectile.cfg->speed_mps);
 
-	offense->state.projectile.ttl_s -= GAME->deltaTicks / 1000.0f;
+	offense->state.projectile.ttl_s -= GAME->deltaTicks_ms / 1000.0f;
 	if (offense->state.projectile.ttl_s <= 0) {
 		Game_DeleteList_Add(el->super.objId);
 	}

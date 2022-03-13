@@ -22,7 +22,7 @@ static void ObjectExplosive_prePhysics(ComponentMonitor* el) {
 	switch (off->state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_IN_FLIGHT:
 			Box2DBodySetLinearSpeed(phy->body, off->state.explosive.cfg->projectileSpeed_mps);
-			off->state.explosive.projectileTtl_s -= GAME->deltaTicks / 1000.0f;
+			off->state.explosive.projectileTtl_s -= GAME->deltaTicks_ms / 1000.0f;
 			if (off->state.explosive.projectileTtl_s <= 0) {
 				Box2DWorldDestroyBody(GAME->world, phy->body);
 				phy->body = ObjectExplosive_CreateCollisionCircleBody(obj->physique, obj->position, off->state.explosive.cfg);
