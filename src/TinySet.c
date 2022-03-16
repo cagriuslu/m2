@@ -1,5 +1,5 @@
-#include "TinySet.h"
-#include <string.h>
+#include "m2/TinySet.h"
+#include "m2/String.h"
 
 static uint8_t TinySet_Hash(const uint8_t* key) {
 	uint8_t hash = 0x03;

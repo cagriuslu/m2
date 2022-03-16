@@ -1,8 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "HashMap.h"
-#include "Array.h"
-#include "Def.h"
-#include <string.h>
+#include "m2/HashMap.h"
+#include "m2/Array.h"
+#include "m2/Def.h"
+#include "m2/String.h"
 #include <stdlib.h>
 #include <assert.h>
 

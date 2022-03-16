@@ -1,7 +1,7 @@
-#include "../Component.h"
-#include "../Object.h"
-#include "../Game.h"
-#include "../Def.h"
+#include <m2/Component.h>
+#include <m2/Object.h>
+#include <m2/Game.h>
+#include <m2/Def.h>
 
 M2Err ComponentLight_Init(ComponentLight* lig, ID objectId) {
 	memset(lig, 0, sizeof(ComponentLight));

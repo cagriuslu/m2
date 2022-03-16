@@ -1,6 +1,6 @@
-#include "TinyArray.h"
-#include "Pool.h"
-#include "Def.h"
+#include "m2/TinyArray.h"
+#include "m2/Pool.h"
+#include "m2/Def.h"
 
 uint64_t TinyArray_Heap[TINY_ARRAY_MAX_INSTANCE_COUNT * TINY_ARRAY_MAX_LENGTH];
 Pool TinyArray_UsedArrays;

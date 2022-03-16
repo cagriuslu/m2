@@ -1,9 +1,9 @@
-#include "Def.h"
+#include "m2/Def.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include <string.h>
+#include "m2/String.h"
 
 LogLevel gCurrentLogLevel = LogLevelDebug;
 

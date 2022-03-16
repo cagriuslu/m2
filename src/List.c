@@ -1,10 +1,10 @@
-#include "List.h"
-#include "Def.h"
+#include "m2/List.h"
+#include "m2/Def.h"
 
 typedef struct _ListItem {
 	ID nextId;
 	ID prevId;
-	char data[0];
+	char data[];
 } ListItem;
 
 int List_Init(List* list, unsigned capacityInBitsMax16, size_t itemSize) {

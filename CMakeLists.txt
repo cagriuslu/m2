@@ -9,12 +9,18 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+    add_compile_definitions("DEBUG")
+endif()
+
 file(GLOB m2_SOURCES
     "src/*.h" "src/*.c"
     "src/*/*.h" "src/*/*.c"
     "src/*/*/*.h" "src/*/*/*.c"
+    "src/*/*/*/*.h" "src/*/*/*/*.c"
     "src/*.cpp")
 add_executable(m2 WIN32 ${m2_SOURCES})
+target_include_directories(m2 PUBLIC src)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_include_directories(m2 PUBLIC /usr/local/include/box2d /usr/local/include/SDL2)
     target_link_directories(m2 PUBLIC /usr/local/lib)
@@ -33,9 +39,7 @@ elseif(WIN32)
 endif()
 
 if(WIN32)
-    # Temporary
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
-
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE") # Temporary
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT m2)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()

@@ -1,8 +1,8 @@
-#include "../Component.h"
-#include <string.h>
+#include <m2/Component.h>
+#include <m2/Game.h>
 
-int ComponentOffense_Init(ComponentOffense* def, ID objId) {
-	memset(def, 0, sizeof(ComponentOffense));
+M2Err ComponentOffense_Init(ComponentOffense* def, ID objId) {
+	memset(def, 0, sizeof(ComponentOffense) + GAME->proxy.componentOffenseDataSize);
 	return Component_Init((Component*)def, objId);
 }
 

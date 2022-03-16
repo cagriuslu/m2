@@ -1,5 +1,5 @@
-#include "SpatialMap.h"
-#include "Def.h"
+#include "m2/SpatialMap.h"
+#include "m2/Def.h"
 
 static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, float boundaryRadius, ID iterator) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
@@ -21,7 +21,7 @@ static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, float boundaryRa
 
 typedef struct _SpatialMapItem {
 	Box2DBody* body;
-	char data[0];
+	char data[];
 } SpatialMapItem;
 
 int SpatialMap_Init(SpatialMap* sm, size_t dataSize) {

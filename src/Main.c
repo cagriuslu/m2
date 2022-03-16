@@ -1,16 +1,16 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "Box2D.h"
-#include "Object.h"
-#include "Array.h"
-#include "UI.h"
-#include "Component.h"
-#include "Event.h"
-#include "Pool.h"
-#include "Game.h"
-#include "SDLUtils.h"
-#include "Def.h"
-#include "Cfg.h"
-#include "Pathfinder.h"
+#include "m2/Box2D.h"
+#include "m2/Object.h"
+#include "m2/Array.h"
+#include "m2/UI.h"
+#include "m2/Component.h"
+#include "m2/Event.h"
+#include "m2/Pool.h"
+#include "m2/Game.h"
+#include "m2/SDLUtils.h"
+#include "m2/Def.h"
+#include "m2/Cfg.h"
+#include "m2/Pathfinder.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -85,27 +85,27 @@ int main(int argc, char **argv) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 		return -1;
 	}
-	SDL_Surface* textureMapSurface = IMG_Load(CFG_TEXTURE_FILE);
-	if (textureMapSurface == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
-		return -1;
-	}
-	if ((GAME->sdlTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMapSurface)) == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
-		return -1;
-	}
-	SDL_SetTextureColorMod(GAME->sdlTexture, 127, 127, 127);
-	SDL_FreeSurface(textureMapSurface);
-	SDL_Surface* textureMaskSurface = IMG_Load(CFG_TEXTURE_MASK_FILE);
-	if (textureMaskSurface == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
-		return -1;
-	}
-	if ((GAME->sdlTextureMask = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMaskSurface)) == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
-		return -1;
-	}
-	SDL_FreeSurface(textureMaskSurface);
+//	SDL_Surface* textureMapSurface = IMG_Load(CFG_TEXTURE_FILE);
+//	if (textureMapSurface == NULL) {
+//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+//		return -1;
+//	}
+//	if ((GAME->sdlTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMapSurface)) == NULL) {
+//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+//		return -1;
+//	}
+//	SDL_SetTextureColorMod(GAME->sdlTexture, 127, 127, 127);
+//	SDL_FreeSurface(textureMapSurface);
+//	SDL_Surface* textureMaskSurface = IMG_Load(CFG_TEXTURE_MASK_FILE);
+//	if (textureMaskSurface == NULL) {
+//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+//		return -1;
+//	}
+//	if ((GAME->sdlTextureMask = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMaskSurface)) == NULL) {
+//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+//		return -1;
+//	}
+//	SDL_FreeSurface(textureMaskSurface);
 	SDL_Surface* lightSurface = IMG_Load("resources/RadialGradient-WhiteBlack.png");
 	if (lightSurface == NULL) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());

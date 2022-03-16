@@ -1,6 +1,6 @@
-#include "AI.h"
-#include "Vec2I.h"
-#include <string.h>
+#include "m2/AI.h"
+#include "m2/Vec2I.h"
+#include "m2/String.h"
 
 M2Err AI_Init(AI* ai) {
 	memset(ai, 0, sizeof(AI));

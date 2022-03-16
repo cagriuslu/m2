@@ -1,10 +1,10 @@
-#include "Pathfinder.h"
-#include "List.h"
-#include "Box2DUtils.h"
-#include "Component.h"
-#include "Object.h"
-#include "Game.h"
-#include <string.h>
+#include "m2/Pathfinder.h"
+#include "m2/List.h"
+#include "m2/Box2DUtils.h"
+#include "m2/Component.h"
+#include "m2/Object.h"
+#include "m2/Game.h"
+#include "m2/String.h"
 #include <stdbool.h>
 #include <float.h>
 #include <stdio.h>

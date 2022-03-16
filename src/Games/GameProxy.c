@@ -1,6 +1,7 @@
-#include "GameProxy.h"
-#include "../UI.h"
-#include "../Game.h"
+#include "m2/GameProxy.h"
+#include "m2/UI.h"
+#include "m2/Game.h"
+#include <SDL_image.h>
 
 M2Err GameProxy_Init(GameProxy *gp) {
 	memset(gp, 0, sizeof(GameProxy));
@@ -8,7 +9,33 @@ M2Err GameProxy_Init(GameProxy *gp) {
 }
 
 M2Err GameProxy_Activate(GameProxy *gp) {
-	Game_UpdateWindowDimensions(GAME->windowRect.w, GAME->windowRect.h);
+	Game_UpdateWindowDimensions(GAME->windowRect.w, GAME->windowRect.h); // Uses tileSize for internal calculations
+	if (gp->textureMapFile) {
+		SDL_Surface* textureMapSurface = IMG_Load(gp->textureMapFile);
+		if (textureMapSurface == NULL) {
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+		}
+		if ((GAME->sdlTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMapSurface)) == NULL) {
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+		}
+		SDL_SetTextureColorMod(GAME->sdlTexture, 127, 127, 127);
+		SDL_FreeSurface(textureMapSurface);
+	}
+	if (gp->textureMaskFile) {
+		SDL_Surface* textureMaskSurface = IMG_Load(gp->textureMaskFile);
+		if (textureMaskSurface == NULL) {
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+		}
+		if ((GAME->sdlTextureMask = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMaskSurface)) == NULL) {
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+		}
+		SDL_FreeSurface(textureMaskSurface);
+	}
+	if (gp->cfgSprites) {
+		for (CfgSpriteIndex i = 0; i < gp->cfgSpriteCount; i++) {
+			M2ASSERT(gp->cfgSprites[i].index == i);
+		}
+	}
 	return M2OK;
 }
 

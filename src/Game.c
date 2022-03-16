@@ -1,11 +1,11 @@
-#include "Game.h"
-#include "Object.h"
-#include "Component.h"
-#include "Box2D.h"
-#include "Cfg.h"
-#include "UI.h"
-#include "Def.h"
-#include "Games/GameLauncher.h"
+#include "m2/Game.h"
+#include "m2/Object.h"
+#include "m2/Component.h"
+#include "m2/Box2D.h"
+#include "m2/Cfg.h"
+#include "m2/UI.h"
+#include "m2/Def.h"
+#include "m2/GameLauncher.h"
 
 // Initialize with default values
 Game gCurrentGame = {
@@ -99,10 +99,7 @@ void Game_UpdateMousePosition() {
 	GAME->mousePositionInWorld_m = Vec2F_Add(GAME->mousePositionWRTScreenCenter_m, cameraPosition);
 }
 
-int Game_Level_Init() {
-	if (GAME->levelLoaded) {
-		Game_Level_Term();
-	}
+static int Game_Level_Init() {
 	M2ERR_REFLECT(Pool_Init(&GAME->objects, 16, sizeof(Object)));
 	M2ERR_REFLECT(InsertionList_Init(&GAME->drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
 	M2ERR_REFLECT(Pool_Init(&GAME->monitors, 16, sizeof(ComponentMonitor)));
@@ -110,8 +107,8 @@ int Game_Level_Init() {
 	M2ERR_REFLECT(Pool_Init(&GAME->graphics, 16, sizeof(ComponentGraphic)));
 	M2ERR_REFLECT(Pool_Init(&GAME->terrainGraphics, 16, sizeof(ComponentGraphic)));
 	M2ERR_REFLECT(Pool_Init(&GAME->lights, 16, sizeof(ComponentLight)));
-	M2ERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense)));
-	M2ERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense)));
+	M2ERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense) + GAME->proxy.componentDefenseDataSize));
+	M2ERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense) + GAME->proxy.componentOffenseDataSize));
 	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
 	GAME->contactListener = Box2DContactListenerRegister(ComponentPhysique_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
@@ -120,37 +117,7 @@ int Game_Level_Init() {
 	return 0;
 }
 
-M2Err Game_Level_Load(const CfgLevel *cfg) {
-	for (int y = 0; y < cfg->h; y++) {
-		for (int x = 0; x < cfg->w; x++) {
-			const CfgLevelTile *lvlTile = cfg->tiles + y * cfg->w + x;
-			if (lvlTile->gndTile) {
-				Object *tile = Pool_Mark(&GAME->objects, NULL, NULL);
-				M2ERR_REFLECT(ObjectTile_InitFromCfg(tile, lvlTile->gndTile, VEC2F(x, y)));
-			}
-			if (lvlTile->chr) {
-				Object *obj = Pool_Mark(&GAME->objects, NULL, NULL);
-				M2ERR_REFLECT(ObjectCharacter_InitFromCfg(obj, lvlTile->chr, VEC2F(x, y)));
-			}
-		}
-	}
-	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
-	ObjectCamera_Init(camera);
-	Object* pointer = Pool_Mark(&GAME->objects, NULL, &GAME->pointerId);
-	ObjectPointer_Init(pointer);
-
-	UIState_Init(&GAME->leftHudUIState, &CFG_UI_HUDLEFT);
-	UIState_UpdatePositions(&GAME->leftHudUIState, GAME->leftHudRect);
-	UIState_UpdateElements(&GAME->leftHudUIState);
-
-	UIState_Init(&GAME->rightHudUIState, &CFG_UI_HUDRIGHT);
-	UIState_UpdatePositions(&GAME->rightHudUIState, GAME->rightHudRect);
-	UIState_UpdateElements(&GAME->rightHudUIState);
-
-	return M2OK;
-}
-
-void Game_Level_Term() {
+static void Game_Level_Term() {
 	// TODO delete members in objects
 	PathfinderMap_Term(&GAME->pathfinderMap);
 	Box2DContactListenerDestroy(GAME->contactListener);
@@ -165,6 +132,43 @@ void Game_Level_Term() {
 	InsertionList_Term(&GAME->drawList);
 	Pool_Term(&GAME->objects);
 	GAME->levelLoaded = false;
+}
+
+M2Err Game_Level_Load(const CfgLevel *cfg) {
+	if (GAME->levelLoaded) {
+		Game_Level_Term();
+	}
+	Game_Level_Init();
+
+	for (int y = 0; y < cfg->h; y++) {
+		for (int x = 0; x < cfg->w; x++) {
+			const CfgTile *cfgTile = cfg->tiles + y * cfg->w + x;
+			if (cfgTile->backgroundSpriteIndex) {
+				Object *tile = Pool_Mark(&GAME->objects, NULL, NULL);
+				M2ERR_REFLECT(ObjectTile_InitFromCfg(tile, cfgTile->backgroundSpriteIndex, VEC2F(x, y)));
+			}
+			if (cfgTile->foregroundSpriteIndex) {
+				Object *obj = Pool_Mark(&GAME->objects, NULL, NULL);
+				M2ERR_REFLECT(GAME->proxy.foregroundSpriteLoader(obj, cfgTile->foregroundSpriteIndex, VEC2F(x, y)));
+			}
+		}
+	}
+	PathfinderMap_Init(&GAME->pathfinderMap);
+
+	Object* camera = Pool_Mark(&GAME->objects, NULL, &GAME->cameraId);
+	ObjectCamera_Init(camera);
+	Object* pointer = Pool_Mark(&GAME->objects, NULL, &GAME->pointerId);
+	ObjectPointer_Init(pointer);
+
+	UIState_Init(&GAME->leftHudUIState, GAME->proxy.cfgHUDLeft);
+	UIState_UpdatePositions(&GAME->leftHudUIState, GAME->leftHudRect);
+	UIState_UpdateElements(&GAME->leftHudUIState);
+
+	UIState_Init(&GAME->rightHudUIState, GAME->proxy.cfgHUDRight);
+	UIState_UpdatePositions(&GAME->rightHudUIState, GAME->rightHudRect);
+	UIState_UpdateElements(&GAME->rightHudUIState);
+
+	return M2OK;
 }
 
 Object* Game_FindObjectById(ID id) {

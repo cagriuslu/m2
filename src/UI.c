@@ -1,9 +1,8 @@
-#include "UI.h"
-#include "Event.h"
-#include "Def.h"
-#include "UIElement.h"
-#include "HashMap.h"
-#include "Game.h"
+#include "m2/UI.h"
+#include "m2/Event.h"
+#include "m2/Def.h"
+#include "m2/HashMap.h"
+#include "m2/Game.h"
 
 // Helper functions
 
@@ -165,7 +164,7 @@ M2Err UIState_UpdateElements(UIState* state) {
 			case CFG_UI_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
 			case CFG_UI_ELEMENT_TYP_DYNAMIC_IMAGE:
 			case CFG_UI_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-				UIElement_UpdateDynamic(elementState);
+				GAME->proxy.uiElementUpdateDynamic(elementState);
 				break;
 			default:
 				break;

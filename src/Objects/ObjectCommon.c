@@ -1,16 +1,2 @@
-#include "../Object.h"
-#include "../Def.h"
-
-int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position);
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position);
-
-int ObjectCharacter_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
-	switch (cfg->objType) {
-		case CFG_OBJTYP_PLAYER:
-			return ObjectPlayer_InitFromCfg(obj, cfg, position);
-		case CFG_OBJTYP_ENEMY:
-			return ObjectEnemy_InitFromCfg(obj, cfg, position);
-		default:
-			return LOG_ERROR_M2V(M2ERR_INVALID_CFG_OBJTYP, Int32, cfg->objType);
-	}
-}
+#include "m2/Object.h"
+#include "m2/Def.h"

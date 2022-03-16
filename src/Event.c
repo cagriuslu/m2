@@ -1,6 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "Event.h"
-#include "Def.h"
+#include "m2/Event.h"
+#include "m2/Def.h"
 
 bool Events_Gather(Events* evs) {
 	memset(evs, 0, sizeof(Events));

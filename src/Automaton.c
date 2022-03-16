@@ -1,4 +1,4 @@
-#include "Automaton.h"
+#include "m2/Automaton.h"
 
 M2Err Automaton_Init(Automaton* sm) {
 	memset(sm, 0, sizeof(Automaton));

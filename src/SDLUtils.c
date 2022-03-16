@@ -1,4 +1,4 @@
-#include "SDLUtils.h"
+#include "m2/SDLUtils.h"
 
 SDL_Cursor* SDLUtils_CreateCursor() {
     const char* str =

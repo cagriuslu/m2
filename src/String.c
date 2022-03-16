@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "String.h"
-#include "Def.h"
-#include <string.h>
+#include "m2/String.h"
+#include "m2/Def.h"
+#include "m2/String.h"
 
 void String_Split_OutItemTerm(void* item) {
 	char* ptr = *((char**)item);

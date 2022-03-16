@@ -1,17 +1,7 @@
-#include "../Component.h"
-#include "../Object.h"
-#include "../Game.h"
-#include "../Def.h"
-
-//#define MOTION_BLUR
-
-static bool IsMotionBlurEnabled() {
-#ifdef MOTION_BLUR
-	return true;
-#else
-	return false;
-#endif
-}
+#include <m2/Component.h>
+#include <m2/Object.h>
+#include <m2/Game.h>
+#include <m2/Def.h>
 
 Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F objGfxCenterPx) {
 	static ID cameraId = 0;
@@ -36,54 +26,19 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 	Object* obj = Pool_GetById(&GAME->objects, gfx->super.objId); M2ASSERT(obj);
 
 	Vec2I obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj->position, gfx->center_px);
-	if (IsMotionBlurEnabled() == false ||
-		!gfx->motionBlurEnabled ||
-		Vec2I_Equals(gfx->prevObjGfxOriginWRTScreenCenter_px, VEC2I_MIN) ||
-		Vec2I_Equals(gfx->prevObjGfxOriginWRTScreenCenter_px, obj_gfx_origin_wrt_screen_center_px)) {
-		// Screen origin is top-left corner
-		Vec2I obj_gfx_origin_wrt_screen_origin_px = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_gfx_origin_wrt_screen_center_px);
-		SDL_Rect dstrect = (SDL_Rect){
-				obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx->textureRect.w * GAME->scale / 2.0f),
-				obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx->textureRect.h * GAME->scale / 2.0f),
-				(int)ceilf((float)gfx->textureRect.w * GAME->scale),
-				(int)ceilf((float)gfx->textureRect.h * GAME->scale)
-		};
-		SDL_Point centerPoint = (SDL_Point){
-				(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
-				(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
-		};
-		SDL_RenderCopyEx(GAME->sdlRenderer, gfx->texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
-	} else {
-		Vec2I obj_displacement_on_screen = Vec2I_Sub(obj_gfx_origin_wrt_screen_center_px, gfx->prevObjGfxOriginWRTScreenCenter_px);
-		Vec2F obj_displacement_on_screen_f = Vec2F_FromVec2I(obj_displacement_on_screen);
-
-		int samplesToDraw = MAX(abs(obj_displacement_on_screen.x), abs(obj_displacement_on_screen.y));
-		samplesToDraw = samplesToDraw == 0 ? 1 : samplesToDraw;
-		Vec2F obj_displacement_step = Vec2F_Div(obj_displacement_on_screen_f, (float)samplesToDraw);
-		SDL_SetTextureAlphaMod(gfx->texture, (uint8_t)roundf(255.0f / sqrtf((float)samplesToDraw))); // sqrt: relation between time and light intensity seems like sqrt, not sure
-		for (int i = 0; i < samplesToDraw; i++) {
-			Vec2F prev_obj_gfx_origin_wrt_screen_center_px_f = Vec2F_FromVec2I(gfx->prevObjGfxOriginWRTScreenCenter_px);
-			Vec2F motion_obj_gfx_origin_wrt_screen_center_px_f = Vec2F_Add(prev_obj_gfx_origin_wrt_screen_center_px_f, Vec2F_Mul(obj_displacement_step, (float)i + 1));
-			Vec2I motion_obj_gfx_origin_wrt_screen_center_px = Vec2I_From2F(motion_obj_gfx_origin_wrt_screen_center_px_f);
-
-			// TODO code copied
-			// Screen origin is top-left corner
-			Vec2I obj_gfx_origin_wrt_screen_origin_px = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, motion_obj_gfx_origin_wrt_screen_center_px);
-			SDL_Rect dstrect = (SDL_Rect){
-					obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx->textureRect.w * GAME->scale / 2.0f),
-					obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx->textureRect.h * GAME->scale / 2.0f),
-					(int)ceilf((float)gfx->textureRect.w * GAME->scale),
-					(int)ceilf((float)gfx->textureRect.h * GAME->scale)
-			};
-			SDL_Point centerPoint = (SDL_Point){
-					(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
-					(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
-			};
-			SDL_RenderCopyEx(GAME->sdlRenderer, gfx->texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
-		}
-		SDL_SetTextureAlphaMod(gfx->texture, 255);
-	}
-	gfx->prevObjGfxOriginWRTScreenCenter_px = obj_gfx_origin_wrt_screen_center_px;
+	// Screen origin is top-left corner
+	Vec2I obj_gfx_origin_wrt_screen_origin_px = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_gfx_origin_wrt_screen_center_px);
+	SDL_Rect dstrect = (SDL_Rect){
+			obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx->textureRect.w * GAME->scale / 2.0f),
+			obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx->textureRect.h * GAME->scale / 2.0f),
+			(int)ceilf((float)gfx->textureRect.w * GAME->scale),
+			(int)ceilf((float)gfx->textureRect.h * GAME->scale)
+	};
+	SDL_Point centerPoint = (SDL_Point){
+			(int)roundf(gfx->center_px.x * GAME->scale) + dstrect.w/2 ,
+			(int)roundf(gfx->center_px.y * GAME->scale) + dstrect.h/2
+	};
+	SDL_RenderCopyEx(GAME->sdlRenderer, gfx->texture, &gfx->textureRect, &dstrect, gfx->angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
 }
 
 void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio) {
@@ -125,14 +80,12 @@ void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRa
 	SDL_RenderFillRect(GAME->sdlRenderer, &empty_dstrect);
 }
 
-int ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId) {
+M2Err ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId) {
 	memset(gfx, 0, sizeof(ComponentGraphic));
 	M2ERR_REFLECT(Component_Init((Component*)gfx, objectId));
 	gfx->texture = GAME->sdlTexture;
 	gfx->draw = ComponentGraphic_DefaultDraw;
-	gfx->prevObjGfxOriginWRTScreenCenter_px = VEC2I_MIN;
-	gfx->prevDrawAngle = NAN;
-	return 0;
+	return M2OK;
 }
 
 void ComponentGraphic_Term(ComponentGraphic* gfx) {
@@ -155,5 +108,4 @@ int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB) {
 	} else {
 		return 0;
 	}
-	return 0;
 }

@@ -1,21 +1,12 @@
-#include "Object.h"
-#include "Game.h"
-#include "Pool.h"
-#include <string.h>
+#include "m2/Object.h"
+#include "m2/Game.h"
+#include "m2/Pool.h"
+#include "m2/String.h"
 
-M2Err Object_Init(Object* obj, Vec2F position, bool initExtra) {
+M2Err Object_Init(Object* obj, Vec2F position) {
 	memset(obj, 0, sizeof(Object));
 	obj->position = position;
-	if (initExtra) {
-		if ((obj->ex = calloc(1, sizeof(ObjectEx))) != NULL) {
-			return M2OK;
-		} else {
-			// TODO print error message
-			return M2ERR_OUT_OF_MEMORY;
-		}
-	} else {
-		return M2OK;
-	}
+	return M2OK;
 }
 
 ComponentMonitor* Object_GetMonitor(Object* obj) {
@@ -128,8 +119,8 @@ void Object_Term(Object* obj) {
 		ComponentOffense_Term(off);
 		Pool_Unmark(&GAME->offenses, off);
 	}
-	if (obj->ex) {
-		// TODO
+	if (obj->data) {
+		free(obj->data);
 	}
 	memset(obj, 0, sizeof(Object));
 }

@@ -1,5 +1,5 @@
-#include "Vec2I.h"
-#include "Vec2F.h"
+#include "m2/Vec2I.h"
+#include "m2/Vec2F.h"
 #include <math.h>
 
 Vec2I Vec2I_Add(Vec2I lhs, Vec2I rhs) {

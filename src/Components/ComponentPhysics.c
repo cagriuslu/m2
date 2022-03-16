@@ -1,12 +1,10 @@
-#include "../Component.h"
-#include "../Object.h"
-#include "../Game.h"
-#include "../Def.h"
+#include <m2/Component.h>
+#include <m2/Game.h>
+#include <m2/Def.h>
 
-int ComponentPhysique_Init(ComponentPhysique* phy, ID objectId) {
+M2Err ComponentPhysique_Init(ComponentPhysique* phy, ID objectId) {
 	memset(phy, 0, sizeof(ComponentPhysique));
-	M2ERR_REFLECT(Component_Init((Component*)phy, objectId));
-	return 0;
+	return Component_Init((Component*)phy, objectId);
 }
 
 void ComponentPhysique_Term(ComponentPhysique* phy) {

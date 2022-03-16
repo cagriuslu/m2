@@ -1,6 +1,6 @@
-#include "Array.h"
+#include "m2/Array.h"
 #include <math.h>
-#include <string.h>
+#include "m2/String.h"
 #include <stdint.h>
 #include <assert.h>
 
