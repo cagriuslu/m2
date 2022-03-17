@@ -10,7 +10,6 @@ typedef struct {
 	AiState aiState;
 	Automaton aiAutomaton;
 	float onHitColorModTtl;
-	AI* ai;
 } EnemyData;
 #define AS_ENEMYDATA(ptr) ((EnemyData*)(ptr))
 

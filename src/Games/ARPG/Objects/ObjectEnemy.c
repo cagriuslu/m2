@@ -73,16 +73,6 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position
 	gfx->center_px = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].objCenter_px;
 	gfx->draw = ObjectEnemy_Draw;
 
-	AI* ai = malloc(sizeof(AI)); // TODO error check, who uses malloc anyways
-	AI_Init(ai);
-	ai->recalculationPeriod = 500;
-	ai->recalculationStopwatch = rand() % ai->recalculationPeriod;
-	ai->attackPeriod = 500;
-	ai->attackStopwatch = rand() % ai->attackPeriod;
-	ai->homePosition = position;
-	ai->triggerDistance = 6.0f;
-	AS_ENEMYDATA(obj->data)->ai = ai;
-
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = ObjectEnemy_prePhysics;
 	el->postPhysics = ObjectEnemy_postPhysics;

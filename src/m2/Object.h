@@ -3,7 +3,6 @@
 
 #include <m2/Component.h>
 #include <m2/Automaton.h>
-#include <m2/AI.h>
 #include <m2/Array.h>
 #include <m2/Cfg.h>
 #include <m2/Vec2F.h>
