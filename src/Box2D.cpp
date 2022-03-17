@@ -1,4 +1,4 @@
-#include "m2/Box2D.h"
+#include "m2/Box2D.hh"
 #include <b2_world.h>
 #include <b2_body.h>
 #include <b2_math.h>
@@ -10,9 +10,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-extern "C" {
-#include "m2/Def.h"
-}
+#include <m2/Def.hh>
 
 #define Vec2FToB2Vec2(vec2f) (b2Vec2{vec2f.x, vec2f.y})
 #define B2Vec2ToVec2F(b2vec2) (Vec2F{b2vec2.x, b2vec2.y})
