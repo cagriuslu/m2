@@ -14,11 +14,10 @@ if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
 endif()
 
 file(GLOB m2_SOURCES
-    "src/*.h" "src/*.c"
-    "src/*/*.h" "src/*/*.c"
-    "src/*/*/*.h" "src/*/*/*.c"
-    "src/*/*/*/*.h" "src/*/*/*/*.c"
-    "src/*.cpp")
+    "src/*.h" "src/*.c*"
+    "src/*/*.h" "src/*/*.c*"
+    "src/*/*/*.h" "src/*/*/*.c*"
+    "src/*/*/*/*.h" "src/*/*/*/*.c*")
 add_executable(m2 WIN32 ${m2_SOURCES})
 target_include_directories(m2 PUBLIC src)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
