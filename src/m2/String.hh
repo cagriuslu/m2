@@ -1,9 +1,11 @@
 #ifndef STRING_H
 #define STRING_H
 
-#include <m2/Def.hh>
-#include <m2/Array.hh>
+#include <vector>
+#include <string>
 
-M2Err String_Split(const char* string, char delimiter, Array* out);
+namespace m2::string {
+	std::vector<std::string> split(std::string str, char delimiter);
+}
 
 #endif
