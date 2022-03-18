@@ -1,4 +1,4 @@
-#include "m2/Vec2F.hh"
+#include "m2/Vec2F-old.hh"
 #include <math.h>
 
 static float _Vec2F_Length(Vec2F in) {
@@ -80,6 +80,6 @@ bool Vec2F_IsNan(Vec2F in) {
 	return isnan(in.x) || isnan(in.y);
 }
 
-Vec2F Vec2F_FromVec2I(Vec2I v) {
+Vec2F Vec2F_FromVec2I(m2::vec2i v) {
 	return Vec2F{ (float)v.x, (float)v.y };
 }

@@ -1,7 +1,7 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include <m2/Vec2F.hh>
+#include <m2/Vec2F-old.hh>
 
 typedef struct {
 	Vec2F lowerBound;

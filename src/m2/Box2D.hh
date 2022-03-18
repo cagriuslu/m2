@@ -1,7 +1,7 @@
 #ifndef BOX2D_H
 #define BOX2D_H
 
-#include "Vec2F.hh"
+#include "Vec2F-old.hh"
 #include "m2/AABB.hh"
 
 typedef void Box2DWorld;

@@ -5,7 +5,7 @@
 #include <m2/Automaton.hh>
 #include <m2/Array.hh>
 #include <m2/Cfg.hh>
-#include <m2/Vec2F.hh>
+#include <m2/Vec2F-old.hh>
 #include <stdint.h>
 
 /// Basis of all objects in the game.

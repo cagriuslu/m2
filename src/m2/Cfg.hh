@@ -4,7 +4,7 @@
 #include "TinySet.hh"
 #include "m2/Automaton.hh"
 #include "List.hh"
-#include "Vec2F.hh"
+#include "Vec2F-old.hh"
 #include "Def.hh"
 #include <SDL.h>
 

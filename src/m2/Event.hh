@@ -3,7 +3,7 @@
 
 #include "m2/Controls.hh"
 #include "Vec2I-old.hh"
-#include "Vec2F.hh"
+#include "Vec2F-old.hh"
 #include <stdbool.h>
 
 typedef struct _Events {

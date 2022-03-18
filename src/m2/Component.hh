@@ -2,7 +2,7 @@
 #define COMPONENT_H
 
 #include <m2/Cfg.hh>
-#include <m2/Vec2F.hh>
+#include <m2/Vec2F-old.hh>
 #include <m2/Box2D.hh>
 #include <m2/Pool.hh>
 #include <SDL.h>

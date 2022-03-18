@@ -4,7 +4,7 @@
 #include "m2/Def.hh"
 #include "m2/HashMap.hh"
 #include "m2/List.hh"
-#include "Vec2F.hh"
+#include "Vec2F-old.hh"
 
 typedef struct _PathfinderMap {
 	HashMap blockedLocations;

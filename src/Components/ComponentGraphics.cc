@@ -3,7 +3,7 @@
 #include <m2/Game.hh>
 #include <m2/Def.hh>
 
-Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F objGfxCenterPx) {
+m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F objGfxCenterPx) {
 	static ID cameraId = 0;
 	static Object* cameraObj = NULL;
 	if (GAME->cameraId && cameraId != GAME->cameraId) {
@@ -14,7 +14,7 @@ Vec2I ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F
 	Vec2F cameraPosition = cameraObj ? cameraObj->position : VEC2F_ZERO; // cameraObj is NULL while level is loading
 	Vec2F obj_origin_wrt_camera_obj_m = Vec2F_Sub(objPosition, cameraPosition);
 	// Screen center is the middle of the window
-	Vec2I obj_origin_wrt_screen_center_px = Vec2I_From2F(Vec2F_Mul(obj_origin_wrt_camera_obj_m, GAME->pixelsPerMeter));
+	m2::vec2i obj_origin_wrt_screen_center_px = m2::vec2i{Vec2F_Mul(obj_origin_wrt_camera_obj_m, GAME->pixelsPerMeter)};
 	Vec2I obj_gfx_origin_wrt_screen_center_px = Vec2I_Add(obj_origin_wrt_screen_center_px, Vec2I{
 			-(int)roundf(objGfxCenterPx.x * GAME->scale),
 			-(int)roundf(objGfxCenterPx.y * GAME->scale)
