@@ -23,7 +23,7 @@
 #ifndef B2_GROWABLE_STACK_H
 #define B2_GROWABLE_STACK_H
 
-#include "m2/String.hh"
+#include <string.h>
 
 #include "b2_settings.h"
 
