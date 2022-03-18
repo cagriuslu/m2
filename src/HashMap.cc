@@ -2,7 +2,6 @@
 #include "m2/HashMap.hh"
 #include "m2/Array.hh"
 #include "m2/Def.hh"
-#include "m2/String.hh"
 #include <m2/vec2i.hh>
 #include <stdlib.h>
 #include <assert.h>

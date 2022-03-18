@@ -1,6 +1,5 @@
 #include "m2/Pool.hh"
 #include <stdlib.h>
-#include "m2/String.hh"
 #include <assert.h>
 #include <stddef.h>
 #include <stdio.h>

@@ -1,6 +1,5 @@
 #include <m2/Array.hh>
 #include <math.h>
-#include "m2/String.hh"
 #include <stdint.h>
 #include <assert.h>
 

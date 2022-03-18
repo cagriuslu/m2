@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "m2/VSON.hh"
 #include "m2/Array.hh"
-#include "m2/String.hh"
+#include "m2/string.hh"
 #include "m2/Def.hh"
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')

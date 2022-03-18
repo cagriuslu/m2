@@ -1,6 +1,5 @@
 #include "m2/InsertionList.hh"
 #include "m2/Pool.hh"
-#include "m2/String.hh"
 
 #define AsUint64Ptr(ptr) ((ID*) (ptr))
 

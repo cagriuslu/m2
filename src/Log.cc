@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include "m2/String.hh"
 
 LogLevel gCurrentLogLevel = LogLevelDebug;
 

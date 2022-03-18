@@ -4,7 +4,6 @@
 #include "m2/Component.hh"
 #include "m2/Object.hh"
 #include "m2/Game.hh"
-#include "m2/String.hh"
 #include <m2/vec2i.hh>
 #include <stdbool.h>
 #include <float.h>
