@@ -335,19 +335,17 @@ M2Err _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
 }
 
 VSON* VSON_Get(VSON* vson, const char* path) {
-	Array pathPieces;
-	M2Err result = String_Split(path, '/', &pathPieces);
-	if (result) {
-		return NULL;
+	auto path_pieces = m2::string::split(path, '/');
+	if (path_pieces.empty()) {
+		return nullptr;
 	}
 
-	for (size_t i = 0; i < Array_Length(&pathPieces) && vson; i++) {
-		char** pathPiecePtr = static_cast<char **>(Array_Get(&pathPieces, i));
+	for (const auto& str : path_pieces) {
 		if (vson->type == VSON_VALUE_TYPE_OBJECT) {
 			// Look for pathPiece
 			VSONObjectKeyValue* objKV = vson->value.objectFirstChild;
 			while (objKV) {
-				if (strcmp(objKV->key, *pathPiecePtr) == 0) {
+				if (strcmp(objKV->key, str.c_str()) == 0) {
 					break;
 				}
 				objKV = objKV->next;
@@ -355,7 +353,7 @@ VSON* VSON_Get(VSON* vson, const char* path) {
 			vson = objKV ? &(objKV->value) : NULL;
 		} else if (vson->type == VSON_VALUE_TYPE_ARRAY) {
 			// Look for int(pathPiece)
-			const long index = strtol(*pathPiecePtr, NULL, 10);
+			const long index = strtol(str.c_str(), NULL, 10);
 			VSONArrayValue* arrV = vson->value.arrayFirstChild;
 			for (long ii = 0; ii < index && arrV; ii++) {
 				arrV = arrV->next;
@@ -365,8 +363,6 @@ VSON* VSON_Get(VSON* vson, const char* path) {
 			vson = NULL;
 		}
 	}
-
-	Array_Term(&pathPieces);
 	return vson;
 }
 const char* VSON_GetString(VSON* vson, const char* path) {
