@@ -19,7 +19,7 @@ static void Player_prePhysics(ComponentMonitor* el) {
 	PlayerData *playerData = AS_PLAYERDATA(obj->data);
 
 	ComponentPhysique* phy = static_cast<ComponentPhysique *>(Pool_GetById(&GAME->physics, obj->physique)); M2ASSERT(phy);
-	Vec2F moveDirection = (Vec2F){ 0.0f, 0.0f };
+	Vec2F moveDirection = Vec2F{ 0.0f, 0.0f };
 	if (GAME->events.keyStates[KEY_UP]) {
 		moveDirection.y += -1.0f;
 		Automaton_ProcessSignal(&playerData->charAnimationAutomaton, SIG_CHARANIM_WALKUP);

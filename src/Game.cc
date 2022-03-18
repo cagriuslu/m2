@@ -24,7 +24,7 @@ Game* Game_GetCurrent() {
 }
 
 void Game_UpdateWindowDimensions(int width, int height) {
-	GAME->windowRect = (SDL_Rect){0, 0, width, height};
+	GAME->windowRect = SDL_Rect{0, 0, width, height};
 
 	float fw = (float)width;
 	float fh = (float)height;
@@ -38,14 +38,14 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME->gameAndHudRect.h = height;
 
 		int envelopeWidth = (width - GAME->gameAndHudRect.w) / 2;
-		GAME->firstEnvelopeRect = (SDL_Rect){ 0, 0, envelopeWidth, height };
-		GAME->secondEnvelopeRect = (SDL_Rect){ width - envelopeWidth, 0, envelopeWidth, height };
+		GAME->firstEnvelopeRect = SDL_Rect{ 0, 0, envelopeWidth, height };
+		GAME->secondEnvelopeRect = SDL_Rect{ width - envelopeWidth, 0, envelopeWidth, height };
 		GAME->gameAndHudRect.x = envelopeWidth;
 		GAME->gameAndHudRect.y = 0;
 
 		int hudWidth = (int)roundf((float)GAME->gameAndHudRect.h * HUD_ASPECT_RATIO);
-		GAME->leftHudRect = (SDL_Rect){ envelopeWidth, 0, hudWidth, GAME->gameAndHudRect.h };
-		GAME->rightHudRect = (SDL_Rect){ width - envelopeWidth - hudWidth, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->leftHudRect = SDL_Rect{ envelopeWidth, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->rightHudRect = SDL_Rect{ width - envelopeWidth - hudWidth, 0, hudWidth, GAME->gameAndHudRect.h };
 		GAME->gameRect.x = envelopeWidth + hudWidth;
 		GAME->gameRect.y = 0;
 	} else if (aspectRatioDiff < -0.001f) {
@@ -57,14 +57,14 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME->gameAndHudRect.h = (int)roundf(fw / GAME_AND_HUD_ASPECT_RATIO);
 
 		int envelopeHeight = (height - GAME->gameAndHudRect.h) / 2;
-		GAME->firstEnvelopeRect = (SDL_Rect){0, 0, width, envelopeHeight };
-		GAME->secondEnvelopeRect = (SDL_Rect){0, height - envelopeHeight, width, envelopeHeight };
+		GAME->firstEnvelopeRect = SDL_Rect{0, 0, width, envelopeHeight };
+		GAME->secondEnvelopeRect = SDL_Rect{0, height - envelopeHeight, width, envelopeHeight };
 		GAME->gameAndHudRect.x = 0;
 		GAME->gameAndHudRect.y = envelopeHeight;
 
 		int hudWidth = (int)roundf((float)GAME->gameAndHudRect.h * HUD_ASPECT_RATIO);
-		GAME->leftHudRect = (SDL_Rect){0, envelopeHeight, hudWidth, GAME->gameAndHudRect.h };
-		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, envelopeHeight, hudWidth, GAME->gameAndHudRect.h };
+		GAME->leftHudRect = SDL_Rect{0, envelopeHeight, hudWidth, GAME->gameAndHudRect.h };
+		GAME->rightHudRect = SDL_Rect{ width - hudWidth, envelopeHeight, hudWidth, GAME->gameAndHudRect.h };
 		GAME->gameRect.x = hudWidth;
 		GAME->gameRect.y = envelopeHeight;
 	} else {
@@ -74,14 +74,14 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME->gameAndHudRect.w = width;
 		GAME->gameAndHudRect.h = height;
 
-		GAME->firstEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
-		GAME->secondEnvelopeRect = (SDL_Rect){ 0,0,0,0, };
+		GAME->firstEnvelopeRect = SDL_Rect{ 0,0,0,0, };
+		GAME->secondEnvelopeRect = SDL_Rect{ 0,0,0,0, };
 		GAME->gameAndHudRect.x = 0;
 		GAME->gameAndHudRect.y = 0;
 
 		int hudWidth = (int)roundf((float)GAME->gameAndHudRect.h * HUD_ASPECT_RATIO);
-		GAME->leftHudRect = (SDL_Rect){ 0, 0, hudWidth, GAME->gameAndHudRect.h };
-		GAME->rightHudRect = (SDL_Rect){ width - hudWidth, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->leftHudRect = SDL_Rect{ 0, 0, hudWidth, GAME->gameAndHudRect.h };
+		GAME->rightHudRect = SDL_Rect{ width - hudWidth, 0, hudWidth, GAME->gameAndHudRect.h };
 		GAME->gameRect.x = hudWidth;
 		GAME->gameRect.y = 0;
 	}
@@ -94,8 +94,8 @@ void Game_UpdateMousePosition() {
 	Vec2F cameraPosition = camera->position;
 
 	Vec2I pointerPosition = GAME->events.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter_px = (Vec2I){pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
-	GAME->mousePositionWRTScreenCenter_m = (Vec2F){pointerPositionWRTScreenCenter_px.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME->pixelsPerMeter };
+	Vec2I pointerPositionWRTScreenCenter_px = Vec2I{pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
+	GAME->mousePositionWRTScreenCenter_m = Vec2F{pointerPositionWRTScreenCenter_px.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME->pixelsPerMeter };
 	GAME->mousePositionInWorld_m = Vec2F_Add(GAME->mousePositionWRTScreenCenter_m, cameraPosition);
 }
 
@@ -109,7 +109,7 @@ static int Game_Level_Init() {
 	M2ERR_REFLECT(Pool_Init(&GAME->lights, 16, sizeof(ComponentLight)));
 	M2ERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense) + GAME->proxy.componentDefenseDataSize));
 	M2ERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense) + GAME->proxy.componentOffenseDataSize));
-	GAME->world = Box2DWorldCreate((Vec2F) { 0.0f, 0.0f });
+	GAME->world = Box2DWorldCreate(Vec2F{ 0.0f, 0.0f });
 	GAME->contactListener = Box2DContactListenerRegister(ComponentPhysique_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
 	M2ERR_REFLECT(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));

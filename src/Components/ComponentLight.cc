@@ -34,8 +34,8 @@ void ComponentLight_DefaultDraw(ComponentLight* lig) {
 
 	Vec2I obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj->position);
 	// Screen origin is top-left corner
-	Vec2I obj_origin_wrt_screen_origin_px = Vec2I_Add((Vec2I) { GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_origin_wrt_screen_center_px);
-	SDL_Rect dstrect = (SDL_Rect){
+	Vec2I obj_origin_wrt_screen_origin_px = Vec2I_Add(Vec2I{ GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_origin_wrt_screen_center_px);
+	SDL_Rect dstrect = SDL_Rect{
 			obj_origin_wrt_screen_origin_px.x - (int)roundf((float)lig->radius_m * GAME->pixelsPerMeter),
 			obj_origin_wrt_screen_origin_px.y - (int)roundf((float)lig->radius_m * GAME->pixelsPerMeter),
 			(int)roundf((float)lig->radius_m * GAME->pixelsPerMeter * 2.0f),

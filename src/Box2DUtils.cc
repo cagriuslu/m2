@@ -72,7 +72,7 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 		Box2DBodySetLinearDamping(body, linearDamping);
 		Box2DBodySetAngularDamping(body, 0.0f);
 		Box2DBodySetFixedRotation(body, fixedRotation);
-		Box2DBodySetMassData(body, mass, (Vec2F) { 0.0f, 0.0f }, 0.0f);
+		Box2DBodySetMassData(body, mass, Vec2F{ 0.0f, 0.0f }, 0.0f);
 	}
 
 	return body;

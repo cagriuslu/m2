@@ -112,8 +112,11 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 0, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
+						.params = {
+								.rect = {
+										.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F},
+										.dims_m = {1.0f, 1.0f}
+								}
 						}
 				}
 		},
@@ -122,9 +125,9 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 48, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
-						}
+						.params = {.rect = {
+								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, .dims_m = {1.0f, 1.0f}
+						}}
 				}
 		},
 		{
@@ -132,9 +135,9 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 96, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
-						}
+						.params = {.rect = {
+								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, .dims_m= {1.0f, 1.0f}
+						}}
 				}
 		},
 		{
@@ -142,9 +145,9 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 144, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
-						}
+						.params = {.rect = {
+								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F},.dims_m= {1.0f, 1.0f}
+						}}
 				}
 		},
 		{
@@ -152,9 +155,9 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 192, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
-						}
+						.params = {.rect = {
+								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F},.dims_m= {1.0f, 1.0f}
+						}}
 				}
 		},
 		{
@@ -162,9 +165,9 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 240, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
-						}
+						.params = {.rect = {
+								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, .dims_m={1.0f, 1.0f}
+						}}
 				}
 		},
 		{
@@ -172,9 +175,9 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 288, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
-						}
+						.params = {.rect = {
+								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F},.dims_m= {1.0f, 1.0f}
+						}}
 				}
 		},
 		{
@@ -182,192 +185,192 @@ const CfgSprite ARPG_CFG_SPRITES[] = {
 				.textureRect = {96, 336, ARPG_CFG_TILE_SIZE, ARPG_CFG_TILE_SIZE},
 				.collider = {
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F}, {1.0f, 1.0f}
-						}
+						.params = {.rect = {
+								.dims_px = {ARPG_CFG_TILE_SIZE_F, ARPG_CFG_TILE_SIZE_F},.dims_m= {1.0f, 1.0f}
+						}}
 				}
 		},
 
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKDOWN_00,
 				.textureRect = {0, 0, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE},
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m= {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE},
 				.collider = {
-						.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
+						.center_px = {0.0f, 0.0f}, .center_m= {0.0f, 0.0f},
 						.type = CFG_COLLIDER_TYPE_CIRCLE,
-						.params.circ = {
-								.radius_px = 12.0f, 12.0f / ARPG_CFG_TILE_SIZE
-						}
+						.params = {.circ = {
+								.radius_px = 12.0f, .radius_m = 12.0f / ARPG_CFG_TILE_SIZE
+						}}
 				}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKDOWN_01,
 				.textureRect = {0, 48, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKDOWN_02,
 				.textureRect = {0, 96, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKLEFT_00,
 				.textureRect = {0, 144, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKLEFT_01,
 				.textureRect = {0, 192, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKLEFT_02,
 				.textureRect = {0, 240, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKRIGHT_00,
 				.textureRect = {0, 288, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKRIGHT_01,
 				.textureRect = {0, 336, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKRIGHT_02,
 				.textureRect = {0, 384, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKUP_00,
 				.textureRect = {0, 432, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKUP_01,
 				.textureRect = {0, 480, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_PLAYER_LOOKUP_02,
 				.textureRect = {0, 528, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKDOWN_00,
 				.textureRect = {48, 0, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE},
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE},
 				.collider = {
-						.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
+						.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 						.type = CFG_COLLIDER_TYPE_CIRCLE,
-						.params.circ = {
-								.radius_px = 12.0f, 12.0f / ARPG_CFG_TILE_SIZE
-						}
+						.params = {.circ = {
+								.radius_px = 12.0f, .radius_m = 12.0f / ARPG_CFG_TILE_SIZE
+						}}
 				}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKDOWN_01,
 				.textureRect = {48, 48, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKDOWN_02,
 				.textureRect = {48, 96, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKLEFT_00,
 				.textureRect = {48, 144, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKLEFT_01,
 				.textureRect = {48, 192, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKLEFT_02,
 				.textureRect = {48, 240, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKRIGHT_00,
 				.textureRect = {48, 288, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKRIGHT_01,
 				.textureRect = {48, 336, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKRIGHT_02,
 				.textureRect = {48, 384, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKUP_00,
 				.textureRect = {48, 432, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKUP_01,
 				.textureRect = {48, 480, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_ENEMY_LOOKUP_02,
 				.textureRect = {48, 528, 48, 48},
-				.objCenter_px = {-0.5f, 12.0f}, {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
+				.objCenter_px = {-0.5f, 12.0f}, .objCenter_m = {-0.5f / ARPG_CFG_TILE_SIZE, 12.0f / ARPG_CFG_TILE_SIZE}
 		},
 		{
 				.index = ARPG_CFGSPRITE_BULLET_00,
 				.textureRect = {144, 0, 48, 48},
-				.objCenter_px = {0.0f, 0.0f}, {0.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
+				.objCenter_px = {0.0f, 0.0f}, .objCenter_m = {0.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
 				.collider = {
-						.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
+						.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 						.type = CFG_COLLIDER_TYPE_CIRCLE,
-						.params.circ = {
-								.radius_px = 3.0f, 3.0f / ARPG_CFG_TILE_SIZE
-						}
+						.params = {.circ = {
+								.radius_px = 3.0f, .radius_m = 3.0f / ARPG_CFG_TILE_SIZE
+						}}
 				}
 		},
 		{
 				.index = ARPG_CFGSPRITE_BULLET_01,
 				.textureRect = {144, 48, 48, 48},
-				.objCenter_px = {0.0f, 0.0f}, {0.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
+				.objCenter_px = {0.0f, 0.0f}, .objCenter_m = {0.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
 				.collider = {
-						.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
+						.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 						.type = CFG_COLLIDER_TYPE_CIRCLE,
-						.params.circ = {
-								.radius_px = 3.0f, 3.0f / ARPG_CFG_TILE_SIZE
-						}
+						.params = {.circ = {
+								.radius_px = 3.0f, .radius_m = 3.0f / ARPG_CFG_TILE_SIZE
+						}}
 				}
 		},
 		{
 				.index = ARPG_CFGSPRITE_SWORD_00,
 				.textureRect = {192, 0, 96, 48},
-				.objCenter_px = {-24.0f, 0.0f}, {-24.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
+				.objCenter_px = {-24.0f, 0.0f}, .objCenter_m = {-24.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
 				.collider = {
-						.center_px = {24.0f, 0.0f}, {24.0f, 0.0f},
+						.center_px = {24.0f, 0.0f}, .center_m = {24.0f, 0.0f},
 						.type = CFG_COLLIDER_TYPE_RECTANGLE,
-						.params.rect = {
-								.dims_px = {54.0f, 8.0f}, {54.0f / ARPG_CFG_TILE_SIZE, 8.0f / ARPG_CFG_TILE_SIZE}
-						}
+						.params = {.rect = {
+								.dims_px = {54.0f, 8.0f}, .dims_m = {54.0f / ARPG_CFG_TILE_SIZE, 8.0f / ARPG_CFG_TILE_SIZE}
+						}}
 				}
 		},
 		{
 				.index = ARPG_CFGSPRITE_BOMB_00,
 				.textureRect = {288, 48, 48, 48},
-				.objCenter_px = {0.0f, 0.0f}, {0.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
+				.objCenter_px = {0.0f, 0.0f}, .objCenter_m = {0.0f / ARPG_CFG_TILE_SIZE, 0.0f / ARPG_CFG_TILE_SIZE},
 				.collider = {
-						.center_px = {0.0f, 0.0f}, {0.0f, 0.0f},
+						.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 						.type = CFG_COLLIDER_TYPE_CIRCLE,
-						.params.circ = {
-								.radius_px = 6.0f, 6.0f / ARPG_CFG_TILE_SIZE
-						}
+						.params = {.circ = {
+								.radius_px = 6.0f, .radius_m = 6.0f / ARPG_CFG_TILE_SIZE
+						}}
 				}
 		},
 };

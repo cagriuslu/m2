@@ -29,7 +29,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 						AABB aabb = Box2DFixtureGetAABB(fixture, proxyIdx);
 						// AABB is bigger 0.01 meters than the object at each side
 						// Decrease its size by 0.02 so that rounding can work						
-						AABB conservativeAabb = (AABB){Vec2F_Add(aabb.lowerBound, (Vec2F){ 0.02f, 0.02f}), Vec2F_Sub(aabb.upperBound, (Vec2F){ 0.02f, 0.02f})};
+						AABB conservativeAabb = AABB{Vec2F_Add(aabb.lowerBound, Vec2F{ 0.02f, 0.02f}), Vec2F_Sub(aabb.upperBound, Vec2F{ 0.02f, 0.02f})};
 						int lowerX = (int) roundf(conservativeAabb.lowerBound.x);
 						int upperX = (int) roundf(conservativeAabb.upperBound.x);
 						int lowerY = (int) roundf(conservativeAabb.lowerBound.y);
@@ -104,7 +104,7 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 	// Holds the positions where will be explored next
 	List frontiers;
 	List_Init(&frontiers, 10, sizeof(PriorityListItem));
-	tmpPrioListItem = (PriorityListItem){0.0f, from};
+	tmpPrioListItem = PriorityListItem{0.0f, from};
 	List_Prepend(&frontiers, &tmpPrioListItem, NULL);
 
 	// Holds from which position should you approach a certain position
@@ -135,22 +135,22 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, Li
 		Vec2I neighbors[4];
 		float frontierToNeighborCosts[4];
 		uint32_t neighborCount = 0;
-		Vec2I topNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) {0, -1});
+		Vec2I topNeighbor = Vec2I_Add(frontierItem->position, Vec2I{0, -1});
 		if (HashMap_GetVec2IKey(&pm->blockedLocations, topNeighbor) == NULL || Vec2I_Equals(to, topNeighbor)) {
 			neighbors[neighborCount] = topNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
-		Vec2I rightNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) { +1, 0 });
+		Vec2I rightNeighbor = Vec2I_Add(frontierItem->position, Vec2I{ +1, 0 });
 		if (HashMap_GetVec2IKey(&pm->blockedLocations, rightNeighbor) == NULL || Vec2I_Equals(to, rightNeighbor)) {
 			neighbors[neighborCount] = rightNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
-		Vec2I bottomNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) { 0, +1 });
+		Vec2I bottomNeighbor = Vec2I_Add(frontierItem->position, Vec2I{ 0, +1 });
 		if (HashMap_GetVec2IKey(&pm->blockedLocations, bottomNeighbor) == NULL || Vec2I_Equals(to, bottomNeighbor)) {
 			neighbors[neighborCount] = bottomNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
-		Vec2I leftNeighbor = Vec2I_Add(frontierItem->position, (Vec2I) { -1, 0 });
+		Vec2I leftNeighbor = Vec2I_Add(frontierItem->position, Vec2I{ -1, 0 });
 		if (HashMap_GetVec2IKey(&pm->blockedLocations, leftNeighbor) == NULL || Vec2I_Equals(to, leftNeighbor)) {
 			neighbors[neighborCount] = leftNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;

@@ -9,7 +9,7 @@
 SDL_Rect _UI_CalculateElementRect(SDL_Rect parentRect, unsigned parentW, unsigned parentH, unsigned childX, unsigned childY, unsigned childW, unsigned childH) {
 	float pixelsPreUnitW = (float)parentRect.w / (float)parentW;
 	float pixelsPreUnitH = (float)parentRect.h / (float)parentH;
-	return (SDL_Rect){
+	return SDL_Rect{
 			parentRect.x + (int)roundf((float)childX * pixelsPreUnitW),
 			parentRect.y + (int)roundf((float)childY * pixelsPreUnitH),
 			(int)roundf((float)childW * pixelsPreUnitW),
@@ -18,7 +18,7 @@ SDL_Rect _UI_CalculateElementRect(SDL_Rect parentRect, unsigned parentW, unsigne
 }
 
 SDL_Texture* UI_GenerateFontTexture(const char *text) {
-	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME->ttfFont, text, (SDL_Color){255, 255, 255, 255});
+	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME->ttfFont, text, SDL_Color{255, 255, 255, 255});
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textSurf);
 	SDL_FreeSurface(textSurf);
 	return texture;
@@ -36,7 +36,7 @@ M2Err _UI_Draw_BackgroundColor(SDL_Rect rect, SDL_Color color) {
 M2Err _UI_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
 	int textW = 0, textH = 0;
 	SDL_QueryTexture(texture, NULL, NULL, &textW, &textH);
-	SDL_Rect textRect = (SDL_Rect) {
+	SDL_Rect textRect = SDL_Rect{
 			rect.x + rect.w / 2 - textW / 2,
 			rect.y + rect.h / 2 - textH / 2,
 			textW,
@@ -52,7 +52,7 @@ UIElementState* _UIState_FindElementByPixel(UIState *state, Vec2I mousePosition)
 		if (elementState->cfg->type == CFG_UI_ELEMENT_TYP_UI) {
 			foundElement = _UIState_FindElementByPixel(elementState->child, mousePosition);
 		} else {
-			SDL_Point p = (SDL_Point){ mousePosition.x, mousePosition.y };
+			SDL_Point p = SDL_Point{ mousePosition.x, mousePosition.y };
 			foundElement = SDL_PointInRect(&p, &elementState->rect) ? elementState : NULL;
 		}
 	}

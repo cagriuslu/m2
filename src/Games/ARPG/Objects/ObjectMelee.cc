@@ -79,8 +79,8 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, V
 		true, // isSensor
 		originatorId == GAME->playerId ? CATEGORY_PLAYER_MELEE_WEAPON : CATEGORY_ENEMY_MELEE_WEAPON, // category
 		0, // mask
-		(Vec2F) {1.25f, 0.1667f}, // boxDims
-		(Vec2F) {0.5833f, 0.0f}, // boxCenterOffset
+		Vec2F{1.25f, 0.1667f}, // boxDims
+		Vec2F{0.5833f, 0.0f}, // boxCenterOffset
 		0.0f, // boxAngle
 		NAN, // diskRadius
 		1.0f, // mass

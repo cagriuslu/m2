@@ -8,7 +8,7 @@ void Pointer_preGraphics(ComponentMonitor* mon) {
 }
 
 int ObjectPointer_Init(Object* obj) {
-	M2ERR_REFLECT(Object_Init(obj, (Vec2F) {0.0f, 0.0f}));
+	M2ERR_REFLECT(Object_Init(obj, Vec2F{0.0f, 0.0f}));
 
 	ComponentMonitor* mon = Object_AddMonitor(obj);
 	mon->preGraphics = Pointer_preGraphics;

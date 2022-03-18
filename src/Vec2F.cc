@@ -10,19 +10,19 @@ static float _Vec2F_LengthSquared(Vec2F in) {
 }
 
 Vec2F Vec2F_Add(Vec2F lhs, Vec2F rhs) {
-	return (Vec2F) {lhs.x + rhs.x, lhs.y + rhs.y};
+	return Vec2F{lhs.x + rhs.x, lhs.y + rhs.y};
 }
 
 Vec2F Vec2F_Sub(Vec2F lhs, Vec2F rhs) {
-	return (Vec2F) {lhs.x - rhs.x, lhs.y - rhs.y};
+	return Vec2F{lhs.x - rhs.x, lhs.y - rhs.y};
 }
 
 Vec2F Vec2F_Mul(Vec2F lhs, float rhs) {
-	return (Vec2F) {lhs.x * rhs, lhs.y * rhs};
+	return Vec2F{lhs.x * rhs, lhs.y * rhs};
 }
 
 Vec2F Vec2F_Div(Vec2F lhs, float rhs) {
-	return (Vec2F) { lhs.x / rhs, lhs.y / rhs };
+	return Vec2F{ lhs.x / rhs, lhs.y / rhs };
 }
 
 Vec2F Vec2F_Normalize(Vec2F in) {
@@ -33,7 +33,7 @@ Vec2F Vec2F_Normalize(Vec2F in) {
 	if (len == 0.0f) {
 		return VEC2F_ZERO;
 	}
-	return (Vec2F) { in.x / len, in.y / len };
+	return Vec2F{ in.x / len, in.y / len };
 }
 
 Vec2F Vec2F_SetLength(Vec2F in, float len) {
@@ -69,7 +69,7 @@ float Vec2F_AngleRads(Vec2F vector) {
 }
 
 Vec2F Vec2F_FromAngle(float rads) {
-	return (Vec2F){cosf(rads), sinf(rads)};
+	return Vec2F{cosf(rads), sinf(rads)};
 }
 
 bool Vec2F_Equals(Vec2F lhs, Vec2F rhs) {
@@ -81,5 +81,5 @@ bool Vec2F_IsNan(Vec2F in) {
 }
 
 Vec2F Vec2F_FromVec2I(Vec2I v) {
-	return (Vec2F) { (float)v.x, (float)v.y };
+	return Vec2F{ (float)v.x, (float)v.y };
 }
