@@ -2,15 +2,14 @@
 #define EVENT_HANDLING_H
 
 #include "m2/Controls.hh"
-#include "Vec2I-old.hh"
-#include "Vec2F-old.hh"
+#include <m2/vec2i.hh>
 #include <stdbool.h>
 
 typedef struct _Events {
 	bool quitEvent;
 	
 	bool windowResizeEvent;
-	Vec2I windowDims;
+	m2::vec2i windowDims;
 	
 	bool keyDownEvent;
 	uint16_t keysPressed[_KEY_COUNT];
@@ -33,7 +32,7 @@ typedef struct _Events {
 	// Persistent states
 	uint8_t keyStates[_KEY_COUNT];
 	uint8_t buttonStates[_BUTTON_COUNT];
-	Vec2I mousePosition;
+	m2::vec2i mousePosition;
 
 	uint8_t rawKeyStates[SDL_NUM_SCANCODES];
 } Events;

@@ -5,7 +5,7 @@
 #include "../ARPG_Cfg.hh"
 #include "../ARPG_Component.hh"
 
-static Box2DBody* ObjectExplosive_CreateCollisionCircleBody(ID phyId, Vec2F position, const CfgExplosive *cfg) {
+static Box2DBody* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::vec2f position, const CfgExplosive *cfg) {
 	return Box2DUtils_CreateBulletSensor(
 			phyId,
 			position,
@@ -59,7 +59,7 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 																						 otherObj->defense)); M2ASSERT(defense);
 				ARPG_ComponentDefense *defenseData = AS_ARPG_COMPONENTDEFENSE(defense->data);
 				// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
-				float distance = Vec2F_Distance(otherObj->position, obj->position);
+				float distance = otherObj->position.distance(obj->position);
 				float damageRadius = offData->state.explosive.cfg->damageRadius_m;
 				if (distance < damageRadius) {
 					// Calculate damage
@@ -73,7 +73,7 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 						defenseData->onDeath(defense);
 					} else {
 						LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off->super.objId, M2_ID, ID, defense->super.objId, M2_HP, Float32, defenseData->hp);
-						Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
+						Box2DBodyApplyForceToCenter(other->body, Box2DBodyGetLinearVelocity(phy->body).normalize() * 5000.0f, true);
 						if (defenseData->onHit) {
 							defenseData->onHit(defense);
 						}
@@ -106,9 +106,9 @@ static void ObjectExplosive_postPhysics(ComponentMonitor* el) {
 	}
 }
 
-M2Err ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID originatorId, Vec2F position, Vec2F direction) {
+M2Err ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID originatorId, m2::vec2f position, m2::vec2f direction) {
 	M2ERR_REFLECT(Object_Init(obj, position));
-	direction = Vec2F_Normalize(direction);
+	direction = direction.normalize();
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = ObjectExplosive_prePhysics;
@@ -123,13 +123,13 @@ M2Err ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID origi
 		0.0f, // Mass
 		0.0f // Damping
 	);
-	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, cfg->projectileSpeed_mps));
+	Box2DBodySetLinearVelocity(phy->body, direction * cfg->projectileSpeed_mps);
 	phy->onCollision = ObjectExplosive_onCollision;
 
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndex].textureRect;
 	gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndex].objCenter_px;
-	gfx->angle = Vec2F_AngleRads(direction);
+	gfx->angle = direction.angle_rads();
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	ARPG_ComponentOffense *offData = AS_ARPG_COMPONENTOFFENSE(off->data);

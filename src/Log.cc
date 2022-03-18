@@ -172,7 +172,7 @@ M2Err Log_M2V_String(LogLevel level, const char* file, int line, M2Err x, const 
 	return x;
 }
 
-M2Err Log_M2V_Vec2F(LogLevel level, const char* file, int line, M2Err x, Vec2F var) {
+M2Err Log_M2V_Vec2F(LogLevel level, const char* file, int line, M2Err x, m2::vec2f var) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}

@@ -77,8 +77,8 @@ typedef struct _Game {
 	Events events;
 	unsigned deltaTicks_ms;
 	float deltaTime_s;
-	Vec2F mousePositionInWorld_m;
-	Vec2F mousePositionWRTScreenCenter_m;
+	m2::vec2f mousePositionInWorld_m;
+	m2::vec2f mousePositionWRTScreenCenter_m;
 	char consoleInput[1024];
 	GameProxy proxy;
 } Game;

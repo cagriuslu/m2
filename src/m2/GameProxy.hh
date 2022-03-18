@@ -22,7 +22,7 @@ typedef struct _GameProxy {
 
 	size_t componentDefenseDataSize;
 	size_t componentOffenseDataSize;
-	M2Err (*foregroundSpriteLoader)(Object*, CfgSpriteIndex, Vec2F);
+	M2Err (*foregroundSpriteLoader)(Object*, CfgSpriteIndex, m2::vec2f);
 
 	void (*destructor)(struct _GameProxy*);
 } GameProxy;

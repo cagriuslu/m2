@@ -1,7 +1,7 @@
 #include "m2/SpatialMap.hh"
 #include "m2/Def.hh"
 
-static Box2DBody* CreateBody(Box2DWorld* world, Vec2F position, float boundaryRadius, ID iterator) {
+static Box2DBody* CreateBody(Box2DWorld* world, m2::vec2f position, float boundaryRadius, ID iterator) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	Box2DBodyDefSetPosition(bodyDef, position);
 	Box2DBodyDefSetUserData(bodyDef, (void*)((uintptr_t)iterator));
@@ -28,7 +28,7 @@ int SpatialMap_Init(SpatialMap* sm, size_t dataSize) {
 	memset(sm, 0, sizeof(SpatialMap));
 	sm->dataSize = dataSize;
 	M2ERR_REFLECT(Pool_Init(&sm->bucket, 16, sizeof(SpatialMapItem) + dataSize));
-	sm->world = Box2DWorldCreate(Vec2F{ 0.0f, 0.0f });
+	sm->world = Box2DWorldCreate(m2::vec2f{});
 	// TODO proper error check
 	return 0;
 }
@@ -46,11 +46,11 @@ size_t SpatialMap_Size(SpatialMap* sm) {
 void SpatialMap_Clear(SpatialMap* sm) {
 	Pool_UnmarkAll(&sm->bucket);
 	Box2DWorldDestroy(sm->world);
-	sm->world = Box2DWorldCreate(Vec2F{ 0.0f, 0.0f });
+	sm->world = Box2DWorldCreate(m2::vec2f{});
 	// TODO proper error check
 }
 
-ID SpatialMap_Add(SpatialMap* sm, Vec2F position, float boundaryRadius, void* copy) {
+ID SpatialMap_Add(SpatialMap* sm, m2::vec2f position, float boundaryRadius, void* copy) {
 	ID iterator = 0;
 	SpatialMapItem* item = static_cast<SpatialMapItem *>(Pool_Mark(&sm->bucket, NULL, &iterator));
 	item->body = CreateBody(sm->world, position, boundaryRadius, iterator);
@@ -71,7 +71,7 @@ void SpatialMap_Remove(SpatialMap* sm, ID iterator) {
 	}
 }
 
-void SpatialMap_SetPosition(SpatialMap* sm, ID iterator, Vec2F position) {
+void SpatialMap_SetPosition(SpatialMap* sm, ID iterator, m2::vec2f position) {
 	SpatialMapItem* item = static_cast<SpatialMapItem *>(Pool_GetById(&sm->bucket, iterator));
 	if (item) {
 		Box2DBodySetTransform(item->body, position, 0.0f);

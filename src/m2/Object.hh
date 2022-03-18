@@ -5,7 +5,7 @@
 #include <m2/Automaton.hh>
 #include <m2/Array.hh>
 #include <m2/Cfg.hh>
-#include <m2/Vec2F-old.hh>
+#include <m2/vec2f.hh>
 #include <stdint.h>
 
 /// Basis of all objects in the game.
@@ -15,7 +15,7 @@
 /// If the component is created and destroyed rapidly => Pool
 /// Else => Data
 typedef struct {
-	Vec2F position;
+	m2::vec2f position;
 	// Components
 	ID monitor;
 	ID physique;
@@ -28,7 +28,7 @@ typedef struct {
 	void *data;
 } Object;
 
-M2Err Object_Init(Object* obj, Vec2F position);
+M2Err Object_Init(Object* obj, m2::vec2f position);
 
 ComponentMonitor* Object_GetMonitor(Object* obj);
 ComponentPhysique* Object_GetPhysique(Object* obj);
@@ -50,7 +50,7 @@ ComponentOffense* Object_AddOffense(Object* obj);
 void Object_Term(Object* obj);
 
 // Different Object types
-int ObjectTile_InitFromCfg(Object* obj, CfgSpriteIndex spriteIndex, Vec2F position);
+int ObjectTile_InitFromCfg(Object* obj, CfgSpriteIndex spriteIndex, m2::vec2f position);
 M2Err ObjectCamera_Init(Object* obj);
 int ObjectPointer_Init(Object* obj);
 

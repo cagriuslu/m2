@@ -21,7 +21,7 @@ static M2Err ARPG_PauseUIButtonHandler(CfgUIButtonType button) {
 	}
 }
 
-static M2Err ARPG_ForegroundSpriteLoader(Object *obj, CfgSpriteIndex idx, Vec2F position) {
+static M2Err ARPG_ForegroundSpriteLoader(Object *obj, CfgSpriteIndex idx, m2::vec2f position) {
 	switch (idx) {
 		case ARPG_CFGSPRITE_PLAYER_LOOKDOWN_00:
 			return ObjectPlayer_InitFromCfg(obj, &CFG_CHARACTER_PLAYER, position);

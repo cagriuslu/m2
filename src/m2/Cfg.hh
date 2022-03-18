@@ -4,7 +4,7 @@
 #include "TinySet.hh"
 #include "m2/Automaton.hh"
 #include "List.hh"
-#include "Vec2F-old.hh"
+#include <m2/vec2f.hh>
 #include "Def.hh"
 #include <SDL.h>
 
@@ -100,13 +100,13 @@ typedef enum {
 	CFG_COLLIDER_TYPE_CIRCLE
 } CfgColliderType;
 typedef struct {
-	Vec2F center_px;
-	Vec2F center_m;
+	m2::vec2f center_px;
+	m2::vec2f center_m;
 	CfgColliderType type;
 	union {
 		struct {
-			Vec2F dims_px;
-			Vec2F dims_m;
+			m2::vec2f dims_px;
+			m2::vec2f dims_m;
 		} rect;
 		struct {
 			float radius_px;
@@ -120,8 +120,8 @@ typedef uint32_t CfgSpriteIndex;
 typedef struct {
 	CfgSpriteIndex index;
 	SDL_Rect textureRect;
-	Vec2F objCenter_px;
-	Vec2F objCenter_m;
+	m2::vec2f objCenter_px;
+	m2::vec2f objCenter_m;
 	CfgCollider collider;
 } CfgSprite;
 

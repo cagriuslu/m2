@@ -91,12 +91,12 @@ void Game_UpdateWindowDimensions(int width, int height) {
 
 void Game_UpdateMousePosition() {
 	Object* camera = static_cast<Object *>(Pool_GetById(&GAME->objects, GAME->cameraId));
-	Vec2F cameraPosition = camera->position;
+	m2::vec2f cameraPosition = camera->position;
 
-	Vec2I pointerPosition = GAME->events.mousePosition;
-	Vec2I pointerPositionWRTScreenCenter_px = Vec2I{pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
-	GAME->mousePositionWRTScreenCenter_m = Vec2F{pointerPositionWRTScreenCenter_px.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME->pixelsPerMeter };
-	GAME->mousePositionInWorld_m = Vec2F_Add(GAME->mousePositionWRTScreenCenter_m, cameraPosition);
+	m2::vec2i pointerPosition = GAME->events.mousePosition;
+	m2::vec2i pointerPositionWRTScreenCenter_px = m2::vec2i{pointerPosition.x - (GAME->windowRect.w / 2), pointerPosition.y - (GAME->windowRect.h / 2) };
+	GAME->mousePositionWRTScreenCenter_m = m2::vec2f{pointerPositionWRTScreenCenter_px.x / GAME->pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME->pixelsPerMeter };
+	GAME->mousePositionInWorld_m = GAME->mousePositionWRTScreenCenter_m + cameraPosition;
 }
 
 static int Game_Level_Init() {
@@ -109,7 +109,7 @@ static int Game_Level_Init() {
 	M2ERR_REFLECT(Pool_Init(&GAME->lights, 16, sizeof(ComponentLight)));
 	M2ERR_REFLECT(Pool_Init(&GAME->defenses, 16, sizeof(ComponentDefense) + GAME->proxy.componentDefenseDataSize));
 	M2ERR_REFLECT(Pool_Init(&GAME->offenses, 16, sizeof(ComponentOffense) + GAME->proxy.componentOffenseDataSize));
-	GAME->world = Box2DWorldCreate(Vec2F{ 0.0f, 0.0f });
+	GAME->world = Box2DWorldCreate({});
 	GAME->contactListener = Box2DContactListenerRegister(ComponentPhysique_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
 	M2ERR_REFLECT(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
@@ -145,11 +145,11 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 			const CfgTile *cfgTile = cfg->tiles + y * cfg->w + x;
 			if (cfgTile->backgroundSpriteIndex) {
 				Object *tile = static_cast<Object *>(Pool_Mark(&GAME->objects, NULL, NULL));
-				M2ERR_REFLECT(ObjectTile_InitFromCfg(tile, cfgTile->backgroundSpriteIndex, VEC2F(x, y)));
+				M2ERR_REFLECT(ObjectTile_InitFromCfg(tile, cfgTile->backgroundSpriteIndex, m2::vec2f{x, y}));
 			}
 			if (cfgTile->foregroundSpriteIndex) {
 				Object *obj = static_cast<Object *>(Pool_Mark(&GAME->objects, NULL, NULL));
-				M2ERR_REFLECT(GAME->proxy.foregroundSpriteLoader(obj, cfgTile->foregroundSpriteIndex, VEC2F(x, y)));
+				M2ERR_REFLECT(GAME->proxy.foregroundSpriteLoader(obj, cfgTile->foregroundSpriteIndex, m2::vec2f{x, y}));
 			}
 		}
 	}

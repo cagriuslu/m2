@@ -17,9 +17,9 @@ void SpatialMap_Term(SpatialMap* sm);
 
 size_t SpatialMap_Size(SpatialMap* sm);
 void SpatialMap_Clear(SpatialMap* sm);
-ID SpatialMap_Add(SpatialMap* sm, Vec2F position, float boundaryRadius, void* copy); // Returns iterator
+ID SpatialMap_Add(SpatialMap* sm, m2::vec2f position, float boundaryRadius, void* copy); // Returns iterator
 void SpatialMap_Remove(SpatialMap* sm, ID iterator);
-void SpatialMap_SetPosition(SpatialMap* sm, ID iterator, Vec2F position);
+void SpatialMap_SetPosition(SpatialMap* sm, ID iterator, m2::vec2f position);
 void SpatialMap_Get(SpatialMap* sm, AABB bounds, Array* outIterators);
 
 void* SpatialMap_GetData(SpatialMap* sm, ID iterator);

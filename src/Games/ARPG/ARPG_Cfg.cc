@@ -1,5 +1,6 @@
 #include "ARPG_Cfg.hh"
 #include <m2/Cfg.hh>
+#include <m2/vec2i.hh>
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// UI //////////////////////////////////
@@ -648,11 +649,11 @@ const CfgAi CFG_AI_HIT_N_RUN_00 = {
 		.hitNRunRunDuration_s = 4.0f
 };
 
-M2Err AiState_Init(AiState *state, const CfgAi* cfg, Vec2F homePosition) {
+M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::vec2f homePosition) {
 	memset(state, 0, sizeof(AiState));
 	state->cfg = cfg;
 	state->homePosition = homePosition;
-	M2ERR_REFLECT(List_Init(&state->reversedWaypointList, 10, sizeof(Vec2I)));
+	M2ERR_REFLECT(List_Init(&state->reversedWaypointList, 10, sizeof(m2::vec2i)));
 	return M2OK;
 }
 

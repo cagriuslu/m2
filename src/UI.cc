@@ -46,7 +46,7 @@ M2Err _UI_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
 	return M2OK;
 }
 
-UIElementState* _UIState_FindElementByPixel(UIState *state, Vec2I mousePosition) {
+UIElementState* _UIState_FindElementByPixel(UIState *state, m2::vec2i mousePosition) {
 	UIElementState* foundElement = NULL;
 	for (UIElementState* elementState = state->firstElement; elementState && (foundElement == NULL); elementState = elementState->next) {
 		if (elementState->cfg->type == CFG_UI_ELEMENT_TYP_UI) {

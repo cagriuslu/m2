@@ -2,7 +2,7 @@
 #define COMPONENT_H
 
 #include <m2/Cfg.hh>
-#include <m2/Vec2F-old.hh>
+#include <m2/vec2f.hh>
 #include <m2/Box2D.hh>
 #include <m2/Pool.hh>
 #include <SDL.h>
@@ -37,7 +37,7 @@ typedef struct _ComponentGraphic {
 	Component super;
 	SDL_Texture *texture;
 	SDL_Rect textureRect;
-	Vec2F center_px;
+	m2::vec2f center_px;
 	float angle;
 	void (*draw)(struct _ComponentGraphic*);
 } ComponentGraphic;

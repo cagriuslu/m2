@@ -3,7 +3,7 @@
 #include "m2/Pool.hh"
 #include "m2/String.hh"
 
-M2Err Object_Init(Object* obj, Vec2F position) {
+M2Err Object_Init(Object* obj, m2::vec2f position) {
 	memset(obj, 0, sizeof(Object));
 	obj->position = position;
 	return M2OK;

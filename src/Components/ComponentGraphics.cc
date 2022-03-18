@@ -3,7 +3,7 @@
 #include <m2/Game.hh>
 #include <m2/Def.hh>
 
-m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, Vec2F objGfxCenterPx) {
+m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::vec2f objPosition, m2::vec2f objGfxCenterPx) {
 	static ID cameraId = 0;
 	static Object* cameraObj = NULL;
 	if (GAME->cameraId && cameraId != GAME->cameraId) {
@@ -11,23 +11,23 @@ m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(Vec2F objPosition, V
 		cameraObj = static_cast<Object *>(Pool_GetById(&GAME->objects, GAME->cameraId)); M2ASSERT(cameraObj);
 	}
 
-	Vec2F cameraPosition = cameraObj ? cameraObj->position : VEC2F_ZERO; // cameraObj is NULL while level is loading
-	Vec2F obj_origin_wrt_camera_obj_m = Vec2F_Sub(objPosition, cameraPosition);
+	m2::vec2f cameraPosition = cameraObj ? cameraObj->position : m2::vec2f{}; // cameraObj is NULL while level is loading
+	m2::vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
 	// Screen center is the middle of the window
-	m2::vec2i obj_origin_wrt_screen_center_px = m2::vec2i{Vec2F_Mul(obj_origin_wrt_camera_obj_m, GAME->pixelsPerMeter)};
-	Vec2I obj_gfx_origin_wrt_screen_center_px = Vec2I_Add(obj_origin_wrt_screen_center_px, Vec2I{
+	m2::vec2i obj_origin_wrt_screen_center_px = m2::vec2i{obj_origin_wrt_camera_obj_m * GAME->pixelsPerMeter};
+	m2::vec2i obj_gfx_origin_wrt_screen_center_px = obj_origin_wrt_screen_center_px + m2::vec2i{
 			-(int)roundf(objGfxCenterPx.x * GAME->scale),
 			-(int)roundf(objGfxCenterPx.y * GAME->scale)
-	});
+	};
 	return obj_gfx_origin_wrt_screen_center_px;
 }
 
 void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 	Object* obj = static_cast<Object *>(Pool_GetById(&GAME->objects, gfx->super.objId)); M2ASSERT(obj);
 
-	Vec2I obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj->position, gfx->center_px);
+	m2::vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj->position, gfx->center_px);
 	// Screen origin is top-left corner
-	Vec2I obj_gfx_origin_wrt_screen_origin_px = Vec2I_Add(Vec2I{ GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_gfx_origin_wrt_screen_center_px);
+	m2::vec2i obj_gfx_origin_wrt_screen_origin_px = m2::vec2i{ GAME->windowRect.w / 2, GAME->windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center_px;
 	SDL_Rect dstrect = SDL_Rect{
 			obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx->textureRect.w * GAME->scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx->textureRect.h * GAME->scale / 2.0f),
@@ -45,13 +45,13 @@ void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRa
 	Object* obj = Game_FindObjectById(gfx->super.objId); M2ASSERT(obj);
 	Object* camera = static_cast<Object *>(Pool_GetById(&GAME->objects, GAME->cameraId)); M2ASSERT(camera);
 
-	Vec2F obj_origin_wrt_camera_obj = Vec2F_Sub(obj->position, camera->position);
-	Vec2I obj_origin_wrt_screen_center = Vec2I_From2F(Vec2F_Mul(obj_origin_wrt_camera_obj, GAME->pixelsPerMeter));
-	Vec2I obj_gfx_origin_wrt_screen_center = Vec2I_Add(obj_origin_wrt_screen_center, Vec2I{
+	m2::vec2f obj_origin_wrt_camera_obj = obj->position - camera->position;
+	m2::vec2i obj_origin_wrt_screen_center = m2::vec2i(obj_origin_wrt_camera_obj * GAME->pixelsPerMeter);
+	m2::vec2i obj_gfx_origin_wrt_screen_center = obj_origin_wrt_screen_center + m2::vec2i{
 		-(int)roundf(gfx->center_px.x * GAME->scale),
 		-(int)roundf(gfx->center_px.y * GAME->scale)
-	});
-	Vec2I obj_gfx_origin_wrt_screen_origin = Vec2I_Add(Vec2I{ GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_gfx_origin_wrt_screen_center);
+	};
+	m2::vec2i obj_gfx_origin_wrt_screen_origin = m2::vec2i{ GAME->windowRect.w / 2, GAME->windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center;
 	SDL_Rect obj_gfx_dstrect = SDL_Rect{
 		obj_gfx_origin_wrt_screen_origin.x - (int)roundf((float)gfx->textureRect.w * GAME->scale / 2.0f),
 		obj_gfx_origin_wrt_screen_origin.y - (int)roundf((float)gfx->textureRect.h * GAME->scale / 2.0f),

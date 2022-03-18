@@ -15,26 +15,26 @@ void ComponentLight_Term(ComponentLight* lig) {
 	memset(lig, 0, sizeof(ComponentLight));
 }
 
-Vec2I ComponentLight_ObjectOriginWRTScreenCenter_px(Vec2F objPosition) {
+m2::vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::vec2f objPosition) {
 	static ID cameraId = 0;
 	static Object* cameraObj = NULL;
 	if (GAME->cameraId && cameraId != GAME->cameraId) {
 		cameraId = GAME->cameraId;
 		cameraObj = static_cast<Object *>(Pool_GetById(&GAME->objects, GAME->cameraId)); M2ASSERT(cameraObj);
 	}
-	Vec2F cameraPosition = cameraObj ? cameraObj->position : VEC2F_ZERO; // cameraObj is NULL while level is loading
-	Vec2F obj_origin_wrt_camera_obj_m = Vec2F_Sub(objPosition, cameraPosition);
+	m2::vec2f cameraPosition = cameraObj ? cameraObj->position : m2::vec2f{}; // cameraObj is NULL while level is loading
+	m2::vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
 	// Screen center is the middle of the window
-	Vec2I obj_origin_wrt_screen_center_px = Vec2I_From2F(Vec2F_Mul(obj_origin_wrt_camera_obj_m, GAME->pixelsPerMeter));
+	m2::vec2i obj_origin_wrt_screen_center_px = m2::vec2i(obj_origin_wrt_camera_obj_m * GAME->pixelsPerMeter);
 	return obj_origin_wrt_screen_center_px;
 }
 
 void ComponentLight_DefaultDraw(ComponentLight* lig) {
 	Object* obj = static_cast<Object *>(Pool_GetById(&GAME->objects, lig->super.objId)); M2ASSERT(obj);
 
-	Vec2I obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj->position);
+	m2::vec2i obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj->position);
 	// Screen origin is top-left corner
-	Vec2I obj_origin_wrt_screen_origin_px = Vec2I_Add(Vec2I{ GAME->windowRect.w / 2, GAME->windowRect.h / 2 }, obj_origin_wrt_screen_center_px);
+	m2::vec2i obj_origin_wrt_screen_origin_px = m2::vec2i{ GAME->windowRect.w / 2, GAME->windowRect.h / 2 } + obj_origin_wrt_screen_center_px;
 	SDL_Rect dstrect = SDL_Rect{
 			obj_origin_wrt_screen_origin_px.x - (int)roundf((float)lig->radius_m * GAME->pixelsPerMeter),
 			obj_origin_wrt_screen_origin_px.y - (int)roundf((float)lig->radius_m * GAME->pixelsPerMeter),

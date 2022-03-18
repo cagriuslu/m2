@@ -1,7 +1,7 @@
 #include "m2/Box2DUtils.hh"
 #include "m2/Game.hh"
 
-Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, Vec2F boxDims, Vec2F boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
+Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::vec2f boxDims, m2::vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
 	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
 	if (isDynamic) {
 		Box2DBodyDefSetTypeDynamic(bodyDef);
@@ -20,7 +20,7 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 		shape = circleShape;
 	} else {
 		Box2DPolygonShape* boxShape = Box2DPolygonShapeCreate();
-		Box2DPolygonShapeSetAsBoxEx(boxShape, Vec2F_Mul(boxDims, 0.5f), boxCenterOffset, boxAngle); // convert to half dims
+		Box2DPolygonShapeSetAsBoxEx(boxShape, boxDims * 0.5f, boxCenterOffset, boxAngle); // convert to half dims
 		shape = boxShape;
 	}
 	Box2DFixtureDef* fixtureDef = Box2DFixtureDefCreate();
@@ -72,13 +72,13 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, Vec2F po
 		Box2DBodySetLinearDamping(body, linearDamping);
 		Box2DBodySetAngularDamping(body, 0.0f);
 		Box2DBodySetFixedRotation(body, fixedRotation);
-		Box2DBodySetMassData(body, mass, Vec2F{ 0.0f, 0.0f }, 0.0f);
+		Box2DBodySetMassData(body, mass, {}, 0.0f);
 	}
 
 	return body;
 }
 
-float Box2DUtilsCheckEyeSight_RayCastCallback(Box2DFixture* fixture, Vec2F point, Vec2F normal, float fraction, void* userData) {
+float Box2DUtilsCheckEyeSight_RayCastCallback(Box2DFixture* fixture, m2::vec2f point, m2::vec2f normal, float fraction, void* userData) {
 	(void)fixture;
 	(void)point;
 	(void)normal;
@@ -87,8 +87,8 @@ float Box2DUtilsCheckEyeSight_RayCastCallback(Box2DFixture* fixture, Vec2F point
 	return 0.0f;
 }
 
-bool Box2DUtils_CheckEyeSight(Vec2F from, Vec2F to, uint16_t categoryMask) {
-	if (Vec2F_Equals(from, to)) {
+bool Box2DUtils_CheckEyeSight(m2::vec2f from, m2::vec2f to, uint16_t categoryMask) {
+	if (from == to) {
 		return true;
 	}
 	

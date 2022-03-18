@@ -3,7 +3,7 @@
 #include "m2/Box2DUtils.hh"
 #include "m2/Game.hh"
 
-int ObjectTile_InitFromCfg(Object* obj, CfgSpriteIndex spriteIndex, Vec2F position) {
+int ObjectTile_InitFromCfg(Object* obj, CfgSpriteIndex spriteIndex, m2::vec2f position) {
 	M2ERR_REFLECT(Object_Init(obj, position));
 
 	const CfgSprite *sprite = &GAME->proxy.cfgSprites[spriteIndex];

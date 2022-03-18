@@ -16,7 +16,7 @@ bool Events_Gather(Events* evs) {
 			case SDL_WINDOWEVENT_RESIZED:
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
 				evs->windowResizeEvent = true;
-				evs->windowDims = Vec2I{ e.window.data1 , e.window.data2 };
+				evs->windowDims = m2::vec2i{ e.window.data1 , e.window.data2 };
 				break;
 			}
 			break;

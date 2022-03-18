@@ -1,7 +1,7 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-#include "Vec2F-old.hh"
+#include <m2/vec2f.hh>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -133,7 +133,7 @@ M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, ID var);
 M2Err Log_M2V_Int32(LogLevel level, const char* file, int line, M2Err x, int32_t var);
 M2Err Log_M2V_Float32(LogLevel level, const char* file, int line, M2Err x, float var);
 M2Err Log_M2V_String(LogLevel level, const char* file, int line, M2Err x, const char* var);
-M2Err Log_M2V_Vec2F(LogLevel level, const char* file, int line, M2Err x, Vec2F var);
+M2Err Log_M2V_vec2f(LogLevel level, const char* file, int line, M2Err x, m2::vec2f var);
 
 #define LOG_TRACE_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
 #define LOG_DEBUG_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelDebug, __FILE__, __LINE__, (x1), (var1), (x2), (var2))

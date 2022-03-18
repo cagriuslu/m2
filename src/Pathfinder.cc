@@ -30,7 +30,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 						AABB aabb = Box2DFixtureGetAABB(fixture, proxyIdx);
 						// AABB is bigger 0.01 meters than the object at each side
 						// Decrease its size by 0.02 so that rounding can work						
-						AABB conservativeAabb = AABB{Vec2F_Add(aabb.lowerBound, Vec2F{ 0.02f, 0.02f}), Vec2F_Sub(aabb.upperBound, Vec2F{ 0.02f, 0.02f})};
+						AABB conservativeAabb = AABB{aabb.lowerBound + m2::vec2f{ 0.02f, 0.02f}, aabb.upperBound - m2::vec2f{ 0.02f, 0.02f}};
 						int lowerX = (int) roundf(conservativeAabb.lowerBound.x);
 						int upperX = (int) roundf(conservativeAabb.upperBound.x);
 						int lowerY = (int) roundf(conservativeAabb.lowerBound.y);
@@ -54,7 +54,7 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 	memset(pm, 0, sizeof(PathfinderMap));
 }
 
-M2Err PathfinderMap_FindPath(PathfinderMap* pm, Vec2F from, Vec2F to, List* outReverseListOfVec2Is) {
+M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::vec2f from, m2::vec2f to, List* outReverseListOfVec2Is) {
 	// Check if there is direct eyesight
 	if (Box2DUtils_CheckEyeSight(from, to, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF)) {
 		auto fromI = m2::vec2i{from};
@@ -94,7 +94,7 @@ typedef struct _PriorityListItem {
 	m2::vec2i position;
 } PriorityListItem;
 
-M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, Vec2F fromF, Vec2F toF, List* outReverseListOfVec2Is) {
+M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f toF, List* outReverseListOfVec2Is) {
 	auto from = m2::vec2i{ fromF };
 	auto to = m2::vec2i{toF};
 
@@ -246,7 +246,7 @@ void _PathfinderMap_GridStepsToAnyAngle(List* listOfVec2Is, List* outListOfVec2I
 	for (ID point2Iterator = List_GetNext(listOfVec2Is, point1Iterator); point2Iterator; point2Iterator = List_GetNext(listOfVec2Is, point2Iterator)) {
 		auto point2 = static_cast<m2::vec2i*>(List_GetData(listOfVec2Is, point2Iterator));
 
-		const bool eyeSight = Box2DUtils_CheckEyeSight(Vec2F_FromVec2I(*point1), Vec2F_FromVec2I(*point2), CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF);
+		const bool eyeSight = Box2DUtils_CheckEyeSight(m2::vec2f{*point1}, m2::vec2f{*point2}, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF);
 		if (List_GetLast(listOfVec2Is) == point2Iterator && eyeSight) {
 			// If we are processing the last point and there is an eye sight, add the last point
 			List_Append(outListOfVec2Is, point2, NULL);

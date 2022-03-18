@@ -30,7 +30,7 @@ void* AiChaseState_Idle(struct _Automaton* am, int signal) {
 			return NULL;
 		case SIG_ALARM:
 			// Check if player is close
-			if (Vec2F_DistanceSquared(obj->position, player->position) < aiState->cfg->triggerDistanceSquared_m) {
+			if (obj->position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
 				// Check if path exists
 				if (PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &aiState->reversedWaypointList) == M2OK) {
 					return (void*)AiChaseState_Triggered;
@@ -51,7 +51,7 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 	AiState* aiState = &(AS_ENEMYDATA(obj->data)->aiState);
 	M2ASSERT(player);
 	// If player is close enough
-	if (Vec2F_DistanceSquared(obj->position, player->position) < aiState->cfg->attackDistanceSquared_m) {
+	if (obj->position.distance_sq(player->position) < aiState->cfg->attackDistanceSquared_m) {
 		// Based on what the capability is
 		switch (aiState->cfg->capability) {
 			case CFG_AI_CAPABILITY_RANGED: {
@@ -64,7 +64,7 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 						&weaponState->cfg->projectile,
 						Pool_GetId(&GAME->objects, obj),
 						obj->position,
-						Vec2F_Sub(player->position, obj->position)
+						player->position - obj->position
 					);
 					// TODO Knockback maybe?
 					weaponState->cooldownCounter_s = 0.0f;
@@ -81,7 +81,7 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 						&weaponState->cfg->melee,
 						Pool_GetId(&GAME->objects, obj),
 						obj->position,
-						Vec2F_Sub(player->position, obj->position)
+						player->position - obj->position
 					);
 					weaponState->cooldownCounter_s = 0.0f;
 				}
@@ -97,7 +97,7 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 						&weaponState->cfg->explosive,
 						Pool_GetId(&GAME->objects, obj),
 						obj->position,
-						Vec2F_Sub(player->position, obj->position)
+						player->position - obj->position
 					);
 					// TODO knockback
 					weaponState->cooldownCounter_s = 0.0f;
@@ -125,7 +125,7 @@ void* AiChaseState_Triggered(struct _Automaton* am, int signal) {
 			return NULL;
 		case SIG_ALARM: {
 			// Check if player is still close
-			if (Vec2F_DistanceSquared(obj->position, player->position) < aiState->cfg->giveUpDistanceSquared_m) {
+			if (obj->position.distance_sq(player->position) < aiState->cfg->giveUpDistanceSquared_m) {
 				// Recalculate path to player
 				PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &aiState->reversedWaypointList);
 			} else {
@@ -140,15 +140,15 @@ void* AiChaseState_Triggered(struct _Automaton* am, int signal) {
 		case SIG_AI_PREPHYSICS:
 			if (1 < List_Length(&aiState->reversedWaypointList)) {
 				ID objPositionIt = List_GetLast(&aiState->reversedWaypointList);
-				Vec2I* objPosition = static_cast<Vec2I *>(List_GetData(&aiState->reversedWaypointList, objPositionIt));
+				m2::vec2i* objPosition = static_cast<m2::vec2i *>(List_GetData(&aiState->reversedWaypointList, objPositionIt));
 				ID targetPositionIt = List_GetPrev(&aiState->reversedWaypointList, objPositionIt);
-				Vec2I* targetPosition = static_cast<Vec2I *>(List_GetData(&aiState->reversedWaypointList,
+				m2::vec2i* targetPosition = static_cast<m2::vec2i *>(List_GetData(&aiState->reversedWaypointList,
 																		  targetPositionIt));
-				if (objPosition && targetPosition && !Vec2I_Equals(*objPosition, *targetPosition)) {
-					Vec2F objPositionF = Vec2F_FromVec2I(*objPosition);
-					Vec2F targetPositionF = Vec2F_FromVec2I(*targetPosition);
-					Vec2F direction = Vec2F_Normalize(Vec2F_Sub(targetPositionF, objPositionF));
-					Vec2F force = Vec2F_Mul(direction, GAME->deltaTicks_ms * AS_ENEMYDATA(obj->data)->characterState.cfg->walkSpeed);
+				if (objPosition && targetPosition && (*objPosition != *targetPosition)) {
+					auto objPositionF = m2::vec2f(*objPosition);
+					auto targetPositionF = m2::vec2f(*targetPosition);
+					m2::vec2f direction = (targetPositionF - objPositionF).normalize();
+					m2::vec2f force = direction * (GAME->deltaTicks_ms * AS_ENEMYDATA(obj->data)->characterState.cfg->walkSpeed);
 					Box2DBodyApplyForceToCenter(phy->body, force, true);
 				}
 			}
@@ -172,14 +172,14 @@ void* AiChaseState_GaveUp(struct _Automaton* am, int signal) {
 			return NULL;
 		case SIG_ALARM:
 			// Check if player is close
-			if (Vec2F_DistanceSquared(obj->position, player->position) < aiState->cfg->triggerDistanceSquared_m) {
+			if (obj->position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
 				// Check if path to player exists
 				if (PathfinderMap_FindPath(&GAME->pathfinderMap, obj->position, player->position, &aiState->reversedWaypointList) == M2OK) {
 					return (void*)AiChaseState_Triggered;
 				}
 			} else {
 				// Check if obj arrived to homePosition
-				if (Vec2F_DistanceSquared(obj->position, aiState->homePosition) < 1.0f) {
+				if (obj->position.distance_sq(aiState->homePosition) < 1.0f) {
 					return (void*)AiChaseState_Idle;
 				} else {
 					// Recalculate path to homePosition
@@ -191,15 +191,15 @@ void* AiChaseState_GaveUp(struct _Automaton* am, int signal) {
 		case SIG_AI_PREPHYSICS:
 			if (1 < List_Length(&aiState->reversedWaypointList)) {
 				ID objPositionIt = List_GetLast(&aiState->reversedWaypointList);
-				Vec2I* objPosition = static_cast<Vec2I *>(List_GetData(&aiState->reversedWaypointList, objPositionIt));
+				m2::vec2i* objPosition = static_cast<m2::vec2i *>(List_GetData(&aiState->reversedWaypointList, objPositionIt));
 				ID targetPositionIt = List_GetPrev(&aiState->reversedWaypointList, objPositionIt);
-				Vec2I* targetPosition = static_cast<Vec2I *>(List_GetData(&aiState->reversedWaypointList,
+				m2::vec2i* targetPosition = static_cast<m2::vec2i *>(List_GetData(&aiState->reversedWaypointList,
 																		  targetPositionIt));
-				if (objPosition && targetPosition && !Vec2I_Equals(*objPosition, *targetPosition)) {
-					Vec2F objPositionF = Vec2F_FromVec2I(*objPosition);
-					Vec2F targetPositionF = Vec2F_FromVec2I(*targetPosition);
-					Vec2F direction = Vec2F_Normalize(Vec2F_Sub(targetPositionF, objPositionF));
-					Vec2F force = Vec2F_Mul(direction, GAME->deltaTicks_ms * AS_ENEMYDATA(obj->data)->characterState.cfg->walkSpeed);
+				if (objPosition && targetPosition && (*objPosition != *targetPosition)) {
+					auto objPositionF = m2::vec2f(*objPosition);
+					auto targetPositionF = m2::vec2f(*targetPosition);
+					m2::vec2f direction = (targetPositionF - objPositionF).normalize();
+					m2::vec2f force = direction * (GAME->deltaTicks_ms * AS_ENEMYDATA(obj->data)->characterState.cfg->walkSpeed);
 					Box2DBodyApplyForceToCenter(phy->body, force, true);
 				}
 			}

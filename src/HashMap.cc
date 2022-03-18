@@ -3,6 +3,7 @@
 #include "m2/Array.hh"
 #include "m2/Def.hh"
 #include "m2/String.hh"
+#include <m2/vec2i.hh>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -83,19 +84,19 @@ void HashMap_UnsetInt64Key(HashMap* hm, int64_t key) {
 	HashMap_Unset(hm, &key);
 }
 
-void* HashMap_SetVec2IKey(HashMap* hm, Vec2I key, void* copy) {
+void* HashMap_SetVec2IKey(HashMap* hm, m2::vec2i key, void* copy) {
 	return HashMap_SetInt32Keys(hm, key.x, key.y, copy);
 }
 
-void* HashMap_TrySetVec2IKey(HashMap* hm, Vec2I key, void* copy) {
+void* HashMap_TrySetVec2IKey(HashMap* hm, m2::vec2i key, void* copy) {
 	return HashMap_TrySetInt32Keys(hm, key.x, key.y, copy);
 }
 
-void* HashMap_GetVec2IKey(HashMap* hm, Vec2I key) {
+void* HashMap_GetVec2IKey(HashMap* hm, m2::vec2i key) {
 	return HashMap_GetInt32Keys(hm, key.x, key.y);
 }
 
-void HashMap_UnsetVec2IKey(HashMap* hm, Vec2I key) {
+void HashMap_UnsetVec2IKey(HashMap* hm, m2::vec2i key) {
 	HashMap_UnsetInt32Keys(hm, key.x, key.y);
 }
 

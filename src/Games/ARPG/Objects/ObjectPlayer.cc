@@ -19,7 +19,7 @@ static void Player_prePhysics(ComponentMonitor* el) {
 	PlayerData *playerData = AS_PLAYERDATA(obj->data);
 
 	ComponentPhysique* phy = static_cast<ComponentPhysique *>(Pool_GetById(&GAME->physics, obj->physique)); M2ASSERT(phy);
-	Vec2F moveDirection = Vec2F{ 0.0f, 0.0f };
+	m2::vec2f moveDirection;
 	if (GAME->events.keyStates[KEY_UP]) {
 		moveDirection.y += -1.0f;
 		Automaton_ProcessSignal(&playerData->charAnimationAutomaton, SIG_CHARANIM_WALKUP);
@@ -36,7 +36,7 @@ static void Player_prePhysics(ComponentMonitor* el) {
 		moveDirection.x += 1.0f;
 		Automaton_ProcessSignal(&playerData->charAnimationAutomaton, SIG_CHARANIM_WALKRIGHT);
 	}
-	Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_Normalize(moveDirection), GAME->deltaTicks_ms * 25.0f), true);
+	Box2DBodyApplyForceToCenter(phy->body, moveDirection.normalize() * (GAME->deltaTicks_ms * 25.0f), true);
 
 	playerData->characterState.rangedWeaponState.cooldownCounter_s += GAME->deltaTime_s;
 	playerData->characterState.meleeWeaponState.cooldownCounter_s += GAME->deltaTime_s;
@@ -44,23 +44,23 @@ static void Player_prePhysics(ComponentMonitor* el) {
 
 	if (GAME->events.buttonStates[BUTTON_PRIMARY] && playerData->characterState.rangedWeaponState.cfg->cooldown_s < playerData->characterState.rangedWeaponState.cooldownCounter_s) {
 		Object* projectile = static_cast<Object *>(Pool_Mark(&GAME->objects, NULL, NULL));
-		Vec2F direction = Vec2F_Normalize(Vec2F_Sub(GAME->mousePositionInWorld_m, obj->position));
+		m2::vec2f direction = (GAME->mousePositionInWorld_m - obj->position).normalize();
 		float accuracy = playerData->characterState.cfg->defaultRangedWeapon->accuracy;
-		float angle = Vec2F_AngleRads(direction) + (M2_PI * randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
-		ObjectProjectile_InitFromCfg(projectile, &playerData->characterState.cfg->defaultRangedWeapon->projectile, GAME->playerId, obj->position, Vec2F_FromAngle(angle));
+		float angle = direction.angle_rads() + (M2_PI * randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
+		ObjectProjectile_InitFromCfg(projectile, &playerData->characterState.cfg->defaultRangedWeapon->projectile, GAME->playerId, obj->position, m2::vec2f::from_angle(angle));
 		// Knockback
-		Box2DBodyApplyForceToCenter(phy->body, Vec2F_Mul(Vec2F_FromAngle(angle + M2_PI), 500.0f), true);
+		Box2DBodyApplyForceToCenter(phy->body, m2::vec2f::from_angle(angle + M2_PI) * 500.0f, true);
 		// TODO set looking direction here as well
 		playerData->characterState.rangedWeaponState.cooldownCounter_s = 0;
 	}
 	if (GAME->events.buttonStates[BUTTON_SECONDARY] && playerData->characterState.meleeWeaponState.cfg->cooldown_s < playerData->characterState.meleeWeaponState.cooldownCounter_s) {
 		Object* melee = static_cast<Object *>(Pool_Mark(&GAME->objects, NULL, NULL));
-		ObjectMelee_InitFromCfg(melee, &playerData->characterState.cfg->defaultMeleeWeapon->melee, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld_m, obj->position));
+		ObjectMelee_InitFromCfg(melee, &playerData->characterState.cfg->defaultMeleeWeapon->melee, GAME->playerId, obj->position, GAME->mousePositionInWorld_m - obj->position);
 		playerData->characterState.meleeWeaponState.cooldownCounter_s = 0;
 	}
 	if (GAME->events.buttonStates[BUTTON_MIDDLE] && playerData->characterState.explosiveWeaponState.cfg->cooldown_s < playerData->characterState.explosiveWeaponState.cooldownCounter_s) {
 		Object* explosive = static_cast<Object *>(Pool_Mark(&GAME->objects, NULL, NULL));
-		ObjectExplosive_InitFromCfg(explosive, &playerData->characterState.cfg->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, Vec2F_Sub(GAME->mousePositionInWorld_m, obj->position));
+		ObjectExplosive_InitFromCfg(explosive, &playerData->characterState.cfg->defaultExplosiveWeapon->explosive, GAME->playerId, obj->position, GAME->mousePositionInWorld_m - obj->position);
 		playerData->characterState.explosiveWeaponState.cooldownCounter_s = 0;
 	}
 }
@@ -76,13 +76,13 @@ static void Player_postPhysics(ComponentMonitor* monitor) {
 
 	// We must call time before other signals
 	Automaton_ProcessTime(&playerData->charAnimationAutomaton, GAME->deltaTime_s);
-	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
+	m2::vec2f velocity = Box2DBodyGetLinearVelocity(phy->body);
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 		Automaton_ProcessSignal(&playerData->charAnimationAutomaton, SIG_CHARANIM_STOP);
 	}
 }
 
-int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
+int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f position) {
 	M2ERR_REFLECT(Object_Init(obj, position));
 	obj->data = calloc(1, sizeof(PlayerData)); M2ASSERT(obj->data);
 	PlayerData *playerData = AS_PLAYERDATA(obj->data);

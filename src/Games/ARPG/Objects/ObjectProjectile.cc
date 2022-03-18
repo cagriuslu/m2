@@ -38,7 +38,7 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 		defenseData->onDeath(defense);
 	} else {
 		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off->super.objId, M2_ID, ID, defense->super.objId, M2_HP, Float32, defenseData->hp);
-		Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Box2DBodyGetLinearVelocity(phy->body)), 5000.0f), true);
+		Box2DBodyApplyForceToCenter(other->body, Box2DBodyGetLinearVelocity(phy->body).normalize() * 5000.0f, true);
 		if (defenseData->onHit) {
 			defenseData->onHit(defense);
 		}
@@ -46,9 +46,9 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 	Game_DeleteList_Add(phy->super.objId);
 }
 
-int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction) {
+int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, m2::vec2f position, m2::vec2f direction) {
 	M2ERR_REFLECT(Object_Init(obj, position));
-	direction = Vec2F_Normalize(direction);
+	direction = direction.normalize();
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
 	el->prePhysics = Bullet_prePhysics;
@@ -62,13 +62,13 @@ int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID origi
 		0.0f, // Mass
 		0.0f // Damping
 	);
-	Box2DBodySetLinearVelocity(phy->body, Vec2F_Mul(direction, cfg->speed_mps));
+	Box2DBodySetLinearVelocity(phy->body, direction * cfg->speed_mps);
 	phy->onCollision = Bullet_onCollision;
 	
 	ComponentGraphic* gfx = Object_AddGraphic(obj);
 	gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndex].textureRect;
 	gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndex].objCenter_px;
-	gfx->angle = Vec2F_AngleRads(direction);
+	gfx->angle = direction.angle_rads();
 
 	ComponentOffense* off = Object_AddOffense(obj);
 	ARPG_ComponentOffense *offData = AS_ARPG_COMPONENTOFFENSE(off->data);

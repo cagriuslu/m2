@@ -51,17 +51,17 @@ static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) 
 		defenseData->onDeath(defense);
 	} else {
 		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, offense->super.objId, M2_ID, ID, defense->super.objId, M2_HP, Float32, defenseData->hp);
-		Box2DBodyApplyForceToCenter(other->body, Vec2F_Mul(Vec2F_Normalize(Vec2F_Sub(otherObj->position, obj->position)), 15000.0f), true);
+		Box2DBodyApplyForceToCenter(other->body, (otherObj->position - obj->position).normalize() * 15000.0f, true);
 		if (defenseData->onHit) {
 			defenseData->onHit(defense);
 		}
 	}
 }
 
-int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, Vec2F position, Vec2F direction) {
+int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, m2::vec2f position, m2::vec2f direction) {
 	M2ERR_REFLECT(Object_Init(obj, position));
 
-	const float theta = Vec2F_AngleRads(direction); // Convert direction to angle
+	const float theta = direction.angle_rads(); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
 
 	ComponentMonitor* el = Object_AddMonitor(obj);
@@ -79,8 +79,8 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, V
 		true, // isSensor
 		originatorId == GAME->playerId ? CATEGORY_PLAYER_MELEE_WEAPON : CATEGORY_ENEMY_MELEE_WEAPON, // category
 		0, // mask
-		Vec2F{1.25f, 0.1667f}, // boxDims
-		Vec2F{0.5833f, 0.0f}, // boxCenterOffset
+		m2::vec2f{1.25f, 0.1667f}, // boxDims
+		m2::vec2f{0.5833f, 0.0f}, // boxCenterOffset
 		0.0f, // boxAngle
 		NAN, // diskRadius
 		1.0f, // mass

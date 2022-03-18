@@ -1,11 +1,11 @@
 #ifndef AABB_H
 #define AABB_H
 
-#include <m2/Vec2F-old.hh>
+#include <m2/vec2f.hh>
 
 typedef struct {
-	Vec2F lowerBound;
-	Vec2F upperBound;
+	m2::vec2f lowerBound;
+	m2::vec2f upperBound;
 } AABB;
 
 #endif

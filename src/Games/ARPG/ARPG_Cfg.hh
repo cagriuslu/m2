@@ -226,9 +226,9 @@ typedef struct {
 	/// If behavior=HIT_N_RUN, duration AI stays in Run period
 	float hitNRunRunDuration_s;
 	/// If behavior=PATROL, top-left of patrol area while idling
-	Vec2F patrolAreaTopLeft;
+	m2::vec2f patrolAreaTopLeft;
 	/// If behavior=PATROL, bottom-right of patrol area while idling
-	Vec2F patrolAreaBottomRight;
+	m2::vec2f patrolAreaBottomRight;
 	/// If behavior=PATROL, patrol speed
 	float patrolSpeed_mps;
 	// Circle around parameters
@@ -239,10 +239,10 @@ extern const CfgAi CFG_AI_KEEP_DISTANCE_00;
 extern const CfgAi CFG_AI_HIT_N_RUN_00;
 typedef struct {
 	const CfgAi* cfg;
-	Vec2F homePosition;
+	m2::vec2f homePosition;
 	ListOfVec2Is reversedWaypointList;
 } AiState;
-M2Err AiState_Init(AiState *state, const CfgAi* cfg, Vec2F homePosition);
+M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::vec2f homePosition);
 
 ////////////////////////////////////////////////////////////////////////
 /////////////////////////////// CHARACTER //////////////////////////////

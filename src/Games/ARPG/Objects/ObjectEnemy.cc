@@ -29,7 +29,7 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 	ComponentPhysique* phy = static_cast<ComponentPhysique *>(Pool_GetById(&GAME->physics, obj->physique)); M2ASSERT(phy);
 	// We must call time before other signals
 	Automaton_ProcessTime(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), GAME->deltaTicks_ms / 1000.0f);
-	Vec2F velocity = Box2DBodyGetLinearVelocity(phy->body);
+	m2::vec2f velocity = Box2DBodyGetLinearVelocity(phy->body);
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 		Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), SIG_CHARANIM_STOP);
 	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
@@ -63,7 +63,7 @@ void ObjectEnemy_Draw(ComponentGraphic* gfx) {
 	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defenseData->hp / defenseData->maxHp);
 }
 
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position) {
+int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f position) {
 	M2ERR_REFLECT(Object_Init(obj, position));
 	obj->data = calloc(1, sizeof(EnemyData)); M2ASSERT(obj->data);
 	M2ERR_REFLECT(CharacterState_Init(&(AS_ENEMYDATA(obj->data)->characterState), cfg));

@@ -13,11 +13,11 @@ typedef struct {
 } EnemyData;
 #define AS_ENEMYDATA(ptr) ((EnemyData*)(ptr))
 
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position);
+int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f position);
 
-M2Err ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID originatorId, Vec2F position, Vec2F direction);
+M2Err ObjectExplosive_InitFromCfg(Object* obj, const CfgExplosive* cfg, ID originatorId, m2::vec2f position, m2::vec2f direction);
 
-int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, Vec2F position, Vec2F direction);
+int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, m2::vec2f position, m2::vec2f direction);
 
 typedef struct {
 	CharacterState characterState;
@@ -25,8 +25,8 @@ typedef struct {
 } PlayerData;
 #define AS_PLAYERDATA(ptr) ((PlayerData*)(ptr))
 
-int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, Vec2F position);
+int ObjectPlayer_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f position);
 
-int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, Vec2F position, Vec2F direction);
+int ObjectProjectile_InitFromCfg(Object* obj, const CfgProjectile *cfg, ID originatorId, m2::vec2f position, m2::vec2f direction);
 
 #endif //M2_ARPG_OBJECT_HH
