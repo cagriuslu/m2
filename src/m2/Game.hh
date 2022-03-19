@@ -12,6 +12,7 @@
 #include "GameProxy.hh"
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <vector>
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
@@ -67,7 +68,7 @@ typedef struct _Game {
 	Box2DWorld* world;
 	Box2DContactListener* contactListener;
 	ID cameraId, playerId, pointerId;
-	Array deleteList; // List of Object IDs
+	std::vector<ID> delete_list;
 	PathfinderMap pathfinderMap;
 	UIState leftHudUIState, rightHudUIState;
 

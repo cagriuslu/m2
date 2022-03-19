@@ -132,7 +132,7 @@ M2Err Log_M2(LogLevel level, const char* file, int line, M2Err x);
 M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, ID var);
 M2Err Log_M2V_Int32(LogLevel level, const char* file, int line, M2Err x, int32_t var);
 M2Err Log_M2V_Float32(LogLevel level, const char* file, int line, M2Err x, float var);
-M2Err Log_M2V_String(LogLevel level, const char* file, int line, M2Err x, const char* var);
+M2Err Log_M2V_CString(LogLevel level, const char* file, int line, M2Err x, const char* var);
 M2Err Log_M2V_vec2f(LogLevel level, const char* file, int line, M2Err x, m2::vec2f var);
 
 #define LOG_TRACE_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
@@ -142,6 +142,7 @@ M2Err Log_M2V_vec2f(LogLevel level, const char* file, int line, M2Err x, m2::vec
 #define LOG_ERROR_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelError, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
 #define LOG_FATAL_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelFatal, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
 void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2);
+void Log_M2V_CString_CString(LogLevel level, const char* file, int line, M2Err x1, const char* var1, M2Err x2, const char* var2);
 
 #define LOG_TRACE_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
 #define LOG_DEBUG_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelDebug, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
@@ -152,8 +153,8 @@ void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, ID var1
 void Log_M2V_ID_ID_Float32(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2, M2Err x3, float var3);
 
 // Convenience macros
-#define LOG_TRACE_FN() LOG_TRACE_M2V(M2_FN, String, __FUNCTION__)
-#define LOG_DEBUG_FN() LOG_DEBUG_M2V(M2_FN, String, __FUNCTION__)
+#define LOG_TRACE_FN() LOG_TRACE_M2V(M2_FN, CString, __FUNCTION__)
+#define LOG_DEBUG_FN() LOG_DEBUG_M2V(M2_FN, CString, __FUNCTION__)
 
 // Helper functions
 void Log_StackTrace();

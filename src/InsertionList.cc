@@ -4,36 +4,33 @@
 #define AsUint64Ptr(ptr) ((ID*) (ptr))
 
 int InsertionList_Init(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID)) {
-	memset(list, 0, sizeof(InsertionList));
-	M2ERR_REFLECT(Array_Init(&list->array, sizeof(ID), maxItemCount, maxItemCount, NULL));
+	*list = {};
 	list->comparator = comparator;
 	return 0;
 }
 
 void InsertionList_Term(InsertionList* list) {
-	Array_Term(&list->array);
+	list->array.clear();
 }
 
 size_t InsertionList_Length(InsertionList* list) {
-	return list->array.length;
+	return list->array.size();
 }
 
 ID InsertionList_Get(InsertionList* list, size_t i) {
-	ID* ptr = static_cast<ID *>(Array_Get(&list->array, i));
-	return ptr ? *ptr : 0;
+	return list->array[i];
 }
 
 void InsertionList_Insert(InsertionList* list, ID id) {
 	// TODO insert via binary search
-	Array_Append(&list->array, &id);
+	list->array.emplace_back(id);
 }
 
 void InsertionList_Remove(InsertionList* list, ID id) {
 	// TODO find via binary search
-	for (size_t i = 0; i < list->array.length; i++) {
-		ID* ptr = static_cast<ID *>(Array_Get(&list->array, i));
-		if (ptr && id == *ptr) {
-			Array_Remove(&list->array, i);
+	for (size_t i = 0; i < list->array.size(); i++) {
+		if (id == list->array[i]) {
+			list->array.erase(list->array.begin() + i);
 			return;
 		}
 	}
@@ -41,15 +38,15 @@ void InsertionList_Remove(InsertionList* list, ID id) {
 
 void InsertionList_Sort(InsertionList* list) {
 	// TODO employ binary search?
-	for (size_t i = 1; i < list->array.length; i++) {
+	for (size_t i = 1; i < list->array.size(); i++) {
 		ID currItem = InsertionList_Get(list, i);
 		for (size_t j = i; 0 < j--; ) {
 			ID iterItem = InsertionList_Get(list, j);
 			if (0 < list->comparator(currItem, iterItem)) {
 				// Copy iter into next item
-				*AsUint64Ptr(Array_Get(&list->array, j + 1)) = iterItem;
+				list->array[j + 1] = iterItem;
 				// Put curr object in place of iter
-				*AsUint64Ptr(Array_Get(&list->array, j)) = currItem;
+				list->array[j] = currItem;
 			} else {
 				break;
 			}

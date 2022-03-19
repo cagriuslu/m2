@@ -8,12 +8,12 @@
 #include <stdbool.h>
 #include <float.h>
 #include <stdio.h>
+#include <unordered_map>
 
 #define ManhattanDistance(a, b) (abs((a).x - (b).x) + abs((a).y - (b).y))
 
 int PathfinderMap_Init(PathfinderMap* pm) {
-	memset(pm, 0, sizeof(PathfinderMap));
-	M2ERR_REFLECT(HashMap_Init(&pm->blockedLocations, sizeof(bool), NULL));
+	*pm = {};
 
 	for (ComponentPhysique* phy = static_cast<ComponentPhysique *>(Pool_GetFirst(
 			&GAME->physics)); phy; phy = static_cast<ComponentPhysique *>(Pool_GetNext(&GAME->physics, phy))) {
@@ -36,8 +36,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 						int upperY = (int) roundf(conservativeAabb.upperBound.y);
 						for (int y = lowerY; y <= upperY; y++) {
 							for (int x = lowerX; x <= upperX; x++) {
-								bool blocked = true;
-								HashMap_SetVec2IKey(&pm->blockedLocations, m2::vec2i(x, y), &blocked); // TODO check result
+								pm->blocked_locations.insert({x, y});
 							}
 						}
 					}
@@ -49,8 +48,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 }
 
 void PathfinderMap_Term(PathfinderMap* pm) {
-	HashMap_Term(&pm->blockedLocations);
-	memset(pm, 0, sizeof(PathfinderMap));
+	*pm = {};
 }
 
 M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::vec2f from, m2::vec2f to, List* outReverseListOfVec2Is) {
@@ -108,15 +106,11 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
 	List_Prepend(&frontiers, &tmpPrioListItem, NULL);
 
 	// Holds from which position should you approach a certain position
-	HashMap cameFrom;
-	HashMap_Init(&cameFrom, sizeof(m2::vec2i), NULL);
-	tmpCameFrom = from;
-	HashMap_SetVec2IKey(&cameFrom, from, &tmpCameFrom);
+	std::unordered_map<m2::vec2i, m2::vec2i, m2::vec2i_hash> came_from;
+	came_from[from] = from;
 
-	HashMap costSoFar;
-	HashMap_Init(&costSoFar, sizeof(float), NULL);
-	tmpCostSoFar = 0.0f;
-	HashMap_SetVec2IKey(&costSoFar, from, &tmpCostSoFar);
+	std::unordered_map<m2::vec2i, float, m2::vec2i_hash> cost_so_far;
+	cost_so_far[from] = 0.0f;
 
 	while (0 < frontiers.bucket.size) {
 		const ID frontierIterator = List_GetFirst(&frontiers);
@@ -128,30 +122,29 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
 		}
 
 		// Find cost to current location
-		float* costToCurrentFrontierPtr = static_cast<float *>(HashMap_GetVec2IKey(&costSoFar, frontierItem->position));
-		const float costToCurrentFrontier = *costToCurrentFrontierPtr;
+		const float costToCurrentFrontier = cost_so_far[frontierItem->position];
 
 		// Gather neighbors of frontierItem
 		m2::vec2i neighbors[4];
 		float frontierToNeighborCosts[4];
 		uint32_t neighborCount = 0;
 		m2::vec2i topNeighbor = frontierItem->position + m2::vec2i(0, -1);
-		if (HashMap_GetVec2IKey(&pm->blockedLocations, topNeighbor) == NULL || (to == topNeighbor)) {
+		if (not pm->blocked_locations.contains(topNeighbor) || (to == topNeighbor)) {
 			neighbors[neighborCount] = topNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		m2::vec2i rightNeighbor = frontierItem->position + m2::vec2i(+1, 0);
-		if (HashMap_GetVec2IKey(&pm->blockedLocations, rightNeighbor) == NULL || (to == rightNeighbor)) {
+		if (not pm->blocked_locations.contains(rightNeighbor) || (to == rightNeighbor)) {
 			neighbors[neighborCount] = rightNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		m2::vec2i bottomNeighbor = frontierItem->position + m2::vec2i(0, +1);
-		if (HashMap_GetVec2IKey(&pm->blockedLocations, bottomNeighbor) == NULL || (to == bottomNeighbor)) {
+		if (not pm->blocked_locations.contains(bottomNeighbor) || (to == bottomNeighbor)) {
 			neighbors[neighborCount] = bottomNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
 		m2::vec2i leftNeighbor = frontierItem->position + m2::vec2i(-1, 0);
-		if (HashMap_GetVec2IKey(&pm->blockedLocations, leftNeighbor) == NULL || (to == leftNeighbor)) {
+		if (not pm->blocked_locations.contains(leftNeighbor) || (to == leftNeighbor)) {
 			neighbors[neighborCount] = leftNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
@@ -164,13 +157,13 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
 			// Calculate the cost of traveling to neighbor from current location
 			float newCostToNeighbor = costToCurrentFrontier + frontierToNeighborCost;
 			// Find the previous cost of traveling to neighbor
-			float* oldCostToNeighborPtr = static_cast<float *>(HashMap_GetVec2IKey(&costSoFar, neighbor));
-			const float oldCostToNeighbor = oldCostToNeighborPtr ? *oldCostToNeighborPtr : FLT_MAX;
+			auto it = cost_so_far.find(neighbor);
+			const float oldCostToNeighbor = (it != cost_so_far.end()) ? it->second : FLT_MAX;
 
 			// If new path to neighbor is cheaper than the old path
 			if (newCostToNeighbor < oldCostToNeighbor) {
 				// Save new cost
-				HashMap_SetVec2IKey(&costSoFar, neighbor, &newCostToNeighbor);
+				cost_so_far[neighbor] = newCostToNeighbor;
 				// Calculate priority of neighbor with heuristic parameter (which is Manhattan distance to `to`)
 				tmpPrioListItem.priority = newCostToNeighbor + ManhattanDistance(to, neighbor);
 				tmpPrioListItem.position = neighbor;
@@ -189,8 +182,7 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
 					List_Append(&frontiers, &tmpPrioListItem, NULL);
 				}
 				// Set the previous position of neighbor as the current position
-				tmpCameFrom = frontierItem->position;
-				HashMap_SetVec2IKey(&cameFrom, neighbor, &tmpCameFrom);
+				came_from[neighbor] = frontierItem->position;
 			}
 		}
 
@@ -200,8 +192,8 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
 
 	M2Err result;
 	// Check if there is a path
-	auto currentCameFrom = static_cast<m2::vec2i*>(HashMap_GetVec2IKey(&cameFrom, to));
-	if (currentCameFrom == NULL) {
+	auto it = came_from.find(to);
+	if (it == came_from.end()) {
 		result = M2ERR_PATH_NOT_FOUND;
 	} else {
 		result = M2OK;
@@ -210,19 +202,19 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
 		// Add `to` to list
 		List_Append(outReverseListOfVec2Is, &to, NULL);
 		// Built outReverseListOfVec2Is
-		while (currentCameFrom && from != *currentCameFrom) {
-			List_Append(outReverseListOfVec2Is, currentCameFrom, NULL);
-			currentCameFrom = static_cast<m2::vec2i*>(HashMap_GetVec2IKey(&cameFrom, *currentCameFrom));
+		while (it != came_from.end() && from != it->second) {
+			m2::vec2i data = it->second;
+			List_Append(outReverseListOfVec2Is, &data, NULL);
+			it = came_from.find(it->second);
 		}
 		// Add `from` to list as well
-		if (currentCameFrom) {
-			List_Append(outReverseListOfVec2Is, currentCameFrom, NULL);
+		if (it != came_from.end()) {
+			m2::vec2i data = it->second;
+			List_Append(outReverseListOfVec2Is, &data, NULL);
 		}
 	}
 
 	// Cleanup
-	HashMap_Term(&costSoFar);
-	HashMap_Term(&cameFrom);
 	List_Term(&frontiers);
 	return result;
 }

@@ -1,5 +1,6 @@
 #include <m2/vec2i.hh>
 #include <m2/vec2f.hh>
+#include <unordered_map>
 
 m2::vec2i::vec2i() : x(0), y(0) {
 
@@ -25,4 +26,9 @@ bool m2::vec2i::operator==(const vec2i& other) const {
 }
 m2::vec2i::operator bool() const {
 	return (x || y);
+}
+
+size_t m2::vec2i_hash::operator()(const vec2i& a) const {
+	uint64_t packed = static_cast<uint64_t>(a.x) | (static_cast<uint64_t>(a.y) << 32);
+	return std::hash<uint64_t>{}(packed);
 }

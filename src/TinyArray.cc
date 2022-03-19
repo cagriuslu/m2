@@ -33,7 +33,7 @@ M2Err TinyArray_Append(TinyArray* array, uint64_t item) {
 			array->length++;
 			return M2OK;
 		} else {
-			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
+			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, CString, "TinyArray is used without being allocated");
 		}
 	} else {
 		return M2ERR_LIMIT_EXCEEDED;
@@ -48,7 +48,7 @@ M2Err TinyArray_Set(TinyArray* array, uint16_t index, uint64_t item) {
 			(*poolItemDataPtr)[index] = item;
 			return M2OK;
 		} else {
-			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
+			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, CString, "TinyArray is used without being allocated");
 		}
 	} else {
 		return M2ERR_OUT_OF_BOUNDS;
@@ -70,7 +70,7 @@ M2Err TinyArray_Remove(TinyArray* array, uint16_t index) {
 			array->length--;
 			return M2OK;
 		} else {
-			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, String, "TinyArray is used without being allocated");
+			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, CString, "TinyArray is used without being allocated");
 		}
 	} else {
 		return M2ERR_OUT_OF_BOUNDS;

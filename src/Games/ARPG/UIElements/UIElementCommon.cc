@@ -21,6 +21,6 @@ M2Err UIElement_UpdateDynamic(UIElementState* state) {
 					return M2ERR_INVALID_CFG_DYNIMGTYP;
 			}
 		default:
-			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, String, "UIElement_UpdateDynamic is called for a non-dynamic element");
+			return LOG_ERROR_M2V(M2ERR_IMPLEMENTATION, CString, "UIElement_UpdateDynamic is called for a non-dynamic element");
 	}
 }

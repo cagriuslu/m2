@@ -2,6 +2,7 @@
 #define M2_VEC2I_HH
 
 #include <cstdint>
+#include <cstddef>
 
 namespace m2 {
 	struct vec2f;
@@ -18,6 +19,10 @@ namespace m2 {
 		vec2i operator-(const vec2i& rhs) const;
 		bool operator==(const vec2i& other) const;
 		explicit operator bool() const;
+	};
+
+	struct vec2i_hash {
+		size_t operator()(const vec2i& a) const;
 	};
 }
 

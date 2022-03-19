@@ -1,13 +1,12 @@
 #ifndef INSERTION_LIST_H
 #define INSERTION_LIST_H
 
-#include "m2/Array.hh"
 #include "Pool.hh"
 #include <stdint.h>
+#include <vector>
 
 typedef struct _InsertionList {
-	// TODO deque might be faster
-	Array array;
+	std::vector<ID> array;
 	int (*comparator)(ID, ID);
 } InsertionList;
 

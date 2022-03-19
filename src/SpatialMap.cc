@@ -82,14 +82,14 @@ static bool StaticMapQueryCB(Box2DFixture* fixture, void* userDataArrayOfIterato
 	Box2DBody* body = Box2DFixtureGetBody(fixture);
 	ID iterator = (ID)((uintptr_t)Box2DBodyGetUserData(body));
 	if (userDataArrayOfIterators) {
-		Array_Append((Array*)userDataArrayOfIterators, &iterator);
+		static_cast<std::vector<ID>*>(userDataArrayOfIterators)->push_back(iterator);
 	}
 	return true;
 }
 
-void SpatialMap_Get(SpatialMap* sm, AABB bounds, Array* outIterators) {
-	Array_Clear(outIterators);
-	Box2DQueryListener* queryListener = Box2DQueryListenerCreate(StaticMapQueryCB, outIterators);
+void SpatialMap_Get(SpatialMap* sm, AABB bounds, std::vector<ID>& outIterators) {
+	outIterators.clear();
+	Box2DQueryListener* queryListener = Box2DQueryListenerCreate(StaticMapQueryCB, &outIterators);
 	Box2DWorldQuery(sm->world, queryListener, bounds);
 	Box2DQueryListenerDestroy(queryListener);
 }

@@ -1,7 +1,6 @@
 #include "m2/UI.hh"
 #include "m2/Event.hh"
 #include "m2/Def.hh"
-#include "m2/HashMap.hh"
 #include "m2/Game.hh"
 
 // Helper functions

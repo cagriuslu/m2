@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "m2/Box2D.hh"
 #include "m2/Object.hh"
-#include "m2/Array.hh"
 #include "m2/UI.hh"
 #include "m2/Component.hh"
 #include "m2/Event.hh"
@@ -57,20 +56,20 @@ int main(int argc, char **argv) {
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
 	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 		return -1;
 	}
 	if (TTF_Init() != 0) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, TTF_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 		return -1;
 	}
 	Game_UpdateWindowDimensions(1600, 900); // Store default window dimensions in GAME
 	if ((GAME->sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowRect.w, GAME->windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
 	SDL_SetWindowMinimumSize(GAME->sdlWindow, 712, 400);
@@ -78,11 +77,11 @@ int main(int argc, char **argv) {
 	GAME->sdlCursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(GAME->sdlCursor);
 	if ((GAME->pixelFormat = SDL_GetWindowPixelFormat(GAME->sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
 	if ((GAME->sdlRenderer = SDL_CreateRenderer(GAME->sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == NULL) { // SDL_RENDERER_PRESENTVSYNC
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
 //	SDL_Surface* textureMapSurface = IMG_Load(CFG_TEXTURE_FILE);
@@ -108,11 +107,11 @@ int main(int argc, char **argv) {
 //	SDL_FreeSurface(textureMaskSurface);
 	SDL_Surface* lightSurface = IMG_Load("resources/RadialGradient-WhiteBlack.png");
 	if (lightSurface == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 		return -1;
 	}
 	if ((GAME->sdlLightTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, lightSurface)) == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
 	SDL_FreeSurface(lightSurface);
@@ -120,7 +119,7 @@ int main(int argc, char **argv) {
 	SDL_SetTextureAlphaMod(GAME->sdlLightTexture, 0);
 	SDL_SetTextureColorMod(GAME->sdlLightTexture, 127, 127, 127);
 	if ((GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, TTF_GetError());
+		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 		return -1;
 	}
 

@@ -4,7 +4,7 @@
 #include "m2/Pool.hh"
 #include "m2/Box2D.hh"
 #include "m2/AABB.hh"
-#include "m2/Array.hh"
+#include <vector>
 
 typedef struct _SpatialMap {
 	Pool bucket;
@@ -20,7 +20,7 @@ void SpatialMap_Clear(SpatialMap* sm);
 ID SpatialMap_Add(SpatialMap* sm, m2::vec2f position, float boundaryRadius, void* copy); // Returns iterator
 void SpatialMap_Remove(SpatialMap* sm, ID iterator);
 void SpatialMap_SetPosition(SpatialMap* sm, ID iterator, m2::vec2f position);
-void SpatialMap_Get(SpatialMap* sm, AABB bounds, Array* outIterators);
+void SpatialMap_Get(SpatialMap* sm, AABB bounds, std::vector<ID>& outIterators);
 
 void* SpatialMap_GetData(SpatialMap* sm, ID iterator);
 

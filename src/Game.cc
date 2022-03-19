@@ -112,7 +112,7 @@ static int Game_Level_Init() {
 	GAME->world = Box2DWorldCreate({});
 	GAME->contactListener = Box2DContactListenerRegister(ComponentPhysique_ContactCB);
 	Box2DWorldSetContactListener(GAME->world, GAME->contactListener);
-	M2ERR_REFLECT(Array_Init(&GAME->deleteList, sizeof(ID), 16, UINT16_MAX + 1, NULL));
+	GAME->delete_list.clear();
 	GAME->levelLoaded = true;
 	return 0;
 }
@@ -122,7 +122,7 @@ static void Game_Level_Term() {
 	PathfinderMap_Term(&GAME->pathfinderMap);
 	Box2DContactListenerDestroy(GAME->contactListener);
 	Box2DWorldDestroy(GAME->world);
-	Array_Term(&GAME->deleteList);
+	GAME->delete_list.clear();
 	Pool_Term(&GAME->offenses);
 	Pool_Term(&GAME->defenses);
 	Pool_Term(&GAME->terrainGraphics);
@@ -176,15 +176,14 @@ Object* Game_FindObjectById(ID id) {
 }
 
 void Game_DeleteList_Add(ID id) {
-	Array_Append(&GAME->deleteList, &id);
+	GAME->delete_list.emplace_back(id);
 }
 
 void Game_DeleteList_DeleteAll() {
-	for (size_t i = 0; i < GAME->deleteList.length; i++) {
-		ID* objIdPtr = static_cast<ID *>(Array_Get(&GAME->deleteList, i)); M2ASSERT(objIdPtr);
-		Object* obj = static_cast<Object *>(Pool_GetById(&GAME->objects, *objIdPtr)); M2ASSERT(obj);
+	for (auto id : GAME->delete_list) {
+		auto obj = static_cast<Object*>(Pool_GetById(&GAME->objects, id)); M2ASSERT(obj);
 		Object_Term(obj);
 		Pool_Unmark(&GAME->objects, obj);
 	}
-	Array_Clear(&GAME->deleteList);
+	GAME->delete_list.clear();
 }

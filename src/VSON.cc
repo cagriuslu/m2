@@ -1,115 +1,126 @@
-#define _CRT_SECURE_NO_WARNINGS
-#include "m2/VSON.hh"
-#include "m2/Array.hh"
-#include "m2/string.hh"
-#include "m2/Def.hh"
+#include <m2/VSON.hh>
+#include <m2/string.hh>
+#include <m2/Def.hh>
+#include <cstdlib>
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
 
-M2Err _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f);
-void _VSON_Serialize_ToFile_AnyValue(VSON* vson, FILE* file);
-
-M2Err VSON_Init_ParseFile(VSON* vson, const char* path) {
-	memset(vson, 0, sizeof(VSON));
-	FILE* f = fopen(path, "r");
-	if (!f) {
-		return M2ERR_FILE_NOT_FOUND;
-	}
-
-	M2Err result = _VSON_ParseFile_UnknownValue(vson, f);
-	if (result == 0 && !feof(f)) {
-		// Check if anything left in file
-		int c;
-		while ((c = fgetc(f)) != EOF) {
-			if (!isspace(c)) {
-				result = M2ERR_FILE_CORRUPTED;
-				break;
+const m2::vson* m2::vson::query(const std::string& path) const {
+	const vson* v = this;
+	for (const auto& path_piece : m2::string::split(path, '/')) {
+		if (std::holds_alternative<vson_object>(value)) {
+			const auto& obj = std::get<vson_object>(value);
+			const auto& it = obj.find(path_piece);
+			if (it != obj.end()) {
+				v = &it->second;
+			} else {
+				return nullptr;
 			}
+		} else if (std::holds_alternative<vson_array>(value)) {
+			const auto& arr = std::get<vson_array>(value);
+			long index = strtol(path_piece.c_str(), nullptr, 10);
+			if (index < arr.size()) {
+				v = &arr[index];
+			} else {
+				return nullptr;
+			}
+		} else if (std::holds_alternative<vson_string>(value)) {
+			return nullptr;
 		}
 	}
+	return v;
 
-	fclose(f);
-	return result;
 }
 
-M2Err VSON_InitObject(VSON* vson) {
-	memset(vson, 0, sizeof(VSON));
-	vson->type = VSON_VALUE_TYPE_OBJECT;
-	return 0;
-}
+static void dump_any_value(const m2::vson& v, std::stringstream& ss) {
+	auto print_string = [](std::stringstream& ss, const std::string& str){
+		ss << '"';
+		for (auto c : str) {
+			if (c == '\\') {
+				ss << R"(\\)";
+			} else if (c == '"') {
+				ss << R"(\")";
+			} else {
+				ss << c;
+			}
+		}
+		ss << '"';
+	};
 
-M2Err VSON_InitArray(VSON* vson) {
-	memset(vson, 0, sizeof(VSON));
-	vson->type = VSON_VALUE_TYPE_ARRAY;
-	return 0;
-}
-
-M2Err VSON_InitString(VSON* vson, const char* string) {
-	memset(vson, 0, sizeof(VSON));
-	vson->type = VSON_VALUE_TYPE_STRING;
-	if ((vson->value.string = static_cast<const char *>(string ? STRDUP(string) : calloc(1, 1))) == NULL) {
-		return M2ERR_OUT_OF_MEMORY;
+	if (std::holds_alternative<m2::vson::vson_object>(v.value)) {
+		ss << '{';
+		for (const auto& kv : std::get<m2::vson::vson_object>(v.value)) {
+			print_string(ss, kv.first);
+			ss << ':';
+			dump_any_value(kv.second, ss);
+			ss << ',';
+		}
+		ss << '}';
+	} else if (std::holds_alternative<m2::vson::vson_array>(v.value)) {
+		ss << '[';
+		for (const auto& elem : std::get<m2::vson::vson_array>(v.value)) {
+			dump_any_value(elem, ss);
+			ss << ',';
+		}
+		ss << ']';
+	} else if (std::holds_alternative<m2::vson::vson_string>(v.value)) {
+		print_string(ss, std::get<m2::vson::vson_string>(v.value));
 	}
-	return 0;
 }
 
-M2Err VSON_InitString_NoCopy(VSON* vson, const char* string) {
-	memset(vson, 0, sizeof(VSON));
-	vson->type = VSON_VALUE_TYPE_STRING;
-	if ((vson->value.string = static_cast<const char *>(string ? string : calloc(1, 1))) == NULL) {
-		return M2ERR_OUT_OF_MEMORY;
+std::string m2::vson::dump_to_string() const {
+	std::stringstream ss;
+	dump_any_value(*this, ss);
+	return ss.str();
+}
+bool m2::vson::dump_to_file(const std::string& fpath) const {
+	FILE* file = fopen(fpath.c_str(), "w");
+	if (!file) {
+		LOG_ERROR_M2VV(M2ERR_FILE_INACCESSIBLE, CString, fpath.c_str(), M2ERR_ERRNO, CString, strerror(errno));
+		return false;
 	}
-	return 0;
+	std::string str = dump_to_string();
+	bool success = (str.size() == fwrite(str.data(), 1, str.size(), file));
+	fclose(file);
+	return success;
 }
 
-M2Err _VSON_ParseFile_FetchPlainString(Array* buffer, FILE* f) {
-	M2Err result = Array_Init(buffer, sizeof(char), 16, INT32_MAX, NULL);
-	if (result) {
-		return result;
-	}
+m2::vson m2::vson::object() {
+	return {.value = vson_object{}};
+}
+m2::vson m2::vson::array() {
+	return {.value = vson_array{}};
+}
+m2::vson m2::vson::string(const std::string& str) {
+	return {.value = vson_string{str}};
+}
 
+static std::optional<m2::vson> parse_unknown_value(std::stringstream& ss);
+
+static std::string fetch_string_plain(std::stringstream& ss) {
+	std::stringstream buffer;
 	int c;
-	char ch;
-	while ((c = fgetc(f)) != EOF) {
+	while ((c = ss.get()) != EOF) {
 		if (ISPLAIN(c)) {
-			ch = (char)c;
-			if (!Array_Append(buffer, &ch)) {
-				// out of memory, or max size reached
-				Array_Term(buffer);
-				return M2ERR_FILE_CORRUPTED;
-			}
+			ss << (char)c;
 		} else {
-			// plain string finished
-			ungetc(c, f);
-			break;
+			ss.unget();
 		}
 	}
-
-	ch = 0;
-	if (!Array_Append(buffer, &ch)) {
-		// out of memory, or max size reached
-		Array_Term(buffer);
-		return M2ERR_FILE_CORRUPTED;
-	}
-	
-	return 0;
+	return ss.str();
 }
-
-M2Err _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
-	M2Err result = VSON_InitObject(vson);
-	if (result) {
-		return result;
-	}
-	VSONObjectKeyValue** nextObjectKeyValuePointerLocation = &(vson->value.objectFirstChild);
-	VSONObjectKeyValue* currentObjectKeyValue = NULL;
+static std::optional<m2::vson> parse_object(std::stringstream& ss) {
+	m2::vson v = m2::vson::object();
+	auto& obj = std::get<m2::vson::vson_object>(v.value);
 
 	const int EXPECT_KEY = 0;
 	const int EXPECT_COLON = 1;
 	const int EXPECT_VALUE = 2;
 	const int EXPECT_COMMA_OR_SPACE = 3;
 
+	std::string key;
 	int c, braceClosed = 0, state = EXPECT_KEY;
-	while ((c = fgetc(f)) != EOF) {
+	while ((c = ss.get()) != EOF) {
 		if (state == EXPECT_KEY) {
 			if (c == '}') {
 				braceClosed = 1;
@@ -118,24 +129,12 @@ M2Err _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				// Do nothing
 			} else if (ISPLAIN(c)) {
 				// Create key-value pair
-				currentObjectKeyValue = static_cast<VSONObjectKeyValue *>(calloc(1, sizeof(VSONObjectKeyValue)));
-				if (!currentObjectKeyValue) {
-					return M2ERR_OUT_OF_MEMORY;
-				}
-				nextObjectKeyValuePointerLocation[0] = currentObjectKeyValue;
-				nextObjectKeyValuePointerLocation = &(currentObjectKeyValue->next);
-				// Parse key
-				ungetc(c, f);
-				Array buffer;
-				result = _VSON_ParseFile_FetchPlainString(&buffer, f);
-				if (result) {
-					return result;
-				}
-				currentObjectKeyValue->key = static_cast<const char *>(Array_TermNoFree(&buffer));
+				ss.unget();
+				key = fetch_string_plain(ss);
 				// Next state
 				state = EXPECT_COLON;
 			} else {
-				return M2ERR_FILE_CORRUPTED;
+				return {};
 			}
 		} else if (state == EXPECT_COLON) {
 			if (isspace(c)) {
@@ -144,17 +143,19 @@ M2Err _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				// Next state
 				state = EXPECT_VALUE;
 			} else {
-				return M2ERR_FILE_CORRUPTED;
+				return {};
 			}
 		} else if (state == EXPECT_VALUE) {
 			if (isspace(c)) {
 				// Do nothing
 			} else {
 				// Parse value
-				ungetc(c, f);
-				result = _VSON_ParseFile_UnknownValue(&currentObjectKeyValue->value, f);
-				if (result) {
-					return M2ERR_FILE_CORRUPTED;
+				ss.unget();
+				auto value = parse_unknown_value(ss);
+				if (value) {
+					obj[key] = *value;
+				} else {
+					return {};
 				}
 				// Next state
 				state = EXPECT_COMMA_OR_SPACE;
@@ -167,29 +168,24 @@ M2Err _VSON_ParseFile_ObjectValue(VSON* vson, FILE* f) {
 				// Next state
 				state = EXPECT_KEY;
 			} else {
-				return M2ERR_FILE_CORRUPTED;
+				return {};
 			}
 		}
 	}
-
 	if (!braceClosed) {
-		return M2ERR_FILE_CORRUPTED;
+		return {};
 	}
-	return 0;
+	return v;
 }
-
-M2Err _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
-	M2Err result = VSON_InitArray(vson);
-	if (result) {
-		return result;
-	}
-	VSONArrayValue** nextArrayValuePointerLocation = &(vson->value.arrayFirstChild);
+static std::optional<m2::vson> parse_array(std::stringstream& ss) {
+	auto v = m2::vson::array();
+	auto& arr = std::get<m2::vson::vson_array>(v.value);
 
 	const int EXPECT_VALUE = 0;
 	const int EXPECT_COMMA_OR_SPACE = 1;
-	
+
 	int c, bracketClosed = 0, state = EXPECT_VALUE;
-	while ((c = fgetc(f)) != EOF) {
+	while ((c = ss.get()) != EOF) {
 		if (state == EXPECT_VALUE) {
 			if (c == ']') {
 				bracketClosed = 1;
@@ -197,20 +193,14 @@ M2Err _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
 			} else if (isspace(c)) {
 				// Do nothing
 			} else {
-				VSONArrayValue* arrayValue = static_cast<VSONArrayValue *>(calloc(1, sizeof(VSONArrayValue)));
-				if (!arrayValue) {
-					return M2ERR_OUT_OF_MEMORY;
+				ss.unget();
+				auto value = parse_unknown_value(ss);
+				if (value) {
+					arr.push_back(*value);
+				} else {
+					return {};
 				}
-
-				nextArrayValuePointerLocation[0] = arrayValue;
-				nextArrayValuePointerLocation = &(arrayValue->next);
-
-				ungetc(c, f);
-				result = _VSON_ParseFile_UnknownValue(&arrayValue->value, f);
-				if (result) {
-					return M2ERR_FILE_CORRUPTED;
-				}
-				
+				// Next state
 				state = EXPECT_COMMA_OR_SPACE;
 			}
 		} else {
@@ -221,38 +211,26 @@ M2Err _VSON_ParseFile_ArrayValue(VSON* vson, FILE* f) {
 				// Next state
 				state = EXPECT_VALUE;
 			} else {
-				return M2ERR_FILE_CORRUPTED;
+				return {};
 			}
 		}
 	}
-
 	if (!bracketClosed) {
-		return M2ERR_FILE_CORRUPTED;
+		return {};
 	}
-	return 0;
+	return v;
 }
-
-M2Err _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
-	Array buffer;
-	M2Err result = Array_Init(&buffer, sizeof(char), 32, INT32_MAX, NULL);
-	if (result) {
-		return result;
-	}
-
+static std::optional<m2::vson> parse_string_quoted(std::stringstream& ss) {
+	std::stringstream buffer;
 	int c, escaping = 0, quoteClosed = 0;
-	while ((c = fgetc(f)) != EOF) {
+	while ((c = ss.get()) != EOF) {
 		if (escaping) {
 			if (c == '"' || c == '\\') {
-				if (Array_Append(&buffer, &c) == NULL) {
-					// out of memory, or max size reached
-					Array_Term(&buffer);
-					return M2ERR_FILE_CORRUPTED;
-				}
+				buffer << (char)c;
 				escaping = 0;
 			} else {
 				// unexpected character
-				Array_Term(&buffer);
-				return M2ERR_FILE_CORRUPTED;
+				return {};
 			}
 		} else {
 			if (c == '"') {
@@ -262,205 +240,72 @@ M2Err _VSON_ParseFile_QuoteStringValue(VSON* vson, FILE* f) {
 			} else if (c == '\\') {
 				escaping = 1;
 			} else if (isprint(c)) {
-				if (Array_Append(&buffer, &c) == NULL) {
-					// out of memory, or max size reached
-					Array_Term(&buffer);
-					return M2ERR_FILE_CORRUPTED;
-				}
+				buffer << (char)c;
 			} else {
 				// unexpected character
-				Array_Term(&buffer);
-				return M2ERR_FILE_CORRUPTED;
+				return {};
 			}
 		}
 	}
-
 	if (!quoteClosed) {
 		// Quote not closed
-		Array_Term(&buffer);
-		return M2ERR_FILE_CORRUPTED;
+		return {};
 	}
-
-	c = 0;
-	if (Array_Append(&buffer, &c) == NULL) {
-		// out of memory, or max size reached
-		Array_Term(&buffer);
-		return M2ERR_FILE_CORRUPTED;
-	}
-
-	result = VSON_InitString(vson, (const char*)Array_Get(&buffer, 0));
-	Array_Term(&buffer);
-	return result;
+	return m2::vson::string(buffer.str());
 }
-
-M2Err _VSON_ParseFile_PlainStringValue(VSON* vson, FILE* f) {
-	Array buffer;
-	M2Err result = _VSON_ParseFile_FetchPlainString(&buffer, f);
-	if (result) {
-		return result;
-	}
-	return VSON_InitString_NoCopy(vson, (const char*)Array_TermNoFree(&buffer));
+static std::optional<m2::vson> parse_string_plain(std::stringstream& ss) {
+	auto str = fetch_string_plain(ss);
+	return m2::vson::string(fetch_string_plain(ss));
 }
-
-M2Err _VSON_ParseFile_UnknownValue(VSON* vson, FILE* f) {
-	int c, result = 1;
-	while ((c = fgetc(f)) != EOF) {
-		if (isspace(c)) {
-			// Do nothing
-		} else {
+static std::optional<m2::vson> parse_unknown_value(std::stringstream& ss) {
+	int c;
+	while ((c = ss.get()) != EOF) {
+		if (not isspace(c)) {
 			if (c == '{') {
-				// Object
-				result = _VSON_ParseFile_ObjectValue(vson, f);
+				return parse_object(ss);
 			} else if (c == '[') {
-				// Array
-				result = _VSON_ParseFile_ArrayValue(vson, f);
+				return parse_array(ss);
 			} else if (c == '"') {
-				// Quoted string
-				result = _VSON_ParseFile_QuoteStringValue(vson, f);
+				return parse_string_quoted(ss);
 			} else if (ISPLAIN(c)) {
-				// Plain string
-				ungetc(c, f);
-				result = _VSON_ParseFile_PlainStringValue(vson, f);
+				ss.unget();
+				return parse_string_plain(ss);
 			} else {
-				result = M2ERR_FILE_CORRUPTED;
+				return {};
 			}
-			break;
 		}
 	}
-	if (result == 1) {
-		// Empty file
-		result = VSON_InitString(vson, NULL);
-	}
-	return result;
+	return {};
 }
 
-VSON* VSON_Get(VSON* vson, const char* path) {
-	auto path_pieces = m2::string::split(path, '/');
-	if (path_pieces.empty()) {
-		return nullptr;
-	}
-
-	for (const auto& str : path_pieces) {
-		if (vson->type == VSON_VALUE_TYPE_OBJECT) {
-			// Look for pathPiece
-			VSONObjectKeyValue* objKV = vson->value.objectFirstChild;
-			while (objKV) {
-				if (strcmp(objKV->key, str.c_str()) == 0) {
-					break;
-				}
-				objKV = objKV->next;
+std::optional<m2::vson> m2::vson::parse_string(const std::string& str) {
+	std::stringstream ss(str);
+	auto optional_vson = parse_unknown_value(ss);
+	if (optional_vson) {
+		int c;
+		while ((c = ss.get()) != EOF) {
+			if (not isspace(c)) {
+				return {};
 			}
-			vson = objKV ? &(objKV->value) : NULL;
-		} else if (vson->type == VSON_VALUE_TYPE_ARRAY) {
-			// Look for int(pathPiece)
-			const long index = strtol(str.c_str(), NULL, 10);
-			VSONArrayValue* arrV = vson->value.arrayFirstChild;
-			for (long ii = 0; ii < index && arrV; ii++) {
-				arrV = arrV->next;
-			}
-			vson = arrV ? &(arrV->value) : NULL;
-		} else {
-			vson = NULL;
 		}
-	}
-	return vson;
-}
-const char* VSON_GetString(VSON* vson, const char* path) {
-	VSON* strPtr = VSON_Get(vson, path);
-	return (strPtr && strPtr->type == VSON_VALUE_TYPE_STRING) ? strPtr->value.string : NULL;
-}
-long VSON_GetLong(VSON* vson, const char* path, long defaultValue) {
-	const char* str = VSON_GetString(vson, path);
-	if (str) {
-		char* str_end = NULL;
-		long value = strtol(str, &str_end, 0);
-		if (str != str_end) {
-			return value;
-		}
-	}
-	return defaultValue;
-}
-float VSON_GetFloat(VSON* vson, const char* path, float defaultValue) {
-	const char* str = VSON_GetString(vson, path);
-	if (str) {
-		char* str_end = NULL;
-		float value = strtof(str, &str_end);
-		if (str != str_end) {
-			return value;
-		}
-	}
-	return defaultValue;
-}
-
-void _VSON_Serialize_ToFile_PrintString(FILE* file, const char* str) {
-	fprintf(file, "\"");
-	for (size_t i = 0; str[i] != 0; i++) {
-		char c = str[i];
-		if (c == '\\') {
-			fprintf(file, "\\\\");
-		} else if (c == '"') {
-			fprintf(file, "\\\"");
-		} else {
-			fprintf(file, "%c", c);
-		}
-	}
-	fprintf(file, "\"");
-}
-
-void _VSON_Serialize_ToFile_ObjectValue(VSON* vson, FILE* file) {
-	fprintf(file, "{");
-	VSON_OBJECT_ITERATE(vson, objKeyValuePtr) {
-		_VSON_Serialize_ToFile_PrintString(file, objKeyValuePtr->key);
-		fprintf(file, ":");
-		_VSON_Serialize_ToFile_AnyValue(&objKeyValuePtr->value, file);
-		fprintf(file, ",");
-	}
-	fprintf(file, "}");
-}
-
-void _VSON_Serialize_ToFile_ArrayValue(VSON* vson, FILE* file) {
-	fprintf(file, "[");
-	VSON_ARRAY_ITERATE(vson, arrayValuePtrName) {
-		_VSON_Serialize_ToFile_AnyValue(&arrayValuePtrName->value, file);
-		fprintf(file, ",");
-	}
-	fprintf(file, "]");
-}
-
-void _VSON_Serialize_ToFile_StringValue(VSON* vson, FILE* file) {
-	_VSON_Serialize_ToFile_PrintString(file, vson->value.string);
-}
-
-void _VSON_Serialize_ToFile_AnyValue(VSON* vson, FILE* file) {
-	switch (vson->type) {
-		case VSON_VALUE_TYPE_OBJECT:
-			_VSON_Serialize_ToFile_ObjectValue(vson, file);
-			break;
-		case VSON_VALUE_TYPE_ARRAY:
-			_VSON_Serialize_ToFile_ArrayValue(vson, file);
-			break;
-		case VSON_VALUE_TYPE_STRING:
-			_VSON_Serialize_ToFile_StringValue(vson, file);
-			break;
-		default:
-			break;
+		return optional_vson;
+	} else {
+		return {};
 	}
 }
-
-M2Err VSON_Serialize_ToFile(VSON* vson, const char* path) {
-	FILE* file = fopen(path, "w");
+std::optional<m2::vson> m2::vson::parse_file(const std::string &fpath) {
+	FILE* file = fopen(fpath.c_str(), "r");
 	if (!file) {
-		LOG_ERROR_M2V(M2ERR_ERRNO, String, strerror(errno));
-		LOG_ERROR_M2V(M2ERR_FILE_INACCESSIBLE, String, path);
-		return M2ERR_FILE_INACCESSIBLE;
+		LOG_ERROR_M2VV(M2ERR_FILE_INACCESSIBLE, CString, fpath.c_str(), M2ERR_ERRNO, CString, strerror(errno));
+		return {};
 	}
 
-	_VSON_Serialize_ToFile_AnyValue(vson, file);
+	std::stringstream ss;
+	while (not feof(file)) {
+		char buffer[512];
+		long n = static_cast<long>(fread(buffer, 1, 512, file));
+		ss.write(buffer, n);
+	}
 	fclose(file);
-	return M2OK;
-}
-
-void VSON_Term(VSON* vson) {
-	(void)vson;
-	// TODO
+	return parse_string(ss.str());
 }

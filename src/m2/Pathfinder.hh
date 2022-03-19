@@ -2,12 +2,13 @@
 #define PATHFINDER_H
 
 #include "m2/Def.hh"
-#include "m2/HashMap.hh"
 #include "m2/List.hh"
+#include <m2/vec2i.hh>
 #include <m2/vec2f.hh>
+#include <unordered_set>
 
-typedef struct _PathfinderMap {
-	HashMap blockedLocations;
+typedef struct {
+	std::unordered_set<m2::vec2i, m2::vec2i_hash> blocked_locations;
 } PathfinderMap;
 
 int PathfinderMap_Init(PathfinderMap* pm);

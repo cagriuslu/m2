@@ -13,10 +13,10 @@ M2Err GameProxy_Activate(GameProxy *gp) {
 	if (gp->textureMapFile) {
 		SDL_Surface* textureMapSurface = IMG_Load(gp->textureMapFile);
 		if (textureMapSurface == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 		}
 		if ((GAME->sdlTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMapSurface)) == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		}
 		SDL_SetTextureColorMod(GAME->sdlTexture, 127, 127, 127);
 		SDL_FreeSurface(textureMapSurface);
@@ -24,10 +24,10 @@ M2Err GameProxy_Activate(GameProxy *gp) {
 	if (gp->textureMaskFile) {
 		SDL_Surface* textureMaskSurface = IMG_Load(gp->textureMaskFile);
 		if (textureMaskSurface == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 		}
 		if ((GAME->sdlTextureMask = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMaskSurface)) == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
+			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		}
 		SDL_FreeSurface(textureMaskSurface);
 	}

@@ -1,55 +1,32 @@
 #ifndef VSON_H
 #define VSON_H
 
-#include "m2/HashMap.hh"
-#include "m2/Def.hh"
+#include <string>
+#include <variant>
+#include <unordered_map>
+#include <vector>
+#include <sstream>
 
-typedef enum _VSONValueType {
-	VSON_VALUE_TYPE_NIL = 0,
-	VSON_VALUE_TYPE_OBJECT,
-	VSON_VALUE_TYPE_ARRAY,
-	VSON_VALUE_TYPE_STRING
-} VSONValueType;
+namespace m2 {
+	struct vson {
+		using vson_nil = std::monostate;
+		using vson_object = std::unordered_map<std::string, vson>;
+		using vson_array = std::vector<vson>;
+		using vson_string = std::string;
 
-typedef union _VSONValue {
-	struct _VSONObjectKeyValue* objectFirstChild;
-	struct _VSONArrayValue* arrayFirstChild;
-	const char* string;
-} VSONValue;
+		std::variant<vson_nil, vson_object, vson_array, vson_string> value;
 
-typedef struct _VSON {
-	VSONValueType type;
-	VSONValue value;
-} VSON;
+		[[nodiscard]] const vson* query(const std::string& path) const;
 
-typedef struct _VSONObjectKeyValue {
-	const char* key;
-	struct _VSON value;
-	struct _VSONObjectKeyValue* next;
-} VSONObjectKeyValue;
+		[[nodiscard]] std::string dump_to_string() const;
+		[[nodiscard]] bool dump_to_file(const std::string& fpath) const;
 
-typedef struct _VSONArrayValue {
-	struct _VSON value;
-	struct _VSONArrayValue* next;
-} VSONArrayValue;
-
-M2Err VSON_Init_ParseFile(VSON* vson, const char* path);
-M2Err VSON_InitObject(VSON* vson);
-M2Err VSON_InitArray(VSON* vson);
-M2Err VSON_InitString(VSON* vson, const char* string);
-M2Err VSON_InitString_NoCopy(VSON* vson, const char* string);
-
-VSON* VSON_Get(VSON* vson, const char* path);
-const char* VSON_GetString(VSON* vson, const char* path);
-long VSON_GetLong(VSON* vson, const char* path, long defaultValue);
-float VSON_GetFloat(VSON* vson, const char* path, float defaultValue);
-
-M2Err VSON_Serialize_ToFile(VSON* vson, const char* path);
-
-void VSON_Term(VSON* vson);
-
-// Convenience macros
-#define VSON_OBJECT_ITERATE(vson, objectKeyValuePtrName) for(VSONObjectKeyValue* objectKeyValuePtrName = (vson) ? (vson)->value.objectFirstChild : NULL; objectKeyValuePtrName && (vson)->type == VSON_VALUE_TYPE_OBJECT; objectKeyValuePtrName = objectKeyValuePtrName->next)
-#define VSON_ARRAY_ITERATE(vson, arrayValuePtrName) for(VSONArrayValue* arrayValuePtrName = (vson) ? (vson)->value.arrayFirstChild : NULL; arrayValuePtrName && (vson)->type == VSON_VALUE_TYPE_ARRAY; arrayValuePtrName = arrayValuePtrName->next)
+		static vson object();
+		static vson array();
+		static vson string(const std::string& str);
+		static std::optional<vson> parse_string(const std::string& str);
+		static std::optional<vson> parse_file(const std::string& fpath);
+	};
+}
 
 #endif
