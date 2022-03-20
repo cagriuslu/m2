@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <sstream>
+#include <optional>
 
 namespace m2 {
 	struct vson {

@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include "m2/Event.hh"
-#include "Pool.hh"
+#include "Pool-old.hh"
 #include "InsertionList.hh"
 #include "Object.hh"
 #include "m2/Box2D.hh"

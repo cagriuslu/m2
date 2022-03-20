@@ -1,7 +1,7 @@
 #ifndef SPATIAL_MAP_H
 #define SPATIAL_MAP_H
 
-#include "m2/Pool.hh"
+#include "m2/Pool-old.hh"
 #include "m2/Box2D.hh"
 #include "m2/AABB.hh"
 #include <vector>

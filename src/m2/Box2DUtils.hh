@@ -1,7 +1,7 @@
 #ifndef BOX2D_UTILS_H
 #define BOX2D_UTILS_H
 
-#include "Pool.hh"
+#include "Pool-old.hh"
 #include "m2/Box2D.hh"
 
 #define CATEGORY_STATIC_OBJECT (0x0001)

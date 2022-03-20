@@ -1,6 +1,6 @@
 #include "m2/Object.hh"
 #include "m2/Game.hh"
-#include "m2/Pool.hh"
+#include "m2/Pool-old.hh"
 
 M2Err Object_Init(Object* obj, m2::vec2f position) {
 	memset(obj, 0, sizeof(Object));

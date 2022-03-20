@@ -4,7 +4,7 @@
 #include "m2/UI.hh"
 #include "m2/Component.hh"
 #include "m2/Event.hh"
-#include "m2/Pool.hh"
+#include "m2/Pool-old.hh"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
 #include "m2/Def.hh"

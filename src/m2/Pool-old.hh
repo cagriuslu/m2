@@ -38,10 +38,10 @@ size_t Pool_Size(Pool* pool);
 bool Pool_IsMarked(Pool* pool, void* data);
 bool Pool_IsMarkedByIndex(Pool* pool, size_t idx);
 bool Pool_IsMarkedById(Pool* pool, ID id);
+
 void* Pool_GetFirst(Pool* pool);
-void* Pool_GetLast(Pool* pool);
 void* Pool_GetNext(Pool* pool, void* currData);
-void* Pool_GetPrev(Pool* pool, void* data);
+
 void* Pool_GetByIndex(Pool* pool, size_t idx);
 void* Pool_GetById(Pool* pool, ID id);
 ID Pool_GetId(Pool* pool, void* data);

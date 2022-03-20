@@ -1,4 +1,4 @@
-#include "m2/Pool.hh"
+#include "m2/Pool-old.hh"
 #include <stdlib.h>
 #include <assert.h>
 #include <stddef.h>
@@ -6,20 +6,6 @@
 
 #define PoolItemData(pool, index) ((PoolItem*) (((int8_t*) ((pool)->items)) + ((pool)->itemSize * (index))))
 #define PoolItemFromData(itemData) ((PoolItem*) (((int8_t*) (itemData)) - offsetof(PoolItem, data)))
-
-uint16_t gPoolId = 1;
-
-M2Err Pool_Init(Pool* pool, unsigned capacityInBitsMax16, size_t dataSize) {
-	memset(pool, 0, sizeof(Pool));
-	pool->capacity = (size_t)1 << capacityInBitsMax16;
-	pool->dataSize = dataSize;
-	pool->itemSize = dataSize + sizeof(PoolItem);
-	pool->shiftedPoolId = ((uint64_t)gPoolId++) << 48;
-	pool->items = static_cast<PoolItem *>(malloc(pool->capacity * pool->itemSize));
-	assert(pool->items);
-	Pool_UnmarkAll(pool);
-	return 0;
-}
 
 void Pool_Term(Pool* pool) {
 	if (pool->items) {
@@ -31,18 +17,9 @@ void Pool_Term(Pool* pool) {
 
 void* Pool_Mark(Pool* pool, void* copy, ID* outId) {
 	if (pool->size < pool->capacity) {
-		const size_t indexToAllocate = pool->nextFreeIndex;
-		PoolItem* itemToAllocate = PoolItemData(pool, indexToAllocate);
-		pool->nextFreeIndex = itemToAllocate->id & 0xFFFF; // Extract next nextFreeIndex
-		itemToAllocate->id = ((uint16_t)pool->nextKey << 16) | ((uint16_t)indexToAllocate & 0xFFFF); // Store new id of the item
-		ID id = pool->shiftedPoolId | (uint64_t)itemToAllocate->id;
-		if (outId) { *outId = id; }
 
-		pool->size++;
-		pool->nextKey++;
-		if (pool->nextKey > pool->capacity) {
-			pool->nextKey = 1; // Rewind key to beginning
-		}
+
+
 		if (pool->highestAllocatedIndex < indexToAllocate) {
 			pool->highestAllocatedIndex = indexToAllocate;
 		}

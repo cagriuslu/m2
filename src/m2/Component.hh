@@ -4,7 +4,7 @@
 #include <m2/Cfg.hh>
 #include <m2/vec2f.hh>
 #include <m2/Box2D.hh>
-#include <m2/Pool.hh>
+#include <m2/Pool-old.hh>
 #include <SDL.h>
 #include <stdint.h>
 
