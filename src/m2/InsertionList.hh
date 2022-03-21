@@ -1,14 +1,16 @@
 #ifndef INSERTION_LIST_H
 #define INSERTION_LIST_H
 
-#include "Pool-old.hh"
+#include <m2/Def.hh>
 #include <stdint.h>
 #include <vector>
 
-typedef struct _InsertionList {
+struct InsertionList {
 	std::vector<ID> array;
 	int (*comparator)(ID, ID);
-} InsertionList;
+
+	InsertionList();
+};
 
 int InsertionList_Init(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID));
 void InsertionList_Term(InsertionList* list);

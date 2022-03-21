@@ -1,8 +1,8 @@
 #ifndef BOX2D_UTILS_H
 #define BOX2D_UTILS_H
 
-#include "Pool-old.hh"
-#include "m2/Box2D.hh"
+#include <m2/Box2D.hh>
+#include <m2/Def.hh>
 
 #define CATEGORY_STATIC_OBJECT (0x0001)
 #define CATEGORY_STATIC_CLIFF (0x0002)
@@ -25,7 +25,7 @@
 #define Box2DUtils_CreateDynamicDiskSensor(phyId, position, sleep, category, radius, mass, damping) Box2DUtils_CreateBody((phyId), /* isDisk */ true,  /* isDynamic */ true,  (position), /* allowSleep */ (sleep), /* isBullet */ false, /* isSensor */ true, (category), /* mask */ 0, /* boxDims */ m2::vec2f{}, /* boxCenterOffset */ m2::vec2f{}, /* boxAngle */ 0.0f, /* diskRadius */ (radius), /* mass */ (mass), /* lineaDamping */ (damping), /* fixedRotation */ true)
 #define Box2DUtils_CreateBulletSensor(phyId, position, category, radius, mass, damping)             Box2DUtils_CreateBody((phyId), /* isDisk */ true,  /* isDynamic */ true,  (position), /* allowSleep */ false,   /* isBullet */ true,  /* isSensor */ true, (category), /* mask */ 0, /* boxDims */ m2::vec2f{}, /* boxCenterOffset */ m2::vec2f{}, /* boxAngle */ 0.0f, /* diskRadius */ (radius), /* mass */ (mass), /* lineaDamping */ (damping), /* fixedRotation */ true)
 
-Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::vec2f boxDims, m2::vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation);
+b2Body* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::vec2f boxDims, m2::vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation);
 
 bool Box2DUtils_CheckEyeSight(m2::vec2f from, m2::vec2f to, uint16_t categoryMask);
 

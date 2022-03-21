@@ -1,32 +1,36 @@
 #include "m2/Box2DUtils.hh"
+
+#include <b2_circle_shape.h>
+#include <b2_fixture.h>
+#include <b2_polygon_shape.h>
+#include <b2_world.h>
+
 #include "m2/Game.hh"
 
-Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::vec2f boxDims, m2::vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
-	Box2DBodyDef* bodyDef = Box2DBodyDefCreate();
+b2Body* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::vec2f boxDims, m2::vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
+	b2BodyDef bodyDef;
 	if (isDynamic) {
-		Box2DBodyDefSetTypeDynamic(bodyDef);
+		bodyDef.type = b2_dynamicBody;
 	}
-	Box2DBodyDefSetPosition(bodyDef, position);
-	Box2DBodyDefSetAllowSleep(bodyDef, allowSleep);
-	Box2DBodyDefSetUserData(bodyDef, (void*) ((uintptr_t) phyId));
-	Box2DBodyDefSetBullet(bodyDef, isBullet);
-	Box2DBody* body = Box2DWorldCreateBody(GAME->world, bodyDef);
-	Box2DBodyDefDestroy(bodyDef);
+	bodyDef.position.Set(position.x, position.y);
+	bodyDef.allowSleep = allowSleep;
+	bodyDef.userData.pointer = phyId;
+	bodyDef.bullet = isBullet;
+	b2Body* body = GAME.world->CreateBody(&bodyDef);
 
-	Box2DShape* shape = NULL;
+	b2FixtureDef fixtureDef;
+	b2CircleShape circle_shape;
+	b2PolygonShape polygon_shape;
 	if (isDisk) {
-		Box2DCircleShape* circleShape = Box2DCircleShapeCreate();
-		Box2DCircleShapeSetRadius(circleShape, diskRadius);
-		shape = circleShape;
+		circle_shape.m_radius = diskRadius;
+		fixtureDef.shape = &circle_shape;
 	} else {
-		Box2DPolygonShape* boxShape = Box2DPolygonShapeCreate();
-		Box2DPolygonShapeSetAsBoxEx(boxShape, boxDims * 0.5f, boxCenterOffset, boxAngle); // convert to half dims
-		shape = boxShape;
+		m2::vec2f halfDims = boxDims * 0.5f;
+		polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(boxCenterOffset), boxAngle);
+		fixtureDef.shape = &polygon_shape;
 	}
-	Box2DFixtureDef* fixtureDef = Box2DFixtureDefCreate();
-	Box2DFixtureDefSetShape(fixtureDef, shape);
-	Box2DFixtureDefSetFriction(fixtureDef, 0.05f);
-	Box2DFixtureDefSetCategoryBits(fixtureDef, categoryBits);
+	fixtureDef.friction = 0.05f;
+	fixtureDef.filter.categoryBits = categoryBits;
 	// If mask is not provided, infer it
 	if (maskBits == 0) {
 		switch (categoryBits) {
@@ -58,27 +62,22 @@ Box2DBody* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2
 				break;
 		}
 	}
-	Box2DFixtureDefSetMaskBits(fixtureDef, maskBits);
-	Box2DFixture* fixture = Box2DBodyCreateFixtureFromFixtureDef(body, fixtureDef);
-	Box2DFixtureSetSensor(fixture, isSensor);
-	Box2DFixtureDefDestroy(fixtureDef);
-	if (isDisk) {
-		Box2DCircleShapeDestroy(shape);
-	} else {
-		Box2DPolygonShapeDestroy(shape);
-	}
+	fixtureDef.filter.maskBits = maskBits;
+	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
+	fixture->SetSensor(isSensor);
 	
 	if (isDynamic) {
-		Box2DBodySetLinearDamping(body, linearDamping);
-		Box2DBodySetAngularDamping(body, 0.0f);
-		Box2DBodySetFixedRotation(body, fixedRotation);
-		Box2DBodySetMassData(body, mass, {}, 0.0f);
+		body->SetLinearDamping(linearDamping);
+		body->SetAngularDamping(0.0f);
+		body->SetFixedRotation(fixedRotation);
+		b2MassData massData = { mass, b2Vec2{0.0f, 0.0f}, 0.0f };
+		body->SetMassData(&massData);
 	}
 
 	return body;
 }
 
-float Box2DUtilsCheckEyeSight_RayCastCallback(Box2DFixture* fixture, m2::vec2f point, m2::vec2f normal, float fraction, void* userData) {
+float Box2DUtilsCheckEyeSight_RayCastCallback(b2Fixture* fixture, m2::vec2f point, m2::vec2f normal, float fraction, void* userData) {
 	(void)fixture;
 	(void)point;
 	(void)normal;
@@ -93,8 +92,7 @@ bool Box2DUtils_CheckEyeSight(m2::vec2f from, m2::vec2f to, uint16_t categoryMas
 	}
 	
 	bool result = true;
-	Box2DRayCastListener* rayCastListener = Box2DRayCastListenerCreate(Box2DUtilsCheckEyeSight_RayCastCallback, categoryMask, &result);
-	Box2DWorldRayCast(GAME->world, rayCastListener, from, to);
-	Box2DRayCastListenerDestroy(rayCastListener);
+	RayCastCallback rccb(Box2DUtilsCheckEyeSight_RayCastCallback, categoryMask, &result);
+	GAME.world->RayCast(&rccb, static_cast<b2Vec2>(from), static_cast<b2Vec2>(to));
 	return result;
 }

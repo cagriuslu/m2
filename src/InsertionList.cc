@@ -1,10 +1,11 @@
 #include "m2/InsertionList.hh"
-#include "m2/Pool-old.hh"
 
 #define AsUint64Ptr(ptr) ((ID*) (ptr))
 
+InsertionList::InsertionList() : comparator(nullptr) {
+}
+
 int InsertionList_Init(InsertionList* list, size_t maxItemCount, int (*comparator)(ID, ID)) {
-	*list = {};
 	list->comparator = comparator;
 	return 0;
 }

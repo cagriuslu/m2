@@ -4,38 +4,33 @@
 #include <m2/Cfg.hh>
 #include <m2/Object.hh>
 
-typedef struct _GameProxy {
-	const CfgUI* entryUi;
-	M2Err (*entryUiButtonHandler)(CfgUIButtonType);
-	const CfgUI* pauseUi;
-	M2Err (*pauseUiButtonHandler)(CfgUIButtonType);
+namespace m2 {
+    struct game_proxy {
+        const CfgUI *entryUi;
 
-	unsigned tileSize;
-	const char *textureMapFile;
-	const char *textureMaskFile;
+        M2Err (*entryUiButtonHandler)(CfgUIButtonType);
 
-	const CfgSprite *cfgSprites;
-	unsigned cfgSpriteCount;
-	const CfgUI *cfgHUDLeft;
-	const CfgUI *cfgHUDRight;
-	M2Err (*uiElementUpdateDynamic)(UIElementState *state);
+        const CfgUI *pauseUi;
 
-	size_t componentDefenseDataSize;
-	size_t componentOffenseDataSize;
-	M2Err (*foregroundSpriteLoader)(Object*, CfgSpriteIndex, m2::vec2f);
+        M2Err (*pauseUiButtonHandler)(CfgUIButtonType);
 
-	void (*destructor)(struct _GameProxy*);
-} GameProxy;
+        unsigned tileSize;
+        const char *textureMapFile;
+        const char *textureMaskFile;
 
-M2Err GameProxy_Init(GameProxy *gp);
-M2Err GameProxy_InitARPG(GameProxy *gp);
+        const CfgSprite *cfgSprites;
+        unsigned cfgSpriteCount;
+        const CfgUI *cfgHUDLeft;
+        const CfgUI *cfgHUDRight;
 
-// Call after initializing the proxy
-M2Err GameProxy_Activate(GameProxy *gp);
+        M2Err (*uiElementUpdateDynamic)(UIElementState *state);
 
-M2Err GameProxy_ExecuteEntryUI(GameProxy *gp);
-M2Err GameProxy_ExecutePauseUI(GameProxy *gp);
+        M2Err (*foregroundSpriteLoader)(Object *, CfgSpriteIndex, m2::vec2f);
 
-void GameProxy_Term(GameProxy *gp);
+        M2Err activate() const;
+        M2Err exec_entry_ui() const;
+        M2Err exec_pause_ui() const;
+    };
+}
 
 #endif //M2_GAMEPROXY_HH

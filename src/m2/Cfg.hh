@@ -1,9 +1,7 @@
 #ifndef CFG_H
 #define CFG_H
 
-#include "TinySet.hh"
 #include "m2/Automaton.hh"
-#include "List.hh"
 #include <m2/vec2f.hh>
 #include "Def.hh"
 #include <SDL.h>
@@ -70,7 +68,7 @@ typedef struct _CfgUI {
 	const CfgUIElement* firstElement;
 } CfgUI;
 DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(CfgUIElement);
-typedef struct _UIElementState {
+struct UIElementState {
 	SDL_Rect rect;
 	const CfgUIElement* cfg;
 
@@ -81,10 +79,10 @@ typedef struct _UIElementState {
 	// Exists for STATIC_TEXT_BUTTON, STATIC_IMAGE_BUTTON, DYNAMIC_TEXT_BUTTON, DYNAMIC_IMAGE_BUTTON
 	bool depressed;
 	// Exists for DYNAMIC_IMAGE, DYNAMIC_IMAGE_BUTTON
-	const SDL_Rect texture;
+	SDL_Rect texture;
 
-	struct _UIElementState* next;
-} UIElementState;
+	struct UIElementState* next;
+};
 typedef struct _UIState {
 	const CfgUI *cfg;
 	SDL_Rect rect;

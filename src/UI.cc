@@ -17,19 +17,19 @@ SDL_Rect _UI_CalculateElementRect(SDL_Rect parentRect, unsigned parentW, unsigne
 }
 
 SDL_Texture* UI_GenerateFontTexture(const char *text) {
-	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME->ttfFont, text, SDL_Color{255, 255, 255, 255});
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textSurf);
+	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME.ttfFont, text, SDL_Color{255, 255, 255, 255});
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textSurf);
 	SDL_FreeSurface(textSurf);
 	return texture;
 }
 
 M2Err _UI_Draw_BackgroundColor(SDL_Rect rect, SDL_Color color) {
 	if (color.a == 0) {
-		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
+		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
 	} else {
-		SDL_SetRenderDrawColor(GAME->sdlRenderer, color.r, color.g, color.b, color.a);
+		SDL_SetRenderDrawColor(GAME.sdlRenderer, color.r, color.g, color.b, color.a);
 	}
-	SDL_RenderFillRect(GAME->sdlRenderer, &rect);
+	SDL_RenderFillRect(GAME.sdlRenderer, &rect);
 	return M2OK;
 }
 M2Err _UI_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
@@ -41,7 +41,7 @@ M2Err _UI_Draw_Text(SDL_Texture* texture, SDL_Rect rect) {
 			textW,
 			textH
 	};
-	SDL_RenderCopy(GAME->sdlRenderer, texture, NULL, &textRect);
+	SDL_RenderCopy(GAME.sdlRenderer, texture, NULL, &textRect);
 	return M2OK;
 }
 
@@ -104,12 +104,13 @@ M2Err UIState_Init(UIState *state, const CfgUI* cfg) {
 		// Iterate over CfgUIElements
 		for (const CfgUIElement *cfgUIElement = cfg->firstElement; cfgUIElement; cfgUIElement = cfgUIElement->next) {
 			// Create UIElementState
-			UIElementState* elementState = static_cast<UIElementState *>(calloc(1, sizeof(UIElementState)));
+			UIElementState* elementState = new UIElementState;
 			if (elementState) {
+                memset(elementState, 0, sizeof(UIElementState));
 				elementState->cfg = cfgUIElement;
 				// Create child UIState if the type fits
 				if (cfgUIElement->type == CFG_UI_ELEMENT_TYP_UI) {
-					UIState* childUIState = static_cast<UIState *>(calloc(1, sizeof(UIState)));
+					UIState* childUIState = new UIState;
 					if (childUIState) {
 						UIState_Init(childUIState, cfgUIElement->child);
 						elementState->child = childUIState;
@@ -163,7 +164,7 @@ M2Err UIState_UpdateElements(UIState* state) {
 			case CFG_UI_ELEMENT_TYP_DYNAMIC_TEXT_BUTTON:
 			case CFG_UI_ELEMENT_TYP_DYNAMIC_IMAGE:
 			case CFG_UI_ELEMENT_TYP_DYNAMIC_IMAGE_BUTTON:
-				GAME->proxy.uiElementUpdateDynamic(elementState);
+				GAME.proxy.uiElementUpdateDynamic(elementState);
 				break;
 			default:
 				break;
@@ -238,17 +239,17 @@ M2Err UIState_Draw(UIState *state) {
 		// Draw element border
 		if (elementState->cfg->borderWidth_px) {
 			if (elementState->depressed == false) {
-				SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 255, 255, 255);
+				SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
 			} else {
-				SDL_SetRenderDrawColor(GAME->sdlRenderer, 127, 127, 127, 255);
+				SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 127, 127, 255);
 			}
-			SDL_RenderDrawRect(GAME->sdlRenderer, &elementState->rect);
+			SDL_RenderDrawRect(GAME.sdlRenderer, &elementState->rect);
 		}
 	}
 	// Draw ui border
 	if (state->cfg->borderWidth_px) {
-		SDL_SetRenderDrawColor(GAME->sdlRenderer, 255, 255, 255, 255);
-		SDL_RenderDrawRect(GAME->sdlRenderer, &state->rect);
+		SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
+		SDL_RenderDrawRect(GAME.sdlRenderer, &state->rect);
 	}
 	return M2OK;
 }
@@ -258,9 +259,9 @@ void UIState_Term(UIState *state) {
 }
 
 M2Err UI_ExecuteBlocking(const CfgUI *ui, CfgUIButtonType* outPressedButton) {
-	UIState state;
+	UIState state = {};
 	UIState_Init(&state, ui);
-	UIState_UpdatePositions(&state, GAME->windowRect);
+	UIState_UpdatePositions(&state, GAME.windowRect);
 	UIState_UpdateElements(&state);
 
 	M2Err result = M2OK;
@@ -276,7 +277,7 @@ M2Err UI_ExecuteBlocking(const CfgUI *ui, CfgUIButtonType* outPressedButton) {
 			}
 			if (evs.windowResizeEvent) {
 				Game_UpdateWindowDimensions(evs.windowDims.x, evs.windowDims.y);
-				UIState_UpdatePositions(&state, GAME->windowRect);
+				UIState_UpdatePositions(&state, GAME.windowRect);
 			}
 			CfgUIButtonType pressedButton;
 			if (UIState_HandleEvents(&state, &evs, &pressedButton)) {
@@ -298,7 +299,7 @@ M2Err UI_ExecuteBlocking(const CfgUI *ui, CfgUIButtonType* outPressedButton) {
 		UIState_UpdateElements(&state);
 		UIState_Draw(&state);
 		// Present
-		SDL_RenderPresent(GAME->sdlRenderer);
+		SDL_RenderPresent(GAME.sdlRenderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 	}

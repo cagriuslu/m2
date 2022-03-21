@@ -1,6 +1,5 @@
 #include "m2/Object.hh"
 #include "m2/Game.hh"
-#include "m2/Pool-old.hh"
 
 M2Err Object_Init(Object* obj, m2::vec2f position) {
 	memset(obj, 0, sizeof(Object));
@@ -9,116 +8,124 @@ M2Err Object_Init(Object* obj, m2::vec2f position) {
 }
 
 ComponentMonitor* Object_GetMonitor(Object* obj) {
-	return static_cast<ComponentMonitor *>(Pool_GetById(&GAME->monitors, obj->monitor));
+	return GAME.monitors.get(obj->monitor);
 }
 
 ComponentPhysique* Object_GetPhysique(Object* obj) {
-	return static_cast<ComponentPhysique *>(Pool_GetById(&GAME->physics, obj->physique));
+	return GAME.physics.get(obj->physique);
 }
 
 ComponentGraphic* Object_GetGraphic(Object* obj) {
-	return static_cast<ComponentGraphic *>(Pool_GetById(&GAME->graphics, obj->graphic));
+	return GAME.graphics.get(obj->graphic);
 }
 
 ComponentGraphic* Object_GetTerrainGraphic(Object* obj) {
-	return static_cast<ComponentGraphic *>(Pool_GetById(&GAME->terrainGraphics, obj->terrainGraphic));
+	return GAME.terrainGraphics.get(obj->terrainGraphic);
 }
 
 ComponentLight* Object_GetLight(Object* obj) {
-	return static_cast<ComponentLight *>(Pool_GetById(&GAME->lights, obj->light));
+	return GAME.lights.get(obj->light);
 }
 
-ComponentDefense* Object_GetDefense(Object* obj) {
-	return static_cast<ComponentDefense *>(Pool_GetById(&GAME->defenses, obj->defense));
+game::component_defense* Object_GetDefense(Object* obj) {
+	return GAME.defenses.get(obj->defense);
 }
 
-ComponentOffense* Object_GetOffense(Object* obj) {
-	return static_cast<ComponentOffense *>(Pool_GetById(&GAME->offenses, obj->offense));
+game::component_offense* Object_GetOffense(Object* obj) {
+	return GAME.offenses.get(obj->offense);
 }
 
 ComponentMonitor* Object_AddMonitor(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentMonitor* el = static_cast<ComponentMonitor *>(Pool_Mark(&GAME->monitors, NULL, &obj->monitor));
-	ComponentMonitor_Init(el, objectId);
-	return el;
+	ID objectId = GAME.objects.get_id(obj);
+
+    auto monitor_pair = GAME.monitors.alloc();
+    obj->monitor = monitor_pair.second;
+	ComponentMonitor_Init(&monitor_pair.first, objectId);
+	return &monitor_pair.first;
 }
 
 ComponentPhysique* Object_AddPhysique(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentPhysique* phy = static_cast<ComponentPhysique *>(Pool_Mark(&GAME->physics, NULL, &obj->physique));
-	ComponentPhysique_Init(phy, objectId);
-	return phy;
+	ID objectId = GAME.objects.get_id(obj);
+
+    auto physique_pair = GAME.physics.alloc();
+    obj->physique = physique_pair.second;
+	ComponentPhysique_Init(&physique_pair.first, objectId);
+	return &physique_pair.first;
 }
 
 ComponentGraphic* Object_AddGraphic(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentGraphic* gfx = static_cast<ComponentGraphic *>(Pool_Mark(&GAME->graphics, NULL, &obj->graphic));
-	ComponentGraphic_Init(gfx, objectId);
-	InsertionList_Insert(&GAME->drawList, obj->graphic);
-	return gfx;
+	ID objectId = GAME.objects.get_id(obj);
+
+    auto graphic_pair = GAME.graphics.alloc();
+    obj->graphic = graphic_pair.second;
+	ComponentGraphic_Init(&graphic_pair.first, objectId);
+	InsertionList_Insert(&GAME.drawList, obj->graphic);
+	return &graphic_pair.first;
 }
 
 ComponentGraphic* Object_AddTerrainGraphic(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentGraphic* gfx = static_cast<ComponentGraphic *>(Pool_Mark(&GAME->terrainGraphics, NULL,
-																	  &obj->terrainGraphic));
-	ComponentGraphic_Init(gfx, objectId);
-	return gfx;
+	ID objectId = GAME.objects.get_id(obj);
+
+    auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
+    obj->terrainGraphic = terrain_graphic_pair.second;
+	ComponentGraphic_Init(&terrain_graphic_pair.first, objectId);
+	return &terrain_graphic_pair.first;
 }
 
 ComponentLight* Object_AddLight(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentLight* lig = static_cast<ComponentLight *>(Pool_Mark(&GAME->lights, NULL, &obj->light));
-	ComponentLight_Init(lig, objectId);
-	return lig;
+	ID objectId = GAME.objects.get_id(obj);
+
+    auto light_pair = GAME.lights.alloc();
+    obj->light = light_pair.second;
+	ComponentLight_Init(&light_pair.first, objectId);
+	return &light_pair.first;
 }
 
-ComponentDefense* Object_AddDefense(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentDefense* def = static_cast<ComponentDefense *>(Pool_Mark(&GAME->defenses, NULL, &obj->defense));
-	ComponentDefense_Init(def, objectId);
-	return def;
+game::component_defense* Object_AddDefense(Object* obj) {
+	ID objectId = GAME.objects.get_id(obj);
+
+    auto defense_pair = GAME.defenses.alloc();
+    obj->defense = defense_pair.second;
+	defense_pair.first = game::component_defense(objectId);
+	return &defense_pair.first;
 }
 
-ComponentOffense* Object_AddOffense(Object* obj) {
-	ID objectId = Pool_GetId(&GAME->objects, obj);
-	ComponentOffense* off = static_cast<ComponentOffense *>(Pool_Mark(&GAME->offenses, NULL, &obj->offense));
-	ComponentOffense_Init(off, objectId);
-	return off;
+game::component_offense* Object_AddOffense(Object* obj) {
+	ID objectId = GAME.objects.get_id(obj);
+
+    auto offense_pair = GAME.offenses.alloc();
+    obj->offense = offense_pair.second;
+    offense_pair.first = game::component_offense(objectId);
+	return &offense_pair.first;
 }
 
 void Object_Term(Object* obj) {
 	if (obj->monitor) {
-		ComponentMonitor* el = static_cast<ComponentMonitor *>(Pool_GetById(&GAME->monitors, obj->monitor));
-		ComponentMonitor_Term(el);
-		Pool_Unmark(&GAME->monitors, el);
+        ComponentMonitor *monitor = GAME.monitors.get(obj->monitor);
+        ComponentMonitor_Term(monitor);
+        GAME.monitors.free(obj->monitor);
 	}
 	if (obj->physique) {
-		ComponentPhysique* phy = static_cast<ComponentPhysique *>(Pool_GetById(&GAME->physics, obj->physique));
-		ComponentPhysique_Term(phy);
-		Pool_Unmark(&GAME->physics, phy);
+        ComponentPhysique *physique = GAME.physics.get(obj->physique);
+        ComponentPhysique_Term(physique);
+        GAME.physics.free(obj->physique);
 	}
 	if (obj->graphic) {
-		InsertionList_Remove(&GAME->drawList, obj->graphic);
-		ComponentGraphic* gfx = static_cast<ComponentGraphic *>(Pool_GetById(&GAME->graphics, obj->graphic));
-		ComponentGraphic_Term(gfx);
-		Pool_Unmark(&GAME->graphics, gfx);
+		InsertionList_Remove(&GAME.drawList, obj->graphic);
+        ComponentGraphic *graphic = GAME.graphics.get(obj->graphic);
+        ComponentGraphic_Term(graphic);
+        GAME.graphics.free(obj->graphic);
 	}
 	if (obj->terrainGraphic) {
-		ComponentGraphic* gfx = static_cast<ComponentGraphic *>(Pool_GetById(&GAME->terrainGraphics,
-																			 obj->terrainGraphic));
-		ComponentGraphic_Term(gfx);
-		Pool_Unmark(&GAME->terrainGraphics, gfx);
+        auto* gfx = GAME.terrainGraphics.get(obj->terrainGraphic);
+        ComponentGraphic_Term(gfx);
+        GAME.terrainGraphics.free(obj->terrainGraphic);
 	}
 	if (obj->defense) {
-		ComponentDefense* def = static_cast<ComponentDefense *>(Pool_GetById(&GAME->defenses, obj->defense));
-		ComponentDefense_Term(def);
-		Pool_Unmark(&GAME->defenses, def);
+        GAME.defenses.free(obj->defense);
 	}
 	if (obj->offense) {
-		ComponentOffense* off = static_cast<ComponentOffense *>(Pool_GetById(&GAME->offenses, obj->offense));
-		ComponentOffense_Term(off);
-		Pool_Unmark(&GAME->offenses, off);
+        GAME.offenses.free(obj->offense);
 	}
 	if (obj->data) {
 		free(obj->data);

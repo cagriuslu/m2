@@ -1,15 +1,15 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <game/component.hh>
 #include "m2/Event.hh"
-#include "Pool-old.hh"
 #include "InsertionList.hh"
 #include "Object.hh"
 #include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
 #include "Pathfinder.hh"
-#include "SpatialMap.hh"
 #include "GameProxy.hh"
+#include <m2/pool.hh>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <vector>
@@ -18,7 +18,7 @@
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
 
-typedef struct _Game {
+struct Game {
 	////////////////////////////////////////////////////////////////////////
 	//////////////////////////////// WINDOW ////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
@@ -56,17 +56,17 @@ typedef struct _Game {
 	// iterate over that pool.
 	// Another reason to put a component inside a Pool: if the type of object that is using that component is
 	// created/destroyed very rapidly.
-	Pool objects;
+    m2::pool<Object> objects;
 	InsertionList drawList;
-	Pool monitors;
-	Pool physics;
-	Pool graphics;
-	Pool terrainGraphics;
-	Pool lights;
-	Pool defenses;
-	Pool offenses;
-	Box2DWorld* world;
-	Box2DContactListener* contactListener;
+    m2::pool<ComponentMonitor> monitors;
+	m2::pool<ComponentPhysique> physics;
+    m2::pool<ComponentGraphic> graphics;
+    m2::pool<ComponentGraphic> terrainGraphics;
+    m2::pool<ComponentLight> lights;
+    m2::pool<game::component_defense> defenses;
+    m2::pool<game::component_offense> offenses;
+	b2World* world;
+	ContactListener* contactListener;
 	ID cameraId, playerId, pointerId;
 	std::vector<ID> delete_list;
 	PathfinderMap pathfinderMap;
@@ -81,11 +81,11 @@ typedef struct _Game {
 	m2::vec2f mousePositionInWorld_m;
 	m2::vec2f mousePositionWRTScreenCenter_m;
 	char consoleInput[1024];
-	GameProxy proxy;
-} Game;
+	const m2::game_proxy& proxy;
+};
 
-#define GAME (Game_GetCurrent())
-Game* Game_GetCurrent();
+extern Game gCurrentGame;
+constexpr Game& GAME = gCurrentGame;
 
 void Game_UpdateWindowDimensions(int width, int height);
 void Game_UpdateMousePosition();

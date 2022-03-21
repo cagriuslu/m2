@@ -1,10 +1,11 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include <b2_world.h>
+
 #include "m2/Box2D.hh"
 #include "m2/Object.hh"
 #include "m2/UI.hh"
 #include "m2/Component.hh"
 #include "m2/Event.hh"
-#include "m2/Pool-old.hh"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
 #include "m2/Def.hh"
@@ -68,19 +69,19 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 	Game_UpdateWindowDimensions(1600, 900); // Store default window dimensions in GAME
-	if ((GAME->sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME->windowRect.w, GAME->windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
+	if ((GAME.sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME.windowRect.w, GAME.windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
-	SDL_SetWindowMinimumSize(GAME->sdlWindow, 712, 400);
+	SDL_SetWindowMinimumSize(GAME.sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
-	GAME->sdlCursor = SDLUtils_CreateCursor();
-	SDL_SetCursor(GAME->sdlCursor);
-	if ((GAME->pixelFormat = SDL_GetWindowPixelFormat(GAME->sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
+	GAME.sdlCursor = SDLUtils_CreateCursor();
+	SDL_SetCursor(GAME.sdlCursor);
+	if ((GAME.pixelFormat = SDL_GetWindowPixelFormat(GAME.sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
-	if ((GAME->sdlRenderer = SDL_CreateRenderer(GAME->sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == NULL) { // SDL_RENDERER_PRESENTVSYNC
+	if ((GAME.sdlRenderer = SDL_CreateRenderer(GAME.sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == NULL) { // SDL_RENDERER_PRESENTVSYNC
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
@@ -89,18 +90,18 @@ int main(int argc, char **argv) {
 //		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
 //		return -1;
 //	}
-//	if ((GAME->sdlTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMapSurface)) == NULL) {
+//	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == NULL) {
 //		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 //		return -1;
 //	}
-//	SDL_SetTextureColorMod(GAME->sdlTexture, 127, 127, 127);
+//	SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127);
 //	SDL_FreeSurface(textureMapSurface);
 //	SDL_Surface* textureMaskSurface = IMG_Load(CFG_TEXTURE_MASK_FILE);
 //	if (textureMaskSurface == NULL) {
 //		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
 //		return -1;
 //	}
-//	if ((GAME->sdlTextureMask = SDL_CreateTextureFromSurface(GAME->sdlRenderer, textureMaskSurface)) == NULL) {
+//	if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == NULL) {
 //		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
 //		return -1;
 //	}
@@ -110,15 +111,15 @@ int main(int argc, char **argv) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 		return -1;
 	}
-	if ((GAME->sdlLightTexture = SDL_CreateTextureFromSurface(GAME->sdlRenderer, lightSurface)) == NULL) {
+	if ((GAME.sdlLightTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, lightSurface)) == NULL) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
 	SDL_FreeSurface(lightSurface);
-	SDL_SetTextureBlendMode(GAME->sdlLightTexture, SDL_BLENDMODE_MUL);
-	SDL_SetTextureAlphaMod(GAME->sdlLightTexture, 0);
-	SDL_SetTextureColorMod(GAME->sdlLightTexture, 127, 127, 127);
-	if ((GAME->ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
+	SDL_SetTextureBlendMode(GAME.sdlLightTexture, SDL_BLENDMODE_MUL);
+	SDL_SetTextureAlphaMod(GAME.sdlLightTexture, 0);
+	SDL_SetTextureColorMod(GAME.sdlLightTexture, 127, 127, 127);
+	if ((GAME.ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 		return -1;
 	}
@@ -156,19 +157,13 @@ int main(int argc, char **argv) {
 //		SDL_PauseAudioDevice(audioDeviceId, 1);
 //	}
 
-	while (true) {
-		GameProxy_Activate(&GAME->proxy); // GameProxy is either statically initialized, or initialized by the previous execution of ExecuteEntryUI
-		M2Err entryUiResult = GameProxy_ExecuteEntryUI(&GAME->proxy);
-		if (entryUiResult == M2ERR_QUIT) {
-			return 0;
-		} else if (entryUiResult == M2ERR_PROXY_CHANGED) {
-			continue;
-		} else if (entryUiResult) {
-			return 1;
-		} else { // entryUiResult == M2OK
-			break;
-		}
-	}
+    GAME.proxy.activate();
+    M2Err entry_ui_result = GAME.proxy.exec_entry_ui();
+    if (entry_ui_result == M2ERR_QUIT) {
+        return 0;
+    } else if (entry_ui_result) {
+        return 1;
+    }
 
 	float timeSinceLastWorldStep = 0.0f;
 	unsigned prevPrePhysicsTicks = SDL_GetTicks();
@@ -189,55 +184,55 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		if (Events_Gather(&GAME->events)) {
+		if (Events_Gather(&GAME.events)) {
 			// Handle quit event
-			if (GAME->events.quitEvent) { break; }
+			if (GAME.events.quitEvent) { break; }
 			// Handle window resize event
-			if (GAME->events.windowResizeEvent) {
-				Game_UpdateWindowDimensions(GAME->events.windowDims.x, GAME->events.windowDims.y);
-				UIState_UpdatePositions(&GAME->leftHudUIState, GAME->leftHudRect);
-				UIState_UpdatePositions(&GAME->rightHudUIState, GAME->rightHudRect);
+			if (GAME.events.windowResizeEvent) {
+				Game_UpdateWindowDimensions(GAME.events.windowDims.x, GAME.events.windowDims.y);
+				UIState_UpdatePositions(&GAME.leftHudUIState, GAME.leftHudRect);
+				UIState_UpdatePositions(&GAME.rightHudUIState, GAME.rightHudRect);
 			}
 			if (!SDL_IsTextInputActive()) {
 				// Handle key events
-				if (GAME->events.keysPressed[KEY_MENU]) {
-					M2Err result = GameProxy_ExecutePauseUI(&GAME->proxy);
+				if (GAME.events.keysPressed[KEY_MENU]) {
+					M2Err result = GAME.proxy.exec_pause_ui();
 					if (result == M2ERR_QUIT) {
 						return 0;
 					} else if (result) {
 						return 1;
 					}
 				}
-				if (GAME->events.keysPressed[KEY_CONSOLE]) {
-					memset(GAME->consoleInput, 0, sizeof(GAME->consoleInput));
+				if (GAME.events.keysPressed[KEY_CONSOLE]) {
+					memset(GAME.consoleInput, 0, sizeof(GAME.consoleInput));
 					SDL_StartTextInput();
 					LOG_INFO("SDL text input activated");
 				}
 				// Handle HUD events (mouse and key)
 				CfgUIButtonType pressedButton;
-				if (UIState_HandleEvents(&GAME->leftHudUIState, &GAME->events, &pressedButton)) {
+				if (UIState_HandleEvents(&GAME.leftHudUIState, &GAME.events, &pressedButton)) {
 					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
 					// There are no hud buttons yet that we care about
 				}
-				if (UIState_HandleEvents(&GAME->rightHudUIState, &GAME->events, &pressedButton)) {
+				if (UIState_HandleEvents(&GAME.rightHudUIState, &GAME.events, &pressedButton)) {
 					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
 					// There are no hud buttons yet that we care about
 				}
 			} else {
 				// Handle text input
-				if (GAME->events.keysPressed[KEY_MENU]) {
+				if (GAME.events.keysPressed[KEY_MENU]) {
 					SDL_StopTextInput();
 					LOG_INFO("SDL text input deactivated");
-				} else if (GAME->events.keysPressed[KEY_ENTER]) {
+				} else if (GAME.events.keysPressed[KEY_ENTER]) {
 					// TODO Execute console command
 					LOG_INFO("Console command");
-					LOG_INFO(GAME->consoleInput);
+					LOG_INFO(GAME.consoleInput);
 					SDL_StopTextInput();
 					LOG_INFO("SDL text input deactivated");
-				} else if (GAME->events.textInputEvent) {
-					strcat(GAME->consoleInput, GAME->events.textInput);
+				} else if (GAME.events.textInputEvent) {
+					strcat(GAME.consoleInput, GAME.events.textInput);
 					LOG_INFO("Console buffer");
-					LOG_INFO(GAME->consoleInput);
+					LOG_INFO(GAME.consoleInput);
 				}
 			}
 		}
@@ -251,35 +246,39 @@ int main(int argc, char **argv) {
 		uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks) - prevWorldStepTicks;
 		prevWorldStepTicks += ticksSinceLastWorldStep;
 		timeSinceLastWorldStep += ticksSinceLastWorldStep / 1000.0f;
-		while (GAME->physicsStep_s < timeSinceLastWorldStep) {
+		while (GAME.physicsStep_s < timeSinceLastWorldStep) {
 			// Pre-physics
-			GAME->deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks) - prevPrePhysicsTicks;
-			GAME->deltaTime_s = GAME->deltaTicks_ms / 1000.0f;
-			prevPrePhysicsTicks += GAME->deltaTicks_ms;
-			for (ComponentMonitor* el = static_cast<ComponentMonitor *>(Pool_GetFirst(
-					&GAME->monitors)); el; el = static_cast<ComponentMonitor *>(Pool_GetNext(&GAME->monitors, el))) {
-				if (el->prePhysics) { el->prePhysics(el); }
-			} // TODO Hard to parallelize
+			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks) - prevPrePhysicsTicks;
+			GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
+			prevPrePhysicsTicks += GAME.deltaTicks_ms;
+            for (auto monitor_it : GAME.monitors) {
+                if (monitor_it.first->prePhysics) {
+                    monitor_it.first->prePhysics(monitor_it.first);
+                }
+            } // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
+
 			// Physics
-			Box2DWorldStep(GAME->world, GAME->physicsStep_s, GAME->velocityIterations, GAME->positionIterations);
-			for (ComponentPhysique* phy = static_cast<ComponentPhysique *>(Pool_GetFirst(&GAME->physics)); phy && phy->body; phy = static_cast<ComponentPhysique *>(Pool_GetNext(
-					&GAME->physics, phy))) {
-				Object* obj = static_cast<Object *>(Pool_GetById(&GAME->objects, phy->super.objId)); M2ASSERT(obj);
-				obj->position = Box2DBodyGetPosition(phy->body);
-			} // TODO Easy to parallelize
+            // HERE is the problem
+			GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
+            for (auto physique_it : GAME.physics) {
+				GAME.objects.get(physique_it.first->super.objId)->position = m2::vec2f{ physique_it.first->body->GetPosition() };
+            } // TODO Easy to parallelize
 			Game_DeleteList_DeleteAll();
+
 			// Post-physics
-			GAME->deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks) - prevPostPhysicsTicks;
-			GAME->deltaTime_s = GAME->deltaTicks_ms / 1000.0f;
-			prevPostPhysicsTicks += GAME->deltaTicks_ms;
-			for (ComponentMonitor* el = static_cast<ComponentMonitor *>(Pool_GetFirst(
-					&GAME->monitors)); el; el = static_cast<ComponentMonitor *>(Pool_GetNext(&GAME->monitors, el))) {
-				if (el->postPhysics) { el->postPhysics(el); }
-			} // TODO Hard to parallelize
+			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks) - prevPostPhysicsTicks;
+			GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
+			prevPostPhysicsTicks += GAME.deltaTicks_ms;
+            for (auto monitor_it : GAME.monitors) {
+                if (monitor_it.first->postPhysics) {
+                    monitor_it.first->postPhysics(monitor_it.first);
+                }
+            } // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
+
 			// Update loop condition
-			timeSinceLastWorldStep -= GAME->physicsStep_s;
+			timeSinceLastWorldStep -= GAME.physicsStep_s;
 		}
 		//////////////////////////// END OF PHYSICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -288,64 +287,75 @@ int main(int argc, char **argv) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Clear screen
-		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderClear(GAME->sdlRenderer);
+		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderClear(GAME.sdlRenderer);
+
 		// Draw terrain
-		GAME->deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevTerrainDrawGraphicsTicks) - prevTerrainDrawGraphicsTicks;
-		GAME->deltaTime_s = GAME->deltaTicks_ms / 1000.0f;
-		prevTerrainDrawGraphicsTicks += GAME->deltaTicks_ms;
-		for (ComponentGraphic* gfx = static_cast<ComponentGraphic *>(Pool_GetFirst(
-				&GAME->terrainGraphics)); gfx; gfx = static_cast<ComponentGraphic *>(Pool_GetNext(
-				&GAME->terrainGraphics, gfx))) {
-			if (gfx->draw) { gfx->draw(gfx); }
-		} // TODO Easy to parallelize
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevTerrainDrawGraphicsTicks) - prevTerrainDrawGraphicsTicks;
+		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
+		prevTerrainDrawGraphicsTicks += GAME.deltaTicks_ms;
+        for (auto graphic_it : GAME.terrainGraphics) {
+            if (graphic_it.first->draw) {
+                graphic_it.first->draw(graphic_it.first);
+            }
+        } // TODO Easy to parallelize
+
 		// Pre-graphic
-		GAME->deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks) - prevPreGraphicsTicks;
-		GAME->deltaTime_s = GAME->deltaTicks_ms / 1000.0f;
-		prevPreGraphicsTicks += GAME->deltaTicks_ms;
-		for (ComponentMonitor* el = static_cast<ComponentMonitor *>(Pool_GetFirst(
-				&GAME->monitors)); el; el = static_cast<ComponentMonitor *>(Pool_GetNext(&GAME->monitors, el))) {
-			if (el->preGraphics) { el->preGraphics(el); }
-		} // TODO Hard to parallelize
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks) - prevPreGraphicsTicks;
+		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
+		prevPreGraphicsTicks += GAME.deltaTicks_ms;
+        for (auto monitor_it : GAME.monitors) {
+            if (monitor_it.first->preGraphics) {
+                monitor_it.first->preGraphics(monitor_it.first);
+            }
+        } // TODO Hard to parallelize
+
 		// Draw
-		InsertionList_Sort(&GAME->drawList);
-		GAME->deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks) - prevDrawTicks;
-		GAME->deltaTime_s = GAME->deltaTicks_ms / 1000.0f;
-		prevDrawTicks += GAME->deltaTicks_ms;
-		size_t insertionListSize = InsertionList_Length(&GAME->drawList);
+		InsertionList_Sort(&GAME.drawList);
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks) - prevDrawTicks;
+		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
+		prevDrawTicks += GAME.deltaTicks_ms;
+		size_t insertionListSize = InsertionList_Length(&GAME.drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
-			ComponentGraphic* gfx = static_cast<ComponentGraphic *>(Pool_GetById(&GAME->graphics,
-																				 InsertionList_Get(&GAME->drawList,
-																								   i)));
-			if (gfx && gfx->draw) { gfx->draw(gfx); }
+            auto* gfx = GAME.graphics.get(InsertionList_Get(&GAME.drawList, i));
+			if (gfx && gfx->draw) {
+                gfx->draw(gfx);
+            }
 		} // TODO Hard to parallelize
+
 		// Draw lights
-		GAME->deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks) - prevDrawLightsTicks;
-		GAME->deltaTime_s = GAME->deltaTicks_ms / 1000.0f;
-		prevDrawLightsTicks += GAME->deltaTicks_ms;
-		for (ComponentLight* lig = static_cast<ComponentLight *>(Pool_GetFirst(
-				&GAME->lights)); lig; lig = static_cast<ComponentLight *>(Pool_GetNext(&GAME->lights, lig))) {
-			if (lig->draw) { lig->draw(lig); }
-		} // TODO Hard to parallelize
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks) - prevDrawLightsTicks;
+		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
+		prevDrawLightsTicks += GAME.deltaTicks_ms;
+        for (auto light_it : GAME.lights) {
+            if (light_it.first->draw) {
+                light_it.first->draw(light_it.first);
+            }
+        } // TODO Hard to parallelize
+
 		// Post-graphic
-		GAME->deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks) - prevPostGraphicsTicks;
-		GAME->deltaTime_s = GAME->deltaTicks_ms / 1000.0f;
-		prevPostGraphicsTicks += GAME->deltaTicks_ms;
-		for (ComponentMonitor* el = static_cast<ComponentMonitor *>(Pool_GetFirst(
-				&GAME->monitors)); el; el = static_cast<ComponentMonitor *>(Pool_GetNext(&GAME->monitors, el))) {
-			if (el->postGraphics) { el->postGraphics(el); }
-		} // TODO Hard to parallelize
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks) - prevPostGraphicsTicks;
+		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
+		prevPostGraphicsTicks += GAME.deltaTicks_ms;
+        for (auto monitor_it : GAME.monitors) {
+            if (monitor_it.first->postGraphics) {
+                monitor_it.first->postGraphics(monitor_it.first);
+            }
+        } // TODO Hard to parallelize
+
 		// Draw HUD
-		UIState_UpdateElements(&GAME->leftHudUIState);
-		UIState_UpdateElements(&GAME->rightHudUIState);
-		UIState_Draw(&GAME->leftHudUIState);
-		UIState_Draw(&GAME->rightHudUIState);
+		UIState_UpdateElements(&GAME.leftHudUIState);
+		UIState_UpdateElements(&GAME.rightHudUIState);
+		UIState_Draw(&GAME.leftHudUIState);
+		UIState_Draw(&GAME.rightHudUIState);
+
 		// Draw envelope
-		SDL_SetRenderDrawColor(GAME->sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->firstEnvelopeRect);
-		SDL_RenderFillRect(GAME->sdlRenderer, &GAME->secondEnvelopeRect);
+		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
+		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.firstEnvelopeRect);
+		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.secondEnvelopeRect);
+
 		// Present
-		SDL_RenderPresent(GAME->sdlRenderer);
+		SDL_RenderPresent(GAME.sdlRenderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 
@@ -359,9 +369,9 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	SDL_DestroyRenderer(GAME->sdlRenderer);
-	SDL_FreeCursor(GAME->sdlCursor);
-	SDL_DestroyWindow(GAME->sdlWindow);
+	SDL_DestroyRenderer(GAME.sdlRenderer);
+	SDL_FreeCursor(GAME.sdlCursor);
+	SDL_DestroyWindow(GAME.sdlWindow);
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();

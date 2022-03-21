@@ -4,13 +4,13 @@
 #include <m2/Cfg.hh>
 #include <m2/vec2f.hh>
 #include <m2/Box2D.hh>
-#include <m2/Pool-old.hh>
+#include <b2_body.h>
 #include <SDL.h>
 #include <stdint.h>
 
-typedef struct {
+struct Component {
 	ID objId;
-} Component;
+};
 M2Err Component_Init(Component* component, ID objectId);
 void Component_Term(Component* component);
 
@@ -26,12 +26,12 @@ void ComponentMonitor_Term(ComponentMonitor* evListener);
 
 typedef struct _ComponentPhysique {
 	Component super;
-	Box2DBody* body;
+	b2Body* body;
 	void (*onCollision)(struct _ComponentPhysique*, struct _ComponentPhysique*);
 } ComponentPhysique;
 M2Err ComponentPhysique_Init(ComponentPhysique* phy, ID objectId);
 void ComponentPhysique_Term(ComponentPhysique* phy);
-void ComponentPhysique_ContactCB(Box2DContact* contact);
+void ComponentPhysique_ContactCB(b2Contact* contact);
 
 typedef struct _ComponentGraphic {
 	Component super;
@@ -56,18 +56,18 @@ M2Err ComponentLight_Init(ComponentLight* lig, ID objectId);
 void ComponentLight_Term(ComponentLight* lig);
 void ComponentLight_DefaultDraw(ComponentLight* lig);
 
-typedef struct _ComponentDefense {
-	Component super;
-	char data[];
-} ComponentDefense;
-M2Err ComponentDefense_Init(ComponentDefense* def, ID objId);
-void ComponentDefense_Term(ComponentDefense* def);
+namespace m2 {
+    struct component_defense {
+        Component super;
 
-typedef struct {
-	Component super;
-	char data[];
-} ComponentOffense;
-M2Err ComponentOffense_Init(ComponentOffense* def, ID objId);
-void ComponentOffense_Term(ComponentOffense* def);
+        explicit component_defense(ID obj_id);
+    };
+
+    struct component_offense {
+        Component super;
+
+        explicit component_offense(ID obj_id);
+    };
+}
 
 #endif

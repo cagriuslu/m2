@@ -14,6 +14,9 @@ m2::vec2f::vec2f(int x, int y) : x(static_cast<float>(x)), y(static_cast<float>(
 m2::vec2f::vec2f(const vec2i& v) : vec2f(v.x, v.y) {
 
 }
+m2::vec2f::vec2f(const b2Vec2& v) : vec2f(v.x, v.y) {
+	
+}
 
 m2::vec2f m2::vec2f::operator+(const vec2f& rhs) const {
 	return {x + rhs.x, y + rhs.y};
@@ -32,6 +35,9 @@ bool m2::vec2f::operator==(const vec2f& other) const {
 }
 m2::vec2f::operator bool() const {
 	return (x != 0.0f) && (y != 0.0f);
+}
+m2::vec2f::operator b2Vec2() const {
+	return b2Vec2{ x, y };
 }
 
 bool m2::vec2f::is_nan() const {
@@ -57,9 +63,8 @@ m2::vec2f m2::vec2f::normalize() const {
 	float len = length();
 	if (len != 0.0f) {
 		return {x / len, y / len};
-	} else {
-		return {};
 	}
+	return {};
 }
 m2::vec2f m2::vec2f::floor_length(float len) const {
 	if (length() < len) {

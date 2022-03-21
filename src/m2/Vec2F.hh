@@ -1,6 +1,8 @@
 #ifndef M2_VEC2F_HH
 #define M2_VEC2F_HH
 
+#include <b2_math.h>
+
 namespace m2 {
 	struct vec2i;
 
@@ -11,6 +13,7 @@ namespace m2 {
 		vec2f(float x, float y);
 		vec2f(int x, int y);
 		explicit vec2f(const vec2i& v);
+		explicit vec2f(const b2Vec2& v);
 
 		vec2f operator+(const vec2f& rhs) const;
 		vec2f operator-(const vec2f& rhs) const;
@@ -18,6 +21,7 @@ namespace m2 {
 		vec2f operator/(const float& rhs) const;
 		bool operator==(const vec2f& other) const;
 		explicit operator bool() const;
+		explicit operator b2Vec2() const;
 
 		[[nodiscard]] bool is_nan() const;
 		[[nodiscard]] float length() const;

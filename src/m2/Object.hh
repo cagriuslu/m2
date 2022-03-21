@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include <game/component.hh>
 #include <m2/Component.hh>
 #include <m2/Automaton.hh>
 #include <m2/Cfg.hh>
@@ -13,7 +14,7 @@
 /// If the component is iterated by the Main Game Loop => Pool
 /// If the component is created and destroyed rapidly => Pool
 /// Else => Data
-typedef struct {
+struct Object {
 	m2::vec2f position;
 	// Components
 	ID monitor;
@@ -25,7 +26,7 @@ typedef struct {
 	ID offense;
 	// Extra
 	void *data;
-} Object;
+};
 
 M2Err Object_Init(Object* obj, m2::vec2f position);
 
@@ -34,17 +35,16 @@ ComponentPhysique* Object_GetPhysique(Object* obj);
 ComponentGraphic* Object_GetGraphic(Object* obj);
 ComponentGraphic* Object_GetTerrainGraphic(Object* obj);
 ComponentLight* Object_GetLight(Object* obj);
-ComponentDefense* Object_GetDefense(Object* obj);
-ComponentOffense* Object_GetOffense(Object* obj);
+game::component_defense* Object_GetDefense(Object* obj);
+game::component_offense* Object_GetOffense(Object* obj);
 
 ComponentMonitor* Object_AddMonitor(Object* obj);
 ComponentPhysique* Object_AddPhysique(Object* obj);
 ComponentGraphic* Object_AddGraphic(Object* obj);
 ComponentGraphic* Object_AddTerrainGraphic(Object* obj);
 ComponentLight* Object_AddLight(Object* obj);
-ComponentDefense* Object_AddDefense(Object* obj);
-ComponentOffense* Object_AddOffense(Object* obj);
-
+game::component_defense* Object_AddDefense(Object* obj);
+game::component_offense* Object_AddOffense(Object* obj);
 
 void Object_Term(Object* obj);
 
