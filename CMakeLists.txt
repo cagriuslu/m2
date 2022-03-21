@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(m2)
 
-add_subdirectory(games)
+add_subdirectory(game)
 add_subdirectory(lib)
 
 set(CMAKE_C_STANDARD 11)
@@ -10,9 +10,14 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-file(GLOB M2_SOURCES "src/m2/*.hh" "src/*.cc")
+file(GLOB M2_SOURCES
+        "include/m2/*.h"
+        "include/m2/*/*.h"
+        "src/*.h"   "src/*.cc"
+        "src/*/*.h" "src/*/*.cc")
+
 add_executable(m2 WIN32 ${M2_SOURCES} ${GAME_SOURCES})
-target_include_directories(m2 PUBLIC src ${GAME_INCLUDE_DIRS})
+target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_include_directories(m2 PUBLIC /usr/local/include/box2d /usr/local/include/SDL2)

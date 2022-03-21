@@ -104,13 +104,13 @@ M2Err UIState_Init(UIState *state, const CfgUI* cfg) {
 		// Iterate over CfgUIElements
 		for (const CfgUIElement *cfgUIElement = cfg->firstElement; cfgUIElement; cfgUIElement = cfgUIElement->next) {
 			// Create UIElementState
-			UIElementState* elementState = new UIElementState;
+			UIElementState* elementState = new UIElementState();
 			if (elementState) {
                 memset(elementState, 0, sizeof(UIElementState));
 				elementState->cfg = cfgUIElement;
 				// Create child UIState if the type fits
 				if (cfgUIElement->type == CFG_UI_ELEMENT_TYP_UI) {
-					UIState* childUIState = new UIState;
+					UIState* childUIState = new UIState();
 					if (childUIState) {
 						UIState_Init(childUIState, cfgUIElement->child);
 						elementState->child = childUIState;

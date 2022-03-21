@@ -1,5 +1,5 @@
 #include <m2/vec2i.hh>
-#include <m2/vec2f.hh>
+#include <m2/Vec2F.h>
 #include <unordered_map>
 
 m2::vec2i::vec2i() : x(0), y(0) {

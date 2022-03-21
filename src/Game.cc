@@ -1,5 +1,5 @@
 #include "m2/Game.hh"
-#include "m2/Object.hh"
+#include <m2/object/Object.hh>
 #include "m2/Component.hh"
 #include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
@@ -9,16 +9,12 @@
 #include <game/game_proxy.hh>
 
 // Initialize with default values
-Game gCurrentGame = {
+Game GAME = {
 	.physicsStep_s = 1.0f / 80.0f,
 	.velocityIterations = 8,
 	.positionIterations = 3,
     .proxy = game::GAME_PROXY
 };
-
-Game* Game_GetCurrent() {
-	return &gCurrentGame;
-}
 
 void Game_UpdateWindowDimensions(int width, int height) {
 	GAME.windowRect = SDL_Rect{0, 0, width, height};

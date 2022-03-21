@@ -1,4 +1,4 @@
-#include "m2/Object.hh"
+#include <m2/object/Object.hh>
 #include "m2/Def.hh"
 #include "m2/Box2DUtils.hh"
 #include "m2/Game.hh"

@@ -5,7 +5,7 @@
 #include <b2_polygon_shape.h>
 #include <b2_world.h>
 
-#include "m2/Game.hh"
+#include <m2/Game.hh>
 
 b2Body* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::vec2f boxDims, m2::vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
 	b2BodyDef bodyDef;

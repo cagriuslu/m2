@@ -1,4 +1,4 @@
-#include <m2/vec2f.hh>
+#include <m2/Vec2F.h>
 #include <m2/vec2i.hh>
 #include <cmath>
 

@@ -2,15 +2,12 @@
 #include <b2_world.h>
 
 #include "m2/Box2D.hh"
-#include "m2/Object.hh"
 #include "m2/UI.hh"
-#include "m2/Component.hh"
 #include "m2/Event.hh"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
 #include "m2/Def.hh"
 #include "m2/Cfg.hh"
-#include "m2/Pathfinder.hh"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -106,7 +103,7 @@ int main(int argc, char **argv) {
 //		return -1;
 //	}
 //	SDL_FreeSurface(textureMaskSurface);
-	SDL_Surface* lightSurface = IMG_Load("resources/RadialGradient-WhiteBlack.png");
+	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
 	if (lightSurface == NULL) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 		return -1;
@@ -119,7 +116,7 @@ int main(int argc, char **argv) {
 	SDL_SetTextureBlendMode(GAME.sdlLightTexture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(GAME.sdlLightTexture, 0);
 	SDL_SetTextureColorMod(GAME.sdlLightTexture, 127, 127, 127);
-	if ((GAME.ttfFont = TTF_OpenFont("resources/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
+	if ((GAME.ttfFont = TTF_OpenFont("resource/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 		return -1;
 	}
