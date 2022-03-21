@@ -6,7 +6,12 @@
 #include <m2/Automaton.hh>
 #include <m2/Cfg.hh>
 #include <m2/vec2f.hh>
+#include <memory>
 #include <stdint.h>
+
+struct ObjectData {
+    virtual ~ObjectData();
+};
 
 /// Basis of all objects in the game.
 /// 
@@ -26,6 +31,7 @@ struct Object {
 	ID offense;
 	// Extra
 	void *data;
+    std::unique_ptr<ObjectData> data_new;
 };
 
 M2Err Object_Init(Object* obj, m2::vec2f position);

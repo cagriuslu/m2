@@ -7,12 +7,17 @@
 #include <game/ARPG_Cfg.hh>
 #include <game/component.hh>
 
+game::ObjectDataEnemy::ObjectDataEnemy(Object& obj) : automata_ai_chase(obj) {}
+
 void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 	Object* obj = Game_FindObjectById(el->super.objId);
+    auto* data = dynamic_cast<game::ObjectDataEnemy*>(obj->data_new.get());
 
 	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj->data)->characterState), GAME.deltaTime_s);
-	Automaton_ProcessTime(&(AS_ENEMYDATA(obj->data)->aiAutomaton), GAME.deltaTime_s);
-	Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->aiAutomaton), SIG_AI_PREPHYSICS);
+    data->automata_ai_chase.time(GAME.deltaTime_s);
+    data->automata_ai_chase.signal(SIG_AI_PREPHYSICS);
+	//Automaton_ProcessTime(&(AS_ENEMYDATA(obj->data)->aiAutomaton), GAME.deltaTime_s);
+	//Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->aiAutomaton), SIG_AI_PREPHYSICS);
 }
 
 void ObjectEnemy_onHit(game::component_defense* def) {
@@ -102,7 +107,7 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f posi
 		AiState_Init(&(AS_ENEMYDATA(obj->data)->aiState), cfg->ai, position);
 		switch (cfg->ai->behavior) {
 			case CFG_AI_BEHAVIOR_CHASE:
-				M2ERR_REFLECT(AutomatonAiChase_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, phy));
+				// No need, cleanup around here
 				break;
 			case CFG_AI_BEHAVIOR_KEEP_DISTANCE:
 				M2ERR_REFLECT(AutomatonAiKeepDistance_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, phy));
@@ -115,5 +120,6 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f posi
 		}
 	}
 
+    obj->data_new = std::make_unique<game::ObjectDataEnemy>(*obj);
 	return 0;
 }

@@ -1,5 +1,32 @@
 #include "m2/Automaton.hh"
 
+m2::Automaton::Automaton(State initial_state) : current_state(initial_state), alarm(NAN) {}
+m2::Automaton::~Automaton() = default;
+
+void m2::Automaton::arm(float duration) {
+    alarm = duration;
+}
+void m2::Automaton::disarm() {
+    alarm = NAN;
+}
+void m2::Automaton::signal(int sig) {
+    auto next_state = current_state(this, sig);
+    if (next_state) {
+        signal(SIG_EXIT);
+        current_state = reinterpret_cast<State>(next_state);
+        signal(SIG_ENTER);
+    }
+}
+void m2::Automaton::time(float delta_time) {
+    if (not isnan(alarm)) {
+        alarm -= delta_time;
+        if (alarm <= 0.0f) {
+            alarm = NAN;
+            this->signal(SIG_ALARM);
+        }
+    }
+}
+
 M2Err Automaton_Init(Automaton* sm) {
 	memset(sm, 0, sizeof(Automaton));
 	sm->alarm = NAN;

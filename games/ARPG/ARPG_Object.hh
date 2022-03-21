@@ -3,15 +3,24 @@
 
 #include <m2/Object.hh>
 #include <game/ARPG_Cfg.hh>
+#include "Automata/AutomatonAiChase.hh"
 
-typedef struct {
+struct EnemyData {
 	CharacterState characterState;
 	Automaton charAnimationAutomaton;
 	AiState aiState;
 	Automaton aiAutomaton;
 	float onHitColorModTtl;
-} EnemyData;
+};
 #define AS_ENEMYDATA(ptr) ((EnemyData*)(ptr))
+
+namespace game {
+    struct ObjectDataEnemy : public ObjectData {
+        game::AutomatonAiChase automata_ai_chase;
+
+        explicit ObjectDataEnemy(Object&);
+    };
+}
 
 int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f position);
 

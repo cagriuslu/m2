@@ -61,7 +61,7 @@ namespace m2 {
         size_t lowest_allocated_index;
         size_t next_free_index;
 
-        pool() : size(0), next_key(1), highest_allocated_index(0), lowest_allocated_index(0), next_free_index(0) {
+        pool() : items(), size(0), next_key(1), highest_allocated_index(0), lowest_allocated_index(0), next_free_index(0) {
             shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
             size_t i = 0;
             for (auto& item : items) {

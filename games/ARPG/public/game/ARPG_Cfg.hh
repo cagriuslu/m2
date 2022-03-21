@@ -238,11 +238,11 @@ typedef struct {
 extern const CfgAi CFG_AI_CHASE_00;
 extern const CfgAi CFG_AI_KEEP_DISTANCE_00;
 extern const CfgAi CFG_AI_HIT_N_RUN_00;
-typedef struct {
+struct AiState {
 	const CfgAi* cfg;
 	m2::vec2f homePosition;
     std::list<m2::vec2i> reversedWaypointList;
-} AiState;
+};
 M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::vec2f homePosition);
 
 ////////////////////////////////////////////////////////////////////////

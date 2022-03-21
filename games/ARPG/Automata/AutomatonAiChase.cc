@@ -4,46 +4,43 @@
 #include "m2/Pathfinder.hh"
 #include <game/ARPG_Cfg.hh>
 #include "../ARPG_Object.hh"
+#include "AutomatonAiChase.hh"
 
 #define ALARM_DURATION(recalcPeriod) ((recalcPeriod) / 2.0f + (recalcPeriod) * randf() * 1.5f)
 
-void* AiChaseState_Idle(struct _Automaton* am, int signal);
-void* AiChaseState_Triggered(struct _Automaton* am, int signal);
-void* AiChaseState_GaveUp(struct _Automaton* am, int signal);
+void* AutomatonState_AutomatonAiChase_Idle(m2::Automaton* a, int sig);
+void* AutomatonState_AutomatonAiChase_Triggered(m2::Automaton* a, int sig);
+void* AutomatonState_AutomatonAiChase_GaveUp(m2::Automaton* a, int sig);
 
-M2Err AutomatonAiChase_Init(Automaton *am, void* obj, void* phy) {
-	M2ERR_REFLECT(Automaton_Init(am));
-	am->currState = AiChaseState_Idle;
-	am->userData_obj = obj;
-	am->userData_phy = phy;
-	Automaton_ProcessSignal(am, SIG_ENTER);
-	return M2OK;
+game::AutomatonAiChase::AutomatonAiChase(Object& obj) : m2::Automaton(AutomatonState_AutomatonAiChase_Idle), obj(obj), phy(*GAME.physics.get(obj.physique)) {
+    signal(SIG_ENTER);
 }
 
-void* AiChaseState_Idle(struct _Automaton* am, int signal) {
-	Object* obj = static_cast<Object *>(am->userData_obj);
-	AiState* aiState = &(AS_ENEMYDATA(obj->data)->aiState);
-	Object* player = Game_FindObjectById(GAME.playerId);
-	switch (signal) {
-		case SIG_ENTER:
-			Automaton_ArmAlarm(am, ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
-			return NULL;
-		case SIG_ALARM:
-			// Check if player is close
-			if (obj->position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
-				// Check if path exists
-				if (PathfinderMap_FindPath(&GAME.pathfinderMap, obj->position, player->position, aiState->reversedWaypointList) == M2OK) {
-					return (void*)AiChaseState_Triggered;
-				}
-			}
-			Automaton_ArmAlarm(am, ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
-			return NULL;
-		case SIG_AI_PREPHYSICS:
-			// TODO implement small patrol
-			return NULL;
-		default:
-			return NULL;
-	}
+void* AutomatonState_AutomatonAiChase_Idle(m2::Automaton* a, int sig) {
+    auto* atm = dynamic_cast<game::AutomatonAiChase*>(a);
+
+    AiState* aiState = &(AS_ENEMYDATA(atm->obj.data)->aiState);
+    Object* player = Game_FindObjectById(GAME.playerId);
+    switch (sig) {
+        case SIG_ENTER:
+            atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
+            return nullptr;
+        case SIG_ALARM:
+            // Check if player is close
+            if (atm->obj.position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
+                // Check if path exists
+                if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player->position, aiState->reversedWaypointList) == M2OK) {
+                    return reinterpret_cast<void*>(AutomatonState_AutomatonAiChase_Triggered);
+                }
+            }
+            atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
+            return nullptr;
+        case SIG_AI_PREPHYSICS:
+            // TODO implement small patrol
+            return nullptr;
+        default:
+            return nullptr;
+    }
 }
 
 void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
@@ -114,95 +111,93 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 	}
 }
 
-void* AiChaseState_Triggered(struct _Automaton* am, int signal) {
-	Object* obj = static_cast<Object *>(am->userData_obj);
-	AiState* aiState = &(AS_ENEMYDATA(obj->data)->aiState);
-	ComponentPhysique* phy = static_cast<ComponentPhysique *>(am->userData_phy);
+void* AutomatonState_AutomatonAiChase_Triggered(m2::Automaton* a, int sig) {
+    auto* atm = dynamic_cast<game::AutomatonAiChase*>(a);
+
+	AiState* aiState = &(AS_ENEMYDATA(atm->obj.data)->aiState);
 	Object* player = Game_FindObjectById(GAME.playerId);
-	switch (signal) {
+	switch (sig) {
 		case SIG_ENTER:
-			Automaton_ArmAlarm(am, ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
-			return NULL;
+            atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
+			return nullptr;
 		case SIG_ALARM: {
 			// Check if player is still close
-			if (obj->position.distance_sq(player->position) < aiState->cfg->giveUpDistanceSquared_m) {
+			if (atm->obj.position.distance_sq(player->position) < aiState->cfg->giveUpDistanceSquared_m) {
 				// Recalculate path to player
-				PathfinderMap_FindPath(&GAME.pathfinderMap, obj->position, player->position, aiState->reversedWaypointList);
+				PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player->position, aiState->reversedWaypointList);
 			} else {
 				// Check if path to homePosition exists
-				if (PathfinderMap_FindPath(&GAME.pathfinderMap, obj->position, aiState->homePosition, aiState->reversedWaypointList) == M2OK) {
-					return (void*)AiChaseState_GaveUp;
+				if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, aiState->homePosition, aiState->reversedWaypointList) == M2OK) {
+					return reinterpret_cast<void*>(AutomatonState_AutomatonAiChase_GaveUp);
 				}
 			}
-			Automaton_ArmAlarm(am, ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
-			return NULL;
+            atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
+			return nullptr;
 		}
 		case SIG_AI_PREPHYSICS:
 			if (1 < aiState->reversedWaypointList.size()) {
-                auto lastPosition = aiState->reversedWaypointList.rbegin();
-                m2::vec2i objPosition = *lastPosition;
-                auto prevPosition = lastPosition++;
-                m2::vec2i targetPosition = *prevPosition;
-				if (objPosition != targetPosition) {
-					auto objPositionF = m2::vec2f(objPosition);
-					auto targetPositionF = m2::vec2f(targetPosition);
+                auto end = aiState->reversedWaypointList.end();
+                auto obj_pos = *std::prev(end, 1);
+                auto target_pos = *std::prev(end, 2);
+				if (obj_pos != target_pos) {
+					auto objPositionF = m2::vec2f(obj_pos);
+					auto targetPositionF = m2::vec2f(target_pos);
 					m2::vec2f direction = (targetPositionF - objPositionF).normalize();
-					m2::vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(obj->data)->characterState.cfg->walkSpeed);
-					phy->body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+					m2::vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(atm->obj.data)->characterState.cfg->walkSpeed);
+					atm->phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 				}
 			}
-			AiChase_AttackIfCloseEnough(obj, player);
-			return NULL;
+			AiChase_AttackIfCloseEnough(&atm->obj, player);
+			return nullptr;
 		default:
-			return NULL;
+			return nullptr;
 	}
 }
 
-void* AiChaseState_GaveUp(struct _Automaton* am, int signal) {
-	Object* obj = static_cast<Object *>(am->userData_obj);
-	AiState* aiState = &(AS_ENEMYDATA(obj->data)->aiState);
-	ComponentPhysique* phy = static_cast<ComponentPhysique *>(am->userData_phy);
+void* AutomatonState_AutomatonAiChase_GaveUp(m2::Automaton* a, int sig) {
+    auto* atm = dynamic_cast<game::AutomatonAiChase*>(a);
+
+	AiState* aiState = &(AS_ENEMYDATA(atm->obj.data)->aiState);
 	Object* player = Game_FindObjectById(GAME.playerId);
-	switch (signal) {
+	switch (sig) {
 		case SIG_ENTER:
-			Automaton_ArmAlarm(am, ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
-			return NULL;
+            atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
+			return nullptr;
 		case SIG_EXIT:
-			return NULL;
+			return nullptr;
 		case SIG_ALARM:
 			// Check if player is close
-			if (obj->position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
+			if (atm->obj.position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
 				// Check if path to player exists
-				if (PathfinderMap_FindPath(&GAME.pathfinderMap, obj->position, player->position, aiState->reversedWaypointList) == M2OK) {
-					return (void*)AiChaseState_Triggered;
+				if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player->position, aiState->reversedWaypointList) == M2OK) {
+					return reinterpret_cast<void*>(AutomatonState_AutomatonAiChase_Triggered);
 				}
 			} else {
 				// Check if obj arrived to homePosition
-				if (obj->position.distance_sq(aiState->homePosition) < 1.0f) {
-					return (void*)AiChaseState_Idle;
+				if (atm->obj.position.distance_sq(aiState->homePosition) < 1.0f) {
+					return reinterpret_cast<void*>(AutomatonState_AutomatonAiChase_Idle);
 				} else {
 					// Recalculate path to homePosition
-					PathfinderMap_FindPath(&GAME.pathfinderMap, obj->position, aiState->homePosition, aiState->reversedWaypointList);
+					PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, aiState->homePosition, aiState->reversedWaypointList);
 				}
 			}
-			Automaton_ArmAlarm(am, ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
-			return NULL;
+            atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
+			return nullptr;
 		case SIG_AI_PREPHYSICS:
 			if (1 < aiState->reversedWaypointList.size()) {
-                auto lastPosition = aiState->reversedWaypointList.rbegin();
-                m2::vec2i objPosition = *lastPosition;
-                auto prevPosition = lastPosition++;
-                m2::vec2i targetPosition = *prevPosition;
-				if (objPosition != targetPosition) {
-					auto objPositionF = m2::vec2f(objPosition);
-					auto targetPositionF = m2::vec2f(targetPosition);
+                auto end = aiState->reversedWaypointList.end();
+                auto obj_pos = *std::prev(end, 1);
+                auto target_pos = *std::prev(end, 2);
+				if (obj_pos != target_pos) {
+					auto objPositionF = m2::vec2f(obj_pos);
+					auto targetPositionF = m2::vec2f(target_pos);
 					m2::vec2f direction = (targetPositionF - objPositionF).normalize();
-					m2::vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(obj->data)->characterState.cfg->walkSpeed);
-					phy->body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+					m2::vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(atm->obj.data)->characterState.cfg->walkSpeed);
+					atm->phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 				}
 			}
-			return NULL;
+			return nullptr;
 		default:
-			return NULL;
+			return nullptr;
 	}
 }

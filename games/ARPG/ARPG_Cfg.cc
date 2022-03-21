@@ -650,7 +650,6 @@ const CfgAi CFG_AI_HIT_N_RUN_00 = {
 };
 
 M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::vec2f homePosition) {
-	memset(state, 0, sizeof(AiState));
 	state->cfg = cfg;
 	state->homePosition = homePosition;
 	return M2OK;

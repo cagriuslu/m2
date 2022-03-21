@@ -60,12 +60,14 @@ namespace m2 {
     struct component_defense {
         Component super;
 
+        component_defense() = default;
         explicit component_defense(ID obj_id);
     };
 
     struct component_offense {
         Component super;
 
+        component_offense() = default;
         explicit component_offense(ID obj_id);
     };
 }

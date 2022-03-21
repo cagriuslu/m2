@@ -223,7 +223,7 @@ void _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::vec2i>& listOfVec2Is
         auto* point2 = &(*point_2_it);
 
 		const bool eyeSight = Box2DUtils_CheckEyeSight(m2::vec2f{*point1}, m2::vec2f{*point2}, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF);
-        if (point_2_it == listOfVec2Is.rbegin().base()) {
+        if (point_2_it == std::prev(listOfVec2Is.end(), 1)) {
             if (eyeSight) {
                 // If we are processing the last point and there is an eye sight, add the last point
                 outListOfVec2Is.push_back(*point2);

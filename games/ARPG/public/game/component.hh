@@ -11,7 +11,7 @@ namespace game {
         void (*onHit)(component_defense*);
         void (*onDeath)(component_defense*);
 
-        component_defense();
+        component_defense() = default;
         explicit component_defense(ID object_id);
     };
 
@@ -23,7 +23,7 @@ namespace game {
             ExplosiveState explosive;
         } state;
 
-        component_offense();
+        component_offense() = default;
         explicit component_offense(ID object_id);
     };
 }

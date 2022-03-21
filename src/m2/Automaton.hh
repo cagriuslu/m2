@@ -2,6 +2,27 @@
 #define AUTOMATON_H
 
 #include "Def.hh"
+#include <optional>
+
+namespace m2 {
+    class Automaton {
+    public:
+        typedef void* (*State)(Automaton* a, int sig);
+
+    private:
+        State current_state;
+        float alarm;
+
+    public:
+        explicit Automaton(State initial_state);
+        virtual ~Automaton();
+
+        void arm(float duration);
+        void disarm();
+        void signal(int sig);
+        void time(float delta_time);
+    };
+}
 
 enum AutomatonSignal {
 	SIG_ENTER = 0,
@@ -44,7 +65,6 @@ M2Err AutomatonCharAnimation_Init(Automaton *sm, const void* cfgCharacter, void*
 typedef enum _AutomatonAi_Signal {
 	SIG_AI_PREPHYSICS = SIG_N,
 } AutomatonAi_Signal;
-M2Err AutomatonAiChase_Init(Automaton *am, void* obj, void* phy);
 M2Err AutomatonAiKeepDistance_Init(Automaton *am, void* obj, void* phy);
 M2Err AutomatonAiHitNRun_Init(Automaton *am, void* obj, void* phy);
 
