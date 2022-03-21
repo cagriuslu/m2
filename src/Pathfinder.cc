@@ -28,19 +28,18 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 				// TODO here it is assumed that fixtures have one child
 				b2AABB aabb = fixture->GetAABB(0);
 				// AABB is bigger 0.01 meters than the object at each side
-				// Decrease its size by 0.02 so that rounding can work						
-				AABB conservativeAabb = AABB{ m2::vec2f{aabb.lowerBound} + m2::vec2f{ 0.02f, 0.02f}, m2::vec2f{aabb.upperBound} - m2::vec2f{ 0.02f, 0.02f} };
-				int lowerX = (int) roundf(conservativeAabb.lowerBound.x);
-				int upperX = (int) roundf(conservativeAabb.upperBound.x);
-				int lowerY = (int) roundf(conservativeAabb.lowerBound.y);
-				int upperY = (int) roundf(conservativeAabb.upperBound.y);
+				// Decrease its size by 0.02 so that rounding can work
+                b2AABB convervative_aabb = m2::box2d::aabb::expand(aabb, -0.02f);
+				int lowerX = (int) roundf(convervative_aabb.lowerBound.x);
+				int upperX = (int) roundf(convervative_aabb.upperBound.x);
+				int lowerY = (int) roundf(convervative_aabb.lowerBound.y);
+				int upperY = (int) roundf(convervative_aabb.upperBound.y);
 				for (int y = lowerY; y <= upperY; y++) {
 					for (int x = lowerX; x <= upperX; x++) {
 						pm->blocked_locations.insert({x, y});
 					}
 				}
 			}
-			
 		}
 	}
 	return 0;

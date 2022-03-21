@@ -3,12 +3,12 @@
 
 #include "Def.hh"
 
-typedef enum _AutomatonSignal {
+enum AutomatonSignal {
 	SIG_ENTER = 0,
 	SIG_EXIT,
 	SIG_ALARM,
 	SIG_N
-} AutomatonSignal;
+};
 
 struct _Automaton;
 /// Return type is again AutomatonState

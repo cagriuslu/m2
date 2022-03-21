@@ -33,6 +33,13 @@ bool QueryCallback::ReportFixture(b2Fixture* fixture) {
 	return (*m_cb)(fixture, m_userData);
 }
 
+b2AABB m2::box2d::aabb::expand(const b2AABB& in, float amount) {
+    return b2AABB{
+        .lowerBound = b2Vec2{in.lowerBound.x - amount, in.lowerBound.y - amount},
+        .upperBound = b2Vec2{in.upperBound.x + amount, in.upperBound.y + amount}
+    };
+}
+
 //void Box2DWorldQuery(Box2DWorld* world, Box2DQueryListener* queryListener, AABB aabb) {
 //	b2AABB b2dAabb;
 //	b2dAabb.lowerBound.Set(aabb.lowerBound.x, aabb.lowerBound.y);

@@ -2,8 +2,8 @@
 #define BOX2D_H
 
 #include <b2_world_callbacks.h>
+#include <b2_collision.h>
 #include <m2/vec2f.hh>
-#include "m2/AABB.hh"
 #include <cstdint>
 
 class ContactListener : public b2ContactListener {
@@ -32,5 +32,13 @@ public:
 
 	bool ReportFixture(b2Fixture* fixture) override;
 };
+
+namespace m2 {
+    namespace box2d {
+        namespace aabb {
+            b2AABB expand(const b2AABB& in, float amount);
+        }
+    }
+}
 
 #endif
