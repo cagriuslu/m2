@@ -19,7 +19,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 	pm->blocked_locations.clear();
     for (auto physique_it : GAME.physics) {
         auto* phy = physique_it.first;
-		auto& obj = GAME.objects[phy->super.objId];
+		auto& obj = GAME.objects[phy->object_id];
 		if (phy->body) {
 			// TODO here it is assumed that bodies has one fixture
 			b2Fixture* fixture = phy->body->GetFixtureList();

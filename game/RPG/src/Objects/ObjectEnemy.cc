@@ -9,8 +9,8 @@
 
 game::object::ObjectDataEnemy::ObjectDataEnemy(m2::object::Object& obj) : automata_ai_chase(obj) {}
 
-void ObjectEnemy_prePhysics(ComponentMonitor* el) {
-	auto& obj = GAME.objects[el->super.objId];
+void ObjectEnemy_prePhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
     auto* data = dynamic_cast<game::object::ObjectDataEnemy*>(obj.data_new.get());
 
 	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj.data)->characterState), GAME.deltaTime_s);
@@ -19,16 +19,16 @@ void ObjectEnemy_prePhysics(ComponentMonitor* el) {
 }
 
 void ObjectEnemy_onHit(game::component_defense* def) {
-	auto& obj = GAME.objects[def->super.objId];
+	auto& obj = GAME.objects[def->object_id];
 	AS_ENEMYDATA(obj.data)->onHitColorModTtl = 0.10f;
 }
 
 void ObjectEnemy_onDeath(game::component_defense* def) {
-	Game_DeleteList_Add(def->super.objId);
+	Game_DeleteList_Add(def->object_id);
 }
 
-static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
-	auto& obj = GAME.objects[monitor->super.objId];
+static void ObjectEnemy_postPhysics(Monitor& monitor) {
+	auto& obj = GAME.objects[monitor.object_id];
 	auto& phy = GAME.physics[obj.physique_id];
 	// We must call time before other signals
 	Automaton_ProcessTime(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), GAME.deltaTicks_ms / 1000.0f);
@@ -50,19 +50,19 @@ static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
 	}
 }
 
-void ObjectEnemy_Draw(ComponentGraphic* gfx) {
-	auto& obj = GAME.objects[gfx->super.objId];
+void ObjectEnemy_Draw(Graphic& gfx) {
+	auto& obj = GAME.objects[gfx.object_id];
 	if (0.0f < AS_ENEMYDATA(obj.data)->onHitColorModTtl) {
-		SDL_Texture *defaultTexture = gfx->texture;
-		gfx->texture = GAME.sdlTextureMask;
-		ComponentGraphic_DefaultDraw(gfx);
-		gfx->texture = defaultTexture;
+		SDL_Texture *defaultTexture = gfx.texture;
+		gfx.texture = GAME.sdlTextureMask;
+		Graphic::default_draw(gfx);
+		gfx.texture = defaultTexture;
 		AS_ENEMYDATA(obj.data)->onHitColorModTtl -= GAME.deltaTicks_ms / 1000.0f;
 	} else {
-		ComponentGraphic_DefaultDraw(gfx);
+		Graphic::default_draw(gfx);
 	}
 	auto& def = obj.defense();
-	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) def.hp / def.maxHp);
+	Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 }
 
 int ObjectEnemy_InitFromCfg(m2::object::Object* obj, const CfgCharacter *cfg, m2::vec2f position) {
@@ -81,7 +81,7 @@ int ObjectEnemy_InitFromCfg(m2::object::Object* obj, const CfgCharacter *cfg, m2
 
 	auto& phy = obj->add_physique();
 	phy.body = Box2DUtils_CreateDynamicDisk(
-			obj->physique_id,
+		obj->physique_id,
 		position,
 		true, // allowSleep
 		CATEGORY_ENEMY,

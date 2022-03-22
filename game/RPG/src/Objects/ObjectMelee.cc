@@ -7,18 +7,18 @@
 
 #define SWING_SPEED (15.0f)
 
-static void Sword_prePhysics(ComponentMonitor* el) {
-	auto& obj = GAME.objects[el->super.objId];
+static void Sword_prePhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	auto& off = obj.offense();
 
 	off.state.melee.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 	if (off.state.melee.ttl_s <= 0) {
-		Game_DeleteList_Add(el->super.objId);
+		Game_DeleteList_Add(mon.object_id);
 	}
 }
 
-static void Sword_postPhysics(ComponentMonitor* el) {
-	auto& obj = GAME.objects[el->super.objId];
+static void Sword_postPhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	float angle = phy.body->GetAngle();
 	auto& gfx = obj.graphic();
@@ -32,23 +32,23 @@ static void Sword_postPhysics(ComponentMonitor* el) {
 	gfx.angle = angle;
 }
 
-static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
+static void Sword_onCollision(Physique& phy, Physique& other) {
 	LOG_DEBUG("Collision");
-	auto& obj = GAME.objects[phy->super.objId];
-	auto& other_obj = GAME.objects[other->super.objId];
+	auto& obj = GAME.objects[phy.object_id];
+	auto& other_obj = GAME.objects[other.object_id];
 	auto& off = GAME.offenses[obj.offense_id];
 	auto& def = GAME.defenses[other_obj.defense_id];
 
 	// Calculate damage
     def.hp -= off.state.melee.cfg->damage;
 	if (def.hp <= 0.0001f && def.onDeath) {
-		LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.super.objId, M2_ID, ID, def.super.objId);
+		LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def.object_id);
         def.onDeath(&def);
 	} else {
-		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.super.objId, M2_ID, ID, def.super.objId, M2_HP, Float32, def.hp);
+		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def.object_id, M2_HP, Float32, def.hp);
 		auto direction = (other_obj.position - obj.position).normalize();
 		auto force = direction * 15000.0f;
-		other->body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+		other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 		if (def.onHit) {
             def.onHit(&def);
 		}

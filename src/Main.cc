@@ -250,16 +250,15 @@ int main(int argc, char **argv) {
 			prevPrePhysicsTicks += GAME.deltaTicks_ms;
             for (auto monitor_it : GAME.monitors) {
                 if (monitor_it.first->prePhysics) {
-                    monitor_it.first->prePhysics(monitor_it.first);
+                    monitor_it.first->prePhysics(*monitor_it.first);
                 }
             } // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
 
 			// Physics
-            // HERE is the problem
 			GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
             for (auto physique_it : GAME.physics) {
-				GAME.objects[physique_it.first->super.objId].position = m2::vec2f{physique_it.first->body->GetPosition()};
+				GAME.objects[physique_it.first->object_id].position = m2::vec2f{physique_it.first->body->GetPosition()};
             } // TODO Easy to parallelize
 			Game_DeleteList_DeleteAll();
 
@@ -269,7 +268,7 @@ int main(int argc, char **argv) {
 			prevPostPhysicsTicks += GAME.deltaTicks_ms;
             for (auto monitor_it : GAME.monitors) {
                 if (monitor_it.first->postPhysics) {
-                    monitor_it.first->postPhysics(monitor_it.first);
+                    monitor_it.first->postPhysics(*monitor_it.first);
                 }
             } // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
@@ -293,7 +292,7 @@ int main(int argc, char **argv) {
 		prevTerrainDrawGraphicsTicks += GAME.deltaTicks_ms;
         for (auto graphic_it : GAME.terrainGraphics) {
             if (graphic_it.first->draw) {
-                graphic_it.first->draw(graphic_it.first);
+                graphic_it.first->draw(*graphic_it.first);
             }
         } // TODO Easy to parallelize
 
@@ -303,7 +302,7 @@ int main(int argc, char **argv) {
 		prevPreGraphicsTicks += GAME.deltaTicks_ms;
         for (auto monitor_it : GAME.monitors) {
             if (monitor_it.first->preGraphics) {
-                monitor_it.first->preGraphics(monitor_it.first);
+                monitor_it.first->preGraphics(*monitor_it.first);
             }
         } // TODO Hard to parallelize
 
@@ -316,7 +315,7 @@ int main(int argc, char **argv) {
 		for (size_t i = 0; i < insertionListSize; i++) {
 			auto& gfx = GAME.graphics[InsertionList_Get(&GAME.drawList, i)];
 			if (gfx.draw) {
-                gfx.draw(&gfx);
+                gfx.draw(gfx);
             }
 		} // TODO Hard to parallelize
 
@@ -326,7 +325,7 @@ int main(int argc, char **argv) {
 		prevDrawLightsTicks += GAME.deltaTicks_ms;
         for (auto light_it : GAME.lights) {
             if (light_it.first->draw) {
-                light_it.first->draw(light_it.first);
+                light_it.first->draw(*light_it.first);
             }
         } // TODO Hard to parallelize
 
@@ -336,7 +335,7 @@ int main(int argc, char **argv) {
 		prevPostGraphicsTicks += GAME.deltaTicks_ms;
         for (auto monitor_it : GAME.monitors) {
             if (monitor_it.first->postGraphics) {
-                monitor_it.first->postGraphics(monitor_it.first);
+                monitor_it.first->postGraphics(*monitor_it.first);
             }
         } // TODO Hard to parallelize
 

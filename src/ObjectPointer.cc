@@ -2,8 +2,8 @@
 #include "m2/Game.hh"
 #include "m2/Def.hh"
 
-void Pointer_preGraphics(ComponentMonitor* mon) {
-	auto& obj = GAME.objects[mon->super.objId];
+void Pointer_preGraphics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	obj.position = GAME.mousePositionInWorld_m;
 }
 

@@ -14,8 +14,8 @@
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
 
-static void Player_prePhysics(ComponentMonitor* el) {
-	auto& obj = GAME.objects[el->super.objId];
+static void Player_prePhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	PlayerData *playerData = AS_PLAYERDATA(obj.data);
 
 	m2::vec2f moveDirection;
@@ -70,8 +70,8 @@ static void Player_onDeath(game::component_defense *def) {
 	LOG_INFO("Player died");
 }
 
-static void Player_postPhysics(ComponentMonitor* monitor) {
-	auto& obj = GAME.objects[monitor->super.objId];
+static void Player_postPhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	PlayerData *playerData = AS_PLAYERDATA(obj.data);
 	auto& phy = GAME.physics[obj.physique_id];
 

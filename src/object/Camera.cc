@@ -8,8 +8,8 @@
 
 m2::object::CameraData::CameraData() : offset() {}
 
-void Camera_postPhysics(ComponentMonitor* el) {
-	auto& cam = GAME.objects[el->super.objId];
+void Camera_postPhysics(Monitor& el) {
+	auto& cam = GAME.objects[el.object_id];
 	auto* camera_data = dynamic_cast<m2::object::CameraData*>(cam.data_new.get());
 	auto& player = GAME.objects[GAME.playerId];
 

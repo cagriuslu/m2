@@ -45,27 +45,27 @@ namespace m2 {
 			// Destructor
 			~Object();
 
-			[[nodiscard]] ComponentMonitor& monitor() const;
-			[[nodiscard]] ComponentPhysique& physique() const;
-			[[nodiscard]] ComponentGraphic& graphic() const;
-			[[nodiscard]] ComponentGraphic& terrain_graphic() const;
-			[[nodiscard]] ComponentLight& light() const;
+			[[nodiscard]] Monitor& monitor() const;
+			[[nodiscard]] Physique& physique() const;
+			[[nodiscard]] Graphic& graphic() const;
+			[[nodiscard]] Graphic& terrain_graphic() const;
+			[[nodiscard]] Light& light() const;
 			[[nodiscard]] game::component_defense& defense() const;
 			[[nodiscard]] game::component_offense& offense() const;
 
-			[[nodiscard]] ComponentMonitor* get_monitor() const;
-			[[nodiscard]] ComponentPhysique* get_physique() const;
-			[[nodiscard]] ComponentGraphic* get_graphic() const;
-			[[nodiscard]] ComponentGraphic* get_terrain_graphic() const;
-			[[nodiscard]] ComponentLight* get_light() const;
+			[[nodiscard]] Monitor* get_monitor() const;
+			[[nodiscard]] Physique* get_physique() const;
+			[[nodiscard]] Graphic* get_graphic() const;
+			[[nodiscard]] Graphic* get_terrain_graphic() const;
+			[[nodiscard]] Light* get_light() const;
 			[[nodiscard]] game::component_defense* get_defense() const;
 			[[nodiscard]] game::component_offense* get_offense() const;
 
-			[[nodiscard]] ComponentMonitor& add_monitor();
-			[[nodiscard]] ComponentPhysique& add_physique();
-			[[nodiscard]] ComponentGraphic& add_graphic();
-			[[nodiscard]] ComponentGraphic& add_terrain_graphic();
-			[[nodiscard]] ComponentLight& add_light();
+			[[nodiscard]] Monitor& add_monitor();
+			[[nodiscard]] Physique& add_physique();
+			[[nodiscard]] Graphic& add_graphic();
+			[[nodiscard]] Graphic& add_terrain_graphic();
+			[[nodiscard]] Light& add_light();
 			[[nodiscard]] game::component_defense& add_defense();
 			[[nodiscard]] game::component_offense& add_offense();
 		};

@@ -13,6 +13,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <vector>
+#include <b2_world.h>
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
@@ -58,11 +59,11 @@ struct Game {
 	// created/destroyed very rapidly.
     m2::pool<m2::object::Object> objects;
 	InsertionList drawList;
-    m2::pool<ComponentMonitor> monitors;
-	m2::pool<ComponentPhysique> physics;
-    m2::pool<ComponentGraphic> graphics;
-    m2::pool<ComponentGraphic> terrainGraphics;
-    m2::pool<ComponentLight> lights;
+    m2::pool<Monitor> monitors;
+	m2::pool<Physique> physics;
+    m2::pool<Graphic> graphics;
+    m2::pool<Graphic> terrainGraphics;
+    m2::pool<Light> lights;
     m2::pool<game::component_defense> defenses;
     m2::pool<game::component_offense> offenses;
 	b2World* world;

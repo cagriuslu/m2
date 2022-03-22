@@ -94,7 +94,7 @@ void Game_UpdateMousePosition() {
 
 static int Game_Level_Init() {
 	GAME.objects.clear();
-	M2ERR_REFLECT(InsertionList_Init(&GAME.drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
+	M2ERR_REFLECT(InsertionList_Init(&GAME.drawList, UINT16_MAX + 1, Graphic::ycomparator_cb));
 	GAME.monitors.clear();
 	GAME.physics.clear();
 	GAME.graphics.clear();
@@ -107,7 +107,7 @@ static int Game_Level_Init() {
 		abort();
 	}
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
-	GAME.contactListener = new ContactListener(ComponentPhysique_ContactCB);
+	GAME.contactListener = new ContactListener(Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 	GAME.delete_list.clear();
 	GAME.levelLoaded = true;

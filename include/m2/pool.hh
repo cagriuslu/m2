@@ -25,6 +25,7 @@ namespace m2 {
 
         struct iterator {
             pool<T,Capacity> *pool;
+			// TODO hold reference instead of pointer
             T* data;
             ID id;
 

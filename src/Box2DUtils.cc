@@ -82,7 +82,7 @@ float Box2DUtilsCheckEyeSight_RayCastCallback(b2Fixture* fixture, m2::vec2f poin
 	(void)point;
 	(void)normal;
 	(void)fraction;
-	*((bool*)userData) = false;
+	static_cast<bool*>(userData)[0] = false;
 	return 0.0f;
 }
 

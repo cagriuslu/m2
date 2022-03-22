@@ -7,9 +7,9 @@
 namespace game {
     struct AutomatonAiChase : public m2::Automaton {
 		m2::object::Object& obj;
-        ComponentPhysique& phy;
+        Physique& phy;
 
-        AutomatonAiChase(m2::object::Object&);
+        explicit AutomatonAiChase(m2::object::Object&);
     };
 }
 

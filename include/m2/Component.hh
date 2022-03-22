@@ -9,66 +9,67 @@
 #include <stdint.h>
 
 struct Component {
-	ID objId;
+	ID object_id;
+
+	Component() = default;
+	explicit Component(ID object_id);
 };
-M2Err Component_Init(Component* component, ID objectId);
-void Component_Term(Component* component);
 
-typedef struct _ComponentMonitor {
-	Component super;
-	void (*prePhysics)(struct _ComponentMonitor*);
-	void (*postPhysics)(struct _ComponentMonitor*);
-	void (*preGraphics)(struct _ComponentMonitor*);
-	void (*postGraphics)(struct _ComponentMonitor*);
-} ComponentMonitor;
-M2Err ComponentMonitor_Init(ComponentMonitor* evListener, ID objectId);
-void ComponentMonitor_Term(ComponentMonitor* evListener);
+struct Monitor : public Component {
+	void (*prePhysics)(Monitor&);
+	void (*postPhysics)(Monitor&);
+	void (*preGraphics)(Monitor&);
+	void (*postGraphics)(Monitor&);
 
-typedef struct _ComponentPhysique {
-	Component super;
+	Monitor() = default;
+	explicit Monitor(ID object_id);
+};
+
+struct Physique : public Component {
 	b2Body* body;
-	void (*onCollision)(struct _ComponentPhysique*, struct _ComponentPhysique*);
-} ComponentPhysique;
-M2Err ComponentPhysique_Init(ComponentPhysique* phy, ID objectId);
-void ComponentPhysique_Term(ComponentPhysique* phy);
-void ComponentPhysique_ContactCB(b2Contact* contact);
+	void (*onCollision)(Physique&, Physique&);
 
-typedef struct _ComponentGraphic {
-	Component super;
+	Physique() = default;
+	explicit Physique(ID object_id);
+	~Physique();
+
+	static void contact_cb(b2Contact* contact);
+};
+
+struct Graphic : public Component {
 	SDL_Texture *texture;
 	SDL_Rect textureRect;
 	m2::vec2f center_px;
 	float angle;
-	void (*draw)(struct _ComponentGraphic*);
-} ComponentGraphic;
-M2Err ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId);
-void ComponentGraphic_Term(ComponentGraphic* gfx);
-void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx);
-void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio);
-int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB);
+	void (*draw)(Graphic&);
 
-typedef struct _ComponentLight {
-	Component super;
+	Graphic() = default;
+	explicit Graphic(ID object_id);
+
+	static void default_draw(Graphic& gfx);
+	static void default_draw_healthbar(Graphic& gfx, float healthRatio);
+	static int ycomparator_cb(ID gfxIdA, ID gfxIdB);
+};
+
+struct Light : public Component {
 	float radius_m;
-	void (*draw)(struct _ComponentLight*);
-} ComponentLight;
-M2Err ComponentLight_Init(ComponentLight* lig, ID objectId);
-void ComponentLight_Term(ComponentLight* lig);
-void ComponentLight_DefaultDraw(ComponentLight* lig);
+	void (*draw)(Light&);
+
+	Light() = default;
+	explicit Light(ID object_id);
+
+	static void default_draw(Light& lig);
+};
 
 namespace m2 {
-    struct component_defense {
-        Component super;
-
+    struct component_defense : public Component {
         component_defense() = default;
-        explicit component_defense(ID obj_id);
+        explicit component_defense(ID object_id);
     };
 
-    struct component_offense {
-        Component super;
-
+    struct component_offense : public Component {
         component_offense() = default;
-        explicit component_offense(ID obj_id);
+        explicit component_offense(ID object_id);
     };
 }
 

@@ -5,8 +5,8 @@
 #include <game/component.hh>
 #include <game/ARPG_Cfg.hh>
 
-static void Bullet_prePhysics(ComponentMonitor* el) {
-	auto& obj = GAME.objects[el->super.objId];
+static void Bullet_prePhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();
 
@@ -15,13 +15,13 @@ static void Bullet_prePhysics(ComponentMonitor* el) {
 
     off.state.projectile.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 	if (off.state.projectile.ttl_s <= 0) {
-		Game_DeleteList_Add(el->super.objId);
+		Game_DeleteList_Add(mon.object_id);
 	}
 }
 
-static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
-	auto& obj = GAME.objects[phy->super.objId];
-	auto& other_obj = GAME.objects[other->super.objId];
+static void Bullet_onCollision(Physique& phy, Physique& other) {
+	auto& obj = GAME.objects[phy.object_id];
+	auto& other_obj = GAME.objects[other.object_id];
 	auto& off = GAME.offenses[obj.offense_id];
 	auto* def = GAME.defenses.get(other_obj.defense_id);
 	if (def) {
@@ -33,18 +33,18 @@ static void Bullet_onCollision(ComponentPhysique* phy, ComponentPhysique* other)
 		// Calculate damage
 		def->hp -= ACCURACY(off.state.projectile.cfg->damage, off.state.projectile.cfg->damageAccuracy);
 		if (def->hp <= 0.0001f && def->onDeath) {
-			LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.super.objId, M2_ID, ID, def->super.objId);
+			LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def->object_id);
 			def->onDeath(def);
 		} else {
-			LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.super.objId, M2_ID, ID, def->super.objId, M2_HP, Float32, def->hp);
-			auto direction = m2::vec2f{ phy->body->GetLinearVelocity() }.normalize();
+			LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def->object_id, M2_HP, Float32, def->hp);
+			auto direction = m2::vec2f{ phy.body->GetLinearVelocity() }.normalize();
 			auto force = direction * 5000.0f;
-			other->body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+			other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 			if (def->onHit) {
 				def->onHit(def);
 			}
 		}
-		Game_DeleteList_Add(phy->super.objId);
+		Game_DeleteList_Add(phy.object_id);
 	}
 }
 

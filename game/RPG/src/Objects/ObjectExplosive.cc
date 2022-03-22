@@ -18,8 +18,8 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::vec2f pos
 	);
 }
 
-static void ObjectExplosive_prePhysics(ComponentMonitor* el) {
-	auto& obj = GAME.objects[el->super.objId];
+static void ObjectExplosive_prePhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();
 
@@ -44,8 +44,8 @@ static void ObjectExplosive_prePhysics(ComponentMonitor* el) {
 	}
 }
 
-static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
-	auto& obj = GAME.objects[phy->super.objId];
+static void ObjectExplosive_onCollision(Physique& phy, Physique& other) {
+	auto& obj = GAME.objects[phy.object_id];
 	auto& off = obj.offense();
 
 	switch (off.state.explosive.explosiveStatus) {
@@ -55,7 +55,7 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
             off.state.explosive.explosiveStatus = EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP;
 			break;
 		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
-			auto& other_obj = GAME.objects[other->super.objId];
+			auto& other_obj = GAME.objects[other.object_id];
 			if (other_obj.defense_id) {
 				auto& def = GAME.defenses[other_obj.defense_id];
 				// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
@@ -69,14 +69,14 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 					def.hp -= damage;
 					if (def.hp <= 0.0001f && def.onDeath) {
 						// TODO fix XOK message
-						LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.super.objId, M2_ID, ID, def.super.objId);
+						LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def.object_id);
 						def.onDeath(&def);
 					} else {
-						LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.super.objId, M2_ID, ID, def.super.objId, M2_HP, Float32, def.hp);
+						LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def.object_id, M2_HP, Float32, def.hp);
 
-						m2::vec2f curr_direction = m2::vec2f{ phy->body->GetLinearVelocity() }.normalize();
+						m2::vec2f curr_direction = m2::vec2f{ phy.body->GetLinearVelocity() }.normalize();
 						m2::vec2f force = curr_direction * 5000.0f;
-						other->body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+						other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 						if (def.onHit) {
 							def.onHit(&def);
 						}
@@ -90,14 +90,14 @@ static void ObjectExplosive_onCollision(ComponentPhysique* phy, ComponentPhysiqu
 	}
 }
 
-static void ObjectExplosive_postPhysics(ComponentMonitor* el) {
-	auto& obj = GAME.objects[el->super.objId];
+static void ObjectExplosive_postPhysics(Monitor& mon) {
+	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();
 
 	switch (off.state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
-			Game_DeleteList_Add(el->super.objId);
+			Game_DeleteList_Add(mon.object_id);
 			break;
 		case EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
 			GAME.world->DestroyBody(phy.body);
