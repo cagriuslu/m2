@@ -5,10 +5,10 @@
 #include <stdexcept>
 
 namespace m2 {
-    struct error : public std::runtime_error {
+    struct Error : public std::runtime_error {
         M2Err code;
 
-        explicit error(M2Err code);
+        explicit Error(M2Err code);
     };
 }
 

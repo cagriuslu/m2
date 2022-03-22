@@ -12,7 +12,7 @@ void* AutomatonState_AutomatonAiChase_Idle(m2::Automaton* a, int sig);
 void* AutomatonState_AutomatonAiChase_Triggered(m2::Automaton* a, int sig);
 void* AutomatonState_AutomatonAiChase_GaveUp(m2::Automaton* a, int sig);
 
-game::AutomatonAiChase::AutomatonAiChase(Object& obj) : m2::Automaton(AutomatonState_AutomatonAiChase_Idle), obj(obj), phy(*GAME.physics.get(obj.physique)) {
+game::AutomatonAiChase::AutomatonAiChase(m2::object::Object& obj) : m2::Automaton(AutomatonState_AutomatonAiChase_Idle), obj(obj), phy(GAME.physics[obj.physique_id]) {
     signal(SIG_ENTER);
 }
 
@@ -20,16 +20,16 @@ void* AutomatonState_AutomatonAiChase_Idle(m2::Automaton* a, int sig) {
     auto* atm = dynamic_cast<game::AutomatonAiChase*>(a);
 
     AiState* aiState = &(AS_ENEMYDATA(atm->obj.data)->aiState);
-    Object* player = Game_FindObjectById(GAME.playerId);
+	auto& player = GAME.objects[GAME.playerId];
     switch (sig) {
         case SIG_ENTER:
             atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
             return nullptr;
         case SIG_ALARM:
             // Check if player is close
-            if (atm->obj.position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
+            if (atm->obj.position.distance_sq(player.position) < aiState->cfg->triggerDistanceSquared_m) {
                 // Check if path exists
-                if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player->position, aiState->reversedWaypointList) == M2OK) {
+                if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player.position, aiState->reversedWaypointList) == M2OK) {
                     return reinterpret_cast<void*>(AutomatonState_AutomatonAiChase_Triggered);
                 }
             }
@@ -43,7 +43,7 @@ void* AutomatonState_AutomatonAiChase_Idle(m2::Automaton* a, int sig) {
     }
 }
 
-void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
+void AiChase_AttackIfCloseEnough(m2::object::Object* obj, m2::object::Object* player) {
 	CharacterState* charState = &(AS_ENEMYDATA(obj->data)->characterState);
 	AiState* aiState = &(AS_ENEMYDATA(obj->data)->aiState);
 	M2ASSERT(player);
@@ -55,7 +55,7 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 				RangedWeaponState* weaponState = &charState->rangedWeaponState; M2ASSERT(weaponState->cfg);
 				// If the weapon cooled down
 				if (weaponState->cfg->cooldown_s <= weaponState->cooldownCounter_s) {
-					Object* projectile = &GAME.objects.alloc().first;
+					m2::object::Object* projectile = &GAME.objects.alloc().first;
 					ObjectProjectile_InitFromCfg(
 						projectile,
 						&weaponState->cfg->projectile,
@@ -72,7 +72,7 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 				MeleeWeaponState* weaponState = &charState->meleeWeaponState; M2ASSERT(weaponState->cfg);
 				// If the weapon cooled down
 				if (weaponState->cfg->cooldown_s <= weaponState->cooldownCounter_s) {
-					Object* melee = &GAME.objects.alloc().first;
+					m2::object::Object* melee = &GAME.objects.alloc().first;
 					ObjectMelee_InitFromCfg(
 						melee,
 						&weaponState->cfg->melee,
@@ -88,7 +88,7 @@ void AiChase_AttackIfCloseEnough(Object* obj, Object* player) {
 				ExplosiveWeaponState* weaponState = &charState->explosiveWeaponState; M2ASSERT(weaponState->cfg);
 				// If the weapon cooled down
 				if (weaponState->cfg->cooldown_s <= weaponState->cooldownCounter_s) {
-					Object* explosive = &GAME.objects.alloc().first;
+					m2::object::Object* explosive = &GAME.objects.alloc().first;
 					ObjectExplosive_InitFromCfg(
 						explosive,
 						&weaponState->cfg->explosive,
@@ -115,16 +115,16 @@ void* AutomatonState_AutomatonAiChase_Triggered(m2::Automaton* a, int sig) {
     auto* atm = dynamic_cast<game::AutomatonAiChase*>(a);
 
 	AiState* aiState = &(AS_ENEMYDATA(atm->obj.data)->aiState);
-	Object* player = Game_FindObjectById(GAME.playerId);
+	auto& player = GAME.objects[GAME.playerId];
 	switch (sig) {
 		case SIG_ENTER:
             atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
 			return nullptr;
 		case SIG_ALARM: {
 			// Check if player is still close
-			if (atm->obj.position.distance_sq(player->position) < aiState->cfg->giveUpDistanceSquared_m) {
+			if (atm->obj.position.distance_sq(player.position) < aiState->cfg->giveUpDistanceSquared_m) {
 				// Recalculate path to player
-				PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player->position, aiState->reversedWaypointList);
+				PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player.position, aiState->reversedWaypointList);
 			} else {
 				// Check if path to homePosition exists
 				if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, aiState->homePosition, aiState->reversedWaypointList) == M2OK) {
@@ -147,7 +147,7 @@ void* AutomatonState_AutomatonAiChase_Triggered(m2::Automaton* a, int sig) {
 					atm->phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 				}
 			}
-			AiChase_AttackIfCloseEnough(&atm->obj, player);
+			AiChase_AttackIfCloseEnough(&atm->obj, &player);
 			return nullptr;
 		default:
 			return nullptr;
@@ -158,7 +158,7 @@ void* AutomatonState_AutomatonAiChase_GaveUp(m2::Automaton* a, int sig) {
     auto* atm = dynamic_cast<game::AutomatonAiChase*>(a);
 
 	AiState* aiState = &(AS_ENEMYDATA(atm->obj.data)->aiState);
-	Object* player = Game_FindObjectById(GAME.playerId);
+	auto& player = GAME.objects[GAME.playerId];
 	switch (sig) {
 		case SIG_ENTER:
             atm->arm(ALARM_DURATION(aiState->cfg->recalculationPeriod_s));
@@ -167,9 +167,9 @@ void* AutomatonState_AutomatonAiChase_GaveUp(m2::Automaton* a, int sig) {
 			return nullptr;
 		case SIG_ALARM:
 			// Check if player is close
-			if (atm->obj.position.distance_sq(player->position) < aiState->cfg->triggerDistanceSquared_m) {
+			if (atm->obj.position.distance_sq(player.position) < aiState->cfg->triggerDistanceSquared_m) {
 				// Check if path to player exists
-				if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player->position, aiState->reversedWaypointList) == M2OK) {
+				if (PathfinderMap_FindPath(&GAME.pathfinderMap, atm->obj.position, player.position, aiState->reversedWaypointList) == M2OK) {
 					return reinterpret_cast<void*>(AutomatonState_AutomatonAiChase_Triggered);
 				}
 			} else {

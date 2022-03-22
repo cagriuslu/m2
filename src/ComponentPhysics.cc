@@ -21,8 +21,12 @@ void ComponentPhysique_Term(ComponentPhysique* phy) {
 void ComponentPhysique_ContactCB(b2Contact* contact) {
 	ID physique_id_a = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
 	ID physique_id_b = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
-	ComponentPhysique* phyA = GAME.physics.get(physique_id_a);
-	ComponentPhysique* phyB = GAME.physics.get(physique_id_b);
-	if (phyA->onCollision) { phyA->onCollision(phyA, phyB); }
-	if (phyB->onCollision) { phyB->onCollision(phyB, phyA); }
+	auto& phy_a = GAME.physics[physique_id_a];
+	auto& phy_b = GAME.physics[physique_id_b];
+	if (phy_a.onCollision) {
+		phy_a.onCollision(&phy_a, &phy_b);
+	}
+	if (phy_b.onCollision) {
+		phy_b.onCollision(&phy_b, &phy_a);
+	}
 }

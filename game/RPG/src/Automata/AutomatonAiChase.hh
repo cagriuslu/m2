@@ -6,10 +6,10 @@
 
 namespace game {
     struct AutomatonAiChase : public m2::Automaton {
-        Object& obj;
+		m2::object::Object& obj;
         ComponentPhysique& phy;
 
-        AutomatonAiChase(Object&);
+        AutomatonAiChase(m2::object::Object&);
     };
 }
 

@@ -8,66 +8,66 @@
 #define SWING_SPEED (15.0f)
 
 static void Sword_prePhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId);
-	game::component_offense* offense = Object_GetOffense(obj);
-    offense->state.melee.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
-	if (offense->state.melee.ttl_s <= 0) {
+	auto& obj = GAME.objects[el->super.objId];
+	auto& off = obj.offense();
+
+	off.state.melee.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
+	if (off.state.melee.ttl_s <= 0) {
 		Game_DeleteList_Add(el->super.objId);
 	}
 }
 
 static void Sword_postPhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId);
-	ComponentPhysique* phy = Object_GetPhysique(obj);
-	ComponentGraphic* gfx = Object_GetGraphic(obj);
-	game::component_offense* off = Object_GetOffense(obj);
+	auto& obj = GAME.objects[el->super.objId];
+	auto& phy = obj.physique();
+	float angle = phy.body->GetAngle();
+	auto& gfx = obj.graphic();
+	auto& off = obj.offense();
 
-	Object* originator = GAME.objects.get(off->originator);
-	float angle = phy->body->GetAngle();
-	// Make sure originator is still alive
+	m2::object::Object* originator = GAME.objects.get(off.originator);
 	if (originator) {
-		phy->body->SetTransform(static_cast<b2Vec2>(originator->position), angle);
+		// Make sure originator is still alive
+		phy.body->SetTransform(static_cast<b2Vec2>(originator->position), angle);
 	}
-	
-	gfx->angle = angle;
+	gfx.angle = angle;
 }
 
 static void Sword_onCollision(ComponentPhysique* phy, ComponentPhysique* other) {
 	LOG_DEBUG("Collision");
-	Object* obj = GAME.objects.get(phy->super.objId);
-	Object* otherObj = GAME.objects.get(other->super.objId);
-    game::component_offense* off = GAME.offenses.get(obj->offense);
-    game::component_defense* def = GAME.defenses.get(otherObj->defense);
+	auto& obj = GAME.objects[phy->super.objId];
+	auto& other_obj = GAME.objects[other->super.objId];
+	auto& off = GAME.offenses[obj.offense_id];
+	auto& def = GAME.defenses[other_obj.defense_id];
 
 	// Calculate damage
-    def->hp -= off->state.melee.cfg->damage;
-	if (def->hp <= 0.0001f && def->onDeath) {
-		LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off->super.objId, M2_ID, ID, def->super.objId);
-        def->onDeath(def);
+    def.hp -= off.state.melee.cfg->damage;
+	if (def.hp <= 0.0001f && def.onDeath) {
+		LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.super.objId, M2_ID, ID, def.super.objId);
+        def.onDeath(&def);
 	} else {
-		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off->super.objId, M2_ID, ID, def->super.objId, M2_HP, Float32, def->hp);
-		auto direction = (otherObj->position - obj->position).normalize();
+		LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.super.objId, M2_ID, ID, def.super.objId, M2_HP, Float32, def.hp);
+		auto direction = (other_obj.position - obj.position).normalize();
 		auto force = direction * 15000.0f;
 		other->body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
-		if (def->onHit) {
-            def->onHit(def);
+		if (def.onHit) {
+            def.onHit(&def);
 		}
 	}
 }
 
-int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, m2::vec2f position, m2::vec2f direction) {
-	M2ERR_REFLECT(Object_Init(obj, position));
+int ObjectMelee_InitFromCfg(m2::object::Object* obj, const CfgMelee *cfg, ID originatorId, m2::vec2f position, m2::vec2f direction) {
+	*obj = m2::object::Object{position};
 
 	const float theta = direction.angle_rads(); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
 
-	ComponentMonitor* el = Object_AddMonitor(obj);
-	el->prePhysics = Sword_prePhysics;
-	el->postPhysics = Sword_postPhysics;
+	auto& mon = obj->add_monitor();
+	mon.prePhysics = Sword_prePhysics;
+	mon.postPhysics = Sword_postPhysics;
 
-	ComponentPhysique* phy = Object_AddPhysique(obj);
-	phy->body = Box2DUtils_CreateBody(
-		GAME.physics.get_id(phy),
+	auto& phy = obj->add_physique();
+	phy.body = Box2DUtils_CreateBody(
+			obj->physique_id,
 		false, // isDisk
 		true, // isDynamic
 		position,
@@ -84,19 +84,19 @@ int ObjectMelee_InitFromCfg(Object* obj, const CfgMelee *cfg, ID originatorId, m
 		0.0f, // linearDamping
 		false // fixedRotation
 	);
-	phy->body->SetTransform(static_cast<b2Vec2>(position), startAngle);
-	phy->body->SetAngularVelocity(-SWING_SPEED);
-	phy->onCollision = Sword_onCollision;
+	phy.body->SetTransform(static_cast<b2Vec2>(position), startAngle);
+	phy.body->SetAngularVelocity(-SWING_SPEED);
+	phy.onCollision = Sword_onCollision;
 
-	ComponentGraphic* gfx = Object_AddGraphic(obj);
-	gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndex].textureRect;
-	gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndex].objCenter_px;
-	gfx->angle = phy->body->GetAngle();
+	auto& gfx = obj->add_graphic();
+	gfx.textureRect = ARPG_CFG_SPRITES[cfg->spriteIndex].textureRect;
+	gfx.center_px = ARPG_CFG_SPRITES[cfg->spriteIndex].objCenter_px;
+	gfx.angle = phy.body->GetAngle();
 
-	game::component_offense* off = Object_AddOffense(obj);
-    off->originator = originatorId;
-    off->state.melee.cfg = cfg;
-    off->state.melee.ttl_s = cfg->ttl_s;
+	auto& off = obj->add_offense();
+    off.originator = originatorId;
+    off.state.melee.cfg = cfg;
+    off.state.melee.ttl_s = cfg->ttl_s;
 	
 	return 0;
 }

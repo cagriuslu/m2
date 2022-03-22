@@ -7,20 +7,16 @@
 M2Err UIElementHP_UpdateDynamicText(UIElementState* state) {
 	if (state->textTexture) {
 		SDL_DestroyTexture(state->textTexture);
-		state->textTexture = NULL;
+		state->textTexture = nullptr;
 	}
 	
 	// Lookup player's health
-	ID playerId = GAME.playerId;
-	Object* playerObj = GAME.objects.get(playerId);
-	if (playerObj) {
-		game::component_defense* def = GAME.defenses.get(playerObj->defense);
-		if (def) {
-			char buffer[64] = { 0 };
-			snprintf(buffer, sizeof(buffer), "%d", (int)roundf(def->hp));
-			state->textTexture = UI_GenerateFontTexture(buffer);
-		}
+	auto* player = GAME.objects.get(GAME.playerId);
+	if (player) {
+		auto& def = GAME.defenses[player->defense_id];
+		char buffer[64] = { 0 };
+		snprintf(buffer, sizeof(buffer), "%d", (int)roundf(def.hp));
+		state->textTexture = UI_GenerateFontTexture(buffer);
 	}
-	
 	return M2OK;
 }

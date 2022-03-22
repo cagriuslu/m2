@@ -3,18 +3,18 @@
 #include "m2/Def.hh"
 
 void Pointer_preGraphics(ComponentMonitor* mon) {
-    auto* obj = GAME.objects.get(mon->super.objId);
-	obj->position = GAME.mousePositionInWorld_m;
+	auto& obj = GAME.objects[mon->super.objId];
+	obj.position = GAME.mousePositionInWorld_m;
 }
 
-int ObjectPointer_Init(Object* obj) {
-	M2ERR_REFLECT(Object_Init(obj, {}));
+int ObjectPointer_Init(m2::object::Object* obj) {
+	*obj = m2::object::Object{m2::vec2f{}};
 
-	ComponentMonitor* mon = Object_AddMonitor(obj);
-	mon->preGraphics = Pointer_preGraphics;
+	auto& mon = obj->add_monitor();
+	mon.preGraphics = Pointer_preGraphics;
 
-	ComponentLight* lig = Object_AddLight(obj);
-	lig->radius_m = 3.0f;
+	auto& light = obj->add_light();
+	light.radius_m = 3.0f;
 
 	return M2OK;
 }

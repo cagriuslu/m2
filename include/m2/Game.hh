@@ -56,7 +56,7 @@ struct Game {
 	// iterate over that pool.
 	// Another reason to put a component inside a Pool: if the type of object that is using that component is
 	// created/destroyed very rapidly.
-    m2::pool<Object> objects;
+    m2::pool<m2::object::Object> objects;
 	InsertionList drawList;
     m2::pool<ComponentMonitor> monitors;
 	m2::pool<ComponentPhysique> physics;
@@ -91,7 +91,6 @@ void Game_UpdateMousePosition();
 
 M2Err Game_Level_Load(const CfgLevel *cfg);
 
-Object* Game_FindObjectById(ID id);
 void Game_DeleteList_Add(ID id);
 void Game_DeleteList_DeleteAll();
 

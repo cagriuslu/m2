@@ -17,7 +17,7 @@ void ComponentLight_Term(ComponentLight* lig) {
 
 m2::vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::vec2f objPosition) {
 	static ID cameraId = 0;
-	static Object* cameraObj = NULL;
+	static m2::object::Object* cameraObj = NULL;
 	if (GAME.cameraId && cameraId != GAME.cameraId) {
 		cameraId = GAME.cameraId;
 		cameraObj = GAME.objects.get(GAME.cameraId);
@@ -30,9 +30,9 @@ m2::vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::vec2f objPosition) {
 }
 
 void ComponentLight_DefaultDraw(ComponentLight* lig) {
-	Object* obj = GAME.objects.get(lig->super.objId);
+	auto& obj = GAME.objects[lig->super.objId];
 
-	m2::vec2i obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj->position);
+	m2::vec2i obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj.position);
 	// Screen origin is top-left corner
 	m2::vec2i obj_origin_wrt_screen_origin_px = m2::vec2i{ GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_origin_wrt_screen_center_px;
 	SDL_Rect dstrect = SDL_Rect{

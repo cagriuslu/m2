@@ -259,7 +259,7 @@ int main(int argc, char **argv) {
             // HERE is the problem
 			GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
             for (auto physique_it : GAME.physics) {
-				GAME.objects.get(physique_it.first->super.objId)->position = m2::vec2f{ physique_it.first->body->GetPosition() };
+				GAME.objects[physique_it.first->super.objId].position = m2::vec2f{physique_it.first->body->GetPosition()};
             } // TODO Easy to parallelize
 			Game_DeleteList_DeleteAll();
 
@@ -314,9 +314,9 @@ int main(int argc, char **argv) {
 		prevDrawTicks += GAME.deltaTicks_ms;
 		size_t insertionListSize = InsertionList_Length(&GAME.drawList);
 		for (size_t i = 0; i < insertionListSize; i++) {
-            auto* gfx = GAME.graphics.get(InsertionList_Get(&GAME.drawList, i));
-			if (gfx && gfx->draw) {
-                gfx->draw(gfx);
+			auto& gfx = GAME.graphics[InsertionList_Get(&GAME.drawList, i)];
+			if (gfx.draw) {
+                gfx.draw(&gfx);
             }
 		} // TODO Hard to parallelize
 

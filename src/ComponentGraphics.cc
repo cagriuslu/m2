@@ -4,14 +4,15 @@
 #include "m2/Def.hh"
 
 m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::vec2f objPosition, m2::vec2f objGfxCenterPx) {
-	static ID cameraId = 0;
-	static Object* cameraObj = NULL;
-	if (GAME.cameraId && cameraId != GAME.cameraId) {
-		cameraId = GAME.cameraId;
-		cameraObj = GAME.objects.get(GAME.cameraId);
+	static auto camera_id = GAME.cameraId;
+	static auto* camera = GAME.objects.get(GAME.cameraId);
+	if (camera_id != GAME.cameraId) {
+		// Camera changed
+		camera_id = GAME.cameraId;
+		camera = GAME.objects.get(GAME.cameraId);
 	}
 
-	m2::vec2f cameraPosition = cameraObj ? cameraObj->position : m2::vec2f{}; // cameraObj is NULL while level is loading
+	m2::vec2f cameraPosition = camera->position;
 	m2::vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
 	// Screen center is the middle of the window
 	m2::vec2i obj_origin_wrt_screen_center_px = m2::vec2i{obj_origin_wrt_camera_obj_m * GAME.pixelsPerMeter};
@@ -23,9 +24,9 @@ m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::vec2f objPositio
 }
 
 void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
-	Object* obj = GAME.objects.get(gfx->super.objId);
+	auto& obj = GAME.objects[gfx->super.objId];
 
-	m2::vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj->position, gfx->center_px);
+	m2::vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj.position, gfx->center_px);
 	// Screen origin is top-left corner
 	m2::vec2i obj_gfx_origin_wrt_screen_origin_px = m2::vec2i{ GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center_px;
 	SDL_Rect dstrect = SDL_Rect{
@@ -42,10 +43,10 @@ void ComponentGraphic_DefaultDraw(ComponentGraphic* gfx) {
 }
 
 void ComponentGraphic_DefaultDrawHealthBar(ComponentGraphic* gfx, float healthRatio) {
-	Object* obj = Game_FindObjectById(gfx->super.objId); M2ASSERT(obj);
-	Object* camera = GAME.objects.get(GAME.cameraId);
+	auto& obj = GAME.objects[gfx->super.objId];
+	auto& cam = GAME.objects[GAME.cameraId];
 
-	m2::vec2f obj_origin_wrt_camera_obj = obj->position - camera->position;
+	m2::vec2f obj_origin_wrt_camera_obj = obj.position - cam.position;
 	m2::vec2i obj_origin_wrt_screen_center = m2::vec2i(obj_origin_wrt_camera_obj * GAME.pixelsPerMeter);
 	m2::vec2i obj_gfx_origin_wrt_screen_center = obj_origin_wrt_screen_center + m2::vec2i{
 		-(int)roundf(gfx->center_px.x * GAME.scale),
@@ -85,6 +86,7 @@ M2Err ComponentGraphic_Init(ComponentGraphic* gfx, ID objectId) {
 	M2ERR_REFLECT(Component_Init((Component*)gfx, objectId));
 	gfx->texture = GAME.sdlTexture;
 	gfx->draw = ComponentGraphic_DefaultDraw;
+
 	return M2OK;
 }
 
@@ -94,13 +96,11 @@ void ComponentGraphic_Term(ComponentGraphic* gfx) {
 }
 
 int ComponentGraphic_YComparatorCB(ID gfxIdA, ID gfxIdB) {
-	ComponentGraphic* gfxA = GAME.graphics.get(gfxIdA);
-	ComponentGraphic* gfxB = GAME.graphics.get(gfxIdB);
-
-	Object* a = GAME.objects.get(gfxA->super.objId);
-	Object* b = GAME.objects.get(gfxB->super.objId);
-
-	float diff = b->position.y - a->position.y;
+	auto& gfx_a = GAME.graphics[gfxIdA];
+	auto& gfx_b = GAME.graphics[gfxIdB];
+	auto& obj_a = GAME.objects[gfx_a.super.objId];
+	auto& obj_b = GAME.objects[gfx_b.super.objId];
+	float diff = obj_b.position.y - obj_a.position.y;
 	if (0 < diff) {
 		return 1;
 	} else if (diff < 0) {

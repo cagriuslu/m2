@@ -83,8 +83,8 @@ void Game_UpdateWindowDimensions(int width, int height) {
 }
 
 void Game_UpdateMousePosition() {
-	Object* camera = GAME.objects.get(GAME.cameraId);
-	m2::vec2f cameraPosition = camera->position;
+	auto& cam = GAME.objects[GAME.cameraId];
+	m2::vec2f cameraPosition = cam.position;
 
 	m2::vec2i pointerPosition = GAME.events.mousePosition;
 	m2::vec2i pointerPositionWRTScreenCenter_px = m2::vec2i{pointerPosition.x - (GAME.windowRect.w / 2), pointerPosition.y - (GAME.windowRect.h / 2) };
@@ -93,15 +93,15 @@ void Game_UpdateMousePosition() {
 }
 
 static int Game_Level_Init() {
-    GAME.objects.free_all();
+	GAME.objects.clear();
 	M2ERR_REFLECT(InsertionList_Init(&GAME.drawList, UINT16_MAX + 1, ComponentGraphic_YComparatorCB));
-    GAME.monitors.free_all();
-	GAME.physics.free_all();
-	GAME.graphics.free_all();
-	GAME.terrainGraphics.free_all();
-	GAME.lights.free_all();
-    GAME.defenses.free_all();
-	GAME.offenses.free_all();
+	GAME.monitors.clear();
+	GAME.physics.clear();
+	GAME.graphics.clear();
+	GAME.terrainGraphics.clear();
+	GAME.lights.clear();
+	GAME.defenses.clear();
+	GAME.offenses.clear();
 	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
 		LOG_FATAL("Box2D version mismatch");
 		abort();
@@ -120,15 +120,15 @@ static void Game_Level_Term() {
 	delete GAME.contactListener;
 	delete GAME.world;
 	GAME.delete_list.clear();
-    GAME.offenses.free_all();
-    GAME.defenses.free_all();
-    GAME.lights.free_all();
-    GAME.terrainGraphics.free_all();
-    GAME.graphics.free_all();
-    GAME.physics.free_all();
-    GAME.monitors.free_all();
+	GAME.offenses.clear();
+	GAME.defenses.clear();
+	GAME.lights.clear();
+	GAME.terrainGraphics.clear();
+	GAME.graphics.clear();
+	GAME.physics.clear();
+	GAME.monitors.clear();
 	InsertionList_Term(&GAME.drawList);
-    GAME.objects.free_all();
+	GAME.objects.clear();
 	GAME.levelLoaded = false;
 }
 
@@ -172,18 +172,12 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 	return M2OK;
 }
 
-Object* Game_FindObjectById(ID id) {
-    return GAME.objects.get(id);
-}
-
 void Game_DeleteList_Add(ID id) {
 	GAME.delete_list.emplace_back(id);
 }
 
 void Game_DeleteList_DeleteAll() {
 	for (auto id : GAME.delete_list) {
-        auto obj = GAME.objects.get(id);
-		Object_Term(obj);
         GAME.objects.free(id);
 	}
 	GAME.delete_list.clear();

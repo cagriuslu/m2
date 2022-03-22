@@ -1,7 +1,7 @@
 #ifndef M2_POOL_HH
 #define M2_POOL_HH
 
-#include <m2/error.hh>
+#include <m2/Error.hh>
 #include <m2/Def.hh>
 #include <array>
 #include <optional>
@@ -96,10 +96,11 @@ namespace m2 {
                 ID id = shifted_pool_id | static_cast<ID>(item.id);
                 return {item.data, id};
             } else {
-                throw m2::error(M2ERR_LIMIT_EXCEEDED);
+                throw m2::Error(M2ERR_LIMIT_EXCEEDED);
             }
         }
-        void free(ID id) {
+
+		void free(ID id) {
             T* data = get(id);
             if (data) {
                 auto* byte_ptr = reinterpret_cast<uint8_t*>(data);
@@ -136,7 +137,7 @@ namespace m2 {
         void free(const T* data) {
             free(get_id(data));
         }
-        void free_all() {
+        void clear() {
             while (size) {
                 auto it = begin();
                 free(it.id);
@@ -150,6 +151,14 @@ namespace m2 {
             return get_id(data);
         }
 
+		T& operator[](ID id) {
+			T* t = get(id);
+			if (t) {
+				return *t;
+			} else {
+				throw m2::Error(M2ERR_OUT_OF_BOUNDS);
+			}
+		}
         T* get(ID id) {
             if (shifted_pool_id == (id & 0xFFFF000000000000ull)) {
                 const auto candidate_idx = static_cast<uint16_t>(id & 0xFFFFull);

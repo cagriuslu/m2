@@ -7,20 +7,20 @@
 #include <game/ARPG_Cfg.hh>
 #include <game/component.hh>
 
-game::object::ObjectDataEnemy::ObjectDataEnemy(Object& obj) : automata_ai_chase(obj) {}
+game::object::ObjectDataEnemy::ObjectDataEnemy(m2::object::Object& obj) : automata_ai_chase(obj) {}
 
 void ObjectEnemy_prePhysics(ComponentMonitor* el) {
-	Object* obj = Game_FindObjectById(el->super.objId);
-    auto* data = dynamic_cast<game::object::ObjectDataEnemy*>(obj->data_new.get());
+	auto& obj = GAME.objects[el->super.objId];
+    auto* data = dynamic_cast<game::object::ObjectDataEnemy*>(obj.data_new.get());
 
-	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj->data)->characterState), GAME.deltaTime_s);
+	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj.data)->characterState), GAME.deltaTime_s);
     data->automata_ai_chase.time(GAME.deltaTime_s);
     data->automata_ai_chase.signal(SIG_AI_PREPHYSICS);
 }
 
 void ObjectEnemy_onHit(game::component_defense* def) {
-	Object* obj = GAME.objects.get(def->super.objId);
-	AS_ENEMYDATA(obj->data)->onHitColorModTtl = 0.10f;
+	auto& obj = GAME.objects[def->super.objId];
+	AS_ENEMYDATA(obj.data)->onHitColorModTtl = 0.10f;
 }
 
 void ObjectEnemy_onDeath(game::component_defense* def) {
@@ -28,60 +28,60 @@ void ObjectEnemy_onDeath(game::component_defense* def) {
 }
 
 static void ObjectEnemy_postPhysics(ComponentMonitor* monitor) {
-	Object* obj = GAME.objects.get(monitor->super.objId);
-	ComponentPhysique* phy = GAME.physics.get(obj->physique);
+	auto& obj = GAME.objects[monitor->super.objId];
+	auto& phy = GAME.physics[obj.physique_id];
 	// We must call time before other signals
-	Automaton_ProcessTime(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), GAME.deltaTicks_ms / 1000.0f);
-	m2::vec2f velocity = m2::vec2f{ phy->body->GetLinearVelocity() };
+	Automaton_ProcessTime(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), GAME.deltaTicks_ms / 1000.0f);
+	m2::vec2f velocity = m2::vec2f{ phy.body->GetLinearVelocity() };
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-		Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), SIG_CHARANIM_STOP);
+		Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_STOP);
 	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
 		if (0 < velocity.y) {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), SIG_CHARANIM_WALKDOWN);
+			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKDOWN);
 		} else {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), SIG_CHARANIM_WALKUP);
+			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKUP);
 		}
 	} else {
 		if (0 < velocity.x) {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), SIG_CHARANIM_WALKRIGHT);
+			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKRIGHT);
 		} else {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), SIG_CHARANIM_WALKLEFT);
+			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKLEFT);
 		}
 	}
 }
 
 void ObjectEnemy_Draw(ComponentGraphic* gfx) {
-	Object* obj = Game_FindObjectById(gfx->super.objId); M2ASSERT(obj);
-	if (0.0f < AS_ENEMYDATA(obj->data)->onHitColorModTtl) {
+	auto& obj = GAME.objects[gfx->super.objId];
+	if (0.0f < AS_ENEMYDATA(obj.data)->onHitColorModTtl) {
 		SDL_Texture *defaultTexture = gfx->texture;
 		gfx->texture = GAME.sdlTextureMask;
 		ComponentGraphic_DefaultDraw(gfx);
 		gfx->texture = defaultTexture;
-		AS_ENEMYDATA(obj->data)->onHitColorModTtl -= GAME.deltaTicks_ms / 1000.0f;
+		AS_ENEMYDATA(obj.data)->onHitColorModTtl -= GAME.deltaTicks_ms / 1000.0f;
 	} else {
 		ComponentGraphic_DefaultDraw(gfx);
 	}
-	game::component_defense* defense = Object_GetDefense(obj); M2ASSERT(defense);
-	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) defense->hp / defense->maxHp);
+	auto& def = obj.defense();
+	ComponentGraphic_DefaultDrawHealthBar(gfx, (float) def.hp / def.maxHp);
 }
 
-int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f position) {
-	M2ERR_REFLECT(Object_Init(obj, position));
+int ObjectEnemy_InitFromCfg(m2::object::Object* obj, const CfgCharacter *cfg, m2::vec2f position) {
+	*obj = m2::object::Object{position};
     obj->data = new EnemyData();
 	M2ERR_REFLECT(CharacterState_Init(&(AS_ENEMYDATA(obj->data)->characterState), cfg));
 
-	ComponentGraphic* gfx = Object_AddGraphic(obj);
-	gfx->textureRect = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].textureRect;
-	gfx->center_px = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].objCenter_px;
-	gfx->draw = ObjectEnemy_Draw;
+	auto& gfx = obj->add_graphic();
+	gfx.textureRect = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].textureRect;
+	gfx.center_px = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].objCenter_px;
+	gfx.draw = ObjectEnemy_Draw;
 
-	ComponentMonitor* el = Object_AddMonitor(obj);
-	el->prePhysics = ObjectEnemy_prePhysics;
-	el->postPhysics = ObjectEnemy_postPhysics;
+	auto& mon = obj->add_monitor();
+	mon.prePhysics = ObjectEnemy_prePhysics;
+	mon.postPhysics = ObjectEnemy_postPhysics;
 
-	ComponentPhysique* phy = Object_AddPhysique(obj);
-	phy->body = Box2DUtils_CreateDynamicDisk(
-		GAME.physics.get_id(phy),
+	auto& phy = obj->add_physique();
+	phy.body = Box2DUtils_CreateDynamicDisk(
+			obj->physique_id,
 		position,
 		true, // allowSleep
 		CATEGORY_ENEMY,
@@ -90,16 +90,16 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f posi
 		cfg->linearDamping
 	);
 
-	game::component_defense* defense = Object_AddDefense(obj);
-    defense->hp = 100;
-    defense->maxHp = 100;
-    defense->onHit = ObjectEnemy_onHit;
-    defense->onDeath = ObjectEnemy_onDeath;
+	auto& def = obj->add_defense();
+	def.hp = 100;
+	def.maxHp = 100;
+	def.onHit = ObjectEnemy_onHit;
+	def.onDeath = ObjectEnemy_onDeath;
 
 	// Initialise character state after components
 	// Character states may access components during initialisation
 
-	AutomatonCharAnimation_Init(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), cfg, gfx);
+	AutomatonCharAnimation_Init(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), cfg, &gfx);
 
 	if (cfg->ai) {
 		AiState_Init(&(AS_ENEMYDATA(obj->data)->aiState), cfg->ai, position);
@@ -108,10 +108,10 @@ int ObjectEnemy_InitFromCfg(Object* obj, const CfgCharacter *cfg, m2::vec2f posi
 				// No need, cleanup around here
 				break;
 			case CFG_AI_BEHAVIOR_KEEP_DISTANCE:
-				M2ERR_REFLECT(AutomatonAiKeepDistance_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, phy));
+				M2ERR_REFLECT(AutomatonAiKeepDistance_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, &phy));
 				break;
 			case CFG_AI_BEHAVIOR_HIT_N_RUN:
-				M2ERR_REFLECT(AutomatonAiHitNRun_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, phy));
+				M2ERR_REFLECT(AutomatonAiHitNRun_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, &phy));
 				break;
 			default:
 				break;

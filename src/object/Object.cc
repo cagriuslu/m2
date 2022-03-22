@@ -1,136 +1,169 @@
 #include <m2/object/Object.hh>
 #include "m2/Game.hh"
 
-m2::object::ObjectData::~ObjectData() {}
+m2::object::Object::Object(const m2::vec2f &position) :
+		position(position),
+		monitor_id(0),
+		physique_id(0),
+		graphic_id(0),
+		terrain_graphic_id(0),
+		light_id(0),
+		defense_id(0),
+		offense_id(0),
+		data(nullptr) {}
 
-M2Err Object_Init(Object* obj, m2::vec2f position) {
-	memset(obj, 0, sizeof(Object));
-	obj->position = position;
-	return M2OK;
+m2::object::Object::Object(Object&& other) noexcept :
+		position(other.position),
+		monitor_id(other.monitor_id),
+		physique_id(other.physique_id),
+		graphic_id(other.graphic_id),
+		terrain_graphic_id(other.terrain_graphic_id),
+		light_id(other.light_id),
+		defense_id(other.defense_id),
+		offense_id(other.offense_id),
+		data(other.data),
+		data_new(std::move(other.data_new)) {
+	other.monitor_id = 0;
+	other.physique_id = 0;
+	other.graphic_id = 0;
+	other.terrain_graphic_id = 0;
+	other.light_id = 0;
+	other.defense_id = 0;
+	other.offense_id = 0;
+	other.data = nullptr;
+}
+m2::object::Object& m2::object::Object::operator=(Object&& other) noexcept {
+	std::swap(position, other.position);
+	std::swap(monitor_id, other.monitor_id);
+	std::swap(physique_id, other.physique_id);
+	std::swap(graphic_id, other.graphic_id);
+	std::swap(terrain_graphic_id, other.terrain_graphic_id);
+	std::swap(light_id, other.light_id);
+	std::swap(defense_id, other.defense_id);
+	std::swap(offense_id, other.offense_id);
+	std::swap(data, other.data);
+	std::swap(data_new, other.data_new);
+	return *this;
 }
 
-ComponentMonitor* Object_GetMonitor(Object* obj) {
-	return GAME.monitors.get(obj->monitor);
-}
-
-ComponentPhysique* Object_GetPhysique(Object* obj) {
-	return GAME.physics.get(obj->physique);
-}
-
-ComponentGraphic* Object_GetGraphic(Object* obj) {
-	return GAME.graphics.get(obj->graphic);
-}
-
-ComponentGraphic* Object_GetTerrainGraphic(Object* obj) {
-	return GAME.terrainGraphics.get(obj->terrainGraphic);
-}
-
-ComponentLight* Object_GetLight(Object* obj) {
-	return GAME.lights.get(obj->light);
-}
-
-game::component_defense* Object_GetDefense(Object* obj) {
-	return GAME.defenses.get(obj->defense);
-}
-
-game::component_offense* Object_GetOffense(Object* obj) {
-	return GAME.offenses.get(obj->offense);
-}
-
-ComponentMonitor* Object_AddMonitor(Object* obj) {
-	ID objectId = GAME.objects.get_id(obj);
-
-    auto monitor_pair = GAME.monitors.alloc();
-    obj->monitor = monitor_pair.second;
-	ComponentMonitor_Init(&monitor_pair.first, objectId);
-	return &monitor_pair.first;
-}
-
-ComponentPhysique* Object_AddPhysique(Object* obj) {
-	ID objectId = GAME.objects.get_id(obj);
-
-    auto physique_pair = GAME.physics.alloc();
-    obj->physique = physique_pair.second;
-	ComponentPhysique_Init(&physique_pair.first, objectId);
-	return &physique_pair.first;
-}
-
-ComponentGraphic* Object_AddGraphic(Object* obj) {
-	ID objectId = GAME.objects.get_id(obj);
-
-    auto graphic_pair = GAME.graphics.alloc();
-    obj->graphic = graphic_pair.second;
-	ComponentGraphic_Init(&graphic_pair.first, objectId);
-	InsertionList_Insert(&GAME.drawList, obj->graphic);
-	return &graphic_pair.first;
-}
-
-ComponentGraphic* Object_AddTerrainGraphic(Object* obj) {
-	ID objectId = GAME.objects.get_id(obj);
-
-    auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
-    obj->terrainGraphic = terrain_graphic_pair.second;
-	ComponentGraphic_Init(&terrain_graphic_pair.first, objectId);
-	return &terrain_graphic_pair.first;
-}
-
-ComponentLight* Object_AddLight(Object* obj) {
-	ID objectId = GAME.objects.get_id(obj);
-
-    auto light_pair = GAME.lights.alloc();
-    obj->light = light_pair.second;
-	ComponentLight_Init(&light_pair.first, objectId);
-	return &light_pair.first;
-}
-
-game::component_defense* Object_AddDefense(Object* obj) {
-	ID objectId = GAME.objects.get_id(obj);
-
-    auto defense_pair = GAME.defenses.alloc();
-    obj->defense = defense_pair.second;
-	defense_pair.first = game::component_defense(objectId);
-	return &defense_pair.first;
-}
-
-game::component_offense* Object_AddOffense(Object* obj) {
-	ID objectId = GAME.objects.get_id(obj);
-
-    auto offense_pair = GAME.offenses.alloc();
-    obj->offense = offense_pair.second;
-    offense_pair.first = game::component_offense(objectId);
-	return &offense_pair.first;
-}
-
-void Object_Term(Object* obj) {
-	if (obj->monitor) {
-        ComponentMonitor *monitor = GAME.monitors.get(obj->monitor);
-        ComponentMonitor_Term(monitor);
-        GAME.monitors.free(obj->monitor);
+m2::object::Object::~Object() {
+	if (monitor_id) {
+		ComponentMonitor *monitor = GAME.monitors.get(monitor_id);
+		ComponentMonitor_Term(monitor);
+		GAME.monitors.free(monitor_id);
 	}
-	if (obj->physique) {
-        ComponentPhysique *physique = GAME.physics.get(obj->physique);
-        ComponentPhysique_Term(physique);
-        GAME.physics.free(obj->physique);
+	if (physique_id) {
+		ComponentPhysique *physique = GAME.physics.get(physique_id);
+		ComponentPhysique_Term(physique);
+		GAME.physics.free(physique_id);
 	}
-	if (obj->graphic) {
-		InsertionList_Remove(&GAME.drawList, obj->graphic);
-        ComponentGraphic *graphic = GAME.graphics.get(obj->graphic);
-        ComponentGraphic_Term(graphic);
-        GAME.graphics.free(obj->graphic);
+	if (graphic_id) {
+		InsertionList_Remove(&GAME.drawList, graphic_id);
+		ComponentGraphic *graphic = GAME.graphics.get(graphic_id);
+		ComponentGraphic_Term(graphic);
+		GAME.graphics.free(graphic_id);
 	}
-	if (obj->terrainGraphic) {
-        auto* gfx = GAME.terrainGraphics.get(obj->terrainGraphic);
-        ComponentGraphic_Term(gfx);
-        GAME.terrainGraphics.free(obj->terrainGraphic);
+	if (terrain_graphic_id) {
+		auto* gfx = GAME.terrainGraphics.get(terrain_graphic_id);
+		ComponentGraphic_Term(gfx);
+		GAME.terrainGraphics.free(terrain_graphic_id);
 	}
-	if (obj->defense) {
-        GAME.defenses.free(obj->defense);
+	if (defense_id) {
+		GAME.defenses.free(defense_id);
 	}
-	if (obj->offense) {
-        GAME.offenses.free(obj->offense);
+	if (offense_id) {
+		GAME.offenses.free(offense_id);
 	}
-	if (obj->data) {
-		free(obj->data);
+	if (data) {
+		free(data);
 	}
-	memset(obj, 0, sizeof(Object));
+}
+
+ComponentMonitor& m2::object::Object::monitor() const {
+	return GAME.monitors[monitor_id];
+}
+ComponentPhysique& m2::object::Object::physique() const {
+	return GAME.physics[physique_id];
+}
+ComponentGraphic& m2::object::Object::graphic() const {
+	return GAME.graphics[graphic_id];
+}
+ComponentGraphic& m2::object::Object::terrain_graphic() const {
+	return GAME.terrainGraphics[terrain_graphic_id];
+}
+ComponentLight& m2::object::Object::light() const {
+	return GAME.lights[light_id];
+}
+game::component_defense& m2::object::Object::defense() const {
+	return GAME.defenses[defense_id];
+}
+game::component_offense& m2::object::Object::offense() const {
+	return GAME.offenses[offense_id];
+}
+
+ComponentMonitor* m2::object::Object::get_monitor() const {
+	return GAME.monitors.get(monitor_id);
+}
+ComponentPhysique* m2::object::Object::get_physique() const {
+	return GAME.physics.get(physique_id);
+}
+ComponentGraphic* m2::object::Object::get_graphic() const {
+	return GAME.graphics.get(graphic_id);
+}
+ComponentGraphic* m2::object::Object::get_terrain_graphic() const {
+	return GAME.terrainGraphics.get(terrain_graphic_id);
+}
+ComponentLight* m2::object::Object::get_light() const {
+	return GAME.lights.get(light_id);
+}
+game::component_defense* m2::object::Object::get_defense() const {
+	return GAME.defenses.get(defense_id);
+}
+game::component_offense* m2::object::Object::get_offense() const {
+	return GAME.offenses.get(offense_id);
+}
+
+ComponentMonitor& m2::object::Object::add_monitor() {
+	auto monitor_pair = GAME.monitors.alloc();
+	monitor_id = monitor_pair.second;
+	ComponentMonitor_Init(&monitor_pair.first, GAME.objects.get_id(this));
+	return monitor_pair.first;
+}
+ComponentPhysique& m2::object::Object::add_physique() {
+	auto physique_pair = GAME.physics.alloc();
+	physique_id = physique_pair.second;
+	ComponentPhysique_Init(&physique_pair.first, GAME.objects.get_id(this));
+	return physique_pair.first;
+}
+ComponentGraphic& m2::object::Object::add_graphic() {
+	auto graphic_pair = GAME.graphics.alloc();
+	graphic_id = graphic_pair.second;
+	ComponentGraphic_Init(&graphic_pair.first, GAME.objects.get_id(this));
+	// TODO move into component
+	InsertionList_Insert(&GAME.drawList, graphic_id);
+	return graphic_pair.first;
+}
+ComponentGraphic& m2::object::Object::add_terrain_graphic() {
+	auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
+	terrain_graphic_id = terrain_graphic_pair.second;
+	ComponentGraphic_Init(&terrain_graphic_pair.first, GAME.objects.get_id(this));
+	return terrain_graphic_pair.first;
+}
+ComponentLight& m2::object::Object::add_light() {
+	auto light_pair = GAME.lights.alloc();
+	light_id = light_pair.second;
+	ComponentLight_Init(&light_pair.first, GAME.objects.get_id(this));
+	return light_pair.first;
+}
+game::component_defense& m2::object::Object::add_defense() {
+	auto defense_pair = GAME.defenses.alloc();
+	defense_id = defense_pair.second;
+	defense_pair.first = game::component_defense(GAME.objects.get_id(this));
+	return defense_pair.first;
+}
+game::component_offense& m2::object::Object::add_offense() {
+	auto offense_pair = GAME.offenses.alloc();
+	offense_id = offense_pair.second;
+	offense_pair.first = game::component_offense(GAME.objects.get_id(this));
+	return offense_pair.first;
 }
