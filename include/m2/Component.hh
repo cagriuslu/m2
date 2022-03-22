@@ -31,6 +31,13 @@ struct Physique : public Component {
 
 	Physique() = default;
 	explicit Physique(ID object_id);
+    // Copy not allowed
+    Physique(const Physique& other) = delete;
+    Physique& operator=(const Physique& other) = delete;
+    // Move constructors
+    Physique(Physique&& other) noexcept;
+    Physique& operator=(Physique&& other) noexcept;
+    // Destructor
 	~Physique();
 
 	static void contact_cb(b2Contact* contact);

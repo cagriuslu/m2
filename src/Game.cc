@@ -117,8 +117,6 @@ static int Game_Level_Init() {
 static void Game_Level_Term() {
 	// TODO delete members in objects
 	PathfinderMap_Term(&GAME.pathfinderMap);
-	delete GAME.contactListener;
-	delete GAME.world;
 	GAME.delete_list.clear();
 	GAME.offenses.clear();
 	GAME.defenses.clear();
@@ -129,6 +127,8 @@ static void Game_Level_Term() {
 	GAME.monitors.clear();
 	InsertionList_Term(&GAME.drawList);
 	GAME.objects.clear();
+    delete GAME.world;
+    delete GAME.contactListener;
 	GAME.levelLoaded = false;
 }
 

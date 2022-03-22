@@ -10,6 +10,17 @@ Physique::~Physique() {
 	}
 }
 
+Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), onCollision(other.onCollision) {
+    other.body = nullptr;
+}
+
+Physique& Physique::operator=(Physique&& other) noexcept {
+    std::swap(object_id, other.object_id);
+    std::swap(body, other.body);
+    std::swap(onCollision, other.onCollision);
+    return *this;
+}
+
 void Physique::contact_cb(b2Contact *contact) {
 	ID physique_id_a = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
 	ID physique_id_b = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
