@@ -4,12 +4,6 @@
 
 Physique::Physique(ID object_id) : Component(object_id), body(nullptr), onCollision(nullptr) {}
 
-Physique::~Physique() {
-	if (body) {
-		GAME.world->DestroyBody(body);
-	}
-}
-
 Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), onCollision(other.onCollision) {
     other.body = nullptr;
 }
@@ -19,6 +13,12 @@ Physique& Physique::operator=(Physique&& other) noexcept {
     std::swap(body, other.body);
     std::swap(onCollision, other.onCollision);
     return *this;
+}
+
+Physique::~Physique() {
+	if (body) {
+		GAME.world->DestroyBody(body);
+	}
 }
 
 void Physique::contact_cb(b2Contact *contact) {
