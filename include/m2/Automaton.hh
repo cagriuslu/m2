@@ -15,7 +15,7 @@ namespace m2 {
 
     public:
         explicit Automaton(State initial_state);
-        virtual ~Automaton();
+        virtual ~Automaton() = default;
 
         void arm(float duration);
         void disarm();

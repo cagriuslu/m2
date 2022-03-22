@@ -23,6 +23,7 @@ Game::~Game() {
     contactListener = nullptr;
     delete world;
     world = nullptr;
+    // TODO deinit others
 }
 
 void Game_UpdateWindowDimensions(int width, int height) {

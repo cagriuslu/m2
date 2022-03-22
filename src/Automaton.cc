@@ -1,7 +1,6 @@
 #include "m2/Automaton.hh"
 
 m2::Automaton::Automaton(State initial_state) : current_state(initial_state), alarm(NAN) {}
-m2::Automaton::~Automaton() = default;
 
 void m2::Automaton::arm(float duration) {
     alarm = duration;
