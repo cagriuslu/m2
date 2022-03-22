@@ -1,7 +1,5 @@
 #include "../ARPG_UIElement.hh"
 #include "m2/Game.hh"
-#include <m2/object/Object.hh>
-#include <game/component.hh>
 #include <stdio.h>
 
 M2Err UIElementHP_UpdateDynamicText(UIElementState* state) {

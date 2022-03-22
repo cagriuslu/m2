@@ -1,4 +1,4 @@
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include "m2/Game.hh"
 #include "m2/Box2D.hh"
 #include "m2/Def.hh"
@@ -18,12 +18,12 @@ void ObjectEnemy_prePhysics(Monitor& mon) {
     data->automata_ai_chase.signal(SIG_AI_PREPHYSICS);
 }
 
-void ObjectEnemy_onHit(game::component_defense* def) {
+void ObjectEnemy_onHit(game::Defense* def) {
 	auto& obj = GAME.objects[def->object_id];
 	AS_ENEMYDATA(obj.data)->onHitColorModTtl = 0.10f;
 }
 
-void ObjectEnemy_onDeath(game::component_defense* def) {
+void ObjectEnemy_onDeath(game::Defense* def) {
 	Game_DeleteList_Add(def->object_id);
 }
 

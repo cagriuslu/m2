@@ -2,7 +2,7 @@
 #define M2_GAMEPROXY_HH
 
 #include <m2/Cfg.hh>
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 
 namespace m2 {
     struct game_proxy {

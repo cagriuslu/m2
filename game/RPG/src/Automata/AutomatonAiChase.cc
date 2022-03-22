@@ -1,5 +1,5 @@
 #include "m2/Automaton.hh"
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include "m2/Game.hh"
 #include "m2/Pathfinder.hh"
 #include <game/ARPG_Cfg.hh>

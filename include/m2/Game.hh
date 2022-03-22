@@ -4,7 +4,7 @@
 #include <game/component.hh>
 #include "m2/Event.hh"
 #include "InsertionList.hh"
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
 #include "Pathfinder.hh"
@@ -64,8 +64,8 @@ struct Game {
     m2::pool<Graphic> graphics;
     m2::pool<Graphic> terrainGraphics;
     m2::pool<Light> lights;
-    m2::pool<game::component_defense> defenses;
-    m2::pool<game::component_offense> offenses;
+    m2::pool<game::Defense> defenses;
+    m2::pool<game::Offense> offenses;
 	b2World* world;
 	ContactListener* contactListener;
 	ID cameraId, playerId, pointerId;

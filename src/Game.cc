@@ -1,5 +1,8 @@
 #include "m2/Game.hh"
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
+#include <m2/object/camera.h>
+#include <m2/object/pointer.h>
+#include <m2/object/tile.h>
 #include "m2/Component.hh"
 #include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
@@ -151,8 +154,7 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 		for (int x = 0; x < cfg->w; x++) {
 			const CfgTile *cfgTile = cfg->tiles + y * cfg->w + x;
 			if (cfgTile->backgroundSpriteIndex) {
-                auto& tile = GAME.objects.alloc().first;
-				M2ERR_REFLECT(ObjectTile_InitFromCfg(&tile, cfgTile->backgroundSpriteIndex, m2::vec2f{x, y}));
+                m2::object::tile::create(m2::vec2f{x, y}, cfgTile->backgroundSpriteIndex);
 			}
 			if (cfgTile->foregroundSpriteIndex) {
                 auto& obj = GAME.objects.alloc().first;
@@ -162,13 +164,8 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 	}
 	PathfinderMap_Init(&GAME.pathfinderMap);
 
-    auto camera_pair = GAME.objects.alloc();
-    GAME.cameraId = camera_pair.second;
-	ObjectCamera_Init(&camera_pair.first);
-
-    auto pointer_pair = GAME.objects.alloc();
-    GAME.pointerId = pointer_pair.second;
-	ObjectPointer_Init(&pointer_pair.first);
+    m2::object::camera::create();
+    m2::object::pointer::create();
 
 	UIState_Init(&GAME.leftHudUIState, GAME.proxy.cfgHUDLeft);
 	UIState_UpdatePositions(&GAME.leftHudUIState, GAME.leftHudRect);

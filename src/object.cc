@@ -1,4 +1,4 @@
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include "m2/Game.hh"
 
 m2::object::Object::Object(const m2::vec2f &position) :
@@ -86,33 +86,11 @@ Graphic& m2::object::Object::terrain_graphic() const {
 Light& m2::object::Object::light() const {
 	return GAME.lights[light_id];
 }
-game::component_defense& m2::object::Object::defense() const {
+game::Defense& m2::object::Object::defense() const {
 	return GAME.defenses[defense_id];
 }
-game::component_offense& m2::object::Object::offense() const {
+game::Offense& m2::object::Object::offense() const {
 	return GAME.offenses[offense_id];
-}
-
-Monitor* m2::object::Object::get_monitor() const {
-	return GAME.monitors.get(monitor_id);
-}
-Physique* m2::object::Object::get_physique() const {
-	return GAME.physics.get(physique_id);
-}
-Graphic* m2::object::Object::get_graphic() const {
-	return GAME.graphics.get(graphic_id);
-}
-Graphic* m2::object::Object::get_terrain_graphic() const {
-	return GAME.terrainGraphics.get(terrain_graphic_id);
-}
-Light* m2::object::Object::get_light() const {
-	return GAME.lights.get(light_id);
-}
-game::component_defense* m2::object::Object::get_defense() const {
-	return GAME.defenses.get(defense_id);
-}
-game::component_offense* m2::object::Object::get_offense() const {
-	return GAME.offenses.get(offense_id);
 }
 
 Monitor& m2::object::Object::add_monitor() {
@@ -131,7 +109,7 @@ Graphic& m2::object::Object::add_graphic() {
 	auto graphic_pair = GAME.graphics.alloc();
 	graphic_id = graphic_pair.second;
 	graphic_pair.first = Graphic{GAME.objects.get_id(this)};
-	// TODO move into component
+	// TODO move into component maybe?
 	InsertionList_Insert(&GAME.drawList, graphic_id);
 	return graphic_pair.first;
 }
@@ -147,15 +125,21 @@ Light& m2::object::Object::add_light() {
 	light_pair.first = Light{GAME.objects.get_id(this)};
 	return light_pair.first;
 }
-game::component_defense& m2::object::Object::add_defense() {
+game::Defense& m2::object::Object::add_defense() {
 	auto defense_pair = GAME.defenses.alloc();
 	defense_id = defense_pair.second;
-	defense_pair.first = game::component_defense{GAME.objects.get_id(this)};
+	defense_pair.first = game::Defense{GAME.objects.get_id(this)};
 	return defense_pair.first;
 }
-game::component_offense& m2::object::Object::add_offense() {
+game::Offense& m2::object::Object::add_offense() {
 	auto offense_pair = GAME.offenses.alloc();
 	offense_id = offense_pair.second;
-	offense_pair.first = game::component_offense{GAME.objects.get_id(this)};
+	offense_pair.first = game::Offense{GAME.objects.get_id(this)};
 	return offense_pair.first;
+}
+
+std::pair<m2::object::Object&, ID> m2::object::create(const m2::vec2f &position) {
+    auto obj_pair = GAME.objects.alloc();
+    obj_pair.first = Object{position};
+    return obj_pair;
 }

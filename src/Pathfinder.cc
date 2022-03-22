@@ -4,7 +4,7 @@
 
 #include "m2/Box2DUtils.hh"
 #include "m2/Component.hh"
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include "m2/Game.hh"
 #include <m2/vec2i.hh>
 #include <stdbool.h>

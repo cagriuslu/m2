@@ -1,5 +1,5 @@
 #include "m2/Automaton.hh"
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include <game/ARPG_Cfg.hh>
 
 #define ALARM_DURATION (0.1f)

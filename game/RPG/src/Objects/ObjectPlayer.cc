@@ -1,4 +1,4 @@
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include "m2/Game.hh"
 #include "m2/Box2DUtils.hh"
 #include "m2/Controls.hh"
@@ -66,7 +66,7 @@ static void Player_prePhysics(Monitor& mon) {
 	}
 }
 
-static void Player_onDeath(game::component_defense *def) {
+static void Player_onDeath(game::Defense *def) {
 	LOG_INFO("Player died");
 }
 

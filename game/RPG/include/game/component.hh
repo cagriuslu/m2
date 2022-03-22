@@ -5,17 +5,17 @@
 #include <m2/Component.hh>
 
 namespace game {
-    struct component_defense : public m2::component_defense {
+    struct Defense : public m2::component_defense {
         float maxHp;
         float hp;
-        void (*onHit)(component_defense*);
-        void (*onDeath)(component_defense*);
+        void (*onHit)(Defense*);
+        void (*onDeath)(Defense*);
 
-        component_defense() = default;
-        explicit component_defense(ID object_id);
+        Defense() = default;
+        explicit Defense(ID object_id);
     };
 
-    struct component_offense : public m2::component_offense {
+    struct Offense : public m2::component_offense {
         ID originator;
         union {
             ProjectileState projectile;
@@ -23,8 +23,8 @@ namespace game {
             ExplosiveState explosive;
         } state;
 
-        component_offense() = default;
-        explicit component_offense(ID object_id);
+        Offense() = default;
+        explicit Offense(ID object_id);
     };
 }
 

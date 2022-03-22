@@ -1,7 +1,7 @@
 #ifndef M2_ARPG_OBJECT_HH
 #define M2_ARPG_OBJECT_HH
 
-#include <m2/object/Object.hh>
+#include <m2/object.hh>
 #include <game/ARPG_Cfg.hh>
 #include "Automata/AutomatonAiChase.hh"
 
@@ -16,7 +16,7 @@ struct EnemyData {
 
 namespace game {
 	namespace object {
-		struct ObjectDataEnemy : public m2::object::ObjectData {
+		struct ObjectDataEnemy : public m2::object::Data {
 			game::AutomatonAiChase automata_ai_chase;
 
 			explicit ObjectDataEnemy(m2::object::Object&);
