@@ -16,6 +16,15 @@ Game GAME = {
     .proxy = game::GAME_PROXY
 };
 
+Game::~Game() {
+    // Get rid of level
+    objects.clear();
+    delete contactListener;
+    contactListener = nullptr;
+    delete world;
+    world = nullptr;
+}
+
 void Game_UpdateWindowDimensions(int width, int height) {
 	GAME.windowRect = SDL_Rect{0, 0, width, height};
 
@@ -115,7 +124,6 @@ static int Game_Level_Init() {
 }
 
 static void Game_Level_Term() {
-	// TODO delete members in objects
 	PathfinderMap_Term(&GAME.pathfinderMap);
 	GAME.delete_list.clear();
 	GAME.offenses.clear();

@@ -83,6 +83,8 @@ struct Game {
 	m2::vec2f mousePositionWRTScreenCenter_m;
 	char consoleInput[1024];
 	const m2::game_proxy& proxy;
+
+    ~Game();
 };
 
 extern Game GAME;
