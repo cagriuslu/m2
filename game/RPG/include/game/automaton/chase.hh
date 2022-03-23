@@ -6,8 +6,6 @@
 #include <functional>
 
 namespace game::automaton::chase {
-    constexpr int SIG_PREPHYSICS = SIG_N;
-
     class Data {
         m2::object::Object& obj;
         m2::object::Object& target;

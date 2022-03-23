@@ -16,7 +16,7 @@ static void ObjectEnemy_prePhysics(Monitor& mon) {
 
 	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj.data)->characterState), GAME.deltaTime_s);
     data->chaser.time(GAME.deltaTime_s);
-    data->chaser.signal(game::automaton::chase::SIG_PREPHYSICS);
+    data->chaser.signal(m2::automaton::SIG_PREPHY);
 }
 
 static void ObjectEnemy_onHit(game::Defense* def) {
@@ -104,19 +104,6 @@ int ObjectEnemy_InitFromCfg(m2::object::Object* obj, const CfgCharacter *cfg, m2
 
 	if (cfg->ai) {
 		AiState_Init(&(AS_ENEMYDATA(obj->data)->aiState), cfg->ai, position);
-		switch (cfg->ai->behavior) {
-			case CFG_AI_BEHAVIOR_CHASE:
-				// No need, cleanup around here
-				break;
-			case CFG_AI_BEHAVIOR_KEEP_DISTANCE:
-				M2ERR_REFLECT(AutomatonAiKeepDistance_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, &phy));
-				break;
-			case CFG_AI_BEHAVIOR_HIT_N_RUN:
-				M2ERR_REFLECT(AutomatonAiHitNRun_Init(&(AS_ENEMYDATA(obj->data)->aiAutomaton), obj, &phy));
-				break;
-			default:
-				break;
-		}
 	}
 
     obj->data_new = std::make_unique<game::object::enemy::Data>(*obj);

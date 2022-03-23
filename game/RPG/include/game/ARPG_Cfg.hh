@@ -236,8 +236,6 @@ typedef struct {
 	// TODO
 } CfgAi;
 extern const CfgAi CFG_AI_CHASE_00;
-extern const CfgAi CFG_AI_KEEP_DISTANCE_00;
-extern const CfgAi CFG_AI_HIT_N_RUN_00;
 struct AiState {
 	const CfgAi* cfg;
 	m2::vec2f homePosition;
@@ -283,8 +281,6 @@ typedef struct {
 } CfgCharacter;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;
 extern const CfgCharacter CFG_CHARACTER_SKELETON_000_CHASE;
-extern const CfgCharacter CFG_CHARACTER_SKELETON_000_KEEP_DISTANCE;
-extern const CfgCharacter CFG_CHARACTER_SKELETON_000_HIT_N_RUN;
 typedef struct CharacterState {
 	const CfgCharacter *cfg;
 	RangedWeaponState rangedWeaponState;
