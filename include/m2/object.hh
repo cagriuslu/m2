@@ -3,7 +3,7 @@
 
 #include "game/component.hh"
 #include "m2/Component.hh"
-#include "m2/Automaton.hh"
+#include "m2/automaton.hh"
 #include "m2/Cfg.hh"
 #include "m2/Vec2F.h"
 #include <memory>

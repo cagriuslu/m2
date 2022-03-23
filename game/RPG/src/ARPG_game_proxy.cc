@@ -2,6 +2,7 @@
 #include <game/ARPG_Cfg.hh>
 #include "ARPG_Object.hh"
 #include "ARPG_UIElement.hh"
+#include <game/object/enemy.h>
 #include "m2/Game.hh"
 
 static M2Err ARPG_EntryUIButtonHandler(CfgUIButtonType button) {

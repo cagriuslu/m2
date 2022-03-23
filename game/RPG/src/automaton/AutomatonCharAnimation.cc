@@ -1,4 +1,4 @@
-#include "m2/Automaton.hh"
+#include "m2/automaton.hh"
 #include <m2/object.hh>
 #include <game/ARPG_Cfg.hh>
 

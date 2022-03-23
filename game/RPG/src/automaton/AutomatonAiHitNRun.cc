@@ -1,4 +1,4 @@
-#include "m2/Automaton.hh"
+#include "m2/automaton.hh"
 
 void* AiHitNRunState_Idle(struct _Automaton* am, int signal);
 void* AiHitNRunState_Hit(struct _Automaton* am, int signal);

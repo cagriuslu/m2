@@ -3,28 +3,7 @@
 
 #include <m2/object.hh>
 #include <game/ARPG_Cfg.hh>
-#include "Automata/AutomatonAiChase.hh"
-
-struct EnemyData {
-	CharacterState characterState;
-	Automaton charAnimationAutomaton;
-	AiState aiState;
-	Automaton aiAutomaton;
-	float onHitColorModTtl;
-};
-#define AS_ENEMYDATA(ptr) ((EnemyData*)(ptr))
-
-namespace game {
-	namespace object {
-		struct ObjectDataEnemy : public m2::object::Data {
-			game::AutomatonAiChase automata_ai_chase;
-
-			explicit ObjectDataEnemy(m2::object::Object&);
-		};
-	}
-}
-
-int ObjectEnemy_InitFromCfg(m2::object::Object* obj, const CfgCharacter *cfg, m2::vec2f position);
+#include <game/automaton/chase.hh>
 
 M2Err ObjectExplosive_InitFromCfg(m2::object::Object* obj, const CfgExplosive* cfg, ID originatorId, m2::vec2f position, m2::vec2f direction);
 

@@ -1,3 +1,4 @@
+#include <game/object/enemy.h>
 #include <m2/object.hh>
 #include "m2/Game.hh"
 #include "m2/Box2D.hh"
@@ -7,23 +8,23 @@
 #include <game/ARPG_Cfg.hh>
 #include <game/component.hh>
 
-game::object::ObjectDataEnemy::ObjectDataEnemy(m2::object::Object& obj) : automata_ai_chase(obj) {}
+game::object::enemy::Data::Data(m2::object::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
 
-void ObjectEnemy_prePhysics(Monitor& mon) {
+static void ObjectEnemy_prePhysics(Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
-    auto* data = dynamic_cast<game::object::ObjectDataEnemy*>(obj.data_new.get());
+    auto* data = dynamic_cast<game::object::enemy::Data*>(obj.data_new.get());
 
 	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj.data)->characterState), GAME.deltaTime_s);
-    data->automata_ai_chase.time(GAME.deltaTime_s);
-    data->automata_ai_chase.signal(SIG_AI_PREPHYSICS);
+    data->chaser.time(GAME.deltaTime_s);
+    data->chaser.signal(game::automaton::chase::SIG_PREPHYSICS);
 }
 
-void ObjectEnemy_onHit(game::Defense* def) {
+static void ObjectEnemy_onHit(game::Defense* def) {
 	auto& obj = GAME.objects[def->object_id];
 	AS_ENEMYDATA(obj.data)->onHitColorModTtl = 0.10f;
 }
 
-void ObjectEnemy_onDeath(game::Defense* def) {
+static void ObjectEnemy_onDeath(game::Defense* def) {
 	Game_DeleteList_Add(def->object_id);
 }
 
@@ -50,7 +51,7 @@ static void ObjectEnemy_postPhysics(Monitor& monitor) {
 	}
 }
 
-void ObjectEnemy_Draw(Graphic& gfx) {
+static void ObjectEnemy_Draw(Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];
 	if (0.0f < AS_ENEMYDATA(obj.data)->onHitColorModTtl) {
 		SDL_Texture *defaultTexture = gfx.texture;
@@ -118,6 +119,6 @@ int ObjectEnemy_InitFromCfg(m2::object::Object* obj, const CfgCharacter *cfg, m2
 		}
 	}
 
-    obj->data_new = std::make_unique<game::object::ObjectDataEnemy>(*obj);
+    obj->data_new = std::make_unique<game::object::enemy::Data>(*obj);
 	return 0;
 }

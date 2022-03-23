@@ -1,5 +1,6 @@
 file(GLOB GAME_SOURCES
         "include/game/*.h"
+        "include/game/*/*.h"
         "src/*.h"   "src/*.cc"
         "src/*/*.h" "src/*/*.cc")
 set(GAME_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/include")

@@ -1,4 +1,4 @@
-#include "m2/Automaton.hh"
+#include "m2/automaton.hh"
 
 void* AiKeepDistanceState_Idle(struct _Automaton* am, int signal);
 void* AiKeepDistanceState_Triggered(struct _Automaton* am, int signal);

@@ -3,24 +3,62 @@
 
 #include "Def.hh"
 #include <optional>
+#include <functional>
 
-namespace m2 {
-    class Automaton {
-    public:
-        typedef void* (*State)(Automaton* a, int sig);
+namespace m2::automaton {
+    enum Signal {
+        SIG_ENTER = 0,
+        SIG_EXIT,
+        SIG_ALARM,
+        SIG_PREPHY,
+        SIG_POSTPHY,
+        SIG_PREGFX,
+        SIG_POSTGFX,
+
+        SIG_N
+    };
+
+    template <typename Data>
+    struct Automaton final {
+        using State = void* (*)(Automaton<Data>& automaton, int sig);
+
+        Data data;
+
+        explicit Automaton(Data&& data) : data(data), current_state(Data::initial_state), alarm(NAN) {
+            signal(SIG_ENTER);
+        }
+
+        void arm(float duration_s) {
+            alarm = duration_s;
+        }
+        void disarm() {
+            alarm = NAN;
+        }
+        void signal(int sig) {
+            auto next_state = (*current_state)(*this, sig);
+            if (next_state) {
+                exit();
+                current_state = reinterpret_cast<State>(next_state);
+                signal(SIG_ENTER);
+            }
+        }
+        void time(float delta_time) {
+            if (not isnan(alarm)) {
+                alarm -= delta_time;
+                if (alarm <= 0.0f) {
+                    alarm = NAN;
+                    signal(SIG_ALARM);
+                }
+            }
+        }
 
     private:
         State current_state;
         float alarm;
 
-    public:
-        explicit Automaton(State initial_state);
-        virtual ~Automaton() = default;
-
-        void arm(float duration);
-        void disarm();
-        void signal(int sig);
-        void time(float delta_time);
+        void exit() {
+            (*current_state)(*this, SIG_EXIT);
+        }
     };
 }
 
