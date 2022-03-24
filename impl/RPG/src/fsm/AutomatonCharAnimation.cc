@@ -38,7 +38,7 @@ M2Err AutomatonCharAnimation_Init(Automaton *sm, const void* cfgCharacter, void*
 
 void* CharAnimation_IdleState(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			gfx->textureRect = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].textureRect;
@@ -59,7 +59,7 @@ void* CharAnimation_IdleState(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_DownStopState(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].textureRect;
@@ -80,7 +80,7 @@ void* CharAnimation_DownStopState(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Down00State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -109,7 +109,7 @@ void* CharAnimation_Down00State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Down01State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -138,7 +138,7 @@ void* CharAnimation_Down01State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Down02State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -167,7 +167,7 @@ void* CharAnimation_Down02State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Down03State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -196,7 +196,7 @@ void* CharAnimation_Down03State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_LeftStopState(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].textureRect;
@@ -217,7 +217,7 @@ void* CharAnimation_LeftStopState(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Left00State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -245,7 +245,7 @@ void* CharAnimation_Left00State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Left01State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -273,7 +273,7 @@ void* CharAnimation_Left01State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Left02State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -301,7 +301,7 @@ void* CharAnimation_Left02State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Left03State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -329,7 +329,7 @@ void* CharAnimation_Left03State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_RightStopState(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].textureRect;
@@ -350,7 +350,7 @@ void* CharAnimation_RightStopState(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Right00State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -379,7 +379,7 @@ void* CharAnimation_Right00State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Right01State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -408,7 +408,7 @@ void* CharAnimation_Right01State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Right02State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -437,7 +437,7 @@ void* CharAnimation_Right02State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Right03State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -466,7 +466,7 @@ void* CharAnimation_Right03State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_UpStopState(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].textureRect;
@@ -487,7 +487,7 @@ void* CharAnimation_UpStopState(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Up00State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -516,7 +516,7 @@ void* CharAnimation_Up00State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Up01State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -545,7 +545,7 @@ void* CharAnimation_Up01State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Up02State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
@@ -574,7 +574,7 @@ void* CharAnimation_Up02State(struct _Automaton* sm, int signal) {
 
 void* CharAnimation_Up03State(struct _Automaton* sm, int signal) {
 	const CfgCharacter* cfg = static_cast<const CfgCharacter *>(sm->userData_cfg);
-	component::Graphic* gfx = static_cast<component::Graphic *>(sm->userData_gfx);
+	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);

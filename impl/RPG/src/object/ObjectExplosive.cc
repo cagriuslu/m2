@@ -45,7 +45,7 @@ static void ObjectExplosive_prePhysics(m2::component::Monitor& mon) {
 	}
 }
 
-static void ObjectExplosive_onCollision(component::Physique& phy, component::Physique& other) {
+static void ObjectExplosive_onCollision(m2::component::Physique& phy, m2::component::Physique& other) {
 	auto& obj = GAME.objects[phy.object_id];
 	auto& off = obj.offense();
 

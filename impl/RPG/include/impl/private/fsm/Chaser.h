@@ -9,7 +9,7 @@ namespace impl::fsm {
     class Chaser {
         m2::Object& obj;
         m2::Object& target;
-        component::Physique& phy;
+        m2::component::Physique& phy;
 
     public:
         Chaser(m2::Object& obj, m2::Object& target);

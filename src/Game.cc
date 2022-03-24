@@ -16,14 +16,14 @@
 #include "m2/component/Graphic.h"
 
 // Initialize with default values
-Game GAME = {
+m2::Game GAME = {
 	.physicsStep_s = 1.0f / 80.0f,
 	.velocityIterations = 8,
 	.positionIterations = 3,
     .proxy = impl::GAME_PROXY
 };
 
-Game::~Game() {
+m2::Game::~Game() {
     // Get rid of level
     objects.clear();
     delete contactListener;
@@ -124,7 +124,7 @@ static int Game_Level_Init() {
 		abort();
 	}
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
-	GAME.contactListener = new ContactListener(component::Physique::contact_cb);
+	GAME.contactListener = new ContactListener(m2::component::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 	GAME.delete_list.clear();
 	GAME.levelLoaded = true;

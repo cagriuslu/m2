@@ -14,8 +14,6 @@
 #include "component/Light.h"
 #include <memory>
 
-using namespace m2;
-
 namespace m2 {
     /// Basis of all objects in the game.
     /// How to decide if a component should reside in Pool or data?

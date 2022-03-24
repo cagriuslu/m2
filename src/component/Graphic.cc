@@ -22,9 +22,9 @@ m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPositio
 	return obj_gfx_origin_wrt_screen_center_px;
 }
 
-component::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), draw(default_draw) {}
+m2::component::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), draw(default_draw) {}
 
-void component::Graphic::default_draw(component::Graphic& gfx) {
+void m2::component::Graphic::default_draw(component::Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];
 
 	Vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj.position, gfx.center_px);
@@ -43,7 +43,7 @@ void component::Graphic::default_draw(component::Graphic& gfx) {
 	SDL_RenderCopyEx(GAME.sdlRenderer, gfx.texture, &gfx.textureRect, &dstrect, gfx.angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
 }
 
-void component::Graphic::default_draw_healthbar(component::Graphic& gfx, float healthRatio) {
+void m2::component::Graphic::default_draw_healthbar(component::Graphic& gfx, float healthRatio) {
 	auto& obj = GAME.objects[gfx.object_id];
 	auto& cam = GAME.objects[GAME.cameraId];
 
@@ -82,7 +82,7 @@ void component::Graphic::default_draw_healthbar(component::Graphic& gfx, float h
 	SDL_RenderFillRect(GAME.sdlRenderer, &empty_dstrect);
 }
 
-int component::Graphic::ycomparator_cb(ID gfxIdA, ID gfxIdB) {
+int m2::component::Graphic::ycomparator_cb(ID gfxIdA, ID gfxIdB) {
 	auto& gfx_a = GAME.graphics[gfxIdA];
 	auto& gfx_b = GAME.graphics[gfxIdB];
 	auto& obj_a = GAME.objects[gfx_a.object_id];

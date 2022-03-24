@@ -50,19 +50,19 @@ static void ObjectEnemy_postPhysics(m2::component::Monitor& monitor) {
 	}
 }
 
-static void ObjectEnemy_Draw(component::Graphic& gfx) {
+static void ObjectEnemy_Draw(m2::component::Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];
 	if (0.0f < AS_ENEMYDATA(obj.data)->onHitColorModTtl) {
 		SDL_Texture *defaultTexture = gfx.texture;
 		gfx.texture = GAME.sdlTextureMask;
-		component::Graphic::default_draw(gfx);
+		m2::component::Graphic::default_draw(gfx);
 		gfx.texture = defaultTexture;
 		AS_ENEMYDATA(obj.data)->onHitColorModTtl -= GAME.deltaTicks_ms / 1000.0f;
 	} else {
-		component::Graphic::default_draw(gfx);
+		m2::component::Graphic::default_draw(gfx);
 	}
 	auto& def = obj.defense();
-	component::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
+	m2::component::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 }
 
 int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f position) {
