@@ -4,10 +4,11 @@
 #include "m2/Box2DUtils.hh"
 #include "impl/public/Component.hh"
 #include "impl/private/ARPG_Cfg.hh"
+#include "Monitor.h"
 
 #define SWING_SPEED (15.0f)
 
-static void Sword_prePhysics(Monitor& mon) {
+static void Sword_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& off = obj.offense();
 
@@ -17,7 +18,7 @@ static void Sword_prePhysics(Monitor& mon) {
 	}
 }
 
-static void Sword_postPhysics(Monitor& mon) {
+static void Sword_postPhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	float angle = phy.body->GetAngle();

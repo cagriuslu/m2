@@ -7,6 +7,7 @@
 #include "../ARPG_Object.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
+#include "Monitor.h"
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -14,7 +15,7 @@
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
 
-static void Player_prePhysics(Monitor& mon) {
+static void Player_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	PlayerData *playerData = AS_PLAYERDATA(obj.data);
 
@@ -70,7 +71,7 @@ static void Player_onDeath(impl::Defense *def) {
 	LOG_INFO("Player died");
 }
 
-static void Player_postPhysics(Monitor& mon) {
+static void Player_postPhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	PlayerData *playerData = AS_PLAYERDATA(obj.data);
 	auto& phy = GAME.physics[obj.physique_id];

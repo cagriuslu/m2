@@ -9,6 +9,8 @@
 #include "m2/Cfg.hh"
 #include "Pathfinder.hh"
 #include "GameProxy.hh"
+#include "component/Monitor.h"
+#include "Monitor.h"
 #include <m2/Pool.hh>
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -18,6 +20,8 @@
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
+
+using namespace m2;
 
 struct Game {
 	////////////////////////////////////////////////////////////////////////
@@ -59,7 +63,7 @@ struct Game {
 	// created/destroyed very rapidly.
     m2::Pool<m2::Object> objects;
 	InsertionList drawList;
-    m2::Pool<Monitor> monitors;
+    m2::Pool<component::Monitor> monitors;
 	m2::Pool<Physique> physics;
     m2::Pool<Graphic> graphics;
     m2::Pool<Graphic> terrainGraphics;

@@ -6,6 +6,7 @@
 #include "m2/Def.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
+#include "Monitor.h"
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
 	return Box2DUtils_CreateBulletSensor(
@@ -18,7 +19,7 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f pos
 	);
 }
 
-static void ObjectExplosive_prePhysics(Monitor& mon) {
+static void ObjectExplosive_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();
@@ -90,7 +91,7 @@ static void ObjectExplosive_onCollision(Physique& phy, Physique& other) {
 	}
 }
 
-static void ObjectExplosive_postPhysics(Monitor& mon) {
+static void ObjectExplosive_postPhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();

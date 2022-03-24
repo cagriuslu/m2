@@ -15,16 +15,6 @@ struct Component {
 	explicit Component(ID object_id);
 };
 
-struct Monitor : public Component {
-	void (*prePhysics)(Monitor&);
-	void (*postPhysics)(Monitor&);
-	void (*preGraphics)(Monitor&);
-	void (*postGraphics)(Monitor&);
-
-	Monitor() = default;
-	explicit Monitor(ID object_id);
-};
-
 struct Physique : public Component {
 	b2Body* body;
 	void (*onCollision)(Physique&, Physique&);

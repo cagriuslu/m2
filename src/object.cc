@@ -1,5 +1,6 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
+#include "Monitor.h"
 
 m2::Object::Object(const m2::Vec2f &position) :
 		position(position),
@@ -71,7 +72,7 @@ m2::Object::~Object() {
 	}
 }
 
-Monitor& m2::Object::monitor() const {
+m2::component::Monitor& m2::Object::monitor() const {
 	return GAME.monitors[monitor_id];
 }
 Physique& m2::Object::physique() const {
@@ -93,10 +94,10 @@ impl::Offense& m2::Object::offense() const {
 	return GAME.offenses[offense_id];
 }
 
-Monitor& m2::Object::add_monitor() {
+m2::component::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();
 	monitor_id = monitor_pair.second;
-	monitor_pair.first = Monitor{GAME.objects.get_id(this)};
+	monitor_pair.first = component::Monitor{GAME.objects.get_id(this)};
 	return monitor_pair.first;
 }
 Physique& m2::Object::add_physique() {

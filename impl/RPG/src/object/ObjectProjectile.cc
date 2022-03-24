@@ -4,8 +4,9 @@
 #include "m2/Def.hh"
 #include "impl/public/Component.hh"
 #include "impl/private/ARPG_Cfg.hh"
+#include "Monitor.h"
 
-static void Bullet_prePhysics(Monitor& mon) {
+static void Bullet_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();

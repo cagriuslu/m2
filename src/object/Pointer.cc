@@ -2,8 +2,9 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.hh"
+#include "Monitor.h"
 
-void pointer_pre_graphics(Monitor& mon) {
+void pointer_pre_graphics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	obj.position = GAME.mousePositionInWorld_m;
 }

@@ -7,10 +7,11 @@
 #include "../ARPG_Object.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
+#include "Monitor.h"
 
 impl::object::Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
 
-static void ObjectEnemy_prePhysics(Monitor& mon) {
+static void ObjectEnemy_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
     auto* data = dynamic_cast<impl::object::Enemy*>(obj.impl.get());
 
@@ -28,7 +29,7 @@ static void ObjectEnemy_onDeath(impl::Defense* def) {
 	Game_DeleteList_Add(def->object_id);
 }
 
-static void ObjectEnemy_postPhysics(Monitor& monitor) {
+static void ObjectEnemy_postPhysics(m2::component::Monitor& monitor) {
 	auto& obj = GAME.objects[monitor.object_id];
 	auto& phy = GAME.physics[obj.physique_id];
 	// We must call time before other signals

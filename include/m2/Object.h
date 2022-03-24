@@ -1,13 +1,17 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "component/Monitor.h"
 #include "ObjectImpl.h"
 #include "impl/public/Component.hh"
 #include "m2/Component.h"
 #include "m2/FSM.h"
 #include "m2/Cfg.hh"
 #include "m2/Vec2f.h"
+#include "Monitor.h"
 #include <memory>
+
+using namespace m2;
 
 namespace m2 {
     /// Basis of all objects in the game.
@@ -40,7 +44,7 @@ namespace m2 {
         // Destructor
         ~Object();
 
-        [[nodiscard]] Monitor& monitor() const;
+        [[nodiscard]] component::Monitor& monitor() const;
         [[nodiscard]] Physique& physique() const;
         [[nodiscard]] Graphic& graphic() const;
         [[nodiscard]] Graphic& terrain_graphic() const;
@@ -48,7 +52,7 @@ namespace m2 {
         [[nodiscard]] impl::Defense& defense() const;
         [[nodiscard]] impl::Offense& offense() const;
 
-        [[nodiscard]] Monitor& add_monitor();
+        [[nodiscard]] component::Monitor& add_monitor();
         [[nodiscard]] Physique& add_physique();
         [[nodiscard]] Graphic& add_graphic();
         [[nodiscard]] Graphic& add_terrain_graphic();
