@@ -3,6 +3,7 @@
 #include "m2/component/Monitor.h"
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
+#include "m2/component/Light.h"
 
 m2::Object::Object(const m2::Vec2f &position) :
 		position(position),
@@ -86,7 +87,7 @@ component::Graphic& m2::Object::graphic() const {
 component::Graphic& m2::Object::terrain_graphic() const {
 	return GAME.terrainGraphics[terrain_graphic_id];
 }
-Light& m2::Object::light() const {
+m2::component::Light& m2::Object::light() const {
 	return GAME.lights[light_id];
 }
 impl::Defense& m2::Object::defense() const {
@@ -122,10 +123,10 @@ component::Graphic& m2::Object::add_terrain_graphic() {
 	terrain_graphic_pair.first = component::Graphic{GAME.objects.get_id(this)};
 	return terrain_graphic_pair.first;
 }
-Light& m2::Object::add_light() {
+m2::component::Light& m2::Object::add_light() {
 	auto light_pair = GAME.lights.alloc();
 	light_id = light_pair.second;
-	light_pair.first = Light{GAME.objects.get_id(this)};
+	light_pair.first = component::Light{GAME.objects.get_id(this)};
 	return light_pair.first;
 }
 impl::Defense& m2::Object::add_defense() {

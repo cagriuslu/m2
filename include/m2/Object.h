@@ -11,6 +11,7 @@
 #include "component/Monitor.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
+#include "component/Light.h"
 #include <memory>
 
 using namespace m2;
@@ -50,7 +51,7 @@ namespace m2 {
         [[nodiscard]] component::Physique& physique() const;
         [[nodiscard]] component::Graphic& graphic() const;
         [[nodiscard]] component::Graphic& terrain_graphic() const;
-        [[nodiscard]] Light& light() const;
+        [[nodiscard]] component::Light& light() const;
         [[nodiscard]] impl::Defense& defense() const;
         [[nodiscard]] impl::Offense& offense() const;
 
@@ -58,7 +59,7 @@ namespace m2 {
         [[nodiscard]] component::Physique& add_physique();
         [[nodiscard]] component::Graphic& add_graphic();
         [[nodiscard]] component::Graphic& add_terrain_graphic();
-        [[nodiscard]] Light& add_light();
+        [[nodiscard]] component::Light& add_light();
         [[nodiscard]] impl::Defense& add_defense();
         [[nodiscard]] impl::Offense& add_offense();
     };

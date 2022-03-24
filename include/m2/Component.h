@@ -15,16 +15,6 @@ struct Component {
 	explicit Component(ID object_id);
 };
 
-struct Light : public Component {
-	float radius_m;
-	void (*draw)(Light&);
-
-	Light() = default;
-	explicit Light(ID object_id);
-
-	static void default_draw(Light& lig);
-};
-
 namespace m2 {
     struct Defense : public Component {
         Defense() = default;

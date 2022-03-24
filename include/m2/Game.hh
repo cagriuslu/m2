@@ -68,7 +68,7 @@ struct Game {
 	m2::Pool<component::Physique> physics;
     m2::Pool<component::Graphic> graphics;
     m2::Pool<component::Graphic> terrainGraphics;
-    m2::Pool<Light> lights;
+    m2::Pool<component::Light> lights;
     m2::Pool<impl::Defense> defenses;
     m2::Pool<impl::Offense> offenses;
 	b2World* world;
