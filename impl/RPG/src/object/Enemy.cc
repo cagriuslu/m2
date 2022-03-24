@@ -4,10 +4,8 @@
 #include "m2/Box2D.hh"
 #include "m2/Def.hh"
 #include "m2/Box2DUtils.hh"
-#include "../ARPG_Object.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
-#include "Monitor.h"
 
 impl::object::Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
 
@@ -52,19 +50,19 @@ static void ObjectEnemy_postPhysics(m2::component::Monitor& monitor) {
 	}
 }
 
-static void ObjectEnemy_Draw(Graphic& gfx) {
+static void ObjectEnemy_Draw(component::Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];
 	if (0.0f < AS_ENEMYDATA(obj.data)->onHitColorModTtl) {
 		SDL_Texture *defaultTexture = gfx.texture;
 		gfx.texture = GAME.sdlTextureMask;
-		Graphic::default_draw(gfx);
+		component::Graphic::default_draw(gfx);
 		gfx.texture = defaultTexture;
 		AS_ENEMYDATA(obj.data)->onHitColorModTtl -= GAME.deltaTicks_ms / 1000.0f;
 	} else {
-		Graphic::default_draw(gfx);
+		component::Graphic::default_draw(gfx);
 	}
 	auto& def = obj.defense();
-	Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
+	component::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 }
 
 int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f position) {

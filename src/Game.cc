@@ -13,6 +13,7 @@
 #include "m2/component/Monitor.h"
 #include "m2/Component.h"
 #include "m2/component/Physique.h"
+#include "m2/component/Graphic.h"
 
 // Initialize with default values
 Game GAME = {
@@ -110,7 +111,7 @@ void Game_UpdateMousePosition() {
 
 static int Game_Level_Init() {
 	GAME.objects.clear();
-	M2ERR_REFLECT(InsertionList_Init(&GAME.drawList, UINT16_MAX + 1, Graphic::ycomparator_cb));
+	M2ERR_REFLECT(InsertionList_Init(&GAME.drawList, UINT16_MAX + 1, m2::component::Graphic::ycomparator_cb));
 	GAME.monitors.clear();
 	GAME.physics.clear();
 	GAME.graphics.clear();

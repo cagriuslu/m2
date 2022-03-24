@@ -11,6 +11,7 @@
 #include "GameProxy.hh"
 #include "component/Monitor.h"
 #include "component/Physique.h"
+#include "component/Graphic.h"
 #include <m2/Pool.hh>
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -65,8 +66,8 @@ struct Game {
 	InsertionList drawList;
     m2::Pool<component::Monitor> monitors;
 	m2::Pool<component::Physique> physics;
-    m2::Pool<Graphic> graphics;
-    m2::Pool<Graphic> terrainGraphics;
+    m2::Pool<component::Graphic> graphics;
+    m2::Pool<component::Graphic> terrainGraphics;
     m2::Pool<Light> lights;
     m2::Pool<impl::Defense> defenses;
     m2::Pool<impl::Offense> offenses;

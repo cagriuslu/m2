@@ -1,7 +1,6 @@
 #include <m2/Component.h>
 #include <m2/Game.hh>
-
-Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), draw(default_draw) {}
+#include "m2/component/Graphic.h"
 
 m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPosition, m2::Vec2f objGfxCenterPx) {
 	static auto camera_id = GAME.cameraId;
@@ -23,12 +22,14 @@ m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPositio
 	return obj_gfx_origin_wrt_screen_center_px;
 }
 
-void Graphic::default_draw(Graphic& gfx) {
+component::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), draw(default_draw) {}
+
+void component::Graphic::default_draw(component::Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];
 
-	m2::Vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj.position, gfx.center_px);
+	Vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj.position, gfx.center_px);
 	// Screen origin is top-left corner
-	m2::Vec2i obj_gfx_origin_wrt_screen_origin_px = m2::Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center_px;
+	Vec2i obj_gfx_origin_wrt_screen_origin_px = Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center_px;
 	auto dstrect = SDL_Rect{
 			obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx.textureRect.w * GAME.scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx.textureRect.h * GAME.scale / 2.0f),
@@ -42,17 +43,17 @@ void Graphic::default_draw(Graphic& gfx) {
 	SDL_RenderCopyEx(GAME.sdlRenderer, gfx.texture, &gfx.textureRect, &dstrect, gfx.angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
 }
 
-void Graphic::default_draw_healthbar(Graphic& gfx, float healthRatio) {
+void component::Graphic::default_draw_healthbar(component::Graphic& gfx, float healthRatio) {
 	auto& obj = GAME.objects[gfx.object_id];
 	auto& cam = GAME.objects[GAME.cameraId];
 
-	m2::Vec2f obj_origin_wrt_camera_obj = obj.position - cam.position;
-	m2::Vec2i obj_origin_wrt_screen_center = m2::Vec2i(obj_origin_wrt_camera_obj * GAME.pixelsPerMeter);
-	m2::Vec2i obj_gfx_origin_wrt_screen_center = obj_origin_wrt_screen_center + m2::Vec2i{
+	Vec2f obj_origin_wrt_camera_obj = obj.position - cam.position;
+	Vec2i obj_origin_wrt_screen_center = Vec2i(obj_origin_wrt_camera_obj * GAME.pixelsPerMeter);
+	Vec2i obj_gfx_origin_wrt_screen_center = obj_origin_wrt_screen_center + Vec2i{
 			-(int)roundf(gfx.center_px.x * GAME.scale),
 			-(int)roundf(gfx.center_px.y * GAME.scale)
 	};
-	m2::Vec2i obj_gfx_origin_wrt_screen_origin = m2::Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center;
+	Vec2i obj_gfx_origin_wrt_screen_origin = Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center;
 	auto obj_gfx_dstrect = SDL_Rect{
 			obj_gfx_origin_wrt_screen_origin.x - (int)roundf((float)gfx.textureRect.w * GAME.scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)roundf((float)gfx.textureRect.h * GAME.scale / 2.0f),
@@ -81,7 +82,7 @@ void Graphic::default_draw_healthbar(Graphic& gfx, float healthRatio) {
 	SDL_RenderFillRect(GAME.sdlRenderer, &empty_dstrect);
 }
 
-int Graphic::ycomparator_cb(ID gfxIdA, ID gfxIdB) {
+int component::Graphic::ycomparator_cb(ID gfxIdA, ID gfxIdB) {
 	auto& gfx_a = GAME.graphics[gfxIdA];
 	auto& gfx_b = GAME.graphics[gfxIdB];
 	auto& obj_a = GAME.objects[gfx_a.object_id];

@@ -10,6 +10,7 @@
 #include "m2/Vec2f.h"
 #include "component/Monitor.h"
 #include "component/Physique.h"
+#include "component/Graphic.h"
 #include <memory>
 
 using namespace m2;
@@ -47,16 +48,16 @@ namespace m2 {
 
         [[nodiscard]] component::Monitor& monitor() const;
         [[nodiscard]] component::Physique& physique() const;
-        [[nodiscard]] Graphic& graphic() const;
-        [[nodiscard]] Graphic& terrain_graphic() const;
+        [[nodiscard]] component::Graphic& graphic() const;
+        [[nodiscard]] component::Graphic& terrain_graphic() const;
         [[nodiscard]] Light& light() const;
         [[nodiscard]] impl::Defense& defense() const;
         [[nodiscard]] impl::Offense& offense() const;
 
         [[nodiscard]] component::Monitor& add_monitor();
         [[nodiscard]] component::Physique& add_physique();
-        [[nodiscard]] Graphic& add_graphic();
-        [[nodiscard]] Graphic& add_terrain_graphic();
+        [[nodiscard]] component::Graphic& add_graphic();
+        [[nodiscard]] component::Graphic& add_terrain_graphic();
         [[nodiscard]] Light& add_light();
         [[nodiscard]] impl::Defense& add_defense();
         [[nodiscard]] impl::Offense& add_offense();

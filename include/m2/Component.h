@@ -15,21 +15,6 @@ struct Component {
 	explicit Component(ID object_id);
 };
 
-struct Graphic : public Component {
-	SDL_Texture *texture;
-	SDL_Rect textureRect;
-	m2::Vec2f center_px;
-	float angle;
-	void (*draw)(Graphic&);
-
-	Graphic() = default;
-	explicit Graphic(ID object_id);
-
-	static void default_draw(Graphic& gfx);
-	static void default_draw_healthbar(Graphic& gfx, float healthRatio);
-	static int ycomparator_cb(ID gfxIdA, ID gfxIdB);
-};
-
 struct Light : public Component {
 	float radius_m;
 	void (*draw)(Light&);

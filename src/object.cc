@@ -2,6 +2,7 @@
 #include "m2/Game.hh"
 #include "m2/component/Monitor.h"
 #include "m2/component/Physique.h"
+#include "m2/component/Graphic.h"
 
 m2::Object::Object(const m2::Vec2f &position) :
 		position(position),
@@ -79,10 +80,10 @@ m2::component::Monitor& m2::Object::monitor() const {
 component::Physique& m2::Object::physique() const {
 	return GAME.physics[physique_id];
 }
-Graphic& m2::Object::graphic() const {
+component::Graphic& m2::Object::graphic() const {
 	return GAME.graphics[graphic_id];
 }
-Graphic& m2::Object::terrain_graphic() const {
+component::Graphic& m2::Object::terrain_graphic() const {
 	return GAME.terrainGraphics[terrain_graphic_id];
 }
 Light& m2::Object::light() const {
@@ -107,18 +108,18 @@ component::Physique& m2::Object::add_physique() {
 	physique_pair.first = component::Physique{GAME.objects.get_id(this)};
 	return physique_pair.first;
 }
-Graphic& m2::Object::add_graphic() {
+component::Graphic& m2::Object::add_graphic() {
 	auto graphic_pair = GAME.graphics.alloc();
 	graphic_id = graphic_pair.second;
-	graphic_pair.first = Graphic{GAME.objects.get_id(this)};
+	graphic_pair.first = component::Graphic{GAME.objects.get_id(this)};
 	// TODO move into component maybe?
 	InsertionList_Insert(&GAME.drawList, graphic_id);
 	return graphic_pair.first;
 }
-Graphic& m2::Object::add_terrain_graphic() {
+component::Graphic& m2::Object::add_terrain_graphic() {
 	auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
 	terrain_graphic_id = terrain_graphic_pair.second;
-	terrain_graphic_pair.first = Graphic{GAME.objects.get_id(this)};
+	terrain_graphic_pair.first = component::Graphic{GAME.objects.get_id(this)};
 	return terrain_graphic_pair.first;
 }
 Light& m2::Object::add_light() {
