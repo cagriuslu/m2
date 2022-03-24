@@ -1,0 +1,28 @@
+#ifndef IMPL_ENEMY_H
+#define IMPL_ENEMY_H
+
+#include <m2/Object.h>
+#include <impl/ARPG_Cfg.hh>
+#include <impl/fsm/Chaser.h>
+
+struct EnemyData {
+    CharacterState characterState;
+    Automaton charAnimationAutomaton;
+    AiState aiState;
+    Automaton aiAutomaton;
+    float onHitColorModTtl;
+};
+#define AS_ENEMYDATA(ptr) ((EnemyData*)(ptr))
+
+namespace impl::object {
+    struct Enemy : public m2::ObjectImpl {
+        m2::FSM<impl::fsm::Chaser> chaser;
+
+        explicit Enemy(m2::Object&);
+    };
+}
+
+int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::vec2f position);
+
+
+#endif //IMPL_ENEMY_H

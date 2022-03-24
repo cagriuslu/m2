@@ -1,4 +1,4 @@
-#include "m2/automaton.hh"
+#include "m2/FSM.h"
 
 M2Err Automaton_Init(Automaton* sm) {
 	memset(sm, 0, sizeof(Automaton));

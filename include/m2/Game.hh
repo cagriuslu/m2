@@ -1,10 +1,10 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <game/component.hh>
+#include <impl/component.hh>
 #include "m2/Event.hh"
 #include "InsertionList.hh"
-#include <m2/object.hh>
+#include <m2/Object.h>
 #include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
 #include "Pathfinder.hh"
@@ -57,15 +57,15 @@ struct Game {
 	// iterate over that pool.
 	// Another reason to put a component inside a Pool: if the type of object that is using that component is
 	// created/destroyed very rapidly.
-    m2::pool<m2::object::Object> objects;
+    m2::pool<m2::Object> objects;
 	InsertionList drawList;
     m2::pool<Monitor> monitors;
 	m2::pool<Physique> physics;
     m2::pool<Graphic> graphics;
     m2::pool<Graphic> terrainGraphics;
     m2::pool<Light> lights;
-    m2::pool<game::Defense> defenses;
-    m2::pool<game::Offense> offenses;
+    m2::pool<impl::Defense> defenses;
+    m2::pool<impl::Offense> offenses;
 	b2World* world;
 	ContactListener* contactListener;
 	ID cameraId, playerId, pointerId;

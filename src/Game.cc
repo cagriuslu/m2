@@ -1,22 +1,22 @@
 #include "m2/Game.hh"
-#include <m2/object.hh>
-#include <m2/object/camera.h>
-#include <m2/object/pointer.h>
-#include <m2/object/tile.h>
+#include <m2/Object.h>
+#include <m2/object/Camera.h>
+#include <m2/object/Pointer.h>
+#include <m2/object/Tile.h>
 #include "m2/Component.hh"
 #include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
 #include "m2/UI.hh"
 #include "m2/Def.hh"
 #include <b2_world.h>
-#include <game/game_proxy.hh>
+#include <impl/game_proxy.hh>
 
 // Initialize with default values
 Game GAME = {
 	.physicsStep_s = 1.0f / 80.0f,
 	.velocityIterations = 8,
 	.positionIterations = 3,
-    .proxy = game::GAME_PROXY
+    .proxy = impl::GAME_PROXY
 };
 
 Game::~Game() {
@@ -154,7 +154,7 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 		for (int x = 0; x < cfg->w; x++) {
 			const CfgTile *cfgTile = cfg->tiles + y * cfg->w + x;
 			if (cfgTile->backgroundSpriteIndex) {
-                m2::object::tile::create(m2::vec2f{x, y}, cfgTile->backgroundSpriteIndex);
+                m2::object::create_tile(m2::vec2f{x, y}, cfgTile->backgroundSpriteIndex);
 			}
 			if (cfgTile->foregroundSpriteIndex) {
                 auto& obj = GAME.objects.alloc().first;
@@ -164,8 +164,8 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 	}
 	PathfinderMap_Init(&GAME.pathfinderMap);
 
-    m2::object::camera::create();
-    m2::object::pointer::create();
+    m2::object::create_camera();
+    m2::object::create_pointer();
 
 	UIState_Init(&GAME.leftHudUIState, GAME.proxy.cfgHUDLeft);
 	UIState_UpdatePositions(&GAME.leftHudUIState, GAME.leftHudRect);

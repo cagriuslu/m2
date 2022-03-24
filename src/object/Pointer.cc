@@ -1,5 +1,5 @@
-#include <m2/object/pointer.h>
-#include <m2/object.hh>
+#include <m2/object/Pointer.h>
+#include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.hh"
 
@@ -8,8 +8,8 @@ void pointer_pre_graphics(Monitor& mon) {
 	obj.position = GAME.mousePositionInWorld_m;
 }
 
-std::pair<m2::object::Object&, ID> m2::object::pointer::create() {
-    auto obj_pair = object::create({});
+std::pair<m2::Object&, ID> m2::object::create_pointer() {
+    auto obj_pair = m2::create_object({});
 
     auto& mon = obj_pair.first.add_monitor();
     mon.preGraphics = pointer_pre_graphics;

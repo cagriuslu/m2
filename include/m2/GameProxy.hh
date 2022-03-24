@@ -2,7 +2,7 @@
 #define M2_GAMEPROXY_HH
 
 #include <m2/Cfg.hh>
-#include <m2/object.hh>
+#include <m2/Object.h>
 
 namespace m2 {
     struct game_proxy {
@@ -25,7 +25,7 @@ namespace m2 {
 
         M2Err (*uiElementUpdateDynamic)(UIElementState *state);
 
-        M2Err (*foregroundSpriteLoader)(m2::object::Object *, CfgSpriteIndex, m2::vec2f);
+        M2Err (*foregroundSpriteLoader)(m2::Object *, CfgSpriteIndex, m2::vec2f);
 
         M2Err activate() const;
         M2Err exec_entry_ui() const;

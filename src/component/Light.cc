@@ -5,7 +5,7 @@ Light::Light(ID object_id) : Component(object_id), radius_m(0.0f), draw(default_
 
 m2::vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::vec2f objPosition) {
 	static ID cameraId = 0;
-	static m2::object::Object* cameraObj = nullptr;
+	static m2::Object* cameraObj = nullptr;
 	if (GAME.cameraId && cameraId != GAME.cameraId) {
 		cameraId = GAME.cameraId;
 		cameraObj = GAME.objects.get(GAME.cameraId);
