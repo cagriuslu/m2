@@ -3,7 +3,7 @@
 
 #include <b2_world_callbacks.h>
 #include <b2_collision.h>
-#include <m2/Vec2F.h>
+#include <m2/Vec2f.h>
 #include <cstdint>
 
 class ContactListener : public b2ContactListener {
@@ -15,11 +15,11 @@ public:
 };
 
 class RayCastCallback : public b2RayCastCallback {
-	float (*m_cb)(b2Fixture*, m2::vec2f point, m2::vec2f normal, float fraction, void* userData);
+	float (*m_cb)(b2Fixture*, m2::Vec2f point, m2::Vec2f normal, float fraction, void* userData);
 	uint16_t m_categoryMask;
 	void* m_userData;
 public:
-	RayCastCallback(float (*cb)(b2Fixture*, m2::vec2f point, m2::vec2f normal, float fraction, void* userData), uint16_t categoryMask, void* userData);
+	RayCastCallback(float (*cb)(b2Fixture*, m2::Vec2f point, m2::Vec2f normal, float fraction, void* userData), uint16_t categoryMask, void* userData);
 
 	float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override;
 };

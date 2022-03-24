@@ -18,7 +18,7 @@ static void Player_prePhysics(Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	PlayerData *playerData = AS_PLAYERDATA(obj.data);
 
-	m2::vec2f moveDirection;
+	m2::Vec2f moveDirection;
 	if (GAME.events.keyStates[KEY_UP]) {
 		moveDirection.y += -1.0f;
 		Automaton_ProcessSignal(&playerData->charAnimationAutomaton, SIG_CHARANIM_WALKUP);
@@ -45,12 +45,12 @@ static void Player_prePhysics(Monitor& mon) {
 
 	if (GAME.events.buttonStates[BUTTON_PRIMARY] && playerData->characterState.rangedWeaponState.cfg->cooldown_s < playerData->characterState.rangedWeaponState.cooldownCounter_s) {
 		m2::Object* projectile = &GAME.objects.alloc().first;
-		m2::vec2f direction = (GAME.mousePositionInWorld_m - obj.position).normalize();
+		m2::Vec2f direction = (GAME.mousePositionInWorld_m - obj.position).normalize();
 		float accuracy = playerData->characterState.cfg->defaultRangedWeapon->accuracy;
 		float angle = direction.angle_rads() + (M2_PI * randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
-		ObjectProjectile_InitFromCfg(projectile, &playerData->characterState.cfg->defaultRangedWeapon->projectile, GAME.playerId, obj.position, m2::vec2f::from_angle(angle));
+		ObjectProjectile_InitFromCfg(projectile, &playerData->characterState.cfg->defaultRangedWeapon->projectile, GAME.playerId, obj.position, m2::Vec2f::from_angle(angle));
 		// Knockback
-		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::vec2f::from_angle(angle + M2_PI) * 500.0f), true);
+		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + M2_PI) * 500.0f), true);
 		// TODO set looking direction here as well
 		playerData->characterState.rangedWeaponState.cooldownCounter_s = 0;
 	}
@@ -77,13 +77,13 @@ static void Player_postPhysics(Monitor& mon) {
 
 	// We must call time before other signals
 	Automaton_ProcessTime(&playerData->charAnimationAutomaton, GAME.deltaTime_s);
-	m2::vec2f velocity = m2::vec2f{ phy.body->GetLinearVelocity() };
+	m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 		Automaton_ProcessSignal(&playerData->charAnimationAutomaton, SIG_CHARANIM_STOP);
 	}
 }
 
-int ObjectPlayer_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::vec2f position) {
+int ObjectPlayer_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f position) {
 	*obj = m2::Object{position};
 	obj->data = calloc(1, sizeof(PlayerData)); M2ASSERT(obj->data);
 	PlayerData *playerData = AS_PLAYERDATA(obj->data);

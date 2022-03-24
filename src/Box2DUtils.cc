@@ -7,7 +7,7 @@
 
 #include <m2/Game.hh>
 
-b2Body* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::vec2f boxDims, m2::vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
+b2Body* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::Vec2f position, bool allowSleep, bool isBullet, bool isSensor, uint16_t categoryBits, uint16_t maskBits, m2::Vec2f boxDims, m2::Vec2f boxCenterOffset, float boxAngle, float diskRadius, float mass, float linearDamping, bool fixedRotation) {
 	b2BodyDef bodyDef;
 	if (isDynamic) {
 		bodyDef.type = b2_dynamicBody;
@@ -25,7 +25,7 @@ b2Body* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f p
 		circle_shape.m_radius = diskRadius;
 		fixtureDef.shape = &circle_shape;
 	} else {
-		m2::vec2f halfDims = boxDims * 0.5f;
+		m2::Vec2f halfDims = boxDims * 0.5f;
 		polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(boxCenterOffset), boxAngle);
 		fixtureDef.shape = &polygon_shape;
 	}
@@ -77,7 +77,7 @@ b2Body* Box2DUtils_CreateBody(ID phyId, bool isDisk, bool isDynamic, m2::vec2f p
 	return body;
 }
 
-float Box2DUtilsCheckEyeSight_RayCastCallback(b2Fixture* fixture, m2::vec2f point, m2::vec2f normal, float fraction, void* userData) {
+float Box2DUtilsCheckEyeSight_RayCastCallback(b2Fixture* fixture, m2::Vec2f point, m2::Vec2f normal, float fraction, void* userData) {
 	(void)fixture;
 	(void)point;
 	(void)normal;
@@ -86,7 +86,7 @@ float Box2DUtilsCheckEyeSight_RayCastCallback(b2Fixture* fixture, m2::vec2f poin
 	return 0.0f;
 }
 
-bool Box2DUtils_CheckEyeSight(m2::vec2f from, m2::vec2f to, uint16_t categoryMask) {
+bool Box2DUtils_CheckEyeSight(m2::Vec2f from, m2::Vec2f to, uint16_t categoryMask) {
 	if (from == to) {
 		return true;
 	}

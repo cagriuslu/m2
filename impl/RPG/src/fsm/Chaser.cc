@@ -133,10 +133,10 @@ void* impl::fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
                 auto obj_pos = *std::prev(end, 1);
                 auto target_pos = *std::prev(end, 2);
                 if (obj_pos != target_pos) {
-                    auto objPositionF = m2::vec2f(obj_pos);
-                    auto targetPositionF = m2::vec2f(target_pos);
-                    m2::vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(automaton.data.obj.data)->characterState.cfg->walkSpeed);
+                    auto objPositionF = m2::Vec2f(obj_pos);
+                    auto targetPositionF = m2::Vec2f(target_pos);
+                    m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
+                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(automaton.data.obj.data)->characterState.cfg->walkSpeed);
                     automaton.data.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
                 }
             }
@@ -180,10 +180,10 @@ void* impl::fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
                 auto obj_pos = *std::prev(end, 1);
                 auto target_pos = *std::prev(end, 2);
                 if (obj_pos != target_pos) {
-                    auto objPositionF = m2::vec2f(obj_pos);
-                    auto targetPositionF = m2::vec2f(target_pos);
-                    m2::vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(automaton.data.obj.data)->characterState.cfg->walkSpeed);
+                    auto objPositionF = m2::Vec2f(obj_pos);
+                    auto targetPositionF = m2::Vec2f(target_pos);
+                    m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
+                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(automaton.data.obj.data)->characterState.cfg->walkSpeed);
                     automaton.data.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
                 }
             }

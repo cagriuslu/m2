@@ -55,7 +55,7 @@ static void Sword_onCollision(Physique& phy, Physique& other) {
 	}
 }
 
-int ObjectMelee_InitFromCfg(m2::Object* obj, const CfgMelee *cfg, ID originatorId, m2::vec2f position, m2::vec2f direction) {
+int ObjectMelee_InitFromCfg(m2::Object* obj, const CfgMelee *cfg, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
 	*obj = m2::Object{position};
 
 	const float theta = direction.angle_rads(); // Convert direction to angle
@@ -76,8 +76,8 @@ int ObjectMelee_InitFromCfg(m2::Object* obj, const CfgMelee *cfg, ID originatorI
 		true, // isSensor
 		originatorId == GAME.playerId ? CATEGORY_PLAYER_MELEE_WEAPON : CATEGORY_ENEMY_MELEE_WEAPON, // category
 		0, // mask
-		m2::vec2f{1.25f, 0.1667f}, // boxDims
-		m2::vec2f{0.5833f, 0.0f}, // boxCenterOffset
+		m2::Vec2f{1.25f, 0.1667f}, // boxDims
+		m2::Vec2f{0.5833f, 0.0f}, // boxCenterOffset
 		0.0f, // boxAngle
 		NAN, // diskRadius
 		1.0f, // mass

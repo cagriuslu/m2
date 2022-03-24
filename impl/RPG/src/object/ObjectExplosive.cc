@@ -7,7 +7,7 @@
 #include <impl/ARPG_Cfg.hh>
 #include <impl/component.hh>
 
-static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::vec2f position, const CfgExplosive *cfg) {
+static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
 	return Box2DUtils_CreateBulletSensor(
 		phyId,
 		position,
@@ -25,8 +25,8 @@ static void ObjectExplosive_prePhysics(Monitor& mon) {
 
 	switch (off.state.explosive.explosiveStatus) {
 		case EXPLOSIVE_STATUS_IN_FLIGHT: {
-			m2::vec2f curr_linear_velocity = m2::vec2f{ phy.body->GetLinearVelocity() };
-			m2::vec2f new_linear_velocity = curr_linear_velocity.normalize() * off.state.explosive.cfg->projectileSpeed_mps;
+			m2::Vec2f curr_linear_velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
+			m2::Vec2f new_linear_velocity = curr_linear_velocity.normalize() * off.state.explosive.cfg->projectileSpeed_mps;
 			phy.body->SetLinearVelocity(static_cast<b2Vec2>(new_linear_velocity));
 			off.state.explosive.projectileTtl_s -= GAME.deltaTicks_ms / 1000.0f;
 			if (off.state.explosive.projectileTtl_s <= 0) {
@@ -74,8 +74,8 @@ static void ObjectExplosive_onCollision(Physique& phy, Physique& other) {
 					} else {
 						LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def.object_id, M2_HP, Float32, def.hp);
 
-						m2::vec2f curr_direction = m2::vec2f{ phy.body->GetLinearVelocity() }.normalize();
-						m2::vec2f force = curr_direction * 5000.0f;
+						m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
+						m2::Vec2f force = curr_direction * 5000.0f;
 						other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 						if (def.onHit) {
 							def.onHit(&def);
@@ -108,7 +108,7 @@ static void ObjectExplosive_postPhysics(Monitor& mon) {
 	}
 }
 
-M2Err ObjectExplosive_InitFromCfg(m2::Object* obj, const CfgExplosive* cfg, ID originatorId, m2::vec2f position, m2::vec2f direction) {
+M2Err ObjectExplosive_InitFromCfg(m2::Object* obj, const CfgExplosive* cfg, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
 	*obj = m2::Object{position};
 	direction = direction.normalize();
 

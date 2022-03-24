@@ -258,7 +258,7 @@ int main(int argc, char **argv) {
 			// Physics
 			GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
             for (auto physique_it : GAME.physics) {
-				GAME.objects[physique_it.first->object_id].position = m2::vec2f{physique_it.first->body->GetPosition()};
+				GAME.objects[physique_it.first->object_id].position = m2::Vec2f{physique_it.first->body->GetPosition()};
             } // TODO Easy to parallelize
 			Game_DeleteList_DeleteAll();
 

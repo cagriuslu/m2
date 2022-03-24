@@ -1,7 +1,7 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 
-m2::Object::Object(const m2::vec2f &position) :
+m2::Object::Object(const m2::Vec2f &position) :
 		position(position),
 		monitor_id(0),
 		physique_id(0),
@@ -138,7 +138,7 @@ impl::Offense& m2::Object::add_offense() {
 	return offense_pair.first;
 }
 
-std::pair<m2::Object&, ID> m2::create_object(const m2::vec2f &position) {
+std::pair<m2::Object&, ID> m2::create_object(const m2::Vec2f &position) {
     auto obj_pair = GAME.objects.alloc();
     obj_pair.first = Object{position};
     return obj_pair;

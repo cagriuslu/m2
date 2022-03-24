@@ -22,7 +22,7 @@ namespace impl::object {
     };
 }
 
-int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::vec2f position);
+int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f position);
 
 
 #endif //IMPL_ENEMY_H

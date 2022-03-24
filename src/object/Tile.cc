@@ -4,7 +4,7 @@
 #include "m2/Box2DUtils.hh"
 #include "m2/Game.hh"
 
-std::pair<m2::Object&, ID> m2::object::create_tile(const vec2f& position, CfgSpriteIndex sprite_index) {
+std::pair<m2::Object&, ID> m2::object::create_tile(const Vec2f& position, CfgSpriteIndex sprite_index) {
     auto obj_pair = create_object(position);
 
     const CfgSprite& sprite = GAME.proxy.cfgSprites[sprite_index];

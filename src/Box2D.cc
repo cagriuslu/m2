@@ -18,11 +18,11 @@ void ContactListener::BeginContact(b2Contact* contact) {
 	m_cb(contact);
 }
 
-RayCastCallback::RayCastCallback(float (*cb)(b2Fixture*, m2::vec2f point, m2::vec2f normal, float fraction, void* userData), uint16_t categoryMask, void* userData) : m_cb(cb), m_categoryMask(categoryMask), m_userData(userData) {}
+RayCastCallback::RayCastCallback(float (*cb)(b2Fixture*, m2::Vec2f point, m2::Vec2f normal, float fraction, void* userData), uint16_t categoryMask, void* userData) : m_cb(cb), m_categoryMask(categoryMask), m_userData(userData) {}
 
 float RayCastCallback::ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) {
 	if (fixture->GetFilterData().categoryBits & m_categoryMask) {
-		return (*m_cb)(fixture, m2::vec2f{ point }, m2::vec2f{ normal }, fraction, m_userData);
+		return (*m_cb)(fixture, m2::Vec2f{point }, m2::Vec2f{normal }, fraction, m_userData);
 	}
 	return 1.0f;
 }

@@ -79,8 +79,8 @@ struct Game {
 	Events events;
 	unsigned deltaTicks_ms;
 	float deltaTime_s;
-	m2::vec2f mousePositionInWorld_m;
-	m2::vec2f mousePositionWRTScreenCenter_m;
+	m2::Vec2f mousePositionInWorld_m;
+	m2::Vec2f mousePositionWRTScreenCenter_m;
 	char consoleInput[1024];
 	const m2::game_proxy& proxy;
 

@@ -3,7 +3,7 @@
 
 Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), draw(default_draw) {}
 
-m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::vec2f objPosition, m2::vec2f objGfxCenterPx) {
+m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPosition, m2::Vec2f objGfxCenterPx) {
 	static auto camera_id = GAME.cameraId;
 	static auto* camera = GAME.objects.get(GAME.cameraId);
 	if (camera_id != GAME.cameraId) {
@@ -12,11 +12,11 @@ m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::vec2f objPositio
 		camera = GAME.objects.get(GAME.cameraId);
 	}
 
-	m2::vec2f cameraPosition = camera->position;
-	m2::vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
+	m2::Vec2f cameraPosition = camera->position;
+	m2::Vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
 	// Screen center is the middle of the window
-	m2::vec2i obj_origin_wrt_screen_center_px = m2::vec2i{obj_origin_wrt_camera_obj_m * GAME.pixelsPerMeter};
-	m2::vec2i obj_gfx_origin_wrt_screen_center_px = obj_origin_wrt_screen_center_px + m2::vec2i{
+	m2::Vec2i obj_origin_wrt_screen_center_px = m2::Vec2i{obj_origin_wrt_camera_obj_m * GAME.pixelsPerMeter};
+	m2::Vec2i obj_gfx_origin_wrt_screen_center_px = obj_origin_wrt_screen_center_px + m2::Vec2i{
 			-(int)roundf(objGfxCenterPx.x * GAME.scale),
 			-(int)roundf(objGfxCenterPx.y * GAME.scale)
 	};
@@ -26,9 +26,9 @@ m2::vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::vec2f objPositio
 void Graphic::default_draw(Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];
 
-	m2::vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj.position, gfx.center_px);
+	m2::Vec2i obj_gfx_origin_wrt_screen_center_px = ComponentGraphic_GraphicsOriginWRTScreenCenter_px(obj.position, gfx.center_px);
 	// Screen origin is top-left corner
-	m2::vec2i obj_gfx_origin_wrt_screen_origin_px = m2::vec2i{ GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center_px;
+	m2::Vec2i obj_gfx_origin_wrt_screen_origin_px = m2::Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center_px;
 	auto dstrect = SDL_Rect{
 			obj_gfx_origin_wrt_screen_origin_px.x - (int)floorf((float)gfx.textureRect.w * GAME.scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin_px.y - (int)floorf((float)gfx.textureRect.h * GAME.scale / 2.0f),
@@ -46,13 +46,13 @@ void Graphic::default_draw_healthbar(Graphic& gfx, float healthRatio) {
 	auto& obj = GAME.objects[gfx.object_id];
 	auto& cam = GAME.objects[GAME.cameraId];
 
-	m2::vec2f obj_origin_wrt_camera_obj = obj.position - cam.position;
-	m2::vec2i obj_origin_wrt_screen_center = m2::vec2i(obj_origin_wrt_camera_obj * GAME.pixelsPerMeter);
-	m2::vec2i obj_gfx_origin_wrt_screen_center = obj_origin_wrt_screen_center + m2::vec2i{
+	m2::Vec2f obj_origin_wrt_camera_obj = obj.position - cam.position;
+	m2::Vec2i obj_origin_wrt_screen_center = m2::Vec2i(obj_origin_wrt_camera_obj * GAME.pixelsPerMeter);
+	m2::Vec2i obj_gfx_origin_wrt_screen_center = obj_origin_wrt_screen_center + m2::Vec2i{
 			-(int)roundf(gfx.center_px.x * GAME.scale),
 			-(int)roundf(gfx.center_px.y * GAME.scale)
 	};
-	m2::vec2i obj_gfx_origin_wrt_screen_origin = m2::vec2i{ GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center;
+	m2::Vec2i obj_gfx_origin_wrt_screen_origin = m2::Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center;
 	auto obj_gfx_dstrect = SDL_Rect{
 			obj_gfx_origin_wrt_screen_origin.x - (int)roundf((float)gfx.textureRect.w * GAME.scale / 2.0f),
 			obj_gfx_origin_wrt_screen_origin.y - (int)roundf((float)gfx.textureRect.h * GAME.scale / 2.0f),

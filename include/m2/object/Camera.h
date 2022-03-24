@@ -5,7 +5,7 @@
 
 namespace m2::object {
     struct Camera : public ObjectImpl {
-        vec2f offset;
+        Vec2f offset;
     };
 
     std::pair<Object&, ID> create_camera();

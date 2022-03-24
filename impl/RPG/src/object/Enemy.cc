@@ -33,7 +33,7 @@ static void ObjectEnemy_postPhysics(Monitor& monitor) {
 	auto& phy = GAME.physics[obj.physique_id];
 	// We must call time before other signals
 	Automaton_ProcessTime(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), GAME.deltaTicks_ms / 1000.0f);
-	m2::vec2f velocity = m2::vec2f{ phy.body->GetLinearVelocity() };
+	m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 		Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_STOP);
 	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
@@ -66,7 +66,7 @@ static void ObjectEnemy_Draw(Graphic& gfx) {
 	Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 }
 
-int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::vec2f position) {
+int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f position) {
 	*obj = m2::Object{position};
     obj->data = new EnemyData();
 	M2ERR_REFLECT(CharacterState_Init(&(AS_ENEMYDATA(obj->data)->characterState), cfg));

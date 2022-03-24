@@ -6,7 +6,7 @@
 #include "m2/Component.hh"
 #include "m2/FSM.h"
 #include "m2/Cfg.hh"
-#include "m2/Vec2F.h"
+#include "m2/Vec2f.h"
 #include <memory>
 
 namespace m2 {
@@ -16,7 +16,7 @@ namespace m2 {
     /// If the component is created and destroyed rapidly => Pool
     /// Else => Data
     struct Object {
-        m2::vec2f position;
+        m2::Vec2f position;
         // Components
         ID monitor_id;
         ID physique_id;
@@ -30,7 +30,7 @@ namespace m2 {
         std::unique_ptr<ObjectImpl> impl;
 
         Object() = default;
-        explicit Object(const m2::vec2f& position);
+        explicit Object(const m2::Vec2f& position);
         // Copy not allowed
         Object(const Object& other) = delete;
         Object& operator=(const Object& other) = delete;
@@ -57,7 +57,7 @@ namespace m2 {
         [[nodiscard]] impl::Offense& add_offense();
     };
 
-    std::pair<Object&, ID> create_object(const m2::vec2f& position);
+    std::pair<Object&, ID> create_object(const m2::Vec2f& position);
 }
 
 #endif

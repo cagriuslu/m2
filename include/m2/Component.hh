@@ -2,7 +2,7 @@
 #define COMPONENT_H
 
 #include <m2/Cfg.hh>
-#include <m2/Vec2F.h>
+#include <m2/Vec2f.h>
 #include <m2/Box2D.hh>
 #include <b2_body.h>
 #include <SDL.h>
@@ -46,7 +46,7 @@ struct Physique : public Component {
 struct Graphic : public Component {
 	SDL_Texture *texture;
 	SDL_Rect textureRect;
-	m2::vec2f center_px;
+	m2::Vec2f center_px;
 	float angle;
 	void (*draw)(Graphic&);
 

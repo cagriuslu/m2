@@ -1,6 +1,6 @@
 #include <impl/ARPG_Cfg.hh>
 #include <m2/Cfg.hh>
-#include <m2/vec2i.hh>
+#include <m2/Vec2i.hh>
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// UI //////////////////////////////////
@@ -628,7 +628,7 @@ const CfgAi CFG_AI_CHASE_00 = {
 		.recalculationPeriod_s = 0.75f,
 };
 
-M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::vec2f homePosition) {
+M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::Vec2f homePosition) {
 	state->cfg = cfg;
 	state->homePosition = homePosition;
 	return M2OK;

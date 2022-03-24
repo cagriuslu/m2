@@ -12,7 +12,7 @@ static void camera_post_physics(Monitor& el) {
 	auto& player = GAME.objects[GAME.playerId];
 
 	// Give an offset to the camera's location based on the position of the mouse
-	m2::vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
+	m2::Vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
 	camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
 	cam.position = cam.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
 }
@@ -20,7 +20,7 @@ static void camera_post_physics(Monitor& el) {
 std::pair<m2::Object&, ID> m2::object::create_camera() {
     // Start at player's location
     auto* player = GAME.objects.get(GAME.playerId);
-    auto obj_pair = create_object(player ? player->position : vec2f{});
+    auto obj_pair = create_object(player ? player->position : Vec2f{});
 
     auto& mon = obj_pair.first.add_monitor();
     mon.postPhysics = camera_post_physics;

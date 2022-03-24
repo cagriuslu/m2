@@ -2,7 +2,7 @@
 #define CFG_H
 
 #include "m2/FSM.h"
-#include <m2/Vec2F.h>
+#include <m2/Vec2f.h>
 #include "Def.hh"
 #include <SDL.h>
 
@@ -93,13 +93,13 @@ typedef enum {
 	CFG_COLLIDER_TYPE_CIRCLE
 } CfgColliderType;
 typedef struct {
-	m2::vec2f center_px;
-	m2::vec2f center_m;
+	m2::Vec2f center_px;
+	m2::Vec2f center_m;
 	CfgColliderType type;
 	union {
 		struct {
-			m2::vec2f dims_px;
-			m2::vec2f dims_m;
+			m2::Vec2f dims_px;
+			m2::Vec2f dims_m;
 		} rect;
 		struct {
 			float radius_px;
@@ -113,8 +113,8 @@ typedef uint32_t CfgSpriteIndex;
 typedef struct {
 	CfgSpriteIndex index;
 	SDL_Rect textureRect;
-	m2::vec2f objCenter_px;
-	m2::vec2f objCenter_m;
+	m2::Vec2f objCenter_px;
+	m2::Vec2f objCenter_m;
 	CfgCollider collider;
 } CfgSprite;
 

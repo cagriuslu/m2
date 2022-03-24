@@ -97,11 +97,11 @@ void Game_UpdateWindowDimensions(int width, int height) {
 
 void Game_UpdateMousePosition() {
 	auto& cam = GAME.objects[GAME.cameraId];
-	m2::vec2f cameraPosition = cam.position;
+	m2::Vec2f cameraPosition = cam.position;
 
-	m2::vec2i pointerPosition = GAME.events.mousePosition;
-	m2::vec2i pointerPositionWRTScreenCenter_px = m2::vec2i{pointerPosition.x - (GAME.windowRect.w / 2), pointerPosition.y - (GAME.windowRect.h / 2) };
-	GAME.mousePositionWRTScreenCenter_m = m2::vec2f{pointerPositionWRTScreenCenter_px.x / GAME.pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME.pixelsPerMeter };
+	m2::Vec2i pointerPosition = GAME.events.mousePosition;
+	m2::Vec2i pointerPositionWRTScreenCenter_px = m2::Vec2i{pointerPosition.x - (GAME.windowRect.w / 2), pointerPosition.y - (GAME.windowRect.h / 2) };
+	GAME.mousePositionWRTScreenCenter_m = m2::Vec2f{pointerPositionWRTScreenCenter_px.x / GAME.pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME.pixelsPerMeter };
 	GAME.mousePositionInWorld_m = GAME.mousePositionWRTScreenCenter_m + cameraPosition;
 }
 
@@ -154,11 +154,11 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 		for (int x = 0; x < cfg->w; x++) {
 			const CfgTile *cfgTile = cfg->tiles + y * cfg->w + x;
 			if (cfgTile->backgroundSpriteIndex) {
-                m2::object::create_tile(m2::vec2f{x, y}, cfgTile->backgroundSpriteIndex);
+                m2::object::create_tile(m2::Vec2f{x, y}, cfgTile->backgroundSpriteIndex);
 			}
 			if (cfgTile->foregroundSpriteIndex) {
                 auto& obj = GAME.objects.alloc().first;
-				M2ERR_REFLECT(GAME.proxy.foregroundSpriteLoader(&obj, cfgTile->foregroundSpriteIndex, m2::vec2f{x, y}));
+				M2ERR_REFLECT(GAME.proxy.foregroundSpriteLoader(&obj, cfgTile->foregroundSpriteIndex, m2::Vec2f{x, y}));
 			}
 		}
 	}

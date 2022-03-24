@@ -25,7 +25,7 @@ namespace m2 {
 
         M2Err (*uiElementUpdateDynamic)(UIElementState *state);
 
-        M2Err (*foregroundSpriteLoader)(m2::Object *, CfgSpriteIndex, m2::vec2f);
+        M2Err (*foregroundSpriteLoader)(m2::Object *, CfgSpriteIndex, m2::Vec2f);
 
         M2Err activate() const;
         M2Err exec_entry_ui() const;

@@ -6,7 +6,7 @@
 #include "m2/Component.hh"
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include <m2/vec2i.hh>
+#include <m2/Vec2i.hh>
 #include <stdbool.h>
 #include <float.h>
 #include <stdio.h>
@@ -49,11 +49,11 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 	pm->blocked_locations.clear();
 }
 
-M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::vec2f from, m2::vec2f to, std::list<m2::vec2i>& outReverseListOfVec2Is) {
+M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::Vec2f from, m2::Vec2f to, std::list<m2::Vec2i>& outReverseListOfVec2Is) {
 	// Check if there is direct eyesight
 	if (Box2DUtils_CheckEyeSight(from, to, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF)) {
-		auto fromI = m2::vec2i{from};
-		auto toI = m2::vec2i{to};
+		auto fromI = m2::Vec2i{from};
+		auto toI = m2::Vec2i{to};
 
         outReverseListOfVec2Is.clear();
 		// Add `to` to list
@@ -66,7 +66,7 @@ M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::vec2f from, m2::vec2f to, st
 			return M2OK;
 		}
 	} else {
-        std::list<m2::vec2i> grid_steps;
+        std::list<m2::Vec2i> grid_steps;
 
 		M2Err anyAngleResult = M2ERR_PATH_NOT_FOUND;
 		if (_PathfinderMap_FindGridSteps(pm, from, to, grid_steps) == M2OK) {
@@ -83,15 +83,15 @@ M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::vec2f from, m2::vec2f to, st
 
 struct PriorityListItem {
 	float priority;
-	m2::vec2i position;
+	m2::Vec2i position;
 };
 
-M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f toF, std::list<m2::vec2i>& outReverseListOfVec2Is) {
-	auto from = m2::vec2i{ fromF };
-	auto to = m2::vec2i{toF};
+M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::Vec2f fromF, m2::Vec2f toF, std::list<m2::Vec2i>& outReverseListOfVec2Is) {
+	auto from = m2::Vec2i{fromF };
+	auto to = m2::Vec2i{toF};
 
 	PriorityListItem tmpPrioListItem;
-	m2::vec2i tmpCameFrom;
+	m2::Vec2i tmpCameFrom;
 	float tmpCostSoFar;
 
 	// Holds the positions where will be explored next
@@ -99,10 +99,10 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
     frontiers.push_front({0.0f, from});
 
 	// Holds from which position should you approach a certain position
-	std::unordered_map<m2::vec2i, m2::vec2i, m2::vec2i_hash> came_from;
+	std::unordered_map<m2::Vec2i, m2::Vec2i, m2::vec2i_hash> came_from;
 	came_from[from] = from;
 
-	std::unordered_map<m2::vec2i, float, m2::vec2i_hash> cost_so_far;
+	std::unordered_map<m2::Vec2i, float, m2::vec2i_hash> cost_so_far;
 	cost_so_far[from] = 0.0f;
 
 	while (not frontiers.empty()) {
@@ -118,25 +118,25 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
 		const float costToCurrentFrontier = cost_so_far[frontierItem->position];
 
 		// Gather neighbors of frontierItem
-		m2::vec2i neighbors[4];
+		m2::Vec2i neighbors[4];
 		float frontierToNeighborCosts[4];
 		uint32_t neighborCount = 0;
-		m2::vec2i topNeighbor = frontierItem->position + m2::vec2i(0, -1);
+		m2::Vec2i topNeighbor = frontierItem->position + m2::Vec2i(0, -1);
 		if (not pm->blocked_locations.contains(topNeighbor) || (to == topNeighbor)) {
 			neighbors[neighborCount] = topNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
-		m2::vec2i rightNeighbor = frontierItem->position + m2::vec2i(+1, 0);
+		m2::Vec2i rightNeighbor = frontierItem->position + m2::Vec2i(+1, 0);
 		if (not pm->blocked_locations.contains(rightNeighbor) || (to == rightNeighbor)) {
 			neighbors[neighborCount] = rightNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
-		m2::vec2i bottomNeighbor = frontierItem->position + m2::vec2i(0, +1);
+		m2::Vec2i bottomNeighbor = frontierItem->position + m2::Vec2i(0, +1);
 		if (not pm->blocked_locations.contains(bottomNeighbor) || (to == bottomNeighbor)) {
 			neighbors[neighborCount] = bottomNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
-		m2::vec2i leftNeighbor = frontierItem->position + m2::vec2i(-1, 0);
+		m2::Vec2i leftNeighbor = frontierItem->position + m2::Vec2i(-1, 0);
 		if (not pm->blocked_locations.contains(leftNeighbor) || (to == leftNeighbor)) {
 			neighbors[neighborCount] = leftNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
@@ -194,20 +194,20 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::vec2f fromF, m2::vec2f
         outReverseListOfVec2Is.push_back(to);
 		// Built outReverseListOfVec2Is
 		while (it != came_from.end() && from != it->second) {
-			m2::vec2i data = it->second;
+			m2::Vec2i data = it->second;
             outReverseListOfVec2Is.push_back(data);
 			it = came_from.find(it->second);
 		}
 		// Add `from` to list as well
 		if (it != came_from.end()) {
-			m2::vec2i data = it->second;
+			m2::Vec2i data = it->second;
             outReverseListOfVec2Is.push_back(data);
 		}
 	}
 	return result;
 }
 
-void _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::vec2i>& listOfVec2Is, std::list<m2::vec2i>& outListOfVec2Is) {
+void _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::Vec2i>& listOfVec2Is, std::list<m2::Vec2i>& outListOfVec2Is) {
     outListOfVec2Is.clear();
 
 	if (listOfVec2Is.size() < 2) {
@@ -217,12 +217,12 @@ void _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::vec2i>& listOfVec2Is
     outListOfVec2Is.push_back(*point_1_it);
     auto* point1 = &(*point_1_it);
 
-	const m2::vec2i* prevPoint2 = nullptr;
+	const m2::Vec2i* prevPoint2 = nullptr;
     auto point_2_it = listOfVec2Is.begin();
 	for (++point_2_it; point_2_it != listOfVec2Is.end(); ++point_2_it) {
         auto* point2 = &(*point_2_it);
 
-		const bool eyeSight = Box2DUtils_CheckEyeSight(m2::vec2f{*point1}, m2::vec2f{*point2}, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF);
+		const bool eyeSight = Box2DUtils_CheckEyeSight(m2::Vec2f{*point1}, m2::Vec2f{*point2}, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF);
         if (point_2_it == std::prev(listOfVec2Is.end(), 1)) {
             if (eyeSight) {
                 // If we are processing the last point and there is an eye sight, add the last point
