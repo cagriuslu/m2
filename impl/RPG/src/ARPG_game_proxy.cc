@@ -1,8 +1,8 @@
-#include <impl/game_proxy.hh>
-#include <impl/ARPG_Cfg.hh>
+#include "impl/private/game_proxy.hh"
+#include "impl/private/ARPG_Cfg.hh"
 #include "ARPG_Object.hh"
 #include "ARPG_UIElement.hh"
-#include <impl/object/Enemy.h>
+#include <impl/private/object/Enemy.h>
 #include "m2/Game.hh"
 
 static M2Err ARPG_EntryUIButtonHandler(CfgUIButtonType button) {

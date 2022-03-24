@@ -21,7 +21,7 @@ namespace m2 {
 		explicit operator bool() const;
 	};
 
-	struct vec2i_hash {
+	struct Vec2iHash {
 		size_t operator()(const Vec2i& a) const;
 	};
 }

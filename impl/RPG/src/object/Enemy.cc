@@ -1,12 +1,12 @@
-#include <impl/object/Enemy.h>
+#include <impl/private/object/Enemy.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Box2D.hh"
 #include "m2/Def.hh"
 #include "m2/Box2DUtils.hh"
 #include "../ARPG_Object.hh"
-#include <impl/ARPG_Cfg.hh>
-#include <impl/component.hh>
+#include "impl/private/ARPG_Cfg.hh"
+#include "impl/public/Component.hh"
 
 impl::object::Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
 

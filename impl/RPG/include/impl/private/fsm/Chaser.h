@@ -1,8 +1,8 @@
 #ifndef IMPL_CHASE_HH
 #define IMPL_CHASE_HH
 
-#include <m2/Object.h>
-#include <m2/FSM.h>
+#include "m2/Object.h"
+#include "m2/FSM.h"
 #include <functional>
 
 namespace impl::fsm {

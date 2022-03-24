@@ -2,8 +2,8 @@
 #include "m2/Def.hh"
 #include "m2/Game.hh"
 #include "m2/Box2DUtils.hh"
-#include <impl/component.hh>
-#include <impl/ARPG_Cfg.hh>
+#include "impl/public/Component.hh"
+#include "impl/private/ARPG_Cfg.hh"
 
 #define SWING_SPEED (15.0f)
 

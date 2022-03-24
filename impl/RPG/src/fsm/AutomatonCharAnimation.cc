@@ -1,6 +1,6 @@
 #include "m2/FSM.h"
 #include <m2/Object.h>
-#include <impl/ARPG_Cfg.hh>
+#include "impl/private/ARPG_Cfg.hh"
 
 #define ALARM_DURATION (0.1f)
 

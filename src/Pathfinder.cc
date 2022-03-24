@@ -3,7 +3,7 @@
 #include <b2_fixture.h>
 
 #include "m2/Box2DUtils.hh"
-#include "m2/Component.hh"
+#include "m2/Component.h"
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include <m2/Vec2i.hh>
@@ -99,10 +99,10 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::Vec2f fromF, m2::Vec2f
     frontiers.push_front({0.0f, from});
 
 	// Holds from which position should you approach a certain position
-	std::unordered_map<m2::Vec2i, m2::Vec2i, m2::vec2i_hash> came_from;
+	std::unordered_map<m2::Vec2i, m2::Vec2i, m2::Vec2iHash> came_from;
 	came_from[from] = from;
 
-	std::unordered_map<m2::Vec2i, float, m2::vec2i_hash> cost_so_far;
+	std::unordered_map<m2::Vec2i, float, m2::Vec2iHash> cost_so_far;
 	cost_so_far[from] = 0.0f;
 
 	while (not frontiers.empty()) {

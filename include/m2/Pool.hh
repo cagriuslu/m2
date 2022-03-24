@@ -15,21 +15,21 @@ namespace m2 {
     extern uint16_t g_pool_id;
 
     template <typename T, size_t Capacity = 65536>
-    struct pool {
+    struct Pool {
         static_assert(Capacity <= 65536);
 
-        struct pool_item {
+        struct Item {
             T data;
             uint32_t id; // If allocated: key|index, else: 0|nextFreeIndex
         };
 
-        struct iterator {
-            pool<T,Capacity> *pool;
+        struct Iterator {
+            Pool<T,Capacity> *pool;
 			// TODO hold reference instead of pointer
             T* data;
             ID id;
 
-            iterator& operator++() {
+            Iterator& operator++() {
                 const uint16_t curr_index = id & 0xFFFFu;
                 for (uint16_t i = curr_index + 1; i <= pool->_highest_allocated_index; ++i) {
                     auto& item = pool->_items[i];
@@ -44,7 +44,7 @@ namespace m2 {
                 id = 0;
                 return *this;
             }
-            bool operator==(const iterator& other) const {
+            bool operator==(const Iterator& other) const {
                 return id == other.id;
             }
             std::pair<T*,ID> operator*() {
@@ -53,7 +53,7 @@ namespace m2 {
         };
 
     private:
-        std::array<pool_item, Capacity> _items;
+        std::array<Item, Capacity> _items;
         ID _shifted_pool_id;
         size_t _size; // [0, 65536]
         // Key is monotonically increasing, and it is a part of the ID. This means if an object is deallocated,
@@ -64,7 +64,7 @@ namespace m2 {
         size_t _next_free_index;
     public:
 
-        pool() : _items(), _size(0), _next_key(1), _highest_allocated_index(0), _lowest_allocated_index(0), _next_free_index(0) {
+        Pool() : _items(), _size(0), _next_key(1), _highest_allocated_index(0), _lowest_allocated_index(0), _next_free_index(0) {
             _shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
             size_t i = 0;
             for (auto& item : _items) {
@@ -77,7 +77,7 @@ namespace m2 {
             if (_size < Capacity) {
                 // Find the item that will be allocated
                 const size_t index_to_alloc = _next_free_index;
-                pool_item& item = _items[index_to_alloc];
+                Item& item = _items[index_to_alloc];
                 // Store next free index
                 _next_free_index = item.id & 0xFFFF;
                 // Set id of the new item
@@ -107,7 +107,7 @@ namespace m2 {
             T* data = get(id);
             if (data) {
                 auto* byte_ptr = reinterpret_cast<uint8_t*>(data);
-                auto* item_ptr = reinterpret_cast<pool_item*>(byte_ptr - offsetof(pool_item, data));
+                auto* item_ptr = reinterpret_cast<Item*>(byte_ptr - offsetof(Item, data));
                 // Get index of item
                 auto index = static_cast<uint16_t>(item_ptr->id & 0xFFFFu);
                 // Clear item
@@ -181,7 +181,7 @@ namespace m2 {
             const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_items[_lowest_allocated_index].data);
             const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_items[_highest_allocated_index].data);
             if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
-                const auto* item_ptr = reinterpret_cast<const pool_item*>(byte_ptr - offsetof(pool_item, data));
+                const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offsetof(Item, data));
                 // Check if item is allocated
                 if (item_ptr->id & 0xFFFF0000u) {
                     return _shifted_pool_id | static_cast<uint64_t>(item_ptr->id);
@@ -190,15 +190,15 @@ namespace m2 {
             return 0;
         }
 
-        iterator begin() {
+        Iterator begin() {
             if (_size) {
-                pool_item& item = _items[_lowest_allocated_index];
+                Item& item = _items[_lowest_allocated_index];
                 return {.pool = this, .data = &item.data, .id = _shifted_pool_id | static_cast<uint64_t>(item.id)};
             } else {
                 return end();
             }
         }
-        iterator end() {
+        Iterator end() {
             return {.pool = this, .data = nullptr, .id = 0};
         }
     };

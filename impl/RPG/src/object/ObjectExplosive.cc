@@ -4,8 +4,8 @@
 #include "m2/Box2DUtils.hh"
 #include "m2/Game.hh"
 #include "m2/Def.hh"
-#include <impl/ARPG_Cfg.hh>
-#include <impl/component.hh>
+#include "impl/private/ARPG_Cfg.hh"
+#include "impl/public/Component.hh"
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
 	return Box2DUtils_CreateBulletSensor(

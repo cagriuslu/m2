@@ -1,3 +1,3 @@
-#include "m2/Component.hh"
+#include "m2/Component.h"
 
-m2::component_offense::component_offense(ID object_id) : Component(object_id) {}
+m2::Offense::Offense(ID object_id) : Component(object_id) {}

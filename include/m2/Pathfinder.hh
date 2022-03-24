@@ -8,7 +8,7 @@
 #include <list>
 
 typedef struct {
-	std::unordered_set<m2::Vec2i, m2::vec2i_hash> blocked_locations;
+	std::unordered_set<m2::Vec2i, m2::Vec2iHash> blocked_locations;
 } PathfinderMap;
 
 int PathfinderMap_Init(PathfinderMap* pm);

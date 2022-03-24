@@ -2,8 +2,8 @@
 #define M2_ARPG_OBJECT_HH
 
 #include <m2/Object.h>
-#include <impl/ARPG_Cfg.hh>
-#include <impl/fsm/Chaser.h>
+#include "impl/private/ARPG_Cfg.hh"
+#include <impl/private/fsm/Chaser.h>
 
 M2Err ObjectExplosive_InitFromCfg(m2::Object* obj, const CfgExplosive* cfg, ID originatorId, m2::Vec2f position, m2::Vec2f direction);
 

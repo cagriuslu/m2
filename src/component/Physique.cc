@@ -1,4 +1,4 @@
-#include <m2/Component.hh>
+#include <m2/Component.h>
 #include <m2/Game.hh>
 #include <b2_contact.h>
 

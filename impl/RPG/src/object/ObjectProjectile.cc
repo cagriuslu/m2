@@ -2,8 +2,8 @@
 #include "m2/Game.hh"
 #include "m2/Box2DUtils.hh"
 #include "m2/Def.hh"
-#include <impl/component.hh>
-#include <impl/ARPG_Cfg.hh>
+#include "impl/public/Component.hh"
+#include "impl/private/ARPG_Cfg.hh"
 
 static void Bullet_prePhysics(Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];

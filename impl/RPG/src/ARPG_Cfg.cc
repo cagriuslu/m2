@@ -1,4 +1,4 @@
-#include <impl/ARPG_Cfg.hh>
+#include "impl/private/ARPG_Cfg.hh"
 #include <m2/Cfg.hh>
 #include <m2/Vec2i.hh>
 

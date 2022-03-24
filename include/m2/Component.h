@@ -69,14 +69,14 @@ struct Light : public Component {
 };
 
 namespace m2 {
-    struct component_defense : public Component {
-        component_defense() = default;
-        explicit component_defense(ID object_id);
+    struct Defense : public Component {
+        Defense() = default;
+        explicit Defense(ID object_id);
     };
 
-    struct component_offense : public Component {
-        component_offense() = default;
-        explicit component_offense(ID object_id);
+    struct Offense : public Component {
+        Offense() = default;
+        explicit Offense(ID object_id);
     };
 }
 

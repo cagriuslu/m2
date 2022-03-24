@@ -2,10 +2,10 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Pathfinder.hh"
-#include <impl/ARPG_Cfg.hh>
+#include "impl/private/ARPG_Cfg.hh"
 #include "../ARPG_Object.hh"
-#include <impl/object/Enemy.h>
-#include <impl/fsm/Chaser.h>
+#include <impl/private/object/Enemy.h>
+#include <impl/private/fsm/Chaser.h>
 
 #define ALARM_DURATION(recalcPeriod) ((recalcPeriod) / 2.0f + (recalcPeriod) * randf() * 1.5f)
 

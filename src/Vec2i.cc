@@ -28,7 +28,7 @@ m2::Vec2i::operator bool() const {
 	return (x || y);
 }
 
-size_t m2::vec2i_hash::operator()(const Vec2i& a) const {
+size_t m2::Vec2iHash::operator()(const Vec2i& a) const {
 	uint64_t packed = static_cast<uint64_t>(a.x) | (static_cast<uint64_t>(a.y) << 32);
 	return std::hash<uint64_t>{}(packed);
 }

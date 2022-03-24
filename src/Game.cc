@@ -3,13 +3,13 @@
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
-#include "m2/Component.hh"
+#include "m2/Component.h"
 #include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
 #include "m2/UI.hh"
 #include "m2/Def.hh"
 #include <b2_world.h>
-#include <impl/game_proxy.hh>
+#include "impl/private/game_proxy.hh"
 
 // Initialize with default values
 Game GAME = {

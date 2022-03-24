@@ -2,8 +2,8 @@
 #define OBJECT_H
 
 #include "ObjectImpl.h"
-#include "impl/component.hh"
-#include "m2/Component.hh"
+#include "impl/public/Component.hh"
+#include "m2/Component.h"
 #include "m2/FSM.h"
 #include "m2/Cfg.hh"
 #include "m2/Vec2f.h"

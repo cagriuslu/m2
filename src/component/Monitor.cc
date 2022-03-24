@@ -1,3 +1,3 @@
-#include <m2/Component.hh>
+#include <m2/Component.h>
 
 Monitor::Monitor(ID object_id) : Component(object_id), prePhysics(nullptr), postPhysics(nullptr), preGraphics(nullptr), postGraphics(nullptr) {}

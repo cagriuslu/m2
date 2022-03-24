@@ -1,4 +1,4 @@
-#include <m2/Component.hh>
+#include <m2/Component.h>
 #include <m2/Game.hh>
 
 Light::Light(ID object_id) : Component(object_id), radius_m(0.0f), draw(default_draw) {}

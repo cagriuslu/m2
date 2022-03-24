@@ -1,4 +1,4 @@
-#include <m2/Component.hh>
+#include <m2/Component.h>
 #include <m2/Game.hh>
 
 Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), draw(default_draw) {}
