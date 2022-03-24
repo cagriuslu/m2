@@ -15,16 +15,4 @@ struct Component {
 	explicit Component(ID object_id);
 };
 
-namespace m2 {
-    struct Defense : public Component {
-        Defense() = default;
-        explicit Defense(ID object_id);
-    };
-
-    struct Offense : public Component {
-        Offense() = default;
-        explicit Offense(ID object_id);
-    };
-}
-
 #endif

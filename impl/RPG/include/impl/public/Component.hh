@@ -2,10 +2,11 @@
 #define IMPL_COMPONENT_HH
 
 #include "impl/private/ARPG_Cfg.hh"
-#include "m2/Component.h"
+#include "m2/component/Defense.h"
+#include "m2/component/Offense.h"
 
 namespace impl {
-    struct Defense : public m2::Defense {
+	struct Defense : public m2::component::Defense {
         float maxHp;
         float hp;
         void (*onHit)(Defense*);
@@ -15,7 +16,7 @@ namespace impl {
         explicit Defense(ID object_id);
     };
 
-    struct Offense : public m2::Offense {
+    struct Offense : public m2::component::Offense {
         ID originator;
         union {
             ProjectileState projectile;

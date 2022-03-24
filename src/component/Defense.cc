@@ -1,4 +1,3 @@
-#include <m2/Component.h>
-#include <m2/Game.hh>
+#include <m2/component/Defense.h>
 
-m2::Defense::Defense(ID object_id) : Component(object_id) {}
+m2::component::Defense::Defense(ID object_id) : Component(object_id) {}
