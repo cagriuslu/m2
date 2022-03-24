@@ -33,7 +33,7 @@ static void Sword_postPhysics(m2::component::Monitor& mon) {
 	gfx.angle = angle;
 }
 
-static void Sword_onCollision(Physique& phy, Physique& other) {
+static void Sword_onCollision(component::Physique& phy, component::Physique& other) {
 	LOG_DEBUG("Collision");
 	auto& obj = GAME.objects[phy.object_id];
 	auto& other_obj = GAME.objects[other.object_id];

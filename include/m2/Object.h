@@ -8,7 +8,8 @@
 #include "m2/FSM.h"
 #include "m2/Cfg.hh"
 #include "m2/Vec2f.h"
-#include "Monitor.h"
+#include "component/Monitor.h"
+#include "component/Physique.h"
 #include <memory>
 
 using namespace m2;
@@ -45,7 +46,7 @@ namespace m2 {
         ~Object();
 
         [[nodiscard]] component::Monitor& monitor() const;
-        [[nodiscard]] Physique& physique() const;
+        [[nodiscard]] component::Physique& physique() const;
         [[nodiscard]] Graphic& graphic() const;
         [[nodiscard]] Graphic& terrain_graphic() const;
         [[nodiscard]] Light& light() const;
@@ -53,7 +54,7 @@ namespace m2 {
         [[nodiscard]] impl::Offense& offense() const;
 
         [[nodiscard]] component::Monitor& add_monitor();
-        [[nodiscard]] Physique& add_physique();
+        [[nodiscard]] component::Physique& add_physique();
         [[nodiscard]] Graphic& add_graphic();
         [[nodiscard]] Graphic& add_terrain_graphic();
         [[nodiscard]] Light& add_light();

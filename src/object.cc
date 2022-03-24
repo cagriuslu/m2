@@ -1,6 +1,7 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include "Monitor.h"
+#include "m2/component/Monitor.h"
+#include "m2/component/Physique.h"
 
 m2::Object::Object(const m2::Vec2f &position) :
 		position(position),
@@ -75,7 +76,7 @@ m2::Object::~Object() {
 m2::component::Monitor& m2::Object::monitor() const {
 	return GAME.monitors[monitor_id];
 }
-Physique& m2::Object::physique() const {
+component::Physique& m2::Object::physique() const {
 	return GAME.physics[physique_id];
 }
 Graphic& m2::Object::graphic() const {
@@ -100,10 +101,10 @@ m2::component::Monitor& m2::Object::add_monitor() {
 	monitor_pair.first = component::Monitor{GAME.objects.get_id(this)};
 	return monitor_pair.first;
 }
-Physique& m2::Object::add_physique() {
+component::Physique& m2::Object::add_physique() {
 	auto physique_pair = GAME.physics.alloc();
 	physique_id = physique_pair.second;
-	physique_pair.first = Physique{GAME.objects.get_id(this)};
+	physique_pair.first = component::Physique{GAME.objects.get_id(this)};
 	return physique_pair.first;
 }
 Graphic& m2::Object::add_graphic() {

@@ -10,6 +10,9 @@
 #include "m2/Def.hh"
 #include <b2_world.h>
 #include "impl/private/game_proxy.hh"
+#include "m2/component/Monitor.h"
+#include "m2/Component.h"
+#include "m2/component/Physique.h"
 
 // Initialize with default values
 Game GAME = {
@@ -120,7 +123,7 @@ static int Game_Level_Init() {
 		abort();
 	}
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
-	GAME.contactListener = new ContactListener(Physique::contact_cb);
+	GAME.contactListener = new ContactListener(component::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 	GAME.delete_list.clear();
 	GAME.levelLoaded = true;
