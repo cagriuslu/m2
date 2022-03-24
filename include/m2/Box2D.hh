@@ -33,12 +33,8 @@ public:
 	bool ReportFixture(b2Fixture* fixture) override;
 };
 
-namespace m2 {
-    namespace box2d {
-        namespace aabb {
-            b2AABB expand(const b2AABB& in, float amount);
-        }
-    }
+namespace m2::box2d::aabb {
+	b2AABB expand(const b2AABB& in, float amount);
 }
 
 #endif

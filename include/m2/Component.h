@@ -8,11 +8,14 @@
 #include <SDL.h>
 #include <stdint.h>
 
-struct Component {
-	ID object_id;
+namespace m2 {
+	struct Component {
+		ID object_id;
 
-	Component() = default;
-	explicit Component(ID object_id);
-};
+		Component() = default;
+
+		explicit Component(ID object_id);
+	};
+}
 
 #endif

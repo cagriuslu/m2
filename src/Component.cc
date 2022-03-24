@@ -1,3 +1,3 @@
-#include "m2/Component.h"
+#include <m2/Component.h>
 
-Component::Component(ID object_id) : object_id(object_id) {}
+m2::Component::Component(ID object_id) : object_id(object_id) {}
