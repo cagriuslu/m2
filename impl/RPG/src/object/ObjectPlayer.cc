@@ -7,7 +7,6 @@
 #include "../ARPG_Object.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
-#include "Monitor.h"
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)

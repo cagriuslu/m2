@@ -6,7 +6,6 @@
 #include "m2/Def.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
-#include "Monitor.h"
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
 	return Box2DUtils_CreateBulletSensor(

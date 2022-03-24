@@ -4,7 +4,6 @@
 #include "m2/Box2DUtils.hh"
 #include "impl/public/Component.hh"
 #include "impl/private/ARPG_Cfg.hh"
-#include "Monitor.h"
 
 #define SWING_SPEED (15.0f)
 
