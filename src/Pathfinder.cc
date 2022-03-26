@@ -1,12 +1,10 @@
 #include "m2/Pathfinder.hh"
-
 #include <b2_fixture.h>
-
-#include "m2/Box2DUtils.hh"
 #include "m2/Component.h"
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include <m2/Vec2i.hh>
+#include <m2/box2d/Utils.h>
 #include <stdbool.h>
 #include <float.h>
 #include <stdio.h>
@@ -24,7 +22,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 			// TODO here it is assumed that bodies has one fixture
 			b2Fixture* fixture = phy->body->GetFixtureList();
 			const uint16_t categoryBits = fixture->GetFilterData().categoryBits;
-			if (categoryBits & (CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF)) {
+			if (categoryBits & (m2::box2d::CATEGORY_STATIC_OBJECT | m2::box2d::CATEGORY_STATIC_CLIFF)) {
 				// TODO here it is assumed that fixtures have one child
 				b2AABB aabb = fixture->GetAABB(0);
 				// AABB is bigger 0.01 meters than the object at each side
@@ -51,7 +49,7 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 
 M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::Vec2f from, m2::Vec2f to, std::list<m2::Vec2i>& outReverseListOfVec2Is) {
 	// Check if there is direct eyesight
-	if (Box2DUtils_CheckEyeSight(from, to, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF)) {
+	if (m2::box2d::check_eye_sight(*GAME.world, from, to, m2::box2d::CATEGORY_STATIC_OBJECT | m2::box2d::CATEGORY_STATIC_CLIFF)) {
 		auto fromI = m2::Vec2i{from};
 		auto toI = m2::Vec2i{to};
 
@@ -222,7 +220,7 @@ void _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::Vec2i>& listOfVec2Is
 	for (++point_2_it; point_2_it != listOfVec2Is.end(); ++point_2_it) {
         auto* point2 = &(*point_2_it);
 
-		const bool eyeSight = Box2DUtils_CheckEyeSight(m2::Vec2f{*point1}, m2::Vec2f{*point2}, CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF);
+		const bool eyeSight = m2::box2d::check_eye_sight(*GAME.world, m2::Vec2f{*point1}, m2::Vec2f{*point2}, m2::box2d::CATEGORY_STATIC_OBJECT | m2::box2d::CATEGORY_STATIC_CLIFF);
         if (point_2_it == std::prev(listOfVec2Is.end(), 1)) {
             if (eyeSight) {
                 // If we are processing the last point and there is an eye sight, add the last point

@@ -3,9 +3,9 @@
 #include "m2/Game.hh"
 #include "m2/Box2D.hh"
 #include "m2/Def.hh"
-#include "m2/Box2DUtils.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
+#include <m2/box2d/Utils.h>
 
 impl::object::Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
 
@@ -80,14 +80,16 @@ int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f 
 	mon.postPhysics = ObjectEnemy_postPhysics;
 
 	auto& phy = obj->add_physique();
-	phy.body = Box2DUtils_CreateDynamicDisk(
-		obj->physique_id,
-		position,
-		true, // allowSleep
-		CATEGORY_ENEMY,
-		ARPG_CFG_SPRITES[cfg->mainSpriteIndex].collider.params.circ.radius_m,
-		cfg->mass_kg,
-		cfg->linearDamping
+	phy.body = m2::box2d::create_dynamic_disk(
+            *GAME.world,
+            obj->physique_id,
+            position,
+            false,
+            true,
+            m2::box2d::CATEGORY_ENEMY,
+            ARPG_CFG_SPRITES[cfg->mainSpriteIndex].collider.params.circ.radius_m,
+            cfg->mass_kg,
+            cfg->linearDamping
 	);
 
 	auto& def = obj->add_defense();

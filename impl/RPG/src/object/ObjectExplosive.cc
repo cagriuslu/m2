@@ -1,20 +1,22 @@
 #include <b2_world.h>
 
 #include <m2/Object.h>
-#include "m2/Box2DUtils.hh"
 #include "m2/Game.hh"
 #include "m2/Def.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
+#include <m2/box2d/Utils.h>
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
-	return Box2DUtils_CreateBulletSensor(
-		phyId,
-		position,
-		CATEGORY_PLAYER_BULLET,
-		cfg->damageRadius_m,
-		0.0f, // Mass
-		0.0f // Damping
+	return m2::box2d::create_bullet(
+            *GAME.world,
+            phyId,
+            position,
+            true,
+            m2::box2d::CATEGORY_PLAYER_BULLET,
+            cfg->damageRadius_m,
+            0.0f,
+            0.0f
 	);
 }
 
@@ -117,13 +119,15 @@ M2Err ObjectExplosive_InitFromCfg(m2::Object* obj, const CfgExplosive* cfg, ID o
 	mon.postPhysics = ObjectExplosive_postPhysics;
 
 	auto& phy = obj->add_physique();
-	phy.body = Box2DUtils_CreateBulletSensor(
+	phy.body = m2::box2d::create_bullet(
+            *GAME.world,
 			obj->physique_id,
 			position,
-			CATEGORY_PLAYER_BULLET,
+            true,
+			m2::box2d::CATEGORY_PLAYER_BULLET,
 			cfg->projectileBodyRadius_m,
-			0.0f, // Mass
-			0.0f // Damping
+			0.0f,
+			0.0f
 	);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * cfg->projectileSpeed_mps));
 	phy.onCollision = ObjectExplosive_onCollision;

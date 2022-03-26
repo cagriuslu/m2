@@ -1,9 +1,9 @@
 #include <m2/Object.h>
 #include "m2/Def.hh"
 #include "m2/Game.hh"
-#include "m2/Box2DUtils.hh"
 #include "impl/public/Component.hh"
 #include "impl/private/ARPG_Cfg.hh"
+#include <m2/box2d/Utils.h>
 
 #define SWING_SPEED (15.0f)
 
@@ -66,23 +66,24 @@ int ObjectMelee_InitFromCfg(m2::Object* obj, const CfgMelee *cfg, ID originatorI
 	mon.postPhysics = Sword_postPhysics;
 
 	auto& phy = obj->add_physique();
-	phy.body = Box2DUtils_CreateBody(
+	phy.body = m2::box2d::create_body(
+            *GAME.world,
 			obj->physique_id,
-		false, // isDisk
-		true, // isDynamic
-		position,
-		false, // allowSleep
-		true, // isBullet
-		true, // isSensor
-		originatorId == GAME.playerId ? CATEGORY_PLAYER_MELEE_WEAPON : CATEGORY_ENEMY_MELEE_WEAPON, // category
-		0, // mask
-		m2::Vec2f{1.25f, 0.1667f}, // boxDims
-		m2::Vec2f{0.5833f, 0.0f}, // boxCenterOffset
-		0.0f, // boxAngle
-		NAN, // diskRadius
-		1.0f, // mass
-		0.0f, // linearDamping
-		false // fixedRotation
+            false,
+            true,
+            position,
+            false,
+            true,
+            true,
+            originatorId == GAME.playerId ? m2::box2d::CATEGORY_PLAYER_MELEE_WEAPON : m2::box2d::CATEGORY_ENEMY_MELEE_WEAPON,
+            0,
+            m2::Vec2f{1.25f, 0.1667f},
+            m2::Vec2f{0.5833f, 0.0f},
+            0.0f,
+            NAN,
+            1.0f,
+            0.0f,
+            false
 	);
 	phy.body->SetTransform(static_cast<b2Vec2>(position), startAngle);
 	phy.body->SetAngularVelocity(-SWING_SPEED);

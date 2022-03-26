@@ -1,9 +1,9 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include "m2/Box2DUtils.hh"
 #include "m2/Def.hh"
 #include "impl/public/Component.hh"
 #include "impl/private/ARPG_Cfg.hh"
+#include <m2/box2d/Utils.h>
 
 static void Bullet_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
@@ -56,13 +56,15 @@ int ObjectProjectile_InitFromCfg(m2::Object* obj, const CfgProjectile *cfg, ID o
 	mon.prePhysics = Bullet_prePhysics;
 
 	auto& phy = obj->add_physique();
-	phy.body = Box2DUtils_CreateBulletSensor(
+	phy.body = m2::box2d::create_bullet(
+            *GAME.world,
 			obj->physique_id,
 			position,
-			CATEGORY_PLAYER_BULLET,
-			0.167f, // Radius
-			0.0f, // Mass
-			0.0f // Damping
+            true,
+			m2::box2d::CATEGORY_PLAYER_BULLET,
+			0.167f,
+			0.0f,
+			0.0f
 	);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * cfg->speed_mps));
 	phy.onCollision = Bullet_onCollision;

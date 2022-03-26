@@ -1,12 +1,12 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include "m2/Box2DUtils.hh"
 #include "m2/Controls.hh"
 #include "m2/Event.hh"
 #include "m2/Def.hh"
 #include "../ARPG_Object.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/public/Component.hh"
+#include <m2/box2d/Utils.h>
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -94,14 +94,16 @@ int ObjectPlayer_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f
 	mon.postPhysics = Player_postPhysics;
 
 	auto& phy = obj->add_physique();
-	phy.body = Box2DUtils_CreateDynamicDisk(
-		obj->physique_id,
-		obj->position,
-		false, // allowSleep
-		CATEGORY_PLAYER,
-		ARPG_CFG_SPRITES[cfg->mainSpriteIndex].collider.params.circ.radius_m,
-		cfg->mass_kg,
-		cfg->linearDamping
+	phy.body = m2::box2d::create_dynamic_disk(
+            *GAME.world,
+            obj->physique_id,
+            obj->position,
+            false,
+            false,
+            m2::box2d::CATEGORY_PLAYER,
+            ARPG_CFG_SPRITES[cfg->mainSpriteIndex].collider.params.circ.radius_m,
+            cfg->mass_kg,
+            cfg->linearDamping
 	);
 
 	auto& gfx = obj->add_graphic();
