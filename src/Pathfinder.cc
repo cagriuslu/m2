@@ -3,6 +3,7 @@
 #include "m2/Component.h"
 #include <m2/Object.h>
 #include "m2/Game.hh"
+#include <m2/box2d/RayCast.h>
 #include <m2/Vec2i.hh>
 #include <m2/box2d/Utils.h>
 #include <stdbool.h>
@@ -27,7 +28,7 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 				b2AABB aabb = fixture->GetAABB(0);
 				// AABB is bigger 0.01 meters than the object at each side
 				// Decrease its size by 0.02 so that rounding can work
-                b2AABB convervative_aabb = m2::box2d::aabb::expand(aabb, -0.02f);
+                b2AABB convervative_aabb = m2::box2d::expand_aabb(aabb, -0.02f);
 				int lowerX = (int) roundf(convervative_aabb.lowerBound.x);
 				int upperX = (int) roundf(convervative_aabb.upperBound.x);
 				int lowerY = (int) roundf(convervative_aabb.lowerBound.y);

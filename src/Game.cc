@@ -4,7 +4,6 @@
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
 #include "m2/Component.h"
-#include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
 #include "m2/UI.hh"
 #include "m2/Def.hh"
@@ -124,7 +123,7 @@ static int Game_Level_Init() {
 		abort();
 	}
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
-	GAME.contactListener = new ContactListener(m2::component::Physique::contact_cb);
+	GAME.contactListener = new m2::box2d::ContactListener(m2::component::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 	GAME.delete_list.clear();
 	GAME.levelLoaded = true;

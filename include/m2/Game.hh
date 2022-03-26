@@ -5,13 +5,13 @@
 #include "m2/Event.hh"
 #include "InsertionList.hh"
 #include <m2/Object.h>
-#include "m2/Box2D.hh"
 #include "m2/Cfg.hh"
 #include "Pathfinder.hh"
 #include "GameProxy.hh"
 #include "component/Monitor.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
+#include <m2/box2d/ContactListener.h>
 #include <m2/Pool.hh>
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -71,7 +71,7 @@ namespace m2 {
 		m2::Pool<impl::Defense> defenses;
 		m2::Pool<impl::Offense> offenses;
 		b2World *world;
-		ContactListener *contactListener;
+        m2::box2d::ContactListener* contactListener;
 		ID cameraId, playerId, pointerId;
 		std::vector<ID> delete_list;
 		PathfinderMap pathfinderMap;

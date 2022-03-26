@@ -24,7 +24,7 @@ namespace m2::box2d {
     b2Body* create_dynamic_disk(b2World& world, ID physique_id, Vec2f position, bool is_sensor, bool allow_sleep, uint16_t category_bits, float disk_radius, float mass, float linear_damping);
     b2Body* create_bullet(b2World& world, ID physique_id, Vec2f position, bool is_sensor, uint16_t category_bits, float disk_radius, float mass, float linear_damping);
 
-    bool check_eye_sight(b2World& world, Vec2f from, Vec2f to, uint16_t category_bits);
+    b2AABB expand_aabb(const b2AABB& in, float amount);
 }
 
 #endif //M2_UTILS_H

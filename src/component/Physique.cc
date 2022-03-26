@@ -21,9 +21,9 @@ m2::component::Physique::~Physique() {
 	}
 }
 
-void m2::component::Physique::contact_cb(b2Contact *contact) {
-	ID physique_id_a = contact->GetFixtureA()->GetBody()->GetUserData().pointer;
-	ID physique_id_b = contact->GetFixtureB()->GetBody()->GetUserData().pointer;
+void m2::component::Physique::contact_cb(b2Contact& contact) {
+	ID physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
+	ID physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = GAME.physics[physique_id_a];
 	auto& phy_b = GAME.physics[physique_id_b];
 	if (phy_a.onCollision) {

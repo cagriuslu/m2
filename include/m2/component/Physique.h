@@ -19,7 +19,7 @@ namespace m2::component {
 		// Destructor
 		~Physique();
 
-		static void contact_cb(b2Contact* contact);
+		static void contact_cb(b2Contact& contact);
 	};
 }
 

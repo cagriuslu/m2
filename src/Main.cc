@@ -1,7 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <b2_world.h>
-
-#include "m2/Box2D.hh"
 #include "m2/UI.hh"
 #include "m2/Event.hh"
 #include "m2/Game.hh"

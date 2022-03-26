@@ -1,5 +1,4 @@
 #include <m2/box2d/Utils.h>
-#include <m2/Box2D.hh>
 #include <b2_circle_shape.h>
 #include <b2_fixture.h>
 #include <b2_polygon_shape.h>
@@ -113,16 +112,9 @@ b2Body* m2::box2d::create_bullet(b2World& world, ID physique_id, m2::Vec2f posit
     return create_body(world, physique_id, true, true, position, false, true, is_sensor, category_bits, 0, {}, {}, 0.0f, disk_radius, mass, linear_damping, true);
 }
 
-bool m2::box2d::check_eye_sight(b2World& world, m2::Vec2f from, m2::Vec2f to, uint16_t category_bits) {
-    if (from == to) {
-        return true;
-    } else {
-        bool result = true;
-        RayCastCallback rccb([&](b2Fixture* fixture, m2::Vec2f point, m2::Vec2f normal, float fraction) -> float {
-            result = false;
-            return 0.0f;
-            }, category_bits);
-        world.RayCast(&rccb, static_cast<b2Vec2>(from), static_cast<b2Vec2>(to));
-        return result;
-    }
+b2AABB m2::box2d::expand_aabb(const b2AABB& in, float amount) {
+    return b2AABB{
+            .lowerBound = b2Vec2{in.lowerBound.x - amount, in.lowerBound.y - amount},
+            .upperBound = b2Vec2{in.upperBound.x + amount, in.upperBound.y + amount}
+    };
 }
