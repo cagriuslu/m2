@@ -5,7 +5,6 @@
 #include <m2/Vec2f.h>
 #include <b2_body.h>
 #include <SDL.h>
-#include <stdint.h>
 
 namespace m2 {
 	struct Component {
