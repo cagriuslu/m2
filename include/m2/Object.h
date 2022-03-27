@@ -3,7 +3,8 @@
 
 #include "component/Monitor.h"
 #include "ObjectImpl.h"
-#include "impl/public/Component.hh"
+#include <impl/public/component/Defense.h>
+#include <impl/public/component/Offense.h>
 #include "m2/Component.h"
 #include "m2/FSM.h"
 #include "m2/Cfg.hh"
@@ -50,16 +51,16 @@ namespace m2 {
         [[nodiscard]] component::Graphic& graphic() const;
         [[nodiscard]] component::Graphic& terrain_graphic() const;
         [[nodiscard]] component::Light& light() const;
-        [[nodiscard]] impl::Defense& defense() const;
-        [[nodiscard]] impl::Offense& offense() const;
+        [[nodiscard]] impl::component::Defense& defense() const;
+        [[nodiscard]] impl::component::Offense& offense() const;
 
         [[nodiscard]] component::Monitor& add_monitor();
         [[nodiscard]] component::Physique& add_physique();
         [[nodiscard]] component::Graphic& add_graphic();
         [[nodiscard]] component::Graphic& add_terrain_graphic();
         [[nodiscard]] component::Light& add_light();
-        [[nodiscard]] impl::Defense& add_defense();
-        [[nodiscard]] impl::Offense& add_offense();
+        [[nodiscard]] impl::component::Defense& add_defense();
+        [[nodiscard]] impl::component::Offense& add_offense();
     };
 
     std::pair<Object&, ID> create_object(const m2::Vec2f& position);

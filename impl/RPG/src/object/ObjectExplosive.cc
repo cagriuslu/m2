@@ -4,7 +4,6 @@
 #include "m2/Game.hh"
 #include "m2/Def.hh"
 #include "impl/private/ARPG_Cfg.hh"
-#include "impl/public/Component.hh"
 #include <m2/box2d/Utils.h>
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {

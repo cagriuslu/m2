@@ -3,7 +3,8 @@
 #include "m2/Game.hh"
 #include "m2/Def.hh"
 #include "impl/private/ARPG_Cfg.hh"
-#include "impl/public/Component.hh"
+#include <impl/public/component/Defense.h>
+#include <impl/public/component/Offense.h>
 #include <m2/box2d/Utils.h>
 
 impl::object::Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
@@ -17,12 +18,12 @@ static void ObjectEnemy_prePhysics(m2::component::Monitor& mon) {
     data->chaser.signal(m2::FSMSIG_PREPHY);
 }
 
-static void ObjectEnemy_onHit(impl::Defense* def) {
+static void ObjectEnemy_onHit(impl::component::Defense* def) {
 	auto& obj = GAME.objects[def->object_id];
 	AS_ENEMYDATA(obj.data)->onHitColorModTtl = 0.10f;
 }
 
-static void ObjectEnemy_onDeath(impl::Defense* def) {
+static void ObjectEnemy_onDeath(impl::component::Defense* def) {
 	Game_DeleteList_Add(def->object_id);
 }
 

@@ -5,7 +5,8 @@
 #include "m2/Def.hh"
 #include "../ARPG_Object.hh"
 #include "impl/private/ARPG_Cfg.hh"
-#include "impl/public/Component.hh"
+#include <impl/public/component/Defense.h>
+#include <impl/public/component/Offense.h>
 #include <m2/box2d/Utils.h>
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
@@ -66,7 +67,7 @@ static void Player_prePhysics(m2::component::Monitor& mon) {
 	}
 }
 
-static void Player_onDeath(impl::Defense *def) {
+static void Player_onDeath(impl::component::Defense *def) {
 	LOG_INFO("Player died");
 }
 

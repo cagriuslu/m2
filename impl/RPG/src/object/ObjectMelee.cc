@@ -1,7 +1,6 @@
 #include <m2/Object.h>
 #include "m2/Def.hh"
 #include "m2/Game.hh"
-#include "impl/public/Component.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include <m2/box2d/Utils.h>
 

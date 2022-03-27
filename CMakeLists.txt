@@ -20,7 +20,8 @@ file(GLOB M2_SOURCES
         "include/m2/*.h"
         "include/m2/*/*.h"
         "src/*.h"   "src/*.cc"
-        "src/*/*.h" "src/*/*.cc")
+        "src/*/*.h" "src/*/*.cc"
+        "src/*/*/*.h" "src/*/*/*.cc")
 
 add_executable(m2 WIN32 ${M2_SOURCES} ${IMPL_SOURCES})
 target_include_directories(m2 PUBLIC include ${IMPL_INCLUDE_DIRS})

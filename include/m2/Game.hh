@@ -1,7 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "impl/public/Component.hh"
+#include <impl/public/component/Defense.h>
+#include <impl/public/component/Offense.h>
 #include "m2/Event.hh"
 #include "InsertionList.hh"
 #include <m2/Object.h>
@@ -68,8 +69,8 @@ namespace m2 {
 		m2::Pool<component::Graphic> graphics;
 		m2::Pool<component::Graphic> terrainGraphics;
 		m2::Pool<component::Light> lights;
-		m2::Pool<impl::Defense> defenses;
-		m2::Pool<impl::Offense> offenses;
+		m2::Pool<impl::component::Defense> defenses;
+		m2::Pool<impl::component::Offense> offenses;
 		b2World *world;
         m2::box2d::ContactListener* contactListener;
 		ID cameraId, playerId, pointerId;
