@@ -2,6 +2,7 @@
 #define DEFS_H
 
 #include <m2/Vec2f.h>
+#include <variant>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -55,6 +56,9 @@ typedef uint64_t ID;
 typedef int32_t M2Err;
 
 const char* M2Err_ToString(M2Err e);
+
+template <typename T>
+using ValueOrM2Err = std::variant<T, M2Err>;
 
 // M2ASSERT policy: In game engine code, try not to crash, but return error instead
 // You can crash in game engine code as well, if the error is definitely implementation error

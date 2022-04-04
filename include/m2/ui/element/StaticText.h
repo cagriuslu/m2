@@ -1,16 +1,21 @@
 #ifndef M2_STATICTEXT_H
 #define M2_STATICTEXT_H
 
+#include "../ElementState.h"
 #include <SDL.h>
 #include <string>
 
 namespace m2::ui::element {
 	struct StaticTextBlueprint {
-		const std::string_view text;
+		std::string_view text;
 	};
 
-	struct StaticTextState {
-		SDL_Texture* texture;
+	struct StaticTextState : public ElementState {
+        SDL_Texture* font_texture;
+
+        explicit StaticTextState(const ElementBlueprint* blueprint);
+        void update_content() override;
+        void draw() override;
 	};
 }
 

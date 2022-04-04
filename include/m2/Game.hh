@@ -9,6 +9,7 @@
 #include "m2/Cfg.hh"
 #include "Pathfinder.hh"
 #include "GameProxy.hh"
+#include "ui/UI.h"
 #include "component/Monitor.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
@@ -76,7 +77,7 @@ namespace m2 {
 		ID cameraId, playerId, pointerId;
 		std::vector<ID> delete_list;
 		PathfinderMap pathfinderMap;
-		UIState leftHudUIState, rightHudUIState;
+        m2::ui::UIState leftHudUIState, rightHudUIState;
 
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// GAME /////////////////////////////////

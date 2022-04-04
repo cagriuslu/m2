@@ -1,5 +1,6 @@
+#include <impl/public/ui/UI.h>
+#include <m2/ui/UI.h>
 #include "m2/GameProxy.hh"
-#include "m2/UI.hh"
 #include "m2/Game.hh"
 #include "SDL_image.h"
 
@@ -35,38 +36,29 @@ M2Err m2::game_proxy::activate() const {
 }
 
 M2Err m2::game_proxy::exec_entry_ui() const {
-	CfgUIButtonType button;
-	M2Err result = UI_ExecuteBlocking(entryUi, &button);
-	if (result) {
-		LOG_ERROR_M2(result);
-		return result;
-	}
-	M2Err handlerResult = entryUiButtonHandler(button);
-	if (handlerResult == M2ERR_QUIT) {
-		LOG_INFO_M2(handlerResult);
-	} else if (handlerResult) {
-		LOG_ERROR_M2(handlerResult);
-	}
-	return handlerResult;
+    auto button = m2::ui::execute_blocking(&impl::ui::entry);
+    if (button.index() == 0) {
+        int return_value = std::get<0>(button);
+        if (return_value == impl::ui::ENTRY_NEW_GAME) {
+            return Game_Level_Load(&CFG_LVL_SP000);
+        } else {
+            return M2ERR_QUIT;
+        }
+    } else {
+        return std::get<1>(button);
+    }
 }
 
 M2Err m2::game_proxy::exec_pause_ui() const {
-	if (pauseUi) {
-		CfgUIButtonType button;
-		M2Err result = UI_ExecuteBlocking(pauseUi, &button);
-		if (result) {
-			LOG_ERROR_M2(result);
-			return result;
-		}
-		if (pauseUiButtonHandler) {
-			M2Err handlerResult = pauseUiButtonHandler(button);
-			if (handlerResult == M2ERR_QUIT) {
-				LOG_INFO_M2(handlerResult);
-			} else if (handlerResult) {
-				LOG_ERROR_M2(handlerResult);
-			}
-			return handlerResult;
-		}
-	}
-	return M2OK;
+    auto button = m2::ui::execute_blocking(&impl::ui::pause);
+    if (button.index() == 0) {
+        int return_value = std::get<0>(button);
+        if (return_value == impl::ui::PAUSE_RESUME_GAME) {
+            return Game_Level_Load(&CFG_LVL_SP000);
+        } else {
+            return M2ERR_QUIT;
+        }
+    } else {
+        return std::get<1>(button);
+    }
 }

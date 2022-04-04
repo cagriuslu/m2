@@ -1,6 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <b2_world.h>
-#include "m2/UI.hh"
 #include "m2/Event.hh"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
@@ -185,8 +184,8 @@ int main(int argc, char **argv) {
 			// Handle window resize event
 			if (GAME.events.windowResizeEvent) {
 				Game_UpdateWindowDimensions(GAME.events.windowDims.x, GAME.events.windowDims.y);
-				UIState_UpdatePositions(&GAME.leftHudUIState, GAME.leftHudRect);
-				UIState_UpdatePositions(&GAME.rightHudUIState, GAME.rightHudRect);
+                GAME.leftHudUIState.update_positions(GAME.leftHudRect);
+                GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 			}
 			if (!SDL_IsTextInputActive()) {
 				// Handle key events
@@ -204,15 +203,14 @@ int main(int argc, char **argv) {
 					LOG_INFO("SDL text input activated");
 				}
 				// Handle HUD events (mouse and key)
-				CfgUIButtonType pressedButton;
-				if (UIState_HandleEvents(&GAME.leftHudUIState, &GAME.events, &pressedButton)) {
-					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
-					// There are no hud buttons yet that we care about
-				}
-				if (UIState_HandleEvents(&GAME.rightHudUIState, &GAME.events, &pressedButton)) {
-					LOG_INFO_M2V(M2_BUTTON, Int32, pressedButton);
-					// There are no hud buttons yet that we care about
-				}
+                auto left_hud_pressed_button = GAME.leftHudUIState.handle_events(GAME.events);
+                if (left_hud_pressed_button) {
+                    // There are no hud buttons yet that we care about
+                }
+                auto right_hud_pressed_button = GAME.rightHudUIState.handle_events(GAME.events);
+                if (right_hud_pressed_button) {
+                    // There are no hud buttons yet that we care about
+                }
 			} else {
 				// Handle text input
 				if (GAME.events.keysPressed[KEY_MENU]) {
@@ -338,10 +336,10 @@ int main(int argc, char **argv) {
         } // TODO Hard to parallelize
 
 		// Draw HUD
-		UIState_UpdateElements(&GAME.leftHudUIState);
-		UIState_UpdateElements(&GAME.rightHudUIState);
-		UIState_Draw(&GAME.leftHudUIState);
-		UIState_Draw(&GAME.rightHudUIState);
+        GAME.leftHudUIState.update_contents();
+        GAME.rightHudUIState.update_contents();
+        GAME.leftHudUIState.draw();
+        GAME.rightHudUIState.draw();
 
 		// Draw envelope
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);

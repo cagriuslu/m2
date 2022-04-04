@@ -1,17 +1,22 @@
 #ifndef M2_DYNAMICTEXT_H
 #define M2_DYNAMICTEXT_H
 
+#include "../ElementState.h"
 #include <SDL.h>
 #include <functional>
 #include <string>
 
 namespace m2::ui::element {
 	struct DynamicTextBlueprint {
-		const std::function<std::string()> callback;
+        std::string (*callback)();
 	};
 
-	struct DynamicTextState {
-		SDL_Texture* texture;
+	struct DynamicTextState : public ElementState {
+        SDL_Texture* font_texture;
+
+        explicit DynamicTextState(const ElementBlueprint* blueprint);
+        void update_content() override;
+        void draw() override;
 	};
 }
 

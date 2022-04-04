@@ -6,24 +6,12 @@
 
 namespace m2 {
     struct game_proxy {
-        const CfgUI *entryUi;
-
-        M2Err (*entryUiButtonHandler)(CfgUIButtonType);
-
-        const CfgUI *pauseUi;
-
-        M2Err (*pauseUiButtonHandler)(CfgUIButtonType);
-
         unsigned tileSize;
         const char *textureMapFile;
         const char *textureMaskFile;
 
         const CfgSprite *cfgSprites;
         unsigned cfgSpriteCount;
-        const CfgUI *cfgHUDLeft;
-        const CfgUI *cfgHUDRight;
-
-        M2Err (*uiElementUpdateDynamic)(UIElementState *state);
 
         M2Err (*foregroundSpriteLoader)(m2::Object *, CfgSpriteIndex, m2::Vec2f);
 

@@ -5,10 +5,10 @@
 #include <m2/object/Tile.h>
 #include "m2/Component.h"
 #include "m2/Cfg.hh"
-#include "m2/UI.hh"
 #include "m2/Def.hh"
 #include <b2_world.h>
 #include "impl/private/game_proxy.hh"
+#include <impl/public/ui/UI.h>
 #include "m2/component/Monitor.h"
 #include "m2/Component.h"
 #include "m2/component/Physique.h"
@@ -170,13 +170,13 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
     m2::object::create_camera();
     m2::object::create_pointer();
 
-	UIState_Init(&GAME.leftHudUIState, GAME.proxy.cfgHUDLeft);
-	UIState_UpdatePositions(&GAME.leftHudUIState, GAME.leftHudRect);
-	UIState_UpdateElements(&GAME.leftHudUIState);
+    GAME.leftHudUIState = m2::ui::UIState(&impl::ui::left_hud);
+    GAME.leftHudUIState.update_positions(GAME.leftHudRect);
+    GAME.leftHudUIState.update_contents();
 
-	UIState_Init(&GAME.rightHudUIState, GAME.proxy.cfgHUDRight);
-	UIState_UpdatePositions(&GAME.rightHudUIState, GAME.rightHudRect);
-	UIState_UpdateElements(&GAME.rightHudUIState);
+    GAME.rightHudUIState = m2::ui::UIState(&impl::ui::right_hud);
+    GAME.rightHudUIState.update_positions(GAME.rightHudRect);
+    GAME.rightHudUIState.update_contents();
 
 	return M2OK;
 }

@@ -1,15 +1,18 @@
 #ifndef M2_STATICIMAGE_H
 #define M2_STATICIMAGE_H
 
+#include "../ElementState.h"
 #include <SDL.h>
 
 namespace m2::ui::element {
 	struct StaticImageBlueprint {
-		const SDL_Rect texture_rect;
+		SDL_Rect texture_rect;
 	};
 
-	struct StaticImageState {
-		int _dummy;
+	struct StaticImageState : public ElementState {
+
+        explicit StaticImageState(const ElementBlueprint* blueprint);
+        // void draw() override;
 	};
 }
 
