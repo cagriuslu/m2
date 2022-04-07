@@ -1,72 +1,18 @@
 #ifndef M2_ARPG_CFG_HH
 #define M2_ARPG_CFG_HH
 
-#include "m2/Cfg.hh"
+#include <m2/SpriteBlueprint.h>
+#include <m2/Def.hh>
 #include <list>
 
 #define ARPG_CFG_TILE_SIZE (48)
 #define ARPG_CFG_TILE_SIZE_F (48.0f)
 
 ////////////////////////////////////////////////////////////////////////
-/////////////////////////////// SPRITES ////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-typedef enum {
-	ARPG_CFGSPRITE_NONE = 0,
-	ARPG_CFGSPRITE_DEFAULT,
-	ARPG_CFGSPRITE_GRASS,
-	ARPG_CFGSPRITE_CLIFF000T,
-	ARPG_CFGSPRITE_CLIFF000R,
-	ARPG_CFGSPRITE_CLIFF000B,
-	ARPG_CFGSPRITE_CLIFF000L,
-	ARPG_CFGSPRITE_CLIFF000TR,
-	ARPG_CFGSPRITE_CLIFF000TL,
-	ARPG_CFGSPRITE_CLIFF000BR,
-	ARPG_CFGSPRITE_CLIFF000BL,
-
-	ARPG_CFGSPRITE_PLAYER_LOOKDOWN_00,
-	ARPG_CFGSPRITE_PLAYER_LOOKDOWN_01,
-	ARPG_CFGSPRITE_PLAYER_LOOKDOWN_02,
-	ARPG_CFGSPRITE_PLAYER_LOOKLEFT_00,
-	ARPG_CFGSPRITE_PLAYER_LOOKLEFT_01,
-	ARPG_CFGSPRITE_PLAYER_LOOKLEFT_02,
-	ARPG_CFGSPRITE_PLAYER_LOOKRIGHT_00,
-	ARPG_CFGSPRITE_PLAYER_LOOKRIGHT_01,
-	ARPG_CFGSPRITE_PLAYER_LOOKRIGHT_02,
-	ARPG_CFGSPRITE_PLAYER_LOOKUP_00,
-	ARPG_CFGSPRITE_PLAYER_LOOKUP_01,
-	ARPG_CFGSPRITE_PLAYER_LOOKUP_02,
-	ARPG_CFGSPRITE_ENEMY_LOOKDOWN_00,
-	ARPG_CFGSPRITE_ENEMY_LOOKDOWN_01,
-	ARPG_CFGSPRITE_ENEMY_LOOKDOWN_02,
-	ARPG_CFGSPRITE_ENEMY_LOOKLEFT_00,
-	ARPG_CFGSPRITE_ENEMY_LOOKLEFT_01,
-	ARPG_CFGSPRITE_ENEMY_LOOKLEFT_02,
-	ARPG_CFGSPRITE_ENEMY_LOOKRIGHT_00,
-	ARPG_CFGSPRITE_ENEMY_LOOKRIGHT_01,
-	ARPG_CFGSPRITE_ENEMY_LOOKRIGHT_02,
-	ARPG_CFGSPRITE_ENEMY_LOOKUP_00,
-	ARPG_CFGSPRITE_ENEMY_LOOKUP_01,
-	ARPG_CFGSPRITE_ENEMY_LOOKUP_02,
-	ARPG_CFGSPRITE_BULLET_00,
-	ARPG_CFGSPRITE_BULLET_01,
-	ARPG_CFGSPRITE_SWORD_00,
-	ARPG_CFGSPRITE_BOMB_00,
-
-	ARPG_CFGSPRITE_N
-} ARPG_CfgSprite_Index;
-
-extern const CfgSprite ARPG_CFG_SPRITES[];
-
-////////////////////////////////////////////////////////////////////////
-///////////////////////////////// LEVEL ////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-extern const CfgLevel CFG_LVL_SP000;
-
-////////////////////////////////////////////////////////////////////////
 ///////////////////// RANGED WEAPON AND PROJECTILE /////////////////////
 ////////////////////////////////////////////////////////////////////////
 typedef struct {
-	CfgSpriteIndex spriteIndex;
+    m2::SpriteIndex spriteIndex;
 	float speed_mps;
 	float damage;
 	float ttl_s;
@@ -106,7 +52,7 @@ typedef enum {
 	CFG_MELEE_MOTION_STAB,
 } CfgMeleeMotion;
 typedef struct {
-	CfgSpriteIndex spriteIndex;
+    m2::SpriteIndex spriteIndex;
 	float damage;
 	CfgMeleeMotion motion;
 	float ttl_s;
@@ -136,7 +82,7 @@ void MeleeWeaponState_ProcessTime(MeleeWeaponState* state, float timePassed);
 //////////////////// EXPLOSIVE WEAPON AND EXPLOSIVE ////////////////////
 ////////////////////////////////////////////////////////////////////////
 typedef struct {
-	CfgSpriteIndex spriteIndex;
+    m2::SpriteIndex spriteIndex;
 	float projectileSpeed_mps;
 	float projectileTtl_s;
 	float projectileBodyRadius_m;
@@ -253,7 +199,7 @@ typedef enum {
 	CFG_CHARTEXTURETYP_N
 } CfgCharacterTextureType;
 typedef struct {
-	CfgSpriteIndex mainSpriteIndex;
+    m2::SpriteIndex mainSpriteIndex;
 	CfgObjectType objType;
 	float mass_kg;
 	float linearDamping;
@@ -262,7 +208,7 @@ typedef struct {
 	const CfgRangedWeapon* defaultRangedWeapon;
 	const CfgMeleeWeapon* defaultMeleeWeapon;
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
-	CfgSpriteIndex spriteIndexes[CFG_CHARTEXTURETYP_N];
+    m2::SpriteIndex spriteIndexes[CFG_CHARTEXTURETYP_N];
 	const CfgAi* ai;
 } CfgCharacter;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;

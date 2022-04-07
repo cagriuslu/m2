@@ -7,7 +7,6 @@
 #include <impl/public/component/Offense.h>
 #include "m2/Component.h"
 #include "m2/FSM.h"
-#include "m2/Cfg.hh"
 #include "m2/Vec2f.h"
 #include "component/Monitor.h"
 #include "component/Physique.h"

@@ -28,6 +28,7 @@ static const char* M2Err_NegativeStrings[] = {
 	"ImplementationError",        // M2ERR_IMPLEMENTATION
 	"TinyObjectLimitExceeded",    // M2ERR_TINYOBJ_LIMIT_EXCEEDED
 	"OutOfBounds",                // M2ERR_OUT_OF_BOUNDS
+    "DynamicAssert",              // M2ERR_DYNAMIC_ASSERT
 };
 
 const char* M2Err_ToString(M2Err e) {

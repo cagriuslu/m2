@@ -2,6 +2,7 @@
 #include "m2/Def.hh"
 #include "m2/Game.hh"
 #include "impl/private/ARPG_Cfg.hh"
+#include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 
 #define SWING_SPEED (15.0f)
@@ -89,8 +90,8 @@ int ObjectMelee_InitFromCfg(m2::Object* obj, const CfgMelee *cfg, ID originatorI
 	phy.onCollision = Sword_onCollision;
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = ARPG_CFG_SPRITES[cfg->spriteIndex].textureRect;
-	gfx.center_px = ARPG_CFG_SPRITES[cfg->spriteIndex].objCenter_px;
+	gfx.textureRect = impl::sprites[cfg->spriteIndex].texture_rect;
+	gfx.center_px = impl::sprites[cfg->spriteIndex].obj_center_px;
 	gfx.angle = phy.body->GetAngle();
 
 	auto& off = obj->add_offense();

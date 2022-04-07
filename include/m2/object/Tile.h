@@ -2,9 +2,10 @@
 #define M2_TILE_H
 
 #include <m2/Object.h>
+#include <m2/SpriteBlueprint.h>
 
 namespace m2::object {
-    std::pair<Object&, ID> create_tile(const Vec2f& position, CfgSpriteIndex sprite_index);
+    std::pair<Object&, ID> create_tile(const Vec2f& position, m2::SpriteIndex sprite_index);
 }
 
 #endif //M2_TILE_H

@@ -2,6 +2,7 @@
 #include "m2/Game.hh"
 #include "m2/Def.hh"
 #include "impl/private/ARPG_Cfg.hh"
+#include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 
 static void Bullet_prePhysics(m2::component::Monitor& mon) {
@@ -69,8 +70,8 @@ int ObjectProjectile_InitFromCfg(m2::Object* obj, const CfgProjectile *cfg, ID o
 	phy.onCollision = Bullet_onCollision;
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = ARPG_CFG_SPRITES[cfg->spriteIndex].textureRect;
-	gfx.center_px = ARPG_CFG_SPRITES[cfg->spriteIndex].objCenter_px;
+	gfx.textureRect = impl::sprites[cfg->spriteIndex].texture_rect;
+	gfx.center_px = impl::sprites[cfg->spriteIndex].obj_center_px;
 	gfx.angle = direction.angle_rads();
 
 	auto& off = obj->add_offense();

@@ -1,6 +1,7 @@
 #include "m2/FSM.h"
 #include <m2/Object.h>
 #include "impl/private/ARPG_Cfg.hh"
+#include <impl/public/SpriteBlueprint.h>
 #include "m2/component/Graphic.h"
 
 #define ALARM_DURATION (0.1f)
@@ -41,8 +42,8 @@ void* CharAnimation_IdleState(struct _Automaton* sm, int signal) {
 	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->mainSpriteIndex].texture_rect;
+			gfx->center_px = impl::sprites[cfg->mainSpriteIndex].obj_center_px;
 			return NULL;
 		case SIG_CHARANIM_WALKDOWN:
 			return (void*)CharAnimation_Down01State;
@@ -62,8 +63,8 @@ void* CharAnimation_DownStopState(struct _Automaton* sm, int signal) {
 	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].obj_center_px;
 			return NULL;
 		case SIG_CHARANIM_WALKDOWN:
 			return (void*)CharAnimation_Down01State;
@@ -84,8 +85,8 @@ void* CharAnimation_Down00State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -113,8 +114,8 @@ void* CharAnimation_Down01State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_01]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_01]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_01]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_01]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -142,8 +143,8 @@ void* CharAnimation_Down02State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -171,8 +172,8 @@ void* CharAnimation_Down03State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_02]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_02]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_02]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKDOWN_02]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -199,8 +200,8 @@ void* CharAnimation_LeftStopState(struct _Automaton* sm, int signal) {
 	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].obj_center_px;
 			return NULL;
 		case SIG_CHARANIM_WALKDOWN:
 			return (void*)CharAnimation_Down01State;
@@ -221,8 +222,8 @@ void* CharAnimation_Left00State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -249,8 +250,8 @@ void* CharAnimation_Left01State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_01]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_01]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_01]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_01]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -277,8 +278,8 @@ void* CharAnimation_Left02State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -305,8 +306,8 @@ void* CharAnimation_Left03State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_02]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_02]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_02]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKLEFT_02]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -332,8 +333,8 @@ void* CharAnimation_RightStopState(struct _Automaton* sm, int signal) {
 	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].obj_center_px;
 			return NULL;
 		case SIG_CHARANIM_WALKDOWN:
 			return (void*)CharAnimation_Down01State;
@@ -354,8 +355,8 @@ void* CharAnimation_Right00State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -383,8 +384,8 @@ void* CharAnimation_Right01State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_01]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_01]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_01]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_01]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -412,8 +413,8 @@ void* CharAnimation_Right02State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -441,8 +442,8 @@ void* CharAnimation_Right03State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_02]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_02]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_02]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKRIGHT_02]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -469,8 +470,8 @@ void* CharAnimation_UpStopState(struct _Automaton* sm, int signal) {
 	m2::component::Graphic* gfx = static_cast<m2::component::Graphic *>(sm->userData_gfx);
 	switch (signal) {
 		case SIG_ENTER:
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].obj_center_px;
 			return NULL;
 		case SIG_CHARANIM_WALKDOWN:
 			return (void*)CharAnimation_Down01State;
@@ -491,8 +492,8 @@ void* CharAnimation_Up00State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -520,8 +521,8 @@ void* CharAnimation_Up01State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_01]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_01]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_01]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_01]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -549,8 +550,8 @@ void* CharAnimation_Up02State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_00]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);
@@ -578,8 +579,8 @@ void* CharAnimation_Up03State(struct _Automaton* sm, int signal) {
 	switch (signal) {
 		case SIG_ENTER:
 			Automaton_ArmAlarm(sm, ALARM_DURATION);
-			gfx->textureRect = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_02]].textureRect;
-			gfx->center_px = ARPG_CFG_SPRITES[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_02]].objCenter_px;
+			gfx->textureRect = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_02]].texture_rect;
+			gfx->center_px = impl::sprites[cfg->spriteIndexes[CFG_CHARTEXTURETYP_LOOKUP_02]].obj_center_px;
 			return NULL;
 		case SIG_EXIT:
 			Automaton_DisarmAlarm(sm);

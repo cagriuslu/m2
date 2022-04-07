@@ -1,4 +1,5 @@
 #include <impl/public/ui/UI.h>
+#include <impl/private/LevelBlueprint.h>
 #include <m2/ui/UI.h>
 #include "m2/GameProxy.hh"
 #include "m2/Game.hh"
@@ -27,11 +28,6 @@ M2Err m2::game_proxy::activate() const {
 		}
 		SDL_FreeSurface(textureMaskSurface);
 	}
-	if (cfgSprites) {
-		for (CfgSpriteIndex i = 0; i < cfgSpriteCount; i++) {
-			M2ASSERT(gp->cfgSprites[i].index == i);
-		}
-	}
 	return M2OK;
 }
 
@@ -40,7 +36,7 @@ M2Err m2::game_proxy::exec_entry_ui() const {
     if (button.index() == 0) {
         int return_value = std::get<0>(button);
         if (return_value == impl::ui::ENTRY_NEW_GAME) {
-            return Game_Level_Load(&CFG_LVL_SP000);
+            return Game_Level_Load(&impl::level::sp_000);
         } else {
             return M2ERR_QUIT;
         }
@@ -54,7 +50,7 @@ M2Err m2::game_proxy::exec_pause_ui() const {
     if (button.index() == 0) {
         int return_value = std::get<0>(button);
         if (return_value == impl::ui::PAUSE_RESUME_GAME) {
-            return Game_Level_Load(&CFG_LVL_SP000);
+            return Game_Level_Load(&impl::level::sp_000);
         } else {
             return M2ERR_QUIT;
         }

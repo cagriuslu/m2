@@ -4,7 +4,6 @@
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
 #include "m2/Def.hh"
-#include "m2/Cfg.hh"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -18,6 +17,7 @@
 
 int main(int argc, char **argv) {
 	LOG_DEBUG_FN();
+    m2::Game::dynamic_assert();
 
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {

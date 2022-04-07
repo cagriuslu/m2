@@ -6,6 +6,7 @@
 #include <impl/public/component/Defense.h>
 #include <impl/public/component/Offense.h>
 #include <m2/box2d/Utils.h>
+#include <impl/public/SpriteBlueprint.h>
 
 impl::object::Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
 
@@ -71,8 +72,8 @@ int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f 
 	M2ERR_REFLECT(CharacterState_Init(&(AS_ENEMYDATA(obj->data)->characterState), cfg));
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].textureRect;
-	gfx.center_px = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].objCenter_px;
+	gfx.textureRect = impl::sprites[cfg->mainSpriteIndex].texture_rect;
+	gfx.center_px = impl::sprites[cfg->mainSpriteIndex].obj_center_px;
 	gfx.draw = ObjectEnemy_Draw;
 
 	auto& mon = obj->add_monitor();
@@ -87,7 +88,7 @@ int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f 
             false,
             true,
             m2::box2d::CATEGORY_ENEMY,
-            ARPG_CFG_SPRITES[cfg->mainSpriteIndex].collider.params.circ.radius_m,
+            std::get<m2::ColliderBlueprint::Circle>(impl::sprites[cfg->mainSpriteIndex].collider.variant).radius_m,
             cfg->mass_kg,
             cfg->linearDamping
 	);

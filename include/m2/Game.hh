@@ -6,7 +6,7 @@
 #include "m2/Event.hh"
 #include "InsertionList.hh"
 #include <m2/Object.h>
-#include "m2/Cfg.hh"
+#include <m2/LevelBlueprint.h>
 #include "Pathfinder.hh"
 #include "GameProxy.hh"
 #include "ui/UI.h"
@@ -91,6 +91,8 @@ namespace m2 {
 		const m2::game_proxy &proxy;
 
 		~Game();
+
+        static void dynamic_assert();
 	};
 }
 
@@ -99,7 +101,7 @@ extern m2::Game GAME;
 void Game_UpdateWindowDimensions(int width, int height);
 void Game_UpdateMousePosition();
 
-M2Err Game_Level_Load(const CfgLevel *cfg);
+M2Err Game_Level_Load(const m2::LevelBlueprint* cfg);
 
 void Game_DeleteList_Add(ID id);
 void Game_DeleteList_DeleteAll();

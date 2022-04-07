@@ -4,7 +4,7 @@
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
 #include "m2/Component.h"
-#include "m2/Cfg.hh"
+#include <impl/public/SpriteBlueprint.h>
 #include "m2/Def.hh"
 #include <b2_world.h>
 #include "impl/private/game_proxy.hh"
@@ -13,6 +13,7 @@
 #include "m2/Component.h"
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
+#include <impl/public/SpriteBlueprint.h>
 
 // Initialize with default values
 m2::Game GAME = {
@@ -30,6 +31,14 @@ m2::Game::~Game() {
     delete world;
     world = nullptr;
     // TODO deinit others
+}
+
+void m2::Game::dynamic_assert() {
+    for (m2::SpriteIndex i = 0; i < impl::sprite_count; i++) {
+        if (impl::sprites[i].index != i) {
+            throw M2FATAL(M2ERR_DYNAMIC_ASSERT);
+        }
+    }
 }
 
 void Game_UpdateWindowDimensions(int width, int height) {
@@ -95,7 +104,7 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME.gameRect.y = 0;
 	}
 	GAME.pixelsPerMeter = (float)GAME.gameAndHudRect.h / 16.0f;
-	GAME.scale = GAME.pixelsPerMeter / GAME.proxy.tileSize;
+	GAME.scale = GAME.pixelsPerMeter / impl::tile_width;
 }
 
 void Game_UpdateMousePosition() {
@@ -147,7 +156,7 @@ static void Game_Level_Term() {
 	GAME.levelLoaded = false;
 }
 
-M2Err Game_Level_Load(const CfgLevel *cfg) {
+M2Err Game_Level_Load(const m2::LevelBlueprint* cfg) {
 	if (GAME.levelLoaded) {
 		Game_Level_Term();
 	}
@@ -155,13 +164,13 @@ M2Err Game_Level_Load(const CfgLevel *cfg) {
 
 	for (int y = 0; y < cfg->h; y++) {
 		for (int x = 0; x < cfg->w; x++) {
-			const CfgTile *cfgTile = cfg->tiles + y * cfg->w + x;
-			if (cfgTile->backgroundSpriteIndex) {
-                m2::object::create_tile(m2::Vec2f{x, y}, cfgTile->backgroundSpriteIndex);
+            const m2::TileBlueprint* tile = cfg->tiles + y * cfg->w + x;
+			if (tile->bg_sprite_index) {
+                m2::object::create_tile(m2::Vec2f{x, y}, tile->bg_sprite_index);
 			}
-			if (cfgTile->foregroundSpriteIndex) {
+			if (tile->fg_sprite_index) {
                 auto& obj = GAME.objects.alloc().first;
-				M2ERR_REFLECT(GAME.proxy.foregroundSpriteLoader(&obj, cfgTile->foregroundSpriteIndex, m2::Vec2f{x, y}));
+				M2ERR_REFLECT(impl::fg_sprite_loader(&obj, tile->fg_sprite_index, m2::Vec2f{x, y}));
 			}
 		}
 	}

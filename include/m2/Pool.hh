@@ -99,7 +99,7 @@ namespace m2 {
                 ID id = _shifted_pool_id | static_cast<ID>(item.id);
                 return {item.data, id};
             } else {
-                throw m2::Error(M2ERR_LIMIT_EXCEEDED);
+                throw M2ERROR(M2ERR_LIMIT_EXCEEDED);
             }
         }
 
@@ -162,7 +162,7 @@ namespace m2 {
 			if (t) {
 				return *t;
 			} else {
-				throw m2::Error(M2ERR_OUT_OF_BOUNDS);
+				throw M2ERROR(M2ERR_OUT_OF_BOUNDS);
 			}
 		}
         T* get(ID id) {

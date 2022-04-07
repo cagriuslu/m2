@@ -1,6 +1,7 @@
 #include <m2/Component.h>
 #include <m2/Game.hh>
 #include "m2/component/Graphic.h"
+#include <impl/public/SpriteBlueprint.h>
 
 m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPosition, m2::Vec2f objGfxCenterPx) {
 	static auto camera_id = GAME.cameraId;
@@ -67,7 +68,7 @@ void m2::component::Graphic::default_draw_healthbar(component::Graphic& gfx, flo
 			obj_gfx_dstrect.x + (obj_gfx_dstrect.w - healthBarWidth) / 2,
 			obj_gfx_dstrect.y + obj_gfx_dstrect.h,
 			(int)roundf((float)healthBarWidth * healthRatio),
-			(int)GAME.proxy.tileSize / 6
+			(int)impl::tile_width / 6
 	};
 	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 0, 0, 200);
 	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);

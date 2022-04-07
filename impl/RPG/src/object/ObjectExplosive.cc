@@ -4,6 +4,7 @@
 #include "m2/Game.hh"
 #include "m2/Def.hh"
 #include "impl/private/ARPG_Cfg.hh"
+#include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
@@ -132,8 +133,8 @@ M2Err ObjectExplosive_InitFromCfg(m2::Object* obj, const CfgExplosive* cfg, ID o
 	phy.onCollision = ObjectExplosive_onCollision;
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = ARPG_CFG_SPRITES[cfg->spriteIndex].textureRect;
-	gfx.center_px = ARPG_CFG_SPRITES[cfg->spriteIndex].objCenter_px;
+	gfx.textureRect = impl::sprites[cfg->spriteIndex].texture_rect;
+	gfx.center_px = impl::sprites[cfg->spriteIndex].obj_center_px;
 	gfx.angle = direction.angle_rads();
 
 	auto& off = obj->add_offense();

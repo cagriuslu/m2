@@ -8,6 +8,7 @@
 #include <impl/public/component/Defense.h>
 #include <impl/public/component/Offense.h>
 #include <m2/box2d/Utils.h>
+#include <impl/public/SpriteBlueprint.h>
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -102,14 +103,14 @@ int ObjectPlayer_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f
             false,
             false,
             m2::box2d::CATEGORY_PLAYER,
-            ARPG_CFG_SPRITES[cfg->mainSpriteIndex].collider.params.circ.radius_m,
+            std::get<m2::ColliderBlueprint::Circle>(impl::sprites[cfg->mainSpriteIndex].collider.variant).radius_m,
             cfg->mass_kg,
             cfg->linearDamping
 	);
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].textureRect;
-	gfx.center_px = ARPG_CFG_SPRITES[cfg->mainSpriteIndex].objCenter_px;
+	gfx.textureRect = impl::sprites[cfg->mainSpriteIndex].texture_rect;
+	gfx.center_px = impl::sprites[cfg->mainSpriteIndex].obj_center_px;
 
 	auto& light = obj->add_light();
 	light.radius_m = 4.0f;

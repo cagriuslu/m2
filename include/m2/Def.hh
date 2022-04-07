@@ -53,6 +53,7 @@ typedef uint64_t ID;
 #define M2ERR_IMPLEMENTATION         (-13)
 #define M2ERR_TINYOBJ_LIMIT_EXCEEDED (-14)
 #define M2ERR_OUT_OF_BOUNDS          (-15)
+#define M2ERR_DYNAMIC_ASSERT         (-16)
 typedef int32_t M2Err;
 
 const char* M2Err_ToString(M2Err e);
