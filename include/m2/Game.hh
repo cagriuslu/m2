@@ -4,7 +4,7 @@
 #include <impl/public/component/Defense.h>
 #include <impl/public/component/Offense.h>
 #include "m2/Event.hh"
-#include "InsertionList.hh"
+#include "DrawList.h"
 #include <m2/Object.h>
 #include <m2/LevelBlueprint.h>
 #include "Pathfinder.hh"
@@ -64,7 +64,7 @@ namespace m2 {
 		// Another reason to put a component inside a Pool: if the type of object that is using that component is
 		// created/destroyed very rapidly.
 		m2::Pool<m2::Object> objects;
-		InsertionList drawList;
+		m2::DrawList draw_list;
 		m2::Pool<component::Monitor> monitors;
 		m2::Pool<component::Physique> physics;
 		m2::Pool<component::Graphic> graphics;

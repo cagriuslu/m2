@@ -82,18 +82,3 @@ void m2::component::Graphic::default_draw_healthbar(component::Graphic& gfx, flo
 	SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 0, 0, 200);
 	SDL_RenderFillRect(GAME.sdlRenderer, &empty_dstrect);
 }
-
-int m2::component::Graphic::ycomparator_cb(ID gfxIdA, ID gfxIdB) {
-	auto& gfx_a = GAME.graphics[gfxIdA];
-	auto& gfx_b = GAME.graphics[gfxIdB];
-	auto& obj_a = GAME.objects[gfx_a.object_id];
-	auto& obj_b = GAME.objects[gfx_b.object_id];
-	float diff = obj_b.position.y - obj_a.position.y;
-	if (0 < diff) {
-		return 1;
-	} else if (diff < 0) {
-		return -1;
-	} else {
-		return 0;
-	}
-}

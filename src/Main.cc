@@ -254,7 +254,14 @@ int main(int argc, char **argv) {
 			// Physics
 			GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
             for (auto physique_it : GAME.physics) {
-				GAME.objects[physique_it.first->object_id].position = m2::Vec2f{physique_it.first->body->GetPosition()};
+				auto object_id = physique_it.first->object_id;
+				auto& object = GAME.objects[object_id];
+				auto old_pos = object.position;
+				auto new_pos = m2::Vec2f{physique_it.first->body->GetPosition()};
+				object.position = new_pos;
+				if (old_pos != new_pos) {
+					GAME.draw_list.update(object_id);
+				}
             } // TODO Easy to parallelize
 			Game_DeleteList_DeleteAll();
 
@@ -303,16 +310,14 @@ int main(int argc, char **argv) {
         } // TODO Hard to parallelize
 
 		// Draw
-		InsertionList_Sort(&GAME.drawList);
 		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks) - prevDrawTicks;
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevDrawTicks += GAME.deltaTicks_ms;
-		size_t insertionListSize = InsertionList_Length(&GAME.drawList);
-		for (size_t i = 0; i < insertionListSize; i++) {
-			auto& gfx = GAME.graphics[InsertionList_Get(&GAME.drawList, i)];
+		for (const auto& gfx_id : GAME.draw_list) {
+			auto& gfx = GAME.graphics[gfx_id];
 			if (gfx.draw) {
-                gfx.draw(gfx);
-            }
+				gfx.draw(gfx);
+			}
 		} // TODO Hard to parallelize
 
 		// Draw lights

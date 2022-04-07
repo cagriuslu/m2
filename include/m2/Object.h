@@ -15,6 +15,14 @@
 #include <memory>
 
 namespace m2 {
+	using ObjectID = ID;
+	using MonitorID = ID;
+	using PhysiqueID = ID;
+	using GraphicID = ID;
+	using LightID = ID;
+	using DefenseID = ID;
+	using OffenseID = ID;
+
     /// Basis of all objects in the game.
     /// How to decide if a component should reside in Pool or data?
     /// If the component is iterated by the Main Game Loop => Pool
@@ -23,13 +31,13 @@ namespace m2 {
     struct Object {
         m2::Vec2f position;
         // Components
-        ID monitor_id;
-        ID physique_id;
-        ID graphic_id;
-        ID terrain_graphic_id;
-        ID light_id;
-        ID defense_id;
-        ID offense_id;
+		MonitorID monitor_id;
+		PhysiqueID physique_id;
+		GraphicID graphic_id;
+		GraphicID terrain_graphic_id;
+		LightID light_id;
+		DefenseID defense_id;
+		OffenseID offense_id;
         // Extra
         void *data;
         std::unique_ptr<ObjectImpl> impl;
@@ -62,7 +70,7 @@ namespace m2 {
         [[nodiscard]] impl::component::Offense& add_offense();
     };
 
-    std::pair<Object&, ID> create_object(const m2::Vec2f& position);
+    std::pair<Object&, ObjectID> create_object(const m2::Vec2f& position);
 }
 
 #endif

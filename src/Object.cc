@@ -51,6 +51,8 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 }
 
 m2::Object::~Object() {
+	// BEWARE: `this` can't be used to lookup the object_id here, because this object is swap-deleted. (in Pool)
+
 	if (monitor_id) {
 		GAME.monitors.free(monitor_id);
 	}
@@ -58,7 +60,7 @@ m2::Object::~Object() {
 		GAME.physics.free(physique_id);
 	}
 	if (graphic_id) {
-		InsertionList_Remove(&GAME.drawList, graphic_id);
+		GAME.draw_list.remove(GAME.graphics[graphic_id].object_id);
 		GAME.graphics.free(graphic_id);
 	}
 	if (terrain_graphic_id) {
@@ -112,9 +114,10 @@ m2::component::Physique& m2::Object::add_physique() {
 m2::component::Graphic& m2::Object::add_graphic() {
 	auto graphic_pair = GAME.graphics.alloc();
 	graphic_id = graphic_pair.second;
-	graphic_pair.first = component::Graphic{GAME.objects.get_id(this)};
-	// TODO move into component maybe?
-	InsertionList_Insert(&GAME.drawList, graphic_id);
+
+	auto obj_id = GAME.objects.get_id(this);
+	graphic_pair.first = component::Graphic{obj_id};
+	GAME.draw_list.insert(obj_id);
 	return graphic_pair.first;
 }
 m2::component::Graphic& m2::Object::add_terrain_graphic() {
@@ -142,7 +145,7 @@ impl::component::Offense& m2::Object::add_offense() {
 	return offense_pair.first;
 }
 
-std::pair<m2::Object&, ID> m2::create_object(const m2::Vec2f &position) {
+std::pair<m2::Object&, m2::ObjectID> m2::create_object(const m2::Vec2f &position) {
     auto obj_pair = GAME.objects.alloc();
     obj_pair.first = Object{position};
     return obj_pair;

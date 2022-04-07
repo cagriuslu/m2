@@ -16,7 +16,6 @@ namespace m2::component {
 
 		static void default_draw(Graphic& gfx);
 		static void default_draw_healthbar(Graphic& gfx, float healthRatio);
-		static int ycomparator_cb(uint64_t gfxIdA, uint64_t gfxIdB);
 	};
 }
 

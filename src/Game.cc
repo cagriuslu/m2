@@ -119,7 +119,6 @@ void Game_UpdateMousePosition() {
 
 static int Game_Level_Init() {
 	GAME.objects.clear();
-	M2ERR_REFLECT(InsertionList_Init(&GAME.drawList, UINT16_MAX + 1, m2::component::Graphic::ycomparator_cb));
 	GAME.monitors.clear();
 	GAME.physics.clear();
 	GAME.graphics.clear();
@@ -149,7 +148,6 @@ static void Game_Level_Term() {
 	GAME.graphics.clear();
 	GAME.physics.clear();
 	GAME.monitors.clear();
-	InsertionList_Term(&GAME.drawList);
 	GAME.objects.clear();
     delete GAME.world;
     delete GAME.contactListener;
