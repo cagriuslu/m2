@@ -1,7 +1,7 @@
 #ifndef THREADPOOL_H
 #define THREADPOOL_H
 
-#include "m2/Def.hh"
+#include "m2/Def.h"
 
 typedef void ThreadPool;
 

@@ -5,7 +5,7 @@
 #include <m2/object/Tile.h>
 #include "m2/Component.h"
 #include <impl/public/SpriteBlueprint.h>
-#include "m2/Def.hh"
+#include "m2/Def.h"
 #include <b2_world.h>
 #include "impl/private/game_proxy.hh"
 #include <impl/public/ui/UI.h>

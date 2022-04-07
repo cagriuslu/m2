@@ -1,8 +1,8 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include "m2/Controls.hh"
+#include "m2/Controls.h"
 #include "m2/Event.hh"
-#include "m2/Def.hh"
+#include "m2/Def.h"
 #include "../ARPG_Object.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include <impl/public/component/Defense.h>

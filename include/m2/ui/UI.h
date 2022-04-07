@@ -3,7 +3,7 @@
 
 #include "ElementBlueprint.h"
 #include "../Event.hh"
-#include "../Def.hh"
+#include "../Def.h"
 #include <SDL_ttf.h>
 #include <SDL.h>
 #include <functional>

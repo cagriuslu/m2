@@ -3,7 +3,7 @@
 #include "m2/Event.hh"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
-#include "m2/Def.hh"
+#include "m2/Def.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>

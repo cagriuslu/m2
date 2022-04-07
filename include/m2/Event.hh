@@ -1,7 +1,7 @@
 #ifndef EVENT_HANDLING_H
 #define EVENT_HANDLING_H
 
-#include "m2/Controls.hh"
+#include "m2/Controls.h"
 #include <m2/Vec2i.hh>
 #include <stdbool.h>
 

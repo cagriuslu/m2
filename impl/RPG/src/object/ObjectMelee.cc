@@ -1,5 +1,5 @@
 #include <m2/Object.h>
-#include "m2/Def.hh"
+#include "m2/Def.h"
 #include "m2/Game.hh"
 #include "impl/private/ARPG_Cfg.hh"
 #include <impl/public/SpriteBlueprint.h>

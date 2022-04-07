@@ -1,7 +1,7 @@
 #include <m2/object/Pointer.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include "m2/Def.hh"
+#include "m2/Def.h"
 
 void pointer_pre_graphics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];

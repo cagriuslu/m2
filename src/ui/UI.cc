@@ -1,7 +1,7 @@
 #include <m2/ui/UI.h>
 #include <m2/ui/element/NestedUI.h>
 #include <m2/Event.hh>
-#include <m2/Def.hh>
+#include <m2/Def.h>
 #include <m2/Game.hh>
 
 static SDL_Rect calculate_element_rect(const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h, unsigned child_x, unsigned child_y, unsigned child_w, unsigned child_h) {

@@ -1,4 +1,4 @@
-#include "m2/Controls.hh"
+#include "m2/Controls.h"
 
 Key KeyFromSDLScancode(SDL_Scancode sc) {
 	switch (sc) {

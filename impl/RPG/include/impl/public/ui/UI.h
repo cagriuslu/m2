@@ -2,7 +2,7 @@
 #define IMPL_UI_H
 
 #include <m2/ui/UI.h>
-#include <m2/Def.hh>
+#include <m2/Def.h>
 
 namespace impl::ui {
     enum EntryReturnValue {

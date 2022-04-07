@@ -1,7 +1,7 @@
 #include <impl/private/object/Enemy.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include "m2/Def.hh"
+#include "m2/Def.h"
 #include "impl/private/ARPG_Cfg.hh"
 #include <impl/public/component/Defense.h>
 #include <impl/public/component/Offense.h>

@@ -1,7 +1,7 @@
 #ifndef INSERTION_LIST_H
 #define INSERTION_LIST_H
 
-#include <m2/Def.hh>
+#include <m2/Def.h>
 #include <stdint.h>
 #include <vector>
 

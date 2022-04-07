@@ -2,7 +2,7 @@
 #define M2_UTILS_H
 
 #include "../Vec2f.h"
-#include "../Def.hh"
+#include "../Def.h"
 #include <b2_body.h>
 #include <b2_world.h>
 #include <memory>

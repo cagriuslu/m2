@@ -1,7 +1,7 @@
 #ifndef PATHFINDER_H
 #define PATHFINDER_H
 
-#include "m2/Def.hh"
+#include "m2/Def.h"
 #include <m2/Vec2i.hh>
 #include <m2/Vec2f.h>
 #include <unordered_set>

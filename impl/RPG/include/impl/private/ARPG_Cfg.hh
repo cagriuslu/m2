@@ -2,7 +2,7 @@
 #define M2_ARPG_CFG_HH
 
 #include <m2/SpriteBlueprint.h>
-#include <m2/Def.hh>
+#include <m2/Def.h>
 #include <list>
 
 #define ARPG_CFG_TILE_SIZE (48)

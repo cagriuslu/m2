@@ -2,7 +2,7 @@
 #define M2_POOL_HH
 
 #include <m2/Error.hh>
-#include <m2/Def.hh>
+#include <m2/Def.h>
 #include <array>
 #include <optional>
 #include <cstdint>

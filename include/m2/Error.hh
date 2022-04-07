@@ -1,7 +1,7 @@
 #ifndef M2_ERROR_HH
 #define M2_ERROR_HH
 
-#include <m2/Def.hh>
+#include <m2/Def.h>
 #include <stdexcept>
 
 #define M2FATAL(...) (::m2::Fatal(__FILE__, __LINE__, __VA_ARGS__))

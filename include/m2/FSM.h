@@ -1,7 +1,7 @@
 #ifndef AUTOMATON_H
 #define AUTOMATON_H
 
-#include "Def.hh"
+#include "Def.h"
 #include <optional>
 #include <functional>
 
