@@ -1,7 +1,7 @@
 #ifndef IMPL_ENEMY_H
 #define IMPL_ENEMY_H
 
-#include "m2/Object.h"
+#include <m2/Object.h>
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/private/fsm/Chaser.h"
 

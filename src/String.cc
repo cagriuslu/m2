@@ -1,4 +1,4 @@
-#include <m2/string.hh>
+#include <m2/String.h>
 
 std::vector<std::string> m2::string::split(std::string str, char delimiter) {
 	std::vector<std::string> tokens;

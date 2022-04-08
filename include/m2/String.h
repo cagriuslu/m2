@@ -1,5 +1,5 @@
-#ifndef M2_STRING_HH
-#define M2_STRING_HH
+#ifndef M2_STRING_H
+#define M2_STRING_H
 
 #include <vector>
 #include <string>
