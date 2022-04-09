@@ -19,10 +19,9 @@ namespace impl::object {
         m2::FSM<impl::fsm::Chaser> chaser;
 
         explicit Enemy(m2::Object&);
+
+        static M2Err init(m2::Object* obj, const CfgCharacter* cfg, m2::Vec2f pos);
     };
 }
-
-int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f position);
-
 
 #endif //IMPL_ENEMY_H

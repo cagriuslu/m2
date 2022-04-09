@@ -269,11 +269,12 @@ const m2::SpriteBlueprint impl::sprites[] {
 const unsigned impl::sprite_count = IMPL_SPRITE_N;
 
 M2Err impl::fg_sprite_loader(m2::Object* obj, m2::SpriteIndex index, m2::Vec2f position) {
+    using namespace object;
     switch (index) {
         case IMPL_SPRITE_PLAYER_LOOKDOWN_00:
             return ObjectPlayer_InitFromCfg(obj, &CFG_CHARACTER_PLAYER, position);
         case IMPL_SPRITE_ENEMY_LOOKDOWN_00:
-            return ObjectEnemy_InitFromCfg(obj, &CFG_CHARACTER_SKELETON_000_CHASE, position);
+            return Enemy::init(obj, &CFG_CHARACTER_SKELETON_000_CHASE, position);
         default:
             return LOG_ERROR_M2V(M2ERR_INVALID_CFG_OBJTYP, Int32, index);
     }

@@ -8,11 +8,13 @@
 #include <m2/box2d/Utils.h>
 #include <impl/public/SpriteBlueprint.h>
 
-impl::object::Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
+using namespace impl::object;
+
+Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
 
 static void ObjectEnemy_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
-    auto* data = dynamic_cast<impl::object::Enemy*>(obj.impl.get());
+    auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 
 	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj.data)->characterState), GAME.deltaTime_s);
     data->chaser.time(GAME.deltaTime_s);
@@ -66,8 +68,8 @@ static void ObjectEnemy_Draw(m2::component::Graphic& gfx) {
 	m2::component::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 }
 
-int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f position) {
-	*obj = m2::Object{position};
+M2Err Enemy::init(m2::Object* obj, const CfgCharacter* cfg, m2::Vec2f pos) {
+	*obj = m2::Object{pos};
     obj->data = new EnemyData();
 	M2ERR_REFLECT(CharacterState_Init(&(AS_ENEMYDATA(obj->data)->characterState), cfg));
 
@@ -84,7 +86,7 @@ int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f 
 	phy.body = m2::box2d::create_dynamic_disk(
             *GAME.world,
             obj->physique_id,
-            position,
+            pos,
             false,
             true,
             m2::box2d::CATEGORY_ENEMY,
@@ -105,9 +107,9 @@ int ObjectEnemy_InitFromCfg(m2::Object* obj, const CfgCharacter *cfg, m2::Vec2f 
 	AutomatonCharAnimation_Init(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), cfg, &gfx);
 
 	if (cfg->ai) {
-		AiState_Init(&(AS_ENEMYDATA(obj->data)->aiState), cfg->ai, position);
+		AiState_Init(&(AS_ENEMYDATA(obj->data)->aiState), cfg->ai, pos);
 	}
 
-    obj->impl = std::make_unique<impl::object::Enemy>(*obj);
+    obj->impl = std::make_unique<Enemy>(*obj);
 	return 0;
 }
