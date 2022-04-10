@@ -193,24 +193,6 @@ void ExplosiveWeaponState_ProcessTime(ExplosiveWeaponState* state, float timePas
 }
 
 ////////////////////////////////////////////////////////////////////////
-////////////////////////////////// AI //////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-const CfgAi CFG_AI_CHASE_00 = {
-		.behavior = CFG_AI_BEHAVIOR_CHASE,
-		.capability = CFG_AI_CAPABILITY_MELEE,
-		.triggerDistanceSquared_m = 25.0f,
-		.attackDistanceSquared_m = 0.5625f,
-		.giveUpDistanceSquared_m = 100.0f,
-		.recalculationPeriod_s = 0.75f,
-};
-
-M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::Vec2f homePosition) {
-	state->cfg = cfg;
-	state->homePosition = homePosition;
-	return M2OK;
-}
-
-////////////////////////////////////////////////////////////////////////
 /////////////////////////////// CHARACTER //////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 const CfgCharacter CFG_CHARACTER_PLAYER = {
@@ -262,7 +244,7 @@ const CfgCharacter CFG_CHARACTER_SKELETON_000_CHASE = {
 				impl::IMPL_SPRITE_ENEMY_LOOKUP_01, // CFG_CHARTEXTURETYP_LOOKUP_01
 				impl::IMPL_SPRITE_ENEMY_LOOKUP_02, // CFG_CHARTEXTURETYP_LOOKUP_02
 		},
-		.ai = &CFG_AI_CHASE_00
+		.aiBlueprint = &impl::ai::blueprint::chase_000
 };
 
 M2Err CharacterState_Init(CharacterState* state, const CfgCharacter* cfg) {

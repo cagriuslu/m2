@@ -190,4 +190,7 @@ float randf();
 #define DEFINE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
 	DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) { size_t len; for (len = 0; ptr; len++, ptr = ptr->next); return len; }
 
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
 #endif

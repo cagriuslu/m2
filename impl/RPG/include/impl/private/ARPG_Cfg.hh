@@ -1,6 +1,7 @@
 #ifndef IMPL_ARPG_CFG_HH
 #define IMPL_ARPG_CFG_HH
 
+#include <impl/private/ai/AiBlueprint.h>
 #include <m2/SpriteBlueprint.h>
 #include <m2/Def.h>
 #include <list>
@@ -119,63 +120,6 @@ M2Err ExplosiveWeaponState_Init(ExplosiveWeaponState* state, const CfgExplosiveW
 void ExplosiveWeaponState_ProcessTime(ExplosiveWeaponState* state, float timePassed);
 
 ////////////////////////////////////////////////////////////////////////
-////////////////////////////////// AI //////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-// Behavior corresponds to the state machine that is used
-typedef enum {
-	CFG_AI_BEHAVIOR_INVALID = 0,
-	CFG_AI_BEHAVIOR_CHASE,
-	CFG_AI_BEHAVIOR_KEEP_DISTANCE,
-	CFG_AI_BEHAVIOR_HIT_N_RUN,
-	CFG_AI_BEHAVIOR_PATROL, // Chases the player when triggered
-	CFG_AI_BEHAVIOR_CIRCLE_AROUND
-} CfgAiBehavior;
-typedef enum {
-	CFG_AI_CAPABILITY_INVALID = 0,
-	CFG_AI_CAPABILITY_RANGED,
-	CFG_AI_CAPABILITY_MELEE,
-	CFG_AI_CAPABILITY_EXPLOSIVE,
-	CFG_AI_CAPABILITY_KAMIKAZE
-} CfgAiCapability;
-typedef struct {
-	CfgAiBehavior behavior;
-	CfgAiCapability capability;
-	/// Distance AI becomes active
-	float triggerDistanceSquared_m;
-	/// Distance AI is clear to attack player
-	float attackDistanceSquared_m;
-	/// Distance AI gives up and returns home
-	float giveUpDistanceSquared_m;
-	/// Period after which AI recalculates waypoints (formula: random(s/2, 3s/2))
-	float recalculationPeriod_s;
-	/// If behavior=KEEP_DISTANCE, distance AI tries to keep
-	float keepDistanceDistanceSquared_m;
-	/// If behavior=HIT_N_RUN, distance AI tries to achieve during Hit period
-	float hitNRunHitDistanceSquared_m;
-	/// If behavior=HIT_N_RUN, duration AI stays in Hit period
-	float hitNRunHitDuration_s;
-	/// If behavior=HIT_N_RUN, distance AI tries to achieve during Run period
-	float hitNRunRunDistanceSquared_m;
-	/// If behavior=HIT_N_RUN, duration AI stays in Run period
-	float hitNRunRunDuration_s;
-	/// If behavior=PATROL, top-left of patrol area while idling
-	m2::Vec2f patrolAreaTopLeft;
-	/// If behavior=PATROL, bottom-right of patrol area while idling
-	m2::Vec2f patrolAreaBottomRight;
-	/// If behavior=PATROL, patrol speed
-	float patrolSpeed_mps;
-	// Circle around parameters
-	// TODO
-} CfgAi;
-extern const CfgAi CFG_AI_CHASE_00;
-struct AiState {
-	const CfgAi* cfg;
-	m2::Vec2f homePosition;
-    std::list<m2::Vec2i> reversedWaypointList;
-};
-M2Err AiState_Init(AiState *state, const CfgAi* cfg, m2::Vec2f homePosition);
-
-////////////////////////////////////////////////////////////////////////
 /////////////////////////////// CHARACTER //////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 typedef enum {
@@ -209,7 +153,7 @@ typedef struct {
 	const CfgMeleeWeapon* defaultMeleeWeapon;
 	const CfgExplosiveWeapon* defaultExplosiveWeapon;
     m2::SpriteIndex spriteIndexes[CFG_CHARTEXTURETYP_N];
-	const CfgAi* ai;
+	const impl::ai::AiBlueprint* aiBlueprint;
 } CfgCharacter;
 extern const CfgCharacter CFG_CHARACTER_PLAYER;
 extern const CfgCharacter CFG_CHARACTER_SKELETON_000_CHASE;

@@ -10,15 +10,22 @@
 
 using namespace impl::object;
 
-Enemy::Enemy(m2::Object& obj) : chaser({obj, GAME.objects[GAME.playerId]}) {}
+Enemy::Enemy(m2::Object& obj, const CfgCharacter* cfg) : fsmVariant(
+	std::visit(overloaded {
+		[&](const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; },
+		[&](const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; },
+		[&](const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; },
+		[&](const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; }
+	}, cfg->aiBlueprint->variant)
+) {}
 
 static void ObjectEnemy_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
     auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 
 	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj.data)->characterState), GAME.deltaTime_s);
-    data->chaser.time(GAME.deltaTime_s);
-    data->chaser.signal(m2::FSMSIG_PREPHY);
+	std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, data->fsmVariant);
+	std::visit([](auto& v) { v.signal(m2::FSMSIG_PREPHY); }, data->fsmVariant);
 }
 
 static void ObjectEnemy_onHit(impl::component::Defense* def) {
@@ -106,10 +113,6 @@ M2Err Enemy::init(m2::Object* obj, const CfgCharacter* cfg, m2::Vec2f pos) {
 
 	AutomatonCharAnimation_Init(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), cfg, &gfx);
 
-	if (cfg->ai) {
-		AiState_Init(&(AS_ENEMYDATA(obj->data)->aiState), cfg->ai, pos);
-	}
-
-    obj->impl = std::make_unique<Enemy>(*obj);
+    obj->impl = std::make_unique<Enemy>(*obj, cfg);
 	return 0;
 }

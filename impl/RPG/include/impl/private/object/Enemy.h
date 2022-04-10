@@ -4,21 +4,28 @@
 #include <m2/Object.h>
 #include "impl/private/ARPG_Cfg.hh"
 #include "impl/private/fsm/Chaser.h"
+#include "impl/private/fsm/DistanceKeeper.h"
+#include "impl/private/fsm/HitNRunner.h"
+#include "impl/private/fsm/Patroller.h"
 
 struct EnemyData {
     CharacterState characterState;
     Automaton charAnimationAutomaton;
-    AiState aiState;
-    Automaton aiAutomaton;
     float onHitColorModTtl;
 };
 #define AS_ENEMYDATA(ptr) ((EnemyData*)(ptr))
 
 namespace impl::object {
     struct Enemy : public m2::ObjectImpl {
-        m2::FSM<impl::fsm::Chaser> chaser;
+		using FSMVariant = std::variant<
+			m2::FSM<impl::fsm::Chaser>,
+			m2::FSM<impl::fsm::DistanceKeeper>,
+			m2::FSM<impl::fsm::HitNRunner>,
+			m2::FSM<impl::fsm::Patroller>
+		>;
+		FSMVariant fsmVariant;
 
-        explicit Enemy(m2::Object&);
+        explicit Enemy(m2::Object&, const CfgCharacter* cfg);
 
         static M2Err init(m2::Object* obj, const CfgCharacter* cfg, m2::Vec2f pos);
     };
