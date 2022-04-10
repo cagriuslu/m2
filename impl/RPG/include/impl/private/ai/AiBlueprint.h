@@ -27,6 +27,10 @@ namespace impl::ai {
 
 		[[nodiscard]] std::unique_ptr<AiState> get_state() const;
     };
+
+	namespace blueprint {
+		extern const AiBlueprint chase_000;
+	}
 }
 
 #endif //IMPL_AIBLUEPRINT_H
