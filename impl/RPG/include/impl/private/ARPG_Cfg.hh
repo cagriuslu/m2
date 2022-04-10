@@ -1,5 +1,5 @@
-#ifndef M2_ARPG_CFG_HH
-#define M2_ARPG_CFG_HH
+#ifndef IMPL_ARPG_CFG_HH
+#define IMPL_ARPG_CFG_HH
 
 #include <m2/SpriteBlueprint.h>
 #include <m2/Def.h>
@@ -222,4 +222,4 @@ typedef struct CharacterState {
 M2Err CharacterState_Init(CharacterState* state, const CfgCharacter* cfg);
 void CharacterState_ProcessTime(CharacterState* state, float timePassed);
 
-#endif //M2_ARPG_CFG_HH
+#endif //IMPL_ARPG_CFG_HH

@@ -4,12 +4,10 @@
 #include "../AiState.h"
 
 namespace impl::ai::type {
-    struct ChaseBlueprint {
-        int _dummy_;
-    };
+    struct ChaseBlueprint {};
 
     struct ChaseState : public AiState {
-        int _dummy_;
+		explicit ChaseState(const AiBlueprint* blueprint);
     };
 }
 

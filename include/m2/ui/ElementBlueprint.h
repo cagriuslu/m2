@@ -35,7 +35,7 @@ namespace m2::ui {
                 element::ButtonDynamicImageBlueprint>;
         ElementBlueprintVariant blueprint_variant;
 
-        std::unique_ptr<ElementState> get_state() const;
+        [[nodiscard]] std::unique_ptr<ElementState> get_state() const;
     };
 }
 

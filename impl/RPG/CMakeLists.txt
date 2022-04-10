@@ -3,7 +3,8 @@ file(GLOB IMPL_SOURCES
         "include/impl/*/*.h"
         "include/impl/*/*/*.h"
         "src/*.h"   "src/*.cc"
-        "src/*/*.h" "src/*/*.cc")
+        "src/*/*.h" "src/*/*.cc"
+        "src/*/*/*.h" "src/*/*/*.cc")
 set(IMPL_INCLUDE_DIRS "${CMAKE_CURRENT_LIST_DIR}/include")
 
 # Export vars to parent

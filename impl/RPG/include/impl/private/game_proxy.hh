@@ -1,5 +1,5 @@
-#ifndef M2_GAME_PROXY_HH
-#define M2_GAME_PROXY_HH
+#ifndef IMPL_GAME_PROXY_HH
+#define IMPL_GAME_PROXY_HH
 
 #include "m2/GameProxy.hh"
 
@@ -7,4 +7,4 @@ namespace impl {
     extern const m2::game_proxy GAME_PROXY;
 }
 
-#endif //M2_GAME_PROXY_HH
+#endif //IMPL_GAME_PROXY_HH
