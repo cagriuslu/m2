@@ -36,7 +36,7 @@ namespace m2 {
         void signal(int sig) {
             auto next_state = (*current_state)(*this, sig);
             if (next_state) {
-                exit();
+				(*current_state)(*this, FSMSIG_EXIT); // Ignore return value
                 current_state = reinterpret_cast<State>(next_state);
                 signal(FSMSIG_ENTER);
             }
@@ -54,10 +54,6 @@ namespace m2 {
     private:
         State current_state;
         float alarm;
-
-        void exit() {
-            (*current_state)(*this, FSMSIG_EXIT);
-        }
     };
 }
 
