@@ -6,8 +6,9 @@
 #include "../ARPG_Object.hh"
 #include <impl/private/object/Enemy.h>
 #include <impl/private/fsm/Chaser.h>
+#include <m2/M2.h>
 
-#define ALARM_DURATION(recalcPeriod) ((recalcPeriod) / 2.0f + (recalcPeriod) * randf() * 1.5f)
+#define ALARM_DURATION(recalcPeriod) ((recalcPeriod) / 2.0f + (recalcPeriod) * m2::randf() * 1.5f)
 
 impl::fsm::Chaser::Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint) :
 	obj(obj),

@@ -1,11 +1,11 @@
 #include <b2_world.h>
-
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
 #include "impl/private/ARPG_Cfg.hh"
 #include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
+#include <m2/M2.h>
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
 	return m2::box2d::create_bullet(
@@ -67,7 +67,7 @@ static void ObjectExplosive_onCollision(m2::component::Physique& phy, m2::compon
 					// Calculate damage
 					float minDamage = off.state.explosive.cfg->damageMin;
 					float maxDamage = off.state.explosive.cfg->damageMax;
-					float damage = LERP(maxDamage, minDamage, distance / damageRadius);
+					float damage = m2::lerp(maxDamage, minDamage, distance / damageRadius);
 					def.hp -= damage;
 					if (def.hp <= 0.0001f && def.onDeath) {
 						// TODO fix XOK message

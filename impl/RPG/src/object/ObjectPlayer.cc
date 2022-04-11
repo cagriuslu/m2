@@ -9,6 +9,7 @@
 #include <impl/public/component/Offense.h>
 #include <m2/box2d/Utils.h>
 #include <impl/public/SpriteBlueprint.h>
+#include <m2/M2.h>
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -49,7 +50,7 @@ static void Player_prePhysics(m2::component::Monitor& mon) {
 		m2::Object* projectile = &GAME.objects.alloc().first;
 		m2::Vec2f direction = (GAME.mousePositionInWorld_m - obj.position).normalize();
 		float accuracy = playerData->characterState.cfg->defaultRangedWeapon->accuracy;
-		float angle = direction.angle_rads() + (M2_PI * randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
+		float angle = direction.angle_rads() + (M2_PI * m2::randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
 		ObjectProjectile_InitFromCfg(projectile, &playerData->characterState.cfg->defaultRangedWeapon->projectile, GAME.playerId, obj.position, m2::Vec2f::from_angle(angle));
 		// Knockback
 		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + M2_PI) * 500.0f), true);

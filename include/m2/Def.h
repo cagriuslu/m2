@@ -177,14 +177,6 @@ void Log_StackTrace();
 ////////////////////////// Convenience Macros //////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-#define MIN(a,b) ((a) < (b) ? (a) : (b))
-#define MAX(a,b) ((a) < (b) ? (b) : (a))
-#define LERP(min,max,t) ((min) + (t) * ((max) - (min)))
-#define ACCURACY(value, accuracy) ((value) + ((value) * randf() * (1 - (accuracy))) - ((value) * (1 - (accuracy)) / 2.0f))
-float NORMALIZE_2PI(float angle);
-/// Generate a random number between 0.0f and 1.0f
-float randf();
-
 #define DECLARE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \
 	size_t SiblingListLength_##typeName(const typeName *ptr)
 #define DEFINE_SIBLING_LIST_LENGTH_CALCULATOR(typeName) \

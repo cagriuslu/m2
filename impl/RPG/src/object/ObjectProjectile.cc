@@ -4,6 +4,7 @@
 #include "impl/private/ARPG_Cfg.hh"
 #include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
+#include <m2/M2.h>
 
 static void Bullet_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
@@ -31,7 +32,7 @@ static void Bullet_onCollision(m2::component::Physique& phy, m2::component::Phys
 		}
 		off.state.projectile.alreadyCollidedThisStep = true;
 		// Calculate damage
-		def->hp -= ACCURACY(off.state.projectile.cfg->damage, off.state.projectile.cfg->damageAccuracy);
+		def->hp -= m2::apply_accuracy(off.state.projectile.cfg->damage, off.state.projectile.cfg->damageAccuracy);
 		if (def->hp <= 0.0001f && def->onDeath) {
 			LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def->object_id);
 			def->onDeath(def);
@@ -77,7 +78,7 @@ int ObjectProjectile_InitFromCfg(m2::Object* obj, const CfgProjectile *cfg, ID o
 	auto& off = obj->add_offense();
     off.originator = originatorId;
     off.state.projectile.cfg = cfg;
-    off.state.projectile.ttl_s = ACCURACY(cfg->ttl_s, cfg->ttlAccuracy);
+    off.state.projectile.ttl_s = m2::apply_accuracy(cfg->ttl_s, cfg->ttlAccuracy);
     off.state.projectile.alreadyCollidedThisStep = false;
 
 	return 0;
