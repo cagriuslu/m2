@@ -26,9 +26,7 @@ namespace impl::ai {
         std::variant<type::ChaseBlueprint, type::HitNRunBlueprint, type::KeepDistanceBlueprint, type::PatrolBlueprint> variant;
     };
 
-	namespace blueprint {
-		extern const AiBlueprint chase_000;
-	}
+	extern const AiBlueprint chase_000;
 }
 
 #endif //IMPL_AIBLUEPRINT_H

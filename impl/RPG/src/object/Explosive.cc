@@ -1,20 +1,21 @@
+#include <impl/private/object/Explosive.h>
+#include <impl/private/character/ExplosiveWeapon.h>
 #include <b2_world.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
-#include "impl/private/ARPG_Cfg.hh"
 #include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 
-static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position, const CfgExplosive *cfg) {
+static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position,  const impl::character::ExplosiveBlueprint* blueprint) {
 	return m2::box2d::create_bullet(
             *GAME.world,
             phyId,
             position,
             true,
             m2::box2d::CATEGORY_PLAYER_BULLET,
-            cfg->damageRadius_m,
+			blueprint->damage_radius_m,
             0.0f,
             0.0f
 	);
@@ -24,22 +25,23 @@ static void ObjectExplosive_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();
+	auto& explosive_state = std::get<impl::character::ExplosiveState>(off.variant);
 
-	switch (off.state.explosive.explosiveStatus) {
-		case EXPLOSIVE_STATUS_IN_FLIGHT: {
+	switch (explosive_state.status) {
+		case impl::character::EXPLOSIVE_STATUS_IN_FLIGHT: {
 			m2::Vec2f curr_linear_velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
-			m2::Vec2f new_linear_velocity = curr_linear_velocity.normalize() * off.state.explosive.cfg->projectileSpeed_mps;
+			m2::Vec2f new_linear_velocity = curr_linear_velocity.normalize() *  explosive_state.blueprint->projectile_speed_mps;
 			phy.body->SetLinearVelocity(static_cast<b2Vec2>(new_linear_velocity));
-			off.state.explosive.projectileTtl_s -= GAME.deltaTicks_ms / 1000.0f;
-			if (off.state.explosive.projectileTtl_s <= 0) {
+			explosive_state.projectile_ttl_s -= GAME.deltaTicks_ms / 1000.0f;
+			if (explosive_state.projectile_ttl_s <= 0) {
 				GAME.world->DestroyBody(phy.body);
-				phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, off.state.explosive.cfg);
-				off.state.explosive.explosiveStatus = EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
+				phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, explosive_state.blueprint);
+				explosive_state.status = impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
 			}
 			break;
 		}
-		case EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
-            off.state.explosive.explosiveStatus = EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
+		case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
+			explosive_state.status = impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
 			break;
 		default:
 			break;
@@ -49,24 +51,25 @@ static void ObjectExplosive_prePhysics(m2::component::Monitor& mon) {
 static void ObjectExplosive_onCollision(m2::component::Physique& phy, m2::component::Physique& other) {
 	auto& obj = GAME.objects[phy.object_id];
 	auto& off = obj.offense();
+	auto& explosive_state = std::get<impl::character::ExplosiveState>(off.variant);
 
-	switch (off.state.explosive.explosiveStatus) {
-		case EXPLOSIVE_STATUS_IN_FLIGHT:
+	switch (explosive_state.status) {
+		case impl::character::EXPLOSIVE_STATUS_IN_FLIGHT:
 			// The object can collide with multiple targets during flight, thus this branch can be executed for multiple
 			// other objects. This is not a problem since we only set the next state
-            off.state.explosive.explosiveStatus = EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP;
+			explosive_state.status = impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP;
 			break;
-		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
+		case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
 			auto& other_obj = GAME.objects[other.object_id];
 			if (other_obj.defense_id) {
 				auto& def = GAME.defenses[other_obj.defense_id];
 				// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
 				float distance = other_obj.position.distance(obj.position);
-				float damageRadius = off.state.explosive.cfg->damageRadius_m;
+				float damageRadius = explosive_state.blueprint->damage_radius_m;
 				if (distance < damageRadius) {
 					// Calculate damage
-					float minDamage = off.state.explosive.cfg->damageMin;
-					float maxDamage = off.state.explosive.cfg->damageMax;
+					float minDamage = explosive_state.blueprint->damage_min;
+					float maxDamage = explosive_state.blueprint->damage_max;
 					float damage = m2::lerp(maxDamage, minDamage, distance / damageRadius);
 					def.hp -= damage;
 					if (def.hp <= 0.0001f && def.onDeath) {
@@ -96,21 +99,22 @@ static void ObjectExplosive_postPhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();
+	auto& explosive_state = std::get<impl::character::ExplosiveState>(off.variant);
 
-	switch (off.state.explosive.explosiveStatus) {
-		case EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
+	switch (explosive_state.status) {
+		case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
 			Game_DeleteList_Add(mon.object_id);
 			break;
-		case EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
+		case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
 			GAME.world->DestroyBody(phy.body);
-			phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, off.state.explosive.cfg);
+			phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, explosive_state.blueprint);
 			break;
 		default:
 			break;
 	}
 }
 
-M2Err ObjectExplosive_InitFromCfg(m2::Object* obj, const CfgExplosive* cfg, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
+M2Err impl::object::Explosive::init(m2::Object* obj, const character::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction) {
 	*obj = m2::Object{position};
 	direction = direction.normalize();
 
@@ -125,23 +129,21 @@ M2Err ObjectExplosive_InitFromCfg(m2::Object* obj, const CfgExplosive* cfg, ID o
 			position,
             true,
 			m2::box2d::CATEGORY_PLAYER_BULLET,
-			cfg->projectileBodyRadius_m,
+			blueprint->projectile_body_radius_m,
 			0.0f,
 			0.0f
 	);
-	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * cfg->projectileSpeed_mps));
+	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * blueprint->projectile_speed_mps));
 	phy.onCollision = ObjectExplosive_onCollision;
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = impl::sprites[cfg->spriteIndex].texture_rect;
-	gfx.center_px = impl::sprites[cfg->spriteIndex].obj_center_px;
+	gfx.textureRect = impl::sprites[blueprint->sprite_index].texture_rect;
+	gfx.center_px = impl::sprites[blueprint->sprite_index].obj_center_px;
 	gfx.angle = direction.angle_rads();
 
 	auto& off = obj->add_offense();
-    off.originator = originatorId;
-    off.state.explosive.cfg = cfg;
-    off.state.explosive.projectileTtl_s = cfg->projectileTtl_s;
-    off.state.explosive.explosiveStatus = EXPLOSIVE_STATUS_IN_FLIGHT;
+    off.originator = originator_id;
+	off.variant = blueprint->get_state();
 
 	return M2OK;
 }

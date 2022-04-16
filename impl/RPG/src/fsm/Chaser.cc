@@ -2,9 +2,10 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Pathfinder.hh"
-#include "impl/private/ARPG_Cfg.hh"
-#include "../ARPG_Object.hh"
 #include <impl/private/object/Enemy.h>
+#include <impl/private/object/Projectile.h>
+#include <impl/private/object/Melee.h>
+#include <impl/private/object/Explosive.h>
 #include <impl/private/fsm/Chaser.h>
 #include <m2/M2.h>
 
@@ -20,10 +21,10 @@ impl::fsm::Chaser::Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint) :
 void* impl::fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
 	const auto* blueprint = automaton.data.blueprint;
     switch (sig) {
-        case SIG_ENTER:
+		case m2::FSMSIG_ENTER:
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
-        case SIG_ALARM:
+		case m2::FSMSIG_ALARM:
             // Check if player is close
             if (automaton.data.obj.position.distance_sq(automaton.data.target.position) < blueprint->trigger_distance_squared_m) {
                 // Check if path exists
@@ -33,7 +34,7 @@ void* impl::fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
             }
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
-        case SIG_AI_PREPHYSICS:
+		case m2::FSMSIG_PREPHY:
             // TODO implement small patrol
             return nullptr;
         default:
@@ -45,59 +46,59 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
 	auto& obj = automaton.data.obj;
 	auto& target = automaton.data.target;
 	const auto* blueprint = automaton.data.blueprint;
-    CharacterState* charState = &(AS_ENEMYDATA(obj.data)->characterState);
+	auto* data = dynamic_cast<impl::object::Enemy*>(automaton.data.obj.impl.get());
 
     // If player is close enough
     if (obj.position.distance_sq(target.position) < blueprint->attack_distance_squared_m) {
         // Based on what the capability is
         switch (automaton.data.blueprint->capability) {
 			case impl::ai::CAPABILITY_RANGED: {
-                RangedWeaponState* weaponState = &charState->rangedWeaponState; M2ASSERT(weaponState->cfg);
+				auto& weapon_state = data->character_state.ranged_weapon_state;
                 // If the weapon cooled down
-                if (weaponState->cfg->cooldown_s <= weaponState->cooldownCounter_s) {
+                if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     m2::Object* projectile = &GAME.objects.alloc().first;
-                    ObjectProjectile_InitFromCfg(
+					impl::object::Projectile::init(
                             projectile,
-                            &weaponState->cfg->projectile,
+							&weapon_state->blueprint->projectile,
                             GAME.objects.get_id(&obj),
                             obj.position,
                             target.position - obj.position
                     );
                     // TODO Knockback maybe?
-                    weaponState->cooldownCounter_s = 0.0f;
+					weapon_state->cooldown_counter_s = 0.0f;
                 }
                 break;
             }
 			case impl::ai::CAPABILITY_MELEE: {
-                MeleeWeaponState* weaponState = &charState->meleeWeaponState; M2ASSERT(weaponState->cfg);
+				auto& weapon_state = data->character_state.melee_weapon_state;
                 // If the weapon cooled down
-                if (weaponState->cfg->cooldown_s <= weaponState->cooldownCounter_s) {
+                if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     m2::Object* melee = &GAME.objects.alloc().first;
-                    ObjectMelee_InitFromCfg(
+					impl::object::Melee::init(
                             melee,
-                            &weaponState->cfg->melee,
+							&weapon_state->blueprint->melee,
                             GAME.objects.get_id(&obj),
                             obj.position,
                             target.position - obj.position
                     );
-                    weaponState->cooldownCounter_s = 0.0f;
+					weapon_state->cooldown_counter_s = 0.0f;
                 }
                 break;
             }
             case impl::ai::CAPABILITY_EXPLOSIVE: {
-                ExplosiveWeaponState* weaponState = &charState->explosiveWeaponState; M2ASSERT(weaponState->cfg);
+				auto& weapon_state = data->character_state.explosive_weapon_state;
                 // If the weapon cooled down
-                if (weaponState->cfg->cooldown_s <= weaponState->cooldownCounter_s) {
+                if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     m2::Object* explosive = &GAME.objects.alloc().first;
-                    ObjectExplosive_InitFromCfg(
+					impl::object::Explosive::init(
                             explosive,
-                            &weaponState->cfg->explosive,
+							&weapon_state->blueprint->explosive,
                             GAME.objects.get_id(&obj),
                             obj.position,
                             target.position - obj.position
                     );
                     // TODO knockback
-                    weaponState->cooldownCounter_s = 0.0f;
+					weapon_state->cooldown_counter_s = 0.0f;
                 }
                 break;
             }
@@ -112,13 +113,14 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
 }
 
 void* impl::fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
+	auto* data = dynamic_cast<impl::object::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     auto& player = GAME.objects[GAME.playerId];
     switch (sig) {
-        case SIG_ENTER:
+		case m2::FSMSIG_ENTER:
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
-        case SIG_ALARM: {
+		case m2::FSMSIG_ALARM: {
             // Check if player is still close
             if (automaton.data.obj.position.distance_sq(player.position) < blueprint->give_up_distance_squared_m) {
                 // Recalculate path to player
@@ -132,7 +134,7 @@ void* impl::fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
         }
-        case SIG_AI_PREPHYSICS:
+		case m2::FSMSIG_PREPHY:
             if (1 < automaton.data.reverse_waypoints.size()) {
                 auto end = automaton.data.reverse_waypoints.end();
                 auto obj_pos = *std::prev(end, 1);
@@ -141,7 +143,7 @@ void* impl::fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
                     auto objPositionF = m2::Vec2f(obj_pos);
                     auto targetPositionF = m2::Vec2f(target_pos);
                     m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(automaton.data.obj.data)->characterState.cfg->walkSpeed);
+                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * data->character_state.blueprint->walk_speed);
                     automaton.data.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
                 }
             }
@@ -153,14 +155,13 @@ void* impl::fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
 }
 
 void* impl::fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
+	auto* data = dynamic_cast<impl::object::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     switch (sig) {
-        case SIG_ENTER:
+        case m2::FSMSIG_ENTER:
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
-        case SIG_EXIT:
-            return nullptr;
-        case SIG_ALARM:
+        case m2::FSMSIG_ALARM:
             // Check if player is close
             if (automaton.data.obj.position.distance_sq(automaton.data.target.position) < automaton.data.blueprint->trigger_distance_squared_m) {
                 // Check if path to player exists
@@ -178,7 +179,7 @@ void* impl::fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
             }
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
-        case SIG_AI_PREPHYSICS:
+        case m2::FSMSIG_PREPHY:
             if (1 < automaton.data.reverse_waypoints.size()) {
                 auto end = automaton.data.reverse_waypoints.end();
                 auto obj_pos = *std::prev(end, 1);
@@ -187,7 +188,7 @@ void* impl::fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
                     auto objPositionF = m2::Vec2f(obj_pos);
                     auto targetPositionF = m2::Vec2f(target_pos);
                     m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * AS_ENEMYDATA(automaton.data.obj.data)->characterState.cfg->walkSpeed);
+                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * data->character_state.blueprint->walk_speed);
                     automaton.data.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
                 }
             }

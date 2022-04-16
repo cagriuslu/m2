@@ -5,6 +5,8 @@
 #include <m2/Object.h>
 #include <m2/FSM.h>
 #include <functional>
+#include "impl/private/ai/AiBlueprint.h"
+#include <list>
 
 namespace impl::fsm {
     struct Chaser {

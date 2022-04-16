@@ -1,7 +1,7 @@
 #include <m2/Object.h>
 #include "m2/Def.h"
 #include "m2/Game.hh"
-#include "impl/private/ARPG_Cfg.hh"
+#include <impl/private/object/Melee.h>
 #include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 
@@ -10,9 +10,10 @@
 static void Sword_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& off = obj.offense();
+	auto& melee_state = std::get<impl::character::MeleeState>(off.variant);
 
-	off.state.melee.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
-	if (off.state.melee.ttl_s <= 0) {
+	melee_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
+	if (melee_state.ttl_s <= 0) {
 		Game_DeleteList_Add(mon.object_id);
 	}
 }
@@ -37,10 +38,11 @@ static void Sword_onCollision(m2::component::Physique& phy, m2::component::Physi
 	auto& obj = GAME.objects[phy.object_id];
 	auto& other_obj = GAME.objects[other.object_id];
 	auto& off = GAME.offenses[obj.offense_id];
+	auto& melee_state = std::get<impl::character::MeleeState>(off.variant);
 	auto& def = GAME.defenses[other_obj.defense_id];
 
 	// Calculate damage
-    def.hp -= off.state.melee.cfg->damage;
+    def.hp -= melee_state.blueprint->damage;
 	if (def.hp <= 0.0001f && def.onDeath) {
 		LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def.object_id);
         def.onDeath(&def);
@@ -55,7 +57,7 @@ static void Sword_onCollision(m2::component::Physique& phy, m2::component::Physi
 	}
 }
 
-int ObjectMelee_InitFromCfg(m2::Object* obj, const CfgMelee *cfg, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
+M2Err impl::object::Melee::init(m2::Object *obj, const character::MeleeBlueprint *blueprint, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
 	*obj = m2::Object{position};
 
 	const float theta = direction.angle_rads(); // Convert direction to angle
@@ -90,14 +92,13 @@ int ObjectMelee_InitFromCfg(m2::Object* obj, const CfgMelee *cfg, ID originatorI
 	phy.onCollision = Sword_onCollision;
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = impl::sprites[cfg->spriteIndex].texture_rect;
-	gfx.center_px = impl::sprites[cfg->spriteIndex].obj_center_px;
+	gfx.textureRect = impl::sprites[blueprint->sprite_index].texture_rect;
+	gfx.center_px = impl::sprites[blueprint->sprite_index].obj_center_px;
 	gfx.angle = phy.body->GetAngle();
 
 	auto& off = obj->add_offense();
     off.originator = originatorId;
-    off.state.melee.cfg = cfg;
-    off.state.melee.ttl_s = cfg->ttl_s;
+	off.variant = blueprint->get_state();
 	
 	return 0;
 }

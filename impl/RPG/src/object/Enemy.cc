@@ -2,7 +2,6 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
-#include "impl/private/ARPG_Cfg.hh"
 #include <impl/public/component/Defense.h>
 #include <impl/public/component/Offense.h>
 #include <m2/box2d/Utils.h>
@@ -10,27 +9,29 @@
 
 using namespace impl::object;
 
-Enemy::Enemy(m2::Object& obj, const CfgCharacter* cfg) : fsmVariant(
+impl::object::Enemy::Enemy(m2::Object& obj, const character::CharacterBlueprint* blueprint) : character_state(blueprint), char_animator({obj.graphic(), blueprint}), fsm_variant(
 	std::visit(overloaded {
-		[&](const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; },
-		[&](const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; },
-		[&](const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; },
-		[&](const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, cfg->aiBlueprint}}; }
-	}, cfg->aiBlueprint->variant)
-) {}
+		[&](const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+		[&](const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
+		[&](const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+		[&](const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }
+	}, blueprint->aiBlueprint->variant)
+), on_hit_color_mod_ttl(0) {}
 
 static void ObjectEnemy_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
     auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 
-	CharacterState_ProcessTime(&(AS_ENEMYDATA(obj.data)->characterState), GAME.deltaTime_s);
-	std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, data->fsmVariant);
-	std::visit([](auto& v) { v.signal(m2::FSMSIG_PREPHY); }, data->fsmVariant);
+	data->character_state.process_time(GAME.deltaTime_s);
+	std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, data->fsm_variant);
+	std::visit([](auto& v) { v.signal(m2::FSMSIG_PREPHY); }, data->fsm_variant);
 }
 
 static void ObjectEnemy_onHit(impl::component::Defense* def) {
 	auto& obj = GAME.objects[def->object_id];
-	AS_ENEMYDATA(obj.data)->onHitColorModTtl = 0.10f;
+	auto* data = dynamic_cast<Enemy*>(obj.impl.get());
+
+	data->on_hit_color_mod_ttl = 0.10f;
 }
 
 static void ObjectEnemy_onDeath(impl::component::Defense* def) {
@@ -39,35 +40,38 @@ static void ObjectEnemy_onDeath(impl::component::Defense* def) {
 
 static void ObjectEnemy_postPhysics(m2::component::Monitor& monitor) {
 	auto& obj = GAME.objects[monitor.object_id];
+	auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 	auto& phy = GAME.physics[obj.physique_id];
+
 	// We must call time before other signals
-	Automaton_ProcessTime(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), GAME.deltaTicks_ms / 1000.0f);
+	data->char_animator.time(GAME.deltaTicks_ms / 1000.0f);
 	m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 	if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-		Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_STOP);
+		data->char_animator.signal(impl::fsm::CharacterAnimation::CHARANIM_STOP);
 	} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
 		if (0 < velocity.y) {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKDOWN);
+			data->char_animator.signal(impl::fsm::CharacterAnimation::CHARANIM_WALKDOWN);
 		} else {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKUP);
+			data->char_animator.signal(impl::fsm::CharacterAnimation::CHARANIM_WALKUP);
 		}
 	} else {
 		if (0 < velocity.x) {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKRIGHT);
+			data->char_animator.signal(impl::fsm::CharacterAnimation::CHARANIM_WALKRIGHT);
 		} else {
-			Automaton_ProcessSignal(&(AS_ENEMYDATA(obj.data)->charAnimationAutomaton), SIG_CHARANIM_WALKLEFT);
+			data->char_animator.signal(impl::fsm::CharacterAnimation::CHARANIM_WALKLEFT);
 		}
 	}
 }
 
 static void ObjectEnemy_Draw(m2::component::Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];
-	if (0.0f < AS_ENEMYDATA(obj.data)->onHitColorModTtl) {
+	auto* data = dynamic_cast<Enemy*>(obj.impl.get());
+	if (0.0f < data->on_hit_color_mod_ttl) {
 		SDL_Texture *defaultTexture = gfx.texture;
 		gfx.texture = GAME.sdlTextureMask;
 		m2::component::Graphic::default_draw(gfx);
 		gfx.texture = defaultTexture;
-		AS_ENEMYDATA(obj.data)->onHitColorModTtl -= GAME.deltaTicks_ms / 1000.0f;
+		data->on_hit_color_mod_ttl -= GAME.deltaTicks_ms / 1000.0f;
 	} else {
 		m2::component::Graphic::default_draw(gfx);
 	}
@@ -75,14 +79,12 @@ static void ObjectEnemy_Draw(m2::component::Graphic& gfx) {
 	m2::component::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 }
 
-M2Err Enemy::init(m2::Object* obj, const CfgCharacter* cfg, m2::Vec2f pos) {
+M2Err Enemy::init(m2::Object* obj, const character::CharacterBlueprint* blueprint, m2::Vec2f pos) {
 	*obj = m2::Object{pos};
-    obj->data = new EnemyData();
-	M2ERR_REFLECT(CharacterState_Init(&(AS_ENEMYDATA(obj->data)->characterState), cfg));
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = impl::sprites[cfg->mainSpriteIndex].texture_rect;
-	gfx.center_px = impl::sprites[cfg->mainSpriteIndex].obj_center_px;
+	gfx.textureRect = impl::sprites[blueprint->main_sprite_index].texture_rect;
+	gfx.center_px = impl::sprites[blueprint->main_sprite_index].obj_center_px;
 	gfx.draw = ObjectEnemy_Draw;
 
 	auto& mon = obj->add_monitor();
@@ -97,9 +99,9 @@ M2Err Enemy::init(m2::Object* obj, const CfgCharacter* cfg, m2::Vec2f pos) {
             false,
             true,
             m2::box2d::CATEGORY_ENEMY,
-            std::get<m2::ColliderBlueprint::Circle>(impl::sprites[cfg->mainSpriteIndex].collider.variant).radius_m,
-            cfg->mass_kg,
-            cfg->linearDamping
+            std::get<m2::ColliderBlueprint::Circle>(impl::sprites[blueprint->main_sprite_index].collider.variant).radius_m,
+			blueprint->mass_kg,
+			blueprint->linear_damping
 	);
 
 	auto& def = obj->add_defense();
@@ -108,11 +110,6 @@ M2Err Enemy::init(m2::Object* obj, const CfgCharacter* cfg, m2::Vec2f pos) {
 	def.onHit = ObjectEnemy_onHit;
 	def.onDeath = ObjectEnemy_onDeath;
 
-	// Initialise character state after components
-	// Character states may access components during initialisation
-
-	AutomatonCharAnimation_Init(&(AS_ENEMYDATA(obj->data)->charAnimationAutomaton), cfg, &gfx);
-
-    obj->impl = std::make_unique<Enemy>(*obj, cfg);
+    obj->impl = std::make_unique<impl::object::Enemy>(*obj, blueprint);
 	return 0;
 }

@@ -1,7 +1,7 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
-#include "impl/private/ARPG_Cfg.hh"
+#include <impl/private/object/Projectile.h>
 #include <impl/public/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
@@ -10,12 +10,13 @@ static void Bullet_prePhysics(m2::component::Monitor& mon) {
 	auto& obj = GAME.objects[mon.object_id];
 	auto& phy = obj.physique();
 	auto& off = obj.offense();
+	auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
 
 	m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
-	phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * off.state.projectile.cfg->speed_mps));
+	phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * projectile_state.blueprint->speed_mps));
 
-    off.state.projectile.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
-	if (off.state.projectile.ttl_s <= 0) {
+	projectile_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
+	if (projectile_state.ttl_s <= 0) {
 		Game_DeleteList_Add(mon.object_id);
 	}
 }
@@ -24,15 +25,16 @@ static void Bullet_onCollision(m2::component::Physique& phy, m2::component::Phys
 	auto& obj = GAME.objects[phy.object_id];
 	auto& other_obj = GAME.objects[other.object_id];
 	auto& off = GAME.offenses[obj.offense_id];
+	auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
 	auto* def = GAME.defenses.get(other_obj.defense_id);
 	if (def) {
 		// Check if already collided
-		if (off.state.projectile.alreadyCollidedThisStep) {
+		if (projectile_state.already_collided_this_step) {
 			return;
 		}
-		off.state.projectile.alreadyCollidedThisStep = true;
+		projectile_state.already_collided_this_step = true;
 		// Calculate damage
-		def->hp -= m2::apply_accuracy(off.state.projectile.cfg->damage, off.state.projectile.cfg->damageAccuracy);
+		def->hp -= m2::apply_accuracy(projectile_state.blueprint->damage, projectile_state.blueprint->damage_accuracy);
 		if (def->hp <= 0.0001f && def->onDeath) {
 			LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def->object_id);
 			def->onDeath(def);
@@ -49,9 +51,9 @@ static void Bullet_onCollision(m2::component::Physique& phy, m2::component::Phys
 	}
 }
 
-int ObjectProjectile_InitFromCfg(m2::Object* obj, const CfgProjectile *cfg, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
-	*obj = m2::Object{position};
-	direction = direction.normalize();
+M2Err impl::object::Projectile::init(m2::Object* obj, const character::ProjectileBlueprint* blueprint, ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
+	*obj = m2::Object{pos};
+	dir = dir.normalize();
 
 	auto& mon = obj->add_monitor();
 	mon.prePhysics = Bullet_prePhysics;
@@ -60,26 +62,24 @@ int ObjectProjectile_InitFromCfg(m2::Object* obj, const CfgProjectile *cfg, ID o
 	phy.body = m2::box2d::create_bullet(
             *GAME.world,
 			obj->physique_id,
-			position,
+			pos,
             true,
 			m2::box2d::CATEGORY_PLAYER_BULLET,
 			0.167f,
 			0.0f,
 			0.0f
 	);
-	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * cfg->speed_mps));
+	phy.body->SetLinearVelocity(static_cast<b2Vec2>(dir * blueprint->speed_mps));
 	phy.onCollision = Bullet_onCollision;
 
 	auto& gfx = obj->add_graphic();
-	gfx.textureRect = impl::sprites[cfg->spriteIndex].texture_rect;
-	gfx.center_px = impl::sprites[cfg->spriteIndex].obj_center_px;
-	gfx.angle = direction.angle_rads();
+	gfx.textureRect = impl::sprites[blueprint->sprite_index].texture_rect;
+	gfx.center_px = impl::sprites[blueprint->sprite_index].obj_center_px;
+	gfx.angle = dir.angle_rads();
 
 	auto& off = obj->add_offense();
     off.originator = originatorId;
-    off.state.projectile.cfg = cfg;
-    off.state.projectile.ttl_s = m2::apply_accuracy(cfg->ttl_s, cfg->ttlAccuracy);
-    off.state.projectile.alreadyCollidedThisStep = false;
+	off.variant = blueprint->get_state();
 
 	return 0;
 }
