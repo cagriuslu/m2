@@ -88,7 +88,6 @@ namespace m2 {
 		m2::Vec2f mousePositionInWorld_m;
 		m2::Vec2f mousePositionWRTScreenCenter_m;
 		char consoleInput[1024];
-		const m2::game_proxy &proxy;
 
 		~Game();
 

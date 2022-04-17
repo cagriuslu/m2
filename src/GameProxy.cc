@@ -5,33 +5,7 @@
 #include "m2/Game.hh"
 #include "SDL_image.h"
 
-M2Err m2::game_proxy::activate() const {
-	Game_UpdateWindowDimensions(GAME.windowRect.w, GAME.windowRect.h); // Uses tileSize for internal calculations
-	if (textureMapFile) {
-		SDL_Surface* textureMapSurface = IMG_Load(textureMapFile);
-		if (textureMapSurface == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
-		}
-		if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
-		}
-		SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127);
-		SDL_FreeSurface(textureMapSurface);
-	}
-	if (textureMaskFile) {
-		SDL_Surface* textureMaskSurface = IMG_Load(textureMaskFile);
-		if (textureMaskSurface == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
-		}
-		if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == NULL) {
-			return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
-		}
-		SDL_FreeSurface(textureMaskSurface);
-	}
-	return M2OK;
-}
-
-M2Err m2::game_proxy::exec_entry_ui() const {
+M2Err m2::game_proxy::exec_entry_ui() {
     auto button = m2::ui::execute_blocking(&impl::ui::entry);
     if (button.index() == 0) {
         int return_value = std::get<0>(button);
@@ -45,7 +19,7 @@ M2Err m2::game_proxy::exec_entry_ui() const {
     }
 }
 
-M2Err m2::game_proxy::exec_pause_ui() const {
+M2Err m2::game_proxy::exec_pause_ui() {
     auto button = m2::ui::execute_blocking(&impl::ui::pause);
     if (button.index() == 0) {
         int return_value = std::get<0>(button);

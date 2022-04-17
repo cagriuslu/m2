@@ -7,7 +7,6 @@
 #include <impl/public/SpriteBlueprint.h>
 #include "m2/Def.h"
 #include <b2_world.h>
-#include "impl/private/game_proxy.hh"
 #include <impl/public/ui/UI.h>
 #include "m2/component/Monitor.h"
 #include "m2/Component.h"
@@ -19,8 +18,7 @@
 m2::Game GAME = {
 	.physicsStep_s = 1.0f / 80.0f,
 	.velocityIterations = 8,
-	.positionIterations = 3,
-    .proxy = impl::GAME_PROXY
+	.positionIterations = 3
 };
 
 m2::Game::~Game() {

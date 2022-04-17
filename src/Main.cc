@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <b2_world.h>
+#include <impl/public/Proxy.h>
 #include "m2/Event.hh"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
@@ -51,55 +52,45 @@ int main(int argc, char **argv) {
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
-		return -1;
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
 	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
-		return -1;
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 	}
 	if (TTF_Init() != 0) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
-		return -1;
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 	}
 	Game_UpdateWindowDimensions(1600, 900); // Store default window dimensions in GAME
 	if ((GAME.sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME.windowRect.w, GAME.windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
-		return -1;
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
 	SDL_SetWindowMinimumSize(GAME.sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
 	GAME.sdlCursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(GAME.sdlCursor);
 	if ((GAME.pixelFormat = SDL_GetWindowPixelFormat(GAME.sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
-		return -1;
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
 	if ((GAME.sdlRenderer = SDL_CreateRenderer(GAME.sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == NULL) { // SDL_RENDERER_PRESENTVSYNC
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
-		return -1;
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
-//	SDL_Surface* textureMapSurface = IMG_Load(CFG_TEXTURE_FILE);
-//	if (textureMapSurface == NULL) {
-//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
-//		return -1;
-//	}
-//	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == NULL) {
-//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
-//		return -1;
-//	}
-//	SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127);
-//	SDL_FreeSurface(textureMapSurface);
-//	SDL_Surface* textureMaskSurface = IMG_Load(CFG_TEXTURE_MASK_FILE);
-//	if (textureMaskSurface == NULL) {
-//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, IMG_GetError());
-//		return -1;
-//	}
-//	if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == NULL) {
-//		LOG_FATAL_M2V(M2ERR_SDL_ERROR, String, SDL_GetError());
-//		return -1;
-//	}
-//	SDL_FreeSurface(textureMaskSurface);
+	SDL_Surface* textureMapSurface = IMG_Load(impl::texture_map_file.data());
+	if (not textureMapSurface) {
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
+	}
+	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == NULL) {
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+	}
+	SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127);
+	SDL_FreeSurface(textureMapSurface);
+	SDL_Surface* textureMaskSurface = IMG_Load(impl::texture_mask_file.data());
+	if (textureMaskSurface == NULL) {
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
+	}
+	if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == NULL) {
+		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+	}
+	SDL_FreeSurface(textureMaskSurface);
 	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
 	if (lightSurface == NULL) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
@@ -151,8 +142,7 @@ int main(int argc, char **argv) {
 //		SDL_PauseAudioDevice(audioDeviceId, 1);
 //	}
 
-    GAME.proxy.activate();
-    M2Err entry_ui_result = GAME.proxy.exec_entry_ui();
+	M2Err entry_ui_result = m2::game_proxy::exec_entry_ui();
     if (entry_ui_result == M2ERR_QUIT) {
         return 0;
     } else if (entry_ui_result) {
@@ -190,7 +180,7 @@ int main(int argc, char **argv) {
 			if (!SDL_IsTextInputActive()) {
 				// Handle key events
 				if (GAME.events.keysPressed[KEY_MENU]) {
-					M2Err result = GAME.proxy.exec_pause_ui();
+					M2Err result = m2::game_proxy::exec_pause_ui();
 					if (result == M2ERR_QUIT) {
 						return 0;
 					} else if (result) {
