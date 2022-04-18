@@ -18,7 +18,7 @@ static SDL_Rect calculate_element_rect(const SDL_Rect& root_rect_px, unsigned ro
 m2::ui::ElementState* m2::ui::UIState::find_element_by_pixel(const m2::Vec2i& mouse_pos) {
     m2::ui::ElementState* found_element = nullptr;
     for (const auto& element : elements) {
-        if (std::holds_alternative<element::NestedUIBlueprint>(element->blueprint->blueprint_variant)) {
+        if (std::holds_alternative<element::NestedUIBlueprint>(element->blueprint->variant)) {
             found_element = dynamic_cast<element::NestedUIState*>(element.get())->ui->find_element_by_pixel(mouse_pos);
         } else {
             auto p = SDL_Point{ mouse_pos.x, mouse_pos.y };
@@ -34,10 +34,12 @@ m2::ui::ElementState* m2::ui::UIState::find_element_by_pixel(const m2::Vec2i& mo
 m2::ui::ElementState* m2::ui::UIState::find_element_by_keyboard_shortcut(const uint8_t* raw_keyboard_state) {
     m2::ui::ElementState* found_element = nullptr;
     for (const auto& element : elements) {
-        if (std::holds_alternative<element::NestedUIBlueprint>(element->blueprint->blueprint_variant)) {
-            found_element = dynamic_cast<element::NestedUIState*>(element.get())->ui->find_element_by_keyboard_shortcut((raw_keyboard_state));
+        if (std::holds_alternative<element::NestedUIBlueprint>(element->blueprint->variant)) {
+            found_element = dynamic_cast<element::NestedUIState*>(element.get())->ui->find_element_by_keyboard_shortcut(raw_keyboard_state);
         } else {
-            found_element = element->get_keyboard_shortcut_active(raw_keyboard_state) ? element.get() : nullptr;
+			if (raw_keyboard_state[element->get_keyboard_shortcut()]) {
+				found_element = element.get();
+			}
         }
         if (found_element) {
             break;
@@ -78,14 +80,20 @@ void m2::ui::UIState::update_positions(const SDL_Rect &rect_px_) {
     }
 }
 
-void m2::ui::UIState::update_contents() {
+m2::ui::Action m2::ui::UIState::update_contents() {
+	Action return_value = Action::CONTINUE;
+
     for (auto& element_state : elements) {
-        element_state->update_content();
+		if ((return_value = element_state->update_content()) != Action::CONTINUE) {
+			break;
+		}
     }
+
+	return return_value;
 }
 
-std::optional<int> m2::ui::UIState::handle_events(const Events& evs) {
-    std::optional<int> return_value;
+m2::ui::Action m2::ui::UIState::handle_events(const Events& evs) {
+    Action return_value = Action::CONTINUE;
 
     SDL_Point mousePosition = {.x = evs.mousePosition.x, .y = evs.mousePosition.y};
 
@@ -100,7 +108,9 @@ std::optional<int> m2::ui::UIState::handle_events(const Events& evs) {
         if (SDL_PointInRect(&mousePosition, &rect_px)) {
             auto* element_under_mouse = find_element_by_pixel(evs.mousePosition);
             if (element_under_mouse) {
-                return_value = element_under_mouse->get_button_return_value();
+				if ((return_value = element_under_mouse->action()) != Action::CONTINUE) {
+					return return_value;
+				}
             }
         }
         for (auto& element : elements) {
@@ -111,8 +121,13 @@ std::optional<int> m2::ui::UIState::handle_events(const Events& evs) {
     {
         auto* keyboard_shortcut_pressed_element = find_element_by_keyboard_shortcut(evs.rawKeyStates);
         if (keyboard_shortcut_pressed_element) {
-            return_value = keyboard_shortcut_pressed_element->get_button_return_value();
+			if ((return_value = keyboard_shortcut_pressed_element->action()) != Action::CONTINUE) {
+				return return_value;
+			}
         }
+		for (auto& element : elements) {
+			element->set_depressed(false);
+		}
     }
 
     return return_value;
@@ -128,10 +143,14 @@ void m2::ui::UIState::draw() {
     draw_border(rect_px, blueprint->border_width_px);
 }
 
-ValueOrM2Err<int> m2::ui::execute_blocking(const UIBlueprint *blueprint) {
+m2::ui::Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
+	Action return_value;
+
     UIState state(blueprint);
     state.update_positions(GAME.windowRect);
-    state.update_contents();
+	if ((return_value = state.update_contents()) != Action::CONTINUE) {
+		return return_value;
+	}
 
     Events evs;
     while (true) {
@@ -140,16 +159,14 @@ ValueOrM2Err<int> m2::ui::execute_blocking(const UIBlueprint *blueprint) {
         ////////////////////////////////////////////////////////////////////////
         if (Events_Gather(&evs)) {
             if (evs.quitEvent) {
-                return ValueOrM2Err<int>{std::in_place_index<1>, M2ERR_QUIT};
+                return Action::QUIT;
             }
             if (evs.windowResizeEvent) {
                 Game_UpdateWindowDimensions(evs.windowDims.x, evs.windowDims.y);
                 state.update_positions(GAME.windowRect);
             }
-            auto pressed_button_return_value = state.handle_events(evs);
-            if (pressed_button_return_value) {
-                LOG_INFO_M2V(M2_BUTTON, Int32, pressed_button_return_value.value());
-                return ValueOrM2Err<int>{std::in_place_index<0>, pressed_button_return_value.value()};
+            if ((return_value = state.handle_events(evs)) != Action::CONTINUE) {
+                return return_value;
             }
         }
         //////////////////////// END OF EVENT HANDLING /////////////////////////
@@ -159,12 +176,13 @@ ValueOrM2Err<int> m2::ui::execute_blocking(const UIBlueprint *blueprint) {
         /////////////////////////////// GRAPHICS ///////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         // Draw ui
-        state.update_contents();
+		if ((return_value = state.update_contents()) != Action::CONTINUE) {
+			return return_value;
+		}
         state.draw();
         // Present
         SDL_RenderPresent(GAME.sdlRenderer);
         /////////////////////////// END OF GRAPHICS ////////////////////////////
         ////////////////////////////////////////////////////////////////////////
     }
-    return ValueOrM2Err<int>{std::in_place_index<1>, M2OK};
 }

@@ -1,5 +1,5 @@
-#ifndef M2_VEC2I_HH
-#define M2_VEC2I_HH
+#ifndef M2_VEC2I_H
+#define M2_VEC2I_H
 
 #include <cstdint>
 #include <cstddef>
@@ -26,4 +26,4 @@ namespace m2 {
 	};
 }
 
-#endif //M2_VEC2I_HH
+#endif //M2_VEC2I_H

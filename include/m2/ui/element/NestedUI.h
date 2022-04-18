@@ -10,7 +10,7 @@ namespace m2::ui {
 
 namespace m2::ui::element {
     struct NestedUIBlueprint {
-        const UIBlueprint* ui;
+        const UIBlueprint* ui; // TODO convert to reference
     };
 
     struct NestedUIState : public ElementState {
@@ -18,7 +18,7 @@ namespace m2::ui::element {
 
         explicit NestedUIState(const ElementBlueprint* blueprint);
         void update_position(const SDL_Rect& rect_px) override;
-        void update_content() override;
+        Action update_content() override;
         void draw() override;
     };
 }

@@ -1,7 +1,7 @@
 #ifndef M2_POOL_HH
 #define M2_POOL_HH
 
-#include <m2/Error.hh>
+#include <m2/Error.h>
 #include <m2/Def.h>
 #include <array>
 #include <optional>

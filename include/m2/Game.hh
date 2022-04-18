@@ -8,7 +8,6 @@
 #include <m2/Object.h>
 #include <m2/LevelBlueprint.h>
 #include "Pathfinder.hh"
-#include "GameProxy.hh"
 #include "ui/UI.h"
 #include "component/Monitor.h"
 #include "component/Physique.h"

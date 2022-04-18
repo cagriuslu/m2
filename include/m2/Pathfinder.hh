@@ -2,7 +2,7 @@
 #define PATHFINDER_H
 
 #include "m2/Def.h"
-#include <m2/Vec2i.hh>
+#include <m2/Vec2i.h>
 #include <m2/Vec2f.h>
 #include <unordered_set>
 #include <list>

@@ -56,11 +56,11 @@ SDL_Cursor* SDLUtils_CreateCursor() {
 	return SDL_CreateCursor(data, mask, side_size, side_size, side_size / 2 - 1, side_size / 2 - 1);
 }
 
-uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks) {
-	uint32_t ticks = SDL_GetTicks();
+uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks) {
+	uint32_t ticks = SDL_GetTicks() - nongame_ticks;
 	while (ticks == lastTicks) {
 		SDL_Delay(1);
-		ticks = SDL_GetTicks();
+		ticks = SDL_GetTicks() - nongame_ticks;
 	}
 	return ticks;
 }

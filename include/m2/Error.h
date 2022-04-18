@@ -1,5 +1,5 @@
-#ifndef M2_ERROR_HH
-#define M2_ERROR_HH
+#ifndef M2_ERROR_H
+#define M2_ERROR_H
 
 #include <m2/Def.h>
 #include <stdexcept>
@@ -17,4 +17,4 @@ namespace m2 {
     };
 }
 
-#endif //M2_ERROR_HH
+#endif //M2_ERROR_H

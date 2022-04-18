@@ -1,4 +1,4 @@
-#include <m2/Vec2i.hh>
+#include <m2/Vec2i.h>
 #include <m2/Vec2f.h>
 #include <unordered_map>
 

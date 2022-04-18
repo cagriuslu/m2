@@ -1,5 +1,5 @@
 #include <m2/Vec2f.h>
-#include <m2/Vec2i.hh>
+#include <m2/Vec2i.h>
 #include <cmath>
 
 m2::Vec2f::Vec2f() : x(0.0f), y(0.0f) {

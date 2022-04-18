@@ -8,19 +8,17 @@ void m2::ui::ElementState::update_position(const SDL_Rect &rect_px_) {
     this->rect_px = rect_px_;
 }
 
-void m2::ui::ElementState::update_content() {}
+m2::ui::Action m2::ui::ElementState::update_content() { return Action::CONTINUE; }
 
 void m2::ui::ElementState::draw() {}
 
-void m2::ui::ElementState::set_depressed(bool state) {}
-
-int m2::ui::ElementState::get_button_return_value() {
-    return -1;
+SDL_Scancode m2::ui::ElementState::get_keyboard_shortcut() const {
+	return SDL_SCANCODE_UNKNOWN;
 }
 
-bool m2::ui::ElementState::get_keyboard_shortcut_active(const uint8_t* raw_keyboard_state) const {
-    return false;
-}
+void m2::ui::ElementState::set_depressed(bool state) { (void)state; }
+
+m2::ui::Action m2::ui::ElementState::action() { return Action::CONTINUE; }
 
 SDL_Texture* m2::ui::ElementState::generate_font_texture(const char* text) {
     SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME.ttfFont, text, SDL_Color{255, 255, 255, 255});
@@ -39,8 +37,4 @@ void m2::ui::ElementState::draw_text(const SDL_Rect& rect, SDL_Texture& texture)
         text_h
     };
     SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &text_rect);
-}
-
-bool m2::ui::ElementState::check_key_pressed(const uint8_t* raw_keyboard_state, SDL_Scancode key) {
-    return raw_keyboard_state[key] && key;
 }

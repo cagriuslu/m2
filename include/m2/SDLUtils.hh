@@ -5,6 +5,6 @@
 
 SDL_Cursor* SDLUtils_CreateCursor();
 
-uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks);
+uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks);
 
 #endif

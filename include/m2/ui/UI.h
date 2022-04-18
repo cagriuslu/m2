@@ -2,6 +2,7 @@
 #define M2_UI_H
 
 #include "ElementBlueprint.h"
+#include "Action.h"
 #include "../Event.hh"
 #include "../Def.h"
 #include <SDL_ttf.h>
@@ -28,8 +29,8 @@ namespace m2::ui {
         UIState();
         explicit UIState(const UIBlueprint* blueprint);
         void update_positions(const SDL_Rect& rect);
-        void update_contents();
-        std::optional<int> handle_events(const Events& evs);
+        Action update_contents();
+        Action handle_events(const Events& evs);
         void draw();
 
     private:
@@ -40,7 +41,7 @@ namespace m2::ui {
         static void draw_border(const SDL_Rect& rect, unsigned border_width_px);
 	};
 
-    ValueOrM2Err<int> execute_blocking(const UIBlueprint* blueprint);
+    Action execute_blocking(const UIBlueprint* blueprint);
 }
 
 #endif //M2_UI_H

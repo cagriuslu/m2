@@ -5,6 +5,7 @@
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
 #include "m2/Def.h"
+#include <impl/public/ui/UI.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -142,23 +143,14 @@ int main(int argc, char **argv) {
 //		SDL_PauseAudioDevice(audioDeviceId, 1);
 //	}
 
-	M2Err entry_ui_result = m2::game_proxy::exec_entry_ui();
-    if (entry_ui_result == M2ERR_QUIT) {
-        return 0;
-    } else if (entry_ui_result) {
-        return 1;
-    }
+	if (m2::ui::execute_blocking(&impl::ui::entry) == m2::ui::Action::QUIT) {
+		return 0;
+	}
 
 	float timeSinceLastWorldStep = 0.0f;
-	unsigned prevPrePhysicsTicks = SDL_GetTicks();
-	unsigned prevWorldStepTicks = SDL_GetTicks();
-	unsigned prevPostPhysicsTicks = SDL_GetTicks();
-	unsigned prevTerrainDrawGraphicsTicks = SDL_GetTicks();
-	unsigned prevPreGraphicsTicks = SDL_GetTicks();
-	unsigned prevDrawTicks = SDL_GetTicks();
-	unsigned prevDrawLightsTicks = SDL_GetTicks();
-	unsigned prevPostGraphicsTicks = SDL_GetTicks();
-	SDL_Delay(1); // Make sure SDL_GetTicks() doesn't return 0
+	auto nongame_ticks = SDL_GetTicks();
+	unsigned prevPrePhysicsTicks = 0, prevWorldStepTicks = 0, prevPostPhysicsTicks = 0, prevTerrainDrawGraphicsTicks = 0,
+		prevPreGraphicsTicks = 0, prevDrawTicks = 0, prevDrawLightsTicks = 0, prevPostGraphicsTicks = 0;
 
 	unsigned frameTimeAccumulator = 0;
 	unsigned frameCount = 0;
@@ -180,12 +172,12 @@ int main(int argc, char **argv) {
 			if (!SDL_IsTextInputActive()) {
 				// Handle key events
 				if (GAME.events.keysPressed[KEY_MENU]) {
-					M2Err result = m2::game_proxy::exec_pause_ui();
-					if (result == M2ERR_QUIT) {
+					uint32_t pause_start_ticks = SDL_GetTicks();
+					if (m2::ui::execute_blocking(&impl::ui::pause) == m2::ui::Action::QUIT) {
 						return 0;
-					} else if (result) {
-						return 1;
 					}
+					uint32_t pause_end_ticks = SDL_GetTicks();
+					nongame_ticks += pause_end_ticks - pause_start_ticks;
 				}
 				if (GAME.events.keysPressed[KEY_CONSOLE]) {
 					memset(GAME.consoleInput, 0, sizeof(GAME.consoleInput));
@@ -193,14 +185,8 @@ int main(int argc, char **argv) {
 					LOG_INFO("SDL text input activated");
 				}
 				// Handle HUD events (mouse and key)
-                auto left_hud_pressed_button = GAME.leftHudUIState.handle_events(GAME.events);
-                if (left_hud_pressed_button) {
-                    // There are no hud buttons yet that we care about
-                }
-                auto right_hud_pressed_button = GAME.rightHudUIState.handle_events(GAME.events);
-                if (right_hud_pressed_button) {
-                    // There are no hud buttons yet that we care about
-                }
+                GAME.leftHudUIState.handle_events(GAME.events);
+                GAME.rightHudUIState.handle_events(GAME.events);
 			} else {
 				// Handle text input
 				if (GAME.events.keysPressed[KEY_MENU]) {
@@ -226,12 +212,12 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks) - prevWorldStepTicks;
+		uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks, nongame_ticks) - prevWorldStepTicks;
 		prevWorldStepTicks += ticksSinceLastWorldStep;
 		timeSinceLastWorldStep += ticksSinceLastWorldStep / 1000.0f;
 		while (GAME.physicsStep_s < timeSinceLastWorldStep) {
 			// Pre-physics
-			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks) - prevPrePhysicsTicks;
+			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks, nongame_ticks) - prevPrePhysicsTicks;
 			GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 			prevPrePhysicsTicks += GAME.deltaTicks_ms;
             for (auto monitor_it : GAME.monitors) {
@@ -256,7 +242,7 @@ int main(int argc, char **argv) {
 			Game_DeleteList_DeleteAll();
 
 			// Post-physics
-			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks) - prevPostPhysicsTicks;
+			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks, nongame_ticks) - prevPostPhysicsTicks;
 			GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 			prevPostPhysicsTicks += GAME.deltaTicks_ms;
             for (auto monitor_it : GAME.monitors) {
@@ -280,7 +266,7 @@ int main(int argc, char **argv) {
 		SDL_RenderClear(GAME.sdlRenderer);
 
 		// Draw terrain
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevTerrainDrawGraphicsTicks) - prevTerrainDrawGraphicsTicks;
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevTerrainDrawGraphicsTicks, nongame_ticks) - prevTerrainDrawGraphicsTicks;
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevTerrainDrawGraphicsTicks += GAME.deltaTicks_ms;
         for (auto graphic_it : GAME.terrainGraphics) {
@@ -290,7 +276,7 @@ int main(int argc, char **argv) {
         } // TODO Easy to parallelize
 
 		// Pre-graphic
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks) - prevPreGraphicsTicks;
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks, nongame_ticks) - prevPreGraphicsTicks;
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevPreGraphicsTicks += GAME.deltaTicks_ms;
         for (auto monitor_it : GAME.monitors) {
@@ -300,7 +286,7 @@ int main(int argc, char **argv) {
         } // TODO Hard to parallelize
 
 		// Draw
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks) - prevDrawTicks;
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks, nongame_ticks) - prevDrawTicks;
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevDrawTicks += GAME.deltaTicks_ms;
 		for (const auto& gfx_id : GAME.draw_list) {
@@ -311,7 +297,7 @@ int main(int argc, char **argv) {
 		} // TODO Hard to parallelize
 
 		// Draw lights
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks) - prevDrawLightsTicks;
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks, nongame_ticks) - prevDrawLightsTicks;
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevDrawLightsTicks += GAME.deltaTicks_ms;
         for (auto light_it : GAME.lights) {
@@ -321,7 +307,7 @@ int main(int argc, char **argv) {
         } // TODO Hard to parallelize
 
 		// Post-graphic
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks) - prevPostGraphicsTicks;
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks, nongame_ticks) - prevPostGraphicsTicks;
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevPostGraphicsTicks += GAME.deltaTicks_ms;
         for (auto monitor_it : GAME.monitors) {
