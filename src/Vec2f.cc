@@ -2,21 +2,12 @@
 #include <m2/Vec2i.h>
 #include <cmath>
 
-m2::Vec2f::Vec2f() : x(0.0f), y(0.0f) {
-
-}
-m2::Vec2f::Vec2f(float x, float y) : x(x), y(y) {
-
-}
-m2::Vec2f::Vec2f(int x, int y) : x(static_cast<float>(x)), y(static_cast<float>(y)) {
-
-}
-m2::Vec2f::Vec2f(const Vec2i& v) : Vec2f(v.x, v.y) {
-
-}
-m2::Vec2f::Vec2f(const b2Vec2& v) : Vec2f(v.x, v.y) {
-	
-}
+m2::Vec2f::Vec2f() : x(0.0f), y(0.0f) {}
+m2::Vec2f::Vec2f(float x, float y) : x(x), y(y) {}
+m2::Vec2f::Vec2f(int x, int y) : x(static_cast<float>(x)), y(static_cast<float>(y)) {}
+m2::Vec2f::Vec2f(unsigned x, unsigned y) : x(static_cast<float>(x)), y(static_cast<float>(y)) {}
+m2::Vec2f::Vec2f(const Vec2i& v) : Vec2f(v.x, v.y) {}
+m2::Vec2f::Vec2f(const b2Vec2& v) : Vec2f(v.x, v.y) {}
 
 m2::Vec2f m2::Vec2f::operator+(const Vec2f& rhs) const {
 	return {x + rhs.x, y + rhs.y};

@@ -13,7 +13,7 @@ std::pair<m2::Object&, ID> m2::object::create_pointer() {
     auto& lig = obj.add_light();
     lig.radius_m = 3.0f;
 
-	monitor.pre_gfx = [&](m2::component::Monitor& mon) {
+	monitor.pre_gfx = [&]([[maybe_unused]] m2::component::Monitor& mon) {
 		obj.position = GAME.mousePositionInWorld_m;
 	};
 

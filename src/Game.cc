@@ -152,15 +152,15 @@ static void Game_Level_Term() {
 	GAME.levelLoaded = false;
 }
 
-M2Err Game_Level_Load(const m2::LevelBlueprint* cfg) {
+M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint) {
 	if (GAME.levelLoaded) {
 		Game_Level_Term();
 	}
 	Game_Level_Init();
 
-	for (int y = 0; y < cfg->h; y++) {
-		for (int x = 0; x < cfg->w; x++) {
-            const m2::TileBlueprint* tile = cfg->tiles + y * cfg->w + x;
+	for (unsigned y = 0; y < blueprint->h; y++) {
+		for (unsigned x = 0; x < blueprint->w; x++) {
+            const m2::TileBlueprint* tile = blueprint->tiles + y * blueprint->w + x;
 			if (tile->bg_sprite_index) {
                 m2::object::create_tile(m2::Vec2f{x, y}, tile->bg_sprite_index);
 			}

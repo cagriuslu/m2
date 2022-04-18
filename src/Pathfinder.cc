@@ -18,7 +18,6 @@ int PathfinderMap_Init(PathfinderMap* pm) {
 	pm->blocked_locations.clear();
     for (auto physique_it : GAME.physics) {
         auto* phy = physique_it.first;
-		auto& obj = GAME.objects[phy->object_id];
 		if (phy->body) {
 			// TODO here it is assumed that bodies has one fixture
 			b2Fixture* fixture = phy->body->GetFixtureList();
@@ -90,8 +89,6 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::Vec2f fromF, m2::Vec2f
 	auto to = m2::Vec2i{toF};
 
 	PriorityListItem tmpPrioListItem;
-	m2::Vec2i tmpCameFrom;
-	float tmpCostSoFar;
 
 	// Holds the positions where will be explored next
     std::list<PriorityListItem> frontiers;

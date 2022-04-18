@@ -1,3 +1,3 @@
 #include <impl/private/fsm/DistanceKeeper.h>
 
-impl::fsm::DistanceKeeper::DistanceKeeper(m2::Object& obj, const ai::AiBlueprint* blueprint) {}
+impl::fsm::DistanceKeeper::DistanceKeeper([[maybe_unused]] m2::Object& obj, [[maybe_unused]] const ai::AiBlueprint* blueprint) {}

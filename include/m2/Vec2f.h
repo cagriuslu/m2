@@ -12,6 +12,7 @@ namespace m2 {
 		Vec2f();
 		Vec2f(float x, float y);
 		Vec2f(int x, int y);
+		Vec2f(unsigned x, unsigned y);
 		explicit Vec2f(const Vec2i& v);
 		explicit Vec2f(const b2Vec2& v);
 

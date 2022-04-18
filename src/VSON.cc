@@ -19,7 +19,7 @@ const m2::vson* m2::vson::query(const std::string& path) const {
 			}
 		} else if (std::holds_alternative<vson_array>(value)) {
 			const auto& arr = std::get<vson_array>(value);
-			long index = strtol(path_piece.c_str(), nullptr, 10);
+			unsigned long index = strtoul(path_piece.c_str(), nullptr, 10);
 			if (index < arr.size()) {
 				v = &arr[index];
 			} else {

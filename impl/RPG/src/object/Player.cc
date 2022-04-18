@@ -51,7 +51,7 @@ M2Err impl::object::Player::init(m2::Object& obj, const character::CharacterBlue
 
 	obj.impl = std::make_unique<impl::object::Player>(obj, blueprint);
 
-	monitor.pre_phy = [&](m2::component::Monitor& mon) {
+	monitor.pre_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
 		auto* data = dynamic_cast<impl::object::Player*>(obj.impl.get());
 		m2::Vec2f moveDirection;
 		if (GAME.events.key_down[m2::u(m2::Key::UP)]) {
@@ -101,7 +101,7 @@ M2Err impl::object::Player::init(m2::Object& obj, const character::CharacterBlue
 		}
 	};
 
-	monitor.post_phy = [&](m2::component::Monitor& mon) {
+	monitor.post_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
 		auto* data = dynamic_cast<impl::object::Player*>(obj.impl.get());
 		// We must call time before other signals
 		data->char_animator.time(GAME.deltaTime_s);
@@ -111,7 +111,7 @@ M2Err impl::object::Player::init(m2::Object& obj, const character::CharacterBlue
 		}
 	};
 
-	def.on_death = [](impl::component::Defense& def) {
+	def.on_death = []([[maybe_unused]] impl::component::Defense& def) {
 		LOG_INFO("Player died");
 	};
 

@@ -8,7 +8,7 @@ SDL_Scancode m2::ui::element::AbstractButtonState::get_keyboard_shortcut() const
 	return std::visit(overloaded {
 		[](const TextBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
 		[](const ImageBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
-		[](const auto& v) -> SDL_Scancode { return SDL_SCANCODE_UNKNOWN; }
+		[]([[maybe_unused]] const auto& v) -> SDL_Scancode { return SDL_SCANCODE_UNKNOWN; }
 	}, blueprint->variant);
 }
 
@@ -20,6 +20,6 @@ m2::ui::Action m2::ui::element::AbstractButtonState::action() {
 	return std::visit(overloaded {
 		[](const TextBlueprint& v) { return v.action_callback(); },
 		[](const ImageBlueprint& v) { return v.action_callback(); },
-		[](const auto& v) { return Action::CONTINUE; }
+		[]([[maybe_unused]] const auto& v) { return Action::CONTINUE; }
 	}, blueprint->variant);
 }

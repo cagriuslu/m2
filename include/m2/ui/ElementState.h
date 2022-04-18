@@ -14,6 +14,7 @@ namespace m2::ui {
         SDL_Rect rect_px;
 
         explicit ElementState(const ElementBlueprint* blueprint);
+		virtual ~ElementState() = default;
         virtual void update_position(const SDL_Rect& rect_px);
         virtual Action update_content();
         virtual void draw();

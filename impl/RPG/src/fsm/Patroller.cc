@@ -1,3 +1,3 @@
 #include <impl/private/fsm/Patroller.h>
 
-impl::fsm::Patroller::Patroller(m2::Object& obj, const ai::AiBlueprint* blueprint) {}
+impl::fsm::Patroller::Patroller([[maybe_unused]] m2::Object& obj, [[maybe_unused]] const ai::AiBlueprint* blueprint) {}

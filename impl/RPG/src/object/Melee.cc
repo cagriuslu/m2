@@ -55,7 +55,7 @@ M2Err impl::object::Melee::init(m2::Object& obj, const character::MeleeBlueprint
 		}
 	};
 
-	monitor.post_phy = [&](m2::component::Monitor& mon) {
+	monitor.post_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
 		float angle = phy.body->GetAngle();
 		m2::Object* originator = GAME.objects.get(off.originator);
 		if (originator) {
@@ -65,7 +65,7 @@ M2Err impl::object::Melee::init(m2::Object& obj, const character::MeleeBlueprint
 		gfx.angle = angle;
 	};
 
-	phy.on_collision = [&](m2::component::Physique& phy, m2::component::Physique& other) {
+	phy.on_collision = [&]([[maybe_unused]] m2::component::Physique& phy, m2::component::Physique& other) {
 		LOG_DEBUG("Collision");
 		auto& other_obj = GAME.objects[other.object_id];
 		auto& melee_state = std::get<impl::character::MeleeState>(off.variant);

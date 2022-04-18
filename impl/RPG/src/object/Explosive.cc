@@ -49,7 +49,7 @@ M2Err impl::object::Explosive::init(m2::Object& obj, const character::ExplosiveB
     off.originator = originator_id;
 	off.variant = blueprint->get_state();
 
-	monitor.pre_phy = [&](m2::component::Monitor& mon) {
+	monitor.pre_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
 		auto& explosive_state = std::get<impl::character::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case impl::character::EXPLOSIVE_STATUS_IN_FLIGHT: {

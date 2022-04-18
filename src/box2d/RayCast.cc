@@ -14,10 +14,15 @@ bool m2::box2d::check_eye_sight(b2World& world, m2::Vec2f from, m2::Vec2f to, ui
         return true;
     } else {
         bool result = true;
-        RayCastCallback rccb([&](b2Fixture* fixture, m2::Vec2f point, m2::Vec2f normal, float fraction) -> float {
-            result = false;
-            return 0.0f;
-        }, category_bits);
+        RayCastCallback rccb(
+				[&](
+						[[maybe_unused]] b2Fixture* fixture,
+						[[maybe_unused]] m2::Vec2f point,
+						[[maybe_unused]] m2::Vec2f normal,
+						[[maybe_unused]] float fraction) -> float {
+					result = false;
+					return 0.0f;
+				}, category_bits);
         world.RayCast(&rccb, static_cast<b2Vec2>(from), static_cast<b2Vec2>(to));
         return result;
     }

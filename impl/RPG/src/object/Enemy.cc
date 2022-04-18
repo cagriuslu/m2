@@ -11,10 +11,10 @@ using namespace impl::object;
 
 impl::object::Enemy::Enemy(m2::Object& obj, const character::CharacterBlueprint* blueprint) : character_state(blueprint), char_animator({obj.graphic(), blueprint}), fsm_variant(
 	std::visit(overloaded {
-		[&](const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
-		[&](const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
-		[&](const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
-		[&](const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }
+		[&]([[maybe_unused]] const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+		[&]([[maybe_unused]] const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
+		[&]([[maybe_unused]] const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+		[&]([[maybe_unused]] const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<impl::fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }
 	}, blueprint->aiBlueprint->variant)
 ), on_hit_color_mod_ttl(0) {}
 
@@ -46,14 +46,14 @@ M2Err Enemy::init(m2::Object& obj, const character::CharacterBlueprint* blueprin
 
     obj.impl = std::make_unique<impl::object::Enemy>(obj, blueprint);
 
-	monitor.pre_phy = [&](m2::component::Monitor& mon) {
+	monitor.pre_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		data->character_state.process_time(GAME.deltaTime_s);
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, data->fsm_variant);
 		std::visit([](auto& v) { v.signal(m2::FSMSIG_PREPHY); }, data->fsm_variant);
 	};
 
-	monitor.post_phy = [&](m2::component::Monitor& mon) {
+	monitor.post_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		// We must call time before other signals
 		data->char_animator.time(GAME.deltaTicks_ms / 1000.0f);
@@ -89,7 +89,7 @@ M2Err Enemy::init(m2::Object& obj, const character::CharacterBlueprint* blueprin
 		m2::component::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 	};
 
-	def.on_hit = [&](impl::component::Defense& def) {
+	def.on_hit = [&]([[maybe_unused]] impl::component::Defense& def) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		data->on_hit_color_mod_ttl = 0.10f;
 	};

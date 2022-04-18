@@ -104,10 +104,15 @@ namespace m2 {
         }
 
 		void free(ID id) {
+			static const Item model = {};
+			static const auto t_ptr = reinterpret_cast<const char*>(&model.data);
+			static const auto model_ptr = reinterpret_cast<const char*>(&model);
+			static const auto offset = t_ptr - model_ptr;
+
             T* data = get(id);
             if (data) {
-                auto* byte_ptr = reinterpret_cast<uint8_t*>(data);
-                auto* item_ptr = reinterpret_cast<Item*>(byte_ptr - offsetof(Item, data));
+                auto* byte_ptr = reinterpret_cast<char*>(data);
+                auto* item_ptr = reinterpret_cast<Item*>(byte_ptr - offset);
                 // Get index of item
                 auto index = static_cast<uint16_t>(item_ptr->id & 0xFFFFu);
                 // Clear item (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)

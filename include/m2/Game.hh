@@ -95,12 +95,14 @@ namespace m2 {
 	};
 }
 
+constexpr auto off = &m2::Game::events;
+
 extern m2::Game GAME;
 
 void Game_UpdateWindowDimensions(int width, int height);
 void Game_UpdateMousePosition();
 
-M2Err Game_Level_Load(const m2::LevelBlueprint* cfg);
+M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint);
 
 void Game_DeleteList_Add(ID id);
 void Game_DeleteList_DeleteAll();
