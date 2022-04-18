@@ -95,18 +95,18 @@ m2::ui::Action m2::ui::UIState::update_contents() {
 m2::ui::Action m2::ui::UIState::handle_events(const Events& evs) {
     Action return_value = Action::CONTINUE;
 
-    SDL_Point mousePosition = {.x = evs.mousePosition.x, .y = evs.mousePosition.y};
+    SDL_Point mousePosition = {.x = evs.mouse_position.x, .y = evs.mouse_position.y};
 
-    if (evs.buttonsPressed[BUTTON_PRIMARY] && SDL_PointInRect(&mousePosition, &rect_px)) {
-        auto* element_under_mouse = find_element_by_pixel(evs.mousePosition);
+    if (evs.mouse_buttons_pressed[u(MouseButton::PRIMARY)] && SDL_PointInRect(&mousePosition, &rect_px)) {
+        auto* element_under_mouse = find_element_by_pixel(evs.mouse_position);
         if (element_under_mouse) {
             element_under_mouse->set_depressed(true);
         }
     }
 
-    if (evs.buttonsReleased[BUTTON_PRIMARY]) {
+    if (evs.mouse_buttons_released[u(MouseButton::PRIMARY)]) {
         if (SDL_PointInRect(&mousePosition, &rect_px)) {
-            auto* element_under_mouse = find_element_by_pixel(evs.mousePosition);
+            auto* element_under_mouse = find_element_by_pixel(evs.mouse_position);
             if (element_under_mouse) {
 				if ((return_value = element_under_mouse->action()) != Action::CONTINUE) {
 					return return_value;
@@ -119,7 +119,7 @@ m2::ui::Action m2::ui::UIState::handle_events(const Events& evs) {
     }
 
     {
-        auto* keyboard_shortcut_pressed_element = find_element_by_keyboard_shortcut(evs.rawKeyStates);
+        auto* keyboard_shortcut_pressed_element = find_element_by_keyboard_shortcut(evs.raw_key_down);
         if (keyboard_shortcut_pressed_element) {
 			if ((return_value = keyboard_shortcut_pressed_element->action()) != Action::CONTINUE) {
 				return return_value;
@@ -152,20 +152,20 @@ m2::ui::Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
 		return return_value;
 	}
 
-    Events evs;
+    Events events;
     while (true) {
         ////////////////////////////////////////////////////////////////////////
         //////////////////////////// EVENT HANDLING ////////////////////////////
         ////////////////////////////////////////////////////////////////////////
-        if (Events_Gather(&evs)) {
-            if (evs.quitEvent) {
+        if (events.gather()) {
+            if (events.quit) {
                 return Action::QUIT;
             }
-            if (evs.windowResizeEvent) {
-                Game_UpdateWindowDimensions(evs.windowDims.x, evs.windowDims.y);
+            if (events.window_resized) {
+                Game_UpdateWindowDimensions(events.window_dimensions.x, events.window_dimensions.y);
                 state.update_positions(GAME.windowRect);
             }
-            if ((return_value = state.handle_events(evs)) != Action::CONTINUE) {
+            if ((return_value = state.handle_events(events)) != Action::CONTINUE) {
                 return return_value;
             }
         }

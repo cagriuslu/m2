@@ -1,42 +1,44 @@
 #ifndef EVENT_HANDLING_H
 #define EVENT_HANDLING_H
 
-#include "m2/Controls.h"
+#include <m2/Controls.h>
 #include <m2/Vec2i.h>
-#include <stdbool.h>
 
-typedef struct _Events {
-	bool quitEvent;
-	
-	bool windowResizeEvent;
-	m2::Vec2i windowDims;
-	
-	bool keyDownEvent;
-	uint16_t keysPressed[_KEY_COUNT];
-	
-	bool keyUpEvent;
-	uint16_t keysReleased[_KEY_COUNT];
-	
-	bool mouseMotionEvent;
-	
-	bool mouseButtonDownEvent;
-	bool mouseWheelEvent;
-	uint16_t buttonsPressed[_BUTTON_COUNT];
+namespace m2 {
+	struct Events {
+		bool quit;
 
-	bool mouseButtonUpEvent;
-	uint16_t buttonsReleased[_BUTTON_COUNT];
+		bool window_resized;
+		m2::Vec2i window_dimensions;
 
-	bool textInputEvent;
-	char textInput[32];
+		bool key_pressed;
+		uint16_t keys_pressed[static_cast<unsigned>(m2::Key::end)];
 
-	// Persistent states
-	uint8_t keyStates[_KEY_COUNT];
-	uint8_t buttonStates[_BUTTON_COUNT];
-	m2::Vec2i mousePosition;
+		bool key_released;
+		uint16_t keys_released[static_cast<unsigned>(m2::Key::end)];
 
-	uint8_t rawKeyStates[SDL_NUM_SCANCODES];
-} Events;
+		bool mouse_moved;
 
-bool Events_Gather(Events* evs);
+		bool mouse_button_pressed;
+		bool mouse_wheel_scrolled;
+		uint16_t mouse_buttons_pressed[static_cast<unsigned>(m2::MouseButton::end)];
+
+		bool mouse_button_released;
+		uint16_t mouse_buttons_released[static_cast<unsigned>(m2::MouseButton::end)];
+
+		bool text_input;
+		char text[32];
+
+		// Persistent states
+		bool key_down[static_cast<unsigned>(m2::Key::end)];
+		bool mouse_button_down[static_cast<unsigned>(m2::MouseButton::end)];
+		m2::Vec2i mouse_position;
+
+		uint8_t raw_key_down[SDL_NUM_SCANCODES];
+
+		Events();
+		bool gather();
+	};
+}
 
 #endif

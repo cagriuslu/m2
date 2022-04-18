@@ -1,7 +1,34 @@
-#ifndef CONTROLS_H
-#define CONTROLS_H
+#ifndef M2_CONTROLS_H
+#define M2_CONTROLS_H
 
 #include <SDL.h>
+
+namespace m2 {
+	enum class Key {
+		UNKNOWN = 0,
+		MENU,
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		CONSOLE,
+		ENTER,
+		end
+	};
+	unsigned u(Key k);
+
+	enum class MouseButton {
+		UNKNOWN = 0,
+		PRIMARY,
+		SECONDARY,
+		MIDDLE,
+		SCROLL_DOWN,
+		SCROLL_UP,
+		end
+	};
+	unsigned u(MouseButton mb);
+	MouseButton button_to_mouse_button(int button);
+}
 
 // Direct keys for Hud items
 // Direct keys while navigating in the menus
@@ -14,39 +41,4 @@
 // Ctrl+Alt+1 followed by Ctrl+Alt+1 followed by Ctrl+Alt+R --> 2600 keys
 // Although, we're not have to connect each Key to a physical key combination, right?
 
-typedef enum _Key {
-	KEY_NONE = 0,
-
-	KEY_MENU,
-
-	KEY_UP,
-	KEY_DOWN,
-	KEY_LEFT,
-	KEY_RIGHT,
-
-	KEY_MODIFIER_SHIFT,
-
-	KEY_CONSOLE,
-	KEY_ENTER,
-
-	_KEY_COUNT
-} Key;
-
-typedef enum _Button {
-	BUTTON_NONE = 0,
-
-	BUTTON_PRIMARY,
-	BUTTON_SECONDARY,
-	BUTTON_MIDDLE,
-	BUTTON_SCROLL_DOWN,
-	BUTTON_SCROLL_UP,
-
-	_BUTTON_COUNT
-} MouseButton;
-
-Key KeyFromSDLScancode(SDL_Scancode sc);
-SDL_Scancode SDLScancodeFromKey(Key k);
-
-MouseButton ButtonFromSDLButton(int button);
-
-#endif
+#endif //M2_CONTROLS_H

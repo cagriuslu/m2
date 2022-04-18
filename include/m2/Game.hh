@@ -18,6 +18,7 @@
 #include <SDL_ttf.h>
 #include <vector>
 #include <b2_world.h>
+#include <sstream>
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
@@ -86,7 +87,7 @@ namespace m2 {
 		float deltaTime_s;
 		m2::Vec2f mousePositionInWorld_m;
 		m2::Vec2f mousePositionWRTScreenCenter_m;
-		char consoleInput[1024];
+		std::stringstream console_input{};
 
 		~Game();
 

@@ -11,6 +11,8 @@
 #include <SDL_ttf.h>
 #include <stdlib.h>
 
+using namespace m2;
+
 //void AudioCallback(void* userdata, uint8_t* stream, int len) {
 //	for (int i = 0; i < len; i++) {
 //		stream[i] = (i % 384) < 192 ? 127 : -128;
@@ -19,7 +21,7 @@
 
 int main(int argc, char **argv) {
 	LOG_DEBUG_FN();
-    m2::Game::dynamic_assert();
+    Game::dynamic_assert();
 
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {
@@ -160,18 +162,31 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		if (Events_Gather(&GAME.events)) {
+		if (GAME.events.gather()) {
 			// Handle quit event
-			if (GAME.events.quitEvent) { break; }
+			if (GAME.events.quit) { break; }
 			// Handle window resize event
-			if (GAME.events.windowResizeEvent) {
-				Game_UpdateWindowDimensions(GAME.events.windowDims.x, GAME.events.windowDims.y);
+			if (GAME.events.window_resized) {
+				Game_UpdateWindowDimensions(GAME.events.window_dimensions.x, GAME.events.window_dimensions.y);
                 GAME.leftHudUIState.update_positions(GAME.leftHudRect);
                 GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 			}
-			if (!SDL_IsTextInputActive()) {
+			if (SDL_IsTextInputActive()) {
+				if (GAME.events.keys_pressed[u(Key::MENU)]) {
+					SDL_StopTextInput();
+					LOG_INFO("SDL text input deactivated");
+				} else if (GAME.events.keys_pressed[u(Key::ENTER)]) {
+					// TODO Execute console command
+					LOG_INFO("Console command");
+					SDL_StopTextInput();
+					LOG_INFO("SDL text input deactivated");
+				} else if (GAME.events.text_input) {
+					GAME.console_input << GAME.events.text;
+					LOG_INFO("Console buffer");
+				}
+			} else {
 				// Handle key events
-				if (GAME.events.keysPressed[KEY_MENU]) {
+				if (GAME.events.keys_pressed[u(Key::MENU)]) {
 					uint32_t pause_start_ticks = SDL_GetTicks();
 					if (m2::ui::execute_blocking(&impl::ui::pause) == m2::ui::Action::QUIT) {
 						return 0;
@@ -179,30 +194,14 @@ int main(int argc, char **argv) {
 					uint32_t pause_end_ticks = SDL_GetTicks();
 					nongame_ticks += pause_end_ticks - pause_start_ticks;
 				}
-				if (GAME.events.keysPressed[KEY_CONSOLE]) {
-					memset(GAME.consoleInput, 0, sizeof(GAME.consoleInput));
+				if (GAME.events.keys_pressed[u(Key::CONSOLE)]) {
+					GAME.console_input = std::stringstream();
 					SDL_StartTextInput();
 					LOG_INFO("SDL text input activated");
 				}
 				// Handle HUD events (mouse and key)
-                GAME.leftHudUIState.handle_events(GAME.events);
-                GAME.rightHudUIState.handle_events(GAME.events);
-			} else {
-				// Handle text input
-				if (GAME.events.keysPressed[KEY_MENU]) {
-					SDL_StopTextInput();
-					LOG_INFO("SDL text input deactivated");
-				} else if (GAME.events.keysPressed[KEY_ENTER]) {
-					// TODO Execute console command
-					LOG_INFO("Console command");
-					LOG_INFO(GAME.consoleInput);
-					SDL_StopTextInput();
-					LOG_INFO("SDL text input deactivated");
-				} else if (GAME.events.textInputEvent) {
-					strcat(GAME.consoleInput, GAME.events.textInput);
-					LOG_INFO("Console buffer");
-					LOG_INFO(GAME.consoleInput);
-				}
+				GAME.leftHudUIState.handle_events(GAME.events);
+				GAME.rightHudUIState.handle_events(GAME.events);
 			}
 		}
 		Game_UpdateMousePosition();
