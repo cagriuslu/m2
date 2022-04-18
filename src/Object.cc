@@ -51,8 +51,6 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 }
 
 m2::Object::~Object() {
-	// BEWARE: `this` can't be used to lookup the object_id here, because this object is swap-deleted. (in Pool)
-
 	if (monitor_id) {
 		GAME.monitors.free(monitor_id);
 	}
@@ -60,7 +58,7 @@ m2::Object::~Object() {
 		GAME.physics.free(physique_id);
 	}
 	if (graphic_id) {
-		GAME.draw_list.remove(GAME.graphics[graphic_id].object_id);
+		GAME.draw_list.remove(GAME.objects.get_id(this));
 		GAME.graphics.free(graphic_id);
 	}
 	if (terrain_graphic_id) {

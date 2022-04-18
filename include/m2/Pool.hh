@@ -110,8 +110,9 @@ namespace m2 {
                 auto* item_ptr = reinterpret_cast<Item*>(byte_ptr - offsetof(Item, data));
                 // Get index of item
                 auto index = static_cast<uint16_t>(item_ptr->id & 0xFFFFu);
-                // Clear item
-                item_ptr->data = T{};
+                // Clear item (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
+				item_ptr->data.~T();
+				new (&item_ptr->data) T();
                 item_ptr->id = _next_free_index & 0x0000FFFFu;
                 // Set next free index
                 _next_free_index = index;
