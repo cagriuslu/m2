@@ -220,8 +220,8 @@ int main(int argc, char **argv) {
 			GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 			prevPrePhysicsTicks += GAME.deltaTicks_ms;
             for (auto monitor_it : GAME.monitors) {
-                if (monitor_it.first->prePhysics) {
-                    monitor_it.first->prePhysics(*monitor_it.first);
+                if (monitor_it.first->pre_phy) {
+                    monitor_it.first->pre_phy(*monitor_it.first);
                 }
             } // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
@@ -245,8 +245,8 @@ int main(int argc, char **argv) {
 			GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 			prevPostPhysicsTicks += GAME.deltaTicks_ms;
             for (auto monitor_it : GAME.monitors) {
-                if (monitor_it.first->postPhysics) {
-                    monitor_it.first->postPhysics(*monitor_it.first);
+                if (monitor_it.first->post_phy) {
+                    monitor_it.first->post_phy(*monitor_it.first);
                 }
             } // TODO Hard to parallelize
 			Game_DeleteList_DeleteAll();
@@ -269,9 +269,9 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevTerrainDrawGraphicsTicks += GAME.deltaTicks_ms;
         for (auto graphic_it : GAME.terrainGraphics) {
-            if (graphic_it.first->draw) {
-                graphic_it.first->draw(*graphic_it.first);
-            }
+			if (graphic_it.first->on_draw) {
+				graphic_it.first->on_draw(*graphic_it.first);
+			}
         } // TODO Easy to parallelize
 
 		// Pre-graphic
@@ -279,8 +279,8 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevPreGraphicsTicks += GAME.deltaTicks_ms;
         for (auto monitor_it : GAME.monitors) {
-            if (monitor_it.first->preGraphics) {
-                monitor_it.first->preGraphics(*monitor_it.first);
+            if (monitor_it.first->pre_gfx) {
+                monitor_it.first->pre_gfx(*monitor_it.first);
             }
         } // TODO Hard to parallelize
 
@@ -290,8 +290,8 @@ int main(int argc, char **argv) {
 		prevDrawTicks += GAME.deltaTicks_ms;
 		for (const auto& gfx_id : GAME.draw_list) {
 			auto& gfx = GAME.graphics[gfx_id];
-			if (gfx.draw) {
-				gfx.draw(gfx);
+			if (gfx.on_draw) {
+				gfx.on_draw(gfx);
 			}
 		} // TODO Hard to parallelize
 
@@ -300,8 +300,8 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevDrawLightsTicks += GAME.deltaTicks_ms;
         for (auto light_it : GAME.lights) {
-            if (light_it.first->draw) {
-                light_it.first->draw(*light_it.first);
+            if (light_it.first->on_draw) {
+                light_it.first->on_draw(*light_it.first);
             }
         } // TODO Hard to parallelize
 
@@ -310,8 +310,8 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = GAME.deltaTicks_ms / 1000.0f;
 		prevPostGraphicsTicks += GAME.deltaTicks_ms;
         for (auto monitor_it : GAME.monitors) {
-            if (monitor_it.first->postGraphics) {
-                monitor_it.first->postGraphics(*monitor_it.first);
+            if (monitor_it.first->post_gfx) {
+                monitor_it.first->post_gfx(*monitor_it.first);
             }
         } // TODO Hard to parallelize
 

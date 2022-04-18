@@ -6,62 +6,16 @@
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 
-static void Bullet_prePhysics(m2::component::Monitor& mon) {
-	auto& obj = GAME.objects[mon.object_id];
-	auto& phy = obj.physique();
-	auto& off = obj.offense();
-	auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
-
-	m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
-	phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * projectile_state.blueprint->speed_mps));
-
-	projectile_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
-	if (projectile_state.ttl_s <= 0) {
-		Game_DeleteList_Add(mon.object_id);
-	}
-}
-
-static void Bullet_onCollision(m2::component::Physique& phy, m2::component::Physique& other) {
-	auto& obj = GAME.objects[phy.object_id];
-	auto& other_obj = GAME.objects[other.object_id];
-	auto& off = GAME.offenses[obj.offense_id];
-	auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
-	auto* def = GAME.defenses.get(other_obj.defense_id);
-	if (def) {
-		// Check if already collided
-		if (projectile_state.already_collided_this_step) {
-			return;
-		}
-		projectile_state.already_collided_this_step = true;
-		// Calculate damage
-		def->hp -= m2::apply_accuracy(projectile_state.blueprint->damage, projectile_state.blueprint->damage_accuracy);
-		if (def->hp <= 0.0001f && def->onDeath) {
-			LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def->object_id);
-			def->onDeath(def);
-		} else {
-			LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def->object_id, M2_HP, Float32, def->hp);
-			auto direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
-			auto force = direction * 5000.0f;
-			other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
-			if (def->onHit) {
-				def->onHit(def);
-			}
-		}
-		Game_DeleteList_Add(phy.object_id);
-	}
-}
-
-M2Err impl::object::Projectile::init(m2::Object* obj, const character::ProjectileBlueprint* blueprint, ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
-	*obj = m2::Object{pos};
+M2Err impl::object::Projectile::init(m2::Object& obj, const character::ProjectileBlueprint* blueprint, ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
+	obj = m2::Object{pos};
 	dir = dir.normalize();
 
-	auto& mon = obj->add_monitor();
-	mon.prePhysics = Bullet_prePhysics;
+	auto& monitor = obj.add_monitor();
 
-	auto& phy = obj->add_physique();
+	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_bullet(
             *GAME.world,
-			obj->physique_id,
+			obj.physique_id,
 			pos,
             true,
 			m2::box2d::CATEGORY_PLAYER_BULLET,
@@ -70,16 +24,54 @@ M2Err impl::object::Projectile::init(m2::Object* obj, const character::Projectil
 			0.0f
 	);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(dir * blueprint->speed_mps));
-	phy.onCollision = Bullet_onCollision;
 
-	auto& gfx = obj->add_graphic();
+	auto& gfx = obj.add_graphic();
 	gfx.textureRect = impl::sprites[blueprint->sprite_index].texture_rect;
 	gfx.center_px = impl::sprites[blueprint->sprite_index].obj_center_px;
 	gfx.angle = dir.angle_rads();
 
-	auto& off = obj->add_offense();
+	auto& off = obj.add_offense();
     off.originator = originatorId;
 	off.variant = blueprint->get_state();
+
+	monitor.pre_phy = [&](m2::component::Monitor& mon) {
+		auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
+		m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
+		phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * projectile_state.blueprint->speed_mps));
+
+		projectile_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
+		if (projectile_state.ttl_s <= 0) {
+			Game_DeleteList_Add(mon.object_id);
+		}
+	};
+
+	phy.on_collision = [&off](m2::component::Physique& phy, m2::component::Physique& other) {
+		auto& other_obj = GAME.objects[other.object_id];
+		auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
+		auto* def = GAME.defenses.get(other_obj.defense_id);
+		if (def) {
+			// Check if already collided
+			if (projectile_state.already_collided_this_step) {
+				return;
+			}
+			projectile_state.already_collided_this_step = true;
+			// Calculate damage
+			def->hp -= m2::apply_accuracy(projectile_state.blueprint->damage, projectile_state.blueprint->damage_accuracy);
+			if (def->hp <= 0.0001f && def->on_death) {
+				LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def->object_id);
+				def->on_death(*def);
+			} else {
+				LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def->object_id, M2_HP, Float32, def->hp);
+				auto direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
+				auto force = direction * 5000.0f;
+				other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+				if (def->on_hit) {
+					def->on_hit(*def);
+				}
+			}
+			Game_DeleteList_Add(phy.object_id);
+		}
+	};
 
 	return 0;
 }

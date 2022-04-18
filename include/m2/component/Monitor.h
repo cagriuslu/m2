@@ -2,13 +2,14 @@
 #define M2_MONITOR_H
 
 #include "../Component.h"
+#include <functional>
 
 namespace m2::component {
 	struct Monitor : public Component {
-		void (*prePhysics)(Monitor&);
-		void (*postPhysics)(Monitor&);
-		void (*preGraphics)(Monitor&);
-		void (*postGraphics)(Monitor&);
+		std::function<void(Monitor&)> pre_phy;
+		std::function<void(Monitor&)> post_phy;
+		std::function<void(Monitor&)> pre_gfx;
+		std::function<void(Monitor&)> post_gfx;
 
 		Monitor() = default;
 		explicit Monitor(uint64_t object_id);

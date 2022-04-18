@@ -166,7 +166,7 @@ M2Err Game_Level_Load(const m2::LevelBlueprint* cfg) {
 			}
 			if (tile->fg_sprite_index) {
                 auto& obj = GAME.objects.alloc().first;
-				M2ERR_REFLECT(impl::fg_sprite_loader(&obj, tile->fg_sprite_index, m2::Vec2f{x, y}));
+				M2ERR_REFLECT(impl::fg_sprite_loader(obj, tile->fg_sprite_index, m2::Vec2f{x, y}));
 			}
 		}
 	}

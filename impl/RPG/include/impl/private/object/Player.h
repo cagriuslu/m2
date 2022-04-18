@@ -12,7 +12,7 @@ namespace impl::object {
 
 		Player(m2::Object&, const character::CharacterBlueprint*);
 
-		static M2Err init(m2::Object* obj, const character::CharacterBlueprint* blueprint, m2::Vec2f pos);
+		static M2Err init(m2::Object& obj, const character::CharacterBlueprint* blueprint, m2::Vec2f pos);
 	};
 }
 

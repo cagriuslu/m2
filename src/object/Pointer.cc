@@ -3,20 +3,20 @@
 #include "m2/Game.hh"
 #include "m2/Def.h"
 
-void pointer_pre_graphics(m2::component::Monitor& mon) {
-	auto& obj = GAME.objects[mon.object_id];
-	obj.position = GAME.mousePositionInWorld_m;
-}
-
 std::pair<m2::Object&, ID> m2::object::create_pointer() {
     auto obj_pair = m2::create_object({});
+	auto& obj = obj_pair.first;
+	auto obj_id = obj_pair.second;
 
-    auto& mon = obj_pair.first.add_monitor();
-    mon.preGraphics = pointer_pre_graphics;
+    auto& monitor = obj.add_monitor();
 
-    auto& lig = obj_pair.first.add_light();
+    auto& lig = obj.add_light();
     lig.radius_m = 3.0f;
 
-    GAME.pointerId = obj_pair.second;
+	monitor.pre_gfx = [&](m2::component::Monitor& mon) {
+		obj.position = GAME.mousePositionInWorld_m;
+	};
+
+    GAME.pointerId = obj_id;
     return obj_pair;
 }

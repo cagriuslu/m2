@@ -2,6 +2,7 @@
 #define M2_GRAPHIC_H
 
 #include "../Component.h"
+#include <functional>
 
 namespace m2::component {
 	struct Graphic : public Component {
@@ -9,7 +10,7 @@ namespace m2::component {
 		SDL_Rect textureRect;
 		Vec2f center_px;
 		float angle;
-		void (*draw)(Graphic&);
+		std::function<void(Graphic&)> on_draw;
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);

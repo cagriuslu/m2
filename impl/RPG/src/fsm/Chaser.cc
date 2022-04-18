@@ -56,7 +56,7 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
 				auto& weapon_state = data->character_state.ranged_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    m2::Object* projectile = &GAME.objects.alloc().first;
+                    auto& projectile = GAME.objects.alloc().first;
 					impl::object::Projectile::init(
                             projectile,
 							&weapon_state->blueprint->projectile,
@@ -73,7 +73,7 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
 				auto& weapon_state = data->character_state.melee_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    m2::Object* melee = &GAME.objects.alloc().first;
+                    auto& melee = GAME.objects.alloc().first;
 					impl::object::Melee::init(
                             melee,
 							&weapon_state->blueprint->melee,
@@ -89,7 +89,7 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
 				auto& weapon_state = data->character_state.explosive_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    m2::Object* explosive = &GAME.objects.alloc().first;
+                    auto& explosive = GAME.objects.alloc().first;
 					impl::object::Explosive::init(
                             explosive,
 							&weapon_state->blueprint->explosive,

@@ -268,7 +268,7 @@ const m2::SpriteBlueprint impl::sprites[] {
 
 const unsigned impl::sprite_count = IMPL_SPRITE_N;
 
-M2Err impl::fg_sprite_loader(m2::Object* obj, m2::SpriteIndex index, m2::Vec2f position) {
+M2Err impl::fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, m2::Vec2f position) {
     using namespace object;
     switch (index) {
         case IMPL_SPRITE_PLAYER_LOOKDOWN_00:

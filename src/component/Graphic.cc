@@ -23,7 +23,7 @@ m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPositio
 	return obj_gfx_origin_wrt_screen_center_px;
 }
 
-m2::component::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), draw(default_draw) {}
+m2::component::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), on_draw(default_draw) {}
 
 void m2::component::Graphic::default_draw(component::Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];

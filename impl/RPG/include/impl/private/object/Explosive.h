@@ -6,7 +6,7 @@
 
 namespace impl::object {
 	struct Explosive {
-		static M2Err init(m2::Object* obj, const character::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction);
+		static M2Err init(m2::Object& obj, const character::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction);
 	};
 }
 

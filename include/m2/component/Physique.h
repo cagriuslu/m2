@@ -2,11 +2,12 @@
 #define M2_PHYSIQUE_H
 
 #include "../Component.h"
+#include <functional>
 
 namespace m2::component {
 	struct Physique : public Component {
 		b2Body* body;
-		void (*onCollision)(Physique&, Physique&);
+		std::function<void(Physique&, Physique&)> on_collision;
 
 		Physique() = default;
 		explicit Physique(ID object_id);
