@@ -1,6 +1,7 @@
 #include <m2/M2.h>
 #include <m2/Def.h>
 #include <random>
+#include <memory>
 
 std::unique_ptr<std::mt19937> random_number_engine;
 std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;

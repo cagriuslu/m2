@@ -6,9 +6,9 @@ m2::ui::element::NestedUIState::NestedUIState(const ElementBlueprint *blueprint)
     ui = std::make_unique<UIState>(std::get<NestedUIBlueprint>(blueprint->variant).ui);
 }
 
-void m2::ui::element::NestedUIState::update_position(const SDL_Rect &rect_px) {
-    this->rect_px = rect_px;
-    ui->update_positions(rect_px);
+void m2::ui::element::NestedUIState::update_position(const SDL_Rect &rect_px_) {
+    this->rect_px = rect_px_;
+    ui->update_positions(rect_px_);
 }
 
 m2::ui::Action m2::ui::element::NestedUIState::update_content() {

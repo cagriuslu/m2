@@ -95,8 +95,6 @@ namespace m2 {
 	};
 }
 
-constexpr auto off = &m2::Game::events;
-
 extern m2::Game GAME;
 
 void Game_UpdateWindowDimensions(int width, int height);
