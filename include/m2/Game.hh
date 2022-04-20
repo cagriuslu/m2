@@ -88,8 +88,7 @@ namespace m2 {
 		float deltaTime_s;
 		m2::Vec2f mousePositionInWorld_m;
 		m2::Vec2f mousePositionWRTScreenCenter_m;
-		std::stringstream console_input{};
-        std::string console_output;
+        std::vector<std::string> console_output;
 
 		~Game();
 

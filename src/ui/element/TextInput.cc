@@ -21,7 +21,7 @@ Action TextInputState::handle_events(const Events& events) {
     if (events.keys_pressed[u(Key::MENU)]) {
         return Action::RETURN;
     } else if (events.keys_pressed[u(Key::ENTER)]) {
-        return std::get<TextInputBlueprint>(blueprint->variant).action_callback(text_input.str());
+        return std::get<TextInputBlueprint>(blueprint->variant).action_callback(text_input);
     } else if (events.text_input) {
         text_input << events.text.data();
     }

@@ -10,6 +10,7 @@
 namespace m2::ui::element {
 	struct TextBlueprint {
 		std::string_view initial_text;
+        TextAlignment alignment;
 		std::function<std::pair<Action,std::optional<std::string>>(void)> update_callback;
 		std::function<Action(void)> action_callback;
 		SDL_Scancode kb_shortcut;

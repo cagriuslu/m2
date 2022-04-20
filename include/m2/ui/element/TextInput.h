@@ -9,7 +9,7 @@
 namespace m2::ui::element {
     struct TextInputBlueprint {
         std::string_view initial_text;
-        std::function<Action(const std::string&)> action_callback;
+        std::function<Action(std::stringstream&)> action_callback;
     };
 
     struct TextInputState : public ElementState {

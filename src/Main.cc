@@ -171,38 +171,26 @@ int main(int argc, char **argv) {
                 GAME.leftHudUIState.update_positions(GAME.leftHudRect);
                 GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 			}
-			if (SDL_IsTextInputActive()) {
-				if (GAME.events.keys_pressed[u(Key::MENU)]) {
-					SDL_StopTextInput();
-					LOG_INFO("SDL text input deactivated");
-				} else if (GAME.events.keys_pressed[u(Key::ENTER)]) {
-					// TODO Execute console command
-					LOG_INFO("Console command");
-					SDL_StopTextInput();
-					LOG_INFO("SDL text input deactivated");
-				} else if (GAME.events.text_input) {
-					GAME.console_input << GAME.events.text.data();
-					LOG_INFO("Console buffer");
-				}
-			} else {
-				// Handle key events
-				if (GAME.events.keys_pressed[u(Key::MENU)]) {
-					uint32_t pause_start_ticks = SDL_GetTicks();
-					if (m2::ui::execute_blocking(&impl::ui::pause) == m2::ui::Action::QUIT) {
-						return 0;
-					}
-					uint32_t pause_end_ticks = SDL_GetTicks();
-					nongame_ticks += pause_end_ticks - pause_start_ticks;
-				}
-				if (GAME.events.keys_pressed[u(Key::CONSOLE)]) {
-					GAME.console_input = std::stringstream();
-					SDL_StartTextInput();
-					LOG_INFO("SDL text input activated");
-				}
-				// Handle HUD events (mouse and key)
-				GAME.leftHudUIState.handle_events(GAME.events);
-				GAME.rightHudUIState.handle_events(GAME.events);
-			}
+            // Handle key events
+            if (GAME.events.keys_pressed[u(Key::MENU)]) {
+                uint32_t pause_start_ticks = SDL_GetTicks();
+                if (m2::ui::execute_blocking(&impl::ui::pause) == m2::ui::Action::QUIT) {
+                    return 0;
+                }
+                uint32_t pause_end_ticks = SDL_GetTicks();
+                nongame_ticks += pause_end_ticks - pause_start_ticks;
+            }
+            if (GAME.events.keys_pressed[u(Key::CONSOLE)]) {
+                uint32_t pause_start_ticks = SDL_GetTicks();
+                if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
+                    return 0;
+                }
+                uint32_t pause_end_ticks = SDL_GetTicks();
+                nongame_ticks += pause_end_ticks - pause_start_ticks;
+            }
+            // Handle HUD events (mouse and key)
+            GAME.leftHudUIState.handle_events(GAME.events);
+            GAME.rightHudUIState.handle_events(GAME.events);
 		}
 		Game_UpdateMousePosition();
 		//////////////////////// END OF EVENT HANDLING /////////////////////////
