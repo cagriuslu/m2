@@ -29,13 +29,10 @@ namespace m2::ui {
         UIState();
         explicit UIState(const UIBlueprint* blueprint);
         void update_positions(const SDL_Rect& rect);
+        Action handle_events(const Events& events);
         Action update_contents();
-        Action handle_events(const Events& evs);
         void draw();
 
-    private:
-        ElementState* find_element_by_pixel(const m2::Vec2i& mouse_pos);
-        ElementState* find_element_by_keyboard_shortcut(const uint8_t* raw_keyboard_state);
     public:
         static void draw_background_color(const SDL_Rect& rect, const SDL_Color& color);
         static void draw_border(const SDL_Rect& rect, unsigned border_width_px);

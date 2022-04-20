@@ -5,13 +5,11 @@
 
 namespace m2::ui::element {
 	struct AbstractButtonState : public ElementState {
+        SDL_Scancode kb_shortcut;
 		bool depressed;
 
 		explicit AbstractButtonState(const ElementBlueprint* blueprint);
-
-		SDL_Scancode get_keyboard_shortcut() const override;
-		void set_depressed(bool state) override;
-		Action action() override;
+        Action handle_events(const Events& events) final;
 	};
 }
 

@@ -2,19 +2,26 @@
 #include <m2/ui/ElementBlueprint.h>
 #include <m2/ui/UI.h>
 
-m2::ui::element::NestedUIState::NestedUIState(const ElementBlueprint *blueprint) : ElementState(blueprint) {
+using namespace m2::ui;
+using namespace m2::ui::element;
+
+NestedUIState::NestedUIState(const ElementBlueprint *blueprint) : ElementState(blueprint) {
     ui = std::make_unique<UIState>(std::get<NestedUIBlueprint>(blueprint->variant).ui);
 }
 
-void m2::ui::element::NestedUIState::update_position(const SDL_Rect &rect_px_) {
+void NestedUIState::update_position(const SDL_Rect &rect_px_) {
     this->rect_px = rect_px_;
     ui->update_positions(rect_px_);
 }
 
-m2::ui::Action m2::ui::element::NestedUIState::update_content() {
+Action NestedUIState::handle_events(const Events &events) {
+    return ui->handle_events(events);
+}
+
+Action NestedUIState::update_content() {
     return ui->update_contents();
 }
 
-void m2::ui::element::NestedUIState::draw() {
+void NestedUIState::draw() {
     ui->draw();
 }

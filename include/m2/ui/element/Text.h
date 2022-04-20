@@ -19,7 +19,7 @@ namespace m2::ui::element {
         SDL_Texture* font_texture;
 
         explicit TextState(const ElementBlueprint* blueprint);
-		~TextState();
+		~TextState() override;
         Action update_content() override;
         void draw() override;
 	};

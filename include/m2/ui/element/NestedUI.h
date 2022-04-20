@@ -17,9 +17,10 @@ namespace m2::ui::element {
         std::unique_ptr<UIState> ui;
 
         explicit NestedUIState(const ElementBlueprint* blueprint);
-        void update_position(const SDL_Rect& rect_px) override;
-        Action update_content() override;
-        void draw() override;
+        void update_position(const SDL_Rect& rect_px) final;
+        Action handle_events(const Events& events) final;
+        Action update_content() final;
+        void draw() final;
     };
 }
 

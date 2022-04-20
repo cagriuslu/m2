@@ -2,13 +2,13 @@
 #define M2_ELEMENTSTATE_H
 
 #include "Action.h"
+#include <m2/Event.hh>
 #include <SDL_ttf.h>
 #include <SDL.h>
 #include <memory>
 
 namespace m2::ui {
     struct ElementBlueprint;
-
     struct ElementState {
         const ElementBlueprint* blueprint;
         SDL_Rect rect_px;
@@ -16,12 +16,9 @@ namespace m2::ui {
         explicit ElementState(const ElementBlueprint* blueprint);
 		virtual ~ElementState() = default;
         virtual void update_position(const SDL_Rect& rect_px);
+        virtual Action handle_events(const Events& events);
         virtual Action update_content();
         virtual void draw();
-
-		[[nodiscard]] virtual SDL_Scancode get_keyboard_shortcut() const;
-        virtual void set_depressed(bool state);
-		virtual Action action();
 
     protected:
         static SDL_Texture* generate_font_texture(const char* text);
