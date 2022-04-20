@@ -3,6 +3,7 @@
 
 #include <m2/Controls.h>
 #include <m2/Vec2i.h>
+#include <array>
 
 namespace m2 {
 	struct Events {
@@ -27,7 +28,8 @@ namespace m2 {
 		uint16_t mouse_buttons_released[static_cast<unsigned>(m2::MouseButton::end)];
 
 		bool text_input;
-		char text[32];
+        static constexpr unsigned TXTSIZE = SDL_TEXTINPUTEVENT_TEXT_SIZE;
+        std::array<char, TXTSIZE> text;
 
 		// Persistent states
 		bool key_down[static_cast<unsigned>(m2::Key::end)];

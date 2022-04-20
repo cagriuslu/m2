@@ -13,6 +13,7 @@
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <impl/public/SpriteBlueprint.h>
+#include <m2/ui/UI.h>
 
 // Initialize with default values
 m2::Game GAME = {
@@ -84,7 +85,7 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME.gameRect.x = hudWidth;
 		GAME.gameRect.y = envelopeHeight;
 	} else {
-		GAME.gameRect.w = width;
+		GAME.gameRect.w = (int)roundf(fh * GAME_ASPECT_RATIO);
 		GAME.gameRect.h = height;
 
 		GAME.gameAndHudRect.w = width;
@@ -101,6 +102,10 @@ void Game_UpdateWindowDimensions(int width, int height) {
 		GAME.gameRect.x = hudWidth;
 		GAME.gameRect.y = 0;
 	}
+    GAME.console_rect.x = GAME.gameRect.x;
+    GAME.console_rect.y = GAME.gameRect.y + GAME.gameRect.h * 22 / 24;
+    GAME.console_rect.w = GAME.gameRect.w;
+    GAME.console_rect.h = GAME.gameRect.h * 2 / 24;
 	GAME.pixelsPerMeter = (float)GAME.gameAndHudRect.h / 16.0f;
 	GAME.scale = GAME.pixelsPerMeter / impl::tile_width;
 }

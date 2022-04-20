@@ -7,7 +7,6 @@
 using namespace m2::ui;
 
 auto no_string = []() { return std::make_pair(Action::CONTINUE, std::optional<std::string>{}); };
-auto no_action = []() { return Action::CONTINUE; };
 auto new_game_button_action = []() {
 	Game_Level_Load(&impl::level::sp_000);
 	return Action::RETURN;
@@ -83,13 +82,11 @@ const UIBlueprint impl::ui::pause = {
 
 static ElementBlueprint::ElementBlueprintVariant left_hud_variant_1 = element::TextBlueprint{
         .initial_text = "HP",
-        .update_callback = no_string,
-        .action_callback = no_action
+        .update_callback = no_string
 };
 static ElementBlueprint::ElementBlueprintVariant left_hud_variant_2 = element::TextBlueprint{
         .initial_text = "100",
-        .update_callback = hp_update,
-        .action_callback = no_action
+        .update_callback = hp_update
 };
 const UIBlueprint impl::ui::left_hud = {
         .w = 19, .h = 72,

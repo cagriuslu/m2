@@ -9,14 +9,19 @@ m2::ui::element::TextState::~TextState() {
 }
 
 m2::ui::Action m2::ui::element::TextState::update_content() {
-	auto [action,optional_string] = std::get<TextBlueprint>(blueprint->variant).update_callback();
-	if (action == Action::CONTINUE && optional_string) {
-		if (font_texture) {
-			SDL_DestroyTexture(font_texture);
-		}
-		font_texture = generate_font_texture(optional_string->c_str());
-	}
-	return action;
+    auto& text_blueprint = std::get<TextBlueprint>(blueprint->variant);
+    if (text_blueprint.update_callback) {
+        auto[action, optional_string] = text_blueprint.update_callback();
+        if (action == Action::CONTINUE && optional_string) {
+            if (font_texture) {
+                SDL_DestroyTexture(font_texture);
+            }
+            font_texture = generate_font_texture(optional_string->c_str());
+        }
+        return action;
+    } else {
+        return Action::CONTINUE;
+    }
 }
 
 void m2::ui::element::TextState::draw() {

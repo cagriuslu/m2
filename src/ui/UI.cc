@@ -186,3 +186,35 @@ m2::ui::Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
         ////////////////////////////////////////////////////////////////////////
     }
 }
+
+auto command_input_update_callback = []() -> std::pair<m2::ui::Action,std::optional<std::string>> {
+    fprintf(stderr, "X\n");
+    return {m2::ui::Action::CONTINUE, GAME.console_input.str()};
+};
+static m2::ui::ElementBlueprint::ElementBlueprintVariant command_input_variant = m2::ui::element::TextBlueprint{
+        .initial_text = "",
+        .update_callback = command_input_update_callback
+};
+auto command_output_update_callback = []() -> std::pair<m2::ui::Action,std::optional<std::string>> {
+    fprintf(stderr, "Y\n");
+    return {m2::ui::Action::CONTINUE, GAME.console_output};
+};
+static m2::ui::ElementBlueprint::ElementBlueprintVariant command_output_variant = m2::ui::element::TextBlueprint{
+        .initial_text = "",
+        .update_callback = command_output_update_callback
+};
+const m2::ui::UIBlueprint m2::ui::console_ui = {
+        .w = 10, .h = 20,
+        .border_width_px = 1,
+        .background_color = SDL_Color{25, 25, 25, 255},
+        .elements = {
+                ElementBlueprint{
+                        .x = 0, .y = 0, .w = 10, .h = 10,
+                        .variant = command_input_variant
+                },
+                ElementBlueprint{
+                        .x = 0, .y = 10, .w = 10, .h = 10,
+                        .variant = command_output_variant
+                }
+        }
+};

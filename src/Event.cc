@@ -58,7 +58,10 @@ bool m2::Events::gather() {
 		case SDL_TEXTINPUT:
 			if (SDL_IsTextInputActive()) {
 				text_input = true;
-				memcpy(text, e.text.text, SDL_TEXTINPUTEVENT_TEXT_SIZE);
+                unsigned i = 0;
+                for (auto& t : text) {
+                    t = e.text.text[i++];
+                }
 			}
 			break;
 		default:

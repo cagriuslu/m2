@@ -19,7 +19,7 @@ namespace m2::ui {
         virtual Action update_content();
         virtual void draw();
 
-		virtual SDL_Scancode get_keyboard_shortcut() const;
+		[[nodiscard]] virtual SDL_Scancode get_keyboard_shortcut() const;
         virtual void set_depressed(bool state);
 		virtual Action action();
 

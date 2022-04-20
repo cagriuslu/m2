@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 	}
 	Game_UpdateWindowDimensions(1600, 900); // Store default window dimensions in GAME
-	if ((GAME.sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME.windowRect.w, GAME.windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == NULL) {
+	if ((GAME.sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME.windowRect.w, GAME.windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
 	SDL_SetWindowMinimumSize(GAME.sdlWindow, 712, 400);
@@ -74,32 +74,32 @@ int main(int argc, char **argv) {
 	if ((GAME.pixelFormat = SDL_GetWindowPixelFormat(GAME.sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
-	if ((GAME.sdlRenderer = SDL_CreateRenderer(GAME.sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == NULL) { // SDL_RENDERER_PRESENTVSYNC
+	if ((GAME.sdlRenderer = SDL_CreateRenderer(GAME.sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == nullptr) { // SDL_RENDERER_PRESENTVSYNC
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
 	SDL_Surface* textureMapSurface = IMG_Load(impl::texture_map_file.data());
 	if (not textureMapSurface) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 	}
-	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == NULL) {
+	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == nullptr) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
 	SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127);
 	SDL_FreeSurface(textureMapSurface);
 	SDL_Surface* textureMaskSurface = IMG_Load(impl::texture_mask_file.data());
-	if (textureMaskSurface == NULL) {
+	if (textureMaskSurface == nullptr) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 	}
-	if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == NULL) {
+	if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == nullptr) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
 	SDL_FreeSurface(textureMaskSurface);
 	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
-	if (lightSurface == NULL) {
+	if (lightSurface == nullptr) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 		return -1;
 	}
-	if ((GAME.sdlLightTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, lightSurface)) == NULL) {
+	if ((GAME.sdlLightTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, lightSurface)) == nullptr) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 		return -1;
 	}
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
 	SDL_SetTextureBlendMode(GAME.sdlLightTexture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(GAME.sdlLightTexture, 0);
 	SDL_SetTextureColorMod(GAME.sdlLightTexture, 127, 127, 127);
-	if ((GAME.ttfFont = TTF_OpenFont("resource/fonts/joystix/joystix-monospace.ttf", 16)) == NULL) {
+	if ((GAME.ttfFont = TTF_OpenFont("resource/fonts/joystix/joystix-monospace.ttf", 16)) == nullptr) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 		return -1;
 	}
@@ -132,7 +132,7 @@ int main(int argc, char **argv) {
 //	want.channels = 1;
 //	want.samples = 4096;
 //	want.callback = AudioCallback;
-//	SDL_AudioDeviceID audioDeviceId = SDL_OpenAudioDevice(NULL, 0, &want, &have, SDL_AUDIO_ALLOW_ANY_CHANGE);
+//	SDL_AudioDeviceID audioDeviceId = SDL_OpenAudioDevice(nullptr, 0, &want, &have, SDL_AUDIO_ALLOW_ANY_CHANGE);
 //	if (audioDeviceId == 0) {
 //		fprintf(stderr, "Failed to open audio: %s\n", SDL_GetError());
 //	} else {
@@ -181,7 +181,7 @@ int main(int argc, char **argv) {
 					SDL_StopTextInput();
 					LOG_INFO("SDL text input deactivated");
 				} else if (GAME.events.text_input) {
-					GAME.console_input << GAME.events.text;
+					GAME.console_input << GAME.events.text.data();
 					LOG_INFO("Console buffer");
 				}
 			} else {

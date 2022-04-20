@@ -18,8 +18,8 @@ void m2::ui::element::AbstractButtonState::set_depressed(bool state) {
 
 m2::ui::Action m2::ui::element::AbstractButtonState::action() {
 	return std::visit(overloaded {
-		[](const TextBlueprint& v) { return v.action_callback(); },
-		[](const ImageBlueprint& v) { return v.action_callback(); },
+		[](const TextBlueprint& v) { return v.action_callback ? v.action_callback() : Action::CONTINUE; },
+		[](const ImageBlueprint& v) { return v.action_callback ? v.action_callback() : Action::CONTINUE; },
 		[]([[maybe_unused]] const auto& v) { return Action::CONTINUE; }
 	}, blueprint->variant);
 }

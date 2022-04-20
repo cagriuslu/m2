@@ -43,6 +43,7 @@ namespace m2 {
 		SDL_Rect secondEnvelopeRect;
 		SDL_Rect leftHudRect;
 		SDL_Rect rightHudRect;
+        SDL_Rect console_rect;
 		float pixelsPerMeter;
 		float scale;
 		TTF_Font *ttfFont;
@@ -88,6 +89,7 @@ namespace m2 {
 		m2::Vec2f mousePositionInWorld_m;
 		m2::Vec2f mousePositionWRTScreenCenter_m;
 		std::stringstream console_input{};
+        std::string console_output;
 
 		~Game();
 
