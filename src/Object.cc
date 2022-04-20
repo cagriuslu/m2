@@ -13,8 +13,7 @@ m2::Object::Object(const m2::Vec2f &position) :
 		terrain_graphic_id(0),
 		light_id(0),
 		defense_id(0),
-		offense_id(0),
-		data(nullptr) {}
+		offense_id(0) {}
 
 m2::Object::Object(Object&& other) noexcept :
         position(other.position),
@@ -25,7 +24,6 @@ m2::Object::Object(Object&& other) noexcept :
         light_id(other.light_id),
         defense_id(other.defense_id),
         offense_id(other.offense_id),
-        data(other.data),
         impl(std::move(other.impl)) {
 	other.monitor_id = 0;
 	other.physique_id = 0;
@@ -34,7 +32,6 @@ m2::Object::Object(Object&& other) noexcept :
 	other.light_id = 0;
 	other.defense_id = 0;
 	other.offense_id = 0;
-	other.data = nullptr;
 }
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(position, other.position);
@@ -45,7 +42,6 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(light_id, other.light_id);
 	std::swap(defense_id, other.defense_id);
 	std::swap(offense_id, other.offense_id);
-	std::swap(data, other.data);
 	std::swap(impl, other.impl);
 	return *this;
 }
@@ -69,9 +65,6 @@ m2::Object::~Object() {
 	}
 	if (offense_id) {
 		GAME.offenses.free(offense_id);
-	}
-	if (data) {
-		free(data);
 	}
 }
 

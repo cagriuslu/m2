@@ -13,9 +13,9 @@
 namespace m2::ui {
     struct ElementState;
     struct ElementBlueprint {
-        unsigned x, y, w, h; // unitless
-        unsigned border_width_px;
-        SDL_Color background_color;
+        unsigned x{}, y{}, w{}, h{}; // unitless
+        unsigned border_width_px{};
+        SDL_Color background_color{};
 
         using ElementBlueprintVariant = std::variant<
                 element::NestedUIBlueprint,

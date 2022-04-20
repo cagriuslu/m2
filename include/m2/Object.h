@@ -31,15 +31,14 @@ namespace m2 {
     struct Object {
         m2::Vec2f position;
         // Components
-		MonitorID monitor_id;
-		PhysiqueID physique_id;
-		GraphicID graphic_id;
-		GraphicID terrain_graphic_id;
-		LightID light_id;
-		DefenseID defense_id;
-		OffenseID offense_id;
-        // Extra
-        void *data;
+		MonitorID monitor_id{};
+		PhysiqueID physique_id{};
+		GraphicID graphic_id{};
+		GraphicID terrain_graphic_id{};
+		LightID light_id{};
+		DefenseID defense_id{};
+		OffenseID offense_id{};
+        // Data
         std::unique_ptr<ObjectImpl> impl;
 
         Object() = default;

@@ -6,7 +6,7 @@
 
 namespace m2::component {
 	struct Light : public Component {
-		float radius_m;
+		float radius_m{};
 		std::function<void(Light&)> on_draw;
 
 		Light() = default;

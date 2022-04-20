@@ -6,10 +6,10 @@
 
 namespace m2::component {
 	struct Graphic : public Component {
-		struct SDL_Texture *texture;
-		SDL_Rect textureRect;
+		struct SDL_Texture *texture{};
+		SDL_Rect textureRect{};
 		Vec2f center_px;
-		float angle;
+		float angle{};
 		std::function<void(Graphic&)> on_draw;
 
 		Graphic() = default;

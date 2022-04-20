@@ -8,7 +8,7 @@
 
 namespace m2 {
 	struct Component {
-		ID object_id;
+		ID object_id{0};
 
 		Component() = default;
 		explicit Component(ID object_id);

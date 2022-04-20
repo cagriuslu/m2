@@ -6,7 +6,7 @@
 
 namespace m2::component {
 	struct Physique : public Component {
-		b2Body* body;
+		b2Body* body{};
 		std::function<void(Physique&, Physique&)> on_collision;
 
 		Physique() = default;
