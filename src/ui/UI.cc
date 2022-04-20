@@ -118,21 +118,19 @@ m2::ui::Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
     }
 }
 
-auto command_input_update_callback = []() -> std::pair<m2::ui::Action,std::optional<std::string>> {
-    fprintf(stderr, "X\n");
-    return {m2::ui::Action::CONTINUE, GAME.console_input.str()};
-};
-static m2::ui::ElementBlueprint::ElementBlueprintVariant command_input_variant = m2::ui::element::TextBlueprint{
+static m2::ui::ElementBlueprint::ElementBlueprintVariant command_input_variant = m2::ui::element::TextInputBlueprint{
         .initial_text = "",
-        .update_callback = command_input_update_callback
-};
-auto command_output_update_callback = []() -> std::pair<m2::ui::Action,std::optional<std::string>> {
-    fprintf(stderr, "Y\n");
-    return {m2::ui::Action::CONTINUE, GAME.console_output};
+        .action_callback = [](const std::string& str) -> m2::ui::Action {
+            fprintf(stderr, "X %s\n", str.c_str());
+            return m2::ui::Action::RETURN;
+        }
 };
 static m2::ui::ElementBlueprint::ElementBlueprintVariant command_output_variant = m2::ui::element::TextBlueprint{
         .initial_text = "",
-        .update_callback = command_output_update_callback
+        .update_callback = []() -> std::pair<m2::ui::Action,std::optional<std::string>> {
+            fprintf(stderr, "Y\n");
+            return {m2::ui::Action::CONTINUE, GAME.console_output};
+        }
 };
 const m2::ui::UIBlueprint m2::ui::console_ui = {
         .w = 10, .h = 20,

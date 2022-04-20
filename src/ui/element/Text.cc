@@ -26,6 +26,6 @@ m2::ui::Action m2::ui::element::TextState::update_content() {
 
 void m2::ui::element::TextState::draw() {
     UIState::draw_background_color(rect_px, blueprint->background_color);
-    draw_text(rect_px, *font_texture);
+    draw_text(rect_px, *font_texture, TextAlignment::CENTER);
     UIState::draw_border(rect_px, blueprint->border_width_px);
 }

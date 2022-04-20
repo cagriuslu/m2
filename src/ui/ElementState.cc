@@ -26,14 +26,36 @@ SDL_Texture* ElementState::generate_font_texture(const char* text) {
     return texture;
 }
 
-void ElementState::draw_text(const SDL_Rect& rect, SDL_Texture& texture) {
+void ElementState::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align) {
     int text_w = 0, text_h = 0;
     SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
-    auto text_rect = SDL_Rect{
-        rect.x + rect.w / 2 - text_w / 2,
-        rect.y + rect.h / 2 - text_h / 2,
-        text_w,
-        text_h
-    };
-    SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &text_rect);
+
+    SDL_Rect dstrect;
+    switch (align) {
+        case TextAlignment::LEFT:
+            dstrect = {
+                    rect.x,
+                    rect.y + rect.h / 2 - text_h / 2,
+                    text_w,
+                    text_h
+            };
+            break;
+        case TextAlignment::RIGHT:
+            dstrect = {
+                    rect.x + rect.w - text_w,
+                    rect.y + rect.h / 2 - text_h / 2,
+                    text_w,
+                    text_h
+            };
+            break;
+        default:
+            dstrect = {
+                    rect.x + rect.w / 2 - text_w / 2,
+                    rect.y + rect.h / 2 - text_h / 2,
+                    text_w,
+                    text_h
+            };
+            break;
+    }
+    SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &dstrect);
 }

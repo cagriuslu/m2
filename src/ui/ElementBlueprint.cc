@@ -9,9 +9,10 @@ std::unique_ptr<m2::ui::ElementState> m2::ui::ElementBlueprint::get_state() cons
         state = std::make_unique<NestedUIState>(this);
     } else if (std::holds_alternative<TextBlueprint>(variant)) {
         state = std::make_unique<TextState>(this);
+    } else if (std::holds_alternative<TextInputBlueprint>(variant)) {
+        state = std::make_unique<TextInputState>(this);
     } else if (std::holds_alternative<ImageBlueprint>(variant)) {
         state = std::make_unique<ImageState>(this);
     }
-
     return state;
 }

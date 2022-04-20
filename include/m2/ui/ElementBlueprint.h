@@ -2,8 +2,9 @@
 #define M2_ELEMENTBLUEPRINT_H
 
 #include "element/Image.h"
-#include "element/Text.h"
 #include "element/NestedUI.h"
+#include "element/Text.h"
+#include "element/TextInput.h"
 #include <SDL_ttf.h>
 #include <SDL.h>
 #include <memory>
@@ -18,8 +19,9 @@ namespace m2::ui {
 
         using ElementBlueprintVariant = std::variant<
                 element::NestedUIBlueprint,
+                element::ImageBlueprint,
                 element::TextBlueprint,
-                element::ImageBlueprint>;
+                element::TextInputBlueprint>;
         ElementBlueprintVariant variant;
 
         [[nodiscard]] std::unique_ptr<ElementState> get_state() const;

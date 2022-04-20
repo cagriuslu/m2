@@ -7,25 +7,17 @@
 using namespace m2::ui;
 
 auto no_string = []() { return std::make_pair(Action::CONTINUE, std::optional<std::string>{}); };
-auto new_game_button_action = []() {
-	Game_Level_Load(&impl::level::sp_000);
-	return Action::RETURN;
-};
-auto resume_game_button_action = []() {
-	return Action::RETURN;
-};
 auto quit_button_action = []() {
 	return Action::QUIT;
-};
-auto hp_update = []() {
-	// TODO
-	return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
 };
 
 static ElementBlueprint::ElementBlueprintVariant entry_variant_1 = element::TextBlueprint{
         .initial_text = "NEW GAME",
         .update_callback = no_string,
-        .action_callback = new_game_button_action,
+        .action_callback = []() {
+            Game_Level_Load(&impl::level::sp_000);
+            return Action::RETURN;
+        },
         .kb_shortcut = SDL_SCANCODE_N
 };
 static ElementBlueprint::ElementBlueprintVariant entry_variant_2 = element::TextBlueprint{
@@ -54,7 +46,9 @@ const UIBlueprint impl::ui::entry = {
 static ElementBlueprint::ElementBlueprintVariant pause_variant_1 = element::TextBlueprint{
         .initial_text = "RESUME_GAME",
         .update_callback = no_string,
-        .action_callback = resume_game_button_action,
+        .action_callback = []() {
+            return Action::RETURN;
+        },
         .kb_shortcut = SDL_SCANCODE_R
 };
 static ElementBlueprint::ElementBlueprintVariant pause_variant_2 = element::TextBlueprint{
@@ -86,7 +80,10 @@ static ElementBlueprint::ElementBlueprintVariant left_hud_variant_1 = element::T
 };
 static ElementBlueprint::ElementBlueprintVariant left_hud_variant_2 = element::TextBlueprint{
         .initial_text = "100",
-        .update_callback = hp_update
+        .update_callback = []() {
+            // TODO
+            return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
+        }
 };
 const UIBlueprint impl::ui::left_hud = {
         .w = 19, .h = 72,
