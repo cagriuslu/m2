@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 project(m2)
 
-add_subdirectory(impl)
+add_subdirectory(game)
 add_subdirectory(lib)
 
 set(CMAKE_C_STANDARD 11)
