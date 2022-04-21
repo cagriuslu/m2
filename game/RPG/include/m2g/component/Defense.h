@@ -5,7 +5,7 @@
 #include <functional>
 
 namespace m2g::component {
-	struct Defense : public m2::component::Defense {
+	struct Defense : public m2::comp::Defense {
 		float maxHp;
 		float hp;
 		std::function<void(Defense&)> on_hit;

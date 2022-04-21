@@ -3,7 +3,7 @@
 
 #include <m2/Object.h>
 
-namespace m2::object {
+namespace m2::obj {
     std::pair<Object&, ID> create_pointer();
 }
 

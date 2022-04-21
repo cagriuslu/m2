@@ -4,7 +4,7 @@
 #include "../Component.h"
 #include <functional>
 
-namespace m2::component {
+namespace m2::comp {
 	struct Physique : public Component {
 		b2Body* body{};
 		std::function<void(Physique&, Physique&)> on_collision;

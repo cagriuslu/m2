@@ -52,19 +52,19 @@ namespace m2 {
         // Destructor
         ~Object();
 
-        [[nodiscard]] component::Monitor& monitor() const;
-        [[nodiscard]] component::Physique& physique() const;
-        [[nodiscard]] component::Graphic& graphic() const;
-        [[nodiscard]] component::Graphic& terrain_graphic() const;
-        [[nodiscard]] component::Light& light() const;
+        [[nodiscard]] comp::Monitor& monitor() const;
+        [[nodiscard]] comp::Physique& physique() const;
+        [[nodiscard]] comp::Graphic& graphic() const;
+        [[nodiscard]] comp::Graphic& terrain_graphic() const;
+        [[nodiscard]] comp::Light& light() const;
         [[nodiscard]] m2g::component::Defense& defense() const;
         [[nodiscard]] m2g::component::Offense& offense() const;
 
-        [[nodiscard]] component::Monitor& add_monitor();
-        [[nodiscard]] component::Physique& add_physique();
-        [[nodiscard]] component::Graphic& add_graphic();
-        [[nodiscard]] component::Graphic& add_terrain_graphic();
-        [[nodiscard]] component::Light& add_light();
+        [[nodiscard]] comp::Monitor& add_monitor();
+        [[nodiscard]] comp::Physique& add_physique();
+        [[nodiscard]] comp::Graphic& add_graphic();
+        [[nodiscard]] comp::Graphic& add_terrain_graphic();
+        [[nodiscard]] comp::Light& add_light();
         [[nodiscard]] m2g::component::Defense& add_defense();
         [[nodiscard]] m2g::component::Offense& add_offense();
     };

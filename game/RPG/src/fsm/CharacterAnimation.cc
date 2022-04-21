@@ -5,7 +5,7 @@
 
 #define ALARM_DURATION (0.1f)
 
-fsm::CharacterAnimation::CharacterAnimation(m2::component::Graphic& gfx, const chr::CharacterBlueprint* blueprint) : gfx(gfx), blueprint(blueprint) {}
+fsm::CharacterAnimation::CharacterAnimation(m2::comp::Graphic& gfx, const chr::CharacterBlueprint* blueprint) : gfx(gfx), blueprint(blueprint) {}
 
 void* fsm::CharacterAnimation::idle(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;

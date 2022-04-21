@@ -3,7 +3,7 @@
 
 #include "../Component.h"
 
-namespace m2::component {
+namespace m2::comp {
 	struct Offense : public Component {
 		Offense() = default;
 		explicit Offense(ID object_id);

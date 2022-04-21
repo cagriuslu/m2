@@ -51,7 +51,7 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 
 	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 
-	monitor.pre_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
+	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* data = dynamic_cast<obj::Player*>(obj.impl.get());
 		m2::Vec2f moveDirection;
 		if (GAME.events.key_down[m2::u(m2::Key::UP)]) {
@@ -101,7 +101,7 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 		}
 	};
 
-	monitor.post_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
+	monitor.post_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* data = dynamic_cast<obj::Player*>(obj.impl.get());
 		// We must call time before other signals
 		data->char_animator.time(GAME.deltaTime_s);

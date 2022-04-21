@@ -16,10 +16,10 @@ namespace fsm {
 		};
 
 		// Inputs
-		m2::component::Graphic& gfx;
+		m2::comp::Graphic& gfx;
 		const chr::CharacterBlueprint* blueprint;
 
-		CharacterAnimation(m2::component::Graphic& gfx, const chr::CharacterBlueprint* blueprint);
+		CharacterAnimation(m2::comp::Graphic& gfx, const chr::CharacterBlueprint* blueprint);
 
 		static void* idle(m2::FSM<CharacterAnimation>& automaton, int signal);
 		static void* downStop(m2::FSM<CharacterAnimation>& automaton, int signal);

@@ -46,14 +46,14 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 
     obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 
-	monitor.pre_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
+	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		data->character_state.process_time(GAME.deltaTime_s);
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, data->fsm_variant);
 		std::visit([](auto& v) { v.signal(m2::FSMSIG_PREPHY); }, data->fsm_variant);
 	};
 
-	monitor.post_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
+	monitor.post_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		// We must call time before other signals
 		data->char_animator.time(GAME.deltaTicks_ms / 1000.0f);
@@ -75,18 +75,18 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 		}
 	};
 
-	gfx.on_draw = [&](m2::component::Graphic& gfx) {
+	gfx.on_draw = [&](m2::comp::Graphic& gfx) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		if (0.0f < data->on_hit_color_mod_ttl) {
 			SDL_Texture *defaultTexture = gfx.texture;
 			gfx.texture = GAME.sdlTextureMask;
-			m2::component::Graphic::default_draw(gfx);
+			m2::comp::Graphic::default_draw(gfx);
 			gfx.texture = defaultTexture;
 			data->on_hit_color_mod_ttl -= GAME.deltaTicks_ms / 1000.0f;
 		} else {
-			m2::component::Graphic::default_draw(gfx);
+			m2::comp::Graphic::default_draw(gfx);
 		}
-		m2::component::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
+		m2::comp::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 	};
 
 	def.on_hit = [&]([[maybe_unused]] m2g::component::Defense& def) {

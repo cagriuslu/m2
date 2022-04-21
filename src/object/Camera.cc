@@ -6,7 +6,7 @@
 #define CAMERA_JUMP_RATIO (4.0f / 50.0f)
 #define OFFSET_LIMIT (1.0f)
 
-std::pair<m2::Object&, ID> m2::object::create_camera() {
+std::pair<m2::Object&, ID> m2::obj::create_camera() {
     // Start at player's location
     auto* player = GAME.objects.get(GAME.playerId);
     auto obj_pair = create_object(player ? player->position : Vec2f{});
@@ -15,10 +15,10 @@ std::pair<m2::Object&, ID> m2::object::create_camera() {
 
     auto& mon = camera.add_monitor();
 
-	camera.impl = std::make_unique<m2::object::Camera>();
+	camera.impl = std::make_unique<m2::obj::Camera>();
 
-	mon.post_phy = [&]([[maybe_unused]] m2::component::Monitor& el) {
-		auto* camera_data = dynamic_cast<m2::object::Camera*>(camera.impl.get());
+	mon.post_phy = [&]([[maybe_unused]] m2::comp::Monitor& el) {
+		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
 
 		// Give an offset to the camera's location based on the position of the mouse

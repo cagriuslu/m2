@@ -4,7 +4,7 @@
 #include "../Component.h"
 #include <functional>
 
-namespace m2::component {
+namespace m2::comp {
 	struct Light : public Component {
 		float radius_m{};
 		std::function<void(Light&)> on_draw;

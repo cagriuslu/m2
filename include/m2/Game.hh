@@ -66,11 +66,11 @@ namespace m2 {
 		// created/destroyed very rapidly.
 		m2::Pool<m2::Object> objects;
 		m2::DrawList draw_list;
-		m2::Pool<component::Monitor> monitors;
-		m2::Pool<component::Physique> physics;
-		m2::Pool<component::Graphic> graphics;
-		m2::Pool<component::Graphic> terrainGraphics;
-		m2::Pool<component::Light> lights;
+		m2::Pool<comp::Monitor> monitors;
+		m2::Pool<comp::Physique> physics;
+		m2::Pool<comp::Graphic> graphics;
+		m2::Pool<comp::Graphic> terrainGraphics;
+		m2::Pool<comp::Light> lights;
 		m2::Pool<m2g::component::Defense> defenses;
 		m2::Pool<m2g::component::Offense> offenses;
 		b2World *world;

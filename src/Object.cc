@@ -68,19 +68,19 @@ m2::Object::~Object() {
 	}
 }
 
-m2::component::Monitor& m2::Object::monitor() const {
+m2::comp::Monitor& m2::Object::monitor() const {
 	return GAME.monitors[monitor_id];
 }
-m2::component::Physique& m2::Object::physique() const {
+m2::comp::Physique& m2::Object::physique() const {
 	return GAME.physics[physique_id];
 }
-m2::component::Graphic& m2::Object::graphic() const {
+m2::comp::Graphic& m2::Object::graphic() const {
 	return GAME.graphics[graphic_id];
 }
-m2::component::Graphic& m2::Object::terrain_graphic() const {
+m2::comp::Graphic& m2::Object::terrain_graphic() const {
 	return GAME.terrainGraphics[terrain_graphic_id];
 }
-m2::component::Light& m2::Object::light() const {
+m2::comp::Light& m2::Object::light() const {
 	return GAME.lights[light_id];
 }
 m2g::component::Defense& m2::Object::defense() const {
@@ -90,37 +90,37 @@ m2g::component::Offense& m2::Object::offense() const {
 	return GAME.offenses[offense_id];
 }
 
-m2::component::Monitor& m2::Object::add_monitor() {
+m2::comp::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();
 	monitor_id = monitor_pair.second;
-	monitor_pair.first = component::Monitor{GAME.objects.get_id(this)};
+	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this)};
 	return monitor_pair.first;
 }
-m2::component::Physique& m2::Object::add_physique() {
+m2::comp::Physique& m2::Object::add_physique() {
 	auto physique_pair = GAME.physics.alloc();
 	physique_id = physique_pair.second;
-	physique_pair.first = component::Physique{GAME.objects.get_id(this)};
+	physique_pair.first = comp::Physique{GAME.objects.get_id(this)};
 	return physique_pair.first;
 }
-m2::component::Graphic& m2::Object::add_graphic() {
+m2::comp::Graphic& m2::Object::add_graphic() {
 	auto graphic_pair = GAME.graphics.alloc();
 	graphic_id = graphic_pair.second;
 
 	auto obj_id = GAME.objects.get_id(this);
-	graphic_pair.first = component::Graphic{obj_id};
+	graphic_pair.first = comp::Graphic{obj_id};
 	GAME.draw_list.insert(obj_id);
 	return graphic_pair.first;
 }
-m2::component::Graphic& m2::Object::add_terrain_graphic() {
+m2::comp::Graphic& m2::Object::add_terrain_graphic() {
 	auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
 	terrain_graphic_id = terrain_graphic_pair.second;
-	terrain_graphic_pair.first = component::Graphic{GAME.objects.get_id(this)};
+	terrain_graphic_pair.first = comp::Graphic{GAME.objects.get_id(this)};
 	return terrain_graphic_pair.first;
 }
-m2::component::Light& m2::Object::add_light() {
+m2::comp::Light& m2::Object::add_light() {
 	auto light_pair = GAME.lights.alloc();
 	light_id = light_pair.second;
-	light_pair.first = component::Light{GAME.objects.get_id(this)};
+	light_pair.first = comp::Light{GAME.objects.get_id(this)};
 	return light_pair.first;
 }
 m2g::component::Defense& m2::Object::add_defense() {

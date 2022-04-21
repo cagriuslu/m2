@@ -4,7 +4,7 @@
 #include "../Component.h"
 #include <functional>
 
-namespace m2::component {
+namespace m2::comp {
 	struct Monitor : public Component {
 		std::function<void(Monitor&)> pre_phy;
 		std::function<void(Monitor&)> post_phy;

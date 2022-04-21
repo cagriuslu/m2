@@ -4,7 +4,7 @@
 #include <m2/Object.h>
 #include <m2/SpriteBlueprint.h>
 
-namespace m2::object {
+namespace m2::obj {
     std::pair<Object&, ID> create_tile(const Vec2f& position, m2::SpriteIndex sprite_index);
 }
 

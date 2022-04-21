@@ -4,7 +4,7 @@
 #include "../Component.h"
 #include <functional>
 
-namespace m2::component {
+namespace m2::comp {
 	struct Graphic : public Component {
 		struct SDL_Texture *texture{};
 		SDL_Rect textureRect{};

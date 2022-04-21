@@ -3,7 +3,7 @@
 
 #include "../Component.h"
 
-namespace m2::component {
+namespace m2::comp {
 	struct Defense : public Component {
 		Defense() = default;
 		explicit Defense(ID object_id);

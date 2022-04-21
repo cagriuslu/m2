@@ -2,7 +2,7 @@
 #include <m2/Component.h>
 #include <m2/Game.hh>
 
-m2::component::Light::Light(ID object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}
+m2::comp::Light::Light(ID object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}
 
 m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
 	static ID cameraId = 0;
@@ -18,7 +18,7 @@ m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
 	return obj_origin_wrt_screen_center_px;
 }
 
-void m2::component::Light::default_draw(Light& lig) {
+void m2::comp::Light::default_draw(Light& lig) {
 	auto& obj = GAME.objects[lig.object_id];
 
 	m2::Vec2i obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj.position);

@@ -49,7 +49,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
     off.originator = originator_id;
 	off.variant = chr::ExplosiveState(blueprint);
 
-	monitor.pre_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
+	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case chr::EXPLOSIVE_STATUS_IN_FLIGHT: {
@@ -72,7 +72,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 		}
 	};
 
-	monitor.post_phy = [&](m2::component::Monitor& mon) {
+	monitor.post_phy = [&](m2::comp::Monitor& mon) {
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
@@ -87,7 +87,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 		}
 	};
 
-	phy.on_collision = [&](m2::component::Physique& phy, m2::component::Physique& other) {
+	phy.on_collision = [&](m2::comp::Physique& phy, m2::comp::Physique& other) {
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case chr::EXPLOSIVE_STATUS_IN_FLIGHT:

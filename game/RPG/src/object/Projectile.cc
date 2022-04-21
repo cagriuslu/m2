@@ -34,7 +34,7 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
     off.originator = originatorId;
 	off.variant = chr::ProjectileState(blueprint);
 
-	monitor.pre_phy = [&](m2::component::Monitor& mon) {
+	monitor.pre_phy = [&](m2::comp::Monitor& mon) {
 		auto& projectile_state = std::get<chr::ProjectileState>(off.variant);
 		m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
 		phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * projectile_state.blueprint->speed_mps));
@@ -45,7 +45,7 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 		}
 	};
 
-	phy.on_collision = [&off](m2::component::Physique& phy, m2::component::Physique& other) {
+	phy.on_collision = [&off](m2::comp::Physique& phy, m2::comp::Physique& other) {
 		auto& other_obj = GAME.objects[other.object_id];
 		auto& projectile_state = std::get<chr::ProjectileState>(off.variant);
 		auto* def = GAME.defenses.get(other_obj.defense_id);

@@ -134,7 +134,7 @@ static int Game_Level_Init() {
 		abort();
 	}
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
-	GAME.contactListener = new m2::box2d::ContactListener(m2::component::Physique::contact_cb);
+	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 	GAME.delete_list.clear();
 	GAME.levelLoaded = true;
@@ -167,7 +167,7 @@ M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint) {
 		for (unsigned x = 0; x < blueprint->w; x++) {
             const m2::TileBlueprint* tile = blueprint->tiles + y * blueprint->w + x;
 			if (tile->bg_sprite_index) {
-                m2::object::create_tile(m2::Vec2f{x, y}, tile->bg_sprite_index);
+                m2::obj::create_tile(m2::Vec2f{x, y}, tile->bg_sprite_index);
 			}
 			if (tile->fg_sprite_index) {
                 auto& obj = GAME.objects.alloc().first;
@@ -177,8 +177,8 @@ M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint) {
 	}
 	PathfinderMap_Init(&GAME.pathfinderMap);
 
-    m2::object::create_camera();
-    m2::object::create_pointer();
+    m2::obj::create_camera();
+    m2::obj::create_pointer();
 
     GAME.leftHudUIState = m2::ui::UIState(&m2g::ui::left_hud);
     GAME.leftHudUIState.update_positions(GAME.leftHudRect);
