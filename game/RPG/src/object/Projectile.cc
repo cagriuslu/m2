@@ -6,7 +6,7 @@
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 
-M2Err impl::object::Projectile::init(m2::Object& obj, const character::ProjectileBlueprint* blueprint, ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
+M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
 	obj = m2::Object{pos};
 	dir = dir.normalize();
 
@@ -26,16 +26,16 @@ M2Err impl::object::Projectile::init(m2::Object& obj, const character::Projectil
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(dir * blueprint->speed_mps));
 
 	auto& gfx = obj.add_graphic();
-	gfx.textureRect = impl::sprites[blueprint->sprite_index].texture_rect;
-	gfx.center_px = impl::sprites[blueprint->sprite_index].obj_center_px;
+	gfx.textureRect = m2g::sprites[blueprint->sprite_index].texture_rect;
+	gfx.center_px = m2g::sprites[blueprint->sprite_index].obj_center_px;
 	gfx.angle = dir.angle_rads();
 
 	auto& off = obj.add_offense();
     off.originator = originatorId;
-	off.variant = character::ProjectileState(blueprint);
+	off.variant = chr::ProjectileState(blueprint);
 
 	monitor.pre_phy = [&](m2::component::Monitor& mon) {
-		auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
+		auto& projectile_state = std::get<chr::ProjectileState>(off.variant);
 		m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
 		phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * projectile_state.blueprint->speed_mps));
 
@@ -47,7 +47,7 @@ M2Err impl::object::Projectile::init(m2::Object& obj, const character::Projectil
 
 	phy.on_collision = [&off](m2::component::Physique& phy, m2::component::Physique& other) {
 		auto& other_obj = GAME.objects[other.object_id];
-		auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);
+		auto& projectile_state = std::get<chr::ProjectileState>(off.variant);
 		auto* def = GAME.defenses.get(other_obj.defense_id);
 		if (def) {
 			// Check if already collided

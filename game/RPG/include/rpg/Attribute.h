@@ -1,7 +1,7 @@
 #ifndef IMPL_ATTRIBUTE_H
 #define IMPL_ATTRIBUTE_H
 
-namespace impl::character {
+namespace chr {
 	enum class Attribute {
 		HP,
 		HP_DAMAGE,

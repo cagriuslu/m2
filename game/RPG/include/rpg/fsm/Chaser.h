@@ -8,7 +8,7 @@
 #include "rpg/ai/AiBlueprint.h"
 #include <list>
 
-namespace impl::fsm {
+namespace fsm {
     struct Chaser {
 		// Inputs
         m2::Object& obj;

@@ -4,7 +4,7 @@
 #include "m2/Object.h"
 #include "m2/SpriteBlueprint.h"
 
-namespace impl {
+namespace m2g {
     constexpr unsigned tile_width = 48;
     constexpr unsigned tile_height = 48;
     constexpr float tile_width_f = static_cast<float>(tile_width);

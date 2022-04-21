@@ -1,17 +1,17 @@
 #ifndef IMPL_DROP_H
 #define IMPL_DROP_H
 
-#include "rpg/item/Item.h"
+#include "rpg/Item.h"
 #include "m2/Object.h"
 #include "m2/Def.h"
 
-namespace impl::object {
+namespace obj {
 	struct Drop : public m2::ObjectImpl {
-		const item::ItemBlueprint& item_blueprint;
+		const itm::ItemBlueprint& item_blueprint;
 
-		explicit Drop(const item::ItemBlueprint& item_blueprint);
+		explicit Drop(const itm::ItemBlueprint& item_blueprint);
 
-		static M2Err init(m2::Object& obj, const item::ItemBlueprint& item_blueprint, m2::Vec2f pos);
+		static M2Err init(m2::Object& obj, const itm::ItemBlueprint& item_blueprint, m2::Vec2f pos);
 	};
 }
 

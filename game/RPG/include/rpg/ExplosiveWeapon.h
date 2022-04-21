@@ -3,7 +3,7 @@
 
 #include "m2/SpriteBlueprint.h"
 
-namespace impl::character {
+namespace chr {
 	enum ExplosiveStatus {
 		EXPLOSIVE_STATUS_IN_FLIGHT,
 		EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP,

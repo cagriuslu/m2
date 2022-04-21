@@ -68,7 +68,7 @@ void m2::component::Graphic::default_draw_healthbar(component::Graphic& gfx, flo
 			obj_gfx_dstrect.x + (obj_gfx_dstrect.w - healthBarWidth) / 2,
 			obj_gfx_dstrect.y + obj_gfx_dstrect.h,
 			(int)roundf((float)healthBarWidth * healthRatio),
-			(int)impl::tile_width / 6
+			(int)m2g::tile_width / 6
 	};
 	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 0, 0, 200);
 	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);

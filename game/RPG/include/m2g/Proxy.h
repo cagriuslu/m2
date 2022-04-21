@@ -3,7 +3,7 @@
 
 #include <string_view>
 
-namespace impl {
+namespace m2g {
 	constexpr std::string_view texture_map_file("resource/48.png");
 	constexpr std::string_view texture_mask_file("resource/48-Mask.png");
 }

@@ -4,7 +4,7 @@
 #include "m2/ui/UI.h"
 #include "m2/Def.h"
 
-namespace impl::ui {
+namespace m2g::ui {
     enum EntryReturnValue {
         ENTRY_NEW_GAME = 0,
         ENTRY_QUIT = M2ERR_QUIT

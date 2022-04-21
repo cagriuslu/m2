@@ -7,7 +7,7 @@
 
 #define SWING_SPEED (15.0f)
 
-M2Err impl::object::Melee::init(m2::Object& obj, const character::MeleeBlueprint *blueprint, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
+M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
 	obj = m2::Object{position};
 
 	const float theta = direction.angle_rads(); // Convert direction to angle
@@ -39,16 +39,16 @@ M2Err impl::object::Melee::init(m2::Object& obj, const character::MeleeBlueprint
 	phy.body->SetAngularVelocity(-SWING_SPEED);
 
 	auto& gfx = obj.add_graphic();
-	gfx.textureRect = impl::sprites[blueprint->sprite_index].texture_rect;
-	gfx.center_px = impl::sprites[blueprint->sprite_index].obj_center_px;
+	gfx.textureRect = m2g::sprites[blueprint->sprite_index].texture_rect;
+	gfx.center_px = m2g::sprites[blueprint->sprite_index].obj_center_px;
 	gfx.angle = phy.body->GetAngle();
 
 	auto& off = obj.add_offense();
     off.originator = originatorId;
-	off.variant = character::MeleeState(blueprint);
+	off.variant = chr::MeleeState(blueprint);
 
 	monitor.pre_phy = [&](m2::component::Monitor& mon) {
-		auto& melee_state = std::get<impl::character::MeleeState>(off.variant);
+		auto& melee_state = std::get<chr::MeleeState>(off.variant);
 		melee_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 		if (melee_state.ttl_s <= 0) {
 			Game_DeleteList_Add(mon.object_id);
@@ -68,7 +68,7 @@ M2Err impl::object::Melee::init(m2::Object& obj, const character::MeleeBlueprint
 	phy.on_collision = [&]([[maybe_unused]] m2::component::Physique& phy, m2::component::Physique& other) {
 		LOG_DEBUG("Collision");
 		auto& other_obj = GAME.objects[other.object_id];
-		auto& melee_state = std::get<impl::character::MeleeState>(off.variant);
+		auto& melee_state = std::get<chr::MeleeState>(off.variant);
 		auto& def = GAME.defenses[other_obj.defense_id];
 
 		// Calculate damage

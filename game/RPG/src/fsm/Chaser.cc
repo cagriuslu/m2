@@ -11,14 +11,14 @@
 
 #define ALARM_DURATION(recalcPeriod) ((recalcPeriod) / 2.0f + (recalcPeriod) * m2::randf() * 1.5f)
 
-impl::fsm::Chaser::Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint) :
+fsm::Chaser::Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint) :
 	obj(obj),
 	blueprint(blueprint),
 	home_position(obj.position),
 	target(GAME.objects[GAME.playerId]),
 	phy(GAME.physics[obj.physique_id]) {}
 
-void* impl::fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
+void* fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
 	const auto* blueprint = automaton.data.blueprint;
     switch (sig) {
 		case m2::FSMSIG_ENTER:
@@ -42,22 +42,22 @@ void* impl::fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
     }
 }
 
-void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
+void AiChase_AttackIfCloseEnough(m2::FSM<fsm::Chaser>& automaton) {
 	auto& obj = automaton.data.obj;
 	auto& target = automaton.data.target;
 	const auto* blueprint = automaton.data.blueprint;
-	auto* data = dynamic_cast<impl::object::Enemy*>(automaton.data.obj.impl.get());
+	auto* data = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 
     // If player is close enough
     if (obj.position.distance_sq(target.position) < blueprint->attack_distance_squared_m) {
         // Based on what the capability is
         switch (automaton.data.blueprint->capability) {
-			case impl::ai::CAPABILITY_RANGED: {
+			case ai::CAPABILITY_RANGED: {
 				auto& weapon_state = data->character_state.ranged_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     auto& projectile = GAME.objects.alloc().first;
-					impl::object::Projectile::init(
+					obj::Projectile::init(
                             projectile,
 							&weapon_state->blueprint->projectile,
                             GAME.objects.get_id(&obj),
@@ -69,12 +69,12 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
                 }
                 break;
             }
-			case impl::ai::CAPABILITY_MELEE: {
+			case ai::CAPABILITY_MELEE: {
 				auto& weapon_state = data->character_state.melee_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     auto& melee = GAME.objects.alloc().first;
-					impl::object::Melee::init(
+					obj::Melee::init(
                             melee,
 							&weapon_state->blueprint->melee,
                             GAME.objects.get_id(&obj),
@@ -85,12 +85,12 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
                 }
                 break;
             }
-            case impl::ai::CAPABILITY_EXPLOSIVE: {
+            case ai::CAPABILITY_EXPLOSIVE: {
 				auto& weapon_state = data->character_state.explosive_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     auto& explosive = GAME.objects.alloc().first;
-					impl::object::Explosive::init(
+					obj::Explosive::init(
                             explosive,
 							&weapon_state->blueprint->explosive,
                             GAME.objects.get_id(&obj),
@@ -102,7 +102,7 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
                 }
                 break;
             }
-            case impl::ai::CAPABILITY_KAMIKAZE: {
+            case ai::CAPABILITY_KAMIKAZE: {
                 // TODO
                 break;
             }
@@ -112,8 +112,8 @@ void AiChase_AttackIfCloseEnough(m2::FSM<impl::fsm::Chaser>& automaton) {
     }
 }
 
-void* impl::fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
-	auto* data = dynamic_cast<impl::object::Enemy*>(automaton.data.obj.impl.get());
+void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
+	auto* data = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     auto& player = GAME.objects[GAME.playerId];
     switch (sig) {
@@ -154,8 +154,8 @@ void* impl::fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
     }
 }
 
-void* impl::fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
-	auto* data = dynamic_cast<impl::object::Enemy*>(automaton.data.obj.impl.get());
+void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
+	auto* data = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     switch (sig) {
         case m2::FSMSIG_ENTER:

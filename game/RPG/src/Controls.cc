@@ -1,6 +1,6 @@
 #include <m2g/Controls.h>
 
-m2::Key impl::scancode_to_key(SDL_Scancode scancode) {
+m2::Key m2g::scancode_to_key(SDL_Scancode scancode) {
 	using namespace m2;
 	switch (scancode) {
 		case SDL_SCANCODE_ESCAPE:
@@ -22,7 +22,7 @@ m2::Key impl::scancode_to_key(SDL_Scancode scancode) {
 	}
 }
 
-const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> impl::key_to_scancode = {
+const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_scancode = {
 		SDL_SCANCODE_UNKNOWN,
 		SDL_SCANCODE_ESCAPE,
 		SDL_SCANCODE_W,

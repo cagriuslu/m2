@@ -27,13 +27,13 @@ bool m2::Events::gather() {
 		case SDL_KEYDOWN:
 			if (e.key.repeat == 0) {
 				key_pressed = true;
-				keys_pressed[u(impl::scancode_to_key(e.key.keysym.scancode))] += 1;
+				keys_pressed[u(m2g::scancode_to_key(e.key.keysym.scancode))] += 1;
 			}
 			break;
 		case SDL_KEYUP:
 			if (e.key.repeat == 0) {
 				key_released = true;
-				keys_released[u(impl::scancode_to_key(e.key.keysym.scancode))] += 1;
+				keys_released[u(m2g::scancode_to_key(e.key.keysym.scancode))] += 1;
 			}
 			break;
 		case SDL_MOUSEMOTION:
@@ -72,7 +72,7 @@ bool m2::Events::gather() {
 	int keyCount = 0;
 	const uint8_t* raw_keyboard_state = SDL_GetKeyboardState(&keyCount);
 	for (unsigned i = 1; i < u(m2::Key::end); i++) {
-		auto scancode = impl::key_to_scancode[i];
+		auto scancode = m2g::key_to_scancode[i];
 		if (scancode != SDL_SCANCODE_UNKNOWN) {
 			key_down[i] = raw_keyboard_state[scancode];
 		}

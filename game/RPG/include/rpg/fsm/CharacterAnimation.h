@@ -2,10 +2,10 @@
 #define IMPL_CHARACTERANIMATION_H
 
 #include "m2/FSM.h"
-#include "rpg/character/Character.h"
+#include "rpg/Character.h"
 #include "m2/component/Graphic.h"
 
-namespace impl::fsm {
+namespace fsm {
 	struct CharacterAnimation {
 		enum FSMSignal {
 			CHARANIM_STOP = m2::FSMSIG_N,
@@ -17,9 +17,9 @@ namespace impl::fsm {
 
 		// Inputs
 		m2::component::Graphic& gfx;
-		const character::CharacterBlueprint* blueprint;
+		const chr::CharacterBlueprint* blueprint;
 
-		CharacterAnimation(m2::component::Graphic& gfx, const character::CharacterBlueprint* blueprint);
+		CharacterAnimation(m2::component::Graphic& gfx, const chr::CharacterBlueprint* blueprint);
 
 		static void* idle(m2::FSM<CharacterAnimation>& automaton, int signal);
 		static void* downStop(m2::FSM<CharacterAnimation>& automaton, int signal);

@@ -230,7 +230,7 @@ static std::optional<m2::vson> parse_string_quoted(std::stringstream& ss) {
 				buffer << (char)c;
 				escaping = 0;
 			} else {
-				// unexpected character
+				// unexpected chr
 				return {};
 			}
 		} else {
@@ -243,7 +243,7 @@ static std::optional<m2::vson> parse_string_quoted(std::stringstream& ss) {
 			} else if (isprint(c)) {
 				buffer << (char)c;
 			} else {
-				// unexpected character
+				// unexpected chr
 				return {};
 			}
 		}

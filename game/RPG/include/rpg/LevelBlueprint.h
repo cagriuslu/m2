@@ -3,7 +3,7 @@
 
 #include "m2/LevelBlueprint.h"
 
-namespace impl::level {
+namespace lvl {
     extern const m2::LevelBlueprint sp_000;
 }
 

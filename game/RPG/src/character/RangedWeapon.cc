@@ -1,8 +1,8 @@
-#include <rpg/character/RangedWeapon.h>
+#include "rpg/RangedWeapon.h"
 #include <m2g/SpriteBlueprint.h>
 #include <m2/M2.h>
 
-using namespace impl::character;
+using namespace chr;
 
 ProjectileState::ProjectileState(const ProjectileBlueprint *blueprint) :
 	blueprint(blueprint),
@@ -20,9 +20,9 @@ void RangedWeaponState::process_time(float time_passed_s) {
 	}
 }
 
-const RangedWeaponBlueprint impl::character::ranged_weapon_gun = {
+const RangedWeaponBlueprint chr::ranged_weapon_gun = {
 		.projectile = {
-				.sprite_index = impl::IMPL_SPRITE_BULLET_00,
+				.sprite_index = m2g::IMPL_SPRITE_BULLET_00,
 				.speed_mps = 20.0f,
 				.damage = 35.0f,
 				.ttl_s = 0.6f,
@@ -33,9 +33,9 @@ const RangedWeaponBlueprint impl::character::ranged_weapon_gun = {
 		.cooldown_s = 0.1f,
 		.accuracy = 0.95f
 };
-const RangedWeaponBlueprint impl::character::ranged_weapon_machinegun = {
+const RangedWeaponBlueprint chr::ranged_weapon_machinegun = {
 		.projectile = {
-				.sprite_index = impl::IMPL_SPRITE_BULLET_00,
+				.sprite_index = m2g::IMPL_SPRITE_BULLET_00,
 				.speed_mps = 2.5f,
 				.damage = 35.0f,
 				.ttl_s = 3.0f,
@@ -46,9 +46,9 @@ const RangedWeaponBlueprint impl::character::ranged_weapon_machinegun = {
 		.cooldown_s = 0.083f,
 		.accuracy = 0.9f
 };
-const RangedWeaponBlueprint impl::character::ranged_weapon_shotgun = {
+const RangedWeaponBlueprint chr::ranged_weapon_shotgun = {
 		.projectile = {
-				.sprite_index = impl::IMPL_SPRITE_BULLET_01,
+				.sprite_index = m2g::IMPL_SPRITE_BULLET_01,
 				.speed_mps = 2.0f,
 				.damage = 20.0f,
 				.ttl_s = 3.0f,
@@ -59,9 +59,9 @@ const RangedWeaponBlueprint impl::character::ranged_weapon_shotgun = {
 		.cooldown_s = 1.0f,
 		.accuracy = 0.9f
 };
-const RangedWeaponBlueprint impl::character::ranged_weapon_bow = {
+const RangedWeaponBlueprint chr::ranged_weapon_bow = {
 		.projectile = {
-				.sprite_index = impl::IMPL_SPRITE_BULLET_01,
+				.sprite_index = m2g::IMPL_SPRITE_BULLET_01,
 				.speed_mps = 1.5f,
 				.damage = 70.0f,
 				.ttl_s = 5.0f,

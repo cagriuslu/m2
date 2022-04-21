@@ -1,7 +1,7 @@
 #ifndef IMPL_PRIVATE_AI_TYPE_CHASE_H
 #define IMPL_PRIVATE_AI_TYPE_CHASE_H
 
-namespace impl::ai::type {
+namespace ai::type {
     struct ChaseBlueprint {};
 }
 

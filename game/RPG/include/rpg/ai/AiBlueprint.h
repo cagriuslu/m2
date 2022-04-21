@@ -8,7 +8,7 @@
 #include "m2/Vec2f.h"
 #include <variant>
 
-namespace impl::ai {
+namespace ai {
     enum Capability {
         CAPABILITY_NONE = 0,
         CAPABILITY_RANGED = 1,

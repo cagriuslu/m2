@@ -1,11 +1,11 @@
 #ifndef IMPL_ITEM_H
 #define IMPL_ITEM_H
 
-#include "rpg/character/Attribute.h"
+#include "rpg/Attribute.h"
 #include "m2/SpriteBlueprint.h"
 #include <list>
 
-namespace impl::item {
+namespace itm {
 	struct ItemBlueprint;
 	struct ItemState {
 		const ItemBlueprint& blueprint;
@@ -15,7 +15,7 @@ namespace impl::item {
 
 	struct ItemBlueprint {
 		m2::SpriteIndex drop_sprite_index;
-		std::list<std::pair<character::Attribute, float>> buffs;
+		std::list<std::pair<chr::Attribute, float>> buffs;
 		float ttl_s; // 0:instantaneous, +inf:endless
 	};
 

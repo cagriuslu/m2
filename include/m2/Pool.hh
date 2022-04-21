@@ -68,19 +68,19 @@ namespace m2 {
             _shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
             size_t i = 0;
             for (auto& item : _items) {
-                // Each item points to next item as free
+                // Each itm points to next itm as free
                 item.id = (i++ + 1) & 0xFFFF;
             }
         }
 
         std::pair<T&, ID> alloc() {
             if (_size < Capacity) {
-                // Find the item that will be allocated
+                // Find the itm that will be allocated
                 const size_t index_to_alloc = _next_free_index;
                 Item& item = _items[index_to_alloc];
                 // Store next free index
                 _next_free_index = item.id & 0xFFFF;
-                // Set id of the new item
+                // Set id of the new itm
                 item.id = (static_cast<uint16_t>(_next_key) << 16) | (static_cast<uint16_t>(index_to_alloc) & 0xFFFF);
                 // Adjust pool
                 ++_size;
@@ -113,9 +113,9 @@ namespace m2 {
             if (data) {
                 auto* byte_ptr = reinterpret_cast<char*>(data);
                 auto* item_ptr = reinterpret_cast<Item*>(byte_ptr - offset);
-                // Get index of item
+                // Get index of itm
                 auto index = static_cast<uint16_t>(item_ptr->id & 0xFFFFu);
-                // Clear item (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
+                // Clear itm (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
 				item_ptr->data.~T();
 				new (&item_ptr->data) T();
                 item_ptr->id = _next_free_index & 0x0000FFFFu;
@@ -188,7 +188,7 @@ namespace m2 {
             const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_items[_highest_allocated_index].data);
             if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
                 const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offsetof(Item, data));
-                // Check if item is allocated
+                // Check if itm is allocated
                 if (item_ptr->id & 0xFFFF0000u) {
                     return _shifted_pool_id | static_cast<uint64_t>(item_ptr->id);
                 }

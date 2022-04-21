@@ -3,7 +3,7 @@
 
 #include "m2/SpriteBlueprint.h"
 
-namespace impl::character {
+namespace chr {
 	struct ProjectileBlueprint;
 	struct ProjectileState {
 		const ProjectileBlueprint* blueprint;

@@ -1,5 +1,5 @@
 #include <rpg/object/Explosive.h>
-#include <rpg/character/ExplosiveWeapon.h>
+#include "rpg/ExplosiveWeapon.h"
 #include <b2_world.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
@@ -8,7 +8,7 @@
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 
-static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position,  const impl::character::ExplosiveBlueprint* blueprint) {
+static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position,  const chr::ExplosiveBlueprint* blueprint) {
 	return m2::box2d::create_bullet(
             *GAME.world,
             phyId,
@@ -21,7 +21,7 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f pos
 	);
 }
 
-M2Err impl::object::Explosive::init(m2::Object& obj, const character::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction) {
+M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction) {
 	obj = m2::Object{position};
 	direction = direction.normalize();
 
@@ -41,18 +41,18 @@ M2Err impl::object::Explosive::init(m2::Object& obj, const character::ExplosiveB
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * blueprint->projectile_speed_mps));
 
 	auto& gfx = obj.add_graphic();
-	gfx.textureRect = impl::sprites[blueprint->sprite_index].texture_rect;
-	gfx.center_px = impl::sprites[blueprint->sprite_index].obj_center_px;
+	gfx.textureRect = m2g::sprites[blueprint->sprite_index].texture_rect;
+	gfx.center_px = m2g::sprites[blueprint->sprite_index].obj_center_px;
 	gfx.angle = direction.angle_rads();
 
 	auto& off = obj.add_offense();
     off.originator = originator_id;
-	off.variant = character::ExplosiveState(blueprint);
+	off.variant = chr::ExplosiveState(blueprint);
 
 	monitor.pre_phy = [&]([[maybe_unused]] m2::component::Monitor& mon) {
-		auto& explosive_state = std::get<impl::character::ExplosiveState>(off.variant);
+		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
-			case impl::character::EXPLOSIVE_STATUS_IN_FLIGHT: {
+			case chr::EXPLOSIVE_STATUS_IN_FLIGHT: {
 				m2::Vec2f curr_linear_velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 				m2::Vec2f new_linear_velocity = curr_linear_velocity.normalize() *  explosive_state.blueprint->projectile_speed_mps;
 				phy.body->SetLinearVelocity(static_cast<b2Vec2>(new_linear_velocity));
@@ -60,12 +60,12 @@ M2Err impl::object::Explosive::init(m2::Object& obj, const character::ExplosiveB
 				if (explosive_state.projectile_ttl_s <= 0) {
 					GAME.world->DestroyBody(phy.body);
 					phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, explosive_state.blueprint);
-					explosive_state.status = impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
+					explosive_state.status = chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
 				}
 				break;
 			}
-			case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
-				explosive_state.status = impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
+			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
+				explosive_state.status = chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
 				break;
 			default:
 				break;
@@ -73,12 +73,12 @@ M2Err impl::object::Explosive::init(m2::Object& obj, const character::ExplosiveB
 	};
 
 	monitor.post_phy = [&](m2::component::Monitor& mon) {
-		auto& explosive_state = std::get<impl::character::ExplosiveState>(off.variant);
+		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
-			case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
+			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
 				Game_DeleteList_Add(mon.object_id);
 				break;
-			case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
+			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
 				GAME.world->DestroyBody(phy.body);
 				phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, explosive_state.blueprint);
 				break;
@@ -88,14 +88,14 @@ M2Err impl::object::Explosive::init(m2::Object& obj, const character::ExplosiveB
 	};
 
 	phy.on_collision = [&](m2::component::Physique& phy, m2::component::Physique& other) {
-		auto& explosive_state = std::get<impl::character::ExplosiveState>(off.variant);
+		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
-			case impl::character::EXPLOSIVE_STATUS_IN_FLIGHT:
+			case chr::EXPLOSIVE_STATUS_IN_FLIGHT:
 				// The object can collide with multiple targets during flight, thus this branch can be executed for multiple
 				// other objects. This is not a problem since we only set the next state
-				explosive_state.status = impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP;
+				explosive_state.status = chr::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP;
 				break;
-			case impl::character::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
+			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
 				auto& other_obj = GAME.objects[other.object_id];
 				if (other_obj.defense_id) {
 					auto& def = GAME.defenses[other_obj.defense_id];

@@ -5,7 +5,7 @@
 #include "m2/Object.h"
 #include "m2/FSM.h"
 
-namespace impl::fsm {
+namespace fsm {
 	class HitNRunner {
 	public:
 		HitNRunner(m2::Object& obj, const ai::AiBlueprint* blueprint);

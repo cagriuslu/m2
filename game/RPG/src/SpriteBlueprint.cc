@@ -2,7 +2,7 @@
 #include <rpg/object/Enemy.h>
 #include <rpg/object/Player.h>
 
-const m2::SpriteBlueprint impl::sprites[] {
+const m2::SpriteBlueprint m2g::sprites[] {
         {
                 .index = IMPL_SPRITE_NONE
         },
@@ -275,15 +275,15 @@ const m2::SpriteBlueprint impl::sprites[] {
 		}
 };
 
-const unsigned impl::sprite_count = IMPL_SPRITE_N;
+const unsigned m2g::sprite_count = IMPL_SPRITE_N;
 
-M2Err impl::fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, m2::Vec2f position) {
-    using namespace object;
+M2Err m2g::fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, m2::Vec2f position) {
+    using namespace obj;
     switch (index) {
         case IMPL_SPRITE_PLAYER_LOOKDOWN_00:
-            return Player::init(obj, &impl::character::character_player, position);
+            return Player::init(obj, &chr::character_player, position);
         case IMPL_SPRITE_ENEMY_LOOKDOWN_00:
-            return Enemy::init(obj, &impl::character::character_skeleton_000_chase, position);
+            return Enemy::init(obj, &chr::character_skeleton_000_chase, position);
         default:
             return LOG_ERROR_M2V(M2ERR_INVALID_CFG_OBJTYP, Int32, index);
     }

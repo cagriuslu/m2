@@ -5,15 +5,15 @@
 
 #define ALARM_DURATION (0.1f)
 
-impl::fsm::CharacterAnimation::CharacterAnimation(m2::component::Graphic& gfx, const character::CharacterBlueprint* blueprint) : gfx(gfx), blueprint(blueprint) {}
+fsm::CharacterAnimation::CharacterAnimation(m2::component::Graphic& gfx, const chr::CharacterBlueprint* blueprint) : gfx(gfx), blueprint(blueprint) {}
 
-void* impl::fsm::CharacterAnimation::idle(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::idle(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
-			gfx.textureRect = impl::sprites[blueprint->main_sprite_index].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->main_sprite_index].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->main_sprite_index].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->main_sprite_index].obj_center_px;
 			return nullptr;
 		case CHARANIM_WALKDOWN:
 			return reinterpret_cast<void*>(down01);
@@ -28,13 +28,13 @@ void* impl::fsm::CharacterAnimation::idle(m2::FSM<CharacterAnimation>& automaton
 	}
 }
 
-void* impl::fsm::CharacterAnimation::downStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::downStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].obj_center_px;
 			return nullptr;
 		case CHARANIM_WALKDOWN:
 			return reinterpret_cast<void*>(down01);
@@ -49,14 +49,14 @@ void* impl::fsm::CharacterAnimation::downStop(m2::FSM<CharacterAnimation>& autom
 	}
 }
 
-void* impl::fsm::CharacterAnimation::down00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down00(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -78,14 +78,14 @@ void* impl::fsm::CharacterAnimation::down00(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::down01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down01(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_01]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_01]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_01]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_01]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -107,14 +107,14 @@ void* impl::fsm::CharacterAnimation::down01(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::down02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down02(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -136,14 +136,14 @@ void* impl::fsm::CharacterAnimation::down02(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::down03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down03(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_02]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKDOWN_02]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_02]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKDOWN_02]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -165,13 +165,13 @@ void* impl::fsm::CharacterAnimation::down03(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::leftStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::leftStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].obj_center_px;
 			return nullptr;
 		case CHARANIM_WALKDOWN:
 			return reinterpret_cast<void*>(down01);
@@ -186,14 +186,14 @@ void* impl::fsm::CharacterAnimation::leftStop(m2::FSM<CharacterAnimation>& autom
 	}
 }
 
-void* impl::fsm::CharacterAnimation::left00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left00(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -214,14 +214,14 @@ void* impl::fsm::CharacterAnimation::left00(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::left01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left01(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_01]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_01]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_01]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_01]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -242,14 +242,14 @@ void* impl::fsm::CharacterAnimation::left01(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::left02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left02(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -270,14 +270,14 @@ void* impl::fsm::CharacterAnimation::left02(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::left03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left03(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_02]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKLEFT_02]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_02]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKLEFT_02]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -298,13 +298,13 @@ void* impl::fsm::CharacterAnimation::left03(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::rightStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::rightStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].obj_center_px;
 			return nullptr;
 		case CHARANIM_WALKDOWN:
 			return reinterpret_cast<void*>(down01);
@@ -319,14 +319,14 @@ void* impl::fsm::CharacterAnimation::rightStop(m2::FSM<CharacterAnimation>& auto
 	}
 }
 
-void* impl::fsm::CharacterAnimation::right00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right00(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -348,14 +348,14 @@ void* impl::fsm::CharacterAnimation::right00(m2::FSM<CharacterAnimation>& automa
 	}
 }
 
-void* impl::fsm::CharacterAnimation::right01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right01(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_01]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_01]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_01]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_01]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -377,14 +377,14 @@ void* impl::fsm::CharacterAnimation::right01(m2::FSM<CharacterAnimation>& automa
 	}
 }
 
-void* impl::fsm::CharacterAnimation::right02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right02(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -406,14 +406,14 @@ void* impl::fsm::CharacterAnimation::right02(m2::FSM<CharacterAnimation>& automa
 	}
 }
 
-void* impl::fsm::CharacterAnimation::right03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right03(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_02]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_02]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_02]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKRIGHT_02]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -435,13 +435,13 @@ void* impl::fsm::CharacterAnimation::right03(m2::FSM<CharacterAnimation>& automa
 	}
 }
 
-void* impl::fsm::CharacterAnimation::upStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::upStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].obj_center_px;
 			return nullptr;
 		case CHARANIM_WALKDOWN:
 			return reinterpret_cast<void*>(down01);
@@ -456,14 +456,14 @@ void* impl::fsm::CharacterAnimation::upStop(m2::FSM<CharacterAnimation>& automat
 	}
 }
 
-void* impl::fsm::CharacterAnimation::up00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up00(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -485,14 +485,14 @@ void* impl::fsm::CharacterAnimation::up00(m2::FSM<CharacterAnimation>& automaton
 	}
 }
 
-void* impl::fsm::CharacterAnimation::up01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up01(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_01]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_01]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_01]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_01]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -514,14 +514,14 @@ void* impl::fsm::CharacterAnimation::up01(m2::FSM<CharacterAnimation>& automaton
 	}
 }
 
-void* impl::fsm::CharacterAnimation::up02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up02(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_00]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();
@@ -543,14 +543,14 @@ void* impl::fsm::CharacterAnimation::up02(m2::FSM<CharacterAnimation>& automaton
 	}
 }
 
-void* impl::fsm::CharacterAnimation::up03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up03(m2::FSM<CharacterAnimation>& automaton, int signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
 		case m2::FSMSIG_ENTER:
 			automaton.arm(ALARM_DURATION);
-			gfx.textureRect = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_02]].texture_rect;
-			gfx.center_px = impl::sprites[blueprint->sprite_indexes[character::CHARACTER_TEXTURE_TYPE_LOOKUP_02]].obj_center_px;
+			gfx.textureRect = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_02]].texture_rect;
+			gfx.center_px = m2g::sprites[blueprint->sprite_indexes[chr::CHARACTER_TEXTURE_TYPE_LOOKUP_02]].obj_center_px;
 			return nullptr;
 		case m2::FSMSIG_EXIT:
 			automaton.disarm();

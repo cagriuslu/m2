@@ -8,7 +8,7 @@
 #include "m2/SpriteBlueprint.h"
 #include <optional>
 
-namespace impl::character {
+namespace chr {
 	enum CharacterTextureType {
 		CHARACTER_TEXTURE_TYPE_LOOKDOWN_00,
 		CHARACTER_TEXTURE_TYPE_LOOKDOWN_01,

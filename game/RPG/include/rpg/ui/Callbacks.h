@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace impl::ui {
+namespace ui {
     std::string hp_callback();
 }
 

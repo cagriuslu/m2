@@ -11,7 +11,7 @@ m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
 		cameraId = GAME.cameraId;
 		cameraObj = GAME.objects.get(GAME.cameraId);
 	}
-	m2::Vec2f cameraPosition = cameraObj ? cameraObj->position : m2::Vec2f{}; // cameraObj is NULL while level is loading
+	m2::Vec2f cameraPosition = cameraObj ? cameraObj->position : m2::Vec2f{}; // cameraObj is NULL while lvl is loading
 	m2::Vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
 	// Screen center is the middle of the window
 	m2::Vec2i obj_origin_wrt_screen_center_px = m2::Vec2i(obj_origin_wrt_camera_obj_m * GAME.pixelsPerMeter);

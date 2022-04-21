@@ -3,7 +3,7 @@
 
 #include "m2/SpriteBlueprint.h"
 
-namespace impl::character {
+namespace chr {
 	enum MeleeMotion {
 		MELEE_MOTION_SWING,
 		MELEE_MOTION_STAB

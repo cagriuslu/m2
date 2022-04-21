@@ -23,7 +23,7 @@ m2::Game GAME = {
 };
 
 m2::Game::~Game() {
-    // Get rid of level
+    // Get rid of lvl
     objects.clear();
     delete contactListener;
     contactListener = nullptr;
@@ -33,8 +33,8 @@ m2::Game::~Game() {
 }
 
 void m2::Game::dynamic_assert() {
-    for (m2::SpriteIndex i = 0; i < impl::sprite_count; i++) {
-        if (impl::sprites[i].index != i) {
+    for (m2::SpriteIndex i = 0; i < m2g::sprite_count; i++) {
+        if (m2g::sprites[i].index != i) {
             throw M2FATAL(M2ERR_DYNAMIC_ASSERT);
         }
     }
@@ -107,7 +107,7 @@ void Game_UpdateWindowDimensions(int width, int height) {
     GAME.console_rect.w = GAME.gameRect.w;
     GAME.console_rect.h = GAME.gameRect.h * 2 / 24;
 	GAME.pixelsPerMeter = (float)GAME.gameAndHudRect.h / 16.0f;
-	GAME.scale = GAME.pixelsPerMeter / impl::tile_width;
+	GAME.scale = GAME.pixelsPerMeter / m2g::tile_width;
 }
 
 void Game_UpdateMousePosition() {
@@ -171,7 +171,7 @@ M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint) {
 			}
 			if (tile->fg_sprite_index) {
                 auto& obj = GAME.objects.alloc().first;
-				M2ERR_REFLECT(impl::fg_sprite_loader(obj, tile->fg_sprite_index, m2::Vec2f{x, y}));
+				M2ERR_REFLECT(m2g::fg_sprite_loader(obj, tile->fg_sprite_index, m2::Vec2f{x, y}));
 			}
 		}
 	}
@@ -180,11 +180,11 @@ M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint) {
     m2::object::create_camera();
     m2::object::create_pointer();
 
-    GAME.leftHudUIState = m2::ui::UIState(&impl::ui::left_hud);
+    GAME.leftHudUIState = m2::ui::UIState(&m2g::ui::left_hud);
     GAME.leftHudUIState.update_positions(GAME.leftHudRect);
     GAME.leftHudUIState.update_contents();
 
-    GAME.rightHudUIState = m2::ui::UIState(&impl::ui::right_hud);
+    GAME.rightHudUIState = m2::ui::UIState(&m2g::ui::right_hud);
     GAME.rightHudUIState.update_positions(GAME.rightHudRect);
     GAME.rightHudUIState.update_contents();
 

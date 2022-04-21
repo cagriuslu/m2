@@ -1,7 +1,7 @@
 #include <rpg/ui/Callbacks.h>
 #include <m2/Game.hh>
 
-std::string impl::ui::hp_callback() {
+std::string ui::hp_callback() {
     // Lookup player's health
     auto* player = GAME.objects.get(GAME.playerId);
     if (player) {

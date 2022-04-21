@@ -4,7 +4,7 @@
 #include "m2/component/Defense.h"
 #include <functional>
 
-namespace impl::component {
+namespace m2g::component {
 	struct Defense : public m2::component::Defense {
 		float maxHp;
 		float hp;

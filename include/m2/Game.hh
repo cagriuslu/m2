@@ -71,8 +71,8 @@ namespace m2 {
 		m2::Pool<component::Graphic> graphics;
 		m2::Pool<component::Graphic> terrainGraphics;
 		m2::Pool<component::Light> lights;
-		m2::Pool<impl::component::Defense> defenses;
-		m2::Pool<impl::component::Offense> offenses;
+		m2::Pool<m2g::component::Defense> defenses;
+		m2::Pool<m2g::component::Offense> offenses;
 		b2World *world;
         m2::box2d::ContactListener* contactListener;
 		ID cameraId, playerId, pointerId;

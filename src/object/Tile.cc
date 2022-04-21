@@ -9,7 +9,7 @@ std::pair<m2::Object&, ID> m2::object::create_tile(const Vec2f& position, m2::Sp
     auto obj_pair = create_object(position);
 	auto& tile = obj_pair.first;
 
-    const auto& sprite = impl::sprites[sprite_index];
+    const auto& sprite = m2g::sprites[sprite_index];
     if (std::holds_alternative<m2::ColliderBlueprint::Rectangle>(sprite.collider.variant)) {
         auto& phy = tile.add_physique();
         phy.body = m2::box2d::create_static_box(*GAME.world, tile.physique_id, position, false, m2::box2d::CATEGORY_STATIC_CLIFF, std::get<m2::ColliderBlueprint::Rectangle>(sprite.collider.variant).dims_m);

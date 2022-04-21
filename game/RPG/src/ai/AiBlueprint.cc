@@ -1,6 +1,6 @@
 #include <rpg/ai/AiBlueprint.h>
 
-const impl::ai::AiBlueprint impl::ai::chase_000 = {
+const ai::AiBlueprint ai::chase_000 = {
 		.capability = CAPABILITY_MELEE,
 		.trigger_distance_squared_m = 25.0f,
 		.attack_distance_squared_m = 0.5625f,

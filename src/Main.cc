@@ -24,7 +24,7 @@ int main(int argc, char **argv) {
 
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {
-		const char* loglevel = "--log-level=";
+		const char* loglevel = "--log-lvl=";
 		const size_t loglevelStrlen = strlen(loglevel);
 		if (strncmp(argv[i], loglevel, loglevelStrlen) == 0) {
 			if (strcmp(argv[i] + loglevelStrlen, "trace") == 0) {
@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
 				gCurrentLogLevel = LogLevelFatal;
 				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelFatal);
 			} else {
-				LOG_WARNING("Invalid log level");
+				LOG_WARNING("Invalid log lvl");
 			}
 		} else {
 			LOG_WARNING("Invalid command line argument");
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 	if ((GAME.sdlRenderer = SDL_CreateRenderer(GAME.sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == nullptr) { // SDL_RENDERER_PRESENTVSYNC
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
-	SDL_Surface* textureMapSurface = IMG_Load(impl::texture_map_file.data());
+	SDL_Surface* textureMapSurface = IMG_Load(m2g::texture_map_file.data());
 	if (not textureMapSurface) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 	}
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 	}
 	SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127);
 	SDL_FreeSurface(textureMapSurface);
-	SDL_Surface* textureMaskSurface = IMG_Load(impl::texture_mask_file.data());
+	SDL_Surface* textureMaskSurface = IMG_Load(m2g::texture_mask_file.data());
 	if (textureMaskSurface == nullptr) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
 	}
@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
 //		SDL_PauseAudioDevice(audioDeviceId, 1);
 //	}
 
-	if (m2::ui::execute_blocking(&impl::ui::entry) == m2::ui::Action::QUIT) {
+	if (m2::ui::execute_blocking(&m2g::ui::entry) == m2::ui::Action::QUIT) {
 		return 0;
 	}
 
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
             // Handle key events
             if (GAME.events.keys_pressed[u(Key::MENU)]) {
                 uint32_t pause_start_ticks = SDL_GetTicks();
-                if (m2::ui::execute_blocking(&impl::ui::pause) == m2::ui::Action::QUIT) {
+                if (m2::ui::execute_blocking(&m2g::ui::pause) == m2::ui::Action::QUIT) {
                     return 0;
                 }
                 uint32_t pause_end_ticks = SDL_GetTicks();

@@ -10,7 +10,7 @@ static void LogHeader(LogLevel level, const char* file, int line) {
 	// Get time
 	time_t now = time(NULL);
 
-	// Convert log level into char
+	// Convert log lvl into char
 	char levelChar = ' ';
 	switch (level) {
 		case LogLevelTrace:
