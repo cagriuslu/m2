@@ -57,16 +57,16 @@ namespace m2 {
         [[nodiscard]] comp::Graphic& graphic() const;
         [[nodiscard]] comp::Graphic& terrain_graphic() const;
         [[nodiscard]] comp::Light& light() const;
-        [[nodiscard]] m2g::component::Defense& defense() const;
-        [[nodiscard]] m2g::component::Offense& offense() const;
+        [[nodiscard]] m2g::comp::Defense& defense() const;
+        [[nodiscard]] m2g::comp::Offense& offense() const;
 
         [[nodiscard]] comp::Monitor& add_monitor();
         [[nodiscard]] comp::Physique& add_physique();
         [[nodiscard]] comp::Graphic& add_graphic();
         [[nodiscard]] comp::Graphic& add_terrain_graphic();
         [[nodiscard]] comp::Light& add_light();
-        [[nodiscard]] m2g::component::Defense& add_defense();
-        [[nodiscard]] m2g::component::Offense& add_offense();
+        [[nodiscard]] m2g::comp::Defense& add_defense();
+        [[nodiscard]] m2g::comp::Offense& add_offense();
     };
 
     std::pair<Object&, ObjectID> create_object(const m2::Vec2f& position);

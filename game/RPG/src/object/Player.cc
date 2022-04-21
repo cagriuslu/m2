@@ -111,7 +111,7 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 		}
 	};
 
-	def.on_death = []([[maybe_unused]] m2g::component::Defense& def) {
+	def.on_death = []([[maybe_unused]] m2g::comp::Defense& def) {
 		LOG_INFO("Player died");
 	};
 

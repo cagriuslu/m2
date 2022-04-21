@@ -89,12 +89,12 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 		m2::comp::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 	};
 
-	def.on_hit = [&]([[maybe_unused]] m2g::component::Defense& def) {
+	def.on_hit = [&]([[maybe_unused]] m2g::comp::Defense& def) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		data->on_hit_color_mod_ttl = 0.10f;
 	};
 
-	def.on_death = [&](m2g::component::Defense& def) {
+	def.on_death = [&](m2g::comp::Defense& def) {
 		Game_DeleteList_Add(def.object_id);
 	};
 

@@ -7,7 +7,7 @@
 #include "m2/component/Offense.h"
 #include <variant>
 
-namespace m2g::component {
+namespace m2g::comp {
 	struct Offense : public m2::comp::Offense {
 		ID originator;
 		std::variant<

@@ -83,10 +83,10 @@ m2::comp::Graphic& m2::Object::terrain_graphic() const {
 m2::comp::Light& m2::Object::light() const {
 	return GAME.lights[light_id];
 }
-m2g::component::Defense& m2::Object::defense() const {
+m2g::comp::Defense& m2::Object::defense() const {
 	return GAME.defenses[defense_id];
 }
-m2g::component::Offense& m2::Object::offense() const {
+m2g::comp::Offense& m2::Object::offense() const {
 	return GAME.offenses[offense_id];
 }
 
@@ -123,16 +123,16 @@ m2::comp::Light& m2::Object::add_light() {
 	light_pair.first = comp::Light{GAME.objects.get_id(this)};
 	return light_pair.first;
 }
-m2g::component::Defense& m2::Object::add_defense() {
+m2g::comp::Defense& m2::Object::add_defense() {
 	auto defense_pair = GAME.defenses.alloc();
 	defense_id = defense_pair.second;
-	defense_pair.first = m2g::component::Defense{GAME.objects.get_id(this)};
+	defense_pair.first = m2g::comp::Defense{GAME.objects.get_id(this)};
 	return defense_pair.first;
 }
-m2g::component::Offense& m2::Object::add_offense() {
+m2g::comp::Offense& m2::Object::add_offense() {
 	auto offense_pair = GAME.offenses.alloc();
 	offense_id = offense_pair.second;
-	offense_pair.first = m2g::component::Offense{GAME.objects.get_id(this)};
+	offense_pair.first = m2g::comp::Offense{GAME.objects.get_id(this)};
 	return offense_pair.first;
 }
 
