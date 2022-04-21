@@ -32,7 +32,7 @@ M2Err impl::object::Projectile::init(m2::Object& obj, const character::Projectil
 
 	auto& off = obj.add_offense();
     off.originator = originatorId;
-	off.variant = blueprint->get_state();
+	off.variant = character::ProjectileState(blueprint);
 
 	monitor.pre_phy = [&](m2::component::Monitor& mon) {
 		auto& projectile_state = std::get<impl::character::ProjectileState>(off.variant);

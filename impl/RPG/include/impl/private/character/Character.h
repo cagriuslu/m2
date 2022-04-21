@@ -45,7 +45,6 @@ namespace impl::character {
 		const RangedWeaponBlueprint* default_ranged_weapon;
 		m2::SpriteIndex sprite_indexes[CHARACTER_TEXTURE_TYPE_N];
 		const ai::AiBlueprint* aiBlueprint;
-		[[nodiscard]] CharacterState get_state() const;
 	};
 
 	extern const CharacterBlueprint character_player;

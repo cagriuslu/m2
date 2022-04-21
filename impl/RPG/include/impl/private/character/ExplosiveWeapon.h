@@ -25,7 +25,6 @@ namespace impl::character {
 		float damage_max;
 		float damage_min;
 		float damage_radius_m;
-		[[nodiscard]] ExplosiveState get_state() const;
 	};
 
 	struct ExplosiveWeaponBlueprint;
@@ -40,7 +39,6 @@ namespace impl::character {
 		ExplosiveBlueprint explosive;
 		float cooldown_s;
 		unsigned initial_explosive_count;
-		[[nodiscard]] ExplosiveWeaponState get_state() const;
 	};
 
 	extern const ExplosiveWeaponBlueprint explosive_weapon_grenade;

@@ -18,7 +18,6 @@ namespace impl::character {
 		float ttl_s;
 		float damage_accuracy;
 		float ttl_accuracy;
-		[[nodiscard]] ProjectileState get_state() const;
 	};
 
 	struct RangedWeaponBlueprint;
@@ -33,7 +32,6 @@ namespace impl::character {
 		unsigned projectile_count;
 		float cooldown_s;
 		float accuracy;
-		[[nodiscard]] RangedWeaponState get_state() const;
 	};
 
 	extern const RangedWeaponBlueprint ranged_weapon_gun; // Default

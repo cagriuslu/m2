@@ -9,10 +9,6 @@ ProjectileState::ProjectileState(const ProjectileBlueprint *blueprint) :
 	already_collided_this_step(false),
 	ttl_s(m2::apply_accuracy(blueprint->ttl_s, blueprint->ttl_accuracy)) {}
 
-ProjectileState ProjectileBlueprint::get_state() const {
-	return ProjectileState{this};
-}
-
 RangedWeaponState::RangedWeaponState(const RangedWeaponBlueprint* blueprint) :
 	blueprint(blueprint),
 	cooldown_counter_s(0) {}
@@ -22,10 +18,6 @@ void RangedWeaponState::process_time(float time_passed_s) {
 	if (blueprint->cooldown_s < cooldown_counter_s) {
 		cooldown_counter_s = blueprint->cooldown_s + 0.001f;
 	}
-}
-
-RangedWeaponState RangedWeaponBlueprint::get_state() const {
-	return RangedWeaponState{this};
 }
 
 const RangedWeaponBlueprint impl::character::ranged_weapon_gun = {

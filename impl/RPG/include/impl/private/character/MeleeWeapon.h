@@ -20,7 +20,6 @@ namespace impl::character {
 		float damage;
 		MeleeMotion motion;
 		float ttl_s;
-		[[nodiscard]] MeleeState get_state() const;
 	};
 
 	struct MeleeWeaponBlueprint;
@@ -33,7 +32,6 @@ namespace impl::character {
 	struct MeleeWeaponBlueprint {
 		MeleeBlueprint melee;
 		float cooldown_s;
-		[[nodiscard]] MeleeWeaponState get_state() const;
 	};
 
 	extern const MeleeWeaponBlueprint melee_weapon_bat;

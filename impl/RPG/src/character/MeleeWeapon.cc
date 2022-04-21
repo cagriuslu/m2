@@ -5,10 +5,6 @@ impl::character::MeleeState::MeleeState(const MeleeBlueprint* blueprint) :
 	blueprint(blueprint),
 	ttl_s(blueprint->ttl_s) {}
 
-impl::character::MeleeState impl::character::MeleeBlueprint::get_state() const {
-	return MeleeState(this);
-}
-
 impl::character::MeleeWeaponState::MeleeWeaponState(const MeleeWeaponBlueprint* blueprint) :
 	blueprint(blueprint),
 	cooldown_counter_s(0.0f) {}
@@ -18,10 +14,6 @@ void impl::character::MeleeWeaponState::process_time(float time_passed_s) {
 	if (blueprint->cooldown_s < cooldown_counter_s) {
 		cooldown_counter_s = blueprint->cooldown_s + 0.001f;
 	}
-}
-
-impl::character::MeleeWeaponState impl::character::MeleeWeaponBlueprint::get_state() const {
-	return MeleeWeaponState(this);
 }
 
 const impl::character::MeleeWeaponBlueprint impl::character::melee_weapon_bat = {

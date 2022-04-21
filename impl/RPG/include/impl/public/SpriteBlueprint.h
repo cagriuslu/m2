@@ -52,6 +52,8 @@ namespace impl {
         IMPL_SPRITE_SWORD_00,
         IMPL_SPRITE_BOMB_00,
 
+		IMPL_SPRITE_RED_POTION_00,
+
         IMPL_SPRITE_N
     };
 

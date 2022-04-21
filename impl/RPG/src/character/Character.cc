@@ -4,13 +4,13 @@
 impl::character::CharacterState::CharacterState(const CharacterBlueprint* blueprint) :
 	blueprint(blueprint) {
 	if (blueprint->default_explosive_weapon) {
-		explosive_weapon_state = blueprint->default_explosive_weapon->get_state();
+		explosive_weapon_state = ExplosiveWeaponState(blueprint->default_explosive_weapon);
 	}
 	if (blueprint->default_melee_weapon) {
-		melee_weapon_state = blueprint->default_melee_weapon->get_state();
+		melee_weapon_state = MeleeWeaponState(blueprint->default_melee_weapon);
 	}
 	if (blueprint->default_ranged_weapon) {
-		ranged_weapon_state = blueprint->default_ranged_weapon->get_state();
+		ranged_weapon_state = RangedWeaponState(blueprint->default_ranged_weapon);
 	}
 }
 
@@ -24,10 +24,6 @@ void impl::character::CharacterState::process_time(float time_passed_s) {
 	if (ranged_weapon_state) {
 		ranged_weapon_state->process_time(time_passed_s);
 	}
-}
-
-impl::character::CharacterState impl::character::CharacterBlueprint::get_state() const {
-	return CharacterState{this};
 }
 
 const impl::character::CharacterBlueprint impl::character::character_player = {

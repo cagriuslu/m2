@@ -263,7 +263,16 @@ const m2::SpriteBlueprint impl::sprites[] {
                                 .radius_px = 6.0f, .radius_m = 6.0f / tile_width_f
                         }
                 }
-        }
+        },
+		{
+				.index = IMPL_SPRITE_RED_POTION_00,
+				.texture_rect = {144, 96, 48, 48},
+				.collider = {
+						.variant = m2::ColliderBlueprint::Circle{
+							.radius_px = 6.0f, .radius_m = 6.0f / tile_width_f
+						}
+				}
+		}
 };
 
 const unsigned impl::sprite_count = IMPL_SPRITE_N;

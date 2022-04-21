@@ -6,10 +6,6 @@ impl::character::ExplosiveState::ExplosiveState(const ExplosiveBlueprint* bluepr
 	projectile_ttl_s(blueprint->projectile_ttl_s),
 	status(EXPLOSIVE_STATUS_IN_FLIGHT) {}
 
-impl::character::ExplosiveState impl::character::ExplosiveBlueprint::get_state() const {
-	return ExplosiveState{this};
-}
-
 impl::character::ExplosiveWeaponState::ExplosiveWeaponState(const ExplosiveWeaponBlueprint* blueprint) :
 	blueprint(blueprint),
 	cooldown_counter_s(0.0f),
@@ -20,10 +16,6 @@ void impl::character::ExplosiveWeaponState::process_time(float time_passed_s) {
 	if (blueprint->cooldown_s < cooldown_counter_s) {
 		cooldown_counter_s = blueprint->cooldown_s + 0.001f;
 	}
-}
-
-impl::character::ExplosiveWeaponState impl::character::ExplosiveWeaponBlueprint::get_state() const {
-	return ExplosiveWeaponState{this};
 }
 
 const impl::character::ExplosiveWeaponBlueprint impl::character::explosive_weapon_grenade = {

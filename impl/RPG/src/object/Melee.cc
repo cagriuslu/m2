@@ -45,7 +45,7 @@ M2Err impl::object::Melee::init(m2::Object& obj, const character::MeleeBlueprint
 
 	auto& off = obj.add_offense();
     off.originator = originatorId;
-	off.variant = blueprint->get_state();
+	off.variant = character::MeleeState(blueprint);
 
 	monitor.pre_phy = [&](m2::component::Monitor& mon) {
 		auto& melee_state = std::get<impl::character::MeleeState>(off.variant);
