@@ -1,4 +1,4 @@
-#include <impl/private/object/Drop.h>
+#include <rpg/object/Drop.h>
 
 impl::object::Drop::Drop(const item::ItemBlueprint &item_blueprint) : item_blueprint(item_blueprint) {}
 

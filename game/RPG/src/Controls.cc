@@ -1,4 +1,4 @@
-#include <impl/public/Controls.h>
+#include <m2g/Controls.h>
 
 m2::Key impl::scancode_to_key(SDL_Scancode scancode) {
 	using namespace m2;

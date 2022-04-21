@@ -1,7 +1,9 @@
 file(GLOB IMPL_SOURCES
-        "include/impl/*.h"
-        "include/impl/*/*.h"
-        "include/impl/*/*/*.h"
+        "include/m2g/*.h"
+        "include/m2g/*/*.h"
+        "include/rpg/*.h"
+        "include/rpg/*/*.h"
+        "include/rpg/*/*/*.h"
         "src/*.h"   "src/*.cc"
         "src/*/*.h" "src/*/*.cc"
         "src/*/*/*.h" "src/*/*/*.cc")

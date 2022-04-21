@@ -1,11 +1,11 @@
-#include <impl/private/object/Enemy.h>
+#include <rpg/object/Enemy.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
-#include <impl/public/component/Defense.h>
-#include <impl/public/component/Offense.h>
+#include <m2g/component/Defense.h>
+#include <m2g/component/Offense.h>
 #include <m2/box2d/Utils.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 
 using namespace impl::object;
 

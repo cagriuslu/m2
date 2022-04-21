@@ -1,7 +1,7 @@
 #include <m2/Component.h>
 #include <m2/Game.hh>
 #include "m2/component/Graphic.h"
-#include <impl/public/SpriteBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 
 m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPosition, m2::Vec2f objGfxCenterPx) {
 	static auto camera_id = GAME.cameraId;

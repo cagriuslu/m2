@@ -1,5 +1,5 @@
-#include <impl/private/item/Item.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <rpg/item/Item.h>
+#include <m2g/SpriteBlueprint.h>
 
 using namespace impl;
 using namespace impl::item;

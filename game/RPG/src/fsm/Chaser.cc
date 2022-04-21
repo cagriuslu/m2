@@ -2,11 +2,11 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Pathfinder.hh"
-#include <impl/private/object/Enemy.h>
-#include <impl/private/object/Projectile.h>
-#include <impl/private/object/Melee.h>
-#include <impl/private/object/Explosive.h>
-#include <impl/private/fsm/Chaser.h>
+#include <rpg/object/Enemy.h>
+#include <rpg/object/Projectile.h>
+#include <rpg/object/Melee.h>
+#include <rpg/object/Explosive.h>
+#include <rpg/fsm/Chaser.h>
 #include <m2/M2.h>
 
 #define ALARM_DURATION(recalcPeriod) ((recalcPeriod) / 2.0f + (recalcPeriod) * m2::randf() * 1.5f)

@@ -4,15 +4,15 @@
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
 #include "m2/Component.h"
-#include <impl/public/SpriteBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 #include "m2/Def.h"
 #include <b2_world.h>
-#include <impl/public/ui/UI.h>
+#include <m2g/ui/UI.h>
 #include "m2/component/Monitor.h"
 #include "m2/Component.h"
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
-#include <impl/public/SpriteBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 #include <m2/ui/UI.h>
 
 // Initialize with default values

@@ -1,5 +1,5 @@
 #include <m2/Event.hh>
-#include <impl/public/Controls.h>
+#include <m2g/Controls.h>
 #include <m2/Def.h>
 
 m2::Events::Events() : quit(), window_resized(), key_pressed(), keys_pressed(), key_released(), keys_released(),

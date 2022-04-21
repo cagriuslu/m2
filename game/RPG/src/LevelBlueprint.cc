@@ -1,5 +1,5 @@
-#include <impl/private/LevelBlueprint.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <rpg/LevelBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 
 #define _       {.bg_sprite_index = impl::IMPL_SPRITE_GRASS,     .fg_sprite_index = impl::IMPL_SPRITE_NONE}
 #define clfTop  {.bg_sprite_index = impl::IMPL_SPRITE_CLIFF000T, .fg_sprite_index = impl::IMPL_SPRITE_NONE}

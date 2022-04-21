@@ -1,10 +1,10 @@
-#include <impl/private/object/Explosive.h>
-#include <impl/private/character/ExplosiveWeapon.h>
+#include <rpg/object/Explosive.h>
+#include <rpg/character/ExplosiveWeapon.h>
 #include <b2_world.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
-#include <impl/public/SpriteBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 

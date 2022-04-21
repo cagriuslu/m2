@@ -1,4 +1,4 @@
-#include <impl/private/ui/Callbacks.h>
+#include <rpg/ui/Callbacks.h>
 #include <m2/Game.hh>
 
 std::string impl::ui::hp_callback() {

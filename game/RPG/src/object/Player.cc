@@ -1,16 +1,16 @@
-#include <impl/private/object/Player.h>
+#include <rpg/object/Player.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Controls.h"
 #include "m2/Event.hh"
 #include "m2/Def.h"
-#include <impl/private/object/Explosive.h>
-#include <impl/private/object/Projectile.h>
-#include <impl/private/object/Melee.h>
-#include <impl/public/component/Defense.h>
-#include <impl/public/component/Offense.h>
+#include <rpg/object/Explosive.h>
+#include <rpg/object/Projectile.h>
+#include <rpg/object/Melee.h>
+#include <m2g/component/Defense.h>
+#include <m2g/component/Offense.h>
 #include <m2/box2d/Utils.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 #include <m2/M2.h>
 
 impl::object::Player::Player(m2::Object& obj, const character::CharacterBlueprint* blueprint) : char_state(blueprint), char_animator({obj.graphic(), blueprint}) {}

@@ -1,6 +1,6 @@
-#include <impl/public/SpriteBlueprint.h>
-#include <impl/private/object/Enemy.h>
-#include <impl/private/object/Player.h>
+#include <m2g/SpriteBlueprint.h>
+#include <rpg/object/Enemy.h>
+#include <rpg/object/Player.h>
 
 const m2::SpriteBlueprint impl::sprites[] {
         {

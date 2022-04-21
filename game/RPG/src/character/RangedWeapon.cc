@@ -1,5 +1,5 @@
-#include <impl/private/character/RangedWeapon.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <rpg/character/RangedWeapon.h>
+#include <m2g/SpriteBlueprint.h>
 #include <m2/M2.h>
 
 using namespace impl::character;

@@ -1,8 +1,8 @@
-#include <impl/public/ui/UI.h>
-#include <impl/private/ui/Callbacks.h>
+#include <m2g/ui/UI.h>
+#include <rpg/ui/Callbacks.h>
 #include <m2/ui/ElementBlueprint.h>
 #include <m2/Game.hh>
-#include <impl/private/LevelBlueprint.h>
+#include <rpg/LevelBlueprint.h>
 
 using namespace m2::ui;
 

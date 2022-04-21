@@ -1,5 +1,5 @@
-#include <impl/private/character/MeleeWeapon.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <rpg/character/MeleeWeapon.h>
+#include <m2g/SpriteBlueprint.h>
 
 impl::character::MeleeState::MeleeState(const MeleeBlueprint* blueprint) :
 	blueprint(blueprint),

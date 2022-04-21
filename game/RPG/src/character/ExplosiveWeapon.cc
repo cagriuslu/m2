@@ -1,5 +1,5 @@
-#include <impl/private/character/ExplosiveWeapon.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <rpg/character/ExplosiveWeapon.h>
+#include <m2g/SpriteBlueprint.h>
 
 impl::character::ExplosiveState::ExplosiveState(const ExplosiveBlueprint* blueprint) :
 	blueprint(blueprint),

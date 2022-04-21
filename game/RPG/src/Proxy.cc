@@ -1,1 +1,1 @@
-#include <impl/public/Proxy.h>
+#include <m2g/Proxy.h>

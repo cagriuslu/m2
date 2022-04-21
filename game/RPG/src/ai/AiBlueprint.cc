@@ -1,4 +1,4 @@
-#include <impl/private/ai/AiBlueprint.h>
+#include <rpg/ai/AiBlueprint.h>
 
 const impl::ai::AiBlueprint impl::ai::chase_000 = {
 		.capability = CAPABILITY_MELEE,

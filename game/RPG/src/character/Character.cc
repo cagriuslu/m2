@@ -1,5 +1,5 @@
-#include <impl/private/character/Character.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <rpg/character/Character.h>
+#include <m2g/SpriteBlueprint.h>
 
 impl::character::CharacterState::CharacterState(const CharacterBlueprint* blueprint) :
 	blueprint(blueprint) {

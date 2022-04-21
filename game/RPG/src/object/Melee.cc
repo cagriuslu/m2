@@ -1,8 +1,8 @@
 #include <m2/Object.h>
 #include "m2/Def.h"
 #include "m2/Game.hh"
-#include <impl/private/object/Melee.h>
-#include <impl/public/SpriteBlueprint.h>
+#include <rpg/object/Melee.h>
+#include <m2g/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 
 #define SWING_SPEED (15.0f)

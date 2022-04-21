@@ -1,6 +1,6 @@
-#include <impl/private/fsm/CharacterAnimation.h>
+#include <rpg/fsm/CharacterAnimation.h>
 #include "m2/FSM.h"
-#include <impl/public/SpriteBlueprint.h>
+#include <m2g/SpriteBlueprint.h>
 #include "m2/component/Graphic.h"
 
 #define ALARM_DURATION (0.1f)

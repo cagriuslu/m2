@@ -1,8 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <impl/public/component/Defense.h>
-#include <impl/public/component/Offense.h>
+#include <m2g/component/Defense.h>
+#include <m2g/component/Offense.h>
 #include "m2/Event.hh"
 #include "DrawList.h"
 #include <m2/Object.h>

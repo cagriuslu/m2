@@ -1,10 +1,10 @@
 #include <b2_world.h>
-#include <impl/public/Proxy.h>
+#include <m2g/Proxy.h>
 #include "m2/Event.hh"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
 #include "m2/Def.h"
-#include <impl/public/ui/UI.h>
+#include <m2g/ui/UI.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
