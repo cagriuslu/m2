@@ -28,8 +28,8 @@ void chr::CharacterState::process_time(float time_passed_s) {
 
 const chr::CharacterBlueprint chr::character_player = {
 		.main_sprite_index = m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_00,
-		.mass_kg = 4.0f,
-		.linear_damping = 10.0f,
+		.mass_kg = 80.0f,
+		.linear_damping = 50.0f,
 		.walk_speed = 25.0f,
 		.max_hp = 100.0f,
 		.default_explosive_weapon = &explosive_weapon_grenade,

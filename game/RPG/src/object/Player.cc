@@ -72,7 +72,7 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 		}
 
 		auto& phy = GAME.physics[obj.physique_id];
-		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * 25.0f)), true);
+		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * 1400.0f)), true);
 
 		data->char_state.explosive_weapon_state->process_time(GAME.deltaTime_s);
 		data->char_state.melee_weapon_state->process_time(GAME.deltaTime_s);
