@@ -141,3 +141,9 @@ std::pair<m2::Object&, m2::ObjectID> m2::create_object(const m2::Vec2f &position
     obj_pair.first = Object{position};
     return obj_pair;
 }
+
+std::function<void(void)> m2::create_object_deleter(ObjectID id) {
+	return [id]() {
+		GAME.objects.free(id);
+	};
+}

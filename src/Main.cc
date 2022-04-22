@@ -211,7 +211,7 @@ int main(int argc, char **argv) {
                     monitor_it.first->pre_phy(*monitor_it.first);
                 }
             } // TODO Hard to parallelize
-			Game_DeleteList_DeleteAll();
+			GAME.execute_deferred_actions();
 
 			// Physics
 			GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
@@ -225,7 +225,7 @@ int main(int argc, char **argv) {
 					GAME.draw_list.update(object_id);
 				}
             } // TODO Easy to parallelize
-			Game_DeleteList_DeleteAll();
+			GAME.execute_deferred_actions();
 
 			// Post-physics
 			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks, nongame_ticks) - prevPostPhysicsTicks;
@@ -236,7 +236,7 @@ int main(int argc, char **argv) {
                     monitor_it.first->post_phy(*monitor_it.first);
                 }
             } // TODO Hard to parallelize
-			Game_DeleteList_DeleteAll();
+			GAME.execute_deferred_actions();
 
 			// Update loop condition
 			timeSinceLastWorldStep -= GAME.physicsStep_s;

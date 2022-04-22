@@ -4,6 +4,18 @@
 #include <b2_polygon_shape.h>
 #include <b2_world.h>
 
+const std::unordered_map<uint16_t,uint16_t> m2::box2d::collision_map = {
+		{CAT_OBSTACLE,       CAT_OBSTACLE | CAT_GND_OBSTACLE | CAT_PLAYER | CAT_PLAYER_AIR_OBJ | CAT_PLAYER_ITEM | CAT_ENEMY | CAT_ENEMY_AIR_OBJ},
+		{CAT_GND_OBSTACLE,   CAT_OBSTACLE | CAT_GND_OBSTACLE | CAT_PLAYER | CAT_PLAYER_ITEM | CAT_ENEMY},
+		{CAT_PLAYER,         CAT_OBSTACLE | CAT_GND_OBSTACLE | CAT_PLAYER_ITEM | CAT_ENEMY | CAT_ENEMY_AIR_OBJ},
+		{CAT_PLAYER_AIR_OBJ, CAT_OBSTACLE | CAT_ENEMY},
+		{CAT_PLAYER_AOE,     CAT_ENEMY},
+		{CAT_PLAYER_ITEM,    CAT_OBSTACLE | CAT_GND_OBSTACLE | CAT_PLAYER},
+		{CAT_ENEMY,          CAT_OBSTACLE | CAT_GND_OBSTACLE | CAT_PLAYER | CAT_PLAYER_AIR_OBJ | CAT_ENEMY},
+		{CAT_ENEMY_AIR_OBJ,  CAT_OBSTACLE | CAT_PLAYER},
+		{CAT_ENEMY_AOE,      CAT_PLAYER}
+};
+
 b2Body* m2::box2d::create_body(
         b2World& world,
         ID physique_id,
@@ -31,6 +43,7 @@ b2Body* m2::box2d::create_body(
     bodyDef.userData.pointer = physique_id;
     bodyDef.bullet = is_bullet;
     b2Body* body = world.CreateBody(&bodyDef);
+	// TODO if this is called during a callback, body ıs returned null
 
     b2FixtureDef fixtureDef;
     b2CircleShape circle_shape;
@@ -47,35 +60,7 @@ b2Body* m2::box2d::create_body(
     fixtureDef.filter.categoryBits = category_bits;
     // If mask is not provided, infer it
     if (mask_bits == 0) {
-        using namespace m2::box2d;
-        switch (category_bits) {
-            case CATEGORY_STATIC_OBJECT:
-                mask_bits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_PLAYER_BULLET | CATEGORY_ENEMY | CATEGORY_ENEMY_BULLET;
-                break;
-            case CATEGORY_STATIC_CLIFF:
-                mask_bits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_ENEMY;
-                break;
-            case CATEGORY_PLAYER:
-                mask_bits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_ENEMY | CATEGORY_ENEMY_BULLET | CATEGORY_ENEMY_MELEE_WEAPON;
-                break;
-            case CATEGORY_PLAYER_BULLET:
-                mask_bits = CATEGORY_STATIC_OBJECT | CATEGORY_ENEMY;
-                break;
-            case CATEGORY_PLAYER_MELEE_WEAPON:
-                mask_bits = CATEGORY_ENEMY;
-                break;
-            case CATEGORY_ENEMY:
-                mask_bits = CATEGORY_STATIC_OBJECT | CATEGORY_STATIC_CLIFF | CATEGORY_PLAYER | CATEGORY_PLAYER_BULLET | CATEGORY_PLAYER_MELEE_WEAPON | CATEGORY_ENEMY;
-                break;
-            case CATEGORY_ENEMY_BULLET:
-                mask_bits = CATEGORY_STATIC_OBJECT | CATEGORY_PLAYER;
-                break;
-            case CATEGORY_ENEMY_MELEE_WEAPON:
-                mask_bits = CATEGORY_PLAYER;
-                break;
-            default:
-                break;
-        }
+		mask_bits = collision_map.at(category_bits);
     }
     fixtureDef.filter.maskBits = mask_bits;
     b2Fixture* fixture = body->CreateFixture(&fixtureDef);

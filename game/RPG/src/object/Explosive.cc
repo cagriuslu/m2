@@ -14,7 +14,7 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f pos
             phyId,
             position,
             true,
-            m2::box2d::CATEGORY_PLAYER_BULLET,
+            m2::box2d::CAT_PLAYER_AOE,
 			blueprint->damage_radius_m,
             0.0f,
             0.0f
@@ -33,7 +33,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 			obj.physique_id,
 			position,
             true,
-			m2::box2d::CATEGORY_PLAYER_BULLET,
+			m2::box2d::CAT_PLAYER_AIR_OBJ,
 			blueprint->projectile_body_radius_m,
 			0.0f,
 			0.0f
@@ -76,7 +76,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
-				Game_DeleteList_Add(mon.object_id);
+				GAME.add_deferred_action(m2::create_object_deleter(mon.object_id));
 				break;
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
 				GAME.world->DestroyBody(phy.body);

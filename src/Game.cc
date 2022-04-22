@@ -32,6 +32,17 @@ m2::Game::~Game() {
     // TODO deinit others
 }
 
+void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
+	level.deferred_actions.push_back(action);
+}
+
+void m2::Game::execute_deferred_actions() {
+	for (auto& action : level.deferred_actions) {
+		action();
+	}
+	level.deferred_actions.clear();
+}
+
 void m2::Game::dynamic_assert() {
     for (m2::SpriteIndex i = 0; i < m2g::sprite_count; i++) {
         if (m2g::sprites[i].index != i) {
@@ -136,14 +147,14 @@ static int Game_Level_Init() {
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
 	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
-	GAME.delete_list.clear();
+	GAME.level.deferred_actions.clear();
 	GAME.levelLoaded = true;
 	return 0;
 }
 
 static void Game_Level_Term() {
 	PathfinderMap_Term(&GAME.pathfinderMap);
-	GAME.delete_list.clear();
+	GAME.level.deferred_actions.clear();
 	GAME.offenses.clear();
 	GAME.defenses.clear();
 	GAME.lights.clear();
@@ -189,15 +200,4 @@ M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint) {
     GAME.rightHudUIState.update_contents();
 
 	return M2OK;
-}
-
-void Game_DeleteList_Add(ID id) {
-	GAME.delete_list.emplace_back(id);
-}
-
-void Game_DeleteList_DeleteAll() {
-	for (auto id : GAME.delete_list) {
-        GAME.objects.free(id);
-	}
-	GAME.delete_list.clear();
 }

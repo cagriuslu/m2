@@ -33,7 +33,7 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
             obj.position,
             false,
             false,
-            m2::box2d::CATEGORY_PLAYER,
+            m2::box2d::CAT_PLAYER,
             std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint->main_sprite_index].collider.variant).radius_m,
             blueprint->mass_kg,
             blueprint->linear_damping

@@ -70,6 +70,7 @@ namespace m2 {
     };
 
     std::pair<Object&, ObjectID> create_object(const m2::Vec2f& position);
+	std::function<void(void)> create_object_deleter(ObjectID id);
 }
 
 #endif

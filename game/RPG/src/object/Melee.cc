@@ -25,7 +25,7 @@ M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, ID
             false,
             true,
             true,
-            originatorId == GAME.playerId ? m2::box2d::CATEGORY_PLAYER_MELEE_WEAPON : m2::box2d::CATEGORY_ENEMY_MELEE_WEAPON,
+            originatorId == GAME.playerId ? m2::box2d::CAT_PLAYER_AIR_OBJ : m2::box2d::CAT_ENEMY_AIR_OBJ,
             0,
             m2::Vec2f{1.25f, 0.1667f},
             m2::Vec2f{0.5833f, 0.0f},
@@ -51,7 +51,7 @@ M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, ID
 		auto& melee_state = std::get<chr::MeleeState>(off.variant);
 		melee_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 		if (melee_state.ttl_s <= 0) {
-			Game_DeleteList_Add(mon.object_id);
+			GAME.add_deferred_action(m2::create_object_deleter(mon.object_id));
 		}
 	};
 

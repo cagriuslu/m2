@@ -18,7 +18,7 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 			obj.physique_id,
 			pos,
             true,
-			m2::box2d::CATEGORY_PLAYER_BULLET,
+			m2::box2d::CAT_PLAYER_AIR_OBJ,
 			0.167f,
 			0.0f,
 			0.0f
@@ -41,7 +41,7 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 
 		projectile_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 		if (projectile_state.ttl_s <= 0) {
-			Game_DeleteList_Add(mon.object_id);
+			GAME.add_deferred_action(m2::create_object_deleter(mon.object_id));
 		}
 	};
 
@@ -69,7 +69,7 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 					def->on_hit(*def);
 				}
 			}
-			Game_DeleteList_Add(phy.object_id);
+			GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
 		}
 	};
 

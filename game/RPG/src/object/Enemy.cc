@@ -1,4 +1,5 @@
 #include <rpg/object/Enemy.h>
+#include <rpg/object/Drop.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
@@ -34,7 +35,7 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
             pos,
             false,
             true,
-            m2::box2d::CATEGORY_ENEMY,
+            m2::box2d::CAT_ENEMY,
             std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint->main_sprite_index].collider.variant).radius_m,
 			blueprint->mass_kg,
 			blueprint->linear_damping
@@ -95,7 +96,11 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	};
 
 	def.on_death = [&](m2g::comp::Defense& def) {
-		Game_DeleteList_Add(def.object_id);
+		auto drop_position = obj.position;
+		GAME.add_deferred_action([=]() {
+			Drop::init(GAME.objects.alloc().first, itm::health_drop_20, drop_position);
+		});
+		GAME.add_deferred_action(m2::create_object_deleter(def.object_id));
 	};
 
 	return 0;

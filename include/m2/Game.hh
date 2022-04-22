@@ -26,6 +26,11 @@
 
 namespace m2 {
 	struct Game {
+		struct Level {
+			std::vector<std::function<void(void)>> deferred_actions;
+		} level;
+
+	public:
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -76,7 +81,6 @@ namespace m2 {
 		b2World *world;
         m2::box2d::ContactListener* contactListener;
 		ID cameraId, playerId, pointerId;
-		std::vector<ID> delete_list;
 		PathfinderMap pathfinderMap;
         m2::ui::UIState leftHudUIState, rightHudUIState;
 
@@ -92,6 +96,9 @@ namespace m2 {
 
 		~Game();
 
+		void add_deferred_action(const std::function<void(void)>& action);
+		void execute_deferred_actions();
+
         static void dynamic_assert();
 	};
 }
@@ -102,8 +109,5 @@ void Game_UpdateWindowDimensions(int width, int height);
 void Game_UpdateMousePosition();
 
 M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint);
-
-void Game_DeleteList_Add(ID id);
-void Game_DeleteList_DeleteAll();
 
 #endif
