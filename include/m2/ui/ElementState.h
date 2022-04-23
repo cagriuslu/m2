@@ -2,7 +2,7 @@
 #define M2_ELEMENTSTATE_H
 
 #include "Action.h"
-#include <m2/Event.hh>
+#include <m2/Events.h>
 #include <SDL_ttf.h>
 #include <SDL.h>
 #include <memory>
@@ -22,7 +22,7 @@ namespace m2::ui {
         explicit ElementState(const ElementBlueprint* blueprint);
 		virtual ~ElementState() = default;
         virtual void update_position(const SDL_Rect& rect_px);
-        virtual Action handle_events(const Events& events);
+        virtual Action handle_events(Events& events);
         virtual Action update_content();
         virtual void draw();
 

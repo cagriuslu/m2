@@ -17,13 +17,16 @@ TextInputState::~TextInputState() {
     SDL_StopTextInput();
 }
 
-Action TextInputState::handle_events(const Events& events) {
-    if (events.keys_pressed[u(Key::MENU)]) {
+Action TextInputState::handle_events(Events& events) {
+    if (events.pop_key_press(Key::MENU)) {
         return Action::RETURN;
-    } else if (events.keys_pressed[u(Key::ENTER)]) {
+    } else if (events.pop_key_press(Key::ENTER)) {
         return std::get<TextInputBlueprint>(blueprint->variant).action_callback(text_input);
-    } else if (events.text_input) {
-        text_input << events.text.data();
+    } else {
+		auto opt_text_input = events.pop_text_input();
+		if (opt_text_input) {
+			text_input << *opt_text_input;
+		}
     }
     return Action::CONTINUE;
 }

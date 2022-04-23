@@ -14,7 +14,7 @@ void NestedUIState::update_position(const SDL_Rect &rect_px_) {
     ui->update_positions(rect_px_);
 }
 
-Action NestedUIState::handle_events(const Events &events) {
+Action NestedUIState::handle_events(Events &events) {
     return ui->handle_events(events);
 }
 

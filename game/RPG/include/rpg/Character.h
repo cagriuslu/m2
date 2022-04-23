@@ -38,7 +38,8 @@ namespace chr {
 		m2::SpriteIndex main_sprite_index;
 		float mass_kg;
 		float linear_damping;
-		float walk_speed;
+		float walk_force;
+		float dash_force;
 		float max_hp;
 		const ExplosiveWeaponBlueprint* default_explosive_weapon;
 		const MeleeWeaponBlueprint* default_melee_weapon;

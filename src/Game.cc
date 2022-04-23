@@ -125,13 +125,14 @@ void Game_UpdateMousePosition() {
 	auto& cam = GAME.objects[GAME.cameraId];
 	m2::Vec2f cameraPosition = cam.position;
 
-	m2::Vec2i pointerPosition = GAME.events.mouse_position;
+	m2::Vec2i pointerPosition = GAME.events.mouse_position();
 	m2::Vec2i pointerPositionWRTScreenCenter_px = m2::Vec2i{pointerPosition.x - (GAME.windowRect.w / 2), pointerPosition.y - (GAME.windowRect.h / 2) };
 	GAME.mousePositionWRTScreenCenter_m = m2::Vec2f{pointerPositionWRTScreenCenter_px.x / GAME.pixelsPerMeter, pointerPositionWRTScreenCenter_px.y / GAME.pixelsPerMeter };
 	GAME.mousePositionInWorld_m = GAME.mousePositionWRTScreenCenter_m + cameraPosition;
 }
 
 static int Game_Level_Init() {
+	GAME.events.clear();
 	GAME.objects.clear();
 	GAME.monitors.clear();
 	GAME.physics.clear();

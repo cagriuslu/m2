@@ -16,17 +16,18 @@ AbstractButtonState::AbstractButtonState(const ElementBlueprint *blueprint) :
         ),
         depressed(false) {}
 
-Action AbstractButtonState::handle_events(const Events &events) {
+Action AbstractButtonState::handle_events(Events &events) {
     bool run_action = false;
 
-    if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.raw_key_down[kb_shortcut]) {
+    if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.is_sdl_key_down(kb_shortcut)) {
         run_action = true;
     } else {
-        SDL_Point mouse_position = {events.mouse_position.x, events.mouse_position.y};
-        if (SDL_PointInRect(&mouse_position, &rect_px)) {
-            if (not depressed && events.mouse_buttons_pressed[u(MouseButton::PRIMARY)]) {
+		auto mouse_position = events.mouse_position();
+        SDL_Point sdl_mouse_position = {mouse_position.x, mouse_position.y};
+        if (SDL_PointInRect(&sdl_mouse_position, &rect_px)) {
+            if (not depressed && events.pop_mouse_button_press(MouseButton::PRIMARY)) {
                 depressed = true;
-            } else if (depressed && events.mouse_buttons_released[u(MouseButton::PRIMARY)]) {
+            } else if (depressed && events.pop_mouse_button_release(MouseButton::PRIMARY)) {
                 run_action = true;
             }
         }

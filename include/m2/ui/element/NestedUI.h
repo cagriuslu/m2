@@ -18,7 +18,7 @@ namespace m2::ui::element {
 
         explicit NestedUIState(const ElementBlueprint* blueprint);
         void update_position(const SDL_Rect& rect_px) final;
-        Action handle_events(const Events& events) final;
+        Action handle_events(Events& events) final;
         Action update_content() final;
         void draw() final;
     };

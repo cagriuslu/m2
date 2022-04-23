@@ -19,7 +19,7 @@ namespace m2::ui::element {
 
         explicit TextInputState(const ElementBlueprint* blueprint);
         ~TextInputState() override;
-        Action handle_events(const Events& events) override;
+        Action handle_events(Events& events) override;
         Action update_content() override;
         void draw() override;
     };

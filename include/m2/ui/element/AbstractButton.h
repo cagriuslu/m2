@@ -9,7 +9,7 @@ namespace m2::ui::element {
 		bool depressed;
 
 		explicit AbstractButtonState(const ElementBlueprint* blueprint);
-        Action handle_events(const Events& events) final;
+        Action handle_events(Events& events) final;
 	};
 }
 

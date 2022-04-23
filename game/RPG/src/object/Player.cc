@@ -2,7 +2,7 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Controls.h"
-#include "m2/Event.hh"
+#include "m2/Events.h"
 #include "m2/Def.h"
 #include <rpg/object/Explosive.h>
 #include <rpg/object/Projectile.h>
@@ -51,34 +51,40 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 
 	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 
-	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
+	monitor.pre_phy = [&obj, &phy]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* data = dynamic_cast<obj::Player*>(obj.impl.get());
+
 		m2::Vec2f moveDirection;
-		if (GAME.events.key_down[m2::u(m2::Key::UP)]) {
+		if (GAME.events.is_key_down(m2::Key::UP)) {
 			moveDirection.y += -1.0f;
 			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKUP);
 		}
-		if (GAME.events.key_down[m2::u(m2::Key::DOWN)]) {
+		if (GAME.events.is_key_down(m2::Key::DOWN)) {
 			moveDirection.y += 1.0f;
 			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKDOWN);
 		}
-		if (GAME.events.key_down[m2::u(m2::Key::LEFT)]) {
+		if (GAME.events.is_key_down(m2::Key::LEFT)) {
 			moveDirection.x += -1.0f;
 			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKLEFT);
 		}
-		if (GAME.events.key_down[m2::u(m2::Key::RIGHT)]) {
+		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			moveDirection.x += 1.0f;
 			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKRIGHT);
 		}
-
-		auto& phy = GAME.physics[obj.physique_id];
-		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * 1400.0f)), true);
+		float force;
+		if (GAME.events.pop_key_press(m2::Key::DASH)) {
+			fprintf(stderr, "Dashing\n");
+			force = data->char_state.blueprint->dash_force;
+		} else {
+			force = data->char_state.blueprint->walk_force;
+		}
+		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * force)), true);
 
 		data->char_state.explosive_weapon_state->process_time(GAME.deltaTime_s);
 		data->char_state.melee_weapon_state->process_time(GAME.deltaTime_s);
 		data->char_state.ranged_weapon_state->process_time(GAME.deltaTime_s);
 
-		if (GAME.events.mouse_button_down[m2::u(m2::MouseButton::PRIMARY)] && data->char_state.ranged_weapon_state->blueprint->cooldown_s < data->char_state.ranged_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && data->char_state.ranged_weapon_state->blueprint->cooldown_s < data->char_state.ranged_weapon_state->cooldown_counter_s) {
 			auto& projectile = GAME.objects.alloc().first;
 			m2::Vec2f direction = (GAME.mousePositionInWorld_m - obj.position).normalize();
 			float accuracy = data->char_state.blueprint->default_ranged_weapon->accuracy;
@@ -89,12 +95,12 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 			// TODO set looking direction here as well
 			data->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}
-		if (GAME.events.mouse_button_down[m2::u(m2::MouseButton::SECONDARY)] && data->char_state.melee_weapon_state->blueprint->cooldown_s < data->char_state.melee_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && data->char_state.melee_weapon_state->blueprint->cooldown_s < data->char_state.melee_weapon_state->cooldown_counter_s) {
 			auto& melee = GAME.objects.alloc().first;
 			obj::Melee::init(melee, &data->char_state.blueprint->default_melee_weapon->melee, GAME.playerId, obj.position, GAME.mousePositionInWorld_m - obj.position);
 			data->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}
-		if (GAME.events.mouse_button_down[m2::u(m2::MouseButton::MIDDLE)] && data->char_state.explosive_weapon_state->blueprint->cooldown_s < data->char_state.explosive_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && data->char_state.explosive_weapon_state->blueprint->cooldown_s < data->char_state.explosive_weapon_state->cooldown_counter_s) {
 			auto& explosive = GAME.objects.alloc().first;
 			obj::Explosive::init(explosive, &data->char_state.blueprint->default_explosive_weapon->explosive, GAME.playerId, obj.position, GAME.mousePositionInWorld_m - obj.position);
 			data->char_state.explosive_weapon_state->cooldown_counter_s = 0;

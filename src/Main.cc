@@ -1,6 +1,6 @@
 #include <b2_world.h>
 #include <m2g/Proxy.h>
-#include "m2/Event.hh"
+#include "m2/Events.h"
 #include "m2/Game.hh"
 #include "m2/SDLUtils.hh"
 #include "m2/Def.h"
@@ -163,15 +163,18 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		if (GAME.events.gather()) {
 			// Handle quit event
-			if (GAME.events.quit) { break; }
+			if (GAME.events.pop_quit()) {
+				break;
+			}
 			// Handle window resize event
-			if (GAME.events.window_resized) {
-				Game_UpdateWindowDimensions(GAME.events.window_dimensions.x, GAME.events.window_dimensions.y);
+			auto window_resize = GAME.events.pop_window_resize();
+			if (window_resize) {
+				Game_UpdateWindowDimensions(window_resize->x, window_resize->y);
                 GAME.leftHudUIState.update_positions(GAME.leftHudRect);
                 GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 			}
             // Handle key events
-            if (GAME.events.keys_pressed[u(Key::MENU)]) {
+            if (GAME.events.pop_key_press(Key::MENU)) {
                 uint32_t pause_start_ticks = SDL_GetTicks();
                 if (m2::ui::execute_blocking(&m2g::ui::pause) == m2::ui::Action::QUIT) {
                     return 0;
@@ -179,7 +182,7 @@ int main(int argc, char **argv) {
                 uint32_t pause_end_ticks = SDL_GetTicks();
                 nongame_ticks += pause_end_ticks - pause_start_ticks;
             }
-            if (GAME.events.keys_pressed[u(Key::CONSOLE)]) {
+            if (GAME.events.pop_key_press(Key::CONSOLE)) {
                 uint32_t pause_start_ticks = SDL_GetTicks();
                 if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
                     return 0;

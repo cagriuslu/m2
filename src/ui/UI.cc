@@ -1,5 +1,5 @@
 #include <m2/ui/UI.h>
-#include <m2/Event.hh>
+#include <m2/Events.h>
 #include <m2/Def.h>
 #include <m2/Game.hh>
 
@@ -48,7 +48,7 @@ void UIState::update_positions(const SDL_Rect &rect_px_) {
     }
 }
 
-Action UIState::handle_events(const Events& events) {
+Action UIState::handle_events(Events& events) {
     Action return_value = Action::CONTINUE;
     for (auto& element : elements) {
         if ((return_value = element->handle_events(events)) != Action::CONTINUE) {
@@ -91,11 +91,12 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
         //////////////////////////// EVENT HANDLING ////////////////////////////
         ////////////////////////////////////////////////////////////////////////
         if (events.gather()) {
-            if (events.quit) {
+            if (events.pop_quit()) {
                 return Action::QUIT;
             }
-            if (events.window_resized) {
-                Game_UpdateWindowDimensions(events.window_dimensions.x, events.window_dimensions.y);
+			auto window_resize = events.pop_window_resize();
+            if (window_resize) {
+                Game_UpdateWindowDimensions(window_resize->x, window_resize->y);
                 state.update_positions(GAME.windowRect);
             }
             if ((return_value = state.handle_events(events)) != Action::CONTINUE) {

@@ -10,7 +10,7 @@ void ElementState::update_position(const SDL_Rect &rect_px_) {
     this->rect_px = rect_px_;
 }
 
-Action ElementState::handle_events(const Events &events) {
+Action ElementState::handle_events(Events &events) {
     (void)events;
     return Action::CONTINUE;
 }

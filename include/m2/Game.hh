@@ -3,7 +3,7 @@
 
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
-#include "m2/Event.hh"
+#include "m2/Events.h"
 #include "DrawList.h"
 #include <m2/Object.h>
 #include <m2/LevelBlueprint.h>

@@ -11,22 +11,25 @@ namespace m2 {
 		DOWN,
 		LEFT,
 		RIGHT,
+		DASH,
 		CONSOLE,
 		ENTER,
 		end
 	};
-	unsigned u(Key k);
+	constexpr unsigned u(Key k) {
+		return static_cast<unsigned>(k);
+	}
 
 	enum class MouseButton {
 		UNKNOWN = 0,
 		PRIMARY,
 		SECONDARY,
 		MIDDLE,
-		SCROLL_DOWN,
-		SCROLL_UP,
 		end
 	};
-	unsigned u(MouseButton mb);
+	constexpr unsigned u(MouseButton mb) {
+		return static_cast<unsigned>(mb);
+	}
 	MouseButton button_to_mouse_button(int button);
 }
 

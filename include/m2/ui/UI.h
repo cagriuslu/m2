@@ -3,7 +3,7 @@
 
 #include "ElementBlueprint.h"
 #include "Action.h"
-#include "../Event.hh"
+#include "../Events.h"
 #include "../Def.h"
 #include <SDL_ttf.h>
 #include <SDL.h>
@@ -29,7 +29,7 @@ namespace m2::ui {
         UIState();
         explicit UIState(const UIBlueprint* blueprint);
         void update_positions(const SDL_Rect& rect);
-        Action handle_events(const Events& events);
+        Action handle_events(Events& events);
         Action update_contents();
         void draw();
 
