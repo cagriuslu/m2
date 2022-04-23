@@ -1,5 +1,5 @@
 #include <rpg/object/Enemy.h>
-#include <rpg/object/Drop.h>
+#include <rpg/object/ConsumableDrop.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
@@ -98,7 +98,7 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	def.on_death = [&](m2g::comp::Defense& def) {
 		auto drop_position = obj.position;
 		GAME.add_deferred_action([=]() {
-			Drop::init(GAME.objects.alloc().first, itm::health_drop_20, drop_position);
+			ConsumableDrop::init(GAME.objects.alloc().first, itm::health_drop_20, drop_position);
 		});
 		GAME.add_deferred_action(m2::create_object_deleter(def.object_id));
 	};

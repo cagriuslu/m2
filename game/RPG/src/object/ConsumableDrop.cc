@@ -1,11 +1,11 @@
-#include <rpg/object/Drop.h>
+#include <rpg/object/ConsumableDrop.h>
 #include <m2g/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 #include <m2/Game.hh>
 
-obj::Drop::Drop(const itm::ItemBlueprint &item_blueprint) : item_blueprint(item_blueprint) {}
+obj::ConsumableDrop::ConsumableDrop(const itm::ConsumableBlueprint &blueprint) : blueprint(blueprint) {}
 
-M2Err obj::Drop::init(m2::Object &obj, const itm::ItemBlueprint &item_blueprint, m2::Vec2f pos) {
+M2Err obj::ConsumableDrop::init(m2::Object &obj, const itm::ConsumableBlueprint &blueprint, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	auto& phy = obj.add_physique();
@@ -23,16 +23,16 @@ M2Err obj::Drop::init(m2::Object &obj, const itm::ItemBlueprint &item_blueprint,
 			{},
 			{},
 			0.0f,
-			std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[item_blueprint.drop_sprite_index].collider.variant).radius_m,
+			std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint.drop_sprite_index].collider.variant).radius_m,
 			1.0f,
 			1.0f,
 			true
 	);
 
 	auto& gfx = obj.add_graphic();
-	gfx.textureRect = m2g::sprites[item_blueprint.drop_sprite_index].texture_rect;
+	gfx.textureRect = m2g::sprites[blueprint.drop_sprite_index].texture_rect;
 
-	obj.impl = std::make_unique<Drop>(item_blueprint);
+	obj.impl = std::make_unique<ConsumableDrop>(blueprint);
 
 	phy.on_collision = [](m2::comp::Physique& phy, m2::comp::Physique& other) {
 		// TODO
