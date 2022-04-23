@@ -4,6 +4,10 @@
 #include "../Component.h"
 #include <functional>
 
+namespace m2 {
+	struct Object;
+}
+
 namespace m2::comp {
 	struct Monitor : public Component {
 		std::function<void(Monitor&)> pre_phy;
@@ -13,6 +17,8 @@ namespace m2::comp {
 
 		Monitor() = default;
 		explicit Monitor(uint64_t object_id);
+
+		[[nodiscard]] Object& parent() const;
 	};
 }
 

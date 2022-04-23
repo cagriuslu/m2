@@ -7,11 +7,11 @@
 
 namespace obj {
 	struct ConsumableDrop : public m2::ObjectImpl {
-		const itm::ConsumableBlueprint& blueprint;
+		const itm::Consumable& blueprint;
 
-		explicit ConsumableDrop(const itm::ConsumableBlueprint& blueprint);
+		explicit ConsumableDrop(const itm::Consumable& blueprint);
 
-		static M2Err init(m2::Object& obj, const itm::ConsumableBlueprint& blueprint, m2::Vec2f pos);
+		static M2Err init(m2::Object& obj, const itm::Consumable& blueprint, m2::Vec2f pos);
 	};
 }
 

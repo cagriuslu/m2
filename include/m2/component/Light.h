@@ -4,6 +4,10 @@
 #include "../Component.h"
 #include <functional>
 
+namespace m2 {
+	struct Object;
+}
+
 namespace m2::comp {
 	struct Light : public Component {
 		float radius_m{};
@@ -11,6 +15,8 @@ namespace m2::comp {
 
 		Light() = default;
 		explicit Light(ID object_id);
+
+		[[nodiscard]] Object& parent() const;
 
 		static void default_draw(Light& lig);
 	};

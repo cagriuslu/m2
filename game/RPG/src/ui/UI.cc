@@ -1,8 +1,8 @@
 #include <m2g/ui/UI.h>
-#include <rpg/ui/Callbacks.h>
 #include <m2/ui/ElementBlueprint.h>
 #include <m2/Game.hh>
 #include <rpg/LevelBlueprint.h>
+#include <m2/M2.h>
 
 using namespace m2::ui;
 
@@ -81,8 +81,13 @@ static ElementBlueprint::ElementBlueprintVariant left_hud_variant_1 = element::T
 static ElementBlueprint::ElementBlueprintVariant left_hud_variant_2 = element::TextBlueprint{
         .initial_text = "100",
         .update_callback = []() {
-            // TODO
-            return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
+	        // Lookup player's health
+			auto* player = GAME.objects.get(GAME.playerId);
+			if (player) {
+				return std::make_pair(Action::CONTINUE, std::make_optional(m2::round_string(player->defense().hp)));
+			} else {
+				return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
+			}
         }
 };
 const UIBlueprint m2g::ui::left_hud = {

@@ -1,6 +1,7 @@
 #include "m2/component/Physique.h"
 #include <m2/Game.hh>
 #include <b2_contact.h>
+#include <m2/Object.h>
 
 m2::comp::Physique::Physique(ID object_id) : Component(object_id), body(nullptr) {}
 
@@ -19,6 +20,10 @@ m2::comp::Physique::~Physique() {
 	if (body) {
 		GAME.world->DestroyBody(body);
 	}
+}
+
+m2::Object& m2::comp::Physique::parent() const {
+	return *GAME.objects.get(object_id);
 }
 
 void m2::comp::Physique::contact_cb(b2Contact& contact) {

@@ -1,8 +1,11 @@
 #ifndef M2_M2_H
 #define M2_M2_H
 
+#include <string>
+
 namespace m2 {
 	float randf();
+	std::string round_string(float f);
 
 	float apply_accuracy(float value, float accuracy);
 

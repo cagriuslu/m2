@@ -3,10 +3,16 @@
 
 #include "../Component.h"
 
+namespace m2 {
+	struct Object;
+}
+
 namespace m2::comp {
 	struct Offense : public Component {
 		Offense() = default;
 		explicit Offense(ID object_id);
+
+		[[nodiscard]] Object& parent() const;
 	};
 }
 

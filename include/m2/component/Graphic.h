@@ -4,6 +4,10 @@
 #include "../Component.h"
 #include <functional>
 
+namespace m2 {
+	struct Object;
+}
+
 namespace m2::comp {
 	struct Graphic : public Component {
 		struct SDL_Texture *texture{};
@@ -14,6 +18,8 @@ namespace m2::comp {
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
+
+		[[nodiscard]] Object& parent() const;
 
 		static void default_draw(Graphic& gfx);
 		static void default_draw_healthbar(Graphic& gfx, float healthRatio);

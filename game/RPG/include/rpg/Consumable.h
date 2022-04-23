@@ -6,20 +6,12 @@
 #include <list>
 
 namespace itm {
-	struct ConsumableBlueprint;
-	struct ConsumableState {
-		const ConsumableBlueprint& blueprint;
-
-		explicit ConsumableState(const ConsumableBlueprint& blueprint);
-	};
-
-	struct ConsumableBlueprint {
+	struct Consumable {
 		m2::SpriteIndex drop_sprite_index;
 		std::list<std::pair<chr::Attribute, float>> buffs;
-		float ttl_s; // 0:instantaneous, +inf:endless
 	};
 
-	extern const ConsumableBlueprint health_drop_20;
+	extern const Consumable health_drop_20;
 }
 
 #endif //IMPL_CONSUMABLE_H

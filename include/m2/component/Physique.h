@@ -4,6 +4,10 @@
 #include "../Component.h"
 #include <functional>
 
+namespace m2 {
+	struct Object;
+}
+
 namespace m2::comp {
 	struct Physique : public Component {
 		b2Body* body{};
@@ -19,6 +23,8 @@ namespace m2::comp {
 		Physique& operator=(Physique&& other) noexcept;
 		// Destructor
 		~Physique();
+
+		[[nodiscard]] Object& parent() const;
 
 		static void contact_cb(b2Contact& contact);
 	};

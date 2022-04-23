@@ -34,6 +34,12 @@ m2::Vec2f::operator b2Vec2() const {
 bool m2::Vec2f::is_nan() const {
 	return isnan(x) || isnan(y);
 }
+bool m2::Vec2f::is_small(float tolerance) const {
+	return is_near({}, tolerance);
+}
+bool m2::Vec2f::is_near(const Vec2f& other, float tolerance) const {
+	return fabsf(other.x - x) < tolerance && fabsf(other.y - y) < tolerance;
+}
 float m2::Vec2f::length() const {
 	return sqrt(length_sq());
 }

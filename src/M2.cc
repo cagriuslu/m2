@@ -16,6 +16,10 @@ float m2::randf() {
 	return (*random_number_distribution)(*random_number_engine);
 }
 
+std::string m2::round_string(float f) {
+	return std::to_string( static_cast<int>(roundf(f)));
+}
+
 float m2::apply_accuracy(float value, float accuracy) {
 	return value + (1.0f - accuracy) * value * (randf() - 0.5f);
 }

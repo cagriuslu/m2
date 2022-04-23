@@ -2,18 +2,20 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Controls.h"
-#include "m2/Events.h"
 #include "m2/Def.h"
 #include <rpg/object/Explosive.h>
 #include <rpg/object/Projectile.h>
 #include <rpg/object/Melee.h>
 #include <m2g/component/Defense.h>
-#include <m2g/component/Offense.h>
 #include <m2/box2d/Utils.h>
 #include <m2g/SpriteBlueprint.h>
 #include <m2/M2.h>
 
 obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : char_state(blueprint), char_animator({obj.graphic(), blueprint}) {}
+
+void obj::Player::add_consumable(const itm::Consumable& consumable) {
+	consumables.emplace_back(consumable);
+}
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -52,69 +54,81 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 
 	monitor.pre_phy = [&obj, &phy]([[maybe_unused]] m2::comp::Monitor& mon) {
-		auto* data = dynamic_cast<obj::Player*>(obj.impl.get());
+		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 
 		m2::Vec2f moveDirection;
 		if (GAME.events.is_key_down(m2::Key::UP)) {
 			moveDirection.y += -1.0f;
-			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKUP);
+			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKUP);
 		}
 		if (GAME.events.is_key_down(m2::Key::DOWN)) {
 			moveDirection.y += 1.0f;
-			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKDOWN);
+			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKDOWN);
 		}
 		if (GAME.events.is_key_down(m2::Key::LEFT)) {
 			moveDirection.x += -1.0f;
-			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKLEFT);
+			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKLEFT);
 		}
 		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			moveDirection.x += 1.0f;
-			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKRIGHT);
+			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKRIGHT);
 		}
 		float force;
 		if (GAME.events.pop_key_press(m2::Key::DASH)) {
 			fprintf(stderr, "Dashing\n");
-			force = data->char_state.blueprint->dash_force;
+			force = impl->char_state.blueprint->dash_force;
 		} else {
-			force = data->char_state.blueprint->walk_force;
+			force = impl->char_state.blueprint->walk_force;
 		}
 		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * force)), true);
 
-		data->char_state.explosive_weapon_state->process_time(GAME.deltaTime_s);
-		data->char_state.melee_weapon_state->process_time(GAME.deltaTime_s);
-		data->char_state.ranged_weapon_state->process_time(GAME.deltaTime_s);
+		impl->char_state.explosive_weapon_state->process_time(GAME.deltaTime_s);
+		impl->char_state.melee_weapon_state->process_time(GAME.deltaTime_s);
+		impl->char_state.ranged_weapon_state->process_time(GAME.deltaTime_s);
 
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && data->char_state.ranged_weapon_state->blueprint->cooldown_s < data->char_state.ranged_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && impl->char_state.ranged_weapon_state->blueprint->cooldown_s < impl->char_state.ranged_weapon_state->cooldown_counter_s) {
 			auto& projectile = GAME.objects.alloc().first;
 			m2::Vec2f direction = (GAME.mousePositionInWorld_m - obj.position).normalize();
-			float accuracy = data->char_state.blueprint->default_ranged_weapon->accuracy;
+			float accuracy = impl->char_state.blueprint->default_ranged_weapon->accuracy;
 			float angle = direction.angle_rads() + (M2_PI * m2::randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
-			obj::Projectile::init(projectile, &data->char_state.blueprint->default_ranged_weapon->projectile, GAME.playerId, obj.position, m2::Vec2f::from_angle(angle));
+			obj::Projectile::init(projectile, &impl->char_state.blueprint->default_ranged_weapon->projectile, GAME.playerId, obj.position, m2::Vec2f::from_angle(angle));
 			// Knockback
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + M2_PI) * 500.0f), true);
 			// TODO set looking direction here as well
-			data->char_state.ranged_weapon_state->cooldown_counter_s = 0;
+			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && data->char_state.melee_weapon_state->blueprint->cooldown_s < data->char_state.melee_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && impl->char_state.melee_weapon_state->blueprint->cooldown_s < impl->char_state.melee_weapon_state->cooldown_counter_s) {
 			auto& melee = GAME.objects.alloc().first;
-			obj::Melee::init(melee, &data->char_state.blueprint->default_melee_weapon->melee, GAME.playerId, obj.position, GAME.mousePositionInWorld_m - obj.position);
-			data->char_state.ranged_weapon_state->cooldown_counter_s = 0;
+			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, GAME.playerId, obj.position, GAME.mousePositionInWorld_m - obj.position);
+			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && data->char_state.explosive_weapon_state->blueprint->cooldown_s < data->char_state.explosive_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && impl->char_state.explosive_weapon_state->blueprint->cooldown_s < impl->char_state.explosive_weapon_state->cooldown_counter_s) {
 			auto& explosive = GAME.objects.alloc().first;
-			obj::Explosive::init(explosive, &data->char_state.blueprint->default_explosive_weapon->explosive, GAME.playerId, obj.position, GAME.mousePositionInWorld_m - obj.position);
-			data->char_state.explosive_weapon_state->cooldown_counter_s = 0;
+			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, GAME.playerId, obj.position, GAME.mousePositionInWorld_m - obj.position);
+			impl->char_state.explosive_weapon_state->cooldown_counter_s = 0;
 		}
 	};
 
-	monitor.post_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
-		auto* data = dynamic_cast<obj::Player*>(obj.impl.get());
+	monitor.post_phy = [&obj,&phy,&def]([[maybe_unused]] m2::comp::Monitor& mon) {
+		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		// We must call time before other signals
-		data->char_animator.time(GAME.deltaTime_s);
-		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
-		if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-			data->char_animator.signal(fsm::CharacterAnimation::CHARANIM_STOP);
+		impl->char_animator.time(GAME.deltaTime_s);
+		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {
+			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_STOP);
 		}
+		// Consumables
+		for (auto& consumable : impl->consumables) {
+			for (const auto& buff : consumable.buffs) {
+				switch (buff.first) {
+					case chr::Attribute::HP:
+						def.hp += buff.second;
+						if (def.maxHp < def.hp) { def.hp = def.maxHp; }
+						break;
+					default: break;
+				}
+			}
+		}
+		impl->consumables.clear();
 	};
 
 	def.on_death = []([[maybe_unused]] m2g::comp::Defense& def) {

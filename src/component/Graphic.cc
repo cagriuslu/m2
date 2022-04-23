@@ -2,6 +2,8 @@
 #include <m2/Game.hh>
 #include "m2/component/Graphic.h"
 #include <m2g/SpriteBlueprint.h>
+#include <m2/Object.h>
+#include <m2/Game.hh>
 
 m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPosition, m2::Vec2f objGfxCenterPx) {
 	static auto camera_id = GAME.cameraId;
@@ -24,6 +26,10 @@ m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPositio
 }
 
 m2::comp::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), on_draw(default_draw) {}
+
+m2::Object& m2::comp::Graphic::parent() const {
+	return *GAME.objects.get(object_id);
+}
 
 void m2::comp::Graphic::default_draw(comp::Graphic& gfx) {
 	auto& obj = GAME.objects[gfx.object_id];

@@ -25,6 +25,8 @@ namespace m2 {
 		explicit operator b2Vec2() const;
 
 		[[nodiscard]] bool is_nan() const;
+		[[nodiscard]] bool is_small(float tolerance) const;
+		[[nodiscard]] bool is_near(const Vec2f& other, float tolerance) const;
 		[[nodiscard]] float length() const;
 		[[nodiscard]] float length_sq() const;
 		[[nodiscard]] float distance(const Vec2f& other) const;
