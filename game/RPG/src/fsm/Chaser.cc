@@ -42,18 +42,18 @@ void* fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
     }
 }
 
-void AiChase_AttackIfCloseEnough(m2::FSM<fsm::Chaser>& automaton) {
+static void attack_if_close_enough(m2::FSM<fsm::Chaser>& automaton) {
 	auto& obj = automaton.data.obj;
 	auto& target = automaton.data.target;
 	const auto* blueprint = automaton.data.blueprint;
-	auto* data = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
+	auto* impl = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 
     // If player is close enough
     if (obj.position.distance_sq(target.position) < blueprint->attack_distance_squared_m) {
         // Based on what the capability is
         switch (automaton.data.blueprint->capability) {
 			case ai::CAPABILITY_RANGED: {
-				auto& weapon_state = data->character_state.ranged_weapon_state;
+				auto& weapon_state = impl->character_state.ranged_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     auto& projectile = GAME.objects.alloc().first;
@@ -70,7 +70,7 @@ void AiChase_AttackIfCloseEnough(m2::FSM<fsm::Chaser>& automaton) {
                 break;
             }
 			case ai::CAPABILITY_MELEE: {
-				auto& weapon_state = data->character_state.melee_weapon_state;
+				auto& weapon_state = impl->character_state.melee_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     auto& melee = GAME.objects.alloc().first;
@@ -86,7 +86,7 @@ void AiChase_AttackIfCloseEnough(m2::FSM<fsm::Chaser>& automaton) {
                 break;
             }
             case ai::CAPABILITY_EXPLOSIVE: {
-				auto& weapon_state = data->character_state.explosive_weapon_state;
+				auto& weapon_state = impl->character_state.explosive_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
                     auto& explosive = GAME.objects.alloc().first;
@@ -113,7 +113,7 @@ void AiChase_AttackIfCloseEnough(m2::FSM<fsm::Chaser>& automaton) {
 }
 
 void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
-	auto* data = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
+	auto* impl = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     auto& player = GAME.objects[GAME.playerId];
     switch (sig) {
@@ -135,19 +135,21 @@ void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
             return nullptr;
         }
 		case m2::FSMSIG_PREPHY:
-            if (1 < automaton.data.reverse_waypoints.size()) {
-                auto end = automaton.data.reverse_waypoints.end();
-                auto obj_pos = *std::prev(end, 1);
-                auto target_pos = *std::prev(end, 2);
-                if (obj_pos != target_pos) {
-                    auto objPositionF = m2::Vec2f(obj_pos);
-                    auto targetPositionF = m2::Vec2f(target_pos);
-                    m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * data->character_state.blueprint->walk_force);
-                    automaton.data.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
-                }
-            }
-            AiChase_AttackIfCloseEnough(automaton);
+			if (not impl->character_state.is_stunned()) {
+				if (1 < automaton.data.reverse_waypoints.size()) {
+					auto end = automaton.data.reverse_waypoints.end();
+					auto obj_pos = *std::prev(end, 1);
+					auto target_pos = *std::prev(end, 2);
+					if (obj_pos != target_pos) {
+						auto objPositionF = m2::Vec2f(obj_pos);
+						auto targetPositionF = m2::Vec2f(target_pos);
+						m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
+						m2::Vec2f force = direction * (GAME.deltaTicks_ms * impl->character_state.blueprint->walk_force);
+						automaton.data.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+					}
+				}
+				attack_if_close_enough(automaton);
+			}
             return nullptr;
         default:
             return nullptr;
@@ -155,7 +157,7 @@ void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
 }
 
 void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
-	auto* data = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
+	auto* impl = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     switch (sig) {
         case m2::FSMSIG_ENTER:
@@ -180,7 +182,7 @@ void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
         case m2::FSMSIG_PREPHY:
-            if (1 < automaton.data.reverse_waypoints.size()) {
+            if (not impl->character_state.is_stunned() && 1 < automaton.data.reverse_waypoints.size()) {
                 auto end = automaton.data.reverse_waypoints.end();
                 auto obj_pos = *std::prev(end, 1);
                 auto target_pos = *std::prev(end, 2);
@@ -188,7 +190,7 @@ void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
                     auto objPositionF = m2::Vec2f(obj_pos);
                     auto targetPositionF = m2::Vec2f(target_pos);
                     m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * data->character_state.blueprint->walk_force);
+                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * impl->character_state.blueprint->walk_force);
                     automaton.data.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
                 }
             }

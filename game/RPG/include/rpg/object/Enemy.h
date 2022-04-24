@@ -23,6 +23,7 @@ namespace obj {
 		float on_hit_color_mod_ttl;
 
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
+		void stun();
 
         static M2Err init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos);
     };

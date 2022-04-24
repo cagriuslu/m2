@@ -19,6 +19,10 @@ obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : c
 	}, blueprint->aiBlueprint->variant)
 ), on_hit_color_mod_ttl(0) {}
 
+void Enemy::stun() {
+	character_state.stun();
+}
+
 M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
@@ -48,10 +52,10 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
     obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 
 	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
-		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		data->character_state.process_time(GAME.deltaTime_s);
-		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, data->fsm_variant);
-		std::visit([](auto& v) { v.signal(m2::FSMSIG_PREPHY); }, data->fsm_variant);
+		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
+		impl->character_state.process_time(GAME.deltaTime_s);
+		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->fsm_variant);
+		std::visit([](auto& v) { v.signal(m2::FSMSIG_PREPHY); }, impl->fsm_variant);
 	};
 
 	monitor.post_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
