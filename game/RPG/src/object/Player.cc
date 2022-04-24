@@ -100,7 +100,7 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && impl->char_state.melee_weapon_state->blueprint->cooldown_s < impl->char_state.melee_weapon_state->cooldown_counter_s) {
 			auto& melee = GAME.objects.alloc().first;
 			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, GAME.playerId, obj.position, GAME.mousePositionInWorld_m - obj.position);
-			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;
+			impl->char_state.melee_weapon_state->cooldown_counter_s = 0;
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && impl->char_state.explosive_weapon_state->blueprint->cooldown_s < impl->char_state.explosive_weapon_state->cooldown_counter_s) {
 			auto& explosive = GAME.objects.alloc().first;
