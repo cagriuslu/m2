@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
 	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == nullptr) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
-	SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127);
+	//SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127); Temporarily disabled, because lighting is disabled
 	SDL_FreeSurface(textureMapSurface);
 	SDL_Surface* textureMaskSurface = IMG_Load(m2g::texture_mask_file.data());
 	if (textureMaskSurface == nullptr) {

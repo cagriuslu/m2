@@ -4,6 +4,7 @@
 #include <rpg/LevelBlueprint.h>
 #include <m2/M2.h>
 #include <rpg/object/Player.h>
+#include <m2g/SpriteBlueprint.h>
 
 using namespace m2::ui;
 
@@ -14,7 +15,18 @@ auto quit_button_action = []() {
 	return Action::QUIT;
 };
 
-static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant entry_variant_0 = wdg::TextBlueprint{
+	.initial_text = "Select save slot:"
+};
+static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::ImageBlueprint{
+	.initial_sprite_index = m2g::IMPL_SPRITE_FLOPPY_DISK,
+	.action_callback = []() {
+		fprintf(stderr, "Pressed button\n");
+		return Action::CONTINUE;
+	},
+	.kb_shortcut = SDL_SCANCODE_1
+};
+static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBlueprint{
 	.initial_text = "NEW GAME",
 	.update_callback = no_string,
 	.action_callback = []() {
@@ -23,7 +35,7 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::TextBluepr
 	},
 	.kb_shortcut = SDL_SCANCODE_N
 };
-static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant entry_variant_3 = wdg::TextBlueprint{
 	.initial_text = "QUIT",
 	.update_callback = no_string,
 	.action_callback = quit_button_action,
@@ -31,17 +43,27 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBluepr
 };
 const UIBlueprint m2g::ui::entry = {
 	.w = 100, .h = 100,
-	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
+	.background_color = {20, 20, 20, 255},
 	.widgets = {
 		WidgetBlueprint{
-			.x = 45, .y = 35, .w = 10, .h = 10,
+			.x = 45, .y = 0, .w = 10, .h = 10,
+			.background_color = {20, 20, 20, 255},
+			.variant = entry_variant_0
+		},
+		WidgetBlueprint{
+			.x = 45, .y = 10, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = entry_variant_1
 		},
 		WidgetBlueprint{
-			.x = 45, .y = 55, .w = 10, .h = 10,
+			.x = 45, .y = 35, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = entry_variant_2
+		},
+		WidgetBlueprint{
+			.x = 45, .y = 55, .w = 10, .h = 10,
+			.border_width_px = 1,
+			.variant = entry_variant_3
 		}
 	}
 };

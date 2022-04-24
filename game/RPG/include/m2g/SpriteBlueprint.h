@@ -53,6 +53,7 @@ namespace m2g {
         IMPL_SPRITE_BOMB_00,
 
 		IMPL_SPRITE_RED_POTION_00,
+		IMPL_SPRITE_FLOPPY_DISK,
 
         IMPL_SPRITE_N
     };

@@ -35,6 +35,5 @@ void m2::comp::Light::default_draw(Light& lig) {
 			(int)roundf((float)lig.radius_m * GAME.pixelsPerMeter * 2.0f),
 			(int)roundf((float)lig.radius_m * GAME.pixelsPerMeter * 2.0f)
 	};
-	SDL_RenderCopy(GAME.sdlRenderer, GAME.sdlLightTexture, NULL, &dstrect);
-
+	//SDL_RenderCopy(GAME.sdlRenderer, GAME.sdlLightTexture, NULL, &dstrect); Temporarily disabled
 }
