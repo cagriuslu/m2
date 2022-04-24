@@ -1,5 +1,5 @@
-#ifndef M2_ELEMENTSTATE_H
-#define M2_ELEMENTSTATE_H
+#ifndef M2_WIDGETSTATE_H
+#define M2_WIDGETSTATE_H
 
 #include "Action.h"
 #include <m2/Events.h>
@@ -14,13 +14,13 @@ namespace m2::ui {
         RIGHT
     };
 
-    struct ElementBlueprint;
-    struct ElementState {
-        const ElementBlueprint* blueprint;
+    struct WidgetBlueprint;
+    struct WidgetState {
+        const WidgetBlueprint* blueprint;
         SDL_Rect rect_px;
 
-        explicit ElementState(const ElementBlueprint* blueprint);
-		virtual ~ElementState() = default;
+        explicit WidgetState(const WidgetBlueprint* blueprint);
+		virtual ~WidgetState() = default;
         virtual void update_position(const SDL_Rect& rect_px);
         virtual Action handle_events(Events& events);
         virtual Action update_content();
@@ -32,4 +32,4 @@ namespace m2::ui {
     };
 }
 
-#endif //M2_ELEMENTSTATE_H
+#endif //M2_WIDGETSTATE_H

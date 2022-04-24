@@ -1,20 +1,20 @@
-#include <m2/ui/element/AbstractButton.h>
-#include <m2/ui/ElementBlueprint.h>
+#include <m2/ui/widget/AbstractButton.h>
+#include <m2/ui/WidgetBlueprint.h>
 #include <m2/Def.h>
 
 using namespace m2::ui;
-using namespace m2::ui::element;
+using namespace m2::ui::wdg;
 
-AbstractButtonState::AbstractButtonState(const ElementBlueprint *blueprint) :
-        ElementState(blueprint),
-        kb_shortcut(
+AbstractButtonState::AbstractButtonState(const WidgetBlueprint *blueprint) :
+	WidgetState(blueprint),
+	kb_shortcut(
             std::visit(overloaded {
                 [](const TextBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
                 [](const ImageBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
                 [](const auto& v) -> SDL_Scancode { (void)v; return SDL_SCANCODE_UNKNOWN; }
             }, blueprint->variant)
         ),
-        depressed(false) {}
+	depressed(false) {}
 
 Action AbstractButtonState::handle_events(Events &events) {
     bool run_action = false;

@@ -1,10 +1,10 @@
-#include <m2/ui/ElementBlueprint.h>
+#include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/UI.h>
 
-std::unique_ptr<m2::ui::ElementState> m2::ui::ElementBlueprint::get_state() const {
-    using namespace element;
+std::unique_ptr<m2::ui::WidgetState> m2::ui::WidgetBlueprint::get_state() const {
+    using namespace wdg;
 
-    std::unique_ptr<ElementState> state;
+    std::unique_ptr<WidgetState> state;
     if (std::holds_alternative<NestedUIBlueprint>(variant)) {
         state = std::make_unique<NestedUIState>(this);
     } else if (std::holds_alternative<TextBlueprint>(variant)) {

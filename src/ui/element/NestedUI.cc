@@ -1,11 +1,11 @@
-#include <m2/ui/element/NestedUI.h>
-#include <m2/ui/ElementBlueprint.h>
+#include <m2/ui/widget/NestedUI.h>
+#include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/UI.h>
 
 using namespace m2::ui;
-using namespace m2::ui::element;
+using namespace m2::ui::wdg;
 
-NestedUIState::NestedUIState(const ElementBlueprint *blueprint) : ElementState(blueprint) {
+NestedUIState::NestedUIState(const WidgetBlueprint *blueprint) : WidgetState(blueprint) {
     ui = std::make_unique<UIState>(std::get<NestedUIBlueprint>(blueprint->variant).ui);
 }
 

@@ -1,11 +1,11 @@
-#include <m2/ui/element/TextInput.h>
-#include <m2/ui/ElementBlueprint.h>
+#include <m2/ui/widget/TextInput.h>
+#include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/UI.h>
 
 using namespace m2::ui;
-using namespace m2::ui::element;
+using namespace m2::ui::wdg;
 
-TextInputState::TextInputState(const ElementBlueprint* blueprint) : ElementState(blueprint), font_texture(nullptr) {
+TextInputState::TextInputState(const WidgetBlueprint* blueprint) : WidgetState(blueprint), font_texture(nullptr) {
     text_input << std::get<TextInputBlueprint>(blueprint->variant).initial_text;
     SDL_StartTextInput();
 }

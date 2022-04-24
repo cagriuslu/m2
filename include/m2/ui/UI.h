@@ -1,7 +1,7 @@
 #ifndef M2_UI_H
 #define M2_UI_H
 
-#include "ElementBlueprint.h"
+#include "WidgetBlueprint.h"
 #include "Action.h"
 #include "../Events.h"
 #include "../Def.h"
@@ -18,13 +18,13 @@ namespace m2::ui {
 		unsigned w, h; // unitless
 		unsigned border_width_px;
 		SDL_Color background_color;
-		std::list<ElementBlueprint> elements;
+		std::list<WidgetBlueprint> widgets;
 	};
 
 	struct UIState {
 		const UIBlueprint* blueprint;
 		SDL_Rect rect_px;
-		std::list<std::unique_ptr<ElementState>> elements;
+		std::list<std::unique_ptr<WidgetState>> widgets;
 
         UIState();
         explicit UIState(const UIBlueprint* blueprint);

@@ -6,7 +6,7 @@
 #include <optional>
 #include <functional>
 
-namespace m2::ui::element {
+namespace m2::ui::wdg {
 	struct ImageBlueprint {
 		SDL_Rect initial_texture_rect;
 		std::function<std::pair<Action,std::optional<SDL_Rect>>(void)> update_callback;
@@ -17,7 +17,7 @@ namespace m2::ui::element {
 	struct ImageState : public AbstractButtonState {
 		SDL_Rect texture_rect;
 
-        explicit ImageState(const ElementBlueprint* blueprint);
+        explicit ImageState(const WidgetBlueprint* blueprint);
         Action update_content() override;
         // void draw() override;
 	};

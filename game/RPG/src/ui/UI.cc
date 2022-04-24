@@ -1,5 +1,5 @@
 #include <m2g/ui/UI.h>
-#include <m2/ui/ElementBlueprint.h>
+#include <m2/ui/WidgetBlueprint.h>
 #include <m2/Game.hh>
 #include <rpg/LevelBlueprint.h>
 #include <m2/M2.h>
@@ -13,7 +13,7 @@ auto quit_button_action = []() {
 	return Action::QUIT;
 };
 
-static ElementBlueprint::ElementBlueprintVariant entry_variant_1 = element::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::TextBlueprint{
 	.initial_text = "NEW GAME",
 	.update_callback = no_string,
 	.action_callback = []() {
@@ -22,7 +22,7 @@ static ElementBlueprint::ElementBlueprintVariant entry_variant_1 = element::Text
 	},
 	.kb_shortcut = SDL_SCANCODE_N
 };
-static ElementBlueprint::ElementBlueprintVariant entry_variant_2 = element::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBlueprint{
 	.initial_text = "QUIT",
 	.update_callback = no_string,
 	.action_callback = quit_button_action,
@@ -31,13 +31,13 @@ static ElementBlueprint::ElementBlueprintVariant entry_variant_2 = element::Text
 const UIBlueprint m2g::ui::entry = {
 	.w = 100, .h = 100,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
-	.elements = {
-		ElementBlueprint{
+	.widgets = {
+		WidgetBlueprint{
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = entry_variant_1
 		},
-		ElementBlueprint{
+		WidgetBlueprint{
 			.x = 45, .y = 55, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = entry_variant_2
@@ -45,7 +45,7 @@ const UIBlueprint m2g::ui::entry = {
 	}
 };
 
-static ElementBlueprint::ElementBlueprintVariant pause_variant_1 = element::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant pause_variant_1 = wdg::TextBlueprint{
 	.initial_text = "RESUME_GAME",
 	.update_callback = no_string,
 	.action_callback = []() {
@@ -53,7 +53,7 @@ static ElementBlueprint::ElementBlueprintVariant pause_variant_1 = element::Text
 	},
 	.kb_shortcut = SDL_SCANCODE_R
 };
-static ElementBlueprint::ElementBlueprintVariant pause_variant_2 = element::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant pause_variant_2 = wdg::TextBlueprint{
 	.initial_text = "QUIT",
 	.update_callback = no_string,
 	.action_callback = quit_button_action,
@@ -62,13 +62,13 @@ static ElementBlueprint::ElementBlueprintVariant pause_variant_2 = element::Text
 const UIBlueprint m2g::ui::pause = {
 	.w = 100, .h = 100,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
-	.elements = {
-		ElementBlueprint{
+	.widgets = {
+		WidgetBlueprint{
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = pause_variant_1
 		},
-		ElementBlueprint{
+		WidgetBlueprint{
 			.x = 45, .y = 55, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = pause_variant_2
@@ -76,11 +76,11 @@ const UIBlueprint m2g::ui::pause = {
 	}
 };
 
-static ElementBlueprint::ElementBlueprintVariant left_hud_variant_1 = element::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_1 = wdg::TextBlueprint{
 	.initial_text = "HP",
 	.update_callback = no_string
 };
-static ElementBlueprint::ElementBlueprintVariant left_hud_variant_2 = element::TextBlueprint{
+static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlueprint{
 	.initial_text = "100",
 	.update_callback = []() {
 		// Lookup player's health
@@ -95,12 +95,12 @@ static ElementBlueprint::ElementBlueprintVariant left_hud_variant_2 = element::T
 const UIBlueprint m2g::ui::left_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 2,
-	.elements = {
-		ElementBlueprint{
+	.widgets = {
+		WidgetBlueprint{
 			.x = 4, .y = 50, .w = 11, .h = 2,
 			.variant = left_hud_variant_1
 		},
-		ElementBlueprint{
+		WidgetBlueprint{
 			.x = 4, .y = 52, .w = 11, .h = 2,
 			.variant = left_hud_variant_2
 		}

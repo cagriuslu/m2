@@ -7,7 +7,7 @@
 #include <optional>
 #include <string>
 
-namespace m2::ui::element {
+namespace m2::ui::wdg {
 	struct TextBlueprint {
 		std::string_view initial_text;
         TextAlignment alignment;
@@ -19,7 +19,7 @@ namespace m2::ui::element {
 	struct TextState : public AbstractButtonState {
         SDL_Texture* font_texture;
 
-        explicit TextState(const ElementBlueprint* blueprint);
+        explicit TextState(const WidgetBlueprint* blueprint);
 		~TextState() override;
         Action update_content() override;
         void draw() override;
