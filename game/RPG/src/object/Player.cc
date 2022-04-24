@@ -123,7 +123,8 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 						def.hp += buff.second;
 						if (def.maxHp < def.hp) { def.hp = def.maxHp; }
 						break;
-					default: break;
+					default:
+						break;
 				}
 			}
 		}
