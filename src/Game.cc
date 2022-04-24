@@ -32,6 +32,10 @@ m2::Game::~Game() {
     // TODO deinit others
 }
 
+m2::Object* m2::Game::player() {
+	return objects.get(playerId);
+}
+
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
 	level.deferred_actions.push_back(action);
 }

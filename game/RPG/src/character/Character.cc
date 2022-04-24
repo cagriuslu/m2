@@ -2,7 +2,7 @@
 #include <m2g/SpriteBlueprint.h>
 
 chr::CharacterState::CharacterState(const CharacterBlueprint* blueprint) :
-	blueprint(blueprint) {
+	blueprint(blueprint), dash_cooldown_counter_s(blueprint->dash_cooldown_s) {
 	if (blueprint->default_explosive_weapon) {
 		explosive_weapon_state = ExplosiveWeaponState(blueprint->default_explosive_weapon);
 	}
@@ -24,6 +24,20 @@ void chr::CharacterState::process_time(float time_passed_s) {
 	if (ranged_weapon_state) {
 		ranged_weapon_state->process_time(time_passed_s);
 	}
+	// Dash
+	dash_cooldown_counter_s += time_passed_s;
+	if (blueprint->dash_cooldown_s < dash_cooldown_counter_s) {
+		dash_cooldown_counter_s = blueprint->dash_cooldown_s + 0.001f;
+	}
+}
+
+bool chr::CharacterState::pop_dash() {
+	if (blueprint->dash_cooldown_s <= dash_cooldown_counter_s) {
+		dash_cooldown_counter_s = 0.0f;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 const chr::CharacterBlueprint chr::character_player = {
@@ -36,6 +50,7 @@ const chr::CharacterBlueprint chr::character_player = {
 		.default_explosive_weapon = &explosive_weapon_grenade,
 		.default_melee_weapon = &melee_weapon_bat,
 		.default_ranged_weapon = &ranged_weapon_gun,
+		.dash_cooldown_s = 2.0f,
 		.sprite_indexes = {
 				m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_00, // CFG_CHARTEXTURETYP_LOOKDOWN_00
 				m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_01, // CFG_CHARTEXTURETYP_LOOKDOWN_01

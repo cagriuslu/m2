@@ -96,6 +96,10 @@ namespace m2 {
 
 		~Game();
 
+		// Accessors
+		Object* player();
+
+		// Modifiers
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
 

@@ -31,8 +31,10 @@ namespace chr {
 		std::optional<ExplosiveWeaponState> explosive_weapon_state;
 		std::optional<MeleeWeaponState> melee_weapon_state;
 		std::optional<RangedWeaponState> ranged_weapon_state;
+		float dash_cooldown_counter_s;
 		explicit CharacterState(const CharacterBlueprint* blueprint);
 		void process_time(float time_passed_s);
+		bool pop_dash();
 	};
 	struct CharacterBlueprint {
 		m2::SpriteIndex main_sprite_index;
@@ -44,6 +46,7 @@ namespace chr {
 		const ExplosiveWeaponBlueprint* default_explosive_weapon;
 		const MeleeWeaponBlueprint* default_melee_weapon;
 		const RangedWeaponBlueprint* default_ranged_weapon;
+		float dash_cooldown_s;
 		m2::SpriteIndex sprite_indexes[CHARACTER_TEXTURE_TYPE_N];
 		const ai::AiBlueprint* aiBlueprint;
 	};

@@ -74,17 +74,14 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKRIGHT);
 		}
 		float force;
-		if (GAME.events.pop_key_press(m2::Key::DASH)) {
-			fprintf(stderr, "Dashing\n");
+		if (GAME.events.pop_key_press(m2::Key::DASH) && impl->char_state.pop_dash()) {
 			force = impl->char_state.blueprint->dash_force;
 		} else {
 			force = impl->char_state.blueprint->walk_force;
 		}
 		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * force)), true);
 
-		impl->char_state.explosive_weapon_state->process_time(GAME.deltaTime_s);
-		impl->char_state.melee_weapon_state->process_time(GAME.deltaTime_s);
-		impl->char_state.ranged_weapon_state->process_time(GAME.deltaTime_s);
+		impl->char_state.process_time(GAME.deltaTime_s);
 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && impl->char_state.ranged_weapon_state->blueprint->cooldown_s < impl->char_state.ranged_weapon_state->cooldown_counter_s) {
 			auto& projectile = GAME.objects.alloc().first;

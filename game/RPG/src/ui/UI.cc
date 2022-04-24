@@ -3,6 +3,7 @@
 #include <m2/Game.hh>
 #include <rpg/LevelBlueprint.h>
 #include <m2/M2.h>
+#include <rpg/object/Player.h>
 
 using namespace m2::ui;
 
@@ -83,10 +84,16 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_1 = wdg::TextBlu
 static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlueprint{
 	.initial_text = "100",
 	.update_callback = []() {
-		// Lookup player's health
-		auto *player = GAME.objects.get(GAME.playerId);
-		if (player) {
-			return std::make_pair(Action::CONTINUE, std::make_optional(m2::round_string(player->defense().hp)));
+		// Lookup player
+		static ID player_id = 0;
+		static float* hp = nullptr;
+		if (player_id != GAME.playerId) {
+			player_id = GAME.playerId;
+			hp = &GAME.player()->defense().hp;
+		}
+		// Read HP
+		if (hp) {
+			return std::make_pair(Action::CONTINUE, std::make_optional(m2::round_string(*hp)));
 		} else {
 			return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
 		}
@@ -100,7 +107,22 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_4 = wdg::Progres
 	.initial_progress = 1.0f,
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {
-		return 0.5f;
+		// Lookup player
+		static ID player_id = 0;
+		static float* counter = nullptr;
+		static float cooldown = 0.0f;
+		if (player_id != GAME.playerId) {
+			player_id = GAME.playerId;
+			auto* impl = dynamic_cast<obj::Player*>(GAME.player()->impl.get());
+			counter = &impl->char_state.dash_cooldown_counter_s;
+			cooldown = impl->char_state.blueprint->dash_cooldown_s;
+		}
+		// Read cooldown counter
+		if (counter) {
+			return *counter / cooldown;
+		} else {
+			return 0.0f;
+		}
 	}
 };
 const UIBlueprint m2g::ui::left_hud = {
@@ -121,6 +143,7 @@ const UIBlueprint m2g::ui::left_hud = {
 		},
 		WidgetBlueprint{
 			.x = 4, .y = 56, .w = 11, .h = 2,
+			.border_width_px = 1,
 			.variant = left_hud_variant_4
 		}
 	}
