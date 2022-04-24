@@ -92,6 +92,17 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlu
 		}
 	}
 };
+static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_3 = wdg::TextBlueprint{
+	.initial_text = "DASH",
+	.update_callback = no_string
+};
+static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_4 = wdg::ProgressBarBlueprint{
+	.initial_progress = 1.0f,
+	.bar_color = SDL_Color{255, 255, 0, 255},
+	.update_callback = []() {
+		return 0.5f;
+	}
+};
 const UIBlueprint m2g::ui::left_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 2,
@@ -103,6 +114,14 @@ const UIBlueprint m2g::ui::left_hud = {
 		WidgetBlueprint{
 			.x = 4, .y = 52, .w = 11, .h = 2,
 			.variant = left_hud_variant_2
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 54, .w = 11, .h = 2,
+			.variant = left_hud_variant_3
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 56, .w = 11, .h = 2,
+			.variant = left_hud_variant_4
 		}
 	}
 };

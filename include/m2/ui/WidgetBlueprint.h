@@ -3,6 +3,7 @@
 
 #include "widget/Image.h"
 #include "widget/NestedUI.h"
+#include "widget/ProgressBar.h"
 #include "widget/Text.h"
 #include "widget/TextInput.h"
 #include <SDL_ttf.h>
@@ -20,6 +21,7 @@ namespace m2::ui {
         using WidgetBlueprintVariant = std::variant<
                 wdg::NestedUIBlueprint,
                 wdg::ImageBlueprint,
+				wdg::ProgressBarBlueprint,
                 wdg::TextBlueprint,
                 wdg::TextInputBlueprint>;
         WidgetBlueprintVariant variant;

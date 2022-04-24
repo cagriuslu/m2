@@ -1,5 +1,6 @@
 #include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/UI.h>
+#include <m2/Error.h>
 
 std::unique_ptr<m2::ui::WidgetState> m2::ui::WidgetBlueprint::get_state() const {
     using namespace wdg;
@@ -12,7 +13,11 @@ std::unique_ptr<m2::ui::WidgetState> m2::ui::WidgetBlueprint::get_state() const 
     } else if (std::holds_alternative<TextInputBlueprint>(variant)) {
         state = std::make_unique<TextInputState>(this);
     } else if (std::holds_alternative<ImageBlueprint>(variant)) {
-        state = std::make_unique<ImageState>(this);
-    }
+	    state = std::make_unique<ImageState>(this);
+    } else if (std::holds_alternative<ProgressBarBlueprint>(variant)) {
+	    state = std::make_unique<ProgressBarState>(this);
+    } else {
+		throw M2FATAL(M2ERR_IMPLEMENTATION);
+	}
     return state;
 }
