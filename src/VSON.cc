@@ -6,8 +6,8 @@
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
 
-const m2::vson* m2::vson::query(const std::string& path) const {
-	const vson* v = this;
+const m2::VSON* m2::VSON::query(const std::string& path) const {
+	const VSON* v = this;
 	for (const auto& path_piece : m2::string::split(path, '/')) {
 		if (std::holds_alternative<vson_object>(value)) {
 			const auto& obj = std::get<vson_object>(value);
@@ -33,7 +33,7 @@ const m2::vson* m2::vson::query(const std::string& path) const {
 
 }
 
-static void dump_any_value(const m2::vson& v, std::stringstream& ss) {
+static void dump_any_value(const m2::VSON& v, std::stringstream& ss) {
 	auto print_string = [](std::stringstream& ss, const std::string& str){
 		ss << '"';
 		for (auto c : str) {
@@ -48,33 +48,33 @@ static void dump_any_value(const m2::vson& v, std::stringstream& ss) {
 		ss << '"';
 	};
 
-	if (std::holds_alternative<m2::vson::vson_object>(v.value)) {
+	if (std::holds_alternative<m2::VSON::vson_object>(v.value)) {
 		ss << '{';
-		for (const auto& kv : std::get<m2::vson::vson_object>(v.value)) {
+		for (const auto& kv : std::get<m2::VSON::vson_object>(v.value)) {
 			print_string(ss, kv.first);
 			ss << ':';
 			dump_any_value(kv.second, ss);
 			ss << ',';
 		}
 		ss << '}';
-	} else if (std::holds_alternative<m2::vson::vson_array>(v.value)) {
+	} else if (std::holds_alternative<m2::VSON::vson_array>(v.value)) {
 		ss << '[';
-		for (const auto& elem : std::get<m2::vson::vson_array>(v.value)) {
+		for (const auto& elem : std::get<m2::VSON::vson_array>(v.value)) {
 			dump_any_value(elem, ss);
 			ss << ',';
 		}
 		ss << ']';
-	} else if (std::holds_alternative<m2::vson::vson_string>(v.value)) {
-		print_string(ss, std::get<m2::vson::vson_string>(v.value));
+	} else if (std::holds_alternative<m2::VSON::vson_string>(v.value)) {
+		print_string(ss, std::get<m2::VSON::vson_string>(v.value));
 	}
 }
 
-std::string m2::vson::dump_to_string() const {
+std::string m2::VSON::dump_to_string() const {
 	std::stringstream ss;
 	dump_any_value(*this, ss);
 	return ss.str();
 }
-bool m2::vson::dump_to_file(const std::string& fpath) const {
+bool m2::VSON::dump_to_file(const std::string& fpath) const {
 	FILE* file = fopen(fpath.c_str(), "w");
 	if (!file) {
 		LOG_ERROR_M2VV(M2ERR_FILE_INACCESSIBLE, CString, fpath.c_str(), M2ERR_ERRNO, CString, strerror(errno));
@@ -86,17 +86,17 @@ bool m2::vson::dump_to_file(const std::string& fpath) const {
 	return success;
 }
 
-m2::vson m2::vson::object() {
+m2::VSON m2::VSON::object() {
 	return {.value = vson_object{}};
 }
-m2::vson m2::vson::array() {
+m2::VSON m2::VSON::array() {
 	return {.value = vson_array{}};
 }
-m2::vson m2::vson::string(const std::string& str) {
+m2::VSON m2::VSON::string(const std::string& str) {
 	return {.value = vson_string{str}};
 }
 
-static std::optional<m2::vson> parse_unknown_value(std::stringstream& ss);
+static std::optional<m2::VSON> parse_unknown_value(std::stringstream& ss);
 
 static std::string fetch_string_plain(std::stringstream& ss) {
 	std::stringstream buffer;
@@ -110,9 +110,9 @@ static std::string fetch_string_plain(std::stringstream& ss) {
 	}
 	return ss.str();
 }
-static std::optional<m2::vson> parse_object(std::stringstream& ss) {
-	m2::vson v = m2::vson::object();
-	auto& obj = std::get<m2::vson::vson_object>(v.value);
+static std::optional<m2::VSON> parse_object(std::stringstream& ss) {
+	m2::VSON v = m2::VSON::object();
+	auto& obj = std::get<m2::VSON::vson_object>(v.value);
 
 	const int EXPECT_KEY = 0;
 	const int EXPECT_COLON = 1;
@@ -178,9 +178,9 @@ static std::optional<m2::vson> parse_object(std::stringstream& ss) {
 	}
 	return v;
 }
-static std::optional<m2::vson> parse_array(std::stringstream& ss) {
-	auto v = m2::vson::array();
-	auto& arr = std::get<m2::vson::vson_array>(v.value);
+static std::optional<m2::VSON> parse_array(std::stringstream& ss) {
+	auto v = m2::VSON::array();
+	auto& arr = std::get<m2::VSON::vson_array>(v.value);
 
 	const int EXPECT_VALUE = 0;
 	const int EXPECT_COMMA_OR_SPACE = 1;
@@ -221,7 +221,7 @@ static std::optional<m2::vson> parse_array(std::stringstream& ss) {
 	}
 	return v;
 }
-static std::optional<m2::vson> parse_string_quoted(std::stringstream& ss) {
+static std::optional<m2::VSON> parse_string_quoted(std::stringstream& ss) {
 	std::stringstream buffer;
 	int c, escaping = 0, quoteClosed = 0;
 	while ((c = ss.get()) != EOF) {
@@ -252,13 +252,13 @@ static std::optional<m2::vson> parse_string_quoted(std::stringstream& ss) {
 		// Quote not closed
 		return {};
 	}
-	return m2::vson::string(buffer.str());
+	return m2::VSON::string(buffer.str());
 }
-static std::optional<m2::vson> parse_string_plain(std::stringstream& ss) {
+static std::optional<m2::VSON> parse_string_plain(std::stringstream& ss) {
 	auto str = fetch_string_plain(ss);
-	return m2::vson::string(fetch_string_plain(ss));
+	return m2::VSON::string(fetch_string_plain(ss));
 }
-static std::optional<m2::vson> parse_unknown_value(std::stringstream& ss) {
+static std::optional<m2::VSON> parse_unknown_value(std::stringstream& ss) {
 	int c;
 	while ((c = ss.get()) != EOF) {
 		if (not isspace(c)) {
@@ -279,7 +279,7 @@ static std::optional<m2::vson> parse_unknown_value(std::stringstream& ss) {
 	return {};
 }
 
-std::optional<m2::vson> m2::vson::parse_string(const std::string& str) {
+std::optional<m2::VSON> m2::VSON::parse_string(const std::string& str) {
 	std::stringstream ss(str);
 	auto optional_vson = parse_unknown_value(ss);
 	if (optional_vson) {
@@ -294,7 +294,7 @@ std::optional<m2::vson> m2::vson::parse_string(const std::string& str) {
 		return {};
 	}
 }
-std::optional<m2::vson> m2::vson::parse_file(const std::string &fpath) {
+std::optional<m2::VSON> m2::VSON::parse_file(const std::string &fpath) {
 	FILE* file = fopen(fpath.c_str(), "r");
 	if (!file) {
 		LOG_ERROR_M2VV(M2ERR_FILE_INACCESSIBLE, CString, fpath.c_str(), M2ERR_ERRNO, CString, strerror(errno));

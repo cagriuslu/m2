@@ -9,23 +9,27 @@
 #include <optional>
 
 namespace m2 {
-	struct vson {
+	struct VSON {
 		using vson_nil = std::monostate;
-		using vson_object = std::unordered_map<std::string, vson>;
-		using vson_array = std::vector<vson>;
+		using vson_object = std::unordered_map<std::string, VSON>;
+		using vson_array = std::vector<VSON>;
 		using vson_string = std::string;
 		std::variant<vson_nil, vson_object, vson_array, vson_string> value;
 
-		[[nodiscard]] const vson* query(const std::string& path) const;
+		[[nodiscard]] const VSON* query(const std::string& path) const;
 
 		[[nodiscard]] std::string dump_to_string() const;
 		[[nodiscard]] bool dump_to_file(const std::string& fpath) const;
-		static std::optional<vson> parse_string(const std::string& str);
-		static std::optional<vson> parse_file(const std::string& fpath);
+		static std::optional<VSON> parse_string(const std::string& str);
+		static std::optional<VSON> parse_file(const std::string& fpath);
 
-		static vson object();
-		static vson array();
-		static vson string(const std::string& str);
+		static VSON object();
+		static VSON array();
+		static VSON string(const std::string& str);
+
+		VSON& operator[](const std::string& key);
+		VSON& operator[](size_t index);
+		VSON& operator=(const std::string& str);
 	};
 }
 
