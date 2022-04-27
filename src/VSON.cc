@@ -6,6 +6,20 @@
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
 
+m2::VSON m2::VSON::nil() {
+	return {.value = vson_nil{}};
+}
+
+m2::VSON m2::VSON::object() {
+	return {.value = vson_object{}};
+}
+m2::VSON m2::VSON::array() {
+	return {.value = vson_array{}};
+}
+m2::VSON m2::VSON::string(const std::string& str) {
+	return {.value = vson_string{str}};
+}
+
 const m2::VSON* m2::VSON::query(const std::string& path) const {
 	const VSON* v = this;
 	for (const auto& path_piece : m2::string::split(path, '/')) {
@@ -31,6 +45,53 @@ const m2::VSON* m2::VSON::query(const std::string& path) const {
 	}
 	return v;
 
+}
+
+bool m2::VSON::is_nil() const {
+	return std::holds_alternative<vson_nil>(value);
+}
+
+bool m2::VSON::is_valid() const {
+	return !is_nil();
+}
+
+const std::string& m2::VSON::string_value() const {
+	if (std::holds_alternative<vson_string>(value)) {
+		return std::get<vson_string>(value);
+	} else {
+		throw std::bad_variant_access();
+	}
+}
+
+m2::VSON& m2::VSON::operator[](const std::string &key) {
+	if (std::holds_alternative<vson_nil>(value)) {
+		value = vson_object();
+	}
+	return std::get<vson_object>(value)[key];
+}
+
+m2::VSON& m2::VSON::operator[](const std::string_view &key) {
+	return operator[](std::string(key));
+}
+
+m2::VSON& m2::VSON::operator[](size_t index) {
+	if (std::holds_alternative<vson_nil>(value)) {
+		value = vson_array();
+	}
+	auto& array = std::get<vson_array>(value);
+	if (array.size() < index + 1) {
+		array.resize(index + 1);
+	}
+	return array[index];
+}
+
+m2::VSON& m2::VSON::operator=(const std::string& str) {
+	if (std::holds_alternative<vson_nil>(value) || std::holds_alternative<vson_string>(value)) {
+		value = str;
+		return *this;
+	} else {
+		throw std::bad_variant_access();
+	}
 }
 
 static void dump_any_value(const m2::VSON& v, std::stringstream& ss) {
@@ -84,16 +145,6 @@ bool m2::VSON::dump_to_file(const std::string& fpath) const {
 	bool success = (str.size() == fwrite(str.data(), 1, str.size(), file));
 	fclose(file);
 	return success;
-}
-
-m2::VSON m2::VSON::object() {
-	return {.value = vson_object{}};
-}
-m2::VSON m2::VSON::array() {
-	return {.value = vson_array{}};
-}
-m2::VSON m2::VSON::string(const std::string& str) {
-	return {.value = vson_string{str}};
 }
 
 static std::optional<m2::VSON> parse_unknown_value(std::stringstream& ss);
