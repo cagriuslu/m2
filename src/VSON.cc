@@ -63,6 +63,18 @@ const std::string& m2::VSON::string_value() const {
 	}
 }
 
+long m2::VSON::long_value() const {
+	return std::stol(string_value());
+}
+
+double m2::VSON::double_value() const {
+	return std::stod(string_value());
+}
+
+const m2::VSON& m2::VSON::operator[](const std::string &key) const {
+	return std::get<vson_object>(value).at(key);
+}
+
 m2::VSON& m2::VSON::operator[](const std::string &key) {
 	if (std::holds_alternative<vson_nil>(value)) {
 		value = vson_object();
@@ -70,8 +82,16 @@ m2::VSON& m2::VSON::operator[](const std::string &key) {
 	return std::get<vson_object>(value)[key];
 }
 
-m2::VSON& m2::VSON::operator[](const std::string_view &key) {
-	return operator[](std::string(key));
+size_t m2::VSON::array_length() const {
+	if (std::holds_alternative<vson_array>(value)) {
+		return std::get<vson_array>(value).size();
+	} else {
+		throw std::bad_variant_access();
+	}
+}
+
+const m2::VSON& m2::VSON::operator[](size_t index) const {
+	return std::get<vson_array>(value)[index];
 }
 
 m2::VSON& m2::VSON::operator[](size_t index) {

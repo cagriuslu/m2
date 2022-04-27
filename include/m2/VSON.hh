@@ -16,18 +16,22 @@ namespace m2 {
 		using vson_string = std::string;
 		std::variant<vson_nil, vson_object, vson_array, vson_string> value;
 
-		static VSON nil();
-		static VSON object();
-		static VSON array();
-		static VSON string(const std::string& str);
+		[[nodiscard]] static VSON nil();
+		[[nodiscard]] static VSON object();
+		[[nodiscard]] static VSON array();
+		[[nodiscard]] static VSON string(const std::string& str);
 
 		[[nodiscard]] const VSON* query(const std::string& path) const;
 		[[nodiscard]] bool is_nil() const;
 		[[nodiscard]] bool is_valid() const;
 		[[nodiscard]] const std::string& string_value() const;
+		[[nodiscard]] long long_value() const;
+		[[nodiscard]] double double_value() const;
 
+		const VSON& operator[](const std::string& key) const;
 		VSON& operator[](const std::string& key);
-		VSON& operator[](const std::string_view& key);
+		[[nodiscard]] size_t array_length() const;
+		const VSON& operator[](size_t index) const;
 		VSON& operator[](size_t index);
 		VSON& operator=(const std::string& str);
 
