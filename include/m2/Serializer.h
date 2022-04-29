@@ -163,7 +163,7 @@ namespace m2::ser {
 #define begin_serializable(ClassName)                                                                                  \
 	struct ClassName {                                                                                                 \
     private:                                                                                                           \
-		std::vector<m2::ser::MemberDef> _members;                                                                      \
+		std::vector<m2::ser::MemberDef> __members;                                                                     \
     public:                                                                                                            \
 		ClassName() = default;                                                                                         \
 		ClassName(const ClassName&) = delete;                                                                          \
@@ -172,40 +172,41 @@ namespace m2::ser {
 		ClassName& operator=(ClassName&&) = delete
 
 #define serializable_long(member) \
-	long member{m2::ser::register_long(this->_members, #member, &this->member)}
+	long member{m2::ser::register_long(this->__members, #member, &this->member)}
 
 #define serializable_double(member) \
-	double member{m2::ser::register_double(this->_members, #member, &this->member)}
+	double member{m2::ser::register_double(this->__members, #member, &this->member)}
 
 #define serializable_string(member) \
-	std::string member{m2::ser::register_string(this->_members, #member, &this->member)}
+	std::string member{m2::ser::register_string(this->__members, #member, &this->member)}
 
 #define serializable_long_array(member) \
-	std::vector<long> member{m2::ser::register_long_array(this->_members, #member, &this->member)}
+	std::vector<long> member{m2::ser::register_long_array(this->__members, #member, &this->member)}
 
 #define serializable_double_array(member) \
-	std::vector<double> member{m2::ser::register_double_array(this->_members, #member, &this->member)}
+	std::vector<double> member{m2::ser::register_double_array(this->__members, #member, &this->member)}
 
 #define serializable_string_array(member) \
-	std::vector<std::string> member{m2::ser::register_string_array(this->_members, #member, &this->member)}
+	std::vector<std::string> member{m2::ser::register_string_array(this->__members, #member, &this->member)}
 
 #define serializable_struct_array(type, member) \
-	std::deque<type> member{m2::ser::register_struct_array<type>(this->_members, #member, &this->member)}
+	std::deque<type> member{m2::ser::register_struct_array<type>(this->__members, #member, &this->member)}
 
 #define serializable_struct(type, member) \
-	type member{m2::ser::register_struct<type>(this->_members, #member, &this->member)}
+	type member{m2::ser::register_struct<type>(this->__members, #member, &this->member)}
 
 #define end_serializable()                                                                                             \
+	public:                                                                                                            \
 		inline m2::VSON to_vson() const {                                                                              \
             auto vson = m2::VSON::object();                                                                            \
-			for (const auto& member : _members) {                                                                      \
+			for (const auto& member : __members) {                                                                     \
                 vson[member.name] = member.serializer();                                                               \
 			}                                                                                                          \
 			return vson;                                                                                               \
 		}                                                                                                              \
                                                                                                                        \
 		inline void from_vson(const m2::VSON& vson) {                                                                  \
-			for (const auto& member : _members) {                                                                      \
+			for (const auto& member : __members) {                                                                     \
 				member.deserializer(vson[member.name]);                                                                \
             }                                                                                                          \
         }                                                                                                              \

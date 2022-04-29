@@ -6,6 +6,8 @@
 namespace m2g {
 	constexpr std::string_view texture_map_file("resource/48.png");
 	constexpr std::string_view texture_mask_file("resource/48-Mask.png");
+
+	void dynamic_assert();
 }
 
 #endif //IMPL_PROXY_H
