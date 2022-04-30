@@ -16,6 +16,9 @@ namespace m2::ser {
 		std::string name;
 		std::function<VSON()> serializer;
 		std::function<void(const VSON&)> deserializer;
+
+		inline MemberDef(decltype(name)&& name, decltype(serializer)&& serializer,
+			decltype(deserializer)&& deserializer) : name(name), serializer(serializer), deserializer(deserializer) {}
 	};
 
 	inline long register_long(std::vector<MemberDef>& members, const std::string_view& name, long* ref) {

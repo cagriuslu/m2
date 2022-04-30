@@ -5,6 +5,7 @@
 #include "rpg/Character.h"
 #include "rpg/fsm/CharacterAnimation.h"
 #include <rpg/Consumable.h>
+#include <vector>
 
 namespace obj {
 	struct Player : public m2::ObjectImpl {
