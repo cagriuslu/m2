@@ -10,20 +10,20 @@
 
 using namespace obj;
 
-obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint), char_animator({obj.graphic(), blueprint}), fsm_variant(
-	std::visit(overloaded {
-		[&]([[maybe_unused]] const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
-		[&]([[maybe_unused]] const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
-		[&]([[maybe_unused]] const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
-		[&]([[maybe_unused]] const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }
-	}, blueprint->aiBlueprint->variant)
-), on_hit_color_mod_ttl(0) {}
+obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id) : group_id(group_id),
+	character_state(blueprint), char_animator({obj.graphic(), blueprint}), fsm_variant(
+		std::visit(overloaded {
+			[&]([[maybe_unused]] const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+			[&]([[maybe_unused]] const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
+			[&]([[maybe_unused]] const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+			[&]([[maybe_unused]] const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }
+		}, blueprint->aiBlueprint->variant)), on_hit_color_mod_ttl(0) {}
 
 void Enemy::stun() {
 	character_state.stun();
 }
 
-M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
+M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	auto& gfx = obj.add_graphic();
@@ -49,7 +49,7 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	def.hp = 100;
 	def.maxHp = 100;
 
-    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
+    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint, group_id);
 
 	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());

@@ -4,9 +4,12 @@
 #include "SpriteBlueprint.h"
 
 namespace m2 {
+	using GroupID = long;
+
     struct TileBlueprint {
         SpriteIndex bg_sprite_index;
         SpriteIndex fg_sprite_index;
+		GroupID fg_object_group;
     };
 
     struct LevelBlueprint {
