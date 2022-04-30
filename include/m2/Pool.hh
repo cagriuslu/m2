@@ -7,8 +7,10 @@
 #include <optional>
 #include <cstdint>
 
-// TODO capacity can be increased: 16bit pool id + 24bit key + 24bit index = 16M items
-// OR 24bit ket + 20bit key + 20bit index = 1M items
+// TODO capacity can be increased:
+// 16bit pool id +  0bit unused + 24bit key + 24bit index = 16M items
+// 16bit pool id +  8bit unused + 20bit key + 20bit index = 1M items
+// 16bit pool id + 16bit unused + 16bit key + 16bit index = 65K items
 // OR make it configurable
 
 namespace m2 {

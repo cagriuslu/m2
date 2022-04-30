@@ -7,6 +7,7 @@
 #include <m2g/component/Offense.h>
 #include <m2/box2d/Utils.h>
 #include <m2g/SpriteBlueprint.h>
+#include <rpg/LevelBlueprint.h>
 
 using namespace obj;
 
@@ -100,6 +101,9 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	};
 
 	def.on_death = [&](m2g::comp::Defense& def) {
+		if (lvl::CONSUMABLE_GROUP < group_id && group_id < lvl::CONSUMABLE_GROUP_N) {
+
+		}
 		auto drop_position = obj.position;
 		GAME.add_deferred_action([=]() {
 			ConsumableDrop::init(GAME.objects.alloc().first, itm::health_drop_20, drop_position);
