@@ -102,7 +102,7 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	def.on_death = [&](m2g::comp::Defense& def) {
 		auto gid = obj.group_id();
 		if (lvl::CONSUMABLE_GROUP < gid && gid < lvl::CONSUMABLE_GROUP_N) {
-
+			// TODO
 		}
 		auto drop_position = obj.position;
 		GAME.add_deferred_action([=]() {
