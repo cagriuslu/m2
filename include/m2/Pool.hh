@@ -7,20 +7,18 @@
 #include <optional>
 #include <cstdint>
 
-// TODO capacity can be increased:
-// 16bit pool id +  0bit unused + 24bit key + 24bit index = 16M items
-// 16bit pool id + 16bit unused + 16bit key + 16bit index = 65K items
-
 namespace m2 {
     extern uint16_t g_pool_id;
 
     template <typename T, uint64_t Capacity = 65536>
     struct Pool {
-        static_assert(Capacity <= 65536);
+        static_assert(Capacity <= 16777216);
 
         struct Item {
             T data;
-            ID id; // If allocated: key|index, else: 0|nextFreeIndex
+			// If allocated: 0(8bit) | key(24bit) | index(24bit)
+			// Else: 0(8bit) | 0(24bit) | nextFreeIndex(24bit)
+            ID id;
         };
 
         struct Iterator {
@@ -54,10 +52,10 @@ namespace m2 {
     private:
         std::array<Item, Capacity> _items;
         ID _shifted_pool_id;
-        uint64_t _size; // [0, 65536]
+        uint64_t _size; // [0, Capacity]
         // Key is monotonically increasing, and it is a part of the ID. This means if an object is deallocated,
         // and some other object is allocated at the same location, they will have different IDs.
-        uint64_t _next_key; // [1, 65536]
+        uint64_t _next_key; // [1, Capacity]
 	    uint64_t _highest_allocated_index;
 	    uint64_t _lowest_allocated_index;
 	    uint64_t _next_free_index;
