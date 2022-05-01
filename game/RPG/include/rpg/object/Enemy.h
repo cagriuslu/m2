@@ -12,7 +12,6 @@
 
 namespace obj {
     struct Enemy : public m2::ObjectImpl {
-		m2::GroupID group_id;
 		chr::CharacterState character_state;
 		m2::FSM<fsm::CharacterAnimation> char_animator;
 		using FSMVariant = std::variant<
@@ -24,10 +23,10 @@ namespace obj {
 		FSMVariant fsm_variant; // TODO rename
 		float on_hit_color_mod_ttl;
 
-		Enemy(m2::Object&, const chr::CharacterBlueprint*, m2::GroupID group_id);
+		Enemy(m2::Object&, const chr::CharacterBlueprint*);
 		void stun();
 
-        static M2Err init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos);
+        static M2Err init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos);
     };
 }
 

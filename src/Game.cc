@@ -138,6 +138,7 @@ void Game_UpdateMousePosition() {
 static int Game_Level_Init() {
 	GAME.events.clear();
 	GAME.objects.clear();
+	GAME.groups.clear();
 	GAME.monitors.clear();
 	GAME.physics.clear();
 	GAME.graphics.clear();
@@ -167,6 +168,7 @@ static void Game_Level_Term() {
 	GAME.graphics.clear();
 	GAME.physics.clear();
 	GAME.monitors.clear();
+	GAME.groups.clear();
 	GAME.objects.clear();
     delete GAME.world;
     delete GAME.contactListener;
@@ -187,7 +189,10 @@ M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint) {
 			}
 			if (tile->fg_sprite_index) {
                 auto& obj = GAME.objects.alloc().first;
-				M2ERR_REFLECT(m2g::fg_sprite_loader(obj, tile->fg_sprite_index, tile->fg_object_group, m2::Vec2f{x, y}));
+				if (tile->fg_object_group) {
+					obj.add_to_group(tile->fg_object_group);
+				}
+				M2ERR_REFLECT(m2g::fg_sprite_loader(obj, tile->fg_sprite_index, m2::Vec2f{x, y}));
 			}
 		}
 	}

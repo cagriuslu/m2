@@ -4,15 +4,14 @@
 #include "m2/Game.hh"
 #include "m2/Def.h"
 #include <m2g/component/Defense.h>
-#include <m2g/component/Offense.h>
 #include <m2/box2d/Utils.h>
 #include <m2g/SpriteBlueprint.h>
 #include <rpg/LevelBlueprint.h>
 
 using namespace obj;
 
-obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id) : group_id(group_id),
-	character_state(blueprint), char_animator({obj.graphic(), blueprint}), fsm_variant(
+obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint),
+	char_animator({obj.graphic(), blueprint}), fsm_variant(
 		std::visit(overloaded {
 			[&]([[maybe_unused]] const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
 			[&]([[maybe_unused]] const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
@@ -24,7 +23,7 @@ void Enemy::stun() {
 	character_state.stun();
 }
 
-M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos) {
+M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	auto& gfx = obj.add_graphic();
@@ -50,7 +49,7 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	def.hp = 100;
 	def.maxHp = 100;
 
-    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint, group_id);
+    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 
 	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
@@ -101,7 +100,8 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	};
 
 	def.on_death = [&](m2g::comp::Defense& def) {
-		if (lvl::CONSUMABLE_GROUP < group_id && group_id < lvl::CONSUMABLE_GROUP_N) {
+		auto gid = obj.group_id();
+		if (lvl::CONSUMABLE_GROUP < gid && gid < lvl::CONSUMABLE_GROUP_N) {
 
 		}
 		auto drop_position = obj.position;

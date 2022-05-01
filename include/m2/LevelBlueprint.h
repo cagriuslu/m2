@@ -2,10 +2,9 @@
 #define M2_LEVELBLUEPRINT_H
 
 #include "SpriteBlueprint.h"
+#include "Def.h"
 
 namespace m2 {
-	using GroupID = long;
-
     struct TileBlueprint {
         SpriteIndex bg_sprite_index;
         SpriteIndex fg_sprite_index;

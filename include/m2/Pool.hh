@@ -147,6 +147,12 @@ namespace m2 {
         void free(const T* data) {
             free(get_id(data));
         }
+		void free_index(uint64_t idx) {
+			auto& item = _items[idx];
+			if (item.id & 0xFFFFFF000000ull) {
+				free(get_id(&item.data));
+			}
+		}
         void clear() {
             while (_size) {
                 auto it = begin();

@@ -12,6 +12,7 @@
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include "component/Light.h"
+#include "Pool.hh"
 #include <memory>
 
 namespace m2 {
@@ -44,6 +45,7 @@ namespace m2 {
         // Destructor
         ~Object();
 
+		[[nodiscard]] GroupID group_id() const;
 	    [[nodiscard]] MonitorID monitor_id() const;
 	    [[nodiscard]] PhysiqueID physique_id() const;
 	    [[nodiscard]] GraphicID graphic_id() const;
@@ -52,6 +54,7 @@ namespace m2 {
 	    [[nodiscard]] DefenseID defense_id() const;
 	    [[nodiscard]] OffenseID offense_id() const;
 
+		[[nodiscard]] Pool<ID,256>& group() const;
         [[nodiscard]] comp::Monitor& monitor() const;
         [[nodiscard]] comp::Physique& physique() const;
         [[nodiscard]] comp::Graphic& graphic() const;
@@ -60,15 +63,18 @@ namespace m2 {
         [[nodiscard]] m2g::comp::Defense& defense() const;
         [[nodiscard]] m2g::comp::Offense& offense() const;
 
-        [[nodiscard]] comp::Monitor& add_monitor();
-        [[nodiscard]] comp::Physique& add_physique();
-        [[nodiscard]] comp::Graphic& add_graphic();
-        [[nodiscard]] comp::Graphic& add_terrain_graphic();
-        [[nodiscard]] comp::Light& add_light();
-        [[nodiscard]] m2g::comp::Defense& add_defense();
-        [[nodiscard]] m2g::comp::Offense& add_offense();
+		void add_to_group(GroupID gid);
+		comp::Monitor& add_monitor();
+        comp::Physique& add_physique();
+        comp::Graphic& add_graphic();
+        comp::Graphic& add_terrain_graphic();
+        comp::Light& add_light();
+        m2g::comp::Defense& add_defense();
+        m2g::comp::Offense& add_offense();
 
 	private:
+		GroupID _group_id{};
+		GroupIndex _group_index{};
 	    // Components
 	    MonitorID _monitor_id{};
 	    PhysiqueID _physique_id{};

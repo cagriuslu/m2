@@ -19,6 +19,7 @@
 #include <vector>
 #include <b2_world.h>
 #include <sstream>
+#include <unordered_map>
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
@@ -69,20 +70,21 @@ namespace m2 {
 		// iterate over that pool.
 		// Another reason to put a component inside a Pool: if the type of object that is using that component is
 		// created/destroyed very rapidly.
-		m2::Pool<m2::Object> objects;
-		m2::DrawList draw_list;
-		m2::Pool<comp::Monitor> monitors;
-		m2::Pool<comp::Physique> physics;
-		m2::Pool<comp::Graphic> graphics;
-		m2::Pool<comp::Graphic> terrainGraphics;
-		m2::Pool<comp::Light> lights;
-		m2::Pool<m2g::comp::Defense> defenses;
-		m2::Pool<m2g::comp::Offense> offenses;
+		Pool<Object> objects;
+		std::unordered_map<GroupID, Pool<ID,256>> groups;
+		DrawList draw_list;
+		Pool<comp::Monitor> monitors;
+		Pool<comp::Physique> physics;
+		Pool<comp::Graphic> graphics;
+		Pool<comp::Graphic> terrainGraphics;
+		Pool<comp::Light> lights;
+		Pool<m2g::comp::Defense> defenses;
+		Pool<m2g::comp::Offense> offenses;
 		b2World *world;
-        m2::box2d::ContactListener* contactListener;
+        box2d::ContactListener* contactListener;
 		ID cameraId, playerId, pointerId;
 		PathfinderMap pathfinderMap;
-        m2::ui::UIState leftHudUIState, rightHudUIState;
+        ui::UIState leftHudUIState, rightHudUIState;
 
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// GAME /////////////////////////////////
@@ -90,8 +92,8 @@ namespace m2 {
 		Events events;
 		unsigned deltaTicks_ms;
 		float deltaTime_s;
-		m2::Vec2f mousePositionInWorld_m;
-		m2::Vec2f mousePositionWRTScreenCenter_m;
+		Vec2f mousePositionInWorld_m;
+		Vec2f mousePositionWRTScreenCenter_m;
         std::vector<std::string> console_output;
 
 		~Game();
