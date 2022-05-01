@@ -22,7 +22,7 @@ namespace m2 {
 
         struct Item {
             T data;
-            uint32_t id; // If allocated: key|index, else: 0|nextFreeIndex
+            ID id; // If allocated: key|index, else: 0|nextFreeIndex
         };
 
         struct Iterator {
@@ -34,7 +34,7 @@ namespace m2 {
                 const uint16_t curr_index = id & 0xFFFFu;
                 for (uint16_t i = curr_index + 1; i <= pool->_highest_allocated_index; ++i) {
                     auto& item = pool->_items[i];
-                    if (item.id & 0xFFFF0000u) {
+                    if (item.id & 0xFFFF0000ull) {
                         data = &item.data;
                         id = item.id;
                         return *this;
@@ -70,7 +70,7 @@ namespace m2 {
 	        uint64_t i = 0;
             for (auto& item : _items) {
                 // Each itm points to next itm as free
-                item.id = (i++ + 1) & 0xFFFF;
+                item.id = (i++ + 1) & 0xFFFFull;
             }
         }
 
@@ -80,9 +80,9 @@ namespace m2 {
                 const uint64_t index_to_alloc = _next_free_index;
                 Item& item = _items[index_to_alloc];
                 // Store next free index
-                _next_free_index = item.id & 0xFFFF;
+                _next_free_index = item.id & 0xFFFFull;
                 // Set id of the new itm
-                item.id = (static_cast<uint16_t>(_next_key) << 16) | (static_cast<uint16_t>(index_to_alloc) & 0xFFFF);
+                item.id = (_next_key << 16) | (index_to_alloc & 0xFFFFull);
                 // Adjust pool
                 ++_size;
                 ++_next_key;
@@ -97,7 +97,7 @@ namespace m2 {
                     _lowest_allocated_index = index_to_alloc;
                 }
                 // Form ID
-                ID id = _shifted_pool_id | static_cast<ID>(item.id);
+                ID id = _shifted_pool_id | item.id;
                 return {item.data, id};
             } else {
                 throw M2ERROR(M2ERR_LIMIT_EXCEEDED);
@@ -115,20 +115,20 @@ namespace m2 {
                 auto* byte_ptr = reinterpret_cast<char*>(data);
                 auto* item_ptr = reinterpret_cast<Item*>(byte_ptr - offset);
                 // Get index of itm
-                auto index = static_cast<uint16_t>(item_ptr->id & 0xFFFFu);
+                auto index = item_ptr->id & 0xFFFFull;
                 // Clear itm (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
 				item_ptr->data.~T();
 				new (&item_ptr->data) T();
-                item_ptr->id = _next_free_index & 0x0000FFFFu;
+                item_ptr->id = _next_free_index & 0xFFFFull;
                 // Set next free index
                 _next_free_index = index;
 
                 --_size;
                 if (_highest_allocated_index == index) {
                     // Search backwards until highest allocated index is found
-                    for (uint16_t i = index; i-- > 0; ) {
+                    for (uint64_t i = index; i-- > 0; ) {
                         _highest_allocated_index = i;
-                        if (_items[i].id & 0xFFFF0000u) {
+                        if (_items[i].id & 0xFFFF0000ull) {
                             break;
                         }
                     }
@@ -137,7 +137,7 @@ namespace m2 {
                     // Search forward until lowest allocated index is found
                     for (uint64_t i = index + 1; i < Capacity; i++) {
                         _lowest_allocated_index = i;
-                        if (_items[i].id & 0xFFFF0000u) {
+                        if (_items[i].id & 0xFFFF0000ull) {
                             break;
                         }
                     }
@@ -176,7 +176,7 @@ namespace m2 {
             if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
                 const auto candidate_idx = static_cast<uint16_t>(id & 0xFFFFull);
                 auto& item = _items[candidate_idx];
-                if (item.id == static_cast<uint32_t>(id & 0xFFFFFFFFull)) {
+                if (item.id == (id & 0xFFFFFFFFull)) {
                     return &item.data;
                 }
             }
@@ -190,8 +190,8 @@ namespace m2 {
             if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
                 const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offsetof(Item, data));
                 // Check if itm is allocated
-                if (item_ptr->id & 0xFFFF0000u) {
-                    return _shifted_pool_id | static_cast<uint64_t>(item_ptr->id);
+                if (item_ptr->id & 0xFFFF0000ull) {
+                    return _shifted_pool_id | item_ptr->id;
                 }
             }
             return 0;
@@ -200,7 +200,7 @@ namespace m2 {
         Iterator begin() {
             if (_size) {
                 Item& item = _items[_lowest_allocated_index];
-                return {.pool = this, .data = &item.data, .id = _shifted_pool_id | static_cast<uint64_t>(item.id)};
+                return {.pool = this, .data = &item.data, .id = _shifted_pool_id | item.id};
             } else {
                 return end();
             }
