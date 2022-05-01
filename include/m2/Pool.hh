@@ -32,7 +32,7 @@ namespace m2 {
                 const uint64_t curr_index = id & 0xFFFFFFull;
                 for (uint64_t i = curr_index + 1; i <= pool->_highest_allocated_index; ++i) {
                     auto& item = pool->_items[i];
-                    if (item.id & 0xFFFF000000ull) {
+                    if (item.id & 0xFFFFFF000000ull) {
                         data = &item.data;
                         id = item.id;
                         return *this;
@@ -126,7 +126,7 @@ namespace m2 {
                     // Search backwards until highest allocated index is found
                     for (uint64_t i = index; i-- > 0; ) {
                         _highest_allocated_index = i;
-                        if (_items[i].id & 0xFFFF000000ull) {
+                        if (_items[i].id & 0xFFFFFF000000ull) {
                             break;
                         }
                     }
@@ -135,7 +135,7 @@ namespace m2 {
                     // Search forward until lowest allocated index is found
                     for (uint64_t i = index + 1; i < Capacity; i++) {
                         _lowest_allocated_index = i;
-                        if (_items[i].id & 0xFFFF000000ull) {
+                        if (_items[i].id & 0xFFFFFF000000ull) {
                             break;
                         }
                     }
@@ -174,7 +174,7 @@ namespace m2 {
             if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
                 const auto candidate_idx = (id & 0xFFFFFFull);
                 auto& item = _items[candidate_idx];
-                if (item.id == (id & 0xFFFFFFFFFFull)) {
+                if (item.id == (id & 0xFFFFFFFFFFFFull)) {
                     return &item.data;
                 }
             }
@@ -188,7 +188,7 @@ namespace m2 {
             if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
                 const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offsetof(Item, data));
                 // Check if itm is allocated
-                if (item_ptr->id & 0xFFFF000000ull) {
+                if (item_ptr->id & 0xFFFFFF000000ull) {
                     return _shifted_pool_id | item_ptr->id;
                 }
             }
