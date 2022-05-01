@@ -18,7 +18,7 @@ M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, ID
 	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_body(
             *GAME.world,
-			obj.physique_id,
+			obj.physique_id(),
             false,
             true,
             position,
@@ -69,7 +69,7 @@ M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, ID
 		LOG_DEBUG("Collision");
 		auto& other_obj = GAME.objects[other.object_id];
 		auto& melee_state = std::get<chr::MeleeState>(off.variant);
-		auto& def = GAME.defenses[other_obj.defense_id];
+		auto& def = GAME.defenses[other_obj.defense_id()];
 
 		// Calculate damage
 		def.hp -= melee_state.blueprint->damage;

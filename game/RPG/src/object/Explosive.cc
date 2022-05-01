@@ -30,7 +30,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_bullet(
             *GAME.world,
-			obj.physique_id,
+			obj.physique_id(),
 			position,
             true,
 			m2::box2d::CAT_PLAYER_AIR_OBJ,
@@ -59,7 +59,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 				explosive_state.projectile_ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 				if (explosive_state.projectile_ttl_s <= 0) {
 					GAME.world->DestroyBody(phy.body);
-					phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, explosive_state.blueprint);
+					phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id(), obj.position, explosive_state.blueprint);
 					explosive_state.status = chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
 				}
 				break;
@@ -80,7 +80,7 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 				break;
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
 				GAME.world->DestroyBody(phy.body);
-				phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id, obj.position, explosive_state.blueprint);
+				phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id(), obj.position, explosive_state.blueprint);
 				break;
 			default:
 				break;
@@ -97,8 +97,8 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 				break;
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP: {
 				auto& other_obj = GAME.objects[other.object_id];
-				if (other_obj.defense_id) {
-					auto& def = GAME.defenses[other_obj.defense_id];
+				if (other_obj.defense_id()) {
+					auto& def = GAME.defenses[other_obj.defense_id()];
 					// Check if otherObj close enough. Colliding doesn't mean otherObj is in damage circle.
 					float distance = other_obj.position.distance(obj.position);
 					float damageRadius = explosive_state.blueprint->damage_radius_m;

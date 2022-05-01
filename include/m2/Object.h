@@ -30,14 +30,6 @@ namespace m2 {
     /// Else => Data
     struct Object {
         m2::Vec2f position;
-        // Components
-		MonitorID monitor_id{};
-		PhysiqueID physique_id{};
-		GraphicID graphic_id{};
-		GraphicID terrain_graphic_id{};
-		LightID light_id{};
-		DefenseID defense_id{};
-		OffenseID offense_id{};
         // Data
         std::unique_ptr<ObjectImpl> impl;
 
@@ -51,6 +43,14 @@ namespace m2 {
         Object& operator=(Object&& other) noexcept;
         // Destructor
         ~Object();
+
+	    [[nodiscard]] MonitorID monitor_id() const;
+	    [[nodiscard]] PhysiqueID physique_id() const;
+	    [[nodiscard]] GraphicID graphic_id() const;
+	    [[nodiscard]] GraphicID terrain_graphic_id() const;
+	    [[nodiscard]] LightID light_id() const;
+	    [[nodiscard]] DefenseID defense_id() const;
+	    [[nodiscard]] OffenseID offense_id() const;
 
         [[nodiscard]] comp::Monitor& monitor() const;
         [[nodiscard]] comp::Physique& physique() const;
@@ -67,6 +67,16 @@ namespace m2 {
         [[nodiscard]] comp::Light& add_light();
         [[nodiscard]] m2g::comp::Defense& add_defense();
         [[nodiscard]] m2g::comp::Offense& add_offense();
+
+	private:
+	    // Components
+	    MonitorID _monitor_id{};
+	    PhysiqueID _physique_id{};
+	    GraphicID _graphic_id{};
+	    GraphicID _terrain_graphic_id{};
+	    LightID _light_id{};
+	    DefenseID _defense_id{};
+	    OffenseID _offense_id{};
     };
 
     std::pair<Object&, ObjectID> create_object(const m2::Vec2f& position);

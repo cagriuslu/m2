@@ -36,7 +36,7 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_dynamic_disk(
             *GAME.world,
-            obj.physique_id,
+            obj.physique_id(),
             pos,
             false,
             true,

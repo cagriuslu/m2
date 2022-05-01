@@ -16,7 +16,7 @@ fsm::Chaser::Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint) :
 	blueprint(blueprint),
 	home_position(obj.position),
 	target(GAME.objects[GAME.playerId]),
-	phy(GAME.physics[obj.physique_id]) {}
+	phy(GAME.physics[obj.physique_id()]) {}
 
 void* fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
 	const auto* blueprint = automaton.data.blueprint;

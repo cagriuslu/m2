@@ -32,7 +32,7 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_dynamic_disk(
             *GAME.world,
-            obj.physique_id,
+            obj.physique_id(),
             obj.position,
             false,
             false,

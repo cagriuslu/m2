@@ -15,7 +15,7 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_bullet(
             *GAME.world,
-			obj.physique_id,
+			obj.physique_id(),
 			pos,
             true,
 			m2::box2d::CAT_PLAYER_AIR_OBJ,
@@ -48,7 +48,7 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 	phy.on_collision = [&off](m2::comp::Physique& phy, m2::comp::Physique& other) {
 		auto& other_obj = GAME.objects[other.object_id];
 		auto& projectile_state = std::get<chr::ProjectileState>(off.variant);
-		auto* def = GAME.defenses.get(other_obj.defense_id);
+		auto* def = GAME.defenses.get(other_obj.defense_id());
 		if (def) {
 			// Check if already collided
 			if (projectile_state.already_collided_this_step) {

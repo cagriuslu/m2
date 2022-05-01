@@ -12,7 +12,7 @@ M2Err obj::ConsumableDrop::init(m2::Object &obj, const itm::Consumable &blueprin
 	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_body(
 			*GAME.world,
-			obj.physique_id,
+			obj.physique_id(),
 			true,
 			false,
 			pos,
