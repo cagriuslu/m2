@@ -16,7 +16,7 @@
 namespace m2 {
     extern uint16_t g_pool_id;
 
-    template <typename T, size_t Capacity = 65536>
+    template <typename T, uint64_t Capacity = 65536>
     struct Pool {
         static_assert(Capacity <= 65536);
 
@@ -27,7 +27,6 @@ namespace m2 {
 
         struct Iterator {
             Pool<T,Capacity> *pool;
-			// TODO hold reference instead of pointer
             T* data;
             ID id;
 
@@ -57,18 +56,18 @@ namespace m2 {
     private:
         std::array<Item, Capacity> _items;
         ID _shifted_pool_id;
-        size_t _size; // [0, 65536]
+        uint64_t _size; // [0, 65536]
         // Key is monotonically increasing, and it is a part of the ID. This means if an object is deallocated,
         // and some other object is allocated at the same location, they will have different IDs.
-        size_t _next_key; // [1, 65536]
-        size_t _highest_allocated_index;
-        size_t _lowest_allocated_index;
-        size_t _next_free_index;
+        uint64_t _next_key; // [1, 65536]
+	    uint64_t _highest_allocated_index;
+	    uint64_t _lowest_allocated_index;
+	    uint64_t _next_free_index;
     public:
 
         Pool() : _items(), _size(0), _next_key(1), _highest_allocated_index(0), _lowest_allocated_index(0), _next_free_index(0) {
             _shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
-            size_t i = 0;
+	        uint64_t i = 0;
             for (auto& item : _items) {
                 // Each itm points to next itm as free
                 item.id = (i++ + 1) & 0xFFFF;
@@ -78,7 +77,7 @@ namespace m2 {
         std::pair<T&, ID> alloc() {
             if (_size < Capacity) {
                 // Find the itm that will be allocated
-                const size_t index_to_alloc = _next_free_index;
+                const uint64_t index_to_alloc = _next_free_index;
                 Item& item = _items[index_to_alloc];
                 // Store next free index
                 _next_free_index = item.id & 0xFFFF;
@@ -136,7 +135,7 @@ namespace m2 {
                 }
                 if (_lowest_allocated_index == index) {
                     // Search forward until lowest allocated index is found
-                    for (size_t i = index + 1; i < Capacity; i++) {
+                    for (uint64_t i = index + 1; i < Capacity; i++) {
                         _lowest_allocated_index = i;
                         if (_items[i].id & 0xFFFF0000u) {
                             break;
@@ -155,7 +154,7 @@ namespace m2 {
             }
         }
 
-        [[nodiscard]] size_t size() const {
+        [[nodiscard]] uint64_t size() const {
             return _size;
         }
         [[nodiscard]] bool contains(ID id) const {
