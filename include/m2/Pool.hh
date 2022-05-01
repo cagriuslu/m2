@@ -62,7 +62,11 @@ namespace m2 {
     public:
 
         Pool() : _items(), _size(0), _next_key(1), _highest_allocated_index(0), _lowest_allocated_index(0), _next_free_index(0) {
-            _shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
+			if (g_pool_id == UINT16_MAX) {
+				throw M2FATAL(M2ERR_LIMIT_EXCEEDED);
+			} else {
+				_shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
+			}
 	        uint64_t i = 0;
             for (auto& item : _items) {
                 // Each itm points to next itm as free
