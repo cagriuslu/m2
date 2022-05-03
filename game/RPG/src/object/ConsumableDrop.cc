@@ -4,9 +4,9 @@
 #include <m2/Game.hh>
 #include <rpg/object/Player.h>
 
-obj::ConsumableDrop::ConsumableDrop(const itm::Consumable &blueprint) : blueprint(blueprint) {}
+obj::ConsumableDrop::ConsumableDrop(const itm::ConsumableBlueprint &blueprint) : blueprint(blueprint) {}
 
-M2Err obj::ConsumableDrop::init(m2::Object &obj, const itm::Consumable &blueprint, m2::Vec2f pos) {
+M2Err obj::ConsumableDrop::init(m2::Object &obj, const itm::ConsumableBlueprint &blueprint, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	auto& phy = obj.add_physique();

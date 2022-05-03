@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "Group.h"
 #include "component/Monitor.h"
 #include "ObjectImpl.h"
 #include <m2g/component/Defense.h>
@@ -14,6 +15,7 @@
 #include "component/Light.h"
 #include "Pool.hh"
 #include <memory>
+#include <functional>
 
 namespace m2 {
 	using ObjectID = ID;
@@ -54,7 +56,7 @@ namespace m2 {
 	    [[nodiscard]] DefenseID defense_id() const;
 	    [[nodiscard]] OffenseID offense_id() const;
 
-		[[nodiscard]] Pool<ID,256>& group() const;
+		[[nodiscard]] Group& group() const;
         [[nodiscard]] comp::Monitor& monitor() const;
         [[nodiscard]] comp::Physique& physique() const;
         [[nodiscard]] comp::Graphic& graphic() const;
@@ -63,7 +65,7 @@ namespace m2 {
         [[nodiscard]] m2g::comp::Defense& defense() const;
         [[nodiscard]] m2g::comp::Offense& offense() const;
 
-		void add_to_group(GroupID gid);
+		void add_to_group(GroupID gid, const std::function<std::unique_ptr<Group>()>& group_initializer);
 		comp::Monitor& add_monitor();
         comp::Physique& add_physique();
         comp::Graphic& add_graphic();
@@ -72,9 +74,11 @@ namespace m2 {
         m2g::comp::Defense& add_defense();
         m2g::comp::Offense& add_offense();
 
+		void remove_from_group();
+
 	private:
 		GroupID _group_id{};
-		GroupIndex _group_index{};
+	    IndexInGroup _group_index{};
 	    // Components
 	    MonitorID _monitor_id{};
 	    PhysiqueID _physique_id{};

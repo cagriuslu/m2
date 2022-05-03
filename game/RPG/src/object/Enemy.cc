@@ -3,10 +3,29 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
+#include <m2/M2.h>
+#include <rpg/ConsumableBlueprint.h>
 #include <m2g/component/Defense.h>
 #include <m2/box2d/Utils.h>
 #include <m2g/SpriteBlueprint.h>
 #include <rpg/LevelBlueprint.h>
+#include <m2/Group.h>
+#include <deque>
+
+struct ConsumableResourceGroup : public m2::Group {
+	std::deque<const itm::ConsumableBlueprint*> consumables;
+
+	explicit ConsumableResourceGroup(decltype(consumables)&& consumables) : m2::Group(), consumables(consumables) {}
+	const itm::ConsumableBlueprint* pop_consumable() {
+		if (not consumables.empty() && m2::rand(members().size()) == 0) {
+			auto pop_index = m2::rand(consumables.size());
+			const auto* consumable = consumables[pop_index];
+			consumables.erase(consumables.begin() + m2::ll(pop_index));
+			return consumable;
+		}
+		return nullptr;
+	}
+};
 
 using namespace obj;
 
@@ -23,8 +42,19 @@ void Enemy::stun() {
 	character_state.stun();
 }
 
-M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
+M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos) {
 	obj = m2::Object{pos};
+
+	if (group_id.type) {
+		obj.add_to_group(group_id, [=]() -> std::unique_ptr<m2::Group> {
+			switch (group_id.type) {
+				case lvl::CONSUMABLE_RESOURCE_GROUP_HP:
+					return std::make_unique<ConsumableResourceGroup>(ConsumableResourceGroup{{&itm::health_drop_20}});
+				default:
+					return {};
+			}
+		});
+	}
 
 	auto& gfx = obj.add_graphic();
 	gfx.textureRect = m2g::sprites[blueprint->main_sprite_index].texture_rect;
@@ -100,14 +130,19 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 	};
 
 	def.on_death = [&](m2g::comp::Defense& def) {
-		auto gid = obj.group_id();
-		if (lvl::CONSUMABLE_GROUP < gid && gid < lvl::CONSUMABLE_GROUP_N) {
-			// TODO
-		}
 		auto drop_position = obj.position;
-		GAME.add_deferred_action([=]() {
-			ConsumableDrop::init(GAME.objects.alloc().first, itm::health_drop_20, drop_position);
-		});
+
+		auto gid = obj.group_id();
+		if (lvl::CONSUMABLE_RESOURCE_GROUP < gid.type && gid.type < lvl::CONSUMABLE_RESOURCE_GROUP_N) {
+			auto& resource_group = dynamic_cast<ConsumableResourceGroup&>(obj.group());
+			const auto* consumable = resource_group.pop_consumable();
+			if (consumable) {
+				GAME.add_deferred_action([=]() {
+					ConsumableDrop::init(GAME.objects.alloc().first, *consumable, drop_position);
+				});
+			}
+		}
+		// Delete self
 		GAME.add_deferred_action(m2::create_object_deleter(def.object_id));
 	};
 

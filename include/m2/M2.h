@@ -4,7 +4,14 @@
 #include <string>
 
 namespace m2 {
+	constexpr long long ll(unsigned long long ull) { return static_cast<long long>(ull); }
+
+	/// Generates from set [0, max)
+	uint32_t rand(uint32_t max);
+	uint64_t rand(uint64_t max);
+
 	float randf();
+
 	std::string round_string(float f);
 
 	float apply_accuracy(float value, float accuracy);

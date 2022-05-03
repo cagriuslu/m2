@@ -7,7 +7,7 @@
 
 m2::Object::Object(const m2::Vec2f &position) :
 	position(position),
-	_group_id(0),
+	_group_id({}),
 	_group_index(0),
 	_monitor_id(0),
 	_physique_id(0),
@@ -29,7 +29,7 @@ m2::Object::Object(Object&& other) noexcept :
 	_light_id(other._light_id),
 	_defense_id(other._defense_id),
 	_offense_id(other._offense_id) {
-	other._group_id = 0;
+	other._group_id = {};
 	other._group_index = 0;
 	other._monitor_id = 0;
 	other._physique_id = 0;
@@ -56,11 +56,7 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 
 m2::Object::~Object() {
 	auto id = GAME.objects.get_id(this);
-	if (_group_id) {
-		GAME.groups[_group_id].free_index(_group_index);
-		_group_id = 0;
-		_group_index = 0;
-	}
+	remove_from_group();
 	if (_monitor_id) {
 		GAME.monitors.free(_monitor_id);
 		_monitor_id = 0;
@@ -113,8 +109,8 @@ m2::OffenseID m2::Object::offense_id() const {
 	return _offense_id;
 }
 
-m2::Pool<ID,256>& m2::Object::group() const {
-	return GAME.groups[_group_id];
+m2::Group& m2::Object::group() const {
+	return *GAME.groups[_group_id];
 }
 m2::comp::Monitor& m2::Object::monitor() const {
 	return GAME.monitors[_monitor_id];
@@ -138,15 +134,13 @@ m2g::comp::Offense& m2::Object::offense() const {
 	return GAME.offenses[_offense_id];
 }
 
-void m2::Object::add_to_group(GroupID gid) {
+void m2::Object::add_to_group(GroupID gid, const std::function<std::unique_ptr<Group>()>& group_initializer) {
 	auto it = GAME.groups.find(gid);
 	if (it == GAME.groups.end()) {
-		it = GAME.groups.insert({gid, {}}).first;
+		it = GAME.groups.insert({gid, std::move(group_initializer())}).first;
 	}
-	auto group_item = it->second.alloc();
-	group_item.first = GAME.objects.get_id(this);
+	_group_index = it->second->add_member(GAME.objects.get_id(this));
 	_group_id = gid;
-	_group_index = static_cast<GroupIndex>(group_item.second);
 }
 m2::comp::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();
@@ -192,6 +186,17 @@ m2g::comp::Offense& m2::Object::add_offense() {
 	_offense_id = offense_pair.second;
 	offense_pair.first = m2g::comp::Offense{GAME.objects.get_id(this)};
 	return offense_pair.first;
+}
+
+void m2::Object::remove_from_group() {
+	if (_group_id.type) {
+		GAME.groups[_group_id]->remove_member(_group_index);
+		if (GAME.groups[_group_id]->members().size() == 0) {
+			GAME.groups.erase(_group_id);
+		}
+		_group_id = {};
+		_group_index = 0;
+	}
 }
 
 std::pair<m2::Object&, m2::ObjectID> m2::create_object(const m2::Vec2f &position) {

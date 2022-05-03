@@ -26,7 +26,7 @@ namespace obj {
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
 		void stun();
 
-        static M2Err init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos);
+        static M2Err init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos);
     };
 }
 

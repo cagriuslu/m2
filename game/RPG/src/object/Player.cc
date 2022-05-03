@@ -14,7 +14,7 @@
 
 obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : char_state(blueprint), char_animator({obj.graphic(), blueprint}) {}
 
-void obj::Player::add_consumable(const itm::Consumable& consumable) {
+void obj::Player::add_consumable(const itm::ConsumableBlueprint& consumable) {
 	consumables.emplace_back(consumable);
 }
 

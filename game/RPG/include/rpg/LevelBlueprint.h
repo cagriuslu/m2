@@ -4,11 +4,11 @@
 #include "m2/LevelBlueprint.h"
 
 namespace lvl {
-	enum ObjectGroup : m2::GroupID {
+	enum ObjectGroup : m2::GroupTypeID {
 		NO_GROUP [[maybe_unused]] = 0,
-		CONSUMABLE_GROUP,
-		CONSUMABLE_GROUP_HP,
-		CONSUMABLE_GROUP_N
+		CONSUMABLE_RESOURCE_GROUP,
+		CONSUMABLE_RESOURCE_GROUP_HP,
+		CONSUMABLE_RESOURCE_GROUP_N
 	};
 
     extern const m2::LevelBlueprint sp_000;

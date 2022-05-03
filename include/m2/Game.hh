@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "Group.h"
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
 #include "m2/Events.h"
@@ -71,7 +72,7 @@ namespace m2 {
 		// Another reason to put a component inside a Pool: if the type of object that is using that component is
 		// created/destroyed very rapidly.
 		Pool<Object> objects;
-		std::unordered_map<GroupID, Pool<ID,256>> groups;
+		std::unordered_map<GroupID, std::unique_ptr<Group>, GroupIDHasher> groups;
 		DrawList draw_list;
 		Pool<comp::Monitor> monitors;
 		Pool<comp::Physique> physics;

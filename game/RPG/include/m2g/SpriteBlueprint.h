@@ -61,7 +61,7 @@ namespace m2g {
 
     extern const m2::SpriteBlueprint sprites[];
     extern const unsigned sprite_count;
-    M2Err fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, m2::Vec2f position);
+    M2Err fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, m2::GroupID gid, m2::Vec2f position);
 }
 
 #endif //IMPL_SPRITEBLUEPRINT_H

@@ -2,6 +2,7 @@
 #define M2_LEVELBLUEPRINT_H
 
 #include "SpriteBlueprint.h"
+#include "Group.h"
 #include "Def.h"
 
 namespace m2 {
