@@ -4,7 +4,6 @@
 namespace chr {
 	enum class Attribute {
 		HP,
-		HP_DAMAGE,
 	};
 }
 

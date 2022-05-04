@@ -6,6 +6,7 @@
 #include "RangedWeapon.h"
 #include "rpg/ai/AiBlueprint.h"
 #include "m2/SpriteBlueprint.h"
+#include <m2/Def.h>
 #include <optional>
 
 namespace chr {
@@ -39,7 +40,7 @@ namespace chr {
 		bool pop_dash();
 		// Stun
 		void stun();
-		bool is_stunned() const;
+		[[nodiscard]] bool is_stunned() const;
 	};
 	struct CharacterBlueprint {
 		m2::SpriteIndex main_sprite_index;
