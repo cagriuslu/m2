@@ -1,114 +1,86 @@
 #include "m2/ThreadPool.hh"
-#include <thread>
-#include <queue>
-#include <array>
-#include <condition_variable>
 
-class CountingSemaphore {
-	unsigned state;
-	std::mutex mutex;
-	std::condition_variable condvar;
+m2::Semaphore::Semaphore(size_t initial_state) : _state(initial_state) {}
 
-public:
-	CountingSemaphore(unsigned initialState = 1) : state(initialState) {}
-
-	void down(unsigned count = 1) {
-		std::unique_lock<std::mutex> lock(mutex);
-		while (state < count) {
-			condvar.wait(lock);
+void m2::Semaphore::down(size_t count) {
+	for (size_t i = 0; i < count; i++) {
+		std::unique_lock<std::mutex> lock(_mutex);
+		while (_state == 0) {
+			_condvar.wait(lock);
 		}
-		state -= count;
+		_state--;
 	}
+}
 
-	void up(unsigned count = 1) {
-		mutex.lock();
-		state += count;
-		mutex.unlock();
-		condvar.notify_all();
+void m2::Semaphore::up(size_t count) {
+	_mutex.lock();
+	_state += count;
+	_mutex.unlock();
+	_condvar.notify_all();
+}
+
+m2::ThreadPool::ThreadPool() : _idle_thread_count(std::thread::hardware_concurrency()), _quit(false) {
+	auto thread_count = std::thread::hardware_concurrency();
+	_threads.resize(thread_count);
+	for (auto& thread : _threads) {
+		thread = std::thread(thread_func, this);
 	}
-};
+}
 
-constexpr unsigned THREAD_COUNT = 4;
+m2::ThreadPool::~ThreadPool() {
+	_mutex.lock();
+	_quit = true;
+	_mutex.unlock();
+	_condvar.notify_all();
 
-struct ThreadPoolImpl {
-	std::array<std::thread, THREAD_COUNT> threads;
+	for (auto& thread : _threads) {
+		thread.join();
+	}
+}
 
-	std::mutex mutex;
-	std::condition_variable condvar;
-	CountingSemaphore idleThreadCount{THREAD_COUNT};
-	// First check if quit flag set
-	bool quit;
-	// Then, check if there is a job queued
-	std::queue<ThreadPoolJob> jobQueue;
+void m2::ThreadPool::queue(const Job& job) {
+	_mutex.lock();
+	_jobs.push(job);
+	_mutex.unlock();
+	_condvar.notify_one();
+}
 
-	ThreadPoolImpl() : quit(false) {}
-};
+void m2::ThreadPool::wait() {
+	unsigned downed = 0;
+	while (downed < _threads.size()) {
+		_idle_thread_count.down();
+		downed++;
+	}
+	_idle_thread_count.up(_threads.size());
+}
 
-void ThreadPool_ThreadFunc(ThreadPoolImpl* pool) {
+size_t m2::ThreadPool::thread_count() const {
+	return _threads.size();
+}
+
+void m2::ThreadPool::thread_func(m2::ThreadPool* pool) {
 	while (true) {
-		ThreadPoolJob job = {};
+		Job job{};
 
 		{
-			std::unique_lock<std::mutex> lock(pool->mutex);
-
+			std::unique_lock<std::mutex> lock(pool->_mutex);
 			// Wait until quit or job
-			while (pool->quit == false || pool->jobQueue.empty()) {
-				pool->condvar.wait(lock);
+			while (!pool->_quit || pool->_jobs.empty()) {
+				pool->_condvar.wait(lock);
 			}
 			// Check if quit
-			if (pool->quit) {
+			if (pool->_quit) {
 				return;
 			}
 			// Otherwise, job
-			job = pool->jobQueue.front();
-			pool->jobQueue.pop();
+			job = pool->_jobs.front();
+			pool->_jobs.pop();
 		}
 
-		pool->idleThreadCount.down();
-		if (job.func) {
-			(*job.func)(job.arg);
+		pool->_idle_thread_count.down();
+		if (job) {
+			job();
 		}
-		pool->idleThreadCount.up();
+		pool->_idle_thread_count.up();
 	}
-}
-
-ThreadPool* ThreadPool_Create() {
-	auto* threadPoolImpl = new ThreadPoolImpl();
-
-	for (auto it = threadPoolImpl->threads.begin(); it != threadPoolImpl->threads.end(); it++) {
-		*it = std::thread(ThreadPool_ThreadFunc, threadPoolImpl);
-	}
-
-	return static_cast<ThreadPool*>(threadPoolImpl);
-}
-
-void ThreadPool_QueueJob(ThreadPool *pool, ThreadPoolJob job) {
-	auto* threadPoolImpl = static_cast<ThreadPoolImpl*>(pool);
-
-	threadPoolImpl->mutex.lock();
-	threadPoolImpl->jobQueue.push(job);
-	threadPoolImpl->mutex.unlock();
-	threadPoolImpl->condvar.notify_one();
-}
-
-void ThreadPool_WaitJobs(ThreadPool *pool) {
-	auto* threadPoolImpl = static_cast<ThreadPoolImpl*>(pool);
-
-	threadPoolImpl->idleThreadCount.down(THREAD_COUNT);
-	threadPoolImpl->idleThreadCount.up(THREAD_COUNT);
-}
-
-void ThreadPool_Destroy(ThreadPool *pool) {
-	auto* threadPoolImpl = static_cast<ThreadPoolImpl*>(pool);
-
-	threadPoolImpl->mutex.lock();
-	threadPoolImpl->quit = true;
-	threadPoolImpl->mutex.unlock();
-	threadPoolImpl->condvar.notify_all();
-
-	for (auto& thread : threadPoolImpl->threads) {
-		thread.join();
-	}
-
-	delete threadPoolImpl;
 }

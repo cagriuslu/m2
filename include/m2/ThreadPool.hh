@@ -1,20 +1,46 @@
-#ifndef THREADPOOL_H
-#define THREADPOOL_H
+#ifndef M2_THREADPOOL_H
+#define M2_THREADPOOL_H
 
-#include "m2/Def.h"
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <vector>
+#include <queue>
+#include <functional>
 
-typedef void ThreadPool;
+namespace m2 {
+	class Semaphore {
+		size_t _state;
+		std::mutex _mutex;
+		std::condition_variable _condvar;
 
-ThreadPool* ThreadPool_Create();
+	public:
+		explicit Semaphore(size_t initial_state = 1);
+		void down(size_t count = 1);
+		void up(size_t count = 1);
+	};
 
-typedef struct _ThreadPoolJob {
-	void (*func)(void*);
-	void* arg;
-} ThreadPoolJob;
+	using Job = std::function<void(void)>;
 
-void ThreadPool_QueueJob(ThreadPool *pool, ThreadPoolJob job);
-void ThreadPool_WaitJobs(ThreadPool *pool);
+	class ThreadPool {
+		std::vector<std::thread> _threads;
+		std::mutex _mutex;
+		std::condition_variable _condvar;
+		Semaphore _idle_thread_count;
+		bool _quit;
+		std::queue<Job> _jobs;
 
-void ThreadPool_Destroy(ThreadPool *pool);
+	public:
+		ThreadPool();
+		~ThreadPool();
+		void queue(const Job& job);
+		void wait();
 
-#endif
+		[[nodiscard]] size_t thread_count() const;
+
+	private:
+		static void thread_func(ThreadPool* pool);
+	};
+}
+
+#endif //M2_THREADPOOL_H
