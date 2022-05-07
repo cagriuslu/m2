@@ -8,6 +8,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
+#include <m2/ThreadPool.h>
 #include <cstdlib>
 
 using namespace m2;
@@ -53,6 +54,8 @@ int main(int argc, char **argv) {
 			LOG_WARNING("Invalid command line argument");
 		}
 	}
+
+	ThreadPool tpool;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
@@ -226,9 +229,10 @@ int main(int argc, char **argv) {
 				auto new_pos = m2::Vec2f{physique_it.first->body->GetPosition()};
 				object.position = new_pos;
 				if (old_pos != new_pos) {
-					GAME.draw_list.update(object_id);
+					GAME.draw_list.queue_update(object_id, new_pos);
 				}
             } // TODO Easy to parallelize
+			GAME.draw_list.update();
 			GAME.execute_deferred_actions();
 
 			// Post-physics

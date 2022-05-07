@@ -1,4 +1,4 @@
-#include "m2/ThreadPool.hh"
+#include "m2/ThreadPool.h"
 
 m2::Semaphore::Semaphore(size_t initial_state) : _state(initial_state) {}
 
@@ -65,16 +65,17 @@ void m2::ThreadPool::thread_func(m2::ThreadPool* pool) {
 		{
 			std::unique_lock<std::mutex> lock(pool->_mutex);
 			// Wait until quit or job
-			while (!pool->_quit || pool->_jobs.empty()) {
+			while (not pool->_quit && pool->_jobs.empty()) {
 				pool->_condvar.wait(lock);
 			}
 			// Check if quit
 			if (pool->_quit) {
 				return;
+			} else {
+				// Otherwise, job
+				job = pool->_jobs.front();
+				pool->_jobs.pop();
 			}
-			// Otherwise, job
-			job = pool->_jobs.front();
-			pool->_jobs.pop();
 		}
 
 		pool->_idle_thread_count.down();

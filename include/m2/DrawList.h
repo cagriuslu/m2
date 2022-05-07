@@ -6,6 +6,7 @@
 #include "Def.h"
 #include <map>
 #include <unordered_map>
+#include "SpinLock.h"
 
 namespace m2 {
 	class DrawList {
@@ -22,6 +23,9 @@ namespace m2 {
 		std::multimap<Vec2f, DrawItem, Vec2fComparator> draw_map;
 		std::unordered_map<ObjectID, decltype(draw_map)::iterator> id_lookup;
 
+		std::vector<std::pair<ObjectID, Vec2f>> update_queue;
+		SpinLock update_queue_lock;
+
 	public:
 		struct ConstIterator {
 			decltype(draw_map)::const_iterator map_it;
@@ -32,7 +36,8 @@ namespace m2 {
 		};
 
 		void insert(ObjectID id);
-		void update(ObjectID id);
+		void queue_update(ObjectID id, const Vec2f& pos);
+		void update();
 		void remove(ObjectID id);
 
 		[[nodiscard]] ConstIterator begin() const;

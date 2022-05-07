@@ -24,9 +24,24 @@ void m2::DrawList::insert(ObjectID id) {
 	id_lookup.insert({id, it});
 }
 
-void m2::DrawList::update(ObjectID id) {
-	remove(id);
-	insert(id);
+void m2::DrawList::queue_update(ObjectID id, const Vec2f& pos) {
+	update_queue_lock.lock();
+	update_queue.emplace_back(id, pos);
+	update_queue_lock.unlock();
+}
+
+void m2::DrawList::update() {
+	update_queue_lock.lock(); // Not necessary, just in case
+	for (auto& [id, pos]: update_queue) {
+		auto id_lookup_it = id_lookup.find(id);
+		if (id_lookup_it != id_lookup.end()) {
+			auto draw_item = id_lookup_it->second->second; // Save DrawItem for later
+			draw_map.erase(id_lookup_it->second); // Erase item from map
+			auto new_it = draw_map.emplace(pos, draw_item); // Add new item with new position
+			id_lookup_it->second = new_it; // Store new iterator into id_lookup table
+		}
+	}
+	update_queue_lock.unlock();
 }
 
 void m2::DrawList::remove(ObjectID id) {
