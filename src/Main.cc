@@ -10,6 +10,7 @@
 #include <SDL_ttf.h>
 #include <m2/ThreadPool.h>
 #include <cstdlib>
+#include <chrono>
 
 using namespace m2;
 
@@ -205,49 +206,58 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks, nongame_ticks) - prevWorldStepTicks;
-		prevWorldStepTicks += ticksSinceLastWorldStep;
-		timeSinceLastWorldStep += (float)ticksSinceLastWorldStep / 1000.0f;
-		while (GAME.physicsStep_s < timeSinceLastWorldStep) {
-			// Pre-physics
-			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks, nongame_ticks) - prevPrePhysicsTicks;
-			GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-			prevPrePhysicsTicks += GAME.deltaTicks_ms;
-            for (auto monitor_it : GAME.monitors) {
-                if (monitor_it.first->pre_phy) {
-                    monitor_it.first->pre_phy(*monitor_it.first);
-                }
-            } // TODO Hard to parallelize
-			GAME.execute_deferred_actions();
-
-			// Physics
-			GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
-            for (auto physique_it : GAME.physics) {
-				auto object_id = physique_it.first->object_id;
-				auto& object = GAME.objects[object_id];
-				auto old_pos = object.position;
-				auto new_pos = m2::Vec2f{physique_it.first->body->GetPosition()};
-				object.position = new_pos;
-				if (old_pos != new_pos) {
-					GAME.draw_list.queue_update(object_id, new_pos);
+		unsigned step_count;
+		for (step_count = 0; step_count < 4; step_count++) {
+			uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks, nongame_ticks) - prevWorldStepTicks;
+			prevWorldStepTicks += ticksSinceLastWorldStep;
+			timeSinceLastWorldStep += (float)ticksSinceLastWorldStep / 1000.0f;
+			if (GAME.physicsStep_s < timeSinceLastWorldStep) {
+				// Pre-physics
+				GAME.deltaTicks_ms =
+					SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks, nongame_ticks) - prevPrePhysicsTicks;
+				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
+				prevPrePhysicsTicks += GAME.deltaTicks_ms;
+				for (auto monitor_it: GAME.monitors) {
+					if (monitor_it.first->pre_phy) {
+						monitor_it.first->pre_phy(*monitor_it.first);
+					}
 				}
-            } // TODO Easy to parallelize
-			GAME.draw_list.update();
-			GAME.execute_deferred_actions();
+				GAME.execute_deferred_actions();
 
-			// Post-physics
-			GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks, nongame_ticks) - prevPostPhysicsTicks;
-			GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-			prevPostPhysicsTicks += GAME.deltaTicks_ms;
-            for (auto monitor_it : GAME.monitors) {
-                if (monitor_it.first->post_phy) {
-                    monitor_it.first->post_phy(*monitor_it.first);
-                }
-            } // TODO Hard to parallelize
-			GAME.execute_deferred_actions();
+				// Physics
+				GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
+	            for (auto physique_it : GAME.physics) {
+					auto object_id = physique_it.first->object_id;
+					auto& object = GAME.objects[object_id];
+					auto old_pos = object.position;
+					auto new_pos = m2::Vec2f{physique_it.first->body->GetPosition()};
+					object.position = new_pos;
+					if (old_pos != new_pos) {
+						GAME.draw_list.queue_update(object_id, new_pos);
+					}
+	            }
+				GAME.draw_list.update();
 
-			// Update loop condition
-			timeSinceLastWorldStep -= GAME.physicsStep_s;
+				// Post-physics
+				GAME.deltaTicks_ms =
+					SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks, nongame_ticks) - prevPostPhysicsTicks;
+				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
+				prevPostPhysicsTicks += GAME.deltaTicks_ms;
+				for (auto monitor_it: GAME.monitors) {
+					if (monitor_it.first->post_phy) {
+						monitor_it.first->post_phy(*monitor_it.first);
+					}
+				}
+				GAME.execute_deferred_actions();
+
+				// Update loop condition
+				timeSinceLastWorldStep -= GAME.physicsStep_s;
+			} else {
+				break;
+			}
+		}
+		if (step_count == 4) {
+			timeSinceLastWorldStep = 0.0f;
 		}
 		//////////////////////////// END OF PHYSICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -267,7 +277,7 @@ int main(int argc, char **argv) {
 			if (graphic_it.first->on_draw) {
 				graphic_it.first->on_draw(*graphic_it.first);
 			}
-        } // TODO Easy to parallelize
+        }
 
 		// Pre-graphic
 		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks, nongame_ticks) - prevPreGraphicsTicks;
@@ -277,7 +287,7 @@ int main(int argc, char **argv) {
             if (monitor_it.first->pre_gfx) {
                 monitor_it.first->pre_gfx(*monitor_it.first);
             }
-        } // TODO Hard to parallelize
+        }
 
 		// Draw
 		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks, nongame_ticks) - prevDrawTicks;
@@ -288,7 +298,7 @@ int main(int argc, char **argv) {
 			if (gfx.on_draw) {
 				gfx.on_draw(gfx);
 			}
-		} // TODO Hard to parallelize
+		}
 
 		// Draw lights
 		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks, nongame_ticks) - prevDrawLightsTicks;
@@ -298,7 +308,7 @@ int main(int argc, char **argv) {
             if (light_it.first->on_draw) {
                 light_it.first->on_draw(*light_it.first);
             }
-        } // TODO Hard to parallelize
+        }
 
 		// Post-graphic
 		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks, nongame_ticks) - prevPostGraphicsTicks;
@@ -308,7 +318,7 @@ int main(int argc, char **argv) {
             if (monitor_it.first->post_gfx) {
                 monitor_it.first->post_gfx(*monitor_it.first);
             }
-        } // TODO Hard to parallelize
+        }
 
 		// Draw HUD
         GAME.leftHudUIState.update_contents();
