@@ -3,8 +3,10 @@
 
 #include <m2/Error.h>
 #include <m2/Def.h>
+#include "ThreadPool.h"
 #include <array>
 #include <optional>
+#include <functional>
 #include <cstdint>
 
 namespace m2 {
@@ -163,7 +165,13 @@ namespace m2 {
         [[nodiscard]] uint64_t size() const {
             return _size;
         }
-        [[nodiscard]] bool contains(ID id) const {
+        [[nodiscard]] std::optional<uint64_t> lowest_index() const {
+			return _size ? _lowest_allocated_index : std::optional<uint64_t>{};
+		}
+		[[nodiscard]] std::optional<uint64_t> highest_index() const {
+			return _size ? _highest_allocated_index : std::optional<uint64_t>{};
+		}
+		[[nodiscard]] bool contains(ID id) const {
             return get(id);
         }
         [[nodiscard]] bool contains(const T* data) const {
@@ -211,9 +219,51 @@ namespace m2 {
                 return end();
             }
         }
+		Iterator begin_after_index(size_t idx) {
+			if (idx <= _highest_allocated_index) {
+				// Search first allocated item starting from idx
+				for (size_t i = idx; i <= _highest_allocated_index; i++) {
+					Item& item = _items[i];
+					if (item.id & 0xFFFFFF000000ull) { // If item allocated
+						return {.pool = this, .data = &item.data, .id = _shifted_pool_id | item.id};
+					}
+				}
+			}
+			return end();
+		}
         Iterator end() {
             return {.pool = this, .data = nullptr, .id = 0};
         }
+
+		void parallel_for_each(ThreadPool& tpool, const std::function<void(ID,T&)>& func) {
+			if (!size()) {
+				return;
+			}
+			auto index_span = highest_index() - lowest_index() + 1;
+			auto fair_item_count = (size_t) std::ceil((float) index_span / (float) tpool.thread_count());
+			for (size_t alloc_item_count = 0; alloc_item_count < index_span;) {
+				auto left_item_count = index_span - alloc_item_count;
+				auto thread_item_count = (fair_item_count < left_item_count) ? fair_item_count : left_item_count;
+				auto from_idx = lowest_index() + alloc_item_count;
+				auto to_idx = from_idx + thread_item_count;
+				auto it = begin_after_index(from_idx);
+				if (it == end() || to_idx <= id2index(it.id)) {
+					// Iterator is not valid or No allocated items in this batch
+				} else {
+					tpool.queue([this, func, it, to_idx]() {
+						for (auto it_cp = it; it_cp != end() && id2index(it_cp.id) < to_idx; ++it_cp) {
+							func(it_cp.id, *it_cp.data);
+						}
+					});
+				}
+				alloc_item_count += thread_item_count;
+			}
+			tpool.wait();
+		}
+
+		static size_t id2index(ID id) {
+			return id & 0xFFFFFFull;
+		}
     };
 }
 
