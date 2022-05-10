@@ -41,6 +41,7 @@ void m2::DrawList::update() {
 			id_lookup_it->second = new_it; // Store new iterator into id_lookup table
 		}
 	}
+	update_queue.clear();
 	update_queue_lock.unlock();
 }
 
