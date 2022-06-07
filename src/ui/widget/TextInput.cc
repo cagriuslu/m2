@@ -22,7 +22,12 @@ Action TextInputState::handle_events(Events& events) {
         return Action::RETURN;
     } else if (events.pop_key_press(Key::ENTER)) {
         return std::get<TextInputBlueprint>(blueprint->variant).action_callback(text_input);
-    } else {
+    } else if (events.pop_key_press(Key::BACKSPACE)) {
+		auto text_input_str = text_input.str();
+		if (not text_input_str.empty()) {
+			text_input = std::stringstream{text_input_str.substr(0, text_input_str.length() - 1)};
+		}
+	} else {
 		auto opt_text_input = events.pop_text_input();
 		if (opt_text_input) {
 			text_input << *opt_text_input;

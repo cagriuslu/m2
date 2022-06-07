@@ -14,6 +14,7 @@ namespace m2 {
 		DASH,
 		CONSOLE,
 		ENTER,
+		BACKSPACE,
 		end
 	};
 	constexpr unsigned u(Key k) {
