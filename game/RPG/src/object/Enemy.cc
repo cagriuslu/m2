@@ -18,7 +18,7 @@ struct ConsumableResourceGroup : public m2::Group {
 	explicit ConsumableResourceGroup(decltype(consumables)&& consumables) : m2::Group(), consumables(consumables) {}
 	const itm::ConsumableBlueprint* pop_consumable() {
 		if (not consumables.empty() && m2::rand(members().size()) == 0) {
-			auto pop_index = m2::rand(consumables.size());
+			auto pop_index = m2::rand(static_cast<uint64_t>(consumables.size()));
 			const auto* consumable = consumables[pop_index];
 			consumables.erase(consumables.begin() + m2::ll(pop_index));
 			return consumable;

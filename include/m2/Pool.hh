@@ -8,6 +8,7 @@
 #include <optional>
 #include <functional>
 #include <cstdint>
+#include <cmath>
 
 namespace m2 {
     extern uint16_t g_pool_id;
