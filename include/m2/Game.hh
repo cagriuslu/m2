@@ -99,10 +99,17 @@ namespace m2 {
 
 		~Game();
 
+		// Level management
+		M2Err load_level(const m2::LevelBlueprint* blueprint);
+		M2Err load_editor();
+		void unload_level();
+
 		// Accessors
 		Object* player();
 
 		// Modifiers
+		void update_window_dims(int width, int height);
+		void update_mouse_position();
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
 
@@ -111,10 +118,5 @@ namespace m2 {
 }
 
 extern m2::Game GAME;
-
-void Game_UpdateWindowDimensions(int width, int height);
-void Game_UpdateMousePosition();
-
-M2Err Game_Level_Load(const m2::LevelBlueprint* blueprint);
 
 #endif

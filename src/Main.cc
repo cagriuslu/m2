@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 	if (TTF_Init() != 0) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 	}
-	Game_UpdateWindowDimensions(1600, 900); // Store default window dimensions in GAME
+	GAME.update_window_dims(1600, 900); // Store default window dimensions in GAME
 	if ((GAME.sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME.windowRect.w, GAME.windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
 	}
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
 			// Handle window resize event
 			auto window_resize = GAME.events.pop_window_resize();
 			if (window_resize) {
-				Game_UpdateWindowDimensions(window_resize->x, window_resize->y);
+				GAME.update_window_dims(window_resize->x, window_resize->y);
                 GAME.leftHudUIState.update_positions(GAME.leftHudRect);
                 GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 			}
@@ -199,7 +199,7 @@ int main(int argc, char **argv) {
             GAME.leftHudUIState.handle_events(GAME.events);
             GAME.rightHudUIState.handle_events(GAME.events);
 		}
-		Game_UpdateMousePosition();
+		GAME.update_mouse_position();
 		//////////////////////// END OF EVENT HANDLING /////////////////////////
 		////////////////////////////////////////////////////////////////////////
 

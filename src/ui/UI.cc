@@ -96,7 +96,7 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
             }
 			auto window_resize = events.pop_window_resize();
             if (window_resize) {
-                Game_UpdateWindowDimensions(window_resize->x, window_resize->y);
+				GAME.update_window_dims(window_resize->x, window_resize->y);
                 state.update_positions(GAME.windowRect);
             }
             if ((return_value = state.handle_events(events)) != Action::CONTINUE) {

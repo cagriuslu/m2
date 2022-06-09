@@ -30,7 +30,7 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBluepr
 	.initial_text = "NEW GAME",
 	.update_callback = no_string,
 	.action_callback = []() {
-		Game_Level_Load(&lvl::sp_000);
+		GAME.load_level(&lvl::sp_000);
 		return Action::RETURN;
 	},
 	.kb_shortcut = SDL_SCANCODE_N
