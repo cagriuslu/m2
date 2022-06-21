@@ -22,6 +22,14 @@ m2::Game GAME = {
 	.positionIterations = 3
 };
 
+m2::Level::Level() : type(LVLTYP_NONE) {
+
+}
+
+m2::Level::~Level() {
+	type = LVLTYP_NONE;
+}
+
 m2::Game::~Game() {
     // Get rid of lvl
     objects.clear();
@@ -33,9 +41,11 @@ m2::Game::~Game() {
 }
 
 M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
-	if (levelLoaded) {
+	if (level && level->type != LVLTYP_NONE) {
 		unload_level();
 	}
+	level = Level{};
+	level->type = LVLTYP_GAME;
 
 	// Reset state
 	events.clear();
@@ -75,13 +85,11 @@ M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 	GAME.rightHudUIState.update_contents();
 
-	GAME.levelLoaded = true;
 	return M2OK;
 }
 
 void m2::Game::unload_level() {
 	PathfinderMap_Term(&pathfinderMap);
-	level.deferred_actions.clear();
 	offenses.clear();
 	defenses.clear();
 	lights.clear();
@@ -93,7 +101,7 @@ void m2::Game::unload_level() {
 	objects.clear();
 	delete world;
 	delete contactListener;
-	levelLoaded = false;
+	level = {};
 }
 
 m2::Object* m2::Game::player() {
@@ -181,14 +189,14 @@ void m2::Game::update_mouse_position() {
 }
 
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
-	level.deferred_actions.push_back(action);
+	level->deferred_actions.push_back(action);
 }
 
 void m2::Game::execute_deferred_actions() {
-	for (auto& action : level.deferred_actions) {
+	for (auto& action : level->deferred_actions) {
 		action();
 	}
-	level.deferred_actions.clear();
+	level->deferred_actions.clear();
 }
 
 void m2::Game::dynamic_assert() {

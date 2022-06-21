@@ -27,10 +27,22 @@
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
 
 namespace m2 {
+	enum LevelType {
+		LVLTYP_NONE,
+		LVLTYP_GAME,
+		LVLTYP_EDITOR
+	};
+
+	struct Level {
+		LevelType type;
+		std::vector<std::function<void(void)>> deferred_actions;
+
+		Level();
+		~Level();
+	};
+
 	struct Game {
-		struct Level {
-			std::vector<std::function<void(void)>> deferred_actions;
-		} level;
+		std::optional<Level> level;
 
 	public:
 		////////////////////////////////////////////////////////////////////////
@@ -65,7 +77,6 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// LEVEL /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		bool levelLoaded;
 		// Objects are not meant to be iterated over, as it holds all types of objects. If a certain type of object needs to
 		// be iterated over, create a component, attach the component to an object, put component in separate pool, and
 		// iterate over that pool.
@@ -110,6 +121,7 @@ namespace m2 {
 		// Modifiers
 		void update_window_dims(int width, int height);
 		void update_mouse_position();
+
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
 
