@@ -55,6 +55,18 @@ bool m2::VSON::is_valid() const {
 	return !is_nil();
 }
 
+bool m2::VSON::is_object() const {
+	return std::holds_alternative<vson_object>(value);
+}
+
+bool m2::VSON::is_array() const {
+	return std::holds_alternative<vson_array>(value);
+}
+
+bool m2::VSON::is_string() const {
+	return std::holds_alternative<vson_string>(value);
+}
+
 const std::string& m2::VSON::string_value() const {
 	if (std::holds_alternative<vson_string>(value)) {
 		return std::get<vson_string>(value);
