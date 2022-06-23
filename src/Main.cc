@@ -111,7 +111,7 @@ int main(int argc, char **argv) {
 	SDL_SetTextureBlendMode(GAME.sdlLightTexture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(GAME.sdlLightTexture, 0);
 	SDL_SetTextureColorMod(GAME.sdlLightTexture, 127, 127, 127);
-	if ((GAME.ttfFont = TTF_OpenFont("resource/fonts/joystix/joystix-monospace.ttf", 16)) == nullptr) {
+	if ((GAME.ttfFont = TTF_OpenFont("resource/fonts/perfect_dos_vga_437/Perfect DOS VGA 437.ttf", 32)) == nullptr) {
 		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
 		return -1;
 	}
