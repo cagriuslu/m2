@@ -88,6 +88,45 @@ M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	return M2OK;
 }
 
+//M2Err m2::Game::load_editor(const m2::LevelBlueprint *blueprint) {
+//	if (level && level->type != LVLTYP_NONE) {
+//		unload_level();
+//	}
+//	level = Level{};
+//	level->type = LVLTYP_EDITOR;
+//
+//	// Reset state
+//	events.clear();
+//
+//	// Load objects
+//	for (unsigned y = 0; y < blueprint->h; y++) {
+//		for (unsigned x = 0; x < blueprint->w; x++) {
+//			const m2::TileBlueprint* tile = blueprint->tiles + y * blueprint->w + x;
+//			if (tile->bg_sprite_index) {
+//				m2::obj::create_tile(m2::Vec2f{x, y}, tile->bg_sprite_index);
+//			}
+//			if (tile->fg_sprite_index) {
+//				auto& obj = GAME.objects.alloc().first;
+//				M2ERR_REFLECT(m2g::fg_sprite_loader(obj, tile->fg_sprite_index, tile->fg_object_group, m2::Vec2f{x, y}));
+//			}
+//		}
+//	}
+//
+//	// Create default objects
+//	m2::obj::create_camera();
+//	m2::obj::create_pointer();
+//
+//	// Init HUD
+//	GAME.leftHudUIState = m2::ui::UIState(&m2g::ui::left_hud);
+//	GAME.leftHudUIState.update_positions(GAME.leftHudRect);
+//	GAME.leftHudUIState.update_contents();
+//	GAME.rightHudUIState = m2::ui::UIState(&m2g::ui::right_hud);
+//	GAME.rightHudUIState.update_positions(GAME.rightHudRect);
+//	GAME.rightHudUIState.update_contents();
+//
+//	return M2OK;
+//}
+
 void m2::Game::unload_level() {
 	PathfinderMap_Term(&pathfinderMap);
 	offenses.clear();
