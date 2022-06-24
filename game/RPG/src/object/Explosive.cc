@@ -8,7 +8,7 @@
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 
-static b2Body* ObjectExplosive_CreateCollisionCircleBody(ID phyId, m2::Vec2f position,  const chr::ExplosiveBlueprint* blueprint) {
+static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::ID phyId, m2::Vec2f position,  const chr::ExplosiveBlueprint* blueprint) {
 	return m2::box2d::create_bullet(
             *GAME.world,
             phyId,

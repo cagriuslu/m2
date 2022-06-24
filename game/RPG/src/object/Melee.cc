@@ -7,7 +7,7 @@
 
 #define SWING_SPEED (15.0f)
 
-M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
+M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
 	obj = m2::Object{position};
 
 	const float theta = direction.angle_rads(); // Convert direction to angle

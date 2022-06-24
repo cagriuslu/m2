@@ -107,7 +107,7 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlu
 	.initial_text = "100",
 	.update_callback = []() {
 		// Lookup player
-		static ID player_id = 0;
+		static m2::ID player_id = 0;
 		static float* hp = nullptr;
 		if (player_id != GAME.playerId) {
 			player_id = GAME.playerId;
@@ -130,7 +130,7 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_4 = wdg::Progres
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {
 		// Lookup player
-		static ID player_id = 0;
+		static m2::ID player_id = 0;
 		static float* counter = nullptr;
 		static float cooldown = 0.0f;
 		if (player_id != GAME.playerId) {

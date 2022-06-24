@@ -16,11 +16,12 @@ struct ConsumableResourceGroup : public m2::Group {
 	std::deque<const itm::ConsumableBlueprint*> consumables;
 
 	explicit ConsumableResourceGroup(decltype(consumables)&& consumables) : m2::Group(), consumables(consumables) {}
+
 	const itm::ConsumableBlueprint* pop_consumable() {
 		if (not consumables.empty() && m2::rand(members().size()) == 0) {
-			auto pop_index = m2::rand(static_cast<uint64_t>(consumables.size()));
+			auto pop_index = m2::rand(static_cast<uint32_t>(consumables.size()));
 			const auto* consumable = consumables[pop_index];
-			consumables.erase(consumables.begin() + m2::ll(pop_index));
+			consumables.erase(consumables.begin() + pop_index);
 			return consumable;
 		}
 		return nullptr;

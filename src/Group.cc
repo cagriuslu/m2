@@ -4,7 +4,7 @@ bool m2::GroupID::operator==(const GroupID &other) const {
 	return (type == other.type) && (instance == other.instance);
 }
 
-m2::Pool<ID, m2::IndexInGroup_MAX+1>& m2::Group::members() {
+m2::Pool<m2::ID, m2::IndexInGroup_MAX+1>& m2::Group::members() {
 	return _members;
 }
 

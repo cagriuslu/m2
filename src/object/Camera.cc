@@ -6,7 +6,7 @@
 #define CAMERA_JUMP_RATIO (4.0f / 50.0f)
 #define OFFSET_LIMIT (1.0f)
 
-std::pair<m2::Object&, ID> m2::obj::create_camera() {
+std::pair<m2::Object&, m2::ID> m2::obj::create_camera() {
     // Start at player's location
     auto* player = GAME.objects.get(GAME.playerId);
     auto obj_pair = create_object(player ? player->position : Vec2f{});

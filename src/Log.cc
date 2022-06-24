@@ -127,7 +127,7 @@ M2Err Log_M2(LogLevel level, const char* file, int line, M2Err x) {
 	return x;
 }
 
-M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, ID var) {
+M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, m2::ID var) {
 	if (level < gCurrentLogLevel) {
 		return x;
 	}
@@ -182,7 +182,7 @@ M2Err Log_M2V_vec2f(LogLevel level, const char* file, int line, M2Err x, m2::Vec
 	return x;
 }
 
-void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2) {
+void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, m2::ID var1, M2Err x2, m2::ID var2) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}
@@ -202,7 +202,7 @@ void Log_M2V_CString_CString(LogLevel level, const char* file, int line, M2Err x
 	LogFooter(level);
 }
 
-void Log_M2V_ID_ID_Float32(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2, M2Err x3, float var3) {
+void Log_M2V_ID_ID_Float32(LogLevel level, const char* file, int line, M2Err x1, m2::ID var1, M2Err x2, m2::ID var2, M2Err x3, float var3) {
 	if (level < gCurrentLogLevel) {
 		return;
 	}

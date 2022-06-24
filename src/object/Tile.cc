@@ -5,7 +5,7 @@
 #include "m2/Game.hh"
 #include <m2/box2d/Utils.h>
 
-std::pair<m2::Object&, ID> m2::obj::create_tile(const Vec2f& position, m2::SpriteIndex sprite_index) {
+std::pair<m2::Object&, m2::ID> m2::obj::create_tile(const Vec2f& position, m2::SpriteIndex sprite_index) {
     auto obj_pair = create_object(position);
 	auto& tile = obj_pair.first;
 

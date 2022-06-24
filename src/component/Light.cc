@@ -10,7 +10,7 @@ m2::Object& m2::comp::Light::parent() const {
 }
 
 m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
-	static ID cameraId = 0;
+	static m2::ID cameraId = 0;
 	static m2::Object* cameraObj = nullptr;
 	if (GAME.cameraId && cameraId != GAME.cameraId) {
 		cameraId = GAME.cameraId;

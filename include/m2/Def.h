@@ -23,8 +23,8 @@
 #define M2_PI4  0.785398163397448f // pi/4
 #define M2_3PI4 2.356194490192345f // 3pi/4
 
-typedef uint64_t ID;
 namespace m2 {
+	using ID = uint64_t;
 	using SpriteIndex = uint32_t;
 }
 
@@ -136,7 +136,7 @@ M2Err Log_M2(LogLevel level, const char* file, int line, M2Err x);
 #define LOG_WARNING_M2V(x, typ, var) Log_M2V_##typ(LogLevelWarn,  __FILE__, __LINE__, (x), (var))
 #define LOG_ERROR_M2V(x, typ, var)   Log_M2V_##typ(LogLevelError, __FILE__, __LINE__, (x), (var))
 #define LOG_FATAL_M2V(x, typ, var)   Log_M2V_##typ(LogLevelFatal, __FILE__, __LINE__, (x), (var))
-M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, ID var);
+M2Err Log_M2V_ID(LogLevel level, const char* file, int line, M2Err x, m2::ID var);
 M2Err Log_M2V_Int32(LogLevel level, const char* file, int line, M2Err x, int32_t var);
 M2Err Log_M2V_Float32(LogLevel level, const char* file, int line, M2Err x, float var);
 M2Err Log_M2V_CString(LogLevel level, const char* file, int line, M2Err x, const char* var);
@@ -148,7 +148,7 @@ M2Err Log_M2V_vec2f(LogLevel level, const char* file, int line, M2Err x, m2::Vec
 #define LOG_WARNING_M2VV(x1, typ1, var1, x2, typ2, var2) Log_M2V_##typ1##_##typ2(LogLevelWarn,  __FILE__, __LINE__, (x1), (var1), (x2), (var2))
 #define LOG_ERROR_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelError, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
 #define LOG_FATAL_M2VV(x1, typ1, var1, x2, typ2, var2)   Log_M2V_##typ1##_##typ2(LogLevelFatal, __FILE__, __LINE__, (x1), (var1), (x2), (var2))
-void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2);
+void Log_M2V_ID_ID(LogLevel level, const char* file, int line, M2Err x1, m2::ID var1, M2Err x2, m2::ID var2);
 void Log_M2V_CString_CString(LogLevel level, const char* file, int line, M2Err x1, const char* var1, M2Err x2, const char* var2);
 
 #define LOG_TRACE_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelTrace, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
@@ -157,7 +157,7 @@ void Log_M2V_CString_CString(LogLevel level, const char* file, int line, M2Err x
 #define LOG_WARNING_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3) Log_M2V_##typ1##_##typ2##_##typ3(LogLevelWarn,  __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
 #define LOG_ERROR_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelError, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
 #define LOG_FATAL_M2VVV(x1, typ1, var1, x2, typ2, var2, x3, typ3, var3)   Log_M2V_##typ1##_##typ2##_##typ3(LogLevelFatal, __FILE__, __LINE__, (x1), (var1), (x2), (var2), (x3), (var3))
-void Log_M2V_ID_ID_Float32(LogLevel level, const char* file, int line, M2Err x1, ID var1, M2Err x2, ID var2, M2Err x3, float var3);
+void Log_M2V_ID_ID_Float32(LogLevel level, const char* file, int line, M2Err x1, m2::ID var1, M2Err x2, m2::ID var2, M2Err x3, float var3);
 
 // Convenience macros
 #define LOG_TRACE_FN() LOG_TRACE_M2V(M2_FN, CString, __FUNCTION__)

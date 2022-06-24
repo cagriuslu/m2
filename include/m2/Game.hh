@@ -20,6 +20,7 @@
 #include <vector>
 #include <b2_world.h>
 #include <sstream>
+#include "Value.h"
 #include <unordered_map>
 #include "M2.h"
 #include <filesystem>

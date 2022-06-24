@@ -5,7 +5,7 @@
 
 namespace obj {
 	struct Melee {
-		static M2Err init(m2::Object& obj, const chr::MeleeBlueprint* blueprint, ID originatorId, m2::Vec2f position, m2::Vec2f direction);
+		static M2Err init(m2::Object& obj, const chr::MeleeBlueprint* blueprint, m2::ID originatorId, m2::Vec2f position, m2::Vec2f direction);
 	};
 }
 
