@@ -21,6 +21,8 @@
 #include <b2_world.h>
 #include <sstream>
 #include <unordered_map>
+#include "M2.h"
+#include <filesystem>
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
@@ -28,7 +30,6 @@
 
 namespace m2 {
 	enum LevelType {
-		LVLTYP_NONE,
 		LVLTYP_GAME,
 		LVLTYP_EDITOR
 	};
@@ -37,8 +38,11 @@ namespace m2 {
 		LevelType type;
 		std::vector<std::function<void(void)>> deferred_actions;
 
-		Level();
-		~Level();
+		// Editor
+		std::optional<std::filesystem::path> editor_file_path;
+
+		explicit Level(const LevelBlueprint* blueprint);
+		explicit Level(const std::filesystem::path& path);
 	};
 
 	struct Game {
@@ -112,7 +116,7 @@ namespace m2 {
 
 		// Level management
 		M2Err load_level(const m2::LevelBlueprint* blueprint);
-		M2Err load_editor();
+		Value<Void> load_editor(const std::filesystem::path& path);
 		void unload_level();
 
 		// Accessors

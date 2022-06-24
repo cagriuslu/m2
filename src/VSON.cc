@@ -25,7 +25,7 @@ const m2::VSON* m2::VSON::query(const std::string& path) const {
 	for (const auto& path_piece : m2::string::split(path, '/')) {
 		if (std::holds_alternative<vson_object>(value)) {
 			const auto& obj = std::get<vson_object>(value);
-			const auto& it = obj.find(path_piece);
+			const auto it = obj.find(path_piece);
 			if (it != obj.end()) {
 				v = &it->second;
 			} else {
@@ -39,12 +39,44 @@ const m2::VSON* m2::VSON::query(const std::string& path) const {
 			} else {
 				return nullptr;
 			}
-		} else if (std::holds_alternative<vson_string>(value)) {
+		} else {
 			return nullptr;
 		}
 	}
 	return v;
+}
 
+std::optional<std::string> m2::VSON::query_string_value(const std::string& path) const {
+	const auto* vson = query(path);
+	if (not vson) {
+		return {};
+	}
+	if (not vson->is_string()) {
+		return {};
+	}
+	return vson->string_value();
+}
+
+std::optional<long> m2::VSON::query_long_value(const std::string& path) const {
+	const auto* vson = query(path);
+	if (not vson) {
+		return {};
+	}
+	if (not vson->is_string()) {
+		return {};
+	}
+	return vson->long_value();
+}
+
+std::optional<double> m2::VSON::query_double_value(const std::string& path) const {
+	const auto* vson = query(path);
+	if (not vson) {
+		return {};
+	}
+	if (not vson->is_string()) {
+		return {};
+	}
+	return vson->double_value();
 }
 
 bool m2::VSON::is_nil() const {
@@ -68,11 +100,7 @@ bool m2::VSON::is_string() const {
 }
 
 const std::string& m2::VSON::string_value() const {
-	if (std::holds_alternative<vson_string>(value)) {
-		return std::get<vson_string>(value);
-	} else {
-		throw std::bad_variant_access();
-	}
+	return std::get<vson_string>(value);
 }
 
 long m2::VSON::long_value() const {
@@ -81,6 +109,10 @@ long m2::VSON::long_value() const {
 
 double m2::VSON::double_value() const {
 	return std::stod(string_value());
+}
+
+size_t m2::VSON::object_size() const {
+	return std::get<vson_object>(value).size();
 }
 
 const m2::VSON& m2::VSON::operator[](const std::string &key) const {
@@ -94,12 +126,32 @@ m2::VSON& m2::VSON::operator[](const std::string &key) {
 	return std::get<vson_object>(value)[key];
 }
 
-size_t m2::VSON::array_length() const {
-	if (std::holds_alternative<vson_array>(value)) {
-		return std::get<vson_array>(value).size();
-	} else {
-		throw std::bad_variant_access();
+const m2::VSON* m2::VSON::at(const std::string& key) const {
+	if (not is_object()) {
+		return nullptr;
 	}
+	const auto& obj = std::get<vson_object>(value);
+	auto it = obj.find(key);
+	if (it == obj.end()) {
+		return nullptr;
+	}
+	return &it->second;
+}
+
+m2::VSON* m2::VSON::at(const std::string& key) {
+	if (not is_object()) {
+		return nullptr;
+	}
+	auto& obj = std::get<vson_object>(value);
+	auto it = obj.find(key);
+	if (it == obj.end()) {
+		return nullptr;
+	}
+	return &it->second;
+}
+
+size_t m2::VSON::array_length() const {
+	return std::get<vson_array>(value).size();
 }
 
 const m2::VSON& m2::VSON::operator[](size_t index) const {
@@ -115,6 +167,28 @@ m2::VSON& m2::VSON::operator[](size_t index) {
 		array.resize(index + 1);
 	}
 	return array[index];
+}
+
+const m2::VSON* m2::VSON::at(size_t index) const {
+	if (not is_array()) {
+		return nullptr;
+	}
+	const auto& arr = std::get<vson_array>(value);
+	if (arr.size() <= index) {
+		return nullptr;
+	}
+	return &arr[index];
+}
+
+m2::VSON* m2::VSON::at(size_t index) {
+	if (not is_array()) {
+		return nullptr;
+	}
+	auto& arr = std::get<vson_array>(value);
+	if (arr.size() <= index) {
+		return nullptr;
+	}
+	return &arr[index];
 }
 
 m2::VSON& m2::VSON::operator=(const std::string& str) {

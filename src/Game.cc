@@ -6,6 +6,7 @@
 #include "m2/Component.h"
 #include <m2g/SpriteBlueprint.h>
 #include "m2/Def.h"
+#include <m2/VSON.hh>
 #include <b2_world.h>
 #include <m2g/ui/UI.h>
 #include "m2/component/Monitor.h"
@@ -22,12 +23,12 @@ m2::Game GAME = {
 	.positionIterations = 3
 };
 
-m2::Level::Level() : type(LVLTYP_NONE) {
+m2::Level::Level(const m2::LevelBlueprint* blueprint) : type(LVLTYP_GAME) {
 
 }
 
-m2::Level::~Level() {
-	type = LVLTYP_NONE;
+m2::Level::Level(const std::filesystem::path& path) : type(LVLTYP_EDITOR), editor_file_path(path) {
+
 }
 
 m2::Game::~Game() {
@@ -41,11 +42,10 @@ m2::Game::~Game() {
 }
 
 M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
-	if (level && level->type != LVLTYP_NONE) {
+	if (level) {
 		unload_level();
 	}
-	level = Level{};
-	level->type = LVLTYP_GAME;
+	level = Level{blueprint};
 
 	// Reset state
 	events.clear();
@@ -88,44 +88,79 @@ M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	return M2OK;
 }
 
-//M2Err m2::Game::load_editor(const m2::LevelBlueprint *blueprint) {
-//	if (level && level->type != LVLTYP_NONE) {
-//		unload_level();
-//	}
-//	level = Level{};
-//	level->type = LVLTYP_EDITOR;
-//
-//	// Reset state
-//	events.clear();
-//
-//	// Load objects
-//	for (unsigned y = 0; y < blueprint->h; y++) {
-//		for (unsigned x = 0; x < blueprint->w; x++) {
-//			const m2::TileBlueprint* tile = blueprint->tiles + y * blueprint->w + x;
-//			if (tile->bg_sprite_index) {
-//				m2::obj::create_tile(m2::Vec2f{x, y}, tile->bg_sprite_index);
-//			}
-//			if (tile->fg_sprite_index) {
-//				auto& obj = GAME.objects.alloc().first;
-//				M2ERR_REFLECT(m2g::fg_sprite_loader(obj, tile->fg_sprite_index, tile->fg_object_group, m2::Vec2f{x, y}));
-//			}
-//		}
-//	}
-//
-//	// Create default objects
-//	m2::obj::create_camera();
-//	m2::obj::create_pointer();
-//
-//	// Init HUD
+m2::Value<m2::Void> m2::Game::load_editor(const std::filesystem::path& path) {
+	namespace fs = std::filesystem;
+	auto typ = fs::status(path).type();
+	if (typ != fs::file_type::not_found && typ != fs::file_type::regular) {
+		return failure(C("Path is not a regular file"));
+	}
+
+	if (level) {
+		unload_level();
+	}
+	level = Level{path};
+
+	// Reset state
+	events.clear();
+
+	auto vson = VSON::parse_file(path.string());
+	if (vson) {
+		auto width = vson->query_long_value("width");
+		auto height = vson->query_long_value("height");
+		const auto* tiles = vson->at("tiles");
+		if (width && height && tiles) {
+			for (unsigned y = 0; y < *height; ++y) {
+				for (unsigned x = 0; x < *width; ++x) {
+					const auto* tile = tiles->at(y * (*width) + x);
+					if (tile) {
+						auto bg = tile->query_long_value("bg");
+						if (bg) {
+							m2::obj::create_tile(m2::Vec2f{x, y}, *bg);
+						}
+
+						auto fg = tile->query_long_value("fg");
+						if (fg) {
+							GroupID gid{};
+							auto fg_group = tile->at("fg_group");
+							if (fg_group) {
+								auto type = fg_group->query_long_value("type");
+								auto inst = fg_group->query_long_value("inst");
+								if (type && inst) {
+									gid.type = *type;
+									gid.instance = *inst;
+								} else {
+									// TODO return error, or log warning
+								}
+							}
+
+							auto& obj = GAME.objects.alloc().first;
+							m2g::fg_sprite_loader(obj, *fg, gid, m2::Vec2f{x, y}); // TODO handle error
+						}
+					} else {
+						// TODO return error, or log warning
+					}
+				}
+			}
+		} else {
+			// TODO return error, or log warning
+		}
+	}
+
+	// Create default objects
+	// TODO create god object, which will be the player
+	m2::obj::create_camera();
+	m2::obj::create_pointer();
+
+	// TODO init custom hud
 //	GAME.leftHudUIState = m2::ui::UIState(&m2g::ui::left_hud);
 //	GAME.leftHudUIState.update_positions(GAME.leftHudRect);
 //	GAME.leftHudUIState.update_contents();
 //	GAME.rightHudUIState = m2::ui::UIState(&m2g::ui::right_hud);
 //	GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 //	GAME.rightHudUIState.update_contents();
-//
-//	return M2OK;
-//}
+
+	return {};
+}
 
 void m2::Game::unload_level() {
 	PathfinderMap_Term(&pathfinderMap);

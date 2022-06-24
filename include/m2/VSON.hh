@@ -22,6 +22,9 @@ namespace m2 {
 		[[nodiscard]] static VSON string(const std::string& str);
 
 		[[nodiscard]] const VSON* query(const std::string& path) const;
+		[[nodiscard]] std::optional<std::string> query_string_value(const std::string& path) const;
+		[[nodiscard]] std::optional<long> query_long_value(const std::string& path) const;
+		[[nodiscard]] std::optional<double> query_double_value(const std::string& path) const;
 		[[nodiscard]] bool is_nil() const;
 		[[nodiscard]] bool is_valid() const;
 		[[nodiscard]] bool is_object() const;
@@ -29,13 +32,18 @@ namespace m2 {
 		[[nodiscard]] bool is_string() const;
 
 		// Object
+		[[nodiscard]] size_t object_size() const;
 		const VSON& operator[](const std::string& key) const;
 		VSON& operator[](const std::string& key);
+		[[nodiscard]] const VSON* at(const std::string& key) const;
+		VSON* at(const std::string& key);
 
 		// Array
 		[[nodiscard]] size_t array_length() const;
 		const VSON& operator[](size_t index) const;
 		VSON& operator[](size_t index);
+		[[nodiscard]] const VSON* at(size_t index) const;
+		VSON* at(size_t index);
 
 		// String
 		[[nodiscard]] const std::string& string_value() const;

@@ -3,6 +3,7 @@
 #include <m2/Def.h>
 #include <m2/Game.hh>
 #include <regex>
+#include <filesystem>
 
 using namespace m2::ui;
 
@@ -131,22 +132,24 @@ const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextI
 			std::smatch match_results;
 
             auto command = ss.str();
-            if (command == "help") {
-                GAME.console_output = {
-                    "Hello!",
-                    "Available commands:",
-                    "help - display this help",
-					"editor file_name - open editor with file",
-                    "quit - quit game"
-                };
-            } else if (std::regex_match(command, match_results, editor_regex)) {
-				auto file_name = match_results.str(1);
-				
-				fprintf(stderr, "file_name %s\n", file_name.c_str());
+            if (std::regex_match(command, match_results, editor_regex)) {
+	            std::filesystem::path file_path{match_results.str(1)};
+				auto load_result = GAME.load_editor(file_path);
+				if (not load_result) {
+					GAME.console_output = { load_result.error() };
+				} else {
+					return Action::RETURN;
+				}
 			} else if (command == "quit") {
                 return_value = Action::QUIT;
             } else {
-                GAME.console_output = {"unknown command"};
+	            GAME.console_output = {
+		            "Hello!",
+		            "Available commands:",
+		            "help - display this help",
+		            "editor file_name - open editor with file",
+		            "quit - quit game"
+	            };
             }
             ss = std::stringstream();
 
