@@ -35,6 +35,9 @@ elseif(WIN32)
     target_link_libraries(m2 optimized box2d       SDL_gpu)
     target_link_libraries(m2 SDL2 SDL2_image SDL2_ttf)
 
+    # Enable this option enable code inspections
+#    target_compile_options(m2 PRIVATE /analyze)
+
     # Copy DLLs
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD

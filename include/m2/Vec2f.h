@@ -2,6 +2,7 @@
 #define M2_VEC2F_H
 
 #include <b2_math.h>
+#include <string>
 
 namespace m2 {
 	struct Vec2i;
@@ -42,6 +43,8 @@ namespace m2 {
 		static Vec2f nan();
 		static Vec2f from_angle(float rads);
 	};
+
+	std::string to_string(const m2::Vec2f&);
 }
 
 #endif //M2_VEC2F_H

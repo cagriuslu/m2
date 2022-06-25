@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstddef>
+#include <string>
 
 namespace m2 {
 	struct Vec2f;
@@ -20,6 +21,8 @@ namespace m2 {
 		bool operator==(const Vec2i& other) const;
 		explicit operator bool() const;
 	};
+
+	std::string to_string(const m2::Vec2i&);
 
 	struct Vec2iHash {
 		size_t operator()(const Vec2i& a) const;

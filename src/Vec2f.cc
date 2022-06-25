@@ -1,6 +1,8 @@
 #include <m2/Vec2f.h>
 #include <m2/Vec2i.h>
 #include <cmath>
+#include <sstream>
+#include <iomanip>
 
 m2::Vec2f::Vec2f() : x(0.0f), y(0.0f) {}
 m2::Vec2f::Vec2f(float x, float y) : x(x), y(y) {}
@@ -89,4 +91,10 @@ m2::Vec2f m2::Vec2f::nan() {
 }
 m2::Vec2f m2::Vec2f::from_angle(float rads) {
 	return {cosf(rads), sinf(rads)};
+}
+
+std::string m2::to_string(const m2::Vec2f& v) {
+	std::stringstream ss;
+	ss << "{ x: " << v.x << ", y: " << v.y << " }";
+	return ss.str();
 }

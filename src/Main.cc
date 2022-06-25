@@ -9,6 +9,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <m2/ThreadPool.h>
+#include <m2/Log.h>
 #include <cstdlib>
 #include <chrono>
 

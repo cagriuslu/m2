@@ -1,6 +1,7 @@
 #include <m2/Vec2i.h>
 #include <m2/Vec2f.h>
 #include <unordered_map>
+#include <sstream>
 
 m2::Vec2i::Vec2i() : x(0), y(0) {
 
@@ -31,4 +32,10 @@ m2::Vec2i::operator bool() const {
 size_t m2::Vec2iHash::operator()(const Vec2i& a) const {
 	uint64_t packed = static_cast<uint64_t>(a.x) | (static_cast<uint64_t>(a.y) << 32);
 	return std::hash<uint64_t>{}(packed);
+}
+
+std::string m2::to_string(const m2::Vec2i& v) {
+	std::stringstream ss;
+	ss << "{ x: " << v.x << ", y: " << v.y << " }";
+	return ss.str();
 }

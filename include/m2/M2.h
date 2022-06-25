@@ -20,6 +20,12 @@ namespace m2 {
 	float max(float a, float b);
 
 	float normalize_rad(float radians);
+
+	template <typename T>
+	constexpr int to_int(T&& t) { return static_cast<int>(t); }
+
+	template <typename T>
+	constexpr int to_unsigned(T&& t) { return static_cast<unsigned>(t); }
 }
 
 #endif //M2_M2_H
