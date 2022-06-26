@@ -58,13 +58,13 @@ std::optional<std::string> m2::VSON::query_string_value(const std::string& path)
 	return vson->string_value();
 }
 
-std::optional<long> m2::VSON::query_long_value(const std::string& path) const {
+m2::Value<long> m2::VSON::query_long_value(const std::string& path) const {
 	const auto* vson = query(path);
 	if (not vson) {
-		return {};
+		return failure("VSON path not found");
 	}
 	if (not vson->is_string()) {
-		return {};
+		return failure("VSON path not string");
 	}
 	return vson->long_value();
 }

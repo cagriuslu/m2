@@ -1,6 +1,7 @@
 #include "m2/Game.hh"
 #include <m2/Exception.h>
 #include <m2/Object.h>
+#include <m2/LevelBlueprint.h>
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
@@ -68,7 +69,7 @@ m2::VoidValue m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 				auto& obj = GAME.objects.alloc().first;
 				auto load_result = m2g::fg_sprite_loader(obj, tile->fg_sprite_index, tile->fg_object_group, m2::Vec2f{x, y});
 				if (!load_result) {
-					return failure(C(load_result.error()));
+					return failure(load_result.error());
 				}
 			}
 		}
@@ -91,12 +92,69 @@ m2::VoidValue m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	return {};
 }
 
-m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
-	namespace fs = std::filesystem;
-	auto typ = fs::status(path).type();
-	if (typ != fs::file_type::not_found && typ != fs::file_type::regular) {
-		return failure(C("Path is not a regular file"));
+namespace {
+	struct LevelFromVson {
+		unsigned width{0};
+		struct Tile {
+			std::optional<m2::SpriteIndex> bg_sprite_index;
+			std::optional<m2::SpriteIndex> fg_sprite_index;
+			std::optional<m2::GroupID> fg_object_group;
+		};
+		std::vector<Tile> tiles;
+	};
+
+	m2::Value<LevelFromVson> validate_level_vson(const std::filesystem::path& path) {
+		namespace fs = std::filesystem;
+		auto typ = fs::status(path).type();
+		if (typ != fs::file_type::not_found && typ != fs::file_type::regular) {
+			return m2::failure("Path is not a regular file");
+		}
+		// If the file does not exist
+		if (typ == fs::file_type::not_found) {
+			return {};
+		}
+		auto vson = m2::VSON::parse_file(path.string());
+		m2_fail_unless(vson, "Unable to parse VSON");
+
+		LevelFromVson level{};
+		auto width = vson->query_long_value("width");
+		auto height = vson->query_long_value("height");
+		const auto* tiles = vson->at("tiles");
+		m2_fail_unless(width && height && tiles, "width, height, or tiles not found");
+		level.width = *width;
+
+		for (unsigned y = 0; y < *height; ++y) {
+			for (unsigned x = 0; x < *width; ++x) {
+				const auto* tile_vson = tiles->at(y * (*width) + x);
+				m2_fail_unless(tile_vson, "Tile not found");
+
+				LevelFromVson::Tile tile{};
+				// Background tile
+				exec_if<long>(tile_vson->query_long_value("bg"), [&](long& bg) {
+					tile.bg_sprite_index = bg;
+				});
+				// Foreground object
+				auto fg = tile_vson->query_long_value("fg");
+				if (fg) {
+					tile.fg_sprite_index = *fg;
+					auto fg_group = tile_vson->at("fg_group");
+					if (fg_group) {
+						auto type = fg_group->query_long_value("type");
+						auto inst = fg_group->query_long_value("inst");
+						m2_fail_unless(type && inst, "Incorrect type or inst in fg_group");
+						tile.fg_object_group = m2::GroupID{static_cast<m2::GroupTypeID>(*type), static_cast<m2::GroupInstanceID>(*inst)};;
+					}
+				}
+				level.tiles.push_back(tile);
+			}
+		}
+		return level;
 	}
+}
+
+m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
+	auto validate_result = validate_level_vson(path);
+	m2_reflect_failure(validate_result);
 
 	if (level) {
 		unload_level();
@@ -106,46 +164,20 @@ m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 	// Reset state
 	events.clear();
 
-	auto vson = VSON::parse_file(path.string());
-	if (vson) {
-		auto width = vson->query_long_value("width");
-		auto height = vson->query_long_value("height");
-		const auto* tiles = vson->at("tiles");
-		if (width && height && tiles) {
-			for (unsigned y = 0; y < *height; ++y) {
-				for (unsigned x = 0; x < *width; ++x) {
-					const auto* tile = tiles->at(y * (*width) + x);
-					if (tile) {
-						auto bg = tile->query_long_value("bg");
-						if (bg) {
-							m2::obj::create_tile(m2::Vec2f{x, y}, *bg);
-						}
-
-						auto fg = tile->query_long_value("fg");
-						if (fg) {
-							GroupID gid{};
-							auto fg_group = tile->at("fg_group");
-							if (fg_group) {
-								auto type = fg_group->query_long_value("type");
-								auto inst = fg_group->query_long_value("inst");
-								if (type && inst) {
-									gid.type = *type;
-									gid.instance = *inst;
-								} else {
-									// TODO return error, or log warning
-								}
-							}
-
-							auto& obj = GAME.objects.alloc().first;
-							m2g::fg_sprite_loader(obj, *fg, gid, m2::Vec2f{x, y}); // TODO handle error
-						}
-					} else {
-						// TODO return error, or log warning
-					}
+	if (not validate_result->tiles.empty()) {
+		for (unsigned y = 0; y < validate_result->tiles.size() / validate_result->width; ++y) {
+			for (unsigned x = 0; x < validate_result->width; ++x) {
+				const auto& tile = validate_result->tiles[y * (validate_result->width) + x];
+				if (tile.bg_sprite_index) {
+					// Create background tile
+					m2::obj::create_tile(m2::Vec2f{x, y}, *tile.bg_sprite_index);
+				}
+				if (tile.fg_sprite_index) {
+					// Create object
+					auto& obj = GAME.objects.alloc().first;
+					m2_reflect_failure(m2g::fg_sprite_loader(obj, *tile.fg_sprite_index, (tile.fg_object_group ? *tile.fg_object_group : GroupID{}), m2::Vec2f{x, y}));
 				}
 			}
-		} else {
-			// TODO return error, or log warning
 		}
 	}
 

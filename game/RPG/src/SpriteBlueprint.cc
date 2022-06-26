@@ -289,6 +289,6 @@ m2::VoidValue m2g::fg_sprite_loader(m2::Object &obj, m2::SpriteIndex index, m2::
 		case IMPL_SPRITE_ENEMY_LOOKDOWN_00:
 			return Enemy::init(obj, &chr::character_skeleton_000_chase, gid, position);
 		default:
-			return m2::failure(C("Invalid sprite index"));
+			return m2::failure("Invalid sprite index");
 	}
 }

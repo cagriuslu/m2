@@ -12,9 +12,11 @@ namespace m2 {
 	constexpr size_t IndexInGroup_MAX = UINT8_MAX;
 
 	struct GroupID {
-		GroupTypeID type;
-		GroupInstanceID instance;
+		GroupTypeID type{0};
+		GroupInstanceID instance{0};
 
+		GroupID() = default;
+		GroupID(GroupTypeID _type, GroupInstanceID _instance);
 		bool operator==(const GroupID& other) const;
 	};
 	struct GroupIDHasher

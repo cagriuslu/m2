@@ -1,6 +1,7 @@
 #ifndef VSON_H
 #define VSON_H
 
+#include "Value.h"
 #include <string>
 #include <variant>
 #include <unordered_map>
@@ -23,7 +24,7 @@ namespace m2 {
 
 		[[nodiscard]] const VSON* query(const std::string& path) const;
 		[[nodiscard]] std::optional<std::string> query_string_value(const std::string& path) const;
-		[[nodiscard]] std::optional<long> query_long_value(const std::string& path) const;
+		[[nodiscard]] Value<long> query_long_value(const std::string& path) const;
 		[[nodiscard]] std::optional<double> query_double_value(const std::string& path) const;
 		[[nodiscard]] bool is_nil() const;
 		[[nodiscard]] bool is_valid() const;

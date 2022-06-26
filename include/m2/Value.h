@@ -3,6 +3,8 @@
 
 #include <variant>
 #include <functional>
+#include <optional>
+#include <string>
 
 #define C(s) ((const char*)(s))
 
@@ -12,13 +14,15 @@ namespace m2 {
 	template <typename E>
 	struct Failure {
 		E _e;
-		explicit constexpr Failure(E&& e) : _e(std::move(e)) {}
+		explicit Failure(const E& e) : _e(e) {}
+		explicit Failure(E&& e) : _e(std::move(e)) {}
 	};
 
-	template <typename E = const char*>
-	constexpr Failure<E> failure(E&& e) {
+	template <typename E>
+	Failure<E> failure(E&& e) {
 		return Failure<E>(std::forward<E>(e));
 	}
+	Failure<const char*> failure(const char* e);
 
 	template <typename T, typename E = const char*>
 	class Value : public std::variant<T,Failure<E>> {
@@ -38,12 +42,24 @@ namespace m2 {
 		T& value() {
 			return std::get<0>(*this);
 		}
+		T& operator*() {
+			return value();
+		}
+		T* operator->() {
+			return &value();
+		}
 
 		[[nodiscard]] bool has_error() const {
 			return !has_value();
 		}
 		const E& error() const {
 			return std::get<1>(*this)._e;
+		}
+		std::optional<Failure<E>> failure() const {
+			if (has_error()) {
+				return Failure<E>(error());
+			}
+			return {};
 		}
 	};
 
@@ -75,6 +91,29 @@ namespace m2 {
 		}
 		return false;
 	}
+
+	template <typename R, typename T, typename E>
+	R transform_if(Value<T,E>&& v, std::function<R(T&)> f, R&& def = R{}) {
+		if (v) {
+			return f(v.value());
+		}
+		return def;
+	}
 }
+
+#define m2_reflect_failure(v)               \
+	do {                                    \
+		auto __failure__ = (v).failure();   \
+		if (__failure__) {                  \
+			return std::move(*__failure__); \
+		}                                   \
+	} while (false)
+
+#define m2_fail_unless(cond, err)        \
+	do {                                 \
+		if (!(cond)) {                   \
+			return ::m2::failure((err)); \
+		}                                \
+	} while (false)
 
 #endif //M2_VALUE_H

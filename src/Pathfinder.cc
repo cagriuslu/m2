@@ -179,7 +179,7 @@ m2::Value<std::list<m2::Vec2i>> _PathfinderMap_FindGridSteps(PathfinderMap* pm, 
 	// Check if there is a path
 	auto it = came_from.find(to);
 	if (it == came_from.end()) {
-		return m2::failure(C("Path not found"));
+		return m2::failure("Path not found");
 	} else {
         outReverseListOfVec2Is.clear();
 		// Add `to` to list
