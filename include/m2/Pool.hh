@@ -1,7 +1,7 @@
 #ifndef M2_POOL_HH
 #define M2_POOL_HH
 
-#include <m2/Error.h>
+#include <m2/Exception.h>
 #include <m2/Def.h>
 #include "ThreadPool.h"
 #include <array>
@@ -66,7 +66,7 @@ namespace m2 {
 
         Pool() : _items(), _size(0), _next_key(1), _highest_allocated_index(0), _lowest_allocated_index(0), _next_free_index(0) {
 			if (g_pool_id == UINT16_MAX) {
-				throw M2FATAL(M2ERR_LIMIT_EXCEEDED);
+				throw M2FATAL("Max pool count exceeded");
 			} else {
 				_shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
 			}
@@ -78,33 +78,32 @@ namespace m2 {
         }
 
         std::pair<T&, ID> alloc() {
-            if (_size < Capacity) {
-                // Find the itm that will be allocated
-                const uint64_t index_to_alloc = _next_free_index;
-                Item& item = _items[index_to_alloc];
-                // Store next free index
-                _next_free_index = item.id & 0xFFFFFFull;
-                // Set id of the new itm
-                item.id = (_next_key << 24) | (index_to_alloc & 0xFFFFFFull);
-                // Adjust pool
-                ++_size;
-                ++_next_key;
-                if (Capacity < _next_key) {
-                    // Rewind key to beginning
-                    _next_key = 1;
-                }
-                if (_highest_allocated_index < index_to_alloc) {
-                    _highest_allocated_index = index_to_alloc;
-                }
-                if (index_to_alloc < _lowest_allocated_index) {
-                    _lowest_allocated_index = index_to_alloc;
-                }
-                // Form ID
-                ID id = _shifted_pool_id | item.id;
-                return {item.data, id};
-            } else {
-                throw M2ERROR(M2ERR_LIMIT_EXCEEDED);
-            }
+	        if (Capacity <= _size) {
+		        throw M2ERROR("Max pool size exceeded");
+	        }
+	        // Find the itm that will be allocated
+	        const uint64_t index_to_alloc = _next_free_index;
+	        Item &item = _items[index_to_alloc];
+	        // Store next free index
+	        _next_free_index = item.id & 0xFFFFFFull;
+	        // Set id of the new itm
+	        item.id = (_next_key << 24) | (index_to_alloc & 0xFFFFFFull);
+	        // Adjust pool
+	        ++_size;
+	        ++_next_key;
+	        if (Capacity < _next_key) {
+		        // Rewind key to beginning
+		        _next_key = 1;
+	        }
+	        if (_highest_allocated_index < index_to_alloc) {
+		        _highest_allocated_index = index_to_alloc;
+	        }
+	        if (index_to_alloc < _lowest_allocated_index) {
+		        _lowest_allocated_index = index_to_alloc;
+	        }
+	        // Form ID
+	        ID id = _shifted_pool_id | item.id;
+	        return {item.data, id};
         }
 
 		void free(ID id) {
@@ -184,7 +183,7 @@ namespace m2 {
 			if (t) {
 				return *t;
 			} else {
-				throw M2ERROR(M2ERR_OUT_OF_BOUNDS);
+				throw M2ERROR("Pool out of bounds");
 			}
 		}
         T* get(ID id) {

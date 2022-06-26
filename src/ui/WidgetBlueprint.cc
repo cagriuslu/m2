@@ -1,6 +1,6 @@
 #include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/UI.h>
-#include <m2/Error.h>
+#include <m2/Exception.h>
 
 std::unique_ptr<m2::ui::WidgetState> m2::ui::WidgetBlueprint::get_state() const {
     using namespace wdg;
@@ -17,7 +17,7 @@ std::unique_ptr<m2::ui::WidgetState> m2::ui::WidgetBlueprint::get_state() const 
     } else if (std::holds_alternative<ProgressBarBlueprint>(variant)) {
 	    state = std::make_unique<ProgressBarState>(this);
     } else {
-		throw M2FATAL(M2ERR_IMPLEMENTATION);
+		throw M2FATAL("Implementation");
 	}
     return state;
 }

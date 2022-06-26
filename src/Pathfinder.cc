@@ -47,7 +47,8 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 	pm->blocked_locations.clear();
 }
 
-M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::Vec2f from, m2::Vec2f to, std::list<m2::Vec2i>& outReverseListOfVec2Is) {
+m2::Value<std::list<m2::Vec2i>> PathfinderMap_FindPath(PathfinderMap* pm, m2::Vec2f from, m2::Vec2f to) {
+	std::list<m2::Vec2i> outReverseListOfVec2Is;
 	// Check if there is direct eyesight
 	if (m2::box2d::check_eye_sight(*GAME.world, from, to, m2::box2d::CAT_OBSTACLE | m2::box2d::CAT_GND_OBSTACLE)) {
 		auto fromI = m2::Vec2i{from};
@@ -58,24 +59,20 @@ M2Err PathfinderMap_FindPath(PathfinderMap* pm, m2::Vec2f from, m2::Vec2f to, st
         outReverseListOfVec2Is.push_back(toI);
 		// Add `from` to list, if it is different than `to`
 		if (fromI == toI) {
-			return M2ERR_PATH_NOT_FOUND;
+			return m2::failure(C("Path not find"));
 		} else {
             outReverseListOfVec2Is.push_back(fromI);
-			return M2OK;
+			return outReverseListOfVec2Is;
 		}
 	} else {
-        std::list<m2::Vec2i> grid_steps;
-
-		M2Err anyAngleResult = M2ERR_PATH_NOT_FOUND;
-		if (_PathfinderMap_FindGridSteps(pm, from, to, grid_steps) == M2OK) {
-			_PathfinderMap_GridStepsToAnyAngle(grid_steps, outReverseListOfVec2Is);
-			if (1 < outReverseListOfVec2Is.size()) {
-				anyAngleResult = M2OK;
+		auto grid_steps = _PathfinderMap_FindGridSteps(pm, from, to);
+		if (grid_steps) {
+			auto any_angle_grid_steps = _PathfinderMap_GridStepsToAnyAngle(grid_steps.value());
+			if (1 < any_angle_grid_steps.size()) {
+				return any_angle_grid_steps;
 			}
-		} else {
-            outReverseListOfVec2Is.clear();
 		}
-		return anyAngleResult;
+		return m2::failure(C("Path not found"));
 	}
 }
 
@@ -84,8 +81,10 @@ struct PriorityListItem {
 	m2::Vec2i position;
 };
 
-M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::Vec2f fromF, m2::Vec2f toF, std::list<m2::Vec2i>& outReverseListOfVec2Is) {
-	auto from = m2::Vec2i{fromF };
+m2::Value<std::list<m2::Vec2i>> _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::Vec2f fromF, m2::Vec2f toF) {
+	std::list<m2::Vec2i> outReverseListOfVec2Is;
+
+	auto from = m2::Vec2i{fromF};
 	auto to = m2::Vec2i{toF};
 
 	PriorityListItem tmpPrioListItem;
@@ -177,14 +176,11 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::Vec2f fromF, m2::Vec2f
         frontiers.erase(curr_frontier_it);
 	}
 
-	M2Err result;
 	// Check if there is a path
 	auto it = came_from.find(to);
 	if (it == came_from.end()) {
-		result = M2ERR_PATH_NOT_FOUND;
+		return m2::failure(C("Path not found"));
 	} else {
-		result = M2OK;
-
         outReverseListOfVec2Is.clear();
 		// Add `to` to list
         outReverseListOfVec2Is.push_back(to);
@@ -199,16 +195,16 @@ M2Err _PathfinderMap_FindGridSteps(PathfinderMap* pm, m2::Vec2f fromF, m2::Vec2f
 			m2::Vec2i data = it->second;
             outReverseListOfVec2Is.push_back(data);
 		}
+		return outReverseListOfVec2Is;
 	}
-	return result;
 }
 
-void _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::Vec2i>& listOfVec2Is, std::list<m2::Vec2i>& outListOfVec2Is) {
-    outListOfVec2Is.clear();
-
+std::list<m2::Vec2i> _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::Vec2i>& listOfVec2Is) {
+	std::list<m2::Vec2i> outListOfVec2Is;
 	if (listOfVec2Is.size() < 2) {
-		return;
+		return std::move(outListOfVec2Is);
 	}
+
     auto point_1_it = listOfVec2Is.begin();
     outListOfVec2Is.push_back(*point_1_it);
     auto* point1 = &(*point_1_it);
@@ -242,4 +238,5 @@ void _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::Vec2i>& listOfVec2Is
 		
 		prevPoint2 = point2;
 	}
+	return std::move(outListOfVec2Is);
 }

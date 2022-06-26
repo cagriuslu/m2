@@ -5,8 +5,9 @@
 #include <m2g/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
+#include <m2/Log.h>
 
-M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
+m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
 	obj = m2::Object{pos};
 	dir = dir.normalize();
 
@@ -58,10 +59,10 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 			// Calculate damage
 			def->hp -= m2::apply_accuracy(projectile_state.blueprint->damage, projectile_state.blueprint->damage_accuracy);
 			if (def->hp <= 0.0001f && def->on_death) {
-				LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def->object_id);
+				LOG_TRACE("Projectile death", off.object_id, def->object_id);
 				def->on_death(*def);
 			} else {
-				LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def->object_id, M2_HP, Float32, def->hp);
+				LOG_TRACE("Projectile damage", off.object_id, def->object_id, def->hp);
 				auto direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
 				auto force = direction * 5000.0f;
 				other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
@@ -73,5 +74,5 @@ M2Err obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blu
 		}
 	};
 
-	return 0;
+	return {};
 }

@@ -7,6 +7,7 @@
 #include <m2g/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
+#include <m2/Log.h>
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::ID phyId, m2::Vec2f position,  const chr::ExplosiveBlueprint* blueprint) {
 	return m2::box2d::create_bullet(
@@ -21,7 +22,7 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::ID phyId, m2::Vec2f
 	);
 }
 
-M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction) {
+m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction) {
 	obj = m2::Object{position};
 	direction = direction.normalize();
 
@@ -109,12 +110,10 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 						float damage = m2::lerp(maxDamage, minDamage, distance / damageRadius);
 						def.hp -= damage;
 						if (def.hp <= 0.0001f && def.on_death) {
-							// TODO fix XOK message
-							LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def.object_id);
+							LOG_TRACE("Projectile death", off.object_id, def.object_id);
 							def.on_death(def);
 						} else {
-							LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def.object_id, M2_HP, Float32, def.hp);
-
+							LOG_TRACE("Projectile damage", off.object_id, def.object_id, def.hp);
 							m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
 							m2::Vec2f force = curr_direction * 5000.0f;
 							other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
@@ -131,5 +130,5 @@ M2Err obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* bluep
 		}
 	};
 
-	return M2OK;
+	return {};
 }

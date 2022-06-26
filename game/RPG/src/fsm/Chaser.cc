@@ -28,7 +28,7 @@ void* fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
             // Check if player is close
             if (automaton.data.obj.position.distance_sq(automaton.data.target.position) < blueprint->trigger_distance_squared_m) {
                 // Check if path exists
-                if (PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.target.position, automaton.data.reverse_waypoints) == M2OK) {
+                if (m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.target.position), automaton.data.reverse_waypoints)) {
                     return reinterpret_cast<void*>(triggered);
                 }
             }
@@ -124,10 +124,10 @@ void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
             // Check if player is still close
             if (automaton.data.obj.position.distance_sq(player.position) < blueprint->give_up_distance_squared_m) {
                 // Recalculate path to player
-                PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, player.position, automaton.data.reverse_waypoints);
+	            m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, player.position), automaton.data.reverse_waypoints);
             } else {
                 // Check if path to homePosition exists
-                if (PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.home_position, automaton.data.reverse_waypoints) == M2OK) {
+                if (m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.home_position), automaton.data.reverse_waypoints)) {
                     return reinterpret_cast<void*>(gave_up);
                 }
             }
@@ -167,7 +167,7 @@ void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
             // Check if player is close
             if (automaton.data.obj.position.distance_sq(automaton.data.target.position) < automaton.data.blueprint->trigger_distance_squared_m) {
                 // Check if path to player exists
-                if (PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.target.position, automaton.data.reverse_waypoints) == M2OK) {
+                if (m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.target.position), automaton.data.reverse_waypoints)) {
                     return reinterpret_cast<void*>(triggered);
                 }
             } else {
@@ -176,7 +176,7 @@ void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
                     return reinterpret_cast<void*>(idle);
                 } else {
                     // Recalculate path to homePosition
-                    PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.home_position, automaton.data.reverse_waypoints);
+	                m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.data.obj.position, automaton.data.home_position), automaton.data.reverse_waypoints);
                 }
             }
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));

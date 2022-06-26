@@ -281,7 +281,7 @@ const m2::SpriteBlueprint m2g::sprites[]{
 
 const unsigned m2g::sprite_count = IMPL_SPRITE_N;
 
-M2Err m2g::fg_sprite_loader(m2::Object &obj, m2::SpriteIndex index, m2::GroupID gid, m2::Vec2f position) {
+m2::VoidValue m2g::fg_sprite_loader(m2::Object &obj, m2::SpriteIndex index, m2::GroupID gid, m2::Vec2f position) {
 	using namespace obj;
 	switch (index) {
 		case IMPL_SPRITE_PLAYER_LOOKDOWN_00:
@@ -289,6 +289,6 @@ M2Err m2g::fg_sprite_loader(m2::Object &obj, m2::SpriteIndex index, m2::GroupID 
 		case IMPL_SPRITE_ENEMY_LOOKDOWN_00:
 			return Enemy::init(obj, &chr::character_skeleton_000_chase, gid, position);
 		default:
-			return LOG_ERROR_M2V(M2ERR_INVALID_CFG_OBJTYP, Int32, index);
+			return m2::failure(C("Invalid sprite index"));
 	}
 }

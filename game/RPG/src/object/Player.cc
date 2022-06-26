@@ -11,6 +11,7 @@
 #include <m2/box2d/Utils.h>
 #include <m2g/SpriteBlueprint.h>
 #include <m2/M2.h>
+#include <m2/Log.h>
 
 obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : char_state(blueprint), char_animator({obj.graphic(), blueprint}) {}
 
@@ -24,7 +25,7 @@ void obj::Player::add_consumable(const itm::ConsumableBlueprint& consumable) {
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
 
-M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
+m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	auto& monitor = obj.add_monitor();
@@ -143,5 +144,5 @@ M2Err obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprin
 	};
 
 	GAME.playerId = GAME.objects.get_id(&obj);
-	return M2OK;
+	return {};
 }

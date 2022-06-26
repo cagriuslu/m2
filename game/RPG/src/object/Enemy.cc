@@ -43,7 +43,7 @@ void Enemy::stun() {
 	character_state.stun();
 }
 
-M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos) {
+m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	if (group_id.type) {
@@ -147,5 +147,5 @@ M2Err Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2:
 		GAME.add_deferred_action(m2::create_object_deleter(def.object_id));
 	};
 
-	return 0;
+	return {};
 }

@@ -1,4 +1,5 @@
 #include "m2/Game.hh"
+#include <m2/Exception.h>
 #include <m2/Object.h>
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
@@ -41,7 +42,7 @@ m2::Game::~Game() {
     // TODO deinit others
 }
 
-M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
+m2::VoidValue m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	if (level) {
 		unload_level();
 	}
@@ -50,8 +51,7 @@ M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	// Reset state
 	events.clear();
 	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
-		LOG_FATAL("Box2D version mismatch");
-		abort();
+		throw M2FATAL("Box2D version mismatch");
 	}
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
 	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
@@ -66,7 +66,10 @@ M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 			}
 			if (tile->fg_sprite_index) {
 				auto& obj = GAME.objects.alloc().first;
-				M2ERR_REFLECT(m2g::fg_sprite_loader(obj, tile->fg_sprite_index, tile->fg_object_group, m2::Vec2f{x, y}));
+				auto load_result = m2g::fg_sprite_loader(obj, tile->fg_sprite_index, tile->fg_object_group, m2::Vec2f{x, y});
+				if (!load_result) {
+					return failure(C(load_result.error()));
+				}
 			}
 		}
 	}
@@ -85,10 +88,10 @@ M2Err m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	GAME.rightHudUIState.update_positions(GAME.rightHudRect);
 	GAME.rightHudUIState.update_contents();
 
-	return M2OK;
+	return {};
 }
 
-m2::Value<m2::Void> m2::Game::load_editor(const std::filesystem::path& path) {
+m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 	namespace fs = std::filesystem;
 	auto typ = fs::status(path).type();
 	if (typ != fs::file_type::not_found && typ != fs::file_type::regular) {
@@ -276,7 +279,7 @@ void m2::Game::execute_deferred_actions() {
 void m2::Game::dynamic_assert() {
     for (m2::SpriteIndex i = 0; i < m2g::sprite_count; i++) {
         if (m2g::sprites[i].index != i) {
-            throw M2FATAL(M2ERR_DYNAMIC_ASSERT);
+            throw M2FATAL("Dynamic assert");
         }
     }
 }

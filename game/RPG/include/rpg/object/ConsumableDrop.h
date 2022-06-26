@@ -4,6 +4,7 @@
 #include "rpg/ConsumableBlueprint.h"
 #include "m2/Object.h"
 #include "m2/Def.h"
+#include <m2/Value.h>
 
 namespace obj {
 	struct ConsumableDrop : public m2::ObjectImpl {
@@ -11,7 +12,7 @@ namespace obj {
 
 		explicit ConsumableDrop(const itm::ConsumableBlueprint& blueprint);
 
-		static M2Err init(m2::Object& obj, const itm::ConsumableBlueprint& blueprint, m2::Vec2f pos);
+		static m2::VoidValue init(m2::Object& obj, const itm::ConsumableBlueprint& blueprint, m2::Vec2f pos);
 	};
 }
 

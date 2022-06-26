@@ -22,7 +22,7 @@ using namespace m2;
 //}
 
 int main(int argc, char **argv) {
-	LOG_DEBUG_FN();
+	DEBUG_FN();
     Game::dynamic_assert();
 	m2g::dynamic_assert();
 
@@ -32,80 +32,85 @@ int main(int argc, char **argv) {
 		const size_t loglevelStrlen = strlen(loglevel);
 		if (strncmp(argv[i], loglevel, loglevelStrlen) == 0) {
 			if (strcmp(argv[i] + loglevelStrlen, "trace") == 0) {
-				gCurrentLogLevel = LogLevelTrace;
-				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelTrace);
+				m2::current_log_level = m2::LogLevel::Trace;
 			} else if (strcmp(argv[i] + loglevelStrlen, "debug") == 0) {
-				gCurrentLogLevel = LogLevelDebug;
-				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelDebug);
+				m2::current_log_level = m2::LogLevel::Debug;
 			} else if (strcmp(argv[i] + loglevelStrlen, "info") == 0) {
-				gCurrentLogLevel = LogLevelInfo;
-				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelInfo);
+				m2::current_log_level = m2::LogLevel::Info;
 			} else if (strcmp(argv[i] + loglevelStrlen, "warning") == 0) {
-				gCurrentLogLevel = LogLevelWarn;
-				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelWarn);
+				m2::current_log_level = m2::LogLevel::Warn;
 			} else if (strcmp(argv[i] + loglevelStrlen, "error") == 0) {
-				gCurrentLogLevel = LogLevelError;
-				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelError);
+				m2::current_log_level = m2::LogLevel::Error;
 			} else if (strcmp(argv[i] + loglevelStrlen, "fatal") == 0) {
-				gCurrentLogLevel = LogLevelFatal;
-				LOG_INFO_M2V(M2_LOG_LEVEL, Int32, LogLevelFatal);
+				m2::current_log_level = m2::LogLevel::Fatal;
 			} else {
-				LOG_WARNING("Invalid log lvl");
+				LOG_WARN("Invalid log level");
 			}
+			LOG_INFO("Current log level", m2::current_log_level);
 		} else {
-			LOG_WARNING("Invalid command line argument");
+			LOG_WARN("Invalid command line argument");
 		}
 	}
 
 	ThreadPool tpool;
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+		LOG_FATAL("SDL error", SDL_GetError());
+		return -1;
 	}
 	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
+		LOG_FATAL("SDL error", IMG_GetError());
+		return -1;
 	}
 	if (TTF_Init() != 0) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
+		LOG_FATAL("SDL error", TTF_GetError());
+		return -1;
 	}
 	GAME.update_window_dims(1600, 900); // Store default window dimensions in GAME
 	if ((GAME.sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME.windowRect.w, GAME.windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+		LOG_FATAL("SDL error", SDL_GetError());
+		return -1;
 	}
 	SDL_SetWindowMinimumSize(GAME.sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
 	GAME.sdlCursor = SDLUtils_CreateCursor();
 	SDL_SetCursor(GAME.sdlCursor);
 	if ((GAME.pixelFormat = SDL_GetWindowPixelFormat(GAME.sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+		LOG_FATAL("SDL error", SDL_GetError());
+		return -1;
 	}
 	if ((GAME.sdlRenderer = SDL_CreateRenderer(GAME.sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == nullptr) { // SDL_RENDERER_PRESENTVSYNC
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+		LOG_FATAL("SDL error", SDL_GetError());
+		return -1;
 	}
 	SDL_Surface* textureMapSurface = IMG_Load(m2g::texture_map_file.data());
 	if (not textureMapSurface) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
+		LOG_FATAL("SDL error", IMG_GetError());
+		return -1;
 	}
 	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == nullptr) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+		LOG_FATAL("SDL error", SDL_GetError());
+		return -1;
 	}
 	//SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127); Temporarily disabled, because lighting is disabled
 	SDL_FreeSurface(textureMapSurface);
 	SDL_Surface* textureMaskSurface = IMG_Load(m2g::texture_mask_file.data());
 	if (textureMaskSurface == nullptr) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
+		LOG_FATAL("SDL error", IMG_GetError());
+		return -1;
 	}
 	if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == nullptr) {
-		return LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+		LOG_FATAL("SDL error", SDL_GetError());
+		return -1;
 	}
 	SDL_FreeSurface(textureMaskSurface);
 	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
 	if (lightSurface == nullptr) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, IMG_GetError());
+		LOG_FATAL("SDL error", IMG_GetError());
 		return -1;
 	}
 	if ((GAME.sdlLightTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, lightSurface)) == nullptr) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, SDL_GetError());
+		LOG_FATAL("SDL error", SDL_GetError());
 		return -1;
 	}
 	SDL_FreeSurface(lightSurface);
@@ -113,7 +118,7 @@ int main(int argc, char **argv) {
 	SDL_SetTextureAlphaMod(GAME.sdlLightTexture, 0);
 	SDL_SetTextureColorMod(GAME.sdlLightTexture, 127, 127, 127);
 	if ((GAME.ttfFont = TTF_OpenFont("resource/fonts/perfect_dos_vga_437/Perfect DOS VGA 437.ttf", 32)) == nullptr) {
-		LOG_FATAL_M2V(M2ERR_SDL_ERROR, CString, TTF_GetError());
+		LOG_FATAL("SDL error", TTF_GetError());
 		return -1;
 	}
 
@@ -342,7 +347,7 @@ int main(int argc, char **argv) {
 		frameCount++;
 		if (1000 < frameTimeAccumulator) {
 			frameTimeAccumulator -= 1000;
-			LOG_TRACE_M2V(M2_FPS, Int32, frameCount);
+			LOGF_TRACE("FPS %d", frameCount);
 			frameCount = 0;
 		}
 	}

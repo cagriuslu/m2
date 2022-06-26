@@ -26,6 +26,16 @@ namespace m2 {
 
 	template <typename T>
 	constexpr int to_unsigned(T&& t) { return static_cast<unsigned>(t); }
+
+	std::string to_string(int);
+	std::string to_string(unsigned int);
+	std::string to_string(long);
+	std::string to_string(unsigned long);
+	std::string to_string(long long);
+	std::string to_string(unsigned long long);
+	std::string to_string(float);
+	std::string to_string(double);
+	std::string to_string(const char*);
 }
 
 #endif //M2_M2_H

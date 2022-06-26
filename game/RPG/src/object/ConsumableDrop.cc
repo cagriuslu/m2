@@ -6,7 +6,7 @@
 
 obj::ConsumableDrop::ConsumableDrop(const itm::ConsumableBlueprint &blueprint) : blueprint(blueprint) {}
 
-M2Err obj::ConsumableDrop::init(m2::Object &obj, const itm::ConsumableBlueprint &blueprint, m2::Vec2f pos) {
+m2::VoidValue obj::ConsumableDrop::init(m2::Object &obj, const itm::ConsumableBlueprint &blueprint, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	auto& phy = obj.add_physique();
@@ -41,5 +41,5 @@ M2Err obj::ConsumableDrop::init(m2::Object &obj, const itm::ConsumableBlueprint 
 		GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
 	};
 
-	return M2OK;
+	return {};
 }

@@ -4,10 +4,11 @@
 #include <rpg/object/Melee.h>
 #include <m2g/SpriteBlueprint.h>
 #include <m2/box2d/Utils.h>
+#include <m2/Log.h>
 
 #define SWING_SPEED (15.0f)
 
-M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
+m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::ID originatorId, m2::Vec2f position, m2::Vec2f direction) {
 	obj = m2::Object{position};
 
 	const float theta = direction.angle_rads(); // Convert direction to angle
@@ -74,10 +75,10 @@ M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2
 		// Calculate damage
 		def.hp -= melee_state.blueprint->damage;
 		if (def.hp <= 0.0001f && def.on_death) {
-			LOG_TRACE_M2VV(M2_PROJECTILE_DEATH, ID, off.object_id, M2_ID, ID, def.object_id);
+			LOG_TRACE("Projectile death", off.object_id, def.object_id);
 			def.on_death(def);
 		} else {
-			LOG_TRACE_M2VVV(M2_PROJECTILE_DMG, ID, off.object_id, M2_ID, ID, def.object_id, M2_HP, Float32, def.hp);
+			LOG_TRACE("Projectile damage", off.object_id, def.object_id, def.hp);
 			auto direction = (other_obj.position - obj.position).normalize();
 			auto force = direction * 15000.0f;
 			other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
@@ -87,5 +88,5 @@ M2Err obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2
 		}
 	};
 	
-	return 0;
+	return {};
 }

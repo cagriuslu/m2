@@ -2,6 +2,7 @@
 #include <m2/VSON.hh>
 #include <m2/String.h>
 #include <m2/Def.h>
+#include <m2/Log.h>
 #include <cstdlib>
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
@@ -244,7 +245,7 @@ std::string m2::VSON::dump_to_string() const {
 bool m2::VSON::dump_to_file(const std::string& fpath) const {
 	FILE* file = fopen(fpath.c_str(), "w");
 	if (!file) {
-		LOG_ERROR_M2VV(M2ERR_FILE_INACCESSIBLE, CString, fpath.c_str(), M2ERR_ERRNO, CString, strerror(errno));
+		LOGF_ERROR("Unable to open file for writing: %s %s", fpath.c_str(), strerror(errno));
 		return false;
 	}
 	std::string str = dump_to_string();
@@ -454,7 +455,7 @@ std::optional<m2::VSON> m2::VSON::parse_string(const std::string& str) {
 std::optional<m2::VSON> m2::VSON::parse_file(const std::string &fpath) {
 	FILE* file = fopen(fpath.c_str(), "r");
 	if (!file) {
-		LOG_ERROR_M2VV(M2ERR_FILE_INACCESSIBLE, CString, fpath.c_str(), M2ERR_ERRNO, CString, strerror(errno));
+		LOGF_ERROR("Unable to open file: %s %s", fpath.c_str(), strerror(errno));
 		return {};
 	}
 

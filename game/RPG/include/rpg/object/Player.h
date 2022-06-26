@@ -6,6 +6,7 @@
 #include "rpg/fsm/CharacterAnimation.h"
 #include <rpg/ConsumableBlueprint.h>
 #include <vector>
+#include <m2/Value.h>
 
 namespace obj {
 	struct Player : public m2::ObjectImpl {
@@ -16,7 +17,7 @@ namespace obj {
 		Player(m2::Object&, const chr::CharacterBlueprint*);
 		void add_consumable(const itm::ConsumableBlueprint& consumable);
 
-		static M2Err init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos);
+		static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos);
 	};
 }
 

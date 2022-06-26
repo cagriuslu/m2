@@ -9,6 +9,7 @@
 #include "rpg/fsm/HitNRunner.h"
 #include "rpg/fsm/Patroller.h"
 #include "m2/LevelBlueprint.h"
+#include <m2/Value.h>
 
 namespace obj {
     struct Enemy : public m2::ObjectImpl {
@@ -26,7 +27,7 @@ namespace obj {
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
 		void stun();
 
-        static M2Err init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos);
+        static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos);
     };
 }
 

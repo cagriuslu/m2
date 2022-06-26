@@ -3,7 +3,7 @@
 
 namespace m2::ui {
 	enum class Action {
-		CONTINUE,
+		CONTINUE = 0,
 		RETURN,
 		QUIT
 	};

@@ -2,10 +2,11 @@
 #define IMPL_PROJECTILE_H
 
 #include "rpg/RangedWeapon.h"
+#include <m2/Value.h>
 
 namespace obj {
 	struct Projectile {
-		static M2Err init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::ID originatorId, m2::Vec2f pos, m2::Vec2f dir);
+		static m2::VoidValue init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::ID originatorId, m2::Vec2f pos, m2::Vec2f dir);
 	};
 }
 

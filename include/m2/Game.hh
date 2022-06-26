@@ -116,8 +116,8 @@ namespace m2 {
 		~Game();
 
 		// Level management
-		M2Err load_level(const m2::LevelBlueprint* blueprint);
-		Value<Void> load_editor(const std::filesystem::path& path);
+		VoidValue load_level(const m2::LevelBlueprint* blueprint);
+		VoidValue load_editor(const std::filesystem::path& path);
 		void unload_level();
 
 		// Accessors
