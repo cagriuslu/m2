@@ -1,4 +1,5 @@
 #include "m2/Game.hh"
+#include <m2/Log.h>
 #include <m2/Exception.h>
 #include <m2/Object.h>
 #include <m2/LevelBlueprint.h>
@@ -84,11 +85,11 @@ m2::VoidValue m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 
 	// Init HUD
 	GAME.leftHudUIState = m2::ui::UIState(&m2g::ui::left_hud);
-	GAME.leftHudUIState.update_positions(GAME.leftHudRect);
-	GAME.leftHudUIState.update_contents();
+	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
+	GAME.leftHudUIState->update_contents();
 	GAME.rightHudUIState = m2::ui::UIState(&m2g::ui::right_hud);
-	GAME.rightHudUIState.update_positions(GAME.rightHudRect);
-	GAME.rightHudUIState.update_contents();
+	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+	GAME.rightHudUIState->update_contents();
 
 	return {};
 }
@@ -199,6 +200,9 @@ m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 }
 
 void m2::Game::unload_level() {
+	leftHudUIState = {};
+	rightHudUIState = {};
+
 	PathfinderMap_Term(&pathfinderMap);
 	offenses.clear();
 	defenses.clear();
@@ -207,10 +211,18 @@ void m2::Game::unload_level() {
 	graphics.clear();
 	physics.clear();
 	monitors.clear();
-	groups.clear();
 	objects.clear();
-	delete world;
+
+	// Check if groups are empty, as it should be
+	if (not groups.empty()) {
+		LOG_WARN("Level unloaded but not all groups are erased");
+	}
+	groups.clear();
+
 	delete contactListener;
+	contactListener = nullptr;
+	delete world;
+	world = nullptr;
 	level = {};
 }
 

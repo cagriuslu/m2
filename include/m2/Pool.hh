@@ -19,8 +19,8 @@ namespace m2 {
 
         struct Item {
             T data;
-			// If allocated: 0(8bit) | key(24bit) | index(24bit)
-			// Else: 0(8bit) | 0(24bit) | nextFreeIndex(24bit)
+			// If allocated: 0(16bit) | key(24bit) | index(24bit)
+			// Else: 0(16bit) | 0(24bit) | nextFreeIndex(24bit)
             ID id;
         };
 

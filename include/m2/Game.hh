@@ -101,7 +101,7 @@ namespace m2 {
         box2d::ContactListener* contactListener;
 		ID cameraId, playerId, pointerId;
 		PathfinderMap pathfinderMap;
-        ui::UIState leftHudUIState, rightHudUIState;
+        std::optional<ui::UIState> leftHudUIState, rightHudUIState;
 
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// GAME /////////////////////////////////

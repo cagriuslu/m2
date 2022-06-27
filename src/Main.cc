@@ -181,8 +181,12 @@ int main(int argc, char **argv) {
 			auto window_resize = GAME.events.pop_window_resize();
 			if (window_resize) {
 				GAME.update_window_dims(window_resize->x, window_resize->y);
-                GAME.leftHudUIState.update_positions(GAME.leftHudRect);
-                GAME.rightHudUIState.update_positions(GAME.rightHudRect);
+				if (GAME.leftHudUIState) {
+					GAME.leftHudUIState->update_positions(GAME.leftHudRect);
+				}
+                if (GAME.rightHudUIState) {
+	                GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+				}
 			}
             // Handle key events
             if (GAME.events.pop_key_press(Key::MENU)) {
@@ -202,8 +206,12 @@ int main(int argc, char **argv) {
                 nongame_ticks += pause_end_ticks - pause_start_ticks;
             }
             // Handle HUD events (mouse and key)
-            GAME.leftHudUIState.handle_events(GAME.events);
-            GAME.rightHudUIState.handle_events(GAME.events);
+			if (GAME.leftHudUIState) {
+				GAME.leftHudUIState->handle_events(GAME.events);
+			}
+			if (GAME.rightHudUIState) {
+				GAME.rightHudUIState->handle_events(GAME.events);
+			}
 		}
 		GAME.update_mouse_position();
 		//////////////////////// END OF EVENT HANDLING /////////////////////////
@@ -231,7 +239,9 @@ int main(int argc, char **argv) {
 				GAME.execute_deferred_actions();
 
 				// Physics
-				GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
+				if (GAME.world) {
+					GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
+				}
 	            for (auto physique_it : GAME.physics) {
 					auto object_id = physique_it.first->object_id;
 					auto& object = GAME.objects[object_id];
@@ -327,10 +337,18 @@ int main(int argc, char **argv) {
         }
 
 		// Draw HUD
-        GAME.leftHudUIState.update_contents();
-        GAME.rightHudUIState.update_contents();
-        GAME.leftHudUIState.draw();
-        GAME.rightHudUIState.draw();
+		if (GAME.leftHudUIState) {
+			GAME.leftHudUIState->update_contents();
+		}
+		if (GAME.rightHudUIState) {
+			GAME.rightHudUIState->update_contents();
+		}
+		if (GAME.leftHudUIState) {
+			GAME.leftHudUIState->draw();
+		}
+		if (GAME.rightHudUIState) {
+			GAME.rightHudUIState->draw();
+		}
 
 		// Draw envelope
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);

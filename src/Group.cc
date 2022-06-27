@@ -13,7 +13,7 @@ m2::Pool<m2::ID, m2::IndexInGroup_MAX+1>& m2::Group::members() {
 m2::IndexInGroup m2::Group::add_member(ID object_id) {
 	auto item = _members.alloc();
 	item.first = object_id;
-	return static_cast<IndexInGroup>(item.second);
+	return static_cast<IndexInGroup>(item.second & 0xFF);
 }
 
 void m2::Group::remove_member(IndexInGroup index) {
