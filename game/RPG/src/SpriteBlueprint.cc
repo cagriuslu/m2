@@ -87,7 +87,6 @@ const m2::SpriteBlueprint m2g::sprites[]{
 			}
 		}
 	},
-
 	{
 		.index = IMPL_SPRITE_PLAYER_LOOKDOWN_00,
 		.texture_rect = {0, 0, 48, 48},
@@ -98,6 +97,29 @@ const m2::SpriteBlueprint m2g::sprites[]{
 				.radius_px = 12.0f, .radius_m = 12.0f / tile_width_f
 			}
 		}
+	},
+	{
+		.index = IMPL_SPRITE_ENEMY_LOOKDOWN_00,
+		.texture_rect = {48, 0, 48, 48},
+		.obj_center_px = {-0.5f, 12.0f}, .obj_center_m = {-0.5f / tile_width_f, 12.0f / tile_height_f},
+		.collider = {
+			.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
+			.variant = m2::ColliderBlueprint::Circle{
+				.radius_px = 12.0f, .radius_m = 12.0f / tile_width_f
+			}
+		}
+	},
+	{
+		.index = IMPL_SPRITE_RED_POTION_00,
+		.texture_rect = {144, 96, 48, 48},
+		.collider = {
+			.variant = m2::ColliderBlueprint::Circle{
+				.radius_px = 6.0f, .radius_m = 6.0f / tile_width_f
+			}
+		}
+	},
+	{
+		.index = IMPL_EDITOR_SPRITE_N
 	},
 	{
 		.index = IMPL_SPRITE_PLAYER_LOOKDOWN_01,
@@ -153,17 +175,6 @@ const m2::SpriteBlueprint m2g::sprites[]{
 		.index = IMPL_SPRITE_PLAYER_LOOKUP_02,
 		.texture_rect = {0, 528, 48, 48},
 		.obj_center_px = {-0.5f, 12.0f}, .obj_center_m = {-0.5f / tile_width_f, 12.0f / tile_height_f}
-	},
-	{
-		.index = IMPL_SPRITE_ENEMY_LOOKDOWN_00,
-		.texture_rect = {48, 0, 48, 48},
-		.obj_center_px = {-0.5f, 12.0f}, .obj_center_m = {-0.5f / tile_width_f, 12.0f / tile_height_f},
-		.collider = {
-			.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
-			.variant = m2::ColliderBlueprint::Circle{
-				.radius_px = 12.0f, .radius_m = 12.0f / tile_width_f
-			}
-		}
 	},
 	{
 		.index = IMPL_SPRITE_ENEMY_LOOKDOWN_01,
@@ -265,20 +276,12 @@ const m2::SpriteBlueprint m2g::sprites[]{
 		}
 	},
 	{
-		.index = IMPL_SPRITE_RED_POTION_00,
-		.texture_rect = {144, 96, 48, 48},
-		.collider = {
-			.variant = m2::ColliderBlueprint::Circle{
-				.radius_px = 6.0f, .radius_m = 6.0f / tile_width_f
-			}
-		}
-	},
-	{
 		.index = IMPL_SPRITE_FLOPPY_DISK,
 		.texture_rect = {144, 144, 48, 48}
 	}
 };
 
+const unsigned m2g::editor_sprite_count = IMPL_EDITOR_SPRITE_N;
 const unsigned m2g::sprite_count = IMPL_SPRITE_N;
 
 m2::VoidValue m2g::fg_sprite_loader(m2::Object &obj, m2::SpriteIndex index, m2::GroupID gid, m2::Vec2f position) {
