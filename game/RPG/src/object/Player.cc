@@ -28,8 +28,6 @@ void obj::Player::add_consumable(const itm::ConsumableBlueprint& consumable) {
 m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
-	auto& monitor = obj.add_monitor();
-
 	auto& phy = obj.add_physique();
 	phy.body = m2::box2d::create_dynamic_disk(
             *GAME.world,
@@ -55,6 +53,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 
 	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 
+	auto& monitor = obj.add_monitor();
 	monitor.pre_phy = [&obj, &phy]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionInWorld_m - obj.position).normalize();

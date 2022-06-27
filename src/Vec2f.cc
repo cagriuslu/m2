@@ -14,6 +14,11 @@ m2::Vec2f::Vec2f(const b2Vec2& v) : Vec2f(v.x, v.y) {}
 m2::Vec2f m2::Vec2f::operator+(const Vec2f& rhs) const {
 	return {x + rhs.x, y + rhs.y};
 }
+m2::Vec2f& m2::Vec2f::operator+=(const Vec2f& rhs) {
+	x += rhs.x;
+	y += rhs.y;
+	return *this;
+}
 m2::Vec2f m2::Vec2f::operator-(const Vec2f& rhs) const {
 	return {x - rhs.x, y - rhs.y};
 }

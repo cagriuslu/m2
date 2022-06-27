@@ -2,6 +2,7 @@
 #include <m2/Exception.h>
 #include <m2/Object.h>
 #include <m2/LevelBlueprint.h>
+#include <m2/object/God.h>
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
@@ -182,7 +183,7 @@ m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 	}
 
 	// Create default objects
-	// TODO create god object, which will be the player
+	m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_pointer();
 

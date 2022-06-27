@@ -11,12 +11,9 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_camera() {
     auto* player = GAME.objects.get(GAME.playerId);
     auto obj_pair = create_object(player ? player->position : Vec2f{});
 	auto& camera = obj_pair.first;
-	auto camera_id = obj_pair.second;
-
-    auto& mon = camera.add_monitor();
-
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
+	auto& mon = camera.add_monitor();
 	mon.post_phy = [&]([[maybe_unused]] m2::comp::Monitor& el) {
 		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
@@ -27,6 +24,6 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_camera() {
 		camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
 	};
 
-    GAME.cameraId = camera_id;
+    GAME.cameraId = obj_pair.second;
     return obj_pair;
 }

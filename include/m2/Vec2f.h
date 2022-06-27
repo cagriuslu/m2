@@ -18,6 +18,7 @@ namespace m2 {
 		explicit Vec2f(const b2Vec2& v);
 
 		Vec2f operator+(const Vec2f& rhs) const;
+		Vec2f& operator+=(const Vec2f& rhs);
 		Vec2f operator-(const Vec2f& rhs) const;
 		Vec2f operator*(const float& rhs) const;
 		Vec2f operator/(const float& rhs) const;
