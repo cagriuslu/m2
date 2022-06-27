@@ -123,8 +123,8 @@ namespace {
 		m2_fail_unless(width && height && tiles, "width, height, or tiles not found");
 		level.width = *width;
 
-		for (unsigned y = 0; y < *height; ++y) {
-			for (unsigned x = 0; x < *width; ++x) {
+		for (long y = 0; y < *height; ++y) {
+			for (long x = 0; x < *width; ++x) {
 				const auto* tile_vson = tiles->at(y * (*width) + x);
 				m2_fail_unless(tile_vson, "Tile not found");
 
@@ -142,7 +142,7 @@ namespace {
 						auto type = fg_group->query_long_value("type");
 						auto inst = fg_group->query_long_value("inst");
 						m2_fail_unless(type && inst, "Incorrect type or inst in fg_group");
-						tile.fg_object_group = m2::GroupID{static_cast<m2::GroupTypeID>(*type), static_cast<m2::GroupInstanceID>(*inst)};;
+						tile.fg_object_group = m2::GroupID{static_cast<m2::GroupTypeID>(*type), static_cast<m2::GroupInstanceID>(*inst)};
 					}
 				}
 				level.tiles.push_back(tile);

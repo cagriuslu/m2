@@ -22,15 +22,17 @@ namespace m2 {
 		[[nodiscard]] static VSON array();
 		[[nodiscard]] static VSON string(const std::string& str);
 
-		[[nodiscard]] const VSON* query(const std::string& path) const;
-		[[nodiscard]] std::optional<std::string> query_string_value(const std::string& path) const;
-		[[nodiscard]] Value<long> query_long_value(const std::string& path) const;
-		[[nodiscard]] std::optional<double> query_double_value(const std::string& path) const;
 		[[nodiscard]] bool is_nil() const;
 		[[nodiscard]] bool is_valid() const;
 		[[nodiscard]] bool is_object() const;
 		[[nodiscard]] bool is_array() const;
 		[[nodiscard]] bool is_string() const;
+
+		// Safe queries
+		[[nodiscard]] const VSON* query(const std::string& path) const;
+		[[nodiscard]] Value<std::string> query_string_value(const std::string& path) const;
+		[[nodiscard]] Value<long> query_long_value(const std::string& path) const;
+		[[nodiscard]] Value<double> query_double_value(const std::string& path) const;
 
 		// Object
 		[[nodiscard]] size_t object_size() const;
@@ -54,8 +56,8 @@ namespace m2 {
 
 		[[nodiscard]] std::string dump_to_string() const;
 		[[nodiscard]] bool dump_to_file(const std::string& fpath) const;
-		static std::optional<VSON> parse_string(const std::string& str);
-		static std::optional<VSON> parse_file(const std::string& fpath);
+		static Value<VSON> parse_string(const std::string& str);
+		static Value<VSON> parse_file(const std::string& fpath);
 	};
 }
 

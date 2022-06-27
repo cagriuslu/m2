@@ -9,8 +9,6 @@
 #define C(s) ((const char*)(s))
 
 namespace m2 {
-	struct Void {};
-
 	template <typename E>
 	struct Failure {
 		E _e;
@@ -63,6 +61,7 @@ namespace m2 {
 		}
 	};
 
+	struct Void {};
 	using VoidValue = Value<Void>;
 
 	template <typename T, typename E>
