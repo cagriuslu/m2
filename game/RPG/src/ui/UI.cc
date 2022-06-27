@@ -8,12 +8,14 @@
 
 using namespace m2::ui;
 
-auto no_string = []() {
-	return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
-};
-auto quit_button_action = []() {
-	return Action::QUIT;
-};
+namespace {
+	auto no_string = []() {
+		return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
+	};
+	auto quit_button_action = []() {
+		return Action::QUIT;
+	};
+}
 
 static WidgetBlueprint::WidgetBlueprintVariant entry_variant_0 = wdg::TextBlueprint{
 	.initial_text = "Select save slot:"

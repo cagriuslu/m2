@@ -123,6 +123,12 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
     }
 }
 
+namespace {
+	auto no_string = []() {
+		return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
+	};
+}
+
 const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextInputBlueprint{
         .initial_text = "",
         .action_callback = [](std::stringstream& ss) -> Action {
@@ -200,10 +206,36 @@ const UIBlueprint m2::ui::console_ui = {
         }
 };
 
+static WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_1 = wdg::TextBlueprint{
+	.initial_text = "Draw",
+	.update_callback = no_string
+};
 const UIBlueprint m2::ui::editor_left_hud = {
-
+	.w = 19, .h = 72,
+	.border_width_px = 1,
+	.widgets = {
+		WidgetBlueprint{
+			.x = 4, .y = 4, .w = 11, .h = 2,
+			.border_width_px = 1,
+			.variant = editor_left_hud_1
+		}
+	}
 };
 
+namespace {
+	const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_1 = wdg::TextBlueprint{
+		.initial_text = "Some text",
+		.update_callback = no_string
+	};
+}
 const UIBlueprint m2::ui::editor_right_hud = {
-
+	.w = 19, .h = 72,
+	.border_width_px = 1,
+	.widgets = {
+		WidgetBlueprint{
+			.x = 4, .y = 4, .w = 11, .h = 2,
+			.border_width_px = 1,
+			.variant = editor_right_hud_1
+		}
+	}
 };

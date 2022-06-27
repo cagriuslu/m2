@@ -188,13 +188,13 @@ m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 	m2::obj::create_camera();
 	m2::obj::create_pointer();
 
-	// TODO init custom hud
-//	GAME.leftHudUIState = m2::ui::UIState(&m2g::ui::left_hud);
-//	GAME.leftHudUIState.update_positions(GAME.leftHudRect);
-//	GAME.leftHudUIState.update_contents();
-//	GAME.rightHudUIState = m2::ui::UIState(&m2g::ui::right_hud);
-//	GAME.rightHudUIState.update_positions(GAME.rightHudRect);
-//	GAME.rightHudUIState.update_contents();
+	// UI Hud
+	GAME.leftHudUIState = m2::ui::UIState(&ui::editor_left_hud);
+	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
+	GAME.leftHudUIState->update_contents();
+	GAME.rightHudUIState = m2::ui::UIState(&ui::editor_right_hud);
+	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+	GAME.rightHudUIState->update_contents();
 
 	return {};
 }
