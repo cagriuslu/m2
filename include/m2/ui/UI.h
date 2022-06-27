@@ -41,6 +41,8 @@ namespace m2::ui {
     Action execute_blocking(const UIBlueprint* blueprint);
 
     extern const UIBlueprint console_ui;
+    extern const UIBlueprint editor_left_hud;
+	extern const UIBlueprint editor_right_hud;
 }
 
 #endif //M2_UI_H

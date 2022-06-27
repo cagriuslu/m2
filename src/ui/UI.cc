@@ -199,3 +199,11 @@ const UIBlueprint m2::ui::console_ui = {
 	        WidgetBlueprint{.x = 0, .y = 23, .w = 1, .h = 1, .variant = command_output_variant<22>()}
         }
 };
+
+const UIBlueprint m2::ui::editor_left_hud = {
+
+};
+
+const UIBlueprint m2::ui::editor_right_hud = {
+
+};
