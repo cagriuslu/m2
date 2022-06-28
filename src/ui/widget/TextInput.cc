@@ -26,6 +26,7 @@ Action TextInputState::handle_events(Events& events) {
 		auto text_input_str = text_input.str();
 		if (not text_input_str.empty()) {
 			text_input = std::stringstream{text_input_str.substr(0, text_input_str.length() - 1)};
+			text_input.seekp(0, std::ios::end);
 		}
 	} else {
 		auto opt_text_input = events.pop_text_input();

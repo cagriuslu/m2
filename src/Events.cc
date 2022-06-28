@@ -86,7 +86,7 @@ bool m2::Events::gather() {
 	mouse_buttons_down[u(m2::MouseButton::MIDDLE)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_MIDDLE);
 
 	return quit || window_resize || key_press_count || key_release_count || mouse_moved || mouse_button_press_count ||
-		mouse_button_release_count || mouse_wheel_scroll_count || text_input.tellp();
+		mouse_button_release_count || mouse_wheel_scroll_count || (not text_input.str().empty());
 }
 
 bool m2::Events::pop_quit() {
@@ -152,8 +152,8 @@ bool m2::Events::pop_mouse_wheel_scroll() {
 }
 
 std::optional<std::string> m2::Events::pop_text_input() {
-	if (text_input.tellp()) {
-		auto str = text_input.str();
+	auto str = text_input.str();
+	if (not str.empty()) {
 		text_input = std::stringstream();
 		return str;
 	} else {
