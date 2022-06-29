@@ -296,7 +296,7 @@ void m2::Game::update_window_dims(int width, int height) {
 	console_rect.y = gameRect.y + gameRect.h * 22 / 24;
 	console_rect.w = gameRect.w;
 	console_rect.h = gameRect.h * 2 / 24;
-	pixelsPerMeter = (float) gameAndHudRect.h / 16.0f;
+	pixelsPerMeter = (float) gameAndHudRect.h / tilesOnScreen;
 	scale = pixelsPerMeter / m2g::tile_width;
 }
 

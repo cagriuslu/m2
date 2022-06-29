@@ -68,6 +68,7 @@ namespace m2 {
 		SDL_Rect leftHudRect;
 		SDL_Rect rightHudRect;
         SDL_Rect console_rect;
+		float tilesOnScreen{16.0f};
 		float pixelsPerMeter;
 		float scale;
 		TTF_Font *ttfFont;
