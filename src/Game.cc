@@ -11,7 +11,6 @@
 #include <m2g/SpriteBlueprint.h>
 #include "m2/Def.h"
 #include <m2/VSON.hh>
-#include <b2_world.h>
 #include <m2g/ui/UI.h>
 #include "m2/component/Monitor.h"
 #include "m2/Component.h"
@@ -53,6 +52,7 @@ m2::VoidValue m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 
 	// Reset state
 	events.clear();
+	is_phy_stepping = false;
 	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
 		throw M2FATAL("Box2D version mismatch");
 	}
@@ -165,6 +165,7 @@ m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 
 	// Reset state
 	events.clear();
+	is_phy_stepping = false;
 
 	if (not validate_result->tiles.empty()) {
 		for (unsigned y = 0; y < validate_result->tiles.size() / validate_result->width; ++y) {

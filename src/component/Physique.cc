@@ -1,4 +1,5 @@
 #include "m2/component/Physique.h"
+#include <m2/box2d/Utils.h>
 #include <m2/Game.hh>
 #include <b2_contact.h>
 #include <m2/Object.h>
@@ -18,7 +19,7 @@ m2::comp::Physique& m2::comp::Physique::operator=(Physique&& other) noexcept {
 
 m2::comp::Physique::~Physique() {
 	if (body) {
-		GAME.world->DestroyBody(body);
+		m2::box2d::destroy_body(GAME, body);
 	}
 }
 

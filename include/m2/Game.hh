@@ -110,6 +110,7 @@ namespace m2 {
 		Events events;
 		unsigned deltaTicks_ms;
 		float deltaTime_s;
+		bool is_phy_stepping;
 		Vec2f mousePositionInWorld_m;
 		Vec2f mousePositionWRTScreenCenter_m;
         std::vector<std::string> console_output;

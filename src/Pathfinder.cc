@@ -1,5 +1,4 @@
 #include "m2/Pathfinder.hh"
-#include <b2_fixture.h>
 #include "m2/Component.h"
 #include <m2/Object.h>
 #include "m2/Game.hh"

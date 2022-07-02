@@ -1,4 +1,3 @@
-#include <b2_world.h>
 #include <m2g/Proxy.h>
 #include "m2/Events.h"
 #include "m2/Game.hh"
@@ -240,7 +239,9 @@ int main(int argc, char **argv) {
 
 				// Physics
 				if (GAME.world) {
+					GAME.is_phy_stepping = true;
 					GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
+					GAME.is_phy_stepping = false;
 				}
 	            for (auto physique_it : GAME.physics) {
 					auto object_id = physique_it.first->object_id;

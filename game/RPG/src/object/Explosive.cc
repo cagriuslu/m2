@@ -1,6 +1,5 @@
 #include <rpg/object/Explosive.h>
 #include "rpg/ExplosiveWeapon.h"
-#include <b2_world.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include "m2/Def.h"
@@ -59,7 +58,7 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 				phy.body->SetLinearVelocity(static_cast<b2Vec2>(new_linear_velocity));
 				explosive_state.projectile_ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 				if (explosive_state.projectile_ttl_s <= 0) {
-					GAME.world->DestroyBody(phy.body);
+					m2::box2d::destroy_body(GAME, phy.body);
 					phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id(), obj.position, explosive_state.blueprint);
 					explosive_state.status = chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP;
 				}
@@ -80,7 +79,7 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 				GAME.add_deferred_action(m2::create_object_deleter(mon.object_id));
 				break;
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
-				GAME.world->DestroyBody(phy.body);
+				m2::box2d::destroy_body(GAME, phy.body);
 				phy.body = ObjectExplosive_CreateCollisionCircleBody(obj.physique_id(), obj.position, explosive_state.blueprint);
 				break;
 			default:

@@ -3,6 +3,7 @@
 
 #include "../Vec2f.h"
 #include "../Def.h"
+#include "../Game.hh"
 #include <b2_body.h>
 #include <b2_world.h>
 #include <memory>
@@ -28,6 +29,8 @@ namespace m2::box2d {
     b2Body* create_bullet(b2World& world, ID physique_id, Vec2f position, bool is_sensor, uint16_t category_bits, float disk_radius, float mass, float linear_damping);
 
     b2AABB expand_aabb(const b2AABB& in, float amount);
+
+	void destroy_body(Game& game, b2Body*& body);
 }
 
 #endif //M2_UTILS_H

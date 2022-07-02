@@ -3,6 +3,7 @@
 #include <b2_fixture.h>
 #include <b2_polygon_shape.h>
 #include <b2_world.h>
+#include <exception>
 
 const std::unordered_map<uint16_t,uint16_t> m2::box2d::collision_map = {
 		{CAT_OBSTACLE,       CAT_OBSTACLE | CAT_GND_OBSTACLE | CAT_PLAYER | CAT_PLAYER_AIR_OBJ | CAT_PLAYER_ITEM | CAT_ENEMY | CAT_ENEMY_AIR_OBJ},
@@ -102,4 +103,13 @@ b2AABB m2::box2d::expand_aabb(const b2AABB& in, float amount) {
             .lowerBound = b2Vec2{in.lowerBound.x - amount, in.lowerBound.y - amount},
             .upperBound = b2Vec2{in.upperBound.x + amount, in.upperBound.y + amount}
     };
+}
+
+void m2::box2d::destroy_body(m2::Game& game, b2Body*& body) {
+	if (GAME.is_phy_stepping) {
+		throw std::runtime_error("b2Body is destroyed during physics step");
+	} else {
+		game.world->DestroyBody(body);
+		body = nullptr;
+	}
 }
