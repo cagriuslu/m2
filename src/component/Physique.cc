@@ -19,7 +19,7 @@ m2::comp::Physique& m2::comp::Physique::operator=(Physique&& other) noexcept {
 
 m2::comp::Physique::~Physique() {
 	if (body) {
-		m2::box2d::destroy_body(GAME, body);
+		m2::box2d::destroy_body(body);
 	}
 }
 

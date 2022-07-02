@@ -30,7 +30,7 @@ namespace m2::box2d {
 
     b2AABB expand_aabb(const b2AABB& in, float amount);
 
-	void destroy_body(Game& game, b2Body*& body);
+	void destroy_body(b2Body*& body);
 }
 
 #endif //M2_UTILS_H

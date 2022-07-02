@@ -35,6 +35,10 @@ b2Body* m2::box2d::create_body(
         float mass,
         float linearDamping,
         bool fixed_rotation) {
+	if (GAME.is_phy_stepping) {
+		throw std::runtime_error("b2Body is created during physics step");
+	}
+
     b2BodyDef bodyDef;
     if (is_dynamic) {
         bodyDef.type = b2_dynamicBody;
@@ -105,11 +109,11 @@ b2AABB m2::box2d::expand_aabb(const b2AABB& in, float amount) {
     };
 }
 
-void m2::box2d::destroy_body(m2::Game& game, b2Body*& body) {
+void m2::box2d::destroy_body(b2Body*& body) {
 	if (GAME.is_phy_stepping) {
 		throw std::runtime_error("b2Body is destroyed during physics step");
 	} else {
-		game.world->DestroyBody(body);
+		GAME.world->DestroyBody(body);
 		body = nullptr;
 	}
 }
