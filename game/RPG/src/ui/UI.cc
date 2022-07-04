@@ -71,7 +71,8 @@ const UIBlueprint m2g::ui::entry = {
 };
 
 static WidgetBlueprint::WidgetBlueprintVariant pause_variant_1 = wdg::TextBlueprint{
-	.initial_text = "RESUME_GAME",
+	.initial_text = "RESUME GAME",
+	.alignment = TextAlignment::CENTER,
 	.update_callback = no_string,
 	.action_callback = []() {
 		return Action::RETURN;

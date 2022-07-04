@@ -16,6 +16,7 @@ namespace m2::ui {
     struct WidgetBlueprint {
         unsigned x{}, y{}, w{}, h{}; // unitless
         unsigned border_width_px{};
+	    unsigned padding_width_px{};
         SDL_Color background_color{};
 
         using WidgetBlueprintVariant = std::variant<

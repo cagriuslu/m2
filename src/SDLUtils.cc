@@ -64,3 +64,12 @@ uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks)
 	}
 	return ticks;
 }
+
+SDL_Rect m2::expand(const SDL_Rect& rect, int diff) {
+	return {
+		rect.x - diff,
+		rect.y - diff,
+		rect.w + 2 * diff,
+		rect.h + 2 * diff
+	};
+}

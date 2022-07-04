@@ -1,6 +1,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/UI.h>
+#include <m2/SDLUtils.hh>
 
 m2::ui::wdg::TextState::TextState(const WidgetBlueprint* blueprint) : AbstractButtonState(blueprint), font_texture(generate_font_texture(std::get<TextBlueprint>(blueprint->variant).initial_text.data())) {}
 
@@ -26,6 +27,6 @@ m2::ui::Action m2::ui::wdg::TextState::update_content() {
 
 void m2::ui::wdg::TextState::draw() {
     UIState::draw_background_color(rect_px, blueprint->background_color);
-    draw_text(rect_px, *font_texture, std::get<TextBlueprint>(blueprint->variant).alignment);
+    draw_text(expand(rect_px, -static_cast<int>(blueprint->padding_width_px)), *font_texture, std::get<TextBlueprint>(blueprint->variant).alignment);
     UIState::draw_border(rect_px, blueprint->border_width_px);
 }

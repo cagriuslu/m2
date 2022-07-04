@@ -92,6 +92,7 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
         ////////////////////////////////////////////////////////////////////////
         //////////////////////////// EVENT HANDLING ////////////////////////////
         ////////////////////////////////////////////////////////////////////////
+        events.clear();
         if (events.gather()) {
             if (events.pop_quit()) {
                 return Action::QUIT;
@@ -206,36 +207,64 @@ const UIBlueprint m2::ui::console_ui = {
         }
 };
 
-static WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_1 = wdg::TextBlueprint{
+const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_1 = wdg::ImageBlueprint{
+	.initial_sprite_index = 1,
+	.action_callback = []() {
+		fprintf(stderr, "Image action\n");
+		return Action::CONTINUE;
+	}
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_2 = wdg::TextBlueprint{
+	.initial_text = "<"
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_3 = wdg::TextBlueprint{
+	.initial_text = ">"
+};
+const UIBlueprint editor_right_hud_draw = {
+	.w = 19, .h = 72,
+	.border_width_px = 1,
+	.widgets = {
+		WidgetBlueprint{
+			.x = 4, .y = 4, .w = 11, .h = 11,
+			.border_width_px = 1,
+			.variant = editor_right_hud_draw_1
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 16, .w = 5, .h = 5,
+			.border_width_px = 1,
+			.variant = editor_right_hud_draw_2
+		},
+		WidgetBlueprint{
+			.x = 10, .y = 16, .w = 5, .h = 5,
+			.border_width_px = 1,
+			.variant = editor_right_hud_draw_3
+		}
+	}
+};
+
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_1 = wdg::TextBlueprint{
 	.initial_text = "Draw",
-	.update_callback = no_string
+	.action_callback = []() -> Action {
+		GAME.rightHudUIState = UIState(&editor_right_hud_draw);
+		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		fprintf(stderr, "Action callback\n");
+		return Action::CONTINUE;
+	}
 };
 const UIBlueprint m2::ui::editor_left_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 1,
 	.widgets = {
 		WidgetBlueprint{
-			.x = 4, .y = 4, .w = 11, .h = 2,
+			.x = 4, .y = 4, .w = 11, .h = 3,
 			.border_width_px = 1,
+			.padding_width_px = 4,
 			.variant = editor_left_hud_1
 		}
 	}
 };
 
-namespace {
-	const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_1 = wdg::TextBlueprint{
-		.initial_text = "Some text",
-		.update_callback = no_string
-	};
-}
-const UIBlueprint m2::ui::editor_right_hud = {
+const UIBlueprint m2::ui::editor_right_hud_empty = {
 	.w = 19, .h = 72,
-	.border_width_px = 1,
-	.widgets = {
-		WidgetBlueprint{
-			.x = 4, .y = 4, .w = 11, .h = 2,
-			.border_width_px = 1,
-			.variant = editor_right_hud_1
-		}
-	}
+	.border_width_px = 1
 };

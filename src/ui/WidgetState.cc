@@ -31,30 +31,18 @@ void WidgetState::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlig
     SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
 
     SDL_Rect dstrect;
+	dstrect.y = rect.h < text_h ? rect.y : rect.y + rect.h / 2 - text_h / 2;
+	dstrect.w = rect.w < text_w ? rect.w : text_w;
+	dstrect.h = rect.h < text_h ? rect.h : text_h;
     switch (align) {
         case TextAlignment::LEFT:
-            dstrect = {
-                    rect.x,
-                    rect.y + rect.h / 2 - text_h / 2,
-                    text_w,
-                    text_h
-            };
+			dstrect.x = rect.x;
             break;
         case TextAlignment::RIGHT:
-            dstrect = {
-                    rect.x + rect.w - text_w,
-                    rect.y + rect.h / 2 - text_h / 2,
-                    text_w,
-                    text_h
-            };
+			dstrect.x = rect.w < text_w ? rect.x : rect.x + rect.w - text_w;
             break;
         default:
-            dstrect = {
-                    rect.x + rect.w / 2 - text_w / 2,
-                    rect.y + rect.h / 2 - text_h / 2,
-                    text_w,
-                    text_h
-            };
+			dstrect.x = rect.w < text_w ? rect.x : rect.x + rect.w / 2 - text_w / 2;
             break;
     }
     SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &dstrect);

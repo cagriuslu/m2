@@ -193,7 +193,7 @@ m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 	GAME.leftHudUIState = m2::ui::UIState(&ui::editor_left_hud);
 	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
 	GAME.leftHudUIState->update_contents();
-	GAME.rightHudUIState = m2::ui::UIState(&ui::editor_right_hud);
+	GAME.rightHudUIState = m2::ui::UIState(&ui::editor_right_hud_empty);
 	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 	GAME.rightHudUIState->update_contents();
 
