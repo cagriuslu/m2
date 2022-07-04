@@ -9,9 +9,6 @@
 using namespace m2::ui;
 
 namespace {
-	auto no_string = []() {
-		return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
-	};
 	auto quit_button_action = []() {
 		return Action::QUIT;
 	};
@@ -30,7 +27,6 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::ImageBluep
 };
 static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBlueprint{
 	.initial_text = "NEW GAME",
-	.update_callback = no_string,
 	.action_callback = []() {
 		GAME.load_level(&lvl::sp_000);
 		return Action::RETURN;
@@ -39,7 +35,6 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBluepr
 };
 static WidgetBlueprint::WidgetBlueprintVariant entry_variant_3 = wdg::TextBlueprint{
 	.initial_text = "QUIT",
-	.update_callback = no_string,
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
 };
@@ -73,7 +68,6 @@ const UIBlueprint m2g::ui::entry = {
 static WidgetBlueprint::WidgetBlueprintVariant pause_variant_1 = wdg::TextBlueprint{
 	.initial_text = "RESUME GAME",
 	.alignment = TextAlignment::CENTER,
-	.update_callback = no_string,
 	.action_callback = []() {
 		return Action::RETURN;
 	},
@@ -81,7 +75,6 @@ static WidgetBlueprint::WidgetBlueprintVariant pause_variant_1 = wdg::TextBluepr
 };
 static WidgetBlueprint::WidgetBlueprintVariant pause_variant_2 = wdg::TextBlueprint{
 	.initial_text = "QUIT",
-	.update_callback = no_string,
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
 };
@@ -103,8 +96,7 @@ const UIBlueprint m2g::ui::pause = {
 };
 
 static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_1 = wdg::TextBlueprint{
-	.initial_text = "HP",
-	.update_callback = no_string
+	.initial_text = "HP"
 };
 static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlueprint{
 	.initial_text = "100",
@@ -125,8 +117,7 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlu
 	}
 };
 static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_3 = wdg::TextBlueprint{
-	.initial_text = "DASH",
-	.update_callback = no_string
+	.initial_text = "DASH"
 };
 static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_4 = wdg::ProgressBarBlueprint{
 	.initial_progress = 1.0f,
