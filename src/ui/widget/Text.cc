@@ -27,6 +27,6 @@ m2::ui::Action m2::ui::wdg::TextState::update_content() {
 
 void m2::ui::wdg::TextState::draw() {
     UIState::draw_background_color(rect_px, blueprint->background_color);
-    draw_text(expand(rect_px, -static_cast<int>(blueprint->padding_width_px)), *font_texture, std::get<TextBlueprint>(blueprint->variant).alignment);
+    draw_text(sdl::expand_rect(rect_px, -static_cast<int>(blueprint->padding_width_px)), *font_texture, std::get<TextBlueprint>(blueprint->variant).alignment);
     UIState::draw_border(rect_px, blueprint->border_width_px);
 }

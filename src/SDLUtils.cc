@@ -65,11 +65,15 @@ uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks)
 	return ticks;
 }
 
-SDL_Rect m2::expand(const SDL_Rect& rect, int diff) {
+SDL_Rect m2::sdl::expand_rect(const SDL_Rect& rect, int diff) {
 	return {
 		rect.x - diff,
 		rect.y - diff,
 		rect.w + 2 * diff,
 		rect.h + 2 * diff
 	};
+}
+
+void m2::SdlTextureDeleter::operator()(SDL_Texture *t) {
+	SDL_DestroyTexture(t);
 }

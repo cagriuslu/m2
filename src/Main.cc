@@ -283,6 +283,24 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
+		// Pre-graphic
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks, nongame_ticks) - prevPreGraphicsTicks;
+		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
+		prevPreGraphicsTicks += GAME.deltaTicks_ms;
+		for (auto monitor_it : GAME.monitors) {
+			if (monitor_it.first->pre_gfx) {
+				monitor_it.first->pre_gfx(*monitor_it.first);
+			}
+		}
+
+		// HUD
+		if (GAME.leftHudUIState) {
+			GAME.leftHudUIState->update_contents();
+		}
+		if (GAME.rightHudUIState) {
+			GAME.rightHudUIState->update_contents();
+		}
+
 		// Clear screen
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(GAME.sdlRenderer);
@@ -295,16 +313,6 @@ int main(int argc, char **argv) {
 			if (graphic_it.first->on_draw) {
 				graphic_it.first->on_draw(*graphic_it.first);
 			}
-        }
-
-		// Pre-graphic
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks, nongame_ticks) - prevPreGraphicsTicks;
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevPreGraphicsTicks += GAME.deltaTicks_ms;
-        for (auto monitor_it : GAME.monitors) {
-            if (monitor_it.first->pre_gfx) {
-                monitor_it.first->pre_gfx(*monitor_it.first);
-            }
         }
 
 		// Draw
@@ -328,23 +336,7 @@ int main(int argc, char **argv) {
             }
         }
 
-		// Post-graphic
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks, nongame_ticks) - prevPostGraphicsTicks;
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevPostGraphicsTicks += GAME.deltaTicks_ms;
-        for (auto monitor_it : GAME.monitors) {
-            if (monitor_it.first->post_gfx) {
-                monitor_it.first->post_gfx(*monitor_it.first);
-            }
-        }
-
-		// Draw HUD
-		if (GAME.leftHudUIState) {
-			GAME.leftHudUIState->update_contents();
-		}
-		if (GAME.rightHudUIState) {
-			GAME.rightHudUIState->update_contents();
-		}
+		// HUD
 		if (GAME.leftHudUIState) {
 			GAME.leftHudUIState->draw();
 		}
@@ -359,6 +351,16 @@ int main(int argc, char **argv) {
 
 		// Present
 		SDL_RenderPresent(GAME.sdlRenderer);
+
+		// Post-graphic
+		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks, nongame_ticks) - prevPostGraphicsTicks;
+		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
+		prevPostGraphicsTicks += GAME.deltaTicks_ms;
+		for (auto monitor_it : GAME.monitors) {
+			if (monitor_it.first->post_gfx) {
+				monitor_it.first->post_gfx(*monitor_it.first);
+			}
+		}
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 

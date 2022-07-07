@@ -2,6 +2,7 @@
 #include <m2/Events.h>
 #include <m2/Def.h>
 #include <m2/Game.hh>
+#include <m2/SDLUtils.hh>
 #include <regex>
 #include <filesystem>
 
@@ -97,7 +98,7 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint, SDL_Rect rect) {
 	SDL_GetRendererOutputSize(GAME.sdlRenderer, &w, &h);
 	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
 	SDL_RenderReadPixels(GAME.sdlRenderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
-	std::unique_ptr<SDL_Texture> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
+	std::unique_ptr<SDL_Texture, m2::SdlTextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
 	SDL_FreeSurface(surface);
 
 	Action return_value;
