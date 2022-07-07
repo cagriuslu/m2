@@ -79,10 +79,23 @@ void UIState::draw() {
 }
 
 Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
+	return execute_blocking(blueprint, GAME.windowRect);
+}
+
+Action m2::ui::execute_blocking(const UIBlueprint *blueprint, SDL_Rect rect) {
+	// Save relation to window, use in case of resize
+	const SDL_Rect& winrect = GAME.windowRect;
+	auto relation_to_window = SDL_FRect{
+		(float)(rect.x - winrect.x) / (float)winrect.w,
+		(float)(rect.y - winrect.y) / (float)winrect.h,
+		(float)rect.w / (float)winrect.w,
+		(float)rect.h / (float)winrect.h,
+	};
+
 	Action return_value;
 
     UIState state(blueprint);
-    state.update_positions(GAME.windowRect);
+    state.update_positions(rect);
 	if ((return_value = state.update_contents()) != Action::CONTINUE) {
 		return return_value;
 	}
@@ -100,7 +113,12 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
 			auto window_resize = events.pop_window_resize();
             if (window_resize) {
 				GAME.update_window_dims(window_resize->x, window_resize->y);
-                state.update_positions(GAME.windowRect);
+                state.update_positions(SDL_Rect{
+	                (int)round((float)winrect.x + relation_to_window.x * (float)winrect.w),
+	                (int)round((float)winrect.y + relation_to_window.y * (float)winrect.h),
+	                (int)round(relation_to_window.w * (float)winrect.w),
+	                (int)round(relation_to_window.h * (float)winrect.h)
+                });
             }
             if ((return_value = state.handle_events(events)) != Action::CONTINUE) {
                 return return_value;
@@ -122,12 +140,6 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint) {
         /////////////////////////// END OF GRAPHICS ////////////////////////////
         ////////////////////////////////////////////////////////////////////////
     }
-}
-
-namespace {
-	auto no_string = []() {
-		return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
-	};
 }
 
 const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextInputBlueprint{
