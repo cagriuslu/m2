@@ -10,7 +10,6 @@
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
 #include <cstdlib>
-#include <chrono>
 
 using namespace m2;
 
@@ -206,12 +205,8 @@ int main(int argc, char **argv) {
                 nongame_ticks += pause_end_ticks - pause_start_ticks;
             }
             // Handle HUD events (mouse and key)
-			if (GAME.leftHudUIState) {
-				GAME.leftHudUIState->handle_events(GAME.events);
-			}
-			if (GAME.rightHudUIState) {
-				GAME.rightHudUIState->handle_events(GAME.events);
-			}
+			IF(GAME.leftHudUIState)->handle_events(GAME.events);
+			IF(GAME.rightHudUIState)->handle_events(GAME.events);
 		}
 		GAME.update_mouse_position();
 		//////////////////////// END OF EVENT HANDLING /////////////////////////
@@ -232,9 +227,7 @@ int main(int argc, char **argv) {
 				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
 				prevPrePhysicsTicks += GAME.deltaTicks_ms;
 				for (auto monitor_it: GAME.monitors) {
-					if (monitor_it.first->pre_phy) {
-						monitor_it.first->pre_phy(*monitor_it.first);
-					}
+					IF(monitor_it.first->pre_phy)(*monitor_it.first);
 				}
 				GAME.execute_deferred_actions();
 
@@ -243,17 +236,17 @@ int main(int argc, char **argv) {
 					GAME.is_phy_stepping = true;
 					GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
 					GAME.is_phy_stepping = false;
-				}
-	            for (auto physique_it : GAME.physics) {
-					auto object_id = physique_it.first->object_id;
-					auto& object = GAME.objects[object_id];
-					auto old_pos = object.position;
-					auto new_pos = m2::Vec2f{physique_it.first->body->GetPosition()};
-					object.position = new_pos;
-					if (old_pos != new_pos) {
-						GAME.draw_list.queue_update(object_id, new_pos);
+					// Update positions
+					for (auto physique_it : GAME.physics) {
+						auto object_id = physique_it.first->object_id;
+						auto& object = GAME.objects[object_id];
+						auto old_pos = object.position;
+						object.position = m2::Vec2f{physique_it.first->body->GetPosition()};
+						if (old_pos != object.position) {
+							GAME.draw_list.queue_update(object_id, object.position);
+						}
 					}
-	            }
+				}
 				GAME.draw_list.update();
 
 				// Post-physics
@@ -262,9 +255,7 @@ int main(int argc, char **argv) {
 				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
 				prevPostPhysicsTicks += GAME.deltaTicks_ms;
 				for (auto monitor_it: GAME.monitors) {
-					if (monitor_it.first->post_phy) {
-						monitor_it.first->post_phy(*monitor_it.first);
-					}
+					IF(monitor_it.first->post_phy)(*monitor_it.first);
 				}
 				GAME.execute_deferred_actions();
 
@@ -288,18 +279,12 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevPreGraphicsTicks += GAME.deltaTicks_ms;
 		for (auto monitor_it : GAME.monitors) {
-			if (monitor_it.first->pre_gfx) {
-				monitor_it.first->pre_gfx(*monitor_it.first);
-			}
+			IF(monitor_it.first->pre_gfx)(*monitor_it.first);
 		}
 
 		// HUD
-		if (GAME.leftHudUIState) {
-			GAME.leftHudUIState->update_contents();
-		}
-		if (GAME.rightHudUIState) {
-			GAME.rightHudUIState->update_contents();
-		}
+		IF(GAME.leftHudUIState)->update_contents();
+		IF(GAME.rightHudUIState)->update_contents();
 
 		// Clear screen
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
@@ -310,9 +295,7 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevTerrainDrawGraphicsTicks += GAME.deltaTicks_ms;
         for (auto graphic_it : GAME.terrainGraphics) {
-			if (graphic_it.first->on_draw) {
-				graphic_it.first->on_draw(*graphic_it.first);
-			}
+			IF(graphic_it.first->on_draw)(*graphic_it.first);
         }
 
 		// Draw
@@ -321,9 +304,7 @@ int main(int argc, char **argv) {
 		prevDrawTicks += GAME.deltaTicks_ms;
 		for (const auto& gfx_id : GAME.draw_list) {
 			auto& gfx = GAME.graphics[gfx_id];
-			if (gfx.on_draw) {
-				gfx.on_draw(gfx);
-			}
+			IF(gfx.on_draw)(gfx);
 		}
 
 		// Draw lights
@@ -331,18 +312,12 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevDrawLightsTicks += GAME.deltaTicks_ms;
         for (auto light_it : GAME.lights) {
-            if (light_it.first->on_draw) {
-                light_it.first->on_draw(*light_it.first);
-            }
+			IF(light_it.first->on_draw)(*light_it.first);
         }
 
 		// HUD
-		if (GAME.leftHudUIState) {
-			GAME.leftHudUIState->draw();
-		}
-		if (GAME.rightHudUIState) {
-			GAME.rightHudUIState->draw();
-		}
+		IF(GAME.leftHudUIState)->draw();
+		IF(GAME.rightHudUIState)->draw();
 
 		// Draw envelope
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
@@ -357,9 +332,7 @@ int main(int argc, char **argv) {
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevPostGraphicsTicks += GAME.deltaTicks_ms;
 		for (auto monitor_it : GAME.monitors) {
-			if (monitor_it.first->post_gfx) {
-				monitor_it.first->post_gfx(*monitor_it.first);
-			}
+			IF(monitor_it.first->post_gfx)(*monitor_it.first);
 		}
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////

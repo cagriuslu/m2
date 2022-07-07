@@ -3,6 +3,8 @@
 
 #include <string>
 
+#define IF(cond) if (cond) cond
+
 namespace m2 {
 	/// Generates from set [0, max)
 	uint32_t rand(uint32_t max);
