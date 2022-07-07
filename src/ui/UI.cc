@@ -92,6 +92,14 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint, SDL_Rect rect) {
 		(float)rect.h / (float)winrect.h,
 	};
 
+	// Get screenshot
+	int w, h;
+	SDL_GetRendererOutputSize(GAME.sdlRenderer, &w, &h);
+	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
+	SDL_RenderReadPixels(GAME.sdlRenderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
+	std::unique_ptr<SDL_Texture> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
+	SDL_FreeSurface(surface);
+
 	Action return_value;
 
     UIState state(blueprint);
@@ -134,6 +142,10 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint, SDL_Rect rect) {
 		if ((return_value = state.update_contents()) != Action::CONTINUE) {
 			return return_value;
 		}
+	    // Clear screen
+	    SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
+	    SDL_RenderClear(GAME.sdlRenderer);
+	    SDL_RenderCopy(GAME.sdlRenderer, texture.get(), nullptr, nullptr);
         state.draw();
         // Present
         SDL_RenderPresent(GAME.sdlRenderer);
