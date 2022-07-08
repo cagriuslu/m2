@@ -3,6 +3,7 @@
 #include <m2/Def.h>
 #include <m2/Game.hh>
 #include <m2/SDLUtils.hh>
+#include <m2/ui/console/Editor.h>
 #include <regex>
 #include <filesystem>
 
@@ -158,22 +159,13 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint, SDL_Rect rect) {
 const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextInputBlueprint{
         .initial_text = "",
         .action_callback = [](std::stringstream& ss) -> Action {
-            Action return_value = Action::CONTINUE;
-
-			static const std::regex editor_regex("editor\\s+(.+)");
-			std::smatch match_results;
-
             auto command = ss.str();
-            if (std::regex_match(command, match_results, editor_regex)) {
-	            std::filesystem::path file_path{match_results.str(1)};
-				auto load_result = GAME.load_editor(file_path);
-				if (not load_result) {
-					GAME.console_output = { load_result.error() };
-				} else {
-					return Action::RETURN;
-				}
+	        ss = std::stringstream();
+
+            if (std::regex_match(command, std::regex{"editor(\\s.*)?"})) {
+	            return m2::ui::con::editor(command);
 			} else if (command == "quit") {
-                return_value = Action::QUIT;
+                return Action::QUIT;
             } else {
 	            GAME.console_output = {
 		            "Hello!",
@@ -183,9 +175,8 @@ const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextI
 		            "quit - quit game"
 	            };
             }
-            ss = std::stringstream();
 
-            return return_value;
+	        return Action::CONTINUE;
         }
 };
 template <unsigned INDEX>
