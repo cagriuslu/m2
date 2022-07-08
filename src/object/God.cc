@@ -24,7 +24,8 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_god() {
 		god.position += move_direction.normalize() * (GAME.deltaTicks_ms * .004f);
 	};
 
-	monitor.pre_gfx = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
+	auto& gfx = god.add_graphic();
+	gfx.on_draw = [&]([[maybe_unused]] m2::comp::Graphic& gfx) {
 		// Draw gridlines
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 127, 127, 127);
 
