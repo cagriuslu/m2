@@ -171,7 +171,7 @@ const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextI
 		            "Hello!",
 		            "Available commands:",
 		            "help - display this help",
-		            "editor file_name - open editor with file",
+		            "editor - open editor",
 		            "quit - quit game"
 	            };
             }
