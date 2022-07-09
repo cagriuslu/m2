@@ -42,6 +42,10 @@ namespace m2 {
 
 		// Editor
 		std::optional<std::filesystem::path> editor_file_path;
+		enum class EditorMode {
+			NONE,
+			DRAW
+		} editor_mode;
 		SpriteIndex draw_sprite_index;
 		explicit Level(const std::filesystem::path& path);
 	};

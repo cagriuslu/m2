@@ -50,12 +50,21 @@ const UIBlueprint editor_right_hud_draw = {
 	}
 };
 
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_1 = wdg::TextBlueprint{
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_draw_button = wdg::TextBlueprint{
 	.initial_text = "Draw",
 	.action_callback = []() -> Action {
+		GAME.level->editor_mode = Level::EditorMode::DRAW;
 		GAME.rightHudUIState = UIState(&editor_right_hud_draw);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
-		fprintf(stderr, "Action callback\n");
+		return Action::CONTINUE;
+	}
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wdg::TextBlueprint{
+	.initial_text = "Cancel",
+	.action_callback = []() -> Action {
+		GAME.level->editor_mode = Level::EditorMode::NONE;
+		GAME.rightHudUIState = UIState(&editor_right_hud);
+		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	}
 };
@@ -67,7 +76,13 @@ const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 			.x = 4, .y = 4, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 4,
-			.variant = editor_left_hud_1
+			.variant = editor_left_hud_draw_button
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 8, .w = 11, .h = 3,
+			.border_width_px = 1,
+			.padding_width_px = 1,
+			.variant = editor_left_hud_cancel_button
 		}
 	}
 };
