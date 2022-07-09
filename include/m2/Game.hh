@@ -38,11 +38,11 @@ namespace m2 {
 	struct Level {
 		LevelType type;
 		std::vector<std::function<void(void)>> deferred_actions;
+		explicit Level(const LevelBlueprint* blueprint);
 
 		// Editor
 		std::optional<std::filesystem::path> editor_file_path;
-
-		explicit Level(const LevelBlueprint* blueprint);
+		SpriteIndex draw_sprite_index;
 		explicit Level(const std::filesystem::path& path);
 	};
 

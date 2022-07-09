@@ -17,6 +17,7 @@
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <m2g/SpriteBlueprint.h>
+#include <m2/ui/Editor.h>
 #include <m2/ui/UI.h>
 
 // Initialize with default values
@@ -30,7 +31,7 @@ m2::Level::Level(const m2::LevelBlueprint* blueprint) : type(LVLTYP_GAME) {
 
 }
 
-m2::Level::Level(const std::filesystem::path& path) : type(LVLTYP_EDITOR), editor_file_path(path) {
+m2::Level::Level(const std::filesystem::path& path) : type(LVLTYP_EDITOR), editor_file_path(path), draw_sprite_index(0) {
 
 }
 
@@ -193,7 +194,7 @@ m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
 	GAME.leftHudUIState = m2::ui::UIState(&ui::editor_left_hud);
 	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
 	GAME.leftHudUIState->update_contents();
-	GAME.rightHudUIState = m2::ui::UIState(&ui::editor_right_hud_empty);
+	GAME.rightHudUIState = m2::ui::UIState(&ui::editor_right_hud);
 	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 	GAME.rightHudUIState->update_contents();
 
