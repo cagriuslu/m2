@@ -37,6 +37,7 @@ namespace m2 {
 
 	struct Level {
 		LevelType type;
+
 		std::vector<std::function<void(void)>> deferred_actions;
 		explicit Level(const LevelBlueprint* blueprint);
 
@@ -46,7 +47,8 @@ namespace m2 {
 			NONE,
 			DRAW
 		} editor_mode;
-		SpriteIndex draw_sprite_index;
+		SpriteIndex editor_draw_sprite_index;
+		bool editor_grid_lines;
 		explicit Level(const std::filesystem::path& path);
 	};
 

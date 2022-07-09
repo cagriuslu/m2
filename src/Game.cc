@@ -27,11 +27,12 @@ m2::Game GAME = {
 	.positionIterations = 3
 };
 
-m2::Level::Level(const m2::LevelBlueprint* blueprint) : type(LVLTYP_GAME) {
+m2::Level::Level(const m2::LevelBlueprint *blueprint) : type(LVLTYP_GAME) {
 
 }
 
-m2::Level::Level(const std::filesystem::path& path) : type(LVLTYP_EDITOR), editor_file_path(path), draw_sprite_index(0) {
+m2::Level::Level(const std::filesystem::path &path) : type(LVLTYP_EDITOR), editor_file_path(path),
+	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0), editor_grid_lines(false) {
 
 }
 

@@ -26,28 +26,32 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_god() {
 
 	auto& gfx = god.add_graphic();
 	gfx.on_draw = [&]([[maybe_unused]] m2::comp::Graphic& gfx) {
-		// Draw gridlines
-		SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 127, 127, 127);
+		if (GAME.level->editor_grid_lines) {
+			// Draw gridlines
+			SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 127, 127, 127);
+			float yOffsetFromWholeMeter = god.position.y - floorf(god.position.y);
+			float yOffsetFromWholeMeterInPixels = yOffsetFromWholeMeter * GAME.pixelsPerMeter;
+			// Draw lines above god
+			for (float y = yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f; (float) GAME.gameRect.y < y; y -= GAME.pixelsPerMeter) {
+				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
+			}
+			// Draw lines below god
+			for (float y = yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f + GAME.pixelsPerMeter; y < (float)(GAME.gameRect.y + GAME.gameRect.h); y += GAME.pixelsPerMeter) {
+				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
+			}
+			float xOffsetFromWholeMeter = god.position.x - floorf(god.position.x);
+			float xOffsetFromWholeMeterInPixels = xOffsetFromWholeMeter * GAME.pixelsPerMeter;
+			// Draw lines left of god
+			for (float x = xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f; (float) GAME.gameRect.x < x; x -= GAME.pixelsPerMeter) {
+				SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
+			}
+			// Draw lines right of god
+			for (float x = xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f + GAME.pixelsPerMeter; x < (float)(GAME.gameRect.x + GAME.gameRect.w); x += GAME.pixelsPerMeter) {
+				SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
+			}
+		}
+		if (GAME.level->editor_mode == Level::EditorMode::DRAW) {
 
-		float yOffsetFromWholeMeter = god.position.y - floorf(god.position.y);
-		float yOffsetFromWholeMeterInPixels = yOffsetFromWholeMeter * GAME.pixelsPerMeter;
-		// Draw lines above god
-		for (float y = yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f; (float) GAME.gameRect.y < y; y -= GAME.pixelsPerMeter) {
-			SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
-		}
-		// Draw lines below god
-		for (float y = yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f + GAME.pixelsPerMeter; y < (float)(GAME.gameRect.y + GAME.gameRect.h); y += GAME.pixelsPerMeter) {
-			SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
-		}
-		float xOffsetFromWholeMeter = god.position.x - floorf(god.position.x);
-		float xOffsetFromWholeMeterInPixels = xOffsetFromWholeMeter * GAME.pixelsPerMeter;
-		// Draw lines left of god
-		for (float x = xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f; (float) GAME.gameRect.x < x; x -= GAME.pixelsPerMeter) {
-			SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
-		}
-		// Draw lines right of god
-		for (float x = xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f + GAME.pixelsPerMeter; x < (float)(GAME.gameRect.x + GAME.gameRect.w); x += GAME.pixelsPerMeter) {
-			SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
 		}
 	};
 

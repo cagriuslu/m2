@@ -7,14 +7,14 @@ using namespace m2::ui;
 
 const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_selected_sprite = wdg::ImageBlueprint{
 	.update_callback = []() -> std::pair<Action,std::optional<SpriteIndex>> {
-		return {Action::CONTINUE, GAME.level->draw_sprite_index};
+		return {Action::CONTINUE, GAME.level->editor_draw_sprite_index};
 	}
 };
 const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_left_arrow = wdg::TextBlueprint{
 	.initial_text = "<",
 	.action_callback = []() {
-		if (GAME.level->draw_sprite_index) {
-			GAME.level->draw_sprite_index--;
+		if (GAME.level->editor_draw_sprite_index) {
+			GAME.level->editor_draw_sprite_index--;
 		}
 		return Action::CONTINUE;
 	}
@@ -22,8 +22,8 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_left_arrow =
 const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_right_arrow = wdg::TextBlueprint{
 	.initial_text = ">",
 	.action_callback = []() {
-		if (GAME.level->draw_sprite_index < m2g::IMPL_EDITOR_SPRITE_N) {
-			GAME.level->draw_sprite_index++;
+		if (GAME.level->editor_draw_sprite_index < m2g::IMPL_EDITOR_SPRITE_N) {
+			GAME.level->editor_draw_sprite_index++;
 		}
 		return Action::CONTINUE;
 	}
@@ -68,6 +68,14 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wd
 		return Action::CONTINUE;
 	}
 };
+
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button = wdg::TextBlueprint{
+	.initial_text = "Grid Lines",
+	.action_callback = []() -> Action {
+		GAME.level->editor_grid_lines = !GAME.level->editor_grid_lines;
+		return Action::CONTINUE;
+	}
+};
 const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 1,
@@ -83,7 +91,13 @@ const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 			.border_width_px = 1,
 			.padding_width_px = 1,
 			.variant = editor_left_hud_cancel_button
-		}
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 64, .w = 11, .h = 3,
+			.border_width_px = 1,
+			.padding_width_px = 4,
+			.variant = editor_left_hud_gridlines_button
+		},
 	}
 };
 
