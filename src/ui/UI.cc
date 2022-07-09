@@ -161,19 +161,20 @@ const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextI
         .action_callback = [](std::stringstream& ss) -> Action {
             auto command = ss.str();
 	        ss = std::stringstream();
+	        GAME.console_output.emplace_back(">> " + command);
 
             if (std::regex_match(command, std::regex{"editor(\\s.*)?"})) {
 	            return m2::ui::con::editor(command);
 			} else if (command == "quit") {
                 return Action::QUIT;
-            } else {
-	            GAME.console_output = {
-		            "Hello!",
-		            "Available commands:",
-		            "help - display this help",
-		            "editor - open editor",
-		            "quit - quit game"
-	            };
+            } else if (command.empty()) {
+				// Do nothing
+			} else {
+				GAME.console_output.emplace_back("Hello!");
+	            GAME.console_output.emplace_back("Available commands:");
+	            GAME.console_output.emplace_back("help - display this help");
+	            GAME.console_output.emplace_back("editor - open editor");
+	            GAME.console_output.emplace_back("quit - quit game");
             }
 
 	        return Action::CONTINUE;
@@ -185,41 +186,42 @@ WidgetBlueprint::WidgetBlueprintVariant command_output_variant() {
         .initial_text = "",
         .alignment = TextAlignment::LEFT,
         .update_callback = []() -> std::pair<Action,std::optional<std::string>> {
-            return {Action::CONTINUE, INDEX < GAME.console_output.size() ? GAME.console_output[INDEX] : std::string()};
+            return {Action::CONTINUE, INDEX < GAME.console_output.size() ? GAME.console_output[GAME.console_output.size() - INDEX - 1] : std::string()};
         }
     };
 }
 const UIBlueprint m2::ui::console_ui = {
-        .w = 1, .h = 24,
+        .w = 1, .h = 25,
         .widgets = {
-	        WidgetBlueprint{
-                        .x = 0, .y = 0, .w = 1, .h = 1,
-                        .border_width_px = 1,
-                        .variant = command_input_variant
-                },
-	        WidgetBlueprint{.x = 0, .y = 1, .w = 1, .h = 1, .variant = command_output_variant<0>()},
-	        WidgetBlueprint{.x = 0, .y = 2, .w = 1, .h = 1, .variant = command_output_variant<1>()},
-	        WidgetBlueprint{.x = 0, .y = 3, .w = 1, .h = 1, .variant = command_output_variant<2>()},
-	        WidgetBlueprint{.x = 0, .y = 4, .w = 1, .h = 1, .variant = command_output_variant<3>()},
-	        WidgetBlueprint{.x = 0, .y = 5, .w = 1, .h = 1, .variant = command_output_variant<4>()},
-	        WidgetBlueprint{.x = 0, .y = 6, .w = 1, .h = 1, .variant = command_output_variant<5>()},
-	        WidgetBlueprint{.x = 0, .y = 7, .w = 1, .h = 1, .variant = command_output_variant<6>()},
-	        WidgetBlueprint{.x = 0, .y = 8, .w = 1, .h = 1, .variant = command_output_variant<7>()},
-	        WidgetBlueprint{.x = 0, .y = 9, .w = 1, .h = 1, .variant = command_output_variant<8>()},
-	        WidgetBlueprint{.x = 0, .y = 10, .w = 1, .h = 1, .variant = command_output_variant<9>()},
-	        WidgetBlueprint{.x = 0, .y = 11, .w = 1, .h = 1, .variant = command_output_variant<10>()},
+	        WidgetBlueprint{.x = 0, .y = 0, .w = 1, .h = 1, .variant = command_output_variant<23>()},
+	        WidgetBlueprint{.x = 0, .y = 1, .w = 1, .h = 1, .variant = command_output_variant<22>()},
+	        WidgetBlueprint{.x = 0, .y = 2, .w = 1, .h = 1, .variant = command_output_variant<21>()},
+	        WidgetBlueprint{.x = 0, .y = 3, .w = 1, .h = 1, .variant = command_output_variant<20>()},
+	        WidgetBlueprint{.x = 0, .y = 4, .w = 1, .h = 1, .variant = command_output_variant<19>()},
+	        WidgetBlueprint{.x = 0, .y = 5, .w = 1, .h = 1, .variant = command_output_variant<18>()},
+	        WidgetBlueprint{.x = 0, .y = 6, .w = 1, .h = 1, .variant = command_output_variant<17>()},
+	        WidgetBlueprint{.x = 0, .y = 7, .w = 1, .h = 1, .variant = command_output_variant<16>()},
+	        WidgetBlueprint{.x = 0, .y = 8, .w = 1, .h = 1, .variant = command_output_variant<15>()},
+	        WidgetBlueprint{.x = 0, .y = 9, .w = 1, .h = 1, .variant = command_output_variant<14>()},
+	        WidgetBlueprint{.x = 0, .y = 10, .w = 1, .h = 1, .variant = command_output_variant<13>()},
+	        WidgetBlueprint{.x = 0, .y = 11, .w = 1, .h = 1, .variant = command_output_variant<12>()},
 	        WidgetBlueprint{.x = 0, .y = 12, .w = 1, .h = 1, .variant = command_output_variant<11>()},
-	        WidgetBlueprint{.x = 0, .y = 13, .w = 1, .h = 1, .variant = command_output_variant<12>()},
-	        WidgetBlueprint{.x = 0, .y = 14, .w = 1, .h = 1, .variant = command_output_variant<13>()},
-	        WidgetBlueprint{.x = 0, .y = 15, .w = 1, .h = 1, .variant = command_output_variant<14>()},
-	        WidgetBlueprint{.x = 0, .y = 16, .w = 1, .h = 1, .variant = command_output_variant<15>()},
-	        WidgetBlueprint{.x = 0, .y = 17, .w = 1, .h = 1, .variant = command_output_variant<16>()},
-	        WidgetBlueprint{.x = 0, .y = 18, .w = 1, .h = 1, .variant = command_output_variant<17>()},
-	        WidgetBlueprint{.x = 0, .y = 19, .w = 1, .h = 1, .variant = command_output_variant<18>()},
-	        WidgetBlueprint{.x = 0, .y = 20, .w = 1, .h = 1, .variant = command_output_variant<19>()},
-	        WidgetBlueprint{.x = 0, .y = 21, .w = 1, .h = 1, .variant = command_output_variant<20>()},
-	        WidgetBlueprint{.x = 0, .y = 22, .w = 1, .h = 1, .variant = command_output_variant<21>()},
-	        WidgetBlueprint{.x = 0, .y = 23, .w = 1, .h = 1, .variant = command_output_variant<22>()}
+	        WidgetBlueprint{.x = 0, .y = 13, .w = 1, .h = 1, .variant = command_output_variant<10>()},
+	        WidgetBlueprint{.x = 0, .y = 14, .w = 1, .h = 1, .variant = command_output_variant<9>()},
+	        WidgetBlueprint{.x = 0, .y = 15, .w = 1, .h = 1, .variant = command_output_variant<8>()},
+	        WidgetBlueprint{.x = 0, .y = 16, .w = 1, .h = 1, .variant = command_output_variant<7>()},
+	        WidgetBlueprint{.x = 0, .y = 17, .w = 1, .h = 1, .variant = command_output_variant<6>()},
+	        WidgetBlueprint{.x = 0, .y = 18, .w = 1, .h = 1, .variant = command_output_variant<5>()},
+	        WidgetBlueprint{.x = 0, .y = 19, .w = 1, .h = 1, .variant = command_output_variant<4>()},
+	        WidgetBlueprint{.x = 0, .y = 20, .w = 1, .h = 1, .variant = command_output_variant<3>()},
+	        WidgetBlueprint{.x = 0, .y = 21, .w = 1, .h = 1, .variant = command_output_variant<2>()},
+	        WidgetBlueprint{.x = 0, .y = 22, .w = 1, .h = 1, .variant = command_output_variant<1>()},
+	        WidgetBlueprint{.x = 0, .y = 23, .w = 1, .h = 1, .variant = command_output_variant<0>()},
+	        WidgetBlueprint{
+		        .x = 0, .y = 24, .w = 1, .h = 1,
+				.background_color = SDL_Color{27, 27, 27, 255},
+		        .variant = command_input_variant
+	        }
         }
 };
 

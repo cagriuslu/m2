@@ -11,9 +11,10 @@ m2::ui::Action m2::ui::con::editor(const std::string &command) {
 		if (load_result) {
 			return Action::RETURN;
 		}
-		GAME.console_output = {load_result.error()};
+		GAME.console_output.emplace_back(load_result.error());
 	} else {
-		GAME.console_output = { "editor usage:", "  file_name - open editor with file" };
+		GAME.console_output.emplace_back("editor usage:");
+		GAME.console_output.emplace_back(".. file_name - open editor with file" );
 	}
 	return Action::CONTINUE;
 }
