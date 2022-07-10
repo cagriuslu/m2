@@ -1,5 +1,6 @@
 #include <m2/ui/Editor.h>
 #include <m2/Game.hh>
+#include <m2/object/Ghost.h>
 #include <m2g/SpriteBlueprint.h>
 
 using namespace m2;
@@ -14,7 +15,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_left_arrow =
 	.initial_text = "<",
 	.action_callback = []() {
 		if (GAME.level->editor_draw_sprite_index) {
-			GAME.level->editor_draw_sprite_index--;
+			m2::obj::set_editor_ghost(--GAME.level->editor_draw_sprite_index - 1);
 		}
 		return Action::CONTINUE;
 	}
@@ -23,7 +24,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_right_arrow 
 	.initial_text = ">",
 	.action_callback = []() {
 		if (GAME.level->editor_draw_sprite_index < m2g::IMPL_EDITOR_SPRITE_N) {
-			GAME.level->editor_draw_sprite_index++;
+			m2::obj::set_editor_ghost(++GAME.level->editor_draw_sprite_index);
 		}
 		return Action::CONTINUE;
 	}
@@ -56,6 +57,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_draw_button = wdg:
 		GAME.level->editor_mode = Level::EditorMode::DRAW;
 		GAME.rightHudUIState = UIState(&editor_right_hud_draw);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		m2::obj::set_editor_ghost(GAME.level->editor_draw_sprite_index);
 		return Action::CONTINUE;
 	}
 };
@@ -65,6 +67,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wd
 		GAME.level->editor_mode = Level::EditorMode::NONE;
 		GAME.rightHudUIState = UIState(&editor_right_hud);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		m2::obj::set_editor_ghost(0);
 		return Action::CONTINUE;
 	}
 };

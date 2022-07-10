@@ -1,3 +1,4 @@
 #include <rpg/fsm/Patroller.h>
+#include <m2/M2.h>
 
-fsm::Patroller::Patroller([[maybe_unused]] m2::Object& obj, [[maybe_unused]] const ai::AiBlueprint* blueprint) {}
+fsm::Patroller::Patroller(MAYBE m2::Object& obj, MAYBE const ai::AiBlueprint* blueprint) {}

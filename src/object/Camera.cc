@@ -14,14 +14,18 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_camera() {
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
 	auto& mon = camera.add_monitor();
-	mon.post_phy = [&]([[maybe_unused]] m2::comp::Monitor& el) {
+	mon.post_phy = [&](MAYBE m2::comp::Monitor& el) {
 		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
 
-		// Give an offset to the camera's location based on the position of the mouse
-		m2::Vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
-		camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
-		camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
+		if (GAME.level->type == Level::Type::GAME) {
+			// Give an offset to the camera's location based on the position of the mouse
+			m2::Vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
+			camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
+			camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
+		} else {
+			camera.position = player.position;
+		}
 	};
 
     GAME.cameraId = obj_pair.second;

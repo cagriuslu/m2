@@ -46,6 +46,7 @@ namespace m2 {
 			DRAW
 		} editor_mode;
 		SpriteIndex editor_draw_sprite_index;
+		ID editor_draw_ghost_id;
 		bool editor_grid_lines;
 		explicit Level(const std::filesystem::path& path);
 	};

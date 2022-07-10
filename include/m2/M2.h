@@ -3,6 +3,7 @@
 
 #include <string>
 
+#define MAYBE [[maybe_unused]]
 #define IF(cond) if (cond) cond
 
 namespace m2 {

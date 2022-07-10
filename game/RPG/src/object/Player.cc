@@ -54,7 +54,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 
 	auto& monitor = obj.add_monitor();
-	monitor.pre_phy = [&obj, &phy]([[maybe_unused]] m2::comp::Monitor& mon) {
+	monitor.pre_phy = [&obj, &phy](MAYBE m2::comp::Monitor& mon) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
 
@@ -108,7 +108,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		}
 	};
 
-	monitor.post_phy = [&obj, &phy, &def]([[maybe_unused]] m2::comp::Monitor& mon) {
+	monitor.post_phy = [&obj, &phy, &def](MAYBE m2::comp::Monitor& mon) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		// We must call time before other signals
 		impl->char_animator.time(GAME.deltaTime_s);
@@ -138,7 +138,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		}
 	};
 
-	def.on_death = []([[maybe_unused]] m2g::comp::Defense& def) {
+	def.on_death = [](MAYBE m2g::comp::Defense& def) {
 		LOG_INFO("Player died");
 	};
 

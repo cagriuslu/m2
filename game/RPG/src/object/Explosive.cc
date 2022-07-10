@@ -49,7 +49,7 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
     off.originator = originator_id;
 	off.variant = chr::ExplosiveState(blueprint);
 
-	monitor.pre_phy = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
+	monitor.pre_phy = [&](MAYBE m2::comp::Monitor& mon) {
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case chr::EXPLOSIVE_STATUS_IN_FLIGHT: {
