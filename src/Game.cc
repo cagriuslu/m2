@@ -27,11 +27,11 @@ m2::Game GAME = {
 	.positionIterations = 3
 };
 
-m2::Level::Level(const m2::LevelBlueprint *blueprint) : type(LVLTYP_GAME) {
+m2::Level::Level(const m2::LevelBlueprint *blueprint) : type(Type::GAME) {
 
 }
 
-m2::Level::Level(const std::filesystem::path &path) : type(LVLTYP_EDITOR), editor_file_path(path),
+m2::Level::Level(const std::filesystem::path &path) : type(Type::EDITOR), editor_file_path(path),
 	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0), editor_grid_lines(false) {
 
 }
@@ -310,7 +310,7 @@ void m2::Game::update_mouse_position() {
 	m2::Vec2i pointerPosition = events.mouse_position();
 	m2::Vec2i pointerPositionWRTScreenCenter_px = m2::Vec2i{pointerPosition.x - (windowRect.w / 2), pointerPosition.y - (windowRect.h / 2) };
 	mousePositionWRTScreenCenter_m = m2::Vec2f{(float) pointerPositionWRTScreenCenter_px.x / pixelsPerMeter, (float) pointerPositionWRTScreenCenter_px.y / pixelsPerMeter };
-	mousePositionInWorld_m = mousePositionWRTScreenCenter_m + cameraPosition;
+	mousePositionWRTGameWorld_m = mousePositionWRTScreenCenter_m + cameraPosition;
 }
 
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {

@@ -30,13 +30,11 @@
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
 
 namespace m2 {
-	enum LevelType {
-		LVLTYP_GAME,
-		LVLTYP_EDITOR
-	};
-
 	struct Level {
-		LevelType type;
+		enum class Type {
+			GAME,
+			EDITOR
+		} type;
 
 		std::vector<std::function<void(void)>> deferred_actions;
 		explicit Level(const LevelBlueprint* blueprint);
@@ -117,7 +115,7 @@ namespace m2 {
 		unsigned deltaTicks_ms;
 		float deltaTime_s;
 		bool is_phy_stepping;
-		Vec2f mousePositionInWorld_m;
+		Vec2f mousePositionWRTGameWorld_m;
 		Vec2f mousePositionWRTScreenCenter_m;
         std::vector<std::string> console_output;
 

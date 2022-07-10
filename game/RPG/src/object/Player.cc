@@ -56,7 +56,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	auto& monitor = obj.add_monitor();
 	monitor.pre_phy = [&obj, &phy]([[maybe_unused]] m2::comp::Monitor& mon) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
-		auto to_mouse = (GAME.mousePositionInWorld_m - obj.position).normalize();
+		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
 
 		m2::Vec2f moveDirection;
 		if (GAME.events.is_key_down(m2::Key::UP)) {

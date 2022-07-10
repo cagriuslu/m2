@@ -14,7 +14,7 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_pointer() {
     lig.radius_m = 3.0f;
 
 	monitor.pre_gfx = [&]([[maybe_unused]] m2::comp::Monitor& mon) {
-		obj.position = GAME.mousePositionInWorld_m;
+		obj.position = GAME.mousePositionWRTGameWorld_m;
 	};
 
     GAME.pointerId = obj_id;
