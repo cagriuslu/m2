@@ -164,13 +164,18 @@ int main(int argc, char **argv) {
 
 	unsigned frameTimeAccumulator = 0;
 	unsigned frameCount = 0;
+	unsigned phy_step_count = UINT_MAX;
 	while (true) {
 		unsigned start_ticks = SDL_GetTicks();
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		GAME.events.clear();
+		if (phy_step_count) {
+			// Clear the events only if the physics step has executed
+			// Otherwise some keys/buttons may not have been handled
+			GAME.events.clear();
+		}
 		if (GAME.events.gather()) {
 			// Handle quit event
 			if (GAME.events.pop_quit()) {
@@ -215,8 +220,7 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		unsigned step_count;
-		for (step_count = 0; step_count < 4; step_count++) {
+		for (phy_step_count = 0; phy_step_count < 4; phy_step_count++) {
 			uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks, nongame_ticks) - prevWorldStepTicks;
 			prevWorldStepTicks += ticksSinceLastWorldStep;
 			timeSinceLastWorldStep += (float)ticksSinceLastWorldStep / 1000.0f;
@@ -265,7 +269,7 @@ int main(int argc, char **argv) {
 				break;
 			}
 		}
-		if (step_count == 4) {
+		if (phy_step_count == 4) {
 			timeSinceLastWorldStep = 0.0f;
 		}
 		//////////////////////////// END OF PHYSICS ////////////////////////////
