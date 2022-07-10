@@ -1,10 +1,12 @@
 #include <m2/Events.h>
 #include <m2g/Controls.h>
+#include <m2/Log.h>
 #include <m2/Def.h>
 
-m2::Events::Events() : quit(), window_resize(), key_press_count(), keys_pressed(), key_release_count(),
-					   keys_released(), mouse_button_press_count(), mouse_buttons_pressed(), mouse_button_release_count(),
-					   mouse_buttons_released(), mouse_wheel_scroll_count(), sdl_keys_down(), keys_down(), mouse_buttons_down() {}
+m2::Events::Events() : quit(), window_resize(), key_press_count(), keys_pressed(), ui_keys_pressed(),
+	key_release_count(), keys_released(), mouse_button_press_count(), mouse_buttons_pressed(),
+	mouse_button_release_count(), mouse_buttons_released(), mouse_wheel_scroll_count(), sdl_keys_down(), keys_down(),
+	mouse_buttons_down() {}
 
 void m2::Events::clear() {
 	*this = Events();
@@ -28,8 +30,15 @@ bool m2::Events::gather() {
 			break;
 		case SDL_KEYDOWN:
 			if (e.key.repeat == 0) {
+				// Game keys
 				key_press_count++;
 				keys_pressed[u(m2g::scancode_to_key(e.key.keysym.scancode))]++;
+				// UI keys
+				if (ui_keys_pressed.size() < ui_key_press_count_limit) {
+					ui_keys_pressed.push_back(e.key.keysym.scancode);
+				} else {
+					LOG_WARN("UI key press count limit exceeded");
+				}
 			}
 			break;
 		case SDL_KEYUP:
@@ -85,8 +94,9 @@ bool m2::Events::gather() {
 	mouse_buttons_down[u(m2::MouseButton::SECONDARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_RIGHT);
 	mouse_buttons_down[u(m2::MouseButton::MIDDLE)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_MIDDLE);
 
-	return quit || window_resize || key_press_count || key_release_count || mouse_moved || mouse_button_press_count ||
-		mouse_button_release_count || mouse_wheel_scroll_count || (not text_input.str().empty());
+	return quit || window_resize || key_press_count || !ui_keys_pressed.empty() || key_release_count || mouse_moved ||
+		mouse_button_press_count || mouse_button_release_count || mouse_wheel_scroll_count ||
+		(not text_input.str().empty());
 }
 
 bool m2::Events::pop_quit() {
@@ -113,6 +123,16 @@ bool m2::Events::pop_key_press(m2::Key k) {
 	} else {
 		return false;
 	}
+}
+
+bool m2::Events::pop_ui_key_press(SDL_Scancode scode) {
+	for (auto it = ui_keys_pressed.begin(); it != ui_keys_pressed.end(); it++) {
+		if (*it == scode) {
+			ui_keys_pressed.erase(it);
+			return true;
+		}
+	}
+	return false;
 }
 
 bool m2::Events::pop_key_release(m2::Key k) {

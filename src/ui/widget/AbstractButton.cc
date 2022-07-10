@@ -19,7 +19,7 @@ AbstractButtonState::AbstractButtonState(const WidgetBlueprint *blueprint) :
 Action AbstractButtonState::handle_events(Events &events) {
     bool run_action = false;
 
-    if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.is_sdl_key_down(kb_shortcut)) {
+    if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.pop_ui_key_press(kb_shortcut)) {
         run_action = true;
     } else {
 		auto mouse_position = events.mouse_position();

@@ -7,15 +7,19 @@
 #include <optional>
 #include <sstream>
 #include <array>
+#include <deque>
 
 namespace m2 {
 	class Events {
+		static constexpr unsigned ui_key_press_count_limit = 16;
+
 		bool quit;
 
 		std::optional<m2::Vec2i> window_resize;
 
 		uint32_t key_press_count;
 		std::array<uint16_t, u(Key::end)> keys_pressed;
+		std::deque<SDL_Scancode> ui_keys_pressed;
 
 		uint32_t key_release_count;
 		std::array<uint16_t, u(Key::end)> keys_released;
@@ -46,6 +50,7 @@ namespace m2 {
 		bool pop_quit();
 		std::optional<Vec2i> pop_window_resize();
 		bool pop_key_press(Key k);
+		bool pop_ui_key_press(SDL_Scancode scode);
 		bool pop_key_release(Key k);
 		bool pop_mouse_button_press(MouseButton mb);
 		bool pop_mouse_button_release(MouseButton mb);

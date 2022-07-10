@@ -59,7 +59,8 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_draw_button = wdg:
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		m2::obj::set_editor_ghost(GAME.level->editor_draw_sprite_index);
 		return Action::CONTINUE;
-	}
+	},
+	.kb_shortcut = SDL_SCANCODE_D
 };
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wdg::TextBlueprint{
 	.initial_text = "Cancel",
@@ -69,7 +70,8 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wd
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		m2::obj::set_editor_ghost(0);
 		return Action::CONTINUE;
-	}
+	},
+	.kb_shortcut = SDL_SCANCODE_C
 };
 
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button = wdg::TextBlueprint{
@@ -77,7 +79,8 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button =
 	.action_callback = []() -> Action {
 		GAME.level->editor_grid_lines = !GAME.level->editor_grid_lines;
 		return Action::CONTINUE;
-	}
+	},
+	.kb_shortcut = SDL_SCANCODE_G
 };
 const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 	.w = 19, .h = 72,
