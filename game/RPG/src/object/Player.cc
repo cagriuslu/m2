@@ -130,7 +130,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		impl->consumables.clear();
 	};
 
-	phy.on_collision = [&phy](m2::comp::Physique& me, m2::comp::Physique& other) {
+	phy.on_collision = [&phy](MAYBE m2::comp::Physique& me, m2::comp::Physique& other) {
 		auto* enemy_impl = dynamic_cast<obj::Enemy*>(other.parent().impl.get());
 		if (enemy_impl && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {
 			enemy_impl->stun();

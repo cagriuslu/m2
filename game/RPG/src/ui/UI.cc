@@ -100,7 +100,7 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_1 = wdg::TextBlu
 };
 static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlueprint{
 	.initial_text = "100",
-	.update_callback = []() {
+	.update_callback = []() -> std::pair<Action,std::string> {
 		// Lookup player
 		static m2::ID player_id = 0;
 		static float* hp = nullptr;
@@ -110,9 +110,9 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlu
 		}
 		// Read HP
 		if (hp) {
-			return std::make_pair(Action::CONTINUE, std::make_optional(m2::round_string(*hp)));
+			return {Action::CONTINUE, std::to_string((int)round(*hp))};
 		} else {
-			return std::make_pair(Action::CONTINUE, std::optional<std::string>{});
+			return {Action::CONTINUE, {}};
 		}
 	}
 };

@@ -21,7 +21,7 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_god() {
 		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		god.position += move_direction.normalize() * (GAME.deltaTicks_ms * .004f);
+		god.position += move_direction.normalize() * ((float)GAME.deltaTicks_ms * .004f);
 	};
 
 	auto& gfx = god.add_graphic();
@@ -33,21 +33,21 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_god() {
 			float yOffsetFromWholeMeterInPixels = yOffsetFromWholeMeter * GAME.pixelsPerMeter;
 			// Draw lines above god
 			for (float y = -yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f; (float) GAME.gameRect.y < y; y -= GAME.pixelsPerMeter) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
+				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, (int)y, GAME.gameRect.x + GAME.gameRect.w, (int)y);
 			}
 			// Draw lines below god
 			for (float y = -yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f + GAME.pixelsPerMeter; y < (float)(GAME.gameRect.y + GAME.gameRect.h); y += GAME.pixelsPerMeter) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
+				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, (int)y, GAME.gameRect.x + GAME.gameRect.w, (int)y);
 			}
 			float xOffsetFromWholeMeter = god.position.x - floor(god.position.x);
 			float xOffsetFromWholeMeterInPixels = xOffsetFromWholeMeter * GAME.pixelsPerMeter;
 			// Draw lines left of god
 			for (float x = -xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f; (float) GAME.gameRect.x < x; x -= GAME.pixelsPerMeter) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
+				SDL_RenderDrawLine(GAME.sdlRenderer, (int)x, GAME.gameRect.y, (int)x, GAME.gameRect.y + GAME.gameRect.h);
 			}
 			// Draw lines right of god
 			for (float x = -xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f + GAME.pixelsPerMeter; x < (float)(GAME.gameRect.x + GAME.gameRect.w); x += GAME.pixelsPerMeter) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
+				SDL_RenderDrawLine(GAME.sdlRenderer, (int)x, GAME.gameRect.y, (int)x, GAME.gameRect.y + GAME.gameRect.h);
 			}
 		}
 	};

@@ -7,25 +7,9 @@
 #define IF(cond) if (cond) cond
 
 namespace m2 {
-	constexpr float PI = 3.141592653589793f;
-
-	/// Generates from set [0, max)
-	uint32_t rand(uint32_t max);
-	uint64_t rand(uint64_t max);
-
-	float randf();
-
-	std::string round_string(float f);
-
-	float apply_accuracy(float value, float accuracy);
-
-	float lerp(float min, float max, float ratio);
-
-	float min(float a, float b);
-	float max(float a, float b);
-
-	float normalize_rad(float radians);
-
+	////////////////////////////////////////////////////////////////////////
+	/////////////////////////// META PROGRAMMING ///////////////////////////
+	////////////////////////////////////////////////////////////////////////
 	template <typename T>
 	constexpr int to_int(T&& t) { return static_cast<int>(t); }
 
@@ -41,11 +25,21 @@ namespace m2 {
 	std::string to_string(float);
 	std::string to_string(double);
 	std::string to_string(const char*);
-}
 
-// Variant helper classes
-template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+	////////////////////////////////////////////////////////////////////////
+	///////////////////////////////// MATH /////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
+	constexpr float PI = 3.141592653589793f;
+
+	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max)
+	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max)
+	float randf(); /// Generates numbers from set [0.0f, 1.0f)
+	float apply_accuracy(float value, float accuracy);
+	float lerp(float min, float max, float ratio);
+}
 
 // The usual suspects
 #include "Pool.hh"

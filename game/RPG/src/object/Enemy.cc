@@ -31,7 +31,7 @@ using namespace obj;
 
 obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint),
 	char_animator({obj.graphic(), blueprint}), fsm_variant(
-		std::visit(overloaded {
+		std::visit(m2::overloaded {
 			[&](MAYBE const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
 			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
 			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },

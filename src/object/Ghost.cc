@@ -23,7 +23,7 @@ namespace {
 		gfx.center_px = m2g::sprites[sprite_index].obj_center_px;
 
 		auto& monitor = ghost.add_monitor();
-		monitor.pre_phy = [&ghost](m2::comp::Monitor& mon) {
+		monitor.pre_phy = [&ghost](MAYBE m2::comp::Monitor& mon) {
 			auto pos = calculate_ghost_screen_position();
 			ghost.position = pos;
 

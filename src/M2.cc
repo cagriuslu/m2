@@ -2,55 +2,9 @@
 #include <random>
 #include <memory>
 
-std::unique_ptr<std::mt19937> random_number_engine;
-std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
-
-uint32_t m2::rand(uint32_t max) {
-	return static_cast<uint32_t>(static_cast<float>(max) * m2::randf());
-}
-
-uint64_t m2::rand(uint64_t max) {
-	return static_cast<uint64_t>(static_cast<double>(max) * m2::randf());
-}
-
-float m2::randf() {
-	if (!random_number_distribution) {
-		// Seed with std::random_device
-		std::random_device rd;
-		random_number_engine = std::make_unique<std::mt19937>(rd());
-		random_number_distribution = std::make_unique<std::uniform_real_distribution<float>>(0.0f, 1.0f);
-	}
-	return (*random_number_distribution)(*random_number_engine);
-}
-
-std::string m2::round_string(float f) {
-	return std::to_string( static_cast<int>(roundf(f)));
-}
-
-float m2::apply_accuracy(float value, float accuracy) {
-	return value + (1.0f - accuracy) * value * (randf() - 0.5f);
-}
-
-float m2::lerp(float min, float max, float ratio) {
-	return min + (max - min) * ratio;
-}
-
-float m2::min(float a, float b) {
-	return a < b ? a : b;
-}
-
-float m2::max(float a, float b) {
-	return a < b ? b : a;
-}
-
-float m2::normalize_rad(float radians) {
-	float n = fmodf(radians, 2 * PI);
-	if (n < 0.0f) {
-		return n + 2 * PI;
-	}
-	return n;
-}
-
+////////////////////////////////////////////////////////////////////////
+/////////////////////////// META PROGRAMMING ///////////////////////////
+////////////////////////////////////////////////////////////////////////
 std::string m2::to_string(int n) {
 	return std::to_string(n);
 }
@@ -85,4 +39,37 @@ std::string m2::to_string(double n) {
 
 std::string m2::to_string(const char* s) {
 	return {s};
+}
+
+////////////////////////////////////////////////////////////////////////
+///////////////////////////////// MATH /////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+
+std::unique_ptr<std::mt19937> random_number_engine;
+std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
+
+uint32_t m2::rand(uint32_t max) {
+	return static_cast<uint32_t>(static_cast<float>(max) * m2::randf());
+}
+
+uint64_t m2::rand(uint64_t max) {
+	return static_cast<uint64_t>(static_cast<double>(max) * m2::randf());
+}
+
+float m2::randf() {
+	if (!random_number_distribution) {
+		// Seed with std::random_device
+		std::random_device rd;
+		random_number_engine = std::make_unique<std::mt19937>(rd());
+		random_number_distribution = std::make_unique<std::uniform_real_distribution<float>>(0.0f, 1.0f);
+	}
+	return (*random_number_distribution)(*random_number_engine);
+}
+
+float m2::apply_accuracy(float value, float accuracy) {
+	return value + (1.0f - accuracy) * value * (randf() - 0.5f);
+}
+
+float m2::lerp(float min, float max, float ratio) {
+	return min + (max - min) * ratio;
 }

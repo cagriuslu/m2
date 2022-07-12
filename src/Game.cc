@@ -26,8 +26,8 @@ m2::Game GAME = {
 	.positionIterations = 3
 };
 
-m2::Level::Level(const m2::LevelBlueprint *blueprint) : type(Type::GAME) {
-
+m2::Level::Level(MAYBE const m2::LevelBlueprint *blueprint) : type(Type::GAME) {
+	// TODO
 }
 
 m2::Level::Level(const std::filesystem::path &path) : type(Type::EDITOR), editor_file_path(path),
