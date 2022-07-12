@@ -7,6 +7,8 @@
 #define IF(cond) if (cond) cond
 
 namespace m2 {
+	constexpr float PI = 3.141592653589793f;
+
 	/// Generates from set [0, max)
 	uint32_t rand(uint32_t max);
 	uint64_t rand(uint64_t max);
@@ -40,5 +42,14 @@ namespace m2 {
 	std::string to_string(double);
 	std::string to_string(const char*);
 }
+
+// Variant helper classes
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+// The usual suspects
+#include "Pool.hh"
+#include "Vec2f.h"
+#include "Vec2i.h"
 
 #endif //M2_M2_H

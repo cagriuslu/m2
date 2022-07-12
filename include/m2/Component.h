@@ -1,8 +1,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "Def.h"
-#include <m2/Vec2f.h>
+#include <m2/M2.h>
 #include <SDL.h>
 
 namespace m2 {

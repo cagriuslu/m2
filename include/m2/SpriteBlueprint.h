@@ -1,7 +1,6 @@
 #ifndef M2_SPRITEBLUEPRINT_H
 #define M2_SPRITEBLUEPRINT_H
 
-#include "Def.h"
 #include "Vec2f.h"
 #include <SDL.h>
 #include <variant>
@@ -22,6 +21,8 @@ namespace m2 {
         Vec2f center_m;
         std::variant<std::monostate,Rectangle,Circle> variant;
     };
+
+	using SpriteIndex = uint32_t;
 
     struct SpriteBlueprint {
         SpriteIndex index{};

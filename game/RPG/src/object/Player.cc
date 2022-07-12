@@ -3,7 +3,6 @@
 #include <rpg/object/Enemy.h>
 #include "m2/Game.hh"
 #include "m2/Controls.h"
-#include "m2/Def.h"
 #include <rpg/object/Explosive.h>
 #include <rpg/object/Projectile.h>
 #include <rpg/object/Melee.h>
@@ -89,10 +88,10 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && impl->char_state.ranged_weapon_state->blueprint->cooldown_s < impl->char_state.ranged_weapon_state->cooldown_counter_s) {
 			auto& projectile = GAME.objects.alloc().first;
 			float accuracy = impl->char_state.blueprint->default_ranged_weapon->accuracy;
-			float angle = to_mouse.angle_rads() + (M2_PI * m2::randf() * (1 - accuracy)) - (M2_PI * ((1 - accuracy) / 2.0f));
+			float angle = to_mouse.angle_rads() + (m2::PI * m2::randf() * (1 - accuracy)) - (m2::PI * ((1 - accuracy) / 2.0f));
 			obj::Projectile::init(projectile, &impl->char_state.blueprint->default_ranged_weapon->projectile, GAME.playerId, obj.position, m2::Vec2f::from_angle(angle));
 			// Knockback
-			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + M2_PI) * 500.0f), true);
+			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + m2::PI) * 500.0f), true);
 			// TODO set looking direction here as well
 			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}

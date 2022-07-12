@@ -2,7 +2,6 @@
 #include <rpg/object/ConsumableDrop.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include "m2/Def.h"
 #include <m2/M2.h>
 #include <rpg/ConsumableBlueprint.h>
 #include <m2g/component/Defense.h>

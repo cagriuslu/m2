@@ -4,7 +4,6 @@
 #include "WidgetBlueprint.h"
 #include "Action.h"
 #include "../Events.h"
-#include "../Def.h"
 #include <SDL_ttf.h>
 #include <SDL.h>
 #include <functional>

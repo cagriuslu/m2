@@ -1,6 +1,6 @@
 #include <m2/ui/widget/AbstractButton.h>
 #include <m2/ui/WidgetBlueprint.h>
-#include <m2/Def.h>
+#include <m2/M2.h>
 
 using namespace m2::ui;
 using namespace m2::ui::wdg;

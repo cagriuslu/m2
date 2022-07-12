@@ -47,7 +47,7 @@ void m2::comp::Graphic::default_draw(comp::Graphic& gfx) {
 			(int)roundf(gfx.center_px.x * GAME.scale) + dstrect.w/2 ,
 			(int)roundf(gfx.center_px.y * GAME.scale) + dstrect.h/2
 	};
-	SDL_RenderCopyEx(GAME.sdlRenderer, gfx.texture, &gfx.textureRect, &dstrect, gfx.angle * 180.0 / M2_PI, &centerPoint, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(GAME.sdlRenderer, gfx.texture, &gfx.textureRect, &dstrect, gfx.angle * 180.0 / PI, &centerPoint, SDL_FLIP_NONE);
 }
 
 void m2::comp::Graphic::default_draw_healthbar(comp::Graphic& gfx, float healthRatio) {

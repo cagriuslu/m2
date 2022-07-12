@@ -2,7 +2,6 @@
 #define IMPL_UI_H
 
 #include "m2/ui/UI.h"
-#include "m2/Def.h"
 #include <m2/M2.h>
 
 namespace m2g::ui {

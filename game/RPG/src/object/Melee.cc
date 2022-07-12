@@ -1,5 +1,4 @@
 #include <m2/Object.h>
-#include "m2/Def.h"
 #include "m2/Game.hh"
 #include <rpg/object/Melee.h>
 #include <m2g/SpriteBlueprint.h>

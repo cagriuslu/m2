@@ -3,7 +3,6 @@
 
 #include "Object.h"
 #include "Vec2f.h"
-#include "Def.h"
 #include <map>
 #include <unordered_map>
 #include "SpinLock.h"

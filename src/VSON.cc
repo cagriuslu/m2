@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <m2/VSON.hh>
 #include <m2/String.h>
-#include <m2/Def.h>
 #include <m2/Log.h>
 #include <cstdlib>
 

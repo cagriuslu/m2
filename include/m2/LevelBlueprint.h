@@ -3,7 +3,6 @@
 
 #include "SpriteBlueprint.h"
 #include "Group.h"
-#include "Def.h"
 
 namespace m2 {
     struct TileBlueprint {

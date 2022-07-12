@@ -1,5 +1,4 @@
 #include <m2/M2.h>
-#include <m2/Def.h>
 #include <random>
 #include <memory>
 
@@ -45,9 +44,9 @@ float m2::max(float a, float b) {
 }
 
 float m2::normalize_rad(float radians) {
-	float n = fmodf(radians, 2 * M2_PI);
+	float n = fmodf(radians, 2 * PI);
 	if (n < 0.0f) {
-		return n + 2 * M2_PI;
+		return n + 2 * PI;
 	}
 	return n;
 }

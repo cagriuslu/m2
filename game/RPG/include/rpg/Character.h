@@ -6,7 +6,6 @@
 #include "RangedWeapon.h"
 #include "rpg/ai/AiBlueprint.h"
 #include "m2/SpriteBlueprint.h"
-#include <m2/Def.h>
 #include <optional>
 
 namespace chr {

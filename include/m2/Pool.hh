@@ -2,7 +2,6 @@
 #define M2_POOL_HH
 
 #include <m2/Exception.h>
-#include <m2/Def.h>
 #include "ThreadPool.h"
 #include <array>
 #include <optional>
@@ -11,6 +10,8 @@
 #include <cmath>
 
 namespace m2 {
+	using ID = uint64_t;
+
     extern uint16_t g_pool_id;
 
     template <typename T, uint64_t Capacity = 65536>

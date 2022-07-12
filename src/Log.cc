@@ -1,11 +1,11 @@
-#include "m2/Def.h"
 #include <m2/Log.h>
 #include <m2/M2.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <time.h>
-#include <stdlib.h>
+#include <cctype>
+#include <cstdio>
+#include <ctime>
+#include <cstdlib>
 #include <cstddef>
+#include <cstdarg>
 
 m2::LogLevel m2::current_log_level = m2::LogLevel::Debug;
 

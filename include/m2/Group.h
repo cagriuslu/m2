@@ -2,7 +2,6 @@
 #define M2_GROUP_H
 
 #include "Pool.hh"
-#include "Def.h"
 #include <unordered_map>
 
 namespace m2 {

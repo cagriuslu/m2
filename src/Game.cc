@@ -9,7 +9,6 @@
 #include <m2/object/Tile.h>
 #include "m2/Component.h"
 #include <m2g/SpriteBlueprint.h>
-#include "m2/Def.h"
 #include <m2/VSON.hh>
 #include <m2g/ui/UI.h>
 #include "m2/component/Monitor.h"
