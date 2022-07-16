@@ -8,6 +8,7 @@
 #include <SDL_ttf.h>
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
+#include <m2/Map2i.h>
 #include <cstdlib>
 
 using namespace m2;
@@ -22,6 +23,8 @@ int main(int argc, char **argv) {
 	DEBUG_FN();
     Game::dynamic_assert();
 	m2g::dynamic_assert();
+
+	m2::Map2i<float> my_map;
 
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {
