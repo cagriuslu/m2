@@ -3,6 +3,7 @@
 
 #include <optional>
 #include <functional>
+#include <cmath>
 
 namespace m2 {
     enum FSMSignal {

@@ -21,6 +21,8 @@ std::string m2::to_string(const LogLevel& lvl) {
 void m2::log_stacktrace() {
 #ifdef _WIN32
 	// Not yet supported
+#elif __APPLE__
+	// Not yet supported
 #else
 	void* callstack[128];
 	int frames = backtrace(callstack, 128);
