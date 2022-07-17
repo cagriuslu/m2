@@ -24,8 +24,6 @@ int main(int argc, char **argv) {
     Game::dynamic_assert();
 	m2g::dynamic_assert();
 
-	m2::Map2i<float> my_map;
-
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {
 		const char* loglevel = "--log-lvl=";
