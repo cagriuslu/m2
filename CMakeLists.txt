@@ -22,10 +22,8 @@ file(GLOB M2_SOURCES
         "src/*.h"   "src/*.cc"
         "src/*/*.h" "src/*/*.cc"
         "src/*/*/*.h" "src/*/*/*.cc")
-
 add_executable(m2 WIN32 ${M2_SOURCES} ${IMPL_SOURCES})
 target_include_directories(m2 PUBLIC include ${IMPL_INCLUDE_DIRS})
-
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_include_directories(m2 PUBLIC /usr/local/include/box2d /usr/local/include/SDL2)
     target_link_directories(m2 PUBLIC /usr/local/lib)
@@ -34,10 +32,7 @@ elseif(WIN32)
     target_link_libraries(m2 debug     box2d-debug SDL_gpu-debug)
     target_link_libraries(m2 optimized box2d       SDL_gpu)
     target_link_libraries(m2 SDL2 SDL2_image SDL2_ttf)
-
-    # Enable this option enable code inspections
-#    target_compile_options(m2 PRIVATE /analyze)
-
+    #target_compile_options(m2 PRIVATE /analyze) # Code inspections
     # Copy DLLs
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
@@ -45,9 +40,26 @@ elseif(WIN32)
         COMMAND_EXPAND_LISTS
     )
 endif()
-
 if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE") # Temporary
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT m2)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+endif()
+
+# Tests (Build with Debug)
+file(GLOB TEST_SOURCES "test/*.cc")
+list(APPEND TEST_SOURCES "src/Vec2f.cc" "src/Vec2i.cc")
+add_executable(test ${TEST_SOURCES})
+target_include_directories(test PUBLIC include)
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+elseif(WIN32)
+    target_link_libraries(test box2d-debug)
+    target_link_libraries(test googletest_main)
+    #target_compile_options(test PRIVATE /analyze) # Code inspections
+    # Copy DLLs
+    add_custom_command(
+            TARGET test POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:test> $<TARGET_FILE_DIR:test>
+            COMMAND_EXPAND_LISTS
+    )
 endif()
