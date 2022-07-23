@@ -36,6 +36,6 @@ size_t m2::Vec2iHash::operator()(const Vec2i& a) const {
 
 std::string m2::to_string(const m2::Vec2i& v) {
 	std::stringstream ss;
-	ss << "{ x: " << v.x << ", y: " << v.y << " }";
+	ss << "{x:" << v.x << ",y:" << v.y << "}";
 	return ss.str();
 }
