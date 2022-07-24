@@ -103,6 +103,6 @@ m2::Vec2f m2::Vec2f::from_angle(float rads) {
 
 std::string m2::to_string(const m2::Vec2f& v) {
 	std::stringstream ss;
-	ss << "{ x: " << v.x << ", y: " << v.y << " }";
+	ss << "{x:" << v.x << ",y:" << v.y << "}";
 	return ss.str();
 }

@@ -52,7 +52,7 @@ TEST(Vec2f, basic) {
 	bool b2 = (bool) v1;
 	EXPECT_FALSE(b2);
 
-	b2Vec2 b2v = (b2Vec2) v12;
+	auto b2v = (b2Vec2) v12;
 	EXPECT_FLOAT_EQ(b2v.x, 0.5f);
 	EXPECT_FLOAT_EQ(b2v.y, 1.0f);
 
@@ -92,5 +92,27 @@ TEST(Vec2f, basic) {
 	EXPECT_FLOAT_EQ(v23.floor_length(1.0f).length(), sqrtf(2.0f));
 	EXPECT_FLOAT_EQ(v23.floor_length(2.0f).length(), 2.0f);
 
-	// TODO
+	Vec2f v24{sqrtf(3), 1.0f};
+	Vec2f v25 = v24.with_length(4.0f);
+	EXPECT_FLOAT_EQ(v25.x, 2.0f * sqrtf(3.0f));
+	EXPECT_FLOAT_EQ(v25.y, 2);
+
+	Vec2f v26{1.0f, 1.0f};
+	EXPECT_FLOAT_EQ(v26.ceil_length(1.0f).x, 1.0f / sqrtf(2.0f));
+	EXPECT_FLOAT_EQ(v26.ceil_length(2.0f).x, 1.0f);
+
+	Vec2f v27;
+	Vec2f v28{1,1};
+	EXPECT_FLOAT_EQ(v27.lerp(v28, 1.0f / 3.0f).x, 1.0f / 3.0f);
+
+	auto v29 = Vec2f::nan();
+	EXPECT_TRUE(isnan(v29.x));
+	EXPECT_TRUE(isnan(v29.y));
+
+	auto v30 = Vec2f::from_angle(PI / 4.0f);
+	EXPECT_FLOAT_EQ(v30.length(), 1.0f);
+	EXPECT_FLOAT_EQ(v30.x, 1.0f / sqrtf(2.0f));
+
+	Vec2f v31{1.23f, 4.56f};
+	EXPECT_STREQ(to_string(v31).c_str(), "{x:1.23,y:4.56}");
 }
