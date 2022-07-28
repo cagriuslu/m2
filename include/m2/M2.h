@@ -39,6 +39,7 @@ namespace m2 {
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
 	float apply_accuracy(float value, float accuracy);
 	float lerp(float min, float max, float ratio);
+	bool is_near(float a, float b, float tolerance);
 }
 
 // The usual suspects

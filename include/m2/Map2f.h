@@ -4,6 +4,8 @@
 #include "Pool.hh"
 #include "Vec2f.h"
 #include <array>
+#include <algorithm>
+#include <numeric>
 #include <variant>
 
 namespace m2 {
@@ -60,18 +62,26 @@ namespace m2 {
 
 			Array* array = nullptr;
 			{
-				Array* provisional_array = std::get<Array*>(*find_node(pos));
-				if (LinearN <= provisional_array->size()) {
-					// TODO allocate quad
-					// TODO what if all items are on the same position exactly
-				} else {
+				ArrayOrQuads* node = find_node(pos);
+				Array* provisional_array = std::get<Array*>(*node);
+				if (provisional_array->size() < LinearN) {
 					array = provisional_array;
+				} else {
+					// Check if all items are in the same position. If so, don't attempt to divide
+					auto is_crowded_predicate = [provisional_array](const ArrayItem& array_item) -> bool {
+						return array_item.pos.is_near(provisional_array->front().pos, 0.001f);
+					};
+					auto is_crowded = std::all_of(provisional_array->begin(), provisional_array->end(), is_crowded_predicate);
+					if (is_crowded) {
+						array = provisional_array;
+					} else {
+						// Divide into quads, find middle point
+						auto mid_point = std::accumulate(provisional_array->begin(), provisional_array->end(), Vec2f{}) / (float)provisional_array->size();
+
+					}
 				}
 			}
-
-			auto array_item = ArrayItem{pos, id};
-
-			// TODO
+			array->emplace_back(pos, id);
 
 			return {item.obj, id};
 		}
