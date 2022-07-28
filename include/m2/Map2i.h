@@ -24,11 +24,11 @@ namespace m2 {
 		Map2i() : Pool<Map2iItem<T>, Capacity>() {}
 
 		std::pair<T&,Map2iID> alloc(const Vec2i& pos) {
-			auto alloced_pair = Pool<Map2iItem<T>,Capacity>::alloc();
-			alloced_pair.first.pos = pos;
-			_xmap.insert({pos.x, alloced_pair.second});
-			_ymap.insert({pos.y, alloced_pair.second});
-			return {alloced_pair.first.obj, alloced_pair.second};
+			auto& [item, id] = Pool<Map2iItem<T>,Capacity>::alloc();
+			item.pos = pos;
+			_xmap.insert({pos.x, id});
+			_ymap.insert({pos.y, id});
+			return {item.obj, id};
 		}
 		using Pool<Map2iItem<T>,Capacity>::free;
 		using Pool<Map2iItem<T>,Capacity>::clear;

@@ -48,7 +48,7 @@ endif()
 
 # Tests (Build with Debug)
 file(GLOB TEST_SOURCES "test/*.cc")
-list(APPEND TEST_SOURCES "src/Vec2f.cc" "src/Vec2i.cc")
+list(APPEND TEST_SOURCES "src/Exception.cc" "src/Log.cc" "src/M2.cc" "src/Pool.cc" "src/Vec2f.cc" "src/Vec2i.cc")
 add_executable(test ${TEST_SOURCES})
 target_include_directories(test PUBLIC include)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
