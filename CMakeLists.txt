@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.21)
+
+# Properties that needs to be set BEFORE project()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
+
 project(m2)
 
 add_subdirectory(game)
@@ -52,6 +56,11 @@ list(APPEND TEST_SOURCES "src/Exception.cc" "src/Log.cc" "src/M2.cc" "src/Pool.c
 add_executable(test ${TEST_SOURCES})
 target_include_directories(test PUBLIC include)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    target_include_directories(test PUBLIC /usr/local/include/box2d /usr/local/include/SDL2)
+    target_include_directories(test PUBLIC /usr/local/include)
+    target_link_directories(test PUBLIC /usr/local/lib)
+    target_link_libraries(test box2d SDL2_image SDL2_ttf SDL2 m)
+    target_link_libraries(test gtest_main gtest gmock_main gmock)
 elseif(WIN32)
     target_link_libraries(test box2d-debug)
     target_link_libraries(test googletest_main)
