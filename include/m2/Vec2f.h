@@ -3,6 +3,7 @@
 
 #include <b2_math.h>
 #include <string>
+#include <array>
 
 namespace m2 {
 	struct Vec2i;
@@ -41,6 +42,9 @@ namespace m2 {
 		[[nodiscard]] Vec2f with_length(float len) const;
 		[[nodiscard]] Vec2f ceil_length(float len) const;
 		[[nodiscard]] Vec2f lerp(const Vec2f& to, float ratio) const;
+
+		/// Order of corners: Bottom-right, Bottom-left, Top-left, Top-right
+		[[nodiscard]] std::array<Vec2f, 4> aabb_corners(float aabb_radius) const;
 
 		static Vec2f nan();
 		static Vec2f from_angle(float rads);

@@ -90,7 +90,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			float accuracy = impl->char_state.blueprint->default_ranged_weapon->accuracy;
 			float angle = to_mouse.angle_rads() + (m2::PI * m2::randf() * (1 - accuracy)) - (m2::PI * ((1 - accuracy) / 2.0f));
 			obj::Projectile::init(projectile, &impl->char_state.blueprint->default_ranged_weapon->projectile, GAME.playerId, obj.position, m2::Vec2f::from_angle(angle));
-			// Knockback
+			// Knock-back
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + m2::PI) * 500.0f), true);
 			// TODO set looking direction here as well
 			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;

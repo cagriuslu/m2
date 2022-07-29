@@ -94,6 +94,10 @@ m2::Vec2f m2::Vec2f::lerp(const Vec2f& to, float ratio) const {
 	return (to - *this) * ratio + *this;
 }
 
+std::array<m2::Vec2f, 4> m2::Vec2f::aabb_corners(float aabb_radius) const {
+	return {Vec2f{x + aabb_radius, y + aabb_radius}, Vec2f{x - aabb_radius, y + aabb_radius}, Vec2f{x - aabb_radius, y - aabb_radius}, Vec2f{x + aabb_radius, y - aabb_radius}};
+}
+
 m2::Vec2f m2::Vec2f::nan() {
 	return {NAN, NAN};
 }
