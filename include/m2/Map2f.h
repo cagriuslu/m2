@@ -30,6 +30,14 @@ namespace m2 {
 		struct Quads {
 			Vec2f origin;
 			ArrayOrQuads quad[4];
+			Quads(const Vec2f& origin, const Array& array) : origin(origin) {
+				for (auto& q : quad) {
+					q = new Array();
+				}
+				for (const auto& item : array) {
+					quad[find_quad_index(item.pos)] = item;
+				}
+			}
 			unsigned find_quad_index(const Vec2f& pos) {
 				if (origin.x <= pos.x && origin.y <= pos.y) {
 					return 0;
@@ -60,25 +68,27 @@ namespace m2 {
 			auto& [item, id] = Pool<Map2fItem<T>,Capacity>::alloc();
 			item.pos = pos;
 
-			Array* array = nullptr;
+			Array* array;
 			{
 				ArrayOrQuads* node = find_node(pos);
-				Array* provisional_array = std::get<Array*>(*node);
-				if (provisional_array->size() < LinearN) {
-					array = provisional_array;
-				} else {
+				Array* prov_array = std::get<Array*>(*node);
+				if (LinearN <= prov_array->size()) {
 					// Check if all items are in the same position. If so, don't attempt to divide
-					auto is_crowded_predicate = [provisional_array](const ArrayItem& array_item) -> bool {
-						return array_item.pos.is_near(provisional_array->front().pos, 0.001f);
+					auto is_crowded_predicate = [prov_array](const ArrayItem &array_item) -> bool {
+						return array_item.pos.is_near(prov_array[0].pos, 0.001f);
 					};
-					auto is_crowded = std::all_of(provisional_array->begin(), provisional_array->end(), is_crowded_predicate);
+					auto is_crowded = std::all_of(prov_array->begin(), prov_array->end(), is_crowded_predicate);
 					if (is_crowded) {
-						array = provisional_array;
+						array = prov_array;
 					} else {
 						// Divide into quads, find middle point
-						auto mid_point = std::accumulate(provisional_array->begin(), provisional_array->end(), Vec2f{}) / (float)provisional_array->size();
-
+						auto mid_point = std::accumulate(prov_array->begin(), prov_array->end(), Vec2f{}) / (float) prov_array->size();
+						auto* quads = new Quads(mid_point, *prov_array);
+						*node = quads;
+						array = std::get<Array*>(quads->quad[quads->find_quad_index(pos)]);
 					}
+				} else {
+					array = prov_array;
 				}
 			}
 			array->emplace_back(pos, id);
@@ -121,6 +131,8 @@ namespace m2 {
 			}
 			return {};
 		}
+
+		// TODO add move function, which can move if they are in the same array, or erase->insert
 	};
 }
 
