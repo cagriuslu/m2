@@ -36,7 +36,7 @@ namespace m2 {
                     auto& item = pool->_items[i];
                     if (item.id & 0xFFFFFF000000ull) {
                         data = &item.data;
-                        id = item.id;
+                        id = pool->_shifted_pool_id | item.id;
                         return *this;
                     }
                 }

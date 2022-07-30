@@ -175,9 +175,8 @@ namespace m2 {
 			_root = std::make_unique<Array>();
 
 			Array all_items;
-			for (const auto it : *this) {
-				const auto [map2f_item, id] = it;
-				all_items.emplace_back(ArrayItem{map2f_item->pos, id});
+			for (auto it = this->begin(); it != this->end(); ++it) {
+				all_items.emplace_back(ArrayItem{it.data->pos, it.id});
 			}
 
 			std::random_device rd;

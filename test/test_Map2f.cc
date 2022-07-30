@@ -51,7 +51,7 @@ TEST(Map2f, basic) {
 	delete map;
 }
 
-TEST(Map2f, complex) {
+TEST(Map2f, basic2) {
 	using namespace m2;
 
 	auto* map = new Map2f<int>();
@@ -61,6 +61,14 @@ TEST(Map2f, complex) {
 		}
 	}
 	map->shuffle();
+
+	auto needle = Vec2f{17, -35};
+	auto radius = 3.5f;
+	auto ids = map->find_ids(needle, radius);
+	EXPECT_EQ(ids.size(), 49);
+	for (auto id : ids) {
+		EXPECT_TRUE(map->get(id)->pos.is_near(needle, radius));
+	}
 
 	delete map;
 }
