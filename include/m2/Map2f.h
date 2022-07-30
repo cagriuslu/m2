@@ -8,6 +8,8 @@
 #include <numeric>
 #include <iterator>
 #include <variant>
+#include <memory>
+#include <random>
 
 namespace m2 {
 	using Map2fID = ID;
@@ -18,28 +20,32 @@ namespace m2 {
 		T obj;
 	};
 
-	template <typename T, uint64_t Capacity = 65536, uint32_t LinearN = 64>
+	template <typename T, uint32_t LinearN = 64, uint64_t Capacity = 65536>
 	class Map2f : private Pool<Map2fItem<T>,Capacity> {
 		struct ArrayItem {
 			Vec2f pos;
 			Map2fID id{0};
 		};
 		using Array = std::vector<ArrayItem>;
+		using ArrayPtr = std::unique_ptr<Array>;
 
-		struct Quads;
-		using ArrayOrQuads = std::variant<Array*, Quads*>;
+		struct Quads; // Forward declaration
+		using QuadsPtr = std::unique_ptr<Quads>;
+
+		using Node = std::variant<ArrayPtr, QuadsPtr>;
+
 		struct Quads {
 			Vec2f origin;
-			ArrayOrQuads quad[4]; /// Order of quads: Bottom-right, Bottom-left, Top-left, Top-right
+			Node quad[4]; /// Order of quads: Bottom-right, Bottom-left, Top-left, Top-right
 			Quads(const Vec2f& origin, const Array& array) : origin(origin) {
 				for (auto& q : quad) {
-					q = new Array();
+					q = std::make_unique<Array>();
 				}
 				for (const auto& item : array) {
-					std::get<Array*>(quad[find_quad_index(item.pos)])->emplace_back(item);
+					std::get<ArrayPtr>(quad[find_quad_index(item.pos)])->emplace_back(item);
 				}
 			}
-			unsigned find_quad_index(const Vec2f& pos) {
+			[[nodiscard]] unsigned find_quad_index(const Vec2f& pos) const {
 				if (origin.x <= pos.x && origin.y <= pos.y) {
 					return 0;
 				} else if (pos.x < origin.x && origin.y <= pos.y) {
@@ -49,7 +55,7 @@ namespace m2 {
 				}
 				return 3;
 			}
-			void append_intersecting_quads(const Vec2f& pos, float aabb_radius, std::queue<const ArrayOrQuads*>& out) const {
+			void append_intersecting_quads(const Vec2f& pos, float aabb_radius, std::queue<const Node*>& out) const {
 				auto aabb_corners = pos.aabb_corners(aabb_radius);
 				for (unsigned i = 0; i < 4; i++) {
 					if (find_quad_index(aabb_corners[i]) == i) {
@@ -58,29 +64,22 @@ namespace m2 {
 				}
 			}
 		};
-		ArrayOrQuads _root;
 
-		ArrayOrQuads* find_node(const Vec2f& pos) {
-			ArrayOrQuads* array_or_quads = &_root;
-			while (std::holds_alternative<Quads*>(*array_or_quads)) {
-				auto* quads = std::get<Quads*>(*array_or_quads);
+		Node* find_node(const Vec2f& pos) {
+			Node* node = &_root;
+			while (std::holds_alternative<QuadsPtr>(*node)) {
+				auto* quads = std::get<QuadsPtr>(*node).get();
 				auto index = quads->find_quad_index(pos);
-				array_or_quads = &quads->quad[index];
+				node = &quads->quad[index];
 			}
-			return array_or_quads;
+			return node;
 		}
 
-	public:
-		Map2f() : Pool<Map2fItem<T>,Capacity>(), _root(new Array()) {}
-
-		std::pair<T&, Map2fID> alloc(const Vec2f& pos) {
-			auto [item, id] = Pool<Map2fItem<T>,Capacity>::alloc();
-			item.pos = pos;
-
+		void insert(const ArrayItem& item) {
 			Array* array;
 			{
-				ArrayOrQuads* node = find_node(pos);
-				Array* prov_array = std::get<Array*>(*node);
+				Node* node = find_node(item.pos);
+				Array* prov_array = std::get<ArrayPtr>(*node).get();
 				if (LinearN <= prov_array->size()) {
 					// Check if all items are in the same position. If so, don't attempt to divide
 					auto is_crowded_predicate = [=](const ArrayItem &array_item) -> bool {
@@ -96,16 +95,26 @@ namespace m2 {
 							accumulation += array_item.pos;
 						});
 						auto mid_point = accumulation / (float) prov_array->size();
-						auto* quads = new Quads(mid_point, *prov_array);
-						*node = quads;
-						array = std::get<Array*>(quads->quad[quads->find_quad_index(pos)]);
+						auto quads = std::make_unique<Quads>(mid_point, *prov_array);
+						array = std::get<ArrayPtr>(quads->quad[quads->find_quad_index(item.pos)]).get();
+						*node = std::move(quads);
 					}
 				} else {
 					array = prov_array;
 				}
 			}
-			array->emplace_back(ArrayItem{pos, id});
+			array->emplace_back(item);
+		}
 
+		Node _root;
+
+	public:
+		Map2f() : Pool<Map2fItem<T>,Capacity>(), _root(std::make_unique<Array>()) {}
+
+		std::pair<T&, Map2fID> alloc(const Vec2f& pos) {
+			auto [item, id] = Pool<Map2fItem<T>,Capacity>::alloc();
+			item.pos = pos;
+			insert(ArrayItem{pos, id});
 			return {item.obj, id};
 		}
 		using Pool<Map2fItem<T>,Capacity>::free;
@@ -121,19 +130,20 @@ namespace m2 {
 		std::vector<Map2fID> find_ids(const Vec2f& pos, float radius) {
 			std::vector<Map2fID> items;
 
-			std::queue<const ArrayOrQuads*> nodes_to_check = {&_root};
+			std::queue<const Node*> nodes_to_check;
+			nodes_to_check.push(&_root);
 			while (!nodes_to_check.empty()) {
-				const ArrayOrQuads* node = nodes_to_check.front();
-				nodes_to_check.pop();
-				if (std::holds_alternative<Array*>(*node)) {
-					const Array* array = std::get<Array*>(*node);
-					std::copy_if(array->begin(), array->end(), std::back_inserter(items), [=](const ArrayItem& item) {
-						return pos.is_near(item.pos, radius);
-					});
+				const Node* node = nodes_to_check.front();
+				if (std::holds_alternative<ArrayPtr>(*node)) {
+					for (const auto& item : *std::get<ArrayPtr>(*node)) {
+						if (pos.is_near(item.pos, radius)) {
+							items.push_back(item.id);
+						}
+					}
 				} else {
-					const Quads* quads = std::get<Quads*>(*node);
-					quads->append_intersecting_quads(pos, radius, nodes_to_check);
+					std::get<QuadsPtr>(*node)->append_intersecting_quads(pos, radius, nodes_to_check);
 				}
+				nodes_to_check.pop();
 			}
 
 			return items;
@@ -159,6 +169,24 @@ namespace m2 {
 				return find_objects(item->pos, radius);
 			}
 			return {};
+		}
+
+		void shuffle() {
+			_root = std::make_unique<Array>();
+
+			Array all_items;
+			for (const auto it : *this) {
+				const auto [map2f_item, id] = it;
+				all_items.emplace_back(ArrayItem{map2f_item->pos, id});
+			}
+
+			std::random_device rd;
+			std::mt19937 g(rd());
+			std::shuffle(all_items.begin(), all_items.end(), g);
+
+			for (const auto& item : all_items) {
+				insert(item);
+			}
 		}
 
 		// TODO add move function, which can move if they are in the same array, or erase->insert
