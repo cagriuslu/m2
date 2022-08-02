@@ -20,6 +20,8 @@ namespace m2 {
 		Vec2i operator-(const Vec2i& rhs) const;
 		bool operator==(const Vec2i& other) const;
 		explicit operator bool() const;
+
+		[[nodiscard]] bool is_near(const Vec2i& other, int tolerance) const;
 	};
 
 	std::string to_string(const m2::Vec2i&);

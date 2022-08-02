@@ -189,6 +189,8 @@ namespace m2 {
 		}
 
 		// TODO add move function, which can move if they are in the same array, or erase->insert
+		// TODO we should be holding AABBs, not point objects
+		// TODO compare Map2i and Map2f, come to a decision
 	};
 }
 

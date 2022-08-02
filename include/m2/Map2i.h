@@ -5,6 +5,7 @@
 #include "Vec2i.h"
 #include <map>
 #include <algorithm>
+#include <iterator>
 
 namespace m2 {
 	using Map2iID = ID;
@@ -17,17 +18,17 @@ namespace m2 {
 
 	template <typename T, uint64_t Capacity = 65536>
 	class Map2i : private Pool<Map2iItem<T>,Capacity> {
-		std::multimap<int32_t, Map2iID> _xmap;
-		std::multimap<int32_t, Map2iID> _ymap;
+		using x_pos = int32_t;
+		using y_pos = int32_t;
+		std::multimap<x_pos, std::pair<y_pos, Map2iID>> _map;
 
 	public:
 		Map2i() : Pool<Map2iItem<T>, Capacity>() {}
 
 		std::pair<T&,Map2iID> alloc(const Vec2i& pos) {
-			auto& [item, id] = Pool<Map2iItem<T>,Capacity>::alloc();
+			auto [item, id] = Pool<Map2iItem<T>,Capacity>::alloc();
 			item.pos = pos;
-			_xmap.insert({pos.x, id});
-			_ymap.insert({pos.y, id});
+			_map.insert({pos.x, {pos.y, id}});
 			return {item.obj, id};
 		}
 		using Pool<Map2iItem<T>,Capacity>::free;
@@ -41,31 +42,14 @@ namespace m2 {
 		using Pool<Map2iItem<T>,Capacity>::get_id;
 
 		std::vector<Map2iID> find_ids(const Vec2i& pos, int32_t radius) {
-			// Find items in x-range
-			std::vector<Map2iID> x_items;
-			for (auto it = _xmap.lower_bound(pos.x - radius); it != _xmap.end() && it->first <= pos.x + radius; it++) {
-				x_items.emplace_back(it->second);
+			std::vector<Map2iID> items;
+			for (auto it = _map.lower_bound(pos.x - radius); it != _map.end() && it->first <= pos.x + radius; it++) {
+				y_pos y = it->second.first;
+				if ((pos.y - radius) <= y && y <= (pos.y + radius)) {
+					items.emplace_back(it->second.second);
+				}
 			}
-			fprintf(stderr, "Map2i x_items count %zu\n", x_items.size());
-			if (x_items.empty()) {
-				return {};
-			}
-			// Find items in y-range
-			std::vector<Map2iID> y_items;
-			for (auto it = _ymap.lower_bound(pos.y - radius); it != _ymap.end() && it->first <= pos.y + radius; it++) {
-				y_items.emplace_back(it->second);
-			}
-			fprintf(stderr, "Map2i y_items count %zu\n", y_items.size());
-			if (y_items.empty()) {
-				return {};
-			}
-			// Sort items
-			std::sort(x_items.begin(), x_items.end());
-			std::sort(y_items.begin(), y_items.end());
-			// Find the intersection of items
-			std::vector<Map2iID> intersect;
-			std::set_intersection(x_items.begin(), x_items.end(), y_items.begin(), y_items.end(), std::back_inserter(intersect));
-			return intersect;
+			return items;
 		}
 		std::vector<Map2iID> find_ids(Map2iID id, int32_t radius) {
 			auto* item = get(id);
