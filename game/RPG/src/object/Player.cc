@@ -12,7 +12,8 @@
 #include <m2/M2.h>
 #include <m2/Log.h>
 
-obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : char_state(blueprint), char_animator({obj.graphic(), blueprint}) {}
+obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) :
+	char_state(blueprint), animation_fsm(blueprint->animation_fsm_blueprint, obj.graphic_id()) {}
 
 void obj::Player::add_consumable(const itm::ConsumableBlueprint& consumable) {
 	consumables.emplace_back(consumable);
@@ -60,19 +61,19 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		m2::Vec2f moveDirection;
 		if (GAME.events.is_key_down(m2::Key::UP)) {
 			moveDirection.y += -1.0f;
-			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKUP);
+			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKUP);
 		}
 		if (GAME.events.is_key_down(m2::Key::DOWN)) {
 			moveDirection.y += 1.0f;
-			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKDOWN);
+			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKDOWN);
 		}
 		if (GAME.events.is_key_down(m2::Key::LEFT)) {
 			moveDirection.x += -1.0f;
-			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKLEFT);
+			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKLEFT);
 		}
 		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			moveDirection.x += 1.0f;
-			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_WALKRIGHT);
+			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKRIGHT);
 		}
 		float force;
 		if (GAME.events.pop_key_press(m2::Key::DASH) && impl->char_state.pop_dash()) {
@@ -110,9 +111,9 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	monitor.post_phy = [&obj, &phy, &def](MAYBE m2::comp::Monitor& mon) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		// We must call time before other signals
-		impl->char_animator.time(GAME.deltaTime_s);
+		impl->animation_fsm.time(GAME.deltaTime_s);
 		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {
-			impl->char_animator.signal(fsm::CharacterAnimation::CHARANIM_STOP);
+			impl->animation_fsm.set_state(chr::CHARANIMSTATE_STOP);
 		}
 		// Consumables
 		for (auto& consumable : impl->consumables) {

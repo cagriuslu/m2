@@ -6,9 +6,18 @@
 #include "RangedWeapon.h"
 #include "rpg/ai/AiBlueprint.h"
 #include "m2/SpriteBlueprint.h"
+#include <m2/fsm/AnimationFSM.h>
 #include <optional>
 
 namespace chr {
+	enum CharacterAnimationState {
+		CHARANIMSTATE_STOP,
+		CHARANIMSTATE_WALKDOWN,
+		CHARANIMSTATE_WALKRIGHT,
+		CHARANIMSTATE_WALKUP,
+		CHARANIMSTATE_WALKLEFT,
+	};
+
 	enum CharacterTextureType {
 		CHARACTER_TEXTURE_TYPE_LOOKDOWN_00,
 		CHARACTER_TEXTURE_TYPE_LOOKDOWN_01,
@@ -54,6 +63,7 @@ namespace chr {
 		float dash_cooldown_s;
 		float stun_ttl_s;
 		m2::SpriteIndex sprite_indexes[CHARACTER_TEXTURE_TYPE_N];
+		const m2::fsm::AnimationFSMBlueprint* animation_fsm_blueprint;
 		const ai::AiBlueprint* aiBlueprint;
 	};
 

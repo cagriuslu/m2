@@ -7,7 +7,7 @@
 
 fsm::CharacterAnimation::CharacterAnimation(m2::comp::Graphic& gfx, const chr::CharacterBlueprint* blueprint) : gfx(gfx), blueprint(blueprint) {}
 
-void* fsm::CharacterAnimation::idle(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::idle(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -28,7 +28,7 @@ void* fsm::CharacterAnimation::idle(m2::FSM<CharacterAnimation>& automaton, int 
 	}
 }
 
-void* fsm::CharacterAnimation::downStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::downStop(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -49,7 +49,7 @@ void* fsm::CharacterAnimation::downStop(m2::FSM<CharacterAnimation>& automaton, 
 	}
 }
 
-void* fsm::CharacterAnimation::down00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down00(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -78,7 +78,7 @@ void* fsm::CharacterAnimation::down00(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::down01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down01(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -107,7 +107,7 @@ void* fsm::CharacterAnimation::down01(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::down02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down02(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -136,7 +136,7 @@ void* fsm::CharacterAnimation::down02(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::down03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::down03(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -165,7 +165,7 @@ void* fsm::CharacterAnimation::down03(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::leftStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::leftStop(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -186,7 +186,7 @@ void* fsm::CharacterAnimation::leftStop(m2::FSM<CharacterAnimation>& automaton, 
 	}
 }
 
-void* fsm::CharacterAnimation::left00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left00(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -214,7 +214,7 @@ void* fsm::CharacterAnimation::left00(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::left01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left01(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -242,7 +242,7 @@ void* fsm::CharacterAnimation::left01(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::left02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left02(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -270,7 +270,7 @@ void* fsm::CharacterAnimation::left02(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::left03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::left03(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -298,7 +298,7 @@ void* fsm::CharacterAnimation::left03(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::rightStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::rightStop(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -319,7 +319,7 @@ void* fsm::CharacterAnimation::rightStop(m2::FSM<CharacterAnimation>& automaton,
 	}
 }
 
-void* fsm::CharacterAnimation::right00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right00(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -348,7 +348,7 @@ void* fsm::CharacterAnimation::right00(m2::FSM<CharacterAnimation>& automaton, i
 	}
 }
 
-void* fsm::CharacterAnimation::right01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right01(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -377,7 +377,7 @@ void* fsm::CharacterAnimation::right01(m2::FSM<CharacterAnimation>& automaton, i
 	}
 }
 
-void* fsm::CharacterAnimation::right02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right02(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -406,7 +406,7 @@ void* fsm::CharacterAnimation::right02(m2::FSM<CharacterAnimation>& automaton, i
 	}
 }
 
-void* fsm::CharacterAnimation::right03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::right03(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -435,7 +435,7 @@ void* fsm::CharacterAnimation::right03(m2::FSM<CharacterAnimation>& automaton, i
 	}
 }
 
-void* fsm::CharacterAnimation::upStop(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::upStop(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -456,7 +456,7 @@ void* fsm::CharacterAnimation::upStop(m2::FSM<CharacterAnimation>& automaton, in
 	}
 }
 
-void* fsm::CharacterAnimation::up00(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up00(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -485,7 +485,7 @@ void* fsm::CharacterAnimation::up00(m2::FSM<CharacterAnimation>& automaton, int 
 	}
 }
 
-void* fsm::CharacterAnimation::up01(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up01(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -514,7 +514,7 @@ void* fsm::CharacterAnimation::up01(m2::FSM<CharacterAnimation>& automaton, int 
 	}
 }
 
-void* fsm::CharacterAnimation::up02(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up02(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {
@@ -543,7 +543,7 @@ void* fsm::CharacterAnimation::up02(m2::FSM<CharacterAnimation>& automaton, int 
 	}
 }
 
-void* fsm::CharacterAnimation::up03(m2::FSM<CharacterAnimation>& automaton, int signal) {
+void* fsm::CharacterAnimation::up03(m2::FSM<CharacterAnimation>& automaton, unsigned signal) {
 	auto& gfx = automaton.data.gfx;
 	const auto* blueprint = automaton.data.blueprint;
 	switch (signal) {

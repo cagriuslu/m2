@@ -18,7 +18,7 @@ fsm::Chaser::Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint) :
 	target(GAME.objects[GAME.playerId]),
 	phy(GAME.physics[obj.physique_id()]) {}
 
-void* fsm::Chaser::idle(m2::FSM<Chaser>& automaton, int sig) {
+void* fsm::Chaser::idle(m2::FSM<Chaser>& automaton, unsigned sig) {
 	const auto* blueprint = automaton.data.blueprint;
     switch (sig) {
 		case m2::FSMSIG_ENTER:
@@ -112,7 +112,7 @@ static void attack_if_close_enough(m2::FSM<fsm::Chaser>& automaton) {
     }
 }
 
-void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
+void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, unsigned sig) {
 	auto* impl = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     auto& player = GAME.objects[GAME.playerId];
@@ -156,7 +156,7 @@ void* fsm::Chaser::triggered(m2::FSM<Chaser>& automaton, int sig) {
     }
 }
 
-void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, int sig) {
+void* fsm::Chaser::gave_up(m2::FSM<Chaser>& automaton, unsigned sig) {
 	auto* impl = dynamic_cast<obj::Enemy*>(automaton.data.obj.impl.get());
 	const auto* blueprint = automaton.data.blueprint;
     switch (sig) {

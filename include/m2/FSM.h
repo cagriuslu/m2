@@ -6,7 +6,7 @@
 #include <cmath>
 
 namespace m2 {
-    enum FSMSignal {
+    enum FSMSignal : unsigned {
         FSMSIG_ENTER = 0,
         FSMSIG_EXIT,
         FSMSIG_ALARM,
@@ -17,13 +17,13 @@ namespace m2 {
         FSMSIG_N
     };
 
-    template <typename T>
-    struct FSM final {
-        using State = void* (*)(FSM<T>& automaton, int sig);
+    template <typename Data>
+    struct FSM {
+        using State = void* (*)(FSM<Data>& automaton, unsigned sig);
 
-        T data;
+        Data data;
 
-        explicit FSM(T&& data) : data(data), current_state(T::initial_state), alarm(NAN) {
+        explicit FSM(Data&& data) : data(data), current_state(Data::initial_state), alarm(NAN) {
             signal(FSMSIG_ENTER);
         }
 
@@ -33,7 +33,7 @@ namespace m2 {
         void disarm() {
             alarm = NAN;
         }
-        void signal(int sig) {
+        void signal(unsigned sig) {
             auto next_state = (*current_state)(*this, sig);
             if (next_state) {
 				(*current_state)(*this, FSMSIG_EXIT); // Ignore return value

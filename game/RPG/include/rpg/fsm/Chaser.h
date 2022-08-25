@@ -22,9 +22,9 @@ namespace fsm {
 
         Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint);
 
-        static void* idle(m2::FSM<Chaser>& automaton, int sig);
-        static void* triggered(m2::FSM<Chaser>& automaton, int sig);
-        static void* gave_up(m2::FSM<Chaser>& automaton, int sig);
+        static void* idle(m2::FSM<Chaser>& automaton, unsigned signal);
+        static void* triggered(m2::FSM<Chaser>& automaton, unsigned signal);
+        static void* gave_up(m2::FSM<Chaser>& automaton, unsigned signal);
 
         static constexpr auto initial_state = &idle;
     };
