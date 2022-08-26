@@ -21,7 +21,6 @@ using namespace m2;
 
 int main(int argc, char **argv) {
 	DEBUG_FN();
-    Game::dynamic_assert();
 	m2g::dynamic_assert();
 
 	// Process command line arguments

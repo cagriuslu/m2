@@ -10,6 +10,7 @@
 #include <optional>
 
 namespace m2::fsm {
+	// Do not create this object directly, use make_animation_fsm_blueprint
 	struct AnimationFSMBlueprint {
 		struct State {
 			unsigned state;
@@ -19,6 +20,7 @@ namespace m2::fsm {
 		float frames_per_second;
 		std::vector<State> states;
 	};
+	AnimationFSMBlueprint make_animation_fsm_blueprint(AnimationFSMBlueprint&& val);
 
 	/// AnimationFSM actually have only one state
 	/// It would be better if it was an actor, instead of FSM

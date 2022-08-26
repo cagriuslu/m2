@@ -63,7 +63,7 @@ namespace m2g {
         IMPL_SPRITE_N
     };
 
-    extern const m2::SpriteBlueprint sprites[];
+	extern const std::vector<m2::SpriteBlueprint> sprites;
 	extern const unsigned editor_sprite_count;
     extern const unsigned sprite_count;
 	m2::VoidValue fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, m2::GroupID gid, m2::Vec2f position);

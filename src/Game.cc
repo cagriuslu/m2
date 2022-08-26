@@ -322,11 +322,3 @@ void m2::Game::execute_deferred_actions() {
 	}
 	level->deferred_actions.clear();
 }
-
-void m2::Game::dynamic_assert() {
-    for (m2::SpriteIndex i = 0; i < m2g::sprite_count; i++) {
-        if (m2g::sprites[i].index != i) {
-            throw M2FATAL("Dynamic assert");
-        }
-    }
-}

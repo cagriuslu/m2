@@ -1,4 +1,15 @@
 #include <m2/fsm/AnimationFSM.h>
+#include <m2/Exception.h>
+
+m2::fsm::AnimationFSMBlueprint m2::fsm::make_animation_fsm_blueprint(AnimationFSMBlueprint&& val) {
+	// Assert that state indexes are zero indexed
+	for (unsigned i = 0; i < val.states.size(); ++i) {
+		if (val.states[i].state != i) {
+			throw M2FATAL("State indexes are not zero indexed");
+		}
+	}
+	return std::move(val);
+}
 
 m2::fsm::AnimationFSMData::AnimationFSMData(const AnimationFSMBlueprint* blueprint, GraphicID gfx_id) : blueprint(blueprint), gfx_id(gfx_id), state_sprite_idx(0,0) {}
 

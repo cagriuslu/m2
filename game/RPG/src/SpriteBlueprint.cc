@@ -2,7 +2,7 @@
 #include <rpg/object/Enemy.h>
 #include <rpg/object/Player.h>
 
-const m2::SpriteBlueprint m2g::sprites[]{
+const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints({
 	{
 		.index = IMPL_SPRITE_NONE
 	},
@@ -279,7 +279,7 @@ const m2::SpriteBlueprint m2g::sprites[]{
 		.index = IMPL_SPRITE_FLOPPY_DISK,
 		.texture_rect = {144, 144, 48, 48}
 	}
-};
+});
 
 const unsigned m2g::editor_sprite_count = IMPL_EDITOR_SPRITE_N;
 const unsigned m2g::sprite_count = IMPL_SPRITE_N;

@@ -3,6 +3,7 @@
 
 #include "Vec2f.h"
 #include <SDL.h>
+#include <vector>
 #include <variant>
 #include <cstdint>
 
@@ -24,6 +25,7 @@ namespace m2 {
 
 	using SpriteIndex = uint32_t;
 
+	// Do not create the sprite blueprints directly, use make_sprite_blueprints
     struct SpriteBlueprint {
         SpriteIndex index{};
         SDL_Rect texture_rect{};
@@ -31,6 +33,7 @@ namespace m2 {
         Vec2f obj_center_m;
         ColliderBlueprint collider;
     };
+	std::vector<SpriteBlueprint> make_sprite_blueprints(std::vector<SpriteBlueprint>&& val);
 }
 
 #endif //M2_SPRITEBLUEPRINT_H
