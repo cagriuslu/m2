@@ -110,25 +110,54 @@ const chr::CharacterBlueprint chr::character_player = {
 		.default_melee_weapon = &melee_weapon_bat,
 		.default_ranged_weapon = &ranged_weapon_gun,
 		.dash_cooldown_s = 2.0f,
-		.sprite_indexes = {
-				m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_00, // CFG_CHARTEXTURETYP_LOOKDOWN_00
-				m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_01, // CFG_CHARTEXTURETYP_LOOKDOWN_01
-				m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_02, // CFG_CHARTEXTURETYP_LOOKDOWN_02
-				m2g::IMPL_SPRITE_PLAYER_LOOKLEFT_00, // CFG_CHARTEXTURETYP_LOOKLEFT_00
-				m2g::IMPL_SPRITE_PLAYER_LOOKLEFT_01, // CFG_CHARTEXTURETYP_LOOKLEFT_01
-				m2g::IMPL_SPRITE_PLAYER_LOOKLEFT_02, // CFG_CHARTEXTURETYP_LOOKLEFT_02
-				m2g::IMPL_SPRITE_PLAYER_LOOKRIGHT_00, // CFG_CHARTEXTURETYP_LOOKRIGHT_00
-				m2g::IMPL_SPRITE_PLAYER_LOOKRIGHT_01, // CFG_CHARTEXTURETYP_LOOKRIGHT_01
-				m2g::IMPL_SPRITE_PLAYER_LOOKRIGHT_02, // CFG_CHARTEXTURETYP_LOOKRIGHT_02
-				m2g::IMPL_SPRITE_PLAYER_LOOKUP_00, // CFG_CHARTEXTURETYP_LOOKUP_00
-				m2g::IMPL_SPRITE_PLAYER_LOOKUP_01, // CFG_CHARTEXTURETYP_LOOKUP_01
-				m2g::IMPL_SPRITE_PLAYER_LOOKUP_02, // CFG_CHARTEXTURETYP_LOOKUP_02
-		},
 		.animation_fsm_blueprint = &player_animation_fsm_blueprint
 };
 
-
-
+const m2::fsm::AnimationFSMBlueprint skeleton000_animation_fsm_blueprint = m2::fsm::make_animation_fsm_blueprint({
+		.frames_per_second = 10,
+		.states = {
+				m2::fsm::AnimationFSMBlueprint::State{
+						.state = chr::CHARANIMSTATE_STOP,
+						.sprites = {m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00}
+				},
+				m2::fsm::AnimationFSMBlueprint::State{
+						.state = chr::CHARANIMSTATE_WALKDOWN,
+						.sprites = {
+								m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_01,
+								m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_02
+						}
+				},
+				m2::fsm::AnimationFSMBlueprint::State{
+						.state = chr::CHARANIMSTATE_WALKRIGHT,
+						.sprites = {
+								m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_01,
+								m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_02
+						}
+				},
+				m2::fsm::AnimationFSMBlueprint::State{
+						.state = chr::CHARANIMSTATE_WALKUP,
+						.sprites = {
+								m2g::IMPL_SPRITE_ENEMY_LOOKUP_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKUP_01,
+								m2g::IMPL_SPRITE_ENEMY_LOOKUP_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKUP_02
+						}
+				},
+				m2::fsm::AnimationFSMBlueprint::State{
+						.state = chr::CHARANIMSTATE_WALKLEFT,
+						.sprites = {
+								m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_01,
+								m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_00,
+								m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_02
+						}
+				}
+		}
+});
 const chr::CharacterBlueprint chr::character_skeleton_000_chase = {
 		.main_sprite_index = m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00,
 		.mass_kg = 10.0f,
@@ -139,19 +168,6 @@ const chr::CharacterBlueprint chr::character_skeleton_000_chase = {
 		.default_melee_weapon = &melee_weapon_sword,
 		.default_ranged_weapon = nullptr,
 		.stun_ttl_s = 2.0f,
-		.sprite_indexes = {
-				m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00, // CFG_CHARTEXTURETYP_LOOKDOWN_00
-				m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_01, // CFG_CHARTEXTURETYP_LOOKDOWN_01
-				m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_02, // CFG_CHARTEXTURETYP_LOOKDOWN_02
-				m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_00, // CFG_CHARTEXTURETYP_LOOKLEFT_00
-				m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_01, // CFG_CHARTEXTURETYP_LOOKLEFT_01
-				m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_02, // CFG_CHARTEXTURETYP_LOOKLEFT_02
-				m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_00, // CFG_CHARTEXTURETYP_LOOKRIGHT_00
-				m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_01, // CFG_CHARTEXTURETYP_LOOKRIGHT_01
-				m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_02, // CFG_CHARTEXTURETYP_LOOKRIGHT_02
-				m2g::IMPL_SPRITE_ENEMY_LOOKUP_00, // CFG_CHARTEXTURETYP_LOOKUP_00
-				m2g::IMPL_SPRITE_ENEMY_LOOKUP_01, // CFG_CHARTEXTURETYP_LOOKUP_01
-				m2g::IMPL_SPRITE_ENEMY_LOOKUP_02, // CFG_CHARTEXTURETYP_LOOKUP_02
-		},
-		.aiBlueprint = &ai::chase_000
+		.animation_fsm_blueprint = &skeleton000_animation_fsm_blueprint,
+		.aiBlueprint = &ai::chase_000,
 };

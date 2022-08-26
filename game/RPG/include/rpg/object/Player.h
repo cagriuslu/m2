@@ -4,7 +4,6 @@
 #include "m2/Object.h"
 #include <m2/fsm/AnimationFSM.h>
 #include "rpg/Character.h"
-#include "rpg/fsm/CharacterAnimation.h"
 #include <rpg/ConsumableBlueprint.h>
 #include <vector>
 #include <m2/Value.h>
