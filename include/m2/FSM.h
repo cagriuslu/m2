@@ -17,13 +17,21 @@ namespace m2 {
         FSMSIG_N
     };
 
-    template <typename Data>
-    struct FSM {
-        using State = void* (*)(FSM<Data>& automaton, unsigned sig);
+	using FSMStateHandler = void*;
 
+    template <typename Data>
+    class FSM {
+	public:
+		using StateHandler = FSMStateHandler (*)(FSM<Data>& automaton, unsigned sig);
+
+	private:
+		StateHandler current_state;
+		float alarm;
+
+	public:
         Data data;
 
-        explicit FSM(Data&& data) : data(data), current_state(Data::initial_state), alarm(NAN) {
+        explicit FSM(Data&& data) : current_state(Data::initial_state), alarm(NAN), data(data) {
             signal(FSMSIG_ENTER);
         }
 
@@ -37,7 +45,7 @@ namespace m2 {
             auto next_state = (*current_state)(*this, sig);
             if (next_state) {
 				(*current_state)(*this, FSMSIG_EXIT); // Ignore return value
-                current_state = reinterpret_cast<State>(next_state);
+                current_state = reinterpret_cast<StateHandler>(next_state);
                 signal(FSMSIG_ENTER);
             }
         }
@@ -50,10 +58,6 @@ namespace m2 {
                 }
             }
         }
-
-    private:
-        State current_state;
-        float alarm;
     };
 }
 

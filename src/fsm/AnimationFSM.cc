@@ -2,7 +2,7 @@
 
 m2::fsm::AnimationFSMData::AnimationFSMData(const AnimationFSMBlueprint* blueprint, GraphicID gfx_id) : blueprint(blueprint), gfx_id(gfx_id), state_sprite_idx(0,0) {}
 
-void* m2::fsm::AnimationFSMData::state_func(FSM<AnimationFSMData>& automaton, unsigned signal) {
+m2::FSMStateHandler m2::fsm::AnimationFSMData::state_func(FSM<AnimationFSMData>& automaton, unsigned signal) {
 	// Determine next sprite index
 	auto blueprint = automaton.data.blueprint;
 	auto curr_idx = automaton.data.state_sprite_idx;

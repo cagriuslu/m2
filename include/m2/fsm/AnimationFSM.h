@@ -20,9 +20,6 @@ namespace m2::fsm {
 		std::vector<State> states;
 	};
 
-	// Forward declaration
-	class AnimationFSM;
-
 	/// AnimationFSM actually have only one state
 	/// It would be better if it was an actor, instead of FSM
 	class AnimationFSMData {
@@ -35,12 +32,11 @@ namespace m2::fsm {
 		AnimationFSMData(const AnimationFSMBlueprint* blueprint, GraphicID gfx_id);
 
 		// States
-		static void* state_func(FSM<AnimationFSMData>& automaton, unsigned signal);
-
+		static FSMStateHandler state_func(FSM<AnimationFSMData>& automaton, unsigned signal);
 		static constexpr auto initial_state = &state_func;
 
 		friend class AnimationFSM;
-		friend struct FSM<AnimationFSMData>;
+		friend class FSM<AnimationFSMData>;
 	};
 
 	class AnimationFSM : private FSM<AnimationFSMData> {
