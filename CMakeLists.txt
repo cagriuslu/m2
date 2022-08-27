@@ -10,7 +10,7 @@ project(m2)
 find_package(Protobuf REQUIRED)
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS pb/GroupBlueprint.proto pb/LevelBlueprint.proto pb/Rect2i.proto pb/TileBlueprint.proto)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS pb/GroupBlueprint.proto pb/LevelBlueprint.proto pb/Rect2i.proto pb/TileBlueprint.proto pb/Vec2f.proto)
 
 add_subdirectory(game)
 add_subdirectory(lib)
