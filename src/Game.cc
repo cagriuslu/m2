@@ -2,11 +2,13 @@
 #include <m2/Log.h>
 #include <m2/Exception.h>
 #include <m2/Object.h>
-#include <m2/LevelBlueprint.h>
 #include <m2/object/God.h>
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
+#include <m2/String.h>
+#include <m2/Proto.h>
+#include <LevelBlueprint.pb.h>
 #include "m2/Component.h"
 #include <m2g/SpriteBlueprint.h>
 #include <m2/VSON.hh>
@@ -26,14 +28,12 @@ m2::Game GAME = {
 	.positionIterations = 3
 };
 
-m2::Level::Level(MAYBE const m2::LevelBlueprint *blueprint) : type(Type::GAME) {
+m2::Level::Level() : type(Type::GAME) {
 	// TODO
 }
 
-m2::Level::Level(const std::filesystem::path &path) : type(Type::EDITOR), editor_file_path(path),
-	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0), editor_grid_lines(false) {
-
-}
+m2::Level::Level(const std::string& path) : type(Type::EDITOR), editor_file_path(path),
+	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0), editor_grid_lines(false) {}
 
 m2::Game::~Game() {
     // Get rid of lvl
@@ -45,32 +45,32 @@ m2::Game::~Game() {
     // TODO deinit others
 }
 
-m2::VoidValue m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
+m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
+	auto lb = proto::json_file_to_message<model::LevelBlueprint>(level_resource_path);
+	m2_reflect_failure(lb);
+	
 	if (level) {
 		unload_level();
 	}
-	level = Level{blueprint};
+	level = Level{};
 
 	// Reset state
 	events.clear();
 	is_phy_stepping = false;
-	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
-		throw M2FATAL("Box2D version mismatch");
-	}
 	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
 	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 
 	// Load objects
-	for (unsigned y = 0; y < blueprint->h; y++) {
-		for (unsigned x = 0; x < blueprint->w; x++) {
-			const m2::TileBlueprint* tile = blueprint->tiles + y * blueprint->w + x;
-			if (tile->bg_sprite_index) {
-				m2::obj::create_tile(m2::Vec2f{x, y}, tile->bg_sprite_index);
+	for (unsigned y = 0; y < lb->height(); y++) {
+		for (unsigned x = 0; x < lb->width(); x++) {
+			auto tb = lb->tiles(y * lb->width() + x);
+			if (tb.bg_sprite_index()) {
+				m2::obj::create_tile(m2::Vec2f{x, y}, tb.bg_sprite_index());
 			}
-			if (tile->fg_sprite_index) {
+			if (tb.fg_sprite_index()) {
 				auto& obj = GAME.objects.alloc().first;
-				auto load_result = m2g::fg_sprite_loader(obj, tile->fg_sprite_index, tile->fg_object_group, m2::Vec2f{x, y});
+				auto load_result = m2g::fg_sprite_loader(obj, tb.fg_sprite_index(), tb.fg_object_group(), m2::Vec2f{x, y});
 				if (!load_result) {
 					return failure(load_result.error());
 				}
@@ -95,92 +95,30 @@ m2::VoidValue m2::Game::load_level(const m2::LevelBlueprint *blueprint) {
 	return {};
 }
 
-namespace {
-	struct LevelFromVson {
-		unsigned width{0};
-		struct Tile {
-			std::optional<m2::SpriteIndex> bg_sprite_index;
-			std::optional<m2::SpriteIndex> fg_sprite_index;
-			std::optional<m2::GroupID> fg_object_group;
-		};
-		std::vector<Tile> tiles;
-	};
-
-	m2::Value<LevelFromVson> validate_level_vson(const std::filesystem::path& path) {
-		namespace fs = std::filesystem;
-		auto typ = fs::status(path).type();
-		if (typ != fs::file_type::not_found && typ != fs::file_type::regular) {
-			return m2::failure("Path is not a regular file");
-		}
-		// If the file does not exist
-		if (typ == fs::file_type::not_found) {
-			return {};
-		}
-		auto vson = m2::VSON::parse_file(path.string());
-		m2_fail_unless(vson, "Unable to parse VSON");
-
-		LevelFromVson level{};
-		auto width = vson->query_long_value("width");
-		auto height = vson->query_long_value("height");
-		const auto* tiles = vson->at("tiles");
-		m2_fail_unless(width && height && tiles, "width, height, or tiles not found");
-		level.width = *width;
-
-		for (long y = 0; y < *height; ++y) {
-			for (long x = 0; x < *width; ++x) {
-				const auto* tile_vson = tiles->at(y * (*width) + x);
-				m2_fail_unless(tile_vson, "Tile not found");
-
-				LevelFromVson::Tile tile{};
-				// Background tile
-				exec_if<long>(tile_vson->query_long_value("bg"), [&](long& bg) {
-					tile.bg_sprite_index = bg;
-				});
-				// Foreground object
-				auto fg = tile_vson->query_long_value("fg");
-				if (fg) {
-					tile.fg_sprite_index = *fg;
-					auto fg_group = tile_vson->at("fg_group");
-					if (fg_group) {
-						auto type = fg_group->query_long_value("type");
-						auto inst = fg_group->query_long_value("inst");
-						m2_fail_unless(type && inst, "Incorrect type or inst in fg_group");
-						tile.fg_object_group = m2::GroupID{static_cast<m2::GroupTypeID>(*type), static_cast<m2::GroupInstanceID>(*inst)};
-					}
-				}
-				level.tiles.push_back(tile);
-			}
-		}
-		return level;
-	}
-}
-
-m2::VoidValue m2::Game::load_editor(const std::filesystem::path& path) {
-	auto validate_result = validate_level_vson(path);
-	m2_reflect_failure(validate_result);
+m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
+	auto lb = proto::json_file_to_message<model::LevelBlueprint>(level_resource_path);
+	m2_reflect_failure(lb);
 
 	if (level) {
 		unload_level();
 	}
-	level = Level{path};
+	level = Level{level_resource_path};
 
 	// Reset state
 	events.clear();
 	is_phy_stepping = false;
 
-	if (not validate_result->tiles.empty()) {
-		for (unsigned y = 0; y < validate_result->tiles.size() / validate_result->width; ++y) {
-			for (unsigned x = 0; x < validate_result->width; ++x) {
-				const auto& tile = validate_result->tiles[y * (validate_result->width) + x];
-				if (tile.bg_sprite_index) {
-					// Create background tile
-					m2::obj::create_tile(m2::Vec2f{x, y}, *tile.bg_sprite_index);
-				}
-				if (tile.fg_sprite_index) {
-					// Create object
-					auto& obj = GAME.objects.alloc().first;
-					m2_reflect_failure(m2g::fg_sprite_loader(obj, *tile.fg_sprite_index, (tile.fg_object_group ? *tile.fg_object_group : GroupID{}), m2::Vec2f{x, y}));
-				}
+	for (unsigned y = 0; y < lb->height(); ++y) {
+		for (unsigned x = 0; x < lb->width(); ++x) {
+			auto tb = lb->tiles(y * lb->width() + x);
+			if (tb.bg_sprite_index()) {
+				// Create background tile
+				m2::obj::create_tile(m2::Vec2f{x, y}, tb.bg_sprite_index());
+			}
+			if (tb.fg_sprite_index()) {
+				// Create object
+				auto& obj = GAME.objects.alloc().first;
+				m2_reflect_failure(m2g::fg_sprite_loader(obj, tb.fg_sprite_index(), tb.fg_object_group(), m2::Vec2f{x, y}));
 			}
 		}
 	}

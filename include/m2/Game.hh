@@ -2,12 +2,12 @@
 #define GAME_H
 
 #include "Group.h"
+#include <GroupBlueprint.pb.h>
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
 #include "m2/Events.h"
 #include "DrawList.h"
 #include <m2/Object.h>
-#include <m2/LevelBlueprint.h>
 #include "Pathfinder.hh"
 #include "ui/UI.h"
 #include "component/Monitor.h"
@@ -37,10 +37,10 @@ namespace m2 {
 		} type;
 
 		std::vector<std::function<void(void)>> deferred_actions;
-		explicit Level(const LevelBlueprint* blueprint);
+		explicit Level();
 
 		// Editor
-		std::optional<std::filesystem::path> editor_file_path;
+		std::optional<std::string> editor_file_path;
 		enum class EditorMode {
 			NONE,
 			DRAW
@@ -48,7 +48,7 @@ namespace m2 {
 		SpriteIndex editor_draw_sprite_index;
 		ID editor_draw_ghost_id;
 		bool editor_grid_lines;
-		explicit Level(const std::filesystem::path& path);
+		explicit Level(const std::string& path);
 	};
 
 	struct Game {
@@ -123,8 +123,8 @@ namespace m2 {
 		~Game();
 
 		// Level management
-		VoidValue load_level(const m2::LevelBlueprint* blueprint);
-		VoidValue load_editor(const std::filesystem::path& path);
+		VoidValue load_level(const std::string& level_resource_path);
+		VoidValue load_editor(const std::string& level_resource_path);
 		void unload_level();
 
 		// Accessors

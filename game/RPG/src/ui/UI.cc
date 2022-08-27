@@ -28,7 +28,7 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::ImageBluep
 static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBlueprint{
 	.initial_text = "NEW GAME",
 	.action_callback = []() {
-		GAME.load_level(&lvl::sp_000);
+		GAME.load_level("resource/game/RPG/levels/sp000.json");
 		return Action::RETURN;
 	},
 	.kb_shortcut = SDL_SCANCODE_N

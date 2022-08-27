@@ -2,6 +2,7 @@
 #define M2_GROUP_H
 
 #include "Pool.hh"
+#include <GroupBlueprint.pb.h>
 #include <unordered_map>
 
 namespace m2 {
@@ -16,6 +17,7 @@ namespace m2 {
 
 		GroupID() = default;
 		GroupID(GroupTypeID _type, GroupInstanceID _instance);
+		GroupID(const model::GroupBlueprint& group_blueprint);
 		bool operator==(const GroupID& other) const;
 	};
 	struct GroupIDHasher

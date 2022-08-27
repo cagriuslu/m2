@@ -58,7 +58,7 @@ m2::Value<std::list<m2::Vec2i>> PathfinderMap_FindPath(PathfinderMap* pm, m2::Ve
         outReverseListOfVec2Is.push_back(toI);
 		// Add `from` to list, if it is different than `to`
 		if (fromI == toI) {
-			return m2::failure(C("Path not find"));
+			return m2::failure("Path not find");
 		} else {
             outReverseListOfVec2Is.push_back(fromI);
 			return outReverseListOfVec2Is;
@@ -71,7 +71,7 @@ m2::Value<std::list<m2::Vec2i>> PathfinderMap_FindPath(PathfinderMap* pm, m2::Ve
 				return any_angle_grid_steps;
 			}
 		}
-		return m2::failure(C("Path not found"));
+		return m2::failure("Path not found");
 	}
 }
 

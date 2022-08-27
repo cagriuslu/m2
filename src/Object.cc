@@ -7,7 +7,7 @@
 
 m2::Object::Object(const m2::Vec2f &position) :
 	position(position),
-	_group_id({}),
+	_group_id(),
 	_group_index(0),
 	_monitor_id(0),
 	_physique_id(0),
@@ -134,13 +134,14 @@ m2g::comp::Offense& m2::Object::offense() const {
 	return GAME.offenses[_offense_id];
 }
 
-void m2::Object::add_to_group(GroupID gid, const std::function<std::unique_ptr<Group>()>& group_initializer) {
-	auto it = GAME.groups.find(gid);
+void m2::Object::add_to_group(const model::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer) {
+	auto group_id = GroupID{group};
+	auto it = GAME.groups.find(group_id);
 	if (it == GAME.groups.end()) {
-		it = GAME.groups.insert({gid, std::move(group_initializer())}).first;
+		it = GAME.groups.insert({group_id, group_initializer()}).first;
 	}
 	_group_index = it->second->add_member(GAME.objects.get_id(this));
-	_group_id = gid;
+	_group_id = group_id;
 }
 m2::comp::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();

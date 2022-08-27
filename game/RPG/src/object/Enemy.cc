@@ -42,12 +42,12 @@ void Enemy::stun() {
 	character_state.stun();
 }
 
-m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::GroupID group_id, m2::Vec2f pos) {
+m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, const m2::model::GroupBlueprint& group, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
-	if (group_id.type) {
-		obj.add_to_group(group_id, [=]() -> std::unique_ptr<m2::Group> {
-			switch (group_id.type) {
+	if (group.type()) {
+		obj.add_to_group(group, [=]() -> std::unique_ptr<m2::Group> {
+			switch (group.type()) {
 				case lvl::CONSUMABLE_RESOURCE_GROUP_HP:
 					return std::make_unique<ConsumableResourceGroup>(ConsumableResourceGroup{{&itm::health_drop_20}});
 				default:

@@ -6,6 +6,12 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
 
 project(m2)
 
+# Protobuf
+find_package(Protobuf REQUIRED)
+include_directories(${Protobuf_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS model/GroupBlueprint.proto model/LevelBlueprint.proto model/TileBlueprint.proto)
+
 add_subdirectory(game)
 add_subdirectory(lib)
 
@@ -26,12 +32,12 @@ file(GLOB M2_SOURCES
         "src/*.h"   "src/*.cc"
         "src/*/*.h" "src/*/*.cc"
         "src/*/*/*.h" "src/*/*/*.cc")
-add_executable(m2 WIN32 ${M2_SOURCES} ${IMPL_SOURCES})
+add_executable(m2 WIN32 ${M2_SOURCES} ${IMPL_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
 target_include_directories(m2 PUBLIC include ${IMPL_INCLUDE_DIRS})
 if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_include_directories(m2 PUBLIC /usr/local/include/box2d /usr/local/include/SDL2)
     target_link_directories(m2 PUBLIC /usr/local/lib)
-    target_link_libraries(m2 box2d SDL2_image SDL2_ttf SDL2 m)
+    target_link_libraries(m2 box2d SDL2_image SDL2_ttf SDL2 ${Protobuf_LIBRARIES} m)
 elseif(WIN32)
     target_link_libraries(m2 debug     box2d-debug SDL_gpu-debug)
     target_link_libraries(m2 optimized box2d       SDL_gpu)

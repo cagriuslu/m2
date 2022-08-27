@@ -2,6 +2,8 @@
 
 m2::GroupID::GroupID(m2::GroupTypeID _type, m2::GroupInstanceID _instance) : type(_type), instance(_instance) {}
 
+m2::GroupID::GroupID(const model::GroupBlueprint& gb) : GroupID(gb.type(), gb.instance()) {}
+
 bool m2::GroupID::operator==(const GroupID &other) const {
 	return (type == other.type) && (instance == other.instance);
 }

@@ -6,6 +6,7 @@
 #include "ObjectImpl.h"
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
+#include <GroupBlueprint.pb.h>
 #include "m2/Component.h"
 #include "m2/FSM.h"
 #include "m2/Vec2f.h"
@@ -65,7 +66,7 @@ namespace m2 {
         [[nodiscard]] m2g::comp::Defense& defense() const;
         [[nodiscard]] m2g::comp::Offense& offense() const;
 
-		void add_to_group(GroupID gid, const std::function<std::unique_ptr<Group>()>& group_initializer);
+		void add_to_group(const model::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer);
 		comp::Monitor& add_monitor();
         comp::Physique& add_physique();
         comp::Graphic& add_graphic();

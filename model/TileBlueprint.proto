@@ -1,0 +1,10 @@
+syntax = "proto3";
+package m2.model;
+
+import "GroupBlueprint.proto";
+
+message TileBlueprint {
+  uint32 bg_sprite_index = 1;
+  uint32 fg_sprite_index = 2;
+  GroupBlueprint fg_object_group = 3;
+}
