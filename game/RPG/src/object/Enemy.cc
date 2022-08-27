@@ -42,7 +42,7 @@ void Enemy::stun() {
 	character_state.stun();
 }
 
-m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, const m2::model::GroupBlueprint& group, m2::Vec2f pos) {
+m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, const m2::pb::GroupBlueprint& group, m2::Vec2f pos) {
 	obj = m2::Object{pos};
 
 	if (group.type()) {

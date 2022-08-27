@@ -1,5 +1,5 @@
 syntax = "proto3";
-package m2.model;
+package m2.pb;
 
 message GroupBlueprint {
   uint32 type = 1;

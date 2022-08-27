@@ -284,7 +284,7 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 const unsigned m2g::editor_sprite_count = IMPL_EDITOR_SPRITE_N;
 const unsigned m2g::sprite_count = IMPL_SPRITE_N;
 
-m2::VoidValue m2g::fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, const m2::model::GroupBlueprint& group, m2::Vec2f position) {
+m2::VoidValue m2g::fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, const m2::pb::GroupBlueprint& group, m2::Vec2f position) {
 	using namespace obj;
 	switch (index) {
 		case IMPL_SPRITE_PLAYER_LOOKDOWN_00:

@@ -46,9 +46,9 @@ m2::Game::~Game() {
 }
 
 m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
-	auto lb = proto::json_file_to_message<model::LevelBlueprint>(level_resource_path);
+	auto lb = proto::json_file_to_message<pb::LevelBlueprint>(level_resource_path);
 	m2_reflect_failure(lb);
-	
+
 	if (level) {
 		unload_level();
 	}
@@ -96,7 +96,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 }
 
 m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
-	auto lb = proto::json_file_to_message<model::LevelBlueprint>(level_resource_path);
+	auto lb = proto::json_file_to_message<pb::LevelBlueprint>(level_resource_path);
 	m2_reflect_failure(lb);
 
 	if (level) {

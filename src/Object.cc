@@ -134,7 +134,7 @@ m2g::comp::Offense& m2::Object::offense() const {
 	return GAME.offenses[_offense_id];
 }
 
-void m2::Object::add_to_group(const model::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer) {
+void m2::Object::add_to_group(const pb::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer) {
 	auto group_id = GroupID{group};
 	auto it = GAME.groups.find(group_id);
 	if (it == GAME.groups.end()) {

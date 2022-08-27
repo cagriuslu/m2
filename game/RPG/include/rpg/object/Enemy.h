@@ -27,7 +27,7 @@ namespace obj {
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
 		void stun();
 
-        static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, const m2::model::GroupBlueprint& group, m2::Vec2f pos);
+        static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, const m2::pb::GroupBlueprint& group, m2::Vec2f pos);
     };
 }
 

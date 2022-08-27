@@ -66,7 +66,7 @@ namespace m2 {
         [[nodiscard]] m2g::comp::Defense& defense() const;
         [[nodiscard]] m2g::comp::Offense& offense() const;
 
-		void add_to_group(const model::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer);
+		void add_to_group(const pb::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer);
 		comp::Monitor& add_monitor();
         comp::Physique& add_physique();
         comp::Graphic& add_graphic();

@@ -17,7 +17,7 @@ namespace m2 {
 
 		GroupID() = default;
 		GroupID(GroupTypeID _type, GroupInstanceID _instance);
-		GroupID(const model::GroupBlueprint& group_blueprint);
+		GroupID(const pb::GroupBlueprint& group_blueprint);
 		bool operator==(const GroupID& other) const;
 	};
 	struct GroupIDHasher
