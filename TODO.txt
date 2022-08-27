@@ -1,0 +1,2 @@
+- Convert all blueprints to protobuf backed json messages
+- Modernize group logic
