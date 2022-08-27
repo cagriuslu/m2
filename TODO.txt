@@ -1,2 +1,3 @@
 - Convert all blueprints to protobuf backed json messages
 - Modernize group logic
+- Can we modernize character logic, item logic, walking logic, walking + animation logic
