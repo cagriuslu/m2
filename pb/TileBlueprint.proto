@@ -4,7 +4,9 @@ package m2.pb;
 import "GroupBlueprint.proto";
 
 message TileBlueprint {
-  uint32 bg_sprite_index = 1;
-  uint32 fg_sprite_index = 2;
-  GroupBlueprint fg_object_group = 3;
+  uint32 bg_sprite_index = 1; // Will be removed
+  uint32 fg_sprite_index = 2; // Will be removed
+  string bg_sprite_key = 3;
+  string fg_sprite_key = 4;
+  GroupBlueprint fg_object_group = 5;
 }

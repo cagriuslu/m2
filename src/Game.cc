@@ -8,6 +8,7 @@
 #include <m2/object/Tile.h>
 #include <m2/String.h>
 #include <m2/Proto.h>
+#include <m2/Sprite.h>
 #include <LevelBlueprint.pb.h>
 #include "m2/Component.h"
 #include <m2g/SpriteBlueprint.h>
@@ -18,17 +19,72 @@
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <m2g/SpriteBlueprint.h>
+#include <m2/SDLUtils.hh>
+#include <SDL_image.h>
 #include <m2/ui/Editor.h>
 #include <m2/ui/UI.h>
 
-m2::Game GAME;
+m2::Game* g_game;
 
-m2::Level::Level() : type(Type::GAME) {
+m2::Level::Level() : type(Type::SINGLE_PLAYER) {
 	// TODO
 }
 
 m2::Level::Level(const std::string& path) : type(Type::EDITOR), editor_file_path(path),
 	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0), editor_grid_lines(false) {}
+
+m2::Game::Game() {
+	update_window_dims(1600, 900); // Store default window dimensions in GAME
+	if ((sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowRect.w, windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
+		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+	}
+	SDL_SetWindowMinimumSize(sdlWindow, 712, 400);
+	SDL_StopTextInput(); // Text input begins activated (sometimes)
+	sdlCursor = SDLUtils_CreateCursor();
+	SDL_SetCursor(sdlCursor);
+	if ((pixelFormat = SDL_GetWindowPixelFormat(sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
+		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+	}
+	if ((sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == nullptr) { // SDL_RENDERER_PRESENTVSYNC
+		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+	}
+	SDL_Surface* textureMapSurface = IMG_Load(m2g::texture_map_file.data());
+	if (not textureMapSurface) {
+		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
+	}
+	if ((sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, textureMapSurface)) == nullptr) {
+		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+	}
+	//SDL_SetTextureColorMod(sdlTexture, 127, 127, 127); Temporarily disabled, because lighting is disabled
+	SDL_FreeSurface(textureMapSurface);
+	SDL_Surface* textureMaskSurface = IMG_Load(m2g::texture_mask_file.data());
+	if (textureMaskSurface == nullptr) {
+		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
+	}
+	if ((sdlTextureMask = SDL_CreateTextureFromSurface(sdlRenderer, textureMaskSurface)) == nullptr) {
+		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+	}
+	SDL_FreeSurface(textureMaskSurface);
+	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
+	if (lightSurface == nullptr) {
+		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
+	}
+	if ((sdlLightTexture = SDL_CreateTextureFromSurface(sdlRenderer, lightSurface)) == nullptr) {
+		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+	}
+	SDL_FreeSurface(lightSurface);
+	SDL_SetTextureBlendMode(sdlLightTexture, SDL_BLENDMODE_MUL);
+	SDL_SetTextureAlphaMod(sdlLightTexture, 0);
+	SDL_SetTextureColorMod(sdlLightTexture, 127, 127, 127);
+	if ((ttfFont = TTF_OpenFont("resource/fonts/perfect_dos_vga_437/Perfect DOS VGA 437.ttf", 32)) == nullptr) {
+		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
+	}
+
+	// Temporarily disabled
+	//auto [sprite_sheets_tmp, sprites_tmp] = load_sheets_and_sprites(std::string{m2g::sprite_sheets}, sdlRenderer);
+	//sprite_sheets = std::move(sprite_sheets_tmp);
+	//sprites = std::move(sprites_tmp);
+}
 
 m2::Game::~Game() {
     // Get rid of lvl
@@ -38,6 +94,10 @@ m2::Game::~Game() {
     delete world;
     world = nullptr;
     // TODO deinit others
+
+	SDL_DestroyRenderer(sdlRenderer);
+	SDL_FreeCursor(sdlCursor);
+	SDL_DestroyWindow(sdlWindow);
 }
 
 m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {

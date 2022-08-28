@@ -35,7 +35,7 @@
 namespace m2 {
 	struct Level {
 		enum class Type {
-			GAME,
+			SINGLE_PLAYER,
 			EDITOR
 		} type;
 
@@ -84,8 +84,8 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		const std::unordered_map<std::string, pb::SpriteSheet> sprite_sheets{sprite::load_sprite_sheets(std::string{m2g::sprite_sheets})};
-		const std::unordered_map<std::string, pb::Sprite> sprites{sprite::load_sprites(std::string{m2g::sprite_sheets})};
+		Sheets sprite_sheets;
+		Sprites sprites;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////
@@ -129,7 +129,7 @@ namespace m2 {
 		Vec2f mousePositionWRTScreenCenter_m;
         std::vector<std::string> console_output;
 
-		Game() = default;
+		Game();
 		~Game();
 
 		// Level management
@@ -149,6 +149,7 @@ namespace m2 {
 	};
 }
 
-extern m2::Game GAME;
+extern m2::Game* g_game;
+#define GAME (*g_game)
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef M2_VEC2F_H
 #define M2_VEC2F_H
 
+#include <Vec2f.pb.h>
 #include <b2_math.h>
 #include <string>
 #include <array>
@@ -17,6 +18,7 @@ namespace m2 {
 		Vec2f(unsigned x, unsigned y);
 		explicit Vec2f(const Vec2i& v);
 		explicit Vec2f(const b2Vec2& v);
+		explicit Vec2f(const pb::Vec2f& v);
 
 		Vec2f operator+(const Vec2f& rhs) const;
 		Vec2f operator+(const float& rhs) const;

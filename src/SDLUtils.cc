@@ -74,6 +74,10 @@ SDL_Rect m2::sdl::expand_rect(const SDL_Rect& rect, int diff) {
 	};
 }
 
+SDL_Rect m2::sdl::to_rect(const pb::Rect2i& pb_rect) {
+	return {pb_rect.x(), pb_rect.y(), pb_rect.w(), pb_rect.h()};
+}
+
 void m2::SdlTextureDeleter::operator()(SDL_Texture *t) {
 	SDL_DestroyTexture(t);
 }

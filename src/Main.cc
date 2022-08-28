@@ -55,6 +55,7 @@ int main(int argc, char **argv) {
 
 	ThreadPool tpool;
 
+	// Global initialization
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
 		LOG_FATAL("SDL error", SDL_GetError());
 		return -1;
@@ -67,61 +68,8 @@ int main(int argc, char **argv) {
 		LOG_FATAL("SDL error", TTF_GetError());
 		return -1;
 	}
-	GAME.update_window_dims(1600, 900); // Store default window dimensions in GAME
-	if ((GAME.sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, GAME.windowRect.w, GAME.windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
-		LOG_FATAL("SDL error", SDL_GetError());
-		return -1;
-	}
-	SDL_SetWindowMinimumSize(GAME.sdlWindow, 712, 400);
-	SDL_StopTextInput(); // Text input begins activated (sometimes)
-	GAME.sdlCursor = SDLUtils_CreateCursor();
-	SDL_SetCursor(GAME.sdlCursor);
-	if ((GAME.pixelFormat = SDL_GetWindowPixelFormat(GAME.sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
-		LOG_FATAL("SDL error", SDL_GetError());
-		return -1;
-	}
-	if ((GAME.sdlRenderer = SDL_CreateRenderer(GAME.sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == nullptr) { // SDL_RENDERER_PRESENTVSYNC
-		LOG_FATAL("SDL error", SDL_GetError());
-		return -1;
-	}
-	SDL_Surface* textureMapSurface = IMG_Load(m2g::texture_map_file.data());
-	if (not textureMapSurface) {
-		LOG_FATAL("SDL error", IMG_GetError());
-		return -1;
-	}
-	if ((GAME.sdlTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMapSurface)) == nullptr) {
-		LOG_FATAL("SDL error", SDL_GetError());
-		return -1;
-	}
-	//SDL_SetTextureColorMod(GAME.sdlTexture, 127, 127, 127); Temporarily disabled, because lighting is disabled
-	SDL_FreeSurface(textureMapSurface);
-	SDL_Surface* textureMaskSurface = IMG_Load(m2g::texture_mask_file.data());
-	if (textureMaskSurface == nullptr) {
-		LOG_FATAL("SDL error", IMG_GetError());
-		return -1;
-	}
-	if ((GAME.sdlTextureMask = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textureMaskSurface)) == nullptr) {
-		LOG_FATAL("SDL error", SDL_GetError());
-		return -1;
-	}
-	SDL_FreeSurface(textureMaskSurface);
-	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
-	if (lightSurface == nullptr) {
-		LOG_FATAL("SDL error", IMG_GetError());
-		return -1;
-	}
-	if ((GAME.sdlLightTexture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, lightSurface)) == nullptr) {
-		LOG_FATAL("SDL error", SDL_GetError());
-		return -1;
-	}
-	SDL_FreeSurface(lightSurface);
-	SDL_SetTextureBlendMode(GAME.sdlLightTexture, SDL_BLENDMODE_MUL);
-	SDL_SetTextureAlphaMod(GAME.sdlLightTexture, 0);
-	SDL_SetTextureColorMod(GAME.sdlLightTexture, 127, 127, 127);
-	if ((GAME.ttfFont = TTF_OpenFont("resource/fonts/perfect_dos_vga_437/Perfect DOS VGA 437.ttf", 32)) == nullptr) {
-		LOG_FATAL("SDL error", TTF_GetError());
-		return -1;
-	}
+	// Initialize game
+	g_game = new Game{};
 
 //	int audioDriverCount = SDL_GetNumAudioDrivers();
 //	fprintf(stderr, "SDL_GetNumAudioDrivers: %d\n", audioDriverCount);
@@ -354,9 +302,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	SDL_DestroyRenderer(GAME.sdlRenderer);
-	SDL_FreeCursor(GAME.sdlCursor);
-	SDL_DestroyWindow(GAME.sdlWindow);
+	delete g_game;
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
