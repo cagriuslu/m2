@@ -1,7 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <m2g/Proxy.h>
 #include "Group.h"
+#include "Sprite.h"
 #include <GroupBlueprint.pb.h>
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
@@ -19,6 +21,7 @@
 #include <SDL_ttf.h>
 #include <vector>
 #include <b2_world.h>
+#include <SpriteSheets.pb.h>
 #include <sstream>
 #include "Value.h"
 #include <unordered_map>
@@ -58,32 +61,38 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		SDL_Window *sdlWindow;
-		SDL_Cursor *sdlCursor;
-		SDL_Renderer *sdlRenderer;
-		SDL_Texture *sdlTexture;
-		SDL_Texture *sdlTextureMask;
-		SDL_Texture *sdlLightTexture;
-		uint32_t pixelFormat;
-		SDL_Rect windowRect;
-		SDL_Rect gameRect;
-		SDL_Rect gameAndHudRect;
-		SDL_Rect firstEnvelopeRect;
-		SDL_Rect secondEnvelopeRect;
-		SDL_Rect leftHudRect;
-		SDL_Rect rightHudRect;
-        SDL_Rect console_rect;
+		SDL_Window *sdlWindow{};
+		SDL_Cursor *sdlCursor{};
+		SDL_Renderer *sdlRenderer{};
+		SDL_Texture *sdlTexture{};
+		SDL_Texture *sdlTextureMask{};
+		SDL_Texture *sdlLightTexture{};
+		uint32_t pixelFormat{};
+		SDL_Rect windowRect{};
+		SDL_Rect gameRect{};
+		SDL_Rect gameAndHudRect{};
+		SDL_Rect firstEnvelopeRect{};
+		SDL_Rect secondEnvelopeRect{};
+		SDL_Rect leftHudRect{};
+		SDL_Rect rightHudRect{};
+        SDL_Rect console_rect{};
 		float tilesOnScreen{16.0f};
-		float pixelsPerMeter;
-		float scale;
-		TTF_Font *ttfFont;
+		float pixelsPerMeter{};
+		float scale{};
+		TTF_Font *ttfFont{};
+
+		////////////////////////////////////////////////////////////////////////
+		////////////////////////////// RESOURCES ///////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		const std::unordered_map<std::string, pb::SpriteSheet> sprite_sheets{sprite::load_sprite_sheets(std::string{m2g::sprite_sheets})};
+		const std::unordered_map<std::string, pb::Sprite> sprites{sprite::load_sprites(std::string{m2g::sprite_sheets})};
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		const float physicsStep_s;
-		const int velocityIterations;
-		const int positionIterations;
+		const float physicsStep_s{1.0f / 80.0f};
+		const int velocityIterations{8};
+		const int positionIterations{3};
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// LEVEL /////////////////////////////////
@@ -103,9 +112,9 @@ namespace m2 {
 		Pool<comp::Light> lights;
 		Pool<m2g::comp::Defense> defenses;
 		Pool<m2g::comp::Offense> offenses;
-		b2World *world;
-        box2d::ContactListener* contactListener;
-		ID cameraId, playerId, pointerId;
+		b2World *world{};
+        box2d::ContactListener* contactListener{};
+		ID cameraId{}, playerId{}, pointerId{};
 		PathfinderMap pathfinderMap;
         std::optional<ui::UIState> leftHudUIState, rightHudUIState;
 
@@ -113,13 +122,14 @@ namespace m2 {
 		///////////////////////////////// GAME /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		Events events;
-		unsigned deltaTicks_ms;
-		float deltaTime_s;
-		bool is_phy_stepping;
+		unsigned deltaTicks_ms{};
+		float deltaTime_s{};
+		bool is_phy_stepping{};
 		Vec2f mousePositionWRTGameWorld_m;
 		Vec2f mousePositionWRTScreenCenter_m;
         std::vector<std::string> console_output;
 
+		Game() = default;
 		~Game();
 
 		// Level management

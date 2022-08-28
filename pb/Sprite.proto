@@ -1,0 +1,15 @@
+syntax = "proto3";
+package m2.pb;
+
+import "Rect2i.proto";
+import "Vec2f.proto";
+import "Collider.proto";
+
+message Sprite {
+  string key = 1;
+  Rect2i rect = 2;
+  uint32 override_ppm = 3; // Pixels per meter
+  Vec2f center_offset_px = 4; // Offset from the center of the rect
+  Collider collider = 5;
+  bool in_editor_palette = 6;
+}

@@ -1,0 +1,7 @@
+syntax = "proto3";
+package m2.pb;
+
+message Dim2f {
+  float w = 1;
+  float h = 2;
+}

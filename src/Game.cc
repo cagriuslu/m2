@@ -21,12 +21,7 @@
 #include <m2/ui/Editor.h>
 #include <m2/ui/UI.h>
 
-// Initialize with default values
-m2::Game GAME = {
-	.physicsStep_s = 1.0f / 80.0f,
-	.velocityIterations = 8,
-	.positionIterations = 3
-};
+m2::Game GAME;
 
 m2::Level::Level() : type(Type::GAME) {
 	// TODO

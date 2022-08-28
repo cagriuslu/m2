@@ -1,0 +1,11 @@
+syntax = "proto3";
+package m2.pb;
+
+import "Sprite.proto";
+
+message SpriteSheet {
+  string key = 1;
+  string resource = 2;
+  uint32 ppm = 3; // Pixels per meter
+  repeated Sprite sprites = 4;
+}

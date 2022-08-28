@@ -1,0 +1,8 @@
+syntax = "proto3";
+package m2.pb;
+
+import "SpriteSheet.proto";
+
+message SpriteSheets {
+  repeated SpriteSheet sheets = 1;
+}

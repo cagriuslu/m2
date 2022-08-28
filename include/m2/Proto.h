@@ -31,25 +31,8 @@ namespace m2::proto {
 		}
 	}
 
-	Value<std::string> message_to_json_string(const google::protobuf::Message& message) {
-		std::string str;
-		auto status = google::protobuf::util::MessageToJsonString(message, &str);
-		if (status.ok()) {
-			return str;
-		} else {
-			return failure(status.ToString());
-		}
-	}
-
-	VoidValue message_to_json_file(const google::protobuf::Message& message, const std::string& path) {
-		std::string str;
-		auto status = google::protobuf::util::MessageToJsonString(message, &str);
-		if (status.ok()) {
-			return string::write_to_file(str, path);
-		} else {
-			return failure(status.ToString());
-		}
-	}
+	Value<std::string> message_to_json_string(const google::protobuf::Message& message);
+	VoidValue message_to_json_file(const google::protobuf::Message& message, const std::string& path);
 }
 
 #endif //M2_PROTO_H

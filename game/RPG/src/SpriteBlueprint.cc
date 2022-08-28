@@ -92,7 +92,6 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 		.texture_rect = {0, 0, 48, 48},
 		.obj_center_px = {-0.5f, 12.0f}, .obj_center_m= {-0.5f / tile_width_f, 12.0f / tile_height_f},
 		.collider = {
-			.center_px = {0.0f, 0.0f}, .center_m= {0.0f, 0.0f},
 			.variant = m2::ColliderBlueprint::Circle{
 				.radius_px = 12.0f, .radius_m = 12.0f / tile_width_f
 			}
@@ -103,7 +102,6 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 		.texture_rect = {48, 0, 48, 48},
 		.obj_center_px = {-0.5f, 12.0f}, .obj_center_m = {-0.5f / tile_width_f, 12.0f / tile_height_f},
 		.collider = {
-			.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 			.variant = m2::ColliderBlueprint::Circle{
 				.radius_px = 12.0f, .radius_m = 12.0f / tile_width_f
 			}
@@ -236,7 +234,6 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 		.texture_rect = {144, 0, 48, 48},
 		.obj_center_px = {0.0f, 0.0f}, .obj_center_m = {0.0f / tile_width_f, 0.0f / tile_height_f},
 		.collider = {
-			.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 			.variant = m2::ColliderBlueprint::Circle{
 				.radius_px = 3.0f, .radius_m = 3.0f / tile_width_f
 			}
@@ -247,7 +244,6 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 		.texture_rect = {144, 48, 48, 48},
 		.obj_center_px = {0.0f, 0.0f}, .obj_center_m = {0.0f / tile_width_f, 0.0f / tile_height_f},
 		.collider = {
-			.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 			.variant = m2::ColliderBlueprint::Circle{
 				.radius_px = 3.0f, .radius_m = 3.0f / tile_width_f
 			}
@@ -269,7 +265,6 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 		.texture_rect = {288, 48, 48, 48},
 		.obj_center_px = {0.0f, 0.0f}, .obj_center_m = {0.0f / tile_width_f, 0.0f / tile_height_f},
 		.collider = {
-			.center_px = {0.0f, 0.0f}, .center_m = {0.0f, 0.0f},
 			.variant = m2::ColliderBlueprint::Circle{
 				.radius_px = 6.0f, .radius_m = 6.0f / tile_width_f
 			}
