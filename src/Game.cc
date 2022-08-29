@@ -80,10 +80,9 @@ m2::Game::Game() {
 		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
 	}
 
-	// Temporarily disabled
-	//auto [sprite_sheets_tmp, sprites_tmp] = load_sheets_and_sprites(std::string{m2g::sprite_sheets}, sdlRenderer);
-	//sprite_sheets = std::move(sprite_sheets_tmp);
-	//sprites = std::move(sprites_tmp);
+	auto [sprite_sheets_tmp, sprites_tmp] = load_sheets_and_sprites(std::string{m2g::sprite_sheets}, sdlRenderer);
+	sprite_sheets = std::move(sprite_sheets_tmp);
+	sprites = std::move(sprites_tmp);
 }
 
 m2::Game::~Game() {

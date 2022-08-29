@@ -12,7 +12,7 @@ namespace m2 {
 		SDL_Texture *_texture;
 
 	public:
-		SpriteSheet(pb::SpriteSheet sprite_sheet, SDL_Renderer* renderer);
+		SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer);
 		~SpriteSheet();
 		[[nodiscard]] const pb::SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] SDL_Texture* texture() const;

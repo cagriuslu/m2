@@ -5,7 +5,7 @@
 #include <SDL_image.h>
 #include <sstream>
 
-m2::SpriteSheet::SpriteSheet(pb::SpriteSheet sprite_sheet, SDL_Renderer* renderer) : _sprite_sheet(std::move(sprite_sheet)) {
+m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer) : _sprite_sheet(sprite_sheet) {
 	SDL_Surface* surface = IMG_Load(sprite_sheet.resource().c_str());
 	if (not surface) {
 		throw M2ERROR("SDL Error while loading " + sprite_sheet.resource() + ": " + IMG_GetError());
