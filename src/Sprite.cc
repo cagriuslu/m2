@@ -10,34 +10,28 @@ m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* 
 	if (not surface) {
 		throw M2ERROR("SDL Error while loading " + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
-	_texture = SDL_CreateTextureFromSurface(renderer, surface);
+	_texture.reset(SDL_CreateTextureFromSurface(renderer, surface));
 	if (not _texture) {
 		throw M2ERROR("SDL Error while creating texture from surface" + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
 	SDL_FreeSurface(surface);
 }
-m2::SpriteSheet::~SpriteSheet() {
-	if (_texture) {
-		SDL_DestroyTexture(_texture);
-		_texture = nullptr;
-	}
-}
 const m2::pb::SpriteSheet& m2::SpriteSheet::sprite_sheet() const {
 	return _sprite_sheet;
 }
 SDL_Texture* m2::SpriteSheet::texture() const {
-	return _texture;
+	return _texture.get(); // TODO potentially dangerous, use shared_ptr instead
 }
 
-m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite) : _sprite_sheet(sprite_sheet), _sprite(sprite), _example_gfx(comp::Graphic::create_example(sprite_sheet.texture(), sdl::to_rect(sprite.rect()), Vec2f{sprite.center_offset_px()})) {}
+m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite) : _sprite_sheet(sprite_sheet), _sprite(sprite), _ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()) {}
 const m2::SpriteSheet& m2::Sprite::sprite_sheet() const {
 	return _sprite_sheet;
 }
 const m2::pb::Sprite& m2::Sprite::sprite() const {
 	return _sprite;
 }
-m2::comp::Graphic m2::Sprite::example_gfx() const {
-	return _example_gfx;
+unsigned m2::Sprite::ppm() const {
+	return _ppm;
 }
 
 m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheets_path, SDL_Renderer* renderer) {
@@ -47,7 +41,7 @@ m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheet
 	}
 	SheetsAndSprites sheets_and_sprites;
 	for (const auto& sheet : sheets->sheets()) {
-		auto [sheets_map_it, sheet_inserted] = sheets_and_sprites.first.insert(std::make_pair(sheet.key(), SpriteSheet{sheet, renderer}));
+		auto [sheets_map_it, sheet_inserted] = sheets_and_sprites.first.emplace(sheet.key(), SpriteSheet{sheet, renderer});
 		if (not sheet_inserted) {
 			throw M2ERROR("Sheets have duplicate keys");
 		}

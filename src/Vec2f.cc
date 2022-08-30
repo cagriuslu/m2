@@ -10,6 +10,7 @@ m2::Vec2f::Vec2f(int x, int y) : x(static_cast<float>(x)), y(static_cast<float>(
 m2::Vec2f::Vec2f(unsigned x, unsigned y) : x(static_cast<float>(x)), y(static_cast<float>(y)) {}
 m2::Vec2f::Vec2f(const Vec2i& v) : Vec2f(v.x, v.y) {}
 m2::Vec2f::Vec2f(const b2Vec2& v) : Vec2f(v.x, v.y) {}
+m2::Vec2f::Vec2f(const pb::Dim2f& v) : Vec2f(v.w(), v.h()) {}
 m2::Vec2f::Vec2f(const pb::Vec2f& v) : Vec2f(v.x(), v.y()) {}
 
 m2::Vec2f m2::Vec2f::operator+(const Vec2f& rhs) const {
@@ -31,6 +32,12 @@ m2::Vec2f m2::Vec2f::operator*(const float& rhs) const {
 }
 m2::Vec2f m2::Vec2f::operator/(const float& rhs) const {
 	return {x / rhs, y / rhs};
+}
+m2::Vec2f m2::Vec2f::operator/(const int& rhs) const {
+	return {x / static_cast<float>(rhs), y / static_cast<float>(rhs)};
+}
+m2::Vec2f m2::Vec2f::operator/(const unsigned& rhs) const {
+	return {x / static_cast<float>(rhs), y / static_cast<float>(rhs)};
 }
 bool m2::Vec2f::operator==(const Vec2f& other) const {
 	return (x == other.x) && (y == other.y);

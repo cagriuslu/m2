@@ -119,9 +119,15 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	for (unsigned y = 0; y < lb->height(); y++) {
 		for (unsigned x = 0; x < lb->width(); x++) {
 			auto tb = lb->tiles(y * lb->width() + x);
-			if (tb.bg_sprite_index()) {
-				m2::obj::create_tile(m2::Vec2f{x, y}, tb.bg_sprite_index());
+			// Load background sprite
+			if (not tb.bg_sprite_key().empty()) {
+				auto sprite_it = sprites.find(tb.bg_sprite_key());
+				if (sprite_it == sprites.end()) {
+					return failure("Unknown sprite key " + tb.bg_sprite_key());
+				}
+				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
 			}
+			// Load foreground object
 			if (tb.fg_sprite_index()) {
 				auto& obj = GAME.objects.alloc().first;
 				auto load_result = m2g::fg_sprite_loader(obj, tb.fg_sprite_index(), tb.fg_object_group(), m2::Vec2f{x, y});
@@ -165,9 +171,13 @@ m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
 	for (unsigned y = 0; y < lb->height(); ++y) {
 		for (unsigned x = 0; x < lb->width(); ++x) {
 			auto tb = lb->tiles(y * lb->width() + x);
-			if (tb.bg_sprite_index()) {
-				// Create background tile
-				m2::obj::create_tile(m2::Vec2f{x, y}, tb.bg_sprite_index());
+			// Load background sprite
+			if (not tb.bg_sprite_key().empty()) {
+				auto sprite_it = sprites.find(tb.bg_sprite_key());
+				if (sprite_it == sprites.end()) {
+					return failure("Unknown sprite key " + tb.bg_sprite_key());
+				}
+				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
 			}
 			if (tb.fg_sprite_index()) {
 				// Create object

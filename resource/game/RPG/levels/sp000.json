@@ -3,165 +3,125 @@
   "height":32,
   "tiles":[
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":3,
       "bgSpriteKey": "main.cliff_top"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":11,
       "fgSpriteKey": "main.player_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -171,7 +131,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -181,7 +140,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -191,129 +149,99 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -323,7 +251,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -333,7 +260,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -343,129 +269,99 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -475,7 +371,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -485,7 +380,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -495,129 +389,99 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -627,7 +491,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -637,7 +500,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -647,129 +509,99 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -779,7 +611,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -789,7 +620,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -799,129 +629,99 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -931,7 +731,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -941,7 +740,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -951,129 +749,99 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -1083,7 +851,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -1093,7 +860,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -1103,129 +869,99 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -1235,7 +971,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -1245,7 +980,6 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00",
@@ -1255,3173 +989,2415 @@
       }
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":6,
       "bgSpriteKey": "main.cliff_left"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass",
       "fgSpriteIndex":12,
       "fgSpriteKey": "main.enemy_lookdown_00"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":4,
       "bgSpriteKey": "main.cliff_right"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":5,
       "bgSpriteKey": "main.cliff_bottom"
     },
     {
-      "bgSpriteIndex":2,
       "bgSpriteKey": "main.grass"
     }
   ]

@@ -18,7 +18,6 @@ namespace m2::comp {
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
-		static Graphic create_example(SDL_Texture *texture, const SDL_Rect& textureRect, const Vec2f& center_px);
 
 		[[nodiscard]] Object& parent() const;
 

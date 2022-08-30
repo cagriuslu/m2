@@ -27,14 +27,6 @@ m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPositio
 
 m2::comp::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), on_draw(default_draw) {}
 
-m2::comp::Graphic m2::comp::Graphic::create_example(SDL_Texture *texture, const SDL_Rect& textureRect, const Vec2f& center_px) {
-	Graphic example;
-	example.texture = texture;
-	example.textureRect = textureRect;
-	example.center_px = center_px;
-	return example;
-}
-
 m2::Object& m2::comp::Graphic::parent() const {
 	return *GAME.objects.get(object_id);
 }
@@ -55,7 +47,9 @@ void m2::comp::Graphic::default_draw(comp::Graphic& gfx) {
 			(int)roundf(gfx.center_px.x * GAME.scale) + dstrect.w/2 ,
 			(int)roundf(gfx.center_px.y * GAME.scale) + dstrect.h/2
 	};
-	SDL_RenderCopyEx(GAME.sdlRenderer, gfx.texture, &gfx.textureRect, &dstrect, gfx.angle * 180.0 / PI, &centerPoint, SDL_FLIP_NONE);
+	if (SDL_RenderCopyEx(GAME.sdlRenderer, gfx.texture, &gfx.textureRect, &dstrect, gfx.angle * 180.0 / PI, &centerPoint, SDL_FLIP_NONE)) {
+		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
+	}
 }
 
 void m2::comp::Graphic::default_draw_healthbar(comp::Graphic& gfx, float healthRatio) {

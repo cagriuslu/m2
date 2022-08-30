@@ -3,31 +3,32 @@
 
 #include "component/Graphic.h"
 #include <SpriteSheets.pb.h>
+#include "SDLUtils.hh"
 #include <SDL.h>
 #include <string>
+#include <memory>
 
 namespace m2 {
 	class SpriteSheet final {
 		pb::SpriteSheet _sprite_sheet;
-		SDL_Texture *_texture;
+		std::unique_ptr<SDL_Texture, m2::SdlTextureDeleter> _texture;
 
 	public:
 		SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer);
-		~SpriteSheet();
 		[[nodiscard]] const pb::SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] SDL_Texture* texture() const;
 	};
 
 	class Sprite {
 		const SpriteSheet& _sprite_sheet;
-		const pb::Sprite& _sprite;
-		const comp::Graphic _example_gfx;
+		pb::Sprite _sprite;
+		const unsigned _ppm;
 
 	public:
 		Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite);
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] const pb::Sprite& sprite() const;
-		[[nodiscard]] comp::Graphic example_gfx() const;
+		[[nodiscard]] unsigned ppm() const;
 	};
 
 	using Sheets = std::unordered_map<std::string, SpriteSheet>;
