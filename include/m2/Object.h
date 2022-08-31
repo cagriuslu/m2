@@ -3,6 +3,7 @@
 
 #include "Group.h"
 #include "component/Monitor.h"
+#include "Sprite.h"
 #include "ObjectImpl.h"
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
@@ -70,7 +71,7 @@ namespace m2 {
 		comp::Monitor& add_monitor();
         comp::Physique& add_physique();
         comp::Graphic& add_graphic();
-        comp::Graphic& add_terrain_graphic();
+		comp::Graphic& add_terrain_graphic(const Sprite& sprite);
         comp::Light& add_light();
         m2g::comp::Defense& add_defense();
         m2g::comp::Offense& add_offense();

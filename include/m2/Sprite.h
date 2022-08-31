@@ -1,7 +1,6 @@
 #ifndef M2_SPRITE_H
 #define M2_SPRITE_H
 
-#include "component/Graphic.h"
 #include <SpriteSheets.pb.h>
 #include "SDLUtils.hh"
 #include <SDL.h>

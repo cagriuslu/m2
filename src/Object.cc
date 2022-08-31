@@ -164,10 +164,10 @@ m2::comp::Graphic& m2::Object::add_graphic() {
 	GAME.draw_list.insert(obj_id);
 	return graphic_pair.first;
 }
-m2::comp::Graphic& m2::Object::add_terrain_graphic() {
+m2::comp::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
 	auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;
-	terrain_graphic_pair.first = comp::Graphic{GAME.objects.get_id(this)};
+	terrain_graphic_pair.first = comp::Graphic{GAME.objects.get_id(this), sprite};
 	return terrain_graphic_pair.first;
 }
 m2::comp::Light& m2::Object::add_light() {

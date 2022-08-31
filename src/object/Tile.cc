@@ -19,10 +19,7 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_tile(const Vec2f& position, const
 		}
 	}
 
-    auto& gfx = tile.add_terrain_graphic();
-	gfx.texture = sprite.sprite_sheet().texture();
-	gfx.textureRect = sdl::to_rect(sprite.sprite().rect());
-	gfx.center_px = Vec2f{sprite.sprite().center_offset_px()};
+    auto& gfx = tile.add_terrain_graphic(sprite);
 
     return obj_pair;
 }

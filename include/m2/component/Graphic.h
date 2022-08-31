@@ -1,7 +1,8 @@
-#ifndef M2_GRAPHIC_H
-#define M2_GRAPHIC_H
+#ifndef M2_COMPONENT_GRAPHIC_H
+#define M2_COMPONENT_GRAPHIC_H
 
 #include "../Component.h"
+#include "../Sprite.h"
 #include <functional>
 
 namespace m2 {
@@ -18,6 +19,7 @@ namespace m2::comp {
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
+		explicit Graphic(uint64_t object_id, const Sprite& sprite);
 
 		[[nodiscard]] Object& parent() const;
 
@@ -26,4 +28,4 @@ namespace m2::comp {
 	};
 }
 
-#endif //M2_GRAPHIC_H
+#endif //M2_COMPONENT_GRAPHIC_H

@@ -27,6 +27,8 @@ m2::Vec2i ComponentGraphic_GraphicsOriginWRTScreenCenter_px(m2::Vec2f objPositio
 
 m2::comp::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), textureRect(), center_px(), angle(0.0f), on_draw(default_draw) {}
 
+m2::comp::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), texture(sprite.sprite_sheet().texture()), textureRect(sdl::to_rect(sprite.sprite().rect())), center_px(Vec2f{sprite.sprite().center_offset_px()}), angle(0.0f), on_draw(default_draw) {}
+
 m2::Object& m2::comp::Graphic::parent() const {
 	return *GAME.objects.get(object_id);
 }
