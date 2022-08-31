@@ -21,12 +21,14 @@ namespace m2 {
 	class Sprite {
 		const SpriteSheet& _sprite_sheet;
 		pb::Sprite _sprite;
+		std::string _key;
 		const unsigned _ppm;
 
 	public:
-		Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite);
+		Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const std::string& key);
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] const pb::Sprite& sprite() const;
+		[[nodiscard]] const std::string& key() const;
 		[[nodiscard]] unsigned ppm() const;
 	};
 

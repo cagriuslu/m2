@@ -279,14 +279,13 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 const unsigned m2g::editor_sprite_count = IMPL_EDITOR_SPRITE_N;
 const unsigned m2g::sprite_count = IMPL_SPRITE_N;
 
-m2::VoidValue m2g::fg_sprite_loader(m2::Object& obj, m2::SpriteIndex index, const m2::pb::GroupBlueprint& group, m2::Vec2f position) {
+m2::VoidValue m2g::fg_object_loader(m2::Object& obj, const std::string& key, const m2::pb::GroupBlueprint& group, m2::Vec2f position) {
 	using namespace obj;
-	switch (index) {
-		case IMPL_SPRITE_PLAYER_LOOKDOWN_00:
-			return Player::init(obj, &chr::character_player, position);
-		case IMPL_SPRITE_ENEMY_LOOKDOWN_00:
-			return Enemy::init(obj, &chr::character_skeleton_000_chase, group, position);
-		default:
-			return m2::failure("Invalid sprite index");
+	if (key == "main.player_lookdown_00") {
+		return Player::init(obj, &chr::character_player, position);
+	} else if (key == "main.enemy_lookdown_00") {
+		return Enemy::init(obj, &chr::character_skeleton_000_chase, group, position);
+	} else {
+		return m2::failure("Invalid sprite index");
 	}
 }

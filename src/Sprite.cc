@@ -23,12 +23,15 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 	return _texture.get(); // TODO potentially dangerous, use shared_ptr instead
 }
 
-m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite) : _sprite_sheet(sprite_sheet), _sprite(sprite), _ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()) {}
+m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const std::string& key) : _sprite_sheet(sprite_sheet), _sprite(sprite), _key(key), _ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()) {}
 const m2::SpriteSheet& m2::Sprite::sprite_sheet() const {
 	return _sprite_sheet;
 }
 const m2::pb::Sprite& m2::Sprite::sprite() const {
 	return _sprite;
+}
+const std::string& m2::Sprite::key() const {
+	return _key;
 }
 unsigned m2::Sprite::ppm() const {
 	return _ppm;
@@ -48,7 +51,7 @@ m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheet
 		for (const auto& sprite : sheet.sprites()) {
 			std::stringstream ss;
 			ss << sheet.key() << '.' << sprite.key();
-			auto [sprites_map_it, sprite_inserted] = sheets_and_sprites.second.insert(std::make_pair(ss.str(), Sprite{sheets_map_it->second, sprite}));
+			auto [sprites_map_it, sprite_inserted] = sheets_and_sprites.second.emplace(ss.str(), Sprite{sheets_map_it->second, sprite, ss.str()});
 			if (not sprite_inserted) {
 				throw M2ERROR("Sprites have duplicate keys");
 			}

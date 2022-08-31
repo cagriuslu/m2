@@ -14,8 +14,6 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-file(GLOB PROTO_FILES "pb/*.proto")
-protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}")
 
 add_subdirectory(game)
 add_subdirectory(lib)
@@ -30,6 +28,9 @@ if(WIN32)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 endif()
+
+file(GLOB PROTO_FILES "pb/*.proto")
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${IMPL_PROTO_FILES}")
 
 file(GLOB M2_SOURCES
         "include/m2/*.h"

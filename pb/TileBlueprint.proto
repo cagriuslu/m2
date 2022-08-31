@@ -2,11 +2,15 @@ syntax = "proto3";
 package m2.pb;
 
 import "GroupBlueprint.proto";
+import "ObjectParameters.proto";
+
+message ForegroundObjectBlueprint {
+  string key = 1;
+  GroupBlueprint group = 2; // Move into parameters maybe?, or instead make the grouping part of game engine
+  m2g.pb.ObjectParameters parameters = 3;
+}
 
 message TileBlueprint {
-  uint32 bg_sprite_index = 1; // Will be removed
-  uint32 fg_sprite_index = 2; // Will be removed
-  string bg_sprite_key = 3;
-  string fg_sprite_key = 4;
-  GroupBlueprint fg_object_group = 5;
+  string bg_sprite_key = 1;
+  ForegroundObjectBlueprint fg_object = 2;
 }

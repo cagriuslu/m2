@@ -122,18 +122,14 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 			// Load background sprite
 			if (not tb.bg_sprite_key().empty()) {
 				auto sprite_it = sprites.find(tb.bg_sprite_key());
-				if (sprite_it == sprites.end()) {
-					return failure("Unknown sprite key " + tb.bg_sprite_key());
-				}
+				m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + tb.bg_sprite_key());
 				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
 			}
 			// Load foreground object
-			if (tb.fg_sprite_index()) {
+			if (tb.has_fg_object()) {
 				auto& obj = GAME.objects.alloc().first;
-				auto load_result = m2g::fg_sprite_loader(obj, tb.fg_sprite_index(), tb.fg_object_group(), m2::Vec2f{x, y});
-				if (!load_result) {
-					return failure(load_result.error());
-				}
+				auto load_result = m2g::fg_object_loader(obj, tb.fg_object().key(), tb.fg_object().group(), m2::Vec2f{x, y});
+				m2_reflect_failure(load_result);
 			}
 		}
 	}
@@ -174,15 +170,14 @@ m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
 			// Load background sprite
 			if (not tb.bg_sprite_key().empty()) {
 				auto sprite_it = sprites.find(tb.bg_sprite_key());
-				if (sprite_it == sprites.end()) {
-					return failure("Unknown sprite key " + tb.bg_sprite_key());
-				}
+				m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + tb.bg_sprite_key());
 				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
 			}
-			if (tb.fg_sprite_index()) {
-				// Create object
+			// Load foreground object
+			if (tb.has_fg_object()) {
 				auto& obj = GAME.objects.alloc().first;
-				m2_reflect_failure(m2g::fg_sprite_loader(obj, tb.fg_sprite_index(), tb.fg_object_group(), m2::Vec2f{x, y}));
+				auto load_result = m2g::fg_object_loader(obj, tb.fg_object().key(), tb.fg_object().group(), m2::Vec2f{x, y});
+				m2_reflect_failure(load_result);
 			}
 		}
 	}
