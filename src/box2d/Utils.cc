@@ -36,7 +36,7 @@ b2Body* m2::box2d::create_body(
         float linearDamping,
         bool fixed_rotation) {
 	if (GAME.is_phy_stepping) {
-		throw std::runtime_error("b2Body is created during physics step");
+		throw M2ERROR("b2Body is created during physics step");
 	}
 
     b2BodyDef bodyDef;
@@ -48,7 +48,10 @@ b2Body* m2::box2d::create_body(
     bodyDef.userData.pointer = physique_id;
     bodyDef.bullet = is_bullet;
     b2Body* body = world.CreateBody(&bodyDef);
-	// TODO if this is called during a callback, body ıs returned null
+	if (!body) {
+		// Most probably this function is called during physics step
+		throw M2ERROR("CreateBody returned null");
+	}
 
     b2FixtureDef fixtureDef;
     b2CircleShape circle_shape;
