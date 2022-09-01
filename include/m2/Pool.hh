@@ -1,7 +1,8 @@
 #ifndef M2_POOL_HH
 #define M2_POOL_HH
 
-#include <m2/Exception.h>
+#include "Exception.h"
+#include "Log.h"
 #include "ThreadPool.h"
 #include <array>
 #include <optional>
@@ -33,7 +34,7 @@ namespace m2 {
             Iterator& operator++() {
                 const uint64_t curr_index = id & 0xFFFFFFull;
                 for (uint64_t i = curr_index + 1; i <= pool->_highest_allocated_index; ++i) {
-                    auto& item = pool->_items[i];
+                    auto& item = pool->_array[i];
                     if (item.id & 0xFFFFFF000000ull) {
                         data = &item.data;
                         id = pool->_shifted_pool_id | item.id;
@@ -53,29 +54,39 @@ namespace m2 {
             }
         };
 
+		struct Array {
+			std::array<Item,Capacity> array;
+			inline Array() {
+				uint64_t i = 0;
+				for (auto& item : array) {
+					// Each itm points to next itm as free
+					item.id = (i++ + 1) & 0xFFFFFFull;
+				}
+			}
+			inline const Item& operator[](size_t i) const {
+				return array[i];
+			}
+			inline Item& operator[](size_t i) {
+				return array[i];
+			}
+		};
+
     private:
-        std::array<Item, Capacity> _items;
-        ID _shifted_pool_id;
-        uint64_t _size; // [0, Capacity]
+		Array _array{};
+        ID _shifted_pool_id{static_cast<uint64_t>(g_pool_id++) << 48};
+        uint64_t _size{0}; // [0, Capacity]
         // Key is monotonically increasing, and it is a part of the ID. This means if an object is deallocated,
         // and some other object is allocated at the same location, they will have different IDs.
-        uint64_t _next_key; // [1, Capacity]
-	    uint64_t _highest_allocated_index;
-	    uint64_t _lowest_allocated_index;
-	    uint64_t _next_free_index;
+        uint64_t _next_key{1}; // [1, Capacity]
+	    uint64_t _highest_allocated_index{0};
+	    uint64_t _lowest_allocated_index{0};
+	    uint64_t _next_free_index{0};
     public:
 
-        Pool() : _items(), _size(0), _next_key(1), _highest_allocated_index(0), _lowest_allocated_index(0), _next_free_index(0) {
-			if (g_pool_id == UINT16_MAX) {
-				throw M2FATAL("Max pool count exceeded");
-			} else {
-				_shifted_pool_id = (static_cast<uint64_t>(g_pool_id++)) << 48;
+        Pool() {
+			if (g_pool_id == 0) {
+				LOG_WARN("Pool ID overflowed");
 			}
-	        uint64_t i = 0;
-            for (auto& item : _items) {
-                // Each itm points to next itm as free
-                item.id = (i++ + 1) & 0xFFFFFFull;
-            }
         }
 
         std::pair<T&, ID> alloc() {
@@ -84,7 +95,7 @@ namespace m2 {
 	        }
 	        // Find the itm that will be allocated
 	        const uint64_t index_to_alloc = _next_free_index;
-	        Item &item = _items[index_to_alloc];
+	        Item &item = _array[index_to_alloc];
 	        // Store next free index
 	        _next_free_index = item.id & 0xFFFFFFull;
 	        // Set id of the new itm
@@ -131,7 +142,7 @@ namespace m2 {
                     // Search backwards until highest allocated index is found
                     for (uint64_t i = index; i-- > 0; ) {
                         _highest_allocated_index = i;
-                        if (_items[i].id & 0xFFFFFF000000ull) {
+                        if (_array[i].id & 0xFFFFFF000000ull) {
                             break;
                         }
                     }
@@ -140,7 +151,7 @@ namespace m2 {
                     // Search forward until lowest allocated index is found
                     for (uint64_t i = index + 1; i < Capacity; i++) {
                         _lowest_allocated_index = i;
-                        if (_items[i].id & 0xFFFFFF000000ull) {
+                        if (_array[i].id & 0xFFFFFF000000ull) {
                             break;
                         }
                     }
@@ -151,7 +162,7 @@ namespace m2 {
             free(get_id(data));
         }
 		void free_index(uint64_t idx) {
-			auto& item = _items[idx];
+			auto& item = _array[idx];
 			if (item.id & 0xFFFFFF000000ull) {
 				free(get_id(&item.data));
 			}
@@ -190,7 +201,7 @@ namespace m2 {
         T* get(ID id) {
             if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
                 const auto candidate_idx = (id & 0xFFFFFFull);
-                auto& item = _items[candidate_idx];
+                auto& item = _array[candidate_idx];
                 if (item.id == (id & 0xFFFFFFFFFFFFull)) {
                     return &item.data;
                 }
@@ -200,8 +211,8 @@ namespace m2 {
         ID get_id(const T* data) const {
             const auto* byte_ptr = reinterpret_cast<const uint8_t*>(data);
             // Check if data is in range of items
-            const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_items[_lowest_allocated_index].data);
-            const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_items[_highest_allocated_index].data);
+            const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_lowest_allocated_index].data);
+            const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_highest_allocated_index].data);
             if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
                 const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offsetof(Item, data));
                 // Check if itm is allocated
@@ -214,7 +225,7 @@ namespace m2 {
 
         Iterator begin() {
             if (_size) {
-                Item& item = _items[_lowest_allocated_index];
+                Item& item = _array[_lowest_allocated_index];
                 return {.pool = this, .data = &item.data, .id = _shifted_pool_id | item.id};
             } else {
                 return end();
@@ -224,7 +235,7 @@ namespace m2 {
 			if (idx <= _highest_allocated_index) {
 				// Search first allocated item starting from idx
 				for (size_t i = idx; i <= _highest_allocated_index; i++) {
-					Item& item = _items[i];
+					Item& item = _array[i];
 					if (item.id & 0xFFFFFF000000ull) { // If item allocated
 						return {.pool = this, .data = &item.data, .id = _shifted_pool_id | item.id};
 					}
