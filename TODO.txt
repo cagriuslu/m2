@@ -2,4 +2,4 @@
 - Modernize group logic
 - Can we modernize character logic, item logic, walking logic, walking + animation logic
 - Implement parent child object relationship so that sword is destroyed and moved with the player
-- Try to modernize
+- Continue working on the editor
