@@ -80,22 +80,24 @@ m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheet
 	return sheets_and_sprites;
 }
 
-m2::SpriteLut m2::generate_sprite_lut(const Sprites& sprites_map) {
-	SpriteLut lut;
+m2::SpriteLuts m2::generate_sprite_lut(const Sprites& sprites_map) {
+	SpriteLuts luts;
 	// Iterate over m2g::sprite_lut
 	unsigned counter = 0;
 	for (const auto& [m2g_sprite, sprite_key] : m2g::sprite_lut) {
-		if (to_unsigned(m2g_sprite) != counter++) {
+		if (to_unsigned(m2g_sprite) != counter) {
 			throw M2FATAL("m2g::sprite_lut contains out of order values");
 		}
 		auto sprites_map_it = sprites_map.find(sprite_key);
 		if (sprites_map_it == sprites_map.end()) {
 			throw M2FATAL("m2g::sprite_lut contains unknown sprite key");
 		}
-		lut.push_back(&sprites_map_it->second);
+		luts.first.push_back(&sprites_map_it->second);
+		luts.second[sprite_key] = static_cast<m2g::Sprite>(counter);
+		counter++;
 	}
 	if (to_unsigned(m2g::Sprite::_end_) != counter) {
 		throw M2FATAL("m2g::sprite_lut is incomplete");
 	}
-	return lut;
+	return luts;
 }

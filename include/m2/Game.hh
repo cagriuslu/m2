@@ -95,6 +95,7 @@ namespace m2 {
 		Sheets sprite_sheets;
 		Sprites sprites;
 		SpriteLut sprite_lut;
+		SpriteReverseLut sprite_reverse_lut;
 		const Sprite& lookup_sprite(m2g::Sprite) const;
 
 		////////////////////////////////////////////////////////////////////////

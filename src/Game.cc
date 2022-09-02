@@ -87,7 +87,9 @@ m2::Game::Game() {
 	auto [sprite_sheets_tmp, sprites_tmp] = load_sheets_and_sprites(std::string{m2g::sprite_sheets}, sdlRenderer);
 	sprite_sheets = std::move(sprite_sheets_tmp);
 	sprites = std::move(sprites_tmp);
-	sprite_lut = generate_sprite_lut(sprites);
+	auto [sprite_lut_tmp, sprite_reverse_lut_tmp] = generate_sprite_lut(sprites);
+	sprite_lut = std::move(sprite_lut_tmp);
+	sprite_reverse_lut = std::move(sprite_reverse_lut_tmp);
 }
 
 m2::Game::~Game() {
@@ -137,7 +139,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 			// Load foreground object
 			if (tb.has_fg_object()) {
 				auto& obj = GAME.objects.alloc().first;
-				auto load_result = m2g::fg_object_loader(obj, tb.fg_object().key(), tb.fg_object().group(), m2::Vec2f{x, y});
+				auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[tb.fg_object().key()], tb.fg_object().group(), m2::Vec2f{x, y});
 				m2_reflect_failure(load_result);
 			}
 		}
@@ -185,7 +187,7 @@ m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
 			// Load foreground object
 			if (tb.has_fg_object()) {
 				auto& obj = GAME.objects.alloc().first;
-				auto load_result = m2g::fg_object_loader(obj, tb.fg_object().key(), tb.fg_object().group(), m2::Vec2f{x, y});
+				auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[tb.fg_object().key()], tb.fg_object().group(), m2::Vec2f{x, y});
 				m2_reflect_failure(load_result);
 			}
 		}

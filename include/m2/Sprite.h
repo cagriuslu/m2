@@ -2,6 +2,7 @@
 #define M2_SPRITE_H
 
 #include <SpriteSheets.pb.h>
+#include <m2g/Sprite.h>
 #include "SDLUtils.hh"
 #include "Vec2f.h"
 #include <SDL.h>
@@ -47,7 +48,9 @@ namespace m2 {
 	SheetsAndSprites load_sheets_and_sprites(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
 
 	using SpriteLut = std::vector<const Sprite*>;
-	SpriteLut generate_sprite_lut(const Sprites& sprites_map);
+	using SpriteReverseLut = std::unordered_map<std::string, m2g::Sprite>;
+	using SpriteLuts = std::pair<SpriteLut,SpriteReverseLut>;
+	SpriteLuts generate_sprite_lut(const Sprites& sprites_map);
 }
 
 #endif //M2_SPRITE_H
