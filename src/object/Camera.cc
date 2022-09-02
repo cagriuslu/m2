@@ -18,7 +18,7 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_camera() {
 		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
 
-		if (GAME.level->type == Level::Type::SINGLE_PLAYER) {
+		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
 			// Give an offset to the camera's location based on the position of the mouse
 			m2::Vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
 			camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);

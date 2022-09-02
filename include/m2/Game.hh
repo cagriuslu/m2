@@ -33,11 +33,18 @@
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
 
 namespace m2 {
-	struct Level {
+	class Level {
+	public:
 		enum class Type {
 			SINGLE_PLAYER,
 			EDITOR
-		} type;
+		};
+
+	private:
+		Type _type;
+
+	public:
+		Type type() const;
 
 		std::vector<std::function<void(void)>> deferred_actions;
 		explicit Level();

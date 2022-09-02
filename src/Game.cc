@@ -26,12 +26,16 @@
 
 m2::Game* g_game;
 
-m2::Level::Level() : type(Type::SINGLE_PLAYER) {
+m2::Level::Level() : _type(Type::SINGLE_PLAYER) {
 	// TODO
 }
 
-m2::Level::Level(const std::string& path) : type(Type::EDITOR), editor_file_path(path),
+m2::Level::Level(const std::string& path) : _type(Type::EDITOR), editor_file_path(path),
 	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0), editor_grid_lines(false) {}
+
+m2::Level::Type m2::Level::type() const {
+	return _type;
+}
 
 m2::Game::Game() {
 	update_window_dims(1600, 900); // Store default window dimensions in GAME
