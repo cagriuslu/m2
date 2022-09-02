@@ -42,9 +42,4 @@ namespace m2 {
 	bool is_near(float a, float b, float tolerance);
 }
 
-// The usual suspects
-#include "Pool.hh"
-#include "Vec2f.h"
-#include "Vec2i.h"
-
 #endif //M2_M2_H

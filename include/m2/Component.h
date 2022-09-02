@@ -2,6 +2,7 @@
 #define COMPONENT_H
 
 #include <m2/M2.h>
+#include "Pool.hh"
 #include <SDL.h>
 
 namespace m2 {

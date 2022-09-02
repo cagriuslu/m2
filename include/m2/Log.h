@@ -1,6 +1,7 @@
 #ifndef M2_LOG_H
 #define M2_LOG_H
 
+#include "M2.h"
 #include <sstream>
 #include <string>
 
