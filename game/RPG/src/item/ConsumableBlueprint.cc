@@ -4,6 +4,6 @@
 using namespace itm;
 
 const itm::ConsumableBlueprint itm::health_drop_20 = {
-		.drop_sprite_index = m2g::IMPL_SPRITE_RED_POTION_00,
+		.drop_sprite = m2g::Sprite::RedPotion,
 		.buffs = {{chr::Attribute::HP, 20.0f}}
 };

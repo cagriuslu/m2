@@ -158,9 +158,16 @@ m2::comp::Physique& m2::Object::add_physique() {
 m2::comp::Graphic& m2::Object::add_graphic() {
 	auto graphic_pair = GAME.graphics.alloc();
 	_graphic_id = graphic_pair.second;
-
 	auto obj_id = GAME.objects.get_id(this);
 	graphic_pair.first = comp::Graphic{obj_id};
+	GAME.draw_list.insert(obj_id);
+	return graphic_pair.first;
+}
+m2::comp::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
+	auto graphic_pair = GAME.graphics.alloc();
+	_graphic_id = graphic_pair.second;
+	auto obj_id = GAME.objects.get_id(this);
+	graphic_pair.first = comp::Graphic{obj_id, sprite};
 	GAME.draw_list.insert(obj_id);
 	return graphic_pair.first;
 }

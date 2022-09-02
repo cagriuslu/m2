@@ -24,14 +24,13 @@ m2::VoidValue obj::ConsumableDrop::init(m2::Object &obj, const itm::ConsumableBl
 			{},
 			{},
 			0.0f,
-			std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint.drop_sprite_index].collider.variant).radius_m,
+			GAME.lookup_sprite(blueprint.drop_sprite).collider_circ_radius_m(),
 			1.0f,
 			1.0f,
 			true
 	);
 
-	auto& gfx = obj.add_graphic();
-	gfx.textureRect = m2g::sprites[blueprint.drop_sprite_index].texture_rect;
+	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint.drop_sprite));
 
 	obj.impl = std::make_unique<ConsumableDrop>(blueprint);
 

@@ -71,6 +71,7 @@ namespace m2 {
 		comp::Monitor& add_monitor();
         comp::Physique& add_physique();
         comp::Graphic& add_graphic();
+		comp::Graphic& add_graphic(const Sprite& sprite);
 		comp::Graphic& add_terrain_graphic(const Sprite& sprite);
         comp::Light& add_light();
         m2g::comp::Defense& add_defense();

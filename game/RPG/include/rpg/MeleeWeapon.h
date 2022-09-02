@@ -1,6 +1,7 @@
 #ifndef IMPL_MELEEWEAPON_H
 #define IMPL_MELEEWEAPON_H
 
+#include <m2g/Sprite.h>
 #include "m2/SpriteBlueprint.h"
 
 namespace chr {
@@ -17,6 +18,7 @@ namespace chr {
 	};
 	struct MeleeBlueprint {
 		m2::SpriteIndex sprite_index;
+		m2g::Sprite sprite;
 		float damage;
 		MeleeMotion motion;
 		float ttl_s;

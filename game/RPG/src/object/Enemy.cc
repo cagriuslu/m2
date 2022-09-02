@@ -56,9 +56,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		});
 	}
 
-	auto& gfx = obj.add_graphic();
-	gfx.textureRect = m2g::sprites[blueprint->main_sprite_index].texture_rect;
-	gfx.center_px = m2g::sprites[blueprint->main_sprite_index].obj_center_px;
+	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->main_sprite));
 
 	auto& monitor = obj.add_monitor();
 
@@ -70,7 +68,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
             false,
             true,
             m2::box2d::CAT_ENEMY,
-            std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint->main_sprite_index].collider.variant).radius_m,
+			GAME.lookup_sprite(blueprint->main_sprite).collider_circ_radius_m(),
 			blueprint->mass_kg,
 			blueprint->linear_damping
 	);

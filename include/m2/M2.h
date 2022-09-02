@@ -14,7 +14,7 @@ namespace m2 {
 	constexpr int to_int(T&& t) { return static_cast<int>(t); }
 
 	template <typename T>
-	constexpr int to_unsigned(T&& t) { return static_cast<unsigned>(t); }
+	constexpr unsigned to_unsigned(T&& t) { return static_cast<unsigned>(t); }
 
 	std::string to_string(int);
 	std::string to_string(unsigned int);

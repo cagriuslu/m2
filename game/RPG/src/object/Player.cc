@@ -41,9 +41,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
             blueprint->linear_damping
 	);
 
-	auto& gfx = obj.add_graphic();
-	gfx.textureRect = m2g::sprites[blueprint->main_sprite_index].texture_rect;
-	gfx.center_px = m2g::sprites[blueprint->main_sprite_index].obj_center_px;
+	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->main_sprite));
 
 	auto& light = obj.add_light();
 	light.radius_m = 4.0f;

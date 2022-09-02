@@ -87,6 +87,7 @@ m2::Game::Game() {
 	auto [sprite_sheets_tmp, sprites_tmp] = load_sheets_and_sprites(std::string{m2g::sprite_sheets}, sdlRenderer);
 	sprite_sheets = std::move(sprite_sheets_tmp);
 	sprites = std::move(sprites_tmp);
+	sprite_lut = generate_sprite_lut(sprites);
 }
 
 m2::Game::~Game() {
@@ -101,6 +102,10 @@ m2::Game::~Game() {
 	SDL_DestroyRenderer(sdlRenderer);
 	SDL_FreeCursor(sdlCursor);
 	SDL_DestroyWindow(sdlWindow);
+}
+
+const m2::Sprite& m2::Game::lookup_sprite(m2g::Sprite sprite) const {
+	return *sprite_lut[to_unsigned(sprite)];
 }
 
 m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {

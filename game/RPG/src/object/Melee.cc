@@ -38,9 +38,7 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	phy.body->SetTransform(static_cast<b2Vec2>(position), startAngle);
 	phy.body->SetAngularVelocity(-SWING_SPEED);
 
-	auto& gfx = obj.add_graphic();
-	gfx.textureRect = m2g::sprites[blueprint->sprite_index].texture_rect;
-	gfx.center_px = m2g::sprites[blueprint->sprite_index].obj_center_px;
+	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->sprite));
 	gfx.angle = phy.body->GetAngle();
 
 	auto& off = obj.add_offense();

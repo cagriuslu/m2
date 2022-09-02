@@ -1,7 +1,9 @@
 #include <m2/Sprite.h>
+#include <m2g/Sprite.h>
 #include <m2/Proto.h>
 #include <m2/Exception.h>
 #include <m2/SDLUtils.hh>
+#include <m2/M2.h>
 #include <SDL_image.h>
 #include <sstream>
 
@@ -23,7 +25,13 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 	return _texture.get(); // TODO potentially dangerous, use shared_ptr instead
 }
 
-m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const std::string& key) : _sprite_sheet(sprite_sheet), _sprite(sprite), _key(key), _ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()) {}
+m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const std::string& key) :
+	_sprite_sheet(sprite_sheet), _sprite(sprite), _key(key),
+	_ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()),
+	_center_offset_m(Vec2f{sprite.center_offset_px()} / _ppm),
+	_collider_center_offset_m(Vec2f{sprite.collider().center_offset_px()} / _ppm),
+	_collider_rect_dims_m(Vec2f{sprite.collider().rect_dims_px()} / _ppm),
+	_collider_circ_radius_m(sprite.collider().circ_radius_px() / _ppm) {}
 const m2::SpriteSheet& m2::Sprite::sprite_sheet() const {
 	return _sprite_sheet;
 }
@@ -35,6 +43,18 @@ const std::string& m2::Sprite::key() const {
 }
 unsigned m2::Sprite::ppm() const {
 	return _ppm;
+}
+m2::Vec2f m2::Sprite::center_offset_m() const {
+	return _center_offset_m;
+}
+m2::Vec2f m2::Sprite::collider_center_offset_m() const {
+	return _collider_center_offset_m;
+}
+m2::Vec2f m2::Sprite::collider_rect_dims_m() const {
+	return _collider_rect_dims_m;
+}
+float m2::Sprite::collider_circ_radius_m() const {
+	return _collider_circ_radius_m;
 }
 
 m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheets_path, SDL_Renderer* renderer) {
@@ -58,4 +78,24 @@ m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheet
 		}
 	}
 	return sheets_and_sprites;
+}
+
+m2::SpriteLut m2::generate_sprite_lut(const Sprites& sprites_map) {
+	SpriteLut lut;
+	// Iterate over m2g::sprite_lut
+	unsigned counter = 0;
+	for (const auto& [m2g_sprite, sprite_key] : m2g::sprite_lut) {
+		if (to_unsigned(m2g_sprite) != counter++) {
+			throw M2FATAL("m2g::sprite_lut contains out of order values");
+		}
+		auto sprites_map_it = sprites_map.find(sprite_key);
+		if (sprites_map_it == sprites_map.end()) {
+			throw M2FATAL("m2g::sprite_lut contains unknown sprite key");
+		}
+		lut.push_back(&sprites_map_it->second);
+	}
+	if (to_unsigned(m2g::Sprite::_end_) != counter) {
+		throw M2FATAL("m2g::sprite_lut is incomplete");
+	}
+	return lut;
 }

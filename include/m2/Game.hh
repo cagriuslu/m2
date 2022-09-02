@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <m2g/Proxy.h>
+#include <m2g/Sprite.h>
 #include "Group.h"
 #include "Sprite.h"
 #include <GroupBlueprint.pb.h>
@@ -44,7 +45,7 @@ namespace m2 {
 		Type _type;
 
 	public:
-		Type type() const;
+		[[nodiscard]] Type type() const;
 
 		std::vector<std::function<void(void)>> deferred_actions;
 		explicit Level();
@@ -93,6 +94,8 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		Sheets sprite_sheets;
 		Sprites sprites;
+		SpriteLut sprite_lut;
+		const Sprite& lookup_sprite(m2g::Sprite) const;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////

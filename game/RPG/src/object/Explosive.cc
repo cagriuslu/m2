@@ -39,9 +39,7 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 	);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * blueprint->projectile_speed_mps));
 
-	auto& gfx = obj.add_graphic();
-	gfx.textureRect = m2g::sprites[blueprint->sprite_index].texture_rect;
-	gfx.center_px = m2g::sprites[blueprint->sprite_index].obj_center_px;
+	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->sprite));
 	gfx.angle = direction.angle_rads();
 
 	auto& off = obj.add_offense();
