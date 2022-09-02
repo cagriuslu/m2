@@ -8,6 +8,7 @@
 #include <cstdarg>
 
 m2::LogLevel m2::current_log_level = m2::LogLevel::Debug;
+bool m2::unexpected_event_occured = false;
 
 std::string m2::to_string(const LogLevel& lvl) {
 	auto lvl_unsigned = to_unsigned(lvl);
@@ -35,15 +36,22 @@ void m2::log_stacktrace() {
 }
 
 void m2::internal::log_header(LogLevel lvl, const char *file, int line) {
+	auto lvl_unsigned = to_unsigned(lvl);
+
+	// Set unexpected event
+	if (to_unsigned(LogLevel::Warn) <= lvl_unsigned && !unexpected_event_occured) {
+		unexpected_event_occured = true;
+	}
+
 	// Get time
 	auto now = std::time(nullptr);
 
 	// Convert log level into char
 	char lvl_char = 'U';
-	auto lvl_unsigned = to_unsigned(lvl);
 	if (lvl_unsigned <= to_unsigned(LogLevel::Fatal)) {
 		static const char lvl_chars[] = {'T', 'D', 'I', 'W', 'E', 'F'};
-		lvl_char = lvl_chars[lvl_unsigned];
+		static const char lvl_chars_un[] = {'t', 'd', 'i', 'w', 'e', 'f'};
+		lvl_char = unexpected_event_occured ? lvl_chars_un[lvl_unsigned] : lvl_chars[lvl_unsigned];
 	}
 
 	// Get file name

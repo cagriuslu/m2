@@ -81,6 +81,9 @@ namespace m2 {
 	private:
 		GroupID _group_id{};
 	    IndexInGroup _group_index{};
+		// TODO use parent-child relationship for objects that needs to be destroyed once their parent is destroyed
+		ObjectID _parent_id;
+		std::unique_ptr<Pool<ObjectID,16>> _children;
 	    // Components
 	    MonitorID _monitor_id{};
 	    PhysiqueID _physique_id{};

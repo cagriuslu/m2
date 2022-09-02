@@ -38,6 +38,7 @@ namespace m2 {
 	std::string to_string(const LogLevel&);
 
 	extern LogLevel current_log_level;
+	extern bool unexpected_event_occured;
 
 	void log_stacktrace();
 
