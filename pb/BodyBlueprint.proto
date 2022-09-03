@@ -1,0 +1,52 @@
+syntax = "proto3";
+package m2.pb;
+
+import "Dim2f.proto";
+import "Vec2f.proto";
+
+enum BodyType {
+  STATIC = 0; // Doesn't move, doesn't collide with other Static or Kinematic objects
+  KINEMATIC = 1; // Moves with constant velocity, doesn't collide with other Static or Kinematic objects
+  DYNAMIC = 2; // Moves with force, collides with everything
+}
+
+message RectangleBodyParameters {
+  Dim2f dims = 1;
+  Vec2f center_offset = 2;
+  float angle = 3;
+}
+
+message CircularBodyParameters {
+  float radius = 1;
+}
+
+enum BodyCategory {
+  OBSTACLE = 0;
+  OBSTACLE_BACKGROUND = 1;
+
+  FRIEND = 2;
+  FRIEND_FOREGROUND_OBJ = 3;
+  FRIEND_BACKGROUND_AOE = 4;
+  FRIEND_PICKUP = 5;
+
+  FOE = 6;
+  FOE_FOREGROUND_OBJ = 7;
+  FOE_BACKGROUND_AOE = 8;
+}
+
+message BodyBlueprint {
+  BodyType type = 1;
+  oneof shape {
+    RectangleBodyParameters rect = 2;
+    CircularBodyParameters circ = 3;
+  }
+  bool allow_sleep = 4;
+  bool is_bullet = 5;
+  bool is_sensor = 6;
+  BodyCategory category = 7;
+
+  // Only applicable for dynamic objects
+  float mass = 8;
+  float linear_damping = 9;
+  bool fixed_rotation = 10;
+}

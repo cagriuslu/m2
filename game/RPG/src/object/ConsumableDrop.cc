@@ -10,25 +10,15 @@ m2::VoidValue obj::ConsumableDrop::init(m2::Object &obj, const itm::ConsumableBl
 	obj = m2::Object{pos};
 
 	auto& phy = obj.add_physique();
-	phy.body = m2::box2d::create_body(
-			*GAME.world,
-			obj.physique_id(),
-			true,
-			false,
-			pos,
-			true,
-			false,
-			true,
-			m2::box2d::CAT_PLAYER_ITEM,
-			0,
-			{},
-			{},
-			0.0f,
-			GAME.lookup_sprite(blueprint.drop_sprite).collider_circ_radius_m(),
-			1.0f,
-			1.0f,
-			true
-	);
+
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::STATIC);
+	bp.mutable_circ()->set_radius(GAME.lookup_sprite(blueprint.drop_sprite).collider_circ_radius_m());
+	bp.set_allow_sleep(true);
+	bp.set_is_bullet(false);
+	bp.set_is_sensor(true);
+	bp.set_category(m2::pb::BodyCategory::FRIEND_PICKUP);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), pos, bp);
 
 	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint.drop_sprite));
 

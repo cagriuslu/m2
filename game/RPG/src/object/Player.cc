@@ -29,17 +29,17 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	obj = m2::Object{pos};
 
 	auto& phy = obj.add_physique();
-	phy.body = m2::box2d::create_dynamic_disk(
-            *GAME.world,
-            obj.physique_id(),
-            obj.position,
-            false,
-            false,
-            m2::box2d::CAT_PLAYER,
-            std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint->main_sprite_index].collider.variant).radius_m,
-            blueprint->mass_kg,
-            blueprint->linear_damping
-	);
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::DYNAMIC);
+	bp.mutable_circ()->set_radius(std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint->main_sprite_index].collider.variant).radius_m);
+	bp.set_allow_sleep(false);
+	bp.set_is_bullet(false);
+	bp.set_is_sensor(false);
+	bp.set_category(m2::pb::BodyCategory::FRIEND);
+	bp.set_mass(blueprint->mass_kg);
+	bp.set_linear_damping(blueprint->linear_damping);
+	bp.set_fixed_rotation(true);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 
 	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->main_sprite));
 

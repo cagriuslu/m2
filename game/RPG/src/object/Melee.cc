@@ -16,25 +16,21 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	auto& monitor = obj.add_monitor();
 
 	auto& phy = obj.add_physique();
-	phy.body = m2::box2d::create_body(
-            *GAME.world,
-			obj.physique_id(),
-            false,
-            true,
-            position,
-            false,
-            true,
-            true,
-            originatorId == GAME.playerId ? m2::box2d::CAT_PLAYER_AIR_OBJ : m2::box2d::CAT_ENEMY_AIR_OBJ,
-            0,
-            m2::Vec2f{1.25f, 0.1667f},
-            m2::Vec2f{0.5833f, 0.0f},
-            0.0f,
-            NAN,
-            1.0f,
-            0.0f,
-            false
-	);
+
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::DYNAMIC);
+	bp.mutable_rect()->mutable_dims()->set_w(1.25f);
+	bp.mutable_rect()->mutable_dims()->set_h(0.1667f);
+	bp.mutable_rect()->mutable_center_offset()->set_x(0.5833f);
+	bp.mutable_rect()->mutable_center_offset()->set_y(0.0f);
+	bp.set_allow_sleep(false);
+	bp.set_is_bullet(true);
+	bp.set_is_sensor(true);
+	bp.set_category(originatorId == GAME.playerId ? m2::pb::BodyCategory::FRIEND_FOREGROUND_OBJ : m2::pb::BodyCategory::FOE_FOREGROUND_OBJ);
+	bp.set_mass(1.0f);
+	bp.set_linear_damping(0);
+	bp.set_fixed_rotation(false);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), position, bp);
 	phy.body->SetTransform(static_cast<b2Vec2>(position), startAngle);
 	phy.body->SetAngularVelocity(-SWING_SPEED);
 

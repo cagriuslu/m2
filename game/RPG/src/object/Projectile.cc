@@ -13,16 +13,17 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	auto& monitor = obj.add_monitor();
 
 	auto& phy = obj.add_physique();
-	phy.body = m2::box2d::create_bullet(
-            *GAME.world,
-			obj.physique_id(),
-			pos,
-            true,
-			m2::box2d::CAT_PLAYER_AIR_OBJ,
-			0.167f,
-			0.0f,
-			0.0f
-	);
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::DYNAMIC);
+	bp.mutable_circ()->set_radius(0.167f);
+	bp.set_allow_sleep(false);
+	bp.set_is_bullet(true);
+	bp.set_is_sensor(true);
+	bp.set_category(m2::pb::BodyCategory::FRIEND_FOREGROUND_OBJ);
+	bp.set_mass(0);
+	bp.set_linear_damping(0);
+	bp.set_fixed_rotation(true);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), pos, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(dir * blueprint->speed_mps));
 
 	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->sprite));

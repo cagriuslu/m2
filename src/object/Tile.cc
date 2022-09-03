@@ -13,7 +13,15 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_tile(const Vec2f& position, const
 		auto& collider = sprite.sprite().collider();
 		if (collider.has_rect_dims_px()) {
 			auto& phy = tile.add_physique();
-			phy.body = m2::box2d::create_static_box(*GAME.world, tile.physique_id(), position, false, m2::box2d::CAT_GND_OBSTACLE,  Vec2f{collider.rect_dims_px()} / sprite.ppm());
+			m2::pb::BodyBlueprint bp;
+			bp.set_type(m2::pb::BodyType::STATIC);
+			bp.mutable_rect()->mutable_dims()->set_w(collider.rect_dims_px().w() / (float)sprite.ppm());
+			bp.mutable_rect()->mutable_dims()->set_h(collider.rect_dims_px().h() / (float)sprite.ppm());
+			bp.set_allow_sleep(true);
+			bp.set_is_bullet(false);
+			bp.set_is_sensor(false);
+			bp.set_category(m2::pb::BodyCategory::OBSTACLE_BACKGROUND);
+			phy.body = m2::box2d::create_body(*GAME.world, tile.physique_id(), position, bp);
 		} else {
 			throw M2FATAL("Circular tile collider unimplemented");
 		}

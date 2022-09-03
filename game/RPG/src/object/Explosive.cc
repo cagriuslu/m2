@@ -8,16 +8,17 @@
 #include <m2/Log.h>
 
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::ID phyId, m2::Vec2f position,  const chr::ExplosiveBlueprint* blueprint) {
-	return m2::box2d::create_bullet(
-            *GAME.world,
-            phyId,
-            position,
-            true,
-            m2::box2d::CAT_PLAYER_AOE,
-			blueprint->damage_radius_m,
-            0.0f,
-            0.0f
-	);
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::DYNAMIC);
+	bp.mutable_circ()->set_radius(blueprint->damage_radius_m);
+	bp.set_allow_sleep(false);
+	bp.set_is_bullet(true);
+	bp.set_is_sensor(true);
+	bp.set_category(m2::pb::BodyCategory::FRIEND_BACKGROUND_AOE);
+	bp.set_mass(0);
+	bp.set_linear_damping(0);
+	bp.set_fixed_rotation(true);
+	return m2::box2d::create_body(*GAME.world, phyId, position, bp);
 }
 
 m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction) {
@@ -27,16 +28,17 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 	auto& monitor = obj.add_monitor();
 
 	auto& phy = obj.add_physique();
-	phy.body = m2::box2d::create_bullet(
-            *GAME.world,
-			obj.physique_id(),
-			position,
-            true,
-			m2::box2d::CAT_PLAYER_AIR_OBJ,
-			blueprint->projectile_body_radius_m,
-			0.0f,
-			0.0f
-	);
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::DYNAMIC);
+	bp.mutable_circ()->set_radius(blueprint->projectile_body_radius_m);
+	bp.set_allow_sleep(false);
+	bp.set_is_bullet(true);
+	bp.set_is_sensor(true);
+	bp.set_category(m2::pb::BodyCategory::FRIEND_FOREGROUND_OBJ);
+	bp.set_mass(0);
+	bp.set_linear_damping(0);
+	bp.set_fixed_rotation(true);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * blueprint->projectile_speed_mps));
 
 	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->sprite));

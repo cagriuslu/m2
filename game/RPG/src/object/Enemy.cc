@@ -61,17 +61,17 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	auto& monitor = obj.add_monitor();
 
 	auto& phy = obj.add_physique();
-	phy.body = m2::box2d::create_dynamic_disk(
-            *GAME.world,
-            obj.physique_id(),
-            pos,
-            false,
-            true,
-            m2::box2d::CAT_ENEMY,
-			GAME.lookup_sprite(blueprint->main_sprite).collider_circ_radius_m(),
-			blueprint->mass_kg,
-			blueprint->linear_damping
-	);
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::DYNAMIC);
+	bp.mutable_circ()->set_radius(GAME.lookup_sprite(blueprint->main_sprite).collider_circ_radius_m());
+	bp.set_allow_sleep(true);
+	bp.set_is_bullet(false);
+	bp.set_is_sensor(false);
+	bp.set_category(m2::pb::BodyCategory::FOE);
+	bp.set_mass(blueprint->mass_kg);
+	bp.set_linear_damping(blueprint->linear_damping);
+	bp.set_fixed_rotation(true);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), pos, bp);
 
 	auto& def = obj.add_defense();
 	def.hp = 100;
