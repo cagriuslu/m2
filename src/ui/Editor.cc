@@ -29,7 +29,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_right_arrow 
 		return Action::CONTINUE;
 	}
 };
-const UIBlueprint editor_right_hud_draw = {
+const UIBlueprint editor_right_hud_paint = {
 	.w = 19, .h = 72,
 	.border_width_px = 1,
 	.widgets = {
@@ -51,16 +51,16 @@ const UIBlueprint editor_right_hud_draw = {
 	}
 };
 
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_draw_button = wdg::TextBlueprint{
-	.initial_text = "Draw",
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg::TextBlueprint{
+	.initial_text = "Paint",
 	.action_callback = []() -> Action {
-		GAME.level->editor_mode = Level::EditorMode::DRAW;
-		GAME.rightHudUIState = UIState(&editor_right_hud_draw);
+		GAME.level->editor_mode = Level::EditorMode::PAINT;
+		GAME.rightHudUIState = UIState(&editor_right_hud_paint);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		m2::obj::set_editor_ghost(GAME.level->editor_draw_sprite_index);
 		return Action::CONTINUE;
 	},
-	.kb_shortcut = SDL_SCANCODE_D
+	.kb_shortcut = SDL_SCANCODE_P
 };
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wdg::TextBlueprint{
 	.initial_text = "Cancel",
@@ -90,7 +90,7 @@ const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 			.x = 4, .y = 4, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 4,
-			.variant = editor_left_hud_draw_button
+			.variant = editor_left_hud_paint_button
 		},
 		WidgetBlueprint{
 			.x = 4, .y = 8, .w = 11, .h = 3,

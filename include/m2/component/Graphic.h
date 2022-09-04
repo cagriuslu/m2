@@ -3,10 +3,18 @@
 
 #include "../Component.h"
 #include "../Sprite.h"
+#include "../Vec2i.h"
+#include "../Vec2f.h"
 #include <functional>
 
 namespace m2 {
 	struct Object;
+
+	/// Returns (position - camera.position)
+	Vec2f offset_from_camera_m(Vec2f position);
+
+	/// Returns (position - camera.position) * game_ppm
+	Vec2i offset_from_camera_px(Vec2f position);
 }
 
 namespace m2::comp {
@@ -14,6 +22,7 @@ namespace m2::comp {
 		SDL_Texture *texture{};
 		SDL_Rect textureRect{};
 		Vec2f center_px;
+		float ppm{};
 		float angle{};
 		std::function<void(Graphic&)> on_draw;
 
@@ -22,6 +31,8 @@ namespace m2::comp {
 		explicit Graphic(uint64_t object_id, const Sprite& sprite);
 
 		[[nodiscard]] Object& parent() const;
+		[[nodiscard]] Vec2i offset_from_screen_center_px() const;
+		[[nodiscard]] Vec2i offset_from_screen_origin_px() const;
 
 		static void default_draw(Graphic& gfx);
 		static void default_draw_healthbar(Graphic& gfx, float healthRatio);

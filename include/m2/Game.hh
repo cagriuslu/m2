@@ -54,7 +54,7 @@ namespace m2 {
 		std::optional<std::string> editor_file_path;
 		enum class EditorMode {
 			NONE,
-			DRAW
+			PAINT
 		} editor_mode;
 		SpriteIndex editor_draw_sprite_index;
 		ID editor_draw_ghost_id;
@@ -84,9 +84,8 @@ namespace m2 {
 		SDL_Rect leftHudRect{};
 		SDL_Rect rightHudRect{};
         SDL_Rect console_rect{};
-		float tilesOnScreen{16.0f};
-		float pixelsPerMeter{};
-		float scale{};
+		float game_height_m{16.0f};
+		float game_ppm{};
 		TTF_Font *ttfFont{};
 
 		////////////////////////////////////////////////////////////////////////
@@ -154,9 +153,11 @@ namespace m2 {
 		// Modifiers
 		void update_window_dims(int width, int height);
 		void update_mouse_position();
-
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
+
+		// Helpers
+		float pixel_scale(float sprite_ppm) const;
 	};
 }
 

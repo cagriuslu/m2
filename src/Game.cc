@@ -4,6 +4,7 @@
 #include <m2/Object.h>
 #include <m2/object/God.h>
 #include <m2/object/Camera.h>
+#include <m2/object/Origin.h>
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
 #include <m2/String.h>
@@ -200,6 +201,7 @@ m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
 	m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_pointer();
+	m2::obj::create_origin();
 
 	// UI Hud
 	GAME.leftHudUIState = m2::ui::UIState(&ui::editor_left_hud);
@@ -309,8 +311,7 @@ void m2::Game::update_window_dims(int width, int height) {
 	console_rect.y = gameRect.y + gameRect.h * 22 / 24;
 	console_rect.w = gameRect.w;
 	console_rect.h = gameRect.h * 2 / 24;
-	pixelsPerMeter = (float) gameAndHudRect.h / tilesOnScreen;
-	scale = pixelsPerMeter / m2g::tile_width;
+	game_ppm = (float) gameAndHudRect.h / game_height_m;
 }
 
 void m2::Game::update_mouse_position() {
@@ -319,7 +320,7 @@ void m2::Game::update_mouse_position() {
 
 	m2::Vec2i pointerPosition = events.mouse_position();
 	m2::Vec2i pointerPositionWRTScreenCenter_px = m2::Vec2i{pointerPosition.x - (windowRect.w / 2), pointerPosition.y - (windowRect.h / 2) };
-	mousePositionWRTScreenCenter_m = m2::Vec2f{(float) pointerPositionWRTScreenCenter_px.x / pixelsPerMeter, (float) pointerPositionWRTScreenCenter_px.y / pixelsPerMeter };
+	mousePositionWRTScreenCenter_m = m2::Vec2f{(float) pointerPositionWRTScreenCenter_px.x / game_ppm, (float) pointerPositionWRTScreenCenter_px.y / game_ppm };
 	mousePositionWRTGameWorld_m = mousePositionWRTScreenCenter_m + cameraPosition;
 }
 
@@ -332,4 +333,8 @@ void m2::Game::execute_deferred_actions() {
 		action();
 	}
 	level->deferred_actions.clear();
+}
+
+float m2::Game::pixel_scale(float sprite_ppm) const {
+	return game_ppm / sprite_ppm;
 }
