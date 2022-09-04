@@ -14,7 +14,7 @@ m2::Vec2i m2::offset_from_camera_px(Vec2f position) {
 	return m2::Vec2i{m2::offset_from_camera_m(position) * GAME.game_ppm};
 }
 
-m2::comp::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), on_draw(default_draw) {}
+m2::comp::Graphic::Graphic(ID object_id) : Component(object_id), texture(GAME.sdlTexture), ppm(GAME.game_ppm), on_draw(default_draw) {}
 
 m2::comp::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), texture(sprite.sprite_sheet().texture()), textureRect(sdl::to_rect(sprite.sprite().rect())), center_px(Vec2f{sprite.sprite().center_offset_px()}), ppm(sprite.ppm()), on_draw(default_draw) {}
 

@@ -84,7 +84,7 @@ namespace m2 {
 		SDL_Rect leftHudRect{};
 		SDL_Rect rightHudRect{};
         SDL_Rect console_rect{};
-		float game_height_m{16.0f};
+		float game_height_m{16.0f}; // This controls the zoom of the game
 		float game_ppm{};
 		TTF_Font *ttfFont{};
 
