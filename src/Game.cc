@@ -24,6 +24,7 @@
 #include <SDL_image.h>
 #include <m2/ui/Editor.h>
 #include <m2/ui/UI.h>
+#include <set>
 
 m2::Game* g_game;
 
@@ -127,23 +128,32 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 
-	// Load objects
-	for (unsigned y = 0; y < lb->height(); y++) {
-		for (unsigned x = 0; x < lb->width(); x++) {
-			auto tb = lb->tiles(y * lb->width() + x);
-			// Load background sprite
-			if (not tb.bg_sprite_key().empty()) {
-				auto sprite_it = sprites.find(tb.bg_sprite_key());
-				m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + tb.bg_sprite_key());
-				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
-			}
-			// Load foreground object
-			if (tb.has_fg_object()) {
-				auto& obj = GAME.objects.alloc().first;
-				auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[tb.fg_object().key()], tb.fg_object().group(), m2::Vec2f{x, y});
-				m2_reflect_failure(load_result);
-			}
+	auto level_width = lb->width();
+	// Look up background sprites
+	std::vector<const Sprite*> bg_sprites;
+	for (const auto& bg_sprite_key : lb->bg_tile_lut()) {
+		auto sprite_it = sprites.find(bg_sprite_key);
+		m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + bg_sprite_key);
+		bg_sprites.push_back(&sprite_it->second);
+	}
+	// Create background tiles
+	for (int i = 0; i < lb->bg_tiles_size(); ++i) {
+		auto lut_index = lb->bg_tiles(i);
+		// Skip negative tiles
+		if (lut_index < 0) {
+			continue;
 		}
+		// Check if corresponding key exists
+		if (lb->bg_tile_lut_size() <= lut_index) {
+			return failure("Background tile LUT index out of bounds");
+		}
+		m2::obj::create_tile(m2::Vec2f{i % level_width, i / level_width}, *bg_sprites[lut_index]);
+	}
+	// Create foreground objects
+	for (const auto& fg_object : lb->fg_objects()) {
+		auto& obj = GAME.objects.alloc().first;
+		auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[fg_object.key()], fg_object.group(), m2::Vec2f{fg_object.position()});
+		m2_reflect_failure(load_result);
 	}
 	// Init pathfinder map
 	PathfinderMap_Init(&GAME.pathfinderMap);
@@ -179,23 +189,23 @@ m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
 	events.clear();
 	is_phy_stepping = false;
 
-	for (unsigned y = 0; y < lb->height(); ++y) {
-		for (unsigned x = 0; x < lb->width(); ++x) {
-			auto tb = lb->tiles(y * lb->width() + x);
-			// Load background sprite
-			if (not tb.bg_sprite_key().empty()) {
-				auto sprite_it = sprites.find(tb.bg_sprite_key());
-				m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + tb.bg_sprite_key());
-				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
-			}
-			// Load foreground object
-			if (tb.has_fg_object()) {
-				auto& obj = GAME.objects.alloc().first;
-				auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[tb.fg_object().key()], tb.fg_object().group(), m2::Vec2f{x, y});
-				m2_reflect_failure(load_result);
-			}
-		}
-	}
+//	for (unsigned y = 0; y < lb->height(); ++y) {
+//		for (unsigned x = 0; x < lb->width(); ++x) {
+//			auto tb = lb->tiles(y * lb->width() + x);
+//			// Load background sprite
+//			if (not tb.bg_sprite_key().empty()) {
+//				auto sprite_it = sprites.find(tb.bg_sprite_key());
+//				m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + tb.bg_sprite_key());
+//				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
+//			}
+//			// Load foreground object
+//			if (tb.has_fg_object()) {
+//				auto& obj = GAME.objects.alloc().first;
+//				auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[tb.fg_object().key()], tb.fg_object().group(), m2::Vec2f{x, y});
+//				m2_reflect_failure(load_result);
+//			}
+//		}
+//	}
 
 	// Create default objects
 	m2::obj::create_god();

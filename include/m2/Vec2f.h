@@ -3,6 +3,7 @@
 
 #include <Dim2f.pb.h>
 #include <Vec2f.pb.h>
+#include <Vec2i.pb.h>
 #include <b2_math.h>
 #include <string>
 #include <array>
@@ -21,6 +22,7 @@ namespace m2 {
 		explicit Vec2f(const b2Vec2& v);
 		explicit Vec2f(const pb::Dim2f& v);
 		explicit Vec2f(const pb::Vec2f& v);
+		explicit Vec2f(const pb::Vec2i& v);
 
 		Vec2f operator+(const Vec2f& rhs) const;
 		Vec2f operator+(const float& rhs) const;
