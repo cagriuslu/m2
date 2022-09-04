@@ -6,17 +6,23 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
 
 project(m2)
 
+# Load external libraries
+add_subdirectory(lib)
+
 # Protobuf
 if(WIN32)
-    find_package(Protobuf REQUIRED PATHS lib/protobuf/protobuf-3.21.5/build/install NO_DEFAULT_PATH)
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    find_package(Protobuf REQUIRED)
+    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/cmake")
+        message(WARNING "protobuf needs to be built first")
+        return()
+    endif()
+    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf" "${CMAKE_PREFIX_PATH}")
+    add_compile_definitions(PROTOBUF_USE_DLLS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
+    file(GLOB Protobuf_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin/*.dll")
 endif()
+find_package(Protobuf REQUIRED)
 include_directories(${Protobuf_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-add_subdirectory(game)
-add_subdirectory(lib)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
@@ -28,6 +34,8 @@ if(WIN32)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 endif()
+
+add_subdirectory(game)
 
 file(GLOB PROTO_FILES "pb/*.proto")
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${IMPL_PROTO_FILES}")
@@ -41,14 +49,18 @@ file(GLOB M2_SOURCES
 add_executable(m2 WIN32 ${M2_SOURCES} ${IMPL_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
 target_include_directories(m2 PUBLIC include ${IMPL_INCLUDE_DIRS})
 if (WIN32)
+    # External library dependencies
+    add_dependencies(m2 protobuf)
     target_link_libraries(m2 debug     box2d-debug SDL_gpu-debug)
     target_link_libraries(m2 optimized box2d       SDL_gpu)
     target_link_libraries(m2 SDL2 SDL2_image SDL2_ttf)
+    target_link_libraries(m2 ${Protobuf_LIBRARIES})
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
     # Copy DLLs
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:m2> $<TARGET_FILE_DIR:m2>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} $<TARGET_FILE_DIR:m2>
         COMMAND_EXPAND_LISTS
     )
 

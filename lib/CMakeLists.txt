@@ -1,5 +1,6 @@
 add_subdirectory(box2d)
 add_subdirectory(googletest)
+add_subdirectory(protobuf)
 add_subdirectory(SDL2)
 add_subdirectory(SDL2_image)
 add_subdirectory(SDL2_ttf)
