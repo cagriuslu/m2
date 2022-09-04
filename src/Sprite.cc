@@ -1,5 +1,5 @@
 #include <m2/Sprite.h>
-#include <m2g/Sprite.h>
+#include <m2g/SpriteID.h>
 #include <m2/Proto.h>
 #include <m2/Exception.h>
 #include <m2/SDLUtils.hh>
@@ -57,12 +57,12 @@ float m2::Sprite::collider_circ_radius_m() const {
 	return _collider_circ_radius_m;
 }
 
-m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheets_path, SDL_Renderer* renderer) {
+m2::SpriteMaps m2::load_sprite_maps(const std::string& sprite_sheets_path, SDL_Renderer* renderer) {
 	auto sheets = proto::json_file_to_message<pb::SpriteSheets>(sprite_sheets_path);
 	if (!sheets) {
 		throw M2ERROR(sheets.error());
 	}
-	SheetsAndSprites sheets_and_sprites;
+	SpriteMaps sheets_and_sprites;
 	for (const auto& sheet : sheets->sheets()) {
 		auto [sheets_map_it, sheet_inserted] = sheets_and_sprites.first.emplace(sheet.key(), SpriteSheet{sheet, renderer});
 		if (not sheet_inserted) {
@@ -80,24 +80,24 @@ m2::SheetsAndSprites m2::load_sheets_and_sprites(const std::string& sprite_sheet
 	return sheets_and_sprites;
 }
 
-m2::SpriteLuts m2::generate_sprite_lut(const Sprites& sprites_map) {
-	SpriteLuts luts;
-	// Iterate over m2g::sprite_lut
+m2::SpriteIDLUTs m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map) {
+	SpriteIDLUTs luts;
+	// Iterate over m2g::sprite_id_to_sprite_key_lut
 	unsigned counter = 0;
-	for (const auto& [m2g_sprite, sprite_key] : m2g::sprite_lut) {
-		if (to_unsigned(m2g_sprite) != counter) {
-			throw M2FATAL("m2g::sprite_lut contains out of order values");
+	for (const auto& [sprite_id, sprite_key] : m2g::sprite_id_to_sprite_key_lut) {
+		if (to_unsigned(sprite_id) != counter) {
+			throw M2FATAL("m2g::sprite_id_to_sprite_key_lut contains out of order values");
 		}
 		auto sprites_map_it = sprites_map.find(sprite_key);
 		if (sprites_map_it == sprites_map.end()) {
-			throw M2FATAL("m2g::sprite_lut contains unknown sprite key");
+			throw M2FATAL("m2g::sprite_id_to_sprite_key_lut contains unknown sprite key");
 		}
 		luts.first.push_back(&sprites_map_it->second);
-		luts.second[sprite_key] = static_cast<m2g::Sprite>(counter);
+		luts.second[sprite_key] = static_cast<m2g::SpriteID>(counter);
 		counter++;
 	}
-	if (to_unsigned(m2g::Sprite::_end_) != counter) {
-		throw M2FATAL("m2g::sprite_lut is incomplete");
+	if (to_unsigned(m2g::SpriteID::_end_) != counter) {
+		throw M2FATAL("m2g::sprite_id_to_sprite_key_lut is incomplete");
 	}
 	return luts;
 }

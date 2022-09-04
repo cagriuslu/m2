@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include <m2g/Proxy.h>
-#include <m2g/Sprite.h>
+#include <m2g/SpriteID.h>
 #include "Group.h"
 #include "Sprite.h"
 #include <GroupBlueprint.pb.h>
@@ -90,11 +90,11 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		Sheets sprite_sheets;
-		Sprites sprites;
-		SpriteLut sprite_lut;
-		SpriteReverseLut sprite_reverse_lut;
-		const Sprite& lookup_sprite(m2g::Sprite) const;
+		SpriteSheetKeyToSpriteSheetMap sprite_sheets;
+		SpriteKeyToSpriteMap sprite_key_to_sprite_map;
+		SpriteIDToSpriteLUT sprite_id_lut;
+		SpriteKeyToSpriteIDMap sprite_key_to_id_map;
+		const Sprite& lookup_sprite(m2g::SpriteID) const;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////

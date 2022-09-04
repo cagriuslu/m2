@@ -2,7 +2,7 @@
 #define M2_SPRITE_H
 
 #include <SpriteSheets.pb.h>
-#include <m2g/Sprite.h>
+#include <m2g/SpriteID.h>
 #include "SDLUtils.hh"
 #include "Vec2f.h"
 #include <SDL.h>
@@ -42,15 +42,15 @@ namespace m2 {
 		[[nodiscard]] float collider_circ_radius_m() const;
 	};
 
-	using Sheets = std::unordered_map<std::string, SpriteSheet>;
-	using Sprites = std::unordered_map<std::string, Sprite>;
-	using SheetsAndSprites = std::pair<Sheets,Sprites>;
-	SheetsAndSprites load_sheets_and_sprites(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
+	using SpriteSheetKeyToSpriteSheetMap = std::unordered_map<std::string, SpriteSheet>;
+	using SpriteKeyToSpriteMap = std::unordered_map<std::string, Sprite>;
+	using SpriteMaps = std::pair<SpriteSheetKeyToSpriteSheetMap,SpriteKeyToSpriteMap>;
+	SpriteMaps load_sprite_maps(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
 
-	using SpriteLut = std::vector<const Sprite*>;
-	using SpriteReverseLut = std::unordered_map<std::string, m2g::Sprite>;
-	using SpriteLuts = std::pair<SpriteLut,SpriteReverseLut>;
-	SpriteLuts generate_sprite_lut(const Sprites& sprites_map);
+	using SpriteIDToSpriteLUT = std::vector<const Sprite*>;
+	using SpriteKeyToSpriteIDMap = std::unordered_map<std::string, m2g::SpriteID>;
+	using SpriteIDLUTs = std::pair<SpriteIDToSpriteLUT,SpriteKeyToSpriteIDMap>;
+	SpriteIDLUTs generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map);
 }
 
 #endif //M2_SPRITE_H

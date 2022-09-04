@@ -86,12 +86,12 @@ m2::Game::Game() {
 		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
 	}
 
-	auto [sprite_sheets_tmp, sprites_tmp] = load_sheets_and_sprites(std::string{m2g::sprite_sheets}, sdlRenderer);
+	auto [sprite_sheets_tmp, sprites_tmp] = load_sprite_maps(std::string{m2g::sprite_sheets}, sdlRenderer);
 	sprite_sheets = std::move(sprite_sheets_tmp);
-	sprites = std::move(sprites_tmp);
-	auto [sprite_lut_tmp, sprite_reverse_lut_tmp] = generate_sprite_lut(sprites);
-	sprite_lut = std::move(sprite_lut_tmp);
-	sprite_reverse_lut = std::move(sprite_reverse_lut_tmp);
+	sprite_key_to_sprite_map = std::move(sprites_tmp);
+	auto [sprite_lut_tmp, sprite_reverse_lut_tmp] = generate_sprite_id_luts(sprite_key_to_sprite_map);
+	sprite_id_lut = std::move(sprite_lut_tmp);
+	sprite_key_to_id_map = std::move(sprite_reverse_lut_tmp);
 }
 
 m2::Game::~Game() {
@@ -108,8 +108,8 @@ m2::Game::~Game() {
 	SDL_DestroyWindow(sdlWindow);
 }
 
-const m2::Sprite& m2::Game::lookup_sprite(m2g::Sprite sprite) const {
-	return *sprite_lut[to_unsigned(sprite)];
+const m2::Sprite& m2::Game::lookup_sprite(m2g::SpriteID sprite) const {
+	return *sprite_id_lut[to_unsigned(sprite)];
 }
 
 m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
@@ -132,8 +132,8 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	// Look up background sprites
 	std::vector<const Sprite*> bg_sprites;
 	for (const auto& bg_sprite_key : lb->bg_tile_lut()) {
-		auto sprite_it = sprites.find(bg_sprite_key);
-		m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + bg_sprite_key);
+		auto sprite_it = sprite_key_to_sprite_map.find(bg_sprite_key);
+		m2_fail_unless(sprite_it != sprite_key_to_sprite_map.end(), "Unknown sprite key " + bg_sprite_key);
 		bg_sprites.push_back(&sprite_it->second);
 	}
 	// Create background tiles
@@ -152,7 +152,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	// Create foreground objects
 	for (const auto& fg_object : lb->fg_objects()) {
 		auto& obj = GAME.objects.alloc().first;
-		auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[fg_object.key()], fg_object.group(), m2::Vec2f{fg_object.position()});
+		auto load_result = m2g::fg_object_loader(obj, sprite_key_to_id_map[fg_object.key()], fg_object.group(), m2::Vec2f{fg_object.position()});
 		m2_reflect_failure(load_result);
 	}
 	// Init pathfinder map

@@ -1,7 +1,7 @@
 #ifndef IMPL_EXPLOSIVEWEAPON_H
 #define IMPL_EXPLOSIVEWEAPON_H
 
-#include <m2g/Sprite.h>
+#include <m2g/SpriteID.h>
 #include "m2/SpriteBlueprint.h"
 
 namespace chr {
@@ -20,7 +20,7 @@ namespace chr {
 	};
 	struct ExplosiveBlueprint {
 		m2::SpriteIndex sprite_index;
-		m2g::Sprite sprite;
+		m2g::SpriteID sprite;
 		float projectile_speed_mps;
 		float projectile_ttl_s;
 		float projectile_body_radius_m;
