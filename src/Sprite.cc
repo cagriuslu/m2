@@ -82,7 +82,6 @@ m2::SpriteMaps m2::load_sprite_maps(const std::string& sprite_sheets_path, SDL_R
 
 m2::SpriteIDLUTs m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map) {
 	SpriteIDLUTs luts;
-	// Iterate over m2g::sprite_id_to_sprite_key_lut
 	unsigned counter = 0;
 	for (const auto& [sprite_id, sprite_key] : m2g::sprite_id_to_sprite_key_lut) {
 		if (to_unsigned(sprite_id) != counter) {
@@ -100,4 +99,14 @@ m2::SpriteIDLUTs m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites
 		throw M2FATAL("m2g::sprite_id_to_sprite_key_lut is incomplete");
 	}
 	return luts;
+}
+
+m2::EditorPaletteSpriteKeys m2::generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map) {
+	EditorPaletteSpriteKeys keys;
+	for (const auto& [key, sprite] : sprites_map) {
+		if (sprite.sprite().in_editor_palette()) {
+			keys.emplace_back(key);
+		}
+	}
+	return keys;
 }

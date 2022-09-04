@@ -51,6 +51,9 @@ namespace m2 {
 	using SpriteKeyToSpriteIDMap = std::unordered_map<std::string, m2g::SpriteID>;
 	using SpriteIDLUTs = std::pair<SpriteIDToSpriteLUT,SpriteKeyToSpriteIDMap>;
 	SpriteIDLUTs generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map);
+
+	using EditorPaletteSpriteKeys = std::vector<std::string>;
+	EditorPaletteSpriteKeys generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map);
 }
 
 #endif //M2_SPRITE_H
