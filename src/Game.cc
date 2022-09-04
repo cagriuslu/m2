@@ -32,7 +32,7 @@ m2::Level::Level() : _type(Type::SINGLE_PLAYER) {
 }
 
 m2::Level::Level(const std::string& path) : _type(Type::EDITOR), editor_file_path(path),
-	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0), editor_grid_lines(false) {}
+	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0) {}
 
 m2::Level::Type m2::Level::type() const {
 	return _type;

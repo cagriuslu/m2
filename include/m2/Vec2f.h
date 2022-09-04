@@ -44,6 +44,8 @@ namespace m2 {
 		[[nodiscard]] float angle_rads() const;
 
 		[[nodiscard]] Vec2f normalize() const;
+		[[nodiscard]] Vec2f floor() const;
+		[[nodiscard]] Vec2i ifloor() const;
 		[[nodiscard]] Vec2f floor_length(float len) const;
 		[[nodiscard]] Vec2f with_length(float len) const;
 		[[nodiscard]] Vec2f ceil_length(float len) const;

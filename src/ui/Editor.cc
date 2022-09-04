@@ -1,6 +1,7 @@
 #include <m2/ui/Editor.h>
 #include <m2/Game.hh>
 #include <m2/object/Ghost.h>
+#include <m2/object/Camera.h>
 #include <m2g/SpriteBlueprint.h>
 
 using namespace m2;
@@ -77,7 +78,11 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wd
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button = wdg::TextBlueprint{
 	.initial_text = "Grid Lines",
 	.action_callback = []() -> Action {
-		GAME.level->editor_grid_lines = !GAME.level->editor_grid_lines;
+		auto* camera = GAME.objects.get(GAME.cameraId);
+		if (camera && camera->impl) {
+			auto& camera_data = dynamic_cast<m2::obj::Camera&>(*camera->impl);
+			camera_data.draw_grid_lines = !camera_data.draw_grid_lines;
+		}
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_G

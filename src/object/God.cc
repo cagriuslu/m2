@@ -24,34 +24,6 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_god() {
 		god.position += move_direction.normalize() * ((float)GAME.deltaTicks_ms * .004f);
 	};
 
-	auto& gfx = god.add_graphic();
-	gfx.on_draw = [&](MAYBE m2::comp::Graphic& gfx) {
-		if (GAME.level->editor_grid_lines) {
-			// Draw gridlines
-			SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 127, 127, 127);
-			float yOffsetFromWholeMeter = god.position.y - floor(god.position.y);
-			float yOffsetFromWholeMeterInPixels = yOffsetFromWholeMeter * GAME.game_ppm;
-			// Draw lines above god
-			for (float y = -yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f; (float) GAME.gameRect.y < y; y -= GAME.game_ppm) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, (int)y, GAME.gameRect.x + GAME.gameRect.w, (int)y);
-			}
-			// Draw lines below god
-			for (float y = -yOffsetFromWholeMeterInPixels + (float) GAME.gameRect.y + (float) GAME.gameRect.h / 2.0f + GAME.game_ppm; y < (float)(GAME.gameRect.y + GAME.gameRect.h); y += GAME.game_ppm) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, (int)y, GAME.gameRect.x + GAME.gameRect.w, (int)y);
-			}
-			float xOffsetFromWholeMeter = god.position.x - floor(god.position.x);
-			float xOffsetFromWholeMeterInPixels = xOffsetFromWholeMeter * GAME.game_ppm;
-			// Draw lines left of god
-			for (float x = -xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f; (float) GAME.gameRect.x < x; x -= GAME.game_ppm) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, (int)x, GAME.gameRect.y, (int)x, GAME.gameRect.y + GAME.gameRect.h);
-			}
-			// Draw lines right of god
-			for (float x = -xOffsetFromWholeMeterInPixels + (float) GAME.gameRect.x + (float) GAME.gameRect.w / 2.0f + GAME.game_ppm; x < (float)(GAME.gameRect.x + GAME.gameRect.w); x += GAME.game_ppm) {
-				SDL_RenderDrawLine(GAME.sdlRenderer, (int)x, GAME.gameRect.y, (int)x, GAME.gameRect.y + GAME.gameRect.h);
-			}
-		}
-	};
-
 	GAME.playerId = obj_pair.second;
 	return obj_pair;
 }

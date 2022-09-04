@@ -81,6 +81,12 @@ m2::Vec2f m2::Vec2f::normalize() const {
 	}
 	return {};
 }
+m2::Vec2f m2::Vec2f::floor() const {
+	return {floorf(x), floorf(y)};
+}
+m2::Vec2i m2::Vec2f::ifloor() const {
+	return Vec2i{this->floor()};
+}
 m2::Vec2f m2::Vec2f::floor_length(float len) const {
 	if (length() < len) {
 		return with_length(len);
