@@ -56,6 +56,9 @@ namespace m2 {
 			NONE,
 			PAINT
 		} editor_mode;
+		void activate_mode(EditorMode mode);
+		const Sprite* editor_paint_mode_selected_sprite;
+		ObjectID editor_paint_mode_selected_sprite_ghost_id;
 		SpriteIndex editor_draw_sprite_index;
 		ID editor_draw_ghost_id;
 		explicit Level(const std::string& path);

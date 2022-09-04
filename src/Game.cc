@@ -39,6 +39,17 @@ m2::Level::Type m2::Level::type() const {
 	return _type;
 }
 
+void m2::Level::activate_mode(EditorMode mode) {
+	switch (mode) {
+		case EditorMode::NONE:
+			// TODO
+			break;
+		case EditorMode::PAINT:
+			// TODO
+			break;
+	}
+}
+
 m2::Game::Game() {
 	update_window_dims(1600, 900); // Store default window dimensions in GAME
 	if ((sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowRect.w, windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
