@@ -18,7 +18,7 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_0 = wdg::TextBluepr
 	.initial_text = "Select save slot:"
 };
 static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::ImageBlueprint{
-	.initial_sprite_index = m2g::IMPL_SPRITE_FLOPPY_DISK,
+	.initial_sprite_key = "main.floppy_disk",
 	.action_callback = []() {
 		fprintf(stderr, "Pressed button\n");
 		return Action::CONTINUE;

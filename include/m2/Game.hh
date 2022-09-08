@@ -55,12 +55,11 @@ namespace m2 {
 		enum class EditorMode {
 			NONE,
 			PAINT
-		} editor_mode;
+		} editor_mode{};
 		void activate_mode(EditorMode mode);
-		const Sprite* editor_paint_mode_selected_sprite;
-		ObjectID editor_paint_mode_selected_sprite_ghost_id;
-		SpriteIndex editor_draw_sprite_index;
-		ID editor_draw_ghost_id;
+		void editor_paint_mode_select_sprite(int index);
+		int editor_paint_mode_selected_sprite{-1};
+		ID editor_paint_mode_selected_sprite_ghost_id{0};
 		explicit Level(const std::string& path);
 	};
 

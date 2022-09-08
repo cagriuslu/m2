@@ -8,25 +8,25 @@ using namespace m2;
 using namespace m2::ui;
 
 const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_selected_sprite = wdg::ImageBlueprint{
-	.update_callback = []() -> std::pair<Action,std::optional<SpriteIndex>> {
-		return {Action::CONTINUE, GAME.level->editor_draw_sprite_index};
+	.update_callback = []() -> std::pair<Action,std::optional<SpriteKey>> {
+		if (GAME.level->editor_paint_mode_selected_sprite < 0) {
+			return {Action::CONTINUE, {}};
+		} else {
+			return {Action::CONTINUE, GAME.editor_sprites[GAME.level->editor_paint_mode_selected_sprite]};
+		}
 	}
 };
 const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_left_arrow = wdg::TextBlueprint{
 	.initial_text = "<",
 	.action_callback = []() {
-		if (GAME.level->editor_draw_sprite_index) {
-			m2::obj::set_editor_ghost(--GAME.level->editor_draw_sprite_index - 1);
-		}
+		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite - 1);
 		return Action::CONTINUE;
 	}
 };
 const WidgetBlueprint::WidgetBlueprintVariant editor_right_hud_draw_right_arrow = wdg::TextBlueprint{
 	.initial_text = ">",
 	.action_callback = []() {
-		if (GAME.level->editor_draw_sprite_index < m2g::IMPL_EDITOR_SPRITE_N) {
-			m2::obj::set_editor_ghost(++GAME.level->editor_draw_sprite_index);
-		}
+		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite + 1);
 		return Action::CONTINUE;
 	}
 };
@@ -55,10 +55,9 @@ const UIBlueprint editor_right_hud_paint = {
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg::TextBlueprint{
 	.initial_text = "Paint",
 	.action_callback = []() -> Action {
-		GAME.level->editor_mode = Level::EditorMode::PAINT;
+		GAME.level->activate_mode(Level::EditorMode::PAINT);
 		GAME.rightHudUIState = UIState(&editor_right_hud_paint);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
-		m2::obj::set_editor_ghost(GAME.level->editor_draw_sprite_index);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_P
@@ -66,10 +65,9 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wdg::TextBlueprint{
 	.initial_text = "Cancel",
 	.action_callback = []() -> Action {
-		GAME.level->editor_mode = Level::EditorMode::NONE;
+		GAME.level->activate_mode(Level::EditorMode::NONE);
 		GAME.rightHudUIState = UIState(&editor_right_hud);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
-		m2::obj::set_editor_ghost(0);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_C

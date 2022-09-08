@@ -20,6 +20,7 @@
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <m2g/SpriteBlueprint.h>
+#include <m2/object/Ghost.h>
 #include <m2/SDLUtils.hh>
 #include <SDL_image.h>
 #include <m2/ui/Editor.h>
@@ -32,21 +33,36 @@ m2::Level::Level() : _type(Type::SINGLE_PLAYER) {
 	// TODO
 }
 
-m2::Level::Level(const std::string& path) : _type(Type::EDITOR), editor_file_path(path),
-	editor_mode(EditorMode::NONE), editor_draw_sprite_index(0) {}
+m2::Level::Level(const std::string& path) : _type(Type::EDITOR), editor_file_path(path) {}
 
 m2::Level::Type m2::Level::type() const {
 	return _type;
 }
 
 void m2::Level::activate_mode(EditorMode mode) {
+	editor_mode = mode;
 	switch (mode) {
 		case EditorMode::NONE:
-			// TODO
+			editor_paint_mode_select_sprite(-1);
 			break;
 		case EditorMode::PAINT:
-			// TODO
+			editor_paint_mode_select_sprite(editor_paint_mode_selected_sprite == -1 ? 0 : editor_paint_mode_selected_sprite);
 			break;
+	}
+}
+void m2::Level::editor_paint_mode_select_sprite(int index) {
+	if (index < 0) {
+		if (editor_paint_mode_selected_sprite_ghost_id) {
+			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
+		}
+		editor_paint_mode_selected_sprite = -1;
+	} else if (index < GAME.editor_sprites.size() && index != editor_paint_mode_selected_sprite) {
+		if (editor_paint_mode_selected_sprite_ghost_id) {
+			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
+		}
+		editor_paint_mode_selected_sprite = index;
+		auto obj_pair = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_sprites[index]));
+		editor_paint_mode_selected_sprite_ghost_id = obj_pair.second;
 	}
 }
 

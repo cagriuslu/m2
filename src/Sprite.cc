@@ -25,13 +25,13 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 	return _texture.get(); // TODO potentially dangerous, use shared_ptr instead
 }
 
-m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const std::string& key) :
+m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const SpriteKey& key) :
 	_sprite_sheet(sprite_sheet), _sprite(sprite), _key(key),
 	_ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()),
 	_center_offset_m(Vec2f{sprite.center_offset_px()} / _ppm),
 	_collider_center_offset_m(Vec2f{sprite.collider().center_offset_px()} / _ppm),
 	_collider_rect_dims_m(Vec2f{sprite.collider().rect_dims_px()} / _ppm),
-	_collider_circ_radius_m(sprite.collider().circ_radius_px() / _ppm) {}
+	_collider_circ_radius_m(sprite.collider().circ_radius_px() / (float)_ppm) {}
 const m2::SpriteSheet& m2::Sprite::sprite_sheet() const {
 	return _sprite_sheet;
 }
@@ -64,13 +64,13 @@ m2::SpriteMaps m2::load_sprite_maps(const std::string& sprite_sheets_path, SDL_R
 	}
 	SpriteMaps sheets_and_sprites;
 	for (const auto& sheet : sheets->sheets()) {
-		auto [sheets_map_it, sheet_inserted] = sheets_and_sprites.first.emplace(sheet.key(), SpriteSheet{sheet, renderer});
+		auto [sheets_map_it, sheet_inserted] = sheets_and_sprites.first.emplace(sheet.name(), SpriteSheet{sheet, renderer});
 		if (not sheet_inserted) {
 			throw M2ERROR("Sheets have duplicate keys");
 		}
 		for (const auto& sprite : sheet.sprites()) {
 			std::stringstream ss;
-			ss << sheet.key() << '.' << sprite.key();
+			ss << sheet.name() << '.' << sprite.name();
 			auto [sprites_map_it, sprite_inserted] = sheets_and_sprites.second.emplace(ss.str(), Sprite{sheets_map_it->second, sprite, ss.str()});
 			if (not sprite_inserted) {
 				throw M2ERROR("Sprites have duplicate keys");

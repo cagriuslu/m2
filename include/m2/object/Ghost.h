@@ -2,9 +2,10 @@
 #define M2_GHOST_H
 
 #include <m2/Object.h>
+#include <m2/Sprite.h>
 
 namespace m2::obj {
-	void set_editor_ghost(SpriteIndex sprite_index);
+	std::pair<m2::Object&, m2::ID> create_ghost(const Sprite& sprite);
 }
 
 #endif //M2_GHOST_H

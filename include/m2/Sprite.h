@@ -10,6 +10,8 @@
 #include <memory>
 
 namespace m2 {
+	using SpriteSheetName = std::string;
+
 	class SpriteSheet final {
 		pb::SpriteSheet _sprite_sheet;
 		std::unique_ptr<SDL_Texture, m2::SdlTextureDeleter> _texture;
@@ -19,6 +21,8 @@ namespace m2 {
 		[[nodiscard]] const pb::SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] SDL_Texture* texture() const;
 	};
+
+	using SpriteKey = std::string;
 
 	class Sprite {
 		const SpriteSheet& _sprite_sheet;
@@ -31,7 +35,7 @@ namespace m2 {
 		const float _collider_circ_radius_m;
 
 	public:
-		Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const std::string& key);
+		Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const SpriteKey& key);
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] const pb::Sprite& sprite() const;
 		[[nodiscard]] const std::string& key() const;
@@ -42,17 +46,17 @@ namespace m2 {
 		[[nodiscard]] float collider_circ_radius_m() const;
 	};
 
-	using SpriteSheetKeyToSpriteSheetMap = std::unordered_map<std::string, SpriteSheet>;
-	using SpriteKeyToSpriteMap = std::unordered_map<std::string, Sprite>;
+	using SpriteSheetKeyToSpriteSheetMap = std::unordered_map<SpriteSheetName, SpriteSheet>;
+	using SpriteKeyToSpriteMap = std::unordered_map<SpriteKey, Sprite>;
 	using SpriteMaps = std::pair<SpriteSheetKeyToSpriteSheetMap,SpriteKeyToSpriteMap>;
 	SpriteMaps load_sprite_maps(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
 
 	using SpriteIDToSpriteLUT = std::vector<const Sprite*>;
-	using SpriteKeyToSpriteIDMap = std::unordered_map<std::string, m2g::SpriteID>;
+	using SpriteKeyToSpriteIDMap = std::unordered_map<SpriteKey, m2g::SpriteID>;
 	using SpriteIDLUTs = std::pair<SpriteIDToSpriteLUT,SpriteKeyToSpriteIDMap>;
 	SpriteIDLUTs generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map);
 
-	using EditorPaletteSpriteKeys = std::vector<std::string>;
+	using EditorPaletteSpriteKeys = std::vector<SpriteKey>;
 	EditorPaletteSpriteKeys generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map);
 }
 
