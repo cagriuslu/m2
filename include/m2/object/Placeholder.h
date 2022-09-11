@@ -6,7 +6,7 @@
 #include <m2/Vec2f.h>
 
 namespace m2::obj {
-	std::pair<m2::Object&, m2::ID> create_placeholder(const Vec2f& pos, const Sprite& sprite, bool is_fg);
+	ID create_placeholder(const Vec2f& pos, const Sprite& sprite, bool is_fg);
 }
 
 #endif //M2_PLACEHOLDER_H

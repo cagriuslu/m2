@@ -32,6 +32,9 @@ m2::Vec2i::operator bool() const {
 bool m2::Vec2i::is_near(const Vec2i& other, int tolerance) const {
 	return abs(other.x - x) <= tolerance && abs(other.y - y) <= tolerance;
 }
+bool m2::Vec2i::in_nonnegative() const {
+	return 0 <= x && 0 <= y;
+}
 
 size_t m2::Vec2iHash::operator()(const Vec2i& a) const {
 	uint64_t packed = static_cast<uint64_t>(a.x) | (static_cast<uint64_t>(a.y) << 32);

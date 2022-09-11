@@ -22,9 +22,8 @@ m2::ID m2::obj::create_god() {
 
 		if (GAME.level->editor_mode == Level::EditorMode::PAINT && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
 			auto mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround();
-			if (0 <= mouse_coordinates.x && 0 <= mouse_coordinates.y) {
-				// Paint mode means selected sprite is BG sprite
-				// TODO
+			if (mouse_coordinates.in_nonnegative()) {
+				GAME.level->editor_paint_mode_paint_sprite(mouse_coordinates);
 			}
 		}
 	});

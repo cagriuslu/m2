@@ -22,13 +22,14 @@ namespace m2 {
 		explicit operator bool() const;
 
 		[[nodiscard]] bool is_near(const Vec2i& other, int tolerance) const;
+		[[nodiscard]] bool in_nonnegative() const;
 	};
-
-	std::string to_string(const m2::Vec2i&);
 
 	struct Vec2iHash {
 		size_t operator()(const Vec2i& a) const;
 	};
+
+	std::string to_string(const m2::Vec2i&);
 }
 
 #endif //M2_VEC2I_H

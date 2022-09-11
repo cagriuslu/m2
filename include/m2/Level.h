@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include "Value.h"
+#include "Vec2i.h"
 #include <LevelBlueprint.pb.h>
 #include <functional>
 #include <optional>
@@ -29,15 +30,17 @@ namespace m2 {
 		std::vector<std::function<void(void)>> deferred_actions;
 
 		// Editor
-		std::optional<std::string> editor_file_path;
 		enum class EditorMode {
 			NONE,
 			PAINT
 		} editor_mode{};
 		void activate_mode(EditorMode mode);
 		void editor_paint_mode_select_sprite(int index);
+		void editor_paint_mode_paint_sprite(const Vec2i& position);
 		int editor_paint_mode_selected_sprite{-1};
 		ID editor_paint_mode_selected_sprite_ghost_id{0};
+		std::unordered_map<Vec2i, ID, Vec2iHash> editor_bg_placeholders;
+		std::unordered_map<Vec2i, ID, Vec2iHash> editor_fg_placeholders;
 
 		static Value<Level> create_single_player_level(const std::string& lb_path);
 		static Value<Level> create_editor_level(const std::string& lb_path);

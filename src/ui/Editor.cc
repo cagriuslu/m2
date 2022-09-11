@@ -96,7 +96,6 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wd
 	},
 	.kb_shortcut = SDL_SCANCODE_C
 };
-
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button = wdg::TextBlueprint{
 	.initial_text = "Grid Lines",
 	.action_callback = []() -> Action {
@@ -108,6 +107,14 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button =
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_G
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_save_button = wdg::TextBlueprint{
+		.initial_text = "Save",
+		.action_callback = []() -> Action {
+			// TODO
+			return Action::CONTINUE;
+		},
+		.kb_shortcut = SDL_SCANCODE_S
 };
 const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 	.w = 19, .h = 72,
@@ -144,10 +151,16 @@ const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 			.variant = editor_left_hud_cancel_button
 		},
 		WidgetBlueprint{
-			.x = 4, .y = 64, .w = 11, .h = 3,
+			.x = 4, .y = 60, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 4,
 			.variant = editor_left_hud_gridlines_button
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 64, .w = 11, .h = 3,
+			.border_width_px = 1,
+			.padding_width_px = 4,
+			.variant = editor_left_hud_save_button
 		},
 	}
 };

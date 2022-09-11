@@ -6,6 +6,7 @@
 #include <m2/Game.hh>
 #include <string>
 #include <filesystem>
+#include <algorithm>
 
 namespace {
 	m2::VoidValue level_blueprint_iterate_tiles(
@@ -76,6 +77,35 @@ void m2::Level::editor_paint_mode_select_sprite(int index) {
 	}
 }
 
+void m2::Level::editor_paint_mode_paint_sprite(const Vec2i& position) {
+	if (0 <= editor_paint_mode_selected_sprite && position.in_nonnegative()) {
+		auto sprite_key = GAME.editor_sprites[editor_paint_mode_selected_sprite];
+		// Check if sprite key is in LUT
+		auto lut_it = std::find(_lb.bg_tile_lut().begin(), _lb.bg_tile_lut().end(), sprite_key);
+		if (lut_it == _lb.bg_tile_lut().end()) {
+			// Add to LUT
+			_lb.add_bg_tile_lut(sprite_key);
+			lut_it = _lb.bg_tile_lut().end() - 1;
+		}
+		auto lut_index = lut_it - _lb.bg_tile_lut().begin();
+		// Allocate item if necessary
+		while (_lb.bg_rows_size() < position.y + 1) {
+			_lb.add_bg_rows();
+		}
+		while (_lb.bg_rows(position.y).items_size() < position.x + 1) {
+			_lb.mutable_bg_rows(position.y)->add_items(-1);
+		}
+		// Paint lut_index
+		_lb.mutable_bg_rows(position.y)->set_items(position.x, (int32_t)lut_index);
+		// Create/Replace placeholder
+		auto placeholders_it = editor_bg_placeholders.find(position);
+		if (placeholders_it != editor_bg_placeholders.end()) {
+			deferred_actions.push_back(create_object_deleter(placeholders_it->second));
+		}
+		editor_bg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.sprite_key_to_sprite_map.at(sprite_key), false);
+	}
+}
+
 m2::Value<m2::Level> m2::Level::create_single_player_level(const std::string& lb_path) {
 	Level level{Type::SINGLE_PLAYER, lb_path};
 	return level;
@@ -91,11 +121,11 @@ m2::Value<m2::Level> m2::Level::create_editor_level(const std::string& lb_path) 
 		editor_level._lb = *lb;
 
 		auto iterate_results = level_blueprint_iterate_tiles(editor_level._lb,
-			[](const m2::Vec2f& position, const m2::Sprite& sprite) {
-				obj::create_placeholder(position, sprite, false);
+			[&](const m2::Vec2f& position, const m2::Sprite& sprite) {
+				editor_level.editor_bg_placeholders[position.iround()] = obj::create_placeholder(position, sprite, false);
 			},
-			[](const m2::Vec2f& position, const std::string& sprite_key, MAYBE const m2::pb::GroupBlueprint& gb) {
-				obj::create_placeholder(position, GAME.sprite_key_to_sprite_map.at(sprite_key), true);
+			[&](const m2::Vec2f& position, const std::string& sprite_key, MAYBE const m2::pb::GroupBlueprint& gb) {
+				editor_level.editor_fg_placeholders[position.iround()] = obj::create_placeholder(position, GAME.sprite_key_to_sprite_map.at(sprite_key), true);
 			}
 		);
 	}
