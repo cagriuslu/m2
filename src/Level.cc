@@ -13,7 +13,6 @@ namespace {
 		const std::function<void(const m2::Vec2f& position, const m2::Sprite& sprite)>& bg_tile_loader,
 		const std::function<void(const m2::Vec2f& position, const std::string& sprite_key, const m2::pb::GroupBlueprint& gb)>& fg_object_loader) {
 		if (bg_tile_loader) {
-			auto level_width = lb.width();
 			// Look up background sprites
 			std::vector<const m2::Sprite*> bg_sprites;
 			for (const auto& bg_sprite_key : lb.bg_tile_lut()) {
@@ -22,17 +21,17 @@ namespace {
 				bg_sprites.push_back(&sprite_it->second);
 			}
 			// Create background tiles
-			for (int i = 0; i < lb.bg_tiles_size(); ++i) {
-				auto lut_index = lb.bg_tiles(i);
-				// Skip negative tiles
-				if (lut_index < 0) {
-					continue;
+			for (int y = 0; y < lb.bg_rows_size(); ++y) {
+				for (int x = 0; x < lb.bg_rows(y).items_size(); ++x) {
+					auto lut_index = lb.bg_rows(y).items(x);
+					if (lut_index < 0) {
+						continue; // Skip negative tiles
+					}
+					if (lb.bg_tile_lut_size() <= lut_index) {
+						return m2::failure("Background tile LUT index out of bounds");
+					}
+					bg_tile_loader(m2::Vec2f{x, y}, *bg_sprites[lut_index]);
 				}
-				// Check if corresponding key exists
-				if (lb.bg_tile_lut_size() <= lut_index) {
-					return m2::failure("Background tile LUT index out of bounds");
-				}
-				bg_tile_loader(m2::Vec2f{i % level_width, i / level_width}, *bg_sprites[lut_index]);
 			}
 		}
 		if (fg_object_loader) {
@@ -41,6 +40,7 @@ namespace {
 				fg_object_loader(m2::Vec2f{fg_object.position()}, fg_object.key(), fg_object.group());
 			}
 		}
+		return {};
 	}
 }
 

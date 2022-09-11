@@ -1,13 +1,10 @@
 #include <m2/object/God.h>
 #include <m2/Game.hh>
 
-std::pair<m2::Object&, m2::ID> m2::obj::create_god() {
-	auto obj_pair = create_object(Vec2f{});
-	auto& god = obj_pair.first;
-	god.impl = std::make_unique<m2::obj::God>();
-
-	auto& monitor = god.add_monitor();
-	monitor.pre_phy = [&](MAYBE m2::comp::Monitor& mon) {
+m2::ID m2::obj::create_god() {
+	auto [obj, id] = create_object(Vec2f{});
+	obj.impl = std::make_unique<m2::obj::God>();
+	obj.add_monitor([&obj = obj](MAYBE m2::comp::Monitor& mon) {
 		m2::Vec2f move_direction;
 		if (GAME.events.is_key_down(m2::Key::UP)) {
 			move_direction.y -= 1.0f;
@@ -21,9 +18,15 @@ std::pair<m2::Object&, m2::ID> m2::obj::create_god() {
 		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		god.position += move_direction.normalize() * ((float)GAME.deltaTicks_ms * .004f);
-	};
+		obj.position += move_direction.normalize() * ((float)GAME.deltaTicks_ms * .01f);
 
-	GAME.playerId = obj_pair.second;
-	return obj_pair;
+		if (GAME.level->editor_mode == Level::EditorMode::PAINT && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
+			auto mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround();
+			if (0 <= mouse_coordinates.x && 0 <= mouse_coordinates.y) {
+				// Paint mode means selected sprite is BG sprite
+				// TODO
+			}
+		}
+	});
+	return id;
 }

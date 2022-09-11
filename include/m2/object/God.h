@@ -8,7 +8,7 @@ namespace m2::obj {
 		int dummy;
 	};
 
-	std::pair<Object&, ID> create_god();
+	ID create_god();
 }
 
 #endif //M2_GOD_H

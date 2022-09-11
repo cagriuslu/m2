@@ -4,6 +4,7 @@ package m2.pb;
 import "Vec2i.proto";
 import "GroupBlueprint.proto";
 import "ObjectParameters.proto";
+import "Int32Array.proto";
 
 message ForegroundObjectBlueprint {
   Vec2i position = 1;
@@ -13,8 +14,7 @@ message ForegroundObjectBlueprint {
 }
 
 message LevelBlueprint {
-  int32 width = 1;
-  repeated string bg_tile_lut = 2;
-  repeated int32 bg_tiles = 3;
-  repeated ForegroundObjectBlueprint fg_objects = 4;
+  repeated string bg_tile_lut = 1;
+  repeated Int32Array bg_rows = 2;
+  repeated ForegroundObjectBlueprint fg_objects = 3;
 }

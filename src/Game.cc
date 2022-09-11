@@ -113,7 +113,6 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 
-	auto level_width = lb->width();
 	// Look up background sprites
 	std::vector<const Sprite*> bg_sprites;
 	for (const auto& bg_sprite_key : lb->bg_tile_lut()) {
@@ -122,17 +121,17 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 		bg_sprites.push_back(&sprite_it->second);
 	}
 	// Create background tiles
-	for (int i = 0; i < lb->bg_tiles_size(); ++i) {
-		auto lut_index = lb->bg_tiles(i);
-		// Skip negative tiles
-		if (lut_index < 0) {
-			continue;
+	for (int y = 0; y < lb->bg_rows_size(); ++y) {
+		for (int x = 0; x < lb->bg_rows(y).items_size(); ++x) {
+			auto lut_index = lb->bg_rows(y).items(x);
+			if (lut_index < 0) {
+				continue; // Skip negative tiles
+			}
+			if (lb->bg_tile_lut_size() <= lut_index) {
+				return failure("Background tile LUT index out of bounds");
+			}
+			m2::obj::create_tile(m2::Vec2f{x, y}, *bg_sprites[lut_index]);
 		}
-		// Check if corresponding key exists
-		if (lb->bg_tile_lut_size() <= lut_index) {
-			return failure("Background tile LUT index out of bounds");
-		}
-		m2::obj::create_tile(m2::Vec2f{i % level_width, i / level_width}, *bg_sprites[lut_index]);
 	}
 	// Create foreground objects
 	for (const auto& fg_object : lb->fg_objects()) {
@@ -172,7 +171,7 @@ m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
 	level = std::move(*level_value);
 
 	// Create default objects
-	m2::obj::create_god();
+	playerId = m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_origin();
 

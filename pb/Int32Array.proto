@@ -1,0 +1,6 @@
+syntax = "proto3";
+package m2.pb;
+
+message Int32Array {
+  repeated int32 items = 1;
+}
