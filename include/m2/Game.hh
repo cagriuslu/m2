@@ -96,7 +96,7 @@ namespace m2 {
 		Pool<comp::Light> lights;
 		Pool<m2g::comp::Defense> defenses;
 		Pool<m2g::comp::Offense> offenses;
-		b2World *world{}; // TODO we must have a mock implementation for editor, otherwise we need to do if-check if we're in editor mode while creating objects
+		b2World *world{};
         box2d::ContactListener* contactListener{};
 		ID cameraId{}, playerId{}, pointerId{};
 		PathfinderMap pathfinderMap;
