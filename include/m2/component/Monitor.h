@@ -10,13 +10,15 @@ namespace m2 {
 
 namespace m2::comp {
 	struct Monitor : public Component {
-		std::function<void(Monitor&)> pre_phy;
-		std::function<void(Monitor&)> post_phy;
-		std::function<void(Monitor&)> pre_gfx;
-		std::function<void(Monitor&)> post_gfx;
+		using Callback = std::function<void(Monitor&)>;
+		Callback pre_phy;
+		Callback post_phy;
+		Callback pre_gfx;
+		Callback post_gfx;
 
 		Monitor() = default;
 		explicit Monitor(uint64_t object_id);
+		explicit Monitor(uint64_t object_id, const Callback& pre_phy, const Callback& post_phy, const Callback& pre_gfx, const Callback& post_gfx);
 
 		[[nodiscard]] Object& parent() const;
 	};

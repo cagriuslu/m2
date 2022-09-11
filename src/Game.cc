@@ -11,16 +11,10 @@
 #include <m2/Proto.h>
 #include <m2/Sprite.h>
 #include <LevelBlueprint.pb.h>
-#include "m2/Component.h"
 #include <m2g/SpriteBlueprint.h>
-#include <m2/VSON.hh>
 #include <m2g/ui/UI.h>
-#include "m2/component/Monitor.h"
-#include "m2/Component.h"
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
-#include <m2g/SpriteBlueprint.h>
-#include <m2/object/Ghost.h>
 #include <m2/SDLUtils.hh>
 #include <SDL_image.h>
 #include <m2/ui/Editor.h>

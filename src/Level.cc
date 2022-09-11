@@ -76,12 +76,11 @@ void m2::Level::editor_paint_mode_select_sprite(int index) {
 			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
 		}
 		editor_paint_mode_selected_sprite = index;
-		auto obj_pair = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_sprites[index]));
-		editor_paint_mode_selected_sprite_ghost_id = obj_pair.second;
+		editor_paint_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_sprites[index]));
 	}
 }
 
-m2::Level::Level(Type type, const std::string& lb_path) : _type(type), _lb_path(lb_path) {}
+m2::Level::Level(Type type, std::string lb_path) : _type(type), _lb_path(std::move(lb_path)) {}
 
 m2::Value<m2::Level> m2::Level::create_editor_level(const std::string& lb_path) {
 	Level editor_level{Type::EDITOR, lb_path};

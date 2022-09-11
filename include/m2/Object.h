@@ -69,6 +69,10 @@ namespace m2 {
 
 		void add_to_group(const pb::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer);
 		comp::Monitor& add_monitor();
+		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy);
+		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& pre_gfx);
+		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx);
+		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx, const comp::Monitor::Callback& post_gfx);
         comp::Physique& add_physique();
         comp::Graphic& add_graphic();
 		comp::Graphic& add_graphic(const Sprite& sprite);

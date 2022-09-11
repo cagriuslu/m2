@@ -149,6 +149,30 @@ m2::comp::Monitor& m2::Object::add_monitor() {
 	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this)};
 	return monitor_pair.first;
 }
+m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy) {
+	auto monitor_pair = GAME.monitors.alloc();
+	_monitor_id = monitor_pair.second;
+	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, {}, {}, {}};
+	return monitor_pair.first;
+}
+m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& pre_gfx) {
+	auto monitor_pair = GAME.monitors.alloc();
+	_monitor_id = monitor_pair.second;
+	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, {}, pre_gfx, {}};
+	return monitor_pair.first;
+}
+m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx) {
+	auto monitor_pair = GAME.monitors.alloc();
+	_monitor_id = monitor_pair.second;
+	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, {}};
+	return monitor_pair.first;
+}
+m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx, const comp::Monitor::Callback& post_gfx) {
+	auto monitor_pair = GAME.monitors.alloc();
+	_monitor_id = monitor_pair.second;
+	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, post_gfx};
+	return monitor_pair.first;
+}
 m2::comp::Physique& m2::Object::add_physique() {
 	auto physique_pair = GAME.physics.alloc();
 	_physique_id = physique_pair.second;

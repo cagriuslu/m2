@@ -38,7 +38,7 @@ namespace m2 {
 		int editor_paint_mode_selected_sprite{-1};
 		ID editor_paint_mode_selected_sprite_ghost_id{0};
 		explicit Level(const std::string& path);
-		Level(Type type, const std::string& lb_path);
+		Level(Type type, std::string lb_path);
 
 		static Value<Level> create_editor_level(const std::string& lb_path);
 	};
