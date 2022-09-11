@@ -44,11 +44,7 @@ namespace {
 	}
 }
 
-m2::Level::Level() : _type(Type::SINGLE_PLAYER) {
-	// TODO
-}
-
-m2::Level::Level(const std::string& path) : _type(Type::EDITOR), editor_file_path(path) {}
+m2::Level::Level(Type type, std::string lb_path) : _type(type), _lb_path(std::move(lb_path)) {}
 
 m2::Level::Type m2::Level::type() const {
 	return _type;
@@ -80,7 +76,10 @@ void m2::Level::editor_paint_mode_select_sprite(int index) {
 	}
 }
 
-m2::Level::Level(Type type, std::string lb_path) : _type(type), _lb_path(std::move(lb_path)) {}
+m2::Value<m2::Level> m2::Level::create_single_player_level(const std::string& lb_path) {
+	Level level{Type::SINGLE_PLAYER, lb_path};
+	return level;
+}
 
 m2::Value<m2::Level> m2::Level::create_editor_level(const std::string& lb_path) {
 	Level editor_level{Type::EDITOR, lb_path};

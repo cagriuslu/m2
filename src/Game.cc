@@ -104,7 +104,9 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	if (level) {
 		unload_level();
 	}
-	level = Level{};
+	auto level_value = Level::create_single_player_level(level_resource_path);
+	m2_reflect_failure(level_value);
+	level = *level_value;
 
 	// Reset state
 	events.clear();
