@@ -104,7 +104,7 @@ m2::SpriteIDLUTs m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites
 m2::EditorPaletteSpriteKeys m2::generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map) {
 	EditorPaletteSpriteKeys keys;
 	for (const auto& [key, sprite] : sprites_map) {
-		if (sprite.sprite().in_editor_palette()) {
+		if (sprite.sprite().editor_palette() != pb::EditorPalette::NO) {
 			keys.emplace_back(key);
 		}
 	}

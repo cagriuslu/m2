@@ -82,11 +82,23 @@ m2::Vec2f m2::Vec2f::normalize() const {
 	}
 	return {};
 }
+m2::Vec2f m2::Vec2f::round() const {
+	return {roundf(x), roundf(y)};
+}
+m2::Vec2i m2::Vec2f::iround() const {
+	return Vec2i{this->round()};
+}
 m2::Vec2f m2::Vec2f::floor() const {
 	return {floorf(x), floorf(y)};
 }
 m2::Vec2i m2::Vec2f::ifloor() const {
 	return Vec2i{this->floor()};
+}
+m2::Vec2f m2::Vec2f::ceil() const {
+	return {ceilf(x), ceilf(y)};
+}
+m2::Vec2i m2::Vec2f::iceil() const {
+	return Vec2i{this->ceil()};
 }
 m2::Vec2f m2::Vec2f::floor_length(float len) const {
 	if (length() < len) {

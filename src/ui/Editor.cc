@@ -62,6 +62,30 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg
 	},
 	.kb_shortcut = SDL_SCANCODE_P
 };
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_erase_button = wdg::TextBlueprint{
+	.initial_text = "Erase",
+	.action_callback = []() -> Action {
+		// TODO
+		return Action::CONTINUE;
+	},
+	.kb_shortcut = SDL_SCANCODE_E
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_place_button = wdg::TextBlueprint{
+	.initial_text = "Place",
+	.action_callback = []() -> Action {
+		// TODO
+		return Action::CONTINUE;
+	},
+	.kb_shortcut = SDL_SCANCODE_O
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_remove_button = wdg::TextBlueprint{
+	.initial_text = "Remove",
+	.action_callback = []() -> Action {
+		// TODO
+		return Action::CONTINUE;
+	},
+	.kb_shortcut = SDL_SCANCODE_R
+};
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wdg::TextBlueprint{
 	.initial_text = "Cancel",
 	.action_callback = []() -> Action {
@@ -97,6 +121,24 @@ const m2::ui::UIBlueprint m2::ui::editor_left_hud = {
 		},
 		WidgetBlueprint{
 			.x = 4, .y = 8, .w = 11, .h = 3,
+			.border_width_px = 1,
+			.padding_width_px = 4,
+			.variant = editor_left_hud_erase_button
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 12, .w = 11, .h = 3,
+			.border_width_px = 1,
+			.padding_width_px = 4,
+			.variant = editor_left_hud_place_button
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 16, .w = 11, .h = 3,
+			.border_width_px = 1,
+			.padding_width_px = 4,
+			.variant = editor_left_hud_remove_button
+		},
+		WidgetBlueprint{
+			.x = 4, .y = 20, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 1,
 			.variant = editor_left_hud_cancel_button

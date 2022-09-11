@@ -29,43 +29,6 @@
 
 m2::Game* g_game;
 
-m2::Level::Level() : _type(Type::SINGLE_PLAYER) {
-	// TODO
-}
-
-m2::Level::Level(const std::string& path) : _type(Type::EDITOR), editor_file_path(path) {}
-
-m2::Level::Type m2::Level::type() const {
-	return _type;
-}
-
-void m2::Level::activate_mode(EditorMode mode) {
-	editor_mode = mode;
-	switch (mode) {
-		case EditorMode::NONE:
-			editor_paint_mode_select_sprite(-1);
-			break;
-		case EditorMode::PAINT:
-			editor_paint_mode_select_sprite(editor_paint_mode_selected_sprite == -1 ? 0 : editor_paint_mode_selected_sprite);
-			break;
-	}
-}
-void m2::Level::editor_paint_mode_select_sprite(int index) {
-	if (index < 0) {
-		if (editor_paint_mode_selected_sprite_ghost_id) {
-			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
-		}
-		editor_paint_mode_selected_sprite = -1;
-	} else if (index < GAME.editor_sprites.size() && index != editor_paint_mode_selected_sprite) {
-		if (editor_paint_mode_selected_sprite_ghost_id) {
-			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
-		}
-		editor_paint_mode_selected_sprite = index;
-		auto obj_pair = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_sprites[index]));
-		editor_paint_mode_selected_sprite_ghost_id = obj_pair.second;
-	}
-}
-
 m2::Game::Game() {
 	update_window_dims(1600, 900); // Store default window dimensions in GAME
 	if ((sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowRect.w, windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
@@ -202,43 +165,21 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 }
 
 m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
-	Value<pb::LevelBlueprint> lb;
-	if (std::filesystem::exists(level_resource_path)) {
-		lb = proto::json_file_to_message<pb::LevelBlueprint>(level_resource_path);
-		m2_reflect_failure(lb);
-	}
-
-	if (level) {
-		unload_level();
-	}
-	level = Level{level_resource_path};
-
 	// Reset state
 	events.clear();
 	is_phy_stepping = false;
 
-//	for (unsigned y = 0; y < lb->height(); ++y) {
-//		for (unsigned x = 0; x < lb->width(); ++x) {
-//			auto tb = lb->tiles(y * lb->width() + x);
-//			// Load background sprite
-//			if (not tb.bg_sprite_key().empty()) {
-//				auto sprite_it = sprites.find(tb.bg_sprite_key());
-//				m2_fail_unless(sprite_it != sprites.end(), "Unknown sprite key " + tb.bg_sprite_key());
-//				m2::obj::create_tile(m2::Vec2f{x, y}, sprite_it->second);
-//			}
-//			// Load foreground object
-//			if (tb.has_fg_object()) {
-//				auto& obj = GAME.objects.alloc().first;
-//				auto load_result = m2g::fg_object_loader(obj, sprite_reverse_lut[tb.fg_object().key()], tb.fg_object().group(), m2::Vec2f{x, y});
-//				m2_reflect_failure(load_result);
-//			}
-//		}
-//	}
+	if (level) {
+		unload_level();
+	}
+
+	auto level_value = Level::create_editor_level(level_resource_path);
+	m2_reflect_failure(level_value);
+	level = std::move(*level_value);
 
 	// Create default objects
 	m2::obj::create_god();
 	m2::obj::create_camera();
-	m2::obj::create_pointer();
 	m2::obj::create_origin();
 
 	// UI Hud

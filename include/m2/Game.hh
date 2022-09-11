@@ -3,6 +3,7 @@
 
 #include <m2g/Proxy.h>
 #include <m2g/SpriteID.h>
+#include "Level.h"
 #include "Group.h"
 #include "Sprite.h"
 #include <GroupBlueprint.pb.h>
@@ -34,35 +35,6 @@
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
 
 namespace m2 {
-	class Level {
-	public:
-		enum class Type {
-			SINGLE_PLAYER,
-			EDITOR
-		};
-
-	private:
-		Type _type;
-
-	public:
-		[[nodiscard]] Type type() const;
-
-		std::vector<std::function<void(void)>> deferred_actions;
-		explicit Level();
-
-		// Editor
-		std::optional<std::string> editor_file_path;
-		enum class EditorMode {
-			NONE,
-			PAINT
-		} editor_mode{};
-		void activate_mode(EditorMode mode);
-		void editor_paint_mode_select_sprite(int index);
-		int editor_paint_mode_selected_sprite{-1};
-		ID editor_paint_mode_selected_sprite_ghost_id{0};
-		explicit Level(const std::string& path);
-	};
-
 	struct Game {
 		std::optional<Level> level;
 
