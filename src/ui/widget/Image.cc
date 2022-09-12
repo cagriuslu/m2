@@ -37,24 +37,26 @@ m2::ui::Action m2::ui::wdg::ImageState::update_content() {
 
 void m2::ui::wdg::ImageState::draw() {
 	UIState::draw_background_color(rect_px, blueprint->background_color);
-	// Make sure sprite is drawn square
-	SDL_Rect dstrect;
-	if (rect_px.h < rect_px.w) {
-		dstrect = {
-			.x = rect_px.x + (rect_px.w - rect_px.h) / 2,
-			.y = rect_px.y,
-			.w = rect_px.h,
-			.h = rect_px.h
-		};
-	} else {
-		dstrect = {
-			.x = rect_px.x,
-			.y = rect_px.y + (rect_px.h - rect_px.w) / 2,
-			.w = rect_px.w,
-			.h = rect_px.w
-		};
+	if (sprite) {
+		// Make sure sprite is drawn square
+		SDL_Rect dstrect;
+		if (rect_px.h < rect_px.w) {
+			dstrect = {
+					.x = rect_px.x + (rect_px.w - rect_px.h) / 2,
+					.y = rect_px.y,
+					.w = rect_px.h,
+					.h = rect_px.h
+			};
+		} else {
+			dstrect = {
+					.x = rect_px.x,
+					.y = rect_px.y + (rect_px.h - rect_px.w) / 2,
+					.w = rect_px.w,
+					.h = rect_px.w
+			};
+		}
+		auto srcrect = sdl::to_rect(sprite->sprite().rect());
+		SDL_RenderCopy(GAME.sdlRenderer, sprite->sprite_sheet().texture(), &srcrect, &dstrect);
 	}
-	auto srcrect = sdl::to_rect(sprite->sprite().rect());
-	SDL_RenderCopy(GAME.sdlRenderer, sprite->sprite_sheet().texture(), &srcrect, &dstrect);
 	UIState::draw_border(rect_px, blueprint->border_width_px);
 }

@@ -33,14 +33,16 @@ namespace m2 {
 		enum class EditorMode {
 			NONE,
 			PAINT,
-			ERASE
+			ERASE,
+			PLACE,
+			REMOVE
 		} editor_mode{};
 		void activate_mode(EditorMode mode);
-		void editor_paint_mode_select_sprite(int index);
+		void editor_paint_or_place_mode_select_sprite(int index);
 		void editor_paint_mode_paint_sprite(const Vec2i& position);
 		void editor_erase_mode_erase_position(const Vec2i& position);
-		int editor_paint_mode_selected_sprite{-1};
-		ID editor_paint_mode_selected_sprite_ghost_id{0};
+		int editor_paint_or_place_mode_selected_sprite{-1};
+		ID editor_paint_or_place_mode_selected_sprite_ghost_id{0};
 		std::unordered_map<Vec2i, ID, Vec2iHash> editor_bg_placeholders;
 		std::unordered_map<Vec2i, ID, Vec2iHash> editor_fg_placeholders;
 

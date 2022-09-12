@@ -55,31 +55,39 @@ void m2::Level::activate_mode(EditorMode mode) {
 	editor_mode = mode;
 	switch (mode) {
 		case EditorMode::PAINT:
-			editor_paint_mode_select_sprite(editor_paint_mode_selected_sprite == -1 ? 0 : editor_paint_mode_selected_sprite);
+		case EditorMode::PLACE:
+			editor_paint_or_place_mode_select_sprite(
+					editor_paint_or_place_mode_selected_sprite == -1 ? 0 : editor_paint_or_place_mode_selected_sprite);
 			break;
 		default:
-			editor_paint_mode_select_sprite(-1);
+			editor_paint_or_place_mode_select_sprite(-1);
 			break;
 	}
 }
-void m2::Level::editor_paint_mode_select_sprite(int index) {
+void m2::Level::editor_paint_or_place_mode_select_sprite(int index) {
+	auto ghost_deleter = [](ID ghost_id) {
+		if (ghost_id) {
+			GAME.add_deferred_action(m2::create_object_deleter(ghost_id));
+		}
+	};
+
 	if (index < 0) {
-		if (editor_paint_mode_selected_sprite_ghost_id) {
-			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
-		}
-		editor_paint_mode_selected_sprite = -1;
-	} else if (index < GAME.editor_bg_sprites.size() && index != editor_paint_mode_selected_sprite) {
-		if (editor_paint_mode_selected_sprite_ghost_id) {
-			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
-		}
-		editor_paint_mode_selected_sprite = index;
-		editor_paint_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_bg_sprites[index]));
+		ghost_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id);
+		editor_paint_or_place_mode_selected_sprite = -1;
+	} else if (editor_mode == EditorMode::PAINT && index < (long)GAME.editor_bg_sprites.size() && index != editor_paint_or_place_mode_selected_sprite) {
+		ghost_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id);
+		editor_paint_or_place_mode_selected_sprite = index;
+		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_bg_sprites[index]));
+	} else if (editor_mode == EditorMode::PLACE && index < (long)GAME.editor_fg_sprites.size() && index != editor_paint_or_place_mode_selected_sprite) {
+		ghost_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id);
+		editor_paint_or_place_mode_selected_sprite = index;
+		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_fg_sprites[index]));
 	}
 }
 
 void m2::Level::editor_paint_mode_paint_sprite(const Vec2i& position) {
-	if (0 <= editor_paint_mode_selected_sprite && position.in_nonnegative()) {
-		auto sprite_key = GAME.editor_bg_sprites[editor_paint_mode_selected_sprite];
+	if (0 <= editor_paint_or_place_mode_selected_sprite && position.in_nonnegative()) {
+		auto sprite_key = GAME.editor_bg_sprites[editor_paint_or_place_mode_selected_sprite];
 		// Check if sprite key is in LUT
 		auto lut_it = std::find(_lb.bg_tile_lut().begin(), _lb.bg_tile_lut().end(), sprite_key);
 		if (lut_it == _lb.bg_tile_lut().end()) {

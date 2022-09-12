@@ -9,24 +9,24 @@ using namespace m2::ui;
 
 const WidgetBlueprint::WidgetBlueprintVariant editor_paint_mode_right_hud_selected_sprite = wdg::ImageBlueprint{
 	.update_callback = []() -> std::pair<Action,std::optional<SpriteKey>> {
-		if (GAME.level->editor_paint_mode_selected_sprite < 0) {
+		if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
 			return {Action::CONTINUE, {}};
 		} else {
-			return {Action::CONTINUE, GAME.editor_bg_sprites[GAME.level->editor_paint_mode_selected_sprite]};
+			return {Action::CONTINUE, GAME.editor_bg_sprites[GAME.level->editor_paint_or_place_mode_selected_sprite]};
 		}
 	}
 };
 const WidgetBlueprint::WidgetBlueprintVariant editor_paint_mode_right_hud_left_arrow = wdg::TextBlueprint{
 	.initial_text = "<",
 	.action_callback = []() {
-		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite - 1);
+		GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite - 1);
 		return Action::CONTINUE;
 	}
 };
 const WidgetBlueprint::WidgetBlueprintVariant editor_paint_mode_right_hud_right_arrow = wdg::TextBlueprint{
 	.initial_text = ">",
 	.action_callback = []() {
-		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite + 1);
+		GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite + 1);
 		return Action::CONTINUE;
 	}
 };
@@ -52,6 +52,51 @@ const UIBlueprint editor_paint_mode_right_hud = {
 	}
 };
 
+const WidgetBlueprint::WidgetBlueprintVariant editor_place_mode_right_hud_selected_sprite = wdg::ImageBlueprint{
+		.update_callback = []() -> std::pair<Action,std::optional<SpriteKey>> {
+			if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
+				return {Action::CONTINUE, {}};
+			} else {
+				return {Action::CONTINUE, GAME.editor_fg_sprites[GAME.level->editor_paint_or_place_mode_selected_sprite]};
+			}
+		}
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_place_mode_right_hud_left_arrow = wdg::TextBlueprint{
+		.initial_text = "<",
+		.action_callback = []() {
+			GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite - 1);
+			return Action::CONTINUE;
+		}
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_place_mode_right_hud_right_arrow = wdg::TextBlueprint{
+		.initial_text = ">",
+		.action_callback = []() {
+			GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite + 1);
+			return Action::CONTINUE;
+		}
+};
+const UIBlueprint editor_place_mode_right_hud = {
+		.w = 19, .h = 72,
+		.border_width_px = 1,
+		.widgets = {
+				WidgetBlueprint{
+						.x = 4, .y = 4, .w = 11, .h = 11,
+						.border_width_px = 1,
+						.variant = editor_place_mode_right_hud_selected_sprite
+				},
+				WidgetBlueprint{
+						.x = 4, .y = 16, .w = 5, .h = 5,
+						.border_width_px = 1,
+						.variant = editor_place_mode_right_hud_left_arrow
+				},
+				WidgetBlueprint{
+						.x = 10, .y = 16, .w = 5, .h = 5,
+						.border_width_px = 1,
+						.variant = editor_place_mode_right_hud_right_arrow
+				}
+		}
+};
+
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg::TextBlueprint{
 	.initial_text = "Paint",
 	.action_callback = []() -> Action {
@@ -74,7 +119,9 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_erase_button = wdg
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_place_button = wdg::TextBlueprint{
 	.initial_text = "Place",
 	.action_callback = []() -> Action {
-		// TODO
+		GAME.level->activate_mode(Level::EditorMode::PLACE);
+		GAME.rightHudUIState = UIState(&editor_place_mode_right_hud);
+		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_O
