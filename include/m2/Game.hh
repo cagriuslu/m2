@@ -69,7 +69,8 @@ namespace m2 {
 		SpriteIDToSpriteLUT sprite_id_lut;
 		const Sprite& lookup_sprite(m2g::SpriteID) const;
 		SpriteKeyToSpriteIDMap sprite_key_to_id_map;
-		EditorPaletteSpriteKeys editor_sprites;
+		EditorPaletteSpriteKeys editor_bg_sprites;
+		EditorPaletteSpriteKeys editor_fg_sprites;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////

@@ -68,18 +68,18 @@ void m2::Level::editor_paint_mode_select_sprite(int index) {
 			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
 		}
 		editor_paint_mode_selected_sprite = -1;
-	} else if (index < GAME.editor_sprites.size() && index != editor_paint_mode_selected_sprite) {
+	} else if (index < GAME.editor_bg_sprites.size() && index != editor_paint_mode_selected_sprite) {
 		if (editor_paint_mode_selected_sprite_ghost_id) {
 			GAME.add_deferred_action(m2::create_object_deleter(editor_paint_mode_selected_sprite_ghost_id));
 		}
 		editor_paint_mode_selected_sprite = index;
-		editor_paint_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_sprites[index]));
+		editor_paint_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_bg_sprites[index]));
 	}
 }
 
 void m2::Level::editor_paint_mode_paint_sprite(const Vec2i& position) {
 	if (0 <= editor_paint_mode_selected_sprite && position.in_nonnegative()) {
-		auto sprite_key = GAME.editor_sprites[editor_paint_mode_selected_sprite];
+		auto sprite_key = GAME.editor_bg_sprites[editor_paint_mode_selected_sprite];
 		// Check if sprite key is in LUT
 		auto lut_it = std::find(_lb.bg_tile_lut().begin(), _lb.bg_tile_lut().end(), sprite_key);
 		if (lut_it == _lb.bg_tile_lut().end()) {

@@ -76,7 +76,9 @@ m2::Game::Game() {
 	auto [sprite_lut_tmp, sprite_reverse_lut_tmp] = generate_sprite_id_luts(sprite_key_to_sprite_map);
 	sprite_id_lut = std::move(sprite_lut_tmp);
 	sprite_key_to_id_map = std::move(sprite_reverse_lut_tmp);
-	editor_sprites = generate_editor_palette_sprite_keys(sprite_key_to_sprite_map);
+	auto [editor_bg_sprites_tmp, editor_fg_sprites_tmp] = generate_editor_palette_sprite_keys(sprite_key_to_sprite_map);
+	editor_bg_sprites = std::move(editor_bg_sprites_tmp);
+	editor_fg_sprites = std::move(editor_fg_sprites_tmp);
 }
 
 m2::Game::~Game() {

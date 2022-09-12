@@ -101,12 +101,19 @@ m2::SpriteIDLUTs m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites
 	return luts;
 }
 
-m2::EditorPaletteSpriteKeys m2::generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map) {
-	EditorPaletteSpriteKeys keys;
+m2::EditorPalettes m2::generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map) {
+	EditorPalettes palettes;
 	for (const auto& [key, sprite] : sprites_map) {
-		if (sprite.sprite().editor_palette() != pb::EditorPalette::NO) {
-			keys.emplace_back(key);
+		switch (sprite.sprite().editor_palette()) {
+			case pb::EditorPalette::BG:
+				palettes.first.emplace_back(key);
+				break;
+			case pb::EditorPalette::FG:
+				palettes.second.emplace_back(key);
+				break;
+			default:
+				break;
 		}
 	}
-	return keys;
+	return palettes;
 }

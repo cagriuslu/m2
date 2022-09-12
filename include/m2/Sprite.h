@@ -57,7 +57,8 @@ namespace m2 {
 	SpriteIDLUTs generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map);
 
 	using EditorPaletteSpriteKeys = std::vector<SpriteKey>;
-	EditorPaletteSpriteKeys generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map);
+	using EditorPalettes = std::pair<EditorPaletteSpriteKeys,EditorPaletteSpriteKeys>;
+	EditorPalettes generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map);
 }
 
 #endif //M2_SPRITE_H
