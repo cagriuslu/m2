@@ -65,7 +65,8 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_erase_button = wdg::TextBlueprint{
 	.initial_text = "Erase",
 	.action_callback = []() -> Action {
-		// TODO
+		GAME.level->activate_mode(Level::EditorMode::ERASE);
+		GAME.rightHudUIState = {};
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_E

@@ -20,10 +20,17 @@ m2::ID m2::obj::create_god() {
 		}
 		obj.position += move_direction.normalize() * ((float)GAME.deltaTicks_ms * .01f);
 
-		if (GAME.level->editor_mode == Level::EditorMode::PAINT && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
-			auto mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround();
-			if (mouse_coordinates.in_nonnegative()) {
-				GAME.level->editor_paint_mode_paint_sprite(mouse_coordinates);
+		Vec2i mouse_coordinates;
+		if (GAME.level->editor_mode != Level::EditorMode::NONE && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) && (mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround()).in_nonnegative()) {
+			switch (GAME.level->editor_mode) {
+				case Level::EditorMode::PAINT:
+					GAME.level->editor_paint_mode_paint_sprite(mouse_coordinates);
+					break;
+				case Level::EditorMode::ERASE:
+					GAME.level->editor_erase_mode_erase_position(mouse_coordinates);
+					break;
+				default:
+					break;
 			}
 		}
 	});

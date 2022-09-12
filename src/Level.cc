@@ -54,11 +54,11 @@ m2::Level::Type m2::Level::type() const {
 void m2::Level::activate_mode(EditorMode mode) {
 	editor_mode = mode;
 	switch (mode) {
-		case EditorMode::NONE:
-			editor_paint_mode_select_sprite(-1);
-			break;
 		case EditorMode::PAINT:
 			editor_paint_mode_select_sprite(editor_paint_mode_selected_sprite == -1 ? 0 : editor_paint_mode_selected_sprite);
+			break;
+		default:
+			editor_paint_mode_select_sprite(-1);
 			break;
 	}
 }
@@ -103,6 +103,16 @@ void m2::Level::editor_paint_mode_paint_sprite(const Vec2i& position) {
 			deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 		}
 		editor_bg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.sprite_key_to_sprite_map.at(sprite_key), false);
+	}
+}
+
+void m2::Level::editor_erase_mode_erase_position(const Vec2i &position) {
+	// Erase lut_index
+	_lb.mutable_bg_rows(position.y)->set_items(position.x, -1);
+	// Delete placeholder
+	auto placeholders_it = editor_bg_placeholders.find(position);
+	if (placeholders_it != editor_bg_placeholders.end()) {
+		deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 	}
 }
 
