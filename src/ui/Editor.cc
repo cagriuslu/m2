@@ -7,7 +7,7 @@
 using namespace m2;
 using namespace m2::ui;
 
-const WidgetBlueprint::WidgetBlueprintVariant editor_paint_mode_right_hud_selected_sprite = wdg::ImageBlueprint{
+const WidgetBlueprint::Variant editor_paint_mode_right_hud_selected_sprite = wdg::ImageBlueprint{
 	.update_callback = []() -> std::pair<Action,std::optional<SpriteKey>> {
 		if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
 			return {Action::CONTINUE, {}};
@@ -16,14 +16,14 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_paint_mode_right_hud_select
 		}
 	}
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_paint_mode_right_hud_left_arrow = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_paint_mode_right_hud_left_arrow = wdg::TextBlueprint{
 	.initial_text = "<",
 	.action_callback = []() {
 		GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite - 1);
 		return Action::CONTINUE;
 	}
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_paint_mode_right_hud_right_arrow = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_paint_mode_right_hud_right_arrow = wdg::TextBlueprint{
 	.initial_text = ">",
 	.action_callback = []() {
 		GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite + 1);
@@ -52,7 +52,7 @@ const UIBlueprint editor_paint_mode_right_hud = {
 	}
 };
 
-const WidgetBlueprint::WidgetBlueprintVariant editor_place_mode_right_hud_selected_sprite = wdg::ImageBlueprint{
+const WidgetBlueprint::Variant editor_place_mode_right_hud_selected_sprite = wdg::ImageBlueprint{
 		.update_callback = []() -> std::pair<Action,std::optional<SpriteKey>> {
 			if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
 				return {Action::CONTINUE, {}};
@@ -61,14 +61,14 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_place_mode_right_hud_select
 			}
 		}
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_place_mode_right_hud_left_arrow = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_place_mode_right_hud_left_arrow = wdg::TextBlueprint{
 		.initial_text = "<",
 		.action_callback = []() {
 			GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite - 1);
 			return Action::CONTINUE;
 		}
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_place_mode_right_hud_right_arrow = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_place_mode_right_hud_right_arrow = wdg::TextBlueprint{
 		.initial_text = ">",
 		.action_callback = []() {
 			GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite + 1);
@@ -97,10 +97,10 @@ const UIBlueprint editor_place_mode_right_hud = {
 		}
 };
 
-const WidgetBlueprint::WidgetBlueprintVariant editor_save_confirmation_text = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_save_confirmation_text = wdg::TextBlueprint{
 	.initial_text = "Are you sure?"
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_save_confirmation_yes_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_save_confirmation_yes_button = wdg::TextBlueprint{
 	.initial_text = "YES",
 	.action_callback = []() -> Action {
 		// TODO
@@ -108,7 +108,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_save_confirmation_yes_butto
 	},
 	.kb_shortcut = SDL_SCANCODE_Y
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_save_confirmation_no_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_save_confirmation_no_button = wdg::TextBlueprint{
 		.initial_text = "NO",
 		.action_callback = []() -> Action { return Action::RETURN; },
 		.kb_shortcut = SDL_SCANCODE_N
@@ -132,7 +132,7 @@ const UIBlueprint editor_save_confirmation = {
 		}
 };
 
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_left_hud_paint_button = wdg::TextBlueprint{
 	.initial_text = "Paint",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::PAINT);
@@ -142,7 +142,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg
 	},
 	.kb_shortcut = SDL_SCANCODE_P
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_erase_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_left_hud_erase_button = wdg::TextBlueprint{
 	.initial_text = "Erase",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::ERASE);
@@ -152,7 +152,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_erase_button = wdg
 	},
 	.kb_shortcut = SDL_SCANCODE_E
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_place_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_left_hud_place_button = wdg::TextBlueprint{
 	.initial_text = "Place",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::PLACE);
@@ -162,7 +162,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_place_button = wdg
 	},
 	.kb_shortcut = SDL_SCANCODE_O
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_remove_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_left_hud_remove_button = wdg::TextBlueprint{
 	.initial_text = "Remove",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::REMOVE);
@@ -172,7 +172,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_remove_button = wd
 	},
 	.kb_shortcut = SDL_SCANCODE_R
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_left_hud_cancel_button = wdg::TextBlueprint{
 	.initial_text = "Cancel",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::NONE);
@@ -182,7 +182,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_cancel_button = wd
 	},
 	.kb_shortcut = SDL_SCANCODE_C
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_left_hud_gridlines_button = wdg::TextBlueprint{
 	.initial_text = "Grid Lines",
 	.action_callback = []() -> Action {
 		auto* camera = GAME.objects.get(GAME.cameraId);
@@ -194,7 +194,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button =
 	},
 	.kb_shortcut = SDL_SCANCODE_G
 };
-const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_save_button = wdg::TextBlueprint{
+const WidgetBlueprint::Variant editor_left_hud_save_button = wdg::TextBlueprint{
 		.initial_text = "Save",
 		.action_callback = []() -> Action {
 			execute_blocking(&editor_save_confirmation);

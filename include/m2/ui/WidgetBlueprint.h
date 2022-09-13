@@ -19,13 +19,13 @@ namespace m2::ui {
 	    unsigned padding_width_px{};
         SDL_Color background_color{};
 
-        using WidgetBlueprintVariant = std::variant<
+        using Variant = std::variant<
                 wdg::NestedUIBlueprint,
                 wdg::ImageBlueprint,
 				wdg::ProgressBarBlueprint,
                 wdg::TextBlueprint,
                 wdg::TextInputBlueprint>;
-        WidgetBlueprintVariant variant;
+        Variant variant;
 
         [[nodiscard]] std::unique_ptr<WidgetState> get_state() const;
     };

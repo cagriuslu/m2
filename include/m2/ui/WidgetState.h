@@ -30,6 +30,8 @@ namespace m2::ui {
         static SDL_Texture* generate_font_texture(const char* text);
         static void draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align);
     };
+
+	std::unique_ptr<WidgetState> create_widget_instance(const WidgetBlueprint& blueprint);
 }
 
 #endif //M2_WIDGETSTATE_H

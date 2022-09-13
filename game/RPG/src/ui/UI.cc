@@ -14,10 +14,10 @@ namespace {
 	};
 }
 
-static WidgetBlueprint::WidgetBlueprintVariant entry_variant_0 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant entry_variant_0 = wdg::TextBlueprint{
 	.initial_text = "Select save slot:"
 };
-static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::ImageBlueprint{
+static WidgetBlueprint::Variant entry_variant_1 = wdg::ImageBlueprint{
 	.initial_sprite_key = "main.floppy_disk",
 	.action_callback = []() {
 		fprintf(stderr, "Pressed button\n");
@@ -25,7 +25,7 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_1 = wdg::ImageBluep
 	},
 	.kb_shortcut = SDL_SCANCODE_1
 };
-static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant entry_variant_2 = wdg::TextBlueprint{
 	.initial_text = "NEW GAME",
 	.action_callback = []() {
 		GAME.load_level("resource/game/RPG/levels/sp000.json");
@@ -33,7 +33,7 @@ static WidgetBlueprint::WidgetBlueprintVariant entry_variant_2 = wdg::TextBluepr
 	},
 	.kb_shortcut = SDL_SCANCODE_N
 };
-static WidgetBlueprint::WidgetBlueprintVariant entry_variant_3 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant entry_variant_3 = wdg::TextBlueprint{
 	.initial_text = "QUIT",
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
@@ -65,7 +65,7 @@ const UIBlueprint m2g::ui::entry = {
 	}
 };
 
-static WidgetBlueprint::WidgetBlueprintVariant pause_variant_1 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant pause_variant_1 = wdg::TextBlueprint{
 	.initial_text = "RESUME GAME",
 	.alignment = TextAlignment::CENTER,
 	.action_callback = []() {
@@ -73,7 +73,7 @@ static WidgetBlueprint::WidgetBlueprintVariant pause_variant_1 = wdg::TextBluepr
 	},
 	.kb_shortcut = SDL_SCANCODE_R
 };
-static WidgetBlueprint::WidgetBlueprintVariant pause_variant_2 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant pause_variant_2 = wdg::TextBlueprint{
 	.initial_text = "QUIT",
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
@@ -95,10 +95,10 @@ const UIBlueprint m2g::ui::pause = {
 	}
 };
 
-static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_1 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant left_hud_variant_1 = wdg::TextBlueprint{
 	.initial_text = "HP"
 };
-static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant left_hud_variant_2 = wdg::TextBlueprint{
 	.initial_text = "100",
 	.update_callback = []() -> std::pair<Action,std::string> {
 		// Lookup player
@@ -116,10 +116,10 @@ static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_2 = wdg::TextBlu
 		}
 	}
 };
-static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_3 = wdg::TextBlueprint{
+static WidgetBlueprint::Variant left_hud_variant_3 = wdg::TextBlueprint{
 	.initial_text = "DASH"
 };
-static WidgetBlueprint::WidgetBlueprintVariant left_hud_variant_4 = wdg::ProgressBarBlueprint{
+static WidgetBlueprint::Variant left_hud_variant_4 = wdg::ProgressBarBlueprint{
 	.initial_progress = 1.0f,
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {

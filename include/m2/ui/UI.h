@@ -14,10 +14,10 @@
 
 namespace m2::ui {
 	struct UIBlueprint {
-		unsigned w, h; // unitless
-		unsigned border_width_px;
-		SDL_Color background_color;
-		std::list<WidgetBlueprint> widgets;
+		unsigned w{}, h{}; // unitless
+		unsigned border_width_px{};
+		SDL_Color background_color{};
+		std::initializer_list<WidgetBlueprint> widgets;
 	};
 
 	struct UIState {

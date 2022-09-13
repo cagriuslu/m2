@@ -155,7 +155,7 @@ Action m2::ui::execute_blocking(const UIBlueprint *blueprint, SDL_Rect rect) {
     }
 }
 
-const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextInputBlueprint{
+const WidgetBlueprint::Variant command_input_variant = wdg::TextInputBlueprint{
         .initial_text = "",
         .action_callback = [](std::stringstream& ss) -> Action {
             auto command = ss.str();
@@ -180,7 +180,7 @@ const WidgetBlueprint::WidgetBlueprintVariant command_input_variant = wdg::TextI
         }
 };
 template <unsigned INDEX>
-WidgetBlueprint::WidgetBlueprintVariant command_output_variant() {
+WidgetBlueprint::Variant command_output_variant() {
     return wdg::TextBlueprint{
         .initial_text = "",
         .alignment = TextAlignment::LEFT,

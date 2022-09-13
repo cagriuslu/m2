@@ -47,3 +47,22 @@ void WidgetState::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlig
     }
     SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &dstrect);
 }
+
+std::unique_ptr<WidgetState> m2::ui::create_widget_instance(const WidgetBlueprint& blueprint) {
+	using namespace wdg;
+	std::unique_ptr<WidgetState> state;
+	if (std::holds_alternative<NestedUIBlueprint>(blueprint.variant)) {
+		state = std::make_unique<NestedUIState>(&blueprint);
+	} else if (std::holds_alternative<TextBlueprint>(blueprint.variant)) {
+		state = std::make_unique<TextState>(&blueprint);
+	} else if (std::holds_alternative<TextInputBlueprint>(blueprint.variant)) {
+		state = std::make_unique<TextInputState>(&blueprint);
+	} else if (std::holds_alternative<ImageBlueprint>(blueprint.variant)) {
+		state = std::make_unique<ImageState>(&blueprint);
+	} else if (std::holds_alternative<ProgressBarBlueprint>(blueprint.variant)) {
+		state = std::make_unique<ProgressBarState>(&blueprint);
+	} else {
+		throw M2FATAL("Implementation");
+	}
+	return state;
+}
