@@ -97,6 +97,41 @@ const UIBlueprint editor_place_mode_right_hud = {
 		}
 };
 
+const WidgetBlueprint::WidgetBlueprintVariant editor_save_confirmation_text = wdg::TextBlueprint{
+	.initial_text = "Are you sure?"
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_save_confirmation_yes_button = wdg::TextBlueprint{
+	.initial_text = "YES",
+	.action_callback = []() -> Action {
+		// TODO
+		return Action::RETURN;
+	},
+	.kb_shortcut = SDL_SCANCODE_Y
+};
+const WidgetBlueprint::WidgetBlueprintVariant editor_save_confirmation_no_button = wdg::TextBlueprint{
+		.initial_text = "NO",
+		.action_callback = []() -> Action { return Action::RETURN; },
+		.kb_shortcut = SDL_SCANCODE_N
+};
+const UIBlueprint editor_save_confirmation = {
+		.w = 7, .h = 5,
+		.border_width_px = 2,
+		.widgets = {
+				WidgetBlueprint{
+					.x = 1, .y = 1, .w = 5, .h = 1,
+					.variant = editor_save_confirmation_text
+				},
+				WidgetBlueprint{
+					.x = 1, .y = 3, .w = 2, .h = 1,
+					.variant = editor_save_confirmation_yes_button
+				},
+				WidgetBlueprint{
+					.x = 4, .y = 3, .w = 2, .h = 1,
+					.variant = editor_save_confirmation_no_button
+				}
+		}
+};
+
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_paint_button = wdg::TextBlueprint{
 	.initial_text = "Paint",
 	.action_callback = []() -> Action {
@@ -162,7 +197,7 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_gridlines_button =
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_save_button = wdg::TextBlueprint{
 		.initial_text = "Save",
 		.action_callback = []() -> Action {
-			// TODO
+			execute_blocking(&editor_save_confirmation);
 			return Action::CONTINUE;
 		},
 		.kb_shortcut = SDL_SCANCODE_S
