@@ -4,3 +4,4 @@
 - Implement parent child object relationship so that sword is destroyed and moved with the player
 - Continue working on the editor
 - Bullet, explosive and sword can be kinematic object
+- Refactor UI classes, don't have forward declarations. Examples: create_widget_instance and Image files inside blueprint and instance
