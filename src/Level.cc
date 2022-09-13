@@ -56,8 +56,7 @@ void m2::Level::activate_mode(EditorMode mode) {
 	switch (mode) {
 		case EditorMode::PAINT:
 		case EditorMode::PLACE:
-			editor_paint_or_place_mode_select_sprite(
-					editor_paint_or_place_mode_selected_sprite == -1 ? 0 : editor_paint_or_place_mode_selected_sprite);
+			editor_paint_or_place_mode_select_sprite(0);
 			break;
 		default:
 			editor_paint_or_place_mode_select_sprite(-1);
@@ -120,6 +119,45 @@ void m2::Level::editor_erase_mode_erase_position(const Vec2i &position) {
 	// Delete placeholder
 	auto placeholders_it = editor_bg_placeholders.find(position);
 	if (placeholders_it != editor_bg_placeholders.end()) {
+		deferred_actions.push_back(create_object_deleter(placeholders_it->second));
+	}
+}
+
+void m2::Level::editor_place_mode_place_object(const Vec2i& position) {
+	if (0 <= editor_paint_or_place_mode_selected_sprite && position.in_nonnegative()) {
+		// Check if object is in fg objects, remove if found
+		for (int i = 0; i < _lb.fg_objects_size(); ++i) {
+			if (position == Vec2i{_lb.fg_objects(i).position()}) {
+				auto* mutable_fg_objects = _lb.mutable_fg_objects();
+				mutable_fg_objects->erase(mutable_fg_objects->begin() + i);
+			}
+		}
+		// Add object to fg objects
+		auto sprite_key = GAME.editor_fg_sprites[editor_paint_or_place_mode_selected_sprite];
+		auto* new_fg_object = _lb.add_fg_objects();
+		new_fg_object->mutable_position()->set_x(position.x);
+		new_fg_object->mutable_position()->set_y(position.y);
+		new_fg_object->set_key(sprite_key);
+		// Create/Replace placeholder
+		auto placeholders_it = editor_fg_placeholders.find(position);
+		if (placeholders_it != editor_fg_placeholders.end()) {
+			deferred_actions.push_back(create_object_deleter(placeholders_it->second));
+		}
+		editor_fg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.sprite_key_to_sprite_map.at(sprite_key), true);
+	}
+}
+
+void m2::Level::editor_remove_mode_remove_object(const Vec2i &position) {
+	// Check if object is in fg objects, remove if found
+	for (int i = 0; i < _lb.fg_objects_size(); ++i) {
+		if (position == Vec2i{_lb.fg_objects(i).position()}) {
+			auto* mutable_fg_objects = _lb.mutable_fg_objects();
+			mutable_fg_objects->erase(mutable_fg_objects->begin() + i);
+		}
+	}
+	// Create/Replace placeholder
+	auto placeholders_it = editor_fg_placeholders.find(position);
+	if (placeholders_it != editor_fg_placeholders.end()) {
 		deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 	}
 }

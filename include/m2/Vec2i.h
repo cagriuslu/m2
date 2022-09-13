@@ -1,6 +1,7 @@
 #ifndef M2_VEC2I_H
 #define M2_VEC2I_H
 
+#include <Vec2i.pb.h>
 #include <cstdint>
 #include <cstddef>
 #include <string>
@@ -15,6 +16,7 @@ namespace m2 {
 		Vec2i(int32_t x, int32_t y);
 		Vec2i(float x, float y);
 		explicit Vec2i(const Vec2f& v);
+		explicit Vec2i(const pb::Vec2i& v);
 
 		Vec2i operator+(const Vec2i& rhs) const;
 		Vec2i operator-(const Vec2i& rhs) const;

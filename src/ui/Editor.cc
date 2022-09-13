@@ -111,7 +111,8 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_erase_button = wdg
 	.initial_text = "Erase",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::ERASE);
-		GAME.rightHudUIState = {};
+		GAME.rightHudUIState = UIState(&editor_right_hud);
+		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_E
@@ -129,7 +130,9 @@ const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_place_button = wdg
 const WidgetBlueprint::WidgetBlueprintVariant editor_left_hud_remove_button = wdg::TextBlueprint{
 	.initial_text = "Remove",
 	.action_callback = []() -> Action {
-		// TODO
+		GAME.level->activate_mode(Level::EditorMode::REMOVE);
+		GAME.rightHudUIState = UIState(&editor_right_hud);
+		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_R

@@ -29,6 +29,12 @@ m2::ID m2::obj::create_god() {
 				case Level::EditorMode::ERASE:
 					GAME.level->editor_erase_mode_erase_position(mouse_coordinates);
 					break;
+				case Level::EditorMode::PLACE:
+					GAME.level->editor_place_mode_place_object(mouse_coordinates);
+					break;
+				case Level::EditorMode::REMOVE:
+					GAME.level->editor_remove_mode_remove_object(mouse_coordinates);
+					break;
 				default:
 					break;
 			}
