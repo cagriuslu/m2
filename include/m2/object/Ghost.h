@@ -5,7 +5,7 @@
 #include <m2/Sprite.h>
 
 namespace m2::obj {
-	m2::ID create_ghost(const Sprite& sprite);
+	m2::Id create_ghost(const Sprite& sprite);
 }
 
 #endif //M2_GHOST_H

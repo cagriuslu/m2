@@ -7,7 +7,7 @@
 #include <m2/M2.h>
 #include <m2/Log.h>
 
-static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::ID phyId, m2::Vec2f position,  const chr::ExplosiveBlueprint* blueprint) {
+static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::Id phyId, m2::Vec2f position, const chr::ExplosiveBlueprint* blueprint) {
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.mutable_circ()->set_radius(blueprint->damage_radius_m);
@@ -21,7 +21,7 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::ID phyId, m2::Vec2f
 	return m2::box2d::create_body(*GAME.world, phyId, position, bp);
 }
 
-m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction) {
+m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectId originator_id, m2::Vec2f position, m2::Vec2f direction) {
 	obj = m2::Object{position};
 	direction = direction.normalize();
 

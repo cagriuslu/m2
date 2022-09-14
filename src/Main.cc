@@ -1,7 +1,7 @@
 #include <m2g/Proxy.h>
 #include "m2/Events.h"
 #include "m2/Game.hh"
-#include "m2/SDLUtils.hh"
+#include "m2/SdlUtils.hh"
 #include <m2g/ui/UI.h>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -172,13 +172,14 @@ int main(int argc, char **argv) {
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		for (phy_step_count = 0; phy_step_count < 4; phy_step_count++) {
-			uint32_t ticksSinceLastWorldStep = SDLUtils_GetTicksAtLeast1ms(prevWorldStepTicks, nongame_ticks) - prevWorldStepTicks;
+			uint32_t ticksSinceLastWorldStep =
+					SdlUtils_GetTicksAtLeast1ms(prevWorldStepTicks, nongame_ticks) - prevWorldStepTicks;
 			prevWorldStepTicks += ticksSinceLastWorldStep;
 			timeSinceLastWorldStep += (float)ticksSinceLastWorldStep / 1000.0f;
 			if (GAME.physicsStep_s < timeSinceLastWorldStep) {
 				// Pre-physics
 				GAME.deltaTicks_ms =
-					SDLUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks, nongame_ticks) - prevPrePhysicsTicks;
+						SdlUtils_GetTicksAtLeast1ms(prevPrePhysicsTicks, nongame_ticks) - prevPrePhysicsTicks;
 				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
 				prevPrePhysicsTicks += GAME.deltaTicks_ms;
 				for (auto monitor_it: GAME.monitors) {
@@ -206,7 +207,7 @@ int main(int argc, char **argv) {
 
 				// Post-physics
 				GAME.deltaTicks_ms =
-					SDLUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks, nongame_ticks) - prevPostPhysicsTicks;
+						SdlUtils_GetTicksAtLeast1ms(prevPostPhysicsTicks, nongame_ticks) - prevPostPhysicsTicks;
 				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
 				prevPostPhysicsTicks += GAME.deltaTicks_ms;
 				for (auto monitor_it: GAME.monitors) {
@@ -230,7 +231,7 @@ int main(int argc, char **argv) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Pre-graphic
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks, nongame_ticks) - prevPreGraphicsTicks;
+		GAME.deltaTicks_ms = SdlUtils_GetTicksAtLeast1ms(prevPreGraphicsTicks, nongame_ticks) - prevPreGraphicsTicks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevPreGraphicsTicks += GAME.deltaTicks_ms;
 		for (auto monitor_it : GAME.monitors) {
@@ -246,7 +247,8 @@ int main(int argc, char **argv) {
 		SDL_RenderClear(GAME.sdlRenderer);
 
 		// Draw terrain
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevTerrainDrawGraphicsTicks, nongame_ticks) - prevTerrainDrawGraphicsTicks;
+		GAME.deltaTicks_ms =
+				SdlUtils_GetTicksAtLeast1ms(prevTerrainDrawGraphicsTicks, nongame_ticks) - prevTerrainDrawGraphicsTicks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevTerrainDrawGraphicsTicks += GAME.deltaTicks_ms;
         for (auto graphic_it : GAME.terrainGraphics) {
@@ -254,7 +256,7 @@ int main(int argc, char **argv) {
         }
 
 		// Draw
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawTicks, nongame_ticks) - prevDrawTicks;
+		GAME.deltaTicks_ms = SdlUtils_GetTicksAtLeast1ms(prevDrawTicks, nongame_ticks) - prevDrawTicks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevDrawTicks += GAME.deltaTicks_ms;
 		for (const auto& gfx_id : GAME.draw_list) {
@@ -263,7 +265,7 @@ int main(int argc, char **argv) {
 		}
 
 		// Draw lights
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevDrawLightsTicks, nongame_ticks) - prevDrawLightsTicks;
+		GAME.deltaTicks_ms = SdlUtils_GetTicksAtLeast1ms(prevDrawLightsTicks, nongame_ticks) - prevDrawLightsTicks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevDrawLightsTicks += GAME.deltaTicks_ms;
         for (auto light_it : GAME.lights) {
@@ -283,7 +285,7 @@ int main(int argc, char **argv) {
 		SDL_RenderPresent(GAME.sdlRenderer);
 
 		// Post-graphic
-		GAME.deltaTicks_ms = SDLUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks, nongame_ticks) - prevPostGraphicsTicks;
+		GAME.deltaTicks_ms = SdlUtils_GetTicksAtLeast1ms(prevPostGraphicsTicks, nongame_ticks) - prevPostGraphicsTicks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevPostGraphicsTicks += GAME.deltaTicks_ms;
 		for (auto monitor_it : GAME.monitors) {

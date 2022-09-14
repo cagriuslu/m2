@@ -11,7 +11,7 @@
 #include <cmath>
 
 namespace m2 {
-	using ID = uint64_t;
+	using Id = uint64_t;
 
     extern uint16_t g_pool_id;
 
@@ -23,13 +23,13 @@ namespace m2 {
             T data;
 			// If allocated: 0(16bit) | key(24bit) | index(24bit)
 			// Else: 0(16bit) | 0(24bit) | nextFreeIndex(24bit)
-            ID id;
+            Id id;
         };
 
         struct Iterator {
             Pool<T,Capacity> *pool;
             T* data;
-            ID id;
+            Id id;
 
             Iterator& operator++() {
                 const uint64_t curr_index = id & 0xFFFFFFull;
@@ -49,7 +49,7 @@ namespace m2 {
             bool operator==(const Iterator& other) const {
                 return id == other.id;
             }
-            std::pair<T*,ID> operator*() {
+            std::pair<T*,Id> operator*() {
                 return {data, id};
             }
         };
@@ -73,7 +73,7 @@ namespace m2 {
 
     private:
 		Array _array{};
-        ID _shifted_pool_id{static_cast<uint64_t>(g_pool_id++) << 48};
+        Id _shifted_pool_id{static_cast<uint64_t>(g_pool_id++) << 48};
         uint64_t _size{0}; // [0, Capacity]
         // Key is monotonically increasing, and it is a part of the ID. This means if an object is deallocated,
         // and some other object is allocated at the same location, they will have different IDs.
@@ -89,7 +89,7 @@ namespace m2 {
 			}
         }
 
-        std::pair<T&, ID> alloc() {
+        std::pair<T&, Id> alloc() {
 	        if (Capacity <= _size) {
 		        throw M2ERROR("Max pool size exceeded");
 	        }
@@ -114,11 +114,11 @@ namespace m2 {
 		        _lowest_allocated_index = index_to_alloc;
 	        }
 	        // Form ID
-	        ID id = _shifted_pool_id | item.id;
+	        Id id = _shifted_pool_id | item.id;
 	        return {item.data, id};
         }
 
-		void free(ID id) {
+		void free(Id id) {
 			static const Item model = {};
 			static const auto t_ptr = reinterpret_cast<const char*>(&model.data);
 			static const auto model_ptr = reinterpret_cast<const char*>(&model);
@@ -183,14 +183,14 @@ namespace m2 {
 		[[nodiscard]] std::optional<uint64_t> highest_index() const {
 			return _size ? _highest_allocated_index : std::optional<uint64_t>{};
 		}
-		[[nodiscard]] bool contains(ID id) const {
+		[[nodiscard]] bool contains(Id id) const {
             return get(id);
         }
         [[nodiscard]] bool contains(const T* data) const {
             return get_id(data);
         }
 
-		T& operator[](ID id) {
+		T& operator[](Id id) {
 			T* t = get(id);
 			if (t) {
 				return *t;
@@ -198,7 +198,7 @@ namespace m2 {
 				throw M2ERROR("Pool out of bounds");
 			}
 		}
-        T* get(ID id) {
+        T* get(Id id) {
             if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
                 const auto candidate_idx = (id & 0xFFFFFFull);
                 auto& item = _array[candidate_idx];
@@ -208,7 +208,7 @@ namespace m2 {
             }
             return nullptr;
         }
-        ID get_id(const T* data) const {
+        Id get_id(const T* data) const {
             const auto* byte_ptr = reinterpret_cast<const uint8_t*>(data);
             // Check if data is in range of items
             const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_lowest_allocated_index].data);
@@ -247,7 +247,7 @@ namespace m2 {
             return {.pool = this, .data = nullptr, .id = 0};
         }
 
-		void parallel_for_each(ThreadPool& tpool, const std::function<void(ID,T&)>& func) {
+		void parallel_for_each(ThreadPool& tpool, const std::function<void(Id, T&)>& func) {
 			if (!size()) {
 				return;
 			}
@@ -273,7 +273,7 @@ namespace m2 {
 			tpool.wait();
 		}
 
-		static size_t id2index(ID id) {
+		static size_t id2index(Id id) {
 			return id & 0xFFFFFFull;
 		}
     };

@@ -4,7 +4,7 @@
 #include <b2_contact.h>
 #include <m2/Object.h>
 
-m2::comp::Physique::Physique(ID object_id) : Component(object_id), body(nullptr) {}
+m2::comp::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
 
 m2::comp::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), on_collision(std::move(other.on_collision)) {
     other.body = nullptr;
@@ -28,8 +28,8 @@ m2::Object& m2::comp::Physique::parent() const {
 }
 
 void m2::comp::Physique::contact_cb(b2Contact& contact) {
-	ID physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
-	ID physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
+	Id physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
+	Id physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = GAME.physics[physique_id_a];
 	auto& phy_b = GAME.physics[physique_id_b];
 	if (phy_a.on_collision) {

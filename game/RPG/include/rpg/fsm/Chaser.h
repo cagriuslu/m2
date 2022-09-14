@@ -3,7 +3,7 @@
 
 #include "rpg/ai/type/Chase.h"
 #include "m2/Object.h"
-#include "m2/FSM.h"
+#include "m2/Fsm.h"
 #include <functional>
 #include "rpg/ai/AiBlueprint.h"
 #include <list>
@@ -22,9 +22,9 @@ namespace fsm {
 
         Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint);
 
-        static void* idle(m2::FSM<Chaser>& automaton, unsigned signal);
-        static void* triggered(m2::FSM<Chaser>& automaton, unsigned signal);
-        static void* gave_up(m2::FSM<Chaser>& automaton, unsigned signal);
+        static void* idle(m2::Fsm<Chaser>& automaton, unsigned signal);
+        static void* triggered(m2::Fsm<Chaser>& automaton, unsigned signal);
+        static void* gave_up(m2::Fsm<Chaser>& automaton, unsigned signal);
 
         static constexpr auto initial_state = &idle;
     };

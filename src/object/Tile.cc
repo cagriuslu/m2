@@ -1,11 +1,11 @@
 #include <m2g/SpriteBlueprint.h>
-#include <m2/SDLUtils.hh>
+#include <m2/SdlUtils.hh>
 #include <m2/object/Tile.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
 #include <m2/box2d/Utils.h>
 
-std::pair<m2::Object&, m2::ID> m2::obj::create_tile(const Vec2f& position, const m2::Sprite& sprite) {
+std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const Vec2f& position, const m2::Sprite& sprite) {
     auto obj_pair = create_object(position);
 	auto& tile = obj_pair.first;
 

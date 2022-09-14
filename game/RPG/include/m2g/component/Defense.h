@@ -12,7 +12,7 @@ namespace m2g::comp {
 		std::function<void(Defense&)> on_death;
 
 		Defense() = default;
-		explicit Defense(m2::ID object_id);
+		explicit Defense(m2::Id object_id);
 	};
 }
 

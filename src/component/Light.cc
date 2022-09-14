@@ -3,14 +3,14 @@
 #include <m2/Game.hh>
 #include <m2/Object.h>
 
-m2::comp::Light::Light(ID object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}
+m2::comp::Light::Light(Id object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}
 
 m2::Object& m2::comp::Light::parent() const {
 	return *GAME.objects.get(object_id);
 }
 
 m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
-	static m2::ID cameraId = 0;
+	static m2::Id cameraId = 0;
 	static m2::Object* cameraObj = nullptr;
 	if (GAME.cameraId && cameraId != GAME.cameraId) {
 		cameraId = GAME.cameraId;

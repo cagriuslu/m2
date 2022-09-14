@@ -3,7 +3,7 @@
 
 #include <SpriteSheets.pb.h>
 #include <m2g/SpriteID.h>
-#include "SDLUtils.hh"
+#include "SdlUtils.hh"
 #include "Vec2f.h"
 #include <SDL.h>
 #include <string>

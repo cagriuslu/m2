@@ -7,7 +7,7 @@
 
 namespace obj {
 	struct Explosive {
-		static m2::VoidValue init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectID originator_id, m2::Vec2f position, m2::Vec2f direction);
+		static m2::VoidValue init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectId originator_id, m2::Vec2f position, m2::Vec2f direction);
 	};
 }
 

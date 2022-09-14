@@ -9,7 +9,7 @@
 #include <m2g/component/Offense.h>
 #include <GroupBlueprint.pb.h>
 #include "m2/Component.h"
-#include "m2/FSM.h"
+#include "m2/Fsm.h"
 #include "m2/Vec2f.h"
 #include "component/Monitor.h"
 #include "component/Physique.h"
@@ -20,13 +20,13 @@
 #include <functional>
 
 namespace m2 {
-	using ObjectID = ID;
-	using MonitorID = ID;
-	using PhysiqueID = ID;
-	using GraphicID = ID;
-	using LightID = ID;
-	using DefenseID = ID;
-	using OffenseID = ID;
+	using ObjectId = Id;
+	using MonitorId = Id;
+	using PhysiqueId = Id;
+	using GraphicId = Id;
+	using LightId = Id;
+	using DefenseId = Id;
+	using OffenseId = Id;
 
     /// Basis of all objects in the game.
     /// How to decide if a component should reside in Pool or data?
@@ -49,14 +49,14 @@ namespace m2 {
         // Destructor
         ~Object();
 
-		[[nodiscard]] GroupID group_id() const;
-	    [[nodiscard]] MonitorID monitor_id() const;
-	    [[nodiscard]] PhysiqueID physique_id() const;
-	    [[nodiscard]] GraphicID graphic_id() const;
-	    [[nodiscard]] GraphicID terrain_graphic_id() const;
-	    [[nodiscard]] LightID light_id() const;
-	    [[nodiscard]] DefenseID defense_id() const;
-	    [[nodiscard]] OffenseID offense_id() const;
+		[[nodiscard]] GroupId group_id() const;
+	    [[nodiscard]] MonitorId monitor_id() const;
+	    [[nodiscard]] PhysiqueId physique_id() const;
+	    [[nodiscard]] GraphicId graphic_id() const;
+	    [[nodiscard]] GraphicId terrain_graphic_id() const;
+	    [[nodiscard]] LightId light_id() const;
+	    [[nodiscard]] DefenseId defense_id() const;
+	    [[nodiscard]] OffenseId offense_id() const;
 
 		[[nodiscard]] Group& group() const;
         [[nodiscard]] comp::Monitor& monitor() const;
@@ -84,23 +84,23 @@ namespace m2 {
 		void remove_from_group();
 
 	private:
-		GroupID _group_id{};
+		GroupId _group_id{};
 	    IndexInGroup _group_index{};
 		// TODO use parent-child relationship for objects that needs to be destroyed once their parent is destroyed
-		ObjectID _parent_id;
-		std::unique_ptr<Pool<ObjectID,16>> _children;
+		ObjectId _parent_id{};
+		std::unique_ptr<Pool<ObjectId,16>> _children;
 	    // Components
-	    MonitorID _monitor_id{};
-	    PhysiqueID _physique_id{};
-	    GraphicID _graphic_id{};
-	    GraphicID _terrain_graphic_id{};
-	    LightID _light_id{};
-	    DefenseID _defense_id{};
-	    OffenseID _offense_id{};
+	    MonitorId _monitor_id{};
+	    PhysiqueId _physique_id{};
+	    GraphicId _graphic_id{};
+	    GraphicId _terrain_graphic_id{};
+	    LightId _light_id{};
+	    DefenseId _defense_id{};
+	    OffenseId _offense_id{};
     };
 
-    std::pair<Object&, ObjectID> create_object(const m2::Vec2f& position);
-	std::function<void(void)> create_object_deleter(ObjectID id);
+    std::pair<Object&, ObjectId> create_object(const m2::Vec2f& position);
+	std::function<void(void)> create_object_deleter(ObjectId id);
 }
 
 #endif

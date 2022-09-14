@@ -15,10 +15,10 @@
 #include <m2g/ui/UI.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
-#include <m2/SDLUtils.hh>
+#include <m2/SdlUtils.hh>
 #include <SDL_image.h>
-#include <m2/ui/Editor.h>
-#include <m2/ui/UI.h>
+#include <m2/Editor.h>
+#include "m2/Ui.h"
 #include <set>
 
 m2::Game* g_game;
@@ -30,7 +30,7 @@ m2::Game::Game() {
 	}
 	SDL_SetWindowMinimumSize(sdlWindow, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
-	sdlCursor = SDLUtils_CreateCursor();
+	sdlCursor = SdlUtils_CreateCursor();
 	SDL_SetCursor(sdlCursor);
 	if ((pixelFormat = SDL_GetWindowPixelFormat(sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
@@ -151,10 +151,10 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	m2::obj::create_pointer();
 
 	// Init HUD
-	GAME.leftHudUIState = m2::ui::UIState(&m2g::ui::left_hud);
+	GAME.leftHudUIState = m2::ui::State(&m2g::ui::left_hud);
 	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
 	GAME.leftHudUIState->update_contents();
-	GAME.rightHudUIState = m2::ui::UIState(&m2g::ui::right_hud);
+	GAME.rightHudUIState = m2::ui::State(&m2g::ui::right_hud);
 	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 	GAME.rightHudUIState->update_contents();
 
@@ -180,10 +180,10 @@ m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
 	m2::obj::create_origin();
 
 	// UI Hud
-	GAME.leftHudUIState = m2::ui::UIState(&ui::editor_left_hud);
+	GAME.leftHudUIState = m2::ui::State(&ui::editor_left_hud);
 	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
 	GAME.leftHudUIState->update_contents();
-	GAME.rightHudUIState = m2::ui::UIState(&ui::editor_right_hud);
+	GAME.rightHudUIState = m2::ui::State(&ui::editor_right_hud);
 	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 	GAME.rightHudUIState->update_contents();
 

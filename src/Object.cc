@@ -84,28 +84,28 @@ m2::Object::~Object() {
 	}
 }
 
-m2::GroupID m2::Object::group_id() const {
+m2::GroupId m2::Object::group_id() const {
 	return _group_id;
 }
-m2::MonitorID m2::Object::monitor_id() const {
+m2::MonitorId m2::Object::monitor_id() const {
 	return _monitor_id;
 }
-m2::PhysiqueID m2::Object::physique_id() const {
+m2::PhysiqueId m2::Object::physique_id() const {
 	return _physique_id;
 }
-m2::GraphicID m2::Object::graphic_id() const {
+m2::GraphicId m2::Object::graphic_id() const {
 	return _graphic_id;
 }
-m2::GraphicID m2::Object::terrain_graphic_id() const {
+m2::GraphicId m2::Object::terrain_graphic_id() const {
 	return _terrain_graphic_id;
 }
-m2::LightID m2::Object::light_id() const {
+m2::LightId m2::Object::light_id() const {
 	return _light_id;
 }
-m2::DefenseID m2::Object::defense_id() const {
+m2::DefenseId m2::Object::defense_id() const {
 	return _defense_id;
 }
-m2::OffenseID m2::Object::offense_id() const {
+m2::OffenseId m2::Object::offense_id() const {
 	return _offense_id;
 }
 
@@ -135,7 +135,7 @@ m2g::comp::Offense& m2::Object::offense() const {
 }
 
 void m2::Object::add_to_group(const pb::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer) {
-	auto group_id = GroupID{group};
+	auto group_id = GroupId{group};
 	auto it = GAME.groups.find(group_id);
 	if (it == GAME.groups.end()) {
 		it = GAME.groups.insert({group_id, group_initializer()}).first;
@@ -231,13 +231,13 @@ void m2::Object::remove_from_group() {
 	}
 }
 
-std::pair<m2::Object&, m2::ObjectID> m2::create_object(const m2::Vec2f &position) {
+std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position) {
     auto obj_pair = GAME.objects.alloc();
     obj_pair.first = Object{position};
     return obj_pair;
 }
 
-std::function<void(void)> m2::create_object_deleter(ObjectID id) {
+std::function<void(void)> m2::create_object_deleter(ObjectId id) {
 	return [id]() {
 		GAME.objects.free(id);
 	};

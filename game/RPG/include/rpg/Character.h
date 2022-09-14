@@ -7,7 +7,7 @@
 #include "RangedWeapon.h"
 #include "rpg/ai/AiBlueprint.h"
 #include "m2/SpriteBlueprint.h"
-#include <m2/fsm/AnimationFSM.h>
+#include <m2/fsm/AnimationFsm.h>
 #include <optional>
 
 namespace chr {
@@ -48,7 +48,7 @@ namespace chr {
 		const RangedWeaponBlueprint* default_ranged_weapon;
 		float dash_cooldown_s;
 		float stun_ttl_s;
-		const m2::fsm::AnimationFSMBlueprint* animation_fsm_blueprint;
+		const m2::fsm::AnimationFsmBlueprint* animation_fsm_blueprint;
 		const ai::AiBlueprint* aiBlueprint;
 	};
 

@@ -2,7 +2,7 @@
 #define IMPL_PLAYER_H
 
 #include "m2/Object.h"
-#include <m2/fsm/AnimationFSM.h>
+#include <m2/fsm/AnimationFsm.h>
 #include "rpg/Character.h"
 #include <rpg/ConsumableBlueprint.h>
 #include <vector>
@@ -11,7 +11,7 @@
 namespace obj {
 	struct Player : public m2::ObjectImpl {
 		chr::CharacterState char_state;
-		m2::fsm::AnimationFSM animation_fsm;
+		m2::fsm::AnimationFsm animation_fsm;
 		std::vector<itm::ConsumableBlueprint> consumables;
 
 		Player(m2::Object&, const chr::CharacterBlueprint*);

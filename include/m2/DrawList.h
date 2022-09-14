@@ -11,8 +11,8 @@ namespace m2 {
 	class DrawList {
 	public:
 		struct DrawItem {
-			ObjectID obj_id;
-			GraphicID gfx_id;
+			ObjectId obj_id;
+			GraphicId gfx_id;
 		};
 
 	private:
@@ -20,9 +20,9 @@ namespace m2 {
 			bool operator()(const Vec2f& lhs, const Vec2f& rhs) const;
 		};
 		std::multimap<Vec2f, DrawItem, Vec2fComparator> draw_map;
-		std::unordered_map<ObjectID, decltype(draw_map)::iterator> id_lookup;
+		std::unordered_map<ObjectId, decltype(draw_map)::iterator> id_lookup;
 
-		std::vector<std::pair<ObjectID, Vec2f>> update_queue;
+		std::vector<std::pair<ObjectId, Vec2f>> update_queue;
 		SpinLock update_queue_lock;
 
 	public:
@@ -31,13 +31,13 @@ namespace m2 {
 
 			ConstIterator& operator++();
 			bool operator==(const ConstIterator& other) const;
-			GraphicID operator*() const;
+			GraphicId operator*() const;
 		};
 
-		void insert(ObjectID id);
-		void queue_update(ObjectID id, const Vec2f& pos);
+		void insert(ObjectId id);
+		void queue_update(ObjectId id, const Vec2f& pos);
 		void update();
-		void remove(ObjectID id);
+		void remove(ObjectId id);
 
 		[[nodiscard]] ConstIterator begin() const;
 		[[nodiscard]] ConstIterator end() const;

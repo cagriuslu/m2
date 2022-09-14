@@ -3,7 +3,7 @@
 
 #include "rpg/ai/AiBlueprint.h"
 #include "m2/Object.h"
-#include "m2/FSM.h"
+#include "m2/Fsm.h"
 
 namespace fsm {
 	class HitNRunner {

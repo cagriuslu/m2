@@ -14,7 +14,7 @@ namespace m2::comp {
 		std::function<void(Light&)> on_draw;
 
 		Light() = default;
-		explicit Light(ID object_id);
+		explicit Light(Id object_id);
 
 		[[nodiscard]] Object& parent() const;
 

@@ -1,7 +1,7 @@
 #ifndef M2_RTREE_H
 #define M2_RTREE_H
 
-#include "AABB2f.h"
+#include "Aabb2f.h"
 #include "Pool.hh"
 
 // Binary tree where each node is an AABB, as you go up the levels, the AABBs get merged. In the highest level, you have the AABB that covers the whole world.
@@ -12,11 +12,11 @@
 // If the grouping accumulates errors, we would start searching all objects
 
 namespace m2 {
-	using RtreeID = ID;
+	using RtreeID = Id;
 
 	template <typename T>
 	struct RtreeItem {
-		AABB2f aabb;
+		Aabb2f aabb;
 		T obj;
 	};
 

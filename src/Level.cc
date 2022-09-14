@@ -64,7 +64,7 @@ void m2::Level::activate_mode(EditorMode mode) {
 	}
 }
 void m2::Level::editor_paint_or_place_mode_select_sprite(int index) {
-	auto ghost_deleter = [](ID ghost_id) {
+	auto ghost_deleter = [](Id ghost_id) {
 		if (ghost_id) {
 			GAME.add_deferred_action(m2::create_object_deleter(ghost_id));
 		}

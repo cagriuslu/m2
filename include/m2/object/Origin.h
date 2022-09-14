@@ -4,7 +4,7 @@
 #include <m2/Object.h>
 
 namespace m2::obj {
-	std::pair<Object&, ID> create_origin();
+	std::pair<Object&, Id> create_origin();
 }
 
 #endif //M2_ORIGIN_H

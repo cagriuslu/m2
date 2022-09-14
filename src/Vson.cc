@@ -1,47 +1,47 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include <m2/VSON.hh>
+#include <m2/Vson.hh>
 #include <m2/String.h>
 #include <m2/Log.h>
 #include <cstdlib>
 
 #define ISPLAIN(c) (isalnum(c) || (c) == '_' || (c) == '-' || (c) == '.')
 
-m2::VSON m2::VSON::nil() {
+m2::Vson m2::Vson::nil() {
 	return {.value = vson_nil{}};
 }
 
-m2::VSON m2::VSON::object() {
+m2::Vson m2::Vson::object() {
 	return {.value = vson_object{}};
 }
-m2::VSON m2::VSON::array() {
+m2::Vson m2::Vson::array() {
 	return {.value = vson_array{}};
 }
-m2::VSON m2::VSON::string(const std::string& str) {
+m2::Vson m2::Vson::string(const std::string& str) {
 	return {.value = vson_string{str}};
 }
 
-bool m2::VSON::is_nil() const {
+bool m2::Vson::is_nil() const {
 	return std::holds_alternative<vson_nil>(value);
 }
 
-bool m2::VSON::is_valid() const {
+bool m2::Vson::is_valid() const {
 	return !is_nil();
 }
 
-bool m2::VSON::is_object() const {
+bool m2::Vson::is_object() const {
 	return std::holds_alternative<vson_object>(value);
 }
 
-bool m2::VSON::is_array() const {
+bool m2::Vson::is_array() const {
 	return std::holds_alternative<vson_array>(value);
 }
 
-bool m2::VSON::is_string() const {
+bool m2::Vson::is_string() const {
 	return std::holds_alternative<vson_string>(value);
 }
 
-const m2::VSON* m2::VSON::query(const std::string& path) const {
-	const VSON* v = this;
+const m2::Vson* m2::Vson::query(const std::string& path) const {
+	const Vson* v = this;
 	for (const auto& path_piece : m2::string::split(path, '/')) {
 		if (std::holds_alternative<vson_object>(value)) {
 			const auto& obj = std::get<vson_object>(value);
@@ -66,55 +66,55 @@ const m2::VSON* m2::VSON::query(const std::string& path) const {
 	return v;
 }
 
-m2::Value<std::string> m2::VSON::query_string_value(const std::string& path) const {
+m2::Value<std::string> m2::Vson::query_string_value(const std::string& path) const {
 	const auto* vson = query(path);
 	m2_fail_unless(vson, "VSON path not found");
 	m2_fail_unless(vson->is_string(), "VSON value not string");
 	return vson->string_value();
 }
 
-m2::Value<long> m2::VSON::query_long_value(const std::string& path) const {
+m2::Value<long> m2::Vson::query_long_value(const std::string& path) const {
 	const auto* vson = query(path);
 	m2_fail_unless(vson, "VSON path not found");
 	m2_fail_unless(vson->is_string(), "VSON value not string");
 	return vson->long_value();
 }
 
-m2::Value<double> m2::VSON::query_double_value(const std::string& path) const {
+m2::Value<double> m2::Vson::query_double_value(const std::string& path) const {
 	const auto* vson = query(path);
 	m2_fail_unless(vson, "VSON path not found");
 	m2_fail_unless(vson->is_string(), "VSON value not string");
 	return vson->double_value();
 }
 
-const std::string& m2::VSON::string_value() const {
+const std::string& m2::Vson::string_value() const {
 	return std::get<vson_string>(value);
 }
 
-long m2::VSON::long_value() const {
+long m2::Vson::long_value() const {
 	return std::stol(string_value());
 }
 
-double m2::VSON::double_value() const {
+double m2::Vson::double_value() const {
 	return std::stod(string_value());
 }
 
-size_t m2::VSON::object_size() const {
+size_t m2::Vson::object_size() const {
 	return std::get<vson_object>(value).size();
 }
 
-const m2::VSON& m2::VSON::operator[](const std::string &key) const {
+const m2::Vson& m2::Vson::operator[](const std::string &key) const {
 	return std::get<vson_object>(value).at(key);
 }
 
-m2::VSON& m2::VSON::operator[](const std::string &key) {
+m2::Vson& m2::Vson::operator[](const std::string &key) {
 	if (std::holds_alternative<vson_nil>(value)) {
 		value = vson_object();
 	}
 	return std::get<vson_object>(value)[key];
 }
 
-const m2::VSON* m2::VSON::at(const std::string& key) const {
+const m2::Vson* m2::Vson::at(const std::string& key) const {
 	if (not is_object()) {
 		return nullptr;
 	}
@@ -126,7 +126,7 @@ const m2::VSON* m2::VSON::at(const std::string& key) const {
 	return &it->second;
 }
 
-m2::VSON* m2::VSON::at(const std::string& key) {
+m2::Vson* m2::Vson::at(const std::string& key) {
 	if (not is_object()) {
 		return nullptr;
 	}
@@ -138,15 +138,15 @@ m2::VSON* m2::VSON::at(const std::string& key) {
 	return &it->second;
 }
 
-size_t m2::VSON::array_length() const {
+size_t m2::Vson::array_length() const {
 	return std::get<vson_array>(value).size();
 }
 
-const m2::VSON& m2::VSON::operator[](size_t index) const {
+const m2::Vson& m2::Vson::operator[](size_t index) const {
 	return std::get<vson_array>(value)[index];
 }
 
-m2::VSON& m2::VSON::operator[](size_t index) {
+m2::Vson& m2::Vson::operator[](size_t index) {
 	if (std::holds_alternative<vson_nil>(value)) {
 		value = vson_array();
 	}
@@ -157,7 +157,7 @@ m2::VSON& m2::VSON::operator[](size_t index) {
 	return array[index];
 }
 
-const m2::VSON* m2::VSON::at(size_t index) const {
+const m2::Vson* m2::Vson::at(size_t index) const {
 	if (not is_array()) {
 		return nullptr;
 	}
@@ -168,7 +168,7 @@ const m2::VSON* m2::VSON::at(size_t index) const {
 	return &arr[index];
 }
 
-m2::VSON* m2::VSON::at(size_t index) {
+m2::Vson* m2::Vson::at(size_t index) {
 	if (not is_array()) {
 		return nullptr;
 	}
@@ -179,7 +179,7 @@ m2::VSON* m2::VSON::at(size_t index) {
 	return &arr[index];
 }
 
-m2::VSON& m2::VSON::operator=(const std::string& str) {
+m2::Vson& m2::Vson::operator=(const std::string& str) {
 	if (std::holds_alternative<vson_nil>(value) || std::holds_alternative<vson_string>(value)) {
 		value = str;
 		return *this;
@@ -188,7 +188,7 @@ m2::VSON& m2::VSON::operator=(const std::string& str) {
 	}
 }
 
-static void dump_any_value(const m2::VSON& v, std::stringstream& ss) {
+static void dump_any_value(const m2::Vson& v, std::stringstream& ss) {
 	auto print_string = [](std::stringstream& ss, const std::string& str){
 		ss << '"';
 		for (auto c : str) {
@@ -203,33 +203,33 @@ static void dump_any_value(const m2::VSON& v, std::stringstream& ss) {
 		ss << '"';
 	};
 
-	if (std::holds_alternative<m2::VSON::vson_object>(v.value)) {
+	if (std::holds_alternative<m2::Vson::vson_object>(v.value)) {
 		ss << '{';
-		for (const auto& kv : std::get<m2::VSON::vson_object>(v.value)) {
+		for (const auto& kv : std::get<m2::Vson::vson_object>(v.value)) {
 			print_string(ss, kv.first);
 			ss << ':';
 			dump_any_value(kv.second, ss);
 			ss << ',';
 		}
 		ss << '}';
-	} else if (std::holds_alternative<m2::VSON::vson_array>(v.value)) {
+	} else if (std::holds_alternative<m2::Vson::vson_array>(v.value)) {
 		ss << '[';
-		for (const auto& elem : std::get<m2::VSON::vson_array>(v.value)) {
+		for (const auto& elem : std::get<m2::Vson::vson_array>(v.value)) {
 			dump_any_value(elem, ss);
 			ss << ',';
 		}
 		ss << ']';
-	} else if (std::holds_alternative<m2::VSON::vson_string>(v.value)) {
-		print_string(ss, std::get<m2::VSON::vson_string>(v.value));
+	} else if (std::holds_alternative<m2::Vson::vson_string>(v.value)) {
+		print_string(ss, std::get<m2::Vson::vson_string>(v.value));
 	}
 }
 
-std::string m2::VSON::dump_to_string() const {
+std::string m2::Vson::dump_to_string() const {
 	std::stringstream ss;
 	dump_any_value(*this, ss);
 	return ss.str();
 }
-bool m2::VSON::dump_to_file(const std::string& fpath) const {
+bool m2::Vson::dump_to_file(const std::string& fpath) const {
 	FILE* file = fopen(fpath.c_str(), "w");
 	if (!file) {
 		LOGF_ERROR("Unable to open file for writing: %s %s", fpath.c_str(), strerror(errno));
@@ -241,7 +241,7 @@ bool m2::VSON::dump_to_file(const std::string& fpath) const {
 	return success;
 }
 
-static m2::Value<m2::VSON> parse_unknown_value(std::stringstream& ss);
+static m2::Value<m2::Vson> parse_unknown_value(std::stringstream& ss);
 
 static std::string fetch_string_plain(std::stringstream& ss) {
 	std::stringstream buffer;
@@ -255,9 +255,9 @@ static std::string fetch_string_plain(std::stringstream& ss) {
 	}
 	return ss.str();
 }
-static m2::Value<m2::VSON> parse_object(std::stringstream& ss) {
-	m2::VSON v = m2::VSON::object();
-	auto& obj = std::get<m2::VSON::vson_object>(v.value);
+static m2::Value<m2::Vson> parse_object(std::stringstream& ss) {
+	m2::Vson v = m2::Vson::object();
+	auto& obj = std::get<m2::Vson::vson_object>(v.value);
 
 	const int EXPECT_KEY = 0;
 	const int EXPECT_COLON = 1;
@@ -320,9 +320,9 @@ static m2::Value<m2::VSON> parse_object(std::stringstream& ss) {
 	}
 	return v;
 }
-static m2::Value<m2::VSON> parse_array(std::stringstream& ss) {
-	auto v = m2::VSON::array();
-	auto& arr = std::get<m2::VSON::vson_array>(v.value);
+static m2::Value<m2::Vson> parse_array(std::stringstream& ss) {
+	auto v = m2::Vson::array();
+	auto& arr = std::get<m2::Vson::vson_array>(v.value);
 
 	const int EXPECT_VALUE = 0;
 	const int EXPECT_COMMA_OR_SPACE = 1;
@@ -358,7 +358,7 @@ static m2::Value<m2::VSON> parse_array(std::stringstream& ss) {
 	}
 	return v;
 }
-static m2::Value<m2::VSON> parse_string_quoted(std::stringstream& ss) {
+static m2::Value<m2::Vson> parse_string_quoted(std::stringstream& ss) {
 	std::stringstream buffer;
 	int c, escaping = 0, quoteClosed = 0;
 	while ((c = ss.get()) != EOF) {
@@ -386,13 +386,13 @@ static m2::Value<m2::VSON> parse_string_quoted(std::stringstream& ss) {
 	if (!quoteClosed) {
 		return m2::failure("Unclosed quote");
 	}
-	return m2::VSON::string(buffer.str());
+	return m2::Vson::string(buffer.str());
 }
-static m2::Value<m2::VSON> parse_string_plain(std::stringstream& ss) {
+static m2::Value<m2::Vson> parse_string_plain(std::stringstream& ss) {
 	auto str = fetch_string_plain(ss);
-	return m2::VSON::string(fetch_string_plain(ss));
+	return m2::Vson::string(fetch_string_plain(ss));
 }
-static m2::Value<m2::VSON> parse_unknown_value(std::stringstream& ss) {
+static m2::Value<m2::Vson> parse_unknown_value(std::stringstream& ss) {
 	int c;
 	while ((c = ss.get()) != EOF) {
 		if (isspace(c)) {
@@ -414,7 +414,7 @@ static m2::Value<m2::VSON> parse_unknown_value(std::stringstream& ss) {
 	return m2::failure("Unexpected end of file");
 }
 
-m2::Value<m2::VSON> m2::VSON::parse_string(const std::string& str) {
+m2::Value<m2::Vson> m2::Vson::parse_string(const std::string& str) {
 	std::stringstream ss(str);
 	auto optional_vson = parse_unknown_value(ss);
 	m2_reflect_failure(optional_vson);
@@ -424,7 +424,7 @@ m2::Value<m2::VSON> m2::VSON::parse_string(const std::string& str) {
 	}
 	return optional_vson;
 }
-m2::Value<m2::VSON> m2::VSON::parse_file(const std::string &fpath) {
+m2::Value<m2::Vson> m2::Vson::parse_file(const std::string &fpath) {
 	FILE* file = fopen(fpath.c_str(), "r");
 	m2_fail_unless(file, "Unable to open file");
 	std::stringstream ss;

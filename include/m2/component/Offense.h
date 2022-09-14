@@ -10,7 +10,7 @@ namespace m2 {
 namespace m2::comp {
 	struct Offense : public Component {
 		Offense() = default;
-		explicit Offense(ID object_id);
+		explicit Offense(Id object_id);
 
 		[[nodiscard]] Object& parent() const;
 	};

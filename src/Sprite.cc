@@ -2,7 +2,7 @@
 #include <m2g/SpriteID.h>
 #include <m2/Proto.h>
 #include <m2/Exception.h>
-#include <m2/SDLUtils.hh>
+#include <m2/SdlUtils.hh>
 #include <m2/M2.h>
 #include <SDL_image.h>
 #include <sstream>

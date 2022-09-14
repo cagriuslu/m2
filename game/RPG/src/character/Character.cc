@@ -54,14 +54,14 @@ bool chr::CharacterState::is_stunned() const {
 	return 0.0f < stun_ttl_s;
 }
 
-const m2::fsm::AnimationFSMBlueprint player_animation_fsm_blueprint = m2::fsm::make_animation_fsm_blueprint({
+const m2::fsm::AnimationFsmBlueprint player_animation_fsm_blueprint = m2::fsm::make_animation_fsm_blueprint({
 	.frames_per_second = 10,
 	.states = {
-		m2::fsm::AnimationFSMBlueprint::State{
+		m2::fsm::AnimationFsmBlueprint::State{
 			.state = chr::CHARANIMSTATE_STOP,
 			.sprites = {m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_00}
 		},
-		m2::fsm::AnimationFSMBlueprint::State{
+		m2::fsm::AnimationFsmBlueprint::State{
 			.state = chr::CHARANIMSTATE_WALKDOWN,
 			.sprites = {
 				m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_00,
@@ -70,7 +70,7 @@ const m2::fsm::AnimationFSMBlueprint player_animation_fsm_blueprint = m2::fsm::m
 	            m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_02
 			}
 		},
-		m2::fsm::AnimationFSMBlueprint::State{
+		m2::fsm::AnimationFsmBlueprint::State{
 			.state = chr::CHARANIMSTATE_WALKRIGHT,
 			.sprites = {
 				m2g::IMPL_SPRITE_PLAYER_LOOKRIGHT_00,
@@ -79,7 +79,7 @@ const m2::fsm::AnimationFSMBlueprint player_animation_fsm_blueprint = m2::fsm::m
 				m2g::IMPL_SPRITE_PLAYER_LOOKRIGHT_02
 			}
 		},
-		m2::fsm::AnimationFSMBlueprint::State{
+		m2::fsm::AnimationFsmBlueprint::State{
 			.state = chr::CHARANIMSTATE_WALKUP,
 			.sprites = {
 				m2g::IMPL_SPRITE_PLAYER_LOOKUP_00,
@@ -88,7 +88,7 @@ const m2::fsm::AnimationFSMBlueprint player_animation_fsm_blueprint = m2::fsm::m
 				m2g::IMPL_SPRITE_PLAYER_LOOKUP_02
 			}
 		},
-		m2::fsm::AnimationFSMBlueprint::State{
+		m2::fsm::AnimationFsmBlueprint::State{
 			.state = chr::CHARANIMSTATE_WALKLEFT,
 			.sprites = {
 				m2g::IMPL_SPRITE_PLAYER_LOOKLEFT_00,
@@ -114,14 +114,14 @@ const chr::CharacterBlueprint chr::character_player = {
 		.animation_fsm_blueprint = &player_animation_fsm_blueprint
 };
 
-const m2::fsm::AnimationFSMBlueprint skeleton000_animation_fsm_blueprint = m2::fsm::make_animation_fsm_blueprint({
+const m2::fsm::AnimationFsmBlueprint skeleton000_animation_fsm_blueprint = m2::fsm::make_animation_fsm_blueprint({
 		.frames_per_second = 10,
 		.states = {
-				m2::fsm::AnimationFSMBlueprint::State{
+				m2::fsm::AnimationFsmBlueprint::State{
 						.state = chr::CHARANIMSTATE_STOP,
 						.sprites = {m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00}
 				},
-				m2::fsm::AnimationFSMBlueprint::State{
+				m2::fsm::AnimationFsmBlueprint::State{
 						.state = chr::CHARANIMSTATE_WALKDOWN,
 						.sprites = {
 								m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00,
@@ -130,7 +130,7 @@ const m2::fsm::AnimationFSMBlueprint skeleton000_animation_fsm_blueprint = m2::f
 								m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_02
 						}
 				},
-				m2::fsm::AnimationFSMBlueprint::State{
+				m2::fsm::AnimationFsmBlueprint::State{
 						.state = chr::CHARANIMSTATE_WALKRIGHT,
 						.sprites = {
 								m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_00,
@@ -139,7 +139,7 @@ const m2::fsm::AnimationFSMBlueprint skeleton000_animation_fsm_blueprint = m2::f
 								m2g::IMPL_SPRITE_ENEMY_LOOKRIGHT_02
 						}
 				},
-				m2::fsm::AnimationFSMBlueprint::State{
+				m2::fsm::AnimationFsmBlueprint::State{
 						.state = chr::CHARANIMSTATE_WALKUP,
 						.sprites = {
 								m2g::IMPL_SPRITE_ENEMY_LOOKUP_00,
@@ -148,7 +148,7 @@ const m2::fsm::AnimationFSMBlueprint skeleton000_animation_fsm_blueprint = m2::f
 								m2g::IMPL_SPRITE_ENEMY_LOOKUP_02
 						}
 				},
-				m2::fsm::AnimationFSMBlueprint::State{
+				m2::fsm::AnimationFsmBlueprint::State{
 						.state = chr::CHARANIMSTATE_WALKLEFT,
 						.sprites = {
 								m2g::IMPL_SPRITE_ENEMY_LOOKLEFT_00,

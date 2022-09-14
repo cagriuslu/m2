@@ -6,30 +6,30 @@
 #include <unordered_map>
 
 namespace m2 {
-	using GroupTypeID = uint16_t;
-	using GroupInstanceID = uint16_t;
+	using GroupTypeId = uint16_t;
+	using GroupInstanceId = uint16_t;
 	using IndexInGroup = uint8_t;
 	constexpr size_t IndexInGroup_MAX = UINT8_MAX;
 
-	struct GroupID {
-		GroupTypeID type{0};
-		GroupInstanceID instance{0};
+	struct GroupId {
+		GroupTypeId type{0};
+		GroupInstanceId instance{0};
 
-		GroupID() = default;
-		GroupID(GroupTypeID _type, GroupInstanceID _instance);
-		GroupID(const pb::GroupBlueprint& group_blueprint);
-		bool operator==(const GroupID& other) const;
+		GroupId() = default;
+		GroupId(GroupTypeId _type, GroupInstanceId _instance);
+		GroupId(const pb::GroupBlueprint& group_blueprint);
+		bool operator==(const GroupId& other) const;
 	};
-	struct GroupIDHasher
+	struct GroupIdHasher
 	{
-		std::size_t operator()(const GroupID& k) const {
+		std::size_t operator()(const GroupId& k) const {
 			using std::hash;
-			return hash<GroupTypeID>()(k.type) ^ (hash<GroupInstanceID>()(k.instance) << 1);
+			return hash<GroupTypeId>()(k.type) ^ (hash<GroupInstanceId>()(k.instance) << 1);
 		}
 	};
 
 	class Group {
-		Pool<ID, IndexInGroup_MAX+1> _members;
+		Pool<Id, IndexInGroup_MAX + 1> _members;
 
 	public:
 		Group() = default;
@@ -37,7 +37,7 @@ namespace m2 {
 
 		decltype(_members)& members();
 
-		IndexInGroup add_member(ID object_id);
+		IndexInGroup add_member(Id object_id);
 		void remove_member(IndexInGroup index);
 	};
 }

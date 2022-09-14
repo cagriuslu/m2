@@ -14,17 +14,17 @@ bool m2::DrawList::ConstIterator::operator==(const ConstIterator& other) const {
 	return map_it == other.map_it;
 }
 
-m2::GraphicID m2::DrawList::ConstIterator::operator*() const {
+m2::GraphicId m2::DrawList::ConstIterator::operator*() const {
 	return map_it->second.gfx_id;
 }
 
-void m2::DrawList::insert(ObjectID id) {
+void m2::DrawList::insert(ObjectId id) {
 	auto& obj = GAME.objects[id];
 	auto it = draw_map.insert({obj.position, {id, obj.graphic_id()}});
 	id_lookup.insert({id, it});
 }
 
-void m2::DrawList::queue_update(ObjectID id, const Vec2f& pos) {
+void m2::DrawList::queue_update(ObjectId id, const Vec2f& pos) {
 	update_queue_lock.lock();
 	update_queue.emplace_back(id, pos);
 	update_queue_lock.unlock();
@@ -45,7 +45,7 @@ void m2::DrawList::update() {
 	update_queue_lock.unlock();
 }
 
-void m2::DrawList::remove(ObjectID id) {
+void m2::DrawList::remove(ObjectId id) {
 	auto it = id_lookup.find(id);
 	if (it != id_lookup.end()) {
 		draw_map.erase(it->second);

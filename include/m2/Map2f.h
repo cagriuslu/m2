@@ -12,7 +12,7 @@
 #include <random>
 
 namespace m2 {
-	using Map2fID = ID;
+	using Map2fID = Id;
 
 	template <typename T>
 	struct Map2fItem {

@@ -1,5 +1,4 @@
 #include <m2g/ui/UI.h>
-#include <m2/ui/WidgetBlueprint.h>
 #include <m2/Game.hh>
 #include <rpg/LevelBlueprint.h>
 #include <m2/M2.h>
@@ -14,10 +13,10 @@ namespace {
 	};
 }
 
-static WidgetBlueprint::Variant entry_variant_0 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant entry_variant_0 = Blueprint::Widget::Text{
 	.initial_text = "Select save slot:"
 };
-static WidgetBlueprint::Variant entry_variant_1 = wdg::ImageBlueprint{
+static Blueprint::Widget::Variant entry_variant_1 = Blueprint::Widget::Image{
 	.initial_sprite_key = "main.floppy_disk",
 	.action_callback = []() {
 		fprintf(stderr, "Pressed button\n");
@@ -25,7 +24,7 @@ static WidgetBlueprint::Variant entry_variant_1 = wdg::ImageBlueprint{
 	},
 	.kb_shortcut = SDL_SCANCODE_1
 };
-static WidgetBlueprint::Variant entry_variant_2 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant entry_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "NEW GAME",
 	.action_callback = []() {
 		GAME.load_level("resource/game/RPG/levels/sp000.json");
@@ -33,31 +32,31 @@ static WidgetBlueprint::Variant entry_variant_2 = wdg::TextBlueprint{
 	},
 	.kb_shortcut = SDL_SCANCODE_N
 };
-static WidgetBlueprint::Variant entry_variant_3 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant entry_variant_3 = Blueprint::Widget::Text{
 	.initial_text = "QUIT",
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
 };
-const UIBlueprint m2g::ui::entry = {
+const Blueprint m2g::ui::entry = {
 	.w = 100, .h = 100,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 45, .y = 0, .w = 10, .h = 10,
 			.background_color = {20, 20, 20, 255},
 			.variant = entry_variant_0
 		},
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 45, .y = 10, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = entry_variant_1
 		},
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = entry_variant_2
 		},
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 45, .y = 55, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = entry_variant_3
@@ -65,7 +64,7 @@ const UIBlueprint m2g::ui::entry = {
 	}
 };
 
-static WidgetBlueprint::Variant pause_variant_1 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant pause_variant_1 = Blueprint::Widget::Text{
 	.initial_text = "RESUME GAME",
 	.alignment = TextAlignment::CENTER,
 	.action_callback = []() {
@@ -73,21 +72,21 @@ static WidgetBlueprint::Variant pause_variant_1 = wdg::TextBlueprint{
 	},
 	.kb_shortcut = SDL_SCANCODE_R
 };
-static WidgetBlueprint::Variant pause_variant_2 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant pause_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "QUIT",
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
 };
-const UIBlueprint m2g::ui::pause = {
+const Blueprint m2g::ui::pause = {
 	.w = 100, .h = 100,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 	.widgets = {
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = pause_variant_1
 		},
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 45, .y = 55, .w = 10, .h = 10,
 			.border_width_px = 1,
 			.variant = pause_variant_2
@@ -95,14 +94,14 @@ const UIBlueprint m2g::ui::pause = {
 	}
 };
 
-static WidgetBlueprint::Variant left_hud_variant_1 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant left_hud_variant_1 = Blueprint::Widget::Text{
 	.initial_text = "HP"
 };
-static WidgetBlueprint::Variant left_hud_variant_2 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant left_hud_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "100",
 	.update_callback = []() -> std::pair<Action,std::string> {
 		// Lookup player
-		static m2::ID player_id = 0;
+		static m2::Id player_id = 0;
 		static float* hp = nullptr;
 		if (player_id != GAME.playerId) {
 			player_id = GAME.playerId;
@@ -116,15 +115,15 @@ static WidgetBlueprint::Variant left_hud_variant_2 = wdg::TextBlueprint{
 		}
 	}
 };
-static WidgetBlueprint::Variant left_hud_variant_3 = wdg::TextBlueprint{
+static Blueprint::Widget::Variant left_hud_variant_3 = Blueprint::Widget::Text{
 	.initial_text = "DASH"
 };
-static WidgetBlueprint::Variant left_hud_variant_4 = wdg::ProgressBarBlueprint{
+static Blueprint::Widget::Variant left_hud_variant_4 = Blueprint::Widget::ProgressBar{
 	.initial_progress = 1.0f,
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {
 		// Lookup player
-		static m2::ID player_id = 0;
+		static m2::Id player_id = 0;
 		static float* counter = nullptr;
 		static float cooldown = 0.0f;
 		if (player_id != GAME.playerId) {
@@ -141,23 +140,23 @@ static WidgetBlueprint::Variant left_hud_variant_4 = wdg::ProgressBarBlueprint{
 		}
 	}
 };
-const UIBlueprint m2g::ui::left_hud = {
+const Blueprint m2g::ui::left_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 2,
 	.widgets = {
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 4, .y = 50, .w = 11, .h = 2,
 			.variant = left_hud_variant_1
 		},
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 4, .y = 52, .w = 11, .h = 2,
 			.variant = left_hud_variant_2
 		},
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 4, .y = 54, .w = 11, .h = 2,
 			.variant = left_hud_variant_3
 		},
-		WidgetBlueprint{
+		Blueprint::Widget{
 			.x = 4, .y = 56, .w = 11, .h = 2,
 			.border_width_px = 1,
 			.variant = left_hud_variant_4
@@ -165,7 +164,7 @@ const UIBlueprint m2g::ui::left_hud = {
 	}
 };
 
-const UIBlueprint m2g::ui::right_hud = {
+const Blueprint m2g::ui::right_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 2
 };

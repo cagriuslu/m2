@@ -32,10 +32,10 @@ using namespace obj;
 obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint),
 	animation_fsm(blueprint->animation_fsm_blueprint, obj.graphic_id()), fsm_variant(
 		std::visit(m2::overloaded {
-			[&](MAYBE const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
-			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
-			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
-			[&](MAYBE const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::FSM<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }
+			[&](MAYBE const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::Fsm<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::Fsm<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }, // TODO implement other FSMs
+			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::Fsm<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; },
+			[&](MAYBE const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::Fsm<fsm::Chaser>{{obj, blueprint->aiBlueprint}}; }
 		}, blueprint->aiBlueprint->variant)), on_hit_color_mod_ttl(0) {}
 
 void Enemy::stun() {

@@ -6,7 +6,7 @@
 #include <m2/M2.h>
 #include <m2/Log.h>
 
-m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::ID originatorId, m2::Vec2f pos, m2::Vec2f dir) {
+m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Id originatorId, m2::Vec2f pos, m2::Vec2f dir) {
 	obj = m2::Object{pos};
 	dir = dir.normalize();
 

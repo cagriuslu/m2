@@ -6,7 +6,7 @@
 #include <cmath>
 
 namespace m2 {
-    enum FSMSignal : unsigned {
+    enum FsmSignal : unsigned {
         FSMSIG_ENTER = 0,
         FSMSIG_EXIT,
         FSMSIG_ALARM,
@@ -17,12 +17,12 @@ namespace m2 {
         FSMSIG_N
     };
 
-	using FSMStateHandler = void*;
+	using FsmStateHandler = void*;
 
     template <typename Data>
-    class FSM {
+    class Fsm {
 	public:
-		using StateHandler = FSMStateHandler (*)(FSM<Data>& automaton, unsigned sig);
+		using StateHandler = FsmStateHandler (*)(Fsm<Data>& automaton, unsigned sig);
 
 	private:
 		StateHandler current_state;
@@ -31,7 +31,7 @@ namespace m2 {
 	public:
         Data data;
 
-        explicit FSM(Data&& data) : current_state(Data::initial_state), alarm(NAN), data(data) {
+        explicit Fsm(Data&& data) : current_state(Data::initial_state), alarm(NAN), data(data) {
             signal(FSMSIG_ENTER);
         }
 

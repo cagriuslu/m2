@@ -7,10 +7,10 @@
 
 namespace m2 {
 	struct Component {
-		ID object_id{0};
+		Id object_id{0};
 
 		Component() = default;
-		explicit Component(ID object_id);
+		explicit Component(Id object_id);
 	};
 }
 

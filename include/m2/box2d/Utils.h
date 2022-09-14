@@ -22,7 +22,7 @@ namespace m2::box2d {
 	constexpr uint16_t BODY_CATEGORY_FOE = (BODY_CATEGORY_FOE_BACKGROUND | BODY_CATEGORY_FOE_FOREGROUND);
 	constexpr uint16_t BODY_CATEGORY_FRIEND_PICKUP = (0x0040);
 
-	b2Body* create_body(b2World& world, ID physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint);
+	b2Body* create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint);
 	void destroy_body(b2Body*& body);
 
     b2AABB expand_aabb(const b2AABB& in, float amount);

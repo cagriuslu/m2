@@ -10,17 +10,17 @@
 #include <optional>
 
 namespace m2 {
-	struct VSON {
+	struct Vson {
 		using vson_nil = std::monostate;
-		using vson_object = std::unordered_map<std::string, VSON>;
-		using vson_array = std::vector<VSON>;
+		using vson_object = std::unordered_map<std::string, Vson>;
+		using vson_array = std::vector<Vson>;
 		using vson_string = std::string;
 		std::variant<vson_nil, vson_object, vson_array, vson_string> value;
 
-		[[nodiscard]] static VSON nil();
-		[[nodiscard]] static VSON object();
-		[[nodiscard]] static VSON array();
-		[[nodiscard]] static VSON string(const std::string& str);
+		[[nodiscard]] static Vson nil();
+		[[nodiscard]] static Vson object();
+		[[nodiscard]] static Vson array();
+		[[nodiscard]] static Vson string(const std::string& str);
 
 		[[nodiscard]] bool is_nil() const;
 		[[nodiscard]] bool is_valid() const;
@@ -29,35 +29,35 @@ namespace m2 {
 		[[nodiscard]] bool is_string() const;
 
 		// Safe queries
-		[[nodiscard]] const VSON* query(const std::string& path) const;
+		[[nodiscard]] const Vson* query(const std::string& path) const;
 		[[nodiscard]] Value<std::string> query_string_value(const std::string& path) const;
 		[[nodiscard]] Value<long> query_long_value(const std::string& path) const;
 		[[nodiscard]] Value<double> query_double_value(const std::string& path) const;
 
 		// Object
 		[[nodiscard]] size_t object_size() const;
-		const VSON& operator[](const std::string& key) const;
-		VSON& operator[](const std::string& key);
-		[[nodiscard]] const VSON* at(const std::string& key) const;
-		VSON* at(const std::string& key);
+		const Vson& operator[](const std::string& key) const;
+		Vson& operator[](const std::string& key);
+		[[nodiscard]] const Vson* at(const std::string& key) const;
+		Vson* at(const std::string& key);
 
 		// Array
 		[[nodiscard]] size_t array_length() const;
-		const VSON& operator[](size_t index) const;
-		VSON& operator[](size_t index);
-		[[nodiscard]] const VSON* at(size_t index) const;
-		VSON* at(size_t index);
+		const Vson& operator[](size_t index) const;
+		Vson& operator[](size_t index);
+		[[nodiscard]] const Vson* at(size_t index) const;
+		Vson* at(size_t index);
 
 		// String
 		[[nodiscard]] const std::string& string_value() const;
 		[[nodiscard]] long long_value() const;
 		[[nodiscard]] double double_value() const;
-		VSON& operator=(const std::string& str);
+		Vson& operator=(const std::string& str);
 
 		[[nodiscard]] std::string dump_to_string() const;
 		[[nodiscard]] bool dump_to_file(const std::string& fpath) const;
-		static Value<VSON> parse_string(const std::string& str);
-		static Value<VSON> parse_file(const std::string& fpath);
+		static Value<Vson> parse_string(const std::string& str);
+		static Value<Vson> parse_file(const std::string& fpath);
 	};
 }
 

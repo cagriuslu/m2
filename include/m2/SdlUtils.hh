@@ -4,9 +4,9 @@
 #include <Rect2i.pb.h>
 #include <SDL.h>
 
-SDL_Cursor* SDLUtils_CreateCursor();
+SDL_Cursor* SdlUtils_CreateCursor();
 
-uint32_t SDLUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks);
+uint32_t SdlUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks);
 
 namespace m2 {
 	namespace sdl {

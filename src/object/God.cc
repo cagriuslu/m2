@@ -1,7 +1,7 @@
 #include <m2/object/God.h>
 #include <m2/Game.hh>
 
-m2::ID m2::obj::create_god() {
+m2::Id m2::obj::create_god() {
 	auto [obj, id] = create_object(Vec2f{});
 	obj.impl = std::make_unique<m2::obj::God>();
 	obj.add_monitor([&obj = obj](MAYBE m2::comp::Monitor& mon) {

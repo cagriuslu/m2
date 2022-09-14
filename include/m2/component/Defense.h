@@ -10,7 +10,7 @@ namespace m2 {
 namespace m2::comp {
 	struct Defense : public Component {
 		Defense() = default;
-		explicit Defense(ID object_id);
+		explicit Defense(Id object_id);
 
 		[[nodiscard]] Object& parent() const;
 	};

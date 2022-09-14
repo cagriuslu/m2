@@ -5,13 +5,13 @@
 #include "Vec2i.h"
 
 namespace m2 {
-	struct AABB2f {
+	struct Aabb2f {
 		Vec2f top_left;
 		Vec2f bottom_right;
 
-		AABB2f();
-		AABB2f(const Vec2f& top_left, const Vec2f& bottom_right);
-		AABB2f(const Vec2i& top_left, const Vec2i& bottom_right);
+		Aabb2f();
+		Aabb2f(const Vec2f& top_left, const Vec2f& bottom_right);
+		Aabb2f(const Vec2i& top_left, const Vec2i& bottom_right);
 
 		[[nodiscard]] float width() const;
 		[[nodiscard]] float height() const;

@@ -8,7 +8,7 @@ namespace m2::obj {
 		int dummy;
 	};
 
-	ID create_god();
+	Id create_god();
 }
 
 #endif //M2_GOD_H

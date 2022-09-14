@@ -8,7 +8,7 @@
 #include <iterator>
 
 namespace m2 {
-	using Map2iID = ID;
+	using Map2iID = Id;
 
 	template <typename T>
 	struct Map2iItem {

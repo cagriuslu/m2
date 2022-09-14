@@ -15,7 +15,7 @@ namespace m2::comp {
 		std::function<void(Physique&, Physique&)> on_collision;
 
 		Physique() = default;
-		explicit Physique(ID object_id);
+		explicit Physique(Id object_id);
 		// Copy not allowed
 		Physique(const Physique& other) = delete;
 		Physique& operator=(const Physique& other) = delete;

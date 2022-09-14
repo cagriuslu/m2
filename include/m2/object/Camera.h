@@ -9,7 +9,7 @@ namespace m2::obj {
         Vec2f offset;
     };
 
-    std::pair<Object&, ID> create_camera();
+    std::pair<Object&, Id> create_camera();
 }
 
 #endif //M2_CAMERA_H

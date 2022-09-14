@@ -37,7 +37,7 @@ namespace m2::box2d {
 	};
 }
 
-b2Body* m2::box2d::create_body(b2World& world, ID physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint) {
+b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint) {
 	if (GAME.is_phy_stepping) {
 		throw M2ERROR("b2Body is created during physics step");
 	}

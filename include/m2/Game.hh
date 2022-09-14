@@ -13,7 +13,7 @@
 #include "DrawList.h"
 #include <m2/Object.h>
 #include "Pathfinder.hh"
-#include "ui/UI.h"
+#include "m2/Ui.h"
 #include "component/Monitor.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
@@ -88,7 +88,7 @@ namespace m2 {
 		// Another reason to put a component inside a Pool: if the type of object that is using that component is
 		// created/destroyed very rapidly.
 		Pool<Object> objects;
-		std::unordered_map<GroupID, std::unique_ptr<Group>, GroupIDHasher> groups;
+		std::unordered_map<GroupId, std::unique_ptr<Group>, GroupIdHasher> groups;
 		DrawList draw_list;
 		Pool<comp::Monitor> monitors;
 		Pool<comp::Physique> physics;
@@ -99,9 +99,9 @@ namespace m2 {
 		Pool<m2g::comp::Offense> offenses;
 		b2World *world{};
         box2d::ContactListener* contactListener{};
-		ID cameraId{}, playerId{}, pointerId{};
+		Id cameraId{}, playerId{}, pointerId{};
 		PathfinderMap pathfinderMap;
-        std::optional<ui::UIState> leftHudUIState, rightHudUIState;
+        std::optional<ui::State> leftHudUIState, rightHudUIState;
 
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// GAME /////////////////////////////////

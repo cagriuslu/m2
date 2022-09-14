@@ -9,7 +9,7 @@
 
 namespace m2g::comp {
 	struct Offense : public m2::comp::Offense {
-		m2::ID originator;
+		m2::Id originator;
 		std::variant<
 			std::monostate,
 			chr::ExplosiveState,
@@ -18,7 +18,7 @@ namespace m2g::comp {
 		> variant;
 
 		Offense() = default;
-		explicit Offense(m2::ID object_id);
+		explicit Offense(m2::Id object_id);
 	};
 }
 

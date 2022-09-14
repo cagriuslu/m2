@@ -1,7 +1,7 @@
 #include <m2/object/Origin.h>
 #include <m2/Game.hh>
 
-std::pair<m2::Object&, m2::ID> m2::obj::create_origin() {
+std::pair<m2::Object&, m2::Id> m2::obj::create_origin() {
 	auto obj_pair = create_object(Vec2f{});
 	auto& origin = obj_pair.first;
 

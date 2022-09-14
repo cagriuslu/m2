@@ -4,7 +4,7 @@
 #include "m2/LevelBlueprint.h"
 
 namespace lvl {
-	enum ObjectGroup : m2::GroupTypeID {
+	enum ObjectGroup : m2::GroupTypeId {
 		NO_GROUP [[maybe_unused]] = 0,
 		CONSUMABLE_RESOURCE_GROUP,
 		CONSUMABLE_RESOURCE_GROUP_HP,
