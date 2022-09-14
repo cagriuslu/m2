@@ -2,7 +2,7 @@
 #include "m2/Events.h"
 #include "m2/Game.hh"
 #include "m2/SdlUtils.hh"
-#include <m2g/ui/UI.h>
+#include <m2g/UI.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>

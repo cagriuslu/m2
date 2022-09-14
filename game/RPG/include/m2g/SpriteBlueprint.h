@@ -1,7 +1,7 @@
 #ifndef IMPL_SPRITEBLUEPRINT_H
 #define IMPL_SPRITEBLUEPRINT_H
 
-#include "SpriteID.h"
+#include "SpriteId.h"
 #include <m2/Object.h>
 #include <GroupBlueprint.pb.h>
 #include <m2/SpriteBlueprint.h>
@@ -66,7 +66,7 @@ namespace m2g {
     };
 
 	extern const std::vector<m2::SpriteBlueprint> sprites;
-	m2::VoidValue fg_object_loader(m2::Object& obj, SpriteID main_sprite, const m2::pb::GroupBlueprint& group, m2::Vec2f position);
+	m2::VoidValue fg_object_loader(m2::Object& obj, SpriteId main_sprite, const m2::pb::GroupBlueprint& group, m2::Vec2f position);
 }
 
 #endif //IMPL_SPRITEBLUEPRINT_H

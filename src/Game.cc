@@ -12,7 +12,7 @@
 #include <m2/Sprite.h>
 #include <LevelBlueprint.pb.h>
 #include <m2g/SpriteBlueprint.h>
-#include <m2g/ui/UI.h>
+#include <m2g/UI.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <m2/SdlUtils.hh>
@@ -95,7 +95,7 @@ m2::Game::~Game() {
 	SDL_DestroyWindow(sdlWindow);
 }
 
-const m2::Sprite& m2::Game::lookup_sprite(m2g::SpriteID sprite) const {
+const m2::Sprite& m2::Game::lookup_sprite(m2g::SpriteId sprite) const {
 	return *sprite_id_lut[to_unsigned(sprite)];
 }
 

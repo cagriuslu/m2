@@ -2,7 +2,7 @@
 #define M2_SPRITE_H
 
 #include <SpriteSheets.pb.h>
-#include <m2g/SpriteID.h>
+#include <m2g/SpriteId.h>
 #include "SdlUtils.hh"
 #include "Vec2f.h"
 #include <SDL.h>
@@ -51,10 +51,10 @@ namespace m2 {
 	using SpriteMaps = std::pair<SpriteSheetKeyToSpriteSheetMap,SpriteKeyToSpriteMap>;
 	SpriteMaps load_sprite_maps(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
 
-	using SpriteIDToSpriteLUT = std::vector<const Sprite*>;
-	using SpriteKeyToSpriteIDMap = std::unordered_map<SpriteKey, m2g::SpriteID>;
-	using SpriteIDLUTs = std::pair<SpriteIDToSpriteLUT,SpriteKeyToSpriteIDMap>;
-	SpriteIDLUTs generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map);
+	using SpriteIdToSpriteLut = std::vector<const Sprite*>;
+	using SpriteKeyToSpriteIdMap = std::unordered_map<SpriteKey, m2g::SpriteId>;
+	using SpriteIdLuts = std::pair<SpriteIdToSpriteLut,SpriteKeyToSpriteIdMap>;
+	SpriteIdLuts generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map);
 
 	using EditorPaletteSpriteKeys = std::vector<SpriteKey>;
 	using EditorPalettes = std::pair<EditorPaletteSpriteKeys,EditorPaletteSpriteKeys>;

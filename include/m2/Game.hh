@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include <m2g/Proxy.h>
-#include <m2g/SpriteID.h>
+#include <m2g/SpriteId.h>
 #include "Level.h"
 #include "Group.h"
 #include "Sprite.h"
@@ -66,9 +66,9 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		SpriteSheetKeyToSpriteSheetMap sprite_sheets;
 		SpriteKeyToSpriteMap sprite_key_to_sprite_map;
-		SpriteIDToSpriteLUT sprite_id_lut;
-		const Sprite& lookup_sprite(m2g::SpriteID) const;
-		SpriteKeyToSpriteIDMap sprite_key_to_id_map;
+		SpriteIdToSpriteLut sprite_id_lut;
+		const Sprite& lookup_sprite(m2g::SpriteId) const;
+		SpriteKeyToSpriteIdMap sprite_key_to_id_map;
 		EditorPaletteSpriteKeys editor_bg_sprites;
 		EditorPaletteSpriteKeys editor_fg_sprites;
 

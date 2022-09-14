@@ -21,7 +21,7 @@ void chr::ExplosiveWeaponState::process_time(float time_passed_s) {
 const chr::ExplosiveWeaponBlueprint chr::explosive_weapon_grenade = {
 		.explosive = {
 				.sprite_index = m2g::IMPL_SPRITE_BOMB_00,
-				.sprite = m2g::SpriteID::Bomb,
+				.sprite = m2g::SpriteId::Bomb,
 				.projectile_speed_mps = 1.5f,
 				.projectile_ttl_s = 4.0f,
 				.projectile_body_radius_m = 0.25f,
@@ -35,7 +35,7 @@ const chr::ExplosiveWeaponBlueprint chr::explosive_weapon_grenade = {
 const chr::ExplosiveWeaponBlueprint chr::explosive_weapon_grenade_launcher = {
 		.explosive = {
 				.sprite_index = m2g::IMPL_SPRITE_BOMB_00,
-				.sprite = m2g::SpriteID::Bomb,
+				.sprite = m2g::SpriteId::Bomb,
 				.projectile_speed_mps = 2.5f,
 				.projectile_ttl_s = 2.0f,
 				.projectile_body_radius_m = 0.25f,

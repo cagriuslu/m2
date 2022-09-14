@@ -1,7 +1,7 @@
 #ifndef IMPL_CHARACTER_H
 #define IMPL_CHARACTER_H
 
-#include <m2g/SpriteID.h>
+#include <m2g/SpriteId.h>
 #include "ExplosiveWeapon.h"
 #include "MeleeWeapon.h"
 #include "RangedWeapon.h"
@@ -37,7 +37,7 @@ namespace chr {
 	};
 	struct CharacterBlueprint {
 		m2::SpriteIndex main_sprite_index;
-		m2g::SpriteID main_sprite;
+		m2g::SpriteId main_sprite;
 		float mass_kg;
 		float linear_damping;
 		float walk_force;

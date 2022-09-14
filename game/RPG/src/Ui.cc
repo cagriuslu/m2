@@ -1,4 +1,4 @@
-#include <m2g/ui/UI.h>
+#include <m2g/UI.h>
 #include <m2/Game.hh>
 #include <rpg/LevelBlueprint.h>
 #include <m2/M2.h>

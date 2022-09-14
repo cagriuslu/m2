@@ -1,7 +1,7 @@
 #ifndef IMPL_RANGEDWEAPON_H
 #define IMPL_RANGEDWEAPON_H
 
-#include <m2g/SpriteID.h>
+#include <m2g/SpriteId.h>
 #include "m2/SpriteBlueprint.h"
 
 namespace chr {
@@ -14,7 +14,7 @@ namespace chr {
 	};
 	struct ProjectileBlueprint {
 		m2::SpriteIndex sprite_index;
-		m2g::SpriteID sprite;
+		m2g::SpriteId sprite;
 		float speed_mps;
 		float damage;
 		float ttl_s;

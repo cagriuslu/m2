@@ -1,5 +1,5 @@
 #include <m2/Sprite.h>
-#include <m2g/SpriteID.h>
+#include <m2g/SpriteId.h>
 #include <m2/Proto.h>
 #include <m2/Exception.h>
 #include <m2/SdlUtils.hh>
@@ -80,8 +80,8 @@ m2::SpriteMaps m2::load_sprite_maps(const std::string& sprite_sheets_path, SDL_R
 	return sheets_and_sprites;
 }
 
-m2::SpriteIDLUTs m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map) {
-	SpriteIDLUTs luts;
+m2::SpriteIdLuts m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map) {
+	SpriteIdLuts luts;
 	unsigned counter = 0;
 	for (const auto& [sprite_id, sprite_key] : m2g::sprite_id_to_sprite_key_lut) {
 		if (to_unsigned(sprite_id) != counter) {
@@ -92,10 +92,10 @@ m2::SpriteIDLUTs m2::generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites
 			throw M2FATAL("m2g::sprite_id_to_sprite_key_lut contains unknown sprite key");
 		}
 		luts.first.push_back(&sprites_map_it->second);
-		luts.second[sprite_key] = static_cast<m2g::SpriteID>(counter);
+		luts.second[sprite_key] = static_cast<m2g::SpriteId>(counter);
 		counter++;
 	}
-	if (to_unsigned(m2g::SpriteID::_end_) != counter) {
+	if (to_unsigned(m2g::SpriteId::_end_) != counter) {
 		throw M2FATAL("m2g::sprite_id_to_sprite_key_lut is incomplete");
 	}
 	return luts;

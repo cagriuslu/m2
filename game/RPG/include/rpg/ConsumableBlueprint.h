@@ -3,12 +3,12 @@
 
 #include "rpg/Attribute.h"
 #include "m2/SpriteBlueprint.h"
-#include <m2g/SpriteID.h>
+#include <m2g/SpriteId.h>
 #include <vector>
 
 namespace itm {
 	struct ConsumableBlueprint {
-		m2g::SpriteID drop_sprite;
+		m2g::SpriteId drop_sprite;
 		std::vector<std::pair<chr::Attribute, float>> buffs;
 	};
 

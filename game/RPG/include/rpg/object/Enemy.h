@@ -8,7 +8,6 @@
 #include "rpg/fsm/DistanceKeeper.h"
 #include "rpg/fsm/HitNRunner.h"
 #include "rpg/fsm/Patroller.h"
-#include "m2/LevelBlueprint.h"
 #include <m2/Value.h>
 
 namespace obj {
