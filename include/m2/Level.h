@@ -4,7 +4,7 @@
 #include "Object.h"
 #include "Value.h"
 #include "Vec2i.h"
-#include <LevelBlueprint.pb.h>
+#include <Level.pb.h>
 #include <functional>
 #include <optional>
 #include <string>
