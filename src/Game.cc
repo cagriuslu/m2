@@ -119,26 +119,26 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 
 	// Look up background sprites
 	std::vector<const Sprite*> bg_sprites;
-	for (const auto& bg_sprite_key : lb->bg_tile_lut()) {
+	for (const auto& bg_sprite_key : lb->background_tile_lut()) {
 		auto sprite_it = sprite_key_to_sprite_map.find(bg_sprite_key);
 		m2_fail_unless(sprite_it != sprite_key_to_sprite_map.end(), "Unknown sprite key " + bg_sprite_key);
 		bg_sprites.push_back(&sprite_it->second);
 	}
 	// Create background tiles
-	for (int y = 0; y < lb->bg_rows_size(); ++y) {
-		for (int x = 0; x < lb->bg_rows(y).items_size(); ++x) {
-			auto lut_index = lb->bg_rows(y).items(x);
+	for (int y = 0; y < lb->background_rows_size(); ++y) {
+		for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
+			auto lut_index = lb->background_rows(y).items(x);
 			if (lut_index < 0) {
 				continue; // Skip negative tiles
 			}
-			if (lb->bg_tile_lut_size() <= lut_index) {
+			if (lb->background_tile_lut_size() <= lut_index) {
 				return failure("Background tile LUT index out of bounds");
 			}
 			m2::obj::create_tile(m2::Vec2f{x, y}, *bg_sprites[lut_index]);
 		}
 	}
 	// Create foreground objects
-	for (const auto& fg_object : lb->fg_objects()) {
+	for (const auto& fg_object : lb->objects()) {
 		auto& obj = GAME.objects.alloc().first;
 		auto load_result = m2g::fg_object_loader(obj, sprite_key_to_id_map[fg_object.key()], fg_object.group(), m2::Vec2f{fg_object.position()});
 		m2_reflect_failure(load_result);

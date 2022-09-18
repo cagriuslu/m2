@@ -5,14 +5,14 @@ import "Vec2i.proto";
 import "GroupBlueprint.proto";
 import "Int32Array.proto";
 
-message ForegroundObjectBlueprint {
+message Object {
   Vec2i position = 1;
   string key = 2;
   GroupBlueprint group = 3; // Move into parameters maybe?, or instead make the grouping part of game engine
 }
 
 message Level {
-  repeated string bg_tile_lut = 1;
-  repeated Int32Array bg_rows = 2;
-  repeated ForegroundObjectBlueprint fg_objects = 3;
+  repeated string background_tile_lut = 1;
+  repeated Int32Array background_rows = 2;
+  repeated Object objects = 3;
 }
