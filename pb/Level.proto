@@ -3,14 +3,12 @@ package m2.pb;
 
 import "Vec2i.proto";
 import "GroupBlueprint.proto";
-import "ObjectParameters.proto";
 import "Int32Array.proto";
 
 message ForegroundObjectBlueprint {
   Vec2i position = 1;
   string key = 2;
   GroupBlueprint group = 3; // Move into parameters maybe?, or instead make the grouping part of game engine
-  m2g.pb.ObjectParameters parameters = 4;
 }
 
 message LevelBlueprint {

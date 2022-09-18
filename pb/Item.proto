@@ -1,0 +1,25 @@
+syntax = "proto3";
+package m2.pb;
+
+import "ResourceType.proto";
+
+message Resource {
+  m2g.pb.ResourceType type = 1;
+  double amount = 2;
+}
+
+enum ItemType {
+  CONSUMABLE = 0;
+  REUSABLE = 1;
+  STATIC = 2;
+}
+
+message Item {
+  string key = 1;
+  ItemType type = 2;
+  repeated Resource resources = 3;
+}
+
+message Items {
+  repeated Item items = 1;
+}

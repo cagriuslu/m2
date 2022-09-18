@@ -1,0 +1,28 @@
+When to use error codes, exception, Value:
+- If the error is commonly occurring, use Value
+- If the error is developer facing, rarely happens, (it is an exceptional case) use exception
+- Don't use error codes
+
+Object is an entity that can exist on its own.
+Objects can have physical components (gfx,phy,light,etc.)
+
+Item is a collection of resources. Items can be transferred from one object to another.
+Items don't exist in the physical world but can be held by objects.
+Items can be used.
+Consumable Item: single-use
+Reusable Item: multi-use, but expires eventually
+Static Item: multi-use, never expires
+Items are identified by a key.
+
+Resource is an amount with a type that can give the holder certain capabilities.
+Anti-resource has a negative amount.
+
+Objects have resources.
+Objects hold items.
+Items have resources.
+Items can grant (anti-)resources on use.
+
+A group is a club which an object can become a member of.
+A group's lifetime is independent of its members.
+A group has a type.
+There can be multiple instances of the same group type.

@@ -1,0 +1,7 @@
+syntax = "proto3";
+package m2g.pb;
+
+enum GroupType {
+  NONE = 0;
+  CONSUMABLE_ITEM_HP20 = 1;
+}

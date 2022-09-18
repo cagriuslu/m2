@@ -1,0 +1,8 @@
+syntax = "proto3";
+package m2g.pb;
+
+enum ObjectType {
+  NONE = 0;
+  PLAYER = 1;
+  SKELETON = 2;
+}

@@ -1,6 +1,0 @@
-syntax = "proto3";
-package m2g.pb;
-
-message ObjectParameters {
-  int32 dummy = 1;
-}
