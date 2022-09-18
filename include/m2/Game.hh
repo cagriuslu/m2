@@ -23,7 +23,7 @@
 #include <SDL_ttf.h>
 #include <vector>
 #include <b2_world.h>
-#include <SpriteSheets.pb.h>
+#include <Sprite.pb.h>
 #include <sstream>
 #include "Value.h"
 #include <unordered_map>

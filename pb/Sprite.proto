@@ -19,3 +19,14 @@ message Sprite {
   Collider collider = 5;
   EditorPalette editor_palette = 6;
 }
+
+message SpriteSheet {
+  string name = 1;
+  string resource = 2;
+  uint32 ppm = 3; // Pixels per meter
+  repeated Sprite sprites = 4;
+}
+
+message SpriteSheets {
+  repeated SpriteSheet sheets = 1;
+}

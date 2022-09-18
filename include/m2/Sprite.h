@@ -1,7 +1,7 @@
 #ifndef M2_SPRITE_H
 #define M2_SPRITE_H
 
-#include <SpriteSheets.pb.h>
+#include <Sprite.pb.h>
 #include <m2g/SpriteId.h>
 #include "SdlUtils.hh"
 #include "Vec2f.h"
