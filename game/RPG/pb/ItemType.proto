@@ -2,6 +2,6 @@ syntax = "proto3";
 package m2g.pb;
 
 enum ItemType {
-  NONE = 0;
+  NO_ITEM = 0;
   CONSUMABLE_POTION_HP20 = 1;
 }

@@ -2,6 +2,6 @@ syntax = "proto3";
 package m2g.pb;
 
 enum ResourceType {
-  NONE = 0;
+  NO_RESOURCE = 0;
   HP = 1;
 }
