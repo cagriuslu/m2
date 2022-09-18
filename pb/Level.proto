@@ -11,7 +11,7 @@ message ForegroundObjectBlueprint {
   GroupBlueprint group = 3; // Move into parameters maybe?, or instead make the grouping part of game engine
 }
 
-message LevelBlueprint {
+message Level {
   repeated string bg_tile_lut = 1;
   repeated Int32Array bg_rows = 2;
   repeated ForegroundObjectBlueprint fg_objects = 3;

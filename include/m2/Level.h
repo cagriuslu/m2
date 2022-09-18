@@ -20,7 +20,7 @@ namespace m2 {
 	private:
 		Type _type;
 		std::string _lb_path;
-		pb::LevelBlueprint _lb;
+		pb::Level _lb;
 
 		Level(Type type, std::string lb_path);
 

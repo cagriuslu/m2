@@ -10,7 +10,7 @@
 
 namespace {
 	m2::VoidValue level_blueprint_iterate_tiles(
-		const m2::pb::LevelBlueprint& lb,
+		const m2::pb::Level& lb,
 		const std::function<void(const m2::Vec2f& position, const m2::Sprite& sprite)>& bg_tile_loader,
 		const std::function<void(const m2::Vec2f& position, const std::string& sprite_key, const m2::pb::GroupBlueprint& gb)>& fg_object_loader) {
 		if (bg_tile_loader) {
@@ -171,7 +171,7 @@ m2::Value<m2::Level> m2::Level::create_editor_level(const std::string& lb_path) 
 	Level editor_level{Type::EDITOR, lb_path};
 
 	if (std::filesystem::exists(lb_path)) {
-		Value<pb::LevelBlueprint> lb = proto::json_file_to_message<pb::LevelBlueprint>(lb_path);
+		Value<pb::Level> lb = proto::json_file_to_message<pb::Level>(lb_path);
 		m2_reflect_failure(lb);
 
 		editor_level._lb = *lb;

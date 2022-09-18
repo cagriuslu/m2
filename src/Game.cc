@@ -100,7 +100,7 @@ const m2::Sprite& m2::Game::lookup_sprite(m2g::SpriteId sprite) const {
 }
 
 m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
-	auto lb = proto::json_file_to_message<pb::LevelBlueprint>(level_resource_path);
+	auto lb = proto::json_file_to_message<pb::Level>(level_resource_path);
 	m2_reflect_failure(lb);
 
 	if (level) {
