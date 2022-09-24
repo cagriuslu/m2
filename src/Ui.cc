@@ -20,17 +20,16 @@ namespace {
 		};
 	}
 
-	const Sprite* lookup_sprite(const std::string& key) {
-		return &GAME.sprite_key_to_sprite_map.at(key);
+	const Sprite* lookup_sprite(m2g::pb::SpriteType sprite_type) {
+		if (sprite_type) {
+			return &GAME.sprites[sprite_type];
+		} else {
+			return nullptr;
+		}
 	}
 
 	const Sprite* lookup_initial_sprite(const Blueprint::Widget *blueprint) {
-		const auto& initial_sprite_key = std::get<Blueprint::Widget::Image>(blueprint->variant).initial_sprite_key;
-		if (initial_sprite_key.empty()) {
-			return nullptr;
-		} else {
-			return lookup_sprite(initial_sprite_key);
-		}
+		return lookup_sprite(std::get<Blueprint::Widget::Image>(blueprint->variant).initial_sprite);
 	}
 }
 
@@ -113,9 +112,9 @@ State::Image::Image(const Blueprint::Widget* blueprint) : AbstractButton(bluepri
 Action State::Image::update_content() {
 	auto& image_blueprint = std::get<Blueprint::Widget::Image>(blueprint->variant);
 	if (image_blueprint.update_callback) {
-		auto[action, opt_key] = image_blueprint.update_callback();
-		if (action == Action::CONTINUE && opt_key) {
-			sprite = lookup_sprite(*opt_key);
+		auto[action, opt_sprite] = image_blueprint.update_callback();
+		if (action == Action::CONTINUE && opt_sprite) {
+			sprite =  lookup_sprite(*opt_sprite);
 		}
 		return action;
 	} else {

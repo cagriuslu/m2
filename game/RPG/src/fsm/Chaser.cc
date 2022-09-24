@@ -56,12 +56,11 @@ static void attack_if_close_enough(m2::Fsm<fsm::Chaser>& automaton) {
 				auto& weapon_state = impl->character_state.ranged_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    auto& projectile = GAME.objects.alloc().first;
+                    auto& projectile = m2::create_object(obj.position).first;
 					obj::Projectile::init(
                             projectile,
 							&weapon_state->blueprint->projectile,
                             GAME.objects.get_id(&obj),
-                            obj.position,
                             target.position - obj.position
                     );
                     // TODO Knockback maybe?
@@ -73,12 +72,11 @@ static void attack_if_close_enough(m2::Fsm<fsm::Chaser>& automaton) {
 				auto& weapon_state = impl->character_state.melee_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    auto& melee = GAME.objects.alloc().first;
+                    auto& melee = m2::create_object(obj.position).first;
 					obj::Melee::init(
                             melee,
 							&weapon_state->blueprint->melee,
                             GAME.objects.get_id(&obj),
-                            obj.position,
                             target.position - obj.position
                     );
 					weapon_state->cooldown_counter_s = 0.0f;
@@ -89,12 +87,11 @@ static void attack_if_close_enough(m2::Fsm<fsm::Chaser>& automaton) {
 				auto& weapon_state = impl->character_state.explosive_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    auto& explosive = GAME.objects.alloc().first;
+                    auto& explosive = m2::create_object(obj.position).first;
 					obj::Explosive::init(
                             explosive,
 							&weapon_state->blueprint->explosive,
                             GAME.objects.get_id(&obj),
-                            obj.position,
                             target.position - obj.position
                     );
                     // TODO knockback

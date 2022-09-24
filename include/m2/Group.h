@@ -2,30 +2,32 @@
 #define M2_GROUP_H
 
 #include "Pool.hh"
-#include <GroupBlueprint.pb.h>
+#include <Level.pb.h>
 #include <unordered_map>
 
 namespace m2 {
-	using GroupTypeId = uint16_t;
-	using GroupInstanceId = uint16_t;
 	using IndexInGroup = uint8_t;
 	constexpr size_t IndexInGroup_MAX = UINT8_MAX;
 
 	struct GroupId {
-		GroupTypeId type{0};
-		GroupInstanceId instance{0};
+		using Type = m2g::pb::GroupType;
+		using Instance = decltype(std::declval<pb::Group>().instance());
+
+		Type type{};
+		Instance instance{};
 
 		GroupId() = default;
-		GroupId(GroupTypeId _type, GroupInstanceId _instance);
-		GroupId(const pb::GroupBlueprint& group_blueprint);
+		GroupId(Type _type, Instance _instance);
+		explicit GroupId(const pb::Group& group);
 		bool operator==(const GroupId& other) const;
-	};
-	struct GroupIdHasher
-	{
-		std::size_t operator()(const GroupId& k) const {
-			using std::hash;
-			return hash<GroupTypeId>()(k.type) ^ (hash<GroupInstanceId>()(k.instance) << 1);
-		}
+
+		operator bool() const;
+
+		struct Hash {
+			std::size_t operator()(const GroupId& k) const {
+				return std::hash<Type>()(k.type) ^ std::hash<Instance>()(k.instance);
+			}
+		};
 	};
 
 	class Group {
@@ -36,7 +38,6 @@ namespace m2 {
 		virtual ~Group() = default;
 
 		decltype(_members)& members();
-
 		IndexInGroup add_member(Id object_id);
 		void remove_member(IndexInGroup index);
 	};

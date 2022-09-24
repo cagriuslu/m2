@@ -7,9 +7,7 @@
 
 #define SWING_SPEED (15.0f)
 
-m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::Id originatorId, m2::Vec2f position, m2::Vec2f direction) {
-	obj = m2::Object{position};
-
+m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::Id originatorId, m2::Vec2f direction) {
 	const float theta = direction.angle_rads(); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
 
@@ -30,11 +28,11 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	bp.set_mass(1.0f);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(false);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), position, bp);
-	phy.body->SetTransform(static_cast<b2Vec2>(position), startAngle);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
+	phy.body->SetTransform(static_cast<b2Vec2>(obj.position), startAngle);
 	phy.body->SetAngularVelocity(-SWING_SPEED);
 
-	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->sprite));
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
 	gfx.angle = phy.body->GetAngle();
 
 	auto& off = obj.add_offense();

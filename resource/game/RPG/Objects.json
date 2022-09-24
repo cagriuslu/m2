@@ -1,0 +1,15 @@
+{
+  "objects": [
+    {
+      "type": "NO_OBJECT"
+    },
+    {
+      "type": "PLAYER",
+      "editorSpriteType": "PLAYER_LOOKDOWN_00"
+    },
+    {
+      "type": "SKELETON",
+      "editorSpriteType": "ENEMY_LOOKDOWN_00"
+    }
+  ]
+}

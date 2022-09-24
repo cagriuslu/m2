@@ -6,8 +6,7 @@
 #include <m2/M2.h>
 #include <m2/Log.h>
 
-m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Id originatorId, m2::Vec2f pos, m2::Vec2f dir) {
-	obj = m2::Object{pos};
+m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Id originatorId, m2::Vec2f dir) {
 	dir = dir.normalize();
 
 	auto& monitor = obj.add_monitor();
@@ -23,10 +22,10 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	bp.set_mass(0);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), pos, bp);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(dir * blueprint->speed_mps));
 
-	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->sprite));
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
 	gfx.angle = dir.angle_rads();
 
 	auto& off = obj.add_offense();

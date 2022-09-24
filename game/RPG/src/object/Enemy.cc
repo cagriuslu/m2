@@ -1,31 +1,14 @@
 #include <rpg/object/Enemy.h>
-#include <rpg/object/ConsumableDrop.h>
+#include <rpg/object/DroppedItem.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
+#include "rpg/group/ItemGroup.h"
 #include <m2/M2.h>
-#include <rpg/ConsumableBlueprint.h>
 #include <m2g/component/Defense.h>
 #include <m2/box2d/Utils.h>
 #include <m2g/SpriteBlueprint.h>
-#include <rpg/LevelBlueprint.h>
 #include <m2/Group.h>
 #include <deque>
-
-struct ConsumableResourceGroup : public m2::Group {
-	std::deque<const itm::ConsumableBlueprint*> consumables;
-
-	explicit ConsumableResourceGroup(decltype(consumables)&& consumables) : m2::Group(), consumables(consumables) {}
-
-	const itm::ConsumableBlueprint* pop_consumable() {
-		if (not consumables.empty() && m2::rand(members().size()) == 0) {
-			auto pop_index = m2::rand(static_cast<uint32_t>(consumables.size()));
-			const auto* consumable = consumables[pop_index];
-			consumables.erase(consumables.begin() + pop_index);
-			return consumable;
-		}
-		return nullptr;
-	}
-};
 
 using namespace obj;
 
@@ -42,28 +25,15 @@ void Enemy::stun() {
 	character_state.stun();
 }
 
-m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, const m2::pb::GroupBlueprint& group, m2::Vec2f pos) {
-	obj = m2::Object{pos};
-
-	if (group.type()) {
-		obj.add_to_group(group, [=]() -> std::unique_ptr<m2::Group> {
-			switch (group.type()) {
-				case lvl::CONSUMABLE_RESOURCE_GROUP_HP:
-					return std::make_unique<ConsumableResourceGroup>(ConsumableResourceGroup{{&itm::health_drop_20}});
-				default:
-					return {};
-			}
-		});
-	}
-
-	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->main_sprite));
+m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
 
 	auto& monitor = obj.add_monitor();
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_circ()->set_radius(GAME.lookup_sprite(blueprint->main_sprite).collider_circ_radius_m());
+	bp.mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].collider_circ_radius_m());
 	bp.set_allow_sleep(true);
 	bp.set_is_bullet(false);
 	bp.set_is_sensor(false);
@@ -71,7 +41,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	bp.set_mass(blueprint->mass_kg);
 	bp.set_linear_damping(blueprint->linear_damping);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), pos, bp);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 
 	auto& def = obj.add_defense();
 	def.hp = 100;
@@ -130,14 +100,17 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	def.on_death = [&](m2g::comp::Defense& def) {
 		auto drop_position = obj.position;
 
-		auto gid = obj.group_id();
-		if (lvl::CONSUMABLE_RESOURCE_GROUP < gid.type && gid.type < lvl::CONSUMABLE_RESOURCE_GROUP_N) {
-			auto& resource_group = dynamic_cast<ConsumableResourceGroup&>(obj.group());
-			const auto* consumable = resource_group.pop_consumable();
-			if (consumable) {
-				GAME.add_deferred_action([=]() {
-					ConsumableDrop::init(GAME.objects.alloc().first, *consumable, drop_position);
-				});
+		m2::Group* group = obj.group();
+		if (group) {
+			// Check if the object belongs to item group
+			auto* item_group = dynamic_cast<rpg::ItemGroup*>(group);
+			if (item_group) {
+				auto optional_item = item_group->pop_item();
+				if (optional_item) {
+					GAME.add_deferred_action([=]() {
+						create_dropped_item(m2::create_object(drop_position).first, *optional_item);
+					});
+				}
 			}
 		}
 		// Delete self

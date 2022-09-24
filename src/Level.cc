@@ -7,50 +7,12 @@
 #include <string>
 #include <filesystem>
 #include <algorithm>
-
-namespace {
-	m2::VoidValue level_blueprint_iterate_tiles(
-		const m2::pb::Level& lb,
-		const std::function<void(const m2::Vec2f& position, const m2::Sprite& sprite)>& bg_tile_loader,
-		const std::function<void(const m2::Vec2f& position, const std::string& sprite_key, const m2::pb::GroupBlueprint& gb)>& fg_object_loader) {
-		if (bg_tile_loader) {
-			// Look up background sprites
-			std::vector<const m2::Sprite*> bg_sprites;
-			for (const auto& bg_sprite_key : lb.background_tile_lut()) {
-				auto sprite_it = GAME.sprite_key_to_sprite_map.find(bg_sprite_key);
-				m2_fail_unless(sprite_it != GAME.sprite_key_to_sprite_map.end(), "Unknown sprite key " + bg_sprite_key);
-				bg_sprites.push_back(&sprite_it->second);
-			}
-			// Create background tiles
-			for (int y = 0; y < lb.background_rows_size(); ++y) {
-				for (int x = 0; x < lb.background_rows(y).items_size(); ++x) {
-					auto lut_index = lb.background_rows(y).items(x);
-					if (lut_index < 0) {
-						continue; // Skip negative tiles
-					}
-					if (lb.background_tile_lut_size() <= lut_index) {
-						return m2::failure("Background tile LUT index out of bounds");
-					}
-					bg_tile_loader(m2::Vec2f{x, y}, *bg_sprites[lut_index]);
-				}
-			}
-		}
-		if (fg_object_loader) {
-			// Create foreground objects
-			for (const auto& fg_object : lb.objects()) {
-				fg_object_loader(m2::Vec2f{fg_object.position()}, fg_object.key(), fg_object.group());
-			}
-		}
-		return {};
-	}
-}
+#include <iterator>
 
 m2::Level::Level(Type type, std::string lb_path) : _type(type), _lb_path(std::move(lb_path)) {}
-
 m2::Level::Type m2::Level::type() const {
 	return _type;
 }
-
 void m2::Level::activate_mode(EditorMode mode) {
 	editor_mode = mode;
 	switch (mode) {
@@ -69,60 +31,48 @@ void m2::Level::editor_paint_or_place_mode_select_sprite(int index) {
 			GAME.add_deferred_action(m2::create_object_deleter(ghost_id));
 		}
 	};
-
 	if (index < 0) {
 		ghost_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id);
 		editor_paint_or_place_mode_selected_sprite = -1;
-	} else if (editor_mode == EditorMode::PAINT && index < (long)GAME.editor_bg_sprites.size() && index != editor_paint_or_place_mode_selected_sprite) {
+	} else if (editor_mode == EditorMode::PAINT && index < (long)GAME.editor_background_sprites.size() && index != editor_paint_or_place_mode_selected_sprite) {
 		ghost_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id);
 		editor_paint_or_place_mode_selected_sprite = index;
-		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_bg_sprites[index]));
-	} else if (editor_mode == EditorMode::PLACE && index < (long)GAME.editor_fg_sprites.size() && index != editor_paint_or_place_mode_selected_sprite) {
+		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprites[GAME.editor_background_sprites[index]]);
+	} else if (editor_mode == EditorMode::PLACE && index < (long)GAME.editor_object_sprites.size() && index != editor_paint_or_place_mode_selected_sprite) {
 		ghost_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id);
 		editor_paint_or_place_mode_selected_sprite = index;
-		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprite_key_to_sprite_map.at(GAME.editor_fg_sprites[index]));
+		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprites[std::next(GAME.editor_object_sprites.begin(), index)->second]);
 	}
 }
-
 void m2::Level::editor_paint_mode_paint_sprite(const Vec2i& position) {
 	if (0 <= editor_paint_or_place_mode_selected_sprite && position.in_nonnegative()) {
-		auto sprite_key = GAME.editor_bg_sprites[editor_paint_or_place_mode_selected_sprite];
-		// Check if sprite key is in LUT
-		auto lut_it = std::find(_lb.background_tile_lut().begin(), _lb.background_tile_lut().end(), sprite_key);
-		if (lut_it == _lb.background_tile_lut().end()) {
-			// Add to LUT
-			_lb.add_background_tile_lut(sprite_key);
-			lut_it = _lb.background_tile_lut().end() - 1;
-		}
-		auto lut_index = lut_it - _lb.background_tile_lut().begin();
+		auto sprite_type = GAME.editor_background_sprites[editor_paint_or_place_mode_selected_sprite];
 		// Allocate item if necessary
 		while (_lb.background_rows_size() < position.y + 1) {
 			_lb.add_background_rows();
 		}
 		while (_lb.background_rows(position.y).items_size() < position.x + 1) {
-			_lb.mutable_background_rows(position.y)->add_items(-1);
+			_lb.mutable_background_rows(position.y)->add_items({});
 		}
 		// Paint lut_index
-		_lb.mutable_background_rows(position.y)->set_items(position.x, (int32_t)lut_index);
+		_lb.mutable_background_rows(position.y)->set_items(position.x, sprite_type);
 		// Create/Replace placeholder
 		auto placeholders_it = editor_bg_placeholders.find(position);
 		if (placeholders_it != editor_bg_placeholders.end()) {
 			deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 		}
-		editor_bg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.sprite_key_to_sprite_map.at(sprite_key), false);
+		editor_bg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.sprites[sprite_type], false);
 	}
 }
-
 void m2::Level::editor_erase_mode_erase_position(const Vec2i &position) {
 	// Erase lut_index
-	_lb.mutable_background_rows(position.y)->set_items(position.x, -1);
+	_lb.mutable_background_rows(position.y)->set_items(position.x, {});
 	// Delete placeholder
 	auto placeholders_it = editor_bg_placeholders.find(position);
 	if (placeholders_it != editor_bg_placeholders.end()) {
 		deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 	}
 }
-
 void m2::Level::editor_place_mode_place_object(const Vec2i& position) {
 	if (0 <= editor_paint_or_place_mode_selected_sprite && position.in_nonnegative()) {
 		// Check if object is in fg objects, remove if found
@@ -133,20 +83,19 @@ void m2::Level::editor_place_mode_place_object(const Vec2i& position) {
 			}
 		}
 		// Add object to fg objects
-		auto sprite_key = GAME.editor_fg_sprites[editor_paint_or_place_mode_selected_sprite];
+		auto object_type = std::next(GAME.editor_object_sprites.begin(), editor_paint_or_place_mode_selected_sprite)->first;
 		auto* new_fg_object = _lb.add_objects();
 		new_fg_object->mutable_position()->set_x(position.x);
 		new_fg_object->mutable_position()->set_y(position.y);
-		new_fg_object->set_key(sprite_key);
+		new_fg_object->set_type(object_type);
 		// Create/Replace placeholder
 		auto placeholders_it = editor_fg_placeholders.find(position);
 		if (placeholders_it != editor_fg_placeholders.end()) {
 			deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 		}
-		editor_fg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.sprite_key_to_sprite_map.at(sprite_key), true);
+		editor_fg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.sprites[GAME.editor_object_sprites[object_type]], true);
 	}
 }
-
 void m2::Level::editor_remove_mode_remove_object(const Vec2i &position) {
 	// Check if object is in fg objects, remove if found
 	for (int i = 0; i < _lb.objects_size(); ++i) {
@@ -161,29 +110,32 @@ void m2::Level::editor_remove_mode_remove_object(const Vec2i &position) {
 		deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 	}
 }
-
 m2::Value<m2::Level> m2::Level::create_single_player_level(const std::string& lb_path) {
 	Level level{Type::SINGLE_PLAYER, lb_path};
 	return level;
 }
-
 m2::Value<m2::Level> m2::Level::create_editor_level(const std::string& lb_path) {
 	Level editor_level{Type::EDITOR, lb_path};
 
 	if (std::filesystem::exists(lb_path)) {
 		Value<pb::Level> lb = proto::json_file_to_message<pb::Level>(lb_path);
 		m2_reflect_failure(lb);
-
 		editor_level._lb = *lb;
-
-		auto iterate_results = level_blueprint_iterate_tiles(editor_level._lb,
-			[&](const m2::Vec2f& position, const m2::Sprite& sprite) {
-				editor_level.editor_bg_placeholders[position.iround()] = obj::create_placeholder(position, sprite, false);
-			},
-			[&](const m2::Vec2f& position, const std::string& sprite_key, MAYBE const m2::pb::GroupBlueprint& gb) {
-				editor_level.editor_fg_placeholders[position.iround()] = obj::create_placeholder(position, GAME.sprite_key_to_sprite_map.at(sprite_key), true);
+		// Create background tiles
+		for (int y = 0; y < lb->background_rows_size(); ++y) {
+			for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
+				auto sprite_type = lb->background_rows(y).items(x);
+				if (sprite_type) {
+					auto position = Vec2f{x, y};
+					editor_level.editor_bg_placeholders[position.iround()] = obj::create_placeholder(position, GAME.sprites[sprite_type], false);
+				}
 			}
-		);
+		}
+		// Create foreground objects
+		for (const auto& fg_object : lb->objects()) {
+			auto position = m2::Vec2f{fg_object.position()};
+			editor_level.editor_fg_placeholders[position.iround()] = obj::create_placeholder(position, GAME.sprites[GAME.editor_object_sprites[fg_object.type()]], true);
+		}
 	}
 
 	return editor_level;

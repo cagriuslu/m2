@@ -4,20 +4,20 @@
 #include "m2/Object.h"
 #include <m2/fsm/AnimationFsm.h>
 #include "rpg/Character.h"
-#include <rpg/ConsumableBlueprint.h>
 #include <vector>
 #include <m2/Value.h>
+#include <ItemType.pb.h>
 
 namespace obj {
 	struct Player : public m2::ObjectImpl {
 		chr::CharacterState char_state;
 		m2::fsm::AnimationFsm animation_fsm;
-		std::vector<itm::ConsumableBlueprint> consumables;
+		std::vector<m2g::pb::ItemType> items;
 
 		Player(m2::Object&, const chr::CharacterBlueprint*);
-		void add_consumable(const itm::ConsumableBlueprint& consumable);
+		void add_item(m2g::pb::ItemType item_type);
 
-		static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos);
+		static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint);
 	};
 }
 

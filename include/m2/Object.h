@@ -7,7 +7,6 @@
 #include "ObjectImpl.h"
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
-#include <GroupBlueprint.pb.h>
 #include "m2/Component.h"
 #include "m2/Fsm.h"
 #include "m2/Vec2f.h"
@@ -58,7 +57,7 @@ namespace m2 {
 	    [[nodiscard]] DefenseId defense_id() const;
 	    [[nodiscard]] OffenseId offense_id() const;
 
-		[[nodiscard]] Group& group() const;
+		[[nodiscard]] Group* group() const;
         [[nodiscard]] comp::Monitor& monitor() const;
         [[nodiscard]] comp::Physique& physique() const;
         [[nodiscard]] comp::Graphic& graphic() const;
@@ -67,7 +66,7 @@ namespace m2 {
         [[nodiscard]] m2g::comp::Defense& defense() const;
         [[nodiscard]] m2g::comp::Offense& offense() const;
 
-		void add_to_group(const pb::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer);
+		void set_group(const GroupId& group_id, IndexInGroup group_index);
 		comp::Monitor& add_monitor();
 		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy);
 		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& pre_gfx);
@@ -80,8 +79,6 @@ namespace m2 {
         comp::Light& add_light();
         m2g::comp::Defense& add_defense();
         m2g::comp::Offense& add_offense();
-
-		void remove_from_group();
 
 	private:
 		GroupId _group_id{};

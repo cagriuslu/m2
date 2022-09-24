@@ -1,7 +1,0 @@
-syntax = "proto3";
-package m2.pb;
-
-message GroupBlueprint {
-  uint32 type = 1;
-  uint32 instance = 2;
-}

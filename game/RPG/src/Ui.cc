@@ -1,6 +1,5 @@
 #include <m2g/UI.h>
 #include <m2/Game.hh>
-#include <rpg/LevelBlueprint.h>
 #include <m2/M2.h>
 #include <rpg/object/Player.h>
 #include <m2g/SpriteBlueprint.h>
@@ -17,7 +16,7 @@ static Blueprint::Widget::Variant entry_variant_0 = Blueprint::Widget::Text{
 	.initial_text = "Select save slot:"
 };
 static Blueprint::Widget::Variant entry_variant_1 = Blueprint::Widget::Image{
-	.initial_sprite_key = "main.floppy_disk",
+	.initial_sprite = m2g::pb::SpriteType::FLOPPY_DISK,
 	.action_callback = []() {
 		fprintf(stderr, "Pressed button\n");
 		return Action::CONTINUE;

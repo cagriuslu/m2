@@ -1,1503 +1,1367 @@
 {
-  "bgTileLut":[
-    "main.grass",
-    "main.cliff_top",
-    "main.cliff_left",
-    "main.cliff_right",
-    "main.cliff_bottom"
-  ],
-  "bgRows":[
+  "backgroundRows":[
     {
       "items":[
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0
+        "GRASS",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "CLIFF_TOP",
+        "GRASS"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        2,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        3
+        "CLIFF_LEFT",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "GRASS",
+        "CLIFF_RIGHT"
       ]
     },
     {
       "items":[
-        0,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        4,
-        0
+        "GRASS",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "CLIFF_BOTTOM",
+        "GRASS"
       ]
     }
   ],
-  "fgObjects":[
+  "objects":[
     {
       "position":{
         "x":1,
         "y":1
       },
-      "key":"main.player_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"PLAYER"
     },
     {
       "position":{
         "x":7,
         "y":1
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":8,
         "y":1
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":9,
         "y":1
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":22,
         "y":1
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":1
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":1
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":7,
         "y":2
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":8,
         "y":2
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":9,
         "y":2
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":22,
         "y":2
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":2
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":2
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":7,
         "y":3
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":8,
         "y":3
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":9,
         "y":3
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":22,
         "y":3
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":3
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":3
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":7,
         "y":4
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":8,
         "y":4
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":9,
         "y":4
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2
-      },
-      "parameters":{
-
-      }
+        "type":"CONSUMABLE_ITEM_HP20"}
     },
     {
       "position":{
         "x":22,
         "y":4
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":4
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":4
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":7,
         "y":5
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1505,13 +1369,10 @@
         "x":8,
         "y":5
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1519,13 +1380,10 @@
         "x":9,
         "y":5
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1533,52 +1391,31 @@
         "x":22,
         "y":5
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":5
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":5
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":7,
         "y":6
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1586,13 +1423,10 @@
         "x":8,
         "y":6
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1600,13 +1434,10 @@
         "x":9,
         "y":6
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1614,52 +1445,31 @@
         "x":22,
         "y":6
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":6
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":6
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":7,
         "y":7
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1667,13 +1477,10 @@
         "x":8,
         "y":7
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1681,13 +1488,10 @@
         "x":9,
         "y":7
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1695,52 +1499,31 @@
         "x":22,
         "y":7
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":7
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":7
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":7,
         "y":8
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1748,13 +1531,10 @@
         "x":8,
         "y":8
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1762,13 +1542,10 @@
         "x":9,
         "y":8
       },
-      "key":"main.enemy_lookdown_00",
+      "type":"SKELETON",
       "group":{
-        "type":2,
+        "type":"CONSUMABLE_ITEM_HP20",
         "instance":1
-      },
-      "parameters":{
-
       }
     },
     {
@@ -1776,897 +1553,483 @@
         "x":22,
         "y":8
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":8
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":8
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":9
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":9
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":9
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":10
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":10
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":10
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":11
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":11
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":11
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":12
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":12
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":12
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":13
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":13
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":13
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":14
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":14
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":14
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":15
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":15
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":15
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":16
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":16
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":16
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":17
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":17
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":17
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":18
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":18
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":18
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":19
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":19
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":19
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":20
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":20
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":20
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":21
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":21
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":21
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":22
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":22
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":22
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":23
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":23
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":23
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":24
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":24
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":24
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":25
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":25
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":25
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":26
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":26
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":26
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":27
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":27
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":27
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":28
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":28
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":28
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":29
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":29
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":29
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":22,
         "y":30
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":23,
         "y":30
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     },
     {
       "position":{
         "x":24,
         "y":30
       },
-      "key":"main.enemy_lookdown_00",
-      "group":{
-
-      },
-      "parameters":{
-
-      }
+      "type":"SKELETON"
     }
   ]
 }

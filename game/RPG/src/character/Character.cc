@@ -101,7 +101,7 @@ const m2::fsm::AnimationFsmBlueprint player_animation_fsm_blueprint = m2::fsm::m
 });
 const chr::CharacterBlueprint chr::character_player = {
 		.main_sprite_index = m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_00,
-		.main_sprite = m2g::SpriteId::Player,
+		.main_sprite = m2g::pb::SpriteType::PLAYER_LOOKDOWN_00,
 		.mass_kg = 80.0f,
 		.linear_damping = 100.0f,
 		.walk_force = 2800.0f,
@@ -161,7 +161,7 @@ const m2::fsm::AnimationFsmBlueprint skeleton000_animation_fsm_blueprint = m2::f
 });
 const chr::CharacterBlueprint chr::character_skeleton_000_chase = {
 		.main_sprite_index = m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00,
-		.main_sprite = m2g::SpriteId::Skeleton,
+		.main_sprite = m2g::pb::SpriteType::ENEMY_LOOKDOWN_00,
 		.mass_kg = 10.0f,
 		.linear_damping = 10.0f,
 		.walk_force = 25.0f,

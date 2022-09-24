@@ -10,13 +10,14 @@
 #include <m2/box2d/Utils.h>
 #include <m2g/SpriteBlueprint.h>
 #include <m2/M2.h>
+#include <Item.pb.h>
 #include <m2/Log.h>
 
 obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) :
 	char_state(blueprint), animation_fsm(blueprint->animation_fsm_blueprint, obj.graphic_id()) {}
 
-void obj::Player::add_consumable(const itm::ConsumableBlueprint& consumable) {
-	consumables.emplace_back(consumable);
+void obj::Player::add_item(m2g::pb::ItemType item_type) {
+	items.push_back(item_type);
 }
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
@@ -25,9 +26,7 @@ void obj::Player::add_consumable(const itm::ConsumableBlueprint& consumable) {
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
 
-m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint, m2::Vec2f pos) {
-	obj = m2::Object{pos};
-
+m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
@@ -41,7 +40,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->main_sprite));
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
 
 	auto& light = obj.add_light();
 	light.radius_m = 4.0f;
@@ -85,23 +84,23 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		impl->char_state.process_time(GAME.deltaTime_s);
 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && impl->char_state.ranged_weapon_state->blueprint->cooldown_s < impl->char_state.ranged_weapon_state->cooldown_counter_s) {
-			auto& projectile = GAME.objects.alloc().first;
+			auto& projectile = m2::create_object(obj.position).first;
 			float accuracy = impl->char_state.blueprint->default_ranged_weapon->accuracy;
 			float angle = to_mouse.angle_rads() + (m2::PI * m2::randf() * (1 - accuracy)) - (m2::PI * ((1 - accuracy) / 2.0f));
-			obj::Projectile::init(projectile, &impl->char_state.blueprint->default_ranged_weapon->projectile, GAME.playerId, obj.position, m2::Vec2f::from_angle(angle));
+			obj::Projectile::init(projectile, &impl->char_state.blueprint->default_ranged_weapon->projectile, GAME.playerId, m2::Vec2f::from_angle(angle));
 			// Knock-back
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + m2::PI) * 500.0f), true);
 			// TODO set looking direction here as well
 			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && impl->char_state.melee_weapon_state->blueprint->cooldown_s < impl->char_state.melee_weapon_state->cooldown_counter_s) {
-			auto& melee = GAME.objects.alloc().first;
-			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, GAME.playerId, obj.position, to_mouse);
+			auto& melee = m2::create_object(obj.position).first;
+			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, GAME.playerId, to_mouse);
 			impl->char_state.melee_weapon_state->cooldown_counter_s = 0;
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && impl->char_state.explosive_weapon_state->blueprint->cooldown_s < impl->char_state.explosive_weapon_state->cooldown_counter_s) {
-			auto& explosive = GAME.objects.alloc().first;
-			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, GAME.playerId, obj.position, to_mouse);
+			auto& explosive = m2::create_object(obj.position).first;
+			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, GAME.playerId, to_mouse);
 			impl->char_state.explosive_weapon_state->cooldown_counter_s = 0;
 		}
 	};
@@ -113,20 +112,25 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {
 			impl->animation_fsm.set_state(chr::CHARANIMSTATE_STOP);
 		}
-		// Consumables
-		for (auto& consumable : impl->consumables) {
-			for (const auto& buff : consumable.buffs) {
-				switch (buff.first) {
-					case chr::Attribute::HP:
-						def.hp += buff.second;
-						if (def.maxHp < def.hp) { def.hp = def.maxHp; }
-						break;
-					default:
-						break;
+		// Consume consumables
+		for (auto it = impl->items.begin(); it != impl->items.end(); ) {
+			auto item = GAME.items[*it];
+			if (item.usage() == m2::pb::Usage::CONSUMABLE) {
+				for (const auto& resource : item.resources()) {
+					switch (resource.type()) {
+						case m2g::pb::ResourceType::HP:
+							def.hp += (float)resource.amount();
+							if (def.maxHp < def.hp) { def.hp = def.maxHp; }
+							break;
+						default:
+							break;
+					}
 				}
+				it = impl->items.erase(it);
+			} else {
+				++it;
 			}
 		}
-		impl->consumables.clear();
 	};
 
 	phy.on_collision = [&phy](MAYBE m2::comp::Physique& me, m2::comp::Physique& other) {

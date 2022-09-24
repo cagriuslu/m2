@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "type": "NO_ITEM"
+    },
+    {
+      "type": "CONSUMABLE_POTION_HP20",
+      "usage": "CONSUMABLE",
+      "resources": [
+        {
+          "type": "HP",
+          "amount": 20
+        }
+      ],
+      "game_sprite": "RED_POTION_00"
+    }
+  ]
+}

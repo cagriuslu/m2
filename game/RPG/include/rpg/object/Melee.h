@@ -6,7 +6,7 @@
 
 namespace obj {
 	struct Melee {
-		static m2::VoidValue init(m2::Object& obj, const chr::MeleeBlueprint* blueprint, m2::Id originatorId, m2::Vec2f position, m2::Vec2f direction);
+		static m2::VoidValue init(m2::Object& obj, const chr::MeleeBlueprint* blueprint, m2::Id originatorId, m2::Vec2f direction);
 	};
 }
 

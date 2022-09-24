@@ -2,16 +2,15 @@
 #define GAME_H
 
 #include <m2g/Proxy.h>
-#include <m2g/SpriteId.h>
 #include "Level.h"
 #include "Group.h"
 #include "Sprite.h"
-#include <GroupBlueprint.pb.h>
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
 #include "m2/Events.h"
 #include "DrawList.h"
 #include <m2/Object.h>
+#include <ObjectType.pb.h>
 #include "Pathfinder.hh"
 #include "m2/Ui.h"
 #include "component/Monitor.h"
@@ -28,6 +27,7 @@
 #include "Value.h"
 #include <unordered_map>
 #include "M2.h"
+#include "Item.h"
 #include <filesystem>
 
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
@@ -62,15 +62,13 @@ namespace m2 {
 		TTF_Font *ttfFont{};
 
 		////////////////////////////////////////////////////////////////////////
-		/////////////////////////////// SPRITES ////////////////////////////////
+		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		SpriteSheetKeyToSpriteSheetMap sprite_sheets;
-		SpriteKeyToSpriteMap sprite_key_to_sprite_map;
-		SpriteIdToSpriteLut sprite_id_lut;
-		const Sprite& lookup_sprite(m2g::SpriteId) const;
-		SpriteKeyToSpriteIdMap sprite_key_to_id_map;
-		EditorPaletteSpriteKeys editor_bg_sprites;
-		EditorPaletteSpriteKeys editor_fg_sprites;
+		std::vector<SpriteSheet> sprite_sheets;
+		std::vector<Sprite> sprites;
+		std::vector<m2g::pb::SpriteType> editor_background_sprites;
+		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> editor_object_sprites;
+		std::vector<pb::Item> items;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////
@@ -88,7 +86,7 @@ namespace m2 {
 		// Another reason to put a component inside a Pool: if the type of object that is using that component is
 		// created/destroyed very rapidly.
 		Pool<Object> objects;
-		std::unordered_map<GroupId, std::unique_ptr<Group>, GroupIdHasher> groups;
+		std::unordered_map<GroupId, std::unique_ptr<Group>, GroupId::Hash> groups;
 		DrawList draw_list;
 		Pool<comp::Monitor> monitors;
 		Pool<comp::Physique> physics;

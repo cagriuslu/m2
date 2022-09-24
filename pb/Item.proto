@@ -1,23 +1,27 @@
 syntax = "proto3";
 package m2.pb;
 
+import "SpriteType.proto";
 import "ResourceType.proto";
+import "ItemType.proto";
 
 message Resource {
   m2g.pb.ResourceType type = 1;
   double amount = 2;
 }
 
-enum ItemType {
+enum Usage {
   CONSUMABLE = 0;
   REUSABLE = 1;
-  STATIC = 2;
+  PASSIVE = 2;
 }
 
 message Item {
-  string key = 1;
-  ItemType type = 2;
+  m2g.pb.ItemType type = 1;
+  Usage usage = 2;
   repeated Resource resources = 3;
+  m2g.pb.SpriteType game_sprite = 4;
+  m2g.pb.SpriteType ui_sprite = 5;
 }
 
 message Items {

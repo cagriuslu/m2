@@ -1,6 +1,7 @@
 syntax = "proto3";
 package m2.pb;
 
+import "SpriteType.proto";
 import "Rect2i.proto";
 import "Vec2f.proto";
 import "Collider.proto";
@@ -12,19 +13,18 @@ enum EditorPalette {
 }
 
 message Sprite {
-  string name = 1;
+  m2g.pb.SpriteType type = 1;
   Rect2i rect = 2;
   uint32 override_ppm = 3; // Pixels per meter
   Vec2f center_offset_px = 4; // Offset from the center of the rect
   Collider collider = 5;
-  EditorPalette editor_palette = 6;
+  bool is_background_tile = 6;
 }
 
 message SpriteSheet {
-  string name = 1;
-  string resource = 2;
-  uint32 ppm = 3; // Pixels per meter
-  repeated Sprite sprites = 4;
+  string resource = 1;
+  uint32 ppm = 2; // Pixels per meter
+  repeated Sprite sprites = 3;
 }
 
 message SpriteSheets {

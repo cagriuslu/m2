@@ -25,7 +25,6 @@ int main(int argc, char **argv) {
 	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
 		throw M2FATAL("Box2D version mismatch");
 	}
-	m2g::dynamic_assert();
 
 	// Process command line arguments
 	for (int i = 1; i < argc; i++) {

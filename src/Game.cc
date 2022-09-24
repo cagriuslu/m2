@@ -9,10 +9,12 @@
 #include <m2/object/Tile.h>
 #include <m2/String.h>
 #include <m2/Proto.h>
+#include <m2g/Group.h>
 #include <m2/Sprite.h>
 #include <Level.pb.h>
 #include <m2g/SpriteBlueprint.h>
 #include <m2g/UI.h>
+#include <SpriteType.pb.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <m2/SdlUtils.hh>
@@ -70,15 +72,11 @@ m2::Game::Game() {
 		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
 	}
 
-	auto [sprite_sheets_tmp, sprites_tmp] = load_sprite_maps(std::string{m2g::sprite_sheets}, sdlRenderer);
-	sprite_sheets = std::move(sprite_sheets_tmp);
-	sprite_key_to_sprite_map = std::move(sprites_tmp);
-	auto [sprite_lut_tmp, sprite_reverse_lut_tmp] = generate_sprite_id_luts(sprite_key_to_sprite_map);
-	sprite_id_lut = std::move(sprite_lut_tmp);
-	sprite_key_to_id_map = std::move(sprite_reverse_lut_tmp);
-	auto [editor_bg_sprites_tmp, editor_fg_sprites_tmp] = generate_editor_palette_sprite_keys(sprite_key_to_sprite_map);
-	editor_bg_sprites = std::move(editor_bg_sprites_tmp);
-	editor_fg_sprites = std::move(editor_fg_sprites_tmp);
+	sprite_sheets = load_sprite_sheets(std::string{m2g::sprite_sheets}, sdlRenderer);
+	sprites = load_sprites(sprite_sheets);
+	editor_background_sprites = list_editor_background_sprites(sprite_sheets);
+	editor_object_sprites = list_editor_object_sprites(std::string{m2g::objects});
+	items = load_items(std::string{m2g::items});
 }
 
 m2::Game::~Game() {
@@ -93,10 +91,6 @@ m2::Game::~Game() {
 	SDL_DestroyRenderer(sdlRenderer);
 	SDL_FreeCursor(sdlCursor);
 	SDL_DestroyWindow(sdlWindow);
-}
-
-const m2::Sprite& m2::Game::lookup_sprite(m2g::SpriteId sprite) const {
-	return *sprite_id_lut[to_unsigned(sprite)];
 }
 
 m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
@@ -117,30 +111,35 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 
-	// Look up background sprites
-	std::vector<const Sprite*> bg_sprites;
-	for (const auto& bg_sprite_key : lb->background_tile_lut()) {
-		auto sprite_it = sprite_key_to_sprite_map.find(bg_sprite_key);
-		m2_fail_unless(sprite_it != sprite_key_to_sprite_map.end(), "Unknown sprite key " + bg_sprite_key);
-		bg_sprites.push_back(&sprite_it->second);
-	}
 	// Create background tiles
 	for (int y = 0; y < lb->background_rows_size(); ++y) {
 		for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
-			auto lut_index = lb->background_rows(y).items(x);
-			if (lut_index < 0) {
-				continue; // Skip negative tiles
+			auto sprite_type = lb->background_rows(y).items(x);
+			if (sprite_type) {
+				obj::create_tile(m2::Vec2f{x, y}, sprites[sprite_type]);
 			}
-			if (lb->background_tile_lut_size() <= lut_index) {
-				return failure("Background tile LUT index out of bounds");
-			}
-			m2::obj::create_tile(m2::Vec2f{x, y}, *bg_sprites[lut_index]);
 		}
 	}
 	// Create foreground objects
 	for (const auto& fg_object : lb->objects()) {
-		auto& obj = GAME.objects.alloc().first;
-		auto load_result = m2g::fg_object_loader(obj, sprite_key_to_id_map[fg_object.key()], fg_object.group(), m2::Vec2f{fg_object.position()});
+		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()});
+
+		// Assign to group
+		if (fg_object.has_group()) {
+			GroupId group_id{fg_object.group()};
+
+			Group *group;
+			auto group_it = groups.find(group_id);
+			if (group_it != groups.end()) {
+				group = group_it->second.get();
+			} else {
+				group = m2g::create_group(group_id.type);
+				groups[group_id] = std::unique_ptr<Group>(group);
+			}
+			obj.set_group(group_id, group->add_member(id));
+		}
+
+		auto load_result = m2g::fg_object_loader(obj, fg_object.type());
 		m2_reflect_failure(load_result);
 	}
 	// Init pathfinder map

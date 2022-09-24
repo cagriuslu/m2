@@ -30,8 +30,8 @@ namespace m2::ui {
 				const Blueprint* ui; // TODO convert to reference
 			};
 			struct Image {
-				std::string initial_sprite_key;
-				std::function<std::pair<Action,std::optional<SpriteKey>>(void)> update_callback;
+				m2g::pb::SpriteType initial_sprite;
+				std::function<std::pair<Action,std::optional<m2g::pb::SpriteType>>(void)> update_callback;
 				std::function<Action(void)> action_callback;
 				SDL_Scancode kb_shortcut;
 			};

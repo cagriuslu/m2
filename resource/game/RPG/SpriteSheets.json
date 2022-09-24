@@ -1,236 +1,235 @@
 {
   "sheets": [
     {
-      "name": "main",
       "resource": "resource/48.png",
       "ppm": 48,
       "sprites": [
         {
-          "name": "default",
+          "type": "NO_SPRITE"
+        },
+        {
+          "type": "EMPTY",
           "rect": {"x": 96, "y": 384, "w": 48, "h": 48},
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "grass",
+          "type": "GRASS",
           "rect": {"x": 336, "y": 0, "w": 48, "h": 48},
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_top",
+          "type": "CLIFF_TOP",
           "rect": {"x": 96, "y": 0, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_right",
+          "type": "CLIFF_RIGHT",
           "rect": {"x": 96, "y": 48, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_bottom",
+          "type": "CLIFF_BOTTOM",
           "rect": {"x": 96, "y": 96, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_left",
+          "type": "CLIFF_LEFT",
           "rect": {"x": 96, "y": 144, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_top_right",
+          "type": "CLIFF_TOP_RIGHT",
           "rect": {"x": 96, "y": 192, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_top_left",
+          "type": "CLIFF_TOP_LEFT",
           "rect": {"x": 96, "y": 240, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_bottom_right",
+          "type": "CLIFF_BOTTOM_RIGHT",
           "rect": {"x": 96, "y": 288, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "cliff_bottom_left",
+          "type": "CLIFF_BOTTOM_LEFT",
           "rect": {"x": 96, "y": 336, "w": 48, "h": 48},
           "collider": {
             "rectDimsPx": {"w":  48, "h": 48}
           },
-          "editorPalette": "BG"
+          "isBackgroundTile": true
         },
         {
-          "name": "player_lookdown_00",
+          "type": "PLAYER_LOOKDOWN_00",
           "rect": {"x": 0, "y": 0, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12},
           "collider": {
             "circRadiusPx": 12
-          },
-          "editorPalette": "FG"
+          }
         },
         {
-          "name": "player_lookdown_01",
+          "type": "PLAYER_LOOKDOWN_01",
           "rect": {"x": 0, "y": 48, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookdown_02",
+          "type": "PLAYER_LOOKDOWN_02",
           "rect": {"x": 0, "y": 96, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookleft_00",
+          "type": "PLAYER_LOOKLEFT_00",
           "rect": {"x": 0, "y": 144, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookleft_01",
+          "type": "PLAYER_LOOKLEFT_01",
           "rect": {"x": 0, "y": 192, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookleft_02",
+          "type": "PLAYER_LOOKLEFT_02",
           "rect": {"x": 0, "y": 240, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookright_00",
+          "type": "PLAYER_LOOKRIGHT_00",
           "rect": {"x": 0, "y": 288, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookright_01",
+          "type": "PLAYER_LOOKRIGHT_01",
           "rect": {"x": 0, "y": 336, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookright_02",
+          "type": "PLAYER_LOOKRIGHT_02",
           "rect": {"x": 0, "y": 384, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookup_00",
+          "type": "PLAYER_LOOKUP_00",
           "rect": {"x": 0, "y": 432, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookup_01",
+          "type": "PLAYER_LOOKUP_01",
           "rect": {"x": 0, "y": 480, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "player_lookup_02",
+          "type": "PLAYER_LOOKUP_02",
           "rect": {"x": 0, "y": 528, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookdown_00",
+          "type": "ENEMY_LOOKDOWN_00",
           "rect": {"x": 48, "y": 0, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12},
           "collider": {
             "circRadiusPx": 12
-          },
-          "editorPalette": "FG"
+          }
         },
         {
-          "name": "enemy_lookdown_01",
+          "type": "ENEMY_LOOKDOWN_01",
           "rect": {"x": 48, "y": 48, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookdown_02",
+          "type": "ENEMY_LOOKDOWN_02",
           "rect": {"x": 48, "y": 96, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookleft_00",
+          "type": "ENEMY_LOOKLEFT_00",
           "rect": {"x": 48, "y": 144, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookleft_01",
+          "type": "ENEMY_LOOKLEFT_01",
           "rect": {"x": 48, "y": 192, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookleft_02",
+          "type": "ENEMY_LOOKLEFT_02",
           "rect": {"x": 48, "y": 240, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookright_00",
+          "type": "ENEMY_LOOKRIGHT_00",
           "rect": {"x": 48, "y": 288, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookright_01",
+          "type": "ENEMY_LOOKRIGHT_01",
           "rect": {"x": 48, "y": 336, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookright_02",
+          "type": "ENEMY_LOOKRIGHT_02",
           "rect": {"x": 48, "y": 384, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookup_00",
+          "type": "ENEMY_LOOKUP_00",
           "rect": {"x": 48, "y": 432, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookup_01",
+          "type": "ENEMY_LOOKUP_01",
           "rect": {"x": 48, "y": 480, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "enemy_lookup_02",
+          "type": "ENEMY_LOOKUP_02",
           "rect": {"x": 48, "y": 528, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "name": "red_potion_00",
+          "type": "RED_POTION_00",
           "rect": {"x": 144, "y": 96, "w": 48, "h": 48},
           "collider": {
             "circRadiusPx": 6
-          },
-          "editorPalette": "FG"
+          }
         },
         {
-          "name": "bullet_00",
+          "type": "BULLET_00",
           "rect": {"x": 144, "y": 0, "w": 48, "h": 48},
           "collider": {
             "circRadiusPx": 3
           }
         },
         {
-          "name": "bullet_01",
+          "type": "BULLET_01",
           "rect": {"x": 144, "y": 48, "w": 48, "h": 48},
           "collider": {
             "circRadiusPx": 3
           }
         },
         {
-          "name": "sword_00",
+          "type": "SWORD_00",
           "rect": {"x": 192, "y": 0, "w": 96, "h": 48},
           "centerOffsetPx": {"x": -24, "y": 0},
           "collider": {
@@ -239,14 +238,14 @@
           }
         },
         {
-          "name": "bomb_00",
+          "type": "BOMB_00",
           "rect": {"x": 288, "y": 48, "w": 48, "h": 48},
           "collider": {
             "circRadiusPx": 6
           }
         },
         {
-          "name": "floppy_disk",
+          "type": "FLOPPY_DISK",
           "rect": {"x": 144, "y": 144, "w": 48, "h": 48}
         }
       ]

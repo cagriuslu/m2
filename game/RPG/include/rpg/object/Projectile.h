@@ -6,7 +6,7 @@
 
 namespace obj {
 	struct Projectile {
-		static m2::VoidValue init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Id originatorId, m2::Vec2f pos, m2::Vec2f dir);
+		static m2::VoidValue init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Id originatorId, m2::Vec2f dir);
 	};
 }
 

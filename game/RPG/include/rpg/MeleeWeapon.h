@@ -1,8 +1,8 @@
 #ifndef IMPL_MELEEWEAPON_H
 #define IMPL_MELEEWEAPON_H
 
-#include <m2g/SpriteId.h>
 #include "m2/SpriteBlueprint.h"
+#include "SpriteType.pb.h"
 
 namespace chr {
 	enum MeleeMotion {
@@ -18,7 +18,7 @@ namespace chr {
 	};
 	struct MeleeBlueprint {
 		m2::SpriteIndex sprite_index;
-		m2g::SpriteId sprite;
+		m2g::pb::SpriteType sprite;
 		float damage;
 		MeleeMotion motion;
 		float ttl_s;

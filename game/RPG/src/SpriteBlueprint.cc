@@ -276,13 +276,13 @@ const std::vector<m2::SpriteBlueprint> m2g::sprites = m2::make_sprite_blueprints
 	}
 });
 
-m2::VoidValue m2g::fg_object_loader(m2::Object& obj, SpriteId main_sprite, const m2::pb::GroupBlueprint& group, m2::Vec2f position) {
+m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type) {
 	using namespace obj;
-	switch (main_sprite) {
-		case SpriteId::Player:
-			return Player::init(obj, &chr::character_player, position);
-		case SpriteId::Skeleton:
-			return Enemy::init(obj, &chr::character_skeleton_000_chase, group, position);
+	switch (object_type) {
+		case pb::ObjectType::PLAYER:
+			return Player::init(obj, &chr::character_player);
+		case pb::ObjectType::SKELETON:
+			return Enemy::init(obj, &chr::character_skeleton_000_chase);
 		default:
 			return m2::failure("Invalid sprite index");
 	}

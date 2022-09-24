@@ -21,8 +21,7 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::Id phyId, m2::Vec2f
 	return m2::box2d::create_body(*GAME.world, phyId, position, bp);
 }
 
-m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectId originator_id, m2::Vec2f position, m2::Vec2f direction) {
-	obj = m2::Object{position};
+m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectId originator_id, m2::Vec2f direction) {
 	direction = direction.normalize();
 
 	auto& monitor = obj.add_monitor();
@@ -38,10 +37,10 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 	bp.set_mass(0);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), position, bp);
+	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * blueprint->projectile_speed_mps));
 
-	auto& gfx = obj.add_graphic(GAME.lookup_sprite(blueprint->sprite));
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
 	gfx.angle = direction.angle_rads();
 
 	auto& off = obj.add_offense();

@@ -2,7 +2,7 @@
 #define M2_SPRITE_H
 
 #include <Sprite.pb.h>
-#include <m2g/SpriteId.h>
+#include <ObjectType.pb.h>
 #include "SdlUtils.hh"
 #include "Vec2f.h"
 #include <SDL.h>
@@ -10,8 +10,6 @@
 #include <memory>
 
 namespace m2 {
-	using SpriteSheetName = std::string;
-
 	class SpriteSheet final {
 		pb::SpriteSheet _sprite_sheet;
 		std::unique_ptr<SDL_Texture, m2::SdlTextureDeleter> _texture;
@@ -22,23 +20,20 @@ namespace m2 {
 		[[nodiscard]] SDL_Texture* texture() const;
 	};
 
-	using SpriteKey = std::string;
-
 	class Sprite {
-		const SpriteSheet& _sprite_sheet;
+		const SpriteSheet* _sprite_sheet{};
 		pb::Sprite _sprite;
-		std::string _key;
-		const unsigned _ppm;
-		const Vec2f _center_offset_m;
-		const Vec2f _collider_center_offset_m;
-		const Vec2f _collider_rect_dims_m;
-		const float _collider_circ_radius_m;
+		unsigned _ppm{};
+		Vec2f _center_offset_m;
+		Vec2f _collider_center_offset_m;
+		Vec2f _collider_rect_dims_m;
+		float _collider_circ_radius_m{};
 
 	public:
-		Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite, const SpriteKey& key);
+		Sprite() = default;
+		Sprite(const SpriteSheet& sprite_sheet, const pb::Sprite& sprite);
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] const pb::Sprite& sprite() const;
-		[[nodiscard]] const std::string& key() const;
 		[[nodiscard]] unsigned ppm() const;
 		[[nodiscard]] Vec2f center_offset_m() const;
 		[[nodiscard]] Vec2f collider_center_offset_m() const;
@@ -46,19 +41,10 @@ namespace m2 {
 		[[nodiscard]] float collider_circ_radius_m() const;
 	};
 
-	using SpriteSheetKeyToSpriteSheetMap = std::unordered_map<SpriteSheetName, SpriteSheet>;
-	using SpriteKeyToSpriteMap = std::unordered_map<SpriteKey, Sprite>;
-	using SpriteMaps = std::pair<SpriteSheetKeyToSpriteSheetMap,SpriteKeyToSpriteMap>;
-	SpriteMaps load_sprite_maps(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
-
-	using SpriteIdToSpriteLut = std::vector<const Sprite*>;
-	using SpriteKeyToSpriteIdMap = std::unordered_map<SpriteKey, m2g::SpriteId>;
-	using SpriteIdLuts = std::pair<SpriteIdToSpriteLut,SpriteKeyToSpriteIdMap>;
-	SpriteIdLuts generate_sprite_id_luts(const SpriteKeyToSpriteMap& sprites_map);
-
-	using EditorPaletteSpriteKeys = std::vector<SpriteKey>;
-	using EditorPalettes = std::pair<EditorPaletteSpriteKeys,EditorPaletteSpriteKeys>;
-	EditorPalettes generate_editor_palette_sprite_keys(const SpriteKeyToSpriteMap& sprites_map);
+	std::vector<SpriteSheet> load_sprite_sheets(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
+	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets);
+	std::vector<m2g::pb::SpriteType> list_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets);
+	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_editor_object_sprites(const std::string& objects_path);
 }
 
 #endif //M2_SPRITE_H

@@ -56,7 +56,9 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 
 m2::Object::~Object() {
 	auto id = GAME.objects.get_id(this);
-	remove_from_group();
+	if (_group_id) {
+		GAME.groups[_group_id]->remove_member(_group_index);
+	}
 	if (_monitor_id) {
 		GAME.monitors.free(_monitor_id);
 		_monitor_id = 0;
@@ -109,8 +111,8 @@ m2::OffenseId m2::Object::offense_id() const {
 	return _offense_id;
 }
 
-m2::Group& m2::Object::group() const {
-	return *GAME.groups[_group_id];
+m2::Group* m2::Object::group() const {
+	return _group_id ? GAME.groups[_group_id].get() : nullptr;
 }
 m2::comp::Monitor& m2::Object::monitor() const {
 	return GAME.monitors[_monitor_id];
@@ -134,14 +136,9 @@ m2g::comp::Offense& m2::Object::offense() const {
 	return GAME.offenses[_offense_id];
 }
 
-void m2::Object::add_to_group(const pb::GroupBlueprint& group, const std::function<std::unique_ptr<Group>()>& group_initializer) {
-	auto group_id = GroupId{group};
-	auto it = GAME.groups.find(group_id);
-	if (it == GAME.groups.end()) {
-		it = GAME.groups.insert({group_id, group_initializer()}).first;
-	}
-	_group_index = it->second->add_member(GAME.objects.get_id(this));
+void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 	_group_id = group_id;
+	_group_index = group_index;
 }
 m2::comp::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();
@@ -220,21 +217,8 @@ m2g::comp::Offense& m2::Object::add_offense() {
 	return offense_pair.first;
 }
 
-void m2::Object::remove_from_group() {
-	if (_group_id.type) {
-		GAME.groups[_group_id]->remove_member(_group_index);
-		if (GAME.groups[_group_id]->members().size() == 0) {
-			GAME.groups.erase(_group_id);
-		}
-		_group_id = {};
-		_group_index = 0;
-	}
-}
-
 std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position) {
-    auto obj_pair = GAME.objects.alloc();
-    obj_pair.first = Object{position};
-    return obj_pair;
+    return GAME.objects.alloc(position);
 }
 
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {

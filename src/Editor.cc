@@ -8,11 +8,11 @@ using namespace m2;
 using namespace m2::ui;
 
 const Blueprint::Widget::Variant editor_paint_mode_right_hud_selected_sprite = Blueprint::Widget::Image{
-	.update_callback = []() -> std::pair<Action,std::optional<SpriteKey>> {
+	.update_callback = []() -> std::pair<Action,std::optional<m2g::pb::SpriteType>> {
 		if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
 			return {Action::CONTINUE, {}};
 		} else {
-			return {Action::CONTINUE, GAME.editor_bg_sprites[GAME.level->editor_paint_or_place_mode_selected_sprite]};
+			return {Action::CONTINUE, GAME.editor_background_sprites[GAME.level->editor_paint_or_place_mode_selected_sprite]};
 		}
 	}
 };
@@ -53,11 +53,11 @@ const Blueprint editor_paint_mode_right_hud = {
 };
 
 const Blueprint::Widget::Variant editor_place_mode_right_hud_selected_sprite = Blueprint::Widget::Image{
-		.update_callback = []() -> std::pair<Action,std::optional<SpriteKey>> {
+		.update_callback = []() -> std::pair<Action,std::optional<m2g::pb::SpriteType>> {
 			if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
 				return {Action::CONTINUE, {}};
 			} else {
-				return {Action::CONTINUE, GAME.editor_fg_sprites[GAME.level->editor_paint_or_place_mode_selected_sprite]};
+				return {Action::CONTINUE,   std::next(GAME.editor_object_sprites.begin(), GAME.level->editor_paint_or_place_mode_selected_sprite)->second};
 			}
 		}
 };
