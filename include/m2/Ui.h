@@ -35,17 +35,17 @@ namespace m2::ui {
 				std::function<Action(void)> action_callback;
 				SDL_Scancode kb_shortcut;
 			};
-			struct ProgressBar {
-				float initial_progress;
-				SDL_Color bar_color;
-				std::function<float(void)> update_callback;
-			};
 			struct Text {
 				std::string_view initial_text;
 				TextAlignment alignment;
 				std::function<std::pair<Action,std::optional<std::string>>(void)> update_callback;
 				std::function<Action(void)> action_callback;
 				SDL_Scancode kb_shortcut;
+			};
+			struct ProgressBar {
+				float initial_progress;
+				SDL_Color bar_color;
+				std::function<float(void)> update_callback;
 			};
 			struct TextInput {
 				std::string_view initial_text;
@@ -110,15 +110,6 @@ namespace m2::ui {
 			Action update_content() override;
 			void draw() override;
 		};
-		struct NestedUi : public Widget {
-			std::unique_ptr<State> ui;
-
-			explicit NestedUi(const Blueprint::Widget* blueprint);
-			void update_position(const SDL_Rect& rect_px) final;
-			Action handle_events(Events& events) final;
-			Action update_content() final;
-			void draw() final;
-		};
 		struct ProgressBar : public Widget {
 			float progress;
 
@@ -136,6 +127,15 @@ namespace m2::ui {
 			Action handle_events(Events& events) override;
 			Action update_content() override;
 			void draw() override;
+		};
+		struct NestedUi : public Widget {
+			std::unique_ptr<State> ui;
+
+			explicit NestedUi(const Blueprint::Widget* blueprint);
+			void update_position(const SDL_Rect& rect_px) final;
+			Action handle_events(Events& events) final;
+			Action update_content() final;
+			void draw() final;
 		};
 
 		const Blueprint* blueprint;
