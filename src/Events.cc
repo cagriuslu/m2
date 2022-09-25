@@ -153,9 +153,26 @@ bool m2::Events::pop_mouse_button_press(m2::MouseButton mb) {
 		return false;
 	}
 }
-
+bool m2::Events::pop_mouse_button_press(m2::MouseButton mb, const Rect2i& rect) {
+	if (mouse_buttons_pressed[u(mb)] && rect.point_in_rect(mouse_position())) {
+		mouse_buttons_pressed[u(mb)]--;
+		mouse_button_press_count--;
+		return true;
+	} else {
+		return false;
+	}
+}
 bool m2::Events::pop_mouse_button_release(m2::MouseButton mb) {
 	if (mouse_buttons_released[u(mb)]) {
+		mouse_buttons_released[u(mb)]--;
+		mouse_button_release_count--;
+		return true;
+	} else {
+		return false;
+	}
+}
+bool m2::Events::pop_mouse_button_release(MouseButton mb, const Rect2i& rect) {
+	if (mouse_buttons_released[u(mb)] && rect.point_in_rect(mouse_position())) {
 		mouse_buttons_released[u(mb)]--;
 		mouse_button_release_count--;
 		return true;

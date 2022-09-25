@@ -2,6 +2,7 @@
 #define M2_EVENTS_H
 
 #include <m2/Controls.h>
+#include "Rect2i.h"
 #include <m2/Vec2i.h>
 #include <array>
 #include <optional>
@@ -53,7 +54,9 @@ namespace m2 {
 		bool pop_ui_key_press(SDL_Scancode scode);
 		bool pop_key_release(Key k);
 		bool pop_mouse_button_press(MouseButton mb);
+		bool pop_mouse_button_press(MouseButton mb, const Rect2i& rect);
 		bool pop_mouse_button_release(MouseButton mb);
+		bool pop_mouse_button_release(MouseButton mb, const Rect2i& rect);
 		bool pop_mouse_wheel_scroll();
 		std::optional<std::string> pop_text_input();
 

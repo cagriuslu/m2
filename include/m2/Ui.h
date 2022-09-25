@@ -6,6 +6,7 @@
 #include <SDL_ttf.h>
 #include <SDL.h>
 #include <functional>
+#include <vector>
 #include <variant>
 #include <optional>
 #include <string>
@@ -51,6 +52,12 @@ namespace m2::ui {
 				std::string_view initial_text;
 				std::function<Action(std::stringstream&)> action_callback;
 			};
+			struct TextSelection {
+				const std::vector<std::string> list;
+				unsigned initial_selection;
+				std::function<Action(const std::string& selection)> action_callback;
+				SDL_Scancode kb_shortcut_inc, kb_shortcut_dec;
+			};
 
 			unsigned x{}, y{}, w{}, h{}; // unitless
 			unsigned border_width_px{};
@@ -62,7 +69,8 @@ namespace m2::ui {
 					Image,
 					ProgressBar,
 					Text,
-					TextInput>;
+					TextInput,
+					TextSelection>;
 			Variant variant;
 		};
 
@@ -126,6 +134,17 @@ namespace m2::ui {
 			~TextInput() override;
 			Action handle_events(Events& events) override;
 			Action update_content() override;
+			void draw() override;
+		};
+		struct TextSelection : public Widget {
+			unsigned selection;
+			SDL_Texture* font_texture;
+			bool inc_depressed{};
+			bool dec_depressed{};
+
+			explicit TextSelection(const Blueprint::Widget* blueprint);
+			~TextSelection() override;
+			Action handle_events(Events& events) override;
 			void draw() override;
 		};
 		struct NestedUi : public Widget {

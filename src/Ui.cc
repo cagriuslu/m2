@@ -2,6 +2,8 @@
 #include <m2/Events.h>
 #include <m2/Game.hh>
 #include <m2/SdlUtils.hh>
+#include <m2/Rect2i.h>
+#include <SDL_image.h>
 #include <regex>
 #include <filesystem>
 
@@ -21,11 +23,7 @@ namespace {
 	}
 
 	const Sprite* lookup_sprite(m2g::pb::SpriteType sprite_type) {
-		if (sprite_type) {
-			return &GAME.sprites[sprite_type];
-		} else {
-			return nullptr;
-		}
+		return sprite_type ? &GAME.sprites[sprite_type] : nullptr;
 	}
 
 	const Sprite* lookup_initial_sprite(const Blueprint::Widget *blueprint) {
@@ -37,8 +35,7 @@ State::Widget::Widget(const Blueprint::Widget* blueprint) : blueprint(blueprint)
 void State::Widget::update_position(const SDL_Rect &rect_px_) {
 	this->rect_px = rect_px_;
 }
-Action State::Widget::handle_events(Events &events) {
-	(void)events;
+Action State::Widget::handle_events(MAYBE Events &events) {
 	return Action::CONTINUE;
 }
 Action State::Widget::update_content() { return Action::CONTINUE; }
@@ -82,18 +79,14 @@ State::AbstractButton::AbstractButton(const Blueprint::Widget *blueprint) :
 		),
 		depressed(false) {}
 Action State::AbstractButton::handle_events(Events &events) {
-	bool run_action = false;
+	bool run_action{};
 	if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.pop_ui_key_press(kb_shortcut)) {
 		run_action = true;
 	} else {
-		auto mouse_position = events.mouse_position();
-		SDL_Point sdl_mouse_position = {mouse_position.x, mouse_position.y};
-		if (SDL_PointInRect(&sdl_mouse_position, &rect_px)) {
-			if (not depressed && events.pop_mouse_button_press(MouseButton::PRIMARY)) {
-				depressed = true;
-			} else if (depressed && events.pop_mouse_button_release(MouseButton::PRIMARY)) {
-				run_action = true;
-			}
+		if (!depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, Rect2i{rect_px})) {
+			depressed = true;
+		} else if (depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, Rect2i{rect_px})) {
+			run_action = true;
 		}
 	}
 	if (run_action) {
@@ -261,6 +254,82 @@ void State::TextInput::draw() {
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
+State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(generate_font_texture(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection].c_str())) {}
+State::TextSelection::~TextSelection() {
+	if (font_texture) {
+		SDL_DestroyTexture(font_texture);
+	}
+}
+Action State::TextSelection::handle_events(Events& events) {
+	auto rect = Rect2i{rect_px};
+	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
+	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2).trim(5);
+	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2).trim(5);
+
+	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
+		inc_depressed = true;
+		dec_depressed = false;
+	} else if (!dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
+		dec_depressed = true;
+		inc_depressed = false;
+	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
+		inc_depressed = false;
+
+		const auto& list = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list;
+		if (selection + 1 < list.size()) {
+			++selection;
+			if (font_texture) {
+				SDL_DestroyTexture(font_texture);
+			}
+			font_texture = generate_font_texture(list[selection].c_str());
+
+			const auto& action_callback = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).action_callback;
+			if (action_callback) {
+				return action_callback(list[selection]);
+			}
+		}
+	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
+		dec_depressed = false;
+
+		if (0 < selection) {
+			--selection;
+			if (font_texture) {
+				SDL_DestroyTexture(font_texture);
+			}
+			const auto& list = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list;
+			font_texture = generate_font_texture(list[selection].c_str());
+
+			const auto& action_callback = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).action_callback;
+			if (action_callback) {
+				return action_callback(list[selection]);
+			}
+		}
+	}
+
+	return Action::CONTINUE;
+}
+void State::TextSelection::draw() {
+	auto rect = Rect2i{rect_px};
+	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
+	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
+	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2).trim(5);
+	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2).trim(5);
+
+	draw_background_color(rect_px, blueprint->background_color);
+
+	draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
+
+	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
+	auto up_dstrect = (SDL_Rect)inc_button_rect;
+	SDL_RenderCopy(GAME.sdlRenderer, up_symbol, nullptr, &up_dstrect);
+
+	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/down-symbol.svg");
+	auto down_dstrect = (SDL_Rect)dec_button_rect;
+	SDL_RenderCopy(GAME.sdlRenderer, down_symbol, nullptr, &down_dstrect);
+
+	draw_border(rect_px, blueprint->border_width_px);
+}
+
 void State::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) {
     if (color.a == 0) {
         SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
@@ -326,6 +395,8 @@ std::unique_ptr<State::Widget> State::create_widget_state(const Blueprint::Widge
 		state = std::make_unique<State::Image>(&blueprint);
 	} else if (std::holds_alternative<Blueprint::Widget::ProgressBar>(blueprint.variant)) {
 		state = std::make_unique<State::ProgressBar>(&blueprint);
+	} else if (std::holds_alternative<Blueprint::Widget::TextSelection>(blueprint.variant)) {
+		state = std::make_unique<State::TextSelection>(&blueprint);
 	} else {
 		throw M2FATAL("Implementation");
 	}
@@ -335,7 +406,6 @@ std::unique_ptr<State::Widget> State::create_widget_state(const Blueprint::Widge
 Action m2::ui::execute_blocking(const Blueprint *blueprint) {
 	return execute_blocking(blueprint, GAME.windowRect);
 }
-
 Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 	// Save relation to window, use in case of resize
 	const SDL_Rect& winrect = GAME.windowRect;

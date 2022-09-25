@@ -199,8 +199,7 @@ const Blueprint::Widget::Variant editor_left_hud_save_button = Blueprint::Widget
 		.action_callback = []() -> Action {
 			execute_blocking(&editor_save_confirmation);
 			return Action::CONTINUE;
-		},
-		.kb_shortcut = SDL_SCANCODE_S
+		}
 };
 const m2::ui::Blueprint m2::ui::editor_left_hud = {
 	.w = 19, .h = 72,
