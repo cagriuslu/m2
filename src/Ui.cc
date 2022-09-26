@@ -263,8 +263,8 @@ State::TextSelection::~TextSelection() {
 Action State::TextSelection::handle_events(Events& events) {
 	auto rect = Rect2i{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
-	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2).trim(5);
-	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2).trim(5);
+	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
+	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 
 	const auto& text_selection = std::get<Blueprint::Widget::TextSelection>(blueprint->variant);
 
