@@ -1,4 +1,4 @@
-#include <m2g/UI.h>
+#include <m2g/Ui.h>
 #include <m2/Game.hh>
 #include <m2/M2.h>
 #include <rpg/object/Player.h>

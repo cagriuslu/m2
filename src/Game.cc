@@ -13,7 +13,7 @@
 #include <m2/Sprite.h>
 #include <Level.pb.h>
 #include <m2g/SpriteBlueprint.h>
-#include <m2g/UI.h>
+#include <m2g/Ui.h>
 #include <SpriteType.pb.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
