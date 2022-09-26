@@ -37,6 +37,7 @@ m2::Game::Game() {
 	if ((pixelFormat = SDL_GetWindowPixelFormat(sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // TODO check if we actually want this
 	if ((sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == nullptr) { // SDL_RENDERER_PRESENTVSYNC
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
