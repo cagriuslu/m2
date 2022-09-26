@@ -34,16 +34,16 @@ Blueprint::Widget::Variant editor_place_mode_right_hud_object_type_selection = B
 	}
 };
 Blueprint editor_place_mode_right_hud = {
-		.w = 19, .h = 72,
-		.border_width_px = 1,
-		.widgets = {
-				Blueprint::Widget{
-						.x = 4, .y = 4, .w = 11, .h = 4,
-						.border_width_px = 1,
-						.padding_width_px = 5,
-						.variant = editor_place_mode_right_hud_object_type_selection
-				}
+	.w = 19, .h = 72,
+	.border_width_px = 1,
+	.widgets = {
+		Blueprint::Widget{
+			.x = 4, .y = 4, .w = 11, .h = 4,
+			.border_width_px = 1,
+			.padding_width_px = 5,
+			.variant = editor_place_mode_right_hud_object_type_selection
 		}
+	}
 };
 
 const Blueprint::Widget::Variant editor_save_confirmation_text = Blueprint::Widget::Text{
@@ -58,27 +58,27 @@ const Blueprint::Widget::Variant editor_save_confirmation_yes_button = Blueprint
 	.kb_shortcut = SDL_SCANCODE_Y
 };
 const Blueprint::Widget::Variant editor_save_confirmation_no_button = Blueprint::Widget::Text{
-		.initial_text = "NO",
-		.action_callback = []() -> Action { return Action::RETURN; },
-		.kb_shortcut = SDL_SCANCODE_N
+	.initial_text = "NO",
+	.action_callback = []() -> Action { return Action::RETURN; },
+	.kb_shortcut = SDL_SCANCODE_N
 };
 const Blueprint editor_save_confirmation = {
-		.w = 7, .h = 5,
-		.border_width_px = 2,
-		.widgets = {
-				Blueprint::Widget{
-					.x = 1, .y = 1, .w = 5, .h = 1,
-					.variant = editor_save_confirmation_text
-				},
-				Blueprint::Widget{
-					.x = 1, .y = 3, .w = 2, .h = 1,
-					.variant = editor_save_confirmation_yes_button
-				},
-				Blueprint::Widget{
-					.x = 4, .y = 3, .w = 2, .h = 1,
-					.variant = editor_save_confirmation_no_button
-				}
+	.w = 7, .h = 5,
+	.border_width_px = 2,
+	.widgets = {
+		Blueprint::Widget{
+			.x = 1, .y = 1, .w = 5, .h = 1,
+			.variant = editor_save_confirmation_text
+		},
+		Blueprint::Widget{
+			.x = 1, .y = 3, .w = 2, .h = 1,
+			.variant = editor_save_confirmation_yes_button
+		},
+		Blueprint::Widget{
+			.x = 4, .y = 3, .w = 2, .h = 1,
+			.variant = editor_save_confirmation_no_button
 		}
+	}
 };
 
 const Blueprint::Widget::Variant editor_left_hud_paint_button = Blueprint::Widget::Text{
@@ -87,14 +87,14 @@ const Blueprint::Widget::Variant editor_left_hud_paint_button = Blueprint::Widge
 		GAME.level->activate_mode(Level::EditorMode::PAINT);
 
 		// Fill tile selector with editor-enabled sprites
-		std::for_each(editor_paint_mode_right_hud.widgets.begin(), editor_paint_mode_right_hud.widgets.end(), [](auto& widget) {
-			std::visit(m2::overloaded {
-					[](Blueprint::Widget::ImageSelection& v) {
-						if (v.list.empty()) {
-							std::copy(std::begin(GAME.editor_background_sprites), std::end(GAME.editor_background_sprites), std::back_inserter(v.list));
-						}
-					},
-					[](MAYBE auto& v) {}
+		std::for_each(editor_paint_mode_right_hud.widgets.begin(), editor_paint_mode_right_hud.widgets.end(), [](auto &widget) {
+			std::visit(m2::overloaded{
+				[](Blueprint::Widget::ImageSelection &v) {
+					if (v.list.empty()) {
+						std::copy(std::begin(GAME.editor_background_sprites), std::end(GAME.editor_background_sprites), std::back_inserter(v.list));
+					}
+				},
+				[](MAYBE auto &v) {}
 			}, widget.variant);
 		});
 
@@ -122,14 +122,14 @@ const Blueprint::Widget::Variant editor_left_hud_place_button = Blueprint::Widge
 		// Fill object type selector with editor-enabled object types
 		std::for_each(editor_place_mode_right_hud.widgets.begin(), editor_place_mode_right_hud.widgets.end(), [](auto& widget) {
 			std::visit(m2::overloaded {
-					[](Blueprint::Widget::TextSelection& v) {
-						if (v.list.empty()) {
-							for (auto& [obj_type, spt] : GAME.editor_object_sprites) {
-								v.list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
-							}
+				[](Blueprint::Widget::TextSelection& v) {
+					if (v.list.empty()) {
+						for (auto& [obj_type, spt] : GAME.editor_object_sprites) {
+							v.list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
 						}
-					},
-					[](MAYBE auto& v) {}
+					}
+				},
+				[](MAYBE auto& v) {}
 			}, widget.variant);
 		});
 
@@ -172,11 +172,11 @@ const Blueprint::Widget::Variant editor_left_hud_gridlines_button = Blueprint::W
 	.kb_shortcut = SDL_SCANCODE_G
 };
 const Blueprint::Widget::Variant editor_left_hud_save_button = Blueprint::Widget::Text{
-		.initial_text = "Save",
-		.action_callback = []() -> Action {
-			execute_blocking(&editor_save_confirmation);
-			return Action::CONTINUE;
-		}
+	.initial_text = "Save",
+	.action_callback = []() -> Action {
+		execute_blocking(&editor_save_confirmation);
+		return Action::CONTINUE;
+	}
 };
 const m2::ui::Blueprint m2::ui::editor_left_hud = {
 	.w = 19, .h = 72,
