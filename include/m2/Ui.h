@@ -52,6 +52,12 @@ namespace m2::ui {
 				std::string_view initial_text;
 				std::function<Action(std::stringstream&)> action_callback;
 			};
+			struct ImageSelection {
+				std::vector<m2g::pb::SpriteType> list;
+				unsigned initial_selection;
+				std::function<Action(m2g::pb::SpriteType selection)> action_callback;
+				SDL_Scancode kb_shortcut_inc, kb_shortcut_dec;
+			};
 			struct TextSelection {
 				std::vector<std::string> list;
 				unsigned initial_selection;
@@ -70,6 +76,7 @@ namespace m2::ui {
 					ProgressBar,
 					Text,
 					TextInput,
+					ImageSelection,
 					TextSelection>;
 			Variant variant;
 		};
@@ -134,6 +141,15 @@ namespace m2::ui {
 			~TextInput() override;
 			Action handle_events(Events& events) override;
 			Action update_content() override;
+			void draw() override;
+		};
+		struct ImageSelection : public Widget {
+			unsigned selection;
+			bool inc_depressed{};
+			bool dec_depressed{};
+
+			explicit ImageSelection(const Blueprint::Widget* blueprint);
+			Action handle_events(Events& events) override;
 			void draw() override;
 		};
 		struct TextSelection : public Widget {

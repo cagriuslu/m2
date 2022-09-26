@@ -38,8 +38,8 @@ namespace m2 {
 			REMOVE
 		} editor_mode{};
 		void activate_mode(EditorMode mode);
-		unsigned editor_paint_mode_selected_sprite{};
-		void editor_paint_mode_select_sprite(unsigned index);
+		m2g::pb::SpriteType editor_paint_mode_selected_sprite_type{};
+		void editor_paint_mode_select_sprite_type(m2g::pb::SpriteType sprite_type);
 		void editor_paint_mode_paint_sprite(const Vec2i& position);
 		void editor_erase_mode_erase_position(const Vec2i& position);
 		m2g::pb::ObjectType editor_place_mode_selected_object_type{};

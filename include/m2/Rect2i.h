@@ -23,6 +23,7 @@ namespace m2 {
 		[[nodiscard]] Rect2i trim_right(int amount) const;
 		[[nodiscard]] Rect2i trim_top(int amount) const;
 		[[nodiscard]] Rect2i trim_bottom(int amount) const;
+		[[nodiscard]] Rect2i trim_to_square() const;
 		[[nodiscard]] Rect2i expand(int amount) const;
 
 	};

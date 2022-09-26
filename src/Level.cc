@@ -17,27 +17,29 @@ void m2::Level::activate_mode(EditorMode mode) {
 	editor_mode = mode;
 	switch (mode) {
 		case EditorMode::PAINT:
-			editor_paint_mode_select_sprite(0);
+			editor_paint_mode_select_sprite_type(GAME.editor_background_sprites[0]);
 			break;
 		case EditorMode::PLACE:
 			editor_place_mode_select_object_type(GAME.editor_object_sprites.begin()->first);
 			break;
 		default:
+			editor_paint_mode_select_sprite_type({});
+			editor_place_mode_select_object_type({});
 			break;
 	}
 }
-void m2::Level::editor_paint_mode_select_sprite(unsigned index) {
+void m2::Level::editor_paint_mode_select_sprite_type(m2g::pb::SpriteType sprite_type) {
 	if (editor_paint_or_place_mode_selected_sprite_ghost_id) {
 		GAME.add_deferred_action(m2::create_object_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id));
 	}
-	if (index < (long)GAME.editor_background_sprites.size() && index != editor_paint_mode_selected_sprite) {
-		editor_paint_mode_selected_sprite = index;
-		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprites[GAME.editor_background_sprites[index]]);
+	if (sprite_type) {
+		editor_paint_mode_selected_sprite_type = sprite_type;
+		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprites[sprite_type]);
 	}
 }
 void m2::Level::editor_paint_mode_paint_sprite(const Vec2i& position) {
 	if (position.in_nonnegative()) {
-		auto sprite_type = GAME.editor_background_sprites[editor_paint_mode_selected_sprite];
+		auto sprite_type = GAME.level->editor_paint_mode_selected_sprite_type;
 		// Allocate item if necessary
 		while (_lb.background_rows_size() < position.y + 1) {
 			_lb.add_background_rows();
@@ -68,8 +70,10 @@ void m2::Level::editor_place_mode_select_object_type(m2g::pb::ObjectType object_
 	if (editor_paint_or_place_mode_selected_sprite_ghost_id) {
 		GAME.add_deferred_action(create_object_deleter(editor_paint_or_place_mode_selected_sprite_ghost_id));
 	}
-	editor_place_mode_selected_object_type = object_type;
-	editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprites[GAME.editor_object_sprites[object_type]]);
+	if (object_type) {
+		editor_place_mode_selected_object_type = object_type;
+		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprites[GAME.editor_object_sprites[object_type]]);
+	}
 }
 void m2::Level::editor_place_mode_place_object(const Vec2i& position) {
 	if (position.in_nonnegative()) {

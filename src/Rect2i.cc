@@ -34,6 +34,16 @@ m2::Rect2i m2::Rect2i::trim_top(int amount) const {
 m2::Rect2i m2::Rect2i::trim_bottom(int amount) const {
 	return (amount < h) ? Rect2i{x, y, w, h - amount} : Rect2i{x, y, w, 0};
 }
+m2::Rect2i m2::Rect2i::trim_to_square() const {
+	if (h < w) {
+		auto diff = w - h;
+		return trim_left(diff / 2).trim_right(diff / 2);
+	} else if (w < h) {
+		auto diff = h - w;
+		return trim_top(diff / 2).trim_bottom(diff / 2);
+	}
+	return *this;
+}
 m2::Rect2i m2::Rect2i::expand(int amount) const {
 	return trim(-amount);
 }

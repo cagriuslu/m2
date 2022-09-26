@@ -7,43 +7,20 @@
 using namespace m2;
 using namespace m2::ui;
 
-const Blueprint::Widget::Variant editor_paint_mode_right_hud_selected_sprite = Blueprint::Widget::Image{
-	.update_callback = []() -> std::pair<Action,std::optional<m2g::pb::SpriteType>> {
-		return {Action::CONTINUE, GAME.editor_background_sprites[GAME.level->editor_paint_mode_selected_sprite]};
-	}
-};
-const Blueprint::Widget::Variant editor_paint_mode_right_hud_left_arrow = Blueprint::Widget::Text{
-	.initial_text = "<",
-	.action_callback = []() {
-		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite - 1);
+Blueprint::Widget::Variant editor_paint_mode_image_selection = Blueprint::Widget::ImageSelection{
+	.action_callback = [](m2g::pb::SpriteType selection) -> Action {
+		GAME.level->editor_paint_mode_select_sprite_type(selection);
 		return Action::CONTINUE;
 	}
 };
-const Blueprint::Widget::Variant editor_paint_mode_right_hud_right_arrow = Blueprint::Widget::Text{
-	.initial_text = ">",
-	.action_callback = []() {
-		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite + 1);
-		return Action::CONTINUE;
-	}
-};
-const Blueprint editor_paint_mode_right_hud = {
+Blueprint editor_paint_mode_right_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 1,
 	.widgets = {
 		Blueprint::Widget{
-			.x = 4, .y = 4, .w = 11, .h = 11,
+			.x = 4, .y = 4, .w = 11, .h = 14,
 			.border_width_px = 1,
-			.variant = editor_paint_mode_right_hud_selected_sprite
-		},
-		Blueprint::Widget{
-			.x = 4, .y = 16, .w = 5, .h = 5,
-			.border_width_px = 1,
-			.variant = editor_paint_mode_right_hud_left_arrow
-		},
-		Blueprint::Widget{
-			.x = 10, .y = 16, .w = 5, .h = 5,
-			.border_width_px = 1,
-			.variant = editor_paint_mode_right_hud_right_arrow
+			.variant = editor_paint_mode_image_selection
 		}
 	}
 };
@@ -108,6 +85,19 @@ const Blueprint::Widget::Variant editor_left_hud_paint_button = Blueprint::Widge
 	.initial_text = "Paint",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::PAINT);
+
+		// Fill tile selector with editor-enabled sprites
+		std::for_each(editor_paint_mode_right_hud.widgets.begin(), editor_paint_mode_right_hud.widgets.end(), [](auto& widget) {
+			std::visit(m2::overloaded {
+					[](Blueprint::Widget::ImageSelection& v) {
+						if (v.list.empty()) {
+							std::copy(std::begin(GAME.editor_background_sprites), std::end(GAME.editor_background_sprites), std::back_inserter(v.list));
+						}
+					},
+					[](MAYBE auto& v) {}
+			}, widget.variant);
+		});
+
 		GAME.rightHudUIState = State(&editor_paint_mode_right_hud);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
