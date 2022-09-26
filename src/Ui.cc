@@ -266,6 +266,9 @@ Action State::TextSelection::handle_events(Events& events) {
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2).trim(5);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2).trim(5);
 
+	const auto& text_selection = std::get<Blueprint::Widget::TextSelection>(blueprint->variant);
+
+	bool selection_changed = false;
 	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = true;
 		dec_depressed = false;
@@ -274,35 +277,27 @@ Action State::TextSelection::handle_events(Events& events) {
 		inc_depressed = false;
 	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = false;
-
-		const auto& list = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list;
-		if (selection + 1 < list.size()) {
+		if (selection + 1 < text_selection.list.size()) {
 			++selection;
-			if (font_texture) {
-				SDL_DestroyTexture(font_texture);
-			}
-			font_texture = generate_font_texture(list[selection].c_str());
-
-			const auto& action_callback = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).action_callback;
-			if (action_callback) {
-				return action_callback(list[selection]);
-			}
+			selection_changed = true;
 		}
 	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
 		dec_depressed = false;
-
 		if (0 < selection) {
 			--selection;
-			if (font_texture) {
-				SDL_DestroyTexture(font_texture);
-			}
-			const auto& list = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list;
-			font_texture = generate_font_texture(list[selection].c_str());
+			selection_changed = true;
+		}
+	}
 
-			const auto& action_callback = std::get<Blueprint::Widget::TextSelection>(blueprint->variant).action_callback;
-			if (action_callback) {
-				return action_callback(list[selection]);
-			}
+	if (selection_changed) {
+		if (font_texture) {
+			SDL_DestroyTexture(font_texture);
+		}
+		font_texture = generate_font_texture(text_selection.list[selection].c_str());
+
+		const auto& action_callback = text_selection.action_callback;
+		if (action_callback) {
+			return action_callback(text_selection.list[selection]);
 		}
 	}
 
@@ -312,20 +307,24 @@ void State::TextSelection::draw() {
 	auto rect = Rect2i{rect_px};
 	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
-	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2).trim(5);
-	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2).trim(5);
+	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
+	auto inc_button_symbol_rect = inc_button_rect.trim(5);
+	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
+	auto dec_button_symbol_rect = dec_button_rect.trim(5);
 
 	draw_background_color(rect_px, blueprint->background_color);
 
 	draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
-	auto up_dstrect = (SDL_Rect)inc_button_rect;
+	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
 	SDL_RenderCopy(GAME.sdlRenderer, up_symbol, nullptr, &up_dstrect);
+	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
 
 	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/down-symbol.svg");
-	auto down_dstrect = (SDL_Rect)dec_button_rect;
+	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
 	SDL_RenderCopy(GAME.sdlRenderer, down_symbol, nullptr, &down_dstrect);
+	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
 }

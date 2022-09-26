@@ -38,13 +38,15 @@ namespace m2 {
 			REMOVE
 		} editor_mode{};
 		void activate_mode(EditorMode mode);
-		void editor_paint_or_place_mode_select_sprite(int index);
+		unsigned editor_paint_mode_selected_sprite{};
+		void editor_paint_mode_select_sprite(unsigned index);
 		void editor_paint_mode_paint_sprite(const Vec2i& position);
 		void editor_erase_mode_erase_position(const Vec2i& position);
+		m2g::pb::ObjectType editor_place_mode_selected_object_type{};
+		void editor_place_mode_select_object_type(m2g::pb::ObjectType object_type);
 		void editor_place_mode_place_object(const Vec2i& position);
 		void editor_remove_mode_remove_object(const Vec2i& position);
-		int editor_paint_or_place_mode_selected_sprite{-1};
-		Id editor_paint_or_place_mode_selected_sprite_ghost_id{0};
+		Id editor_paint_or_place_mode_selected_sprite_ghost_id{};
 		std::unordered_map<Vec2i, Id, Vec2iHash> editor_bg_placeholders;
 		std::unordered_map<Vec2i, Id, Vec2iHash> editor_fg_placeholders;
 

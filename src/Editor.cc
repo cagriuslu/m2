@@ -9,24 +9,20 @@ using namespace m2::ui;
 
 const Blueprint::Widget::Variant editor_paint_mode_right_hud_selected_sprite = Blueprint::Widget::Image{
 	.update_callback = []() -> std::pair<Action,std::optional<m2g::pb::SpriteType>> {
-		if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
-			return {Action::CONTINUE, {}};
-		} else {
-			return {Action::CONTINUE, GAME.editor_background_sprites[GAME.level->editor_paint_or_place_mode_selected_sprite]};
-		}
+		return {Action::CONTINUE, GAME.editor_background_sprites[GAME.level->editor_paint_mode_selected_sprite]};
 	}
 };
 const Blueprint::Widget::Variant editor_paint_mode_right_hud_left_arrow = Blueprint::Widget::Text{
 	.initial_text = "<",
 	.action_callback = []() {
-		GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite - 1);
+		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite - 1);
 		return Action::CONTINUE;
 	}
 };
 const Blueprint::Widget::Variant editor_paint_mode_right_hud_right_arrow = Blueprint::Widget::Text{
 	.initial_text = ">",
 	.action_callback = []() {
-		GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite + 1);
+		GAME.level->editor_paint_mode_select_sprite(GAME.level->editor_paint_mode_selected_sprite + 1);
 		return Action::CONTINUE;
 	}
 };
@@ -52,47 +48,23 @@ const Blueprint editor_paint_mode_right_hud = {
 	}
 };
 
-const Blueprint::Widget::Variant editor_place_mode_right_hud_selected_sprite = Blueprint::Widget::Image{
-		.update_callback = []() -> std::pair<Action,std::optional<m2g::pb::SpriteType>> {
-			if (GAME.level->editor_paint_or_place_mode_selected_sprite < 0) {
-				return {Action::CONTINUE, {}};
-			} else {
-				return {Action::CONTINUE,   std::next(GAME.editor_object_sprites.begin(), GAME.level->editor_paint_or_place_mode_selected_sprite)->second};
-			}
-		}
+Blueprint::Widget::Variant editor_place_mode_right_hud_object_type_selection = Blueprint::Widget::TextSelection{
+	.action_callback = [](const std::string& selection) -> Action {
+		auto object_type = m2g::pb::ObjectType::NO_OBJECT;
+		m2g::pb::ObjectType_Parse(selection, &object_type);
+		GAME.level->editor_place_mode_select_object_type(object_type);
+		return Action::CONTINUE;
+	}
 };
-const Blueprint::Widget::Variant editor_place_mode_right_hud_left_arrow = Blueprint::Widget::Text{
-		.initial_text = "<",
-		.action_callback = []() {
-			GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite - 1);
-			return Action::CONTINUE;
-		}
-};
-const Blueprint::Widget::Variant editor_place_mode_right_hud_right_arrow = Blueprint::Widget::Text{
-		.initial_text = ">",
-		.action_callback = []() {
-			GAME.level->editor_paint_or_place_mode_select_sprite(GAME.level->editor_paint_or_place_mode_selected_sprite + 1);
-			return Action::CONTINUE;
-		}
-};
-const Blueprint editor_place_mode_right_hud = {
+Blueprint editor_place_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
 		.widgets = {
 				Blueprint::Widget{
-						.x = 4, .y = 4, .w = 11, .h = 11,
+						.x = 4, .y = 4, .w = 11, .h = 4,
 						.border_width_px = 1,
-						.variant = editor_place_mode_right_hud_selected_sprite
-				},
-				Blueprint::Widget{
-						.x = 4, .y = 16, .w = 5, .h = 5,
-						.border_width_px = 1,
-						.variant = editor_place_mode_right_hud_left_arrow
-				},
-				Blueprint::Widget{
-						.x = 10, .y = 16, .w = 5, .h = 5,
-						.border_width_px = 1,
-						.variant = editor_place_mode_right_hud_right_arrow
+						.padding_width_px = 5,
+						.variant = editor_place_mode_right_hud_object_type_selection
 				}
 		}
 };
@@ -156,6 +128,21 @@ const Blueprint::Widget::Variant editor_left_hud_place_button = Blueprint::Widge
 	.initial_text = "Place",
 	.action_callback = []() -> Action {
 		GAME.level->activate_mode(Level::EditorMode::PLACE);
+
+		// Fill object type selector with editor-enabled object types
+		std::for_each(editor_place_mode_right_hud.widgets.begin(), editor_place_mode_right_hud.widgets.end(), [](auto& widget) {
+			std::visit(m2::overloaded {
+					[](Blueprint::Widget::TextSelection& v) {
+						if (v.list.empty()) {
+							for (auto& [obj_type, spt] : GAME.editor_object_sprites) {
+								v.list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
+							}
+						}
+					},
+					[](MAYBE auto& v) {}
+			}, widget.variant);
+		});
+
 		GAME.rightHudUIState = State(&editor_place_mode_right_hud);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;

@@ -53,7 +53,7 @@ namespace m2::ui {
 				std::function<Action(std::stringstream&)> action_callback;
 			};
 			struct TextSelection {
-				const std::vector<std::string> list;
+				std::vector<std::string> list;
 				unsigned initial_selection;
 				std::function<Action(const std::string& selection)> action_callback;
 				SDL_Scancode kb_shortcut_inc, kb_shortcut_dec;
@@ -77,7 +77,7 @@ namespace m2::ui {
 		unsigned w{}, h{}; // unitless
 		unsigned border_width_px{};
 		SDL_Color background_color{};
-		std::initializer_list<Widget> widgets;
+		std::vector<Widget> widgets;
 	};
 
 	struct State {

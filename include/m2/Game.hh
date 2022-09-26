@@ -135,6 +135,7 @@ namespace m2 {
 }
 
 extern m2::Game* g_game;
-#define GAME (*g_game)
+inline m2::Game& GameInstance() { return *g_game; }
+#define GAME (GameInstance())
 
 #endif
