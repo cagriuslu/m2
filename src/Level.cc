@@ -21,6 +21,8 @@ void m2::Level::activate_mode(EditorMode mode) {
 			break;
 		case EditorMode::PLACE:
 			editor_place_mode_select_object_type(GAME.editor_object_sprites.begin()->first);
+			editor_place_mode_select_group_type(m2g::pb::GroupType::NO_GROUP);
+			editor_place_mode_select_group_instance(0);
 			break;
 		default:
 			editor_paint_mode_select_sprite_type({});
@@ -75,6 +77,8 @@ void m2::Level::editor_place_mode_select_object_type(m2g::pb::ObjectType object_
 		editor_paint_or_place_mode_selected_sprite_ghost_id = obj::create_ghost(GAME.sprites[GAME.editor_object_sprites[object_type]]);
 	}
 }
+void m2::Level::editor_place_mode_select_group_type(m2g::pb::GroupType group_type) { editor_place_mode_selected_group_type = group_type; }
+void m2::Level::editor_place_mode_select_group_instance(unsigned group_instance) { editor_place_mode_selected_group_instance = group_instance; }
 void m2::Level::editor_place_mode_place_object(const Vec2i& position) {
 	if (position.in_nonnegative()) {
 		// Check if object is in fg objects, remove if found
@@ -90,6 +94,9 @@ void m2::Level::editor_place_mode_place_object(const Vec2i& position) {
 		new_fg_object->mutable_position()->set_x(position.x);
 		new_fg_object->mutable_position()->set_y(position.y);
 		new_fg_object->set_type(object_type);
+		auto* group = new_fg_object->mutable_group();
+		group->set_type(editor_place_mode_selected_group_type);
+		group->set_instance(editor_place_mode_selected_group_instance);
 		// Create/Replace placeholder
 		auto placeholders_it = editor_fg_placeholders.find(position);
 		if (placeholders_it != editor_fg_placeholders.end()) {

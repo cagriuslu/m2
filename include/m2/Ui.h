@@ -56,13 +56,17 @@ namespace m2::ui {
 				std::vector<m2g::pb::SpriteType> list;
 				unsigned initial_selection;
 				std::function<Action(m2g::pb::SpriteType selection)> action_callback;
-				SDL_Scancode kb_shortcut_inc, kb_shortcut_dec;
 			};
 			struct TextSelection {
 				std::vector<std::string> list;
 				unsigned initial_selection;
 				std::function<Action(const std::string& selection)> action_callback;
-				SDL_Scancode kb_shortcut_inc, kb_shortcut_dec;
+			};
+			struct IntegerSelection {
+				// Values are inclusive
+				int min_value, max_value;
+				int initial_value;
+				std::function<Action(int value)> action_callback;
 			};
 
 			unsigned x{}, y{}, w{}, h{}; // unitless
@@ -71,13 +75,14 @@ namespace m2::ui {
 			SDL_Color background_color{};
 
 			using Variant = std::variant<
-					NestedUi,
-					Image,
-					ProgressBar,
-					Text,
-					TextInput,
-					ImageSelection,
-					TextSelection>;
+				NestedUi,
+				Image,
+				ProgressBar,
+				Text,
+				TextInput,
+				ImageSelection,
+				TextSelection,
+				IntegerSelection>;
 			Variant variant;
 		};
 
@@ -101,6 +106,7 @@ namespace m2::ui {
 
 		protected:
 			static SDL_Texture* generate_font_texture(const char* text);
+			static SDL_Texture* generate_font_texture(const std::string& text);
 			static void draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align);
 		};
 		struct AbstractButton : public Widget {
@@ -160,6 +166,17 @@ namespace m2::ui {
 
 			explicit TextSelection(const Blueprint::Widget* blueprint);
 			~TextSelection() override;
+			Action handle_events(Events& events) override;
+			void draw() override;
+		};
+		struct IntegerSelection : public Widget {
+			int value;
+			SDL_Texture* font_texture;
+			bool inc_depressed{};
+			bool dec_depressed{};
+
+			explicit IntegerSelection(const Blueprint::Widget* blueprint);
+			~IntegerSelection() override;
 			Action handle_events(Events& events) override;
 			void draw() override;
 		};

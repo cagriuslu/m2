@@ -33,6 +33,23 @@ Blueprint::Widget::Variant editor_place_mode_right_hud_object_type_selection = B
 		return Action::CONTINUE;
 	}
 };
+Blueprint::Widget::Variant editor_place_mode_right_hud_group_type_selection = Blueprint::Widget::TextSelection{
+	.action_callback = [](const std::string &selection) -> Action {
+		auto group_type = m2g::pb::GroupType::NO_GROUP;
+		m2g::pb::GroupType_Parse(selection, &group_type);
+		GAME.level->editor_place_mode_select_group_type(group_type);
+		return Action::CONTINUE;
+	}
+};
+const Blueprint::Widget::Variant editor_place_mode_right_hud_group_instance_selection = Blueprint::Widget::IntegerSelection{
+	.min_value = 0,
+	.max_value = 999,
+	.initial_value = 0,
+	.action_callback = [](int selection) -> Action {
+		GAME.level->editor_place_mode_select_group_instance(selection);
+		return Action::CONTINUE;
+	}
+};
 Blueprint editor_place_mode_right_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 1,
@@ -42,6 +59,18 @@ Blueprint editor_place_mode_right_hud = {
 			.border_width_px = 1,
 			.padding_width_px = 5,
 			.variant = editor_place_mode_right_hud_object_type_selection
+		},
+		Blueprint::Widget{
+			.x = 4, .y = 9, .w = 11, .h = 4,
+			.border_width_px = 1,
+			.padding_width_px = 5,
+			.variant = editor_place_mode_right_hud_group_type_selection
+		},
+		Blueprint::Widget{
+			.x = 4, .y = 14, .w = 11, .h = 4,
+			.border_width_px = 1,
+			.padding_width_px = 5,
+			.variant = editor_place_mode_right_hud_group_instance_selection
 		}
 	}
 };
@@ -120,18 +149,20 @@ const Blueprint::Widget::Variant editor_left_hud_place_button = Blueprint::Widge
 		GAME.level->activate_mode(Level::EditorMode::PLACE);
 
 		// Fill object type selector with editor-enabled object types
-		std::for_each(editor_place_mode_right_hud.widgets.begin(), editor_place_mode_right_hud.widgets.end(), [](auto& widget) {
-			std::visit(m2::overloaded {
-				[](Blueprint::Widget::TextSelection& v) {
-					if (v.list.empty()) {
-						for (auto& [obj_type, spt] : GAME.editor_object_sprites) {
-							v.list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
-						}
-					}
-				},
-				[](MAYBE auto& v) {}
-			}, widget.variant);
-		});
+		auto& object_type_selection = std::get<Blueprint::Widget::TextSelection>(editor_place_mode_right_hud.widgets[0].variant);
+		if (object_type_selection.list.empty()) {
+			for (auto& [obj_type, spt] : GAME.editor_object_sprites) {
+				object_type_selection.list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
+			}
+		}
+		// Fill group type selector
+		auto& group_type_selection = std::get<Blueprint::Widget::TextSelection>(editor_place_mode_right_hud.widgets[1].variant);
+		if (group_type_selection.list.empty()) {
+			auto* group_type_desc = m2g::pb::GroupType_descriptor();
+			for (int e  = 0; e < group_type_desc->value_count(); ++e) {
+				group_type_selection.list.emplace_back(group_type_desc->value(e)->name());
+			}
+		}
 
 		GAME.rightHudUIState = State(&editor_place_mode_right_hud);
 		GAME.rightHudUIState->update_positions(GAME.rightHudRect);

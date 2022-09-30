@@ -46,6 +46,9 @@ SDL_Texture* State::Widget::generate_font_texture(const char* text) {
 	SDL_FreeSurface(textSurf);
 	return texture;
 }
+SDL_Texture* State::Widget::generate_font_texture(const std::string& text) {
+	return generate_font_texture(text.c_str());
+}
 void State::Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align) {
 	int text_w = 0, text_h = 0;
 	SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
@@ -323,7 +326,7 @@ void State::ImageSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(generate_font_texture(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection].c_str())) {}
+State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(generate_font_texture(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection])) {}
 State::TextSelection::~TextSelection() {
 	if (font_texture) {
 		SDL_DestroyTexture(font_texture);
@@ -373,6 +376,81 @@ Action State::TextSelection::handle_events(Events& events) {
 	return Action::CONTINUE;
 }
 void State::TextSelection::draw() {
+	auto rect = Rect2i{rect_px};
+	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
+	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
+	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
+	auto inc_button_symbol_rect = inc_button_rect.trim(5);
+	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
+	auto dec_button_symbol_rect = dec_button_rect.trim(5);
+
+	draw_background_color(rect_px, blueprint->background_color);
+
+	draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
+
+	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
+	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
+	SDL_RenderCopy(GAME.sdlRenderer, up_symbol, nullptr, &up_dstrect);
+	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
+
+	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/down-symbol.svg");
+	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
+	SDL_RenderCopy(GAME.sdlRenderer, down_symbol, nullptr, &down_dstrect);
+	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
+
+	draw_border(rect_px, blueprint->border_width_px);
+}
+
+State::IntegerSelection::IntegerSelection(const Blueprint::Widget *blueprint) : Widget(blueprint), value(std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant).initial_value), font_texture(generate_font_texture(std::to_string(value))) {}
+State::IntegerSelection::~IntegerSelection() {
+	if (font_texture) {
+		SDL_DestroyTexture(font_texture);
+	}
+}
+Action State::IntegerSelection::handle_events(Events& events) {
+	auto rect = Rect2i{rect_px};
+	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
+	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
+	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
+
+	const auto& integer_selection = std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant);
+
+	bool selection_changed = false;
+	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
+		inc_depressed = true;
+		dec_depressed = false;
+	} else if (!dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
+		dec_depressed = true;
+		inc_depressed = false;
+	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
+		inc_depressed = false;
+		if (value < integer_selection.max_value) {
+			++value;
+			selection_changed = true;
+		}
+	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
+		dec_depressed = false;
+		if (integer_selection.min_value < value) {
+			--value;
+			selection_changed = true;
+		}
+	}
+
+	if (selection_changed) {
+		if (font_texture) {
+			SDL_DestroyTexture(font_texture);
+		}
+		font_texture = generate_font_texture(std::to_string(value));
+
+		const auto& action_callback = integer_selection.action_callback;
+		if (action_callback) {
+			return action_callback(value);
+		}
+	}
+
+	return Action::CONTINUE;
+}
+void State::IntegerSelection::draw() {
 	auto rect = Rect2i{rect_px};
 	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
@@ -467,6 +545,8 @@ std::unique_ptr<State::Widget> State::create_widget_state(const Blueprint::Widge
 		state = std::make_unique<State::ImageSelection>(&blueprint);
 	} else if (std::holds_alternative<Blueprint::Widget::TextSelection>(blueprint.variant)) {
 		state = std::make_unique<State::TextSelection>(&blueprint);
+	} else if (std::holds_alternative<Blueprint::Widget::IntegerSelection>(blueprint.variant)) {
+		state = std::make_unique<State::IntegerSelection>(&blueprint);
 	} else {
 		throw M2FATAL("Implementation");
 	}
