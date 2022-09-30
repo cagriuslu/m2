@@ -126,7 +126,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()});
 
 		// Assign to group
-		if (fg_object.has_group()) {
+		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
 			GroupId group_id{fg_object.group()};
 
 			Group *group;

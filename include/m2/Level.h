@@ -58,6 +58,8 @@ namespace m2 {
 		void editor_place_mode_place_object(const Vec2i& position);
 		// Remove mode
 		void editor_remove_mode_remove_object(const Vec2i& position);
+		// Save
+		void editor_save();
 
 		static Value<Level> create_single_player_level(const std::string& lb_path);
 		static Value<Level> create_editor_level(const std::string& lb_path);

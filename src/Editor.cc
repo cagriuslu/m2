@@ -81,7 +81,7 @@ const Blueprint::Widget::Variant editor_save_confirmation_text = Blueprint::Widg
 const Blueprint::Widget::Variant editor_save_confirmation_yes_button = Blueprint::Widget::Text{
 	.initial_text = "YES",
 	.action_callback = []() -> Action {
-		// TODO
+		GAME.level->editor_save();
 		return Action::RETURN;
 	},
 	.kb_shortcut = SDL_SCANCODE_Y

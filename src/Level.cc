@@ -119,6 +119,9 @@ void m2::Level::editor_remove_mode_remove_object(const Vec2i &position) {
 		deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 	}
 }
+void m2::Level::editor_save() {
+	*proto::message_to_json_file(_lb, _lb_path);
+}
 m2::Value<m2::Level> m2::Level::create_single_player_level(const std::string& lb_path) {
 	Level level{Type::SINGLE_PLAYER, lb_path};
 	return level;
