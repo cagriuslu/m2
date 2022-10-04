@@ -1,0 +1,21 @@
+syntax = "proto3";
+package m2.pb;
+
+import "SpriteType.proto";
+import "AnimationStateType.proto";
+import "AnimationType.proto";
+
+message AnimationState {
+  m2g.pb.AnimationStateType type = 1;
+  repeated m2g.pb.SpriteType sprites = 2;
+}
+
+message Animation {
+  m2g.pb.AnimationType type = 1;
+  float fps = 2;
+  repeated AnimationState states = 3;
+}
+
+message Animations {
+  repeated Animation animations = 1;
+}

@@ -78,6 +78,7 @@ m2::Game::Game() {
 	editor_background_sprites = list_editor_background_sprites(sprite_sheets);
 	editor_object_sprites = list_editor_object_sprites(std::string{m2g::objects});
 	items = load_items(std::string{m2g::items});
+	animations = load_animations(std::string{m2g::animations});
 }
 
 m2::Game::~Game() {

@@ -1,0 +1,8 @@
+syntax = "proto3";
+package m2g.pb;
+
+enum AnimationType {
+  NO_ANIMATION_TYPE = 0;
+  ANIMATION_TYPE_PLAYER_MOVEMENT = 1;
+  ANIMATION_TYPE_SKELETON_MOVEMENT = 2;
+}

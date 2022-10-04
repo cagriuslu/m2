@@ -9,6 +9,7 @@
 #include <m2g/component/Offense.h>
 #include "m2/Events.h"
 #include "DrawList.h"
+#include "Animation.h"
 #include <m2/Object.h>
 #include <ObjectType.pb.h>
 #include "Pathfinder.hh"
@@ -69,6 +70,7 @@ namespace m2 {
 		std::vector<m2g::pb::SpriteType> editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> editor_object_sprites;
 		std::vector<pb::Item> items;
+		std::vector<Animation> animations;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////

@@ -1,0 +1,56 @@
+{
+  "animations": [
+    {
+      "type": "ANIMATION_TYPE_PLAYER_MOVEMENT",
+      "fps": 10,
+      "states": [
+        {
+          "type": "ANIMATION_STATE_IDLE",
+          "sprites": ["PLAYER_LOOKDOWN_00"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKDOWN",
+          "sprites": ["PLAYER_LOOKDOWN_00", "PLAYER_LOOKDOWN_01", "PLAYER_LOOKDOWN_00", "PLAYER_LOOKDOWN_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKRIGHT",
+          "sprites": ["PLAYER_LOOKRIGHT_00", "PLAYER_LOOKRIGHT_01", "PLAYER_LOOKRIGHT_00", "PLAYER_LOOKRIGHT_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKUP",
+          "sprites": ["PLAYER_LOOKUP_00", "PLAYER_LOOKUP_01", "PLAYER_LOOKUP_00", "PLAYER_LOOKUP_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKLEFT",
+          "sprites": ["PLAYER_LOOKLEFT_00", "PLAYER_LOOKLEFT_01", "PLAYER_LOOKLEFT_00", "PLAYER_LOOKLEFT_02"]
+        }
+      ]
+    },
+    {
+      "type": "ANIMATION_TYPE_SKELETON_MOVEMENT",
+      "fps": 10,
+      "states": [
+        {
+          "type": "ANIMATION_STATE_IDLE",
+          "sprites": ["ENEMY_LOOKDOWN_00"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKDOWN",
+          "sprites": ["ENEMY_LOOKDOWN_00", "ENEMY_LOOKDOWN_01", "ENEMY_LOOKDOWN_00", "ENEMY_LOOKDOWN_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKRIGHT",
+          "sprites": ["ENEMY_LOOKRIGHT_00", "ENEMY_LOOKRIGHT_01", "ENEMY_LOOKRIGHT_00", "ENEMY_LOOKRIGHT_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKUP",
+          "sprites": ["ENEMY_LOOKUP_00", "ENEMY_LOOKUP_01", "ENEMY_LOOKUP_00", "ENEMY_LOOKUP_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKLEFT",
+          "sprites": ["ENEMY_LOOKLEFT_00", "ENEMY_LOOKLEFT_01", "ENEMY_LOOKLEFT_00", "ENEMY_LOOKLEFT_02"]
+        }
+      ]
+    }
+  ]
+}
