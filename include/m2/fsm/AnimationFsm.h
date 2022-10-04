@@ -22,8 +22,6 @@ namespace m2::fsm {
 	};
 	AnimationFsmBlueprint make_animation_fsm_blueprint(AnimationFsmBlueprint&& val);
 
-	/// AnimationFSM actually have only one state
-	/// It would be better if it was an actor, instead of FSM
 	class AnimationFsmBase {
 		// Input
 		const AnimationFsmBlueprint* blueprint;
