@@ -13,7 +13,7 @@
 using namespace obj;
 
 obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint),
-	animation_fsm(blueprint->animation_fsm_blueprint, obj.graphic_id()), fsm_variant(
+	animation_fsm(blueprint->animation_type, obj.graphic_id()), fsm_variant(
 		std::visit(m2::overloaded {
 			[&](MAYBE const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; },
 			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; }, // TODO implement other FSMs
@@ -62,18 +62,18 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		data->animation_fsm.time(GAME.deltaTicks_ms / 1000.0f);
 		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 		if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-			data->animation_fsm.signal(chr::CHARANIMSTATE_STOP);
+			data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_IDLE);
 		} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
 			if (0 < velocity.y) {
-				data->animation_fsm.signal(chr::CHARANIMSTATE_WALKDOWN);
+				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKDOWN);
 			} else {
-				data->animation_fsm.signal(chr::CHARANIMSTATE_WALKUP);
+				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKUP);
 			}
 		} else {
 			if (0 < velocity.x) {
-				data->animation_fsm.signal(chr::CHARANIMSTATE_WALKRIGHT);
+				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKRIGHT);
 			} else {
-				data->animation_fsm.signal(chr::CHARANIMSTATE_WALKLEFT);
+				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKLEFT);
 			}
 		}
 	};

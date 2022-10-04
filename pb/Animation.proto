@@ -14,6 +14,7 @@ message Animation {
   m2g.pb.AnimationType type = 1;
   float fps = 2;
   repeated AnimationState states = 3;
+  m2g.pb.AnimationStateType initial_state = 4;
 }
 
 message Animations {

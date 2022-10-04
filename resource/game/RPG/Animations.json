@@ -1,6 +1,9 @@
 {
   "animations": [
     {
+      "type": "NO_ANIMATION_TYPE"
+    },
+    {
       "type": "ANIMATION_TYPE_PLAYER_MOVEMENT",
       "fps": 10,
       "states": [
@@ -24,7 +27,8 @@
           "type": "ANIMATION_STATE_WALKLEFT",
           "sprites": ["PLAYER_LOOKLEFT_00", "PLAYER_LOOKLEFT_01", "PLAYER_LOOKLEFT_00", "PLAYER_LOOKLEFT_02"]
         }
-      ]
+      ],
+      "initialState": "ANIMATION_STATE_IDLE"
     },
     {
       "type": "ANIMATION_TYPE_SKELETON_MOVEMENT",
@@ -50,7 +54,8 @@
           "type": "ANIMATION_STATE_WALKLEFT",
           "sprites": ["ENEMY_LOOKLEFT_00", "ENEMY_LOOKLEFT_01", "ENEMY_LOOKLEFT_00", "ENEMY_LOOKLEFT_02"]
         }
-      ]
+      ],
+      "initialState": "ANIMATION_STATE_IDLE"
     }
   ]
 }

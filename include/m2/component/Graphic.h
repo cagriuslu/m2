@@ -29,6 +29,7 @@ namespace m2::comp {
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
 		explicit Graphic(uint64_t object_id, const Sprite& sprite);
+		void set_sprite(const Sprite& sprite);
 
 		[[nodiscard]] Object& parent() const;
 		[[nodiscard]] Vec2i offset_from_screen_center_px() const;

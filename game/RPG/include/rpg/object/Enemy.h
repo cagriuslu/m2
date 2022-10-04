@@ -2,7 +2,7 @@
 #define IMPL_ENEMY_H
 
 #include "rpg/Character.h"
-#include <m2/fsm/AnimationFsm.h>
+#include <m2/Animation.h>
 #include "m2/Object.h"
 #include "rpg/fsm/Chaser.h"
 #include "rpg/fsm/DistanceKeeper.h"
@@ -13,7 +13,7 @@
 namespace obj {
     struct Enemy : public m2::ObjectImpl {
 		chr::CharacterState character_state;
-		m2::Fsm<m2::fsm::AnimationFsmBase> animation_fsm;
+		m2::Fsm<m2::AnimationFsmBase> animation_fsm;
 		using FSMVariant = std::variant<
 			m2::Fsm<rpg::ChaserFsmBase>,
 			m2::Fsm<rpg::DistanceKeeperFsmBase>,

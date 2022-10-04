@@ -16,7 +16,16 @@ m2::Vec2i m2::offset_from_camera_px(Vec2f position) {
 
 m2::comp::Graphic::Graphic(Id object_id) : Component(object_id), texture(GAME.sdlTexture), ppm(GAME.game_ppm), on_draw(default_draw) {}
 
-m2::comp::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), texture(sprite.sprite_sheet().texture()), textureRect(sdl::to_rect(sprite.sprite().rect())), center_px(Vec2f{sprite.sprite().center_offset_px()}), ppm(sprite.ppm()), on_draw(default_draw) {}
+m2::comp::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw) {
+	set_sprite(sprite);
+}
+
+void m2::comp::Graphic::set_sprite(const Sprite &sprite) {
+	texture = sprite.sprite_sheet().texture();
+	textureRect = sdl::to_rect(sprite.sprite().rect());
+	center_px = Vec2f{sprite.sprite().center_offset_px()};
+	ppm = sprite.ppm();
+}
 
 m2::Object& m2::comp::Graphic::parent() const {
 	return *GAME.objects.get(object_id);

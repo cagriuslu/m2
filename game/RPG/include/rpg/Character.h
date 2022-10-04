@@ -5,19 +5,11 @@
 #include "MeleeWeapon.h"
 #include "RangedWeapon.h"
 #include "rpg/ai/AiBlueprint.h"
+#include <AnimationType.pb.h>
 #include "m2/SpriteBlueprint.h"
-#include <m2/fsm/AnimationFsm.h>
 #include <optional>
 
 namespace chr {
-	enum CharacterAnimationState {
-		CHARANIMSTATE_STOP,
-		CHARANIMSTATE_WALKDOWN,
-		CHARANIMSTATE_WALKRIGHT,
-		CHARANIMSTATE_WALKUP,
-		CHARANIMSTATE_WALKLEFT,
-	};
-
 	struct CharacterBlueprint;
 	struct CharacterState {
 		const CharacterBlueprint* blueprint;
@@ -47,7 +39,7 @@ namespace chr {
 		const RangedWeaponBlueprint* default_ranged_weapon;
 		float dash_cooldown_s;
 		float stun_ttl_s;
-		const m2::fsm::AnimationFsmBlueprint* animation_fsm_blueprint;
+		m2g::pb::AnimationType animation_type;
 		const ai::AiBlueprint* aiBlueprint;
 	};
 
