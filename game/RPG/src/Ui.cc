@@ -2,7 +2,7 @@
 #include <m2/Game.hh>
 #include <m2/M2.h>
 #include <rpg/object/Player.h>
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 
 using namespace m2::ui;
 

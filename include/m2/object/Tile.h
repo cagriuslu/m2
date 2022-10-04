@@ -2,7 +2,6 @@
 #define M2_TILE_H
 
 #include <m2/Object.h>
-#include <m2/SpriteBlueprint.h>
 #include <m2/Sprite.h>
 
 namespace m2::obj {

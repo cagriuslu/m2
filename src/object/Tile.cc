@@ -1,4 +1,4 @@
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 #include <m2/SdlUtils.hh>
 #include <m2/object/Tile.h>
 #include <m2/Object.h>

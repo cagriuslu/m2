@@ -1,5 +1,5 @@
 #include "rpg/Character.h"
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 
 chr::CharacterState::CharacterState(const CharacterBlueprint* blueprint) :
 	blueprint(blueprint), dash_cooldown_counter_s(blueprint->dash_cooldown_s), stun_ttl_s() {
@@ -55,7 +55,6 @@ bool chr::CharacterState::is_stunned() const {
 }
 
 const chr::CharacterBlueprint chr::character_player = {
-		.main_sprite_index = m2g::IMPL_SPRITE_PLAYER_LOOKDOWN_00,
 		.main_sprite = m2g::pb::SpriteType::PLAYER_LOOKDOWN_00,
 		.mass_kg = 80.0f,
 		.linear_damping = 100.0f,
@@ -70,7 +69,6 @@ const chr::CharacterBlueprint chr::character_player = {
 };
 
 const chr::CharacterBlueprint chr::character_skeleton_000_chase = {
-		.main_sprite_index = m2g::IMPL_SPRITE_ENEMY_LOOKDOWN_00,
 		.main_sprite = m2g::pb::SpriteType::ENEMY_LOOKDOWN_00,
 		.mass_kg = 10.0f,
 		.linear_damping = 10.0f,

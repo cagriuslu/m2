@@ -6,7 +6,7 @@
 #include <m2/M2.h>
 #include <m2g/component/Defense.h>
 #include <m2/box2d/Utils.h>
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 #include <m2/Group.h>
 #include <deque>
 

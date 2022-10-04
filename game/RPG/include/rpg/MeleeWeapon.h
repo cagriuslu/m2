@@ -1,7 +1,6 @@
 #ifndef IMPL_MELEEWEAPON_H
 #define IMPL_MELEEWEAPON_H
 
-#include "m2/SpriteBlueprint.h"
 #include "SpriteType.pb.h"
 
 namespace chr {
@@ -17,7 +16,6 @@ namespace chr {
 		explicit MeleeState(const MeleeBlueprint* blueprint);
 	};
 	struct MeleeBlueprint {
-		m2::SpriteIndex sprite_index;
 		m2g::pb::SpriteType sprite;
 		float damage;
 		MeleeMotion motion;

@@ -1,5 +1,5 @@
 #include "rpg/RangedWeapon.h"
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 #include <m2/M2.h>
 
 using namespace chr;
@@ -22,7 +22,6 @@ void RangedWeaponState::process_time(float time_passed_s) {
 
 const RangedWeaponBlueprint chr::ranged_weapon_gun = {
 		.projectile = {
-				.sprite_index = m2g::IMPL_SPRITE_BULLET_00,
 				.sprite = m2g::pb::SpriteType::BULLET_00,
 				.speed_mps = 20.0f,
 				.damage = 35.0f,
@@ -36,7 +35,6 @@ const RangedWeaponBlueprint chr::ranged_weapon_gun = {
 };
 const RangedWeaponBlueprint chr::ranged_weapon_machinegun = {
 		.projectile = {
-				.sprite_index = m2g::IMPL_SPRITE_BULLET_00,
 				.sprite = m2g::pb::SpriteType::BULLET_00,
 				.speed_mps = 2.5f,
 				.damage = 35.0f,
@@ -50,7 +48,6 @@ const RangedWeaponBlueprint chr::ranged_weapon_machinegun = {
 };
 const RangedWeaponBlueprint chr::ranged_weapon_shotgun = {
 		.projectile = {
-				.sprite_index = m2g::IMPL_SPRITE_BULLET_01,
 				.sprite = m2g::pb::SpriteType::BULLET_01,
 				.speed_mps = 2.0f,
 				.damage = 20.0f,
@@ -64,7 +61,6 @@ const RangedWeaponBlueprint chr::ranged_weapon_shotgun = {
 };
 const RangedWeaponBlueprint chr::ranged_weapon_bow = {
 		.projectile = {
-				.sprite_index = m2g::IMPL_SPRITE_BULLET_01,
 				.sprite = m2g::pb::SpriteType::BULLET_01,
 				.speed_mps = 1.5f,
 				.damage = 70.0f,

@@ -2,7 +2,7 @@
 #include <m2/Game.hh>
 #include <m2/object/Ghost.h>
 #include <m2/object/Camera.h>
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 
 using namespace m2;
 using namespace m2::ui;

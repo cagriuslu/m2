@@ -1,7 +1,6 @@
 #ifndef IMPL_EXPLOSIVEWEAPON_H
 #define IMPL_EXPLOSIVEWEAPON_H
 
-#include "m2/SpriteBlueprint.h"
 #include "SpriteType.pb.h"
 
 namespace chr {
@@ -19,7 +18,6 @@ namespace chr {
 		explicit ExplosiveState(const ExplosiveBlueprint* blueprint);
 	};
 	struct ExplosiveBlueprint {
-		m2::SpriteIndex sprite_index;
 		m2g::pb::SpriteType sprite;
 		float projectile_speed_mps;
 		float projectile_ttl_s;

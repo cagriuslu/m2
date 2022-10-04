@@ -1,7 +1,7 @@
 #include <m2/Component.h>
 #include <m2/Game.hh>
 #include "m2/component/Graphic.h"
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 #include <m2/Object.h>
 #include <m2/Game.hh>
 
@@ -86,7 +86,7 @@ void m2::comp::Graphic::default_draw_healthbar(comp::Graphic& gfx, float healthR
 			obj_gfx_dstrect.x + (obj_gfx_dstrect.w - healthBarWidth) / 2,
 			obj_gfx_dstrect.y + obj_gfx_dstrect.h,
 			(int)roundf((float)healthBarWidth * healthRatio),
-			(int)m2g::tile_width / 6
+			(int)48 / 6
 	};
 	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 0, 0, 200);
 	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);

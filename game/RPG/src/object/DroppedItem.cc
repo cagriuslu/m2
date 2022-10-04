@@ -1,5 +1,5 @@
 #include <rpg/object/DroppedItem.h>
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 #include <Item.pb.h>
 #include <m2/box2d/Utils.h>
 #include <m2/Game.hh>

@@ -8,7 +8,7 @@
 #include <rpg/object/Melee.h>
 #include <m2g/component/Defense.h>
 #include <m2/box2d/Utils.h>
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 #include <m2/M2.h>
 #include <Item.pb.h>
 #include <m2/Log.h>
@@ -30,7 +30,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_circ()->set_radius(std::get<m2::ColliderBlueprint::Circle>(m2g::sprites[blueprint->main_sprite_index].collider.variant).radius_m);
+	bp.mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].collider_circ_radius_m());
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(false);
 	bp.set_is_sensor(false);

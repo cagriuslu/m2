@@ -6,7 +6,6 @@
 #include "RangedWeapon.h"
 #include "rpg/ai/AiBlueprint.h"
 #include <AnimationType.pb.h>
-#include "m2/SpriteBlueprint.h"
 #include <optional>
 
 namespace chr {
@@ -27,7 +26,6 @@ namespace chr {
 		[[nodiscard]] bool is_stunned() const;
 	};
 	struct CharacterBlueprint {
-		m2::SpriteIndex main_sprite_index;
 		m2g::pb::SpriteType main_sprite;
 		float mass_kg;
 		float linear_damping;

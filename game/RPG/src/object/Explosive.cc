@@ -2,7 +2,7 @@
 #include "rpg/ExplosiveWeapon.h"
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include <m2g/SpriteBlueprint.h>
+#include <m2g/Object.h>
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 #include <m2/Log.h>
