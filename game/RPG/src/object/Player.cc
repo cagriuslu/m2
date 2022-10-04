@@ -58,19 +58,19 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		m2::Vec2f moveDirection;
 		if (GAME.events.is_key_down(m2::Key::UP)) {
 			moveDirection.y += -1.0f;
-			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKUP);
+			impl->animation_fsm.signal(chr::CHARANIMSTATE_WALKUP);
 		}
 		if (GAME.events.is_key_down(m2::Key::DOWN)) {
 			moveDirection.y += 1.0f;
-			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKDOWN);
+			impl->animation_fsm.signal(chr::CHARANIMSTATE_WALKDOWN);
 		}
 		if (GAME.events.is_key_down(m2::Key::LEFT)) {
 			moveDirection.x += -1.0f;
-			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKLEFT);
+			impl->animation_fsm.signal(chr::CHARANIMSTATE_WALKLEFT);
 		}
 		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			moveDirection.x += 1.0f;
-			impl->animation_fsm.set_state(chr::CHARANIMSTATE_WALKRIGHT);
+			impl->animation_fsm.signal(chr::CHARANIMSTATE_WALKRIGHT);
 		}
 		float force;
 		if (GAME.events.pop_key_press(m2::Key::DASH) && impl->char_state.pop_dash()) {
@@ -110,7 +110,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		// We must call time before other signals
 		impl->animation_fsm.time(GAME.deltaTime_s);
 		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {
-			impl->animation_fsm.set_state(chr::CHARANIMSTATE_STOP);
+			impl->animation_fsm.signal(chr::CHARANIMSTATE_STOP);
 		}
 		// Consume consumables
 		for (auto it = impl->items.begin(); it != impl->items.end(); ) {

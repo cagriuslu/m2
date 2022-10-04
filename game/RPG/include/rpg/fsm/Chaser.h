@@ -2,16 +2,17 @@
 #define IMPL_CHASE_HH
 
 #include "rpg/ai/type/Chase.h"
+#include <rpg/ai/AiFsmSignal.h>
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 #include <functional>
 #include "rpg/ai/AiBlueprint.h"
 #include <list>
 
-namespace fsm {
-    struct Chaser {
+namespace rpg {
+    struct ChaserFsmBase {
 		// Inputs
-        m2::Object& obj;
+        m2::Object* obj;
 		const ai::AiBlueprint* blueprint;
 		// State
 		m2::Vec2f home_position;
@@ -20,11 +21,11 @@ namespace fsm {
 		m2::Object& target;
 		m2::comp::Physique& phy;
 
-        Chaser(m2::Object& obj, const ai::AiBlueprint* blueprint);
+        ChaserFsmBase(m2::Object* obj, const ai::AiBlueprint* blueprint);
 
-        static void* idle(m2::Fsm<Chaser>& automaton, unsigned signal);
-        static void* triggered(m2::Fsm<Chaser>& automaton, unsigned signal);
-        static void* gave_up(m2::Fsm<Chaser>& automaton, unsigned signal);
+        static void* idle(m2::Fsm<ChaserFsmBase>& automaton, int signal);
+        static void* triggered(m2::Fsm<ChaserFsmBase>& automaton, int signal);
+        static void* gave_up(m2::Fsm<ChaserFsmBase>& automaton, int signal);
 
         static constexpr auto initial_state = &idle;
     };

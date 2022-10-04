@@ -24,28 +24,19 @@ namespace m2::fsm {
 
 	/// AnimationFSM actually have only one state
 	/// It would be better if it was an actor, instead of FSM
-	class AnimationFsmData {
+	class AnimationFsmBase {
 		// Input
 		const AnimationFsmBlueprint* blueprint;
 		GraphicId gfx_id;
 		// Data
 		std::pair<unsigned,unsigned> state_sprite_idx;
 
-		AnimationFsmData(const AnimationFsmBlueprint* blueprint, GraphicId gfx_id);
-
-		// States
-		static FsmStateHandler state_func(Fsm<AnimationFsmData>& automaton, unsigned signal);
-		static constexpr auto initial_state = &state_func;
-
-		friend class AnimationFsm;
-		friend class Fsm<AnimationFsmData>;
-	};
-
-	class AnimationFsm : private Fsm<AnimationFsmData> {
 	public:
-		AnimationFsm(const AnimationFsmBlueprint* blueprint, GraphicId gfx_id);
-		void set_state(unsigned state);
-		using Fsm<AnimationFsmData>::time;
+		AnimationFsmBase(const AnimationFsmBlueprint* blueprint, GraphicId gfx_id);
+
+	protected:
+		static void* state_func(Fsm<AnimationFsmBase>& fsm, int signal);
+		static constexpr auto initial_state = &state_func;
 	};
 }
 

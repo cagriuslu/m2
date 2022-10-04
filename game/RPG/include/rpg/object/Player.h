@@ -11,7 +11,7 @@
 namespace obj {
 	struct Player : public m2::ObjectImpl {
 		chr::CharacterState char_state;
-		m2::fsm::AnimationFsm animation_fsm;
+		m2::Fsm<m2::fsm::AnimationFsmBase> animation_fsm;
 		std::vector<m2g::pb::ItemType> items;
 
 		Player(m2::Object&, const chr::CharacterBlueprint*);

@@ -5,10 +5,10 @@
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 
-namespace fsm {
-	class Patroller {
+namespace rpg {
+	class PatrollerFsmBase {
 	public:
-		Patroller(m2::Object& obj, const ai::AiBlueprint* blueprint);
+		PatrollerFsmBase(m2::Object& obj, const ai::AiBlueprint* blueprint);
 	};
 }
 

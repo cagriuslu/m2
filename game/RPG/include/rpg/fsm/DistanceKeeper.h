@@ -5,10 +5,10 @@
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 
-namespace fsm {
-	class DistanceKeeper {
+namespace rpg {
+	class DistanceKeeperFsmBase {
 	public:
-		DistanceKeeper(m2::Object& obj, const ai::AiBlueprint* blueprint);
+		DistanceKeeperFsmBase(m2::Object& obj, const ai::AiBlueprint* blueprint);
 	};
 }
 

@@ -6,34 +6,32 @@
 #include <cmath>
 
 namespace m2 {
-    enum FsmSignal : unsigned {
-        FSMSIG_ENTER = 0,
-        FSMSIG_EXIT,
-        FSMSIG_ALARM,
-        FSMSIG_PREPHY,
-        FSMSIG_POSTPHY,
-        FSMSIG_PREGFX,
-        FSMSIG_POSTGFX,
-        FSMSIG_N
+    enum FsmSignal {
+        FSM_SIGNAL_EXIT = -3,
+        FSM_SIGNAL_ALARM = -2,
+		FSM_SIGNAL_ENTER = -1,
+		// Custom signals are non-negative
+		FSM_SIGNAL_CUSTOM = 0
     };
 
-	using FsmStateHandler = void*;
-
-    template <typename Data>
-    class Fsm {
+    template <typename FsmBase>
+    class Fsm : public FsmBase {
 	public:
-		using StateHandler = FsmStateHandler (*)(Fsm<Data>& automaton, unsigned sig);
+		using StateHandler = void* (*)(Fsm<FsmBase>& fsm, int fsm_signal);
 
 	private:
-		StateHandler current_state;
-		float alarm;
+		StateHandler current_state{FsmBase::initial_state};
+		float alarm{NAN};
 
 	public:
-        Data data;
-
-        explicit Fsm(Data&& data) : current_state(Data::initial_state), alarm(NAN), data(data) {
-            signal(FSMSIG_ENTER);
-        }
+		template <typename ...Args>
+		explicit Fsm(const Args&... args) : FsmBase(args...) {
+			signal(FSM_SIGNAL_ENTER);
+		}
+		template <typename ...Args>
+		explicit Fsm(Args&&... args) : FsmBase(args...) {
+			signal(FSM_SIGNAL_ENTER);
+		}
 
         void arm(float duration_s) {
             alarm = duration_s;
@@ -41,12 +39,12 @@ namespace m2 {
         void disarm() {
             alarm = NAN;
         }
-        void signal(unsigned sig) {
-            auto next_state = (*current_state)(*this, sig);
+        void signal(int fsm_signal) {
+            auto next_state = (*current_state)(*this, fsm_signal);
             if (next_state) {
-				(*current_state)(*this, FSMSIG_EXIT); // Ignore return value
+				(*current_state)(*this, FSM_SIGNAL_EXIT); // Ignore return value
                 current_state = reinterpret_cast<StateHandler>(next_state);
-                signal(FSMSIG_ENTER);
+                signal(FSM_SIGNAL_ENTER);
             }
         }
         void time(float delta_time) {
@@ -54,7 +52,7 @@ namespace m2 {
                 alarm -= delta_time;
                 if (alarm <= 0.0f) {
                     alarm = NAN;
-                    signal(FSMSIG_ALARM);
+                    signal(FSM_SIGNAL_ALARM);
                 }
             }
         }

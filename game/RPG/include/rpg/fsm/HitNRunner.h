@@ -5,10 +5,10 @@
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 
-namespace fsm {
-	class HitNRunner {
+namespace rpg {
+	class HitNRunnerFsmBase {
 	public:
-		HitNRunner(m2::Object& obj, const ai::AiBlueprint* blueprint);
+		HitNRunnerFsmBase(m2::Object& obj, const ai::AiBlueprint* blueprint);
 	};
 }
 
