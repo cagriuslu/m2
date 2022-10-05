@@ -12,14 +12,13 @@
 
 using namespace obj;
 
-obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint),
-	animation_fsm(blueprint->animation_type, obj.graphic_id()), fsm_variant(
+obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint), animation_fsm(blueprint->animation_type, obj.graphic_id()), fsm_variant(
 		std::visit(m2::overloaded {
 			[&](MAYBE const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; },
 			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; }, // TODO implement other FSMs
 			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; },
 			[&](MAYBE const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; }
-		}, blueprint->aiBlueprint->variant)), on_hit_color_mod_ttl(0) {}
+		}, blueprint->aiBlueprint->variant)), on_hit_effect_ttl(0) {}
 
 void Enemy::stun() {
 	character_state.stun();
@@ -80,20 +79,20 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 
 	gfx.on_draw = [&](m2::comp::Graphic& gfx) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		if (0.0f < data->on_hit_color_mod_ttl) {
-			gfx.effect_type = m2::pb::SPRITE_EFFECT_MASK;
-			m2::comp::Graphic::default_draw(gfx);
-			gfx.effect_type = m2::pb::NO_SPRITE_EFFECT;
-			data->on_hit_color_mod_ttl -= GAME.deltaTicks_ms / 1000.0f;
-		} else {
-			m2::comp::Graphic::default_draw(gfx);
-		}
+		m2::comp::Graphic::default_draw(gfx);
 		m2::comp::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
+		if (0.0f < data->on_hit_effect_ttl) {
+			data->on_hit_effect_ttl -= GAME.deltaTicks_ms / 1000.0f;
+			if (data->on_hit_effect_ttl < 0.0f) {
+				gfx.effect_type = m2::pb::NO_SPRITE_EFFECT;
+			}
+		}
 	};
 
 	def.on_hit = [&](MAYBE m2g::comp::Defense& def) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		data->on_hit_color_mod_ttl = 0.10f;
+		data->on_hit_effect_ttl = 0.15f;
+		gfx.effect_type = m2::pb::SPRITE_EFFECT_MASK;
 	};
 
 	def.on_death = [&](m2g::comp::Defense& def) {

@@ -21,7 +21,7 @@ namespace obj {
 			m2::Fsm<rpg::PatrollerFsmBase>
 		>;
 		FSMVariant fsm_variant; // TODO rename
-		float on_hit_color_mod_ttl;
+		float on_hit_effect_ttl;
 
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
 		void stun();
