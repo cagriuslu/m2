@@ -81,3 +81,7 @@ SDL_Rect m2::sdl::to_rect(const pb::Rect2i& pb_rect) {
 void m2::SdlTextureDeleter::operator()(SDL_Texture *t) {
 	SDL_DestroyTexture(t);
 }
+
+void m2::SdlSurfaceDeleter::operator()(SDL_Surface *s) {
+	SDL_FreeSurface(s);
+}

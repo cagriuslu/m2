@@ -17,6 +17,10 @@ namespace m2 {
 	struct SdlTextureDeleter {
 		void operator()(SDL_Texture* t);
 	};
+
+	struct SdlSurfaceDeleter {
+		void operator()(SDL_Surface* s);
+	};
 }
 
 #endif

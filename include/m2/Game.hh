@@ -66,6 +66,7 @@ namespace m2 {
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		std::vector<SpriteSheet> sprite_sheets;
+		std::optional<SpriteEffectsSheet> sprite_effects_sheet;
 		std::vector<Sprite> sprites;
 		std::vector<m2g::pb::SpriteType> editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> editor_object_sprites;

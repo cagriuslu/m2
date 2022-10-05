@@ -19,17 +19,14 @@ namespace m2 {
 
 namespace m2::comp {
 	struct Graphic : public Component {
-		SDL_Texture *texture{};
-		SDL_Rect textureRect{};
-		Vec2f center_px;
-		float ppm{};
+		const Sprite* sprite{};
+		pb::SpriteEffectType effect_type{pb::NO_SPRITE_EFFECT};
 		float angle{};
-		std::function<void(Graphic&)> on_draw;
+		std::function<void(Graphic&)> on_draw{};
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
 		explicit Graphic(uint64_t object_id, const Sprite& sprite);
-		void set_sprite(const Sprite& sprite);
 
 		[[nodiscard]] Object& parent() const;
 		[[nodiscard]] Vec2i offset_from_screen_center_px() const;

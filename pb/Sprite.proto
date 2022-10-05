@@ -6,19 +6,33 @@ import "Rect2i.proto";
 import "Vec2f.proto";
 import "Collider.proto";
 
-enum EditorPalette {
-  NO = 0;
-  BG = 1;
-  FG = 2;
+message Color {
+  uint32 r = 1;
+  uint32 g = 2;
+  uint32 b = 3;
+  uint32 a = 4;
+}
+
+enum SpriteEffectType {
+  NO_SPRITE_EFFECT = 0;
+  SPRITE_EFFECT_MASK = 1;
+}
+
+message SpriteEffect {
+  SpriteEffectType type = 1;
+  oneof effect_arg {
+    Color mask_color = 2;
+  }
 }
 
 message Sprite {
   m2g.pb.SpriteType type = 1;
-  Rect2i rect = 2;
-  uint32 override_ppm = 3; // Pixels per meter
-  Vec2f center_offset_px = 4; // Offset from the center of the rect
-  Collider collider = 5;
-  bool is_background_tile = 6;
+  repeated SpriteEffect effects = 2;
+  Rect2i rect = 3;
+  uint32 override_ppm = 4; // Pixels per meter
+  Vec2f center_offset_px = 5; // Offset from the center of the rect
+  Collider collider = 6;
+  bool is_background_tile = 7;
 }
 
 message SpriteSheet {

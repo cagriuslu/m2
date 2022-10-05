@@ -81,10 +81,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	gfx.on_draw = [&](m2::comp::Graphic& gfx) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		if (0.0f < data->on_hit_color_mod_ttl) {
-			SDL_Texture *defaultTexture = gfx.texture;
-			gfx.texture = GAME.sdlTextureMask;
+			// TODO simplify
+			gfx.effect_type = m2::pb::SPRITE_EFFECT_MASK;
 			m2::comp::Graphic::default_draw(gfx);
-			gfx.texture = defaultTexture;
+			gfx.effect_type = m2::pb::NO_SPRITE_EFFECT;
 			data->on_hit_color_mod_ttl -= GAME.deltaTicks_ms / 1000.0f;
 		} else {
 			m2::comp::Graphic::default_draw(gfx);

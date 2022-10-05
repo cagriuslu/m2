@@ -74,7 +74,8 @@ m2::Game::Game() {
 	}
 
 	sprite_sheets = load_sprite_sheets(std::string{m2g::sprite_sheets}, sdlRenderer);
-	sprites = load_sprites(sprite_sheets);
+	sprite_effects_sheet = SpriteEffectsSheet{sdlRenderer, pixelFormat};
+	sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	editor_background_sprites = list_editor_background_sprites(sprite_sheets);
 	editor_object_sprites = list_editor_object_sprites(std::string{m2g::objects});
 	items = load_items(std::string{m2g::items});

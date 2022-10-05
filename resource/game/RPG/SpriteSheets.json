@@ -146,6 +146,14 @@
         },
         {
           "type": "ENEMY_LOOKDOWN_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 0, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12},
           "collider": {
@@ -154,56 +162,144 @@
         },
         {
           "type": "ENEMY_LOOKDOWN_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 48, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKDOWN_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 96, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKLEFT_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 144, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKLEFT_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 192, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKLEFT_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 240, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKRIGHT_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 288, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKRIGHT_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 336, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKRIGHT_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 384, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKUP_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 432, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKUP_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 480, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
           "type": "ENEMY_LOOKUP_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 48, "y": 528, "w": 48, "h": 48},
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },

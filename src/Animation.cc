@@ -67,7 +67,7 @@ void* m2::AnimationFsmBase::state_func(Fsm<AnimationFsmBase>& fsm, int signal) {
 		auto gfx = GAME.graphics.get(fsm.gfx_id);
 		if (gfx) {
 			auto sprite_type = animation.state(new_pair->first).sprites(new_pair->second);
-			gfx->set_sprite(GAME.sprites[sprite_type]);
+			gfx->sprite = &GAME.sprites[sprite_type];
 		} else {
 			LOG_WARN("Graphics component destroyed before Animation FSM");
 		}
