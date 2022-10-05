@@ -46,8 +46,6 @@ namespace m2 {
 		SDL_Window *sdlWindow{};
 		SDL_Cursor *sdlCursor{};
 		SDL_Renderer *sdlRenderer{};
-		SDL_Texture *sdlTexture{};
-		SDL_Texture *sdlTextureMask{};
 		SDL_Texture *sdlLightTexture{};
 		uint32_t pixelFormat{};
 		SDL_Rect windowRect{};

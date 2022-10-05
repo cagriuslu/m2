@@ -41,23 +41,7 @@ m2::Game::Game() {
 	if ((sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED)) == nullptr) { // SDL_RENDERER_PRESENTVSYNC
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
-	SDL_Surface* textureMapSurface = IMG_Load(m2g::texture_map_file.data());
-	if (not textureMapSurface) {
-		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
-	}
-	if ((sdlTexture = SDL_CreateTextureFromSurface(sdlRenderer, textureMapSurface)) == nullptr) {
-		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
-	}
 	//SDL_SetTextureColorMod(sdlTexture, 127, 127, 127); Temporarily disabled, because lighting is disabled
-	SDL_FreeSurface(textureMapSurface);
-	SDL_Surface* textureMaskSurface = IMG_Load(m2g::texture_mask_file.data());
-	if (textureMaskSurface == nullptr) {
-		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
-	}
-	if ((sdlTextureMask = SDL_CreateTextureFromSurface(sdlRenderer, textureMaskSurface)) == nullptr) {
-		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
-	}
-	SDL_FreeSurface(textureMaskSurface);
 	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
 	if (lightSurface == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
