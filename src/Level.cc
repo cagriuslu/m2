@@ -2,7 +2,7 @@
 #include <m2/Value.h>
 #include <m2/object/Ghost.h>
 #include <m2/object/Placeholder.h>
-#include <m2/Proto.h>
+#include <m2/protobuf/Utils.h>
 #include <m2/Game.hh>
 #include <string>
 #include <filesystem>

@@ -1,6 +1,6 @@
 #include <m2/Game.hh>
 #include <m2/Animation.h>
-#include <m2/Proto.h>
+#include <m2/protobuf/Utils.h>
 #include <m2/Exception.h>
 
 m2::Animation::Animation(const pb::Animation &pb) : _animation(pb) {

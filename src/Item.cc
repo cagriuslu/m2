@@ -1,5 +1,5 @@
 #include <m2/Item.h>
-#include <m2/Proto.h>
+#include <m2/protobuf/Utils.h>
 #include <m2/Exception.h>
 
 std::vector<m2::pb::Item> m2::load_items(const std::string &items_path) {

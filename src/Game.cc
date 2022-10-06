@@ -8,7 +8,7 @@
 #include <m2/object/Pointer.h>
 #include <m2/object/Tile.h>
 #include <m2/String.h>
-#include <m2/Proto.h>
+#include <m2/protobuf/Utils.h>
 #include <m2g/Group.h>
 #include <m2/Sprite.h>
 #include <Level.pb.h>
@@ -17,7 +17,7 @@
 #include <SpriteType.pb.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
-#include <m2/SdlUtils.hh>
+#include <m2/sdl/Utils.hh>
 #include <SDL_image.h>
 #include <m2/Editor.h>
 #include "m2/Ui.h"

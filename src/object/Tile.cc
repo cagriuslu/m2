@@ -1,5 +1,5 @@
 #include <m2g/Object.h>
-#include <m2/SdlUtils.hh>
+#include <m2/sdl/Utils.hh>
 #include <m2/object/Tile.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"

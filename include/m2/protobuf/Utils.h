@@ -1,8 +1,8 @@
-#ifndef M2_PROTO_H
-#define M2_PROTO_H
+#ifndef M2_UTILS_H
+#define M2_UTILS_H
 
-#include "Value.h"
-#include "String.h"
+#include "../Value.h"
+#include "../String.h"
 #include <google/protobuf/util/json_util.h>
 #include <string>
 
@@ -35,4 +35,4 @@ namespace m2::proto {
 	VoidValue message_to_json_file(const google::protobuf::Message& message, const std::string& path);
 }
 
-#endif //M2_PROTO_H
+#endif //M2_UTILS_H

@@ -1,5 +1,5 @@
 #include <m2/Sprite.h>
-#include <m2/Proto.h>
+#include <m2/protobuf/Utils.h>
 #include <Object.pb.h>
 #include <m2/Exception.h>
 #include <SDL_image.h>

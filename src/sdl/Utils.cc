@@ -1,4 +1,4 @@
-#include "m2/SdlUtils.hh"
+#include <m2/sdl/Utils.hh>
 
 SDL_Cursor* SdlUtils_CreateCursor() {
     const char* str =

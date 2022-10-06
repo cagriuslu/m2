@@ -3,7 +3,7 @@
 
 #include <Sprite.pb.h>
 #include <ObjectType.pb.h>
-#include "SdlUtils.hh"
+#include "sdl/Utils.hh"
 #include "Vec2f.h"
 #include <SDL.h>
 #include <string>
