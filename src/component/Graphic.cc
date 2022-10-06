@@ -20,12 +20,12 @@ m2::Object& m2::comp::Graphic::parent() const {
 m2::Vec2i m2::comp::Graphic::offset_from_screen_center_px() const {
 	auto& obj = parent();
 
-	auto center_offset_px = Vec2f{sprite->sprite().center_offset_px()};
-	auto ppm = static_cast<float>(sprite->ppm());
+	auto center_offset_px = sprite ? Vec2f{sprite->sprite().center_offset_px()} : Vec2f{};
+	auto pixel_scale = sprite ? GAME.pixel_scale(sprite->ppm()) : 1.0f;
 
 	return m2::offset_from_camera_px(obj.position) + Vec2i{
-		-(int)roundf(center_offset_px.x * GAME.pixel_scale(ppm)),
-		-(int)roundf(center_offset_px.y * GAME.pixel_scale(ppm))
+		-(int)roundf(center_offset_px.x * pixel_scale),
+		-(int)roundf(center_offset_px.y * pixel_scale)
 	};
 }
 m2::Vec2i m2::comp::Graphic::offset_from_screen_origin_px() const {

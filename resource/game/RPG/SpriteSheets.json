@@ -345,6 +345,44 @@
           "rect": {"x": 144, "y": 144, "w": 48, "h": 48}
         }
       ]
+    },
+    {
+      "resource": "resource/game/RPG/castle.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "CASTLE_TOP_LEFT_CORNER_TOWER",
+          "rect": {"x": 16, "y": 48, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 16}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_TOP_RIGHT_CORNER_TOWER",
+          "rect": {"x": 48, "y": 48, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 16}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_BOTTOM_LEFT_CORNER_TOWER",
+          "rect": {"x": 16, "y": 144, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 16}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_BOTTOM_RIGHT_CORNER_TOWER",
+          "rect": {"x": 48, "y": 144, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 16}
+          },
+          "isBackgroundTile": true
+        }
+      ]
     }
   ]
 }
