@@ -381,6 +381,61 @@
             "rectDimsPx": {"w": 16, "h": 16}
           },
           "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_TOP_LEFT_CORNER",
+          "rect": {"x": 16, "y": 112, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 16}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_TOP_RIGHT_CORNER",
+          "rect": {"x": 48, "y": 112, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 16}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_TOP_WALL",
+          "rect": {"x": 32, "y": 112, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 10}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_LEFT_WALL",
+          "rect": {"x": 16, "y": 128, "w": 16, "h": 16},
+          "collider": {
+            "centerOffsetPx": {"x": -4, "y": 0},
+            "rectDimsPx": {"w": 6, "h": 16}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_RIGHT_WALL",
+          "rect": {"x": 48, "y": 128, "w": 16, "h": 16},
+          "collider": {
+            "centerOffsetPx": {"x": 4, "y": 0},
+            "rectDimsPx": {"w": 6, "h": 16}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_BOTTOM_WALL",
+          "rect": {"x": 32, "y": 144, "w": 16, "h": 16},
+          "collider": {
+            "rectDimsPx": {"w": 16, "h": 6}
+          },
+          "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_GROUND",
+          "rect": {"x": 32, "y": 128, "w": 16, "h": 16},
+          "isBackgroundTile": true
         }
       ]
     }
