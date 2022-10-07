@@ -2,6 +2,6 @@
 - Modernize group logic
 - Can we modernize character logic, item logic, walking logic, walking + animation logic -> bring them into engine
 - Implement parent child object relationship so that sword is destroyed and moved with the player
-- Continue working on the editor
 - Bullet, explosive and sword can be kinematic object
 - Introduce AnimationType and an animation description (which requires animation events to be also protobuf)
+- Add foreground tiles (drawn after objects)
