@@ -24,10 +24,10 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 	return _texture.get(); // TODO potentially dangerous, use shared_ptr instead
 }
 
-m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer, uint32_t window_pixel_format) : _renderer(renderer) {
+m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : _renderer(renderer) {
 	int bpp;
 	uint32_t r_mask, g_mask, b_mask, a_mask;
-	SDL_PixelFormatEnumToMasks(window_pixel_format, &bpp, &r_mask, &g_mask, &b_mask, &a_mask);
+	SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_BGRA32, &bpp, &r_mask, &g_mask, &b_mask, &a_mask);
 
 	auto* surface = SDL_CreateRGBSurface(0, 512, 512, bpp, r_mask, g_mask, b_mask, a_mask);
 	if (!surface) {
@@ -85,11 +85,9 @@ SDL_Rect m2::SpriteEffectsSheet::create_effect(const SpriteSheet &sheet, const p
 					auto src_pixel = *(src_pixels + (x + y * src_surface->w));
 
 					// Color dst pixel
-					if (src_pixel & src_surface->format->Amask) {
-						auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
-						auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + _h) * dst_surface->w);
-						*dst_pixel = dst_color;
-					}
+					auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
+					auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + _h) * dst_surface->w);
+					*dst_pixel = (src_pixel & src_surface->format->Amask) ? dst_color : 0;
 				}
 			}
 

@@ -29,7 +29,7 @@ namespace m2 {
 		std::unique_ptr<SDL_Texture, SdlTextureDeleter> _texture;
 
 	public:
-		SpriteEffectsSheet(SDL_Renderer* renderer, uint32_t window_pixel_format);
+		explicit SpriteEffectsSheet(SDL_Renderer* renderer);
 		[[nodiscard]] SDL_Texture* texture() const;
 		SDL_Rect create_effect(const SpriteSheet& sheet, const pb::Rect2i& rect, const pb::SpriteEffect& effect);
 	};
