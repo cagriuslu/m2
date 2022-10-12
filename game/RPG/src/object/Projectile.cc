@@ -18,7 +18,7 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	bp.set_is_bullet(true);
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(0.167f);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
-	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_FOREGROUND_OBJ);
+	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
 	bp.set_mass(0);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(true);

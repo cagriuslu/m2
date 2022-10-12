@@ -24,7 +24,7 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(0.5833f);
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(0.0f);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
-	bp.mutable_foreground_fixture()->set_category(originatorId == GAME.playerId ? m2::pb::FixtureCategory::FRIEND_FOREGROUND_OBJ : m2::pb::FixtureCategory::FOE_FOREGROUND_OBJ);
+	bp.mutable_foreground_fixture()->set_category(originatorId == GAME.playerId ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
 	bp.set_mass(1.0f);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(false);
