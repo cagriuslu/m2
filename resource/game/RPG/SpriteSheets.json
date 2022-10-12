@@ -82,69 +82,6 @@
           "isBackgroundTile": true
         },
         {
-          "type": "PLAYER_LOOKDOWN_00",
-          "rect": {"x": 0, "y": 0, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12},
-          "collider": {
-            "circRadiusPx": 12
-          }
-        },
-        {
-          "type": "PLAYER_LOOKDOWN_01",
-          "rect": {"x": 0, "y": 48, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKDOWN_02",
-          "rect": {"x": 0, "y": 96, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKLEFT_00",
-          "rect": {"x": 0, "y": 144, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKLEFT_01",
-          "rect": {"x": 0, "y": 192, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKLEFT_02",
-          "rect": {"x": 0, "y": 240, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKRIGHT_00",
-          "rect": {"x": 0, "y": 288, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKRIGHT_01",
-          "rect": {"x": 0, "y": 336, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKRIGHT_02",
-          "rect": {"x": 0, "y": 384, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKUP_00",
-          "rect": {"x": 0, "y": 432, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKUP_01",
-          "rect": {"x": 0, "y": 480, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "PLAYER_LOOKUP_02",
-          "rect": {"x": 0, "y": 528, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
           "type": "ENEMY_LOOKDOWN_00",
           "effects": [
             {
@@ -472,6 +409,75 @@
           "type": "CASTLE_GROUND",
           "rect": {"x": 32, "y": 128, "w": 16, "h": 16},
           "isBackgroundTile": true
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/monsterstimefantasyrpgspritepack/chara6.png",
+      "ppm": 26,
+      "sprites": [
+        {
+          "type": "PLAYER_LOOKDOWN_00",
+          "rect": {"x": 26, "y": 0, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10},
+          "collider": {
+            "circRadiusPx": 7.5
+          }
+        },
+        {
+          "type": "PLAYER_LOOKDOWN_01",
+          "rect": {"x": 0, "y": 0, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKDOWN_02",
+          "rect": {"x": 52, "y": 0, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKLEFT_00",
+          "rect": {"x": 26, "y": 36, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKLEFT_01",
+          "rect": {"x": 0, "y": 36, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKLEFT_02",
+          "rect": {"x": 52, "y": 36, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKRIGHT_00",
+          "rect": {"x": 26, "y": 72, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKRIGHT_01",
+          "rect": {"x": 0, "y": 72, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKRIGHT_02",
+          "rect": {"x": 52, "y": 72, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKUP_00",
+          "rect": {"x": 26, "y": 108, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKUP_01",
+          "rect": {"x": 0, "y": 108, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
+        },
+        {
+          "type": "PLAYER_LOOKUP_02",
+          "rect": {"x": 52, "y": 108, "w": 26, "h": 36},
+          "centerOffsetPx": {"x": 0, "y": 10}
         }
       ]
     }
