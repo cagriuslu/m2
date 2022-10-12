@@ -9,8 +9,8 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const Vec2f& position, const
     auto obj_pair = create_object(position);
 	auto& tile = obj_pair.first;
 
-	if (sprite.sprite().has_collider()) {
-		auto& collider = sprite.sprite().collider();
+	if (sprite.sprite().has_background_collider()) {
+		auto& collider = sprite.sprite().background_collider();
 		if (collider.has_rect_dims_px()) {
 			auto& phy = tile.add_physique();
 			m2::pb::BodyBlueprint bp;

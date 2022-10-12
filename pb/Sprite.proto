@@ -31,8 +31,9 @@ message Sprite {
   Rect2i rect = 3;
   uint32 override_ppm = 4; // Pixels per meter
   Vec2f center_offset_px = 5; // Offset from the center of the rect
-  Collider collider = 6;
-  bool is_background_tile = 7;
+  Collider background_collider = 6;
+  Collider foreground_collider = 7;
+  bool is_background_tile = 8;
 }
 
 message SpriteSheet {

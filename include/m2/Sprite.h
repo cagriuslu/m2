@@ -43,9 +43,9 @@ namespace m2 {
 
 		unsigned _ppm{};
 		Vec2f _center_offset_m;
-		Vec2f _collider_center_offset_m;
-		Vec2f _collider_rect_dims_m;
-		float _collider_circ_radius_m{};
+		Vec2f _background_collider_center_offset_m;
+		Vec2f _background_collider_rect_dims_m;
+		float _background_collider_circ_radius_m{};
 
 	public:
 		Sprite() = default;
@@ -56,9 +56,9 @@ namespace m2 {
 		[[nodiscard]] SDL_Rect effect_rect(pb::SpriteEffectType effect_type) const;
 		[[nodiscard]] unsigned ppm() const;
 		[[nodiscard]] Vec2f center_offset_m() const;
-		[[nodiscard]] Vec2f collider_center_offset_m() const;
-		[[nodiscard]] Vec2f collider_rect_dims_m() const;
-		[[nodiscard]] float collider_circ_radius_m() const;
+		[[nodiscard]] Vec2f background_collider_center_offset_m() const;
+		[[nodiscard]] Vec2f background_collider_rect_dims_m() const;
+		[[nodiscard]] float background_collider_circ_radius_m() const;
 	};
 
 	std::vector<SpriteSheet> load_sprite_sheets(const std::string& sprite_sheets_path, SDL_Renderer* renderer);

@@ -13,7 +13,7 @@ m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_t
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::STATIC);
-	bp.mutable_circ()->set_radius(sprite.collider_circ_radius_m());
+	bp.mutable_circ()->set_radius(sprite.background_collider_circ_radius_m());
 	bp.set_allow_sleep(true);
 	bp.set_is_bullet(false);
 	bp.set_is_sensor(true);

@@ -30,7 +30,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].collider_circ_radius_m());
+	bp.mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].background_collider_circ_radius_m());
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(false);
 	bp.set_is_sensor(false);

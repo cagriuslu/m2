@@ -115,9 +115,9 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_sprite_sheet(&sprite_sheet), _sprite(sprite), _effects_sheet(&sprite_effects_sheet),
 	_ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()),
 	_center_offset_m(Vec2f{sprite.center_offset_px()} / _ppm),
-	_collider_center_offset_m(Vec2f{sprite.collider().center_offset_px()} / _ppm),
-	_collider_rect_dims_m(Vec2f{sprite.collider().rect_dims_px()} / _ppm),
-	_collider_circ_radius_m(sprite.collider().circ_radius_px() / (float)_ppm) {
+	_background_collider_center_offset_m(Vec2f{sprite.background_collider().center_offset_px()} / _ppm),
+	_background_collider_rect_dims_m(Vec2f{sprite.background_collider().rect_dims_px()} / _ppm),
+	_background_collider_circ_radius_m(sprite.background_collider().circ_radius_px() / (float)_ppm) {
 	// Create effects
 	if (sprite.effects_size()) {
 		_effects.resize(pb::SpriteEffectType_ARRAYSIZE);
@@ -157,14 +157,14 @@ unsigned m2::Sprite::ppm() const {
 m2::Vec2f m2::Sprite::center_offset_m() const {
 	return _center_offset_m;
 }
-m2::Vec2f m2::Sprite::collider_center_offset_m() const {
-	return _collider_center_offset_m;
+m2::Vec2f m2::Sprite::background_collider_center_offset_m() const {
+	return _background_collider_center_offset_m;
 }
-m2::Vec2f m2::Sprite::collider_rect_dims_m() const {
-	return _collider_rect_dims_m;
+m2::Vec2f m2::Sprite::background_collider_rect_dims_m() const {
+	return _background_collider_rect_dims_m;
 }
-float m2::Sprite::collider_circ_radius_m() const {
-	return _collider_circ_radius_m;
+float m2::Sprite::background_collider_circ_radius_m() const {
+	return _background_collider_circ_radius_m;
 }
 
 std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::string &sprite_sheets_path, SDL_Renderer *renderer) {
