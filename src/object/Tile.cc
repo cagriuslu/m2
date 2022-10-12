@@ -15,12 +15,12 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const Vec2f& position, const
 			auto& phy = tile.add_physique();
 			m2::pb::BodyBlueprint bp;
 			bp.set_type(m2::pb::BodyType::STATIC);
-			bp.mutable_rect()->mutable_dims()->set_w(collider.rect_dims_px().w() / (float)sprite.ppm());
-			bp.mutable_rect()->mutable_dims()->set_h(collider.rect_dims_px().h() / (float)sprite.ppm());
 			bp.set_allow_sleep(true);
 			bp.set_is_bullet(false);
-			bp.set_is_sensor(false);
-			bp.set_category(m2::pb::BodyCategory::OBSTACLE_BACKGROUND);
+			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(collider.rect_dims_px().w() / (float)sprite.ppm());
+			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(collider.rect_dims_px().h() / (float)sprite.ppm());
+			bp.mutable_background_fixture()->set_is_sensor(false);
+			bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 			phy.body = m2::box2d::create_body(*GAME.world, tile.physique_id(), position, bp);
 		} else {
 			throw M2FATAL("Circular tile collider unimplemented");

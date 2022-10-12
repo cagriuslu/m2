@@ -13,11 +13,11 @@ m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_t
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::STATIC);
-	bp.mutable_circ()->set_radius(sprite.background_collider_circ_radius_m());
 	bp.set_allow_sleep(true);
 	bp.set_is_bullet(false);
-	bp.set_is_sensor(true);
-	bp.set_category(m2::pb::BodyCategory::FRIEND_PICKUP);
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->set_is_sensor(true);
+	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_PICKUP);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 
 	auto& gfx = obj.add_graphic(sprite);

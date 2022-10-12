@@ -14,11 +14,11 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_circ()->set_radius(0.167f);
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(true);
-	bp.set_is_sensor(true);
-	bp.set_category(m2::pb::BodyCategory::FRIEND_FOREGROUND_OBJ);
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(0.167f);
+	bp.mutable_foreground_fixture()->set_is_sensor(true);
+	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_FOREGROUND_OBJ);
 	bp.set_mass(0);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(true);

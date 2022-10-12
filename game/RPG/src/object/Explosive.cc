@@ -10,11 +10,11 @@
 static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::Id phyId, m2::Vec2f position, const chr::ExplosiveBlueprint* blueprint) {
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_circ()->set_radius(blueprint->damage_radius_m);
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(true);
-	bp.set_is_sensor(true);
-	bp.set_category(m2::pb::BodyCategory::FRIEND_BACKGROUND_AOE);
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(blueprint->damage_radius_m);
+	bp.mutable_background_fixture()->set_is_sensor(true);
+	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_BACKGROUND_AOE);
 	bp.set_mass(0);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(true);
@@ -29,11 +29,11 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_circ()->set_radius(blueprint->projectile_body_radius_m);
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(true);
-	bp.set_is_sensor(true);
-	bp.set_category(m2::pb::BodyCategory::FRIEND_FOREGROUND_OBJ);
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(blueprint->projectile_body_radius_m);
+	bp.mutable_foreground_fixture()->set_is_sensor(true);
+	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_FOREGROUND_OBJ);
 	bp.set_mass(0);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(true);

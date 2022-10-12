@@ -12,28 +12,28 @@ namespace m2::box2d {
 		/* DYNAMIC   */ b2_dynamicBody,
 	};
 
-	const uint16_t BodyCategory_to_collision_category_map[] = {
-		/* OBSTACLE              */ BODY_CATEGORY_OBSTACLE,
-		/* OBSTACLE_BACKGROUND   */ BODY_CATEGORY_OBSTACLE_BACKGROUND,
-		/* FRIEND                */ BODY_CATEGORY_FRIEND,
-		/* FRIEND_FOREGROUND_OBJ */ BODY_CATEGORY_FRIEND_FOREGROUND,
-		/* FRIEND_BACKGROUND_AOE */ BODY_CATEGORY_FRIEND_BACKGROUND,
-		/* FRIEND_PICKUP         */ BODY_CATEGORY_FRIEND_PICKUP,
-		/* FOE                   */ BODY_CATEGORY_FOE,
-		/* FOE_FOREGROUND_OBJ    */ BODY_CATEGORY_FOE_FOREGROUND,
-		/* FOE_BACKGROUND_AOE    */ BODY_CATEGORY_FOE_BACKGROUND,
+	const uint16_t FixtureCategory_to_collision_category_map[] = {
+		/* OBSTACLE              */ FIXTURE_CATEGORY_OBSTACLE,
+		/* OBSTACLE_BACKGROUND   */ FIXTURE_CATEGORY_OBSTACLE_BACKGROUND,
+		/* FRIEND                */ FIXTURE_CATEGORY_FRIEND,
+		/* FRIEND_FOREGROUND_OBJ */ FIXTURE_CATEGORY_FRIEND_FOREGROUND,
+		/* FRIEND_BACKGROUND_AOE */ FIXTURE_CATEGORY_FRIEND_BACKGROUND,
+		/* FRIEND_PICKUP         */ FIXTURE_CATEGORY_FRIEND_PICKUP,
+		/* FOE                   */ FIXTURE_CATEGORY_FOE,
+		/* FOE_FOREGROUND_OBJ    */ FIXTURE_CATEGORY_FOE_FOREGROUND,
+		/* FOE_BACKGROUND_AOE    */ FIXTURE_CATEGORY_FOE_BACKGROUND,
 	};
 
-	const uint16_t BodyCategory_to_collision_bits_map[] = {
-		/* OBSTACLE              */ BODY_CATEGORY_OBSTACLE            | BODY_CATEGORY_FRIEND            | BODY_CATEGORY_FOE            | BODY_CATEGORY_FRIEND_PICKUP,
-		/* OBSTACLE_BACKGROUND   */ BODY_CATEGORY_OBSTACLE_BACKGROUND | BODY_CATEGORY_FRIEND_BACKGROUND | BODY_CATEGORY_FOE_BACKGROUND | BODY_CATEGORY_FRIEND_PICKUP,
-		/* FRIEND                */ BODY_CATEGORY_OBSTACLE                                              | BODY_CATEGORY_FOE            | BODY_CATEGORY_FRIEND_PICKUP,
-		/* FRIEND_FOREGROUND_OBJ */ BODY_CATEGORY_OBSTACLE_FOREGROUND                                   | BODY_CATEGORY_FOE_BACKGROUND                              ,
-		/* FRIEND_BACKGROUND_AOE */                                                                       BODY_CATEGORY_FOE_BACKGROUND                              ,
-		/* FRIEND_PICKUP         */ BODY_CATEGORY_OBSTACLE            | BODY_CATEGORY_FRIEND                                                                        ,
-		/* FOE                   */ BODY_CATEGORY_OBSTACLE            | BODY_CATEGORY_FRIEND            | BODY_CATEGORY_FOE                                         ,
-		/* FOE_FOREGROUND_OBJ    */ BODY_CATEGORY_OBSTACLE_FOREGROUND | BODY_CATEGORY_FRIEND_BACKGROUND                                                             ,
-		/* FOE_BACKGROUND_AOE    */                                     BODY_CATEGORY_FRIEND_BACKGROUND                                                             ,
+	const uint16_t FixtureCategory_to_collision_bits_map[] = {
+		/* OBSTACLE              */ FIXTURE_CATEGORY_OBSTACLE | FIXTURE_CATEGORY_FRIEND | FIXTURE_CATEGORY_FOE | FIXTURE_CATEGORY_FRIEND_PICKUP,
+		/* OBSTACLE_BACKGROUND   */ FIXTURE_CATEGORY_OBSTACLE_BACKGROUND | FIXTURE_CATEGORY_FRIEND_BACKGROUND | FIXTURE_CATEGORY_FOE_BACKGROUND | FIXTURE_CATEGORY_FRIEND_PICKUP,
+		/* FRIEND                */ FIXTURE_CATEGORY_OBSTACLE | FIXTURE_CATEGORY_FOE | FIXTURE_CATEGORY_FRIEND_PICKUP,
+		/* FRIEND_FOREGROUND_OBJ */ FIXTURE_CATEGORY_OBSTACLE_FOREGROUND | FIXTURE_CATEGORY_FOE_BACKGROUND                              ,
+		/* FRIEND_BACKGROUND_AOE */                                                                       FIXTURE_CATEGORY_FOE_BACKGROUND                              ,
+		/* FRIEND_PICKUP         */ FIXTURE_CATEGORY_OBSTACLE | FIXTURE_CATEGORY_FRIEND                                                                        ,
+		/* FOE                   */ FIXTURE_CATEGORY_OBSTACLE | FIXTURE_CATEGORY_FRIEND | FIXTURE_CATEGORY_FOE                                         ,
+		/* FOE_FOREGROUND_OBJ    */ FIXTURE_CATEGORY_OBSTACLE_FOREGROUND | FIXTURE_CATEGORY_FRIEND_BACKGROUND                                                             ,
+		/* FOE_BACKGROUND_AOE    */                                     FIXTURE_CATEGORY_FRIEND_BACKGROUND                                                             ,
 	};
 }
 
@@ -54,22 +54,30 @@ b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f positio
 		throw M2ERROR("CreateBody returned null");
 	}
 
-	b2FixtureDef fixtureDef;
-	b2CircleShape circle_shape;
-	b2PolygonShape polygon_shape;
-	if (blueprint.has_circ()) {
-		circle_shape.m_radius = blueprint.circ().radius();
-		fixtureDef.shape = &circle_shape;
-	} else {
-		m2::Vec2f halfDims = Vec2f{blueprint.rect().dims()} * 0.5f;
-		polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(Vec2f{blueprint.rect().center_offset()}), blueprint.rect().angle());
-		fixtureDef.shape = &polygon_shape;
+	auto fixture_creator = [&body](const pb::Fixture& fixture_blueprint) {
+		b2FixtureDef fixtureDef;
+		b2CircleShape circle_shape;
+		b2PolygonShape polygon_shape;
+		if (fixture_blueprint.has_circ()) {
+			circle_shape.m_radius = fixture_blueprint.circ().radius();
+			fixtureDef.shape = &circle_shape;
+		} else {
+			m2::Vec2f halfDims = Vec2f{fixture_blueprint.rect().dims()} * 0.5f;
+			polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(Vec2f{fixture_blueprint.rect().center_offset()}), fixture_blueprint.rect().angle());
+			fixtureDef.shape = &polygon_shape;
+		}
+		fixtureDef.friction = 0.05f;
+		fixtureDef.filter.categoryBits = FixtureCategory_to_collision_category_map[fixture_blueprint.category()];
+		fixtureDef.filter.maskBits = FixtureCategory_to_collision_bits_map[fixture_blueprint.category()];
+		b2Fixture* fixture = body->CreateFixture(&fixtureDef);
+		fixture->SetSensor(fixture_blueprint.is_sensor());
+	};
+	if (blueprint.has_background_fixture()) {
+		fixture_creator(blueprint.background_fixture());
 	}
-	fixtureDef.friction = 0.05f;
-	fixtureDef.filter.categoryBits = BodyCategory_to_collision_category_map[blueprint.category()];
-	fixtureDef.filter.maskBits = BodyCategory_to_collision_bits_map[blueprint.category()];
-	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
-	fixture->SetSensor(blueprint.is_sensor());
+	if (blueprint.has_foreground_fixture()) {
+		fixture_creator(blueprint.foreground_fixture());
+	}
 
 	if (blueprint.type() == pb::BodyType::DYNAMIC) {
 		body->SetLinearDamping(blueprint.linear_damping());
@@ -100,5 +108,5 @@ b2AABB m2::box2d::expand_aabb(const b2AABB& in, float amount) {
 
 bool m2::box2d::is_obstacle(const b2Fixture* fixture) {
 	auto category_bits = fixture->GetFilterData().categoryBits;
-	return category_bits & BODY_CATEGORY_OBSTACLE;
+	return category_bits & FIXTURE_CATEGORY_OBSTACLE;
 }

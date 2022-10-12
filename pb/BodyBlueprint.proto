@@ -20,7 +20,7 @@ message CircularBodyParameters {
   float radius = 1;
 }
 
-enum BodyCategory {
+enum FixtureCategory {
   OBSTACLE = 0;
   OBSTACLE_BACKGROUND = 1;
 
@@ -34,16 +34,22 @@ enum BodyCategory {
   FOE_BACKGROUND_AOE = 8;
 }
 
+message Fixture {
+  oneof shape {
+    RectangleBodyParameters rect = 1;
+    CircularBodyParameters circ = 2;
+  }
+  FixtureCategory category = 3;
+  bool is_sensor = 4;
+}
+
 message BodyBlueprint {
   BodyType type = 1;
-  oneof shape {
-    RectangleBodyParameters rect = 2;
-    CircularBodyParameters circ = 3;
-  }
-  bool allow_sleep = 4;
-  bool is_bullet = 5;
-  bool is_sensor = 6;
-  BodyCategory category = 7;
+  bool allow_sleep = 2;
+  bool is_bullet = 3;
+
+  Fixture background_fixture = 4;
+  Fixture foreground_fixture = 5;
 
   // Only applicable for dynamic objects
   float mass = 8;

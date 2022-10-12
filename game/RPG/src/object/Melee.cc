@@ -17,14 +17,14 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_rect()->mutable_dims()->set_w(1.25f);
-	bp.mutable_rect()->mutable_dims()->set_h(0.1667f);
-	bp.mutable_rect()->mutable_center_offset()->set_x(0.5833f);
-	bp.mutable_rect()->mutable_center_offset()->set_y(0.0f);
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(true);
-	bp.set_is_sensor(true);
-	bp.set_category(originatorId == GAME.playerId ? m2::pb::BodyCategory::FRIEND_FOREGROUND_OBJ : m2::pb::BodyCategory::FOE_FOREGROUND_OBJ);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(1.25f);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(0.1667f);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(0.5833f);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(0.0f);
+	bp.mutable_foreground_fixture()->set_is_sensor(true);
+	bp.mutable_foreground_fixture()->set_category(originatorId == GAME.playerId ? m2::pb::FixtureCategory::FRIEND_FOREGROUND_OBJ : m2::pb::FixtureCategory::FOE_FOREGROUND_OBJ);
 	bp.set_mass(1.0f);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(false);

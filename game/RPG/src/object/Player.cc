@@ -30,11 +30,12 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].background_collider_circ_radius_m());
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(false);
-	bp.set_is_sensor(false);
-	bp.set_category(m2::pb::BodyCategory::FRIEND);
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->set_is_sensor(false);
+	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND);
+	// TODO foreground fixture
 	bp.set_mass(blueprint->mass_kg);
 	bp.set_linear_damping(blueprint->linear_damping);
 	bp.set_fixed_rotation(true);

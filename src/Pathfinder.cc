@@ -48,7 +48,7 @@ void PathfinderMap_Term(PathfinderMap* pm) {
 m2::Value<std::list<m2::Vec2i>> PathfinderMap_FindPath(PathfinderMap* pm, m2::Vec2f from, m2::Vec2f to) {
 	std::list<m2::Vec2i> outReverseListOfVec2Is;
 	// Check if there is direct eyesight
-	if (m2::box2d::check_eye_sight(*GAME.world, from, to, m2::box2d::BODY_CATEGORY_OBSTACLE)) {
+	if (m2::box2d::check_eye_sight(*GAME.world, from, to, m2::box2d::FIXTURE_CATEGORY_OBSTACLE)) {
 		auto fromI = m2::Vec2i{from};
 		auto toI = m2::Vec2i{to};
 
@@ -212,7 +212,7 @@ std::list<m2::Vec2i> _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::Vec2
 	for (++point_2_it; point_2_it != listOfVec2Is.end(); ++point_2_it) {
         auto* point2 = &(*point_2_it);
 
-		const bool eyeSight = m2::box2d::check_eye_sight(*GAME.world, m2::Vec2f{*point1}, m2::Vec2f{*point2}, m2::box2d::BODY_CATEGORY_OBSTACLE);
+		const bool eyeSight = m2::box2d::check_eye_sight(*GAME.world, m2::Vec2f{*point1}, m2::Vec2f{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
         if (point_2_it == std::prev(listOfVec2Is.end(), 1)) {
             if (eyeSight) {
                 // If we are processing the last point and there is an eye sight, add the last point
