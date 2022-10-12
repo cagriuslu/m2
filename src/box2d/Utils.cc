@@ -12,7 +12,7 @@ namespace m2::box2d {
 		/* DYNAMIC   */ b2_dynamicBody,
 	};
 
-	const uint16_t collision_category_map[] = {
+	const uint16_t BodyCategory_to_collision_category_map[] = {
 		/* OBSTACLE              */ BODY_CATEGORY_OBSTACLE,
 		/* OBSTACLE_BACKGROUND   */ BODY_CATEGORY_OBSTACLE_BACKGROUND,
 		/* FRIEND                */ BODY_CATEGORY_FRIEND,
@@ -24,7 +24,7 @@ namespace m2::box2d {
 		/* FOE_BACKGROUND_AOE    */ BODY_CATEGORY_FOE_BACKGROUND,
 	};
 
-	const uint16_t collision_mask_map[] = {
+	const uint16_t BodyCategory_to_collision_bits_map[] = {
 		/* OBSTACLE              */ BODY_CATEGORY_OBSTACLE            | BODY_CATEGORY_FRIEND            | BODY_CATEGORY_FOE            | BODY_CATEGORY_FRIEND_PICKUP,
 		/* OBSTACLE_BACKGROUND   */ BODY_CATEGORY_OBSTACLE_BACKGROUND | BODY_CATEGORY_FRIEND_BACKGROUND | BODY_CATEGORY_FOE_BACKGROUND | BODY_CATEGORY_FRIEND_PICKUP,
 		/* FRIEND                */ BODY_CATEGORY_OBSTACLE                                              | BODY_CATEGORY_FOE            | BODY_CATEGORY_FRIEND_PICKUP,
@@ -66,8 +66,8 @@ b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f positio
 		fixtureDef.shape = &polygon_shape;
 	}
 	fixtureDef.friction = 0.05f;
-	fixtureDef.filter.categoryBits = collision_category_map[blueprint.category()];
-	fixtureDef.filter.maskBits = collision_mask_map[blueprint.category()];
+	fixtureDef.filter.categoryBits = BodyCategory_to_collision_category_map[blueprint.category()];
+	fixtureDef.filter.maskBits = BodyCategory_to_collision_bits_map[blueprint.category()];
 	b2Fixture* fixture = body->CreateFixture(&fixtureDef);
 	fixture->SetSensor(blueprint.is_sensor());
 
