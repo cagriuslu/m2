@@ -46,6 +46,9 @@ namespace m2 {
 		Vec2f _background_collider_center_offset_m;
 		Vec2f _background_collider_rect_dims_m;
 		float _background_collider_circ_radius_m{};
+		Vec2f _foreground_collider_center_offset_m;
+		Vec2f _foreground_collider_rect_dims_m;
+		float _foreground_collider_circ_radius_m{};
 
 	public:
 		Sprite() = default;
@@ -59,6 +62,9 @@ namespace m2 {
 		[[nodiscard]] Vec2f background_collider_center_offset_m() const;
 		[[nodiscard]] Vec2f background_collider_rect_dims_m() const;
 		[[nodiscard]] float background_collider_circ_radius_m() const;
+		[[nodiscard]] Vec2f foreground_collider_center_offset_m() const;
+		[[nodiscard]] Vec2f foreground_collider_rect_dims_m() const;
+		[[nodiscard]] float foreground_collider_circ_radius_m() const;
 	};
 
 	std::vector<SpriteSheet> load_sprite_sheets(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
