@@ -33,7 +33,7 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	phy.body->SetAngularVelocity(-SWING_SPEED);
 
 	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
-	gfx.angle = phy.body->GetAngle();
+	gfx.draw_angle = phy.body->GetAngle();
 
 	auto& off = obj.add_offense();
     off.originator = originatorId;
@@ -54,7 +54,7 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 			// Make sure originator is still alive
 			phy.body->SetTransform(static_cast<b2Vec2>(originator->position), angle);
 		}
-		gfx.angle = angle;
+		gfx.draw_angle = angle;
 	};
 
 	phy.on_collision = [&](MAYBE m2::comp::Physique& phy, m2::comp::Physique& other) {

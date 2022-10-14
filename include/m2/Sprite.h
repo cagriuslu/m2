@@ -6,6 +6,7 @@
 #include "sdl/Utils.hh"
 #include "Vec2f.h"
 #include <SDL.h>
+#include <optional>
 #include <string>
 #include <memory>
 
@@ -22,16 +23,31 @@ namespace m2 {
 		[[nodiscard]] SDL_Texture* texture() const;
 	};
 
-	class SpriteEffectsSheet final {
+	class DynamicSheet {
 		SDL_Renderer* _renderer; // TODO Use weak-ptr instead
 		std::unique_ptr<SDL_Surface, SdlSurfaceDeleter> _surface;
 		int _h{};
 		std::unique_ptr<SDL_Texture, SdlTextureDeleter> _texture;
 
 	public:
-		explicit SpriteEffectsSheet(SDL_Renderer* renderer);
+		explicit DynamicSheet(SDL_Renderer* renderer);
 		[[nodiscard]] SDL_Texture* texture() const;
+		std::pair<SDL_Surface*, SDL_Rect> alloc(int w, int h);
+		SDL_Texture* recreate_texture();
+	};
+
+	class SpriteEffectsSheet : private DynamicSheet {
+	public:
+		explicit SpriteEffectsSheet(SDL_Renderer* renderer);
+		using DynamicSheet::texture;
 		SDL_Rect create_effect(const SpriteSheet& sheet, const pb::Rect2i& rect, const pb::SpriteEffect& effect);
+	};
+
+	class ForegroundCompanionsSheet : private DynamicSheet {
+	public:
+		explicit ForegroundCompanionsSheet(SDL_Renderer* renderer);
+		using DynamicSheet::texture;
+		SDL_Rect create_foreground_companion(const SpriteSheet& sheet, const pb::Sprite& sprite);
 	};
 
 	class Sprite final {
@@ -40,6 +56,10 @@ namespace m2 {
 
 		const SpriteEffectsSheet* _effects_sheet{};
 		std::vector<SDL_Rect> _effects;
+
+		const ForegroundCompanionsSheet* _foreground_companions_sheet{};
+		std::optional<SDL_Rect> _foreground_companion_rect;
+		Vec2f _foreground_companion_center_offset_m{};
 
 		unsigned _ppm{};
 		Vec2f _center_offset_m;
@@ -52,11 +72,15 @@ namespace m2 {
 
 	public:
 		Sprite() = default;
-		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite);
+		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, ForegroundCompanionsSheet& foreground_companions_sheet, const pb::Sprite& sprite);
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] const pb::Sprite& sprite() const;
 		[[nodiscard]] SDL_Texture* effects_texture() const;
 		[[nodiscard]] SDL_Rect effect_rect(pb::SpriteEffectType effect_type) const;
+		[[nodiscard]] SDL_Texture* foreground_companions_texture() const;
+		[[nodiscard]] bool has_foreground_companion() const;
+		[[nodiscard]] SDL_Rect foreground_companion_rect() const;
+		[[nodiscard]] Vec2f foreground_companion_center_offset_m() const;
 		[[nodiscard]] unsigned ppm() const;
 		[[nodiscard]] Vec2f center_offset_m() const;
 		[[nodiscard]] Vec2f background_collider_center_offset_m() const;
@@ -68,7 +92,7 @@ namespace m2 {
 	};
 
 	std::vector<SpriteSheet> load_sprite_sheets(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
-	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet);
+	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet, ForegroundCompanionsSheet& foreground_companions_sheet);
 	std::vector<m2g::pb::SpriteType> list_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets);
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_editor_object_sprites(const std::string& objects_path);
 }

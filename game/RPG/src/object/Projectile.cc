@@ -26,7 +26,7 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(dir * blueprint->speed_mps));
 
 	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
-	gfx.angle = dir.angle_rads();
+	gfx.draw_angle = dir.angle_rads();
 
 	auto& off = obj.add_offense();
     off.originator = originatorId;

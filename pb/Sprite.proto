@@ -25,6 +25,11 @@ message SpriteEffect {
   }
 }
 
+message ForegroundCompanion {
+  Vec2f center_offset_px = 1;
+  repeated Rect2i rects = 2; // w.r.t SpriteSheet coordinates
+}
+
 message Sprite {
   m2g.pb.SpriteType type = 1;
   repeated SpriteEffect effects = 2;
@@ -34,6 +39,7 @@ message Sprite {
   Collider background_collider = 6;
   Collider foreground_collider = 7;
   bool is_background_tile = 8;
+  ForegroundCompanion foreground_companion = 9; // Only background tiles can have foreground companion
 }
 
 message SpriteSheet {

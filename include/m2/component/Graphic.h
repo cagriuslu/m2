@@ -20,8 +20,9 @@ namespace m2 {
 namespace m2::comp {
 	struct Graphic : public Component {
 		const Sprite* sprite{};
-		pb::SpriteEffectType effect_type{pb::NO_SPRITE_EFFECT};
-		float angle{};
+		pb::SpriteEffectType draw_effect_type{pb::NO_SPRITE_EFFECT};
+		bool draw_foreground_companion{};
+		float draw_angle{};
 		std::function<void(Graphic&)> on_draw{};
 
 		Graphic() = default;

@@ -21,6 +21,10 @@ m2::Vec2i m2::comp::Graphic::offset_from_screen_center_px() const {
 	auto& obj = parent();
 
 	auto center_offset_px = sprite ? Vec2f{sprite->sprite().center_offset_px()} : Vec2f{};
+	if (sprite && draw_foreground_companion) {
+		center_offset_px = Vec2f{sprite->sprite().foreground_companion().center_offset_px()};
+	}
+
 	auto pixel_scale = sprite ? GAME.pixel_scale(sprite->ppm()) : 1.0f;
 
 	return m2::offset_from_camera_px(obj.position) + Vec2i{
@@ -35,9 +39,26 @@ void m2::comp::Graphic::default_draw(comp::Graphic& gfx) {
 	if (not gfx.sprite) {
 		return;
 	}
-	auto* texture = gfx.effect_type == pb::NO_SPRITE_EFFECT ? gfx.sprite->sprite_sheet().texture() : gfx.sprite->effects_texture();
-	auto src_rect = gfx.effect_type == pb::NO_SPRITE_EFFECT ? sdl::to_rect(gfx.sprite->sprite().rect()) : gfx.sprite->effect_rect(gfx.effect_type);
+
+	auto* texture = gfx.sprite->sprite_sheet().texture();
+	if (gfx.draw_effect_type) {
+		texture = gfx.sprite->effects_texture();
+	} else if (gfx.draw_foreground_companion) {
+		texture = gfx.sprite->foreground_companions_texture();
+	}
+
+	auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
+	if (gfx.draw_effect_type) {
+		src_rect = gfx.sprite->effect_rect(gfx.draw_effect_type);
+	} else if (gfx.draw_foreground_companion) {
+		src_rect = gfx.sprite->foreground_companion_rect();
+	}
+
 	auto center_offset_px = Vec2f{gfx.sprite->sprite().center_offset_px()};
+	if (gfx.draw_foreground_companion) {
+		center_offset_px = Vec2f{gfx.sprite->sprite().foreground_companion().center_offset_px()};
+	}
+
 	auto ppm = static_cast<float>(gfx.sprite->ppm());
 
 	auto offset_from_screen_origin_px = gfx.offset_from_screen_origin_px();
@@ -52,7 +73,7 @@ void m2::comp::Graphic::default_draw(comp::Graphic& gfx) {
 		(int)roundf(center_offset_px.x * pixel_scale) + dst_rect.w / 2 ,
 		(int)roundf(center_offset_px.y * pixel_scale) + dst_rect.h / 2
 	};
-	if (SDL_RenderCopyEx(GAME.sdlRenderer, texture, &src_rect, &dst_rect, gfx.angle * 180.0 / PI, &centerPoint, SDL_FLIP_NONE)) {
+	if (SDL_RenderCopyEx(GAME.sdlRenderer, texture, &src_rect, &dst_rect, gfx.draw_angle * 180.0 / PI, &centerPoint, SDL_FLIP_NONE)) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }

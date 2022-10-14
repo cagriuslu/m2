@@ -24,7 +24,7 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 	return _texture.get(); // TODO potentially dangerous, use shared_ptr instead
 }
 
-m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : _renderer(renderer) {
+m2::DynamicSheet::DynamicSheet(SDL_Renderer *renderer) : _renderer(renderer) {
 	int bpp;
 	uint32_t r_mask, g_mask, b_mask, a_mask;
 	SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_BGRA32, &bpp, &r_mask, &g_mask, &b_mask, &a_mask);
@@ -35,18 +35,18 @@ m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : _renderer(r
 	}
 	_surface.reset(surface);
 }
-SDL_Texture* m2::SpriteEffectsSheet::texture() const {
+SDL_Texture* m2::DynamicSheet::texture() const {
 	return _texture.get();
 }
-SDL_Rect m2::SpriteEffectsSheet::create_effect(const SpriteSheet &sheet, const pb::Rect2i &rect, const pb::SpriteEffect &effect) {
+std::pair<SDL_Surface*, SDL_Rect> m2::DynamicSheet::alloc(int w, int h) {
 	// Check if effect will fit
-	if (_surface->w < rect.w()) {
+	if (_surface->w < w) {
 		throw M2FATAL("Sprite effect exceeds width limit: " + std::to_string(_surface->w));
 	}
 
 	// Resize surface if necessary
-	if (_surface->h < _h + rect.h()) {
-		auto* new_surface = SDL_CreateRGBSurface(0, _surface->w, (_surface->h + rect.h()) * 3 / 2, _surface->format->BitsPerPixel, _surface->format->Rmask, _surface->format->Gmask, _surface->format->Bmask, _surface->format->Amask);
+	if (_surface->h < _h + h) {
+		auto* new_surface = SDL_CreateRGBSurface(0, _surface->w, (_surface->h + h) * 3 / 2, _surface->format->BitsPerPixel, _surface->format->Rmask, _surface->format->Gmask, _surface->format->Bmask, _surface->format->Amask);
 		if (!new_surface) {
 			throw M2ERROR("Failed to create RGB surface: " + std::string{SDL_GetError()});
 		}
@@ -57,11 +57,26 @@ SDL_Rect m2::SpriteEffectsSheet::create_effect(const SpriteSheet &sheet, const p
 		_surface.reset(new_surface);
 	}
 
+	auto retval = std::make_pair(_surface.get(), SDL_Rect{0, _h, w, h});
+	_h += h;
+	return retval;
+}
+SDL_Texture* m2::DynamicSheet::recreate_texture() {
+	_texture.reset(SDL_CreateTextureFromSurface(_renderer, _surface.get()));
+	if (not _texture) {
+		throw M2ERROR("SDL error: " + std::string{SDL_GetError()});
+	}
+	return _texture.get();
+}
+
+m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
+SDL_Rect m2::SpriteEffectsSheet::create_effect(const SpriteSheet &sheet, const pb::Rect2i &rect, const pb::SpriteEffect &effect) {
+	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
+
 	// Create effect
 	switch (effect.type()) {
 		case pb::SpriteEffectType::SPRITE_EFFECT_MASK: {
 			auto* src_surface = sheet.surface();
-			auto* dst_surface = _surface.get();
 
 			// Check pixel stride
 			if (src_surface->format->BytesPerPixel != 4 || dst_surface->format->BytesPerPixel != 4) {
@@ -86,7 +101,7 @@ SDL_Rect m2::SpriteEffectsSheet::create_effect(const SpriteSheet &sheet, const p
 
 					// Color dst pixel
 					auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
-					auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + _h) * dst_surface->w);
+					auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + dst_rect.y) * dst_surface->w);
 					*dst_pixel = (src_pixel & src_surface->format->Amask) ? dst_color : 0;
 				}
 			}
@@ -100,19 +115,35 @@ SDL_Rect m2::SpriteEffectsSheet::create_effect(const SpriteSheet &sheet, const p
 			throw M2ERROR("Not implemented sprite effect type: " + std::to_string(effect.type()));
 	}
 
-	// Recreate texture
-	_texture.reset(SDL_CreateTextureFromSurface(_renderer, _surface.get()));
-	if (not _texture) {
-		throw M2ERROR("SDL error: " + std::string{SDL_GetError()});
-	}
+	recreate_texture();
 
-	auto retval = SDL_Rect{0, _h, rect.w(), rect.h()};
-	_h += rect.h();
-	return retval;
+	return dst_rect;
 }
 
-m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite) :
+m2::ForegroundCompanionsSheet::ForegroundCompanionsSheet(SDL_Renderer *renderer) : DynamicSheet(renderer) {}
+SDL_Rect m2::ForegroundCompanionsSheet::create_foreground_companion(const SpriteSheet& sheet, const pb::Sprite& sprite) {
+	auto* src_surface = sheet.surface();
+	auto [dst_surface, dst_rect] = alloc(sprite.rect().w(), sprite.rect().h());
+
+	for (const auto& rect : sprite.foreground_companion().rects()) {
+		auto blit_src_rect = sdl::to_rect(rect);
+		auto blit_dst_rect = SDL_Rect{
+			dst_rect.x + rect.x() - sprite.rect().x(),
+			dst_rect.y + rect.y() - sprite.rect().y(),
+			rect.w(),
+			rect.h()
+		};
+		SDL_BlitSurface(src_surface, &blit_src_rect, dst_surface, &blit_dst_rect);
+	}
+
+	recreate_texture();
+
+	return dst_rect;
+}
+
+m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, ForegroundCompanionsSheet& foreground_companions_sheet, const pb::Sprite& sprite) :
 	_sprite_sheet(&sprite_sheet), _sprite(sprite), _effects_sheet(&sprite_effects_sheet),
+	_foreground_companions_sheet(&foreground_companions_sheet),
 	_ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()),
 	_center_offset_m(Vec2f{sprite.center_offset_px()} / _ppm),
 	_background_collider_center_offset_m(Vec2f{sprite.background_collider().center_offset_px()} / _ppm),
@@ -135,6 +166,12 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 			is_created[effect.type()] = true;
 		}
 	}
+
+	// Create foreground companion
+	if (sprite.has_foreground_companion()) {
+		_foreground_companion_rect = foreground_companions_sheet.create_foreground_companion(sprite_sheet, sprite);
+		_foreground_companion_center_offset_m = Vec2f{sprite.foreground_companion().center_offset_px()} / (float)_ppm;
+	}
 }
 const m2::SpriteSheet& m2::Sprite::sprite_sheet() const {
 	return *_sprite_sheet;
@@ -149,10 +186,25 @@ SDL_Texture* m2::Sprite::effects_texture() const {
 	return nullptr;
 }
 SDL_Rect m2::Sprite::effect_rect(pb::SpriteEffectType effect_type) const {
-	if (effects_texture()) {
-		return _effects[effect_type];
+	return _effects[effect_type];
+}
+SDL_Texture* m2::Sprite::foreground_companions_texture() const {
+	if (_foreground_companions_sheet) {
+		return _foreground_companions_sheet->texture();
+	}
+	return nullptr;
+}
+bool m2::Sprite::has_foreground_companion() const {
+	return _sprite.has_foreground_companion();
+}
+SDL_Rect m2::Sprite::foreground_companion_rect() const {
+	if (_foreground_companion_rect) {
+		return *_foreground_companion_rect;
 	}
 	return {};
+}
+m2::Vec2f m2::Sprite::foreground_companion_center_offset_m() const {
+	return _foreground_companion_center_offset_m;
 }
 unsigned m2::Sprite::ppm() const {
 	return _ppm;
@@ -191,7 +243,7 @@ std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::string &sprite_sh
 	return sheets_vector;
 }
 
-std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet) {
+std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet, ForegroundCompanionsSheet& foreground_companions_sheet) {
 	std::vector<Sprite> sprites_vector(m2g::pb::SpriteType_ARRAYSIZE);
 	std::vector<bool> is_loaded(m2g::pb::SpriteType_ARRAYSIZE);
 
@@ -203,7 +255,7 @@ std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_
 				throw M2ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
 			}
 			// Load sprite
-			sprites_vector[sprite.type()] = Sprite{sprite_sheet, sprite_effects_sheet, sprite};
+			sprites_vector[sprite.type()] = Sprite{sprite_sheet, sprite_effects_sheet, foreground_companions_sheet, sprite};
 			is_loaded[sprite.type()] = true;
 		}
 	}
