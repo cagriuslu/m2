@@ -4,4 +4,3 @@
 - Implement parent child object relationship so that sword is destroyed and moved with the player
 - Bullet, explosive and sword can be kinematic object
 - Introduce AnimationType and an animation description (which requires animation events to be also protobuf)
-- Add foreground tiles (drawn after objects)
