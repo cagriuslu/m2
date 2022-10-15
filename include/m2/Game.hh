@@ -31,15 +31,25 @@
 #include "Item.h"
 #include <filesystem>
 
+#define GAME (::m2::Game::instance())
+#define CONST_GAME (::m2::Game::const_instance())
+
 #define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
 #define GAME_ASPECT_RATIO (5.0f / 4.0f)
 #define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
 
 namespace m2 {
 	struct Game {
+		static Game* _instance;
+
 		std::optional<Level> level;
 
 	public:
+		static void create_instance();
+		inline static const Game& const_instance() { return *_instance; }
+		inline static Game& instance() { return *_instance; }
+		static void destroy_instance();
+
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -135,9 +145,5 @@ namespace m2 {
 		float pixel_scale(float sprite_ppm) const;
 	};
 }
-
-extern m2::Game* g_game;
-inline m2::Game& GameInstance() { return *g_game; }
-#define GAME (GameInstance())
 
 #endif

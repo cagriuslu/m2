@@ -21,9 +21,19 @@
 #include <SDL_image.h>
 #include <m2/Editor.h>
 #include "m2/Ui.h"
-#include <set>
 
-m2::Game* g_game;
+m2::Game* m2::Game::_instance;
+
+void m2::Game::create_instance() {
+	if (_instance) {
+		throw M2FATAL("Cannot create multiple instance of Game");
+	}
+	_instance = new Game();
+}
+void m2::Game::destroy_instance() {
+	delete _instance;
+	_instance = nullptr;
+}
 
 m2::Game::Game() {
 	update_window_dims(1600, 900); // Store default window dimensions in GAME

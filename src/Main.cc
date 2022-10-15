@@ -67,8 +67,8 @@ int main(int argc, char **argv) {
 		LOG_FATAL("SDL error", TTF_GetError());
 		return -1;
 	}
-	// Initialize game
-	g_game = new Game{};
+
+	Game::create_instance();
 
 //	int audioDriverCount = SDL_GetNumAudioDrivers();
 //	fprintf(stderr, "SDL_GetNumAudioDrivers: %d\n", audioDriverCount);
@@ -303,7 +303,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	delete g_game;
+	Game::destroy_instance();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();
