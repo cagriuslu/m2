@@ -17,7 +17,7 @@ namespace m2::box2d {
         float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override;
     };
 
-    bool check_eye_sight(b2World& world, Vec2f from, Vec2f to, uint16_t category_bits);
+    bool check_eyesight(b2World& world, Vec2f from, Vec2f to, uint16_t category_bits);
 }
 
 #endif //M2_RAYCAST_H

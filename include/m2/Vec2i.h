@@ -25,6 +25,10 @@ namespace m2 {
 
 		[[nodiscard]] bool is_near(const Vec2i& other, int tolerance) const;
 		[[nodiscard]] bool in_nonnegative() const;
+		[[nodiscard]] float length() const;
+		[[nodiscard]] float length_sq() const;
+		[[nodiscard]] float distance(const Vec2i& other) const;
+		[[nodiscard]] int manhattan_distance(const Vec2i& other) const;
 	};
 
 	struct Vec2iHash {

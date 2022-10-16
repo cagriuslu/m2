@@ -33,6 +33,7 @@ namespace m2 {
 	///////////////////////////////// MATH /////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
 	constexpr float PI = 3.141592653589793f;
+	constexpr float SQROOT_2 = 1.414213562373095f;
 
 	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max)
 	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max)
