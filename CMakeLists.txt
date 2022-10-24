@@ -4,10 +4,11 @@ cmake_minimum_required(VERSION 3.21)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
 
-project(m2)
+project(m2 C CXX ASM)
 
 # Load external libraries
 add_subdirectory(lib)
+add_subdirectory(x86_64)
 
 # Protobuf
 if(WIN32)
@@ -48,6 +49,7 @@ file(GLOB M2_SOURCES
         "src/*/*/*.h" "src/*/*/*.cc")
 add_executable(m2 WIN32 ${M2_SOURCES} ${IMPL_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
 target_include_directories(m2 PUBLIC include ${IMPL_INCLUDE_DIRS})
+target_link_libraries(m2 x86_64)
 if (WIN32)
     # External library dependencies
     add_dependencies(m2 protobuf)
