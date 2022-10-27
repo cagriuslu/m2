@@ -53,8 +53,8 @@ target_link_libraries(m2 x86_64)
 if (WIN32)
     # External library dependencies
     add_dependencies(m2 protobuf)
-    target_link_libraries(m2 debug     box2d-debug SDL_gpu-debug)
-    target_link_libraries(m2 optimized box2d       SDL_gpu)
+    target_link_libraries(m2 debug     box2d-debug)
+    target_link_libraries(m2 optimized box2d)
     target_link_libraries(m2 SDL2 SDL2_image SDL2_ttf)
     target_link_libraries(m2 ${Protobuf_LIBRARIES})
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
