@@ -51,8 +51,6 @@ add_executable(m2 WIN32 ${M2_SOURCES} ${IMPL_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS
 target_include_directories(m2 PUBLIC include ${IMPL_INCLUDE_DIRS})
 target_link_libraries(m2 x86_64)
 if (WIN32)
-    # External library dependencies
-    add_dependencies(m2 protobuf)
     target_link_libraries(m2 debug     box2d-debug)
     target_link_libraries(m2 optimized box2d)
     target_link_libraries(m2 SDL2 SDL2_image SDL2_ttf)
