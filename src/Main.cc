@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
 
 				// Physics
 				if (GAME.world) {
-					GAME.is_phy_stepping = true;
+					GAME.is_phy_stepping = true; // TODO replace with b2World->IsLocked()
 					GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
 					GAME.is_phy_stepping = false;
 					// Update positions
