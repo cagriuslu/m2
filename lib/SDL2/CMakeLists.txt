@@ -13,5 +13,11 @@ if (WIN32)
 	)
 	target_link_libraries(SDL2 INTERFACE SDL2main)
 else()
-
+	include(ExternalProject)
+	ExternalProject_Add(
+		libSDL2
+		URL ${CMAKE_CURRENT_LIST_DIR}/SDL2-2.0.20.zip
+		CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+		BUILD_COMMAND make -j${PROCESSOR_COUNT}
+	)
 endif()

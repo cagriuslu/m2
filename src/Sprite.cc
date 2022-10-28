@@ -2,7 +2,7 @@
 #include <m2/protobuf/Utils.h>
 #include <Object.pb.h>
 #include <m2/Exception.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 
 m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer) : _sprite_sheet(sprite_sheet) {
 	_surface.reset(IMG_Load(sprite_sheet.resource().c_str()));

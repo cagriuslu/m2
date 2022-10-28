@@ -1,0 +1,11 @@
+if (WIN32)
+
+else()
+    include(ExternalProject)
+    ExternalProject_Add(
+        libfreetype
+        URL ${CMAKE_CURRENT_LIST_DIR}/freetype-2.12.1.tar.gz
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DFT_DISABLE_ZLIB=ON -DFT_DISABLE_BZIP2=ON -DFT_DISABLE_PNG=ON -DFT_DISABLE_HARFBUZZ=ON -DFT_DISABLE_BROTLI=ON
+        BUILD_COMMAND make -j${PROCESSOR_COUNT}
+    )
+endif()

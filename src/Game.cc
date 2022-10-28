@@ -18,7 +18,7 @@
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <m2/sdl/Utils.hh>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <m2/Editor.h>
 #include "m2/Ui.h"
 

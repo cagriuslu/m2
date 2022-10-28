@@ -3,7 +3,7 @@
 #include <m2/Game.hh>
 #include <m2/sdl/Utils.hh>
 #include <m2/Rect2i.h>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <regex>
 #include <filesystem>
 

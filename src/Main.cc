@@ -4,8 +4,8 @@
 #include "m2/sdl/Utils.hh"
 #include <m2g/Ui.h>
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
 #include <m2/Map2i.h>

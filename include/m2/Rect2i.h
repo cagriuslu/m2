@@ -2,7 +2,7 @@
 #define M2_RECT2I_H
 
 #include "Vec2i.h"
-#include <SDL_rect.h>
+#include <SDL2/SDL_rect.h>
 #include <string>
 
 namespace m2 {

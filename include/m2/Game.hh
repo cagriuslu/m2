@@ -20,7 +20,7 @@
 #include <m2/box2d/ContactListener.h>
 #include <m2/Pool.hh>
 #include <SDL.h>
-#include <SDL_ttf.h>
+#include <SDL2/SDL_ttf.h>
 #include <vector>
 #include <box2d/b2_world.h>
 #include <Sprite.pb.h>
