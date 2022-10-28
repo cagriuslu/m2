@@ -1,9 +1,9 @@
 #ifndef M2_QUERY_H
 #define M2_QUERY_H
 
-#include <b2_world.h>
-#include <b2_world_callbacks.h>
-#include <b2_fixture.h>
+#include <box2d/b2_world.h>
+#include <box2d/b2_world_callbacks.h>
+#include <box2d/b2_fixture.h>
 #include <functional>
 
 namespace m2::box2d {

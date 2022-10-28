@@ -2,7 +2,7 @@
 #define M2_PHYSIQUE_H
 
 #include "../Component.h"
-#include <b2_body.h>
+#include <box2d/b2_body.h>
 #include <functional>
 
 namespace m2 {

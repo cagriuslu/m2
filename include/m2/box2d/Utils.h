@@ -4,9 +4,9 @@
 #include "../Vec2f.h"
 #include <BodyBlueprint.pb.h>
 #include "../Game.hh"
-#include <b2_body.h>
-#include <b2_fixture.h>
-#include <b2_world.h>
+#include <box2d/b2_body.h>
+#include <box2d/b2_fixture.h>
+#include <box2d/b2_world.h>
 #include <memory>
 #include <unordered_map>
 

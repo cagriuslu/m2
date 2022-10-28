@@ -13,5 +13,17 @@ if(WIN32)
 		INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/box2d-2.4.1/include/box2d"
 	)
 else()
+	include(ExternalProject)
+	ExternalProject_Add(
+		libbox2d
+		URL ${CMAKE_CURRENT_LIST_DIR}/box2d-2.4.1.zip
+		CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBOX2D_BUILD_UNIT_TESTS=OFF -DBOX2D_BUILD_TESTBED=OFF
+	)
 
+	add_library(box2d STATIC IMPORTED GLOBAL)
+	add_dependencies(box2d libbox2d)
+	set_target_properties(box2d PROPERTIES
+		IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/lib/libbox2d.a"
+		INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}/include"
+	)
 endif()

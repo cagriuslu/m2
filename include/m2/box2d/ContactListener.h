@@ -1,7 +1,7 @@
 #ifndef M2_CONTACTLISTENER_H
 #define M2_CONTACTLISTENER_H
 
-#include <b2_world_callbacks.h>
+#include <box2d/b2_world_callbacks.h>
 #include <functional>
 
 namespace m2::box2d {

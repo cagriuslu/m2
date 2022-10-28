@@ -1,8 +1,8 @@
 #include <m2/box2d/Utils.h>
-#include <b2_circle_shape.h>
-#include <b2_fixture.h>
-#include <b2_polygon_shape.h>
-#include <b2_world.h>
+#include <box2d/b2_circle_shape.h>
+#include <box2d/b2_fixture.h>
+#include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_world.h>
 #include <exception>
 
 namespace m2::box2d {

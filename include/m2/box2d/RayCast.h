@@ -2,9 +2,9 @@
 #define M2_RAYCAST_H
 
 #include "../Vec2f.h"
-#include <b2_world.h>
-#include <b2_world_callbacks.h>
-#include <b2_fixture.h>
+#include <box2d/b2_world.h>
+#include <box2d/b2_world_callbacks.h>
+#include <box2d/b2_fixture.h>
 #include <functional>
 
 namespace m2::box2d {

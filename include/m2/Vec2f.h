@@ -4,7 +4,7 @@
 #include <Dim2f.pb.h>
 #include <Vec2f.pb.h>
 #include <Vec2i.pb.h>
-#include <b2_math.h>
+#include <box2d/b2_math.h>
 #include <string>
 #include <array>
 

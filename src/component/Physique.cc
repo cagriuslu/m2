@@ -1,7 +1,7 @@
 #include "m2/component/Physique.h"
 #include <m2/box2d/Utils.h>
 #include <m2/Game.hh>
-#include <b2_contact.h>
+#include <box2d/b2_contact.h>
 #include <m2/Object.h>
 
 m2::comp::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}

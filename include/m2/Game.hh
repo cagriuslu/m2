@@ -22,7 +22,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <vector>
-#include <b2_world.h>
+#include <box2d/b2_world.h>
 #include <Sprite.pb.h>
 #include <sstream>
 #include "Value.h"
