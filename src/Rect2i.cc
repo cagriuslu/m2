@@ -1,9 +1,12 @@
 #include <m2/Rect2i.h>
+#include <m2/Rect2f.h>
 #include <sstream>
 
 m2::Rect2i::Rect2i() : x(), y(), w(), h() {}
 m2::Rect2i::Rect2i(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
+m2::Rect2i::Rect2i(const Rect2f& r) : x(static_cast<int>(r.x)), y(static_cast<int>(r.y)), w(static_cast<int>(r.w)), h(static_cast<int>(r.h)) {}
 m2::Rect2i::Rect2i(const SDL_Rect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
+m2::Rect2i::Rect2i(const pb::Rect2i& r) : x(r.x()), y(r.y()), w(r.w()), h(r.h()) {}
 
 bool m2::Rect2i::operator==(const Rect2i &other) const {
 	return (x == other.x) && (y == other.y) && (w == other.w) && (h == other.h);
@@ -13,6 +16,9 @@ m2::Rect2i::operator bool() const {
 }
 m2::Rect2i::operator SDL_Rect() const {
 	return SDL_Rect{x, y, w, h};
+}
+m2::Rect2i::operator SDL_FRect() const {
+	return SDL_FRect{static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h)};
 }
 bool m2::Rect2i::point_in_rect(const Vec2i& p) const {
 	return (p.x >= x) && (p.x < (x + w)) && (p.y >= y) && (p.y < (y + h));
@@ -46,6 +52,16 @@ m2::Rect2i m2::Rect2i::trim_to_square() const {
 }
 m2::Rect2i m2::Rect2i::expand(int amount) const {
 	return trim(-amount);
+}
+std::optional<m2::Rect2i> m2::Rect2i::intersect(const m2::Rect2i& other) const {
+	auto a = static_cast<SDL_Rect>(*this);
+	auto b = static_cast<SDL_Rect>(other);
+	SDL_Rect result;
+	if (SDL_IntersectRect(&a, &b, &result)) {
+		return Rect2i{result};
+	} else {
+		return {};
+	}
 }
 
 std::string m2::to_string(const m2::Rect2i& v) {

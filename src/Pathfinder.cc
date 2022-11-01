@@ -36,7 +36,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_smooth_path(const Vec2f& from_f, con
 	}
 
 	// Check if there is direct eyesight
-	if (box2d::check_eyesight(*GAME.world, from_f, to_f, box2d::FIXTURE_CATEGORY_OBSTACLE)) {
+	if (check_eyesight(from, to)) {
 		return {to, from};
 	}
 
@@ -64,7 +64,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 		auto current_frontier_it = frontiers.begin();
 		auto frontier = current_frontier_it->second;
 
-		// If next location to process is the destination, stop
+		// If next location to process is the destination, a path is found. Stop.
 		if (frontier == to) {
 			break;
 		}
@@ -74,7 +74,17 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 		uint32_t reachable_neighbor_count = 0;
 		for (const auto& direction : {Vec2i{0, +1}, Vec2i{+1, 0}, Vec2i{0, -1}, Vec2i{-1, 0}}) {
 			auto neighbor = frontier + direction;
-			if (not _blocked_locations.contains(neighbor) || to == neighbor) {
+
+			bool is_reachable = false;
+			if (frontier == from) {
+				is_reachable = _blocked_locations.contains(from) ? check_eyesight(frontier, neighbor) : not _blocked_locations.contains(neighbor);
+			} else if (not _blocked_locations.contains(neighbor)) {
+				is_reachable = true;
+			} else if (neighbor == to) {
+				is_reachable = check_eyesight(frontier, neighbor);
+			}
+
+			if (is_reachable) {
 				reachable_neighbors[reachable_neighbor_count++] = neighbor;
 			}
 		}
@@ -172,6 +182,10 @@ std::vector<m2::Vec2i> m2::Pathfinder::smoothen_path(const std::vector<Vec2i>& r
 		prev_point2 = point2;
 	}
 	return smooth_path;
+}
+
+bool m2::Pathfinder::check_eyesight(const Vec2i& from, const Vec2i& to) {
+	return box2d::check_eyesight(*GAME.world, Vec2f{from} + Vec2f{0.5f, 0.5f}, Vec2f{to} + Vec2f{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
 }
 
 #define ManhattanDistance(a, b) (abs((a).x - (b).x) + abs((a).y - (b).y))
