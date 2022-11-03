@@ -2,6 +2,8 @@
 #define M2_SPRITE_H
 
 #include <Sprite.pb.h>
+#include "Glyph.h"
+#include "DynamicSheet.h"
 #include <ObjectType.pb.h>
 #include "sdl/Utils.hh"
 #include "Vec2f.h"
@@ -21,19 +23,6 @@ namespace m2 {
 		[[nodiscard]] const pb::SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] SDL_Surface* surface() const;
 		[[nodiscard]] SDL_Texture* texture() const;
-	};
-
-	class DynamicSheet {
-		SDL_Renderer* _renderer; // TODO Use weak-ptr instead
-		std::unique_ptr<SDL_Surface, SdlSurfaceDeleter> _surface;
-		int _h{};
-		std::unique_ptr<SDL_Texture, SdlTextureDeleter> _texture;
-
-	public:
-		explicit DynamicSheet(SDL_Renderer* renderer);
-		[[nodiscard]] SDL_Texture* texture() const;
-		std::pair<SDL_Surface*, SDL_Rect> alloc(int w, int h);
-		SDL_Texture* recreate_texture();
 	};
 
 	class SpriteEffectsSheet : private DynamicSheet {

@@ -1,5 +1,6 @@
 #include "m2/Game.hh"
 #include <m2/Log.h>
+#include <m2/Glyph.h>
 #include <m2/Exception.h>
 #include <m2/Object.h>
 #include <m2/object/God.h>
@@ -73,6 +74,7 @@ m2::Game::Game() {
 	sprites = load_sprites(sprite_sheets, *sprite_effects_sheet, *foreground_companions_sheet);
 	editor_background_sprites = list_editor_background_sprites(sprite_sheets);
 	editor_object_sprites = list_editor_object_sprites(std::string{m2g::objects});
+	glyphs_sheet = GlyphsSheet{sdlRenderer};
 	items = load_items(std::string{m2g::items});
 	animations = load_animations(std::string{m2g::animations});
 }

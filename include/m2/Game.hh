@@ -79,6 +79,7 @@ namespace m2 {
 		std::vector<Sprite> sprites;
 		std::vector<m2g::pb::SpriteType> editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> editor_object_sprites;
+		std::optional<GlyphsSheet> glyphs_sheet;
 		std::vector<pb::Item> items;
 		std::vector<Animation> animations;
 
