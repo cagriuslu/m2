@@ -1,6 +1,8 @@
 #include <m2/Glyph.h>
 #include <m2/Exception.h>
 #include <SDL2/SDL_image.h>
+#include <string_view>
+#include <array>
 
 constexpr std::array<std::string_view, m2::pb::GlyphType_ARRAYSIZE> glyph_resources = {
 	"",
@@ -17,7 +19,7 @@ size_t m2::GlyphsSheet::GlyphKeyHash::operator()(const GlyphKey &k) const {
 }
 
 m2::GlyphsSheet::GlyphsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
-std::pair<SDL_Texture*, SDL_Rect> m2::GlyphsSheet::get_glyph(pb::GlyphType type, unsigned w, unsigned h) {
+std::pair<SDL_Texture*, SDL_Rect> m2::GlyphsSheet::get_glyph(pb::GlyphType type, int w, int h) {
 	GlyphKey key{.type = type, .w = w, .h = h};
 
 	// Check if already renderer
@@ -29,12 +31,12 @@ std::pair<SDL_Texture*, SDL_Rect> m2::GlyphsSheet::get_glyph(pb::GlyphType type,
 		if (!file) {
 			throw M2FATAL("Unable to open glyph file: " + std::string(SDL_GetError()));
 		}
-		auto* svg_surface = IMG_LoadSizedSVG_RW(file, static_cast<int>(w), static_cast<int>(h));
+		auto* svg_surface = IMG_LoadSizedSVG_RW(file, w, h);
 		if (!svg_surface) {
 			throw M2FATAL("Unable to open glyph file: " + std::string(IMG_GetError()));
 		}
 
-		auto [dst_surface, dst_rect] = alloc(static_cast<int>(w), static_cast<int>(h));
+		auto [dst_surface, dst_rect] = alloc(w, h);
 		if (SDL_BlitSurface(svg_surface, nullptr, dst_surface, &dst_rect)) {
 			throw M2FATAL("Unable to blit glyph: " + std::string(SDL_GetError()));
 		}

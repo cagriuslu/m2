@@ -65,6 +65,11 @@ uint32_t SdlUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks)
 	return ticks;
 }
 
+void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel) {
+	auto* target_pixel = (uint32_t*)((uint8_t*)surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel);
+	*target_pixel = pixel;
+}
+
 SDL_Rect m2::sdl::expand_rect(const SDL_Rect& rect, int diff) {
 	return {
 		rect.x - diff,

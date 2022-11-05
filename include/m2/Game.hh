@@ -4,6 +4,7 @@
 #include <m2g/Proxy.h>
 #include "Level.h"
 #include "Group.h"
+#include "Shape.h"
 #include "Sprite.h"
 #include <m2g/component/Defense.h>
 #include <m2g/component/Offense.h>
@@ -80,6 +81,7 @@ namespace m2 {
 		std::vector<m2g::pb::SpriteType> editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> editor_object_sprites;
 		std::optional<GlyphsSheet> glyphs_sheet;
+		std::optional<ShapesSheet> shapes_sheet;
 		std::vector<pb::Item> items;
 		std::vector<Animation> animations;
 

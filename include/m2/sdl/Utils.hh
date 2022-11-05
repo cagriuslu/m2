@@ -10,6 +10,7 @@ uint32_t SdlUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks)
 
 namespace m2 {
 	namespace sdl {
+		void set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel);
 		SDL_Rect expand_rect(const SDL_Rect& rect, int diff); // Replace with Rect2i::expand
 		SDL_Rect to_rect(const pb::Rect2i& pb_rect); // Replace with Rect2i
 	}
