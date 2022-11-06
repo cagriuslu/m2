@@ -26,6 +26,7 @@ namespace m2::comp {
 		~Physique();
 
 		[[nodiscard]] Object& parent() const;
+		void draw_shapes() const;
 
 		static void contact_cb(b2Contact& contact);
 	};

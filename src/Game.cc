@@ -117,13 +117,13 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 		for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
 			auto sprite_type = lb->background_rows(y).items(x);
 			if (sprite_type) {
-				obj::create_tile(m2::Vec2f{x, y}, sprites[sprite_type]);
+				obj::create_tile(Vec2f{x, y} + Vec2f{0.5f, 0.5f}, sprites[sprite_type]);
 			}
 		}
 	}
 	// Create foreground objects
 	for (const auto& fg_object : lb->objects()) {
-		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()});
+		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()} + Vec2f{0.5f, 0.5f});
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
@@ -221,73 +221,40 @@ m2::Object* m2::Game::player() {
 	return objects.get(playerId);
 }
 
-void m2::Game::update_window_dims(int width, int height) {
-	windowRect = SDL_Rect{0, 0, width, height};
+void m2::Game::update_window_dims(int window_width, int window_height) {
+	windowRect = SDL_Rect{0, 0, window_width, window_height};
 
-	auto fw = (float)width;
-	auto fh = (float)height;
-	float aspectRatioDiff = (fw / fh) - GAME_AND_HUD_ASPECT_RATIO;
-	if (0.001f < aspectRatioDiff) {
-		// Screen is wider than expected, we need envelope on left & right
-		gameRect.w = (int)roundf(fh * GAME_ASPECT_RATIO);
-		gameRect.h = height;
-
-		gameAndHudRect.w = (int)roundf(fh * GAME_AND_HUD_ASPECT_RATIO);
-		gameAndHudRect.h = height;
-
-		int envelopeWidth = (width - gameAndHudRect.w) / 2;
-		firstEnvelopeRect = SDL_Rect{ 0, 0, envelopeWidth, height };
-		secondEnvelopeRect = SDL_Rect{ width - envelopeWidth, 0, envelopeWidth, height };
-		gameAndHudRect.x = envelopeWidth;
-		gameAndHudRect.y = 0;
-
-		int hudWidth = (int)roundf((float) gameAndHudRect.h * HUD_ASPECT_RATIO);
-		leftHudRect = SDL_Rect{ envelopeWidth, 0, hudWidth, gameAndHudRect.h };
-		rightHudRect = SDL_Rect{ width - envelopeWidth - hudWidth, 0, hudWidth, gameAndHudRect.h };
-		gameRect.x = envelopeWidth + hudWidth;
-		gameRect.y = 0;
-	} else if (aspectRatioDiff < -0.001f) {
-		// Screen is taller than expected, we need envelope on top & bottom
-		gameRect.w = width;
-		gameRect.h = (int)roundf(fw / GAME_ASPECT_RATIO);
-
-		gameAndHudRect.w = width;
-		gameAndHudRect.h = (int)roundf(fw / GAME_AND_HUD_ASPECT_RATIO);
-
-		int envelopeHeight = (height - gameAndHudRect.h) / 2;
-		firstEnvelopeRect = SDL_Rect{0, 0, width, envelopeHeight };
-		secondEnvelopeRect = SDL_Rect{0, height - envelopeHeight, width, envelopeHeight };
-		gameAndHudRect.x = 0;
-		gameAndHudRect.y = envelopeHeight;
-
-		int hudWidth = (int)roundf((float) gameAndHudRect.h * HUD_ASPECT_RATIO);
-		leftHudRect = SDL_Rect{0, envelopeHeight, hudWidth, gameAndHudRect.h };
-		rightHudRect = SDL_Rect{ width - hudWidth, envelopeHeight, hudWidth, gameAndHudRect.h };
-		gameRect.x = hudWidth;
-		gameRect.y = envelopeHeight;
+	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
+	if (window_width < ideal_width) {
+		// Screen is taller than expected
+		int provisional_game_height = window_width * GAME_AND_HUD_ASPECT_RATIO_DIV / GAME_AND_HUD_ASPECT_RATIO_MUL;
+		game_ppm = provisional_game_height * game_height_div_m / game_height_mul_m;
 	} else {
-		gameRect.w = (int)roundf(fh * GAME_ASPECT_RATIO);
-		gameRect.h = height;
-
-		gameAndHudRect.w = width;
-		gameAndHudRect.h = height;
-
-		firstEnvelopeRect = SDL_Rect{ 0,0,0,0, };
-		secondEnvelopeRect = SDL_Rect{ 0,0,0,0, };
-		gameAndHudRect.x = 0;
-		gameAndHudRect.y = 0;
-
-		int hudWidth = (int)roundf((float) gameAndHudRect.h * HUD_ASPECT_RATIO);
-		leftHudRect = SDL_Rect{ 0, 0, hudWidth, gameAndHudRect.h };
-		rightHudRect = SDL_Rect{ width - hudWidth, 0, hudWidth, gameAndHudRect.h };
-		gameRect.x = hudWidth;
-		gameRect.y = 0;
+		// Screen is exact or wider
+		game_ppm = window_height * game_height_div_m / game_height_mul_m;
 	}
-	console_rect.x = gameRect.x;
-	console_rect.y = gameRect.y + gameRect.h * 22 / 24;
-	console_rect.w = gameRect.w;
-	console_rect.h = gameRect.h * 2 / 24;
-	game_ppm = (float) gameAndHudRect.h / game_height_m;
+
+	int game_height = game_ppm * game_height_mul_m / game_height_div_m;
+	int game_width = game_height * GAME_ASPECT_RATIO_MUL / GAME_ASPECT_RATIO_DIV;
+	int hud_height = game_height;
+	int hud_width = game_height * HUD_ASPECT_RATIO_MUL / HUD_ASPECT_RATIO_DIV;
+
+	int top_envelope_size = (window_height - game_height) / 2;
+	int bottom_envelope_size = (window_height - game_height) - top_envelope_size;
+	int left_envelope_size = (window_width - game_width - 2 * hud_width) / 2;
+	int right_envelope_size = (window_width - game_width - 2 * hud_width) - left_envelope_size;
+
+	topEnvelopeRect = SDL_Rect{0, 0, window_width, top_envelope_size};
+	bottomEnvelopeRect = SDL_Rect{0, top_envelope_size + game_height, window_width, bottom_envelope_size};
+	leftEnvelopeRect = SDL_Rect{0, top_envelope_size, left_envelope_size, game_height};
+	rightEnvelopeRect = SDL_Rect{left_envelope_size + 2 * hud_width + game_width, top_envelope_size, right_envelope_size, game_height};
+
+	gameAndHudRect = SDL_Rect{left_envelope_size, top_envelope_size, 2 * hud_width + game_width, game_height};
+	leftHudRect = SDL_Rect{left_envelope_size, top_envelope_size, hud_width, hud_height};
+	rightHudRect = SDL_Rect{left_envelope_size + hud_width + game_width, top_envelope_size, hud_width, hud_height};
+	gameRect = SDL_Rect{left_envelope_size + hud_width, top_envelope_size, game_width, game_height};
+
+	console_rect = SDL_Rect{gameRect.x, gameRect.y + gameRect.h * 22 / 24, gameRect.w, gameRect.h * 2 / 24};
 }
 
 void m2::Game::update_mouse_position() {
@@ -311,6 +278,6 @@ void m2::Game::execute_deferred_actions() {
 	level->deferred_actions.clear();
 }
 
-float m2::Game::pixel_scale(float sprite_ppm) const {
-	return game_ppm / sprite_ppm;
+std::pair<int, int> m2::Game::pixel_scale_mul_div(int sprite_ppm) const {
+	return std::make_pair(game_ppm, sprite_ppm);
 }

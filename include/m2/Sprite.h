@@ -50,7 +50,7 @@ namespace m2 {
 		std::optional<SDL_Rect> _foreground_companion_rect;
 		Vec2f _foreground_companion_center_offset_m{};
 
-		unsigned _ppm{};
+		int _ppm{};
 		Vec2f _center_offset_m;
 		Vec2f _background_collider_center_offset_m;
 		Vec2f _background_collider_rect_dims_m;
@@ -70,7 +70,7 @@ namespace m2 {
 		[[nodiscard]] bool has_foreground_companion() const;
 		[[nodiscard]] SDL_Rect foreground_companion_rect() const;
 		[[nodiscard]] Vec2f foreground_companion_center_offset_m() const;
-		[[nodiscard]] unsigned ppm() const;
+		[[nodiscard]] int ppm() const;
 		[[nodiscard]] Vec2f center_offset_m() const;
 		[[nodiscard]] Vec2f background_collider_center_offset_m() const;
 		[[nodiscard]] Vec2f background_collider_rect_dims_m() const;

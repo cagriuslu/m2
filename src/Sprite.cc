@@ -99,7 +99,7 @@ SDL_Rect m2::ForegroundCompanionsSheet::create_foreground_companion(const Sprite
 m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, ForegroundCompanionsSheet& foreground_companions_sheet, const pb::Sprite& sprite) :
 	_sprite_sheet(&sprite_sheet), _sprite(sprite), _effects_sheet(&sprite_effects_sheet),
 	_foreground_companions_sheet(&foreground_companions_sheet),
-	_ppm(sprite.override_ppm() ? sprite.override_ppm() : sprite_sheet.sprite_sheet().ppm()),
+	_ppm(sprite.override_ppm() ? (int)sprite.override_ppm() : (int)sprite_sheet.sprite_sheet().ppm()),
 	_center_offset_m(Vec2f{sprite.center_offset_px()} / _ppm),
 	_background_collider_center_offset_m(Vec2f{sprite.background_collider().center_offset_px()} / _ppm),
 	_background_collider_rect_dims_m(Vec2f{sprite.background_collider().rect_dims_px()} / _ppm),
@@ -161,7 +161,7 @@ SDL_Rect m2::Sprite::foreground_companion_rect() const {
 m2::Vec2f m2::Sprite::foreground_companion_center_offset_m() const {
 	return _foreground_companion_center_offset_m;
 }
-unsigned m2::Sprite::ppm() const {
+int m2::Sprite::ppm() const {
 	return _ppm;
 }
 m2::Vec2f m2::Sprite::center_offset_m() const {

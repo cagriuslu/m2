@@ -271,14 +271,23 @@ int main(int argc, char **argv) {
 			IF(light_it.first->on_draw)(*light_it.first);
         }
 
+#ifdef DEBUG
+		// Draw debug shapes
+		for (auto physique_it : GAME.physics) {
+			physique_it.first->draw_shapes();
+		}
+#endif
+
 		// HUD
 		IF(GAME.leftHudUIState)->draw();
 		IF(GAME.rightHudUIState)->draw();
 
 		// Draw envelope
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.firstEnvelopeRect);
-		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.secondEnvelopeRect);
+		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.topEnvelopeRect);
+		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.bottomEnvelopeRect);
+		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.leftEnvelopeRect);
+		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.rightEnvelopeRect);
 
 		// Present
 		SDL_RenderPresent(GAME.sdlRenderer);

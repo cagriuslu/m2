@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.21)
 
+option(DEBUG "Enable debug mode" OFF)
+if(DEBUG)
+    add_compile_definitions(DEBUG)
+endif()
+
 # Properties that needs to be set BEFORE project()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)

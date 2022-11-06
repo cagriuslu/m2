@@ -35,9 +35,12 @@
 #define GAME (::m2::Game::instance())
 #define CONST_GAME (::m2::Game::const_instance())
 
-#define GAME_AND_HUD_ASPECT_RATIO (16.0f / 9.0f)
-#define GAME_ASPECT_RATIO (5.0f / 4.0f)
-#define HUD_ASPECT_RATIO ((GAME_AND_HUD_ASPECT_RATIO - GAME_ASPECT_RATIO) / 2.0f) // which is 19:72
+#define GAME_AND_HUD_ASPECT_RATIO_MUL (16)
+#define GAME_AND_HUD_ASPECT_RATIO_DIV (9)
+#define GAME_ASPECT_RATIO_MUL (5)
+#define GAME_ASPECT_RATIO_DIV (4)
+#define HUD_ASPECT_RATIO_MUL (GAME_AND_HUD_ASPECT_RATIO_MUL * GAME_ASPECT_RATIO_DIV - GAME_ASPECT_RATIO_MUL * GAME_AND_HUD_ASPECT_RATIO_DIV)
+#define HUD_ASPECT_RATIO_DIV (GAME_AND_HUD_ASPECT_RATIO_DIV * GAME_ASPECT_RATIO_DIV * 2)
 
 namespace m2 {
 	struct Game {
@@ -62,13 +65,16 @@ namespace m2 {
 		SDL_Rect windowRect{};
 		SDL_Rect gameRect{};
 		SDL_Rect gameAndHudRect{};
-		SDL_Rect firstEnvelopeRect{};
-		SDL_Rect secondEnvelopeRect{};
+		SDL_Rect topEnvelopeRect{};
+		SDL_Rect bottomEnvelopeRect{};
+		SDL_Rect leftEnvelopeRect{};
+		SDL_Rect rightEnvelopeRect{};
 		SDL_Rect leftHudRect{};
 		SDL_Rect rightHudRect{};
         SDL_Rect console_rect{};
-		float game_height_m{16.0f}; // This controls the zoom of the game
-		float game_ppm{};
+		int game_height_mul_m{16}; // Game height controls the zoom of the game
+		int game_height_div_m{1};
+		int game_ppm{};
 		TTF_Font *ttfFont{};
 
 		////////////////////////////////////////////////////////////////////////
@@ -139,13 +145,13 @@ namespace m2 {
 		Object* player();
 
 		// Modifiers
-		void update_window_dims(int width, int height);
+		void update_window_dims(int window_width, int window_height);
 		void update_mouse_position();
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
 
 		// Helpers
-		float pixel_scale(float sprite_ppm) const;
+		std::pair<int, int> pixel_scale_mul_div(int sprite_ppm) const;
 	};
 }
 

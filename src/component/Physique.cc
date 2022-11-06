@@ -1,7 +1,9 @@
 #include "m2/component/Physique.h"
 #include <m2/box2d/Utils.h>
 #include <m2/Game.hh>
+#include <m2/Shape.h>
 #include <box2d/b2_contact.h>
+#include <box2d/b2_shape.h>
 #include <m2/Object.h>
 
 m2::comp::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
@@ -25,6 +27,54 @@ m2::comp::Physique::~Physique() {
 
 m2::Object& m2::comp::Physique::parent() const {
 	return *GAME.objects.get(object_id);
+}
+
+void m2::comp::Physique::draw_shapes() const {
+	auto position = Vec2f{body->GetPosition()};
+	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+		b2AABB aabb;
+		fixture->GetShape()->ComputeAABB(&aabb, body->GetTransform(), 0);
+
+		switch (fixture->GetType()) {
+			case b2Shape::Type::e_polygon: {
+				int rect_w = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm);
+				int rect_h = (int)roundf((aabb.upperBound.y - aabb.lowerBound.y) * (float)GAME.game_ppm);
+				auto [texture, src_rect] = GAME.shapes_sheet->get_rectangle_aa(SDL_Color{255, 0, 0, 255}, rect_w, rect_h);
+
+				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position);
+				auto dst_rect = SDL_Rect{
+					(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w / 2),
+					(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h / 2),
+					src_rect.w,
+					src_rect.h
+				};
+
+				if (SDL_RenderCopy(GAME.sdlRenderer, texture, &src_rect, &dst_rect)) {
+					throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
+				}
+				break;
+			}
+			case b2Shape::Type::e_circle: {
+				int r = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm) / 2;
+				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(SDL_Color{255, 0, 0, 255}, r);
+
+				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position);
+				auto dst_rect = SDL_Rect{
+					(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w / 2),
+					(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h / 2),
+					src_rect.w,
+					src_rect.h
+				};
+
+				if (SDL_RenderCopy(GAME.sdlRenderer, texture, &src_rect, &dst_rect)) {
+					throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
+				}
+				break;
+			}
+			default:
+				throw M2FATAL("Unsupported shape");
+		}
+	}
 }
 
 void m2::comp::Physique::contact_cb(b2Contact& contact) {
