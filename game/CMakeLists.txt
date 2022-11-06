@@ -4,17 +4,9 @@ if(NOT DEFINED GAME)
 endif()
 
 # Descend into GAME's directory
-if(${GAME} MATCHES "PLAT")
-    add_subdirectory(PLAT)
-elseif(${GAME} MATCHES "RPG")
-    add_subdirectory(RPG)
-elseif(${GAME} MATCHES "RTS")
-    add_subdirectory(RTS)
-else()
-    message("${GAME} not implemented")
-endif()
+add_subdirectory(${GAME})
 
 # Export variables to parent
-set(IMPL_PROTO_FILES "${IMPL_PROTO_FILES}" PARENT_SCOPE)
-set(IMPL_SOURCES "${IMPL_SOURCES}" PARENT_SCOPE)
-set(IMPL_INCLUDE_DIRS "${IMPL_INCLUDE_DIRS}" PARENT_SCOPE)
+set(GAME_PROTO_FILES "${GAME_PROTO_FILES}" PARENT_SCOPE)
+set(GAME_SOURCES "${GAME_SOURCES}" PARENT_SCOPE)
+set(GAME_INCLUDE_DIRS "${GAME_INCLUDE_DIRS}" PARENT_SCOPE)
