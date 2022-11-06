@@ -203,11 +203,6 @@ void m2::Game::unload_level() {
 	physics.clear();
 	monitors.clear();
 	objects.clear();
-
-	// Check if groups are empty, as it should be
-	if (not groups.empty()) {
-		LOG_WARN("Level unloaded but not all groups are erased");
-	}
 	groups.clear();
 
 	delete contactListener;

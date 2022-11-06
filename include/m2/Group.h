@@ -21,7 +21,7 @@ namespace m2 {
 		explicit GroupId(const pb::Group& group);
 		bool operator==(const GroupId& other) const;
 
-		operator bool() const;
+		explicit operator bool() const;
 
 		struct Hash {
 			std::size_t operator()(const GroupId& k) const {
