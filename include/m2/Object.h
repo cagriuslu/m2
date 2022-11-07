@@ -48,6 +48,7 @@ namespace m2 {
         // Destructor
         ~Object();
 
+		[[nodiscard]] Id id() const;
 		[[nodiscard]] GroupId group_id() const;
 	    [[nodiscard]] MonitorId monitor_id() const;
 	    [[nodiscard]] PhysiqueId physique_id() const;

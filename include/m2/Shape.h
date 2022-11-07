@@ -2,7 +2,6 @@
 #define M2_SHAPE_H
 
 #include "DynamicSheet.h"
-#include <Shape.pb.h>
 
 namespace m2 {
 	class ShapesSheet : private DynamicSheet {

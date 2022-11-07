@@ -86,6 +86,10 @@ m2::Object::~Object() {
 	}
 }
 
+m2::Id m2::Object::id() const {
+	// Looking up the id of the object itself is not very common
+	return GAME.objects.get_id(this);
+}
 m2::GroupId m2::Object::group_id() const {
 	return _group_id;
 }

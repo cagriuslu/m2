@@ -1,0 +1,22 @@
+{
+  "sheets": [
+    {
+      "resource": "resource/game/MINE/cartoonrpgcharacters1/PNG/DWARF/6.png",
+      "ppm": 162,
+      "sprites": [
+        {
+          "type": "NO_SPRITE"
+        },
+        {
+          "type": "DWARF_FULL",
+          "rect": {"x": 0, "y": 0, "w": 162, "h": 176},
+          "centerOffsetPx" : {"x": -27, "y": 88},
+          "backgroundCollider": {
+            "centerOffsetPx": {"x": -27, "y": 60},
+            "circRadiusPx": 28
+          }
+        }
+      ]
+    }
+  ]
+}

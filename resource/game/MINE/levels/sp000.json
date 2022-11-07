@@ -1,0 +1,13 @@
+{
+  "backgroundRows":[
+  ],
+  "objects":[
+    {
+      "position":{
+        "x":2,
+        "y":3
+      },
+      "type":"DWARF"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "objects": [
+    {
+      "type": "NO_OBJECT"
+    },
+    {
+      "type": "DWARF",
+      "editor_sprite_type": "DWARF_FULL"
+    }
+  ]
+}
