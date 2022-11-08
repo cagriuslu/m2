@@ -121,15 +121,8 @@ namespace m2 {
         }
 
 		void free(Id id) {
-			static const Item model = {};
-			static const auto t_ptr = reinterpret_cast<const char*>(&model.data);
-			static const auto model_ptr = reinterpret_cast<const char*>(&model);
-			static const auto offset = t_ptr - model_ptr;
-
-            T* data = get(id);
-            if (data) {
-                auto* byte_ptr = reinterpret_cast<char*>(data);
-                auto* item_ptr = reinterpret_cast<Item*>(byte_ptr - offset);
+			auto* item_ptr = get_array_item(id);
+            if (item_ptr) {
                 // Get index of itm
                 auto index = item_ptr->id & 0xFFFFFFull;
                 // Clear itm (avoid swap-delete, objects might rely on `this`, ex. Pool ID lookups)
@@ -200,14 +193,23 @@ namespace m2 {
 				throw M2ERROR("Pool out of bounds");
 			}
 		}
+	private:
+		Item* get_array_item(Id id) {
+			if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
+				const auto candidate_idx = (id & 0xFFFFFFull);
+				auto& item = _array[candidate_idx];
+				if (item.id == (id & 0xFFFFFFFFFFFFull)) {
+					return &item;
+				}
+			}
+			return nullptr;
+		}
+	public:
         T* get(Id id) {
-            if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
-                const auto candidate_idx = (id & 0xFFFFFFull);
-                auto& item = _array[candidate_idx];
-                if (item.id == (id & 0xFFFFFFFFFFFFull)) {
-                    return &item.data;
-                }
-            }
+			auto* item = get_array_item(id);
+			if (item) {
+				return &item->data;
+			}
             return nullptr;
         }
         Id get_id(const T* data) const {
