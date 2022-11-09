@@ -108,7 +108,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	// Reset state
 	events.clear();
 	is_phy_stepping = false;
-	GAME.world = new b2World(b2Vec2{0.0f, 0.0f});
+	GAME.world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{});
 	GAME.contactListener = new m2::box2d::ContactListener(m2::comp::Physique::contact_cb);
 	GAME.world->SetContactListener(GAME.contactListener);
 
