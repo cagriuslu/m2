@@ -64,7 +64,7 @@ m2::Game::Game() {
 	SDL_SetTextureBlendMode(sdlLightTexture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(sdlLightTexture, 0);
 	SDL_SetTextureColorMod(sdlLightTexture, 127, 127, 127);
-	if ((ttfFont = TTF_OpenFont("resource/fonts/perfect_dos_vga_437/Perfect DOS VGA 437.ttf", 32)) == nullptr) {
+	if ((ttfFont = TTF_OpenFont("resource/fonts/VT323/VT323-Regular.ttf", 32)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
 	}
 
