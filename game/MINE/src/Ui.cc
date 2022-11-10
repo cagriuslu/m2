@@ -31,11 +31,13 @@ const Blueprint m2g::ui::entry = {
 		Blueprint::Widget{
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.border_width_px = 1,
+			.padding_width_px = 5,
 			.variant = entry_variant_2
 		},
 		Blueprint::Widget{
 			.x = 45, .y = 55, .w = 10, .h = 10,
 			.border_width_px = 1,
+			.padding_width_px = 5,
 			.variant = entry_variant_3
 		}
 	}
@@ -61,11 +63,13 @@ const Blueprint m2g::ui::pause = {
 		Blueprint::Widget{
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.border_width_px = 1,
+			.padding_width_px = 5,
 			.variant = pause_variant_1
 		},
 		Blueprint::Widget{
 			.x = 45, .y = 55, .w = 10, .h = 10,
 			.border_width_px = 1,
+			.padding_width_px = 5,
 			.variant = pause_variant_2
 		}
 	}

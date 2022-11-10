@@ -63,8 +63,7 @@ namespace m2::ui {
 				std::function<Action(const std::string& selection)> action_callback;
 			};
 			struct IntegerSelection {
-				// Values are inclusive
-				int min_value, max_value;
+				int min_value, max_value; /// Values are inclusive
 				int initial_value;
 				std::function<Action(int value)> action_callback;
 			};
