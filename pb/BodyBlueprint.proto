@@ -41,8 +41,9 @@ message Fixture {
     RectangleBodyParameters rect = 1;
     CircularBodyParameters circ = 2;
   }
-  FixtureCategory category = 3;
-  bool is_sensor = 4;
+  optional float friction = 3;
+  FixtureCategory category = 4;
+  bool is_sensor = 5;
 }
 
 message BodyBlueprint {

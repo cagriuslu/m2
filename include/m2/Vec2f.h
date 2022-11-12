@@ -28,6 +28,7 @@ namespace m2 {
 		Vec2f operator+(const float& rhs) const;
 		Vec2f& operator+=(const Vec2f& rhs);
 		Vec2f operator-(const Vec2f& rhs) const;
+		Vec2f operator-(const float& rhs) const;
 		Vec2f operator*(const float& rhs) const;
 		Vec2f operator/(const float& rhs) const;
 		Vec2f operator/(const int& rhs) const;
@@ -46,6 +47,7 @@ namespace m2 {
 		[[nodiscard]] float angle_rads() const;
 
 		[[nodiscard]] Vec2f normalize() const;
+		[[nodiscard]] Vec2f ln() const;
 		[[nodiscard]] Vec2f round() const;
 		[[nodiscard]] Vec2i iround() const;
 		[[nodiscard]] Vec2f floor() const;

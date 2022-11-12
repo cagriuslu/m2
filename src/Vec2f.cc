@@ -28,6 +28,9 @@ m2::Vec2f& m2::Vec2f::operator+=(const Vec2f& rhs) {
 m2::Vec2f m2::Vec2f::operator-(const Vec2f& rhs) const {
 	return {x - rhs.x, y - rhs.y};
 }
+m2::Vec2f m2::Vec2f::operator-(const float& rhs) const {
+	return {x - rhs, y - rhs};
+}
 m2::Vec2f m2::Vec2f::operator*(const float& rhs) const {
 	return {x * rhs, y * rhs};
 }
@@ -81,6 +84,9 @@ m2::Vec2f m2::Vec2f::normalize() const {
 		return {x / len, y / len};
 	}
 	return {};
+}
+m2::Vec2f m2::Vec2f::ln() const {
+	return {logf(x), logf(y)};
 }
 m2::Vec2f m2::Vec2f::round() const {
 	return {roundf(x), roundf(y)};

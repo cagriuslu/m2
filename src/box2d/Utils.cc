@@ -74,7 +74,7 @@ b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f positio
 			polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(Vec2f{fixture_blueprint.rect().center_offset()}), fixture_blueprint.rect().angle());
 			fixtureDef.shape = &polygon_shape;
 		}
-		fixtureDef.friction = 0.05f;
+		fixtureDef.friction = fixture_blueprint.has_friction() ? fixture_blueprint.friction() : 0.1f;
 		fixtureDef.filter.categoryBits = FixtureCategory_to_collision_category_map[fixture_blueprint.category()];
 		fixtureDef.filter.maskBits = FixtureCategory_to_collision_bits_map[fixture_blueprint.category()];
 		b2Fixture* fixture = body->CreateFixture(&fixtureDef);
