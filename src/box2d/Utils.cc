@@ -98,12 +98,11 @@ b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f positio
 	return body;
 }
 
-void m2::box2d::destroy_body(b2Body*& body) {
+void m2::box2d::destroy_body(b2Body* body) {
 	if (GAME.is_phy_stepping) {
 		throw std::runtime_error("b2Body is destroyed during physics step");
 	} else {
 		GAME.world->DestroyBody(body);
-		body = nullptr;
 	}
 }
 

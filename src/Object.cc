@@ -5,23 +5,13 @@
 #include "m2/component/Graphic.h"
 #include "m2/component/Light.h"
 
-m2::Object::Object(const m2::Vec2f &position) :
-	position(position),
-	_group_id(),
-	_group_index(0),
-	_monitor_id(0),
-	_physique_id(0),
-	_graphic_id(0),
-	_terrain_graphic_id(0),
-	_light_id(0),
-	_defense_id(0),
-	_offense_id(0) {}
+m2::Object::Object(const m2::Vec2f &position) : position(position) {}
 
 m2::Object::Object(Object&& other) noexcept :
 	position(other.position),
 	impl(std::move(other.impl)),
 	_group_id(other._group_id),
-	_group_index(other._group_index),
+	_index_in_group(other._index_in_group),
 	_monitor_id(other._monitor_id),
 	_physique_id(other._physique_id),
 	_graphic_id(other._graphic_id),
@@ -30,7 +20,7 @@ m2::Object::Object(Object&& other) noexcept :
 	_defense_id(other._defense_id),
 	_offense_id(other._offense_id) {
 	other._group_id = {};
-	other._group_index = 0;
+	other._index_in_group = 0;
 	other._monitor_id = 0;
 	other._physique_id = 0;
 	other._graphic_id = 0;
@@ -43,7 +33,7 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(position, other.position);
 	std::swap(impl, other.impl);
 	std::swap(_group_id, other._group_id);
-	std::swap(_group_index, other._group_index);
+	std::swap(_index_in_group, other._index_in_group);
 	std::swap(_monitor_id, other._monitor_id);
 	std::swap(_physique_id, other._physique_id);
 	std::swap(_graphic_id, other._graphic_id);
@@ -57,7 +47,7 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 m2::Object::~Object() {
 	auto id = GAME.objects.get_id(this);
 	if (_group_id) {
-		GAME.groups[_group_id]->remove_member(_group_index);
+		GAME.groups[_group_id]->remove_member(_index_in_group);
 	}
 	if (_monitor_id) {
 		GAME.monitors.free(_monitor_id);
@@ -86,7 +76,7 @@ m2::Object::~Object() {
 	}
 }
 
-m2::Id m2::Object::id() const {
+m2::ObjectId m2::Object::id() const {
 	// Looking up the id of the object itself is not very common
 	return GAME.objects.get_id(this);
 }
@@ -142,8 +132,9 @@ m2g::comp::Offense& m2::Object::offense() const {
 
 void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 	_group_id = group_id;
-	_group_index = group_index;
+	_index_in_group = group_index;
 }
+
 m2::comp::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;

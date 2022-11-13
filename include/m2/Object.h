@@ -32,7 +32,7 @@ namespace m2 {
     /// If the component is iterated by the Main Game Loop => Pool
     /// If the component is created and destroyed rapidly => Pool
     /// Else => Data
-    struct Object {
+    struct Object final {
         m2::Vec2f position;
         // Data
         std::unique_ptr<ObjectImpl> impl;
@@ -48,7 +48,7 @@ namespace m2 {
         // Destructor
         ~Object();
 
-		[[nodiscard]] Id id() const;
+		[[nodiscard]] ObjectId id() const;
 		[[nodiscard]] GroupId group_id() const;
 	    [[nodiscard]] MonitorId monitor_id() const;
 	    [[nodiscard]] PhysiqueId physique_id() const;
@@ -68,6 +68,8 @@ namespace m2 {
         [[nodiscard]] m2g::comp::Offense& offense() const;
 
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
+
+		std::pair<Object&, ObjectId> add_child(const m2::Vec2f& position);
 		comp::Monitor& add_monitor();
 		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy);
 		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& pre_gfx);
@@ -83,10 +85,7 @@ namespace m2 {
 
 	private:
 		GroupId _group_id{};
-	    IndexInGroup _group_index{};
-		// TODO use parent-child relationship for objects that needs to be destroyed once their parent is destroyed
-		ObjectId _parent_id{};
-		std::unique_ptr<Pool<ObjectId,16>> _children;
+	    IndexInGroup _index_in_group{};
 	    // Components
 	    MonitorId _monitor_id{};
 	    PhysiqueId _physique_id{};

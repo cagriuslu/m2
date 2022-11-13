@@ -38,7 +38,7 @@ namespace m2::box2d {
 	constexpr uint16_t FIXTURE_CATEGORY_FOE_ALL = FIXTURE_CATEGORY_FOE | FIXTURE_CATEGORY_FOE_ALL_OFFENSE;
 
 	b2Body* create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint);
-	void destroy_body(b2Body*& body);
+	void destroy_body(b2Body* body);
 
     b2AABB expand_aabb(const b2AABB& in, float amount);
 	bool is_obstacle(const b2Fixture* fixture);
