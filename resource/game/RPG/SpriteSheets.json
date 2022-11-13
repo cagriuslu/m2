@@ -465,6 +465,7 @@
             "circRadiusPx": 7.5
           },
           "foregroundCollider": {
+            "centerOffsetPx": {"x": 0, "y": -10},
             "circRadiusPx": 9.5
           }
         },

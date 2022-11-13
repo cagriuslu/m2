@@ -36,6 +36,8 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.mutable_background_fixture()->set_is_sensor(false);
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].foreground_collider_circ_radius_m());
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(GAME.sprites[blueprint->main_sprite].foreground_collider_center_offset_m().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.sprites[blueprint->main_sprite].foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->set_is_sensor(false);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(blueprint->mass_kg);

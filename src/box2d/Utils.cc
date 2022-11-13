@@ -66,8 +66,10 @@ b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f positio
 		b2FixtureDef fixtureDef;
 		b2CircleShape circle_shape;
 		b2PolygonShape polygon_shape;
+
 		if (fixture_blueprint.has_circ()) {
 			circle_shape.m_radius = fixture_blueprint.circ().radius();
+			circle_shape.m_p = static_cast<b2Vec2>(Vec2f{fixture_blueprint.circ().center_offset()});
 			fixtureDef.shape = &circle_shape;
 		} else {
 			m2::Vec2f halfDims = Vec2f{fixture_blueprint.rect().dims()} * 0.5f;

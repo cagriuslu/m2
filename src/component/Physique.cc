@@ -4,6 +4,8 @@
 #include <m2/Shape.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_shape.h>
+#include <box2d/b2_polygon_shape.h>
+#include <box2d/b2_circle_shape.h>
 #include <m2/Object.h>
 
 m2::comp::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
@@ -37,11 +39,14 @@ void m2::comp::Physique::draw_shapes() const {
 
 		switch (fixture->GetType()) {
 			case b2Shape::Type::e_polygon: {
+				const auto* shape = dynamic_cast<const b2PolygonShape*>(fixture->GetShape());
 				int rect_w = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm);
 				int rect_h = (int)roundf((aabb.upperBound.y - aabb.lowerBound.y) * (float)GAME.game_ppm);
 				auto [texture, src_rect] = GAME.shapes_sheet->get_rectangle_aa(SDL_Color{255, 0, 0, 255}, rect_w, rect_h);
 
-				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position);
+				auto center_offset_m = Vec2f{shape->m_centroid};
+
+				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
 				auto dst_rect = SDL_Rect{
 					(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w / 2),
 					(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h / 2),
@@ -55,10 +60,13 @@ void m2::comp::Physique::draw_shapes() const {
 				break;
 			}
 			case b2Shape::Type::e_circle: {
+				const auto* shape = dynamic_cast<const b2CircleShape*>(fixture->GetShape());
 				int r = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm) / 2;
 				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(SDL_Color{255, 0, 0, 255}, r);
 
-				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position);
+				auto center_offset_m = Vec2f{shape->m_p};
+
+				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
 				auto dst_rect = SDL_Rect{
 					(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w / 2),
 					(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h / 2),

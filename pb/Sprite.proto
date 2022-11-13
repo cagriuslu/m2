@@ -4,7 +4,7 @@ package m2.pb;
 import "SpriteType.proto";
 import "Rect2i.proto";
 import "Vec2f.proto";
-import "Collider.proto";
+import "Dim2f.proto";
 
 message Color {
   uint32 r = 1;
@@ -25,8 +25,16 @@ message SpriteEffect {
   }
 }
 
+message Collider {
+  optional Vec2f center_offset_px = 1; // Offset from the origin of the sprite
+  oneof collider_variant {
+    Dim2f rect_dims_px = 11;
+    float circ_radius_px = 12;
+  }
+}
+
 message ForegroundCompanion {
-  Vec2f center_offset_px = 1;
+  optional Vec2f center_offset_px = 1;
   repeated Rect2i rects = 2; // w.r.t SpriteSheet coordinates
 }
 
