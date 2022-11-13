@@ -56,7 +56,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 
 	auto& monitor = obj.add_monitor();
-	monitor.pre_phy = [&obj, &phy](MAYBE m2::comp::Monitor& mon) {
+	monitor.pre_phy = [&obj, &phy](MAYBE m2::Monitor& mon) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
 
@@ -111,7 +111,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		}
 	};
 
-	monitor.post_phy = [&obj, &phy, &def](MAYBE m2::comp::Monitor& mon) {
+	monitor.post_phy = [&obj, &phy, &def](MAYBE m2::Monitor& mon) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		// We must call time before other signals
 		impl->animation_fsm.time(GAME.deltaTime_s);
@@ -139,14 +139,14 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		}
 	};
 
-	phy.on_collision = [&phy](MAYBE m2::comp::Physique& me, m2::comp::Physique& other) {
+	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other) {
 		auto* enemy_impl = dynamic_cast<obj::Enemy*>(other.parent().impl.get());
 		if (enemy_impl && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {
 			enemy_impl->stun();
 		}
 	};
 
-	def.on_death = [](MAYBE m2g::comp::Defense& def) {
+	def.on_death = [](MAYBE m2g::Defense& def) {
 		LOG_INFO("Player died");
 	};
 

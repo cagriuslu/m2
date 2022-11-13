@@ -9,7 +9,7 @@ namespace m2 {
 	struct Object;
 }
 
-namespace m2::comp {
+namespace m2 {
 	struct Physique : public Component {
 		b2Body* body{};
 		std::function<void(Physique&, Physique&)> on_collision;

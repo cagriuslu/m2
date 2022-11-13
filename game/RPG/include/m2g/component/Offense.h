@@ -7,8 +7,8 @@
 #include "m2/component/Offense.h"
 #include <variant>
 
-namespace m2g::comp {
-	struct Offense : public m2::comp::Offense {
+namespace m2g {
+	struct Offense : public m2::Offense {
 		m2::Id originator;
 		std::variant<
 			std::monostate,

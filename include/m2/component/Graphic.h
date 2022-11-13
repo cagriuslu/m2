@@ -23,7 +23,7 @@ namespace m2 {
 	Vec2f screen_origin_to_position_px(const Vec2f& position);
 }
 
-namespace m2::comp {
+namespace m2 {
 	struct Graphic : public Component {
 		const Sprite* sprite{};
 		pb::SpriteEffectType draw_effect_type{pb::NO_SPRITE_EFFECT};

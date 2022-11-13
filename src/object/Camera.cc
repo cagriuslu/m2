@@ -14,7 +14,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
 	auto& mon = camera.add_monitor();
-	mon.post_phy = [&](MAYBE m2::comp::Monitor& monitor) {
+	mon.post_phy = [&](MAYBE m2::Monitor& monitor) {
 		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
 
@@ -30,7 +30,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 
 	if (GAME.level->type() == Level::Type::EDITOR) {
 		auto& gfx = camera.add_graphic();
-		gfx.on_draw = [&](MAYBE comp::Graphic& gfx) {
+		gfx.on_draw = [&](MAYBE Graphic& gfx) {
 			auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 			if (camera_data->draw_grid_lines) {
 				auto offset_from_floored_position_m = camera.position - camera.position.floor();

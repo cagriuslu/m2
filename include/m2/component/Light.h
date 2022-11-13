@@ -8,7 +8,7 @@ namespace m2 {
 	struct Object;
 }
 
-namespace m2::comp {
+namespace m2 {
 	struct Light : public Component {
 		float radius_m{};
 		std::function<void(Light&)> on_draw;

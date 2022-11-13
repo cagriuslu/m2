@@ -8,30 +8,30 @@
 #include <box2d/b2_circle_shape.h>
 #include <m2/Object.h>
 
-m2::comp::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
+m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
 
-m2::comp::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), on_collision(std::move(other.on_collision)) {
+m2::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), on_collision(std::move(other.on_collision)) {
     other.body = nullptr;
 }
 
-m2::comp::Physique& m2::comp::Physique::operator=(Physique&& other) noexcept {
+m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     std::swap(object_id, other.object_id);
     std::swap(body, other.body);
 	std::swap(on_collision, other.on_collision);
     return *this;
 }
 
-m2::comp::Physique::~Physique() {
+m2::Physique::~Physique() {
 	if (body) {
 		m2::box2d::destroy_body(body);
 	}
 }
 
-m2::Object& m2::comp::Physique::parent() const {
+m2::Object& m2::Physique::parent() const {
 	return *GAME.objects.get(object_id);
 }
 
-void m2::comp::Physique::draw_shapes() const {
+void m2::Physique::draw_shapes() const {
 	auto position = Vec2f{body->GetPosition()};
 	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 		b2AABB aabb;
@@ -85,7 +85,7 @@ void m2::comp::Physique::draw_shapes() const {
 	}
 }
 
-void m2::comp::Physique::contact_cb(b2Contact& contact) {
+void m2::Physique::contact_cb(b2Contact& contact) {
 	Id physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = GAME.physics[physique_id_a];

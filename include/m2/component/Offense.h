@@ -7,7 +7,7 @@ namespace m2 {
 	struct Object;
 }
 
-namespace m2::comp {
+namespace m2 {
 	struct Offense : public Component {
 		Offense() = default;
 		explicit Offense(Id object_id);

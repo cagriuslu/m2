@@ -8,7 +8,7 @@ namespace m2 {
 	struct Object;
 }
 
-namespace m2::comp {
+namespace m2 {
 	struct Monitor : public Component {
 		using Callback = std::function<void(Monitor&)>;
 		Callback pre_phy;

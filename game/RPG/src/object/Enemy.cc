@@ -51,14 +51,14 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 
     obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 
-	monitor.pre_phy = [&](MAYBE m2::comp::Monitor& mon) {
+	monitor.pre_phy = [&](MAYBE m2::Monitor& mon) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
 		impl->character_state.process_time(GAME.deltaTime_s);
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->fsm_variant);
 		std::visit([](auto& v) { v.signal(rpg::AI_FSM_SIGNAL_PREPHY); }, impl->fsm_variant);
 	};
 
-	monitor.post_phy = [&](MAYBE m2::comp::Monitor& mon) {
+	monitor.post_phy = [&](MAYBE m2::Monitor& mon) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		// We must call time before other signals
 		data->animation_fsm.time(GAME.deltaTicks_ms / 1000.0f);
@@ -80,10 +80,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		}
 	};
 
-	gfx.on_draw = [&](m2::comp::Graphic& gfx) {
+	gfx.on_draw = [&](m2::Graphic& gfx) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		m2::comp::Graphic::default_draw(gfx);
-		m2::comp::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
+		m2::Graphic::default_draw(gfx);
+		m2::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 		if (0.0f < data->on_hit_effect_ttl) {
 			data->on_hit_effect_ttl -= GAME.deltaTicks_ms / 1000.0f;
 			if (data->on_hit_effect_ttl < 0.0f) {
@@ -92,13 +92,13 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		}
 	};
 
-	def.on_hit = [&](MAYBE m2g::comp::Defense& def) {
+	def.on_hit = [&](MAYBE m2g::Defense& def) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		data->on_hit_effect_ttl = 0.15f;
 		gfx.draw_effect_type = m2::pb::SPRITE_EFFECT_MASK;
 	};
 
-	def.on_death = [&](m2g::comp::Defense& def) {
+	def.on_death = [&](m2g::Defense& def) {
 		auto drop_position = obj.position;
 
 		m2::Group* group = obj.group();

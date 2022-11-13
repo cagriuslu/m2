@@ -22,7 +22,7 @@ m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_t
 
 	auto& gfx = obj.add_graphic(sprite);
 
-	phy.on_collision = [&obj](m2::comp::Physique& phy, m2::comp::Physique& other) {
+	phy.on_collision = [&obj](m2::Physique& phy, m2::Physique& other) {
 		auto* impl = dynamic_cast<DroppedItem*>(obj.impl.get());
 		dynamic_cast<Player*>(other.parent().impl.get())->add_item(impl->item_type);
 		GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));

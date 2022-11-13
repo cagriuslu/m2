@@ -108,25 +108,25 @@ m2::OffenseId m2::Object::offense_id() const {
 m2::Group* m2::Object::group() const {
 	return _group_id ? GAME.groups[_group_id].get() : nullptr;
 }
-m2::comp::Monitor& m2::Object::monitor() const {
+m2::Monitor& m2::Object::monitor() const {
 	return GAME.monitors[_monitor_id];
 }
-m2::comp::Physique& m2::Object::physique() const {
+m2::Physique& m2::Object::physique() const {
 	return GAME.physics[_physique_id];
 }
-m2::comp::Graphic& m2::Object::graphic() const {
+m2::Graphic& m2::Object::graphic() const {
 	return GAME.graphics[_graphic_id];
 }
-m2::comp::Graphic& m2::Object::terrain_graphic() const {
+m2::Graphic& m2::Object::terrain_graphic() const {
 	return GAME.terrainGraphics[_terrain_graphic_id];
 }
-m2::comp::Light& m2::Object::light() const {
+m2::Light& m2::Object::light() const {
 	return GAME.lights[_light_id];
 }
-m2g::comp::Defense& m2::Object::defense() const {
+m2g::Defense& m2::Object::defense() const {
 	return GAME.defenses[_defense_id];
 }
-m2g::comp::Offense& m2::Object::offense() const {
+m2g::Offense& m2::Object::offense() const {
 	return GAME.offenses[_offense_id];
 }
 
@@ -135,80 +135,80 @@ void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 	_index_in_group = group_index;
 }
 
-m2::comp::Monitor& m2::Object::add_monitor() {
+m2::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this)};
+	monitor_pair.first = Monitor{GAME.objects.get_id(this)};
 	return monitor_pair.first;
 }
-m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy) {
+m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, {}, {}, {}};
+	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, {}, {}, {}};
 	return monitor_pair.first;
 }
-m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& pre_gfx) {
+m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& pre_gfx) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, {}, pre_gfx, {}};
+	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, {}, pre_gfx, {}};
 	return monitor_pair.first;
 }
-m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx) {
+m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, {}};
+	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, {}};
 	return monitor_pair.first;
 }
-m2::comp::Monitor& m2::Object::add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx, const comp::Monitor::Callback& post_gfx) {
+m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx, const Monitor::Callback& post_gfx) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = comp::Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, post_gfx};
+	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, post_gfx};
 	return monitor_pair.first;
 }
-m2::comp::Physique& m2::Object::add_physique() {
+m2::Physique& m2::Object::add_physique() {
 	auto physique_pair = GAME.physics.alloc();
 	_physique_id = physique_pair.second;
-	physique_pair.first = comp::Physique{GAME.objects.get_id(this)};
+	physique_pair.first = Physique{GAME.objects.get_id(this)};
 	return physique_pair.first;
 }
-m2::comp::Graphic& m2::Object::add_graphic() {
+m2::Graphic& m2::Object::add_graphic() {
 	auto graphic_pair = GAME.graphics.alloc();
 	_graphic_id = graphic_pair.second;
 	auto obj_id = GAME.objects.get_id(this);
-	graphic_pair.first = comp::Graphic{obj_id};
+	graphic_pair.first = Graphic{obj_id};
 	GAME.draw_list.insert(obj_id);
 	return graphic_pair.first;
 }
-m2::comp::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
+m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
 	auto graphic_pair = GAME.graphics.alloc();
 	_graphic_id = graphic_pair.second;
 	auto obj_id = GAME.objects.get_id(this);
-	graphic_pair.first = comp::Graphic{obj_id, sprite};
+	graphic_pair.first = Graphic{obj_id, sprite};
 	GAME.draw_list.insert(obj_id);
 	return graphic_pair.first;
 }
-m2::comp::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
+m2::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
 	auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;
-	terrain_graphic_pair.first = comp::Graphic{GAME.objects.get_id(this), sprite};
+	terrain_graphic_pair.first = Graphic{GAME.objects.get_id(this), sprite};
 	return terrain_graphic_pair.first;
 }
-m2::comp::Light& m2::Object::add_light() {
+m2::Light& m2::Object::add_light() {
 	auto light_pair = GAME.lights.alloc();
 	_light_id = light_pair.second;
-	light_pair.first = comp::Light{GAME.objects.get_id(this)};
+	light_pair.first = Light{GAME.objects.get_id(this)};
 	return light_pair.first;
 }
-m2g::comp::Defense& m2::Object::add_defense() {
+m2g::Defense& m2::Object::add_defense() {
 	auto defense_pair = GAME.defenses.alloc();
 	_defense_id = defense_pair.second;
-	defense_pair.first = m2g::comp::Defense{GAME.objects.get_id(this)};
+	defense_pair.first = m2g::Defense{GAME.objects.get_id(this)};
 	return defense_pair.first;
 }
-m2g::comp::Offense& m2::Object::add_offense() {
+m2g::Offense& m2::Object::add_offense() {
 	auto offense_pair = GAME.offenses.alloc();
 	_offense_id = offense_pair.second;
-	offense_pair.first = m2g::comp::Offense{GAME.objects.get_id(this)};
+	offense_pair.first = m2g::Offense{GAME.objects.get_id(this)};
 	return offense_pair.first;
 }
 

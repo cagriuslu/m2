@@ -7,7 +7,7 @@ namespace m2 {
 	struct Object;
 }
 
-namespace m2::comp {
+namespace m2 {
 	struct Defense : public Component {
 		Defense() = default;
 		explicit Defense(Id object_id);

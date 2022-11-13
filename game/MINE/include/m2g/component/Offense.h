@@ -3,8 +3,8 @@
 
 #include <m2/component/Offense.h>
 
-namespace m2g::comp {
-	struct Offense : public m2::comp::Offense {
+namespace m2g {
+	struct Offense : public m2::Offense {
 		Offense() = default;
 		explicit Offense(m2::Id object_id);
 	};

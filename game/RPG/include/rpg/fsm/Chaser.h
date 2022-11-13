@@ -19,7 +19,7 @@ namespace rpg {
 		std::list<m2::Vec2i> reverse_waypoints;
 		// Convenience
 		m2::Object& target;
-		m2::comp::Physique& phy;
+		m2::Physique& phy;
 
         ChaserFsmBase(m2::Object* obj, const ai::AiBlueprint* blueprint);
 

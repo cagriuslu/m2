@@ -59,29 +59,29 @@ namespace m2 {
 	    [[nodiscard]] OffenseId offense_id() const;
 
 		[[nodiscard]] Group* group() const;
-        [[nodiscard]] comp::Monitor& monitor() const;
-        [[nodiscard]] comp::Physique& physique() const;
-        [[nodiscard]] comp::Graphic& graphic() const;
-        [[nodiscard]] comp::Graphic& terrain_graphic() const;
-        [[nodiscard]] comp::Light& light() const;
-        [[nodiscard]] m2g::comp::Defense& defense() const;
-        [[nodiscard]] m2g::comp::Offense& offense() const;
+        [[nodiscard]] Monitor& monitor() const;
+        [[nodiscard]] Physique& physique() const;
+        [[nodiscard]] Graphic& graphic() const;
+        [[nodiscard]] Graphic& terrain_graphic() const;
+        [[nodiscard]] Light& light() const;
+        [[nodiscard]] m2g::Defense& defense() const;
+        [[nodiscard]] m2g::Offense& offense() const;
 
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
 
 		std::pair<Object&, ObjectId> add_child(const m2::Vec2f& position);
-		comp::Monitor& add_monitor();
-		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy);
-		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& pre_gfx);
-		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx);
-		comp::Monitor& add_monitor(const comp::Monitor::Callback& pre_phy, const comp::Monitor::Callback& post_phy, const comp::Monitor::Callback& pre_gfx, const comp::Monitor::Callback& post_gfx);
-        comp::Physique& add_physique();
-        comp::Graphic& add_graphic();
-		comp::Graphic& add_graphic(const Sprite& sprite);
-		comp::Graphic& add_terrain_graphic(const Sprite& sprite);
-        comp::Light& add_light();
-        m2g::comp::Defense& add_defense();
-        m2g::comp::Offense& add_offense();
+		Monitor& add_monitor();
+		Monitor& add_monitor(const Monitor::Callback& pre_phy);
+		Monitor& add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& pre_gfx);
+		Monitor& add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx);
+		Monitor& add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx, const Monitor::Callback& post_gfx);
+        Physique& add_physique();
+        Graphic& add_graphic();
+		Graphic& add_graphic(const Sprite& sprite);
+		Graphic& add_terrain_graphic(const Sprite& sprite);
+        Light& add_light();
+        m2g::Defense& add_defense();
+        m2g::Offense& add_offense();
 
 	private:
 		GroupId _group_id{};

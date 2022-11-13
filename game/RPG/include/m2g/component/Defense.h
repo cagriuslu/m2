@@ -4,8 +4,8 @@
 #include "m2/component/Defense.h"
 #include <functional>
 
-namespace m2g::comp {
-	struct Defense : public m2::comp::Defense {
+namespace m2g {
+	struct Defense : public m2::Defense {
 		float maxHp;
 		float hp;
 		std::function<void(Defense&)> on_hit;

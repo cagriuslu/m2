@@ -18,7 +18,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 
 	obj.add_graphic(GAME.sprites[m2g::pb::SpriteType::DWARF_FULL]);
 
-	obj.add_monitor([&](m2::comp::Monitor& mon) {
+	obj.add_monitor([&](m2::Monitor& mon) {
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UNKNOWN, m2::Key::UNKNOWN);
 		auto x_velocity = phy.body->GetLinearVelocity().x;
 		auto velocity_limit = 5.0f; // Unit is unknown

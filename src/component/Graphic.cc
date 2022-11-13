@@ -16,13 +16,13 @@ m2::Vec2f m2::screen_origin_to_position_px(const Vec2f& position) {
 	return camera_to_position_px(position) + Vec2f{GAME.windowRect.w / 2, GAME.windowRect.h / 2 };
 }
 
-m2::comp::Graphic::Graphic(Id object_id) : Component(object_id) {}
-m2::comp::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), sprite(&sprite), on_draw(default_draw) {}
-m2::Object& m2::comp::Graphic::parent() const {
+m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
+m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), sprite(&sprite), on_draw(default_draw) {}
+m2::Object& m2::Graphic::parent() const {
 	return *GAME.objects.get(object_id);
 }
 
-m2::Vec2f m2::comp::Graphic::sprite_center_to_sprite_origin_px() const {
+m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	if (sprite) {
 		Vec2f vector_in_source_pixels;
 		if (draw_foreground_companion) {
@@ -39,10 +39,10 @@ m2::Vec2f m2::comp::Graphic::sprite_center_to_sprite_origin_px() const {
 	}
 }
 
-m2::Vec2f m2::comp::Graphic::screen_origin_to_sprite_center_px() const {
+m2::Vec2f m2::Graphic::screen_origin_to_sprite_center_px() const {
 	return screen_origin_to_position_px(parent().position) - sprite_center_to_sprite_origin_px();
 }
-void m2::comp::Graphic::default_draw(comp::Graphic& gfx) {
+void m2::Graphic::default_draw(Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only draws sprites
 		return;
@@ -80,7 +80,7 @@ void m2::comp::Graphic::default_draw(comp::Graphic& gfx) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }
-void m2::comp::Graphic::default_draw_healthbar(comp::Graphic& gfx, float healthRatio) {
+void m2::Graphic::default_draw_healthbar(Graphic& gfx, float healthRatio) {
 	auto& obj = GAME.objects[gfx.object_id];
 	auto& cam = GAME.objects[GAME.cameraId];
 
