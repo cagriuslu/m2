@@ -44,8 +44,6 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_linear_damping(blueprint->linear_damping);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
-	// TODO foreground object center offset doesn't work
-	// TODO both collider are co-centric
 
 	obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
 
