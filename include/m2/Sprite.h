@@ -29,14 +29,8 @@ namespace m2 {
 	public:
 		explicit SpriteEffectsSheet(SDL_Renderer* renderer);
 		using DynamicSheet::texture;
-		SDL_Rect create_effect(const SpriteSheet& sheet, const pb::Rect2i& rect, const pb::SpriteEffect& effect);
-	};
-
-	class ForegroundCompanionsSheet : private DynamicSheet {
-	public:
-		explicit ForegroundCompanionsSheet(SDL_Renderer* renderer);
-		using DynamicSheet::texture;
-		SDL_Rect create_foreground_companion(const SpriteSheet& sheet, const pb::Sprite& sprite);
+		SDL_Rect create_mask_effect(const SpriteSheet& sheet, const pb::Rect2i& rect, const pb::Color& mask_color);
+		SDL_Rect create_foreground_companion_effect(const SpriteSheet& sheet, const pb::Rect2i &rect, const google::protobuf::RepeatedPtrField<pb::Rect2i>& rect_pieces);
 	};
 
 	class Sprite final {
@@ -45,10 +39,8 @@ namespace m2 {
 
 		const SpriteEffectsSheet* _effects_sheet{};
 		std::vector<SDL_Rect> _effects;
-
-		const ForegroundCompanionsSheet* _foreground_companions_sheet{};
-		std::optional<SDL_Rect> _foreground_companion_rect;
-		Vec2f _foreground_companion_center_offset_m{};
+		std::optional<Vec2f> _foreground_companion_center_offset_px{};
+		std::optional<Vec2f> _foreground_companion_center_offset_m{};
 
 		int _ppm{};
 		Vec2f _center_offset_m;
@@ -61,14 +53,13 @@ namespace m2 {
 
 	public:
 		Sprite() = default;
-		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, ForegroundCompanionsSheet& foreground_companions_sheet, const pb::Sprite& sprite);
+		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite);
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] const pb::Sprite& sprite() const;
 		[[nodiscard]] SDL_Texture* effects_texture() const;
 		[[nodiscard]] SDL_Rect effect_rect(pb::SpriteEffectType effect_type) const;
-		[[nodiscard]] SDL_Texture* foreground_companions_texture() const;
 		[[nodiscard]] bool has_foreground_companion() const;
-		[[nodiscard]] SDL_Rect foreground_companion_rect() const;
+		[[nodiscard]] Vec2f foreground_companion_center_offset_px() const;
 		[[nodiscard]] Vec2f foreground_companion_center_offset_m() const;
 		[[nodiscard]] int ppm() const;
 		[[nodiscard]] Vec2f center_offset_m() const;
@@ -81,7 +72,7 @@ namespace m2 {
 	};
 
 	std::vector<SpriteSheet> load_sprite_sheets(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
-	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet, ForegroundCompanionsSheet& foreground_companions_sheet);
+	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet);
 	std::vector<m2g::pb::SpriteType> list_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets);
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_editor_object_sprites(const std::string& objects_path);
 }

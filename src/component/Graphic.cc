@@ -25,8 +25,8 @@ m2::Object& m2::Graphic::parent() const {
 m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	if (sprite) {
 		Vec2f vector_in_source_pixels;
-		if (draw_foreground_companion) {
-			vector_in_source_pixels = Vec2f{sprite->sprite().foreground_companion().center_offset_px()};
+		if (draw_sprite_effect == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && sprite->has_foreground_companion()) {
+			vector_in_source_pixels = sprite->foreground_companion_center_offset_px();
 		} else {
 			vector_in_source_pixels = Vec2f{sprite->sprite().center_offset_px()};
 		}
@@ -49,17 +49,13 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 	}
 
 	auto* texture = gfx.sprite->sprite_sheet().texture();
-	if (gfx.draw_effect_type) {
+	if (gfx.draw_sprite_effect) {
 		texture = gfx.sprite->effects_texture();
-	} else if (gfx.draw_foreground_companion) {
-		texture = gfx.sprite->foreground_companions_texture();
 	}
 
 	auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
-	if (gfx.draw_effect_type) {
-		src_rect = gfx.sprite->effect_rect(gfx.draw_effect_type);
-	} else if (gfx.draw_foreground_companion) {
-		src_rect = gfx.sprite->foreground_companion_rect();
+	if (gfx.draw_sprite_effect) {
+		src_rect = gfx.sprite->effect_rect(gfx.draw_sprite_effect);
 	}
 
 	auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();

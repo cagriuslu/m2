@@ -87,7 +87,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		if (0.0f < data->on_hit_effect_ttl) {
 			data->on_hit_effect_ttl -= GAME.deltaTicks_ms / 1000.0f;
 			if (data->on_hit_effect_ttl < 0.0f) {
-				gfx.draw_effect_type = m2::pb::NO_SPRITE_EFFECT;
+				gfx.draw_sprite_effect = m2::pb::NO_SPRITE_EFFECT;
 			}
 		}
 	};
@@ -95,7 +95,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	def.on_hit = [&](MAYBE m2g::Defense& def) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		data->on_hit_effect_ttl = 0.15f;
-		gfx.draw_effect_type = m2::pb::SPRITE_EFFECT_MASK;
+		gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;
 	};
 
 	def.on_death = [&](m2g::Defense& def) {

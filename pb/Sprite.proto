@@ -13,15 +13,23 @@ message Color {
   uint32 a = 4;
 }
 
+// Only background tiles can have foreground companion
+message ForegroundCompanion {
+  optional Vec2f center_offset_px = 1;
+  repeated Rect2i rects = 2; // w.r.t SpriteSheet coordinates
+}
+
 enum SpriteEffectType {
   NO_SPRITE_EFFECT = 0;
-  SPRITE_EFFECT_MASK = 1;
+  SPRITE_EFFECT_FOREGROUND_COMPANION = 1;
+  SPRITE_EFFECT_MASK = 2;
 }
 
 message SpriteEffect {
   SpriteEffectType type = 1;
   oneof effect_arg {
-    Color mask_color = 2;
+    ForegroundCompanion foreground_companion = 2;
+    Color mask_color = 3;
   }
 }
 
@@ -33,11 +41,6 @@ message Collider {
   }
 }
 
-message ForegroundCompanion {
-  optional Vec2f center_offset_px = 1;
-  repeated Rect2i rects = 2; // w.r.t SpriteSheet coordinates
-}
-
 message Sprite {
   m2g.pb.SpriteType type = 1;
   repeated SpriteEffect effects = 2;
@@ -47,7 +50,6 @@ message Sprite {
   Collider background_collider = 6;
   Collider foreground_collider = 7;
   bool is_background_tile = 8;
-  ForegroundCompanion foreground_companion = 9; // Only background tiles can have foreground companion
 }
 
 message SpriteSheet {
