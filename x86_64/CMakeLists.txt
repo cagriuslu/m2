@@ -1,7 +1,0 @@
-if (WIN32)
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "")
-endif()
-
-file(GLOB X86_64_SOURCES "src/*.s")
-add_library(x86_64 include/x86_64.h ${X86_64_SOURCES})
-target_include_directories(x86_64 PUBLIC include)

@@ -18,7 +18,6 @@ project(m2 C CXX ASM)
 
 # Load external libraries
 add_subdirectory(lib)
-add_subdirectory(x86_64)
 
 # protobuf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin")
@@ -127,7 +126,6 @@ if (WIN32)
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT m2)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(m2 x86_64)
     target_link_libraries(m2 m)
 endif()
 
