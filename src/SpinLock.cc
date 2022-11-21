@@ -6,10 +6,12 @@ void m2::SpinLock::lock() {
 			break;
 		}
 		while (_lock.load(std::memory_order_relaxed)) {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
 			_mm_pause();
-#else
-			__builtin_ia32_pause();
+#elif defined(__x86_64__)
+            __builtin_ia32_pause();
+#elif defined(__arm64__)
+            asm volatile("yield");
 #endif
 		}
 	}
