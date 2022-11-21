@@ -17,7 +17,6 @@ project(m2 C CXX ASM)
 
 # Load external libraries
 add_subdirectory(lib)
-add_subdirectory(x86_64)
 
 # protobuf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin")
@@ -92,7 +91,6 @@ file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc")
 add_executable(m2 WIN32 ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
 target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
-target_link_libraries(m2 x86_64)
 if (WIN32)
     target_link_libraries(m2 debug     box2d-debug)
     target_link_libraries(m2 optimized box2d)
