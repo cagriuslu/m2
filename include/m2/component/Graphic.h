@@ -8,8 +8,6 @@
 #include <functional>
 
 namespace m2 {
-	struct Object;
-
 	/// Returns a vector from camera to given position in meters.
 	/// Hint: (position - camera.position)
 	Vec2f camera_to_position_m(const Vec2f& position);
@@ -33,8 +31,6 @@ namespace m2 {
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
 		explicit Graphic(uint64_t object_id, const Sprite& sprite);
-
-		[[nodiscard]] Object& parent() const;
 
 		/// Returns a vector from the sprite's center pixel to the sprite's graphical origin.
 		/// The graphical origin should align with the object's position, not the sprite's center pixel.

@@ -27,10 +27,6 @@ m2::Physique::~Physique() {
 	}
 }
 
-m2::Object& m2::Physique::parent() const {
-	return *GAME.objects.get(object_id);
-}
-
 void m2::Physique::draw_shapes() const {
 	auto position = Vec2f{body->GetPosition()};
 	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {

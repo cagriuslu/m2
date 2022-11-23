@@ -2,6 +2,7 @@
 #include <m2/Game.hh>
 #include <SpriteType.pb.h>
 #include <m2/box2d/Utils.h>
+#include <m2/box2d/Query.h>
 #include <m2/game/CharacterMovement.h>
 
 m2::VoidValue create_dwarf(m2::Object& obj) {
@@ -19,12 +20,32 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	obj.add_graphic(GAME.sprites[m2g::pb::SpriteType::DWARF_FULL]);
 
 	obj.add_monitor([&](m2::Monitor& mon) {
+        // Character movement
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UNKNOWN, m2::Key::UNKNOWN);
 		auto x_velocity = phy.body->GetLinearVelocity().x;
 		auto velocity_limit = 5.0f; // Unit is unknown
 		auto limiting_func = logf(velocity_limit - fabs(x_velocity));
 		auto force = limiting_func * 2500.0f;
 		phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force}, true);
+
+        // Mouse button
+        if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
+            if (GAME.mousePositionWRTGameWorld_m.is_near(obj.position, 2.0f)) {
+                fprintf(stderr, "Mouse is close\n");
+
+                // Look for objects which have Defence component
+                m2::box2d::query(*GAME.world, m2::Aabb2f{GAME.mousePositionWRTGameWorld_m, 0.1f}, [](m2::Physique& other_phy) -> bool {
+                    fprintf(stderr, "Query found an object at %llu %f,%f\n", other_phy.parent().id(), other_phy.parent().position.x, other_phy.parent().position.y);
+
+                    if (other_phy.parent().defense_id()) {
+                        // Found an object with defense, stop the search
+                        fprintf(stderr, "Mouse is close to a defense object\n");
+                        return true;
+                    }
+                    return false;
+                });
+            }
+        }
 	});
 
 	GAME.playerId = obj.id();

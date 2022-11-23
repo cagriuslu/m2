@@ -6,10 +6,6 @@
 #include <functional>
 
 namespace m2 {
-	struct Object;
-}
-
-namespace m2 {
 	struct Physique : public Component {
 		b2Body* body{};
 		std::function<void(Physique&, Physique&)> on_collision;
@@ -25,7 +21,6 @@ namespace m2 {
 		// Destructor
 		~Physique();
 
-		[[nodiscard]] Object& parent() const;
 		void draw_shapes() const;
 
 		static void contact_cb(b2Contact& contact);

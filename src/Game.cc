@@ -116,7 +116,8 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 		for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
 			auto sprite_type = lb->background_rows(y).items(x);
 			if (sprite_type) {
-				obj::create_tile(Vec2f{x, y} + Vec2f{0.5f, 0.5f}, sprites[sprite_type]);
+                auto [tile_obj, tile_id] = obj::create_tile(Vec2f{x, y} + Vec2f{0.5f, 0.5f}, sprites[sprite_type]);
+                m2g::post_tile_create(tile_obj, sprite_type);
 			}
 		}
 	}
