@@ -5,6 +5,8 @@
 
 namespace m2g {
 	struct Defense : public m2::Defense {
+        float health{1.0f};
+
 		Defense() = default;
 		explicit Defense(m2::Id object_id);
 	};

@@ -10,38 +10,35 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const Vec2f& position, const
 	obj_pair.first.add_terrain_graphic(sprite);
 
 	if (sprite.sprite().has_background_collider()) {
-		auto collider_obj_pair = create_object(position + sprite.background_collider_center_offset_m());
-		auto& collider = sprite.sprite().background_collider();
-		if (collider.has_rect_dims_px()) {
-			auto& phy = collider_obj_pair.first.add_physique();
-			m2::pb::BodyBlueprint bp;
-			bp.set_type(m2::pb::BodyType::STATIC);
-			bp.set_allow_sleep(true);
-			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(collider.rect_dims_px().w() / (float)sprite.ppm());
-			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(collider.rect_dims_px().h() / (float)sprite.ppm());
-			bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
-			phy.body = m2::box2d::create_body(*GAME.world, collider_obj_pair.first.physique_id(), collider_obj_pair.first.position, bp);
-		} else {
-			throw M2FATAL("Circular tile collider unimplemented");
-		}
-	}
+        m2::pb::BodyBlueprint bp;
 
-	// Use foreground collider as a secondary background collider
-	if (sprite.sprite().has_foreground_collider()) {
-		auto collider_obj_pair = create_object(position + sprite.foreground_collider_center_offset_m());
-		auto& collider = sprite.sprite().foreground_collider();
-		if (collider.has_rect_dims_px()) {
-			auto& phy = collider_obj_pair.first.add_physique();
-			m2::pb::BodyBlueprint bp;
+		auto& background_collider = sprite.sprite().background_collider();
+		if (background_collider.has_rect_dims_px()) {
 			bp.set_type(m2::pb::BodyType::STATIC);
 			bp.set_allow_sleep(true);
-			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(collider.rect_dims_px().w() / (float)sprite.ppm());
-			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(collider.rect_dims_px().h() / (float)sprite.ppm());
+			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(background_collider.rect_dims_px().w() / (float)sprite.ppm());
+			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(background_collider.rect_dims_px().h() / (float)sprite.ppm());
+            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.background_collider_center_offset_m().x);
+            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.background_collider_center_offset_m().y);
 			bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
-			phy.body = m2::box2d::create_body(*GAME.world, collider_obj_pair.first.physique_id(), collider_obj_pair.first.position, bp);
 		} else {
-			throw M2FATAL("Circular tile collider unimplemented");
+			throw M2FATAL("Circular tile background_collider unimplemented");
 		}
+
+        // Use foreground collider as a secondary background collider
+        auto& foreground_collider = sprite.sprite().foreground_collider();
+        if (foreground_collider.has_rect_dims_px()) {
+            bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(foreground_collider.rect_dims_px().w() / (float)sprite.ppm());
+            bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(foreground_collider.rect_dims_px().h() / (float)sprite.ppm());
+            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.foreground_collider_center_offset_m().x);
+            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.foreground_collider_center_offset_m().y);
+            bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
+        } else if (foreground_collider.has_circ_radius_px()) {
+            throw M2FATAL("Circular tile foreground_collider unimplemented");
+        }
+
+        auto& phy = obj_pair.first.add_physique();
+        phy.body = m2::box2d::create_body(*GAME.world, obj_pair.first.physique_id(), obj_pair.first.position, bp);
 	}
 
 	if (sprite.has_foreground_companion()) {

@@ -4,15 +4,9 @@
 #include "../Component.h"
 
 namespace m2 {
-	struct Object;
-}
-
-namespace m2 {
 	struct Offense : public Component {
 		Offense() = default;
 		explicit Offense(Id object_id);
-
-		[[nodiscard]] Object& parent() const;
 	};
 }
 

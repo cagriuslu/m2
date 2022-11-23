@@ -3,7 +3,3 @@
 #include <m2/Game.hh>
 
 m2::Offense::Offense(Id object_id) : Component(object_id) {}
-
-m2::Object& m2::Offense::parent() const {
-	return *GAME.objects.get(object_id);
-}

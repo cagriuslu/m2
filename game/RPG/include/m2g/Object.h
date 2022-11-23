@@ -5,6 +5,7 @@
 #include <m2/Value.h>
 
 namespace m2g {
+    void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
 	m2::VoidValue fg_object_loader(m2::Object& obj, pb::ObjectType object_type);
 }
 

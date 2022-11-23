@@ -6,11 +6,16 @@
 #include <SDL2/SDL.h>
 
 namespace m2 {
+    // Forward declaration
+    struct Object;
+
 	struct Component {
 		Id object_id{0};
 
 		Component() = default;
 		explicit Component(Id object_id);
+
+        [[nodiscard]] Object& parent() const;
 	};
 }
 

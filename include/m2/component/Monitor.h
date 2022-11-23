@@ -5,10 +5,6 @@
 #include <functional>
 
 namespace m2 {
-	struct Object;
-}
-
-namespace m2 {
 	struct Monitor : public Component {
 		using Callback = std::function<void(Monitor&)>;
 		Callback pre_phy;
@@ -19,8 +15,6 @@ namespace m2 {
 		Monitor() = default;
 		explicit Monitor(uint64_t object_id);
 		explicit Monitor(uint64_t object_id, const Callback& pre_phy, const Callback& post_phy, const Callback& pre_gfx, const Callback& post_gfx);
-
-		[[nodiscard]] Object& parent() const;
 	};
 }
 

@@ -4,3 +4,4 @@
   - This is very complex, doesn't work well because box2d doesn't have parent-child relation.
   - We have to do that ourselves, which is very complex.
 - Bullet, explosive and sword can be kinematic object
+- We don't update events during consecutive physics loops, may cause issue with event handling. It is as if mouse is held down longer than usual.

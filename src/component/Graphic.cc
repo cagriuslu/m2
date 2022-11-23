@@ -18,9 +18,6 @@ m2::Vec2f m2::screen_origin_to_position_px(const Vec2f& position) {
 
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), sprite(&sprite), on_draw(default_draw) {}
-m2::Object& m2::Graphic::parent() const {
-	return *GAME.objects.get(object_id);
-}
 
 m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	if (sprite) {
