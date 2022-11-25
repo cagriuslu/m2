@@ -26,23 +26,16 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 		phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 2500.0f}, true);
 
         // Mouse button
-        if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
-            if (GAME.mousePositionWRTGameWorld_m.is_near(obj.position, 2.0f)) {
-                fprintf(stderr, "Mouse is close\n");
-
-                // Look for objects which have Defence component
-                m2::box2d::query(*GAME.world, m2::Aabb2f{GAME.mousePositionWRTGameWorld_m, 0.1f}, [](m2::Physique& other_phy) -> bool {
-                    fprintf(stderr, "Query found an object at %llu %f,%f\n", other_phy.parent().id(), other_phy.parent().position.x, other_phy.parent().position.y);
-
-                    if (other_phy.parent().defense_id()) {
-                        // Found an object with defense, stop the search
-                        fprintf(stderr, "Mouse is close to a defense object\n");
-                        return true;
-                    }
-                    return false;
-                });
-            }
-        }
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
+			m2::box2d::find_objects_near_position_under_mouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
+				if (other_phy.parent().defense_id()) {
+					// Found an object with defense, stop the search
+					fprintf(stderr, "Mouse is close to a defense object\n");
+					return true;
+				}
+				return false;
+			});
+		}
 	});
 
 	GAME.playerId = obj.id();

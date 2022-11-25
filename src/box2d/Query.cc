@@ -19,3 +19,9 @@ void m2::box2d::query(b2World& world, const Aabb2f& aabb, m2::box2d::QueryCallba
     QueryCallbackType q{std::move(query_callback)};
     world.QueryAABB(&q, static_cast<b2AABB>(aabb));
 }
+
+void m2::box2d::find_objects_near_position_under_mouse(Vec2f position, float max_distance, QueryCallback&& query_callback) {
+	if (GAME.mousePositionWRTGameWorld_m.is_near(position, max_distance)) {
+		m2::box2d::query(*GAME.world, m2::Aabb2f{GAME.mousePositionWRTGameWorld_m, 0.05f}, std::move(query_callback));
+	}
+}
