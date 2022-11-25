@@ -4,7 +4,7 @@
 #include "Sprite.h"
 #include "Events.h"
 #include <SDL2/SDL_ttf.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <functional>
 #include <vector>
 #include <variant>

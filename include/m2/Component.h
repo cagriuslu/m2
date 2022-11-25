@@ -3,7 +3,7 @@
 
 #include <m2/M2.h>
 #include "Pool.hh"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 namespace m2 {
 	struct Component {

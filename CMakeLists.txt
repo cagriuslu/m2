@@ -11,6 +11,7 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
 
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
+set(CMAKE_BUILD_PARALLEL_LEVEL ${PROCESSOR_COUNT})
 
 project(m2 C CXX ASM)
 
@@ -46,6 +47,10 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2/lib")
 endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2")
 find_package(SDL2 REQUIRED)
+if (WIN32)
+    set(SDL2_INCLUDE_DIRS "${SDL2_DIR}/../include;${SDL2_DIR}/../include/SDL2") # On Windows, SDL2_INCLUDE_DIRS is not populated?!
+    file(GLOB SDL2_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2/bin/*.dll")
+endif()
 
 # SDL2_image
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image/lib")
@@ -55,8 +60,14 @@ endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/png")
 find_package(SDL2_image REQUIRED)
-set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../../include")
-set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../../lib")
+if (WIN32)
+    set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../include")
+    set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../lib")
+    file(GLOB SDL2_image_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image/bin/*.dll" "${CMAKE_CURRENT_BINARY_DIR}/lib/png/bin/*.dll" "${CMAKE_CURRENT_BINARY_DIR}/lib/z/bin/*.dll")
+else()
+    set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../../include")
+    set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../../lib")
+endif()
 set(SDL2_image_LIBRARIES "SDL2_image")
 
 # SDL2_ttf
@@ -66,8 +77,14 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf/lib")
 endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf")
 find_package(SDL2_ttf REQUIRED)
-set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../../../include")
-set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../../../lib")
+if (WIN32)
+    set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../include")
+    set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../lib")
+    file(GLOB SDL2_ttf_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf/bin/*.dll")
+else()
+    set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../../../include")
+    set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../../../lib")
+endif()
 set(SDL2_ttf_LIBRARIES "SDL2_ttf")
 
 set(CMAKE_C_STANDARD 11)
@@ -89,20 +106,19 @@ file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h")
 file(GLOB M2_PRIVATE_HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h")
 file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc")
 add_executable(m2 WIN32 ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
-target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
+if (NOT WIN32)
+    target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
+endif()
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
-target_link_libraries(m2 x86_64)
+target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
+target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
+target_link_libraries(m2 box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES})
 if (WIN32)
-    target_link_libraries(m2 debug     box2d-debug)
-    target_link_libraries(m2 optimized box2d)
-    target_link_libraries(m2 SDL2 SDL2_image SDL2_ttf)
-    target_link_libraries(m2 ${Protobuf_LIBRARIES})
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
     # Copy DLLs
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:m2> $<TARGET_FILE_DIR:m2>
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} $<TARGET_FILE_DIR:m2>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} ${SDL2_DLLS} ${SDL2_image_DLLS} ${SDL2_ttf_DLLS} $<TARGET_FILE_DIR:m2>
         COMMAND_EXPAND_LISTS
     )
 
@@ -110,9 +126,8 @@ if (WIN32)
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT m2)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
-    target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-    target_link_libraries(m2 box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES} m)
+    target_link_libraries(m2 x86_64)
+    target_link_libraries(m2 m)
 endif()
 
 # Tests (Build with Debug)

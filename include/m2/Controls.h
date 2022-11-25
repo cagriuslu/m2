@@ -1,7 +1,7 @@
 #ifndef M2_CONTROLS_H
 #define M2_CONTROLS_H
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 namespace m2 {
 	enum class Key {

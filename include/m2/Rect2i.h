@@ -2,8 +2,10 @@
 #define M2_RECT2I_H
 
 #include "Vec2i.h"
+#include <Rect2i.pb.h>
 #include <SDL2/SDL_rect.h>
 #include <string>
+#include <optional>
 
 namespace m2 {
 	struct Rect2f;

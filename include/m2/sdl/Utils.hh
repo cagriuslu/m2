@@ -2,7 +2,7 @@
 #define SDL_UTILS_H
 
 #include <Rect2i.pb.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 SDL_Cursor* SdlUtils_CreateCursor();
 

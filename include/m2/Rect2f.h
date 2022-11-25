@@ -4,6 +4,7 @@
 #include <SDL2/SDL_rect.h>
 #include <Rect2i.pb.h>
 #include "Vec2f.h"
+#include <optional>
 
 namespace m2 {
 	struct Rect2i;

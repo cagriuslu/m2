@@ -7,7 +7,7 @@
 #include <ObjectType.pb.h>
 #include "sdl/Utils.hh"
 #include "Vec2f.h"
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <optional>
 #include <string>
 #include <memory>
