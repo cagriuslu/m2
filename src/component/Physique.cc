@@ -93,3 +93,7 @@ void m2::Physique::contact_cb(b2Contact& contact) {
 		phy_b.on_collision(phy_b, phy_a);
 	}
 }
+
+float m2::calculate_limited_force(float curr_velocity, float speed_limit) {
+	return logf(fabs(speed_limit) - fabs(curr_velocity));
+}

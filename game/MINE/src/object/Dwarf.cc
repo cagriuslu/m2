@@ -22,11 +22,8 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	obj.add_monitor([&](m2::Monitor& mon) {
         // Character movement
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UNKNOWN, m2::Key::UNKNOWN);
-		auto x_velocity = phy.body->GetLinearVelocity().x;
-		auto velocity_limit = 5.0f; // Unit is unknown
-		auto limiting_func = logf(velocity_limit - fabs(x_velocity));
-		auto force = limiting_func * 2500.0f;
-		phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force}, true);
+		auto force_multiplier = m2::calculate_limited_force(phy.body->GetLinearVelocity().x, 5.0f);
+		phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 2500.0f}, true);
 
         // Mouse button
         if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
