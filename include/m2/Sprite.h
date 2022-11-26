@@ -15,8 +15,8 @@
 namespace m2 {
 	class SpriteSheet final {
 		pb::SpriteSheet _sprite_sheet;
-		std::unique_ptr<SDL_Surface, SdlSurfaceDeleter> _surface;
-		std::unique_ptr<SDL_Texture, SdlTextureDeleter> _texture;
+		std::unique_ptr<SDL_Surface, sdl::SurfaceDeleter> _surface;
+		std::unique_ptr<SDL_Texture, sdl::TextureDeleter> _texture;
 
 	public:
 		SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer);

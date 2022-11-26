@@ -8,9 +8,9 @@
 namespace m2 {
 	class DynamicSheet {
 		SDL_Renderer* _renderer; // TODO Use weak-ptr instead
-		std::unique_ptr<SDL_Surface, SdlSurfaceDeleter> _surface;
+		std::unique_ptr<SDL_Surface, sdl::SurfaceDeleter> _surface;
 		int _h{};
-		std::unique_ptr<SDL_Texture, SdlTextureDeleter> _texture;
+		std::unique_ptr<SDL_Texture, sdl::TextureDeleter> _texture;
 
 	public:
 		explicit DynamicSheet(SDL_Renderer* renderer);
