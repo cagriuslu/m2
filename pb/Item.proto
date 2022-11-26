@@ -16,6 +16,7 @@ enum Usage {
   PASSIVE = 2;
 }
 
+/// An item also represents a capability
 message Item {
   m2g.pb.ItemType type = 1;
   Usage usage = 2;
