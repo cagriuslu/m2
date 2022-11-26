@@ -114,7 +114,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			if (item.usage() == m2::pb::Usage::CONSUMABLE) {
 				for (const auto& resource : item.resources()) {
 					switch (resource.type()) {
-						case m2g::pb::ResourceType::HP:
+						case m2g::pb::RESOURCE_HP:
 							def.hp += (float)resource.amount();
 							if (def.maxHp < def.hp) { def.hp = def.maxHp; }
 							break;
@@ -133,6 +133,12 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 
 	auto& light = obj.add_light();
 	light.radius_m = 4.0f;
+
+	auto& chr = obj.add_character();
+	chr.add_item(m2g::pb::ITEM_PASSIVE_MACHINE_GUN);
+	chr.add_item(m2g::pb::ITEM_PASSIVE_SWORD);
+	chr.add_item(m2g::pb::ITEM_PASSIVE_GRENADE_LAUNCHER);
+	chr.add_resource(m2g::pb::RESOURCE_HP, 100.0f);
 
 	auto& def = obj.add_defense();
     def.maxHp = def.hp = blueprint->max_hp;
