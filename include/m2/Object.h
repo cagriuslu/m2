@@ -2,7 +2,6 @@
 #define OBJECT_H
 
 #include "Group.h"
-#include "component/Monitor.h"
 #include "Sprite.h"
 #include "ObjectImpl.h"
 #include <m2g/component/Defense.h>
@@ -10,7 +9,6 @@
 #include "m2/Component.h"
 #include "m2/Fsm.h"
 #include "m2/Vec2f.h"
-#include "component/Monitor.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include "component/Light.h"
@@ -21,7 +19,6 @@
 
 namespace m2 {
 	using ObjectId = Id;
-	using MonitorId = Id;
 	using PhysiqueId = Id;
 	using GraphicId = Id;
 	using LightId = Id;
@@ -52,7 +49,6 @@ namespace m2 {
 
 		[[nodiscard]] ObjectId id() const;
 		[[nodiscard]] GroupId group_id() const;
-	    [[nodiscard]] MonitorId monitor_id() const;
 	    [[nodiscard]] PhysiqueId physique_id() const;
 	    [[nodiscard]] GraphicId graphic_id() const;
 	    [[nodiscard]] GraphicId terrain_graphic_id() const;
@@ -62,7 +58,6 @@ namespace m2 {
 		[[nodiscard]] CharacterId character_id() const;
 
 		[[nodiscard]] Group* group() const;
-        [[nodiscard]] Monitor& monitor() const;
         [[nodiscard]] Physique& physique() const;
         [[nodiscard]] Graphic& graphic() const;
         [[nodiscard]] Graphic& terrain_graphic() const;
@@ -73,11 +68,6 @@ namespace m2 {
 
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
 
-		Monitor& add_monitor();
-		Monitor& add_monitor(const Monitor::Callback& pre_phy);
-		Monitor& add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& pre_gfx);
-		Monitor& add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx);
-		Monitor& add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx, const Monitor::Callback& post_gfx);
         Physique& add_physique();
         Graphic& add_graphic();
 		Graphic& add_graphic(const Sprite& sprite);
@@ -91,7 +81,6 @@ namespace m2 {
 		GroupId _group_id{};
 	    IndexInGroup _index_in_group{};
 	    // Components
-	    MonitorId _monitor_id{};
 	    PhysiqueId _physique_id{};
 	    GraphicId _graphic_id{};
 	    GraphicId _terrain_graphic_id{};

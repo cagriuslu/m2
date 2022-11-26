@@ -7,14 +7,12 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_pointer() {
 	auto& obj = obj_pair.first;
 	auto obj_id = obj_pair.second;
 
-    auto& monitor = obj.add_monitor();
+	obj.add_graphic().pre_draw = [&obj](m2::Graphic& gfx) {
+		obj.position = GAME.mousePositionWRTGameWorld_m;
+	};
 
     auto& lig = obj.add_light();
     lig.radius_m = 3.0f;
-
-	monitor.pre_gfx = [&](MAYBE m2::Monitor& mon) {
-		obj.position = GAME.mousePositionWRTGameWorld_m;
-	};
 
     GAME.pointerId = obj_id;
     return obj_pair;

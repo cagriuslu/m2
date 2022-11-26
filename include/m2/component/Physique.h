@@ -7,6 +7,10 @@
 
 namespace m2 {
 	struct Physique : public Component {
+		using Callback = std::function<void(Physique&)>;
+		Callback pre_step{};
+		Callback post_step{};
+
 		b2Body* body{};
 		std::function<void(Physique&, Physique&)> on_collision;
 

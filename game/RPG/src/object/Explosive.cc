@@ -24,8 +24,6 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::Id phyId, m2::Vec2f
 m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectId originator_id, m2::Vec2f direction) {
 	direction = direction.normalize();
 
-	auto& monitor = obj.add_monitor();
-
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
@@ -39,15 +37,8 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * blueprint->projectile_speed_mps));
-
-	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
-	gfx.draw_angle = direction.angle_rads();
-
-	auto& off = obj.add_offense();
-    off.originator = originator_id;
-	off.variant = chr::ExplosiveState(blueprint);
-
-	monitor.pre_phy = [&](MAYBE m2::Monitor& mon) {
+	phy.pre_step = [&obj](m2::Physique& phy) {
+		auto& off = obj.offense();
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case chr::EXPLOSIVE_STATUS_IN_FLIGHT: {
@@ -69,12 +60,12 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 				break;
 		}
 	};
-
-	monitor.post_phy = [&](m2::Monitor& mon) {
+	phy.post_step = [&obj](m2::Physique& phy) {
+		auto& off = obj.offense();
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);
 		switch (explosive_state.status) {
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_THIS_STEP:
-				GAME.add_deferred_action(m2::create_object_deleter(mon.object_id));
+				GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
 				break;
 			case chr::EXPLOSIVE_STATUS_WILL_EXPLODE_NEXT_STEP:
 				m2::box2d::destroy_body(phy.body);
@@ -84,6 +75,13 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 				break;
 		}
 	};
+
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
+	gfx.draw_angle = direction.angle_rads();
+
+	auto& off = obj.add_offense();
+    off.originator = originator_id;
+	off.variant = chr::ExplosiveState(blueprint);
 
 	phy.on_collision = [&](m2::Physique& phy, m2::Physique& other) {
 		auto& explosive_state = std::get<chr::ExplosiveState>(off.variant);

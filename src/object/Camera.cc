@@ -13,8 +13,8 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 	auto& camera = obj_pair.first;
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
-	auto& mon = camera.add_monitor();
-	mon.post_phy = [&](MAYBE m2::Monitor& monitor) {
+	auto& phy = camera.add_physique();
+	phy.post_step = [&camera](Physique& phy) {
 		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
 

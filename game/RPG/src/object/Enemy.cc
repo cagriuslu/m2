@@ -27,8 +27,6 @@ void Enemy::stun() {
 m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
 	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
 
-	auto& monitor = obj.add_monitor();
-
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
@@ -44,21 +42,13 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	bp.set_linear_damping(blueprint->linear_damping);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
-
-	auto& def = obj.add_defense();
-	def.hp = 100;
-	def.maxHp = 100;
-
-    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
-
-	monitor.pre_phy = [&](MAYBE m2::Monitor& mon) {
+	phy.pre_step = [&obj](m2::Physique& phy) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
 		impl->character_state.process_time(GAME.deltaTime_s);
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->fsm_variant);
 		std::visit([](auto& v) { v.signal(rpg::AI_FSM_SIGNAL_PREPHY); }, impl->fsm_variant);
 	};
-
-	monitor.post_phy = [&](MAYBE m2::Monitor& mon) {
+	phy.post_step = [&obj](m2::Physique& phy) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		// We must call time before other signals
 		data->animation_fsm.time(GAME.deltaTicks_ms / 1000.0f);
@@ -79,6 +69,12 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 			}
 		}
 	};
+
+	auto& def = obj.add_defense();
+	def.hp = 100;
+	def.maxHp = 100;
+
+    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 
 	gfx.on_draw = [&](m2::Graphic& gfx) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());

@@ -28,6 +28,10 @@ m2::Physique::~Physique() {
 }
 
 void m2::Physique::draw_shapes() const {
+	if (!body) {
+		return;
+	}
+
 	auto position = Vec2f{body->GetPosition()};
 	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 		b2AABB aabb;

@@ -4,7 +4,7 @@
 m2::Id m2::obj::create_god() {
 	auto [obj, id] = create_object(Vec2f{});
 	obj.impl = std::make_unique<m2::obj::God>();
-	obj.add_monitor([&obj = obj](MAYBE m2::Monitor& mon) {
+	obj.add_physique().pre_step = [&obj = obj](MAYBE Physique& mon) {
 		m2::Vec2f move_direction;
 		if (GAME.events.is_key_down(m2::Key::UP)) {
 			move_direction.y -= 1.0f;
@@ -39,6 +39,6 @@ m2::Id m2::obj::create_god() {
 					break;
 			}
 		}
-	});
+	};
 	return id;
 }

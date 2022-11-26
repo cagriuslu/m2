@@ -15,7 +15,6 @@
 #include <ObjectType.pb.h>
 #include "Pathfinder.hh"
 #include "m2/Ui.h"
-#include "component/Monitor.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include <m2/box2d/ContactListener.h>
@@ -108,7 +107,6 @@ namespace m2 {
 		Pool<Object> objects;
 		std::unordered_map<GroupId, std::unique_ptr<Group>, GroupId::Hash> groups;
 		DrawList draw_list;
-		Pool<Monitor> monitors;
 		Pool<Physique> physics;
 		Pool<Graphic> graphics;
 		Pool<Graphic> terrainGraphics;
