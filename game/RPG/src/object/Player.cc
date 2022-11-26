@@ -44,19 +44,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_linear_damping(blueprint->linear_damping);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
-
-	obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
-
-	auto& light = obj.add_light();
-	light.radius_m = 4.0f;
-
-	auto& def = obj.add_defense();
-    def.maxHp = def.hp = blueprint->max_hp;
-
-	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
-
-	auto& monitor = obj.add_monitor();
-	monitor.pre_phy = [&obj, &phy](MAYBE m2::Monitor& mon) {
+	phy.pre_step = [&obj](m2::Physique& phy) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
 
@@ -110,8 +98,8 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			impl->char_state.explosive_weapon_state->cooldown_counter_s = 0;
 		}
 	};
-
-	monitor.post_phy = [&obj, &phy, &def](MAYBE m2::Monitor& mon) {
+	phy.post_step = [&obj](m2::Physique& phy) {
+		auto& def = obj.defense();
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		// We must call time before other signals
 		impl->animation_fsm.time(GAME.deltaTime_s);
@@ -138,6 +126,16 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			}
 		}
 	};
+
+	obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
+
+	auto& light = obj.add_light();
+	light.radius_m = 4.0f;
+
+	auto& def = obj.add_defense();
+    def.maxHp = def.hp = blueprint->max_hp;
+
+	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 
 	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other) {
 		auto* enemy_impl = dynamic_cast<obj::Enemy*>(other.parent().impl.get());

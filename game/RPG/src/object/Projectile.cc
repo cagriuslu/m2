@@ -9,8 +9,6 @@
 m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Id originatorId, m2::Vec2f dir) {
 	dir = dir.normalize();
 
-	auto& monitor = obj.add_monitor();
-
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
@@ -24,6 +22,17 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(dir * blueprint->speed_mps));
+	phy.pre_step = [&obj](m2::Physique& phy) {
+		auto& off = obj.offense();
+		auto& projectile_state = std::get<chr::ProjectileState>(off.variant);
+		m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
+		phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * projectile_state.blueprint->speed_mps));
+
+		projectile_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
+		if (projectile_state.ttl_s <= 0) {
+			GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
+		}
+	};
 
 	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
 	gfx.draw_angle = dir.angle_rads();
@@ -31,17 +40,6 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	auto& off = obj.add_offense();
     off.originator = originatorId;
 	off.variant = chr::ProjectileState(blueprint);
-
-	monitor.pre_phy = [&](m2::Monitor& mon) {
-		auto& projectile_state = std::get<chr::ProjectileState>(off.variant);
-		m2::Vec2f curr_direction = m2::Vec2f{phy.body->GetLinearVelocity() }.normalize();
-		phy.body->SetLinearVelocity(static_cast<b2Vec2>(curr_direction * projectile_state.blueprint->speed_mps));
-
-		projectile_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
-		if (projectile_state.ttl_s <= 0) {
-			GAME.add_deferred_action(m2::create_object_deleter(mon.object_id));
-		}
-	};
 
 	phy.on_collision = [&off](m2::Physique& phy, m2::Physique& other) {
 		auto& other_obj = GAME.objects[other.object_id];

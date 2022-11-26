@@ -23,10 +23,14 @@ namespace m2 {
 
 namespace m2 {
 	struct Graphic : public Component {
+		using Callback = std::function<void(Graphic&)>;
+		Callback pre_draw{};
+		Callback on_draw{};
+		Callback post_draw{};
+
 		const Sprite* sprite{};
 		pb::SpriteEffectType draw_sprite_effect{pb::NO_SPRITE_EFFECT};
 		float draw_angle{};
-		std::function<void(Graphic&)> on_draw{};
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);

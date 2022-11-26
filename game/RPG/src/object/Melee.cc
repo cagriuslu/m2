@@ -11,8 +11,6 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	const float theta = direction.angle_rads(); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
 
-	auto& monitor = obj.add_monitor();
-
 	auto& phy = obj.add_physique();
 
 	m2::pb::BodyBlueprint bp;
@@ -31,23 +29,17 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetTransform(static_cast<b2Vec2>(obj.position), startAngle);
 	phy.body->SetAngularVelocity(-SWING_SPEED);
-
-	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
-	gfx.draw_angle = phy.body->GetAngle();
-
-	auto& off = obj.add_offense();
-    off.originator = originatorId;
-	off.variant = chr::MeleeState(blueprint);
-
-	monitor.pre_phy = [&](m2::Monitor& mon) {
+	phy.pre_step = [&obj](m2::Physique& phy) {
+		auto& off = obj.offense();
 		auto& melee_state = std::get<chr::MeleeState>(off.variant);
 		melee_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
 		if (melee_state.ttl_s <= 0) {
-			GAME.add_deferred_action(m2::create_object_deleter(mon.object_id));
+			GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
 		}
 	};
-
-	monitor.post_phy = [&](MAYBE m2::Monitor& mon) {
+	phy.post_step = [&obj](m2::Physique& phy) {
+		auto& off = obj.offense();
+		auto& gfx = obj.graphic();
 		float angle = phy.body->GetAngle();
 		m2::Object* originator = GAME.objects.get(off.originator);
 		if (originator) {
@@ -56,6 +48,13 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 		}
 		gfx.draw_angle = angle;
 	};
+
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
+	gfx.draw_angle = phy.body->GetAngle();
+
+	auto& off = obj.add_offense();
+    off.originator = originatorId;
+	off.variant = chr::MeleeState(blueprint);
 
 	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other) {
 		LOG_DEBUG("Collision");

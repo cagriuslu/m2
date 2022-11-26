@@ -202,7 +202,6 @@ void m2::Game::unload_level() {
 	terrainGraphics.clear();
 	graphics.clear();
 	physics.clear();
-	monitors.clear();
 	objects.clear();
 	groups.clear();
 
