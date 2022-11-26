@@ -4,7 +4,7 @@
 #include "m2/component/Graphic.h"
 #include "m2/component/Light.h"
 
-m2::Object::Object(const m2::Vec2f &position) : position(position) {}
+m2::Object::Object(const m2::Vec2f &position, ObjectId parent_id) : position(position), _parent_id(parent_id) {}
 
 m2::Object::Object(Object&& other) noexcept :
 	position(other.position),
@@ -79,6 +79,9 @@ m2::ObjectId m2::Object::id() const {
 	// Looking up the id of the object itself is not very common
 	return GAME.objects.get_id(this);
 }
+m2::ObjectId m2::Object::parent_id() const {
+    return _parent_id;
+}
 m2::GroupId m2::Object::group_id() const {
 	return _group_id;
 }
@@ -104,6 +107,9 @@ m2::CharacterId m2::Object::character_id() const {
     return _character_id;
 }
 
+m2::Object* m2::Object::parent() const {
+    return _parent_id ? GAME.objects.get(_parent_id) : nullptr;
+}
 m2::Group* m2::Object::group() const {
 	return _group_id ? GAME.groups[_group_id].get() : nullptr;
 }
@@ -185,8 +191,8 @@ m2::Character& m2::Object::add_character() {
     return character_pair.first;
 }
 
-std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position) {
-    return GAME.objects.alloc(position);
+std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position, ObjectId parent_id) {
+    return GAME.objects.alloc(position, parent_id);
 }
 
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {

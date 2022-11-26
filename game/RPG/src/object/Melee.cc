@@ -7,7 +7,7 @@
 
 #define SWING_SPEED (15.0f)
 
-m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::Id originatorId, m2::Vec2f direction) {
+m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::Vec2f direction) {
 	const float theta = direction.angle_rads(); // Convert direction to angle
 	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
 
@@ -22,7 +22,7 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(0.5833f);
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(0.0f);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
-	bp.mutable_foreground_fixture()->set_category(originatorId == GAME.playerId ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
+	bp.mutable_foreground_fixture()->set_category(obj.parent_id() == GAME.playerId ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
 	bp.set_mass(1.0f);
 	bp.set_linear_damping(0);
 	bp.set_fixed_rotation(false);
@@ -41,10 +41,9 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 		auto& off = obj.offense();
 		auto& gfx = obj.graphic();
 		float angle = phy.body->GetAngle();
-		m2::Object* originator = GAME.objects.get(off.originator);
-		if (originator) {
+		if (obj.parent()) {
 			// Make sure originator is still alive
-			phy.body->SetTransform(static_cast<b2Vec2>(originator->position), angle);
+			phy.body->SetTransform(static_cast<b2Vec2>(obj.parent()->position), angle);
 		}
 		gfx.draw_angle = angle;
 	};
@@ -53,7 +52,6 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 	gfx.draw_angle = phy.body->GetAngle();
 
 	auto& off = obj.add_offense();
-    off.originator = originatorId;
 	off.variant = chr::MeleeState(blueprint);
 
 	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other) {

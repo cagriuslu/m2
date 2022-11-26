@@ -37,7 +37,7 @@ namespace m2 {
         std::unique_ptr<ObjectImpl> impl;
 
         Object() = default;
-        explicit Object(const m2::Vec2f& position);
+        explicit Object(const m2::Vec2f& position, ObjectId parent_id = 0);
         // Copy not allowed
         Object(const Object& other) = delete;
         Object& operator=(const Object& other) = delete;
@@ -48,6 +48,7 @@ namespace m2 {
         ~Object();
 
 		[[nodiscard]] ObjectId id() const;
+		[[nodiscard]] ObjectId parent_id() const;
 		[[nodiscard]] GroupId group_id() const;
 	    [[nodiscard]] PhysiqueId physique_id() const;
 	    [[nodiscard]] GraphicId graphic_id() const;
@@ -57,6 +58,7 @@ namespace m2 {
 	    [[nodiscard]] OffenseId offense_id() const;
 		[[nodiscard]] CharacterId character_id() const;
 
+		[[nodiscard]] Object* parent() const;
 		[[nodiscard]] Group* group() const;
         [[nodiscard]] Physique& physique() const;
         [[nodiscard]] Graphic& graphic() const;
@@ -78,6 +80,7 @@ namespace m2 {
 		Character& add_character();
 
 	private:
+		ObjectId _parent_id{};
 		GroupId _group_id{};
 	    IndexInGroup _index_in_group{};
 	    // Components
@@ -90,7 +93,7 @@ namespace m2 {
 		CharacterId _character_id{};
     };
 
-    std::pair<Object&, ObjectId> create_object(const m2::Vec2f& position);
+    std::pair<Object&, ObjectId> create_object(const m2::Vec2f& position, ObjectId parent_id = 0);
 	std::function<void(void)> create_object_deleter(ObjectId id);
 }
 

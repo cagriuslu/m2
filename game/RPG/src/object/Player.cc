@@ -27,6 +27,8 @@ void obj::Player::add_item(m2g::pb::ItemType item_type) {
 // Double tap directional buttons to dodge
 
 m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
+	const auto id = obj.id();
+
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
@@ -44,7 +46,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_linear_damping(blueprint->linear_damping);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
-	phy.pre_step = [&obj](m2::Physique& phy) {
+	phy.pre_step = [&](m2::Physique& phy) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
 
@@ -78,23 +80,23 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		impl->char_state.process_time(GAME.deltaTime_s);
 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && impl->char_state.ranged_weapon_state->blueprint->cooldown_s < impl->char_state.ranged_weapon_state->cooldown_counter_s) {
-			auto& projectile = m2::create_object(obj.position).first;
+			auto& projectile = m2::create_object(obj.position, id).first;
 			float accuracy = impl->char_state.blueprint->default_ranged_weapon->accuracy;
 			float angle = to_mouse.angle_rads() + (m2::PI * m2::randf() * (1 - accuracy)) - (m2::PI * ((1 - accuracy) / 2.0f));
-			obj::Projectile::init(projectile, &impl->char_state.blueprint->default_ranged_weapon->projectile, GAME.playerId, m2::Vec2f::from_angle(angle));
+			obj::Projectile::init(projectile, &impl->char_state.blueprint->default_ranged_weapon->projectile, m2::Vec2f::from_angle(angle));
 			// Knock-back
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + m2::PI) * 500.0f), true);
 			// TODO set looking direction here as well
 			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && impl->char_state.melee_weapon_state->blueprint->cooldown_s < impl->char_state.melee_weapon_state->cooldown_counter_s) {
-			auto& melee = m2::create_object(obj.position).first;
-			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, GAME.playerId, to_mouse);
+			auto& melee = m2::create_object(obj.position, id).first;
+			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, to_mouse);
 			impl->char_state.melee_weapon_state->cooldown_counter_s = 0;
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && impl->char_state.explosive_weapon_state->blueprint->cooldown_s < impl->char_state.explosive_weapon_state->cooldown_counter_s) {
-			auto& explosive = m2::create_object(obj.position).first;
-			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, GAME.playerId, to_mouse);
+			auto& explosive = m2::create_object(obj.position, id).first;
+			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, to_mouse);
 			impl->char_state.explosive_weapon_state->cooldown_counter_s = 0;
 		}
 	};
