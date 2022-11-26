@@ -14,6 +14,7 @@
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include "component/Light.h"
+#include "component/Character.h"
 #include "Pool.hh"
 #include <memory>
 #include <functional>
@@ -26,6 +27,7 @@ namespace m2 {
 	using LightId = Id;
 	using DefenseId = Id;
 	using OffenseId = Id;
+	using CharacterId = Id;
 
     /// Basis of all objects in the game.
     /// How to decide if a component should reside in Pool or data?
@@ -57,6 +59,7 @@ namespace m2 {
 	    [[nodiscard]] LightId light_id() const;
 	    [[nodiscard]] DefenseId defense_id() const;
 	    [[nodiscard]] OffenseId offense_id() const;
+		[[nodiscard]] CharacterId character_id() const;
 
 		[[nodiscard]] Group* group() const;
         [[nodiscard]] Monitor& monitor() const;
@@ -66,10 +69,10 @@ namespace m2 {
         [[nodiscard]] Light& light() const;
         [[nodiscard]] m2g::Defense& defense() const;
         [[nodiscard]] m2g::Offense& offense() const;
+		[[nodiscard]] Character& character() const;
 
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
 
-		std::pair<Object&, ObjectId> add_child(const m2::Vec2f& position);
 		Monitor& add_monitor();
 		Monitor& add_monitor(const Monitor::Callback& pre_phy);
 		Monitor& add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& pre_gfx);
@@ -82,6 +85,7 @@ namespace m2 {
         Light& add_light();
         m2g::Defense& add_defense();
         m2g::Offense& add_offense();
+		Character& add_character();
 
 	private:
 		GroupId _group_id{};
@@ -94,6 +98,7 @@ namespace m2 {
 	    LightId _light_id{};
 	    DefenseId _defense_id{};
 	    OffenseId _offense_id{};
+		CharacterId _character_id{};
     };
 
     std::pair<Object&, ObjectId> create_object(const m2::Vec2f& position);
