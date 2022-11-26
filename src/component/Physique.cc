@@ -27,7 +27,7 @@ m2::Physique::~Physique() {
 	}
 }
 
-void m2::Physique::draw_shapes() const {
+void m2::Physique::draw_debug_shapes() const {
 	if (!body) {
 		return;
 	}

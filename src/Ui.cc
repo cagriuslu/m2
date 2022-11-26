@@ -571,7 +571,7 @@ Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 	SDL_GetRendererOutputSize(GAME.sdlRenderer, &w, &h);
 	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
 	SDL_RenderReadPixels(GAME.sdlRenderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
-	std::unique_ptr<SDL_Texture, m2::SdlTextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
+	std::unique_ptr<SDL_Texture, m2::sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
 	SDL_FreeSurface(surface);
 
 	Action return_value;

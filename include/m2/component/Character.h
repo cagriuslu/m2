@@ -6,8 +6,8 @@
 
 namespace m2 {
 	struct Character : public Component {
-		using Callback = std::function<void(Character&)>;
-		Callback update;
+		std::function<void(Character&)> update;
+		std::function<void(Character&, Character&)> interact;
 
 		Character() = default;
 		explicit Character(uint64_t object_id);

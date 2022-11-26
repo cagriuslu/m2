@@ -56,11 +56,13 @@ SDL_Cursor* SdlUtils_CreateCursor() {
 	return SDL_CreateCursor(data, mask, side_size, side_size, side_size / 2 - 1, side_size / 2 - 1);
 }
 
-uint32_t SdlUtils_GetTicksAtLeast1ms(uint32_t lastTicks, uint32_t nongame_ticks) {
-	uint32_t ticks = SDL_GetTicks() - nongame_ticks;
-	while (ticks == lastTicks) {
-		SDL_Delay(1);
-		ticks = SDL_GetTicks() - nongame_ticks;
+uint32_t m2::sdl::get_ticks(uint32_t last_ticks, uint32_t pause_ticks, uint32_t min) {
+	auto ticks = SDL_GetTicks() - pause_ticks;
+	if (min) {
+		while (ticks <= last_ticks + min) {
+			SDL_Delay(min);
+			ticks = SDL_GetTicks() - pause_ticks;
+		}
 	}
 	return ticks;
 }
@@ -83,10 +85,10 @@ SDL_Rect m2::sdl::to_rect(const pb::Rect2i& pb_rect) {
 	return {pb_rect.x(), pb_rect.y(), pb_rect.w(), pb_rect.h()};
 }
 
-void m2::SdlTextureDeleter::operator()(SDL_Texture *t) {
+void m2::sdl::TextureDeleter::operator()(SDL_Texture *t) {
 	SDL_DestroyTexture(t);
 }
 
-void m2::SdlSurfaceDeleter::operator()(SDL_Surface *s) {
+void m2::sdl::SurfaceDeleter::operator()(SDL_Surface *s) {
 	SDL_FreeSurface(s);
 }

@@ -25,7 +25,7 @@ namespace m2 {
 		// Destructor
 		~Physique();
 
-		void draw_shapes() const;
+		void draw_debug_shapes() const;
 
 		static void contact_cb(b2Contact& contact);
 	};
