@@ -1,3 +1,3 @@
 #include <m2g/component/Offense.h>
 
-m2g::Offense::Offense(m2::Id object_id) : m2::Offense(object_id), originator(0) {}
+m2g::Offense::Offense(m2::Id object_id) : m2::Offense(object_id) {}

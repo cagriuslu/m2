@@ -56,11 +56,10 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 				auto& weapon_state = impl->character_state.ranged_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    auto& projectile = m2::create_object(obj->position).first;
+                    auto& projectile = m2::create_object(obj->position, obj->id()).first;
 					obj::Projectile::init(
                             projectile,
 							&weapon_state->blueprint->projectile,
-                            GAME.objects.get_id(obj),
                             target.position - obj->position
                     );
                     // TODO Knockback maybe?
@@ -72,13 +71,8 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 				auto& weapon_state = impl->character_state.melee_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    auto& melee = m2::create_object(obj->position).first;
-					obj::Melee::init(
-                            melee,
-							&weapon_state->blueprint->melee,
-                            GAME.objects.get_id(obj),
-                            target.position - obj->position
-                    );
+                    auto& melee = m2::create_object(obj->position, obj->id()).first;
+					obj::Melee::init(melee, &weapon_state->blueprint->melee, target.position - obj->position);
 					weapon_state->cooldown_counter_s = 0.0f;
                 }
                 break;
@@ -87,11 +81,10 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 				auto& weapon_state = impl->character_state.explosive_weapon_state;
                 // If the weapon cooled down
                 if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
-                    auto& explosive = m2::create_object(obj->position).first;
+                    auto& explosive = m2::create_object(obj->position, obj->id()).first;
 					obj::Explosive::init(
                             explosive,
 							&weapon_state->blueprint->explosive,
-                            GAME.objects.get_id(obj),
                             target.position - obj->position
                     );
                     // TODO knockback

@@ -6,7 +6,7 @@
 #include <m2/M2.h>
 #include <m2/Log.h>
 
-m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Id originatorId, m2::Vec2f dir) {
+m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBlueprint* blueprint, m2::Vec2f dir) {
 	dir = dir.normalize();
 
 	auto& phy = obj.add_physique();
@@ -38,7 +38,6 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	gfx.draw_angle = dir.angle_rads();
 
 	auto& off = obj.add_offense();
-    off.originator = originatorId;
 	off.variant = chr::ProjectileState(blueprint);
 
 	phy.on_collision = [&off](m2::Physique& phy, m2::Physique& other) {

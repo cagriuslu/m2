@@ -21,7 +21,7 @@ static b2Body* ObjectExplosive_CreateCollisionCircleBody(m2::Id phyId, m2::Vec2f
 	return m2::box2d::create_body(*GAME.world, phyId, position, bp);
 }
 
-m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::ObjectId originator_id, m2::Vec2f direction) {
+m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprint* blueprint, m2::Vec2f direction) {
 	direction = direction.normalize();
 
 	auto& phy = obj.add_physique();
@@ -80,7 +80,6 @@ m2::VoidValue obj::Explosive::init(m2::Object& obj, const chr::ExplosiveBlueprin
 	gfx.draw_angle = direction.angle_rads();
 
 	auto& off = obj.add_offense();
-    off.originator = originator_id;
 	off.variant = chr::ExplosiveState(blueprint);
 
 	phy.on_collision = [&](m2::Physique& phy, m2::Physique& other) {
