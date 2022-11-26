@@ -1,6 +1,7 @@
 #ifndef M2_CHARACTER_H
 #define M2_CHARACTER_H
 
+#include <m2g/Interaction.h>
 #include "../Component.h"
 #include <Item.pb.h>
 #include <vector>
@@ -9,7 +10,7 @@
 namespace m2 {
 	struct Character : public Component {
 		std::function<void(Character&)> update;
-		std::function<void(Character&, Character&)> interact;
+		std::function<void(Character&, Character&, m2g::InteractionType)> interact;
 
 		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const;
 		[[nodiscard]] size_t count_item(m2g::pb::ItemType item_type) const;
