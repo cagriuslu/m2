@@ -18,7 +18,8 @@ m2::Object::Object(Object&& other) noexcept :
 	_terrain_graphic_id(other._terrain_graphic_id),
 	_light_id(other._light_id),
 	_defense_id(other._defense_id),
-	_offense_id(other._offense_id) {
+	_offense_id(other._offense_id),
+    _character_id(other._character_id) {
 	other._group_id = {};
 	other._index_in_group = 0;
 	other._monitor_id = 0;
@@ -28,6 +29,7 @@ m2::Object::Object(Object&& other) noexcept :
 	other._light_id = 0;
 	other._defense_id = 0;
 	other._offense_id = 0;
+    other._character_id = 0;
 }
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(position, other.position);
@@ -41,6 +43,7 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(_light_id, other._light_id);
 	std::swap(_defense_id, other._defense_id);
 	std::swap(_offense_id, other._offense_id);
+	std::swap(_character_id, other._character_id);
 	return *this;
 }
 
@@ -74,6 +77,10 @@ m2::Object::~Object() {
 		GAME.offenses.free(_offense_id);
 		_offense_id = 0;
 	}
+    if (_character_id) {
+        GAME.characters.free(_character_id);
+        _character_id = 0;
+    }
 }
 
 m2::ObjectId m2::Object::id() const {
@@ -104,6 +111,9 @@ m2::DefenseId m2::Object::defense_id() const {
 m2::OffenseId m2::Object::offense_id() const {
 	return _offense_id;
 }
+m2::CharacterId m2::Object::character_id() const {
+    return _character_id;
+}
 
 m2::Group* m2::Object::group() const {
 	return _group_id ? GAME.groups[_group_id].get() : nullptr;
@@ -129,6 +139,9 @@ m2g::Defense& m2::Object::defense() const {
 m2g::Offense& m2::Object::offense() const {
 	return GAME.offenses[_offense_id];
 }
+m2::Character& m2::Object::character() const {
+    return GAME.characters[_character_id];
+}
 
 void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 	_group_id = group_id;
@@ -138,78 +151,82 @@ void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 m2::Monitor& m2::Object::add_monitor() {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = Monitor{GAME.objects.get_id(this)};
+	monitor_pair.first = Monitor{id()};
 	return monitor_pair.first;
 }
 m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, {}, {}, {}};
+	monitor_pair.first = Monitor{id(), pre_phy, {}, {}, {}};
 	return monitor_pair.first;
 }
 m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& pre_gfx) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, {}, pre_gfx, {}};
+	monitor_pair.first = Monitor{id(), pre_phy, {}, pre_gfx, {}};
 	return monitor_pair.first;
 }
 m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, {}};
+	monitor_pair.first = Monitor{id(), pre_phy, post_phy, pre_gfx, {}};
 	return monitor_pair.first;
 }
 m2::Monitor& m2::Object::add_monitor(const Monitor::Callback& pre_phy, const Monitor::Callback& post_phy, const Monitor::Callback& pre_gfx, const Monitor::Callback& post_gfx) {
 	auto monitor_pair = GAME.monitors.alloc();
 	_monitor_id = monitor_pair.second;
-	monitor_pair.first = Monitor{GAME.objects.get_id(this), pre_phy, post_phy, pre_gfx, post_gfx};
+	monitor_pair.first = Monitor{id(), pre_phy, post_phy, pre_gfx, post_gfx};
 	return monitor_pair.first;
 }
 m2::Physique& m2::Object::add_physique() {
 	auto physique_pair = GAME.physics.alloc();
 	_physique_id = physique_pair.second;
-	physique_pair.first = Physique{GAME.objects.get_id(this)};
+	physique_pair.first = Physique{id()};
 	return physique_pair.first;
 }
 m2::Graphic& m2::Object::add_graphic() {
 	auto graphic_pair = GAME.graphics.alloc();
 	_graphic_id = graphic_pair.second;
-	auto obj_id = GAME.objects.get_id(this);
-	graphic_pair.first = Graphic{obj_id};
-	GAME.draw_list.insert(obj_id);
+	graphic_pair.first = Graphic{id()};
+	GAME.draw_list.insert(id());
 	return graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
 	auto graphic_pair = GAME.graphics.alloc();
 	_graphic_id = graphic_pair.second;
-	auto obj_id = GAME.objects.get_id(this);
-	graphic_pair.first = Graphic{obj_id, sprite};
-	GAME.draw_list.insert(obj_id);
+	graphic_pair.first = Graphic{id(), sprite};
+	GAME.draw_list.insert(id());
 	return graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
 	auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;
-	terrain_graphic_pair.first = Graphic{GAME.objects.get_id(this), sprite};
+	terrain_graphic_pair.first = Graphic{id(), sprite};
 	return terrain_graphic_pair.first;
 }
 m2::Light& m2::Object::add_light() {
 	auto light_pair = GAME.lights.alloc();
 	_light_id = light_pair.second;
-	light_pair.first = Light{GAME.objects.get_id(this)};
+	light_pair.first = Light{id()};
 	return light_pair.first;
 }
 m2g::Defense& m2::Object::add_defense() {
 	auto defense_pair = GAME.defenses.alloc();
 	_defense_id = defense_pair.second;
-	defense_pair.first = m2g::Defense{GAME.objects.get_id(this)};
+	defense_pair.first = m2g::Defense{id()};
 	return defense_pair.first;
 }
 m2g::Offense& m2::Object::add_offense() {
 	auto offense_pair = GAME.offenses.alloc();
 	_offense_id = offense_pair.second;
-	offense_pair.first = m2g::Offense{GAME.objects.get_id(this)};
+	offense_pair.first = m2g::Offense{id()};
 	return offense_pair.first;
+}
+m2::Character& m2::Object::add_character() {
+    auto character_pair = GAME.characters.alloc();
+    _character_id = character_pair.second;
+    character_pair.first = Character{id()};
+    return character_pair.first;
 }
 
 std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position) {

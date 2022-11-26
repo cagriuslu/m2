@@ -115,6 +115,7 @@ namespace m2 {
 		Pool<Light> lights;
 		Pool<m2g::Defense> defenses;
 		Pool<m2g::Offense> offenses;
+		Pool<Character> characters;
 		b2World *world{};
         box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointerId{};
