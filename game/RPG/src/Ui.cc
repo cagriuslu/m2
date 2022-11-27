@@ -121,22 +121,13 @@ static Blueprint::Widget::Variant left_hud_variant_4 = Blueprint::Widget::Progre
 	.initial_progress = 1.0f,
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {
-		// Lookup player
-		static m2::Id player_id = 0;
-		static float* counter = nullptr;
-		static float cooldown = 0.0f;
-		if (player_id != GAME.playerId) {
-			player_id = GAME.playerId;
-			auto* impl = dynamic_cast<obj::Player*>(GAME.player()->impl.get());
-			counter = &impl->char_state.dash_cooldown_counter_s;
-			cooldown = impl->char_state.blueprint->dash_cooldown_s;
+		if (GAME.playerId) {
+			float counter = GAME.player()->character().get_resource(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER);
+			float cooldown = 2.0f;
+			counter = (cooldown <= counter) ? cooldown : counter;
+			return counter / cooldown;
 		}
-		// Read cooldown counter
-		if (counter) {
-			return *counter / cooldown;
-		} else {
-			return 0.0f;
-		}
+		return 0.0f;
 	}
 };
 const Blueprint m2g::ui::left_hud = {

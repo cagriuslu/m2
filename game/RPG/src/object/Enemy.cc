@@ -38,8 +38,8 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].foreground_collider_circ_radius_m());
 	bp.mutable_foreground_fixture()->set_is_sensor(false);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_FOREGROUND);
-	bp.set_mass(blueprint->mass_kg);
-	bp.set_linear_damping(blueprint->linear_damping);
+	bp.set_mass(10.0f);
+	bp.set_linear_damping(10.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.pre_step = [&obj](m2::Physique& phy) {
@@ -70,9 +70,11 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		}
 	};
 
+	auto& chr = obj.add_full_character();
+	chr.add_item(m2g::pb::ITEM_PASSIVE_SWORD);
+
 	auto& def = obj.add_defense();
-	def.hp = 100;
-	def.maxHp = 100;
+	def.maxHp = def.hp = 100.0f;
 
     obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 

@@ -5,4 +5,6 @@ enum ResourceType {
   NO_RESOURCE = 0;
   RESOURCE_TTL = 1;
   RESOURCE_HP = 2;
+
+  RESOURCE_DASH_COOLDOWN_COUNTER = 1001;
 }

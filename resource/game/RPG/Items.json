@@ -4,15 +4,37 @@
       "type": "NO_ITEM"
     },
     {
-      "type": "CONSUMABLE_POTION_HP20",
+      "type": "ITEM_CONSUMABLE_POTION_20HP",
       "usage": "CONSUMABLE",
       "resources": [
         {
-          "type": "HP",
+          "type": "RESOURCE_HP",
           "amount": 20
         }
       ],
       "game_sprite": "RED_POTION_00"
+    },
+    {
+      "type": "ITEM_REUSABLE_CAPABILITY_DASH_EVERY_2S",
+      "usage": "REUSABLE",
+      "resources": [
+        {
+          "type": "RESOURCE_DASH_COOLDOWN_COUNTER",
+          "amount": -2.0
+        }
+      ]
+    },
+    {
+      "type": "ITEM_PASSIVE_MACHINE_GUN",
+      "usage": "PASSIVE"
+    },
+    {
+      "type": "ITEM_PASSIVE_SWORD",
+      "usage": "PASSIVE"
+    },
+    {
+      "type": "ITEM_PASSIVE_GRENADE_LAUNCHER",
+      "usage": "PASSIVE"
     }
   ]
 }
