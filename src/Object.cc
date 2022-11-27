@@ -131,8 +131,9 @@ m2g::Defense& m2::Object::defense() const {
 m2g::Offense& m2::Object::offense() const {
 	return GAME.offenses[_offense_id];
 }
-m2::Character& m2::Object::character() const {
-    return GAME.characters[_character_id];
+m2::CharacterBase& m2::Object::character() const {
+    auto& it = GAME.characters[_character_id];
+    return get_character_base(it);
 }
 
 void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
@@ -184,11 +185,17 @@ m2g::Offense& m2::Object::add_offense() {
 	offense_pair.first = m2g::Offense{id()};
 	return offense_pair.first;
 }
-m2::Character& m2::Object::add_character() {
+m2::CharacterBase& m2::Object::add_tiny_character() {
     auto character_pair = GAME.characters.alloc();
     _character_id = character_pair.second;
-    character_pair.first = Character{id()};
-    return character_pair.first;
+    character_pair.first = TinyCharacter{id()};
+    return std::get<TinyCharacter>(character_pair.first);
+}
+m2::CharacterBase& m2::Object::add_full_character() {
+    auto character_pair = GAME.characters.alloc();
+    _character_id = character_pair.second;
+    character_pair.first = FullCharacter{id()};
+    return std::get<FullCharacter>(character_pair.first);
 }
 
 std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position, ObjectId parent_id) {

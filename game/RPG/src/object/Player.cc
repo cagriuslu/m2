@@ -42,8 +42,8 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.sprites[blueprint->main_sprite].foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->set_is_sensor(false);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
-	bp.set_mass(blueprint->mass_kg);
-	bp.set_linear_damping(blueprint->linear_damping);
+	bp.set_mass(80.0f);
+	bp.set_linear_damping(100.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.pre_step = [&](m2::Physique& phy) {
@@ -69,11 +69,11 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			impl->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKRIGHT);
 		}
 		float force;
-		if (GAME.events.pop_key_press(m2::Key::DASH) && impl->char_state.pop_dash()) {
+		if (GAME.events.pop_key_press(m2::Key::DASH) && obj.character().clear_resource_if(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER, 2.0f)) {
 			moveDirection = to_mouse;
-			force = impl->char_state.blueprint->dash_force;
+			force = 100000.0f;
 		} else {
-			force = impl->char_state.blueprint->walk_force;
+			force = 2800.0f;
 		}
 		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * force)), true);
 
@@ -134,14 +134,19 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	auto& light = obj.add_light();
 	light.radius_m = 4.0f;
 
-	auto& chr = obj.add_character();
+	auto& chr = obj.add_full_character();
 	chr.add_item(m2g::pb::ITEM_PASSIVE_MACHINE_GUN);
 	chr.add_item(m2g::pb::ITEM_PASSIVE_SWORD);
 	chr.add_item(m2g::pb::ITEM_PASSIVE_GRENADE_LAUNCHER);
+	chr.add_item(m2g::pb::ITEM_REUSABLE_CAPABILITY_DASH_EVERY_2S);
 	chr.add_resource(m2g::pb::RESOURCE_HP, 100.0f);
+	chr.add_resource(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER, 2.0f);
+	chr.update = [](m2::CharacterBase& chr) {
+		chr.add_resource(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER, GAME.deltaTime_s);
+	};
 
 	auto& def = obj.add_defense();
-    def.maxHp = def.hp = blueprint->max_hp;
+    def.maxHp = def.hp = 100.0f;
 
 	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
 

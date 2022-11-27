@@ -134,7 +134,7 @@ void* rpg::ChaserFsmBase::triggered(m2::Fsm<ChaserFsmBase>& automaton, int sig) 
 						auto objPositionF = m2::Vec2f(obj_pos);
 						auto targetPositionF = m2::Vec2f(target_pos);
 						m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-						m2::Vec2f force = direction * (GAME.deltaTicks_ms * impl->character_state.blueprint->walk_force);
+						m2::Vec2f force = direction * (GAME.deltaTicks_ms * 25.0f);
 						automaton.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 					}
 				}
@@ -180,7 +180,7 @@ void* rpg::ChaserFsmBase::gave_up(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
                     auto objPositionF = m2::Vec2f(obj_pos);
                     auto targetPositionF = m2::Vec2f(target_pos);
                     m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * impl->character_state.blueprint->walk_force);
+                    m2::Vec2f force = direction * (GAME.deltaTicks_ms * 25.0f);
                     automaton.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
                 }
             }

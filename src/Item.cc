@@ -5,7 +5,7 @@
 std::vector<m2::pb::Item> m2::load_items(const std::string &items_path) {
 	auto items = proto::json_file_to_message<pb::Items>(items_path);
 	if (!items) {
-		return {};
+		throw M2ERROR(items.error());
 	}
 
 	std::vector<pb::Item> items_vector(m2g::pb::ItemType_ARRAYSIZE);
