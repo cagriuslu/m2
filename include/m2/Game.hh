@@ -32,7 +32,7 @@
 #include <filesystem>
 
 #define GAME (::m2::Game::instance())
-#define CONST_GAME (::m2::Game::const_instance())
+#define CGAME (::m2::Game::const_instance())
 
 #define GAME_AND_HUD_ASPECT_RATIO_MUL (16)
 #define GAME_AND_HUD_ASPECT_RATIO_DIV (9)

@@ -187,6 +187,10 @@ int main(int argc, char **argv) {
 				// Character update
 				for (auto character_it : GAME.characters) {
 					auto& chr = get_character_base(*character_it.first);
+					chr.automatic_update();
+				}
+				for (auto character_it : GAME.characters) {
+					auto& chr = get_character_base(*character_it.first);
 					IF(chr.update)(chr);
 				}
 				GAME.execute_deferred_actions();

@@ -6,7 +6,7 @@
     {
       "type": "ITEM_CONSUMABLE_POTION_20HP",
       "usage": "CONSUMABLE",
-      "resources": [
+      "benefits": [
         {
           "type": "RESOURCE_HP",
           "amount": 20
@@ -15,12 +15,28 @@
       "game_sprite": "RED_POTION_00"
     },
     {
-      "type": "ITEM_REUSABLE_CAPABILITY_DASH_EVERY_2S",
+      "type": "ITEM_REUSABLE_DASH_2S",
       "usage": "REUSABLE",
-      "resources": [
+      "costs": [
         {
-          "type": "RESOURCE_DASH_COOLDOWN_COUNTER",
-          "amount": -2.0
+          "type": "RESOURCE_DASH_ENERGY",
+          "amount": 2.0
+        }
+      ],
+      "benefits": [
+        {
+          "type": "RESOURCE_DASH_ENERGY",
+          "nInf": true
+        }
+      ]
+    },
+    {
+      "type": "ITEM_AUTOMATIC_DASH_ENERGY",
+      "usage": "AUTOMATIC",
+      "benefits": [
+        {
+          "type": "RESOURCE_DASH_ENERGY",
+          "amount": 1.0
         }
       ]
     },

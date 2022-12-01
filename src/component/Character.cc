@@ -3,169 +3,198 @@
 #include <algorithm>
 
 m2::CharacterBase::CharacterBase(uint64_t object_id) : Component(object_id) {}
-bool m2::CharacterBase::use_item(m2g::pb::ItemType item_type) {
-	if (!has_item(item_type)) {
+bool m2::CharacterBase::has_item(m2g::pb::ItemType item_type) const {
+	return has_item(GAME.items[item_type]);
+}
+size_t m2::CharacterBase::count_item(m2g::pb::ItemType item_type) const {
+	return count_item(GAME.items[item_type]);
+}
+void m2::CharacterBase::add_item(m2g::pb::ItemType item_type) {
+	add_item(GAME.items[item_type]);
+}
+bool m2::CharacterBase::use_item(m2g::pb::ItemType item_type, float resource_multiplier) {
+	return use_item(GAME.items[item_type], resource_multiplier);
+}
+bool m2::CharacterBase::use_item(const pb::Item& item, float resource_multiplier) {
+	if (!has_item(item)) {
 		return false;
 	}
-	const auto& item = GAME.items[item_type];
-	auto apply_item = [&]() {
-		for (const auto& resources_it : item.resources()) {
-			this->add_resource(resources_it.type(), static_cast<float>(resources_it.amount()));
+	// Check if costs can be paid
+	if (item.costs_size() == 1) {
+		if (0.0f < get_resource_amount(item.costs(0)) * resource_multiplier && this->get_resource(item.costs(0).type()) < get_resource_amount(item.costs(0)) * resource_multiplier) {
+			return false;
 		}
-	};
-	switch (item.usage()) {
-		case pb::CONSUMABLE:
-			apply_item();
-			remove_item(item_type);
-			break;
-		case pb::REUSABLE:
-		case pb::PASSIVE:
-			apply_item();
-			break;
-		default:
-			break;
+	} else if (1 < item.costs_size()) {
+		// Merge costs
+		std::map<m2g::pb::ResourceType, pb::Resource> merged_costs;
+		for (const auto& cost_it : item.costs()) {
+			auto merged_costs_it = merged_costs.find(cost_it.type());
+			if (merged_costs_it != merged_costs.end()) {
+				auto new_cost = get_resource_amount(merged_costs_it->second) + get_resource_amount(cost_it);
+				merged_costs_it->second.set_amount(new_cost);
+			} else {
+				merged_costs[cost_it.type()] = cost_it;
+			}
+		}
+		bool enough = true;
+		for (const auto& cost_it : merged_costs) {
+			if (0.0f < get_resource_amount(cost_it.second) * resource_multiplier && this->get_resource(cost_it.second.type()) < get_resource_amount(cost_it.second) * resource_multiplier) {
+				enough = false;
+			}
+		}
+		if (!enough) {
+			return false;
+		}
+	}
+	// Pay the costs
+	for (const auto& cost_it : item.costs()) {
+		this->remove_resource(cost_it.type(), get_resource_amount(cost_it) * resource_multiplier);
+	}
+	// Get the benefits
+	for (const auto& benefit_it : item.benefits()) {
+		this->add_resource(benefit_it.type(), get_resource_amount(benefit_it) * resource_multiplier);
+	}
+	if (item.usage() == pb::CONSUMABLE) {
+		remove_item(item);
 	}
 	return true;
 }
-bool m2::CharacterBase::use_item_if(m2g::pb::ItemType item_type) {
-	if (!has_item(item_type)) {
-		return false;
+void m2::CharacterBase::remove_item(m2g::pb::ItemType item_type) {
+	remove_item(GAME.items[item_type]);
+}
+void m2::CharacterBase::clear_item(m2g::pb::ItemType item_type) {
+	clear_item(GAME.items[item_type]);
+}
+float m2::CharacterBase::get_resource_amount(const pb::Resource& resource) {
+	if (resource.has_amount()) {
+		return static_cast<float>(resource.amount());
+	} else if (resource.has_p_inf() && resource.p_inf()) {
+		return INFINITY;
+	} else if (resource.has_n_inf() && resource.n_inf()) {
+		return -INFINITY;
+	} else {
+		return 0.0f;
 	}
-	bool enough = true;
-	for (const auto& resources_it : GAME.items[item_type].resources()) {
-		if (resources_it.amount() < 0.0f && this->get_resource(resources_it.type()) < resources_it.amount()) {
-			enough = false;
-		}
-	}
-	if (enough) {
-		return use_item(item_type);
-	}
-	return false;
 }
 
 m2::TinyCharacter::TinyCharacter(uint64_t object_id) : CharacterBase(object_id) {}
-bool m2::TinyCharacter::has_item(m2g::pb::ItemType item_type) const {
-	return item && *item == item_type;
-}
-size_t m2::TinyCharacter::count_item(m2g::pb::ItemType item_type) const {
-	return has_item(item_type) ? 1 : 0;
-}
-void m2::TinyCharacter::add_item(m2g::pb::ItemType item_type) {
-	item = item_type;
-}
-bool m2::TinyCharacter::remove_item(m2g::pb::ItemType item_type) {
-	if (has_item(item_type)) {
-		item = {};
-		return true;
+void m2::TinyCharacter::automatic_update() {
+	if (_item && _item->usage() == pb::AUTOMATIC) {
+		use_item(*_item, GAME.deltaTime_s);
 	}
-	return false;
 }
-bool m2::TinyCharacter::clear_item(m2g::pb::ItemType item_type) {
-	return remove_item(item_type);
+bool m2::TinyCharacter::has_item(const pb::Item& item) const {
+	return _item && _item->SerializeAsString() == item.SerializeAsString();
+}
+size_t m2::TinyCharacter::count_item(const pb::Item& item) const {
+	return has_item(item) ? 1 : 0;
+}
+void m2::TinyCharacter::add_item(const pb::Item& item) {
+	_item = item;
+	if (item.use_on_acquire()) {
+		use_item(item);
+	}
+}
+void m2::TinyCharacter::remove_item(const pb::Item& item) {
+	if (has_item(item)) {
+		_item = {};
+	}
+}
+void m2::TinyCharacter::clear_item(const pb::Item& item) {
+	return remove_item(item);
 }
 bool m2::TinyCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
-	return resource && resource->first == resource_type && 0.0f < resource->second;
+	return _resource && _resource->first == resource_type && 0.0f < _resource->second;
 }
 float m2::TinyCharacter::get_resource(m2g::pb::ResourceType resource_type) const {
-	if (resource && resource->first == resource_type) {
-		return static_cast<float>(resource->second);
+	if (_resource && _resource->first == resource_type) {
+		return static_cast<float>(_resource->second);
 	}
 	return {};
 }
 float m2::TinyCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
-	if (resource && resource->first == resource_type) {
-		auto new_amount = resource->second + amount;
+	if (_resource && _resource->first == resource_type) {
+		auto new_amount = _resource->second + amount;
 		new_amount = (new_amount < 0.0f) ? 0.0f : new_amount;
-		resource->second = new_amount;
+		_resource->second = new_amount;
 		return static_cast<float>(new_amount);
 	} else if (0.0f < amount) {
-		resource = std::make_pair(resource_type, amount);
+		_resource = std::make_pair(resource_type, amount);
 		return amount;
 	} else {
-		resource = std::make_pair(resource_type, 0.0f);
+		_resource = std::make_pair(resource_type, 0.0f);
 		return 0.0f;
 	}
 }
 float m2::TinyCharacter::remove_resource(m2g::pb::ResourceType resource_type, float amount) {
 	return add_resource(resource_type, -amount);
 }
-bool m2::TinyCharacter::remove_resource_if(m2g::pb::ResourceType resource_type, float amount) {
-	if (resource && resource->first == resource_type) {
-		auto new_amount = resource->second - amount;
-		if (new_amount < 0.0f) {
-			return false;
-		}
-		resource->second = new_amount;
-		return true;
-	} else if (amount < 0.0f) {
-		resource = std::make_pair(resource_type, amount);
-		return true;
-	} else {
-		return false;
+void m2::TinyCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
+	if (_resource && _resource->first == resource_type) {
+		_resource = {};
 	}
 }
-bool m2::TinyCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
-	if (resource && resource->first == resource_type) {
-		resource = {};
-		return true;
-	} else {
-		return false;
-	}
-}
-bool m2::TinyCharacter::clear_resource_if(m2g::pb::ResourceType resource_type, float amount) {
-	if (resource && resource->first == resource_type) {
-		auto new_amount = resource->second - amount;
-		if (new_amount < 0.0f) {
-			return false;
-		}
-		resource = {};
-		return true;
-	} else {
-		return false;
-	}
-}
-
 
 m2::FullCharacter::FullCharacter(uint64_t object_id) : CharacterBase(object_id) {}
-bool m2::FullCharacter::has_item(m2g::pb::ItemType item_type) const {
-	return items.find(item_type) != items.end();
-}
-size_t m2::FullCharacter::count_item(m2g::pb::ItemType item_type) const {
-	return items.count(item_type);
-}
-void m2::FullCharacter::add_item(m2g::pb::ItemType item_type) {
-	items.emplace(item_type);
-}
-bool m2::FullCharacter::remove_item(m2g::pb::ItemType item_type) {
-	auto it = items.find(item_type);
-	if (it != items.end()) {
-		items.erase(it);
-		return true;
+void m2::FullCharacter::automatic_update() {
+	for (const auto& item : _items) {
+		if (item.usage() == pb::AUTOMATIC) {
+			use_item(item, GAME.deltaTime_s);
+		}
 	}
-	return false;
 }
-bool m2::FullCharacter::clear_item(m2g::pb::ItemType item_type) {
-	return items.erase(item_type);
+bool m2::FullCharacter::has_item(const pb::Item& item) const {
+	auto serialized = item.SerializeAsString();
+	return std::find_if(_items.cbegin(), _items.cend(), [serialized](const auto& held_item) {
+		return serialized == held_item.SerializeAsString();
+	}) != _items.end();
+}
+size_t m2::FullCharacter::count_item(const pb::Item& item) const {
+	auto serialized = item.SerializeAsString();
+	return std::count_if(_items.cbegin(), _items.cend(), [serialized](const auto& held_item) {
+		return serialized == held_item.SerializeAsString();
+	});
+}
+void m2::FullCharacter::add_item(const pb::Item& item) {
+	_items.emplace_back(item);
+	if (item.use_on_acquire()) {
+		use_item(item);
+	}
+}
+void m2::FullCharacter::remove_item(const pb::Item& item) {
+	auto serialized = item.SerializeAsString();
+	auto it = std::find_if(_items.cbegin(), _items.cend(), [serialized](const auto& held_item) {
+		return serialized == held_item.SerializeAsString();
+	});
+	if (it != _items.end()) {
+		_items.erase(it);
+	}
+}
+void m2::FullCharacter::clear_item(const pb::Item& item) {
+	auto serialized = item.SerializeAsString();
+	_items.erase(std::remove_if(_items.begin(), _items.end(), [serialized](const auto& held_item) {
+		return serialized == held_item.SerializeAsString();
+	}), _items.end());
 }
 bool m2::FullCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
-	return resources.count(resource_type);
+	return _resources.count(resource_type);
 }
 float m2::FullCharacter::get_resource(m2g::pb::ResourceType resource_type) const {
-	auto it = resources.find(resource_type);
-	if (it != resources.end()) {
+	auto it = _resources.find(resource_type);
+	if (it != _resources.end()) {
 		return it->second;
 	}
 	return 0.0f;
 }
 float m2::FullCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
-	auto it = resources.find(resource_type);
-	if (it != resources.end()) {
+	auto it = _resources.find(resource_type);
+	if (it != _resources.end()) {
 		auto new_amount = it->second + amount;
 		new_amount = (new_amount < 0.0f) ? 0.0f : new_amount;
 		it->second = new_amount;
 		return static_cast<float>(new_amount);
 	} else if (0.0f < amount) {
-		resources[resource_type] = amount;
+		_resources[resource_type] = amount;
 		return amount;
 	} else {
 		return 0.0f;
@@ -174,42 +203,10 @@ float m2::FullCharacter::add_resource(m2g::pb::ResourceType resource_type, float
 float m2::FullCharacter::remove_resource(m2g::pb::ResourceType resource_type, float amount) {
 	return add_resource(resource_type, -amount);
 }
-bool m2::FullCharacter::remove_resource_if(m2g::pb::ResourceType resource_type, float amount) {
-	auto it = resources.find(resource_type);
-	if (it != resources.end()) {
-		auto new_amount = it->second - amount;
-		if (new_amount < 0.0f) {
-			return false;
-		}
-		it->second = new_amount;
-		return true;
-	} else if (amount < 0.0f) {
-		resources[resource_type] = -amount;
-		return true;
-	} else {
-		return false;
-	}
-}
-bool m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
-	auto it = resources.find(resource_type);
-	if (it != resources.end()) {
-		resources.erase(it);
-		return true;
-	} else {
-		return false;
-	}
-}
-bool m2::FullCharacter::clear_resource_if(m2g::pb::ResourceType resource_type, float amount) {
-	auto it = resources.find(resource_type);
-	if (it != resources.end()) {
-		auto new_amount = it->second - amount;
-		if (new_amount < 0.0f) {
-			return false;
-		}
-		resources.erase(it);
-		return true;
-	} else {
-		return false;
+void m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
+	auto it = _resources.find(resource_type);
+	if (it != _resources.end()) {
+		_resources.erase(it);
 	}
 }
 

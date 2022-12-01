@@ -69,7 +69,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			impl->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKRIGHT);
 		}
 		float force;
-		if (GAME.events.pop_key_press(m2::Key::DASH) && obj.character().clear_resource_if(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER, 2.0f)) {
+		if (GAME.events.pop_key_press(m2::Key::DASH) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
 			moveDirection = to_mouse;
 			force = 100000.0f;
 		} else {
@@ -112,7 +112,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		for (auto it = impl->items.begin(); it != impl->items.end(); ) {
 			auto item = GAME.items[*it];
 			if (item.usage() == m2::pb::Usage::CONSUMABLE) {
-				for (const auto& resource : item.resources()) {
+				for (const auto& resource : item.benefits()) {
 					switch (resource.type()) {
 						case m2g::pb::RESOURCE_HP:
 							def.hp += (float)resource.amount();
@@ -138,11 +138,11 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	chr.add_item(m2g::pb::ITEM_PASSIVE_MACHINE_GUN);
 	chr.add_item(m2g::pb::ITEM_PASSIVE_SWORD);
 	chr.add_item(m2g::pb::ITEM_PASSIVE_GRENADE_LAUNCHER);
-	chr.add_item(m2g::pb::ITEM_REUSABLE_CAPABILITY_DASH_EVERY_2S);
+	chr.add_item(m2g::pb::ITEM_REUSABLE_DASH_2S);
+	chr.add_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY);
 	chr.add_resource(m2g::pb::RESOURCE_HP, 100.0f);
-	chr.add_resource(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER, 2.0f);
+	chr.add_resource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 	chr.update = [](m2::CharacterBase& chr) {
-		chr.add_resource(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER, GAME.deltaTime_s);
 	};
 
 	auto& def = obj.add_defense();

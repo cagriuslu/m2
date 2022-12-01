@@ -7,22 +7,29 @@ import "ItemType.proto";
 
 message Resource {
   m2g.pb.ResourceType type = 1;
-  double amount = 2;
+  oneof value {
+    double amount = 2;
+    bool p_inf = 3;
+    bool n_inf = 4;
+  }
 }
 
 enum Usage {
   CONSUMABLE = 0;
   REUSABLE = 1;
-  PASSIVE = 2;
+  AUTOMATIC = 2; // Benefits are applied automatically every second
+  PASSIVE = 3;
 }
 
 /// An item also represents a capability
 message Item {
   m2g.pb.ItemType type = 1;
   Usage usage = 2;
-  repeated Resource resources = 3;
-  m2g.pb.SpriteType game_sprite = 4;
-  m2g.pb.SpriteType ui_sprite = 5;
+  bool use_on_acquire = 3;
+  repeated Resource costs = 4;
+  repeated Resource benefits = 5;
+  m2g.pb.SpriteType game_sprite = 6;
+  m2g.pb.SpriteType ui_sprite = 7;
 }
 
 message Items {

@@ -122,7 +122,7 @@ static Blueprint::Widget::Variant left_hud_variant_4 = Blueprint::Widget::Progre
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {
 		if (GAME.playerId) {
-			float counter = GAME.player()->character().get_resource(m2g::pb::RESOURCE_DASH_COOLDOWN_COUNTER);
+			float counter = GAME.player()->character().get_resource(m2g::pb::RESOURCE_DASH_ENERGY);
 			float cooldown = 2.0f;
 			counter = (cooldown <= counter) ? cooldown : counter;
 			return counter / cooldown;
