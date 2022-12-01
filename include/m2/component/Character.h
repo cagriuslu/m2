@@ -18,18 +18,24 @@ namespace m2 {
 		CharacterBase() = default;
 		explicit CharacterBase(uint64_t object_id);
 
-		[[nodiscard]] virtual bool has_item(m2g::pb::ItemType item_type) const = 0;
-		[[nodiscard]] virtual size_t count_item(m2g::pb::ItemType item_type) const = 0;
-		/// Add item
-		virtual void add_item(m2g::pb::ItemType item_type) = 0;
+		virtual void automatic_update() = 0;
+
+		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const;
+		[[nodiscard]] virtual bool has_item(const pb::Item& item) const = 0;
+		[[nodiscard]] size_t count_item(m2g::pb::ItemType item_type) const;
+		[[nodiscard]] virtual size_t count_item(const pb::Item& item) const = 0;
+		/// Add item. If the usage type is IMMEDIATE, item will be used
+		void add_item(m2g::pb::ItemType item_type);
+		virtual void add_item(const pb::Item& item) = 0;
 		/// Return success
-		bool use_item(m2g::pb::ItemType item_type);
-		/// Use item if resources allow
-		bool use_item_if(m2g::pb::ItemType item_type);
+		bool use_item(m2g::pb::ItemType item_type, float resource_multiplier = 1.0f);
+		bool use_item(const pb::Item& item, float resource_multiplier = 1.0f);
 		/// Return success
-		virtual bool remove_item(m2g::pb::ItemType item_type) = 0;
+		void remove_item(m2g::pb::ItemType item_type);
+		virtual void remove_item(const pb::Item& item) = 0;
 		/// Return success
-		virtual bool clear_item(m2g::pb::ItemType item_type) = 0;
+		void clear_item(m2g::pb::ItemType item_type);
+		virtual void clear_item(const pb::Item& item) = 0;
 
 		[[nodiscard]] virtual bool has_resource(m2g::pb::ResourceType resource_type) const = 0;
 		[[nodiscard]] virtual float get_resource(m2g::pb::ResourceType resource_type) const = 0;
@@ -37,54 +43,50 @@ namespace m2 {
 		virtual float add_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		/// Return remaining amount
 		virtual float remove_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
-		/// Remove resource if amount allows, return success
-		virtual bool remove_resource_if(m2g::pb::ResourceType resource_type, float amount) = 0;
-		/// Return success
-		virtual bool clear_resource(m2g::pb::ResourceType resource_type) = 0;
-		/// Clear resource if amount allows, return success
-		virtual bool clear_resource_if(m2g::pb::ResourceType resource_type, float amount) = 0;
+		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
+
+	protected:
+		static float get_resource_amount(const pb::Resource& resource);
 	};
 
 	class TinyCharacter : public CharacterBase {
-		std::optional<m2g::pb::ItemType> item;
-		std::optional<std::pair<m2g::pb::ResourceType,float>> resource;
+		std::optional<pb::Item> _item;
+		std::optional<std::pair<m2g::pb::ResourceType,float>> _resource;
 
 	public:
 		TinyCharacter() = default;
 		explicit TinyCharacter(uint64_t object_id);
-		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const override;
-		[[nodiscard]] size_t count_item(m2g::pb::ItemType item_type) const override;
-		void add_item(m2g::pb::ItemType item_type) override;
-		bool remove_item(m2g::pb::ItemType item_type) override;
-		bool clear_item(m2g::pb::ItemType item_type) override;
+		void automatic_update() override;
+		[[nodiscard]] bool has_item(const pb::Item& item) const override;
+		[[nodiscard]] size_t count_item(const pb::Item& item) const override;
+		void add_item(const pb::Item& item) override;
+		void remove_item(const pb::Item& item) override;
+		void clear_item(const pb::Item& item) override;
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		bool remove_resource_if(m2g::pb::ResourceType resource_type, float amount) override;
-		bool clear_resource(m2g::pb::ResourceType resource_type) override;
-		bool clear_resource_if(m2g::pb::ResourceType resource_type, float amount) override;
+		void clear_resource(m2g::pb::ResourceType resource_type) override;
 	};
 
 	class FullCharacter : public CharacterBase {
-		std::unordered_multiset<m2g::pb::ItemType> items;
-		std::unordered_map<m2g::pb::ResourceType, float> resources;
+		std::vector<pb::Item> _items;
+		std::unordered_map<m2g::pb::ResourceType, float> _resources;
 
 	public:
 		FullCharacter() = default;
 		explicit FullCharacter(uint64_t object_id);
-		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const override;
-		[[nodiscard]] size_t count_item(m2g::pb::ItemType item_type) const override;
-		void add_item(m2g::pb::ItemType item_type) override;
-		bool remove_item(m2g::pb::ItemType item_type) override;
-		bool clear_item(m2g::pb::ItemType item_type) override;
+		void automatic_update() override;
+		[[nodiscard]] bool has_item(const pb::Item& item) const override;
+		[[nodiscard]] size_t count_item(const pb::Item& item) const override;
+		void add_item(const pb::Item& item) override;
+		void remove_item(const pb::Item& item) override;
+		void clear_item(const pb::Item& item) override;
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
-		bool remove_resource_if(m2g::pb::ResourceType resource_type, float amount) override;
-		bool clear_resource(m2g::pb::ResourceType resource_type) override;
-		bool clear_resource_if(m2g::pb::ResourceType resource_type, float amount) override;
+		void clear_resource(m2g::pb::ResourceType resource_type) override;
 	};
 
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
