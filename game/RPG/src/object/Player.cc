@@ -92,10 +92,9 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			auto& melee = m2::create_object(obj.position, id).first;
 			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, to_mouse);
 		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && impl->char_state.explosive_weapon_state->blueprint->cooldown_s < impl->char_state.explosive_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER)) {
 			auto& explosive = m2::create_object(obj.position, id).first;
 			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, to_mouse);
-			impl->char_state.explosive_weapon_state->cooldown_counter_s = 0;
 		}
 	};
 	phy.post_step = [&obj](m2::Physique& phy) {
