@@ -30,14 +30,10 @@ namespace chr {
 	struct ExplosiveWeaponBlueprint;
 	struct ExplosiveWeaponState {
 		const ExplosiveWeaponBlueprint* blueprint;
-		float cooldown_counter_s;
-		unsigned explosive_count;
 		explicit ExplosiveWeaponState(const ExplosiveWeaponBlueprint* blueprint);
-		void process_time(float time_passed_s);
 	};
 	struct ExplosiveWeaponBlueprint {
 		ExplosiveBlueprint explosive;
-		float cooldown_s;
 		unsigned initial_explosive_count;
 	};
 
