@@ -6,15 +6,7 @@ chr::MeleeState::MeleeState(const MeleeBlueprint* blueprint) :
 	ttl_s(blueprint->ttl_s) {}
 
 chr::MeleeWeaponState::MeleeWeaponState(const MeleeWeaponBlueprint* blueprint) :
-	blueprint(blueprint),
-	cooldown_counter_s(0.0f) {}
-
-void chr::MeleeWeaponState::process_time(float time_passed_s) {
-	cooldown_counter_s += time_passed_s;
-	if (blueprint->cooldown_s < cooldown_counter_s) {
-		cooldown_counter_s = blueprint->cooldown_s + 0.001f;
-	}
-}
+	blueprint(blueprint) {}
 
 const chr::MeleeWeaponBlueprint chr::melee_weapon_bat = {
 		.melee = {
@@ -22,8 +14,7 @@ const chr::MeleeWeaponBlueprint chr::melee_weapon_bat = {
 				.damage = 60.0f,
 				.motion = MELEE_MOTION_SWING,
 				.ttl_s = 0.150f
-		},
-		.cooldown_s = 0.33f
+		}
 };
 const chr::MeleeWeaponBlueprint chr::melee_weapon_sword = {
 		.melee = {
@@ -31,8 +22,7 @@ const chr::MeleeWeaponBlueprint chr::melee_weapon_sword = {
 				.damage = 45.0f, // TODO normally 90
 				.motion = MELEE_MOTION_SWING,
 				.ttl_s = 0.150f
-		},
-		.cooldown_s = 0.33f
+		}
 };
 const chr::MeleeWeaponBlueprint chr::melee_weapon_spear = {
 		.melee = {
@@ -40,8 +30,7 @@ const chr::MeleeWeaponBlueprint chr::melee_weapon_spear = {
 				.damage = 120.0f,
 				.motion = MELEE_MOTION_STAB,
 				.ttl_s = 0.150f
-		},
-		.cooldown_s = 1.0f
+		}
 };
 const chr::MeleeWeaponBlueprint chr::melee_weapon_dagger = {
 		.melee = {
@@ -49,6 +38,5 @@ const chr::MeleeWeaponBlueprint chr::melee_weapon_dagger = {
 				.damage = 60.0f,
 				.motion = MELEE_MOTION_STAB,
 				.ttl_s = 0.150f
-		},
-		.cooldown_s = 0.5f
+		}
 };

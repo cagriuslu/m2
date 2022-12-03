@@ -88,10 +88,9 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + m2::PI) * 500.0f), true);
 			// TODO set looking direction here as well
 		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && impl->char_state.melee_weapon_state->blueprint->cooldown_s < impl->char_state.melee_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_SWORD)) {
 			auto& melee = m2::create_object(obj.position, id).first;
 			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, to_mouse);
-			impl->char_state.melee_weapon_state->cooldown_counter_s = 0;
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && impl->char_state.explosive_weapon_state->blueprint->cooldown_s < impl->char_state.explosive_weapon_state->cooldown_counter_s) {
 			auto& explosive = m2::create_object(obj.position, id).first;

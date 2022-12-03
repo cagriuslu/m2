@@ -25,13 +25,10 @@ namespace chr {
 	struct MeleeWeaponBlueprint;
 	struct MeleeWeaponState {
 		const MeleeWeaponBlueprint* blueprint;
-		float cooldown_counter_s;
 		explicit MeleeWeaponState(const MeleeWeaponBlueprint* blueprint);
-		void process_time(float time_passed_s);
 	};
 	struct MeleeWeaponBlueprint {
 		MeleeBlueprint melee;
-		float cooldown_s;
 	};
 
 	extern const MeleeWeaponBlueprint melee_weapon_bat;
