@@ -55,7 +55,7 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 			case ai::CAPABILITY_RANGED: {
 				auto& weapon_state = impl->character_state.ranged_weapon_state;
                 // If the weapon cooled down
-                if (weapon_state->blueprint->cooldown_s <= weapon_state->cooldown_counter_s) {
+                if (obj->character().use_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN)) {
                     auto& projectile = m2::create_object(obj->position, obj->id()).first;
 					obj::Projectile::init(
                             projectile,
@@ -63,7 +63,6 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
                             target.position - obj->position
                     );
                     // TODO Knockback maybe?
-					weapon_state->cooldown_counter_s = 0.0f;
                 }
                 break;
             }

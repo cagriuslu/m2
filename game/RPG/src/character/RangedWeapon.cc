@@ -10,15 +10,7 @@ ProjectileState::ProjectileState(const ProjectileBlueprint *blueprint) :
 	ttl_s(m2::apply_accuracy(blueprint->ttl_s, blueprint->ttl_accuracy)) {}
 
 RangedWeaponState::RangedWeaponState(const RangedWeaponBlueprint* blueprint) :
-	blueprint(blueprint),
-	cooldown_counter_s(0) {}
-
-void RangedWeaponState::process_time(float time_passed_s) {
-	cooldown_counter_s += time_passed_s;
-	if (blueprint->cooldown_s < cooldown_counter_s) {
-		cooldown_counter_s = blueprint->cooldown_s + 0.001f;
-	}
-}
+	blueprint(blueprint) {}
 
 const RangedWeaponBlueprint chr::ranged_weapon_gun = {
 		.projectile = {

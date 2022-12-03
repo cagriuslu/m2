@@ -23,9 +23,7 @@ namespace chr {
 	struct RangedWeaponBlueprint;
 	struct RangedWeaponState {
 		const RangedWeaponBlueprint* blueprint;
-		float cooldown_counter_s;
 		explicit RangedWeaponState(const RangedWeaponBlueprint* blueprint);
-		void process_time(float time_passed_s);
 	};
 	struct RangedWeaponBlueprint {
 		ProjectileBlueprint projectile;
