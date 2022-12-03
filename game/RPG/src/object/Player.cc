@@ -131,19 +131,17 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 
 	obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
 
-	auto& light = obj.add_light();
-	light.radius_m = 4.0f;
-
 	auto& chr = obj.add_full_character();
-	chr.add_item(m2g::pb::ITEM_PASSIVE_MACHINE_GUN);
-	chr.add_item(m2g::pb::ITEM_PASSIVE_SWORD);
-	chr.add_item(m2g::pb::ITEM_PASSIVE_GRENADE_LAUNCHER);
 	chr.add_item(m2g::pb::ITEM_REUSABLE_DASH_2S);
+	chr.add_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
+	chr.add_item(m2g::pb::ITEM_REUSABLE_SWORD);
+	chr.add_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER);
 	chr.add_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY);
+	chr.add_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY);
+	chr.add_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY);
+	chr.add_item(m2g::pb::ITEM_AUTOMATIC_EXPLOSIVE_ENERGY);
+
 	chr.add_resource(m2g::pb::RESOURCE_HP, 100.0f);
-	chr.add_resource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
-	chr.update = [](m2::CharacterBase& chr) {
-	};
 
 	auto& def = obj.add_defense();
     def.maxHp = def.hp = 100.0f;
