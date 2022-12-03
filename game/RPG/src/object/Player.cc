@@ -79,7 +79,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 
 		impl->char_state.process_time(GAME.deltaTime_s);
 
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && impl->char_state.ranged_weapon_state->blueprint->cooldown_s < impl->char_state.ranged_weapon_state->cooldown_counter_s) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN)) {
 			auto& projectile = m2::create_object(obj.position, id).first;
 			float accuracy = impl->char_state.blueprint->default_ranged_weapon->accuracy;
 			float angle = to_mouse.angle_rads() + (m2::PI * m2::randf() * (1 - accuracy)) - (m2::PI * ((1 - accuracy) / 2.0f));
@@ -87,7 +87,6 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			// Knock-back
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + m2::PI) * 500.0f), true);
 			// TODO set looking direction here as well
-			impl->char_state.ranged_weapon_state->cooldown_counter_s = 0;
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && impl->char_state.melee_weapon_state->blueprint->cooldown_s < impl->char_state.melee_weapon_state->cooldown_counter_s) {
 			auto& melee = m2::create_object(obj.position, id).first;
