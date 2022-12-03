@@ -27,8 +27,6 @@ namespace chr {
 	};
 	struct RangedWeaponBlueprint {
 		ProjectileBlueprint projectile;
-		unsigned projectile_count;
-		float cooldown_s;
 		float accuracy;
 	};
 

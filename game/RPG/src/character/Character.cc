@@ -18,9 +18,6 @@ void chr::CharacterState::process_time(float time_passed_s) {
 	if (explosive_weapon_state) {
 		explosive_weapon_state->process_time(time_passed_s);
 	}
-	if (melee_weapon_state) {
-		melee_weapon_state->process_time(time_passed_s);
-	}
 	// Stun
 	if (0.0f < stun_ttl_s) {
 		stun_ttl_s -= time_passed_s;

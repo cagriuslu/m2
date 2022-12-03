@@ -21,8 +21,6 @@ const RangedWeaponBlueprint chr::ranged_weapon_gun = {
 				.damage_accuracy = 0.8f,
 				.ttl_accuracy = 0.9f
 		},
-		.projectile_count = 1,
-		.cooldown_s = 0.1f,
 		.accuracy = 0.95f
 };
 const RangedWeaponBlueprint chr::ranged_weapon_machinegun = {
@@ -34,8 +32,6 @@ const RangedWeaponBlueprint chr::ranged_weapon_machinegun = {
 				.damage_accuracy = 0.8f,
 				.ttl_accuracy = 0.95f
 		},
-		.projectile_count = 1,
-		.cooldown_s = 0.083f,
 		.accuracy = 0.9f
 };
 const RangedWeaponBlueprint chr::ranged_weapon_shotgun = {
@@ -47,8 +43,6 @@ const RangedWeaponBlueprint chr::ranged_weapon_shotgun = {
 				.damage_accuracy = 0.8f,
 				.ttl_accuracy = 0.95f
 		},
-		.projectile_count = 5,
-		.cooldown_s = 1.0f,
 		.accuracy = 0.9f
 };
 const RangedWeaponBlueprint chr::ranged_weapon_bow = {
@@ -60,7 +54,5 @@ const RangedWeaponBlueprint chr::ranged_weapon_bow = {
 				.damage_accuracy = 0.8f,
 				.ttl_accuracy = 0.95f
 		},
-		.projectile_count = 1,
-		.cooldown_s = 1.0f,
 		.accuracy = 0.9f
 };
