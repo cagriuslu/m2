@@ -31,6 +31,54 @@
       ]
     },
     {
+      "type": "ITEM_REUSABLE_MACHINE_GUN",
+      "usage": "REUSABLE",
+      "costs": [
+        {
+          "type": "RESOURCE_RANGED_ENERGY",
+          "amount": 0.1
+        }
+      ],
+      "benefits": [
+        {
+          "type": "RESOURCE_RANGED_ENERGY",
+          "nInf": true
+        }
+      ]
+    },
+    {
+      "type": "ITEM_REUSABLE_SWORD",
+      "usage": "REUSABLE",
+      "costs": [
+        {
+          "type": "RESOURCE_MELEE_ENERGY",
+          "amount": 0.333
+        }
+      ],
+      "benefits": [
+        {
+          "type": "RESOURCE_MELEE_ENERGY",
+          "nInf": true
+        }
+      ]
+    },
+    {
+      "type": "ITEM_REUSABLE_GRENADE_LAUNCHER",
+      "usage": "REUSABLE",
+      "costs": [
+        {
+          "type": "RESOURCE_EXPLOSIVE_ENERGY",
+          "amount": 1.0
+        }
+      ],
+      "benefits": [
+        {
+          "type": "RESOURCE_EXPLOSIVE_ENERGY",
+          "nInf": true
+        }
+      ]
+    },
+    {
       "type": "ITEM_AUTOMATIC_DASH_ENERGY",
       "usage": "AUTOMATIC",
       "benefits": [
@@ -41,16 +89,34 @@
       ]
     },
     {
-      "type": "ITEM_PASSIVE_MACHINE_GUN",
-      "usage": "PASSIVE"
+      "type": "ITEM_AUTOMATIC_RANGED_ENERGY",
+      "usage": "AUTOMATIC",
+      "benefits": [
+        {
+          "type": "RESOURCE_RANGED_ENERGY",
+          "amount": 1.0
+        }
+      ]
     },
     {
-      "type": "ITEM_PASSIVE_SWORD",
-      "usage": "PASSIVE"
+      "type": "ITEM_AUTOMATIC_MELEE_ENERGY",
+      "usage": "AUTOMATIC",
+      "benefits": [
+        {
+          "type": "RESOURCE_MELEE_ENERGY",
+          "amount": 1.0
+        }
+      ]
     },
     {
-      "type": "ITEM_PASSIVE_GRENADE_LAUNCHER",
-      "usage": "PASSIVE"
+      "type": "ITEM_AUTOMATIC_EXPLOSIVE_ENERGY",
+      "usage": "AUTOMATIC",
+      "benefits": [
+        {
+          "type": "RESOURCE_EXPLOSIVE_ENERGY",
+          "amount": 1.0
+        }
+      ]
     }
   ]
 }

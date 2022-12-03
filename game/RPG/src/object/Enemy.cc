@@ -71,7 +71,8 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	};
 
 	auto& chr = obj.add_full_character();
-	chr.add_item(m2g::pb::ITEM_PASSIVE_SWORD);
+	chr.add_item(m2g::pb::ITEM_REUSABLE_SWORD);
+	chr.add_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY);
 
 	auto& def = obj.add_defense();
 	def.maxHp = def.hp = 100.0f;

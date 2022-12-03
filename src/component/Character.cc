@@ -177,37 +177,22 @@ void m2::FullCharacter::clear_item(const pb::Item& item) {
 	}), _items.end());
 }
 bool m2::FullCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
-	return _resources.count(resource_type);
+	return 0.0f < _resources[resource_type];
 }
 float m2::FullCharacter::get_resource(m2g::pb::ResourceType resource_type) const {
-	auto it = _resources.find(resource_type);
-	if (it != _resources.end()) {
-		return it->second;
-	}
-	return 0.0f;
+	return _resources[resource_type];
 }
 float m2::FullCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
-	auto it = _resources.find(resource_type);
-	if (it != _resources.end()) {
-		auto new_amount = it->second + amount;
-		new_amount = (new_amount < 0.0f) ? 0.0f : new_amount;
-		it->second = new_amount;
-		return static_cast<float>(new_amount);
-	} else if (0.0f < amount) {
-		_resources[resource_type] = amount;
-		return amount;
-	} else {
-		return 0.0f;
-	}
+	auto new_amount = get_resource(resource_type) + amount;
+	new_amount = (new_amount < 0.0f) ? 0.0f : new_amount;
+	_resources[resource_type] = new_amount;
+	return new_amount;
 }
 float m2::FullCharacter::remove_resource(m2g::pb::ResourceType resource_type, float amount) {
 	return add_resource(resource_type, -amount);
 }
 void m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
-	auto it = _resources.find(resource_type);
-	if (it != _resources.end()) {
-		_resources.erase(it);
-	}
+	_resources[resource_type] = 0.0f;
 }
 
 m2::CharacterBase& m2::get_character_base(CharacterVariant& v) {

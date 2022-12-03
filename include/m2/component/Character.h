@@ -71,7 +71,7 @@ namespace m2 {
 
 	class FullCharacter : public CharacterBase {
 		std::vector<pb::Item> _items;
-		std::unordered_map<m2g::pb::ResourceType, float> _resources;
+		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> _resources{};
 
 	public:
 		FullCharacter() = default;
