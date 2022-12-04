@@ -6,6 +6,7 @@
     {
       "type": "ITEM_CONSUMABLE_POTION_20HP",
       "usage": "CONSUMABLE",
+      "useOnAcquire": true,
       "benefits": [
         {
           "type": "RESOURCE_HP",
