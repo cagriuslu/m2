@@ -4,11 +4,6 @@
 #include "SpriteType.pb.h"
 
 namespace chr {
-	enum MeleeMotion {
-		MELEE_MOTION_SWING,
-		MELEE_MOTION_STAB
-	};
-
 	struct MeleeBlueprint;
 	struct MeleeState {
 		const MeleeBlueprint* blueprint;
@@ -18,7 +13,6 @@ namespace chr {
 	struct MeleeBlueprint {
 		m2g::pb::SpriteType sprite;
 		float damage;
-		MeleeMotion motion;
 		float ttl_s;
 	};
 
