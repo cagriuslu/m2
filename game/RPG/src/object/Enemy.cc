@@ -42,7 +42,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	bp.set_linear_damping(10.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
-	phy.pre_step = [&obj](m2::Physique& phy) {
+	phy.pre_step = [&obj](MAYBE m2::Physique& phy) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
 		impl->character_state.process_time(GAME.deltaTime_s);
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->fsm_variant);

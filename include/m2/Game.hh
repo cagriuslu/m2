@@ -26,10 +26,10 @@
 #include <Sprite.pb.h>
 #include <sstream>
 #include "Value.h"
-#include <unordered_map>
 #include "M2.h"
 #include "Item.h"
 #include <filesystem>
+#include <unordered_map>
 
 #define GAME (::m2::Game::instance())
 #define CGAME (::m2::Game::const_instance())

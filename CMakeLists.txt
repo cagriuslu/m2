@@ -7,7 +7,7 @@ endif()
 
 # Properties that needs to be set BEFORE project()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 12.6)
 cmake_policy(SET CMP0135 OLD)
 
 include(ProcessorCount)

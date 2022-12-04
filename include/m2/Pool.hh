@@ -218,7 +218,8 @@ namespace m2 {
             const auto* lowest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_lowest_allocated_index].data);
             const auto* highest_byte_ptr = reinterpret_cast<const uint8_t*>(&_array[_highest_allocated_index].data);
             if (lowest_byte_ptr <= byte_ptr && byte_ptr <= highest_byte_ptr) {
-                const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offsetof(Item, data));
+				auto offset_of_data = reinterpret_cast<uint8_t*>(&(reinterpret_cast<Item*>(0)->data));
+                const auto* item_ptr = reinterpret_cast<const Item*>(byte_ptr - offset_of_data);
                 // Check if itm is allocated
                 if (item_ptr->id & 0xFFFFFF000000ull) {
                     return _shifted_pool_id | item_ptr->id;

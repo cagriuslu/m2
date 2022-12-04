@@ -17,7 +17,7 @@ m2::Vec2f m2::screen_origin_to_position_px(const Vec2f& position) {
 }
 
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
-m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), sprite(&sprite), on_draw(default_draw) {}
+m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), sprite(&sprite) {}
 
 m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	if (sprite) {
@@ -79,7 +79,6 @@ void m2::Graphic::default_draw_healthbar(Graphic& gfx, float healthRatio) {
 
 	auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
 	auto center_offset_px = Vec2f{gfx.sprite->sprite().center_offset_px()};
-	auto ppm = static_cast<float>(gfx.sprite->ppm());
 
 	Vec2f obj_origin_wrt_camera_obj = obj.position - cam.position;
 	Vec2i obj_origin_wrt_screen_center = Vec2i(obj_origin_wrt_camera_obj * GAME.game_ppm);

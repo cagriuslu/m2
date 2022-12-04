@@ -26,6 +26,7 @@ namespace m2 {
 		using Callback = std::function<void(Graphic&)>;
 		Callback pre_draw{};
 		Callback on_draw{};
+		Callback on_effect{};
 		Callback post_draw{};
 
 		const Sprite* sprite{};
