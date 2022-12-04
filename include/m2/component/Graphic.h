@@ -32,6 +32,7 @@ namespace m2 {
 		const Sprite* sprite{};
 		pb::SpriteEffectType draw_sprite_effect{pb::NO_SPRITE_EFFECT};
 		float draw_angle{};
+		std::optional<float> draw_effect_health_bar; /// [0,1]
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
@@ -46,7 +47,7 @@ namespace m2 {
 		[[nodiscard]] Vec2f screen_origin_to_sprite_center_px() const;
 
 		static void default_draw(Graphic& gfx);
-		static void default_draw_healthbar(Graphic& gfx, float healthRatio);
+		static void default_effect(Graphic& gfx);
 	};
 }
 

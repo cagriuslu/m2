@@ -17,7 +17,7 @@ m2::Vec2f m2::screen_origin_to_position_px(const Vec2f& position) {
 }
 
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
-m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), sprite(&sprite) {}
+m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_effect(default_effect), sprite(&sprite) {}
 
 m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	if (sprite) {
@@ -73,45 +73,42 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }
-void m2::Graphic::default_draw_healthbar(Graphic& gfx, float healthRatio) {
-	auto& obj = GAME.objects[gfx.object_id];
-	auto& cam = GAME.objects[GAME.cameraId];
+void m2::Graphic::default_effect(Graphic& gfx) {
+	if (not gfx.sprite) {
+		// This function only works if there is a sprite
+		return;
+	}
+	if (not gfx.draw_effect_health_bar) {
+		return;
+	}
 
 	auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
-	auto center_offset_px = Vec2f{gfx.sprite->sprite().center_offset_px()};
 
-	Vec2f obj_origin_wrt_camera_obj = obj.position - cam.position;
-	Vec2i obj_origin_wrt_screen_center = Vec2i(obj_origin_wrt_camera_obj * GAME.game_ppm);
+	// White frame
+	auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
 	auto [mul, div] = GAME.pixel_scale_mul_div(gfx.sprite->ppm());
-	Vec2i obj_gfx_origin_wrt_screen_center = obj_origin_wrt_screen_center + Vec2i{
-		-(int)roundf(center_offset_px.x) * mul / div,
-		-(int)roundf(center_offset_px.y) * mul / div
+	auto dst_rect = SDL_Rect{
+			(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * mul / div / 2),
+			(int)roundf(screen_origin_to_sprite_center_px.y) + (src_rect.h * mul * 11 / div / 2 / 10), // Give an offset of 1.1
+			src_rect.w * mul / div,
+			15 * mul / 100 // 0.15 m height
 	};
-	Vec2i obj_gfx_origin_wrt_screen_origin = Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_gfx_origin_wrt_screen_center;
-	auto obj_gfx_dstrect = SDL_Rect{
-		obj_gfx_origin_wrt_screen_origin.x - (src_rect.w * mul / div / 2),
-		obj_gfx_origin_wrt_screen_origin.y - (src_rect.h * mul / div / 2),
-		src_rect.w * mul / div,
-		src_rect.h * mul / div
-	};
+	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(GAME.sdlRenderer, &dst_rect);
 
-	int healthBarWidth = obj_gfx_dstrect.w * 8 / 10;
+	// Black shadow
+	auto shadow_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, dst_rect.w - 2, dst_rect.h - 2};
+	SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(GAME.sdlRenderer, &shadow_rect);
 
-	auto filled_dstrect = SDL_Rect{
-		obj_gfx_dstrect.x + (obj_gfx_dstrect.w - healthBarWidth) / 2,
-		obj_gfx_dstrect.y + obj_gfx_dstrect.h,
-		(int)roundf((float)healthBarWidth * healthRatio),
-		(int)48 / 6
-	};
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 0, 0, 200);
-	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);
-
-	auto empty_dstrect = SDL_Rect{
-		filled_dstrect.x + filled_dstrect.w,
-		filled_dstrect.y,
-		healthBarWidth - filled_dstrect.w,
-		filled_dstrect.h
-	};
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 0, 0, 200);
-	SDL_RenderFillRect(GAME.sdlRenderer, &empty_dstrect);
+	// Green part
+	float percentage = (*gfx.draw_effect_health_bar) < 0.0f ? 0.0f : (1.0f < *gfx.draw_effect_health_bar) ? 1.0f :  *gfx.draw_effect_health_bar;
+	SDL_Rect green_rect;
+	if (7 <= dst_rect.w) {
+		green_rect = SDL_Rect{shadow_rect.x + 1, shadow_rect.y + 1, (int)roundf(percentage * (float)(shadow_rect.w - 2)), shadow_rect.h - 2};
+	} else {
+		green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, (int)roundf(percentage * (float)(dst_rect.w - 2)), dst_rect.h - 2};
+	}
+	SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 255, 0, 255);
+	SDL_RenderFillRect(GAME.sdlRenderer, &green_rect);
 }

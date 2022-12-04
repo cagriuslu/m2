@@ -126,7 +126,11 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		}
 	};
 
-	obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
+	gfx.pre_draw = [&](m2::Graphic& gfx) {
+		const auto& def = gfx.parent().defense();
+		gfx.draw_effect_health_bar = (float) def.hp / def.maxHp;
+	};
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(m2g::pb::ITEM_REUSABLE_DASH_2S);

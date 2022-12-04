@@ -79,10 +79,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 
     obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 
-	gfx.on_draw = [&](m2::Graphic& gfx) {
+	gfx.pre_draw = [&](m2::Graphic& gfx) {
+		gfx.draw_effect_health_bar = (float) def.hp / def.maxHp;
+
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		m2::Graphic::default_draw(gfx);
-		m2::Graphic::default_draw_healthbar(gfx, (float) def.hp / def.maxHp);
 		if (0.0f < data->on_hit_effect_ttl) {
 			data->on_hit_effect_ttl -= GAME.deltaTicks_ms / 1000.0f;
 			if (data->on_hit_effect_ttl < 0.0f) {
