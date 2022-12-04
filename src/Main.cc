@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 	float timeSinceLastWorldStep = 0.0f;
 	auto pause_ticks = SDL_GetTicks();
 	unsigned prevPrePhysicsTicks = 0, prevWorldStepTicks = 0, prevPostPhysicsTicks = 0, prevTerrainDrawGraphicsTicks = 0,
-		prevPreGraphicsTicks = 0, prevDrawTicks = 0, prevDrawLightsTicks = 0, prevPostGraphicsTicks = 0;
+		prevPreGraphicsTicks = 0, prevDrawTicks = 0, prevDrawLightsTicks = 0, prevDrawEffectsTicks = 0, prevPostGraphicsTicks = 0;
 
 	unsigned frameTimeAccumulator = 0;
 	unsigned frameCount = 0;
@@ -277,6 +277,14 @@ int main(int argc, char **argv) {
         for (auto light_it : GAME.lights) {
 			IF(light_it.first->on_draw)(*light_it.first);
         }
+
+		// Draw effects
+		GAME.deltaTicks_ms = sdl::get_ticks(prevDrawEffectsTicks, pause_ticks, 1) - prevDrawEffectsTicks;
+		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
+		prevDrawEffectsTicks += GAME.deltaTicks_ms;
+		for (auto gfx_it : GAME.graphics) {
+			IF(gfx_it.first->on_effect)(*gfx_it.first);
+		}
 
 #ifdef DEBUG
 		// Draw debug shapes

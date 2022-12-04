@@ -75,7 +75,7 @@ void m2::internal::log_header(LogLevel lvl, const char *file, int line) {
 	};
 	const char* file_name_padding = file_name_paddings[file_name_capitals_len];
 
-	fprintf(stderr, "[%010lld:%c:%s%s:%05d] ", now, lvl_char, file_name_padding, file_name_capitals, line);
+	fprintf(stderr, "[%010lld:%c:%s%s:%05d] ", (long long)now, lvl_char, file_name_padding, file_name_capitals, line);
 }
 
 #if _MSC_VER > 1400

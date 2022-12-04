@@ -20,7 +20,7 @@ m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_t
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ITEM_ON_FOREGROUND);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(sprite);
+	obj.add_graphic(sprite);
 
 	phy.on_collision = [&obj](m2::Physique& phy, m2::Physique& other) {
 		auto* impl = dynamic_cast<DroppedItem*>(obj.impl.get());

@@ -38,7 +38,6 @@ m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *bluep
 		}
 	};
 	phy.post_step = [&obj](m2::Physique& phy) {
-		auto& off = obj.offense();
 		auto& gfx = obj.graphic();
 		float angle = phy.body->GetAngle();
 		if (obj.parent()) {

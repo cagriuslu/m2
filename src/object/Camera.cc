@@ -14,7 +14,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
 	auto& phy = camera.add_physique();
-	phy.post_step = [&camera](Physique& phy) {
+	phy.post_step = [&camera](MAYBE Physique& phy) {
 		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
 

@@ -58,7 +58,7 @@ namespace m2 {
 			}
 			log_header(lvl, file, line);
 			fprintf(stderr, "%s ", msg);
-			([&] {
+			((void)[&] {
 				fprintf(stderr, "%s ", ::m2::to_string(ts).c_str());
 			}, ...);
 			fprintf(stderr, "\n");

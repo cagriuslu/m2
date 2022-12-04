@@ -25,7 +25,7 @@ void m2::Light::default_draw(Light& lig) {
 	m2::Vec2i obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj.position);
 	// Screen origin is top-left corner
 	m2::Vec2i obj_origin_wrt_screen_origin_px = m2::Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 } + obj_origin_wrt_screen_center_px;
-	auto dstrect = SDL_Rect{
+	MAYBE auto dstrect = SDL_Rect{
 			obj_origin_wrt_screen_origin_px.x - (int)roundf((float)lig.radius_m * GAME.game_ppm),
 			obj_origin_wrt_screen_origin_px.y - (int)roundf((float)lig.radius_m * GAME.game_ppm),
 			(int)roundf((float)lig.radius_m * GAME.game_ppm * 2.0f),
