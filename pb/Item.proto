@@ -3,6 +3,7 @@ package m2.pb;
 
 import "SpriteType.proto";
 import "ResourceType.proto";
+import "AttributeType.proto";
 import "ItemType.proto";
 
 message Resource {
@@ -14,22 +15,29 @@ message Resource {
   }
 }
 
+message Attribute {
+    m2g.pb.AttributeType type = 1;
+    double amount = 2;
+}
+
 enum Usage {
-  CONSUMABLE = 0;
-  REUSABLE = 1;
+  CONSUMABLE = 0; // Item is destroyed after first use
+  REUSABLE = 1; // Cost & Benefits are applied manually
   AUTOMATIC = 2; // Benefits are applied automatically every second
-  PASSIVE = 3;
+  PASSIVE = 3; // Item cannot be used
 }
 
 /// An item also represents a capability
 message Item {
   m2g.pb.ItemType type = 1;
-  Usage usage = 2;
-  bool use_on_acquire = 3;
-  repeated Resource costs = 4;
-  repeated Resource benefits = 5;
-  m2g.pb.SpriteType game_sprite = 6;
-  m2g.pb.SpriteType ui_sprite = 7;
+  m2g.pb.ItemCategory category = 2;
+  Usage usage = 3;
+  bool use_on_acquire = 4;
+  repeated Resource costs = 5;
+  repeated Resource benefits = 6;
+  repeated Attribute attributes = 7;
+  m2g.pb.SpriteType game_sprite = 8;
+  m2g.pb.SpriteType ui_sprite = 9;
 }
 
 message Items {

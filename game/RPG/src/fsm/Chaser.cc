@@ -55,7 +55,7 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 			case ai::CAPABILITY_RANGED: {
 				auto& weapon_state = impl->character_state.ranged_weapon_state;
                 // If the weapon cooled down
-                if (obj->character().use_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN)) {
+                if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
                     auto& projectile = m2::create_object(obj->position, obj->id()).first;
 					obj::Projectile::init(
                             projectile,
@@ -69,7 +69,7 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 			case ai::CAPABILITY_MELEE: {
 				auto& weapon_state = impl->character_state.melee_weapon_state;
                 // If the weapon cooled down
-                if (obj->character().use_item(m2g::pb::ITEM_REUSABLE_SWORD)) {
+                if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
                     auto& melee = m2::create_object(obj->position, obj->id()).first;
 					obj::Melee::init(melee, &weapon_state->blueprint->melee, target.position - obj->position);
                 }
@@ -78,7 +78,7 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
             case ai::CAPABILITY_EXPLOSIVE: {
 				auto& weapon_state = impl->character_state.explosive_weapon_state;
                 // If the weapon cooled down
-                if (obj->character().use_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER)) {
+                if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER))) {
                     auto& explosive = m2::create_object(obj->position, obj->id()).first;
 					obj::Explosive::init(
                             explosive,

@@ -69,7 +69,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			impl->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKRIGHT);
 		}
 		float force;
-		if (GAME.events.pop_key_press(m2::Key::DASH) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
+		if (GAME.events.pop_key_press(m2::Key::DASH) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
 			moveDirection = to_mouse;
 			force = 100000.0f;
 		} else {
@@ -79,7 +79,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 
 		impl->char_state.process_time(GAME.deltaTime_s);
 
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN)) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
 			auto& projectile = m2::create_object(obj.position, id).first;
 			float accuracy = impl->char_state.blueprint->default_ranged_weapon->accuracy;
 			float angle = to_mouse.angle_rads() + (m2::PI * m2::randf() * (1 - accuracy)) - (m2::PI * ((1 - accuracy) / 2.0f));
@@ -88,11 +88,11 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(angle + m2::PI) * 500.0f), true);
 			// TODO set looking direction here as well
 		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_SWORD)) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 			auto& melee = m2::create_object(obj.position, id).first;
 			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, to_mouse);
 		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER)) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER))) {
 			auto& explosive = m2::create_object(obj.position, id).first;
 			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, to_mouse);
 		}
@@ -133,15 +133,14 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	};
 
 	auto& chr = obj.add_full_character();
-	chr.add_item(m2g::pb::ITEM_REUSABLE_DASH_2S);
-	chr.add_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
-	chr.add_item(m2g::pb::ITEM_REUSABLE_SWORD);
-	chr.add_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER);
-	chr.add_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY);
-	chr.add_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY);
-	chr.add_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY);
-	chr.add_item(m2g::pb::ITEM_AUTOMATIC_EXPLOSIVE_ENERGY);
-
+	chr.add_item(GAME.items[m2g::pb::ITEM_REUSABLE_DASH_2S]);
+	chr.add_item(GAME.items[m2g::pb::ITEM_REUSABLE_MACHINE_GUN]);
+	chr.add_item(GAME.items[m2g::pb::ITEM_REUSABLE_SWORD]);
+	chr.add_item(GAME.items[m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER]);
+	chr.add_item(GAME.items[m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY]);
+	chr.add_item(GAME.items[m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY]);
+	chr.add_item(GAME.items[m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY]);
+	chr.add_item(GAME.items[m2g::pb::ITEM_AUTOMATIC_EXPLOSIVE_ENERGY]);
 	chr.add_resource(m2g::pb::RESOURCE_HP, 100.0f);
 
 	auto& def = obj.add_defense();
