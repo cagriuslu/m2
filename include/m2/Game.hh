@@ -86,7 +86,7 @@ namespace m2 {
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> editor_object_sprites;
 		std::optional<GlyphsSheet> glyphs_sheet;
 		std::optional<ShapesSheet> shapes_sheet;
-		std::vector<pb::Item> items;
+		std::vector<Item> items;
 		std::vector<Animation> animations;
 
 		////////////////////////////////////////////////////////////////////////

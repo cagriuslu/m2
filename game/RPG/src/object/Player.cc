@@ -108,8 +108,8 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		// Consume consumables
 		for (auto it = impl->items.begin(); it != impl->items.end(); ) {
 			auto item = GAME.items[*it];
-			if (item.usage() == m2::pb::Usage::CONSUMABLE) {
-				for (const auto& resource : item.benefits()) {
+			if (item->usage() == m2::pb::Usage::CONSUMABLE) {
+				for (const auto& resource : item->benefits()) {
 					switch (resource.type()) {
 						case m2g::pb::RESOURCE_HP:
 							def.hp += (float)resource.amount();

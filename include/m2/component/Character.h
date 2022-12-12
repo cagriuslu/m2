@@ -3,7 +3,7 @@
 
 #include <m2g/Interaction.h>
 #include "../Component.h"
-#include <Item.pb.h>
+#include "../Item.h"
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
@@ -22,7 +22,7 @@ namespace m2 {
 			std::unique_ptr<IteratorImpl<T>> _impl;
 			using Filter = std::variant<std::monostate,m2g::pb::ItemType,m2g::pb::ItemCategory>;
 			Filter _filter;
-			T* _item_ptr; // pb::Item or const pb::Item
+			T* _item_ptr; // Item or const Item
 		public:
 			using difference_type = std::ptrdiff_t;
 			using value_type = T;
@@ -58,28 +58,25 @@ namespace m2 {
 		[[nodiscard]] bool has_item(m2g::pb::ItemCategory item_cat) const;
 		[[nodiscard]] size_t count_item(m2g::pb::ItemType item_type) const;
 		[[nodiscard]] size_t count_item(m2g::pb::ItemCategory item_cat) const;
-		[[nodiscard]] virtual Iterator<pb::Item> find_items(m2g::pb::ItemType item_type) = 0;
-		[[nodiscard]] virtual Iterator<pb::Item> find_items(m2g::pb::ItemCategory item_cat) = 0;
-		[[nodiscard]] virtual Iterator<pb::Item> begin_items() = 0;
-		[[nodiscard]] virtual Iterator<pb::Item> end_items() = 0;
-		[[nodiscard]] virtual Iterator<const pb::Item> cbegin_items() const = 0;
-		[[nodiscard]] virtual Iterator<const pb::Item> cend_items() const = 0;
-		virtual void add_item(const pb::Item& item) = 0;
-		bool use_item(const Iterator<pb::Item>& item, float resource_multiplier = 1.0f);
-		virtual void remove_item(const Iterator<pb::Item>& item) = 0;
+		[[nodiscard]] virtual Iterator<Item> find_items(m2g::pb::ItemType item_type) = 0;
+		[[nodiscard]] virtual Iterator<Item> find_items(m2g::pb::ItemCategory item_cat) = 0;
+		[[nodiscard]] virtual Iterator<Item> begin_items() = 0;
+		[[nodiscard]] virtual Iterator<Item> end_items() = 0;
+		[[nodiscard]] virtual Iterator<const Item> cbegin_items() const = 0;
+		[[nodiscard]] virtual Iterator<const Item> cend_items() const = 0;
+		virtual void add_item(const Item& item) = 0;
+		bool use_item(const Iterator<Item>& item_it, float resource_multiplier = 1.0f);
+		virtual void remove_item(const Iterator<Item>& item) = 0;
 
 		[[nodiscard]] virtual bool has_resource(m2g::pb::ResourceType resource_type) const = 0;
 		[[nodiscard]] virtual float get_resource(m2g::pb::ResourceType resource_type) const = 0;
 		virtual float add_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float remove_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
-
-	protected:
-		static float get_resource_amount(const pb::Resource& resource);
 	};
 
 	class TinyCharacter : public CharacterBase {
-		std::optional<pb::Item> _item;
+		std::optional<Item> _item;
 		std::optional<std::pair<m2g::pb::ResourceType,float>> _resource;
 
 	public:
@@ -93,14 +90,14 @@ namespace m2 {
 
 		void automatic_update() override;
 
-		Iterator<pb::Item> find_items(m2g::pb::ItemType item_type) override;
-		Iterator<pb::Item> find_items(m2g::pb::ItemCategory item_cat) override;
-		Iterator<pb::Item> begin_items() override;
-		Iterator<pb::Item> end_items() override;
-		Iterator<const pb::Item> cbegin_items() const override;
-		Iterator<const pb::Item> cend_items() const override;
-		void add_item(const pb::Item& item) override;
-		void remove_item(const Iterator<pb::Item>& item) override;
+		Iterator<Item> find_items(m2g::pb::ItemType item_type) override;
+		Iterator<Item> find_items(m2g::pb::ItemCategory item_cat) override;
+		Iterator<Item> begin_items() override;
+		Iterator<Item> end_items() override;
+		Iterator<const Item> cbegin_items() const override;
+		Iterator<const Item> cend_items() const override;
+		void add_item(const Item& item) override;
+		void remove_item(const Iterator<Item>& item) override;
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
@@ -110,7 +107,7 @@ namespace m2 {
 	};
 
 	class FullCharacter : public CharacterBase {
-		std::vector<pb::Item> _items;
+		std::vector<Item> _items;
 		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> _resources{};
 
 	public:
@@ -129,7 +126,7 @@ namespace m2 {
 					}
 				} else if (std::holds_alternative<m2g::pb::ItemType>(filter)) {
 					for (size_t i = curr_index + 1; i < _character->_items.size(); ++i) {
-						if (_character->_items[i].type() == std::get<m2g::pb::ItemType>(filter)) {
+						if (_character->_items[i]->type() == std::get<m2g::pb::ItemType>(filter)) {
 							// Found item
 							IteratorImpl<T>::set_item(iter, &_character->_items[i]);
 							return;
@@ -137,7 +134,7 @@ namespace m2 {
 					}
 				} else if (std::holds_alternative<m2g::pb::ItemCategory>(filter)) {
 					for (size_t i = curr_index + 1; i < _character->_items.size(); ++i) {
-						if (_character->_items[i].category() == std::get<m2g::pb::ItemCategory>(filter)) {
+						if (_character->_items[i]->category() == std::get<m2g::pb::ItemCategory>(filter)) {
 							// Found item
 							IteratorImpl<T>::set_item(iter, &_character->_items[i]);
 							return;
@@ -156,14 +153,14 @@ namespace m2 {
 
 		void automatic_update() override;
 
-		Iterator<pb::Item> find_items(m2g::pb::ItemType item_type) override;
-		Iterator<pb::Item> find_items(m2g::pb::ItemCategory item_cat) override;
-		Iterator<pb::Item> begin_items() override;
-		Iterator<pb::Item> end_items() override;
-		[[nodiscard]] Iterator<const pb::Item> cbegin_items() const override;
-		[[nodiscard]] Iterator<const pb::Item> cend_items() const override;
-		void add_item(const pb::Item& item) override;
-		void remove_item(const Iterator<pb::Item>& item) override;
+		Iterator<Item> find_items(m2g::pb::ItemType item_type) override;
+		Iterator<Item> find_items(m2g::pb::ItemCategory item_cat) override;
+		Iterator<Item> begin_items() override;
+		Iterator<Item> end_items() override;
+		[[nodiscard]] Iterator<const Item> cbegin_items() const override;
+		[[nodiscard]] Iterator<const Item> cend_items() const override;
+		void add_item(const Item& item) override;
+		void remove_item(const Iterator<Item>& item) override;
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;

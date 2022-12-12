@@ -9,7 +9,7 @@ import "ItemType.proto";
 message Resource {
   m2g.pb.ResourceType type = 1;
   oneof value {
-    double amount = 2;
+    float amount = 2;
     bool p_inf = 3;
     bool n_inf = 4;
   }
@@ -17,7 +17,7 @@ message Resource {
 
 message Attribute {
     m2g.pb.AttributeType type = 1;
-    double amount = 2;
+    float amount = 2;
 }
 
 enum Usage {
