@@ -45,6 +45,32 @@
           "type": "RESOURCE_RANGED_ENERGY",
           "nInf": true
         }
+      ],
+      "attributes": [
+        {
+          "type": "ATTRIBUTE_LINEAR_SPEED",
+          "amount": 20
+        },
+        {
+          "type": "ATTRIBUTE_ANGULAR_ACCURACY",
+          "amount": 0.95
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_DAMAGE",
+          "amount": 35
+        },
+        {
+          "type": "ATTRIBUTE_DAMAGE_ACCURACY",
+          "amount": 0.8
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_TTL",
+          "amount": 0.6
+        },
+        {
+          "type": "ATTRIBUTE_TTL_ACCURACY",
+          "amount": 0.9
+        }
       ]
     },
     {
@@ -76,6 +102,16 @@
         {
           "type": "RESOURCE_EXPLOSIVE_ENERGY",
           "nInf": true
+        }
+      ]
+    },
+    {
+      "type": "ITEM_AUTOMATIC_TTL",
+      "usage": "AUTOMATIC",
+      "benefits": [
+        {
+          "type": "RESOURCE_TTL",
+          "amount": -1.0
         }
       ]
     },

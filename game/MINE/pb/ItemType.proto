@@ -4,3 +4,7 @@ package m2g.pb;
 enum ItemType {
   NO_ITEM = 0;
 }
+
+enum ItemCategory {
+    NO_ITEM_CATEGORY = 0;
+}

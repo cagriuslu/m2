@@ -37,6 +37,8 @@ m2::VoidValue obj::Projectile::init(m2::Object& obj, const chr::ProjectileBluepr
 	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
 	gfx.draw_angle = dir.angle_rads();
 
+	auto& chr = obj.add_tiny_character();
+
 	auto& off = obj.add_offense();
 	off.variant = chr::ProjectileState(blueprint);
 
