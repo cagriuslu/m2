@@ -86,7 +86,7 @@ namespace m2 {
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> editor_object_sprites;
 		std::optional<GlyphsSheet> glyphs_sheet;
 		std::optional<ShapesSheet> shapes_sheet;
-		std::vector<Item> items;
+		std::vector<Item> _items;
 		std::vector<Animation> animations;
 
 		////////////////////////////////////////////////////////////////////////
@@ -140,6 +140,7 @@ namespace m2 {
 
 		// Accessors
 		Object* player();
+		const Item& get_item(m2g::pb::ItemType item_type);
 
 		// Modifiers
 		void update_window_dims(int window_width, int window_height);

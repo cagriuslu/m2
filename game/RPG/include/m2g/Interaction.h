@@ -3,7 +3,8 @@
 
 namespace m2g {
 	enum class InteractionType {
-		COLLISION
+		COLLIDE_TO,
+		GET_COLLIDED_BY
 	};
 }
 

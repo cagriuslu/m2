@@ -3,7 +3,7 @@
 #include "m2/Game.hh"
 #include "m2/Pathfinder.hh"
 #include <rpg/object/Enemy.h>
-#include <rpg/object/Projectile.h>
+#include <rpg/object/RangedWeapon.h>
 #include <rpg/object/Melee.h>
 #include <rpg/object/Explosive.h>
 #include <rpg/fsm/Chaser.h>
@@ -52,20 +52,8 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
     if (obj->position.distance_sq(target.position) < blueprint->attack_distance_squared_m) {
         // Based on what the capability is
         switch (automaton.blueprint->capability) {
-			case ai::CAPABILITY_RANGED: {
-				auto& weapon_state = impl->character_state.ranged_weapon_state;
-                // If the weapon cooled down
-                if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
-                    auto& projectile = m2::create_object(obj->position, obj->id()).first;
-					obj::Projectile::init(
-                            projectile,
-							&weapon_state->blueprint->projectile,
-                            target.position - obj->position
-                    );
-                    // TODO Knockback maybe?
-                }
-                break;
-            }
+			case ai::CAPABILITY_RANGED:
+				throw M2ERROR("Chaser ranged weapon not implemented");
 			case ai::CAPABILITY_MELEE: {
 				auto& weapon_state = impl->character_state.melee_weapon_state;
                 // If the weapon cooled down

@@ -10,10 +10,10 @@
 #include <functional>
 
 namespace m2 {
-	class CharacterBase : public Component {
+	class Character : public Component {
 	public:
-		std::function<void(CharacterBase& self)> update;
-		std::function<void(CharacterBase& self, CharacterBase& other, m2g::InteractionType)> interact;
+		std::function<void(Character& self)> update;
+		std::function<void(Character& self, Character& other, m2g::InteractionType)> interact;
 
 		template <typename T> class IteratorImpl;
 		template <typename T> class Iterator {
@@ -49,10 +49,11 @@ namespace m2 {
 			static void set_item(Iterator<T>& iter, T* ptr) { iter._item_ptr = ptr; }
 		};
 
-		CharacterBase() = default;
-		explicit CharacterBase(uint64_t object_id);
+		Character() = default;
+		explicit Character(uint64_t object_id);
 
 		virtual void automatic_update() = 0;
+		static void execute_interaction(Character& first_char, m2g::InteractionType cause, Character& second_char, m2g::InteractionType effect);
 
 		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const;
 		[[nodiscard]] bool has_item(m2g::pb::ItemCategory item_cat) const;
@@ -75,7 +76,7 @@ namespace m2 {
 		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
 	};
 
-	class TinyCharacter : public CharacterBase {
+	class TinyCharacter : public Character {
 		std::optional<Item> _item;
 		std::optional<std::pair<m2g::pb::ResourceType,float>> _resource;
 
@@ -106,7 +107,7 @@ namespace m2 {
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
 	};
 
-	class FullCharacter : public CharacterBase {
+	class FullCharacter : public Character {
 		std::vector<Item> _items;
 		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> _resources{};
 
@@ -167,10 +168,14 @@ namespace m2 {
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
+
+	private:
+		static const google::protobuf::EnumDescriptor* const resource_type_desc;
+		static int resource_type_index(m2g::pb::ResourceType resource_type);
 	};
 
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
-	CharacterBase& get_character_base(CharacterVariant& v);
+	Character& get_character_base(CharacterVariant& v);
 }
 
 #endif //M2_CHARACTER_H

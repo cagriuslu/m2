@@ -10,7 +10,7 @@
       "benefits": [
         {
           "type": "RESOURCE_HP",
-          "amount": 20
+          "amount": 0.2
         }
       ],
       "game_sprite": "RED_POTION_00"
@@ -57,7 +57,7 @@
         },
         {
           "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 35
+          "amount": 0.35
         },
         {
           "type": "ATTRIBUTE_DAMAGE_ACCURACY",
