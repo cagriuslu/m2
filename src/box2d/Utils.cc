@@ -45,6 +45,14 @@ namespace m2::box2d {
 	};
 }
 
+m2::pb::BodyBlueprint m2::box2d::example_bullet_body_blueprint() {
+	m2::pb::BodyBlueprint bp;
+	bp.set_type(m2::pb::BodyType::KINEMATIC);
+	bp.set_allow_sleep(false);
+	bp.set_is_bullet(true);
+	return bp;
+}
+
 b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint) {
 	if (GAME.world->IsLocked()) {
 		throw M2ERROR("b2Body is created during physics step");

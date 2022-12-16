@@ -1,4 +1,5 @@
 #include <rpg/object/Enemy.h>
+#include <m2g/Interaction.h>
 #include <rpg/object/DroppedItem.h>
 #include <m2/Object.h>
 #include "m2/Game.hh"
@@ -11,6 +12,8 @@
 #include <deque>
 
 using namespace obj;
+using namespace m2g;
+using namespace m2g::pb;
 
 obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint), animation_fsm(blueprint->animation_type, obj.graphic_id()), fsm_variant(
 		std::visit(m2::overloaded {
@@ -71,9 +74,23 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	};
 
 	auto& chr = obj.add_full_character();
-	chr.add_item(GAME.items[m2g::pb::ITEM_REUSABLE_SWORD]);
-	chr.add_item(GAME.items[m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY]);
-	chr.add_resource(m2g::pb::RESOURCE_HP, 100.0f);
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::InteractionType interaction_type) {
+		// Check if we got hit
+		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
+			// Apply mask effect
+			auto* data = dynamic_cast<Enemy*>(obj.impl.get());
+			data->on_hit_effect_ttl = 0.15f;
+			gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;
+			// Check if we died
+			if (!self.has_resource(RESOURCE_HP)) {
+				// TODO
+				fprintf(stderr, "You died\n");
+			}
+		}
+	};
 
 	auto& def = obj.add_defense();
 	def.maxHp = def.hp = 100.0f;
@@ -81,7 +98,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
     obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
 
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
-		gfx.draw_effect_health_bar = (float) def.hp / def.maxHp;
+		gfx.draw_effect_health_bar = chr.get_resource(RESOURCE_HP);
 
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		if (0.0f < data->on_hit_effect_ttl) {

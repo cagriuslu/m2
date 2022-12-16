@@ -38,7 +38,7 @@ namespace m2 {
 	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max)
 	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max)
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
-	float apply_accuracy(float value, float accuracy);
+	float apply_accuracy(float value, float accuracy); /// Returns value ± value * accuracy%
 	float lerp(float min, float max, float ratio);
 	bool is_near(float a, float b, float tolerance);
 }

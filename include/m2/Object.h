@@ -66,7 +66,7 @@ namespace m2 {
         [[nodiscard]] Light& light() const;
         [[nodiscard]] m2g::Defense& defense() const;
         [[nodiscard]] m2g::Offense& offense() const;
-		[[nodiscard]] CharacterBase& character() const;
+		[[nodiscard]] Character& character() const;
 
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
 
@@ -77,8 +77,8 @@ namespace m2 {
         Light& add_light();
         m2g::Defense& add_defense();
         m2g::Offense& add_offense();
-		CharacterBase& add_tiny_character();
-		CharacterBase& add_full_character();
+		Character& add_tiny_character();
+		Character& add_full_character();
 
 	private:
 		ObjectId _parent_id{};

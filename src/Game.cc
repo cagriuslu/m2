@@ -75,7 +75,7 @@ m2::Game::Game() {
 	editor_object_sprites = list_editor_object_sprites(std::string{m2g::objects});
 	glyphs_sheet = GlyphsSheet{sdlRenderer};
 	shapes_sheet = ShapesSheet{sdlRenderer};
-	items = load_items(std::string{m2g::items});
+	_items = load_items(std::string{m2g::items});
 	animations = load_animations(std::string{m2g::animations});
 }
 
@@ -212,6 +212,11 @@ void m2::Game::unload_level() {
 
 m2::Object* m2::Game::player() {
 	return objects.get(playerId);
+}
+
+const m2::Item& m2::Game::get_item(m2g::pb::ItemType item_type) {
+	static const auto* const item_type_desc = m2g::pb::ItemType_descriptor();
+	return _items[item_type_desc->FindValueByNumber(item_type)->index()];
 }
 
 void m2::Game::update_window_dims(int window_width, int window_height) {

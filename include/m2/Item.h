@@ -25,8 +25,14 @@ namespace m2 {
 		const pb::Item* operator->() const;
 		const pb::Item& item() const;
 		float get_cost(m2g::pb::ResourceType) const;
+		float try_get_cost(m2g::pb::ResourceType, float default_value) const;
+		bool has_cost(m2g::pb::ResourceType) const;
 		float get_benefit(m2g::pb::ResourceType) const;
+		float try_get_benefit(m2g::pb::ResourceType, float default_value) const;
+		bool has_benefit(m2g::pb::ResourceType) const;
 		float get_attribute(m2g::pb::AttributeType) const;
+		float try_get_attribute(m2g::pb::AttributeType, float default_value) const;
+		bool has_attribute(m2g::pb::AttributeType) const;
 	};
 
 	std::vector<Item> load_items(const std::string& items_path);

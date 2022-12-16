@@ -25,11 +25,32 @@ const m2::pb::Item& m2::Item::item() const {
 float m2::Item::get_cost(m2g::pb::ResourceType type) const {
 	return _costs[resource_type_desc->FindValueByNumber(type)->index()];
 }
+float m2::Item::try_get_cost(m2g::pb::ResourceType type, float default_value) const {
+	auto value = get_cost(type);
+	return value != 0.0f ? value : default_value;
+}
+bool m2::Item::has_cost(m2g::pb::ResourceType type) const {
+	return get_cost(type) != 0.0f;
+}
 float m2::Item::get_benefit(m2g::pb::ResourceType type) const {
 	return _benefits[resource_type_desc->FindValueByNumber(type)->index()];
 }
+float m2::Item::try_get_benefit(m2g::pb::ResourceType type, float default_value) const {
+	auto value = get_benefit(type);
+	return value != 0.0f ? value : default_value;
+}
+bool m2::Item::has_benefit(m2g::pb::ResourceType type) const {
+	return get_benefit(type) != 0.0f;
+}
 float m2::Item::get_attribute(m2g::pb::AttributeType type) const {
 	return _attributes[attribute_type_desc->FindValueByNumber(type)->index()];
+}
+float m2::Item::try_get_attribute(m2g::pb::AttributeType type, float default_value) const {
+	auto value = get_attribute(type);
+	return value != 0.0f ? value : default_value;
+}
+bool m2::Item::has_attribute(m2g::pb::AttributeType type) const {
+	return get_attribute(type) != 0.0f;
 }
 
 std::vector<m2::Item> m2::load_items(const std::string &items_path) {
@@ -41,22 +62,22 @@ std::vector<m2::Item> m2::load_items(const std::string &items_path) {
 	std::vector<Item> items_vector(m2g::pb::ItemType_ARRAYSIZE);
 	std::vector<bool> is_loaded(m2g::pb::ItemType_ARRAYSIZE);
 
+	const auto* item_type_desc = m2g::pb::ItemType_descriptor();
 	for (const auto& item : items->items()) {
+		auto index = item_type_desc->FindValueByNumber(item.type())->index();
 		// Check if the item is already loaded
-		if (is_loaded[item.type()]) {
+		if (is_loaded[index]) {
 			throw M2ERROR("Item has duplicate definition: " + std::to_string(item.type()));
 		}
 		// Load item
-		items_vector[item.type()] = Item{item};
-		is_loaded[item.type()] = true;
+		items_vector[index] = Item{item};
+		is_loaded[index] = true;
 	}
 
 	// Check if every item is loaded
-	const auto* item_type_desc = m2g::pb::ItemType_descriptor();
 	for (int e = 0; e < item_type_desc->value_count(); ++e) {
-		int value = item_type_desc->value(e)->number();
-		if (!is_loaded[value]) {
-			throw M2ERROR("Item is not defined: " + std::to_string(value));
+		if (!is_loaded[e]) {
+			throw M2ERROR("Item is not defined: " + std::to_string(item_type_desc->value(e)->number()));
 		}
 	}
 

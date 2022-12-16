@@ -3,7 +3,6 @@
 
 #include "rpg/ExplosiveWeapon.h"
 #include "rpg/MeleeWeapon.h"
-#include "rpg/RangedWeapon.h"
 #include "m2/component/Offense.h"
 #include <variant>
 
@@ -12,8 +11,7 @@ namespace m2g {
 		std::variant<
 			std::monostate,
 			chr::ExplosiveState,
-			chr::MeleeState,
-			chr::ProjectileState
+			chr::MeleeState
 		> variant;
 
 		Offense() = default;
