@@ -118,7 +118,38 @@
           "type": "RESOURCE_EXPLOSIVE_ENERGY",
           "nInf": true
         }
-      ]
+      ],
+      "attributes": [
+        {
+          "type": "ATTRIBUTE_LINEAR_SPEED",
+          "amount": 1.5
+        },
+        {
+          "type": "ATTRIBUTE_ANGULAR_ACCURACY",
+          "amount": 1
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_DAMAGE",
+          "amount": 1
+        },
+        {
+          "type": "ATTRIBUTE_DAMAGE_ACCURACY",
+          "amount": 0.95
+        },
+        {
+          "type": "ATTRIBUTE_DAMAGE_RADIUS",
+          "amount": 2
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_TTL",
+          "amount": 3.5
+        },
+        {
+          "type": "ATTRIBUTE_TTL_ACCURACY",
+          "amount": 0.75
+        }
+      ],
+      "gameSprite": "BOMB_00"
     },
     {
       "type": "ITEM_AUTOMATIC_TTL",
