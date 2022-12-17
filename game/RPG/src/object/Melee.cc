@@ -7,73 +7,84 @@
 
 #define SWING_SPEED (15.0f)
 
-m2::VoidValue obj::Melee::init(m2::Object& obj, const chr::MeleeBlueprint *blueprint, m2::Vec2f direction) {
-	const float theta = direction.angle_rads(); // Convert direction to angle
-	const float startAngle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
+using namespace m2g;
+using namespace m2g::pb;
 
+m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &direction, const m2::Item &melee_weapon, bool is_friend) {
+	// Check if weapon has necessary attributes
+	if (!melee_weapon.has_attribute(ATTRIBUTE_AVERAGE_DAMAGE)) {
+		throw M2ERROR("Melee weapon has no average damage");
+	}
+	if (!melee_weapon.has_attribute(ATTRIBUTE_AVERAGE_TTL)) {
+		throw M2ERROR("Melee weapon has no average TTL");
+	}
+
+	float average_damage = melee_weapon.get_attribute(ATTRIBUTE_AVERAGE_DAMAGE);
+	float damage_accuracy = melee_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_ACCURACY, 1.0f);
+	float average_ttl = melee_weapon.get_attribute(ATTRIBUTE_AVERAGE_TTL);
+
+	const float theta = direction.angle_rads();
+	const float start_angle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
+
+	// Add physics
 	auto& phy = obj.add_physique();
-
-	m2::pb::BodyBlueprint bp;
-	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.set_allow_sleep(false);
-	bp.set_is_bullet(true);
+	auto bp = m2::box2d::example_bullet_body_blueprint();
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(1.25f);
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(0.1667f);
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(0.5833f);
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(0.0f);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
-	bp.mutable_foreground_fixture()->set_category(obj.parent_id() == GAME.playerId ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
-	bp.set_mass(1.0f);
-	bp.set_linear_damping(0);
-	bp.set_fixed_rotation(false);
+	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
-	phy.body->SetTransform(static_cast<b2Vec2>(obj.position), startAngle);
+	phy.body->SetTransform(static_cast<b2Vec2>(obj.position), start_angle);
 	phy.body->SetAngularVelocity(-SWING_SPEED);
-	phy.pre_step = [&obj](m2::Physique& phy) {
-		auto& off = obj.offense();
-		auto& melee_state = std::get<chr::MeleeState>(off.variant);
-		melee_state.ttl_s -= GAME.deltaTicks_ms / 1000.0f;
-		if (melee_state.ttl_s <= 0) {
+
+	// Add graphics
+	auto& gfx = obj.add_graphic(GAME.sprites[melee_weapon->game_sprite()]);
+	gfx.draw_angle = phy.body->GetAngle();
+
+	// Add character
+	auto& chr = obj.add_tiny_character();
+	chr.add_item(GAME.get_item(ITEM_AUTOMATIC_TTL));
+	chr.add_resource(RESOURCE_TTL, average_ttl);
+
+	chr.update = [](m2::Character& chr) {
+		if (!chr.has_resource(RESOURCE_TTL)) {
+			GAME.add_deferred_action(m2::create_object_deleter(chr.object_id));
+		}
+	};
+	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other) {
+		auto& other_obj = other.parent();
+		if (other_obj.character_id()) {
+			m2::Character::execute_interaction(chr, InteractionType::COLLIDE_TO, other_obj.character(), InteractionType::GET_COLLIDED_BY);
+			// TODO knock-back
+		}
+	};
+	chr.interact = [=](MAYBE m2::Character& self, m2::Character& other, InteractionType interaction_type) {
+		if (interaction_type == InteractionType::COLLIDE_TO) {
+			// Calculate damage
+			float damage = m2::apply_accuracy(average_damage, damage_accuracy);
+			// Create and give damage item
+			m2::pb::Item damage_item;
+			damage_item.set_usage(m2::pb::CONSUMABLE);
+			damage_item.set_use_on_acquire(true);
+			auto* benefit = damage_item.add_benefits();
+			benefit->set_type(RESOURCE_HP);
+			benefit->set_amount(-damage);
+			other.add_item(m2::Item{damage_item});
+		}
+	};
+	phy.post_step = [&](m2::Physique& phy) {
+		auto* originator = obj.parent();
+		if (originator) {
+			float curr_angle = phy.body->GetAngle();
+			phy.body->SetTransform(static_cast<b2Vec2>(originator->position), curr_angle);
+			obj.graphic().draw_angle = curr_angle;
+		} else {
+			// Originator died
 			GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
 		}
 	};
-	phy.post_step = [&obj](m2::Physique& phy) {
-		auto& gfx = obj.graphic();
-		float angle = phy.body->GetAngle();
-		if (obj.parent()) {
-			// Make sure originator is still alive
-			phy.body->SetTransform(static_cast<b2Vec2>(obj.parent()->position), angle);
-		}
-		gfx.draw_angle = angle;
-	};
 
-	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->sprite]);
-	gfx.draw_angle = phy.body->GetAngle();
-
-	auto& off = obj.add_offense();
-	off.variant = chr::MeleeState(blueprint);
-
-	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other) {
-		LOG_DEBUG("Collision");
-		auto& other_obj = GAME.objects[other.object_id];
-		auto& melee_state = std::get<chr::MeleeState>(off.variant);
-		auto& def = GAME.defenses[other_obj.defense_id()];
-
-		// Calculate damage
-		def.hp -= melee_state.blueprint->damage;
-		if (def.hp <= 0.0001f && def.on_death) {
-			LOG_TRACE("Projectile death", off.object_id, def.object_id);
-			def.on_death(def);
-		} else {
-			LOG_TRACE("Projectile damage", off.object_id, def.object_id, def.hp);
-			auto direction = (other_obj.position - obj.position).normalize();
-			auto force = direction * 15000.0f;
-			other.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
-			if (def.on_hit) {
-				def.on_hit(def);
-			}
-		}
-	};
-	
 	return {};
 }

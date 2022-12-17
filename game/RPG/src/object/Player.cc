@@ -35,18 +35,16 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(false);
 	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].background_collider_circ_radius_m());
-	bp.mutable_background_fixture()->set_is_sensor(false);
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].foreground_collider_circ_radius_m());
 	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(GAME.sprites[blueprint->main_sprite].foreground_collider_center_offset_m().x);
 	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.sprites[blueprint->main_sprite].foreground_collider_center_offset_m().y);
-	bp.mutable_foreground_fixture()->set_is_sensor(false);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(80.0f);
 	bp.set_linear_damping(100.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
-	phy.pre_step = [&](m2::Physique& phy) {
+	phy.pre_step = [&, id=id](m2::Physique& phy) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
 
@@ -88,7 +86,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 			auto& melee = m2::create_object(obj.position, id).first;
-			obj::Melee::init(melee, &impl->char_state.blueprint->default_melee_weapon->melee, to_mouse);
+			rpg::create_melee_object(melee, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER))) {
 			auto& explosive = m2::create_object(obj.position, id).first;

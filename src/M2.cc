@@ -67,6 +67,9 @@ float m2::randf() {
 }
 
 float m2::apply_accuracy(float value, float accuracy) {
+	if (accuracy == 1.0f) {
+		return value;
+	}
 	return value + (1.0f - accuracy) * value * (randf() - 0.5f);
 }
 

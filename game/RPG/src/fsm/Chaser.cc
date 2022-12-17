@@ -55,11 +55,9 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 			case ai::CAPABILITY_RANGED:
 				throw M2ERROR("Chaser ranged weapon not implemented");
 			case ai::CAPABILITY_MELEE: {
-				auto& weapon_state = impl->character_state.melee_weapon_state;
-                // If the weapon cooled down
                 if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
                     auto& melee = m2::create_object(obj->position, obj->id()).first;
-					obj::Melee::init(melee, &weapon_state->blueprint->melee, target.position - obj->position);
+					rpg::create_melee_object(melee, target.position, GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
                 }
                 break;
             }

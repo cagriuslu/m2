@@ -61,6 +61,7 @@ m2::VoidValue rpg::create_ranged_weapon_projectile(m2::Object& obj, const m2::Ve
 		auto& other_obj = other.parent();
 		if (other_obj.character_id()) {
 			m2::Character::execute_interaction(chr, InteractionType::COLLIDE_TO, other_obj.character(), InteractionType::GET_COLLIDED_BY);
+			// TODO knock-back
 		}
 	};
 	chr.interact = [=](m2::Character& self, m2::Character& other, InteractionType interaction_type) {
