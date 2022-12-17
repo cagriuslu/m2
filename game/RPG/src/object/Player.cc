@@ -5,7 +5,7 @@
 #include "m2/Controls.h"
 #include <rpg/object/Explosive.h>
 #include <rpg/object/RangedWeapon.h>
-#include <rpg/object/Melee.h>
+#include <rpg/object/MeleeWeapon.h>
 #include <m2g/component/Defense.h>
 #include <m2/box2d/Utils.h>
 #include <m2g/Object.h>
@@ -80,7 +80,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
 			// New projectile
 			auto& projectile = m2::create_object(obj.position, id).first;
-			rpg::create_ranged_weapon_projectile(projectile, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
+			rpg::create_ranged_weapon_object(projectile, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
 			// Knock-back
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(to_mouse.angle_rads() + m2::PI) * 500.0f), true);
 		}

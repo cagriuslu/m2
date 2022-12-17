@@ -4,7 +4,7 @@
 #include "m2/Pathfinder.hh"
 #include <rpg/object/Enemy.h>
 #include <rpg/object/RangedWeapon.h>
-#include <rpg/object/Melee.h>
+#include <rpg/object/MeleeWeapon.h>
 #include <rpg/object/Explosive.h>
 #include <rpg/fsm/Chaser.h>
 #include <m2/M2.h>
