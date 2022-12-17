@@ -97,7 +97,9 @@ namespace m2 {
 	        // Find the itm that will be allocated
 	        const uint64_t index_to_alloc = _next_free_index;
 	        Item &item = _array[index_to_alloc];
-			item.data = T{args...};
+			// Create object inplace
+			item.data.~T();
+			new (&item.data) T{args...};
 	        // Store next free index
 	        _next_free_index = item.id & 0xFFFFFFull;
 	        // Set id of the new itm

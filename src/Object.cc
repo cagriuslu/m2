@@ -9,6 +9,7 @@ m2::Object::Object(const m2::Vec2f &position, ObjectId parent_id) : position(pos
 m2::Object::Object(Object&& other) noexcept :
 	position(other.position),
 	impl(std::move(other.impl)),
+	_parent_id(other._parent_id),
 	_group_id(other._group_id),
 	_index_in_group(other._index_in_group),
 	_physique_id(other._physique_id),
@@ -19,6 +20,7 @@ m2::Object::Object(Object&& other) noexcept :
 	_offense_id(other._offense_id),
     _character_id(other._character_id) {
 	other._group_id = {};
+	other._parent_id = 0;
 	other._index_in_group = 0;
 	other._physique_id = 0;
 	other._graphic_id = 0;
@@ -31,6 +33,7 @@ m2::Object::Object(Object&& other) noexcept :
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(position, other.position);
 	std::swap(impl, other.impl);
+	std::swap(_parent_id, other._parent_id);
 	std::swap(_group_id, other._group_id);
 	std::swap(_index_in_group, other._index_in_group);
 	std::swap(_physique_id, other._physique_id);

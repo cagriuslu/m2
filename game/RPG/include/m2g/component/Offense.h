@@ -2,7 +2,6 @@
 #define IMPL_OFFENSE_H
 
 #include "rpg/ExplosiveWeapon.h"
-#include "rpg/MeleeWeapon.h"
 #include "m2/component/Offense.h"
 #include <variant>
 
@@ -10,8 +9,7 @@ namespace m2g {
 	struct Offense : public m2::Offense {
 		std::variant<
 			std::monostate,
-			chr::ExplosiveState,
-			chr::MeleeState
+			chr::ExplosiveState
 		> variant;
 
 		Offense() = default;

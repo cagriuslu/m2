@@ -87,7 +87,22 @@
           "type": "RESOURCE_MELEE_ENERGY",
           "nInf": true
         }
-      ]
+      ],
+      "attributes": [
+        {
+          "type": "ATTRIBUTE_AVERAGE_DAMAGE",
+          "amount": 0.45
+        },
+        {
+          "type": "ATTRIBUTE_DAMAGE_ACCURACY",
+          "amount": 0.95
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_TTL",
+          "amount": 0.15
+        }
+      ],
+      "gameSprite": "SWORD_00"
     },
     {
       "type": "ITEM_REUSABLE_GRENADE_LAUNCHER",
