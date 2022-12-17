@@ -11,7 +11,7 @@ using namespace m2g::pb;
 
 // TODO add other types of Ranged Weapons: Machine Gun, Shotgun, Bow
 
-m2::VoidValue rpg::create_ranged_weapon_projectile(m2::Object& obj, const m2::Vec2f& intended_direction, const m2::Item& ranged_weapon) {
+m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f& intended_direction, const m2::Item& ranged_weapon) {
 	// Check if weapon has necessary attributes
 	if (!ranged_weapon.has_attribute(ATTRIBUTE_LINEAR_SPEED)) {
 		throw M2ERROR("Ranged weapon has no linear speed");

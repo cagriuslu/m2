@@ -1,7 +1,6 @@
 #include <m2/Object.h>
 #include "m2/Game.hh"
-#include <rpg/object/Melee.h>
-#include <m2g/Object.h>
+#include <rpg/object/MeleeWeapon.h>
 #include <m2/box2d/Utils.h>
 #include <m2/Log.h>
 
