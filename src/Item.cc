@@ -95,3 +95,15 @@ float m2::get_resource_amount(const m2::pb::Resource& resource) {
 		return 0.0f;
 	}
 }
+
+m2::Item m2::example_damage_item(m2g::pb::ResourceType resource_type, float damage) {
+	m2::pb::Item damage_item;
+
+	damage_item.set_usage(m2::pb::CONSUMABLE);
+	damage_item.set_use_on_acquire(true);
+	auto* benefit = damage_item.add_benefits();
+	benefit->set_type(resource_type);
+	benefit->set_amount(-damage);
+
+	return Item{damage_item};
+}

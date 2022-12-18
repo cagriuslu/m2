@@ -2,11 +2,7 @@
 #include <m2g/Object.h>
 
 chr::CharacterState::CharacterState(const CharacterBlueprint* blueprint) :
-	blueprint(blueprint), stun_ttl_s() {
-	if (blueprint->default_explosive_weapon) {
-		explosive_weapon_state = ExplosiveWeaponState(blueprint->default_explosive_weapon);
-	}
-}
+	blueprint(blueprint), stun_ttl_s() {}
 
 void chr::CharacterState::process_time(float time_passed_s) {
 	// Stun
@@ -27,13 +23,11 @@ bool chr::CharacterState::is_stunned() const {
 
 const chr::CharacterBlueprint chr::character_player = {
 		.main_sprite = m2g::pb::SpriteType::PLAYER_LOOKDOWN_00,
-		.default_explosive_weapon = &explosive_weapon_grenade,
 		.animation_type = m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT
 };
 
 const chr::CharacterBlueprint chr::character_skeleton_000_chase = {
 		.main_sprite = m2g::pb::SpriteType::ENEMY_LOOKDOWN_00,
-		.default_explosive_weapon = nullptr,
 		.stun_ttl_s = 2.0f,
 		.animation_type = m2g::pb::ANIMATION_TYPE_SKELETON_MOVEMENT,
 		.aiBlueprint = &ai::chase_000,

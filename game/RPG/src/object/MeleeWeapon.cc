@@ -64,13 +64,7 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &directi
 			// Calculate damage
 			float damage = m2::apply_accuracy(average_damage, damage_accuracy);
 			// Create and give damage item
-			m2::pb::Item damage_item;
-			damage_item.set_usage(m2::pb::CONSUMABLE);
-			damage_item.set_use_on_acquire(true);
-			auto* benefit = damage_item.add_benefits();
-			benefit->set_type(RESOURCE_HP);
-			benefit->set_amount(-damage);
-			other.add_item(m2::Item{damage_item});
+			other.add_item(m2::example_damage_item(RESOURCE_HP, damage));
 		}
 	};
 	phy.post_step = [&](m2::Physique& phy) {

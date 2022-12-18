@@ -37,6 +37,7 @@ namespace m2 {
 
 	std::vector<Item> load_items(const std::string& items_path);
 	float get_resource_amount(const pb::Resource& resource);
+	Item example_damage_item(m2g::pb::ResourceType resource_type, float damage);
 }
 
 #endif //M2_ITEM_H

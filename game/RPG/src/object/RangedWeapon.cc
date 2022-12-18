@@ -40,6 +40,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(0.167f);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
+	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * linear_speed));
 
@@ -69,13 +70,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 			// Calculate damage
 			float damage = m2::apply_accuracy(average_damage, damage_accuracy);
 			// Create and give damage item
-			m2::pb::Item damage_item;
-			damage_item.set_usage(m2::pb::CONSUMABLE);
-			damage_item.set_use_on_acquire(true);
-			auto* benefit = damage_item.add_benefits();
-			benefit->set_type(RESOURCE_HP);
-			benefit->set_amount(-damage);
-			other.add_item(m2::Item{damage_item});
+			other.add_item(m2::example_damage_item(RESOURCE_HP, damage));
 			// Clear TTL
 			self.clear_resource(RESOURCE_TTL);
 		}

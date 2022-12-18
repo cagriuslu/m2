@@ -1,17 +1,11 @@
 #ifndef IMPL_OFFENSE_H
 #define IMPL_OFFENSE_H
 
-#include "rpg/ExplosiveWeapon.h"
 #include "m2/component/Offense.h"
 #include <variant>
 
 namespace m2g {
 	struct Offense : public m2::Offense {
-		std::variant<
-			std::monostate,
-			chr::ExplosiveState
-		> variant;
-
 		Offense() = default;
 		explicit Offense(m2::Id object_id);
 	};
