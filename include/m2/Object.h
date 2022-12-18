@@ -78,6 +78,7 @@ namespace m2 {
         m2g::Defense& add_defense();
         m2g::Offense& add_offense();
 		Character& add_tiny_character();
+		// TODO mini(2),small(4),medium(8),large(16),huge(32)
 		Character& add_full_character();
 
 	private:

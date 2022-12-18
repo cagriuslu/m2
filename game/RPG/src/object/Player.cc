@@ -3,7 +3,7 @@
 #include <rpg/object/Enemy.h>
 #include "m2/Game.hh"
 #include "m2/Controls.h"
-#include <rpg/object/Explosive.h>
+#include <rpg/object/ExplosiveWeapon.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
 #include <m2g/component/Defense.h>
@@ -90,7 +90,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER))) {
 			auto& explosive = m2::create_object(obj.position, id).first;
-			obj::Explosive::init(explosive, &impl->char_state.blueprint->default_explosive_weapon->explosive, to_mouse);
+			rpg::create_explosive_object(explosive, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
 		}
 	};
 	phy.post_step = [&obj](m2::Physique& phy) {

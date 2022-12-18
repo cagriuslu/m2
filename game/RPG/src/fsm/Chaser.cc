@@ -5,7 +5,6 @@
 #include <rpg/object/Enemy.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
-#include <rpg/object/Explosive.h>
 #include <rpg/fsm/Chaser.h>
 #include <m2/M2.h>
 
@@ -46,7 +45,6 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 	auto& obj = automaton.obj;
 	auto& target = automaton.target;
 	const auto* blueprint = automaton.blueprint;
-	auto* impl = dynamic_cast<obj::Enemy*>(automaton.obj->impl.get());
 
     // If player is close enough
     if (obj->position.distance_sq(target.position) < blueprint->attack_distance_squared_m) {
@@ -62,18 +60,7 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
                 break;
             }
             case ai::CAPABILITY_EXPLOSIVE: {
-				auto& weapon_state = impl->character_state.explosive_weapon_state;
-                // If the weapon cooled down
-                if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER))) {
-                    auto& explosive = m2::create_object(obj->position, obj->id()).first;
-					obj::Explosive::init(
-                            explosive,
-							&weapon_state->blueprint->explosive,
-                            target.position - obj->position
-                    );
-                    // TODO knockback
-                }
-                break;
+				throw M2ERROR("Chaser explosive weapon not implemented");
             }
             case ai::CAPABILITY_KAMIKAZE: {
                 // TODO
