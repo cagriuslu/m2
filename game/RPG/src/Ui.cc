@@ -100,15 +100,9 @@ static Blueprint::Widget::Variant left_hud_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "100",
 	.update_callback = []() -> std::pair<Action,std::string> {
 		// Lookup player
-		static m2::Id player_id = 0;
-		static float* hp = nullptr;
-		if (player_id != GAME.playerId) {
-			player_id = GAME.playerId;
-			hp = &GAME.player()->defense().hp;
-		}
-		// Read HP
-		if (hp) {
-			return {Action::CONTINUE, std::to_string((int)round(*hp))};
+		if (GAME.playerId) {
+			float hp = GAME.player()->character().get_resource(m2g::pb::RESOURCE_HP);
+			return {Action::CONTINUE, std::to_string((int)round(hp * 100.0f))};
 		} else {
 			return {Action::CONTINUE, {}};
 		}

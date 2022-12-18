@@ -6,12 +6,9 @@
 #include <rpg/object/ExplosiveWeapon.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
-#include <m2g/component/Defense.h>
 #include <m2/box2d/Utils.h>
-#include <m2g/Object.h>
 #include <m2/M2.h>
 #include <Item.pb.h>
-#include <m2/Log.h>
 
 obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) :
 	char_state(blueprint), animation_fsm(blueprint->animation_type, obj.graphic_id()) {}
@@ -44,6 +41,22 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_linear_damping(100.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
+
+	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
+
+	auto& chr = obj.add_full_character();
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_EXPLOSIVE_ENERGY));
+	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
+
+	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
+
 	phy.pre_step = [&, id=id](m2::Physique& phy) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
@@ -93,8 +106,13 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			rpg::create_explosive_object(explosive, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
 		}
 	};
+	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other) {
+		auto* enemy_impl = dynamic_cast<obj::Enemy*>(other.parent().impl.get());
+		if (enemy_impl && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {
+			enemy_impl->stun();
+		}
+	};
 	phy.post_step = [&obj](m2::Physique& phy) {
-		auto& def = obj.defense();
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
 		// We must call time before other signals
 		impl->animation_fsm.time(GAME.deltaTime_s);
@@ -108,9 +126,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 				for (const auto& resource : item->benefits()) {
 					switch (resource.type()) {
 						case m2g::pb::RESOURCE_HP:
-							def.hp += (float)resource.amount();
-							if (def.maxHp < def.hp) { def.hp = def.maxHp; }
-							break;
+							throw M2ERROR("Item pickup not implemented");
 						default:
 							break;
 					}
@@ -121,38 +137,8 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			}
 		}
 	};
-
-	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
-		const auto& def = gfx.parent().defense();
-		gfx.draw_effect_health_bar = (float) def.hp / def.maxHp;
-	};
-
-	auto& chr = obj.add_full_character();
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_EXPLOSIVE_ENERGY));
-	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
-
-	auto& def = obj.add_defense();
-    def.maxHp = def.hp = 100.0f;
-
-	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
-
-	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other) {
-		auto* enemy_impl = dynamic_cast<obj::Enemy*>(other.parent().impl.get());
-		if (enemy_impl && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {
-			enemy_impl->stun();
-		}
-	};
-
-	def.on_death = [](MAYBE m2g::Defense& def) {
-		LOG_INFO("Player died");
+		gfx.draw_effect_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
 
 	GAME.playerId = GAME.objects.get_id(&obj);

@@ -4,8 +4,6 @@
 #include "Group.h"
 #include "Sprite.h"
 #include "ObjectImpl.h"
-#include <m2g/component/Defense.h>
-#include <m2g/component/Offense.h>
 #include "m2/Component.h"
 #include "m2/Fsm.h"
 #include "m2/Vec2f.h"
@@ -22,8 +20,6 @@ namespace m2 {
 	using PhysiqueId = Id;
 	using GraphicId = Id;
 	using LightId = Id;
-	using DefenseId = Id;
-	using OffenseId = Id;
 	using CharacterId = Id;
 
     /// Basis of all objects in the game.
@@ -54,8 +50,6 @@ namespace m2 {
 	    [[nodiscard]] GraphicId graphic_id() const;
 	    [[nodiscard]] GraphicId terrain_graphic_id() const;
 	    [[nodiscard]] LightId light_id() const;
-	    [[nodiscard]] DefenseId defense_id() const;
-	    [[nodiscard]] OffenseId offense_id() const;
 		[[nodiscard]] CharacterId character_id() const;
 
 		[[nodiscard]] Object* parent() const;
@@ -64,8 +58,6 @@ namespace m2 {
         [[nodiscard]] Graphic& graphic() const;
         [[nodiscard]] Graphic& terrain_graphic() const;
         [[nodiscard]] Light& light() const;
-        [[nodiscard]] m2g::Defense& defense() const;
-        [[nodiscard]] m2g::Offense& offense() const;
 		[[nodiscard]] Character& character() const;
 
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
@@ -75,8 +67,6 @@ namespace m2 {
 		Graphic& add_graphic(const Sprite& sprite);
 		Graphic& add_terrain_graphic(const Sprite& sprite);
         Light& add_light();
-        m2g::Defense& add_defense();
-        m2g::Offense& add_offense();
 		Character& add_tiny_character();
 		// TODO mini(2),small(4),medium(8),large(16),huge(32)
 		Character& add_full_character();
@@ -90,8 +80,6 @@ namespace m2 {
 	    GraphicId _graphic_id{};
 	    GraphicId _terrain_graphic_id{};
 	    LightId _light_id{};
-	    DefenseId _defense_id{};
-	    OffenseId _offense_id{};
 		CharacterId _character_id{};
     };
 

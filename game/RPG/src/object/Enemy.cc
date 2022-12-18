@@ -5,9 +5,7 @@
 #include "m2/Game.hh"
 #include "rpg/group/ItemGroup.h"
 #include <m2/M2.h>
-#include <m2g/component/Defense.h>
 #include <m2/box2d/Utils.h>
-#include <m2g/Object.h>
 #include <m2/Group.h>
 #include <deque>
 
@@ -45,11 +43,48 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	bp.set_linear_damping(10.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
+
+	auto& chr = obj.add_full_character();
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
+
+    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
+
 	phy.pre_step = [&obj](MAYBE m2::Physique& phy) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
 		impl->character_state.process_time(GAME.deltaTime_s);
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->fsm_variant);
 		std::visit([](auto& v) { v.signal(rpg::AI_FSM_SIGNAL_PREPHY); }, impl->fsm_variant);
+	};
+	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::InteractionType interaction_type) {
+		// Check if we got hit
+		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
+			// Apply mask effect
+			auto* data = dynamic_cast<Enemy*>(obj.impl.get());
+			data->on_hit_effect_ttl = 0.15f;
+			gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;
+			// Check if we died
+			if (!self.has_resource(RESOURCE_HP)) {
+				// Drop item
+				auto drop_position = obj.position;
+				m2::Group* group = obj.group();
+				if (group) {
+					// Check if the object belongs to item group
+					auto* item_group = dynamic_cast<rpg::ItemGroup*>(group);
+					if (item_group) {
+						auto optional_item = item_group->pop_item();
+						if (optional_item) {
+							GAME.add_deferred_action([=]() {
+								create_dropped_item(m2::create_object(drop_position).first, *optional_item);
+							});
+						}
+					}
+				}
+				// Delete self
+				GAME.add_deferred_action(m2::create_object_deleter(self.object_id));
+			}
+		}
 	};
 	phy.post_step = [&obj](m2::Physique& phy) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
@@ -72,31 +107,6 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 			}
 		}
 	};
-
-	auto& chr = obj.add_full_character();
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
-	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::InteractionType interaction_type) {
-		// Check if we got hit
-		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
-			// Apply mask effect
-			auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-			data->on_hit_effect_ttl = 0.15f;
-			gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;
-			// Check if we died
-			if (!self.has_resource(RESOURCE_HP)) {
-				// TODO
-				fprintf(stderr, "You died\n");
-			}
-		}
-	};
-
-	auto& def = obj.add_defense();
-	def.maxHp = def.hp = 100.0f;
-
-    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
-
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		gfx.draw_effect_health_bar = chr.get_resource(RESOURCE_HP);
 
@@ -107,32 +117,6 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 				gfx.draw_sprite_effect = m2::pb::NO_SPRITE_EFFECT;
 			}
 		}
-	};
-
-	def.on_hit = [&](MAYBE m2g::Defense& def) {
-		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		data->on_hit_effect_ttl = 0.15f;
-		gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;
-	};
-
-	def.on_death = [&](m2g::Defense& def) {
-		auto drop_position = obj.position;
-
-		m2::Group* group = obj.group();
-		if (group) {
-			// Check if the object belongs to item group
-			auto* item_group = dynamic_cast<rpg::ItemGroup*>(group);
-			if (item_group) {
-				auto optional_item = item_group->pop_item();
-				if (optional_item) {
-					GAME.add_deferred_action([=]() {
-						create_dropped_item(m2::create_object(drop_position).first, *optional_item);
-					});
-				}
-			}
-		}
-		// Delete self
-		GAME.add_deferred_action(m2::create_object_deleter(def.object_id));
 	};
 
 	return {};

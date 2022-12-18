@@ -194,8 +194,6 @@ void m2::Game::unload_level() {
 
 	PathfinderMap_Term(&pathfinderMap);
 	characters.clear();
-	offenses.clear();
-	defenses.clear();
 	lights.clear();
 	terrainGraphics.clear();
 	graphics.clear();
