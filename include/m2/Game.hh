@@ -6,8 +6,6 @@
 #include "Group.h"
 #include "Shape.h"
 #include "Sprite.h"
-#include <m2g/component/Defense.h>
-#include <m2g/component/Offense.h>
 #include "m2/Events.h"
 #include "DrawList.h"
 #include "Animation.h"
@@ -111,8 +109,6 @@ namespace m2 {
 		Pool<Graphic> graphics;
 		Pool<Graphic> terrainGraphics;
 		Pool<Light> lights;
-		Pool<m2g::Defense> defenses;
-		Pool<m2g::Offense> offenses;
 		Pool<CharacterVariant> characters;
 		b2World *world{};
         box2d::ContactListener* contactListener{};

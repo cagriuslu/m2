@@ -16,8 +16,6 @@ m2::Object::Object(Object&& other) noexcept :
 	_graphic_id(other._graphic_id),
 	_terrain_graphic_id(other._terrain_graphic_id),
 	_light_id(other._light_id),
-	_defense_id(other._defense_id),
-	_offense_id(other._offense_id),
     _character_id(other._character_id) {
 	other._group_id = {};
 	other._parent_id = 0;
@@ -26,8 +24,6 @@ m2::Object::Object(Object&& other) noexcept :
 	other._graphic_id = 0;
 	other._terrain_graphic_id = 0;
 	other._light_id = 0;
-	other._defense_id = 0;
-	other._offense_id = 0;
     other._character_id = 0;
 }
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
@@ -40,8 +36,6 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(_graphic_id, other._graphic_id);
 	std::swap(_terrain_graphic_id, other._terrain_graphic_id);
 	std::swap(_light_id, other._light_id);
-	std::swap(_defense_id, other._defense_id);
-	std::swap(_offense_id, other._offense_id);
 	std::swap(_character_id, other._character_id);
 	return *this;
 }
@@ -63,14 +57,6 @@ m2::Object::~Object() {
 	if (_terrain_graphic_id) {
 		GAME.terrainGraphics.free(_terrain_graphic_id);
 		_terrain_graphic_id = 0;
-	}
-	if (_defense_id) {
-		GAME.defenses.free(_defense_id);
-		_defense_id = 0;
-	}
-	if (_offense_id) {
-		GAME.offenses.free(_offense_id);
-		_offense_id = 0;
 	}
     if (_character_id) {
         GAME.characters.free(_character_id);
@@ -100,12 +86,6 @@ m2::GraphicId m2::Object::terrain_graphic_id() const {
 m2::LightId m2::Object::light_id() const {
 	return _light_id;
 }
-m2::DefenseId m2::Object::defense_id() const {
-	return _defense_id;
-}
-m2::OffenseId m2::Object::offense_id() const {
-	return _offense_id;
-}
 m2::CharacterId m2::Object::character_id() const {
     return _character_id;
 }
@@ -127,12 +107,6 @@ m2::Graphic& m2::Object::terrain_graphic() const {
 }
 m2::Light& m2::Object::light() const {
 	return GAME.lights[_light_id];
-}
-m2g::Defense& m2::Object::defense() const {
-	return GAME.defenses[_defense_id];
-}
-m2g::Offense& m2::Object::offense() const {
-	return GAME.offenses[_offense_id];
 }
 m2::Character& m2::Object::character() const {
     auto& it = GAME.characters[_character_id];
@@ -175,18 +149,6 @@ m2::Light& m2::Object::add_light() {
 	_light_id = light_pair.second;
 	light_pair.first = Light{id()};
 	return light_pair.first;
-}
-m2g::Defense& m2::Object::add_defense() {
-	auto defense_pair = GAME.defenses.alloc();
-	_defense_id = defense_pair.second;
-	defense_pair.first = m2g::Defense{id()};
-	return defense_pair.first;
-}
-m2g::Offense& m2::Object::add_offense() {
-	auto offense_pair = GAME.offenses.alloc();
-	_offense_id = offense_pair.second;
-	offense_pair.first = m2g::Offense{id()};
-	return offense_pair.first;
 }
 m2::Character& m2::Object::add_tiny_character() {
     auto character_pair = GAME.characters.alloc();

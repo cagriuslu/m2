@@ -24,14 +24,15 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 
 		// Mouse button
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
-			m2::box2d::find_objects_near_position_under_mouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
-				if (other_phy.parent().defense_id()) {
-					// Found an object with defense, stop the search
-					fprintf(stderr, "Mouse is close to a defense object\n");
-					return true;
-				}
-				return false;
-			});
+			throw M2ERROR("Implement mouse clicking");
+//			m2::box2d::find_objects_near_position_under_mouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
+//				if (other_phy.parent().defense_id()) {
+//					// Found an object with defense, stop the search
+//					fprintf(stderr, "Mouse is close to a defense object\n");
+//					return true;
+//				}
+//				return false;
+//			});
 		}
 	};
 

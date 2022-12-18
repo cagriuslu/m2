@@ -5,8 +5,8 @@ void m2g::post_tile_create(m2::Object& obj, pb::SpriteType sprite_type) {
     switch (sprite_type) {
         case pb::SpriteType::GRASSLAND_DIRT_1:
         case pb::SpriteType::GRASSLAND_DIRT_2: {
-            auto& def = obj.add_defense();
-            fprintf(stderr, "Added defense component to %llu %f, %f\n", def.parent().id(), obj.position.x, obj.position.y);
+            throw M2ERROR("Implement tile creation");
+            //fprintf(stderr, "Added defense component to %llu %f, %f\n", def.parent().id(), obj.position.x, obj.position.y);
             break;
         }
         default:
