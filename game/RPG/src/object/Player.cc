@@ -13,10 +13,6 @@
 obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) :
 	char_state(blueprint), animation_fsm(blueprint->animation_type, obj.graphic_id()) {}
 
-void obj::Player::add_item(m2g::pb::ItemType item_type) {
-	items.push_back(item_type);
-}
-
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
 // Mouse middle button: explosive weapon (player can only carry one explosive weapon)
@@ -118,23 +114,6 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		impl->animation_fsm.time(GAME.deltaTime_s);
 		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {
 			impl->animation_fsm.signal(m2g::pb::ANIMATION_STATE_IDLE);
-		}
-		// Consume consumables
-		for (auto it = impl->items.begin(); it != impl->items.end(); ) {
-			auto item = GAME.get_item(*it);
-			if (item->usage() == m2::pb::Usage::CONSUMABLE) {
-				for (const auto& resource : item->benefits()) {
-					switch (resource.type()) {
-						case m2g::pb::RESOURCE_HP:
-							throw M2ERROR("Item pickup not implemented");
-						default:
-							break;
-					}
-				}
-				it = impl->items.erase(it);
-			} else {
-				++it;
-			}
 		}
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {

@@ -83,6 +83,9 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 			} else if (neighbor == to) {
 				is_reachable = check_eyesight(frontier, neighbor);
 			}
+			// TODO: the old pathfinder had a bug in this algorithm:
+			// If (from) is on one of the blocked locations, and if one of the neighbors end up OUTSIDE of the game area,
+			// (because from is on the edge of the map), the search spills outside the game area and never ends.
 
 			if (is_reachable) {
 				reachable_neighbors[reachable_neighbor_count++] = neighbor;
@@ -139,7 +142,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::smoothen_path(const std::vector<Vec2i>& r
 
 	std::vector<Vec2i> smooth_path{reverse_path.front()}; // insert `to`
 	const auto* point1 = &reverse_path[0];
-	const Vec2i* prev_point2 = nullptr;
+	const auto* prev_point2 = point1;
 
 	float cost = 0.0f;
 	auto insert_point = [&](const Vec2i* point) {
@@ -311,6 +314,8 @@ m2::Value<std::list<m2::Vec2i>> _PathfinderMap_FindGridSteps(PathfinderMap* pm, 
 			neighbors[neighborCount] = leftNeighbor;
 			frontierToNeighborCosts[neighborCount++] = 1.0f;
 		}
+		// TODO: If (from) is on one of the block locations, and if one of the neighbors end up OUTSIDE of the game area,
+		// (because from is on the edge of the map), the search spills outside the game area and never ends.
 
 		// Iterate over neighbors
 		for (uint32_t neighIdx = 0; neighIdx < neighborCount; neighIdx++) {
@@ -384,7 +389,7 @@ std::list<m2::Vec2i> _PathfinderMap_GridStepsToAnyAngle(const std::list<m2::Vec2
     outListOfVec2Is.push_back(*point_1_it);
     auto* point1 = &(*point_1_it);
 
-	const m2::Vec2i* prevPoint2 = nullptr;
+	const m2::Vec2i* prevPoint2 = point1;
     auto point_2_it = listOfVec2Is.begin();
 	for (++point_2_it; point_2_it != listOfVec2Is.end(); ++point_2_it) {
         auto* point2 = &(*point_2_it);
