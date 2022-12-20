@@ -143,7 +143,6 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 		m2_reflect_failure(load_result);
 	}
 	// Init pathfinder map
-	PathfinderMap_Init(&GAME.pathfinderMap);
 	pathfinder = Pathfinder{*lb};
 
 	// Create default objects
@@ -193,7 +192,6 @@ void m2::Game::unload_level() {
 	leftHudUIState = {};
 	rightHudUIState = {};
 
-	PathfinderMap_Term(&pathfinderMap);
 	characters.clear();
 	lights.clear();
 	terrainGraphics.clear();

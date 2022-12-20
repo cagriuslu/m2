@@ -113,7 +113,6 @@ namespace m2 {
 		b2World *world{};
         box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointerId{};
-		PathfinderMap pathfinderMap;
 		std::optional<Pathfinder> pathfinder;
         std::optional<ui::State> leftHudUIState, rightHudUIState;
 
