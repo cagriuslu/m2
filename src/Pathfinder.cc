@@ -1,6 +1,5 @@
 #include "m2/Pathfinder.hh"
 #include "m2/Component.h"
-#include <m2/Object.h>
 #include "m2/Game.hh"
 #include <m2/box2d/RayCast.h>
 #include <m2/Vec2i.h>
@@ -79,13 +78,12 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 			if (frontier == from) {
 				is_reachable = _blocked_locations.contains(from) ? check_eyesight(frontier, neighbor) : not _blocked_locations.contains(neighbor);
 			} else if (not _blocked_locations.contains(neighbor)) {
-				is_reachable = true;
+				// If frontier is on a blocked location, neighbor may lay outside the playable area
+				// Check if there is eyesight from frontier to neighbor
+				is_reachable = _blocked_locations.contains(frontier) ? check_eyesight(frontier, neighbor) : true;
 			} else if (neighbor == to) {
 				is_reachable = check_eyesight(frontier, neighbor);
 			}
-			// TODO: the old pathfinder had a bug in this algorithm:
-			// If (from) is on one of the blocked locations, and if one of the neighbors end up OUTSIDE of the game area,
-			// (because from is on the edge of the map), the search spills outside the game area and never ends.
 
 			if (is_reachable) {
 				reachable_neighbors[reachable_neighbor_count++] = neighbor;
