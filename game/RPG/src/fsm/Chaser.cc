@@ -26,10 +26,12 @@ void* rpg::ChaserFsmBase::idle(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
 		case m2::FSM_SIGNAL_ALARM:
             // Check if player is close
             if (automaton.obj->position.distance_sq(automaton.target.position) < blueprint->trigger_distance_squared_m) {
-                // Check if path exists
-                if (m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.obj->position, automaton.target.position), automaton.reverse_waypoints)) {
-                    return reinterpret_cast<void*>(triggered);
-                }
+				// Check if path exists
+				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
+				if (not smooth_path.empty()) {
+					automaton.reverse_waypoints = std::move(smooth_path);
+					return reinterpret_cast<void*>(triggered);
+				}
             }
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
@@ -84,12 +86,17 @@ void* rpg::ChaserFsmBase::triggered(m2::Fsm<ChaserFsmBase>& automaton, int sig) 
             // Check if player is still close
             if (automaton.obj->position.distance_sq(player.position) < blueprint->give_up_distance_squared_m) {
                 // Recalculate path to player
-	            m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.obj->position, player.position), automaton.reverse_waypoints);
+				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
+				if (not smooth_path.empty()) {
+					automaton.reverse_waypoints = std::move(smooth_path);
+				}
             } else {
                 // Check if path to homePosition exists
-                if (m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.obj->position, automaton.home_position), automaton.reverse_waypoints)) {
-                    return reinterpret_cast<void*>(gave_up);
-                }
+				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
+				if (not smooth_path.empty()) {
+					automaton.reverse_waypoints = std::move(smooth_path);
+					return reinterpret_cast<void*>(gave_up);
+				}
             }
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
@@ -127,16 +134,21 @@ void* rpg::ChaserFsmBase::gave_up(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
             // Check if player is close
             if (automaton.obj->position.distance_sq(automaton.target.position) < automaton.blueprint->trigger_distance_squared_m) {
                 // Check if path to player exists
-                if (m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.obj->position, automaton.target.position), automaton.reverse_waypoints)) {
-                    return reinterpret_cast<void*>(triggered);
-                }
+				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
+				if (not smooth_path.empty()) {
+					automaton.reverse_waypoints = std::move(smooth_path);
+					return reinterpret_cast<void*>(triggered);
+				}
             } else {
                 // Check if obj arrived to homePosition
                 if (automaton.obj->position.distance_sq(automaton.home_position) < 1.0f) {
                     return reinterpret_cast<void*>(idle);
                 } else {
                     // Recalculate path to homePosition
-	                m2::assign_if(PathfinderMap_FindPath(&GAME.pathfinderMap, automaton.obj->position, automaton.home_position), automaton.reverse_waypoints);
+					auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
+					if (not smooth_path.empty()) {
+						automaton.reverse_waypoints = std::move(smooth_path);
+					}
                 }
             }
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));

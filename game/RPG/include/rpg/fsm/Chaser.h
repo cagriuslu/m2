@@ -16,7 +16,7 @@ namespace rpg {
 		const ai::AiBlueprint* blueprint;
 		// State
 		m2::Vec2f home_position;
-		std::list<m2::Vec2i> reverse_waypoints;
+		std::vector<m2::Vec2i> reverse_waypoints;
 		// Convenience
 		m2::Object& target;
 		m2::Physique& phy;

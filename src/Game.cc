@@ -144,6 +144,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	}
 	// Init pathfinder map
 	PathfinderMap_Init(&GAME.pathfinderMap);
+	pathfinder = Pathfinder{*lb};
 
 	// Create default objects
 	m2::obj::create_camera();
