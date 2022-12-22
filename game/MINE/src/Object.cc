@@ -1,12 +1,17 @@
 #include <m2g/Object.h>
 #include <mine/object/Dwarf.h>
+#include <ResourceType.pb.h>
+
+using namespace m2g;
+using namespace m2g::pb;
 
 void m2g::post_tile_create(m2::Object& obj, pb::SpriteType sprite_type) {
     switch (sprite_type) {
         case pb::SpriteType::GRASSLAND_DIRT_1:
         case pb::SpriteType::GRASSLAND_DIRT_2: {
-            throw M2ERROR("Implement tile creation");
-            //fprintf(stderr, "Added defense component to %llu %f, %f\n", def.parent().id(), obj.position.x, obj.position.y);
+			// Add HP to destroyable tiles
+			auto& chr = obj.add_tiny_character();
+			chr.add_resource(RESOURCE_HP, 1.0f);
             break;
         }
         default:

@@ -5,6 +5,9 @@
 #include <m2/box2d/Query.h>
 #include <m2/game/CharacterMovement.h>
 
+using namespace m2g;
+using namespace m2g::pb;
+
 m2::VoidValue create_dwarf(m2::Object& obj) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
@@ -24,15 +27,30 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 
 		// Mouse button
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
-			throw M2ERROR("Implement mouse clicking");
-//			m2::box2d::find_objects_near_position_under_mouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
-//				if (other_phy.parent().defense_id()) {
-//					// Found an object with defense, stop the search
-//					fprintf(stderr, "Mouse is close to a defense object\n");
-//					return true;
-//				}
-//				return false;
-//			});
+			m2::box2d::find_objects_near_position_under_mouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
+				auto& obj_under_mouse = other_phy.parent();
+				// If object under mouse has character
+				if (obj_under_mouse.character_id()) {
+					auto& chr_under_mouse = obj_under_mouse.character();
+					// If character has HP
+					if (chr_under_mouse.has_resource(RESOURCE_HP)) {
+						// Damage object
+						chr_under_mouse.remove_resource(RESOURCE_HP, 2.0f * GAME.deltaTime_s);
+						// Show health bar
+						auto hp = chr_under_mouse.get_resource(RESOURCE_HP);
+						obj_under_mouse.terrain_graphic().draw_effect_health_bar = hp;
+						// If object under mouse runs out of HP
+						if (hp == 0.0f) {
+							// Delete object
+							GAME.add_deferred_action(m2::create_object_deleter(chr_under_mouse.object_id));
+						}
+					}
+					// Stop searching
+					return false;
+				}
+				// Continue searching
+				return true;
+			});
 		}
 	};
 
