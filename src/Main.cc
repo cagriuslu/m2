@@ -282,6 +282,9 @@ int main(int argc, char **argv) {
 		GAME.deltaTicks_ms = sdl::get_ticks(prevDrawEffectsTicks, pause_ticks, 1) - prevDrawEffectsTicks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prevDrawEffectsTicks += GAME.deltaTicks_ms;
+		for (auto gfx_it : GAME.terrainGraphics) {
+			IF(gfx_it.first->on_effect)(*gfx_it.first);
+		}
 		for (auto gfx_it : GAME.graphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
