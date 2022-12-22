@@ -15,17 +15,18 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 
 	auto& phy = camera.add_physique();
 	phy.post_step = [&camera](MAYBE Physique& phy) {
-		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
+//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = GAME.objects[GAME.playerId];
 
-		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
-			// Give an offset to the camera's location based on the position of the mouse
-			m2::Vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
-			camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
-			camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
-		} else {
+		// Mouse lookahead disabled temporarily
+//		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
+//			// Give an offset to the camera's location based on the position of the mouse
+//			m2::Vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
+//			camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
+//			camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
+//		} else {
 			camera.position = player.position;
-		}
+//		}
 	};
 
 	if (GAME.level->type() == Level::Type::EDITOR) {
