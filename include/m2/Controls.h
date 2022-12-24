@@ -11,7 +11,7 @@ namespace m2 {
 		DOWN,
 		LEFT,
 		RIGHT,
-		DASH,
+		DASH, // TODO rename to SPACE
 		CONSOLE,
 		ENTER,
 		BACKSPACE,

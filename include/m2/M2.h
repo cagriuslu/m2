@@ -2,6 +2,7 @@
 #define M2_M2_H
 
 #include <string>
+#include <array>
 
 #define MAYBE [[maybe_unused]]
 #define IF(cond) if (cond) cond
@@ -28,6 +29,14 @@ namespace m2 {
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+	template<typename T, size_t N>
+	constexpr std::array<T, N> make_array(T value) {
+		std::array<T, N> a{};
+		for (auto& x : a)
+			x = value;
+		return a;
+	}
 
 	////////////////////////////////////////////////////////////////////////
 	///////////////////////////////// MATH /////////////////////////////////
