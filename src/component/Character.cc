@@ -79,6 +79,38 @@ bool m2::Character::use_item(const Iterator<Item>& item_it, float resource_multi
 	}
 	return true;
 }
+m2::internal::ResourceAmount::ResourceAmount(float amount, float max_amount) {
+	set_max_amount(max_amount);
+	set_amount(amount);
+}
+float m2::internal::ResourceAmount::amount() const {
+	return _amount;
+}
+bool m2::internal::ResourceAmount::has_amount() const {
+	return 0.0f < _amount;
+}
+float m2::internal::ResourceAmount::set_amount(float amount) {
+	return _amount = std::clamp(amount, 0.0f, _max_amount);
+}
+float m2::internal::ResourceAmount::add_amount(float amount) {
+	return set_amount(_amount + amount);
+}
+float m2::internal::ResourceAmount::remove_amount(float amount) {
+	return set_amount(_amount - amount);
+}
+float m2::internal::ResourceAmount::clear_amount() {
+	return _amount = 0.0f;
+}
+float m2::internal::ResourceAmount::max_amount() const {
+	return _max_amount;
+}
+float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
+	if (max_amount < 0.0f) {
+		throw M2ERROR("Negative max resource");
+	}
+	_max_amount = max_amount;
+	return set_amount(_amount);
+}
 
 m2::TinyCharacter::TinyCharacter(uint64_t object_id) : Character(object_id) {}
 void m2::TinyCharacter::automatic_update() {
@@ -116,26 +148,25 @@ void m2::TinyCharacter::remove_item(const Iterator<Item>& item) {
 	}
 }
 bool m2::TinyCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
-	return _resource && _resource->first == resource_type && 0.0f < _resource->second;
+	return _resource && _resource->first == resource_type && _resource->second.has_amount();
 }
 float m2::TinyCharacter::get_resource(m2g::pb::ResourceType resource_type) const {
+	return (_resource && _resource->first == resource_type) ? _resource->second.amount() : float{};
+}
+float m2::TinyCharacter::get_max_resource(m2g::pb::ResourceType resource_type) const {
+	return (_resource && _resource->first == resource_type) ? _resource->second.max_amount() : INFINITY;
+}
+void m2::TinyCharacter::set_max_resource(m2g::pb::ResourceType resource_type, float max) {
 	if (_resource && _resource->first == resource_type) {
-		return static_cast<float>(_resource->second);
+		_resource->second.set_max_amount(max);
 	}
-	return {};
 }
 float m2::TinyCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
 	if (_resource && _resource->first == resource_type) {
-		auto new_amount = _resource->second + amount;
-		new_amount = (new_amount < 0.0f) ? 0.0f : new_amount;
-		_resource->second = new_amount;
-		return static_cast<float>(new_amount);
-	} else if (0.0f < amount) {
-		_resource = std::make_pair(resource_type, amount);
-		return amount;
+		return _resource->second.add_amount(amount);
 	} else {
-		_resource = std::make_pair(resource_type, 0.0f);
-		return 0.0f;
+		_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
+		return _resource->second.amount();
 	}
 }
 float m2::TinyCharacter::remove_resource(m2g::pb::ResourceType resource_type, float amount) {
@@ -143,7 +174,7 @@ float m2::TinyCharacter::remove_resource(m2g::pb::ResourceType resource_type, fl
 }
 void m2::TinyCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
 	if (_resource && _resource->first == resource_type) {
-		_resource = {};
+		_resource->second.clear_amount();
 	}
 }
 
@@ -193,22 +224,25 @@ void m2::FullCharacter::remove_item(const Iterator<Item>& item) {
 	}
 }
 bool m2::FullCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
-	return 0.0f < _resources[resource_type_index(resource_type)];
+	return _resources[resource_type_index(resource_type)].has_amount();
 }
 float m2::FullCharacter::get_resource(m2g::pb::ResourceType resource_type) const {
-	return _resources[resource_type_index(resource_type)];
+	return _resources[resource_type_index(resource_type)].amount();
+}
+float m2::FullCharacter::get_max_resource(m2g::pb::ResourceType resource_type) const {
+	return _resources[resource_type_index(resource_type)].max_amount();
+}
+void m2::FullCharacter::set_max_resource(m2g::pb::ResourceType resource_type, float max) {
+	_resources[resource_type_index(resource_type)].set_max_amount(max);
 }
 float m2::FullCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
-	auto new_amount = get_resource(resource_type) + amount;
-	new_amount = (new_amount < 0.0f) ? 0.0f : new_amount;
-	_resources[resource_type_index(resource_type)] = new_amount;
-	return new_amount;
+	return _resources[resource_type_index(resource_type)].add_amount(amount);
 }
 float m2::FullCharacter::remove_resource(m2g::pb::ResourceType resource_type, float amount) {
-	return add_resource(resource_type, -amount);
+	return _resources[resource_type_index(resource_type)].remove_amount(amount);
 }
 void m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
-	_resources[resource_type_index(resource_type)] = 0.0f;
+	_resources[resource_type_index(resource_type)].clear_amount();
 }
 
 const google::protobuf::EnumDescriptor* const m2::FullCharacter::resource_type_desc = m2g::pb::ResourceType_descriptor();
