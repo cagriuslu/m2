@@ -4,4 +4,6 @@ package m2g.pb;
 enum ResourceType {
   NO_RESOURCE = 0;
   RESOURCE_HP = 1;
+
+  RESOURCE_JUMP_ENERGY = 1001;
 }

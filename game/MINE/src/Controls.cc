@@ -13,6 +13,8 @@ m2::Key m2g::scancode_to_key(SDL_Scancode scancode) {
 			return Key::LEFT;
 		case SDL_SCANCODE_D:
 			return Key::RIGHT;
+		case SDL_SCANCODE_SPACE:
+			return Key::DASH;
 		case SDL_SCANCODE_GRAVE:
 			return Key::CONSOLE;
 		case SDL_SCANCODE_RETURN:
@@ -31,6 +33,7 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 	SDL_SCANCODE_S,
 	SDL_SCANCODE_A,
 	SDL_SCANCODE_D,
+	SDL_SCANCODE_SPACE,
 	SDL_SCANCODE_GRAVE,
 	SDL_SCANCODE_RETURN,
 	SDL_SCANCODE_BACKSPACE
