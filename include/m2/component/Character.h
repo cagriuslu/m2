@@ -71,14 +71,36 @@ namespace m2 {
 
 		[[nodiscard]] virtual bool has_resource(m2g::pb::ResourceType resource_type) const = 0;
 		[[nodiscard]] virtual float get_resource(m2g::pb::ResourceType resource_type) const = 0;
+		[[nodiscard]] virtual float get_max_resource(m2g::pb::ResourceType resource_type) const = 0;
+		virtual void set_max_resource(m2g::pb::ResourceType resource_type, float max) = 0;
 		virtual float add_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float remove_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
 	};
 
+	namespace internal {
+		class ResourceAmount {
+			float _amount{};
+			float _max_amount{INFINITY};
+		public:
+			explicit ResourceAmount(float amount = 0.0f, float max_amount = INFINITY);
+
+			[[nodiscard]] float amount() const;
+			[[nodiscard]] bool has_amount() const;
+
+			float set_amount(float amount);
+			float add_amount(float amount);
+			float remove_amount(float amount);
+			float clear_amount();
+
+			[[nodiscard]] float max_amount() const;
+			float set_max_amount(float max_amount);
+		};
+	}
+
 	class TinyCharacter : public Character {
 		std::optional<Item> _item;
-		std::optional<std::pair<m2g::pb::ResourceType,float>> _resource;
+		std::optional<std::pair<m2g::pb::ResourceType, internal::ResourceAmount>> _resource;
 
 	public:
 		template <typename T> class TinyCharacterIteratorImpl : public IteratorImpl<T> {
@@ -102,6 +124,8 @@ namespace m2 {
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
+		float get_max_resource(m2g::pb::ResourceType resource_type) const override;
+		void set_max_resource(m2g::pb::ResourceType resource_type, float max) override;
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
@@ -109,7 +133,7 @@ namespace m2 {
 
 	class FullCharacter : public Character {
 		std::vector<Item> _items;
-		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> _resources{};
+		std::array<internal::ResourceAmount, m2g::pb::ResourceType_ARRAYSIZE> _resources;
 
 	public:
 		template <typename T, typename CharacterType> class FullCharacterIteratorImpl : public IteratorImpl<T> {
@@ -165,6 +189,8 @@ namespace m2 {
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
+		[[nodiscard]] float get_max_resource(m2g::pb::ResourceType resource_type) const override;
+		void set_max_resource(m2g::pb::ResourceType resource_type, float max) override;
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
