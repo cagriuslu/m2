@@ -98,13 +98,30 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	auto lb = proto::json_file_to_message<pb::Level>(level_resource_path);
 	m2_reflect_failure(lb);
 
-	if (level) {
-		unload_level();
-	}
 	auto level_value = Level::create_single_player_level(level_resource_path);
 	m2_reflect_failure(level_value);
+
+	if (level) {
+		unload_level(); // TODO make destructor
+	}
 	level = *level_value;
 
+	return internal_load_level(*lb);
+}
+
+m2::VoidValue m2::Game::load_level(const pb::Level& lb) {
+	auto level_value = Level::create_single_player_level();
+	m2_reflect_failure(level_value);
+
+	if (level) {
+		unload_level(); // TODO make destructor
+	}
+	level = *level_value;
+
+	return internal_load_level(lb);
+}
+
+m2::VoidValue m2::Game::internal_load_level(const pb::Level& lb) {
 	// Reset state
 	events.clear();
 	GAME.world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{});
@@ -112,9 +129,9 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 	GAME.world->SetContactListener(GAME.contactListener);
 
 	// Create background tiles
-	for (int y = 0; y < lb->background_rows_size(); ++y) {
-		for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
-			auto sprite_type = lb->background_rows(y).items(x);
+	for (int y = 0; y < lb.background_rows_size(); ++y) {
+		for (int x = 0; x < lb.background_rows(y).items_size(); ++x) {
+			auto sprite_type = lb.background_rows(y).items(x);
 			if (sprite_type) {
                 auto [tile_obj, tile_id] = obj::create_tile(Vec2f{x, y} + Vec2f{0.5f, 0.5f}, sprites[sprite_type]);
                 m2g::post_tile_create(tile_obj, sprite_type);
@@ -122,7 +139,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 		}
 	}
 	// Create foreground objects
-	for (const auto& fg_object : lb->objects()) {
+	for (const auto& fg_object : lb.objects()) {
 		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()} + Vec2f{0.5f, 0.5f});
 
 		// Assign to group
@@ -144,7 +161,7 @@ m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
 		m2_reflect_failure(load_result);
 	}
 	// Init pathfinder map
-	pathfinder = Pathfinder{*lb};
+	pathfinder = Pathfinder{lb};
 
 	// Create default objects
 	m2::obj::create_camera();

@@ -132,6 +132,7 @@ namespace m2 {
 
 		// Level management
 		VoidValue load_level(const std::string& level_resource_path);
+		VoidValue load_level(const pb::Level& lb);
 		VoidValue load_editor(const std::string& level_resource_path);
 		void unload_level();
 
@@ -147,6 +148,9 @@ namespace m2 {
 
 		// Helpers
 		std::pair<int, int> pixel_scale_mul_div(int sprite_ppm) const;
+
+	private:
+		VoidValue internal_load_level(const pb::Level& level_blueprint);
 	};
 }
 
