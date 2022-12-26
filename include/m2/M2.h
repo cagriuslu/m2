@@ -42,13 +42,14 @@ namespace m2 {
 	///////////////////////////////// MATH /////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
 	constexpr float PI = 3.141592653589793f;
+	constexpr float PI_MUL2 = 6.283185307179586f;
+	constexpr float PI_DIV2 = 1.570796326794897f;
 	constexpr float SQROOT_2 = 1.414213562373095f;
 
 	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max)
 	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max)
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
 	float apply_accuracy(float value, float accuracy); /// Returns value ± value * accuracy%
-	float lerp(float min, float max, float ratio);
 	bool is_near(float a, float b, float tolerance);
 }
 
