@@ -1,5 +1,4 @@
 #include "m2/Game.hh"
-#include <m2/Log.h>
 #include <m2/Glyph.h>
 #include <m2/Exception.h>
 #include <m2/Object.h>
@@ -276,7 +275,7 @@ void m2::Game::update_mouse_position() {
 
 	m2::Vec2i pointerPosition = events.mouse_position();
 	m2::Vec2i pointerPositionWRTScreenCenter_px = m2::Vec2i{pointerPosition.x - (windowRect.w / 2), pointerPosition.y - (windowRect.h / 2) };
-	mousePositionWRTScreenCenter_m = m2::Vec2f{(float) pointerPositionWRTScreenCenter_px.x / game_ppm, (float) pointerPositionWRTScreenCenter_px.y / game_ppm };
+	mousePositionWRTScreenCenter_m = m2::Vec2f{(float) pointerPositionWRTScreenCenter_px.x / (float) game_ppm, (float) pointerPositionWRTScreenCenter_px.y / (float) game_ppm };
 	mousePositionWRTGameWorld_m = mousePositionWRTScreenCenter_m + cameraPosition;
 }
 
