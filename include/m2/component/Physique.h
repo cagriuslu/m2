@@ -36,8 +36,7 @@ namespace m2 {
 	// Utilities
 
 	/// Returns a force multiplier that can be applied to a physics object with a speed limit
-	/// speed_limit doesn't have a known unit
-	float calculate_limited_force(float curr_velocity, float speed_limit);
+	float calculate_limited_force(float curr_speed, float speed_limit);
 }
 
 #endif //M2_PHYSIQUE_H

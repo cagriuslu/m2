@@ -95,6 +95,13 @@ b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f positio
 		body->SetFixedRotation(blueprint.fixed_rotation());
 		b2MassData massData = {blueprint.mass(), b2Vec2{0.0f, 0.0f}, 0.0f};
 		body->SetMassData(&massData);
+
+		auto gravity_scale = blueprint.gravity_scale();
+		if (gravity_scale < 0.0f) {
+			body->SetGravityScale(0.0f);
+		} else {
+			body->SetGravityScale(gravity_scale == 0.0f ? 1.0f : gravity_scale);
+		}
 	}
 
 	return body;

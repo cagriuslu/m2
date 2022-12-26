@@ -113,6 +113,6 @@ void m2::Physique::default_end_contact_cb(b2Contact& b2_contact) {
 	}
 }
 
-float m2::calculate_limited_force(float curr_velocity, float speed_limit) {
-	return logf(fabs(speed_limit) - fabs(curr_velocity));
+float m2::calculate_limited_force(float curr_speed, float speed_limit) {
+	return logf(abs(speed_limit) - abs(curr_speed) + 1.0f); // ln(1) = 0
 }
