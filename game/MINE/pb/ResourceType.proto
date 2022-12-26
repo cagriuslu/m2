@@ -6,4 +6,5 @@ enum ResourceType {
   RESOURCE_HP = 1;
 
   RESOURCE_JUMP_ENERGY = 1001;
+  RESOURCE_IS_GROUNDED = 1002;
 }

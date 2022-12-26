@@ -13,7 +13,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.sprites[m2g::pb::DWARF_FULL].background_collider_circ_radius_m());
-	bp.mutable_background_fixture()->set_friction(20.0f);
+	bp.mutable_background_fixture()->set_friction(2.0f);
 	bp.mutable_background_fixture()->set_category(m2::pb::FRIEND_ON_BACKGROUND);
 	bp.set_mass(100);
 	bp.set_linear_damping(1.0f);
@@ -29,8 +29,17 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	phy.pre_step = [&obj, &chr](m2::Physique& phy) {
 		// Character movement
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UNKNOWN, m2::Key::UNKNOWN);
-		auto force_multiplier = m2::calculate_limited_force(phy.body->GetLinearVelocity().x, 5.0f);
-		phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 2500.0f}, true);
+		if (direction_enum == m2::CHARMOVEMENT_NONE) {
+			// Slow down character
+			auto horizontal_velocity = phy.body->GetLinearVelocity().x;
+			if (0.001f < abs(horizontal_velocity)) {
+				// TODO
+			}
+		} else {
+			// Accelerate character
+			auto force_multiplier = m2::calculate_limited_force(phy.body->GetLinearVelocity().x, 5.0f);
+			phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 2500.0f}, true);
+		}
 		// Jump
 		if (GAME.events.is_key_down(m2::Key::DASH) && chr.use_item(chr.find_items(ITEM_REUSABLE_JUMP))) {
 			phy.body->ApplyForceToCenter(b2Vec2{0.0f, -50000}, true);
@@ -64,6 +73,8 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 				return true;
 			});
 		}
+	};
+	phy.on_collision = [](m2::Physique& phy, m2::Physique& other) {
 	};
 
 	GAME.playerId = obj.id();

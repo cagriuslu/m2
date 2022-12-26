@@ -13,6 +13,7 @@ namespace m2 {
 
 		b2Body* body{};
 		std::function<void(Physique&, Physique&)> on_collision;
+		std::function<void(Physique&, Physique&)> off_collision;
 
 		Physique() = default;
 		explicit Physique(Id object_id);
@@ -27,7 +28,8 @@ namespace m2 {
 
 		void draw_debug_shapes() const;
 
-		static void contact_cb(b2Contact& contact);
+		static void default_begin_contact_cb(b2Contact& contact);
+		static void default_end_contact_cb(b2Contact& contact);
 	};
 
 	// Utilities
