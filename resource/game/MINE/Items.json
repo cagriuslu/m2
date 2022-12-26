@@ -9,7 +9,7 @@
       "costs": [
         {
           "type": "RESOURCE_JUMP_ENERGY",
-          "amount": 1.0
+          "amount": 0.2
         }
       ],
       "benefits": [
