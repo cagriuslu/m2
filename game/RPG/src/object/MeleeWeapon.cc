@@ -52,7 +52,7 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &directi
 			GAME.add_deferred_action(m2::create_object_deleter(chr.object_id));
 		}
 	};
-	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other) {
+	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		auto& other_obj = other.parent();
 		if (other_obj.character_id()) {
 			m2::Character::execute_interaction(chr, InteractionType::COLLIDE_TO, other_obj.character(), InteractionType::GET_COLLIDED_BY);

@@ -81,7 +81,7 @@ m2::VoidValue rpg::create_explosive_object(m2::Object& obj, const m2::Vec2f& int
 			impl.explosive_state = ExplosiveState::EXPLODING;
 		}
 	};
-	phy.on_collision = [=,&chr,&impl](MAYBE m2::Physique& phy, m2::Physique& other) {
+	phy.on_collision = [=,&chr,&impl](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (impl.explosive_state == ExplosiveState::IN_FLIGHT) {
 			// May collide with multiple objects during flight, not a problem since only state is set
 			LOG_DEBUG("Will explode next step");

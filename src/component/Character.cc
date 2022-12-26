@@ -161,6 +161,14 @@ void m2::TinyCharacter::set_max_resource(m2g::pb::ResourceType resource_type, fl
 		_resource->second.set_max_amount(max);
 	}
 }
+float m2::TinyCharacter::set_resource(m2g::pb::ResourceType resource_type, float amount) {
+	if (_resource && _resource->first == resource_type) {
+		return _resource->second.set_amount(amount);
+	} else {
+		_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
+		return _resource->second.amount();
+	}
+}
 float m2::TinyCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
 	if (_resource && _resource->first == resource_type) {
 		return _resource->second.add_amount(amount);
@@ -234,6 +242,9 @@ float m2::FullCharacter::get_max_resource(m2g::pb::ResourceType resource_type) c
 }
 void m2::FullCharacter::set_max_resource(m2g::pb::ResourceType resource_type, float max) {
 	_resources[resource_type_index(resource_type)].set_max_amount(max);
+}
+float m2::FullCharacter::set_resource(m2g::pb::ResourceType resource_type, float amount) {
+	return _resources[resource_type_index(resource_type)].set_amount(amount);
 }
 float m2::FullCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
 	return _resources[resource_type_index(resource_type)].add_amount(amount);

@@ -20,7 +20,7 @@ m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_t
 
 	obj.add_graphic(sprite);
 
-	phy.on_collision = [=](m2::Physique& phy, m2::Physique& other) {
+	phy.on_collision = [=](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		other.parent().character().add_item(GAME.get_item(item_type));
 		GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
 	};

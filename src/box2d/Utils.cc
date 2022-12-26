@@ -108,16 +108,20 @@ void m2::box2d::destroy_body(b2Body* body) {
 	}
 }
 
+bool m2::box2d::has_obstacle(const b2Body* body) {
+	bool is_obstacle = false;
+	for (const auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+		auto category_bits = fixture->GetFilterData().categoryBits;
+		is_obstacle |= category_bits & FIXTURE_CATEGORY_OBSTACLE;
+	}
+	return is_obstacle;
+}
+
 b2AABB m2::box2d::expand_aabb(const b2AABB& in, float amount) {
     return b2AABB{
 		.lowerBound = b2Vec2{in.lowerBound.x - amount, in.lowerBound.y - amount},
 		.upperBound = b2Vec2{in.upperBound.x + amount, in.upperBound.y + amount}
     };
-}
-
-bool m2::box2d::is_obstacle(const b2Fixture* fixture) {
-	auto category_bits = fixture->GetFilterData().categoryBits;
-	return category_bits & FIXTURE_CATEGORY_OBSTACLE;
 }
 
 m2::pb::BodyBlueprint m2::box2d::example_bullet_body_blueprint() {

@@ -73,6 +73,7 @@ namespace m2 {
 		[[nodiscard]] virtual float get_resource(m2g::pb::ResourceType resource_type) const = 0;
 		[[nodiscard]] virtual float get_max_resource(m2g::pb::ResourceType resource_type) const = 0;
 		virtual void set_max_resource(m2g::pb::ResourceType resource_type, float max) = 0;
+		virtual float set_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float add_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float remove_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
@@ -126,6 +127,7 @@ namespace m2 {
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
 		float get_max_resource(m2g::pb::ResourceType resource_type) const override;
 		void set_max_resource(m2g::pb::ResourceType resource_type, float max) override;
+		float set_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
@@ -191,6 +193,7 @@ namespace m2 {
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_max_resource(m2g::pb::ResourceType resource_type) const override;
 		void set_max_resource(m2g::pb::ResourceType resource_type, float max) override;
+		float set_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;

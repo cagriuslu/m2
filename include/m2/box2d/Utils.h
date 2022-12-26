@@ -40,8 +40,10 @@ namespace m2::box2d {
 	b2Body* create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint);
 	void destroy_body(b2Body* body);
 
+	bool has_obstacle(const b2Body* body);
+
     b2AABB expand_aabb(const b2AABB& in, float amount);
-	bool is_obstacle(const b2Fixture* fixture);
+
 	pb::BodyBlueprint example_bullet_body_blueprint();
 }
 

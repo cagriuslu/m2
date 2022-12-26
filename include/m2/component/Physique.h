@@ -2,6 +2,7 @@
 #define M2_PHYSIQUE_H
 
 #include "../Component.h"
+#include "../box2d/ContactListener.h"
 #include <box2d/b2_body.h>
 #include <functional>
 
@@ -12,7 +13,7 @@ namespace m2 {
 		Callback post_step{};
 
 		b2Body* body{};
-		std::function<void(Physique&, Physique&)> on_collision;
+		std::function<void(Physique&, Physique&, const box2d::Contact&)> on_collision;
 		std::function<void(Physique&, Physique&)> off_collision;
 
 		Physique() = default;
@@ -28,8 +29,8 @@ namespace m2 {
 
 		void draw_debug_shapes() const;
 
-		static void default_begin_contact_cb(b2Contact& contact);
-		static void default_end_contact_cb(b2Contact& contact);
+		static void default_begin_contact_cb(b2Contact& b2_contact);
+		static void default_end_contact_cb(b2Contact& b2_contact);
 	};
 
 	// Utilities

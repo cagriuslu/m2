@@ -41,7 +41,8 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 			phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 2500.0f}, true);
 		}
 		// Jump
-		if (GAME.events.is_key_down(m2::Key::DASH) && chr.use_item(chr.find_items(ITEM_REUSABLE_JUMP))) {
+		auto is_grounded = chr.get_resource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.get_resource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
+		if (is_grounded && GAME.events.is_key_down(m2::Key::DASH) && chr.use_item(chr.find_items(ITEM_REUSABLE_JUMP))) {
 			phy.body->ApplyForceToCenter(b2Vec2{0.0f, -50000}, true);
 		}
 
@@ -74,7 +75,25 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 			});
 		}
 	};
-	phy.on_collision = [](m2::Physique& phy, m2::Physique& other) {
+	phy.on_collision = [&chr](m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
+		// Check if in contact with obstacle
+		if (other.body && m2::box2d::has_obstacle(other.body)) {
+			// Check is contact normal points upwards
+			if (abs(contact.normal.x) <= -contact.normal.y) {
+				chr.set_resource(RESOURCE_IS_GROUNDED_X, other.parent().position.x);
+				chr.set_resource(RESOURCE_IS_GROUNDED_Y, other.parent().position.y);
+			}
+		}
+	};
+	phy.off_collision = [&chr](m2::Physique& phy, m2::Physique& other) {
+		// Check if in contact with obstacle
+		if (other.body && m2::box2d::has_obstacle(other.body)) {
+			// Check if the other object is the grounding object
+			if (chr.get_resource(RESOURCE_IS_GROUNDED_X) == other.parent().position.x && chr.get_resource(RESOURCE_IS_GROUNDED_Y) == other.parent().position.y) {
+				chr.set_resource(RESOURCE_IS_GROUNDED_X, 0.0f);
+				chr.set_resource(RESOURCE_IS_GROUNDED_Y, 0.0f);
+			}
+		}
 	};
 
 	GAME.playerId = obj.id();
