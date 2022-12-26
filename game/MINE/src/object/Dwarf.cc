@@ -13,10 +13,11 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.sprites[m2g::pb::DWARF_FULL].background_collider_circ_radius_m());
-	bp.mutable_background_fixture()->set_friction(2.0f);
+	bp.mutable_background_fixture()->set_friction(0.0f);
 	bp.mutable_background_fixture()->set_category(m2::pb::FRIEND_ON_BACKGROUND);
 	bp.set_mass(100);
-	bp.set_linear_damping(1.0f);
+	bp.set_gravity_scale(2.0f);
+	bp.set_linear_damping(0.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
 
@@ -31,19 +32,22 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UNKNOWN, m2::Key::UNKNOWN);
 		if (direction_enum == m2::CHARMOVEMENT_NONE) {
 			// Slow down character
-			auto horizontal_velocity = phy.body->GetLinearVelocity().x;
-			if (0.001f < abs(horizontal_velocity)) {
-				// TODO
+			auto linear_velocity = phy.body->GetLinearVelocity();
+			if (0.0f < abs(linear_velocity.x)) {
+				linear_velocity.x /= 1.25f;
+				phy.body->SetLinearVelocity(linear_velocity);
 			}
 		} else {
 			// Accelerate character
 			auto force_multiplier = m2::calculate_limited_force(phy.body->GetLinearVelocity().x, 5.0f);
-			phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 2500.0f}, true);
+			phy.body->ApplyForceToCenter(b2Vec2{direction_vector * force_multiplier * 4000.0f}, true);
 		}
 		// Jump
 		auto is_grounded = chr.get_resource(RESOURCE_IS_GROUNDED_X) != 0.0f && chr.get_resource(RESOURCE_IS_GROUNDED_Y) != 0.0f;
 		if (is_grounded && GAME.events.is_key_down(m2::Key::DASH) && chr.use_item(chr.find_items(ITEM_REUSABLE_JUMP))) {
-			phy.body->ApplyForceToCenter(b2Vec2{0.0f, -50000}, true);
+			auto linear_velocity = phy.body->GetLinearVelocity();
+			linear_velocity.y -= 7.0f;
+			phy.body->SetLinearVelocity(linear_velocity);
 		}
 
 		// Mouse button
@@ -75,7 +79,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 			});
 		}
 	};
-	phy.on_collision = [&chr](m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
+	phy.on_collision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle
 		if (other.body && m2::box2d::has_obstacle(other.body)) {
 			// Check is contact normal points upwards
@@ -85,7 +89,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 			}
 		}
 	};
-	phy.off_collision = [&chr](m2::Physique& phy, m2::Physique& other) {
+	phy.off_collision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other) {
 		// Check if in contact with obstacle
 		if (other.body && m2::box2d::has_obstacle(other.body)) {
 			// Check if the other object is the grounding object
