@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <iterator>
 
+m2::Level::Level(Type type) : _type(type) {}
 m2::Level::Level(Type type, std::string lb_path) : _type(type), _lb_path(std::move(lb_path)) {}
 m2::Level::Type m2::Level::type() const {
 	return _type;
@@ -122,9 +123,11 @@ void m2::Level::editor_remove_mode_remove_object(const Vec2i &position) {
 void m2::Level::editor_save() {
 	*proto::message_to_json_file(_lb, _lb_path);
 }
+m2::Value<m2::Level> m2::Level::create_single_player_level() {
+	return Level{Type::SINGLE_PLAYER};
+}
 m2::Value<m2::Level> m2::Level::create_single_player_level(const std::string& lb_path) {
-	Level level{Type::SINGLE_PLAYER, lb_path};
-	return level;
+	return Level{Type::SINGLE_PLAYER, lb_path};
 }
 m2::Value<m2::Level> m2::Level::create_editor_level(const std::string& lb_path) {
 	Level editor_level{Type::EDITOR, lb_path};

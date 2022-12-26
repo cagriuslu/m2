@@ -22,6 +22,7 @@ namespace m2 {
 		std::string _lb_path;
 		pb::Level _lb;
 
+		Level(Type type);
 		Level(Type type, std::string lb_path);
 
 	public:
@@ -61,6 +62,7 @@ namespace m2 {
 		// Save
 		void editor_save();
 
+		static Value<Level> create_single_player_level();
 		static Value<Level> create_single_player_level(const std::string& lb_path);
 		static Value<Level> create_editor_level(const std::string& lb_path);
 	};
