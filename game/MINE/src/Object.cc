@@ -7,11 +7,20 @@ using namespace m2g::pb;
 
 void m2g::post_tile_create(m2::Object& obj, pb::SpriteType sprite_type) {
     switch (sprite_type) {
+		case pb::SpriteType::DUNGEON_COAL_1:
+		case pb::SpriteType::DUNGEON_COAL_2: {
+			// Add HP to destroyable tiles
+			auto& chr = obj.add_tiny_character();
+			chr.add_resource(RESOURCE_HP, 2.0f);
+			chr.set_max_resource(RESOURCE_HP, 2.0f);
+			break;
+		}
         case pb::SpriteType::GRASSLAND_DIRT_1:
         case pb::SpriteType::GRASSLAND_DIRT_2: {
 			// Add HP to destroyable tiles
 			auto& chr = obj.add_tiny_character();
 			chr.add_resource(RESOURCE_HP, 1.0f);
+			chr.set_max_resource(RESOURCE_HP, 1.0f);
             break;
         }
         default:

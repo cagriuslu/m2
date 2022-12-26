@@ -33,6 +33,31 @@ namespace m2::proto {
 
 	Value<std::string> message_to_json_string(const google::protobuf::Message& message);
 	VoidValue message_to_json_file(const google::protobuf::Message& message, const std::string& path);
+
+	template <typename T>
+	T* mutable_get_or_create(::google::protobuf::RepeatedPtrField<T>* mutable_repeated_field, int index) {
+		T* t = nullptr;
+		while (mutable_repeated_field->size() <= index) {
+			t = mutable_repeated_field->Add();
+		}
+		if (!t) {
+			t = &mutable_repeated_field->at(index);
+		}
+		return t;
+	}
+
+	template <typename T>
+	T* mutable_get_or_create(::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index, const T& fill_value = {}) {
+		T* t = nullptr;
+		while (mutable_repeated_field->size() <= index) {
+			t = mutable_repeated_field->Add();
+			*t = fill_value;
+		}
+		if (!t) {
+			t = &mutable_repeated_field->at(index);
+		}
+		return t;
+	}
 }
 
 #endif //M2_UTILS_H
