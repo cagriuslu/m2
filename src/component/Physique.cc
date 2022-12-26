@@ -86,21 +86,23 @@ void m2::Physique::draw_debug_shapes() const {
 	}
 }
 
-void m2::Physique::default_begin_contact_cb(b2Contact& contact) {
-	Id physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
-	Id physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
+void m2::Physique::default_begin_contact_cb(b2Contact& b2_contact) {
+	box2d::Contact contact{b2_contact};
+
+	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
+	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = GAME.physics[physique_id_a];
 	auto& phy_b = GAME.physics[physique_id_b];
 	if (phy_a.on_collision) {
-		phy_a.on_collision(phy_a, phy_b);
+		phy_a.on_collision(phy_a, phy_b, contact);
 	}
 	if (phy_b.on_collision) {
-		phy_b.on_collision(phy_b, phy_a);
+		phy_b.on_collision(phy_b, phy_a, contact);
 	}
 }
-void m2::Physique::default_end_contact_cb(b2Contact& contact) {
-	Id physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
-	Id physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
+void m2::Physique::default_end_contact_cb(b2Contact& b2_contact) {
+	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
+	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = GAME.physics[physique_id_a];
 	auto& phy_b = GAME.physics[physique_id_b];
 	if (phy_a.off_collision) {

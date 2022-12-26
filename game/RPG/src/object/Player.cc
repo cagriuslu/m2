@@ -102,7 +102,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 			rpg::create_explosive_object(explosive, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
 		}
 	};
-	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other) {
+	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		auto* enemy_impl = dynamic_cast<obj::Enemy*>(other.parent().impl.get());
 		if (enemy_impl && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {
 			enemy_impl->stun();
