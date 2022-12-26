@@ -6,11 +6,13 @@
 
 namespace m2::box2d {
     class ContactListener : public b2ContactListener {
-        std::function<void(b2Contact&)> m_cb;
+        std::function<void(b2Contact&)> _begin_contact_cb;
+        std::function<void(b2Contact&)> _end_contact_cb;
     public:
-        explicit ContactListener(std::function<void(b2Contact&)>&& cb);
+        explicit ContactListener(std::function<void(b2Contact&)>&& begin_contact_cb, std::function<void(b2Contact&)>&& end_contact_cb = {});
 
         void BeginContact(b2Contact* contact) override;
+        void EndContact(b2Contact* contact) override;
     };
 }
 

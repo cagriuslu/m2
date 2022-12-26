@@ -10,7 +10,7 @@
 
 m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
 
-m2::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), on_collision(std::move(other.on_collision)) {
+m2::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
     other.body = nullptr;
 }
 
@@ -18,6 +18,7 @@ m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     std::swap(object_id, other.object_id);
     std::swap(body, other.body);
 	std::swap(on_collision, other.on_collision);
+	std::swap(off_collision, other.off_collision);
     return *this;
 }
 
@@ -85,7 +86,7 @@ void m2::Physique::draw_debug_shapes() const {
 	}
 }
 
-void m2::Physique::contact_cb(b2Contact& contact) {
+void m2::Physique::default_begin_contact_cb(b2Contact& contact) {
 	Id physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
 	auto& phy_a = GAME.physics[physique_id_a];
@@ -95,6 +96,18 @@ void m2::Physique::contact_cb(b2Contact& contact) {
 	}
 	if (phy_b.on_collision) {
 		phy_b.on_collision(phy_b, phy_a);
+	}
+}
+void m2::Physique::default_end_contact_cb(b2Contact& contact) {
+	Id physique_id_a = contact.GetFixtureA()->GetBody()->GetUserData().pointer;
+	Id physique_id_b = contact.GetFixtureB()->GetBody()->GetUserData().pointer;
+	auto& phy_a = GAME.physics[physique_id_a];
+	auto& phy_b = GAME.physics[physique_id_b];
+	if (phy_a.off_collision) {
+		phy_a.off_collision(phy_a, phy_b);
+	}
+	if (phy_b.off_collision) {
+		phy_b.off_collision(phy_b, phy_a);
 	}
 }
 
