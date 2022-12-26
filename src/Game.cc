@@ -75,6 +75,7 @@ m2::Game::Game() {
 	editor_object_sprites = list_editor_object_sprites(std::string{m2g::objects});
 	glyphs_sheet = GlyphsSheet{sdlRenderer};
 	shapes_sheet = ShapesSheet{sdlRenderer};
+	dynamic_sheet = DynamicSheet{sdlRenderer};
 	_items = load_items(std::string{m2g::items});
 	animations = load_animations(std::string{m2g::animations});
 }

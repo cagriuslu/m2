@@ -67,6 +67,9 @@ uint32_t m2::sdl::get_ticks(uint32_t last_ticks, uint32_t pause_ticks, uint32_t 
 	return ticks;
 }
 
+void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+	set_pixel(surface, x, y, SDL_MapRGBA(surface->format, r, g, b, a));
+}
 void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel) {
 	auto* target_pixel = (uint32_t*)((uint8_t*)surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel);
 	*target_pixel = pixel;

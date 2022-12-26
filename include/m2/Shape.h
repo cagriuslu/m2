@@ -28,7 +28,7 @@ namespace m2 {
 	public:
 		explicit ShapesSheet(SDL_Renderer* renderer);
 		std::pair<SDL_Texture*, SDL_Rect> get_line(SDL_Color color, int x1, int y1);
-		std::pair<SDL_Texture*, SDL_Rect> get_rectangle_aa(SDL_Color color, int w, int h);
+		std::pair<SDL_Texture*, SDL_Rect> get_rectangle_aa(SDL_Color color, int w, int h); // Axis-aligned
 		std::pair<SDL_Texture*, SDL_Rect> get_circle(SDL_Color color, int radius);
 	};
 }

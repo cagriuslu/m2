@@ -73,10 +73,6 @@ float m2::apply_accuracy(float value, float accuracy) {
 	return value + (1.0f - accuracy) * value * (randf() - 0.5f);
 }
 
-float m2::lerp(float min, float max, float ratio) {
-	return min + (max - min) * ratio;
-}
-
 bool m2::is_near(float a, float b, float tolerance) {
 	return fabsf(a - b) < tolerance;
 }
