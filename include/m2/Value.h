@@ -18,8 +18,8 @@ namespace m2 {
 	Failure<E> failure(E&& e) {
 		return Failure<E>(std::forward<E>(e));
 	}
-	Failure<std::string> failure(const char* e);
-	Failure<std::string> failure(const std::string& e);
+	inline Failure<std::string> failure(const char* e) { return Failure<std::string>(std::string{e}); }
+	inline Failure<std::string> failure(const std::string& e) { return Failure<std::string>(e); }
 
 	template <typename T, typename E = std::string>
 	class Value : public std::variant<T,Failure<E>> {
