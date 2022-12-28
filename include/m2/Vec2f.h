@@ -61,8 +61,6 @@ namespace m2 {
 		// Vec2i
 		explicit Vec2f(const Vec2i& v);
 		[[nodiscard]] Vec2i iround() const;
-		[[nodiscard]] Vec2i ifloor() const;
-		[[nodiscard]] Vec2i iceil() const;
 
 		inline static Vec2f nan() { return {NAN, NAN}; }
 		inline static Vec2f from_angle(float rads) { return {cosf(rads), sinf(rads)}; }
