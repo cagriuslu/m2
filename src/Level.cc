@@ -41,7 +41,7 @@ void m2::Level::editor_paint_mode_select_sprite_type(m2g::pb::SpriteType sprite_
 	}
 }
 void m2::Level::editor_paint_mode_paint_sprite(const Vec2i& position) {
-	if (position.in_nonnegative()) {
+	if (!position.is_negative()) {
 		auto sprite_type = GAME.level->editor_paint_mode_selected_sprite_type;
 		// Allocate item if necessary
 		while (_lb.background_rows_size() < position.y + 1) {
@@ -81,7 +81,7 @@ void m2::Level::editor_place_mode_select_object_type(m2g::pb::ObjectType object_
 void m2::Level::editor_place_mode_select_group_type(m2g::pb::GroupType group_type) { editor_place_mode_selected_group_type = group_type; }
 void m2::Level::editor_place_mode_select_group_instance(unsigned group_instance) { editor_place_mode_selected_group_instance = group_instance; }
 void m2::Level::editor_place_mode_place_object(const Vec2i& position) {
-	if (position.in_nonnegative()) {
+	if (!position.is_negative()) {
 		// Check if object is in fg objects, remove if found
 		for (int i = 0; i < _lb.objects_size(); ++i) {
 			if (position == Vec2i{_lb.objects(i).position()}) {

@@ -21,7 +21,8 @@ m2::Id m2::obj::create_god() {
 		obj.position += move_direction.normalize() * ((float)GAME.deltaTicks_ms * .01f);
 
 		Vec2i mouse_coordinates;
-		if (GAME.level->editor_mode != Level::EditorMode::NONE && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) && (mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround()).in_nonnegative()) {
+		if (GAME.level->editor_mode != Level::EditorMode::NONE && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) &&
+				!(mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround()).is_negative()) {
 			switch (GAME.level->editor_mode) {
 				case Level::EditorMode::PAINT:
 					GAME.level->editor_paint_mode_paint_sprite(mouse_coordinates);
