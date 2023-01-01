@@ -67,12 +67,12 @@ m2::sdl::ticks_t m2::sdl::get_ticks(ticks_t pause_ticks) {
 	return static_cast<int64_t>(SDL_GetTicks64()) - pause_ticks;
 }
 
-uint32_t m2::sdl::get_ticks(uint32_t last_ticks, uint32_t pause_ticks, uint32_t min) {
-	auto ticks = SDL_GetTicks() - pause_ticks;
+m2::sdl::ticks_t m2::sdl::get_ticks(ticks_t last_ticks, ticks_t pause_ticks, ticks_t min) {
+	auto ticks = get_ticks(pause_ticks);
 	if (min) {
 		while (ticks <= last_ticks + min) {
-			SDL_Delay(min);
-			ticks = SDL_GetTicks() - pause_ticks;
+			delay(min);
+			ticks += min;
 		}
 	}
 	return ticks;

@@ -89,7 +89,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	phy.post_step = [&obj](m2::Physique& phy) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		// We must call time before other signals
-		data->animation_fsm.time(GAME.deltaTicks_ms / 1000.0f);
+		data->animation_fsm.time(GAME.deltaTime_s);
 		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 		if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 			data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_IDLE);
@@ -112,7 +112,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		if (0.0f < data->on_hit_effect_ttl) {
-			data->on_hit_effect_ttl -= GAME.deltaTicks_ms / 1000.0f;
+			data->on_hit_effect_ttl -= GAME.deltaTime_s;
 			if (data->on_hit_effect_ttl < 0.0f) {
 				gfx.draw_sprite_effect = m2::pb::NO_SPRITE_EFFECT;
 			}
