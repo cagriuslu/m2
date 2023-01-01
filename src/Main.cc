@@ -177,12 +177,12 @@ int main(int argc, char **argv) {
 
 			// Advance time by GAME.phy_period
 			GAME.deltaTime_s = GAME.phy_period;
-			// Pre-physics
+			/////////////////////////////// PRE-PHY ////////////////////////////////
 			for (auto physique_it: GAME.physics) {
 				IF(physique_it.first->pre_step)(*physique_it.first);
 			}
 			GAME.execute_deferred_actions();
-			// Character
+			////////////////////////////// CHARACTER ///////////////////////////////
 			for (auto character_it: GAME.characters) {
 				auto &chr = get_character_base(*character_it.first);
 				chr.automatic_update();
@@ -192,7 +192,7 @@ int main(int argc, char **argv) {
 				IF(chr.update)(chr);
 			}
 			GAME.execute_deferred_actions();
-			// Physics
+			/////////////////////////////// PHYSICS ////////////////////////////////
 			if (GAME.world) {
 				GAME.world->Step(GAME.phy_period, GAME.velocityIterations, GAME.positionIterations);
 				// Update positions
@@ -209,54 +209,51 @@ int main(int argc, char **argv) {
 				}
 			}
 			GAME.draw_list.update();
-			// Post-physics
+			/////////////////////////////// POST-PHY ///////////////////////////////
 			for (auto physique_it: GAME.physics) {
 				IF(physique_it.first->post_step)(*physique_it.first);
 			}
 			GAME.execute_deferred_actions();
 			++phy_step_count;
+			//////////////////////////// END OF PHYSICS ////////////////////////////
+			////////////////////////////////////////////////////////////////////////
 
 			time_since_last_phy -= GAME.phy_period;
 		}
 		if (prev_phy_step_count == 4) {
 			time_since_last_phy = 0.0f;
 		}
-		//////////////////////////// END OF PHYSICS ////////////////////////////
-		////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		// Pre-graphic
+		//////////////////////////////// PRE-GFX ///////////////////////////////
 		GAME.deltaTicks_ms = sdl::get_ticks(prev_gfx_ticks, pause_ticks, 1) - prev_gfx_ticks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prev_gfx_ticks += GAME.deltaTicks_ms;
 		for (auto graphic_if : GAME.graphics) {
 			IF(graphic_if.first->pre_draw)(*graphic_if.first);
 		}
-
-		// HUD
+		////////////////////////////////// HUD /////////////////////////////////
 		IF(GAME.leftHudUIState)->update_contents();
 		IF(GAME.rightHudUIState)->update_contents();
-
-		// Clear screen
+		///////////////////////////////// CLEAR ////////////////////////////////
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(GAME.sdlRenderer);
-
-		// Draw terrain
+		//////////////////////////////// TERRAIN ///////////////////////////////
         for (auto graphic_it : GAME.terrainGraphics) {
 			IF(graphic_it.first->on_draw)(*graphic_it.first);
         }
-		// Draw objects
+		//////////////////////////////// OBJECTS ///////////////////////////////
 		for (const auto& gfx_id : GAME.draw_list) {
 			auto& gfx = GAME.graphics[gfx_id];
 			IF(gfx.on_draw)(gfx);
 		}
-		// Draw lights
+		//////////////////////////////// LIGHTS ////////////////////////////////
         for (auto light_it : GAME.lights) {
 			IF(light_it.first->on_draw)(*light_it.first);
         }
-		// Draw effects
+		//////////////////////////////// EFFECTS ///////////////////////////////
 		for (auto gfx_it : GAME.terrainGraphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
@@ -269,22 +266,18 @@ int main(int argc, char **argv) {
 			physique_it.first->draw_debug_shapes();
 		}
 #endif
-
-		// HUD
+		////////////////////////////////// HUD /////////////////////////////////
 		IF(GAME.leftHudUIState)->draw();
 		IF(GAME.rightHudUIState)->draw();
-
-		// Draw envelope
+		/////////////////////////////// ENVELOPER //////////////////////////////
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.topEnvelopeRect);
 		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.bottomEnvelopeRect);
 		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.leftEnvelopeRect);
 		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.rightEnvelopeRect);
-
-		// Present
+		//////////////////////////////// PRESENT ///////////////////////////////
 		SDL_RenderPresent(GAME.sdlRenderer);
-
-		// Post-graphic
+		/////////////////////////////// POST-GFX ///////////////////////////////
 		for (auto graphic_if : GAME.graphics) {
 			IF(graphic_if.first->post_draw)(*graphic_if.first);
 		}
