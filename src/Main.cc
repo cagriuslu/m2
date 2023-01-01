@@ -107,21 +107,20 @@ int main(int argc, char **argv) {
 		return 0;
 	}
 
-	float timeSinceLastWorldStep = 0.0f;
-	auto pause_ticks = SDL_GetTicks();
-	unsigned prevPrePhysicsTicks = 0, prevWorldStepTicks = 0, prevPostPhysicsTicks = 0, prevTerrainDrawGraphicsTicks = 0,
-		prevPreGraphicsTicks = 0, prevDrawTicks = 0, prevDrawLightsTicks = 0, prevDrawEffectsTicks = 0, prevPostGraphicsTicks = 0;
+	auto pause_ticks = sdl::get_ticks();
+	float time_since_last_phy = 0.0f;
+	unsigned prev_phy_ticks = 0, prev_gfx_ticks = 0;
+	unsigned prev_phy_step_count = UINT_MAX;
 
-	unsigned frameTimeAccumulator = 0;
-	unsigned frameCount = 0;
-	unsigned phy_step_count = UINT_MAX;
+	unsigned frame_count_time = 0;
+	unsigned phy_step_count = 0;
+	unsigned gfx_draw_count = 0;
+	auto frame_start_ticks = pause_ticks;
 	while (true) {
-		unsigned start_ticks = SDL_GetTicks();
-
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		if (phy_step_count) {
+		if (prev_phy_step_count) {
 			// Clear the events only if the physics step has executed
 			// Otherwise some keys/buttons may not have been handled
 			GAME.events.clear();
@@ -144,20 +143,18 @@ int main(int argc, char **argv) {
 			}
             // Handle key events
             if (GAME.events.pop_key_press(Key::MENU)) {
-                uint32_t pause_start_ticks = SDL_GetTicks();
+				auto pause_start = sdl::get_ticks();
                 if (m2::ui::execute_blocking(&m2g::ui::pause) == m2::ui::Action::QUIT) {
                     return 0;
                 }
-                uint32_t pause_end_ticks = SDL_GetTicks();
-				pause_ticks += pause_end_ticks - pause_start_ticks;
+				pause_ticks += sdl::get_ticks() - pause_start;
             }
             if (GAME.events.pop_key_press(Key::CONSOLE)) {
-                uint32_t pause_start_ticks = SDL_GetTicks();
+				auto pause_start = sdl::get_ticks();
                 if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
                     return 0;
                 }
-                uint32_t pause_end_ticks = SDL_GetTicks();
-				pause_ticks += pause_end_ticks - pause_start_ticks;
+				pause_ticks += sdl::get_ticks() - pause_start;
             }
             // Handle HUD events (mouse and key)
 			IF(GAME.leftHudUIState)->handle_events(GAME.events);
@@ -170,66 +167,59 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		for (phy_step_count = 0; phy_step_count < 4; phy_step_count++) {
-			uint32_t ticksSinceLastWorldStep = sdl::get_ticks(prevWorldStepTicks, pause_ticks, 1) - prevWorldStepTicks;
-			prevWorldStepTicks += ticksSinceLastWorldStep;
-			timeSinceLastWorldStep += (float)ticksSinceLastWorldStep / 1000.0f;
-			if (GAME.physicsStep_s < timeSinceLastWorldStep) {
-				// Pre-physics
-				GAME.deltaTicks_ms = sdl::get_ticks(prevPrePhysicsTicks, pause_ticks, 1) - prevPrePhysicsTicks;
-				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
-				prevPrePhysicsTicks += GAME.deltaTicks_ms;
-				for (auto physique_it : GAME.physics) {
-					IF(physique_it.first->pre_step)(*physique_it.first);
-				}
-				GAME.execute_deferred_actions();
+		for (prev_phy_step_count = 0; prev_phy_step_count < 4; prev_phy_step_count++) {
+			auto ticks_since_prev_phy = sdl::get_ticks(prev_phy_ticks, pause_ticks, 1) - prev_phy_ticks;
+			prev_phy_ticks += ticks_since_prev_phy;
+			time_since_last_phy += (float)ticks_since_prev_phy / 1000.0f;
+			if (time_since_last_phy <= GAME.phy_period) {
+				break;
+			}
 
-				// Character update
-				for (auto character_it : GAME.characters) {
-					auto& chr = get_character_base(*character_it.first);
-					chr.automatic_update();
-				}
-				for (auto character_it : GAME.characters) {
-					auto& chr = get_character_base(*character_it.first);
-					IF(chr.update)(chr);
-				}
-				GAME.execute_deferred_actions();
-
-				// Physics
-				if (GAME.world) {
-					GAME.world->Step(GAME.physicsStep_s, GAME.velocityIterations, GAME.positionIterations);
-					// Update positions
-					for (auto physique_it : GAME.physics) {
-						auto& phy = *physique_it.first;
-						if (phy.body) {
-							auto& object = phy.parent();
-							auto old_pos = object.position;
-							object.position = m2::Vec2f{phy.body->GetPosition()};
-							if (old_pos != object.position) {
-								GAME.draw_list.queue_update(phy.object_id, object.position);
-							}
+			// Advance time by GAME.phy_period
+			GAME.deltaTime_s = GAME.phy_period;
+			// Pre-physics
+			for (auto physique_it: GAME.physics) {
+				IF(physique_it.first->pre_step)(*physique_it.first);
+			}
+			GAME.execute_deferred_actions();
+			// Character
+			for (auto character_it: GAME.characters) {
+				auto &chr = get_character_base(*character_it.first);
+				chr.automatic_update();
+			}
+			for (auto character_it: GAME.characters) {
+				auto &chr = get_character_base(*character_it.first);
+				IF(chr.update)(chr);
+			}
+			GAME.execute_deferred_actions();
+			// Physics
+			if (GAME.world) {
+				GAME.world->Step(GAME.phy_period, GAME.velocityIterations, GAME.positionIterations);
+				// Update positions
+				for (auto physique_it: GAME.physics) {
+					auto &phy = *physique_it.first;
+					if (phy.body) {
+						auto &object = phy.parent();
+						auto old_pos = object.position;
+						object.position = m2::Vec2f{phy.body->GetPosition()};
+						if (old_pos != object.position) {
+							GAME.draw_list.queue_update(phy.object_id, object.position);
 						}
 					}
 				}
-				GAME.draw_list.update();
-
-				// Post-physics
-				GAME.deltaTicks_ms = sdl::get_ticks(prevPostPhysicsTicks, pause_ticks, 1) - prevPostPhysicsTicks;
-				GAME.deltaTime_s = (float) GAME.deltaTicks_ms / 1000.0f;
-				prevPostPhysicsTicks += GAME.deltaTicks_ms;
-				for (auto physique_it : GAME.physics) {
-					IF(physique_it.first->post_step)(*physique_it.first);
-				}
-				GAME.execute_deferred_actions();
-
-				// Update loop condition
-				timeSinceLastWorldStep -= GAME.physicsStep_s;
-			} else {
-				break;
 			}
+			GAME.draw_list.update();
+			// Post-physics
+			for (auto physique_it: GAME.physics) {
+				IF(physique_it.first->post_step)(*physique_it.first);
+			}
+			GAME.execute_deferred_actions();
+			++phy_step_count;
+
+			time_since_last_phy -= GAME.phy_period;
 		}
-		if (phy_step_count == 4) {
-			timeSinceLastWorldStep = 0.0f;
+		if (prev_phy_step_count == 4) {
+			time_since_last_phy = 0.0f;
 		}
 		//////////////////////////// END OF PHYSICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -238,9 +228,9 @@ int main(int argc, char **argv) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Pre-graphic
-		GAME.deltaTicks_ms = sdl::get_ticks(prevPreGraphicsTicks, pause_ticks, 1) - prevPreGraphicsTicks;
+		GAME.deltaTicks_ms = sdl::get_ticks(prev_gfx_ticks, pause_ticks, 1) - prev_gfx_ticks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevPreGraphicsTicks += GAME.deltaTicks_ms;
+		prev_gfx_ticks += GAME.deltaTicks_ms;
 		for (auto graphic_if : GAME.graphics) {
 			IF(graphic_if.first->pre_draw)(*graphic_if.first);
 		}
@@ -254,41 +244,25 @@ int main(int argc, char **argv) {
 		SDL_RenderClear(GAME.sdlRenderer);
 
 		// Draw terrain
-		GAME.deltaTicks_ms = sdl::get_ticks(prevTerrainDrawGraphicsTicks, pause_ticks, 1) - prevTerrainDrawGraphicsTicks;
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevTerrainDrawGraphicsTicks += GAME.deltaTicks_ms;
         for (auto graphic_it : GAME.terrainGraphics) {
 			IF(graphic_it.first->on_draw)(*graphic_it.first);
         }
-
-		// Draw
-		GAME.deltaTicks_ms = sdl::get_ticks(prevDrawTicks, pause_ticks, 1) - prevDrawTicks;
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevDrawTicks += GAME.deltaTicks_ms;
+		// Draw objects
 		for (const auto& gfx_id : GAME.draw_list) {
 			auto& gfx = GAME.graphics[gfx_id];
 			IF(gfx.on_draw)(gfx);
 		}
-
 		// Draw lights
-		GAME.deltaTicks_ms = sdl::get_ticks(prevDrawLightsTicks, pause_ticks, 1) - prevDrawLightsTicks;
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevDrawLightsTicks += GAME.deltaTicks_ms;
         for (auto light_it : GAME.lights) {
 			IF(light_it.first->on_draw)(*light_it.first);
         }
-
 		// Draw effects
-		GAME.deltaTicks_ms = sdl::get_ticks(prevDrawEffectsTicks, pause_ticks, 1) - prevDrawEffectsTicks;
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevDrawEffectsTicks += GAME.deltaTicks_ms;
 		for (auto gfx_it : GAME.terrainGraphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
 		for (auto gfx_it : GAME.graphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
-
 #ifdef DEBUG
 		// Draw debug shapes
 		for (auto physique_it : GAME.physics) {
@@ -311,22 +285,21 @@ int main(int argc, char **argv) {
 		SDL_RenderPresent(GAME.sdlRenderer);
 
 		// Post-graphic
-		GAME.deltaTicks_ms = sdl::get_ticks(prevPostGraphicsTicks, pause_ticks, 1) - prevPostGraphicsTicks;
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prevPostGraphicsTicks += GAME.deltaTicks_ms;
 		for (auto graphic_if : GAME.graphics) {
 			IF(graphic_if.first->post_draw)(*graphic_if.first);
 		}
+		++gfx_draw_count;
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 
-		unsigned end_ticks = SDL_GetTicks();
-		frameTimeAccumulator += end_ticks - start_ticks;
-		frameCount++;
-		if (1000 < frameTimeAccumulator) {
-			frameTimeAccumulator -= 1000;
-			LOGF_TRACE("FPS %d", frameCount);
-			frameCount = 0;
+		auto frame_end_ticks = sdl::get_ticks();
+		frame_count_time += frame_end_ticks - frame_start_ticks;
+		frame_start_ticks = frame_end_ticks;
+		if (1000 < frame_count_time) {
+			frame_count_time -= 1000;
+			LOGF_TRACE("PHY count %d, GFX count %d", phy_step_count, gfx_draw_count);
+			phy_step_count = 0;
+			gfx_draw_count = 0;
 		}
 	}
 

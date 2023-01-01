@@ -82,7 +82,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		} else {
 			force = 2800.0f;
 		}
-		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTicks_ms * force)), true);
+		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTime_s * force * 1000)), true);
 
 		impl->char_state.process_time(GAME.deltaTime_s);
 

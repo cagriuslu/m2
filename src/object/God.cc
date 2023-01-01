@@ -18,7 +18,7 @@ m2::Id m2::obj::create_god() {
 		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		obj.position += move_direction.normalize() * ((float)GAME.deltaTicks_ms * .01f);
+		obj.position += move_direction.normalize() * ((float)GAME.deltaTime_s * 10.0f);
 
 		Vec2i mouse_coordinates;
 		if (GAME.level->editor_mode != Level::EditorMode::NONE && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) &&
