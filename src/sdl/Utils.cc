@@ -1,4 +1,5 @@
 #include <m2/sdl/Utils.hh>
+#include <m2/Game.hh>
 
 SDL_Cursor* SdlUtils_CreateCursor() {
     const char* str =
@@ -56,6 +57,16 @@ SDL_Cursor* SdlUtils_CreateCursor() {
 	return SDL_CreateCursor(data, mask, side_size, side_size, side_size / 2 - 1, side_size / 2 - 1);
 }
 
+void m2::sdl::delay(ticks_t duration) {
+	if (0 < duration) {
+		SDL_Delay(duration);
+	}
+}
+
+m2::sdl::ticks_t m2::sdl::get_ticks(ticks_t pause_ticks) {
+	return static_cast<int64_t>(SDL_GetTicks64()) - pause_ticks;
+}
+
 uint32_t m2::sdl::get_ticks(uint32_t last_ticks, uint32_t pause_ticks, uint32_t min) {
 	auto ticks = SDL_GetTicks() - pause_ticks;
 	if (min) {
@@ -65,6 +76,12 @@ uint32_t m2::sdl::get_ticks(uint32_t last_ticks, uint32_t pause_ticks, uint32_t 
 		}
 	}
 	return ticks;
+}
+
+int m2::sdl::get_refresh_rate() {
+	SDL_DisplayMode dm{};
+	SDL_GetWindowDisplayMode(GAME.sdlWindow, &dm);
+	return dm.refresh_rate;
 }
 
 void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {

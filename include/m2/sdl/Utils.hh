@@ -15,7 +15,12 @@ namespace m2::sdl {
 		void operator()(SDL_Surface* s);
 	};
 
+	using ticks_t = int64_t;
+	void delay(ticks_t duration);
+	ticks_t get_ticks(ticks_t pause_ticks = 0);
 	uint32_t get_ticks(uint32_t last_ticks, uint32_t pause_ticks, uint32_t min = 0);
+
+	int get_refresh_rate();
 
 	/// Assumes surface is already locked
 	void set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
