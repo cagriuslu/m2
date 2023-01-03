@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "Group.h"
 #include "Shape.h"
+#include "AudioManager.h"
 #include "Sprite.h"
 #include "m2/Events.h"
 #include "DrawList.h"
@@ -58,8 +59,7 @@ namespace m2 {
 		SDL_Cursor *sdlCursor{};
 		SDL_Renderer *sdlRenderer{};
 		SDL_Texture *sdlLightTexture{};
-		SDL_AudioDeviceID sdl_audio_device_id{};
-		SDL_AudioSpec sdl_audio_spec{};
+		std::optional<AudioManager> audio_manager;
 		uint32_t pixelFormat{};
 		SDL_Rect windowRect{};
 		SDL_Rect gameRect{};
@@ -143,7 +143,6 @@ namespace m2 {
 		const Item& get_item(m2g::pb::ItemType item_type);
 
 		// Modifiers
-		void set_audio_status(bool play);
 		void update_window_dims(int window_width, int window_height);
 		void update_mouse_position();
 		void add_deferred_action(const std::function<void(void)>& action);
@@ -153,7 +152,6 @@ namespace m2 {
 		std::pair<int, int> pixel_scale_mul_div(int sprite_ppm) const;
 
 	private:
-		static void audio_callback(void* user_data, uint8_t* stream, int length);
 		VoidValue internal_load_level(const pb::Level& level_blueprint);
 	};
 }

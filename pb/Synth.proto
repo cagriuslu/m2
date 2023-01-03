@@ -1,0 +1,16 @@
+syntax = "proto3";
+package m2.pb;
+
+enum SoundWaveShape {
+    SINE = 0;
+    SQUARE = 1;
+    TRIANGLE = 2;
+    SAWTOOTH = 3;
+}
+
+message SyntheticSound {
+    SoundWaveShape shape = 1;
+    float frequency = 2; // [0, 24000]
+    float phase = 3; // [0, 2PI), wraps around
+    float amplitude = 4; // [-1, 1], saturates
+}
