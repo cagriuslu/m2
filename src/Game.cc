@@ -67,17 +67,7 @@ m2::Game::Game() {
 		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
 	}
 
-	SDL_AudioSpec want{};
-	want.freq = 48000;
-	want.format = AUDIO_S8;
-	want.channels = 1;
-	want.samples = 4096;
-	want.callback = audio_callback;
-	want.userdata = this;
-	sdl_audio_device_id = SDL_OpenAudioDevice(nullptr, 0, &want, &sdl_audio_spec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE);
-	if (!sdl_audio_device_id) {
-		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
-	}
+	audio_manager = AudioManager{};
 
 	sprite_sheets = load_sprite_sheets(std::string{m2g::sprite_sheets}, sdlRenderer);
 	sprite_effects_sheet = SpriteEffectsSheet{sdlRenderer};
@@ -245,12 +235,6 @@ const m2::Item& m2::Game::get_item(m2g::pb::ItemType item_type) {
 	return _items[item_type_desc->FindValueByNumber(item_type)->index()];
 }
 
-void m2::Game::set_audio_status(bool play) {
-	if (sdl_audio_device_id) {
-		SDL_PauseAudioDevice(sdl_audio_device_id, play ? 0 : 1);
-	}
-}
-
 void m2::Game::update_window_dims(int window_width, int window_height) {
 	windowRect = SDL_Rect{0, 0, window_width, window_height};
 
@@ -306,12 +290,6 @@ void m2::Game::execute_deferred_actions() {
 		action();
 	}
 	level->deferred_actions.clear();
-}
-
-void m2::Game::audio_callback(void* user_data, uint8_t* stream, int length) {
-	for (int i = 0; i < length; i++) {
-		stream[i] = (i % 384) < 192 ? 127 : -128;
-	}
 }
 
 std::pair<int, int> m2::Game::pixel_scale_mul_div(int sprite_ppm) const {
