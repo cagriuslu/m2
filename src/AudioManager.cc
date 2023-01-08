@@ -5,7 +5,7 @@
 m2::AudioManager::AudioManager() {
 	SDL_AudioSpec want{};
 	want.freq = 48000;
-	want.format = AUDIO_S16;
+	want.format = AUDIO_F32;
 	want.channels = 2;
 	want.samples = 48000;
 	want.callback = audio_callback;
@@ -13,6 +13,9 @@ m2::AudioManager::AudioManager() {
 	sdl_audio_device_id = SDL_OpenAudioDevice(nullptr, 0, &want, &sdl_audio_spec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE);
 	if (!sdl_audio_device_id) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+	}
+	if (want.format != sdl_audio_spec.format) {
+		throw M2FATAL("Undesired audio format");
 	}
 }
 
@@ -34,7 +37,7 @@ void m2::AudioManager::stop(PlaybackId id) {
 void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, int length) {
 	auto& am = *GAME.audio_manager;
 	auto* out_stream = reinterpret_cast<AudioSample*>(stream);
-	auto out_length = (size_t) length / 4; // 2 channels, 2 byte samples
+	auto out_length = (size_t) length / 8; // 2 channels, 4 byte samples
 
 	// TODO play multiple tracks
 	// TODO play mono tracks

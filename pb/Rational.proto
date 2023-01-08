@@ -1,0 +1,7 @@
+syntax = "proto3";
+package m2.pb;
+
+message Rational {
+    int32 n = 1; // Nominator
+    int32 d = 2; // Denominator
+}
