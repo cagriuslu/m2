@@ -5,7 +5,7 @@
 
 namespace m2 {
 	struct AudioSample {
-		int16_t l{}, r{};
+		float l{}, r{};
 	};
 }
 
