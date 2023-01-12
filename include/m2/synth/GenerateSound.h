@@ -13,6 +13,7 @@ namespace m2::synth {
 		static_assert(std::is_same<SynthSample, std::remove_cvref_t<decltype(*first)>>(), "ForwardIterator does not point to SynthesizerSample or derivative");
 		static_assert(std::is_same<SynthSample, std::remove_cvref_t<decltype(*last)>>(), "ForwardIterator does not point to SynthesizerSample or derivative");
 		internal::validate(sound, frequency);
+		// TODO floating point operations in this function accumulate and disturb the sound
 
 		auto fraction_of_cycle = [=](float t) -> float {
 			return fmodf(frequency * t, 1.0f);
