@@ -19,9 +19,9 @@ message SynthSound {
 
 message SynthNote {
     Rational start_beat = 1; // in beats
-    Rational duration = 2; // in beats
-    float frequency = 3; // [0, 24000]
-    float volume = 4;    // [0, 1]
+    Rational duration = 2;   // in beats
+    float frequency = 3;     // [0, 24000]
+    float volume = 4;        // [0, 1]
 }
 
 message SynthTrack {
