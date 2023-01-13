@@ -22,6 +22,7 @@ namespace m2 {
 		inline bool operator==(const Vec2i& other) const { return x == other.x && y == other.y; }
 		inline explicit operator bool() const { return (x || y); }
 
+		[[nodiscard]] inline bool is_near(const Vec2i& other, int tolerance) const { return abs(other.x - x) <= tolerance && abs(other.y - y) <= tolerance; }
 		[[nodiscard]] inline bool is_negative() const { return x < 0 || y < 0; }
 		[[nodiscard]] inline float length_sq() const { return (float)x * (float)x + (float)y * (float)y; }
 		[[nodiscard]] inline float length() const { return sqrt(length_sq()); }
