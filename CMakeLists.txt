@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
+# Options
 option(DEBUG "Enable debug mode" OFF)
 if(DEBUG)
     add_compile_definitions(DEBUG)
@@ -87,6 +88,17 @@ else()
 endif()
 set(SDL2_ttf_LIBRARIES "SDL2_ttf")
 
+if(DEBUG)
+    # GTest
+    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest")
+        message(WARNING "libgtest needs to be built first")
+        return()
+    endif()
+    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest")
+    find_package(GTest REQUIRED)
+endif()
+
+# Compiler flags
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_CXX_STANDARD 20)
@@ -99,6 +111,7 @@ endif()
 
 add_subdirectory(game)
 
+# Generate protobuf files
 file(GLOB PROTO_FILES "pb/*.proto")
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
@@ -129,25 +142,26 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     target_link_libraries(m2 m)
 endif()
 
-# Tests (Build with Debug)
-file(GLOB TEST_SOURCES "test/*.cc")
-list(APPEND TEST_SOURCES "src/Exception.cc" "src/Log.cc" "src/M2.cc" "src/Pool.cc" "src/Vec2f.cc" "src/Vec2i.cc")
-add_executable(test ${TEST_SOURCES})
-target_include_directories(test PUBLIC include)
-if(WIN32)
-    target_link_libraries(test box2d-debug)
-    target_link_libraries(test googletest_main)
-    #target_compile_options(test PRIVATE /analyze) # Code inspections
-    # Copy DLLs
-    add_custom_command(
-            TARGET test POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:test> $<TARGET_FILE_DIR:test>
-            COMMAND_EXPAND_LISTS
-    )
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_include_directories(test PUBLIC /usr/local/include/SDL2)
-    target_include_directories(test PUBLIC /usr/local/include)
-    target_link_directories(test PUBLIC /usr/local/lib)
-    target_link_libraries(test box2d SDL2_image SDL2_ttf SDL2 m)
-    target_link_libraries(test gtest_main gtest gmock_main gmock)
+if(GTest_FOUND)
+    # Tests (Build with Debug)
+    file(GLOB TEST_SOURCES "test/*.cc")
+    list(APPEND TEST_SOURCES "src/Exception.cc" "src/Log.cc" "src/M2.cc" "src/Pool.cc" "src/Vec2f.cc" "src/Vec2i.cc")
+    add_executable(test ${TEST_SOURCES})
+    target_include_directories(test PUBLIC include)
+    if(WIN32)
+        target_link_libraries(test box2d-debug)
+        target_link_libraries(test googletest_main)
+        #target_compile_options(test PRIVATE /analyze) # Code inspections
+        # Copy DLLs
+        add_custom_command(
+                TARGET test POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:test> $<TARGET_FILE_DIR:test>
+                COMMAND_EXPAND_LISTS
+        )
+    elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
+        target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
+        target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES} m)
+        target_link_libraries(test GTest::gtest GTest::gtest_main)
+    endif()
 endif()

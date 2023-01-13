@@ -25,5 +25,12 @@ if (WIN32)
             )
     target_link_libraries(googletest_main INTERFACE "googletest;googlemock_main;googlemock")
 else()
-
+    include(ExternalProject)
+    ExternalProject_Add(
+        libgtest
+        URL ${CMAKE_CURRENT_LIST_DIR}/googletest-release-1.12.1.zip
+        URL_HASH SHA256=24564e3b712d3eb30ac9a85d92f7d720f60cc0173730ac166f27dda7fed76cb2
+        CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+        BUILD_COMMAND make -j${PROCESSOR_COUNT}
+    )
 endif()
