@@ -90,7 +90,7 @@ set(SDL2_ttf_LIBRARIES "SDL2_ttf")
 
 if(DEBUG)
     # GTest
-    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest")
+    if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest/lib")
         message(WARNING "libgtest needs to be built first")
         return()
     endif()
