@@ -11,6 +11,7 @@
 #include <deque>
 
 namespace m2 {
+	/// Stateful event manager
 	class Events {
 		static constexpr unsigned ui_key_press_count_limit = 16;
 

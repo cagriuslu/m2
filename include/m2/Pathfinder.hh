@@ -15,8 +15,8 @@ namespace m2 {
 	public:
 		explicit Pathfinder(const pb::Level& level_blueprint);
 
-		// Returns reverse path [to, to - 1, to - 2, ..., from + 1, from]
-		// Returns empty vector if path not found
+		/// Returns reverse path [to, to - 1, to - 2, ..., from + 1, from]
+		/// Returns empty vector if path not found
 		std::vector<Vec2i> find_smooth_path(const Vec2f& from, const Vec2f& to, float max_distance_m);
 
 	private:
