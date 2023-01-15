@@ -8,6 +8,7 @@
 #include "SpinLock.h"
 
 namespace m2 {
+	/// A list that orders the items with their Y-positions
 	class DrawList {
 	public:
 		struct DrawItem {

@@ -30,6 +30,7 @@ namespace m2 {
 		};
 	};
 
+	/// Group of objects
 	class Group {
 		Pool<Id, IndexInGroup_MAX + 1> _members;
 

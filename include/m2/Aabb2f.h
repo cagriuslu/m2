@@ -6,6 +6,7 @@
 #include <box2d/b2_collision.h>
 
 namespace m2 {
+	/// Axis-aligned bounding box
 	struct Aabb2f {
 		Vec2f top_left;
 		Vec2f bottom_right;

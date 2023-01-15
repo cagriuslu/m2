@@ -14,6 +14,7 @@ namespace m2 {
 		FSM_SIGNAL_CUSTOM = 0
     };
 
+	/// Provides a specialization for a given FSM base
     template <typename FsmBase>
     class Fsm : public FsmBase {
 	public:

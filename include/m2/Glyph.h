@@ -5,6 +5,7 @@
 #include <Glyph.pb.h>
 
 namespace m2 {
+	/// Sheet that generated and holds Glyphs on demand
 	class GlyphsSheet : private DynamicSheet {
 		struct GlyphKey {
 			pb::GlyphType type;

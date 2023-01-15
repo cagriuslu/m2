@@ -6,6 +6,7 @@
 #include <memory>
 
 namespace m2 {
+	/// Sprite sheet that dynamically increases in size on demand
 	class DynamicSheet {
 		SDL_Renderer* _renderer; // TODO Use weak-ptr instead
 		std::unique_ptr<SDL_Surface, sdl::SurfaceDeleter> _surface;

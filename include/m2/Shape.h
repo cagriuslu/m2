@@ -4,6 +4,7 @@
 #include "DynamicSheet.h"
 
 namespace m2 {
+	/// Sheet that generates and returns shapes on demand
 	class ShapesSheet : private DynamicSheet {
 		enum class ShapeType {
 			NONE = 0,
