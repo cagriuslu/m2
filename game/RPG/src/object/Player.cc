@@ -1,7 +1,7 @@
 #include <rpg/object/Player.h>
 #include <m2/Object.h>
 #include <rpg/object/Enemy.h>
-#include "m2/Game.hh"
+#include "m2/Game.h"
 #include "m2/Controls.h"
 #include <rpg/object/ExplosiveWeapon.h>
 #include <rpg/object/RangedWeapon.h>

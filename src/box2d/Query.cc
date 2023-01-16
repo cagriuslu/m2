@@ -1,5 +1,5 @@
 #include <m2/box2d/Query.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 
 class QueryCallbackType : public b2QueryCallback {
 

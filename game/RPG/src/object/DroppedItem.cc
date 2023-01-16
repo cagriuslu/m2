@@ -2,7 +2,7 @@
 #include <m2g/Object.h>
 #include <Item.pb.h>
 #include <m2/box2d/Utils.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 #include <rpg/object/Player.h>
 
 m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_type) {

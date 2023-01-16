@@ -3,7 +3,7 @@
 #include <m2/object/Ghost.h>
 #include <m2/object/Placeholder.h>
 #include <m2/protobuf/Utils.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 #include <string>
 #include <filesystem>
 #include <algorithm>

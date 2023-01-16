@@ -1,5 +1,5 @@
 #include <m2/game/CharacterMovement.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 
 std::pair<m2::CharacterMovementDirection, m2::Vec2f> m2::calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key) {
 	Vec2f direction_vector;

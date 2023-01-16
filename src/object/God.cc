@@ -1,5 +1,5 @@
 #include <m2/object/God.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 
 m2::Id m2::obj::create_god() {
 	auto [obj, id] = create_object(Vec2f{});

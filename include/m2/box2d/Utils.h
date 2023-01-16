@@ -3,7 +3,7 @@
 
 #include "../Vec2f.h"
 #include <BodyBlueprint.pb.h>
-#include "../Game.hh"
+#include "../Game.h"
 #include <box2d/b2_body.h>
 #include <box2d/b2_fixture.h>
 #include <box2d/b2_world.h>

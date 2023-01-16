@@ -1,5 +1,5 @@
 #include <mine/object/Dwarf.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 #include <SpriteType.pb.h>
 #include <m2/box2d/Utils.h>
 #include <m2/box2d/Query.h>

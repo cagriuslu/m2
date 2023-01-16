@@ -1,7 +1,7 @@
 #include "m2/Fsm.h"
 #include <m2/Object.h>
-#include "m2/Game.hh"
-#include "m2/Pathfinder.hh"
+#include "m2/Game.h"
+#include "m2/Pathfinder.h"
 #include <rpg/object/Enemy.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>

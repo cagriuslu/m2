@@ -1,5 +1,5 @@
 #include <m2g/Ui.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 #include <m2/Noise.h>
 #include <m2g/Object.h>
 #include <m2/protobuf/Utils.h>

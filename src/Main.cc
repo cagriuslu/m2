@@ -1,6 +1,6 @@
 #include <m2g/Proxy.h>
 #include "m2/Events.h"
-#include "m2/Game.hh"
+#include "m2/Game.h"
 #include "m2/sdl/Utils.hh"
 #include <m2g/Ui.h>
 #include <SDL.h>

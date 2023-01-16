@@ -1,5 +1,5 @@
 #include <m2/sdl/Utils.hh>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 
 SDL_Cursor* SdlUtils_CreateCursor() {
     const char* str =

@@ -1,4 +1,4 @@
-#include "m2/Game.hh"
+#include "m2/Game.h"
 #include <m2/Glyph.h>
 #include <m2/Exception.h>
 #include <m2/Object.h>

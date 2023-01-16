@@ -1,5 +1,5 @@
 #include <m2/Object.h>
-#include "m2/Game.hh"
+#include "m2/Game.h"
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include "m2/component/Light.h"

@@ -1,6 +1,6 @@
 #include "m2/component/Physique.h"
 #include <m2/box2d/Utils.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 #include <m2/Shape.h>
 #include <box2d/b2_contact.h>
 #include <box2d/b2_shape.h>

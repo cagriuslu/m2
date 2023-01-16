@@ -1,6 +1,6 @@
 #include <m2/component/Light.h>
 #include <m2/Component.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 #include <m2/Object.h>
 
 m2::Light::Light(Id object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}

@@ -1,6 +1,6 @@
 #include <m2/AudioManager.h>
 #include <m2/Exception.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 
 m2::AudioManager::AudioManager() {
 	SDL_AudioSpec want{};

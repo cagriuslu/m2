@@ -12,7 +12,7 @@
 #include "Animation.h"
 #include <m2/Object.h>
 #include <ObjectType.pb.h>
-#include "Pathfinder.hh"
+#include "Pathfinder.h"
 #include "m2/Ui.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"

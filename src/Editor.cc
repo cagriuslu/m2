@@ -1,5 +1,5 @@
 #include <m2/Editor.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 #include <m2/object/Ghost.h>
 #include <m2/object/Camera.h>
 #include <m2g/Object.h>

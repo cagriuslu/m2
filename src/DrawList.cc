@@ -1,5 +1,5 @@
 #include <m2/DrawList.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 
 bool m2::DrawList::Vec2fComparator::operator()(const Vec2f& lhs, const Vec2f& rhs) const {
 	return lhs.y < rhs.y;

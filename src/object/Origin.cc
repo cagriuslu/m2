@@ -1,5 +1,5 @@
 #include <m2/object/Origin.h>
-#include <m2/Game.hh>
+#include <m2/Game.h>
 
 std::pair<m2::Object&, m2::Id> m2::obj::create_origin() {
 	auto obj_pair = create_object(Vec2f{});

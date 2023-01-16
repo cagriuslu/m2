@@ -1,6 +1,6 @@
-#include "m2/Pathfinder.hh"
+#include "m2/Pathfinder.h"
 #include "m2/Component.h"
-#include "m2/Game.hh"
+#include "m2/Game.h"
 #include <m2/box2d/RayCast.h>
 #include <m2/Vec2i.h>
 #include <m2/box2d/Utils.h>
