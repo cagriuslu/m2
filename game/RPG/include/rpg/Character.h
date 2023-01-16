@@ -2,6 +2,7 @@
 #define IMPL_CHARACTER_H
 
 #include "rpg/ai/AiBlueprint.h"
+#include <SpriteType.pb.h>
 #include <AnimationType.pb.h>
 #include <optional>
 

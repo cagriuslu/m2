@@ -12,24 +12,36 @@ void m2::Character::execute_interaction(Character& first_char, m2g::InteractionT
 	}
 }
 bool m2::Character::has_item(m2g::pb::ItemType item_type) const {
-	return std::any_of(cbegin_items(), cend_items(), [=](const Item& item) {
-		return item->type() == item_type;
-	});
+    for (auto it = cbegin_items(); it != cend_items(); ++it) {
+        if (it->item().type() == item_type) {
+            return true;
+        }
+    }
 }
 bool m2::Character::has_item(m2g::pb::ItemCategory item_cat) const {
-	return std::any_of(cbegin_items(), cend_items(), [=](const Item& item) {
-		return item->category() == item_cat;
-	});
+    for (auto it = cbegin_items(); it != cend_items(); ++it) {
+        if (it->item().category() == item_cat) {
+            return true;
+        }
+    }
 }
 size_t m2::Character::count_item(m2g::pb::ItemType item_type) const {
-	return std::count_if(cbegin_items(), cend_items(), [=](const Item& item) {
-		return item->type() == item_type;
-	});
+    size_t count = 0;
+    for (auto it = cbegin_items(); it != cend_items(); ++it) {
+        if (it->item().type() == item_type) {
+            ++count;
+        }
+    }
+	return count;
 }
 size_t m2::Character::count_item(m2g::pb::ItemCategory item_cat) const {
-	return std::count_if(cbegin_items(), cend_items(), [=](const Item& item) {
-		return item->category() == item_cat;
-	});
+    size_t count = 0;
+    for (auto it = cbegin_items(); it != cend_items(); ++it) {
+        if (it->item().category() == item_cat) {
+            ++count;
+        }
+    }
+    return count;
 }
 bool m2::Character::use_item(const Iterator<Item>& item_it, float resource_multiplier) {
 	if (item_it == end_items()) {

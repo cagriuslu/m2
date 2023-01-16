@@ -9,7 +9,9 @@ endif()
 # Properties that needs to be set BEFORE project()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 12.6)
-cmake_policy(SET CMP0135 OLD)
+if(NOT WIN32)
+    cmake_policy(SET CMP0135 OLD)
+endif()
 
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
@@ -148,20 +150,19 @@ if(GTest_FOUND)
     list(APPEND TEST_SOURCES "src/Exception.cc" "src/Log.cc" "src/M2.cc" "src/Pool.cc" "src/Rational.cc" "src/Vec2f.cc" "src/Vec2i.cc")
     add_executable(test ${TEST_SOURCES})
     target_include_directories(test PUBLIC include)
+    target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
+    target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
+    target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES})
+    target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
-        target_link_libraries(test box2d-debug)
-        target_link_libraries(test googletest_main)
         #target_compile_options(test PRIVATE /analyze) # Code inspections
         # Copy DLLs
         add_custom_command(
                 TARGET test POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:test> $<TARGET_FILE_DIR:test>
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} ${SDL2_DLLS} ${SDL2_image_DLLS} ${SDL2_ttf_DLLS} $<TARGET_FILE_DIR:test>
                 COMMAND_EXPAND_LISTS
         )
     elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        target_include_directories(test PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
-        target_link_directories(test PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-        target_link_libraries(test box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES} m)
-        target_link_libraries(test GTest::gtest GTest::gtest_main)
+        target_link_libraries(test m)
     endif()
 endif()

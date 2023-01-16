@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <functional>
+#include <variant>
 
 namespace m2 {
 	class Character : public Component {
@@ -19,7 +20,7 @@ namespace m2 {
 		template <typename T> class Iterator {
 		protected:
 			friend IteratorImpl<T>;
-			std::unique_ptr<IteratorImpl<T>> _impl;
+			std::unique_ptr<IteratorImpl<T>> _impl; // PImpl
 			using Filter = std::variant<std::monostate,m2g::pb::ItemType,m2g::pb::ItemCategory>;
 			Filter _filter;
 			T* _item_ptr; // Item or const Item
