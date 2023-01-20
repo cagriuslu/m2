@@ -19,6 +19,9 @@ m2::Rational::Rational(float f) {
 	{
 		auto abs_f = fabsf(f);
 		// Decide on the precision
+		// It's wrong to calculate precision calculation based on decimal orders.
+		// But most float number is entered as a decimal number.
+		// Correct precision calculation is below.
 		if (1000000.0f < abs_f) {
 			precision = 1LL;
 		} else if (100000.0f < abs_f) {
@@ -36,6 +39,16 @@ m2::Rational::Rational(float f) {
 		} else {
 			precision = 10000000LL;
 		}
+		
+//		int exp;
+//		frexpf(f, &exp);
+//		if (exp < 0) {
+//			precision = (1LL << 23);
+//		} else if (23 < exp) {
+//			precision = 1LL;
+//		} else {
+//			precision = (1LL << (23 - exp));
+//		}
 	}
 
 	auto raised_f = roundf(f * (float) precision);
