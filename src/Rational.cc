@@ -15,10 +15,33 @@ m2::Rational simplify(int64_t n, int64_t d) {
 }
 
 m2::Rational::Rational(float f) {
-	float integral = std::floor(f);
-	float frac = f - integral;
-	int64_t precision = 1000000000ULL; // Accuracy
-	*this = internal::simplify(static_cast<int64_t>(roundf(frac * (float) precision)), precision);
+	int64_t precision;
+	{
+		auto abs_f = fabsf(f);
+		// Decide on the precision
+		if (1000000.0f < abs_f) {
+			precision = 1LL;
+		} else if (100000.0f < abs_f) {
+			precision = 10LL;
+		} else if (10000.0f < abs_f) {
+			precision = 100LL;
+		} else if (1000.0f < abs_f) {
+			precision = 1000LL;
+		} else if (100.0f < abs_f) {
+			precision = 10000LL;
+		} else if (10.0f < abs_f) {
+			precision = 100000LL;
+		} else if (1.0f < abs_f) {
+			precision = 1000000LL;
+		} else {
+			precision = 10000000LL;
+		}
+	}
+
+	auto raised_f = roundf(f * (float) precision);
+	auto raised = (int64_t) raised_f;
+
+	*this = internal::simplify(raised, precision);
 }
 
 m2::Rational m2::Rational::operator+(const Rational& rhs) const {
