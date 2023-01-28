@@ -172,6 +172,16 @@
       ]
     },
     {
+      "type": "ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL",
+      "usage": "AUTOMATIC",
+      "benefits": [
+        {
+          "type": "RESOURCE_DAMAGE_EFFECT_TTL",
+          "amount": -1.0
+        }
+      ]
+    },
+    {
       "type": "ITEM_AUTOMATIC_DASH_ENERGY",
       "usage": "AUTOMATIC",
       "benefits": [

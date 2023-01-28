@@ -10,7 +10,6 @@
 
 namespace obj {
 	struct Player : public m2::ObjectImpl {
-		chr::CharacterState char_state;
 		m2::Fsm<m2::AnimationFsmBase> animation_fsm;
 
 		Player(m2::Object&, const chr::CharacterBlueprint*);

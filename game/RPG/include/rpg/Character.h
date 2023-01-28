@@ -7,11 +7,6 @@
 #include <optional>
 
 namespace chr {
-	struct CharacterBlueprint;
-	struct CharacterState {
-		const CharacterBlueprint* blueprint;
-		explicit CharacterState(const CharacterBlueprint* blueprint);
-	};
 	struct CharacterBlueprint {
 		m2g::pb::SpriteType main_sprite;
 		m2g::pb::AnimationType animation_type;

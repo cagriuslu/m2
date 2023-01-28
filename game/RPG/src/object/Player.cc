@@ -11,7 +11,7 @@
 #include <Item.pb.h>
 
 obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) :
-	char_state(blueprint), animation_fsm(blueprint->animation_type, obj.graphic_id()) {}
+	animation_fsm(blueprint->animation_type, obj.graphic_id()) {}
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)

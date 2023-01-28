@@ -12,7 +12,6 @@
 
 namespace obj {
     struct Enemy : public m2::ObjectImpl {
-		chr::CharacterState character_state;
 		m2::Fsm<m2::AnimationFsmBase> animation_fsm;
 		using FSMVariant = std::variant<
 			m2::Fsm<rpg::ChaserFsmBase>,
@@ -21,7 +20,6 @@ namespace obj {
 			m2::Fsm<rpg::PatrollerFsmBase>
 		>;
 		FSMVariant fsm_variant; // TODO rename
-		float on_hit_effect_ttl;
 
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
 

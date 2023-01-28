@@ -1,9 +1,6 @@
 #include "rpg/Character.h"
 #include <m2g/Object.h>
 
-chr::CharacterState::CharacterState(const CharacterBlueprint* blueprint) :
-	blueprint(blueprint) {}
-
 const chr::CharacterBlueprint chr::character_player = {
 		.main_sprite = m2g::pb::SpriteType::PLAYER_LOOKDOWN_00,
 		.animation_type = m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT

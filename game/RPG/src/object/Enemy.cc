@@ -13,13 +13,13 @@ using namespace obj;
 using namespace m2g;
 using namespace m2g::pb;
 
-obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : character_state(blueprint), animation_fsm(blueprint->animation_type, obj.graphic_id()), fsm_variant(
+obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : animation_fsm(blueprint->animation_type, obj.graphic_id()), fsm_variant(
 		std::visit(m2::overloaded {
 			[&](MAYBE const ai::type::ChaseBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; },
 			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; }, // TODO implement other FSMs
 			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; },
 			[&](MAYBE const ai::type::PatrolBlueprint& v) -> FSMVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; }
-		}, blueprint->aiBlueprint->variant)), on_hit_effect_ttl(0) {}
+		}, blueprint->aiBlueprint->variant)) {}
 
 m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
 	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
@@ -56,11 +56,13 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		// Check if we got hit
 		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
 			// Apply mask effect
-			auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-			data->on_hit_effect_ttl = 0.15f;
+			self.set_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;
+			if (not self.has_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL)) {
+				self.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
+			}
 			// Check if we died
-			if (!self.has_resource(RESOURCE_HP)) {
+			if (not self.has_resource(RESOURCE_HP)) {
 				// Drop item
 				auto drop_position = obj.position;
 				m2::Group* group = obj.group();
@@ -110,12 +112,8 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		gfx.draw_effect_health_bar = chr.get_resource(RESOURCE_HP);
 
-		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		if (0.0f < data->on_hit_effect_ttl) {
-			data->on_hit_effect_ttl -= GAME.deltaTime_s;
-			if (data->on_hit_effect_ttl < 0.0f) {
-				gfx.draw_sprite_effect = m2::pb::NO_SPRITE_EFFECT;
-			}
+		if (not chr.has_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL)) {
+			gfx.draw_sprite_effect = m2::pb::NO_SPRITE_EFFECT;
 		}
 	};
 
