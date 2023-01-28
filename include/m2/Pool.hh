@@ -94,7 +94,7 @@ namespace m2 {
 	        if (Capacity <= _size) {
 		        throw M2ERROR("Max pool size exceeded");
 	        }
-	        // Find the itm that will be allocated
+	        // Find the item that will be allocated
 	        const uint64_t index_to_alloc = _next_free_index;
 	        Item &item = _array[index_to_alloc];
 			// Create object inplace
@@ -121,6 +121,11 @@ namespace m2 {
 	        Id id = _shifted_pool_id | item.id;
 	        return {item.data, id};
         }
+		template <typename... Args>
+		Id emplace(Args... args) {
+			auto item = alloc(args...);
+			return item.second;
+		}
 
 		void free(Id id) {
 			auto* item_ptr = get_array_item(id);

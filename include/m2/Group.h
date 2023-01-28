@@ -16,15 +16,17 @@ namespace m2 {
 		Type type{};
 		Instance instance{};
 
+		// Constructors
 		GroupId() = default;
-		GroupId(Type _type, Instance _instance);
-		explicit GroupId(const pb::Group& group);
-		bool operator==(const GroupId& other) const;
+		inline GroupId(Type _type, Instance _instance) : type(_type), instance(_instance) {}
+		inline explicit GroupId(const pb::Group& group) : GroupId(group.type(), group.instance()) {}
 
-		explicit operator bool() const;
+		// Operators
+		inline bool operator==(const GroupId& other) const { return (type == other.type) && (instance == other.instance); }
+		inline explicit operator bool() const { return type != m2g::pb::NO_GROUP; }
 
 		struct Hash {
-			std::size_t operator()(const GroupId& k) const {
+			inline std::size_t operator()(const GroupId& k) const {
 				return std::hash<Type>()(k.type) ^ std::hash<Instance>()(k.instance);
 			}
 		};
@@ -38,9 +40,9 @@ namespace m2 {
 		Group() = default;
 		virtual ~Group() = default;
 
-		decltype(_members)& members();
-		IndexInGroup add_member(Id object_id);
-		void remove_member(IndexInGroup index);
+		[[nodiscard]] inline uint64_t member_count() const { return _members.size(); }
+		inline IndexInGroup add_member(Id object_id) { return _members.emplace(object_id) & 0xFF; }
+		inline void remove_member(IndexInGroup index) { _members.free_index(index); }
 	};
 }
 
