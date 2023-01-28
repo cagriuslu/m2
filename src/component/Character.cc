@@ -17,6 +17,7 @@ bool m2::Character::has_item(m2g::pb::ItemType item_type) const {
             return true;
         }
     }
+	return false;
 }
 bool m2::Character::has_item(m2g::pb::ItemCategory item_cat) const {
     for (auto it = cbegin_items(); it != cend_items(); ++it) {
@@ -24,6 +25,7 @@ bool m2::Character::has_item(m2g::pb::ItemCategory item_cat) const {
             return true;
         }
     }
+	return false;
 }
 size_t m2::Character::count_item(m2g::pb::ItemType item_type) const {
     size_t count = 0;
@@ -91,31 +93,7 @@ bool m2::Character::use_item(const Iterator<Item>& item_it, float resource_multi
 	}
 	return true;
 }
-m2::internal::ResourceAmount::ResourceAmount(float amount, float max_amount) {
-	set_max_amount(max_amount);
-	set_amount(amount);
-}
-float m2::internal::ResourceAmount::amount() const {
-	return _amount;
-}
-bool m2::internal::ResourceAmount::has_amount() const {
-	return 0.0f < _amount;
-}
-float m2::internal::ResourceAmount::set_amount(float amount) {
-	return _amount = std::clamp(amount, 0.0f, _max_amount);
-}
-float m2::internal::ResourceAmount::add_amount(float amount) {
-	return set_amount(_amount + amount);
-}
-float m2::internal::ResourceAmount::remove_amount(float amount) {
-	return set_amount(_amount - amount);
-}
-float m2::internal::ResourceAmount::clear_amount() {
-	return _amount = 0.0f;
-}
-float m2::internal::ResourceAmount::max_amount() const {
-	return _max_amount;
-}
+
 float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
 	if (max_amount < 0.0f) {
 		throw M2ERROR("Negative max resource");

@@ -16,14 +16,15 @@ namespace m2 {
 		std::function<void(Character& self)> update;
 		std::function<void(Character& self, Character& other, m2g::InteractionType)> interact;
 
-		template <typename T> class IteratorImpl;
+		template <typename T> class IteratorImpl; // Forward declaration
 		template <typename T> class Iterator {
+			static_assert(std::is_same_v<T, Item> || std::is_same_v<T, const Item>);
 		protected:
 			friend IteratorImpl<T>;
 			std::unique_ptr<IteratorImpl<T>> _impl; // PImpl
 			using Filter = std::variant<std::monostate,m2g::pb::ItemType,m2g::pb::ItemCategory>;
 			Filter _filter;
-			T* _item_ptr; // Item or const Item
+			T* _item_ptr;
 		public:
 			using difference_type = std::ptrdiff_t;
 			using value_type = T;
@@ -40,6 +41,7 @@ namespace m2 {
 			const T* operator->() const { return _item_ptr; }
 		};
 		template <typename T> class IteratorImpl {
+			static_assert(std::is_same_v<T, Item> || std::is_same_v<T, const Item>);
 		public:
 			virtual ~IteratorImpl() = default;
 			virtual void increment(Iterator<T>& iter) = 0;
@@ -85,17 +87,17 @@ namespace m2 {
 			float _amount{};
 			float _max_amount{INFINITY};
 		public:
-			explicit ResourceAmount(float amount = 0.0f, float max_amount = INFINITY);
+			inline explicit ResourceAmount(float amount = 0.0f, float max_amount = INFINITY) { set_max_amount(max_amount); set_amount(amount); }
 
-			[[nodiscard]] float amount() const;
-			[[nodiscard]] bool has_amount() const;
+			[[nodiscard]] inline float amount() const { return _amount; }
+			[[nodiscard]] inline bool has_amount() const { return 0.0f < _amount; }
 
-			float set_amount(float amount);
-			float add_amount(float amount);
-			float remove_amount(float amount);
-			float clear_amount();
+			inline float set_amount(float amount) { return _amount = std::clamp(amount, 0.0f, _max_amount); }
+			inline float add_amount(float amount) { return set_amount(_amount + amount); }
+			inline float remove_amount(float amount) { return set_amount(_amount - amount); }
+			inline float clear_amount() { return _amount = 0.0f; }
 
-			[[nodiscard]] float max_amount() const;
+			[[nodiscard]] inline float max_amount() const { return _max_amount; }
 			float set_max_amount(float max_amount);
 		};
 	}
@@ -106,6 +108,7 @@ namespace m2 {
 
 	public:
 		template <typename T> class TinyCharacterIteratorImpl : public IteratorImpl<T> {
+			static_assert(std::is_same_v<T, Item> || std::is_same_v<T, const Item>);
 		public:
 			void increment(Iterator<T>& iter) override { IteratorImpl<T>::set_item(iter, nullptr); }
 		};
@@ -140,6 +143,7 @@ namespace m2 {
 
 	public:
 		template <typename T, typename CharacterType> class FullCharacterIteratorImpl : public IteratorImpl<T> {
+			static_assert(std::is_same_v<Item, T> || std::is_same_v<const Item, T>);
 			CharacterType* _character;
 		public:
 			explicit FullCharacterIteratorImpl(CharacterType* character) : _character(character) {}
