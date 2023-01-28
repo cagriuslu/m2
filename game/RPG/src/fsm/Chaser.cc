@@ -45,6 +45,7 @@ void* rpg::ChaserFsmBase::idle(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
 
 static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 	auto& obj = automaton.obj;
+	auto& chr = obj->character();
 	auto& target = automaton.target;
 	const auto* blueprint = automaton.blueprint;
 
@@ -55,7 +56,7 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 			case ai::CAPABILITY_RANGED:
 				throw M2ERROR("Chaser ranged weapon not implemented");
 			case ai::CAPABILITY_MELEE: {
-                if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
+                if (chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
                     auto& melee = m2::create_object(obj->position, obj->id()).first;
 					rpg::create_melee_object(melee, target.position, GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
                 }
@@ -75,7 +76,9 @@ static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
 }
 
 void* rpg::ChaserFsmBase::triggered(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
-	auto* impl = dynamic_cast<obj::Enemy*>(automaton.obj->impl.get());
+	auto& obj = automaton.obj;
+	auto& chr = obj->character();
+
 	const auto* blueprint = automaton.blueprint;
     auto& player = GAME.objects[GAME.playerId];
     switch (sig) {
@@ -102,7 +105,7 @@ void* rpg::ChaserFsmBase::triggered(m2::Fsm<ChaserFsmBase>& automaton, int sig) 
             return nullptr;
         }
 		case rpg::AI_FSM_SIGNAL_PREPHY:
-			if (not impl->character_state.is_stunned()) {
+			if (not chr.has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
 				if (1 < automaton.reverse_waypoints.size()) {
 					auto end = automaton.reverse_waypoints.end();
 					auto obj_pos = *std::prev(end, 1);
@@ -124,7 +127,9 @@ void* rpg::ChaserFsmBase::triggered(m2::Fsm<ChaserFsmBase>& automaton, int sig) 
 }
 
 void* rpg::ChaserFsmBase::gave_up(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
-	auto* impl = dynamic_cast<obj::Enemy*>(automaton.obj->impl.get());
+	auto& obj = automaton.obj;
+	auto& chr = obj->character();
+
 	const auto* blueprint = automaton.blueprint;
     switch (sig) {
         case m2::FSM_SIGNAL_ENTER:
@@ -154,7 +159,7 @@ void* rpg::ChaserFsmBase::gave_up(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
             automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
             return nullptr;
         case rpg::AI_FSM_SIGNAL_PREPHY:
-            if (not impl->character_state.is_stunned() && 1 < automaton.reverse_waypoints.size()) {
+            if (not chr.has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < automaton.reverse_waypoints.size()) {
                 auto end = automaton.reverse_waypoints.end();
                 auto obj_pos = *std::prev(end, 1);
                 auto target_pos = *std::prev(end, 2);

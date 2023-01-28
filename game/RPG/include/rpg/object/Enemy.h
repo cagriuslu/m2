@@ -24,7 +24,6 @@ namespace obj {
 		float on_hit_effect_ttl;
 
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
-		void stun();
 
         static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint);
     };

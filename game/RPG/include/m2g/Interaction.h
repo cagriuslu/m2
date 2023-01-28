@@ -4,7 +4,9 @@
 namespace m2g {
 	enum class InteractionType {
 		COLLIDE_TO,
-		GET_COLLIDED_BY
+		GET_COLLIDED_BY,
+		STUN,
+		GET_STUNNED_BY
 	};
 }
 
