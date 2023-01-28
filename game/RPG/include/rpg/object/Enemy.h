@@ -13,13 +13,13 @@
 namespace obj {
     struct Enemy : public m2::ObjectImpl {
 		m2::Fsm<m2::AnimationFsmBase> animation_fsm;
-		using FSMVariant = std::variant<
+		using AiFsmVariant = std::variant<
 			m2::Fsm<rpg::ChaserFsmBase>,
 			m2::Fsm<rpg::DistanceKeeperFsmBase>,
 			m2::Fsm<rpg::HitNRunnerFsmBase>,
 			m2::Fsm<rpg::PatrollerFsmBase>
 		>;
-		FSMVariant fsm_variant; // TODO rename
+		AiFsmVariant ai_fsm;
 
 		Enemy(m2::Object&, const chr::CharacterBlueprint*);
 
