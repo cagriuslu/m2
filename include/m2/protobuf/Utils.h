@@ -1,5 +1,5 @@
-#ifndef M2_UTILS_H
-#define M2_UTILS_H
+#ifndef M2_PROTOBUF_UTILS_H
+#define M2_PROTOBUF_UTILS_H
 
 #include "../Value.h"
 #include "../String.h"
@@ -60,4 +60,4 @@ namespace m2::proto {
 	}
 }
 
-#endif //M2_UTILS_H
+#endif //M2_PROTOBUF_UTILS_H

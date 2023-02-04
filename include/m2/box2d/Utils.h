@@ -1,5 +1,5 @@
-#ifndef M2_UTILS_H
-#define M2_UTILS_H
+#ifndef M2_BOX2D_UTILS_H
+#define M2_BOX2D_UTILS_H
 
 #include "../Vec2f.h"
 #include <BodyBlueprint.pb.h>
@@ -47,4 +47,4 @@ namespace m2::box2d {
 	pb::BodyBlueprint example_bullet_body_blueprint();
 }
 
-#endif //M2_UTILS_H
+#endif //M2_BOX2D_UTILS_H
