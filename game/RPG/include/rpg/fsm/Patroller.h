@@ -6,9 +6,21 @@
 #include "m2/Fsm.h"
 
 namespace rpg {
-	class PatrollerFsmBase {
+	enum class PatrollerMode {
+		Idle
+	};
+
+	class PatrollerFsmSignal : public m2::FsmSignalBase {
 	public:
-		PatrollerFsmBase(m2::Object& obj, const ai::AiBlueprint* blueprint);
+		using FsmSignalBase::FsmSignalBase;
+	};
+
+	class PatrollerFsm : public m2::FsmBase<PatrollerMode, PatrollerFsmSignal> {
+	public:
+		PatrollerFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint) : FsmBase(PatrollerMode::Idle) {}
+
+	protected:
+		inline std::optional<PatrollerMode> handle_signal(const PatrollerFsmSignal& s) override { return {}; }
 	};
 }
 

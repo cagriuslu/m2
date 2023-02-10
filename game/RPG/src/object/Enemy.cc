@@ -15,10 +15,10 @@ using namespace m2g::pb;
 
 obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : animation_fsm(blueprint->animation_type, obj.graphic_id()), ai_fsm(
 		std::visit(m2::overloaded {
-			[&](MAYBE const ai::type::ChaseBlueprint& v) -> AiFsmVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; },
-			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> AiFsmVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; }, // TODO implement other FSMs
-			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> AiFsmVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; },
-			[&](MAYBE const ai::type::PatrolBlueprint& v) -> AiFsmVariant { return m2::Fsm<rpg::ChaserFsmBase>{&obj, blueprint->aiBlueprint}; }
+			[&](MAYBE const ai::type::ChaseBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; },
+			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; }, // TODO implement other FSMs
+			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; },
+			[&](MAYBE const ai::type::PatrolBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; }
 		}, blueprint->aiBlueprint->variant)) {}
 
 m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
@@ -50,7 +50,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	phy.pre_step = [&obj](MAYBE m2::Physique& phy) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->ai_fsm);
-		std::visit([](auto& v) { v.signal(rpg::AI_FSM_SIGNAL_PREPHY); }, impl->ai_fsm);
+		std::visit(m2::overloaded {
+			[](rpg::ChaserFsm& v) { v.signal(rpg::ChaserFsmSignal{}); },
+			[](auto& v) { }
+		}, impl->ai_fsm);
 	};
 	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::InteractionType interaction_type) {
 		// Check if we got hit
@@ -94,18 +97,18 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		data->animation_fsm.time(GAME.deltaTime_s);
 		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 		if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-			data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_IDLE);
+			data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
 			if (0 < velocity.y) {
-				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKDOWN);
+				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKDOWN});
 			} else {
-				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKUP);
+				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKUP});
 			}
 		} else {
 			if (0 < velocity.x) {
-				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKRIGHT);
+				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKRIGHT});
 			} else {
-				data->animation_fsm.signal(m2g::pb::ANIMATION_STATE_WALKLEFT);
+				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKLEFT});
 			}
 		}
 	};

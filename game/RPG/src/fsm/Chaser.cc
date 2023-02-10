@@ -8,171 +8,157 @@
 #include <rpg/fsm/Chaser.h>
 #include <m2/M2.h>
 
-#define ALARM_DURATION(recalcPeriod) ((recalcPeriod) / 2.0f + (recalcPeriod) * m2::randf() * 1.5f)
-
-rpg::ChaserFsmBase::ChaserFsmBase(m2::Object* obj, const ai::AiBlueprint* blueprint) :
-	obj(obj),
-	blueprint(blueprint),
-	home_position(obj->position),
-	target(GAME.objects[GAME.playerId]),
-	phy(GAME.physics[obj->physique_id()]) {}
-
-void* rpg::ChaserFsmBase::idle(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
-	const auto* blueprint = automaton.blueprint;
-    switch (sig) {
-		case m2::FSM_SIGNAL_ENTER:
-            automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
-            return nullptr;
-		case m2::FSM_SIGNAL_ALARM:
-            // Check if player is close
-            if (automaton.obj->position.distance_sq(automaton.target.position) < blueprint->trigger_distance_squared_m) {
-				// Check if path exists
-				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
-				if (not smooth_path.empty()) {
-					automaton.reverse_waypoints = std::move(smooth_path);
-					return reinterpret_cast<void*>(triggered);
-				}
-            }
-            automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
-            return nullptr;
-		case rpg::AI_FSM_SIGNAL_PREPHY:
-            // TODO implement small patrol
-            return nullptr;
-        default:
-            return nullptr;
-    }
+namespace {
+	float random_alarm_duration(float recalc_period) {
+		return recalc_period / 2.0f + recalc_period * m2::randf() * 1.5f;
+	}
 }
 
-static void attack_if_close_enough(m2::Fsm<rpg::ChaserFsmBase>& automaton) {
-	auto& obj = automaton.obj;
-	auto& chr = obj->character();
-	auto& target = automaton.target;
-	const auto* blueprint = automaton.blueprint;
-
-    // If player is close enough
-    if (obj->position.distance_sq(target.position) < blueprint->attack_distance_squared_m) {
-        // Based on what the capability is
-        switch (automaton.blueprint->capability) {
-			case ai::CAPABILITY_RANGED:
-				throw M2ERROR("Chaser ranged weapon not implemented");
-			case ai::CAPABILITY_MELEE: {
-                if (chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
-                    auto& melee = m2::create_object(obj->position, obj->id()).first;
-					rpg::create_melee_object(melee, target.position, GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
-                }
-                break;
-            }
-            case ai::CAPABILITY_EXPLOSIVE: {
-				throw M2ERROR("Chaser explosive weapon not implemented");
-            }
-            case ai::CAPABILITY_KAMIKAZE: {
-                // TODO
-                break;
-            }
-            default:
-                break;
-        }
-    }
+rpg::ChaserFsm::ChaserFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint) : FsmBase(ChaserMode::Idle), obj(obj), blueprint(blueprint), home_position(obj->position) {
+	init();
 }
 
-void* rpg::ChaserFsmBase::triggered(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
-	auto& obj = automaton.obj;
-	auto& chr = obj->character();
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_signal(const ChaserFsmSignal &s) {
+	if (s.type() == m2::FsmSignalType::EnterState) {
+		// Action for EnterState is the same for all states
+		arm(random_alarm_duration(blueprint->recalculation_period_s));
+		return {};
+	}
 
-	const auto* blueprint = automaton.blueprint;
-    auto& player = GAME.objects[GAME.playerId];
-    switch (sig) {
-		case m2::FSM_SIGNAL_ENTER:
-            automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
-            return nullptr;
-		case m2::FSM_SIGNAL_ALARM: {
-            // Check if player is still close
-            if (automaton.obj->position.distance_sq(player.position) < blueprint->give_up_distance_squared_m) {
-                // Recalculate path to player
-				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
-				if (not smooth_path.empty()) {
-					automaton.reverse_waypoints = std::move(smooth_path);
-				}
-            } else {
-                // Check if path to homePosition exists
-				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
-				if (not smooth_path.empty()) {
-					automaton.reverse_waypoints = std::move(smooth_path);
-					return reinterpret_cast<void*>(gave_up);
-				}
-            }
-            automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
-            return nullptr;
-        }
-		case rpg::AI_FSM_SIGNAL_PREPHY:
-			if (not chr.has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
-				if (1 < automaton.reverse_waypoints.size()) {
-					auto end = automaton.reverse_waypoints.end();
-					auto obj_pos = *std::prev(end, 1);
-					auto target_pos = *std::prev(end, 2);
-					if (obj_pos != target_pos) {
-						auto objPositionF = m2::Vec2f(obj_pos);
-						auto targetPositionF = m2::Vec2f(target_pos);
-						m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-						m2::Vec2f force = direction * (GAME.deltaTime_s * 25000.0f);
-						automaton.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
-					}
-				}
-				attack_if_close_enough(automaton);
+	switch (state()) {
+		case ChaserMode::Idle:
+			switch (s.type()) {
+				case m2::FsmSignalType::Alarm: return handle_alarm_while_idle();
+				case m2::FsmSignalType::Custom: return {}; // TODO implement small patrol
+				default: return {};
 			}
-            return nullptr;
-        default:
-            return nullptr;
-    }
+		case ChaserMode::Triggered:
+			switch (s.type()) {
+				case m2::FsmSignalType::Alarm: return handle_alarm_while_triggered();
+				case m2::FsmSignalType::Custom: return handle_physics_step_while_triggered();
+				default: return {};
+			}
+		case ChaserMode::GaveUp:
+			switch (s.type()) {
+				case m2::FsmSignalType::Alarm: return handle_alarm_while_gave_up();
+				case m2::FsmSignalType::Custom: return handle_physics_step_while_gave_up();
+				default: return {};
+			}
+	}
 }
 
-void* rpg::ChaserFsmBase::gave_up(m2::Fsm<ChaserFsmBase>& automaton, int sig) {
-	auto& obj = automaton.obj;
-	auto& chr = obj->character();
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
+	// Check if player is close
+	if (obj->position.is_near(GAME.player()->position, blueprint->trigger_distance_m)) {
+		// Check if path exists
+		auto smooth_path = GAME.pathfinder->find_smooth_path(obj->position, GAME.player()->position, blueprint->give_up_distance_m);
+		if (not smooth_path.empty()) {
+			reverse_waypoints = std::move(smooth_path);
+			return ChaserMode::Triggered;
+		}
+	} else {
+		arm(random_alarm_duration(blueprint->recalculation_period_s));
+		return {};
+	}
+}
 
-	const auto* blueprint = automaton.blueprint;
-    switch (sig) {
-        case m2::FSM_SIGNAL_ENTER:
-            automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
-            return nullptr;
-        case m2::FSM_SIGNAL_ALARM:
-            // Check if player is close
-            if (automaton.obj->position.distance_sq(automaton.target.position) < automaton.blueprint->trigger_distance_squared_m) {
-                // Check if path to player exists
-				auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
-				if (not smooth_path.empty()) {
-					automaton.reverse_waypoints = std::move(smooth_path);
-					return reinterpret_cast<void*>(triggered);
-				}
-            } else {
-                // Check if obj arrived to homePosition
-                if (automaton.obj->position.distance_sq(automaton.home_position) < 1.0f) {
-                    return reinterpret_cast<void*>(idle);
-                } else {
-                    // Recalculate path to homePosition
-					auto smooth_path = GAME.pathfinder->find_smooth_path(automaton.obj->position, automaton.target.position, blueprint->give_up_distance_m);
-					if (not smooth_path.empty()) {
-						automaton.reverse_waypoints = std::move(smooth_path);
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
+	// Check if player is still close
+	if (obj->position.is_near(GAME.player()->position, blueprint->give_up_distance_m)) {
+		// Recalculate path to player
+		auto smooth_path = GAME.pathfinder->find_smooth_path(obj->position, GAME.player()->position, blueprint->give_up_distance_m);
+		if (not smooth_path.empty()) {
+			reverse_waypoints = std::move(smooth_path);
+		}
+	} else {
+		// Check if path to homePosition exists
+		auto smooth_path = GAME.pathfinder->find_smooth_path(obj->position, GAME.player()->position, blueprint->give_up_distance_m);
+		if (not smooth_path.empty()) {
+			reverse_waypoints = std::move(smooth_path);
+			return ChaserMode::GaveUp;
+		}
+	}
+	arm(random_alarm_duration(blueprint->recalculation_period_s));
+	return {};
+}
+
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_triggered() {
+	// If not stunned
+	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
+		if (1 < reverse_waypoints.size()) {
+			auto end = reverse_waypoints.end();
+			auto obj_pos = *std::prev(end, 1);
+			auto target_pos = *std::prev(end, 2);
+			if (obj_pos != target_pos) {
+				auto objPositionF = m2::Vec2f(obj_pos);
+				auto targetPositionF = m2::Vec2f(target_pos);
+				m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
+				m2::Vec2f force = direction * (GAME.deltaTime_s * 25000.0f);
+				obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+			}
+		}
+		// Attack if player is close
+		if (obj->position.is_near(GAME.player()->position, blueprint->attack_distance_m)) {
+			// Based on what the capability is
+			switch (blueprint->capability) {
+				case ai::CAPABILITY_RANGED:
+					throw M2ERROR("Chaser ranged weapon not implemented");
+				case ai::CAPABILITY_MELEE:
+					if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
+						auto& melee = m2::create_object(obj->position, obj->id()).first;
+						rpg::create_melee_object(melee, GAME.player()->position, GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
 					}
-                }
-            }
-            automaton.arm(ALARM_DURATION(blueprint->recalculation_period_s));
-            return nullptr;
-        case rpg::AI_FSM_SIGNAL_PREPHY:
-            if (not chr.has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < automaton.reverse_waypoints.size()) {
-                auto end = automaton.reverse_waypoints.end();
-                auto obj_pos = *std::prev(end, 1);
-                auto target_pos = *std::prev(end, 2);
-                if (obj_pos != target_pos) {
-                    auto objPositionF = m2::Vec2f(obj_pos);
-                    auto targetPositionF = m2::Vec2f(target_pos);
-                    m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-                    m2::Vec2f force = direction * (GAME.deltaTime_s * 25000.0f);
-                    automaton.phy.body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
-                }
-            }
-            return nullptr;
-        default:
-            return nullptr;
-    }
+					break;
+				case ai::CAPABILITY_EXPLOSIVE:
+					throw M2ERROR("Chaser explosive weapon not implemented");
+				case ai::CAPABILITY_KAMIKAZE:
+					throw M2ERROR("Chaser kamikaze not implemented");
+				default:
+					break;
+			}
+		}
+	}
+	return {};
+}
+
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
+	// Check if player is close
+	if (obj->position.is_near(GAME.player()->position, blueprint->trigger_distance_m)) {
+		// Check if path to player exists
+		auto smooth_path = GAME.pathfinder->find_smooth_path(obj->position, GAME.player()->position, blueprint->give_up_distance_m);
+		if (not smooth_path.empty()) {
+			reverse_waypoints = std::move(smooth_path);
+			return ChaserMode::Triggered;
+		}
+	} else {
+		// Check if obj arrived to homePosition
+		if (obj->position.is_near(home_position, 1.0f)) {
+			return ChaserMode::Idle;
+		} else {
+			// Recalculate path to homePosition
+			auto smooth_path = GAME.pathfinder->find_smooth_path(obj->position, GAME.player()->position, blueprint->give_up_distance_m);
+			if (not smooth_path.empty()) {
+				reverse_waypoints = std::move(smooth_path);
+			}
+		}
+	}
+	arm(random_alarm_duration(blueprint->recalculation_period_s));
+	return {};
+}
+
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up() {
+	// If not stunned
+	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < reverse_waypoints.size()) {
+		auto end = reverse_waypoints.end();
+		auto obj_pos = *std::prev(end, 1);
+		auto target_pos = *std::prev(end, 2);
+		if (obj_pos != target_pos) {
+			auto objPositionF = m2::Vec2f(obj_pos);
+			auto targetPositionF = m2::Vec2f(target_pos);
+			m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
+			m2::Vec2f force = direction * (GAME.deltaTime_s * 25000.0f);
+			obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+		}
+	}
+	return {};
 }

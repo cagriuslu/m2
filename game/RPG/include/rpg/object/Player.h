@@ -4,13 +4,14 @@
 #include "m2/Object.h"
 #include <m2/Animation.h>
 #include "rpg/Character.h"
+#include "m2/fsm/AnimationFsm.h"
 #include <vector>
 #include <m2/Value.h>
 #include <ItemType.pb.h>
 
 namespace obj {
 	struct Player : public m2::ObjectImpl {
-		m2::Fsm<m2::AnimationFsmBase> animation_fsm;
+		m2::AnimationFsm animation_fsm;
 
 		Player(m2::Object&, const chr::CharacterBlueprint*);
 

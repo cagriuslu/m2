@@ -19,9 +19,8 @@ namespace ai {
 
     struct AiBlueprint {
         ai::Capability capability; /// Bitmap of capabilities
-        float trigger_distance_squared_m; /// Distance AI becomes active
-        float attack_distance_squared_m; /// Distance AI is clear to attack player
-        float give_up_distance_squared_m; /// Distance AI gives up
+        float trigger_distance_m; /// Distance AI becomes active
+        float attack_distance_m; /// Distance AI is clear to attack player
         float give_up_distance_m; /// Distance AI gives up
         float recalculation_period_s; /// Period after which AI recalculates waypoints (formula: random(s/2, 3s/2))
         std::variant<type::ChaseBlueprint, type::HitNRunBlueprint, type::KeepDistanceBlueprint, type::PatrolBlueprint> variant;

@@ -6,9 +6,21 @@
 #include "m2/Fsm.h"
 
 namespace rpg {
-	class HitNRunnerFsmBase {
+	enum class HitNRunnerMode {
+		Idle
+	};
+
+	class HitNRunnerFsmSignal : public m2::FsmSignalBase {
 	public:
-		HitNRunnerFsmBase(m2::Object& obj, const ai::AiBlueprint* blueprint);
+		using FsmSignalBase::FsmSignalBase;
+	};
+
+	class HitNRunnerFsm : public m2::FsmBase<HitNRunnerMode, HitNRunnerFsmSignal> {
+	public:
+		HitNRunnerFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint) : FsmBase(HitNRunnerMode::Idle) {}
+
+	protected:
+		inline std::optional<HitNRunnerMode> handle_signal(const HitNRunnerFsmSignal& s) override { return {}; }
 	};
 }
 
