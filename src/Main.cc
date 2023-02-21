@@ -16,15 +16,12 @@ using namespace m2;
 int main(int argc, char **argv) {
 	DEBUG_FN();
 
-	if (b2_version.major != 2 || b2_version.minor != 4 || b2_version.revision != 0) {
-		throw M2FATAL("Box2D version mismatch");
-	}
-
-	// Process command line arguments
+	LOG_DEBUG("Processing command line arguments...");
 	for (int i = 1; i < argc; i++) {
-		const char* loglevel = "--log-lvl=";
-		const size_t loglevelStrlen = strlen(loglevel);
-		if (strncmp(argv[i], loglevel, loglevelStrlen) == 0) {
+		const char* log_level = "--log-lvl=";
+		const size_t loglevelStrlen = strlen(log_level);
+		if (strncmp(argv[i], log_level, loglevelStrlen) == 0) {
+			LOG_DEBUG("Encountered log-lvl option");
 			if (strcmp(argv[i] + loglevelStrlen, "trace") == 0) {
 				m2::current_log_level = m2::LogLevel::Trace;
 			} else if (strcmp(argv[i] + loglevelStrlen, "debug") == 0) {
@@ -40,35 +37,44 @@ int main(int argc, char **argv) {
 			} else {
 				LOG_WARN("Invalid log level");
 			}
-			LOG_INFO("Current log level", m2::current_log_level);
+			LOG_INFO("New log level", m2::current_log_level);
 		} else {
-			LOG_WARN("Invalid command line argument");
+			LOG_WARN("Unknown command line argument");
 		}
 	}
+	LOG_DEBUG("Processed command line arguments");
 
 	ThreadPool tpool;
 
-	// Global initialization
+	LOG_DEBUG("Initializing SDL...");
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
 		LOG_FATAL("SDL error", SDL_GetError());
 		return -1;
 	}
+	LOG_DEBUG("Initialized SDL, initializing SDL_image...");
 	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
 		LOG_FATAL("SDL error", IMG_GetError());
 		return -1;
 	}
+	LOG_DEBUG("Initialized SDL_image, initializing SDL_ttf...");
 	if (TTF_Init() != 0) {
 		LOG_FATAL("SDL error", TTF_GetError());
 		return -1;
 	}
+	LOG_DEBUG("Initialized SDL_ttf");
 
 	Game::create_instance();
 
+	LOG_DEBUG("Executing entry UI...");
 	if (m2::ui::execute_blocking(&m2g::ui::entry) == m2::ui::Action::QUIT) {
+		LOG_INFO("Entry UI returned QUIT");
 		return 0;
 	}
+	LOG_DEBUG("Executed entry UI");
 
 	auto pause_ticks = sdl::get_ticks();
+	LOG_DEBUG("Initial ticks", pause_ticks);
+
 	float time_since_last_phy = 0.0f;
 	unsigned prev_phy_ticks = 0, prev_gfx_ticks = 0;
 	unsigned prev_phy_step_count = UINT_MAX;

@@ -25,17 +25,20 @@
 m2::Game* m2::Game::_instance;
 
 void m2::Game::create_instance() {
+	DEBUG_FN();
 	if (_instance) {
 		throw M2FATAL("Cannot create multiple instance of Game");
 	}
 	_instance = new Game();
 }
 void m2::Game::destroy_instance() {
+	DEBUG_FN();
 	delete _instance;
 	_instance = nullptr;
 }
 
 m2::Game::Game() {
+	DEBUG_FN();
 	update_window_dims(1600, 900); // Store default window dimensions in GAME
 	if ((sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowRect.w, windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});

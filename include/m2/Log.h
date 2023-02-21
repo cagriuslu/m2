@@ -4,10 +4,17 @@
 #include "M2.h"
 #include <sstream>
 #include <string>
-
 #if _MSC_VER > 1400
 #include <sal.h>
 #endif
+
+/// When to use which debug level:
+/// Fatal: Unable to continue, will crash immediately
+/// Error: A necessary operation failed, will crash gracefully unless recovered
+/// Warn: An optional operation failed, behavior may be unpredictable
+/// Info: Minimal indication of expected operation
+/// Debug: Everything that is attempted and completed
+/// Trace: Like Debug, but for each frame
 
 #define LOGF_TRACE(fmt, ...) ::m2::internal::logf(::m2::LogLevel::Trace, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_DEBUG(fmt, ...) ::m2::internal::logf(::m2::LogLevel::Debug, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
@@ -23,8 +30,8 @@
 #define LOG_ERROR(msg, ...) ::m2::internal::log(::m2::LogLevel::Error, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_FATAL(msg, ...) ::m2::internal::log(::m2::LogLevel::Fatal, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 
-#define TRACE_FN() ::m2::internal::logf(::m2::LogLevel::Trace, __FILE__, __LINE__, __FUNCTION__)
-#define DEBUG_FN() ::m2::internal::logf(::m2::LogLevel::Debug, __FILE__, __LINE__, __FUNCTION__)
+#define TRACE_FN() LOG_TRACE("f", __FUNCTION__)
+#define DEBUG_FN() LOG_DEBUG("f", __FUNCTION__)
 
 namespace m2 {
 	enum class LogLevel {
@@ -56,11 +63,12 @@ namespace m2 {
 			if (lvl < current_log_level) {
 				return;
 			}
+			constexpr std::size_t args_size = std::tuple_size<std::tuple<Ts...>>::value;
+
 			log_header(lvl, file, line);
-			fprintf(stderr, "%s ", msg);
-			((void)[&] {
-				fprintf(stderr, "%s ", ::m2::to_string(ts).c_str());
-			}, ...);
+			fprintf(stderr, args_size ? "%s: " : "%s", msg);
+			// Use the argument list of a lambda to unroll the ts
+			[](...){}((fprintf(stderr, "%s ", ::m2::to_string(ts).c_str()))...);
 			fprintf(stderr, "\n");
 		}
 	}
