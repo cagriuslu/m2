@@ -44,7 +44,7 @@ void m2::internal::log_header(LogLevel lvl, const char *file, int line) {
 	}
 
 	// Get time
-	auto now = std::time(nullptr);
+	auto now = std::time(nullptr) - 1577836800ull; // 2020
 
 	// Convert log level into char
 	char lvl_char = 'U';
@@ -62,20 +62,20 @@ void m2::internal::log_header(LogLevel lvl, const char *file, int line) {
 #endif
 	const char* file_name = (file_name_wo_dirs == nullptr) ? file : file_name_wo_dirs;
 	// Simplify file name
-	char file_name_capitals[6] = { 0 };
+	char file_name_capitals[4] = { 0 };
 	int file_name_capitals_len = 0;
-	for (size_t i = 0; i < strlen(file_name) && file_name_capitals_len < 5; i++) {
+	for (size_t i = 0; i < strlen(file_name) && file_name_capitals_len < 3; i++) {
 		char c = file_name[i];
 		if (isupper(c) || isdigit(c)) {
 			file_name_capitals[file_name_capitals_len++] = c;
 		}
 	}
 	static const char* file_name_paddings[] = {
-		"-----", "----", "---", "--", "-", ""
+		"XXX", "XX", "X", ""
 	};
 	const char* file_name_padding = file_name_paddings[file_name_capitals_len];
 
-	fprintf(stderr, "[%010lld:%c:%s%s:%05d] ", (long long)now, lvl_char, file_name_padding, file_name_capitals, line);
+	fprintf(stderr, "[%c%09lld%s%s%03d] ", lvl_char, (long long)now, file_name_padding, file_name_capitals, line % 1000);
 }
 
 #if _MSC_VER > 1400
