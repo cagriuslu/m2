@@ -1,24 +1,5 @@
 #include "m2/ThreadPool.h"
 
-m2::Semaphore::Semaphore(size_t initial_state) : _state(initial_state) {}
-
-void m2::Semaphore::down(size_t count) {
-	for (size_t i = 0; i < count; i++) {
-		std::unique_lock<std::mutex> lock(_mutex);
-		while (_state == 0) {
-			_condvar.wait(lock);
-		}
-		_state--;
-	}
-}
-
-void m2::Semaphore::up(size_t count) {
-	_mutex.lock();
-	_state += count;
-	_mutex.unlock();
-	_condvar.notify_all();
-}
-
 m2::ThreadPool::ThreadPool() : _idle_thread_count(std::thread::hardware_concurrency()), _quit(false) {
 	auto thread_count = std::thread::hardware_concurrency();
 	_threads.resize(thread_count);
