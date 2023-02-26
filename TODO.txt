@@ -1,7 +1,1 @@
-- Convert all blueprints to protobuf backed json messages
-- Can we modernize character logic, item logic, walking logic, walking + animation logic -> bring them into engine
-- Implement parent child object relationship so that sword is destroyed and moved with the player
-  - This is very complex, doesn't work well because box2d doesn't have parent-child relation.
-  - We have to do that ourselves, which is very complex.
-- Bullet, explosive and sword can be kinematic object
 - We don't update events during consecutive physics loops, may cause issue with event handling. It is as if mouse is held down longer than usual.
