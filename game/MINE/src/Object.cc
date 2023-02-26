@@ -1,5 +1,6 @@
 #include <m2g/Object.h>
 #include <mine/object/Dwarf.h>
+#include <mine/object/Blacksmith.h>
 #include <ResourceType.pb.h>
 
 using namespace m2g;
@@ -32,7 +33,9 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 	switch (object_type) {
 		case pb::ObjectType::DWARF:
 			return create_dwarf(obj);
+		case pb::ObjectType::BLACKSMITH:
+			return create_blacksmith(obj);
 		default:
-			return m2::failure("Invalid sprite index");
+			return m2::failure("Invalid object type");
 	}
 }

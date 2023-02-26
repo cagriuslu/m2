@@ -21,7 +21,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	obj.add_graphic(GAME.sprites[m2g::pb::SpriteType::DWARF_FULL]);
+	obj.add_graphic(GAME.sprites[SpriteType::DWARF_FULL]);
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(ITEM_REUSABLE_JUMP));

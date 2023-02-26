@@ -28,6 +28,7 @@ namespace m2 {
 	std::string to_string(float);
 	std::string to_string(double);
 	std::string to_string(const char*);
+	std::string to_string(const std::string&);
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;

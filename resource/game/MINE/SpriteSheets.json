@@ -19,6 +19,17 @@
       ]
     },
     {
+      "resource": "resource/game/MINE/2D Game art bundle 2018/Character Sprite/Big Guy/PNG/Big Guy 01/PNG Sequences/Idle/Idle_000.png",
+      "ppm": 400,
+      "sprites": [
+        {
+          "type": "BLACKSMITH_FULL",
+          "rect": {"x": 0, "y": 0, "w": 471, "h": 438},
+          "centerOffsetPx" : {"x": 0, "y": 0}
+        }
+      ]
+    },
+    {
       "resource": "resource/game/MINE/2dhandpainted/Dungeon@64x64.png",
       "ppm": 64,
       "sprites": [
