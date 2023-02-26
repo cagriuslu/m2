@@ -9,7 +9,7 @@ std::optional<m2::AnimationFsmState> m2::AnimationFsm::handle_signal(const Anima
 	auto set_sprite = [this](m2g::pb::AnimationStateType state, int index) {
 		this->anim_state = state;
 		this->state_index = index;
-		auto gfx = GAME.graphics.get(this->gfx_id);
+		auto gfx = LEVEL.graphics.get(this->gfx_id);
 		if (gfx) {
 			gfx->sprite = &GAME.sprites[animation.state(state).sprites(index)];
 		} else {

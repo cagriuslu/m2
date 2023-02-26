@@ -36,7 +36,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_mass(80.0f);
 	bp.set_linear_damping(100.0f);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
 
@@ -118,6 +118,6 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		gfx.draw_effect_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
 
-	GAME.playerId = GAME.objects.get_id(&obj);
+	LEVEL.playerId = LEVEL.objects.get_id(&obj);
 	return {};
 }

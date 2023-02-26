@@ -19,7 +19,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	bp.set_gravity_scale(2.0f);
 	bp.set_linear_damping(0.0f);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	obj.add_graphic(GAME.sprites[m2g::pb::SpriteType::DWARF_FULL]);
 
@@ -100,6 +100,6 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 		}
 	};
 
-	GAME.playerId = obj.id();
+	LEVEL.playerId = obj.id();
 	return {};
 }

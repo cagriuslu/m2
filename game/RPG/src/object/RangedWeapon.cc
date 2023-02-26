@@ -41,7 +41,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * linear_speed));
 
 	// Add graphics

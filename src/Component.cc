@@ -5,5 +5,5 @@
 m2::Component::Component(Id object_id) : object_id(object_id) {}
 
 m2::Object& m2::Component::parent() const {
-    return *GAME.objects.get(object_id);
+    return *LEVEL.objects.get(object_id);
 }

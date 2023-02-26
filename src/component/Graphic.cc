@@ -4,7 +4,7 @@
 #include <m2/Object.h>
 
 m2::Vec2f m2::camera_to_position_m(const Vec2f& position) {
-	auto* camera = GAME.objects.get(GAME.cameraId);
+	auto* camera = LEVEL.objects.get(LEVEL.cameraId);
 	return position - camera->position;
 }
 

@@ -31,7 +31,7 @@
 #include <unordered_map>
 
 #define GAME (m2::Game::instance())
-#define CGAME (m2::Game::const_instance())
+#define LEVEL (GAME.level())
 
 #define GAME_AND_HUD_ASPECT_RATIO_MUL (16)
 #define GAME_AND_HUD_ASPECT_RATIO_DIV (9)
@@ -44,11 +44,10 @@ namespace m2 {
 	struct Game {
 		static Game* _instance;
 
-		std::optional<Level> level;
+		std::optional<Level> _level;
 
 	public:
 		static void create_instance();
-		inline static const Game& const_instance() { return *_instance; }
 		inline static Game& instance() { return *_instance; }
 		static void destroy_instance();
 
@@ -98,29 +97,7 @@ namespace m2 {
 		const int positionIterations{3};
 
 		////////////////////////////////////////////////////////////////////////
-		//////////////////////////////// LEVEL /////////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		// Objects are not meant to be iterated over, as it holds all types of objects. If a certain type of object needs to
-		// be iterated over, create a component, attach the component to an object, put component in separate pool, and
-		// iterate over that pool.
-		// Another reason to put a component inside a Pool: if the type of object that is using that component is
-		// created/destroyed very rapidly.
-		Pool<Object> objects;
-		std::unordered_map<GroupId, std::unique_ptr<Group>, GroupId::Hash> groups;
-		DrawList draw_list;
-		Pool<Physique> physics;
-		Pool<Graphic> graphics;
-		Pool<Graphic> terrainGraphics;
-		Pool<Light> lights;
-		Pool<CharacterVariant> characters;
-		b2World *world{};
-        box2d::ContactListener* contactListener{};
-		Id cameraId{}, playerId{}, pointerId{};
-		std::optional<Pathfinder> pathfinder;
-        std::optional<ui::State> leftHudUIState, rightHudUIState;
-
-		////////////////////////////////////////////////////////////////////////
-		///////////////////////////////// GAME /////////////////////////////////
+		///////////////////////////////// MISC /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		Events events;
 		unsigned deltaTicks_ms{};
@@ -133,13 +110,11 @@ namespace m2 {
 		~Game();
 
 		// Level management
-		VoidValue load_level(const std::string& level_resource_path);
-		VoidValue load_level(const pb::Level& lb);
+		VoidValue load_level(const std::variant<FilePath,pb::Level>& level_path_or_blueprint);
 		VoidValue load_editor(const std::string& level_resource_path);
-		void unload_level();
+		inline Level& level() { return *_level; }
 
 		// Accessors
-		Object* player();
 		const Item& get_item(m2g::pb::ItemType item_type);
 
 		// Modifiers
@@ -152,7 +127,7 @@ namespace m2 {
 		std::pair<int, int> pixel_scale_mul_div(int sprite_ppm) const;
 
 	private:
-		VoidValue internal_load_level(const pb::Level& level_blueprint);
+		void reset_state();
 	};
 }
 

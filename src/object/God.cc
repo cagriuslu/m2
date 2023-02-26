@@ -21,20 +21,20 @@ m2::Id m2::obj::create_god() {
 		obj.position += move_direction.normalize() * ((float)GAME.deltaTime_s * 10.0f);
 
 		Vec2i mouse_coordinates;
-		if (GAME.level->editor_mode != Level::EditorMode::NONE && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) &&
-				!(mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround()).is_negative()) {
-			switch (GAME.level->editor_mode) {
+		if (LEVEL.editor_mode != Level::EditorMode::NONE && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) &&
+			!(mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround()).is_negative()) {
+			switch (LEVEL.editor_mode) {
 				case Level::EditorMode::PAINT:
-					GAME.level->editor_paint_mode_paint_sprite(mouse_coordinates);
+					LEVEL.editor_paint_mode_paint_sprite(mouse_coordinates);
 					break;
 				case Level::EditorMode::ERASE:
-					GAME.level->editor_erase_mode_erase_position(mouse_coordinates);
+					LEVEL.editor_erase_mode_erase_position(mouse_coordinates);
 					break;
 				case Level::EditorMode::PLACE:
-					GAME.level->editor_place_mode_place_object(mouse_coordinates);
+					LEVEL.editor_place_mode_place_object(mouse_coordinates);
 					break;
 				case Level::EditorMode::REMOVE:
-					GAME.level->editor_remove_mode_remove_object(mouse_coordinates);
+					LEVEL.editor_remove_mode_remove_object(mouse_coordinates);
 					break;
 				default:
 					break;

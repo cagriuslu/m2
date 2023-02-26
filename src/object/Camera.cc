@@ -8,7 +8,7 @@
 
 std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
     // Start at player's location
-    auto* player = GAME.objects.get(GAME.playerId);
+    auto* player = LEVEL.objects.get(LEVEL.playerId);
     auto obj_pair = create_object(player ? player->position : Vec2f{});
 	auto& camera = obj_pair.first;
 	camera.impl = std::make_unique<m2::obj::Camera>();
@@ -16,7 +16,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 	auto& phy = camera.add_physique();
 	phy.post_step = [&camera](MAYBE Physique& phy) {
 //		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
-		auto& player = GAME.objects[GAME.playerId];
+		auto& player = LEVEL.objects[LEVEL.playerId];
 
 		// Mouse lookahead disabled temporarily
 //		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
@@ -29,7 +29,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 //		}
 	};
 
-	if (GAME.level->type() == Level::Type::EDITOR) {
+	if (LEVEL.type() == Level::Type::EDITOR) {
 		auto& gfx = camera.add_graphic();
 		gfx.on_draw = [&](MAYBE Graphic& gfx) {
 			auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
@@ -62,6 +62,6 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		};
 	}
 
-    GAME.cameraId = obj_pair.second;
+	LEVEL.cameraId = obj_pair.second;
     return obj_pair;
 }

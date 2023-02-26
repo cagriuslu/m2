@@ -85,152 +85,27 @@ m2::Game::Game() {
 }
 
 m2::Game::~Game() {
-    // Get rid of lvl
-    objects.clear();
-    delete contactListener;
-    contactListener = nullptr;
-    delete world;
-    world = nullptr;
-    // TODO deinit others
-
+	_level.reset();
 	SDL_DestroyRenderer(sdlRenderer);
 	SDL_FreeCursor(sdlCursor);
 	SDL_DestroyWindow(sdlWindow);
 }
 
-m2::VoidValue m2::Game::load_level(const std::string& level_resource_path) {
-	auto lb = proto::json_file_to_message<pb::Level>(level_resource_path);
-	m2_reflect_failure(lb);
-
-	auto level_value = Level::create_single_player_level(level_resource_path);
-	m2_reflect_failure(level_value);
-
-	if (level) {
-		unload_level(); // TODO make destructor
-	}
-	level = *level_value;
-
-	return internal_load_level(*lb);
+m2::VoidValue m2::Game::load_level(const std::variant<FilePath,pb::Level>& level_path_or_blueprint) {
+	_level.reset();
+	reset_state();
+	_level.emplace();
+	return _level->init_single_player(level_path_or_blueprint);
 }
-
-m2::VoidValue m2::Game::load_level(const pb::Level& lb) {
-	auto level_value = Level::create_single_player_level();
-	m2_reflect_failure(level_value);
-
-	if (level) {
-		unload_level(); // TODO make destructor
-	}
-	level = *level_value;
-
-	return internal_load_level(lb);
-}
-
-m2::VoidValue m2::Game::internal_load_level(const pb::Level& lb) {
-	// Reset state
-	events.clear();
-	GAME.world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{});
-	GAME.contactListener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
-	GAME.world->SetContactListener(GAME.contactListener);
-
-	// Create background tiles
-	for (int y = 0; y < lb.background_rows_size(); ++y) {
-		for (int x = 0; x < lb.background_rows(y).items_size(); ++x) {
-			auto sprite_type = lb.background_rows(y).items(x);
-			if (sprite_type) {
-                auto [tile_obj, tile_id] = obj::create_tile(Vec2f{x, y} + Vec2f{0.5f, 0.5f}, sprites[sprite_type]);
-                m2g::post_tile_create(tile_obj, sprite_type);
-			}
-		}
-	}
-	// Create foreground objects
-	for (const auto& fg_object : lb.objects()) {
-		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()} + Vec2f{0.5f, 0.5f});
-
-		// Assign to group
-		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
-			GroupId group_id{fg_object.group()};
-
-			Group *group;
-			auto group_it = groups.find(group_id);
-			if (group_it != groups.end()) {
-				group = group_it->second.get();
-			} else {
-				group = m2g::create_group(group_id.type);
-				groups[group_id] = std::unique_ptr<Group>(group);
-			}
-			obj.set_group(group_id, group->add_member(id));
-		}
-
-		auto load_result = m2g::fg_object_loader(obj, fg_object.type());
-		m2_reflect_failure(load_result);
-	}
-	// Init pathfinder map
-	pathfinder = Pathfinder{lb};
-
-	// Create default objects
-	m2::obj::create_camera();
-	m2::obj::create_pointer();
-
-	// Init HUD
-	GAME.leftHudUIState = m2::ui::State(&m2g::ui::left_hud);
-	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
-	GAME.leftHudUIState->update_contents();
-	GAME.rightHudUIState = m2::ui::State(&m2g::ui::right_hud);
-	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
-	GAME.rightHudUIState->update_contents();
-
-	return {};
-}
-
 m2::VoidValue m2::Game::load_editor(const std::string& level_resource_path) {
-	// Reset state
+	_level.reset();
+	reset_state();
+	_level.emplace();
+	return _level->init_editor(level_resource_path);
+}
+
+void m2::Game::reset_state() {
 	events.clear();
-
-	if (level) {
-		unload_level();
-	}
-
-	auto level_value = Level::create_editor_level(level_resource_path);
-	m2_reflect_failure(level_value);
-	level = std::move(*level_value);
-
-	// Create default objects
-	playerId = m2::obj::create_god();
-	m2::obj::create_camera();
-	m2::obj::create_origin();
-
-	// UI Hud
-	GAME.leftHudUIState = m2::ui::State(&ui::editor_left_hud);
-	GAME.leftHudUIState->update_positions(GAME.leftHudRect);
-	GAME.leftHudUIState->update_contents();
-	GAME.rightHudUIState = m2::ui::State(&ui::editor_right_hud);
-	GAME.rightHudUIState->update_positions(GAME.rightHudRect);
-	GAME.rightHudUIState->update_contents();
-
-	return {};
-}
-
-void m2::Game::unload_level() {
-	leftHudUIState = {};
-	rightHudUIState = {};
-
-	characters.clear();
-	lights.clear();
-	terrainGraphics.clear();
-	graphics.clear();
-	physics.clear();
-	objects.clear();
-	groups.clear();
-
-	delete contactListener;
-	contactListener = nullptr;
-	delete world;
-	world = nullptr;
-	level = {};
-}
-
-m2::Object* m2::Game::player() {
-	return objects.get(playerId);
 }
 
 const m2::Item& m2::Game::get_item(m2g::pb::ItemType item_type) {
@@ -275,7 +150,7 @@ void m2::Game::update_window_dims(int window_width, int window_height) {
 }
 
 void m2::Game::update_mouse_position() {
-	auto& cam = objects[cameraId];
+	auto& cam = _level->objects[_level->cameraId];
 	m2::Vec2f cameraPosition = cam.position;
 
 	m2::Vec2i pointerPosition = events.mouse_position();
@@ -285,14 +160,14 @@ void m2::Game::update_mouse_position() {
 }
 
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
-	level->deferred_actions.push_back(action);
+	_level->deferred_actions.push_back(action);
 }
 
 void m2::Game::execute_deferred_actions() {
-	for (auto& action : level->deferred_actions) {
+	for (auto& action : _level->deferred_actions) {
 		action();
 	}
-	level->deferred_actions.clear();
+	_level->deferred_actions.clear();
 }
 
 std::pair<int, int> m2::Game::pixel_scale_mul_div(int sprite_ppm) const {

@@ -38,7 +38,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	bp.set_mass(10.0f);
 	bp.set_linear_damping(10.0f);
 	bp.set_fixed_rotation(true);
-	phy.body = m2::box2d::create_body(*GAME.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));

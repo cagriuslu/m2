@@ -14,6 +14,6 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_pointer() {
     auto& lig = obj.add_light();
     lig.radius_m = 3.0f;
 
-    GAME.pointerId = obj_id;
+	LEVEL.pointerId = obj_id;
     return obj_pair;
 }

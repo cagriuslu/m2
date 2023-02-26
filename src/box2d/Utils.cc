@@ -46,7 +46,7 @@ namespace m2::box2d {
 }
 
 b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint) {
-	if (GAME.world->IsLocked()) {
+	if (LEVEL.world->IsLocked()) {
 		throw M2ERROR("b2Body is created during physics step");
 	}
 
@@ -108,10 +108,10 @@ b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f positio
 }
 
 void m2::box2d::destroy_body(b2Body* body) {
-	if (GAME.world->IsLocked()) {
+	if (LEVEL.world->IsLocked()) {
 		throw std::runtime_error("b2Body is destroyed during physics step");
 	} else {
-		GAME.world->DestroyBody(body);
+		LEVEL.world->DestroyBody(body);
 	}
 }
 

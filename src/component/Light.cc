@@ -8,9 +8,9 @@ m2::Light::Light(Id object_id) : Component(object_id), radius_m(0.0f), on_draw(d
 m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
 	static m2::Id cameraId = 0;
 	static m2::Object* cameraObj = nullptr;
-	if (GAME.cameraId && cameraId != GAME.cameraId) {
-		cameraId = GAME.cameraId;
-		cameraObj = GAME.objects.get(GAME.cameraId);
+	if (LEVEL.cameraId && cameraId != LEVEL.cameraId) {
+		cameraId = LEVEL.cameraId;
+		cameraObj = LEVEL.objects.get(LEVEL.cameraId);
 	}
 	m2::Vec2f cameraPosition = cameraObj ? cameraObj->position : m2::Vec2f{}; // cameraObj is NULL while lvl is loading
 	m2::Vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
@@ -20,7 +20,7 @@ m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
 }
 
 void m2::Light::default_draw(Light& lig) {
-	auto& obj = GAME.objects[lig.object_id];
+	auto& obj = LEVEL.objects[lig.object_id];
 
 	m2::Vec2i obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj.position);
 	// Screen origin is top-left corner

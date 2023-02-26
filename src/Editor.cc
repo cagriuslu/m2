@@ -9,7 +9,7 @@ using namespace m2::ui;
 
 Blueprint::Widget::Variant editor_paint_mode_image_selection = Blueprint::Widget::ImageSelection{
 	.action_callback = [](m2g::pb::SpriteType selection) -> Action {
-		GAME.level->editor_paint_mode_select_sprite_type(selection);
+		LEVEL.editor_paint_mode_select_sprite_type(selection);
 		return Action::CONTINUE;
 	}
 };
@@ -29,7 +29,7 @@ Blueprint::Widget::Variant editor_place_mode_right_hud_object_type_selection = B
 	.action_callback = [](const std::string& selection) -> Action {
 		auto object_type = m2g::pb::ObjectType::NO_OBJECT;
 		m2g::pb::ObjectType_Parse(selection, &object_type);
-		GAME.level->editor_place_mode_select_object_type(object_type);
+		LEVEL.editor_place_mode_select_object_type(object_type);
 		return Action::CONTINUE;
 	}
 };
@@ -37,7 +37,7 @@ Blueprint::Widget::Variant editor_place_mode_right_hud_group_type_selection = Bl
 	.action_callback = [](const std::string &selection) -> Action {
 		auto group_type = m2g::pb::GroupType::NO_GROUP;
 		m2g::pb::GroupType_Parse(selection, &group_type);
-		GAME.level->editor_place_mode_select_group_type(group_type);
+		LEVEL.editor_place_mode_select_group_type(group_type);
 		return Action::CONTINUE;
 	}
 };
@@ -46,7 +46,7 @@ const Blueprint::Widget::Variant editor_place_mode_right_hud_group_instance_sele
 	.max_value = 999,
 	.initial_value = 0,
 	.action_callback = [](int selection) -> Action {
-		GAME.level->editor_place_mode_select_group_instance(selection);
+		LEVEL.editor_place_mode_select_group_instance(selection);
 		return Action::CONTINUE;
 	}
 };
@@ -81,7 +81,7 @@ const Blueprint::Widget::Variant editor_save_confirmation_text = Blueprint::Widg
 const Blueprint::Widget::Variant editor_save_confirmation_yes_button = Blueprint::Widget::Text{
 	.initial_text = "YES",
 	.action_callback = []() -> Action {
-		GAME.level->editor_save();
+		LEVEL.editor_save();
 		return Action::RETURN;
 	},
 	.kb_shortcut = SDL_SCANCODE_Y
@@ -113,7 +113,7 @@ const Blueprint editor_save_confirmation = {
 const Blueprint::Widget::Variant editor_left_hud_paint_button = Blueprint::Widget::Text{
 	.initial_text = "Paint",
 	.action_callback = []() -> Action {
-		GAME.level->activate_mode(Level::EditorMode::PAINT);
+		LEVEL.activate_mode(Level::EditorMode::PAINT);
 
 		// Fill tile selector with editor-enabled sprites
 		std::for_each(editor_paint_mode_right_hud.widgets.begin(), editor_paint_mode_right_hud.widgets.end(), [](auto &widget) {
@@ -127,8 +127,8 @@ const Blueprint::Widget::Variant editor_left_hud_paint_button = Blueprint::Widge
 			}, widget.variant);
 		});
 
-		GAME.rightHudUIState = State(&editor_paint_mode_right_hud);
-		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		LEVEL.rightHudUIState = State(&editor_paint_mode_right_hud);
+		LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_P
@@ -136,9 +136,9 @@ const Blueprint::Widget::Variant editor_left_hud_paint_button = Blueprint::Widge
 const Blueprint::Widget::Variant editor_left_hud_erase_button = Blueprint::Widget::Text{
 	.initial_text = "Erase",
 	.action_callback = []() -> Action {
-		GAME.level->activate_mode(Level::EditorMode::ERASE);
-		GAME.rightHudUIState = State(&editor_right_hud);
-		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		LEVEL.activate_mode(Level::EditorMode::ERASE);
+		LEVEL.rightHudUIState = State(&editor_right_hud);
+		LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_E
@@ -146,7 +146,7 @@ const Blueprint::Widget::Variant editor_left_hud_erase_button = Blueprint::Widge
 const Blueprint::Widget::Variant editor_left_hud_place_button = Blueprint::Widget::Text{
 	.initial_text = "Place",
 	.action_callback = []() -> Action {
-		GAME.level->activate_mode(Level::EditorMode::PLACE);
+		LEVEL.activate_mode(Level::EditorMode::PLACE);
 
 		// Fill object type selector with editor-enabled object types
 		auto& object_type_selection = std::get<Blueprint::Widget::TextSelection>(editor_place_mode_right_hud.widgets[0].variant);
@@ -164,8 +164,8 @@ const Blueprint::Widget::Variant editor_left_hud_place_button = Blueprint::Widge
 			}
 		}
 
-		GAME.rightHudUIState = State(&editor_place_mode_right_hud);
-		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		LEVEL.rightHudUIState = State(&editor_place_mode_right_hud);
+		LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_O
@@ -173,9 +173,9 @@ const Blueprint::Widget::Variant editor_left_hud_place_button = Blueprint::Widge
 const Blueprint::Widget::Variant editor_left_hud_remove_button = Blueprint::Widget::Text{
 	.initial_text = "Remove",
 	.action_callback = []() -> Action {
-		GAME.level->activate_mode(Level::EditorMode::REMOVE);
-		GAME.rightHudUIState = State(&editor_right_hud);
-		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		LEVEL.activate_mode(Level::EditorMode::REMOVE);
+		LEVEL.rightHudUIState = State(&editor_right_hud);
+		LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_R
@@ -183,9 +183,9 @@ const Blueprint::Widget::Variant editor_left_hud_remove_button = Blueprint::Widg
 const Blueprint::Widget::Variant editor_left_hud_cancel_button = Blueprint::Widget::Text{
 	.initial_text = "Cancel",
 	.action_callback = []() -> Action {
-		GAME.level->activate_mode(Level::EditorMode::NONE);
-		GAME.rightHudUIState = State(&editor_right_hud);
-		GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+		LEVEL.activate_mode(Level::EditorMode::NONE);
+		LEVEL.rightHudUIState = State(&editor_right_hud);
+		LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_C
@@ -193,7 +193,7 @@ const Blueprint::Widget::Variant editor_left_hud_cancel_button = Blueprint::Widg
 const Blueprint::Widget::Variant editor_left_hud_gridlines_button = Blueprint::Widget::Text{
 	.initial_text = "Grid Lines",
 	.action_callback = []() -> Action {
-		auto* camera = GAME.objects.get(GAME.cameraId);
+		auto* camera = LEVEL.objects.get(LEVEL.cameraId);
 		if (camera && camera->impl) {
 			auto& camera_data = dynamic_cast<m2::obj::Camera&>(*camera->impl);
 			camera_data.draw_grid_lines = !camera_data.draw_grid_lines;

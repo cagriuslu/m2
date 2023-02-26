@@ -159,7 +159,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::smoothen_path(const std::vector<Vec2i>& r
 	for (auto point2_it = reverse_path.begin() + 1; point2_it != reverse_path.end(); ++point2_it) {
 		auto* point2 = &(*point2_it);
 
-		bool eyesight = m2::box2d::check_eyesight(*GAME.world, m2::Vec2f{*point1}, m2::Vec2f{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
+		bool eyesight = m2::box2d::check_eyesight(*LEVEL.world, m2::Vec2f{*point1}, m2::Vec2f{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
 		if (point2_it == std::prev(reverse_path.end(), 1)) {
 			if (not eyesight) {
 				// If we are processing the last point AND there is no eyesight, add the previous point
@@ -186,5 +186,5 @@ std::vector<m2::Vec2i> m2::Pathfinder::smoothen_path(const std::vector<Vec2i>& r
 }
 
 bool m2::Pathfinder::check_eyesight(const Vec2i& from, const Vec2i& to) {
-	return box2d::check_eyesight(*GAME.world, Vec2f{from} + Vec2f{0.5f, 0.5f}, Vec2f{to} + Vec2f{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
+	return box2d::check_eyesight(*LEVEL.world, Vec2f{from} + Vec2f{0.5f, 0.5f}, Vec2f{to} + Vec2f{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
 }

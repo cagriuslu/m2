@@ -91,8 +91,8 @@ void m2::Physique::default_begin_contact_cb(b2Contact& b2_contact) {
 
 	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
-	auto& phy_a = GAME.physics[physique_id_a];
-	auto& phy_b = GAME.physics[physique_id_b];
+	auto& phy_a = LEVEL.physics[physique_id_a];
+	auto& phy_b = LEVEL.physics[physique_id_b];
 	if (phy_a.on_collision) {
 		phy_a.on_collision(phy_a, phy_b, contact);
 	}
@@ -103,8 +103,8 @@ void m2::Physique::default_begin_contact_cb(b2Contact& b2_contact) {
 void m2::Physique::default_end_contact_cb(b2Contact& b2_contact) {
 	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
-	auto& phy_a = GAME.physics[physique_id_a];
-	auto& phy_b = GAME.physics[physique_id_b];
+	auto& phy_a = LEVEL.physics[physique_id_a];
+	auto& phy_b = LEVEL.physics[physique_id_b];
 	if (phy_a.off_collision) {
 		phy_a.off_collision(phy_a, phy_b);
 	}

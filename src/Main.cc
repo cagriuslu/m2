@@ -101,11 +101,11 @@ int main(int argc, char **argv) {
 			auto window_resize = GAME.events.pop_window_resize();
 			if (window_resize) {
 				GAME.update_window_dims(window_resize->x, window_resize->y);
-				if (GAME.leftHudUIState) {
-					GAME.leftHudUIState->update_positions(GAME.leftHudRect);
+				if (LEVEL.leftHudUIState) {
+					LEVEL.leftHudUIState->update_positions(GAME.leftHudRect);
 				}
-                if (GAME.rightHudUIState) {
-	                GAME.rightHudUIState->update_positions(GAME.rightHudRect);
+                if (LEVEL.rightHudUIState) {
+					LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
 				}
 			}
             // Handle key events
@@ -124,8 +124,8 @@ int main(int argc, char **argv) {
 				pause_ticks += sdl::get_ticks() - pause_start;
             }
             // Handle HUD events (mouse and key)
-			IF(GAME.leftHudUIState)->handle_events(GAME.events);
-			IF(GAME.rightHudUIState)->handle_events(GAME.events);
+			IF(LEVEL.leftHudUIState)->handle_events(GAME.events);
+			IF(LEVEL.rightHudUIState)->handle_events(GAME.events);
 		}
 		GAME.update_mouse_position();
 		//////////////////////// END OF EVENT HANDLING /////////////////////////
@@ -145,39 +145,39 @@ int main(int argc, char **argv) {
 			// Advance time by GAME.phy_period
 			GAME.deltaTime_s = GAME.phy_period;
 			/////////////////////////////// PRE-PHY ////////////////////////////////
-			for (auto physique_it: GAME.physics) {
+			for (auto physique_it: LEVEL.physics) {
 				IF(physique_it.first->pre_step)(*physique_it.first);
 			}
 			GAME.execute_deferred_actions();
 			////////////////////////////// CHARACTER ///////////////////////////////
-			for (auto character_it: GAME.characters) {
+			for (auto character_it: LEVEL.characters) {
 				auto &chr = get_character_base(*character_it.first);
 				chr.automatic_update();
 			}
-			for (auto character_it: GAME.characters) {
+			for (auto character_it: LEVEL.characters) {
 				auto &chr = get_character_base(*character_it.first);
 				IF(chr.update)(chr);
 			}
 			GAME.execute_deferred_actions();
 			/////////////////////////////// PHYSICS ////////////////////////////////
-			if (GAME.world) {
-				GAME.world->Step(GAME.phy_period, GAME.velocityIterations, GAME.positionIterations);
+			if (LEVEL.world) {
+				LEVEL.world->Step(GAME.phy_period, GAME.velocityIterations, GAME.positionIterations);
 				// Update positions
-				for (auto physique_it: GAME.physics) {
+				for (auto physique_it: LEVEL.physics) {
 					auto &phy = *physique_it.first;
 					if (phy.body) {
 						auto &object = phy.parent();
 						auto old_pos = object.position;
 						object.position = m2::Vec2f{phy.body->GetPosition()};
 						if (old_pos != object.position) {
-							GAME.draw_list.queue_update(phy.object_id, object.position);
+							LEVEL.draw_list.queue_update(phy.object_id, object.position);
 						}
 					}
 				}
 			}
-			GAME.draw_list.update();
+			LEVEL.draw_list.update();
 			/////////////////////////////// POST-PHY ///////////////////////////////
-			for (auto physique_it: GAME.physics) {
+			for (auto physique_it: LEVEL.physics) {
 				IF(physique_it.first->post_step)(*physique_it.first);
 			}
 			GAME.execute_deferred_actions();
@@ -198,44 +198,44 @@ int main(int argc, char **argv) {
 		GAME.deltaTicks_ms = sdl::get_ticks(prev_gfx_ticks, pause_ticks, 1) - prev_gfx_ticks;
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prev_gfx_ticks += GAME.deltaTicks_ms;
-		for (auto graphic_if : GAME.graphics) {
+		for (auto graphic_if : LEVEL.graphics) {
 			IF(graphic_if.first->pre_draw)(*graphic_if.first);
 		}
 		////////////////////////////////// HUD /////////////////////////////////
-		IF(GAME.leftHudUIState)->update_contents();
-		IF(GAME.rightHudUIState)->update_contents();
+		IF(LEVEL.leftHudUIState)->update_contents();
+		IF(LEVEL.rightHudUIState)->update_contents();
 		///////////////////////////////// CLEAR ////////////////////////////////
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderClear(GAME.sdlRenderer);
 		//////////////////////////////// TERRAIN ///////////////////////////////
-        for (auto graphic_it : GAME.terrainGraphics) {
+        for (auto graphic_it : LEVEL.terrainGraphics) {
 			IF(graphic_it.first->on_draw)(*graphic_it.first);
         }
 		//////////////////////////////// OBJECTS ///////////////////////////////
-		for (const auto& gfx_id : GAME.draw_list) {
-			auto& gfx = GAME.graphics[gfx_id];
+		for (const auto& gfx_id : LEVEL.draw_list) {
+			auto& gfx = LEVEL.graphics[gfx_id];
 			IF(gfx.on_draw)(gfx);
 		}
 		//////////////////////////////// LIGHTS ////////////////////////////////
-        for (auto light_it : GAME.lights) {
+        for (auto light_it : LEVEL.lights) {
 			IF(light_it.first->on_draw)(*light_it.first);
         }
 		//////////////////////////////// EFFECTS ///////////////////////////////
-		for (auto gfx_it : GAME.terrainGraphics) {
+		for (auto gfx_it : LEVEL.terrainGraphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
-		for (auto gfx_it : GAME.graphics) {
+		for (auto gfx_it : LEVEL.graphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
 #ifdef DEBUG
 		// Draw debug shapes
-		for (auto physique_it : GAME.physics) {
+		for (auto physique_it : LEVEL.physics) {
 			physique_it.first->draw_debug_shapes();
 		}
 #endif
 		////////////////////////////////// HUD /////////////////////////////////
-		IF(GAME.leftHudUIState)->draw();
-		IF(GAME.rightHudUIState)->draw();
+		IF(LEVEL.leftHudUIState)->draw();
+		IF(LEVEL.rightHudUIState)->draw();
 		/////////////////////////////// ENVELOPER //////////////////////////////
 		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
 		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.topEnvelopeRect);
@@ -245,7 +245,7 @@ int main(int argc, char **argv) {
 		//////////////////////////////// PRESENT ///////////////////////////////
 		SDL_RenderPresent(GAME.sdlRenderer);
 		/////////////////////////////// POST-GFX ///////////////////////////////
-		for (auto graphic_if : GAME.graphics) {
+		for (auto graphic_if : LEVEL.graphics) {
 			IF(graphic_if.first->post_draw)(*graphic_if.first);
 		}
 		++gfx_draw_count;

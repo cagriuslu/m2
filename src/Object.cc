@@ -41,32 +41,32 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 }
 
 m2::Object::~Object() {
-	auto id = GAME.objects.get_id(this);
+	auto id = LEVEL.objects.get_id(this);
 	if (_group_id) {
-		GAME.groups[_group_id]->remove_member(_index_in_group);
+		LEVEL.groups[_group_id]->remove_member(_index_in_group);
 	}
 	if (_physique_id) {
-		GAME.physics.free(_physique_id);
+		LEVEL.physics.free(_physique_id);
 		_physique_id = 0;
 	}
 	if (_graphic_id) {
-		GAME.draw_list.remove(id);
-		GAME.graphics.free(_graphic_id);
+		LEVEL.draw_list.remove(id);
+		LEVEL.graphics.free(_graphic_id);
 		_graphic_id = 0;
 	}
 	if (_terrain_graphic_id) {
-		GAME.terrainGraphics.free(_terrain_graphic_id);
+		LEVEL.terrainGraphics.free(_terrain_graphic_id);
 		_terrain_graphic_id = 0;
 	}
     if (_character_id) {
-        GAME.characters.free(_character_id);
+		LEVEL.characters.free(_character_id);
         _character_id = 0;
     }
 }
 
 m2::ObjectId m2::Object::id() const {
 	// Looking up the id of the object itself is not very common
-	return GAME.objects.get_id(this);
+	return LEVEL.objects.get_id(this);
 }
 m2::ObjectId m2::Object::parent_id() const {
     return _parent_id;
@@ -91,25 +91,25 @@ m2::CharacterId m2::Object::character_id() const {
 }
 
 m2::Object* m2::Object::parent() const {
-    return _parent_id ? GAME.objects.get(_parent_id) : nullptr;
+    return _parent_id ? LEVEL.objects.get(_parent_id) : nullptr;
 }
 m2::Group* m2::Object::group() const {
-	return _group_id ? GAME.groups[_group_id].get() : nullptr;
+	return _group_id ? LEVEL.groups[_group_id].get() : nullptr;
 }
 m2::Physique& m2::Object::physique() const {
-	return GAME.physics[_physique_id];
+	return LEVEL.physics[_physique_id];
 }
 m2::Graphic& m2::Object::graphic() const {
-	return GAME.graphics[_graphic_id];
+	return LEVEL.graphics[_graphic_id];
 }
 m2::Graphic& m2::Object::terrain_graphic() const {
-	return GAME.terrainGraphics[_terrain_graphic_id];
+	return LEVEL.terrainGraphics[_terrain_graphic_id];
 }
 m2::Light& m2::Object::light() const {
-	return GAME.lights[_light_id];
+	return LEVEL.lights[_light_id];
 }
 m2::Character& m2::Object::character() const {
-    auto& it = GAME.characters[_character_id];
+    auto& it = LEVEL.characters[_character_id];
     return get_character_base(it);
 }
 
@@ -119,56 +119,56 @@ void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 }
 
 m2::Physique& m2::Object::add_physique() {
-	auto physique_pair = GAME.physics.alloc();
+	auto physique_pair = LEVEL.physics.alloc();
 	_physique_id = physique_pair.second;
 	physique_pair.first = Physique{id()};
 	return physique_pair.first;
 }
 m2::Graphic& m2::Object::add_graphic() {
-	auto graphic_pair = GAME.graphics.alloc();
+	auto graphic_pair = LEVEL.graphics.alloc();
 	_graphic_id = graphic_pair.second;
 	graphic_pair.first = Graphic{id()};
-	GAME.draw_list.insert(id());
+	LEVEL.draw_list.insert(id());
 	return graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
-	auto graphic_pair = GAME.graphics.alloc();
+	auto graphic_pair = LEVEL.graphics.alloc();
 	_graphic_id = graphic_pair.second;
 	graphic_pair.first = Graphic{id(), sprite};
-	GAME.draw_list.insert(id());
+	LEVEL.draw_list.insert(id());
 	return graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
-	auto terrain_graphic_pair = GAME.terrainGraphics.alloc();
+	auto terrain_graphic_pair = LEVEL.terrainGraphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;
 	terrain_graphic_pair.first = Graphic{id(), sprite};
 	return terrain_graphic_pair.first;
 }
 m2::Light& m2::Object::add_light() {
-	auto light_pair = GAME.lights.alloc();
+	auto light_pair = LEVEL.lights.alloc();
 	_light_id = light_pair.second;
 	light_pair.first = Light{id()};
 	return light_pair.first;
 }
 m2::Character& m2::Object::add_tiny_character() {
-    auto character_pair = GAME.characters.alloc();
+    auto character_pair = LEVEL.characters.alloc();
     _character_id = character_pair.second;
     character_pair.first = TinyCharacter{id()};
     return std::get<TinyCharacter>(character_pair.first);
 }
 m2::Character& m2::Object::add_full_character() {
-    auto character_pair = GAME.characters.alloc();
+    auto character_pair = LEVEL.characters.alloc();
     _character_id = character_pair.second;
     character_pair.first = FullCharacter{id()};
     return std::get<FullCharacter>(character_pair.first);
 }
 
 std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position, ObjectId parent_id) {
-    return GAME.objects.alloc(position, parent_id);
+    return LEVEL.objects.alloc(position, parent_id);
 }
 
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {
 	return [id]() {
-		GAME.objects.free(id);
+		LEVEL.objects.free(id);
 	};
 }
