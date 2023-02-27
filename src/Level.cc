@@ -53,13 +53,16 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 		for (int x = 0; x < _lb->background_rows(y).items_size(); ++x) {
 			auto sprite_type = _lb->background_rows(y).items(x);
 			if (sprite_type) {
+                LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
 				auto [tile_obj, tile_id] = obj::create_tile(Vec2f{x, y} + Vec2f{0.5f, 0.5f}, GAME.sprites[sprite_type]);
 				m2g::post_tile_create(tile_obj, sprite_type);
+                LOG_TRACE("Created tile", tile_id);
 			}
 		}
 	}
 	// Create foreground objects
 	for (const auto& fg_object : _lb->objects()) {
+        LOGF_TRACE("Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(), fg_object.position().y());
 		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()} + Vec2f{0.5f, 0.5f});
 
 		// Assign to group
@@ -79,6 +82,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 
 		auto load_result = m2g::fg_object_loader(obj, fg_object.type());
 		m2_reflect_failure(load_result);
+        LOG_TRACE("Created object", id);
 	}
 	// Init pathfinder map
 	pathfinder = Pathfinder{*_lb};

@@ -122,6 +122,7 @@ m2::Physique& m2::Object::add_physique() {
 	auto physique_pair = LEVEL.physics.alloc();
 	_physique_id = physique_pair.second;
 	physique_pair.first = Physique{id()};
+    LOG_TRACE("Added physique component", _physique_id);
 	return physique_pair.first;
 }
 m2::Graphic& m2::Object::add_graphic() {
@@ -129,6 +130,7 @@ m2::Graphic& m2::Object::add_graphic() {
 	_graphic_id = graphic_pair.second;
 	graphic_pair.first = Graphic{id()};
 	LEVEL.draw_list.insert(id());
+    LOG_TRACE("Added graphic component", _graphic_id);
 	return graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
@@ -136,30 +138,35 @@ m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
 	_graphic_id = graphic_pair.second;
 	graphic_pair.first = Graphic{id(), sprite};
 	LEVEL.draw_list.insert(id());
+    LOG_TRACE("Added graphic component", _graphic_id);
 	return graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
 	auto terrain_graphic_pair = LEVEL.terrainGraphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;
 	terrain_graphic_pair.first = Graphic{id(), sprite};
+    LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return terrain_graphic_pair.first;
 }
 m2::Light& m2::Object::add_light() {
 	auto light_pair = LEVEL.lights.alloc();
 	_light_id = light_pair.second;
 	light_pair.first = Light{id()};
+    LOG_TRACE("Added light component", _light_id);
 	return light_pair.first;
 }
 m2::Character& m2::Object::add_tiny_character() {
     auto character_pair = LEVEL.characters.alloc();
     _character_id = character_pair.second;
     character_pair.first = TinyCharacter{id()};
+    LOG_TRACE("Added tiny character", _character_id);
     return std::get<TinyCharacter>(character_pair.first);
 }
 m2::Character& m2::Object::add_full_character() {
     auto character_pair = LEVEL.characters.alloc();
     _character_id = character_pair.second;
     character_pair.first = FullCharacter{id()};
+    LOG_TRACE("Added full character", _character_id);
     return std::get<FullCharacter>(character_pair.first);
 }
 

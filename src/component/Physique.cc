@@ -10,12 +10,14 @@
 
 m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
 
-m2::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), body(other.body), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
+m2::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), pre_step(std::move(other.pre_step)), post_step(std::move(other.post_step)), body(other.body), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
     other.body = nullptr;
 }
 
 m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     std::swap(object_id, other.object_id);
+    std::swap(pre_step, other.pre_step);
+    std::swap(post_step, other.post_step);
     std::swap(body, other.body);
 	std::swap(on_collision, other.on_collision);
 	std::swap(off_collision, other.off_collision);
