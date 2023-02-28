@@ -45,6 +45,10 @@ namespace m2::box2d {
     b2AABB expand_aabb(const b2AABB& in, float amount);
 
 	pb::BodyBlueprint example_bullet_body_blueprint();
+
+	/// b2Vec2 object's default constructor does not zero-initialize
+	/// Provide our own.
+	inline b2Vec2 vec2_zero() { return b2Vec2{0.0f, 0.0f}; }
 }
 
 #endif //M2_BOX2D_UTILS_H

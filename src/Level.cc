@@ -12,6 +12,7 @@
 #include <m2/object/Pointer.h>
 #include <m2/object/Placeholder.h>
 #include <m2/protobuf/Utils.h>
+#include <m2/box2d/Utils.h>
 #include <m2/Game.h>
 #include <filesystem>
 #include <iterator>
@@ -44,7 +45,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 		_lb = std::get<pb::Level>(level_path_or_blueprint);
 	}
 
-	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : b2Vec2{});
+	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
 	contactListener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
 	world->SetContactListener(contactListener);
 

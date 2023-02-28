@@ -5,10 +5,8 @@
 #include <m2g/Ui.h>
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
-#include <m2/Map2i.h>
 #include <cstdlib>
 
 using namespace m2;
@@ -161,7 +159,9 @@ int main(int argc, char **argv) {
 			GAME.execute_deferred_actions();
 			/////////////////////////////// PHYSICS ////////////////////////////////
 			if (LEVEL.world) {
+				LOGF_TRACE("Stepping world %f seconds...", GAME.phy_period);
 				LEVEL.world->Step(GAME.phy_period, GAME.velocityIterations, GAME.positionIterations);
+				LOG_TRACE("World stepped");
 				// Update positions
 				for (auto physique_it: LEVEL.physics) {
 					auto &phy = *physique_it.first;
