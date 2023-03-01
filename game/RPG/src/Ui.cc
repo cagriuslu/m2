@@ -41,7 +41,7 @@ const Blueprint m2g::ui::entry = {
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
 		Blueprint::Widget{
-			.x = 45, .y = 0, .w = 10, .h = 10,
+			.x = 40, .y = 0, .w = 20, .h = 10,
 			.background_color = {20, 20, 20, 255},
 			.variant = entry_variant_0
 		},

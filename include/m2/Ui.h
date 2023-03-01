@@ -67,6 +67,12 @@ namespace m2::ui {
 				int initial_value;
 				std::function<Action(int value)> action_callback;
 			};
+			struct CheckboxWithText {
+				std::string text;
+				bool initial_state;
+				std::function<Action(bool state)> action_callback;
+				SDL_Scancode kb_shortcut;
+			};
 
 			unsigned x{}, y{}, w{}, h{}; // unitless
 			unsigned border_width_px{};
@@ -81,7 +87,8 @@ namespace m2::ui {
 				TextInput,
 				ImageSelection,
 				TextSelection,
-				IntegerSelection>;
+				IntegerSelection,
+				CheckboxWithText>;
 			Variant variant;
 		};
 
@@ -177,6 +184,14 @@ namespace m2::ui {
 			explicit IntegerSelection(const Blueprint::Widget* blueprint);
 			~IntegerSelection() override;
 			Action handle_events(Events& events) override;
+			void draw() override;
+		};
+		struct CheckboxWithText : public AbstractButton {
+			bool state;
+			SDL_Texture* font_texture;
+
+			explicit CheckboxWithText(const Blueprint::Widget* blueprint);
+			~CheckboxWithText() override;
 			void draw() override;
 		};
 		struct NestedUi : public Widget {

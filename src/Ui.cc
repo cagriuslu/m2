@@ -77,6 +77,7 @@ State::AbstractButton::AbstractButton(const Blueprint::Widget *blueprint) :
 				std::visit(overloaded {
 						[](const Blueprint::Widget::Text& v) -> SDL_Scancode { return v.kb_shortcut; },
 						[](const Blueprint::Widget::Image& v) -> SDL_Scancode { return v.kb_shortcut; },
+						[](const Blueprint::Widget::CheckboxWithText& v) -> SDL_Scancode { return v.kb_shortcut; },
 						[](const auto& v) -> SDL_Scancode { (void)v; return SDL_SCANCODE_UNKNOWN; }
 				}, blueprint->variant)
 		),
@@ -97,7 +98,13 @@ Action State::AbstractButton::handle_events(Events &events) {
 		return std::visit(overloaded {
 				[](const Blueprint::Widget::Text& v) { return v.action_callback ? v.action_callback() : Action::CONTINUE; },
 				[](const Blueprint::Widget::Image& v) { return v.action_callback ? v.action_callback() : Action::CONTINUE; },
-				[](const auto& v) { (void)v; return Action::CONTINUE; }
+				[&](const Blueprint::Widget::CheckboxWithText& v) {
+					// Overloading handle_events for CheckboxWithText is too much work, do it here
+					auto checkbox_with_text_state = dynamic_cast<State::CheckboxWithText*>(this);
+					checkbox_with_text_state->state = !checkbox_with_text_state->state;
+					return v.action_callback ? v.action_callback(checkbox_with_text_state->state) : Action::CONTINUE;
+				},
+				[](MAYBE const auto& v) { return Action::CONTINUE; }
 		}, blueprint->variant);
 	} else {
 		return Action::CONTINUE;
@@ -204,8 +211,7 @@ void State::ProgressBar::draw() {
 			(int)roundf((float)rect_px.w * progress),
 			rect_px.h
 	};
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g,
-						   pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
+	SDL_SetRenderDrawColor(GAME.sdlRenderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g, pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
 	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);
 	// Foreground
 	State::draw_border(rect_px, blueprint->border_width_px);
@@ -476,8 +482,35 @@ void State::IntegerSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
+State::CheckboxWithText::CheckboxWithText(const Blueprint::Widget *blueprint) : AbstractButton(blueprint), state(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).initial_state), font_texture(generate_font_texture(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).text)) {}
+State::CheckboxWithText::~CheckboxWithText() {
+	if (font_texture) {
+		SDL_DestroyTexture(font_texture);
+	}
+}
+void State::CheckboxWithText::draw() {
+	// Background
+	State::draw_background_color(rect_px, blueprint->background_color);
+	// Checkbox
+	auto filled_dstrect = SDL_Rect{rect_px.x, rect_px.y, rect_px.h, rect_px.h};
+	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);
+	if (!state) {
+		auto empty_dstrect = SDL_Rect{rect_px.x + 1, rect_px.y + 1, rect_px.h - 2, rect_px.h - 2};
+		SDL_SetRenderDrawColor(GAME.sdlRenderer, blueprint->background_color.r, blueprint->background_color.g, blueprint->background_color.b, blueprint->background_color.a);
+		SDL_RenderFillRect(GAME.sdlRenderer, &empty_dstrect);
+	}
+	// Text
+	auto text_rect = Rect2i{rect_px};
+	draw_text((SDL_Rect)text_rect.trim_left(rect_px.h).trim((int)blueprint->padding_width_px), *font_texture, TextAlignment::LEFT);
+	// Border
+	State::draw_border(rect_px, blueprint->border_width_px);
+}
+
 void State::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) {
-    if (color.a == 0) {
+    if (!color.r && !color.g && !color.b && !color.a) {
+		// If the color is all zeros, user probably didn't initialize the Color at all
+		// Paint background to default background color
         SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
     } else {
         SDL_SetRenderDrawColor(GAME.sdlRenderer, color.r, color.g, color.b, color.a);
@@ -547,6 +580,8 @@ std::unique_ptr<State::Widget> State::create_widget_state(const Blueprint::Widge
 		state = std::make_unique<State::TextSelection>(&blueprint);
 	} else if (std::holds_alternative<Blueprint::Widget::IntegerSelection>(blueprint.variant)) {
 		state = std::make_unique<State::IntegerSelection>(&blueprint);
+	} else if (std::holds_alternative<Blueprint::Widget::CheckboxWithText>(blueprint.variant)) {
+		state = std::make_unique<State::CheckboxWithText>(&blueprint);
 	} else {
 		throw M2FATAL("Implementation");
 	}
