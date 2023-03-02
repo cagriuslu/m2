@@ -208,7 +208,7 @@ std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_
 	return sprites_vector;
 }
 
-std::vector<m2g::pb::SpriteType> m2::list_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets) {
+std::vector<m2g::pb::SpriteType> m2::list_level_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets) {
 	std::vector<m2g::pb::SpriteType> sprites_vector;
 
 	for (const auto& sprite_sheet : sprite_sheets) {
@@ -222,7 +222,7 @@ std::vector<m2g::pb::SpriteType> m2::list_editor_background_sprites(const std::v
 	return sprites_vector;
 }
 
-std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_editor_object_sprites(const std::string& objects_path) {
+std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_sprites(const std::string& objects_path) {
 	auto objects = proto::json_file_to_message<pb::Objects>(objects_path);
 	if (!objects) {
 		throw M2ERROR(objects.error());
@@ -239,8 +239,8 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_editor_object_sprite
 		}
 		has_encountered[object.type()] = true;
 
-		if (object.editor_sprite_type()) {
-			object_sprite_map[object.type()] = object.editor_sprite_type();
+		if (object.level_editor_sprite_type()) {
+			object_sprite_map[object.type()] = object.level_editor_sprite_type();
 		}
 	}
 

@@ -670,17 +670,17 @@ const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::Text
 	        ss = std::stringstream();
 	        GAME.console_output.emplace_back(">> " + command);
 
-            if (std::regex_match(command, std::regex{"editor(\\s.*)?"})) {
+            if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
 				std::smatch match_results;
-				if (std::regex_match(command, match_results, std::regex{"editor\\s+(.+)"})) {
-					auto load_result = GAME.load_editor(match_results.str(1));
+				if (std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
+					auto load_result = GAME.load_level_editor(match_results.str(1));
 					if (load_result) {
 						return Action::RETURN;
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
-					GAME.console_output.emplace_back("editor usage:");
-					GAME.console_output.emplace_back(".. file_name - open editor with file" );
+					GAME.console_output.emplace_back("ledit usage:");
+					GAME.console_output.emplace_back(".. file_name - open level editor with file" );
 				}
 				return Action::CONTINUE;
 			} else if (command == "quit") {
@@ -691,7 +691,7 @@ const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::Text
 				GAME.console_output.emplace_back("Hello!");
 	            GAME.console_output.emplace_back("Available commands:");
 	            GAME.console_output.emplace_back("help - display this help");
-	            GAME.console_output.emplace_back("editor - open editor");
+	            GAME.console_output.emplace_back("ledit - open level editor");
 	            GAME.console_output.emplace_back("quit - quit game");
             }
 

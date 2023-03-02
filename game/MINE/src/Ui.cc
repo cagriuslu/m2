@@ -38,7 +38,7 @@ static Blueprint::Widget::Variant entry_variant_1 = Blueprint::Widget::Text{
 				}
 			}
 
-			GAME.load_level(lb);
+			GAME.load_single_player(lb);
 			return Action::RETURN;
 		},
 		.kb_shortcut = SDL_SCANCODE_R
@@ -46,7 +46,7 @@ static Blueprint::Widget::Variant entry_variant_1 = Blueprint::Widget::Text{
 static Blueprint::Widget::Variant entry_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "NEW GAME",
 	.action_callback = []() {
-		auto success = GAME.load_level("resource/game/MINE/levels/sp000.json");
+		auto success = GAME.load_single_player("resource/game/MINE/levels/sp000.json");
 		if (!success) {
 			LOG_ERROR("Unable to load level", success.error());
 		}

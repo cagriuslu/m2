@@ -5,11 +5,11 @@
     },
     {
       "type": "PLAYER",
-      "editorSpriteType": "PLAYER_LOOKDOWN_00"
+      "levelEditorSpriteType": "PLAYER_LOOKDOWN_00"
     },
     {
       "type": "SKELETON",
-      "editorSpriteType": "ENEMY_LOOKDOWN_00"
+      "levelEditorSpriteType": "ENEMY_LOOKDOWN_00"
     }
   ]
 }

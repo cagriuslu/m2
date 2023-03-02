@@ -5,11 +5,11 @@
     },
     {
       "type": "DWARF",
-      "editor_sprite_type": "DWARF_FULL"
+      "levelEditorSpriteType": "DWARF_FULL"
     },
     {
       "type": "BLACKSMITH",
-      "editor_sprite_type": "BLACKSMITH_FULL"
+      "levelEditorSpriteType": "BLACKSMITH_FULL"
     }
   ]
 }

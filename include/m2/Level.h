@@ -18,7 +18,7 @@ namespace m2 {
 		enum class Type {
 			NO_TYPE,
 			SINGLE_PLAYER,
-			EDITOR
+			LEVEL_EDITOR
 		};
 
 	private:
@@ -50,41 +50,45 @@ namespace m2 {
 		std::optional<Pathfinder> pathfinder;
 		std::optional<ui::State> leftHudUIState, rightHudUIState;
 		std::vector<std::function<void(void)>> deferred_actions;
-
 		VoidValue init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint);
-		VoidValue init_editor(const FilePath& lb_path);
 
-		// Editor
-		enum class EditorMode {
-			NONE,
-			PAINT,
-			ERASE,
-			PLACE,
-			REMOVE
-		} editor_mode{};
-		void activate_mode(EditorMode mode);
-		// Editor members
-		std::unordered_map<Vec2i, Id, Vec2iHash> editor_bg_placeholders;
-		std::unordered_map<Vec2i, Id, Vec2iHash> editor_fg_placeholders;
-		m2g::pb::SpriteType editor_paint_mode_selected_sprite_type{};
-		// Paint mode
-		Id editor_paint_or_place_mode_selected_sprite_ghost_id{};
-		void editor_paint_mode_select_sprite_type(m2g::pb::SpriteType sprite_type);
-		void editor_paint_mode_paint_sprite(const Vec2i& position);
-		// Erase mode
-		void editor_erase_mode_erase_position(const Vec2i& position);
-		// Place mode
-		m2g::pb::ObjectType editor_place_mode_selected_object_type{};
-		m2g::pb::GroupType editor_place_mode_selected_group_type{};
-		unsigned editor_place_mode_selected_group_instance{};
-		void editor_place_mode_select_object_type(m2g::pb::ObjectType object_type);
-		void editor_place_mode_select_group_type(m2g::pb::GroupType group_type);
-		void editor_place_mode_select_group_instance(unsigned group_instance);
-		void editor_place_mode_place_object(const Vec2i& position);
-		// Remove mode
-		void editor_remove_mode_remove_object(const Vec2i& position);
-		// Save
-		void editor_save();
+		struct LevelEditorState {
+			struct PaintMode {
+				m2g::pb::SpriteType selected_sprite_type{};
+				Id selected_sprite_ghost_id{};
+				void select_sprite_type(m2g::pb::SpriteType sprite_type);
+				void paint_sprite(const Vec2i& position);
+			};
+			struct EraseMode {
+				void erase_position(const Vec2i& position);
+			};
+			struct PlaceMode {
+				Id selected_sprite_ghost_id{};
+				m2g::pb::ObjectType selected_object_type{};
+				m2g::pb::GroupType selected_group_type{};
+				unsigned selected_group_instance{};
+				void select_object_type(m2g::pb::ObjectType object_type);
+				void select_group_type(m2g::pb::GroupType group_type);
+				void select_group_instance(unsigned group_instance);
+				void place_object(const Vec2i& position);
+			};
+			struct RemoveMode {
+				void remove_object(const Vec2i& position);
+			};
+
+			std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode> mode;
+			std::unordered_map<Vec2i, Id, Vec2iHash> bg_placeholders;
+			std::unordered_map<Vec2i, Id, Vec2iHash> fg_placeholders;
+
+			void deactivate_mode();
+			void activate_paint_mode();
+			void activate_erase_mode();
+			void activate_place_mode();
+			void activate_remove_mode();
+			static void save();
+		};
+		std::optional<LevelEditorState> level_editor_state;
+		VoidValue init_level_editor(const FilePath& lb_path);
 
 		// Accessors
 		inline Object* player() { return objects.get(playerId); }

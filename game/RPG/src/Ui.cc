@@ -26,7 +26,7 @@ static Blueprint::Widget::Variant entry_variant_1 = Blueprint::Widget::Image{
 static Blueprint::Widget::Variant entry_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "NEW GAME",
 	.action_callback = []() {
-		GAME.load_level("resource/game/RPG/levels/sp000.json");
+		GAME.load_single_player("resource/game/RPG/levels/sp000.json");
 		return Action::RETURN;
 	},
 	.kb_shortcut = SDL_SCANCODE_N

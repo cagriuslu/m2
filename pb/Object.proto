@@ -6,7 +6,7 @@ import "SpriteType.proto";
 
 message Object {
   m2g.pb.ObjectType type = 1;
-  m2g.pb.SpriteType editor_sprite_type = 3;
+  m2g.pb.SpriteType level_editor_sprite_type = 3;
 }
 
 message Objects {

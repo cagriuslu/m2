@@ -21,24 +21,15 @@ m2::Id m2::obj::create_god() {
 		obj.position += move_direction.normalize() * ((float)GAME.deltaTime_s * 10.0f);
 
 		Vec2i mouse_coordinates;
-		if (LEVEL.editor_mode != Level::EditorMode::NONE && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) &&
+		if (!std::holds_alternative<std::monostate>(LEVEL.level_editor_state->mode) && GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) &&
 			!(mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround()).is_negative()) {
-			switch (LEVEL.editor_mode) {
-				case Level::EditorMode::PAINT:
-					LEVEL.editor_paint_mode_paint_sprite(mouse_coordinates);
-					break;
-				case Level::EditorMode::ERASE:
-					LEVEL.editor_erase_mode_erase_position(mouse_coordinates);
-					break;
-				case Level::EditorMode::PLACE:
-					LEVEL.editor_place_mode_place_object(mouse_coordinates);
-					break;
-				case Level::EditorMode::REMOVE:
-					LEVEL.editor_remove_mode_remove_object(mouse_coordinates);
-					break;
-				default:
-					break;
-			}
+			std::visit(m2::overloaded {
+					[=](Level::LevelEditorState::PaintMode& v) { v.paint_sprite(mouse_coordinates); },
+					[=](Level::LevelEditorState::EraseMode& v) { v.erase_position(mouse_coordinates); },
+					[=](Level::LevelEditorState::PlaceMode& v) { v.place_object(mouse_coordinates); },
+					[=](Level::LevelEditorState::RemoveMode& v) { v.remove_object(mouse_coordinates); },
+					[](MAYBE auto& v) {}
+			}, LEVEL.level_editor_state->mode);
 		}
 	};
 	return id;
