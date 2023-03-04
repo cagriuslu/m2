@@ -6,7 +6,7 @@ size_t m2::synth::beat_sample_count(SynthBpm bpm, const pb::Rational& beats, uns
 	// SampleRate * beats * SecondsPerBeat
 	return sample_rate * beats.n() * 60 / beats.d() / bpm;
 }
-size_t m2::synth::beat_step_count(const pb::Rational& beats, int32_t max_denominator) {
+size_t m2::synth::beat_step_count(const pb::Rational& beats, int64_t max_denominator) {
 	auto step_count = (Rational{beats} * max_denominator).simplify();
 	if (step_count.d() != 1) {
 		throw M2FATAL("Implementation error");
@@ -22,8 +22,8 @@ m2::Rational m2::synth::track_beat_count(const pb::SynthTrack& track) {
 	}
 	return total_duration;
 }
-int32_t m2::synth::track_max_denominator(const pb::SynthTrack& track) {
-	int32_t max_denominator = 1;
+int64_t m2::synth::track_max_denominator(const pb::SynthTrack& track) {
+	int64_t max_denominator = 1;
 	for (const auto& note : track.notes()) {
 		auto start_denominator = Rational{note.start_beat()}.simplify().d();
 		auto duration_denominator = Rational{note.duration()}.simplify().d();
@@ -46,8 +46,8 @@ m2::Rational m2::synth::song_beat_count(const pb::SynthSong& song) {
 	}
 	return max_beat_count;
 }
-int32_t m2::synth::song_max_denominator(const pb::SynthSong& song) {
-	int32_t max_max_denominator = 1;
+int64_t m2::synth::song_max_denominator(const pb::SynthSong& song) {
+	int64_t max_max_denominator = 1;
 	for (const auto& track : song.tracks()) {
 		max_max_denominator = std::max(max_max_denominator, track_max_denominator(track));
 	}
