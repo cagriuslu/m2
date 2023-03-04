@@ -28,12 +28,12 @@ namespace m2::synth {
 			auto note_start_it = first + sample_index_of_note;
 
 			ForwardIterator step_it = note_start_it;
-			float step_phase = 0.0f;
+			Rational step_fraction_of_cycle;
 			for (auto i = first_step_index_of_note; i < note_duration_in_steps; ++i) {
 				auto samples_left_in_buffer = static_cast<size_t>(last - step_it);
 				auto step_last_it = step_it + std::min(step_sample_count, samples_left_in_buffer);
 
-				step_phase = generate_sound(step_it, step_last_it, steps[i]++, track.sound(), note.frequency(), track.volume() * note.volume() * volume, step_phase);
+				step_fraction_of_cycle = generate_sound(step_it, step_last_it, steps[i]++, track.sound(), note.frequency(), track.volume() * note.volume() * volume, step_fraction_of_cycle);
 				if (step_last_it == last) {
 					return last;
 				} else {

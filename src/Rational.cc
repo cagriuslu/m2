@@ -1,4 +1,5 @@
 #include <m2/Rational.h>
+#include <m2/M2.h>
 #include <numeric>
 
 namespace m2::internal {
@@ -14,6 +15,8 @@ m2::Rational simplify(int64_t n, int64_t d) {
 
 }
 
+// Default protobuf object has n=0,d=0. If that's the case, create Rational{0,1}
+m2::Rational::Rational(const pb::Rational& r) : _n(r.n()), _d(!r.n() && !r.d() ? 1 : r.d()) {}
 m2::Rational::Rational(double d) {
 	int64_t precision;
 	{
@@ -73,6 +76,16 @@ m2::Rational::Rational(double d) {
 	*this = internal::simplify(raised, precision);
 }
 
+m2::Rational m2::Rational::simplify() const {
+	return internal::simplify(_n, _d);
+}
+m2::Rational m2::Rational::mod(const Rational& other) const {
+	auto lhs = _n * other._d;
+	auto rhs = _d * other._n;
+	auto mod_result = ((lhs % rhs) + rhs) % rhs;
+	return internal::simplify(mod_result, _d * other._d);
+}
+
 m2::Rational m2::Rational::operator+(const Rational& rhs) const {
 	int64_t n, d;
 	if (_d == rhs._d) {
@@ -84,24 +97,31 @@ m2::Rational m2::Rational::operator+(const Rational& rhs) const {
 	}
 	return internal::simplify(n, d);
 }
-
+m2::Rational& m2::Rational::operator+=(const Rational& rhs) {
+	*this = *this + rhs;
+	return *this;
+}
+m2::Rational m2::Rational::operator*(const Rational& rhs) const {
+	return internal::simplify(_n * rhs._n, _d * rhs._d);
+}
 m2::Rational m2::Rational::operator*(int64_t rhs) const {
 	return internal::simplify(_n * rhs, _d);
 }
-
 m2::Rational m2::Rational::operator/(const Rational& rhs) const {
 	return internal::simplify(_n * rhs._d, _d * rhs._n);
 }
-
-m2::Rational m2::Rational::mod(const Rational& other) const {
-	auto lhs = _n * other._d;
-	auto rhs = _d * other._n;
-	auto mod_result = lhs % rhs;
-	return internal::simplify(mod_result, _d * other._d);
+m2::Rational m2::Rational::operator/(int64_t rhs) const {
+	return internal::simplify(_n, _d * rhs);
 }
 
-[[nodiscard]] m2::Rational m2::Rational::simplify() const {
-	return internal::simplify(_n, _d);
+m2::Rational m2::Rational::pi_mul2() {
+	return Rational{PI_MUL2};
+}
+
+std::string m2::to_string(const Rational& r) {
+	char buffer[20 + 1 + 20 + 1];
+	snprintf(buffer, sizeof(buffer), "%lld/%lld", r.n(), r.d());
+	return buffer;
 }
 
 bool operator==(const m2::Rational& lhs, const m2::Rational& rhs) {

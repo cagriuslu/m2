@@ -13,7 +13,7 @@ enum SoundWaveShape {
 
 message SynthSound {
     SoundWaveShape shape = 1;
-    float phase = 2;     // [0, 2PI), wraps around
+    Rational fraction_of_cycle = 2;  // [0,1), wraps around, used instead of phase
     float amplitude = 3; // [-1, 1], saturates
 }
 

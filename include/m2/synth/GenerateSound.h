@@ -6,21 +6,21 @@
 #include <type_traits>
 
 namespace m2::synth {
-	/// Returns the phase of the last sample.
+	/// Returns the fraction of cycle of the next sample.
 	/// mix_factor = How many signals already exist in the buffer
 	template <typename ForwardIterator, unsigned SampleRate = 48000>
-	float generate_sound(ForwardIterator first, ForwardIterator last, unsigned mix_factor, const pb::SynthSound& sound, float frequency, float volume = 1.0f, float last_phase = 0.0f) {
+	Rational generate_sound(ForwardIterator first, ForwardIterator last, unsigned mix_factor, const pb::SynthSound& sound, float frequency, float volume = 1.0f, Rational next_fraction_of_cycle = {}) {
 		static_assert(std::is_same<SynthSample, std::remove_cvref_t<decltype(*first)>>(), "ForwardIterator does not point to SynthesizerSample or derivative");
 		static_assert(std::is_same<SynthSample, std::remove_cvref_t<decltype(*last)>>(), "ForwardIterator does not point to SynthesizerSample or derivative");
 		internal::validate(sound, frequency);
-		// TODO floating point operations in this function accumulate and disturb the sound
 
-		auto fraction_of_cycle = [=](float t) -> float {
-			return fmodf(frequency * t, 1.0f);
+		const Rational frequency_r{frequency};
+		auto fraction_of_cycle = [=](Rational t) -> Rational {
+			return (frequency_r * t).mod(Rational{1,1});
 		};
 
-		MAYBE auto raw_sample = [=](float t) -> float {
-			auto foc = fraction_of_cycle(t);
+		MAYBE auto raw_sample = [=](Rational t) -> float {
+			auto foc = fraction_of_cycle(t).to_float();
 			switch (sound.shape()) {
 				case pb::SINE:
 					return sinf(PI_MUL2 * foc);
@@ -37,16 +37,14 @@ namespace m2::synth {
 			}
 		};
 
-		auto sample = [=](float t) -> SynthSample {
+		auto sample = [=](Rational t) -> SynthSample {
 			auto rs = raw_sample(t);
 			return sound.amplitude() * volume * rs;
 		};
 
-		auto initial_phase = fmodf(fmodf(last_phase + sound.phase(), PI_MUL2) + PI_MUL2, PI_MUL2); // Initial phase of the signal, combination of sound.phase() and initial_phase. Add 2PI and re-modulate in case the first result is negative.
-		auto initial_t = initial_phase / PI_MUL2 / frequency; // Initial `t` of the signal
-		auto t = initial_t;
-		auto t_step = 1.0f / SampleRate;
-
+		auto initial_fraction_of_cycle = (Rational{sound.fraction_of_cycle()} + next_fraction_of_cycle).mod(Rational{1, 1}); // Initial fraction of cycle
+		auto t = initial_fraction_of_cycle / frequency_r; // Initial `t` of the signal
+		auto t_step = Rational{1,1} / SampleRate; // Step size in time axis
 		if (mix_factor == 0) {
 			for (; first != last; ++first, t += t_step) {
 				*first = sample(t);
@@ -61,7 +59,7 @@ namespace m2::synth {
 				*first = mixed_sample;
 			}
 		}
-		return PI_MUL2 * fraction_of_cycle(t);
+		return fraction_of_cycle(t);
 	}
 }
 
