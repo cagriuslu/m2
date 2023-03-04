@@ -9,7 +9,7 @@ namespace m2::synth {
 	/// Returns the fraction of cycle of the next sample.
 	/// mix_factor = How many signals already exist in the buffer
 	template <typename ForwardIterator, unsigned SampleRate = 48000>
-	Rational generate_sound(ForwardIterator first, ForwardIterator last, unsigned mix_factor, const pb::SynthSound& sound, float frequency, float volume = 1.0f, Rational next_fraction_of_cycle = {}) {
+	Rational generate_sound(ForwardIterator first, ForwardIterator last, const pb::SynthSound& sound, float frequency, float volume = 1.0f, Rational next_fraction_of_cycle = {}) {
 		static_assert(std::is_same<SynthSample, std::remove_cvref_t<decltype(*first)>>(), "ForwardIterator does not point to SynthesizerSample or derivative");
 		static_assert(std::is_same<SynthSample, std::remove_cvref_t<decltype(*last)>>(), "ForwardIterator does not point to SynthesizerSample or derivative");
 		internal::validate(sound, frequency);
@@ -45,19 +45,8 @@ namespace m2::synth {
 		auto initial_fraction_of_cycle = (Rational{sound.fraction_of_cycle()} + next_fraction_of_cycle).mod(Rational{1, 1}); // Initial fraction of cycle
 		auto t = initial_fraction_of_cycle / frequency_r; // Initial `t` of the signal
 		auto t_step = Rational{1,1} / SampleRate; // Step size in time axis
-		if (mix_factor == 0) {
-			for (; first != last; ++first, t += t_step) {
-				*first = sample(t);
-			}
-		} else {
-			for (; first != last; ++first, t += t_step) {
-				auto old_sample = *first;
-				auto old_sample_scaled_up = old_sample * static_cast<float>(mix_factor);
-				auto new_sample = sample(t);
-				auto mixed_sample_scaled_up = old_sample_scaled_up + new_sample;
-				auto mixed_sample = mixed_sample_scaled_up / static_cast<float>(mix_factor + 1);
-				*first = mixed_sample;
-			}
+		for (; first != last; ++first, t += t_step) {
+			*first += sample(t);
 		}
 		return fraction_of_cycle(t);
 	}

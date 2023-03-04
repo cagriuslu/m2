@@ -31,8 +31,11 @@ int64_t m2::synth::track_max_denominator(const pb::SynthTrack& track) {
 	}
 	return max_denominator;
 }
-size_t m2::synth::track_step_count(const pb::SynthTrack& track) {
-	return beat_step_count(track_beat_count(track).to_pb(), track_max_denominator(track));
+size_t m2::synth::track_step_count(const pb::SynthTrack& track, int64_t max_denominator) {
+	if (max_denominator == -1) {
+		max_denominator = track_max_denominator(track);
+	}
+	return beat_step_count(track_beat_count(track).to_pb(), max_denominator);
 }
 size_t m2::synth::track_sample_count(SynthBpm bpm, const pb::SynthTrack& track, unsigned sample_rate) {
 	return beat_sample_count(bpm, track_beat_count(track).to_pb(), sample_rate);
@@ -54,9 +57,10 @@ int64_t m2::synth::song_max_denominator(const pb::SynthSong& song) {
 	return max_max_denominator;
 }
 size_t m2::synth::song_step_count(const pb::SynthSong& song) {
+	auto max_denominator = song_max_denominator(song);
 	size_t max_step_count = 0;
 	for (const auto& track : song.tracks()) {
-		max_step_count = std::max(max_step_count, track_step_count(track));
+		max_step_count = std::max(max_step_count, track_step_count(track, max_denominator));
 	}
 	return max_step_count;
 }

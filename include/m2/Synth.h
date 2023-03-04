@@ -24,7 +24,8 @@ namespace m2 {
 		/// max_denominator is the finest division of the beats in the track
 		int64_t track_max_denominator(const pb::SynthTrack& track);
 		/// Returns the number of steps in the track
-		size_t track_step_count(const pb::SynthTrack& track);
+		/// If max_denominator is -1, track_max_denominator is called to calculate the max_denominator
+		size_t track_step_count(const pb::SynthTrack& track, int64_t max_denominator = -1);
 		/// Returns the number of samples for the given track for a given BPM
 		size_t track_sample_count(SynthBpm bpm, const pb::SynthTrack& track, unsigned sample_rate = 48000);
 

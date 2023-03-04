@@ -14,8 +14,6 @@ namespace m2::synth {
 		static_assert(std::is_same<SynthSample, std::remove_cvref_t<decltype(*last)>>(), "ForwardIterator does not point to SynthesizerSample or derivative");
 		internal::validate(song);
 
-		std::vector<unsigned> steps(song_step_count(song), 0); // Holds mix_factors
-
 		auto max_denominator = song_max_denominator(song);
 		auto step_sample_count = beat_sample_count(song.bpm(), Rational{1, max_denominator}.to_pb(), SampleRate);
 		auto real_last_it = first;
@@ -33,9 +31,9 @@ namespace m2::synth {
 					auto samples_left_in_buffer = static_cast<size_t>(last - step_it);
 					auto step_last_it = step_it + std::min(step_sample_count, samples_left_in_buffer);
 
-					step_fraction_of_cycle = generate_sound(step_it, step_last_it, steps[i]++, track.sound(), note.frequency(), track.volume() * note.volume() * volume, step_fraction_of_cycle);
+					step_fraction_of_cycle = generate_sound(step_it, step_last_it, track.sound(), note.frequency(), track.volume() * note.volume() * volume, step_fraction_of_cycle);
 					if (step_last_it == last) {
-						return last; // Buffer already full
+						break; // Buffer already full
 					} else {
 						step_it = step_last_it;
 					}

@@ -10,29 +10,38 @@
         {
           "startBeat":{
             "n":0,
-            "d":2
+            "d":1
           },
           "duration":{
-            "n":1,
-            "d":2
+            "n":2,
+            "d":1
           },
           "frequency":120,
           "volume":1
-        },
+        }
+      ],
+      "volume":0.25
+    },
+    {
+      "sound":{
+        "shape":"SINE",
+        "amplitude":1
+      },
+      "notes":[
         {
           "startBeat":{
             "n":2,
-            "d":2
+            "d":1
           },
           "duration":{
-            "n":1,
-            "d":8
+            "n":2,
+            "d":1
           },
-          "frequency": 240,
+          "frequency":120,
           "volume":1
         }
       ],
-      "volume":1
+      "volume":0.25
     },
     {
       "sound":{
@@ -43,29 +52,29 @@
         {
           "startBeat":{
             "n":0,
-            "d":2
+            "d":1
           },
           "duration":{
             "n":1,
-            "d":4
+            "d":8
           },
-          "volume":0.25
+          "volume":1
         },
         {
           "startBeat":{
             "n":1,
-            "d":2
+            "d":1
           },
           "duration":{
             "n":1,
-            "d":4
+            "d":8
           },
-          "volume":0.25
+          "volume":1
         },
         {
           "startBeat":{
             "n":2,
-            "d":2
+            "d":1
           },
           "duration":{
             "n":1,
@@ -76,16 +85,16 @@
         {
           "startBeat":{
             "n":3,
-            "d":2
+            "d":1
           },
           "duration":{
             "n":1,
-            "d":4
+            "d":8
           },
-          "volume":0.25
+          "volume":1
         }
       ],
-      "volume":1
+      "volume":0.25
     }
   ]
 }
