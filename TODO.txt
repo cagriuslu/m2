@@ -1,3 +1,4 @@
 - We don't update events during consecutive physics loops, may cause issue with event handling. It is as if mouse is held down longer than usual.
 - b2World'u C++ objesine donustur, otomatik release olsun
 - Genel olarak custom move/copy constructor'larindan kurtul
+- Synth subsystem assumes beat denominators are divisable by each other. max_denominator calculation / step count calculation would be wrong if one beat was 1/3 and another was 1/4
