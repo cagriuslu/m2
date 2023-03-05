@@ -43,7 +43,7 @@ namespace m2 {
 		[[nodiscard]] inline float length() const { return sqrt(length_sq()); }
 		[[nodiscard]] inline float distance_sq(const Vec2f& other) const { return (other - *this).length_sq(); }
 		[[nodiscard]] inline float distance(const Vec2f& other) const { return (other - *this).length(); }
-		[[nodiscard]] inline float angle_rads() const { return atan2(y, x); }
+		[[nodiscard]] inline float angle_rads() const { return atan2f(y, x); }
 
 		[[nodiscard]] inline Vec2f normalize() const { float len = length(); return len != 0.0f ? Vec2f{x / len, y / len} : Vec2f{}; }
 		[[nodiscard]] inline Vec2f ln() const { return {logf(x), logf(y)}; }

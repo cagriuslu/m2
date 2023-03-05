@@ -3,6 +3,7 @@
 
 #include "../Component.h"
 #include "../AudioManager.h"
+#include "../Vec2f.h"
 #include <functional>
 #include <list>
 
@@ -14,6 +15,12 @@ namespace m2 {
 
 		Sound() = default;
 		explicit Sound(Id object_id);
+	};
+
+	struct SoundListener {
+		Vec2f position;
+		float direction{}; // [0,2PI]
+		float listen_angle{PI_MUL2}; // [0,2PI] Minimum angle to omnidirectional hearing
 	};
 }
 

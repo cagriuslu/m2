@@ -2,6 +2,8 @@
 #include <m2/Exception.h>
 #include <m2/Game.h>
 
+m2::AudioManager::Playback::Playback(const AudioSample* _samples, size_t _sample_count, float _volume, PlayPolicy _play_policy, size_t _next_sample) : samples(_samples), sample_count(_sample_count), volume(_volume), play_policy(_play_policy), next_sample(_next_sample) {}
+
 m2::AudioManager::AudioManager() {
 	SDL_AudioSpec want{};
 	want.freq = 48000;
@@ -24,15 +26,25 @@ m2::PlaybackId m2::AudioManager::loop(const AudioSample* samples, size_t sample_
 		throw M2ERROR("Playing multiple tracks not supported");
 	}
 
-	_playbacks.push_back({.playback_id = _next_playback_id++, .samples = samples, .sample_count = sample_count, .volume = volume, .play_policy = LOOP, .next_sample = start_sample});
+	auto playback_id = _next_playback_id++;
+	_playbacks[playback_id] = Playback{samples, sample_count, volume, LOOP, start_sample};
 	SDL_PauseAudioDevice(sdl_audio_device_id, 0);
-	return _playbacks.back().playback_id;
+	return playback_id;
+}
+
+m2::AudioManager::Playback* m2::AudioManager::get_playback(PlaybackId id) {
+	auto it = _playbacks.find(id);
+	if (it != _playbacks.end()) {
+		return &it->second;
+	}
+	return nullptr;
 }
 
 void m2::AudioManager::stop(PlaybackId id) {
-	std::erase_if(_playbacks, [=](const Playback& pb) {
-		return pb.playback_id == id;
-	});
+	auto it = _playbacks.find(id);
+	if (it != _playbacks.end()) {
+		_playbacks.erase(it);
+	}
 	if (_playbacks.empty()) {
 		SDL_PauseAudioDevice(sdl_audio_device_id, 1);
 	}
@@ -43,7 +55,7 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 	auto* out_stream = reinterpret_cast<AudioSample*>(stream);
 	auto out_length = (size_t) length / sizeof(AudioSample); // in samples
 
-	auto& pb = am._playbacks.front();
+	auto& pb = am._playbacks.begin()->second;
 	if (pb.play_policy == ONCE) {
 		throw M2ERROR("Playing audio once not supported");
 	}
@@ -58,7 +70,7 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 		auto begin = pb.samples + pb.next_sample;
 		auto end = begin + count;
 		std::transform(begin, end, out_stream, [pb](const AudioSample& sample) -> AudioSample {
-			return AudioSample{.l = sample.l * pb.volume, .r = sample.r * pb.volume};
+			return AudioSample{.l = sample.l * pb.volume * pb.left_volume(), .r = sample.r * pb.volume * pb.right_volume()};
 		});
 		pb.next_sample = (pb.next_sample + count) % pb.sample_count;
 	};

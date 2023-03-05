@@ -185,6 +185,72 @@ int main(int argc, char **argv) {
 			//////////////////////////// END OF PHYSICS ////////////////////////////
 			////////////////////////////////////////////////////////////////////////
 
+			///////////////////////////////// SOUND ////////////////////////////////
+			if (LEVEL.left_listener || LEVEL.right_listener) {
+				// Loop over sounds
+				for (auto sound_it : LEVEL.sounds) {
+					const auto& sound = *sound_it.first;
+					const auto& sound_position = sound.parent().position;
+
+					// Loop over playbacks
+					for (auto playback_id : sound.playbacks) {
+						auto playback_ptr = GAME.audio_manager->get_playback(playback_id);
+						if (!playback_ptr) {
+							continue;
+						}
+						auto& playback = *playback_ptr;
+
+						// Left listener
+						if (LEVEL.left_listener) {
+							auto listener_position = LEVEL.left_listener->position;
+							auto distance_to_left_listener = sound_position.distance(listener_position);
+							if (distance_to_left_listener <= GAME.max_hearing_distance_m) {
+								// Calculate volume drop-off based on distance
+								auto volume_due_to_distance = std::lerp(0.0f, 1.0f, (GAME.max_hearing_distance_m - distance_to_left_listener) / GAME.max_hearing_distance_m);
+
+								// Check if angle difference to hearing edge is less than zero
+								auto angle_to_sound = (sound_position - listener_position).angle_rads();
+								auto angle_diff_to_sound = fabs(angle_to_sound - LEVEL.left_listener->direction);
+								auto angle_diff_to_hearing_edge = angle_diff_to_sound - LEVEL.left_listener->listen_angle / 2.0f;
+								if (angle_diff_to_hearing_edge <= 0.0f) {
+									// Full hearing, apply distance
+									playback.set_left_volume(volume_due_to_distance);
+								} else {
+									// Apply both distance and angle
+									auto volume_due_to_angle = std::lerp(GAME.min_hearing_facing_away, 1.0f, (PI - angle_diff_to_hearing_edge) / PI);
+									playback.set_left_volume(volume_due_to_distance * volume_due_to_angle);
+								}
+							}
+						}
+
+						// Right listener
+						if (LEVEL.right_listener) {
+							auto listener_position = LEVEL.right_listener->position;
+							auto distance_to_left_listener = sound_position.distance(listener_position);
+							if (distance_to_left_listener <= GAME.max_hearing_distance_m) {
+								// Calculate volume drop-off based on distance
+								auto volume_due_to_distance = std::lerp(0.0f, 1.0f, (GAME.max_hearing_distance_m - distance_to_left_listener) / GAME.max_hearing_distance_m);
+
+								// Check if angle difference to hearing edge is less than zero
+								auto angle_to_sound = (sound_position - listener_position).angle_rads();
+								auto angle_diff_to_sound = fabs(angle_to_sound - LEVEL.right_listener->direction);
+								auto angle_diff_to_hearing_edge = angle_diff_to_sound - LEVEL.right_listener->listen_angle / 2.0f;
+								if (angle_diff_to_hearing_edge <= 0.0f) {
+									// Full hearing, apply distance
+									playback.set_right_volume(volume_due_to_distance);
+								} else {
+									// Apply both distance and angle
+									auto volume_due_to_angle = std::lerp(GAME.min_hearing_facing_away, 1.0f, (PI - angle_diff_to_hearing_edge) / PI);
+									playback.set_right_volume(volume_due_to_distance * volume_due_to_angle);
+								}
+							}
+						}
+					}
+				}
+			}
+			///////////////////////////// END OF SOUND /////////////////////////////
+			////////////////////////////////////////////////////////////////////////
+
 			time_since_last_phy -= GAME.phy_period;
 		}
 		if (prev_phy_step_count == 4) {

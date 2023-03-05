@@ -48,6 +48,7 @@ namespace m2 {
 		b2World *world{};
 		box2d::ContactListener* contactListener{};
 		Id cameraId{}, playerId{}, pointerId{};
+		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
 		std::optional<ui::State> leftHudUIState, rightHudUIState;
 		std::vector<std::function<void(void)>> deferred_actions;
