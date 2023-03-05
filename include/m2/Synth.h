@@ -1,7 +1,7 @@
 #ifndef M2_SYNTH_H
 #define M2_SYNTH_H
 
-#include "Audio.h"
+#include "AudioManager.h"
 #include "Rational.h"
 #include "M2.h"
 #include <Synth.pb.h>

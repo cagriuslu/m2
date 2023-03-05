@@ -16,6 +16,7 @@ m2::Object::Object(Object&& other) noexcept :
 	_graphic_id(other._graphic_id),
 	_terrain_graphic_id(other._terrain_graphic_id),
 	_light_id(other._light_id),
+	_sound_id(other._sound_id),
     _character_id(other._character_id) {
 	other._group_id = {};
 	other._parent_id = 0;
@@ -24,6 +25,7 @@ m2::Object::Object(Object&& other) noexcept :
 	other._graphic_id = 0;
 	other._terrain_graphic_id = 0;
 	other._light_id = 0;
+	other._sound_id = 0;
     other._character_id = 0;
 }
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
@@ -36,6 +38,7 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(_graphic_id, other._graphic_id);
 	std::swap(_terrain_graphic_id, other._terrain_graphic_id);
 	std::swap(_light_id, other._light_id);
+	std::swap(_sound_id, other._sound_id);
 	std::swap(_character_id, other._character_id);
 	return *this;
 }
@@ -57,6 +60,14 @@ m2::Object::~Object() {
 	if (_terrain_graphic_id) {
 		LEVEL.terrainGraphics.free(_terrain_graphic_id);
 		_terrain_graphic_id = 0;
+	}
+	if (_light_id) {
+		LEVEL.lights.free(_light_id);
+		_light_id = 0;
+	}
+	if (_sound_id) {
+		LEVEL.sounds.free(_sound_id);
+		_sound_id = 0;
 	}
     if (_character_id) {
 		LEVEL.characters.free(_character_id);
@@ -86,6 +97,9 @@ m2::GraphicId m2::Object::terrain_graphic_id() const {
 m2::LightId m2::Object::light_id() const {
 	return _light_id;
 }
+m2::SoundId m2::Object::sound_id() const {
+	return _sound_id;
+}
 m2::CharacterId m2::Object::character_id() const {
     return _character_id;
 }
@@ -107,6 +121,9 @@ m2::Graphic& m2::Object::terrain_graphic() const {
 }
 m2::Light& m2::Object::light() const {
 	return LEVEL.lights[_light_id];
+}
+m2::Sound& m2::Object::sound() const {
+	return LEVEL.sounds[_sound_id];
 }
 m2::Character& m2::Object::character() const {
     auto& it = LEVEL.characters[_character_id];
@@ -154,6 +171,13 @@ m2::Light& m2::Object::add_light() {
 	light_pair.first = Light{id()};
     LOG_TRACE("Added light component", _light_id);
 	return light_pair.first;
+}
+m2::Sound& m2::Object::add_sound() {
+	auto sound_pair = LEVEL.sounds.alloc();
+	_sound_id = sound_pair.second;
+	sound_pair.first = Sound{id()};
+	LOG_TRACE("Added sound component", _sound_id);
+	return sound_pair.first;
 }
 m2::Character& m2::Object::add_tiny_character() {
     auto character_pair = LEVEL.characters.alloc();

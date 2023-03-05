@@ -1,13 +1,16 @@
 #ifndef M2_AUDIOMANAGER_H
 #define M2_AUDIOMANAGER_H
 
-#include "Audio.h"
 #include <SDL.h>
-#include <vector>
+#include <list>
 #include <memory>
 
 namespace m2 {
 	using PlaybackId = size_t;
+
+	struct AudioSample {
+		float l{}, r{};
+	};
 
 	class AudioManager {
 		enum PlayPolicy {
@@ -18,6 +21,7 @@ namespace m2 {
 			PlaybackId playback_id{};
 			const AudioSample* samples{};
 			size_t sample_count{};
+			float volume{1.0f};
 			PlayPolicy play_policy{};
 			size_t next_sample{};
 		};
@@ -25,16 +29,16 @@ namespace m2 {
 		SDL_AudioDeviceID sdl_audio_device_id{};
 		SDL_AudioSpec sdl_audio_spec{};
 		PlaybackId _next_playback_id{};
-		std::vector<Playback> _playbacks;
+		std::list<Playback> _playbacks;
 
 	public:
 		AudioManager();
 
-		PlaybackId loop(const AudioSample* samples, size_t sample_count, size_t start_sample);
+		PlaybackId loop(const AudioSample* samples, size_t sample_count, float volume = 1.0f, size_t start_sample = 0);
 		void stop(PlaybackId id);
 
 	private:
-		static void audio_callback(void* user_data, uint8_t* stream, int length);
+		static void audio_callback(void* count, uint8_t* stream, int length);
 	};
 }
 

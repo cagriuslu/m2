@@ -43,6 +43,7 @@ namespace m2 {
 		Pool<Graphic> graphics;
 		Pool<Graphic> terrainGraphics;
 		Pool<Light> lights;
+		Pool<Sound> sounds;
 		Pool<CharacterVariant> characters;
 		b2World *world{};
 		box2d::ContactListener* contactListener{};

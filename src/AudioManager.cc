@@ -19,12 +19,12 @@ m2::AudioManager::AudioManager() {
 	}
 }
 
-m2::PlaybackId m2::AudioManager::loop(const AudioSample* samples, size_t sample_count, size_t start_sample) {
-	if (0 < _playbacks.size()) {
+m2::PlaybackId m2::AudioManager::loop(const AudioSample* samples, size_t sample_count, float volume, size_t start_sample) {
+	if (!_playbacks.empty()) {
 		throw M2ERROR("Playing multiple tracks not supported");
 	}
 
-	_playbacks.push_back({.playback_id = _next_playback_id++, .samples = samples, .sample_count = sample_count, .play_policy = LOOP, .next_sample = start_sample});
+	_playbacks.push_back({.playback_id = _next_playback_id++, .samples = samples, .sample_count = sample_count, .volume = volume, .play_policy = LOOP, .next_sample = start_sample});
 	SDL_PauseAudioDevice(sdl_audio_device_id, 0);
 	return _playbacks.back().playback_id;
 }
@@ -41,7 +41,7 @@ void m2::AudioManager::stop(PlaybackId id) {
 void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, int length) {
 	auto& am = *GAME.audio_manager;
 	auto* out_stream = reinterpret_cast<AudioSample*>(stream);
-	auto out_length = (size_t) length / sizeof(AudioSample);
+	auto out_length = (size_t) length / sizeof(AudioSample); // in samples
 
 	auto& pb = am._playbacks.front();
 	if (pb.play_policy == ONCE) {
@@ -54,16 +54,18 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 		throw M2FATAL("Implementation error");
 	}
 
-	auto copy = [&](size_t len) {
-		memcpy(out_stream, pb.samples + pb.next_sample, len * sizeof(AudioSample));
-		pb.next_sample += len;
-		if (pb.sample_count == pb.next_sample) {
-			pb.next_sample = 0;
-		}
+	auto copy = [&](size_t count) {
+		auto begin = pb.samples + pb.next_sample;
+		auto end = begin + count;
+		std::transform(begin, end, out_stream, [pb](const AudioSample& sample) -> AudioSample {
+			return AudioSample{.l = sample.l * pb.volume, .r = sample.r * pb.volume};
+		});
+		pb.next_sample = (pb.next_sample + count) % pb.sample_count;
 	};
 
 	// First copy
-	auto min_len = std::min(pb.sample_count - pb.next_sample, out_length);
+	auto samples_left_in_buffer = pb.sample_count - pb.next_sample;
+	auto min_len = std::min(samples_left_in_buffer, out_length);
 	copy(min_len);
 	// In case playback wrapped around
 	copy(out_length - min_len);
