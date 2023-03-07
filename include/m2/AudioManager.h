@@ -2,24 +2,26 @@
 #define M2_AUDIOMANAGER_H
 
 #include "Value.h"
+#include "Pool.hh"
 #include <SDL.h>
 #include <list>
 #include <memory>
+#include <mutex>
+#include <array>
 
 namespace m2 {
-	using PlaybackId = size_t;
+	using PlaybackId = Id;
 
 	struct AudioSample {
 		float l{}, r{};
 	};
 
-	class AudioManager {
+	struct AudioManager {
 		enum PlayPolicy {
 			ONCE = 0,
 			LOOP
 		};
 
-	public:
 		struct Playback {
 			const AudioSample* samples{};
 			size_t sample_count{};
@@ -38,16 +40,14 @@ namespace m2 {
 			float _left_volume{1.0f}, _right_volume{1.0f};
 		};
 
-	private:
 		SDL_AudioDeviceID sdl_audio_device_id{};
 		SDL_AudioSpec sdl_audio_spec{};
-		PlaybackId _next_playback_id{};
-		std::unordered_map<PlaybackId, Playback> _playbacks;
+		Pool<Playback, 32> playbacks;
+		std::mutex playbacks_mutex;
 
-	public:
 		AudioManager();
 
-		PlaybackId loop(const AudioSample* samples, size_t sample_count, float volume = 1.0f, size_t start_sample = 0);
+		PlaybackId play(const AudioSample* samples, size_t sample_count, PlayPolicy policy, float volume = 1.0f, size_t start_sample = 0);
 		Playback* get_playback(PlaybackId id);
 		void stop(PlaybackId id);
 

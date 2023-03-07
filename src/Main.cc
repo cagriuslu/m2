@@ -194,7 +194,10 @@ int main(int argc, char **argv) {
 
 					// Loop over playbacks
 					for (auto playback_id : sound.playbacks) {
-						auto& playback = *GAME.audio_manager->get_playback(playback_id);
+						auto playback = GAME.audio_manager->get_playback(playback_id);
+						if (!playback) {
+							continue; // Playback may have finished (if it's ONCE)
+						}
 
 						// Left listener
 						auto left_volume = 0.0f;
@@ -219,7 +222,7 @@ int main(int argc, char **argv) {
 								}
 							}
 						}
-						playback.set_left_volume(left_volume);
+						playback->set_left_volume(left_volume);
 
 						// Right listener
 						auto right_volume = 0.0f;
@@ -244,7 +247,7 @@ int main(int argc, char **argv) {
 								}
 							}
 						}
-						playback.set_right_volume(right_volume);
+						playback->set_right_volume(right_volume);
 					}
 				}
 			}

@@ -70,7 +70,7 @@ m2::Game::Game() {
 		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
 	}
 
-	audio_manager = AudioManager{};
+	audio_manager.emplace();
 
 	sprite_sheets = load_sprite_sheets(std::string{m2g::sprite_sheets}, sdlRenderer);
 	sprite_effects_sheet = SpriteEffectsSheet{sdlRenderer};
