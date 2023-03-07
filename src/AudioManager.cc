@@ -4,7 +4,7 @@
 
 /// It's not possible to queue audio during audio callback
 /// Thus having a high callback frequency allows new audio to be queued faster
-constexpr int AUDIO_CALLBACK_FREQUENCY = 20;
+constexpr int AUDIO_CALLBACK_FREQUENCY = 30;
 
 m2::AudioManager::Playback::Playback(const AudioSample* _samples, size_t _sample_count, float _volume, PlayPolicy _play_policy, size_t _next_sample) : samples(_samples), sample_count(_sample_count), volume(_volume), play_policy(_play_policy), next_sample(_next_sample) {}
 
