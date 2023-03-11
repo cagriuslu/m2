@@ -2,25 +2,16 @@
 #include <m2/Glyph.h>
 #include <m2/Exception.h>
 #include <m2/Object.h>
-#include <m2/object/God.h>
-#include <m2/object/Camera.h>
-#include <m2/object/Origin.h>
-#include <m2/object/Pointer.h>
-#include <m2/object/Tile.h>
 #include <m2/String.h>
-#include <m2/protobuf/Utils.h>
 #include <m2g/Group.h>
 #include <m2/Sprite.h>
 #include <Level.pb.h>
-#include <m2g/Object.h>
-#include <m2g/Ui.h>
-#include <SpriteType.pb.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include <m2/sdl/Utils.hh>
 #include <SDL2/SDL_image.h>
-#include <m2/LevelEditor.h>
 #include "m2/Ui.h"
+#include <filesystem>
 
 m2::Game* m2::Game::_instance;
 
@@ -71,17 +62,21 @@ m2::Game::Game() {
 	}
 
 	audio_manager.emplace();
-
-	sprite_sheets = load_sprite_sheets(std::string{m2g::sprite_sheets}, sdlRenderer);
 	sprite_effects_sheet = SpriteEffectsSheet{sdlRenderer};
-	sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
-	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
-	level_editor_object_sprites = list_level_editor_object_sprites(std::string{m2g::objects});
 	glyphs_sheet = GlyphsSheet{sdlRenderer};
 	shapes_sheet = ShapesSheet{sdlRenderer};
 	dynamic_sheet = DynamicSheet{sdlRenderer};
-	_items = load_items(std::string{m2g::items});
-	animations = load_animations(std::string{m2g::animations});
+
+	// Load game resources
+	std::filesystem::path resource_dir("resource");
+	std::filesystem::path game_resource_dir = resource_dir / "game" / m2g::game_name;
+
+	sprite_sheets = load_sprite_sheets(game_resource_dir / "SpriteSheets.json", sdlRenderer);
+	sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
+	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
+	level_editor_object_sprites = list_level_editor_object_sprites(game_resource_dir / "Objects.json");
+	_items = load_items(game_resource_dir / "Items.json");
+	animations = load_animations(game_resource_dir / "Animations.json");
 }
 
 m2::Game::~Game() {

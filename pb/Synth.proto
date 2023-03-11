@@ -34,3 +34,9 @@ message SynthSong {
     uint32 bpm = 1;
     repeated SynthTrack tracks = 2;
 }
+
+message Sounds {
+    repeated SynthSound sounds = 1;
+    repeated SynthTrack tracks = 2;
+    repeated SynthSong songs = 3;
+}

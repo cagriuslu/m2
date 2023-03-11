@@ -5,10 +5,7 @@
 
 namespace m2g {
 	constexpr bool gravity = false;
-	constexpr std::string_view objects("resource/game/RPG/Objects.json");
-	constexpr std::string_view sprite_sheets("resource/game/RPG/SpriteSheets.json");
-	constexpr std::string_view items("resource/game/RPG/Items.json");
-	constexpr std::string_view animations("resource/game/RPG/Animations.json");
+	constexpr std::string_view game_name("RPG");
 }
 
 #endif //IMPL_PROXY_H
