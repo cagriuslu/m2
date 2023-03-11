@@ -8,8 +8,8 @@ namespace m2 {
 		int64_t _n{0}, _d{1};
 
 	public:
-		inline Rational() = default;
-		inline Rational(int64_t n, int64_t d) : _n(n), _d(d) {}
+		constexpr Rational() = default;
+		constexpr Rational(int64_t n, int64_t d) : _n(n), _d(d) {}
 		explicit Rational(const pb::Rational& r);
 		explicit Rational(double d);
 
@@ -29,6 +29,8 @@ namespace m2 {
 		[[nodiscard]] inline double to_double() const { return static_cast<double>(_n) / static_cast<double>(_d); }
 		[[nodiscard]] inline pb::Rational to_pb() const { pb::Rational r; r.set_n(_n); r.set_d(_d); return r; }
 
+		static inline Rational zero() { return Rational{}; }
+		static inline Rational one() { return Rational{1,1}; }
 		static Rational pi_mul2();
 	};
 	std::string to_string(const Rational& r);

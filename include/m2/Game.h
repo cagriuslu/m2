@@ -9,7 +9,7 @@
 #include "Sprite.h"
 #include "m2/Events.h"
 #include "DrawList.h"
-#include "Sound.h"
+#include "Song.h"
 #include "Animation.h"
 #include <m2/Object.h>
 #include <ObjectType.pb.h>
@@ -89,7 +89,7 @@ namespace m2 {
 		std::optional<DynamicSheet> dynamic_sheet;
 		std::vector<Item> _items;
 		std::vector<Animation> animations;
-		std::vector<Sound> sounds;
+		std::vector<Song> songs;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////

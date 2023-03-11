@@ -1,10 +1,10 @@
 syntax = "proto3";
 package m2g.pb;
 
-enum SoundType {
-    NO_SOUND = 0;
+enum SongType {
+    NO_SONG = 0;
     // Sounds
-    SOUND_DAMAGE_TO_ENEMY = 1;
+    SONG_DAMAGE_TO_ENEMY = 1;
     // Tracks
     // Songs
 }

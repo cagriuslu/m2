@@ -2,6 +2,8 @@
 #define M2_AUDIOMANAGER_H
 
 #include "Value.h"
+#include "Song.h"
+#include "Synth.h"
 #include "Pool.hh"
 #include <SDL.h>
 #include <list>
@@ -12,10 +14,6 @@
 namespace m2 {
 	using PlaybackId = Id;
 
-	struct AudioSample {
-		float l{}, r{};
-	};
-
 	struct AudioManager {
 		enum PlayPolicy {
 			ONCE = 0,
@@ -23,14 +21,13 @@ namespace m2 {
 		};
 
 		struct Playback {
-			const AudioSample* samples{};
-			size_t sample_count{};
+			const Song* song{};
 			float volume{1.0f};
 			PlayPolicy play_policy{};
 			size_t next_sample{};
 
 			Playback() = default;
-			Playback(const AudioSample* _samples, size_t _sample_count, float _volume, PlayPolicy _play_policy, size_t _next_sample);
+			Playback(const Song* _song, float _volume, PlayPolicy _play_policy);
 
 			inline void set_left_volume(float v) { _left_volume = v; }
 			[[nodiscard]] inline float left_volume() const { return _left_volume; }
@@ -47,7 +44,7 @@ namespace m2 {
 
 		AudioManager();
 
-		PlaybackId play(const AudioSample* samples, size_t sample_count, PlayPolicy policy, float volume = 1.0f, size_t start_sample = 0);
+		PlaybackId play(const Song* song, PlayPolicy policy, float volume = 1.0f);
 		Playback* get_playback(PlaybackId id);
 		void stop(PlaybackId id);
 

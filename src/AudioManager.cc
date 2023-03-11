@@ -6,11 +6,11 @@
 /// Thus having a high callback frequency allows new audio to be queued faster
 constexpr int AUDIO_CALLBACK_FREQUENCY = 30;
 
-m2::AudioManager::Playback::Playback(const AudioSample* _samples, size_t _sample_count, float _volume, PlayPolicy _play_policy, size_t _next_sample) : samples(_samples), sample_count(_sample_count), volume(_volume), play_policy(_play_policy), next_sample(_next_sample) {}
+m2::AudioManager::Playback::Playback(const Song* _song, float _volume, PlayPolicy _play_policy) : song(_song), volume(_volume), play_policy(_play_policy) {}
 
 m2::AudioManager::AudioManager() {
 	SDL_AudioSpec want{};
-	want.freq = 48000;
+	want.freq = DEFAULT_AUDIO_SAMPLE_RATE;
 	want.format = AUDIO_F32;
 	want.channels = 2;
 	want.samples = want.freq / AUDIO_CALLBACK_FREQUENCY;
@@ -25,13 +25,13 @@ m2::AudioManager::AudioManager() {
 	}
 }
 
-m2::PlaybackId m2::AudioManager::play(const AudioSample* samples, size_t sample_count, PlayPolicy policy, float volume, size_t start_sample) {
-	if (sample_count < sdl_audio_spec.samples) {
+m2::PlaybackId m2::AudioManager::play(const Song* song, PlayPolicy policy, float volume) {
+	if (song->sample_count() < sdl_audio_spec.samples) {
 		throw M2ERROR("Playing short audio is not supported");
 	}
 
 	std::unique_lock<std::mutex> lock{playbacks_mutex};
-	auto id = playbacks.emplace(samples, sample_count, volume, policy, start_sample);
+	auto id = playbacks.emplace(song, volume, policy);
 	SDL_PauseAudioDevice(sdl_audio_device_id, 0);
 	return id;
 }
@@ -55,18 +55,18 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 	memset(stream, 0, length);
 
 	auto copy = [=](Playback* playback, size_t copy_count) {
-		auto begin = playback->samples + playback->next_sample;
+		auto begin = playback->song->data() + playback->next_sample;
 		auto end = begin + copy_count;
 		std::transform(begin, end, out_stream, [=](const AudioSample& sample) -> AudioSample {
 			return AudioSample{.l = out_stream->l + sample.l * playback->volume * playback->left_volume(), .r = out_stream->r + sample.r * playback->volume * playback->right_volume()};
 		});
-		playback->next_sample = (playback->next_sample + copy_count) % playback->sample_count;
+		playback->next_sample = (playback->next_sample + copy_count) % playback->song->sample_count();
 	};
 
 	std::unique_lock<std::mutex> lock{audio_manager.playbacks_mutex};
 	for (auto [playback, id] : audio_manager.playbacks) {
 		// Copy the samples left in the playback buffer
-		auto samples_left_playback_buffer = playback->sample_count - playback->next_sample;
+		auto samples_left_playback_buffer = playback->song->sample_count() - playback->next_sample;
 		auto min_len = std::min(samples_left_playback_buffer, out_length);
 		copy(playback, min_len);
 

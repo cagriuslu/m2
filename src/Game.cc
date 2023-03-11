@@ -77,6 +77,7 @@ m2::Game::Game() {
 	level_editor_object_sprites = list_level_editor_object_sprites(game_resource_dir / "Objects.json");
 	_items = load_items(game_resource_dir / "Items.json");
 	animations = load_animations(game_resource_dir / "Animations.json");
+	songs = load_songs(game_resource_dir / "Songs.json");
 }
 
 m2::Game::~Game() {

@@ -11,12 +11,6 @@ enum SoundWaveShape {
     NOISE = 4;
 }
 
-message SynthSound {
-    SoundWaveShape shape = 1;
-    Rational fraction_of_cycle = 2;  // [0,1), wraps around, used instead of phase
-    float amplitude = 3; // [-1, 1], saturates
-}
-
 message SynthNote {
     Rational start_beat = 1; // in beats
     Rational duration = 2;   // in beats
@@ -25,18 +19,13 @@ message SynthNote {
 }
 
 message SynthTrack {
-    SynthSound sound = 1;
-    repeated SynthNote notes = 2;
-    float volume = 3;
+    SoundWaveShape shape = 1;
+    float volume = 2;  // [0,1]
+    float balance = 3; // [-1,1] left to right
+    repeated SynthNote notes = 4;
 }
 
 message SynthSong {
     uint32 bpm = 1;
     repeated SynthTrack tracks = 2;
-}
-
-message Sounds {
-    repeated SynthSound sounds = 1;
-    repeated SynthTrack tracks = 2;
-    repeated SynthSong songs = 3;
 }

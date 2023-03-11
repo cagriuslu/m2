@@ -1,0 +1,14 @@
+syntax = "proto3";
+package m2.pb;
+
+import "SongType.proto";
+import "Synth.proto";
+
+message Song {
+    m2g.pb.SongType type = 1;
+    SynthSong synth_song = 2;
+}
+
+message Songs {
+    repeated Song songs = 1;
+}
