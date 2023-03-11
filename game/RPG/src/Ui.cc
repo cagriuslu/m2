@@ -27,6 +27,7 @@ static Blueprint::Widget::Variant entry_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "NEW GAME",
 	.action_callback = []() {
 		GAME.load_single_player("resource/game/RPG/levels/sp000.json");
+		GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME), m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 		return Action::RETURN;
 	},
 	.kb_shortcut = SDL_SCANCODE_N

@@ -1,0 +1,124 @@
+{
+  "songs": [
+    {
+      "type": "NO_SONG"
+    },
+    {
+      "type": "SONG_DAMAGE_TO_ENEMY",
+      "synthSong": {
+        "bpm": 120,
+        "tracks": [
+          {
+            "shape": "SAWTOOTH",
+            "volume": 1,
+            "balance": 0,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 1},
+                "frequency": 800,
+                "volume": 1
+              },
+              {
+                "startBeat": {"n": 2, "d": 1},
+                "duration": {"n": 3, "d": 1},
+                "frequency": 600,
+                "volume": 1
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "SONG_MAIN_THEME",
+      "synthSong": {
+        "bpm": 200,
+        "tracks": [
+          {
+            "__comment": "Bass drum",
+            "shape": "TRIANGLE",
+            "volume": 1,
+            "balance": 0,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 200,
+                "volume": 1
+              },
+              {
+                "startBeat": {"n": 5, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 200,
+                "volume": 1
+              }
+            ]
+          },
+          {
+            "__comment": "Hi-hat and Snare",
+            "shape": "NOISE",
+            "volume": 1,
+            "balance": 0,
+            "notes": [
+              {
+                "startBeat": {"n": 0, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 0.5
+              },
+              {
+                "startBeat": {"n": 1, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 0.5
+              },
+              {
+                "startBeat": {"n": 2, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 1
+              },
+              {
+                "startBeat": {"n": 3, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 0.5
+              },
+              {
+                "startBeat": {"n": 4, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 0.5
+              },
+              {
+                "startBeat": {"n": 5, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 0.5
+              },
+              {
+                "startBeat": {"n": 6, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 1
+              },
+              {
+                "startBeat": {"n": 7, "d": 1},
+                "duration": {"n": 1, "d": 16},
+                "frequency": 1000,
+                "volume": 0.5
+              },
+              {
+                "startBeat": {"n": 7, "d": 1},
+                "duration": {"n": 1, "d": 1},
+                "frequency": 1000,
+                "volume": 0
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

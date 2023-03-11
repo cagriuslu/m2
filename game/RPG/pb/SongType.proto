@@ -3,8 +3,8 @@ package m2g.pb;
 
 enum SongType {
     NO_SONG = 0;
-    // Sounds
+    // Sound effects
     SONG_DAMAGE_TO_ENEMY = 1;
-    // Tracks
     // Songs
+    SONG_MAIN_THEME = 1001;
 }

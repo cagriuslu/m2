@@ -89,7 +89,7 @@ namespace m2 {
 		std::optional<DynamicSheet> dynamic_sheet;
 		std::vector<Item> _items;
 		std::vector<Animation> animations;
-		std::vector<Song> songs;
+		std::vector<Song> _songs;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// BOX2D /////////////////////////////////
@@ -124,6 +124,7 @@ namespace m2 {
 
 		// Accessors
 		const Item& get_item(m2g::pb::ItemType item_type);
+		const Song& get_song(m2g::pb::SongType song_type);
 
 		// Modifiers
 		void update_window_dims(int window_width, int window_height);

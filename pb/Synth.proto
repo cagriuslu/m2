@@ -19,10 +19,11 @@ message SynthNote {
 }
 
 message SynthTrack {
-    SoundWaveShape shape = 1;
-    float volume = 2;  // [0,1]
-    float balance = 3; // [-1,1] left to right
-    repeated SynthNote notes = 4;
+    string __comment = 1;
+    SoundWaveShape shape = 2;
+    float volume = 3;  // [0,1]
+    float balance = 4; // [-1,1] left to right
+    repeated SynthNote notes = 5;
 }
 
 message SynthSong {

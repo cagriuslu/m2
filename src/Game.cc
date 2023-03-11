@@ -77,7 +77,7 @@ m2::Game::Game() {
 	level_editor_object_sprites = list_level_editor_object_sprites(game_resource_dir / "Objects.json");
 	_items = load_items(game_resource_dir / "Items.json");
 	animations = load_animations(game_resource_dir / "Animations.json");
-	songs = load_songs(game_resource_dir / "Songs.json");
+	_songs = load_songs(game_resource_dir / "Songs.json");
 }
 
 m2::Game::~Game() {
@@ -107,6 +107,10 @@ void m2::Game::reset_state() {
 const m2::Item& m2::Game::get_item(m2g::pb::ItemType item_type) {
 	static const auto* const item_type_desc = m2g::pb::ItemType_descriptor();
 	return _items[item_type_desc->FindValueByNumber(item_type)->index()];
+}
+const m2::Song& m2::Game::get_song(m2g::pb::SongType song_type) {
+	static const auto* const song_type_desc = m2g::pb::SongType_descriptor();
+	return _songs[song_type_desc->FindValueByNumber(song_type)->index()];
 }
 
 void m2::Game::update_window_dims(int window_width, int window_height) {
