@@ -12,7 +12,7 @@ namespace m2::synth {
 	void mix_track(ForwardIterator first, ForwardIterator last, const pb::SynthTrack& track, SynthBpm bpm) {
 		static_assert(std::is_same<AudioSample, std::remove_cvref_t<decltype(*first)>>(), "ForwardIterator does not point to AudioSample or derivative");
 		static_assert(std::is_same<AudioSample, std::remove_cvref_t<decltype(*last)>>(), "ForwardIterator does not point to AudioSample or derivative");
-		if (bpm == 0 || 1000 < bpm) {
+		if (bpm == 0 || 10000 < bpm) {
 			throw M2ERROR("BPM out-of-bounds");
 		}
 

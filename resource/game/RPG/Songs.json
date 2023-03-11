@@ -6,7 +6,7 @@
     {
       "type": "SONG_DAMAGE_TO_ENEMY",
       "synthSong": {
-        "bpm": 120,
+        "bpm": 1200,
         "tracks": [
           {
             "shape": "SAWTOOTH",
@@ -16,13 +16,13 @@
               {
                 "startBeat": {"n": 0, "d": 1},
                 "duration": {"n": 1, "d": 1},
-                "frequency": 800,
+                "frequency": 300,
                 "volume": 1
               },
               {
                 "startBeat": {"n": 2, "d": 1},
                 "duration": {"n": 3, "d": 1},
-                "frequency": 600,
+                "frequency": 200,
                 "volume": 1
               }
             ]
