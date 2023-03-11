@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
 			///////////////////////////////// SOUND ////////////////////////////////
 			if (LEVEL.left_listener || LEVEL.right_listener) {
 				// Loop over sounds
-				for (auto sound_it : LEVEL.sounds) {
+				for (auto sound_it : LEVEL.sound_emitters) {
 					const auto& sound = *sound_it.first;
 					const auto& sound_position = sound.parent().position;
 

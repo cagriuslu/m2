@@ -1,5 +1,5 @@
-#ifndef M2_SOUND_H
-#define M2_SOUND_H
+#ifndef M2_SOUNDEMITTER_H
+#define M2_SOUNDEMITTER_H
 
 #include "../Component.h"
 #include "../AudioManager.h"
@@ -8,13 +8,13 @@
 #include <list>
 
 namespace m2 {
-	struct Sound : public Component {
-		std::function<void(Sound&)> on_update{};
+	struct SoundEmitter : public Component {
+		std::function<void(SoundEmitter&)> on_update{};
 
 		std::list<PlaybackId> playbacks;
 
-		Sound() = default;
-		explicit Sound(Id object_id);
+		SoundEmitter() = default;
+		explicit SoundEmitter(Id object_id);
 	};
 
 	struct SoundListener {
@@ -24,4 +24,4 @@ namespace m2 {
 	};
 }
 
-#endif //M2_SOUND_H
+#endif //M2_SOUNDEMITTER_H

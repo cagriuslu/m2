@@ -10,7 +10,7 @@
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include "component/Light.h"
-#include "component/Sound.h"
+#include "component/SoundEmitter.h"
 #include "component/Character.h"
 #include "Pool.hh"
 #include <memory>
@@ -61,7 +61,7 @@ namespace m2 {
         [[nodiscard]] Graphic& graphic() const;
         [[nodiscard]] Graphic& terrain_graphic() const;
         [[nodiscard]] Light& light() const;
-        [[nodiscard]] Sound& sound() const;
+        [[nodiscard]] SoundEmitter& sound_emitter() const;
 		[[nodiscard]] Character& character() const;
 
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
@@ -70,7 +70,7 @@ namespace m2 {
 		Graphic& add_graphic(const Sprite& sprite);
 		Graphic& add_terrain_graphic(const Sprite& sprite);
         Light& add_light();
-        Sound& add_sound();
+        SoundEmitter& add_sound_emitter();
 		Character& add_tiny_character();
 		// TODO mini(2),small(4),medium(8),large(16),huge(32)
 		Character& add_full_character();

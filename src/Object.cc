@@ -66,7 +66,7 @@ m2::Object::~Object() {
 		_light_id = 0;
 	}
 	if (_sound_id) {
-		LEVEL.sounds.free(_sound_id);
+		LEVEL.sound_emitters.free(_sound_id);
 		_sound_id = 0;
 	}
     if (_character_id) {
@@ -122,8 +122,8 @@ m2::Graphic& m2::Object::terrain_graphic() const {
 m2::Light& m2::Object::light() const {
 	return LEVEL.lights[_light_id];
 }
-m2::Sound& m2::Object::sound() const {
-	return LEVEL.sounds[_sound_id];
+m2::SoundEmitter& m2::Object::sound_emitter() const {
+	return LEVEL.sound_emitters[_sound_id];
 }
 m2::Character& m2::Object::character() const {
     auto& it = LEVEL.characters[_character_id];
@@ -172,10 +172,10 @@ m2::Light& m2::Object::add_light() {
     LOG_TRACE("Added light component", _light_id);
 	return light_pair.first;
 }
-m2::Sound& m2::Object::add_sound() {
-	auto sound_pair = LEVEL.sounds.alloc();
+m2::SoundEmitter& m2::Object::add_sound_emitter() {
+	auto sound_pair = LEVEL.sound_emitters.alloc();
 	_sound_id = sound_pair.second;
-	sound_pair.first = Sound{id()};
+	sound_pair.first = SoundEmitter{id()};
 	LOG_TRACE("Added sound component", _sound_id);
 	return sound_pair.first;
 }
