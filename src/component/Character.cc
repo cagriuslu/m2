@@ -128,7 +128,7 @@ m2::Character::Iterator<const m2::Item> m2::TinyCharacter::cend_items() const {
 }
 void m2::TinyCharacter::add_item(const Item& item) {
 	_item = item;
-	if (item->use_on_acquire()) {
+	if (item.item().use_on_acquire()) {
 		use_item(begin_items());
 	}
 }
@@ -186,13 +186,13 @@ void m2::FullCharacter::automatic_update() {
 }
 m2::Character::Iterator<m2::Item> m2::FullCharacter::find_items(m2g::pb::ItemType item_type) {
 	auto it = std::find_if(_items.begin(), _items.end(), [=](const Item& item) {
-		return item->type() == item_type;
+		return item.item().type() == item_type;
 	});
 	return {new FullCharacterIteratorImpl<m2::Item, FullCharacter>{this}, item_type, it == _items.end() ? nullptr : &(*it)};
 }
 m2::Character::Iterator<m2::Item> m2::FullCharacter::find_items(m2g::pb::ItemCategory cat) {
 	auto it = std::find_if(_items.begin(), _items.end(), [=](const Item& item) {
-		return item->category() == cat;
+		return item.item().category() == cat;
 	});
 	return {new FullCharacterIteratorImpl<m2::Item, FullCharacter>{this}, cat, it == _items.end() ? nullptr : &(*it)};
 }
@@ -210,7 +210,7 @@ m2::Character::Iterator<const m2::Item> m2::FullCharacter::cend_items() const {
 }
 void m2::FullCharacter::add_item(const Item& item) {
 	_items.emplace_back(item);
-	if (item->use_on_acquire()) {
+	if (item.item().use_on_acquire()) {
 		use_item(Iterator<Item>{nullptr, {}, &_items.back()});
 	}
 }
@@ -246,9 +246,8 @@ void m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
 	_resources[resource_type_index(resource_type)].clear_amount();
 }
 
-const google::protobuf::EnumDescriptor* const m2::FullCharacter::resource_type_desc = m2g::pb::ResourceType_descriptor();
 int m2::FullCharacter::resource_type_index(m2g::pb::ResourceType resource_type) {
-	return resource_type_desc->FindValueByNumber(resource_type)->index();
+	return proto::enum_index<m2g::pb::ResourceType>(resource_type);
 }
 
 m2::Character& m2::get_character_base(CharacterVariant& v) {

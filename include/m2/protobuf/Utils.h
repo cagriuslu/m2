@@ -4,6 +4,7 @@
 #include "../Value.h"
 #include "../String.h"
 #include <google/protobuf/util/json_util.h>
+#include <google/protobuf/generated_enum_reflection.h>
 #include <string>
 
 namespace m2::proto {
@@ -57,6 +58,36 @@ namespace m2::proto {
 			t = &mutable_repeated_field->at(index);
 		}
 		return t;
+	}
+
+	template <typename EnumT>
+	int enum_value_count() {
+		static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+		return descriptor->value_count();
+	}
+
+	template <typename EnumT>
+	int enum_index(EnumT enum_value) {
+		static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+		return descriptor->FindValueByNumber(enum_value)->index();
+	}
+
+	template <typename EnumT>
+	EnumT enum_value(int index) {
+		static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+		return static_cast<EnumT>(descriptor->value(index)->number());
+	}
+
+	template <typename EnumT>
+	const std::string& enum_name(int index) {
+		static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+		return descriptor->value(index)->name();
+	}
+
+	template <typename EnumT>
+	const std::string& enum_name(EnumT enum_value) {
+		static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
+		return descriptor->FindValueByNumber(enum_value)->name();
 	}
 }
 

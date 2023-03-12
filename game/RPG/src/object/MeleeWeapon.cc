@@ -39,7 +39,7 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &directi
 	phy.body->SetAngularVelocity(-SWING_SPEED);
 
 	// Add graphics
-	auto& gfx = obj.add_graphic(GAME.sprites[melee_weapon->game_sprite()]);
+	auto& gfx = obj.add_graphic(GAME.get_sprite(melee_weapon.item().game_sprite()));
 	gfx.draw_angle = phy.body->GetAngle();
 
 	// Add character

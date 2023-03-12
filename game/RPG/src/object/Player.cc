@@ -27,18 +27,18 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(false);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.get_sprite(blueprint->main_sprite).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.sprites[blueprint->main_sprite].foreground_collider_circ_radius_m());
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(GAME.sprites[blueprint->main_sprite].foreground_collider_center_offset_m().x);
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.sprites[blueprint->main_sprite].foreground_collider_center_offset_m().y);
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.get_sprite(blueprint->main_sprite).foreground_collider_circ_radius_m());
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(GAME.get_sprite(blueprint->main_sprite).foreground_collider_center_offset_m().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.get_sprite(blueprint->main_sprite).foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(80.0f);
 	bp.set_linear_damping(100.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(GAME.sprites[blueprint->main_sprite]);
+	auto& gfx = obj.add_graphic(GAME.get_sprite(blueprint->main_sprite));
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));

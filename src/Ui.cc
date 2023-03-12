@@ -23,7 +23,7 @@ namespace {
 	}
 
 	const Sprite* lookup_sprite(m2g::pb::SpriteType sprite_type) {
-		return sprite_type ? &GAME.sprites[sprite_type] : nullptr;
+		return sprite_type ? &GAME.get_sprite(sprite_type) : nullptr;
 	}
 
 	const Sprite* lookup_initial_sprite(const Blueprint::Widget *blueprint) {
@@ -314,7 +314,7 @@ void State::ImageSelection::draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 
 	const auto& image_selection = std::get<Blueprint::Widget::ImageSelection>(blueprint->variant);
-	const auto& sprite = GAME.sprites[image_selection.list[selection]];
+	const auto& sprite = GAME.get_sprite(image_selection.list[selection]);
 	auto sprite_srcrect = sdl::to_rect(sprite.sprite().rect());
 	auto sprite_dstrect = (SDL_Rect)image_rect;
 	SDL_RenderCopy(GAME.sdlRenderer, sprite.sprite_sheet().texture(), &sprite_srcrect, &sprite_dstrect);

@@ -45,7 +45,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * linear_speed));
 
 	// Add graphics
-	auto& gfx = obj.add_graphic(GAME.sprites[SpriteType::BULLET_00]);
+	auto& gfx = obj.add_graphic(GAME.get_sprite(SpriteType::BULLET_00));
 	gfx.draw_angle = angle;
 
 	// Add character

@@ -14,7 +14,7 @@ m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	for (int y = 0; y < lb.background_rows_size(); ++y) {
 		for (int x = 0; x < lb.background_rows(y).items_size(); ++x) {
 			auto sprite_type = lb.background_rows(y).items(x);
-			if (sprite_type && GAME.sprites[sprite_type].sprite().has_background_collider()) {
+			if (sprite_type && GAME.get_sprite(sprite_type).sprite().has_background_collider()) {
 				_blocked_locations.emplace(x, y);
 			}
 		}

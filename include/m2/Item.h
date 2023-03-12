@@ -1,9 +1,9 @@
 #ifndef M2_ITEM_H
 #define M2_ITEM_H
 
+#include "protobuf/Utils.h"
 #include <Item.pb.h>
 #include <vector>
-#include <array>
 #include <string>
 
 namespace m2 {
@@ -12,17 +12,14 @@ namespace m2 {
 	/// It uses high memory, use only when fast resource/attribute lookup is needed.
 	class Item {
 		pb::Item _item;
-		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> _costs{};
-		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> _benefits{};
-		std::array<float, m2g::pb::AttributeType_ARRAYSIZE> _attributes{};
-		static const google::protobuf::EnumDescriptor* const resource_type_desc;
-		static const google::protobuf::EnumDescriptor* const attribute_type_desc;
+		std::vector<float> _costs = std::vector<float>(proto::enum_value_count<m2g::pb::ResourceType>());
+		std::vector<float> _benefits = std::vector<float>(proto::enum_value_count<m2g::pb::ResourceType>());
+		std::vector<float> _attributes = std::vector<float>(proto::enum_value_count<m2g::pb::AttributeType>());
 
 	public:
 		Item() = default;
 		explicit Item(pb::Item item);
 
-		const pb::Item* operator->() const;
 		const pb::Item& item() const;
 		float get_cost(m2g::pb::ResourceType) const;
 		float try_get_cost(m2g::pb::ResourceType, float default_value) const;

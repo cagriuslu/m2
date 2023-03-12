@@ -94,27 +94,28 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_foreground_collider_circ_radius_m(sprite.foreground_collider().circ_radius_px() / (float)_ppm) {
 	// Create effects
 	if (sprite.effects_size()) {
-		_effects.resize(pb::SpriteEffectType_ARRAYSIZE);
-		std::vector<bool> is_created(pb::SpriteEffectType_ARRAYSIZE);
+		_effects.resize(proto::enum_value_count<pb::SpriteEffectType>());
+		std::vector<bool> is_created(proto::enum_value_count<pb::SpriteEffectType>());
 		for (const auto& effect : sprite.effects()) {
+			auto index = proto::enum_index(effect.type());
 			// Check if the effect is already created
-			if (is_created[effect.type()]) {
+			if (is_created[index]) {
 				throw M2ERROR("Sprite has duplicate effect definition: " + std::to_string(effect.type()));
 			}
 			// Create effect
 			switch (effect.type()) {
 				case pb::SPRITE_EFFECT_FOREGROUND_COMPANION:
-					_effects[effect.type()] = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.rect(), effect.foreground_companion().rects());
+					_effects[index] = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.rect(), effect.foreground_companion().rects());
 					_foreground_companion_center_offset_px = Vec2f{effect.foreground_companion().center_offset_px()};
 					_foreground_companion_center_offset_m = Vec2f{effect.foreground_companion().center_offset_px()} / (float)_ppm;
 					break;
 				case pb::SPRITE_EFFECT_MASK:
-					_effects[effect.type()] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.rect(), effect.mask_color());
+					_effects[index] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.rect(), effect.mask_color());
 					break;
 				default:
 					break;
 			}
-			is_created[effect.type()] = true;
+			is_created[index] = true;
 		}
 	}
 }
@@ -131,7 +132,7 @@ SDL_Texture* m2::Sprite::effects_texture() const {
 	return nullptr;
 }
 SDL_Rect m2::Sprite::effect_rect(pb::SpriteEffectType effect_type) const {
-	return _effects[effect_type];
+	return _effects[proto::enum_index(effect_type)];
 }
 bool m2::Sprite::has_foreground_companion() const {
 	return _foreground_companion_center_offset_m.has_value();
@@ -180,28 +181,27 @@ std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::string &sprite_sh
 }
 
 std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet) {
-	std::vector<Sprite> sprites_vector(m2g::pb::SpriteType_ARRAYSIZE);
-	std::vector<bool> is_loaded(m2g::pb::SpriteType_ARRAYSIZE);
+	std::vector<Sprite> sprites_vector(proto::enum_value_count<m2g::pb::SpriteType>());
+	std::vector<bool> is_loaded(proto::enum_value_count<m2g::pb::SpriteType>());
 
 	// Load sprites
 	for (const auto& sprite_sheet : sprite_sheets) {
 		for (const auto& sprite : sprite_sheet.sprite_sheet().sprites()) {
+			auto index = proto::enum_index(sprite.type());
 			// Check if the sprite is already loaded
-			if (is_loaded[sprite.type()]) {
+			if (is_loaded[index]) {
 				throw M2ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
 			}
 			// Load sprite
-			sprites_vector[sprite.type()] = Sprite{sprite_sheet, sprite_effects_sheet, sprite};
-			is_loaded[sprite.type()] = true;
+			sprites_vector[index] = Sprite{sprite_sheet, sprite_effects_sheet, sprite};
+			is_loaded[index] = true;
 		}
 	}
 
 	// Check if every sprite type is loaded
-	const auto* sprite_type_desc = m2g::pb::SpriteType_descriptor();
-	for (int e = 0; e < sprite_type_desc->value_count(); ++e) {
-		int value = sprite_type_desc->value(e)->number();
-		if (!is_loaded[value]) {
-			throw M2ERROR("Sprite is not defined: " + std::to_string(value));
+	for (int e = 0; e < proto::enum_value_count<m2g::pb::SpriteType>(); ++e) {
+		if (!is_loaded[e]) {
+			throw M2ERROR("Sprite is not defined: " + proto::enum_name<m2g::pb::SpriteType>(e));
 		}
 	}
 
@@ -229,15 +229,16 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_
 	}
 
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_sprite_map;
-	std::vector<bool> has_encountered(m2g::pb::ObjectType_ARRAYSIZE);
+	std::vector<bool> has_encountered(proto::enum_value_count<m2g::pb::ObjectType>());
 
 	// Visit every object
 	for (const auto& object : objects->objects()) {
+		auto index = proto::enum_index(object.type());
 		// Check if object type already exists
-		if (has_encountered[object.type()]) {
+		if (has_encountered[index]) {
 			throw M2ERROR("Object has duplicate definition: " + std::to_string(object.type()));
 		}
-		has_encountered[object.type()] = true;
+		has_encountered[index] = true;
 
 		if (object.level_editor_sprite_type()) {
 			object_sprite_map[object.type()] = object.level_editor_sprite_type();
@@ -245,11 +246,9 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_
 	}
 
 	// Check if every object type is encountered
-	const auto* object_type_desc = m2g::pb::ObjectType_descriptor();
-	for (int e = 0; e < object_type_desc->value_count(); ++e) {
-		int value = object_type_desc->value(e)->number();
-		if (!has_encountered[value]) {
-			throw M2ERROR("Object is not defined: " +  std::to_string(value));
+	for (int e = 0; e < proto::enum_value_count<m2g::pb::ObjectType>(); ++e) {
+		if (!has_encountered[e]) {
+			throw M2ERROR("Object is not defined: " + proto::enum_name<m2g::pb::ObjectType>(e));
 		}
 	}
 

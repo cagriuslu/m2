@@ -12,7 +12,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.sprites[m2g::pb::DWARF_FULL].background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.get_sprite(m2g::pb::DWARF_FULL).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_friction(0.0f);
 	bp.mutable_background_fixture()->set_category(m2::pb::FRIEND_ON_BACKGROUND);
 	bp.set_mass(100);
@@ -21,7 +21,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	obj.add_graphic(GAME.sprites[SpriteType::DWARF_FULL]);
+	obj.add_graphic(GAME.get_sprite(SpriteType::DWARF_FULL));
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(ITEM_REUSABLE_JUMP));

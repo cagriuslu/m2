@@ -17,6 +17,8 @@ namespace m2 {
 		std::function<void(Character& self, Character& other, m2g::InteractionType)> interact;
 
 		template <typename T> class IteratorImpl; // Forward declaration
+		/// Iterator can be const or non-const
+		/// Iterator uses pImpl pattern to allow polymorphism with templates
 		template <typename T> class Iterator {
 			static_assert(std::is_same_v<T, Item> || std::is_same_v<T, const Item>);
 		protected:
@@ -40,6 +42,8 @@ namespace m2 {
 			const T& operator*() const { return *_item_ptr; }
 			const T* operator->() const { return _item_ptr; }
 		};
+		/// IteratorImpl can be const or non-const
+		/// IteratorImpl needs to be overridden by child Character types
 		template <typename T> class IteratorImpl {
 			static_assert(std::is_same_v<T, Item> || std::is_same_v<T, const Item>);
 		public:
@@ -158,7 +162,7 @@ namespace m2 {
 					}
 				} else if (std::holds_alternative<m2g::pb::ItemType>(filter)) {
 					for (size_t i = curr_index + 1; i < _character->_items.size(); ++i) {
-						if (_character->_items[i]->type() == std::get<m2g::pb::ItemType>(filter)) {
+						if (_character->_items[i].item().type() == std::get<m2g::pb::ItemType>(filter)) {
 							// Found item
 							IteratorImpl<T>::set_item(iter, &_character->_items[i]);
 							return;
@@ -166,7 +170,7 @@ namespace m2 {
 					}
 				} else if (std::holds_alternative<m2g::pb::ItemCategory>(filter)) {
 					for (size_t i = curr_index + 1; i < _character->_items.size(); ++i) {
-						if (_character->_items[i]->category() == std::get<m2g::pb::ItemCategory>(filter)) {
+						if (_character->_items[i].item().category() == std::get<m2g::pb::ItemCategory>(filter)) {
 							// Found item
 							IteratorImpl<T>::set_item(iter, &_character->_items[i]);
 							return;
@@ -204,7 +208,6 @@ namespace m2 {
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
 
 	private:
-		static const google::protobuf::EnumDescriptor* const resource_type_desc;
 		static int resource_type_index(m2g::pb::ResourceType resource_type);
 	};
 

@@ -1,39 +1,42 @@
 #include <m2/Animation.h>
 #include <m2/protobuf/Utils.h>
 #include <m2/Exception.h>
+#include <utility>
 
-m2::Animation::Animation(const pb::Animation &pb) : _animation(pb) {
-	_states.resize(m2g::pb::AnimationStateType_ARRAYSIZE);
+using namespace m2g::pb;
+
+m2::Animation::Animation(pb::Animation pb) : _animation(std::move(pb)) {
+	_states.resize(proto::enum_value_count<AnimationStateType>());
 	for (const auto& state : _animation.states()) {
-		_states[state.type()] = state;
+		_states[proto::enum_index(state.type())] = state;
 	}
 }
+
 std::vector<m2::Animation> m2::load_animations(const std::string& path) {
 	auto animations = proto::json_file_to_message<pb::Animations>(path);
 	if (!animations) {
 		throw M2ERROR(animations.error());
 	}
 
-	std::vector<Animation> animations_vector(m2g::pb::AnimationType_ARRAYSIZE);
-	std::vector<bool> is_loaded(m2g::pb::AnimationType_ARRAYSIZE);
+	std::vector<Animation> animations_vector(proto::enum_value_count<AnimationType>());
+	std::vector<bool> is_loaded(proto::enum_value_count<AnimationType>());
 
 	// Load animations
 	for (const auto& animation : animations->animations()) {
+		auto index = proto::enum_index(animation.type());
 		// Check if animation is already loaded
-		if (is_loaded[animation.type()]) {
-			throw M2ERROR("Animation has duplicate definition: " + std::to_string(animation.type()));
+		if (is_loaded[index]) {
+			throw M2ERROR("Animation has duplicate definition: " + AnimationType_Name(animation.type()));
 		}
 		// Load animation
-		animations_vector[animation.type()] = Animation{animation};
-		is_loaded[animation.type()] = true;
+		animations_vector[index] = Animation{animation};
+		is_loaded[index] = true;
 	}
 
 	// Check if every animation is loaded
-	const auto* animation_type_desc = m2g::pb::AnimationType_descriptor();
-	for (int e = 0; e < animation_type_desc->value_count(); ++e) {
-		int value = animation_type_desc->value(e)->number();
-		if (!is_loaded[value]) {
-			throw M2ERROR("Animation is not defined: " + std::to_string(value));
+	for (int i = 0; i < proto::enum_value_count<AnimationType>(); ++i) {
+		if (!is_loaded[i]) {
+			throw M2ERROR("Animation is not defined: " + proto::enum_name<AnimationType>(i));
 		}
 	}
 

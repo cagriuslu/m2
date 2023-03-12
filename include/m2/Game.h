@@ -81,7 +81,7 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		std::vector<SpriteSheet> sprite_sheets;
 		std::optional<SpriteEffectsSheet> sprite_effects_sheet;
-		std::vector<Sprite> sprites;
+		std::vector<Sprite> _sprites;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> level_editor_object_sprites;
 		std::optional<GlyphsSheet> glyphs_sheet;
@@ -123,7 +123,8 @@ namespace m2 {
 		inline Level& level() { return *_level; }
 
 		// Accessors
-		const Item& get_item(m2g::pb::ItemType item_type);
+		inline const Sprite& get_sprite(m2g::pb::SpriteType sprite_type) { return _sprites[proto::enum_index(sprite_type)]; }
+		inline const Item& get_item(m2g::pb::ItemType item_type) { return _items[proto::enum_index(item_type)]; }
 		const Song& get_song(m2g::pb::SongType song_type);
 
 		// Modifiers

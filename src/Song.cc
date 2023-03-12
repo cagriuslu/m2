@@ -15,13 +15,12 @@ std::vector<m2::Song> m2::load_songs(const std::string& path) {
 		throw M2ERROR(songs.error());
 	}
 
-	const auto* song_type_desc = m2g::pb::SongType_descriptor();
-	std::vector<Song> songs_vector(song_type_desc->value_count());
-	std::vector<bool> is_loaded(song_type_desc->value_count());
+	std::vector<Song> songs_vector(proto::enum_value_count<m2g::pb::SongType>());
+	std::vector<bool> is_loaded(proto::enum_value_count<m2g::pb::SongType>());
 
 	for (const auto& song : songs->songs()) {
-		LOGF_DEBUG("Loading song %s...", song_type_desc->FindValueByNumber(song.type())->name().c_str());
-		auto index = song_type_desc->FindValueByNumber(song.type())->index();
+		LOGF_DEBUG("Loading song %s...", proto::enum_name(song.type()).c_str());
+		auto index = proto::enum_index(song.type());
 		// Check if the song is already loaded
 		if (is_loaded[index]) {
 			throw M2ERROR("Song has duplicate definition: " + std::to_string(song.type()));
@@ -33,9 +32,9 @@ std::vector<m2::Song> m2::load_songs(const std::string& path) {
 	}
 
 	// Check if every item is loaded
-	for (int e = 0; e < song_type_desc->value_count(); ++e) {
+	for (int e = 0; e < proto::enum_value_count<m2g::pb::SongType>(); ++e) {
 		if (!is_loaded[e]) {
-			throw M2ERROR("Song is not defined: " + std::to_string(song_type_desc->value(e)->number()));
+			throw M2ERROR("Song is not defined: " + proto::enum_name<m2g::pb::SongType>(e));
 		}
 	}
 

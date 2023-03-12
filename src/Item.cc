@@ -2,28 +2,23 @@
 #include <m2/protobuf/Utils.h>
 #include <m2/Exception.h>
 
-const google::protobuf::EnumDescriptor* const m2::Item::resource_type_desc = m2g::pb::ResourceType_descriptor();
-const google::protobuf::EnumDescriptor* const m2::Item::attribute_type_desc = m2g::pb::AttributeType_descriptor();
-
 m2::Item::Item(pb::Item item) : _item(std::move(item)) {
 	for (const auto& cost : _item.costs()) {
-		_costs[resource_type_desc->FindValueByNumber(cost.type())->index()] = get_resource_amount(cost);
+		_costs[proto::enum_index(cost.type())] = get_resource_amount(cost);
 	}
 	for (const auto& benefit : _item.benefits()) {
-		_benefits[resource_type_desc->FindValueByNumber(benefit.type())->index()] = get_resource_amount(benefit);
+		_benefits[proto::enum_index(benefit.type())] = get_resource_amount(benefit);
 	}
 	for (const auto& attribute : _item.attributes()) {
-		_attributes[attribute_type_desc->FindValueByNumber(attribute.type())->index()] = attribute.amount();
+		_attributes[proto::enum_index(attribute.type())] = attribute.amount();
 	}
 }
-const m2::pb::Item* m2::Item::operator->() const {
-	return &_item;
-}
+
 const m2::pb::Item& m2::Item::item() const {
 	return _item;
 }
 float m2::Item::get_cost(m2g::pb::ResourceType type) const {
-	return _costs[resource_type_desc->FindValueByNumber(type)->index()];
+	return _costs[proto::enum_index(type)];
 }
 float m2::Item::try_get_cost(m2g::pb::ResourceType type, float default_value) const {
 	auto value = get_cost(type);
@@ -33,7 +28,7 @@ bool m2::Item::has_cost(m2g::pb::ResourceType type) const {
 	return get_cost(type) != 0.0f;
 }
 float m2::Item::get_benefit(m2g::pb::ResourceType type) const {
-	return _benefits[resource_type_desc->FindValueByNumber(type)->index()];
+	return _benefits[proto::enum_index(type)];
 }
 float m2::Item::try_get_benefit(m2g::pb::ResourceType type, float default_value) const {
 	auto value = get_benefit(type);
@@ -43,7 +38,7 @@ bool m2::Item::has_benefit(m2g::pb::ResourceType type) const {
 	return get_benefit(type) != 0.0f;
 }
 float m2::Item::get_attribute(m2g::pb::AttributeType type) const {
-	return _attributes[attribute_type_desc->FindValueByNumber(type)->index()];
+	return _attributes[proto::enum_index(type)];
 }
 float m2::Item::try_get_attribute(m2g::pb::AttributeType type, float default_value) const {
 	auto value = get_attribute(type);
@@ -59,15 +54,14 @@ std::vector<m2::Item> m2::load_items(const std::string &items_path) {
 		throw M2ERROR(items.error());
 	}
 
-	std::vector<Item> items_vector(m2g::pb::ItemType_ARRAYSIZE);
-	std::vector<bool> is_loaded(m2g::pb::ItemType_ARRAYSIZE);
+	std::vector<Item> items_vector(proto::enum_value_count<m2g::pb::ItemType>());
+	std::vector<bool> is_loaded(proto::enum_value_count<m2g::pb::ItemType>());
 
-	const auto* item_type_desc = m2g::pb::ItemType_descriptor();
 	for (const auto& item : items->items()) {
-		auto index = item_type_desc->FindValueByNumber(item.type())->index();
+		auto index = proto::enum_index(item.type());
 		// Check if the item is already loaded
 		if (is_loaded[index]) {
-			throw M2ERROR("Item has duplicate definition: " + std::to_string(item.type()));
+			throw M2ERROR("Item has duplicate definition: " + proto::enum_name(item.type()));
 		}
 		// Load item
 		items_vector[index] = Item{item};
@@ -75,9 +69,9 @@ std::vector<m2::Item> m2::load_items(const std::string &items_path) {
 	}
 
 	// Check if every item is loaded
-	for (int e = 0; e < item_type_desc->value_count(); ++e) {
-		if (!is_loaded[e]) {
-			throw M2ERROR("Item is not defined: " + std::to_string(item_type_desc->value(e)->number()));
+	for (int i = 0; i < proto::enum_value_count<m2g::pb::ItemType>(); ++i) {
+		if (!is_loaded[i]) {
+			throw M2ERROR("Item is not defined: " + proto::enum_name<m2g::pb::ItemType>(i));
 		}
 	}
 

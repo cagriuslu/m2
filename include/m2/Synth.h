@@ -14,6 +14,8 @@ namespace m2 {
 
 	struct AudioSample {
 		SynthSample l{}, r{};
+
+		inline void mutable_mix(SynthSample _l, SynthSample _r) { l += _l; r += _r; }
 	};
 
 	namespace synth {

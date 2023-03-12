@@ -54,7 +54,7 @@ m2::VoidValue rpg::create_explosive_object(m2::Object& obj, const m2::Vec2f& int
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * linear_speed));
 
 	// Add graphics
-	auto& gfx = obj.add_graphic(GAME.sprites[explosive_weapon->game_sprite()]);
+	auto& gfx = obj.add_graphic(GAME.get_sprite(explosive_weapon.item().game_sprite()));
 	gfx.draw_angle = angle;
 
 	// Add character

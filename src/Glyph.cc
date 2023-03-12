@@ -1,10 +1,12 @@
 #include <m2/Glyph.h>
 #include <m2/Exception.h>
+#include <m2/protobuf/Utils.h>
 #include <SDL2/SDL_image.h>
 #include <string_view>
-#include <array>
+#include <vector>
 
-constexpr std::array<std::string_view, m2::pb::GlyphType_ARRAYSIZE> glyph_resources = {
+// This vector is accessed using GlyphType enum indexes, thus the values should be consecutive
+const std::vector<std::string_view> glyph_resources{
 	"",
 	"resource/red-circle.svg"
 };
@@ -18,7 +20,12 @@ size_t m2::GlyphsSheet::GlyphKeyHash::operator()(const GlyphKey &k) const {
 	return std::hash<uint64_t>{}(packed);
 }
 
-m2::GlyphsSheet::GlyphsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
+m2::GlyphsSheet::GlyphsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {
+	// Assert that glyph_resources is the correct size
+	if (glyph_resources.size() != (size_t) proto::enum_value_count<pb::GlyphType>()) {
+		throw M2FATAL("Invalid Glyph resource count");
+	}
+}
 std::pair<SDL_Texture*, SDL_Rect> m2::GlyphsSheet::get_glyph(pb::GlyphType type, int w, int h) {
 	GlyphKey key{.type = type, .w = w, .h = h};
 
@@ -27,7 +34,7 @@ std::pair<SDL_Texture*, SDL_Rect> m2::GlyphsSheet::get_glyph(pb::GlyphType type,
 	if (it != _glyphs.end()) {
 		return {texture(), it->second};
 	} else {
-		SDL_RWops *file = SDL_RWFromFile(glyph_resources[static_cast<unsigned>(type)].data(), "rb");
+		SDL_RWops *file = SDL_RWFromFile(glyph_resources[proto::enum_index(type)].data(), "rb");
 		if (!file) {
 			throw M2FATAL("Unable to open glyph file: " + std::string(SDL_GetError()));
 		}

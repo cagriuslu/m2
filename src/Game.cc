@@ -72,7 +72,7 @@ m2::Game::Game() {
 	std::filesystem::path game_resource_dir = resource_dir / "game" / m2g::game_name;
 
 	sprite_sheets = load_sprite_sheets(game_resource_dir / "SpriteSheets.json", sdlRenderer);
-	sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
+	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
 	level_editor_object_sprites = list_level_editor_object_sprites(game_resource_dir / "Objects.json");
 	_items = load_items(game_resource_dir / "Items.json");
@@ -104,13 +104,8 @@ void m2::Game::reset_state() {
 	events.clear();
 }
 
-const m2::Item& m2::Game::get_item(m2g::pb::ItemType item_type) {
-	static const auto* const item_type_desc = m2g::pb::ItemType_descriptor();
-	return _items[item_type_desc->FindValueByNumber(item_type)->index()];
-}
 const m2::Song& m2::Game::get_song(m2g::pb::SongType song_type) {
-	static const auto* const song_type_desc = m2g::pb::SongType_descriptor();
-	return _songs[song_type_desc->FindValueByNumber(song_type)->index()];
+	return _songs[proto::enum_index(song_type)];
 }
 
 void m2::Game::update_window_dims(int window_width, int window_height) {
