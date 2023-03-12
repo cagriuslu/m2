@@ -52,14 +52,21 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 	auto& audio_manager = *GAME.audio_manager;
 	auto* out_stream = reinterpret_cast<AudioSample*>(stream);
 	auto out_length = (size_t) length / sizeof(AudioSample); // in samples
-	memset(stream, 0, length);
+
+	// Clear buffer
+	std::fill(out_stream, out_stream + out_length, AudioSample{});
 
 	auto copy = [=](Playback* playback, size_t copy_count) {
-		auto begin = playback->song->data() + playback->next_sample;
-		auto end = begin + copy_count;
-		std::transform(begin, end, out_stream, [=](const AudioSample& sample) -> AudioSample {
-			return AudioSample{.l = out_stream->l + sample.l * playback->volume * playback->left_volume(), .r = out_stream->r + sample.r * playback->volume * playback->right_volume()};
-		});
+		const auto* begin = playback->song->data() + playback->next_sample;
+		const auto* end = begin + copy_count;
+
+		for (auto it = begin; it != end; ++it) {
+			const auto& playback_sample = *it;
+			auto l_playback_sample = playback_sample.l * playback->volume * playback->left_volume();
+			auto r_playback_sample = playback_sample.r * playback->volume * playback->right_volume();
+			out_stream[it - begin].mutable_mix(l_playback_sample, r_playback_sample);
+		}
+
 		playback->next_sample = (playback->next_sample + copy_count) % playback->song->sample_count();
 	};
 
