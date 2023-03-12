@@ -11,7 +11,7 @@ namespace m2 {
 	struct SoundEmitter : public Component {
 		std::function<void(SoundEmitter&)> on_update{};
 
-		std::list<PlaybackId> playbacks;
+		std::list<PlaybackId> playbacks; // Playback should be queued to AudioManager, then the ID should be added here
 
 		SoundEmitter() = default;
 		explicit SoundEmitter(Id object_id);
@@ -21,6 +21,8 @@ namespace m2 {
 		Vec2f position;
 		float direction{}; // [0,2PI]
 		float listen_angle{PI_MUL2}; // [0,2PI] Minimum angle to omnidirectional hearing
+
+		[[nodiscard]] float volume_of(const Vec2f& emitter_position) const;
 	};
 }
 

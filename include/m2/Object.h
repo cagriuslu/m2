@@ -21,7 +21,7 @@ namespace m2 {
 	using PhysiqueId = Id;
 	using GraphicId = Id;
 	using LightId = Id;
-	using SoundId = Id;
+	using SoundEmitterId = Id;
 	using CharacterId = Id;
 
     /// Basis of all objects in the game.
@@ -52,7 +52,7 @@ namespace m2 {
 	    [[nodiscard]] GraphicId graphic_id() const;
 	    [[nodiscard]] GraphicId terrain_graphic_id() const;
 	    [[nodiscard]] LightId light_id() const;
-	    [[nodiscard]] SoundId sound_id() const;
+	    [[nodiscard]] SoundEmitterId sound_id() const;
 		[[nodiscard]] CharacterId character_id() const;
 
 		[[nodiscard]] Object* parent() const;
@@ -75,7 +75,15 @@ namespace m2 {
 		// TODO mini(2),small(4),medium(8),large(16),huge(32)
 		Character& add_full_character();
 
+		void remove_physique();
+		void remove_graphic();
+		void remove_terrain_graphic();
+		void remove_light();
+		void remove_sound_emitter();
+		void remove_character();
+
 	private:
+		mutable std::optional<ObjectId> _id;
 		ObjectId _parent_id{};
 		GroupId _group_id{};
 	    IndexInGroup _index_in_group{};
@@ -84,12 +92,18 @@ namespace m2 {
 	    GraphicId _graphic_id{};
 	    GraphicId _terrain_graphic_id{};
 	    LightId _light_id{};
-		SoundId _sound_id{};
+		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};
     };
 
     std::pair<Object&, ObjectId> create_object(const m2::Vec2f& position, ObjectId parent_id = 0);
 	std::function<void(void)> create_object_deleter(ObjectId id);
+	std::function<void(void)> create_physique_deleter(ObjectId id);
+	std::function<void(void)> create_graphic_deleter(ObjectId id);
+	std::function<void(void)> create_terrain_graphic_deleter(ObjectId id);
+	std::function<void(void)> create_light_deleter(ObjectId id);
+	std::function<void(void)> create_sound_emitter_deleter(ObjectId id);
+	std::function<void(void)> create_character_deleter(ObjectId id);
 }
 
 #endif

@@ -181,79 +181,36 @@ int main(int argc, char **argv) {
 				IF(physique_it.first->post_step)(*physique_it.first);
 			}
 			GAME.execute_deferred_actions();
-			++phy_step_count;
-			//////////////////////////// END OF PHYSICS ////////////////////////////
-			////////////////////////////////////////////////////////////////////////
 
 			///////////////////////////////// SOUND ////////////////////////////////
+			for (auto sound_emitter_it : LEVEL.sound_emitters) {
+				IF(sound_emitter_it.first->on_update)(*sound_emitter_it.first);
+			}
+			GAME.execute_deferred_actions();
+			// Calculate directional audio
 			if (LEVEL.left_listener || LEVEL.right_listener) {
 				// Loop over sounds
-				for (auto sound_it : LEVEL.sound_emitters) {
-					const auto& sound = *sound_it.first;
-					const auto& sound_position = sound.parent().position;
-
+				for (auto sound_emitter_it : LEVEL.sound_emitters) {
+					const auto& sound_emitter = *sound_emitter_it.first;
+					const auto& sound_position = sound_emitter.parent().position;
 					// Loop over playbacks
-					for (auto playback_id : sound.playbacks) {
-						auto playback = GAME.audio_manager->get_playback(playback_id);
-						if (!playback) {
+					for (auto playback_id : sound_emitter.playbacks) {
+						if (!GAME.audio_manager->has_playback(playback_id)) {
 							continue; // Playback may have finished (if it's ONCE)
 						}
-
 						// Left listener
-						auto left_volume = 0.0f;
-						if (LEVEL.left_listener) {
-							auto listener_position = LEVEL.left_listener->position;
-							auto distance_to_left_listener = sound_position.distance(listener_position);
-							if (distance_to_left_listener <= GAME.max_hearing_distance_m) {
-								// Calculate volume drop-off based on distance
-								auto volume_due_to_distance = std::lerp(0.0f, 1.0f, (GAME.max_hearing_distance_m - distance_to_left_listener) / GAME.max_hearing_distance_m);
-
-								// Check if angle difference to hearing edge is less than zero
-								auto angle_to_sound = (sound_position - listener_position).angle_rads();
-								auto angle_diff_to_sound = fabs(angle_to_sound - LEVEL.left_listener->direction);
-								auto angle_diff_to_hearing_edge = angle_diff_to_sound - LEVEL.left_listener->listen_angle / 2.0f;
-								if (angle_diff_to_hearing_edge <= 0.0f) {
-									// Full hearing, apply distance
-									left_volume = volume_due_to_distance;
-								} else {
-									// Apply both distance and angle
-									auto volume_due_to_angle = std::lerp(GAME.min_hearing_facing_away, 1.0f, (PI - angle_diff_to_hearing_edge) / PI);
-									left_volume = volume_due_to_distance * volume_due_to_angle;
-								}
-							}
-						}
-						playback->set_left_volume(left_volume);
-
+						auto left_volume = LEVEL.left_listener ? LEVEL.left_listener->volume_of(sound_position) : 0.0f;
+						GAME.audio_manager->set_playback_left_volume(playback_id, left_volume);
 						// Right listener
-						auto right_volume = 0.0f;
-						if (LEVEL.right_listener) {
-							auto listener_position = LEVEL.right_listener->position;
-							auto distance_to_left_listener = sound_position.distance(listener_position);
-							if (distance_to_left_listener <= GAME.max_hearing_distance_m) {
-								// Calculate volume drop-off based on distance
-								auto volume_due_to_distance = std::lerp(0.0f, 1.0f, (GAME.max_hearing_distance_m - distance_to_left_listener) / GAME.max_hearing_distance_m);
-
-								// Check if angle difference to hearing edge is less than zero
-								auto angle_to_sound = (sound_position - listener_position).angle_rads();
-								auto angle_diff_to_sound = fabs(angle_to_sound - LEVEL.right_listener->direction);
-								auto angle_diff_to_hearing_edge = angle_diff_to_sound - LEVEL.right_listener->listen_angle / 2.0f;
-								if (angle_diff_to_hearing_edge <= 0.0f) {
-									// Full hearing, apply distance
-									right_volume = volume_due_to_distance;
-								} else {
-									// Apply both distance and angle
-									auto volume_due_to_angle = std::lerp(GAME.min_hearing_facing_away, 1.0f, (PI - angle_diff_to_hearing_edge) / PI);
-									right_volume = volume_due_to_distance * volume_due_to_angle;
-								}
-							}
-						}
-						playback->set_right_volume(right_volume);
+						auto right_volume = LEVEL.right_listener ? LEVEL.right_listener->volume_of(sound_position) : 0.0f;
+						GAME.audio_manager->set_playback_right_volume(playback_id, right_volume);
 					}
 				}
 			}
 			///////////////////////////// END OF SOUND /////////////////////////////
 			////////////////////////////////////////////////////////////////////////
 
+			++phy_step_count;
 			time_since_last_phy -= GAME.phy_period;
 		}
 		if (prev_phy_step_count == 4) {

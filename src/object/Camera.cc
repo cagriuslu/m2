@@ -17,6 +17,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 	phy.post_step = [&camera](MAYBE Physique& phy) {
 //		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 		auto& player = LEVEL.objects[LEVEL.playerId];
+		camera.position = player.position;
 
 		// Mouse lookahead disabled temporarily
 //		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
@@ -25,8 +26,13 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 //			camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
 //			camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
 //		} else {
-			camera.position = player.position;
+//			camera.position = player.position;
 //		}
+
+		if constexpr (m2g::camera_is_listener) {
+			LEVEL.left_listener->position = camera.position;
+			LEVEL.right_listener->position = camera.position;
+		}
 	};
 
 	if (LEVEL.type() == Level::Type::LEVEL_EDITOR) {
@@ -60,6 +66,11 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 				}
 			}
 		};
+	}
+
+	if constexpr (m2g::camera_is_listener) {
+		LEVEL.left_listener = SoundListener{.position = LEVEL.player()->position, .direction = PI, .listen_angle = PI_DIV2};
+		LEVEL.right_listener = SoundListener{.position = LEVEL.player()->position, .direction = 0.0f, .listen_angle = PI_DIV2};
 	}
 
 	LEVEL.cameraId = obj_pair.second;

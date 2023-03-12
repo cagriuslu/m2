@@ -36,15 +36,34 @@ m2::PlaybackId m2::AudioManager::play(const Song* song, PlayPolicy policy, float
 	return id;
 }
 
-m2::AudioManager::Playback* m2::AudioManager::get_playback(PlaybackId id) {
-	return playbacks.get(id);
-}
-
 void m2::AudioManager::stop(PlaybackId id) {
 	std::unique_lock<std::mutex> lock{playbacks_mutex};
 	playbacks.free(id);
 	if (playbacks.size() == 0) {
 		SDL_PauseAudioDevice(sdl_audio_device_id, 1);
+	}
+}
+
+bool m2::AudioManager::has_playback(PlaybackId id) {
+	std::unique_lock<std::mutex> lock{playbacks_mutex};
+	return playbacks.get(id) != nullptr;
+}
+void m2::AudioManager::set_playback_volume(PlaybackId id, float volume) {
+	std::unique_lock<std::mutex> lock{playbacks_mutex};
+	if (auto* playback = playbacks.get(id); playback) {
+		playback->volume = volume;
+	}
+}
+void m2::AudioManager::set_playback_left_volume(PlaybackId id, float volume) {
+	std::unique_lock<std::mutex> lock{playbacks_mutex};
+	if (auto* playback = playbacks.get(id); playback) {
+		playback->left_volume = volume;
+	}
+}
+void m2::AudioManager::set_playback_right_volume(PlaybackId id, float volume) {
+	std::unique_lock<std::mutex> lock{playbacks_mutex};
+	if (auto* playback = playbacks.get(id); playback) {
+		playback->right_volume = volume;
 	}
 }
 
@@ -62,8 +81,8 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 
 		for (auto it = begin; it != end; ++it) {
 			const auto& playback_sample = *it;
-			auto l_playback_sample = playback_sample.l * playback->volume * playback->left_volume();
-			auto r_playback_sample = playback_sample.r * playback->volume * playback->right_volume();
+			auto l_playback_sample = playback_sample.l * playback->volume * playback->left_volume;
+			auto r_playback_sample = playback_sample.r * playback->volume * playback->right_volume;
 			out_stream[it - begin].mutable_mix(l_playback_sample, r_playback_sample);
 		}
 

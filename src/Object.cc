@@ -7,17 +7,17 @@
 m2::Object::Object(const m2::Vec2f &position, ObjectId parent_id) : position(position), _parent_id(parent_id) {}
 
 m2::Object::Object(Object&& other) noexcept :
-	position(other.position),
-	impl(std::move(other.impl)),
-	_parent_id(other._parent_id),
-	_group_id(other._group_id),
-	_index_in_group(other._index_in_group),
-	_physique_id(other._physique_id),
-	_graphic_id(other._graphic_id),
-	_terrain_graphic_id(other._terrain_graphic_id),
-	_light_id(other._light_id),
-	_sound_id(other._sound_id),
-    _character_id(other._character_id) {
+		position(other.position),
+		impl(std::move(other.impl)),
+		_parent_id(other._parent_id),
+		_group_id(other._group_id),
+		_index_in_group(other._index_in_group),
+		_physique_id(other._physique_id),
+		_graphic_id(other._graphic_id),
+		_terrain_graphic_id(other._terrain_graphic_id),
+		_light_id(other._light_id),
+		_sound_emitter_id(other._sound_emitter_id),
+		_character_id(other._character_id) {
 	other._group_id = {};
 	other._parent_id = 0;
 	other._index_in_group = 0;
@@ -25,7 +25,7 @@ m2::Object::Object(Object&& other) noexcept :
 	other._graphic_id = 0;
 	other._terrain_graphic_id = 0;
 	other._light_id = 0;
-	other._sound_id = 0;
+	other._sound_emitter_id = 0;
     other._character_id = 0;
 }
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
@@ -38,46 +38,29 @@ m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(_graphic_id, other._graphic_id);
 	std::swap(_terrain_graphic_id, other._terrain_graphic_id);
 	std::swap(_light_id, other._light_id);
-	std::swap(_sound_id, other._sound_id);
+	std::swap(_sound_emitter_id, other._sound_emitter_id);
 	std::swap(_character_id, other._character_id);
 	return *this;
 }
 
 m2::Object::~Object() {
-	auto id = LEVEL.objects.get_id(this);
 	if (_group_id) {
 		LEVEL.groups[_group_id]->remove_member(_index_in_group);
 	}
-	if (_physique_id) {
-		LEVEL.physics.free(_physique_id);
-		_physique_id = 0;
-	}
-	if (_graphic_id) {
-		LEVEL.draw_list.remove(id);
-		LEVEL.graphics.free(_graphic_id);
-		_graphic_id = 0;
-	}
-	if (_terrain_graphic_id) {
-		LEVEL.terrainGraphics.free(_terrain_graphic_id);
-		_terrain_graphic_id = 0;
-	}
-	if (_light_id) {
-		LEVEL.lights.free(_light_id);
-		_light_id = 0;
-	}
-	if (_sound_id) {
-		LEVEL.sound_emitters.free(_sound_id);
-		_sound_id = 0;
-	}
-    if (_character_id) {
-		LEVEL.characters.free(_character_id);
-        _character_id = 0;
-    }
+	remove_physique();
+	remove_graphic();
+	remove_terrain_graphic();
+	remove_light();
+	remove_sound_emitter();
+	remove_character();
 }
 
 m2::ObjectId m2::Object::id() const {
-	// Looking up the id of the object itself is not very common
-	return LEVEL.objects.get_id(this);
+	if (!_id) {
+		// Looking up the id of the object itself is not very common
+		_id = LEVEL.objects.get_id(this);
+	}
+	return *_id;
 }
 m2::ObjectId m2::Object::parent_id() const {
     return _parent_id;
@@ -97,8 +80,8 @@ m2::GraphicId m2::Object::terrain_graphic_id() const {
 m2::LightId m2::Object::light_id() const {
 	return _light_id;
 }
-m2::SoundId m2::Object::sound_id() const {
-	return _sound_id;
+m2::SoundEmitterId m2::Object::sound_id() const {
+	return _sound_emitter_id;
 }
 m2::CharacterId m2::Object::character_id() const {
     return _character_id;
@@ -123,7 +106,7 @@ m2::Light& m2::Object::light() const {
 	return LEVEL.lights[_light_id];
 }
 m2::SoundEmitter& m2::Object::sound_emitter() const {
-	return LEVEL.sound_emitters[_sound_id];
+	return LEVEL.sound_emitters[_sound_emitter_id];
 }
 m2::Character& m2::Object::character() const {
     auto& it = LEVEL.characters[_character_id];
@@ -174,9 +157,9 @@ m2::Light& m2::Object::add_light() {
 }
 m2::SoundEmitter& m2::Object::add_sound_emitter() {
 	auto sound_pair = LEVEL.sound_emitters.alloc();
-	_sound_id = sound_pair.second;
+	_sound_emitter_id = sound_pair.second;
 	sound_pair.first = SoundEmitter{id()};
-	LOG_TRACE("Added sound component", _sound_id);
+	LOG_TRACE("Added sound component", _sound_emitter_id);
 	return sound_pair.first;
 }
 m2::Character& m2::Object::add_tiny_character() {
@@ -194,12 +177,91 @@ m2::Character& m2::Object::add_full_character() {
     return std::get<FullCharacter>(character_pair.first);
 }
 
+void m2::Object::remove_physique() {
+	if (_physique_id) {
+		LEVEL.physics.free(_physique_id);
+		_physique_id = 0;
+	}
+}
+void m2::Object::remove_graphic() {
+	if (_graphic_id) {
+		LEVEL.draw_list.remove(id());
+		LEVEL.graphics.free(_graphic_id);
+		_graphic_id = 0;
+	}
+}
+void m2::Object::remove_terrain_graphic() {
+	if (_terrain_graphic_id) {
+		LEVEL.terrainGraphics.free(_terrain_graphic_id);
+		_terrain_graphic_id = 0;
+	}
+}
+void m2::Object::remove_light() {
+	if (_light_id) {
+		LEVEL.lights.free(_light_id);
+		_light_id = 0;
+	}
+}
+void m2::Object::remove_sound_emitter() {
+	if (_sound_emitter_id) {
+		LEVEL.sound_emitters.free(_sound_emitter_id);
+		_sound_emitter_id = 0;
+	}
+}
+void m2::Object::remove_character() {
+	if (_character_id) {
+		LEVEL.characters.free(_character_id);
+		_character_id = 0;
+	}
+}
+
 std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position, ObjectId parent_id) {
     return LEVEL.objects.alloc(position, parent_id);
 }
-
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {
 	return [id]() {
 		LEVEL.objects.free(id);
+	};
+}
+std::function<void(void)> m2::create_physique_deleter(ObjectId id) {
+	return [id]() {
+		if (auto* object = LEVEL.objects.get(id); object) {
+			object->remove_physique();
+		}
+	};
+}
+std::function<void(void)> m2::create_graphic_deleter(ObjectId id) {
+	return [id]() {
+		if (auto* object = LEVEL.objects.get(id); object) {
+			object->remove_graphic();
+		}
+	};
+}
+std::function<void(void)> m2::create_terrain_graphic_deleter(ObjectId id) {
+	return [id]() {
+		if (auto* object = LEVEL.objects.get(id); object) {
+			object->remove_terrain_graphic();
+		}
+	};
+}
+std::function<void(void)> m2::create_light_deleter(ObjectId id) {
+	return [id]() {
+		if (auto* object = LEVEL.objects.get(id); object) {
+			object->remove_light();
+		}
+	};
+}
+std::function<void(void)> m2::create_sound_emitter_deleter(ObjectId id) {
+	return [id]() {
+		if (auto* object = LEVEL.objects.get(id); object) {
+			object->remove_sound_emitter();
+		}
+	};
+}
+std::function<void(void)> m2::create_character_deleter(ObjectId id) {
+	return [id]() {
+		if (auto* object = LEVEL.objects.get(id); object) {
+			object->remove_character();
+		}
 	};
 }

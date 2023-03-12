@@ -5,6 +5,7 @@
 
 namespace m2g {
 	constexpr bool gravity = false;
+	constexpr bool camera_is_listener = true;
 	constexpr std::string_view game_name("RPG");
 }
 

@@ -58,8 +58,21 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::InteractionType interaction_type) {
 		// Check if we got hit
 		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
-			// Play audio effect
-			GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_DAMAGE_TO_ENEMY), m2::AudioManager::PlayPolicy::ONCE, 0.10f);
+			// Play audio effect if not already doing so
+			if (obj.sound_id() == 0) {
+				// Add sound emitter
+				auto& sound_emitter = obj.add_sound_emitter();
+				sound_emitter.on_update = [&](m2::SoundEmitter& se) {
+					// Play sound
+					if (se.playbacks.empty()) {
+						auto playback_id = GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_DAMAGE_TO_ENEMY), m2::AudioManager::PlayPolicy::ONCE, 0.10f);
+						se.playbacks.emplace_back(playback_id);
+					} else {
+						// Playback finished, destroy self
+						LEVEL.deferred_actions.emplace_back(m2::create_sound_emitter_deleter(obj.id()));
+					}
+				};
+			}
 			// Apply mask effect
 			self.set_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;

@@ -20,23 +20,19 @@ namespace m2 {
 			LOOP
 		};
 
+	private:
 		struct Playback {
 			const Song* song{};
 			float volume{1.0f};
 			PlayPolicy play_policy{};
 			size_t next_sample{};
+			float left_volume{1.0f}, right_volume{1.0f};
 
 			Playback() = default;
 			Playback(const Song* _song, float _volume, PlayPolicy _play_policy);
-
-			inline void set_left_volume(float v) { _left_volume = v; }
-			[[nodiscard]] inline float left_volume() const { return _left_volume; }
-			inline void set_right_volume(float v) { _right_volume = v; }
-			[[nodiscard]] inline float right_volume() const { return _right_volume; }
-		private:
-			float _left_volume{1.0f}, _right_volume{1.0f};
 		};
 
+	public:
 		SDL_AudioDeviceID sdl_audio_device_id{};
 		SDL_AudioSpec sdl_audio_spec{};
 		Pool<Playback, 32> playbacks;
@@ -45,8 +41,12 @@ namespace m2 {
 		AudioManager();
 
 		PlaybackId play(const Song* song, PlayPolicy policy, float volume = 1.0f);
-		Playback* get_playback(PlaybackId id);
 		void stop(PlaybackId id);
+
+		bool has_playback(PlaybackId id);
+		void set_playback_volume(PlaybackId id, float volume);
+		void set_playback_left_volume(PlaybackId id, float volume);
+		void set_playback_right_volume(PlaybackId id, float volume);
 
 	private:
 		static void audio_callback(void* count, uint8_t* stream, int length);
