@@ -6,7 +6,7 @@
 #include <rpg/object/Player.h>
 
 m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_type) {
-	const auto& sprite = GAME.get_sprite(GAME.get_item(item_type).item().game_sprite());
+	const auto& sprite = GAME.get_sprite(GAME.get_item(item_type)->game_sprite());
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;

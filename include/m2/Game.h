@@ -87,7 +87,7 @@ namespace m2 {
 		std::optional<GlyphsSheet> glyphs_sheet;
 		std::optional<ShapesSheet> shapes_sheet;
 		std::optional<DynamicSheet> dynamic_sheet;
-		std::vector<Item> _items;
+		std::vector<FullItem> _items;
 		std::vector<Animation> animations;
 		std::vector<Song> _songs;
 
@@ -124,7 +124,7 @@ namespace m2 {
 
 		// Accessors
 		inline const Sprite& get_sprite(m2g::pb::SpriteType sprite_type) { return _sprites[proto::enum_index(sprite_type)]; }
-		inline const Item& get_item(m2g::pb::ItemType item_type) { return _items[proto::enum_index(item_type)]; }
+		inline SmartPointer<const Item> get_item(m2g::pb::ItemType item_type) { return make_static<const Item>(&_items[proto::enum_index(item_type)]); }
 		const Song& get_song(m2g::pb::SongType song_type);
 
 		// Modifiers

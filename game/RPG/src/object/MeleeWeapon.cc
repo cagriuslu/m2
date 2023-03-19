@@ -39,7 +39,7 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &directi
 	phy.body->SetAngularVelocity(-SWING_SPEED);
 
 	// Add graphics
-	auto& gfx = obj.add_graphic(GAME.get_sprite(melee_weapon.item().game_sprite()));
+	auto& gfx = obj.add_graphic(GAME.get_sprite(melee_weapon.game_sprite()));
 	gfx.draw_angle = phy.body->GetAngle();
 
 	// Add character
@@ -64,7 +64,7 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &directi
 			// Calculate damage
 			float damage = m2::apply_accuracy(average_damage, damage_accuracy);
 			// Create and give damage item
-			other.add_item(m2::example_damage_item(RESOURCE_HP, damage));
+			other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
 		}
 	};
 	phy.post_step = [&](m2::Physique& phy) {

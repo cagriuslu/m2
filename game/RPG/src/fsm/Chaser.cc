@@ -106,7 +106,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 				case ai::CAPABILITY_MELEE:
 					if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 						auto& melee = m2::create_object(obj->position, obj->id()).first;
-						rpg::create_melee_object(melee, LEVEL.player()->position, GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
+						rpg::create_melee_object(melee, LEVEL.player()->position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
 					}
 					break;
 				case ai::CAPABILITY_EXPLOSIVE:

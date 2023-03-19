@@ -87,17 +87,17 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
 			// New projectile
 			auto& projectile = m2::create_object(obj.position, id).first;
-			rpg::create_ranged_weapon_object(projectile, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
+			rpg::create_ranged_weapon_object(projectile, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
 			// Knock-back
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(to_mouse.angle_rads() + m2::PI) * 500.0f), true);
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 			auto& melee = m2::create_object(obj.position, id).first;
-			rpg::create_melee_object(melee, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
+			rpg::create_melee_object(melee, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER))) {
 			auto& explosive = m2::create_object(obj.position, id).first;
-			rpg::create_explosive_object(explosive, to_mouse, GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
+			rpg::create_explosive_object(explosive, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
 		}
 	};
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {

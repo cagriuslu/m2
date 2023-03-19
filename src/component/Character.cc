@@ -1,6 +1,15 @@
 #include <m2/component/Character.h>
 #include <m2/Game.h>
 #include <algorithm>
+#include <m2/protobuf/Utils.h>
+
+float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
+	if (max_amount < 0.0f) {
+		throw M2ERROR("Negative max resource");
+	}
+	_max_amount = max_amount;
+	return set_amount(_amount);
+}
 
 m2::Character::Character(uint64_t object_id) : Component(object_id) {}
 void m2::Character::execute_interaction(Character& first_char, m2g::InteractionType cause, Character& second_char, m2g::InteractionType effect) {
@@ -12,16 +21,16 @@ void m2::Character::execute_interaction(Character& first_char, m2g::InteractionT
 	}
 }
 bool m2::Character::has_item(m2g::pb::ItemType item_type) const {
-    for (auto it = cbegin_items(); it != cend_items(); ++it) {
-        if (it->item().type() == item_type) {
+    for (auto it = begin_items(); it != end_items(); ++it) {
+        if (it->type() == item_type) {
             return true;
         }
     }
 	return false;
 }
 bool m2::Character::has_item(m2g::pb::ItemCategory item_cat) const {
-    for (auto it = cbegin_items(); it != cend_items(); ++it) {
-        if (it->item().category() == item_cat) {
+    for (auto it = begin_items(); it != end_items(); ++it) {
+        if (it->category() == item_cat) {
             return true;
         }
     }
@@ -29,8 +38,8 @@ bool m2::Character::has_item(m2g::pb::ItemCategory item_cat) const {
 }
 size_t m2::Character::count_item(m2g::pb::ItemType item_type) const {
     size_t count = 0;
-    for (auto it = cbegin_items(); it != cend_items(); ++it) {
-        if (it->item().type() == item_type) {
+    for (auto it = begin_items(); it != end_items(); ++it) {
+        if (it->type() == item_type) {
             ++count;
         }
     }
@@ -38,101 +47,98 @@ size_t m2::Character::count_item(m2g::pb::ItemType item_type) const {
 }
 size_t m2::Character::count_item(m2g::pb::ItemCategory item_cat) const {
     size_t count = 0;
-    for (auto it = cbegin_items(); it != cend_items(); ++it) {
-        if (it->item().category() == item_cat) {
+    for (auto it = begin_items(); it != end_items(); ++it) {
+        if (it->category() == item_cat) {
             ++count;
         }
     }
     return count;
 }
-bool m2::Character::use_item(const Iterator<Item>& item_it, float resource_multiplier) {
+bool m2::Character::use_item(const Iterator& item_it, float resource_multiplier) {
 	if (item_it == end_items()) {
 		return false;
 	}
-	if (item_it->item().usage() == pb::PASSIVE) {
-		LOG_WARN("Attempted to use PASSIVE item_it", item_it->item().type());
+	if (item_it->usage() == pb::PASSIVE) {
+		LOG_WARN("Attempted to use PASSIVE item_it", item_it->type());
 		return false;
 	}
+
 	// Check if costs can be paid
-	if (item_it->item().costs_size() == 1) {
-		if (0.0f < get_resource_amount(item_it->item().costs(0)) * resource_multiplier && this->get_resource(item_it->item().costs(0).type()) < get_resource_amount(item_it->item().costs(0)) * resource_multiplier) {
+	if (item_it->get_cost_count() == 1) {
+		const auto cost = item_it->get_cost_by_index(0);
+		const auto adjusted_cost_amount = cost.second * resource_multiplier;
+		if (0.0f < adjusted_cost_amount && get_resource(cost.first) < adjusted_cost_amount) {
 			return false;
 		}
-	} else if (1 < item_it->item().costs_size()) {
+	} else if (1 < item_it->get_cost_count()) {
 		// Merge costs
-		std::map<m2g::pb::ResourceType, pb::Resource> merged_costs;
-		for (const auto& cost_it : item_it->item().costs()) {
-			auto merged_costs_it = merged_costs.find(cost_it.type());
-			if (merged_costs_it != merged_costs.end()) {
-				auto new_cost = get_resource_amount(merged_costs_it->second) + get_resource_amount(cost_it);
-				merged_costs_it->second.set_amount(new_cost);
-			} else {
-				merged_costs[cost_it.type()] = cost_it;
-			}
+		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> merged_costs{};
+		for (size_t i = 0; i < item_it->get_cost_count(); ++i) {
+			const auto cost = item_it->get_cost_by_index(i);
+			merged_costs[cost.first] += cost.second * resource_multiplier;
 		}
+
 		bool enough = true;
-		for (const auto& cost_it : merged_costs) {
-			if (0.0f < get_resource_amount(cost_it.second) * resource_multiplier && this->get_resource(cost_it.second.type()) < get_resource_amount(cost_it.second) * resource_multiplier) {
+		for (size_t i = 0; i < merged_costs.size(); ++i) {
+			if (0.0f < merged_costs[i] && get_resource((m2g::pb::ResourceType) i) <= merged_costs[i]) {
 				enough = false;
+				break;
 			}
 		}
 		if (!enough) {
 			return false;
 		}
 	}
+
 	// Pay the costs
-	for (const auto& cost_it : item_it->item().costs()) {
-		this->remove_resource(cost_it.type(), get_resource_amount(cost_it) * resource_multiplier);
+	for (size_t i = 0; i < item_it->get_cost_count(); ++i) {
+		const auto cost = item_it->get_cost_by_index(i);
+		remove_resource(cost.first, cost.second * resource_multiplier);
 	}
 	// Get the benefits
-	for (const auto& benefit_it : item_it->item().benefits()) {
-		this->add_resource(benefit_it.type(), get_resource_amount(benefit_it) * resource_multiplier);
+	for (size_t i = 0; i < item_it->get_benefit_count(); ++i) {
+		const auto benefit = item_it->get_benefit_by_index(i);
+		add_resource(benefit.first, benefit.second * resource_multiplier);
 	}
-	if (item_it->item().usage() == pb::CONSUMABLE) {
+	if (item_it->usage() == pb::CONSUMABLE) {
 		remove_item(item_it);
 	}
 	return true;
 }
 
-float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
-	if (max_amount < 0.0f) {
-		throw M2ERROR("Negative max resource");
+namespace {
+	void tiny_character_iterator_incrementor(m2::Character::Iterator& it) {
+		it.set(nullptr);
 	}
-	_max_amount = max_amount;
-	return set_amount(_amount);
 }
 
 m2::TinyCharacter::TinyCharacter(uint64_t object_id) : Character(object_id) {}
 void m2::TinyCharacter::automatic_update() {
-	if (_item && _item->item().usage() == pb::AUTOMATIC) {
+	if (_item && _item->usage() == pb::AUTOMATIC) {
 		use_item(begin_items(), GAME.deltaTime_s);
 	}
 }
-m2::Character::Iterator<m2::Item> m2::TinyCharacter::find_items(m2g::pb::ItemType item_type) {
-	return {new TinyCharacterIteratorImpl<m2::Item>{}, item_type, _item && _item->item().type() == item_type ? &(*_item) : nullptr};
+m2::Character::Iterator m2::TinyCharacter::find_items(m2g::pb::ItemType item_type) {
+	return {*this, tiny_character_iterator_incrementor, item_type, 0,
+			_item && _item->type() == item_type ? _item.get() : nullptr};
 }
-m2::Character::Iterator<m2::Item> m2::TinyCharacter::find_items(m2g::pb::ItemCategory cat) {
-	return {new TinyCharacterIteratorImpl<m2::Item>{}, cat, _item && _item->item().category() == cat ? &(*_item) : nullptr};
+m2::Character::Iterator m2::TinyCharacter::find_items(m2g::pb::ItemCategory cat) {
+	return {*this, tiny_character_iterator_incrementor, cat, 0,
+			_item && _item->category() == cat ? _item.get() : nullptr};
 }
-m2::Character::Iterator<m2::Item> m2::TinyCharacter::begin_items() {
-	return {new TinyCharacterIteratorImpl<m2::Item>{}, {}, _item ? &(*_item) : nullptr};
+m2::Character::Iterator m2::TinyCharacter::begin_items() const {
+	return {*this, tiny_character_iterator_incrementor, {}, 0, _item ? _item.get() : nullptr};
 }
-m2::Character::Iterator<m2::Item> m2::TinyCharacter::end_items() {
-	return {nullptr, {}, nullptr};
+m2::Character::Iterator m2::TinyCharacter::end_items() const {
+	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
 }
-m2::Character::Iterator<const m2::Item> m2::TinyCharacter::cbegin_items() const {
-	return {new TinyCharacterIteratorImpl<const m2::Item>{}, {}, _item ? &(*_item) : nullptr};
-}
-m2::Character::Iterator<const m2::Item> m2::TinyCharacter::cend_items() const {
-	return {nullptr, {}, nullptr};
-}
-void m2::TinyCharacter::add_item(const Item& item) {
-	_item = item;
-	if (item.item().use_on_acquire()) {
+void m2::TinyCharacter::add_item(SmartPointer<const Item>&& item) {
+	_item = std::move(item);
+	if (_item->use_on_acquire()) {
 		use_item(begin_items());
 	}
 }
-void m2::TinyCharacter::remove_item(const Iterator<Item>& item) {
+void m2::TinyCharacter::remove_item(const Iterator& item) {
 	if (item != end_items()) {
 		_item = {};
 	}
@@ -176,49 +182,88 @@ void m2::TinyCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
 	}
 }
 
+void m2::full_character_iterator_incrementor(m2::Character::Iterator& it) {
+	const auto& character = dynamic_cast<const m2::FullCharacter&>(it.character());
+	auto curr_index = it.get_index();
+	auto filter = it.get_filter();
+	if (std::holds_alternative<std::monostate>(filter)) {
+		if (curr_index + 1 < character._items.size()) {
+			// Next item
+			it.set_index(curr_index + 1);
+			it.set(character._items[curr_index + 1].get());
+			return;
+		}
+	} else if (std::holds_alternative<m2g::pb::ItemType>(filter)) {
+		for (size_t i = curr_index + 1; i < character._items.size(); ++i) {
+			if (character._items[i].get()->type() == std::get<m2g::pb::ItemType>(filter)) {
+				// Found item
+				it.set_index(i);
+				it.set(character._items[i].get());
+				return;
+			}
+		}
+	} else if (std::holds_alternative<m2g::pb::ItemCategory>(filter)) {
+		for (size_t i = curr_index + 1; i < character._items.size(); ++i) {
+			if (character._items[i].get()->category() == std::get<m2g::pb::ItemCategory>(filter)) {
+				// Found item
+				it.set_index(i);
+				it.set(character._items[i].get());
+				return;
+			}
+		}
+	} else {
+		throw M2FATAL("Invalid iterator filter");
+	}
+	// Item not found
+	it.set(nullptr);
+}
+
 m2::FullCharacter::FullCharacter(uint64_t object_id) : Character(object_id) {}
 void m2::FullCharacter::automatic_update() {
 	for (auto it = begin_items(); it != end_items(); ++it) {
-		if (it->item().usage() == pb::AUTOMATIC) {
+		if (it->usage() == pb::AUTOMATIC) {
 			use_item(it, GAME.deltaTime_s);
 		}
 	}
 }
-m2::Character::Iterator<m2::Item> m2::FullCharacter::find_items(m2g::pb::ItemType item_type) {
-	auto it = std::find_if(_items.begin(), _items.end(), [=](const Item& item) {
-		return item.item().type() == item_type;
-	});
-	return {new FullCharacterIteratorImpl<m2::Item, FullCharacter>{this}, item_type, it == _items.end() ? nullptr : &(*it)};
+m2::Character::Iterator m2::FullCharacter::find_items(m2g::pb::ItemType item_type) {
+	for (size_t i = 0; i < _items.size(); ++i) {
+		const auto& item = _items[i];
+		if (item.get()->type() == item_type) {
+			return {*this, full_character_iterator_incrementor, item_type, i, item.get()};
+		}
+	}
+	return end_items();
 }
-m2::Character::Iterator<m2::Item> m2::FullCharacter::find_items(m2g::pb::ItemCategory cat) {
-	auto it = std::find_if(_items.begin(), _items.end(), [=](const Item& item) {
-		return item.item().category() == cat;
-	});
-	return {new FullCharacterIteratorImpl<m2::Item, FullCharacter>{this}, cat, it == _items.end() ? nullptr : &(*it)};
+m2::Character::Iterator m2::FullCharacter::find_items(m2g::pb::ItemCategory cat) {
+	for (size_t i = 0; i < _items.size(); ++i) {
+		const auto& item = _items[i];
+		if (item.get()->category() == cat) {
+			return {*this, full_character_iterator_incrementor, cat, i, item.get()};
+		}
+	}
+	return end_items();
 }
-m2::Character::Iterator<m2::Item> m2::FullCharacter::begin_items() {
-	return {new FullCharacterIteratorImpl<m2::Item, FullCharacter>{this}, {}, _items.empty() ? nullptr : _items.data()};
+m2::Character::Iterator m2::FullCharacter::begin_items() const {
+	if (!_items.empty()) {
+		return {*this, full_character_iterator_incrementor, {}, 0, _items.front().get()};
+	}
+	return end_items();
 }
-m2::Character::Iterator<m2::Item> m2::FullCharacter::end_items() {
-	return {nullptr, {}, nullptr};
+m2::Character::Iterator m2::FullCharacter::end_items() const {
+	return {*this, full_character_iterator_incrementor, {}, 0, nullptr};
 }
-m2::Character::Iterator<const m2::Item> m2::FullCharacter::cbegin_items() const {
-	return {new FullCharacterIteratorImpl<const m2::Item, const FullCharacter>{this}, {}, _items.empty() ? nullptr : _items.data()};
-}
-m2::Character::Iterator<const m2::Item> m2::FullCharacter::cend_items() const {
-	return {nullptr, {}, nullptr};
-}
-void m2::FullCharacter::add_item(const Item& item) {
-	_items.emplace_back(item);
-	if (item.item().use_on_acquire()) {
-		use_item(Iterator<Item>{nullptr, {}, &_items.back()});
+void m2::FullCharacter::add_item(SmartPointer<const Item>&& item) {
+	_items.emplace_back(std::move(item));
+	if (_items.back()->use_on_acquire()) {
+		use_item(Iterator{*this, full_character_iterator_incrementor, {}, _items.size() - 1, _items.back().get()});
 	}
 }
-void m2::FullCharacter::remove_item(const Iterator<Item>& item) {
+void m2::FullCharacter::remove_item(const Iterator& item) {
 	if (item != end_items()) {
-		auto start = _items.cbegin();
-		std::advance(start, &(*item) - _items.data());
-		_items.erase(start);
+		auto it = _items.cbegin();
+		std::advance(it, item.get_index());
+		_items.erase(it);
 	}
 }
 bool m2::FullCharacter::has_resource(m2g::pb::ResourceType resource_type) const {

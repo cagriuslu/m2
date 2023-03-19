@@ -70,7 +70,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 			// Calculate damage
 			float damage = m2::apply_accuracy(average_damage, damage_accuracy);
 			// Create and give damage item
-			other.add_item(m2::example_damage_item(RESOURCE_HP, damage));
+			other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
 			// Clear TTL
 			self.clear_resource(RESOURCE_TTL);
 		}
