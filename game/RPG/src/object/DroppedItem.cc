@@ -1,9 +1,7 @@
 #include <rpg/object/DroppedItem.h>
-#include <m2g/Object.h>
 #include <Item.pb.h>
 #include <m2/box2d/Utils.h>
 #include <m2/Game.h>
-#include <rpg/object/Player.h>
 
 m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_type) {
 	const auto& sprite = GAME.get_sprite(GAME.get_item(item_type)->game_sprite());

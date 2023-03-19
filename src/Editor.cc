@@ -2,7 +2,6 @@
 #include <m2/Game.h>
 #include <m2/object/Ghost.h>
 #include <m2/object/Camera.h>
-#include <m2g/Object.h>
 
 using namespace m2;
 using namespace m2::ui;

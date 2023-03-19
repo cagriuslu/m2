@@ -7,3 +7,4 @@
 - Sound doesn't play if object dies
 - Proxy.h dosyasina gerek yok, include edilen bir Proxy.h olabilir m2 icinde.
 - m2g include headerlarina gerek yok aslinda
+- Protobuf enumlarinin incremental olmamalari sikintiya yol aciyor, cunku ARRAYSIZE constexpr, ama enum_value_count degil

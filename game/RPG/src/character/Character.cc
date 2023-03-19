@@ -1,5 +1,4 @@
 #include "rpg/Character.h"
-#include <m2g/Object.h>
 
 const chr::CharacterBlueprint chr::character_player = {
 		.main_sprite = m2g::pb::SpriteType::PLAYER_LOOKDOWN_00,

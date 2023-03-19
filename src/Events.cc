@@ -1,5 +1,5 @@
 #include <m2/Events.h>
-#include <m2g/Controls.h>
+#include <m2/Proxy.h>
 #include <m2/Log.h>
 
 m2::Events::Events() : quit(), window_resize(), key_press_count(), keys_pressed(), ui_keys_pressed(),

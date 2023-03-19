@@ -1,8 +1,7 @@
-#include <m2g/Ui.h>
+#include <m2/Proxy.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
 #include <rpg/object/Player.h>
-#include <m2g/Object.h>
 
 using namespace m2::ui;
 

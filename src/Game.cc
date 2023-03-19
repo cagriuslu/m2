@@ -3,7 +3,6 @@
 #include <m2/Exception.h>
 #include <m2/Object.h>
 #include <m2/String.h>
-#include <m2g/Group.h>
 #include <m2/Sprite.h>
 #include <Level.pb.h>
 #include "m2/component/Physique.h"

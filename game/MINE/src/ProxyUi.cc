@@ -1,7 +1,6 @@
-#include <m2g/Ui.h>
+#include <m2/Proxy.h>
 #include <m2/Game.h>
 #include <m2/Noise.h>
-#include <m2g/Object.h>
 #include <m2/protobuf/Utils.h>
 #include <SpriteType.pb.h>
 

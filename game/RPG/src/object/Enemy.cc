@@ -1,5 +1,4 @@
 #include <rpg/object/Enemy.h>
-#include <m2g/Interaction.h>
 #include <rpg/object/DroppedItem.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
@@ -7,6 +6,7 @@
 #include <m2/M2.h>
 #include <m2/box2d/Utils.h>
 #include <m2/Group.h>
+#include <InteractionType.pb.h>
 #include <deque>
 
 using namespace obj;
@@ -55,7 +55,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 			[](auto& v) { }
 		}, impl->ai_fsm);
 	};
-	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::InteractionType interaction_type) {
+	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType interaction_type) {
 		// Check if we got hit
 		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
 			// Play audio effect if not already doing so

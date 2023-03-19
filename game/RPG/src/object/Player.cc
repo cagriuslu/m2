@@ -103,7 +103,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (other.parent().character_id() && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {
 			auto& other_char = other.parent().character();
-			m2::Character::execute_interaction(chr, m2g::InteractionType::STUN, other_char, m2g::InteractionType::GET_STUNNED_BY);
+			m2::Character::execute_interaction(chr, m2g::pb::InteractionType::STUN, other_char, m2g::pb::InteractionType::GET_STUNNED_BY);
 		}
 	};
 	phy.post_step = [&obj](m2::Physique& phy) {

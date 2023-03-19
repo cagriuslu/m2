@@ -1,7 +1,5 @@
 #include <m2/Level.h>
-#include <m2g/Object.h>
-#include <m2g/Ui.h>
-#include <m2g/Group.h>
+#include <m2/Proxy.h>
 #include <m2/Value.h>
 #include <m2/object/Tile.h>
 #include <m2/object/Ghost.h>

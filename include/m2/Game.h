@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <m2g/Proxy.h>
+#include "Proxy.h"
 #include "Level.h"
 #include "Group.h"
 #include "Shape.h"

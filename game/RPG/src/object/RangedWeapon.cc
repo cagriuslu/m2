@@ -1,7 +1,6 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/object/RangedWeapon.h>
-#include <m2g/Object.h>
 #include <m2/box2d/Utils.h>
 #include <m2/M2.h>
 #include <m2/Log.h>

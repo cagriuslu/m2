@@ -1,8 +1,6 @@
-#include <m2g/Object.h>
-#include <m2/sdl/Utils.hh>
 #include <m2/object/Tile.h>
 #include <m2/Object.h>
-#include "m2/Game.h"
+#include <m2/Game.h>
 #include <m2/box2d/Utils.h>
 
 std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const Vec2f& position, const m2::Sprite& sprite) {
