@@ -5,3 +5,5 @@
   GAME._items sadece bir storage, custom made item'lar herhangi bir yerde saklanip itemlari saga sola pass edilebilir.
   Kisa sureli yaratilan item'lar icin belki unique_ptr pass alan fonksiyon yapabiliriz character'e
 - Sound doesn't play if object dies
+- Proxy.h dosyasina gerek yok, include edilen bir Proxy.h olabilir m2 icinde.
+- m2g include headerlarina gerek yok aslinda
