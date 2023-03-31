@@ -3,19 +3,49 @@
 #include <m2/sdl/Utils.hh>
 
 bool m2::ShapesSheet::ShapeKey::operator==(const ShapeKey &other) const {
-	return type == other.type && x1 == other.x1 && y1 == other.y1 && w == other.w && h == other.h && r == other.r;
+	return type == other.type && color.r == other.color.r && color.g == other.color.g && color.b == other.color.b &&
+			color.a == other.color.a && x1 == other.x1 && y1 == other.y1 && w == other.w && h == other.h && r == other.r;
 }
 size_t m2::ShapesSheet::ShapeKeyHash::operator()(const ShapeKey &k) const {
-	uint64_t packed = static_cast<uint64_t>(k.x1) | (static_cast<uint64_t>(k.y1) << 8);
-	packed |= (static_cast<uint64_t>(k.w) << 16) | (static_cast<uint64_t>(k.h) << 24);
-	packed |= static_cast<uint64_t>(k.r) << 32;
-	packed |= static_cast<uint64_t>(k.type) << 40;
+	uint64_t packed{};
+	packed |= static_cast<uint64_t>(k.color.r ^ k.color.g);
+	packed |= static_cast<uint64_t>(k.color.b ^ k.color.a) << 8;
+	packed |= static_cast<uint64_t>(k.x1) << 16;
+	packed |= static_cast<uint64_t>(k.y1) << 24;
+	packed |= static_cast<uint64_t>(k.w) << 32;
+	packed |= static_cast<uint64_t>(k.h) << 40;
+	packed |= static_cast<uint64_t>(k.r) << 48;
+	packed |= static_cast<uint64_t>(k.type) << 56;
 	return std::hash<uint64_t>{}(packed);
 }
 
 m2::ShapesSheet::ShapesSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
+
+std::pair<SDL_Texture*, SDL_Rect> m2::ShapesSheet::get_pixel(SDL_Color color) {
+	// Check if already rendered
+	ShapeKey key{.type = ShapeType::PIXEL, .color = color};
+	auto it = _shapes.find(key);
+	if (it != _shapes.end()) {
+		return {texture(), it->second};
+	} else {
+		// Allocate space from the dynamic sheet
+		auto [surface, rect] = alloc(1, 1);
+		// Lock surface
+		if (SDL_LockSurface(surface)) {
+			throw M2ERROR("Unable to lock surface: " + std::string{SDL_GetError()});
+		}
+		// Draw pixel
+		auto pixel = SDL_MapRGBA(surface->format, color.r, color.g, color.b, color.a);
+		sdl::set_pixel(surface, rect.x, rect.y, pixel);
+		// Unlock surface
+		SDL_UnlockSurface(surface);
+		// Save to map
+		_shapes[key] = rect;
+		return {recreate_texture(), rect};
+	}
+}
 std::pair<SDL_Texture*, SDL_Rect> m2::ShapesSheet::get_line(SDL_Color color, int x1, int y1) {
-	ShapeKey key{.type = ShapeType::LINE, .x1 = x1, .y1 = y1};
+	ShapeKey key{.type = ShapeType::LINE, .color = color, .x1 = x1, .y1 = y1};
 
 	// Check if already rendered
 	auto it = _shapes.find(key);
@@ -62,7 +92,7 @@ std::pair<SDL_Texture*, SDL_Rect> m2::ShapesSheet::get_line(SDL_Color color, int
 	}
 }
 std::pair<SDL_Texture*, SDL_Rect> m2::ShapesSheet::get_rectangle_aa(SDL_Color color, int w, int h) {
-	ShapeKey key{.type = ShapeType::RECTANGLE_AA, .w = w, .h = h};
+	ShapeKey key{.type = ShapeType::RECTANGLE_AA, .color = color, .w = w, .h = h};
 
 	// Check if already rendered
 	auto it = _shapes.find(key);
@@ -100,7 +130,7 @@ std::pair<SDL_Texture*, SDL_Rect> m2::ShapesSheet::get_rectangle_aa(SDL_Color co
 }
 std::pair<SDL_Texture*, SDL_Rect> m2::ShapesSheet::get_circle(SDL_Color color, int r) {
 	int w = r * 2 + 1;
-	ShapeKey key{.type = ShapeType::CIRCLE, .r = r};
+	ShapeKey key{.type = ShapeType::CIRCLE, .color = color, .r = r};
 
 	// Check if already rendered
 	auto it = _shapes.find(key);
