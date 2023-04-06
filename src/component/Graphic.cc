@@ -39,6 +39,7 @@ m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 m2::Vec2f m2::Graphic::screen_origin_to_sprite_center_px() const {
 	return screen_origin_to_position_px(parent().position) - sprite_center_to_sprite_origin_px();
 }
+
 void m2::Graphic::default_draw(Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only draws sprites
@@ -64,12 +65,13 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 		src_rect.h * mul / div
 	};
 
-	auto centerPoint = SDL_Point{
+	// Sprite is rotated around this point
+	auto center_point = SDL_Point{
 		(int)roundf(gfx.sprite_center_to_sprite_origin_px().x) + dst_rect.w / 2 ,
 		(int)roundf(gfx.sprite_center_to_sprite_origin_px().y) + dst_rect.h / 2
 	};
 
-	if (SDL_RenderCopyEx(GAME.sdlRenderer, texture, &src_rect, &dst_rect, gfx.draw_angle * 180.0f / PI, &centerPoint, SDL_FLIP_NONE)) {
+	if (SDL_RenderCopyEx(GAME.sdlRenderer, texture, &src_rect, &dst_rect, gfx.draw_angle * 180.0f / PI, &center_point, SDL_FLIP_NONE)) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }

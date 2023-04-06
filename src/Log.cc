@@ -1,23 +1,7 @@
 #include <m2/Log.h>
 #include <m2/M2.h>
-#include <cctype>
-#include <cstdio>
-#include <ctime>
-#include <cstdlib>
-#include <cstddef>
-#include <cstdarg>
 
-m2::LogLevel m2::current_log_level = m2::LogLevel::Debug;
-bool m2::unexpected_event_occured = false;
-
-std::string m2::to_string(const LogLevel& lvl) {
-	auto lvl_unsigned = to_unsigned(lvl);
-	if (lvl_unsigned <= to_unsigned(LogLevel::Fatal)) {
-		static const std::string lvls[] = {"Trace", "Debug", "Info", "Warn", "Error", "Fatal"};
-		return lvls[lvl_unsigned];
-	}
-	return "Unknown";
-}
+static bool unexpected_event_occured = false;
 
 void m2::log_stacktrace() {
 #ifdef _WIN32
@@ -35,11 +19,11 @@ void m2::log_stacktrace() {
 #endif
 }
 
-void m2::internal::log_header(LogLevel lvl, const char *file, int line) {
+void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 	auto lvl_unsigned = to_unsigned(lvl);
 
 	// Set unexpected event
-	if (to_unsigned(LogLevel::Warn) <= lvl_unsigned && !unexpected_event_occured) {
+	if (to_unsigned(pb::LogLevel::WRN) <= lvl_unsigned && !unexpected_event_occured) {
 		unexpected_event_occured = true;
 	}
 
@@ -48,7 +32,7 @@ void m2::internal::log_header(LogLevel lvl, const char *file, int line) {
 
 	// Convert log level into char
 	char lvl_char = 'U';
-	if (lvl_unsigned <= to_unsigned(LogLevel::Fatal)) {
+	if (lvl_unsigned <= to_unsigned(pb::LogLevel::FTL)) {
 		static const char lvl_chars[] = {'T', 'D', 'I', 'W', 'E', 'F'};
 		static const char lvl_chars_un[] = {'t', 'd', 'i', 'w', 'e', 'f'};
 		lvl_char = unexpected_event_occured ? lvl_chars_un[lvl_unsigned] : lvl_chars[lvl_unsigned];
@@ -79,9 +63,9 @@ void m2::internal::log_header(LogLevel lvl, const char *file, int line) {
 }
 
 #if _MSC_VER > 1400
-void m2::internal::logf(LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...) {
+void m2::detail::logf(LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...) {
 #else
-void m2::internal::logf(LogLevel lvl, const char* file, int line, const char* fmt, ...) {
+void m2::detail::logf(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) {
 #endif
 	if (lvl < current_log_level) {
 		return;

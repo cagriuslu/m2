@@ -1,6 +1,7 @@
 #include <m2/AudioManager.h>
 #include <m2/Exception.h>
 #include <m2/Game.h>
+#include <m2/Options.h>
 
 /// It's not possible to queue audio during audio callback
 /// Thus having a high callback frequency allows new audio to be queued faster
@@ -80,10 +81,14 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 		const auto* end = begin + copy_count;
 
 		for (auto it = begin; it != end; ++it) {
-			const auto& playback_sample = *it;
-			auto l_playback_sample = playback_sample.l * playback->volume * playback->left_volume;
-			auto r_playback_sample = playback_sample.r * playback->volume * playback->right_volume;
-			out_stream[it - begin].mutable_mix(l_playback_sample, r_playback_sample);
+			if (silent) {
+				out_stream[it - begin] = {};
+			} else {
+				const auto& playback_sample = *it;
+				auto l_playback_sample = playback_sample.l * playback->volume * playback->left_volume;
+				auto r_playback_sample = playback_sample.r * playback->volume * playback->right_volume;
+				out_stream[it - begin].mutable_mix(l_playback_sample, r_playback_sample);
+			}
 		}
 
 		playback->next_sample = (playback->next_sample + copy_count) % playback->song->sample_count();

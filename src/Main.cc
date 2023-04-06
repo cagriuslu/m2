@@ -15,28 +15,22 @@ int main(int argc, char **argv) {
 
 	LOG_DEBUG("Processing command line arguments...");
 	for (int i = 1; i < argc; i++) {
-		const char* log_level = "--log-lvl=";
-		const size_t loglevelStrlen = strlen(log_level);
-		if (strncmp(argv[i], log_level, loglevelStrlen) == 0) {
-			LOG_DEBUG("Encountered log-lvl option");
-			if (strcmp(argv[i] + loglevelStrlen, "trace") == 0) {
-				m2::current_log_level = m2::LogLevel::Trace;
-			} else if (strcmp(argv[i] + loglevelStrlen, "debug") == 0) {
-				m2::current_log_level = m2::LogLevel::Debug;
-			} else if (strcmp(argv[i] + loglevelStrlen, "info") == 0) {
-				m2::current_log_level = m2::LogLevel::Info;
-			} else if (strcmp(argv[i] + loglevelStrlen, "warning") == 0) {
-				m2::current_log_level = m2::LogLevel::Warn;
-			} else if (strcmp(argv[i] + loglevelStrlen, "error") == 0) {
-				m2::current_log_level = m2::LogLevel::Error;
-			} else if (strcmp(argv[i] + loglevelStrlen, "fatal") == 0) {
-				m2::current_log_level = m2::LogLevel::Fatal;
-			} else {
+		LOG_TRACE("Processing argument %s...", argv[i]);
+		std::string arg{argv[i]};
+		constexpr std::string_view log_level_opt = "--log-level=";
+		constexpr std::string_view silent_opt = "--silent";
+		if (arg.starts_with(log_level_opt)) {
+			auto opt = arg.substr(log_level_opt.size());
+			LOG_DEBUG("Encountered log-level option", opt);
+			if (not pb::LogLevel_Parse(opt, &current_log_level)) {
 				LOG_WARN("Invalid log level");
 			}
-			LOG_INFO("New log level", m2::current_log_level);
+			LOG_INFO("New log level", current_log_level);
+		} else if (arg == silent_opt) {
+			silent = true;
+			LOG_INFO("Silent", current_log_level);
 		} else {
-			LOG_WARN("Unknown command line argument");
+			LOG_WARN("Unknown command line argument", arg);
 		}
 	}
 	LOG_DEBUG("Processed command line arguments");

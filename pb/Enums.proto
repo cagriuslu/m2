@@ -1,0 +1,12 @@
+syntax = "proto3";
+package m2.pb;
+
+enum LogLevel {
+    NO_LOG_LEVEL = 0;
+    TRC = 1;
+    DBG = 2;
+    INF = 3;
+    WRN = 4;
+    ERR = 5;
+    FTL = 6;
+}
