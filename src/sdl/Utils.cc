@@ -91,6 +91,13 @@ void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel) {
 	auto* target_pixel = (uint32_t*)((uint8_t*)surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel);
 	*target_pixel = pixel;
 }
+uint32_t m2::sdl::get_pixel(const SDL_Surface* surface, int x, int y) {
+	if (surface->format->format != SDL_PIXELFORMAT_BGRA32) {
+		throw M2FATAL("get_pixel is called with a surface with an unsupported pixel format");
+	}
+	auto* target_pixel = (uint32_t*)((uint8_t*)surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel);
+	return *target_pixel;
+}
 
 SDL_Rect m2::sdl::expand_rect(const SDL_Rect& rect, int diff) {
 	return {

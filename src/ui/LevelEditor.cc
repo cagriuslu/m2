@@ -1,7 +1,7 @@
-#include <m2/LevelEditor.h>
-#include <m2/Game.h>
-#include <m2/object/Ghost.h>
-#include <m2/object/Camera.h>
+#include "m2/ui/LevelEditor.h"
+#include "m2/Game.h"
+#include "m2/object/Ghost.h"
+#include "m2/object/Camera.h"
 
 using namespace m2;
 using namespace m2::ui;
@@ -184,16 +184,12 @@ const Blueprint::Widget::Variant level_editor_left_hud_cancel_button = Blueprint
 		LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
 		return Action::CONTINUE;
 	},
-	.kb_shortcut = SDL_SCANCODE_C
+	.kb_shortcut = SDL_SCANCODE_X
 };
 const Blueprint::Widget::Variant level_editor_left_hud_gridlines_button = Blueprint::Widget::Text{
-	.initial_text = "Grid Lines",
+	.initial_text = "Grid",
 	.action_callback = []() -> Action {
-		auto* camera = LEVEL.objects.get(LEVEL.cameraId);
-		if (camera && camera->impl) {
-			auto& camera_data = dynamic_cast<m2::obj::Camera&>(*camera->impl);
-			camera_data.draw_grid_lines = !camera_data.draw_grid_lines;
-		}
+		LEVEL.toggle_grid();
 		return Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_G

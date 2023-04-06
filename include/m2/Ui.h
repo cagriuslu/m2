@@ -65,6 +65,7 @@ namespace m2::ui {
 			struct IntegerSelection {
 				int min_value, max_value; /// Values are inclusive
 				int initial_value;
+				std::function<std::optional<int>(void)> update_callback;
 				std::function<Action(int value)> action_callback;
 			};
 			struct CheckboxWithText {
@@ -184,6 +185,7 @@ namespace m2::ui {
 			explicit IntegerSelection(const Blueprint::Widget* blueprint);
 			~IntegerSelection() override;
 			Action handle_events(Events& events) override;
+			Action update_content() override;
 			void draw() override;
 		};
 		struct CheckboxWithText : public AbstractButton {

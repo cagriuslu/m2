@@ -98,6 +98,12 @@ m2::VoidValue m2::Game::load_level_editor(const std::string& level_resource_path
 	_level.emplace();
 	return _level->init_level_editor(level_resource_path);
 }
+m2::VoidValue m2::Game::load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset) {
+	_level.reset();
+	reset_state();
+	_level.emplace();
+	return _level->init_pixel_editor(image_resource_path, x_offset, y_offset);
+}
 
 void m2::Game::reset_state() {
 	events.clear();

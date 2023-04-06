@@ -141,6 +141,13 @@ m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
     LOG_TRACE("Added graphic component", _graphic_id);
 	return graphic_pair.first;
 }
+m2::Graphic& m2::Object::add_terrain_graphic() {
+	auto terrain_graphic_pair = LEVEL.terrainGraphics.alloc();
+	_terrain_graphic_id = terrain_graphic_pair.second;
+	terrain_graphic_pair.first = Graphic{id()};
+	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
+	return terrain_graphic_pair.first;
+}
 m2::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
 	auto terrain_graphic_pair = LEVEL.terrainGraphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;

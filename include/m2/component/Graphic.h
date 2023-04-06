@@ -42,8 +42,9 @@ namespace m2 {
 		/// The graphical origin should align with the object's position, not the sprite's center pixel.
 		[[nodiscard]] Vec2f sprite_center_to_sprite_origin_px() const;
 
-		/// Returns a vector from screen origin to the center of the sprite that should be drawn.
-		/// Returns screen_origin_to_position_px(position) - sprite_center_to_sprite_origin_px().
+		/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
+		/// Returns screen_origin_to_position_px(position) - sprite_center_to_sprite_origin_px() if sprite is non-NULL.
+		/// Returns screen_origin_to_position_px(position) if sprite is NULL.
 		[[nodiscard]] Vec2f screen_origin_to_sprite_center_px() const;
 
 		static void default_draw(Graphic& gfx);

@@ -18,7 +18,8 @@ namespace m2 {
 		enum class Type {
 			NO_TYPE,
 			SINGLE_PLAYER,
-			LEVEL_EDITOR
+			LEVEL_EDITOR,
+			PIXEL_EDITOR
 		};
 
 	private:
@@ -52,6 +53,7 @@ namespace m2 {
 		std::optional<Pathfinder> pathfinder;
 		std::optional<ui::State> leftHudUIState, rightHudUIState;
 		std::vector<std::function<void(void)>> deferred_actions;
+
 		VoidValue init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint);
 
 		struct LevelEditorState {
@@ -92,8 +94,39 @@ namespace m2 {
 		std::optional<LevelEditorState> level_editor_state;
 		VoidValue init_level_editor(const FilePath& lb_path);
 
+		struct PixelEditorState {
+			struct PaintMode {
+				void paint_color(const Vec2i& position);
+			};
+			struct EraseMode {
+				void erase_color(const Vec2i& position);
+			};
+			struct ColorPickerMode {
+				void pick_color(const Vec2i& position);
+			};
+
+			std::variant<std::monostate,PaintMode,EraseMode,ColorPickerMode> mode;
+			SDL_Color selected_color;
+			std::unordered_map<Vec2i, std::pair<Id,SDL_Color>, Vec2iHash> pixels;
+			sdl::SurfaceUniquePtr image_surface;
+			Vec2i image_offset;
+
+			inline void select_color(const SDL_Color& color) { selected_color = color; }
+			void deactivate_mode();
+			void activate_paint_mode();
+			void activate_erase_mode();
+			void activate_color_picker_mode();
+			static void save();
+		};
+		std::optional<PixelEditorState> pixel_editor_state;
+		VoidValue init_pixel_editor(const FilePath& path, int x_offset, int y_offset);
+
 		// Accessors
 		inline Object* player() { return objects.get(playerId); }
+		inline Object* camera() { return objects.get(cameraId); }
+
+		// Convenience
+		void toggle_grid();
 	};
 }
 

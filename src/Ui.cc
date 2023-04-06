@@ -247,7 +247,7 @@ Action State::TextInput::handle_events(Events& events) {
 	return Action::CONTINUE;
 }
 Action State::TextInput::update_content() {
-	auto new_str = text_input.str();
+	auto new_str = text_input.str() + '_';
 	if (new_str != font_texture_str) {
 		if (font_texture) {
 			SDL_DestroyTexture(font_texture);
@@ -454,6 +454,20 @@ Action State::IntegerSelection::handle_events(Events& events) {
 		}
 	}
 
+	return Action::CONTINUE;
+}
+m2::ui::Action State::IntegerSelection::update_content() {
+	auto& pb_blueprint = std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant);
+	if (pb_blueprint.update_callback) {
+		auto optional_value = pb_blueprint.update_callback();
+		if (optional_value) {
+			value = *optional_value;
+			if (font_texture) {
+				SDL_DestroyTexture(font_texture);
+			}
+			font_texture = generate_font_texture(std::to_string(value));
+		}
+	}
 	return Action::CONTINUE;
 }
 void State::IntegerSelection::draw() {
@@ -680,7 +694,22 @@ const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::Text
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
 					GAME.console_output.emplace_back("ledit usage:");
-					GAME.console_output.emplace_back(".. file_name - open level editor with file" );
+					GAME.console_output.emplace_back(".. file_name - open level editor with file");
+				}
+				return Action::CONTINUE;
+			} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
+				std::smatch match_results;
+				if (std::regex_match(command, match_results, std::regex{"pedit\\s+([0-9]+)\\s+([0-9]+)\\s+(.+)"})) {
+					auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
+					auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
+					auto load_result = GAME.load_pixel_editor(match_results.str(3), (int) x_offset, (int) y_offset);
+					if (load_result) {
+						return Action::RETURN;
+					}
+					GAME.console_output.emplace_back(load_result.error());
+				} else {
+					GAME.console_output.emplace_back("pedit usage:");
+					GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 				}
 				return Action::CONTINUE;
 			} else if (command == "quit") {
@@ -688,10 +717,10 @@ const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::Text
             } else if (command.empty()) {
 				// Do nothing
 			} else {
-				GAME.console_output.emplace_back("Hello!");
 	            GAME.console_output.emplace_back("Available commands:");
 	            GAME.console_output.emplace_back("help - display this help");
 	            GAME.console_output.emplace_back("ledit - open level editor");
+	            GAME.console_output.emplace_back("pedit - open pixel editor");
 	            GAME.console_output.emplace_back("quit - quit game");
             }
 

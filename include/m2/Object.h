@@ -68,6 +68,7 @@ namespace m2 {
         Physique& add_physique();
         Graphic& add_graphic();
 		Graphic& add_graphic(const Sprite& sprite);
+		Graphic& add_terrain_graphic();
 		Graphic& add_terrain_graphic(const Sprite& sprite);
         Light& add_light();
         SoundEmitter& add_sound_emitter();

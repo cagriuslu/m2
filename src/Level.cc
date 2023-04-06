@@ -4,13 +4,16 @@
 #include <m2/object/Tile.h>
 #include <m2/object/Ghost.h>
 #include <m2/object/God.h>
-#include <m2/LevelEditor.h>
+#include "m2/ui/LevelEditor.h"
 #include <m2/object/Origin.h>
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
 #include <m2/object/Placeholder.h>
+#include <m2/ui/PixelEditor.h>
+#include <m2/object/Pixel.h>
 #include <m2/protobuf/Utils.h>
 #include <m2/box2d/Utils.h>
+#include <SDL2/SDL_image.h>
 #include <m2/Game.h>
 #include <filesystem>
 #include <iterator>
@@ -127,6 +130,7 @@ void m2::Level::LevelEditorState::PaintMode::paint_sprite(const Vec2i& position)
 		if (placeholders_it != LEVEL.level_editor_state->bg_placeholders.end()) {
 			LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second));
 		}
+		// TODO delete previous object
 		LEVEL.level_editor_state->bg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.get_sprite(sprite_type), false);
 	}
 }
@@ -214,9 +218,10 @@ void m2::Level::LevelEditorState::save() {
 }
 m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	_type = Type::LEVEL_EDITOR;
+	_lb_path = lb_path;
 	level_editor_state = LevelEditorState{};
+
 	if (std::filesystem::exists(lb_path)) {
-		_lb_path = lb_path;
 		auto lb = proto::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		_lb = *lb;
@@ -237,7 +242,6 @@ m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 			level_editor_state->fg_placeholders[position.iround()] = obj::create_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()]), true);
 		}
 	} else {
-		_lb_path = lb_path;
 		_lb = pb::Level{};
 	}
 
@@ -255,4 +259,108 @@ m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	rightHudUIState->update_contents();
 
 	return {};
+}
+
+void m2::Level::PixelEditorState::PaintMode::paint_color(const Vec2i& position) {
+	// Delete existing pixel, if there is one
+	auto it = LEVEL.pixel_editor_state->pixels.find(position);
+	if (it != LEVEL.pixel_editor_state->pixels.end()) {
+		GAME.add_deferred_action(create_object_deleter(it->second.first));
+		LEVEL.pixel_editor_state->pixels.erase(it);
+	}
+	auto pixel_id = obj::create_pixel(static_cast<Vec2f>(position), LEVEL.pixel_editor_state->selected_color);
+	LEVEL.pixel_editor_state->pixels[position] = std::make_pair(pixel_id, LEVEL.pixel_editor_state->selected_color);
+}
+void m2::Level::PixelEditorState::EraseMode::erase_color(const Vec2i &position) {
+	auto it = LEVEL.pixel_editor_state->pixels.find(position);
+	if (it != LEVEL.pixel_editor_state->pixels.end()) {
+		GAME.add_deferred_action(create_object_deleter(it->second.first));
+		LEVEL.pixel_editor_state->pixels.erase(it);
+	}
+}
+void m2::Level::PixelEditorState::ColorPickerMode::pick_color(const Vec2i &position) {
+	auto it = LEVEL.pixel_editor_state->pixels.find(position);
+	if (it != LEVEL.pixel_editor_state->pixels.end()) {
+		LOG_DEBUG("Selected color");
+		LEVEL.pixel_editor_state->select_color(it->second.second);
+	}
+}
+void m2::Level::PixelEditorState::deactivate_mode() {
+	mode = std::monostate{};
+}
+void m2::Level::PixelEditorState::activate_paint_mode() {
+	mode = PaintMode{};
+}
+void m2::Level::PixelEditorState::activate_erase_mode() {
+	mode = EraseMode{};
+}
+void m2::Level::PixelEditorState::activate_color_picker_mode() {
+	mode = ColorPickerMode{};
+}
+void m2::Level::PixelEditorState::save() {
+	// TODO
+}
+m2::VoidValue m2::Level::init_pixel_editor(const m2::FilePath &path, int x_offset, int y_offset) {
+	_type = Type::PIXEL_EDITOR;
+	_lb_path = path;
+	pixel_editor_state = PixelEditorState{};
+	pixel_editor_state->image_offset = Vec2i{x_offset, y_offset};
+
+	if (std::filesystem::exists(path)) {
+		// Load image
+		sdl::SurfaceUniquePtr tmp_surface(IMG_Load(path.c_str()));
+		if (not tmp_surface) {
+			return failure("Unable to load image " + path + ": " + IMG_GetError());
+		}
+		// Convert to a more conventional format
+		pixel_editor_state->image_surface.reset(SDL_ConvertSurfaceFormat(tmp_surface.get(), SDL_PIXELFORMAT_BGRA32, 0));
+		if (not pixel_editor_state->image_surface) {
+			return failure("Unable to convert image format: " + std::string(SDL_GetError()));
+		}
+		// Iterate over pixels
+		SDL_LockSurface(pixel_editor_state->image_surface.get());
+		// Activate paint mode
+		pixel_editor_state->activate_paint_mode();
+
+		const auto& off = pixel_editor_state->image_offset;
+		const auto& sur = *pixel_editor_state->image_surface;
+		auto y_max = std::min(128, sur.h - off.y);
+		auto x_max = std::min(128, sur.w - off.x);
+		for (int y = off.y; y < y_max; ++y) {
+			for (int x = off.x; x < x_max; ++x) {
+				// Get pixel
+				auto pixel = sdl::get_pixel(&sur, x, y);
+				// Map pixel to color
+				SDL_Color color;
+				SDL_GetRGBA(pixel, sur.format, &color.r, &color.g, &color.b, &color.a);
+				// Select color
+				pixel_editor_state->selected_color = color;
+				// Paint pixel
+				std::get<Level::PixelEditorState::PaintMode>(pixel_editor_state->mode).paint_color(Vec2i{x, y});
+			}
+		}
+
+		pixel_editor_state->deactivate_mode();
+		SDL_UnlockSurface(pixel_editor_state->image_surface.get());
+	}
+
+	// Create default objects
+	playerId = m2::obj::create_god();
+	m2::obj::create_camera();
+	m2::obj::create_origin();
+
+	// UI Hud
+	leftHudUIState = m2::ui::State(&ui::pixel_editor_left_hud);
+	leftHudUIState->update_positions(GAME.leftHudRect);
+	leftHudUIState->update_contents();
+	rightHudUIState = m2::ui::State(&ui::pixel_editor_right_hud);
+	rightHudUIState->update_positions(GAME.rightHudRect);
+	rightHudUIState->update_contents();
+
+	return {};
+}
+
+void m2::Level::toggle_grid() {
+	auto& camera_data = dynamic_cast<m2::obj::Camera&>(*camera()->impl);
+	camera_data.draw_grid_lines = !camera_data.draw_grid_lines;
 }

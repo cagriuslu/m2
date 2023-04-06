@@ -11,9 +11,13 @@ namespace m2::sdl {
 		void operator()(SDL_Texture* t);
 	};
 
+	using TextureUniquePtr = std::unique_ptr<SDL_Texture, TextureDeleter>;
+
 	struct SurfaceDeleter {
 		void operator()(SDL_Surface* s);
 	};
+
+	using SurfaceUniquePtr = std::unique_ptr<SDL_Surface, SurfaceDeleter>;
 
 	using ticks_t = int64_t;
 	void delay(ticks_t duration);
@@ -25,6 +29,7 @@ namespace m2::sdl {
 	/// Assumes surface is already locked
 	void set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 	void set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel);
+	uint32_t get_pixel(const SDL_Surface* surface, int x, int y);
 
 	SDL_Rect expand_rect(const SDL_Rect& rect, int diff); // Replace with Rect2i::expand
 	SDL_Rect to_rect(const pb::Rect2i& pb_rect); // Replace with Rect2i
