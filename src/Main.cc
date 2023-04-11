@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 			LOG_INFO("New log level", current_log_level);
 		} else if (arg == silent_opt) {
 			silent = true;
-			LOG_INFO("Silent", current_log_level);
+			LOG_INFO("Silent");
 		} else {
 			LOG_WARN("Unknown command line argument", arg);
 		}

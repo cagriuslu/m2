@@ -33,8 +33,8 @@ void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 	// Convert log level into char
 	char lvl_char = 'U';
 	if (lvl_unsigned <= to_unsigned(pb::LogLevel::FTL)) {
-		static const char lvl_chars[] = {'T', 'D', 'I', 'W', 'E', 'F'};
-		static const char lvl_chars_un[] = {'t', 'd', 'i', 'w', 'e', 'f'};
+		static const char lvl_chars[] = {0, 'T', 'D', 'I', 'W', 'E', 'F'};
+		static const char lvl_chars_un[] = {0, 't', 'd', 'i', 'w', 'e', 'f'};
 		lvl_char = unexpected_event_occured ? lvl_chars_un[lvl_unsigned] : lvl_chars[lvl_unsigned];
 	}
 
