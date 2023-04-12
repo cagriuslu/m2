@@ -1,5 +1,6 @@
 #include <m2/sdl/Utils.hh>
 #include <m2/Game.h>
+#include <m2/M2.h>
 
 SDL_Cursor* SdlUtils_CreateCursor() {
     const char* str =
@@ -82,6 +83,20 @@ int m2::sdl::get_refresh_rate() {
 	SDL_DisplayMode dm{};
 	SDL_GetWindowDisplayMode(GAME.sdlWindow, &dm);
 	return dm.refresh_rate;
+}
+
+int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count) {
+	std::vector<SDL_Point> points{piece_count + 1};
+	for (unsigned i = 0; i < piece_count; ++i) {
+		int x = (int) std::roundf(std::cosf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->w / 2.0f);
+		int y = (int) std::roundf(std::sinf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->h / 2.0f);
+		points[i].x = dst_rect->x + dst_rect->w / 2 + x;
+		points[i].y = dst_rect->y + dst_rect->h / 2 + y;
+	}
+	points[piece_count] = points[0]; // Last point
+
+	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+	return SDL_RenderDrawLines(renderer, points.data(), (int) points.size());
 }
 
 void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {

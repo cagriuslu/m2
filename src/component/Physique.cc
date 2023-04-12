@@ -45,27 +45,24 @@ void m2::Physique::draw_debug_shapes() const {
 				const auto* shape = dynamic_cast<const b2PolygonShape*>(fixture->GetShape());
 				int rect_w = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm);
 				int rect_h = (int)roundf((aabb.upperBound.y - aabb.lowerBound.y) * (float)GAME.game_ppm);
-				auto [texture, src_rect] = GAME.shapes_sheet->get_rectangle_aa(SDL_Color{255, 0, 0, 255}, rect_w, rect_h);
 
 				auto center_offset_m = Vec2f{shape->m_centroid};
 
 				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
 				auto dst_rect = SDL_Rect{
-					(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w / 2),
-					(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h / 2),
-					src_rect.w,
-					src_rect.h
+					(int)roundf(screen_origin_to_sprite_center_px.x) - (rect_w / 2),
+					(int)roundf(screen_origin_to_sprite_center_px.y) - (rect_h / 2),
+					rect_w,
+					rect_h
 				};
-
-				if (SDL_RenderCopy(GAME.sdlRenderer, texture, &src_rect, &dst_rect)) {
-					throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
-				}
+				SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 0, 0, 255);
+				SDL_RenderDrawRect(GAME.sdlRenderer, &dst_rect);
 				break;
 			}
 			case b2Shape::Type::e_circle: {
 				const auto* shape = dynamic_cast<const b2CircleShape*>(fixture->GetShape());
-				int r = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm) / 2;
-				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(SDL_Color{255, 0, 0, 255}, r);
+				int R = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm);
+				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(SDL_Color{255, 0, 0, 255}, R, R, 16);
 
 				auto center_offset_m = Vec2f{shape->m_p};
 

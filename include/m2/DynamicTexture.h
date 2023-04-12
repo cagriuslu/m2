@@ -12,6 +12,7 @@ namespace m2 {
 
 	public:
 		explicit DynamicTexture(SDL_Renderer* renderer);
+		[[nodiscard]] SDL_Renderer* renderer() const;
 		[[nodiscard]] SDL_Texture* texture() const;
 		SDL_Rect alloc(int w, int h);
 	};
