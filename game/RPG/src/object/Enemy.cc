@@ -52,7 +52,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->ai_fsm);
 		std::visit(m2::overloaded {
 			[](rpg::ChaserFsm& v) { v.signal(rpg::ChaserFsmSignal{}); },
-			[](auto& v) { }
+			[](MAYBE auto& v) { }
 		}, impl->ai_fsm);
 	};
 	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType interaction_type) {

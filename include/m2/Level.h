@@ -38,7 +38,7 @@ namespace m2 {
 		// Another reason to put a component inside a Pool: if the type of object that is using that component is
 		// created/destroyed very rapidly.
 		Pool<Object> objects;
-		std::unordered_map<GroupId, std::unique_ptr<Group>, GroupId::Hash> groups;
+		std::map<GroupId, std::unique_ptr<Group>, GroupId::Less> groups;
 		DrawList draw_list;
 		Pool<Physique> physics;
 		Pool<Graphic> graphics;

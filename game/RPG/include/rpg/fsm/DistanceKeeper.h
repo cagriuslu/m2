@@ -17,10 +17,10 @@ namespace rpg {
 
 	class DistanceKeeperFsm : public m2::FsmBase<DistanceKeeperMode, DistanceKeeperFsmSignal> {
 	public:
-		DistanceKeeperFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint) : FsmBase(DistanceKeeperMode::Idle) {}
+		DistanceKeeperFsm(MAYBE const m2::Object* obj, MAYBE const ai::AiBlueprint* blueprint) : FsmBase(DistanceKeeperMode::Idle) {}
 
 	protected:
-		inline std::optional<DistanceKeeperMode> handle_signal(const DistanceKeeperFsmSignal& s) override { return {}; }
+		inline std::optional<DistanceKeeperMode> handle_signal(MAYBE const DistanceKeeperFsmSignal& s) override { return {}; }
 	};
 }
 

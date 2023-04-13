@@ -459,6 +459,11 @@
           "type": "CASTLE_GROUND",
           "rect": {"x": 32, "y": 128, "w": 16, "h": 16},
           "isBackgroundTile": true
+        },
+        {
+          "type": "CASTLE_GROUND_TRIGGER",
+          "rect": {"x": 32, "y": 128, "w": 16, "h": 16},
+          "isBackgroundTile": true
         }
       ]
     },

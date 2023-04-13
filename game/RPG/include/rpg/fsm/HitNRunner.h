@@ -17,10 +17,10 @@ namespace rpg {
 
 	class HitNRunnerFsm : public m2::FsmBase<HitNRunnerMode, HitNRunnerFsmSignal> {
 	public:
-		HitNRunnerFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint) : FsmBase(HitNRunnerMode::Idle) {}
+		HitNRunnerFsm(MAYBE const m2::Object* obj, MAYBE const ai::AiBlueprint* blueprint) : FsmBase(HitNRunnerMode::Idle) {}
 
 	protected:
-		inline std::optional<HitNRunnerMode> handle_signal(const HitNRunnerFsmSignal& s) override { return {}; }
+		inline std::optional<HitNRunnerMode> handle_signal(MAYBE const HitNRunnerFsmSignal& s) override { return {}; }
 	};
 }
 

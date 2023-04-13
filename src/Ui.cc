@@ -8,7 +8,6 @@
 #include <filesystem>
 
 using namespace m2;
-using namespace m2::ui;
 
 namespace {
 	SDL_Rect calculate_widget_rect(const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h, unsigned child_x, unsigned child_y, unsigned child_w, unsigned child_h) {
@@ -26,30 +25,30 @@ namespace {
 		return sprite_type ? &GAME.get_sprite(sprite_type) : nullptr;
 	}
 
-	const Sprite* lookup_initial_sprite(const Blueprint::Widget *blueprint) {
-		return lookup_sprite(std::get<Blueprint::Widget::Image>(blueprint->variant).initial_sprite);
+	const Sprite* lookup_initial_sprite(const ui::Blueprint::Widget *blueprint) {
+		return lookup_sprite(std::get<ui::Blueprint::Widget::Image>(blueprint->variant).initial_sprite);
 	}
 }
 
-State::Widget::Widget(const Blueprint::Widget* blueprint) : blueprint(blueprint), rect_px({}) {}
-void State::Widget::update_position(const SDL_Rect &rect_px_) {
+ui::State::Widget::Widget(const Blueprint::Widget* blueprint) : blueprint(blueprint), rect_px({}) {}
+void ui::State::Widget::update_position(const SDL_Rect &rect_px_) {
 	this->rect_px = rect_px_;
 }
-Action State::Widget::handle_events(MAYBE Events &events) {
+ui::Action ui::State::Widget::handle_events(MAYBE Events &events) {
 	return Action::CONTINUE;
 }
-Action State::Widget::update_content() { return Action::CONTINUE; }
-void State::Widget::draw() {}
-SDL_Texture* State::Widget::generate_font_texture(const char* text) {
+ui::Action ui::State::Widget::update_content() { return Action::CONTINUE; }
+void ui::State::Widget::draw() {}
+SDL_Texture* ui::State::Widget::generate_font_texture(const char* text) {
 	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME.ttfFont, text, SDL_Color{255, 255, 255, 255});
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textSurf);
 	SDL_FreeSurface(textSurf);
 	return texture;
 }
-SDL_Texture* State::Widget::generate_font_texture(const std::string& text) {
+SDL_Texture* ui::State::Widget::generate_font_texture(const std::string& text) {
 	return generate_font_texture(text.c_str());
 }
-void State::Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align) {
+void ui::State::Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align) {
 	int text_w = 0, text_h = 0;
 	SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
 
@@ -71,7 +70,7 @@ void State::Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAl
 	SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &dstrect);
 }
 
-State::AbstractButton::AbstractButton(const Blueprint::Widget *blueprint) :
+ui::State::AbstractButton::AbstractButton(const ui::Blueprint::Widget *blueprint) :
 		Widget(blueprint),
 		kb_shortcut(
 				std::visit(overloaded {
@@ -82,7 +81,7 @@ State::AbstractButton::AbstractButton(const Blueprint::Widget *blueprint) :
 				}, blueprint->variant)
 		),
 		depressed(false) {}
-Action State::AbstractButton::handle_events(Events &events) {
+ui::Action ui::State::AbstractButton::handle_events(Events &events) {
 	bool run_action{};
 	if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.pop_ui_key_press(kb_shortcut)) {
 		run_action = true;
@@ -111,8 +110,8 @@ Action State::AbstractButton::handle_events(Events &events) {
 	}
 }
 
-State::Image::Image(const Blueprint::Widget* blueprint) : AbstractButton(blueprint), sprite(lookup_initial_sprite(blueprint)) {}
-Action State::Image::update_content() {
+ui::State::Image::Image(const ui::Blueprint::Widget* blueprint) : AbstractButton(blueprint), sprite(lookup_initial_sprite(blueprint)) {}
+ui::Action ui::State::Image::update_content() {
 	auto& image_blueprint = std::get<Blueprint::Widget::Image>(blueprint->variant);
 	if (image_blueprint.update_callback) {
 		auto[action, opt_sprite] = image_blueprint.update_callback();
@@ -124,7 +123,7 @@ Action State::Image::update_content() {
 		return Action::CONTINUE;
 	}
 }
-void State::Image::draw() {
+void ui::State::Image::draw() {
 	State::draw_background_color(rect_px, blueprint->background_color);
 	if (sprite) {
 		// Make sure sprite is drawn square
@@ -150,11 +149,11 @@ void State::Image::draw() {
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::Text::Text(const Blueprint::Widget* blueprint) : AbstractButton(blueprint), font_texture(generate_font_texture(std::get<Blueprint::Widget::Text>(blueprint->variant).initial_text.data())) {}
-State::Text::~Text() {
+ui::State::Text::Text(const Blueprint::Widget* blueprint) : AbstractButton(blueprint), font_texture(generate_font_texture(std::get<Blueprint::Widget::Text>(blueprint->variant).initial_text.data())) {}
+ui::State::Text::~Text() {
 	SDL_DestroyTexture(font_texture);
 }
-Action State::Text::update_content() {
+ui::Action ui::State::Text::update_content() {
 	auto& text_blueprint = std::get<Blueprint::Widget::Text>(blueprint->variant);
 	if (text_blueprint.update_callback) {
 		auto[action, optional_string] = text_blueprint.update_callback();
@@ -169,38 +168,38 @@ Action State::Text::update_content() {
 		return Action::CONTINUE;
 	}
 }
-void State::Text::draw() {
+void ui::State::Text::draw() {
 	State::draw_background_color(rect_px, blueprint->background_color);
 	draw_text(sdl::expand_rect(rect_px, -static_cast<int>(blueprint->padding_width_px)), *font_texture, std::get<Blueprint::Widget::Text>(blueprint->variant).alignment);
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::NestedUi::NestedUi(const Blueprint::Widget *blueprint) : Widget(blueprint) {
+ui::State::NestedUi::NestedUi(const Blueprint::Widget *blueprint) : Widget(blueprint) {
 	ui = std::make_unique<State>(std::get<Blueprint::Widget::NestedUi>(blueprint->variant).ui);
 }
-void State::NestedUi::update_position(const SDL_Rect &rect_px_) {
+void ui::State::NestedUi::update_position(const SDL_Rect &rect_px_) {
 	this->rect_px = rect_px_;
 	ui->update_positions(rect_px_);
 }
-Action State::NestedUi::handle_events(Events &events) {
+ui::Action ui::State::NestedUi::handle_events(Events &events) {
 	return ui->handle_events(events);
 }
-Action State::NestedUi::update_content() {
+ui::Action ui::State::NestedUi::update_content() {
 	return ui->update_contents();
 }
-void State::NestedUi::draw() {
+void ui::State::NestedUi::draw() {
 	ui->draw();
 }
 
-State::ProgressBar::ProgressBar(const Blueprint::Widget* blueprint) : Widget(blueprint), progress(std::get<Blueprint::Widget::ProgressBar>(blueprint->variant).initial_progress) {}
-m2::ui::Action State::ProgressBar::update_content() {
+ui::State::ProgressBar::ProgressBar(const Blueprint::Widget* blueprint) : Widget(blueprint), progress(std::get<Blueprint::Widget::ProgressBar>(blueprint->variant).initial_progress) {}
+ui::Action ui::State::ProgressBar::update_content() {
 	auto& pb_blueprint = std::get<Blueprint::Widget::ProgressBar>(blueprint->variant);
 	if (pb_blueprint.update_callback) {
 		progress = pb_blueprint.update_callback();
 	}
 	return Action::CONTINUE;
 }
-void State::ProgressBar::draw() {
+void ui::State::ProgressBar::draw() {
 	auto& pb_blueprint = std::get<Blueprint::Widget::ProgressBar>(blueprint->variant);
 	// Background
 	State::draw_background_color(rect_px, blueprint->background_color);
@@ -217,17 +216,17 @@ void State::ProgressBar::draw() {
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::TextInput::TextInput(const Blueprint::Widget* blueprint) : Widget(blueprint), font_texture(nullptr) {
+ui::State::TextInput::TextInput(const Blueprint::Widget* blueprint) : Widget(blueprint), font_texture(nullptr) {
 	text_input << std::get<Blueprint::Widget::TextInput>(blueprint->variant).initial_text;
 	SDL_StartTextInput();
 }
-State::TextInput::~TextInput() {
+ui::State::TextInput::~TextInput() {
 	if (font_texture) {
 		SDL_DestroyTexture(font_texture);
 	}
 	SDL_StopTextInput();
 }
-Action State::TextInput::handle_events(Events& events) {
+ui::Action ui::State::TextInput::handle_events(Events& events) {
 	if (events.pop_key_press(Key::MENU)) {
 		return Action::RETURN;
 	} else if (events.pop_key_press(Key::ENTER)) {
@@ -246,7 +245,7 @@ Action State::TextInput::handle_events(Events& events) {
 	}
 	return Action::CONTINUE;
 }
-Action State::TextInput::update_content() {
+ui::Action ui::State::TextInput::update_content() {
 	auto new_str = text_input.str() + '_';
 	if (new_str != font_texture_str) {
 		if (font_texture) {
@@ -257,14 +256,14 @@ Action State::TextInput::update_content() {
 	}
 	return Action::CONTINUE;
 }
-void State::TextInput::draw() {
+void ui::State::TextInput::draw() {
 	State::draw_background_color(rect_px, blueprint->background_color);
 	draw_text(rect_px, *font_texture, TextAlignment::LEFT);
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::ImageSelection::ImageSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::ImageSelection>(blueprint->variant).initial_selection) {}
-Action State::ImageSelection::handle_events(Events& events) {
+ui::State::ImageSelection::ImageSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::ImageSelection>(blueprint->variant).initial_selection) {}
+ui::Action ui::State::ImageSelection::handle_events(Events& events) {
 	auto rect = Rect2i{rect_px};
 	auto buttons_rect = rect.trim_top(rect.w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
@@ -302,7 +301,7 @@ Action State::ImageSelection::handle_events(Events& events) {
 
 	return Action::CONTINUE;
 }
-void State::ImageSelection::draw() {
+void ui::State::ImageSelection::draw() {
 	auto rect = Rect2i{rect_px};
 	auto image_rect = rect.trim_bottom(rect.h - rect.w);
 	auto buttons_rect = rect.trim_top(rect.w);
@@ -332,13 +331,13 @@ void State::ImageSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(generate_font_texture(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection])) {}
-State::TextSelection::~TextSelection() {
+ui::State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(generate_font_texture(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection])) {}
+ui::State::TextSelection::~TextSelection() {
 	if (font_texture) {
 		SDL_DestroyTexture(font_texture);
 	}
 }
-Action State::TextSelection::handle_events(Events& events) {
+ui::Action ui::State::TextSelection::handle_events(Events& events) {
 	auto rect = Rect2i{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
@@ -381,7 +380,7 @@ Action State::TextSelection::handle_events(Events& events) {
 
 	return Action::CONTINUE;
 }
-void State::TextSelection::draw() {
+void ui::State::TextSelection::draw() {
 	auto rect = Rect2i{rect_px};
 	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
@@ -407,13 +406,13 @@ void State::TextSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::IntegerSelection::IntegerSelection(const Blueprint::Widget *blueprint) : Widget(blueprint), value(std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant).initial_value), font_texture(generate_font_texture(std::to_string(value))) {}
-State::IntegerSelection::~IntegerSelection() {
+ui::State::IntegerSelection::IntegerSelection(const Blueprint::Widget *blueprint) : Widget(blueprint), value(std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant).initial_value), font_texture(generate_font_texture(std::to_string(value))) {}
+ui::State::IntegerSelection::~IntegerSelection() {
 	if (font_texture) {
 		SDL_DestroyTexture(font_texture);
 	}
 }
-Action State::IntegerSelection::handle_events(Events& events) {
+ui::Action ui::State::IntegerSelection::handle_events(Events& events) {
 	auto rect = Rect2i{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
@@ -456,7 +455,7 @@ Action State::IntegerSelection::handle_events(Events& events) {
 
 	return Action::CONTINUE;
 }
-m2::ui::Action State::IntegerSelection::update_content() {
+ui::Action ui::State::IntegerSelection::update_content() {
 	auto& pb_blueprint = std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant);
 	if (pb_blueprint.update_callback) {
 		auto optional_value = pb_blueprint.update_callback();
@@ -470,7 +469,7 @@ m2::ui::Action State::IntegerSelection::update_content() {
 	}
 	return Action::CONTINUE;
 }
-void State::IntegerSelection::draw() {
+void ui::State::IntegerSelection::draw() {
 	auto rect = Rect2i{rect_px};
 	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
@@ -496,13 +495,13 @@ void State::IntegerSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-State::CheckboxWithText::CheckboxWithText(const Blueprint::Widget *blueprint) : AbstractButton(blueprint), state(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).initial_state), font_texture(generate_font_texture(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).text)) {}
-State::CheckboxWithText::~CheckboxWithText() {
+ui::State::CheckboxWithText::CheckboxWithText(const Blueprint::Widget *blueprint) : AbstractButton(blueprint), state(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).initial_state), font_texture(generate_font_texture(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).text)) {}
+ui::State::CheckboxWithText::~CheckboxWithText() {
 	if (font_texture) {
 		SDL_DestroyTexture(font_texture);
 	}
 }
-void State::CheckboxWithText::draw() {
+void ui::State::CheckboxWithText::draw() {
 	// Background
 	State::draw_background_color(rect_px, blueprint->background_color);
 	// Checkbox
@@ -521,7 +520,7 @@ void State::CheckboxWithText::draw() {
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
-void State::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) {
+void ui::State::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) {
     if (!color.r && !color.g && !color.b && !color.a) {
 		// If the color is all zeros, user probably didn't initialize the Color at all
 		// Paint background to default background color
@@ -531,26 +530,26 @@ void State::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) 
     }
     SDL_RenderFillRect(GAME.sdlRenderer, &rect);
 }
-void State::draw_border(const SDL_Rect& rect, unsigned border_width_px) {
+void ui::State::draw_border(const SDL_Rect& rect, unsigned border_width_px) {
     if (border_width_px) {
         SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
         SDL_RenderDrawRect(GAME.sdlRenderer, &rect);
     }
 }
-State::State() : blueprint(nullptr), rect_px() {}
-State::State(const Blueprint* blueprint) : blueprint(blueprint), rect_px({}) {
+ui::State::State() : blueprint(nullptr), rect_px() {}
+ui::State::State(const Blueprint* blueprint) : blueprint(blueprint), rect_px({}) {
     for (const auto& widget_blueprint : blueprint->widgets) {
         widgets.push_back(create_widget_state(widget_blueprint));
     }
 }
-void State::update_positions(const SDL_Rect &rect_px_) {
+void ui::State::update_positions(const SDL_Rect &rect_px_) {
     this->rect_px = rect_px_;
     for (auto& widget_state : widgets) {
         SDL_Rect widget_rect = calculate_widget_rect(rect_px_, blueprint->w, blueprint->h, widget_state->blueprint->x, widget_state->blueprint->y, widget_state->blueprint->w, widget_state->blueprint->h);
         widget_state->update_position(widget_rect);
     }
 }
-Action State::handle_events(Events& events) {
+ui::Action ui::State::handle_events(Events& events) {
     Action return_value = Action::CONTINUE;
     for (auto& widget : widgets) {
         if ((return_value = widget->handle_events(events)) != Action::CONTINUE) {
@@ -559,7 +558,7 @@ Action State::handle_events(Events& events) {
     }
     return return_value;
 }
-Action State::update_contents() {
+ui::Action ui::State::update_contents() {
     Action return_value = Action::CONTINUE;
     for (auto& widget : widgets) {
         if ((return_value = widget->update_content()) != Action::CONTINUE) {
@@ -568,7 +567,7 @@ Action State::update_contents() {
     }
     return return_value;
 }
-void State::draw() {
+void ui::State::draw() {
     draw_background_color(rect_px, blueprint->background_color);
     for (auto& widget : widgets) {
         widget->draw();
@@ -576,7 +575,7 @@ void State::draw() {
     draw_border(rect_px, blueprint->border_width_px);
 }
 
-std::unique_ptr<State::Widget> State::create_widget_state(const Blueprint::Widget& blueprint) {
+std::unique_ptr<ui::State::Widget> ui::State::create_widget_state(const Blueprint::Widget& blueprint) {
 	std::unique_ptr<State::Widget> state;
 	if (std::holds_alternative<Blueprint::Widget::NestedUi>(blueprint.variant)) {
 		state = std::make_unique<State::NestedUi>(&blueprint);
@@ -602,10 +601,10 @@ std::unique_ptr<State::Widget> State::create_widget_state(const Blueprint::Widge
 	return state;
 }
 
-Action m2::ui::execute_blocking(const Blueprint *blueprint) {
+ui::Action ui::execute_blocking(const Blueprint *blueprint) {
 	return execute_blocking(blueprint, GAME.windowRect);
 }
-Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
+ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 	// Save relation to window, use in case of resize
 	const SDL_Rect& winrect = GAME.windowRect;
 	auto relation_to_window = SDL_FRect{
@@ -620,7 +619,7 @@ Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 	SDL_GetRendererOutputSize(GAME.sdlRenderer, &w, &h);
 	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
 	SDL_RenderReadPixels(GAME.sdlRenderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
-	std::unique_ptr<SDL_Texture, m2::sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
+	std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
 	SDL_FreeSurface(surface);
 
 	Action return_value;
@@ -631,7 +630,7 @@ Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 		return return_value;
 	}
 
-    m2::Events events;
+    Events events;
     while (true) {
         ////////////////////////////////////////////////////////////////////////
         //////////////////////////// EVENT HANDLING ////////////////////////////
@@ -677,9 +676,9 @@ Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
     }
 }
 
-const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::TextInput{
+const ui::Blueprint::Widget::Variant command_input_variant = ui::Blueprint::Widget::TextInput{
         .initial_text = "",
-        .action_callback = [](std::stringstream& ss) -> Action {
+        .action_callback = [](std::stringstream& ss) -> ui::Action {
             auto command = ss.str();
 	        ss = std::stringstream();
 	        GAME.console_output.emplace_back(">> " + command);
@@ -689,14 +688,14 @@ const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::Text
 				if (std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
 					auto load_result = GAME.load_level_editor(match_results.str(1));
 					if (load_result) {
-						return Action::RETURN;
+						return ui::Action::RETURN;
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
 					GAME.console_output.emplace_back("ledit usage:");
 					GAME.console_output.emplace_back(".. file_name - open level editor with file");
 				}
-				return Action::CONTINUE;
+				return ui::Action::CONTINUE;
 			} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
 				std::smatch match_results;
 				if (std::regex_match(command, match_results, std::regex{"pedit\\s+([0-9]+)\\s+([0-9]+)\\s+(.+)"})) {
@@ -704,16 +703,16 @@ const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::Text
 					auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
 					auto load_result = GAME.load_pixel_editor(match_results.str(3), (int) x_offset, (int) y_offset);
 					if (load_result) {
-						return Action::RETURN;
+						return ui::Action::RETURN;
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
 					GAME.console_output.emplace_back("pedit usage:");
 					GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 				}
-				return Action::CONTINUE;
+				return ui::Action::CONTINUE;
 			} else if (command == "quit") {
-                return Action::QUIT;
+                return ui::Action::QUIT;
             } else if (command.empty()) {
 				// Do nothing
 			} else {
@@ -724,20 +723,20 @@ const Blueprint::Widget::Variant command_input_variant = Blueprint::Widget::Text
 	            GAME.console_output.emplace_back("quit - quit game");
             }
 
-	        return Action::CONTINUE;
+	        return ui::Action::CONTINUE;
         }
 };
 template <unsigned INDEX>
-Blueprint::Widget::Variant command_output_variant() {
-    return Blueprint::Widget::Text{
+ui::Blueprint::Widget::Variant command_output_variant() {
+    return ui::Blueprint::Widget::Text{
         .initial_text = "",
-        .alignment = TextAlignment::LEFT,
-        .update_callback = []() -> std::pair<Action,std::optional<std::string>> {
-            return {Action::CONTINUE, INDEX < GAME.console_output.size() ? GAME.console_output[GAME.console_output.size() - INDEX - 1] : std::string()};
+        .alignment = ui::TextAlignment::LEFT,
+        .update_callback = []() -> std::pair<ui::Action,std::optional<std::string>> {
+            return {ui::Action::CONTINUE, INDEX < GAME.console_output.size() ? GAME.console_output[GAME.console_output.size() - INDEX - 1] : std::string()};
         }
     };
 }
-const Blueprint m2::ui::console_ui = {
+const ui::Blueprint ui::console_ui = {
         .w = 1, .h = 25,
         .widgets = {
 			Blueprint::Widget{.x = 0, .y = 0, .w = 1, .h = 1, .variant = command_output_variant<23>()},

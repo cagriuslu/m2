@@ -17,10 +17,10 @@ namespace rpg {
 
 	class PatrollerFsm : public m2::FsmBase<PatrollerMode, PatrollerFsmSignal> {
 	public:
-		PatrollerFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint) : FsmBase(PatrollerMode::Idle) {}
+		PatrollerFsm(MAYBE const m2::Object* obj, MAYBE const ai::AiBlueprint* blueprint) : FsmBase(PatrollerMode::Idle) {}
 
 	protected:
-		inline std::optional<PatrollerMode> handle_signal(const PatrollerFsmSignal& s) override { return {}; }
+		inline std::optional<PatrollerMode> handle_signal(MAYBE const PatrollerFsmSignal& s) override { return {}; }
 	};
 }
 

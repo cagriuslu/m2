@@ -1,14 +1,13 @@
 #include <m2/Proxy.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
-#include <rpg/object/Player.h>
 
 using namespace m2::ui;
 
 namespace {
-	auto quit_button_action = []() {
+	Action quit_button_action() {
 		return Action::QUIT;
-	};
+	}
 }
 
 static Blueprint::Widget::Variant entry_variant_0 = Blueprint::Widget::Text{
@@ -25,7 +24,8 @@ static Blueprint::Widget::Variant entry_variant_1 = Blueprint::Widget::Image{
 static Blueprint::Widget::Variant entry_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "NEW GAME",
 	.action_callback = []() {
-		GAME.load_single_player("resource/game/RPG/levels/sp000.json");
+		auto success = GAME.load_single_player("resource/game/RPG/levels/sp000.json");
+		m2_throw_failure_error(success);
 		GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME), m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 		return Action::RETURN;
 	},

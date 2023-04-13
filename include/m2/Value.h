@@ -1,6 +1,7 @@
 #ifndef M2_VALUE_H
 #define M2_VALUE_H
 
+#include "Exception.h"
 #include <variant>
 #include <functional>
 #include <optional>
@@ -12,6 +13,13 @@ namespace m2 {
 		E _e;
 		explicit Failure(const E& e) : _e(e) {}
 		explicit Failure(E&& e) : _e(std::move(e)) {}
+
+		void throw_fatal(const char* file, int line) const {
+			throw Fatal(file, line, _e);
+		}
+		void throw_error(const char* file, int line) const {
+			throw Error(file, line, _e);
+		}
 	};
 
 	template <typename E>
@@ -112,6 +120,22 @@ namespace m2 {
 		if (!(cond)) {                   \
 			return ::m2::failure((err)); \
 		}                                \
+	} while (false)
+
+#define m2_throw_failure_fatal(v)                       \
+	do {                                                \
+		auto __failure__ = (v).failure();               \
+		if (__failure__) {                              \
+			__failure__->throw_fatal(__FILE__, __LINE__); \
+		}                                               \
+	} while (false)
+
+#define m2_throw_failure_error(v)                       \
+	do {                                                \
+		auto __failure__ = (v).failure();               \
+		if (__failure__) {                              \
+			__failure__->throw_error(__FILE__, __LINE__); \
+		}                                               \
 	} while (false)
 
 #endif //M2_VALUE_H

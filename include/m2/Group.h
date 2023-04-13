@@ -25,9 +25,9 @@ namespace m2 {
 		inline bool operator==(const GroupId& other) const { return (type == other.type) && (instance == other.instance); }
 		inline explicit operator bool() const { return type != m2g::pb::NO_GROUP; }
 
-		struct Hash {
-			inline std::size_t operator()(const GroupId& k) const {
-				return std::hash<Type>()(k.type) ^ std::hash<Instance>()(k.instance);
+		struct Less {
+			inline bool operator()(const GroupId& a, const GroupId& b) const {
+				return a.type == b.type ? a.instance < b.instance : a.type < b.type;
 			}
 		};
 	};

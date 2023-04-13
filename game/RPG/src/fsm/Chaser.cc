@@ -56,10 +56,9 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 			reverse_waypoints = std::move(smooth_path);
 			return ChaserMode::Triggered;
 		}
-	} else {
-		arm(random_alarm_duration(blueprint->recalculation_period_s));
-		return {};
 	}
+	arm(random_alarm_duration(blueprint->recalculation_period_s));
+	return {};
 }
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {

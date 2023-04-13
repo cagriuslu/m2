@@ -2,6 +2,9 @@ syntax = "proto3";
 package m2g.pb;
 
 enum GroupType {
-  NO_GROUP = 0;
-  CONSUMABLE_ITEM_HP20 = 1;
+    NO_GROUP = 0;
+
+    //_BEGIN_ENEMY_GROUPS = 1;
+    ENEMIES_WITH_CONSUMABLE_ITEM_HP20 = 1;
+    //_END_ENEMY_GROUPS = 3;
 }

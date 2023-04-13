@@ -1,6 +1,7 @@
 #ifndef M2_PROXY_H
 #define M2_PROXY_H
 
+#include "Action.h"
 #include "Controls.h"
 #include "Group.h"
 #include "Object.h"
@@ -40,6 +41,9 @@ namespace m2g {
 
 	/// Create Group for the given type
 	m2::Group* create_group(pb::GroupType group_type);
+
+	/// Actions
+	extern std::vector<m2::Action> actions;
 }
 
 #endif //M2_PROXY_H
