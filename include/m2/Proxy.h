@@ -21,6 +21,10 @@ namespace m2g {
 	/// Is the camera also a sound listener
 	extern const bool camera_is_listener;
 
+	/// Context
+	void* create_context();
+	void destroy_context(void* context);
+
 	/// UI
 	namespace ui {
 		const m2::ui::Blueprint* main_menu();

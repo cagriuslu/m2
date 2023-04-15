@@ -77,10 +77,14 @@ m2::Game::Game() {
 	_items = load_items(game_resource_dir / "Items.json");
 	animations = load_animations(game_resource_dir / "Animations.json");
 	_songs = load_songs(game_resource_dir / "Songs.json");
+
+	context = m2g::create_context();
 }
 
 m2::Game::~Game() {
 	_level.reset();
+	m2g::destroy_context(context);
+	context = nullptr;
 	SDL_DestroyRenderer(sdlRenderer);
 	SDL_FreeCursor(sdlCursor);
 	SDL_DestroyWindow(sdlWindow);

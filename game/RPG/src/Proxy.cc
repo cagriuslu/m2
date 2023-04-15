@@ -7,6 +7,12 @@ const std::string_view m2g::game_name = "RPG";
 const bool m2g::gravity = false;
 const bool m2g::camera_is_listener = true;
 
+void* m2g::create_context() {
+	return nullptr;
+}
+void m2g::destroy_context(MAYBE void* context) {
+}
+
 m2::Key m2g::scancode_to_key(SDL_Scancode scancode) {
 	using namespace m2;
 	switch (scancode) {
