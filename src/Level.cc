@@ -94,10 +94,10 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 	m2::obj::create_pointer();
 
 	// Init HUD
-	leftHudUIState = m2::ui::State(&m2g::ui::left_hud);
+	leftHudUIState = m2::ui::State(m2g::ui::left_hud());
 	leftHudUIState->update_positions(GAME.leftHudRect);
 	leftHudUIState->update_contents();
-	rightHudUIState = m2::ui::State(&m2g::ui::right_hud);
+	rightHudUIState = m2::ui::State(m2g::ui::right_hud());
 	rightHudUIState->update_positions(GAME.rightHudRect);
 	rightHudUIState->update_contents();
 

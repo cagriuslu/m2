@@ -79,6 +79,8 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 	}
 }
 
-m2::Group* m2g::create_group(pb::GroupType group_type) {
+m2::Group* m2g::create_group(MAYBE pb::GroupType group_type) {
 	return nullptr;
 }
+
+std::vector<m2::Action> m2g::actions;

@@ -58,7 +58,7 @@ static Blueprint::Widget::Variant entry_variant_3 = Blueprint::Widget::Text{
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
 };
-const Blueprint m2g::ui::entry = {
+const Blueprint main_menu_blueprint = {
 	.w = 100, .h = 100,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
@@ -96,7 +96,7 @@ static Blueprint::Widget::Variant pause_variant_2 = Blueprint::Widget::Text{
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
 };
-const Blueprint m2g::ui::pause = {
+const Blueprint pause_menu_blueprint = {
 	.w = 100, .h = 100,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 	.widgets = {
@@ -115,12 +115,25 @@ const Blueprint m2g::ui::pause = {
 	}
 };
 
-const Blueprint m2g::ui::left_hud = {
+const Blueprint left_hud_blueprint = {
 	.w = 19, .h = 72,
 	.border_width_px = 2
 };
 
-const Blueprint m2g::ui::right_hud = {
+const Blueprint right_hud_blueprint = {
 	.w = 19, .h = 72,
 	.border_width_px = 2
 };
+
+const m2::ui::Blueprint* m2g::ui::main_menu() {
+	return &main_menu_blueprint;
+}
+const m2::ui::Blueprint* m2g::ui::pause_menu() {
+	return &pause_menu_blueprint;
+}
+const m2::ui::Blueprint* m2g::ui::left_hud() {
+	return &left_hud_blueprint;
+}
+const m2::ui::Blueprint* m2g::ui::right_hud() {
+	return &right_hud_blueprint;
+}

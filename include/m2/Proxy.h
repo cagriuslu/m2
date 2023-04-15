@@ -23,10 +23,10 @@ namespace m2g {
 
 	/// UI
 	namespace ui {
-		extern const m2::ui::Blueprint entry;
-		extern const m2::ui::Blueprint pause;
-		extern const m2::ui::Blueprint left_hud;
-		extern const m2::ui::Blueprint right_hud;
+		const m2::ui::Blueprint* main_menu();
+		const m2::ui::Blueprint* pause_menu();
+		const m2::ui::Blueprint* left_hud();
+		const m2::ui::Blueprint* right_hud();
 	}
 
 	/// Controls

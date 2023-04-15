@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 	Game::create_instance();
 
 	LOG_DEBUG("Executing entry UI...");
-	if (m2::ui::execute_blocking(&m2g::ui::entry) == m2::ui::Action::QUIT) {
+	if (m2::ui::execute_blocking(m2g::ui::main_menu()) == m2::ui::Action::QUIT) {
 		LOG_INFO("Entry UI returned QUIT");
 		return 0;
 	}
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
             // Handle key events
             if (GAME.events.pop_key_press(Key::MENU)) {
 				auto pause_start = sdl::get_ticks();
-                if (m2::ui::execute_blocking(&m2g::ui::pause) == m2::ui::Action::QUIT) {
+                if (m2::ui::execute_blocking(m2g::ui::pause_menu()) == m2::ui::Action::QUIT) {
                     return 0;
                 }
 				pause_ticks += sdl::get_ticks() - pause_start;
