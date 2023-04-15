@@ -94,8 +94,8 @@ namespace m2::ui {
 		};
 
 		unsigned w{}, h{}; // unitless
-		unsigned border_width_px{};
-		SDL_Color background_color{};
+		unsigned border_width_px{1};
+		SDL_Color background_color{0, 0, 0, 255};
 		std::vector<Widget> widgets;
 	};
 
