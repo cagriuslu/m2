@@ -1,5 +1,5 @@
 #include <m2/Vm.h>
-#include <m2/String.h>
+#include <m2/FileSystem.h>
 #include <m2/Exception.h>
 #include <sstream>
 
@@ -267,7 +267,7 @@ m2::VoidValue m2::Vm::add_script(const std::string& script) {
 }
 
 m2::VoidValue m2::Vm::add_script_file(const std::string& path) {
-	auto str = string::read_file(path);
+	auto str = read_file(path);
 	m2_reflect_failure(str);
 	return add_script(*str);
 }

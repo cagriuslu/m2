@@ -2,7 +2,7 @@
 #define M2_PROTOBUF_UTILS_H
 
 #include "../Value.h"
-#include "../String.h"
+#include "../FileSystem.h"
 #include <google/protobuf/util/json_util.h>
 #include <google/protobuf/generated_enum_reflection.h>
 #include <string>
@@ -21,7 +21,7 @@ namespace m2::proto {
 
 	template <typename ProtoType>
 	Value<ProtoType> json_file_to_message(const std::string& path) {
-		auto str = string::read_file(path);
+		auto str = read_file(path);
 		m2_reflect_failure(str);
 		ProtoType message;
 		auto status = google::protobuf::util::JsonStringToMessage(str.value(), &message);

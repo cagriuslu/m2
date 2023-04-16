@@ -1,4 +1,6 @@
 #include <m2/Proxy.h>
+#include <rpg/Context.h>
+#include <m2/FileSystem.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
 
@@ -6,87 +8,36 @@ using namespace m2::ui;
 
 namespace {
 	Action quit_button_action() {
+		LOG_INFO("Quit button pressed");
 		return Action::QUIT;
 	}
 }
 
-static Blueprint::Widget::Variant main_menu_variant_0 = Blueprint::Widget::Text{
-	.initial_text = "Select save slot:"
-};
-static Blueprint::Widget::Variant main_menu_variant_1 = Blueprint::Widget::Image{
-	.initial_sprite = m2g::pb::SpriteType::FLOPPY_DISK,
-	.action_callback = []() {
-		fprintf(stderr, "Pressed button\n");
-		return Action::CONTINUE;
-	},
-	.kb_shortcut = SDL_SCANCODE_1
-};
-static Blueprint::Widget::Variant main_menu_variant_2 = Blueprint::Widget::Text{
-	.initial_text = "NEW GAME",
-	.action_callback = []() {
-		auto success = GAME.load_single_player("resource/game/RPG/levels/sp000.json");
-		m2_throw_failure_error(success);
-		GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME), m2::AudioManager::PlayPolicy::LOOP, 0.5f);
-		return Action::RETURN;
-	},
-	.kb_shortcut = SDL_SCANCODE_N
-};
-static Blueprint::Widget::Variant main_menu_variant_3 = Blueprint::Widget::Text{
-	.initial_text = "QUIT",
-	.action_callback = quit_button_action,
-	.kb_shortcut = SDL_SCANCODE_Q
-};
-const Blueprint main_menu_blueprint = {
-	.w = 100, .h = 100,
-	.background_color = {20, 20, 20, 255},
-	.widgets = {
-		Blueprint::Widget{
-			.x = 40, .y = 0, .w = 20, .h = 10,
-			.background_color = {20, 20, 20, 255},
-			.variant = main_menu_variant_0
-		},
-		Blueprint::Widget{
-			.x = 45, .y = 10, .w = 10, .h = 10,
-			.border_width_px = 1,
-			.variant = main_menu_variant_1
-		},
-		Blueprint::Widget{
-			.x = 45, .y = 35, .w = 10, .h = 10,
-			.border_width_px = 1,
-			.variant = main_menu_variant_2
-		},
-		Blueprint::Widget{
-			.x = 45, .y = 55, .w = 10, .h = 10,
-			.border_width_px = 1,
-			.variant = main_menu_variant_3
-		}
-	}
-};
-
 static Blueprint::Widget::Variant pause_menu_variant_1 = Blueprint::Widget::Text{
-	.initial_text = "RESUME GAME",
-	.alignment = TextAlignment::CENTER,
+	.initial_text = "Resume",
 	.action_callback = []() {
+		LOG_DEBUG("Resume button pressed");
 		return Action::RETURN;
 	},
 	.kb_shortcut = SDL_SCANCODE_R
 };
 static Blueprint::Widget::Variant pause_menu_variant_2 = Blueprint::Widget::Text{
-	.initial_text = "QUIT",
+	.initial_text = "Quit",
 	.action_callback = quit_button_action,
 	.kb_shortcut = SDL_SCANCODE_Q
 };
 const Blueprint pause_menu_blueprint = {
-	.w = 100, .h = 100,
+	.w = 160, .h = 90,
+	.border_width_px = 0,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 	.widgets = {
 		Blueprint::Widget{
-			.x = 45, .y = 35, .w = 10, .h = 10,
+			.x = 75, .y = 42, .w = 10, .h = 6,
 			.border_width_px = 1,
 			.variant = pause_menu_variant_1
 		},
 		Blueprint::Widget{
-			.x = 45, .y = 55, .w = 10, .h = 10,
+			.x = 75, .y = 78, .w = 10, .h = 6,
 			.border_width_px = 1,
 			.variant = pause_menu_variant_2
 		}
@@ -154,7 +105,59 @@ const Blueprint right_hud_blueprint = {
 };
 
 const m2::ui::Blueprint* m2g::ui::main_menu() {
-	return &main_menu_blueprint;
+	// Generate main menu
+	auto& context = rpg::Context::get_instance();
+	context.main_menu_blueprint = m2::ui::Blueprint{
+		.w = 160, .h = 90,
+		.border_width_px = 0,
+		.background_color = SDL_Color{20, 20, 20, 255}
+	};
+
+	auto level_jsons = m2::list_files(GAME.game_resource_dir / "Levels", ".json");
+	LOG_INFO("Adding level buttons", level_jsons.size());
+	for (unsigned i = 0; i < level_jsons.size(); ++i) {
+		const auto& level_json = level_jsons[i];
+		auto level_name = level_json.stem().string();
+
+		bool level_completed = context.progress.level_completion_times().contains(level_name);
+
+		auto row = i / 6; // 6 rows
+		auto col = i % 8; // 8 columns
+
+		unsigned x_padding = 26, y_padding = 17;
+		unsigned x_button_width = 10, y_button_width = 6;
+		unsigned button_gap = 4;
+		context.main_menu_blueprint.widgets.emplace_back(m2::ui::Blueprint::Widget{
+			.x = x_padding + col * (x_button_width + button_gap),
+			.y = y_padding + row * (y_button_width + button_gap),
+			.w = x_button_width, .h = y_button_width,
+			.border_width_px = 1,
+			.variant = Blueprint::Widget::Text{
+				.initial_text = level_completed ? level_name : '*' + level_name + '*',
+				.action_callback = [=]() {
+					LOG_INFO("Loading level...", level_json);
+					auto success = GAME.load_single_player(level_json);
+					m2_throw_failure_as_error(success);
+					LOG_INFO("Level loaded");
+					GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME), m2::AudioManager::PlayPolicy::LOOP, 0.5f);
+					return Action::RETURN;
+				}
+			}
+		});
+	}
+
+	LOG_DEBUG("Adding quit button");
+	context.main_menu_blueprint.widgets.emplace_back(m2::ui::Blueprint::Widget{
+		.x = 75, .y = 78, .w = 10, .h = 6,
+		.border_width_px = 1,
+		.variant = Blueprint::Widget::Text{
+			.initial_text = "Quit",
+			.action_callback = quit_button_action,
+			.kb_shortcut = SDL_SCANCODE_Q
+		}
+	});
+
+	return &context.main_menu_blueprint;
 }
 const m2::ui::Blueprint* m2g::ui::pause_menu() {
 	return &pause_menu_blueprint;

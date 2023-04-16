@@ -122,7 +122,7 @@ namespace m2 {
 		}                                \
 	} while (false)
 
-#define m2_throw_failure_fatal(v)                       \
+#define m2_throw_failure_as_fatal(v)                       \
 	do {                                                \
 		auto __failure__ = (v).failure();               \
 		if (__failure__) {                              \
@@ -130,7 +130,7 @@ namespace m2 {
 		}                                               \
 	} while (false)
 
-#define m2_throw_failure_error(v)                       \
+#define m2_throw_failure_as_error(v)                       \
 	do {                                                \
 		auto __failure__ = (v).failure();               \
 		if (__failure__) {                              \

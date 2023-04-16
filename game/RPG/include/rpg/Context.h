@@ -1,6 +1,7 @@
 #ifndef RPG_CONTEXT_H
 #define RPG_CONTEXT_H
 
+#include <m2/Ui.h>
 #include <Progress.pb.h>
 #include <filesystem>
 
@@ -9,7 +10,10 @@ namespace rpg {
 		std::filesystem::path progress_file_path;
 		pb::Progress progress;
 
+		m2::ui::Blueprint main_menu_blueprint;
+
 		Context();
+		static Context& get_instance();
 
 		void save_progress() const;
 	};

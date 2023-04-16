@@ -13,6 +13,11 @@ rpg::Context::Context() {
 	}
 }
 
+rpg::Context& rpg::Context::get_instance() {
+	// Context is stored in GAME
+	return *reinterpret_cast<Context*>(GAME.context);
+}
+
 void rpg::Context::save_progress() const {
 	m2::proto::message_to_json_file(progress, progress_file_path);
 }

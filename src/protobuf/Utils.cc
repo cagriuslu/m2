@@ -14,7 +14,7 @@ m2::VoidValue m2::proto::message_to_json_file(const google::protobuf::Message& m
 	std::string str;
 	auto status = google::protobuf::util::MessageToJsonString(message, &str);
 	if (status.ok()) {
-		return string::write_to_file(str, path);
+		return write_to_file(str, path);
 	} else {
 		return failure(status.ToString());
 	}

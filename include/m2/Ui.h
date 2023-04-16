@@ -28,7 +28,7 @@ namespace m2::ui {
 	struct Blueprint {
 		struct Widget {
 			struct NestedUi {
-				const Blueprint* ui; // TODO convert to reference
+				const Blueprint* ui{}; // TODO convert to reference
 			};
 			struct Image {
 				m2g::pb::SpriteType initial_sprite;
@@ -75,10 +75,10 @@ namespace m2::ui {
 				SDL_Scancode kb_shortcut;
 			};
 
-			unsigned x{}, y{}, w{}, h{}; // unitless
-			unsigned border_width_px{};
+			unsigned x{}, y{}, w{1}, h{1}; // unitless
+			unsigned border_width_px{1};
 			unsigned padding_width_px{};
-			SDL_Color background_color{};
+			SDL_Color background_color{0, 0, 0, 255};
 
 			using Variant = std::variant<
 				NestedUi,
@@ -93,7 +93,7 @@ namespace m2::ui {
 			Variant variant;
 		};
 
-		unsigned w{}, h{}; // unitless
+		unsigned w{1}, h{1}; // unitless
 		unsigned border_width_px{1};
 		SDL_Color background_color{0, 0, 0, 255};
 		std::vector<Widget> widgets;
