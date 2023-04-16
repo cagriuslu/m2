@@ -1,0 +1,6 @@
+syntax = "proto3";
+package rpg.pb;
+
+message Progress {
+    map<string, uint64> level_completion_times = 1;
+}

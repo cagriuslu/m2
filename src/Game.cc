@@ -20,6 +20,7 @@ void m2::Game::create_instance() {
 		throw M2FATAL("Cannot create multiple instance of Game");
 	}
 	_instance = new Game();
+	_instance->initialize_context();
 }
 void m2::Game::destroy_instance() {
 	DEBUG_FN();
@@ -68,7 +69,7 @@ m2::Game::Game() {
 
 	// Load game resources
 	std::filesystem::path resource_dir("resource");
-	std::filesystem::path game_resource_dir = resource_dir / "game" / m2g::game_name;
+	game_resource_dir = resource_dir / "game" / m2g::game_name;
 
 	sprite_sheets = load_sprite_sheets(game_resource_dir / "SpriteSheets.json", sdlRenderer);
 	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
@@ -77,17 +78,23 @@ m2::Game::Game() {
 	_items = load_items(game_resource_dir / "Items.json");
 	animations = load_animations(game_resource_dir / "Animations.json");
 	_songs = load_songs(game_resource_dir / "Songs.json");
-
-	context = m2g::create_context();
 }
 
 m2::Game::~Game() {
 	_level.reset();
-	m2g::destroy_context(context);
-	context = nullptr;
+	if (context) {
+		m2g::destroy_context(context);
+		context = nullptr;
+	}
 	SDL_DestroyRenderer(sdlRenderer);
 	SDL_FreeCursor(sdlCursor);
 	SDL_DestroyWindow(sdlWindow);
+}
+
+void m2::Game::initialize_context() {
+	// User might access GAME from the following function
+	// We have to call it after GAME is fully constructed
+	context = m2g::create_context();
 }
 
 m2::VoidValue m2::Game::load_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint) {

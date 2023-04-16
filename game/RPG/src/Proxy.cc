@@ -2,15 +2,18 @@
 #include <rpg/group/ItemGroup.h>
 #include <rpg/object/Enemy.h>
 #include <rpg/object/Player.h>
+#include <rpg/Context.h>
 
 const std::string_view m2g::game_name = "RPG";
 const bool m2g::gravity = false;
 const bool m2g::camera_is_listener = true;
 
 void* m2g::create_context() {
-	return nullptr;
+	auto* context = new rpg::Context();
+	return context;
 }
 void m2g::destroy_context(MAYBE void* context) {
+	delete reinterpret_cast<rpg::Context*>(context);
 }
 
 m2::Key m2g::scancode_to_key(SDL_Scancode scancode) {

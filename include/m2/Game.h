@@ -79,6 +79,7 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
+		std::filesystem::path game_resource_dir;
 		std::vector<SpriteSheet> sprite_sheets;
 		std::optional<SpriteEffectsSheet> sprite_effects_sheet;
 		std::vector<Sprite> _sprites;
@@ -117,6 +118,9 @@ namespace m2 {
 
 		Game();
 		~Game();
+
+		// Initialization
+		void initialize_context();
 
 		// Level management
 		VoidValue load_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint);
