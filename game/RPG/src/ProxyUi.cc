@@ -136,7 +136,7 @@ const m2::ui::Blueprint* m2g::ui::main_menu() {
 				.initial_text = level_completed ? level_name : '*' + level_name + '*',
 				.action_callback = [=]() {
 					LOG_INFO("Loading level...", level_json);
-					auto success = GAME.load_single_player(level_json);
+					auto success = GAME.load_single_player(level_json, level_name);
 					m2_throw_failure_as_error(success);
 					LOG_INFO("Level loaded");
 					GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME), m2::AudioManager::PlayPolicy::LOOP, 0.5f);

@@ -2,6 +2,7 @@
 #include <rpg/group/ItemGroup.h>
 #include <rpg/object/Enemy.h>
 #include <rpg/object/Player.h>
+#include <rpg/object/FinishPoint.h>
 #include <rpg/Context.h>
 
 const std::string_view m2g::game_name = "RPG";
@@ -64,6 +65,8 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 			return Player::init(obj, &chr::character_player);
 		case pb::ObjectType::SKELETON:
 			return Enemy::init(obj, &chr::character_skeleton_000_chase);
+		case pb::ObjectType::CASTLE_FINISH_POINT:
+			return rpg::init_finish_point(obj, object_type);
 		default:
 			return m2::failure("Invalid sprite index");
 	}

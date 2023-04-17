@@ -605,6 +605,8 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint) {
 	return execute_blocking(blueprint, GAME.windowRect);
 }
 ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
+	auto execute_start_ticks = sdl::get_ticks();
+
 	// Save relation to window, use in case of resize
 	const SDL_Rect& winrect = GAME.windowRect;
 	auto relation_to_window = SDL_FRect{
@@ -627,6 +629,7 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
     State state(blueprint);
     state.update_positions(rect);
 	if ((return_value = state.update_contents()) != Action::CONTINUE) {
+		GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
 		return return_value;
 	}
 
@@ -638,6 +641,7 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
         events.clear();
         if (events.gather()) {
             if (events.pop_quit()) {
+				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
                 return Action::QUIT;
             }
 			auto window_resize = events.pop_window_resize();
@@ -651,6 +655,8 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
                 });
             }
             if ((return_value = state.handle_events(events)) != Action::CONTINUE) {
+				// TODO if execute_blocking is executed recursively, pause_ticks calculation becomes incorrect
+				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
                 return return_value;
             }
         }
@@ -662,6 +668,7 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
         ////////////////////////////////////////////////////////////////////////
         // Draw ui
 		if ((return_value = state.update_contents()) != Action::CONTINUE) {
+			GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
 			return return_value;
 		}
 	    // Clear screen

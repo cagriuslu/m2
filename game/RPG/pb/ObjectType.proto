@@ -2,7 +2,8 @@ syntax = "proto3";
 package m2g.pb;
 
 enum ObjectType {
-  NO_OBJECT = 0;
-  PLAYER = 1;
-  SKELETON = 2;
+    NO_OBJECT = 0;
+    PLAYER = 1;
+    SKELETON = 2;
+    CASTLE_FINISH_POINT = 3;
 }

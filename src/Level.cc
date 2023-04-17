@@ -34,7 +34,7 @@ m2::Level::~Level() {
 	world = nullptr;
 }
 
-m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint) {
+m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint, const std::string& name) {
 	_type = Type::SINGLE_PLAYER;
 	if (std::holds_alternative<FilePath>(level_path_or_blueprint)) {
 		_lb_path = std::get<FilePath>(level_path_or_blueprint);
@@ -45,6 +45,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 		_lb_path = {};
 		_lb = std::get<pb::Level>(level_path_or_blueprint);
 	}
+	_name = name;
 
 	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
 	contactListener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
@@ -358,6 +359,19 @@ m2::VoidValue m2::Level::init_pixel_editor(const m2::FilePath &path, int x_offse
 	rightHudUIState->update_contents();
 
 	return {};
+}
+
+m2::sdl::ticks_t m2::Level::get_level_duration() const {
+	return sdl::get_ticks_since(*level_start_ticks, GAME.pause_ticks - *level_start_pause_ticks);
+}
+
+void m2::Level::begin_game_loop() {
+	if (!level_start_ticks || !level_start_pause_ticks) {
+		// This means this is the first time the game loop is executing
+		// Initialize start_ticks counters
+		level_start_ticks = sdl::get_ticks();
+		level_start_pause_ticks = GAME.pause_ticks;
+	}
 }
 
 void m2::Level::toggle_grid() {

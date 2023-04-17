@@ -21,8 +21,8 @@ namespace m2::sdl {
 
 	using ticks_t = int64_t;
 	void delay(ticks_t duration);
-	ticks_t get_ticks(ticks_t pause_ticks = 0);
-	ticks_t get_ticks(ticks_t last_ticks, ticks_t pause_ticks, ticks_t min = 0);
+	ticks_t get_ticks();
+	ticks_t get_ticks_since(ticks_t last_ticks, ticks_t pause_ticks = 0, ticks_t min = 0);
 
 	int get_refresh_rate();
 

@@ -55,6 +55,7 @@ int main(int argc, char **argv) {
 	LOG_DEBUG("Initialized SDL_ttf");
 
 	Game::create_instance();
+	GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
 	LOG_DEBUG("Executing entry UI...");
 	if (m2::ui::execute_blocking(m2g::ui::main_menu()) == m2::ui::Action::QUIT) {
@@ -63,9 +64,6 @@ int main(int argc, char **argv) {
 	}
 	LOG_DEBUG("Executed entry UI");
 
-	auto pause_ticks = sdl::get_ticks();
-	LOG_DEBUG("Initial ticks", pause_ticks);
-
 	float time_since_last_phy = 0.0f;
 	unsigned prev_phy_ticks = 0, prev_gfx_ticks = 0;
 	unsigned prev_phy_step_count = UINT_MAX;
@@ -73,8 +71,11 @@ int main(int argc, char **argv) {
 	unsigned frame_count_time = 0;
 	unsigned phy_step_count = 0;
 	unsigned gfx_draw_count = 0;
-	auto frame_start_ticks = pause_ticks;
-	while (true) {
+	auto frame_start_ticks = GAME.pause_ticks;
+	LOG_DEBUG("Initial ticks", GAME.pause_ticks);
+	while (!GAME.quit) {
+		LEVEL.begin_game_loop();
+
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -105,14 +106,12 @@ int main(int argc, char **argv) {
                 if (m2::ui::execute_blocking(m2g::ui::pause_menu()) == m2::ui::Action::QUIT) {
                     return 0;
                 }
-				pause_ticks += sdl::get_ticks() - pause_start;
             }
             if (GAME.events.pop_key_press(Key::CONSOLE)) {
 				auto pause_start = sdl::get_ticks();
                 if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
                     return 0;
                 }
-				pause_ticks += sdl::get_ticks() - pause_start;
             }
             // Handle HUD events (mouse and key)
 			IF(LEVEL.leftHudUIState)->handle_events(GAME.events);
@@ -126,7 +125,7 @@ int main(int argc, char **argv) {
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		for (prev_phy_step_count = 0; prev_phy_step_count < 4; prev_phy_step_count++) {
-			auto ticks_since_prev_phy = sdl::get_ticks(prev_phy_ticks, pause_ticks, 1) - prev_phy_ticks;
+			auto ticks_since_prev_phy = sdl::get_ticks_since(prev_phy_ticks, GAME.pause_ticks, 1);
 			prev_phy_ticks += ticks_since_prev_phy;
 			time_since_last_phy += (float)ticks_since_prev_phy / 1000.0f;
 			if (time_since_last_phy <= GAME.phy_period) {
@@ -140,6 +139,9 @@ int main(int argc, char **argv) {
 				IF(physique_it.first->pre_step)(*physique_it.first);
 			}
 			GAME.execute_deferred_actions();
+			if (GAME.quit) {
+				break;
+			}
 			////////////////////////////// CHARACTER ///////////////////////////////
 			for (auto character_it: LEVEL.characters) {
 				auto &chr = get_character_base(*character_it.first);
@@ -150,6 +152,9 @@ int main(int argc, char **argv) {
 				IF(chr.update)(chr);
 			}
 			GAME.execute_deferred_actions();
+			if (GAME.quit) {
+				break;
+			}
 			/////////////////////////////// PHYSICS ////////////////////////////////
 			if (LEVEL.world) {
 				LOGF_TRACE("Stepping world %f seconds...", GAME.phy_period);
@@ -169,11 +174,18 @@ int main(int argc, char **argv) {
 				}
 			}
 			LEVEL.draw_list.update();
+			GAME.execute_deferred_actions();
+			if (GAME.quit) {
+				break;
+			}
 			/////////////////////////////// POST-PHY ///////////////////////////////
 			for (auto physique_it: LEVEL.physics) {
 				IF(physique_it.first->post_step)(*physique_it.first);
 			}
 			GAME.execute_deferred_actions();
+			if (GAME.quit) {
+				break;
+			}
 			//////////////////////////////// ACTIONS ///////////////////////////////
 			for (const auto& action_it: m2g::actions) {
 				// Execute if there's no condition, or there is a condition and it's true
@@ -187,6 +199,9 @@ int main(int argc, char **argv) {
 				IF(sound_emitter_it.first->on_update)(*sound_emitter_it.first);
 			}
 			GAME.execute_deferred_actions();
+			if (GAME.quit) {
+				break;
+			}
 			// Calculate directional audio
 			if (LEVEL.left_listener || LEVEL.right_listener) {
 				// Loop over sounds
@@ -216,12 +231,15 @@ int main(int argc, char **argv) {
 		if (prev_phy_step_count == 4) {
 			time_since_last_phy = 0.0f;
 		}
+		if (GAME.quit) {
+			break;
+		}
 
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// PRE-GFX ///////////////////////////////
-		GAME.deltaTicks_ms = sdl::get_ticks(prev_gfx_ticks, pause_ticks, 1) - prev_gfx_ticks;
+		GAME.deltaTicks_ms = sdl::get_ticks_since(prev_gfx_ticks, GAME.pause_ticks, 1);
 		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
 		prev_gfx_ticks += GAME.deltaTicks_ms;
 		for (auto graphic_if : LEVEL.graphics) {

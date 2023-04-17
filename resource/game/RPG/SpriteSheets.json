@@ -461,9 +461,11 @@
           "isBackgroundTile": true
         },
         {
-          "type": "CASTLE_GROUND_TRIGGER",
-          "rect": {"x": 32, "y": 128, "w": 16, "h": 16},
-          "isBackgroundTile": true
+          "type": "CASTLE_FINISH_POINT_SPRITE",
+          "rect": {"x": 272, "y": 224, "w": 16, "h": 16},
+          "backgroundCollider": {
+            "circRadiusPx": 6
+          }
         }
       ]
     },

@@ -10,6 +10,10 @@
     {
       "type": "SKELETON",
       "levelEditorSpriteType": "ENEMY_LOOKDOWN_00"
+    },
+    {
+      "type": "CASTLE_FINISH_POINT",
+      "levelEditorSpriteType": "CASTLE_FINISH_POINT_SPRITE"
     }
   ]
 }

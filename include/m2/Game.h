@@ -75,6 +75,7 @@ namespace m2 {
 		int game_height_div_m{1};
 		int game_ppm{};
 		TTF_Font *ttfFont{};
+		bool quit{};
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
@@ -110,6 +111,7 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		void* context{};
 		Events events;
+		sdl::ticks_t pause_ticks{};
 		unsigned deltaTicks_ms{};
 		float deltaTime_s{};
 		Vec2f mousePositionWRTGameWorld_m;
@@ -123,7 +125,7 @@ namespace m2 {
 		void initialize_context();
 
 		// Level management
-		VoidValue load_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint);
+		VoidValue load_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		VoidValue load_level_editor(const std::string& level_resource_path);
 		VoidValue load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		inline Level& level() { return *_level; }
@@ -135,6 +137,7 @@ namespace m2 {
 
 		// Modifiers
 		void update_window_dims(int window_width, int window_height);
+		inline void add_pause_ticks(sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void update_mouse_position();
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();

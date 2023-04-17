@@ -26,6 +26,7 @@ namespace m2 {
 		Type _type{};
 		std::optional<FilePath> _lb_path;
 		std::optional<pb::Level> _lb;
+		std::string _name;
 
 	public:
 		~Level();
@@ -52,9 +53,11 @@ namespace m2 {
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
 		std::optional<ui::State> leftHudUIState, rightHudUIState;
+		std::optional<sdl::ticks_t> level_start_ticks;
+		std::optional<sdl::ticks_t> level_start_pause_ticks;
 		std::vector<std::function<void(void)>> deferred_actions;
 
-		VoidValue init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint);
+		VoidValue init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint, const std::string& name);
 
 		struct LevelEditorState {
 			struct PaintMode {
@@ -121,9 +124,13 @@ namespace m2 {
 		std::optional<PixelEditorState> pixel_editor_state;
 		VoidValue init_pixel_editor(const FilePath& path, int x_offset, int y_offset);
 
+		void begin_game_loop();
+
 		// Accessors
+		inline const std::string& name() const { return _name; }
 		inline Object* player() { return objects.get(playerId); }
 		inline Object* camera() { return objects.get(cameraId); }
+		sdl::ticks_t get_level_duration() const;
 
 		// Convenience
 		void toggle_grid();
