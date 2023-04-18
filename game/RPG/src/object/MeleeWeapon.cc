@@ -1,10 +1,9 @@
+#include <m2/Vec2f.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/object/MeleeWeapon.h>
 #include <m2/box2d/Utils.h>
 #include <m2/Log.h>
-
-#define SWING_SPEED (15.0f)
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -17,29 +16,32 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &directi
 	if (!melee_weapon.has_attribute(ATTRIBUTE_AVERAGE_TTL)) {
 		throw M2ERROR("Melee weapon has no average TTL");
 	}
-
 	float average_damage = melee_weapon.get_attribute(ATTRIBUTE_AVERAGE_DAMAGE);
 	float damage_accuracy = melee_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_ACCURACY, 1.0f);
 	float average_ttl = melee_weapon.get_attribute(ATTRIBUTE_AVERAGE_TTL);
 
-	const float theta = direction.angle_rads();
-	const float start_angle = theta + SWING_SPEED * (150 / 1000.0f / 2.0f);
+	const float direction_angle = direction.angle_rads();
+	constexpr float swing_angle = m2::PI_MUL2 * 120.0f / 360.0f; // Swing angle is 120 degrees
+	const float start_angle = direction_angle + swing_angle / 2.0f;
+	const float swing_speed = swing_angle / average_ttl;
+
+	const auto& sprite = GAME.get_sprite(melee_weapon.game_sprite());
 
 	// Add physics
 	auto& phy = obj.add_physique();
 	auto bp = m2::box2d::example_bullet_body_blueprint();
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(1.25f);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(0.1667f);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(0.5833f);
-	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(0.0f);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.foreground_collider_rect_dims_m().x);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.foreground_collider_rect_dims_m().y);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.foreground_collider_center_offset_m().x);
+	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
 	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetTransform(static_cast<b2Vec2>(obj.position), start_angle);
-	phy.body->SetAngularVelocity(-SWING_SPEED);
+	phy.body->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
-	auto& gfx = obj.add_graphic(GAME.get_sprite(melee_weapon.game_sprite()));
+	auto& gfx = obj.add_graphic(sprite);
 	gfx.draw_angle = phy.body->GetAngle();
 
 	// Add character

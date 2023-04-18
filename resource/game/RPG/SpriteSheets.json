@@ -268,7 +268,7 @@
           "type": "SWORD_00",
           "rect": {"x": 192, "y": 0, "w": 96, "h": 48},
           "centerOffsetPx": {"x": -24, "y": 0},
-          "backgroundCollider": {
+          "foregroundCollider": {
             "centerOffsetPx": {"x": 24, "y": 0},
             "rectDimsPx": {"w": 54, "h": 8}
           }
