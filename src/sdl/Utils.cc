@@ -97,6 +97,13 @@ int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_
 	return SDL_RenderDrawLines(renderer, points.data(), (int) points.size());
 }
 
+m2::sdl::TextureUniquePtr m2::sdl::generate_font(const char* text, SDL_Color color) {
+	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.ttfFont, text, color);
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, surf);
+	SDL_FreeSurface(surf);
+	return TextureUniquePtr{texture};
+}
+
 void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 	set_pixel(surface, x, y, SDL_MapRGBA(surface->format, r, g, b, a));
 }

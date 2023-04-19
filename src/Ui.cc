@@ -39,15 +39,6 @@ ui::Action ui::State::Widget::handle_events(MAYBE Events &events) {
 }
 ui::Action ui::State::Widget::update_content() { return Action::CONTINUE; }
 void ui::State::Widget::draw() {}
-SDL_Texture* ui::State::Widget::generate_font_texture(const char* text) {
-	SDL_Surface *textSurf = TTF_RenderUTF8_Blended(GAME.ttfFont, text, SDL_Color{255, 255, 255, 255});
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, textSurf);
-	SDL_FreeSurface(textSurf);
-	return texture;
-}
-SDL_Texture* ui::State::Widget::generate_font_texture(const std::string& text) {
-	return generate_font_texture(text.c_str());
-}
 void ui::State::Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align) {
 	int text_w = 0, text_h = 0;
 	SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
@@ -149,19 +140,13 @@ void ui::State::Image::draw() {
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
-ui::State::Text::Text(const Blueprint::Widget* blueprint) : AbstractButton(blueprint), font_texture(generate_font_texture(std::get<Blueprint::Widget::Text>(blueprint->variant).initial_text.data())) {}
-ui::State::Text::~Text() {
-	SDL_DestroyTexture(font_texture);
-}
+ui::State::Text::Text(const Blueprint::Widget* blueprint) : AbstractButton(blueprint), font_texture(sdl::generate_font(std::get<Blueprint::Widget::Text>(blueprint->variant).initial_text.data())) {}
 ui::Action ui::State::Text::update_content() {
 	auto& text_blueprint = std::get<Blueprint::Widget::Text>(blueprint->variant);
 	if (text_blueprint.update_callback) {
 		auto[action, optional_string] = text_blueprint.update_callback();
 		if (action == Action::CONTINUE && optional_string) {
-			if (font_texture) {
-				SDL_DestroyTexture(font_texture);
-			}
-			font_texture = generate_font_texture(optional_string->c_str());
+			font_texture = sdl::generate_font(optional_string->c_str());
 		}
 		return action;
 	} else {
@@ -221,9 +206,6 @@ ui::State::TextInput::TextInput(const Blueprint::Widget* blueprint) : Widget(blu
 	SDL_StartTextInput();
 }
 ui::State::TextInput::~TextInput() {
-	if (font_texture) {
-		SDL_DestroyTexture(font_texture);
-	}
 	SDL_StopTextInput();
 }
 ui::Action ui::State::TextInput::handle_events(Events& events) {
@@ -248,10 +230,7 @@ ui::Action ui::State::TextInput::handle_events(Events& events) {
 ui::Action ui::State::TextInput::update_content() {
 	auto new_str = text_input.str() + '_';
 	if (new_str != font_texture_str) {
-		if (font_texture) {
-			SDL_DestroyTexture(font_texture);
-		}
-		font_texture = generate_font_texture(new_str.c_str());
+		font_texture = sdl::generate_font(new_str.c_str());
 		font_texture_str = new_str;
 	}
 	return Action::CONTINUE;
@@ -331,12 +310,7 @@ void ui::State::ImageSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-ui::State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(generate_font_texture(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection])) {}
-ui::State::TextSelection::~TextSelection() {
-	if (font_texture) {
-		SDL_DestroyTexture(font_texture);
-	}
-}
+ui::State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(sdl::generate_font(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection].c_str())) {}
 ui::Action ui::State::TextSelection::handle_events(Events& events) {
 	auto rect = Rect2i{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
@@ -367,10 +341,7 @@ ui::Action ui::State::TextSelection::handle_events(Events& events) {
 	}
 
 	if (selection_changed) {
-		if (font_texture) {
-			SDL_DestroyTexture(font_texture);
-		}
-		font_texture = generate_font_texture(text_selection.list[selection].c_str());
+		font_texture = sdl::generate_font(text_selection.list[selection].c_str());
 
 		const auto& action_callback = text_selection.action_callback;
 		if (action_callback) {
@@ -406,12 +377,7 @@ void ui::State::TextSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-ui::State::IntegerSelection::IntegerSelection(const Blueprint::Widget *blueprint) : Widget(blueprint), value(std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant).initial_value), font_texture(generate_font_texture(std::to_string(value))) {}
-ui::State::IntegerSelection::~IntegerSelection() {
-	if (font_texture) {
-		SDL_DestroyTexture(font_texture);
-	}
-}
+ui::State::IntegerSelection::IntegerSelection(const Blueprint::Widget *blueprint) : Widget(blueprint), value(std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant).initial_value), font_texture(sdl::generate_font(std::to_string(value).c_str())) {}
 ui::Action ui::State::IntegerSelection::handle_events(Events& events) {
 	auto rect = Rect2i{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
@@ -442,10 +408,7 @@ ui::Action ui::State::IntegerSelection::handle_events(Events& events) {
 	}
 
 	if (selection_changed) {
-		if (font_texture) {
-			SDL_DestroyTexture(font_texture);
-		}
-		font_texture = generate_font_texture(std::to_string(value));
+		font_texture = sdl::generate_font(std::to_string(value).c_str());
 
 		const auto& action_callback = integer_selection.action_callback;
 		if (action_callback) {
@@ -461,10 +424,7 @@ ui::Action ui::State::IntegerSelection::update_content() {
 		auto optional_value = pb_blueprint.update_callback();
 		if (optional_value) {
 			value = *optional_value;
-			if (font_texture) {
-				SDL_DestroyTexture(font_texture);
-			}
-			font_texture = generate_font_texture(std::to_string(value));
+			font_texture = sdl::generate_font(std::to_string(value).c_str());
 		}
 	}
 	return Action::CONTINUE;
@@ -495,12 +455,7 @@ void ui::State::IntegerSelection::draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-ui::State::CheckboxWithText::CheckboxWithText(const Blueprint::Widget *blueprint) : AbstractButton(blueprint), state(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).initial_state), font_texture(generate_font_texture(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).text)) {}
-ui::State::CheckboxWithText::~CheckboxWithText() {
-	if (font_texture) {
-		SDL_DestroyTexture(font_texture);
-	}
-}
+ui::State::CheckboxWithText::CheckboxWithText(const Blueprint::Widget *blueprint) : AbstractButton(blueprint), state(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).initial_state), font_texture(sdl::generate_font(std::get<Blueprint::Widget::CheckboxWithText>(blueprint->variant).text.c_str())) {}
 void ui::State::CheckboxWithText::draw() {
 	// Background
 	State::draw_background_color(rect_px, blueprint->background_color);

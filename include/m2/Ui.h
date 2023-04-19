@@ -1,6 +1,7 @@
 #ifndef M2_UI_H
 #define M2_UI_H
 
+#include "sdl/Utils.hh"
 #include "Sprite.h"
 #include "Events.h"
 #include <SDL2/SDL_ttf.h>
@@ -31,21 +32,22 @@ namespace m2::ui {
 				const Blueprint* ui{}; // TODO convert to reference
 			};
 			struct Image {
-				m2g::pb::SpriteType initial_sprite;
+				m2g::pb::SpriteType initial_sprite{};
 				std::function<std::pair<Action,std::optional<m2g::pb::SpriteType>>(void)> update_callback;
 				std::function<Action(void)> action_callback;
-				SDL_Scancode kb_shortcut;
+				SDL_Scancode kb_shortcut{};
 			};
 			struct Text {
 				std::string_view initial_text;
 				TextAlignment alignment;
+				bool is_toggle{}; // TODO
 				std::function<std::pair<Action,std::optional<std::string>>(void)> update_callback;
 				std::function<Action(void)> action_callback;
-				SDL_Scancode kb_shortcut;
+				SDL_Scancode kb_shortcut{};
 			};
 			struct ProgressBar {
-				float initial_progress;
-				SDL_Color bar_color;
+				float initial_progress{};
+				SDL_Color bar_color{};
 				std::function<float(void)> update_callback;
 			};
 			struct TextInput {
@@ -54,25 +56,25 @@ namespace m2::ui {
 			};
 			struct ImageSelection {
 				std::vector<m2g::pb::SpriteType> list;
-				unsigned initial_selection;
+				unsigned initial_selection{};
 				std::function<Action(m2g::pb::SpriteType selection)> action_callback;
 			};
 			struct TextSelection {
 				std::vector<std::string> list;
-				unsigned initial_selection;
+				unsigned initial_selection{};
 				std::function<Action(const std::string& selection)> action_callback;
 			};
 			struct IntegerSelection {
-				int min_value, max_value; /// Values are inclusive
-				int initial_value;
+				int min_value{}, max_value{}; /// Values are inclusive
+				int initial_value{};
 				std::function<std::optional<int>(void)> update_callback;
 				std::function<Action(int value)> action_callback;
 			};
 			struct CheckboxWithText {
 				std::string text;
-				bool initial_state;
+				bool initial_state{};
 				std::function<Action(bool state)> action_callback;
-				SDL_Scancode kb_shortcut;
+				SDL_Scancode kb_shortcut{};
 			};
 
 			unsigned x{}, y{}, w{1}, h{1}; // unitless
@@ -112,8 +114,6 @@ namespace m2::ui {
 			virtual void draw();
 
 		protected:
-			static SDL_Texture* generate_font_texture(const char* text);
-			static SDL_Texture* generate_font_texture(const std::string& text);
 			static void draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align);
 		};
 		struct AbstractButton : public Widget {
@@ -131,10 +131,9 @@ namespace m2::ui {
 			void draw() override;
 		};
 		struct Text : public AbstractButton {
-			SDL_Texture* font_texture;
+			sdl::TextureUniquePtr font_texture;
 
 			explicit Text(const Blueprint::Widget* blueprint);
-			~Text() override;
 			Action update_content() override;
 			void draw() override;
 		};
@@ -147,7 +146,7 @@ namespace m2::ui {
 		};
 		struct TextInput : public Widget {
 			std::stringstream text_input;
-			SDL_Texture* font_texture;
+			sdl::TextureUniquePtr font_texture;
 			std::string font_texture_str;
 
 			explicit TextInput(const Blueprint::Widget* blueprint);
@@ -167,33 +166,30 @@ namespace m2::ui {
 		};
 		struct TextSelection : public Widget {
 			unsigned selection;
-			SDL_Texture* font_texture;
+			sdl::TextureUniquePtr font_texture;
 			bool inc_depressed{};
 			bool dec_depressed{};
 
 			explicit TextSelection(const Blueprint::Widget* blueprint);
-			~TextSelection() override;
 			Action handle_events(Events& events) override;
 			void draw() override;
 		};
 		struct IntegerSelection : public Widget {
 			int value;
-			SDL_Texture* font_texture;
+			sdl::TextureUniquePtr font_texture;
 			bool inc_depressed{};
 			bool dec_depressed{};
 
 			explicit IntegerSelection(const Blueprint::Widget* blueprint);
-			~IntegerSelection() override;
 			Action handle_events(Events& events) override;
 			Action update_content() override;
 			void draw() override;
 		};
 		struct CheckboxWithText : public AbstractButton {
 			bool state;
-			SDL_Texture* font_texture;
+			sdl::TextureUniquePtr font_texture;
 
 			explicit CheckboxWithText(const Blueprint::Widget* blueprint);
-			~CheckboxWithText() override;
 			void draw() override;
 		};
 		struct NestedUi : public Widget {
