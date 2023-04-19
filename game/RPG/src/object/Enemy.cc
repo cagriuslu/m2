@@ -3,6 +3,7 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include "rpg/group/ItemGroup.h"
+#include <rpg/Context.h>
 #include <m2/M2.h>
 #include <m2/box2d/Utils.h>
 #include <m2/Group.h>
@@ -46,6 +47,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
+
+	// Increment enemy counter
+	auto& context = rpg::Context::get_instance();
+	context.alive_enemy_count++;
 
 	phy.pre_step = [&obj](MAYBE m2::Physique& phy) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
@@ -96,6 +101,9 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 						}
 					}
 				}
+				// Decrement enemy counter
+				auto& context = rpg::Context::get_instance();
+				context.alive_enemy_count--;
 				// Delete self
 				GAME.add_deferred_action(m2::create_object_deleter(self.object_id));
 			}

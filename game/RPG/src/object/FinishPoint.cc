@@ -19,9 +19,11 @@ m2::VoidValue rpg::init_finish_point(m2::Object& obj, m2g::pb::ObjectType& type)
 	auto& gfx = obj.add_graphic(sprite);
 	gfx.draw_sprite_effect = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 
-	phy.on_collision = [](m2::Physique& self, m2::Physique& other, const m2::box2d::Contact& contact) {
-		if (other.object_id == LEVEL.playerId) {
-			// If collided with player, finish game
+	phy.on_collision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+		// Check enemy counter
+		auto& context = rpg::Context::get_instance();
+		if (context.alive_enemy_count == 0) {
+			// Finish game
 			GAME.add_deferred_action([]() {
 				auto level_duration = LEVEL.get_level_duration();
 				LOG_INFO("Level duration", level_duration);
@@ -35,6 +37,11 @@ m2::VoidValue rpg::init_finish_point(m2::Object& obj, m2g::pb::ObjectType& type)
 				}
 			});
 		}
+	};
+	gfx.pre_draw = [](MAYBE m2::Graphic& gfx) {
+		// Check enemy counter, adjust sprite effect
+		auto& context = rpg::Context::get_instance();
+		gfx.draw_sprite_effect = context.alive_enemy_count ? m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE : m2::pb::SpriteEffectType::NO_SPRITE_EFFECT;
 	};
 
 	return {};

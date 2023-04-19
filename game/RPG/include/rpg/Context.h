@@ -12,6 +12,8 @@ namespace rpg {
 
 		m2::ui::Blueprint main_menu_blueprint;
 
+		unsigned alive_enemy_count{};
+
 		Context();
 		static Context& get_instance();
 
