@@ -462,6 +462,9 @@
         },
         {
           "type": "CASTLE_FINISH_POINT_SPRITE",
+          "effects": [{
+            "type": "SPRITE_EFFECT_GRAYSCALE"
+          }],
           "rect": {"x": 272, "y": 224, "w": 16, "h": 16},
           "backgroundCollider": {
             "circRadiusPx": 6

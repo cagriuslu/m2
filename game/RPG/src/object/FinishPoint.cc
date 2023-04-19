@@ -16,7 +16,8 @@ m2::VoidValue rpg::init_finish_point(m2::Object& obj, m2g::pb::ObjectType& type)
 	bp.mutable_background_fixture()->set_is_sensor(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	obj.add_graphic(sprite);
+	auto& gfx = obj.add_graphic(sprite);
+	gfx.draw_sprite_effect = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 
 	phy.on_collision = [](m2::Physique& self, m2::Physique& other, const m2::box2d::Contact& contact) {
 		if (other.object_id == LEVEL.playerId) {

@@ -81,6 +81,46 @@ SDL_Rect m2::SpriteEffectsSheet::create_foreground_companion_effect(const Sprite
 
 	return dst_rect;
 }
+SDL_Rect m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::Rect2i &rect) {
+	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
+
+	// Check pixel stride
+	auto* src_surface = sheet.surface();
+	if (src_surface->format->BytesPerPixel != 4 || dst_surface->format->BytesPerPixel != 4) {
+		throw M2FATAL("Surface has unsupported pixel format");
+	}
+
+	SDL_LockSurface(src_surface);
+	SDL_LockSurface(dst_surface);
+
+	for (int y = rect.y(); y < rect.y() + rect.h(); ++y) {
+		for (int x = rect.x(); x < rect.x() + rect.w(); ++x) {
+			// Read src pixel
+			auto* src_pixels = static_cast<uint32_t*>(src_surface->pixels);
+			auto src_pixel = *(src_pixels + (x + y * src_surface->w));
+			// Decompose to RPG
+			uint8_t r,g,b,a;
+			SDL_GetRGBA(src_pixel, src_surface->format, &r, &g, &b, &a);
+			// Apply weights
+			float rf = 0.299f * static_cast<float>(r) / 255.0f;
+			float gf = 0.587f * static_cast<float>(g) / 255.0f;
+			float bf = 0.114f * static_cast<float>(b) / 255.0f;
+			// Convert back to int
+			auto bw = (uint8_t) roundf((rf + gf + bf) * 255.0f);
+			// Color dst pixel
+			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
+			auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + dst_rect.y) * dst_surface->w);
+			*dst_pixel = SDL_MapRGBA(dst_surface->format, bw, bw, bw, a);
+		}
+	}
+
+	SDL_UnlockSurface(dst_surface);
+	SDL_UnlockSurface(src_surface);
+
+	recreate_texture();
+
+	return dst_rect;
+}
 
 m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite) :
 	_sprite_sheet(&sprite_sheet), _sprite(sprite), _effects_sheet(&sprite_effects_sheet),
@@ -112,8 +152,11 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 				case pb::SPRITE_EFFECT_MASK:
 					_effects[index] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.rect(), effect.mask_color());
 					break;
-				default:
+				case pb::SPRITE_EFFECT_GRAYSCALE:
+					_effects[index] = sprite_effects_sheet.create_grayscale_effect(sprite_sheet, sprite.rect());
 					break;
+				default:
+					throw M2ERROR("Encountered a sprite with unknown sprite effect: " + std::to_string(sprite.type()));
 			}
 			is_created[index] = true;
 		}

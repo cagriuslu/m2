@@ -6,7 +6,6 @@
 #include <SDL2/SDL_image.h>
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
-#include <cstdlib>
 
 using namespace m2;
 
@@ -102,13 +101,11 @@ int main(int argc, char **argv) {
 			}
             // Handle key events
             if (GAME.events.pop_key_press(Key::MENU)) {
-				auto pause_start = sdl::get_ticks();
                 if (m2::ui::execute_blocking(m2g::ui::pause_menu()) == m2::ui::Action::QUIT) {
                     return 0;
                 }
             }
             if (GAME.events.pop_key_press(Key::CONSOLE)) {
-				auto pause_start = sdl::get_ticks();
                 if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
                     return 0;
                 }

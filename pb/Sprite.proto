@@ -23,6 +23,7 @@ enum SpriteEffectType {
   NO_SPRITE_EFFECT = 0;
   SPRITE_EFFECT_FOREGROUND_COMPANION = 1;
   SPRITE_EFFECT_MASK = 2;
+  SPRITE_EFFECT_GRAYSCALE = 3;
 }
 
 message SpriteEffect {
