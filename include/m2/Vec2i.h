@@ -32,12 +32,19 @@ namespace m2 {
 		// Vec2f
 		explicit Vec2i(const Vec2f& v);
 	};
+	std::string to_string(const m2::Vec2i&);
 
 	struct Vec2iHash {
 		inline size_t operator()(const Vec2i& a) const { return std::hash<uint64_t>{}((uint64_t)a.x | ((uint64_t)a.y << 32)); }
 	};
-
-	std::string to_string(const m2::Vec2i&);
+	struct Vec2iCompareRightToLeft {
+		// Reverse sort based on x coordinate
+		inline bool operator()(const Vec2i& a, const Vec2i& b) { return b.x < a.x; }
+	};
+	struct Vec2iCompareBottomToTop {
+		// Reverse sort based on y coordinate
+		inline bool operator()(const Vec2i& a, const Vec2i& b) { return b.y < a.y; }
+	};
 }
 
 #endif //M2_VEC2I_H

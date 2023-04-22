@@ -29,6 +29,7 @@ m2::Id m2::obj::create_god() {
 							[=](Level::LevelEditorState::EraseMode& v) { v.erase_position(mouse_coordinates); },
 							[=](Level::LevelEditorState::PlaceMode& v) { v.place_object(mouse_coordinates); },
 							[=](Level::LevelEditorState::RemoveMode& v) { v.remove_object(mouse_coordinates); },
+							[=](Level::LevelEditorState::ShiftMode& v) { v.shift(mouse_coordinates); },
 							[](MAYBE auto& v) {}
 					}, LEVEL.level_editor_state->mode);
 					break;

@@ -1,6 +1,7 @@
 #ifndef M2_LEVEL_H
 #define M2_LEVEL_H
 
+#include "level_editor/Detail.h"
 #include "Object.h"
 #include "Ui.h"
 #include "DrawList.h"
@@ -82,16 +83,25 @@ namespace m2 {
 			struct RemoveMode {
 				void remove_object(const Vec2i& position);
 			};
+			struct ShiftMode {
+				enum class ShiftType {
+					RIGHT,
+					DOWN,
+					RIGHT_N_DOWN
+				} shift_type;
+				void shift(const Vec2i& position);
+			};
 
-			std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode> mode;
-			std::unordered_map<Vec2i, Id, Vec2iHash> bg_placeholders;
-			std::unordered_map<Vec2i, Id, Vec2iHash> fg_placeholders;
+			std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode,ShiftMode> mode;
+			level_editor::detail::PlaceholderMap bg_placeholders; // TODO Map2i might be used instead
+			level_editor::detail::PlaceholderMap fg_placeholders; // TODO Map2i might be used instead
 
 			void deactivate_mode();
 			void activate_paint_mode();
 			void activate_erase_mode();
 			void activate_place_mode();
 			void activate_remove_mode();
+			void activate_shift_mode();
 			static void save();
 		};
 		std::optional<LevelEditorState> level_editor_state;

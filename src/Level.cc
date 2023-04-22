@@ -4,7 +4,7 @@
 #include <m2/object/Tile.h>
 #include <m2/object/Ghost.h>
 #include <m2/object/God.h>
-#include "m2/ui/LevelEditor.h"
+#include <m2/level_editor/Ui.h>
 #include <m2/object/Origin.h>
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
@@ -12,6 +12,7 @@
 #include <m2/ui/PixelEditor.h>
 #include <m2/object/Pixel.h>
 #include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Level.h>
 #include <m2/box2d/Utils.h>
 #include <SDL2/SDL_image.h>
 #include <m2/Game.h>
@@ -189,10 +190,22 @@ void m2::Level::LevelEditorState::RemoveMode::remove_object(const Vec2i &positio
 			mutable_objects->erase(mutable_objects->begin() + i);
 		}
 	}
-	// Create/Replace placeholder
+	// Remove placeholder
 	auto placeholders_it = LEVEL.level_editor_state->fg_placeholders.find(position);
 	if (placeholders_it != LEVEL.level_editor_state->fg_placeholders.end()) {
 		LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second));
+	}
+}
+void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) {
+	if (shift_type == ShiftType::RIGHT) {
+		proto::level::shift_background_right(*LEVEL._lb, position);
+		proto::level::shift_foreground_right(*LEVEL._lb, position);
+		level_editor::detail::shift_placeholders_right(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x);
+		level_editor::detail::shift_placeholders_right(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x);
+	} else if (shift_type == ShiftType::DOWN) {
+
+	} else if (shift_type == ShiftType::RIGHT_N_DOWN) {
+
 	}
 }
 void m2::Level::LevelEditorState::deactivate_mode() {
@@ -213,6 +226,9 @@ void m2::Level::LevelEditorState::activate_place_mode() {
 }
 void m2::Level::LevelEditorState::activate_remove_mode() {
 	mode = RemoveMode{};
+}
+void m2::Level::LevelEditorState::activate_shift_mode() {
+	mode = ShiftMode{};
 }
 void m2::Level::LevelEditorState::save() {
 	*proto::message_to_json_file(*LEVEL._lb, *LEVEL._lb_path);
@@ -252,10 +268,10 @@ m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	m2::obj::create_origin();
 
 	// UI Hud
-	leftHudUIState = m2::ui::State(&ui::level_editor_left_hud);
+	leftHudUIState = m2::ui::State(&level_editor::ui::left_hud);
 	leftHudUIState->update_positions(GAME.leftHudRect);
 	leftHudUIState->update_contents();
-	rightHudUIState = m2::ui::State(&ui::level_editor_right_hud);
+	rightHudUIState = m2::ui::State(&level_editor::ui::right_hud);
 	rightHudUIState->update_positions(GAME.rightHudRect);
 	rightHudUIState->update_contents();
 

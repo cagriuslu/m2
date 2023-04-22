@@ -23,6 +23,8 @@ message SpriteTypeArray {
 
 message Level {
   repeated SpriteTypeArray background_rows = 1;
-  repeated SpriteTypeArray second_background_rows = 2; // Second quadrant, negative x, positive y
-  repeated LevelObject objects = 3;
+  repeated SpriteTypeArray second_background_rows = 2; // Second quadrant, negative x, positive y, UNUSED
+  repeated SpriteTypeArray third_background_rows = 3; // Third quadrant, negative x, negative y, UNUSED
+  repeated SpriteTypeArray forth_background_rows = 4; // Forth quadrant, positive x, negative y, UNUSED
+  repeated LevelObject objects = 5;
 }
