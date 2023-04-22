@@ -39,7 +39,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 	_type = Type::SINGLE_PLAYER;
 	if (std::holds_alternative<FilePath>(level_path_or_blueprint)) {
 		_lb_path = std::get<FilePath>(level_path_or_blueprint);
-		auto lb = proto::json_file_to_message<pb::Level>(*_lb_path);
+		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		_lb = *lb;
 	} else {
@@ -198,8 +198,8 @@ void m2::Level::LevelEditorState::RemoveMode::remove_object(const Vec2i &positio
 }
 void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) {
 	if (shift_type == ShiftType::RIGHT) {
-		proto::level::shift_background_right(*LEVEL._lb, position);
-		proto::level::shift_foreground_right(*LEVEL._lb, position);
+		protobuf::level::shift_background_right(*LEVEL._lb, position);
+		protobuf::level::shift_foreground_right(*LEVEL._lb, position);
 		level_editor::detail::shift_placeholders_right(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x);
 		level_editor::detail::shift_placeholders_right(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x);
 	} else if (shift_type == ShiftType::DOWN) {
@@ -231,7 +231,7 @@ void m2::Level::LevelEditorState::activate_shift_mode() {
 	mode = ShiftMode{};
 }
 void m2::Level::LevelEditorState::save() {
-	*proto::message_to_json_file(*LEVEL._lb, *LEVEL._lb_path);
+	*protobuf::message_to_json_file(*LEVEL._lb, *LEVEL._lb_path);
 }
 m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	_type = Type::LEVEL_EDITOR;
@@ -239,7 +239,7 @@ m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	level_editor_state = LevelEditorState{};
 
 	if (std::filesystem::exists(lb_path)) {
-		auto lb = proto::json_file_to_message<pb::Level>(*_lb_path);
+		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		_lb = *lb;
 

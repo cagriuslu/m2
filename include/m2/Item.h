@@ -83,9 +83,9 @@ namespace m2 {
 	/// This class uses high memory, and is slow to construct. It should only be used when fast resource/attribute lookup is necessary.
 	class FullItem final : public Item {
 		pb::Item _item;
-		std::vector<float> _costs = std::vector<float>(proto::enum_value_count<m2g::pb::ResourceType>());
-		std::vector<float> _benefits = std::vector<float>(proto::enum_value_count<m2g::pb::ResourceType>());
-		std::vector<float> _attributes = std::vector<float>(proto::enum_value_count<m2g::pb::AttributeType>());
+		std::vector<float> _costs = std::vector<float>(protobuf::enum_value_count<m2g::pb::ResourceType>());
+		std::vector<float> _benefits = std::vector<float>(protobuf::enum_value_count<m2g::pb::ResourceType>());
+		std::vector<float> _attributes = std::vector<float>(protobuf::enum_value_count<m2g::pb::AttributeType>());
 
 	public:
 		FullItem() = default;

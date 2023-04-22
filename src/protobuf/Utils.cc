@@ -1,6 +1,6 @@
 #include <m2/protobuf/Utils.h>
 
-m2::Value<std::string> m2::proto::message_to_json_string(const google::protobuf::Message& message) {
+m2::Value<std::string> m2::protobuf::message_to_json_string(const google::protobuf::Message& message) {
 	std::string str;
 	auto status = google::protobuf::util::MessageToJsonString(message, &str);
 	if (status.ok()) {
@@ -10,7 +10,7 @@ m2::Value<std::string> m2::proto::message_to_json_string(const google::protobuf:
 	}
 }
 
-m2::VoidValue m2::proto::message_to_json_file(const google::protobuf::Message& message, const std::string& path) {
+m2::VoidValue m2::protobuf::message_to_json_file(const google::protobuf::Message& message, const std::string& path) {
 	std::string str;
 	auto status = google::protobuf::util::MessageToJsonString(message, &str);
 	if (status.ok()) {

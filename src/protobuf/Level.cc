@@ -1,6 +1,6 @@
 #include <m2/protobuf/Level.h>
 
-void m2::proto::level::shift_background_right(pb::Level& lb, const Vec2i& pos) {
+void m2::protobuf::level::shift_background_right(pb::Level& lb, const Vec2i& pos) {
 	// Iterate over background rows
 	for (int y = 0; y < lb.background_rows_size(); ++y) {
 		auto* sprite_type_array = lb.mutable_background_rows(y);
@@ -15,7 +15,7 @@ void m2::proto::level::shift_background_right(pb::Level& lb, const Vec2i& pos) {
 	}
 }
 
-void m2::proto::level::shift_foreground_right(pb::Level& lb, const Vec2i& pos) {
+void m2::protobuf::level::shift_foreground_right(pb::Level& lb, const Vec2i& pos) {
 	// Iterate over foreground objects
 	for (int o = 0; o < lb.objects_size(); ++o) {
 		auto* level_object = lb.mutable_objects(o);
@@ -26,18 +26,18 @@ void m2::proto::level::shift_foreground_right(pb::Level& lb, const Vec2i& pos) {
 	}
 }
 
-void m2::proto::level::shift_background_down(pb::Level& lb, const Vec2i& pos) {
+void m2::protobuf::level::shift_background_down(pb::Level& lb, const Vec2i& pos) {
 
 }
 
-void m2::proto::level::shift_foreground_down(pb::Level& lb, const Vec2i& pos) {
+void m2::protobuf::level::shift_foreground_down(pb::Level& lb, const Vec2i& pos) {
 
 }
 
-void m2::proto::level::shift_background_right_down(pb::Level& lb, const Vec2i& pos) {
+void m2::protobuf::level::shift_background_right_down(pb::Level& lb, const Vec2i& pos) {
 
 }
 
-void m2::proto::level::shift_foreground_right_down(pb::Level& lb, const Vec2i& pos) {
+void m2::protobuf::level::shift_foreground_right_down(pb::Level& lb, const Vec2i& pos) {
 
 }

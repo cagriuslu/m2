@@ -179,8 +179,8 @@ const ui::Blueprint::Widget::Variant level_editor_left_hud_place_button = ui::Bl
 			// Fill group type selector
 			auto& group_type_selection = std::get<ui::Blueprint::Widget::TextSelection>(level_editor_place_mode_right_hud.widgets[1].variant);
 			if (group_type_selection.list.empty()) {
-				for (int e  = 0; e < proto::enum_value_count<m2g::pb::GroupType>(); ++e) {
-					group_type_selection.list.emplace_back(proto::enum_name<m2g::pb::GroupType>(e));
+				for (int e  = 0; e < protobuf::enum_value_count<m2g::pb::GroupType>(); ++e) {
+					group_type_selection.list.emplace_back(protobuf::enum_name<m2g::pb::GroupType>(e));
 				}
 			}
 

@@ -292,7 +292,7 @@ void m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
 }
 
 int m2::FullCharacter::resource_type_index(m2g::pb::ResourceType resource_type) {
-	return proto::enum_index<m2g::pb::ResourceType>(resource_type);
+	return protobuf::enum_index<m2g::pb::ResourceType>(resource_type);
 }
 
 m2::Character& m2::get_character_base(CharacterVariant& v) {

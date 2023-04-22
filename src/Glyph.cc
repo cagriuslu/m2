@@ -22,7 +22,7 @@ size_t m2::GlyphsSheet::GlyphKeyHash::operator()(const GlyphKey &k) const {
 
 m2::GlyphsSheet::GlyphsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {
 	// Assert that glyph_resources is the correct size
-	if (glyph_resources.size() != (size_t) proto::enum_value_count<pb::GlyphType>()) {
+	if (glyph_resources.size() != (size_t) protobuf::enum_value_count<pb::GlyphType>()) {
 		throw M2FATAL("Invalid Glyph resource count");
 	}
 }
@@ -34,7 +34,7 @@ std::pair<SDL_Texture*, SDL_Rect> m2::GlyphsSheet::get_glyph(pb::GlyphType type,
 	if (it != _glyphs.end()) {
 		return {texture(), it->second};
 	} else {
-		SDL_RWops *file = SDL_RWFromFile(glyph_resources[proto::enum_index(type)].data(), "rb");
+		SDL_RWops *file = SDL_RWFromFile(glyph_resources[protobuf::enum_index(type)].data(), "rb");
 		if (!file) {
 			throw M2FATAL("Unable to open glyph file: " + std::string(SDL_GetError()));
 		}

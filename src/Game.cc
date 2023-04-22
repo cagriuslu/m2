@@ -121,7 +121,7 @@ void m2::Game::reset_state() {
 }
 
 const m2::Song& m2::Game::get_song(m2g::pb::SongType song_type) {
-	return _songs[proto::enum_index(song_type)];
+	return _songs[protobuf::enum_index(song_type)];
 }
 
 void m2::Game::update_window_dims(int window_width, int window_height) {

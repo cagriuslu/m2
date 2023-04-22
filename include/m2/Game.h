@@ -131,8 +131,8 @@ namespace m2 {
 		inline Level& level() { return *_level; }
 
 		// Accessors
-		inline const Sprite& get_sprite(m2g::pb::SpriteType sprite_type) { return _sprites[proto::enum_index(sprite_type)]; }
-		inline SmartPointer<const Item> get_item(m2g::pb::ItemType item_type) { return make_static<const Item>(&_items[proto::enum_index(item_type)]); }
+		inline const Sprite& get_sprite(m2g::pb::SpriteType sprite_type) { return _sprites[protobuf::enum_index(sprite_type)]; }
+		inline SmartPointer<const Item> get_item(m2g::pb::ItemType item_type) { return make_static<const Item>(&_items[protobuf::enum_index(item_type)]); }
 		const Song& get_song(m2g::pb::SongType song_type);
 
 		// Modifiers

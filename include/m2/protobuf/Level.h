@@ -4,7 +4,7 @@
 #include "../Vec2i.h"
 #include <Level.pb.h>
 
-namespace m2::proto::level {
+namespace m2::protobuf::level {
 	void shift_background_right(pb::Level& lb, const Vec2i& pos);
 	void shift_foreground_right(pb::Level& lb, const Vec2i& pos);
 
