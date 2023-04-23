@@ -5,7 +5,7 @@
 #include "rpg/group/ItemGroup.h"
 #include <rpg/Context.h>
 #include <m2/M2.h>
-#include <m2/box2d/Utils.h>
+#include <m2/box2d/Detail.h>
 #include <m2/Group.h>
 #include <InteractionType.pb.h>
 #include <deque>

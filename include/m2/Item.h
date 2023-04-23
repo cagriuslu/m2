@@ -1,7 +1,7 @@
 #ifndef M2_ITEM_H
 #define M2_ITEM_H
 
-#include "protobuf/Utils.h"
+#include "protobuf/Detail.h"
 #include "SmartPointer.h"
 #include <Item.pb.h>
 #include <vector>

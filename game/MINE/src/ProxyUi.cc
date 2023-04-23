@@ -1,7 +1,7 @@
 #include <m2/Proxy.h>
 #include <m2/Game.h>
 #include <m2/Noise.h>
-#include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Detail.h>
 #include <SpriteType.pb.h>
 
 using namespace m2::ui;

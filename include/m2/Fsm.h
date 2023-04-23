@@ -1,7 +1,7 @@
 #ifndef AUTOMATON_H
 #define AUTOMATON_H
 
-#include "protobuf/Utils.h"
+#include "protobuf/Detail.h"
 #include "Exception.h"
 #include "Value.h"
 #include <google/protobuf/message.h>

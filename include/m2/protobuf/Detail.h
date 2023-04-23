@@ -1,7 +1,8 @@
-#ifndef M2_PROTOBUF_UTILS_H
-#define M2_PROTOBUF_UTILS_H
+#ifndef M2_PROTOBUF_DETAIL_H
+#define M2_PROTOBUF_DETAIL_H
 
 #include "../Value.h"
+#include "../Exception.h"
 #include "../FileSystem.h"
 #include <google/protobuf/util/json_util.h>
 #include <google/protobuf/generated_enum_reflection.h>
@@ -36,6 +37,19 @@ namespace m2::protobuf {
 	VoidValue message_to_json_file(const google::protobuf::Message& message, const std::string& path);
 
 	template <typename T>
+	T* mutable_get_or_create(::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index, const T& fill_value = {}) {
+		T* t = nullptr;
+		while (mutable_repeated_field->size() <= index) {
+			t = mutable_repeated_field->Add();
+			*t = fill_value;
+		}
+		if (!t) {
+			t = &mutable_repeated_field->at(index);
+		}
+		return t;
+	}
+
+	template <typename T>
 	T* mutable_get_or_create(::google::protobuf::RepeatedPtrField<T>* mutable_repeated_field, int index) {
 		T* t = nullptr;
 		while (mutable_repeated_field->size() <= index) {
@@ -47,17 +61,36 @@ namespace m2::protobuf {
 		return t;
 	}
 
+	/// Returns null if index is out-of-bounds
 	template <typename T>
-	T* mutable_get_or_create(::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index, const T& fill_value = {}) {
-		T* t = nullptr;
-		while (mutable_repeated_field->size() <= index) {
-			t = mutable_repeated_field->Add();
-			*t = fill_value;
+	T* mutable_insert(::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index) {
+		if (index <= mutable_repeated_field->size()) {
+			// Append element
+			auto* new_element = mutable_repeated_field->Add();
+			// Swap elements
+			for (int i = mutable_repeated_field->size() - 1; index < i--;) {
+				mutable_repeated_field->SwapElements(i, i + 1);
+			}
+			return new_element;
+		} else {
+			return nullptr;
 		}
-		if (!t) {
-			t = &mutable_repeated_field->at(index);
+	}
+
+	/// Returns null if index is out-of-bounds
+	template <typename T>
+	T* mutable_insert(::google::protobuf::RepeatedPtrField<T>* mutable_repeated_field, int index) {
+		if (index <= mutable_repeated_field->size()) {
+			// Append element
+			auto* new_element = mutable_repeated_field->Add();
+			// Swap elements
+			for (int i = mutable_repeated_field->size() - 1; index < i--;) {
+				mutable_repeated_field->SwapElements(i, i + 1);
+			}
+			return new_element;
+		} else {
+			return nullptr;
 		}
-		return t;
 	}
 
 	template <typename EnumT>
@@ -91,4 +124,4 @@ namespace m2::protobuf {
 	}
 }
 
-#endif //M2_PROTOBUF_UTILS_H
+#endif //M2_PROTOBUF_DETAIL_H

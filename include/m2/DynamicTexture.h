@@ -1,7 +1,7 @@
 #ifndef M2_DYNAMICTEXTURE_H
 #define M2_DYNAMICTEXTURE_H
 
-#include "sdl/Utils.hh"
+#include "sdl/Detail.hh"
 
 namespace m2 {
 	/// Texture that dynamically increases in size on demand

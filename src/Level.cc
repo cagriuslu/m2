@@ -11,9 +11,8 @@
 #include <m2/object/Placeholder.h>
 #include <m2/ui/PixelEditor.h>
 #include <m2/object/Pixel.h>
-#include <m2/protobuf/Utils.h>
-#include <m2/protobuf/Level.h>
-#include <m2/box2d/Utils.h>
+#include <m2/protobuf/Detail.h>
+#include <m2/box2d/Detail.h>
 #include <SDL2/SDL_image.h>
 #include <m2/Game.h>
 #include <filesystem>
@@ -117,32 +116,21 @@ void m2::Level::LevelEditorState::PaintMode::select_sprite_type(m2g::pb::SpriteT
 }
 void m2::Level::LevelEditorState::PaintMode::paint_sprite(const Vec2i& position) {
 	if (!position.is_negative()) {
-		auto sprite_type = selected_sprite_type;
-		// Allocate item if necessary
-		while (LEVEL._lb->background_rows_size() < position.y + 1) {
-			LEVEL._lb->add_background_rows();
-		}
-		while (LEVEL._lb->background_rows(position.y).items_size() < position.x + 1) {
-			LEVEL._lb->mutable_background_rows(position.y)->add_items({});
-		}
-		// Paint lut_index
-		LEVEL._lb->mutable_background_rows(position.y)->set_items(position.x, sprite_type);
+		// Delete previous placeholder
+		EraseMode::erase_position(position);
 		// Create/Replace placeholder
-		auto placeholders_it = LEVEL.level_editor_state->bg_placeholders.find(position);
-		if (placeholders_it != LEVEL.level_editor_state->bg_placeholders.end()) {
-			LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second));
-		}
-		// TODO delete previous object
-		LEVEL.level_editor_state->bg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.get_sprite(sprite_type), false);
+		LEVEL.level_editor_state->bg_placeholders[position] = std::make_pair(obj::create_placeholder(Vec2f{position}, GAME.get_sprite(selected_sprite_type), false), selected_sprite_type);
+	}
+}
+m2::Level::LevelEditorState::PaintMode::~PaintMode() {
+	if (selected_sprite_ghost_id) {
+		LEVEL.deferred_actions.push_back(create_object_deleter(selected_sprite_ghost_id));
 	}
 }
 void m2::Level::LevelEditorState::EraseMode::erase_position(const Vec2i &position) {
-	// Erase lut_index
-	LEVEL._lb->mutable_background_rows(position.y)->set_items(position.x, {});
-	// Delete placeholder
 	auto placeholders_it = LEVEL.level_editor_state->bg_placeholders.find(position);
 	if (placeholders_it != LEVEL.level_editor_state->bg_placeholders.end()) {
-		LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second));
+		LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second.first));
 	}
 }
 void m2::Level::LevelEditorState::PlaceMode::select_object_type(m2g::pb::ObjectType object_type) {
@@ -156,56 +144,41 @@ void m2::Level::LevelEditorState::PlaceMode::select_object_type(m2g::pb::ObjectT
 }
 void m2::Level::LevelEditorState::PlaceMode::select_group_type(m2g::pb::GroupType group_type) { selected_group_type = group_type; }
 void m2::Level::LevelEditorState::PlaceMode::select_group_instance(unsigned group_instance) { selected_group_instance = group_instance; }
-void m2::Level::LevelEditorState::PlaceMode::place_object(const Vec2i& position) {
+void m2::Level::LevelEditorState::PlaceMode::place_object(const Vec2i& position) const {
 	if (!position.is_negative()) {
-		// Check if object is in fg objects, remove if found
-		for (int i = 0; i < LEVEL._lb->objects_size(); ++i) {
-			if (position == Vec2i{LEVEL._lb->objects(i).position()}) {
-				auto* mutable_objects = LEVEL._lb->mutable_objects();
-				mutable_objects->erase(mutable_objects->begin() + i);
-			}
-		}
-		// Add object to fg objects
-		auto object_type = selected_object_type;
-		auto* new_fg_object = LEVEL._lb->add_objects();
-		new_fg_object->mutable_position()->set_x(position.x);
-		new_fg_object->mutable_position()->set_y(position.y);
-		new_fg_object->set_type(object_type);
-		auto* group = new_fg_object->mutable_group();
-		group->set_type(selected_group_type);
-		group->set_instance(selected_group_instance);
+		// Delete previous placeholder
+		RemoveMode::remove_object(position);
 		// Create/Replace placeholder
-		auto placeholders_it = LEVEL.level_editor_state->fg_placeholders.find(position);
-		if (placeholders_it != LEVEL.level_editor_state->fg_placeholders.end()) {
-			LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second));
-		}
-		LEVEL.level_editor_state->fg_placeholders[position] = obj::create_placeholder(Vec2f{position}, GAME.get_sprite(GAME.level_editor_object_sprites[object_type]), true);
+		pb::LevelObject level_object;
+		level_object.mutable_position()->set_x(position.x);
+		level_object.mutable_position()->set_y(position.y);
+		level_object.set_type(selected_object_type);
+		level_object.mutable_group()->set_type(selected_group_type);
+		level_object.mutable_group()->set_instance(selected_group_instance);
+		LEVEL.level_editor_state->fg_placeholders[position] = std::make_pair(obj::create_placeholder(Vec2f{position}, GAME.get_sprite(GAME.level_editor_object_sprites[selected_object_type]), true), level_object);
+	}
+}
+m2::Level::LevelEditorState::PlaceMode::~PlaceMode() {
+	if (selected_sprite_ghost_id) {
+		LEVEL.deferred_actions.push_back(create_object_deleter(selected_sprite_ghost_id));
 	}
 }
 void m2::Level::LevelEditorState::RemoveMode::remove_object(const Vec2i &position) {
-	// Check if object is in fg objects, remove if found
-	for (int i = 0; i < LEVEL._lb->objects_size(); ++i) {
-		if (position == Vec2i{LEVEL._lb->objects(i).position()}) {
-			auto* mutable_objects = LEVEL._lb->mutable_objects();
-			mutable_objects->erase(mutable_objects->begin() + i);
-		}
-	}
-	// Remove placeholder
 	auto placeholders_it = LEVEL.level_editor_state->fg_placeholders.find(position);
 	if (placeholders_it != LEVEL.level_editor_state->fg_placeholders.end()) {
-		LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second));
+		LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second.first));
 	}
 }
-void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) {
+void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) const {
 	if (shift_type == ShiftType::RIGHT) {
-		protobuf::level::shift_background_right(*LEVEL._lb, position);
-		protobuf::level::shift_foreground_right(*LEVEL._lb, position);
-		level_editor::detail::shift_placeholders_right(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x);
-		level_editor::detail::shift_placeholders_right(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x);
+		level_editor::shift_placeholders_right(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x);
+		level_editor::shift_placeholders_right(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x);
 	} else if (shift_type == ShiftType::DOWN) {
-
+		level_editor::shift_placeholders_down(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.y);
+		level_editor::shift_placeholders_down(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.y);
 	} else if (shift_type == ShiftType::RIGHT_N_DOWN) {
-
+		level_editor::shift_placeholders_right_down(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x, position.y);
+		level_editor::shift_placeholders_right_down(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x, position.y);
 	}
 }
 void m2::Level::LevelEditorState::deactivate_mode() {
@@ -231,7 +204,15 @@ void m2::Level::LevelEditorState::activate_shift_mode() {
 	mode = ShiftMode{};
 }
 void m2::Level::LevelEditorState::save() {
-	*protobuf::message_to_json_file(*LEVEL._lb, *LEVEL._lb_path);
+	pb::Level level;
+	for (const auto& [position, pair] : LEVEL.level_editor_state->bg_placeholders) {
+		auto* row = protobuf::mutable_get_or_create(level.mutable_background_rows(), position.y); // Get or create row
+		*(protobuf::mutable_get_or_create(row->mutable_items(), position.x)) = pair.second; // Set sprite type
+	}
+	for (const auto& [position, pair] : LEVEL.level_editor_state->fg_placeholders) {
+		level.add_objects()->CopyFrom(pair.second);
+	}
+	protobuf::message_to_json_file(level, *LEVEL._lb_path);
 }
 m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	_type = Type::LEVEL_EDITOR;
@@ -241,25 +222,21 @@ m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	if (std::filesystem::exists(lb_path)) {
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
-		_lb = *lb;
-
 		// Create background tiles
 		for (int y = 0; y < lb->background_rows_size(); ++y) {
 			for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
 				auto sprite_type = lb->background_rows(y).items(x);
 				if (sprite_type) {
 					auto position = Vec2f{x, y};
-					level_editor_state->bg_placeholders[position.iround()] = obj::create_placeholder(position, GAME.get_sprite(sprite_type), false);
+					level_editor_state->bg_placeholders[position.iround()] = std::make_pair(obj::create_placeholder(position, GAME.get_sprite(sprite_type), false), sprite_type);
 				}
 			}
 		}
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
 			auto position = m2::Vec2f{fg_object.position()};
-			level_editor_state->fg_placeholders[position.iround()] = obj::create_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()]), true);
+			level_editor_state->fg_placeholders[position.iround()] = std::make_pair(obj::create_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()]), true), fg_object);
 		}
-	} else {
-		_lb = pb::Level{};
 	}
 
 	// Create default objects

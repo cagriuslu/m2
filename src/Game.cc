@@ -7,7 +7,7 @@
 #include <Level.pb.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
-#include <m2/sdl/Utils.hh>
+#include <m2/sdl/Detail.hh>
 #include <SDL2/SDL_image.h>
 #include "m2/Ui.h"
 #include <filesystem>

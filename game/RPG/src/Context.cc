@@ -1,6 +1,6 @@
 #include <rpg/Context.h>
 #include <m2/Game.h>
-#include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Detail.h>
 
 rpg::Context::Context() {
 	// Load progress

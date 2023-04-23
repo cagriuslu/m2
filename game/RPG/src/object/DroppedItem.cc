@@ -1,6 +1,6 @@
 #include <rpg/object/DroppedItem.h>
 #include <Item.pb.h>
-#include <m2/box2d/Utils.h>
+#include <m2/box2d/Detail.h>
 #include <m2/Game.h>
 
 m2::VoidValue obj::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_type) {

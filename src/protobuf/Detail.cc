@@ -1,4 +1,4 @@
-#include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Detail.h>
 
 m2::Value<std::string> m2::protobuf::message_to_json_string(const google::protobuf::Message& message) {
 	std::string str;

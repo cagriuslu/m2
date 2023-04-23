@@ -45,6 +45,10 @@ namespace m2 {
 		// Reverse sort based on y coordinate
 		inline bool operator()(const Vec2i& a, const Vec2i& b) { return b.y < a.y; }
 	};
+	struct Vec2iCompareRightBottomToLeftTop {
+		// Reverse sort based on first x, then y coordinate
+		inline bool operator()(const Vec2i& a, const Vec2i& b) { return a.x == b.x ? b.y < a.y : b.x < a.x; }
+	};
 }
 
 #endif //M2_VEC2I_H

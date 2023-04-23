@@ -1,7 +1,7 @@
 #include "m2/Ui.h"
 #include <m2/Events.h>
 #include <m2/Game.h>
-#include <m2/sdl/Utils.hh>
+#include <m2/sdl/Detail.hh>
 #include <m2/Rect2i.h>
 #include <SDL2/SDL_image.h>
 #include <regex>

@@ -5,7 +5,7 @@
 #include "Glyph.h"
 #include "DynamicSheet.h"
 #include <ObjectType.pb.h>
-#include "sdl/Utils.hh"
+#include "sdl/Detail.hh"
 #include "Vec2f.h"
 #include <SDL2/SDL.h>
 #include <optional>

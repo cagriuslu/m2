@@ -1,5 +1,5 @@
-#ifndef SDL_UTILS_H
-#define SDL_UTILS_H
+#ifndef M2_SDL_DETAIL_H
+#define M2_SDL_DETAIL_H
 
 #include <Rect2i.pb.h>
 #include <SDL2/SDL.h>
@@ -40,4 +40,4 @@ namespace m2::sdl {
 	SDL_Rect to_rect(const pb::Rect2i& pb_rect); // Replace with Rect2i
 }
 
-#endif
+#endif //M2_SDL_DETAIL_H

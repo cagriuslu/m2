@@ -1,6 +1,6 @@
 #include <rpg/object/FinishPoint.h>
 #include <rpg/Context.h>
-#include <m2/box2d/Utils.h>
+#include <m2/box2d/Detail.h>
 
 m2::VoidValue rpg::init_finish_point(m2::Object& obj, m2g::pb::ObjectType& type) {
 	auto sprite_type = GAME.level_editor_object_sprites[type];

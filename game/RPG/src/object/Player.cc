@@ -6,7 +6,7 @@
 #include <rpg/object/ExplosiveWeapon.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
-#include <m2/box2d/Utils.h>
+#include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <Item.pb.h>
 

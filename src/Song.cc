@@ -1,5 +1,5 @@
 #include <m2/Song.h>
-#include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Detail.h>
 #include <m2/Log.h>
 
 m2::Song::Song(const pb::Song &song) {

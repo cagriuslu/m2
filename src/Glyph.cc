@@ -1,6 +1,6 @@
 #include <m2/Glyph.h>
 #include <m2/Exception.h>
-#include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Detail.h>
 #include <SDL2/SDL_image.h>
 #include <string_view>
 #include <vector>

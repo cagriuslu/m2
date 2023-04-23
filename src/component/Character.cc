@@ -1,7 +1,7 @@
 #include <m2/component/Character.h>
 #include <m2/Game.h>
 #include <algorithm>
-#include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Detail.h>
 
 float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
 	if (max_amount < 0.0f) {

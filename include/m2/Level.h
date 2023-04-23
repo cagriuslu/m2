@@ -66,9 +66,11 @@ namespace m2 {
 				Id selected_sprite_ghost_id{};
 				void select_sprite_type(m2g::pb::SpriteType sprite_type);
 				void paint_sprite(const Vec2i& position);
+
+				~PaintMode();
 			};
 			struct EraseMode {
-				void erase_position(const Vec2i& position);
+				static void erase_position(const Vec2i& position);
 			};
 			struct PlaceMode {
 				Id selected_sprite_ghost_id{};
@@ -78,10 +80,12 @@ namespace m2 {
 				void select_object_type(m2g::pb::ObjectType object_type);
 				void select_group_type(m2g::pb::GroupType group_type);
 				void select_group_instance(unsigned group_instance);
-				void place_object(const Vec2i& position);
+				void place_object(const Vec2i& position) const;
+
+				~PlaceMode();
 			};
 			struct RemoveMode {
-				void remove_object(const Vec2i& position);
+				static void remove_object(const Vec2i& position);
 			};
 			struct ShiftMode {
 				enum class ShiftType {
@@ -89,12 +93,12 @@ namespace m2 {
 					DOWN,
 					RIGHT_N_DOWN
 				} shift_type;
-				void shift(const Vec2i& position);
+				void shift(const Vec2i& position) const;
 			};
 
 			std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode,ShiftMode> mode;
-			level_editor::detail::PlaceholderMap bg_placeholders; // TODO Map2i might be used instead
-			level_editor::detail::PlaceholderMap fg_placeholders; // TODO Map2i might be used instead
+			level_editor::BackgroundPlaceholderMap bg_placeholders; // TODO Map2i might be used instead
+			level_editor::ForegroundPlaceholderMap fg_placeholders; // TODO Map2i might be used instead
 
 			void deactivate_mode();
 			void activate_paint_mode();
@@ -109,13 +113,13 @@ namespace m2 {
 
 		struct PixelEditorState {
 			struct PaintMode {
-				void paint_color(const Vec2i& position);
+				static void paint_color(const Vec2i& position);
 			};
 			struct EraseMode {
-				void erase_color(const Vec2i& position);
+				static void erase_color(const Vec2i& position);
 			};
 			struct ColorPickerMode {
-				void pick_color(const Vec2i& position);
+				static void pick_color(const Vec2i& position);
 			};
 
 			std::variant<std::monostate,PaintMode,EraseMode,ColorPickerMode> mode;

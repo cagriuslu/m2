@@ -1,5 +1,5 @@
 #include <m2/Item.h>
-#include <m2/protobuf/Utils.h>
+#include <m2/protobuf/Detail.h>
 #include <m2/Exception.h>
 
 #include <utility>

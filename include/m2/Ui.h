@@ -1,7 +1,7 @@
 #ifndef M2_UI_H
 #define M2_UI_H
 
-#include "sdl/Utils.hh"
+#include "sdl/Detail.hh"
 #include "Sprite.h"
 #include "Events.h"
 #include <SDL2/SDL_ttf.h>

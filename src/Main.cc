@@ -1,7 +1,7 @@
 #include <m2/Proxy.h>
 #include "m2/Events.h"
 #include "m2/Game.h"
-#include "m2/sdl/Utils.hh"
+#include "m2/sdl/Detail.hh"
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
 #include <m2/ThreadPool.h>

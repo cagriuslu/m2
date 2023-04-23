@@ -1,5 +1,5 @@
-#ifndef M2_BOX2D_UTILS_H
-#define M2_BOX2D_UTILS_H
+#ifndef M2_BOX2D_DETAIL_H
+#define M2_BOX2D_DETAIL_H
 
 #include "../Vec2f.h"
 #include <BodyBlueprint.pb.h>
@@ -51,4 +51,4 @@ namespace m2::box2d {
 	inline b2Vec2 vec2_zero() { return b2Vec2{0.0f, 0.0f}; }
 }
 
-#endif //M2_BOX2D_UTILS_H
+#endif //M2_BOX2D_DETAIL_H

@@ -2,7 +2,7 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/object/MeleeWeapon.h>
-#include <m2/box2d/Utils.h>
+#include <m2/box2d/Detail.h>
 #include <m2/Log.h>
 
 using namespace m2g;

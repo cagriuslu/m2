@@ -3,7 +3,7 @@
 #include "m2/Game.h"
 #include <m2/box2d/RayCast.h>
 #include <m2/Vec2i.h>
-#include <m2/box2d/Utils.h>
+#include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <cfloat>
 #include <unordered_map>

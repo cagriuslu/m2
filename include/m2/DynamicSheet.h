@@ -1,7 +1,7 @@
 #ifndef M2_DYNAMICSHEET_H
 #define M2_DYNAMICSHEET_H
 
-#include "sdl/Utils.hh"
+#include "sdl/Detail.hh"
 #include <SDL2/SDL.h>
 #include <memory>
 
