@@ -11,6 +11,8 @@ namespace m2::level_editor {
 
 	template <typename PlaceholderMapType>
 	void shift_placeholders_right(PlaceholderMapType& placeholders, Pool<Object>& objects, int x) {
+		static_assert(std::is_same<std::remove_cvref_t<PlaceholderMapType>, BackgroundPlaceholderMap>() ||
+		        std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
 		// Gather the placeholders that need to be moved
 		std::vector<Vec2i> placeholders_to_move;
 		for (const auto& [ph_position, id] : placeholders) {
@@ -25,12 +27,17 @@ namespace m2::level_editor {
 			auto node = placeholders.extract(ph_position); // Extract node
 			node.key().x++; // Move node
 			objects[node.mapped().first].position.x = static_cast<float>(node.key().x); // Move object
+			if constexpr (std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>()) {
+				node.mapped().second.mutable_position()->set_x(node.key().x);
+			}
 			placeholders.insert(std::move(node)); // Insert back into the map
 		}
 	}
 
 	template <typename PlaceholderMapType>
 	void shift_placeholders_down(PlaceholderMapType& placeholders, Pool<Object>& objects, int y) {
+		static_assert(std::is_same<std::remove_cvref_t<PlaceholderMapType>, BackgroundPlaceholderMap>() ||
+				std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
 		// Gather the placeholders that need to be moved
 		std::vector<Vec2i> placeholders_to_move;
 		for (const auto& [ph_position, id] : placeholders) {
@@ -45,12 +52,17 @@ namespace m2::level_editor {
 			auto node = placeholders.extract(ph_position); // Extract node
 			node.key().y++; // Move node
 			objects[node.mapped().first].position.y = static_cast<float>(node.key().y); // Move object
+			if constexpr (std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>()) {
+				node.mapped().second.mutable_position()->set_y(node.key().y);
+			}
 			placeholders.insert(std::move(node)); // Insert back into the map
 		}
 	}
 
 	template <typename PlaceholderMapType>
 	void shift_placeholders_right_down(PlaceholderMapType& placeholders, Pool<Object>& objects, int x, int y) {
+		static_assert(std::is_same<std::remove_cvref_t<PlaceholderMapType>, BackgroundPlaceholderMap>() ||
+				std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
 		// Gather the placeholders that need to be moved
 		std::vector<Vec2i> placeholders_to_move;
 		for (const auto& [ph_position, id] : placeholders) {
@@ -67,6 +79,10 @@ namespace m2::level_editor {
 			node.key().y++; // Move node
 			objects[node.mapped().first].position.x = static_cast<float>(node.key().x); // Move object
 			objects[node.mapped().first].position.y = static_cast<float>(node.key().y); // Move object
+			if constexpr (std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>()) {
+				node.mapped().second.mutable_position()->set_x(node.key().x);
+				node.mapped().second.mutable_position()->set_y(node.key().y);
+			}
 			placeholders.insert(std::move(node)); // Insert back into the map
 		}
 	}

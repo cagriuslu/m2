@@ -131,6 +131,7 @@ void m2::Level::LevelEditorState::EraseMode::erase_position(const Vec2i &positio
 	auto placeholders_it = LEVEL.level_editor_state->bg_placeholders.find(position);
 	if (placeholders_it != LEVEL.level_editor_state->bg_placeholders.end()) {
 		LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second.first));
+		LEVEL.level_editor_state->bg_placeholders.erase(placeholders_it);
 	}
 }
 void m2::Level::LevelEditorState::PlaceMode::select_object_type(m2g::pb::ObjectType object_type) {
@@ -167,6 +168,7 @@ void m2::Level::LevelEditorState::RemoveMode::remove_object(const Vec2i &positio
 	auto placeholders_it = LEVEL.level_editor_state->fg_placeholders.find(position);
 	if (placeholders_it != LEVEL.level_editor_state->fg_placeholders.end()) {
 		LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second.first));
+		LEVEL.level_editor_state->fg_placeholders.erase(placeholders_it);
 	}
 }
 void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) const {
