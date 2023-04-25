@@ -62,9 +62,9 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 	using namespace obj;
 	switch (object_type) {
 		case pb::ObjectType::PLAYER:
-			return Player::init(obj, &chr::character_player);
+			return Player::init(obj);
 		case pb::ObjectType::SKELETON:
-			return Enemy::init(obj, &chr::character_skeleton_000_chase);
+			return Enemy::init(obj, object_type);
 		case pb::ObjectType::CASTLE_FINISH_POINT:
 			return rpg::init_finish_point(obj, object_type);
 		default:

@@ -1,6 +1,5 @@
 #include <rpg/object/Player.h>
 #include <m2/Object.h>
-#include <rpg/object/Enemy.h>
 #include "m2/Game.h"
 #include "m2/Controls.h"
 #include <rpg/object/ExplosiveWeapon.h>
@@ -10,8 +9,8 @@
 #include <m2/M2.h>
 #include <Item.pb.h>
 
-obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) :
-	animation_fsm(blueprint->animation_type, obj.graphic_id()) {}
+obj::Player::Player(m2::Object& obj) :
+	animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -19,26 +18,27 @@ obj::Player::Player(m2::Object& obj, const chr::CharacterBlueprint* blueprint) :
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
 
-m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
-	const auto id = obj.id();
+m2::VoidValue obj::Player::init(m2::Object& obj) {
+	auto id = obj.id();
+	auto main_sprite_type = GAME.level_editor_object_sprites[m2g::pb::PLAYER];
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.set_allow_sleep(false);
 	bp.set_is_bullet(false);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.get_sprite(blueprint->main_sprite).background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.get_sprite(main_sprite_type).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.get_sprite(blueprint->main_sprite).foreground_collider_circ_radius_m());
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(GAME.get_sprite(blueprint->main_sprite).foreground_collider_center_offset_m().x);
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.get_sprite(blueprint->main_sprite).foreground_collider_center_offset_m().y);
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.get_sprite(main_sprite_type).foreground_collider_circ_radius_m());
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(GAME.get_sprite(main_sprite_type).foreground_collider_center_offset_m().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.get_sprite(main_sprite_type).foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(80.0f);
 	bp.set_linear_damping(100.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(GAME.get_sprite(blueprint->main_sprite));
+	auto& gfx = obj.add_graphic(GAME.get_sprite(main_sprite_type));
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
@@ -51,7 +51,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj, const chr::CharacterBlueprint* 
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_EXPLOSIVE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
-	obj.impl = std::make_unique<obj::Player>(obj, blueprint);
+	obj.impl = std::make_unique<obj::Player>(obj);
 
 	phy.pre_step = [&, id=id](m2::Physique& phy) {
 		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());

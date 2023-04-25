@@ -1,7 +1,6 @@
 #ifndef IMPL_PATROLLER_H
 #define IMPL_PATROLLER_H
 
-#include "rpg/ai/AiBlueprint.h"
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 
@@ -17,7 +16,7 @@ namespace rpg {
 
 	class PatrollerFsm : public m2::FsmBase<PatrollerMode, PatrollerFsmSignal> {
 	public:
-		PatrollerFsm(MAYBE const m2::Object* obj, MAYBE const ai::AiBlueprint* blueprint) : FsmBase(PatrollerMode::Idle) {}
+		PatrollerFsm(MAYBE const m2::Object* obj, MAYBE const pb::Ai* ai) : FsmBase(PatrollerMode::Idle) {}
 
 	protected:
 		inline std::optional<PatrollerMode> handle_signal(MAYBE const PatrollerFsmSignal& s) override { return {}; }

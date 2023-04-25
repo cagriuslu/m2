@@ -3,7 +3,6 @@
 
 #include "m2/Object.h"
 #include <m2/Animation.h>
-#include "rpg/Character.h"
 #include "m2/fsm/AnimationFsm.h"
 #include <vector>
 #include <m2/Value.h>
@@ -13,9 +12,9 @@ namespace obj {
 	struct Player : public m2::ObjectImpl {
 		m2::AnimationFsm animation_fsm;
 
-		Player(m2::Object&, const chr::CharacterBlueprint*);
+		explicit Player(m2::Object& obj);
 
-		static m2::VoidValue init(m2::Object& obj, const chr::CharacterBlueprint* blueprint);
+		static m2::VoidValue init(m2::Object& obj);
 	};
 }
 

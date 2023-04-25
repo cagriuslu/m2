@@ -14,14 +14,14 @@ namespace {
 	}
 }
 
-rpg::ChaserFsm::ChaserFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint) : FsmBase(ChaserMode::Idle), obj(obj), blueprint(blueprint), home_position(obj->position) {
+rpg::ChaserFsm::ChaserFsm(const m2::Object* obj, const pb::Ai* ai) : FsmBase(ChaserMode::Idle), obj(obj), ai(ai), home_position(obj->position) {
 	init();
 }
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_signal(const ChaserFsmSignal &s) {
 	if (s.type() == m2::FsmSignalType::EnterState) {
 		// Action for EnterState is the same for all states
-		arm(random_alarm_duration(blueprint->recalculation_period_s));
+		arm(random_alarm_duration(ai->recalculation_period()));
 		return {};
 	}
 
@@ -49,35 +49,35 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_signal(const ChaserFsmSign
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 	// Check if player is close
-	if (obj->position.is_near(LEVEL.player()->position, blueprint->trigger_distance_m)) {
+	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		// Check if path exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, blueprint->give_up_distance_m);
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 			return ChaserMode::Triggered;
 		}
 	}
-	arm(random_alarm_duration(blueprint->recalculation_period_s));
+	arm(random_alarm_duration(ai->recalculation_period()));
 	return {};
 }
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
 	// Check if player is still close
-	if (obj->position.is_near(LEVEL.player()->position, blueprint->give_up_distance_m)) {
+	if (obj->position.is_near(LEVEL.player()->position, ai->give_up_distance())) {
 		// Recalculate path to player
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, blueprint->give_up_distance_m);
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 		}
 	} else {
 		// Check if path to homePosition exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, blueprint->give_up_distance_m);
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 			return ChaserMode::GaveUp;
 		}
 	}
-	arm(random_alarm_duration(blueprint->recalculation_period_s));
+	arm(random_alarm_duration(ai->recalculation_period()));
 	return {};
 }
 
@@ -97,20 +97,21 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 			}
 		}
 		// Attack if player is close
-		if (obj->position.is_near(LEVEL.player()->position, blueprint->attack_distance_m)) {
+		if (obj->position.is_near(LEVEL.player()->position, ai->attack_distance())) {
 			// Based on what the capability is
-			switch (blueprint->capability) {
-				case ai::CAPABILITY_RANGED:
+			auto capability = ai->capabilities(0); // TODO add other capabilities
+			switch (capability) {
+				case pb::CAPABILITY_RANGED:
 					throw M2ERROR("Chaser ranged weapon not implemented");
-				case ai::CAPABILITY_MELEE:
+				case pb::CAPABILITY_MELEE:
 					if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 						auto& melee = m2::create_object(obj->position, obj->id()).first;
 						rpg::create_melee_object(melee, LEVEL.player()->position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
 					}
 					break;
-				case ai::CAPABILITY_EXPLOSIVE:
+				case pb::CAPABILITY_EXPLOSIVE:
 					throw M2ERROR("Chaser explosive weapon not implemented");
-				case ai::CAPABILITY_KAMIKAZE:
+				case pb::CAPABILITY_KAMIKAZE:
 					throw M2ERROR("Chaser kamikaze not implemented");
 				default:
 					break;
@@ -122,9 +123,9 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 	// Check if player is close
-	if (obj->position.is_near(LEVEL.player()->position, blueprint->trigger_distance_m)) {
+	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		// Check if path to player exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, blueprint->give_up_distance_m);
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 			return ChaserMode::Triggered;
@@ -135,13 +136,13 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 			return ChaserMode::Idle;
 		} else {
 			// Recalculate path to homePosition
-			auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, blueprint->give_up_distance_m);
+			auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
 			if (not smooth_path.empty()) {
 				reverse_waypoints = std::move(smooth_path);
 			}
 		}
 	}
-	arm(random_alarm_duration(blueprint->recalculation_period_s));
+	arm(random_alarm_duration(ai->recalculation_period()));
 	return {};
 }
 

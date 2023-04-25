@@ -1,12 +1,11 @@
 #ifndef IMPL_CHASE_HH
 #define IMPL_CHASE_HH
 
-#include "rpg/ai/type/Chase.h"
 #include "m2/Object.h"
 #include "m2/Fsm.h"
-#include <functional>
-#include "rpg/ai/AiBlueprint.h"
+#include <Enemy.pb.h>
 #include <list>
+#include <functional>
 
 namespace rpg {
 	enum class ChaserMode {
@@ -24,12 +23,12 @@ namespace rpg {
 
 	class ChaserFsm : public m2::FsmBase<ChaserMode, ChaserFsmSignal> {
 		const m2::Object* obj;
-		const ai::AiBlueprint* blueprint;
-		const m2::Vec2f home_position;
+		const pb::Ai* ai;
+		m2::Vec2f home_position;
 		std::vector<m2::Vec2i> reverse_waypoints;
 
 	public:
-		ChaserFsm(const m2::Object* obj, const ai::AiBlueprint* blueprint);
+		ChaserFsm(const m2::Object* obj, const pb::Ai* ai);
 
 	protected:
 		std::optional<ChaserMode> handle_signal(const ChaserFsmSignal& s) override;

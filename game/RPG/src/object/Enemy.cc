@@ -14,26 +14,33 @@ using namespace obj;
 using namespace m2g;
 using namespace m2g::pb;
 
-obj::Enemy::Enemy(m2::Object& obj, const chr::CharacterBlueprint* blueprint) : animation_fsm(blueprint->animation_type, obj.graphic_id()), ai_fsm(
-		std::visit(m2::overloaded {
-			[&](MAYBE const ai::type::ChaseBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; },
-			[&](MAYBE const ai::type::HitNRunBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; }, // TODO implement other FSMs
-			[&](MAYBE const ai::type::KeepDistanceBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; },
-			[&](MAYBE const ai::type::PatrolBlueprint& v) -> AiFsmVariant { return rpg::ChaserFsm{&obj, blueprint->aiBlueprint}; }
-		}, blueprint->aiBlueprint->variant)) {}
+obj::Enemy::Enemy(m2::Object& obj, const rpg::pb::Enemy* enemy) : animation_fsm(enemy->animation_type(), obj.graphic_id()) {
+	switch (enemy->ai().variant_case()) {
+		case rpg::pb::Ai::kChaser:
+			ai_fsm = rpg::ChaserFsm{&obj, &enemy->ai()};
+			break;
+		case rpg::pb::Ai::kHitNRun:
+		case rpg::pb::Ai::kKeepDistance:
+		case rpg::pb::Ai::kPatrol:
+		default:
+			throw M2ERROR("Not yet implemented");
+	}
+}
 
-m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* blueprint) {
-	auto& gfx = obj.add_graphic(GAME.get_sprite(blueprint->main_sprite));
+m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
+	auto main_sprite_type = GAME.level_editor_object_sprites[object_type];
+
+	auto& gfx = obj.add_graphic(GAME.get_sprite(main_sprite_type));
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.set_allow_sleep(true);
 	bp.set_is_bullet(false);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.get_sprite(blueprint->main_sprite).background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.get_sprite(main_sprite_type).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_is_sensor(false);
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.get_sprite(blueprint->main_sprite).foreground_collider_circ_radius_m());
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.get_sprite(main_sprite_type).foreground_collider_circ_radius_m());
 	bp.mutable_foreground_fixture()->set_is_sensor(false);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_FOREGROUND);
 	bp.set_mass(10.0f);
@@ -46,7 +53,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
-    obj.impl = std::make_unique<obj::Enemy>(obj, blueprint);
+    obj.impl = std::make_unique<obj::Enemy>(obj, rpg::Context::get_instance().get_enemy(object_type));
 
 	// Increment enemy counter
 	auto& context = rpg::Context::get_instance();
@@ -54,7 +61,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, const chr::CharacterBlueprint* bluepr
 
 	phy.pre_step = [&obj](MAYBE m2::Physique& phy) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
-		std::visit([](auto& v) { v.time(GAME.deltaTime_s); }, impl->ai_fsm);
+		std::visit(m2::overloaded {
+			[](MAYBE std::monostate& v) {},
+			[](auto& v) { v.time(GAME.deltaTime_s); }
+		}, impl->ai_fsm);
 		std::visit(m2::overloaded {
 			[](rpg::ChaserFsm& v) { v.signal(rpg::ChaserFsmSignal{}); },
 			[](MAYBE auto& v) { }

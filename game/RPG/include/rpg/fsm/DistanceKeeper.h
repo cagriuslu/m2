@@ -1,7 +1,6 @@
 #ifndef IMPL_DISTANCEKEEPER_H
 #define IMPL_DISTANCEKEEPER_H
 
-#include "rpg/ai/AiBlueprint.h"
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 
@@ -17,7 +16,7 @@ namespace rpg {
 
 	class DistanceKeeperFsm : public m2::FsmBase<DistanceKeeperMode, DistanceKeeperFsmSignal> {
 	public:
-		DistanceKeeperFsm(MAYBE const m2::Object* obj, MAYBE const ai::AiBlueprint* blueprint) : FsmBase(DistanceKeeperMode::Idle) {}
+		DistanceKeeperFsm(MAYBE const m2::Object* obj, MAYBE const pb::Ai* ai) : FsmBase(DistanceKeeperMode::Idle) {}
 
 	protected:
 		inline std::optional<DistanceKeeperMode> handle_signal(MAYBE const DistanceKeeperFsmSignal& s) override { return {}; }
