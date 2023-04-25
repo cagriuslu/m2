@@ -43,19 +43,67 @@ void ui::State::Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, Te
 	int text_w = 0, text_h = 0;
 	SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
 
-	SDL_Rect dstrect;
-	dstrect.y = rect.h < text_h ? rect.y : rect.y + rect.h / 2 - text_h / 2;
-	dstrect.w = rect.w < text_w ? rect.w : text_w;
-	dstrect.h = rect.h < text_h ? rect.h : text_h;
+	// Current font has 2x5 letters
+	int letter_w = 2;
+	int letter_h = 5;
+	// Current font is rendered with 280px
+	if (text_h != 280) {
+		throw M2FATAL("Unexpected font height");
+	}
+	if ((text_w % 112) != 0) {
+		throw M2FATAL("Unexpected font aspect ratio");
+	}
+	int char_count = text_w / 112;
+
+	// Do the math one order above
+	auto rect_w_1000 = rect.w * 1000;
+	auto rect_h_1000 = rect.h * 1000;
+	// Decide whether to squeeze from the sides, or top and bottom
+	auto height_multiplier_1000 = rect_h_1000 / text_h;
+	auto ideal_width_1000 = text_w * height_multiplier_1000;
+	int provisional_text_w, provisional_text_h;
+	if (ideal_width_1000 < rect_w_1000) {
+		// Rect is wider than the text
+		provisional_text_w = text_w * height_multiplier_1000 / 1000;
+		provisional_text_h = rect.h;
+	} else {
+		// Rect is taller than the text
+		auto width_multiplier_1000 = rect_w_1000 / text_w;
+		provisional_text_w = rect.w;
+		provisional_text_h = text_h * width_multiplier_1000 / 1000;
+	}
+	// Make sure the width is an integer multiple of character count
+	provisional_text_w /= char_count;
+	provisional_text_w *= char_count;
+	// Apply correction based on letter aspect ratio
+	int final_text_w, final_text_h;
+	int letter_scale_h_1000 = 1000 * provisional_text_h / letter_h;
+	int letter_scale_w_1000 = 1000 * provisional_text_w / letter_w;
+	if (letter_scale_h_1000 < letter_scale_w_1000) {
+		// Height is correct, apply correction to width
+		int expected_letter_w = letter_w * letter_scale_h_1000 / 1000;
+		final_text_w = char_count * expected_letter_w;
+		final_text_h = letter_h * letter_scale_h_1000 / 1000;
+	} else {
+		// Width is correct, apply correction to height
+		int expected_letter_h = letter_h * letter_scale_w_1000 / 1000;
+		final_text_w = letter_w * letter_scale_w_1000 / 1000;
+		final_text_h = expected_letter_h;
+	}
+
+	SDL_Rect dstrect{};
+	dstrect.y = rect.y + rect.h / 2 - final_text_h / 2;
+	dstrect.w = final_text_w;
+	dstrect.h = final_text_h;
 	switch (align) {
 		case TextAlignment::LEFT:
 			dstrect.x = rect.x;
 			break;
 		case TextAlignment::RIGHT:
-			dstrect.x = rect.w < text_w ? rect.x : rect.x + rect.w - text_w;
+			dstrect.x = rect.x + rect.w - final_text_w;
 			break;
 		default:
-			dstrect.x = rect.w < text_w ? rect.x : rect.x + rect.w / 2 - text_w / 2;
+			dstrect.x = rect.x + rect.w / 2 - final_text_w / 2;
 			break;
 	}
 	SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &dstrect);
@@ -155,7 +203,9 @@ ui::Action ui::State::Text::update_content() {
 }
 void ui::State::Text::draw() {
 	State::draw_background_color(rect_px, blueprint->background_color);
-	draw_text(sdl::expand_rect(rect_px, -static_cast<int>(blueprint->padding_width_px)), *font_texture, std::get<Blueprint::Widget::Text>(blueprint->variant).alignment);
+	if (font_texture) {
+		draw_text(sdl::expand_rect(rect_px, -static_cast<int>(blueprint->padding_width_px)), *font_texture, std::get<Blueprint::Widget::Text>(blueprint->variant).alignment);
+	}
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
@@ -237,7 +287,9 @@ ui::Action ui::State::TextInput::update_content() {
 }
 void ui::State::TextInput::draw() {
 	State::draw_background_color(rect_px, blueprint->background_color);
-	draw_text(rect_px, *font_texture, TextAlignment::LEFT);
+	if (font_texture) {
+		draw_text(rect_px, *font_texture, TextAlignment::LEFT);
+	}
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
 
@@ -362,7 +414,9 @@ void ui::State::TextSelection::draw() {
 
 	draw_background_color(rect_px, blueprint->background_color);
 
-	draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
+	if (font_texture) {
+		draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
+	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
@@ -440,7 +494,9 @@ void ui::State::IntegerSelection::draw() {
 
 	draw_background_color(rect_px, blueprint->background_color);
 
-	draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
+	if (font_texture) {
+		draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
+	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
@@ -469,8 +525,10 @@ void ui::State::CheckboxWithText::draw() {
 		SDL_RenderFillRect(GAME.sdlRenderer, &empty_dstrect);
 	}
 	// Text
-	auto text_rect = Rect2i{rect_px};
-	draw_text((SDL_Rect)text_rect.trim_left(rect_px.h).trim((int)blueprint->padding_width_px), *font_texture, TextAlignment::LEFT);
+	if (font_texture) {
+		auto text_rect = Rect2i{rect_px};
+		draw_text((SDL_Rect)text_rect.trim_left(rect_px.h).trim((int)blueprint->padding_width_px), *font_texture, TextAlignment::LEFT);
+	}
 	// Border
 	State::draw_border(rect_px, blueprint->border_width_px);
 }

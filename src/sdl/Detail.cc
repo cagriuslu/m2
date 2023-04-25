@@ -99,7 +99,15 @@ int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_
 
 m2::sdl::TextureUniquePtr m2::sdl::generate_font(const char* text, SDL_Color color) {
 	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.ttfFont, text, color);
+
+	// Store previous render quality
+	const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
+	// Create texture with linear filtering
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Linear filtering is less crisp, but more readable when small
 	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, surf);
+	// Reinstate previous render quality
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality);
+
 	SDL_FreeSurface(surf);
 	return TextureUniquePtr{texture};
 }
