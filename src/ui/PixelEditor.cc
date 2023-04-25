@@ -59,37 +59,37 @@ const ui::Blueprint m2::ui::pixel_editor_left_hud = {
 		Blueprint::Widget{
 			.x = 4, .y = 4, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_paint_button
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 8, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_erase_button
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 12, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_color_picker_button
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 16, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 1,
+			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_cancel_button
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 60, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_gridlines_button
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 64, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_save_button
 		},
 	}
@@ -166,25 +166,25 @@ const ui::Blueprint m2::ui::pixel_editor_right_hud = {
 		Blueprint::Widget{
 			.x = 4, .y = 4, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_right_hud_red_selection
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 8, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_right_hud_green_selection
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 12, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 4,
+			.padding_width_px = 2,
 			.variant = pixel_editor_right_hud_blue_selection
 		},
 		Blueprint::Widget{
 			.x = 4, .y = 16, .w = 11, .h = 3,
 			.border_width_px = 1,
-			.padding_width_px = 1,
+			.padding_width_px = 2,
 			.variant = pixel_editor_right_hud_alpha_selection
 		},
 	}

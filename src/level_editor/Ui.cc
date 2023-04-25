@@ -55,19 +55,19 @@ ui::Blueprint level_editor_place_mode_right_hud = {
 				ui::Blueprint::Widget{
 						.x = 4, .y = 4, .w = 11, .h = 4,
 						.border_width_px = 1,
-						.padding_width_px = 5,
+						.padding_width_px = 2,
 						.variant = level_editor_place_mode_right_hud_object_type_selection
 				},
 				ui::Blueprint::Widget{
 						.x = 4, .y = 9, .w = 11, .h = 4,
 						.border_width_px = 1,
-						.padding_width_px = 5,
+						.padding_width_px = 2,
 						.variant = level_editor_place_mode_right_hud_group_type_selection
 				},
 				ui::Blueprint::Widget{
 						.x = 4, .y = 14, .w = 11, .h = 4,
 						.border_width_px = 1,
-						.padding_width_px = 5,
+						.padding_width_px = 2,
 						.variant = level_editor_place_mode_right_hud_group_instance_selection
 				}
 		}
@@ -242,49 +242,49 @@ const m2::ui::Blueprint m2::level_editor::ui::left_hud = {
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 4, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 4,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_paint_button
 				},
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 8, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 4,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_erase_button
 				},
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 12, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 4,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_place_button
 				},
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 16, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 4,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_remove_button
 				},
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 20, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 1,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_shift_button
 				},
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 24, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 1,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_cancel_button
 				},
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 60, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 4,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_gridlines_button
 				},
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 64, .w = 11, .h = 3,
 						.border_width_px = 1,
-						.padding_width_px = 4,
+						.padding_width_px = 2,
 						.variant = level_editor_left_hud_save_button
 				},
 		}
