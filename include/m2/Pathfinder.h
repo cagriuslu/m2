@@ -14,9 +14,9 @@ namespace m2 {
 
 		// Holds from which position should you approach another position, while trying to reach a certain destination.
 		// First key is the destination, first value is the corresponding approach map.
-		// The key of the approach map should be approached from the value.
-		using ApproachMap = std::unordered_map<Vec2i, Vec2i, Vec2iHash>;
-		std::unordered_map<Vec2i, ApproachMap, Vec2iHash> _approach_from_cache; // TODO cache is not used for look-up, only storage
+		// The key of the approach map should be approached from the value, with the stored cost.
+		using ApproachMap = std::unordered_map<Vec2i, std::pair<Vec2i,float>, Vec2iHash>;
+		std::unordered_map<Vec2i, ApproachMap, Vec2iHash> _approach_from_cache;
 
 	public:
 		explicit Pathfinder(const pb::Level& level_blueprint);

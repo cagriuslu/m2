@@ -72,7 +72,11 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 			auto neighbor = frontier + direction;
 
 			bool is_reachable = false;
-			if (frontier == from) {
+			auto cache_it = approach_map.find(neighbor);
+			if (cache_it != approach_map.end() && cache_it->second.first == frontier) {
+				LOG_TRACE("Pathfinder cache hit", frontier, neighbor);
+				is_reachable = true;
+			} else if (frontier == from) {
 				is_reachable = _blocked_locations.contains(from) ? check_eyesight(frontier, neighbor) : not _blocked_locations.contains(neighbor);
 			} else if (not _blocked_locations.contains(neighbor)) {
 				// If frontier is on a blocked location, neighbor may lay outside the playable area
@@ -83,7 +87,8 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 			}
 			if (is_reachable) {
 				// Calculate the cost of traveling to neighbor from current location
-				auto new_cost = provisional_cost[frontier] + 1.0f;
+				// Use the cached value if cache was hit
+				auto new_cost = (cache_it != approach_map.end()) ? cache_it->second.second + 1.0f : provisional_cost[frontier] + 1.0f;
 				// Find the previous cost of traveling to neighbor
 				auto it = provisional_cost.find(neighbor);
 				auto old_cost = (it != provisional_cost.end()) ? it->second : FLT_MAX;
@@ -97,7 +102,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 					// Insert into frontiers
 					frontiers.insert({neighbor_priority, neighbor});
 					// Set the previous position of neighbor as the current position
-					approach_map[neighbor] = frontier;
+					approach_map[neighbor] = {frontier, new_cost};
 				}
 			}
 		}
@@ -113,9 +118,9 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 	} else {
 		std::vector<m2::Vec2i> path{to};
 		// Built reverse list of positions
-		while (it != approach_map.end() && from != it->second) {
-			path.emplace_back(it->second);
-			it = approach_map.find(it->second);
+		while (it != approach_map.end() && from != it->second.first) {
+			path.emplace_back(it->second.first);
+			it = approach_map.find(it->second.first);
 		}
 		path.emplace_back(from);
 		return path;
