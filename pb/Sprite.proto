@@ -54,9 +54,10 @@ message Sprite {
 }
 
 message SpriteSheet {
-  string resource = 1;
-  uint32 ppm = 2; // Pixels per meter
-  repeated Sprite sprites = 3;
+    string __comment__ = 1;
+    string resource = 2;
+    uint32 ppm = 3; // Pixels per meter
+    repeated Sprite sprites = 4;
 }
 
 message SpriteSheets {

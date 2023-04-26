@@ -11,6 +11,18 @@
         "recalculationPeriod": 0.5,
         "chaser": {}
       }
+    },
+    {
+      "objectType": "CUTEOPUS",
+      "animationType": "ANIMATION_TYPE_CUTEOPUS_MOVEMENT",
+      "ai": {
+        "capabilities": ["CAPABILITY_MELEE"],
+        "triggerDistance": 5.0,
+        "attackDistance": 0.75,
+        "giveUpDistance": 10.0,
+        "recalculationPeriod": 0.5,
+        "chaser": {}
+      }
     }
   ]
 }

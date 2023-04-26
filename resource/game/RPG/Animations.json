@@ -56,6 +56,33 @@
         }
       ],
       "initialState": "ANIMATION_STATE_IDLE"
+    },
+    {
+      "type": "ANIMATION_TYPE_CUTEOPUS_MOVEMENT",
+      "fps": 10,
+      "states": [
+        {
+          "type": "ANIMATION_STATE_IDLE",
+          "sprites": ["CUTEOPUS_LOOKDOWN_00"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKDOWN",
+          "sprites": ["CUTEOPUS_LOOKDOWN_00", "CUTEOPUS_LOOKDOWN_01", "CUTEOPUS_LOOKDOWN_00", "CUTEOPUS_LOOKDOWN_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKRIGHT",
+          "sprites": ["CUTEOPUS_LOOKRIGHT_00", "CUTEOPUS_LOOKRIGHT_01", "CUTEOPUS_LOOKRIGHT_00", "CUTEOPUS_LOOKRIGHT_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKUP",
+          "sprites": ["CUTEOPUS_LOOKUP_00", "CUTEOPUS_LOOKUP_01", "CUTEOPUS_LOOKUP_00", "CUTEOPUS_LOOKUP_02"]
+        },
+        {
+          "type": "ANIMATION_STATE_WALKLEFT",
+          "sprites": ["CUTEOPUS_LOOKLEFT_00", "CUTEOPUS_LOOKLEFT_01", "CUTEOPUS_LOOKLEFT_00", "CUTEOPUS_LOOKLEFT_02"]
+        }
+      ],
+      "initialState": "ANIMATION_STATE_IDLE"
     }
   ]
 }

@@ -14,6 +14,10 @@
     {
       "type": "CASTLE_FINISH_POINT",
       "levelEditorSpriteType": "CASTLE_FINISH_POINT_SPRITE"
+    },
+    {
+      "type": "CUTEOPUS",
+      "levelEditorSpriteType": "CUTEOPUS_LOOKDOWN_00"
     }
   ]
 }

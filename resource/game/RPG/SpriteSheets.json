@@ -544,6 +544,80 @@
           "centerOffsetPx": {"x": 0, "y": 10}
         }
       ]
+    },
+    {
+      "resource": "resource/game/RPG/monsterstimefantasyrpgspritepack/monster2.png",
+      "ppm": 32,
+      "__comment__": "Sheet has extra 32 rows on top. Sprites have arbitrary separation in-between",
+      "sprites": [
+        {
+          "type": "CUTEOPUS_LOOKDOWN_00",
+          "rect": {"x": 425, "y": 32, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5},
+          "backgroundCollider": {
+            "circRadiusPx": 7
+          },
+          "foregroundCollider": {
+            "centerOffsetPx": {"x": 0, "y": -8.5},
+            "circRadiusPx": 8.5
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKDOWN_01",
+          "rect": {"x": 365, "y": 32, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKDOWN_02",
+          "rect": {"x": 485, "y": 32, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKLEFT_00",
+          "rect": {"x": 425, "y": 96, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKLEFT_01",
+          "rect": {"x": 365, "y": 96, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKLEFT_02",
+          "rect": {"x": 485, "y": 96, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKRIGHT_00",
+          "rect": {"x": 425, "y": 160, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKRIGHT_01",
+          "rect": {"x": 365, "y": 160, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKRIGHT_02",
+          "rect": {"x": 485, "y": 160, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKUP_00",
+          "rect": {"x": 425, "y": 224, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKUP_01",
+          "rect": {"x": 365, "y": 224, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        },
+        {
+          "type": "CUTEOPUS_LOOKUP_02",
+          "rect": {"x": 485, "y": 224, "w": 33, "h": 32},
+          "centerOffsetPx": {"x": 0, "y": 8.5}
+        }
+      ]
     }
   ]
 }

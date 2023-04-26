@@ -36,7 +36,7 @@
         "bpm": 200,
         "tracks": [
           {
-            "__comment": "Bass drum",
+            "__comment__": "Bass drum",
             "shape": "TRIANGLE",
             "volume": 1,
             "balance": 0,
@@ -56,7 +56,7 @@
             ]
           },
           {
-            "__comment": "Hi-hat and Snare",
+            "__comment__": "Hi-hat and Snare",
             "shape": "NOISE",
             "volume": 1,
             "balance": 0,

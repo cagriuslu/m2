@@ -68,6 +68,8 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 			return Enemy::init(obj, object_type);
 		case pb::ObjectType::CASTLE_FINISH_POINT:
 			return rpg::init_finish_point(obj, object_type);
+		case pb::ObjectType::CUTEOPUS:
+			return Enemy::init(obj, object_type);
 		default:
 			return m2::failure("Invalid sprite index");
 	}
