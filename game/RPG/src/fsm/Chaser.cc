@@ -2,7 +2,6 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include "m2/Pathfinder.h"
-#include <rpg/object/Enemy.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
 #include <rpg/fsm/Chaser.h>

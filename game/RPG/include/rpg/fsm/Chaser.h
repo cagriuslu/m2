@@ -15,7 +15,7 @@ namespace rpg {
 	};
 
 	class ChaserFsmSignal : public m2::FsmSignalBase {
-		// No content, signifies physics loop
+		// No content, signifies physics step
 	public:
 		inline ChaserFsmSignal() : FsmSignalBase(m2::FsmSignalType::Custom) {}
 		using FsmSignalBase::FsmSignalBase;
