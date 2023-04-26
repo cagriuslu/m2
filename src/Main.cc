@@ -171,6 +171,10 @@ int main(int argc, char **argv) {
 				}
 			}
 			LEVEL.draw_list.update();
+			if (not m2g::world_is_static) {
+				// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been moved
+				LEVEL.pathfinder->clear_cache();
+			}
 			GAME.execute_deferred_actions();
 			if (GAME.quit) {
 				break;

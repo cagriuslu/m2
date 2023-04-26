@@ -18,6 +18,9 @@ namespace m2g {
 	/// Should the b2World have gravity towards downwards direction
 	extern const bool gravity;
 
+	/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
+	extern const bool world_is_static;
+
 	/// Is the camera also a sound listener
 	extern const bool camera_is_listener;
 

@@ -7,6 +7,7 @@
 
 const std::string_view m2g::game_name = "RPG";
 const bool m2g::gravity = false;
+const bool m2g::world_is_static = true;
 const bool m2g::camera_is_listener = true;
 
 void* m2g::create_context() {

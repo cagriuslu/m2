@@ -53,8 +53,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 	// Holds the positions which will be explored next. Key is the priority, value is the position.
 	std::multimap<float, Vec2i> frontiers{{0.0f, from}};
 
-	// Holds from which position should you approach a certain position. Key should be approached from value.
-	std::unordered_map<Vec2i, Vec2i, Vec2iHash> approach_from{{from, from}};
+	auto& approach_map = _approach_from_cache[to];
 
 	// Holds accumulated cost of reaching a position. Key is the position, value is its cost.
 	std::unordered_map<Vec2i, float, Vec2iHash> provisional_cost{{from, 0.0f}};
@@ -68,9 +67,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 			break;
 		}
 
-		// Gather neighbors of frontierItem
-		m2::Vec2i reachable_neighbors[4];
-		uint32_t reachable_neighbor_count = 0;
+		// Iterate over neighbors
 		for (const auto& direction : {Vec2i{0, +1}, Vec2i{+1, 0}, Vec2i{0, -1}, Vec2i{-1, 0}}) {
 			auto neighbor = frontier + direction;
 
@@ -84,32 +81,24 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 			} else if (neighbor == to) {
 				is_reachable = check_eyesight(frontier, neighbor);
 			}
-
 			if (is_reachable) {
-				reachable_neighbors[reachable_neighbor_count++] = neighbor;
-			}
-		}
+				// Calculate the cost of traveling to neighbor from current location
+				auto new_cost = provisional_cost[frontier] + 1.0f;
+				// Find the previous cost of traveling to neighbor
+				auto it = provisional_cost.find(neighbor);
+				auto old_cost = (it != provisional_cost.end()) ? it->second : FLT_MAX;
 
-		// Iterate over neighbors
-		for (uint32_t i = 0; i < reachable_neighbor_count; ++i) {
-			const auto& neighbor = reachable_neighbors[i];
-
-			// Calculate the cost of traveling to neighbor from current location
-			auto new_cost = provisional_cost[frontier] + 1.0f;
-			// Find the previous cost of traveling to neighbor
-			auto it = provisional_cost.find(neighbor);
-			auto old_cost = (it != provisional_cost.end()) ? it->second : FLT_MAX;
-
-			// If new path to neighbor is cheaper than the old AND cheaper than max_grid_distance
-			if (new_cost < old_cost && new_cost < max_grid_distance_m) {
-				// Save new cost
-				provisional_cost[neighbor] = new_cost;
-				// Calculate priority of neighbor with heuristic parameter (which is Manhattan distance to `to`)
-				auto neighbor_priority = new_cost + (float)neighbor.manhattan_distance(to);
-				// Insert into frontiers
-				frontiers.insert({neighbor_priority, neighbor});
-				// Set the previous position of neighbor as the current position
-				approach_from[neighbor] = frontier;
+				// If new path to neighbor is cheaper than the old AND cheaper than max_grid_distance
+				if (new_cost < old_cost && new_cost < max_grid_distance_m) {
+					// Save new cost
+					provisional_cost[neighbor] = new_cost;
+					// Calculate priority of neighbor with heuristic parameter (which is Manhattan distance to `to`)
+					auto neighbor_priority = new_cost + (float)neighbor.manhattan_distance(to);
+					// Insert into frontiers
+					frontiers.insert({neighbor_priority, neighbor});
+					// Set the previous position of neighbor as the current position
+					approach_map[neighbor] = frontier;
+				}
 			}
 		}
 
@@ -118,15 +107,15 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 	}
 
 	// Check if there is a path
-	auto it = approach_from.find(to);
-	if (it == approach_from.end()) {
+	auto it = approach_map.find(to);
+	if (it == approach_map.end()) {
 		return {};
 	} else {
 		std::vector<m2::Vec2i> path{to};
 		// Built reverse list of positions
-		while (it != approach_from.end() && from != it->second) {
+		while (it != approach_map.end() && from != it->second) {
 			path.emplace_back(it->second);
-			it = approach_from.find(it->second);
+			it = approach_map.find(it->second);
 		}
 		path.emplace_back(from);
 		return path;
