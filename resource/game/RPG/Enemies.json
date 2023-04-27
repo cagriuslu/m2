@@ -7,9 +7,10 @@
         "capabilities": ["CAPABILITY_MELEE"],
         "triggerDistance": 5.0,
         "attackDistance": 0.75,
-        "giveUpDistance": 10.0,
         "recalculationPeriod": 0.5,
-        "chaser": {}
+        "chaser": {
+          "giveUpDistance": 10.0
+        }
       }
     },
     {
@@ -17,11 +18,10 @@
       "animationType": "ANIMATION_TYPE_CUTEOPUS_MOVEMENT",
       "ai": {
         "capabilities": ["CAPABILITY_MELEE"],
-        "triggerDistance": 5.0,
+        "triggerDistance": 6.0,
         "attackDistance": 0.75,
-        "giveUpDistance": 10.0,
-        "recalculationPeriod": 0.5,
-        "chaser": {}
+        "recalculationPeriod": 0.4,
+        "hitNRun": {}
       }
     }
   ]

@@ -55,7 +55,11 @@ namespace m2 {
 			log_header(lvl, file, line);
 			fprintf(stderr, args_size ? "%s: " : "%s", msg);
 			// Use the argument list of a lambda to unroll the ts
-			[](...){}((fprintf(stderr, "%s ", ::m2::to_string(ts).c_str()))...);
+			{
+				using namespace std;
+				using namespace m2;
+				[](...){}((fprintf(stderr, "%s ", to_string(ts).c_str()))...);
+			}
 			fprintf(stderr, "\n");
 		}
 	}

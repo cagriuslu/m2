@@ -21,6 +21,8 @@ obj::Enemy::Enemy(m2::Object& obj, const rpg::pb::Enemy* enemy) : animation_fsm(
 			break;
 		case rpg::pb::Ai::kHitNRun:
 		case rpg::pb::Ai::kKeepDistance:
+			ai_fsm = rpg::DistanceKeeperFsm{&obj, &enemy->ai()};
+			break;
 		case rpg::pb::Ai::kPatrol:
 		default:
 			throw M2ERROR("Not yet implemented");
@@ -67,6 +69,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 		}, impl->ai_fsm);
 		std::visit(m2::overloaded {
 			[](rpg::ChaserFsm& v) { v.signal(rpg::ChaserFsmSignal{}); },
+			[](rpg::DistanceKeeperFsm& v) { v.signal(rpg::DistanceKeeperFsmSignal{}); },
 			[](MAYBE auto& v) { }
 		}, impl->ai_fsm);
 	};

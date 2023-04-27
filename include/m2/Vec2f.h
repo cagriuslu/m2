@@ -54,6 +54,7 @@ namespace m2 {
 		[[nodiscard]] inline Vec2f floor_length(float len) const { return length() < len ? with_length(len) : *this; }
 		[[nodiscard]] inline Vec2f ceil_length(float len) const { return len < length() ? with_length(len) : *this; }
 		[[nodiscard]] inline Vec2f lerp(const Vec2f& to, float ratio) const { return *this + (to - *this) * ratio; }
+		[[nodiscard]] inline Vec2f rotate(float rads) const { return from_angle(angle_rads() + rads).with_length(length()); }
 
 		/// Order of corners: Bottom-right, Bottom-left, Top-left, Top-right
 		[[nodiscard]] std::array<Vec2f, 4> aabb_corners(float aabb_radius) const;

@@ -7,8 +7,7 @@
 namespace rpg {
 	enum class DistanceKeeperMode {
 		Idle,
-		Triggered,
-		GaveUp
+		Triggered
 	};
 
 	class DistanceKeeperFsmSignal : public m2::FsmSignalBase {
@@ -21,13 +20,20 @@ namespace rpg {
 	class DistanceKeeperFsm : public m2::FsmBase<DistanceKeeperMode, DistanceKeeperFsmSignal> {
 		const m2::Object* obj;
 		const pb::Ai* ai;
-		m2::Vec2f home_position;
+		std::optional<m2::Vec2f> escape_towards;
 
 	public:
 		DistanceKeeperFsm(const m2::Object* obj, const pb::Ai* ai);
 
 	protected:
 		std::optional<DistanceKeeperMode> handle_signal(const DistanceKeeperFsmSignal& s) override;
+
+	private:
+		std::optional<DistanceKeeperMode> handle_alarm_while_idle();
+		std::optional<DistanceKeeperMode> handle_alarm_while_triggered();
+		std::optional<DistanceKeeperMode> handle_physics_step_while_triggered();
+
+		std::optional<m2::Vec2f> find_direction_to_escape();
 	};
 }
 

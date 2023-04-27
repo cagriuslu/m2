@@ -53,11 +53,11 @@ std::unique_ptr<std::mt19937> random_number_engine;
 std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
 
 uint32_t m2::rand(uint32_t max) {
-	return static_cast<uint32_t>(static_cast<float>(max) * m2::randf());
+	return static_cast<uint32_t>(roundf(static_cast<float>(max) * m2::randf()));
 }
 
 uint64_t m2::rand(uint64_t max) {
-	return static_cast<uint64_t>(static_cast<double>(max) * m2::randf());
+	return static_cast<uint64_t>(round(static_cast<double>(max) * m2::randf()));
 }
 
 float m2::randf() {

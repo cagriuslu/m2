@@ -12,16 +12,16 @@ enum Capability {
     CAPABILITY_EXPLOSIVE = 3;
     CAPABILITY_KAMIKAZE = 4;
 }
-message Chaser {}
+message Chaser {
+    float give_up_distance = 1; // Distance AI gives up (in meters)
+}
 message HitNRun {
     float hit_distance_squared = 1; // Distance AI tries to achieve during Hit period (in meters)
     float hit_duration = 2; // Duration AI stays in Hit period (in seconds)
     float run_distance_squared = 3; // Distance AI tries to achieve during Run period (in meters)
     float run_duration = 4; // Duration AI stays in Run period (in seconds)
 }
-message KeepDistance {
-    float distance_squared = 1; // Distance AI tries to keep (in meters)
-}
+message KeepDistance {}
 message Patrol {
     m2.pb.Vec2f area_top_left = 1; // Top-left of patrol area while idling
     m2.pb.Vec2f area_bottom_right = 2; // Bottom-right of patrol area while idling
@@ -32,13 +32,12 @@ message Ai {
     repeated Capability capabilities = 1;
     float trigger_distance = 2; // Distance AI becomes active (in meters)
     float attack_distance = 3; // Distance AI is clear to attack player (in meters)
-    float give_up_distance = 4; // Distance AI gives up (in meters)
-    float recalculation_period = 5; // Period after which AI recalculates waypoints (formula: random(s/2, 3s/2))
+    float recalculation_period = 4; // Period after which AI recalculates waypoints (formula: random(s/2, 3s/2))
     oneof variant {
-        Chaser chaser = 6;
-        HitNRun hit_n_run = 7;
-        KeepDistance keep_distance = 8;
-        Patrol patrol = 9;
+        Chaser chaser = 5;
+        HitNRun hit_n_run = 6;
+        KeepDistance keep_distance = 7;
+        Patrol patrol = 8;
     }
 }
 

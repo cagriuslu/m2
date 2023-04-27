@@ -50,7 +50,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 	// Check if player is close
 	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		// Check if path exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 			return ChaserMode::Triggered;
@@ -62,15 +62,15 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
 	// Check if player is still close
-	if (obj->position.is_near(LEVEL.player()->position, ai->give_up_distance())) {
+	if (obj->position.is_near(LEVEL.player()->position, ai->chaser().give_up_distance())) {
 		// Recalculate path to player
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 		}
 	} else {
 		// Check if path to homePosition exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 			return ChaserMode::GaveUp;
@@ -124,7 +124,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 	// Check if player is close
 	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		// Check if path to player exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
+		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
 		if (not smooth_path.empty()) {
 			reverse_waypoints = std::move(smooth_path);
 			return ChaserMode::Triggered;
@@ -135,7 +135,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 			return ChaserMode::Idle;
 		} else {
 			// Recalculate path to homePosition
-			auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->give_up_distance());
+			auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
 			if (not smooth_path.empty()) {
 				reverse_waypoints = std::move(smooth_path);
 			}

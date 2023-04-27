@@ -18,6 +18,7 @@ namespace m2::box2d {
     };
 
     bool check_eyesight(b2World& world, Vec2f from, Vec2f to, uint16_t category_bits);
+	float check_distance(b2World& world, Vec2f from, Vec2f to, uint16_t category_bits);
 }
 
 #endif //M2_RAYCAST_H

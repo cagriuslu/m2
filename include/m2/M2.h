@@ -55,6 +55,9 @@ namespace m2 {
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
 	float apply_accuracy(float value, float accuracy); /// Returns value ± value * accuracy%
 	bool is_near(float a, float b, float tolerance);
+	constexpr float to_radians(float degrees) { return degrees / 180.0f * ::m2::PI; }
+	constexpr float to_radians(int degrees) { return to_radians(static_cast<float>(degrees)); }
+	constexpr float to_degrees(float radians) { return radians / ::m2::PI * 180.0f; }
 }
 
 #endif //M2_M2_H
