@@ -244,13 +244,6 @@
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "type": "RED_POTION_00",
-          "rect": {"x": 144, "y": 96, "w": 48, "h": 48},
-          "backgroundCollider": {
-            "circRadiusPx": 6
-          }
-        },
-        {
           "type": "BULLET_00",
           "rect": {"x": 144, "y": 0, "w": 48, "h": 48},
           "backgroundCollider": {
@@ -283,6 +276,28 @@
         {
           "type": "FLOPPY_DISK",
           "rect": {"x": 144, "y": 144, "w": 48, "h": 48}
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "RED_POTION_00",
+          "rect": {"x": 80, "y": 640, "w": 16, "h": 16},
+          "centerOffsetPx": {"x": 0, "y": 3},
+          "backgroundCollider": {
+            "circRadiusPx": 5
+          }
+        },
+        {
+          "type": "RED_POTION_01",
+          "rect": {"x": 224, "y": 576, "w": 16, "h": 16},
+          "centerOffsetPx": {"x": 0, "y": 3},
+          "backgroundCollider": {
+            "circRadiusPx": 5
+          }
         }
       ]
     },

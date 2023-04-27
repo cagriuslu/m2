@@ -4,6 +4,14 @@
       "type": "NO_OBJECT"
     },
     {
+      "type": "HP_POTION_20",
+      "levelEditorSpriteType": "RED_POTION_00"
+    },
+    {
+      "type": "HP_POTION_80",
+      "levelEditorSpriteType": "RED_POTION_01"
+    },
+    {
       "type": "PLAYER",
       "levelEditorSpriteType": "PLAYER_LOOKDOWN_00"
     },

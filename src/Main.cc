@@ -100,13 +100,13 @@ int main(int argc, char **argv) {
 				}
 			}
             // Handle key events
+			if (GAME.events.pop_key_press(Key::CONSOLE)) {
+				if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
+					return 0;
+				}
+			}
             if (GAME.events.pop_key_press(Key::MENU)) {
                 if (m2::ui::execute_blocking(m2g::ui::pause_menu()) == m2::ui::Action::QUIT) {
-                    return 0;
-                }
-            }
-            if (GAME.events.pop_key_press(Key::CONSOLE)) {
-                if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
                     return 0;
                 }
             }
@@ -189,7 +189,7 @@ int main(int argc, char **argv) {
 			}
 			//////////////////////////////// ACTIONS ///////////////////////////////
 			for (const auto& action_it: m2g::actions) {
-				// Execute if there's no condition, or there is a condition and it's true
+				// Execute if there's no condition, or there is a condition, and it's true
 				if (!action_it.trigger_condition || action_it.trigger_condition()) {
 					action_it.action();
 				}

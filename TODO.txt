@@ -8,3 +8,4 @@
 - Pixel editor save'i implement et
 - Protobuf loading yaparken duplicate type'a sahip liste load etmesi bir pattern'a donustu
 - Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
+- Override ppm doesn't work

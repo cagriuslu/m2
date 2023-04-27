@@ -37,7 +37,6 @@ enum SpriteType {
     ENEMY_LOOKUP_00 = 32;
     ENEMY_LOOKUP_01 = 33;
     ENEMY_LOOKUP_02 = 34;
-    RED_POTION_00 = 35;
     BULLET_00 = 36;
     BULLET_01 = 37;
     SWORD_00 = 38;
@@ -73,4 +72,8 @@ enum SpriteType {
     CUTEOPUS_LOOKUP_00 = 66;
     CUTEOPUS_LOOKUP_01 = 67;
     CUTEOPUS_LOOKUP_02 = 68;
+
+    // Potions
+    RED_POTION_00 = 100;
+    RED_POTION_01 = 101;
 }

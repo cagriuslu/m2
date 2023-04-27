@@ -1,28 +1,49 @@
-When to use error codes, exception, Value:
-- If the error is commonly occurring, use Value
-- If the error is developer facing, rarely happens, (it is an exceptional case) use exception
-- Don't use error codes
+# Main Function
+- Main menu is executed.
+- Game loop is executed until the quit flag is set.
 
-Object is an entity that can exist on its own.
-Objects can have physical components (gfx,phy,light,etc.)
+# Game Loop
+- Events are gathered. Window closure, resize, console button events are handled by the engine.
+If the menu button is pressed, pause menu is executed. HUD events are passed on to event handlers.
+Finally, mouse movement events are handled by the engine.
+- Physics loop is executed, possibly multiple times. Physics loop frequency is generally higher than graphics, and it's
+fixed. Following steps are executed during physics loop: pre_phy handlers, automatic character updates, custom character
+updates, world step, updating the positions, reorder draw list, post_phy handlers, conditional actions, sound emitters,
+directional audio calculation.
+- Graphics subsystem is executed, once. Following steps are executed during graphics: pre_draw handlers, HUD content updates,
+on_draw handlers for terrain objects, on_draw handlers for objects (which by default draws the sprites), on_draw handlers
+for lights, complimentary graphic elements for terrain and objects, debug shapes (colliders), HUD drawing, screen envelope
+drawing, post_draw handlers.
 
-Item is a collection of resources. Items can be transferred from one object to another.
-Items don't exist in the physical world but can be held by objects.
-Items can be used.
-Consumable Item: single-use
-Reusable Item: multi-use, but expires eventually
-Static Item: multi-use, never expires
-Items are identified by a key.
+# Entity Component System
+- m2::Object is the main game entity. It can have the following components: physique, graphic, background graphic, light
+emitter, sound emitter, character. Additionally, it can have the following properties: unique pointer to user data, reference
+to parent object, group membership.
+- m2::Physique can hold a physics body. It also has callback for collision with other bodies.
+- m2::Graphic can hold a reference to a sprite. It can draw the sprite during graphics update, or call the custom drawers.
+- m2::Light
+- m2::SoundEmitter
+- m2::Character is the base class of character classes. It can accept interactions from other objects.
 
-Resource is an amount with a type that can give the holder certain capabilities.
-Anti-resource has a negative amount.
+# Group Subsystem
+A group is a club an object can become a member of. It has a type, and it can have multiple instances. A group's lifetime
+is independent of its members.
 
-Objects have resources.
-Objects hold items.
-Items have resources.
-Items can grant (anti-)resources on use.
+# Character Subsystem
+Character components can hold resources and items.
 
-A group is a club which an object can become a member of.
-A group's lifetime is independent of its members.
-A group has a type.
-There can be multiple instances of the same group type.
+Resources represent a non-negative amount of certain type.
+
+Items have a certain type and a category for identification.
+It has different usage types such as: Consumable (item disappears after use), Reusable (item doesn't disappear after use),
+Automatic (item is used automatically every physics loop), Passive (item cannot be used, only held).
+Items have a use_on_acquire flag which signifies that the item cannot be held, and it's used upon acquire.
+Items can have costs (required resources to use the item), benefits (resources gained upon use), and attributes (a value
+of certain type).
+
+Character has an update callback to process the effects of items with automatic effects. They can also have a generic update
+callback. Interactions between characters are usually done in the form of interactions. Interactions have two parts, the
+causer and the effected. Interactions with a resource exchange usually happens like this: Interaction is initiated from
+a physics or collision handler. In the causer's interaction callback, it prepares an item that contains resources, and adds
+gives it to the effected character. If the item has use_on_acquire flag, it's used immediately. Then, the effected's
+interaction callback observes the effects of the interaction.

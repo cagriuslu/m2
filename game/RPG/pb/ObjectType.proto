@@ -3,8 +3,10 @@ package m2g.pb;
 
 enum ObjectType {
     NO_OBJECT = 0;
-    PLAYER = 1;
-    SKELETON = 2;
-    CASTLE_FINISH_POINT = 3;
-    CUTEOPUS = 4;
+    HP_POTION_20 = 1;
+    HP_POTION_80 = 2;
+    PLAYER = 3;
+    SKELETON = 4;
+    CASTLE_FINISH_POINT = 5;
+    CUTEOPUS = 6;
 }
