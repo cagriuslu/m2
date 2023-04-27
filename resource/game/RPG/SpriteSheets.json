@@ -244,36 +244,6 @@
           "centerOffsetPx": {"x": -0.5, "y": 12}
         },
         {
-          "type": "BULLET_00",
-          "rect": {"x": 144, "y": 0, "w": 48, "h": 48},
-          "backgroundCollider": {
-            "circRadiusPx": 3
-          }
-        },
-        {
-          "type": "BULLET_01",
-          "rect": {"x": 144, "y": 48, "w": 48, "h": 48},
-          "backgroundCollider": {
-            "circRadiusPx": 3
-          }
-        },
-        {
-          "type": "SWORD_00",
-          "rect": {"x": 192, "y": 0, "w": 96, "h": 48},
-          "centerOffsetPx": {"x": -24, "y": 0},
-          "foregroundCollider": {
-            "centerOffsetPx": {"x": 24, "y": 0},
-            "rectDimsPx": {"w": 54, "h": 8}
-          }
-        },
-        {
-          "type": "BOMB_00",
-          "rect": {"x": 288, "y": 48, "w": 48, "h": 48},
-          "backgroundCollider": {
-            "circRadiusPx": 6
-          }
-        },
-        {
           "type": "FLOPPY_DISK",
           "rect": {"x": 144, "y": 144, "w": 48, "h": 48}
         }
@@ -283,6 +253,44 @@
       "resource": "resource/game/RPG/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
       "ppm": 16,
       "sprites": [
+        {
+          "type": "GUN_BULLET",
+          "rect": {"x": 16, "y": 1440, "w": 16, "h": 16},
+          "originalRotation": -0.75,
+          "overridePpm": 32,
+          "foregroundCollider": {
+            "centerOffsetPx": {"x": 5, "y": 0},
+            "circRadiusPx": 3
+          }
+        },
+        {
+          "type": "MACHINE_GUN_BULLET",
+          "rect": {"x": 0, "y": 1456, "w": 16, "h": 16},
+          "originalRotation": -0.75,
+          "overridePpm": 32,
+          "foregroundCollider": {
+            "centerOffsetPx": {"x": 5, "y": 0},
+            "circRadiusPx": 3
+          }
+        },
+        {
+          "type": "EXPLOSIVE_BULLET",
+          "rect": {"x": 208, "y": 1344, "w": 16, "h": 16},
+          "overridePpm": 32,
+          "foregroundCollider": {
+            "circRadiusPx": 8
+          }
+        },
+        {
+          "type": "SWORD",
+          "rect": {"x": 112, "y": 1712, "w": 16, "h": 16},
+          "originalRotation": -0.75,
+          "centerOffsetPx": {"x": -13, "y": 0},
+          "foregroundCollider": {
+            "centerOffsetPx": {"x": 13, "y": 0},
+            "rectDimsPx": {"w": 26, "h": 5}
+          }
+        },
         {
           "type": "RED_POTION_00",
           "rect": {"x": 80, "y": 640, "w": 16, "h": 16},

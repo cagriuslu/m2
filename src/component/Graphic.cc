@@ -26,6 +26,9 @@ m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 			vector_in_source_pixels = sprite->foreground_companion_center_offset_px();
 		} else {
 			vector_in_source_pixels = Vec2f{sprite->sprite().center_offset_px()};
+			if (sprite->original_rotation_radians() != 0.0f) {
+				vector_in_source_pixels = vector_in_source_pixels.rotate(sprite->original_rotation_radians());
+			}
 		}
 
 		auto [mul, div] = GAME.pixel_scale_mul_div(sprite->ppm());
@@ -66,12 +69,14 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 	};
 
 	// Sprite is rotated around this point
+	auto center_offset = gfx.sprite_center_to_sprite_origin_px();
 	auto center_point = SDL_Point{
-		(int)roundf(gfx.sprite_center_to_sprite_origin_px().x) + dst_rect.w / 2 ,
-		(int)roundf(gfx.sprite_center_to_sprite_origin_px().y) + dst_rect.h / 2
+		(int)roundf(center_offset.x) + dst_rect.w / 2 ,
+		(int)roundf(center_offset.y) + dst_rect.h / 2
 	};
 
-	if (SDL_RenderCopyEx(GAME.sdlRenderer, texture, &src_rect, &dst_rect, gfx.draw_angle * 180.0f / PI, &center_point, SDL_FLIP_NONE)) {
+	auto original_rotation = gfx.sprite->original_rotation_radians();
+	if (SDL_RenderCopyEx(GAME.sdlRenderer, texture, &src_rect, &dst_rect, m2::to_degrees(gfx.draw_angle - original_rotation), &center_point, SDL_FLIP_NONE)) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }

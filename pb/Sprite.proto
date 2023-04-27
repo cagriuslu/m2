@@ -46,11 +46,14 @@ message Sprite {
   m2g.pb.SpriteType type = 1;
   repeated SpriteEffect effects = 2;
   Rect2i rect = 3;
-  uint32 override_ppm = 4; // Pixels per meter
-  Vec2f center_offset_px = 5; // Offset from the center of the rect
-  Collider background_collider = 6;
-  Collider foreground_collider = 7;
-  bool is_background_tile = 8;
+  // Original rotation is just an offset to the graphics.
+  // Colliders should assume the image is pointing in the right direction.
+  float original_rotation = 4; // In 1/PI
+  uint32 override_ppm = 5; // Pixels per meter
+  Vec2f center_offset_px = 6; // Offset from the center of the rect
+  Collider background_collider = 7;
+  Collider foreground_collider = 8;
+  bool is_background_tile = 9;
 }
 
 message SpriteSheet {

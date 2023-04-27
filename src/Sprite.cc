@@ -1,6 +1,7 @@
 #include <m2/Sprite.h>
 #include <m2/protobuf/Detail.h>
 #include <Object.pb.h>
+#include <m2/M2.h>
 #include <m2/Exception.h>
 #include <SDL2/SDL_image.h>
 
@@ -124,8 +125,8 @@ SDL_Rect m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& shee
 
 m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite) :
 	_sprite_sheet(&sprite_sheet), _sprite(sprite), _effects_sheet(&sprite_effects_sheet),
+	_original_rotation_radians(sprite.original_rotation() * m2::PI),
 	_ppm(sprite.override_ppm() ? (int)sprite.override_ppm() : (int)sprite_sheet.sprite_sheet().ppm()),
-	_center_offset_m(Vec2f{sprite.center_offset_px()} / _ppm),
 	_background_collider_center_offset_m(Vec2f{sprite.background_collider().center_offset_px()} / _ppm),
 	_background_collider_rect_dims_m(Vec2f{sprite.background_collider().rect_dims_px()} / _ppm),
 	_background_collider_circ_radius_m(sprite.background_collider().circ_radius_px() / (float)_ppm),
@@ -186,11 +187,11 @@ m2::Vec2f m2::Sprite::foreground_companion_center_offset_px() const {
 m2::Vec2f m2::Sprite::foreground_companion_center_offset_m() const {
 	return _foreground_companion_center_offset_m.value();
 }
+float m2::Sprite::original_rotation_radians() const {
+	return _original_rotation_radians;
+}
 int m2::Sprite::ppm() const {
 	return _ppm;
-}
-m2::Vec2f m2::Sprite::center_offset_m() const {
-	return _center_offset_m;
 }
 m2::Vec2f m2::Sprite::background_collider_center_offset_m() const {
 	return _background_collider_center_offset_m;

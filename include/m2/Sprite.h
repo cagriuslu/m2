@@ -43,8 +43,8 @@ namespace m2 {
 		std::optional<Vec2f> _foreground_companion_center_offset_px{};
 		std::optional<Vec2f> _foreground_companion_center_offset_m{};
 
+		float _original_rotation_radians{};
 		int _ppm{};
-		Vec2f _center_offset_m;
 		Vec2f _background_collider_center_offset_m;
 		Vec2f _background_collider_rect_dims_m;
 		float _background_collider_circ_radius_m{};
@@ -62,8 +62,8 @@ namespace m2 {
 		[[nodiscard]] bool has_foreground_companion() const;
 		[[nodiscard]] Vec2f foreground_companion_center_offset_px() const;
 		[[nodiscard]] Vec2f foreground_companion_center_offset_m() const;
+		[[nodiscard]] float original_rotation_radians() const;
 		[[nodiscard]] int ppm() const;
-		[[nodiscard]] Vec2f center_offset_m() const;
 		[[nodiscard]] Vec2f background_collider_center_offset_m() const;
 		[[nodiscard]] Vec2f background_collider_rect_dims_m() const;
 		[[nodiscard]] float background_collider_circ_radius_m() const;

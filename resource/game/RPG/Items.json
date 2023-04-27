@@ -160,7 +160,7 @@
           "amount": 0.75
         }
       ],
-      "gameSprite": "BOMB_00"
+      "gameSprite": "EXPLOSIVE_BULLET"
     },
     {
       "type": "ITEM_REUSABLE_SWORD",
@@ -191,7 +191,7 @@
           "amount": 0.15
         }
       ],
-      "gameSprite": "SWORD_00"
+      "gameSprite": "SWORD"
     },
     {
       "type": "ITEM_AUTOMATIC_TTL",
