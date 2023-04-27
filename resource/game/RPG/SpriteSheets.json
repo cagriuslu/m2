@@ -298,6 +298,20 @@
           "backgroundCollider": {
             "circRadiusPx": 5
           }
+        },
+        {
+          "type": "MACHINE_GUN_ICON",
+          "rect": {"x": 112, "y": 1408, "w": 16, "h": 16},
+          "backgroundCollider": {
+            "circRadiusPx": 8
+          }
+        },
+        {
+          "type": "EXPLOSIVE_ICON",
+          "rect": {"x": 64, "y": 1216, "w": 16, "h": 16},
+          "backgroundCollider": {
+            "circRadiusPx": 8
+          }
         }
       ]
     },

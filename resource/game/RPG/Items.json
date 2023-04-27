@@ -32,6 +32,48 @@
       ]
     },
     {
+      "type": "ITEM_REUSABLE_GUN",
+      "usage": "REUSABLE",
+      "costs": [
+        {
+          "type": "RESOURCE_RANGED_ENERGY",
+          "amount": 0.1
+        }
+      ],
+      "benefits": [
+        {
+          "type": "RESOURCE_RANGED_ENERGY",
+          "nInf": true
+        }
+      ],
+      "attributes": [
+        {
+          "type": "ATTRIBUTE_LINEAR_SPEED",
+          "amount": 20
+        },
+        {
+          "type": "ATTRIBUTE_ANGULAR_ACCURACY",
+          "amount": 0.95
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_DAMAGE",
+          "amount": 0.35
+        },
+        {
+          "type": "ATTRIBUTE_DAMAGE_ACCURACY",
+          "amount": 0.8
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_TTL",
+          "amount": 0.6
+        },
+        {
+          "type": "ATTRIBUTE_TTL_ACCURACY",
+          "amount": 0.9
+        }
+      ]
+    },
+    {
       "type": "ITEM_REUSABLE_MACHINE_GUN",
       "usage": "REUSABLE",
       "costs": [
@@ -74,48 +116,17 @@
       ]
     },
     {
-      "type": "ITEM_REUSABLE_SWORD",
+      "type": "ITEM_REUSABLE_EXPLOSIVE",
       "usage": "REUSABLE",
       "costs": [
         {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "amount": 0.333
-        }
-      ],
-      "benefits": [
-        {
-          "type": "RESOURCE_MELEE_ENERGY",
-          "nInf": true
-        }
-      ],
-      "attributes": [
-        {
-          "type": "ATTRIBUTE_AVERAGE_DAMAGE",
-          "amount": 0.45
-        },
-        {
-          "type": "ATTRIBUTE_DAMAGE_ACCURACY",
-          "amount": 0.95
-        },
-        {
-          "type": "ATTRIBUTE_AVERAGE_TTL",
-          "amount": 0.15
-        }
-      ],
-      "gameSprite": "SWORD_00"
-    },
-    {
-      "type": "ITEM_REUSABLE_GRENADE_LAUNCHER",
-      "usage": "REUSABLE",
-      "costs": [
-        {
-          "type": "RESOURCE_EXPLOSIVE_ENERGY",
+          "type": "RESOURCE_RANGED_ENERGY",
           "amount": 1.0
         }
       ],
       "benefits": [
         {
-          "type": "RESOURCE_EXPLOSIVE_ENERGY",
+          "type": "RESOURCE_RANGED_ENERGY",
           "nInf": true
         }
       ],
@@ -150,6 +161,37 @@
         }
       ],
       "gameSprite": "BOMB_00"
+    },
+    {
+      "type": "ITEM_REUSABLE_SWORD",
+      "usage": "REUSABLE",
+      "costs": [
+        {
+          "type": "RESOURCE_MELEE_ENERGY",
+          "amount": 0.333
+        }
+      ],
+      "benefits": [
+        {
+          "type": "RESOURCE_MELEE_ENERGY",
+          "nInf": true
+        }
+      ],
+      "attributes": [
+        {
+          "type": "ATTRIBUTE_AVERAGE_DAMAGE",
+          "amount": 0.45
+        },
+        {
+          "type": "ATTRIBUTE_DAMAGE_ACCURACY",
+          "amount": 0.95
+        },
+        {
+          "type": "ATTRIBUTE_AVERAGE_TTL",
+          "amount": 0.15
+        }
+      ],
+      "gameSprite": "SWORD_00"
     },
     {
       "type": "ITEM_AUTOMATIC_TTL",
@@ -207,16 +249,6 @@
       "benefits": [
         {
           "type": "RESOURCE_MELEE_ENERGY",
-          "amount": 1.0
-        }
-      ]
-    },
-    {
-      "type": "ITEM_AUTOMATIC_EXPLOSIVE_ENERGY",
-      "usage": "AUTOMATIC",
-      "benefits": [
-        {
-          "type": "RESOURCE_EXPLOSIVE_ENERGY",
           "amount": 1.0
         }
       ]

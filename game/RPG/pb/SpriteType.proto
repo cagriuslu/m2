@@ -76,4 +76,8 @@ enum SpriteType {
     // Potions
     RED_POTION_00 = 100;
     RED_POTION_01 = 101;
+
+    // Item icons
+    MACHINE_GUN_ICON = 200;
+    EXPLOSIVE_ICON = 201;
 }

@@ -44,11 +44,10 @@ m2::VoidValue obj::Player::init(m2::Object& obj) {
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_EXPLOSIVE));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_EXPLOSIVE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
 	obj.impl = std::make_unique<obj::Player>(obj);
@@ -95,9 +94,9 @@ m2::VoidValue obj::Player::init(m2::Object& obj) {
 			auto& melee = m2::create_object(obj.position, id).first;
 			rpg::create_melee_object(melee, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
 		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER))) {
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_EXPLOSIVE))) {
 			auto& explosive = m2::create_object(obj.position, id).first;
-			rpg::create_explosive_object(explosive, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_GRENADE_LAUNCHER));
+			rpg::create_explosive_object(explosive, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_EXPLOSIVE));
 		}
 	};
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
