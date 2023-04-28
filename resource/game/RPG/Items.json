@@ -71,7 +71,8 @@
           "type": "ATTRIBUTE_TTL_ACCURACY",
           "amount": 0.9
         }
-      ]
+      ],
+      "gameSprite": "GUN_BULLET"
     },
     {
       "type": "ITEM_REUSABLE_MACHINE_GUN",
@@ -113,7 +114,9 @@
           "type": "ATTRIBUTE_TTL_ACCURACY",
           "amount": 0.9
         }
-      ]
+      ],
+      "gameSprite": "MACHINE_GUN_BULLET",
+      "uiSprite": "MACHINE_GUN_ICON"
     },
     {
       "type": "ITEM_REUSABLE_EXPLOSIVE",
@@ -160,7 +163,8 @@
           "amount": 0.75
         }
       ],
-      "gameSprite": "EXPLOSIVE_BULLET"
+      "gameSprite": "EXPLOSIVE_BULLET",
+      "uiSprite": "EXPLOSIVE_ICON"
     },
     {
       "type": "ITEM_REUSABLE_SWORD",
