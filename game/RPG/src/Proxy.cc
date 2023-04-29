@@ -79,7 +79,7 @@ m2::Group* m2g::create_group(pb::GroupType group_type) {
 	switch (group_type) {
 		case pb::GroupType::ENEMIES_WITH_CONSUMABLE_ITEM_HP20: {
 			auto* g = new rpg::ItemGroup();
-			g->add_item(pb::ITEM_CONSUMABLE_POTION_20HP);
+			g->add_item(pb::ITEM_CONSUMABLE_HP_POTION_20);
 			return g;
 		}
 		default:

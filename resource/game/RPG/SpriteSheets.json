@@ -292,7 +292,7 @@
           }
         },
         {
-          "type": "RED_POTION_00",
+          "type": "SPRITE_HP_POTION_20",
           "rect": {"x": 80, "y": 640, "w": 16, "h": 16},
           "centerOffsetPx": {"x": 0, "y": 3},
           "backgroundCollider": {
@@ -300,7 +300,7 @@
           }
         },
         {
-          "type": "RED_POTION_01",
+          "type": "SPRITE_HP_POTION_80",
           "rect": {"x": 224, "y": 576, "w": 16, "h": 16},
           "centerOffsetPx": {"x": 0, "y": 3},
           "backgroundCollider": {

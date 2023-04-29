@@ -4,7 +4,7 @@
       "type": "NO_ITEM"
     },
     {
-      "type": "ITEM_CONSUMABLE_POTION_20HP",
+      "type": "ITEM_CONSUMABLE_HP_POTION_20",
       "usage": "CONSUMABLE",
       "useOnAcquire": true,
       "benefits": [
@@ -13,10 +13,10 @@
           "amount": 0.2
         }
       ],
-      "uiSprite": "RED_POTION_00"
+      "uiSprite": "SPRITE_HP_POTION_20"
     },
     {
-      "type": "ITEM_CONSUMABLE_POTION_80HP",
+      "type": "ITEM_CONSUMABLE_HP_POTION_80",
       "usage": "CONSUMABLE",
       "useOnAcquire": true,
       "benefits": [
@@ -25,7 +25,7 @@
           "amount": 0.8
         }
       ],
-      "uiSprite": "RED_POTION_01"
+      "uiSprite": "SPRITE_HP_POTION_80"
     },
     {
       "type": "ITEM_REUSABLE_DASH_2S",

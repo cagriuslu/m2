@@ -74,8 +74,8 @@ enum SpriteType {
     CUTEOPUS_LOOKUP_02 = 68;
 
     // Potions
-    RED_POTION_00 = 100;
-    RED_POTION_01 = 101;
+    SPRITE_HP_POTION_20 = 100;
+    SPRITE_HP_POTION_80 = 101;
 
     // Item icons
     MACHINE_GUN_ICON = 200;
