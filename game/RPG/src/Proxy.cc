@@ -78,9 +78,7 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 m2::Group* m2g::create_group(pb::GroupType group_type) {
 	switch (group_type) {
 		case pb::GroupType::GROUP_LOW_HP_POTION_DROPPER: {
-			auto* g = new rpg::ItemGroup();
-			g->add_item(pb::ITEM_CONSUMABLE_HP_POTION_20);
-			return g;
+			return new rpg::ItemGroup({{pb::ITEM_CONSUMABLE_HP_POTION_20, 4}, {pb::ITEM_CONSUMABLE_HP_POTION_80, 1}});
 		}
 		default:
 			return nullptr;

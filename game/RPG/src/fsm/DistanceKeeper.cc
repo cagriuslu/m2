@@ -84,7 +84,7 @@ std::optional<m2::Vec2f> rpg::DistanceKeeperFsm::find_direction_to_escape() {
 	for (auto sweep_degrees : {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110}) {
 		auto sweep_rads = m2::to_radians(sweep_degrees);
 		// Try both directions randomly
-		auto first_sweep_rads = m2::rand(1u) ? sweep_rads : -sweep_rads;
+		auto first_sweep_rads = m2::rand(2u) ? sweep_rads : -sweep_rads;
 		auto second_sweep_rads = -first_sweep_rads;
 		for (auto offset : {first_sweep_rads, second_sweep_rads}) {
 			if (can_escape(offset)) {

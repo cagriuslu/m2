@@ -8,12 +8,11 @@
 
 namespace rpg {
 	class ItemGroup : public m2::Group {
-		std::deque<m2g::pb::ItemType> items;
+		std::optional<m2g::pb::ItemType> _item;
 
 	public:
-		ItemGroup() = default;
+		ItemGroup(std::initializer_list<std::pair<m2g::pb::ItemType, float>>&& item_probabilities);
 
-		void add_item(m2g::pb::ItemType item);
 		std::optional<m2g::pb::ItemType> pop_item();
 	};
 }
