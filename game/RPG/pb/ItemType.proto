@@ -10,6 +10,7 @@ enum ItemCategory {
 enum ItemType {
     NO_ITEM = 0;
     ITEM_CONSUMABLE_POTION_20HP = 1;
+    ITEM_CONSUMABLE_POTION_80HP = 2;
 
     ITEM_REUSABLE_DASH_2S = 1001;
     ITEM_REUSABLE_GUN = 1002;

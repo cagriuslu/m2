@@ -13,7 +13,19 @@
           "amount": 0.2
         }
       ],
-      "game_sprite": "RED_POTION_00"
+      "uiSprite": "RED_POTION_00"
+    },
+    {
+      "type": "ITEM_CONSUMABLE_POTION_80HP",
+      "usage": "CONSUMABLE",
+      "useOnAcquire": true,
+      "benefits": [
+        {
+          "type": "RESOURCE_HP",
+          "amount": 0.8
+        }
+      ],
+      "uiSprite": "RED_POTION_01"
     },
     {
       "type": "ITEM_REUSABLE_DASH_2S",
