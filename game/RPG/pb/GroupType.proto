@@ -4,5 +4,5 @@ package m2g.pb;
 enum GroupType {
     NO_GROUP = 0;
 
-    ENEMIES_WITH_CONSUMABLE_ITEM_HP20 = 1;
+    GROUP_LOW_HP_POTION_DROPPER = 1;
 }
