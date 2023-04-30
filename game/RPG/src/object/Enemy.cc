@@ -10,20 +10,20 @@
 #include <InteractionType.pb.h>
 #include <deque>
 
-using namespace obj;
+using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
-obj::Enemy::Enemy(m2::Object& obj, const rpg::pb::Enemy* enemy) : animation_fsm(enemy->animation_type(), obj.graphic_id()) {
+Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->animation_type(), obj.graphic_id()) {
 	switch (enemy->ai().variant_case()) {
-		case rpg::pb::Ai::kChaser:
-			ai_fsm = rpg::ChaserFsm{&obj, &enemy->ai()};
+		case pb::Ai::kChaser:
+			ai_fsm = ChaserFsm{&obj, &enemy->ai()};
 			break;
-		case rpg::pb::Ai::kHitNRun:
-		case rpg::pb::Ai::kKeepDistance:
-			ai_fsm = rpg::DistanceKeeperFsm{&obj, &enemy->ai()};
+		case pb::Ai::kHitNRun:
+		case pb::Ai::kKeepDistance:
+			ai_fsm = DistanceKeeperFsm{&obj, &enemy->ai()};
 			break;
-		case rpg::pb::Ai::kPatrol:
+		case pb::Ai::kPatrol:
 		default:
 			throw M2ERROR("Not yet implemented");
 	}
@@ -52,10 +52,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
-    obj.impl = std::make_unique<obj::Enemy>(obj, rpg::Context::get_instance().get_enemy(object_type));
+    obj.impl = std::make_unique<Enemy>(obj, Context::get_instance().get_enemy(object_type));
 
 	// Increment enemy counter
-	auto& context = rpg::Context::get_instance();
+	auto& context = Context::get_instance();
 	context.alive_enemy_count++;
 
 	phy.pre_step = [&obj](MAYBE m2::Physique& phy) {
@@ -65,8 +65,8 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			[](auto& v) { v.time(GAME.deltaTime_s); }
 		}, impl->ai_fsm);
 		std::visit(m2::overloaded {
-			[](rpg::ChaserFsm& v) { v.signal(rpg::ChaserFsmSignal{}); },
-			[](rpg::DistanceKeeperFsm& v) { v.signal(rpg::DistanceKeeperFsmSignal{}); },
+			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{}); },
+			[](DistanceKeeperFsm& v) { v.signal(DistanceKeeperFsmSignal{}); },
 			[](MAYBE auto& v) { }
 		}, impl->ai_fsm);
 	};
@@ -90,7 +90,6 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			}
 			// Apply mask effect
 			self.set_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
-			gfx.draw_sprite_effect = m2::pb::SPRITE_EFFECT_MASK;
 			if (not self.has_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL)) {
 				self.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
 			}
@@ -101,7 +100,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 				m2::Group* group = obj.group();
 				if (group) {
 					// Check if the object belongs to item group
-					auto* item_group = dynamic_cast<rpg::ItemGroup*>(group);
+					auto* item_group = dynamic_cast<ItemGroup*>(group);
 					if (item_group) {
 						auto optional_item = item_group->pop_item();
 						if (optional_item) {
@@ -112,7 +111,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 					}
 				}
 				// Decrement enemy counter
-				auto& context = rpg::Context::get_instance();
+				auto& context = Context::get_instance();
 				context.alive_enemy_count--;
 				// Delete self
 				GAME.add_deferred_action(m2::create_object_deleter(self.object_id));
@@ -146,11 +145,9 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 		}
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
+		using namespace m2::pb;
 		gfx.draw_effect_health_bar = chr.get_resource(RESOURCE_HP);
-
-		if (not chr.has_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL)) {
-			gfx.draw_sprite_effect = m2::pb::NO_SPRITE_EFFECT;
-		}
+		gfx.draw_sprite_effect = chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL) ? SPRITE_EFFECT_MASK : NO_SPRITE_EFFECT;
 	};
 
 	return {};

@@ -10,7 +10,7 @@
 #include <m2/Value.h>
 #include <variant>
 
-namespace obj {
+namespace rpg {
     struct Enemy : public m2::ObjectImpl {
 		m2::AnimationFsm animation_fsm;
 

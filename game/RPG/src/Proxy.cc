@@ -60,7 +60,7 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
 
 m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type) {
-	using namespace obj;
+	using namespace rpg;
 	switch (object_type) {
 		case pb::ObjectType::PLAYER:
 			return Player::init(obj);

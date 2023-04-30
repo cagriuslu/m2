@@ -9,7 +9,7 @@
 #include <m2/M2.h>
 #include <Item.pb.h>
 
-obj::Player::Player(m2::Object& obj) :
+rpg::Player::Player(m2::Object& obj) :
 	animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
@@ -18,7 +18,7 @@ obj::Player::Player(m2::Object& obj) :
 // Mouse middle scroll: change primary projectile weapon
 // Double tap directional buttons to dodge
 
-m2::VoidValue obj::Player::init(m2::Object& obj) {
+m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	auto id = obj.id();
 	auto main_sprite_type = GAME.level_editor_object_sprites[m2g::pb::PLAYER];
 
@@ -50,10 +50,10 @@ m2::VoidValue obj::Player::init(m2::Object& obj) {
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
-	obj.impl = std::make_unique<obj::Player>(obj);
+	obj.impl = std::make_unique<rpg::Player>(obj);
 
 	phy.pre_step = [&, id=id](m2::Physique& phy) {
-		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
+		auto* impl = dynamic_cast<rpg::Player*>(obj.impl.get());
 		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
 
 		// TODO Use CharacterMovement instead
@@ -106,7 +106,7 @@ m2::VoidValue obj::Player::init(m2::Object& obj) {
 		}
 	};
 	phy.post_step = [&obj](m2::Physique& phy) {
-		auto* impl = dynamic_cast<obj::Player*>(obj.impl.get());
+		auto* impl = dynamic_cast<rpg::Player*>(obj.impl.get());
 		// We must call time before other signals
 		impl->animation_fsm.time(GAME.deltaTime_s);
 		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {

@@ -8,7 +8,7 @@
 #include <m2/Value.h>
 #include <ItemType.pb.h>
 
-namespace obj {
+namespace rpg {
 	struct Player : public m2::ObjectImpl {
 		m2::AnimationFsm animation_fsm;
 
