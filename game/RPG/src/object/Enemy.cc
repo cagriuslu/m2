@@ -49,6 +49,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
@@ -90,9 +91,6 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			}
 			// Apply mask effect
 			self.set_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
-			if (not self.has_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL)) {
-				self.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
-			}
 			// Check if we died
 			if (not self.has_resource(RESOURCE_HP)) {
 				// Drop item

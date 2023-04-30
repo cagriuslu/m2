@@ -1,7 +1,9 @@
 #include <rpg/object/Player.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
+#include <rpg/Detail.h>
 #include "m2/Controls.h"
+#include <m2/game/CharacterMovement.h>
 #include <rpg/object/ExplosiveWeapon.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
@@ -53,49 +55,42 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 
 	phy.pre_step = [&, id=id](m2::Physique& phy) {
 		auto* impl = dynamic_cast<rpg::Player*>(obj.impl.get());
-		auto to_mouse = (GAME.mouse_position_world_m() - obj.position).normalize();
+		auto& chr = obj.character();
+		auto vector_to_mouse = (GAME.mouse_position_world_m() - obj.position).normalize();
 
-		// TODO Use CharacterMovement instead
-		m2::Vec2f moveDirection;
-		if (GAME.events.is_key_down(m2::Key::UP)) {
-			moveDirection.y += -1.0f;
-			impl->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKUP});
-		}
-		if (GAME.events.is_key_down(m2::Key::DOWN)) {
-			moveDirection.y += 1.0f;
-			impl->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKDOWN});
-		}
-		if (GAME.events.is_key_down(m2::Key::LEFT)) {
-			moveDirection.x += -1.0f;
-			impl->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKLEFT});
-		}
-		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
-			moveDirection.x += 1.0f;
-			impl->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKRIGHT});
-		}
-		float force;
-		if (GAME.events.pop_key_press(m2::Key::DASH) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
-			moveDirection = to_mouse;
-			force = 100000.0f;
+		m2::Vec2f move_vector;
+		float move_force{};
+		// Check if dash
+		if (GAME.events.pop_key_press(m2::Key::DASH) && chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
+			move_vector = vector_to_mouse;
+			move_force = 100000000.0f;
 		} else {
-			force = 2800.0f;
+			// Character movement
+			auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
+			auto animation_state_type = detail::CharacterMovementDirection_to_AnimationStateType(direction_enum);
+			impl->animation_fsm.signal(m2::AnimationFsmSignal{animation_state_type});
+			move_vector = direction_vector;
+			move_force = 2800000.0f;
 		}
-		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.delta_time_s() * force * 1000)), true);
+		if (move_vector) {
+			// Apply force
+			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(move_vector * (move_force * GAME.delta_time_s())), true);
+		}
 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
 			// New projectile
 			auto& projectile = m2::create_object(obj.position, id).first;
-			rpg::create_ranged_weapon_object(projectile, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
+			rpg::create_ranged_weapon_object(projectile, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
 			// Knock-back
-			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(to_mouse.angle_rads() + m2::PI) * 500.0f), true);
+			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 500.0f), true);
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 			auto& melee = m2::create_object(obj.position, id).first;
-			rpg::create_melee_object(melee, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
+			rpg::create_melee_object(melee, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_EXPLOSIVE))) {
 			auto& explosive = m2::create_object(obj.position, id).first;
-			rpg::create_explosive_object(explosive, to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_EXPLOSIVE));
+			rpg::create_explosive_object(explosive, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_EXPLOSIVE));
 		}
 	};
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {

@@ -11,7 +11,6 @@ namespace m2 {
 
 	class AnimationFsmSignal : public FsmSignalBase {
 		m2g::pb::AnimationStateType _animation_state;
-
 	public:
 		inline explicit AnimationFsmSignal(m2g::pb::AnimationStateType animation_state) : FsmSignalBase(FsmSignalType::Custom), _animation_state(animation_state) {}
 		using FsmSignalBase::FsmSignalBase;
