@@ -52,9 +52,9 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
 	obj.impl = std::make_unique<rpg::Player>(obj);
+	auto& impl = dynamic_cast<Player&>(*obj.impl);
 
 	phy.pre_step = [&, id=id](m2::Physique& phy) {
-		auto* impl = dynamic_cast<rpg::Player*>(obj.impl.get());
 		auto& chr = obj.character();
 		auto vector_to_mouse = (GAME.mouse_position_world_m() - obj.position).normalize();
 
@@ -67,8 +67,8 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		} else {
 			// Character movement
 			auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
-			auto animation_state_type = detail::CharacterMovementDirection_to_AnimationStateType(direction_enum);
-			impl->animation_fsm.signal(m2::AnimationFsmSignal{animation_state_type});
+			auto anim_state_type = detail::to_animation_state_type(direction_enum);
+			impl.animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 			move_vector = direction_vector;
 			move_force = 2800000.0f;
 		}
@@ -82,7 +82,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 			auto& projectile = m2::create_object(obj.position, id).first;
 			rpg::create_ranged_weapon_object(projectile, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
 			// Knock-back
-			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 500.0f), true);
+			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 			auto& melee = m2::create_object(obj.position, id).first;
@@ -99,15 +99,8 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 			m2::Character::execute_interaction(chr, m2g::pb::InteractionType::STUN, other_char, m2g::pb::InteractionType::GET_STUNNED_BY);
 		}
 	};
-	phy.post_step = [&obj](m2::Physique& phy) {
-		auto* impl = dynamic_cast<rpg::Player*>(obj.impl.get());
-		// We must call time before other signals
-		impl->animation_fsm.time(GAME.delta_time_s());
-		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {
-			impl->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
-		}
-	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
+		impl.animation_fsm.time(GAME.delta_time_s());
 		gfx.draw_effect_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
 

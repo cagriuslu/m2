@@ -1,6 +1,6 @@
 #include <rpg/Detail.h>
 
-m2g::pb::AnimationStateType rpg::detail::CharacterMovementDirection_to_AnimationStateType(m2::CharacterMovementDirection dir) {
+m2g::pb::AnimationStateType rpg::detail::to_animation_state_type(m2::CharacterMovementDirection dir) {
 	auto animation_state_type = m2g::pb::ANIMATION_STATE_IDLE;
 	switch (dir) {
 		case m2::CHARMOVEMENT_DOWN_LEFT:

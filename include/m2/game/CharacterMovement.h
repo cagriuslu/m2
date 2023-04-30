@@ -19,6 +19,7 @@ namespace m2 {
 		CHARMOVEMENT_DOWN,
 		CHARMOVEMENT_UP,
 	};
+	CharacterMovementDirection to_character_movement_direction(const Vec2f& direction_vector);
 
 	std::pair<CharacterMovementDirection, Vec2f> calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key);
 }

@@ -22,13 +22,13 @@ namespace rpg {
 	};
 
 	class ChaserFsm : public m2::FsmBase<ChaserMode, ChaserFsmSignal> {
-		const m2::Object* obj;
+		m2::Object* obj;
 		const pb::Ai* ai;
 		m2::Vec2f home_position;
 		std::vector<m2::Vec2i> reverse_waypoints;
 
 	public:
-		ChaserFsm(const m2::Object* obj, const pb::Ai* ai);
+		ChaserFsm(m2::Object* obj, const pb::Ai* ai);
 
 	protected:
 		std::optional<ChaserMode> handle_signal(const ChaserFsmSignal& s) override;

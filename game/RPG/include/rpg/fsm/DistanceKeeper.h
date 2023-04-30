@@ -18,12 +18,12 @@ namespace rpg {
 	};
 
 	class DistanceKeeperFsm : public m2::FsmBase<DistanceKeeperMode, DistanceKeeperFsmSignal> {
-		const m2::Object* obj;
+		m2::Object* obj;
 		const pb::Ai* ai;
 		std::optional<m2::Vec2f> escape_towards;
 
 	public:
-		DistanceKeeperFsm(const m2::Object* obj, const pb::Ai* ai);
+		DistanceKeeperFsm(m2::Object* obj, const pb::Ai* ai);
 
 	protected:
 		std::optional<DistanceKeeperMode> handle_signal(const DistanceKeeperFsmSignal& s) override;

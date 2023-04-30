@@ -1,4 +1,5 @@
 #include "m2/Fsm.h"
+#include <rpg/object/Enemy.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include "m2/Pathfinder.h"
@@ -13,7 +14,7 @@ namespace {
 	}
 }
 
-rpg::ChaserFsm::ChaserFsm(const m2::Object* obj, const pb::Ai* ai) : FsmBase(ChaserMode::Idle), obj(obj), ai(ai), home_position(obj->position) {
+rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(ChaserMode::Idle), obj(obj), ai(ai), home_position(obj->position) {
 	init();
 }
 
@@ -85,14 +86,10 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
 		if (1 < reverse_waypoints.size()) {
 			auto end = reverse_waypoints.end();
-			auto obj_pos = *std::prev(end, 1);
+			auto first_pos = *std::prev(end, 1);
 			auto target_pos = *std::prev(end, 2);
-			if (obj_pos != target_pos) {
-				auto objPositionF = m2::Vec2f(obj_pos);
-				auto targetPositionF = m2::Vec2f(target_pos);
-				m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-				m2::Vec2f force = direction * (GAME.delta_time_s() * 25000.0f);
-				obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+			if (first_pos != target_pos) {
+				Enemy::move_to(*obj, m2::Vec2f{target_pos}, 25000.0f);
 			}
 		}
 		// Attack if player is close
@@ -149,14 +146,10 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up
 	// If not stunned
 	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < reverse_waypoints.size()) {
 		auto end = reverse_waypoints.end();
-		auto obj_pos = *std::prev(end, 1);
+		auto first_pos = *std::prev(end, 1);
 		auto target_pos = *std::prev(end, 2);
-		if (obj_pos != target_pos) {
-			auto objPositionF = m2::Vec2f(obj_pos);
-			auto targetPositionF = m2::Vec2f(target_pos);
-			m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-			m2::Vec2f force = direction * (GAME.delta_time_s() * 25000.0f);
-			obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+		if (first_pos != target_pos) {
+			Enemy::move_to(*obj, m2::Vec2f{target_pos}, 25000.0f);
 		}
 	}
 	return {};

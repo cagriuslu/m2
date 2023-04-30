@@ -3,7 +3,7 @@
 #include <m2/box2d/Detail.h>
 #include <m2/Game.h>
 #include <m2/Vec2f.h>
-#include <initializer_list>
+#include <rpg/object/Enemy.h>
 
 namespace {
 	float random_alarm_duration(float recalc_period) {
@@ -11,7 +11,7 @@ namespace {
 	}
 }
 
-rpg::DistanceKeeperFsm::DistanceKeeperFsm(const m2::Object* obj, const pb::Ai* ai) : FsmBase(DistanceKeeperMode::Idle), obj(obj), ai(ai) {
+rpg::DistanceKeeperFsm::DistanceKeeperFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(DistanceKeeperMode::Idle), obj(obj), ai(ai) {
 	init();
 }
 
@@ -63,8 +63,7 @@ std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_alarm_whil
 }
 std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_physics_step_while_triggered() {
 	if (escape_towards) {
-		m2::Vec2f force = (*escape_towards) * (GAME.delta_time_s() * 30000.0f);
-		obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
+		Enemy::move_towards(*obj, *escape_towards, 30000.0f);
 	}
 	return {};
 }

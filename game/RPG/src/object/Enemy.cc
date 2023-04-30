@@ -1,8 +1,10 @@
 #include <rpg/object/Enemy.h>
+#include <m2/game/CharacterMovement.h>
 #include <rpg/object/DroppedItem.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include "rpg/group/ItemGroup.h"
+#include <rpg/Detail.h>
 #include <rpg/Context.h>
 #include <m2/M2.h>
 #include <m2/box2d/Detail.h>
@@ -54,22 +56,22 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, Context::get_instance().get_enemy(object_type));
+	auto& impl = dynamic_cast<Enemy&>(*obj.impl);
 
 	// Increment enemy counter
 	auto& context = Context::get_instance();
 	context.alive_enemy_count++;
 
-	phy.pre_step = [&obj](MAYBE m2::Physique& phy) {
-		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
+	phy.pre_step = [&](MAYBE m2::Physique& phy) {
 		std::visit(m2::overloaded {
 			[](MAYBE std::monostate& v) {},
 			[](auto& v) { v.time(GAME.delta_time_s()); }
-		}, impl->ai_fsm);
+		}, impl.ai_fsm);
 		std::visit(m2::overloaded {
 			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{}); },
 			[](DistanceKeeperFsm& v) { v.signal(DistanceKeeperFsmSignal{}); },
 			[](MAYBE auto& v) { }
-		}, impl->ai_fsm);
+		}, impl.ai_fsm);
 	};
 	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType interaction_type) {
 		// Check if we got hit
@@ -121,32 +123,35 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			}
 		}
 	};
-	phy.post_step = [&obj](m2::Physique& phy) {
-		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
-		// We must call time before other signals
-		data->animation_fsm.time(GAME.delta_time_s());
-		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
-		if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
-			data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
-		} else if (fabsf(velocity.x) < fabsf(velocity.y)) {
-			if (0 < velocity.y) {
-				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKDOWN});
-			} else {
-				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKUP});
-			}
-		} else {
-			if (0 < velocity.x) {
-				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKRIGHT});
-			} else {
-				data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_WALKLEFT});
-			}
+	phy.post_step = [&](MAYBE m2::Physique& phy) {
+		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity()};
+		if (velocity.is_near(m2::Vec2f{}, 0.1f)) {
+			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		using namespace m2::pb;
+		impl.animation_fsm.time(GAME.delta_time_s());
 		gfx.draw_effect_health_bar = chr.get_resource(RESOURCE_HP);
 		gfx.draw_sprite_effect = chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL) ? SPRITE_EFFECT_MASK : NO_SPRITE_EFFECT;
 	};
 
 	return {};
+}
+
+void rpg::Enemy::move_to(m2::Object& obj, const m2::Vec2f& target, float force) {
+	// Calculate direction vector
+	const auto& obj_position = obj.position;
+	auto direction = (target - obj_position).normalize();
+	move_towards(obj, direction, force);
+}
+
+void rpg::Enemy::move_towards(m2::Object& obj, const m2::Vec2f& direction, float force) {
+	// Walk animation
+	auto char_move_dir = m2::to_character_movement_direction(direction);
+	auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
+	dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
+	// Apply force
+	m2::Vec2f force_direction = direction * (GAME.delta_time_s() * force);
+	obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
 }
