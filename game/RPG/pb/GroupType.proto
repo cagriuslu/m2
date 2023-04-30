@@ -5,4 +5,5 @@ enum GroupType {
     NO_GROUP = 0;
 
     GROUP_LOW_HP_POTION_DROPPER = 1;
+    GROUP_MACHINE_GUN_DROPPER = 2;
 }

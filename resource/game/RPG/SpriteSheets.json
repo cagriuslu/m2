@@ -589,6 +589,14 @@
       "sprites": [
         {
           "type": "CUTEOPUS_LOOKDOWN_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 425, "y": 32, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5},
           "backgroundCollider": {
@@ -601,56 +609,144 @@
         },
         {
           "type": "CUTEOPUS_LOOKDOWN_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 365, "y": 32, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKDOWN_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 485, "y": 32, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKLEFT_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 425, "y": 96, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKLEFT_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 365, "y": 96, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKLEFT_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 485, "y": 96, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKRIGHT_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 425, "y": 160, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKRIGHT_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 365, "y": 160, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKRIGHT_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 485, "y": 160, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKUP_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 425, "y": 224, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKUP_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 365, "y": 224, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         },
         {
           "type": "CUTEOPUS_LOOKUP_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 0, "g": 0, "b": 180, "a": 255
+              }
+            }
+          ],
           "rect": {"x": 485, "y": 224, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
         }
