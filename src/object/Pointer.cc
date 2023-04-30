@@ -8,12 +8,12 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_pointer() {
 	auto obj_id = obj_pair.second;
 
 	obj.add_graphic().pre_draw = [&obj](MAYBE m2::Graphic& gfx) {
-		obj.position = GAME.mousePositionWRTGameWorld_m;
+		obj.position = GAME.mouse_position_world_m();
 	};
 
     auto& lig = obj.add_light();
     lig.radius_m = 3.0f;
 
-	LEVEL.pointerId = obj_id;
+	LEVEL.pointer_id = obj_id;
     return obj_pair;
 }

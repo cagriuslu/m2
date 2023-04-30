@@ -62,7 +62,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 		auto* impl = dynamic_cast<Enemy*>(obj.impl.get());
 		std::visit(m2::overloaded {
 			[](MAYBE std::monostate& v) {},
-			[](auto& v) { v.time(GAME.deltaTime_s); }
+			[](auto& v) { v.time(GAME.delta_time_s()); }
 		}, impl->ai_fsm);
 		std::visit(m2::overloaded {
 			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{}); },
@@ -126,7 +126,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	phy.post_step = [&obj](m2::Physique& phy) {
 		auto* data = dynamic_cast<Enemy*>(obj.impl.get());
 		// We must call time before other signals
-		data->animation_fsm.time(GAME.deltaTime_s);
+		data->animation_fsm.time(GAME.delta_time_s());
 		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity() };
 		if (fabsf(velocity.x) < 0.5000f && fabsf(velocity.y) < 0.5000f) {
 			data->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});

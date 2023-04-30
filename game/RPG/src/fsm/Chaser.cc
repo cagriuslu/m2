@@ -91,7 +91,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 				auto objPositionF = m2::Vec2f(obj_pos);
 				auto targetPositionF = m2::Vec2f(target_pos);
 				m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-				m2::Vec2f force = direction * (GAME.deltaTime_s * 25000.0f);
+				m2::Vec2f force = direction * (GAME.delta_time_s() * 25000.0f);
 				obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 			}
 		}
@@ -155,7 +155,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up
 			auto objPositionF = m2::Vec2f(obj_pos);
 			auto targetPositionF = m2::Vec2f(target_pos);
 			m2::Vec2f direction = (targetPositionF - objPositionF).normalize();
-			m2::Vec2f force = direction * (GAME.deltaTime_s * 25000.0f);
+			m2::Vec2f force = direction * (GAME.delta_time_s() * 25000.0f);
 			obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 		}
 	}

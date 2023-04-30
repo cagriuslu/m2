@@ -63,7 +63,7 @@ std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_alarm_whil
 }
 std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_physics_step_while_triggered() {
 	if (escape_towards) {
-		m2::Vec2f force = (*escape_towards) * (GAME.deltaTime_s * 30000.0f);
+		m2::Vec2f force = (*escape_towards) * (GAME.delta_time_s() * 30000.0f);
 		obj->physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force), true);
 	}
 	return {};

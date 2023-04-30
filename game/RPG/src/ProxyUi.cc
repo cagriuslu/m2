@@ -51,7 +51,7 @@ static Blueprint::Widget::Variant left_hud_variant_2 = Blueprint::Widget::Text{
 	.initial_text = "100",
 	.update_callback = []() -> std::pair<Action,std::string> {
 		// Lookup player
-		if (LEVEL.playerId) {
+		if (LEVEL.player_id) {
 			float hp = LEVEL.player()->character().get_resource(m2g::pb::RESOURCE_HP);
 			return {Action::CONTINUE, std::to_string((int)round(hp * 100.0f))};
 		} else {
@@ -66,7 +66,7 @@ static Blueprint::Widget::Variant left_hud_variant_4 = Blueprint::Widget::Progre
 	.initial_progress = 1.0f,
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {
-		if (LEVEL.playerId) {
+		if (LEVEL.player_id) {
 			float counter = LEVEL.player()->character().get_resource(m2g::pb::RESOURCE_DASH_ENERGY);
 			float cooldown = 2.0f;
 			counter = (cooldown <= counter) ? cooldown : counter;

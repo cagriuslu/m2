@@ -9,8 +9,7 @@
 #include <m2/M2.h>
 #include <Item.pb.h>
 
-rpg::Player::Player(m2::Object& obj) :
-	animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
+rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
 
 // Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
 // Mouse secondary button: melee weapon (player can only carry one melee weapon)
@@ -54,7 +53,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 
 	phy.pre_step = [&, id=id](m2::Physique& phy) {
 		auto* impl = dynamic_cast<rpg::Player*>(obj.impl.get());
-		auto to_mouse = (GAME.mousePositionWRTGameWorld_m - obj.position).normalize();
+		auto to_mouse = (GAME.mouse_position_world_m() - obj.position).normalize();
 
 		// TODO Use CharacterMovement instead
 		m2::Vec2f moveDirection;
@@ -81,7 +80,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		} else {
 			force = 2800.0f;
 		}
-		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.deltaTime_s * force * 1000)), true);
+		phy.body->ApplyForceToCenter(static_cast<b2Vec2>(moveDirection.normalize() * (GAME.delta_time_s() * force * 1000)), true);
 
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
 			// New projectile
@@ -108,7 +107,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	phy.post_step = [&obj](m2::Physique& phy) {
 		auto* impl = dynamic_cast<rpg::Player*>(obj.impl.get());
 		// We must call time before other signals
-		impl->animation_fsm.time(GAME.deltaTime_s);
+		impl->animation_fsm.time(GAME.delta_time_s());
 		if (m2::Vec2f(phy.body->GetLinearVelocity()).is_small(0.5f)) {
 			impl->animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
@@ -117,6 +116,6 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		gfx.draw_effect_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
 
-	LEVEL.playerId = LEVEL.objects.get_id(&obj);
+	LEVEL.player_id = LEVEL.objects.get_id(&obj);
 	return {};
 }

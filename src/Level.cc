@@ -22,14 +22,14 @@ m2::Level::~Level() {
 	// Custom destructor is provided because the order is important
 	characters.clear();
 	lights.clear();
-	terrainGraphics.clear();
+	terrain_graphics.clear();
 	graphics.clear();
 	physics.clear();
 	objects.clear();
 	groups.clear();
 
-	delete contactListener;
-	contactListener = nullptr;
+	delete contact_listener;
+	contact_listener = nullptr;
 	delete world;
 	world = nullptr;
 }
@@ -48,8 +48,8 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 	_name = name;
 
 	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
-	contactListener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
-	world->SetContactListener(contactListener);
+	contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
+	world->SetContactListener(contact_listener);
 
 	// Create background tiles
 	for (int y = 0; y < _lb->background_rows_size(); ++y) {
@@ -95,12 +95,12 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Leve
 	m2::obj::create_pointer();
 
 	// Init HUD
-	leftHudUIState = m2::ui::State(m2g::ui::left_hud());
-	leftHudUIState->update_positions(GAME.leftHudRect);
-	leftHudUIState->update_contents();
-	rightHudUIState = m2::ui::State(m2g::ui::right_hud());
-	rightHudUIState->update_positions(GAME.rightHudRect);
-	rightHudUIState->update_contents();
+	left_hud_ui_state = m2::ui::State(m2g::ui::left_hud());
+	left_hud_ui_state->update_positions(GAME.left_hud_rect);
+	left_hud_ui_state->update_contents();
+	right_hud_ui_state = m2::ui::State(m2g::ui::right_hud());
+	right_hud_ui_state->update_positions(GAME.right_hud_rect);
+	right_hud_ui_state->update_contents();
 
 	return {};
 }
@@ -242,17 +242,17 @@ m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
 	}
 
 	// Create default objects
-	playerId = m2::obj::create_god();
+	player_id = m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_origin();
 
 	// UI Hud
-	leftHudUIState = m2::ui::State(&level_editor::ui::left_hud);
-	leftHudUIState->update_positions(GAME.leftHudRect);
-	leftHudUIState->update_contents();
-	rightHudUIState = m2::ui::State(&level_editor::ui::right_hud);
-	rightHudUIState->update_positions(GAME.rightHudRect);
-	rightHudUIState->update_contents();
+	left_hud_ui_state = m2::ui::State(&level_editor::ui::left_hud);
+	left_hud_ui_state->update_positions(GAME.left_hud_rect);
+	left_hud_ui_state->update_contents();
+	right_hud_ui_state = m2::ui::State(&level_editor::ui::right_hud);
+	right_hud_ui_state->update_positions(GAME.right_hud_rect);
+	right_hud_ui_state->update_contents();
 
 	return {};
 }
@@ -341,17 +341,17 @@ m2::VoidValue m2::Level::init_pixel_editor(const m2::FilePath &path, int x_offse
 	}
 
 	// Create default objects
-	playerId = m2::obj::create_god();
+	player_id = m2::obj::create_god();
 	m2::obj::create_camera();
 	m2::obj::create_origin();
 
 	// UI Hud
-	leftHudUIState = m2::ui::State(&ui::pixel_editor_left_hud);
-	leftHudUIState->update_positions(GAME.leftHudRect);
-	leftHudUIState->update_contents();
-	rightHudUIState = m2::ui::State(&ui::pixel_editor_right_hud);
-	rightHudUIState->update_positions(GAME.rightHudRect);
-	rightHudUIState->update_contents();
+	left_hud_ui_state = m2::ui::State(&ui::pixel_editor_left_hud);
+	left_hud_ui_state->update_positions(GAME.left_hud_rect);
+	left_hud_ui_state->update_contents();
+	right_hud_ui_state = m2::ui::State(&ui::pixel_editor_right_hud);
+	right_hud_ui_state->update_positions(GAME.right_hud_rect);
+	right_hud_ui_state->update_contents();
 
 	return {};
 }

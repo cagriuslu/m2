@@ -92,11 +92,11 @@ int main(int argc, char **argv) {
 			auto window_resize = GAME.events.pop_window_resize();
 			if (window_resize) {
 				GAME.update_window_dims(window_resize->x, window_resize->y);
-				if (LEVEL.leftHudUIState) {
-					LEVEL.leftHudUIState->update_positions(GAME.leftHudRect);
+				if (LEVEL.left_hud_ui_state) {
+					LEVEL.left_hud_ui_state->update_positions(GAME.left_hud_rect);
 				}
-                if (LEVEL.rightHudUIState) {
-					LEVEL.rightHudUIState->update_positions(GAME.rightHudRect);
+                if (LEVEL.right_hud_ui_state) {
+					LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
 				}
 			}
             // Handle key events
@@ -111,8 +111,8 @@ int main(int argc, char **argv) {
                 }
             }
             // Handle HUD events (mouse and key)
-			IF(LEVEL.leftHudUIState)->handle_events(GAME.events);
-			IF(LEVEL.rightHudUIState)->handle_events(GAME.events);
+			IF(LEVEL.left_hud_ui_state)->handle_events(GAME.events);
+			IF(LEVEL.right_hud_ui_state)->handle_events(GAME.events);
 		}
 		GAME.update_mouse_position();
 		//////////////////////// END OF EVENT HANDLING /////////////////////////
@@ -130,7 +130,7 @@ int main(int argc, char **argv) {
 			}
 
 			// Advance time by GAME.phy_period
-			GAME.deltaTime_s = GAME.phy_period;
+			GAME._delta_time_s = GAME.phy_period;
 			/////////////////////////////// PRE-PHY ////////////////////////////////
 			for (auto physique_it: LEVEL.physics) {
 				IF(physique_it.first->pre_step)(*physique_it.first);
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
 			/////////////////////////////// PHYSICS ////////////////////////////////
 			if (LEVEL.world) {
 				LOGF_TRACE("Stepping world %f seconds...", GAME.phy_period);
-				LEVEL.world->Step(GAME.phy_period, GAME.velocityIterations, GAME.positionIterations);
+				LEVEL.world->Step(GAME.phy_period, GAME.velocity_iterations, GAME.position_iterations);
 				LOG_TRACE("World stepped");
 				// Update positions
 				for (auto physique_it: LEVEL.physics) {
@@ -240,20 +240,20 @@ int main(int argc, char **argv) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// PRE-GFX ///////////////////////////////
-		GAME.deltaTicks_ms = sdl::get_ticks_since(prev_gfx_ticks, GAME.pause_ticks, 1);
-		GAME.deltaTime_s = (float)GAME.deltaTicks_ms / 1000.0f;
-		prev_gfx_ticks += GAME.deltaTicks_ms;
+		auto delta_ticks = sdl::get_ticks_since(prev_gfx_ticks, GAME.pause_ticks, 1);
+		GAME._delta_time_s = static_cast<float>(delta_ticks) / 1000.0f;
+		prev_gfx_ticks += delta_ticks;
 		for (auto graphic_if : LEVEL.graphics) {
 			IF(graphic_if.first->pre_draw)(*graphic_if.first);
 		}
 		////////////////////////////////// HUD /////////////////////////////////
-		IF(LEVEL.leftHudUIState)->update_contents();
-		IF(LEVEL.rightHudUIState)->update_contents();
+		IF(LEVEL.left_hud_ui_state)->update_contents();
+		IF(LEVEL.right_hud_ui_state)->update_contents();
 		///////////////////////////////// CLEAR ////////////////////////////////
-		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderClear(GAME.sdlRenderer);
+		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
+		SDL_RenderClear(GAME.renderer);
 		//////////////////////////////// TERRAIN ///////////////////////////////
-        for (auto graphic_it : LEVEL.terrainGraphics) {
+        for (auto graphic_it : LEVEL.terrain_graphics) {
 			IF(graphic_it.first->on_draw)(*graphic_it.first);
         }
 		//////////////////////////////// OBJECTS ///////////////////////////////
@@ -266,7 +266,7 @@ int main(int argc, char **argv) {
 			IF(light_it.first->on_draw)(*light_it.first);
         }
 		//////////////////////////////// EFFECTS ///////////////////////////////
-		for (auto gfx_it : LEVEL.terrainGraphics) {
+		for (auto gfx_it : LEVEL.terrain_graphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
 		for (auto gfx_it : LEVEL.graphics) {
@@ -279,16 +279,16 @@ int main(int argc, char **argv) {
 		}
 #endif
 		////////////////////////////////// HUD /////////////////////////////////
-		IF(LEVEL.leftHudUIState)->draw();
-		IF(LEVEL.rightHudUIState)->draw();
+		IF(LEVEL.left_hud_ui_state)->draw();
+		IF(LEVEL.right_hud_ui_state)->draw();
 		/////////////////////////////// ENVELOPER //////////////////////////////
-		SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.topEnvelopeRect);
-		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.bottomEnvelopeRect);
-		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.leftEnvelopeRect);
-		SDL_RenderFillRect(GAME.sdlRenderer, &GAME.rightEnvelopeRect);
+		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
+		SDL_RenderFillRect(GAME.renderer, &GAME.top_envelope_rect);
+		SDL_RenderFillRect(GAME.renderer, &GAME.bottom_envelope_rect);
+		SDL_RenderFillRect(GAME.renderer, &GAME.left_envelope_rect);
+		SDL_RenderFillRect(GAME.renderer, &GAME.right_envelope_rect);
 		//////////////////////////////// PRESENT ///////////////////////////////
-		SDL_RenderPresent(GAME.sdlRenderer);
+		SDL_RenderPresent(GAME.renderer);
 		/////////////////////////////// POST-GFX ///////////////////////////////
 		for (auto graphic_if : LEVEL.graphics) {
 			IF(graphic_if.first->post_draw)(*graphic_if.first);

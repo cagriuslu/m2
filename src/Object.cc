@@ -100,7 +100,7 @@ m2::Graphic& m2::Object::graphic() const {
 	return LEVEL.graphics[_graphic_id];
 }
 m2::Graphic& m2::Object::terrain_graphic() const {
-	return LEVEL.terrainGraphics[_terrain_graphic_id];
+	return LEVEL.terrain_graphics[_terrain_graphic_id];
 }
 m2::Light& m2::Object::light() const {
 	return LEVEL.lights[_light_id];
@@ -142,14 +142,14 @@ m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
 	return graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_terrain_graphic() {
-	auto terrain_graphic_pair = LEVEL.terrainGraphics.alloc();
+	auto terrain_graphic_pair = LEVEL.terrain_graphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;
 	terrain_graphic_pair.first = Graphic{id()};
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return terrain_graphic_pair.first;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
-	auto terrain_graphic_pair = LEVEL.terrainGraphics.alloc();
+	auto terrain_graphic_pair = LEVEL.terrain_graphics.alloc();
 	_terrain_graphic_id = terrain_graphic_pair.second;
 	terrain_graphic_pair.first = Graphic{id(), sprite};
     LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
@@ -199,7 +199,7 @@ void m2::Object::remove_graphic() {
 }
 void m2::Object::remove_terrain_graphic() {
 	if (_terrain_graphic_id) {
-		LEVEL.terrainGraphics.free(_terrain_graphic_id);
+		LEVEL.terrain_graphics.free(_terrain_graphic_id);
 		_terrain_graphic_id = 0;
 	}
 }

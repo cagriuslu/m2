@@ -4,16 +4,16 @@
 #include <m2/Object.h>
 
 m2::Vec2f m2::camera_to_position_m(const Vec2f& position) {
-	auto* camera = LEVEL.objects.get(LEVEL.cameraId);
+	auto* camera = LEVEL.objects.get(LEVEL.camera_id);
 	return position - camera->position;
 }
 
 m2::Vec2f m2::camera_to_position_px(const Vec2f& position) {
-	return camera_to_position_m(position) * GAME.game_ppm;
+	return camera_to_position_m(position) * GAME.game_ppm();
 }
 
 m2::Vec2f m2::screen_origin_to_position_px(const Vec2f& position) {
-	return camera_to_position_px(position) + Vec2f{GAME.windowRect.w / 2, GAME.windowRect.h / 2 };
+	return camera_to_position_px(position) + Vec2f{GAME.window_rect.w / 2, GAME.window_rect.h / 2 };
 }
 
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
@@ -76,7 +76,7 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 	};
 
 	auto original_rotation = gfx.sprite->original_rotation_radians();
-	if (SDL_RenderCopyEx(GAME.sdlRenderer, texture, &src_rect, &dst_rect, m2::to_degrees(gfx.draw_angle - original_rotation), &center_point, SDL_FLIP_NONE)) {
+	if (SDL_RenderCopyEx(GAME.renderer, texture, &src_rect, &dst_rect, m2::to_degrees(gfx.draw_angle - original_rotation), &center_point, SDL_FLIP_NONE)) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }
@@ -100,13 +100,13 @@ void m2::Graphic::default_effect(Graphic& gfx) {
 			src_rect.w * mul / div,
 			15 * mul / 100 // 0.15 m height
 	};
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(GAME.sdlRenderer, &dst_rect);
+	SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(GAME.renderer, &dst_rect);
 
 	// Black shadow
 	auto shadow_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, dst_rect.w - 2, dst_rect.h - 2};
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
-	SDL_RenderFillRect(GAME.sdlRenderer, &shadow_rect);
+	SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
+	SDL_RenderFillRect(GAME.renderer, &shadow_rect);
 
 	// Green part
 	float percentage = (*gfx.draw_effect_health_bar) < 0.0f ? 0.0f : (1.0f < *gfx.draw_effect_health_bar) ? 1.0f :  *gfx.draw_effect_health_bar;
@@ -116,6 +116,6 @@ void m2::Graphic::default_effect(Graphic& gfx) {
 	} else {
 		green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, (int)roundf(percentage * (float)(dst_rect.w - 2)), dst_rect.h - 2};
 	}
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 255, 0, 255);
-	SDL_RenderFillRect(GAME.sdlRenderer, &green_rect);
+	SDL_SetRenderDrawColor(GAME.renderer, 0, 255, 0, 255);
+	SDL_RenderFillRect(GAME.renderer, &green_rect);
 }

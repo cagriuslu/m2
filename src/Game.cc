@@ -31,18 +31,18 @@ void m2::Game::destroy_instance() {
 m2::Game::Game() {
 	DEBUG_FN();
 	update_window_dims(1600, 900); // Store default window dimensions in GAME
-	if ((sdlWindow = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowRect.w, windowRect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
+	if ((window = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_rect.w, window_rect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
-	SDL_SetWindowMinimumSize(sdlWindow, 712, 400);
+	SDL_SetWindowMinimumSize(window, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
-	sdlCursor = SdlUtils_CreateCursor();
-	SDL_SetCursor(sdlCursor);
-	if ((pixelFormat = SDL_GetWindowPixelFormat(sdlWindow)) == SDL_PIXELFORMAT_UNKNOWN) {
+	cursor = SdlUtils_CreateCursor();
+	SDL_SetCursor(cursor);
+	if ((pixel_format = SDL_GetWindowPixelFormat(window)) == SDL_PIXELFORMAT_UNKNOWN) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Unset: pixelated sprites, "1": filtered sprites
-	if ((sdlRenderer = SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE)) == nullptr) { // TODO: SDL_RENDERER_PRESENTVSYNC
+	if ((renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE)) == nullptr) { // TODO: SDL_RENDERER_PRESENTVSYNC
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
 	//SDL_SetTextureColorMod(sdlTexture, 127, 127, 127); Temporarily disabled, because lighting is disabled
@@ -50,28 +50,28 @@ m2::Game::Game() {
 	if (lightSurface == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
 	}
-	if ((sdlLightTexture = SDL_CreateTextureFromSurface(sdlRenderer, lightSurface)) == nullptr) {
+	if ((light_texture = SDL_CreateTextureFromSurface(renderer, lightSurface)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_FreeSurface(lightSurface);
-	SDL_SetTextureBlendMode(sdlLightTexture, SDL_BLENDMODE_MUL);
-	SDL_SetTextureAlphaMod(sdlLightTexture, 0);
-	SDL_SetTextureColorMod(sdlLightTexture, 127, 127, 127);
-	if ((ttfFont = TTF_OpenFont("resource/fonts/VT323/VT323-Regular.ttf", 280)) == nullptr) {
+	SDL_SetTextureBlendMode(light_texture, SDL_BLENDMODE_MUL);
+	SDL_SetTextureAlphaMod(light_texture, 0);
+	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
+	if ((font = TTF_OpenFont("resource/fonts/VT323/VT323-Regular.ttf", 280)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
 	}
 
 	audio_manager.emplace();
-	sprite_effects_sheet = SpriteEffectsSheet{sdlRenderer};
-	glyphs_sheet = GlyphsSheet{sdlRenderer};
-	shapes_sheet = ShapesSheet{sdlRenderer};
-	dynamic_sheet = DynamicSheet{sdlRenderer};
+	sprite_effects_sheet = SpriteEffectsSheet{renderer};
+	glyphs_sheet = GlyphsSheet{renderer};
+	shapes_sheet = ShapesSheet{renderer};
+	dynamic_sheet = DynamicSheet{renderer};
 
 	// Load game resources
 	std::filesystem::path resource_dir("resource");
 	game_resource_dir = resource_dir / "game" / m2g::game_name;
 
-	sprite_sheets = load_sprite_sheets(game_resource_dir / "SpriteSheets.json", sdlRenderer);
+	sprite_sheets = load_sprite_sheets(game_resource_dir / "SpriteSheets.json", renderer);
 	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
 	level_editor_object_sprites = list_level_editor_object_sprites(game_resource_dir / "Objects.json");
@@ -86,9 +86,9 @@ m2::Game::~Game() {
 		m2g::destroy_context(context);
 		context = nullptr;
 	}
-	SDL_DestroyRenderer(sdlRenderer);
-	SDL_FreeCursor(sdlCursor);
-	SDL_DestroyWindow(sdlWindow);
+	SDL_DestroyRenderer(renderer);
+	SDL_FreeCursor(cursor);
+	SDL_DestroyWindow(window);
 }
 
 void m2::Game::initialize_context() {
@@ -125,19 +125,19 @@ const m2::Song& m2::Game::get_song(m2g::pb::SongType song_type) {
 }
 
 void m2::Game::update_window_dims(int window_width, int window_height) {
-	windowRect = SDL_Rect{0, 0, window_width, window_height};
+	window_rect = SDL_Rect{0, 0, window_width, window_height};
 
 	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
 	if (window_width < ideal_width) {
 		// Screen is taller than expected
-		int provisional_game_height = window_width * GAME_AND_HUD_ASPECT_RATIO_DIV / GAME_AND_HUD_ASPECT_RATIO_MUL;
-		game_ppm = provisional_game_height * game_height_div_m / game_height_mul_m;
+		auto provisional_game_height = window_width * GAME_AND_HUD_ASPECT_RATIO_DIV / GAME_AND_HUD_ASPECT_RATIO_MUL;
+		_game_ppm = provisional_game_height * game_height_m.d() / game_height_m.n();
 	} else {
 		// Screen is exact or wider
-		game_ppm = window_height * game_height_div_m / game_height_mul_m;
+		_game_ppm = window_height * game_height_m.d() / game_height_m.n();
 	}
 
-	int game_height = game_ppm * game_height_mul_m / game_height_div_m;
+	int game_height = _game_ppm * game_height_m.n() / game_height_m.d();
 	int game_width = game_height * GAME_ASPECT_RATIO_MUL / GAME_ASPECT_RATIO_DIV;
 	int hud_height = game_height;
 	int hud_width = game_height * HUD_ASPECT_RATIO_MUL / HUD_ASPECT_RATIO_DIV;
@@ -147,27 +147,25 @@ void m2::Game::update_window_dims(int window_width, int window_height) {
 	int left_envelope_size = (window_width - game_width - 2 * hud_width) / 2;
 	int right_envelope_size = (window_width - game_width - 2 * hud_width) - left_envelope_size;
 
-	topEnvelopeRect = SDL_Rect{0, 0, window_width, top_envelope_size};
-	bottomEnvelopeRect = SDL_Rect{0, top_envelope_size + game_height, window_width, bottom_envelope_size};
-	leftEnvelopeRect = SDL_Rect{0, top_envelope_size, left_envelope_size, game_height};
-	rightEnvelopeRect = SDL_Rect{left_envelope_size + 2 * hud_width + game_width, top_envelope_size, right_envelope_size, game_height};
+	top_envelope_rect = SDL_Rect{0, 0, window_width, top_envelope_size};
+	bottom_envelope_rect = SDL_Rect{0, top_envelope_size + game_height, window_width, bottom_envelope_size};
+	left_envelope_rect = SDL_Rect{0, top_envelope_size, left_envelope_size, game_height};
+	right_envelope_rect = SDL_Rect{left_envelope_size + 2 * hud_width + game_width, top_envelope_size, right_envelope_size, game_height};
 
-	gameAndHudRect = SDL_Rect{left_envelope_size, top_envelope_size, 2 * hud_width + game_width, game_height};
-	leftHudRect = SDL_Rect{left_envelope_size, top_envelope_size, hud_width, hud_height};
-	rightHudRect = SDL_Rect{left_envelope_size + hud_width + game_width, top_envelope_size, hud_width, hud_height};
-	gameRect = SDL_Rect{left_envelope_size + hud_width, top_envelope_size, game_width, game_height};
+	game_and_hud_rect = SDL_Rect{left_envelope_size, top_envelope_size, 2 * hud_width + game_width, game_height};
+	left_hud_rect = SDL_Rect{left_envelope_size, top_envelope_size, hud_width, hud_height};
+	right_hud_rect = SDL_Rect{left_envelope_size + hud_width + game_width, top_envelope_size, hud_width, hud_height};
+	game_rect = SDL_Rect{left_envelope_size + hud_width, top_envelope_size, game_width, game_height};
 
-	console_rect = SDL_Rect{gameRect.x, gameRect.y + gameRect.h * 22 / 24, gameRect.w, gameRect.h * 2 / 24};
+	console_rect = SDL_Rect{game_rect.x, game_rect.y + game_rect.h * 22 / 24, game_rect.w, game_rect.h * 2 / 24};
 }
 
 void m2::Game::update_mouse_position() {
-	auto& cam = _level->objects[_level->cameraId];
-	m2::Vec2f cameraPosition = cam.position;
-
-	m2::Vec2i pointerPosition = events.mouse_position();
-	m2::Vec2i pointerPositionWRTScreenCenter_px = m2::Vec2i{pointerPosition.x - (windowRect.w / 2), pointerPosition.y - (windowRect.h / 2) };
-	mousePositionWRTScreenCenter_m = m2::Vec2f{(float) pointerPositionWRTScreenCenter_px.x / (float) game_ppm, (float) pointerPositionWRTScreenCenter_px.y / (float) game_ppm };
-	mousePositionWRTGameWorld_m = mousePositionWRTScreenCenter_m + cameraPosition;
+	auto mouse_position = events.mouse_position();
+	auto screen_center_to_mouse_position_px = Vec2i{mouse_position.x - (window_rect.w / 2), mouse_position.y - (window_rect.h / 2)};
+	_screen_center_to_mouse_position_m = Vec2f{(float) screen_center_to_mouse_position_px.x / (float) _game_ppm, (float) screen_center_to_mouse_position_px.y / (float) _game_ppm};
+	auto camera_position = _level->objects[_level->camera_id].position;
+	_mouse_position_world_m = _screen_center_to_mouse_position_m + camera_position;
 }
 
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
@@ -182,5 +180,5 @@ void m2::Game::execute_deferred_actions() {
 }
 
 std::pair<int, int> m2::Game::pixel_scale_mul_div(int sprite_ppm) const {
-	return std::make_pair(game_ppm, sprite_ppm);
+	return std::make_pair(_game_ppm, sprite_ppm);
 }

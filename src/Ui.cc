@@ -106,7 +106,7 @@ void ui::State::Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, Te
 			dstrect.x = rect.x + rect.w / 2 - final_text_w / 2;
 			break;
 	}
-	SDL_RenderCopy(GAME.sdlRenderer, &texture, nullptr, &dstrect);
+	SDL_RenderCopy(GAME.renderer, &texture, nullptr, &dstrect);
 }
 
 ui::State::AbstractButton::AbstractButton(const ui::Blueprint::Widget *blueprint) :
@@ -183,7 +183,7 @@ void ui::State::Image::draw() {
 			};
 		}
 		auto srcrect = sdl::to_rect(sprite->sprite().rect());
-		SDL_RenderCopy(GAME.sdlRenderer, sprite->sprite_sheet().texture(), &srcrect, &dstrect);
+		SDL_RenderCopy(GAME.renderer, sprite->sprite_sheet().texture(), &srcrect, &dstrect);
 	}
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
@@ -245,8 +245,8 @@ void ui::State::ProgressBar::draw() {
 			(int)roundf((float)rect_px.w * progress),
 			rect_px.h
 	};
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g, pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
-	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);
+	SDL_SetRenderDrawColor(GAME.renderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g, pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
+	SDL_RenderFillRect(GAME.renderer, &filled_dstrect);
 	// Foreground
 	State::draw_border(rect_px, blueprint->border_width_px);
 }
@@ -347,16 +347,16 @@ void ui::State::ImageSelection::draw() {
 	const auto& sprite = GAME.get_sprite(image_selection.list[selection]);
 	auto sprite_srcrect = sdl::to_rect(sprite.sprite().rect());
 	auto sprite_dstrect = (SDL_Rect)image_rect;
-	SDL_RenderCopy(GAME.sdlRenderer, sprite.sprite_sheet().texture(), &sprite_srcrect, &sprite_dstrect);
+	SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &sprite_srcrect, &sprite_dstrect);
 
-	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
+	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
-	SDL_RenderCopy(GAME.sdlRenderer, up_symbol, nullptr, &up_dstrect);
+	SDL_RenderCopy(GAME.renderer, up_symbol, nullptr, &up_dstrect);
 	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
 
-	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/down-symbol.svg");
+	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.renderer, "resource/down-symbol.svg");
 	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
-	SDL_RenderCopy(GAME.sdlRenderer, down_symbol, nullptr, &down_dstrect);
+	SDL_RenderCopy(GAME.renderer, down_symbol, nullptr, &down_dstrect);
 	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
@@ -418,14 +418,14 @@ void ui::State::TextSelection::draw() {
 		draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
 	}
 
-	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
+	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
-	SDL_RenderCopy(GAME.sdlRenderer, up_symbol, nullptr, &up_dstrect);
+	SDL_RenderCopy(GAME.renderer, up_symbol, nullptr, &up_dstrect);
 	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
 
-	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/down-symbol.svg");
+	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.renderer, "resource/down-symbol.svg");
 	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
-	SDL_RenderCopy(GAME.sdlRenderer, down_symbol, nullptr, &down_dstrect);
+	SDL_RenderCopy(GAME.renderer, down_symbol, nullptr, &down_dstrect);
 	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
@@ -498,14 +498,14 @@ void ui::State::IntegerSelection::draw() {
 		draw_text((SDL_Rect)text_rect, *font_texture, TextAlignment::LEFT);
 	}
 
-	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/up-symbol.svg");
+	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
-	SDL_RenderCopy(GAME.sdlRenderer, up_symbol, nullptr, &up_dstrect);
+	SDL_RenderCopy(GAME.renderer, up_symbol, nullptr, &up_dstrect);
 	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
 
-	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.sdlRenderer, "resource/down-symbol.svg");
+	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.renderer, "resource/down-symbol.svg");
 	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
-	SDL_RenderCopy(GAME.sdlRenderer, down_symbol, nullptr, &down_dstrect);
+	SDL_RenderCopy(GAME.renderer, down_symbol, nullptr, &down_dstrect);
 	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
@@ -517,12 +517,12 @@ void ui::State::CheckboxWithText::draw() {
 	State::draw_background_color(rect_px, blueprint->background_color);
 	// Checkbox
 	auto filled_dstrect = SDL_Rect{rect_px.x, rect_px.y, rect_px.h, rect_px.h};
-	SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
-	SDL_RenderFillRect(GAME.sdlRenderer, &filled_dstrect);
+	SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 255);
+	SDL_RenderFillRect(GAME.renderer, &filled_dstrect);
 	if (!state) {
 		auto empty_dstrect = SDL_Rect{rect_px.x + 1, rect_px.y + 1, rect_px.h - 2, rect_px.h - 2};
-		SDL_SetRenderDrawColor(GAME.sdlRenderer, blueprint->background_color.r, blueprint->background_color.g, blueprint->background_color.b, blueprint->background_color.a);
-		SDL_RenderFillRect(GAME.sdlRenderer, &empty_dstrect);
+		SDL_SetRenderDrawColor(GAME.renderer, blueprint->background_color.r, blueprint->background_color.g, blueprint->background_color.b, blueprint->background_color.a);
+		SDL_RenderFillRect(GAME.renderer, &empty_dstrect);
 	}
 	// Text
 	if (font_texture) {
@@ -537,16 +537,16 @@ void ui::State::draw_background_color(const SDL_Rect& rect, const SDL_Color& col
     if (!color.r && !color.g && !color.b && !color.a) {
 		// If the color is all zeros, user probably didn't initialize the Color at all
 		// Paint background to default background color
-        SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
+        SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
     } else {
-        SDL_SetRenderDrawColor(GAME.sdlRenderer, color.r, color.g, color.b, color.a);
+        SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
     }
-    SDL_RenderFillRect(GAME.sdlRenderer, &rect);
+    SDL_RenderFillRect(GAME.renderer, &rect);
 }
 void ui::State::draw_border(const SDL_Rect& rect, unsigned border_width_px) {
     if (border_width_px) {
-        SDL_SetRenderDrawColor(GAME.sdlRenderer, 255, 255, 255, 255);
-        SDL_RenderDrawRect(GAME.sdlRenderer, &rect);
+        SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 255);
+        SDL_RenderDrawRect(GAME.renderer, &rect);
     }
 }
 ui::State::State() : blueprint(nullptr), rect_px() {}
@@ -615,13 +615,13 @@ std::unique_ptr<ui::State::Widget> ui::State::create_widget_state(const Blueprin
 }
 
 ui::Action ui::execute_blocking(const Blueprint *blueprint) {
-	return execute_blocking(blueprint, GAME.windowRect);
+	return execute_blocking(blueprint, GAME.window_rect);
 }
 ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 	auto execute_start_ticks = sdl::get_ticks();
 
 	// Save relation to window, use in case of resize
-	const SDL_Rect& winrect = GAME.windowRect;
+	const SDL_Rect& winrect = GAME.window_rect;
 	auto relation_to_window = SDL_FRect{
 		(float)(rect.x - winrect.x) / (float)winrect.w,
 		(float)(rect.y - winrect.y) / (float)winrect.h,
@@ -631,10 +631,10 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 
 	// Get screenshot
 	int w, h;
-	SDL_GetRendererOutputSize(GAME.sdlRenderer, &w, &h);
+	SDL_GetRendererOutputSize(GAME.renderer, &w, &h);
 	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
-	SDL_RenderReadPixels(GAME.sdlRenderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
-	std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.sdlRenderer, surface));
+	SDL_RenderReadPixels(GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
+	std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
 	SDL_FreeSurface(surface);
 
 	Action return_value;
@@ -685,12 +685,12 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 			return return_value;
 		}
 	    // Clear screen
-	    SDL_SetRenderDrawColor(GAME.sdlRenderer, 0, 0, 0, 255);
-	    SDL_RenderClear(GAME.sdlRenderer);
-	    SDL_RenderCopy(GAME.sdlRenderer, texture.get(), nullptr, nullptr);
+	    SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
+	    SDL_RenderClear(GAME.renderer);
+	    SDL_RenderCopy(GAME.renderer, texture.get(), nullptr, nullptr);
         state.draw();
         // Present
-        SDL_RenderPresent(GAME.sdlRenderer);
+        SDL_RenderPresent(GAME.renderer);
         /////////////////////////// END OF GRAPHICS ////////////////////////////
         ////////////////////////////////////////////////////////////////////////
     }

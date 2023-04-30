@@ -60,7 +60,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 					// If character has HP
 					if (chr_under_mouse.has_resource(RESOURCE_HP)) {
 						// Damage object
-						chr_under_mouse.remove_resource(RESOURCE_HP, 2.0f * GAME.deltaTime_s);
+						chr_under_mouse.remove_resource(RESOURCE_HP, 2.0f * GAME.delta_time_s());
 						// Show health bar
 						auto hp = chr_under_mouse.get_resource(RESOURCE_HP);
 						auto max_hp = chr_under_mouse.get_max_resource(RESOURCE_HP);
@@ -100,6 +100,6 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 		}
 	};
 
-	LEVEL.playerId = obj.id();
+	LEVEL.player_id = obj.id();
 	return {};
 }

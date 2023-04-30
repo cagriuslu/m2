@@ -13,6 +13,7 @@
 #include "Animation.h"
 #include <m2/Object.h>
 #include <ObjectType.pb.h>
+#include "Rational.h"
 #include "Pathfinder.h"
 #include "m2/Ui.h"
 #include "component/Physique.h"
@@ -45,7 +46,22 @@ namespace m2 {
 	struct Game {
 		static Game* _instance;
 
+		////////////////////////////////////////////////////////////////////////
+		//////////////////////////////// WINDOW ////////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		int _game_ppm{};
+
+		////////////////////////////////////////////////////////////////////////
+		////////////////////////////// RESOURCES ///////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		std::vector<Sprite> _sprites;
+		std::vector<FullItem> _items;
+		std::vector<Song> _songs;
+
 		std::optional<Level> _level;
+		float _delta_time_s{};
+		Vec2f _mouse_position_world_m;
+		Vec2f _screen_center_to_mouse_position_m;
 
 	public:
 		static void create_instance();
@@ -55,26 +71,17 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		SDL_Window *sdlWindow{};
-		SDL_Cursor *sdlCursor{};
-		SDL_Renderer *sdlRenderer{};
-		SDL_Texture *sdlLightTexture{};
+		SDL_Window* window{};
+		SDL_Cursor* cursor{};
+		SDL_Renderer *renderer{};
+		SDL_Texture *light_texture{};
 		std::optional<AudioManager> audio_manager;
-		uint32_t pixelFormat{};
-		SDL_Rect windowRect{};
-		SDL_Rect gameRect{};
-		SDL_Rect gameAndHudRect{};
-		SDL_Rect topEnvelopeRect{};
-		SDL_Rect bottomEnvelopeRect{};
-		SDL_Rect leftEnvelopeRect{};
-		SDL_Rect rightEnvelopeRect{};
-		SDL_Rect leftHudRect{};
-		SDL_Rect rightHudRect{};
-        SDL_Rect console_rect{};
-		int game_height_mul_m{16}; // Game height controls the zoom of the game
-		int game_height_div_m{1};
-		int game_ppm{};
-		TTF_Font *ttfFont{};
+		uint32_t pixel_format{};
+		SDL_Rect window_rect{}, game_rect{}, game_and_hud_rect{};
+		SDL_Rect top_envelope_rect{}, bottom_envelope_rect{}, left_envelope_rect{}, right_envelope_rect{};
+		SDL_Rect left_hud_rect{}, right_hud_rect{}, console_rect{};
+		Rational game_height_m{16, 1}; // Controls the zoom of the game
+		TTF_Font *font{};
 		bool quit{};
 
 		////////////////////////////////////////////////////////////////////////
@@ -83,28 +90,21 @@ namespace m2 {
 		std::filesystem::path game_resource_dir;
 		std::vector<SpriteSheet> sprite_sheets;
 		std::optional<SpriteEffectsSheet> sprite_effects_sheet;
-		std::vector<Sprite> _sprites;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> level_editor_object_sprites;
 		std::optional<GlyphsSheet> glyphs_sheet;
 		std::optional<ShapesSheet> shapes_sheet;
 		std::optional<DynamicSheet> dynamic_sheet;
-		std::vector<FullItem> _items;
 		std::vector<Animation> animations;
-		std::vector<Song> _songs;
-
-		////////////////////////////////////////////////////////////////////////
-		//////////////////////////////// BOX2D /////////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		const float phy_period{1.0f / 80.0f};
-		const int velocityIterations{8};
-		const int positionIterations{3};
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// CONFIG ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		const float max_hearing_distance_m{20.0f};
-		const float min_hearing_facing_away{0.1f};
+		static constexpr float phy_period{1.0f / 80.0f};
+		static constexpr int velocity_iterations{8};
+		static constexpr int position_iterations{3};
+		static constexpr float max_hearing_distance_m{20.0f};
+		static constexpr float min_hearing_facing_away{0.1f}; // Ratio
 
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// MISC /////////////////////////////////
@@ -112,10 +112,6 @@ namespace m2 {
 		void* context{};
 		Events events;
 		sdl::ticks_t pause_ticks{};
-		unsigned deltaTicks_ms{};
-		float deltaTime_s{};
-		Vec2f mousePositionWRTGameWorld_m;
-		Vec2f mousePositionWRTScreenCenter_m;
         std::vector<std::string> console_output;
 
 		Game();
@@ -131,9 +127,13 @@ namespace m2 {
 		inline Level& level() { return *_level; }
 
 		// Accessors
+		inline int game_ppm() const { return _game_ppm; }
 		inline const Sprite& get_sprite(m2g::pb::SpriteType sprite_type) { return _sprites[protobuf::enum_index(sprite_type)]; }
 		inline SmartPointer<const Item> get_item(m2g::pb::ItemType item_type) { return make_static<const Item>(&_items[protobuf::enum_index(item_type)]); }
 		const Song& get_song(m2g::pb::SongType song_type);
+		inline float delta_time_s() const { return _delta_time_s; }
+		inline const Vec2f& mouse_position_world_m() const { return _mouse_position_world_m; }
+		inline const Vec2f& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
 
 		// Modifiers
 		void update_window_dims(int window_width, int window_height);

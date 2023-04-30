@@ -79,7 +79,7 @@ m2::sdl::ticks_t m2::sdl::get_ticks_since(ticks_t last_ticks, ticks_t pause_tick
 
 int m2::sdl::get_refresh_rate() {
 	SDL_DisplayMode dm{};
-	SDL_GetWindowDisplayMode(GAME.sdlWindow, &dm);
+	SDL_GetWindowDisplayMode(GAME.window, &dm);
 	return dm.refresh_rate;
 }
 
@@ -98,13 +98,13 @@ int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_
 }
 
 m2::sdl::TextureUniquePtr m2::sdl::generate_font(const char* text, SDL_Color color) {
-	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.ttfFont, text, color);
+	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.font, text, color);
 
 	// Store previous render quality
 	const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
 	// Create texture with linear filtering
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Linear filtering is less crisp, but more readable when small
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.sdlRenderer, surf);
+	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.renderer, surf);
 	// Reinstate previous render quality
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality);
 

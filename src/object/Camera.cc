@@ -8,7 +8,7 @@
 
 std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
     // Start at player's location
-    auto* player = LEVEL.objects.get(LEVEL.playerId);
+    auto* player = LEVEL.objects.get(LEVEL.player_id);
     auto obj_pair = create_object(player ? player->position : Vec2f{});
 	auto& camera = obj_pair.first;
 	camera.impl = std::make_unique<m2::obj::Camera>();
@@ -16,7 +16,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 	auto& phy = camera.add_physique();
 	phy.post_step = [&camera](MAYBE Physique& phy) {
 //		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
-		auto& player = LEVEL.objects[LEVEL.playerId];
+		auto& player = LEVEL.objects[LEVEL.player_id];
 		camera.position = player.position;
 
 		// Mouse lookahead disabled temporarily
@@ -41,28 +41,28 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 			auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 			if (camera_data->draw_grid_lines) {
 				auto offset_from_floored_position_m = camera.position - camera.position.floor();
-				auto offset_from_floored_position_px = offset_from_floored_position_m * GAME.game_ppm;
-				auto screen_center = Vec2i{GAME.windowRect.w / 2, GAME.windowRect.h / 2 };
+				auto offset_from_floored_position_px = offset_from_floored_position_m * GAME.game_ppm();
+				auto screen_center = Vec2i{GAME.window_rect.w / 2, GAME.window_rect.h / 2 };
 				auto horizontal_line_y = [=](int index) -> int {
-					return screen_center.y - (int)roundf(offset_from_floored_position_px.y) + index * (int)GAME.game_ppm;
+					return screen_center.y - (int)roundf(offset_from_floored_position_px.y) + index * (int)GAME.game_ppm();
 				};
 				auto vertical_line_x = [=](int index) -> int {
-					return screen_center.x - (int)roundf(offset_from_floored_position_px.x) + index * (int)GAME.game_ppm;
+					return screen_center.x - (int)roundf(offset_from_floored_position_px.x) + index * (int)GAME.game_ppm();
 				};
 				// Draw horizontal lines
-				SDL_SetRenderDrawColor(GAME.sdlRenderer, 127, 127, 255, 127);
-				for (int i = 0, y = horizontal_line_y(i); y <= GAME.gameRect.y + GAME.gameRect.h; ++i, y = horizontal_line_y(i)) {
-					SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
+				SDL_SetRenderDrawColor(GAME.renderer, 127, 127, 255, 127);
+				for (int i = 0, y = horizontal_line_y(i); y <= GAME.game_rect.y + GAME.game_rect.h; ++i, y = horizontal_line_y(i)) {
+					SDL_RenderDrawLine(GAME.renderer, GAME.game_rect.x, y, GAME.game_rect.x + GAME.game_rect.w, y);
 				}
-				for (int i = -1, y = horizontal_line_y(i); GAME.gameRect.y <= y; --i, y = horizontal_line_y(i)) {
-					SDL_RenderDrawLine(GAME.sdlRenderer, GAME.gameRect.x, y, GAME.gameRect.x + GAME.gameRect.w, y);
+				for (int i = -1, y = horizontal_line_y(i); GAME.game_rect.y <= y; --i, y = horizontal_line_y(i)) {
+					SDL_RenderDrawLine(GAME.renderer, GAME.game_rect.x, y, GAME.game_rect.x + GAME.game_rect.w, y);
 				}
 				// Draw vertical lines
-				for (int i = 0, x = vertical_line_x(i); x <= GAME.gameRect.x + GAME.gameRect.w; ++i, x = vertical_line_x(i)) {
-					SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
+				for (int i = 0, x = vertical_line_x(i); x <= GAME.game_rect.x + GAME.game_rect.w; ++i, x = vertical_line_x(i)) {
+					SDL_RenderDrawLine(GAME.renderer, x, GAME.game_rect.y, x, GAME.game_rect.y + GAME.game_rect.h);
 				}
-				for (int i = -1, x = vertical_line_x(i); GAME.gameRect.x <= x; --i, x = vertical_line_x(i)) {
-					SDL_RenderDrawLine(GAME.sdlRenderer, x, GAME.gameRect.y, x, GAME.gameRect.y + GAME.gameRect.h);
+				for (int i = -1, x = vertical_line_x(i); GAME.game_rect.x <= x; --i, x = vertical_line_x(i)) {
+					SDL_RenderDrawLine(GAME.renderer, x, GAME.game_rect.y, x, GAME.game_rect.y + GAME.game_rect.h);
 				}
 			}
 		};
@@ -73,6 +73,6 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		LEVEL.right_listener = SoundListener{.position = LEVEL.player()->position, .direction = 0.0f, .listen_angle = PI_DIV2};
 	}
 
-	LEVEL.cameraId = obj_pair.second;
+	LEVEL.camera_id = obj_pair.second;
     return obj_pair;
 }

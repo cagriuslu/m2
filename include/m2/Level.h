@@ -44,16 +44,16 @@ namespace m2 {
 		DrawList draw_list;
 		Pool<Physique> physics;
 		Pool<Graphic> graphics;
-		Pool<Graphic> terrainGraphics;
+		Pool<Graphic> terrain_graphics;
 		Pool<Light> lights;
 		Pool<SoundEmitter> sound_emitters;
 		Pool<CharacterVariant> characters;
 		b2World *world{};
-		box2d::ContactListener* contactListener{};
-		Id cameraId{}, playerId{}, pointerId{};
+		box2d::ContactListener* contact_listener{};
+		Id camera_id{}, player_id{}, pointer_id{};
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
-		std::optional<ui::State> leftHudUIState, rightHudUIState;
+		std::optional<ui::State> left_hud_ui_state, right_hud_ui_state;
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
 		std::vector<std::function<void(void)>> deferred_actions;
@@ -142,8 +142,8 @@ namespace m2 {
 
 		// Accessors
 		inline const std::string& name() const { return _name; }
-		inline Object* player() { return objects.get(playerId); }
-		inline Object* camera() { return objects.get(cameraId); }
+		inline Object* player() { return objects.get(player_id); }
+		inline Object* camera() { return objects.get(camera_id); }
 		sdl::ticks_t get_level_duration() const;
 
 		// Convenience

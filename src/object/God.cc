@@ -18,10 +18,10 @@ m2::Id m2::obj::create_god() {
 		if (GAME.events.is_key_down(m2::Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		obj.position += move_direction.normalize() * ((float)GAME.deltaTime_s * 10.0f);
+		obj.position += move_direction.normalize() * ((float)GAME.delta_time_s() * 10.0f);
 
 		Vec2i mouse_coordinates;
-		if (GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) && !(mouse_coordinates = GAME.mousePositionWRTGameWorld_m.iround()).is_negative()) {
+		if (GAME.events.pop_mouse_button_press(MouseButton::PRIMARY) && !(mouse_coordinates = GAME.mouse_position_world_m().iround()).is_negative()) {
 			switch (LEVEL.type()) {
 				case Level::Type::LEVEL_EDITOR: {
 					std::visit(m2::overloaded {
