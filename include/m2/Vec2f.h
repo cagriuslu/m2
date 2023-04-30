@@ -33,7 +33,7 @@ namespace m2 {
 		inline Vec2f operator/(const int& rhs) const { return {x / (float)rhs, y / (float)rhs}; }
 		inline Vec2f operator/(const unsigned& rhs) const { return {x / (float)rhs, y / (float)rhs}; }
 		inline bool operator==(const Vec2f& other) const { return (x == other.x) && (y == other.y); }
-		inline explicit operator bool() const { return (x != 0.0f) && (y != 0.0f); }
+		inline explicit operator bool() const { return (x != 0.0f) || (y != 0.0f); }
 		inline explicit operator b2Vec2() const { return b2Vec2{x, y}; }
 
 		[[nodiscard]] inline bool is_nan() const { return isnan(x) || isnan(y); }
