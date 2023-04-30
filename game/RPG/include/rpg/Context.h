@@ -13,7 +13,9 @@ namespace rpg {
 		std::filesystem::path progress_file_path;
 		pb::Progress progress;
 
-		m2::ui::Blueprint main_menu_blueprint; // Cache
+		// Blueprints need to be retained
+		mutable m2::ui::Blueprint _main_menu;
+		mutable m2::ui::Blueprint _you_died_menu;
 
 		unsigned alive_enemy_count{};
 
@@ -23,6 +25,9 @@ namespace rpg {
 		const pb::Enemy* get_enemy(m2g::pb::ObjectType object_type) const;
 
 		void save_progress() const;
+
+		const m2::ui::Blueprint* main_menu() const;
+		const m2::ui::Blueprint* you_died_menu() const;
 	};
 }
 

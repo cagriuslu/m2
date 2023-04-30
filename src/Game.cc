@@ -86,6 +86,7 @@ m2::Game::~Game() {
 		m2g::destroy_context(context);
 		context = nullptr;
 	}
+	audio_manager.reset();
 	SDL_DestroyRenderer(renderer);
 	SDL_FreeCursor(cursor);
 	SDL_DestroyWindow(window);

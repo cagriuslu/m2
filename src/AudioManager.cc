@@ -25,6 +25,9 @@ m2::AudioManager::AudioManager() {
 		throw M2FATAL("Undesired audio format");
 	}
 }
+m2::AudioManager::~AudioManager() {
+	SDL_PauseAudioDevice(sdl_audio_device_id, 1);
+}
 
 m2::PlaybackId m2::AudioManager::play(const Song* song, PlayPolicy policy, float volume) {
 	if (song->sample_count() < sdl_audio_spec.samples) {

@@ -39,6 +39,7 @@ namespace m2 {
 		std::mutex playbacks_mutex;
 
 		AudioManager();
+		~AudioManager();
 
 		PlaybackId play(const Song* song, PlayPolicy policy, float volume = 1.0f);
 		void stop(PlaybackId id);

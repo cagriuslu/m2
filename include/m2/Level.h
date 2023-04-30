@@ -141,6 +141,7 @@ namespace m2 {
 		void begin_game_loop();
 
 		// Accessors
+		inline std::optional<FilePath> path() const { return _lb_path; }
 		inline const std::string& name() const { return _name; }
 		inline Object* player() { return objects.get(player_id); }
 		inline Object* camera() { return objects.get(camera_id); }

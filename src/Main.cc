@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		for (prev_phy_step_count = 0; prev_phy_step_count < 4; prev_phy_step_count++) {
+		for (prev_phy_step_count = 0; prev_phy_step_count < 4 && !GAME.quit; prev_phy_step_count++) {
 			auto ticks_since_prev_phy = sdl::get_ticks_since(prev_phy_ticks, GAME.pause_ticks, 1);
 			prev_phy_ticks += ticks_since_prev_phy;
 			time_since_last_phy += (float)ticks_since_prev_phy / 1000.0f;

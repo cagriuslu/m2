@@ -3,6 +3,7 @@
 #include "m2/Game.h"
 #include <rpg/Detail.h>
 #include "m2/Controls.h"
+#include <rpg/Context.h>
 #include <m2/game/CharacterMovement.h>
 #include <rpg/object/ExplosiveWeapon.h>
 #include <rpg/object/RangedWeapon.h>
@@ -91,6 +92,14 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_EXPLOSIVE))) {
 			auto& explosive = m2::create_object(obj.position, id).first;
 			rpg::create_explosive_object(explosive, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_EXPLOSIVE));
+		}
+	};
+	chr.update = [](MAYBE m2::Character& chr) {
+		if (not chr.has_resource(m2g::pb::RESOURCE_HP)) {
+			LOG_INFO("You died");
+			if (m2::ui::execute_blocking(rpg::Context::get_instance().you_died_menu()) == m2::ui::Action::QUIT) {
+				GAME.quit = true;
+			}
 		}
 	};
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
