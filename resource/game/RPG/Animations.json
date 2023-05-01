@@ -36,23 +36,23 @@
       "states": [
         {
           "type": "ANIMATION_STATE_IDLE",
-          "sprites": ["ENEMY_LOOKDOWN_00"]
+          "sprites": ["SKELETON_LOOKDOWN_00"]
         },
         {
           "type": "ANIMATION_STATE_WALKDOWN",
-          "sprites": ["ENEMY_LOOKDOWN_00", "ENEMY_LOOKDOWN_01", "ENEMY_LOOKDOWN_00", "ENEMY_LOOKDOWN_02"]
+          "sprites": ["SKELETON_LOOKDOWN_00", "SKELETON_LOOKDOWN_01", "SKELETON_LOOKDOWN_00", "SKELETON_LOOKDOWN_02"]
         },
         {
           "type": "ANIMATION_STATE_WALKRIGHT",
-          "sprites": ["ENEMY_LOOKRIGHT_00", "ENEMY_LOOKRIGHT_01", "ENEMY_LOOKRIGHT_00", "ENEMY_LOOKRIGHT_02"]
+          "sprites": ["SKELETON_LOOKRIGHT_00", "SKELETON_LOOKRIGHT_01", "SKELETON_LOOKRIGHT_00", "SKELETON_LOOKRIGHT_02"]
         },
         {
           "type": "ANIMATION_STATE_WALKUP",
-          "sprites": ["ENEMY_LOOKUP_00", "ENEMY_LOOKUP_01", "ENEMY_LOOKUP_00", "ENEMY_LOOKUP_02"]
+          "sprites": ["SKELETON_LOOKUP_00", "SKELETON_LOOKUP_01", "SKELETON_LOOKUP_00", "SKELETON_LOOKUP_02"]
         },
         {
           "type": "ANIMATION_STATE_WALKLEFT",
-          "sprites": ["ENEMY_LOOKLEFT_00", "ENEMY_LOOKLEFT_01", "ENEMY_LOOKLEFT_00", "ENEMY_LOOKLEFT_02"]
+          "sprites": ["SKELETON_LOOKLEFT_00", "SKELETON_LOOKLEFT_01", "SKELETON_LOOKLEFT_00", "SKELETON_LOOKLEFT_02"]
         }
       ],
       "initialState": "ANIMATION_STATE_IDLE"

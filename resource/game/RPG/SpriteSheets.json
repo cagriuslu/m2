@@ -82,168 +82,6 @@
           "isBackgroundTile": true
         },
         {
-          "type": "ENEMY_LOOKDOWN_00",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 0, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12},
-          "backgroundCollider": {
-            "circRadiusPx": 12
-          },
-          "foregroundCollider": {
-            "circRadiusPx": 12
-          }
-        },
-        {
-          "type": "ENEMY_LOOKDOWN_01",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 48, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKDOWN_02",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 96, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKLEFT_00",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 144, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKLEFT_01",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 192, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKLEFT_02",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 240, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKRIGHT_00",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 288, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKRIGHT_01",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 336, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKRIGHT_02",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 384, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKUP_00",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 432, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKUP_01",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 480, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
-          "type": "ENEMY_LOOKUP_02",
-          "effects": [
-            {
-              "type": "SPRITE_EFFECT_MASK",
-              "maskColor": {
-                "r": 255, "g": 0, "b": 0, "a": 255
-              }
-            }
-          ],
-          "rect": {"x": 48, "y": 528, "w": 48, "h": 48},
-          "centerOffsetPx": {"x": -0.5, "y": 12}
-        },
-        {
           "type": "FLOPPY_DISK",
           "rect": {"x": 144, "y": 144, "w": 48, "h": 48}
         }
@@ -749,6 +587,176 @@
           ],
           "rect": {"x": 485, "y": 224, "w": 33, "h": 32},
           "centerOffsetPx": {"x": 0, "y": 8.5}
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/monsterstimefantasyrpgspritepack/monster4.png",
+      "ppm": 26,
+      "sprites": [
+        {
+          "type": "SKELETON_LOOKDOWN_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 614, "y": 28, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5},
+          "backgroundCollider": {
+            "centerOffsetPx": {"x": 0, "y": 6},
+            "circRadiusPx": 3.5
+          },
+          "foregroundCollider": {
+            "centerOffsetPx": {"x": 0, "y": -4},
+            "circRadiusPx": 6
+          }
+        },
+        {
+          "type": "SKELETON_LOOKDOWN_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 554, "y": 28, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKDOWN_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 674, "y": 28, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKLEFT_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 614, "y": 92, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKLEFT_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 554, "y": 92, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKLEFT_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 674, "y": 92, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKRIGHT_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 614, "y": 156, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKRIGHT_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 554, "y": 156, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKRIGHT_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 674, "y": 156, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKUP_00",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 614, "y": 220, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKUP_01",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 554, "y": 220, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
+        },
+        {
+          "type": "SKELETON_LOOKUP_02",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_MASK",
+              "maskColor": {
+                "r": 255, "g": 0, "b": 0, "a": 255
+              }
+            }
+          ],
+          "rect": {"x": 674, "y": 220, "w": 24, "h": 36},
+          "centerOffsetPx": {"x": -0.5, "y": 8.5}
         }
       ]
     }

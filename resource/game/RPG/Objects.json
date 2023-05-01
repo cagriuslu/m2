@@ -9,7 +9,7 @@
     },
     {
       "type": "SKELETON",
-      "levelEditorSpriteType": "ENEMY_LOOKDOWN_00"
+      "levelEditorSpriteType": "SKELETON_LOOKDOWN_00"
     },
     {
       "type": "CASTLE_FINISH_POINT",
