@@ -44,9 +44,8 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_EXPLOSIVE));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
@@ -78,12 +77,36 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(move_vector * (move_force * GAME.delta_time_s())), true);
 		}
 
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_MACHINE_GUN))) {
-			// New projectile
-			auto& projectile = m2::create_object(obj.position, id).first;
-			rpg::create_ranged_weapon_object(projectile, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_MACHINE_GUN));
-			// Knock-back
-			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
+		// Primary weapon
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
+			auto shoot = [&](const m2::Item& weapon) {
+				auto [proj_obj, s] = m2::create_object(obj.position, id);
+				rpg::create_ranged_weapon_object(proj_obj, vector_to_mouse, weapon);
+				// Knock-back
+				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
+			};
+
+			// Check if there is a special ranged weapon
+			auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
+			if (special_it != chr.end_items()) {
+				// Check if special ammo left
+				if (chr.has_resource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
+					// Try to use the weapon
+					if (chr.use_item(special_it)) {
+						shoot(*special_it);
+					}
+				} else {
+					// Remove weapon if no ammo left
+					chr.remove_item(special_it);
+				}
+			} else {
+				// Find default weapon
+				auto default_it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
+				// Try to use the weapon
+				if (chr.use_item(default_it)) {
+					shoot(*default_it);
+				}
+			}
 		}
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 			auto& melee = m2::create_object(obj.position, id).first;

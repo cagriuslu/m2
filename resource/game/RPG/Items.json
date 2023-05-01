@@ -45,11 +45,12 @@
     },
     {
       "type": "ITEM_REUSABLE_GUN",
+      "category": "ITEM_CATEGORY_DEFAULT_RANGED_WEAPON",
       "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
-          "amount": 0.1
+          "amount": 0.66
         }
       ],
       "benefits": [
@@ -88,11 +89,16 @@
     },
     {
       "type": "ITEM_REUSABLE_MACHINE_GUN",
+      "category": "ITEM_CATEGORY_SPECIAL_RANGED_WEAPON",
       "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
           "amount": 0.1
+        },
+        {
+          "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
+          "amount": 1.0
         }
       ],
       "benefits": [
@@ -132,10 +138,15 @@
     },
     {
       "type": "ITEM_REUSABLE_EXPLOSIVE",
+      "category": "ITEM_CATEGORY_SPECIAL_RANGED_WEAPON",
       "usage": "REUSABLE",
       "costs": [
         {
           "type": "RESOURCE_RANGED_ENERGY",
+          "amount": 1.0
+        },
+        {
+          "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
           "amount": 1.0
         }
       ],
@@ -180,6 +191,7 @@
     },
     {
       "type": "ITEM_REUSABLE_SWORD",
+      "category": "ITEM_CATEGORY_DEFAULT_MELEE_WEAPON",
       "usage": "REUSABLE",
       "costs": [
         {
