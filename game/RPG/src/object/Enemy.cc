@@ -139,14 +139,8 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	return {};
 }
 
-void rpg::Enemy::move_to(m2::Object& obj, const m2::Vec2f& target, float force) {
-	// Calculate direction vector
-	const auto& obj_position = obj.position;
-	auto direction = (target - obj_position).normalize();
-	move_towards(obj, direction, force);
-}
-
-void rpg::Enemy::move_towards(m2::Object& obj, const m2::Vec2f& direction, float force) {
+void rpg::Enemy::move_towards(m2::Object& obj, m2::Vec2f direction, float force) {
+	direction = direction.normalize();
 	// Walk animation
 	auto char_move_dir = m2::to_character_movement_direction(direction);
 	auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);

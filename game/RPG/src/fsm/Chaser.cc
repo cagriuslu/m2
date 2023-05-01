@@ -84,14 +84,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_triggered() {
 	// If not stunned
 	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
-		if (1 < reverse_waypoints.size()) {
-			auto end = reverse_waypoints.end();
-			auto first_pos = *std::prev(end, 1);
-			auto target_pos = *std::prev(end, 2);
-			if (first_pos != target_pos) {
-				Enemy::move_to(*obj, m2::Vec2f{target_pos}, 25000.0f);
-			}
-		}
+		follow_waypoints();
 		// Attack if player is close
 		if (obj->position.is_near(LEVEL.player()->position, ai->attack_distance())) {
 			// Based on what the capability is
@@ -143,14 +136,19 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 }
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up() {
-	// If not stunned
+	follow_waypoints();
+	return {};
+}
+
+void rpg::ChaserFsm::follow_waypoints() {
 	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < reverse_waypoints.size()) {
 		auto end = reverse_waypoints.end();
 		auto first_pos = *std::prev(end, 1);
 		auto target_pos = *std::prev(end, 2);
 		if (first_pos != target_pos) {
-			Enemy::move_to(*obj, m2::Vec2f{target_pos}, 25000.0f);
+			auto first_pos_f = m2::Vec2f{first_pos};
+			auto target_pos_f = m2::Vec2f{target_pos};
+			Enemy::move_towards(*obj, target_pos_f - first_pos_f, 25000.0f);
 		}
 	}
-	return {};
 }

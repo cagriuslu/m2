@@ -39,6 +39,8 @@ namespace rpg {
 		std::optional<ChaserMode> handle_physics_step_while_triggered();
 		std::optional<ChaserMode> handle_alarm_while_gave_up();
 		std::optional<ChaserMode> handle_physics_step_while_gave_up();
+
+		void follow_waypoints();
 	};
 }
 
