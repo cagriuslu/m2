@@ -7,17 +7,19 @@ enum ResourceType {
 
     // TTL of objects with a limited life (Ex. projectiles)
     RESOURCE_TTL = 1001;
+    // TTL of an explosion
+    RESOURCE_EXPLOSION_TTL = 1002;
     // TTL of stun effect
-    RESOURCE_STUN_TTL = 1002;
+    RESOURCE_STUN_TTL = 1003;
     // TTL of visual effects after taking a damage
-    RESOURCE_DAMAGE_EFFECT_TTL = 1003;
+    RESOURCE_DAMAGE_EFFECT_TTL = 1004;
     // Energy required to dash
-    RESOURCE_DASH_ENERGY = 1004;
+    RESOURCE_DASH_ENERGY = 1005;
     // Energy required for ranged attack
-    RESOURCE_RANGED_ENERGY = 1005;
+    RESOURCE_RANGED_ENERGY = 1006;
     // Energy required for melee attack
-    RESOURCE_MELEE_ENERGY = 1006;
+    RESOURCE_MELEE_ENERGY = 1007;
 
     // Ammo
-    RESOURCE_SPECIAL_RANGED_WEAPON_AMMO = 1007;
+    RESOURCE_SPECIAL_RANGED_WEAPON_AMMO = 1008;
 }

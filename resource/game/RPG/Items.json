@@ -232,6 +232,16 @@
       ]
     },
     {
+      "type": "ITEM_AUTOMATIC_EXPLOSIVE_TTL",
+      "usage": "AUTOMATIC",
+      "benefits": [
+        {
+          "type": "RESOURCE_EXPLOSION_TTL",
+          "amount": -1.0
+        }
+      ]
+    },
+    {
       "type": "ITEM_AUTOMATIC_STUN_TTL",
       "usage": "AUTOMATIC",
       "benefits": [

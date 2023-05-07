@@ -26,6 +26,8 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	float angular_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_ANGULAR_ACCURACY, 1.0f);
 	float average_damage = ranged_weapon.get_attribute(ATTRIBUTE_AVERAGE_DAMAGE);
 	float damage_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_ACCURACY, 1.0f);
+	float damage_radius = ranged_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_RADIUS, 0.0f); // Explosive if non-zero
+	bool is_explosive = (0.0f < damage_radius);
 	float average_ttl = ranged_weapon.get_attribute(ATTRIBUTE_AVERAGE_TTL);
 	float ttl_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_TTL_ACCURACY, 1.0f);
 
@@ -33,10 +35,14 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	auto direction = m2::Vec2f::from_angle(angle);
 	float ttl = m2::apply_accuracy(average_ttl, ttl_accuracy);
 
+	const auto& sprite = GAME.get_sprite(ranged_weapon.game_sprite());
+
 	// Add physics
 	auto& phy = obj.add_physique();
 	auto bp = m2::box2d::example_bullet_body_blueprint();
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(0.167f);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(sprite.foreground_collider_center_offset_m().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(sprite.foreground_collider_center_offset_m().y);
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(sprite.foreground_collider_circ_radius_m());
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
 	bp.set_fixed_rotation(true);
@@ -44,7 +50,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * linear_speed));
 
 	// Add graphics
-	auto& gfx = obj.add_graphic(GAME.get_sprite(SpriteType::GUN_BULLET));
+	auto& gfx = obj.add_graphic(sprite);
 	gfx.draw_angle = angle;
 
 	// Add character
@@ -52,26 +58,64 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	chr.add_item(GAME.get_item(ITEM_AUTOMATIC_TTL));
 	chr.add_resource(RESOURCE_TTL, ttl);
 
-	chr.update = [&](m2::Character& chr) {
+	chr.update = [=, &phy, &obj](m2::Character& chr) {
 		if (!chr.has_resource(RESOURCE_TTL)) {
-			GAME.add_deferred_action(m2::create_object_deleter(chr.object_id));
+			if (is_explosive) {
+				LOG_DEBUG("Exploding...");
+				m2::box2d::destroy_body(phy.body);
+				auto bp = m2::box2d::example_bullet_body_blueprint();
+				bp.mutable_background_fixture()->mutable_circ()->set_radius(damage_radius);
+				bp.mutable_background_fixture()->set_is_sensor(true);
+				bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
+				phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
+				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
+				chr.add_item(GAME.get_item(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
+				chr.set_resource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
+			} else {
+				LOG_DEBUG("Destroying self");
+				GAME.add_deferred_action(m2::create_object_deleter(chr.object_id));
+			}
 		}
 	};
-	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		auto& other_obj = other.parent();
-		if (other_obj.character_id()) {
-			m2::Character::execute_interaction(chr, InteractionType::COLLIDE_TO, other_obj.character(), InteractionType::GET_COLLIDED_BY);
-			// TODO knock-back
+	phy.on_collision = [=, &chr](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+		if (is_explosive && chr.has_resource(RESOURCE_TTL)) {
+			LOG_DEBUG("Explosive hit a target during flight, will explode next step");
+			chr.set_resource(RESOURCE_TTL, 0.0f); // Clear TTL, chr.update will create the explosion
+		} else {
+			if (other.parent().character_id()) {
+				LOG_DEBUG("Hit a target, triggering interaction...");
+				m2::Character::execute_interaction(chr, InteractionType::COLLIDE_TO, other.parent().character(), InteractionType::GET_COLLIDED_BY);
+				// TODO knock-back
+			}
 		}
 	};
 	chr.interact = [=](m2::Character& self, m2::Character& other, InteractionType interaction_type) {
-		if (interaction_type == InteractionType::COLLIDE_TO && self.has_resource(RESOURCE_TTL)) {
-			// Calculate damage
-			float damage = m2::apply_accuracy(average_damage, damage_accuracy);
-			// Create and give damage item
-			other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
-			// Clear TTL
-			self.clear_resource(RESOURCE_TTL);
+		if (interaction_type == InteractionType::COLLIDE_TO) {
+			if (is_explosive && self.has_resource(RESOURCE_EXPLOSION_TTL)) {
+				LOG_DEBUG("Explosive damage");
+				auto distance = self.parent().position.distance(other.parent().position);
+				auto damage_ratio = distance / damage_radius;
+				if (damage_ratio < 1.1f) {
+					// Calculate damage
+					float damage = m2::apply_accuracy(average_damage, damage_accuracy) * damage_ratio;
+					// Create and give damage item
+					other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
+				}
+			} else if (self.has_resource(RESOURCE_TTL)) {
+				LOG_DEBUG("Regular damage");
+				// Calculate damage
+				float damage = m2::apply_accuracy(average_damage, damage_accuracy);
+				// Create and give damage item
+				other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
+				// Clear TTL
+				self.clear_resource(RESOURCE_TTL);
+			}
+		}
+	};
+	phy.post_step = [&chr](m2::Physique& phy) {
+		if (chr.has_resource(RESOURCE_EXPLOSION_TTL)) {
+			LOG_DEBUG("Exploded");
+			GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
 		}
 	};
 

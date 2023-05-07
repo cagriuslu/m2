@@ -5,7 +5,6 @@
 #include "m2/Controls.h"
 #include <rpg/Context.h>
 #include <m2/game/CharacterMovement.h>
-#include <rpg/object/ExplosiveWeapon.h>
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
 #include <m2/box2d/Detail.h>
@@ -111,10 +110,6 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 			auto& melee = m2::create_object(obj.position, id).first;
 			rpg::create_melee_object(melee, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
-		}
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::MIDDLE) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_EXPLOSIVE))) {
-			auto& explosive = m2::create_object(obj.position, id).first;
-			rpg::create_explosive_object(explosive, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_EXPLOSIVE));
 		}
 	};
 	chr.update = [](MAYBE m2::Character& chr) {
