@@ -107,6 +107,12 @@
           "nInf": true
         }
       ],
+      "acquireBenefits": [
+        {
+          "type": "RESOURCE_SPECIAL_RANGED_WEAPON_AMMO",
+          "amount": 80
+        }
+      ],
       "attributes": [
         {
           "type": "ATTRIBUTE_LINEAR_SPEED",

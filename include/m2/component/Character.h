@@ -128,7 +128,7 @@ namespace m2 {
 	/// FullCharacter can hold any number of items, and can have any Resource
 	class FullCharacter : public Character {
 		std::vector<SmartPointer<const Item>> _items;
-		std::array<internal::ResourceAmount, m2g::pb::ResourceType_ARRAYSIZE> _resources;
+		std::vector<internal::ResourceAmount> _resources = std::vector<internal::ResourceAmount>(protobuf::enum_value_count<m2g::pb::ResourceType>());
 
 	public:
 		FullCharacter() = default;

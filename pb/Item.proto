@@ -35,9 +35,10 @@ message Item {
   bool use_on_acquire = 4;
   repeated Resource costs = 5;
   repeated Resource benefits = 6;
-  repeated Attribute attributes = 7;
-  m2g.pb.SpriteType game_sprite = 8;
-  m2g.pb.SpriteType ui_sprite = 9;
+  repeated Resource acquire_benefits = 7; // Gained regardless use_on_acquire or not. Gained before benefits.
+  repeated Attribute attributes = 8;
+  m2g.pb.SpriteType game_sprite = 9;
+  m2g.pb.SpriteType ui_sprite = 10;
 }
 
 message Items {

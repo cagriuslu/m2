@@ -80,7 +80,7 @@ bool m2::Character::use_item(const Iterator& item_it, float resource_multiplier)
 
 		bool enough = true;
 		for (size_t i = 0; i < merged_costs.size(); ++i) {
-			if (0.0f < merged_costs[i] && get_resource((m2g::pb::ResourceType) i) <= merged_costs[i]) {
+			if (0.0f < merged_costs[i] && get_resource((m2g::pb::ResourceType) i) < merged_costs[i]) {
 				enough = false;
 				break;
 			}
@@ -134,6 +134,11 @@ m2::Character::Iterator m2::TinyCharacter::end_items() const {
 }
 void m2::TinyCharacter::add_item(SmartPointer<const Item>&& item) {
 	_item = std::move(item);
+	// Get acquire benefits
+	for (size_t i = 0; i < _item->get_acquire_benefit_count(); ++i) {
+		const auto benefit = _item->get_acquire_benefit_by_index(i);
+		add_resource(benefit.first, benefit.second);
+	}
 	if (_item->use_on_acquire()) {
 		use_item(begin_items());
 	}
@@ -255,6 +260,11 @@ m2::Character::Iterator m2::FullCharacter::end_items() const {
 }
 void m2::FullCharacter::add_item(SmartPointer<const Item>&& item) {
 	_items.emplace_back(std::move(item));
+	// Get acquire benefits
+	for (size_t i = 0; i < _items.back()->get_acquire_benefit_count(); ++i) {
+		const auto benefit = _items.back()->get_acquire_benefit_by_index(i);
+		add_resource(benefit.first, benefit.second);
+	}
 	if (_items.back()->use_on_acquire()) {
 		use_item(Iterator{*this, full_character_iterator_incrementor, {}, _items.size() - 1, _items.back().get()});
 	}

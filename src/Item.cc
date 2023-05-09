@@ -6,10 +6,10 @@
 
 m2::TinyItem::TinyItem(m2g::pb::ItemType type, m2g::pb::ItemCategory category, pb::Usage usage, bool use_on_acquire,
 		std::pair<m2g::pb::ResourceType, float> cost, std::pair<m2g::pb::ResourceType, float> benefit,
-		std::pair<m2g::pb::AttributeType, float> attribute, m2g::pb::SpriteType game_sprite,
-		m2g::pb::SpriteType ui_sprite) : _type(type), _category(category), _usage(usage),
-		_use_on_acquire(use_on_acquire), _cost(std::move(cost)), _benefit(std::move(benefit)), _attribute(std::move(attribute)),
-		_game_sprite(game_sprite), _ui_sprite(ui_sprite) {}
+		std::pair<m2g::pb::ResourceType, float> acquire_benefit, std::pair<m2g::pb::AttributeType, float> attribute,
+		m2g::pb::SpriteType game_sprite, m2g::pb::SpriteType ui_sprite) : _type(type), _category(category), _usage(usage),
+		_use_on_acquire(use_on_acquire), _cost(std::move(cost)), _benefit(std::move(benefit)), _acquire_benefit(std::move(acquire_benefit)),
+		_attribute(std::move(attribute)), _game_sprite(game_sprite), _ui_sprite(ui_sprite) {}
 
 std::pair<m2g::pb::ResourceType, float> m2::TinyItem::get_cost_by_index(size_t i) const {
 	if (i == 0) {
@@ -61,6 +61,31 @@ bool m2::TinyItem::has_benefit(m2g::pb::ResourceType resource_type) const {
 	}
 	return false;
 }
+std::pair<m2g::pb::ResourceType, float> m2::TinyItem::get_acquire_benefit_by_index(size_t i) const {
+	if (i == 0) {
+		return _acquire_benefit;
+	} else {
+		throw M2ERROR("Out of bounds cost index");
+	}
+}
+float m2::TinyItem::get_acquire_benefit(m2g::pb::ResourceType resource_type) const {
+	if (_acquire_benefit.first == resource_type) {
+		return _acquire_benefit.second;
+	}
+	return 0.0f;
+}
+float m2::TinyItem::try_get_acquire_benefit(m2g::pb::ResourceType resource_type, float default_value) const {
+	if (_acquire_benefit.first == resource_type) {
+		return _acquire_benefit.second;
+	}
+	return default_value;
+}
+bool m2::TinyItem::has_acquire_benefit(m2g::pb::ResourceType resource_type) const {
+	if (_acquire_benefit.first == resource_type) {
+		return _acquire_benefit.second != 0.0f;
+	}
+	return false;
+}
 std::pair<m2g::pb::AttributeType, float> m2::TinyItem::get_attribute_by_index(size_t i) const {
 	if (i == 0) {
 		return _attribute;
@@ -94,6 +119,9 @@ m2::FullItem::FullItem(pb::Item item) : _item(std::move(item)) {
 	for (const auto& benefit : _item.benefits()) {
 		_benefits[protobuf::enum_index(benefit.type())] = get_resource_amount(benefit);
 	}
+	for (const auto& acquire_benefit : _item.acquire_benefits()) {
+		_acquire_benefits[protobuf::enum_index(acquire_benefit.type())] = get_resource_amount(acquire_benefit);
+	}
 	for (const auto& attribute : _item.attributes()) {
 		_attributes[protobuf::enum_index(attribute.type())] = attribute.amount();
 	}
@@ -126,6 +154,20 @@ float m2::FullItem::try_get_benefit(m2g::pb::ResourceType type, float default_va
 }
 bool m2::FullItem::has_benefit(m2g::pb::ResourceType type) const {
 	return get_benefit(type) != 0.0f;
+}
+std::pair<m2g::pb::ResourceType, float> m2::FullItem::get_acquire_benefit_by_index(size_t i) const {
+	const auto& acquire_benefit = _item.acquire_benefits((int) i);
+	return std::make_pair(acquire_benefit.type(), get_resource_amount(acquire_benefit));
+}
+float m2::FullItem::get_acquire_benefit(m2g::pb::ResourceType type) const {
+	return _acquire_benefits[protobuf::enum_index(type)];
+}
+float m2::FullItem::try_get_acquire_benefit(m2g::pb::ResourceType type, float default_value) const {
+	auto value = get_acquire_benefit(type);
+	return value != 0.0f ? value : default_value;
+}
+bool m2::FullItem::has_acquire_benefit(m2g::pb::ResourceType type) const {
+	return get_acquire_benefit(type) != 0.0f;
 }
 std::pair<m2g::pb::AttributeType, float> m2::FullItem::get_attribute_by_index(size_t i) const {
 	const auto& attr = _item.attributes((int) i);
@@ -187,5 +229,6 @@ float m2::get_resource_amount(const m2::pb::Resource& resource) {
 m2::SmartPointer<const m2::Item> m2::make_damage_item(m2g::pb::ResourceType resource_type, float damage) {
 	return make_dynamic<const Item>(new TinyItem(m2g::pb::ItemType{}, m2g::pb::ItemCategory{}, pb::CONSUMABLE, true,
 			std::pair<m2g::pb::ResourceType, float>{}, std::make_pair(resource_type, -damage),
-			std::pair<m2g::pb::AttributeType, float>{}, m2g::pb::SpriteType{}, m2g::pb::SpriteType{}));
+			std::pair<m2g::pb::ResourceType, float>{}, std::pair<m2g::pb::AttributeType, float>{}, m2g::pb::SpriteType{},
+			m2g::pb::SpriteType{}));
 }
