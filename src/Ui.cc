@@ -125,14 +125,23 @@ ui::Action ui::State::AbstractButton::handle_events(Events &events) {
 	if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.pop_ui_key_press(kb_shortcut)) {
 		run_action = true;
 	} else {
-		if (!depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, Rect2i{rect_px})) {
-			depressed = true;
-		} else if (depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, Rect2i{rect_px})) {
-			run_action = true;
+		if (not depressed) {
+			// Check if mouse pressed inside the rect
+			if (events.pop_mouse_button_press(MouseButton::PRIMARY, Rect2i{rect_px})) {
+				depressed = true;
+			}
+		} else {
+			// Check if mouse released inside the rect
+			if (events.pop_mouse_button_release(MouseButton::PRIMARY, Rect2i{rect_px})) {
+				depressed = false;
+				run_action = true;
+			} else if (events.pop_mouse_button_release(MouseButton::PRIMARY)) {
+				// Check if mouse released outside the rect
+				depressed = false;
+			}
 		}
 	}
 	if (run_action) {
-		depressed = false;
 		return std::visit(overloaded {
 				[](const Blueprint::Widget::Text& v) { return v.action_callback ? v.action_callback() : Action::CONTINUE; },
 				[](const Blueprint::Widget::Image& v) { return v.action_callback ? v.action_callback() : Action::CONTINUE; },
@@ -185,7 +194,7 @@ void ui::State::Image::draw() {
 		auto srcrect = sdl::to_rect(sprite->sprite().rect());
 		SDL_RenderCopy(GAME.renderer, sprite->sprite_sheet().texture(), &srcrect, &dstrect);
 	}
-	State::draw_border(rect_px, blueprint->border_width_px);
+	State::draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }
 
 ui::State::Text::Text(const Blueprint::Widget* blueprint) : AbstractButton(blueprint), font_texture(sdl::generate_font(std::get<Blueprint::Widget::Text>(blueprint->variant).initial_text.data())) {}
@@ -204,9 +213,14 @@ ui::Action ui::State::Text::update_content() {
 void ui::State::Text::draw() {
 	State::draw_background_color(rect_px, blueprint->background_color);
 	if (font_texture) {
+		if (depressed) {
+			SDL_SetTextureColorMod(font_texture.get(), 127, 127, 127);
+		} else {
+			SDL_SetTextureColorMod(font_texture.get(), 255, 255, 255);
+		}
 		draw_text(sdl::expand_rect(rect_px, -static_cast<int>(blueprint->padding_width_px)), *font_texture, std::get<Blueprint::Widget::Text>(blueprint->variant).alignment);
 	}
-	State::draw_border(rect_px, blueprint->border_width_px);
+	State::draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }
 
 ui::State::NestedUi::NestedUi(const Blueprint::Widget *blueprint) : Widget(blueprint) {
@@ -543,9 +557,9 @@ void ui::State::draw_background_color(const SDL_Rect& rect, const SDL_Color& col
     }
     SDL_RenderFillRect(GAME.renderer, &rect);
 }
-void ui::State::draw_border(const SDL_Rect& rect, unsigned border_width_px) {
+void ui::State::draw_border(const SDL_Rect& rect, unsigned border_width_px, const SDL_Color& color) {
     if (border_width_px) {
-        SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
         SDL_RenderDrawRect(GAME.renderer, &rect);
     }
 }

@@ -217,8 +217,9 @@ namespace m2::ui {
 		static std::unique_ptr<State::Widget> create_widget_state(const Blueprint::Widget& blueprint);
 
     public:
+		// Helpers
         static void draw_background_color(const SDL_Rect& rect, const SDL_Color& color);
-        static void draw_border(const SDL_Rect& rect, unsigned border_width_px);
+        static void draw_border(const SDL_Rect& rect, unsigned border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 	};
 
     Action execute_blocking(const Blueprint* blueprint);
