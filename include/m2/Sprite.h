@@ -9,6 +9,7 @@
 #include "Vec2f.h"
 #include <SDL2/SDL.h>
 #include <optional>
+#include <filesystem>
 #include <string>
 #include <memory>
 
@@ -72,10 +73,10 @@ namespace m2 {
 		[[nodiscard]] float foreground_collider_circ_radius_m() const;
 	};
 
-	std::vector<SpriteSheet> load_sprite_sheets(const std::string& sprite_sheets_path, SDL_Renderer* renderer);
+	std::vector<SpriteSheet> load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer* renderer);
 	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet);
 	std::vector<m2g::pb::SpriteType> list_level_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets);
-	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(const std::string& objects_path);
+	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(const std::filesystem::path& objects_path);
 }
 
 #endif //M2_SPRITE_H

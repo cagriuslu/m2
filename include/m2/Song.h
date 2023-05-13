@@ -4,6 +4,7 @@
 #include "Synth.h"
 #include <Song.pb.h>
 #include <vector>
+#include <filesystem>
 
 namespace m2 {
 	class Song {
@@ -17,7 +18,7 @@ namespace m2 {
 		[[nodiscard]] inline const AudioSample* data() const { return _samples.data(); }
 	};
 
-	std::vector<Song> load_songs(const std::string& path);
+	std::vector<Song> load_songs(const std::filesystem::path& path);
 }
 
 #endif //M2_SONG_H

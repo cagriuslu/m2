@@ -212,7 +212,7 @@ float m2::Sprite::foreground_collider_circ_radius_m() const {
 	return _foreground_collider_circ_radius_m;
 }
 
-std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::string &sprite_sheets_path, SDL_Renderer *renderer) {
+std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer *renderer) {
 	auto sheets = protobuf::json_file_to_message<pb::SpriteSheets>(sprite_sheets_path);
 	if (!sheets) {
 		throw M2ERROR(sheets.error());
@@ -266,7 +266,7 @@ std::vector<m2g::pb::SpriteType> m2::list_level_editor_background_sprites(const 
 	return sprites_vector;
 }
 
-std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_sprites(const std::string& objects_path) {
+std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_sprites(const std::filesystem::path& objects_path) {
 	auto objects = protobuf::json_file_to_message<pb::Objects>(objects_path);
 	if (!objects) {
 		throw M2ERROR(objects.error());

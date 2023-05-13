@@ -98,7 +98,7 @@ void m2::Game::initialize_context() {
 	context = m2g::create_context();
 }
 
-m2::VoidValue m2::Game::load_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+m2::VoidValue m2::Game::load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	reset_state();
 	_level.emplace();

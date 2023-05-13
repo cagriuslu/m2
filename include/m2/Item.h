@@ -137,7 +137,7 @@ namespace m2 {
 		[[nodiscard]] inline m2g::pb::SpriteType ui_sprite() const override { return _item.ui_sprite(); }
 	};
 
-	std::vector<FullItem> load_items(const std::string& items_path);
+	std::vector<FullItem> load_items(const std::filesystem::path& items_path);
 	float get_resource_amount(const pb::Resource& resource);
 	SmartPointer<const Item> make_damage_item(m2g::pb::ResourceType resource_type, float damage);
 }

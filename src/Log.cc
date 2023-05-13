@@ -1,5 +1,6 @@
 #include <m2/Log.h>
 #include <m2/M2.h>
+#include <cstdarg>
 
 static bool unexpected_event_occured = false;
 
@@ -63,7 +64,7 @@ void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 }
 
 #if _MSC_VER > 1400
-void m2::detail::logf(LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...) {
+void m2::detail::logf(pb::LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...) {
 #else
 void m2::detail::logf(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) {
 #endif

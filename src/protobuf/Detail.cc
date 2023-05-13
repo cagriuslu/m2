@@ -10,7 +10,7 @@ m2::Value<std::string> m2::protobuf::message_to_json_string(const google::protob
 	}
 }
 
-m2::VoidValue m2::protobuf::message_to_json_file(const google::protobuf::Message& message, const std::string& path) {
+m2::VoidValue m2::protobuf::message_to_json_file(const google::protobuf::Message& message, const std::filesystem::path& path) {
 	std::string str;
 	auto status = google::protobuf::util::MessageToJsonString(message, &str);
 	if (status.ok()) {

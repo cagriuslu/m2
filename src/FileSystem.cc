@@ -1,9 +1,9 @@
 #include <m2/FileSystem.h>
 #include <sstream>
 
-m2::Value<std::string> m2::read_file(const std::string& path) {
-	FILE* file = fopen(path.c_str(), "r");
-	m2_fail_unless(file, "Unable to open file " + path);
+m2::Value<std::string> m2::read_file(const std::filesystem::path& path) {
+	FILE* file = fopen(path.string().c_str(), "r");
+	m2_fail_unless(file, "Unable to open file " + path.string());
 
 	std::stringstream ss;
 	while (not feof(file)) {
@@ -15,9 +15,9 @@ m2::Value<std::string> m2::read_file(const std::string& path) {
 	return ss.str();
 }
 
-m2::VoidValue m2::write_to_file(const std::string& str, const std::string& path) {
-	FILE* file = fopen(path.c_str(), "w");
-	m2_fail_unless(file, "Unable to open file " + path);
+m2::VoidValue m2::write_to_file(const std::string& str, const std::filesystem::path& path) {
+	FILE* file = fopen(path.string().c_str(), "w");
+	m2_fail_unless(file, "Unable to open file " + path.string());
 	auto size = str.size();
 	bool success = (fwrite(str.data(), 1, size, file) == size);
 	fclose(file);

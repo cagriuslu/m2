@@ -184,7 +184,7 @@ bool m2::FullItem::has_attribute(m2g::pb::AttributeType type) const {
 	return get_attribute(type) != 0.0f;
 }
 
-std::vector<m2::FullItem> m2::load_items(const std::string &items_path) {
+std::vector<m2::FullItem> m2::load_items(const std::filesystem::path& items_path) {
 	auto items = protobuf::json_file_to_message<pb::Items>(items_path);
 	if (!items) {
 		throw M2ERROR(items.error());

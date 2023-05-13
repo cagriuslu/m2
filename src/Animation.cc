@@ -12,7 +12,7 @@ m2::Animation::Animation(pb::Animation pb) : _animation(std::move(pb)) {
 	}
 }
 
-std::vector<m2::Animation> m2::load_animations(const std::string& path) {
+std::vector<m2::Animation> m2::load_animations(const std::filesystem::path& path) {
 	auto animations = protobuf::json_file_to_message<pb::Animations>(path);
 	if (!animations) {
 		throw M2ERROR(animations.error());

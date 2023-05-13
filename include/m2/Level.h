@@ -25,7 +25,7 @@ namespace m2 {
 
 	private:
 		Type _type{};
-		std::optional<FilePath> _lb_path;
+		std::optional<std::filesystem::path> _lb_path;
 		std::optional<pb::Level> _lb;
 		std::string _name;
 
@@ -58,7 +58,7 @@ namespace m2 {
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
 		std::vector<std::function<void(void)>> deferred_actions;
 
-		VoidValue init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint, const std::string& name);
+		VoidValue init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
 
 		struct LevelEditorState {
 			struct PaintMode {
@@ -109,7 +109,7 @@ namespace m2 {
 			static void save();
 		};
 		std::optional<LevelEditorState> level_editor_state;
-		VoidValue init_level_editor(const FilePath& lb_path);
+		VoidValue init_level_editor(const std::filesystem::path& lb_path);
 
 		struct PixelEditorState {
 			struct PaintMode {
@@ -136,12 +136,12 @@ namespace m2 {
 			static void save();
 		};
 		std::optional<PixelEditorState> pixel_editor_state;
-		VoidValue init_pixel_editor(const FilePath& path, int x_offset, int y_offset);
+		VoidValue init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
 
 		void begin_game_loop();
 
 		// Accessors
-		inline std::optional<FilePath> path() const { return _lb_path; }
+		inline std::optional<std::filesystem::path> path() const { return _lb_path; }
 		inline const std::string& name() const { return _name; }
 		inline Object* player() { return objects.get(player_id); }
 		inline Object* camera() { return objects.get(camera_id); }

@@ -121,7 +121,7 @@ namespace m2 {
 		void initialize_context();
 
 		// Level management
-		VoidValue load_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		VoidValue load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		VoidValue load_level_editor(const std::string& level_resource_path);
 		VoidValue load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		inline Level& level() { return *_level; }

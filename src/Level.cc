@@ -34,10 +34,10 @@ m2::Level::~Level() {
 	world = nullptr;
 }
 
-m2::VoidValue m2::Level::init_single_player(const std::variant<FilePath,pb::Level>& level_path_or_blueprint, const std::string& name) {
+m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
 	_type = Type::SINGLE_PLAYER;
-	if (std::holds_alternative<FilePath>(level_path_or_blueprint)) {
-		_lb_path = std::get<FilePath>(level_path_or_blueprint);
+	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
+		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		_lb = *lb;
@@ -216,7 +216,7 @@ void m2::Level::LevelEditorState::save() {
 	}
 	protobuf::message_to_json_file(level, *LEVEL._lb_path);
 }
-m2::VoidValue m2::Level::init_level_editor(const FilePath& lb_path) {
+m2::VoidValue m2::Level::init_level_editor(const std::filesystem::path& lb_path) {
 	_type = Type::LEVEL_EDITOR;
 	_lb_path = lb_path;
 	level_editor_state = LevelEditorState{};
@@ -296,7 +296,7 @@ void m2::Level::PixelEditorState::activate_color_picker_mode() {
 void m2::Level::PixelEditorState::save() {
 	// TODO
 }
-m2::VoidValue m2::Level::init_pixel_editor(const m2::FilePath &path, int x_offset, int y_offset) {
+m2::VoidValue m2::Level::init_pixel_editor(const std::filesystem::path &path, int x_offset, int y_offset) {
 	_type = Type::PIXEL_EDITOR;
 	_lb_path = path;
 	pixel_editor_state = PixelEditorState{};
@@ -304,9 +304,9 @@ m2::VoidValue m2::Level::init_pixel_editor(const m2::FilePath &path, int x_offse
 
 	if (std::filesystem::exists(path)) {
 		// Load image
-		sdl::SurfaceUniquePtr tmp_surface(IMG_Load(path.c_str()));
+		sdl::SurfaceUniquePtr tmp_surface(IMG_Load(path.string().c_str()));
 		if (not tmp_surface) {
-			return failure("Unable to load image " + path + ": " + IMG_GetError());
+			return failure("Unable to load image " + path.string() + ": " + IMG_GetError());
 		}
 		// Convert to a more conventional format
 		pixel_editor_state->image_surface.reset(SDL_ConvertSurfaceFormat(tmp_surface.get(), SDL_PIXELFORMAT_BGRA32, 0));

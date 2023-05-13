@@ -40,7 +40,7 @@ namespace m2 {
 		void log_header(pb::LogLevel lvl, const char* file, int line);
 
 #if _MSC_VER > 1400
-		void logf(LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...);
+		void logf(pb::LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...);
 #else
 		void logf(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) __attribute__ ((format (printf, 4, 5)));
 #endif

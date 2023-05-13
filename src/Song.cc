@@ -9,7 +9,7 @@ m2::Song::Song(const pb::Song &song) {
 	synth::mix_song(_samples.begin(), _samples.end(), song.synth_song());
 }
 
-std::vector<m2::Song> m2::load_songs(const std::string& path) {
+std::vector<m2::Song> m2::load_songs(const std::filesystem::path& path) {
 	auto songs = protobuf::json_file_to_message<pb::Songs>(path);
 	if (!songs) {
 		throw M2ERROR(songs.error());
