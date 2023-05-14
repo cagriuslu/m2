@@ -2,47 +2,11 @@
 #define M2_M2_H
 
 #include "Meta.h"
-#include <string>
-#include <array>
 
 #define MAYBE [[maybe_unused]]
 #define IF(cond) if (cond) cond
 
 namespace m2 {
-	////////////////////////////////////////////////////////////////////////
-	/////////////////////////// META PROGRAMMING ///////////////////////////
-	////////////////////////////////////////////////////////////////////////
-	template <typename T>
-	constexpr int to_int(T&& t) { return static_cast<int>(t); }
-
-	template <typename T>
-	constexpr unsigned to_unsigned(T&& t) { return static_cast<unsigned>(t); }
-
-	std::string to_string(int);
-	std::string to_string(unsigned int);
-	std::string to_string(long);
-	std::string to_string(unsigned long);
-	std::string to_string(long long);
-	std::string to_string(unsigned long long);
-	std::string to_string(float);
-	std::string to_string(double);
-	std::string to_string(const char*);
-	std::string to_string(const std::string&);
-
-	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
-
-	template<typename T, size_t N>
-	constexpr std::array<T, N> make_array(T value) {
-		std::array<T, N> a{};
-		for (auto& x : a)
-			x = value;
-		return a;
-	}
-
-	////////////////////////////////////////////////////////////////////////
-	///////////////////////////////// MATH /////////////////////////////////
-	////////////////////////////////////////////////////////////////////////
 	constexpr float PI = 3.141592653589793f;
 	constexpr float PI_MUL2 = 6.283185307179586f;
 	constexpr float PI_MUL3_DIV2 = 4.71238898038469f;

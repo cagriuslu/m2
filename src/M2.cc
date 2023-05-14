@@ -2,55 +2,10 @@
 #include <random>
 #include <memory>
 
-////////////////////////////////////////////////////////////////////////
-/////////////////////////// META PROGRAMMING ///////////////////////////
-////////////////////////////////////////////////////////////////////////
-std::string m2::to_string(int n) {
-	return std::to_string(n);
+namespace {
+	std::unique_ptr<std::mt19937> random_number_engine;
+	std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
 }
-
-std::string m2::to_string(unsigned int n) {
-	return std::to_string(n);
-}
-
-std::string m2::to_string(long n) {
-	return std::to_string(n);
-}
-
-std::string m2::to_string(unsigned long n) {
-	return std::to_string(n);
-}
-
-std::string m2::to_string(long long n) {
-	return std::to_string(n);
-}
-
-std::string m2::to_string(unsigned long long n) {
-	return std::to_string(n);
-}
-
-std::string m2::to_string(float n) {
-	return std::to_string(n);
-}
-
-std::string m2::to_string(double n) {
-	return std::to_string(n);
-}
-
-std::string m2::to_string(const char* s) {
-	return {s};
-}
-
-std::string m2::to_string(const std::string& s) {
-	return s;
-}
-
-////////////////////////////////////////////////////////////////////////
-///////////////////////////////// MATH /////////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-std::unique_ptr<std::mt19937> random_number_engine;
-std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
 
 uint32_t m2::rand(uint32_t max) {
 	return static_cast<uint32_t>(static_cast<float>(max) * m2::randf());
