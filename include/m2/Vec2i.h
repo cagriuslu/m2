@@ -28,12 +28,14 @@ namespace m2 {
 		[[nodiscard]] inline float length_sq() const { return (float)x * (float)x + (float)y * (float)y; }
 		[[nodiscard]] inline float length() const { return sqrt(length_sq()); }
 		[[nodiscard]] inline float distance(const Vec2i& other) const { return (other - *this).length(); }
+		[[nodiscard]] inline float distance_sq(const Vec2i& other) const { return (other - *this).length_sq(); }
 		[[nodiscard]] inline int manhattan_distance(const Vec2i& other) const { return abs(other.x - x) + abs(other.y - y); }
 
 		/// Iterates over the cells in the rectangle between this and the other cell.
 		void for_each_cell_in_between(const Vec2i& other, const std::function<void(const Vec2i&)>& f) const;
 	};
 	std::string to_string(const m2::Vec2i&);
+	std::string to_string(const std::vector<Vec2i>&);
 
 	struct Vec2iHash {
 		inline size_t operator()(const Vec2i& a) const { return std::hash<uint64_t>{}((uint64_t)a.x | ((uint64_t)a.y << 32)); }

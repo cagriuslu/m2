@@ -47,6 +47,7 @@ namespace m2 {
 		Vson& operator[](size_t index);
 		[[nodiscard]] const Vson* at(size_t index) const;
 		Vson* at(size_t index);
+		void push_back(Vson&& v);
 
 		// String
 		[[nodiscard]] const std::string& string_value() const;

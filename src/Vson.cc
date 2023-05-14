@@ -109,7 +109,7 @@ const m2::Vson& m2::Vson::operator[](const std::string &key) const {
 
 m2::Vson& m2::Vson::operator[](const std::string &key) {
 	if (std::holds_alternative<vson_nil>(value)) {
-		value = vson_object();
+		value = vson_object{};
 	}
 	return std::get<vson_object>(value)[key];
 }
@@ -148,7 +148,7 @@ const m2::Vson& m2::Vson::operator[](size_t index) const {
 
 m2::Vson& m2::Vson::operator[](size_t index) {
 	if (std::holds_alternative<vson_nil>(value)) {
-		value = vson_array();
+		value = vson_array{};
 	}
 	auto& array = std::get<vson_array>(value);
 	if (array.size() < index + 1) {
@@ -177,6 +177,18 @@ m2::Vson* m2::Vson::at(size_t index) {
 		return nullptr;
 	}
 	return &arr[index];
+}
+
+void m2::Vson::push_back(Vson&& v) {
+	if (std::holds_alternative<vson_nil>(value)) {
+		value = vson_array{};
+	}
+
+	if (std::holds_alternative<vson_array>(value)) {
+		std::get<vson_array>(value).emplace_back(std::move(v));
+	} else {
+		throw std::bad_variant_access();
+	}
 }
 
 m2::Vson& m2::Vson::operator=(const std::string& str) {

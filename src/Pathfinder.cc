@@ -21,7 +21,7 @@ m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	}
 }
 
-std::vector<m2::Vec2i> m2::Pathfinder::find_smooth_path(const Vec2f& from_f, const Vec2f& to_f, float max_distance_m) {
+m2::Path m2::Pathfinder::find_smooth_path(const Vec2f& from_f, const Vec2f& to_f, float max_distance_m) {
 	auto from = m2::Vec2i{from_f};
 	auto to = m2::Vec2i{to_f};
 	if (from == to) {
@@ -47,7 +47,23 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_smooth_path(const Vec2f& from_f, con
 	return {};
 }
 
-std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const Vec2i& to, float max_distance_m) {
+m2::Path m2::Pathfinder::find_grid_path(const Vec2i& from, const Vec2i& to, float max_distance_m) {
+	if (from == to) {
+		return {};
+	}
+
+	// Check if the target is too far even from bird's eye
+	auto distance_sq = from.distance_sq(to);
+	auto max_distance_sq = max_distance_m * max_distance_m;
+	if (max_distance_sq < distance_sq) {
+		return {};
+	}
+
+	// Check if there is direct eyesight
+	if (check_eyesight(from, to)) {
+		return {to, from};
+	}
+
 	auto max_grid_distance_m = max_distance_m * SQROOT_2;
 
 	// Holds the positions which will be explored next. Key is the priority, value is the position.
@@ -116,7 +132,7 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 	if (it == approach_map.end()) {
 		return {};
 	} else {
-		std::vector<m2::Vec2i> path{to};
+		Path path{to};
 		// Built reverse list of positions
 		while (it != approach_map.end() && from != it->second.first) {
 			path.emplace_back(it->second.first);
@@ -127,12 +143,12 @@ std::vector<m2::Vec2i> m2::Pathfinder::find_grid_path(const Vec2i& from, const V
 	}
 }
 
-std::vector<m2::Vec2i> m2::Pathfinder::smoothen_path(const std::vector<Vec2i>& reverse_path, float max_distance_m) {
+m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_distance_m) {
 	if (reverse_path.size() < 2) {
 		throw M2ERROR("Path contains less than two points");
 	}
 
-	std::vector<Vec2i> smooth_path{reverse_path.front()}; // insert `to`
+	Path smooth_path{reverse_path.front()}; // insert `to`
 	const auto* point1 = &reverse_path[0];
 	const auto* prev_point2 = point1;
 

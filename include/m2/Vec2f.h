@@ -42,6 +42,7 @@ namespace m2 {
 		[[nodiscard]] inline float length_sq() const { return x * x + y * y; }
 		[[nodiscard]] inline float length() const { return sqrt(length_sq()); }
 		[[nodiscard]] inline float distance_sq(const Vec2f& other) const { return (other - *this).length_sq(); }
+		[[nodiscard]] float distance_sq(const Vec2i& other) const;
 		[[nodiscard]] inline float distance(const Vec2f& other) const { return (other - *this).length(); }
 		[[nodiscard]] inline float angle_rads() const { return atan2f(y, x); }
 

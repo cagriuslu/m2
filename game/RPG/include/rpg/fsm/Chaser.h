@@ -2,6 +2,7 @@
 #define IMPL_CHASE_HH
 
 #include "m2/Object.h"
+#include "m2/Pathfinder.h"
 #include "m2/Fsm.h"
 #include <Enemy.pb.h>
 #include <list>
@@ -25,7 +26,7 @@ namespace rpg {
 		m2::Object* obj;
 		const pb::Ai* ai;
 		m2::Vec2f home_position;
-		std::vector<m2::Vec2i> reverse_waypoints;
+		m2::Path reverse_path;
 
 	public:
 		ChaserFsm(m2::Object* obj, const pb::Ai* ai);
@@ -40,6 +41,7 @@ namespace rpg {
 		std::optional<ChaserMode> handle_alarm_while_gave_up();
 		std::optional<ChaserMode> handle_physics_step_while_gave_up();
 
+		bool find_path(const m2::Vec2f& target, float max_distance);
 		void follow_waypoints();
 	};
 }

@@ -2,7 +2,6 @@
 #include <rpg/object/Enemy.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
-#include "m2/Pathfinder.h"
 #include <rpg/object/RangedWeapon.h>
 #include <rpg/object/MeleeWeapon.h>
 #include <rpg/fsm/Chaser.h>
@@ -11,6 +10,21 @@
 namespace {
 	float random_alarm_duration(float recalc_period) {
 		return recalc_period / 2.0f + recalc_period * m2::randf() * 1.5f;
+	}
+
+	m2::Path::const_reverse_iterator reverse_find_first_local_min(const m2::Path& list, const m2::Vec2f& pos) {
+		auto closest_it = list.crbegin();
+		auto closest_distance_sq = pos.distance_sq(*closest_it);
+		for (auto it = std::next(closest_it); it != list.rend(); ++it) {
+			auto new_closest_distance_sq = pos.distance_sq(*it);
+			if (closest_distance_sq < new_closest_distance_sq) {
+				break;
+			} else {
+				closest_it = it;
+				closest_distance_sq = new_closest_distance_sq;
+			}
+		}
+		return closest_it;
 	}
 }
 
@@ -51,9 +65,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 	// Check if player is close
 	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		// Check if path exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
-		if (not smooth_path.empty()) {
-			reverse_waypoints = std::move(smooth_path);
+		if (find_path(LEVEL.player()->position, ai->chaser().give_up_distance())) {
 			return ChaserMode::Triggered;
 		}
 	}
@@ -65,15 +77,10 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
 	// Check if player is still close
 	if (obj->position.is_near(LEVEL.player()->position, ai->chaser().give_up_distance())) {
 		// Recalculate path to player
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
-		if (not smooth_path.empty()) {
-			reverse_waypoints = std::move(smooth_path);
-		}
+		find_path(LEVEL.player()->position, ai->chaser().give_up_distance());
 	} else {
-		// Check if path to homePosition exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
-		if (not smooth_path.empty()) {
-			reverse_waypoints = std::move(smooth_path);
+		// Check if path to home_position exists
+		if (find_path(home_position, INFINITY)) {
 			return ChaserMode::GaveUp;
 		}
 	}
@@ -114,9 +121,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 	// Check if player is close
 	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		// Check if path to player exists
-		auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
-		if (not smooth_path.empty()) {
-			reverse_waypoints = std::move(smooth_path);
+		if (find_path(LEVEL.player()->position, ai->chaser().give_up_distance())) {
 			return ChaserMode::Triggered;
 		}
 	} else {
@@ -125,10 +130,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_gave_up() {
 			return ChaserMode::Idle;
 		} else {
 			// Recalculate path to homePosition
-			auto smooth_path = LEVEL.pathfinder->find_smooth_path(obj->position, LEVEL.player()->position, ai->chaser().give_up_distance());
-			if (not smooth_path.empty()) {
-				reverse_waypoints = std::move(smooth_path);
-			}
+			find_path(home_position, INFINITY);
 		}
 	}
 	arm(random_alarm_duration(ai->recalculation_period()));
@@ -140,15 +142,22 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up
 	return {};
 }
 
+bool rpg::ChaserFsm::find_path(const m2::Vec2f& target, float max_distance) {
+	auto smooth_path = LEVEL.pathfinder->find_grid_path(obj->position, target, max_distance);
+	if (not smooth_path.empty()) {
+		reverse_path = std::move(smooth_path);
+		return true;
+	}
+	return false;
+}
+
 void rpg::ChaserFsm::follow_waypoints() {
-	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < reverse_waypoints.size()) {
-		auto end = reverse_waypoints.end();
-		auto first_pos = *std::prev(end, 1);
-		auto target_pos = *std::prev(end, 2);
-		if (first_pos != target_pos) {
-			auto first_pos_f = m2::Vec2f{first_pos};
-			auto target_pos_f = m2::Vec2f{target_pos};
-			Enemy::move_towards(*obj, target_pos_f - first_pos_f, 25000.0f);
+	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < reverse_path.size()) {
+		auto closest_waypoint_it = reverse_find_first_local_min(reverse_path, obj->position);
+		auto next_waypoint_it = std::next(closest_waypoint_it);
+		if (next_waypoint_it != reverse_path.crend()) {
+			auto target = m2::Vec2f{*next_waypoint_it};
+			Enemy::move_towards(*obj, target - obj->position, 25000.0f);
 		}
 	}
 }

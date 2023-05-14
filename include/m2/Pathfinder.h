@@ -9,6 +9,8 @@
 #include <list>
 
 namespace m2 {
+	using Path = std::vector<Vec2i>;
+
 	class Pathfinder {
 		std::unordered_set<m2::Vec2i, m2::Vec2iHash> _blocked_locations;
 
@@ -23,14 +25,18 @@ namespace m2 {
 
 		/// Returns reverse path [to, to - 1, to - 2, ..., from + 1, from]
 		/// Returns empty vector if path not found
-		std::vector<Vec2i> find_smooth_path(const Vec2f& from, const Vec2f& to, float max_distance_m);
+		Path find_grid_path(const Vec2i& from, const Vec2i& to, float max_distance_m);
+		inline Path find_grid_path(const Vec2f& from, const Vec2f& to, float max_distance_m) { return find_grid_path(Vec2i{from}, Vec2i{to}, max_distance_m); }
+
+		/// Returns reverse path [to, to - 1, to - 2, ..., from + 1, from]
+		/// Returns empty vector if path not found
+		Path find_smooth_path(const Vec2f& from, const Vec2f& to, float max_distance_m);
 
 		/// If the world is not static, the cache should be cleared after the physics step
 		inline void clear_cache() { _approach_from_cache.clear(); }
 
 	private:
-		std::vector<Vec2i> find_grid_path(const Vec2i& from, const Vec2i& to, float max_distance_m);
-		static std::vector<Vec2i> smoothen_path(const std::vector<Vec2i>& reverse_path, float max_distance_m);
+		static Path smoothen_path(const Path& reverse_path, float max_distance_m);
 		static bool check_eyesight(const Vec2i& from, const Vec2i& to);
 	};
 }

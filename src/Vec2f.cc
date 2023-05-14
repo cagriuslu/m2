@@ -7,6 +7,10 @@ m2::Vec2i m2::Vec2f::iround() const {
 	return Vec2i{this->round()};
 }
 
+float m2::Vec2f::distance_sq(const Vec2i& other) const {
+	return this->distance_sq(Vec2f{other});
+}
+
 std::array<m2::Vec2f, 4> m2::Vec2f::aabb_corners(float aabb_radius) const {
 	return {Vec2f{x + aabb_radius, y + aabb_radius}, Vec2f{x - aabb_radius, y + aabb_radius}, Vec2f{x - aabb_radius, y - aabb_radius}, Vec2f{x + aabb_radius, y - aabb_radius}};
 }
