@@ -87,13 +87,25 @@ const ui::Blueprint::Widget::Variant select_mode_right_hud_shift_down_button = u
 		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_copy_button = ui::Blueprint::Widget::Text{
-		.initial_text = "Copy"
+		.initial_text = "Copy",
+		.action_callback = []() -> ui::Action {
+			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).copy();
+			return ui::Action::CONTINUE;
+		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_paste_bg_button = ui::Blueprint::Widget::Text{
-		.initial_text = "Paste BG"
+		.initial_text = "Paste BG",
+		.action_callback = []() -> ui::Action {
+			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).paste_bg();
+			return ui::Action::CONTINUE;
+		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_paste_fg_button = ui::Blueprint::Widget::Text{
-		.initial_text = "Paste FG"
+		.initial_text = "Paste FG",
+		.action_callback = []() -> ui::Action {
+			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).paste_fg();
+			return ui::Action::CONTINUE;
+		}
 };
 ui::Blueprint select_mode_right_hud = {
 		.w = 19, .h = 72,

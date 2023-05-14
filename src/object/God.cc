@@ -1,6 +1,11 @@
 #include <m2/object/God.h>
 #include <m2/Game.h>
 
+namespace {
+	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 180};
+	constexpr SDL_Color CLIPBOARD_COLOR = {0, 255, 0, 80};
+}
+
 m2::Id m2::obj::create_god() {
 	auto [obj, id] = create_object(Vec2f{});
 	obj.impl = std::make_unique<God>();
@@ -62,8 +67,10 @@ m2::Id m2::obj::create_god() {
 						std::visit(m2::overloaded {
 								[=](Level::LevelEditorState::SelectMode& v) {
 									if (v.selection_position_1) {
-										v.selection_position_2 = mouse_coordinates;
-										LOG_DEBUG("Selection position 2", *v.selection_position_2);
+										auto [low_position, high_position] = std::minmax(*v.selection_position_1, mouse_coordinates, Vec2iCompareTopLeftToBottomRight{});
+										v.selection_position_1 = low_position;
+										v.selection_position_2 = high_position;
+										LOG_DEBUG("Selection positions", *v.selection_position_1, *v.selection_position_2);
 									}
 								},
 								[](MAYBE auto& v) {}
@@ -79,26 +86,30 @@ m2::Id m2::obj::create_god() {
 		}
 	};
 
-	obj.add_graphic().post_draw = [](m2::Graphic& gfx) {
+	obj.add_graphic().post_draw = [](MAYBE m2::Graphic& gfx) {
 		// Check if level editor is active
 		if (LEVEL.type() == Level::Type::LEVEL_EDITOR) {
 			// Check if select mode is active
 			if (std::holds_alternative<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode)) {
 				auto& select_mode = std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode);
-				auto selection_color = SDL_Color{0, 127, 255, 180};
-				// Check if the selection is in progress
+				// Draw selection
 				if (select_mode.selection_position_1 && not select_mode.selection_position_2) {
-					// Check if the mouse is in the first quadrant
+					// If the mouse is in the first quadrant, color selection
 					if (Vec2i mouse_coordinates = GAME.mouse_position_world_m().iround(); not mouse_coordinates.is_negative()) {
-						// Color selection
 						select_mode.selection_position_1->for_each_cell_in_between(mouse_coordinates, [=](const Vec2i& cell) {
-							Graphic::color_cell(cell, selection_color);
+							Graphic::color_cell(cell, SELECTION_COLOR);
 						});
 					}
 				} else if (select_mode.selection_position_1 && select_mode.selection_position_2) {
 					// Selection is done, color selection
 					select_mode.selection_position_1->for_each_cell_in_between(*select_mode.selection_position_2, [=](const Vec2i& cell) {
-						Graphic::color_cell(cell, selection_color);
+						Graphic::color_cell(cell, SELECTION_COLOR);
+					});
+				}
+				// Draw clipboard
+				if (select_mode.clipboard_position_1 && select_mode.clipboard_position_2) {
+					select_mode.clipboard_position_1->for_each_cell_in_between(*select_mode.clipboard_position_2, [=](const Vec2i& cell) {
+						Graphic::color_cell(cell, CLIPBOARD_COLOR);
 					});
 				}
 			}

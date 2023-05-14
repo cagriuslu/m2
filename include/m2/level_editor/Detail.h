@@ -24,7 +24,7 @@ namespace m2::level_editor {
 				[](const typename PlaceholderMapType::value_type& kv) { return kv.first; });
 
 		// Sort bg placeholders from right to left, because unordered_map does not allow multiple values in the same position
-		std::sort(placeholders_to_move.begin(), placeholders_to_move.end(), Vec2iCompareRightBottomToLeftTop{});
+		std::sort(placeholders_to_move.begin(), placeholders_to_move.end(), Vec2iCompareBottomRightToTopLeft{});
 
 		// Move the placeholders
 		for (const auto& ph_position : placeholders_to_move) {

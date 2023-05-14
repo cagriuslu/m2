@@ -88,12 +88,13 @@ namespace m2 {
 				static void remove_object(const Vec2i& position);
 			};
 			struct SelectMode {
-				std::optional<m2::Vec2i> selection_position_1, selection_position_2;
-				void shift_right() const;
-				void shift_down() const;
-				void copy() const;
-				void paste_bg() const;
-				void paste_fg() const;
+				std::optional<m2::Vec2i> selection_position_1, selection_position_2; // TopLeft, BottomRight
+				std::optional<m2::Vec2i> clipboard_position_1, clipboard_position_2; // TopLeft, BottomRight
+				void shift_right();
+				void shift_down();
+				void copy();
+				void paste_bg();
+				void paste_fg();
 			};
 			struct ShiftMode {
 				enum class ShiftType {

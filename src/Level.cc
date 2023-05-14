@@ -171,7 +171,7 @@ void m2::Level::LevelEditorState::RemoveMode::remove_object(const Vec2i &positio
 		LEVEL.level_editor_state->fg_placeholders.erase(placeholders_it);
 	}
 }
-void m2::Level::LevelEditorState::SelectMode::shift_right() const {
+void m2::Level::LevelEditorState::SelectMode::shift_right() {
 	if (selection_position_1 && selection_position_2) {
 		auto min_x = std::min(selection_position_1->x, selection_position_2->x);
 		auto min_y = std::min(selection_position_1->y, selection_position_2->y);
@@ -181,7 +181,7 @@ void m2::Level::LevelEditorState::SelectMode::shift_right() const {
 		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
 	}
 }
-void m2::Level::LevelEditorState::SelectMode::shift_down() const {
+void m2::Level::LevelEditorState::SelectMode::shift_down() {
 	if (selection_position_1 && selection_position_2) {
 		auto min_x = std::min(selection_position_1->x, selection_position_2->x);
 		auto max_x = std::max(selection_position_1->x, selection_position_2->x);
@@ -191,9 +191,40 @@ void m2::Level::LevelEditorState::SelectMode::shift_down() const {
 		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
 	}
 }
-void m2::Level::LevelEditorState::SelectMode::copy() const {}
-void m2::Level::LevelEditorState::SelectMode::paste_bg() const {}
-void m2::Level::LevelEditorState::SelectMode::paste_fg() const {}
+void m2::Level::LevelEditorState::SelectMode::copy() {
+	if (selection_position_1 && selection_position_2) {
+		clipboard_position_1 = selection_position_1;
+		clipboard_position_2 = selection_position_2;
+		selection_position_1 = {};
+		selection_position_2 = {};
+	}
+}
+void m2::Level::LevelEditorState::SelectMode::paste_bg() {
+	if (selection_position_1 && selection_position_2 && clipboard_position_1 && clipboard_position_2) {
+		clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [=](const Vec2i& cell) {
+			auto it = LEVEL.level_editor_state->bg_placeholders.find(cell);
+			if (it != LEVEL.level_editor_state->bg_placeholders.end()) {
+				auto new_position = *selection_position_1 + (cell - *clipboard_position_1);
+				auto sprite_type = it->second.second;
+				LEVEL.level_editor_state->bg_placeholders[new_position] = std::make_pair(obj::create_placeholder(Vec2f{new_position}, GAME.get_sprite(sprite_type), false), sprite_type);
+			}
+		});
+	}
+}
+void m2::Level::LevelEditorState::SelectMode::paste_fg() {
+	if (selection_position_1 && selection_position_2 && clipboard_position_1 && clipboard_position_2) {
+		clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [=](const Vec2i& cell) {
+			auto it = LEVEL.level_editor_state->fg_placeholders.find(cell);
+			if (it != LEVEL.level_editor_state->fg_placeholders.end()) {
+				auto new_position = *selection_position_1 + (cell - *clipboard_position_1);
+				auto level_object = it->second.second;
+				level_object.mutable_position()->set_x(new_position.x);
+				level_object.mutable_position()->set_y(new_position.y);
+				LEVEL.level_editor_state->fg_placeholders[new_position] = std::make_pair(obj::create_placeholder(Vec2f{new_position}, GAME.get_sprite(GAME.level_editor_object_sprites[level_object.type()]), true), level_object);
+			}
+		});
+	}
+}
 void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) const {
 	if (shift_type == ShiftType::RIGHT) {
 		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x, INT32_MAX, INT32_MIN, INT32_MAX, 1, 0);
