@@ -272,6 +272,10 @@ int main(int argc, char **argv) {
 		for (auto gfx_it : LEVEL.graphics) {
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
+		/////////////////////////////// POST-GFX ///////////////////////////////
+		for (auto graphic_if : LEVEL.graphics) {
+			IF(graphic_if.first->post_draw)(*graphic_if.first);
+		}
 #ifdef DEBUG
 		// Draw debug shapes
 		for (auto physique_it : LEVEL.physics) {
@@ -289,10 +293,6 @@ int main(int argc, char **argv) {
 		SDL_RenderFillRect(GAME.renderer, &GAME.right_envelope_rect);
 		//////////////////////////////// PRESENT ///////////////////////////////
 		SDL_RenderPresent(GAME.renderer);
-		/////////////////////////////// POST-GFX ///////////////////////////////
-		for (auto graphic_if : LEVEL.graphics) {
-			IF(graphic_if.first->post_draw)(*graphic_if.first);
-		}
 		++gfx_draw_count;
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////

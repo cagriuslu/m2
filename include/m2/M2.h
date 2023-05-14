@@ -1,6 +1,7 @@
 #ifndef M2_M2_H
 #define M2_M2_H
 
+#include "Meta.h"
 #include <string>
 #include <array>
 

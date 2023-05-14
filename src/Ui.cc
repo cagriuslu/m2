@@ -121,6 +121,17 @@ ui::State::AbstractButton::AbstractButton(const ui::Blueprint::Widget *blueprint
 		),
 		depressed(false) {}
 ui::Action ui::State::AbstractButton::handle_events(Events &events) {
+	// Return early if there is no action callback
+	bool has_action_callback = std::visit(overloaded {
+			[](const Blueprint::Widget::Text& v) -> bool { return (bool) v.action_callback; },
+			[](const Blueprint::Widget::Image& v) -> bool { return (bool) v.action_callback; },
+			[](const Blueprint::Widget::CheckboxWithText& v) -> bool { return (bool) v.action_callback; },
+			[](MAYBE const auto& v) -> bool { return false; }
+	}, blueprint->variant);
+	if (!has_action_callback) {
+		return Action::CONTINUE;
+	}
+
 	bool run_action{};
 	if (kb_shortcut != SDL_SCANCODE_UNKNOWN && SDL_IsTextInputActive() == false && events.pop_ui_key_press(kb_shortcut)) {
 		run_action = true;

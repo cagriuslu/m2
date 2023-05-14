@@ -80,6 +80,7 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }
+
 void m2::Graphic::default_effect(Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only works if there is a sprite
@@ -118,4 +119,18 @@ void m2::Graphic::default_effect(Graphic& gfx) {
 	}
 	SDL_SetRenderDrawColor(GAME.renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(GAME.renderer, &green_rect);
+}
+
+void m2::Graphic::color_cell(const Vec2i& cell, SDL_Color color) {
+	auto screen_origin_to_cell_center_px = screen_origin_to_position_px(Vec2f{cell});
+	auto rect = SDL_Rect{
+		(int)roundf(screen_origin_to_cell_center_px.x) - (GAME.game_ppm() / 2),
+		(int)roundf(screen_origin_to_cell_center_px.y) - (GAME.game_ppm() / 2),
+		GAME.game_ppm(),
+		GAME.game_ppm()
+	};
+
+	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
+	SDL_RenderFillRect(GAME.renderer, &rect);
 }

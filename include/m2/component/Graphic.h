@@ -26,7 +26,7 @@ namespace m2 {
 		using Callback = std::function<void(Graphic&)>;
 		Callback pre_draw{};
 		Callback on_draw{};
-		Callback on_effect{};
+		Callback on_effect{}; // For drawing the health bar??
 		Callback post_draw{};
 
 		const Sprite* sprite{};
@@ -48,7 +48,9 @@ namespace m2 {
 		[[nodiscard]] Vec2f screen_origin_to_sprite_center_px() const;
 
 		static void default_draw(Graphic& gfx);
-		static void default_effect(Graphic& gfx);
+		static void default_effect(Graphic& gfx); // Draws health bar??
+		/// Color the world cell with the given color
+		static void color_cell(const Vec2i& cell, SDL_Color color);
 	};
 }
 

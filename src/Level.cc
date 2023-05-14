@@ -171,16 +171,39 @@ void m2::Level::LevelEditorState::RemoveMode::remove_object(const Vec2i &positio
 		LEVEL.level_editor_state->fg_placeholders.erase(placeholders_it);
 	}
 }
+void m2::Level::LevelEditorState::SelectMode::shift_right() const {
+	if (selection_position_1 && selection_position_2) {
+		auto min_x = std::min(selection_position_1->x, selection_position_2->x);
+		auto min_y = std::min(selection_position_1->y, selection_position_2->y);
+		auto max_y = std::max(selection_position_1->y, selection_position_2->y);
+		auto shift_count = abs(selection_position_1->x - selection_position_2->x) + 1;
+		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
+	}
+}
+void m2::Level::LevelEditorState::SelectMode::shift_down() const {
+	if (selection_position_1 && selection_position_2) {
+		auto min_x = std::min(selection_position_1->x, selection_position_2->x);
+		auto max_x = std::max(selection_position_1->x, selection_position_2->x);
+		auto min_y = std::min(selection_position_1->y, selection_position_2->y);
+		auto shift_count = abs(selection_position_1->y - selection_position_2->y) + 1;
+		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
+	}
+}
+void m2::Level::LevelEditorState::SelectMode::copy() const {}
+void m2::Level::LevelEditorState::SelectMode::paste_bg() const {}
+void m2::Level::LevelEditorState::SelectMode::paste_fg() const {}
 void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) const {
 	if (shift_type == ShiftType::RIGHT) {
-		level_editor::shift_placeholders_right(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x);
-		level_editor::shift_placeholders_right(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x, INT32_MAX, INT32_MIN, INT32_MAX, 1, 0);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x, INT32_MAX, INT32_MIN, INT32_MAX, 1, 0);
 	} else if (shift_type == ShiftType::DOWN) {
-		level_editor::shift_placeholders_down(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.y);
-		level_editor::shift_placeholders_down(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.y);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, INT32_MIN, INT32_MAX, position.y, INT32_MAX, 0, 1);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, INT32_MIN, INT32_MAX, position.y, INT32_MAX, 0, 1);
 	} else if (shift_type == ShiftType::RIGHT_N_DOWN) {
-		level_editor::shift_placeholders_right_down(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x, position.y);
-		level_editor::shift_placeholders_right_down(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x, position.y);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x, INT32_MAX, position.y, INT32_MAX, 1, 1);
+		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, position.x, INT32_MAX, position.y, INT32_MAX, 1, 1);
 	}
 }
 void m2::Level::LevelEditorState::deactivate_mode() {
@@ -201,6 +224,9 @@ void m2::Level::LevelEditorState::activate_place_mode() {
 }
 void m2::Level::LevelEditorState::activate_remove_mode() {
 	mode = RemoveMode{};
+}
+void m2::Level::LevelEditorState::activate_select_mode() {
+	mode = SelectMode{};
 }
 void m2::Level::LevelEditorState::activate_shift_mode() {
 	mode = ShiftMode{};

@@ -9,76 +9,33 @@ namespace m2::level_editor {
 	using BackgroundPlaceholderMap = std::unordered_map<Vec2i, std::pair<Id, m2g::pb::SpriteType>, Vec2iHash>;
 	using ForegroundPlaceholderMap = std::unordered_map<Vec2i, std::pair<Id, m2::pb::LevelObject>, Vec2iHash>;
 
+	/// Shifts placeholders between [x1, x2] and [y1, y2] by (x_shift_count, y_shift_count)
 	template <typename PlaceholderMapType>
-	void shift_placeholders_right(PlaceholderMapType& placeholders, Pool<Object>& objects, int x) {
-		static_assert(std::is_same<std::remove_cvref_t<PlaceholderMapType>, BackgroundPlaceholderMap>() ||
-		        std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
-		// Gather the placeholders that need to be moved
-		std::vector<Vec2i> placeholders_to_move;
-		for (const auto& [ph_position, id] : placeholders) {
-			if (x <= ph_position.x) {
-				placeholders_to_move.emplace_back(ph_position); // Add to list
-			}
-		}
-		// Sort bg placeholders from right to left
-		std::sort(placeholders_to_move.begin(), placeholders_to_move.end(), Vec2iCompareRightToLeft{});
-		// Move the bg placeholders
-		for (const auto& ph_position : placeholders_to_move) {
-			auto node = placeholders.extract(ph_position); // Extract node
-			node.key().x++; // Move node
-			objects[node.mapped().first].position.x = static_cast<float>(node.key().x); // Move object
-			if constexpr (std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>()) {
-				node.mapped().second.mutable_position()->set_x(node.key().x);
-			}
-			placeholders.insert(std::move(node)); // Insert back into the map
-		}
-	}
-
-	template <typename PlaceholderMapType>
-	void shift_placeholders_down(PlaceholderMapType& placeholders, Pool<Object>& objects, int y) {
+	void shift_placeholders(PlaceholderMapType& placeholders, Pool<Object>& objects, int x1, int x2, int y1, int y2, unsigned x_shift_count, unsigned y_shift_count) {
 		static_assert(std::is_same<std::remove_cvref_t<PlaceholderMapType>, BackgroundPlaceholderMap>() ||
 				std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
 		// Gather the placeholders that need to be moved
 		std::vector<Vec2i> placeholders_to_move;
-		for (const auto& [ph_position, id] : placeholders) {
-			if (y <= ph_position.y) {
-				placeholders_to_move.emplace_back(ph_position); // Add to list
-			}
-		}
-		// Sort bg placeholders from right to left
-		std::sort(placeholders_to_move.begin(), placeholders_to_move.end(), Vec2iCompareBottomToTop{});
-		// Move the bg placeholders
-		for (const auto& ph_position : placeholders_to_move) {
-			auto node = placeholders.extract(ph_position); // Extract node
-			node.key().y++; // Move node
-			objects[node.mapped().first].position.y = static_cast<float>(node.key().y); // Move object
-			if constexpr (std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>()) {
-				node.mapped().second.mutable_position()->set_y(node.key().y);
-			}
-			placeholders.insert(std::move(node)); // Insert back into the map
-		}
-	}
+		transform_copy_if(placeholders.begin(), placeholders.end(), std::back_inserter(placeholders_to_move),
+				[=](const typename PlaceholderMapType::value_type& kv) {
+					const auto& pos = kv.first;
+					return x1 <= pos.x && pos.x <= x2 && y1 <= pos.y && pos.y <= y2;
+				},
+				[](const typename PlaceholderMapType::value_type& kv) { return kv.first; });
 
-	template <typename PlaceholderMapType>
-	void shift_placeholders_right_down(PlaceholderMapType& placeholders, Pool<Object>& objects, int x, int y) {
-		static_assert(std::is_same<std::remove_cvref_t<PlaceholderMapType>, BackgroundPlaceholderMap>() ||
-				std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
-		// Gather the placeholders that need to be moved
-		std::vector<Vec2i> placeholders_to_move;
-		for (const auto& [ph_position, id] : placeholders) {
-			if (x <= ph_position.x && y <= ph_position.y) {
-				placeholders_to_move.emplace_back(ph_position); // Add to list
-			}
-		}
-		// Sort bg placeholders from right bottom to left top
+		// Sort bg placeholders from right to left, because unordered_map does not allow multiple values in the same position
 		std::sort(placeholders_to_move.begin(), placeholders_to_move.end(), Vec2iCompareRightBottomToLeftTop{});
-		// Move the bg placeholders
+
+		// Move the placeholders
 		for (const auto& ph_position : placeholders_to_move) {
 			auto node = placeholders.extract(ph_position); // Extract node
-			node.key().x++; // Move node
-			node.key().y++; // Move node
-			objects[node.mapped().first].position.x = static_cast<float>(node.key().x); // Move object
-			objects[node.mapped().first].position.y = static_cast<float>(node.key().y); // Move object
+			// Move node
+			node.key().x += x_shift_count;
+			node.key().y += y_shift_count;
+			// Move object
+			objects[node.mapped().first].position.x += x_shift_count;
+			objects[node.mapped().first].position.y += y_shift_count;
+			// Move LevelObject
 			if constexpr (std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>()) {
 				node.mapped().second.mutable_position()->set_x(node.key().x);
 				node.mapped().second.mutable_position()->set_y(node.key().y);

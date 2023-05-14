@@ -15,6 +15,7 @@ namespace m2 {
 		inline Vec2i() = default;
 		inline Vec2i(int32_t x, int32_t y) : x(x), y(y) {}
 		inline Vec2i(float x, float y) : x((int32_t)x), y((int32_t)y) {}
+		explicit Vec2i(const Vec2f& v);
 		inline explicit Vec2i(const pb::Vec2i& v) : Vec2i(v.x(), v.y()) {}
 
 		inline Vec2i operator+(const Vec2i& rhs) const { return {x + rhs.x, y + rhs.y}; }
@@ -29,8 +30,8 @@ namespace m2 {
 		[[nodiscard]] inline float distance(const Vec2i& other) const { return (other - *this).length(); }
 		[[nodiscard]] inline int manhattan_distance(const Vec2i& other) const { return abs(other.x - x) + abs(other.y - y); }
 
-		// Vec2f
-		explicit Vec2i(const Vec2f& v);
+		/// Iterates over the cells in the rectangle between this and the other cell.
+		void for_each_cell_in_between(const Vec2i& other, const std::function<void(const Vec2i&)>& f) const;
 	};
 	std::string to_string(const m2::Vec2i&);
 
