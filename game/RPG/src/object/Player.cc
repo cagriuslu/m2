@@ -57,23 +57,20 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		auto& chr = obj.character();
 		auto vector_to_mouse = (GAME.mouse_position_world_m() - obj.position).normalize();
 
-		m2::Vec2f move_vector;
+		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
 		float move_force{};
 		// Check if dash
 		if (GAME.events.pop_key_press(m2::Key::DASH) && chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
-			move_vector = vector_to_mouse;
 			move_force = 100000000.0f;
 		} else {
 			// Character movement
-			auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
 			auto anim_state_type = detail::to_animation_state_type(direction_enum);
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
-			move_vector = direction_vector;
 			move_force = 2800000.0f;
 		}
-		if (move_vector) {
+		if (direction_vector) {
 			// Apply force
-			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(move_vector * (move_force * GAME.delta_time_s())), true);
+			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(direction_vector * (move_force * GAME.delta_time_s())), true);
 		}
 
 		// Primary weapon
