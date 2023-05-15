@@ -187,13 +187,6 @@ int main(int argc, char **argv) {
 			if (GAME.quit) {
 				break;
 			}
-			//////////////////////////////// ACTIONS ///////////////////////////////
-			for (const auto& action_it: m2g::actions) {
-				// Execute if there's no condition, or there is a condition, and it's true
-				if (!action_it.trigger_condition || action_it.trigger_condition()) {
-					action_it.action();
-				}
-			}
 
 			///////////////////////////////// SOUND ////////////////////////////////
 			for (auto sound_emitter_it : LEVEL.sound_emitters) {
