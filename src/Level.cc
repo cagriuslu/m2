@@ -96,10 +96,10 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 
 	// Init HUD
 	left_hud_ui_state = m2::ui::State(m2g::ui::left_hud());
-	left_hud_ui_state->update_positions(GAME.left_hud_rect);
+	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 	left_hud_ui_state->update_contents();
 	right_hud_ui_state = m2::ui::State(m2g::ui::right_hud());
-	right_hud_ui_state->update_positions(GAME.right_hud_rect);
+	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
 
 	return {};
@@ -305,10 +305,10 @@ m2::VoidValue m2::Level::init_level_editor(const std::filesystem::path& lb_path)
 
 	// UI Hud
 	left_hud_ui_state = m2::ui::State(&level_editor::ui::left_hud);
-	left_hud_ui_state->update_positions(GAME.left_hud_rect);
+	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 	left_hud_ui_state->update_contents();
 	right_hud_ui_state = m2::ui::State(&level_editor::ui::right_hud);
-	right_hud_ui_state->update_positions(GAME.right_hud_rect);
+	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
 
 	return {};
@@ -404,10 +404,10 @@ m2::VoidValue m2::Level::init_pixel_editor(const std::filesystem::path &path, in
 
 	// UI Hud
 	left_hud_ui_state = m2::ui::State(&ui::pixel_editor_left_hud);
-	left_hud_ui_state->update_positions(GAME.left_hud_rect);
+	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 	left_hud_ui_state->update_contents();
 	right_hud_ui_state = m2::ui::State(&ui::pixel_editor_right_hud);
-	right_hud_ui_state->update_positions(GAME.right_hud_rect);
+	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
 
 	return {};

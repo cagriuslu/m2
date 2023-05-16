@@ -43,8 +43,8 @@ void m2::Physique::draw_debug_shapes() const {
 		switch (fixture->GetType()) {
 			case b2Shape::Type::e_polygon: {
 				const auto* shape = dynamic_cast<const b2PolygonShape*>(fixture->GetShape());
-				int rect_w = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm());
-				int rect_h = (int)roundf((aabb.upperBound.y - aabb.lowerBound.y) * (float)GAME.game_ppm());
+				int rect_w = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.dimensions().ppm);
+				int rect_h = (int)roundf((aabb.upperBound.y - aabb.lowerBound.y) * (float)GAME.dimensions().ppm);
 
 				// Decompose the "object origin" to "shape centroid" vector
 				// (shape doesn't know where the object origin is, or the angle of the object)
@@ -69,7 +69,7 @@ void m2::Physique::draw_debug_shapes() const {
 			}
 			case b2Shape::Type::e_circle: {
 				const auto* shape = dynamic_cast<const b2CircleShape*>(fixture->GetShape());
-				int R = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.game_ppm());
+				int R = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.dimensions().ppm);
 				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(SDL_Color{255, 0, 0, 255}, R, R, 16);
 
 				auto center_offset_m = Vec2f{shape->m_p};

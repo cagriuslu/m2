@@ -640,13 +640,13 @@ std::unique_ptr<ui::State::Widget> ui::State::create_widget_state(const Blueprin
 }
 
 ui::Action ui::execute_blocking(const Blueprint *blueprint) {
-	return execute_blocking(blueprint, GAME.window_rect);
+	return execute_blocking(blueprint, GAME.dimensions().window);
 }
 ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 	auto execute_start_ticks = sdl::get_ticks();
 
 	// Save relation to window, use in case of resize
-	const SDL_Rect& winrect = GAME.window_rect;
+	const SDL_Rect& winrect = GAME.dimensions().window;
 	auto relation_to_window = SDL_FRect{
 		(float)(rect.x - winrect.x) / (float)winrect.w,
 		(float)(rect.y - winrect.y) / (float)winrect.h,
@@ -684,7 +684,7 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
             }
 			auto window_resize = events.pop_window_resize();
             if (window_resize) {
-				GAME.update_window_dims(window_resize->x, window_resize->y);
+				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
                 state.update_positions(SDL_Rect{
 	                (int)round((float)winrect.x + relation_to_window.x * (float)winrect.w),
 	                (int)round((float)winrect.y + relation_to_window.y * (float)winrect.h),

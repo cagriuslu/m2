@@ -5,6 +5,7 @@
 #include "Group.h"
 #include "Object.h"
 #include "Ui.h"
+#include "Rational.h"
 #include "Value.h"
 #include <GroupType.pb.h>
 #include <string_view>
@@ -13,6 +14,8 @@
 namespace m2g {
 	/// Name of the game, which is used to discover the resources
 	extern const std::string_view game_name;
+
+	extern const m2::Rational default_game_height_m;
 
 	/// Should the b2World have gravity towards downwards direction
 	extern const bool gravity;

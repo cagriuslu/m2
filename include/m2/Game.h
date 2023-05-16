@@ -46,10 +46,15 @@ namespace m2 {
 	struct Game {
 		static Game* _instance;
 
-		////////////////////////////////////////////////////////////////////////
-		//////////////////////////////// WINDOW ////////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		int _game_ppm{};
+		struct Dimensions {
+			Rational height_m{20}; // Controls the zoom of the game
+			int ppm{};
+			SDL_Rect window{}, game{}, game_and_hud{};
+			SDL_Rect top_envelope{}, bottom_envelope{}, left_envelope{}, right_envelope{};
+			SDL_Rect left_hud{}, right_hud{}, console{};
+			Dimensions() = default;
+			Dimensions(const Rational& game_height_m, int window_width, int window_height);
+		} _dims;
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
@@ -77,10 +82,6 @@ namespace m2 {
 		SDL_Texture *light_texture{};
 		std::optional<AudioManager> audio_manager;
 		uint32_t pixel_format{};
-		SDL_Rect window_rect{}, game_rect{}, game_and_hud_rect{};
-		SDL_Rect top_envelope_rect{}, bottom_envelope_rect{}, left_envelope_rect{}, right_envelope_rect{};
-		SDL_Rect left_hud_rect{}, right_hud_rect{}, console_rect{};
-		Rational game_height_m{16, 1}; // Controls the zoom of the game
 		TTF_Font *font{};
 		bool quit{};
 
@@ -127,7 +128,7 @@ namespace m2 {
 		inline Level& level() { return *_level; }
 
 		// Accessors
-		inline int game_ppm() const { return _game_ppm; }
+		inline const Dimensions& dimensions() const { return _dims; }
 		inline const Sprite& get_sprite(m2g::pb::SpriteType sprite_type) { return _sprites[protobuf::enum_index(sprite_type)]; }
 		inline SmartPointer<const Item> get_item(m2g::pb::ItemType item_type) { return make_static<const Item>(&_items[protobuf::enum_index(item_type)]); }
 		const Song& get_song(m2g::pb::SongType song_type);
@@ -136,7 +137,7 @@ namespace m2 {
 		inline const Vec2f& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
 
 		// Modifiers
-		void update_window_dims(int window_width, int window_height);
+		void recalculate_dimensions(int window_width, int window_height, const Rational& game_height = {});
 		inline void add_pause_ticks(sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void update_mouse_position();
 		void add_deferred_action(const std::function<void(void)>& action);

@@ -9,11 +9,11 @@ m2::Vec2f m2::camera_to_position_m(const Vec2f& position) {
 }
 
 m2::Vec2f m2::camera_to_position_px(const Vec2f& position) {
-	return camera_to_position_m(position) * GAME.game_ppm();
+	return camera_to_position_m(position) * GAME.dimensions().ppm;
 }
 
 m2::Vec2f m2::screen_origin_to_position_px(const Vec2f& position) {
-	return camera_to_position_px(position) + Vec2f{GAME.window_rect.w / 2, GAME.window_rect.h / 2 };
+	return camera_to_position_px(position) + Vec2f{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
 }
 
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
@@ -124,10 +124,10 @@ void m2::Graphic::default_effect(Graphic& gfx) {
 void m2::Graphic::color_cell(const Vec2i& cell, SDL_Color color) {
 	auto screen_origin_to_cell_center_px = screen_origin_to_position_px(Vec2f{cell});
 	auto rect = SDL_Rect{
-		(int)roundf(screen_origin_to_cell_center_px.x) - (GAME.game_ppm() / 2),
-		(int)roundf(screen_origin_to_cell_center_px.y) - (GAME.game_ppm() / 2),
-		GAME.game_ppm(),
-		GAME.game_ppm()
+		(int)roundf(screen_origin_to_cell_center_px.x) - (GAME.dimensions().ppm / 2),
+		(int)roundf(screen_origin_to_cell_center_px.y) - (GAME.dimensions().ppm / 2),
+		GAME.dimensions().ppm,
+		GAME.dimensions().ppm
 	};
 
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);

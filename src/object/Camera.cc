@@ -41,28 +41,28 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 			auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 			if (camera_data->draw_grid_lines) {
 				auto offset_from_floored_position_m = camera.position - camera.position.floor();
-				auto offset_from_floored_position_px = offset_from_floored_position_m * GAME.game_ppm();
-				auto screen_center = Vec2i{GAME.window_rect.w / 2, GAME.window_rect.h / 2 };
+				auto offset_from_floored_position_px = offset_from_floored_position_m * GAME.dimensions().ppm;
+				auto screen_center = Vec2i{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
 				auto horizontal_line_y = [=](int index) -> int {
-					return screen_center.y - (int)roundf(offset_from_floored_position_px.y) + index * (int)GAME.game_ppm();
+					return screen_center.y - (int)roundf(offset_from_floored_position_px.y) + index * GAME.dimensions().ppm;
 				};
 				auto vertical_line_x = [=](int index) -> int {
-					return screen_center.x - (int)roundf(offset_from_floored_position_px.x) + index * (int)GAME.game_ppm();
+					return screen_center.x - (int)roundf(offset_from_floored_position_px.x) + index * GAME.dimensions().ppm;
 				};
 				// Draw horizontal lines
 				SDL_SetRenderDrawColor(GAME.renderer, 127, 127, 255, 127);
-				for (int i = 0, y = horizontal_line_y(i); y <= GAME.game_rect.y + GAME.game_rect.h; ++i, y = horizontal_line_y(i)) {
-					SDL_RenderDrawLine(GAME.renderer, GAME.game_rect.x, y, GAME.game_rect.x + GAME.game_rect.w, y);
+				for (int i = 0, y = horizontal_line_y(i); y <= GAME.dimensions().game.y + GAME.dimensions().game.h; ++i, y = horizontal_line_y(i)) {
+					SDL_RenderDrawLine(GAME.renderer, GAME.dimensions().game.x, y, GAME.dimensions().game.x + GAME.dimensions().game.w, y);
 				}
-				for (int i = -1, y = horizontal_line_y(i); GAME.game_rect.y <= y; --i, y = horizontal_line_y(i)) {
-					SDL_RenderDrawLine(GAME.renderer, GAME.game_rect.x, y, GAME.game_rect.x + GAME.game_rect.w, y);
+				for (int i = -1, y = horizontal_line_y(i); GAME.dimensions().game.y <= y; --i, y = horizontal_line_y(i)) {
+					SDL_RenderDrawLine(GAME.renderer, GAME.dimensions().game.x, y, GAME.dimensions().game.x + GAME.dimensions().game.w, y);
 				}
 				// Draw vertical lines
-				for (int i = 0, x = vertical_line_x(i); x <= GAME.game_rect.x + GAME.game_rect.w; ++i, x = vertical_line_x(i)) {
-					SDL_RenderDrawLine(GAME.renderer, x, GAME.game_rect.y, x, GAME.game_rect.y + GAME.game_rect.h);
+				for (int i = 0, x = vertical_line_x(i); x <= GAME.dimensions().game.x + GAME.dimensions().game.w; ++i, x = vertical_line_x(i)) {
+					SDL_RenderDrawLine(GAME.renderer, x, GAME.dimensions().game.y, x, GAME.dimensions().game.y + GAME.dimensions().game.h);
 				}
-				for (int i = -1, x = vertical_line_x(i); GAME.game_rect.x <= x; --i, x = vertical_line_x(i)) {
-					SDL_RenderDrawLine(GAME.renderer, x, GAME.game_rect.y, x, GAME.game_rect.y + GAME.game_rect.h);
+				for (int i = -1, x = vertical_line_x(i); GAME.dimensions().game.x <= x; --i, x = vertical_line_x(i)) {
+					SDL_RenderDrawLine(GAME.renderer, x, GAME.dimensions().game.y, x, GAME.dimensions().game.y + GAME.dimensions().game.h);
 				}
 			}
 		};

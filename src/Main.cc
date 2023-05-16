@@ -91,12 +91,12 @@ int main(int argc, char **argv) {
 			// Handle window resize event
 			auto window_resize = GAME.events.pop_window_resize();
 			if (window_resize) {
-				GAME.update_window_dims(window_resize->x, window_resize->y);
+				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
 				if (LEVEL.left_hud_ui_state) {
-					LEVEL.left_hud_ui_state->update_positions(GAME.left_hud_rect);
+					LEVEL.left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 				}
                 if (LEVEL.right_hud_ui_state) {
-					LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+					LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 				}
 			}
             // Handle key events
@@ -280,10 +280,10 @@ int main(int argc, char **argv) {
 		IF(LEVEL.right_hud_ui_state)->draw();
 		/////////////////////////////// ENVELOPER //////////////////////////////
 		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(GAME.renderer, &GAME.top_envelope_rect);
-		SDL_RenderFillRect(GAME.renderer, &GAME.bottom_envelope_rect);
-		SDL_RenderFillRect(GAME.renderer, &GAME.left_envelope_rect);
-		SDL_RenderFillRect(GAME.renderer, &GAME.right_envelope_rect);
+		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().top_envelope);
+		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().bottom_envelope);
+		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().left_envelope);
+		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().right_envelope);
 		//////////////////////////////// PRESENT ///////////////////////////////
 		SDL_RenderPresent(GAME.renderer);
 		++gfx_draw_count;

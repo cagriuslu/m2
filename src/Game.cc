@@ -30,8 +30,8 @@ void m2::Game::destroy_instance() {
 
 m2::Game::Game() {
 	DEBUG_FN();
-	update_window_dims(1600, 900); // Store default window dimensions in GAME
-	if ((window = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, window_rect.w, window_rect.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
+	recalculate_dimensions(800, 450, m2g::default_game_height_m);
+	if ((window = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _dims.window.w, _dims.window.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_SetWindowMinimumSize(window, 712, 400);
@@ -124,46 +124,14 @@ const m2::Song& m2::Game::get_song(m2g::pb::SongType song_type) {
 	return _songs[protobuf::enum_index(song_type)];
 }
 
-void m2::Game::update_window_dims(int window_width, int window_height) {
-	window_rect = SDL_Rect{0, 0, window_width, window_height};
-
-	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
-	if (window_width < ideal_width) {
-		// Screen is taller than expected
-		auto provisional_game_height = window_width * GAME_AND_HUD_ASPECT_RATIO_DIV / GAME_AND_HUD_ASPECT_RATIO_MUL;
-		_game_ppm = provisional_game_height * game_height_m.d() / game_height_m.n();
-	} else {
-		// Screen is exact or wider
-		_game_ppm = window_height * game_height_m.d() / game_height_m.n();
-	}
-
-	int game_height = _game_ppm * game_height_m.n() / game_height_m.d();
-	int game_width = game_height * GAME_ASPECT_RATIO_MUL / GAME_ASPECT_RATIO_DIV;
-	int hud_height = game_height;
-	int hud_width = game_height * HUD_ASPECT_RATIO_MUL / HUD_ASPECT_RATIO_DIV;
-
-	int top_envelope_size = (window_height - game_height) / 2;
-	int bottom_envelope_size = (window_height - game_height) - top_envelope_size;
-	int left_envelope_size = (window_width - game_width - 2 * hud_width) / 2;
-	int right_envelope_size = (window_width - game_width - 2 * hud_width) - left_envelope_size;
-
-	top_envelope_rect = SDL_Rect{0, 0, window_width, top_envelope_size};
-	bottom_envelope_rect = SDL_Rect{0, top_envelope_size + game_height, window_width, bottom_envelope_size};
-	left_envelope_rect = SDL_Rect{0, top_envelope_size, left_envelope_size, game_height};
-	right_envelope_rect = SDL_Rect{left_envelope_size + 2 * hud_width + game_width, top_envelope_size, right_envelope_size, game_height};
-
-	game_and_hud_rect = SDL_Rect{left_envelope_size, top_envelope_size, 2 * hud_width + game_width, game_height};
-	left_hud_rect = SDL_Rect{left_envelope_size, top_envelope_size, hud_width, hud_height};
-	right_hud_rect = SDL_Rect{left_envelope_size + hud_width + game_width, top_envelope_size, hud_width, hud_height};
-	game_rect = SDL_Rect{left_envelope_size + hud_width, top_envelope_size, game_width, game_height};
-
-	console_rect = SDL_Rect{game_rect.x, game_rect.y + game_rect.h * 22 / 24, game_rect.w, game_rect.h * 2 / 24};
+void m2::Game::recalculate_dimensions(int window_width, int window_height, const Rational& game_height) {
+	_dims = Dimensions{game_height.n() == 0 ? _dims.height_m : game_height, window_width, window_height};
 }
 
 void m2::Game::update_mouse_position() {
 	auto mouse_position = events.mouse_position();
-	auto screen_center_to_mouse_position_px = Vec2i{mouse_position.x - (window_rect.w / 2), mouse_position.y - (window_rect.h / 2)};
-	_screen_center_to_mouse_position_m = Vec2f{(float) screen_center_to_mouse_position_px.x / (float) _game_ppm, (float) screen_center_to_mouse_position_px.y / (float) _game_ppm};
+	auto screen_center_to_mouse_position_px = Vec2i{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
+	_screen_center_to_mouse_position_m = Vec2f{(float) screen_center_to_mouse_position_px.x / (float) _dims.ppm, (float) screen_center_to_mouse_position_px.y / (float) _dims.ppm};
 	auto camera_position = _level->objects[_level->camera_id].position;
 	_mouse_position_world_m = _screen_center_to_mouse_position_m + camera_position;
 }
@@ -180,5 +148,5 @@ void m2::Game::execute_deferred_actions() {
 }
 
 std::pair<int, int> m2::Game::pixel_scale_mul_div(int sprite_ppm) const {
-	return std::make_pair(_game_ppm, sprite_ppm);
+	return std::make_pair(_dims.ppm, sprite_ppm);
 }

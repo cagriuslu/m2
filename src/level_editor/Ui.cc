@@ -216,7 +216,7 @@ const ui::Blueprint::Widget::Variant left_hud_paint_button = ui::Blueprint::Widg
 			});
 
 			LEVEL.right_hud_ui_state = ui::State(&paint_mode_right_hud);
-			LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return ui::Action::CONTINUE;
 		},
 		.kb_shortcut = SDL_SCANCODE_P
@@ -226,7 +226,7 @@ const ui::Blueprint::Widget::Variant left_hud_erase_button = ui::Blueprint::Widg
 		.action_callback = []() -> ui::Action {
 			LEVEL.level_editor_state->activate_erase_mode();
 			LEVEL.right_hud_ui_state = ui::State(&level_editor::ui::right_hud);
-			LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return ui::Action::CONTINUE;
 		},
 		.kb_shortcut = SDL_SCANCODE_E
@@ -251,7 +251,7 @@ const ui::Blueprint::Widget::Variant left_hud_place_button = ui::Blueprint::Widg
 			}
 
 			LEVEL.right_hud_ui_state = ui::State(&place_mode_right_hud);
-			LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return ui::Action::CONTINUE;
 		},
 		.kb_shortcut = SDL_SCANCODE_O
@@ -261,7 +261,7 @@ const ui::Blueprint::Widget::Variant left_hud_remove_button = ui::Blueprint::Wid
 		.action_callback = []() -> ui::Action {
 			LEVEL.level_editor_state->activate_remove_mode();
 			LEVEL.right_hud_ui_state = ui::State(&level_editor::ui::right_hud);
-			LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return ui::Action::CONTINUE;
 		},
 		.kb_shortcut = SDL_SCANCODE_R
@@ -271,7 +271,7 @@ const ui::Blueprint::Widget::Variant left_hud_select_button = ui::Blueprint::Wid
 		.action_callback = []() -> ui::Action {
 			LEVEL.level_editor_state->activate_select_mode();
 			LEVEL.right_hud_ui_state = ui::State(&select_mode_right_hud);
-			LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return ui::Action::CONTINUE;
 		}
 };
@@ -280,7 +280,7 @@ const ui::Blueprint::Widget::Variant left_hud_shift_button = ui::Blueprint::Widg
 		.action_callback = []() -> ui::Action {
 			LEVEL.level_editor_state->activate_shift_mode();
 			LEVEL.right_hud_ui_state = ui::State(&shift_mode_right_hud);
-			LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return ui::Action::CONTINUE;
 		}
 };
@@ -289,7 +289,7 @@ const ui::Blueprint::Widget::Variant left_hud_cancel_button = ui::Blueprint::Wid
 		.action_callback = []() -> ui::Action {
 			LEVEL.level_editor_state->deactivate_mode();
 			LEVEL.right_hud_ui_state = ui::State(&level_editor::ui::right_hud);
-			LEVEL.right_hud_ui_state->update_positions(GAME.right_hud_rect);
+			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return ui::Action::CONTINUE;
 		},
 		.kb_shortcut = SDL_SCANCODE_X

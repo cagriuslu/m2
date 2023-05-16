@@ -15,7 +15,7 @@ m2::Vec2i ComponentLight_ObjectOriginWRTScreenCenter_px(m2::Vec2f objPosition) {
 	m2::Vec2f cameraPosition = cameraObj ? cameraObj->position : m2::Vec2f{}; // cameraObj is NULL while lvl is loading
 	m2::Vec2f obj_origin_wrt_camera_obj_m = objPosition - cameraPosition;
 	// Screen center is the middle of the window
-	m2::Vec2i obj_origin_wrt_screen_center_px = m2::Vec2i(obj_origin_wrt_camera_obj_m * GAME.game_ppm());
+	m2::Vec2i obj_origin_wrt_screen_center_px = m2::Vec2i(obj_origin_wrt_camera_obj_m * GAME.dimensions().ppm);
 	return obj_origin_wrt_screen_center_px;
 }
 
@@ -24,12 +24,12 @@ void m2::Light::default_draw(Light& lig) {
 
 	m2::Vec2i obj_origin_wrt_screen_center_px = ComponentLight_ObjectOriginWRTScreenCenter_px(obj.position);
 	// Screen origin is top-left corner
-	m2::Vec2i obj_origin_wrt_screen_origin_px = m2::Vec2i{GAME.window_rect.w / 2, GAME.window_rect.h / 2 } + obj_origin_wrt_screen_center_px;
+	m2::Vec2i obj_origin_wrt_screen_origin_px = m2::Vec2i{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 } + obj_origin_wrt_screen_center_px;
 	MAYBE auto dstrect = SDL_Rect{
-			obj_origin_wrt_screen_origin_px.x - (int)roundf((float)lig.radius_m * GAME.game_ppm()),
-			obj_origin_wrt_screen_origin_px.y - (int)roundf((float)lig.radius_m * GAME.game_ppm()),
-			(int)roundf((float)lig.radius_m * GAME.game_ppm() * 2.0f),
-			(int)roundf((float)lig.radius_m * GAME.game_ppm() * 2.0f)
+			obj_origin_wrt_screen_origin_px.x - (int)roundf((float)lig.radius_m * GAME.dimensions().ppm),
+			obj_origin_wrt_screen_origin_px.y - (int)roundf((float)lig.radius_m * GAME.dimensions().ppm),
+			(int)roundf((float)lig.radius_m * GAME.dimensions().ppm * 2.0f),
+			(int)roundf((float)lig.radius_m * GAME.dimensions().ppm * 2.0f)
 	};
 	//SDL_RenderCopy(GAME.sdlRenderer, GAME.sdlLightTexture, NULL, &dstrect); Temporarily disabled
 }

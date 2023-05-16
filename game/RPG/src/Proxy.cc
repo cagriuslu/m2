@@ -6,6 +6,7 @@
 #include <rpg/Context.h>
 
 const std::string_view m2g::game_name = "RPG";
+const m2::Rational m2g::default_game_height_m = {16, 1};
 const bool m2g::gravity = false;
 const bool m2g::world_is_static = true;
 const bool m2g::camera_is_listener = true;
