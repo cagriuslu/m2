@@ -31,8 +31,7 @@ m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 			}
 		}
 
-		auto [mul, div] = GAME.pixel_scale_mul_div(sprite->ppm());
-		auto vector_in_destination_pixels = vector_in_source_pixels * (float)mul / (float)div;
+		auto vector_in_destination_pixels = vector_in_source_pixels * (float)GAME.dimensions().ppm / (float)sprite->ppm();
 		return vector_in_destination_pixels;
 	} else {
 		return {};
@@ -60,12 +59,11 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 	}
 
 	auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
-	auto [mul, div] = GAME.pixel_scale_mul_div(gfx.sprite->ppm());
 	auto dst_rect = SDL_Rect{
-		(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * mul / div / 2),
-		(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h * mul / div / 2),
-		src_rect.w * mul / div,
-		src_rect.h * mul / div
+		(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
+		(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
+		src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm(),
+		src_rect.h * GAME.dimensions().ppm / gfx.sprite->ppm()
 	};
 
 	// Sprite is rotated around this point
@@ -94,12 +92,11 @@ void m2::Graphic::default_effect(Graphic& gfx) {
 
 	// White frame
 	auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
-	auto [mul, div] = GAME.pixel_scale_mul_div(gfx.sprite->ppm());
 	auto dst_rect = SDL_Rect{
-			(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * mul / div / 2),
-			(int)roundf(screen_origin_to_sprite_center_px.y) + (src_rect.h * mul * 11 / div / 2 / 10), // Give an offset of 1.1
-			src_rect.w * mul / div,
-			15 * mul / 100 // 0.15 m height
+			(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
+			(int)roundf(screen_origin_to_sprite_center_px.y) + (src_rect.h * GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1
+			src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm(),
+			15 * GAME.dimensions().ppm / 100 // 0.15 m height
 	};
 	SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(GAME.renderer, &dst_rect);

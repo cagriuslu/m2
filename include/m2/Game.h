@@ -136,15 +136,38 @@ namespace m2 {
 		inline const Vec2f& mouse_position_world_m() const { return _mouse_position_world_m; }
 		inline const Vec2f& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
 
+		// Handlers
+		void handle_quit_event();
+		void handle_window_resize_event();
+		void handle_console_event();
+		void handle_menu_event();
+		void handle_hud_events();
+		void execute_pre_step();
+		void update_characters();
+		void execute_step();
+		void execute_post_step();
+		void update_sounds();
+		void execute_pre_draw();
+		void update_hud_contents();
+		void clear_back_buffer();
+		void draw_background();
+		void draw_foreground();
+		void draw_lights();
+		void draw_background_effects();
+		void draw_foreground_effects();
+		void execute_post_draw();
+		void draw_debug_shapes();
+		void draw_hud();
+		void draw_envelopes();
+		void flip_buffers();
+
 		// Modifiers
-		void recalculate_dimensions(int window_width, int window_height, const Rational& game_height = {});
 		inline void add_pause_ticks(sdl::ticks_t ticks) { pause_ticks += ticks; }
-		void update_mouse_position();
+		void recalculate_dimensions(int window_width, int window_height, const Rational& game_height = {});
+		void recalculate_mouse_position();
+		void recalculate_directional_audio();
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
-
-		// Helpers
-		std::pair<int, int> pixel_scale_mul_div(int sprite_ppm) const;
 
 	private:
 		void reset_state();

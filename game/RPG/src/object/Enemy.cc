@@ -80,7 +80,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			if (obj.sound_id() == 0) {
 				// Add sound emitter
 				auto& sound_emitter = obj.add_sound_emitter();
-				sound_emitter.on_update = [&](m2::SoundEmitter& se) {
+				sound_emitter.update = [&](m2::SoundEmitter& se) {
 					// Play sound
 					if (se.playbacks.empty()) {
 						auto playback_id = GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_DAMAGE_TO_ENEMY), m2::AudioManager::PlayPolicy::ONCE, 0.10f);

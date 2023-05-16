@@ -1,11 +1,12 @@
 #include <m2/Proxy.h>
-#include "m2/Events.h"
 #include "m2/Game.h"
 #include "m2/sdl/Detail.hh"
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
+
+#define BREAK_IF_QUIT() if (GAME.quit) break
 
 using namespace m2;
 
@@ -84,39 +85,14 @@ int main(int argc, char **argv) {
 			GAME.events.clear();
 		}
 		if (GAME.events.gather()) {
-			// Handle quit event
-			if (GAME.events.pop_quit()) {
-				break;
-			}
-			// Handle window resize event
-			auto window_resize = GAME.events.pop_window_resize();
-			if (window_resize) {
-				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
-				if (LEVEL.left_hud_ui_state) {
-					LEVEL.left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
-				}
-                if (LEVEL.right_hud_ui_state) {
-					LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
-				}
-			}
-            // Handle key events
-			if (GAME.events.pop_key_press(Key::CONSOLE)) {
-				if (m2::ui::execute_blocking(&m2::ui::console_ui) == m2::ui::Action::QUIT) {
-					return 0;
-				}
-			}
-            if (GAME.events.pop_key_press(Key::MENU)) {
-                if (m2::ui::execute_blocking(m2g::ui::pause_menu()) == m2::ui::Action::QUIT) {
-                    return 0;
-                }
-            }
-            // Handle HUD events (mouse and key)
-			IF(LEVEL.left_hud_ui_state)->handle_events(GAME.events);
-			IF(LEVEL.right_hud_ui_state)->handle_events(GAME.events);
+			GAME.handle_quit_event();
+			GAME.handle_window_resize_event();
+			GAME.handle_console_event();
+			GAME.handle_menu_event();
+			GAME.handle_hud_events();
 		}
-		GAME.update_mouse_position();
-		//////////////////////// END OF EVENT HANDLING /////////////////////////
-		////////////////////////////////////////////////////////////////////////
+		BREAK_IF_QUIT();
+		GAME.recalculate_mouse_position();
 
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
@@ -131,93 +107,18 @@ int main(int argc, char **argv) {
 
 			// Advance time by GAME.phy_period
 			GAME._delta_time_s = GAME.phy_period;
-			/////////////////////////////// PRE-PHY ////////////////////////////////
-			for (auto physique_it: LEVEL.physics) {
-				IF(physique_it.first->pre_step)(*physique_it.first);
-			}
-			GAME.execute_deferred_actions();
-			if (GAME.quit) {
-				break;
-			}
-			////////////////////////////// CHARACTER ///////////////////////////////
-			for (auto character_it: LEVEL.characters) {
-				auto &chr = get_character_base(*character_it.first);
-				chr.automatic_update();
-			}
-			for (auto character_it: LEVEL.characters) {
-				auto &chr = get_character_base(*character_it.first);
-				IF(chr.update)(chr);
-			}
-			GAME.execute_deferred_actions();
-			if (GAME.quit) {
-				break;
-			}
-			/////////////////////////////// PHYSICS ////////////////////////////////
-			if (LEVEL.world) {
-				LOGF_TRACE("Stepping world %f seconds...", GAME.phy_period);
-				LEVEL.world->Step(GAME.phy_period, GAME.velocity_iterations, GAME.position_iterations);
-				LOG_TRACE("World stepped");
-				// Update positions
-				for (auto physique_it: LEVEL.physics) {
-					auto &phy = *physique_it.first;
-					if (phy.body) {
-						auto &object = phy.parent();
-						auto old_pos = object.position;
-						object.position = m2::Vec2f{phy.body->GetPosition()};
-						if (old_pos != object.position) {
-							LEVEL.draw_list.queue_update(phy.object_id, object.position);
-						}
-					}
-				}
-			}
-			LEVEL.draw_list.update();
-			if (not m2g::world_is_static) {
-				// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been moved
-				LEVEL.pathfinder->clear_cache();
-			}
-			GAME.execute_deferred_actions();
-			if (GAME.quit) {
-				break;
-			}
-			/////////////////////////////// POST-PHY ///////////////////////////////
-			for (auto physique_it: LEVEL.physics) {
-				IF(physique_it.first->post_step)(*physique_it.first);
-			}
-			GAME.execute_deferred_actions();
-			if (GAME.quit) {
-				break;
-			}
 
-			///////////////////////////////// SOUND ////////////////////////////////
-			for (auto sound_emitter_it : LEVEL.sound_emitters) {
-				IF(sound_emitter_it.first->on_update)(*sound_emitter_it.first);
-			}
-			GAME.execute_deferred_actions();
-			if (GAME.quit) {
-				break;
-			}
-			// Calculate directional audio
-			if (LEVEL.left_listener || LEVEL.right_listener) {
-				// Loop over sounds
-				for (auto sound_emitter_it : LEVEL.sound_emitters) {
-					const auto& sound_emitter = *sound_emitter_it.first;
-					const auto& sound_position = sound_emitter.parent().position;
-					// Loop over playbacks
-					for (auto playback_id : sound_emitter.playbacks) {
-						if (!GAME.audio_manager->has_playback(playback_id)) {
-							continue; // Playback may have finished (if it's ONCE)
-						}
-						// Left listener
-						auto left_volume = LEVEL.left_listener ? LEVEL.left_listener->volume_of(sound_position) : 0.0f;
-						GAME.audio_manager->set_playback_left_volume(playback_id, left_volume);
-						// Right listener
-						auto right_volume = LEVEL.right_listener ? LEVEL.right_listener->volume_of(sound_position) : 0.0f;
-						GAME.audio_manager->set_playback_right_volume(playback_id, right_volume);
-					}
-				}
-			}
-			///////////////////////////// END OF SOUND /////////////////////////////
-			////////////////////////////////////////////////////////////////////////
+			GAME.execute_pre_step();
+			BREAK_IF_QUIT();
+			GAME.update_characters();
+			BREAK_IF_QUIT();
+			GAME.execute_step();
+			BREAK_IF_QUIT();
+			GAME.execute_post_step();
+			BREAK_IF_QUIT();
+			GAME.update_sounds();
+			BREAK_IF_QUIT();
+			GAME.recalculate_directional_audio();
 
 			++phy_step_count;
 			time_since_last_phy -= GAME.phy_period;
@@ -225,70 +126,31 @@ int main(int argc, char **argv) {
 		if (prev_phy_step_count == 4) {
 			time_since_last_phy = 0.0f;
 		}
-		if (GAME.quit) {
-			break;
-		}
+		BREAK_IF_QUIT();
 
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		//////////////////////////////// PRE-GFX ///////////////////////////////
 		auto delta_ticks = sdl::get_ticks_since(prev_gfx_ticks, GAME.pause_ticks, 1);
 		GAME._delta_time_s = static_cast<float>(delta_ticks) / 1000.0f;
 		prev_gfx_ticks += delta_ticks;
-		for (auto graphic_if : LEVEL.graphics) {
-			IF(graphic_if.first->pre_draw)(*graphic_if.first);
-		}
-		////////////////////////////////// HUD /////////////////////////////////
-		IF(LEVEL.left_hud_ui_state)->update_contents();
-		IF(LEVEL.right_hud_ui_state)->update_contents();
-		///////////////////////////////// CLEAR ////////////////////////////////
-		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
-		SDL_RenderClear(GAME.renderer);
-		//////////////////////////////// TERRAIN ///////////////////////////////
-        for (auto graphic_it : LEVEL.terrain_graphics) {
-			IF(graphic_it.first->on_draw)(*graphic_it.first);
-        }
-		//////////////////////////////// OBJECTS ///////////////////////////////
-		for (const auto& gfx_id : LEVEL.draw_list) {
-			auto& gfx = LEVEL.graphics[gfx_id];
-			IF(gfx.on_draw)(gfx);
-		}
-		//////////////////////////////// LIGHTS ////////////////////////////////
-        for (auto light_it : LEVEL.lights) {
-			IF(light_it.first->on_draw)(*light_it.first);
-        }
-		//////////////////////////////// EFFECTS ///////////////////////////////
-		for (auto gfx_it : LEVEL.terrain_graphics) {
-			IF(gfx_it.first->on_effect)(*gfx_it.first);
-		}
-		for (auto gfx_it : LEVEL.graphics) {
-			IF(gfx_it.first->on_effect)(*gfx_it.first);
-		}
-		/////////////////////////////// POST-GFX ///////////////////////////////
-		for (auto graphic_if : LEVEL.graphics) {
-			IF(graphic_if.first->post_draw)(*graphic_if.first);
-		}
-#ifdef DEBUG
-		// Draw debug shapes
-		for (auto physique_it : LEVEL.physics) {
-			physique_it.first->draw_debug_shapes();
-		}
-#endif
-		////////////////////////////////// HUD /////////////////////////////////
-		IF(LEVEL.left_hud_ui_state)->draw();
-		IF(LEVEL.right_hud_ui_state)->draw();
-		/////////////////////////////// ENVELOPER //////////////////////////////
-		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().top_envelope);
-		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().bottom_envelope);
-		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().left_envelope);
-		SDL_RenderFillRect(GAME.renderer, &GAME.dimensions().right_envelope);
-		//////////////////////////////// PRESENT ///////////////////////////////
-		SDL_RenderPresent(GAME.renderer);
+
+
+		GAME.execute_pre_draw();
+		GAME.update_hud_contents();
+		GAME.clear_back_buffer();
+        GAME.draw_background();
+		GAME.draw_foreground();
+        GAME.draw_lights();
+		GAME.draw_background_effects();
+		GAME.draw_foreground_effects();
+		GAME.execute_post_draw();
+		GAME.draw_debug_shapes();
+		GAME.draw_hud();
+		GAME.draw_envelopes();
+		GAME.flip_buffers();
+
 		++gfx_draw_count;
-		/////////////////////////// END OF GRAPHICS ////////////////////////////
-		////////////////////////////////////////////////////////////////////////
 
 		auto frame_end_ticks = sdl::get_ticks();
 		frame_count_time += frame_end_ticks - frame_start_ticks;
