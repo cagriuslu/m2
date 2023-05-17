@@ -17,18 +17,16 @@ int main(int argc, char **argv) {
 	for (int i = 1; i < argc; i++) {
 		LOG_TRACE("Processing argument %s...", argv[i]);
 		std::string arg{argv[i]};
-		constexpr std::string_view log_level_opt = "--log-level=";
-		constexpr std::string_view silent_opt = "--silent";
-		if (arg.starts_with(log_level_opt)) {
+		if (constexpr std::string_view log_level_opt = "--log-level="; arg.starts_with(log_level_opt)) {
 			auto opt = arg.substr(log_level_opt.size());
 			LOG_DEBUG("Encountered log-level option", opt);
 			if (not pb::LogLevel_Parse(opt, &current_log_level)) {
 				LOG_WARN("Invalid log level");
 			}
 			LOG_INFO("New log level", current_log_level);
-		} else if (arg == silent_opt) {
-			silent = true;
+		} else if (arg == "--silent") {
 			LOG_INFO("Silent");
+			silent = true;
 		} else {
 			LOG_WARN("Unknown command line argument", arg);
 		}

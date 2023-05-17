@@ -6,7 +6,7 @@
       "ai": {
         "capabilities": ["CAPABILITY_MELEE"],
         "triggerDistance": 5.0,
-        "attackDistance": 0.75,
+        "attackDistance": 1.25,
         "recalculationPeriod": 0.5,
         "chaser": {
           "giveUpDistance": 10.0
@@ -19,7 +19,7 @@
       "ai": {
         "capabilities": ["CAPABILITY_MELEE"],
         "triggerDistance": 6.0,
-        "attackDistance": 0.75,
+        "attackDistance": 1.25,
         "recalculationPeriod": 0.4,
         "hitNRun": {}
       }

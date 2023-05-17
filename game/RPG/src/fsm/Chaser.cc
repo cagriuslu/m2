@@ -102,7 +102,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_trigger
 				case pb::CAPABILITY_MELEE:
 					if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
 						auto& melee = m2::create_object(obj->position, obj->id()).first;
-						rpg::create_melee_object(melee, LEVEL.player()->position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
+						rpg::create_melee_object(melee, LEVEL.player()->position - obj->position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
 					}
 					break;
 				case pb::CAPABILITY_EXPLOSIVE:
@@ -158,6 +158,8 @@ void rpg::ChaserFsm::follow_waypoints() {
 		if (next_waypoint_it != reverse_path.crend()) {
 			auto target = m2::Vec2f{*next_waypoint_it};
 			Enemy::move_towards(*obj, target - obj->position, 25000.0f);
+		} else {
+			// Player is very close
 		}
 	}
 }
