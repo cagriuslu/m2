@@ -38,7 +38,7 @@ namespace m2::ui {
 				SDL_Scancode kb_shortcut{};
 			};
 			struct Text {
-				std::string_view initial_text;
+				std::string initial_text;
 				TextAlignment alignment;
 				bool is_toggle{}; // TODO
 				std::function<std::pair<Action,std::optional<std::string>>(void)> update_callback;
@@ -51,7 +51,7 @@ namespace m2::ui {
 				std::function<float(void)> update_callback;
 			};
 			struct TextInput {
-				std::string_view initial_text;
+				std::string initial_text;
 				std::function<Action(std::stringstream&)> action_callback;
 			};
 			struct ImageSelection {

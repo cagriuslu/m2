@@ -97,8 +97,8 @@ int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_
 	return SDL_RenderDrawLines(renderer, points.data(), (int) points.size());
 }
 
-m2::sdl::TextureUniquePtr m2::sdl::generate_font(const char* text, SDL_Color color) {
-	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.font, text, color);
+m2::sdl::TextureUniquePtr m2::sdl::generate_font(const std::string& text, SDL_Color color) {
+	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.font, text.c_str(), color);
 
 	// Store previous render quality
 	const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);

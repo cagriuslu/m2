@@ -29,7 +29,7 @@ namespace m2::sdl {
 
 	int draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count);
 
-	TextureUniquePtr generate_font(const char* text, SDL_Color color = {255, 255, 255, 255});
+	TextureUniquePtr generate_font(const std::string& text, SDL_Color color = {255, 255, 255, 255});
 
 	/// Assumes surface is already locked
 	void set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);

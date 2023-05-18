@@ -49,6 +49,7 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 		auto level_name = level_json.stem().string();
 
 		bool level_completed = progress.level_completion_times().contains(level_name);
+		auto level_display_name = level_completed ? level_name : '*' + level_name + '*';
 
 		auto row = i / 6; // 6 rows
 		auto col = i % 8; // 8 columns
@@ -62,7 +63,7 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 			.w = x_button_width, .h = y_button_width,
 			.border_width_px = 1,
 			.variant = m2::ui::Blueprint::Widget::Text{
-				.initial_text = level_completed ? level_name : '*' + level_name + '*',
+				.initial_text = level_display_name,
 				.action_callback = [=]() {
 					auto success = GAME.load_single_player(level_json, level_name);
 					m2_throw_failure_as_error(success);
