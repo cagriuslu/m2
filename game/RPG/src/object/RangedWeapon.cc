@@ -10,7 +10,7 @@ using namespace m2g::pb;
 
 // TODO add other types of Ranged Weapons: Machine Gun, Shotgun, Bow
 
-m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f& intended_direction, const m2::Item& ranged_weapon) {
+m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!ranged_weapon.has_attribute(ATTRIBUTE_LINEAR_SPEED)) {
 		throw M2ERROR("Ranged weapon has no linear speed");
@@ -44,7 +44,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(sprite.foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(sprite.foreground_collider_circ_radius_m());
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
-	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
+	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetLinearVelocity(static_cast<b2Vec2>(direction * linear_speed));

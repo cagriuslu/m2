@@ -5,6 +5,7 @@
 #include "m2/Game.h"
 #include "rpg/group/ItemGroup.h"
 #include "rpg/object/MeleeWeapon.h"
+#include "rpg/object/RangedWeapon.h"
 #include <rpg/Detail.h>
 #include <rpg/Context.h>
 #include <m2/M2.h>
@@ -51,8 +52,10 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& chr = obj.add_full_character();
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
@@ -163,14 +166,25 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 			// Based on what the capability is
 			auto capability = ai.capabilities(0); // TODO add other capabilities
 			switch (capability) {
-				case pb::CAPABILITY_RANGED:
-					throw M2ERROR("Chaser ranged weapon not implemented");
-				case pb::CAPABILITY_MELEE:
-					if (obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
+				case pb::CAPABILITY_RANGED: {
+					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
+					if (it && obj.character().use_item(it)) {
+						auto& projectile = m2::create_object(obj.position, obj.id()).first;
+						auto shoot_direction = LEVEL.player()->position - obj.position;
+						rpg::create_ranged_weapon_object(projectile, shoot_direction, *it, false);
+						// Knock-back
+						obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
+					}
+					break;
+				}
+				case pb::CAPABILITY_MELEE: {
+					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
+					if (it && obj.character().use_item(it)) {
 						auto& melee = m2::create_object(obj.position, obj.id()).first;
 						rpg::create_melee_object(melee, LEVEL.player()->position - obj.position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
 					}
 					break;
+				}
 				case pb::CAPABILITY_EXPLOSIVE:
 					throw M2ERROR("Chaser explosive weapon not implemented");
 				case pb::CAPABILITY_KAMIKAZE:

@@ -17,9 +17,9 @@
       "objectType": "CUTEOPUS",
       "animationType": "ANIMATION_TYPE_CUTEOPUS_MOVEMENT",
       "ai": {
-        "capabilities": ["CAPABILITY_MELEE"],
+        "capabilities": ["CAPABILITY_RANGED"],
         "triggerDistance": 6.0,
-        "attackDistance": 1.25,
+        "attackDistance": 3,
         "recalculationPeriod": 0.4,
         "hitNRun": {}
       }

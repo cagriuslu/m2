@@ -296,19 +296,37 @@
         },
         {
           "type": "CASTLE_INNER_CORNER_BOTTOM_RIGHT",
+          "effects": [{
+            "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+            "foregroundCompanion": {
+              "centerOffsetPx": {"x": 4.5, "y": 5.5},
+              "rects": [
+                {"x": 73, "y": 117, "w": 7, "h": 11}
+              ]
+            }
+          }],
           "rect": {"x": 64, "y": 112, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 4.5, "y": 2.5},
-            "rectDimsPx": {"w": 7, "h": 11}
+            "centerOffsetPx": {"x": 4.5, "y": 5.5},
+            "rectDimsPx": {"w": 7, "h": 5}
           },
           "isBackgroundTile": true
         },
         {
           "type": "CASTLE_INNER_CORNER_BOTTOM_LEFT",
+          "effects": [{
+            "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+            "foregroundCompanion": {
+              "centerOffsetPx": {"x": -4.5, "y": 5.5},
+              "rects": [
+                {"x": 80, "y": 117, "w": 7, "h": 11}
+              ]
+            }
+          }],
           "rect": {"x": 80, "y": 112, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": -4.5, "y": 2.5},
-            "rectDimsPx": {"w": 7, "h": 11}
+            "centerOffsetPx": {"x": -4.5, "y": 5.5},
+            "rectDimsPx": {"w": 7, "h": 5}
           },
           "isBackgroundTile": true
         },
@@ -316,8 +334,8 @@
           "type": "CASTLE_INNER_CORNER_TOP_RIGHT",
           "rect": {"x": 64, "y": 128, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 4.5, "y": -2.5},
-            "rectDimsPx": {"w": 7, "h": 11}
+            "centerOffsetPx": {"x": 4.5, "y": -2},
+            "rectDimsPx": {"w": 7, "h": 12}
           },
           "isBackgroundTile": true
         },
@@ -325,8 +343,8 @@
           "type": "CASTLE_INNER_CORNER_TOP_LEFT",
           "rect": {"x": 80, "y": 128, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": -4.5, "y": -2.5},
-            "rectDimsPx": {"w": 7, "h": 11}
+            "centerOffsetPx": {"x": -4.5, "y": -2},
+            "rectDimsPx": {"w": 7, "h": 12}
           },
           "isBackgroundTile": true
         },

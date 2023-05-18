@@ -13,12 +13,6 @@
 
 rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
 
-// Mouse primary button: shoot projectile (player can at most carry 3 primary weapons)
-// Mouse secondary button: melee weapon (player can only carry one melee weapon)
-// Mouse middle button: explosive weapon (player can only carry one explosive weapon)
-// Mouse middle scroll: change primary projectile weapon
-// Double tap directional buttons to dodge
-
 m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	auto id = obj.id();
 	auto main_sprite_type = GAME.level_editor_object_sprites[m2g::pb::PLAYER];
@@ -76,8 +70,8 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		// Primary weapon
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			auto shoot = [&](const m2::Item& weapon) {
-				auto [proj_obj, s] = m2::create_object(obj.position, id);
-				rpg::create_ranged_weapon_object(proj_obj, vector_to_mouse, weapon);
+				auto& projectile = m2::create_object(obj.position, id).first;
+				rpg::create_ranged_weapon_object(projectile, vector_to_mouse, weapon, true);
 				// Knock-back
 				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
 			};
@@ -106,9 +100,13 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		}
 
 		// Secondary weapon
-		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY) && obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
-			auto& melee = m2::create_object(obj.position, id).first;
-			rpg::create_melee_object(melee, vector_to_mouse, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), true);
+		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY)) {
+			// Find melee weapon
+			auto it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
+			if (it && chr.use_item(it)) {
+				auto& melee = m2::create_object(obj.position, id).first;
+				rpg::create_melee_object(melee, vector_to_mouse, *it, true);
+			}
 		}
 	};
 	chr.update = [](MAYBE m2::Character& chr) {

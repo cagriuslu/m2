@@ -58,6 +58,7 @@ namespace m2 {
 			inline Iterator(const Character& character, Incrementor incrementor, Filter filter, size_t index, const Item* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _item_ptr(ptr) {}
 			inline Iterator& operator++() { _incrementor(*this); return *this; }
 			inline bool operator==(const Iterator& other) const { return _item_ptr == other._item_ptr; }
+			inline explicit operator bool() { return _item_ptr; }
 			inline const Item& operator*() const { return *_item_ptr; }
 			inline const Item* operator->() const { return _item_ptr; }
 
