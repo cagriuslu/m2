@@ -25,11 +25,11 @@ float m2::randf() {
 	return (*random_number_distribution)(*random_number_engine);
 }
 
-float m2::apply_accuracy(float value, float accuracy) {
+float m2::apply_accuracy(float value, float max_swing, float accuracy) {
 	if (accuracy == 1.0f) {
 		return value;
 	}
-	return value + (1.0f - accuracy) * value * (randf() - 0.5f);
+	return value + max_swing * (2.0f * randf() - 1.0f) * (1.0f - accuracy);
 }
 
 bool m2::is_near(float a, float b, float tolerance) {

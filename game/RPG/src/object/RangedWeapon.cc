@@ -31,9 +31,9 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	float average_ttl = ranged_weapon.get_attribute(ATTRIBUTE_AVERAGE_TTL);
 	float ttl_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_TTL_ACCURACY, 1.0f);
 
-	float angle = m2::apply_accuracy(intended_direction.angle_rads(), angular_accuracy);
+	float angle = m2::apply_accuracy(intended_direction.angle_rads(), m2::PI, angular_accuracy);
 	auto direction = m2::Vec2f::from_angle(angle);
-	float ttl = m2::apply_accuracy(average_ttl, ttl_accuracy);
+	float ttl = m2::apply_accuracy(average_ttl, average_ttl, ttl_accuracy);
 
 	const auto& sprite = GAME.get_sprite(ranged_weapon.game_sprite());
 
@@ -97,14 +97,14 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 				auto damage_ratio = distance / damage_radius;
 				if (damage_ratio < 1.1f) {
 					// Calculate damage
-					float damage = m2::apply_accuracy(average_damage, damage_accuracy) * damage_ratio;
+					float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;
 					// Create and give damage item
 					other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
 				}
 			} else if (self.has_resource(RESOURCE_TTL)) {
 				LOG_DEBUG("Regular damage");
 				// Calculate damage
-				float damage = m2::apply_accuracy(average_damage, damage_accuracy);
+				float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy);
 				// Create and give damage item
 				other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
 				// Clear TTL

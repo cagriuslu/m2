@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 	}
 	LOG_DEBUG("Processed command line arguments");
 
-	ThreadPool tpool;
+	ThreadPool thread_pool;
 
 	LOG_DEBUG("Initializing SDL...");
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {

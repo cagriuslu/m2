@@ -64,7 +64,7 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::Vec2f &directi
 	chr.interact = [=](MAYBE m2::Character& self, m2::Character& other, InteractionType interaction_type) {
 		if (interaction_type == InteractionType::COLLIDE_TO) {
 			// Calculate damage
-			float damage = m2::apply_accuracy(average_damage, damage_accuracy);
+			float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy);
 			// Create and give damage item
 			other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
 		}
