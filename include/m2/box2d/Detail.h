@@ -37,6 +37,8 @@ namespace m2::box2d {
 	constexpr uint16_t FIXTURE_CATEGORY_FOE_ALL_FOREGROUND = FIXTURE_CATEGORY_FOE_ON_FOREGROUND | FIXTURE_CATEGORY_FOE_OFFENSE_ON_FOREGROUND;
 	constexpr uint16_t FIXTURE_CATEGORY_FOE_ALL = FIXTURE_CATEGORY_FOE | FIXTURE_CATEGORY_FOE_ALL_OFFENSE;
 
+	bool does_category_have_background_bits(uint16_t category_bits);
+
 	b2Body* create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint);
 	void destroy_body(b2Body* body);
 

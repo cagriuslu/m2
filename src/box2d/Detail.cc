@@ -45,6 +45,14 @@ namespace m2::box2d {
 	};
 }
 
+bool m2::box2d::does_category_have_background_bits(uint16_t category_bits) {
+	return (category_bits & FIXTURE_CATEGORY_OBSTACLE_ON_BACKGROUND) ||
+		(category_bits & FIXTURE_CATEGORY_FRIEND_ON_BACKGROUND) ||
+		(category_bits & FIXTURE_CATEGORY_FRIEND_OFFENSE_ON_BACKGROUND) ||
+		(category_bits & FIXTURE_CATEGORY_FOE_ON_BACKGROUND) ||
+		(category_bits & FIXTURE_CATEGORY_FOE_OFFENSE_ON_BACKGROUND);
+}
+
 b2Body* m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint) {
 	if (LEVEL.world->IsLocked()) {
 		throw M2ERROR("b2Body is created during physics step");

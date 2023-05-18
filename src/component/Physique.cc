@@ -40,6 +40,11 @@ void m2::Physique::draw_debug_shapes() const {
 		b2AABB aabb;
 		fixture->GetShape()->ComputeAABB(&aabb, body->GetTransform(), 0);
 
+		// Pick different color for background and foreground colliders
+		auto color = box2d::does_category_have_background_bits(fixture->GetFilterData().categoryBits) ?
+			SDL_Color{255, 0, 0, 255} :
+			SDL_Color{255, 255, 0, 255};
+
 		switch (fixture->GetType()) {
 			case b2Shape::Type::e_polygon: {
 				const auto* shape = dynamic_cast<const b2PolygonShape*>(fixture->GetShape());
@@ -63,14 +68,14 @@ void m2::Physique::draw_debug_shapes() const {
 					rect_w,
 					rect_h
 				};
-				SDL_SetRenderDrawColor(GAME.renderer, 255, 0, 0, 255);
+				SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 				SDL_RenderDrawRect(GAME.renderer, &dst_rect);
 				break;
 			}
 			case b2Shape::Type::e_circle: {
 				const auto* shape = dynamic_cast<const b2CircleShape*>(fixture->GetShape());
 				int R = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.dimensions().ppm);
-				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(SDL_Color{255, 0, 0, 255}, R, R, 16);
+				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(color, R, R, 16);
 
 				auto center_offset_m = Vec2f{shape->m_p};
 
