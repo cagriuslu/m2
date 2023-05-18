@@ -26,7 +26,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	float angular_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_ANGULAR_ACCURACY, 1.0f);
 	float average_damage = ranged_weapon.get_attribute(ATTRIBUTE_AVERAGE_DAMAGE);
 	float damage_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_ACCURACY, 1.0f);
-	float damage_radius = ranged_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_RADIUS, 0.0f); // Explosive if non-zero
+	float damage_radius = ranged_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_RADIUS, 0.0f);
 	bool is_explosive = (0.0f < damage_radius);
 	float average_ttl = ranged_weapon.get_attribute(ATTRIBUTE_AVERAGE_TTL);
 	float ttl_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_TTL_ACCURACY, 1.0f);

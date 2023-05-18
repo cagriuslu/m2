@@ -5,7 +5,7 @@ m2::AnimationFsm::AnimationFsm(m2g::pb::AnimationType animation_type, GraphicId 
 	init();
 }
 
-std::optional<m2::AnimationFsmState> m2::AnimationFsm::handle_signal(const AnimationFsmSignal& s) {
+std::optional<m2::AnimationFsmState> m2::AnimationFsm::handle_signal(const AnimationFsmSignal& signal) {
 	auto set_sprite = [this](m2g::pb::AnimationStateType state, int index) {
 		this->anim_state = state;
 		this->state_index = index;
@@ -17,16 +17,26 @@ std::optional<m2::AnimationFsmState> m2::AnimationFsm::handle_signal(const Anima
 		}
 	};
 
-	if (s.type() ==  FsmSignalType::EnterState) {
+	if (signal.type() ==  FsmSignalType::EnterState) {
 		set_sprite(anim_state, state_index);
 		arm(1.0f / animation.animation().fps());
-	} else if (s.type() == FsmSignalType::Alarm) {
+	} else if (signal.type() == FsmSignalType::Alarm) {
 		auto state_sprite_count = animation.state(anim_state).sprites_size();
 		set_sprite(anim_state, (state_index + 1) % state_sprite_count);
 		arm(1.0f / animation.animation().fps());
-	} else if (s.type() == FsmSignalType::Custom) {
-		if (anim_state != s.animation_state_type()) {
-			set_sprite(s.animation_state_type(), 0);
+	} else if (signal.type() == FsmSignalType::Custom) {
+		// Check if the state change is necessary
+		if (anim_state != signal.animation_state_type()) {
+			// Check if there are sprites in the state
+			if (animation.state(signal.animation_state_type()).sprites_size()) {
+				set_sprite(signal.animation_state_type(), 0);
+				arm(1.0f / animation.animation().fps());
+			} else {
+				// Else, change the animation state, but disarm the alarm
+				anim_state = signal.animation_state_type();
+				state_index = 0;
+				disarm();
+			}
 		}
 	}
 	return {};
