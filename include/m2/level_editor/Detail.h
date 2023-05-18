@@ -6,6 +6,9 @@
 #include <m2/Vec2i.h>
 
 namespace m2::level_editor {
+	constexpr std::string_view paint_button_label = "PAINT";
+	constexpr std::string_view place_button_label = "PLACE";
+
 	using BackgroundPlaceholderMap = std::unordered_map<Vec2i, std::pair<Id, m2g::pb::SpriteType>, Vec2iHash>;
 	using ForegroundPlaceholderMap = std::unordered_map<Vec2i, std::pair<Id, m2::pb::LevelObject>, Vec2iHash>;
 

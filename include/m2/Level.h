@@ -87,6 +87,11 @@ namespace m2 {
 			struct RemoveMode {
 				static void remove_object(const Vec2i& position);
 			};
+			struct PickMode {
+				bool pick_foreground{};
+				static std::optional<m2g::pb::SpriteType> lookup_background_sprite(const Vec2i& position);
+				static std::optional<m2::pb::LevelObject> lookup_foreground_object(const Vec2i& position);
+			};
 			struct SelectMode {
 				std::optional<m2::Vec2i> selection_position_1, selection_position_2; // TopLeft, BottomRight
 				std::optional<m2::Vec2i> clipboard_position_1, clipboard_position_2; // TopLeft, BottomRight
@@ -95,6 +100,8 @@ namespace m2 {
 				void copy();
 				void paste_bg();
 				void paste_fg();
+				void erase();
+				void remove();
 			};
 			struct ShiftMode {
 				enum class ShiftType {
@@ -105,7 +112,7 @@ namespace m2 {
 				void shift(const Vec2i& position) const;
 			};
 
-			std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode,SelectMode,ShiftMode> mode;
+			std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode,PickMode,SelectMode,ShiftMode> mode;
 			level_editor::BackgroundPlaceholderMap bg_placeholders; // TODO Map2i might be used instead
 			level_editor::ForegroundPlaceholderMap fg_placeholders; // TODO Map2i might be used instead
 
@@ -114,6 +121,7 @@ namespace m2 {
 			void activate_erase_mode();
 			void activate_place_mode();
 			void activate_remove_mode();
+			void activate_pick_mode();
 			void activate_select_mode();
 			void activate_shift_mode();
 			static void save();

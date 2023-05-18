@@ -171,6 +171,20 @@ void m2::Level::LevelEditorState::RemoveMode::remove_object(const Vec2i &positio
 		LEVEL.level_editor_state->fg_placeholders.erase(placeholders_it);
 	}
 }
+std::optional<m2g::pb::SpriteType> m2::Level::LevelEditorState::PickMode::lookup_background_sprite(const Vec2i& position) {
+	auto it = LEVEL.level_editor_state->bg_placeholders.find(position);
+	if (it != LEVEL.level_editor_state->bg_placeholders.end()) {
+		return it->second.second;
+	}
+	return {};
+}
+std::optional<m2::pb::LevelObject> m2::Level::LevelEditorState::PickMode::lookup_foreground_object(const Vec2i& position) {
+	auto it = LEVEL.level_editor_state->fg_placeholders.find(position);
+	if (it != LEVEL.level_editor_state->fg_placeholders.end()) {
+		return it->second.second;
+	}
+	return {};
+}
 void m2::Level::LevelEditorState::SelectMode::shift_right() {
 	if (selection_position_1 && selection_position_2) {
 		auto min_x = std::min(selection_position_1->x, selection_position_2->x);
@@ -225,6 +239,20 @@ void m2::Level::LevelEditorState::SelectMode::paste_fg() {
 		});
 	}
 }
+void m2::Level::LevelEditorState::SelectMode::erase() {
+	if (selection_position_1 && selection_position_2) {
+		selection_position_1->for_each_cell_in_between(*selection_position_2, [](const Vec2i& cell) {
+			Level::LevelEditorState::EraseMode::erase_position(cell);
+		});
+	}
+}
+void m2::Level::LevelEditorState::SelectMode::remove() {
+	if (selection_position_1 && selection_position_2) {
+		selection_position_1->for_each_cell_in_between(*selection_position_2, [](const Vec2i& cell) {
+			Level::LevelEditorState::RemoveMode::remove_object(cell);
+		});
+	}
+}
 void m2::Level::LevelEditorState::ShiftMode::shift(const Vec2i& position) const {
 	if (shift_type == ShiftType::RIGHT) {
 		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, position.x, INT32_MAX, INT32_MIN, INT32_MAX, 1, 0);
@@ -255,6 +283,9 @@ void m2::Level::LevelEditorState::activate_place_mode() {
 }
 void m2::Level::LevelEditorState::activate_remove_mode() {
 	mode = RemoveMode{};
+}
+void m2::Level::LevelEditorState::activate_pick_mode() {
+	mode = PickMode{};
 }
 void m2::Level::LevelEditorState::activate_select_mode() {
 	mode = SelectMode{};

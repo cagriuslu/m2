@@ -164,6 +164,7 @@ namespace m2::ui {
 
 			explicit ImageSelection(const Blueprint::Widget* blueprint);
 			Action handle_events(Events& events) override;
+			Action select(unsigned index);
 			void draw() override;
 		};
 		struct TextSelection : public Widget {
@@ -174,6 +175,7 @@ namespace m2::ui {
 
 			explicit TextSelection(const Blueprint::Widget* blueprint);
 			Action handle_events(Events& events) override;
+			Action select(unsigned index);
 			void draw() override;
 		};
 		struct IntegerSelection : public Widget {
@@ -184,6 +186,7 @@ namespace m2::ui {
 
 			explicit IntegerSelection(const Blueprint::Widget* blueprint);
 			Action handle_events(Events& events) override;
+			Action select(int value);
 			Action update_content() override;
 			void draw() override;
 		};

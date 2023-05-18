@@ -327,7 +327,6 @@ ui::Action ui::State::ImageSelection::handle_events(Events& events) {
 
 	const auto& image_selection = std::get<Blueprint::Widget::ImageSelection>(blueprint->variant);
 
-	bool selection_changed = false;
 	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = true;
 		dec_depressed = false;
@@ -337,24 +336,24 @@ ui::Action ui::State::ImageSelection::handle_events(Events& events) {
 	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = false;
 		if (selection + 1 < image_selection.list.size()) {
-			++selection;
-			selection_changed = true;
+			select(selection + 1);
 		}
 	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
 		dec_depressed = false;
 		if (0 < selection) {
-			--selection;
-			selection_changed = true;
+			select(selection - 1);
 		}
 	}
+	return Action::CONTINUE;
+}
+ui::Action ui::State::ImageSelection::select(unsigned index) {
+	selection = index;
 
-	if (selection_changed) {
-		const auto& action_callback = image_selection.action_callback;
-		if (action_callback) {
-			return action_callback(image_selection.list[selection]);
-		}
+	const auto& image_selection = std::get<Blueprint::Widget::ImageSelection>(blueprint->variant);
+	const auto& action_callback = image_selection.action_callback;
+	if (action_callback) {
+		return action_callback(image_selection.list[selection]);
 	}
-
 	return Action::CONTINUE;
 }
 void ui::State::ImageSelection::draw() {
@@ -396,7 +395,6 @@ ui::Action ui::State::TextSelection::handle_events(Events& events) {
 
 	const auto& text_selection = std::get<Blueprint::Widget::TextSelection>(blueprint->variant);
 
-	bool selection_changed = false;
 	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = true;
 		dec_depressed = false;
@@ -406,26 +404,26 @@ ui::Action ui::State::TextSelection::handle_events(Events& events) {
 	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = false;
 		if (selection + 1 < text_selection.list.size()) {
-			++selection;
-			selection_changed = true;
+			return select(selection + 1);
 		}
 	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
 		dec_depressed = false;
 		if (0 < selection) {
-			--selection;
-			selection_changed = true;
+			return select(selection - 1);
 		}
 	}
+	return Action::CONTINUE;
+}
+ui::Action ui::State::TextSelection::select(unsigned index) {
+	selection = index;
 
-	if (selection_changed) {
-		font_texture = sdl::generate_font(text_selection.list[selection]);
+	const auto& text_selection = std::get<Blueprint::Widget::TextSelection>(blueprint->variant);
+	font_texture = sdl::generate_font(text_selection.list[selection]);
 
-		const auto& action_callback = text_selection.action_callback;
-		if (action_callback) {
-			return action_callback(text_selection.list[selection]);
-		}
+	const auto& action_callback = text_selection.action_callback;
+	if (action_callback) {
+		return action_callback(text_selection.list[selection]);
 	}
-
 	return Action::CONTINUE;
 }
 void ui::State::TextSelection::draw() {
@@ -465,7 +463,6 @@ ui::Action ui::State::IntegerSelection::handle_events(Events& events) {
 
 	const auto& integer_selection = std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant);
 
-	bool selection_changed = false;
 	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = true;
 		dec_depressed = false;
@@ -475,26 +472,25 @@ ui::Action ui::State::IntegerSelection::handle_events(Events& events) {
 	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
 		inc_depressed = false;
 		if (value < integer_selection.max_value) {
-			++value;
-			selection_changed = true;
+			select(value + 1);
 		}
 	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
 		dec_depressed = false;
 		if (integer_selection.min_value < value) {
-			--value;
-			selection_changed = true;
+			select(value - 1);
 		}
 	}
+	return Action::CONTINUE;
+}
+ui::Action ui::State::IntegerSelection::select(int _value) {
+	value = _value;
+	font_texture = sdl::generate_font(std::to_string(value));
 
-	if (selection_changed) {
-		font_texture = sdl::generate_font(std::to_string(value));
-
-		const auto& action_callback = integer_selection.action_callback;
-		if (action_callback) {
-			return action_callback(value);
-		}
+	const auto& integer_selection = std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant);
+	const auto& action_callback = integer_selection.action_callback;
+	if (action_callback) {
+		return action_callback(value);
 	}
-
 	return Action::CONTINUE;
 }
 ui::Action ui::State::IntegerSelection::update_content() {
