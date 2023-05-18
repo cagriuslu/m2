@@ -52,7 +52,7 @@ static Blueprint::Widget::Variant hp_progress_bar = Blueprint::Widget::ProgressB
 		}
 };
 static Blueprint::Widget::Variant dash_label = Blueprint::Widget::Text{
-	.initial_text = "DASH"
+	.initial_text = "DASH COOLDOWN"
 };
 static Blueprint::Widget::Variant dash_progress_bar = Blueprint::Widget::ProgressBar{
 	.initial_progress = 1.0f,
@@ -75,30 +75,25 @@ const Blueprint left_hud_blueprint = {
 	.border_width_px = 2,
 	.widgets = {
 		Blueprint::Widget{
-			.x = 4, .y = 50, .w = 11, .h = 2,
+			.x = 2, .y = 60, .w = 15, .h = 2,
 			.border_width_px = 0,
 			.variant = hp_label
 		},
 		Blueprint::Widget{
-			.x = 4, .y = 52, .w = 11, .h = 2,
+			.x = 2, .y = 62, .w = 15, .h = 2,
 			.variant = hp_progress_bar
 		},
 		Blueprint::Widget{
-			.x = 4, .y = 56, .w = 11, .h = 2,
+			.x = 2, .y = 66, .w = 15, .h = 2,
 			.border_width_px = 0,
 			.variant = dash_label
 		},
 		Blueprint::Widget{
-			.x = 4, .y = 58, .w = 11, .h = 2,
+			.x = 2, .y = 68, .w = 15, .h = 2,
 			.border_width_px = 1,
 			.variant = dash_progress_bar
 		}
 	}
-};
-
-const Blueprint right_hud_blueprint = {
-	.w = 19, .h = 72,
-	.border_width_px = 2
 };
 
 const m2::ui::Blueprint* m2g::ui::main_menu() {
@@ -111,5 +106,5 @@ const m2::ui::Blueprint* m2g::ui::left_hud() {
 	return &left_hud_blueprint;
 }
 const m2::ui::Blueprint* m2g::ui::right_hud() {
-	return &right_hud_blueprint;
+	return rpg::Context::get_instance().right_hud();
 }

@@ -43,6 +43,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.add_resource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 
 	obj.impl = std::make_unique<rpg::Player>(obj);
 	auto& impl = dynamic_cast<Player&>(*obj.impl);
@@ -52,9 +53,9 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		auto vector_to_mouse = (GAME.mouse_position_world_m() - obj.position).normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
-		float move_force{};
+		float move_force;
 		// Check if dash
-		if (GAME.events.pop_key_press(m2::Key::DASH) && chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
+		if (direction_vector && GAME.events.pop_key_press(m2::Key::DASH) && chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
 			move_force = 100000000.0f;
 		} else {
 			// Character movement
@@ -110,12 +111,15 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		}
 	};
 	chr.update = [](MAYBE m2::Character& chr) {
+		// Check if died
 		if (not chr.has_resource(m2g::pb::RESOURCE_HP)) {
 			LOG_INFO("You died");
 			if (m2::ui::execute_blocking(rpg::Context::get_instance().you_died_menu()) == m2::ui::Action::QUIT) {
 				GAME.quit = true;
 			}
 		}
+		// Show/hide ammo display
+		rpg::Context::get_instance().set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (other.parent().character_id() && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {

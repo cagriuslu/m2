@@ -35,7 +35,7 @@ void rpg::Context::save_progress() const {
 	m2::protobuf::message_to_json_file(progress, progress_file_path);
 }
 
-const m2::ui::Blueprint* rpg::Context::main_menu() const {
+const m2::ui::Blueprint* rpg::Context::main_menu() {
 	_main_menu = m2::ui::Blueprint{
 		.w = 160, .h = 90,
 		.border_width_px = 0,
@@ -89,7 +89,47 @@ const m2::ui::Blueprint* rpg::Context::main_menu() const {
 	return &_main_menu;
 }
 
-const m2::ui::Blueprint* rpg::Context::you_died_menu() const {
+const m2::ui::Blueprint* rpg::Context::right_hud() {
+	_right_hud = m2::ui::Blueprint{
+		.w = 19, .h = 72,
+		.border_width_px = 2
+	};
+
+	_right_hud.widgets.emplace_back(m2::ui::Blueprint::Widget{
+		.initially_enabled = false,
+		.x = 2, .y = 66, .w = 15, .h = 2,
+		.border_width_px = 0,
+		.variant = m2::ui::Blueprint::Widget::Text{
+				.initial_text = "AMMO"
+		}
+	});
+	_right_hud.widgets.emplace_back(m2::ui::Blueprint::Widget{
+		.initially_enabled = false,
+		.x = 2, .y = 68, .w = 15, .h = 2,
+		.border_width_px = 1,
+		.variant = m2::ui::Blueprint::Widget::ProgressBar{
+			.bar_color = SDL_Color{0, 127, 255, 255},
+			.update_callback = []() {
+				if (auto* player = LEVEL.player(); player) {
+					if (auto ammo = player->character().get_resource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
+						if (auto weapon = player->character().find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON); weapon) {
+							return ammo / weapon->get_acquire_benefit(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO);
+						}
+					}
+				}
+				return 0.0f;
+			}
+		}
+	});
+
+	return &_right_hud;
+}
+void rpg::Context::set_ammo_display_state(bool enabled) {
+	LEVEL.right_hud_ui_state->widgets[0]->enabled = enabled;
+	LEVEL.right_hud_ui_state->widgets[1]->enabled = enabled;
+}
+
+const m2::ui::Blueprint* rpg::Context::you_died_menu() {
 	_you_died_menu = m2::ui::Blueprint{
 		.w = 160, .h = 90,
 		.border_width_px = 0,

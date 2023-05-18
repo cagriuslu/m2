@@ -77,6 +77,7 @@ namespace m2::ui {
 				SDL_Scancode kb_shortcut{};
 			};
 
+			bool initially_enabled{true};
 			unsigned x{}, y{}, w{1}, h{1}; // unitless
 			unsigned border_width_px{1};
 			unsigned padding_width_px{};
@@ -103,8 +104,9 @@ namespace m2::ui {
 
 	struct State {
 		struct Widget {
+			bool enabled{true};
 			const Blueprint::Widget* blueprint;
-			SDL_Rect rect_px;
+			SDL_Rect rect_px{};
 
 			explicit Widget(const Blueprint::Widget* blueprint);
 			virtual ~Widget() = default;
@@ -202,11 +204,12 @@ namespace m2::ui {
 			void draw() final;
 		};
 
-		const Blueprint* blueprint;
-		SDL_Rect rect_px;
-		std::list<std::unique_ptr<Widget>> widgets;
+		bool enabled{true};
+		const Blueprint* blueprint{};
+		SDL_Rect rect_px{};
+		std::vector<std::unique_ptr<Widget>> widgets;
 
-		State();
+		State() = default;
         explicit State(const Blueprint* blueprint);
         void update_positions(const SDL_Rect& rect);
         Action handle_events(Events& events);

@@ -30,7 +30,7 @@ namespace {
 	}
 }
 
-ui::State::Widget::Widget(const Blueprint::Widget* blueprint) : blueprint(blueprint), rect_px({}) {}
+ui::State::Widget::Widget(const Blueprint::Widget* blueprint) : enabled(blueprint->initially_enabled), blueprint(blueprint) {}
 void ui::State::Widget::update_position(const SDL_Rect &rect_px_) {
 	this->rect_px = rect_px_;
 }
@@ -574,8 +574,8 @@ void ui::State::draw_border(const SDL_Rect& rect, unsigned border_width_px, cons
         SDL_RenderDrawRect(GAME.renderer, &rect);
     }
 }
-ui::State::State() : blueprint(nullptr), rect_px() {}
-ui::State::State(const Blueprint* blueprint) : blueprint(blueprint), rect_px({}) {
+
+ui::State::State(const Blueprint* blueprint) : blueprint(blueprint) {
     for (const auto& widget_blueprint : blueprint->widgets) {
         widgets.push_back(create_widget_state(widget_blueprint));
     }
@@ -589,28 +589,36 @@ void ui::State::update_positions(const SDL_Rect &rect_px_) {
 }
 ui::Action ui::State::handle_events(Events& events) {
     Action return_value = Action::CONTINUE;
-    for (auto& widget : widgets) {
-        if ((return_value = widget->handle_events(events)) != Action::CONTINUE) {
-            break;
-        }
-    }
+	if (enabled) {
+		for (auto& widget : widgets) {
+			if (widget->enabled && (return_value = widget->handle_events(events)) != Action::CONTINUE) {
+				break;
+			}
+		}
+	}
     return return_value;
 }
 ui::Action ui::State::update_contents() {
     Action return_value = Action::CONTINUE;
-    for (auto& widget : widgets) {
-        if ((return_value = widget->update_content()) != Action::CONTINUE) {
-            break;
-        }
-    }
+	if (enabled) {
+		for (auto& widget : widgets) {
+			if (widget->enabled && (return_value = widget->update_content()) != Action::CONTINUE) {
+				break;
+			}
+		}
+	}
     return return_value;
 }
 void ui::State::draw() {
-    draw_background_color(rect_px, blueprint->background_color);
-    for (auto& widget : widgets) {
-        widget->draw();
-    }
-    draw_border(rect_px, blueprint->border_width_px);
+	if (enabled) {
+		draw_background_color(rect_px, blueprint->background_color);
+		for (auto& widget : widgets) {
+			if (widget->enabled) {
+				widget->draw();
+			}
+		}
+		draw_border(rect_px, blueprint->border_width_px);
+	}
 }
 
 std::unique_ptr<ui::State::Widget> ui::State::create_widget_state(const Blueprint::Widget& blueprint) {

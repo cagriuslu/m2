@@ -8,26 +8,26 @@
 
 namespace rpg {
 	struct Context {
-		pb::Enemies enemies;
-
-		std::filesystem::path progress_file_path;
-		pb::Progress progress;
-
-		// Blueprints need to be retained
-		mutable m2::ui::Blueprint _main_menu;
-		mutable m2::ui::Blueprint _you_died_menu;
-
-		unsigned alive_enemy_count{};
-
 		Context();
 		static Context& get_instance();
 
+		pb::Enemies enemies;
+		unsigned alive_enemy_count{};
 		const pb::Enemy* get_enemy(m2g::pb::ObjectType object_type) const;
 
+		std::filesystem::path progress_file_path;
+		pb::Progress progress;
 		void save_progress() const;
 
-		const m2::ui::Blueprint* main_menu() const;
-		const m2::ui::Blueprint* you_died_menu() const;
+		m2::ui::Blueprint _main_menu;
+		const m2::ui::Blueprint* main_menu();
+
+		m2::ui::Blueprint _right_hud;
+		const m2::ui::Blueprint* right_hud();
+		void set_ammo_display_state(bool enabled);
+
+		m2::ui::Blueprint _you_died_menu;
+		const m2::ui::Blueprint* you_died_menu();
 	};
 }
 
