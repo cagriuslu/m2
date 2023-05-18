@@ -89,31 +89,8 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_triggered() {
 }
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_triggered() {
-	// If not stunned
-	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
-		follow_waypoints();
-		// Attack if player is close
-		if (obj->position.is_near(LEVEL.player()->position, ai->attack_distance())) {
-			// Based on what the capability is
-			auto capability = ai->capabilities(0); // TODO add other capabilities
-			switch (capability) {
-				case pb::CAPABILITY_RANGED:
-					throw M2ERROR("Chaser ranged weapon not implemented");
-				case pb::CAPABILITY_MELEE:
-					if (obj->character().use_item(obj->character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
-						auto& melee = m2::create_object(obj->position, obj->id()).first;
-						rpg::create_melee_object(melee, LEVEL.player()->position - obj->position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
-					}
-					break;
-				case pb::CAPABILITY_EXPLOSIVE:
-					throw M2ERROR("Chaser explosive weapon not implemented");
-				case pb::CAPABILITY_KAMIKAZE:
-					throw M2ERROR("Chaser kamikaze not implemented");
-				default:
-					break;
-			}
-		}
-	}
+	follow_waypoints();
+	Enemy::attack_if_close(*obj, *ai);
 	return {};
 }
 
@@ -152,14 +129,12 @@ bool rpg::ChaserFsm::find_path(const m2::Vec2f& target, float max_distance) {
 }
 
 void rpg::ChaserFsm::follow_waypoints() {
-	if (not obj->character().has_resource(m2g::pb::RESOURCE_STUN_TTL) && 1 < reverse_path.size()) {
-		auto closest_waypoint_it = reverse_find_first_local_min(reverse_path, obj->position);
-		auto next_waypoint_it = std::next(closest_waypoint_it);
-		if (next_waypoint_it != reverse_path.crend()) {
-			auto target = m2::Vec2f{*next_waypoint_it};
-			Enemy::move_towards(*obj, target - obj->position, 25000.0f);
-		} else {
-			// Player is very close
-		}
+	auto closest_waypoint_it = reverse_find_first_local_min(reverse_path, obj->position);
+	auto next_waypoint_it = std::next(closest_waypoint_it);
+	if (next_waypoint_it != reverse_path.crend()) {
+		auto target = m2::Vec2f{*next_waypoint_it};
+		Enemy::move_towards(*obj, target - obj->position, 25000.0f);
+	} else {
+		// Player is very close
 	}
 }

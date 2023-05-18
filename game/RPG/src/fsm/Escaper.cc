@@ -1,4 +1,4 @@
-#include <rpg/fsm/DistanceKeeper.h>
+#include <rpg/fsm/Escaper.h>
 #include <m2/box2d/RayCast.h>
 #include <m2/box2d/Detail.h>
 #include <m2/Game.h>
@@ -11,11 +11,11 @@ namespace {
 	}
 }
 
-rpg::DistanceKeeperFsm::DistanceKeeperFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(DistanceKeeperMode::Idle), obj(obj), ai(ai) {
+rpg::EscaperFsm::EscaperFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(EscaperMode::Idle), obj(obj), ai(ai) {
 	init();
 }
 
-std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_signal(const DistanceKeeperFsmSignal& s) {
+std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_signal(const EscaperFsmSignal& s) {
 	if (s.type() == m2::FsmSignalType::EnterState) {
 		// Action for EnterState is the same for all states
 		arm(random_alarm_duration(ai->recalculation_period()));
@@ -23,13 +23,13 @@ std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_signal(con
 	}
 
 	switch (state()) {
-		case DistanceKeeperMode::Idle:
+		case EscaperMode::Idle:
 			switch (s.type()) {
 				case m2::FsmSignalType::Alarm: return handle_alarm_while_idle();
 				case m2::FsmSignalType::Custom: return {}; // TODO implement small patrol
 				default: return {};
 			}
-		case DistanceKeeperMode::Triggered:
+		case EscaperMode::Triggered:
 			switch (s.type()) {
 				case m2::FsmSignalType::Alarm: return handle_alarm_while_triggered();
 				case m2::FsmSignalType::Custom: return handle_physics_step_while_triggered();
@@ -38,19 +38,19 @@ std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_signal(con
 	}
 }
 
-std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_alarm_while_idle() {
+std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_alarm_while_idle() {
 	// Check if player is close
 	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		escape_towards = find_direction_to_escape();
 		if (escape_towards) {
 			LOG_TRACE("Escaping towards", *escape_towards);
-			return DistanceKeeperMode::Triggered;
+			return EscaperMode::Triggered;
 		}
 	}
 	arm(random_alarm_duration(ai->recalculation_period()));
 	return {};
 }
-std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_alarm_while_triggered() {
+std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_alarm_while_triggered() {
 	// Check if player is still close
 	if (obj->position.is_near(LEVEL.player()->position, ai->trigger_distance())) {
 		escape_towards = find_direction_to_escape();
@@ -58,17 +58,18 @@ std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_alarm_whil
 		return {};
 	} else {
 		escape_towards = {};
-		return DistanceKeeperMode::Idle;
+		return EscaperMode::Idle;
 	}
 }
-std::optional<rpg::DistanceKeeperMode> rpg::DistanceKeeperFsm::handle_physics_step_while_triggered() {
+std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_physics_step_while_triggered() {
 	if (escape_towards) {
 		Enemy::move_towards(*obj, *escape_towards, 30000.0f);
 	}
+	Enemy::attack_if_close(*obj, *ai);
 	return {};
 }
 
-std::optional<m2::Vec2f> rpg::DistanceKeeperFsm::find_direction_to_escape() {
+std::optional<m2::Vec2f> rpg::EscaperFsm::find_direction_to_escape() {
 	float raycast_length = ai->trigger_distance() / 2.0f;
 	auto angle_from_player_to_obj = (obj->position - LEVEL.player()->position).angle_rads();
 

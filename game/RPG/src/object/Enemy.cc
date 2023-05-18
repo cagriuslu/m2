@@ -4,6 +4,7 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include "rpg/group/ItemGroup.h"
+#include "rpg/object/MeleeWeapon.h"
 #include <rpg/Detail.h>
 #include <rpg/Context.h>
 #include <m2/M2.h>
@@ -23,7 +24,7 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 			break;
 		case pb::Ai::kHitNRun:
 		case pb::Ai::kKeepDistance:
-			ai_fsm = DistanceKeeperFsm{&obj, &enemy->ai()};
+			ai_fsm = EscaperFsm{&obj, &enemy->ai()};
 			break;
 		case pb::Ai::kPatrol:
 		default:
@@ -69,7 +70,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 		}, impl.ai_fsm);
 		std::visit(m2::overloaded {
 			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{}); },
-			[](DistanceKeeperFsm& v) { v.signal(DistanceKeeperFsmSignal{}); },
+			[](EscaperFsm& v) { v.signal(EscaperFsmSignal{}); },
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
@@ -117,6 +118,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 				GAME.add_deferred_action(m2::create_object_deleter(self.object_id));
 			}
 		} else if (interaction_type == InteractionType::GET_STUNNED_BY) {
+			LOG_DEBUG("Stunned");
 			self.set_resource(m2g::pb::RESOURCE_STUN_TTL, 2.0f);
 			if (not self.has_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL)) {
 				self.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
@@ -140,12 +142,42 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 }
 
 void rpg::Enemy::move_towards(m2::Object& obj, m2::Vec2f direction, float force) {
-	direction = direction.normalize();
-	// Walk animation
-	auto char_move_dir = m2::to_character_movement_direction(direction);
-	auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
-	dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
-	// Apply force
-	m2::Vec2f force_direction = direction * (GAME.delta_time_s() * force);
-	obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
+	// If not stunned
+	if (not obj.character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
+		direction = direction.normalize();
+		// Walk animation
+		auto char_move_dir = m2::to_character_movement_direction(direction);
+		auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
+		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
+		// Apply force
+		m2::Vec2f force_direction = direction * (GAME.delta_time_s() * force);
+		obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
+	}
+}
+
+void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
+	// If not stunned
+	if (not obj.character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
+		// Attack if player is close
+		if (obj.position.is_near(LEVEL.player()->position, ai.attack_distance())) {
+			// Based on what the capability is
+			auto capability = ai.capabilities(0); // TODO add other capabilities
+			switch (capability) {
+				case pb::CAPABILITY_RANGED:
+					throw M2ERROR("Chaser ranged weapon not implemented");
+				case pb::CAPABILITY_MELEE:
+					if (obj.character().use_item(obj.character().find_items(m2g::pb::ITEM_REUSABLE_SWORD))) {
+						auto& melee = m2::create_object(obj.position, obj.id()).first;
+						rpg::create_melee_object(melee, LEVEL.player()->position - obj.position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
+					}
+					break;
+				case pb::CAPABILITY_EXPLOSIVE:
+					throw M2ERROR("Chaser explosive weapon not implemented");
+				case pb::CAPABILITY_KAMIKAZE:
+					throw M2ERROR("Chaser kamikaze not implemented");
+				default:
+					break;
+			}
+		}
+	}
 }
