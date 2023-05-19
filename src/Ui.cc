@@ -210,6 +210,15 @@ void ui::State::Image::draw() {
 
 ui::State::Text::Text(const Blueprint::Widget* blueprint) : AbstractButton(blueprint), font_texture(sdl::generate_font(std::get<Blueprint::Widget::Text>(blueprint->variant).initial_text)) {}
 ui::Action ui::State::Text::update_content() {
+	if (disable_after) {
+		*disable_after -= GAME.delta_time_s();
+		if (*disable_after <= 0.0f) {
+			disable_after = {};
+			enabled = false;
+			return Action::CONTINUE;
+		}
+	}
+
 	auto& text_blueprint = std::get<Blueprint::Widget::Text>(blueprint->variant);
 	if (text_blueprint.update_callback) {
 		auto[action, optional_string] = text_blueprint.update_callback();
@@ -555,18 +564,16 @@ void ui::State::CheckboxWithText::draw() {
 }
 
 void ui::State::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) {
-    if (!color.r && !color.g && !color.b && !color.a) {
-		// If the color is all zeros, user probably didn't initialize the Color at all
-		// Paint background to default background color
-        SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
-    } else {
+	if (color.r || color.g || color.b || color.a) {
         SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+		SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
+		SDL_RenderFillRect(GAME.renderer, &rect);
     }
-    SDL_RenderFillRect(GAME.renderer, &rect);
 }
 void ui::State::draw_border(const SDL_Rect& rect, unsigned border_width_px, const SDL_Color& color) {
     if (border_width_px) {
         SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+		SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
         SDL_RenderDrawRect(GAME.renderer, &rect);
     }
 }
@@ -819,4 +826,23 @@ const ui::Blueprint ui::console_ui = {
 		        .variant = command_input_variant
 	        }
         }
+};
+
+const ui::Blueprint ui::message_box_ui = {
+		.w = 1, .h = 1,
+		.border_width_px = 0,
+		.widgets = {
+				Blueprint::Widget{
+						.initially_enabled = false,
+						.x = 0, .y = 0, .w = 1, .h = 1,
+						.border_width_px = 0,
+						.background_color = SDL_Color{127, 127, 127, 127},
+						.variant = Blueprint::Widget::Text{
+								.alignment = TextAlignment::LEFT,
+								.update_callback = []() {
+									return std::make_pair(Action::CONTINUE, LEVEL.message);
+								}
+						}
+				}
+		}
 };

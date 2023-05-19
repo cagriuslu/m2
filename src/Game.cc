@@ -137,6 +137,7 @@ void m2::Game::handle_window_resize_event() {
 		if (_level) {
 			IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
 			IF(_level->right_hud_ui_state)->update_positions(_dims.right_hud);
+			IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
 		}
 	}
 }
@@ -160,6 +161,7 @@ void m2::Game::handle_menu_event() {
 void m2::Game::handle_hud_events() {
 	IF(_level->left_hud_ui_state)->handle_events(events);
 	IF(_level->right_hud_ui_state)->handle_events(events);
+	IF(_level->message_box_ui_state)->handle_events(events);
 }
 
 void m2::Game::execute_pre_step() {
@@ -232,6 +234,7 @@ void m2::Game::execute_pre_draw() {
 void m2::Game::update_hud_contents() {
 	IF(_level->left_hud_ui_state)->update_contents();
 	IF(_level->right_hud_ui_state)->update_contents();
+	IF(_level->message_box_ui_state)->update_contents();
 }
 
 void m2::Game::clear_back_buffer() {
@@ -287,6 +290,7 @@ void m2::Game::draw_debug_shapes() {
 void m2::Game::draw_hud() {
 	IF(_level->left_hud_ui_state)->draw();
 	IF(_level->right_hud_ui_state)->draw();
+	IF(_level->message_box_ui_state)->draw();
 }
 
 void m2::Game::draw_envelopes() {

@@ -47,6 +47,10 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 	}
 	_name = name;
 
+	left_hud_ui_state = m2::ui::State(m2g::ui::left_hud());
+	right_hud_ui_state = m2::ui::State(m2g::ui::right_hud());
+	message_box_ui_state = m2::ui::State(&ui::message_box_ui);
+
 	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
 	contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
 	world->SetContactListener(contact_listener);
@@ -95,12 +99,12 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 	m2::obj::create_pointer();
 
 	// Init HUD
-	left_hud_ui_state = m2::ui::State(m2g::ui::left_hud());
 	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 	left_hud_ui_state->update_contents();
-	right_hud_ui_state = m2::ui::State(m2g::ui::right_hud());
 	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
+	message_box_ui_state->update_positions(GAME.dimensions().message_box);
+	message_box_ui_state->update_contents();
 
 	return {};
 }

@@ -54,6 +54,8 @@ namespace m2 {
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
 		std::optional<ui::State> left_hud_ui_state, right_hud_ui_state;
+		std::optional<std::string> message;
+		std::optional<ui::State> message_box_ui_state;
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
 		std::vector<std::function<void(void)>> deferred_actions;

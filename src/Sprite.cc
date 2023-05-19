@@ -14,6 +14,7 @@ m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* 
 	if (not _texture) {
 		throw M2ERROR("SDL Error while creating texture from surface" + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
+	SDL_SetTextureBlendMode(_texture.get(), SDL_BLENDMODE_BLEND);
 }
 const m2::pb::SpriteSheet& m2::SpriteSheet::sprite_sheet() const {
 	return _sprite_sheet;

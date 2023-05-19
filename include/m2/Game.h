@@ -51,7 +51,7 @@ namespace m2 {
 			int ppm{};
 			SDL_Rect window{}, game{}, game_and_hud{};
 			SDL_Rect top_envelope{}, bottom_envelope{}, left_envelope{}, right_envelope{};
-			SDL_Rect left_hud{}, right_hud{}, console{};
+			SDL_Rect left_hud{}, right_hud{}, message_box{};
 			Dimensions() = default;
 			Dimensions(const Rational& game_height_m, int window_width, int window_height);
 		} _dims;

@@ -33,5 +33,6 @@ m2::Game::Dimensions::Dimensions(const Rational& game_height_m, int window_width
 	right_hud = SDL_Rect{left_envelope_size + hud_width + game_width, top_envelope_size, hud_width, hud_height};
 	game = SDL_Rect{left_envelope_size + hud_width, top_envelope_size, game_width, game_height};
 
-	console = SDL_Rect{game.x, game.y + game.h * 22 / 24, game.w, game.h * 2 / 24};
+	auto message_box_height = game.h / 25;
+	message_box = SDL_Rect{game.x, game.y + game.h - message_box_height, game.w, message_box_height};
 }

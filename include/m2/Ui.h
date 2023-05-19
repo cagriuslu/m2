@@ -81,7 +81,7 @@ namespace m2::ui {
 			unsigned x{}, y{}, w{1}, h{1}; // unitless
 			unsigned border_width_px{1};
 			unsigned padding_width_px{};
-			SDL_Color background_color{0, 0, 0, 255};
+			SDL_Color background_color{};
 
 			using Variant = std::variant<
 				NestedUi,
@@ -98,13 +98,14 @@ namespace m2::ui {
 
 		unsigned w{1}, h{1}; // unitless
 		unsigned border_width_px{1};
-		SDL_Color background_color{0, 0, 0, 255};
+		SDL_Color background_color{};
 		std::vector<Widget> widgets;
 	};
 
 	struct State {
 		struct Widget {
 			bool enabled{true};
+			std::optional<float> disable_after; // TODO only implemented for Text
 			const Blueprint::Widget* blueprint;
 			SDL_Rect rect_px{};
 
@@ -232,6 +233,7 @@ namespace m2::ui {
 	Action execute_blocking(const Blueprint* blueprint, SDL_Rect rect);
 
     extern const Blueprint console_ui;
+    extern const Blueprint message_box_ui;
 }
 
 #endif //M2_UI_H

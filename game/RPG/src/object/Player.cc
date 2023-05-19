@@ -132,6 +132,12 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		gfx.draw_effect_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
 
+	if (LEVEL.name() == "1") {
+		LEVEL.message = "Use W,A,S,D to walk.";
+		LEVEL.message_box_ui_state->widgets[0]->disable_after = 8;
+		LEVEL.message_box_ui_state->widgets[0]->enabled = true;
+	}
+
 	LEVEL.player_id = LEVEL.objects.get_id(&obj);
 	return {};
 }
