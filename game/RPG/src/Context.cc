@@ -93,7 +93,8 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 const m2::ui::Blueprint* rpg::Context::right_hud() {
 	_right_hud = m2::ui::Blueprint{
 		.w = 19, .h = 72,
-		.border_width_px = 2
+		.border_width_px = 2,
+		.background_color = {0, 0, 0, 255}
 	};
 
 	_right_hud.widgets.emplace_back(m2::ui::Blueprint::Widget{

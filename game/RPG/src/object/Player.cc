@@ -133,7 +133,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	};
 
 	if (LEVEL.name() == "1") {
-		LEVEL.message = "Use W,A,S,D to walk.";
+		LEVEL.message = "Use W,A,S,D to walk, SPACE to dash.";
 		LEVEL.message_box_ui_state->widgets[0]->disable_after = 8;
 		LEVEL.message_box_ui_state->widgets[0]->enabled = true;
 	}

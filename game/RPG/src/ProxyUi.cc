@@ -73,6 +73,7 @@ static Blueprint::Widget::Variant dash_progress_bar = Blueprint::Widget::Progres
 const Blueprint left_hud_blueprint = {
 	.w = 19, .h = 72,
 	.border_width_px = 2,
+	.background_color = {0, 0, 0, 255},
 	.widgets = {
 		Blueprint::Widget{
 			.x = 2, .y = 60, .w = 15, .h = 2,
