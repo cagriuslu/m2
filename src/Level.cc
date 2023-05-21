@@ -465,3 +465,8 @@ void m2::Level::toggle_grid() {
 	auto& camera_data = dynamic_cast<m2::obj::Camera&>(*camera()->impl);
 	camera_data.draw_grid_lines = !camera_data.draw_grid_lines;
 }
+void m2::Level::display_message(const std::string& msg, float timeout) {
+	message = msg;
+	message_box_ui_state->widgets[0]->disable_after = timeout;
+	message_box_ui_state->widgets[0]->enabled = true;
+}
