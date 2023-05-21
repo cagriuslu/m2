@@ -167,7 +167,7 @@ namespace m2 {
 		inline Object* camera() { return objects.get(camera_id); }
 		sdl::ticks_t get_level_duration() const;
 
-		// Convenience
+		// Modifiers
 		void toggle_grid();
 	};
 }

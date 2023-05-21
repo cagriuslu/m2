@@ -40,14 +40,15 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		gfx.on_draw = [&](MAYBE Graphic& gfx) {
 			auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 			if (camera_data->draw_grid_lines) {
-				auto offset_from_floored_position_m = camera.position - camera.position.floor();
-				auto offset_from_floored_position_px = offset_from_floored_position_m * GAME.dimensions().ppm;
+				auto grid_offset = -0.5f; // Move grid to top left by 0.5f
+				auto offset_from_nearest_integer_position_m = camera.position - (camera.position.floor() + grid_offset);
+				auto offset_from_nearest_integer_position_px = offset_from_nearest_integer_position_m * GAME.dimensions().ppm;
 				auto screen_center = Vec2i{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
 				auto horizontal_line_y = [=](int index) -> int {
-					return screen_center.y - (int)roundf(offset_from_floored_position_px.y) + index * GAME.dimensions().ppm;
+					return screen_center.y - (int)roundf(offset_from_nearest_integer_position_px.y) + index * GAME.dimensions().ppm;
 				};
 				auto vertical_line_x = [=](int index) -> int {
-					return screen_center.x - (int)roundf(offset_from_floored_position_px.x) + index * GAME.dimensions().ppm;
+					return screen_center.x - (int)roundf(offset_from_nearest_integer_position_px.x) + index * GAME.dimensions().ppm;
 				};
 				// Draw horizontal lines
 				SDL_SetRenderDrawColor(GAME.renderer, 127, 127, 255, 127);
