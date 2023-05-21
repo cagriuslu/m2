@@ -693,6 +693,12 @@ ui::Action ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
 				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
                 return Action::QUIT;
             }
+			if (events.pop_key_press(Key::CONSOLE)) {
+				auto act = ui::execute_blocking(&ui::console_ui);
+				if (act != ui::Action::CONTINUE) {
+					return act;
+				}
+			}
 			auto window_resize = events.pop_window_resize();
             if (window_resize) {
 				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
