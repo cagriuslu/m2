@@ -428,6 +428,13 @@ const ui::Blueprint::Widget::Variant left_hud_save_button = ui::Blueprint::Widge
 			return ui::Action::CONTINUE;
 		}
 };
+const ui::Blueprint::Widget::Variant left_hud_coordinates = ui::Blueprint::Widget::Text{
+		.initial_text = "0,0",
+		.update_callback = []() {
+			auto mouse_position = GAME.mouse_position_world_m().iround();
+			return std::make_pair(ui::Action::CONTINUE, std::to_string(mouse_position.x) + ',' + std::to_string(mouse_position.y));
+		}
+};
 const m2::ui::Blueprint m2::level_editor::ui::left_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
@@ -481,17 +488,22 @@ const m2::ui::Blueprint m2::level_editor::ui::left_hud = {
 						.variant = left_hud_cancel_button
 				},
 				m2::ui::Blueprint::Widget{
-						.x = 4, .y = 63, .w = 11, .h = 3,
+						.x = 4, .y = 62, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.padding_width_px = 2,
 						.variant = left_hud_gridlines_button
 				},
 				m2::ui::Blueprint::Widget{
-						.x = 4, .y = 67, .w = 11, .h = 3,
+						.x = 4, .y = 66, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.padding_width_px = 2,
 						.variant = left_hud_save_button
 				},
+				m2::ui::Blueprint::Widget{
+						.x = 0, .y = 70, .w = 19, .h = 2,
+						.border_width_px = 0,
+						.variant = left_hud_coordinates
+				}
 		}
 };
 
