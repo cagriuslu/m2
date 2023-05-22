@@ -18,6 +18,10 @@
     {
       "type": "CUTEOPUS",
       "levelEditorSpriteType": "CUTEOPUS_LOOKDOWN_00"
+    },
+    {
+      "type": "MACHINE_GUN",
+      "levelEditorSpriteType": "MACHINE_GUN_ICON"
     }
   ]
 }
