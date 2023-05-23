@@ -1,22 +1,12 @@
 {
   "sheets": [
     {
-      "resource": "resource/game/RPG/48.png",
-      "ppm": 48,
+      "resource": "resource/game/RPG/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
+      "ppm": 16,
       "sprites": [
         {
           "type": "NO_SPRITE"
         },
-        {
-          "type": "FLOPPY_DISK",
-          "rect": {"x": 144, "y": 144, "w": 48, "h": 48}
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/RPG/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
-      "ppm": 16,
-      "sprites": [
         {
           "type": "GUN_BULLET",
           "rect": {"x": 16, "y": 1440, "w": 16, "h": 16},
