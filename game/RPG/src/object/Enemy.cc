@@ -53,7 +53,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
@@ -164,7 +164,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 		// Attack if player is close
 		if (obj.position.is_near(LEVEL.player()->position, ai.attack_distance())) {
 			// Based on what the capability is
-			auto capability = ai.capabilities(0); // TODO add other capabilities
+			auto capability = ai.capabilities(0);
 			switch (capability) {
 				case pb::CAPABILITY_RANGED: {
 					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
@@ -181,7 +181,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 					if (it && obj.character().use_item(it)) {
 						auto& melee = m2::create_object(obj.position, obj.id()).first;
-						rpg::create_melee_object(melee, LEVEL.player()->position - obj.position, *GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD), false);
+						rpg::create_melee_object(melee, LEVEL.player()->position - obj.position, *it, false);
 					}
 					break;
 				}

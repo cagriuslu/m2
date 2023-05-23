@@ -3,16 +3,6 @@ package m2g.pb;
 
 enum SpriteType {
     NO_SPRITE = 0;
-    EMPTY = 1;
-    GRASS = 2;
-    CLIFF_TOP = 3;
-    CLIFF_RIGHT = 4;
-    CLIFF_BOTTOM = 5;
-    CLIFF_LEFT = 6;
-    CLIFF_TOP_RIGHT = 7;
-    CLIFF_TOP_LEFT = 8;
-    CLIFF_BOTTOM_RIGHT = 9;
-    CLIFF_BOTTOM_LEFT = 10;
     PLAYER_LOOKDOWN_00 = 11;
     PLAYER_LOOKDOWN_01 = 12;
     PLAYER_LOOKDOWN_02 = 13;
