@@ -12,3 +12,7 @@
 - RPG level design: adam kendisine saldiran canavarlari normalde olduremeyecegi, ama ilerleyip baska bir canavari oldurup ondan dusen silahi aldiktan sonra oldurebilecegi bir level olsun
 - SDL_ComposeCustomBlendMode
 - ledit Copy-Paste ile override edilen objelerin placeholder'lari silinmiyor
+- Enable VSync, do something while waiting for VSync
+- Dialog with an NPC, character screen, inventory, buy/sell against a seller, character selection
+- Synth editor
+- UI widgets: scroll area, horizontal/vertical slider, radio button, tabs, table
