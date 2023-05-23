@@ -28,7 +28,7 @@ float m2::box2d::check_distance(b2World& world, Vec2f from, Vec2f to, uint16_t c
 	Vec2f poi{to};
 	RayCastCallback rccb([&poi](MAYBE b2Fixture* fixture, Vec2f point, MAYBE Vec2f normal, MAYBE float fraction) -> float {
 		poi = point;
-		return 0.0f;
+		return fraction;
 	}, category_bits);
 	world.RayCast(&rccb, static_cast<b2Vec2>(from), static_cast<b2Vec2>(to));
 	return (poi - from).length();

@@ -2,6 +2,7 @@
 #include <m2/protobuf/Detail.h>
 #include <Object.pb.h>
 #include <m2/M2.h>
+#include <m2/Proxy.h>
 #include <m2/Exception.h>
 #include <SDL2/SDL_image.h>
 
@@ -15,6 +16,10 @@ m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* 
 		throw M2ERROR("SDL Error while creating texture from surface" + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
 	SDL_SetTextureBlendMode(_texture.get(), SDL_BLENDMODE_BLEND);
+	if (m2g::lightning) {
+		// Darken the texture
+		SDL_SetTextureColorMod(_texture.get(), 127, 127, 127);
+	}
 }
 const m2::pb::SpriteSheet& m2::SpriteSheet::sprite_sheet() const {
 	return _sprite_sheet;

@@ -5,6 +5,7 @@
 #include <Vec2f.pb.h>
 #include <Vec2i.pb.h>
 #include <box2d/b2_math.h>
+#include <SDL_rect.h>
 #include <string>
 #include <array>
 
@@ -35,6 +36,7 @@ namespace m2 {
 		inline bool operator==(const Vec2f& other) const { return (x == other.x) && (y == other.y); }
 		inline explicit operator bool() const { return (x != 0.0f) || (y != 0.0f); }
 		inline explicit operator b2Vec2() const { return b2Vec2{x, y}; }
+		inline explicit operator SDL_FPoint() const { return SDL_FPoint{x, y}; }
 
 		[[nodiscard]] inline bool is_nan() const { return isnan(x) || isnan(y); }
 		[[nodiscard]] inline bool is_near(const Vec2f& other, float tolerance) const { return fabsf(other.x - x) <= tolerance && fabsf(other.y - y) <= tolerance; }

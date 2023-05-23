@@ -10,3 +10,4 @@
 - Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
 - Override ppm doesn't work for dropped items
 - RPG level design: adam kendisine saldiran canavarlari normalde olduremeyecegi, ama ilerleyip baska bir canavari oldurup ondan dusen silahi aldiktan sonra oldurebilecegi bir level olsun
+- SDL_ComposeCustomBlendMode

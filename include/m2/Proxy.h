@@ -23,6 +23,9 @@ namespace m2g {
 	/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
 	extern const bool world_is_static;
 
+	/// Is lightning enabled? Darkens the textures.
+	extern const bool lightning;
+
 	/// Is the camera also a sound listener
 	extern const bool camera_is_listener;
 

@@ -12,6 +12,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_pointer() {
 	};
 
     auto& lig = obj.add_light();
+	//lig.dynamic_category_bits = box2d::FIXTURE_CATEGORY_OBSTACLE;
     lig.radius_m = 3.0f;
 
 	LEVEL.pointer_id = obj_id;
