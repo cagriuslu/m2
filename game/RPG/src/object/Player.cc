@@ -136,6 +136,8 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		LEVEL.display_message("Use W,A,S,D to walk, SPACE to dash.", 8.0f);
 	} else if (LEVEL.name() == "2") {
 		LEVEL.display_message("Use left mouse button to shoot.", 8.0f);
+	} else if (LEVEL.name() == "3") {
+		LEVEL.display_message("Use right mouse button to melee.", 8.0f);
 	}
 
 	LEVEL.player_id = LEVEL.objects.get_id(&obj);

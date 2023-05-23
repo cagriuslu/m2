@@ -437,7 +437,8 @@ const ui::Blueprint::Widget::Variant left_hud_coordinates = ui::Blueprint::Widge
 };
 const m2::ui::Blueprint m2::level_editor::ui::left_hud = {
 		.w = 19, .h = 72,
-		.border_width_px = 1,
+		.border_width_px = 0,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				m2::ui::Blueprint::Widget{
 						.x = 4, .y = 2, .w = 11, .h = 3,
@@ -509,5 +510,6 @@ const m2::ui::Blueprint m2::level_editor::ui::left_hud = {
 
 const ui::Blueprint m2::level_editor::ui::right_hud = {
 		.w = 19, .h = 72,
-		.border_width_px = 1
+		.border_width_px = 0,
+		.background_color = {50, 50, 50, 255}
 };
