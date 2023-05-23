@@ -11,3 +11,4 @@
 - Override ppm doesn't work for dropped items
 - RPG level design: adam kendisine saldiran canavarlari normalde olduremeyecegi, ama ilerleyip baska bir canavari oldurup ondan dusen silahi aldiktan sonra oldurebilecegi bir level olsun
 - SDL_ComposeCustomBlendMode
+- ledit Copy-Paste ile override edilen objelerin placeholder'lari silinmiyor
