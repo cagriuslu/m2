@@ -16,3 +16,4 @@
 - Dialog with an NPC, character screen, inventory, buy/sell against a seller, character selection
 - Synth editor
 - UI widgets: scroll area, horizontal/vertical slider, radio button, tabs, table
+- Enemies should be triggered if they are hit

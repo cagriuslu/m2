@@ -68,13 +68,8 @@ m2::sdl::ticks_t m2::sdl::get_ticks() {
 	return static_cast<int64_t>(SDL_GetTicks64());
 }
 
-m2::sdl::ticks_t m2::sdl::get_ticks_since(ticks_t last_ticks, ticks_t pause_ticks, ticks_t min) {
-	auto ticks = get_ticks() - last_ticks - pause_ticks;
-	if (min) {
-		delay(min);
-		ticks += min;
-	}
-	return ticks;
+m2::sdl::ticks_t m2::sdl::get_ticks_since(ticks_t last_ticks, ticks_t pause_ticks) {
+	return get_ticks() - last_ticks - pause_ticks;
 }
 
 int m2::sdl::get_refresh_rate() {
