@@ -1,11 +1,6 @@
-#include "m2/Fsm.h"
-#include <rpg/object/Enemy.h>
-#include <m2/Object.h>
-#include "m2/Game.h"
-#include <rpg/object/RangedWeapon.h>
-#include <rpg/object/MeleeWeapon.h>
 #include <rpg/fsm/Chaser.h>
-#include <m2/M2.h>
+#include <rpg/object/Enemy.h>
+#include <m2/Game.h>
 
 namespace {
 	float random_alarm_duration(float recalc_period) {
@@ -43,13 +38,23 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_signal(const ChaserFsmSign
 		case ChaserMode::Idle:
 			switch (s.type()) {
 				case m2::FsmSignalType::Alarm: return handle_alarm_while_idle();
-				case m2::FsmSignalType::Custom: return {}; // TODO implement small patrol
+				case m2::FsmSignalType::Custom:
+					if (s.got_hit()) {
+						return handle_hit_while_idle_or_given_up();
+					} else {
+						return {}; // TODO implement small patrol
+					}
 				default: return {};
 			}
 		case ChaserMode::Triggered:
 			switch (s.type()) {
 				case m2::FsmSignalType::Alarm: return handle_alarm_while_triggered();
-				case m2::FsmSignalType::Custom: return handle_physics_step_while_triggered();
+				case m2::FsmSignalType::Custom:
+					if (s.phy_step()) {
+						return handle_physics_step_while_triggered();
+					} else {
+						return {};
+					}
 				default: return {};
 			}
 		case ChaserMode::GaveUp:
@@ -70,6 +75,14 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_alarm_while_idle() {
 		}
 	}
 	arm(random_alarm_duration(ai->recalculation_period()));
+	return {};
+}
+
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_hit_while_idle_or_given_up() {
+	// Check if path exists
+	if (find_path(LEVEL.player()->position, ai->hit_trigger_distance())) {
+		return ChaserMode::Triggered;
+	}
 	return {};
 }
 

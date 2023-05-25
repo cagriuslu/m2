@@ -16,10 +16,19 @@ namespace rpg {
 	};
 
 	class ChaserFsmSignal : public m2::FsmSignalBase {
-		// No content, signifies physics step
 	public:
-		inline ChaserFsmSignal() : FsmSignalBase(m2::FsmSignalType::Custom) {}
+		enum class Type {
+			PHY_STEP,
+			GOT_HIT,
+		};
+	private:
+		Type _type;
+	public:
+		inline explicit ChaserFsmSignal(Type type) : FsmSignalBase(m2::FsmSignalType::Custom), _type(type) {}
 		using FsmSignalBase::FsmSignalBase;
+
+		inline bool got_hit() const { return _type == Type::GOT_HIT; }
+		inline bool phy_step() const { return _type == Type::PHY_STEP; }
 	};
 
 	class ChaserFsm : public m2::FsmBase<ChaserMode, ChaserFsmSignal> {
@@ -36,6 +45,7 @@ namespace rpg {
 
 	private:
 		std::optional<ChaserMode> handle_alarm_while_idle();
+		std::optional<ChaserMode> handle_hit_while_idle_or_given_up();
 		std::optional<ChaserMode> handle_alarm_while_triggered();
 		std::optional<ChaserMode> handle_physics_step_while_triggered();
 		std::optional<ChaserMode> handle_alarm_while_gave_up();

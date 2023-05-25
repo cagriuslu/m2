@@ -72,7 +72,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			[](auto& v) { v.time(GAME.delta_time_s()); }
 		}, impl.ai_fsm);
 		std::visit(m2::overloaded {
-			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{}); },
+			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{ChaserFsmSignal::Type::PHY_STEP}); },
 			[](EscaperFsm& v) { v.signal(EscaperFsmSignal{}); },
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
@@ -119,6 +119,12 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 				context.alive_enemy_count--;
 				// Delete self
 				GAME.add_deferred_action(m2::create_object_deleter(self.object_id));
+			} else {
+				// Else, notify AI
+				std::visit(m2::overloaded {
+						[](ChaserFsm& v) { v.signal(ChaserFsmSignal{ChaserFsmSignal::Type::GOT_HIT}); },
+						[](MAYBE auto& v) { }
+				}, impl.ai_fsm);
 			}
 		} else if (interaction_type == InteractionType::GET_STUNNED_BY) {
 			LOG_DEBUG("Stunned");

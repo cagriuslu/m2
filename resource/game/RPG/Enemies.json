@@ -6,6 +6,7 @@
       "ai": {
         "capabilities": ["CAPABILITY_MELEE"],
         "triggerDistance": 5.0,
+        "hitTriggerDistance": 15.0,
         "attackDistance": 1.25,
         "recalculationPeriod": 0.5,
         "chaser": {

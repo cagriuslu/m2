@@ -1,4 +1,3 @@
-- We don't update events during consecutive physics loops, may cause issue with event handling. It is as if mouse is held down longer than usual.
 - b2World'u C++ objesine donustur, otomatik release olsun
 - Genel olarak custom move/copy constructor'larindan kurtul
 - Sound doesn't play if object dies
@@ -16,4 +15,3 @@
 - Dialog with an NPC, character screen, inventory, buy/sell against a seller, character selection
 - Synth editor
 - UI widgets: scroll area, horizontal/vertical slider, radio button, tabs, table
-- Enemies should be triggered if they are hit

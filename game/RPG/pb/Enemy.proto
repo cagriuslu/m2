@@ -31,13 +31,14 @@ message Patrol {
 message Ai {
     repeated Capability capabilities = 1;
     float trigger_distance = 2; // Distance AI becomes active (in meters)
-    float attack_distance = 3; // Distance AI is clear to attack player (in meters)
-    float recalculation_period = 4; // Period after which AI recalculates waypoints (formula: random(s/2, 3s/2))
+    float hit_trigger_distance = 3; // Distance AI becomes active if got hit (in meters)
+    float attack_distance = 4; // Distance AI is clear to attack player (in meters)
+    float recalculation_period = 5; // Period after which AI recalculates waypoints (formula: random(s/2, 3s/2))
     oneof variant {
-        Chaser chaser = 5;
-        HitNRun hit_n_run = 6;
-        KeepDistance keep_distance = 7;
-        Patrol patrol = 8;
+        Chaser chaser = 6;
+        HitNRun hit_n_run = 7;
+        KeepDistance keep_distance = 8;
+        Patrol patrol = 9;
     }
 }
 
