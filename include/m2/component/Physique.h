@@ -3,6 +3,7 @@
 
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
+#include "../box2d/Body.h"
 #include <box2d/b2_body.h>
 #include <functional>
 
@@ -12,7 +13,7 @@ namespace m2 {
 		Callback pre_step{};
 		Callback post_step{};
 
-		b2Body* body{};
+		box2d::BodyUniquePtr body;
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> on_collision;
 		std::function<void(Physique&, Physique&)> off_collision;
 
@@ -24,8 +25,6 @@ namespace m2 {
 		// Move constructors
 		Physique(Physique&& other) noexcept;
 		Physique& operator=(Physique&& other) noexcept;
-		// Destructor
-		~Physique();
 
 		void draw_debug_shapes() const;
 

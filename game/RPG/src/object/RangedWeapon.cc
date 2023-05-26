@@ -62,7 +62,6 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 		if (!chr.has_resource(RESOURCE_TTL)) {
 			if (is_explosive) {
 				LOG_DEBUG("Exploding...");
-				m2::box2d::destroy_body(phy.body);
 				auto bp = m2::box2d::example_bullet_body_blueprint();
 				bp.mutable_background_fixture()->mutable_circ()->set_radius(damage_radius);
 				bp.mutable_background_fixture()->set_is_sensor(true);

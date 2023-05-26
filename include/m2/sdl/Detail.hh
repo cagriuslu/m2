@@ -11,13 +11,11 @@ namespace m2::sdl {
 	struct TextureDeleter {
 		void operator()(SDL_Texture* t);
 	};
-
 	using TextureUniquePtr = std::unique_ptr<SDL_Texture, TextureDeleter>;
 
 	struct SurfaceDeleter {
 		void operator()(SDL_Surface* s);
 	};
-
 	using SurfaceUniquePtr = std::unique_ptr<SDL_Surface, SurfaceDeleter>;
 
 	using ticks_t = int64_t;

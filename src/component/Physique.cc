@@ -10,7 +10,7 @@
 
 m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
 
-m2::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), pre_step(std::move(other.pre_step)), post_step(std::move(other.post_step)), body(other.body), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
+m2::Physique::Physique(Physique&& other) noexcept : Component(other.object_id), pre_step(std::move(other.pre_step)), post_step(std::move(other.post_step)), body(std::move(other.body)), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
     other.body = nullptr;
 }
 
@@ -22,12 +22,6 @@ m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
 	std::swap(on_collision, other.on_collision);
 	std::swap(off_collision, other.off_collision);
     return *this;
-}
-
-m2::Physique::~Physique() {
-	if (body) {
-		m2::box2d::destroy_body(body);
-	}
 }
 
 void m2::Physique::draw_debug_shapes() const {
