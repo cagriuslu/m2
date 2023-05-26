@@ -10,7 +10,7 @@ using namespace m2g::pb;
 
 // TODO add other types of Ranged Weapons: Machine Gun, Shotgun, Bow
 
-m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
+m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!ranged_weapon.has_attribute(ATTRIBUTE_LINEAR_SPEED)) {
 		throw M2ERROR("Ranged weapon has no linear speed");
@@ -32,7 +32,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::Vec2f&
 	float ttl_accuracy = ranged_weapon.try_get_attribute(ATTRIBUTE_TTL_ACCURACY, 1.0f);
 
 	float angle = m2::apply_accuracy(intended_direction.angle_rads(), m2::PI, angular_accuracy);
-	auto direction = m2::Vec2f::from_angle(angle);
+	auto direction = m2::VecF::from_angle(angle);
 	float ttl = m2::apply_accuracy(average_ttl, average_ttl, ttl_accuracy);
 
 	const auto& sprite = GAME.get_sprite(ranged_weapon.game_sprite());

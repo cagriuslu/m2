@@ -3,7 +3,7 @@
 
 m2::SoundEmitter::SoundEmitter(Id object_id) : Component(object_id) {}
 
-float m2::SoundListener::volume_of(const Vec2f& emitter_position) const {
+float m2::SoundListener::volume_of(const VecF& emitter_position) const {
 	auto distance = emitter_position.distance(position);
 	if (GAME.max_hearing_distance_m < distance) {
 		return 0.0f;

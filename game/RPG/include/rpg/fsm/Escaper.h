@@ -19,7 +19,7 @@ namespace rpg {
 	class EscaperFsm : public m2::FsmBase<EscaperMode, EscaperFsmSignal> {
 		m2::Object* obj;
 		const pb::Ai* ai;
-		std::optional<m2::Vec2f> escape_towards;
+		std::optional<m2::VecF> escape_towards;
 
 	public:
 		EscaperFsm(m2::Object* obj, const pb::Ai* ai);
@@ -32,6 +32,6 @@ namespace rpg {
 		std::optional<EscaperMode> handle_alarm_while_triggered();
 		std::optional<EscaperMode> handle_physics_step_while_triggered();
 
-		std::optional<m2::Vec2f> find_direction_to_escape();
+		std::optional<m2::VecF> find_direction_to_escape();
 	};
 }

@@ -2,7 +2,7 @@
 #include <m2/Events.h>
 #include <m2/Game.h>
 #include <m2/sdl/Detail.hh>
-#include <m2/Rect2i.h>
+#include <m2/RectI.h>
 #include <SDL2/SDL_image.h>
 #include <regex>
 #include <filesystem>
@@ -138,12 +138,12 @@ ui::Action ui::State::AbstractButton::handle_events(Events &events) {
 	} else {
 		if (not depressed) {
 			// Check if mouse pressed inside the rect
-			if (events.pop_mouse_button_press(MouseButton::PRIMARY, Rect2i{rect_px})) {
+			if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{rect_px})) {
 				depressed = true;
 			}
 		} else {
 			// Check if mouse released inside the rect
-			if (events.pop_mouse_button_release(MouseButton::PRIMARY, Rect2i{rect_px})) {
+			if (events.pop_mouse_button_release(MouseButton::PRIMARY, RectI{rect_px})) {
 				depressed = false;
 				run_action = true;
 			} else if (events.pop_mouse_button_release(MouseButton::PRIMARY)) {
@@ -329,7 +329,7 @@ void ui::State::TextInput::draw() {
 
 ui::State::ImageSelection::ImageSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::ImageSelection>(blueprint->variant).initial_selection) {}
 ui::Action ui::State::ImageSelection::handle_events(Events& events) {
-	auto rect = Rect2i{rect_px};
+	auto rect = RectI{rect_px};
 	auto buttons_rect = rect.trim_top(rect.w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
@@ -366,7 +366,7 @@ ui::Action ui::State::ImageSelection::select(unsigned index) {
 	return Action::CONTINUE;
 }
 void ui::State::ImageSelection::draw() {
-	auto rect = Rect2i{rect_px};
+	auto rect = RectI{rect_px};
 	auto image_rect = rect.trim_bottom(rect.h - rect.w);
 	auto buttons_rect = rect.trim_top(rect.w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
@@ -397,7 +397,7 @@ void ui::State::ImageSelection::draw() {
 
 ui::State::TextSelection::TextSelection(const Blueprint::Widget* blueprint) : Widget(blueprint), selection(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).initial_selection), font_texture(sdl::generate_font(std::get<Blueprint::Widget::TextSelection>(blueprint->variant).list[selection])) {}
 ui::Action ui::State::TextSelection::handle_events(Events& events) {
-	auto rect = Rect2i{rect_px};
+	auto rect = RectI{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
@@ -436,7 +436,7 @@ ui::Action ui::State::TextSelection::select(unsigned index) {
 	return Action::CONTINUE;
 }
 void ui::State::TextSelection::draw() {
-	auto rect = Rect2i{rect_px};
+	auto rect = RectI{rect_px};
 	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
@@ -465,7 +465,7 @@ void ui::State::TextSelection::draw() {
 
 ui::State::IntegerSelection::IntegerSelection(const Blueprint::Widget *blueprint) : Widget(blueprint), value(std::get<Blueprint::Widget::IntegerSelection>(blueprint->variant).initial_value), font_texture(sdl::generate_font(std::to_string(value))) {}
 ui::Action ui::State::IntegerSelection::handle_events(Events& events) {
-	auto rect = Rect2i{rect_px};
+	auto rect = RectI{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
@@ -514,7 +514,7 @@ ui::Action ui::State::IntegerSelection::update_content() {
 	return Action::CONTINUE;
 }
 void ui::State::IntegerSelection::draw() {
-	auto rect = Rect2i{rect_px};
+	auto rect = RectI{rect_px};
 	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
@@ -556,7 +556,7 @@ void ui::State::CheckboxWithText::draw() {
 	}
 	// Text
 	if (font_texture) {
-		auto text_rect = Rect2i{rect_px};
+		auto text_rect = RectI{rect_px};
 		draw_text((SDL_Rect)text_rect.trim_left(rect_px.h).trim((int)blueprint->padding_width_px), *font_texture, TextAlignment::LEFT);
 	}
 	// Border

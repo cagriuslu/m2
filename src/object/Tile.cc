@@ -3,7 +3,7 @@
 #include <m2/Game.h>
 #include <m2/box2d/Detail.h>
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const Vec2f& position, const m2::Sprite& sprite) {
+std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const VecF& position, const m2::Sprite& sprite) {
     auto obj_pair = create_object(position);
 	obj_pair.first.add_terrain_graphic(sprite);
 
@@ -46,7 +46,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const Vec2f& position, const
     return obj_pair;
 }
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_tile_foreground_companion(const Vec2f& position, const m2::Sprite& sprite) {
+std::pair<m2::Object&, m2::Id> m2::obj::create_tile_foreground_companion(const VecF& position, const m2::Sprite& sprite) {
 	auto obj_pair = create_object(position + sprite.foreground_companion_center_offset_m());
 	auto& companion = obj_pair.first;
 

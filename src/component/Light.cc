@@ -20,7 +20,7 @@ void m2::Light::default_draw(Light& lig) {
 	if (category_bits) {
 		// Check if the object is inside the object
 		bool inside_body = false;
-		box2d::query(*LEVEL.world, Aabb2f{obj.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
+		box2d::query(*LEVEL.world, AABB{obj.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
 			if (fixture.GetFilterData().categoryBits & category_bits) {
 				inside_body = true;
 				return false;
@@ -33,7 +33,7 @@ void m2::Light::default_draw(Light& lig) {
 
 			std::vector<SDL_Vertex> vertices;
 			// The vector that'll be rotated for raycasting
-			Vec2f full_span_m{lig.radius_m, 0.0f};
+			VecF full_span_m{lig.radius_m, 0.0f};
 			constexpr int steps = 360;
 			for (unsigned i = 0; i < steps; ++i) {
 				uint8_t max_brightness = 255;

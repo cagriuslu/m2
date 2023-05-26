@@ -1,6 +1,6 @@
 #pragma once
-#include "Vec2f.h"
+#include "VecF.h"
 
 namespace m2 {
-	float perlin(const Vec2f& point, float depth); // [0, 1]
+	float perlin(const VecF& point, float depth); // [0, 1]
 }

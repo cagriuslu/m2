@@ -23,7 +23,7 @@ bool m2::Events::gather() {
 			switch (e.window.event) {
 			case SDL_WINDOWEVENT_RESIZED:
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				window_resize = m2::Vec2i{e.window.data1 , e.window.data2};
+				window_resize = m2::VecI{e.window.data1 , e.window.data2};
 				break;
 			}
 			break;
@@ -104,7 +104,7 @@ bool m2::Events::pop_quit() {
 	return value;
 }
 
-std::optional<m2::Vec2i> m2::Events::pop_window_resize() {
+std::optional<m2::VecI> m2::Events::pop_window_resize() {
 	if (window_resize) {
 		auto value = *window_resize;
 		window_resize.reset();
@@ -153,7 +153,7 @@ bool m2::Events::pop_mouse_button_press(m2::MouseButton mb) {
 		return false;
 	}
 }
-bool m2::Events::pop_mouse_button_press(m2::MouseButton mb, const Rect2i& rect) {
+bool m2::Events::pop_mouse_button_press(m2::MouseButton mb, const RectI& rect) {
 	if (mouse_buttons_pressed[u(mb)] && rect.point_in_rect(mouse_position())) {
 		mouse_buttons_pressed[u(mb)]--;
 		mouse_button_press_count--;
@@ -171,7 +171,7 @@ bool m2::Events::pop_mouse_button_release(m2::MouseButton mb) {
 		return false;
 	}
 }
-bool m2::Events::pop_mouse_button_release(MouseButton mb, const Rect2i& rect) {
+bool m2::Events::pop_mouse_button_release(MouseButton mb, const RectI& rect) {
 	if (mouse_buttons_released[u(mb)] && rect.point_in_rect(mouse_position())) {
 		mouse_buttons_released[u(mb)]--;
 		mouse_button_release_count--;
@@ -209,6 +209,6 @@ bool m2::Events::is_mouse_button_down(MouseButton mb) const {
 	return mouse_buttons_down[u(mb)];
 }
 
-m2::Vec2i m2::Events::mouse_position() const {
+m2::VecI m2::Events::mouse_position() const {
 	return _mouse_position;
 }

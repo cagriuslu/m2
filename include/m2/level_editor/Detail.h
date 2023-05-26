@@ -1,14 +1,14 @@
 #pragma once
 #include <m2/Object.h>
 #include <m2/Pool.hh>
-#include <m2/Vec2i.h>
+#include <m2/VecI.h>
 
 namespace m2::level_editor {
 	constexpr std::string_view paint_button_label = "PAINT";
 	constexpr std::string_view place_button_label = "PLACE";
 
-	using BackgroundPlaceholderMap = std::unordered_map<Vec2i, std::pair<Id, m2g::pb::SpriteType>, Vec2iHash>;
-	using ForegroundPlaceholderMap = std::unordered_map<Vec2i, std::pair<Id, m2::pb::LevelObject>, Vec2iHash>;
+	using BackgroundPlaceholderMap = std::unordered_map<VecI, std::pair<Id, m2g::pb::SpriteType>, Vec2iHash>;
+	using ForegroundPlaceholderMap = std::unordered_map<VecI, std::pair<Id, m2::pb::LevelObject>, Vec2iHash>;
 
 	/// Shifts placeholders between [x1, x2] and [y1, y2] by (x_shift_count, y_shift_count)
 	template <typename PlaceholderMapType>
@@ -16,7 +16,7 @@ namespace m2::level_editor {
 		static_assert(std::is_same<std::remove_cvref_t<PlaceholderMapType>, BackgroundPlaceholderMap>() ||
 				std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
 		// Gather the placeholders that need to be moved
-		std::vector<Vec2i> placeholders_to_move;
+		std::vector<VecI> placeholders_to_move;
 		transform_copy_if(placeholders.begin(), placeholders.end(), std::back_inserter(placeholders_to_move),
 				[=](const typename PlaceholderMapType::value_type& kv) {
 					const auto& pos = kv.first;

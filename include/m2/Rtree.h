@@ -1,5 +1,5 @@
 #pragma once
-#include "Aabb2f.h"
+#include "AABB.h"
 #include "Pool.hh"
 
 // Binary tree where each node is an AABB, as you go up the levels, the AABBs get merged. In the highest level, you have the AABB that covers the whole world.
@@ -14,7 +14,7 @@ namespace m2 {
 
 	template <typename T>
 	struct RtreeItem {
-		Aabb2f aabb;
+		AABB aabb;
 		T obj;
 	};
 

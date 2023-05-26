@@ -7,7 +7,7 @@
 #include "DrawList.h"
 #include "Pathfinder.h"
 #include "Value.h"
-#include "Vec2i.h"
+#include "VecI.h"
 #include <Level.pb.h>
 #include <functional>
 #include <optional>

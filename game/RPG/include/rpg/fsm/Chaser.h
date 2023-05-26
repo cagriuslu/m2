@@ -32,7 +32,7 @@ namespace rpg {
 	class ChaserFsm : public m2::FsmBase<ChaserMode, ChaserFsmSignal> {
 		m2::Object* obj;
 		const pb::Ai* ai;
-		m2::Vec2f home_position;
+		m2::VecF home_position;
 		m2::Path reverse_path;
 
 	public:
@@ -49,7 +49,7 @@ namespace rpg {
 		std::optional<ChaserMode> handle_alarm_while_gave_up();
 		std::optional<ChaserMode> handle_physics_step_while_gave_up();
 
-		bool find_path(const m2::Vec2f& target, float max_distance);
+		bool find_path(const m2::VecF& target, float max_distance);
 		void follow_waypoints();
 	};
 }

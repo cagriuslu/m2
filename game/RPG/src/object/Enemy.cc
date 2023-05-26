@@ -135,8 +135,8 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 		}
 	};
 	phy.post_step = [&](MAYBE m2::Physique& phy) {
-		m2::Vec2f velocity = m2::Vec2f{phy.body->GetLinearVelocity()};
-		if (velocity.is_near(m2::Vec2f{}, 0.1f)) {
+		m2::VecF velocity = m2::VecF{phy.body->GetLinearVelocity()};
+		if (velocity.is_near(m2::VecF{}, 0.1f)) {
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{m2g::pb::ANIMATION_STATE_IDLE});
 		}
 	};
@@ -150,7 +150,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	return {};
 }
 
-void rpg::Enemy::move_towards(m2::Object& obj, m2::Vec2f direction, float force) {
+void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) {
 	// If not stunned
 	if (not obj.character().has_resource(m2g::pb::RESOURCE_STUN_TTL)) {
 		direction = direction.normalize();
@@ -159,7 +159,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::Vec2f direction, float force)
 		auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
 		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
-		m2::Vec2f force_direction = direction * (GAME.delta_time_s() * force);
+		m2::VecF force_direction = direction * (GAME.delta_time_s() * force);
 		obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
 	}
 }
@@ -179,7 +179,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 						auto shoot_direction = LEVEL.player()->position - obj.position;
 						rpg::create_ranged_weapon_object(projectile, shoot_direction, *it, false);
 						// Knock-back
-						obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
+						obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
 					}
 					break;
 				}

@@ -1,7 +1,7 @@
 #include <m2/DrawList.h>
 #include <m2/Game.h>
 
-bool m2::DrawList::Vec2fComparator::operator()(const Vec2f& lhs, const Vec2f& rhs) const {
+bool m2::DrawList::Vec2fComparator::operator()(const VecF& lhs, const VecF& rhs) const {
 	return lhs.y < rhs.y;
 }
 
@@ -24,7 +24,7 @@ void m2::DrawList::insert(ObjectId id) {
 	id_lookup.insert({id, it});
 }
 
-void m2::DrawList::queue_update(ObjectId id, const Vec2f& pos) {
+void m2::DrawList::queue_update(ObjectId id, const VecF& pos) {
 	update_queue_lock.lock();
 	update_queue.emplace_back(id, pos);
 	update_queue_lock.unlock();

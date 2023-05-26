@@ -7,7 +7,7 @@ namespace {
 		return recalc_period / 2.0f + recalc_period * m2::randf() * 1.5f;
 	}
 
-	m2::Path::const_reverse_iterator reverse_find_first_local_min(const m2::Path& list, const m2::Vec2f& pos) {
+	m2::Path::const_reverse_iterator reverse_find_first_local_min(const m2::Path& list, const m2::VecF& pos) {
 		auto closest_it = list.crbegin();
 		auto closest_distance_sq = pos.distance_sq(*closest_it);
 		for (auto it = std::next(closest_it); it != list.rend(); ++it) {
@@ -132,7 +132,7 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up
 	return {};
 }
 
-bool rpg::ChaserFsm::find_path(const m2::Vec2f& target, float max_distance) {
+bool rpg::ChaserFsm::find_path(const m2::VecF& target, float max_distance) {
 	auto smooth_path = LEVEL.pathfinder->find_grid_path(obj->position, target, max_distance);
 	if (not smooth_path.empty()) {
 		reverse_path = std::move(smooth_path);
@@ -145,7 +145,7 @@ void rpg::ChaserFsm::follow_waypoints() {
 	auto closest_waypoint_it = reverse_find_first_local_min(reverse_path, obj->position);
 	auto next_waypoint_it = std::next(closest_waypoint_it);
 	if (next_waypoint_it != reverse_path.crend()) {
-		auto target = m2::Vec2f{*next_waypoint_it};
+		auto target = m2::VecF{*next_waypoint_it};
 		Enemy::move_towards(*obj, target - obj->position, 25000.0f);
 	} else {
 		// Player is very close

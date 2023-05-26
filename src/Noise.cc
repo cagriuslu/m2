@@ -1,5 +1,5 @@
 #include <m2/Noise.h>
-#include <m2/Vec2i.h>
+#include <m2/VecI.h>
 #include <cmath>
 
 namespace internal::perlin {
@@ -69,10 +69,10 @@ namespace internal::perlin {
 	}
 }
 
-float m2::perlin(const Vec2f& point, float depth) {
+float m2::perlin(const VecF& point, float depth) {
 	using namespace internal::perlin;
 
-	auto point_i = Vec2i{point};
+	auto point_i = VecI{point};
 	auto depth_i = static_cast<int>(depth);
 
 	// Find the unit cube the point lies in

@@ -29,7 +29,7 @@ void m2::Physique::draw_debug_shapes() const {
 		return;
 	}
 
-	auto position = Vec2f{body->GetPosition()}; // Position of the object origin
+	auto position = VecF{body->GetPosition()}; // Position of the object origin
 	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 		b2AABB aabb;
 		fixture->GetShape()->ComputeAABB(&aabb, body->GetTransform(), 0);
@@ -47,13 +47,13 @@ void m2::Physique::draw_debug_shapes() const {
 
 				// Decompose the "object origin" to "shape centroid" vector
 				// (shape doesn't know where the object origin is, or the angle of the object)
-				auto centroid_offset_m = Vec2f{shape->m_centroid};
+				auto centroid_offset_m = VecF{shape->m_centroid};
 				auto centroid_offset_length_m = centroid_offset_m.length();
 				auto centroid_offset_angle = centroid_offset_m.angle_rads();
 				// Current angle of the object in the world
 				auto current_angle = body->GetTransform().q.GetAngle();
 				// Compose the "object origin" to "current shape centroid" vector
-				auto center_offset_m = Vec2f::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
+				auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 
 				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
 				auto dst_rect = SDL_Rect{
@@ -71,7 +71,7 @@ void m2::Physique::draw_debug_shapes() const {
 				int R = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.dimensions().ppm);
 				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(color, R, R, 16);
 
-				auto center_offset_m = Vec2f{shape->m_p};
+				auto center_offset_m = VecF{shape->m_p};
 
 				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
 				auto dst_rect = SDL_Rect{

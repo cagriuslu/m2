@@ -9,7 +9,7 @@
 std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
     // Start at player's location
     auto* player = LEVEL.objects.get(LEVEL.player_id);
-    auto obj_pair = create_object(player ? player->position : Vec2f{});
+    auto obj_pair = create_object(player ? player->position : VecF{});
 	auto& camera = obj_pair.first;
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
@@ -22,7 +22,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		// Mouse lookahead disabled temporarily
 //		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
 //			// Give an offset to the camera's location based on the position of the mouse
-//			m2::Vec2f offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
+//			m2::VecF offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
 //			camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
 //			camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
 //		} else {
@@ -43,7 +43,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 				auto grid_offset = -0.5f; // Move grid to top left by 0.5f
 				auto offset_from_nearest_integer_position_m = camera.position - (camera.position.floor() + grid_offset);
 				auto offset_from_nearest_integer_position_px = offset_from_nearest_integer_position_m * GAME.dimensions().ppm;
-				auto screen_center = Vec2i{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
+				auto screen_center = VecI{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
 				auto horizontal_line_y = [=](int index) -> int {
 					return screen_center.y - (int)roundf(offset_from_nearest_integer_position_px.y) + index * GAME.dimensions().ppm;
 				};

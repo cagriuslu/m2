@@ -2,7 +2,7 @@ syntax = "proto3";
 package m2.pb;
 
 import "Dim2f.proto";
-import "Vec2f.proto";
+import "VecF.proto";
 
 enum BodyType {
   STATIC = 0; // Doesn't move, doesn't collide with other Static or Kinematic objects
@@ -12,13 +12,13 @@ enum BodyType {
 
 message RectangleBodyParameters {
   Dim2f dims = 1;
-  Vec2f center_offset = 2;
+  VecF center_offset = 2;
   float angle = 3;
 }
 
 message CircularBodyParameters {
   float radius = 1;
-  Vec2f center_offset = 2;
+  VecF center_offset = 2;
 }
 
 enum FixtureCategory {

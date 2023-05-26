@@ -2,7 +2,7 @@
 #include "m2/Component.h"
 #include "m2/Game.h"
 #include <m2/box2d/RayCast.h>
-#include <m2/Vec2i.h>
+#include <m2/VecI.h>
 #include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <cfloat>
@@ -21,9 +21,9 @@ m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	}
 }
 
-m2::Path m2::Pathfinder::find_smooth_path(const Vec2f& from_f, const Vec2f& to_f, float max_distance_m) {
-	auto from = m2::Vec2i{from_f};
-	auto to = m2::Vec2i{to_f};
+m2::Path m2::Pathfinder::find_smooth_path(const VecF& from_f, const VecF& to_f, float max_distance_m) {
+	auto from = m2::VecI{from_f};
+	auto to = m2::VecI{to_f};
 	if (from == to) {
 		return {};
 	}
@@ -47,7 +47,7 @@ m2::Path m2::Pathfinder::find_smooth_path(const Vec2f& from_f, const Vec2f& to_f
 	return {};
 }
 
-m2::Path m2::Pathfinder::find_grid_path(const Vec2i& from, const Vec2i& to, float max_distance_m) {
+m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float max_distance_m) {
 	if (from == to) {
 		return {};
 	}
@@ -67,12 +67,12 @@ m2::Path m2::Pathfinder::find_grid_path(const Vec2i& from, const Vec2i& to, floa
 	auto max_grid_distance_m = max_distance_m * SQROOT_2;
 
 	// Holds the positions which will be explored next. Key is the priority, value is the position.
-	std::multimap<float, Vec2i> frontiers{{0.0f, from}};
+	std::multimap<float, VecI> frontiers{{0.0f, from}};
 
 	auto& approach_map = _approach_from_cache[to];
 
 	// Holds accumulated cost of reaching a position. Key is the position, value is its cost.
-	std::unordered_map<Vec2i, float, Vec2iHash> provisional_cost{{from, 0.0f}};
+	std::unordered_map<VecI, float, Vec2iHash> provisional_cost{{from, 0.0f}};
 
 	while (not frontiers.empty()) {
 		auto current_frontier_it = frontiers.begin();
@@ -84,7 +84,7 @@ m2::Path m2::Pathfinder::find_grid_path(const Vec2i& from, const Vec2i& to, floa
 		}
 
 		// Iterate over neighbors
-		for (const auto& direction : {Vec2i{0, +1}, Vec2i{+1, 0}, Vec2i{0, -1}, Vec2i{-1, 0}}) {
+		for (const auto& direction : {VecI{0, +1}, VecI{+1, 0}, VecI{0, -1}, VecI{-1, 0}}) {
 			auto neighbor = frontier + direction;
 
 			bool is_reachable = false;
@@ -153,7 +153,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 	const auto* prev_point2 = point1;
 
 	float cost = 0.0f;
-	auto insert_point = [&](const Vec2i* point) {
+	auto insert_point = [&](const VecI* point) {
 		if (point) {
 			auto cost_to_point = smooth_path.back().distance(*point);
 			if (max_distance_m < cost + cost_to_point) {
@@ -169,7 +169,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 	for (auto point2_it = reverse_path.begin() + 1; point2_it != reverse_path.end(); ++point2_it) {
 		auto* point2 = &(*point2_it);
 
-		bool eyesight = m2::box2d::check_eyesight(*LEVEL.world, m2::Vec2f{*point1}, m2::Vec2f{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
+		bool eyesight = m2::box2d::check_eyesight(*LEVEL.world, m2::VecF{*point1}, m2::VecF{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
 		if (point2_it == std::prev(reverse_path.end(), 1)) {
 			if (not eyesight) {
 				// If we are processing the last point AND there is no eyesight, add the previous point
@@ -195,6 +195,6 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 	return smooth_path;
 }
 
-bool m2::Pathfinder::check_eyesight(const Vec2i& from, const Vec2i& to) {
-	return box2d::check_eyesight(*LEVEL.world, Vec2f{from} + Vec2f{0.5f, 0.5f}, Vec2f{to} + Vec2f{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
+bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
+	return box2d::check_eyesight(*LEVEL.world, VecF{from} + VecF{0.5f, 0.5f}, VecF{to} + VecF{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
 }

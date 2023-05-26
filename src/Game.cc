@@ -195,7 +195,7 @@ void m2::Game::execute_step() {
 				auto &object = phy.parent();
 				auto old_pos = object.position;
 				// Update draw list
-				object.position = m2::Vec2f{phy.body->GetPosition()};
+				object.position = m2::VecF{phy.body->GetPosition()};
 				if (old_pos != object.position) {
 					_level->draw_list.queue_update(phy.object_id, object.position);
 				}
@@ -311,8 +311,8 @@ void m2::Game::recalculate_dimensions(int window_width, int window_height, const
 
 void m2::Game::recalculate_mouse_position() {
 	auto mouse_position = events.mouse_position();
-	auto screen_center_to_mouse_position_px = Vec2i{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
-	_screen_center_to_mouse_position_m = Vec2f{(float) screen_center_to_mouse_position_px.x / (float) _dims.ppm, (float) screen_center_to_mouse_position_px.y / (float) _dims.ppm};
+	auto screen_center_to_mouse_position_px = VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
+	_screen_center_to_mouse_position_m = VecF{(float) screen_center_to_mouse_position_px.x / (float) _dims.ppm, (float) screen_center_to_mouse_position_px.y / (float) _dims.ppm};
 	auto camera_position = _level->objects[_level->camera_id].position;
 	_mouse_position_world_m = _screen_center_to_mouse_position_m + camera_position;
 }

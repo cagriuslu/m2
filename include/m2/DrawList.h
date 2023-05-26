@@ -1,6 +1,6 @@
 #pragma once
 #include "Object.h"
-#include "Vec2f.h"
+#include "VecF.h"
 #include <map>
 #include <unordered_map>
 #include "SpinLock.h"
@@ -16,12 +16,12 @@ namespace m2 {
 
 	private:
 		struct Vec2fComparator {
-			bool operator()(const Vec2f& lhs, const Vec2f& rhs) const;
+			bool operator()(const VecF& lhs, const VecF& rhs) const;
 		};
-		std::multimap<Vec2f, DrawItem, Vec2fComparator> draw_map;
+		std::multimap<VecF, DrawItem, Vec2fComparator> draw_map;
 		std::unordered_map<ObjectId, decltype(draw_map)::iterator> id_lookup;
 
-		std::vector<std::pair<ObjectId, Vec2f>> update_queue;
+		std::vector<std::pair<ObjectId, VecF>> update_queue;
 		SpinLock update_queue_lock;
 
 	public:
@@ -34,7 +34,7 @@ namespace m2 {
 		};
 
 		void insert(ObjectId id);
-		void queue_update(ObjectId id, const Vec2f& pos);
+		void queue_update(ObjectId id, const VecF& pos);
 		void update();
 		void remove(ObjectId id);
 

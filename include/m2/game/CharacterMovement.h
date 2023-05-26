@@ -1,6 +1,6 @@
 #pragma once
 #include "../Controls.h"
-#include "../Vec2f.h"
+#include "../VecF.h"
 
 namespace m2 {
 	enum CharacterMovementDirection {
@@ -17,7 +17,7 @@ namespace m2 {
 		CHARMOVEMENT_DOWN,
 		CHARMOVEMENT_UP,
 	};
-	CharacterMovementDirection to_character_movement_direction(const Vec2f& direction_vector);
+	CharacterMovementDirection to_character_movement_direction(const VecF& direction_vector);
 
-	std::pair<CharacterMovementDirection, Vec2f> calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key);
+	std::pair<CharacterMovementDirection, VecF> calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key);
 }

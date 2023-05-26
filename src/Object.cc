@@ -4,7 +4,7 @@
 #include "m2/component/Graphic.h"
 #include "m2/component/Light.h"
 
-m2::Object::Object(const m2::Vec2f &position, ObjectId parent_id) : position(position), _parent_id(parent_id) {}
+m2::Object::Object(const m2::VecF &position, ObjectId parent_id) : position(position), _parent_id(parent_id) {}
 
 m2::Object::Object(Object&& other) noexcept :
 		position(other.position),
@@ -222,7 +222,7 @@ void m2::Object::remove_character() {
 	}
 }
 
-std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::Vec2f &position, ObjectId parent_id) {
+std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::VecF &position, ObjectId parent_id) {
     return LEVEL.objects.alloc(position, parent_id);
 }
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {

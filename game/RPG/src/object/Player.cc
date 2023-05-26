@@ -74,7 +74,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 				auto& projectile = m2::create_object(obj.position, id).first;
 				rpg::create_ranged_weapon_object(projectile, vector_to_mouse, weapon, true);
 				// Knock-back
-				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::Vec2f::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
+				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
 			};
 
 			// Check if there is a special ranged weapon
@@ -122,7 +122,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		rpg::Context::get_instance().set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (other.parent().character_id() && 10.0f < m2::Vec2f{phy.body->GetLinearVelocity()}.length()) {
+		if (other.parent().character_id() && 10.0f < m2::VecF{phy.body->GetLinearVelocity()}.length()) {
 			auto& other_char = other.parent().character();
 			m2::Character::execute_interaction(chr, m2g::pb::InteractionType::STUN, other_char, m2g::pb::InteractionType::GET_STUNNED_BY);
 		}

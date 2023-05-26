@@ -7,11 +7,11 @@ namespace {
 }
 
 m2::Id m2::obj::create_god() {
-	auto [obj, id] = create_object(Vec2f{});
+	auto [obj, id] = create_object(VecF{});
 	obj.impl = std::make_unique<God>();
 
 	obj.add_physique().pre_step = [&obj = obj](MAYBE Physique& phy) {
-		m2::Vec2f move_direction;
+		m2::VecF move_direction;
 		if (GAME.events.is_key_down(Key::UP)) {
 			move_direction.y -= 1.0f;
 		}
@@ -27,7 +27,7 @@ m2::Id m2::obj::create_god() {
 		obj.position += move_direction.normalize() * ((float)GAME.delta_time_s() * 10.0f);
 
 		// Check if mouse is in positive quadrant
-		if (Vec2i mouse_coordinates = GAME.mouse_position_world_m().iround(); not mouse_coordinates.is_negative()) {
+		if (VecI mouse_coordinates = GAME.mouse_position_world_m().iround(); not mouse_coordinates.is_negative()) {
 			// Check if mouse pressed
 			if (GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
 				LOG_DEBUG("Mouse pressed");
@@ -154,20 +154,20 @@ m2::Id m2::obj::create_god() {
 				// Draw selection
 				if (select_mode.selection_position_1 && not select_mode.selection_position_2) {
 					// If the mouse is in the first quadrant, color selection
-					if (Vec2i mouse_coordinates = GAME.mouse_position_world_m().iround(); not mouse_coordinates.is_negative()) {
-						select_mode.selection_position_1->for_each_cell_in_between(mouse_coordinates, [=](const Vec2i& cell) {
+					if (VecI mouse_coordinates = GAME.mouse_position_world_m().iround(); not mouse_coordinates.is_negative()) {
+						select_mode.selection_position_1->for_each_cell_in_between(mouse_coordinates, [=](const VecI& cell) {
 							Graphic::color_cell(cell, SELECTION_COLOR);
 						});
 					}
 				} else if (select_mode.selection_position_1 && select_mode.selection_position_2) {
 					// Selection is done, color selection
-					select_mode.selection_position_1->for_each_cell_in_between(*select_mode.selection_position_2, [=](const Vec2i& cell) {
+					select_mode.selection_position_1->for_each_cell_in_between(*select_mode.selection_position_2, [=](const VecI& cell) {
 						Graphic::color_cell(cell, SELECTION_COLOR);
 					});
 				}
 				// Draw clipboard
 				if (select_mode.clipboard_position_1 && select_mode.clipboard_position_2) {
-					select_mode.clipboard_position_1->for_each_cell_in_between(*select_mode.clipboard_position_2, [=](const Vec2i& cell) {
+					select_mode.clipboard_position_1->for_each_cell_in_between(*select_mode.clipboard_position_2, [=](const VecI& cell) {
 						Graphic::color_cell(cell, CLIPBOARD_COLOR);
 					});
 				}

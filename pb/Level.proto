@@ -4,7 +4,7 @@ package m2.pb;
 import "GroupType.proto";
 import "ObjectType.proto";
 import "SpriteType.proto";
-import "Vec2i.proto";
+import "VecI.proto";
 
 message Group {
   m2g.pb.GroupType type = 1;
@@ -12,7 +12,7 @@ message Group {
 }
 
 message LevelObject {
-  Vec2i position = 1;
+  VecI position = 1;
   m2g.pb.ObjectType type = 2;
   Group group = 3;
 }

@@ -3,29 +3,29 @@
 #include "m2/component/Graphic.h"
 #include <m2/Object.h>
 
-m2::Vec2f m2::camera_to_position_m(const Vec2f& position) {
+m2::VecF m2::camera_to_position_m(const VecF& position) {
 	auto* camera = LEVEL.objects.get(LEVEL.camera_id);
 	return position - camera->position;
 }
 
-m2::Vec2f m2::camera_to_position_px(const Vec2f& position) {
+m2::VecF m2::camera_to_position_px(const VecF& position) {
 	return camera_to_position_m(position) * GAME.dimensions().ppm;
 }
 
-m2::Vec2f m2::screen_origin_to_position_px(const Vec2f& position) {
-	return camera_to_position_px(position) + Vec2f{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
+m2::VecF m2::screen_origin_to_position_px(const VecF& position) {
+	return camera_to_position_px(position) + VecF{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
 }
 
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_effect(default_effect), sprite(&sprite) {}
 
-m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
+m2::VecF m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	if (sprite) {
-		Vec2f vector_in_source_pixels;
+		VecF vector_in_source_pixels;
 		if (draw_sprite_effect == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && sprite->has_foreground_companion()) {
 			vector_in_source_pixels = sprite->foreground_companion_center_offset_px();
 		} else {
-			vector_in_source_pixels = Vec2f{sprite->sprite().center_offset_px()};
+			vector_in_source_pixels = VecF{sprite->sprite().center_offset_px()};
 			if (sprite->original_rotation_radians() != 0.0f) {
 				vector_in_source_pixels = vector_in_source_pixels.rotate(sprite->original_rotation_radians());
 			}
@@ -38,7 +38,7 @@ m2::Vec2f m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	}
 }
 
-m2::Vec2f m2::Graphic::screen_origin_to_sprite_center_px() const {
+m2::VecF m2::Graphic::screen_origin_to_sprite_center_px() const {
 	return screen_origin_to_position_px(parent().position) - sprite_center_to_sprite_origin_px();
 }
 
@@ -118,8 +118,8 @@ void m2::Graphic::default_effect(Graphic& gfx) {
 	SDL_RenderFillRect(GAME.renderer, &green_rect);
 }
 
-void m2::Graphic::color_cell(const Vec2i& cell, SDL_Color color) {
-	auto screen_origin_to_cell_center_px = screen_origin_to_position_px(Vec2f{cell});
+void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
+	auto screen_origin_to_cell_center_px = screen_origin_to_position_px(VecF{cell});
 	auto rect = SDL_Rect{
 		(int)roundf(screen_origin_to_cell_center_px.x) - (GAME.dimensions().ppm / 2),
 		(int)roundf(screen_origin_to_cell_center_px.y) - (GAME.dimensions().ppm / 2),

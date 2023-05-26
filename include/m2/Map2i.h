@@ -1,6 +1,6 @@
 #pragma once
 #include "Pool.hh"
-#include "Vec2i.h"
+#include "VecI.h"
 #include <map>
 #include <algorithm>
 #include <iterator>
@@ -10,7 +10,7 @@ namespace m2 {
 
 	template <typename T>
 	struct Map2iItem {
-		Vec2i pos;
+		VecI pos;
 		T obj;
 	};
 
@@ -23,7 +23,7 @@ namespace m2 {
 	public:
 		Map2i() : Pool<Map2iItem<T>, Capacity>() {}
 
-		std::pair<T&,Map2iID> alloc(const Vec2i& pos) {
+		std::pair<T&,Map2iID> alloc(const VecI& pos) {
 			auto [item, id] = Pool<Map2iItem<T>,Capacity>::alloc();
 			item.pos = pos;
 			_map.insert({pos.x, {pos.y, id}});
@@ -39,7 +39,7 @@ namespace m2 {
 		using Pool<Map2iItem<T>,Capacity>::get;
 		using Pool<Map2iItem<T>,Capacity>::get_id;
 
-		std::vector<Map2iID> find_ids(const Vec2i& pos, int32_t radius) {
+		std::vector<Map2iID> find_ids(const VecI& pos, int32_t radius) {
 			std::vector<Map2iID> items;
 			for (auto it = _map.lower_bound(pos.x - radius); it != _map.end() && it->first <= pos.x + radius; it++) {
 				y_pos y = it->second.first;
@@ -56,7 +56,7 @@ namespace m2 {
 			}
 			return {};
 		}
-		std::vector<T*> find_objects(const Vec2i& pos, int32_t radius) {
+		std::vector<T*> find_objects(const VecI& pos, int32_t radius) {
 			auto ids = find_ids(pos, radius);
 			std::vector<T*> objects;
 			std::transform(ids.cbegin(), ids.cend(), std::back_inserter(objects), [=](Map2iID id) {

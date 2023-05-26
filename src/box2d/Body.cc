@@ -53,7 +53,7 @@ void m2::box2d::BodyDeleter::operator()(b2Body* body) {
 	}
 }
 
-m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint) {
+m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, m2::VecF position, const pb::BodyBlueprint& blueprint) {
 	if (LEVEL.world->IsLocked()) {
 		throw M2ERROR("b2Body is created during physics step");
 	}
@@ -77,11 +77,11 @@ m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, 
 
 		if (fixture_blueprint.has_circ()) {
 			circle_shape.m_radius = fixture_blueprint.circ().radius();
-			circle_shape.m_p = static_cast<b2Vec2>(Vec2f{fixture_blueprint.circ().center_offset()});
+			circle_shape.m_p = static_cast<b2Vec2>(VecF{fixture_blueprint.circ().center_offset()});
 			fixtureDef.shape = &circle_shape;
 		} else {
-			m2::Vec2f halfDims = Vec2f{fixture_blueprint.rect().dims()} * 0.5f;
-			polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(Vec2f{fixture_blueprint.rect().center_offset()}), fixture_blueprint.rect().angle());
+			m2::VecF halfDims = VecF{fixture_blueprint.rect().dims()} * 0.5f;
+			polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(VecF{fixture_blueprint.rect().center_offset()}), fixture_blueprint.rect().angle());
 			fixtureDef.shape = &polygon_shape;
 		}
 		fixtureDef.friction = fixture_blueprint.has_friction() ? fixture_blueprint.friction() : 0.1f;

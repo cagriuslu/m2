@@ -1,6 +1,5 @@
-#include <m2/ui/PixelEditor.h>
+#include <m2/pixel_editor/Ui.h>
 #include <m2/Game.h>
-#include <m2/object/Camera.h>
 
 using namespace m2;
 

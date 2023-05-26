@@ -63,8 +63,8 @@ namespace m2 {
 
 		std::optional<Level> _level;
 		float _delta_time_s{};
-		Vec2f _mouse_position_world_m;
-		Vec2f _screen_center_to_mouse_position_m;
+		VecF _mouse_position_world_m;
+		VecF _screen_center_to_mouse_position_m;
 
 	public:
 		static void create_instance();
@@ -133,8 +133,8 @@ namespace m2 {
 		inline SmartPointer<const Item> get_item(m2g::pb::ItemType item_type) { return make_static<const Item>(&_items[protobuf::enum_index(item_type)]); }
 		const Song& get_song(m2g::pb::SongType song_type);
 		inline float delta_time_s() const { return _delta_time_s; }
-		inline const Vec2f& mouse_position_world_m() const { return _mouse_position_world_m; }
-		inline const Vec2f& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
+		inline const VecF& mouse_position_world_m() const { return _mouse_position_world_m; }
+		inline const VecF& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
 
 		// Handlers
 		void handle_quit_event();

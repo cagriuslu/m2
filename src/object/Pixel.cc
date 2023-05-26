@@ -1,7 +1,7 @@
 #include <m2/object/Pixel.h>
 #include <m2/Game.h>
 
-m2::Id m2::obj::create_pixel(const Vec2f &pos, SDL_Color color) {
+m2::Id m2::obj::create_pixel(const VecF &pos, SDL_Color color) {
 	auto [obj, id] = create_object(pos);
 
 	auto& gfx = obj.add_terrain_graphic();

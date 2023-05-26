@@ -4,12 +4,12 @@ m2::box2d::Contact::Contact(const b2Contact& contact) {
 	b2WorldManifold world_manifold;
 	contact.GetWorldManifold(&world_manifold);
 
-	normal = Vec2f{world_manifold.normal};
+	normal = VecF{world_manifold.normal};
 
-	Vec2f p;
+	VecF p;
 	auto point_count = contact.GetManifold()->pointCount;
 	for (decltype(point_count) i = 0; i < point_count; ++i) {
-		p += Vec2f{world_manifold.points[i]};
+		p += VecF{world_manifold.points[i]};
 	}
 	point = p / point_count;
 

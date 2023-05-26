@@ -1,25 +1,25 @@
 #pragma once
 #include "../Object.h"
-#include "../Vec2i.h"
+#include "../VecI.h"
 #include <SDL.h>
 
 namespace m2::pedit {
 	struct State {
 		struct PaintMode {
-			static void paint_color(const Vec2i& position);
+			static void paint_color(const VecI& position);
 		};
 		struct EraseMode {
-			static void erase_color(const Vec2i& position);
+			static void erase_color(const VecI& position);
 		};
 		struct ColorPickerMode {
-			static void pick_color(const Vec2i& position);
+			static void pick_color(const VecI& position);
 		};
 
 		std::variant<std::monostate,PaintMode,EraseMode,ColorPickerMode> mode;
 		SDL_Color selected_color;
-		std::unordered_map<Vec2i, std::pair<Id,SDL_Color>, Vec2iHash> pixels;
+		std::unordered_map<VecI, std::pair<Id,SDL_Color>, Vec2iHash> pixels;
 		sdl::SurfaceUniquePtr image_surface;
-		Vec2i image_offset;
+		VecI image_offset;
 
 		inline void select_color(const SDL_Color& color) { selected_color = color; }
 		void deactivate_mode();

@@ -1,7 +1,7 @@
 syntax = "proto3";
 package m2.pb;
 
-message Vec2i {
+message VecI {
   int32 x = 1;
   int32 y = 2;
 }

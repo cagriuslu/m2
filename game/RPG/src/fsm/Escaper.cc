@@ -2,7 +2,7 @@
 #include <m2/box2d/RayCast.h>
 #include <m2/box2d/Detail.h>
 #include <m2/Game.h>
-#include <m2/Vec2f.h>
+#include <m2/VecF.h>
 #include <rpg/object/Enemy.h>
 
 namespace {
@@ -69,13 +69,13 @@ std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_physics_step_while_trigg
 	return {};
 }
 
-std::optional<m2::Vec2f> rpg::EscaperFsm::find_direction_to_escape() {
+std::optional<m2::VecF> rpg::EscaperFsm::find_direction_to_escape() {
 	float raycast_length = ai->trigger_distance() / 2.0f;
 	auto angle_from_player_to_obj = (obj->position - LEVEL.player()->position).angle_rads();
 
 	auto can_escape = [=](float offset) -> bool {
 		auto radians_offset = angle_from_player_to_obj + offset;
-		auto raycast_target = obj->position + m2::Vec2f::from_angle(radians_offset).with_length(raycast_length);
+		auto raycast_target = obj->position + m2::VecF::from_angle(radians_offset).with_length(raycast_length);
 		auto raycast_distance = m2::box2d::check_distance(*LEVEL.world, obj->position, raycast_target, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
 		return (raycast_length - raycast_distance) < 0.1f; // 0.1 comparison error
 	};
@@ -88,7 +88,7 @@ std::optional<m2::Vec2f> rpg::EscaperFsm::find_direction_to_escape() {
 		auto second_sweep_rads = -first_sweep_rads;
 		for (auto offset : {first_sweep_rads, second_sweep_rads}) {
 			if (can_escape(offset)) {
-				return m2::Vec2f::from_angle(angle_from_player_to_obj + offset);
+				return m2::VecF::from_angle(angle_from_player_to_obj + offset);
 			}
 		}
 	}

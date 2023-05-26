@@ -4,7 +4,7 @@
 #include "DynamicSheet.h"
 #include <ObjectType.pb.h>
 #include "sdl/Detail.hh"
-#include "Vec2f.h"
+#include "VecF.h"
 #include <SDL2/SDL.h>
 #include <optional>
 #include <filesystem>
@@ -28,9 +28,9 @@ namespace m2 {
 	public:
 		explicit SpriteEffectsSheet(SDL_Renderer* renderer);
 		using DynamicSheet::texture;
-		SDL_Rect create_mask_effect(const SpriteSheet& sheet, const pb::Rect2i& rect, const pb::Color& mask_color);
-		SDL_Rect create_foreground_companion_effect(const SpriteSheet& sheet, const pb::Rect2i &rect, const google::protobuf::RepeatedPtrField<pb::Rect2i>& rect_pieces);
-		SDL_Rect create_grayscale_effect(const SpriteSheet& sheet, const pb::Rect2i &rect);
+		SDL_Rect create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color);
+		SDL_Rect create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces);
+		SDL_Rect create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect);
 	};
 
 	class Sprite final {
@@ -39,16 +39,16 @@ namespace m2 {
 
 		const SpriteEffectsSheet* _effects_sheet{};
 		std::vector<SDL_Rect> _effects;
-		std::optional<Vec2f> _foreground_companion_center_offset_px{};
-		std::optional<Vec2f> _foreground_companion_center_offset_m{};
+		std::optional<VecF> _foreground_companion_center_offset_px{};
+		std::optional<VecF> _foreground_companion_center_offset_m{};
 
 		float _original_rotation_radians{};
 		int _ppm{};
-		Vec2f _background_collider_center_offset_m;
-		Vec2f _background_collider_rect_dims_m;
+		VecF _background_collider_center_offset_m;
+		VecF _background_collider_rect_dims_m;
 		float _background_collider_circ_radius_m{};
-		Vec2f _foreground_collider_center_offset_m;
-		Vec2f _foreground_collider_rect_dims_m;
+		VecF _foreground_collider_center_offset_m;
+		VecF _foreground_collider_rect_dims_m;
 		float _foreground_collider_circ_radius_m{};
 
 	public:
@@ -59,15 +59,15 @@ namespace m2 {
 		[[nodiscard]] SDL_Texture* effects_texture() const;
 		[[nodiscard]] SDL_Rect effect_rect(pb::SpriteEffectType effect_type) const;
 		[[nodiscard]] bool has_foreground_companion() const;
-		[[nodiscard]] Vec2f foreground_companion_center_offset_px() const;
-		[[nodiscard]] Vec2f foreground_companion_center_offset_m() const;
+		[[nodiscard]] VecF foreground_companion_center_offset_px() const;
+		[[nodiscard]] VecF foreground_companion_center_offset_m() const;
 		[[nodiscard]] float original_rotation_radians() const;
 		[[nodiscard]] int ppm() const;
-		[[nodiscard]] Vec2f background_collider_center_offset_m() const;
-		[[nodiscard]] Vec2f background_collider_rect_dims_m() const;
+		[[nodiscard]] VecF background_collider_center_offset_m() const;
+		[[nodiscard]] VecF background_collider_rect_dims_m() const;
 		[[nodiscard]] float background_collider_circ_radius_m() const;
-		[[nodiscard]] Vec2f foreground_collider_center_offset_m() const;
-		[[nodiscard]] Vec2f foreground_collider_rect_dims_m() const;
+		[[nodiscard]] VecF foreground_collider_center_offset_m() const;
+		[[nodiscard]] VecF foreground_collider_rect_dims_m() const;
 		[[nodiscard]] float foreground_collider_circ_radius_m() const;
 	};
 

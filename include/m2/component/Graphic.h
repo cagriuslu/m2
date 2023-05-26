@@ -1,22 +1,22 @@
 #pragma once
 #include "../Component.h"
 #include "../Sprite.h"
-#include "../Vec2i.h"
-#include "../Vec2f.h"
+#include "../VecI.h"
+#include "../VecF.h"
 #include <functional>
 
 namespace m2 {
 	/// Returns a vector from camera to given position in meters.
 	/// Hint: (position - camera.position)
-	Vec2f camera_to_position_m(const Vec2f& position);
+	VecF camera_to_position_m(const VecF& position);
 
 	/// Returns a vector from camera to given position in pixels.
 	/// For meters to pixels conversion, game_ppm is used.
-	Vec2f camera_to_position_px(const Vec2f& position);
+	VecF camera_to_position_px(const VecF& position);
 
 	/// Returns a vector from screen origin (top-left corner) to given position in pixels.
 	/// For meter to pixels conversion, game_ppm is used.
-	Vec2f screen_origin_to_position_px(const Vec2f& position);
+	VecF screen_origin_to_position_px(const VecF& position);
 }
 
 namespace m2 {
@@ -38,16 +38,16 @@ namespace m2 {
 
 		/// Returns a vector from the sprite's center pixel to the sprite's graphical origin.
 		/// The graphical origin should align with the object's position, not the sprite's center pixel.
-		[[nodiscard]] Vec2f sprite_center_to_sprite_origin_px() const;
+		[[nodiscard]] VecF sprite_center_to_sprite_origin_px() const;
 
 		/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
 		/// Returns screen_origin_to_position_px(position) - sprite_center_to_sprite_origin_px() if sprite is non-NULL.
 		/// Returns screen_origin_to_position_px(position) if sprite is NULL.
-		[[nodiscard]] Vec2f screen_origin_to_sprite_center_px() const;
+		[[nodiscard]] VecF screen_origin_to_sprite_center_px() const;
 
 		static void default_draw(Graphic& gfx);
 		static void default_effect(Graphic& gfx); // Draws health bar??
 		/// Color the world cell with the given color
-		static void color_cell(const Vec2i& cell, SDL_Color color);
+		static void color_cell(const VecI& cell, SDL_Color color);
 	};
 }

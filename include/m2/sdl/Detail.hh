@@ -1,5 +1,5 @@
 #pragma once
-#include <Rect2i.pb.h>
+#include <RectI.pb.h>
 #include <SDL2/SDL.h>
 #include <string_view>
 
@@ -32,6 +32,6 @@ namespace m2::sdl {
 	void set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel);
 	uint32_t get_pixel(const SDL_Surface* surface, int x, int y);
 
-	SDL_Rect expand_rect(const SDL_Rect& rect, int diff); // Replace with Rect2i::expand
-	SDL_Rect to_rect(const pb::Rect2i& pb_rect); // Replace with Rect2i
+	SDL_Rect expand_rect(const SDL_Rect& rect, int diff); // Replace with RectI::expand
+	SDL_Rect to_rect(const pb::RectI& pb_rect); // Replace with RectI
 }

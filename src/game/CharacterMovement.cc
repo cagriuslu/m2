@@ -1,7 +1,7 @@
 #include <m2/game/CharacterMovement.h>
 #include <m2/Game.h>
 
-m2::CharacterMovementDirection m2::to_character_movement_direction(const Vec2f& direction_vector) {
+m2::CharacterMovementDirection m2::to_character_movement_direction(const VecF& direction_vector) {
 	int direction = CHARMOVEMENT_NONE;
 	if (direction_vector.x < -0.5f) {
 		direction = CHARMOVEMENT_LEFT;
@@ -27,8 +27,8 @@ m2::CharacterMovementDirection m2::to_character_movement_direction(const Vec2f& 
 	return static_cast<CharacterMovementDirection>(direction);
 }
 
-std::pair<m2::CharacterMovementDirection, m2::Vec2f> m2::calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key) {
-	Vec2f direction_vector;
+std::pair<m2::CharacterMovementDirection, m2::VecF> m2::calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key) {
+	VecF direction_vector;
 	if ((bool)left_key && GAME.events.is_key_down(left_key)) {
 		direction_vector.x -= 1.0f;
 	}

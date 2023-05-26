@@ -24,7 +24,7 @@ namespace rpg {
 		Enemy(m2::Object& obj, const rpg::pb::Enemy* enemy);
 
         static m2::VoidValue init(m2::Object& obj, m2g::pb::ObjectType object_type);
-		static void move_towards(m2::Object& obj, m2::Vec2f direction, float force);
+		static void move_towards(m2::Object& obj, m2::VecF direction, float force);
 		static void attack_if_close(m2::Object& obj, const pb::Ai& ai);
     };
 }

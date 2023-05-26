@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/Controls.h>
-#include "Rect2i.h"
-#include <m2/Vec2i.h>
+#include "RectI.h"
+#include <m2/VecI.h>
 #include <array>
 #include <optional>
 #include <sstream>
@@ -15,7 +15,7 @@ namespace m2 {
 
 		bool quit;
 
-		std::optional<m2::Vec2i> window_resize;
+		std::optional<m2::VecI> window_resize;
 
 		uint32_t key_press_count;
 		std::array<uint16_t, u(Key::end)> keys_pressed;
@@ -39,7 +39,7 @@ namespace m2 {
 		std::array<bool, SDL_NUM_SCANCODES> sdl_keys_down;
 		std::array<bool, u(Key::end)> keys_down;
 		std::array<bool, u(MouseButton::end)> mouse_buttons_down;
-		m2::Vec2i _mouse_position;
+		m2::VecI _mouse_position;
 
 	public:
 		Events();
@@ -48,20 +48,20 @@ namespace m2 {
 		bool gather();
 
 		bool pop_quit();
-		std::optional<Vec2i> pop_window_resize();
+		std::optional<VecI> pop_window_resize();
 		bool pop_key_press(Key k);
 		bool pop_ui_key_press(SDL_Scancode scode);
 		bool pop_key_release(Key k);
 		bool pop_mouse_button_press(MouseButton mb);
-		bool pop_mouse_button_press(MouseButton mb, const Rect2i& rect);
+		bool pop_mouse_button_press(MouseButton mb, const RectI& rect);
 		bool pop_mouse_button_release(MouseButton mb);
-		bool pop_mouse_button_release(MouseButton mb, const Rect2i& rect);
+		bool pop_mouse_button_release(MouseButton mb, const RectI& rect);
 		bool pop_mouse_wheel_scroll();
 		std::optional<std::string> pop_text_input();
 
 		bool is_sdl_key_down(SDL_Scancode sc) const;
 		bool is_key_down(Key k) const;
 		bool is_mouse_button_down(MouseButton mb) const;
-		m2::Vec2i mouse_position() const;
+		m2::VecI mouse_position() const;
 	};
 }

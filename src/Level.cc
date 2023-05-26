@@ -8,8 +8,7 @@
 #include <m2/object/Camera.h>
 #include <m2/object/Pointer.h>
 #include <m2/object/Placeholder.h>
-#include <m2/ui/PixelEditor.h>
-#include <m2/object/Pixel.h>
+#include <m2/pixel_editor/Ui.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/box2d/Detail.h>
 #include <SDL2/SDL_image.h>
@@ -60,7 +59,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 			auto sprite_type = _lb->background_rows(y).items(x);
 			if (sprite_type) {
                 LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-				auto [tile_obj, tile_id] = obj::create_tile(Vec2f{x, y} + Vec2f{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
+				auto [tile_obj, tile_id] = obj::create_tile(VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
 				m2g::post_tile_create(tile_obj, sprite_type);
                 LOG_TRACE("Created tile", tile_id);
 			}
@@ -69,7 +68,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 	// Create foreground objects
 	for (const auto& fg_object : _lb->objects()) {
         LOGF_TRACE("Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(), fg_object.position().y());
-		auto [obj, id] = m2::create_object(m2::Vec2f{fg_object.position()} + Vec2f{0.5f, 0.5f});
+		auto [obj, id] = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f});
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
@@ -121,14 +120,14 @@ m2::VoidValue m2::Level::init_level_editor(const std::filesystem::path& lb_path)
 			for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
 				auto sprite_type = lb->background_rows(y).items(x);
 				if (sprite_type) {
-					auto position = Vec2f{x, y};
+					auto position = VecF{x, y};
 					level_editor_state->bg_placeholders[position.iround()] = std::make_pair(obj::create_placeholder(position, GAME.get_sprite(sprite_type), false), sprite_type);
 				}
 			}
 		}
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
-			auto position = m2::Vec2f{fg_object.position()};
+			auto position = m2::VecF{fg_object.position()};
 			level_editor_state->fg_placeholders[position.iround()] = std::make_pair(obj::create_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()]), true), fg_object);
 		}
 	}
@@ -153,7 +152,7 @@ m2::VoidValue m2::Level::init_pixel_editor(const std::filesystem::path &path, in
 	_type = Type::PIXEL_EDITOR;
 	_lb_path = path;
 	pixel_editor_state = pedit::State{};
-	pixel_editor_state->image_offset = Vec2i{x_offset, y_offset};
+	pixel_editor_state->image_offset = VecI{x_offset, y_offset};
 
 	if (std::filesystem::exists(path)) {
 		// Load image
@@ -185,7 +184,7 @@ m2::VoidValue m2::Level::init_pixel_editor(const std::filesystem::path &path, in
 				// Select color
 				pixel_editor_state->selected_color = color;
 				// Paint pixel
-				pedit::State::PaintMode::paint_color(Vec2i{x, y});
+				pedit::State::PaintMode::paint_color(VecI{x, y});
 			}
 		}
 

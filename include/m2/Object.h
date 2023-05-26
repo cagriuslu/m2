@@ -4,7 +4,7 @@
 #include "ObjectImpl.h"
 #include "m2/Component.h"
 #include "m2/Fsm.h"
-#include "m2/Vec2f.h"
+#include "m2/VecF.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include "component/Light.h"
@@ -28,12 +28,12 @@ namespace m2 {
     /// If the component is created and destroyed rapidly => Pool
     /// Else => Data
     struct Object final {
-        m2::Vec2f position;
+        m2::VecF position;
         // Data
         std::unique_ptr<ObjectImpl> impl;
 
         Object() = default;
-        explicit Object(const m2::Vec2f& position, ObjectId parent_id = 0);
+        explicit Object(const m2::VecF& position, ObjectId parent_id = 0);
         // Copy not allowed
         Object(const Object& other) = delete;
         Object& operator=(const Object& other) = delete;
@@ -95,7 +95,7 @@ namespace m2 {
 		CharacterId _character_id{};
     };
 
-    std::pair<Object&, ObjectId> create_object(const m2::Vec2f& position, ObjectId parent_id = 0);
+    std::pair<Object&, ObjectId> create_object(const m2::VecF& position, ObjectId parent_id = 0);
 	std::function<void(void)> create_object_deleter(ObjectId id);
 	std::function<void(void)> create_physique_deleter(ObjectId id);
 	std::function<void(void)> create_graphic_deleter(ObjectId id);

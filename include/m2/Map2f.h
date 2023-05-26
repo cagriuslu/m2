@@ -1,6 +1,6 @@
 #pragma once
 #include "Pool.hh"
-#include "Vec2f.h"
+#include "VecF.h"
 #include <array>
 #include <algorithm>
 #include <numeric>
@@ -14,14 +14,14 @@ namespace m2 {
 
 	template <typename T>
 	struct Map2fItem {
-		Vec2f pos;
+		VecF pos;
 		T obj;
 	};
 
 	template <typename T, uint32_t LinearN = 64, uint64_t Capacity = 65536>
 	class Map2f : private Pool<Map2fItem<T>,Capacity> {
 		struct ArrayItem {
-			Vec2f pos;
+			VecF pos;
 			Map2fID id{0};
 		};
 		using Array = std::vector<ArrayItem>;
@@ -33,9 +33,9 @@ namespace m2 {
 		using Node = std::variant<ArrayPtr, QuadsPtr>;
 
 		struct Quads {
-			Vec2f origin;
+			VecF origin;
 			Node quad[4]; /// Order of quads: Bottom-right, Bottom-left, Top-left, Top-right
-			Quads(const Vec2f& origin, const Array& array) : origin(origin) {
+			Quads(const VecF& origin, const Array& array) : origin(origin) {
 				for (auto& q : quad) {
 					q = std::make_unique<Array>();
 				}
@@ -43,7 +43,7 @@ namespace m2 {
 					std::get<ArrayPtr>(quad[find_quad_index(item.pos)])->emplace_back(item);
 				}
 			}
-			[[nodiscard]] unsigned find_quad_index(const Vec2f& pos) const {
+			[[nodiscard]] unsigned find_quad_index(const VecF& pos) const {
 				if (origin.x <= pos.x && origin.y <= pos.y) {
 					return 0;
 				} else if (pos.x < origin.x && origin.y <= pos.y) {
@@ -53,7 +53,7 @@ namespace m2 {
 				}
 				return 3;
 			}
-			void append_intersecting_quads(const Vec2f& pos, float aabb_radius, std::queue<const Node*>& out) const {
+			void append_intersecting_quads(const VecF& pos, float aabb_radius, std::queue<const Node*>& out) const {
 				auto aabb_corners = pos.aabb_corners(aabb_radius);
 				for (unsigned i = 0; i < 4; i++) {
 					if (find_quad_index(aabb_corners[i]) == i) {
@@ -63,7 +63,7 @@ namespace m2 {
 			}
 		};
 
-		Node* find_node(const Vec2f& pos) {
+		Node* find_node(const VecF& pos) {
 			Node* node = &_root;
 			while (std::holds_alternative<QuadsPtr>(*node)) {
 				auto* quads = std::get<QuadsPtr>(*node).get();
@@ -88,7 +88,7 @@ namespace m2 {
 						array = prov_array;
 					} else {
 						// Divide into quads, find middle point
-						Vec2f accumulation;
+						VecF accumulation;
 						std::for_each(prov_array->begin(), prov_array->end(), [&accumulation](const ArrayItem& array_item) {
 							accumulation += array_item.pos;
 						});
@@ -109,7 +109,7 @@ namespace m2 {
 	public:
 		Map2f() : Pool<Map2fItem<T>,Capacity>(), _root(std::make_unique<Array>()) {}
 
-		std::pair<T&, Map2fID> alloc(const Vec2f& pos) {
+		std::pair<T&, Map2fID> alloc(const VecF& pos) {
 			auto [item, id] = Pool<Map2fItem<T>,Capacity>::alloc();
 			item.pos = pos;
 			insert(ArrayItem{pos, id});
@@ -125,7 +125,7 @@ namespace m2 {
 		using Pool<Map2fItem<T>,Capacity>::get;
 		using Pool<Map2fItem<T>,Capacity>::get_id;
 
-		std::vector<Map2fID> find_ids(const Vec2f& pos, float radius) {
+		std::vector<Map2fID> find_ids(const VecF& pos, float radius) {
 			std::vector<Map2fID> items;
 
 			std::queue<const Node*> nodes_to_check;
@@ -153,7 +153,7 @@ namespace m2 {
 			}
 			return {};
 		}
-		std::vector<T*> find_objects(const Vec2i& pos, float radius) {
+		std::vector<T*> find_objects(const VecI& pos, float radius) {
 			auto ids = find_ids(pos, radius);
 			std::vector<T*> objects;
 			std::transform(ids.cbegin(), ids.cend(), std::back_inserter(objects), [=](Map2fID id) {

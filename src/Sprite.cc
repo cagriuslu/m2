@@ -32,7 +32,7 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 }
 
 m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
-SDL_Rect m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, const pb::Rect2i &rect, const pb::Color& mask_color) {
+SDL_Rect m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, const pb::RectI &rect, const pb::Color& mask_color) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -70,7 +70,7 @@ SDL_Rect m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, co
 
 	return dst_rect;
 }
-SDL_Rect m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::Rect2i &rect, const google::protobuf::RepeatedPtrField<pb::Rect2i>& rect_pieces) {
+SDL_Rect m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	for (const auto& rect_piece : rect_pieces) {
@@ -88,7 +88,7 @@ SDL_Rect m2::SpriteEffectsSheet::create_foreground_companion_effect(const Sprite
 
 	return dst_rect;
 }
-SDL_Rect m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::Rect2i &rect) {
+SDL_Rect m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -133,11 +133,11 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_sprite_sheet(&sprite_sheet), _sprite(sprite), _effects_sheet(&sprite_effects_sheet),
 	_original_rotation_radians(sprite.original_rotation() * m2::PI),
 	_ppm(sprite.override_ppm() ? (int)sprite.override_ppm() : (int)sprite_sheet.sprite_sheet().ppm()),
-	_background_collider_center_offset_m(Vec2f{sprite.background_collider().center_offset_px()} / _ppm),
-	_background_collider_rect_dims_m(Vec2f{sprite.background_collider().rect_dims_px()} / _ppm),
+	_background_collider_center_offset_m(VecF{sprite.background_collider().center_offset_px()} / _ppm),
+	_background_collider_rect_dims_m(VecF{sprite.background_collider().rect_dims_px()} / _ppm),
 	_background_collider_circ_radius_m(sprite.background_collider().circ_radius_px() / (float)_ppm),
-	_foreground_collider_center_offset_m(Vec2f{sprite.foreground_collider().center_offset_px()} / _ppm),
-	_foreground_collider_rect_dims_m(Vec2f{sprite.foreground_collider().rect_dims_px()} / _ppm),
+	_foreground_collider_center_offset_m(VecF{sprite.foreground_collider().center_offset_px()} / _ppm),
+	_foreground_collider_rect_dims_m(VecF{sprite.foreground_collider().rect_dims_px()} / _ppm),
 	_foreground_collider_circ_radius_m(sprite.foreground_collider().circ_radius_px() / (float)_ppm) {
 	// Create effects
 	if (sprite.effects_size()) {
@@ -153,8 +153,8 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 			switch (effect.type()) {
 				case pb::SPRITE_EFFECT_FOREGROUND_COMPANION:
 					_effects[index] = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.rect(), effect.foreground_companion().rects());
-					_foreground_companion_center_offset_px = Vec2f{effect.foreground_companion().center_offset_px()};
-					_foreground_companion_center_offset_m = Vec2f{effect.foreground_companion().center_offset_px()} / (float)_ppm;
+					_foreground_companion_center_offset_px = VecF{effect.foreground_companion().center_offset_px()};
+					_foreground_companion_center_offset_m = VecF{effect.foreground_companion().center_offset_px()} / (float)_ppm;
 					break;
 				case pb::SPRITE_EFFECT_MASK:
 					_effects[index] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.rect(), effect.mask_color());
@@ -187,10 +187,10 @@ SDL_Rect m2::Sprite::effect_rect(pb::SpriteEffectType effect_type) const {
 bool m2::Sprite::has_foreground_companion() const {
 	return _foreground_companion_center_offset_m.has_value();
 }
-m2::Vec2f m2::Sprite::foreground_companion_center_offset_px() const {
+m2::VecF m2::Sprite::foreground_companion_center_offset_px() const {
 	return _foreground_companion_center_offset_px.value();
 }
-m2::Vec2f m2::Sprite::foreground_companion_center_offset_m() const {
+m2::VecF m2::Sprite::foreground_companion_center_offset_m() const {
 	return _foreground_companion_center_offset_m.value();
 }
 float m2::Sprite::original_rotation_radians() const {
@@ -199,19 +199,19 @@ float m2::Sprite::original_rotation_radians() const {
 int m2::Sprite::ppm() const {
 	return _ppm;
 }
-m2::Vec2f m2::Sprite::background_collider_center_offset_m() const {
+m2::VecF m2::Sprite::background_collider_center_offset_m() const {
 	return _background_collider_center_offset_m;
 }
-m2::Vec2f m2::Sprite::background_collider_rect_dims_m() const {
+m2::VecF m2::Sprite::background_collider_rect_dims_m() const {
 	return _background_collider_rect_dims_m;
 }
 float m2::Sprite::background_collider_circ_radius_m() const {
 	return _background_collider_circ_radius_m;
 }
-m2::Vec2f m2::Sprite::foreground_collider_center_offset_m() const {
+m2::VecF m2::Sprite::foreground_collider_center_offset_m() const {
 	return _foreground_collider_center_offset_m;
 }
-m2::Vec2f m2::Sprite::foreground_collider_rect_dims_m() const {
+m2::VecF m2::Sprite::foreground_collider_rect_dims_m() const {
 	return _foreground_collider_rect_dims_m;
 }
 float m2::Sprite::foreground_collider_circ_radius_m() const {

@@ -3,7 +3,7 @@ package rpg.pb;
 
 import "AnimationType.proto";
 import "ObjectType.proto";
-import "Vec2f.proto";
+import "VecF.proto";
 
 enum Capability {
     NO_CAPABILITY = 0;
@@ -23,8 +23,8 @@ message HitNRun {
 }
 message KeepDistance {}
 message Patrol {
-    m2.pb.Vec2f area_top_left = 1; // Top-left of patrol area while idling
-    m2.pb.Vec2f area_bottom_right = 2; // Bottom-right of patrol area while idling
+    m2.pb.VecF area_top_left = 1; // Top-left of patrol area while idling
+    m2.pb.VecF area_bottom_right = 2; // Bottom-right of patrol area while idling
     float speed = 3; // Patrol speed (in mps)
 }
 
