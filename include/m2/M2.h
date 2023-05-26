@@ -1,6 +1,4 @@
-#ifndef M2_M2_H
-#define M2_M2_H
-
+#pragma once
 #include "Meta.h"
 
 #define MAYBE [[maybe_unused]]
@@ -22,5 +20,3 @@ namespace m2 {
 	constexpr float to_radians(int degrees) { return to_radians(static_cast<float>(degrees)); }
 	constexpr float to_degrees(float radians) { return radians / ::m2::PI * 180.0f; }
 }
-
-#endif //M2_M2_H

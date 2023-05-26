@@ -1,6 +1,4 @@
-#ifndef PATHFINDER_H
-#define PATHFINDER_H
-
+#pragma once
 #include <m2/Vec2i.h>
 #include <m2/Vec2f.h>
 #include "Value.h"
@@ -40,5 +38,3 @@ namespace m2 {
 		static bool check_eyesight(const Vec2i& from, const Vec2i& to);
 	};
 }
-
-#endif

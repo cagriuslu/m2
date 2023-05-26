@@ -1,6 +1,4 @@
-#ifndef RPG_ITEMGROUP_H
-#define RPG_ITEMGROUP_H
-
+#pragma once
 #include <m2/Group.h>
 #include <ItemType.pb.h>
 #include <deque>
@@ -16,5 +14,3 @@ namespace rpg {
 		std::optional<m2g::pb::ItemType> pop_item();
 	};
 }
-
-#endif //RPG_ITEMGROUP_H

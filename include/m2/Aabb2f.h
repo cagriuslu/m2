@@ -1,6 +1,4 @@
-#ifndef M2_AABB2F_H
-#define M2_AABB2F_H
-
+#pragma once
 #include "Vec2f.h"
 #include "Vec2i.h"
 #include <box2d/b2_collision.h>
@@ -24,5 +22,3 @@ namespace m2 {
         explicit operator b2AABB() const;
 	};
 }
-
-#endif //M2_AABB2F_H

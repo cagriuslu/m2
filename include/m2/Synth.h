@@ -1,6 +1,4 @@
-#ifndef M2_SYNTH_H
-#define M2_SYNTH_H
-
+#pragma once
 #include "Rational.h"
 #include "M2.h"
 #include <Synth.pb.h>
@@ -36,5 +34,3 @@ namespace m2 {
 #include "synth/MixNote.h"
 #include "synth/MixTrack.h"
 #include "synth/MixSong.h"
-
-#endif //M2_SYNTH_H

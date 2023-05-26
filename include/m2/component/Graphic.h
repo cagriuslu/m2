@@ -1,6 +1,4 @@
-#ifndef M2_COMPONENT_GRAPHIC_H
-#define M2_COMPONENT_GRAPHIC_H
-
+#pragma once
 #include "../Component.h"
 #include "../Sprite.h"
 #include "../Vec2i.h"
@@ -53,5 +51,3 @@ namespace m2 {
 		static void color_cell(const Vec2i& cell, SDL_Color color);
 	};
 }
-
-#endif //M2_COMPONENT_GRAPHIC_H

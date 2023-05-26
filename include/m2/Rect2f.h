@@ -1,6 +1,4 @@
-#ifndef M2_RECT2F_H
-#define M2_RECT2F_H
-
+#pragma once
 #include <SDL2/SDL_rect.h>
 #include <Rect2i.pb.h>
 #include "Vec2f.h"
@@ -29,5 +27,3 @@ namespace m2 {
 		[[nodiscard]] std::optional<Rect2f> intersect(const Rect2f& other) const;
 	};
 }
-
-#endif //M2_RECT2F_H

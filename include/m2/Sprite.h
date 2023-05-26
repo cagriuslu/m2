@@ -1,6 +1,4 @@
-#ifndef M2_SPRITE_H
-#define M2_SPRITE_H
-
+#pragma once
 #include <Sprite.pb.h>
 #include "Glyph.h"
 #include "DynamicSheet.h"
@@ -78,5 +76,3 @@ namespace m2 {
 	std::vector<m2g::pb::SpriteType> list_level_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets);
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(const std::filesystem::path& objects_path);
 }
-
-#endif //M2_SPRITE_H

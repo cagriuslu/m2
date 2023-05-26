@@ -1,6 +1,4 @@
-#ifndef M2_RECT2I_H
-#define M2_RECT2I_H
-
+#pragma once
 #include "Vec2i.h"
 #include <Rect2i.pb.h>
 #include <SDL2/SDL_rect.h>
@@ -38,5 +36,3 @@ namespace m2 {
 
 	std::string to_string(const Rect2i&);
 }
-
-#endif //M2_RECT2I_H

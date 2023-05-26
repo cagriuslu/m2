@@ -1,6 +1,4 @@
-#ifndef M2_GOD_H
-#define M2_GOD_H
-
+#pragma once
 #include <m2/Object.h>
 
 namespace m2::obj {
@@ -10,5 +8,3 @@ namespace m2::obj {
 
 	Id create_god();
 }
-
-#endif //M2_GOD_H

@@ -1,6 +1,4 @@
-#ifndef AUTOMATON_H
-#define AUTOMATON_H
-
+#pragma once
 #include "protobuf/Detail.h"
 #include "Exception.h"
 #include "Value.h"
@@ -82,5 +80,3 @@ namespace m2 {
 		virtual std::optional<State> handle_signal(const Signal& s) = 0;
 	};
 }
-
-#endif //AUTOMATON_H

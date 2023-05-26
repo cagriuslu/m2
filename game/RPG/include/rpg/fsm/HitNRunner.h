@@ -1,6 +1,4 @@
-#ifndef IMPL_HITNRUNNER_H
-#define IMPL_HITNRUNNER_H
-
+#pragma once
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 
@@ -22,5 +20,3 @@ namespace rpg {
 		inline std::optional<HitNRunnerMode> handle_signal(MAYBE const HitNRunnerFsmSignal& s) override { return {}; }
 	};
 }
-
-#endif //IMPL_HITNRUNNER_H

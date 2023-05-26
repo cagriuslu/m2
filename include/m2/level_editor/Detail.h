@@ -1,6 +1,4 @@
-#ifndef M2_LEVELEDITOR_DETAIL_H
-#define M2_LEVELEDITOR_DETAIL_H
-
+#pragma once
 #include <m2/Object.h>
 #include <m2/Pool.hh>
 #include <m2/Vec2i.h>
@@ -47,5 +45,3 @@ namespace m2::level_editor {
 		}
 	}
 }
-
-#endif //M2_LEVELEDITOR_DETAIL_H

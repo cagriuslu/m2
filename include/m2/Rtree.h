@@ -1,6 +1,4 @@
-#ifndef M2_RTREE_H
-#define M2_RTREE_H
-
+#pragma once
 #include "Aabb2f.h"
 #include "Pool.hh"
 
@@ -24,5 +22,3 @@ namespace m2 {
 	class Rtree : private Pool<RtreeItem<T>,Capacity> {
 	};
 }
-
-#endif //M2_RTREE_H

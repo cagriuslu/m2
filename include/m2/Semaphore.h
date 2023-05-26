@@ -1,6 +1,4 @@
-#ifndef M2_SEMAPHORE_H
-#define M2_SEMAPHORE_H
-
+#pragma once
 #include <mutex>
 #include <condition_variable>
 
@@ -16,5 +14,3 @@ namespace m2 {
 		void up(size_t count = 1);
 	};
 }
-
-#endif //M2_SEMAPHORE_H

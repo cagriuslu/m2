@@ -1,6 +1,4 @@
-#ifndef M2_CHARACTER_H
-#define M2_CHARACTER_H
-
+#pragma once
 #include "../SmartPointer.h"
 #include "../Component.h"
 #include "../Item.h"
@@ -161,5 +159,3 @@ namespace m2 {
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
 	Character& get_character_base(CharacterVariant& v);
 }
-
-#endif //M2_CHARACTER_H

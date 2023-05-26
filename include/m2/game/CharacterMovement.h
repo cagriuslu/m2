@@ -1,6 +1,4 @@
-#ifndef M2_CHARACTERMOVEMENT_H
-#define M2_CHARACTERMOVEMENT_H
-
+#pragma once
 #include "../Controls.h"
 #include "../Vec2f.h"
 
@@ -23,5 +21,3 @@ namespace m2 {
 
 	std::pair<CharacterMovementDirection, Vec2f> calculate_character_movement(Key left_key, Key right_key, Key up_key, Key down_key);
 }
-
-#endif //M2_CHARACTERMOVEMENT_H

@@ -1,6 +1,4 @@
-#ifndef M2_SOUNDEMITTER_H
-#define M2_SOUNDEMITTER_H
-
+#pragma once
 #include "../Component.h"
 #include "../AudioManager.h"
 #include "../Vec2f.h"
@@ -25,5 +23,3 @@ namespace m2 {
 		[[nodiscard]] float volume_of(const Vec2f& emitter_position) const;
 	};
 }
-
-#endif //M2_SOUNDEMITTER_H

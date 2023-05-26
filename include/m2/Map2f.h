@@ -1,6 +1,4 @@
-#ifndef M2_MAP2F_H
-#define M2_MAP2F_H
-
+#pragma once
 #include "Pool.hh"
 #include "Vec2f.h"
 #include <array>
@@ -193,5 +191,3 @@ namespace m2 {
 		// TODO compare Map2i and Map2f, come to a decision
 	};
 }
-
-#endif //M2_MAP2F_H

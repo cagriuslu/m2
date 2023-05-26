@@ -1,6 +1,4 @@
-#ifndef M2_PHYSIQUE_H
-#define M2_PHYSIQUE_H
-
+#pragma once
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
 #include "../box2d/Body.h"
@@ -37,5 +35,3 @@ namespace m2 {
 	/// Returns a force multiplier that can be applied to a physics object with a speed limit
 	float calculate_limited_force(float curr_speed, float speed_limit);
 }
-
-#endif //M2_PHYSIQUE_H

@@ -1,6 +1,4 @@
-#ifndef M2_META_H
-#define M2_META_H
-
+#pragma once
 #include <string>
 
 namespace m2 {
@@ -29,5 +27,3 @@ namespace m2 {
 		return destination;
 	}
 }
-
-#endif //M2_META_H

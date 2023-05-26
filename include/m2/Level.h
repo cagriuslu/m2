@@ -1,6 +1,4 @@
-#ifndef M2_LEVEL_H
-#define M2_LEVEL_H
-
+#pragma once
 #include "level_editor/Detail.h"
 #include "level_editor/State.h"
 #include "pixel_editor/State.h"
@@ -80,5 +78,3 @@ namespace m2 {
 		void display_message(const std::string& msg, float timeout = 5.0f);
 	};
 }
-
-#endif //M2_LEVEL_H

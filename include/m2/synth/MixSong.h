@@ -1,6 +1,4 @@
-#ifndef M2_MIXSONG_H
-#define M2_MIXSONG_H
-
+#pragma once
 #include "../Synth.h"
 #include "../Rational.h"
 #include <Synth.pb.h>
@@ -17,5 +15,3 @@ namespace m2::synth {
 		}
 	}
 }
-
-#endif //M2_MIXSONG_H

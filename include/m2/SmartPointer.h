@@ -1,6 +1,4 @@
-#ifndef M2_SMARTPOINTER_H
-#define M2_SMARTPOINTER_H
-
+#pragma once
 #include "M2.h"
 #include <variant>
 #include <memory>
@@ -56,5 +54,3 @@ namespace m2 {
 		return SmartPointer<T>{std::unique_ptr<T>{args...}};
 	}
 }
-
-#endif //M2_SMARTPOINTER_H

@@ -1,6 +1,4 @@
-#ifndef M2_VM_H
-#define M2_VM_H
-
+#pragma once
 #include "Value.h"
 #include <array>
 #include <string>
@@ -73,5 +71,3 @@ namespace m2 {
 		VoidValue add_script_file(const std::string& path);
 	};
 }
-
-#endif //M2_VM_H

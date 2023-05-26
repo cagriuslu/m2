@@ -1,6 +1,4 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
-
+#pragma once
 #include <m2/M2.h>
 #include "Pool.hh"
 #include <SDL2/SDL.h>
@@ -19,5 +17,3 @@ namespace m2 {
         [[nodiscard]] Object& parent() const;
 	};
 }
-
-#endif

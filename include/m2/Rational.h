@@ -1,6 +1,4 @@
-#ifndef M2_RATIONAL_H
-#define M2_RATIONAL_H
-
+#pragma once
 #include <Rational.pb.h>
 
 namespace m2 {
@@ -49,5 +47,3 @@ bool operator<(const m2::Rational& lhs, const m2::Rational& rhs);
 bool operator>(const m2::Rational& lhs, const m2::Rational& rhs);
 bool operator<=(const m2::Rational& lhs, const m2::Rational& rhs);
 bool operator>=(const m2::Rational& lhs, const m2::Rational& rhs);
-
-#endif //M2_RATIONAL_H

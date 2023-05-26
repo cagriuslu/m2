@@ -1,6 +1,4 @@
-#ifndef M2_UI_H
-#define M2_UI_H
-
+#pragma once
 #include "sdl/Detail.hh"
 #include "Sprite.h"
 #include "Events.h"
@@ -235,5 +233,3 @@ namespace m2::ui {
     extern const Blueprint console_ui;
     extern const Blueprint message_box_ui;
 }
-
-#endif //M2_UI_H

@@ -1,6 +1,4 @@
-#ifndef M2_SONG_H
-#define M2_SONG_H
-
+#pragma once
 #include "Synth.h"
 #include <Song.pb.h>
 #include <vector>
@@ -20,5 +18,3 @@ namespace m2 {
 
 	std::vector<Song> load_songs(const std::filesystem::path& path);
 }
-
-#endif //M2_SONG_H

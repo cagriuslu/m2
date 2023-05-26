@@ -1,6 +1,4 @@
-#ifndef M2_DYNAMICSHEET_H
-#define M2_DYNAMICSHEET_H
-
+#pragma once
 #include "sdl/Detail.hh"
 #include <SDL2/SDL.h>
 #include <memory>
@@ -20,5 +18,3 @@ namespace m2 {
 		SDL_Texture* recreate_texture();
 	};
 }
-
-#endif //M2_DYNAMICSHEET_H

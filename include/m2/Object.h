@@ -1,6 +1,4 @@
-#ifndef OBJECT_H
-#define OBJECT_H
-
+#pragma once
 #include "Group.h"
 #include "Sprite.h"
 #include "ObjectImpl.h"
@@ -106,5 +104,3 @@ namespace m2 {
 	std::function<void(void)> create_sound_emitter_deleter(ObjectId id);
 	std::function<void(void)> create_character_deleter(ObjectId id);
 }
-
-#endif

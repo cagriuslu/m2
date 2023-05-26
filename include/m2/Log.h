@@ -1,6 +1,4 @@
-#ifndef M2_LOG_H
-#define M2_LOG_H
-
+#pragma once
 #include "Options.h"
 #include "M2.h"
 #include <string>
@@ -63,5 +61,3 @@ namespace m2 {
 		}
 	}
 }
-
-#endif //M2_LOG_H

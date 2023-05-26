@@ -1,6 +1,4 @@
-#ifndef M2_SPINLOCK_H
-#define M2_SPINLOCK_H
-
+#pragma once
 #include <atomic>
 
 namespace m2 {
@@ -11,5 +9,3 @@ namespace m2 {
 		void unlock();
 	};
 }
-
-#endif //M2_SPINLOCK_H

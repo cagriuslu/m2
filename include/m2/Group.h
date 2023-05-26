@@ -1,6 +1,4 @@
-#ifndef M2_GROUP_H
-#define M2_GROUP_H
-
+#pragma once
 #include "Pool.hh"
 #include <Level.pb.h>
 #include <unordered_map>
@@ -45,5 +43,3 @@ namespace m2 {
 		inline void remove_member(IndexInGroup index) { _members.free_index(index); }
 	};
 }
-
-#endif //M2_GROUP_H

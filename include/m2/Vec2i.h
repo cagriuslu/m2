@@ -1,6 +1,4 @@
-#ifndef M2_VEC2I_H
-#define M2_VEC2I_H
-
+#pragma once
 #include <Vec2i.pb.h>
 #include <cstdint>
 #include <cstddef>
@@ -57,5 +55,3 @@ namespace m2 {
 		inline bool operator()(const Vec2i& a, const Vec2i& b) { return a.y == b.y ? b.x < a.x : b.y < a.y; }
 	};
 }
-
-#endif //M2_VEC2I_H

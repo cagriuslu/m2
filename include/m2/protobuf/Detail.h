@@ -1,6 +1,4 @@
-#ifndef M2_PROTOBUF_DETAIL_H
-#define M2_PROTOBUF_DETAIL_H
-
+#pragma once
 #include "../Value.h"
 #include "../Exception.h"
 #include "../FileSystem.h"
@@ -123,5 +121,3 @@ namespace m2::protobuf {
 		return descriptor->FindValueByNumber(enum_value)->name();
 	}
 }
-
-#endif //M2_PROTOBUF_DETAIL_H

@@ -1,6 +1,4 @@
-#ifndef M2_CONTROLS_H
-#define M2_CONTROLS_H
-
+#pragma once
 #include <SDL2/SDL.h>
 
 namespace m2 {
@@ -44,5 +42,3 @@ namespace m2 {
 // This can extend endlessly
 // Ctrl+Alt+1 followed by Ctrl+Alt+1 followed by Ctrl+Alt+R --> 2600 keys
 // Although, we're not have to connect each Key to a physical key combination, right?
-
-#endif //M2_CONTROLS_H

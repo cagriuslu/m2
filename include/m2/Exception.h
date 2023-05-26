@@ -1,6 +1,4 @@
-#ifndef M2_EXCEPTION_H
-#define M2_EXCEPTION_H
-
+#pragma once
 #include <stdexcept>
 #include <string>
 
@@ -18,5 +16,3 @@ namespace m2 {
         Error(const char* file, int line, const char* msg);
     };
 }
-
-#endif //M2_EXCEPTION_H

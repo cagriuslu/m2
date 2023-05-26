@@ -1,6 +1,4 @@
-#ifndef M2_MIXNOTE_H
-#define M2_MIXNOTE_H
-
+#pragma once
 #include "../Synth.h"
 #include <m2/Exception.h>
 #include <type_traits>
@@ -45,5 +43,3 @@ namespace m2::synth {
 		}
 	}
 }
-
-#endif //M2_MIXNOTE_H

@@ -1,6 +1,4 @@
-#ifndef RPG_ESCAPER_H
-#define RPG_ESCAPER_H
-
+#pragma once
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 #include <Enemy.pb.h>
@@ -37,5 +35,3 @@ namespace rpg {
 		std::optional<m2::Vec2f> find_direction_to_escape();
 	};
 }
-
-#endif //RPG_ESCAPER_H

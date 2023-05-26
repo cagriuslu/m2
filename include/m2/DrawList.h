@@ -1,6 +1,4 @@
-#ifndef M2_DRAWLIST_H
-#define M2_DRAWLIST_H
-
+#pragma once
 #include "Object.h"
 #include "Vec2f.h"
 #include <map>
@@ -44,5 +42,3 @@ namespace m2 {
 		[[nodiscard]] ConstIterator end() const;
 	};
 }
-
-#endif //M2_DRAWLIST_H

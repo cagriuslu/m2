@@ -1,6 +1,4 @@
-#ifndef M2_MAP2I_H
-#define M2_MAP2I_H
-
+#pragma once
 #include "Pool.hh"
 #include "Vec2i.h"
 #include <map>
@@ -75,5 +73,3 @@ namespace m2 {
 		}
 	};
 }
-
-#endif //M2_MAP2I_H

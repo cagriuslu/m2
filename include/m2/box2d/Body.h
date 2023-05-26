@@ -1,6 +1,4 @@
-#ifndef M2_BOX2D_BODY_H
-#define M2_BOX2D_BODY_H
-
+#pragma once
 #include <box2d/b2_body.h>
 #include "../Pool.hh"
 #include "../Vec2f.h"
@@ -15,5 +13,3 @@ namespace m2::box2d {
 	BodyUniquePtr create_body(b2World& world, Id physique_id, m2::Vec2f position, const pb::BodyBlueprint& blueprint);
 	bool has_obstacle(const b2Body* body);
 }
-
-#endif //M2_BOX2D_BODY_H

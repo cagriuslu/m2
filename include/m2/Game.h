@@ -1,6 +1,4 @@
-#ifndef GAME_H
-#define GAME_H
-
+#pragma once
 #include "Proxy.h"
 #include "Level.h"
 #include "Group.h"
@@ -175,5 +173,3 @@ namespace m2 {
 		void reset_state();
 	};
 }
-
-#endif

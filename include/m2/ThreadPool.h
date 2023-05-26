@@ -1,6 +1,4 @@
-#ifndef M2_THREADPOOL_H
-#define M2_THREADPOOL_H
-
+#pragma once
 #include "Semaphore.h"
 #include <thread>
 #include <mutex>
@@ -32,5 +30,3 @@ namespace m2 {
 		static void thread_func(ThreadPool* pool);
 	};
 }
-
-#endif //M2_THREADPOOL_H

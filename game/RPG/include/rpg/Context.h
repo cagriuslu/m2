@@ -1,6 +1,4 @@
-#ifndef RPG_CONTEXT_H
-#define RPG_CONTEXT_H
-
+#pragma once
 #include <m2/Ui.h>
 #include <Enemy.pb.h>
 #include <Progress.pb.h>
@@ -30,5 +28,3 @@ namespace rpg {
 		const m2::ui::Blueprint* you_died_menu();
 	};
 }
-
-#endif //RPG_CONTEXT_H

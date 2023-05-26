@@ -1,6 +1,4 @@
-#ifndef M2_EVENTS_H
-#define M2_EVENTS_H
-
+#pragma once
 #include <m2/Controls.h>
 #include "Rect2i.h"
 #include <m2/Vec2i.h>
@@ -67,5 +65,3 @@ namespace m2 {
 		m2::Vec2i mouse_position() const;
 	};
 }
-
-#endif

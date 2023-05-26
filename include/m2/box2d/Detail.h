@@ -1,6 +1,4 @@
-#ifndef M2_BOX2D_DETAIL_H
-#define M2_BOX2D_DETAIL_H
-
+#pragma once
 #include "../Vec2f.h"
 #include <BodyBlueprint.pb.h>
 #include "../Game.h"
@@ -47,5 +45,3 @@ namespace m2::box2d {
 	/// Provide our own.
 	inline b2Vec2 vec2_zero() { return b2Vec2{0.0f, 0.0f}; }
 }
-
-#endif //M2_BOX2D_DETAIL_H

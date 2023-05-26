@@ -1,6 +1,4 @@
-#ifndef M2_DYNAMICTEXTURE_H
-#define M2_DYNAMICTEXTURE_H
-
+#pragma once
 #include "sdl/Detail.hh"
 
 namespace m2 {
@@ -17,5 +15,3 @@ namespace m2 {
 		SDL_Rect alloc(int w, int h);
 	};
 }
-
-#endif //M2_DYNAMICTEXTURE_H

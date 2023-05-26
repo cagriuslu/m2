@@ -1,6 +1,4 @@
-#ifndef M2_OPTIONS_H
-#define M2_OPTIONS_H
-
+#pragma once
 #include <Enums.pb.h>
 
 namespace m2 {
@@ -9,5 +7,3 @@ namespace m2 {
 
 	extern bool silent;
 }
-
-#endif //M2_OPTIONS_H

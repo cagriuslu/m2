@@ -1,6 +1,4 @@
-#ifndef M2_VEC2F_H
-#define M2_VEC2F_H
-
+#pragma once
 #include <Dim2f.pb.h>
 #include <Vec2f.pb.h>
 #include <Vec2i.pb.h>
@@ -72,5 +70,3 @@ namespace m2 {
 
 	std::string to_string(const m2::Vec2f&);
 }
-
-#endif //M2_VEC2F_H

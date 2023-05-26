@@ -1,6 +1,4 @@
-#ifndef M2_SHAPE_H
-#define M2_SHAPE_H
-
+#pragma once
 #include "DynamicTexture.h"
 
 namespace m2 {
@@ -29,5 +27,3 @@ namespace m2 {
 		std::pair<SDL_Texture*, SDL_Rect> get_circle(SDL_Color color, uint16_t w, uint16_t h, unsigned piece_count);
 	};
 }
-
-#endif //M2_SHAPE_H

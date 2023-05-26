@@ -1,6 +1,4 @@
-#ifndef M2_QUERY_H
-#define M2_QUERY_H
-
+#pragma once
 #include <box2d/b2_world.h>
 #include <box2d/b2_world_callbacks.h>
 #include <box2d/b2_fixture.h>
@@ -21,5 +19,3 @@ namespace m2::box2d {
 	/// Query the default world for physics objects near a position under the mouse
 	void find_objects_near_position_under_mouse(Vec2f position, float max_distance, PhysiqueQueryCallback&& query_callback);
 }
-
-#endif //M2_QUERY_H

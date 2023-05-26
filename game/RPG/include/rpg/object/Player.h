@@ -1,6 +1,4 @@
-#ifndef IMPL_PLAYER_H
-#define IMPL_PLAYER_H
-
+#pragma once
 #include "m2/Object.h"
 #include <m2/Animation.h>
 #include "m2/fsm/AnimationFsm.h"
@@ -17,5 +15,3 @@ namespace rpg {
 		static m2::VoidValue init(m2::Object& obj);
 	};
 }
-
-#endif //IMPL_PLAYER_H

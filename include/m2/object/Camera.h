@@ -1,6 +1,4 @@
-#ifndef M2_CAMERA_H
-#define M2_CAMERA_H
-
+#pragma once
 #include <m2/Object.h>
 
 namespace m2::obj {
@@ -11,5 +9,3 @@ namespace m2::obj {
 
     std::pair<Object&, Id> create_camera();
 }
-
-#endif //M2_CAMERA_H

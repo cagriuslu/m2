@@ -1,6 +1,4 @@
-#ifndef IMPL_CHASE_HH
-#define IMPL_CHASE_HH
-
+#pragma once
 #include "m2/Object.h"
 #include "m2/Pathfinder.h"
 #include "m2/Fsm.h"
@@ -55,5 +53,3 @@ namespace rpg {
 		void follow_waypoints();
 	};
 }
-
-#endif //IMPL_CHASE_HH

@@ -1,6 +1,4 @@
-#ifndef M2_SDL_DETAIL_H
-#define M2_SDL_DETAIL_H
-
+#pragma once
 #include <Rect2i.pb.h>
 #include <SDL2/SDL.h>
 #include <string_view>
@@ -37,5 +35,3 @@ namespace m2::sdl {
 	SDL_Rect expand_rect(const SDL_Rect& rect, int diff); // Replace with Rect2i::expand
 	SDL_Rect to_rect(const pb::Rect2i& pb_rect); // Replace with Rect2i
 }
-
-#endif //M2_SDL_DETAIL_H

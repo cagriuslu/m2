@@ -1,6 +1,4 @@
-#ifndef M2_AUDIOMANAGER_H
-#define M2_AUDIOMANAGER_H
-
+#pragma once
 #include "Value.h"
 #include "Song.h"
 #include "Synth.h"
@@ -53,5 +51,3 @@ namespace m2 {
 		static void audio_callback(void* count, uint8_t* stream, int length);
 	};
 }
-
-#endif //M2_AUDIOMANAGER_H

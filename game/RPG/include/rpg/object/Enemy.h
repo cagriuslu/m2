@@ -1,6 +1,4 @@
-#ifndef IMPL_ENEMY_H
-#define IMPL_ENEMY_H
-
+#pragma once
 #include <m2/fsm/AnimationFsm.h>
 #include "m2/Object.h"
 #include "rpg/fsm/Chaser.h"
@@ -30,5 +28,3 @@ namespace rpg {
 		static void attack_if_close(m2::Object& obj, const pb::Ai& ai);
     };
 }
-
-#endif //IMPL_ENEMY_H

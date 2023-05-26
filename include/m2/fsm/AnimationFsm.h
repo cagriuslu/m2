@@ -1,6 +1,4 @@
-#ifndef M2_ANIMATIONFSM_H
-#define M2_ANIMATIONFSM_H
-
+#pragma once
 #include "../Fsm.h"
 #include "../Object.h"
 #include "../Animation.h"
@@ -31,5 +29,3 @@ namespace m2 {
 		std::optional<AnimationFsmState> handle_signal(const AnimationFsmSignal& signal) override;
 	};
 }
-
-#endif //M2_ANIMATIONFSM_H

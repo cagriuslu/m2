@@ -1,6 +1,4 @@
-#ifndef M2_ANIMATION_H
-#define M2_ANIMATION_H
-
+#pragma once
 #include "Fsm.h"
 #include "Object.h"
 #include <SpriteType.pb.h>
@@ -20,5 +18,3 @@ namespace m2 {
 	};
 	std::vector<Animation> load_animations(const std::filesystem::path& path);
 }
-
-#endif //M2_ANIMATION_H

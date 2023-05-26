@@ -1,6 +1,4 @@
-#ifndef M2_ITEM_H
-#define M2_ITEM_H
-
+#pragma once
 #include "protobuf/Detail.h"
 #include "SmartPointer.h"
 #include <Item.pb.h>
@@ -141,5 +139,3 @@ namespace m2 {
 	float get_resource_amount(const pb::Resource& resource);
 	SmartPointer<const Item> make_damage_item(m2g::pb::ResourceType resource_type, float damage);
 }
-
-#endif //M2_ITEM_H

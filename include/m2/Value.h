@@ -1,6 +1,4 @@
-#ifndef M2_VALUE_H
-#define M2_VALUE_H
-
+#pragma once
 #include "Exception.h"
 #include <variant>
 #include <functional>
@@ -137,5 +135,3 @@ namespace m2 {
 			__failure__->throw_error(__FILE__, __LINE__); \
 		}                                               \
 	} while (false)
-
-#endif //M2_VALUE_H

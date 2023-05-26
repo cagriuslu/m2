@@ -1,6 +1,4 @@
-#ifndef IMPL_PATROLLER_H
-#define IMPL_PATROLLER_H
-
+#pragma once
 #include "m2/Object.h"
 #include "m2/Fsm.h"
 
@@ -22,5 +20,3 @@ namespace rpg {
 		inline std::optional<PatrollerMode> handle_signal(MAYBE const PatrollerFsmSignal& s) override { return {}; }
 	};
 }
-
-#endif //IMPL_PATROLLER_H

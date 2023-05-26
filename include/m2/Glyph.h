@@ -1,6 +1,4 @@
-#ifndef M2_GLYPH_H
-#define M2_GLYPH_H
-
+#pragma once
 #include "DynamicSheet.h"
 #include <Glyph.pb.h>
 
@@ -24,5 +22,3 @@ namespace m2 {
 		std::pair<SDL_Texture*, SDL_Rect> get_glyph(pb::GlyphType type, int w, int h);
 	};
 }
-
-#endif //M2_GLYPH_H

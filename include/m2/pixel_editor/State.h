@@ -1,6 +1,4 @@
-#ifndef M2_PEDIT_STATE_H
-#define M2_PEDIT_STATE_H
-
+#pragma once
 #include "../Object.h"
 #include "../Vec2i.h"
 #include <SDL.h>
@@ -31,5 +29,3 @@ namespace m2::pedit {
 		static void save();
 	};
 }
-
-#endif //M2_PEDIT_STATE_H

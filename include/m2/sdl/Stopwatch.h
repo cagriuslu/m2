@@ -1,6 +1,4 @@
-#ifndef M2_STOPWATCH_H
-#define M2_STOPWATCH_H
-
+#pragma once
 #include "Detail.hh"
 
 namespace m2::sdl {
@@ -27,5 +25,3 @@ namespace m2::sdl {
 		[[nodiscard]] inline ticks_t last() const { return _last_measurement; }
 	};
 }
-
-#endif //M2_STOPWATCH_H

@@ -1,6 +1,4 @@
-#ifndef M2_CONTACTLISTENER_H
-#define M2_CONTACTLISTENER_H
-
+#pragma once
 #include "../Vec2f.h"
 #include <box2d/b2_world_callbacks.h>
 #include <box2d/b2_contact.h>
@@ -25,5 +23,3 @@ namespace m2::box2d {
         void EndContact(b2Contact* contact) override;
     };
 }
-
-#endif //M2_CONTACTLISTENER_H

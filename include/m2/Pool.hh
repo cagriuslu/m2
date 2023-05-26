@@ -1,6 +1,4 @@
-#ifndef M2_POOL_HH
-#define M2_POOL_HH
-
+#pragma once
 #include "Exception.h"
 #include "Log.h"
 #include "ThreadPool.h"
@@ -290,5 +288,3 @@ namespace m2 {
 		}
     };
 }
-
-#endif //M2_POOL_HH

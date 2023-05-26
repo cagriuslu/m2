@@ -1,6 +1,4 @@
-#ifndef M2_RAYCAST_H
-#define M2_RAYCAST_H
-
+#pragma once
 #include "../Vec2f.h"
 #include <box2d/b2_world.h>
 #include <box2d/b2_world_callbacks.h>
@@ -20,5 +18,3 @@ namespace m2::box2d {
     bool check_eyesight(b2World& world, Vec2f from, Vec2f to, uint16_t category_bits);
 	float check_distance(b2World& world, Vec2f from, Vec2f to, uint16_t category_bits);
 }
-
-#endif //M2_RAYCAST_H

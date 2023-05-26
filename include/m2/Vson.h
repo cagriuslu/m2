@@ -1,6 +1,4 @@
-#ifndef VSON_H
-#define VSON_H
-
+#pragma once
 #include "Value.h"
 #include <string>
 #include <variant>
@@ -61,5 +59,3 @@ namespace m2 {
 		static Value<Vson> parse_file(const std::string& fpath);
 	};
 }
-
-#endif

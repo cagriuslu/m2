@@ -1,6 +1,4 @@
-#ifndef M2_LEDIT_STATE_H
-#define M2_LEDIT_STATE_H
-
+#pragma once
 #include "Detail.h"
 
 namespace m2::ledit {
@@ -71,5 +69,3 @@ namespace m2::ledit {
 		static void save();
 	};
 }
-
-#endif //M2_LEDIT_STATE_H
