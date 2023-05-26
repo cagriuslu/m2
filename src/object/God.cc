@@ -34,14 +34,14 @@ m2::Id m2::obj::create_god() {
 				switch (LEVEL.type()) {
 					case Level::Type::LEVEL_EDITOR: {
 						std::visit(m2::overloaded {
-								[=](Level::LevelEditorState::PaintMode& v) { v.paint_sprite(mouse_coordinates); },
-								[=](Level::LevelEditorState::EraseMode& v) { v.erase_position(mouse_coordinates); },
-								[=](Level::LevelEditorState::PlaceMode& v) { v.place_object(mouse_coordinates); },
-								[=](Level::LevelEditorState::RemoveMode& v) { v.remove_object(mouse_coordinates); },
-								[=](Level::LevelEditorState::PickMode& v) {
+								[=](ledit::State::PaintMode& v) { v.paint_sprite(mouse_coordinates); },
+								[=](ledit::State::EraseMode& v) { v.erase_position(mouse_coordinates); },
+								[=](ledit::State::PlaceMode& v) { v.place_object(mouse_coordinates); },
+								[=](ledit::State::RemoveMode& v) { v.remove_object(mouse_coordinates); },
+								[=](ledit::State::PickMode& v) {
 									if (v.pick_foreground) {
 										// Pick position
-										if (auto level_object = Level::LevelEditorState::PickMode::lookup_foreground_object(mouse_coordinates); level_object) {
+										if (auto level_object = ledit::State::PickMode::lookup_foreground_object(mouse_coordinates); level_object) {
 											// Programmatically find and press the "Place" button
 											for (const auto& widget_ptr : LEVEL.left_hud_ui_state->widgets) {
 												// If the widget is Text
@@ -72,7 +72,7 @@ m2::Id m2::obj::create_god() {
 										}
 									} else {
 										// Pick position
-										if (auto picked_sprite_type = Level::LevelEditorState::PickMode::lookup_background_sprite(mouse_coordinates); picked_sprite_type) {
+										if (auto picked_sprite_type = ledit::State::PickMode::lookup_background_sprite(mouse_coordinates); picked_sprite_type) {
 											// Programmatically find and press the "Paint" button
 											for (const auto& widget_ptr : LEVEL.left_hud_ui_state->widgets) {
 												// If the widget is Text
@@ -97,21 +97,21 @@ m2::Id m2::obj::create_god() {
 										}
 									}
 								},
-								[=](Level::LevelEditorState::SelectMode& v) {
+								[=](ledit::State::SelectMode& v) {
 									v.selection_position_1 = mouse_coordinates;
 									v.selection_position_2 = {};
 									LOG_DEBUG("Selection position 1", *v.selection_position_1);
 								},
-								[=](Level::LevelEditorState::ShiftMode& v) { v.shift(mouse_coordinates); },
+								[=](ledit::State::ShiftMode& v) { v.shift(mouse_coordinates); },
 								[](MAYBE auto& v) {}
 						}, LEVEL.level_editor_state->mode);
 						break;
 					}
 					case Level::Type::PIXEL_EDITOR: {
 						std::visit(m2::overloaded {
-								[=](Level::PixelEditorState::PaintMode& v) { v.paint_color(mouse_coordinates); },
-								[=](Level::PixelEditorState::EraseMode& v) { v.erase_color(mouse_coordinates); },
-								[=](Level::PixelEditorState::ColorPickerMode& v) { v.pick_color(mouse_coordinates); },
+								[=](pedit::State::PaintMode& v) { v.paint_color(mouse_coordinates); },
+								[=](pedit::State::EraseMode& v) { v.erase_color(mouse_coordinates); },
+								[=](pedit::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates); },
 								[](MAYBE auto& v) {}
 						}, LEVEL.pixel_editor_state->mode);
 						break;
@@ -124,7 +124,7 @@ m2::Id m2::obj::create_god() {
 				switch (LEVEL.type()) {
 					case Level::Type::LEVEL_EDITOR: {
 						std::visit(m2::overloaded {
-								[=](Level::LevelEditorState::SelectMode& v) {
+								[=](ledit::State::SelectMode& v) {
 									if (v.selection_position_1) {
 										auto [low_position, high_position] = std::minmax(*v.selection_position_1, mouse_coordinates, Vec2iCompareTopLeftToBottomRight{});
 										v.selection_position_1 = low_position;
@@ -149,8 +149,8 @@ m2::Id m2::obj::create_god() {
 		// Check if level editor is active
 		if (LEVEL.type() == Level::Type::LEVEL_EDITOR) {
 			// Check if select mode is active
-			if (std::holds_alternative<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode)) {
-				auto& select_mode = std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode);
+			if (std::holds_alternative<ledit::State::SelectMode>(LEVEL.level_editor_state->mode)) {
+				auto& select_mode = std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode);
 				// Draw selection
 				if (select_mode.selection_position_1 && not select_mode.selection_position_2) {
 					// If the mouse is in the first quadrant, color selection

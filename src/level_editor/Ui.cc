@@ -9,7 +9,7 @@ const ui::Blueprint::Widget::Variant paint_mode_title = ui::Blueprint::Widget::T
 };
 const ui::Blueprint::Widget::Variant paint_mode_image_selection = ui::Blueprint::Widget::ImageSelection{
 		.action_callback = [](m2g::pb::SpriteType selection) -> ui::Action {
-			std::get<Level::LevelEditorState::PaintMode>(LEVEL.level_editor_state->mode).select_sprite_type(selection);
+			std::get<ledit::State::PaintMode>(LEVEL.level_editor_state->mode).select_sprite_type(selection);
 			return ui::Action::CONTINUE;
 		}
 };
@@ -52,7 +52,7 @@ const ui::Blueprint::Widget::Variant place_mode_right_hud_object_type_selection 
 		.action_callback = [](const std::string& selection) -> ui::Action {
 			auto object_type = m2g::pb::ObjectType::NO_OBJECT;
 			m2g::pb::ObjectType_Parse(selection, &object_type);
-			std::get<Level::LevelEditorState::PlaceMode>(LEVEL.level_editor_state->mode).select_object_type(object_type);
+			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_object_type(object_type);
 			return ui::Action::CONTINUE;
 		}
 };
@@ -60,7 +60,7 @@ const ui::Blueprint::Widget::Variant place_mode_right_hud_group_type_selection =
 		.action_callback = [](const std::string &selection) -> ui::Action {
 			auto group_type = m2g::pb::GroupType::NO_GROUP;
 			m2g::pb::GroupType_Parse(selection, &group_type);
-			std::get<Level::LevelEditorState::PlaceMode>(LEVEL.level_editor_state->mode).select_group_type(group_type);
+			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_group_type(group_type);
 			return ui::Action::CONTINUE;
 		}
 };
@@ -69,7 +69,7 @@ const ui::Blueprint::Widget::Variant place_mode_right_hud_group_instance_selecti
 		.max_value = 999,
 		.initial_value = 0,
 		.action_callback = [](int selection) -> ui::Action {
-			std::get<Level::LevelEditorState::PlaceMode>(LEVEL.level_editor_state->mode).select_group_instance(selection);
+			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_group_instance(selection);
 			return ui::Action::CONTINUE;
 		}
 };
@@ -125,9 +125,9 @@ const ui::Blueprint::Widget::Variant pick_mode_right_hud_ground_selection = ui::
 		.list = {"Background", "Foreground"},
 		.action_callback = [](const std::string& selection) -> ui::Action {
 			if (selection == "Background") {
-				std::get<Level::LevelEditorState::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = false;
+				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = false;
 			} else if (selection == "Foreground") {
-				std::get<Level::LevelEditorState::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = true;
+				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = true;
 			}
 			return ui::Action::CONTINUE;
 		}
@@ -155,49 +155,49 @@ const ui::Blueprint::Widget::Variant select_mode_title = ui::Blueprint::Widget::
 const ui::Blueprint::Widget::Variant select_mode_right_hud_shift_right_button = ui::Blueprint::Widget::Text{
 		.initial_text = "Shift Right",
 		.action_callback = []() -> ui::Action {
-			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).shift_right();
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).shift_right();
 			return ui::Action::CONTINUE;
 		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_shift_down_button = ui::Blueprint::Widget::Text{
 		.initial_text = "Shift Down",
 		.action_callback = []() -> ui::Action {
-			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).shift_down();
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).shift_down();
 			return ui::Action::CONTINUE;
 		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_copy_button = ui::Blueprint::Widget::Text{
 		.initial_text = "Copy",
 		.action_callback = []() -> ui::Action {
-			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).copy();
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).copy();
 			return ui::Action::CONTINUE;
 		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_paste_bg_button = ui::Blueprint::Widget::Text{
 		.initial_text = "Paste BG",
 		.action_callback = []() -> ui::Action {
-			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).paste_bg();
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).paste_bg();
 			return ui::Action::CONTINUE;
 		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_paste_fg_button = ui::Blueprint::Widget::Text{
 		.initial_text = "Paste FG",
 		.action_callback = []() -> ui::Action {
-			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).paste_fg();
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).paste_fg();
 			return ui::Action::CONTINUE;
 		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_erase_button = ui::Blueprint::Widget::Text{
 		.initial_text = "Erase",
 		.action_callback = []() -> ui::Action {
-			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).erase();
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).erase();
 			return ui::Action::CONTINUE;
 		}
 };
 const ui::Blueprint::Widget::Variant select_mode_right_hud_remove_button = ui::Blueprint::Widget::Text{
 		.initial_text = "Remove",
 		.action_callback = []() -> ui::Action {
-			std::get<Level::LevelEditorState::SelectMode>(LEVEL.level_editor_state->mode).remove();
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).remove();
 			return ui::Action::CONTINUE;
 		}
 };
@@ -255,11 +255,11 @@ const ui::Blueprint::Widget::Variant shift_mode_right_hud_shift_direction_select
 		.list = {"Right", "Down", "Right & Down"},
 		.action_callback = [](const std::string& selection) -> ui::Action {
 			if (selection == "Right") {
-				std::get<Level::LevelEditorState::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = Level::LevelEditorState::ShiftMode::ShiftType::RIGHT;
+				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT;
 			} else if (selection == "Down") {
-				std::get<Level::LevelEditorState::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = Level::LevelEditorState::ShiftMode::ShiftType::DOWN;
+				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::DOWN;
 			} else if (selection == "Right & Down") {
-				std::get<Level::LevelEditorState::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = Level::LevelEditorState::ShiftMode::ShiftType::RIGHT_N_DOWN;
+				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT_N_DOWN;
 			}
 			return ui::Action::CONTINUE;
 		}
