@@ -3,7 +3,7 @@
 
 using namespace m2;
 
-const ui::Blueprint::Widget::Variant pixel_editor_left_hud_paint_button = ui::Blueprint::Widget::Text{
+const ui::widget::TextBlueprint pixel_editor_left_hud_paint_button = {
 	.initial_text = "Paint",
 	.action_callback = []() -> ui::Action {
 		LEVEL.pixel_editor_state->activate_paint_mode();
@@ -11,7 +11,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_left_hud_paint_button = ui::Bl
 	},
 	.kb_shortcut = SDL_SCANCODE_P
 };
-const ui::Blueprint::Widget::Variant pixel_editor_left_hud_erase_button = ui::Blueprint::Widget::Text{
+const ui::widget::TextBlueprint pixel_editor_left_hud_erase_button = {
 	.initial_text = "Erase",
 	.action_callback = []() -> ui::Action {
 		LEVEL.pixel_editor_state->activate_erase_mode();
@@ -19,7 +19,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_left_hud_erase_button = ui::Bl
 	},
 	.kb_shortcut = SDL_SCANCODE_E
 };
-const ui::Blueprint::Widget::Variant pixel_editor_left_hud_color_picker_button = ui::Blueprint::Widget::Text{
+const ui::widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 	.initial_text = "Pick",
 	.action_callback = []() -> ui::Action {
 		LEVEL.pixel_editor_state->activate_color_picker_mode();
@@ -27,7 +27,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_left_hud_color_picker_button =
 	},
 	.kb_shortcut = SDL_SCANCODE_C
 };
-const ui::Blueprint::Widget::Variant pixel_editor_left_hud_cancel_button = ui::Blueprint::Widget::Text{
+const ui::widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 	.initial_text = "Cancel",
 	.action_callback = []() -> ui::Action {
 		LEVEL.level_editor_state->deactivate_mode();
@@ -35,7 +35,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_left_hud_cancel_button = ui::B
 	},
 	.kb_shortcut = SDL_SCANCODE_X
 };
-const ui::Blueprint::Widget::Variant pixel_editor_left_hud_gridlines_button = ui::Blueprint::Widget::Text{
+const ui::widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 	.initial_text = "Grid",
 	.action_callback = []() -> ui::Action {
 		LEVEL.toggle_grid();
@@ -43,7 +43,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_left_hud_gridlines_button = ui
 	},
 	.kb_shortcut = SDL_SCANCODE_G
 };
-const ui::Blueprint::Widget::Variant pixel_editor_left_hud_save_button = ui::Blueprint::Widget::Text{
+const ui::widget::TextBlueprint pixel_editor_left_hud_save_button = {
 	.initial_text = "Save",
 	.action_callback = []() -> ui::Action {
 		//execute_blocking(&level_editor_save_confirmation);
@@ -55,37 +55,37 @@ const ui::Blueprint m2::ui::pixel_editor_left_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 1,
 	.widgets = {
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 4, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_paint_button
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 8, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_erase_button
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 12, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_color_picker_button
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 16, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_cancel_button
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 60, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_left_hud_gridlines_button
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 64, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
@@ -94,7 +94,7 @@ const ui::Blueprint m2::ui::pixel_editor_left_hud = {
 	}
 };
 
-const ui::Blueprint::Widget::Variant pixel_editor_right_hud_red_selection = ui::Blueprint::Widget::IntegerSelection{
+const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_red_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
@@ -110,7 +110,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_right_hud_red_selection = ui::
 			return ui::Action::CONTINUE;
 		}
 };
-const ui::Blueprint::Widget::Variant pixel_editor_right_hud_green_selection = ui::Blueprint::Widget::IntegerSelection{
+const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_green_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
@@ -126,7 +126,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_right_hud_green_selection = ui
 			return ui::Action::CONTINUE;
 		}
 };
-const ui::Blueprint::Widget::Variant pixel_editor_right_hud_blue_selection = ui::Blueprint::Widget::IntegerSelection{
+const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_blue_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
@@ -142,7 +142,7 @@ const ui::Blueprint::Widget::Variant pixel_editor_right_hud_blue_selection = ui:
 			return ui::Action::CONTINUE;
 		}
 };
-const ui::Blueprint::Widget::Variant pixel_editor_right_hud_alpha_selection = ui::Blueprint::Widget::IntegerSelection{
+const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_alpha_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
@@ -162,25 +162,25 @@ const ui::Blueprint m2::ui::pixel_editor_right_hud = {
 	.w = 19, .h = 72,
 	.border_width_px = 1,
 	.widgets = {
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 4, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_right_hud_red_selection
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 8, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_right_hud_green_selection
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 12, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,
 			.variant = pixel_editor_right_hud_blue_selection
 		},
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 4, .y = 16, .w = 11, .h = 3,
 			.border_width_px = 1,
 			.padding_width_px = 2,

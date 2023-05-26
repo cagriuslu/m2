@@ -2,7 +2,7 @@
 #include "Controls.h"
 #include "Group.h"
 #include "Object.h"
-#include "Ui.h"
+#include "ui/Blueprint.h"
 #include "Rational.h"
 #include "Value.h"
 #include <GroupType.pb.h>

@@ -1,5 +1,6 @@
 #pragma once
-#include <m2/Ui.h>
+#include <m2/ui/State.h>
+#include <m2/ui/Blueprint.h>
 #include <Enemy.pb.h>
 #include <Progress.pb.h>
 #include <filesystem>

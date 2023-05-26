@@ -57,12 +57,12 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 		unsigned x_padding = 26, y_padding = 17;
 		unsigned x_button_width = 10, y_button_width = 6;
 		unsigned button_gap = 4;
-		_main_menu.widgets.emplace_back(m2::ui::Blueprint::Widget{
+		_main_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 			.x = x_padding + col * (x_button_width + button_gap),
 			.y = y_padding + row * (y_button_width + button_gap),
 			.w = x_button_width, .h = y_button_width,
 			.border_width_px = 1,
-			.variant = m2::ui::Blueprint::Widget::Text{
+			.variant = m2::ui::widget::TextBlueprint{
 				.initial_text = level_display_name,
 				.action_callback = [=]() {
 					auto success = GAME.load_single_player(level_json, level_name);
@@ -75,10 +75,10 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 	}
 
 	LOG_DEBUG("Adding quit button");
-	_main_menu.widgets.emplace_back(m2::ui::Blueprint::Widget{
+	_main_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 		.x = 75, .y = 78, .w = 10, .h = 6,
 		.border_width_px = 1,
-		.variant = m2::ui::Blueprint::Widget::Text{
+		.variant = m2::ui::widget::TextBlueprint{
 			.initial_text = "Quit",
 			.action_callback = []() {
 				return m2::ui::Action::QUIT;
@@ -97,19 +97,19 @@ const m2::ui::Blueprint* rpg::Context::right_hud() {
 		.background_color = {0, 0, 0, 255}
 	};
 
-	_right_hud.widgets.emplace_back(m2::ui::Blueprint::Widget{
+	_right_hud.widgets.emplace_back(m2::ui::WidgetBlueprint{
 		.initially_enabled = false,
 		.x = 2, .y = 66, .w = 15, .h = 2,
 		.border_width_px = 0,
-		.variant = m2::ui::Blueprint::Widget::Text{
+		.variant = m2::ui::widget::TextBlueprint{
 				.initial_text = "AMMO"
 		}
 	});
-	_right_hud.widgets.emplace_back(m2::ui::Blueprint::Widget{
+	_right_hud.widgets.emplace_back(m2::ui::WidgetBlueprint{
 		.initially_enabled = false,
 		.x = 2, .y = 68, .w = 15, .h = 2,
 		.border_width_px = 1,
-		.variant = m2::ui::Blueprint::Widget::ProgressBar{
+		.variant = m2::ui::widget::ProgressBarBlueprint{
 			.bar_color = SDL_Color{0, 127, 255, 255},
 			.update_callback = []() {
 				if (auto* player = LEVEL.player(); player) {
@@ -140,10 +140,10 @@ const m2::ui::Blueprint* rpg::Context::you_died_menu() {
 
 	auto lb_path = LEVEL.path();
 	if (lb_path) {
-		_you_died_menu.widgets.emplace_back(m2::ui::Blueprint::Widget{
+		_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 			.x = 70, .y = 30, .w = 20, .h = 6,
 			.border_width_px = 1,
-			.variant = m2::ui::Blueprint::Widget::Text{
+			.variant = m2::ui::widget::TextBlueprint{
 				.initial_text = "Retry",
 				.action_callback = [=]() -> m2::ui::Action {
 					auto success = GAME.load_single_player(*lb_path, LEVEL.name());
@@ -154,10 +154,10 @@ const m2::ui::Blueprint* rpg::Context::you_died_menu() {
 		});
 	}
 
-	_you_died_menu.widgets.emplace_back(m2::ui::Blueprint::Widget{
+	_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 		.x = 70, .y = 42, .w = 20, .h = 6,
 		.border_width_px = 1,
-		.variant = m2::ui::Blueprint::Widget::Text{
+		.variant = m2::ui::widget::TextBlueprint{
 			.initial_text = "Main Menu",
 			.action_callback = [&]() {
 				return m2::ui::execute_blocking(&_main_menu);
@@ -165,10 +165,10 @@ const m2::ui::Blueprint* rpg::Context::you_died_menu() {
 		}
 	});
 
-	_you_died_menu.widgets.emplace_back(m2::ui::Blueprint::Widget{
+	_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 		.x = 70, .y = 54, .w = 20, .h = 6,
 		.border_width_px = 1,
-		.variant = m2::ui::Blueprint::Widget::Text{
+		.variant = m2::ui::widget::TextBlueprint{
 			.initial_text = "Quit",
 			.action_callback = []() {
 				return m2::ui::Action::QUIT;

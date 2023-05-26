@@ -20,7 +20,7 @@ void m2::Light::default_draw(Light& lig) {
 	if (category_bits) {
 		// Check if the object is inside the object
 		bool inside_body = false;
-		box2d::query(*LEVEL.world, AABB{obj.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
+		box2d::query(*LEVEL.world, Aabb{obj.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
 			if (fixture.GetFilterData().categoryBits & category_bits) {
 				inside_body = true;
 				return false;

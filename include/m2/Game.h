@@ -13,7 +13,7 @@
 #include <ObjectType.pb.h>
 #include "Rational.h"
 #include "Pathfinder.h"
-#include "m2/Ui.h"
+#include "ui/State.h"
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include <m2/box2d/ContactListener.h>

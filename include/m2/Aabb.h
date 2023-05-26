@@ -5,15 +5,15 @@
 
 namespace m2 {
 	/// Axis-aligned bounding box
-	struct AABB {
+	struct Aabb {
 		VecF top_left;
 		VecF bottom_right;
 
-		AABB();
-		AABB(const VecF& top_left, const VecF& bottom_right);
-		AABB(const VecI& top_left, const VecI& bottom_right);
-        AABB(const VecF& center, float side);
-        AABB(const VecF& center, float width, float height);
+		Aabb();
+		Aabb(const VecF& top_left, const VecF& bottom_right);
+		Aabb(const VecI& top_left, const VecI& bottom_right);
+        Aabb(const VecF& center, float side);
+        Aabb(const VecF& center, float width, float height);
 
 		[[nodiscard]] float width() const;
 		[[nodiscard]] float height() const;

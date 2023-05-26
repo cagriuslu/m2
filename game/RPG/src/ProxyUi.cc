@@ -5,7 +5,7 @@
 
 using namespace m2::ui;
 
-static Blueprint::Widget::Variant resume_button = Blueprint::Widget::Text{
+static widget::TextBlueprint resume_button = {
 	.initial_text = "Resume",
 	.action_callback = []() {
 		LOG_DEBUG("Resume button pressed");
@@ -13,7 +13,7 @@ static Blueprint::Widget::Variant resume_button = Blueprint::Widget::Text{
 	},
 	.kb_shortcut = SDL_SCANCODE_R
 };
-static Blueprint::Widget::Variant quit_button = Blueprint::Widget::Text{
+static widget::TextBlueprint quit_button = {
 	.initial_text = "Quit",
 	.action_callback = []() {
 		return m2::ui::Action::QUIT;
@@ -25,12 +25,12 @@ const Blueprint pause_menu_blueprint = {
 	.border_width_px = 0,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 	.widgets = {
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 75, .y = 42, .w = 10, .h = 6,
 			.border_width_px = 1,
 			.variant = resume_button
 		},
-		Blueprint::Widget{
+			WidgetBlueprint{
 			.x = 75, .y = 78, .w = 10, .h = 6,
 			.border_width_px = 1,
 			.variant = quit_button
@@ -38,10 +38,10 @@ const Blueprint pause_menu_blueprint = {
 	}
 };
 
-static Blueprint::Widget::Variant hp_label = Blueprint::Widget::Text{
+static widget::TextBlueprint hp_label = {
 	.initial_text = "HP"
 };
-static Blueprint::Widget::Variant hp_progress_bar = Blueprint::Widget::ProgressBar{
+static widget::ProgressBarBlueprint hp_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 0, 0, 255},
 		.update_callback = []() -> float {
@@ -51,10 +51,10 @@ static Blueprint::Widget::Variant hp_progress_bar = Blueprint::Widget::ProgressB
 			return 0.0f;
 		}
 };
-static Blueprint::Widget::Variant dash_label = Blueprint::Widget::Text{
+static widget::TextBlueprint dash_label = {
 	.initial_text = "DASH COOLDOWN"
 };
-static Blueprint::Widget::Variant dash_progress_bar = Blueprint::Widget::ProgressBar{
+static widget::ProgressBarBlueprint dash_progress_bar = {
 	.initial_progress = 1.0f,
 	.bar_color = SDL_Color{255, 255, 0, 255},
 	.update_callback = []() {
@@ -75,21 +75,21 @@ const Blueprint left_hud_blueprint = {
 	.border_width_px = 2,
 	.background_color = {0, 0, 0, 255},
 	.widgets = {
-		Blueprint::Widget{
+		WidgetBlueprint{
 			.x = 2, .y = 60, .w = 15, .h = 2,
 			.border_width_px = 0,
 			.variant = hp_label
 		},
-		Blueprint::Widget{
+			WidgetBlueprint{
 			.x = 2, .y = 62, .w = 15, .h = 2,
 			.variant = hp_progress_bar
 		},
-		Blueprint::Widget{
+			WidgetBlueprint{
 			.x = 2, .y = 66, .w = 15, .h = 2,
 			.border_width_px = 0,
 			.variant = dash_label
 		},
-		Blueprint::Widget{
+			WidgetBlueprint{
 			.x = 2, .y = 68, .w = 15, .h = 2,
 			.border_width_px = 1,
 			.variant = dash_progress_bar

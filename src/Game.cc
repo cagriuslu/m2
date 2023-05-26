@@ -9,7 +9,6 @@
 #include "m2/component/Graphic.h"
 #include <m2/sdl/Detail.hh>
 #include <SDL2/SDL_image.h>
-#include "m2/Ui.h"
 #include <filesystem>
 
 m2::Game* m2::Game::_instance;
