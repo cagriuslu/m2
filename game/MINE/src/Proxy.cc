@@ -3,7 +3,10 @@
 #include <mine/object/Blacksmith.h>
 
 const std::string_view m2g::game_name = "MINE";
+const m2::Rational m2g::default_game_height_m = {16, 1};
 const bool m2g::gravity = true;
+const bool m2g::world_is_static = false;
+const bool m2g::lightning = false;
 const bool m2g::camera_is_listener = false;
 
 void* m2g::create_context() {
@@ -88,5 +91,3 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 m2::Group* m2g::create_group(MAYBE pb::GroupType group_type) {
 	return nullptr;
 }
-
-std::vector<m2::Action> m2g::actions;

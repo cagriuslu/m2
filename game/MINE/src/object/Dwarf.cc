@@ -81,7 +81,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	};
 	phy.on_collision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other, const m2::box2d::Contact& contact) {
 		// Check if in contact with obstacle
-		if (other.body && m2::box2d::has_obstacle(other.body)) {
+		if (other.body && m2::box2d::has_obstacle(other.body.get())) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.x) <= -contact.normal.y) {
 				chr.set_resource(RESOURCE_IS_GROUNDED_X, other.parent().position.x);
@@ -91,7 +91,7 @@ m2::VoidValue create_dwarf(m2::Object& obj) {
 	};
 	phy.off_collision = [&chr](MAYBE m2::Physique& phy, m2::Physique& other) {
 		// Check if in contact with obstacle
-		if (other.body && m2::box2d::has_obstacle(other.body)) {
+		if (other.body && m2::box2d::has_obstacle(other.body.get())) {
 			// Check if the other object is the grounding object
 			if (chr.get_resource(RESOURCE_IS_GROUNDED_X) == other.parent().position.x && chr.get_resource(RESOURCE_IS_GROUNDED_Y) == other.parent().position.y) {
 				chr.set_resource(RESOURCE_IS_GROUNDED_X, 0.0f);
