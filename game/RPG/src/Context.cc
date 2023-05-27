@@ -44,7 +44,7 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 
 	auto level_jsons = m2::list_files(GAME.game_resource_dir / "Levels", ".json");
 	LOG_INFO("Adding level buttons", level_jsons.size());
-	for (unsigned i = 0; i < level_jsons.size(); ++i) {
+	for (int i = 0; i < (ssize_t)level_jsons.size(); ++i) {
 		const auto& level_json = level_jsons[i];
 		auto level_name = level_json.stem().string();
 
@@ -54,9 +54,9 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 		auto row = i / 6; // 6 rows
 		auto col = i % 8; // 8 columns
 
-		unsigned x_padding = 26, y_padding = 17;
-		unsigned x_button_width = 10, y_button_width = 6;
-		unsigned button_gap = 4;
+		int x_padding = 26, y_padding = 17;
+		int x_button_width = 10, y_button_width = 6;
+		int button_gap = 4;
 		_main_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 			.x = x_padding + col * (x_button_width + button_gap),
 			.y = y_padding + row * (y_button_width + button_gap),

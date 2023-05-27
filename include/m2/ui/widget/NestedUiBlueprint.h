@@ -1,12 +1,13 @@
 #pragma once
 
-// Forward declaration
 namespace m2::ui {
+	// Forward declaration
 	struct Blueprint;
-}
 
-namespace m2::ui::widget {
-	struct NestedUiBlueprint {
-		const Blueprint* ui;
-	};
+	namespace widget {
+		struct NestedUiBlueprint {
+			const Blueprint* ui{};
+			int inner_w{}, inner_h{}; // Zero means nested UI should fit the available space
+		};
+	}
 }

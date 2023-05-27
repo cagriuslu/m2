@@ -2,11 +2,6 @@
 #include <m2/Proxy.h>
 #include <m2/Log.h>
 
-m2::Events::Events() : quit(), window_resize(), key_press_count(), keys_pressed(), ui_keys_pressed(),
-	key_release_count(), keys_released(), mouse_button_press_count(), mouse_buttons_pressed(),
-	mouse_button_release_count(), mouse_buttons_released(), mouse_wheel_scroll_count(), sdl_keys_down(), keys_down(),
-	mouse_buttons_down() {}
-
 void m2::Events::clear() {
 	*this = Events();
 }
@@ -58,7 +53,8 @@ bool m2::Events::gather() {
 			mouse_buttons_released[u(m2::button_to_mouse_button(e.button.button))]++;
 			break;
 		case SDL_MOUSEWHEEL:
-			mouse_wheel_scroll_count += e.wheel.y;
+			mouse_wheel_vertical_scroll_count += e.wheel.y;
+			mouse_wheel_horizontal_scroll_count += e.wheel.x;
 			break;
 		case SDL_TEXTINPUT:
 			if (SDL_IsTextInputActive()) {
@@ -94,8 +90,8 @@ bool m2::Events::gather() {
 	mouse_buttons_down[u(m2::MouseButton::MIDDLE)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_MIDDLE);
 
 	return quit || window_resize || key_press_count || !ui_keys_pressed.empty() || key_release_count || mouse_moved ||
-		mouse_button_press_count || mouse_button_release_count || mouse_wheel_scroll_count ||
-		(not text_input.str().empty());
+		mouse_button_press_count || mouse_button_release_count || mouse_wheel_vertical_scroll_count ||
+		mouse_wheel_horizontal_scroll_count || (not text_input.str().empty());
 }
 
 bool m2::Events::pop_quit() {
@@ -181,10 +177,34 @@ bool m2::Events::pop_mouse_button_release(MouseButton mb, const RectI& rect) {
 	}
 }
 
-bool m2::Events::pop_mouse_wheel_scroll() {
-	auto value = mouse_wheel_scroll_count;
-	mouse_wheel_scroll_count = 0;
+int32_t m2::Events::pop_mouse_wheel_vertical_scroll() {
+	auto value = mouse_wheel_vertical_scroll_count;
+	mouse_wheel_vertical_scroll_count = 0;
 	return value;
+}
+
+int32_t m2::Events::pop_mouse_wheel_vertical_scroll(const RectI& rect) {
+	if (rect.point_in_rect(mouse_position())) {
+		auto value = mouse_wheel_vertical_scroll_count;
+		mouse_wheel_vertical_scroll_count = 0;
+		return value;
+	}
+	return 0;
+}
+
+int32_t m2::Events::pop_mouse_wheel_horizontal_scroll() {
+	auto value = mouse_wheel_horizontal_scroll_count;
+	mouse_wheel_horizontal_scroll_count = 0;
+	return value;
+}
+
+int32_t m2::Events::pop_mouse_wheel_horizontal_scroll(const RectI& rect) {
+	if (rect.point_in_rect(mouse_position())) {
+		auto value = mouse_wheel_horizontal_scroll_count;
+		mouse_wheel_horizontal_scroll_count = 0;
+		return value;
+	}
+	return 0;
 }
 
 std::optional<std::string> m2::Events::pop_text_input() {

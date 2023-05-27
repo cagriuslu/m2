@@ -5,6 +5,21 @@
 
 using namespace m2::ui;
 
+const Blueprint inner_ui = {
+		.w = 10, .h = 10,
+		.border_width_px = 0,
+		.background_color = {.r = 127, .g = 0, .b = 80, .a = 255},
+		.widgets = {
+				WidgetBlueprint{
+						.x = 1, .y = 1, .w = 8, .h = 8,
+						.border_width_px = 0,
+						.background_color = {.r = 80, .g = 127, .b = 0, .a = 255},
+						.variant = widget::TextBlueprint{
+								.initial_text = "AM"
+						}
+				}
+		}
+};
 static widget::TextBlueprint resume_button = {
 	.initial_text = "Resume",
 	.action_callback = []() {
@@ -21,21 +36,28 @@ static widget::TextBlueprint quit_button = {
 	.kb_shortcut = SDL_SCANCODE_Q
 };
 const Blueprint pause_menu_blueprint = {
-	.w = 160, .h = 90,
-	.border_width_px = 0,
-	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
-	.widgets = {
-		WidgetBlueprint{
-			.x = 75, .y = 42, .w = 10, .h = 6,
-			.border_width_px = 1,
-			.variant = resume_button
-		},
-			WidgetBlueprint{
-			.x = 75, .y = 78, .w = 10, .h = 6,
-			.border_width_px = 1,
-			.variant = quit_button
+		.w = 160, .h = 90,
+		.border_width_px = 0,
+		.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
+		.widgets = {
+				WidgetBlueprint{
+						.x = 10, .y = 10, .w = 20, .h = 20,
+						.variant = widget::NestedUiBlueprint{
+								.ui = &inner_ui,
+								.inner_w = 5, .inner_h = 5
+						}
+				},
+				WidgetBlueprint{
+						.x = 75, .y = 42, .w = 10, .h = 6,
+						.border_width_px = 1,
+						.variant = resume_button
+				},
+				WidgetBlueprint{
+						.x = 75, .y = 78, .w = 10, .h = 6,
+						.border_width_px = 1,
+						.variant = quit_button
+				}
 		}
-	}
 };
 
 static widget::TextBlueprint hp_label = {

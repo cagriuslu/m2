@@ -13,36 +13,37 @@ namespace m2 {
 	class Events {
 		static constexpr unsigned ui_key_press_count_limit = 16;
 
-		bool quit;
+		bool quit{};
 
 		std::optional<m2::VecI> window_resize;
 
-		uint32_t key_press_count;
-		std::array<uint16_t, u(Key::end)> keys_pressed;
+		uint32_t key_press_count{};
+		std::array<uint16_t, u(Key::end)> keys_pressed{};
 		std::deque<SDL_Scancode> ui_keys_pressed;
 
-		uint32_t key_release_count;
-		std::array<uint16_t, u(Key::end)> keys_released;
+		uint32_t key_release_count{};
+		std::array<uint16_t, u(Key::end)> keys_released{};
 
-		uint32_t mouse_button_press_count;
-		std::array<uint16_t, u(MouseButton::end)> mouse_buttons_pressed;
+		uint32_t mouse_button_press_count{};
+		std::array<uint16_t, u(MouseButton::end)> mouse_buttons_pressed{};
 
-		uint32_t mouse_button_release_count;
-		std::array<uint16_t, u(MouseButton::end)> mouse_buttons_released;
+		uint32_t mouse_button_release_count{};
+		std::array<uint16_t, u(MouseButton::end)> mouse_buttons_released{};
 
-		uint32_t mouse_wheel_scroll_count;
+		int32_t mouse_wheel_vertical_scroll_count{};
+		int32_t mouse_wheel_horizontal_scroll_count{};
 
 		std::stringstream text_input;
 
 		// Persistent states
 
-		std::array<bool, SDL_NUM_SCANCODES> sdl_keys_down;
-		std::array<bool, u(Key::end)> keys_down;
-		std::array<bool, u(MouseButton::end)> mouse_buttons_down;
+		std::array<bool, SDL_NUM_SCANCODES> sdl_keys_down{};
+		std::array<bool, u(Key::end)> keys_down{};
+		std::array<bool, u(MouseButton::end)> mouse_buttons_down{};
 		m2::VecI _mouse_position;
 
 	public:
-		Events();
+		Events() = default;
 
 		void clear();
 		bool gather();
@@ -56,7 +57,10 @@ namespace m2 {
 		bool pop_mouse_button_press(MouseButton mb, const RectI& rect);
 		bool pop_mouse_button_release(MouseButton mb);
 		bool pop_mouse_button_release(MouseButton mb, const RectI& rect);
-		bool pop_mouse_wheel_scroll();
+		int32_t pop_mouse_wheel_vertical_scroll();
+		int32_t pop_mouse_wheel_vertical_scroll(const RectI& rect);
+		int32_t pop_mouse_wheel_horizontal_scroll();
+		int32_t pop_mouse_wheel_horizontal_scroll(const RectI& rect);
 		std::optional<std::string> pop_text_input();
 
 		bool is_sdl_key_down(SDL_Scancode sc) const;

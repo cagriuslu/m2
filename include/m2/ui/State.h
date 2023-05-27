@@ -17,6 +17,8 @@ namespace m2::ui {
 
 	private:
 		static std::unique_ptr<Widget> create_widget_state(const WidgetBlueprint& blueprint);
+	public:
+		static SDL_Rect calculate_widget_rect(const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
 	};
 
 	Action execute_blocking(const Blueprint* blueprint);

@@ -13,4 +13,4 @@
 - Enable VSync, do something while waiting for VSync
 - Dialog with an NPC, character screen, inventory, buy/sell against a seller, character selection
 - Synth editor
-- UI widgets: scroll area, horizontal/vertical slider, radio button, tabs, table
+- UI widgets: horizontal/vertical slider, radio button, tabs, table

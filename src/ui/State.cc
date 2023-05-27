@@ -14,20 +14,8 @@
 #include <m2/sdl/Detail.hh>
 #include <regex>
 
+using namespace m2;
 using namespace m2::ui;
-
-namespace {
-	SDL_Rect calculate_widget_rect(const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h, unsigned child_x, unsigned child_y, unsigned child_w, unsigned child_h) {
-		auto pixels_per_unit_w = (float)root_rect_px.w / (float)root_w;
-		auto pixels_per_unit_h = (float)root_rect_px.h / (float)root_h;
-		return SDL_Rect{
-				root_rect_px.x + (int)roundf((float)child_x * pixels_per_unit_w),
-				root_rect_px.y + (int)roundf((float)child_y * pixels_per_unit_h),
-				(int)roundf((float)child_w * pixels_per_unit_w),
-				(int)roundf((float)child_h * pixels_per_unit_h)
-		};
-	}
-}
 
 State::State(const Blueprint* blueprint) : blueprint(blueprint) {
 	for (const auto& widget_blueprint : blueprint->widgets) {
@@ -106,6 +94,19 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint& bluepr
 	}
 
 	return state;
+}
+
+SDL_Rect State::calculate_widget_rect(
+		const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h,
+		int child_x, int child_y, unsigned child_w, unsigned child_h) {
+	auto pixels_per_unit_w = (float)root_rect_px.w / (float)root_w;
+	auto pixels_per_unit_h = (float)root_rect_px.h / (float)root_h;
+	return SDL_Rect{
+			root_rect_px.x + (int)roundf((float)child_x * pixels_per_unit_w),
+			root_rect_px.y + (int)roundf((float)child_y * pixels_per_unit_h),
+			(int)roundf((float)child_w * pixels_per_unit_w),
+			(int)roundf((float)child_h * pixels_per_unit_h)
+	};
 }
 
 m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint) {

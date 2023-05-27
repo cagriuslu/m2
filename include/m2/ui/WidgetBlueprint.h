@@ -16,7 +16,7 @@ namespace m2::ui {
 
 
 		bool initially_enabled{true};
-		unsigned x{}, y{}, w{1}, h{1}; // unitless
+		int x{}, y{}, w{1}, h{1}; // unitless
 		unsigned border_width_px{1};
 		unsigned padding_width_px{};
 		SDL_Color background_color{};
