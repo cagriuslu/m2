@@ -693,6 +693,24 @@
           "centerOffsetPx": {"x": -0.5, "y": 8.5}
         }
       ]
+    },
+    {
+      "resource": "resource/game/RPG/custom/skeleton-corpse.png",
+      "ppm": 26,
+      "sprites": [
+        {
+          "type": "SKELETON_CORPSE",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_IMAGE_ADJUSTMENT",
+              "imageAdjustment": {
+                "brightnessMultiplier": 0.5
+              }
+            }
+          ],
+          "rect": {"x": 0, "y": 0, "w": 26, "h": 26}
+        }
+      ]
     }
   ]
 }

@@ -19,11 +19,16 @@ message ForegroundCompanion {
   repeated RectI rects = 2; // w.r.t SpriteSheet coordinates
 }
 
+message ImageAdjustment {
+  float brightness_multiplier = 1;
+}
+
 enum SpriteEffectType {
   NO_SPRITE_EFFECT = 0;
   SPRITE_EFFECT_FOREGROUND_COMPANION = 1;
   SPRITE_EFFECT_MASK = 2;
   SPRITE_EFFECT_GRAYSCALE = 3;
+  SPRITE_EFFECT_IMAGE_ADJUSTMENT = 4;
 }
 
 message SpriteEffect {
@@ -31,6 +36,7 @@ message SpriteEffect {
   oneof effect_arg {
     ForegroundCompanion foreground_companion = 2;
     Color mask_color = 3;
+      ImageAdjustment image_adjustment = 4;
   }
 }
 

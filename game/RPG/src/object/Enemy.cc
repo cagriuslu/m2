@@ -6,6 +6,7 @@
 #include "rpg/group/ItemGroup.h"
 #include "rpg/object/MeleeWeapon.h"
 #include "rpg/object/RangedWeapon.h"
+#include <rpg/object/Corpse.h>
 #include <rpg/Detail.h>
 #include <rpg/Context.h>
 #include <m2/M2.h>
@@ -77,7 +78,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
-	chr.interact = [&](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType interaction_type) {
+	chr.interact = [&, obj_type = object_type](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType interaction_type) {
 		// Check if we got hit
 		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
 			// Play audio effect if not already doing so
@@ -118,7 +119,15 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 				auto& context = Context::get_instance();
 				context.alive_enemy_count--;
 				// Delete self
+				LOG_INFO("Enemy died");
 				GAME.add_deferred_action(m2::create_object_deleter(self.object_id));
+				// Create corpse
+				if (obj_type == ObjectType::SKELETON) {
+					GAME.add_deferred_action([pos = obj.position]() {
+						auto& corpse = m2::create_object(pos).first;
+						create_corpse(corpse, m2g::pb::SKELETON_CORPSE);
+					});
+				}
 			} else {
 				// Else, notify AI
 				std::visit(m2::overloaded {

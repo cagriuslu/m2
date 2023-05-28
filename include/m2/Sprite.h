@@ -31,6 +31,7 @@ namespace m2 {
 		SDL_Rect create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color);
 		SDL_Rect create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces);
 		SDL_Rect create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect);
+		SDL_Rect create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment);
 	};
 
 	class Sprite final {

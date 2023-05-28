@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
 
 		if (since_last_fps.measure(); 5000 < since_last_fps.lap()) {
 			since_last_fps.subtract_from_lap(5000);
-			LOGF_DEBUG("PHY count %d, GFX count %d", phy_count, gfx_count);
+			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 5.0f);
 			phy_count = 0;
 			gfx_count = 0;
 		}
