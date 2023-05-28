@@ -711,6 +711,24 @@
           "rect": {"x": 0, "y": 0, "w": 26, "h": 26}
         }
       ]
+    },
+    {
+      "resource": "resource/game/RPG/custom/cuteopus-corpse.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "CUTEOPUS_CORPSE",
+          "effects": [
+            {
+              "type": "SPRITE_EFFECT_IMAGE_ADJUSTMENT",
+              "imageAdjustment": {
+                "brightnessMultiplier": 0.5
+              }
+            }
+          ],
+          "rect": {"x": 0, "y": 0, "w": 32, "h": 32}
+        }
+      ]
     }
   ]
 }

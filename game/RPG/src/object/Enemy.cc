@@ -127,6 +127,11 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 						auto& corpse = m2::create_object(pos).first;
 						create_corpse(corpse, m2g::pb::SKELETON_CORPSE);
 					});
+				} else if (obj_type == ObjectType::CUTEOPUS) {
+					GAME.add_deferred_action([pos = obj.position]() {
+						auto& corpse = m2::create_object(pos).first;
+						create_corpse(corpse, m2g::pb::CUTEOPUS_CORPSE);
+					});
 				}
 			} else {
 				// Else, notify AI
