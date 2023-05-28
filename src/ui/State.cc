@@ -201,8 +201,8 @@ m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rec
 const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprint{
 		.initial_text = "",
 		.action_callback = [](std::stringstream& ss) -> Action {
-			auto command = ss.str();
-			ss = std::stringstream();
+			auto command = ss.str(); // Get command
+			ss = std::stringstream(); // Clear the text input
 			GAME.console_output.emplace_back(">> " + command);
 
 			if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
@@ -233,6 +233,20 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 				}
 				return Action::CONTINUE;
+			} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
+				std::smatch match_results;
+				if (std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
+					auto parameter = match_results.str(1);
+					if (parameter == "game_height") {
+						auto new_game_height = strtof(match_results.str(2).c_str(), nullptr);
+						GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, Rational{new_game_height});
+						return Action::RETURN;
+					} else {
+						GAME.console_output.emplace_back("Unknown parameter");
+					}
+				} else {
+					// TODO print help
+				}
 			} else if (command == "quit") {
 				return Action::QUIT;
 			} else if (command.empty()) {
@@ -263,6 +277,7 @@ widget::TextBlueprint command_output_variant() {
 const Blueprint m2::ui::console_ui = {
 		.w = 1, .h = 25,
 		.border_width_px = 0,
+		.background_color = {0, 0, 0, 255},
 		.widgets = {
 				WidgetBlueprint{.x = 0, .y = 0, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<23>()},
 				WidgetBlueprint{.x = 0, .y = 1, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<22>()},
