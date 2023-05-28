@@ -43,6 +43,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
+	chr.set_max_resource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.add_resource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
 
 	obj.impl = std::make_unique<rpg::Player>(obj);
