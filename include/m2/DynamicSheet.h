@@ -16,5 +16,8 @@ namespace m2 {
 		[[nodiscard]] SDL_Texture* texture() const;
 		std::pair<SDL_Surface*, SDL_Rect> alloc(int w, int h);
 		SDL_Texture* recreate_texture();
+	protected:
+		[[nodiscard]] inline int width() const { return _surface->w; }
+		[[nodiscard]] inline int height() const { return _surface->h; }
 	};
 }

@@ -1,3 +1,4 @@
+#include <m3/VecF.h>
 #include <m2/Proxy.h>
 #include "m2/Game.h"
 #include "m2/sdl/Detail.hh"
@@ -122,9 +123,9 @@ int main(int argc, char **argv) {
 		GAME.execute_pre_draw();
 		GAME.update_hud_contents();
 		GAME.clear_back_buffer();
-        GAME.draw_background();
+		GAME.draw_background();
 		GAME.draw_foreground();
-        GAME.draw_lights();
+		GAME.draw_lights();
 		GAME.draw_background_effects();
 		GAME.draw_foreground_effects();
 		GAME.execute_post_draw();

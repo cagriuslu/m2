@@ -32,6 +32,9 @@ namespace m2 {
 		SDL_Rect create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces);
 		SDL_Rect create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect);
 		SDL_Rect create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment);
+
+		[[nodiscard]] inline int texture_width() const { return width(); }
+		[[nodiscard]] inline int texture_height() const { return height(); }
 	};
 
 	class Sprite final {
@@ -57,6 +60,7 @@ namespace m2 {
 		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite);
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] const pb::Sprite& sprite() const;
+		[[nodiscard]] inline const SpriteEffectsSheet* effects_sheet() const { return _effects_sheet; }
 		[[nodiscard]] SDL_Texture* effects_texture() const;
 		[[nodiscard]] SDL_Rect effect_rect(pb::SpriteEffectType effect_type) const;
 		[[nodiscard]] bool has_foreground_companion() const;

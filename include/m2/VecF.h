@@ -40,7 +40,7 @@ namespace m2 {
 		[[nodiscard]] inline bool is_near(const VecF& other, float tolerance) const { return fabsf(other.x - x) <= tolerance && fabsf(other.y - y) <= tolerance; }
 		[[nodiscard]] inline bool is_small(float tolerance) const { return is_near({}, tolerance); }
 		[[nodiscard]] inline float length_sq() const { return x * x + y * y; }
-		[[nodiscard]] inline float length() const { return sqrt(length_sq()); }
+		[[nodiscard]] inline float length() const { return sqrtf(length_sq()); }
 		[[nodiscard]] inline float distance_sq(const VecF& other) const { return (other - *this).length_sq(); }
 		[[nodiscard]] float distance_sq(const VecI& other) const;
 		[[nodiscard]] inline float distance(const VecF& other) const { return (other - *this).length(); }
@@ -68,5 +68,5 @@ namespace m2 {
 		inline static VecF from_angle(float rads) { return {cosf(rads), sinf(rads)}; }
 	};
 
-	std::string to_string(const m2::VecF&);
+	std::string to_string(const VecF&);
 }
