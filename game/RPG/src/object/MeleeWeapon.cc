@@ -43,6 +43,7 @@ m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::VecF &directio
 	// Add graphics
 	auto& gfx = obj.add_graphic(sprite);
 	gfx.draw_angle = phy.body->GetAngle();
+	gfx.z = 0.5f;
 
 	// Add character
 	auto& chr = obj.add_tiny_character();

@@ -2,6 +2,15 @@
 #include <string>
 
 namespace m2 {
+	template <typename T>
+	int I(T t) { return static_cast<int>(t); }
+
+	template <typename T>
+	unsigned U(T t) { return static_cast<unsigned>(t); }
+
+	template <typename T>
+	float F(T t) { return static_cast<float>(t); }
+
 	std::string to_string(int);
 	std::string to_string(unsigned int);
 	std::string to_string(long);

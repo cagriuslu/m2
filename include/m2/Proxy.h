@@ -24,6 +24,15 @@ namespace m2g {
 	/// Is lightning enabled? Darkens the textures.
 	extern const bool lightning;
 
+	/// Z-component of perspective camera
+	extern const float camera_height;
+	/// Distance between the camera and the player position
+	extern const float camera_distance;
+	/// Horizontal field-of-view of camera, in degrees
+	extern const float horizontal_field_of_view;
+	/// Z component of the xy-plane for camera to mouse ray-casts
+	extern const float xy_plane_z_component;
+
 	/// Is the camera also a sound listener
 	extern const bool camera_is_listener;
 

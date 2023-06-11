@@ -52,6 +52,7 @@ m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::VecF& 
 	// Add graphics
 	auto& gfx = obj.add_graphic(sprite);
 	gfx.draw_angle = angle;
+	gfx.z = 0.5f;
 
 	// Add character
 	auto& chr = obj.add_tiny_character();

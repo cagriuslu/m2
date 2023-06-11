@@ -3,6 +3,9 @@
 #include "../Sprite.h"
 #include "../VecI.h"
 #include "../VecF.h"
+#include "../../m3/VecF.h"
+#include "../../m3/Line.h"
+#include "m3/Plane.h"
 #include <functional>
 
 namespace m2 {
@@ -19,6 +22,26 @@ namespace m2 {
 	VecF screen_origin_to_position_px(const VecF& position);
 }
 
+namespace m3 {
+	VecF camera_position_m();
+	VecF player_position_m();
+
+	/// Returns the width of the plane seen by the camera in its equator
+	float visible_width_m();
+
+	/// Returns the PPM at the plane seen by the camera in its equator.
+	/// PPM should stay the same along the plane seen by the camera.
+	float ppm();
+
+	Line camera_to_position(const VecF& position); // ray from camera to position
+	Plane player_to_camera();
+
+	std::optional<VecF> player_to_projection_of_position_m(const VecF& position);
+	std::optional<m2::VecF> projection_of_position_m(const VecF& position); // Centered around player
+	std::optional<m2::VecF> projection_of_position_px(const VecF& position); // Centered around player
+	std::optional<m2::VecF> screen_origin_to_projection_of_position_px(const VecF& position);
+}
+
 namespace m2 {
 	struct Graphic : public Component {
 		using Callback = std::function<void(Graphic&)>;
@@ -30,6 +53,7 @@ namespace m2 {
 		const Sprite* sprite{};
 		pb::SpriteEffectType draw_sprite_effect{pb::NO_SPRITE_EFFECT};
 		float draw_angle{};
+		float z{};
 		std::optional<float> draw_effect_health_bar; /// [0,1]
 
 		Graphic() = default;
