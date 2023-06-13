@@ -65,6 +65,7 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 			.variant = m2::ui::widget::TextBlueprint{
 				.initial_text = level_display_name,
 				.action_callback = [=]() {
+					Context::get_instance().alive_enemy_count = 0;
 					auto success = GAME.load_single_player(level_json, level_name);
 					m2_throw_failure_as_error(success);
 					GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME), m2::AudioManager::PlayPolicy::LOOP, 0.5f);
@@ -146,6 +147,7 @@ const m2::ui::Blueprint* rpg::Context::you_died_menu() {
 			.variant = m2::ui::widget::TextBlueprint{
 				.initial_text = "Retry",
 				.action_callback = [=]() -> m2::ui::Action {
+					Context::get_instance().alive_enemy_count = 0;
 					auto success = GAME.load_single_player(*lb_path, LEVEL.name());
 					m2_throw_failure_as_error(success);
 					return m2::ui::Action::RETURN;
