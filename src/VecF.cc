@@ -1,5 +1,5 @@
 #include <m2/VecF.h>
-#include <m3/VecF.h>
+#include <m2/m3/VecF.h>
 #include <m2/VecI.h>
 #include <sstream>
 

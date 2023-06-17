@@ -1,4 +1,4 @@
-#include <m3/VecF.h>
+#include <m2/m3/VecF.h>
 #include <m2/Component.h>
 #include <m2/Game.h>
 #include "m2/component/Graphic.h"

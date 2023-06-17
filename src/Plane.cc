@@ -1,4 +1,4 @@
-#include <m3/Plane.h>
+#include <m2/m3/Plane.h>
 #include <m2/Log.h>
 
 std::pair<m3::VecF,bool> m3::Plane::intersection(const Line& line) const {

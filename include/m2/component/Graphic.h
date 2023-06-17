@@ -3,9 +3,9 @@
 #include "../Sprite.h"
 #include "../VecI.h"
 #include "../VecF.h"
-#include "../../m3/VecF.h"
-#include "../../m3/Line.h"
-#include "m3/Plane.h"
+#include "../m3/VecF.h"
+#include "../m3/Line.h"
+#include "../m3/Plane.h"
 #include <functional>
 
 namespace m2 {
