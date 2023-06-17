@@ -54,7 +54,7 @@ namespace m2 {
 		pb::SpriteEffectType draw_sprite_effect{pb::NO_SPRITE_EFFECT};
 		float draw_angle{};
 		float z{};
-		std::optional<float> draw_effect_health_bar; /// [0,1]
+		std::optional<float> draw_addon_health_bar; /// [0,1]
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id);
@@ -70,7 +70,7 @@ namespace m2 {
 		[[nodiscard]] VecF screen_origin_to_sprite_center_px() const;
 
 		static void default_draw(Graphic& gfx);
-		static void default_effect(Graphic& gfx); // Draws health bar??
+		static void default_draw_addons(Graphic& gfx);
 		/// Color the world cell with the given color
 		static void color_cell(const VecI& cell, SDL_Color color);
 	};

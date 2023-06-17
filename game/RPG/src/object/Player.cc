@@ -130,7 +130,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		impl.animation_fsm.time(GAME.delta_time_s());
-		gfx.draw_effect_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
+		gfx.draw_addon_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
 
 	if (LEVEL.name() == "1") {

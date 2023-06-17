@@ -12,7 +12,7 @@ namespace m2 {
 
 		inline VecI() = default;
 		inline VecI(int32_t x, int32_t y) : x(x), y(y) {}
-		inline VecI(float x, float y) : x((int32_t)x), y((int32_t)y) {}
+		inline VecI(float x, float y) : x((int32_t)roundf(x)), y((int32_t)roundf(y)) {}
 		explicit VecI(const VecF& v);
 		inline explicit VecI(const pb::VecI& v) : VecI(v.x(), v.y()) {}
 

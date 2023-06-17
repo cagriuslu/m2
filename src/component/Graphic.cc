@@ -119,7 +119,7 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_of_position_px(const Vec
 }
 
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
-m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_effect(default_effect), sprite(&sprite) {}
+m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_effect(default_draw_addons), sprite(&sprite) {}
 
 m2::VecF m2::Graphic::sprite_center_to_sprite_origin_px() const {
 	if (sprite) {
@@ -330,41 +330,44 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 	}
 }
 
-void m2::Graphic::default_effect(Graphic& gfx) {
+void m2::Graphic::default_draw_addons(Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only works if there is a sprite
 		return;
 	}
-	if (not gfx.draw_effect_health_bar) {
+	if (not gfx.draw_addon_health_bar) {
 		return;
 	}
 
-	auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
+	SDL_Rect dst_rect{};
 
-	// White frame
-	auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
-	auto dst_rect = SDL_Rect{
-			(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
-			(int)roundf(screen_origin_to_sprite_center_px.y) + (src_rect.h * GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1
-			src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm(),
-			15 * GAME.dimensions().ppm / 100 // 0.15 m height
-	};
-	SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 255);
+	if (m2g::camera_height == 0.0f) {
+		auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
+		auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
+		dst_rect = SDL_Rect{
+				(int) roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
+				(int) roundf(screen_origin_to_sprite_center_px.y) + (src_rect.h * GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1
+				GAME.dimensions().ppm,
+				GAME.dimensions().ppm * 12 / 100 // 0.15 m height
+		};
+	} else {
+		auto obj_position = gfx.parent().position;
+		// Place add-on below the sprite
+		auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
+		auto projected_addon_position = m3::screen_origin_to_projection_of_position_px(addon_position);
+		if (projected_addon_position) {
+			auto rect = RectI::centered_around(VecI{*projected_addon_position}, GAME.dimensions().ppm, GAME.dimensions().ppm * 12 / 100);
+			dst_rect = (SDL_Rect) rect;
+		}
+	}
+
+	// Black background
+	SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
 	SDL_RenderFillRect(GAME.renderer, &dst_rect);
 
-	// Black shadow
-	auto shadow_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, dst_rect.w - 2, dst_rect.h - 2};
-	SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
-	SDL_RenderFillRect(GAME.renderer, &shadow_rect);
-
 	// Green part
-	float percentage = (*gfx.draw_effect_health_bar) < 0.0f ? 0.0f : (1.0f < *gfx.draw_effect_health_bar) ? 1.0f :  *gfx.draw_effect_health_bar;
-	SDL_Rect green_rect;
-	if (7 <= dst_rect.w) {
-		green_rect = SDL_Rect{shadow_rect.x + 1, shadow_rect.y + 1, (int)roundf(percentage * (float)(shadow_rect.w - 2)), shadow_rect.h - 2};
-	} else {
-		green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, (int)roundf(percentage * (float)(dst_rect.w - 2)), dst_rect.h - 2};
-	}
+	float percentage = (*gfx.draw_addon_health_bar) < 0.0f ? 0.0f : (1.0f < *gfx.draw_addon_health_bar) ? 1.0f : *gfx.draw_addon_health_bar;
+	auto green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, I(roundf(percentage * F(dst_rect.w - 2))), dst_rect.h - 2};
 	SDL_SetRenderDrawColor(GAME.renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(GAME.renderer, &green_rect);
 }
