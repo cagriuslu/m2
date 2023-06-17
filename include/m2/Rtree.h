@@ -1,6 +1,6 @@
 #pragma once
 #include "Aabb.h"
-#include "Pool.hh"
+#include "Pool.h"
 
 // Binary tree where each node is an AABB, as you go up the levels, the AABBs get merged. In the highest level, you have the AABB that covers the whole world.
 // Instead of binary, we should use k=4 because it has potential to be more efficient

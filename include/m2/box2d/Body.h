@@ -1,6 +1,6 @@
 #pragma once
 #include <box2d/b2_body.h>
-#include "../Pool.hh"
+#include "../Pool.h"
 #include "../VecF.h"
 #include <BodyBlueprint.pb.h>
 #include <memory>

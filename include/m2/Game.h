@@ -17,7 +17,7 @@
 #include "component/Physique.h"
 #include "component/Graphic.h"
 #include <m2/box2d/ContactListener.h>
-#include <m2/Pool.hh>
+#include <m2/Pool.h>
 #include <SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <vector>

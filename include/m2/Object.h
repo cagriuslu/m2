@@ -10,7 +10,7 @@
 #include "component/Light.h"
 #include "component/SoundEmitter.h"
 #include "component/Character.h"
-#include "Pool.hh"
+#include "Pool.h"
 #include <memory>
 #include <functional>
 

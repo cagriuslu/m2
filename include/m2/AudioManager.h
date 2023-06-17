@@ -2,7 +2,7 @@
 #include "Value.h"
 #include "Song.h"
 #include "Synth.h"
-#include "Pool.hh"
+#include "Pool.h"
 #include <SDL.h>
 #include <list>
 #include <memory>
