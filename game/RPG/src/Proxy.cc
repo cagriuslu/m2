@@ -11,9 +11,9 @@ const m2::Rational m2g::default_game_height_m = {16, 1};
 const bool m2g::gravity = false;
 const bool m2g::world_is_static = true;
 const bool m2g::lightning = false;
-const float m2g::camera_height = 5.5f;
-const float m2g::camera_distance = 8.0f;
-const float m2g::horizontal_field_of_view = 90.0f;
+float m2g::camera_height = 5.5f;
+float m2g::camera_distance = 8.0f;
+float m2g::horizontal_field_of_view = 90.0f;
 const float m2g::xy_plane_z_component = 0.75f;
 const bool m2g::camera_is_listener = true;
 

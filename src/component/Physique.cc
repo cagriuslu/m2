@@ -42,8 +42,8 @@ void m2::Physique::draw_debug_shapes() const {
 		switch (fixture->GetType()) {
 			case b2Shape::Type::e_polygon: {
 				const auto* shape = dynamic_cast<const b2PolygonShape*>(fixture->GetShape());
-				int rect_w = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.dimensions().ppm);
-				int rect_h = (int)roundf((aabb.upperBound.y - aabb.lowerBound.y) * (float)GAME.dimensions().ppm);
+				auto width = aabb.upperBound.x - aabb.lowerBound.x;
+				auto height = aabb.upperBound.y - aabb.lowerBound.y;
 
 				// Decompose the "object origin" to "shape centroid" vector
 				// (shape doesn't know where the object origin is, or the angle of the object)
@@ -55,34 +55,73 @@ void m2::Physique::draw_debug_shapes() const {
 				// Compose the "object origin" to "current shape centroid" vector
 				auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 
-				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
-				auto dst_rect = SDL_Rect{
-					(int)roundf(screen_origin_to_sprite_center_px.x) - (rect_w / 2),
-					(int)roundf(screen_origin_to_sprite_center_px.y) - (rect_h / 2),
-					rect_w,
-					rect_h
-				};
-				SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-				SDL_RenderDrawRect(GAME.renderer, &dst_rect);
+				if (m2g::camera_height == 0.0f) {
+					int rect_w = I(roundf(width * F(GAME.dimensions().ppm)));
+					int rect_h = I(roundf(height * F(GAME.dimensions().ppm)));
+					auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
+					auto dst_rect = SDL_Rect{
+							(int)roundf(screen_origin_to_sprite_center_px.x) - (rect_w / 2),
+							(int)roundf(screen_origin_to_sprite_center_px.y) - (rect_h / 2),
+							rect_w,
+							rect_h
+					};
+					SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+					SDL_RenderDrawRect(GAME.renderer, &dst_rect);
+				} else {
+					auto center_position_2d = position + center_offset_m;
+					auto center_position = m3::VecF{center_position_2d};
+					// Draw a rectangle
+					auto point_0 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(-width / 2.0f).offset_y(-height / 2.0f));
+					auto point_1 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(width / 2.0f).offset_y(-height / 2.0f));
+					auto point_2 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(-width / 2.0f).offset_y(height / 2.0f));
+					auto point_3 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(width / 2.0f).offset_y(height / 2.0f));
+					if (point_0 && point_1 && point_2 && point_3) {
+						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+						SDL_RenderDrawLineF(GAME.renderer, point_0->x, point_0->y, point_1->x, point_1->y);
+						SDL_RenderDrawLineF(GAME.renderer, point_1->x, point_1->y, point_3->x, point_3->y);
+						SDL_RenderDrawLineF(GAME.renderer, point_3->x, point_3->y, point_2->x, point_2->y);
+						SDL_RenderDrawLineF(GAME.renderer, point_2->x, point_2->y, point_0->x, point_0->y);
+					}
+				}
 				break;
 			}
 			case b2Shape::Type::e_circle: {
 				const auto* shape = dynamic_cast<const b2CircleShape*>(fixture->GetShape());
-				int R = (int)roundf((aabb.upperBound.x - aabb.lowerBound.x) * (float)GAME.dimensions().ppm);
-				auto [texture, src_rect] = GAME.shapes_sheet->get_circle(color, R, R, 16);
+				auto center_offset_m = VecF{shape->m_p}; // Offset of shape from object's origin
+				auto circumference = aabb.upperBound.x - aabb.lowerBound.x;
+				auto radius = circumference / 2.0f;
 
-				auto center_offset_m = VecF{shape->m_p};
-
-				auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
-				auto dst_rect = SDL_Rect{
-					(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w / 2),
-					(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h / 2),
-					src_rect.w,
-					src_rect.h
-				};
-
-				if (SDL_RenderCopy(GAME.renderer, texture, &src_rect, &dst_rect)) {
-					throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
+				if (m2g::camera_height == 0.0f) {
+					// Calculate circumference in pixels
+					int R = I(roundf(circumference * F(GAME.dimensions().ppm)));
+					auto [texture, src_rect] = GAME.shapes_sheet->get_circle(color, R, R, 16);
+					// Calculate destination Rect
+					auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
+					auto dst_rect = SDL_Rect{
+							I(roundf(screen_origin_to_sprite_center_px.x)) - (src_rect.w / 2),
+							I(roundf(screen_origin_to_sprite_center_px.y)) - (src_rect.h / 2),
+							src_rect.w,
+							src_rect.h
+					};
+					// Render shape
+					if (SDL_RenderCopy(GAME.renderer, texture, &src_rect, &dst_rect)) {
+						throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
+					}
+				} else {
+					auto center_position_2d = position + center_offset_m;
+					auto center_position = m3::VecF{center_position_2d};
+					// Draw a diamond instead of circle
+					auto horizontal_point_a = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(-radius));
+					auto horizontal_point_b = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(radius));
+					auto vertical_point_a = m3::screen_origin_to_projection_of_position_px(center_position.offset_y(-radius));
+					auto vertical_point_b = m3::screen_origin_to_projection_of_position_px(center_position.offset_y(radius));
+					if (horizontal_point_a && horizontal_point_b && vertical_point_a && vertical_point_b) {
+						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+						SDL_RenderDrawLineF(GAME.renderer, horizontal_point_a->x, horizontal_point_a->y, vertical_point_a->x, vertical_point_a->y);
+						SDL_RenderDrawLineF(GAME.renderer, vertical_point_a->x, vertical_point_a->y, horizontal_point_b->x, horizontal_point_b->y);
+						SDL_RenderDrawLineF(GAME.renderer, horizontal_point_b->x, horizontal_point_b->y, vertical_point_b->x, vertical_point_b->y);
+						SDL_RenderDrawLineF(GAME.renderer, vertical_point_b->x, vertical_point_b->y, horizontal_point_a->x, horizontal_point_a->y);
+					}
 				}
 				break;
 			}

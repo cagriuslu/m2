@@ -64,7 +64,7 @@ namespace m2 {
 		std::optional<Level> _level;
 		float _delta_time_s{};
 		VecF _mouse_position_world_m;
-		VecF _screen_center_to_mouse_position_m; // Doesn't mean mush in 2.5D mode
+		VecF _screen_center_to_mouse_position_m; // Doesn't mean much in 2.5D mode
 
 	public:
 		static void create_instance();

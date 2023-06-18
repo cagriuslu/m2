@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../VecF.h"
 #include <cmath>
 
 namespace m3 {
@@ -9,6 +10,7 @@ namespace m3 {
 		inline VecF() = default;
 		inline VecF(float x, float y, float z) : x(x), y(y), z(z) {}
 		inline VecF(int x, int y, int z) : x((float)x), y((float)y), z((float)z) {}
+		inline VecF(const m2::VecF& xy, float z = 0.0f) : x(xy.x), y(xy.y), z(z) {}
 
 		inline VecF operator+(const VecF& rhs) const { return {x + rhs.x, y + rhs.y, z + rhs.z}; }
 		inline VecF operator-(const VecF& rhs) const { return {x - rhs.x, y - rhs.y, z - rhs.z}; }
