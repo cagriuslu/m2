@@ -66,6 +66,9 @@ enum SpriteType {
     CUTEOPUS_LOOKUP_02 = 81;
     CUTEOPUS_CORPSE = 82;
 
+    // Decorations
+    SPRITE_BUSH_01 = 101;
+
     // Potions
     SPRITE_HP_POTION_20 = 1000;
     SPRITE_HP_POTION_80 = 1001;

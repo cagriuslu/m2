@@ -22,6 +22,10 @@
     {
       "type": "MACHINE_GUN",
       "levelEditorSpriteType": "MACHINE_GUN_ICON"
+    },
+    {
+      "type": "BUSH_01",
+      "levelEditorSpriteType": "SPRITE_BUSH_01"
     }
   ]
 }

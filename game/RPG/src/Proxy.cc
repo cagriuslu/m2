@@ -5,6 +5,8 @@
 #include <rpg/object/FinishPoint.h>
 #include <rpg/Context.h>
 #include <rpg/object/DroppedItem.h>
+#include <rpg/object/Decoration.h>
+#include <m2/Game.h>
 
 const std::string_view m2g::game_name = "RPG";
 const m2::Rational m2g::default_game_height_m = {16, 1};
@@ -79,6 +81,8 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 			return Enemy::init(obj, object_type);
 		case pb::ObjectType::MACHINE_GUN:
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
+		case pb::BUSH_01:
+			return rpg::create_decoration(obj, GAME.level_editor_object_sprites[object_type]);
 		default:
 			return m2::failure("Invalid sprite index");
 	}

@@ -729,6 +729,16 @@
           "rect": {"x": 0, "y": 0, "w": 32, "h": 32}
         }
       ]
+    },
+    {
+      "resource": "resource/game/RPG/Forest Environment Pixel Art Tileset/Sprites/Decor/Bush/bush_1.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_BUSH_01",
+          "rect": {"x": 0, "y": 0, "w": 48, "h": 32}
+        }
+      ]
     }
   ]
 }
