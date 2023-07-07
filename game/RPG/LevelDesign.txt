@@ -1,0 +1,129 @@
+Game mechanics:
+0) Walking
+1) Dash
+2) Ranged weapon
+3) Melee weapon
+4) Machine gun
+5) Explosive weapon
+6) Long sword: Long range, big knock-back, slow
+7) Axe: Very short range, big damage, slow
+8) Stun
+
+Environments:
+- Open
+- Closed
+
+Rules:
+- Start with tutorials, but sprinkle some real levels in between tutorials.
+- After starter levels, have one open, one closed level.
+- Starter levels can contain one stage, later levels can contain up to 4 stages.
+- Same stages can appear in different levels with different difficulties.
+- The game has two tiers. In the first tier, don't introduce all the mechanics, only Walking, Ranged, Melee, Machine gun, Dash.
+  Second tier has Explosive, Axe, Long sword, Stun.
+- There shouldn't be more than 2 high-intensity challenge at the same time. For example, one type of enemy chasing,
+  other type of enemy escaping, but no third type of enemy.
+
+Required AI:
+- Chase
+- Escape
+
+Possible AI:
+- Hit and run
+- Patrol an area
+- Patrol waypoints
+- Kamikaze
+- Circle player
+- Trap player
+- Trap player with bullets
+
+Possible features:
+- In-game time
+
+Tutorial ideas:
+0) Walking: Walking tutorial on both open and closed level
+1) Dashing: Towers and drops
+2) Ranged: Shoot an enemy trapped in some tower
+3) Melee: A melee enemy is attacking you in a closed space
+
+Level ideas:
+1) Walking:
+   - Open: Make a level where the exit is hidden behind a bush.
+   - Closed: A labyrinth with endless corridors, with rooms in between. You cannot pass from every room to another, but
+     it's hard to see this in a first glance.
+
+2) Dash:
+   - Closed: There are towers and drops in between them. Since there's no jumping, you have to dash in-between.
+   - Open: There are canals on the ground, you cannot jump in-between them, you have to dash.
+
+4) Ranged:
+   - Closed: You are in a closed space with other enemies that are attacking you with ranged weapons.
+   - Closed: Enemies are chasing after you with melee weapons.
+   - Closed: Labyrinth but there are enemies in some rooms, or there are enemies walking around.
+   - Open: Enemies are coming after you but they herd you towards other enemies.
+
+6) Ranged & Dash:
+   - Closed: Similar to (2), but there are enemies either following you, or guarding the in-between cliffs.
+   - Open: Similar to (2), but there are enemies following you (flying).
+
+8) Melee:
+   - Closed: Melee enemies are attacking you in a closed space.
+   - Closed: You are in a labyrinth with very strong & fast enemies.
+   - Open: There are enemies hidden behind bushes. They're fast and jumping on you.
+
+10) Melee & Dash:
+   - Open & Closed: While dashing in-between safe zones, enemies appear all of a sudden. They cannot be shot before.
+   - Open & Closed: There are fast (or dashing) enemies swarming you.
+
+14) Melee & Ranged & Dash:
+    - Open & Closed: You are in a space with both enemies jumping on you and attacking melee, and there are enemies
+      escaping from you while attacking you ranged.
+    - Closed: While dashing in-between safe zones enemies appear all of a sudden, and there are enemies following you.
+
+16) Machine gun:
+    - Closed: You're in a confined small space. Enemies are coming towards you flying. First wave of enemies drops
+      machine gun. You need to kill those enemies while they're close to you, so that you can pick up the machine gun
+      and shoot the following waves of enemies.
+    - Closed: There is a swarm of enemies running towards somewhere. You need to run behind and kill them before they
+      are too far away. If you miss the enemies, you cannot finish the level.
+    - Open: There are enemies chasing you, and at the same time escaping from you.
+
+18) Machine gun & Dash:
+    - Open & Closed: Jumping in-between safe zones, there are enemies following you.
+    - Open: Jumping in-between safe zones, enemies are following you flying. But they escape after hitting you.
+
+20) Machine gun & Ranged:
+    - Open: There are a bunch of enemies flying away, you need to shoot them to get the machine gun for the incoming swarm.
+
+24) Machine gun & Melee:
+    - Closed: A swarm of enemies going through you.
+    - Open: A swarm of enemies attacking you like flies. (back and forth)
+
+36) Explosive & Melee:
+    - Closed: There is a room full of enemies. If one notices you, all are triggered.
+    - Open: There are hiding behind the trees. If you don't kill them all at once, they multiply and swarm you. (like flies)
+      Beehives multiply upon any attack. It's best to hit them direct with explosive. The hit makes the bees multiple,
+      the explosive kills the bees.
+
+64) Long sword:
+    - Closed: Closed space with strong enemies.
+    - Closed: There are enemies you cannot reach but the sword can. They move very quickly and you don't have strong ranged
+      weapon. The long sword can reach them.
+    - Open: A squad of enemies attack you and run away.
+    - Closed & Ranged: There are heavy enemies only the long sword can push. You need to push these enemies to make room for
+      yourself because there are other enemies coming after you.
+    - Open & Ranged: Enemies coming from all directions. You need to push the enemies to get some breathing space.
+    - Machine gun: more intense
+    - Explosive: clumped enemies
+
+128) Axe:
+     - Open & Closed: Slow tank enemies.
+     - Open & Ranged: There is an enemy that attack you melee all of a sudden, then runs away. You need to stab it,
+       then shoot after it.
+     - Machine gun: more enemies
+     - Explosive: clumped enemies
+
+256) Stun:
+     - Open & Closed: Stop enemies and kill them when they are stunned.
+     - Closed: A flying enemy we cannot follow after, we have to stun.
+     - Closed: An enemy jumping and attacking you, then running away forever.
+     - Open: There are enemies attacking you while escaping from you. You can stun and stop them to attack.
