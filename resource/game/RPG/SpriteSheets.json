@@ -46,6 +46,30 @@
           }
         },
         {
+          "type": "LONGSWORD_ICON",
+          "rect": {"x": 240, "y": 1712, "w": 16, "h": 16},
+          "backgroundCollider": {
+            "circRadiusPx": 8
+          }
+        },
+        {
+          "type": "AXE_ICON",
+          "rect": {"x": 240, "y": 1232, "w": 16, "h": 16},
+          "backgroundCollider": {
+            "circRadiusPx": 8
+          }
+        },
+        {
+          "type": "AXE",
+          "rect": {"x": 96, "y": 1456, "w": 16, "h": 16},
+          "originalRotation": -0.75,
+          "centerOffsetPx": {"x": -13, "y": 0},
+          "foregroundCollider": {
+            "centerOffsetPx": {"x": 13, "y": 0},
+            "rectDimsPx": {"w": 26, "h": 5}
+          }
+        },
+        {
           "type": "SPRITE_HP_POTION_20",
           "rect": {"x": 80, "y": 640, "w": 16, "h": 16},
           "centerOffsetPx": {"x": 0, "y": 3},
@@ -727,6 +751,22 @@
             }
           ],
           "rect": {"x": 0, "y": 0, "w": 32, "h": 32}
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/custom/long-sword.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "LONGSWORD",
+          "rect": {"x": 0, "y": 0, "w": 32, "h": 32},
+          "originalRotation": -0.75,
+          "centerOffsetPx": {"x": -25, "y": 0},
+          "foregroundCollider": {
+            "centerOffsetPx": {"x": 25, "y": 0},
+            "rectDimsPx": {"w": 50, "h": 5}
+          }
         }
       ]
     },

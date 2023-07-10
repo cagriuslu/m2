@@ -66,6 +66,11 @@ enum SpriteType {
     CUTEOPUS_LOOKUP_02 = 81;
     CUTEOPUS_CORPSE = 82;
 
+    LONGSWORD = 83;
+    LONGSWORD_ICON = 84;
+    AXE = 85;
+    AXE_ICON = 86;
+
     // Decorations
     SPRITE_BUSH_01 = 101;
 
