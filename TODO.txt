@@ -14,3 +14,4 @@
 - Dialog with an NPC, character screen, inventory, buy/sell against a seller, character selection
 - Synth editor
 - UI widgets: horizontal/vertical slider, radio button, tabs
+- The capabilities of object should be plug-and-play. You shouldn't implement jumping for both enemy and player for example.
