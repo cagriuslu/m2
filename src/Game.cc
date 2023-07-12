@@ -284,13 +284,15 @@ void m2::Game::draw_debug_shapes() {
 		phy_it.first->draw_debug_shapes();
 	}
 
-	SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 127);
-	for (int y = -50; y < 51; ++y) {
-		for (int x = -50; x < 51; ++x) {
-			m3::VecF p = {x, y, 0};
-			auto projected_p = m3::screen_origin_to_projection_of_position_px(p);
-			if (projected_p) {
-				SDL_RenderDrawPointF(GAME.renderer, projected_p->x, projected_p->y);
+	if (m2g::camera_height != 0.0f) {
+		SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 127);
+		for (int y = -50; y < 51; ++y) {
+			for (int x = -50; x < 51; ++x) {
+				m3::VecF p = {x, y, 0};
+				auto projected_p = m3::screen_origin_to_projection_of_position_px(p);
+				if (projected_p) {
+					SDL_RenderDrawPointF(GAME.renderer, projected_p->x, projected_p->y);
+				}
 			}
 		}
 	}

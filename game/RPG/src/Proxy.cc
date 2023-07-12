@@ -13,7 +13,7 @@ const m2::Rational m2g::default_game_height_m = {16, 1};
 const bool m2g::gravity = false;
 const bool m2g::world_is_static = true;
 const bool m2g::lightning = false;
-float m2g::camera_height = 5.5f;
+float m2g::camera_height = 0.0f;
 float m2g::camera_distance = 8.0f;
 float m2g::horizontal_field_of_view = 90.0f;
 const float m2g::xy_plane_z_component = 0.75f;
@@ -65,6 +65,17 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 		SDL_SCANCODE_RETURN,
 		SDL_SCANCODE_BACKSPACE
 };
+
+void m2g::pre_single_player_level(const std::string& name) {
+	LOG_INFO("Loading level", name);
+	auto level_number = strtol(name.c_str(), nullptr, 10);
+	if (level_number < 5) {
+		m2g::camera_height = 0.0f;
+	} else {
+		m2g::camera_height = 5.5f;
+	}
+
+}
 
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
 
