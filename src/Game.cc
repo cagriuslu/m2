@@ -244,6 +244,7 @@ void m2::Game::clear_back_buffer() {
 void m2::Game::draw_background() {
 	for (auto gfx_it : _level->terrain_graphics) {
 		IF(gfx_it.first->on_draw)(*gfx_it.first);
+		IF(gfx_it.first->on_effect)(*gfx_it.first);
 	}
 }
 
@@ -251,24 +252,13 @@ void m2::Game::draw_foreground() {
 	for (const auto& gfx_id : _level->draw_list) {
 		auto& gfx = _level->graphics[gfx_id];
 		IF(gfx.on_draw)(gfx);
+		IF(gfx.on_effect)(gfx);
 	}
 }
 
 void m2::Game::draw_lights() {
 	for (auto light_it : _level->lights) {
 		IF(light_it.first->on_draw)(*light_it.first);
-	}
-}
-
-void m2::Game::draw_background_effects() {
-	for (auto gfx_it : _level->terrain_graphics) {
-		IF(gfx_it.first->on_effect)(*gfx_it.first);
-	}
-}
-
-void m2::Game::draw_foreground_effects() {
-	for (auto gfx_it : _level->graphics) {
-		IF(gfx_it.first->on_effect)(*gfx_it.first);
 	}
 }
 
@@ -286,8 +276,8 @@ void m2::Game::draw_debug_shapes() {
 
 	if (m2g::camera_height != 0.0f) {
 		SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 127);
-		for (int y = -50; y < 51; ++y) {
-			for (int x = -50; x < 51; ++x) {
+		for (int y = 0; y < 20; ++y) {
+			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
 				auto projected_p = m3::screen_origin_to_projection_of_position_px(p);
 				if (projected_p) {

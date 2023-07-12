@@ -153,8 +153,6 @@ namespace m2 {
 		void draw_background();
 		void draw_foreground();
 		void draw_lights();
-		void draw_background_effects();
-		void draw_foreground_effects();
 		void execute_post_draw();
 		void draw_debug_shapes();
 		void draw_hud();
