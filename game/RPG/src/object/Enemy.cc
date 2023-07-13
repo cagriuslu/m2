@@ -4,8 +4,8 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include "rpg/group/ItemGroup.h"
-#include "rpg/object/MeleeWeapon.h"
-#include "rpg/object/RangedWeapon.h"
+#include "rpg/object/Blade.h"
+#include "rpg/object/Projectile.h"
 #include <rpg/object/Corpse.h>
 #include <rpg/Detail.h>
 #include <rpg/Context.h>
@@ -191,7 +191,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					if (it && obj.character().use_item(it)) {
 						auto& projectile = m2::create_object(obj.position, obj.id()).first;
 						auto shoot_direction = LEVEL.player()->position - obj.position;
-						rpg::create_ranged_weapon_object(projectile, shoot_direction, *it, false);
+						rpg::create_projectile(projectile, shoot_direction, *it, false);
 						// Knock-back
 						obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
 					}
@@ -201,7 +201,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 					if (it && obj.character().use_item(it)) {
 						auto& melee = m2::create_object(obj.position, obj.id()).first;
-						rpg::create_melee_object(melee, LEVEL.player()->position - obj.position, *it, false);
+						rpg::create_blade(melee, LEVEL.player()->position - obj.position, *it, false);
 					}
 					break;
 				}

@@ -1,6 +1,6 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
-#include <rpg/object/RangedWeapon.h>
+#include <rpg/object/Projectile.h>
 #include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <m2/Log.h>
@@ -10,7 +10,7 @@ using namespace m2g::pb;
 
 // TODO add other types of Ranged Weapons: Machine Gun, Shotgun, Bow
 
-m2::VoidValue rpg::create_ranged_weapon_object(m2::Object& obj, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
+m2::VoidValue rpg::create_projectile(m2::Object& obj, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!ranged_weapon.has_attribute(ATTRIBUTE_LINEAR_SPEED)) {
 		throw M2ERROR("Ranged weapon has no linear speed");

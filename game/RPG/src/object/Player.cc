@@ -5,8 +5,8 @@
 #include "m2/Controls.h"
 #include <rpg/Context.h>
 #include <m2/game/CharacterMovement.h>
-#include <rpg/object/RangedWeapon.h>
-#include <rpg/object/MeleeWeapon.h>
+#include <rpg/object/Projectile.h>
+#include <rpg/object/Blade.h>
 #include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <Item.pb.h>
@@ -73,7 +73,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			auto shoot = [&](const m2::Item& weapon) {
 				auto& projectile = m2::create_object(obj.position, id).first;
-				rpg::create_ranged_weapon_object(projectile, vector_to_mouse, weapon, true);
+				rpg::create_projectile(projectile, vector_to_mouse, weapon, true);
 				// Knock-back
 				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
 			};
@@ -107,7 +107,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 			auto it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 			if (it && chr.use_item(it)) {
 				auto& melee = m2::create_object(obj.position, id).first;
-				rpg::create_melee_object(melee, vector_to_mouse, *it, true);
+				rpg::create_blade(melee, vector_to_mouse, *it, true);
 			}
 		}
 	};

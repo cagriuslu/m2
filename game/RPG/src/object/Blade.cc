@@ -1,14 +1,14 @@
 #include <m2/VecF.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
-#include <rpg/object/MeleeWeapon.h>
+#include <rpg/object/Blade.h>
 #include <m2/box2d/Detail.h>
 #include <m2/Log.h>
 
 using namespace m2g;
 using namespace m2g::pb;
 
-m2::VoidValue rpg::create_melee_object(m2::Object &obj, const m2::VecF &direction, const m2::Item &melee_weapon, bool is_friend) {
+m2::VoidValue rpg::create_blade(m2::Object &obj, const m2::VecF &direction, const m2::Item &melee_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!melee_weapon.has_attribute(ATTRIBUTE_AVERAGE_DAMAGE)) {
 		throw M2ERROR("Melee weapon has no average damage");
