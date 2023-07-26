@@ -21,7 +21,7 @@ m2::VoidValue rpg::create_blade(m2::Object &obj, const m2::VecF &direction, cons
 	float average_ttl = melee_weapon.get_attribute(ATTRIBUTE_AVERAGE_TTL);
 
 	const float direction_angle = direction.angle_rads();
-	constexpr float swing_angle = m2::PI_MUL2 * 120.0f / 360.0f; // Swing angle is 120 degrees
+	constexpr float swing_angle = m2::to_radians(120.0f); // Swing angle is 120 degrees
 	const float start_angle = direction_angle + swing_angle / 2.0f;
 	const float swing_speed = swing_angle / average_ttl;
 
