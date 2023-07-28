@@ -1,3 +1,4 @@
+- RPG: game mekaniklerini finalize et
 - Genel olarak custom move/copy constructor'larindan kurtul
 - Sound doesn't play if object dies
 - Protobuf enumlarinin incremental olmamalari sikintiya yol aciyor, cunku ARRAYSIZE constexpr, ama enum_value_count degil

@@ -146,7 +146,7 @@ void rpg::ChaserFsm::follow_waypoints() {
 	auto next_waypoint_it = std::next(closest_waypoint_it);
 	if (next_waypoint_it != reverse_path.crend()) {
 		auto target = m2::VecF{*next_waypoint_it};
-		Enemy::move_towards(*obj, target - obj->position, 25000.0f);
+		Enemy::move_towards(*obj, target - obj->position, 30000.0f);
 	} else {
 		// Player is very close
 	}

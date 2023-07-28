@@ -20,8 +20,6 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.set_allow_sleep(false);
-	bp.set_is_bullet(false);
 	bp.mutable_background_fixture()->mutable_circ()->set_radius(GAME.get_sprite(main_sprite_type).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(GAME.get_sprite(main_sprite_type).foreground_collider_circ_radius_m());
@@ -29,7 +27,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.get_sprite(main_sprite_type).foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(80.0f);
-	bp.set_linear_damping(100.0f);
+	bp.set_linear_damping(30.0f);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
@@ -57,12 +55,12 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		float move_force;
 		// Check if dash
 		if (direction_vector && GAME.events.pop_key_press(m2::Key::DASH) && chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
-			move_force = 100000000.0f;
+			move_force = 40000000.0f;
 		} else {
 			// Character movement
 			auto anim_state_type = detail::to_animation_state_type(direction_enum);
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
-			move_force = 2800000.0f;
+			move_force = 1000000.0f;
 		}
 		if (direction_vector) {
 			// Apply force
