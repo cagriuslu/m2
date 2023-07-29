@@ -68,8 +68,8 @@ m2::VoidValue rpg::create_projectile(m2::Object& obj, const m2::VecF& intended_d
 				bp.mutable_background_fixture()->set_is_sensor(true);
 				bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND);
 				phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
-				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.add_item(GAME.get_item(ITEM_AUTOMATIC_EXPLOSIVE_TTL));
+				// RESOURCE_EXPLOSION_TTL only means the object is currently exploding
 				chr.set_resource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
 			} else {
 				LOG_DEBUG("Destroying self");

@@ -24,6 +24,10 @@
       "levelEditorSpriteType": "MACHINE_GUN_ICON"
     },
     {
+      "type": "EXPLOSIVE",
+      "levelEditorSpriteType": "EXPLOSIVE_ICON"
+    },
+    {
       "type": "BUSH_01",
       "levelEditorSpriteType": "SPRITE_BUSH_01"
     }

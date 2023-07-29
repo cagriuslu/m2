@@ -8,6 +8,7 @@ enum ObjectType {
     CASTLE_FINISH_POINT = 3;
     CUTEOPUS = 4;
     MACHINE_GUN = 5;
+    EXPLOSIVE = 6;
 
     BUSH_01 = 1001;
 }
