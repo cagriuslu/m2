@@ -7,6 +7,9 @@
 #include <rpg/object/DroppedItem.h>
 #include <rpg/object/Decoration.h>
 #include <m2/Game.h>
+#include <rpg/Defs.h>
+
+using namespace rpg;
 
 const std::string_view m2g::game_name = "RPG";
 const m2::Rational m2g::default_game_height_m = {16, 1};
@@ -66,15 +69,25 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 		SDL_SCANCODE_BACKSPACE
 };
 
-void m2g::pre_single_player_level(const std::string& name) {
+void m2g::pre_single_player_level_init(const std::string& name) {
 	LOG_INFO("Loading level", name);
+
 	auto level_number = strtol(name.c_str(), nullptr, 10);
 	if (level_number < 5) {
 		m2g::camera_height = 0.0f;
 	} else {
 		m2g::camera_height = 5.5f;
 	}
+}
 
+void m2g::post_single_player_level_init(const std::string& name) {
+	if (LEVEL.name() == "1") {
+		LEVEL.display_message("Use W,A,S,D to walk, SPACE to dash.", MESSAGE_TIMEOUT);
+	} else if (LEVEL.name() == "2") {
+		LEVEL.display_message("Use left mouse button to shoot.", MESSAGE_TIMEOUT);
+	} else if (LEVEL.name() == "3") {
+		LEVEL.display_message("Use right mouse button to melee.", MESSAGE_TIMEOUT);
+	}
 }
 
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}

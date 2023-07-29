@@ -52,8 +52,9 @@ namespace m2g {
 	m2::Key scancode_to_key(SDL_Scancode scancode);
 	extern const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> key_to_scancode;
 
-	/// Called before a single player level is loaded
-	void pre_single_player_level(const std::string& name);
+	/// Called before/after a single player level is loaded
+	void pre_single_player_level_init(const std::string& name);
+	void post_single_player_level_init(const std::string& name);
 
 	/// Called after a tile is created
 	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);

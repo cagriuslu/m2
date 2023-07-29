@@ -45,7 +45,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 	}
 	_name = name;
 
-	m2g::pre_single_player_level(_name);
+	m2g::pre_single_player_level_init(_name);
 
 	left_hud_ui_state = m2::ui::State(m2g::ui::left_hud());
 	right_hud_ui_state = m2::ui::State(m2g::ui::right_hud());
@@ -105,6 +105,8 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 	right_hud_ui_state->update_contents();
 	message_box_ui_state->update_positions(GAME.dimensions().message_box);
 	message_box_ui_state->update_contents();
+
+	m2g::post_single_player_level_init(_name);
 
 	return {};
 }

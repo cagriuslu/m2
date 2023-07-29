@@ -10,6 +10,7 @@
 #include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <Item.pb.h>
+#include <rpg/Defs.h>
 
 rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
 
@@ -26,8 +27,8 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(GAME.get_sprite(main_sprite_type).foreground_collider_center_offset_m().x);
 	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(GAME.get_sprite(main_sprite_type).foreground_collider_center_offset_m().y);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
-	bp.set_mass(80.0f);
-	bp.set_linear_damping(30.0f);
+	bp.set_mass(PLAYER_MASS);
+	bp.set_linear_damping(PLAYER_LINEAR_DAMPING);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
@@ -55,12 +56,12 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		float move_force;
 		// Check if dash
 		if (direction_vector && GAME.events.pop_key_press(m2::Key::DASH) && chr.use_item(chr.find_items(m2g::pb::ITEM_REUSABLE_DASH_2S))) {
-			move_force = 40000000.0f;
+			move_force = PLAYER_DASH_FORCE;
 		} else {
 			// Character movement
 			auto anim_state_type = detail::to_animation_state_type(direction_enum);
 			impl.animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
-			move_force = 1000000.0f;
+			move_force = PLAYER_WALK_FORCE;
 		}
 		if (direction_vector) {
 			// Apply force
@@ -130,14 +131,6 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		impl.animation_fsm.time(GAME.delta_time_s());
 		gfx.draw_addon_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
-
-	if (LEVEL.name() == "1") {
-		LEVEL.display_message("Use W,A,S,D to walk, SPACE to dash.", 8.0f);
-	} else if (LEVEL.name() == "2") {
-		LEVEL.display_message("Use left mouse button to shoot.", 8.0f);
-	} else if (LEVEL.name() == "3") {
-		LEVEL.display_message("Use right mouse button to melee.", 8.0f);
-	}
 
 	LEVEL.player_id = LEVEL.objects.get_id(&obj);
 	return {};
