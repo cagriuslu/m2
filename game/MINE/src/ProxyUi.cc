@@ -2,7 +2,7 @@
 #include <m2/Game.h>
 #include <m2/Noise.h>
 #include <m2/protobuf/Detail.h>
-#include <SpriteType.pb.h>
+#include <m2g_SpriteType.pb.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;

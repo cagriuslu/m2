@@ -12,12 +12,16 @@ float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
 }
 
 m2::Character::Character(uint64_t object_id) : Component(object_id) {}
-void m2::Character::execute_interaction(Character& first_char, m2g::pb::InteractionType cause, Character& second_char, m2g::pb::InteractionType effect) {
-	if (first_char.interact) {
-		first_char.interact(first_char, second_char, cause);
-	}
-	if (second_char.interact) {
-		second_char.interact(second_char, first_char, effect);
+void m2::Character::execute_interaction(Character& first_char, Character& second_char, m2g::pb::InteractionType type) {
+	if (first_char.create_interaction) {
+		auto interaction = first_char.create_interaction(first_char, second_char, type);
+		if (interaction) {
+			if (second_char.get_interacted_by) {
+				second_char.get_interacted_by(second_char, first_char, type, *interaction);
+			} else {
+				LOG_WARN("Interaction generated but second character has no handler", m2g::pb::InteractionType_Name(type));
+			}
+		}
 	}
 }
 bool m2::Character::has_item(m2g::pb::ItemType item_type) const {

@@ -2,7 +2,7 @@
 #include "../SmartPointer.h"
 #include "../Component.h"
 #include "../Item.h"
-#include <InteractionType.pb.h>
+#include <m2g_Interaction.pb.h>
 #include <utility>
 #include <vector>
 #include <unordered_set>
@@ -34,7 +34,8 @@ namespace m2 {
 	class Character : public Component {
 	public:
 		std::function<void(Character& self)> update;
-		std::function<void(Character& self, Character& other, m2g::pb::InteractionType)> interact;
+		std::function<std::optional<m2g::pb::InteractionData>(Character& self, Character& other, m2g::pb::InteractionType type)> create_interaction;
+		std::function<void(Character& self, Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data)> get_interacted_by;
 
 		class Iterator {
 		public:
@@ -72,7 +73,7 @@ namespace m2 {
 		explicit Character(uint64_t object_id);
 
 		virtual void automatic_update() = 0;
-		static void execute_interaction(Character& first_char, m2g::pb::InteractionType cause, Character& second_char, m2g::pb::InteractionType effect);
+		static void execute_interaction(Character& first_char, Character& second_char, m2g::pb::InteractionType type);
 
 		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const;
 		[[nodiscard]] bool has_item(m2g::pb::ItemCategory item_cat) const;

@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/Group.h>
-#include <ItemType.pb.h>
+#include <m2g_ItemType.pb.h>
 #include <deque>
 #include <optional>
 

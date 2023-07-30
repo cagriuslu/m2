@@ -1,10 +1,10 @@
 syntax = "proto3";
 package m2.pb;
 
-import "SpriteType.proto";
-import "ResourceType.proto";
-import "AttributeType.proto";
-import "ItemType.proto";
+import "m2g_SpriteType.proto";
+import "m2g_ResourceType.proto";
+import "m2g_AttributeType.proto";
+import "m2g_ItemType.proto";
 
 message Resource {
   m2g.pb.ResourceType type = 1;

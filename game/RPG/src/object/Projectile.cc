@@ -84,13 +84,14 @@ m2::VoidValue rpg::create_projectile(m2::Object& obj, const m2::VecF& intended_d
 		} else {
 			if (other.parent().character_id()) {
 				LOG_DEBUG("Hit a target, triggering interaction...");
-				m2::Character::execute_interaction(chr, InteractionType::COLLIDE_TO, other.parent().character(), InteractionType::GET_COLLIDED_BY);
+				m2::Character::execute_interaction(chr, other.parent().character(), InteractionType::HIT);
 				// TODO knock-back
 			}
 		}
 	};
-	chr.interact = [=](m2::Character& self, m2::Character& other, InteractionType interaction_type) {
-		if (interaction_type == InteractionType::COLLIDE_TO) {
+	chr.create_interaction = [=](m2::Character& self, m2::Character& other, m2g::pb::InteractionType type) -> std::optional<m2g::pb::InteractionData> {
+		if (type == InteractionType::HIT) {
+			InteractionData data;
 			if (is_explosive && self.has_resource(RESOURCE_EXPLOSION_TTL)) {
 				LOG_DEBUG("Explosive damage");
 				auto distance = self.parent().position.distance(other.parent().position);
@@ -98,19 +99,19 @@ m2::VoidValue rpg::create_projectile(m2::Object& obj, const m2::VecF& intended_d
 				if (damage_ratio < 1.1f) {
 					// Calculate damage
 					float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;
-					// Create and give damage item
-					other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
+					data.set_hit_damage(damage);
 				}
 			} else if (self.has_resource(RESOURCE_TTL)) {
 				LOG_DEBUG("Regular damage");
 				// Calculate damage
 				float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy);
-				// Create and give damage item
-				other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
+				data.set_hit_damage(damage);
 				// Clear TTL
 				self.clear_resource(RESOURCE_TTL);
 			}
+			return data;
 		}
+		return std::nullopt;
 	};
 	phy.post_step = [&chr](m2::Physique& phy) {
 		if (chr.has_resource(RESOURCE_EXPLOSION_TTL)) {

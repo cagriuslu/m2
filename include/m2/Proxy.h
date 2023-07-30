@@ -5,7 +5,7 @@
 #include "ui/Blueprint.h"
 #include "Rational.h"
 #include "Value.h"
-#include <GroupType.pb.h>
+#include <m2g_GroupType.pb.h>
 #include <string_view>
 #include <array>
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <Sprite.pb.h>
 #include "DynamicSheet.h"
-#include <ObjectType.pb.h>
+#include <m2g_ObjectType.pb.h>
 #include "sdl/Detail.hh"
 #include "VecF.h"
 #include <SDL2/SDL.h>

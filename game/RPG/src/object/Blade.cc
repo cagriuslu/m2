@@ -58,17 +58,18 @@ m2::VoidValue rpg::create_blade(m2::Object &obj, const m2::VecF &direction, cons
 	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		auto& other_obj = other.parent();
 		if (other_obj.character_id()) {
-			m2::Character::execute_interaction(chr, InteractionType::COLLIDE_TO, other_obj.character(), InteractionType::GET_COLLIDED_BY);
+			m2::Character::execute_interaction(chr, other_obj.character(), InteractionType::HIT);
 			// TODO knock-back
 		}
 	};
-	chr.interact = [=](MAYBE m2::Character& self, m2::Character& other, InteractionType interaction_type) {
-		if (interaction_type == InteractionType::COLLIDE_TO) {
+	chr.create_interaction = [=](MAYBE m2::Character& self, m2::Character& other, InteractionType interaction_type) -> std::optional<InteractionData> {
+		if (interaction_type == InteractionType::HIT) {
 			// Calculate damage
-			float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy);
-			// Create and give damage item
-			other.add_item(m2::make_damage_item(RESOURCE_HP, damage));
+			InteractionData data;
+			data.set_hit_damage(m2::apply_accuracy(average_damage, average_damage, damage_accuracy));
+			return data;
 		}
+		return std::nullopt;
 	};
 	phy.post_step = [&](m2::Physique& phy) {
 		auto* originator = obj.parent();

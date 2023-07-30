@@ -4,7 +4,7 @@
 #include "m2/fsm/AnimationFsm.h"
 #include <vector>
 #include <m2/Value.h>
-#include <ItemType.pb.h>
+#include <m2g_ItemType.pb.h>
 
 namespace rpg {
 	struct Player : public m2::ObjectImpl {

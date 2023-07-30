@@ -1,7 +1,7 @@
 syntax = "proto3";
 package m2.pb;
 
-import "SongType.proto";
+import "m2g_SongType.proto";
 import "Synth.proto";
 
 message Song {

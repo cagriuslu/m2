@@ -12,7 +12,7 @@
 #include <m2/M2.h>
 #include <m2/box2d/Detail.h>
 #include <m2/Group.h>
-#include <InteractionType.pb.h>
+#include <m2g_Interaction.pb.h>
 #include <deque>
 
 using namespace rpg;
@@ -58,6 +58,7 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, Context::get_instance().get_enemy(object_type));
@@ -78,9 +79,12 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
-	chr.interact = [&, obj_type = object_type](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType interaction_type) {
-		// Check if we got hit
-		if (interaction_type == InteractionType::GET_COLLIDED_BY) {
+	chr.get_interacted_by = [&, obj_type = object_type](m2::Character& self, m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
+		if (type == InteractionType::HIT) {
+			// Deduct HP
+			self.remove_resource(RESOURCE_HP, data.hit_damage());
+			// Apply mask effect
+			self.set_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			// Play audio effect if not already doing so
 			if (obj.sound_id() == 0) {
 				// Add sound emitter
@@ -96,8 +100,6 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 					}
 				};
 			}
-			// Apply mask effect
-			self.set_resource(m2g::pb::RESOURCE_DAMAGE_EFFECT_TTL, 0.15f);
 			// Check if we died
 			if (not self.has_resource(RESOURCE_HP)) {
 				// Drop item
@@ -140,12 +142,8 @@ m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 						[](MAYBE auto& v) { }
 				}, impl.ai_fsm);
 			}
-		} else if (interaction_type == InteractionType::GET_STUNNED_BY) {
-			LOG_DEBUG("Stunned");
-			self.set_resource(m2g::pb::RESOURCE_STUN_TTL, 2.0f);
-			if (not self.has_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL)) {
-				self.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
-			}
+		} else if (type == STUN) {
+			self.set_resource(m2g::pb::RESOURCE_STUN_TTL, data.stun_duration());
 		}
 	};
 	phy.post_step = [&](MAYBE m2::Physique& phy) {

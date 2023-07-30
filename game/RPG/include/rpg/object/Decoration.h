@@ -1,5 +1,5 @@
 #pragma once
-#include <SpriteType.pb.h>
+#include <m2g_SpriteType.pb.h>
 #include <m2/Object.h>
 
 namespace rpg {

@@ -1,9 +1,9 @@
 syntax = "proto3";
 package m2.pb;
 
-import "SpriteType.proto";
-import "AnimationStateType.proto";
-import "AnimationType.proto";
+import "m2g_SpriteType.proto";
+import "m2g_AnimationStateType.proto";
+import "m2g_AnimationType.proto";
 
 message AnimationState {
   m2g.pb.AnimationStateType type = 1;

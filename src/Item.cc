@@ -225,10 +225,3 @@ float m2::get_resource_amount(const m2::pb::Resource& resource) {
 		return 0.0f;
 	}
 }
-
-m2::SmartPointer<const m2::Item> m2::make_damage_item(m2g::pb::ResourceType resource_type, float damage) {
-	return make_dynamic<const Item>(new TinyItem(m2g::pb::ItemType{}, m2g::pb::ItemCategory{}, pb::CONSUMABLE, true,
-			std::pair<m2g::pb::ResourceType, float>{}, std::make_pair(resource_type, -damage),
-			std::pair<m2g::pb::ResourceType, float>{}, std::pair<m2g::pb::AttributeType, float>{}, m2g::pb::SpriteType{},
-			m2g::pb::SpriteType{}));
-}

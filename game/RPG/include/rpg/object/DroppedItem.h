@@ -1,5 +1,5 @@
 #pragma once
-#include <ItemType.pb.h>
+#include <m2g_ItemType.pb.h>
 #include "m2/Object.h"
 #include <m2/Value.h>
 

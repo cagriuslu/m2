@@ -1,6 +1,6 @@
 #pragma once
 #include "../Action.h"
-#include <SpriteType.pb.h>
+#include <m2g_SpriteType.pb.h>
 #include <vector>
 
 namespace m2::ui::widget {

@@ -1,8 +1,8 @@
 syntax = "proto3";
 package rpg.pb;
 
-import "AnimationType.proto";
-import "ObjectType.proto";
+import "m2g_AnimationType.proto";
+import "m2g_ObjectType.proto";
 import "VecF.proto";
 
 enum Capability {

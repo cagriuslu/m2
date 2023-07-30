@@ -10,7 +10,7 @@
 #include "Song.h"
 #include "Animation.h"
 #include <m2/Object.h>
-#include <ObjectType.pb.h>
+#include <m2g_ObjectType.pb.h>
 #include "Rational.h"
 #include "Pathfinder.h"
 #include "ui/State.h"

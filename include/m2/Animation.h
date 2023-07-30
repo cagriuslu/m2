@@ -1,7 +1,7 @@
 #pragma once
 #include "Fsm.h"
 #include "Object.h"
-#include <SpriteType.pb.h>
+#include <m2g_SpriteType.pb.h>
 #include <Animation.pb.h>
 #include <vector>
 

@@ -1,9 +1,9 @@
 syntax = "proto3";
 package m2.pb;
 
-import "GroupType.proto";
-import "ObjectType.proto";
-import "SpriteType.proto";
+import "m2g_GroupType.proto";
+import "m2g_ObjectType.proto";
+import "m2g_SpriteType.proto";
 import "VecI.proto";
 
 message Group {

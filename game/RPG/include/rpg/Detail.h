@@ -1,5 +1,5 @@
 #pragma once
-#include <AnimationStateType.pb.h>
+#include <m2g_AnimationStateType.pb.h>
 #include <m2/game/CharacterMovement.h>
 
 namespace rpg::detail {

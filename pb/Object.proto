@@ -1,8 +1,8 @@
 syntax = "proto3";
 package m2.pb;
 
-import "ObjectType.proto";
-import "SpriteType.proto";
+import "m2g_ObjectType.proto";
+import "m2g_SpriteType.proto";
 
 message Object {
   m2g.pb.ObjectType type = 1;

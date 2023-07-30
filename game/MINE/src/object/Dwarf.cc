@@ -1,6 +1,6 @@
 #include <mine/object/Dwarf.h>
 #include <m2/Game.h>
-#include <SpriteType.pb.h>
+#include <m2g_SpriteType.pb.h>
 #include <m2/box2d/Detail.h>
 #include <m2/box2d/Query.h>
 #include <m2/game/CharacterMovement.h>

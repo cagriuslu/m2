@@ -124,8 +124,16 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (other.parent().character_id() && 10.0f < m2::VecF{phy.body->GetLinearVelocity()}.length()) {
 			auto& other_char = other.parent().character();
-			m2::Character::execute_interaction(chr, m2g::pb::InteractionType::STUN, other_char, m2g::pb::InteractionType::GET_STUNNED_BY);
+			m2::Character::execute_interaction(chr, other_char, m2g::pb::InteractionType::STUN);
 		}
+	};
+	chr.create_interaction = [](m2::Character& self, m2::Character& other, m2g::pb::InteractionType type) -> std::optional<m2g::pb::InteractionData> {
+		if (type == m2g::pb::STUN) {
+			m2g::pb::InteractionData data;
+			data.set_stun_duration(2.0f);
+			return data;
+		}
+		return std::nullopt;
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		impl.animation_fsm.time(GAME.delta_time_s());
