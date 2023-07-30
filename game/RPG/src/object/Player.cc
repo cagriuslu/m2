@@ -11,6 +11,10 @@
 #include <m2/M2.h>
 #include <Item.pb.h>
 #include <rpg/Defs.h>
+#include <array>
+
+using namespace m2g;
+using namespace m2g::pb;
 
 rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
 
@@ -125,7 +129,7 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 		}
 		// Check if special ammo finished
 		if (auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
-			special_it != chr.end_items() && !chr.has_resource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
+			special_it && !chr.has_resource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
 			// Remove weapon if no ammo left
 			chr.remove_item(special_it);
 		}
@@ -148,9 +152,24 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 	};
 	chr.get_interacted_by = [](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
 		if (type == m2g::pb::HIT) {
+			// Get hit by an enemy
 			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
-		} else if (type == m2g::pb::GIVE_ITEM) {
-			self.add_item(GAME.get_item(data.item_type()));
+		} else if (type == GIVE_ITEM) {
+			auto item = GAME.get_item(data.item_type());
+			// Player can hold only one special weapon of certain type, get rid of the previous one
+			constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
+			constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
+			for (size_t i = 0; i < special_categories.size(); ++i) {
+				if (auto sp = special_categories[i]; sp == item->category()) {
+					if (auto it = self.find_items(sp); it) {
+						self.remove_item(it); // Remove weapon
+						self.clear_resource(special_ammo_type[i]); // Also remove any ammo
+					}
+					break;
+				}
+			}
+			// Add item
+			self.add_item(std::move(item));
 		}
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
