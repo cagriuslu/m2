@@ -282,41 +282,6 @@ const Blueprint shift_mode_right_hud = {
 		}
 };
 
-const widget::TextBlueprint save_confirmation_text = {
-		.initial_text = "Are you sure?"
-};
-const widget::TextBlueprint save_confirmation_yes_button = {
-		.initial_text = "YES",
-		.action_callback = []() -> Action {
-			LEVEL.level_editor_state->save();
-			return Action::RETURN;
-		},
-		.kb_shortcut = SDL_SCANCODE_Y
-};
-const widget::TextBlueprint save_confirmation_no_button = {
-		.initial_text = "NO",
-		.action_callback = []() -> Action { return Action::RETURN; },
-		.kb_shortcut = SDL_SCANCODE_N
-};
-const Blueprint save_confirmation = {
-		.w = 7, .h = 5,
-		.border_width_px = 2,
-		.widgets = {
-				WidgetBlueprint{
-						.x = 1, .y = 1, .w = 5, .h = 1,
-						.variant = save_confirmation_text
-				},
-				WidgetBlueprint{
-						.x = 1, .y = 3, .w = 2, .h = 1,
-						.variant = save_confirmation_yes_button
-				},
-				WidgetBlueprint{
-						.x = 4, .y = 3, .w = 2, .h = 1,
-						.variant = save_confirmation_no_button
-				}
-		}
-};
-
 const widget::TextBlueprint left_hud_paint_button = {
 		.initial_text = std::string{level_editor::paint_button_label},
 		.action_callback = []() -> Action {
@@ -425,7 +390,7 @@ const widget::TextBlueprint left_hud_gridlines_button = {
 const widget::TextBlueprint left_hud_save_button = {
 		.initial_text = "SAVE",
 		.action_callback = []() -> Action {
-			execute_blocking(&save_confirmation);
+			LEVEL.level_editor_state->save();
 			return Action::CONTINUE;
 		}
 };

@@ -77,24 +77,16 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
 			};
 
-			// Check if there is a special ranged weapon
+			// Check if there is a special ranged weapon and try to use the item
 			auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
-			if (special_it != chr.end_items()) {
-				// Check if special ammo left
-				if (chr.has_resource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
-					// Try to use the weapon
-					if (chr.use_item(special_it)) {
-						shoot(*special_it);
-					}
-				} else {
-					// Remove weapon if no ammo left
-					chr.remove_item(special_it);
+			if (special_it) {
+				if (chr.use_item(special_it)) {
+					shoot(*special_it);
 				}
 			} else {
-				// Find default weapon
+				// Find default weapon and try to use it
 				auto default_it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
-				// Try to use the weapon
-				if (chr.use_item(default_it)) {
+				if (default_it && chr.use_item(default_it)) {
 					shoot(*default_it);
 				}
 			}
@@ -102,11 +94,24 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 
 		// Secondary weapon
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY)) {
-			// Find melee weapon
-			auto it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
-			if (it && chr.use_item(it)) {
+			auto slash = [&](const m2::Item& weapon) {
 				auto& melee = m2::create_object(obj.position, id).first;
-				rpg::create_blade(melee, vector_to_mouse, *it, true);
+				rpg::create_blade(melee, vector_to_mouse, weapon, true);
+			};
+
+			// Check if there is a special melee weapon and try to use the item
+			auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_MELEE_WEAPON);
+			if (special_it) {
+				// Try to use the weapon
+				if (chr.use_item(special_it)) {
+					slash(*special_it);
+				}
+			} else {
+				// Find default melee weapon and try to use it
+				auto default_it = chr.find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
+				if (default_it && chr.use_item(default_it)) {
+					slash(*default_it);
+				}
 			}
 		}
 	};
@@ -117,6 +122,12 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 			if (m2::ui::execute_blocking(rpg::Context::get_instance().you_died_menu()) == m2::ui::Action::QUIT) {
 				GAME.quit = true;
 			}
+		}
+		// Check if special ammo finished
+		if (auto special_it = chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON);
+			special_it != chr.end_items() && !chr.has_resource(m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO)) {
+			// Remove weapon if no ammo left
+			chr.remove_item(special_it);
 		}
 		// Show/hide ammo display
 		rpg::Context::get_instance().set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
