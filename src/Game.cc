@@ -1,5 +1,4 @@
 #include "m2/Game.h"
-#include <m2/Glyph.h>
 #include <m2/Exception.h>
 #include <m2/Object.h>
 #include <m2/String.h>
@@ -61,7 +60,6 @@ m2::Game::Game() {
 
 	audio_manager.emplace();
 	sprite_effects_sheet = SpriteEffectsSheet{renderer};
-	glyphs_sheet = GlyphsSheet{renderer};
 	shapes_sheet = ShapesSheet{renderer};
 	dynamic_sheet = DynamicSheet{renderer};
 

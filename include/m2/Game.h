@@ -91,7 +91,6 @@ namespace m2 {
 		std::optional<SpriteEffectsSheet> sprite_effects_sheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> level_editor_object_sprites;
-		std::optional<GlyphsSheet> glyphs_sheet;
 		std::optional<ShapesSheet> shapes_sheet;
 		std::optional<DynamicSheet> dynamic_sheet;
 		std::vector<Animation> animations;

@@ -1,6 +1,5 @@
 #pragma once
 #include <Sprite.pb.h>
-#include "Glyph.h"
 #include "DynamicSheet.h"
 #include <ObjectType.pb.h>
 #include "sdl/Detail.hh"
