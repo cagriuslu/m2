@@ -7,19 +7,14 @@ enum InteractionType {
     NO_INTERACTION = 0;
 
     HIT = 1;
-    GET_HIT_BY = 2;
-
-    STUN = 3;
-    GET_STUNNED_BY = 4;
-
-    GIVE_SIMPLE_ITEM = 5;
-    RECEIVED_ITEM = 6;
+    STUN = 2;
+    GIVE_ITEM = 3;
 }
 
 message InteractionData {
     oneof InteractionSpecificData {
         float hit_damage = 1;
         float stun_duration = 2;
-        ItemType simple_item_type = 3;
+        ItemType item_type = 3;
     }
 }

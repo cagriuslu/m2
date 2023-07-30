@@ -62,7 +62,7 @@ m2::VoidValue rpg::create_blade(m2::Object &obj, const m2::VecF &direction, cons
 			// TODO knock-back
 		}
 	};
-	chr.create_interaction = [=](MAYBE m2::Character& self, m2::Character& other, InteractionType interaction_type) -> std::optional<InteractionData> {
+	chr.create_interaction = [=](MAYBE m2::Character& self, MAYBE m2::Character& other, InteractionType interaction_type) -> std::optional<InteractionData> {
 		if (interaction_type == InteractionType::HIT) {
 			// Calculate damage
 			InteractionData data;

@@ -18,10 +18,20 @@ m2::VoidValue rpg::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_t
 
 	obj.add_graphic(sprite);
 
-	phy.on_collision = [=](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		// TODO transfer items with interaction, rather than directly adding
-		other.parent().character().add_item(GAME.get_item(item_type));
+	// Symbolic character just to execute interactions
+	auto& chr = obj.add_tiny_character();
+
+	phy.on_collision = [&chr](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+		m2::Character::execute_interaction(chr, other.parent().character(), m2g::pb::InteractionType::GIVE_ITEM);
 		GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
+	};
+	chr.create_interaction = [item_type](MAYBE m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type) -> std::optional<m2g::pb::InteractionData> {
+		if (type == m2g::pb::InteractionType::GIVE_ITEM) {
+			m2g::pb::InteractionData data;
+			data.set_item_type(item_type);
+			return data;
+		}
+		return std::nullopt;
 	};
 
 	return {};

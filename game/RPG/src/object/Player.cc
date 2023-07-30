@@ -127,13 +127,20 @@ m2::VoidValue rpg::Player::init(m2::Object& obj) {
 			m2::Character::execute_interaction(chr, other_char, m2g::pb::InteractionType::STUN);
 		}
 	};
-	chr.create_interaction = [](m2::Character& self, m2::Character& other, m2g::pb::InteractionType type) -> std::optional<m2g::pb::InteractionData> {
+	chr.create_interaction = [](MAYBE m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type) -> std::optional<m2g::pb::InteractionData> {
 		if (type == m2g::pb::STUN) {
 			m2g::pb::InteractionData data;
 			data.set_stun_duration(2.0f);
 			return data;
 		}
 		return std::nullopt;
+	};
+	chr.get_interacted_by = [](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
+		if (type == m2g::pb::HIT) {
+			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
+		} else if (type == m2g::pb::GIVE_ITEM) {
+			self.add_item(GAME.get_item(data.item_type()));
+		}
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		impl.animation_fsm.time(GAME.delta_time_s());
