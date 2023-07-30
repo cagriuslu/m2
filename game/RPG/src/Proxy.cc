@@ -109,6 +109,8 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_EXPLOSIVE);
 		case pb::ObjectType::LONG_SWORD_ITEM_DROP:
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_LONG_SWORD);
+		case pb::ObjectType::AXE_ITEM_DROP:
+			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_AXE);
 		case pb::BUSH_01:
 			return rpg::create_decoration(obj, GAME.level_editor_object_sprites[object_type]);
 		default:

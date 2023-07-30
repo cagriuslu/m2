@@ -10,6 +10,7 @@ enum ObjectType {
     MACHINE_GUN_ITEM_DROP = 5;
     EXPLOSIVE_ITEM_DROP = 6;
     LONG_SWORD_ITEM_DROP = 7;
+    AXE_ITEM_DROP = 8;
 
     BUSH_01 = 1001;
 }

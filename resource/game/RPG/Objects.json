@@ -32,6 +32,10 @@
       "levelEditorSpriteType": "LONGSWORD_ICON"
     },
     {
+      "type": "AXE_ITEM_DROP",
+      "levelEditorSpriteType": "AXE_ICON"
+    },
+    {
       "type": "BUSH_01",
       "levelEditorSpriteType": "SPRITE_BUSH_01"
     }
