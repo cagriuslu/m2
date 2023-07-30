@@ -28,21 +28,36 @@ void m2::Game::destroy_instance() {
 
 m2::Game::Game() {
 	DEBUG_FN();
+	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
+//	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
+//		LOG_WARN("Failed to set opengl as render hint");
+//	}
+	// Use the driver line API
+	if (SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2") == false) {
+		LOG_WARN("Failed to set line render method");
+	}
+
 	recalculate_dimensions(800, 450, m2g::default_game_height_m);
 	if ((window = SDL_CreateWindow("m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _dims.window.w, _dims.window.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_SetWindowMinimumSize(window, 712, 400);
 	SDL_StopTextInput(); // Text input begins activated (sometimes)
+
 	cursor = SdlUtils_CreateCursor();
 	SDL_SetCursor(cursor);
 	if ((pixel_format = SDL_GetWindowPixelFormat(window)) == SDL_PIXELFORMAT_UNKNOWN) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
+
 	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Unset: pixelated sprites, "1": filtered sprites
 	if ((renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE)) == nullptr) { // TODO: SDL_RENDERER_PRESENTVSYNC
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
+	SDL_RendererInfo info;
+	SDL_GetRendererInfo(renderer, &info);
+	LOG_INFO("Renderer", info.name);
+
 	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
 	if (lightSurface == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});

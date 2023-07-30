@@ -77,10 +77,14 @@ void m2::Physique::draw_debug_shapes() const {
 					auto point_3 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(width / 2.0f).offset_y(height / 2.0f));
 					if (point_0 && point_1 && point_2 && point_3) {
 						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-						SDL_RenderDrawLineF(GAME.renderer, point_0->x, point_0->y, point_1->x, point_1->y);
-						SDL_RenderDrawLineF(GAME.renderer, point_1->x, point_1->y, point_3->x, point_3->y);
-						SDL_RenderDrawLineF(GAME.renderer, point_3->x, point_3->y, point_2->x, point_2->y);
-						SDL_RenderDrawLineF(GAME.renderer, point_2->x, point_2->y, point_0->x, point_0->y);
+						std::array<SDL_FPoint, 5> points = {
+								SDL_FPoint{point_0->x, point_0->y},
+								SDL_FPoint{point_1->x, point_1->y},
+								SDL_FPoint{point_3->x, point_3->y},
+								SDL_FPoint{point_2->x, point_2->y},
+								SDL_FPoint{point_0->x, point_0->y}
+						};
+						SDL_RenderDrawLinesF(GAME.renderer, points.data(), points.size());
 					}
 				}
 				break;
@@ -117,10 +121,14 @@ void m2::Physique::draw_debug_shapes() const {
 					auto vertical_point_b = m3::screen_origin_to_projection_of_position_px(center_position.offset_y(radius));
 					if (horizontal_point_a && horizontal_point_b && vertical_point_a && vertical_point_b) {
 						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-						SDL_RenderDrawLineF(GAME.renderer, horizontal_point_a->x, horizontal_point_a->y, vertical_point_a->x, vertical_point_a->y);
-						SDL_RenderDrawLineF(GAME.renderer, vertical_point_a->x, vertical_point_a->y, horizontal_point_b->x, horizontal_point_b->y);
-						SDL_RenderDrawLineF(GAME.renderer, horizontal_point_b->x, horizontal_point_b->y, vertical_point_b->x, vertical_point_b->y);
-						SDL_RenderDrawLineF(GAME.renderer, vertical_point_b->x, vertical_point_b->y, horizontal_point_a->x, horizontal_point_a->y);
+						std::array<SDL_FPoint, 5> points = {
+								SDL_FPoint{horizontal_point_a->x, horizontal_point_a->y},
+								SDL_FPoint{vertical_point_a->x, vertical_point_a->y},
+								SDL_FPoint{horizontal_point_b->x, horizontal_point_b->y},
+								SDL_FPoint{vertical_point_b->x, vertical_point_b->y},
+								SDL_FPoint{horizontal_point_a->x, horizontal_point_a->y}
+						};
+						SDL_RenderDrawLinesF(GAME.renderer, points.data(), points.size());
 					}
 				}
 				break;
