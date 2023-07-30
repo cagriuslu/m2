@@ -35,7 +35,7 @@ Character components can hold resources and items.
 
 Resources represent a non-negative amount of certain type.
 
-Items have a certain type and a category for identification.
+Items are completely abstract, no physical representations. They have a certain type and a category for identification.
 It has different usage types such as: Consumable (item disappears after use), Reusable (item doesn't disappear after
 use), Automatic (item is used automatically every physics loop), Passive (item cannot be used, only held).
 Items have a use_on_acquire flag which signifies that the item cannot be held, and it's used upon acquire.
