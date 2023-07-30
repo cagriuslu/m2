@@ -7,8 +7,9 @@ enum ObjectType {
     SKELETON = 2;
     CASTLE_FINISH_POINT = 3;
     CUTEOPUS = 4;
-    MACHINE_GUN = 5;
-    EXPLOSIVE = 6;
+    MACHINE_GUN_ITEM_DROP = 5;
+    EXPLOSIVE_ITEM_DROP = 6;
+    LONG_SWORD_ITEM_DROP = 7;
 
     BUSH_01 = 1001;
 }

@@ -103,10 +103,12 @@ m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type)
 			return rpg::init_finish_point(obj, object_type);
 		case pb::ObjectType::CUTEOPUS:
 			return Enemy::init(obj, object_type);
-		case pb::ObjectType::MACHINE_GUN:
+		case pb::ObjectType::MACHINE_GUN_ITEM_DROP:
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
-		case pb::ObjectType::EXPLOSIVE:
+		case pb::ObjectType::EXPLOSIVE_ITEM_DROP:
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_EXPLOSIVE);
+		case pb::ObjectType::LONG_SWORD_ITEM_DROP:
+			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_LONG_SWORD);
 		case pb::BUSH_01:
 			return rpg::create_decoration(obj, GAME.level_editor_object_sprites[object_type]);
 		default:

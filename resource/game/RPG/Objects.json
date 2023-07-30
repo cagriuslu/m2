@@ -20,12 +20,16 @@
       "levelEditorSpriteType": "CUTEOPUS_LOOKDOWN_00"
     },
     {
-      "type": "MACHINE_GUN",
+      "type": "MACHINE_GUN_ITEM_DROP",
       "levelEditorSpriteType": "MACHINE_GUN_ICON"
     },
     {
-      "type": "EXPLOSIVE",
+      "type": "EXPLOSIVE_ITEM_DROP",
       "levelEditorSpriteType": "EXPLOSIVE_ICON"
+    },
+    {
+      "type": "LONG_SWORD_ITEM_DROP",
+      "levelEditorSpriteType": "LONGSWORD_ICON"
     },
     {
       "type": "BUSH_01",
