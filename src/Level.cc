@@ -87,7 +87,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 			obj.set_group(group_id, group->add_member(id));
 		}
 
-		auto load_result = m2g::fg_object_loader(obj, fg_object.type());
+		auto load_result = m2g::init_fg_object(obj, fg_object.type());
 		m2_reflect_failure(load_result);
         LOG_TRACE("Created object", id);
 	}

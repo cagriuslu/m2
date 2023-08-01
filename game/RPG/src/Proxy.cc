@@ -92,7 +92,7 @@ void m2g::post_single_player_level_init(const std::string& name) {
 
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
 
-m2::VoidValue m2g::fg_object_loader(m2::Object& obj, pb::ObjectType object_type) {
+m2::VoidValue m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {
 	using namespace rpg;
 	switch (object_type) {
 		case pb::ObjectType::PLAYER:
