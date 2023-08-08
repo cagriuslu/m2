@@ -290,7 +290,7 @@ const widget::TextBlueprint left_hud_paint_button = {
 			auto& list = std::get<widget::ImageSelectionBlueprint>(paint_mode_right_hud.widgets[1].variant).list;
 			std::copy(std::begin(GAME.level_editor_background_sprites), std::end(GAME.level_editor_background_sprites), std::back_inserter(list));
 
-			LEVEL.right_hud_ui_state = ui::State(&paint_mode_right_hud);
+			LEVEL.right_hud_ui_state.emplace(&paint_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		},
@@ -300,7 +300,7 @@ const widget::TextBlueprint left_hud_erase_button = {
 		.initial_text = "ERASE",
 		.action_callback = []() -> Action {
 			LEVEL.level_editor_state->activate_erase_mode();
-			LEVEL.right_hud_ui_state = ui::State(&erase_mode_right_hud);
+			LEVEL.right_hud_ui_state.emplace(&erase_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		},
@@ -325,7 +325,7 @@ const widget::TextBlueprint left_hud_place_button = {
 				}
 			}
 
-			LEVEL.right_hud_ui_state = ui::State(&place_mode_right_hud);
+			LEVEL.right_hud_ui_state.emplace(&place_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		},
@@ -335,7 +335,7 @@ const widget::TextBlueprint left_hud_remove_button = {
 		.initial_text = "REMOVE",
 		.action_callback = []() -> Action {
 			LEVEL.level_editor_state->activate_remove_mode();
-			LEVEL.right_hud_ui_state = ui::State(&remove_mode_right_hud);
+			LEVEL.right_hud_ui_state.emplace(&remove_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		},
@@ -345,7 +345,7 @@ const widget::TextBlueprint left_hud_pick_button = {
 		.initial_text = "PICK",
 		.action_callback = []() -> Action {
 			LEVEL.level_editor_state->activate_pick_mode();
-			LEVEL.right_hud_ui_state = ui::State(&pick_mode_right_hud);
+			LEVEL.right_hud_ui_state.emplace(&pick_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		},
@@ -355,7 +355,7 @@ const widget::TextBlueprint left_hud_select_button = {
 		.initial_text = "SELECT",
 		.action_callback = []() -> Action {
 			LEVEL.level_editor_state->activate_select_mode();
-			LEVEL.right_hud_ui_state = State(&select_mode_right_hud);
+			LEVEL.right_hud_ui_state.emplace(&select_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		}
@@ -364,7 +364,7 @@ const widget::TextBlueprint left_hud_shift_button = {
 		.initial_text = "SHIFT",
 		.action_callback = []() -> Action {
 			LEVEL.level_editor_state->activate_shift_mode();
-			LEVEL.right_hud_ui_state = State(&shift_mode_right_hud);
+			LEVEL.right_hud_ui_state.emplace(&shift_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		}
@@ -373,7 +373,7 @@ const widget::TextBlueprint left_hud_cancel_button = {
 		.initial_text = "CANCEL",
 		.action_callback = []() -> Action {
 			LEVEL.level_editor_state->deactivate_mode();
-			LEVEL.right_hud_ui_state = State(&level_editor::ui::right_hud);
+			LEVEL.right_hud_ui_state.emplace(&level_editor::ui::right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
 		},

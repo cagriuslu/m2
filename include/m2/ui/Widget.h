@@ -8,6 +8,7 @@
 namespace m2::ui {
 	struct Widget {
 		bool enabled{true};
+		bool focused{false};
 		std::optional<float> disable_after; // TODO only implemented for Text
 		const WidgetBlueprint* blueprint;
 		SDL_Rect rect_px{};
@@ -16,6 +17,7 @@ namespace m2::ui {
 		virtual ~Widget() = default;
 		virtual void update_position(const SDL_Rect& rect_px);
 		virtual Action handle_events(Events& events);
+		virtual void focus_changed();
 		virtual Action update_content();
 		virtual void draw();
 

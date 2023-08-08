@@ -29,7 +29,7 @@ void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 	}
 
 	// Get time
-	auto now = std::time(nullptr) - 1577836800ull; // 2020
+	auto now = std::time(nullptr) - 1672531200ull; // 2023
 
 	// Convert log level into char
 	char lvl_char = 'U';
@@ -56,11 +56,11 @@ void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 		}
 	}
 	static const char* file_name_paddings[] = {
-		"XXX", "XX", "X", ""
+		"---", "--", "-", ""
 	};
 	const char* file_name_padding = file_name_paddings[file_name_capitals_len];
 
-	fprintf(stderr, "[%c%09lld%s%s%03d] ", lvl_char, (long long)now, file_name_padding, file_name_capitals, line % 1000);
+	fprintf(stderr, "[%c %09lld %s%s %03d] ", lvl_char, (long long)now, file_name_padding, file_name_capitals, line % 1000);
 }
 
 #if _MSC_VER > 1400

@@ -13,14 +13,32 @@
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/sdl/Detail.hh>
 #include <regex>
+#include <ranges>
 
 using namespace m2;
 using namespace m2::ui;
 
+namespace {
+	// Filters
+	constexpr auto is_widget_enabled = [](const auto& w) { return w->enabled; };
+	constexpr auto is_widget_focused = [](const auto& w) { return w->focused; };
+	// Actions
+	constexpr auto draw_widget = [](const auto& w) { w->draw(); };
+}
+
 State::State(const Blueprint* blueprint) : blueprint(blueprint) {
 	for (const auto& widget_blueprint : blueprint->widgets) {
+		// Create widget
 		widgets.push_back(create_widget_state(widget_blueprint));
+		// Check if focus is requested
+		if (widget_blueprint.initially_focused) {
+			set_widget_focus_state(*widgets.back(), true);
+		}
 	}
+}
+
+State::~State() {
+	clear_focus();
 }
 
 void State::update_positions(const SDL_Rect &rect_px_) {
@@ -32,39 +50,54 @@ void State::update_positions(const SDL_Rect &rect_px_) {
 }
 
 Action State::handle_events(Events& events) {
-	Action return_value = Action::CONTINUE;
-	if (enabled) {
-		for (auto& widget : widgets) {
-			if (widget->enabled && (return_value = widget->handle_events(events)) != Action::CONTINUE) {
+	// Return if State not enabled
+	if (!enabled) {
+		return Action::CONTINUE;
+	}
+
+	for (auto& widget : widgets | std::views::filter(is_widget_enabled)) {
+		switch (auto action = widget->handle_events(events); action) {
+			case Action::CONTINUE:
+				continue;
+			case Action::GAIN_FOCUS:
+			case Action::LOSE_FOCUS:
+				set_widget_focus_state(*widget, action == Action::GAIN_FOCUS);
 				break;
-			}
+			default:
+				return action;
 		}
 	}
-	return return_value;
+	return Action::CONTINUE;
 }
 
 Action State::update_contents() {
-	Action return_value = Action::CONTINUE;
-	if (enabled) {
-		for (auto& widget : widgets) {
-			if (widget->enabled && (return_value = widget->update_content()) != Action::CONTINUE) {
-				break;
-			}
+	// Return if State not enabled
+	if (!enabled) {
+		return Action::CONTINUE;
+	}
+
+	for (auto& widget : widgets | std::views::filter(is_widget_enabled)) {
+		switch (auto action = widget->update_content(); action) {
+			case Action::CONTINUE:
+			case Action::GAIN_FOCUS:
+			case Action::LOSE_FOCUS:
+				continue;
+			default:
+				return action;
 		}
 	}
-	return return_value;
+	return Action::CONTINUE;
 }
 
 void State::draw() {
-	if (enabled) {
-		Widget::draw_background_color(rect_px, blueprint->background_color);
-		for (auto& widget : widgets) {
-			if (widget->enabled) {
-				widget->draw();
-			}
-		}
-		Widget::draw_border(rect_px, blueprint->border_width_px);
+	// Return if State not enabled
+	if (!enabled) {
+		return;
 	}
+
+	Widget::draw_background_color(rect_px, blueprint->background_color);
+	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), draw_widget);
+	Widget::draw_border(rect_px, blueprint->border_width_px);
 }
 
 std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint& blueprint) {
@@ -94,6 +127,32 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint& bluepr
 	}
 
 	return state;
+}
+
+void State::set_widget_focus_state(Widget& w, bool focus_state) {
+	if (focus_state) {
+		if (!w.focused) {
+			// Clear existing focus
+			clear_focus();
+			// Set focus
+			w.focused = true;
+			w.focus_changed();
+		}
+	} else {
+		// Reset focus
+		if (w.focused) {
+			w.focused = false;
+			w.focus_changed();
+		}
+	}
+}
+
+void State::clear_focus() {
+	// Check if there's an already focused widget
+	std::ranges::for_each(
+			widgets | std::views::filter(is_widget_focused),
+			[&](const auto& it) { set_widget_focus_state(*it, false); }
+	);
 }
 
 SDL_Rect State::calculate_widget_rect(
@@ -153,10 +212,11 @@ m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rec
 				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
 				return Action::QUIT;
 			}
-			if (events.pop_key_press(Key::CONSOLE)) {
-				auto act = execute_blocking(&console_ui);
-				if (act != Action::CONTINUE) {
-					return act;
+			if (events.pop_key_press(Key::CONSOLE) && blueprint != &console_ui) { // Do not open console on top of console
+				LOG_INFO("Console");
+				if (auto action = execute_blocking(&console_ui);
+						action != Action::CONTINUE && action != Action::RETURN) {
+					return action;
 				}
 			}
 			auto window_resize = events.pop_window_resize();
@@ -249,6 +309,8 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				}
 			} else if (command == "quit") {
 				return Action::QUIT;
+			} else if (command == "close") {
+				return Action::RETURN;
 			} else if (command.empty()) {
 				// Do nothing
 			} else {
@@ -256,6 +318,8 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				GAME.console_output.emplace_back("help - display this help");
 				GAME.console_output.emplace_back("ledit - open level editor");
 				GAME.console_output.emplace_back("pedit - open pixel editor");
+				GAME.console_output.emplace_back("set - set game variable");
+				GAME.console_output.emplace_back("close - close the console");
 				GAME.console_output.emplace_back("quit - quit game");
 			}
 
@@ -304,6 +368,7 @@ const Blueprint m2::ui::console_ui = {
 				WidgetBlueprint{.x = 0, .y = 22, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<1>()},
 				WidgetBlueprint{.x = 0, .y = 23, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<0>()},
 				WidgetBlueprint{
+						.initially_focused = true,
 						.x = 0, .y = 24, .w = 1, .h = 1,
 						.background_color = SDL_Color{27, 27, 27, 255},
 						.variant = command_input_variant

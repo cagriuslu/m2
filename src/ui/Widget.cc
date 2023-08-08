@@ -13,6 +13,8 @@ Action Widget::handle_events(MAYBE Events &events) {
 	return Action::CONTINUE;
 }
 
+void Widget::focus_changed() {}
+
 Action Widget::update_content() { return Action::CONTINUE; }
 
 void Widget::draw() {}

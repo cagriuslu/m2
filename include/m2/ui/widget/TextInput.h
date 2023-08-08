@@ -10,8 +10,8 @@ namespace m2::ui::widget {
 		std::string font_texture_str;
 
 		explicit TextInput(const WidgetBlueprint* blueprint);
-		~TextInput() override;
 		Action handle_events(Events& events) override;
+		void focus_changed() override;
 		Action update_content() override;
 		void draw() override;
 	};

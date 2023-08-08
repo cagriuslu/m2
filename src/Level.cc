@@ -47,9 +47,9 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 
 	m2g::pre_single_player_level_init(_name);
 
-	left_hud_ui_state = m2::ui::State(m2g::ui::left_hud());
-	right_hud_ui_state = m2::ui::State(m2g::ui::right_hud());
-	message_box_ui_state = m2::ui::State(&ui::message_box_ui);
+	left_hud_ui_state.emplace(m2g::ui::left_hud());
+	right_hud_ui_state.emplace(m2g::ui::right_hud());
+	message_box_ui_state.emplace(&ui::message_box_ui);
 
 	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
 	contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
@@ -142,10 +142,10 @@ m2::VoidValue m2::Level::init_level_editor(const std::filesystem::path& lb_path)
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_state = m2::ui::State(&level_editor::ui::left_hud);
+	left_hud_ui_state.emplace(&level_editor::ui::left_hud);
 	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 	left_hud_ui_state->update_contents();
-	right_hud_ui_state = m2::ui::State(&level_editor::ui::right_hud);
+	right_hud_ui_state.emplace(&level_editor::ui::right_hud);
 	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
 
@@ -202,10 +202,10 @@ m2::VoidValue m2::Level::init_pixel_editor(const std::filesystem::path &path, in
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_state = m2::ui::State(&ui::pixel_editor_left_hud);
+	left_hud_ui_state.emplace(&ui::pixel_editor_left_hud);
 	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 	left_hud_ui_state->update_contents();
-	right_hud_ui_state = m2::ui::State(&ui::pixel_editor_right_hud);
+	right_hud_ui_state.emplace(&ui::pixel_editor_right_hud);
 	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
 
