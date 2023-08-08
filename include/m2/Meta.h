@@ -1,4 +1,5 @@
 #pragma once
+#include <tl/expected.hpp>
 #include <string>
 
 namespace m2 {
@@ -35,4 +36,10 @@ namespace m2 {
 		}
 		return destination;
 	}
+
+	struct Void {};
+	using void_expected = tl::expected<void, std::string>;
+
+	template <typename T>
+	using expected = tl::expected<T, std::string>;
 }

@@ -127,7 +127,7 @@ endif()
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
 target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-target_link_libraries(m2 box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES})
+target_link_libraries(m2 box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES} expected)
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
     # Copy DLLs

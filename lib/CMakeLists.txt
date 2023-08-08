@@ -1,4 +1,5 @@
 add_subdirectory(box2d)
+add_subdirectory(expected)
 add_subdirectory(freetype)
 add_subdirectory(googletest)
 add_subdirectory(png)
