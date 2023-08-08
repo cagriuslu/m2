@@ -34,7 +34,7 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 	}
 }
 
-m2::VoidValue Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
+m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
 	auto main_sprite_type = GAME.level_editor_object_sprites[object_type];
 
 	auto& gfx = obj.add_graphic(GAME.get_sprite(main_sprite_type));

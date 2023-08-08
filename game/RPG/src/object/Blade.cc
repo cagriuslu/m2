@@ -8,7 +8,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-m2::VoidValue rpg::create_blade(m2::Object &obj, const m2::VecF &direction, const m2::Item &melee_weapon, bool is_friend) {
+m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, const m2::Item &melee_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!melee_weapon.has_attribute(ATTRIBUTE_AVERAGE_DAMAGE)) {
 		throw M2ERROR("Melee weapon has no average damage");

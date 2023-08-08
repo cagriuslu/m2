@@ -24,7 +24,7 @@
 #include <box2d/b2_world.h>
 #include <Sprite.pb.h>
 #include <sstream>
-#include "Value.h"
+#include "Meta.h"
 #include "M2.h"
 #include "Item.h"
 #include <filesystem>
@@ -121,9 +121,9 @@ namespace m2 {
 		void initialize_context();
 
 		// Level management
-		VoidValue load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
-		VoidValue load_level_editor(const std::string& level_resource_path);
-		VoidValue load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
+		void_expected load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected load_level_editor(const std::string& level_resource_path);
+		void_expected load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		inline Level& level() { return *_level; }
 
 		// Accessors

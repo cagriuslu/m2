@@ -1,6 +1,6 @@
 #include <m2/Level.h>
 #include <m2/Proxy.h>
-#include <m2/Value.h>
+#include <m2/Meta.h>
 #include <m2/object/Tile.h>
 #include <m2/object/God.h>
 #include <m2/level_editor/Ui.h>
@@ -32,7 +32,7 @@ m2::Level::~Level() {
 	world = nullptr;
 }
 
-m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+m2::void_expected m2::Level::init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
 	_type = Type::SINGLE_PLAYER;
 	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
 		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
@@ -111,7 +111,7 @@ m2::VoidValue m2::Level::init_single_player(const std::variant<std::filesystem::
 	return {};
 }
 
-m2::VoidValue m2::Level::init_level_editor(const std::filesystem::path& lb_path) {
+m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_path) {
 	_type = Type::LEVEL_EDITOR;
 	_lb_path = lb_path;
 	level_editor_state = ledit::State{};
@@ -152,7 +152,7 @@ m2::VoidValue m2::Level::init_level_editor(const std::filesystem::path& lb_path)
 	return {};
 }
 
-m2::VoidValue m2::Level::init_pixel_editor(const std::filesystem::path &path, int x_offset, int y_offset) {
+m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path, int x_offset, int y_offset) {
 	_type = Type::PIXEL_EDITOR;
 	_lb_path = path;
 	pixel_editor_state = pedit::State{};
@@ -162,12 +162,12 @@ m2::VoidValue m2::Level::init_pixel_editor(const std::filesystem::path &path, in
 		// Load image
 		sdl::SurfaceUniquePtr tmp_surface(IMG_Load(path.string().c_str()));
 		if (not tmp_surface) {
-			return failure("Unable to load image " + path.string() + ": " + IMG_GetError());
+			return make_unexpected("Unable to load image " + path.string() + ": " + IMG_GetError());
 		}
 		// Convert to a more conventional format
 		pixel_editor_state->image_surface.reset(SDL_ConvertSurfaceFormat(tmp_surface.get(), SDL_PIXELFORMAT_BGRA32, 0));
 		if (not pixel_editor_state->image_surface) {
-			return failure("Unable to convert image format: " + std::string(SDL_GetError()));
+			return make_unexpected("Unable to convert image format: " + std::string(SDL_GetError()));
 		}
 		// Iterate over pixels
 		SDL_LockSurface(pixel_editor_state->image_surface.get());

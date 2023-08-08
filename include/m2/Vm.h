@@ -1,5 +1,5 @@
 #pragma once
-#include "Value.h"
+#include "Meta.h"
 #include <array>
 #include <string>
 #include <variant>
@@ -67,7 +67,7 @@ namespace m2 {
 	public:
 		Vm() = default;
 
-		VoidValue add_script(const std::string& script);
-		VoidValue add_script_file(const std::string& path);
+		void_expected add_script(const std::string& script);
+		void_expected add_script_file(const std::string& path);
 	};
 }

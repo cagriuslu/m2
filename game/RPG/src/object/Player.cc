@@ -18,7 +18,7 @@ using namespace m2g::pb;
 
 rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLAYER_MOVEMENT, obj.graphic_id()) {}
 
-m2::VoidValue rpg::Player::init(m2::Object& obj) {
+m2::void_expected rpg::Player::init(m2::Object& obj) {
 	auto id = obj.id();
 	auto main_sprite_type = GAME.level_editor_object_sprites[m2g::pb::PLAYER];
 

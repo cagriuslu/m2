@@ -92,7 +92,7 @@ void m2g::post_single_player_level_init(const std::string& name) {
 
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
 
-m2::VoidValue m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {
+m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {
 	using namespace rpg;
 	switch (object_type) {
 		case pb::ObjectType::PLAYER:
@@ -114,7 +114,7 @@ m2::VoidValue m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {
 		case pb::BUSH_01:
 			return rpg::create_decoration(obj, GAME.level_editor_object_sprites[object_type]);
 		default:
-			return m2::failure("Unhandled object type");
+			return m2::make_unexpected("Unhandled object type");
 	}
 }
 

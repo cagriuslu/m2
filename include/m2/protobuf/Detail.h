@@ -1,5 +1,5 @@
 #pragma once
-#include "../Value.h"
+#include "../Meta.h"
 #include "../Exception.h"
 #include "../FileSystem.h"
 #include <google/protobuf/util/json_util.h>
@@ -8,31 +8,32 @@
 
 namespace m2::protobuf {
 	template <typename ProtoType>
-	Value<ProtoType> json_string_to_message(const std::string& str) {
+	expected<ProtoType> json_string_to_message(const std::string& str) {
 		ProtoType message;
 		auto status = google::protobuf::util::JsonStringToMessage(str, &message);
 		if (status.ok()) {
 			return message;
 		} else {
-			return failure(status.ToString());
+			return make_unexpected(status.ToString());
 		}
 	}
 
 	template <typename ProtoType>
-	Value<ProtoType> json_file_to_message(const std::filesystem::path& path) {
+	expected<ProtoType> json_file_to_message(const std::filesystem::path& path) {
 		auto str = read_file(path);
 		m2_reflect_failure(str);
+
 		ProtoType message;
 		auto status = google::protobuf::util::JsonStringToMessage(str.value(), &message);
 		if (status.ok()) {
 			return message;
 		} else {
-			return failure(status.ToString());
+			return make_unexpected(status.ToString());
 		}
 	}
 
-	Value<std::string> message_to_json_string(const google::protobuf::Message& message);
-	VoidValue message_to_json_file(const google::protobuf::Message& message, const std::filesystem::path& path);
+	expected<std::string> message_to_json_string(const google::protobuf::Message& message);
+	void_expected message_to_json_file(const google::protobuf::Message& message, const std::filesystem::path& path);
 
 	template <typename T>
 	T* mutable_get_or_create(::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index, const T& fill_value = {}) {

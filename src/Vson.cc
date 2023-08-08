@@ -66,21 +66,21 @@ const m2::Vson* m2::Vson::query(const std::string& path) const {
 	return v;
 }
 
-m2::Value<std::string> m2::Vson::query_string_value(const std::string& path) const {
+m2::expected<std::string> m2::Vson::query_string_value(const std::string& path) const {
 	const auto* vson = query(path);
 	m2_fail_unless(vson, "VSON path not found");
 	m2_fail_unless(vson->is_string(), "VSON value not string");
 	return vson->string_value();
 }
 
-m2::Value<long> m2::Vson::query_long_value(const std::string& path) const {
+m2::expected<long> m2::Vson::query_long_value(const std::string& path) const {
 	const auto* vson = query(path);
 	m2_fail_unless(vson, "VSON path not found");
 	m2_fail_unless(vson->is_string(), "VSON value not string");
 	return vson->long_value();
 }
 
-m2::Value<double> m2::Vson::query_double_value(const std::string& path) const {
+m2::expected<double> m2::Vson::query_double_value(const std::string& path) const {
 	const auto* vson = query(path);
 	m2_fail_unless(vson, "VSON path not found");
 	m2_fail_unless(vson->is_string(), "VSON value not string");
@@ -253,7 +253,7 @@ bool m2::Vson::dump_to_file(const std::string& fpath) const {
 	return success;
 }
 
-static m2::Value<m2::Vson> parse_unknown_value(std::stringstream& ss);
+static m2::expected<m2::Vson> parse_unknown_value(std::stringstream& ss);
 
 static std::string fetch_string_plain(std::stringstream& ss) {
 	std::stringstream buffer;
@@ -267,7 +267,7 @@ static std::string fetch_string_plain(std::stringstream& ss) {
 	}
 	return ss.str();
 }
-static m2::Value<m2::Vson> parse_object(std::stringstream& ss) {
+static m2::expected<m2::Vson> parse_object(std::stringstream& ss) {
 	m2::Vson v = m2::Vson::object();
 	auto& obj = std::get<m2::Vson::vson_object>(v.value);
 
@@ -292,7 +292,7 @@ static m2::Value<m2::Vson> parse_object(std::stringstream& ss) {
 				// Next state
 				state = EXPECT_COLON;
 			} else {
-				return m2::failure("Unexpected character in object");
+				return m2::make_unexpected("Unexpected character in object");
 			}
 		} else if (state == EXPECT_COLON) {
 			if (isspace(c)) {
@@ -301,7 +301,7 @@ static m2::Value<m2::Vson> parse_object(std::stringstream& ss) {
 				// Next state
 				state = EXPECT_VALUE;
 			} else {
-				return m2::failure("Unexpected character in object");
+				return m2::make_unexpected("Unexpected character in object");
 			}
 		} else if (state == EXPECT_VALUE) {
 			if (isspace(c)) {
@@ -323,16 +323,16 @@ static m2::Value<m2::Vson> parse_object(std::stringstream& ss) {
 				// Next state
 				state = EXPECT_KEY;
 			} else {
-				return m2::failure("Unexpected character in object");
+				return m2::make_unexpected("Unexpected character in object");
 			}
 		}
 	}
 	if (!braceClosed) {
-		return m2::failure("Unclosed braces");
+		return m2::make_unexpected("Unclosed braces");
 	}
 	return v;
 }
-static m2::Value<m2::Vson> parse_array(std::stringstream& ss) {
+static m2::expected<m2::Vson> parse_array(std::stringstream& ss) {
 	auto v = m2::Vson::array();
 	auto& arr = std::get<m2::Vson::vson_array>(v.value);
 
@@ -361,16 +361,16 @@ static m2::Value<m2::Vson> parse_array(std::stringstream& ss) {
 			} else if (c == ',' || isspace(c)) {
 				state = EXPECT_VALUE; // Next state
 			} else {
-				return m2::failure("Unexpected character in array");
+				return m2::make_unexpected("Unexpected character in array");
 			}
 		}
 	}
 	if (!bracketClosed) {
-		return m2::failure("Unclosed bracket");
+		return m2::make_unexpected("Unclosed bracket");
 	}
 	return v;
 }
-static m2::Value<m2::Vson> parse_string_quoted(std::stringstream& ss) {
+static m2::expected<m2::Vson> parse_string_quoted(std::stringstream& ss) {
 	std::stringstream buffer;
 	int c, escaping = 0, quoteClosed = 0;
 	while ((c = ss.get()) != EOF) {
@@ -379,7 +379,7 @@ static m2::Value<m2::Vson> parse_string_quoted(std::stringstream& ss) {
 				buffer << (char)c;
 				escaping = 0;
 			} else {
-				return m2::failure("Unexpected character");
+				return m2::make_unexpected("Unexpected character");
 			}
 		} else {
 			if (c == '"') {
@@ -391,20 +391,20 @@ static m2::Value<m2::Vson> parse_string_quoted(std::stringstream& ss) {
 			} else if (isprint(c)) {
 				buffer << (char)c;
 			} else {
-				return m2::failure("Unexpected character");
+				return m2::make_unexpected("Unexpected character");
 			}
 		}
 	}
 	if (!quoteClosed) {
-		return m2::failure("Unclosed quote");
+		return m2::make_unexpected("Unclosed quote");
 	}
 	return m2::Vson::string(buffer.str());
 }
-static m2::Value<m2::Vson> parse_string_plain(std::stringstream& ss) {
+static m2::expected<m2::Vson> parse_string_plain(std::stringstream& ss) {
 	auto str = fetch_string_plain(ss);
 	return m2::Vson::string(fetch_string_plain(ss));
 }
-static m2::Value<m2::Vson> parse_unknown_value(std::stringstream& ss) {
+static m2::expected<m2::Vson> parse_unknown_value(std::stringstream& ss) {
 	int c;
 	while ((c = ss.get()) != EOF) {
 		if (isspace(c)) {
@@ -420,13 +420,13 @@ static m2::Value<m2::Vson> parse_unknown_value(std::stringstream& ss) {
 			ss.unget();
 			return parse_string_plain(ss);
 		} else {
-			return m2::failure("Unexpected character");
+			return m2::make_unexpected("Unexpected character");
 		}
 	}
-	return m2::failure("Unexpected end of file");
+	return m2::make_unexpected("Unexpected end of file");
 }
 
-m2::Value<m2::Vson> m2::Vson::parse_string(const std::string& str) {
+m2::expected<m2::Vson> m2::Vson::parse_string(const std::string& str) {
 	std::stringstream ss(str);
 	auto optional_vson = parse_unknown_value(ss);
 	m2_reflect_failure(optional_vson);
@@ -436,7 +436,7 @@ m2::Value<m2::Vson> m2::Vson::parse_string(const std::string& str) {
 	}
 	return optional_vson;
 }
-m2::Value<m2::Vson> m2::Vson::parse_file(const std::string &fpath) {
+m2::expected<m2::Vson> m2::Vson::parse_file(const std::string &fpath) {
 	FILE* file = fopen(fpath.c_str(), "r");
 	m2_fail_unless(file, "Unable to open file");
 	std::stringstream ss;

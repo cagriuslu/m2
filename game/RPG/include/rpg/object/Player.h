@@ -3,7 +3,7 @@
 #include <m2/Animation.h>
 #include "m2/fsm/AnimationFsm.h"
 #include <vector>
-#include <m2/Value.h>
+#include <m2/Meta.h>
 #include <m2g_ItemType.pb.h>
 
 namespace rpg {
@@ -12,6 +12,6 @@ namespace rpg {
 
 		explicit Player(m2::Object& obj);
 
-		static m2::VoidValue init(m2::Object& obj);
+		static m2::void_expected init(m2::Object& obj);
 	};
 }

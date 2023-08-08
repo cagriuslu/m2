@@ -2,11 +2,12 @@
 #include "level_editor/Detail.h"
 #include "level_editor/State.h"
 #include "pixel_editor/State.h"
+#include "sheet_editor/State.h"
 #include "Object.h"
 #include "ui/State.h"
 #include "DrawList.h"
 #include "Pathfinder.h"
-#include "Value.h"
+#include "Meta.h"
 #include "VecI.h"
 #include <Level.pb.h>
 #include <functional>
@@ -59,10 +60,12 @@ namespace m2 {
 		std::vector<std::function<void(void)>> deferred_actions;
 		std::optional<ledit::State> level_editor_state;
 		std::optional<pedit::State> pixel_editor_state;
+		std::optional<sedit::State> sheet_editor_state;
 
-		VoidValue init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
-		VoidValue init_level_editor(const std::filesystem::path& lb_path);
-		VoidValue init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
+		void_expected init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected init_level_editor(const std::filesystem::path& lb_path);
+		void_expected init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
+
 
 		// Accessors
 		[[nodiscard]] inline Type type() const { return _type; }

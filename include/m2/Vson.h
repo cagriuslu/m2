@@ -1,5 +1,5 @@
 #pragma once
-#include "Value.h"
+#include "Meta.h"
 #include <string>
 #include <variant>
 #include <unordered_map>
@@ -28,9 +28,9 @@ namespace m2 {
 
 		// Safe queries
 		[[nodiscard]] const Vson* query(const std::string& path) const;
-		[[nodiscard]] Value<std::string> query_string_value(const std::string& path) const;
-		[[nodiscard]] Value<long> query_long_value(const std::string& path) const;
-		[[nodiscard]] Value<double> query_double_value(const std::string& path) const;
+		[[nodiscard]] expected<std::string> query_string_value(const std::string& path) const;
+		[[nodiscard]] expected<long> query_long_value(const std::string& path) const;
+		[[nodiscard]] expected<double> query_double_value(const std::string& path) const;
 
 		// Object
 		[[nodiscard]] size_t object_size() const;
@@ -55,7 +55,7 @@ namespace m2 {
 
 		[[nodiscard]] std::string dump_to_string() const;
 		[[nodiscard]] bool dump_to_file(const std::string& fpath) const;
-		static Value<Vson> parse_string(const std::string& str);
-		static Value<Vson> parse_file(const std::string& fpath);
+		static expected<Vson> parse_string(const std::string& str);
+		static expected<Vson> parse_file(const std::string& fpath);
 	};
 }

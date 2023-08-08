@@ -8,7 +8,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-m2::VoidValue create_dwarf(m2::Object& obj) {
+m2::void_expected create_dwarf(m2::Object& obj) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);

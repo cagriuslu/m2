@@ -187,7 +187,7 @@ namespace {
 	}
 }
 
-m2::VoidValue m2::Vm::add_script(const std::string& script) {
+m2::void_expected m2::Vm::add_script(const std::string& script) {
 	using namespace vm;
 
 	std::optional<std::string> current_function;
@@ -261,12 +261,12 @@ m2::VoidValue m2::Vm::add_script(const std::string& script) {
 		}
 		save_function();
 	} catch (const Error& e) {
-		return failure(e.what());
+		return make_unexpected(e.what());
 	}
 	return {};
 }
 
-m2::VoidValue m2::Vm::add_script_file(const std::string& path) {
+m2::void_expected m2::Vm::add_script_file(const std::string& path) {
 	auto str = read_file(path);
 	m2_reflect_failure(str);
 	return add_script(*str);

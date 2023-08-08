@@ -1,4 +1,5 @@
 #pragma once
+#include "Exception.h"
 #include <tl/expected.hpp>
 #include <string>
 
@@ -42,4 +43,37 @@ namespace m2 {
 
 	template <typename T>
 	using expected = tl::expected<T, std::string>;
+
+	template <typename E>
+	auto make_unexpected(E&& e) { return tl::make_unexpected(std::forward<E>(e)); }
 }
+
+#define m2_reflect_failure(v)              \
+	do {                                   \
+		if (!(v)) {                        \
+			return ::m2::make_unexpected(  \
+					std::move((v).error()) \
+			);                             \
+		}                                  \
+	} while (false)
+
+#define m2_fail_unless(cond, err)                  \
+	do {                                           \
+		if (!(cond)) {                             \
+				return ::m2::make_unexpected(err); \
+		}                                          \
+	} while (false)
+
+#define m2_throw_failure_as_fatal(v)                            \
+	do {                                                        \
+		if (!(v)) {                                             \
+			throw ::m2::Fatal(__FILE__, __LINE__, (v).error()); \
+		}                                                       \
+	} while (false)
+
+#define m2_throw_failure_as_error(v)                            \
+	do {                                                        \
+		if (!(v)) {                                             \
+			throw ::m2::Error(__FILE__, __LINE__, (v).error()); \
+		}                                                       \
+	} while (false)

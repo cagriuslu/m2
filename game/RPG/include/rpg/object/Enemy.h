@@ -5,7 +5,7 @@
 #include "rpg/fsm/Escaper.h"
 #include "rpg/fsm/HitNRunner.h"
 #include "rpg/fsm/Patroller.h"
-#include <m2/Value.h>
+#include <m2/Meta.h>
 #include <variant>
 
 namespace rpg {
@@ -23,7 +23,7 @@ namespace rpg {
 
 		Enemy(m2::Object& obj, const rpg::pb::Enemy* enemy);
 
-        static m2::VoidValue init(m2::Object& obj, m2g::pb::ObjectType object_type);
+        static m2::void_expected init(m2::Object& obj, m2g::pb::ObjectType object_type);
 		static void move_towards(m2::Object& obj, m2::VecF direction, float force);
 		static void attack_if_close(m2::Object& obj, const pb::Ai& ai);
     };
