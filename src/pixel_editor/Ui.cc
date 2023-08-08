@@ -30,7 +30,7 @@ const ui::widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 const ui::widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 	.initial_text = "Cancel",
 	.action_callback = []() -> ui::Action {
-		LEVEL.level_editor_state->deactivate_mode();
+		LEVEL.pixel_editor_state->deactivate_mode();
 		return ui::Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_X
