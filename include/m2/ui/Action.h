@@ -5,7 +5,8 @@ namespace m2::ui {
 		CONTINUE = 0, // UI keeps running
 		GAIN_FOCUS, // UI keeps running
 		LOSE_FOCUS, // UI keeps running
-		RETURN, // UI returns
+		BREAK, // UI returns once
+		RETURN, // UI returns all the way
 		QUIT // Application returns
 	};
 }

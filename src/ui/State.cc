@@ -213,10 +213,14 @@ m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rec
 				return Action::QUIT;
 			}
 			if (events.pop_key_press(Key::CONSOLE) && blueprint != &console_ui) { // Do not open console on top of console
-				LOG_INFO("Console");
-				if (auto action = execute_blocking(&console_ui);
-						action != Action::CONTINUE && action != Action::RETURN) {
+				LOG_INFO("Opening console");
+				auto action = execute_blocking(&console_ui);
+				if (action == Action::BREAK) {
+					// Continue with the prev UI
+				} else if (action == Action::RETURN || action == Action::QUIT) {
 					return action;
+				} else {
+					LOG_WARN("Console returned unexpected action", (int) action);
 				}
 			}
 			auto window_resize = events.pop_window_resize();
@@ -310,7 +314,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 			} else if (command == "quit") {
 				return Action::QUIT;
 			} else if (command == "close") {
-				return Action::RETURN;
+				return Action::BREAK;
 			} else if (command.empty()) {
 				// Do nothing
 			} else {

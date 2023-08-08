@@ -6,7 +6,7 @@ using namespace m2::ui::widget;
 
 namespace {
 	void reset_focus() {
-		LOG_INFO("Stopping text input");
+		LOG_DEBUG("Stopping text input");
 		SDL_StopTextInput();
 	}
 }
@@ -45,7 +45,7 @@ Action TextInput::handle_events(Events& events) {
 
 void TextInput::focus_changed() {
 	if (focused) {
-		LOG_INFO("Starting text input");
+		LOG_DEBUG("Starting text input");
 		SDL_StartTextInput();
 	} else {
 		reset_focus();
