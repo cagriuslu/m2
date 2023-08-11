@@ -123,7 +123,7 @@ const widget::TextBlueprint pick_mode_title = {
 		.initial_text = "PICK"
 };
 const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
-		.list = {"Background", "Foreground"},
+		.initial_list = {"Background", "Foreground"},
 		.action_callback = [](const std::string& selection) -> Action {
 			if (selection == "Background") {
 				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = false;
@@ -253,7 +253,7 @@ const widget::TextBlueprint shift_mode_title = {
 		.initial_text = "SHIFT"
 };
 const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
-		.list = {"Right", "Down", "Right & Down"},
+		.initial_list = {"Right", "Down", "Right & Down"},
 		.action_callback = [](const std::string& selection) -> Action {
 			if (selection == "Right") {
 				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT;
@@ -312,16 +312,16 @@ const widget::TextBlueprint left_hud_place_button = {
 			LEVEL.level_editor_state->activate_place_mode();
 			// Fill object type selector with editor-enabled object types
 			auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
-			if (object_type_selection.list.empty()) {
+			if (object_type_selection.initial_list.empty()) {
 				for (auto& [obj_type, spt] : GAME.level_editor_object_sprites) {
-					object_type_selection.list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
+					object_type_selection.initial_list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
 				}
 			}
 			// Fill group type selector
 			auto& group_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[2].variant);
-			if (group_type_selection.list.empty()) {
+			if (group_type_selection.initial_list.empty()) {
 				for (int e  = 0; e < protobuf::enum_value_count<m2g::pb::GroupType>(); ++e) {
-					group_type_selection.list.emplace_back(protobuf::enum_name<m2g::pb::GroupType>(e));
+					group_type_selection.initial_list.emplace_back(protobuf::enum_name<m2g::pb::GroupType>(e));
 				}
 			}
 

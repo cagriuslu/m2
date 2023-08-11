@@ -4,12 +4,14 @@
 
 namespace m2::ui::widget {
 	struct TextSelection : public Widget {
+		std::vector<std::string> list;
 		unsigned selection;
-		sdl::TextureUniquePtr font_texture;
+		sdl::FontTexture font_texture2;
 		bool inc_depressed{};
 		bool dec_depressed{};
 
 		explicit TextSelection(const WidgetBlueprint* blueprint);
+		Action update_content() override;
 		Action handle_events(Events& events) override;
 		Action select(unsigned index);
 		void draw() override;
