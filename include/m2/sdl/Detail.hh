@@ -1,4 +1,5 @@
 #pragma once
+#include "../Meta.h"
 #include <RectI.pb.h>
 #include <SDL2/SDL.h>
 #include <string_view>
@@ -25,6 +26,18 @@ namespace m2::sdl {
 
 	int draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count);
 
+	class FontTexture {
+		TextureUniquePtr _texture;
+		std::string _text;
+
+		inline FontTexture(SDL_Texture* texture, const std::string& text) : _texture(texture), _text(text) {}
+	public:
+		static m2::expected<FontTexture> create(const std::string& text, SDL_Color color = {255, 255, 255, 255});
+		inline SDL_Texture& texture() const { return *_texture; }
+		inline std::string_view text() const { return _text; }
+	};
+
+	// TODO get rid of this, this is the old way
 	TextureUniquePtr generate_font(const std::string& text, SDL_Color color = {255, 255, 255, 255});
 
 	/// Assumes surface is already locked
