@@ -16,34 +16,23 @@ namespace {
 	}
 }
 
-TextSelection::TextSelection(const WidgetBlueprint* blueprint) : Widget(blueprint), list(std::get<TextSelectionBlueprint>(blueprint->variant).initial_list), selection(std::get<TextSelectionBlueprint>(blueprint->variant).initial_selection), font_texture2(*sdl::FontTexture::create(list[selection])) {
+TextSelection::TextSelection(const WidgetBlueprint* blueprint) : Widget(blueprint), list(std::get<TextSelectionBlueprint>(blueprint->variant).initial_list) {
+	select(0);
 	throw_if_list_has_duplicates(list);
 }
 
 Action TextSelection::update_content() {
 	auto& text_blueprint = std::get<TextSelectionBlueprint>(blueprint->variant);
 	if (text_blueprint.update_callback) {
-		auto[action, optional_list] = text_blueprint.update_callback();
+		auto[action, optional_list] = text_blueprint.update_callback(list, selection);
 		if (action == Action::CONTINUE && optional_list) {
 			// Check list
 			throw_if_list_has_duplicates(*optional_list);
 
-			// Look-up old string
-			auto old_string = list[selection];
 			// Save new list
 			list = *optional_list;
-			// Search old string in new list
-			unsigned new_selection = 0;
-			for (unsigned i = 0; i < list.size(); ++i) {
-				if (old_string == list[i]) {
-					new_selection = i;
-					break;
-				}
-			}
-			// Change selection if necessary
-			if (selection != new_selection) {
-				select(new_selection);
-			}
+			// Select default item
+			select(0);
 		}
 		return action;
 	} else {
@@ -79,11 +68,15 @@ Action TextSelection::handle_events(Events& events) {
 
 Action TextSelection::select(unsigned index) {
 	selection = index;
-	font_texture2 = *sdl::FontTexture::create(list[selection]);
+	if (!list.empty()) {
+		font_texture = *sdl::FontTexture::create(list[selection]);
 
-	const auto& action_callback = std::get<TextSelectionBlueprint>(blueprint->variant).action_callback;
-	if (action_callback) {
-		return action_callback(list[selection]);
+		const auto& action_callback = std::get<TextSelectionBlueprint>(blueprint->variant).action_callback;
+		if (action_callback) {
+			return action_callback(list[selection]);
+		}
+	} else {
+		font_texture = *sdl::FontTexture::create("<EMPTY>");
 	}
 	return Action::CONTINUE;
 }
@@ -99,7 +92,9 @@ void TextSelection::draw() {
 
 	draw_background_color(rect_px, blueprint->background_color);
 
-	draw_text((SDL_Rect)text_rect, font_texture2.texture(), TextAlignment::LEFT);
+	if (font_texture) {
+		draw_text((SDL_Rect)text_rect, font_texture.texture(), TextAlignment::LEFT);
+	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;

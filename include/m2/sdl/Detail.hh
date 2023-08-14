@@ -32,9 +32,11 @@ namespace m2::sdl {
 
 		inline FontTexture(SDL_Texture* texture, const std::string& text) : _texture(texture), _text(text) {}
 	public:
+		FontTexture() = default;
 		static m2::expected<FontTexture> create(const std::string& text, SDL_Color color = {255, 255, 255, 255});
-		inline SDL_Texture& texture() const { return *_texture; }
-		inline std::string_view text() const { return _text; }
+		[[nodiscard]] inline SDL_Texture& texture() const { return *_texture; }
+		[[nodiscard]] inline std::string_view text() const { return _text; }
+		inline explicit operator bool() const { return (bool) _texture; }
 	};
 
 	// TODO get rid of this, this is the old way

@@ -5,7 +5,7 @@
 
 namespace m2::ui::widget {
 	struct ImageSelection : public Widget {
-		unsigned selection;
+		unsigned selection{};
 		bool inc_depressed{};
 		bool dec_depressed{};
 

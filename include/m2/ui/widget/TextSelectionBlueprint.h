@@ -5,9 +5,10 @@
 
 namespace m2::ui::widget {
 	struct TextSelectionBlueprint {
-		std::vector<std::string> initial_list;
-		unsigned initial_selection{};
-		std::function<std::pair<Action,std::optional<std::vector<std::string>>>(void)> update_callback;
+		using Options = std::vector<std::string>;
+
+		Options initial_list;
+		std::function<std::pair<Action,std::optional<Options>>(const Options& current_list, unsigned current_selection)> update_callback;
 		std::function<Action(const std::string& selection)> action_callback;
 	};
 }

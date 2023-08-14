@@ -5,8 +5,8 @@
 namespace m2::ui::widget {
 	struct TextSelection : public Widget {
 		std::vector<std::string> list;
-		unsigned selection;
-		sdl::FontTexture font_texture2;
+		unsigned selection{};
+		sdl::FontTexture font_texture;
 		bool inc_depressed{};
 		bool dec_depressed{};
 
