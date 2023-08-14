@@ -11,6 +11,7 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/sheet_editor/Ui.h>
 #include <m2/sdl/Detail.hh>
 #include <regex>
 #include <ranges>
@@ -305,6 +306,20 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 				}
 				return Action::CONTINUE;
+			} else if (std::regex_match(command, std::regex{"sedit(\\s.*)?"})) {
+				std::smatch match_results;
+				if (std::regex_match(command, match_results, std::regex{R"(sedit\s+(.+))"})) {
+					auto load_result = GAME.load_sheet_editor(match_results.str(1));
+					if (load_result) {
+						// Execute main menu the first time the sheet editor is run
+						return execute_blocking(&m2::ui::sheet_editor_main_menu);
+					}
+					GAME.console_output.emplace_back(load_result.error());
+				} else {
+					GAME.console_output.emplace_back("sedit usage:");
+					GAME.console_output.emplace_back(".. file_name - open sheet editor with file");
+				}
+				return Action::CONTINUE;
 			} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
 				std::smatch match_results;
 				if (std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
@@ -330,6 +345,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				GAME.console_output.emplace_back("help - display this help");
 				GAME.console_output.emplace_back("ledit - open level editor");
 				GAME.console_output.emplace_back("pedit - open pixel editor");
+				GAME.console_output.emplace_back("sedit - open sheet editor");
 				GAME.console_output.emplace_back("set - set game variable");
 				GAME.console_output.emplace_back("close - close the console");
 				GAME.console_output.emplace_back("quit - quit game");

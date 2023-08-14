@@ -21,7 +21,8 @@ namespace m2 {
 			NO_TYPE,
 			SINGLE_PLAYER,
 			LEVEL_EDITOR,
-			PIXEL_EDITOR
+			PIXEL_EDITOR,
+			SHEET_EDITOR
 		};
 
 	private:
@@ -65,7 +66,7 @@ namespace m2 {
 		void_expected init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
 		void_expected init_level_editor(const std::filesystem::path& lb_path);
 		void_expected init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
-
+		void_expected init_sheet_editor(const std::filesystem::path& path);
 
 		// Accessors
 		[[nodiscard]] inline Type type() const { return _type; }

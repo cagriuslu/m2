@@ -5,6 +5,7 @@
 #include <m2/Sprite.h>
 #include <Level.pb.h>
 #include "m2/component/Physique.h"
+#include <m2/sheet_editor/Ui.h>
 #include "m2/component/Graphic.h"
 #include <m2/sdl/Detail.hh>
 #include <SDL2/SDL_image.h>
@@ -128,6 +129,13 @@ m2::void_expected m2::Game::load_pixel_editor(const std::string& image_resource_
 	return _level->init_pixel_editor(image_resource_path, x_offset, y_offset);
 }
 
+m2::void_expected m2::Game::load_sheet_editor(const std::string& sheet_path) {
+	_level.reset();
+	reset_state();
+	_level.emplace();
+	return _level->init_sheet_editor(sheet_path);
+}
+
 void m2::Game::reset_state() {
 	events.clear();
 }
@@ -164,7 +172,22 @@ void m2::Game::handle_console_event() {
 
 void m2::Game::handle_menu_event() {
 	if (events.pop_key_press(Key::MENU)) {
-		if (ui::execute_blocking(m2g::ui::pause_menu()) == ui::Action::QUIT) {
+		// Select the correct pause menu
+		const auto* pause_menu = [](Level::Type type) -> const ui::Blueprint* {
+			if (type == Level::Type::SINGLE_PLAYER) {
+				return m2g::ui::pause_menu();
+			} else if (type == Level::Type::LEVEL_EDITOR) {
+				return nullptr;
+			} else if (type == Level::Type::PIXEL_EDITOR) {
+				return nullptr;
+			} else if (type == Level::Type::SHEET_EDITOR) {
+				return &m2::ui::sheet_editor_main_menu;
+			} else {
+				return nullptr;
+			}
+		}(level().type());
+		// Execute pause menu if found, exit if QUIT is returned
+		if (pause_menu && ui::execute_blocking(pause_menu) == ui::Action::QUIT) {
 			quit = true;
 		}
 	}
