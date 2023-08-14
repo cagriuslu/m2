@@ -41,6 +41,99 @@ State::~State() {
 	clear_focus();
 }
 
+Action State::execute() {
+	return execute(GAME.dimensions().window);
+}
+
+Action State::execute(SDL_Rect rect) {
+	auto execute_start_ticks = sdl::get_ticks();
+
+	// Save relation to window, use in case of resize
+	const SDL_Rect& winrect = GAME.dimensions().window;
+	auto relation_to_window = SDL_FRect{
+			(float)(rect.x - winrect.x) / (float)winrect.w,
+			(float)(rect.y - winrect.y) / (float)winrect.h,
+			(float)rect.w / (float)winrect.w,
+			(float)rect.h / (float)winrect.h,
+	};
+
+	// Get screenshot
+	int w, h;
+	SDL_GetRendererOutputSize(GAME.renderer, &w, &h);
+	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
+	SDL_RenderReadPixels(GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
+	std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
+	SDL_FreeSurface(surface);
+
+	Action return_value;
+
+	update_positions(rect);
+	if ((return_value = update_contents()) != Action::CONTINUE) {
+		GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
+		return return_value;
+	}
+
+	Events events;
+	while (true) {
+		////////////////////////////////////////////////////////////////////////
+		//////////////////////////// EVENT HANDLING ////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		events.clear();
+		if (events.gather()) {
+			if (events.pop_quit()) {
+				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
+				return Action::QUIT;
+			}
+			if (events.pop_key_press(Key::CONSOLE) && blueprint != &console_ui) { // Do not open console on top of console
+				LOG_INFO("Opening console");
+				auto action = execute_blocking(&console_ui);
+				if (action == Action::RETURN) {
+					// Continue with the prev UI
+				} else if (action == Action::QUIT) {
+					return action;
+				} else {
+					LOG_WARN("Console returned unexpected action", (int) action);
+				}
+			}
+			auto window_resize = events.pop_window_resize();
+			if (window_resize) {
+				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
+				update_positions(SDL_Rect{
+						(int)round((float)winrect.x + relation_to_window.x * (float)winrect.w),
+						(int)round((float)winrect.y + relation_to_window.y * (float)winrect.h),
+						(int)round(relation_to_window.w * (float)winrect.w),
+						(int)round(relation_to_window.h * (float)winrect.h)
+				});
+			}
+			if ((return_value = handle_events(events)) != Action::CONTINUE) {
+				// TODO if execute_blocking is executed recursively, pause_ticks calculation becomes incorrect
+				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
+				return return_value;
+			}
+		}
+		//////////////////////// END OF EVENT HANDLING /////////////////////////
+		////////////////////////////////////////////////////////////////////////
+
+		////////////////////////////////////////////////////////////////////////
+		/////////////////////////////// GRAPHICS ///////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		// Draw ui
+		if ((return_value = update_contents()) != Action::CONTINUE) {
+			GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
+			return return_value;
+		}
+		// Clear screen
+		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
+		SDL_RenderClear(GAME.renderer);
+		SDL_RenderCopy(GAME.renderer, texture.get(), nullptr, nullptr);
+		draw();
+		// Present
+		SDL_RenderPresent(GAME.renderer);
+		/////////////////////////// END OF GRAPHICS ////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+	}
+}
+
 void State::update_positions(const SDL_Rect &rect_px_) {
 	this->rect_px = rect_px_;
 	for (auto& widget_state : widgets) {
@@ -173,93 +266,8 @@ m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint) {
 }
 
 m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
-	auto execute_start_ticks = sdl::get_ticks();
-
-	// Save relation to window, use in case of resize
-	const SDL_Rect& winrect = GAME.dimensions().window;
-	auto relation_to_window = SDL_FRect{
-			(float)(rect.x - winrect.x) / (float)winrect.w,
-			(float)(rect.y - winrect.y) / (float)winrect.h,
-			(float)rect.w / (float)winrect.w,
-			(float)rect.h / (float)winrect.h,
-	};
-
-	// Get screenshot
-	int w, h;
-	SDL_GetRendererOutputSize(GAME.renderer, &w, &h);
-	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
-	SDL_RenderReadPixels(GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
-	std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
-	SDL_FreeSurface(surface);
-
-	Action return_value;
-
-	State state(blueprint);
-	state.update_positions(rect);
-	if ((return_value = state.update_contents()) != Action::CONTINUE) {
-		GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
-		return return_value;
-	}
-
-	Events events;
-	while (true) {
-		////////////////////////////////////////////////////////////////////////
-		//////////////////////////// EVENT HANDLING ////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		events.clear();
-		if (events.gather()) {
-			if (events.pop_quit()) {
-				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
-				return Action::QUIT;
-			}
-			if (events.pop_key_press(Key::CONSOLE) && blueprint != &console_ui) { // Do not open console on top of console
-				LOG_INFO("Opening console");
-				auto action = execute_blocking(&console_ui);
-				if (action == Action::BREAK) {
-					// Continue with the prev UI
-				} else if (action == Action::RETURN || action == Action::QUIT) {
-					return action;
-				} else {
-					LOG_WARN("Console returned unexpected action", (int) action);
-				}
-			}
-			auto window_resize = events.pop_window_resize();
-			if (window_resize) {
-				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
-				state.update_positions(SDL_Rect{
-						(int)round((float)winrect.x + relation_to_window.x * (float)winrect.w),
-						(int)round((float)winrect.y + relation_to_window.y * (float)winrect.h),
-						(int)round(relation_to_window.w * (float)winrect.w),
-						(int)round(relation_to_window.h * (float)winrect.h)
-				});
-			}
-			if ((return_value = state.handle_events(events)) != Action::CONTINUE) {
-				// TODO if execute_blocking is executed recursively, pause_ticks calculation becomes incorrect
-				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
-				return return_value;
-			}
-		}
-		//////////////////////// END OF EVENT HANDLING /////////////////////////
-		////////////////////////////////////////////////////////////////////////
-
-		////////////////////////////////////////////////////////////////////////
-		/////////////////////////////// GRAPHICS ///////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		// Draw ui
-		if ((return_value = state.update_contents()) != Action::CONTINUE) {
-			GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
-			return return_value;
-		}
-		// Clear screen
-		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
-		SDL_RenderClear(GAME.renderer);
-		SDL_RenderCopy(GAME.renderer, texture.get(), nullptr, nullptr);
-		state.draw();
-		// Present
-		SDL_RenderPresent(GAME.renderer);
-		/////////////////////////// END OF GRAPHICS ////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-	}
+	State state{blueprint};
+	return state.execute(rect);
 }
 
 const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprint{
@@ -304,7 +312,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					if (parameter == "game_height") {
 						auto new_game_height = strtof(match_results.str(2).c_str(), nullptr);
 						GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, Rational{new_game_height});
-						return Action::RETURN;
+						return Action::CONTINUE;
 					} else {
 						GAME.console_output.emplace_back("Unknown parameter");
 					}
@@ -314,7 +322,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 			} else if (command == "quit") {
 				return Action::QUIT;
 			} else if (command == "close") {
-				return Action::BREAK;
+				return Action::RETURN;
 			} else if (command.empty()) {
 				// Do nothing
 			} else {
