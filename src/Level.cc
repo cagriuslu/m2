@@ -9,6 +9,7 @@
 #include <m2/object/Pointer.h>
 #include <m2/object/Placeholder.h>
 #include <m2/pixel_editor/Ui.h>
+#include <m2/sheet_editor/Ui.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/box2d/Detail.h>
 #include <SDL2/SDL_image.h>
@@ -206,6 +207,31 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path
 	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
 	left_hud_ui_state->update_contents();
 	right_hud_ui_state.emplace(&ui::pixel_editor_right_hud);
+	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
+	right_hud_ui_state->update_contents();
+
+	return {};
+}
+
+m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path) {
+	_type = Type::SHEET_EDITOR;
+	_lb_path = path;
+
+	// Create state
+	auto state = sedit::State::create(*_lb_path);
+	m2_reflect_failure(state);
+	sheet_editor_state = std::move(*state);
+
+	// Create default objects
+	player_id = m2::obj::create_god();
+	m2::obj::create_camera();
+	m2::obj::create_origin();
+
+	// UI Hud
+	left_hud_ui_state.emplace(&ui::sheet_editor_left_hud);
+	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
+	left_hud_ui_state->update_contents();
+	right_hud_ui_state.emplace(&ui::sheet_editor_right_hud);
 	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
 
