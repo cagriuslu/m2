@@ -33,6 +33,17 @@ namespace m2 {
 		return destination;
 	}
 
+	template <typename It>
+	bool is_identical(It first1, It last1, It first2, It last2) {
+		for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
+			if (*first1 != *first2) {
+				return false;
+			}
+		}
+		// Check if end has been reached for both container
+		return first1 == last1 && first2 == last2;
+	}
+
 	struct Void {};
 	using void_expected = tl::expected<void, std::string>;
 
