@@ -73,7 +73,7 @@ Action TextSelection::select(unsigned index) {
 
 		const auto& action_callback = std::get<TextSelectionBlueprint>(blueprint->variant).action_callback;
 		if (action_callback) {
-			return action_callback(list[selection]);
+			return action_callback(selection, list[selection]);
 		}
 	} else {
 		font_texture = *sdl::FontTexture::create("<EMPTY>");

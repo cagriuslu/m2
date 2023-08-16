@@ -50,7 +50,7 @@ const widget::TextBlueprint place_mode_title = {
 		.initial_text = "PLACE"
 };
 const widget::TextSelectionBlueprint place_mode_right_hud_object_type_selection = {
-		.action_callback = [](const std::string& selection) -> Action {
+		.action_callback = [](MAYBE unsigned selection_idx, const std::string& selection) -> Action {
 			auto object_type = m2g::pb::ObjectType::NO_OBJECT;
 			m2g::pb::ObjectType_Parse(selection, &object_type);
 			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_object_type(object_type);
@@ -58,7 +58,7 @@ const widget::TextSelectionBlueprint place_mode_right_hud_object_type_selection 
 		}
 };
 const widget::TextSelectionBlueprint place_mode_right_hud_group_type_selection = {
-		.action_callback = [](const std::string &selection) -> Action {
+		.action_callback = [](MAYBE unsigned selection_idx, const std::string &selection) -> Action {
 			auto group_type = m2g::pb::GroupType::NO_GROUP;
 			m2g::pb::GroupType_Parse(selection, &group_type);
 			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_group_type(group_type);
@@ -124,7 +124,7 @@ const widget::TextBlueprint pick_mode_title = {
 };
 const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
 		.initial_list = {"Background", "Foreground"},
-		.action_callback = [](const std::string& selection) -> Action {
+		.action_callback = [](MAYBE unsigned selection_idx, const std::string& selection) -> Action {
 			if (selection == "Background") {
 				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = false;
 			} else if (selection == "Foreground") {
@@ -254,7 +254,7 @@ const widget::TextBlueprint shift_mode_title = {
 };
 const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
 		.initial_list = {"Right", "Down", "Right & Down"},
-		.action_callback = [](const std::string& selection) -> Action {
+		.action_callback = [](MAYBE unsigned selection_idx, const std::string& selection) -> Action {
 			if (selection == "Right") {
 				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT;
 			} else if (selection == "Down") {

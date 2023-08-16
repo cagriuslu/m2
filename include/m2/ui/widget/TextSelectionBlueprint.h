@@ -9,6 +9,6 @@ namespace m2::ui::widget {
 
 		Options initial_list;
 		std::function<std::pair<Action,std::optional<Options>>(const Options& current_list, unsigned current_selection)> update_callback;
-		std::function<Action(const std::string& selection)> action_callback;
+		std::function<Action(unsigned selection_idx, const std::string& selection)> action_callback;
 	};
 }
