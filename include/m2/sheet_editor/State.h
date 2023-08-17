@@ -5,19 +5,22 @@
 #include <m2g_SpriteType.pb.h>
 #include <Sprite.pb.h>
 #include <filesystem>
+#include <utility>
 
 namespace m2::sedit {
-	struct State {
-		pb::SpriteSheets sheets_pb;
-		std::optional<int> selected_sheet;
+	class State {
+		const std::filesystem::path _path;
+		mutable pb::SpriteSheets _sprite_sheets;
+		m2g::pb::SpriteType _selected_sprite_type{};
 
+		inline explicit State(std::filesystem::path path) : _path(std::move(path)) {}
+
+	public:
 		static m2::expected<State> create(const std::filesystem::path& path);
 
-		std::unique_ptr<ui::State> add_sheet_dialog;
-		ui::Action execute_add_sheet_dialog(bool edit = false);
-		void_expected add_sheet(const std::string& resource, unsigned ppm, bool edit = false);
+		// This function re-reads the file every time it's called.
+		const pb::SpriteSheets& sprite_sheets() const;
 
-	private:
-		explicit State(pb::SpriteSheets);
+		void select_sprite_type(m2g::pb::SpriteType);
 	};
 }

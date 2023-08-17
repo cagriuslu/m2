@@ -220,7 +220,7 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	// Create state
 	auto state = sedit::State::create(*_lb_path);
 	m2_reflect_failure(state);
-	sheet_editor_state = std::move(*state);
+	sheet_editor_state.emplace(std::move(*state));
 
 	// Create default objects
 	player_id = m2::obj::create_god();
