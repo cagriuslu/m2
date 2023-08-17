@@ -4,6 +4,8 @@
 
 namespace m2::ui::widget {
 	struct TextSelection : public Widget {
+		const TextSelectionBlueprint& text_selection_blueprint;
+
 		std::vector<std::string> list;
 		unsigned selection{};
 		sdl::FontTexture font_texture;

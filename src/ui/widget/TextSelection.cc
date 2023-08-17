@@ -7,30 +7,47 @@ using namespace m2::ui::widget;
 
 namespace {
 	void throw_if_list_has_duplicates(const std::vector<std::string>& list_ref) {
+		// Create a copy of the list
 		auto list = list_ref;
+		// Remove duplicates
 		std::sort(list.begin(), list.end());
-		std::unique(list.begin(), list.end());
+		auto new_last = std::unique(list.begin(), list.end());
+		list.erase(new_last, list.end());
+		// Compare sizes
 		if (list.size() != list_ref.size()) {
 			throw M2ERROR("TextSelection list cannot have duplicates");
 		}
 	}
 }
 
-TextSelection::TextSelection(const WidgetBlueprint* blueprint) : Widget(blueprint), list(std::get<TextSelectionBlueprint>(blueprint->variant).initial_list) {
-	select(0);
+TextSelection::TextSelection(const WidgetBlueprint* blueprint) : Widget(blueprint),
+		text_selection_blueprint(std::get<TextSelectionBlueprint>(blueprint->variant)),
+		list(text_selection_blueprint.initial_list) {
 	throw_if_list_has_duplicates(list);
+
+	// on_create
+	if (text_selection_blueprint.on_create) {
+		auto opt_list = text_selection_blueprint.on_create();
+		if (opt_list) {
+			// Save new list
+			list = *opt_list;
+			// Verify list
+			throw_if_list_has_duplicates(list);
+		}
+	}
+
+	// Select default item
+	select(0);
 }
 
 Action TextSelection::update_content() {
-	auto& text_blueprint = std::get<TextSelectionBlueprint>(blueprint->variant);
-	if (text_blueprint.update_callback) {
-		auto[action, optional_list] = text_blueprint.update_callback(list, selection);
+	if (text_selection_blueprint.update_callback) {
+		auto[action, optional_list] = text_selection_blueprint.update_callback(list, selection);
 		if (action == Action::CONTINUE && optional_list) {
-			// Check list
-			throw_if_list_has_duplicates(*optional_list);
-
 			// Save new list
 			list = *optional_list;
+			// Verify list
+			throw_if_list_has_duplicates(*optional_list);
 			// Select default item
 			select(0);
 		}
@@ -71,9 +88,8 @@ Action TextSelection::select(unsigned index) {
 	if (!list.empty()) {
 		font_texture = *sdl::FontTexture::create(list[selection]);
 
-		const auto& action_callback = std::get<TextSelectionBlueprint>(blueprint->variant).action_callback;
-		if (action_callback) {
-			return action_callback(selection, list[selection]);
+		if (text_selection_blueprint.action_callback) {
+			return text_selection_blueprint.action_callback(selection, list[selection]);
 		}
 	} else {
 		font_texture = *sdl::FontTexture::create("<EMPTY>");
@@ -83,7 +99,7 @@ Action TextSelection::select(unsigned index) {
 
 void TextSelection::draw() {
 	auto rect = RectI{rect_px};
-	auto text_rect = rect.trim_right(rect.h / 2).trim(blueprint->padding_width_px);
+	auto text_rect = rect.trim_right(rect.h / 2).trim((int) blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto inc_button_symbol_rect = inc_button_rect.trim(5);
