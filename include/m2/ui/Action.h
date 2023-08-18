@@ -6,6 +6,7 @@ namespace m2::ui {
 		GAIN_FOCUS, // UI keeps running
 		LOSE_FOCUS, // UI keeps running
 		RETURN, // UI returns
+		CLEAR_STACK, // UI returns all the way
 		QUIT // Application returns
 	};
 }

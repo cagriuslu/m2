@@ -90,7 +90,7 @@ Action State::execute(SDL_Rect rect) {
 				auto action = execute_blocking(&console_ui);
 				if (action == Action::RETURN) {
 					// Continue with the prev UI
-				} else if (action == Action::QUIT) {
+				} else if (action == Action::CLEAR_STACK || action == Action::QUIT) {
 					return action;
 				} else {
 					LOG_WARN("Console returned unexpected action", (int) action);
@@ -283,7 +283,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				if (std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
 					auto load_result = GAME.load_level_editor(match_results.str(1));
 					if (load_result) {
-						return Action::RETURN;
+						return Action::CLEAR_STACK;
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
@@ -298,7 +298,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
 					auto load_result = GAME.load_pixel_editor(match_results.str(3), (int) x_offset, (int) y_offset);
 					if (load_result) {
-						return Action::RETURN;
+						return Action::CLEAR_STACK;
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
@@ -312,7 +312,8 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					auto load_result = GAME.load_sheet_editor(match_results.str(1));
 					if (load_result) {
 						// Execute main menu the first time the sheet editor is run
-						return execute_blocking(&m2::ui::sheet_editor_main_menu);
+						auto main_menu_result = execute_blocking(&m2::ui::sheet_editor_main_menu);
+						return main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result;
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
