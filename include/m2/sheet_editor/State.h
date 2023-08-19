@@ -22,5 +22,6 @@ namespace m2::sedit {
 		const pb::SpriteSheets& sprite_sheets() const;
 
 		void select_sprite_type(m2g::pb::SpriteType);
+		void prepare_sprite_selection();
 	};
 }

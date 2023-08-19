@@ -7,12 +7,14 @@ using namespace m2::ui;
 const Blueprint m2::ui::sheet_editor_left_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {0, 0, 0, 255},
 		.widgets = {}
 };
 
 const ui::Blueprint m2::ui::sheet_editor_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {0, 0, 0, 255},
 		.widgets = {}
 };
 
@@ -51,13 +53,13 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 				WidgetBlueprint{
-						.x = 40, .y = 18, .w = 80, .h = 10,
+						.x = 35 , .y = 20, .w = 90, .h = 10,
 						.border_width_px = 1,
 						.padding_width_px = 2,
 						.variant = sprite_selection
 				},
 				WidgetBlueprint{
-						.x = 108, .y = 76, .w = 48, .h = 10,
+						.x = 35, .y = 60, .w = 40, .h = 10,
 						.border_width_px = 1,
 						.padding_width_px = 2,
 						.variant = widget::TextBlueprint{
@@ -66,5 +68,18 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 								.kb_shortcut = SDL_SCANCODE_Q
 						}
 				},
+				WidgetBlueprint{
+						.x = 85, .y = 60, .w = 40, .h = 10,
+						.border_width_px = 1,
+						.padding_width_px = 2,
+						.variant = widget::TextBlueprint{
+								.initial_text = "SELECT",
+								.action_callback = []() -> Action {
+									LEVEL.sheet_editor_state->prepare_sprite_selection();
+									return Action::RETURN;
+								},
+								.kb_shortcut = SDL_SCANCODE_RETURN
+						}
+				}
 		}
 };

@@ -33,3 +33,7 @@ const m2::pb::SpriteSheets& m2::sedit::State::sprite_sheets() const {
 void m2::sedit::State::select_sprite_type(m2g::pb::SpriteType sprite_type) {
 	_selected_sprite_type = sprite_type;
 }
+
+void m2::sedit::State::prepare_sprite_selection() {
+	// TODO
+}
