@@ -12,6 +12,27 @@ float m2::VecF::distance_sq(const VecI& other) const {
 	return this->distance_sq(VecF{other});
 }
 
+m2::VecF m2::VecF::clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const {
+	auto cp = *this;
+	if (min) {
+		if (cp.x < min->x) {
+			cp.x = min->x;
+		}
+		if (cp.y < min->y) {
+			cp.y = min->y;
+		}
+	}
+	if (max) {
+		if (max->x < cp.x) {
+			cp.x = max->x;
+		}
+		if (max->y < cp.y) {
+			cp.y = max->y;
+		}
+	}
+	return cp;
+}
+
 std::array<m2::VecF, 4> m2::VecF::aabb_corners(float aabb_radius) const {
 	return {VecF{x + aabb_radius, y + aabb_radius}, VecF{x - aabb_radius, y + aabb_radius}, VecF{x - aabb_radius, y - aabb_radius}, VecF{x + aabb_radius, y - aabb_radius}};
 }

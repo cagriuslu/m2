@@ -28,99 +28,94 @@ m2::Id m2::obj::create_god() {
 			move_direction.x += 1.0f;
 		}
 		obj.position += move_direction.normalize() * ((float)GAME.delta_time_s() * 10.0f);
+		// Prevent God from going into negative quadrants
+		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
 		// Check if mouse is in positive quadrant
 		if (VecI mouse_coordinates = GAME.mouse_position_world_m().iround(); not mouse_coordinates.is_negative()) {
 			// Check if mouse pressed
 			if (GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
 				LOG_DEBUG("Mouse pressed");
-				switch (LEVEL.type()) {
-					case Level::Type::LEVEL_EDITOR: {
-						std::visit(m2::overloaded {
-								[=](ledit::State::PaintMode& v) { v.paint_sprite(mouse_coordinates); },
-								[=](ledit::State::EraseMode& v) { v.erase_position(mouse_coordinates); },
-								[=](ledit::State::PlaceMode& v) { v.place_object(mouse_coordinates); },
-								[=](ledit::State::RemoveMode& v) { v.remove_object(mouse_coordinates); },
-								[=](ledit::State::PickMode& v) {
-									if (v.pick_foreground) {
-										// Pick position
-										if (auto level_object = ledit::State::PickMode::lookup_foreground_object(mouse_coordinates); level_object) {
-											// Programmatically find and press the "Place" button
-											for (const auto& widget_ptr : LEVEL.left_hud_ui_state->widgets) {
-												// If the widget is Text
-												if (std::holds_alternative<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant)) {
-													// If the button is labeled correctly
-													if (const auto& widget_blueprint_text_variant = std::get<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant); widget_blueprint_text_variant.initial_text == m2::level_editor::place_button_label) {
-														// Press the button
-														widget_blueprint_text_variant.action_callback();
-														// Right hud points to `place_mode_right_hud`, select the object type
-														auto object_type_index = 0;
-														for (const auto& level_editor_object : GAME.level_editor_object_sprites) {
-															if (level_editor_object.first == level_object->type()) {
-																dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[1]).select(object_type_index);
-																break;
-															}
-															++object_type_index;
+				if (LEVEL.type() == Level::Type::LEVEL_EDITOR) {
+					std::visit(m2::overloaded {
+							[=](ledit::State::PaintMode& v) { v.paint_sprite(mouse_coordinates); },
+							[=](ledit::State::EraseMode& v) { v.erase_position(mouse_coordinates); },
+							[=](ledit::State::PlaceMode& v) { v.place_object(mouse_coordinates); },
+							[=](ledit::State::RemoveMode& v) { v.remove_object(mouse_coordinates); },
+							[=](ledit::State::PickMode& v) {
+								if (v.pick_foreground) {
+									// Pick position
+									if (auto level_object = ledit::State::PickMode::lookup_foreground_object(mouse_coordinates); level_object) {
+										// Programmatically find and press the "Place" button
+										for (const auto& widget_ptr : LEVEL.left_hud_ui_state->widgets) {
+											// If the widget is Text
+											if (std::holds_alternative<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant)) {
+												// If the button is labeled correctly
+												if (const auto& widget_blueprint_text_variant = std::get<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant); widget_blueprint_text_variant.initial_text == m2::level_editor::place_button_label) {
+													// Press the button
+													widget_blueprint_text_variant.action_callback();
+													// Right hud points to `place_mode_right_hud`, select the object type
+													auto object_type_index = 0;
+													for (const auto& level_editor_object : GAME.level_editor_object_sprites) {
+														if (level_editor_object.first == level_object->type()) {
+															dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[1]).select(object_type_index);
+															break;
 														}
-														// Select group type
-														auto group_type_index = protobuf::enum_index(level_object->group().type());
-														dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[2]).select(group_type_index);
-														// Select group instance
-														auto group_instance = level_object->group().instance();
-														dynamic_cast<ui::widget::IntegerSelection&>(*LEVEL.right_hud_ui_state->widgets[3]).select((int)group_instance);
-														break;
+														++object_type_index;
 													}
-												}
-											}
-										}
-									} else {
-										// Pick position
-										if (auto picked_sprite_type = ledit::State::PickMode::lookup_background_sprite(mouse_coordinates); picked_sprite_type) {
-											// Programmatically find and press the "Paint" button
-											for (const auto& widget_ptr : LEVEL.left_hud_ui_state->widgets) {
-												// If the widget is Text
-												if (std::holds_alternative<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant)) {
-													// If the button is labeled correctly
-													if (const auto& widget_blueprint_text_variant = std::get<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant); widget_blueprint_text_variant.initial_text == m2::level_editor::paint_button_label) {
-														// Press the button
-														widget_blueprint_text_variant.action_callback();
-														// Right hud points to `paint_mode_right_hud`, select the sprite type
-														auto sprite_type_index = 0;
-														for (const auto& sprite_type : GAME.level_editor_background_sprites) {
-															if (sprite_type == picked_sprite_type) {
-																dynamic_cast<ui::widget::ImageSelection&>(*LEVEL.right_hud_ui_state->widgets[1]).select(sprite_type_index);
-																break;
-															}
-															++sprite_type_index;
-														}
-														break;
-													}
+													// Select group type
+													auto group_type_index = protobuf::enum_index(level_object->group().type());
+													dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[2]).select(group_type_index);
+													// Select group instance
+													auto group_instance = level_object->group().instance();
+													dynamic_cast<ui::widget::IntegerSelection&>(*LEVEL.right_hud_ui_state->widgets[3]).select((int)group_instance);
+													break;
 												}
 											}
 										}
 									}
-								},
-								[=](ledit::State::SelectMode& v) {
-									v.selection_position_1 = mouse_coordinates;
-									v.selection_position_2 = {};
-									LOG_DEBUG("Selection position 1", *v.selection_position_1);
-								},
-								[=](ledit::State::ShiftMode& v) { v.shift(mouse_coordinates); },
-								[](MAYBE auto& v) {}
-						}, LEVEL.level_editor_state->mode);
-						break;
-					}
-					case Level::Type::PIXEL_EDITOR: {
-						std::visit(m2::overloaded {
-								[=](pedit::State::PaintMode& v) { v.paint_color(mouse_coordinates); },
-								[=](pedit::State::EraseMode& v) { v.erase_color(mouse_coordinates); },
-								[=](pedit::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates); },
-								[](MAYBE auto& v) {}
-						}, LEVEL.pixel_editor_state->mode);
-						break;
-					}
-					default:
-						throw M2FATAL("God is created for an invalid level type");
+								} else {
+									// Pick position
+									if (auto picked_sprite_type = ledit::State::PickMode::lookup_background_sprite(mouse_coordinates); picked_sprite_type) {
+										// Programmatically find and press the "Paint" button
+										for (const auto& widget_ptr : LEVEL.left_hud_ui_state->widgets) {
+											// If the widget is Text
+											if (std::holds_alternative<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant)) {
+												// If the button is labeled correctly
+												if (const auto& widget_blueprint_text_variant = std::get<ui::widget::TextBlueprint>(widget_ptr->blueprint->variant); widget_blueprint_text_variant.initial_text == m2::level_editor::paint_button_label) {
+													// Press the button
+													widget_blueprint_text_variant.action_callback();
+													// Right hud points to `paint_mode_right_hud`, select the sprite type
+													auto sprite_type_index = 0;
+													for (const auto& sprite_type : GAME.level_editor_background_sprites) {
+														if (sprite_type == picked_sprite_type) {
+															dynamic_cast<ui::widget::ImageSelection&>(*LEVEL.right_hud_ui_state->widgets[1]).select(sprite_type_index);
+															break;
+														}
+														++sprite_type_index;
+													}
+													break;
+												}
+											}
+										}
+									}
+								}
+							},
+							[=](ledit::State::SelectMode& v) {
+								v.selection_position_1 = mouse_coordinates;
+								v.selection_position_2 = {};
+								LOG_DEBUG("Selection position 1", *v.selection_position_1);
+							},
+							[=](ledit::State::ShiftMode& v) { v.shift(mouse_coordinates); },
+							[](MAYBE auto& v) {}
+					}, LEVEL.level_editor_state->mode);
+				} else if (LEVEL.type() == Level::Type::PIXEL_EDITOR) {
+					std::visit(m2::overloaded {
+							[=](pedit::State::PaintMode& v) { v.paint_color(mouse_coordinates); },
+							[=](pedit::State::EraseMode& v) { v.erase_color(mouse_coordinates); },
+							[=](pedit::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates); },
+							[](MAYBE auto& v) {}
+					}, LEVEL.pixel_editor_state->mode);
 				}
 			} else if (GAME.events.pop_mouse_button_release(MouseButton::PRIMARY)) {
 				// If mouse is released

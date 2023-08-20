@@ -56,6 +56,7 @@ namespace m2 {
 		[[nodiscard]] inline VecF ceil_length(float len) const { return len < length() ? with_length(len) : *this; }
 		[[nodiscard]] inline VecF lerp(const VecF& to, float ratio) const { return *this + (to - *this) * ratio; }
 		[[nodiscard]] inline VecF rotate(float rads) const { return from_angle(angle_rads() + rads).with_length(length()); }
+		[[nodiscard]] VecF clamp(const std::optional<VecF>& min, const std::optional<VecF>& max) const;
 
 		/// Order of corners: Bottom-right, Bottom-left, Top-left, Top-right
 		[[nodiscard]] std::array<VecF, 4> aabb_corners(float aabb_radius) const;
