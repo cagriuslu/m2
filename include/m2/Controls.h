@@ -13,6 +13,8 @@ namespace m2 {
 		CONSOLE,
 		ENTER,
 		BACKSPACE,
+		MINUS,
+		PLUS,
 		end
 	};
 	constexpr unsigned u(Key k) {
