@@ -124,7 +124,7 @@ m2::Id m2::obj::create_god() {
 						std::visit(m2::overloaded {
 								[=](ledit::State::SelectMode& v) {
 									if (v.selection_position_1) {
-										auto [low_position, high_position] = std::minmax(*v.selection_position_1, mouse_coordinates, Vec2iCompareTopLeftToBottomRight{});
+										auto [low_position, high_position] = std::minmax(*v.selection_position_1, mouse_coordinates, VecICompareTopLeftToBottomRight{});
 										v.selection_position_1 = low_position;
 										v.selection_position_2 = high_position;
 										LOG_DEBUG("Selection positions", *v.selection_position_1, *v.selection_position_2);

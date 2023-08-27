@@ -72,7 +72,7 @@ m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float 
 	auto& approach_map = _approach_from_cache[to];
 
 	// Holds accumulated cost of reaching a position. Key is the position, value is its cost.
-	std::unordered_map<VecI, float, Vec2iHash> provisional_cost{{from, 0.0f}};
+	std::unordered_map<VecI, float, VecIHash> provisional_cost{{from, 0.0f}};
 
 	while (not frontiers.empty()) {
 		auto current_frontier_it = frontiers.begin();

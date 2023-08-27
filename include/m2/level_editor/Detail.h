@@ -7,8 +7,8 @@ namespace m2::level_editor {
 	constexpr std::string_view paint_button_label = "PAINT";
 	constexpr std::string_view place_button_label = "PLACE";
 
-	using BackgroundPlaceholderMap = std::unordered_map<VecI, std::pair<Id, m2g::pb::SpriteType>, Vec2iHash>;
-	using ForegroundPlaceholderMap = std::unordered_map<VecI, std::pair<Id, m2::pb::LevelObject>, Vec2iHash>;
+	using BackgroundPlaceholderMap = std::unordered_map<VecI, std::pair<Id, m2g::pb::SpriteType>, VecIHash>;
+	using ForegroundPlaceholderMap = std::unordered_map<VecI, std::pair<Id, m2::pb::LevelObject>, VecIHash>;
 
 	/// Shifts placeholders between [x1, x2] and [y1, y2] by (x_shift_count, y_shift_count)
 	template <typename PlaceholderMapType>
@@ -25,7 +25,7 @@ namespace m2::level_editor {
 				[](const typename PlaceholderMapType::value_type& kv) { return kv.first; });
 
 		// Sort bg placeholders from right to left, because unordered_map does not allow multiple values in the same position
-		std::sort(placeholders_to_move.begin(), placeholders_to_move.end(), Vec2iCompareBottomRightToTopLeft{});
+		std::sort(placeholders_to_move.begin(), placeholders_to_move.end(), VecICompareBottomRightToTopLeft{});
 
 		// Move the placeholders
 		for (const auto& ph_position : placeholders_to_move) {

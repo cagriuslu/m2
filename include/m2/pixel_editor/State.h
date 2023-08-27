@@ -17,7 +17,7 @@ namespace m2::pedit {
 
 		std::variant<std::monostate,PaintMode,EraseMode,ColorPickerMode> mode;
 		SDL_Color selected_color;
-		std::unordered_map<VecI, std::pair<Id,SDL_Color>, Vec2iHash> pixels;
+		std::unordered_map<VecI, std::pair<Id,SDL_Color>, VecIHash> pixels;
 		sdl::SurfaceUniquePtr image_surface;
 		VecI image_offset;
 

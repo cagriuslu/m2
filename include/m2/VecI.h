@@ -35,22 +35,22 @@ namespace m2 {
 	std::string to_string(const m2::VecI&);
 	std::string to_string(const std::vector<VecI>&);
 
-	struct Vec2iHash {
+	struct VecIHash {
 		inline size_t operator()(const VecI& a) const { return std::hash<uint64_t>{}((uint64_t)a.x | ((uint64_t)a.y << 32)); }
 	};
-	struct Vec2iCompareRightToLeft {
+	struct VecICompareRightToLeft {
 		// Reverse sort based on x coordinate
 		inline bool operator()(const VecI& a, const VecI& b) { return b.x < a.x; }
 	};
-	struct Vec2iCompareBottomToTop {
+	struct VecICompareBottomToTop {
 		// Reverse sort based on y coordinate
 		inline bool operator()(const VecI& a, const VecI& b) { return b.y < a.y; }
 	};
-	struct Vec2iCompareTopLeftToBottomRight {
+	struct VecICompareTopLeftToBottomRight {
 		// Forward sort based on first y, then x coordinate
 		inline bool operator()(const VecI& a, const VecI& b) { return a.y == b.y ? a.x < b.x : a.y < b.y; }
 	};
-	struct Vec2iCompareBottomRightToTopLeft {
+	struct VecICompareBottomRightToTopLeft {
 		// Reverse sort based on first y, then x coordinate
 		inline bool operator()(const VecI& a, const VecI& b) { return a.y == b.y ? b.x < a.x : b.y < a.y; }
 	};
