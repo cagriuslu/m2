@@ -1,5 +1,6 @@
 #include <m2/RectF.h>
 #include <m2/RectI.h>
+#include <m2/Meta.h>
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
@@ -24,6 +25,9 @@ float m2::RectF::area() const {
 }
 m2::RectF m2::RectF::shift_origin(const VecF& direction) const {
 	return {x - direction.x, y - direction.y, w, h};
+}
+m2::RectF m2::RectF::expand(float amount) const {
+	return {x - amount, y - amount, w + amount + amount, h + amount + amount};
 }
 std::optional<m2::RectF> m2::RectF::intersect(const RectF& other) const {
 	if (not (*this) || not other) {
@@ -63,10 +67,10 @@ std::optional<m2::RectF> m2::RectF::intersect(const RectF& other) const {
 std::vector<m2::VecI> m2::RectF::intersecting_cells() const {
 	std::vector<m2::VecI> cells;
 
-	float lower_x = floorf(x), higher_x = ceilf(x + w);
-	float lower_y = floorf(y), higher_y = ceilf(y + h);
-	for (float b = lower_y; b < higher_y; b += 1.0f) {
-		for (float a = lower_x; a < higher_x; a += 1.0f) {
+	int lower_x = I(floorf(x)), higher_x = I(ceilf(x + w));
+	int lower_y = I(floorf(y)), higher_y = I(ceilf(y + h));
+	for (int b = lower_y; b < higher_y; ++b) {
+		for (int a = lower_x; a < higher_x; ++a) {
 			cells.emplace_back(a, b);
 		}
 	}

@@ -51,6 +51,11 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		auto& player = LEVEL.objects[LEVEL.player_id];
 		camera.position = player.position;
 
+		// Call dynamic image loader
+		if (LEVEL.type() == Level::Type::SHEET_EDITOR && LEVEL.dynamic_image_loader) {
+			LEVEL.dynamic_image_loader->move(GAME.viewport_to_2d_world_rect_m());
+		}
+
 		// Mouse lookahead disabled temporarily
 //		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
 //			// Give an offset to the camera's location based on the position of the mouse

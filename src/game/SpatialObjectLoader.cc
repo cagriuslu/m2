@@ -4,6 +4,9 @@
 void m2::SpatialObjectLoader::move(const m2::RectF &viewport) {
 	// TODO this is a very naive, low performance implementation
 
+	// Expand the viewport by 1
+	auto expanded_viewport = viewport.expand(1.0f);
+
 	std::unordered_set<VecI, VecIHash> loaded_positions;
 	// Extract keys of loaded object into set
 	transform(_loaded_objs.begin(), _loaded_objs.end(), // Iterate over loaded objects
@@ -11,7 +14,7 @@ void m2::SpatialObjectLoader::move(const m2::RectF &viewport) {
 			[](const auto& kv_pair) { return kv_pair.first; }); // Extract the keys
 
 	// Load everything in viewport
-	for (const auto& position : viewport.intersecting_cells()) {
+	for (const auto& position : expanded_viewport.intersecting_cells()) {
 		// Check if load has been called for the position already
 		if (_loaded_objs.contains(position)) {
 			// Remove from loaded positions

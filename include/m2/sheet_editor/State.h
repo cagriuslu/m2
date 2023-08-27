@@ -2,6 +2,7 @@
 #include "../Meta.h"
 #include "../ui/Blueprint.h"
 #include "../ui/State.h"
+#include "../sheet_editor/DynamicImageLoader.h"
 #include <m2g_SpriteType.pb.h>
 #include <Sprite.pb.h>
 #include <filesystem>

@@ -382,6 +382,19 @@ void m2::Game::recalculate_mouse_position() {
 	}
 }
 
+m2::VecF m2::Game::pixel_to_2d_world_m(const VecI& pixel_position) {
+	auto screen_center_to_pixel_position_px = VecI{pixel_position.x - (_dims.window.w / 2), pixel_position.y - (_dims.window.h / 2)};
+	auto screen_center_to_pixel_position_m = VecF{F(screen_center_to_pixel_position_px.x) / F(_dims.ppm), F(screen_center_to_pixel_position_px.y) / F(_dims.ppm)};
+	auto camera_position = _level->objects[_level->camera_id].position;
+	return screen_center_to_pixel_position_m + camera_position;
+}
+
+m2::RectF m2::Game::viewport_to_2d_world_rect_m() {
+	auto top_left = pixel_to_2d_world_m(VecI{dimensions().game.x, dimensions().game.y});
+	auto bottom_right = pixel_to_2d_world_m(VecI{dimensions().game.x + dimensions().game.w, dimensions().game.y + dimensions().game.h});
+	return RectF::from_corners(top_left, bottom_right);
+}
+
 void m2::Game::recalculate_directional_audio() {
 	if (_level->left_listener || _level->right_listener) {
 		// Loop over sounds

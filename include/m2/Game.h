@@ -135,6 +135,8 @@ namespace m2 {
 		inline float delta_time_s() const { return _delta_time_s; }
 		inline const VecF& mouse_position_world_m() const { return _mouse_position_world_m; }
 		inline const VecF& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
+		VecF pixel_to_2d_world_m(const VecI& pixel_position);
+		RectF viewport_to_2d_world_rect_m();
 
 		// Handlers
 		void handle_quit_event();

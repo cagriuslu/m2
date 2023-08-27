@@ -3,6 +3,7 @@
 #include "level_editor/State.h"
 #include "pixel_editor/State.h"
 #include "sheet_editor/State.h"
+#include "sheet_editor/DynamicImageLoader.h"
 #include "Object.h"
 #include "ui/State.h"
 #include "DrawList.h"
@@ -62,6 +63,7 @@ namespace m2 {
 		std::optional<ledit::State> level_editor_state;
 		std::optional<pedit::State> pixel_editor_state;
 		std::optional<sedit::State> sheet_editor_state;
+		std::optional<DynamicImageLoader> dynamic_image_loader;
 
 		void_expected init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
 		void_expected init_level_editor(const std::filesystem::path& lb_path);
