@@ -26,5 +26,6 @@ namespace m2 {
 		[[nodiscard]] float area() const;
 		[[nodiscard]] RectF shift_origin(const VecF& direction) const;
 		[[nodiscard]] std::optional<RectF> intersect(const RectF& other) const;
+		[[nodiscard]] std::vector<VecI> intersecting_cells() const;
 	};
 }

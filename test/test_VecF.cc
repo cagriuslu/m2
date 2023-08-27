@@ -77,7 +77,7 @@ TEST(VecF, basic) {
 	VecF v18{-1.0f, -2.0f};
 	EXPECT_FLOAT_EQ(v18.distance({-4.0f, 2.0f}), 5.0f);
 
-	EXPECT_FLOAT_EQ(v18.distance_sq({-4.0f, 2.0f}), 25.0f);
+	EXPECT_FLOAT_EQ(v18.distance_sq(VecF{-4.0f, 2.0f}), 25.0f);
 
 	VecF v19{0.0f, 1.0f};
 	EXPECT_FLOAT_EQ(v19.angle_rads(), PI / 2.0f);

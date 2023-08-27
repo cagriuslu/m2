@@ -60,3 +60,16 @@ std::optional<m2::RectF> m2::RectF::intersect(const RectF& other) const {
 
 	return result ? result : std::optional<m2::RectF>{};
 }
+std::vector<m2::VecI> m2::RectF::intersecting_cells() const {
+	std::vector<m2::VecI> cells;
+
+	float lower_x = floorf(x), higher_x = ceilf(x + w);
+	float lower_y = floorf(y), higher_y = ceilf(y + h);
+	for (float b = lower_y; b < higher_y; b += 1.0f) {
+		for (float a = lower_x; a < higher_x; a += 1.0f) {
+			cells.emplace_back(a, b);
+		}
+	}
+	return cells;
+}
+
