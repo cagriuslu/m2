@@ -271,6 +271,20 @@ m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rec
 	return state.execute(rect);
 }
 
+m2::ui::Widget* m2::ui::find_text_widget(State& state, const std::string& text) {
+	auto it = std::ranges::find_if(state.widgets,
+			// Predicate
+			[=](const auto* blueprint) {
+				const auto* text_variant = std::get_if<ui::widget::TextBlueprint>(&blueprint->variant);
+				// If widget is Text and the button is labelled correctly
+				return text_variant && text_variant->initial_text == text;
+			},
+			// Projection
+			[](const auto& unique_blueprint) { return unique_blueprint->blueprint; });
+
+	return (it != state.widgets.end()) ? it->get() : nullptr;
+}
+
 const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprint{
 		.initial_text = "",
 		.action_callback = [](std::stringstream& ss) -> Action {

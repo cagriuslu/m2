@@ -29,6 +29,7 @@ namespace m2::ui {
 	// Helpers
 	Action execute_blocking(const Blueprint* blueprint);
 	Action execute_blocking(const Blueprint* blueprint, SDL_Rect rect);
+	Widget* find_text_widget(State& state, const std::string& text);
 
 	extern const Blueprint console_ui;
 	extern const Blueprint message_box_ui;
