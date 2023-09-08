@@ -7,10 +7,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_origin() {
 
 	auto& gfx = origin.add_graphic();
 	gfx.on_draw = [](m2::Graphic &gfx) {
-		SDL_SetRenderDrawColor(GAME.renderer, 255, 0, 0, 255);
-		auto draw_position = VecI{screen_origin_to_position_px(gfx.parent().position)};
-		SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
-		SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
+		Graphic::draw_cross(gfx.parent().position, SDL_Color{255, 0, 0, 255});
 	};
 
 	return obj_pair;

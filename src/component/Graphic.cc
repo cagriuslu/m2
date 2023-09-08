@@ -385,3 +385,25 @@ void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
 	SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
 	SDL_RenderFillRect(GAME.renderer, &rect);
 }
+
+void m2::Graphic::color_rect(const RectF& world_coordinates_m, SDL_Color color) {
+	auto screen_origin_to_top_left_px = screen_origin_to_position_px(world_coordinates_m.top_left());
+	auto screen_origin_to_bottom_right_px = screen_origin_to_position_px(world_coordinates_m.bottom_right());
+	auto rect = SDL_Rect{
+			(int)roundf(screen_origin_to_top_left_px.x),
+			(int)roundf(screen_origin_to_top_left_px.y),
+			(int)roundf(screen_origin_to_bottom_right_px.x - screen_origin_to_top_left_px.x),
+			(int)roundf(screen_origin_to_bottom_right_px.y - screen_origin_to_top_left_px.y)
+	};
+
+	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
+	SDL_RenderFillRect(GAME.renderer, &rect);
+}
+
+void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
+	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+	auto draw_position = VecI{screen_origin_to_position_px(world_position)};
+	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
+	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
+}

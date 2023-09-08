@@ -6,6 +6,7 @@
 #include "../m3/VecF.h"
 #include "../m3/Line.h"
 #include "../m3/Plane.h"
+#include "../RectF.h"
 #include <functional>
 
 namespace m2 {
@@ -71,7 +72,10 @@ namespace m2 {
 
 		static void default_draw(Graphic& gfx);
 		static void default_draw_addons(Graphic& gfx);
+
 		/// Color the world cell with the given color
 		static void color_cell(const VecI& cell, SDL_Color color);
+		static void color_rect(const RectF& world_coordinates_m, SDL_Color color);
+		static void draw_cross(const VecF& world_position, SDL_Color color);
 	};
 }

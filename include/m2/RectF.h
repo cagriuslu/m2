@@ -23,11 +23,17 @@ namespace m2 {
 		explicit operator bool() const;
 		explicit operator SDL_FRect() const;
 		explicit operator SDL_Rect() const;
+		[[nodiscard]] inline VecF top_left() const { return VecF{x, y}; }
+		[[nodiscard]] inline VecF top_right() const { return VecF{x + w, y}; }
+		[[nodiscard]] inline VecF bottom_left() const { return VecF{x, y + h}; }
+		[[nodiscard]] inline VecF bottom_right() const { return VecF{x + w, y + h}; }
 
 		[[nodiscard]] float area() const;
-		[[nodiscard]] RectF shift_origin(const VecF& direction) const;
+		[[nodiscard]] RectF shift(const VecF& direction) const; // Shifts the rect
+		[[nodiscard]] RectF shift_origin(const VecF& direction) const; // Shifts the origin of the coordinate system
 		[[nodiscard]] RectF expand(float amount) const;
 		[[nodiscard]] std::optional<RectF> intersect(const RectF& other) const;
 		[[nodiscard]] std::vector<VecI> intersecting_cells() const;
+		[[nodiscard]] VecF center() const;
 	};
 }

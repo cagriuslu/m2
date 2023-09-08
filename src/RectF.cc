@@ -23,6 +23,9 @@ m2::RectF::operator SDL_Rect() const {
 float m2::RectF::area() const {
 	return w * h;
 }
+m2::RectF m2::RectF::shift(const VecF& direction) const {
+	return {x + direction.x, y + direction.y, w, h};
+}
 m2::RectF m2::RectF::shift_origin(const VecF& direction) const {
 	return {x - direction.x, y - direction.y, w, h};
 }
@@ -76,4 +79,6 @@ std::vector<m2::VecI> m2::RectF::intersecting_cells() const {
 	}
 	return cells;
 }
-
+m2::VecF m2::RectF::center() const {
+	return VecF{x + w / 2.0f, y + h / 2.0f};
+}

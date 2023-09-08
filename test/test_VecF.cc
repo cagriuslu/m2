@@ -3,9 +3,9 @@
 #include <m2/VecI.h>
 #include <m2/M2.h>
 
-TEST(VecF, basic) {
-	using namespace m2;
+using namespace m2;
 
+TEST(VecF, basic) {
 	VecF v1;
 	EXPECT_FLOAT_EQ(v1.x, 0.0f);
 	EXPECT_FLOAT_EQ(v1.y, 0.0f);
@@ -115,4 +115,21 @@ TEST(VecF, basic) {
 
 	VecF v31{1.23f, 4.56f};
 	EXPECT_STREQ(to_string(v31).c_str(), "{x:1.23,y:4.56}");
+}
+
+TEST(VecF, hround) {
+	VecF v1;
+	VecF v2 = v1.hround();
+	EXPECT_FLOAT_EQ(v2.x, 0.0f);
+	EXPECT_FLOAT_EQ(v2.y, 0.0f);
+
+	VecF v3{0.4f, -0.4f};
+	VecF v4 = v3.hround();
+	EXPECT_FLOAT_EQ(v4.x, 0.5f);
+	EXPECT_FLOAT_EQ(v4.y, -0.5f);
+
+	VecF v5{0.8f, -0.8f};
+	VecF v6 = v5.hround();
+	EXPECT_FLOAT_EQ(v6.x, 1.0f);
+	EXPECT_FLOAT_EQ(v6.y, -1.0f);
 }

@@ -15,6 +15,7 @@ message Color {
 
 // Only background tiles can have foreground companion
 message ForegroundCompanion {
+  // Vector from the center of the (rect) to the position that should be the origin
   VecF center_offset_px = 1;
   repeated RectI rects = 2; // w.r.t SpriteSheet coordinates
 }
@@ -42,7 +43,7 @@ message SpriteEffect {
 
 message Collider {
   // Vector from origin of the sprite to the position that should be the origin of this collider.
-  VecF center_offset_px = 1;
+  VecF center_offset_px = 1; // TODO rename to origin_offset_px
 
   oneof collider_variant {
     Dim2f rect_dims_px = 11;

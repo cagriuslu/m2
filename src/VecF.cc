@@ -7,6 +7,21 @@ m2::VecF::VecF(const VecI& v) : VecF(v.x, v.y) {}
 m2::VecI m2::VecF::iround() const {
 	return VecI{this->round()};
 }
+m2::VecF m2::VecF::hround() const {
+	auto h = [](float f) {
+		float diff = f - floorf(f), new_f;
+		if (diff < 0.25f) {
+			new_f = floorf(f);
+		} else if (diff < 0.75f) {
+			new_f = floorf(f) + 0.5f;
+		} else {
+			new_f = floorf(f) + 1.0f;
+		}
+		return new_f;
+	};
+
+	return VecF{h(x), h(y)};
+}
 
 float m2::VecF::distance_sq(const VecI& other) const {
 	return this->distance_sq(VecF{other});

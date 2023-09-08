@@ -38,6 +38,7 @@ namespace m2 {
 
 		[[nodiscard]] inline bool is_nan() const { return isnan(x) || isnan(y); }
 		[[nodiscard]] inline bool is_near(const VecF& other, float tolerance) const { return fabsf(other.x - x) <= tolerance && fabsf(other.y - y) <= tolerance; }
+		[[nodiscard]] inline bool is_negative() const { return x < 0.0f || y < 0.0f; }
 		[[nodiscard]] inline bool is_small(float tolerance) const { return is_near({}, tolerance); }
 		[[nodiscard]] inline float length_sq() const { return x * x + y * y; }
 		[[nodiscard]] inline float length() const { return sqrtf(length_sq()); }
@@ -64,10 +65,28 @@ namespace m2 {
 		// VecI
 		explicit VecF(const VecI& v);
 		[[nodiscard]] VecI iround() const;
+		[[nodiscard]] VecF hround() const; // Round to halves (ex. 0.0, 0.5, 1.0, 1.5, ...)
 
 		inline static VecF nan() { return {NAN, NAN}; }
 		inline static VecF from_angle(float rads) { return {cosf(rads), sinf(rads)}; }
 	};
 
 	std::string to_string(const VecF&);
+
+	struct VecFCompareRightToLeft {
+		// Reverse sort based on x coordinate
+		inline bool operator()(const VecF& a, const VecF& b) { return b.x < a.x; }
+	};
+	struct VecFCompareBottomToTop {
+		// Reverse sort based on y coordinate
+		inline bool operator()(const VecF& a, const VecF& b) { return b.y < a.y; }
+	};
+	struct VecFCompareTopLeftToBottomRight {
+		// Forward sort based on first y, then x coordinate
+		inline bool operator()(const VecF& a, const VecF& b) { return a.y == b.y ? a.x < b.x : a.y < b.y; }
+	};
+	struct VecFCompareBottomRightToTopLeft {
+		// Reverse sort based on first y, then x coordinate
+		inline bool operator()(const VecF& a, const VecF& b) { return a.y == b.y ? b.x < a.x : b.y < a.y; }
+	};
 }
