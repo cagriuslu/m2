@@ -222,6 +222,13 @@ const widget::TextBlueprint left_hud_cancel_button = {
 			return Action::CONTINUE;
 		}
 };
+const widget::TextBlueprint left_hud_coordinates = {
+		.initial_text = "0.0:0.0",
+		.update_callback = []() {
+			auto mouse_position = GAME.mouse_position_world_m().hround();
+			return std::make_pair(Action::CONTINUE, m2::to_string(mouse_position.x, 1) + ':' + m2::to_string(mouse_position.y, 1));
+		}
+};
 const Blueprint m2::ui::sheet_editor_left_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
@@ -257,6 +264,11 @@ const Blueprint m2::ui::sheet_editor_left_hud = {
 						.padding_width_px = 2,
 						.variant = left_hud_cancel_button
 				},
+				WidgetBlueprint{
+						.x = 0, .y = 70, .w = 19, .h = 2,
+						.border_width_px = 0,
+						.variant = left_hud_coordinates
+				}
 		}
 };
 

@@ -234,7 +234,9 @@ RectI m2::sedit::State::selected_sprite_rect() const {
 }
 
 VecF m2::sedit::State::selected_sprite_center() const {
-	return RectF{selected_sprite_rect()}.center();
+	// Rect needs to be shifted to fit into cells
+	auto rect = RectF{selected_sprite_rect()}.shift({-0.5f, -0.5f});
+	return rect.center();
 }
 
 VecF m2::sedit::State::selected_sprite_origin() const {

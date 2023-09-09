@@ -15,6 +15,7 @@ namespace m2 {
 	std::string to_string(long long);
 	std::string to_string(unsigned long long);
 	std::string to_string(float);
+	std::string to_string(float, unsigned precision);
 	std::string to_string(double);
 	std::string to_string(const char*);
 	std::string to_string(const std::string&);

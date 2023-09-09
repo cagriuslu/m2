@@ -140,10 +140,10 @@ m2::Id m2::obj::create_god() {
 		if (LEVEL.type() == Level::Type::SHEET_EDITOR) {
 			if (GAME.events.pop_key_press(Key::MINUS)) {
 				// Decrease game height
-				GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, GAME.dimensions().height_m + Rational(1,1));
+				GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, GAME.dimensions().height_m + Rational(5,1));
 			} else if (GAME.events.pop_key_press(Key::PLUS)) {
 				// Increase game height
-				GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, GAME.dimensions().height_m + Rational(-1,1));
+				GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, GAME.dimensions().height_m + Rational(-5,1));
 			}
 		}
 	};

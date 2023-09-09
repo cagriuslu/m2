@@ -312,7 +312,7 @@
         {
           "type": "PLAYER_LOOKDOWN_00",
           "rect": {"x": 26, "y": 0, "w": 26, "h": 36},
-          "centerOffsetPx": {"x": 0, "y": 10},
+          "centerOffsetPx": {"x": -0.5, "y": 10},
           "backgroundCollider": {
             "circRadiusPx": 7.5
           },
