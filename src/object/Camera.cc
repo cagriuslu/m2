@@ -72,12 +72,12 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		}
 	};
 
-	if (LEVEL.type() == Level::Type::LEVEL_EDITOR || LEVEL.type() == Level::Type::PIXEL_EDITOR) {
+	if (LEVEL.type() == Level::Type::LEVEL_EDITOR || LEVEL.type() == Level::Type::PIXEL_EDITOR || LEVEL.type() == Level::Type::SHEET_EDITOR) {
 		// Add graphics
 		auto& gfx = camera.add_graphic();
 		gfx.on_draw = [&](MAYBE Graphic& gfx) {
 			auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
-			if (camera_data->draw_grid_lines) {
+			if (camera_data->draw_grid_lines || LEVEL.type() == Level::Type::SHEET_EDITOR) {
 				draw_grid_lines(camera.position);
 			}
 		};
