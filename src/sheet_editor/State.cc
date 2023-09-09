@@ -133,15 +133,38 @@ void State::BackgroundColliderMode::on_draw() const {
 
 	if (current_rect) {
 		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
-		Graphic::color_rect(current_rect->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
+		auto rect = current_rect->shift(sprite_center);
+		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
+		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
 	}
 	if (current_circ) {
 		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
-		Graphic::color_rect(current_circ->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
+		auto rect = current_circ->shift(sprite_center);
+		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
+		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::BackgroundColliderMode::set() {
-	// TODO
+	auto selection_results = SelectionResult{GAME.events};
+	// If rect is selected
+	if (selection_results.is_primary_selection_finished()) {
+		auto positions = selection_results.primary_halfcell_selection_position_m();
+		auto rect = RectF::from_corners(positions->first, positions->second); // wrt sprite coordinates
+		auto origin_offset = rect.center() - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
+		auto dims = VecF{rect.w, rect.h}; // new dims
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_background_collider()->mutable_rect_dims_px()->set_w(dims.x);
+			sprite.mutable_background_collider()->mutable_rect_dims_px()->set_h(dims.y);
+		});
+		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center()); // current
+		current_circ = std::nullopt;
+		GAME.events.reset_primary_selection();
+	} else if (selection_results.is_secondary_selection_finished()) {
+		// If circ is selected
+		// TODO
+	}
 }
 void State::BackgroundColliderMode::reset() {
 	// TODO
@@ -178,15 +201,38 @@ void State::ForegroundColliderMode::on_draw() const {
 
 	if (current_rect) {
 		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
-		Graphic::color_rect(current_rect->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
+		auto rect = current_rect->shift(sprite_center);
+		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
+		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
 	}
 	if (current_circ) {
 		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
-		Graphic::color_rect(current_circ->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
+		auto rect = current_circ->shift(sprite_center);
+		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
+		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::ForegroundColliderMode::set() {
-	// TODO
+	auto selection_results = SelectionResult{GAME.events};
+	// If rect is selected
+	if (selection_results.is_primary_selection_finished()) {
+		auto positions = selection_results.primary_halfcell_selection_position_m();
+		auto rect = RectF::from_corners(positions->first, positions->second); // wrt sprite coordinates
+		auto origin_offset = rect.center() - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
+		auto dims = VecF{rect.w, rect.h}; // new dims
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_foreground_collider()->mutable_rect_dims_px()->set_w(dims.x);
+			sprite.mutable_foreground_collider()->mutable_rect_dims_px()->set_h(dims.y);
+		});
+		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center()); // current
+		current_circ = std::nullopt;
+		GAME.events.reset_primary_selection();
+	} else if (selection_results.is_secondary_selection_finished()) {
+		// If circ is selected
+		// TODO
+	}
 }
 void State::ForegroundColliderMode::reset() {
 	// TODO
@@ -227,6 +273,31 @@ const pb::Sprite& m2::sedit::State::selected_sprite() const {
 		}
 	}
 	throw M2ERROR("Sprite sheet does not contain selected sprite");
+}
+
+void m2::sedit::State::modify_selected_sprite(std::function<void(pb::Sprite&)> modifier) {
+	// If path exists,
+	if (std::filesystem::exists(_path)) {
+		// Check if the file is a valid pb::SpriteSheets
+		if (auto sprite_sheets = protobuf::json_file_to_message<pb::SpriteSheets>(_path); sprite_sheets) {
+			for (int i = 0; i < sprite_sheets->sheets_size(); ++i) {
+				auto* mutable_sheet = sprite_sheets->mutable_sheets(i);
+				for (int j = 0; j < mutable_sheet->sprites_size(); ++j) {
+					auto* mutable_sprite = mutable_sheet->mutable_sprites(j);
+					if (mutable_sprite->type() == _selected_sprite_type) {
+						modifier(*mutable_sprite);
+						protobuf::message_to_json_file(*sprite_sheets, _path);
+						return;
+					}
+				}
+			}
+			throw M2ERROR("Sprite not found in SpriteSheets");
+		} else {
+			throw M2ERROR("File is not a valid m2::pb::SpriteSheets: " + _path.string());
+		}
+	} else {
+		throw M2ERROR("Can't modify nonexistent file");
+	}
 }
 
 RectI m2::sedit::State::selected_sprite_rect() const {

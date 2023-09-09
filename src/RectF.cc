@@ -1,6 +1,7 @@
 #include <m2/RectF.h>
 #include <m2/RectI.h>
 #include <m2/Meta.h>
+#include <sstream>
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
@@ -88,4 +89,10 @@ std::vector<m2::VecI> m2::RectF::intersecting_cells() const {
 }
 m2::VecF m2::RectF::center() const {
 	return VecF{x + w / 2.0f, y + h / 2.0f};
+}
+
+std::string m2::to_string(const RectF& rect) {
+	std::stringstream ss;
+	ss << "{x:" << rect.x << ",y:" << rect.y << ",w:" << rect.w << ",h:" << rect.h << "}";
+	return ss.str();
 }

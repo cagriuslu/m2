@@ -36,4 +36,6 @@ namespace m2 {
 		[[nodiscard]] std::vector<VecI> intersecting_cells() const;
 		[[nodiscard]] VecF center() const;
 	};
+
+	std::string to_string(const RectF&);
 }

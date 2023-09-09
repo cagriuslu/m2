@@ -63,7 +63,7 @@ namespace m2::sedit {
 			void on_draw() const;
 
 			void set();
-			std::optional<m2::RectF> current_rect, current_circ;
+			std::optional<m2::RectF> current_rect, current_circ; // wrt sprite center
 			void reset();
 		};
 		struct ForegroundColliderMode {
@@ -77,7 +77,7 @@ namespace m2::sedit {
 			void on_draw() const;
 
 			void set();
-			std::optional<m2::RectF> current_rect, current_circ;
+			std::optional<m2::RectF> current_rect, current_circ; // wrt sprite center
 			void reset();
 		};
 		std::variant<std::monostate, ForegroundCompanionMode, RectMode, BackgroundColliderMode, ForegroundColliderMode> mode;
@@ -86,6 +86,7 @@ namespace m2::sedit {
 
 		const pb::SpriteSheets& sprite_sheets() const; // This function re-reads the file every time it's called.
 		const pb::Sprite& selected_sprite() const; // This function re-reads the file every time it's called.
+		void modify_selected_sprite(std::function<void(pb::Sprite&)> modifier); // This function re-reads the file every time it's called.
 		RectI selected_sprite_rect() const; // This function re-reads the file every time it's called.
 		VecF selected_sprite_center() const; // This function re-reads the file every time it's called.
 		VecF selected_sprite_origin() const; // This function re-reads the file every time it's called.
