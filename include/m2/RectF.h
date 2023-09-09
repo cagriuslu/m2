@@ -18,7 +18,7 @@ namespace m2 {
 		explicit RectF(const SDL_Rect& r);
 		explicit RectF(const pb::RectI& r);
 		static inline RectF centered_around(const VecF& center, float w, float h) { return {center.x - w / 2.0f, center.y - h / 2.0f, w, h}; }
-		static inline RectF from_corners(const VecF& top_left, const VecF& bottom_right) { return {top_left.x, top_left.y, bottom_right.x - top_left.x, bottom_right.y - top_left.y}; }
+		static RectF from_corners(const VecF& corner1, const VecF& corner2);
 
 		explicit operator bool() const;
 		explicit operator SDL_FRect() const;

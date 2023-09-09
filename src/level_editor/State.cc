@@ -2,6 +2,12 @@
 #include <m2/Game.h>
 #include <m2/object/Ghost.h>
 #include <m2/object/Placeholder.h>
+#include <m2/game/Selection.h>
+
+namespace {
+	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 180};
+	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
+}
 
 void m2::ledit::State::PaintMode::select_sprite_type(m2g::pb::SpriteType sprite_type) {
 	if (selected_sprite_ghost_id) {
@@ -83,70 +89,101 @@ std::optional<m2::pb::LevelObject> m2::ledit::State::PickMode::lookup_foreground
 	}
 	return {};
 }
+m2::ledit::State::SelectMode::SelectMode() {
+	// Enable selection
+	Events::enable_primary_selection(RectI{GAME.dimensions().game});
+}
+m2::ledit::State::SelectMode::~SelectMode() {
+	Events::disable_primary_selection();
+}
+void m2::ledit::State::SelectMode::on_draw() const {
+	// Draw selection
+	if (auto positions = SelectionResult{GAME.events}.primary_int_selection_position_m(); positions) {
+		positions->first.for_each_cell_in_between(positions->second, [=](const VecI& cell) {
+			Graphic::color_cell(cell, SELECTION_COLOR);
+		});
+	}
+	// Draw clipboard
+	if (clipboard_position_1 && clipboard_position_2) {
+		clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [=](const VecI& cell) {
+			Graphic::color_cell(cell, CONFIRMED_SELECTION_COLOR);
+		});
+	}
+}
 void m2::ledit::State::SelectMode::shift_right() {
-	if (selection_position_1 && selection_position_2) {
-		auto min_x = std::min(selection_position_1->x, selection_position_2->x);
-		auto min_y = std::min(selection_position_1->y, selection_position_2->y);
-		auto max_y = std::max(selection_position_1->y, selection_position_2->y);
-		auto shift_count = abs(selection_position_1->x - selection_position_2->x) + 1;
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+		auto min_x = positions->first.x;
+		auto min_y = positions->first.y;
+		auto max_y = positions->second.y;
+		auto shift_count = abs(positions->first.x - positions->second.x) + 1;
 		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
 		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, min_x, INT32_MAX, min_y, max_y, shift_count, 0);
 	}
 }
 void m2::ledit::State::SelectMode::shift_down() {
-	if (selection_position_1 && selection_position_2) {
-		auto min_x = std::min(selection_position_1->x, selection_position_2->x);
-		auto max_x = std::max(selection_position_1->x, selection_position_2->x);
-		auto min_y = std::min(selection_position_1->y, selection_position_2->y);
-		auto shift_count = abs(selection_position_1->y - selection_position_2->y) + 1;
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+		auto min_x = positions->first.x;
+		auto max_x = positions->second.x;
+		auto min_y = positions->first.y;
+		auto shift_count = abs(positions->first.y - positions->second.y) + 1;
 		level_editor::shift_placeholders(LEVEL.level_editor_state->bg_placeholders, LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
 		level_editor::shift_placeholders(LEVEL.level_editor_state->fg_placeholders, LEVEL.objects, min_x, max_x, min_y, INT32_MAX, 0, shift_count);
 	}
 }
 void m2::ledit::State::SelectMode::copy() {
-	if (selection_position_1 && selection_position_2) {
-		clipboard_position_1 = selection_position_1;
-		clipboard_position_2 = selection_position_2;
-		selection_position_1 = {};
-		selection_position_2 = {};
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+		clipboard_position_1 = positions->first;
+		clipboard_position_2 = positions->second;
+		GAME.events.reset_primary_selection();
 	}
 }
 void m2::ledit::State::SelectMode::paste_bg() {
-	if (selection_position_1 && selection_position_2 && clipboard_position_1 && clipboard_position_2) {
-		clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [=](const VecI& cell) {
-			auto it = LEVEL.level_editor_state->bg_placeholders.find(cell);
-			if (it != LEVEL.level_editor_state->bg_placeholders.end()) {
-				auto new_position = *selection_position_1 + (cell - *clipboard_position_1);
-				auto sprite_type = it->second.second;
-				LEVEL.level_editor_state->bg_placeholders[new_position] = std::make_pair(obj::create_placeholder(VecF{new_position}, GAME.get_sprite(sprite_type), false), sprite_type);
-			}
-		});
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+		if (clipboard_position_1 && clipboard_position_2) {
+			clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [&](const VecI& cell) {
+				auto it = LEVEL.level_editor_state->bg_placeholders.find(cell);
+				if (it != LEVEL.level_editor_state->bg_placeholders.end()) {
+					auto new_position = positions->first + (cell - *clipboard_position_1);
+					auto sprite_type = it->second.second;
+					LEVEL.level_editor_state->bg_placeholders[new_position] = std::make_pair(obj::create_placeholder(VecF{new_position}, GAME.get_sprite(sprite_type), false), sprite_type);
+				}
+			});
+		}
 	}
 }
 void m2::ledit::State::SelectMode::paste_fg() {
-	if (selection_position_1 && selection_position_2 && clipboard_position_1 && clipboard_position_2) {
-		clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [=](const VecI& cell) {
-			auto it = LEVEL.level_editor_state->fg_placeholders.find(cell);
-			if (it != LEVEL.level_editor_state->fg_placeholders.end()) {
-				auto new_position = *selection_position_1 + (cell - *clipboard_position_1);
-				auto level_object = it->second.second;
-				level_object.mutable_position()->set_x(new_position.x);
-				level_object.mutable_position()->set_y(new_position.y);
-				LEVEL.level_editor_state->fg_placeholders[new_position] = std::make_pair(obj::create_placeholder(VecF{new_position}, GAME.get_sprite(GAME.level_editor_object_sprites[level_object.type()]), true), level_object);
-			}
-		});
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+		if (clipboard_position_1 && clipboard_position_2) {
+			clipboard_position_1->for_each_cell_in_between(*clipboard_position_2, [&](const VecI& cell) {
+				auto it = LEVEL.level_editor_state->fg_placeholders.find(cell);
+				if (it != LEVEL.level_editor_state->fg_placeholders.end()) {
+					auto new_position = positions->first + (cell - *clipboard_position_1);
+					auto level_object = it->second.second;
+					level_object.mutable_position()->set_x(new_position.x);
+					level_object.mutable_position()->set_y(new_position.y);
+					LEVEL.level_editor_state->fg_placeholders[new_position] = std::make_pair(obj::create_placeholder(VecF{new_position}, GAME.get_sprite(GAME.level_editor_object_sprites[level_object.type()]), true), level_object);
+				}
+			});
+		}
 	}
 }
 void m2::ledit::State::SelectMode::erase() {
-	if (selection_position_1 && selection_position_2) {
-		selection_position_1->for_each_cell_in_between(*selection_position_2, [](const VecI& cell) {
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+		positions->first.for_each_cell_in_between(positions->second, [](const VecI& cell) {
 			ledit::State::EraseMode::erase_position(cell);
 		});
 	}
 }
 void m2::ledit::State::SelectMode::remove() {
-	if (selection_position_1 && selection_position_2) {
-		selection_position_1->for_each_cell_in_between(*selection_position_2, [](const VecI& cell) {
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+		positions->first.for_each_cell_in_between(positions->second, [](const VecI& cell) {
 			ledit::State::RemoveMode::remove_object(cell);
 		});
 	}
@@ -164,32 +201,32 @@ void m2::ledit::State::ShiftMode::shift(const VecI& position) const {
 	}
 }
 void m2::ledit::State::deactivate_mode() {
-	mode = std::monostate{};
+	mode.emplace<std::monostate>();
 }
 void m2::ledit::State::activate_paint_mode() {
-	mode = PaintMode{};
+	mode.emplace<PaintMode>();
 	std::get<PaintMode>(mode).select_sprite_type(GAME.level_editor_background_sprites[0]);
 }
 void m2::ledit::State::activate_erase_mode() {
-	mode = EraseMode{};
+	mode.emplace<EraseMode>();
 }
 void m2::ledit::State::activate_place_mode() {
-	mode = PlaceMode{};
+	mode.emplace<PlaceMode>();
 	std::get<PlaceMode>(mode).select_object_type(GAME.level_editor_object_sprites.begin()->first);
 	std::get<PlaceMode>(mode).select_group_type(m2g::pb::GroupType::NO_GROUP);
 	std::get<PlaceMode>(mode).select_group_instance(0);
 }
 void m2::ledit::State::activate_remove_mode() {
-	mode = RemoveMode{};
+	mode.emplace<RemoveMode>();
 }
 void m2::ledit::State::activate_pick_mode() {
-	mode = PickMode{};
+	mode.emplace<PickMode>();
 }
 void m2::ledit::State::activate_select_mode() {
-	mode = SelectMode{};
+	mode.emplace<SelectMode>();
 }
 void m2::ledit::State::activate_shift_mode() {
-	mode = ShiftMode{};
+	mode.emplace<ShiftMode>();
 }
 void m2::ledit::State::save() {
 	pb::Level level;

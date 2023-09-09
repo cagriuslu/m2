@@ -1,9 +1,19 @@
 #include <m2/sheet_editor/State.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Game.h>
+#include <m2/game/Selection.h>
 
 using namespace m2;
 using namespace m2::sedit;
+
+namespace {
+	constexpr SDL_Color SELECTION_COLOR = {0, 127, 255, 180};
+	constexpr SDL_Color YELLOW_SELECTION_COLOR = {127, 127, 0, 180};
+	constexpr SDL_Color RED_SELECTION_COLOR = {255, 0, 0, 180};
+	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
+	constexpr SDL_Color CROSS_COLOR = {0, 127, 255, 255};
+	constexpr SDL_Color CONFIRMED_CROSS_COLOR = {0, 255, 0, 255};
+}
 
 State::ForegroundCompanionMode::ForegroundCompanionMode() {
 	const auto& sprite = LEVEL.sheet_editor_state->selected_sprite();
@@ -17,6 +27,29 @@ State::ForegroundCompanionMode::ForegroundCompanionMode() {
 			// Set center
 			current_center = VecF{effect.foreground_companion().center_offset_px()};
 		}
+	}
+	// Enable selection
+	Events::enable_primary_selection(RectI{GAME.dimensions().game});
+}
+State::ForegroundCompanionMode::~ForegroundCompanionMode() {
+	Events::disable_primary_selection();
+}
+void State::ForegroundCompanionMode::on_draw() const {
+	// Draw selection
+	if (auto positions = SelectionResult{GAME.events}.primary_cell_selection_position_m(); positions) {
+		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);
+	}
+	// Draw center selection
+	if (secondary_selection_position) {
+		Graphic::draw_cross(*secondary_selection_position, CROSS_COLOR);
+	}
+
+	for (const auto& rect : current_rects) {
+		Graphic::color_rect(RectF{rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+	}
+	if (current_center) {
+		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
+		Graphic::draw_cross(sprite_center + *current_center, CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::ForegroundCompanionMode::add_rect() {
@@ -35,6 +68,29 @@ State::RectMode::RectMode() {
 	current_rect = RectI{sprite.rect()};
 	// Set center
 	current_center = VecF{sprite.center_offset_px()};
+	// Enable selection
+	Events::enable_primary_selection(RectI{GAME.dimensions().game});
+}
+State::RectMode::~RectMode() {
+	Events::disable_primary_selection();
+}
+void State::RectMode::on_draw() const {
+	// Draw selection
+	if (auto positions = SelectionResult{GAME.events}.primary_cell_selection_position_m(); positions) {
+		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);
+	}
+	// Draw center selection
+	if (secondary_selection_position) {
+		Graphic::draw_cross(*secondary_selection_position, CROSS_COLOR);
+	}
+
+	if (current_rect) {
+		Graphic::color_rect(RectF{*current_rect}.shift({-0.5f, -0.5f}), CONFIRMED_SELECTION_COLOR);
+	}
+	if (current_center) {
+		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
+		Graphic::draw_cross(sprite_center + *current_center, CONFIRMED_CROSS_COLOR);
+	}
 }
 void State::RectMode::set_rect() {
 	// TODO
@@ -57,6 +113,32 @@ State::BackgroundColliderMode::BackgroundColliderMode() {
 			current_rect = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
 		}
 	}
+	// Enable selection
+	Events::enable_primary_selection(RectI{GAME.dimensions().game});
+	Events::enable_secondary_selection(RectI{GAME.dimensions().game});
+}
+State::BackgroundColliderMode::~BackgroundColliderMode() {
+	Events::disable_primary_selection();
+	Events::disable_secondary_selection();
+}
+void State::BackgroundColliderMode::on_draw() const {
+	// Draw rect selection
+	if (auto positions = SelectionResult{GAME.events}.primary_halfcell_selection_position_m(); positions) {
+		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), YELLOW_SELECTION_COLOR);
+	}
+	// Draw circ selection
+	if (auto positions = SelectionResult{GAME.events}.secondary_halfcell_selection_position_m(); positions) {
+		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), RED_SELECTION_COLOR);
+	}
+
+	if (current_rect) {
+		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
+		Graphic::color_rect(current_rect->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
+	}
+	if (current_circ) {
+		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
+		Graphic::color_rect(current_circ->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
+	}
 }
 void State::BackgroundColliderMode::set() {
 	// TODO
@@ -75,6 +157,32 @@ State::ForegroundColliderMode::ForegroundColliderMode() {
 			auto radius = sprite.foreground_collider().circ_radius_px();
 			current_rect = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
 		}
+	}
+	// Enable selection
+	Events::enable_primary_selection(RectI{GAME.dimensions().game});
+	Events::enable_secondary_selection(RectI{GAME.dimensions().game});
+}
+State::ForegroundColliderMode::~ForegroundColliderMode() {
+	Events::disable_primary_selection();
+	Events::disable_secondary_selection();
+}
+void State::ForegroundColliderMode::on_draw() const {
+	// Draw rect selection
+	if (auto positions = SelectionResult{GAME.events}.primary_halfcell_selection_position_m(); positions) {
+		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), YELLOW_SELECTION_COLOR);
+	}
+	// Draw circ selection
+	if (auto positions = SelectionResult{GAME.events}.secondary_halfcell_selection_position_m(); positions) {
+		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), RED_SELECTION_COLOR);
+	}
+
+	if (current_rect) {
+		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
+		Graphic::color_rect(current_rect->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
+	}
+	if (current_circ) {
+		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
+		Graphic::color_rect(current_circ->shift(sprite_center), CONFIRMED_SELECTION_COLOR);
 	}
 }
 void State::ForegroundColliderMode::set() {
@@ -166,21 +274,21 @@ void m2::sedit::State::prepare_sprite_selection() {
 }
 
 void m2::sedit::State::deactivate_mode() {
-	mode = std::monostate{};
+	mode.emplace<std::monostate>();
 }
 
 void m2::sedit::State::activate_foreground_companion_mode() {
-	mode = ForegroundCompanionMode{};
+	mode.emplace<ForegroundCompanionMode>();
 }
 
 void m2::sedit::State::activate_rect_mode() {
-	mode = RectMode{};
+	mode.emplace<RectMode>();
 }
 
 void m2::sedit::State::activate_background_collider_mode() {
-	mode = BackgroundColliderMode{};
+	mode.emplace<BackgroundColliderMode>();
 }
 
 void m2::sedit::State::activate_foreground_collider_mode() {
-	mode = ForegroundColliderMode{};
+	mode.emplace<ForegroundColliderMode>();
 }

@@ -2,6 +2,7 @@
 #include <m2/Controls.h>
 #include "RectI.h"
 #include <m2/VecI.h>
+#include <m2/VecF.h>
 #include <array>
 #include <optional>
 #include <sstream>
@@ -36,7 +37,6 @@ namespace m2 {
 		std::stringstream text_input;
 
 		// Persistent states
-
 		std::array<bool, SDL_NUM_SCANCODES> sdl_keys_down{};
 		std::array<bool, u(Key::end)> keys_down{};
 		std::array<bool, u(MouseButton::end)> mouse_buttons_down{};
@@ -53,9 +53,13 @@ namespace m2 {
 		bool pop_key_press(Key k);
 		bool pop_ui_key_press(SDL_Scancode scode);
 		bool pop_key_release(Key k);
+		bool peak_mouse_button_press(MouseButton mb);
 		bool pop_mouse_button_press(MouseButton mb);
+		bool peak_mouse_button_press(MouseButton mb, const RectI& rect);
 		bool pop_mouse_button_press(MouseButton mb, const RectI& rect);
+		bool peak_mouse_button_release(MouseButton mb);
 		bool pop_mouse_button_release(MouseButton mb);
+		bool peak_mouse_button_release(MouseButton mb, const RectI& rect);
 		bool pop_mouse_button_release(MouseButton mb, const RectI& rect);
 		int32_t pop_mouse_wheel_vertical_scroll();
 		int32_t pop_mouse_wheel_vertical_scroll(const RectI& rect);
@@ -66,6 +70,16 @@ namespace m2 {
 		bool is_sdl_key_down(SDL_Scancode sc) const;
 		bool is_key_down(Key k) const;
 		bool is_mouse_button_down(MouseButton mb) const;
-		m2::VecI mouse_position() const;
+		VecI mouse_position() const;
+
+		std::pair<std::optional<VecF>, std::optional<VecF>> primary_selection_position_m() const;
+		std::pair<std::optional<VecF>, std::optional<VecF>> secondary_selection_position_m() const;
+
+		static void enable_primary_selection(const RectI& screen_rect);
+		static void enable_secondary_selection(const RectI& screen_rect);
+		static void reset_primary_selection();
+		static void reset_secondary_selection();
+		static void disable_primary_selection();
+		static void disable_secondary_selection();
 	};
 }

@@ -15,12 +15,17 @@ namespace m2::sedit {
 		m2g::pb::SpriteType _selected_sprite_type{};
 
 		struct ForegroundCompanionMode {
-			// For setting the rectangle
-			std::optional<m2::VecI> primary_selection_position_1, primary_selection_position_2; // TopLeft, BottomRight
 			// Secondary mouse button sets the center
 			std::optional<m2::VecF> secondary_selection_position;
 
 			ForegroundCompanionMode();
+			// Disable copy, default move
+			ForegroundCompanionMode(const ForegroundCompanionMode& other) = delete;
+			ForegroundCompanionMode& operator=(const ForegroundCompanionMode& other) = delete;
+			ForegroundCompanionMode(ForegroundCompanionMode&& other) = default;
+			ForegroundCompanionMode& operator=(ForegroundCompanionMode&& other) = default;
+			~ForegroundCompanionMode();
+			void on_draw() const;
 
 			void add_rect();
 			std::vector<m2::RectI> current_rects;
@@ -29,12 +34,17 @@ namespace m2::sedit {
 			void reset();
 		};
 		struct RectMode {
-			// For setting the rectangle
-			std::optional<m2::VecI> primary_selection_position_1, primary_selection_position_2; // TopLeft, BottomRight
 			// Secondary mouse button sets the center
 			std::optional<m2::VecF> secondary_selection_position;
 
 			RectMode();
+			// Disable copy, default move
+			RectMode(const RectMode& other) = delete;
+			RectMode& operator=(const RectMode& other) = delete;
+			RectMode(RectMode&& other) = default;
+			RectMode& operator=(RectMode&& other) = default;
+			~RectMode();
+			void on_draw() const;
 
 			void set_rect();
 			std::optional<m2::RectI> current_rect;
@@ -43,24 +53,28 @@ namespace m2::sedit {
 			void reset();
 		};
 		struct BackgroundColliderMode {
-			// For setting the rectangle
-			std::optional<m2::VecF> primary_selection_position_1, primary_selection_position_2; // TopLeft, BottomRight
-			// For setting the circle
-			std::optional<m2::VecF> secondary_selection_position_1, secondary_selection_position_2; // TopLeft, BottomRight
-
 			BackgroundColliderMode();
+			// Disable copy, default move
+			BackgroundColliderMode(const BackgroundColliderMode& other) = delete;
+			BackgroundColliderMode& operator=(const BackgroundColliderMode& other) = delete;
+			BackgroundColliderMode(BackgroundColliderMode&& other) = default;
+			BackgroundColliderMode& operator=(BackgroundColliderMode&& other) = default;
+			~BackgroundColliderMode();
+			void on_draw() const;
 
 			void set();
 			std::optional<m2::RectF> current_rect, current_circ;
 			void reset();
 		};
 		struct ForegroundColliderMode {
-			// For setting the rectangle
-			std::optional<m2::VecF> primary_selection_position_1, primary_selection_position_2; // TopLeft, BottomRight
-			// For setting the circle
-			std::optional<m2::VecF> secondary_selection_position_1, secondary_selection_position_2; // TopLeft, BottomRight
-
 			ForegroundColliderMode();
+			// Disable copy, default move
+			ForegroundColliderMode(const ForegroundColliderMode& other) = delete;
+			ForegroundColliderMode& operator=(const ForegroundColliderMode& other) = delete;
+			ForegroundColliderMode(ForegroundColliderMode&& other) = default;
+			ForegroundColliderMode& operator=(ForegroundColliderMode&& other) = default;
+			~ForegroundColliderMode();
+			void on_draw() const;
 
 			void set();
 			std::optional<m2::RectF> current_rect, current_circ;

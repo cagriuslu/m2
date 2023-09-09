@@ -1,12 +1,27 @@
 #include <m2/Events.h>
+#include <m2/Game.h>
 #include <m2/Proxy.h>
 #include <m2/Log.h>
+
+using namespace m2;
+
+namespace {
+	// Global state
+	std::optional<RectI> primary_selection_screen_rect_px, secondary_selection_screen_rect_px;
+	std::optional<VecF> primary_selection_position_1_m, primary_selection_position_2_m;
+	std::optional<VecF> secondary_selection_position_1_m, secondary_selection_position_2_m;
+}
 
 void m2::Events::clear() {
 	*this = Events();
 }
 
 bool m2::Events::gather() {
+	const uint32_t mouseStateBitmask = SDL_GetMouseState(&_mouse_position.x, &_mouse_position.y);
+	mouse_buttons_down[u(m2::MouseButton::PRIMARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_LEFT);
+	mouse_buttons_down[u(m2::MouseButton::SECONDARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_RIGHT);
+	mouse_buttons_down[u(m2::MouseButton::MIDDLE)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_MIDDLE);
+
 	bool mouse_moved = false;
 	SDL_Event e;
 	while (!quit && SDL_PollEvent(&e) != 0) {
@@ -47,10 +62,32 @@ bool m2::Events::gather() {
 		case SDL_MOUSEBUTTONDOWN:
 			mouse_button_press_count++;
 			mouse_buttons_pressed[u(m2::button_to_mouse_button(e.button.button))]++;
+			if (primary_selection_screen_rect_px && peak_mouse_button_press(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
+				primary_selection_position_1_m = GAME.mouse_position_world_m();
+				primary_selection_position_2_m = std::nullopt;
+				secondary_selection_position_1_m = std::nullopt;
+				secondary_selection_position_2_m = std::nullopt;
+			}
+			if (secondary_selection_screen_rect_px && peak_mouse_button_press(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
+				primary_selection_position_1_m = std::nullopt;
+				primary_selection_position_2_m = std::nullopt;
+				secondary_selection_position_1_m = GAME.mouse_position_world_m();
+				secondary_selection_position_2_m = std::nullopt;
+			}
 			break;
 		case SDL_MOUSEBUTTONUP:
 			mouse_button_release_count++;
 			mouse_buttons_released[u(m2::button_to_mouse_button(e.button.button))]++;
+			if (primary_selection_screen_rect_px && peak_mouse_button_release(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
+				primary_selection_position_2_m = GAME.mouse_position_world_m();
+				secondary_selection_position_1_m = std::nullopt;
+				secondary_selection_position_2_m = std::nullopt;
+			}
+			if (secondary_selection_screen_rect_px && peak_mouse_button_release(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
+				primary_selection_position_1_m = std::nullopt;
+				primary_selection_position_2_m = std::nullopt;
+				secondary_selection_position_2_m = GAME.mouse_position_world_m();
+			}
 			break;
 		case SDL_MOUSEWHEEL:
 			mouse_wheel_vertical_scroll_count += e.wheel.y;
@@ -83,11 +120,6 @@ bool m2::Events::gather() {
 		auto scancode = m2g::key_to_scancode[i];
 		keys_down[i] = (scancode != SDL_SCANCODE_UNKNOWN) && raw_keyboard_state[scancode];
 	}
-
-	const uint32_t mouseStateBitmask = SDL_GetMouseState(&_mouse_position.x, &_mouse_position.y);
-	mouse_buttons_down[u(m2::MouseButton::PRIMARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_LEFT);
-	mouse_buttons_down[u(m2::MouseButton::SECONDARY)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_RIGHT);
-	mouse_buttons_down[u(m2::MouseButton::MIDDLE)] = mouseStateBitmask & SDL_BUTTON(SDL_BUTTON_MIDDLE);
 
 	return quit || window_resize || key_press_count || !ui_keys_pressed.empty() || key_release_count || mouse_moved ||
 		mouse_button_press_count || mouse_button_release_count || mouse_wheel_vertical_scroll_count ||
@@ -140,6 +172,9 @@ bool m2::Events::pop_key_release(m2::Key k) {
 	}
 }
 
+bool m2::Events::peak_mouse_button_press(m2::MouseButton mb) {
+	return mouse_buttons_pressed[u(mb)];
+}
 bool m2::Events::pop_mouse_button_press(m2::MouseButton mb) {
 	if (mouse_buttons_pressed[u(mb)]) {
 		mouse_buttons_pressed[u(mb)]--;
@@ -148,6 +183,9 @@ bool m2::Events::pop_mouse_button_press(m2::MouseButton mb) {
 	} else {
 		return false;
 	}
+}
+bool Events::peak_mouse_button_press(MouseButton mb, const RectI& rect) {
+	return mouse_buttons_pressed[u(mb)] && rect.point_in_rect(mouse_position());
 }
 bool m2::Events::pop_mouse_button_press(m2::MouseButton mb, const RectI& rect) {
 	if (mouse_buttons_pressed[u(mb)] && rect.point_in_rect(mouse_position())) {
@@ -158,6 +196,9 @@ bool m2::Events::pop_mouse_button_press(m2::MouseButton mb, const RectI& rect) {
 		return false;
 	}
 }
+bool m2::Events::peak_mouse_button_release(m2::MouseButton mb) {
+	return mouse_buttons_released[u(mb)];
+}
 bool m2::Events::pop_mouse_button_release(m2::MouseButton mb) {
 	if (mouse_buttons_released[u(mb)]) {
 		mouse_buttons_released[u(mb)]--;
@@ -166,6 +207,9 @@ bool m2::Events::pop_mouse_button_release(m2::MouseButton mb) {
 	} else {
 		return false;
 	}
+}
+bool Events::peak_mouse_button_release(MouseButton mb, const RectI& rect) {
+	return mouse_buttons_released[u(mb)] && rect.point_in_rect(mouse_position());
 }
 bool m2::Events::pop_mouse_button_release(MouseButton mb, const RectI& rect) {
 	if (mouse_buttons_released[u(mb)] && rect.point_in_rect(mouse_position())) {
@@ -231,4 +275,36 @@ bool m2::Events::is_mouse_button_down(MouseButton mb) const {
 
 m2::VecI m2::Events::mouse_position() const {
 	return _mouse_position;
+}
+
+std::pair<std::optional<VecF>, std::optional<VecF>> Events::primary_selection_position_m() const {
+	return std::make_pair(primary_selection_position_1_m, primary_selection_position_2_m);
+}
+std::pair<std::optional<VecF>, std::optional<VecF>> Events::secondary_selection_position_m() const {
+	return std::make_pair(secondary_selection_position_1_m, secondary_selection_position_2_m);
+}
+
+void Events::enable_primary_selection(const RectI& screen_rect) {
+	primary_selection_screen_rect_px = screen_rect;
+	reset_primary_selection();
+}
+void Events::enable_secondary_selection(const RectI& screen_rect) {
+	secondary_selection_screen_rect_px = screen_rect;
+	reset_secondary_selection();
+}
+void Events::reset_primary_selection() {
+	primary_selection_position_1_m = std::nullopt;
+	primary_selection_position_2_m = std::nullopt;
+}
+void Events::reset_secondary_selection() {
+	secondary_selection_position_1_m = std::nullopt;
+	secondary_selection_position_2_m = std::nullopt;
+}
+void Events::disable_primary_selection() {
+	primary_selection_screen_rect_px = std::nullopt;
+	reset_primary_selection();
+}
+void Events::disable_secondary_selection() {
+	secondary_selection_screen_rect_px = std::nullopt;
+	reset_secondary_selection();
 }

@@ -35,8 +35,17 @@ namespace m2::ledit {
 			static std::optional<m2::pb::LevelObject> lookup_foreground_object(const VecI& position);
 		};
 		struct SelectMode {
-			std::optional<m2::VecI> selection_position_1, selection_position_2; // TopLeft, BottomRight
 			std::optional<m2::VecI> clipboard_position_1, clipboard_position_2; // TopLeft, BottomRight
+
+			SelectMode();
+			// Disable copy, default move
+			SelectMode(const SelectMode& other) = delete;
+			SelectMode& operator=(const SelectMode& other) = delete;
+			SelectMode(SelectMode&& other) = default;
+			SelectMode& operator=(SelectMode&& other) = default;
+			~SelectMode();
+			void on_draw() const;
+
 			void shift_right();
 			void shift_down();
 			void copy();

@@ -9,6 +9,13 @@ m2::RectF::RectF(const RectI& r) : x(static_cast<float>(r.x)), y(static_cast<flo
 m2::RectF::RectF(const SDL_FRect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
 m2::RectF::RectF(const SDL_Rect& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}
 m2::RectF::RectF(const pb::RectI& r) : x(static_cast<float>(r.x())), y(static_cast<float>(r.y())), w(static_cast<float>(r.w())), h(static_cast<float>(r.h())) {}
+m2::RectF m2::RectF::from_corners(const m2::VecF &corner1, const m2::VecF &corner2) {
+	auto top_left_x = std::min(corner1.x, corner2.x);
+	auto top_left_y = std::min(corner1.y, corner2.y);
+	auto bottom_right_x = std::max(corner1.x, corner2.x);
+	auto bottom_right_y = std::max(corner1.y, corner2.y);
+	return {top_left_x, top_left_y, bottom_right_x - top_left_x, bottom_right_y - top_left_y};
+}
 
 m2::RectF::operator bool() const {
 	return 0.0f < w && 0.0f < h;
