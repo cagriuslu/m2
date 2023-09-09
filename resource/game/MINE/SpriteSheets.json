@@ -12,7 +12,7 @@
           "rect": {"x": 0, "y": 0, "w": 162, "h": 176},
           "centerOffsetPx" : {"x": -40, "y": 53},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": -40, "y": 53},
+            "originOffsetPx": {"x": -40, "y": 53},
             "circRadiusPx": 35
           }
         }

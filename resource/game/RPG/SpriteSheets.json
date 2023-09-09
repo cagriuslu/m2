@@ -13,7 +13,7 @@
           "originalRotation": -0.75,
           "overridePpm": 32,
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 5, "y": 0},
+            "originOffsetPx": {"x": 5, "y": 0},
             "circRadiusPx": 3
           }
         },
@@ -23,7 +23,7 @@
           "originalRotation": -0.75,
           "overridePpm": 32,
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 5, "y": 0},
+            "originOffsetPx": {"x": 5, "y": 0},
             "circRadiusPx": 3
           }
         },
@@ -41,7 +41,7 @@
           "originalRotation": -0.75,
           "centerOffsetPx": {"x": -13, "y": 0},
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 13, "y": 0},
+            "originOffsetPx": {"x": 13, "y": 0},
             "rectDimsPx": {"w": 26, "h": 5}
           }
         },
@@ -65,7 +65,7 @@
           "originalRotation": -0.75,
           "centerOffsetPx": {"x": -13, "y": 0},
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 13, "y": 0},
+            "originOffsetPx": {"x": 13, "y": 0},
             "rectDimsPx": {"w": 26, "h": 5}
           }
         },
@@ -138,11 +138,11 @@
           }],
           "rect": {"x": 16, "y": 144, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 0, "y": 5.5},
+            "originOffsetPx": {"x": 0, "y": 5.5},
             "rectDimsPx": {"w": 16, "h": 5}
           },
           "foregroundCollider": {
-            "centerOffsetPx": {"x": -4.5, "y": 0},
+            "originOffsetPx": {"x": -4.5, "y": 0},
             "rectDimsPx": {"w": 7, "h": 16}
           },
           "isBackgroundTile": true
@@ -164,11 +164,11 @@
           }],
           "rect": {"x": 48, "y": 144, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 0, "y": 5.5},
+            "originOffsetPx": {"x": 0, "y": 5.5},
             "rectDimsPx": {"w": 16, "h": 5}
           },
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 4.5, "y": 0},
+            "originOffsetPx": {"x": 4.5, "y": 0},
             "rectDimsPx": {"w": 7, "h": 16}
           },
           "isBackgroundTile": true
@@ -201,7 +201,7 @@
           "type": "CASTLE_LEFT_WALL",
           "rect": {"x": 16, "y": 128, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": -4, "y": 0},
+            "originOffsetPx": {"x": -4, "y": 0},
             "rectDimsPx": {"w": 6, "h": 16}
           },
           "isBackgroundTile": true
@@ -210,7 +210,7 @@
           "type": "CASTLE_RIGHT_WALL",
           "rect": {"x": 48, "y": 128, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 4, "y": 0},
+            "originOffsetPx": {"x": 4, "y": 0},
             "rectDimsPx": {"w": 6, "h": 16}
           },
           "isBackgroundTile": true
@@ -229,7 +229,7 @@
           }],
           "rect": {"x": 32, "y": 144, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 0, "y": 5.5},
+            "originOffsetPx": {"x": 0, "y": 5.5},
             "rectDimsPx": {"w": 16, "h": 5}
           },
           "isBackgroundTile": true
@@ -247,7 +247,7 @@
           }],
           "rect": {"x": 64, "y": 112, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 4.5, "y": 5.5},
+            "originOffsetPx": {"x": 4.5, "y": 5.5},
             "rectDimsPx": {"w": 7, "h": 5}
           },
           "isBackgroundTile": true
@@ -265,7 +265,7 @@
           }],
           "rect": {"x": 80, "y": 112, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": -4.5, "y": 5.5},
+            "originOffsetPx": {"x": -4.5, "y": 5.5},
             "rectDimsPx": {"w": 7, "h": 5}
           },
           "isBackgroundTile": true
@@ -274,7 +274,7 @@
           "type": "CASTLE_INNER_CORNER_TOP_RIGHT",
           "rect": {"x": 64, "y": 128, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 4.5, "y": -2},
+            "originOffsetPx": {"x": 4.5, "y": -2},
             "rectDimsPx": {"w": 7, "h": 12}
           },
           "isBackgroundTile": true
@@ -283,7 +283,7 @@
           "type": "CASTLE_INNER_CORNER_TOP_LEFT",
           "rect": {"x": 80, "y": 128, "w": 16, "h": 16},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": -4.5, "y": -2},
+            "originOffsetPx": {"x": -4.5, "y": -2},
             "rectDimsPx": {"w": 7, "h": 12}
           },
           "isBackgroundTile": true
@@ -317,7 +317,7 @@
             "circRadiusPx": 7.5
           },
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 0, "y": -10},
+            "originOffsetPx": {"x": 0, "y": -10},
             "circRadiusPx": 9.5
           }
         },
@@ -399,7 +399,7 @@
             "circRadiusPx": 7
           },
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 0, "y": -8.5},
+            "originOffsetPx": {"x": 0, "y": -8.5},
             "circRadiusPx": 8.5
           }
         },
@@ -565,11 +565,11 @@
           "rect": {"x": 614, "y": 28, "w": 24, "h": 36},
           "centerOffsetPx": {"x": -0.5, "y": 8.5},
           "backgroundCollider": {
-            "centerOffsetPx": {"x": 0, "y": 6},
+            "originOffsetPx": {"x": 0, "y": 6},
             "circRadiusPx": 3.5
           },
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 0, "y": -4},
+            "originOffsetPx": {"x": 0, "y": -4},
             "circRadiusPx": 6
           }
         },
@@ -764,7 +764,7 @@
           "originalRotation": -0.75,
           "centerOffsetPx": {"x": -25, "y": 0},
           "foregroundCollider": {
-            "centerOffsetPx": {"x": 25, "y": 0},
+            "originOffsetPx": {"x": 25, "y": 0},
             "rectDimsPx": {"w": 50, "h": 5}
           }
         }

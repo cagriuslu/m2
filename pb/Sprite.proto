@@ -43,7 +43,7 @@ message SpriteEffect {
 
 message Collider {
   // Vector from origin of the sprite to the position that should be the origin of this collider.
-  VecF center_offset_px = 1; // TODO rename to origin_offset_px
+  VecF origin_offset_px = 1;
 
   oneof collider_variant {
     Dim2f rect_dims_px = 11;

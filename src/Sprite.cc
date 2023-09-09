@@ -175,10 +175,10 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_sprite_sheet(&sprite_sheet), _sprite(sprite), _effects_sheet(&sprite_effects_sheet),
 	_original_rotation_radians(sprite.original_rotation() * m2::PI),
 	_ppm(sprite.override_ppm() ? (int)sprite.override_ppm() : (int)sprite_sheet.sprite_sheet().ppm()),
-	_background_collider_center_offset_m(VecF{sprite.background_collider().center_offset_px()} / _ppm),
+	_background_collider_center_offset_m(VecF{sprite.background_collider().origin_offset_px()} / _ppm), // TODO rename to _background_collider_origin_offset_m
 	_background_collider_rect_dims_m(VecF{sprite.background_collider().rect_dims_px()} / _ppm),
 	_background_collider_circ_radius_m(sprite.background_collider().circ_radius_px() / (float)_ppm),
-	_foreground_collider_center_offset_m(VecF{sprite.foreground_collider().center_offset_px()} / _ppm),
+	_foreground_collider_center_offset_m(VecF{sprite.foreground_collider().origin_offset_px()} / _ppm), // TODO rename to _foreground_collider_origin_offset_m
 	_foreground_collider_rect_dims_m(VecF{sprite.foreground_collider().rect_dims_px()} / _ppm),
 	_foreground_collider_circ_radius_m(sprite.foreground_collider().circ_radius_px() / (float)_ppm) {
 	// Create effects

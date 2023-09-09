@@ -105,7 +105,7 @@ void State::RectMode::reset() {
 State::BackgroundColliderMode::BackgroundColliderMode() {
 	const auto& sprite = LEVEL.sheet_editor_state->selected_sprite();
 	if (sprite.has_background_collider()) {
-		auto collider_origin = VecF{sprite.center_offset_px()} + VecF{sprite.background_collider().center_offset_px()};
+		auto collider_origin = VecF{sprite.center_offset_px()} + VecF{sprite.background_collider().origin_offset_px()};
 		if (sprite.background_collider().has_rect_dims_px()) {
 			current_rect = RectF{collider_origin, VecF{sprite.background_collider().rect_dims_px()}};
 		} else if (sprite.background_collider().has_circ_radius_px()) {
@@ -150,7 +150,7 @@ void State::BackgroundColliderMode::reset() {
 State::ForegroundColliderMode::ForegroundColliderMode() {
 	const auto& sprite = LEVEL.sheet_editor_state->selected_sprite();
 	if (sprite.has_foreground_collider()) {
-		auto collider_origin = VecF{sprite.center_offset_px()} + VecF{sprite.foreground_collider().center_offset_px()};
+		auto collider_origin = VecF{sprite.center_offset_px()} + VecF{sprite.foreground_collider().origin_offset_px()};
 		if (sprite.foreground_collider().has_rect_dims_px()) {
 			current_rect = RectF{collider_origin, VecF{sprite.foreground_collider().rect_dims_px()}};
 		} else if (sprite.foreground_collider().has_circ_radius_px()) {
