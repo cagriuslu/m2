@@ -110,7 +110,7 @@ State::BackgroundColliderMode::BackgroundColliderMode() {
 			current_rect = RectF{collider_origin, VecF{sprite.background_collider().rect_dims_px()}};
 		} else if (sprite.background_collider().has_circ_radius_px()) {
 			auto radius = sprite.background_collider().circ_radius_px();
-			current_rect = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
+			current_circ = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
 		}
 	}
 	// Enable selection
@@ -138,6 +138,7 @@ void State::BackgroundColliderMode::on_draw() const {
 		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
 	}
 	if (current_circ) {
+		// Find location of the circle
 		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
 		auto rect = current_circ->shift(sprite_center);
 		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
@@ -178,7 +179,7 @@ State::ForegroundColliderMode::ForegroundColliderMode() {
 			current_rect = RectF{collider_origin, VecF{sprite.foreground_collider().rect_dims_px()}};
 		} else if (sprite.foreground_collider().has_circ_radius_px()) {
 			auto radius = sprite.foreground_collider().circ_radius_px();
-			current_rect = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
+			current_circ = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
 		}
 	}
 	// Enable selection
