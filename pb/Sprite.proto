@@ -55,6 +55,7 @@ message Sprite {
   m2g.pb.SpriteType type = 1;
 
   // List of effects that might be used during the game
+  // TODO convert to Map
   repeated SpriteEffect effects = 2;
 
   // Coordinates of the sprite in sheet

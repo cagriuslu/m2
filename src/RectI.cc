@@ -7,6 +7,13 @@ m2::RectI::RectI(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
 m2::RectI::RectI(const RectF& r) : x(static_cast<int>(r.x)), y(static_cast<int>(r.y)), w(static_cast<int>(r.w)), h(static_cast<int>(r.h)) {}
 m2::RectI::RectI(const SDL_Rect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
 m2::RectI::RectI(const pb::RectI& r) : x(r.x()), y(r.y()), w(r.w()), h(r.h()) {}
+m2::RectI m2::RectI::from_corners(const m2::VecI &corner1, const m2::VecI &corner2) {
+	auto top_left_x = std::min(corner1.x, corner2.x);
+	auto top_left_y = std::min(corner1.y, corner2.y);
+	auto bottom_right_x = std::max(corner1.x, corner2.x);
+	auto bottom_right_y = std::max(corner1.y, corner2.y);
+	return {top_left_x, top_left_y, bottom_right_x - top_left_x + 1, bottom_right_y - top_left_y + 1};
+}
 
 bool m2::RectI::operator==(const RectI &other) const {
 	return (x == other.x) && (y == other.y) && (w == other.w) && (h == other.h);

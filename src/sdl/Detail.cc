@@ -107,7 +107,7 @@ int m2::sdl::draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, c
 		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(center_position_px + full_span_px), .color = edge_color});
 	}
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-	SDL_RenderGeometry(renderer, nullptr, vertices.data(), (int)vertices.size(), nullptr, 0);
+	return SDL_RenderGeometry(renderer, nullptr, vertices.data(), (int)vertices.size(), nullptr, 0);
 }
 
 m2::sdl::TextureUniquePtr m2::sdl::generate_font(const std::string& text, SDL_Color color) {

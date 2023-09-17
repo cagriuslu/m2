@@ -22,10 +22,11 @@ State::ForegroundCompanionMode::ForegroundCompanionMode() {
 		if (effect.type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
 			// Iterate over rects
 			for (const auto& rect : effect.foreground_companion().rects()) {
-				current_rects.emplace_back(RectI{rect});
+				current_rects.emplace_back(rect);
 			}
 			// Set center
 			current_center = VecF{effect.foreground_companion().center_offset_px()};
+			break;
 		}
 	}
 	// Enable selection
@@ -53,13 +54,65 @@ void State::ForegroundCompanionMode::on_draw() const {
 	}
 }
 void State::ForegroundCompanionMode::add_rect() {
-	// TODO
+	auto selection_results = SelectionResult{GAME.events};
+	// If rect is selected
+	if (selection_results.is_primary_selection_finished()) {
+		auto positions = selection_results.primary_int_selection_position_m();
+		auto rect = RectI::from_corners(positions->first, positions->second); // wrt sprite coordinates
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			// Iterate over effects
+			for (int i = 0; i < sprite.effects_size(); ++i) {
+				auto* mutable_effect = sprite.mutable_effects(i);
+				if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
+					auto* new_rect = mutable_effect->mutable_foreground_companion()->add_rects();
+					new_rect->set_x(rect.x);
+					new_rect->set_y(rect.y);
+					new_rect->set_w(rect.w);
+					new_rect->set_h(rect.h);
+					break;
+				}
+			}
+		});
+		current_rects.emplace_back(rect);
+		GAME.events.reset_primary_selection();
+	}
 }
 void State::ForegroundCompanionMode::set_center() {
-	// TODO
+	// Store center selection
+	if (secondary_selection_position) {
+		auto center_offset = *secondary_selection_position - LEVEL.sheet_editor_state->selected_sprite_center(); // new offset from sprite center
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			// Iterate over effects
+			for (int i = 0; i < sprite.effects_size(); ++i) {
+				auto* mutable_effect = sprite.mutable_effects(i);
+				if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
+					// Set center
+					mutable_effect->mutable_foreground_companion()->mutable_center_offset_px()->set_x(center_offset.x);
+					mutable_effect->mutable_foreground_companion()->mutable_center_offset_px()->set_y(center_offset.y);
+					break;
+				}
+			}
+		});
+		current_center = center_offset;
+		secondary_selection_position = std::nullopt;
+	}
 }
 void State::ForegroundCompanionMode::reset() {
-	// TODO
+	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+		// Iterate over effects
+		for (int i = 0; i < sprite.effects_size(); ++i) {
+			auto* mutable_effect = sprite.mutable_effects(i);
+			if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
+				mutable_effect->mutable_foreground_companion()->clear_center_offset_px();
+				mutable_effect->mutable_foreground_companion()->clear_rects();
+				break;
+			}
+		}
+	});
+	current_rects.clear();
+	current_center = std::nullopt;
+	GAME.events.reset_primary_selection();
+	secondary_selection_position = std::nullopt;
 }
 
 State::RectMode::RectMode() {
@@ -93,13 +146,43 @@ void State::RectMode::on_draw() const {
 	}
 }
 void State::RectMode::set_rect() {
-	// TODO
+	auto selection_results = SelectionResult{GAME.events};
+	// If rect is selected
+	if (selection_results.is_primary_selection_finished()) {
+		LOG_DEBUG("Primary selection");
+		auto positions = selection_results.primary_int_selection_position_m();
+		auto rect = RectI::from_corners(positions->first, positions->second); // wrt sprite coordinates
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			sprite.mutable_rect()->set_x(rect.x);
+			sprite.mutable_rect()->set_y(rect.y);
+			sprite.mutable_rect()->set_w(rect.w);
+			sprite.mutable_rect()->set_h(rect.h);
+		});
+		current_rect = rect;
+		GAME.events.reset_primary_selection();
+	}
 }
 void State::RectMode::set_center() {
-	// TODO
+	// Store center selection
+	if (secondary_selection_position) {
+		auto center_offset = *secondary_selection_position - LEVEL.sheet_editor_state->selected_sprite_center(); // new offset from sprite center
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			sprite.mutable_center_offset_px()->set_x(center_offset.x);
+			sprite.mutable_center_offset_px()->set_y(center_offset.y);
+		});
+		current_center = center_offset;
+		secondary_selection_position = std::nullopt;
+	}
 }
 void State::RectMode::reset() {
-	// TODO
+	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.clear_rect();
+		sprite.clear_center_offset_px();
+	});
+	current_rect = std::nullopt;
+	current_center = std::nullopt;
+	GAME.events.reset_primary_selection();
+	secondary_selection_position = std::nullopt;
 }
 
 State::BackgroundColliderMode::BackgroundColliderMode() {
@@ -314,7 +397,7 @@ const pb::Sprite& m2::sedit::State::selected_sprite() const {
 	throw M2ERROR("Sprite sheet does not contain selected sprite");
 }
 
-void m2::sedit::State::modify_selected_sprite(std::function<void(pb::Sprite&)> modifier) {
+void m2::sedit::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) {
 	// If path exists,
 	if (std::filesystem::exists(_path)) {
 		// Check if the file is a valid pb::SpriteSheets
@@ -357,7 +440,7 @@ void m2::sedit::State::select_sprite_type(m2g::pb::SpriteType sprite_type) {
 	_selected_sprite_type = sprite_type;
 }
 
-void m2::sedit::State::prepare_sprite_selection() {
+void m2::sedit::State::prepare_sprite_selection() const {
 	const auto& sprite_sheets = this->sprite_sheets();
 
 	// Reload dynamic image loader with the resource
@@ -382,7 +465,6 @@ void m2::sedit::State::prepare_sprite_selection() {
 	}
 	image_loader_loaded:
 	return;
-	// TODO
 }
 
 void m2::sedit::State::deactivate_mode() {

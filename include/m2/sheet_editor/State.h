@@ -89,14 +89,14 @@ namespace m2::sedit {
 
 		const pb::SpriteSheets& sprite_sheets() const; // This function re-reads the file every time it's called.
 		const pb::Sprite& selected_sprite() const; // This function re-reads the file every time it's called.
-		void modify_selected_sprite(std::function<void(pb::Sprite&)> modifier); // This function re-reads the file every time it's called.
+		void modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier); // This function re-reads the file every time it's called.
 		RectI selected_sprite_rect() const; // This function re-reads the file every time it's called.
 		VecF selected_sprite_center() const; // This function re-reads the file every time it's called.
 		VecF selected_sprite_origin() const; // This function re-reads the file every time it's called.
 
 		// To be used by the main menu
 		void select_sprite_type(m2g::pb::SpriteType);
-		void prepare_sprite_selection();
+		void prepare_sprite_selection() const;
 
 		// To be used by left hud
 		void deactivate_mode();

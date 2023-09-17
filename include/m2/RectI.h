@@ -17,6 +17,7 @@ namespace m2 {
 		explicit RectI(const SDL_Rect& r);
 		explicit RectI(const pb::RectI& r);
 		static inline RectI centered_around(const VecI& center, int w, int h) { return {center.x - w/2, center.y - h/2, w, h}; }
+		static RectI from_corners(const VecI& corner1, const VecI& corner2);
 
 		bool operator==(const RectI& other) const;
 		explicit operator bool() const;
