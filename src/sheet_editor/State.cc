@@ -110,7 +110,7 @@ State::BackgroundColliderMode::BackgroundColliderMode() {
 			current_rect = RectF{collider_origin, VecF{sprite.background_collider().rect_dims_px()}};
 		} else if (sprite.background_collider().has_circ_radius_px()) {
 			auto radius = sprite.background_collider().circ_radius_px();
-			current_circ = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
+			current_circ = CircF{collider_origin, radius};
 		}
 	}
 	// Enable selection
@@ -128,7 +128,7 @@ void State::BackgroundColliderMode::on_draw() const {
 	}
 	// Draw circ selection
 	if (auto positions = SelectionResult{GAME.events}.secondary_halfcell_selection_position_m(); positions) {
-		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), RED_SELECTION_COLOR);
+		Graphic::color_disk(positions->first, positions->first.distance(positions->second), RED_SELECTION_COLOR);
 	}
 
 	if (current_rect) {
@@ -140,9 +140,9 @@ void State::BackgroundColliderMode::on_draw() const {
 	if (current_circ) {
 		// Find location of the circle
 		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
-		auto rect = current_circ->shift(sprite_center);
-		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
-		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
+		auto circ = CircF{current_circ->center + sprite_center, current_circ->r};
+		Graphic::color_disk(circ.center, circ.r, CONFIRMED_SELECTION_COLOR);
+		Graphic::draw_cross(circ.center, CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::BackgroundColliderMode::set() {
@@ -179,7 +179,7 @@ State::ForegroundColliderMode::ForegroundColliderMode() {
 			current_rect = RectF{collider_origin, VecF{sprite.foreground_collider().rect_dims_px()}};
 		} else if (sprite.foreground_collider().has_circ_radius_px()) {
 			auto radius = sprite.foreground_collider().circ_radius_px();
-			current_circ = RectF::centered_around(collider_origin, radius * 2.0f, radius * 2.0f);
+			current_circ = CircF{collider_origin, radius};
 		}
 	}
 	// Enable selection
@@ -197,7 +197,7 @@ void State::ForegroundColliderMode::on_draw() const {
 	}
 	// Draw circ selection
 	if (auto positions = SelectionResult{GAME.events}.secondary_halfcell_selection_position_m(); positions) {
-		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), RED_SELECTION_COLOR);
+		Graphic::color_disk(positions->first, positions->first.distance(positions->second), RED_SELECTION_COLOR);
 	}
 
 	if (current_rect) {
@@ -208,9 +208,9 @@ void State::ForegroundColliderMode::on_draw() const {
 	}
 	if (current_circ) {
 		auto sprite_center = LEVEL.sheet_editor_state->selected_sprite_center();
-		auto rect = current_circ->shift(sprite_center);
-		Graphic::color_rect(rect, CONFIRMED_SELECTION_COLOR);
-		Graphic::draw_cross(rect.center(), CONFIRMED_CROSS_COLOR);
+		auto circ = CircF{current_circ->center + sprite_center, current_circ->r};
+		Graphic::color_disk(circ.center, circ.r, CONFIRMED_SELECTION_COLOR);
+		Graphic::draw_cross(circ.center, CONFIRMED_CROSS_COLOR);
 	}
 }
 void State::ForegroundColliderMode::set() {

@@ -1,5 +1,6 @@
 #pragma once
 #include "../Meta.h"
+#include "../CircF.h"
 #include "../ui/Blueprint.h"
 #include "../ui/State.h"
 #include "../sheet_editor/DynamicImageLoader.h"
@@ -63,7 +64,8 @@ namespace m2::sedit {
 			void on_draw() const;
 
 			void set();
-			std::optional<m2::RectF> current_rect, current_circ; // wrt sprite center
+			std::optional<m2::RectF> current_rect; // wrt sprite center
+			std::optional<CircF> current_circ; // wrt sprite center
 			void reset();
 		};
 		struct ForegroundColliderMode {
@@ -77,7 +79,8 @@ namespace m2::sedit {
 			void on_draw() const;
 
 			void set();
-			std::optional<m2::RectF> current_rect, current_circ; // wrt sprite center
+			std::optional<m2::RectF> current_rect; // wrt sprite center
+			std::optional<CircF> current_circ; // wrt sprite center
 			void reset();
 		};
 		std::variant<std::monostate, ForegroundCompanionMode, RectMode, BackgroundColliderMode, ForegroundColliderMode> mode;
