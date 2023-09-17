@@ -92,6 +92,24 @@ int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_
 	return SDL_RenderDrawLines(renderer, points.data(), (int) points.size());
 }
 
+int m2::sdl::draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, const SDL_Color& center_color, float radius_px, const SDL_Color& edge_color, unsigned steps) {
+	std::vector<SDL_Vertex> vertices(steps * 3);
+	// The vector that'll be rotated for the edges
+	VecF full_span_px{radius_px, 0.0f};
+	for (unsigned i = 0; i < steps; ++i) {
+		// Center point of the triangle
+		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(center_position_px), .color = center_color});
+		// Second point of the triangle
+		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(center_position_px + full_span_px), .color = edge_color});
+		// Rotate full_span_px for next iteration
+		full_span_px = full_span_px.rotate(PI_MUL2 / static_cast<float>(steps));
+		// Third point of the triangle
+		vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(center_position_px + full_span_px), .color = edge_color});
+	}
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+	SDL_RenderGeometry(renderer, nullptr, vertices.data(), (int)vertices.size(), nullptr, 0);
+}
+
 m2::sdl::TextureUniquePtr m2::sdl::generate_font(const std::string& text, SDL_Color color) {
 	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.font, text.c_str(), color);
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <VecI.pb.h>
+#include <SDL_rect.h>
 #include <cstdint>
 #include <cstddef>
 #include <string>
@@ -20,6 +21,7 @@ namespace m2 {
 		inline VecI operator-(const VecI& rhs) const { return {x - rhs.x, y - rhs.y}; }
 		inline bool operator==(const VecI& other) const { return x == other.x && y == other.y; }
 		inline explicit operator bool() const { return (x || y); }
+		inline explicit operator SDL_FPoint() const { return SDL_FPoint{static_cast<float>(x), static_cast<float>(y)}; }
 
 		[[nodiscard]] inline bool is_near(const VecI& other, int tolerance) const { return abs(other.x - x) <= tolerance && abs(other.y - y) <= tolerance; }
 		[[nodiscard]] inline bool is_negative() const { return x < 0 || y < 0; }
