@@ -149,6 +149,7 @@ void State::BackgroundColliderMode::set() {
 	auto selection_results = SelectionResult{GAME.events};
 	// If rect is selected
 	if (selection_results.is_primary_selection_finished()) {
+		LOG_DEBUG("Primary selection");
 		auto positions = selection_results.primary_halfcell_selection_position_m();
 		auto rect = RectF::from_corners(positions->first, positions->second); // wrt sprite coordinates
 		auto origin_offset = rect.center() - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
@@ -159,16 +160,34 @@ void State::BackgroundColliderMode::set() {
 			sprite.mutable_background_collider()->mutable_rect_dims_px()->set_w(dims.x);
 			sprite.mutable_background_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
-		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center()); // current
+		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center());
 		current_circ = std::nullopt;
 		GAME.events.reset_primary_selection();
 	} else if (selection_results.is_secondary_selection_finished()) {
+		LOG_DEBUG("Secondary selection");
 		// If circ is selected
-		// TODO
+		auto positions = selection_results.secondary_halfcell_selection_position_m();
+		auto center = positions->first;
+		auto radius = positions->first.distance(positions->second);
+		auto origin_offset = center - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_background_collider()->set_circ_radius_px(radius);
+		});
+		current_rect = std::nullopt;
+		current_circ = CircF{center - LEVEL.sheet_editor_state->selected_sprite_center(), radius};
+		GAME.events.reset_secondary_selection();
 	}
 }
 void State::BackgroundColliderMode::reset() {
-	// TODO
+	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.clear_background_collider();
+	});
+	current_rect = std::nullopt;
+	current_circ = std::nullopt;
+	GAME.events.reset_primary_selection();
+	GAME.events.reset_secondary_selection();
 }
 
 State::ForegroundColliderMode::ForegroundColliderMode() {
@@ -217,6 +236,7 @@ void State::ForegroundColliderMode::set() {
 	auto selection_results = SelectionResult{GAME.events};
 	// If rect is selected
 	if (selection_results.is_primary_selection_finished()) {
+		LOG_DEBUG("Primary selection");
 		auto positions = selection_results.primary_halfcell_selection_position_m();
 		auto rect = RectF::from_corners(positions->first, positions->second); // wrt sprite coordinates
 		auto origin_offset = rect.center() - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
@@ -227,16 +247,34 @@ void State::ForegroundColliderMode::set() {
 			sprite.mutable_foreground_collider()->mutable_rect_dims_px()->set_w(dims.x);
 			sprite.mutable_foreground_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
-		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center()); // current
+		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center());
 		current_circ = std::nullopt;
 		GAME.events.reset_primary_selection();
 	} else if (selection_results.is_secondary_selection_finished()) {
+		LOG_DEBUG("Secondary selection");
 		// If circ is selected
-		// TODO
+		auto positions = selection_results.secondary_halfcell_selection_position_m();
+		auto center = positions->first;
+		auto radius = positions->first.distance(positions->second);
+		auto origin_offset = center - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
+		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_foreground_collider()->set_circ_radius_px(radius);
+		});
+		current_rect = std::nullopt;
+		current_circ = CircF{center - LEVEL.sheet_editor_state->selected_sprite_center(), radius};
+		GAME.events.reset_secondary_selection();
 	}
 }
 void State::ForegroundColliderMode::reset() {
-	// TODO
+	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
+		sprite.clear_foreground_collider();
+	});
+	current_rect = std::nullopt;
+	current_circ = std::nullopt;
+	GAME.events.reset_primary_selection();
+	GAME.events.reset_secondary_selection();
 }
 
 expected<m2::sedit::State> m2::sedit::State::create(const std::filesystem::path& path) {

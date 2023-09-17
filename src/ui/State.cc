@@ -15,6 +15,7 @@
 #include <m2/sdl/Detail.hh>
 #include <regex>
 #include <ranges>
+#include <m2/String.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -322,8 +323,10 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				return Action::CONTINUE;
 			} else if (std::regex_match(command, std::regex{"sedit(\\s.*)?"})) {
 				std::smatch match_results;
-				if (std::regex_match(command, match_results, std::regex{R"(sedit\s+(.+))"})) {
-					auto load_result = GAME.load_sheet_editor(match_results.str(1));
+				if (std::regex_match(command, match_results, std::regex{R"(sedit(\s.*)?)"})) {
+					auto trimmed_arg = string::trim(match_results.str(1));
+					auto path = trimmed_arg.empty() ? (GAME.game_resource_dir / "SpriteSheets.json").string() : trimmed_arg;
+					auto load_result = GAME.load_sheet_editor(path);
 					if (load_result) {
 						// Execute main menu the first time the sheet editor is run
 						auto main_menu_result = execute_blocking(&m2::ui::sheet_editor_main_menu);
