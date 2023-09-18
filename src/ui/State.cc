@@ -343,8 +343,8 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				if (std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
 					auto parameter = match_results.str(1);
 					if (parameter == "game_height") {
-						auto new_game_height = strtof(match_results.str(2).c_str(), nullptr);
-						GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, Rational{new_game_height});
+						auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
+						GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, new_game_height);
 						return Action::CONTINUE;
 					} else {
 						GAME.console_output.emplace_back("Unknown parameter");

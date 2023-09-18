@@ -1,19 +1,19 @@
 #include <m2/Game.h>
 
-m2::Game::Dimensions::Dimensions(const Rational& game_height_m, int window_width, int window_height) : height_m(game_height_m) {
+m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window_height) : height_m(game_height_m) {
 	window = SDL_Rect{0, 0, window_width, window_height};
 
 	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
 	if (window_width < ideal_width) {
 		// Screen is taller than expected
 		auto provisional_game_height = window_width * GAME_AND_HUD_ASPECT_RATIO_DIV / GAME_AND_HUD_ASPECT_RATIO_MUL;
-		ppm = provisional_game_height * height_m.d() / height_m.n();
+		ppm = provisional_game_height / height_m;
 	} else {
 		// Screen is exact or wider
-		ppm = window_height * height_m.d() / height_m.n();
+		ppm = window_height / height_m;
 	}
 
-	int game_height = ppm * height_m.n() / height_m.d();
+	int game_height = ppm * height_m;
 	int game_width = game_height * GAME_ASPECT_RATIO_MUL / GAME_ASPECT_RATIO_DIV;
 	int hud_height = game_height;
 	int hud_width = game_height * HUD_ASPECT_RATIO_MUL / HUD_ASPECT_RATIO_DIV;

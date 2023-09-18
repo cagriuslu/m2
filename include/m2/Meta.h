@@ -7,6 +7,8 @@ namespace m2 {
 	int I(auto t) { return static_cast<int>(t); }
 	unsigned U(auto t) { return static_cast<unsigned>(t); }
 	float F(auto t) { return static_cast<float>(t); }
+	inline int iround(float t) { return static_cast<int>(roundf(t)); }
+	inline unsigned uround(float t) { return static_cast<unsigned>(roundf(t)); }
 
 	std::string to_string(int);
 	std::string to_string(unsigned int);

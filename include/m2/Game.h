@@ -45,13 +45,13 @@ namespace m2 {
 		static Game* _instance;
 
 		struct Dimensions {
-			Rational height_m{20}; // Controls the zoom of the game
+			int height_m{20}; // Controls the zoom of the game
 			int ppm{};
 			SDL_Rect window{}, game{}, game_and_hud{};
 			SDL_Rect top_envelope{}, bottom_envelope{}, left_envelope{}, right_envelope{};
 			SDL_Rect left_hud{}, right_hud{}, message_box{};
 			Dimensions() = default;
-			Dimensions(const Rational& game_height_m, int window_width, int window_height);
+			Dimensions(int game_height_m, int window_width, int window_height);
 		} _dims;
 
 		////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,8 @@ namespace m2 {
 
 		// Modifiers
 		inline void add_pause_ticks(sdl::ticks_t ticks) { pause_ticks += ticks; }
-		void recalculate_dimensions(int window_width, int window_height, const Rational& game_height = {});
+		void recalculate_dimensions(int window_width, int window_height, int game_height_m = 0);
+		void set_zoom(float game_height_multiplier);
 		void recalculate_mouse_position();
 		void recalculate_directional_audio();
 		void add_deferred_action(const std::function<void(void)>& action);

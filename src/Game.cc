@@ -4,7 +4,6 @@
 #include <m2/String.h>
 #include <m2/Sprite.h>
 #include <Level.pb.h>
-#include "m2/component/Physique.h"
 #include <m2/sheet_editor/Ui.h>
 #include "m2/component/Graphic.h"
 #include <m2/sdl/Detail.hh>
@@ -154,11 +153,7 @@ void m2::Game::handle_window_resize_event() {
 	auto window_resize = events.pop_window_resize();
 	if (window_resize) {
 		recalculate_dimensions(window_resize->x, window_resize->y);
-		if (_level) {
-			IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
-			IF(_level->right_hud_ui_state)->update_positions(_dims.right_hud);
-			IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
-		}
+		set_zoom(1.0f);
 	}
 }
 
@@ -343,8 +338,17 @@ void m2::Game::flip_buffers() {
 	SDL_RenderPresent(renderer);
 }
 
-void m2::Game::recalculate_dimensions(int window_width, int window_height, const Rational& game_height) {
-	_dims = Dimensions{game_height.n() == 0 ? _dims.height_m : game_height, window_width, window_height};
+void m2::Game::recalculate_dimensions(int window_width, int window_height, int game_height_m) {
+	_dims = Dimensions{game_height_m == 0 ? _dims.height_m : game_height_m, window_width, window_height};
+}
+
+void m2::Game::set_zoom(float game_height_multiplier) {
+	recalculate_dimensions(_dims.window.w, _dims.window.h, iround(static_cast<float>(_dims.height_m) * game_height_multiplier));
+	if (_level) {
+		IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
+		IF(_level->right_hud_ui_state)->update_positions(_dims.right_hud);
+		IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
+	}
 }
 
 void m2::Game::recalculate_mouse_position() {

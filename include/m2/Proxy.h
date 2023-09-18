@@ -13,7 +13,7 @@ namespace m2g {
 	/// Name of the game, which is used to discover the resources
 	extern const std::string_view game_name;
 
-	extern const m2::Rational default_game_height_m;
+	extern const int default_game_height_m;
 
 	/// Should the b2World have gravity towards downwards direction
 	extern const bool gravity;
