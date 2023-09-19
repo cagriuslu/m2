@@ -1,6 +1,7 @@
 #include <m2/Vm.h>
 #include <m2/FileSystem.h>
 #include <m2/Exception.h>
+#include <m2/Log.h>
 #include <sstream>
 
 namespace {
@@ -29,7 +30,9 @@ namespace {
 		}
 	}
 
-	std::string fetch_until_except_character(std::stringstream& ss, int limiter) {
+	/// Fetches a string from the stream until the limiter character is encountered.
+	/// The limiter character is not present in the returned string.
+	std::string fetch_until_char(std::stringstream& ss, int limiter) {
 		std::stringstream out;
 
 		bool escaping = false;
@@ -181,8 +184,12 @@ namespace {
 			case COMMENT:
 				return COMMENT;
 
-			default:
+			default: {
+				if (is_whitespace(c)) {
+					return WHITESPACE;
+				}
 				throw M2ERROR(std::string("Unexpected character: ") + c);
+			}
 		}
 	}
 }
@@ -213,7 +220,7 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 		while ((c = ss.get()) != EOF) {
 			if (c == COMMENT) {
 				// Skip comment line
-				fetch_until_except_character(ss, '\n');
+				fetch_until_char(ss, '\n');
 			} else if (c == DEFINE_FUNC) {
 				// Begin new function
 				auto func_name = fetch_identifier(ss);
@@ -234,8 +241,11 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 				current_labels[label] = current_commands.size();
 			} else if (current_function) {
 				// Save command
+				LOGF_TRACE("Trying to determine the type of instruction '%c'...", c);
 				auto inst_type = determine_instruction_type((char) c);
 				switch (inst_type) {
+					case WHITESPACE:
+						break;
 					case SIMPLE:
 						current_commands.emplace_back(c, std::monostate{});
 						break;
@@ -247,7 +257,7 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 						current_commands.emplace_back(c, fetch_integer(ss));
 						break;
 					case STRING:
-						current_commands.emplace_back(c, fetch_until_except_character(ss, '"'));
+						current_commands.emplace_back(c, fetch_until_char(ss, '"'));
 						break;
 					case CHAR:
 						current_commands.emplace_back(c, fetch_character(ss));

@@ -7,10 +7,11 @@
 namespace m2 {
 	namespace vm {
 		enum InstructionType {
+			WHITESPACE,
 			SIMPLE,
 			WITH_STRING_ARG,
 			WITH_INTEGER_ARG,
-			INTEGER = ',',
+			INTEGER = '`',
 			STRING = '"',
 			CHAR = '\'',
 			_ESCAPE = '\\', // Not really an instruction
@@ -30,8 +31,8 @@ namespace m2 {
 			ARRAY_INDIRECT = ']',
 			STACK_INDIRECT = ')',
 			PUSH_OBJECT = '{',
-			POP = '`',
-			// unused '}'
+			POP = '}',
+			// unused ',' swap maybe?
 		};
 		enum StrArgInstruction : char {
 			DEFINE_FUNC = ';',
