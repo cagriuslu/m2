@@ -3,6 +3,7 @@
 #include <array>
 #include <string>
 #include <variant>
+#include <list>
 
 namespace m2 {
 	namespace vm {
@@ -11,9 +12,9 @@ namespace m2 {
 			SIMPLE,
 			WITH_STRING_ARG,
 			WITH_INTEGER_ARG,
-			INTEGER = '`',
+			NUMBER = '`',
+			DECIMAL_SEPARATOR = '.',
 			STRING = '"',
-			CHAR = '\'',
 			_ESCAPE = '\\', // Not really an instruction
 			COMMENT = '#',
 		};
@@ -28,47 +29,65 @@ namespace m2 {
 			BINARY_XOR = '^',
 			BINARY_COMPLEMENT = '~',
 			MODULO = '%',
-			ARRAY_INDIRECT = ']',
-			STACK_INDIRECT = ')',
-			PUSH_OBJECT = '{',
+
+			PUSH_EMPTY = '{', // Array of object
+			GET_INDIRECT = '[',
+			SET_INDIRECT = ']',
 			POP = '}',
-			// unused ',' swap maybe?
 		};
 		enum StrArgInstruction : char {
 			DEFINE_FUNC = ';',
 			DEFINE_LABEL = ':',
-			CALL_FUNC = '.',
+			CALL_FUNC = ',',
 			JUMP_POSITIVE = '>',
 			JUMP_NEGATIVE = '<',
 			JUMP_ZERO  = '?',
 			JUMP = '!',
+
 			GET_MEMBER = '@',
 			SET_MEMBER = '$',
 		};
 		enum IntArgInstruction : char {
-			ARRAY_DIRECT = '[',
-			STACK_DIRECT = '(',
+			STACK_GET = '(',
+			STACK_SET = ')',
 		};
+		// Unused: '
 	}
 
 	class Vm {
+	public:
+		using InstructionIndex = size_t;
+		using Labels = std::unordered_map<std::string, InstructionIndex>;
+
+	private:
 		struct Command {
 			char inst{};
-			using Arg = std::variant<std::monostate, int, std::string>;
-			Arg arg;
-
-			inline Command(char _inst, Arg&& _arg) : inst(_inst), arg(std::move(_arg)) {}
+			std::variant<std::monostate, int, float, std::string> arg{};
+			inline explicit Command(char inst) : inst(inst) {}
+			inline Command(char inst, int i) : inst(inst), arg(i) {}
+			inline Command(char inst, float f) : inst(inst), arg(f) {}
+			inline Command(char inst, std::string s) : inst(inst), arg(std::move(s)) {}
 		};
 		using Commands = std::vector<Command>;
-		using Labels = std::unordered_map<std::string, size_t>;
 		using CommandsAndLabels = std::pair<Commands, Labels>;
-
 		std::unordered_map<std::string, CommandsAndLabels> _functions;
 
 	public:
-		Vm() = default;
-
 		void_expected add_script(const std::string& script);
 		void_expected add_script_file(const std::string& path);
+
+		struct Object;
+		using ObjectKey = std::string;
+		using ObjectValue = std::variant<int, float, std::string, Object>;
+		struct Object { std::unordered_map<ObjectKey, ObjectValue> map; };
+		using ReturnValue = std::variant<std::monostate, int, float, std::string, Object>;
+		[[nodiscard]] m2::expected<ReturnValue> execute(const std::string& func) const;
+
+		using StackValue = ObjectValue;
+		using Stack = std::list<StackValue>;
+	private:
+		void execute_recursively(Stack& stack, const std::string& func) const;
 	};
+
+	std::string to_string(const Vm::StackValue& value);
 }

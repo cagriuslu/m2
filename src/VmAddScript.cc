@@ -80,62 +80,40 @@ namespace {
 		return out.str();
 	}
 
-	int fetch_integer(std::stringstream& ss) {
-		std::stringstream i_str;
+	std::variant<int,float> fetch_number(std::stringstream& ss) {
+		std::stringstream n_str;
 
 		// Parse until non-digit character is fetched
 		int c, n = 0;
-		for (c = ss.get(); isdigit(c) || (c == '-' && n == 0); c = ss.get(), ++n) {
-			i_str << (char)c;
+		bool decimal = false;
+		for (c = ss.get(); (n == 0 && c == '-') || isdigit(c) || (!decimal && c == '.'); c = ss.get(), ++n) {
+			if (c == '.') {
+				decimal = true;
+			}
+			n_str << (char)c;
 		}
 
 		if (is_whitespace(c)) {
 			// Success
-			auto str = i_str.str();
-			return (int) strtol(str.c_str(), nullptr, 10);
+			auto str = n_str.str();
+			if (decimal) {
+				return strtof(str.c_str(), nullptr);
+			} else {
+				return (int) strtol(str.c_str(), nullptr, 10);
+			}
 		} else {
 			throw M2ERROR("Unexpected digit character: " + std::to_string(c));
 		}
 	}
 
-	int fetch_character(std::stringstream& ss) {
-		int c = ss.get();
-		if (c == m2::vm::_ESCAPE) {
-			c = ss.get();
-			switch (c) {
-				case 'a':
-					c = '\a';
-					break;
-				case 'b':
-					c = '\b';
-					break;
-				case 'f':
-					c = '\f';
-					break;
-				case 'n':
-					c = '\n';
-					break;
-				case 'r':
-					c = '\r';
-					break;
-				case 't':
-					c = '\t';
-					break;
-				case 'v':
-					c = '\v';
-					break;
-				case '"':
-					c = '"';
-					break;
-				case '\\':
-					c = '\\';
-					break;
-				default:
-					throw M2ERROR(std::string("Unexpected escape character") + (char) c);
-			}
+	int fetch_integer(std::stringstream& ss) {
+		auto n = fetch_number(ss);
+		if (not std::holds_alternative<int>(n)) {
+			std::visit(m2::overloaded {
+				[](float f) { throw M2ERROR("Expected integer: " + std::to_string(f)); }
+			}, n);
 		}
-
-		return c;
+		return std::get<int>(n);
 	}
 
 	m2::vm::InstructionType determine_instruction_type(char c) {
@@ -151,9 +129,9 @@ namespace {
 			case BINARY_XOR:
 			case BINARY_COMPLEMENT:
 			case MODULO:
-			case ARRAY_INDIRECT:
-			case STACK_INDIRECT:
-			case PUSH_OBJECT:
+			case PUSH_EMPTY:
+			case GET_INDIRECT:
+			case SET_INDIRECT:
 			case POP:
 				return SIMPLE;
 
@@ -168,18 +146,15 @@ namespace {
 			case SET_MEMBER:
 				return WITH_STRING_ARG;
 
-			case ARRAY_DIRECT:
-			case STACK_DIRECT:
+			case STACK_GET:
+			case STACK_SET:
 				return WITH_INTEGER_ARG;
 
-			case INTEGER:
-				return INTEGER;
+			case NUMBER:
+				return NUMBER;
 
 			case STRING:
 				return STRING;
-
-			case CHAR:
-				return CHAR;
 
 			case COMMENT:
 				return COMMENT;
@@ -247,20 +222,22 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 					case WHITESPACE:
 						break;
 					case SIMPLE:
-						current_commands.emplace_back(c, std::monostate{});
+						current_commands.emplace_back(c);
 						break;
 					case WITH_STRING_ARG:
 						current_commands.emplace_back(c, fetch_identifier(ss));
 						break;
 					case WITH_INTEGER_ARG:
-					case INTEGER:
 						current_commands.emplace_back(c, fetch_integer(ss));
+						break;
+					case NUMBER:
+						std::visit(m2::overloaded {
+							[&](int i) {current_commands.emplace_back(c, i);},
+							[&](float f) {current_commands.emplace_back(c, f);}
+						}, fetch_number(ss));
 						break;
 					case STRING:
 						current_commands.emplace_back(c, fetch_until_char(ss, '"'));
-						break;
-					case CHAR:
-						current_commands.emplace_back(c, fetch_character(ss));
 						break;
 					default:
 						throw M2ERROR(std::string("Unexpected instruction type: ") + std::to_string(inst_type));
