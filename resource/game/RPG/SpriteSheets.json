@@ -1,7 +1,7 @@
 {
   "sheets": [
     {
-      "resource": "resource/game/RPG/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
+      "resource": "resource/game/RPG/icons/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
       "ppm": 16,
       "sprites": [
         {
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/fantasyrpgtilesetpack/castle.png",
+      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/castle.png",
       "ppm": 16,
       "sprites": [
         {
@@ -306,7 +306,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/monsterstimefantasyrpgspritepack/chara6.png",
+      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/chara6.png",
       "ppm": 26,
       "sprites": [
         {
@@ -379,7 +379,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/monsterstimefantasyrpgspritepack/monster2.png",
+      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/monster2.png",
       "ppm": 32,
       "__comment__": "Sheet has extra 32 rows on top. Sprites have arbitrary separation in-between",
       "sprites": [
@@ -549,7 +549,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/monsterstimefantasyrpgspritepack/monster4.png",
+      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/monster4.png",
       "ppm": 26,
       "sprites": [
         {
@@ -771,7 +771,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/Forest Environment Pixel Art Tileset/Sprites/Decor/Bush/bush_1.png",
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Bush/bush_1.png",
       "ppm": 32,
       "sprites": [
         {

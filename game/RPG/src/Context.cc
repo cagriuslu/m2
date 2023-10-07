@@ -42,7 +42,7 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 		.background_color = SDL_Color{20, 20, 20, 255}
 	};
 
-	auto level_jsons = m2::list_files(GAME.game_resource_dir / "Levels", ".json");
+	auto level_jsons = m2::list_files(GAME.game_resource_dir / "levels", ".json");
 	LOG_INFO("Adding level buttons", level_jsons.size());
 	for (int i = 0; i < (ssize_t)level_jsons.size(); ++i) {
 		const auto& level_json = level_jsons[i];
