@@ -2,6 +2,7 @@
 #include <m2/Game.h>
 #include <algorithm>
 #include <m2/protobuf/Detail.h>
+#include <cstdlib>
 
 float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
 	if (max_amount < 0.0f) {
@@ -76,21 +77,17 @@ bool m2::Character::use_item(const Iterator& item_it, float resource_multiplier)
 		}
 	} else if (1 < item_it->get_cost_count()) {
 		// Merge costs
-		std::array<float, m2g::pb::ResourceType_ARRAYSIZE> merged_costs{};
+		auto resource_count = protobuf::enum_value_count<m2g::pb::ResourceType>();
+		auto* merged_costs = (float*) alloca(resource_count * sizeof(float));
 		for (size_t i = 0; i < item_it->get_cost_count(); ++i) {
 			const auto cost = item_it->get_cost_by_index(i);
-			merged_costs[cost.first] += cost.second * resource_multiplier;
+			merged_costs[protobuf::enum_index(cost.first)] += cost.second * resource_multiplier;
 		}
-
-		bool enough = true;
-		for (size_t i = 0; i < merged_costs.size(); ++i) {
-			if (0.0f < merged_costs[i] && get_resource((m2g::pb::ResourceType) i) < merged_costs[i]) {
-				enough = false;
-				break;
+		// Check if all costs are covered
+		for (int i = 0; i < resource_count; ++i) {
+			if (0.0f < merged_costs[i] && get_resource(protobuf::enum_value<m2g::pb::ResourceType>(i)) < merged_costs[i]) {
+				return false;
 			}
-		}
-		if (!enough) {
-			return false;
 		}
 	}
 
