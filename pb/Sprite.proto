@@ -72,6 +72,9 @@ message RegularSprite {
   int32 override_ppm = 4;
 
   // Vector from the center of the (rect) to the position that should be the origin
+  // TODO replace with `VecF origin`, which is based on sprite sheet coordinates.
+  // TODO It would be much simpler to write SpriteSheets.
+  // TODO do similar for other coordinates
   VecF center_offset_px = 5;
 
   Collider background_collider = 6;

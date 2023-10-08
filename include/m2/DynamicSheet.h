@@ -1,5 +1,6 @@
 #pragma once
 #include "sdl/Detail.hh"
+#include "RectI.h"
 #include <SDL2/SDL.h>
 #include <memory>
 
@@ -14,7 +15,7 @@ namespace m2 {
 	public:
 		explicit DynamicSheet(SDL_Renderer* renderer);
 		[[nodiscard]] SDL_Texture* texture() const;
-		std::pair<SDL_Surface*, SDL_Rect> alloc(int w, int h);
+		std::pair<SDL_Surface*, RectI> alloc(int w, int h);
 		SDL_Texture* recreate_texture();
 	protected:
 		[[nodiscard]] inline int width() const { return _surface->w; }

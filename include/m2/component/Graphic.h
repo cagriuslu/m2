@@ -61,15 +61,6 @@ namespace m2 {
 		explicit Graphic(uint64_t object_id);
 		explicit Graphic(uint64_t object_id, const Sprite& sprite);
 
-		/// Returns a vector from the sprite's center pixel to the sprite's graphical origin.
-		/// The graphical origin should align with the object's position, not the sprite's center pixel.
-		[[nodiscard]] VecF sprite_center_to_sprite_origin_px() const;
-
-		/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
-		/// Returns screen_origin_to_position_px(position) - sprite_center_to_sprite_origin_px() if sprite is non-NULL.
-		/// Returns screen_origin_to_position_px(position) if sprite is NULL.
-		[[nodiscard]] VecF screen_origin_to_sprite_center_px() const;
-
 		static void default_draw(Graphic& gfx);
 		static void default_draw_addons(Graphic& gfx);
 
@@ -79,4 +70,16 @@ namespace m2 {
 		static void color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
 		static void draw_cross(const VecF& world_position, SDL_Color color);
 	};
+
+	/// Returns a vector from the sprite's center pixel to the sprite's graphical origin.
+	/// The graphical origin should align with the object's position, not the sprite's center pixel.
+	VecF sprite_center_to_sprite_origin_px(const Sprite& sprite, pb::SpriteEffectType effect_type);
+
+	/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
+	/// Returns screen_origin_to_position_px(position) - sprite_center_to_sprite_origin_px() if sprite is non-NULL.
+	/// Returns screen_origin_to_position_px(position) if sprite is NULL.
+	VecF screen_origin_to_sprite_center_px(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type);
+
+	void draw_real_2d(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type, float angle);
+	void draw_fake_3d(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type, float angle, bool is_foreground, float z);
 }

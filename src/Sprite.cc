@@ -5,6 +5,7 @@
 #include <m2/Proxy.h>
 #include <m2/Exception.h>
 #include <SDL2/SDL_image.h>
+#include <m2/Game.h>
 
 m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer) : _sprite_sheet(sprite_sheet) {
 	_surface.reset(IMG_Load(sprite_sheet.resource().c_str()));
@@ -32,7 +33,7 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 }
 
 m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
-SDL_Rect m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, const pb::RectI &rect, const pb::Color& mask_color) {
+m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, const pb::RectI &rect, const pb::Color& mask_color) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -70,7 +71,7 @@ SDL_Rect m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, co
 
 	return dst_rect;
 }
-SDL_Rect m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
+m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	for (const auto& rect_piece : rect_pieces) {
@@ -88,7 +89,7 @@ SDL_Rect m2::SpriteEffectsSheet::create_foreground_companion_effect(const Sprite
 
 	return dst_rect;
 }
-SDL_Rect m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect) {
+m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -128,7 +129,7 @@ SDL_Rect m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& shee
 
 	return dst_rect;
 }
-SDL_Rect m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment) {
+m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -192,7 +193,8 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 				: box2d::ColliderType::NONE),
 	_foreground_collider_center_offset_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _foreground_collider_origin_offset_m
 	_foreground_collider_rect_dims_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().rect_dims_px()} / (float)_ppm),
-	_foreground_collider_circ_radius_m(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().circ_radius_px() / (float)_ppm) {
+	_foreground_collider_circ_radius_m(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().circ_radius_px() / (float)_ppm),
+	_is_background_tile(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().is_background_tile()) {
 	// Create effects
 	if (sprite.has_regular() && sprite.regular().effects_size()) {
 		_effects.resize(protobuf::enum_value_count<pb::SpriteEffectType>());
@@ -237,7 +239,7 @@ SDL_Texture* m2::Sprite::effects_texture() const {
 	}
 	return nullptr;
 }
-SDL_Rect m2::Sprite::effect_rect(pb::SpriteEffectType effect_type) const {
+m2::RectI m2::Sprite::effect_rect(pb::SpriteEffectType effect_type) const {
 	return _effects[protobuf::enum_index(effect_type)];
 }
 bool m2::Sprite::has_foreground_companion() const {
@@ -274,6 +276,19 @@ float m2::Sprite::foreground_collider_circ_radius_m() const {
 	return _foreground_collider_circ_radius_m;
 }
 
+float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
+	return static_cast<float>(GAME.dimensions().ppm) / static_cast<float>(ppm());
+}
+m2::VecF m2::Sprite::center_to_origin_px(pb::SpriteEffectType effect_type) const {
+	if (effect_type == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && has_foreground_companion()) {
+		return foreground_companion_center_offset_px();
+	} else {
+		return original_rotation_radians() != 0.0f
+				? center_offset_px().rotate(original_rotation_radians())
+				: center_offset_px();
+	}
+}
+
 std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer *renderer) {
 	auto sheets = protobuf::json_file_to_message<pb::SpriteSheets>(sprite_sheets_path);
 	if (!sheets) {
@@ -307,6 +322,10 @@ std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_
 					if (not is_loaded[protobuf::enum_index(background.type())]) {
 						throw M2ERROR("Background of the sprite with backgrounds is not loaded yet: " + std::to_string(sprite.type()) + "," + std::to_string(background.type()));
 					}
+				}
+				// Check if foreground is a background tile
+				if (not sprites_vector[protobuf::enum_index(sprite.with_backgrounds().foreground())].is_background_tile()) {
+					throw M2ERROR("Non-background tiles cannot have backgrounds");
 				}
 			}
 			// Load sprite

@@ -121,214 +121,18 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_of_position_px(const Vec
 m2::Graphic::Graphic(Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_effect(default_draw_addons), sprite(&sprite) {}
 
-m2::VecF m2::Graphic::sprite_center_to_sprite_origin_px() const {
-	if (sprite) {
-		VecF vector_in_source_pixels;
-		if (draw_sprite_effect == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && sprite->has_foreground_companion()) {
-			vector_in_source_pixels = sprite->foreground_companion_center_offset_px();
-		} else {
-			vector_in_source_pixels = VecF{sprite->center_offset_px()};
-			if (sprite->original_rotation_radians() != 0.0f) {
-				vector_in_source_pixels = vector_in_source_pixels.rotate(sprite->original_rotation_radians());
-			}
-		}
-
-		// Convert from source pixels to destination pixels
-		auto vector_in_destination_pixels = vector_in_source_pixels
-				* static_cast<float>(GAME.dimensions().ppm)
-				/ static_cast<float>(sprite->ppm());
-		return vector_in_destination_pixels;
-	} else {
-		return {};
-	}
-}
-
-m2::VecF m2::Graphic::screen_origin_to_sprite_center_px() const {
-	return screen_origin_to_position_px(parent().position) - sprite_center_to_sprite_origin_px();
-}
-
 void m2::Graphic::default_draw(Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only draws sprites
 		return;
 	}
 
-	// Select correct texture
-	auto* texture = gfx.sprite->sprite_sheet().texture();
-	if (gfx.draw_sprite_effect) {
-		texture = gfx.sprite->effects_texture();
-	}
-
-	// Select the correct source rectangle
-	auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
-	if (gfx.draw_sprite_effect) {
-		src_rect = gfx.sprite->effect_rect(gfx.draw_sprite_effect);
-	}
-
 	if (m2g::camera_height != 0.0f) {
-		// Draw two triangles in one call
-		// 0****1
-		// *   **
-		// *  * *
-		// * *  *
-		// **   *
-		// 2****3
-
-		auto position = gfx.parent().position;
-		auto position3 = m3::VecF{position.x, position.y, 0.0f};
-
-		m3::VecF point_0, point_1, point_2, point_3;
-
 		// Check if foreground or background
 		bool is_foreground = LEVEL.graphics.get_id(&gfx);
-		if (is_foreground) {
-			auto sprite_x_offset_in_dest_px = gfx.sprite_center_to_sprite_origin_px().x;
-			auto point_0_not_rotated = m3::VecF{
-					position.x - ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y,
-					(float)src_rect.h / (float)gfx.sprite->ppm()
-			};
-			auto point_1_not_rotated = m3::VecF{
-					position.x + ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y,
-					(float)src_rect.h / (float)gfx.sprite->ppm()
-			};
-			auto point_2_not_rotated = m3::VecF{
-					position.x - ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y,
-					0.0f
-			};
-			auto point_3_not_rotated = m3::VecF{
-					position.x + ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y,
-					0.0f
-			};
-
-			auto position_to_point_0_not_rotated = point_0_not_rotated - position3;
-			auto position_to_point_1_not_rotated = point_1_not_rotated - position3;
-			auto position_to_point_2_not_rotated = point_2_not_rotated - position3;
-			auto position_to_point_3_not_rotated = point_3_not_rotated - position3;
-
-			// Apply sprite and object rotation
-			auto xz_rotation = gfx.sprite->original_rotation_radians();
-			auto xy_rotation = gfx.draw_angle;
-			auto position_to_point_0 = position_to_point_0_not_rotated.rotate_xz(xz_rotation).rotate_xy(xy_rotation);
-			auto position_to_point_1 = position_to_point_1_not_rotated.rotate_xz(xz_rotation).rotate_xy(xy_rotation);
-			auto position_to_point_2 = position_to_point_2_not_rotated.rotate_xz(xz_rotation).rotate_xy(xy_rotation);
-			auto position_to_point_3 = position_to_point_3_not_rotated.rotate_xz(xz_rotation).rotate_xy(xy_rotation);
-
-			point_0 = (position_to_point_0 + position3).offset_z(gfx.z);
-			point_1 = (position_to_point_1 + position3).offset_z(gfx.z);
-			point_2 = (position_to_point_2 + position3).offset_z(gfx.z);
-			point_3 = (position_to_point_3 + position3).offset_z(gfx.z);
-		} else {
-			// Background sprite
-			auto sprite_x_offset_in_dest_px = gfx.sprite_center_to_sprite_origin_px().x;
-			auto sprite_y_offset_in_dest_px = gfx.sprite_center_to_sprite_origin_px().y;
-			auto point_0_not_rotated = m3::VecF{
-					position.x - ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y - ((float)src_rect.h / (float)gfx.sprite->ppm() / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
-					0.0f
-			};
-			auto point_1_not_rotated = m3::VecF{
-					position.x + ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y - ((float)src_rect.h / (float)gfx.sprite->ppm() / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
-					0.0f
-			};
-			auto point_2_not_rotated = m3::VecF{
-					position.x - ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y + ((float)src_rect.h / (float)gfx.sprite->ppm() / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
-					0.0f
-			};
-			auto point_3_not_rotated = m3::VecF{
-					position.x + ((float)src_rect.w / (float)gfx.sprite->ppm() / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-					position.y + ((float)src_rect.h / (float)gfx.sprite->ppm() / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
-					0.0f
-			};
-
-			auto position_to_point_0_not_rotated = point_0_not_rotated - position3;
-			auto position_to_point_1_not_rotated = point_1_not_rotated - position3;
-			auto position_to_point_2_not_rotated = point_2_not_rotated - position3;
-			auto position_to_point_3_not_rotated = point_3_not_rotated - position3;
-
-			// Apply sprite and object rotation
-			auto xy_rotation = gfx.draw_angle - gfx.sprite->original_rotation_radians();
-			auto position_to_point_0 = position_to_point_0_not_rotated.rotate_xy(xy_rotation);
-			auto position_to_point_1 = position_to_point_1_not_rotated.rotate_xy(xy_rotation);
-			auto position_to_point_2 = position_to_point_2_not_rotated.rotate_xy(xy_rotation);
-			auto position_to_point_3 = position_to_point_3_not_rotated.rotate_xy(xy_rotation);
-
-			point_0 = (position_to_point_0 + position3).offset_z(gfx.z);
-			point_1 = (position_to_point_1 + position3).offset_z(gfx.z);
-			point_2 = (position_to_point_2 + position3).offset_z(gfx.z);
-			point_3 = (position_to_point_3 + position3).offset_z(gfx.z);
-		}
-
-		auto projected_point_0 = m3::screen_origin_to_projection_of_position_px(point_0);
-		auto projected_point_1 = m3::screen_origin_to_projection_of_position_px(point_1);
-		auto projected_point_2 = m3::screen_origin_to_projection_of_position_px(point_2);
-		auto projected_point_3 = m3::screen_origin_to_projection_of_position_px(point_3);
-
-		if (projected_point_0 && projected_point_1 && projected_point_2 && projected_point_3) {
-			auto texture_width = (float) (gfx.draw_sprite_effect ?
-					gfx.sprite->effects_sheet()->texture_width() : gfx.sprite->sprite_sheet().surface()->w);
-			auto texture_height = (float) (gfx.draw_sprite_effect ?
-					gfx.sprite->effects_sheet()->texture_height() : gfx.sprite->sprite_sheet().surface()->h);
-
-			SDL_Vertex vertices[4] = {};
-			vertices[0].position = static_cast<SDL_FPoint>(*projected_point_0);
-			vertices[0].color = {255, 255, 255, 255};
-			vertices[0].tex_coord = SDL_FPoint{
-					(float)src_rect.x / texture_width,
-					(float)src_rect.y / texture_height,
-			};
-
-			vertices[1].position = static_cast<SDL_FPoint>(*projected_point_1);
-			vertices[1].color = {255, 255, 255, 255};
-			vertices[1].tex_coord = SDL_FPoint{
-					(float)(src_rect.x + src_rect.w) / texture_width,
-					(float)(src_rect.y) / texture_height,
-			};
-
-			vertices[2].position = static_cast<SDL_FPoint>(*projected_point_2);
-			vertices[2].color = {255, 255, 255, 255};
-			vertices[2].tex_coord = SDL_FPoint{
-					(float)src_rect.x / texture_width,
-					(float)(src_rect.y + src_rect.h) / texture_height,
-			};
-
-			vertices[3].position = static_cast<SDL_FPoint>(*projected_point_3);
-			vertices[3].color = {255, 255, 255, 255};
-			vertices[3].tex_coord = SDL_FPoint{
-					(float)(src_rect.x + src_rect.w) / texture_width,
-					(float)(src_rect.y + src_rect.h) / texture_height,
-			};
-
-			static const int indices[6] = {0, 1, 2, 2, 1, 3};
-
-			SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
-			SDL_RenderGeometry(GAME.renderer, texture, vertices, 4, indices, 6);
-		}
+		draw_fake_3d(gfx.parent().position, *gfx.sprite, gfx.draw_sprite_effect, gfx.draw_angle, is_foreground, gfx.z);
 	} else {
-		auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
-		auto dst_rect = SDL_Rect{
-				(int)roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
-				(int)roundf(screen_origin_to_sprite_center_px.y) - (src_rect.h * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
-				src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm(),
-				src_rect.h * GAME.dimensions().ppm / gfx.sprite->ppm()
-		};
-
-		// Sprite is rotated around this point
-		auto center_offset = gfx.sprite_center_to_sprite_origin_px();
-		auto center_point = SDL_Point{
-				(int)roundf(center_offset.x) + dst_rect.w / 2 ,
-				(int)roundf(center_offset.y) + dst_rect.h / 2
-		};
-
-		auto original_rotation = gfx.sprite->original_rotation_radians();
-		if (SDL_RenderCopyEx(GAME.renderer, texture, &src_rect, &dst_rect, m2::to_degrees(gfx.draw_angle - original_rotation), &center_point, SDL_FLIP_NONE)) {
-			throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
-		}
+		draw_real_2d(gfx.parent().position, *gfx.sprite, gfx.draw_sprite_effect, gfx.draw_angle);
 	}
 }
 
@@ -345,10 +149,10 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 
 	if (m2g::camera_height == 0.0f) {
 		auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
-		auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
+		auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_px(gfx.parent().position, *gfx.sprite, gfx.draw_sprite_effect);
 		dst_rect = SDL_Rect{
-				(int) roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
-				(int) roundf(screen_origin_to_sprite_center_px.y) + (src_rect.h * GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1
+				(int) roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
+				(int) roundf(screen_origin_to_sprite_center_px_vec.y) + (src_rect.h * GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1
 				GAME.dimensions().ppm,
 				GAME.dimensions().ppm * 12 / 100 // 0.15 m height
 		};

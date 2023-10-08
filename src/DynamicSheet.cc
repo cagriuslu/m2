@@ -16,7 +16,7 @@ m2::DynamicSheet::DynamicSheet(SDL_Renderer *renderer) : _renderer(renderer) {
 SDL_Texture* m2::DynamicSheet::texture() const {
 	return _texture.get();
 }
-std::pair<SDL_Surface*, SDL_Rect> m2::DynamicSheet::alloc(int w, int h) {
+std::pair<SDL_Surface*, m2::RectI> m2::DynamicSheet::alloc(int w, int h) {
 	// Check if effect will fit
 	if (_surface->w < w) {
 		throw M2FATAL("Sprite effect exceeds width limit: " + std::to_string(_surface->w));
@@ -35,7 +35,7 @@ std::pair<SDL_Surface*, SDL_Rect> m2::DynamicSheet::alloc(int w, int h) {
 		_surface.reset(new_surface);
 	}
 
-	auto retval = std::make_pair(_surface.get(), SDL_Rect{0, _h, w, h});
+	auto retval = std::make_pair(_surface.get(), RectI{0, _h, w, h});
 	_h += h;
 	return retval;
 }
