@@ -196,6 +196,9 @@
           "isBackgroundTile": true
         },
         {
+          "type": "CASTLE_TOP_LEFT_CORNER_TOWER_GRASS_BACKGROUND"
+        },
+        {
           "type": "CASTLE_TOP_RIGHT_CORNER_TOWER",
           "rect": {
             "x": 48,
