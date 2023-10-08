@@ -34,24 +34,24 @@ void Image::draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 	if (sprite) {
 		// Make sure sprite is drawn square
-		SDL_Rect dstrect;
+		SDL_Rect dst_rect;
 		if (rect_px.h < rect_px.w) {
-			dstrect = {
+			dst_rect = {
 					.x = rect_px.x + (rect_px.w - rect_px.h) / 2,
 					.y = rect_px.y,
 					.w = rect_px.h,
 					.h = rect_px.h
 			};
 		} else {
-			dstrect = {
+			dst_rect = {
 					.x = rect_px.x,
 					.y = rect_px.y + (rect_px.h - rect_px.w) / 2,
 					.w = rect_px.w,
 					.h = rect_px.w
 			};
 		}
-		auto srcrect = sdl::to_rect(sprite->sprite().rect());
-		SDL_RenderCopy(GAME.renderer, sprite->sprite_sheet().texture(), &srcrect, &dstrect);
+		auto src_rect = static_cast<SDL_Rect>(sprite->rect());
+		SDL_RenderCopy(GAME.renderer, sprite->sprite_sheet().texture(), &src_rect, &dst_rect);
 	}
 	draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }

@@ -51,8 +51,9 @@ message Collider {
   }
 }
 
-message Regular {
+message RegularSprite {
   // List of effects that might be used during the game
+  // Effects are only generated for regular sprites, not for sprites with backgrounds.
   // TODO convert to Map
   repeated SpriteEffect effects = 1;
 
@@ -68,7 +69,7 @@ message Regular {
   float original_rotation = 3;
 
   // Override the PPm value of the sheet with this value if given.
-  uint32 override_ppm = 4;
+  int32 override_ppm = 4;
 
   // Vector from the center of the (rect) to the position that should be the origin
   VecF center_offset_px = 5;
@@ -88,27 +89,25 @@ message Background {
   // TODO add offset if necessary
 }
 
-message Backgrounds {
-  repeated Background background = 1;
+message SpriteWithBackgrounds {
+  // Draw other sprites as the background of this one
+  m2g.pb.SpriteType foreground = 2;
+  repeated Background backgrounds = 1;
 }
 
 message Sprite {
   string __comment__ = 1;
-
   m2g.pb.SpriteType type = 2;
-
   oneof variant {
-    Regular regular = 3;
-
-    // Draw other sprites as the background of this one
-    Backgrounds backgrounds = 4;
+    RegularSprite regular = 3;
+    SpriteWithBackgrounds with_backgrounds = 4;
   }
 }
 
 message SpriteSheet {
   string __comment__ = 1;
   string resource = 2;
-  uint32 ppm = 3; // Pixels per meter
+  int32 ppm = 3; // Pixels per meter
   repeated Sprite sprites = 4;
 }
 

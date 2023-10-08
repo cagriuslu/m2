@@ -18,7 +18,7 @@ namespace {
 State::ForegroundCompanionMode::ForegroundCompanionMode() {
 	const auto& sprite = LEVEL.sheet_editor_state->selected_sprite();
 	// Iterate over effects
-	for (const auto& effect : sprite.effects()) {
+	for (const auto& effect : sprite.regular().effects()) {
 		if (effect.type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
 			// Iterate over rects
 			for (const auto& rect : effect.foreground_companion().rects()) {
@@ -61,8 +61,8 @@ void State::ForegroundCompanionMode::add_rect() {
 		auto rect = RectI::from_corners(positions->first, positions->second); // wrt sprite coordinates
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
 			// Iterate over effects
-			for (int i = 0; i < sprite.effects_size(); ++i) {
-				auto* mutable_effect = sprite.mutable_effects(i);
+			for (int i = 0; i < sprite.regular().effects_size(); ++i) {
+				auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
 				if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
 					auto* new_rect = mutable_effect->mutable_foreground_companion()->add_rects();
 					new_rect->set_x(rect.x);
@@ -83,8 +83,8 @@ void State::ForegroundCompanionMode::set_center() {
 		auto center_offset = *secondary_selection_position - LEVEL.sheet_editor_state->selected_sprite_center(); // new offset from sprite center
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
 			// Iterate over effects
-			for (int i = 0; i < sprite.effects_size(); ++i) {
-				auto* mutable_effect = sprite.mutable_effects(i);
+			for (int i = 0; i < sprite.regular().effects_size(); ++i) {
+				auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
 				if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
 					// Set center
 					mutable_effect->mutable_foreground_companion()->mutable_center_offset_px()->set_x(center_offset.x);
@@ -100,8 +100,8 @@ void State::ForegroundCompanionMode::set_center() {
 void State::ForegroundCompanionMode::reset() {
 	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
 		// Iterate over effects
-		for (int i = 0; i < sprite.effects_size(); ++i) {
-			auto* mutable_effect = sprite.mutable_effects(i);
+		for (int i = 0; i < sprite.regular().effects_size(); ++i) {
+			auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
 			if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
 				mutable_effect->mutable_foreground_companion()->clear_center_offset_px();
 				mutable_effect->mutable_foreground_companion()->clear_rects();
@@ -118,9 +118,9 @@ void State::ForegroundCompanionMode::reset() {
 State::RectMode::RectMode() {
 	const auto& sprite = LEVEL.sheet_editor_state->selected_sprite();
 	// Set rect
-	current_rect = RectI{sprite.rect()};
+	current_rect = RectI{sprite.regular().rect()};
 	// Set center
-	current_center = VecF{sprite.center_offset_px()};
+	current_center = VecF{sprite.regular().center_offset_px()};
 	// Enable selection
 	Events::enable_primary_selection(RectI{GAME.dimensions().game});
 }
@@ -153,10 +153,10 @@ void State::RectMode::set_rect() {
 		auto positions = selection_results.primary_int_selection_position_m();
 		auto rect = RectI::from_corners(positions->first, positions->second); // wrt sprite coordinates
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_rect()->set_x(rect.x);
-			sprite.mutable_rect()->set_y(rect.y);
-			sprite.mutable_rect()->set_w(rect.w);
-			sprite.mutable_rect()->set_h(rect.h);
+			sprite.mutable_regular()->mutable_rect()->set_x(rect.x);
+			sprite.mutable_regular()->mutable_rect()->set_y(rect.y);
+			sprite.mutable_regular()->mutable_rect()->set_w(rect.w);
+			sprite.mutable_regular()->mutable_rect()->set_h(rect.h);
 		});
 		current_rect = rect;
 		GAME.events.reset_primary_selection();
@@ -167,8 +167,8 @@ void State::RectMode::set_center() {
 	if (secondary_selection_position) {
 		auto center_offset = *secondary_selection_position - LEVEL.sheet_editor_state->selected_sprite_center(); // new offset from sprite center
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_center_offset_px()->set_x(center_offset.x);
-			sprite.mutable_center_offset_px()->set_y(center_offset.y);
+			sprite.mutable_regular()->mutable_center_offset_px()->set_x(center_offset.x);
+			sprite.mutable_regular()->mutable_center_offset_px()->set_y(center_offset.y);
 		});
 		current_center = center_offset;
 		secondary_selection_position = std::nullopt;
@@ -176,8 +176,8 @@ void State::RectMode::set_center() {
 }
 void State::RectMode::reset() {
 	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-		sprite.clear_rect();
-		sprite.clear_center_offset_px();
+		sprite.mutable_regular()->clear_rect();
+		sprite.mutable_regular()->clear_center_offset_px();
 	});
 	current_rect = std::nullopt;
 	current_center = std::nullopt;
@@ -187,12 +187,12 @@ void State::RectMode::reset() {
 
 State::BackgroundColliderMode::BackgroundColliderMode() {
 	const auto& sprite = LEVEL.sheet_editor_state->selected_sprite();
-	if (sprite.has_background_collider()) {
-		auto collider_origin = VecF{sprite.center_offset_px()} + VecF{sprite.background_collider().origin_offset_px()};
-		if (sprite.background_collider().has_rect_dims_px()) {
-			current_rect = RectF{collider_origin, VecF{sprite.background_collider().rect_dims_px()}};
-		} else if (sprite.background_collider().has_circ_radius_px()) {
-			auto radius = sprite.background_collider().circ_radius_px();
+	if (sprite.regular().has_background_collider()) {
+		auto collider_origin = VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().background_collider().origin_offset_px()};
+		if (sprite.regular().background_collider().has_rect_dims_px()) {
+			current_rect = RectF{collider_origin, VecF{sprite.regular().background_collider().rect_dims_px()}};
+		} else if (sprite.regular().background_collider().has_circ_radius_px()) {
+			auto radius = sprite.regular().background_collider().circ_radius_px();
 			current_circ = CircF{collider_origin, radius};
 		}
 	}
@@ -238,10 +238,10 @@ void State::BackgroundColliderMode::set() {
 		auto origin_offset = rect.center() - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
 		auto dims = VecF{rect.w, rect.h}; // new dims
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
-			sprite.mutable_background_collider()->mutable_rect_dims_px()->set_w(dims.x);
-			sprite.mutable_background_collider()->mutable_rect_dims_px()->set_h(dims.y);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_w(dims.x);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
 		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center());
 		current_circ = std::nullopt;
@@ -254,9 +254,9 @@ void State::BackgroundColliderMode::set() {
 		auto radius = positions->first.distance(positions->second);
 		auto origin_offset = center - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
-			sprite.mutable_background_collider()->set_circ_radius_px(radius);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_background_collider()->set_circ_radius_px(radius);
 		});
 		current_rect = std::nullopt;
 		current_circ = CircF{center - LEVEL.sheet_editor_state->selected_sprite_center(), radius};
@@ -265,7 +265,7 @@ void State::BackgroundColliderMode::set() {
 }
 void State::BackgroundColliderMode::reset() {
 	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-		sprite.clear_background_collider();
+		sprite.mutable_regular()->clear_background_collider();
 	});
 	current_rect = std::nullopt;
 	current_circ = std::nullopt;
@@ -275,12 +275,12 @@ void State::BackgroundColliderMode::reset() {
 
 State::ForegroundColliderMode::ForegroundColliderMode() {
 	const auto& sprite = LEVEL.sheet_editor_state->selected_sprite();
-	if (sprite.has_foreground_collider()) {
-		auto collider_origin = VecF{sprite.center_offset_px()} + VecF{sprite.foreground_collider().origin_offset_px()};
-		if (sprite.foreground_collider().has_rect_dims_px()) {
-			current_rect = RectF{collider_origin, VecF{sprite.foreground_collider().rect_dims_px()}};
-		} else if (sprite.foreground_collider().has_circ_radius_px()) {
-			auto radius = sprite.foreground_collider().circ_radius_px();
+	if (sprite.regular().has_foreground_collider()) {
+		auto collider_origin = VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().foreground_collider().origin_offset_px()};
+		if (sprite.regular().foreground_collider().has_rect_dims_px()) {
+			current_rect = RectF{collider_origin, VecF{sprite.regular().foreground_collider().rect_dims_px()}};
+		} else if (sprite.regular().foreground_collider().has_circ_radius_px()) {
+			auto radius = sprite.regular().foreground_collider().circ_radius_px();
 			current_circ = CircF{collider_origin, radius};
 		}
 	}
@@ -325,10 +325,10 @@ void State::ForegroundColliderMode::set() {
 		auto origin_offset = rect.center() - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
 		auto dims = VecF{rect.w, rect.h}; // new dims
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
-			sprite.mutable_foreground_collider()->mutable_rect_dims_px()->set_w(dims.x);
-			sprite.mutable_foreground_collider()->mutable_rect_dims_px()->set_h(dims.y);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_rect_dims_px()->set_w(dims.x);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
 		current_rect = rect.shift_origin(LEVEL.sheet_editor_state->selected_sprite_center());
 		current_circ = std::nullopt;
@@ -341,9 +341,9 @@ void State::ForegroundColliderMode::set() {
 		auto radius = positions->first.distance(positions->second);
 		auto origin_offset = center - LEVEL.sheet_editor_state->selected_sprite_origin(); // new offset from sprite origin
 		LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
-			sprite.mutable_foreground_collider()->set_circ_radius_px(radius);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_foreground_collider()->set_circ_radius_px(radius);
 		});
 		current_rect = std::nullopt;
 		current_circ = CircF{center - LEVEL.sheet_editor_state->selected_sprite_center(), radius};
@@ -352,7 +352,7 @@ void State::ForegroundColliderMode::set() {
 }
 void State::ForegroundColliderMode::reset() {
 	LEVEL.sheet_editor_state->modify_selected_sprite([&](pb::Sprite& sprite) {
-		sprite.clear_foreground_collider();
+		sprite.mutable_regular()->clear_foreground_collider();
 	});
 	current_rect = std::nullopt;
 	current_circ = std::nullopt;
@@ -423,7 +423,7 @@ void m2::sedit::State::modify_selected_sprite(const std::function<void(pb::Sprit
 }
 
 RectI m2::sedit::State::selected_sprite_rect() const {
-	return RectI{selected_sprite().rect()};
+	return RectI{selected_sprite().regular().rect()};
 }
 
 VecF m2::sedit::State::selected_sprite_center() const {
@@ -433,7 +433,7 @@ VecF m2::sedit::State::selected_sprite_center() const {
 }
 
 VecF m2::sedit::State::selected_sprite_origin() const {
-	return selected_sprite_center() + VecF{selected_sprite().center_offset_px()};
+	return selected_sprite_center() + VecF{selected_sprite().regular().center_offset_px()};
 }
 
 void m2::sedit::State::select_sprite_type(m2g::pb::SpriteType sprite_type) {

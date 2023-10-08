@@ -127,14 +127,16 @@ m2::VecF m2::Graphic::sprite_center_to_sprite_origin_px() const {
 		if (draw_sprite_effect == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && sprite->has_foreground_companion()) {
 			vector_in_source_pixels = sprite->foreground_companion_center_offset_px();
 		} else {
-			vector_in_source_pixels = VecF{sprite->sprite().center_offset_px()};
+			vector_in_source_pixels = VecF{sprite->center_offset_px()};
 			if (sprite->original_rotation_radians() != 0.0f) {
 				vector_in_source_pixels = vector_in_source_pixels.rotate(sprite->original_rotation_radians());
 			}
 		}
 
 		// Convert from source pixels to destination pixels
-		auto vector_in_destination_pixels = vector_in_source_pixels * (float)GAME.dimensions().ppm / (float)sprite->ppm();
+		auto vector_in_destination_pixels = vector_in_source_pixels
+				* static_cast<float>(GAME.dimensions().ppm)
+				/ static_cast<float>(sprite->ppm());
 		return vector_in_destination_pixels;
 	} else {
 		return {};
@@ -158,7 +160,7 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 	}
 
 	// Select the correct source rectangle
-	auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
+	auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
 	if (gfx.draw_sprite_effect) {
 		src_rect = gfx.sprite->effect_rect(gfx.draw_sprite_effect);
 	}
@@ -342,7 +344,7 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 	SDL_Rect dst_rect{};
 
 	if (m2g::camera_height == 0.0f) {
-		auto src_rect = sdl::to_rect(gfx.sprite->sprite().rect());
+		auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
 		auto screen_origin_to_sprite_center_px = gfx.screen_origin_to_sprite_center_px();
 		dst_rect = SDL_Rect{
 				(int) roundf(screen_origin_to_sprite_center_px.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),

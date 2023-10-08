@@ -64,7 +64,7 @@ void ImageSelection::draw() {
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
 		const auto& sprite = GAME.get_sprite(image_selection.list[selection]);
-		auto sprite_srcrect = sdl::to_rect(sprite.sprite().rect());
+		auto sprite_srcrect = static_cast<SDL_Rect>(sprite.rect());
 		auto sprite_dstrect = (SDL_Rect)image_rect;
 		SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &sprite_srcrect, &sprite_dstrect);
 	}
