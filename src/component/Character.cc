@@ -79,6 +79,7 @@ bool m2::Character::use_item(const Iterator& item_it, float resource_multiplier)
 		// Merge costs
 		auto resource_count = protobuf::enum_value_count<m2g::pb::ResourceType>();
 		auto* merged_costs = (float*) alloca(resource_count * sizeof(float));
+		memset(merged_costs, 0, resource_count * sizeof(float));
 		for (size_t i = 0; i < item_it->get_cost_count(); ++i) {
 			const auto cost = item_it->get_cost_by_index(i);
 			merged_costs[protobuf::enum_index(cost.first)] += cost.second * resource_multiplier;
