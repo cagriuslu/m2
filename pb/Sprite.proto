@@ -51,15 +51,13 @@ message Collider {
   }
 }
 
-message Sprite {
-  m2g.pb.SpriteType type = 1;
-
+message Regular {
   // List of effects that might be used during the game
   // TODO convert to Map
-  repeated SpriteEffect effects = 2;
+  repeated SpriteEffect effects = 1;
 
   // Coordinates of the sprite in sheet
-  RectI rect = 3;
+  RectI rect = 2;
 
   // Original rotation should be set according to the rotation of the sprite in the sprite sheet
   // Expects values in-between (-1, 1], which corresponds to -180, 180 degrees.
@@ -67,19 +65,44 @@ message Sprite {
   // Example: If the sprite points towards top-left on the sheet, it's original rotation is -0.75.
   // The graphics system will rotate the sprite back before drawing.
   // Collider parameters should assume the sprite is already rotated.
-  float original_rotation = 4;
+  float original_rotation = 3;
 
   // Override the PPm value of the sheet with this value if given.
-  uint32 override_ppm = 5;
+  uint32 override_ppm = 4;
 
   // Vector from the center of the (rect) to the position that should be the origin
-  VecF center_offset_px = 6;
+  VecF center_offset_px = 5;
 
-  Collider background_collider = 7;
-  Collider foreground_collider = 8;
+  Collider background_collider = 6;
+  Collider foreground_collider = 7;
 
   // If the tile is a background tile, it'll show up in the PAINT list of the level editor.
-  bool is_background_tile = 9;
+  bool is_background_tile = 8;
+}
+
+message Background {
+  // Sprite type of the background
+  m2g.pb.SpriteType type = 1;
+
+  // Background descriptor aligns origins of the background and the sprite
+  // TODO add offset if necessary
+}
+
+message Backgrounds {
+  repeated Background background = 1;
+}
+
+message Sprite {
+  string __comment__ = 1;
+
+  m2g.pb.SpriteType type = 2;
+
+  oneof variant {
+    Regular regular = 3;
+
+    // Draw other sprites as the background of this one
+    Backgrounds backgrounds = 4;
+  }
 }
 
 message SpriteSheet {
