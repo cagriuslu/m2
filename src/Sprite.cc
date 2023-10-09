@@ -194,7 +194,9 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_foreground_collider_center_offset_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _foreground_collider_origin_offset_m
 	_foreground_collider_rect_dims_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().rect_dims_px()} / (float)_ppm),
 	_foreground_collider_circ_radius_m(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().circ_radius_px() / (float)_ppm),
-	_is_background_tile(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().is_background_tile()) {
+	_is_background_tile(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().is_background_tile()),
+	_has_backgrounds(sprite.has_with_backgrounds()),
+	_foreground(sprite.has_with_backgrounds() ? sprite.with_backgrounds().foreground() : m2g::pb::SpriteType{}) {
 	// Create effects
 	if (sprite.has_regular() && sprite.regular().effects_size()) {
 		_effects.resize(protobuf::enum_value_count<pb::SpriteEffectType>());
@@ -226,6 +228,17 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 			}
 			is_created[index] = true;
 		}
+	}
+
+	// Backgrounds
+	if (_sprite.has_with_backgrounds()) {
+		std::transform(
+				sprite.with_backgrounds().backgrounds().begin(),
+				sprite.with_backgrounds().backgrounds().end(),
+				std::back_inserter(_backgrounds),
+				[](const auto& background_definition) {
+					return background_definition.type();
+				});
 	}
 }
 #undef FOREGROUND_IF_WITH_BACKGROUNDS
@@ -324,8 +337,16 @@ std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_
 					}
 				}
 				// Check if foreground is a background tile
-				if (not sprites_vector[protobuf::enum_index(sprite.with_backgrounds().foreground())].is_background_tile()) {
+				const auto& foreground = sprites_vector[protobuf::enum_index(sprite.with_backgrounds().foreground())];
+				if (not foreground.is_background_tile()) {
 					throw M2ERROR("Non-background tiles cannot have backgrounds");
+				}
+				// Check if foreground and backgrounds are the same size
+				for (const auto& background_desc : sprite.with_backgrounds().backgrounds()) {
+					const auto& background = sprites_vector[protobuf::enum_index(background_desc.type())];
+					if (foreground.rect().w != background.rect().w || foreground.rect().h != background.rect().h) {
+						throw M2ERROR("Background of the sprite is not the same size as the background: " + std::to_string(sprite.type()) + "," + std::to_string(background_desc.type()));
+					}
 				}
 			}
 			// Load sprite
@@ -349,7 +370,7 @@ std::vector<m2g::pb::SpriteType> m2::list_level_editor_background_sprites(const 
 
 	for (const auto& sprite_sheet : sprite_sheets) {
 		for (const auto& sprite : sprite_sheet.sprite_sheet().sprites()) {
-			if (sprite.regular().is_background_tile()) {
+			if (sprite.regular().is_background_tile() || sprite.has_with_backgrounds()) {
 				sprites_vector.push_back(sprite.type());
 			}
 		}

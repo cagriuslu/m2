@@ -1,7 +1,9 @@
 #include <m2/ui/widget/ImageSelection.h>
+#include <m2/ui/widget/Image.h>
 #include <m2/Game.h>
 #include <SDL2/SDL_image.h>
 
+using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
@@ -64,9 +66,8 @@ void ImageSelection::draw() {
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
 		const auto& sprite = GAME.get_sprite(image_selection.list[selection]);
-		auto sprite_srcrect = static_cast<SDL_Rect>(sprite.rect());
-		auto sprite_dstrect = (SDL_Rect)image_rect;
-		SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &sprite_srcrect, &sprite_dstrect);
+		auto dst_rect = static_cast<SDL_Rect>(image_rect);
+		draw_sprite(sprite, dst_rect);
 	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");

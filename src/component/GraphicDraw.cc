@@ -12,7 +12,7 @@ namespace {
 		return effect_type ? sprite.effect_rect(effect_type) : sprite.rect();
 	}
 
-	inline m2::VecF total_texture_dimensions(const m2::Sprite& sprite, m2::pb::SpriteEffectType effect_type) {
+	m2::VecF total_texture_dimensions(const m2::Sprite& sprite, m2::pb::SpriteEffectType effect_type) {
 		if (effect_type) {
 			return {sprite.effects_sheet()->texture_width(), sprite.effects_sheet()->texture_height()};
 		} else {
@@ -31,6 +31,16 @@ m2::VecF m2::screen_origin_to_sprite_center_px(const VecF& position, const Sprit
 }
 
 void m2::draw_real_2d(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type, float angle) {
+	if (sprite.has_backgrounds()) {
+		// Draw backgrounds
+		for (const auto& background : sprite.backgrounds()) {
+			draw_real_2d(position, GAME.get_sprite(background), pb::SpriteEffectType{}, angle);
+		}
+		// Draw foreground
+		draw_real_2d(position, GAME.get_sprite(sprite.foreground()), effect_type, angle);
+		return;
+	}
+
 	auto src_rect = find_rect(sprite, effect_type);
 	auto sprite_ppm = sprite.ppm();
 

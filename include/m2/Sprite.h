@@ -60,6 +60,10 @@ namespace m2 {
 		float _foreground_collider_circ_radius_m{};
 		bool _is_background_tile{};
 
+		bool _has_backgrounds{};
+		m2g::pb::SpriteType _foreground{};
+		std::vector<m2g::pb::SpriteType> _backgrounds;
+
 	public:
 		Sprite() = default;
 		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, const std::vector<Sprite>& already_loaded_sprites);
@@ -85,6 +89,10 @@ namespace m2 {
 		[[nodiscard]] VecF foreground_collider_rect_dims_m() const;
 		[[nodiscard]] float foreground_collider_circ_radius_m() const;
 		[[nodiscard]] inline bool is_background_tile() const { return _is_background_tile; }
+
+		[[nodiscard]] inline bool has_backgrounds() const { return _has_backgrounds; }
+		[[nodiscard]] m2g::pb::SpriteType foreground() const { return _foreground; }
+		[[nodiscard]] const std::vector<m2g::pb::SpriteType>& backgrounds() const { return _backgrounds; }
 
 		/// Ratio of screen pixels to sprite pixels
 		/// Multiply sprite dimensions with this number to convert them to screen dimensions.

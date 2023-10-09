@@ -50,8 +50,22 @@ void Image::draw() {
 					.h = rect_px.w
 			};
 		}
-		auto src_rect = static_cast<SDL_Rect>(sprite->rect());
-		SDL_RenderCopy(GAME.renderer, sprite->sprite_sheet().texture(), &src_rect, &dst_rect);
+		draw_sprite(*sprite, dst_rect);
 	}
 	draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
+}
+
+void m2::ui::widget::draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect) {
+	if (sprite.has_backgrounds()) {
+		// Draw backgrounds
+		for (const auto& background : sprite.backgrounds()) {
+			draw_sprite(GAME.get_sprite(background), dst_rect);
+		}
+		// Draw foreground
+		draw_sprite(GAME.get_sprite(sprite.foreground()), dst_rect);
+		return;
+	}
+
+	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
+	SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &src_rect, &dst_rect);
 }
