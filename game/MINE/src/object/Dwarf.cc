@@ -64,7 +64,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 						// Show health bar
 						auto hp = chr_under_mouse.get_resource(RESOURCE_HP);
 						auto max_hp = chr_under_mouse.get_max_resource(RESOURCE_HP);
-						obj_under_mouse.terrain_graphic().draw_effect_health_bar = hp / max_hp;
+						obj_under_mouse.terrain_graphic().draw_addon_health_bar = hp / max_hp;
 						// If object under mouse runs out of HP
 						if (hp == 0.0f) {
 							// Delete object

@@ -9,11 +9,13 @@
         },
         {
           "type": "DWARF_FULL",
-          "rect": {"x": 0, "y": 0, "w": 162, "h": 176},
-          "centerOffsetPx" : {"x": -40, "y": 53},
-          "backgroundCollider": {
-            "originOffsetPx": {"x": -40, "y": 53},
-            "circRadiusPx": 35
+          "regular": {
+            "rect": {"x": 0, "y": 0, "w": 162, "h": 176},
+            "centerOffsetPx" : {"x": -40, "y": 53},
+            "backgroundCollider": {
+              "originOffsetPx": {"x": -40, "y": 53},
+              "circRadiusPx": 35
+            }
           }
         }
       ]
@@ -24,8 +26,10 @@
       "sprites": [
         {
           "type": "BLACKSMITH_FULL",
-          "rect": {"x": 0, "y": 0, "w": 471, "h": 438},
-          "centerOffsetPx" : {"x": 0, "y": 0}
+          "regular": {
+            "rect": {"x": 0, "y": 0, "w": 471, "h": 438},
+            "centerOffsetPx" : {"x": 0, "y": 0}
+          }
         }
       ]
     },
@@ -35,35 +39,43 @@
       "sprites": [
         {
           "type": "DUNGEON_BEDROCK_1",
-          "rect": {"x": 576, "y": 320, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 576, "y": 320, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         },
         {
           "type": "DUNGEON_BEDROCK_2",
-          "rect": {"x": 640, "y": 320, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 640, "y": 320, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         },
         {
           "type": "DUNGEON_COAL_1",
-          "rect": {"x": 576, "y": 384, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 576, "y": 384, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         },
         {
           "type": "DUNGEON_COAL_2",
-          "rect": {"x": 640, "y": 384, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 640, "y": 384, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         }
       ]
     },
@@ -73,35 +85,43 @@
       "sprites": [
         {
           "type": "GRASSLAND_DIRT_WITH_GRASS_1",
-          "rect": {"x": 128, "y": 576, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 128, "y": 576, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         },
         {
           "type": "GRASSLAND_DIRT_WITH_GRASS_2",
-          "rect": {"x": 192, "y": 576, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 192, "y": 576, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         },
         {
           "type": "GRASSLAND_DIRT_1",
-          "rect": {"x": 128, "y": 640, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 128, "y": 640, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         },
         {
           "type": "GRASSLAND_DIRT_2",
-          "rect": {"x": 192, "y": 640, "w": 64, "h": 64},
-          "backgroundCollider": {
-            "rectDimsPx": {"w": 64, "h": 64}
-          },
-          "isBackgroundTile": true
+          "regular": {
+            "rect": {"x": 192, "y": 640, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
         }
       ]
     }
