@@ -22,6 +22,9 @@ namespace m2 {
 	std::string to_string(double);
 	std::string to_string(const char*);
 	std::string to_string(const std::string&);
+	template <typename T, typename U> std::string to_string(const std::pair<T,U>& pair) {
+		return "(" + to_string(pair.first) + "," + to_string(pair.second) + ")";
+	}
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;

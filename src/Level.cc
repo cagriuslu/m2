@@ -21,7 +21,9 @@ m2::Level::~Level() {
 	// Custom destructor is provided because the order is important
 	characters.clear();
 	lights.clear();
-	terrain_graphics.clear();
+	for (auto& terrain : terrain_graphics) {
+		terrain.clear();
+	}
 	graphics.clear();
 	physics.clear();
 	objects.clear();
@@ -57,14 +59,17 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	world->SetContactListener(contact_listener);
 
 	// Create background tiles
-	for (int y = 0; y < _lb->background_rows_size(); ++y) {
-		for (int x = 0; x < _lb->background_rows(y).items_size(); ++x) {
-			auto sprite_type = _lb->background_rows(y).items(x);
-			if (sprite_type) {
-                LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-				auto [tile_obj, tile_id] = obj::create_tile(VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
-				m2g::post_tile_create(tile_obj, sprite_type);
-                LOG_TRACE("Created tile", tile_id);
+	for (int l = 0; l < _lb->background_layers_size(); ++l) {
+		const auto& layer = _lb->background_layers(l);
+		for (int y = 0; y < layer.background_rows_size(); ++y) {
+			for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
+				auto sprite_type = layer.background_rows(y).items(x);
+				if (sprite_type) {
+					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
+					auto [tile_obj, tile_id] = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
+					m2g::post_tile_create(tile_obj, sprite_type);
+					LOG_TRACE("Created tile", tile_id);
+				}
 			}
 		}
 	}
@@ -121,9 +126,10 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		// Create background tiles
-		for (int y = 0; y < lb->background_rows_size(); ++y) {
-			for (int x = 0; x < lb->background_rows(y).items_size(); ++x) {
-				auto sprite_type = lb->background_rows(y).items(x);
+		const auto& first_layer = _lb->background_layers(0);
+		for (int y = 0; y < first_layer.background_rows_size(); ++y) {
+			for (int x = 0; x < first_layer.background_rows(y).items_size(); ++x) {
+				auto sprite_type = first_layer.background_rows(y).items(x);
 				if (sprite_type) {
 					auto position = VecF{x, y};
 					level_editor_state->bg_placeholders[position.iround()] = std::make_pair(obj::create_placeholder(position, GAME.get_sprite(sprite_type), false), sprite_type);

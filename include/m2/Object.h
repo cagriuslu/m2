@@ -48,7 +48,7 @@ namespace m2 {
 		[[nodiscard]] GroupId group_id() const;
 	    [[nodiscard]] PhysiqueId physique_id() const;
 	    [[nodiscard]] GraphicId graphic_id() const;
-	    [[nodiscard]] GraphicId terrain_graphic_id() const;
+	    [[nodiscard]] std::pair<GraphicId, BackgroundLayer> terrain_graphic_id() const;
 	    [[nodiscard]] LightId light_id() const;
 	    [[nodiscard]] SoundEmitterId sound_id() const;
 		[[nodiscard]] CharacterId character_id() const;
@@ -66,8 +66,8 @@ namespace m2 {
         Physique& add_physique();
         Graphic& add_graphic();
 		Graphic& add_graphic(const Sprite& sprite);
-		Graphic& add_terrain_graphic();
-		Graphic& add_terrain_graphic(const Sprite& sprite);
+		Graphic& add_terrain_graphic(BackgroundLayer layer);
+		Graphic& add_terrain_graphic(BackgroundLayer layer, const Sprite& sprite);
         Light& add_light();
         SoundEmitter& add_sound_emitter();
 		Character& add_tiny_character();
@@ -89,7 +89,7 @@ namespace m2 {
 	    // Components
 	    PhysiqueId _physique_id{};
 	    GraphicId _graphic_id{};
-	    GraphicId _terrain_graphic_id{};
+		std::pair<GraphicId,BackgroundLayer> _terrain_graphic_id{};
 	    LightId _light_id{};
 		SoundEmitterId _sound_emitter_id{};
 		CharacterId _character_id{};

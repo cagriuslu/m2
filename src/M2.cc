@@ -7,6 +7,10 @@ namespace {
 	std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
 }
 
+std::string m2::to_string(BackgroundLayer layer) {
+	return to_string(I(layer));
+}
+
 uint32_t m2::rand(uint32_t max) {
 	return static_cast<uint32_t>(static_cast<float>(max) * m2::randf());
 }

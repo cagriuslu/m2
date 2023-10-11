@@ -32,7 +32,8 @@ static TextBlueprint entry_variant_1 = {
 					auto noise = m2::perlin({x * 0.4f, y * 0.4f}, 1.0f);
 					auto st = (noise < 0.5f) ? GRASSLAND_DIRT_1 : DUNGEON_COAL_1;
 
-					auto* sprite_array = m2::protobuf::mutable_get_or_create(lb.mutable_background_rows(), y);
+					m2::protobuf::mutable_get_or_create(lb.mutable_background_layers(), 0);
+					auto* sprite_array = m2::protobuf::mutable_get_or_create(lb.mutable_background_layers(0)->mutable_background_rows(), y);
 					auto* sprite = m2::protobuf::mutable_get_or_create(sprite_array->mutable_items(), x);
 					*sprite = st;
 				}

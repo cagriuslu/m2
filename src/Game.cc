@@ -273,9 +273,11 @@ void m2::Game::clear_back_buffer() {
 }
 
 void m2::Game::draw_background() {
-	for (auto gfx_it : _level->terrain_graphics) {
-		IF(gfx_it.first->on_draw)(*gfx_it.first);
-		IF(gfx_it.first->on_effect)(*gfx_it.first);
+	for (auto it = _level->terrain_graphics.rbegin(); it != _level->terrain_graphics.rend(); ++it) {
+		for (auto gfx_it : *it) {
+			IF(gfx_it.first->on_draw)(*gfx_it.first);
+			IF(gfx_it.first->on_effect)(*gfx_it.first);
+		}
 	}
 }
 

@@ -3,9 +3,9 @@
 #include <m2/Game.h>
 #include <m2/box2d/Detail.h>
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_tile(const VecF& position, const m2::Sprite& sprite) {
+std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const VecF& position, const m2::Sprite& sprite) {
     auto obj_pair = create_object(position);
-	obj_pair.first.add_terrain_graphic(sprite);
+	obj_pair.first.add_terrain_graphic(layer, sprite);
 
 	if (sprite.background_collider_type() != box2d::ColliderType::NONE) {
         m2::pb::BodyBlueprint bp;

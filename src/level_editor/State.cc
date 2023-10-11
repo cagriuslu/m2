@@ -231,7 +231,8 @@ void m2::ledit::State::activate_shift_mode() {
 void m2::ledit::State::save() {
 	pb::Level level;
 	for (const auto& [position, pair] : LEVEL.level_editor_state->bg_placeholders) {
-		auto* row = protobuf::mutable_get_or_create(level.mutable_background_rows(), position.y); // Get or create row
+		protobuf::mutable_get_or_create(level.mutable_background_layers(), 0);
+		auto* row = protobuf::mutable_get_or_create(level.mutable_background_layers(0)->mutable_background_rows(), position.y); // Get or create row
 		*(protobuf::mutable_get_or_create(row->mutable_items(), position.x)) = pair.second; // Set sprite type
 	}
 	for (const auto& [position, pair] : LEVEL.level_editor_state->fg_placeholders) {

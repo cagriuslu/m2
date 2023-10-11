@@ -21,10 +21,14 @@ message SpriteTypeArray {
   repeated m2g.pb.SpriteType items = 1;
 }
 
-message Level {
+message BackgroundLayer {
   repeated SpriteTypeArray background_rows = 1;
   repeated SpriteTypeArray second_background_rows = 2; // Second quadrant, negative x, positive y, UNUSED
   repeated SpriteTypeArray third_background_rows = 3; // Third quadrant, negative x, negative y, UNUSED
   repeated SpriteTypeArray forth_background_rows = 4; // Forth quadrant, positive x, negative y, UNUSED
-  repeated LevelObject objects = 5;
+}
+
+message Level {
+  repeated BackgroundLayer background_layers = 5; // First element is the front-most background
+  repeated LevelObject objects = 6;
 }

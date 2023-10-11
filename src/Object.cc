@@ -23,7 +23,7 @@ m2::Object::Object(Object&& other) noexcept :
 	other._index_in_group = 0;
 	other._physique_id = 0;
 	other._graphic_id = 0;
-	other._terrain_graphic_id = 0;
+	other._terrain_graphic_id = {};
 	other._light_id = 0;
 	other._sound_emitter_id = 0;
     other._character_id = 0;
@@ -74,7 +74,7 @@ m2::PhysiqueId m2::Object::physique_id() const {
 m2::GraphicId m2::Object::graphic_id() const {
 	return _graphic_id;
 }
-m2::GraphicId m2::Object::terrain_graphic_id() const {
+std::pair<m2::GraphicId, m2::BackgroundLayer> m2::Object::terrain_graphic_id() const {
 	return _terrain_graphic_id;
 }
 m2::LightId m2::Object::light_id() const {
@@ -100,7 +100,7 @@ m2::Graphic& m2::Object::graphic() const {
 	return LEVEL.graphics[_graphic_id];
 }
 m2::Graphic& m2::Object::terrain_graphic() const {
-	return LEVEL.terrain_graphics[_terrain_graphic_id];
+	return LEVEL.terrain_graphics[I(_terrain_graphic_id.second)][_terrain_graphic_id.first];
 }
 m2::Light& m2::Object::light() const {
 	return LEVEL.lights[_light_id];
@@ -141,16 +141,16 @@ m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
     LOG_TRACE("Added graphic component", _graphic_id);
 	return graphic_pair.first;
 }
-m2::Graphic& m2::Object::add_terrain_graphic() {
-	auto terrain_graphic_pair = LEVEL.terrain_graphics.alloc();
-	_terrain_graphic_id = terrain_graphic_pair.second;
+m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
+	auto terrain_graphic_pair = LEVEL.terrain_graphics[I(layer)].alloc();
+	_terrain_graphic_id = std::make_pair(terrain_graphic_pair.second, layer);
 	terrain_graphic_pair.first = Graphic{id()};
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return terrain_graphic_pair.first;
 }
-m2::Graphic& m2::Object::add_terrain_graphic(const Sprite& sprite) {
-	auto terrain_graphic_pair = LEVEL.terrain_graphics.alloc();
-	_terrain_graphic_id = terrain_graphic_pair.second;
+m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const Sprite& sprite) {
+	auto terrain_graphic_pair = LEVEL.terrain_graphics[I(layer)].alloc();
+	_terrain_graphic_id = std::make_pair(terrain_graphic_pair.second, layer);
 	terrain_graphic_pair.first = Graphic{id(), sprite};
     LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return terrain_graphic_pair.first;
@@ -198,9 +198,9 @@ void m2::Object::remove_graphic() {
 	}
 }
 void m2::Object::remove_terrain_graphic() {
-	if (_terrain_graphic_id) {
-		LEVEL.terrain_graphics.free(_terrain_graphic_id);
-		_terrain_graphic_id = 0;
+	if (_terrain_graphic_id.first) {
+		LEVEL.terrain_graphics[I(_terrain_graphic_id.second)].free(_terrain_graphic_id.first);
+		_terrain_graphic_id = {};
 	}
 }
 void m2::Object::remove_light() {

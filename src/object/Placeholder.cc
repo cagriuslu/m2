@@ -5,7 +5,7 @@ m2::Id m2::obj::create_placeholder(const VecF& pos, const Sprite& sprite, bool i
 	if (is_fg) {
 		obj.add_graphic(sprite);
 	} else {
-		obj.add_terrain_graphic(sprite);
+		obj.add_terrain_graphic(BackgroundLayer::L0, sprite);
 	}
 	return id;
 }

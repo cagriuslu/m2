@@ -11,6 +11,15 @@ namespace m2 {
 	constexpr float PI_DIV2 = 1.570796326794897f;
 	constexpr float SQROOT_2 = 1.414213562373095f;
 
+	enum class BackgroundLayer {
+		L0 = 0,
+		L1 = 1,
+		L2 = 2,
+		L3 = 3,
+		n
+	};
+	std::string to_string(BackgroundLayer layer);
+
 	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max)
 	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max)
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
