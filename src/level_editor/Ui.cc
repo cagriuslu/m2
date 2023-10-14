@@ -8,6 +8,15 @@ using namespace m2::ui;
 const widget::TextBlueprint paint_mode_title = {
 	.initial_text = "PAINT"
 };
+const widget::IntegerSelectionBlueprint paint_mode_layer_selection = {
+		.min_value = 0,
+		.max_value = 3,
+		.initial_value = 0,
+		.action_callback = [](int value) -> Action {
+			std::get<ledit::State::PaintMode>(LEVEL.level_editor_state->mode).selected_layer = static_cast<BackgroundLayer>(value);
+			return Action::CONTINUE;
+		}
+};
 const widget::ImageSelectionBlueprint paint_mode_image_selection = {
 		.action_callback = [](m2g::pb::SpriteType selection) -> Action {
 			std::get<ledit::State::PaintMode>(LEVEL.level_editor_state->mode).select_sprite_type(selection);
@@ -17,6 +26,7 @@ const widget::ImageSelectionBlueprint paint_mode_image_selection = {
 Blueprint paint_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 2, .w = 11, .h = 3,
@@ -24,7 +34,12 @@ Blueprint paint_mode_right_hud = {
 						.variant = paint_mode_title
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 6, .w = 11, .h = 14,
+						.x = 4, .y = 6, .w = 11, .h = 6,
+						.border_width_px = 1,
+						.variant = paint_mode_layer_selection
+				},
+				WidgetBlueprint{
+						.x = 4, .y = 13, .w = 11, .h = 14,
 						.border_width_px = 1,
 						.variant = paint_mode_image_selection
 				}
@@ -34,15 +49,30 @@ Blueprint paint_mode_right_hud = {
 const widget::TextBlueprint erase_mode_title = {
 		.initial_text = "ERASE"
 };
+const widget::IntegerSelectionBlueprint erase_mode_layer_selection = {
+		.min_value = 0,
+		.max_value = 3,
+		.initial_value = 0,
+		.action_callback = [](int value) -> Action {
+			std::get<ledit::State::EraseMode>(LEVEL.level_editor_state->mode).selected_layer = static_cast<BackgroundLayer>(value);
+			return Action::CONTINUE;
+		}
+};
 const Blueprint erase_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 2, .w = 11, .h = 3,
 						.border_width_px = 0,
 						.variant = erase_mode_title
-				}
+				},
+				WidgetBlueprint{
+						.x = 4, .y = 6, .w = 11, .h = 6,
+						.border_width_px = 1,
+						.variant = erase_mode_layer_selection
+				},
 		}
 };
 
@@ -77,6 +107,7 @@ const widget::IntegerSelectionBlueprint place_mode_right_hud_group_instance_sele
 Blueprint place_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 2, .w = 11, .h = 3,
@@ -110,6 +141,7 @@ const widget::TextBlueprint remove_mode_title = {
 const Blueprint remove_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 2, .w = 11, .h = 3,
@@ -133,9 +165,19 @@ const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
 			return Action::CONTINUE;
 		}
 };
+const widget::IntegerSelectionBlueprint pick_mode_layer_selection = {
+		.min_value = 0,
+		.max_value = 3,
+		.initial_value = 0,
+		.action_callback = [](int value) -> Action {
+			std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).selected_layer = static_cast<BackgroundLayer>(value);
+			return Action::CONTINUE;
+		}
+};
 const Blueprint pick_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 2, .w = 11, .h = 3,
@@ -146,12 +188,26 @@ const Blueprint pick_mode_right_hud = {
 						.x = 4, .y = 6, .w = 11, .h = 4,
 						.border_width_px = 1,
 						.variant = pick_mode_right_hud_ground_selection
-				}
+				},
+				WidgetBlueprint{
+						.x = 4, .y = 11, .w = 11, .h = 6,
+						.border_width_px = 1,
+						.variant = pick_mode_layer_selection
+				},
 		}
 };
 
 const widget::TextBlueprint select_mode_title = {
 		.initial_text = "SELECT"
+};
+const widget::IntegerSelectionBlueprint select_mode_layer_selection = {
+		.min_value = 0,
+		.max_value = 3,
+		.initial_value = 0,
+		.action_callback = [](int value) -> Action {
+			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).selected_layer = static_cast<BackgroundLayer>(value);
+			return Action::CONTINUE;
+		}
 };
 const widget::TextBlueprint select_mode_right_hud_shift_right_button = {
 		.initial_text = "Shift Right",
@@ -205,6 +261,7 @@ const widget::TextBlueprint select_mode_right_hud_remove_button = {
 const Blueprint select_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 2, .w = 11, .h = 3,
@@ -212,37 +269,42 @@ const Blueprint select_mode_right_hud = {
 						.variant = select_mode_title
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 6, .w = 11, .h = 3,
+						.x = 4, .y = 6, .w = 11, .h = 6,
+						.border_width_px = 1,
+						.variant = select_mode_layer_selection
+				},
+				WidgetBlueprint{
+						.x = 4, .y = 13, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_shift_right_button
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 10, .w = 11, .h = 3,
+						.x = 4, .y = 17, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_shift_down_button
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 14, .w = 11, .h = 3,
+						.x = 4, .y = 21, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_copy_button
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 18, .w = 11, .h = 3,
+						.x = 4, .y = 25, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_paste_bg_button
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 22, .w = 11, .h = 3,
+						.x = 4, .y = 29, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_paste_fg_button
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 26, .w = 11, .h = 3,
+						.x = 4, .y = 33, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_erase_button
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 30, .w = 11, .h = 3,
+						.x = 4, .y = 37, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_remove_button
 				}
@@ -268,6 +330,7 @@ const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_select
 const Blueprint shift_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
+		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 2, .w = 11, .h = 3,
@@ -287,7 +350,7 @@ const widget::TextBlueprint left_hud_paint_button = {
 		.action_callback = []() -> Action {
 			LEVEL.level_editor_state->activate_paint_mode();
 			// Fill tile selector with editor-enabled sprites
-			auto& list = std::get<widget::ImageSelectionBlueprint>(paint_mode_right_hud.widgets[1].variant).list;
+			auto& list = std::get<widget::ImageSelectionBlueprint>(paint_mode_right_hud.widgets[2].variant).list;
 			std::copy(std::begin(GAME.level_editor_background_sprites), std::end(GAME.level_editor_background_sprites), std::back_inserter(list));
 
 			LEVEL.right_hud_ui_state.emplace(&paint_mode_right_hud);
@@ -403,7 +466,7 @@ const widget::TextBlueprint left_hud_coordinates = {
 };
 const Blueprint level_editor::ui::left_hud = {
 		.w = 19, .h = 72,
-		.border_width_px = 0,
+		.border_width_px = 1,
 		.background_color = {50, 50, 50, 255},
 		.widgets = {
 				WidgetBlueprint{
@@ -476,6 +539,6 @@ const Blueprint level_editor::ui::left_hud = {
 
 const Blueprint level_editor::ui::right_hud = {
 		.w = 19, .h = 72,
-		.border_width_px = 0,
+		.border_width_px = 1,
 		.background_color = {50, 50, 50, 255}
 };

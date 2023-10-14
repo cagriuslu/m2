@@ -126,20 +126,22 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		// Create background tiles
-		const auto& first_layer = _lb->background_layers(0);
-		for (int y = 0; y < first_layer.background_rows_size(); ++y) {
-			for (int x = 0; x < first_layer.background_rows(y).items_size(); ++x) {
-				auto sprite_type = first_layer.background_rows(y).items(x);
-				if (sprite_type) {
-					auto position = VecF{x, y};
-					level_editor_state->bg_placeholders[position.iround()] = std::make_pair(obj::create_placeholder(position, GAME.get_sprite(sprite_type), false), sprite_type);
+		for (int l = 0; l < lb->background_layers_size(); ++l) {
+			const auto& layer = lb->background_layers(l);
+			for (int y = 0; y < layer.background_rows_size(); ++y) {
+				for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
+					auto sprite_type = layer.background_rows(y).items(x);
+					if (sprite_type) {
+						auto position = VecF{x, y};
+						level_editor_state->bg_placeholders[l][position.iround()] = std::make_pair(obj::create_background_placeholder(position, GAME.get_sprite(sprite_type), static_cast<BackgroundLayer>(l)), sprite_type); // HERE
+					}
 				}
 			}
 		}
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
 			auto position = m2::VecF{fg_object.position()};
-			level_editor_state->fg_placeholders[position.iround()] = std::make_pair(obj::create_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()]), true), fg_object);
+			level_editor_state->fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()])), fg_object);
 		}
 	}
 

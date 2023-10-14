@@ -1,11 +1,13 @@
 #include <m2/object/Placeholder.h>
 
-m2::Id m2::obj::create_placeholder(const VecF& pos, const Sprite& sprite, bool is_fg) {
+m2::Id m2::obj::create_background_placeholder(const VecF& pos, const Sprite& sprite, BackgroundLayer layer) {
 	auto [obj, id] = create_object(pos);
-	if (is_fg) {
-		obj.add_graphic(sprite);
-	} else {
-		obj.add_terrain_graphic(BackgroundLayer::L0, sprite);
-	}
+	obj.add_terrain_graphic(layer, sprite);
+	return id;
+}
+
+m2::Id m2::obj::create_foreground_placeholder(const VecF& pos, const Sprite& sprite) {
+	auto [obj, id] = create_object(pos);
+	obj.add_graphic(sprite);
 	return id;
 }

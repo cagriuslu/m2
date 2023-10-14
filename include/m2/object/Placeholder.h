@@ -4,5 +4,6 @@
 #include <m2/VecF.h>
 
 namespace m2::obj {
-	Id create_placeholder(const VecF& pos, const Sprite& sprite, bool is_fg);
+	Id create_background_placeholder(const VecF& pos, const Sprite& sprite, BackgroundLayer layer);
+	Id create_foreground_placeholder(const VecF& pos, const Sprite& sprite);
 }

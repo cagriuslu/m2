@@ -9,6 +9,7 @@
 #include <m2/sdl/Detail.hh>
 #include <SDL2/SDL_image.h>
 #include <filesystem>
+#include <ranges>
 
 m2::Game* m2::Game::_instance;
 
@@ -272,12 +273,31 @@ void m2::Game::clear_back_buffer() {
 	SDL_RenderClear(renderer);
 }
 
-void m2::Game::draw_background() {
-	for (auto it = _level->terrain_graphics.rbegin(); it != _level->terrain_graphics.rend(); ++it) {
-		for (auto gfx_it : *it) {
+namespace {
+	inline void draw_one_background_layer(m2::Pool<m2::Graphic>& terrain_graphics) {
+		for (auto gfx_it : terrain_graphics) {
 			IF(gfx_it.first->on_draw)(*gfx_it.first);
 			IF(gfx_it.first->on_effect)(*gfx_it.first);
 		}
+	}
+	inline void draw_all_background_layers(m2::Level& level) {
+		// Draw all background layers
+		for (auto& terrain_graphics : std::ranges::reverse_view(level.terrain_graphics)) {
+			draw_one_background_layer(terrain_graphics);
+		}
+	}
+}
+void m2::Game::draw_background() {
+	if (_level->type() == Level::Type::LEVEL_EDITOR) {
+		std::visit(m2::overloaded {
+			[&](const ledit::State::PaintMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
+			[&](const ledit::State::EraseMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
+			[&](const ledit::State::PickMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
+			[&](const ledit::State::SelectMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
+			[&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
+		}, _level->level_editor_state->mode);
+	} else {
+		draw_all_background_layers(*_level);
 	}
 }
 
