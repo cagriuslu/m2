@@ -1,4 +1,3 @@
-- RPG: game mekaniklerini finalize et
 - Genel olarak custom move/copy constructor'larindan kurtul
 - Sound doesn't play if object dies
 - m2 command line argument'larini direkt consola redirect et
@@ -7,7 +6,6 @@
 - Protobuf loading yaparken duplicate type'a sahip liste load etmesi bir pattern'a donustu
 - Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
 - Override ppm doesn't work for dropped items
-- RPG level design: adam kendisine saldiran canavarlari normalde olduremeyecegi, ama ilerleyip baska bir canavari oldurup ondan dusen silahi aldiktan sonra oldurebilecegi bir level olsun
 - SDL_ComposeCustomBlendMode
 - ledit Copy-Paste ile override edilen objelerin placeholder'lari silinmiyor
 - Enable VSync, do something while waiting for VSync
@@ -15,3 +13,11 @@
 - Synth editor
 - UI widgets: horizontal/vertical slider, radio button, tabs
 - The capabilities of object should be plug-and-play. You shouldn't implement jumping for both enemy and player for example.
+- Add width to pathfinder smoothing algorithm
+- Try bgfx
+
+RPG
+- Take inspiration from: Elden Ring, Diablo 1-2
+- Add sprites for open game area
+- Build tutorial levels: Walking, Dashing, Ranged Weapon, Melee Weapon, Machine Gun, Explosive Weapon, Long Sword, Axe, Stun
+- Chaser gets stuck sometimes, either solve properly, or add detection
