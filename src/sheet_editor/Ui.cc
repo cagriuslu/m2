@@ -294,7 +294,7 @@ const widget::TextSelectionBlueprint sprite_selection = {
 		.action_callback = [](MAYBE unsigned selection_idx, const std::string& selection) -> ui::Action {
 			m2g::pb::SpriteType selected_sprite_type;
 			if (m2g::pb::SpriteType_Parse(selection, &selected_sprite_type)) {
-				LEVEL.sheet_editor_state->select_sprite_type(selected_sprite_type);
+				LEVEL.sheet_editor_state->set_sprite_type(selected_sprite_type);
 				return Action::CONTINUE;
 			} else {
 				throw M2FATAL("Implementation error: Unknown sprite type ended up in sprite selection list");
@@ -329,7 +329,7 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 						.variant = widget::TextBlueprint{
 								.initial_text = "SELECT",
 								.action_callback = []() -> Action {
-									LEVEL.sheet_editor_state->prepare_sprite_selection();
+									LEVEL.sheet_editor_state->select();
 									return Action::RETURN;
 								},
 								.kb_shortcut = SDL_SCANCODE_RETURN

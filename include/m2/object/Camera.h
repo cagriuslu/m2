@@ -7,5 +7,5 @@ namespace m2::obj {
         VecF offset;
     };
 
-    std::pair<Object&, Id> create_camera();
+    Id create_camera();
 }

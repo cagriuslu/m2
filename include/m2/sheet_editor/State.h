@@ -95,8 +95,8 @@ namespace m2::sedit {
 		VecF selected_sprite_origin() const; // This function re-reads the file every time it's called.
 
 		// To be used by the main menu
-		void select_sprite_type(m2g::pb::SpriteType);
-		void prepare_sprite_selection() const;
+		void set_sprite_type(m2g::pb::SpriteType);
+		void select() const;
 
 		// To be used by left hud
 		void deactivate_mode();

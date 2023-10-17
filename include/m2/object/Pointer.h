@@ -2,5 +2,5 @@
 #include <m2/Object.h>
 
 namespace m2::obj {
-    std::pair<Object&, Id> create_pointer();
+    Id create_pointer();
 }

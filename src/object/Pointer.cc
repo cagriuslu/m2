@@ -2,7 +2,7 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_pointer() {
+m2::Id m2::obj::create_pointer() {
     auto obj_pair = m2::create_object({});
 	auto& obj = obj_pair.first;
 	auto obj_id = obj_pair.second;
@@ -16,5 +16,5 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_pointer() {
     lig.radius_m = 3.0f;
 
 	LEVEL.pointer_id = obj_id;
-    return obj_pair;
+    return obj_pair.second;
 }

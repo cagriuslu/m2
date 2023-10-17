@@ -2,6 +2,8 @@
 #include "m2/Object.h"
 #include "m2/Game.h"
 
+#include <m2/object/Line.h>
+
 // TODO this depends on the physics loop freq rather than time
 #define CAMERA_JUMP_RATIO (4.0f / 50.0f)
 #define OFFSET_LIMIT (1.0f)
@@ -36,7 +38,7 @@ namespace {
 	}
 }
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
+m2::Id m2::obj::create_camera() {
     // Start at player's location
     auto* player = LEVEL.objects.get(LEVEL.player_id);
     auto obj_pair = create_object(player ? player->position : VecF{});
@@ -52,8 +54,10 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		camera.position = player.position;
 
 		// Call dynamic image loader
-		if (LEVEL.type() == Level::Type::SHEET_EDITOR && LEVEL.dynamic_image_loader) {
-			LEVEL.dynamic_image_loader->move(GAME.viewport_to_2d_world_rect_m());
+		if (LEVEL.type() == Level::Type::SHEET_EDITOR) {
+			IF(LEVEL.dynamic_image_loader)->move(GAME.viewport_to_2d_world_rect_m());
+			IF(LEVEL.dynamic_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
+			IF(LEVEL.dynamic_sheet_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
 		}
 
 		// Mouse lookahead disabled temporarily
@@ -78,7 +82,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 		gfx.on_draw = [&](MAYBE Graphic& gfx) {
 			auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
 			if (camera_data->draw_grid_lines || LEVEL.type() == Level::Type::SHEET_EDITOR) {
-				draw_grid_lines(camera.position);
+				//draw_grid_lines(camera.position);
 			}
 		};
 	}
@@ -89,5 +93,5 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_camera() {
 	}
 
 	LEVEL.camera_id = obj_pair.second;
-    return obj_pair;
+    return obj_pair.second;
 }

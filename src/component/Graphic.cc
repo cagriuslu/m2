@@ -219,3 +219,15 @@ void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
 	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
 }
+
+void m2::Graphic::draw_vertical_line(float x, SDL_Color color) {
+	auto x_px = static_cast<int>(roundf(screen_origin_to_position_px(VecF{x, 0.0f}).x));
+	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawLine(GAME.renderer, x_px, GAME.dimensions().game.y, x_px, GAME.dimensions().game.y + GAME.dimensions().game.h);
+}
+
+void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
+	auto y_px = static_cast<int>(roundf(screen_origin_to_position_px(VecF{0.0f, y}).y));
+	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_RenderDrawLine(GAME.renderer, GAME.dimensions().game.x, y_px, GAME.dimensions().game.x + GAME.dimensions().game.w, y_px);
+}

@@ -4,5 +4,5 @@
 
 namespace m2::obj {
 	/// Creates an object that follows the mouse pointer around
-	m2::Id create_ghost(const Sprite& sprite);
+	Id create_ghost(const Sprite& sprite);
 }

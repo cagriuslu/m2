@@ -1,5 +1,6 @@
 #include <m2/RectI.h>
 #include <m2/RectF.h>
+#include <m2/Meta.h>
 #include <sstream>
 
 m2::RectI::RectI() : x(), y(), w(), h() {}
@@ -13,6 +14,11 @@ m2::RectI m2::RectI::from_corners(const m2::VecI &corner1, const m2::VecI &corne
 	auto bottom_right_x = std::max(corner1.x, corner2.x);
 	auto bottom_right_y = std::max(corner1.y, corner2.y);
 	return {top_left_x, top_left_y, bottom_right_x - top_left_x + 1, bottom_right_y - top_left_y + 1};
+}
+m2::RectI m2::RectI::from_intersecting_cells(const RectF& rect) {
+	auto x = I(floorf(rect.x));
+	auto y = I(floorf(rect.y));
+	return {x, y, I(ceilf(rect.x + rect.w)) - x, I(ceilf(rect.y + rect.h)) - y};
 }
 
 bool m2::RectI::operator==(const RectI &other) const {

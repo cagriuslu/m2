@@ -1,7 +1,7 @@
 #include <m2/object/Origin.h>
 #include <m2/Game.h>
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_origin() {
+m2::Id m2::obj::create_origin() {
 	auto obj_pair = create_object(VecF{});
 	auto& origin = obj_pair.first;
 
@@ -10,5 +10,5 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_origin() {
 		Graphic::draw_cross(gfx.parent().position, SDL_Color{255, 0, 0, 255});
 	};
 
-	return obj_pair;
+	return obj_pair.second;
 }

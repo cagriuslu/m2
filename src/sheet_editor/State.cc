@@ -436,11 +436,11 @@ VecF m2::sedit::State::selected_sprite_origin() const {
 	return selected_sprite_center() + VecF{selected_sprite().regular().center_offset_px()};
 }
 
-void m2::sedit::State::select_sprite_type(m2g::pb::SpriteType sprite_type) {
+void m2::sedit::State::set_sprite_type(m2g::pb::SpriteType sprite_type) {
 	_selected_sprite_type = sprite_type;
 }
 
-void m2::sedit::State::prepare_sprite_selection() const {
+void m2::sedit::State::select() const {
 	const auto& sprite_sheets = this->sprite_sheets();
 
 	// Reload dynamic image loader with the resource
@@ -454,6 +454,8 @@ void m2::sedit::State::prepare_sprite_selection() const {
 					throw M2ERROR("Failed to load the image: " + sprite_sheet.resource());
 				}
 				LEVEL.dynamic_image_loader.emplace(std::move(*image_loader));
+				LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 127});
+				LEVEL.dynamic_sheet_grid_lines_loader.emplace(SDL_Color{255, 255, 255, 127}, sprite_sheet.ppm());
 
 				// Move God to center if rect is already selected
 				LEVEL.player()->position = selected_sprite_center();
