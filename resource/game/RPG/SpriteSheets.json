@@ -789,6 +789,30 @@
         {
           "type": "CASTLE_WALL_STAIRS_RIGHT_TOP",
           "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "y": -2.5
+                  },
+                  "rects": [
+                    {
+                      "x": 372,
+                      "y": 149,
+                      "w": 9,
+                      "h": 2
+                    },
+                    {
+                      "x": 368,
+                      "y": 151,
+                      "w": 16,
+                      "h": 9
+                    }
+                  ]
+                }
+              }
+            ],
             "rect": {
               "x": 368,
               "y": 144,
@@ -797,6 +821,15 @@
             },
             "centerOffsetPx": {
               "y": -8
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 5
+              }
             },
             "isBackgroundTile": true
           }
