@@ -1,9 +1,8 @@
-- Genel olarak custom move/copy constructor'larindan kurtul
 - Sound doesn't play if object dies
 - m2 command line argument'larini direkt consola redirect et
 - Pixel editor aktif oldugu zaman arka plana transparency pattern ciz
 - Pixel editor save'i implement et
-- Protobuf loading yaparken duplicate type'a sahip liste load etmesi bir pattern'a donustu
+- Protobuf loading yaparken duplicate type'a sahip liste load etmesi bir pattern'a donustur
 - Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
 - Override ppm doesn't work for dropped items
 - SDL_ComposeCustomBlendMode
