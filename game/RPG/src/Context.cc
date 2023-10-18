@@ -4,11 +4,11 @@
 
 rpg::Context::Context() {
 	// Load enemies
-	auto expect_enemies = m2::protobuf::json_file_to_message<pb::Enemies>(GAME.game_resource_dir / "Enemies.json");
+	auto expect_enemies = m2::protobuf::json_file_to_message<pb::Enemies>(GAME.resource_dir / "Enemies.json");
 	m2_throw_failure_as_error(expect_enemies);
 	enemies = *expect_enemies;
 	// Load progress
-	progress_file_path = GAME.game_resource_dir / "Progress.json";
+	progress_file_path = GAME.resource_dir / "Progress.json";
 	auto expect_progress = m2::protobuf::json_file_to_message<rpg::pb::Progress>(progress_file_path);
 	if (expect_progress) {
 		progress.CopyFrom(*expect_progress);
@@ -42,7 +42,7 @@ const m2::ui::Blueprint* rpg::Context::main_menu() {
 		.background_color = SDL_Color{20, 20, 20, 255}
 	};
 
-	auto level_jsons = m2::list_files(GAME.game_resource_dir / "levels", ".json");
+	auto level_jsons = m2::list_files(GAME.resource_dir / "levels", ".json");
 	LOG_INFO("Adding level buttons", level_jsons.size());
 	for (int i = 0; i < (ssize_t)level_jsons.size(); ++i) {
 		const auto& level_json = level_jsons[i];

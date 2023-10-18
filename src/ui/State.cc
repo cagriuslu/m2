@@ -296,7 +296,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 			if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
 				std::smatch match_results;
 				if (std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
-					auto load_result = GAME.load_level_editor(match_results.str(1));
+					auto load_result = GAME.load_level_editor(GAME.levels_dir / match_results.str(1));
 					if (load_result) {
 						return Action::CLEAR_STACK;
 					}
@@ -325,7 +325,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				std::smatch match_results;
 				if (std::regex_match(command, match_results, std::regex{R"(sedit(\s.*)?)"})) {
 					auto trimmed_arg = string::trim(match_results.str(1));
-					auto path = trimmed_arg.empty() ? (GAME.game_resource_dir / "SpriteSheets.json").string() : trimmed_arg;
+					auto path = trimmed_arg.empty() ? (GAME.resource_dir / "SpriteSheets.json").string() : trimmed_arg;
 					auto load_result = GAME.load_sheet_editor(path);
 					if (load_result) {
 						// Execute main menu the first time the sheet editor is run

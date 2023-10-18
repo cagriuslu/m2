@@ -80,16 +80,17 @@ m2::Game::Game() {
 	dynamic_sheet = DynamicSheet{renderer};
 
 	// Load game resources
-	std::filesystem::path resource_dir("resource");
-	game_resource_dir = resource_dir / "game" / m2g::game_name;
+	std::filesystem::path _resource_dir("resource");
+	resource_dir = _resource_dir / "game" / m2g::game_name;
+	levels_dir = _resource_dir / "game" / m2g::game_name / "levels";
 
-	sprite_sheets = load_sprite_sheets(game_resource_dir / "SpriteSheets.json", renderer);
+	sprite_sheets = load_sprite_sheets(resource_dir / "SpriteSheets.json", renderer);
 	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
-	level_editor_object_sprites = list_level_editor_object_sprites(game_resource_dir / "Objects.json");
-	_items = load_items(game_resource_dir / "Items.json");
-	animations = load_animations(game_resource_dir / "Animations.json");
-	_songs = load_songs(game_resource_dir / "Songs.json");
+	level_editor_object_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
+	_items = load_items(resource_dir / "Items.json");
+	animations = load_animations(resource_dir / "Animations.json");
+	_songs = load_songs(resource_dir / "Songs.json");
 }
 
 m2::Game::~Game() {
