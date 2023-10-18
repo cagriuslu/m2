@@ -234,12 +234,12 @@
         {
           "type": "CASTLE_TOP_LEFT_CORNER_TOWER_GRASS_BACKGROUND",
           "withBackgrounds": {
-            "foreground": "CASTLE_TOP_LEFT_CORNER_TOWER",
             "backgrounds": [
               {
                 "type": "GRASS_GROUND"
               }
-            ]
+            ],
+            "foreground": "CASTLE_TOP_LEFT_CORNER_TOWER"
           }
         },
         {
@@ -700,6 +700,213 @@
             "backgroundCollider": {
               "circRadiusPx": 6
             }
+          }
+        },
+        {
+          "type": "CASTLE_WALL",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 176,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_LEFT",
+          "regular": {
+            "rect": {
+              "x": 304,
+              "y": 176,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_LEFT_TOP",
+          "regular": {
+            "rect": {
+              "x": 304,
+              "y": 144,
+              "w": 16,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": -8
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 368,
+              "y": 176,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_RIGHT_TOP",
+          "regular": {
+            "rect": {
+              "x": 368,
+              "y": 144,
+              "w": 16,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": -8
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_LEFT",
+          "regular": {
+            "rect": {
+              "x": 320,
+              "y": 192,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_MID",
+          "regular": {
+            "rect": {
+              "x": 336,
+              "y": 192,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 352,
+              "y": 192,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_LEFT_WITH_GROUND",
+          "withBackgrounds": {
+            "backgrounds": [
+              {
+                "type": "CASTLE_GROUND"
+              }
+            ],
+            "foreground": "CASTLE_STAIRS_BOTTOM_LEFT"
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_MID_WITH_GROUND",
+          "withBackgrounds": {
+            "backgrounds": [
+              {
+                "type": "CASTLE_GROUND"
+              }
+            ],
+            "foreground": "CASTLE_STAIRS_BOTTOM_MID"
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_RIGHT_WITH_GROUND",
+          "withBackgrounds": {
+            "backgrounds": [
+              {
+                "type": "CASTLE_GROUND"
+              }
+            ],
+            "foreground": "CASTLE_STAIRS_BOTTOM_RIGHT"
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_LEFT",
+          "regular": {
+            "rect": {
+              "x": 320,
+              "y": 160,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_MID",
+          "regular": {
+            "rect": {
+              "x": 336,
+              "y": 160,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 352,
+              "y": 160,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_TOP_LEFT",
+          "regular": {
+            "rect": {
+              "x": 320,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_TOP_MID",
+          "regular": {
+            "rect": {
+              "x": 336,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_TOP_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 352,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
           }
         }
       ]
