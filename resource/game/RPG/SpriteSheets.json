@@ -729,6 +729,30 @@
         {
           "type": "CASTLE_WALL_STAIRS_LEFT_TOP",
           "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "y": -2.5
+                  },
+                  "rects": [
+                    {
+                      "x": 304,
+                      "y": 151,
+                      "w": 16,
+                      "h": 9
+                    },
+                    {
+                      "x": 308,
+                      "y": 149,
+                      "w": 9,
+                      "h": 2
+                    }
+                  ]
+                }
+              }
+            ],
             "rect": {
               "x": 304,
               "y": 144,

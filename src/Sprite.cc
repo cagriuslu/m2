@@ -71,7 +71,7 @@ m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, c
 
 	return dst_rect;
 }
-m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
+m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI& rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	for (const auto& rect_piece : rect_pieces) {
@@ -182,6 +182,7 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_original_rotation_radians(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().original_rotation() * m2::PI),
 	_ppm(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().override_ppm() ? FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().override_ppm() : sprite_sheet.sprite_sheet().ppm()),
 	_center_offset_px(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().center_offset_px()),
+	_center_offset_m(_center_offset_px / (float) _ppm),
 	_background_collider_type(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().has_background_collider()
 			? (FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE : box2d::ColliderType::CIRCLE)
 			: box2d::ColliderType::NONE),

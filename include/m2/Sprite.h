@@ -50,6 +50,7 @@ namespace m2 {
 		float _original_rotation_radians{};
 		int _ppm{};
 		VecF _center_offset_px;
+		VecF _center_offset_m;
 		box2d::ColliderType _background_collider_type{box2d::ColliderType::NONE};
 		VecF _background_collider_center_offset_m;
 		VecF _background_collider_rect_dims_m;
@@ -80,6 +81,7 @@ namespace m2 {
 		[[nodiscard]] float original_rotation_radians() const;
 		[[nodiscard]] int ppm() const;
 		[[nodiscard]] inline const VecF& center_offset_px() const { return _center_offset_px; }
+		[[nodiscard]] inline const VecF& center_offset_m() const { return _center_offset_m; }
 		[[nodiscard]] inline box2d::ColliderType background_collider_type() const { return _background_collider_type; }
 		[[nodiscard]] VecF background_collider_center_offset_m() const;
 		[[nodiscard]] VecF background_collider_rect_dims_m() const;
