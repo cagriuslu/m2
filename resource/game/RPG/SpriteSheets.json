@@ -777,6 +777,16 @@
               "w": 16,
               "h": 16
             },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": -6.5,
+                "y": -2
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 12
+              }
+            },
             "isBackgroundTile": true
           }
         },
@@ -800,6 +810,16 @@
               "y": 192,
               "w": 16,
               "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 6.5,
+                "y": -2
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 12
+              }
             },
             "isBackgroundTile": true
           }
@@ -846,6 +866,15 @@
               "w": 16,
               "h": 16
             },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": -6.5
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 16
+              }
+            },
             "isBackgroundTile": true
           }
         },
@@ -869,6 +898,15 @@
               "y": 160,
               "w": 16,
               "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 6.5
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 16
+              }
             },
             "isBackgroundTile": true
           }

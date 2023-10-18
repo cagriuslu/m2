@@ -22,6 +22,10 @@
             "NO_SPRITE",
             "NO_SPRITE",
             "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
             "CASTLE_TOP_RIGHT_CORNER_TOWER"
           ]
         },
@@ -29,6 +33,10 @@
           "items": [
             "NO_SPRITE",
             "CASTLE_TOP_LEFT_CORNER",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
@@ -66,6 +74,10 @@
             "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
             "CASTLE_RIGHT_WALL"
           ]
         },
@@ -86,9 +98,39 @@
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
-            "CASTLE_INNER_CORNER_BOTTOM_LEFT",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_WALL_STAIRS_LEFT_TOP",
+            "CASTLE_STAIRS_TOP_LEFT",
+            "CASTLE_STAIRS_TOP_MID",
+            "CASTLE_STAIRS_TOP_RIGHT",
+            "CASTLE_WALL_STAIRS_RIGHT_TOP",
+            "CASTLE_BOTTOM_RIGHT_CORNER_TOWER"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "NO_SPRITE",
+            "CASTLE_STAIRS_LEFT",
+            "CASTLE_STAIRS_MID",
+            "CASTLE_STAIRS_RIGHT",
+            "NO_SPRITE",
+            "CASTLE_WALL"
           ]
         },
         {
@@ -108,9 +150,11 @@
             "NO_SPRITE",
             "NO_SPRITE",
             "NO_SPRITE",
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "CASTLE_STAIRS_LEFT",
+            "CASTLE_STAIRS_MID",
+            "CASTLE_STAIRS_RIGHT"
           ]
         },
         {
@@ -130,9 +174,11 @@
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_RIGHT_CORNER",
             "NO_SPRITE",
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "CASTLE_STAIRS_LEFT",
+            "CASTLE_STAIRS_MID",
+            "CASTLE_STAIRS_RIGHT"
           ]
         },
         {
@@ -152,9 +198,11 @@
             "CASTLE_GROUND",
             "CASTLE_RIGHT_WALL",
             "NO_SPRITE",
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "CASTLE_STAIRS_LEFT",
+            "CASTLE_STAIRS_MID",
+            "CASTLE_STAIRS_RIGHT"
           ]
         },
         {
@@ -174,9 +222,35 @@
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_RIGHT_CORNER_TOWER",
             "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "CASTLE_STAIRS_LEFT",
+            "CASTLE_STAIRS_MID",
+            "CASTLE_STAIRS_RIGHT"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
             "CASTLE_LEFT_WALL",
             "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
+            "CASTLE_RIGHT_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "CASTLE_STAIRS_LEFT",
+            "CASTLE_STAIRS_MID",
+            "CASTLE_STAIRS_RIGHT"
           ]
         },
         {
@@ -196,9 +270,13 @@
             "NO_SPRITE",
             "NO_SPRITE",
             "NO_SPRITE",
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "CASTLE_STAIRS_LEFT",
+            "CASTLE_STAIRS_MID",
+            "CASTLE_STAIRS_RIGHT",
+            "NO_SPRITE",
+            "CASTLE_TOP_RIGHT_CORNER_TOWER"
           ]
         },
         {
@@ -218,15 +296,23 @@
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
-            "CASTLE_INNER_CORNER_TOP_LEFT",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_STAIRS_BOTTOM_LEFT_WITH_GROUND",
+            "CASTLE_STAIRS_BOTTOM_MID_WITH_GROUND",
+            "CASTLE_STAIRS_BOTTOM_RIGHT_WITH_GROUND",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_RIGHT_CORNER"
           ]
         },
         {
           "items": [
             "NO_SPRITE",
             "CASTLE_LEFT_WALL",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
@@ -264,7 +350,37 @@
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_RIGHT_CORNER_TOWER"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL"
           ]
         }
       ]
@@ -292,25 +408,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -324,25 +421,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -384,25 +462,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -416,25 +475,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -476,25 +516,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -508,25 +529,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -568,11 +570,262 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
             "GRASS_GROUND"
           ]
         },
         {
           "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -601,7 +854,7 @@
     {
       "position": {
         "x": 12,
-        "y": 7
+        "y": 8
       },
       "type": "CASTLE_FINISH_POINT",
       "group": {}
