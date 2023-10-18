@@ -6,7 +6,7 @@ namespace m2::sdl {
 		const ticks_t& _pause_ticks_ref;
 		ticks_t _total_ticks{};
 		ticks_t _lap{};
-		ticks_t _last_measurement;
+		ticks_t _last_measurement{};
 
 	public:
 		inline explicit Stopwatch(const ticks_t& pause_ticks_ref) : _pause_ticks_ref(pause_ticks_ref) {}

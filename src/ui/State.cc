@@ -48,7 +48,7 @@ Action State::execute() {
 }
 
 Action State::execute(SDL_Rect rect) {
-	auto execute_start_ticks = sdl::get_ticks();
+	DEBUG_FN();
 
 	// Save relation to window, use in case of resize
 	const SDL_Rect& winrect = GAME.dimensions().window;
@@ -71,7 +71,6 @@ Action State::execute(SDL_Rect rect) {
 
 	update_positions(rect);
 	if ((return_value = update_contents()) != Action::CONTINUE) {
-		GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
 		return return_value;
 	}
 
@@ -83,15 +82,16 @@ Action State::execute(SDL_Rect rect) {
 		events.clear();
 		if (events.gather()) {
 			if (events.pop_quit()) {
-				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
 				return Action::QUIT;
 			}
 			if (events.pop_key_press(Key::CONSOLE) && blueprint != &console_ui) { // Do not open console on top of console
 				LOG_INFO("Opening console");
-				auto action = execute_blocking(&console_ui);
+				auto action = State::create_execute_sync(&console_ui);
 				if (action == Action::RETURN) {
 					// Continue with the prev UI
+					LOG_DEBUG("Console returned");
 				} else if (action == Action::CLEAR_STACK || action == Action::QUIT) {
+					LOG_DEBUG("Console returned", (int) action);
 					return action;
 				} else {
 					LOG_WARN("Console returned unexpected action", (int) action);
@@ -108,8 +108,6 @@ Action State::execute(SDL_Rect rect) {
 				});
 			}
 			if ((return_value = handle_events(events)) != Action::CONTINUE) {
-				// TODO if execute_blocking is executed recursively, pause_ticks calculation becomes incorrect
-				GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
 				return return_value;
 			}
 		}
@@ -121,7 +119,6 @@ Action State::execute(SDL_Rect rect) {
 		////////////////////////////////////////////////////////////////////////
 		// Draw ui
 		if ((return_value = update_contents()) != Action::CONTINUE) {
-			GAME.add_pause_ticks(sdl::get_ticks_since(execute_start_ticks));
 			return return_value;
 		}
 		// Clear screen
@@ -250,6 +247,29 @@ void State::clear_focus() {
 	);
 }
 
+Action State::create_execute_sync(const Blueprint* blueprint) {
+	return create_execute_sync(blueprint, GAME.dimensions().window);
+}
+
+Action State::create_execute_sync(const Blueprint* blueprint, SDL_Rect rect) {
+	// Check if there are other blocking UIs
+	if (GAME.ui_begin_ticks) {
+		// Execute state without keeping time
+		State state{blueprint};
+		return state.execute(rect);
+	} else {
+		// Save begin ticks for later and other nested UIs
+		GAME.ui_begin_ticks = sdl::get_ticks();
+		// Execute state
+		State state{blueprint};
+		auto action = state.execute(rect);
+		// Add pause ticks
+		GAME.add_pause_ticks(sdl::get_ticks_since(*GAME.ui_begin_ticks));
+		GAME.ui_begin_ticks.reset();
+		return action;
+	}
+}
+
 SDL_Rect State::calculate_widget_rect(
 		const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h,
 		int child_x, int child_y, unsigned child_w, unsigned child_h) {
@@ -261,15 +281,6 @@ SDL_Rect State::calculate_widget_rect(
 			(int)roundf((float)child_w * pixels_per_unit_w),
 			(int)roundf((float)child_h * pixels_per_unit_h)
 	};
-}
-
-m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint) {
-	return execute_blocking(blueprint, GAME.dimensions().window);
-}
-
-m2::ui::Action m2::ui::execute_blocking(const Blueprint *blueprint, SDL_Rect rect) {
-	State state{blueprint};
-	return state.execute(rect);
 }
 
 m2::ui::Widget* m2::ui::find_text_widget(State& state, const std::string& text) {
@@ -329,7 +340,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					auto load_result = GAME.load_sheet_editor(path);
 					if (load_result) {
 						// Execute main menu the first time the sheet editor is run
-						auto main_menu_result = execute_blocking(&m2::ui::sheet_editor_main_menu);
+						auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
 						return main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result;
 					}
 					GAME.console_output.emplace_back(load_result.error());

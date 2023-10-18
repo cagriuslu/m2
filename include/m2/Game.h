@@ -117,6 +117,7 @@ namespace m2 {
 		void* context{};
 		Events events;
 		sdl::ticks_t pause_ticks{}; // Ticks spent outside of game
+		std::optional<sdl::ticks_t> ui_begin_ticks; // Exists only if there is an ongoing sync UI
         std::vector<std::string> console_output;
 
 		Game();

@@ -32,7 +32,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj, m2g::pb::ObjectType& t
 				rpg::Context::get_instance().save_progress();
 				LOG_INFO("Progress saved");
 
-				if (m2::ui::execute_blocking(m2g::ui::main_menu()) == m2::ui::Action::QUIT) {
+				if (m2::ui::State::create_execute_sync(m2g::ui::main_menu()) == m2::ui::Action::QUIT) {
 					GAME.quit = true;
 				}
 			});

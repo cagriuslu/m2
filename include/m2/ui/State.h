@@ -23,12 +23,12 @@ namespace m2::ui {
 		void set_widget_focus_state(Widget& w, bool state);
 		void clear_focus();
 	public:
+		static Action create_execute_sync(const Blueprint* blueprint);
+		static Action create_execute_sync(const Blueprint* blueprint, SDL_Rect rect);
 		static SDL_Rect calculate_widget_rect(const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
 	};
 
 	// Helpers
-	Action execute_blocking(const Blueprint* blueprint);
-	Action execute_blocking(const Blueprint* blueprint, SDL_Rect rect);
 	Widget* find_text_widget(State& state, const std::string& text);
 
 	extern const Blueprint console_ui;

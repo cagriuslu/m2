@@ -161,7 +161,7 @@ void m2::Game::handle_window_resize_event() {
 
 void m2::Game::handle_console_event() {
 	if (events.pop_key_press(Key::CONSOLE)) {
-		if (ui::execute_blocking(&ui::console_ui) == ui::Action::QUIT) {
+		if (ui::State::create_execute_sync(&ui::console_ui) == ui::Action::QUIT) {
 			quit = true;
 		}
 	}
@@ -184,7 +184,7 @@ void m2::Game::handle_menu_event() {
 			}
 		}(level().type());
 		// Execute pause menu if found, exit if QUIT is returned
-		if (pause_menu && ui::execute_blocking(pause_menu) == ui::Action::QUIT) {
+		if (pause_menu && ui::State::create_execute_sync(pause_menu) == ui::Action::QUIT) {
 			quit = true;
 		}
 	}

@@ -162,7 +162,7 @@ const m2::ui::Blueprint* rpg::Context::you_died_menu() {
 		.variant = m2::ui::widget::TextBlueprint{
 			.initial_text = "Main Menu",
 			.action_callback = [&]() {
-				return m2::ui::execute_blocking(&_main_menu);
+				return m2::ui::State::create_execute_sync(&_main_menu);
 			}
 		}
 	});
