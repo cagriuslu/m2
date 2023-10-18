@@ -329,6 +329,11 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 						.variant = widget::TextBlueprint{
 								.initial_text = "SELECT",
 								.action_callback = []() -> Action {
+									if (not std::holds_alternative<std::monostate>(LEVEL.sheet_editor_state->mode)) {
+										LEVEL.sheet_editor_state->deactivate_mode();
+										LEVEL.right_hud_ui_state.emplace(&sheet_editor_right_hud);
+										LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
+									}
 									LEVEL.sheet_editor_state->select();
 									return Action::RETURN;
 								},
