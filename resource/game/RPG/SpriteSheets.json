@@ -738,6 +738,15 @@
             "centerOffsetPx": {
               "y": -8
             },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 5
+              }
+            },
             "isBackgroundTile": true
           }
         },
