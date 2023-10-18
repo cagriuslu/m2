@@ -3,7 +3,6 @@
 
 namespace m2::obj {
     struct Camera : public ObjectImpl {
-		bool draw_grid_lines{false};
         VecF offset;
     };
 

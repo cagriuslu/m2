@@ -83,7 +83,6 @@ namespace m2 {
 
 		// Modifiers
 		void begin_game_loop();
-		void toggle_grid();
 		void display_message(const std::string& msg, float timeout = 5.0f);
 	};
 }

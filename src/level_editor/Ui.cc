@@ -445,7 +445,11 @@ const widget::TextBlueprint left_hud_cancel_button = {
 const widget::TextBlueprint left_hud_gridlines_button = {
 		.initial_text = "GRID",
 		.action_callback = []() -> Action {
-			LEVEL.toggle_grid();
+			if (LEVEL.dynamic_grid_lines_loader) {
+				LEVEL.dynamic_grid_lines_loader.reset();
+			} else {
+				LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 127});
+			}
 			return Action::CONTINUE;
 		},
 		.kb_shortcut = SDL_SCANCODE_G

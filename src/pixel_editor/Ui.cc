@@ -38,7 +38,11 @@ const ui::widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 const ui::widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 	.initial_text = "Grid",
 	.action_callback = []() -> ui::Action {
-		LEVEL.toggle_grid();
+		if (LEVEL.dynamic_grid_lines_loader) {
+			LEVEL.dynamic_grid_lines_loader.reset();
+		} else {
+			LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 127});
+		}
 		return ui::Action::CONTINUE;
 	},
 	.kb_shortcut = SDL_SCANCODE_G
