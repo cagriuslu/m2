@@ -33,39 +33,7 @@ Action Image::on_update() {
 void Image::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 	if (_sprite) {
-		// Make sure sprite is drawn square
-		SDL_Rect dst_rect;
-		if (rect_px.h < rect_px.w) {
-			dst_rect = {
-					.x = rect_px.x + (rect_px.w - rect_px.h) / 2,
-					.y = rect_px.y,
-					.w = rect_px.h,
-					.h = rect_px.h
-			};
-		} else {
-			dst_rect = {
-					.x = rect_px.x,
-					.y = rect_px.y + (rect_px.h - rect_px.w) / 2,
-					.w = rect_px.w,
-					.h = rect_px.w
-			};
-		}
-		draw_sprite(*_sprite, dst_rect);
+		draw_sprite(*_sprite, rect_px);
 	}
 	draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
-}
-
-void m2::ui::widget::draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect) {
-	if (sprite.has_backgrounds()) {
-		// Draw backgrounds
-		for (const auto& background : sprite.backgrounds()) {
-			draw_sprite(GAME.get_sprite(background), dst_rect);
-		}
-		// Draw foreground
-		draw_sprite(GAME.get_sprite(sprite.foreground()), dst_rect);
-		return;
-	}
-
-	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
-	SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &src_rect, &dst_rect);
 }

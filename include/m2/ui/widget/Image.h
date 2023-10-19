@@ -11,6 +11,4 @@ namespace m2::ui::widget {
 		Action on_update() override;
 		void on_draw() override;
 	};
-
-	void draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect);
 }

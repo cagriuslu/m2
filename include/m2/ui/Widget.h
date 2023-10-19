@@ -2,6 +2,7 @@
 #include "../Events.h"
 #include "WidgetBlueprint.h"
 #include "Action.h"
+#include "../Sprite.h"
 #include <optional>
 #include <SDL.h>
 
@@ -34,6 +35,7 @@ namespace m2::ui {
 		// Helpers
 		static void draw_background_color(const SDL_Rect& rect, const SDL_Color& color);
 		static void draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align);
+		static void draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect);
 		static void draw_border(const SDL_Rect& rect, unsigned border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 	};
 }

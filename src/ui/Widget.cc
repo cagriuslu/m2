@@ -97,6 +97,36 @@ void Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment
 	SDL_RenderCopy(GAME.renderer, &texture, nullptr, &dstrect);
 }
 
+void m2::ui::Widget::draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect) {
+	if (sprite.has_backgrounds()) {
+		// Draw backgrounds
+		for (const auto& background : sprite.backgrounds()) {
+			draw_sprite(GAME.get_sprite(background), dst_rect);
+		}
+		// Draw foreground
+		draw_sprite(GAME.get_sprite(sprite.foreground()), dst_rect);
+		return;
+	}
+
+	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
+	auto sprite_aspect_ratio = (float) src_rect.w / (float) src_rect.h;
+	auto widget_aspect_ratio = (float) dst_rect.w / (float) dst_rect.h;
+
+	float sprite_size_multiplier =
+			sprite_aspect_ratio < widget_aspect_ratio // Compare aspect ratios of sprite and widget
+					? (float) dst_rect.h / (float) src_rect.h // Widget is wider than the sprite
+					: (float) dst_rect.w / (float) src_rect.w; // Sprite is wider than the widget
+
+	auto actual_dst_rect = SDL_Rect{
+			.x = dst_rect.x + (dst_rect.w - iround(src_rect.w * sprite_size_multiplier)) / 2,
+			.y = dst_rect.y + (dst_rect.h - iround(src_rect.h * sprite_size_multiplier)) / 2,
+			.w = iround(src_rect.w * sprite_size_multiplier),
+			.h = iround(src_rect.h * sprite_size_multiplier)
+	};
+
+	SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &src_rect, &actual_dst_rect);
+}
+
 void Widget::draw_border(const SDL_Rect& rect, unsigned border_width_px, const SDL_Color& color) {
 	if (border_width_px) {
 		SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
