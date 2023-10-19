@@ -2,11 +2,12 @@
 #include "../Widget.h"
 
 namespace m2::ui::widget {
-	struct ProgressBar : public Widget {
-		float progress;
+	class ProgressBar : public Widget {
+		float _progress;
 
-		explicit ProgressBar(const WidgetBlueprint* blueprint);
-		Action update_content() override;
-		void draw() override;
+	public:
+		explicit ProgressBar(State* parent, const WidgetBlueprint* blueprint);
+		Action on_update() override;
+		void on_draw() override;
 	};
 }

@@ -4,10 +4,14 @@
 #include <SDL.h>
 
 namespace m2::ui::widget {
+	// Forward declaration
+	class Image;
+
 	struct ImageBlueprint {
 		m2g::pb::SpriteType initial_sprite{};
-		std::function<std::pair<Action,std::optional<m2g::pb::SpriteType>>(void)> update_callback;
-		std::function<Action(void)> action_callback;
 		SDL_Scancode kb_shortcut{};
+
+		std::function<std::pair<Action,std::optional<m2g::pb::SpriteType>>(const Image& self)> on_update;
+		std::function<Action(const Image& self)> on_action;
 	};
 }

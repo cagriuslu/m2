@@ -20,19 +20,18 @@ namespace {
 	}
 }
 
-TextSelection::TextSelection(const WidgetBlueprint* blueprint) : Widget(blueprint),
-		text_selection_blueprint(std::get<TextSelectionBlueprint>(blueprint->variant)),
-		list(text_selection_blueprint.initial_list) {
-	throw_if_list_has_duplicates(list);
+TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint),
+		_list(text_selection_blueprint().initial_list) {
+	throw_if_list_has_duplicates(_list);
 
 	// on_create
-	if (text_selection_blueprint.on_create) {
-		auto opt_list = text_selection_blueprint.on_create();
+	if (text_selection_blueprint().on_create) {
+		auto opt_list = text_selection_blueprint().on_create(*this);
 		if (opt_list) {
 			// Save new list
-			list = *opt_list;
+			_list = *opt_list;
 			// Verify list
-			throw_if_list_has_duplicates(list);
+			throw_if_list_has_duplicates(_list);
 		}
 	}
 
@@ -40,12 +39,12 @@ TextSelection::TextSelection(const WidgetBlueprint* blueprint) : Widget(blueprin
 	select(0);
 }
 
-Action TextSelection::update_content() {
-	if (text_selection_blueprint.update_callback) {
-		auto[action, optional_list] = text_selection_blueprint.update_callback(list, selection);
+Action TextSelection::on_update() {
+	if (text_selection_blueprint().on_update) {
+		auto[action, optional_list] = text_selection_blueprint().on_update(*this);
 		if (action == Action::CONTINUE && optional_list) {
 			// Save new list
-			list = *optional_list;
+			_list = *optional_list;
 			// Verify list
 			throw_if_list_has_duplicates(*optional_list);
 			// Select default item
@@ -57,39 +56,39 @@ Action TextSelection::update_content() {
 	}
 }
 
-Action TextSelection::handle_events(Events& events) {
+Action TextSelection::on_event(Events& events) {
 	auto rect = RectI{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 
-	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
-		inc_depressed = true;
-		dec_depressed = false;
-	} else if (!dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
-		dec_depressed = true;
-		inc_depressed = false;
-	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
-		inc_depressed = false;
-		if (selection + 1 < list.size()) {
-			return select(selection + 1);
+	if (!_inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
+		_inc_depressed = true;
+		_dec_depressed = false;
+	} else if (!_dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
+		_dec_depressed = true;
+		_inc_depressed = false;
+	} else if (_inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
+		_inc_depressed = false;
+		if (_selection + 1 < _list.size()) {
+			return select(_selection + 1);
 		}
-	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
-		dec_depressed = false;
-		if (0 < selection) {
-			return select(selection - 1);
+	} else if (_dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
+		_dec_depressed = false;
+		if (0 < _selection) {
+			return select(_selection - 1);
 		}
 	} else {
 		// Check if scrolled
 		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect); 0 < scroll_amount) {
-			auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), list.size() - selection - 1);
+			auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _list.size() - _selection - 1);
 			if (min_scroll_amount) {
-				return select(selection + min_scroll_amount);
+				return select(_selection + min_scroll_amount);
 			}
 		} else if (scroll_amount < 0) {
-			auto min_scroll_amount = std::min(static_cast<unsigned>(-scroll_amount), selection);
+			auto min_scroll_amount = std::min(static_cast<unsigned>(-scroll_amount), _selection);
 			if (min_scroll_amount) {
-				return select(selection - min_scroll_amount);
+				return select(_selection - min_scroll_amount);
 			}
 		}
 	}
@@ -97,20 +96,20 @@ Action TextSelection::handle_events(Events& events) {
 }
 
 Action TextSelection::select(unsigned index) {
-	selection = index;
-	if (!list.empty()) {
-		font_texture = *sdl::FontTexture::create(list[selection]);
+	_selection = index;
+	if (!_list.empty()) {
+		_font_texture = *sdl::FontTexture::create(_list[_selection]);
 
-		if (text_selection_blueprint.action_callback) {
-			return text_selection_blueprint.action_callback(selection, list[selection]);
+		if (text_selection_blueprint().on_action) {
+			return text_selection_blueprint().on_action(*this);
 		}
 	} else {
-		font_texture = *sdl::FontTexture::create("<EMPTY>");
+		_font_texture = *sdl::FontTexture::create("<EMPTY>");
 	}
 	return Action::CONTINUE;
 }
 
-void TextSelection::draw() {
+void TextSelection::on_draw() {
 	auto rect = RectI{rect_px};
 	auto text_rect = rect.trim_right(rect.h / 2).trim((int) blueprint->padding_width_px);
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
@@ -121,8 +120,8 @@ void TextSelection::draw() {
 
 	draw_background_color(rect_px, blueprint->background_color);
 
-	if (font_texture) {
-		draw_text((SDL_Rect)text_rect, font_texture.texture(), TextAlignment::LEFT);
+	if (_font_texture) {
+		draw_text((SDL_Rect)text_rect, _font_texture.texture(), TextAlignment::LEFT);
 	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");

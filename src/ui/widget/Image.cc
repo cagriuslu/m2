@@ -15,14 +15,14 @@ namespace {
 	}
 }
 
-Image::Image(const WidgetBlueprint* blueprint) : AbstractButton(blueprint), sprite(lookup_initial_sprite(blueprint)) {}
+Image::Image(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint), _sprite(lookup_initial_sprite(blueprint)) {}
 
-Action Image::update_content() {
+Action Image::on_update() {
 	auto& image_blueprint = std::get<ImageBlueprint>(blueprint->variant);
-	if (image_blueprint.update_callback) {
-		auto[action, opt_sprite] = image_blueprint.update_callback();
+	if (image_blueprint.on_update) {
+		auto[action, opt_sprite] = image_blueprint.on_update(*this);
 		if (action == Action::CONTINUE && opt_sprite) {
-			sprite =  lookup_sprite(*opt_sprite);
+			_sprite =  lookup_sprite(*opt_sprite);
 		}
 		return action;
 	} else {
@@ -30,9 +30,9 @@ Action Image::update_content() {
 	}
 }
 
-void Image::draw() {
+void Image::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
-	if (sprite) {
+	if (_sprite) {
 		// Make sure sprite is drawn square
 		SDL_Rect dst_rect;
 		if (rect_px.h < rect_px.w) {
@@ -50,7 +50,7 @@ void Image::draw() {
 					.h = rect_px.w
 			};
 		}
-		draw_sprite(*sprite, dst_rect);
+		draw_sprite(*_sprite, dst_rect);
 	}
 	draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }

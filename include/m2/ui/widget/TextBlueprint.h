@@ -5,12 +5,16 @@
 #include <SDL.h>
 
 namespace m2::ui::widget {
+	// Forward declaration
+	class Text;
+
 	struct TextBlueprint {
 		std::string initial_text;
 		TextAlignment alignment;
 		bool is_toggle{}; // TODO
-		std::function<std::pair<Action,std::optional<std::string>>(void)> update_callback;
-		std::function<Action(void)> action_callback;
 		SDL_Scancode kb_shortcut{};
+
+		std::function<std::pair<Action,std::optional<std::string>>(const Text& self)> on_update;
+		std::function<Action(const Text& self)> on_action;
 	};
 }

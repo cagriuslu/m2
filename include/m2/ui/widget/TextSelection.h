@@ -3,19 +3,21 @@
 #include "../../sdl/Detail.hh"
 
 namespace m2::ui::widget {
-	struct TextSelection : public Widget {
-		const TextSelectionBlueprint& text_selection_blueprint;
+	class TextSelection : public Widget {
+		std::vector<std::string> _list;
+		unsigned _selection{};
+		sdl::FontTexture _font_texture;
+		bool _inc_depressed{};
+		bool _dec_depressed{};
 
-		std::vector<std::string> list;
-		unsigned selection{};
-		sdl::FontTexture font_texture;
-		bool inc_depressed{};
-		bool dec_depressed{};
-
-		explicit TextSelection(const WidgetBlueprint* blueprint);
-		Action update_content() override;
-		Action handle_events(Events& events) override;
+	public:
+		explicit TextSelection(State* parent, const WidgetBlueprint* blueprint);
+		Action on_update() override;
+		Action on_event(Events& events) override;
 		Action select(unsigned index);
-		void draw() override;
+		void on_draw() override;
+
+		const TextSelectionBlueprint& text_selection_blueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }
+		inline const std::string& selection() const { return _list[_selection]; }
 	};
 }

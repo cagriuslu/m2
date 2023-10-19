@@ -11,12 +11,12 @@ namespace {
 	}
 }
 
-TextInput::TextInput(const WidgetBlueprint* blueprint) : Widget(blueprint) {
+TextInput::TextInput(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
 	const auto& te_blueprint = std::get<TextInputBlueprint>(blueprint->variant);
-	text_input << te_blueprint.initial_text;
+	_text_input << te_blueprint.initial_text;
 }
 
-Action TextInput::handle_events(Events& events) {
+Action TextInput::on_event(Events& events) {
 	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{rect_px})) {
 		LOG_INFO("Regaining focus");
 		return Action::GAIN_FOCUS;
@@ -28,22 +28,26 @@ Action TextInput::handle_events(Events& events) {
 
 	if (events.pop_key_press(Key::MENU)) {
 		return Action::LOSE_FOCUS;
-	} else if (events.pop_key_press(Key::ENTER) && std::get<TextInputBlueprint>(blueprint->variant).action_callback) {
-		return std::get<TextInputBlueprint>(blueprint->variant).action_callback(text_input);
+	} else if (events.pop_key_press(Key::ENTER) && std::get<TextInputBlueprint>(blueprint->variant).on_action) {
+		auto [action, new_string] = std::get<TextInputBlueprint>(blueprint->variant).on_action(*this);
+		if (new_string) {
+			_text_input = std::stringstream{*new_string};
+		}
+		return action;
 	} else if (events.pop_key_press(Key::BACKSPACE)) {
-		if (auto text_input_str = text_input.str(); not text_input_str.empty()) {
-			text_input = std::stringstream{text_input_str.substr(0, text_input_str.length() - 1)};
-			text_input.seekp(0, std::ios::end);
+		if (auto text_input_str = _text_input.str(); not text_input_str.empty()) {
+			_text_input = std::stringstream{text_input_str.substr(0, text_input_str.length() - 1)};
+			_text_input.seekp(0, std::ios::end);
 		}
 	} else {
 		if (auto opt_text_input = events.pop_text_input(); opt_text_input) {
-			text_input << *opt_text_input;
+			_text_input << *opt_text_input;
 		}
 	}
 	return Action::CONTINUE;
 }
 
-void TextInput::focus_changed() {
+void TextInput::on_focus_change() {
 	if (focused) {
 		LOG_DEBUG("Starting text input");
 		SDL_StartTextInput();
@@ -52,8 +56,8 @@ void TextInput::focus_changed() {
 	}
 }
 
-Action TextInput::update_content() {
-	auto str = text_input.str();
+Action TextInput::on_update() {
+	auto str = _text_input.str();
 
 	// Add '_' if focused
 	if (focused) {
@@ -61,18 +65,18 @@ Action TextInput::update_content() {
 	}
 
 	// Generate new texture is the string has changed
-	if (str != font_texture_str) {
-		font_texture = sdl::generate_font(str);
-		font_texture_str = str;
+	if (str != _font_texture_str) {
+		_font_texture = sdl::generate_font(str);
+		_font_texture_str = str;
 	}
 
 	return Action::CONTINUE;
 }
 
-void TextInput::draw() {
+void TextInput::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
-	if (font_texture) {
-		draw_text(rect_px, *font_texture, TextAlignment::LEFT);
+	if (_font_texture) {
+		draw_text(rect_px, *_font_texture, TextAlignment::LEFT);
 	}
 	draw_border(rect_px, blueprint->border_width_px);
 }

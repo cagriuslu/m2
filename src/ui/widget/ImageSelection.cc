@@ -7,11 +7,11 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-ImageSelection::ImageSelection(const WidgetBlueprint* blueprint) : Widget(blueprint) {
+ImageSelection::ImageSelection(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
 	select(0);
 }
 
-Action ImageSelection::handle_events(Events& events) {
+Action ImageSelection::on_event(Events& events) {
 	auto rect = RectI{rect_px};
 	auto buttons_rect = rect.trim_top(rect.w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
@@ -19,40 +19,40 @@ Action ImageSelection::handle_events(Events& events) {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 
-	if (!inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
-		inc_depressed = true;
-		dec_depressed = false;
-	} else if (!dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
-		dec_depressed = true;
-		inc_depressed = false;
-	} else if (inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
-		inc_depressed = false;
-		if (selection + 1 < image_selection.list.size()) {
-			select(selection + 1);
+	if (!_inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
+		_inc_depressed = true;
+		_dec_depressed = false;
+	} else if (!_dec_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, dec_button_rect)) {
+		_dec_depressed = true;
+		_inc_depressed = false;
+	} else if (_inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
+		_inc_depressed = false;
+		if (_selection + 1 < image_selection.list.size()) {
+			select(_selection + 1);
 		}
-	} else if (dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
-		dec_depressed = false;
-		if (0 < selection) {
-			select(selection - 1);
+	} else if (_dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
+		_dec_depressed = false;
+		if (0 < _selection) {
+			select(_selection - 1);
 		}
 	}
 	return Action::CONTINUE;
 }
 
 Action ImageSelection::select(unsigned index) {
-	selection = index;
+	_selection = index;
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto& action_callback = image_selection.action_callback;
+		const auto& action_callback = image_selection.on_action;
 		if (action_callback) {
-			return action_callback(image_selection.list[selection]);
+			return action_callback(*this);
 		}
 	}
 	return Action::CONTINUE;
 }
 
-void ImageSelection::draw() {
+void ImageSelection::on_draw() {
 	auto rect = RectI{rect_px};
 	auto image_rect = rect.trim_bottom(rect.h - rect.w);
 	auto buttons_rect = rect.trim_top(rect.w);
@@ -65,7 +65,7 @@ void ImageSelection::draw() {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto& sprite = GAME.get_sprite(image_selection.list[selection]);
+		const auto& sprite = GAME.get_sprite(image_selection.list[_selection]);
 		auto dst_rect = static_cast<SDL_Rect>(image_rect);
 		draw_sprite(sprite, dst_rect);
 	}

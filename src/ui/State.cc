@@ -22,14 +22,14 @@ using namespace m2::ui;
 
 namespace {
 	// Filters
-	constexpr auto is_widget_enabled = [](const auto& w) { return w->enabled; };
-	constexpr auto is_widget_focused = [](const auto& w) { return w->focused; };
+	constexpr auto is_widget_enabled = [](const auto &w) { return w->enabled; };
+	constexpr auto is_widget_focused = [](const auto &w) { return w->focused; };
 	// Actions
-	constexpr auto draw_widget = [](const auto& w) { w->draw(); };
+	constexpr auto draw_widget = [](const auto &w) { w->on_draw(); };
 }
 
-State::State(const Blueprint* blueprint) : blueprint(blueprint) {
-	for (const auto& widget_blueprint : blueprint->widgets) {
+State::State(const Blueprint *blueprint) : blueprint(blueprint) {
+	for (const auto &widget_blueprint: blueprint->widgets) {
 		// Create widget
 		widgets.push_back(create_widget_state(widget_blueprint));
 		// Check if focus is requested
@@ -39,30 +39,49 @@ State::State(const Blueprint* blueprint) : blueprint(blueprint) {
 	}
 }
 
-State::~State() {
-	clear_focus();
+Action State::create_execute_sync(const Blueprint *blueprint) {
+	return create_execute_sync(blueprint, GAME.dimensions().window);
 }
 
-Action State::execute() {
-	return execute(GAME.dimensions().window);
+Action State::create_execute_sync(const Blueprint *blueprint, SDL_Rect rect) {
+	// Check if there are other blocking UIs
+	if (GAME.ui_begin_ticks) {
+		// Execute state without keeping time
+		State state{blueprint};
+		return state.execute(rect);
+	} else {
+		// Save begin ticks for later and other nested UIs
+		GAME.ui_begin_ticks = sdl::get_ticks();
+		// Execute state
+		State state{blueprint};
+		auto action = state.execute(rect);
+		// Add pause ticks
+		GAME.add_pause_ticks(sdl::get_ticks_since(*GAME.ui_begin_ticks));
+		GAME.ui_begin_ticks.reset();
+		return action;
+	}
+}
+
+State::~State() {
+	clear_focus();
 }
 
 Action State::execute(SDL_Rect rect) {
 	DEBUG_FN();
 
 	// Save relation to window, use in case of resize
-	const SDL_Rect& winrect = GAME.dimensions().window;
+	const SDL_Rect &winrect = GAME.dimensions().window;
 	auto relation_to_window = SDL_FRect{
-			(float)(rect.x - winrect.x) / (float)winrect.w,
-			(float)(rect.y - winrect.y) / (float)winrect.h,
-			(float)rect.w / (float)winrect.w,
-			(float)rect.h / (float)winrect.h,
+			(float) (rect.x - winrect.x) / (float) winrect.w,
+			(float) (rect.y - winrect.y) / (float) winrect.h,
+			(float) rect.w / (float) winrect.w,
+			(float) rect.h / (float) winrect.h,
 	};
 
 	// Get screenshot
 	int w, h;
 	SDL_GetRendererOutputSize(GAME.renderer, &w, &h);
-	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
+	auto *surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
 	SDL_RenderReadPixels(GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
 	std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
 	SDL_FreeSurface(surface);
@@ -84,7 +103,8 @@ Action State::execute(SDL_Rect rect) {
 			if (events.pop_quit()) {
 				return Action::QUIT;
 			}
-			if (events.pop_key_press(Key::CONSOLE) && blueprint != &console_ui) { // Do not open console on top of console
+			if (events.pop_key_press(Key::CONSOLE) &&
+					blueprint != &console_ui) { // Do not open console on top of console
 				LOG_INFO("Opening console");
 				auto action = State::create_execute_sync(&console_ui);
 				if (action == Action::RETURN) {
@@ -101,10 +121,10 @@ Action State::execute(SDL_Rect rect) {
 			if (window_resize) {
 				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
 				update_positions(SDL_Rect{
-						(int)round((float)winrect.x + relation_to_window.x * (float)winrect.w),
-						(int)round((float)winrect.y + relation_to_window.y * (float)winrect.h),
-						(int)round(relation_to_window.w * (float)winrect.w),
-						(int)round(relation_to_window.h * (float)winrect.h)
+						(int) round((float) winrect.x + relation_to_window.x * (float) winrect.w),
+						(int) round((float) winrect.y + relation_to_window.y * (float) winrect.h),
+						(int) round(relation_to_window.w * (float) winrect.w),
+						(int) round(relation_to_window.h * (float) winrect.h)
 				});
 			}
 			if ((return_value = handle_events(events)) != Action::CONTINUE) {
@@ -135,20 +155,21 @@ Action State::execute(SDL_Rect rect) {
 
 void State::update_positions(const SDL_Rect &rect_px_) {
 	this->rect_px = rect_px_;
-	for (auto& widget_state : widgets) {
-		SDL_Rect widget_rect = calculate_widget_rect(rect_px_, blueprint->w, blueprint->h, widget_state->blueprint->x, widget_state->blueprint->y, widget_state->blueprint->w, widget_state->blueprint->h);
-		widget_state->update_position(widget_rect);
+	for (auto &widget_state: widgets) {
+		SDL_Rect widget_rect = calculate_widget_rect(rect_px_, blueprint->w, blueprint->h, widget_state->blueprint->x,
+				widget_state->blueprint->y, widget_state->blueprint->w, widget_state->blueprint->h);
+		widget_state->on_position_update(widget_rect);
 	}
 }
 
-Action State::handle_events(Events& events) {
+Action State::handle_events(Events &events) {
 	// Return if State not enabled
 	if (!enabled) {
 		return Action::CONTINUE;
 	}
 
-	for (auto& widget : widgets | std::views::filter(is_widget_enabled)) {
-		switch (auto action = widget->handle_events(events); action) {
+	for (auto &widget: widgets | std::views::filter(is_widget_enabled)) {
+		switch (auto action = widget->on_event(events); action) {
 			case Action::CONTINUE:
 				continue;
 			case Action::GAIN_FOCUS:
@@ -168,8 +189,8 @@ Action State::update_contents() {
 		return Action::CONTINUE;
 	}
 
-	for (auto& widget : widgets | std::views::filter(is_widget_enabled)) {
-		switch (auto action = widget->update_content(); action) {
+	for (auto &widget: widgets | std::views::filter(is_widget_enabled)) {
+		switch (auto action = widget->on_update(); action) {
 			case Action::CONTINUE:
 			case Action::GAIN_FOCUS:
 			case Action::LOSE_FOCUS:
@@ -192,28 +213,28 @@ void State::draw() {
 	Widget::draw_border(rect_px, blueprint->border_width_px);
 }
 
-std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint& blueprint) {
+std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget_blueprint) {
 	std::unique_ptr<Widget> state;
 
 	using namespace m2::ui::widget;
-	if (std::holds_alternative<NestedUiBlueprint>(blueprint.variant)) {
-		state = std::make_unique<NestedUi>(&blueprint);
-	} else if (std::holds_alternative<TextBlueprint>(blueprint.variant)) {
-		state = std::make_unique<Text>(&blueprint);
-	} else if (std::holds_alternative<TextInputBlueprint>(blueprint.variant)) {
-		state = std::make_unique<TextInput>(&blueprint);
-	} else if (std::holds_alternative<ImageBlueprint>(blueprint.variant)) {
-		state = std::make_unique<Image>(&blueprint);
-	} else if (std::holds_alternative<ProgressBarBlueprint>(blueprint.variant)) {
-		state = std::make_unique<ProgressBar>(&blueprint);
-	} else if (std::holds_alternative<ImageSelectionBlueprint>(blueprint.variant)) {
-		state = std::make_unique<ImageSelection>(&blueprint);
-	} else if (std::holds_alternative<TextSelectionBlueprint>(blueprint.variant)) {
-		state = std::make_unique<TextSelection>(&blueprint);
-	} else if (std::holds_alternative<IntegerSelectionBlueprint>(blueprint.variant)) {
-		state = std::make_unique<IntegerSelection>(&blueprint);
-	} else if (std::holds_alternative<CheckboxWithTextBlueprint>(blueprint.variant)) {
-		state = std::make_unique<CheckboxWithText>(&blueprint);
+	if (std::holds_alternative<NestedUiBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<NestedUi>(this, &widget_blueprint);
+	} else if (std::holds_alternative<TextBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<Text>(this, &widget_blueprint);
+	} else if (std::holds_alternative<TextInputBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<TextInput>(this, &widget_blueprint);
+	} else if (std::holds_alternative<ImageBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<Image>(this, &widget_blueprint);
+	} else if (std::holds_alternative<ProgressBarBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<ProgressBar>(this, &widget_blueprint);
+	} else if (std::holds_alternative<ImageSelectionBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<ImageSelection>(this, &widget_blueprint);
+	} else if (std::holds_alternative<TextSelectionBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<TextSelection>(this, &widget_blueprint);
+	} else if (std::holds_alternative<IntegerSelectionBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<IntegerSelection>(this, &widget_blueprint);
+	} else if (std::holds_alternative<CheckboxWithTextBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<CheckboxWithText>(this, &widget_blueprint);
 	} else {
 		throw M2FATAL("Implementation");
 	}
@@ -221,20 +242,20 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint& bluepr
 	return state;
 }
 
-void State::set_widget_focus_state(Widget& w, bool focus_state) {
+void State::set_widget_focus_state(Widget &w, bool focus_state) {
 	if (focus_state) {
 		if (!w.focused) {
 			// Clear existing focus
 			clear_focus();
 			// Set focus
 			w.focused = true;
-			w.focus_changed();
+			w.on_focus_change();
 		}
 	} else {
 		// Reset focus
 		if (w.focused) {
 			w.focused = false;
-			w.focus_changed();
+			w.on_focus_change();
 		}
 	}
 }
@@ -243,65 +264,41 @@ void State::clear_focus() {
 	// Check if there's an already focused widget
 	std::ranges::for_each(
 			widgets | std::views::filter(is_widget_focused),
-			[&](const auto& it) { set_widget_focus_state(*it, false); }
+			[&](const auto &it) { set_widget_focus_state(*it, false); }
 	);
 }
 
-Action State::create_execute_sync(const Blueprint* blueprint) {
-	return create_execute_sync(blueprint, GAME.dimensions().window);
-}
-
-Action State::create_execute_sync(const Blueprint* blueprint, SDL_Rect rect) {
-	// Check if there are other blocking UIs
-	if (GAME.ui_begin_ticks) {
-		// Execute state without keeping time
-		State state{blueprint};
-		return state.execute(rect);
-	} else {
-		// Save begin ticks for later and other nested UIs
-		GAME.ui_begin_ticks = sdl::get_ticks();
-		// Execute state
-		State state{blueprint};
-		auto action = state.execute(rect);
-		// Add pause ticks
-		GAME.add_pause_ticks(sdl::get_ticks_since(*GAME.ui_begin_ticks));
-		GAME.ui_begin_ticks.reset();
-		return action;
-	}
-}
-
-SDL_Rect State::calculate_widget_rect(
-		const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h,
+SDL_Rect m2::ui::calculate_widget_rect(
+		const SDL_Rect &root_rect_px, unsigned root_w, unsigned root_h,
 		int child_x, int child_y, unsigned child_w, unsigned child_h) {
-	auto pixels_per_unit_w = (float)root_rect_px.w / (float)root_w;
-	auto pixels_per_unit_h = (float)root_rect_px.h / (float)root_h;
+	auto pixels_per_unit_w = (float) root_rect_px.w / (float) root_w;
+	auto pixels_per_unit_h = (float) root_rect_px.h / (float) root_h;
 	return SDL_Rect{
-			root_rect_px.x + (int)roundf((float)child_x * pixels_per_unit_w),
-			root_rect_px.y + (int)roundf((float)child_y * pixels_per_unit_h),
-			(int)roundf((float)child_w * pixels_per_unit_w),
-			(int)roundf((float)child_h * pixels_per_unit_h)
+			root_rect_px.x + (int) roundf((float) child_x * pixels_per_unit_w),
+			root_rect_px.y + (int) roundf((float) child_y * pixels_per_unit_h),
+			(int) roundf((float) child_w * pixels_per_unit_w),
+			(int) roundf((float) child_h * pixels_per_unit_h)
 	};
 }
 
-m2::ui::Widget* m2::ui::find_text_widget(State& state, const std::string& text) {
+m2::ui::Widget *m2::ui::find_text_widget(State &state, const std::string &text) {
 	auto it = std::ranges::find_if(state.widgets,
 			// Predicate
-			[=](const auto* blueprint) {
-				const auto* text_variant = std::get_if<ui::widget::TextBlueprint>(&blueprint->variant);
+			[=](const auto *blueprint) {
+				const auto *text_variant = std::get_if<ui::widget::TextBlueprint>(&blueprint->variant);
 				// If widget is Text and the button is labelled correctly
 				return text_variant && text_variant->initial_text == text;
 			},
 			// Projection
-			[](const auto& unique_blueprint) { return unique_blueprint->blueprint; });
+			[](const auto &unique_blueprint) { return unique_blueprint->blueprint; });
 
 	return (it != state.widgets.end()) ? it->get() : nullptr;
 }
 
 const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprint{
 		.initial_text = "",
-		.action_callback = [](std::stringstream& ss) -> Action {
-			auto command = ss.str(); // Get command
-			ss = std::stringstream(); // Clear the text input
+		.on_action = [](const widget::TextInput &self) -> std::pair<Action, std::optional<std::string>> {
+			const auto &command = self.text_input();
 			GAME.console_output.emplace_back(">> " + command);
 
 			if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
@@ -309,14 +306,14 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				if (std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
 					auto load_result = GAME.load_level_editor(GAME.levels_dir / match_results.str(1));
 					if (load_result) {
-						return Action::CLEAR_STACK;
+						return std::make_pair(Action::CLEAR_STACK, std::string{});
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
 					GAME.console_output.emplace_back("ledit usage:");
 					GAME.console_output.emplace_back(".. file_name - open level editor with file");
 				}
-				return Action::CONTINUE;
+				return std::make_pair(Action::CONTINUE, std::string{});
 			} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
 				std::smatch match_results;
 				if (std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
@@ -324,14 +321,14 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
 					auto load_result = GAME.load_pixel_editor(match_results.str(3), (int) x_offset, (int) y_offset);
 					if (load_result) {
-						return Action::CLEAR_STACK;
+						return std::make_pair(Action::CLEAR_STACK, std::string{});
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
 					GAME.console_output.emplace_back("pedit usage:");
 					GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 				}
-				return Action::CONTINUE;
+				return std::make_pair(Action::CONTINUE, std::string{});
 			} else if (std::regex_match(command, std::regex{"sedit(\\s.*)?"})) {
 				std::smatch match_results;
 				if (std::regex_match(command, match_results, std::regex{R"(sedit(\s.*)?)"})) {
@@ -341,22 +338,25 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					if (load_result) {
 						// Execute main menu the first time the sheet editor is run
 						auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
-						return main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result;
+						return std::make_pair(
+								main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result,
+								std::string{});
 					}
 					GAME.console_output.emplace_back(load_result.error());
 				} else {
 					GAME.console_output.emplace_back("sedit usage:");
 					GAME.console_output.emplace_back(".. file_name - open sheet editor with file");
 				}
-				return Action::CONTINUE;
+				return std::make_pair(Action::CONTINUE, std::string{});
 			} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
 				std::smatch match_results;
 				if (std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
 					auto parameter = match_results.str(1);
 					if (parameter == "game_height") {
 						auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
-						GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h, new_game_height);
-						return Action::CONTINUE;
+						GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h,
+								new_game_height);
+						return std::make_pair(Action::CONTINUE, std::string{});
 					} else {
 						GAME.console_output.emplace_back("Unknown parameter");
 					}
@@ -364,9 +364,9 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					// TODO print help
 				}
 			} else if (command == "quit") {
-				return Action::QUIT;
+				return std::make_pair(Action::QUIT, std::string{});
 			} else if (command == "close") {
-				return Action::RETURN;
+				return std::make_pair(Action::RETURN, std::string{});
 			} else if (command.empty()) {
 				// Do nothing
 			} else {
@@ -380,17 +380,19 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				GAME.console_output.emplace_back("quit - quit game");
 			}
 
-			return Action::CONTINUE;
+			return std::make_pair(Action::CONTINUE, std::string{});
 		}
 };
 
-template <unsigned INDEX>
+template<unsigned INDEX>
 widget::TextBlueprint command_output_variant() {
 	return {
 			.initial_text = "",
 			.alignment = TextAlignment::LEFT,
-			.update_callback = []() -> std::pair<Action,std::optional<std::string>> {
-				return {Action::CONTINUE, INDEX < GAME.console_output.size() ? GAME.console_output[GAME.console_output.size() - INDEX - 1] : std::string()};
+			.on_update = [](MAYBE const widget::Text &self) -> std::pair<Action, std::optional<std::string>> {
+				return {Action::CONTINUE,
+						INDEX < GAME.console_output.size() ? GAME.console_output[GAME.console_output.size() - INDEX - 1]
+								: std::string()};
 			}
 	};
 }
@@ -444,7 +446,7 @@ const Blueprint m2::ui::message_box_ui = {
 						.background_color = SDL_Color{127, 127, 127, 127},
 						.variant = widget::TextBlueprint{
 								.alignment = TextAlignment::LEFT,
-								.update_callback = []() {
+								.on_update = [](MAYBE const widget::Text &self) {
 									return std::make_pair(Action::CONTINUE, LEVEL.message);
 								}
 						}

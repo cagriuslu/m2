@@ -1,6 +1,7 @@
 #include <m2/object/God.h>
 #include <m2/ui/widget/ImageSelection.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/IntegerSelection.h>
 #include <m2/Game.h>
 
@@ -14,7 +15,7 @@ namespace {
 			return;
 		}
 		// Press the button
-		std::get<ui::widget::TextBlueprint>(widget->blueprint->variant).action_callback();
+		dynamic_cast<ui::widget::Text*>(widget)->trigger_action();
 		// Right hud points to `place_mode_right_hud`, select the object type
 		auto object_type_index = 0;
 		for (const auto& level_editor_object : GAME.level_editor_object_sprites) {
@@ -39,7 +40,7 @@ namespace {
 			return;
 		}
 		// Press the button
-		std::get<ui::widget::TextBlueprint>(widget->blueprint->variant).action_callback();
+		dynamic_cast<ui::widget::Text*>(widget)->trigger_action();
 		// Right hud points to `paint_mode_right_hud`, select the sprite type
 		auto sprite_type_index = 0;
 		for (const auto& sprite_type : GAME.level_editor_background_sprites) {

@@ -3,16 +3,19 @@
 #include "../../sdl/Detail.hh"
 
 namespace m2::ui::widget {
-	struct IntegerSelection : public Widget {
-		int value;
-		sdl::TextureUniquePtr font_texture;
-		bool inc_depressed{};
-		bool dec_depressed{};
+	class IntegerSelection : public Widget {
+		int _value;
+		sdl::TextureUniquePtr _font_texture;
+		bool _inc_depressed{};
+		bool _dec_depressed{};
 
-		explicit IntegerSelection(const WidgetBlueprint* blueprint);
-		Action handle_events(Events& events) override;
+	public:
+		explicit IntegerSelection(State* parent, const WidgetBlueprint* blueprint);
+		Action on_event(Events& events) override;
 		Action select(int value);
-		Action update_content() override;
-		void draw() override;
+		Action on_update() override;
+		void on_draw() override;
+
+		inline int value() const { return _value; }
 	};
 }

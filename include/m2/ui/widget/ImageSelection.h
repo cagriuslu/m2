@@ -4,14 +4,17 @@
 #include "../Widget.h"
 
 namespace m2::ui::widget {
-	struct ImageSelection : public Widget {
-		unsigned selection{};
-		bool inc_depressed{};
-		bool dec_depressed{};
+	class ImageSelection : public Widget {
+		unsigned _selection{};
+		bool _inc_depressed{};
+		bool _dec_depressed{};
 
-		explicit ImageSelection(const WidgetBlueprint* blueprint);
-		Action handle_events(Events& events) override;
+	public:
+		explicit ImageSelection(State* parent, const WidgetBlueprint* blueprint);
+		Action on_event(Events& events) override;
 		Action select(unsigned index);
-		void draw() override;
+		void on_draw() override;
+
+		inline m2g::pb::SpriteType selection() const { return std::get<ImageSelectionBlueprint>(blueprint->variant).list[_selection]; }
 	};
 }

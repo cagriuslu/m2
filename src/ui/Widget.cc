@@ -3,21 +3,21 @@
 
 using namespace m2::ui;
 
-Widget::Widget(const WidgetBlueprint* blueprint) : enabled(blueprint->initially_enabled), blueprint(blueprint) {}
+Widget::Widget(State* parent, const WidgetBlueprint* blueprint) : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
 
-void Widget::update_position(const SDL_Rect &rect_px_) {
+void Widget::on_position_update(const SDL_Rect &rect_px_) {
 	this->rect_px = rect_px_;
 }
 
-Action Widget::handle_events(MAYBE Events &events) {
+Action Widget::on_event(MAYBE Events &events) {
 	return Action::CONTINUE;
 }
 
-void Widget::focus_changed() {}
+void Widget::on_focus_change() {}
 
-Action Widget::update_content() { return Action::CONTINUE; }
+Action Widget::on_update() { return Action::CONTINUE; }
 
-void Widget::draw() {}
+void Widget::on_draw() {}
 
 void Widget::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) {
 	if (color.r || color.g || color.b || color.a) {

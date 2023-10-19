@@ -3,11 +3,16 @@
 #include "../../sdl/Detail.hh"
 
 namespace m2::ui::widget {
-	struct CheckboxWithText : public AbstractButton {
-		bool state;
-		sdl::TextureUniquePtr font_texture;
+	class CheckboxWithText : public AbstractButton {
+		bool _state;
+		sdl::TextureUniquePtr _font_texture;
 
-		explicit CheckboxWithText(const WidgetBlueprint* blueprint);
-		void draw() override;
+	public:
+		explicit CheckboxWithText(State* parent, const WidgetBlueprint* blueprint);
+		void on_draw() override;
+
+		inline bool state() const { return _state; }
+
+		friend struct AbstractButton;
 	};
 }

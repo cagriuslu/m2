@@ -6,19 +6,19 @@
 using namespace m2::ui;
 
 static widget::TextBlueprint resume_button = {
-	.initial_text = "Resume",
-	.action_callback = []() {
-		LOG_DEBUG("Resume button pressed");
-		return Action::RETURN;
-	},
-	.kb_shortcut = SDL_SCANCODE_R
+		.initial_text = "Resume",
+		.kb_shortcut = SDL_SCANCODE_R,
+		.on_action = [](MAYBE const widget::Text &self) {
+			LOG_DEBUG("Resume button pressed");
+			return Action::RETURN;
+		}
 };
 static widget::TextBlueprint quit_button = {
-	.initial_text = "Quit",
-	.action_callback = []() {
-		return m2::ui::Action::QUIT;
-	},
-	.kb_shortcut = SDL_SCANCODE_Q
+		.initial_text = "Quit",
+		.kb_shortcut = SDL_SCANCODE_Q,
+		.on_action = [](MAYBE const widget::Text &self) {
+			return m2::ui::Action::QUIT;
+		}
 };
 const Blueprint pause_menu_blueprint = {
 		.w = 160, .h = 90,
@@ -39,12 +39,12 @@ const Blueprint pause_menu_blueprint = {
 };
 
 static widget::TextBlueprint hp_label = {
-	.initial_text = "HP"
+		.initial_text = "HP"
 };
 static widget::ProgressBarBlueprint hp_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 0, 0, 255},
-		.update_callback = []() -> float {
+		.on_update = [](MAYBE const widget::ProgressBar& self) -> float {
 			if (LEVEL.player()) {
 				return LEVEL.player()->character().get_resource(m2g::pb::RESOURCE_HP);
 			}
@@ -52,60 +52,63 @@ static widget::ProgressBarBlueprint hp_progress_bar = {
 		}
 };
 static widget::TextBlueprint dash_label = {
-	.initial_text = "DASH COOLDOWN"
+		.initial_text = "DASH COOLDOWN"
 };
 static widget::ProgressBarBlueprint dash_progress_bar = {
-	.initial_progress = 1.0f,
-	.bar_color = SDL_Color{255, 255, 0, 255},
-	.update_callback = []() {
-		if (LEVEL.player()) {
-			// Check if player has DASH capability
-			if (LEVEL.player()->character().has_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
-				float counter = LEVEL.player()->character().get_resource(m2g::pb::RESOURCE_DASH_ENERGY);
-				float cooldown = 2.0f;
-				counter = (cooldown <= counter) ? cooldown : counter;
-				return counter / cooldown;
+		.initial_progress = 1.0f,
+		.bar_color = SDL_Color{255, 255, 0, 255},
+		.on_update = [](MAYBE const widget::ProgressBar& self) {
+			if (LEVEL.player()) {
+				// Check if player has DASH capability
+				if (LEVEL.player()->character().has_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
+					float counter = LEVEL.player()->character().get_resource(m2g::pb::RESOURCE_DASH_ENERGY);
+					float cooldown = 2.0f;
+					counter = (cooldown <= counter) ? cooldown : counter;
+					return counter / cooldown;
+				}
 			}
+			return 0.0f;
 		}
-		return 0.0f;
-	}
 };
 const Blueprint left_hud_blueprint = {
-	.w = 19, .h = 72,
-	.border_width_px = 2,
-	.background_color = {0, 0, 0, 255},
-	.widgets = {
-		WidgetBlueprint{
-			.x = 2, .y = 60, .w = 15, .h = 2,
-			.border_width_px = 0,
-			.variant = hp_label
-		},
-			WidgetBlueprint{
-			.x = 2, .y = 62, .w = 15, .h = 2,
-			.variant = hp_progress_bar
-		},
-			WidgetBlueprint{
-			.x = 2, .y = 66, .w = 15, .h = 2,
-			.border_width_px = 0,
-			.variant = dash_label
-		},
-			WidgetBlueprint{
-			.x = 2, .y = 68, .w = 15, .h = 2,
-			.border_width_px = 1,
-			.variant = dash_progress_bar
+		.w = 19, .h = 72,
+		.border_width_px = 2,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+				WidgetBlueprint{
+						.x = 2, .y = 60, .w = 15, .h = 2,
+						.border_width_px = 0,
+						.variant = hp_label
+				},
+				WidgetBlueprint{
+						.x = 2, .y = 62, .w = 15, .h = 2,
+						.variant = hp_progress_bar
+				},
+				WidgetBlueprint{
+						.x = 2, .y = 66, .w = 15, .h = 2,
+						.border_width_px = 0,
+						.variant = dash_label
+				},
+				WidgetBlueprint{
+						.x = 2, .y = 68, .w = 15, .h = 2,
+						.border_width_px = 1,
+						.variant = dash_progress_bar
+				}
 		}
-	}
 };
 
-const m2::ui::Blueprint* m2g::ui::main_menu() {
+const m2::ui::Blueprint *m2g::ui::main_menu() {
 	return rpg::Context::get_instance().main_menu();
 }
-const m2::ui::Blueprint* m2g::ui::pause_menu() {
+
+const m2::ui::Blueprint *m2g::ui::pause_menu() {
 	return &pause_menu_blueprint;
 }
-const m2::ui::Blueprint* m2g::ui::left_hud() {
+
+const m2::ui::Blueprint *m2g::ui::left_hud() {
 	return &left_hud_blueprint;
 }
-const m2::ui::Blueprint* m2g::ui::right_hud() {
+
+const m2::ui::Blueprint *m2g::ui::right_hud() {
 	return rpg::Context::get_instance().right_hud();
 }

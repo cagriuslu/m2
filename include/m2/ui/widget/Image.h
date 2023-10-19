@@ -3,12 +3,13 @@
 #include "AbstractButton.h"
 
 namespace m2::ui::widget {
-	struct Image : public AbstractButton {
-		const Sprite* sprite;
+	class Image : public AbstractButton {
+		const Sprite* _sprite;
 
-		explicit Image(const WidgetBlueprint* blueprint);
-		Action update_content() override;
-		void draw() override;
+	public:
+		explicit Image(State* parent, const WidgetBlueprint* blueprint);
+		Action on_update() override;
+		void on_draw() override;
 	};
 
 	void draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect);

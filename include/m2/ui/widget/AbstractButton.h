@@ -6,7 +6,10 @@ namespace m2::ui::widget {
 		SDL_Scancode kb_shortcut;
 		bool depressed;
 
-		explicit AbstractButton(const WidgetBlueprint* blueprint);
-		Action handle_events(Events& events) final;
+		explicit AbstractButton(State* parent, const WidgetBlueprint* blueprint);
+		Action on_event(Events& events) final;
+
+		// Helpers for external usage
+		Action trigger_action();
 	};
 }

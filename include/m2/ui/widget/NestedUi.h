@@ -7,14 +7,15 @@ namespace m2::ui {
 }
 
 namespace m2::ui::widget {
-	struct NestedUi : public Widget {
-		std::unique_ptr<State> ui;
-		int inner_x{}, inner_y{};
+	class NestedUi : public Widget {
+		std::unique_ptr<State> _ui;
+		int _inner_x{}, _inner_y{};
 
-		explicit NestedUi(const WidgetBlueprint* blueprint);
-		void update_position(const SDL_Rect& rect_px) final;
-		Action handle_events(Events& events) final;
-		Action update_content() final;
-		void draw() final;
+	public:
+		explicit NestedUi(State* parent, const WidgetBlueprint* blueprint);
+		void on_position_update(const SDL_Rect& rect_px) final;
+		Action on_event(Events& events) final;
+		Action on_update() final;
+		void on_draw() final;
 	};
 }

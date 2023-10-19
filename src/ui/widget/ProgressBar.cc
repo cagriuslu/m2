@@ -4,17 +4,17 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-ProgressBar::ProgressBar(const WidgetBlueprint* blueprint) : Widget(blueprint), progress(std::get<ProgressBarBlueprint>(blueprint->variant).initial_progress) {}
+ProgressBar::ProgressBar(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint), _progress(std::get<ProgressBarBlueprint>(blueprint->variant).initial_progress) {}
 
-Action ProgressBar::update_content() {
+Action ProgressBar::on_update() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);
-	if (pb_blueprint.update_callback) {
-		progress = pb_blueprint.update_callback();
+	if (pb_blueprint.on_update) {
+		_progress = pb_blueprint.on_update(*this);
 	}
 	return Action::CONTINUE;
 }
 
-void ProgressBar::draw() {
+void ProgressBar::on_draw() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);
 	// Background
 	draw_background_color(rect_px, blueprint->background_color);
@@ -22,7 +22,7 @@ void ProgressBar::draw() {
 	auto filled_dstrect = SDL_Rect{
 			rect_px.x,
 			rect_px.y,
-			(int)roundf((float)rect_px.w * progress),
+			(int)roundf((float)rect_px.w * _progress),
 			rect_px.h
 	};
 	SDL_SetRenderDrawColor(GAME.renderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g, pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
