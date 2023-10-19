@@ -1,6 +1,7 @@
 #include <m2/sheet_editor/Ui.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/ui/widget/Image.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -274,7 +275,16 @@ const Blueprint m2::ui::sheet_editor_left_hud = {
 };
 
 widget::ImageBlueprint sprite_display = {
-
+		.on_update = [](const widget::Image& self) -> std::pair<Action,std::optional<m2g::pb::SpriteType>> {
+			auto* text_selection_widget = self.parent().find_first_widget_of_blueprint_type<widget::TextSelectionBlueprint>();
+			auto selected_sprite_name = dynamic_cast<widget::TextSelection*>(text_selection_widget)->selection();
+			m2g::pb::SpriteType selected_sprite_type;
+			if (m2g::pb::SpriteType_Parse(selected_sprite_name, &selected_sprite_type)) {
+				return std::make_pair(Action::CONTINUE, selected_sprite_type);
+			} else {
+				throw M2FATAL("Implementation error: Unknown sprite type ended up in sprite selection list");
+			}
+		}
 };
 const widget::TextSelectionBlueprint sprite_selection = {
 		.on_create = [](MAYBE const widget::TextSelection& self) -> std::optional<widget::TextSelectionBlueprint::Options> {

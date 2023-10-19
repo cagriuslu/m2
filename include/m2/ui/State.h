@@ -29,7 +29,7 @@ namespace m2::ui {
 		// Helpers
 
 		template<typename WidgetT>
-		Widget* find_first_widget_of_type() {
+		Widget* find_first_widget_of_blueprint_type() {
 			for (auto& w : widgets) {
 				if (std::holds_alternative<WidgetT>(w->blueprint->variant)) {
 					return w.get();

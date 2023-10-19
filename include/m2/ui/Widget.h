@@ -29,7 +29,7 @@ namespace m2::ui {
 		virtual Action on_update();
 		virtual void on_draw();
 
-		[[nodiscard]] inline State* parent() const { return _parent; }
+		[[nodiscard]] inline State& parent() const { return *_parent; }
 
 		// Helpers
 		static void draw_background_color(const SDL_Rect& rect, const SDL_Color& color);
