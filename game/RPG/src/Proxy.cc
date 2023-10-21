@@ -77,13 +77,6 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 
 void m2g::pre_single_player_level_init(const std::string& name) {
 	LOG_INFO("Loading level", name);
-
-	auto level_number = strtol(name.c_str(), nullptr, 10);
-	if (level_number < 5) {
-		m2g::camera_height = 0.0f;
-	} else {
-		m2g::camera_height = 5.5f;
-	}
 }
 
 void m2g::post_single_player_level_init(const std::string& name) {

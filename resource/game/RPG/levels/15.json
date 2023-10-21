@@ -911,5 +911,8 @@
         "instance": 1
       }
     }
-  ]
+  ],
+  "initialCameraHeight": 5.5,
+  "initialCameraDistance": 8.0,
+  "initialHorizontalFieldOfView": 90.0
 }

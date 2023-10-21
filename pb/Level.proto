@@ -29,6 +29,10 @@ message BackgroundLayer {
 }
 
 message Level {
-  repeated BackgroundLayer background_layers = 5; // First element is the front-most background
-  repeated LevelObject objects = 6;
+  repeated BackgroundLayer background_layers = 1; // First element is the front-most background
+  repeated LevelObject objects = 2;
+
+  float initial_camera_height = 3;
+  float initial_camera_distance = 4;
+  float initial_horizontal_field_of_view = 5;
 }

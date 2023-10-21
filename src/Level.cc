@@ -58,6 +58,10 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
 	world->SetContactListener(contact_listener);
 
+	m2g::camera_height = _lb->initial_camera_height();
+	m2g::camera_distance = _lb->initial_camera_distance();
+	m2g::horizontal_field_of_view = _lb->initial_horizontal_field_of_view();
+
 	// Create background tiles
 	for (int l = 0; l < _lb->background_layers_size(); ++l) {
 		const auto& layer = _lb->background_layers(l);
