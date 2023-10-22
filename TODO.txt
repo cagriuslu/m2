@@ -1,12 +1,9 @@
 - Sound doesn't play if object dies
 - m2 command line argument'larini direkt consola redirect et
-- Pixel editor aktif oldugu zaman arka plana transparency pattern ciz
-- Pixel editor save'i implement et
 - Protobuf loading yaparken duplicate type'a sahip liste load etmesi bir pattern'a donustur
 - Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
 - Override ppm doesn't work for dropped items
 - SDL_ComposeCustomBlendMode
-- ledit Copy-Paste ile override edilen objelerin placeholder'lari silinmiyor
 - Enable VSync, do something while waiting for VSync
 - Dialog with an NPC, character screen, inventory, buy/sell against a seller, character selection
 - Synth editor
@@ -14,6 +11,10 @@
 - The capabilities of object should be plug-and-play. You shouldn't implement jumping for both enemy and player for example.
 - Add width to pathfinder smoothing algorithm
 - Try bgfx
+
+Pixel Editor
+- Draw transparency pattern
+- Implement SAVE
 
 RPG
 - Take inspiration from: Elden Ring, Diablo 1-2

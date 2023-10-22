@@ -157,6 +157,7 @@ void m2::ledit::State::SelectMode::paste_bg() {
 				if (it != LEVEL.level_editor_state->bg_placeholders[I(*clipboard_layer)].end()) {
 					auto new_position = positions->first + (cell - *clipboard_position_1);
 					auto sprite_type = it->second.second;
+					EraseMode::erase_position(new_position, selected_layer);
 					LEVEL.level_editor_state->bg_placeholders[I(selected_layer)][new_position] = std::make_pair(obj::create_background_placeholder(VecF{new_position}, GAME.get_sprite(sprite_type), selected_layer), sprite_type);
 				}
 			});
@@ -174,6 +175,7 @@ void m2::ledit::State::SelectMode::paste_fg() {
 					auto level_object = it->second.second;
 					level_object.mutable_position()->set_x(new_position.x);
 					level_object.mutable_position()->set_y(new_position.y);
+					RemoveMode::remove_object(new_position);
 					LEVEL.level_editor_state->fg_placeholders[new_position] = std::make_pair(obj::create_foreground_placeholder(VecF{new_position}, GAME.get_sprite(GAME.level_editor_object_sprites[level_object.type()])), level_object);
 				}
 			});
