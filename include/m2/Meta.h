@@ -40,6 +40,17 @@ namespace m2 {
 		return destination;
 	}
 
+	template <typename InputIt, typename Operation>
+	void for_each_adjacent_pair(InputIt first, InputIt last, Operation operation) {
+		if(first == last) {
+			return;
+		}
+		InputIt next = first;
+		for(++next; next != last; ++first, ++next) {
+			operation(*first, *next);
+		}
+	}
+
 	template <typename It>
 	bool is_identical(It first1, It last1, It first2, It last2) {
 		for (; first1 != last1 && first2 != last2; ++first1, ++first2) {

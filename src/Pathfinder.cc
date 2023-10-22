@@ -199,3 +199,9 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
 	return box2d::check_eyesight(*LEVEL.world, VecF{from} + VecF{0.5f, 0.5f}, VecF{to} + VecF{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
 }
+
+void m2::Pathfinder::draw_path(const Path& path, SDL_Color color) {
+	for_each_adjacent_pair(path.begin(), path.end(), [color](const VecI& p1, const VecI& p2) {
+		Graphic::draw_line(static_cast<VecF>(p1), static_cast<VecF>(p2), color);
+	});
+}

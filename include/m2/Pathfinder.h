@@ -33,6 +33,8 @@ namespace m2 {
 		/// If the world is not static, the cache should be cleared after the physics step
 		inline void clear_cache() { _approach_from_cache.clear(); }
 
+		static void draw_path(const Path& path, SDL_Color color);
+
 	private:
 		static Path smoothen_path(const Path& reverse_path, float max_distance_m);
 		static bool check_eyesight(const VecI& from, const VecI& to);

@@ -69,6 +69,7 @@ namespace m2 {
 		static void color_rect(const RectF& world_coordinates_m, SDL_Color color);
 		static void color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
 		static void draw_cross(const VecF& world_position, SDL_Color color);
+		static void draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);
 		static void draw_vertical_line(float x, SDL_Color color);
 		static void draw_horizontal_line(float y, SDL_Color color);
 	};

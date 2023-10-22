@@ -220,6 +220,21 @@ void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
 }
 
+void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
+	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+	if (m2g::camera_height == 0.0f) {
+		auto p1 = static_cast<VecI>(screen_origin_to_position_px(world_position_1));
+		auto p2 = static_cast<VecI>(screen_origin_to_position_px(world_position_2));
+		SDL_RenderDrawLine(GAME.renderer, p1.x, p1.y, p2.x, p2.y);
+	} else {
+		auto p1 = m3::screen_origin_to_projection_of_position_px(world_position_1);
+		auto p2 = m3::screen_origin_to_projection_of_position_px(world_position_2);
+		if (p1 && p2) {
+			SDL_RenderDrawLineF(GAME.renderer, p1->x, p1->y, p2->x, p2->y);
+		}
+	}
+}
+
 void m2::Graphic::draw_vertical_line(float x, SDL_Color color) {
 	auto x_px = static_cast<int>(roundf(screen_origin_to_position_px(VecF{x, 0.0f}).x));
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);

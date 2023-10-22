@@ -4,6 +4,7 @@
 #include <RectI.pb.h>
 #include <SDL2/SDL.h>
 #include <string_view>
+#include <utility>
 
 SDL_Cursor* SdlUtils_CreateCursor();
 
@@ -32,7 +33,7 @@ namespace m2::sdl {
 		TextureUniquePtr _texture;
 		std::string _text;
 
-		inline FontTexture(SDL_Texture* texture, const std::string& text) : _texture(texture), _text(text) {}
+		inline FontTexture(SDL_Texture* texture, std::string  text) : _texture(texture), _text(std::move(text)) {}
 	public:
 		FontTexture() = default;
 		static m2::expected<FontTexture> create(const std::string& text, SDL_Color color = {255, 255, 255, 255});

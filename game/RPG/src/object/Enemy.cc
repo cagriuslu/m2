@@ -13,6 +13,7 @@
 #include <m2/box2d/Detail.h>
 #include <m2/Group.h>
 #include <m2g_Interaction.pb.h>
+#include <m2/Pathfinder.h>
 #include <deque>
 
 using namespace rpg;
@@ -157,6 +158,13 @@ m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) 
 		impl.animation_fsm.time(GAME.delta_time_s());
 		gfx.draw_addon_health_bar = chr.get_resource(RESOURCE_HP);
 		gfx.draw_sprite_effect = chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL) ? SPRITE_EFFECT_MASK : NO_SPRITE_EFFECT;
+	};
+	phy.on_debug_draw = [&impl](m2::Physique& phy) {
+		m2::Physique::default_debug_draw(phy);
+		std::visit(m2::overloaded {
+				[](ChaserFsm& v) { m2::Pathfinder::draw_path(v.reverse_path(), SDL_Color{127, 127, 255, 255}); },
+				[](MAYBE auto& v) { }
+		}, impl.ai_fsm);
 	};
 
 	return {};

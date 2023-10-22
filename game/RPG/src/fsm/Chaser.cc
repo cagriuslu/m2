@@ -135,16 +135,16 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_physics_step_while_gave_up
 bool rpg::ChaserFsm::find_path(const m2::VecF& target, float max_distance) {
 	auto smooth_path = LEVEL.pathfinder->find_grid_path(obj->position, target, max_distance);
 	if (not smooth_path.empty()) {
-		reverse_path = std::move(smooth_path);
+		_reverse_path = std::move(smooth_path);
 		return true;
 	}
 	return false;
 }
 
 void rpg::ChaserFsm::follow_waypoints() {
-	auto closest_waypoint_it = reverse_find_first_local_min(reverse_path, obj->position);
+	auto closest_waypoint_it = reverse_find_first_local_min(_reverse_path, obj->position);
 	auto next_waypoint_it = std::next(closest_waypoint_it);
-	if (next_waypoint_it != reverse_path.crend()) {
+	if (next_waypoint_it != _reverse_path.crend()) {
 		auto target = m2::VecF{*next_waypoint_it};
 		Enemy::move_towards(*obj, target - obj->position, 30000.0f);
 	} else {

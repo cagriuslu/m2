@@ -33,10 +33,12 @@ namespace rpg {
 		m2::Object* obj;
 		const pb::Ai* ai;
 		m2::VecF home_position;
-		m2::Path reverse_path;
+		m2::Path _reverse_path;
 
 	public:
 		ChaserFsm(m2::Object* obj, const pb::Ai* ai);
+
+		const m2::Path reverse_path() const { return _reverse_path; }
 
 	protected:
 		std::optional<ChaserMode> handle_signal(const ChaserFsmSignal& s) override;
