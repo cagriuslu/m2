@@ -162,7 +162,7 @@ namespace m2 {
 		void draw_foreground();
 		void draw_lights();
 		void execute_post_draw();
-		void draw_debug_shapes();
+		void debug_draw();
 		void draw_hud();
 		void draw_envelopes();
 		void flip_buffers();

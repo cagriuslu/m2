@@ -7,9 +7,12 @@
 
 namespace m2 {
 	struct Physique : public Component {
+		static void default_debug_draw(Physique& phy);
+
 		using Callback = std::function<void(Physique&)>;
 		Callback pre_step{};
 		Callback post_step{};
+		Callback on_debug_draw{default_debug_draw};
 
 		box2d::BodyUniquePtr body;
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> on_collision;
@@ -23,8 +26,6 @@ namespace m2 {
 		// Move constructors
 		Physique(Physique&& other) noexcept;
 		Physique& operator=(Physique&& other) noexcept;
-
-		void draw_debug_shapes() const;
 
 		static void default_begin_contact_cb(b2Contact& b2_contact);
 		static void default_end_contact_cb(b2Contact& b2_contact);

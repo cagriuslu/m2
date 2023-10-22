@@ -24,15 +24,15 @@ m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     return *this;
 }
 
-void m2::Physique::draw_debug_shapes() const {
-	if (!body) {
+void m2::Physique::default_debug_draw(Physique& phy) {
+	if (!phy.body) {
 		return;
 	}
 
-	auto position = VecF{body->GetPosition()}; // Position of the object origin
-	for (auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
+	auto position = VecF{phy.body->GetPosition()}; // Position of the object origin
+	for (auto* fixture = phy.body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 		b2AABB aabb;
-		fixture->GetShape()->ComputeAABB(&aabb, body->GetTransform(), 0);
+		fixture->GetShape()->ComputeAABB(&aabb, phy.body->GetTransform(), 0);
 
 		// Pick different color for background and foreground colliders
 		auto color = box2d::does_category_have_background_bits(fixture->GetFilterData().categoryBits) ?
@@ -51,7 +51,7 @@ void m2::Physique::draw_debug_shapes() const {
 				auto centroid_offset_length_m = centroid_offset_m.length();
 				auto centroid_offset_angle = centroid_offset_m.angle_rads();
 				// Current angle of the object in the world
-				auto current_angle = body->GetTransform().q.GetAngle();
+				auto current_angle = phy.body->GetTransform().q.GetAngle();
 				// Compose the "object origin" to "current shape centroid" vector
 				auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 

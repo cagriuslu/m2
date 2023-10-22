@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 		GAME.draw_foreground();
 		GAME.draw_lights();
 		GAME.execute_post_draw();
-		GAME.draw_debug_shapes();
+		GAME.debug_draw();
 		GAME.draw_hud();
 		GAME.draw_envelopes();
 		GAME.flip_buffers();

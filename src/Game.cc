@@ -322,10 +322,10 @@ void m2::Game::execute_post_draw() {
 	}
 }
 
-void m2::Game::draw_debug_shapes() {
+void m2::Game::debug_draw() {
 #ifdef DEBUG
-	for (auto phy_it : _level->physics) {
-		phy_it.first->draw_debug_shapes();
+	for (auto phy_it: _level->physics) {
+		IF(phy_it.first->on_debug_draw)(*phy_it.first);
 	}
 
 	if (m2g::camera_height != 0.0f) {
