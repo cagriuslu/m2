@@ -172,32 +172,28 @@ m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteShe
 	return dst_rect;
 }
 
-// Returns the foreground sprite if `s` has backgrounds, otherwise returns `s`
-#define FOREGROUND_IF_WITH_BACKGROUNDS(s, already_loaded_sprites) ((s).has_with_backgrounds() ? (already_loaded_sprites)[::m2::protobuf::enum_index((s).with_backgrounds().foreground())]._sprite : (s))
-m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, const std::vector<Sprite>& already_loaded_sprites) :
+m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite) :
 	_sprite_sheet(&sprite_sheet),
 	_sprite(sprite),
 	_effects_sheet(&sprite_effects_sheet),
-	_rect(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().rect()),
-	_original_rotation_radians(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().original_rotation() * m2::PI),
-	_ppm(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().override_ppm() ? FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().override_ppm() : sprite_sheet.sprite_sheet().ppm()),
-	_center_offset_px(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().center_offset_px()),
+	_rect(sprite.regular().rect()),
+	_original_rotation_radians(sprite.regular().original_rotation() * m2::PI),
+	_ppm(sprite.regular().override_ppm() ? sprite.regular().override_ppm() : sprite_sheet.sprite_sheet().ppm()),
+	_center_offset_px(sprite.regular().center_offset_px()),
 	_center_offset_m(_center_offset_px / (float) _ppm),
-	_background_collider_type(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().has_background_collider()
-			? (FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE : box2d::ColliderType::CIRCLE)
+	_background_collider_type(sprite.regular().has_background_collider()
+			? (sprite.regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE : box2d::ColliderType::CIRCLE)
 			: box2d::ColliderType::NONE),
-	_background_collider_center_offset_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().background_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _background_collider_origin_offset_m
-	_background_collider_rect_dims_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().background_collider().rect_dims_px()} / (float)_ppm),
-	_background_collider_circ_radius_m(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().background_collider().circ_radius_px() / (float)_ppm),
-	_foreground_collider_type(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().has_foreground_collider()
-				? (FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE : box2d::ColliderType::CIRCLE)
+	_background_collider_center_offset_m(VecF{sprite.regular().background_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _background_collider_origin_offset_m
+	_background_collider_rect_dims_m(VecF{sprite.regular().background_collider().rect_dims_px()} / (float)_ppm),
+	_background_collider_circ_radius_m(sprite.regular().background_collider().circ_radius_px() / (float)_ppm),
+	_foreground_collider_type(sprite.regular().has_foreground_collider()
+				? (sprite.regular().foreground_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE : box2d::ColliderType::CIRCLE)
 				: box2d::ColliderType::NONE),
-	_foreground_collider_center_offset_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _foreground_collider_origin_offset_m
-	_foreground_collider_rect_dims_m(VecF{FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().rect_dims_px()} / (float)_ppm),
-	_foreground_collider_circ_radius_m(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().foreground_collider().circ_radius_px() / (float)_ppm),
-	_is_background_tile(FOREGROUND_IF_WITH_BACKGROUNDS(sprite, already_loaded_sprites).regular().is_background_tile()),
-	_has_backgrounds(sprite.has_with_backgrounds()),
-	_foreground(sprite.has_with_backgrounds() ? sprite.with_backgrounds().foreground() : m2g::pb::SpriteType{}) {
+	_foreground_collider_center_offset_m(VecF{sprite.regular().foreground_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _foreground_collider_origin_offset_m
+	_foreground_collider_rect_dims_m(VecF{sprite.regular().foreground_collider().rect_dims_px()} / (float)_ppm),
+	_foreground_collider_circ_radius_m(sprite.regular().foreground_collider().circ_radius_px() / (float)_ppm),
+	_is_background_tile(sprite.regular().is_background_tile()) {
 	// Create effects
 	if (sprite.has_regular() && sprite.regular().effects_size()) {
 		_effects.resize(protobuf::enum_value_count<pb::SpriteEffectType>());
@@ -230,19 +226,7 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 			is_created[index] = true;
 		}
 	}
-
-	// Backgrounds
-	if (_sprite.has_with_backgrounds()) {
-		std::transform(
-				sprite.with_backgrounds().backgrounds().begin(),
-				sprite.with_backgrounds().backgrounds().end(),
-				std::back_inserter(_backgrounds),
-				[](const auto& background_definition) {
-					return background_definition.type();
-				});
-	}
 }
-#undef FOREGROUND_IF_WITH_BACKGROUNDS
 
 const m2::SpriteSheet& m2::Sprite::sprite_sheet() const {
 	return *_sprite_sheet;
@@ -327,31 +311,8 @@ std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_
 			if (is_loaded[index]) {
 				throw M2ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
 			}
-			// Check if sprite is with backgrounds, but the dependents are not loaded yet
-			if (sprite.has_with_backgrounds()) {
-				if (not is_loaded[protobuf::enum_index(sprite.with_backgrounds().foreground())]) {
-					throw M2ERROR("Foreground of the sprite with backgrounds is not loaded yet: " + std::to_string(sprite.type()));
-				}
-				for (const auto& background : sprite.with_backgrounds().backgrounds()) {
-					if (not is_loaded[protobuf::enum_index(background.type())]) {
-						throw M2ERROR("Background of the sprite with backgrounds is not loaded yet: " + std::to_string(sprite.type()) + "," + std::to_string(background.type()));
-					}
-				}
-				// Check if foreground is a background tile
-				const auto& foreground = sprites_vector[protobuf::enum_index(sprite.with_backgrounds().foreground())];
-				if (not foreground.is_background_tile()) {
-					throw M2ERROR("Non-background tiles cannot have backgrounds");
-				}
-				// Check if foreground and backgrounds are the same size
-				for (const auto& background_desc : sprite.with_backgrounds().backgrounds()) {
-					const auto& background = sprites_vector[protobuf::enum_index(background_desc.type())];
-					if (foreground.rect().w != background.rect().w || foreground.rect().h != background.rect().h) {
-						throw M2ERROR("Background of the sprite is not the same size as the background: " + std::to_string(sprite.type()) + "," + std::to_string(background_desc.type()));
-					}
-				}
-			}
 			// Load sprite
-			sprites_vector[index] = Sprite{sprite_sheet, sprite_effects_sheet, sprite, sprites_vector};
+			sprites_vector[index] = Sprite{sprite_sheet, sprite_effects_sheet, sprite};
 			is_loaded[index] = true;
 		}
 	}
@@ -371,7 +332,7 @@ std::vector<m2g::pb::SpriteType> m2::list_level_editor_background_sprites(const 
 
 	for (const auto& sprite_sheet : sprite_sheets) {
 		for (const auto& sprite : sprite_sheet.sprite_sheet().sprites()) {
-			if (sprite.regular().is_background_tile() || sprite.has_with_backgrounds()) {
+			if (sprite.regular().is_background_tile()) {
 				sprites_vector.push_back(sprite.type());
 			}
 		}

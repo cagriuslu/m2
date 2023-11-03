@@ -98,16 +98,6 @@ void Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment
 }
 
 void m2::ui::Widget::draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect) {
-	if (sprite.has_backgrounds()) {
-		// Draw backgrounds
-		for (const auto& background : sprite.backgrounds()) {
-			draw_sprite(GAME.get_sprite(background), dst_rect);
-		}
-		// Draw foreground
-		draw_sprite(GAME.get_sprite(sprite.foreground()), dst_rect);
-		return;
-	}
-
 	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
 	auto sprite_aspect_ratio = (float) src_rect.w / (float) src_rect.h;
 	auto widget_aspect_ratio = (float) dst_rect.w / (float) dst_rect.h;

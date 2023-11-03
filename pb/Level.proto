@@ -3,8 +3,8 @@ package m2.pb;
 
 import "m2g_GroupType.proto";
 import "m2g_ObjectType.proto";
-import "m2g_SpriteType.proto";
 import "VecI.proto";
+import "M2.proto";
 
 message Group {
   m2g.pb.GroupType type = 1;
@@ -15,10 +15,6 @@ message LevelObject {
   VecI position = 1;
   m2g.pb.ObjectType type = 2;
   Group group = 3;
-}
-
-message SpriteTypeArray {
-  repeated m2g.pb.SpriteType items = 1;
 }
 
 message BackgroundLayer {

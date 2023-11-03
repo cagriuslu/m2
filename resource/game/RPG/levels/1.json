@@ -299,9 +299,9 @@
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
-            "CASTLE_STAIRS_BOTTOM_LEFT_WITH_GROUND",
-            "CASTLE_STAIRS_BOTTOM_MID_WITH_GROUND",
-            "CASTLE_STAIRS_BOTTOM_RIGHT_WITH_GROUND",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_RIGHT_CORNER"
           ]

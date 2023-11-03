@@ -232,17 +232,6 @@
           }
         },
         {
-          "type": "CASTLE_TOP_LEFT_CORNER_TOWER_GRASS_BACKGROUND",
-          "withBackgrounds": {
-            "backgrounds": [
-              {
-                "type": "GRASS_GROUND"
-              }
-            ],
-            "foreground": "CASTLE_TOP_LEFT_CORNER_TOWER"
-          }
-        },
-        {
           "type": "CASTLE_TOP_RIGHT_CORNER_TOWER",
           "regular": {
             "rect": {
@@ -914,39 +903,6 @@
               }
             },
             "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "CASTLE_STAIRS_BOTTOM_LEFT_WITH_GROUND",
-          "withBackgrounds": {
-            "backgrounds": [
-              {
-                "type": "CASTLE_GROUND"
-              }
-            ],
-            "foreground": "CASTLE_STAIRS_BOTTOM_LEFT"
-          }
-        },
-        {
-          "type": "CASTLE_STAIRS_BOTTOM_MID_WITH_GROUND",
-          "withBackgrounds": {
-            "backgrounds": [
-              {
-                "type": "CASTLE_GROUND"
-              }
-            ],
-            "foreground": "CASTLE_STAIRS_BOTTOM_MID"
-          }
-        },
-        {
-          "type": "CASTLE_STAIRS_BOTTOM_RIGHT_WITH_GROUND",
-          "withBackgrounds": {
-            "backgrounds": [
-              {
-                "type": "CASTLE_GROUND"
-              }
-            ],
-            "foreground": "CASTLE_STAIRS_BOTTOM_RIGHT"
           }
         },
         {

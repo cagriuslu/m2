@@ -5,6 +5,7 @@ import "m2g_SpriteType.proto";
 import "RectI.proto";
 import "VecF.proto";
 import "Dim2f.proto";
+import "M2.proto";
 
 message Color {
   uint32 r = 1;
@@ -81,26 +82,11 @@ message RegularSprite {
   bool is_background_tile = 8;
 }
 
-message Background {
-  // Sprite type of the background
-  m2g.pb.SpriteType type = 1;
-
-  // Background descriptor aligns origins of the background and the sprite
-  // TODO add offset if necessary
-}
-
-message SpriteWithBackgrounds {
-  // Draw other sprites as the background of this one
-  m2g.pb.SpriteType foreground = 2;
-  repeated Background backgrounds = 1;
-}
-
 message Sprite {
   string __comment__ = 1;
   m2g.pb.SpriteType type = 2;
   oneof variant {
     RegularSprite regular = 3;
-    SpriteWithBackgrounds with_backgrounds = 4;
   }
 }
 
