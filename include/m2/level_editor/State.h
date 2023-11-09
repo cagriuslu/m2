@@ -4,7 +4,6 @@
 namespace m2::ledit {
 	struct State {
 		struct PaintMode {
-			BackgroundLayer selected_layer{};
 			m2g::pb::SpriteType selected_sprite_type{};
 			Id selected_sprite_ghost_id{};
 
@@ -13,8 +12,6 @@ namespace m2::ledit {
 			~PaintMode();
 		};
 		struct EraseMode {
-			BackgroundLayer selected_layer{};
-
 			void erase_position(const VecI& position);
 			static void erase_position(const VecI& position, BackgroundLayer layer);
 		};
@@ -35,13 +32,11 @@ namespace m2::ledit {
 		};
 		struct PickMode {
 			bool pick_foreground{};
-			BackgroundLayer selected_layer{};
 
 			std::optional<m2g::pb::SpriteType> lookup_background_sprite(const VecI& position);
 			std::optional<m2::pb::LevelObject> lookup_foreground_object(const VecI& position);
 		};
 		struct SelectMode {
-			BackgroundLayer selected_layer{};
 			std::optional<BackgroundLayer> clipboard_layer;
 			std::optional<m2::VecI> clipboard_position_1, clipboard_position_2; // TopLeft, BottomRight
 
@@ -75,6 +70,7 @@ namespace m2::ledit {
 		std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode,PickMode,SelectMode,ShiftMode> mode;
 		std::array<level_editor::BackgroundPlaceholderMap, static_cast<int>(BackgroundLayer::n)> bg_placeholders; // TODO Map2i might be used instead
 		level_editor::ForegroundPlaceholderMap fg_placeholders; // TODO Map2i might be used instead
+		BackgroundLayer selected_layer{};
 
 		void deactivate_mode();
 		void activate_paint_mode();

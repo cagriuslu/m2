@@ -5,7 +5,20 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint), _value(std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value), _font_texture(sdl::generate_font(std::to_string(_value))) {}
+IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint),
+		_value(std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value),
+		_font_texture(sdl::generate_font(std::to_string(_value))) {
+
+	// on_create
+	if (integer_selection_blueprint().on_create) {
+		auto opt_value = integer_selection_blueprint().on_create(*this);
+		if (opt_value) {
+			// Save new value
+			_value = *opt_value;
+			_font_texture = sdl::generate_font(std::to_string(_value));
+		}
+	}
+}
 
 Action IntegerSelection::on_event(Events& events) {
 	auto rect = RectI{rect_px};

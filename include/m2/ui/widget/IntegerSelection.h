@@ -17,5 +17,8 @@ namespace m2::ui::widget {
 		void on_draw() override;
 
 		inline int value() const { return _value; }
+
+	private:
+		const IntegerSelectionBlueprint& integer_selection_blueprint() const { return std::get<IntegerSelectionBlueprint>(blueprint->variant); }
 	};
 }

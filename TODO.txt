@@ -21,3 +21,5 @@ RPG
 - Add sprites for open game area
 - Build tutorial levels: Walking, Dashing, Ranged Weapon, Melee Weapon, Machine Gun, Explosive Weapon, Long Sword, Axe, Stun
 - Chaser gets stuck sometimes, either solve properly, or add detection
+- Build all game mechanics
+- Make THE MOST MINIMAL levels to showcase the engine, do not make an enjoyable game.

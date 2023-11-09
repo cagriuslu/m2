@@ -17,7 +17,9 @@ namespace m2::ui::widget {
 		Action select(unsigned index);
 		void on_draw() override;
 
-		const TextSelectionBlueprint& text_selection_blueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }
 		inline const std::string& selection() const { return _list[_selection]; }
+
+	private:
+		const TextSelectionBlueprint& text_selection_blueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }
 	};
 }

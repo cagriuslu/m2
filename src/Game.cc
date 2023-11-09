@@ -291,10 +291,10 @@ namespace {
 void m2::Game::draw_background() {
 	if (_level->type() == Level::Type::LEVEL_EDITOR) {
 		std::visit(m2::overloaded {
-			[&](const ledit::State::PaintMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
-			[&](const ledit::State::EraseMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
-			[&](const ledit::State::PickMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
-			[&](const ledit::State::SelectMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(mode.selected_layer)]); },
+			[&](MAYBE const ledit::State::PaintMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
+			[&](MAYBE const ledit::State::EraseMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
+			[&](MAYBE const ledit::State::PickMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
+			[&](MAYBE const ledit::State::SelectMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
 			[&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
 		}, _level->level_editor_state->mode);
 	} else {
