@@ -79,9 +79,9 @@ void m2g::pre_single_player_level_init(const std::string& name) {
 
 void m2g::post_single_player_level_init(const std::string& name) {
 	if (name == "1") {
-		LEVEL.display_message("Use W,A,S,D to walk, SPACE to dash.", MESSAGE_TIMEOUT);
+		LEVEL.display_message("Use W,A,S,D to walk", MESSAGE_TIMEOUT);
 	} else if (name == "2") {
-		LEVEL.display_message("Use left mouse button to shoot.", MESSAGE_TIMEOUT);
+		LEVEL.display_message("Use SPACE button while walking to dash.", MESSAGE_TIMEOUT);
 	} else if (name == "3") {
 		LEVEL.display_message("Use right mouse button to melee.", MESSAGE_TIMEOUT);
 	}

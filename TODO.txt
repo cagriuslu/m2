@@ -11,6 +11,7 @@
 - The capabilities of object should be plug-and-play. You shouldn't implement jumping for both enemy and player for example.
 - Add width to pathfinder smoothing algorithm
 - Try bgfx
+- Add timer widget that executes an action after some time
 
 Pixel Editor
 - Draw transparency pattern
