@@ -1,8 +1,9 @@
 #include <rpg/Objects.h>
 #include <m2/Game.h>
+#include <m2/game/Timer.h>
 
 struct Spikes : public m2::ObjectImpl {
-	std::optional<m2::sdl::ticks_t> trigger_ticks;
+	std::optional<m2::Timer> trigger_timer;
 };
 
 m2::void_expected rpg::create_spikes(m2::Object& obj) {
@@ -27,28 +28,36 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 	obj.impl = std::make_unique<Spikes>();
 	auto& impl = dynamic_cast<Spikes&>(*obj.impl);
 
-	phy.on_collision = [&](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		// Check if the spikes are in, and not triggered
-		if (gfx.sprite == &spikes_in && not impl.trigger_ticks) {
-			impl.trigger_ticks = m2::sdl::get_ticks() - GAME.pause_ticks;
-		} else if (gfx.sprite == &spikes_out) {
-			// Spikes are out
-			// TODO hurt
+	phy.pre_step = [&, bp](MAYBE m2::Physique& self) {
+		// Check if the spikes are in, and triggered
+		if (gfx.sprite == &spikes_in && impl.trigger_timer) {
+			if (impl.trigger_timer->has_ticks_passed(200)) {
+				gfx.sprite = &spikes_out;
+				impl.trigger_timer = m2::Timer{};
+				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
+				self.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
+			}
+		} else if (gfx.sprite == &spikes_out && impl.trigger_timer) {
+			// Spikes are out and triggered
+			if (impl.trigger_timer->has_ticks_passed(1000)) {
+				gfx.sprite = &spikes_in;
+				impl.trigger_timer.reset();
+				// Recreate the body so that collision is reset, otherwise the Player standing on the spikes doesn't collide again
+				self.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
+			}
 		}
 	};
-	phy.post_step = [&](MAYBE m2::Physique& self) {
-		// Check if the spikes are in, and triggered
-		if (gfx.sprite == &spikes_in && impl.trigger_ticks) {
-			auto ticks_since = m2::sdl::get_ticks_since(*impl.trigger_ticks, GAME.pause_ticks);
-			if (200 < ticks_since) {
-				gfx.sprite = &spikes_out;
-				impl.trigger_ticks = m2::sdl::get_ticks() - GAME.pause_ticks;
-			}
-		} else if (gfx.sprite == &spikes_out && impl.trigger_ticks) {
-			// Spikes are out and triggered
-			if (1000 < m2::sdl::get_ticks_since(*impl.trigger_ticks, GAME.pause_ticks)) {
-				gfx.sprite = &spikes_in;
-				impl.trigger_ticks.reset();
+	phy.on_collision = [&](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+		// Check if the spikes are in, and not triggered
+		if (gfx.sprite == &spikes_in && not impl.trigger_timer) {
+			impl.trigger_timer = m2::Timer{};
+		} else if (gfx.sprite == &spikes_out) {
+			// Spikes are out
+			auto& other_obj = other.parent();
+			if (other_obj.character_id()) {
+				m2g::pb::InteractionData id;
+				id.set_hit_damage(100.0f);
+				m2::Character::execute_stray_interaction(other_obj.character(), m2g::pb::InteractionType::HIT, id);
 			}
 		}
 	};

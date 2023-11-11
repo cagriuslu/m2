@@ -77,7 +77,7 @@ m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) 
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
-	chr.get_interacted_by = [&, obj_type = object_type](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
+	chr.on_interaction = [&, obj_type = object_type](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
 		if (type == InteractionType::HIT) {
 			// Deduct HP
 			self.remove_resource(RESOURCE_HP, data.hit_damage());

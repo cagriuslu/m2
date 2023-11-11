@@ -149,7 +149,10 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		}
 		return std::nullopt;
 	};
-	chr.get_interacted_by = [](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
+	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
+		self.on_stray_interaction(self, type, data);
+	};
+	chr.on_stray_interaction = [](m2::Character& self, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
 		if (type == m2g::pb::HIT) {
 			// Get hit by an enemy
 			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());

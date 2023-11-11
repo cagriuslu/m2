@@ -46,5 +46,5 @@ Character has an update callback to process the effects of items with automatic 
 update callback. Interactions between characters are usually done in the form of interactions. Interactions have two
 parts, the causer and the effected. Interactions with a resource exchange usually happens like this: Interaction is
 triggered by a physics or collision handler. In the causer's create_interaction callback, it prepares InteractionData
-that contains the details, and returns it. The effected's get_interacted_by callback is called with the data. If an item
+that contains the details, and returns it. The effected's on_interaction callback is called with the data. If an item
 is transferred, and it has use_on_acquire flag, it's used immediately.

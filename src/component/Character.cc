@@ -17,12 +17,19 @@ void m2::Character::execute_interaction(Character& first_char, Character& second
 	if (first_char.create_interaction) {
 		auto interaction = first_char.create_interaction(first_char, second_char, type);
 		if (interaction) {
-			if (second_char.get_interacted_by) {
-				second_char.get_interacted_by(second_char, first_char, type, *interaction);
+			if (second_char.on_interaction) {
+				second_char.on_interaction(second_char, first_char, type, *interaction);
 			} else {
 				LOG_WARN("Interaction generated but second character has no handler", m2g::pb::InteractionType_Name(type));
 			}
 		}
+	}
+}
+void m2::Character::execute_stray_interaction(Character& second_char, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
+	if (second_char.on_stray_interaction) {
+		second_char.on_stray_interaction(second_char, type, data);
+	} else {
+		LOG_WARN("Stray interaction generated but second character has no handler", m2g::pb::InteractionType_Name(type));
 	}
 }
 bool m2::Character::has_item(m2g::pb::ItemType item_type) const {
