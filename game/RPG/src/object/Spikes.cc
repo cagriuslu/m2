@@ -53,11 +53,10 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 			impl.trigger_timer = m2::Timer{};
 		} else if (gfx.sprite == &spikes_out) {
 			// Spikes are out
-			auto& other_obj = other.parent();
-			if (other_obj.character_id()) {
-				m2g::pb::InteractionData id;
-				id.set_hit_damage(100.0f);
-				m2::Character::execute_stray_interaction(other_obj.character(), m2g::pb::InteractionType::HIT, id);
+			if (auto* other_char = other.parent().get_character(); other_char){
+				m2g::pb::InteractionData data;
+				data.set_hit_damage(100.0f);
+				other_char->execute_interaction(data);
 			}
 		}
 	};

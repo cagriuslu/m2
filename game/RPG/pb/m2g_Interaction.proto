@@ -3,14 +3,6 @@ package m2g.pb;
 
 import "m2g_ItemType.proto";
 
-enum InteractionType {
-    NO_INTERACTION = 0;
-
-    HIT = 1;
-    STUN = 2;
-    GIVE_ITEM = 3;
-}
-
 message InteractionData {
     oneof InteractionSpecificData {
         float hit_damage = 1;

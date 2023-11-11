@@ -56,20 +56,12 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 		}
 	};
 	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		auto& other_obj = other.parent();
-		if (other_obj.character_id()) {
-			m2::Character::execute_interaction(chr, other_obj.character(), InteractionType::HIT);
-			// TODO knock-back
-		}
-	};
-	chr.create_interaction = [=](MAYBE m2::Character& self, MAYBE m2::Character& other, InteractionType interaction_type) -> std::optional<InteractionData> {
-		if (interaction_type == InteractionType::HIT) {
-			// Calculate damage
+		if (auto* other_char = other.parent().get_character(); other_char) {
 			InteractionData data;
 			data.set_hit_damage(m2::apply_accuracy(average_damage, average_damage, damage_accuracy));
-			return data;
+			other_char->execute_interaction(data);
+			// TODO knock-back
 		}
-		return std::nullopt;
 	};
 	phy.post_step = [&](m2::Physique& phy) {
 		auto* originator = obj.parent();

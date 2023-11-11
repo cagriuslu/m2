@@ -53,6 +53,8 @@ namespace m2 {
 	    [[nodiscard]] SoundEmitterId sound_id() const;
 		[[nodiscard]] CharacterId character_id() const;
 
+    	[[nodiscard]] Character* get_character() const;
+
 		[[nodiscard]] Object* parent() const;
 		[[nodiscard]] Group* group() const;
         [[nodiscard]] Physique& physique() const;

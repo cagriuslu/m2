@@ -77,8 +77,8 @@ m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) 
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
-	chr.on_interaction = [&, obj_type = object_type](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
-		if (type == InteractionType::HIT) {
+	chr.on_interaction = [&, obj_type = object_type](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) {
+		if (data.has_hit_damage()) {
 			// Deduct HP
 			self.remove_resource(RESOURCE_HP, data.hit_damage());
 			// Apply mask effect
@@ -140,7 +140,7 @@ m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) 
 						[](MAYBE auto& v) { }
 				}, impl.ai_fsm);
 			}
-		} else if (type == STUN) {
+		} else if (data.has_stun_duration()) {
 			self.set_resource(m2g::pb::RESOURCE_STUN_TTL, data.stun_duration());
 		}
 	};

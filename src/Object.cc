@@ -87,6 +87,10 @@ m2::CharacterId m2::Object::character_id() const {
     return _character_id;
 }
 
+m2::Character* m2::Object::get_character() const {
+	return get_character_base(LEVEL.characters.get(_character_id));
+}
+
 m2::Object* m2::Object::parent() const {
     return _parent_id ? LEVEL.objects.get(_parent_id) : nullptr;
 }

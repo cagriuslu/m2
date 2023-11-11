@@ -82,36 +82,30 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 			LOG_DEBUG("Explosive hit a target during flight, will explode next step");
 			chr.set_resource(RESOURCE_TTL, 0.0f); // Clear TTL, chr.update will create the explosion
 		} else {
-			if (other.parent().character_id()) {
-				LOG_DEBUG("Hit a target, triggering interaction...");
-				m2::Character::execute_interaction(chr, other.parent().character(), InteractionType::HIT);
+			if (auto* other_char = other.parent().get_character(); other_char) {
+				InteractionData data;
+				if (is_explosive && chr.has_resource(RESOURCE_EXPLOSION_TTL)) {
+					LOG_DEBUG("Explosive damage");
+					auto distance = chr.parent().position.distance(other.parent().position);
+					auto damage_ratio = distance / damage_radius;
+					if (damage_ratio < 1.1f) {
+						// Calculate damage
+						float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;
+						data.set_hit_damage(damage);
+					}
+				} else if (chr.has_resource(RESOURCE_TTL)) {
+					LOG_DEBUG("Regular damage");
+					// Calculate damage
+					float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy);
+					data.set_hit_damage(damage);
+					// Clear TTL
+					chr.clear_resource(RESOURCE_TTL);
+				}
+				other_char->execute_interaction(data);
+
 				// TODO knock-back
 			}
 		}
-	};
-	chr.create_interaction = [=](m2::Character& self, m2::Character& other, m2g::pb::InteractionType type) -> std::optional<m2g::pb::InteractionData> {
-		if (type == InteractionType::HIT) {
-			InteractionData data;
-			if (is_explosive && self.has_resource(RESOURCE_EXPLOSION_TTL)) {
-				LOG_DEBUG("Explosive damage");
-				auto distance = self.parent().position.distance(other.parent().position);
-				auto damage_ratio = distance / damage_radius;
-				if (damage_ratio < 1.1f) {
-					// Calculate damage
-					float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy) * damage_ratio;
-					data.set_hit_damage(damage);
-				}
-			} else if (self.has_resource(RESOURCE_TTL)) {
-				LOG_DEBUG("Regular damage");
-				// Calculate damage
-				float damage = m2::apply_accuracy(average_damage, average_damage, damage_accuracy);
-				data.set_hit_damage(damage);
-				// Clear TTL
-				self.clear_resource(RESOURCE_TTL);
-			}
-			return data;
-		}
-		return std::nullopt;
 	};
 	phy.post_step = [&chr](m2::Physique& phy) {
 		if (chr.has_resource(RESOURCE_EXPLOSION_TTL)) {

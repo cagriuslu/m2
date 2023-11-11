@@ -11,7 +11,6 @@
 - The capabilities of object should be plug-and-play. You shouldn't implement jumping for both enemy and player for example.
 - Add width to pathfinder smoothing algorithm
 - Try bgfx
-- Remove InteractionType as InteractionData contains everything, also remove create_interaction callback
 
 Pixel Editor
 - Draw transparency pattern

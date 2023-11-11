@@ -34,9 +34,7 @@ namespace m2 {
 	class Character : public Component {
 	public:
 		std::function<void(Character& self)> update;
-		std::function<std::optional<m2g::pb::InteractionData>(Character& self, Character& other, m2g::pb::InteractionType type)> create_interaction;
-		std::function<void(Character& self, Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data)> on_interaction;
-		std::function<void(Character& self, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data)> on_stray_interaction;
+		std::function<void(Character& self, Character* other, const m2g::pb::InteractionData& data)> on_interaction;
 
 		class Iterator {
 		public:
@@ -74,12 +72,8 @@ namespace m2 {
 		explicit Character(uint64_t object_id);
 
 		virtual void automatic_update() = 0;
-		// Calls first_char.create_interaction for the InteractionData to be generated.
-		// Useful for separating interaction logic from physique logic.
-		static void execute_interaction(Character& first_char, Character& second_char, m2g::pb::InteractionType type);
-		// Uses the given InteractionData to execute the interaction.
-		// Useful for separating interaction logic from physique logic.
-		static void execute_stray_interaction(Character& second_char, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data);
+		void execute_interaction(Character& initiator, const m2g::pb::InteractionData& data);
+		void execute_interaction(const m2g::pb::InteractionData& data);
 
 		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const;
 		[[nodiscard]] bool has_item(m2g::pb::ItemCategory item_cat) const;
@@ -165,4 +159,5 @@ namespace m2 {
 
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
 	Character& get_character_base(CharacterVariant& v);
+	Character* get_character_base(CharacterVariant* v);
 }

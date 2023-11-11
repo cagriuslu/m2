@@ -135,28 +135,18 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Show/hide ammo display
 		rpg::Context::get_instance().set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
-	phy.on_collision = [&phy, &chr](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (other.parent().character_id() && 10.0f < m2::VecF{phy.body->GetLinearVelocity()}.length()) {
-			auto& other_char = other.parent().character();
-			m2::Character::execute_interaction(chr, other_char, m2g::pb::InteractionType::STUN);
-		}
-	};
-	chr.create_interaction = [](MAYBE m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type) -> std::optional<m2g::pb::InteractionData> {
-		if (type == m2g::pb::STUN) {
-			m2g::pb::InteractionData data;
+	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+		if (auto* other_char = other.parent().get_character(); other_char && 10.0f < m2::VecF{phy.body->GetLinearVelocity()}.length()) {
+			InteractionData data;
 			data.set_stun_duration(2.0f);
-			return data;
+			other_char->execute_interaction(data);
 		}
-		return std::nullopt;
 	};
-	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character& other, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
-		self.on_stray_interaction(self, type, data);
-	};
-	chr.on_stray_interaction = [](m2::Character& self, m2g::pb::InteractionType type, const m2g::pb::InteractionData& data) {
-		if (type == m2g::pb::HIT) {
+	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) {
+		if (data.has_hit_damage()) {
 			// Get hit by an enemy
 			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
-		} else if (type == GIVE_ITEM) {
+		} else if (data.has_item_type()) {
 			auto item = GAME.get_item(data.item_type());
 			// Player can hold only one special weapon of certain type, get rid of the previous one
 			constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
