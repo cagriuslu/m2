@@ -2,10 +2,8 @@
 #include <rpg/group/ItemGroup.h>
 #include <rpg/object/Enemy.h>
 #include <rpg/object/Player.h>
-#include <rpg/object/FinishPoint.h>
+#include <rpg/Objects.h>
 #include <rpg/Context.h>
-#include <rpg/object/DroppedItem.h>
-#include <rpg/object/Decoration.h>
 #include <m2/Game.h>
 #include <rpg/Defs.h>
 
@@ -112,6 +110,8 @@ m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_typ
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_AXE);
 		case pb::BUSH_01:
 			return rpg::create_decoration(obj, GAME.level_editor_object_sprites[object_type]);
+		case pb::SPIKES:
+			return rpg::create_spikes(obj);
 		default:
 			return m2::make_unexpected("Unhandled object type");
 	}

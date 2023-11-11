@@ -1860,6 +1860,45 @@
           }
         }
       ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/dungeon.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "SPIKES_IN",
+          "regular": {
+            "rect": {
+              "x": 208,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "x": 0.5,
+              "y": 1.5
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 5.5
+            }
+          }
+        },
+        {
+          "type": "SPIKES_OUT",
+          "regular": {
+            "rect": {
+              "x": 176,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "x": 0.5,
+              "y": 1.5
+            }
+          }
+        }
+      ]
     }
   ]
 }

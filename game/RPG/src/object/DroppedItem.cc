@@ -1,4 +1,4 @@
-#include <rpg/object/DroppedItem.h>
+#include <rpg/Objects.h>
 #include <Item.pb.h>
 #include <m2/box2d/Detail.h>
 #include <m2/Game.h>

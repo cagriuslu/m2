@@ -99,4 +99,6 @@ enum SpriteType {
 
     // Decorations
     SPRITE_BUSH_01 = 3501;
+    SPIKES_IN = 3601;
+    SPIKES_OUT = 3602;
 }

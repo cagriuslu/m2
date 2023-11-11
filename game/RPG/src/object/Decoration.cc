@@ -1,4 +1,4 @@
-#include <rpg/object/Decoration.h>
+#include <rpg/Objects.h>
 #include <m2/Game.h>
 
 m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type) {

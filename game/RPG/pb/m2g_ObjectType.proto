@@ -13,4 +13,5 @@ enum ObjectType {
     AXE_ITEM_DROP = 8;
 
     BUSH_01 = 1001;
+    SPIKES = 1101;
 }

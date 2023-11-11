@@ -38,6 +38,10 @@
     {
       "type": "BUSH_01",
       "levelEditorSpriteType": "SPRITE_BUSH_01"
+    },
+    {
+      "type": "SPIKES",
+      "levelEditorSpriteType": "SPIKES_OUT"
     }
   ]
 }

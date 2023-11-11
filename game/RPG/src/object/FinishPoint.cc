@@ -1,4 +1,4 @@
-#include <rpg/object/FinishPoint.h>
+#include <rpg/Objects.h>
 #include <rpg/Context.h>
 #include <m2/box2d/Detail.h>
 

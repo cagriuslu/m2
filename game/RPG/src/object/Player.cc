@@ -5,8 +5,7 @@
 #include "m2/Controls.h"
 #include <rpg/Context.h>
 #include <m2/game/CharacterMovement.h>
-#include <rpg/object/Projectile.h>
-#include <rpg/object/Blade.h>
+#include <rpg/Objects.h>
 #include <m2/box2d/Detail.h>
 #include <m2/M2.h>
 #include <Item.pb.h>

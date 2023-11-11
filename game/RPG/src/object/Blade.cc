@@ -1,7 +1,7 @@
 #include <m2/VecF.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
-#include <rpg/object/Blade.h>
+#include <rpg/Objects.h>
 #include <m2/box2d/Detail.h>
 #include <m2/Log.h>
 

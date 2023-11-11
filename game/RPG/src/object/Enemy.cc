@@ -1,12 +1,9 @@
 #include <rpg/object/Enemy.h>
 #include <m2/game/CharacterMovement.h>
-#include <rpg/object/DroppedItem.h>
+#include <rpg/Objects.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include "rpg/group/ItemGroup.h"
-#include "rpg/object/Blade.h"
-#include "rpg/object/Projectile.h"
-#include <rpg/object/Corpse.h>
 #include <rpg/Detail.h>
 #include <rpg/Context.h>
 #include <m2/M2.h>

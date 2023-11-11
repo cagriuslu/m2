@@ -29,7 +29,7 @@ namespace m2 {
     /// Else => Data
     struct Object final {
         m2::VecF position;
-        // Data
+        // Custom Data
         std::unique_ptr<ObjectImpl> impl;
 
         Object() = default;
