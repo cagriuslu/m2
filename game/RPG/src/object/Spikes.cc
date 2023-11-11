@@ -47,7 +47,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 			}
 		}
 	};
-	phy.on_collision = [&](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+	phy.on_collision = [&spikes_in, &spikes_out, &impl, &gfx](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		// Check if the spikes are in, and not triggered
 		if (gfx.sprite == &spikes_in && not impl.trigger_timer) {
 			impl.trigger_timer = m2::Timer{};
@@ -55,7 +55,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 			// Spikes are out
 			if (auto* other_char = other.parent().get_character(); other_char){
 				m2g::pb::InteractionData data;
-				data.set_hit_damage(100.0f);
+				data.set_hit_damage(1.0f);
 				other_char->execute_interaction(data);
 			}
 		}

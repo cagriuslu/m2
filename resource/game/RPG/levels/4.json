@@ -1,5 +1,6 @@
 {
   "backgroundLayers": [
+    {},
     {
       "backgroundRows": [
         {},
@@ -7,17 +8,6 @@
           "items": [
             "NO_SPRITE",
             "CASTLE_TOP_LEFT_CORNER_TOWER",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
-            "NO_SPRITE",
             "NO_SPRITE",
             "NO_SPRITE",
             "NO_SPRITE",
@@ -45,17 +35,6 @@
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
-            "CASTLE_TOP_WALL",
             "CASTLE_TOP_RIGHT_CORNER"
           ]
         },
@@ -73,7 +52,81 @@
             "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
+            "CASTLE_RIGHT_WALL"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_LEFT_WALL",
             "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_RIGHT_WALL"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_LEFT_WALL",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_RIGHT_WALL"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_LEFT_WALL",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_RIGHT_WALL"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_LEFT_WALL",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_RIGHT_WALL"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_LEFT_WALL",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
@@ -101,18 +154,245 @@
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
-            "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_RIGHT_CORNER_TOWER"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL"
+          ]
+        }
+      ]
+    },
+    {},
+    {
+      "backgroundRows": [
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
           ]
         }
       ]
@@ -122,25 +402,17 @@
     {
       "position": {
         "x": 11,
-        "y": 3
+        "y": 8
       },
       "type": "SKELETON",
       "group": {}
     },
     {
       "position": {
-        "x": 22,
-        "y": 3
+        "x": 2,
+        "y": 8
       },
       "type": "CASTLE_FINISH_POINT",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 12,
-        "y": 3
-      },
-      "type": "SKELETON",
       "group": {}
     },
     {

@@ -2,9 +2,49 @@
   "backgroundLayers": [
     {
       "backgroundRows": [
+        {},
         {
           "items": [
+            "NO_SPRITE",
+            "CASTLE_TOP_LEFT_CORNER_TOWER",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "CASTLE_TOP_RIGHT_CORNER_TOWER"
+          ]
+        },
+        {
+          "items": [
+            "NO_SPRITE",
             "CASTLE_TOP_LEFT_CORNER",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
@@ -21,7 +61,18 @@
         },
         {
           "items": [
+            "NO_SPRITE",
             "CASTLE_LEFT_WALL",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
@@ -38,177 +89,18 @@
         },
         {
           "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
-            "CASTLE_LEFT_WALL",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_GROUND",
-            "CASTLE_RIGHT_WALL"
-          ]
-        },
-        {
-          "items": [
+            "NO_SPRITE",
             "CASTLE_BOTTOM_LEFT_CORNER_TOWER",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
@@ -229,26 +121,34 @@
   "objects": [
     {
       "position": {
-        "x": 1,
-        "y": 11
+        "x": 11,
+        "y": 3
+      },
+      "type": "SKELETON",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 22,
+        "y": 3
       },
       "type": "CASTLE_FINISH_POINT",
       "group": {}
     },
     {
       "position": {
-        "x": 1,
-        "y": 1
+        "x": 12,
+        "y": 3
       },
-      "type": "PLAYER",
+      "type": "SKELETON",
       "group": {}
     },
     {
       "position": {
-        "x": 11,
-        "y": 11
+        "x": 2,
+        "y": 3
       },
-      "type": "SKELETON",
+      "type": "PLAYER",
       "group": {}
     }
   ]

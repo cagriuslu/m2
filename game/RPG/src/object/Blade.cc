@@ -55,7 +55,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 			GAME.add_deferred_action(m2::create_object_deleter(chr.object_id));
 		}
 	};
-	phy.on_collision = [&](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+	phy.on_collision = [average_damage, damage_accuracy](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.parent().get_character(); other_char) {
 			InteractionData data;
 			data.set_hit_damage(m2::apply_accuracy(average_damage, average_damage, damage_accuracy));

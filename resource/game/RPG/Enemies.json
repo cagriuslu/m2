@@ -7,7 +7,7 @@
         "capabilities": ["CAPABILITY_MELEE"],
         "triggerDistance": 5.0,
         "hitTriggerDistance": 15.0,
-        "attackDistance": 1.25,
+        "attackDistance": 0.75,
         "recalculationPeriod": 0.5,
         "chaser": {
           "giveUpDistance": 10.0

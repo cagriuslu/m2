@@ -12,6 +12,7 @@
 #include <rpg/Defs.h>
 #include <array>
 
+using namespace rpg;
 using namespace m2g;
 using namespace m2g::pb;
 
@@ -39,7 +40,10 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
+	if (LEVEL.name() != "4") {
+		// 4th level is melee tutorial
+		chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
+	}
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
@@ -135,8 +139,8 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Show/hide ammo display
 		rpg::Context::get_instance().set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
-	phy.on_collision = [&phy](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.parent().get_character(); other_char && 10.0f < m2::VecF{phy.body->GetLinearVelocity()}.length()) {
+	phy.on_collision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
+		if (auto* other_char = other.parent().get_character(); other_char && 10.0f < m2::VecF{me.body->GetLinearVelocity()}.length()) {
 			InteractionData data;
 			data.set_stun_duration(2.0f);
 			other_char->execute_interaction(data);
