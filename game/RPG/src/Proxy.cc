@@ -86,6 +86,8 @@ void m2g::post_single_player_level_init(const std::string& name) {
 		LEVEL.display_message("Use left mouse button to shoot bullets.", MESSAGE_TIMEOUT);
 	} else if (name == "04") {
 		LEVEL.display_message("Use right mouse button to melee.", MESSAGE_TIMEOUT);
+	} else if (name == "05") {
+		LEVEL.display_message("All enemies must be killed to complete the level successfully.", MESSAGE_TIMEOUT);
 	}
 }
 
