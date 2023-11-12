@@ -1856,6 +1856,9 @@
             "rect": {
               "w": 48,
               "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
             }
           }
         }
@@ -1866,7 +1869,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_FLOWER_ORANGE_02"
+          "type": "SPRITE_FLOWER_ORANGE_02",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
         }
       ]
     },
@@ -1875,7 +1887,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_FLOWER_PINK_03"
+          "type": "SPRITE_FLOWER_PINK_03",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
         }
       ]
     },
@@ -1884,7 +1905,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_FLOWER_WHITE_05"
+          "type": "SPRITE_FLOWER_WHITE_05",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
         }
       ]
     },
@@ -1893,7 +1923,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_PINE_01"
+          "type": "SPRITE_PINE_01",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            }
+          }
         }
       ]
     },
@@ -1902,7 +1941,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_PINE_DEAD_02"
+          "type": "SPRITE_PINE_DEAD_02",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            }
+          }
         }
       ]
     },
@@ -1911,7 +1959,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_ROCK_03"
+          "type": "SPRITE_ROCK_03",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
         }
       ]
     },
@@ -1920,7 +1977,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_TREE_03"
+          "type": "SPRITE_TREE_03",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            }
+          }
         }
       ]
     },
@@ -1929,7 +1995,16 @@
       "ppm": 32,
       "sprites": [
         {
-          "type": "SPRITE_TREE_DEAD_03"
+          "type": "SPRITE_TREE_DEAD_03",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            }
+          }
         }
       ]
     },
