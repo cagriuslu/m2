@@ -1862,6 +1862,78 @@
       ]
     },
     {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/orange/flower_orange_2.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_FLOWER_ORANGE_02"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/pink/flower_pink_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_FLOWER_PINK_03"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/white/flower_white_5.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_FLOWER_WHITE_05"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine/pine_1.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_PINE_01"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine_dead/pine_dead_2.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_PINE_DEAD_02"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Rock/rock_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_ROCK_03"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree/tree_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_TREE_03"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree_dead/tree_dead_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_TREE_DEAD_03"
+        }
+      ]
+    },
+    {
       "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/dungeon.png",
       "ppm": 16,
       "sprites": [
