@@ -43,10 +43,10 @@ const m2::ui::Blueprint *rpg::Context::main_menu() {
 	};
 
 	auto level_jsons = m2::list_files(GAME.resource_dir / "levels", ".json");
-	LOG_INFO("Adding level buttons", level_jsons.size());
 	for (int i = 0; i < (ssize_t) level_jsons.size(); ++i) {
 		const auto &level_json = level_jsons[i];
 		auto level_name = level_json.stem().string();
+		LOG_INFO("Adding level button", level_name);
 
 		bool level_completed = progress.level_completion_times().contains(level_name);
 		auto level_display_name = level_completed ? level_name : '*' + level_name + '*';

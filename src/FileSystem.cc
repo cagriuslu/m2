@@ -41,5 +41,6 @@ std::vector<std::filesystem::path> m2::list_files(const std::filesystem::path& d
 			}
 		}
 	}
+	std::sort(files.begin(), files.end());
 	return files;
 }
