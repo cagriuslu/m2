@@ -2,6 +2,7 @@
 #include <m2/protobuf/Detail.h>
 #include <m2/Game.h>
 #include <m2/game/Selection.h>
+#include <m2/object/Line.h>
 
 using namespace m2;
 using namespace m2::sedit;
@@ -456,6 +457,13 @@ void m2::sedit::State::select() const {
 				LEVEL.dynamic_image_loader.emplace(std::move(*image_loader));
 				LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 127});
 				LEVEL.dynamic_sheet_grid_lines_loader.emplace(SDL_Color{255, 255, 255, 127}, sprite_sheet.ppm());
+
+				// Creates lines showing the boundaries of the sheet
+				obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});
+				obj::create_horizontal_line(-0.5f, SDL_Color{255, 0, 0, 255});
+				auto image_size = LEVEL.dynamic_image_loader->image_size();
+				obj::create_vertical_line(F(image_size.x) - 0.5f, SDL_Color{255, 0, 0, 255});
+				obj::create_horizontal_line(F(image_size.y) - 0.5f, SDL_Color{255, 0, 0, 255});
 
 				// Move God to center if rect is already selected
 				LEVEL.player()->position = selected_sprite_center();

@@ -18,19 +18,26 @@ m2::expected<m2::DynamicImageLoader> m2::DynamicImageLoader::create(const std::f
 	return DynamicImageLoader{std::move(surface)};
 }
 
-m2::ObjectId m2::DynamicImageLoader::load(const VecI& position) {
-	if (position.x < 0 || position.y < 0) {
-		return 0;
+m2::VecI m2::DynamicImageLoader::image_size() const {
+	if (_image) {
+		return VecI{_image->w, _image->h};
+	} else {
+		return VecI{};
 	}
+}
 
+m2::ObjectId m2::DynamicImageLoader::load(const VecI& position) {
 	// Lookup pixel
 	SDL_LockSurface(_image.get());
 	auto pixel = sdl::get_pixel(_image.get(), position.x, position.y);
 	SDL_UnlockSurface(_image.get());
+	if (not pixel) {
+		return 0;
+	}
 
 	// Get SDL_Color from pixel
 	SDL_Color color;
-	SDL_GetRGBA(pixel, _image->format, &color.r, &color.g, &color.b, &color.a);
+	SDL_GetRGBA(*pixel, _image->format, &color.r, &color.g, &color.b, &color.a);
 
 	// Create pixel object
 	return obj::create_pixel(static_cast<VecF>(position), color);

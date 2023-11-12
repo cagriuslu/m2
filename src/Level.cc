@@ -195,9 +195,12 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path
 			for (int x = off.x; x < x_max; ++x) {
 				// Get pixel
 				auto pixel = sdl::get_pixel(&sur, x, y);
+				if (!pixel) {
+					throw std::runtime_error("Implementation error! Pixel should have been in bounds");
+				}
 				// Map pixel to color
 				SDL_Color color;
-				SDL_GetRGBA(pixel, sur.format, &color.r, &color.g, &color.b, &color.a);
+				SDL_GetRGBA(*pixel, sur.format, &color.r, &color.g, &color.b, &color.a);
 				// Select color
 				pixel_editor_state->selected_color = color;
 				// Paint pixel
