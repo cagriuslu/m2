@@ -246,6 +246,15 @@ void m2::ledit::State::activate_shift_mode() {
 }
 void m2::ledit::State::save() {
 	pb::Level level;
+	// Start from the current level
+	if (auto lb = LEVEL.level_blueprint(); lb) {
+		level = *lb;
+	}
+
+	// Clear fields that'll be filled here
+	level.clear_background_layers();
+	level.clear_objects();
+
 	for (int i = 0; i < I(BackgroundLayer::n); ++i) {
 		for (const auto& [position, pair] : LEVEL.level_editor_state->bg_placeholders[i]) {
 			protobuf::mutable_get_or_create(level.mutable_background_layers(), i);

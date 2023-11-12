@@ -77,6 +77,7 @@ namespace m2 {
 		// Accessors
 		[[nodiscard]] inline Type type() const { return _type; }
 		inline std::optional<std::filesystem::path> path() const { return _lb_path; }
+		inline std::optional<pb::Level> level_blueprint() const { return _lb; }
 		inline const std::string& name() const { return _name; }
 		inline Object* player() { return objects.get(player_id); }
 		inline Object* camera() { return objects.get(camera_id); }

@@ -129,6 +129,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	if (std::filesystem::exists(lb_path)) {
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
+		_lb.emplace(*lb);
 		// Create background tiles
 		for (int l = 0; l < lb->background_layers_size(); ++l) {
 			const auto& layer = lb->background_layers(l);
