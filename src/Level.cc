@@ -253,6 +253,17 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	return {};
 }
 
+m2::void_expected m2::Level::reset_sheet_editor() {
+	objects.clear();
+
+	// Create default objects
+	player_id = m2::obj::create_god();
+	m2::obj::create_camera();
+	m2::obj::create_origin();
+
+	return {};
+}
+
 m2::sdl::ticks_t m2::Level::get_level_duration() const {
 	return sdl::get_ticks_since(*level_start_ticks, GAME.pause_ticks - *level_start_pause_ticks);
 }

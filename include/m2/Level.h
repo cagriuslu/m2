@@ -72,6 +72,7 @@ namespace m2 {
 		void_expected init_level_editor(const std::filesystem::path& lb_path);
 		void_expected init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
 		void_expected init_sheet_editor(const std::filesystem::path& path);
+		void_expected reset_sheet_editor();
 
 		// Accessors
 		[[nodiscard]] inline Type type() const { return _type; }

@@ -442,8 +442,10 @@ void m2::sedit::State::set_sprite_type(m2g::pb::SpriteType sprite_type) {
 }
 
 void m2::sedit::State::select() const {
-	const auto& sprite_sheets = this->sprite_sheets();
+	// Get rid of previously created pixels, lines, etc.
+	LEVEL.reset_sheet_editor();
 
+	const auto& sprite_sheets = this->sprite_sheets();
 	// Reload dynamic image loader with the resource
 	// To find sprite in the sheet, iterate over sheets
 	for (const auto& sprite_sheet : sprite_sheets.sheets()) {
@@ -455,8 +457,8 @@ void m2::sedit::State::select() const {
 					throw M2ERROR("Failed to load the image: " + sprite_sheet.resource());
 				}
 				LEVEL.dynamic_image_loader.emplace(std::move(*image_loader));
-				LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 127});
-				LEVEL.dynamic_sheet_grid_lines_loader.emplace(SDL_Color{255, 255, 255, 127}, sprite_sheet.ppm());
+				LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
+				LEVEL.dynamic_sheet_grid_lines_loader.emplace(SDL_Color{255, 255, 255, 80}, sprite_sheet.ppm());
 
 				// Creates lines showing the boundaries of the sheet
 				obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});
