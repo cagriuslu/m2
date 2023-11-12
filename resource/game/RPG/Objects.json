@@ -40,6 +40,38 @@
       "levelEditorSpriteType": "SPRITE_BUSH_01"
     },
     {
+      "type": "FLOWER_ORANGE_02",
+      "levelEditorSpriteType": "SPRITE_FLOWER_ORANGE_02"
+    },
+    {
+      "type": "FLOWER_PINK_03",
+      "levelEditorSpriteType": "SPRITE_FLOWER_PINK_03"
+    },
+    {
+      "type": "FLOWER_WHITE_05",
+      "levelEditorSpriteType": "SPRITE_FLOWER_WHITE_05"
+    },
+    {
+      "type": "PINE_01",
+      "levelEditorSpriteType": "SPRITE_PINE_01"
+    },
+    {
+      "type": "PINE_DEAD_02",
+      "levelEditorSpriteType": "SPRITE_PINE_DEAD_02"
+    },
+    {
+      "type": "ROCK_03",
+      "levelEditorSpriteType": "SPRITE_ROCK_03"
+    },
+    {
+      "type": "TREE_03",
+      "levelEditorSpriteType": "SPRITE_TREE_03"
+    },
+    {
+      "type": "TREE_DEAD_03",
+      "levelEditorSpriteType": "SPRITE_TREE_DEAD_03"
+    },
+    {
       "type": "SPIKES",
       "levelEditorSpriteType": "SPIKES_OUT"
     }

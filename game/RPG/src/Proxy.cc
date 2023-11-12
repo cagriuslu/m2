@@ -111,6 +111,14 @@ m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_typ
 		case pb::ObjectType::AXE_ITEM_DROP:
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_AXE);
 		case pb::BUSH_01:
+		case pb::FLOWER_ORANGE_02:
+		case pb::FLOWER_PINK_03:
+		case pb::FLOWER_WHITE_05:
+		case pb::PINE_01:
+		case pb::PINE_DEAD_02:
+		case pb::ROCK_03:
+		case pb::TREE_03:
+		case pb::TREE_DEAD_03:
 			return rpg::create_decoration(obj, GAME.level_editor_object_sprites[object_type]);
 		case pb::SPIKES:
 			return rpg::create_spikes(obj);

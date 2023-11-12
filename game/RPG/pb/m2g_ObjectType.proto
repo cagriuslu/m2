@@ -13,5 +13,13 @@ enum ObjectType {
     AXE_ITEM_DROP = 8;
 
     BUSH_01 = 1001;
+    FLOWER_ORANGE_02 = 1002;
+    FLOWER_PINK_03 = 1003;
+    FLOWER_WHITE_05 = 1004;
+    PINE_01 = 1005;
+    PINE_DEAD_02 = 1006;
+    ROCK_03 = 1007;
+    TREE_03 = 1008;
+    TREE_DEAD_03 = 1009;
     SPIKES = 1101;
 }
