@@ -1163,26 +1163,141 @@
   "objects": [
     {
       "position": {
-        "x": 29,
-        "y": 20
+        "x": 31,
+        "y": 23
       },
-      "type": "TREE_DEAD_03",
+      "type": "FENCE_VERTICAL",
       "group": {}
     },
     {
       "position": {
-        "x": 15,
-        "y": 13
+        "x": 31,
+        "y": 21
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 9
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 8
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 12,
+        "y": 19
       },
       "type": "FLOWER_WHITE_05",
       "group": {}
     },
     {
       "position": {
-        "x": 7,
-        "y": 16
+        "x": 9
       },
-      "type": "BUSH_01",
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 7
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 12
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 27
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 25
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 3
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 17
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 28
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 30
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 10
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 14
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 13
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 17
+      },
+      "type": "FENCE_VERTICAL",
       "group": {}
     },
     {
@@ -1195,10 +1310,597 @@
     },
     {
       "position": {
-        "x": 27,
-        "y": 6
+        "y": 21
       },
-      "type": "PINE_DEAD_02",
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 22
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 22,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 24
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 19,
+        "y": 13
+      },
+      "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 25
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 26
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 23
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 19
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 15
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 16
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 23,
+        "y": 19
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 20
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 30
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 14,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15,
+        "y": 12
+      },
+      "type": "SKELETON",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 26,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 13
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 23,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 12,
+        "y": 16
+      },
+      "type": "FLOWER_ORANGE_02",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 4
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 19,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 17
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 15
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 18
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 29,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 5
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 24
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 25,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 20,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 16,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 19
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 28
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 12,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 19
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 12
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 21
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 11
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 29
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 13,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 20
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 14,
+        "y": 12
+      },
+      "type": "SKELETON",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 17,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 29
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 21,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 24
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 27
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 27
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15,
+        "y": 19
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 12
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 20
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 14
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 29
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 12
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 22
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 26
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 30,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 22,
+        "y": 7
+      },
+      "type": "PINE_01",
+      "group": {}
+    },
+    {
+      "position": {},
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 27
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15,
+        "y": 28
+      },
+      "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 12,
+        "y": 9
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 29,
+        "y": 20
+      },
+      "type": "TREE_DEAD_03",
       "group": {}
     },
     {
@@ -1211,15 +1913,48 @@
     },
     {
       "position": {
-        "x": 24,
-        "y": 1
+        "x": 7,
+        "y": 31
       },
-      "type": "FLOWER_WHITE_05",
+      "type": "FENCE_HORIZONTAL",
       "group": {}
     },
     {
-      "position": {},
-      "type": "PLAYER",
+      "position": {
+        "x": 23
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 27,
+        "y": 6
+      },
+      "type": "PINE_DEAD_02",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 4
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 16
+      },
+      "type": "BUSH_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15,
+        "y": 13
+      },
+      "type": "FLOWER_WHITE_05",
       "group": {}
     },
     {
@@ -1227,7 +1962,37 @@
         "x": 31,
         "y": 31
       },
-      "type": "CASTLE_FINISH_POINT",
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 19
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 16
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 21
+      },
+      "type": "ROCK_03",
       "group": {}
     },
     {
@@ -1236,14 +2001,6 @@
         "y": 9
       },
       "type": "BUSH_01",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 10,
-        "y": 4
-      },
-      "type": "PINE_01",
       "group": {}
     },
     {
@@ -1264,18 +2021,18 @@
     },
     {
       "position": {
-        "x": 13,
-        "y": 28
+        "x": 24,
+        "y": 1
       },
-      "type": "PINE_DEAD_02",
+      "type": "FLOWER_WHITE_05",
       "group": {}
     },
     {
       "position": {
-        "x": 15,
-        "y": 19
+        "x": 30,
+        "y": 10
       },
-      "type": "TREE_03",
+      "type": "ROCK_03",
       "group": {}
     },
     {
@@ -1288,10 +2045,49 @@
     },
     {
       "position": {
+        "y": 8
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 13,
+        "y": 28
+      },
+      "type": "PINE_DEAD_02",
+      "group": {}
+    },
+    {
+      "position": {
         "x": 11,
         "y": 3
       },
       "type": "FLOWER_ORANGE_02",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 27
+      },
+      "type": "PINE_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 30,
+        "y": 30
+      },
+      "type": "CASTLE_FINISH_POINT",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 9
+      },
+      "type": "ROCK_03",
       "group": {}
     },
     {
@@ -1304,9 +2100,10 @@
     },
     {
       "position": {
-        "x": 19
+        "x": 31,
+        "y": 16
       },
-      "type": "ROCK_03",
+      "type": "FENCE_VERTICAL",
       "group": {}
     },
     {
@@ -1319,26 +2116,9 @@
     },
     {
       "position": {
-        "x": 11,
-        "y": 31
+        "x": 5
       },
-      "type": "TREE_DEAD_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 27,
-        "y": 3
-      },
-      "type": "PINE_01",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 3,
-        "y": 12
-      },
-      "type": "TREE_03",
+      "type": "FENCE_HORIZONTAL",
       "group": {}
     },
     {
@@ -1347,6 +2127,13 @@
         "y": 20
       },
       "type": "FLOWER_PINK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 28
+      },
+      "type": "FENCE_VERTICAL",
       "group": {}
     },
     {
@@ -1362,7 +2149,59 @@
         "x": 31,
         "y": 2
       },
-      "type": "TREE_DEAD_03",
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 9
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 27,
+        "y": 3
+      },
+      "type": "PINE_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 1
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 6
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 4
+      },
+      "type": "PINE_01",
       "group": {}
     },
     {
@@ -1375,10 +2214,10 @@
     },
     {
       "position": {
-        "x": 12,
-        "y": 9
+        "x": 1,
+        "y": 1
       },
-      "type": "FLOWER_WHITE_05",
+      "type": "PLAYER",
       "group": {}
     },
     {
@@ -1399,230 +2238,14 @@
     },
     {
       "position": {
-        "x": 22,
-        "y": 10
-      },
-      "type": "FLOWER_PINK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 14,
-        "y": 7
-      },
-      "type": "ROCK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 22,
-        "y": 4
-      },
-      "type": "TREE_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 7,
-        "y": 26
-      },
-      "type": "FLOWER_PINK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 6,
-        "y": 12
-      },
-      "type": "FLOWER_ORANGE_02",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 23,
-        "y": 19
-      },
-      "type": "FLOWER_WHITE_05",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 15,
-        "y": 21
-      },
-      "type": "TREE_DEAD_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 26,
-        "y": 29
-      },
-      "type": "PINE_01",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 12,
-        "y": 16
-      },
-      "type": "FLOWER_ORANGE_02",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 4,
-        "y": 19
-      },
-      "type": "FLOWER_WHITE_05",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 26,
-        "y": 14
-      },
-      "type": "PINE_01",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 9,
-        "y": 4
-      },
-      "type": "ROCK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 7,
-        "y": 29
-      },
-      "type": "ROCK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 5,
-        "y": 7
-      },
-      "type": "FLOWER_WHITE_05",
-      "group": {}
-    },
-    {
-      "position": {
-        "y": 21
-      },
-      "type": "TREE_DEAD_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 20,
-        "y": 16
-      },
-      "type": "TREE_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 12,
-        "y": 19
-      },
-      "type": "FLOWER_WHITE_05",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 7,
-        "y": 27
-      },
-      "type": "PINE_01",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 22,
-        "y": 7
-      },
-      "type": "PINE_01",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 18,
-        "y": 4
-      },
-      "type": "TREE_DEAD_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 24,
-        "y": 26
-      },
-      "type": "PINE_DEAD_02",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 4,
-        "y": 27
-      },
-      "type": "FLOWER_WHITE_05",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 20,
-        "y": 21
-      },
-      "type": "ROCK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 6,
-        "y": 21
-      },
-      "type": "ROCK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 30,
-        "y": 10
-      },
-      "type": "ROCK_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 8,
-        "y": 14
-      },
-      "type": "PINE_01",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 5,
         "y": 3
       },
-      "type": "BUSH_01",
+      "type": "FENCE_VERTICAL",
       "group": {}
     },
     {
       "position": {
-        "x": 28,
-        "y": 17
-      },
-      "type": "TREE_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 7,
+        "x": 22,
         "y": 10
       },
       "type": "FLOWER_PINK_03",
@@ -1630,10 +2253,18 @@
     },
     {
       "position": {
-        "x": 14,
-        "y": 15
+        "x": 31,
+        "y": 18
       },
-      "type": "TREE_03",
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 14,
+        "y": 7
+      },
+      "type": "ROCK_03",
       "group": {}
     },
     {
@@ -1646,6 +2277,235 @@
     },
     {
       "position": {
+        "x": 22,
+        "y": 4
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 26,
+        "y": 14
+      },
+      "type": "PINE_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 26
+      },
+      "type": "FLOWER_PINK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 5
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 9,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 25
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 12
+      },
+      "type": "FLOWER_ORANGE_02",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 1
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 26,
+        "y": 29
+      },
+      "type": "PINE_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15,
+        "y": 21
+      },
+      "type": "TREE_DEAD_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 28,
+        "y": 31
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 15,
+        "y": 11
+      },
+      "type": "SKELETON",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 29
+      },
+      "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 11
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 9,
+        "y": 4
+      },
+      "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 7
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 20,
+        "y": 16
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 24
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 18,
+        "y": 4
+      },
+      "type": "TREE_DEAD_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 28,
+        "y": 17
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 24,
+        "y": 26
+      },
+      "type": "PINE_DEAD_02",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 20,
+        "y": 21
+      },
+      "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 14
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 30
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 29,
+        "y": 14
+      },
+      "type": "PINE_DEAD_02",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 26
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 14,
+        "y": 15
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 10
+      },
+      "type": "FLOWER_PINK_03",
+      "group": {}
+    },
+    {
+      "position": {
         "x": 16,
         "y": 3
       },
@@ -1654,18 +2514,10 @@
     },
     {
       "position": {
-        "x": 14,
-        "y": 12
+        "x": 24,
+        "y": 31
       },
-      "type": "SKELETON",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 19,
-        "y": 13
-      },
-      "type": "ROCK_03",
+      "type": "FENCE_HORIZONTAL",
       "group": {}
     },
     {
@@ -1678,18 +2530,9 @@
     },
     {
       "position": {
-        "x": 10,
-        "y": 8
+        "x": 7
       },
-      "type": "TREE_03",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 15,
-        "y": 28
-      },
-      "type": "ROCK_03",
+      "type": "FENCE_HORIZONTAL",
       "group": {}
     },
     {
@@ -1710,34 +2553,26 @@
     },
     {
       "position": {
-        "x": 26,
-        "y": 6
+        "x": 19,
+        "y": 27
       },
-      "type": "ROCK_03",
+      "type": "FLOWER_PINK_03",
       "group": {}
     },
     {
       "position": {
-        "x": 3,
-        "y": 24
+        "x": 31,
+        "y": 22
       },
-      "type": "TREE_03",
+      "type": "FENCE_VERTICAL",
       "group": {}
     },
     {
       "position": {
-        "x": 15,
-        "y": 12
+        "x": 27,
+        "y": 31
       },
-      "type": "SKELETON",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 14,
-        "y": 26
-      },
-      "type": "PINE_01",
+      "type": "FENCE_HORIZONTAL",
       "group": {}
     },
     {
@@ -1758,18 +2593,24 @@
     },
     {
       "position": {
-        "x": 19,
-        "y": 27
+        "y": 7
       },
-      "type": "FLOWER_PINK_03",
+      "type": "FENCE_VERTICAL",
       "group": {}
     },
     {
       "position": {
-        "x": 29,
-        "y": 14
+        "x": 14,
+        "y": 26
       },
-      "type": "PINE_DEAD_02",
+      "type": "PINE_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2
+      },
+      "type": "FENCE_HORIZONTAL",
       "group": {}
     },
     {
@@ -1782,10 +2623,70 @@
     },
     {
       "position": {
-        "x": 6,
-        "y": 9
+        "y": 18
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 31,
+        "y": 10
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 8
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "y": 6
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 26,
+        "y": 6
       },
       "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 3
+      },
+      "type": "BUSH_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 14
+      },
+      "type": "PINE_01",
       "group": {}
     },
     {
@@ -1798,10 +2699,9 @@
     },
     {
       "position": {
-        "x": 15,
-        "y": 11
+        "y": 2
       },
-      "type": "SKELETON",
+      "type": "FENCE_VERTICAL",
       "group": {}
     }
   ],

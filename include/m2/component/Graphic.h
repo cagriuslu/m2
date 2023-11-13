@@ -53,7 +53,7 @@ namespace m2 {
 
 		const Sprite* sprite{};
 		pb::SpriteEffectType draw_sprite_effect{pb::NO_SPRITE_EFFECT};
-		float draw_angle{};
+		float draw_angle{}; // Rads
 		float z{};
 		std::optional<float> draw_addon_health_bar; /// [0,1]
 

@@ -21,5 +21,8 @@ enum ObjectType {
     ROCK_03 = 1007;
     TREE_03 = 1008;
     TREE_DEAD_03 = 1009;
+    FENCE_HORIZONTAL = 1010;
+    FENCE_VERTICAL = 1011;
+
     SPIKES = 1101;
 }

@@ -121,7 +121,9 @@ m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_typ
 		case pb::ROCK_03:
 		case pb::TREE_03:
 		case pb::TREE_DEAD_03:
-			return rpg::create_decoration(obj, GAME.level_editor_object_sprites[object_type]);
+		case pb::FENCE_HORIZONTAL:
+		case pb::FENCE_VERTICAL:
+			return rpg::create_decoration(obj, object_type, GAME.level_editor_object_sprites[object_type]);
 		case pb::SPIKES:
 			return rpg::create_spikes(obj);
 		default:

@@ -13,7 +13,7 @@ enum BodyType {
 message RectangleBodyParameters {
   Dim2f dims = 1;
   VecF center_offset = 2;
-  float angle = 3;
+  float angle = 3; // Rads
 }
 
 message CircularBodyParameters {

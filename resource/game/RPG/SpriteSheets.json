@@ -2046,6 +2046,32 @@
           }
         }
       ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/outside.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "SPRITE_FENCE",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 80,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "y": 6.5
+            },
+            "backgroundCollider": {
+              "rectDimsPx": {
+                "w": 16,
+                "h": 3
+              }
+            }
+          }
+        }
+      ]
     }
   ]
 }

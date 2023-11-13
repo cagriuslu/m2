@@ -12,7 +12,7 @@ namespace rpg {
 
 	m2::void_expected create_corpse(m2::Object& obj, m2g::pb::SpriteType);
 
-	m2::void_expected create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type);
+	m2::void_expected create_decoration(m2::Object& obj, m2g::pb::ObjectType object_type, m2g::pb::SpriteType sprite_type);
 
 	m2::void_expected create_dropped_item(m2::Object& obj, m2g::pb::ItemType item_type);
 

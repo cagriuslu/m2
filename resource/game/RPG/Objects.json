@@ -72,6 +72,14 @@
       "levelEditorSpriteType": "SPRITE_TREE_DEAD_03"
     },
     {
+      "type": "FENCE_HORIZONTAL",
+      "levelEditorSpriteType": "SPRITE_FENCE"
+    },
+    {
+      "type": "FENCE_VERTICAL",
+      "levelEditorSpriteType": "SPRITE_FENCE"
+    },
+    {
       "type": "SPIKES",
       "levelEditorSpriteType": "SPIKES_OUT"
     }
