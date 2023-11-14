@@ -14,6 +14,7 @@ const int m2g::default_game_height_m = 16;
 const bool m2g::gravity = false;
 const bool m2g::world_is_static = true;
 const bool m2g::lightning = false;
+m2::ProjectionType m2g::projection_type = m2::ProjectionType::PARALLEL_THREE_QUARTERS;
 float m2g::camera_height = 0.0f;
 float m2g::camera_distance = 8.0f;
 float m2g::horizontal_field_of_view = 90.0f;

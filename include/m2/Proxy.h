@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "ui/Blueprint.h"
 #include "Rational.h"
+#include "component/Graphic.h"
 #include "Meta.h"
 #include <m2g_GroupType.pb.h>
 #include <string_view>
@@ -24,6 +25,7 @@ namespace m2g {
 	/// Is lightning enabled? Darkens the textures.
 	extern const bool lightning;
 
+	extern m2::ProjectionType projection_type;
 	/// Z-component of perspective camera
 	extern float camera_height;
 	/// Distance between the camera and the player position

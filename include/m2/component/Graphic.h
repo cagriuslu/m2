@@ -10,6 +10,24 @@
 #include <functional>
 
 namespace m2 {
+	enum class ProjectionType {
+		// Only the top side of objects are visible. Example: Tanks
+		PARALLEL_TOP,
+		// Only the front side of objects are visible. Example: Super Mario Bros
+		PARALLEL_FRONT,
+		// Top, front, and right side of objects are visible. Example: AoE II
+		PARALLEL_ISOMETRIC,
+		// Top and front side of objects are visible. Example: Pokémon Gold
+		PARALLEL_THREE_QUARTERS,
+		// Lines parallel to Y-axis intersect at -Y infinity.
+		// Lines parallel to Z-axis intersect at -Z infinity. Example: Paper Mario
+		PERSPECTIVE_YZ,
+		// Lines parallel to X-axis intersect at -X infinity.
+		// Lines parallel to Y-axis intersect at -Y infinity.
+		// Lines parallel to Z-axis intersect at -Z infinity. Example: Half-life
+		PERSPECTIVE_XYZ,
+	};
+
 	/// Returns a vector from camera to given position in meters.
 	/// Hint: (position - camera.position)
 	VecF camera_to_position_m(const VecF& position);
