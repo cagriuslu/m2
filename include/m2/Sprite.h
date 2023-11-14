@@ -89,11 +89,17 @@ namespace m2 {
 		[[nodiscard]] inline bool is_background_tile() const { return _is_background_tile; }
 
 		/// Ratio of screen pixels to sprite pixels
-		/// Multiply sprite dimensions with this number to convert them to screen dimensions.
+		/// Multiply sprite dimensions (srcpx) with this number to convert them to screen dimensions (dstpx).
 		[[nodiscard]] float sheet_to_screen_pixel_multiplier() const;
 
 		/// Returns a vector from the sprite's center pixel to the sprite's origin.
-		[[nodiscard]] VecF center_to_origin_px(pb::SpriteEffectType effect_type) const;
+		[[nodiscard]] VecF center_to_origin_srcpx(pb::SpriteEffectType effect_type) const;
+
+		/// Returns a vector from the sprite's center pixel to the sprite's graphical origin in screen dimensions (dstpx).
+		[[nodiscard]] inline VecF center_to_origin_dstpx(pb::SpriteEffectType effect_type) const {
+			// Convert from source pixels to destination pixels
+			return center_to_origin_srcpx(effect_type) * sheet_to_screen_pixel_multiplier();
+		}
 	};
 
 	std::vector<SpriteSheet> load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer* renderer);

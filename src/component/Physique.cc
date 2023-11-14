@@ -58,7 +58,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				if (m2g::camera_height == 0.0f) {
 					int rect_w = I(roundf(width * F(GAME.dimensions().ppm)));
 					int rect_h = I(roundf(height * F(GAME.dimensions().ppm)));
-					auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
+					auto screen_origin_to_sprite_center_px = screen_origin_to_position_dstpx(position + center_offset_m);
 					auto dst_rect = SDL_Rect{
 							(int)roundf(screen_origin_to_sprite_center_px.x) - (rect_w / 2),
 							(int)roundf(screen_origin_to_sprite_center_px.y) - (rect_h / 2),
@@ -71,10 +71,14 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					auto center_position_2d = position + center_offset_m;
 					auto center_position = m3::VecF{center_position_2d};
 					// Draw a rectangle
-					auto point_0 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(-width / 2.0f).offset_y(-height / 2.0f));
-					auto point_1 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(width / 2.0f).offset_y(-height / 2.0f));
-					auto point_2 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(-width / 2.0f).offset_y(height / 2.0f));
-					auto point_3 = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(width / 2.0f).offset_y(height / 2.0f));
+					auto point_0 = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_x(-width / 2.0f).offset_y(-height / 2.0f));
+					auto point_1 = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_x(width / 2.0f).offset_y(-height / 2.0f));
+					auto point_2 = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_x(-width / 2.0f).offset_y(height / 2.0f));
+					auto point_3 = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_x(width / 2.0f).offset_y(height / 2.0f));
 					if (point_0 && point_1 && point_2 && point_3) {
 						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 						std::array<SDL_FPoint, 5> points = {
@@ -100,7 +104,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					int R = I(roundf(circumference * F(GAME.dimensions().ppm)));
 					auto [texture, src_rect] = GAME.shapes_sheet->get_circle(color, R, R, 16);
 					// Calculate destination Rect
-					auto screen_origin_to_sprite_center_px = screen_origin_to_position_px(position + center_offset_m);
+					auto screen_origin_to_sprite_center_px = screen_origin_to_position_dstpx(position + center_offset_m);
 					auto dst_rect = SDL_Rect{
 							I(roundf(screen_origin_to_sprite_center_px.x)) - (src_rect.w / 2),
 							I(roundf(screen_origin_to_sprite_center_px.y)) - (src_rect.h / 2),
@@ -115,10 +119,14 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					auto center_position_2d = position + center_offset_m;
 					auto center_position = m3::VecF{center_position_2d};
 					// Draw a diamond instead of circle
-					auto horizontal_point_a = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(-radius));
-					auto horizontal_point_b = m3::screen_origin_to_projection_of_position_px(center_position.offset_x(radius));
-					auto vertical_point_a = m3::screen_origin_to_projection_of_position_px(center_position.offset_y(-radius));
-					auto vertical_point_b = m3::screen_origin_to_projection_of_position_px(center_position.offset_y(radius));
+					auto horizontal_point_a = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_x(-radius));
+					auto horizontal_point_b = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_x(radius));
+					auto vertical_point_a = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_y(-radius));
+					auto vertical_point_b = m3::screen_origin_to_projection_of_position_dstpx(
+							center_position.offset_y(radius));
 					if (horizontal_point_a && horizontal_point_b && vertical_point_a && vertical_point_b) {
 						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 						std::array<SDL_FPoint, 5> points = {

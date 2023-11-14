@@ -29,7 +29,7 @@ void m2::Light::default_draw(Light& lig) {
 		});
 
 		if (not inside_body) {
-			auto position_px = screen_origin_to_position_px(obj.position);
+			auto position_px = screen_origin_to_position_dstpx(obj.position);
 
 			std::vector<SDL_Vertex> vertices;
 			// The vector that'll be rotated for raycasting
@@ -63,7 +63,7 @@ void m2::Light::default_draw(Light& lig) {
 			SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
 		}
 	} else {
-		auto position_px = screen_origin_to_position_px(obj.position);
+		auto position_px = screen_origin_to_position_dstpx(obj.position);
 		MAYBE auto dstrect = SDL_Rect{
 				(int)roundf(position_px.x - lig.radius_m * GAME.dimensions().ppm),
 				(int)roundf(position_px.y - lig.radius_m * GAME.dimensions().ppm),

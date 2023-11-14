@@ -28,12 +28,16 @@ m2::VecF m2::camera_to_position_m(const VecF& position) {
 	return position - camera->position;
 }
 
-m2::VecF m2::camera_to_position_px(const VecF& position) {
+m2::VecF m2::camera_to_position_dstpx(const VecF& position) {
 	return camera_to_position_m(position) * GAME.dimensions().ppm;
 }
 
-m2::VecF m2::screen_origin_to_position_px(const VecF& position) {
-	return camera_to_position_px(position) + VecF{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
+m2::VecF m2::screen_origin_to_position_dstpx(const VecF& position) {
+	return camera_to_position_dstpx(position) + VecF{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
+}
+
+m2::VecF m2::screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type) {
+	return screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx(effect_type);
 }
 
 m3::VecF m3::camera_position_m() {
@@ -102,7 +106,7 @@ std::optional<m2::VecF> m3::projection_of_position_m(const VecF& position) {
 
 	return m2::VecF{projection_on_x, projection_on_y};
 }
-std::optional<m2::VecF> m3::projection_of_position_px(const VecF& position) {
+std::optional<m2::VecF> m3::projection_of_position_dstpx(const VecF& position) {
 	auto projection_of_position_in_meters = projection_of_position_m(position);
 	if (not projection_of_position_in_meters) {
 		return {};
@@ -110,8 +114,8 @@ std::optional<m2::VecF> m3::projection_of_position_px(const VecF& position) {
 	auto pixels_per_meter = ppm();
 	return *projection_of_position_in_meters * pixels_per_meter;
 }
-std::optional<m2::VecF> m3::screen_origin_to_projection_of_position_px(const VecF& position) {
-	auto projection_of_position_in_pixels = projection_of_position_px(position);
+std::optional<m2::VecF> m3::screen_origin_to_projection_of_position_dstpx(const VecF& position) {
+	auto projection_of_position_in_pixels = projection_of_position_dstpx(position);
 	if (not projection_of_position_in_pixels) {
 		return {};
 	}
@@ -149,7 +153,8 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 
 	if (m2g::camera_height == 0.0f) {
 		auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
-		auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_px(gfx.parent().position, *gfx.sprite, gfx.draw_sprite_effect);
+		auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.parent().position,
+				*gfx.sprite, gfx.draw_sprite_effect);
 		dst_rect = SDL_Rect{
 				(int) roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
 				(int) roundf(screen_origin_to_sprite_center_px_vec.y) + (src_rect.h * GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1
@@ -160,7 +165,7 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 		auto obj_position = gfx.parent().position;
 		// Place add-on below the sprite
 		auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
-		auto projected_addon_position = m3::screen_origin_to_projection_of_position_px(addon_position);
+		auto projected_addon_position = m3::screen_origin_to_projection_of_position_dstpx(addon_position);
 		if (projected_addon_position) {
 			auto rect = RectI::centered_around(VecI{*projected_addon_position}, GAME.dimensions().ppm, GAME.dimensions().ppm * 12 / 100);
 			dst_rect = (SDL_Rect) rect;
@@ -179,7 +184,7 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 }
 
 void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
-	auto screen_origin_to_cell_center_px = screen_origin_to_position_px(VecF{cell});
+	auto screen_origin_to_cell_center_px = screen_origin_to_position_dstpx(VecF{cell});
 	auto rect = SDL_Rect{
 		(int)roundf(screen_origin_to_cell_center_px.x) - (GAME.dimensions().ppm / 2),
 		(int)roundf(screen_origin_to_cell_center_px.y) - (GAME.dimensions().ppm / 2),
@@ -193,8 +198,8 @@ void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
 }
 
 void m2::Graphic::color_rect(const RectF& world_coordinates_m, SDL_Color color) {
-	auto screen_origin_to_top_left_px = screen_origin_to_position_px(world_coordinates_m.top_left());
-	auto screen_origin_to_bottom_right_px = screen_origin_to_position_px(world_coordinates_m.bottom_right());
+	auto screen_origin_to_top_left_px = screen_origin_to_position_dstpx(world_coordinates_m.top_left());
+	auto screen_origin_to_bottom_right_px = screen_origin_to_position_dstpx(world_coordinates_m.bottom_right());
 	auto rect = SDL_Rect{
 			(int)roundf(screen_origin_to_top_left_px.x),
 			(int)roundf(screen_origin_to_top_left_px.y),
@@ -208,14 +213,14 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, SDL_Color color) 
 }
 
 void m2::Graphic::color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color) {
-	auto center_position_px = screen_origin_to_position_px(center_position_m);
+	auto center_position_px = screen_origin_to_position_dstpx(center_position_m);
 	auto radius_px = radius_m * GAME.dimensions().ppm;
 	sdl::draw_disk(GAME.renderer, center_position_px, color, radius_px, color);
 }
 
 void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-	auto draw_position = VecI{screen_origin_to_position_px(world_position)};
+	auto draw_position = VecI{screen_origin_to_position_dstpx(world_position)};
 	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
 	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
 }
@@ -223,12 +228,12 @@ void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 	if (m2g::camera_height == 0.0f) {
-		auto p1 = static_cast<VecI>(screen_origin_to_position_px(world_position_1));
-		auto p2 = static_cast<VecI>(screen_origin_to_position_px(world_position_2));
+		auto p1 = static_cast<VecI>(screen_origin_to_position_dstpx(world_position_1));
+		auto p2 = static_cast<VecI>(screen_origin_to_position_dstpx(world_position_2));
 		SDL_RenderDrawLine(GAME.renderer, p1.x, p1.y, p2.x, p2.y);
 	} else {
-		auto p1 = m3::screen_origin_to_projection_of_position_px(world_position_1);
-		auto p2 = m3::screen_origin_to_projection_of_position_px(world_position_2);
+		auto p1 = m3::screen_origin_to_projection_of_position_dstpx(world_position_1);
+		auto p2 = m3::screen_origin_to_projection_of_position_dstpx(world_position_2);
 		if (p1 && p2) {
 			SDL_RenderDrawLineF(GAME.renderer, p1->x, p1->y, p2->x, p2->y);
 		}
@@ -236,13 +241,13 @@ void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_posi
 }
 
 void m2::Graphic::draw_vertical_line(float x, SDL_Color color) {
-	auto x_px = static_cast<int>(roundf(screen_origin_to_position_px(VecF{x, 0.0f}).x));
+	auto x_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{x, 0.0f}).x));
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(GAME.renderer, x_px, GAME.dimensions().game.y, x_px, GAME.dimensions().game.y + GAME.dimensions().game.h);
 }
 
 void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
-	auto y_px = static_cast<int>(roundf(screen_origin_to_position_px(VecF{0.0f, y}).y));
+	auto y_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{0.0f, y}).y));
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(GAME.renderer, GAME.dimensions().game.x, y_px, GAME.dimensions().game.x + GAME.dimensions().game.w, y_px);
 }

@@ -333,7 +333,7 @@ void m2::Game::debug_draw() {
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
-				auto projected_p = m3::screen_origin_to_projection_of_position_px(p);
+				auto projected_p = m3::screen_origin_to_projection_of_position_dstpx(p);
 				if (projected_p) {
 					SDL_RenderDrawPointF(GAME.renderer, projected_p->x, projected_p->y);
 				}

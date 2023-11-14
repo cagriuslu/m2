@@ -277,7 +277,7 @@ float m2::Sprite::foreground_collider_circ_radius_m() const {
 float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
 	return static_cast<float>(GAME.dimensions().ppm) / static_cast<float>(ppm());
 }
-m2::VecF m2::Sprite::center_to_origin_px(pb::SpriteEffectType effect_type) const {
+m2::VecF m2::Sprite::center_to_origin_srcpx(pb::SpriteEffectType effect_type) const {
 	if (effect_type == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && has_foreground_companion()) {
 		return foreground_companion_center_offset_px();
 	} else {

@@ -34,11 +34,15 @@ namespace m2 {
 
 	/// Returns a vector from camera to given position in pixels.
 	/// For meters to pixels conversion, game_ppm is used.
-	VecF camera_to_position_px(const VecF& position);
+	VecF camera_to_position_dstpx(const VecF& position);
 
 	/// Returns a vector from screen origin (top-left corner) to given position in pixels.
 	/// For meter to pixels conversion, game_ppm is used.
-	VecF screen_origin_to_position_px(const VecF& position);
+	VecF screen_origin_to_position_dstpx(const VecF& position);
+
+	/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
+	/// Returns screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx() if sprite is non-NULL.
+	VecF screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type);
 }
 
 namespace m3 {
@@ -57,8 +61,8 @@ namespace m3 {
 
 	std::optional<VecF> player_to_projection_of_position_m(const VecF& position);
 	std::optional<m2::VecF> projection_of_position_m(const VecF& position); // Centered around player
-	std::optional<m2::VecF> projection_of_position_px(const VecF& position); // Centered around player
-	std::optional<m2::VecF> screen_origin_to_projection_of_position_px(const VecF& position);
+	std::optional<m2::VecF> projection_of_position_dstpx(const VecF& position); // Centered around player
+	std::optional<m2::VecF> screen_origin_to_projection_of_position_dstpx(const VecF& position);
 }
 
 namespace m2 {
@@ -91,15 +95,6 @@ namespace m2 {
 		static void draw_vertical_line(float x, SDL_Color color);
 		static void draw_horizontal_line(float y, SDL_Color color);
 	};
-
-	/// Returns a vector from the sprite's center pixel to the sprite's graphical origin.
-	/// The graphical origin should align with the object's position, not the sprite's center pixel.
-	VecF sprite_center_to_sprite_origin_px(const Sprite& sprite, pb::SpriteEffectType effect_type);
-
-	/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
-	/// Returns screen_origin_to_position_px(position) - sprite_center_to_sprite_origin_px() if sprite is non-NULL.
-	/// Returns screen_origin_to_position_px(position) if sprite is NULL.
-	VecF screen_origin_to_sprite_center_px(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type);
 
 	void draw_real_2d(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type, float angle);
 	void draw_fake_3d(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type, float angle, bool is_foreground, float z);

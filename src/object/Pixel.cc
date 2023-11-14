@@ -6,7 +6,7 @@ m2::Id m2::obj::create_pixel(const VecF &pos, SDL_Color color) {
 
 	auto& gfx = obj.add_terrain_graphic(BackgroundLayer::L0);
 	gfx.on_draw = [=](Graphic& gfx) {
-		auto screen_origin_to_position_px_vec = screen_origin_to_position_px(gfx.parent().position);
+		auto screen_origin_to_position_px_vec = screen_origin_to_position_dstpx(gfx.parent().position);
 		auto dst_rect = SDL_Rect{
 				(int)roundf(screen_origin_to_position_px_vec.x) - (GAME.dimensions().ppm / 2),
 				(int)roundf(screen_origin_to_position_px_vec.y) - (GAME.dimensions().ppm / 2),
