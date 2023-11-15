@@ -143,10 +143,10 @@ void m2::draw_fake_3d(const VecF& position, const Sprite& sprite, pb::SpriteEffe
 		point_3 = (position_to_point_3 + position3).offset_z(z);
 	}
 
-	auto projected_point_0 = m3::screen_origin_to_projection_of_position_dstpx(point_0);
-	auto projected_point_1 = m3::screen_origin_to_projection_of_position_dstpx(point_1);
-	auto projected_point_2 = m3::screen_origin_to_projection_of_position_dstpx(point_2);
-	auto projected_point_3 = m3::screen_origin_to_projection_of_position_dstpx(point_3);
+	auto projected_point_0 = m3::screen_origin_to_projection_along_camera_plane_dstpx(LEVEL.projection_type(), point_0);
+	auto projected_point_1 = m3::screen_origin_to_projection_along_camera_plane_dstpx(LEVEL.projection_type(), point_1);
+	auto projected_point_2 = m3::screen_origin_to_projection_along_camera_plane_dstpx(LEVEL.projection_type(), point_2);
+	auto projected_point_3 = m3::screen_origin_to_projection_along_camera_plane_dstpx(LEVEL.projection_type(), point_3);
 
 	if (projected_point_0 && projected_point_1 && projected_point_2 && projected_point_3) {
 		auto texture_dims = total_texture_dimensions(sprite, effect_type);

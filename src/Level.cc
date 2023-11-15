@@ -47,6 +47,7 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 		_lb = std::get<pb::Level>(level_path_or_blueprint);
 	}
 	_name = name;
+	_projection_type = _lb->projection_type();
 
 	m2g::pre_single_player_level_init(_name);
 
@@ -57,10 +58,6 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
 	contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
 	world->SetContactListener(contact_listener);
-
-	m2g::camera_height = _lb->initial_camera_height();
-	m2g::camera_distance = _lb->initial_camera_distance();
-	m2g::horizontal_field_of_view = _lb->initial_horizontal_field_of_view();
 
 	// Create background tiles
 	for (int l = 0; l < _lb->background_layers_size(); ++l) {

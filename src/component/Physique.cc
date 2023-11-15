@@ -55,7 +55,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				// Compose the "object origin" to "current shape centroid" vector
 				auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 
-				if (m2g::camera_height == 0.0f) {
+				if (is_projection_type_parallel(LEVEL.projection_type())) {
 					int rect_w = I(roundf(width * F(GAME.dimensions().ppm)));
 					int rect_h = I(roundf(height * F(GAME.dimensions().ppm)));
 					auto screen_origin_to_sprite_center_px = screen_origin_to_position_dstpx(position + center_offset_m);
@@ -71,13 +71,17 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					auto center_position_2d = position + center_offset_m;
 					auto center_position = m3::VecF{center_position_2d};
 					// Draw a rectangle
-					auto point_0 = m3::screen_origin_to_projection_of_position_dstpx(
+					auto point_0 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_x(-width / 2.0f).offset_y(-height / 2.0f));
-					auto point_1 = m3::screen_origin_to_projection_of_position_dstpx(
+					auto point_1 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_x(width / 2.0f).offset_y(-height / 2.0f));
-					auto point_2 = m3::screen_origin_to_projection_of_position_dstpx(
+					auto point_2 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_x(-width / 2.0f).offset_y(height / 2.0f));
-					auto point_3 = m3::screen_origin_to_projection_of_position_dstpx(
+					auto point_3 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_x(width / 2.0f).offset_y(height / 2.0f));
 					if (point_0 && point_1 && point_2 && point_3) {
 						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
@@ -99,7 +103,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				auto circumference = aabb.upperBound.x - aabb.lowerBound.x;
 				auto radius = circumference / 2.0f;
 
-				if (m2g::camera_height == 0.0f) {
+				if (is_projection_type_parallel(LEVEL.projection_type())) {
 					// Calculate circumference in pixels
 					int R = I(roundf(circumference * F(GAME.dimensions().ppm)));
 					auto [texture, src_rect] = GAME.shapes_sheet->get_circle(color, R, R, 16);
@@ -119,13 +123,17 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					auto center_position_2d = position + center_offset_m;
 					auto center_position = m3::VecF{center_position_2d};
 					// Draw a diamond instead of circle
-					auto horizontal_point_a = m3::screen_origin_to_projection_of_position_dstpx(
+					auto horizontal_point_a = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_x(-radius));
-					auto horizontal_point_b = m3::screen_origin_to_projection_of_position_dstpx(
+					auto horizontal_point_b = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_x(radius));
-					auto vertical_point_a = m3::screen_origin_to_projection_of_position_dstpx(
+					auto vertical_point_a = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_y(-radius));
-					auto vertical_point_b = m3::screen_origin_to_projection_of_position_dstpx(
+					auto vertical_point_b = m3::screen_origin_to_projection_along_camera_plane_dstpx(
+							LEVEL.projection_type(),
 							center_position.offset_y(radius));
 					if (horizontal_point_a && horizontal_point_b && vertical_point_a && vertical_point_b) {
 						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);

@@ -25,8 +25,9 @@ namespace m2g {
 	/// Is lightning enabled? Darkens the textures.
 	extern const bool lightning;
 
-	extern m2::ProjectionType projection_type;
-	/// Z-component of perspective camera
+	/// Z component of the focus position, which has the same XY position as the player
+	extern float focus_point_height;
+	/// Z component of perspective camera
 	extern float camera_height;
 	/// Distance between the camera and the player position
 	extern float camera_distance;

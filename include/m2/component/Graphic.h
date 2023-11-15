@@ -1,32 +1,17 @@
 #pragma once
 #include "../Component.h"
 #include "../Sprite.h"
-#include "../VecI.h"
 #include "../VecF.h"
 #include "../m3/VecF.h"
 #include "../m3/Line.h"
 #include "../m3/Plane.h"
 #include "../RectF.h"
+#include <Level.pb.h>
 #include <functional>
 
 namespace m2 {
-	enum class ProjectionType {
-		// Only the top side of objects are visible. Example: Tanks
-		PARALLEL_TOP,
-		// Only the front side of objects are visible. Example: Super Mario Bros
-		PARALLEL_FRONT,
-		// Top, front, and right side of objects are visible. Example: AoE II
-		PARALLEL_ISOMETRIC,
-		// Top and front side of objects are visible. Example: Pokémon Gold
-		PARALLEL_THREE_QUARTERS,
-		// Lines parallel to Y-axis intersect at -Y infinity.
-		// Lines parallel to Z-axis intersect at -Z infinity. Example: Paper Mario
-		PERSPECTIVE_YZ,
-		// Lines parallel to X-axis intersect at -X infinity.
-		// Lines parallel to Y-axis intersect at -Y infinity.
-		// Lines parallel to Z-axis intersect at -Z infinity. Example: Half-life
-		PERSPECTIVE_XYZ,
-	};
+	bool is_projection_type_parallel(pb::ProjectionType pt);
+	bool is_projection_type_perspective(pb::ProjectionType pt);
 
 	/// Returns a vector from camera to given position in meters.
 	/// Hint: (position - camera.position)
@@ -46,23 +31,45 @@ namespace m2 {
 }
 
 namespace m3 {
-	VecF camera_position_m();
-	VecF player_position_m();
+	/// Returns the position of the camera in 3D.
+	VecF camera_position_m(m2::pb::ProjectionType projection_type);
+
+	/// Returns the position of the focus in 3D.
+	/// Focus point will be placed in the middle of the screen.
+	VecF focus_position_m();
 
 	/// Returns the width of the plane seen by the camera in its equator
-	float visible_width_m();
+	float visible_width_m(m2::pb::ProjectionType projection_type);
 
 	/// Returns the PPM at the plane seen by the camera in its equator.
-	/// PPM should stay the same along the plane seen by the camera.
-	float ppm();
+	float ppm(m2::pb::ProjectionType projection_type);
 
-	Line camera_to_position(const VecF& position); // ray from camera to position
-	Plane player_to_camera();
+	/// Returns the line from camera to given position.
+	Line camera_to_position_line(m2::pb::ProjectionType projection_type, const VecF& position);
 
-	std::optional<VecF> player_to_projection_of_position_m(const VecF& position);
-	std::optional<m2::VecF> projection_of_position_m(const VecF& position); // Centered around player
-	std::optional<m2::VecF> projection_of_position_dstpx(const VecF& position); // Centered around player
-	std::optional<m2::VecF> screen_origin_to_projection_of_position_dstpx(const VecF& position);
+	/// Returns the plane that faces the camera from the focus point.
+	/// This plane is called the "camera plane"
+	Plane focus_to_camera_plane(m2::pb::ProjectionType projection_type);
+
+	/// Returns the projection of a given position on the camera plane.
+	std::optional<VecF> projection(m2::pb::ProjectionType projection_type, const VecF& position);
+
+	/// Returns a 3D vector from the focus point to the projection of a given position.
+	/// Since the focus point is at the center of the camera plane, this vector must also lie on the plane.
+	std::optional<VecF> focus_to_projection_m(m2::pb::ProjectionType projection_type, const VecF& position);
+
+	/// Returns a vector from the focus point to the projection of a given position, but using the camera plane as the
+	/// coordinate system where the focus point sits in the center. Returned vector is 2D, because both the focus point
+	/// and the projection lie on the same plane (camera plane)
+	std::optional<m2::VecF> focus_to_projection_in_camera_plane_coordinates_m(m2::pb::ProjectionType projection_type, const VecF& position);
+
+	/// Returns a vector from the focus point to the projection of a given position, but using the camera plane as the
+	/// coordinate system where the focus point sits in the center, in destination pixels.
+	std::optional<m2::VecF> focus_to_projection_in_camera_plane_coordinates_dstpx(m2::pb::ProjectionType projection_type, const VecF& position);
+
+	/// Returns a vector from the screen origins, to the projection of a given position, but using the camera plane as
+	/// the coordinate system where the focus point sits in the center, in destination pixels.
+	std::optional<m2::VecF> screen_origin_to_projection_along_camera_plane_dstpx(m2::pb::ProjectionType projection_type, const VecF& position);
 }
 
 namespace m2 {

@@ -80,7 +80,7 @@ m2::Game::Game() {
 	dynamic_sheet = DynamicSheet{renderer};
 
 	// Load game resources
-	std::filesystem::path _resource_dir("resource");
+	const std::filesystem::path _resource_dir("resource");
 	resource_dir = _resource_dir / "game" / m2g::game_name;
 	levels_dir = _resource_dir / "game" / m2g::game_name / "levels";
 
@@ -170,18 +170,14 @@ void m2::Game::handle_console_event() {
 void m2::Game::handle_menu_event() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
-		const auto* pause_menu = [](Level::Type type) -> const ui::Blueprint* {
+		const auto* pause_menu = [](const Level::Type type) -> const ui::Blueprint* {
 			if (type == Level::Type::SINGLE_PLAYER) {
 				return m2g::ui::pause_menu();
-			} else if (type == Level::Type::LEVEL_EDITOR) {
-				return nullptr;
-			} else if (type == Level::Type::PIXEL_EDITOR) {
-				return nullptr;
-			} else if (type == Level::Type::SHEET_EDITOR) {
-				return &m2::ui::sheet_editor_main_menu;
-			} else {
-				return nullptr;
 			}
+			if (type == Level::Type::SHEET_EDITOR) {
+				return &ui::sheet_editor_main_menu;
+			}
+			return nullptr;
 		}(level().type());
 		// Execute pause menu if found, exit if QUIT is returned
 		if (pause_menu && ui::State::create_execute_sync(pause_menu) == ui::Action::QUIT) {
@@ -328,12 +324,12 @@ void m2::Game::debug_draw() {
 		IF(phy_it.first->on_debug_draw)(*phy_it.first);
 	}
 
-	if (m2g::camera_height != 0.0f) {
+	if (is_projection_type_perspective(_level->projection_type())) {
 		SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 127);
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
-				auto projected_p = m3::screen_origin_to_projection_of_position_dstpx(p);
+				auto projected_p = screen_origin_to_projection_along_camera_plane_dstpx(_level->projection_type(), p);
 				if (projected_p) {
 					SDL_RenderDrawPointF(GAME.renderer, projected_p->x, projected_p->y);
 				}
@@ -379,20 +375,20 @@ void m2::Game::recalculate_mouse_position() {
 	auto screen_center_to_mouse_position_px = VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
 	_screen_center_to_mouse_position_m = VecF{F(screen_center_to_mouse_position_px.x) / F(_dims.ppm), F(screen_center_to_mouse_position_px.y) / F(_dims.ppm)};
 
-	if (m2g::camera_height != 0.0f) {
+	if (is_projection_type_perspective(_level->projection_type())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
 		auto sin_of_player_to_camera_angle = m2g::camera_height / m2g::camera_distance;
 		auto cos_of_player_to_camera_angle = sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 
-		auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm()) * sin_of_player_to_camera_angle;
-		auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm()) * cos_of_player_to_camera_angle;
-		auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm();
-		auto player_position = m3::player_position_m();
+		auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * sin_of_player_to_camera_angle;
+		auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * cos_of_player_to_camera_angle;
+		auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm(_level->projection_type());
+		auto player_position = m3::focus_position_m();
 		auto mouse_position_world_m = m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
 
 		// Create Line from camera to mouse position
-		auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(), mouse_position_world_m);
+		auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(_level->projection_type()), mouse_position_world_m);
 		// Get the xy-plane
 		auto plane = m3::Plane::xy_plane(m2g::xy_plane_z_component);
 		// Get the intersection

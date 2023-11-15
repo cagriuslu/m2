@@ -7,6 +7,7 @@ const int m2g::default_game_height_m = 16;
 const bool m2g::gravity = true;
 const bool m2g::world_is_static = false;
 const bool m2g::lightning = false;
+float m2g::focus_point_height = 2.0f;
 float m2g::camera_height = 0.0f;
 float m2g::camera_distance = 8.0f;
 float m2g::horizontal_field_of_view = 90.0f;

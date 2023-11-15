@@ -10,7 +10,6 @@
 #include "DrawList.h"
 #include "Pathfinder.h"
 #include "Meta.h"
-#include "VecI.h"
 #include <Level.pb.h>
 #include <functional>
 #include <optional>
@@ -32,6 +31,7 @@ namespace m2 {
 		std::optional<std::filesystem::path> _lb_path;
 		std::optional<pb::Level> _lb;
 		std::string _name;
+		pb::ProjectionType _projection_type{pb::PARALLEL_TOP};
 
 	public:
 		~Level();
@@ -60,7 +60,7 @@ namespace m2 {
 		std::optional<ui::State> message_box_ui_state;
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
-		std::vector<std::function<void(void)>> deferred_actions;
+		std::vector<std::function<void()>> deferred_actions;
 		std::optional<ledit::State> level_editor_state;
 		std::optional<pedit::State> pixel_editor_state;
 		std::optional<sedit::State> sheet_editor_state;
@@ -75,12 +75,13 @@ namespace m2 {
 		void_expected reset_sheet_editor();
 
 		// Accessors
-		[[nodiscard]] inline Type type() const { return _type; }
-		inline std::optional<std::filesystem::path> path() const { return _lb_path; }
-		inline std::optional<pb::Level> level_blueprint() const { return _lb; }
-		inline const std::string& name() const { return _name; }
-		inline Object* player() { return objects.get(player_id); }
-		inline Object* camera() { return objects.get(camera_id); }
+		[[nodiscard]] Type type() const { return _type; }
+		std::optional<std::filesystem::path> path() const { return _lb_path; }
+		std::optional<pb::Level> level_blueprint() const { return _lb; }
+		const std::string& name() const { return _name; }
+		pb::ProjectionType projection_type() const { return _projection_type; }
+		Object* player() { return objects.get(player_id); }
+		Object* camera() { return objects.get(camera_id); }
 		sdl::ticks_t get_level_duration() const;
 
 		// Modifiers
