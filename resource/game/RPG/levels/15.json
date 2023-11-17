@@ -1,5 +1,5 @@
 {
-  "projectionType": "PERSPECTIVE_XYZ",
+  "projectionType": "PERSPECTIVE_YZ",
   "backgroundLayers": [
     {
       "backgroundRows": [
