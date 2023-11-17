@@ -1931,6 +1931,13 @@
             },
             "centerOffsetPx": {
               "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 2,
+                "y": 1.5
+              },
+              "circRadiusPx": 4.0
             }
           }
         }
@@ -1949,6 +1956,13 @@
             },
             "centerOffsetPx": {
               "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 1.5,
+                "y": 2
+              },
+              "circRadiusPx": 3.5
             }
           }
         }
@@ -1967,6 +1981,12 @@
             },
             "centerOffsetPx": {
               "y": 14
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 2
+              },
+              "circRadiusPx": 8
             }
           }
         }
@@ -1985,6 +2005,13 @@
             },
             "centerOffsetPx": {
               "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 2,
+                "y": 2
+              },
+              "circRadiusPx": 3
             }
           }
         }
@@ -2003,6 +2030,13 @@
             },
             "centerOffsetPx": {
               "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 2,
+                "y": 2
+              },
+              "circRadiusPx": 3
             }
           }
         }
