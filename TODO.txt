@@ -12,6 +12,7 @@
 - Add width to pathfinder smoothing algorithm
 - Try bgfx
 - Add timer widget that executes an action after some time
+- Level editor'da SELECT ile Paste BG yapinca eski tile'lar silinmiyor olabilir
 
 Pixel Editor
 - Draw transparency pattern
@@ -19,8 +20,7 @@ Pixel Editor
 
 RPG
 - Take inspiration from: Elden Ring, Diablo 1-2
-- Add sprites for open game area
-- Build tutorial levels: Walking, Dashing, Ranged Weapon, Melee Weapon, Machine Gun, Explosive Weapon, Long Sword, Axe, Stun
+- Build tutorial levels: Machine Gun, Explosive Weapon, Long Sword, Axe, Stun
 - Chaser gets stuck sometimes, either solve properly, or add detection
 - Build all game mechanics
 - Make THE MOST MINIMAL levels to showcase the engine, do not make an enjoyable game.

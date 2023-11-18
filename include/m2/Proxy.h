@@ -7,6 +7,7 @@
 #include "component/Graphic.h"
 #include "Meta.h"
 #include <m2g_GroupType.pb.h>
+#include <Level.pb.h>
 #include <string_view>
 #include <array>
 
@@ -56,8 +57,8 @@ namespace m2g {
 	extern const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> key_to_scancode;
 
 	/// Called before/after a single player level is loaded
-	void pre_single_player_level_init(const std::string& name);
-	void post_single_player_level_init(const std::string& name);
+	void pre_single_player_level_init(const std::string& name, const m2::pb::Level& level);
+	void post_single_player_level_init(const std::string& name, const m2::pb::Level& level);
 
 	/// Called after a tile is created
 	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);

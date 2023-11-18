@@ -59,9 +59,9 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 		SDL_SCANCODE_BACKSPACE
 };
 
-void m2g::pre_single_player_level_init(MAYBE const std::string& name) {}
+void m2g::pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
-void m2g::post_single_player_level_init(MAYBE const std::string& name) {}
+void m2g::post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
 void m2g::post_tile_create(m2::Object& obj, pb::SpriteType sprite_type) {
 	switch (sprite_type) {

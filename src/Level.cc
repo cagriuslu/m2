@@ -49,7 +49,7 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	_name = name;
 	_projection_type = _lb->projection_type();
 
-	m2g::pre_single_player_level_init(_name);
+	m2g::pre_single_player_level_init(_name, *_lb);
 
 	left_hud_ui_state.emplace(m2g::ui::left_hud());
 	right_hud_ui_state.emplace(m2g::ui::right_hud());
@@ -113,7 +113,7 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	message_box_ui_state->update_positions(GAME.dimensions().message_box);
 	message_box_ui_state->update_contents();
 
-	m2g::post_single_player_level_init(_name);
+	m2g::post_single_player_level_init(_name, *_lb);
 
 	return {};
 }

@@ -1,4 +1,5 @@
 {
+  "__comment__": "Use W,A,S,D to walk.",
   "projectionType": "PARALLEL_THREE_QUARTERS",
   "backgroundLayers": [
     {},

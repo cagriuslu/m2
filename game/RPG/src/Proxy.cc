@@ -74,21 +74,13 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 		SDL_SCANCODE_EQUALS
 };
 
-void m2g::pre_single_player_level_init(const std::string& name) {
+void m2g::pre_single_player_level_init(const std::string& name, MAYBE const m2::pb::Level& level) {
 	LOG_INFO("Loading level", name);
 }
 
-void m2g::post_single_player_level_init(const std::string& name) {
-	if (name == "01") {
-		LEVEL.display_message("Use W,A,S,D to walk", MESSAGE_TIMEOUT);
-	} else if (name == "02") {
-		LEVEL.display_message("Use SPACE button while walking to dash.", MESSAGE_TIMEOUT);
-	} else if (name == "03") {
-		LEVEL.display_message("Use left mouse button to shoot bullets.", MESSAGE_TIMEOUT);
-	} else if (name == "04") {
-		LEVEL.display_message("Use right mouse button to melee.", MESSAGE_TIMEOUT);
-	} else if (name == "05") {
-		LEVEL.display_message("All enemies must be killed to complete the level successfully.", MESSAGE_TIMEOUT);
+void m2g::post_single_player_level_init(MAYBE const std::string& name, const m2::pb::Level& level) {
+	if (const auto& msg = level.__comment__(); not msg.empty()) {
+		LEVEL.display_message(msg, MESSAGE_TIMEOUT);
 	}
 }
 
