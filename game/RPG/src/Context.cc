@@ -141,13 +141,13 @@ const m2::ui::Blueprint *rpg::Context::you_died_menu() {
 	_you_died_menu = m2::ui::Blueprint{
 			.w = 160, .h = 90,
 			.border_width_px = 0,
-			.background_color = SDL_Color{20, 20, 20, 255}
+			.background_color = SDL_Color{127, 0, 0, 127}
 	};
 
 	auto lb_path = LEVEL.path();
 	if (lb_path) {
 		_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
-				.x = 70, .y = 30, .w = 20, .h = 6,
+				.x = 70, .y = 70, .w = 20, .h = 6,
 				.border_width_px = 1,
 				.variant = m2::ui::widget::TextBlueprint{
 						.initial_text = "Retry",
@@ -162,7 +162,7 @@ const m2::ui::Blueprint *rpg::Context::you_died_menu() {
 	}
 
 	_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
-			.x = 70, .y = 42, .w = 20, .h = 6,
+			.x = 55, .y = 80, .w = 20, .h = 6,
 			.border_width_px = 1,
 			.variant = m2::ui::widget::TextBlueprint{
 					.initial_text = "Main Menu",
@@ -173,7 +173,7 @@ const m2::ui::Blueprint *rpg::Context::you_died_menu() {
 	});
 
 	_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
-			.x = 70, .y = 54, .w = 20, .h = 6,
+			.x = 85, .y = 80, .w = 20, .h = 6,
 			.border_width_px = 1,
 			.variant = m2::ui::widget::TextBlueprint{
 					.initial_text = "Quit",

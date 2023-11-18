@@ -1,5 +1,5 @@
 {
-  "__comment__": "Use SPACE button while walking to dash.",
+  "Comment": "Use SPACE button while walking to dash.",
   "projectionType": "PARALLEL_THREE_QUARTERS",
   "backgroundLayers": [
     {},
@@ -10,6 +10,10 @@
           "items": [
             "NO_SPRITE",
             "CASTLE_TOP_LEFT_CORNER_TOWER",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
+            "NO_SPRITE",
             "NO_SPRITE",
             "NO_SPRITE",
             "NO_SPRITE",
@@ -43,6 +47,10 @@
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
             "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
+            "CASTLE_TOP_WALL",
             "CASTLE_TOP_RIGHT_CORNER"
           ]
         },
@@ -50,6 +58,10 @@
           "items": [
             "NO_SPRITE",
             "CASTLE_LEFT_WALL",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
+            "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
             "CASTLE_GROUND",
@@ -83,12 +95,20 @@
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
+            "CASTLE_BOTTOM_WALL",
             "CASTLE_BOTTOM_RIGHT_CORNER_TOWER"
           ]
         },
         {
           "items": [
             "NO_SPRITE",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
+            "CASTLE_WALL",
             "CASTLE_WALL",
             "CASTLE_WALL",
             "CASTLE_WALL",
@@ -130,23 +150,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -160,23 +163,6 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND",
-            "GRASS_GROUND"
-          ]
-        },
-        {
-          "items": [
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -214,11 +200,69 @@
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
             "GRASS_GROUND"
           ]
         },
         {
           "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
             "GRASS_GROUND",
@@ -244,10 +288,18 @@
   "objects": [
     {
       "position": {
-        "x": 10,
+        "x": 18,
         "y": 3
       },
-      "type": "SPIKES",
+      "type": "CASTLE_FINISH_POINT",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 3
+      },
+      "type": "PLAYER",
       "group": {}
     },
     {
@@ -260,18 +312,10 @@
     },
     {
       "position": {
-        "x": 14,
+        "x": 10,
         "y": 3
       },
-      "type": "CASTLE_FINISH_POINT",
-      "group": {}
-    },
-    {
-      "position": {
-        "x": 2,
-        "y": 3
-      },
-      "type": "PLAYER",
+      "type": "SPIKES",
       "group": {}
     }
   ]
