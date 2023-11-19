@@ -34,6 +34,8 @@
 namespace m2 {
 	void log_stacktrace();
 
+	const std::string& to_string(const pb::LogLevel&);
+
 	namespace detail {
 		void log_header(pb::LogLevel lvl, const char* file, int line);
 

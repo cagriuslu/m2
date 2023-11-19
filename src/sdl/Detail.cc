@@ -65,7 +65,7 @@ void m2::sdl::delay(ticks_t duration) {
 }
 
 m2::sdl::ticks_t m2::sdl::get_ticks() {
-	return static_cast<int64_t>(SDL_GetTicks64());
+	return static_cast<int64_t>(SDL_GetTicks64()) / time_slowdown_factor;
 }
 
 m2::sdl::ticks_t m2::sdl::get_ticks_since(ticks_t last_ticks, ticks_t pause_ticks) {

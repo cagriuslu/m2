@@ -20,6 +20,10 @@ void m2::log_stacktrace() {
 #endif
 }
 
+const std::string& m2::to_string(const pb::LogLevel& lvl) {
+	return pb::LogLevel_Name(lvl);
+}
+
 void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 	auto lvl_int = int(lvl);
 

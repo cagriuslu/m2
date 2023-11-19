@@ -21,14 +21,21 @@ int main(int argc, char **argv) {
 		std::string arg{argv[i]};
 		if (constexpr std::string_view log_level_opt = "--log-level="; arg.starts_with(log_level_opt)) {
 			auto opt = arg.substr(log_level_opt.size());
-			LOG_DEBUG("Encountered log-level option", opt);
 			if (not pb::LogLevel_Parse(opt, &current_log_level)) {
-				LOG_WARN("Invalid log level");
+				LOG_WARN("Invalid log level", opt);
 			}
 			LOG_INFO("New log level", current_log_level);
 		} else if (arg == "--silent") {
 			LOG_INFO("Silent");
 			silent = true;
+		} else if (constexpr std::string_view slowdown_opt = "--slowdown="; arg.starts_with(slowdown_opt)) {
+			auto opt = arg.substr(slowdown_opt.size());
+			if (auto slowdown_factor = strtol(opt.c_str(), nullptr, 0); 1 <= slowdown_factor) {
+				time_slowdown_factor = static_cast<int>(slowdown_factor);
+				LOG_INFO("New slowdown factor", time_slowdown_factor);
+			} else {
+				LOG_WARN("Invalid slowdown factor", opt);
+			}
 		} else {
 			LOG_WARN("Unknown command line argument", arg);
 		}
