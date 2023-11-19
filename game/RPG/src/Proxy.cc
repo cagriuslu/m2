@@ -82,6 +82,8 @@ void m2g::post_single_player_level_init(MAYBE const std::string& name, const m2:
 	const auto& id = level.identifier();
 	if (id == "WalkingTutorialClosed") {
 		LEVEL.display_message("Use W,A,S,D to walk.", MESSAGE_TIMEOUT);
+	} else if (id == "WalkingTutorialOpen") {
+		LEVEL.display_message("Some levels will be outdoors.", MESSAGE_TIMEOUT);
 	} else if (id == "FlagTutorialClosed") {
 		LEVEL.display_message("Find the blue flag to exit the level.", MESSAGE_TIMEOUT);
 	} else if (id == "DashTutorialClosed") {
