@@ -41,7 +41,7 @@ Possible features:
 
 Tutorial ideas:
 0) Walking: Walking tutorial on both open and closed level
-1) Dashing: Towers and drops
+1) Dashing: Towers with spikes in-between
 2) Ranged: Shoot an enemy trapped in some tower
 3) Melee: A melee enemy is attacking you in a closed space
 
