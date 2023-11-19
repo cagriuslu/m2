@@ -79,8 +79,19 @@ void m2g::pre_single_player_level_init(const std::string& name, MAYBE const m2::
 }
 
 void m2g::post_single_player_level_init(MAYBE const std::string& name, const m2::pb::Level& level) {
-	if (const auto& msg = level.__comment__(); not msg.empty()) {
-		LEVEL.display_message(msg, MESSAGE_TIMEOUT);
+	const auto& id = level.identifier();
+	if (id == "WalkingTutorialClosed") {
+		LEVEL.display_message("Use W,A,S,D to walk.", MESSAGE_TIMEOUT);
+	} else if (id == "FlagTutorialClosed") {
+		LEVEL.display_message("Find the blue flag to exit the level.", MESSAGE_TIMEOUT);
+	} else if (id == "DashTutorialClosed") {
+		LEVEL.display_message("Use SPACE button while walking to dash.", MESSAGE_TIMEOUT);
+	} else if (id == "RangedWeaponTutorialClosed") {
+		LEVEL.display_message("Use left mouse button to shoot bullets.", MESSAGE_TIMEOUT);
+	} else if (id == "MeleeTutorialClosed") {
+		LEVEL.display_message("Use right mouse button to melee.", MESSAGE_TIMEOUT);
+	} else if (id == "AllMustBeKilledTutorialOpen") {
+		LEVEL.display_message("All enemies must be killed to complete the level successfully.", MESSAGE_TIMEOUT);
 	}
 }
 

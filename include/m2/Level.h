@@ -79,6 +79,7 @@ namespace m2 {
 		std::optional<std::filesystem::path> path() const { return _lb_path; }
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }
+		const std::string& identifier() const { return _lb->identifier(); }
 		pb::ProjectionType projection_type() const { return _projection_type; }
 		Object* player() { return objects.get(player_id); }
 		Object* camera() { return objects.get(camera_id); }

@@ -48,7 +48,7 @@ enum ProjectionType {
 }
 
 message Level {
-  string __comment__ = 1;
+  string identifier = 1; // To recognize the level independent of it's name
   ProjectionType projection_type = 2;
   repeated BackgroundLayer background_layers = 3; // First element is the front-most background
   repeated LevelObject objects = 4;

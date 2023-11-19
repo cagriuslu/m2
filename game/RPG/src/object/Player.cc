@@ -40,7 +40,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	auto& chr = obj.add_full_character();
 	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
-	if (LEVEL.name() != "4") {
+	if (LEVEL.identifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
 		chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
 	}
