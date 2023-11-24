@@ -1,4 +1,5 @@
 #include <m2/ui/widget/Text.h>
+#include <m2/sdl/Font.h>
 #include <m2/Game.h>
 
 using namespace m2::ui;

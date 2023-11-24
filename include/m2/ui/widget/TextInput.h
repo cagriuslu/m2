@@ -1,6 +1,6 @@
 #pragma once
 #include "../Widget.h"
-#include "../../sdl/Detail.hh"
+#include <m2/sdl/Texture.h>
 #include <sstream>
 
 namespace m2::ui::widget {

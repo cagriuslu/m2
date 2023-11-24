@@ -1,7 +1,7 @@
 #include <m2/m3/VecF.h>
 #include <m2/Proxy.h>
 #include "m2/Game.h"
-#include "m2/sdl/Detail.hh"
+#include "m2/sdl/Detail.h"
 #include "m2/sdl/Stopwatch.h"
 #include <SDL.h>
 #include <SDL2/SDL_image.h>

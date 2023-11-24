@@ -4,7 +4,7 @@
 #include <m2/Meta.h>
 #include <m2/Object.h>
 #include <m2g_SpriteType.pb.h>
-#include <m2/sdl/Detail.hh>
+#include <m2/sdl/Detail.h>
 
 namespace rpg {
 	/// Represents the blade object that's created by referring to the melee_weapon.

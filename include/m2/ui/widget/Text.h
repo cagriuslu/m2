@@ -1,6 +1,6 @@
 #pragma once
 #include "AbstractButton.h"
-#include "../../sdl/Detail.hh"
+#include "../../sdl/Detail.h"
 
 namespace m2::ui::widget {
 	class Text : public AbstractButton {

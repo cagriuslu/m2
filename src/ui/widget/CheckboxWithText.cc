@@ -1,5 +1,6 @@
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/Game.h>
+#include <m2/sdl/Font.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;

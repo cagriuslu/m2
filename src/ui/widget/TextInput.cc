@@ -1,4 +1,5 @@
 #include <m2/ui/widget/TextInput.h>
+#include <m2/sdl/Font.h>
 #include <m2/Log.h>
 
 using namespace m2::ui;

@@ -1,6 +1,6 @@
 #pragma once
-#include "../Widget.h"
-#include "../../sdl/Detail.hh"
+#include <m2/ui/Widget.h>
+#include <m2/sdl/Font.h>
 
 namespace m2::ui::widget {
 	class TextSelection : public Widget {

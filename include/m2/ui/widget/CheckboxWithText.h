@@ -1,6 +1,6 @@
 #pragma once
 #include "AbstractButton.h"
-#include "../../sdl/Detail.hh"
+#include <m2/sdl/Texture.h>
 
 namespace m2::ui::widget {
 	class CheckboxWithText : public AbstractButton {

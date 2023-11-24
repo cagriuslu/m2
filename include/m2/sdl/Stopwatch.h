@@ -1,5 +1,5 @@
 #pragma once
-#include "Detail.hh"
+#include "Detail.h"
 
 namespace m2::sdl {
 	class Stopwatch {

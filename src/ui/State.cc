@@ -12,7 +12,7 @@
 #include <m2/ui/widget/TextInput.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/sheet_editor/Ui.h>
-#include <m2/sdl/Detail.hh>
+#include <m2/sdl/Detail.h>
 #include <regex>
 #include <ranges>
 #include <m2/String.h>

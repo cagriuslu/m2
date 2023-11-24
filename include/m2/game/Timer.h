@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../sdl/Detail.hh"
+#include "../sdl/Detail.h"
 
 namespace m2 {
 	// A timer for in-game time keeping. It doesn't get effected by UI pauses.

@@ -1,5 +1,5 @@
 #pragma once
-#include "sdl/Detail.hh"
+#include "sdl/Texture.h"
 
 namespace m2 {
 	/// Texture that dynamically increases in size on demand

@@ -1,6 +1,6 @@
 #include <m2/Shape.h>
 #include <m2/Exception.h>
-#include <m2/sdl/Detail.hh>
+#include <m2/sdl/Detail.h>
 
 bool m2::ShapesSheet::ShapeKey::operator==(const ShapeKey &other) const {
 	return type == other.type && color.r == other.color.r && color.g == other.color.g && color.b == other.color.b &&

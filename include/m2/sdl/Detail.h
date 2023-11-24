@@ -3,22 +3,10 @@
 #include "../VecI.h"
 #include <RectI.pb.h>
 #include <SDL2/SDL.h>
-#include <string_view>
-#include <utility>
 
 SDL_Cursor* SdlUtils_CreateCursor();
 
 namespace m2::sdl {
-	struct TextureDeleter {
-		void operator()(SDL_Texture* t);
-	};
-	using TextureUniquePtr = std::unique_ptr<SDL_Texture, TextureDeleter>;
-
-	struct SurfaceDeleter {
-		void operator()(SDL_Surface* s);
-	};
-	using SurfaceUniquePtr = std::unique_ptr<SDL_Surface, SurfaceDeleter>;
-
 	using ticks_t = int64_t;
 	void delay(ticks_t duration);
 	ticks_t get_ticks();
@@ -28,22 +16,6 @@ namespace m2::sdl {
 
 	int draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count);
 	int draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, const SDL_Color& center_color, float radius_px, const SDL_Color& edge_color, unsigned steps = 96);
-
-	class FontTexture {
-		TextureUniquePtr _texture;
-		std::string _text;
-
-		inline FontTexture(SDL_Texture* texture, std::string  text) : _texture(texture), _text(std::move(text)) {}
-	public:
-		FontTexture() = default;
-		static m2::expected<FontTexture> create(const std::string& text, SDL_Color color = {255, 255, 255, 255});
-		[[nodiscard]] inline SDL_Texture& texture() const { return *_texture; }
-		[[nodiscard]] inline std::string_view text() const { return _text; }
-		inline explicit operator bool() const { return (bool) _texture; }
-	};
-
-	// TODO get rid of this, this is the old way
-	TextureUniquePtr generate_font(const std::string& text, SDL_Color color = {255, 255, 255, 255});
 
 	/// Assumes surface is already locked
 	void set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);

@@ -6,7 +6,7 @@
 #include <Level.pb.h>
 #include <m2/sheet_editor/Ui.h>
 #include "m2/component/Graphic.h"
-#include <m2/sdl/Detail.hh>
+#include <m2/sdl/Detail.h>
 #include <SDL2/SDL_image.h>
 #include <filesystem>
 #include <ranges>

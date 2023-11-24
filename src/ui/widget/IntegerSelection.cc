@@ -1,5 +1,6 @@
 #include <m2/ui/widget/IntegerSelection.h>
 #include <m2/Game.h>
+#include <m2/sdl/Font.h>
 #include <SDL2/SDL_image.h>
 
 using namespace m2::ui;

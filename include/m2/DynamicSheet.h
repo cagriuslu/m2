@@ -1,5 +1,7 @@
 #pragma once
-#include "sdl/Detail.hh"
+#include "sdl/Detail.h"
+#include "sdl/Surface.h"
+#include "sdl/Texture.h"
 #include "RectI.h"
 #include <SDL2/SDL.h>
 #include <memory>

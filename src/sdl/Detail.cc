@@ -1,4 +1,4 @@
-#include <m2/sdl/Detail.hh>
+#include <m2/sdl/Detail.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
 
@@ -110,44 +110,6 @@ int m2::sdl::draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, c
 	return SDL_RenderGeometry(renderer, nullptr, vertices.data(), (int)vertices.size(), nullptr, 0);
 }
 
-m2::sdl::TextureUniquePtr m2::sdl::generate_font(const std::string& text, SDL_Color color) {
-	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.font, text.c_str(), color);
-
-	// Store previous render quality
-	const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
-	// Create texture with linear filtering
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Linear filtering is less crisp, but more readable when small
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.renderer, surf);
-	// Reinstate previous render quality
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality);
-
-	SDL_FreeSurface(surf);
-	return TextureUniquePtr{texture};
-}
-
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(const std::string& text, SDL_Color color) {
-	// Render to surface
-	SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.font, text.c_str(), color);
-	if (!surf) {
-		return m2::make_unexpected(TTF_GetError());
-	}
-
-	// Store previous render quality
-	const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
-	// Create texture with linear filtering
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Linear filtering is less crisp, but more readable when small
-
-	// Create texture
-	SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.renderer, surf);
-	SDL_FreeSurface(surf); // Free surface right away
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality); // Reinstate previous render quality right away
-
-	if (!texture) {
-		return m2::make_unexpected(SDL_GetError());
-	}
-	return FontTexture{texture, text};
-}
-
 void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
 	set_pixel(surface, x, y, SDL_MapRGBA(surface->format, r, g, b, a));
 }
@@ -180,12 +142,4 @@ SDL_Rect m2::sdl::expand_rect(const SDL_Rect& rect, int diff) {
 
 SDL_Rect m2::sdl::to_rect(const pb::RectI& pb_rect) {
 	return {pb_rect.x(), pb_rect.y(), pb_rect.w(), pb_rect.h()};
-}
-
-void m2::sdl::TextureDeleter::operator()(SDL_Texture *t) {
-	SDL_DestroyTexture(t);
-}
-
-void m2::sdl::SurfaceDeleter::operator()(SDL_Surface *s) {
-	SDL_FreeSurface(s);
 }
