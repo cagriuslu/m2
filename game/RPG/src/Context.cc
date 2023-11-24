@@ -51,8 +51,9 @@ const m2::ui::Blueprint *rpg::Context::main_menu() {
 		bool level_completed = progress.level_completion_times().contains(level_name);
 		auto level_display_name = level_completed ? level_name : '*' + level_name + '*';
 
-		auto row = i / 6; // 6 rows
-		auto col = i % 8; // 8 columns
+		// 8 columns
+		auto row = i / 8;
+		auto col = i % 8;
 
 		int x_padding = 26, y_padding = 17;
 		int x_button_width = 10, y_button_width = 6;
