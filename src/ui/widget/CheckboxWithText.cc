@@ -5,7 +5,9 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-CheckboxWithText::CheckboxWithText(State* parent, const WidgetBlueprint *blueprint) : AbstractButton(parent, blueprint), _state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state), _font_texture(sdl::generate_font(std::get<CheckboxWithTextBlueprint>(blueprint->variant).text)) {}
+CheckboxWithText::CheckboxWithText(State* parent, const WidgetBlueprint *blueprint) : AbstractButton(parent, blueprint),
+		_state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state),
+		_font_texture(std::move(*sdl::FontTexture::create(std::get<CheckboxWithTextBlueprint>(blueprint->variant).text))) {}
 
 void CheckboxWithText::on_draw() {
 	// Background
@@ -22,7 +24,7 @@ void CheckboxWithText::on_draw() {
 	// Text
 	if (_font_texture) {
 		auto text_rect = RectI{rect_px};
-		draw_text((SDL_Rect)text_rect.trim_left(rect_px.h).trim((int)blueprint->padding_width_px), *_font_texture, TextAlignment::LEFT);
+		draw_text((SDL_Rect)text_rect.trim_left(rect_px.h).trim((int)blueprint->padding_width_px), _font_texture.texture(), TextAlignment::LEFT);
 	}
 	// Border
 	draw_border(rect_px, blueprint->border_width_px);

@@ -8,15 +8,14 @@ using namespace m2::ui::widget;
 
 IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint),
 		_value(std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value),
-		_font_texture(sdl::generate_font(std::to_string(_value))) {
-
-	// on_create
+		_font_texture(std::move(*sdl::FontTexture::create(std::to_string(_value)))) {
+	// Execute on_create
 	if (integer_selection_blueprint().on_create) {
 		auto opt_value = integer_selection_blueprint().on_create(*this);
 		if (opt_value) {
 			// Save new value
 			_value = *opt_value;
-			_font_texture = sdl::generate_font(std::to_string(_value));
+			_font_texture = std::move(*sdl::FontTexture::create(std::to_string(_value)));
 		}
 	}
 }
@@ -51,7 +50,7 @@ Action IntegerSelection::on_event(Events& events) {
 
 Action IntegerSelection::select(int v) {
 	_value = v;
-	_font_texture = sdl::generate_font(std::to_string(_value));
+	_font_texture = std::move(*sdl::FontTexture::create(std::to_string(_value)));
 
 	const auto& integer_selection = std::get<IntegerSelectionBlueprint>(blueprint->variant);
 	const auto& action_callback = integer_selection.on_action;
@@ -67,7 +66,7 @@ Action IntegerSelection::on_update() {
 		auto optional_value = pb_blueprint.on_update(*this);
 		if (optional_value) {
 			_value = *optional_value;
-			_font_texture = sdl::generate_font(std::to_string(_value));
+			_font_texture = std::move(*sdl::FontTexture::create(std::to_string(_value)));
 		}
 	}
 	return Action::CONTINUE;
@@ -85,7 +84,7 @@ void IntegerSelection::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 
 	if (_font_texture) {
-		draw_text((SDL_Rect)text_rect, *_font_texture, TextAlignment::LEFT);
+		draw_text((SDL_Rect)text_rect, _font_texture.texture(), TextAlignment::LEFT);
 	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");

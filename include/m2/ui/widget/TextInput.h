@@ -1,12 +1,12 @@
 #pragma once
 #include "../Widget.h"
-#include <m2/sdl/Texture.h>
+#include <m2/sdl/Font.h>
 #include <sstream>
 
 namespace m2::ui::widget {
 	class TextInput : public Widget {
 		std::stringstream _text_input;
-		sdl::TextureUniquePtr _font_texture;
+		sdl::FontTexture _font_texture;
 		std::string _font_texture_str;
 
 	public:

@@ -1,10 +1,10 @@
 #pragma once
 #include "AbstractButton.h"
-#include "../../sdl/Detail.h"
+#include <m2/sdl/Font.h>
 
 namespace m2::ui::widget {
 	class Text : public AbstractButton {
-		sdl::TextureUniquePtr _font_texture;
+		sdl::FontTexture _font_texture;
 
 	public:
 		explicit Text(State* parent, const WidgetBlueprint* blueprint);

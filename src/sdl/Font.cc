@@ -24,18 +24,3 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(const std::strin
     }
     return FontTexture{texture, text};
 }
-
-m2::sdl::TextureUniquePtr m2::sdl::generate_font(const std::string& text, SDL_Color color) {
-    SDL_Surface *surf = TTF_RenderUTF8_Blended(GAME.font, text.c_str(), color);
-
-    // Store previous render quality
-    const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
-    // Create texture with linear filtering
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Linear filtering is less crisp, but more readable when small
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(GAME.renderer, surf);
-    // Reinstate previous render quality
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality);
-
-    SDL_FreeSurface(surf);
-    return TextureUniquePtr{texture};
-}

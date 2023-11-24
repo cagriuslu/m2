@@ -1,11 +1,11 @@
 #pragma once
 #include "AbstractButton.h"
-#include <m2/sdl/Texture.h>
+#include <m2/sdl/Font.h>
 
 namespace m2::ui::widget {
 	class CheckboxWithText : public AbstractButton {
 		bool _state;
-		sdl::TextureUniquePtr _font_texture;
+		sdl::FontTexture _font_texture;
 
 	public:
 		explicit CheckboxWithText(State* parent, const WidgetBlueprint* blueprint);

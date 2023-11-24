@@ -5,7 +5,8 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint), _font_texture(sdl::generate_font(std::get<TextBlueprint>(blueprint->variant).initial_text)) {}
+Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
+		_font_texture(std::move(*sdl::FontTexture::create(std::get<TextBlueprint>(blueprint->variant).initial_text))) {}
 
 Action Text::on_update() {
 	if (disable_after) {
@@ -21,7 +22,7 @@ Action Text::on_update() {
 	if (text_blueprint.on_update) {
 		auto[action, optional_string] = text_blueprint.on_update(*this);
 		if (action == Action::CONTINUE && optional_string) {
-			_font_texture = sdl::generate_font(*optional_string);
+			_font_texture = std::move(*sdl::FontTexture::create(*optional_string));
 		}
 		return action;
 	} else {
@@ -33,11 +34,11 @@ void Text::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 	if (_font_texture) {
 		if (depressed) {
-			SDL_SetTextureColorMod(_font_texture.get(), 127, 127, 127);
+			SDL_SetTextureColorMod(&_font_texture.texture(), 127, 127, 127);
 		} else {
-			SDL_SetTextureColorMod(_font_texture.get(), 255, 255, 255);
+			SDL_SetTextureColorMod(&_font_texture.texture(), 255, 255, 255);
 		}
-		draw_text(sdl::expand_rect(rect_px, -static_cast<int>(blueprint->padding_width_px)), *_font_texture, std::get<TextBlueprint>(blueprint->variant).alignment);
+		draw_text(sdl::expand_rect(rect_px, -static_cast<int>(blueprint->padding_width_px)), _font_texture.texture(), std::get<TextBlueprint>(blueprint->variant).alignment);
 	}
 	draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }

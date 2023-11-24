@@ -16,7 +16,4 @@ namespace m2::sdl {
         [[nodiscard]] std::string_view text() const { return _text; }
         explicit operator bool() const { return static_cast<bool>(_texture); }
     };
-
-    // TODO get rid of this, this is the old way
-    TextureUniquePtr generate_font(const std::string& text, SDL_Color color = {255, 255, 255, 255});
 }
