@@ -7,15 +7,13 @@ using namespace m2::ui;
 using namespace m2::ui::widget;
 
 IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint),
-		_value(std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value),
-		_font_texture(std::move(*sdl::FontTexture::create(std::to_string(_value)))) {
+		_font_texture(std::move(*sdl::FontTexture::create(std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value))) {
 	// Execute on_create
 	if (integer_selection_blueprint().on_create) {
 		auto opt_value = integer_selection_blueprint().on_create(*this);
 		if (opt_value) {
 			// Save new value
-			_value = *opt_value;
-			_font_texture = std::move(*sdl::FontTexture::create(std::to_string(_value)));
+			_font_texture = std::move(*sdl::FontTexture::create(*opt_value));
 		}
 	}
 }
@@ -36,21 +34,20 @@ Action IntegerSelection::on_event(Events& events) {
 		_inc_depressed = false;
 	} else if (_inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
 		_inc_depressed = false;
-		if (_value < integer_selection.max_value) {
-			select(_value + 1);
+		if (value() < integer_selection.max_value) {
+			select(value() + 1);
 		}
 	} else if (_dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
 		_dec_depressed = false;
-		if (integer_selection.min_value < _value) {
-			select(_value - 1);
+		if (integer_selection.min_value < value()) {
+			select(value() - 1);
 		}
 	}
 	return Action::CONTINUE;
 }
 
 Action IntegerSelection::select(int v) {
-	_value = v;
-	_font_texture = std::move(*sdl::FontTexture::create(std::to_string(_value)));
+	_font_texture = std::move(*sdl::FontTexture::create(v));
 
 	const auto& integer_selection = std::get<IntegerSelectionBlueprint>(blueprint->variant);
 	const auto& action_callback = integer_selection.on_action;
@@ -65,8 +62,7 @@ Action IntegerSelection::on_update() {
 	if (pb_blueprint.on_update) {
 		auto optional_value = pb_blueprint.on_update(*this);
 		if (optional_value) {
-			_value = *optional_value;
-			_font_texture = std::move(*sdl::FontTexture::create(std::to_string(_value)));
+			_font_texture = std::move(*sdl::FontTexture::create(*optional_value));
 		}
 	}
 	return Action::CONTINUE;

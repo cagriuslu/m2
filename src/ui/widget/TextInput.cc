@@ -66,9 +66,8 @@ Action TextInput::on_update() {
 	}
 
 	// Generate new texture is the string has changed
-	if (str != _font_texture_str) {
+	if (str != _font_texture.string_value()) {
 		_font_texture = std::move(*sdl::FontTexture::create(str));
-		_font_texture_str = str;
 	}
 
 	return Action::CONTINUE;

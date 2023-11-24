@@ -7,7 +7,6 @@ namespace m2::ui::widget {
 	class TextInput : public Widget {
 		std::stringstream _text_input;
 		sdl::FontTexture _font_texture;
-		std::string _font_texture_str;
 
 	public:
 		explicit TextInput(State* parent, const WidgetBlueprint* blueprint);
