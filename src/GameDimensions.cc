@@ -1,7 +1,7 @@
 #include <m2/Game.h>
 
 m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window_height) : height_m(game_height_m) {
-	window = SDL_Rect{0, 0, window_width, window_height};
+	window = RectI{0, 0, window_width, window_height};
 
 	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
 	if (window_width < ideal_width) {
@@ -23,16 +23,16 @@ m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window
 	int left_envelope_size = (window_width - game_width - 2 * hud_width) / 2;
 	int right_envelope_size = (window_width - game_width - 2 * hud_width) - left_envelope_size;
 
-	top_envelope = SDL_Rect{0, 0, window_width, top_envelope_size};
-	bottom_envelope = SDL_Rect{0, top_envelope_size + game_height, window_width, bottom_envelope_size};
-	left_envelope = SDL_Rect{0, top_envelope_size, left_envelope_size, game_height};
-	right_envelope = SDL_Rect{left_envelope_size + 2 * hud_width + game_width, top_envelope_size, right_envelope_size, game_height};
+	top_envelope = RectI{0, 0, window_width, top_envelope_size};
+	bottom_envelope = RectI{0, top_envelope_size + game_height, window_width, bottom_envelope_size};
+	left_envelope = RectI{0, top_envelope_size, left_envelope_size, game_height};
+	right_envelope = RectI{left_envelope_size + 2 * hud_width + game_width, top_envelope_size, right_envelope_size, game_height};
 
-	game_and_hud = SDL_Rect{left_envelope_size, top_envelope_size, 2 * hud_width + game_width, game_height};
-	left_hud = SDL_Rect{left_envelope_size, top_envelope_size, hud_width, hud_height};
-	right_hud = SDL_Rect{left_envelope_size + hud_width + game_width, top_envelope_size, hud_width, hud_height};
-	game = SDL_Rect{left_envelope_size + hud_width, top_envelope_size, game_width, game_height};
+	game_and_hud = RectI{left_envelope_size, top_envelope_size, 2 * hud_width + game_width, game_height};
+	left_hud = RectI{left_envelope_size, top_envelope_size, hud_width, hud_height};
+	right_hud = RectI{left_envelope_size + hud_width + game_width, top_envelope_size, hud_width, hud_height};
+	game = RectI{left_envelope_size + hud_width, top_envelope_size, game_width, game_height};
 
 	auto message_box_height = game.h / 25;
-	message_box = SDL_Rect{game.x, game.y + game.h - message_box_height, game.w, message_box_height};
+	message_box = RectI{game.x, game.y + game.h - message_box_height, game.w, message_box_height};
 }

@@ -70,6 +70,23 @@ namespace m2 {
 
 	template <typename E>
 	auto make_unexpected(E&& e) { return tl::make_unexpected(std::forward<E>(e)); }
+
+	// Convenience functions using expected
+
+	template <typename T>
+	T&& _move_or_throw_error(const char* file, int line, expected<T>&& e) {
+		if (!e) {
+			throw Error{file, line, e.error()};
+		}
+		return std::move(*e);
+	}
+
+	template <typename T>
+	void _succeed_or_throw_error(const char* file, int line, const expected<T>& e) {
+		if (!e) {
+			throw Error{file, line, e.error()};
+		}
+	}
 }
 
 #define m2_reflect_failure(v)              \
@@ -88,16 +105,5 @@ namespace m2 {
 		}                                          \
 	} while (false)
 
-#define m2_throw_failure_as_fatal(v)                            \
-	do {                                                        \
-		if (!(v)) {                                             \
-			throw ::m2::Fatal(__FILE__, __LINE__, (v).error()); \
-		}                                                       \
-	} while (false)
-
-#define m2_throw_failure_as_error(v)                            \
-	do {                                                        \
-		if (!(v)) {                                             \
-			throw ::m2::Error(__FILE__, __LINE__, (v).error()); \
-		}                                                       \
-	} while (false)
+#define m2_move_or_throw_error(v) (::m2::_move_or_throw_error(__FILE__, __LINE__, (v)))
+#define m2_succeed_or_throw_error(v) (::m2::_succeed_or_throw_error(__FILE__, __LINE__, (v)))

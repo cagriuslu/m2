@@ -57,7 +57,7 @@ namespace m2 {
 			// Use the argument list of a lambda to unroll the ts
 			{
 				using namespace m2;
-				[](...){}((fprintf(stderr, "%s ", to_string(ts).c_str()))...);
+				[](...){}(fprintf(stderr, "%s ", to_string(ts).c_str())...);
 			}
 			fprintf(stderr, "\n");
 		}

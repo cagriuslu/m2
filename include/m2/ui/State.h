@@ -5,17 +5,17 @@ namespace m2::ui {
 	struct State {
 		bool enabled{true};
 		const Blueprint* blueprint{};
-		SDL_Rect rect_px{};
+		RectI rect_px{};
 		std::vector<std::unique_ptr<Widget>> widgets;
 
 		State() = default;
 		explicit State(const Blueprint* blueprint);
 		static Action create_execute_sync(const Blueprint* blueprint);
-		static Action create_execute_sync(const Blueprint* blueprint, SDL_Rect rect);
+		static Action create_execute_sync(const Blueprint* blueprint, RectI rect);
 		~State();
 
-		Action execute(SDL_Rect rect);
-        void update_positions(const SDL_Rect& rect);
+		Action execute(RectI rect);
+        void update_positions(const RectI& rect);
         Action handle_events(Events& events);
         Action update_contents();
         void draw();
@@ -40,7 +40,7 @@ namespace m2::ui {
 	};
 
 	// Helpers
-	SDL_Rect calculate_widget_rect(const SDL_Rect& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
+	RectI calculate_widget_rect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
 	Widget* find_text_widget(State& state, const std::string& text);
 
 	extern const Blueprint console_ui;

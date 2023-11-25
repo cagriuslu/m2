@@ -20,7 +20,7 @@ NestedUi::NestedUi(State* parent, const WidgetBlueprint *blueprint) : Widget(par
 	_ui = std::make_unique<State>(nested_blueprint.ui);
 }
 
-void NestedUi::on_position_update(const SDL_Rect &rect_px_) {
+void NestedUi::on_position_update(const RectI& rect_px_) {
 	rect_px = rect_px_;
 
 	const auto& nested_blueprint = std::get<NestedUiBlueprint>(blueprint->variant);
@@ -28,11 +28,11 @@ void NestedUi::on_position_update(const SDL_Rect &rect_px_) {
 		_ui->update_positions(rect_px_);
 	} else {
 		// Update position based on inner_w and inner_h
-		auto fake_rect = SDL_Rect{
-				.x = rect_px.x - _inner_x * rect_px.w / nested_blueprint.inner_w,
-				.y = rect_px.y - _inner_y * rect_px.h / nested_blueprint.inner_h,
-				.w = rect_px.w * nested_blueprint.ui->w / nested_blueprint.inner_w,
-				.h = rect_px.h * nested_blueprint.ui->h / nested_blueprint.inner_h
+		auto fake_rect = RectI{
+				rect_px.x - _inner_x * rect_px.w / nested_blueprint.inner_w,
+				rect_px.y - _inner_y * rect_px.h / nested_blueprint.inner_h,
+				rect_px.w * nested_blueprint.ui->w / nested_blueprint.inner_w,
+				rect_px.h * nested_blueprint.ui->h / nested_blueprint.inner_h
 		};
 		_ui->update_positions(calculate_widget_rect(fake_rect, nested_blueprint.ui->w, nested_blueprint.ui->h, 0, 0, nested_blueprint.ui->w, nested_blueprint.ui->h));
 	}
@@ -59,7 +59,8 @@ Action NestedUi::on_update() {
 }
 
 void NestedUi::on_draw() {
-	SDL_RenderSetClipRect(GAME.renderer, &rect_px);
+	auto sdl_rect = static_cast<SDL_Rect>(rect_px);
+	SDL_RenderSetClipRect(GAME.renderer, &sdl_rect);
 	_ui->draw();
 	SDL_RenderSetClipRect(GAME.renderer, nullptr);
 }

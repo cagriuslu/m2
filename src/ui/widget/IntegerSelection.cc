@@ -6,14 +6,16 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint),
-		_font_texture(std::move(*sdl::FontTexture::create(std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value))) {
+IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint) {
+	const auto inital_value = std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value;
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(inital_value));
+
 	// Execute on_create
 	if (integer_selection_blueprint().on_create) {
 		auto opt_value = integer_selection_blueprint().on_create(*this);
 		if (opt_value) {
 			// Save new value
-			_font_texture = std::move(*sdl::FontTexture::create(*opt_value));
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(*opt_value));
 		}
 	}
 }
@@ -79,19 +81,19 @@ void IntegerSelection::on_draw() {
 
 	draw_background_color(rect_px, blueprint->background_color);
 
-	if (_font_texture) {
-		draw_text((SDL_Rect)text_rect, _font_texture.texture(), TextAlignment::LEFT);
+	if (const auto texture = _font_texture.texture(); texture) {
+		draw_text(text_rect, *texture, TextAlignment::LEFT);
 	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
 	SDL_RenderCopy(GAME.renderer, up_symbol, nullptr, &up_dstrect);
-	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
+	draw_border(inc_button_rect, blueprint->border_width_px);
 
 	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.renderer, "resource/down-symbol.svg");
 	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
 	SDL_RenderCopy(GAME.renderer, down_symbol, nullptr, &down_dstrect);
-	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
+	draw_border(dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
 }

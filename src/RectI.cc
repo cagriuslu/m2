@@ -38,7 +38,6 @@ bool m2::RectI::point_in_rect(const VecI& p) const {
 }
 
 m2::RectI m2::RectI::trim(int amount) const {
-	// TODO bound check
 	return RectI{x + amount, y + amount, w - amount - amount, h - amount - amount};
 }
 m2::RectI m2::RectI::trim_left(int amount) const {

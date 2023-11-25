@@ -346,11 +346,17 @@ void m2::Game::draw_hud() {
 }
 
 void m2::Game::draw_envelopes() {
+	SDL_Rect sdl_rect{};
+
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_RenderFillRect(renderer, &_dims.top_envelope);
-	SDL_RenderFillRect(renderer, &_dims.bottom_envelope);
-	SDL_RenderFillRect(renderer, &_dims.left_envelope);
-	SDL_RenderFillRect(renderer, &_dims.right_envelope);
+	sdl_rect = static_cast<SDL_Rect>(_dims.top_envelope);
+	SDL_RenderFillRect(renderer, &sdl_rect);
+	sdl_rect = static_cast<SDL_Rect>(_dims.bottom_envelope);
+	SDL_RenderFillRect(renderer, &sdl_rect);
+	sdl_rect = static_cast<SDL_Rect>(_dims.left_envelope);
+	SDL_RenderFillRect(renderer, &sdl_rect);
+	sdl_rect = static_cast<SDL_Rect>(_dims.right_envelope);
+	SDL_RenderFillRect(renderer, &sdl_rect);
 }
 
 void m2::Game::flip_buffers() {

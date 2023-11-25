@@ -5,7 +5,7 @@ using namespace m2::ui;
 
 Widget::Widget(State* parent, const WidgetBlueprint* blueprint) : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
 
-void Widget::on_position_update(const SDL_Rect &rect_px_) {
+void Widget::on_position_update(const RectI& rect_px_) {
 	this->rect_px = rect_px_;
 }
 
@@ -19,15 +19,17 @@ Action Widget::on_update() { return Action::CONTINUE; }
 
 void Widget::on_draw() {}
 
-void Widget::draw_background_color(const SDL_Rect& rect, const SDL_Color& color) {
+void Widget::draw_background_color(const RectI& rect, const SDL_Color& color) {
 	if (color.r || color.g || color.b || color.a) {
 		SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 		SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
-		SDL_RenderFillRect(GAME.renderer, &rect);
+
+		const auto sdl_rect = static_cast<SDL_Rect>(rect);
+		SDL_RenderFillRect(GAME.renderer, &sdl_rect);
 	}
 }
 
-void Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment align) {
+void Widget::draw_text(const RectI& rect, SDL_Texture& texture, TextAlignment align) {
 	int text_w = 0, text_h = 0;
 	SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
 
@@ -97,7 +99,7 @@ void Widget::draw_text(const SDL_Rect& rect, SDL_Texture& texture, TextAlignment
 	SDL_RenderCopy(GAME.renderer, &texture, nullptr, &dstrect);
 }
 
-void m2::ui::Widget::draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect) {
+void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
 	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
 	auto sprite_aspect_ratio = (float) src_rect.w / (float) src_rect.h;
 	auto widget_aspect_ratio = (float) dst_rect.w / (float) dst_rect.h;
@@ -117,10 +119,12 @@ void m2::ui::Widget::draw_sprite(const Sprite& sprite, const SDL_Rect& dst_rect)
 	SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &src_rect, &actual_dst_rect);
 }
 
-void Widget::draw_border(const SDL_Rect& rect, unsigned border_width_px, const SDL_Color& color) {
+void Widget::draw_border(const RectI& rect, unsigned border_width_px, const SDL_Color& color) {
 	if (border_width_px) {
 		SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 		SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
-		SDL_RenderDrawRect(GAME.renderer, &rect);
+
+		auto sdl_rect = static_cast<SDL_Rect>(rect);
+		SDL_RenderDrawRect(GAME.renderer, &sdl_rect);
 	}
 }

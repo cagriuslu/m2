@@ -98,13 +98,13 @@ Action TextSelection::on_event(Events& events) {
 Action TextSelection::select(unsigned index) {
 	_selection = index;
 	if (!_list.empty()) {
-		_font_texture = *sdl::FontTexture::create(_list[_selection]);
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(_list[_selection]));
 
 		if (text_selection_blueprint().on_action) {
 			return text_selection_blueprint().on_action(*this);
 		}
 	} else {
-		_font_texture = *sdl::FontTexture::create("<EMPTY>");
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create("<EMPTY>"));
 	}
 	return Action::CONTINUE;
 }
@@ -120,19 +120,19 @@ void TextSelection::on_draw() {
 
 	draw_background_color(rect_px, blueprint->background_color);
 
-	if (_font_texture) {
-		draw_text((SDL_Rect)text_rect, _font_texture.texture(), TextAlignment::LEFT);
+	if (const auto texture = _font_texture.texture(); texture) {
+		draw_text(text_rect, *texture, TextAlignment::LEFT);
 	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
 	SDL_RenderCopy(GAME.renderer, up_symbol, nullptr, &up_dstrect);
-	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
+	draw_border(inc_button_rect, blueprint->border_width_px);
 
 	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.renderer, "resource/down-symbol.svg");
 	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
 	SDL_RenderCopy(GAME.renderer, down_symbol, nullptr, &down_dstrect);
-	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
+	draw_border(dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
 }

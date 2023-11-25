@@ -23,7 +23,4 @@ namespace m2::sdl {
 	/// Returns the BGRA32 pixel if x,y are in bounds. Returns nullopt if not.
 	/// Assumes surface is already locked
 	std::optional<uint32_t> get_pixel(const SDL_Surface* surface, int x, int y);
-
-	SDL_Rect expand_rect(const SDL_Rect& rect, int diff); // Replace with RectI::expand
-	SDL_Rect to_rect(const pb::RectI& pb_rect); // Replace with RectI
 }

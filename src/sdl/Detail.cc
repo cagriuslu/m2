@@ -130,16 +130,3 @@ std::optional<uint32_t> m2::sdl::get_pixel(const SDL_Surface* surface, int x, in
 	auto* target_pixel = (uint32_t*)((uint8_t*)surface->pixels + y * surface->pitch + x * surface->format->BytesPerPixel);
 	return *target_pixel;
 }
-
-SDL_Rect m2::sdl::expand_rect(const SDL_Rect& rect, int diff) {
-	return {
-		rect.x - diff,
-		rect.y - diff,
-		rect.w + 2 * diff,
-		rect.h + 2 * diff
-	};
-}
-
-SDL_Rect m2::sdl::to_rect(const pb::RectI& pb_rect) {
-	return {pb_rect.x(), pb_rect.y(), pb_rect.w(), pb_rect.h()};
-}

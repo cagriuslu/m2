@@ -75,7 +75,7 @@ m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const Sprit
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	for (const auto& rect_piece : rect_pieces) {
-		auto blit_src_rect = sdl::to_rect(rect_piece);
+		auto blit_src_rect = static_cast<SDL_Rect>(RectI{rect_piece});
 		auto blit_dst_rect = SDL_Rect{
 			dst_rect.x + rect_piece.x() - rect.x(),
 			dst_rect.y + rect_piece.y() - rect.y(),

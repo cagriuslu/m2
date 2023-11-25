@@ -15,6 +15,6 @@ namespace m2::ui::widget {
 		Action on_update() override;
 		void on_draw() override;
 
-		inline std::string text_input() const { return _text_input.str(); }
+		std::string text_input() const { return _text_input.str(); }
 	};
 }

@@ -43,7 +43,7 @@ Action State::create_execute_sync(const Blueprint *blueprint) {
 	return create_execute_sync(blueprint, GAME.dimensions().window);
 }
 
-Action State::create_execute_sync(const Blueprint *blueprint, SDL_Rect rect) {
+Action State::create_execute_sync(const Blueprint *blueprint, RectI rect) {
 	// Check if there are other blocking UIs
 	if (GAME.ui_begin_ticks) {
 		// Execute state without keeping time
@@ -66,12 +66,12 @@ State::~State() {
 	clear_focus();
 }
 
-Action State::execute(SDL_Rect rect) {
+Action State::execute(RectI rect) {
 	DEBUG_FN();
 
 	// Save relation to window, use in case of resize
-	const SDL_Rect &winrect = GAME.dimensions().window;
-	auto relation_to_window = SDL_FRect{
+	const auto& winrect = GAME.dimensions().window;
+	auto relation_to_window = RectF{
 			(float) (rect.x - winrect.x) / (float) winrect.w,
 			(float) (rect.y - winrect.y) / (float) winrect.h,
 			(float) rect.w / (float) winrect.w,
@@ -120,7 +120,7 @@ Action State::execute(SDL_Rect rect) {
 			auto window_resize = events.pop_window_resize();
 			if (window_resize) {
 				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
-				update_positions(SDL_Rect{
+				update_positions(RectI{
 						(int) round((float) winrect.x + relation_to_window.x * (float) winrect.w),
 						(int) round((float) winrect.y + relation_to_window.y * (float) winrect.h),
 						(int) round(relation_to_window.w * (float) winrect.w),
@@ -153,10 +153,10 @@ Action State::execute(SDL_Rect rect) {
 	}
 }
 
-void State::update_positions(const SDL_Rect &rect_px_) {
+void State::update_positions(const RectI& rect_px_) {
 	this->rect_px = rect_px_;
 	for (auto &widget_state: widgets) {
-		SDL_Rect widget_rect = calculate_widget_rect(rect_px_, blueprint->w, blueprint->h, widget_state->blueprint->x,
+		auto widget_rect = calculate_widget_rect(rect_px_, blueprint->w, blueprint->h, widget_state->blueprint->x,
 				widget_state->blueprint->y, widget_state->blueprint->w, widget_state->blueprint->h);
 		widget_state->on_position_update(widget_rect);
 	}
@@ -268,12 +268,10 @@ void State::clear_focus() {
 	);
 }
 
-SDL_Rect m2::ui::calculate_widget_rect(
-		const SDL_Rect &root_rect_px, unsigned root_w, unsigned root_h,
-		int child_x, int child_y, unsigned child_w, unsigned child_h) {
+RectI m2::ui::calculate_widget_rect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h) {
 	auto pixels_per_unit_w = (float) root_rect_px.w / (float) root_w;
 	auto pixels_per_unit_h = (float) root_rect_px.h / (float) root_h;
-	return SDL_Rect{
+	return RectI{
 			root_rect_px.x + (int) roundf((float) child_x * pixels_per_unit_w),
 			root_rect_px.y + (int) roundf((float) child_y * pixels_per_unit_h),
 			(int) roundf((float) child_w * pixels_per_unit_w),

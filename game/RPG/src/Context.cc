@@ -4,9 +4,7 @@
 
 rpg::Context::Context() {
 	// Load enemies
-	auto expect_enemies = m2::protobuf::json_file_to_message<pb::Enemies>(GAME.resource_dir / "Enemies.json");
-	m2_throw_failure_as_error(expect_enemies);
-	enemies = *expect_enemies;
+	enemies = m2_move_or_throw_error(m2::protobuf::json_file_to_message<pb::Enemies>(GAME.resource_dir / "Enemies.json"));
 	// Load progress
 	progress_file_path = GAME.resource_dir / "Progress.json";
 	auto expect_progress = m2::protobuf::json_file_to_message<rpg::pb::Progress>(progress_file_path);
@@ -67,8 +65,7 @@ const m2::ui::Blueprint *rpg::Context::main_menu() {
 						.initial_text = level_display_name,
 						.on_action = [=](MAYBE const m2::ui::widget::Text &self) {
 							Context::get_instance().alive_enemy_count = 0;
-							auto success = GAME.load_single_player(level_json, level_name);
-							m2_throw_failure_as_error(success);
+							m2_succeed_or_throw_error(GAME.load_single_player(level_json, level_name));
 							GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME),
 									m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 							return m2::ui::Action::RETURN;
@@ -154,8 +151,7 @@ const m2::ui::Blueprint *rpg::Context::you_died_menu() {
 						.initial_text = "Retry",
 						.on_action = [=](MAYBE const m2::ui::widget::Text &self) -> m2::ui::Action {
 							Context::get_instance().alive_enemy_count = 0;
-							auto success = GAME.load_single_player(*lb_path, LEVEL.name());
-							m2_throw_failure_as_error(success);
+							m2_succeed_or_throw_error(GAME.load_single_player(*lb_path, LEVEL.name()));
 							return m2::ui::Action::RETURN;
 						}
 				}

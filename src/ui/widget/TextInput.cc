@@ -67,7 +67,7 @@ Action TextInput::on_update() {
 
 	// Generate new texture is the string has changed
 	if (str != _font_texture.string_value()) {
-		_font_texture = std::move(*sdl::FontTexture::create(str));
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(str));
 	}
 
 	return Action::CONTINUE;
@@ -75,8 +75,8 @@ Action TextInput::on_update() {
 
 void TextInput::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
-	if (_font_texture) {
-		draw_text(rect_px, _font_texture.texture(), TextAlignment::LEFT);
+	if (const auto texture = _font_texture.texture(); texture) {
+		draw_text(rect_px, *texture, TextAlignment::LEFT);
 	}
 	draw_border(rect_px, blueprint->border_width_px);
 }

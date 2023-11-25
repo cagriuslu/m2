@@ -40,6 +40,9 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(float number, SD
 }
 
 m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(const std::string& text, SDL_Color color) {
+    if (text.empty()) {
+        return FontTexture{nullptr, text};
+    }
     auto expect_texture = generate_font_texture(text, color);
     m2_reflect_failure(expect_texture);
     return FontTexture{*expect_texture, text};

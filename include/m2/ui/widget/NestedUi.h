@@ -13,7 +13,7 @@ namespace m2::ui::widget {
 
 	public:
 		explicit NestedUi(State* parent, const WidgetBlueprint* blueprint);
-		void on_position_update(const SDL_Rect& rect_px) final;
+		void on_position_update(const RectI& rect_px) final;
 		Action on_event(Events& events) final;
 		Action on_update() final;
 		void on_draw() final;

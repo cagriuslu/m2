@@ -66,19 +66,18 @@ void ImageSelection::on_draw() {
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
 		const auto& sprite = GAME.get_sprite(image_selection.list[_selection]);
-		auto dst_rect = static_cast<SDL_Rect>(image_rect);
-		draw_sprite(sprite, dst_rect);
+		draw_sprite(sprite, image_rect);
 	}
 
 	static SDL_Texture* up_symbol = IMG_LoadTexture(GAME.renderer, "resource/up-symbol.svg");
 	auto up_dstrect = (SDL_Rect)inc_button_symbol_rect;
 	SDL_RenderCopy(GAME.renderer, up_symbol, nullptr, &up_dstrect);
-	draw_border((SDL_Rect)inc_button_rect, blueprint->border_width_px);
+	draw_border(inc_button_rect, blueprint->border_width_px);
 
 	static SDL_Texture* down_symbol = IMG_LoadTexture(GAME.renderer, "resource/down-symbol.svg");
 	auto down_dstrect = (SDL_Rect)dec_button_symbol_rect;
 	SDL_RenderCopy(GAME.renderer, down_symbol, nullptr, &down_dstrect);
-	draw_border((SDL_Rect)dec_button_rect, blueprint->border_width_px);
+	draw_border(dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
 }
