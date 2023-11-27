@@ -4,6 +4,7 @@
 #include <m2/String.h>
 #include <m2/Sprite.h>
 #include <Level.pb.h>
+#include <m2/level_editor/Ui.h>
 #include <m2/sheet_editor/Ui.h>
 #include "m2/component/Graphic.h"
 #include <m2/sdl/Detail.h>
@@ -123,7 +124,7 @@ m2::void_expected m2::Game::load_level_editor(const std::string& level_resource_
 	_level.emplace();
 	return _level->init_level_editor(level_resource_path);
 }
-m2::void_expected m2::Game::load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset) {
+m2::void_expected m2::Game::load_pixel_editor(const std::string& image_resource_path, const int x_offset, const int y_offset) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
@@ -141,7 +142,7 @@ void m2::Game::reset_state() {
 	events.clear();
 }
 
-const m2::Song& m2::Game::get_song(m2g::pb::SongType song_type) {
+const m2::Song& m2::Game::get_song(const m2g::pb::SongType song_type) {
 	return _songs[protobuf::enum_index(song_type)];
 }
 
@@ -152,8 +153,7 @@ void m2::Game::handle_quit_event() {
 }
 
 void m2::Game::handle_window_resize_event() {
-	auto window_resize = events.pop_window_resize();
-	if (window_resize) {
+	if (const auto window_resize = events.pop_window_resize(); window_resize) {
 		recalculate_dimensions(window_resize->x, window_resize->y);
 		set_zoom(1.0f);
 	}
@@ -170,15 +170,15 @@ void m2::Game::handle_console_event() {
 void m2::Game::handle_menu_event() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
-		const auto* pause_menu = [](const Level::Type type) -> const ui::Blueprint* {
-			if (type == Level::Type::SINGLE_PLAYER) {
-				return m2g::ui::pause_menu();
-			}
-			if (type == Level::Type::SHEET_EDITOR) {
-				return &ui::sheet_editor_main_menu;
-			}
-			return nullptr;
-		}(level().type());
+		const ui::Blueprint* pause_menu{};
+		if (const auto type = level().type(); type == Level::Type::SINGLE_PLAYER) {
+			pause_menu = m2g::ui::pause_menu();
+		} else if (type == Level::Type::LEVEL_EDITOR) {
+			pause_menu = &level_editor::ui::menu;
+		} else if (type == Level::Type::SHEET_EDITOR) {
+			pause_menu = &ui::sheet_editor_main_menu;
+		}
+
 		// Execute pause menu if found, exit if QUIT is returned
 		if (pause_menu && ui::State::create_execute_sync(pause_menu) == ui::Action::QUIT) {
 			quit = true;
@@ -193,19 +193,19 @@ void m2::Game::handle_hud_events() {
 }
 
 void m2::Game::execute_pre_step() {
-	for (auto phy_it: _level->physics) {
-		IF(phy_it.first->pre_step)(*phy_it.first);
+	for (const auto& [phy, _] : _level->physics) {
+		IF(phy->pre_step)(*phy);
 	}
 	execute_deferred_actions();
 }
 
 void m2::Game::update_characters() {
-	for (auto char_it: _level->characters) {
-		auto &chr = get_character_base(*char_it.first);
+	for (const auto& [character, _] : _level->characters) {
+		auto &chr = get_character_base(*character);
 		chr.automatic_update();
 	}
-	for (auto char_it: _level->characters) {
-		auto &chr = get_character_base(*char_it.first);
+	for (const auto& [character, _] : _level->characters) {
+		auto &chr = get_character_base(*character);
 		IF(chr.update)(chr);
 	}
 	execute_deferred_actions();
@@ -217,15 +217,14 @@ void m2::Game::execute_step() {
 		_level->world->Step(phy_period, velocity_iterations, position_iterations);
 		LOG_TRACE("World stepped");
 		// Update positions
-		for (auto physique_it: _level->physics) {
-			auto &phy = *physique_it.first;
-			if (phy.body) {
-				auto &object = phy.parent();
+		for (const auto& [phy, _] : _level->physics) {
+			if (phy->body) {
+				auto &object = phy->parent();
 				auto old_pos = object.position;
 				// Update draw list
-				object.position = m2::VecF{phy.body->GetPosition()};
+				object.position = m2::VecF{phy->body->GetPosition()};
 				if (old_pos != object.position) {
-					_level->draw_list.queue_update(phy.object_id, object.position);
+					_level->draw_list.queue_update(phy->object_id, object.position);
 				}
 			}
 		}
@@ -240,22 +239,22 @@ void m2::Game::execute_step() {
 }
 
 void m2::Game::execute_post_step() {
-	for (auto phy_it: _level->physics) {
-		IF(phy_it.first->post_step)(*phy_it.first);
+	for (const auto& [phy, _] : _level->physics) {
+		IF(phy->post_step)(*phy);
 	}
 	execute_deferred_actions();
 }
 
 void m2::Game::update_sounds() {
-	for (auto sound_emitter_it : _level->sound_emitters) {
-		IF(sound_emitter_it.first->update)(*sound_emitter_it.first);
+	for (const auto& [sound_emitter, _] : _level->sound_emitters) {
+		IF(sound_emitter->update)(*sound_emitter);
 	}
 	execute_deferred_actions();
 }
 
 void m2::Game::execute_pre_draw() {
-	for (auto gfx_it : _level->graphics) {
-		IF(gfx_it.first->pre_draw)(*gfx_it.first);
+	for (const auto& [gfx, _] : _level->graphics) {
+		IF(gfx->pre_draw)(*gfx);
 	}
 }
 
@@ -265,19 +264,19 @@ void m2::Game::update_hud_contents() {
 	IF(_level->message_box_ui_state)->update_contents();
 }
 
-void m2::Game::clear_back_buffer() {
+void m2::Game::clear_back_buffer() const {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 }
 
 namespace {
-	inline void draw_one_background_layer(m2::Pool<m2::Graphic>& terrain_graphics) {
-		for (auto gfx_it : terrain_graphics) {
-			IF(gfx_it.first->on_draw)(*gfx_it.first);
-			IF(gfx_it.first->on_effect)(*gfx_it.first);
+	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrain_graphics) {
+		for (const auto& [gfx, _] : terrain_graphics) {
+			IF(gfx->on_draw)(*gfx);
+			IF(gfx->on_effect)(*gfx);
 		}
 	}
-	inline void draw_all_background_layers(m2::Level& level) {
+	void draw_all_background_layers(m2::Level& level) {
 		// Draw all background layers
 		for (auto& terrain_graphics : std::ranges::reverse_view(level.terrain_graphics)) {
 			draw_one_background_layer(terrain_graphics);
@@ -286,7 +285,7 @@ namespace {
 }
 void m2::Game::draw_background() {
 	if (_level->type() == Level::Type::LEVEL_EDITOR) {
-		std::visit(m2::overloaded {
+		std::visit(overloaded {
 			[&](MAYBE const ledit::State::PaintMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
 			[&](MAYBE const ledit::State::EraseMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
 			[&](MAYBE const ledit::State::PickMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
@@ -307,21 +306,21 @@ void m2::Game::draw_foreground() {
 }
 
 void m2::Game::draw_lights() {
-	for (auto light_it : _level->lights) {
-		IF(light_it.first->on_draw)(*light_it.first);
+	for (const auto& [light, _] : _level->lights) {
+		IF(light->on_draw)(*light);
 	}
 }
 
 void m2::Game::execute_post_draw() {
-	for (auto gfx_it : _level->graphics) {
-		IF(gfx_it.first->post_draw)(*gfx_it.first);
+	for (const auto& [gfx, _] : _level->graphics) {
+		IF(gfx->post_draw)(*gfx);
 	}
 }
 
 void m2::Game::debug_draw() {
 #ifdef DEBUG
-	for (auto phy_it: _level->physics) {
-		IF(phy_it.first->on_debug_draw)(*phy_it.first);
+	for (const auto& [phy, _] : _level->physics) {
+		IF(phy->on_debug_draw)(*phy);
 	}
 
 	if (is_projection_type_perspective(_level->projection_type())) {
@@ -329,8 +328,7 @@ void m2::Game::debug_draw() {
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
-				auto projected_p = screen_origin_to_projection_along_camera_plane_dstpx(_level->projection_type(), p);
-				if (projected_p) {
+				if (const auto projected_p = screen_origin_to_projection_along_camera_plane_dstpx(_level->projection_type(), p); projected_p) {
 					SDL_RenderDrawPointF(GAME.renderer, projected_p->x, projected_p->y);
 				}
 			}
@@ -345,7 +343,7 @@ void m2::Game::draw_hud() {
 	IF(_level->message_box_ui_state)->draw();
 }
 
-void m2::Game::draw_envelopes() {
+void m2::Game::draw_envelopes() const {
 	SDL_Rect sdl_rect{};
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -359,15 +357,15 @@ void m2::Game::draw_envelopes() {
 	SDL_RenderFillRect(renderer, &sdl_rect);
 }
 
-void m2::Game::flip_buffers() {
+void m2::Game::flip_buffers() const {
 	SDL_RenderPresent(renderer);
 }
 
-void m2::Game::recalculate_dimensions(int window_width, int window_height, int game_height_m) {
+void m2::Game::recalculate_dimensions(const int window_width, const int window_height, const int game_height_m) {
 	_dims = Dimensions{game_height_m == 0 ? _dims.height_m : game_height_m, window_width, window_height};
 }
 
-void m2::Game::set_zoom(float game_height_multiplier) {
+void m2::Game::set_zoom(const float game_height_multiplier) {
 	recalculate_dimensions(_dims.window.w, _dims.window.h, iround(static_cast<float>(_dims.height_m) * game_height_multiplier));
 	if (_level) {
 		IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
@@ -377,69 +375,66 @@ void m2::Game::set_zoom(float game_height_multiplier) {
 }
 
 void m2::Game::recalculate_mouse_position() {
-	auto mouse_position = events.mouse_position();
-	auto screen_center_to_mouse_position_px = VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
+	const auto mouse_position = events.mouse_position();
+	const auto screen_center_to_mouse_position_px = VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
 	_screen_center_to_mouse_position_m = VecF{F(screen_center_to_mouse_position_px.x) / F(_dims.ppm), F(screen_center_to_mouse_position_px.y) / F(_dims.ppm)};
 
 	if (is_projection_type_perspective(_level->projection_type())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
-		auto sin_of_player_to_camera_angle = m2g::camera_height / m2g::camera_distance;
-		auto cos_of_player_to_camera_angle = sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
+		const auto sin_of_player_to_camera_angle = m2g::camera_height / m2g::camera_distance;
+		const auto cos_of_player_to_camera_angle = sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 
-		auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * sin_of_player_to_camera_angle;
-		auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * cos_of_player_to_camera_angle;
-		auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm(_level->projection_type());
-		auto player_position = m3::focus_position_m();
-		auto mouse_position_world_m = m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
+		const auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * sin_of_player_to_camera_angle;
+		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * cos_of_player_to_camera_angle;
+		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm(_level->projection_type());
+		const auto player_position = m3::focus_position_m();
+		const auto mouse_position_world_m = m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
 
 		// Create Line from camera to mouse position
-		auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(_level->projection_type()), mouse_position_world_m);
+		const auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(_level->projection_type()), mouse_position_world_m);
 		// Get the xy-plane
-		auto plane = m3::Plane::xy_plane(m2g::xy_plane_z_component);
+		const auto plane = m3::Plane::xy_plane(m2g::xy_plane_z_component);
 		// Get the intersection
-		auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse);
-
-		if (forward_intersection) {
+		if (const auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse); forward_intersection) {
 			_mouse_position_world_m = VecF{intersection_point.x, intersection_point.y};
 		} else {
 			_mouse_position_world_m = VecF{-intersection_point.x, -10000.0f}; // Infinity is 10KM
 		}
 	} else {
-		auto camera_position = _level->objects[_level->camera_id].position;
+		const auto camera_position = _level->objects[_level->camera_id].position;
 		_mouse_position_world_m = _screen_center_to_mouse_position_m + camera_position;
 	}
 }
 
 m2::VecF m2::Game::pixel_to_2d_world_m(const VecI& pixel_position) {
-	auto screen_center_to_pixel_position_px = VecI{pixel_position.x - (_dims.window.w / 2), pixel_position.y - (_dims.window.h / 2)};
-	auto screen_center_to_pixel_position_m = VecF{F(screen_center_to_pixel_position_px.x) / F(_dims.ppm), F(screen_center_to_pixel_position_px.y) / F(_dims.ppm)};
-	auto camera_position = _level->objects[_level->camera_id].position;
+	const auto screen_center_to_pixel_position_px = VecI{pixel_position.x - (_dims.window.w / 2), pixel_position.y - (_dims.window.h / 2)};
+	const auto screen_center_to_pixel_position_m = VecF{F(screen_center_to_pixel_position_px.x) / F(_dims.ppm), F(screen_center_to_pixel_position_px.y) / F(_dims.ppm)};
+	const auto camera_position = _level->objects[_level->camera_id].position;
 	return screen_center_to_pixel_position_m + camera_position;
 }
 
 m2::RectF m2::Game::viewport_to_2d_world_rect_m() {
-	auto top_left = pixel_to_2d_world_m(VecI{dimensions().game.x, dimensions().game.y});
-	auto bottom_right = pixel_to_2d_world_m(VecI{dimensions().game.x + dimensions().game.w, dimensions().game.y + dimensions().game.h});
+	const auto top_left = pixel_to_2d_world_m(VecI{dimensions().game.x, dimensions().game.y});
+	const auto bottom_right = pixel_to_2d_world_m(VecI{dimensions().game.x + dimensions().game.w, dimensions().game.y + dimensions().game.h});
 	return RectF::from_corners(top_left, bottom_right);
 }
 
 void m2::Game::recalculate_directional_audio() {
 	if (_level->left_listener || _level->right_listener) {
 		// Loop over sounds
-		for (auto sound_emitter_it : _level->sound_emitters) {
-			const auto& sound_emitter = *sound_emitter_it.first;
-			const auto& sound_position = sound_emitter.parent().position;
+		for (const auto& [sound_emitter, _] : _level->sound_emitters) {
+			const auto& sound_position = sound_emitter->parent().position;
 			// Loop over playbacks
-			for (auto playback_id : sound_emitter.playbacks) {
+			for (const auto playback_id : sound_emitter->playbacks) {
 				if (!audio_manager->has_playback(playback_id)) {
 					continue; // Playback may have finished (if it's ONCE)
 				}
 				// Left listener
-				auto left_volume = _level->left_listener ? _level->left_listener->volume_of(sound_position) : 0.0f;
+				const auto left_volume = _level->left_listener ? _level->left_listener->volume_of(sound_position) : 0.0f;
 				audio_manager->set_playback_left_volume(playback_id, left_volume);
 				// Right listener
-				auto right_volume = _level->right_listener ? _level->right_listener->volume_of(sound_position) : 0.0f;
+				const auto right_volume = _level->right_listener ? _level->right_listener->volume_of(sound_position) : 0.0f;
 				audio_manager->set_playback_right_volume(playback_id, right_volume);
 			}
 		}

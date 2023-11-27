@@ -19,6 +19,7 @@ namespace m2::sdl {
 
         // Can be null if the string is empty
         [[nodiscard]] SDL_Texture* texture() const { return _texture.get(); }
+        explicit operator bool() const { return texture(); }
 
         [[nodiscard]] int int_value() const { return std::get<int>(_value); }
         [[nodiscard]] float float_value() const { return std::get<float>(_value); }

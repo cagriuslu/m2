@@ -1,6 +1,7 @@
 #pragma once
 #include "widget/CheckboxWithTextBlueprint.h"
 #include "widget/ImageBlueprint.h"
+#include "widget/HiddenBlueprint.h"
 #include "widget/ImageSelectionBlueprint.h"
 #include "widget/IntegerSelectionBlueprint.h"
 #include "widget/NestedUiBlueprint.h"
@@ -22,6 +23,7 @@ namespace m2::ui {
 
 		using Variant = std::variant<
 				widget::NestedUiBlueprint,
+				widget::HiddenBlueprint,
 				widget::ImageBlueprint,
 				widget::TextBlueprint,
 				widget::ProgressBarBlueprint,

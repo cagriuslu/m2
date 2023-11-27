@@ -21,15 +21,14 @@ namespace m2::ui {
         void draw();
 
 	private:
-		std::unique_ptr<Widget> create_widget_state(const WidgetBlueprint& blueprint);
+		std::unique_ptr<Widget> create_widget_state(const WidgetBlueprint& widget_blueprint);
 		void set_widget_focus_state(Widget& w, bool state);
 		void clear_focus();
 
 	public:
 		// Helpers
-
 		template<typename WidgetT>
-		Widget* find_first_widget_of_blueprint_type() {
+		[[nodiscard]] Widget* find_first_widget_of_blueprint_type() const {
 			for (auto& w : widgets) {
 				if (std::holds_alternative<WidgetT>(w->blueprint->variant)) {
 					return w.get();

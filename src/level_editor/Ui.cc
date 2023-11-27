@@ -157,8 +157,7 @@ const widget::TextBlueprint pick_mode_title = {
 const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
 		.initial_list = {"Background", "Foreground"},
 		.on_action = [](const widget::TextSelection& self) -> Action {
-			const auto& selection = self.selection();
-			if (selection == "Background") {
+			if (const auto& selection = self.selection(); selection == "Background") {
 				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = false;
 			} else if (selection == "Foreground") {
 				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = true;
@@ -300,8 +299,7 @@ const widget::TextBlueprint shift_mode_title = {
 const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
 		.initial_list = {"Right", "Down", "Right & Down"},
 		.on_action = [](const widget::TextSelection& self) -> Action {
-			const auto& selection = self.selection();
-			if (selection == "Right") {
+			if (const auto& selection = self.selection(); selection == "Right") {
 				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT;
 			} else if (selection == "Down") {
 				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::DOWN;
@@ -438,17 +436,10 @@ const widget::TextBlueprint left_hud_gridlines_button = {
 			return Action::CONTINUE;
 		}
 };
-const widget::TextBlueprint left_hud_save_button = {
-		.initial_text = "SAVE",
-		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->save();
-			return Action::CONTINUE;
-		}
-};
 const widget::TextBlueprint left_hud_coordinates = {
 		.initial_text = "0,0",
 		.on_update = [](MAYBE const widget::Text& self) {
-			auto mouse_position = GAME.mouse_position_world_m().iround();
+			const auto mouse_position = GAME.mouse_position_world_m().iround();
 			return std::make_pair(Action::CONTINUE, std::to_string(mouse_position.x) + ',' + std::to_string(mouse_position.y));
 		}
 };
@@ -506,16 +497,10 @@ const Blueprint level_editor::ui::left_hud = {
 						.variant = left_hud_cancel_button
 				},
 				WidgetBlueprint{
-						.x = 4, .y = 62, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
-						.variant = left_hud_gridlines_button
-				},
-				WidgetBlueprint{
 						.x = 4, .y = 66, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.padding_width_px = 2,
-						.variant = left_hud_save_button
+						.variant = left_hud_gridlines_button
 				},
 				WidgetBlueprint{
 						.x = 0, .y = 70, .w = 19, .h = 2,
@@ -529,4 +514,40 @@ const Blueprint level_editor::ui::right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
 		.background_color = {50, 50, 50, 255}
+};
+
+const widget::TextBlueprint save_button = {
+	.initial_text = "Save",
+	.kb_shortcut = SDL_SCANCODE_S,
+	.on_action = [](MAYBE const widget::Text& self) -> Action {
+		LEVEL.level_editor_state->save();
+		return Action::CONTINUE;
+	}
+};
+const widget::TextBlueprint quit_button = {
+	.initial_text = "Quit",
+	.kb_shortcut = SDL_SCANCODE_Q,
+	.on_action = [](MAYBE const widget::Text& self) -> Action {
+		return Action::QUIT;
+	}
+};
+const Blueprint level_editor::ui::menu = {
+	.w = 160, .h = 90,
+	.border_width_px = 0,
+	.background_color = {50, 50, 50, 255},
+	.cancellable = true,
+	.widgets = {
+		WidgetBlueprint{
+			.x = 70, .y = 40, .w = 20, .h = 10,
+			.border_width_px = 1,
+			.padding_width_px = 2,
+			.variant = save_button
+		},
+		WidgetBlueprint{
+			.x = 70, .y = 70, .w = 20, .h = 10,
+			.border_width_px = 1,
+			.padding_width_px = 2,
+			.variant = quit_button
+		}
+	}
 };

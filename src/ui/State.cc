@@ -4,6 +4,7 @@
 #include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/Image.h>
+#include <m2/ui/widget/Hidden.h>
 #include <m2/ui/widget/ImageSelection.h>
 #include <m2/ui/widget/IntegerSelection.h>
 #include <m2/ui/widget/NestedUi.h>
@@ -43,7 +44,7 @@ Action State::create_execute_sync(const Blueprint *blueprint) {
 	return create_execute_sync(blueprint, GAME.dimensions().window);
 }
 
-Action State::create_execute_sync(const Blueprint *blueprint, RectI rect) {
+Action State::create_execute_sync(const Blueprint *blueprint, const RectI rect) {
 	// Check if there are other blocking UIs
 	if (GAME.ui_begin_ticks) {
 		// Execute state without keeping time
@@ -54,7 +55,7 @@ Action State::create_execute_sync(const Blueprint *blueprint, RectI rect) {
 		GAME.ui_begin_ticks = sdl::get_ticks();
 		// Execute state
 		State state{blueprint};
-		auto action = state.execute(rect);
+		const auto action = state.execute(rect);
 		// Add pause ticks
 		GAME.add_pause_ticks(sdl::get_ticks_since(*GAME.ui_begin_ticks));
 		GAME.ui_begin_ticks.reset();
@@ -66,16 +67,16 @@ State::~State() {
 	clear_focus();
 }
 
-Action State::execute(RectI rect) {
+Action State::execute(const RectI rect) {
 	DEBUG_FN();
 
 	// Save relation to window, use in case of resize
 	const auto& winrect = GAME.dimensions().window;
-	auto relation_to_window = RectF{
-			(float) (rect.x - winrect.x) / (float) winrect.w,
-			(float) (rect.y - winrect.y) / (float) winrect.h,
-			(float) rect.w / (float) winrect.w,
-			(float) rect.h / (float) winrect.h,
+	const auto relation_to_window = RectF{
+			static_cast<float>(rect.x - winrect.x) / static_cast<float>(winrect.w),
+			static_cast<float>(rect.y - winrect.y) / static_cast<float>(winrect.h),
+			static_cast<float>(rect.w) / static_cast<float>(winrect.w),
+			static_cast<float>(rect.h) / static_cast<float>(winrect.h)
 	};
 
 	// Get screenshot
@@ -83,7 +84,7 @@ Action State::execute(RectI rect) {
 	SDL_GetRendererOutputSize(GAME.renderer, &w, &h);
 	auto *surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
 	SDL_RenderReadPixels(GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
-	std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
+	const std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
 	SDL_FreeSurface(surface);
 
 	Action return_value;
@@ -106,25 +107,23 @@ Action State::execute(RectI rect) {
 			if (events.pop_key_press(Key::CONSOLE) &&
 					blueprint != &console_ui) { // Do not open console on top of console
 				LOG_INFO("Opening console");
-				auto action = State::create_execute_sync(&console_ui);
-				if (action == Action::RETURN) {
+				if (auto action = create_execute_sync(&console_ui); action == Action::RETURN) {
 					// Continue with the prev UI
 					LOG_DEBUG("Console returned");
 				} else if (action == Action::CLEAR_STACK || action == Action::QUIT) {
-					LOG_DEBUG("Console returned", (int) action);
+					LOG_DEBUG("Console returned", static_cast<int>(action));
 					return action;
 				} else {
-					LOG_WARN("Console returned unexpected action", (int) action);
+					LOG_WARN("Console returned unexpected action", static_cast<int>(action));
 				}
 			}
-			auto window_resize = events.pop_window_resize();
-			if (window_resize) {
+			if (const auto window_resize = events.pop_window_resize(); window_resize) {
 				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
 				update_positions(RectI{
-						(int) round((float) winrect.x + relation_to_window.x * (float) winrect.w),
-						(int) round((float) winrect.y + relation_to_window.y * (float) winrect.h),
-						(int) round(relation_to_window.w * (float) winrect.w),
-						(int) round(relation_to_window.h * (float) winrect.h)
+						static_cast<int>(round(static_cast<float>(winrect.x) + relation_to_window.x * static_cast<float>(winrect.w))),
+						static_cast<int>(round(static_cast<float>(winrect.y) + relation_to_window.y * static_cast<float>(winrect.h))),
+						static_cast<int>(round(relation_to_window.w * static_cast<float>(winrect.w))),
+						static_cast<int>(round(relation_to_window.h * static_cast<float>(winrect.h)))
 				});
 			}
 			if ((return_value = handle_events(events)) != Action::CONTINUE) {
@@ -153,10 +152,10 @@ Action State::execute(RectI rect) {
 	}
 }
 
-void State::update_positions(const RectI& rect_px_) {
-	this->rect_px = rect_px_;
-	for (auto &widget_state: widgets) {
-		auto widget_rect = calculate_widget_rect(rect_px_, blueprint->w, blueprint->h, widget_state->blueprint->x,
+void State::update_positions(const RectI& rect) {
+	this->rect_px = rect;
+	for (const auto &widget_state: widgets) {
+		auto widget_rect = calculate_widget_rect(rect, blueprint->w, blueprint->h, widget_state->blueprint->x,
 				widget_state->blueprint->y, widget_state->blueprint->w, widget_state->blueprint->h);
 		widget_state->on_position_update(widget_rect);
 	}
@@ -168,8 +167,12 @@ Action State::handle_events(Events &events) {
 		return Action::CONTINUE;
 	}
 
+	if (blueprint->cancellable && events.pop_key_press(Key::MENU)) {
+		return Action::RETURN;
+	}
+
 	for (auto &widget: widgets | std::views::filter(is_widget_enabled)) {
-		switch (auto action = widget->on_event(events); action) {
+		switch (const auto action = widget->on_event(events); action) {
 			case Action::CONTINUE:
 				continue;
 			case Action::GAIN_FOCUS:
@@ -189,8 +192,8 @@ Action State::update_contents() {
 		return Action::CONTINUE;
 	}
 
-	for (auto &widget: widgets | std::views::filter(is_widget_enabled)) {
-		switch (auto action = widget->on_update(); action) {
+	for (const auto &widget: widgets | std::views::filter(is_widget_enabled)) {
+		switch (const auto action = widget->on_update(); action) {
 			case Action::CONTINUE:
 			case Action::GAIN_FOCUS:
 			case Action::LOSE_FOCUS:
@@ -219,6 +222,8 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget
 	using namespace m2::ui::widget;
 	if (std::holds_alternative<NestedUiBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<NestedUi>(this, &widget_blueprint);
+	} else if (std::holds_alternative<HiddenBlueprint>(widget_blueprint.variant)) {
+		state = std::make_unique<Hidden>(this, &widget_blueprint);
 	} else if (std::holds_alternative<TextBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<Text>(this, &widget_blueprint);
 	} else if (std::holds_alternative<TextInputBlueprint>(widget_blueprint.variant)) {
@@ -242,8 +247,8 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget
 	return state;
 }
 
-void State::set_widget_focus_state(Widget &w, bool focus_state) {
-	if (focus_state) {
+void State::set_widget_focus_state(Widget &w, const bool state) {
+	if (state) {
 		if (!w.focused) {
 			// Clear existing focus
 			clear_focus();
@@ -268,19 +273,19 @@ void State::clear_focus() {
 	);
 }
 
-RectI m2::ui::calculate_widget_rect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h) {
-	auto pixels_per_unit_w = (float) root_rect_px.w / (float) root_w;
-	auto pixels_per_unit_h = (float) root_rect_px.h / (float) root_h;
+RectI ui::calculate_widget_rect(const RectI& root_rect_px, const unsigned root_w, const unsigned root_h, const int child_x, const int child_y, const unsigned child_w, const unsigned child_h) {
+	const auto pixels_per_unit_w = static_cast<float>(root_rect_px.w) / static_cast<float>(root_w);
+	const auto pixels_per_unit_h = static_cast<float>(root_rect_px.h) / static_cast<float>(root_h);
 	return RectI{
-			root_rect_px.x + (int) roundf((float) child_x * pixels_per_unit_w),
-			root_rect_px.y + (int) roundf((float) child_y * pixels_per_unit_h),
-			(int) roundf((float) child_w * pixels_per_unit_w),
-			(int) roundf((float) child_h * pixels_per_unit_h)
+			root_rect_px.x + static_cast<int>(roundf(static_cast<float>(child_x) * pixels_per_unit_w)),
+			root_rect_px.y + static_cast<int>(roundf(static_cast<float>(child_y) * pixels_per_unit_h)),
+			static_cast<int>(roundf(static_cast<float>(child_w) * pixels_per_unit_w)),
+			static_cast<int>(roundf(static_cast<float>(child_h) * pixels_per_unit_h))
 	};
 }
 
 m2::ui::Widget *m2::ui::find_text_widget(State &state, const std::string &text) {
-	auto it = std::ranges::find_if(state.widgets,
+	const auto it = std::ranges::find_if(state.widgets,
 			// Predicate
 			[=](const auto *blueprint) {
 				const auto *text_variant = std::get_if<ui::widget::TextBlueprint>(&blueprint->variant);
@@ -300,8 +305,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 			GAME.console_output.emplace_back(">> " + command);
 
 			if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
-				std::smatch match_results;
-				if (std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
+				if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
 					auto load_result = GAME.load_level_editor(GAME.levels_dir / match_results.str(1));
 					if (load_result) {
 						return std::make_pair(Action::CLEAR_STACK, std::string{});
@@ -313,11 +317,10 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				}
 				return std::make_pair(Action::CONTINUE, std::string{});
 			} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
-				std::smatch match_results;
-				if (std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
+				if (std::smatch match_results; std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
 					auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
 					auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
-					auto load_result = GAME.load_pixel_editor(match_results.str(3), (int) x_offset, (int) y_offset);
+					auto load_result = GAME.load_pixel_editor(match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
 					if (load_result) {
 						return std::make_pair(Action::CLEAR_STACK, std::string{});
 					}
@@ -328,8 +331,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				}
 				return std::make_pair(Action::CONTINUE, std::string{});
 			} else if (std::regex_match(command, std::regex{"sedit(\\s.*)?"})) {
-				std::smatch match_results;
-				if (std::regex_match(command, match_results, std::regex{R"(sedit(\s.*)?)"})) {
+				if (std::smatch match_results; std::regex_match(command, match_results, std::regex{R"(sedit(\s.*)?)"})) {
 					auto trimmed_arg = string::trim(match_results.str(1));
 					auto path = trimmed_arg.empty() ? (GAME.resource_dir / "SpriteSheets.json").string() : trimmed_arg;
 					auto load_result = GAME.load_sheet_editor(path);
@@ -347,17 +349,14 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				}
 				return std::make_pair(Action::CONTINUE, std::string{});
 			} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
-				std::smatch match_results;
-				if (std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
-					auto parameter = match_results.str(1);
-					if (parameter == "game_height") {
+				if (std::smatch match_results; std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
+					if (auto parameter = match_results.str(1); parameter == "game_height") {
 						auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
 						GAME.recalculate_dimensions(GAME.dimensions().window.w, GAME.dimensions().window.h,
 								new_game_height);
 						return std::make_pair(Action::CONTINUE, std::string{});
-					} else {
-						GAME.console_output.emplace_back("Unknown parameter");
 					}
+					GAME.console_output.emplace_back("Unknown parameter");
 				} else {
 					// TODO print help
 				}

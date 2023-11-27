@@ -36,12 +36,12 @@ Action TextInput::on_event(Events& events) {
 		}
 		return action;
 	} else if (events.pop_key_press(Key::BACKSPACE)) {
-		if (auto text_input_str = _text_input.str(); not text_input_str.empty()) {
+		if (const auto text_input_str = _text_input.str(); not text_input_str.empty()) {
 			_text_input = std::stringstream{text_input_str.substr(0, text_input_str.length() - 1)};
 			_text_input.seekp(0, std::ios::end);
 		}
 	} else {
-		if (auto opt_text_input = events.pop_text_input(); opt_text_input) {
+		if (const auto opt_text_input = events.pop_text_input(); opt_text_input) {
 			_text_input << *opt_text_input;
 		}
 	}
@@ -66,7 +66,7 @@ Action TextInput::on_update() {
 	}
 
 	// Generate new texture is the string has changed
-	if (str != _font_texture.string_value()) {
+	if (not _font_texture || str != _font_texture.string_value()) {
 		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(str));
 	}
 

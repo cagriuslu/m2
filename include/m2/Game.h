@@ -1,7 +1,6 @@
 #pragma once
 #include "Proxy.h"
 #include "Level.h"
-#include "Group.h"
 #include "Shape.h"
 #include "AudioManager.h"
 #include "Sprite.h"
@@ -11,24 +10,13 @@
 #include "Animation.h"
 #include <m2/Object.h>
 #include <m2g_ObjectType.pb.h>
-#include "Rational.h"
-#include "Pathfinder.h"
-#include "ui/State.h"
-#include "component/Physique.h"
-#include "component/Graphic.h"
-#include <m2/box2d/ContactListener.h>
 #include <m2/Pool.h>
 #include <SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <vector>
-#include <box2d/b2_world.h>
-#include <Sprite.pb.h>
-#include <sstream>
 #include "Meta.h"
-#include "M2.h"
 #include "Item.h"
 #include <filesystem>
-#include <unordered_map>
 
 #define GAME (m2::Game::instance())
 #define LEVEL (GAME.level())
@@ -131,16 +119,16 @@ namespace m2 {
 		void_expected load_level_editor(const std::string& level_resource_path);
 		void_expected load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		void_expected load_sheet_editor(const std::string& sheet_path);
-		inline Level& level() { return *_level; }
+		Level& level() { return *_level; }
 
 		// Accessors
-		inline const Dimensions& dimensions() const { return _dims; }
-		inline const Sprite& get_sprite(m2g::pb::SpriteType sprite_type) { return _sprites[protobuf::enum_index(sprite_type)]; }
-		inline SmartPointer<const Item> get_item(m2g::pb::ItemType item_type) { return make_static<const Item>(&_items[protobuf::enum_index(item_type)]); }
+		const Dimensions& dimensions() const { return _dims; }
+		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[protobuf::enum_index(sprite_type)]; }
+		SmartPointer<const Item> get_item(const m2g::pb::ItemType item_type) const { return make_static<const Item>(&_items[protobuf::enum_index(item_type)]); }
 		const Song& get_song(m2g::pb::SongType song_type);
-		inline float delta_time_s() const { return _delta_time_s; }
-		inline const VecF& mouse_position_world_m() const { return _mouse_position_world_m; }
-		inline const VecF& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
+		float delta_time_s() const { return _delta_time_s; }
+		const VecF& mouse_position_world_m() const { return _mouse_position_world_m; }
+		const VecF& screen_center_to_mouse_position_m() const { return _screen_center_to_mouse_position_m; }
 		VecF pixel_to_2d_world_m(const VecI& pixel_position);
 		RectF viewport_to_2d_world_rect_m();
 
@@ -157,18 +145,18 @@ namespace m2 {
 		void update_sounds();
 		void execute_pre_draw();
 		void update_hud_contents();
-		void clear_back_buffer();
+		void clear_back_buffer() const;
 		void draw_background();
 		void draw_foreground();
 		void draw_lights();
 		void execute_post_draw();
 		void debug_draw();
 		void draw_hud();
-		void draw_envelopes();
-		void flip_buffers();
+		void draw_envelopes() const;
+		void flip_buffers() const;
 
 		// Modifiers
-		inline void add_pause_ticks(sdl::ticks_t ticks) { pause_ticks += ticks; }
+		void add_pause_ticks(const sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void recalculate_dimensions(int window_width, int window_height, int game_height_m = 0);
 		void set_zoom(float game_height_multiplier);
 		void recalculate_mouse_position();
