@@ -1,7 +1,6 @@
 - Sound doesn't play if object dies
 - m2 command line argument'larini direkt consola redirect et
 - Protobuf loading yaparken duplicate type'a sahip liste load etmesi bir pattern'a donustur
-- Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
 - Override ppm doesn't work for dropped items
 - SDL_ComposeCustomBlendMode
 - Enable VSync, do something while waiting for VSync
@@ -19,6 +18,7 @@ Pixel Editor
 - Implement SAVE
 
 RPG
+- Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
 - Take inspiration from: Elden Ring, Diablo 1-2
 - Build tutorial levels: Machine Gun, Explosive Weapon, Long Sword, Axe, Stun
 - Chaser gets stuck sometimes, either solve properly, or add detection
