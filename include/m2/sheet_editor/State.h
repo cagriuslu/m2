@@ -1,19 +1,18 @@
 #pragma once
 #include "../Meta.h"
 #include "../CircF.h"
-#include "../ui/Blueprint.h"
 #include "../ui/State.h"
 #include "../sheet_editor/DynamicImageLoader.h"
 #include <m2g_SpriteType.pb.h>
 #include <Sprite.pb.h>
 #include <filesystem>
-#include <utility>
 
 namespace m2::sedit {
 	struct State {
 		const std::filesystem::path _path;
 		mutable pb::SpriteSheets _sprite_sheets;
 		m2g::pb::SpriteType _selected_sprite_type{};
+		std::optional<DynamicImageLoader> _dynamic_image_loader;
 
 		struct ForegroundCompanionMode {
 			// Secondary mouse button sets the center
@@ -93,10 +92,11 @@ namespace m2::sedit {
 		RectI selected_sprite_rect() const; // This function re-reads the file every time it's called.
 		VecF selected_sprite_center() const; // This function re-reads the file every time it's called.
 		VecF selected_sprite_origin() const; // This function re-reads the file every time it's called.
+		DynamicImageLoader* dynamic_image_loader() { return _dynamic_image_loader ? &*_dynamic_image_loader : nullptr; }
 
 		// To be used by the main menu
 		void set_sprite_type(m2g::pb::SpriteType);
-		void select() const;
+		void select();
 
 		// To be used by left hud
 		void deactivate_mode();

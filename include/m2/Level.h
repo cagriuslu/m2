@@ -11,23 +11,14 @@
 #include "Pathfinder.h"
 #include "Meta.h"
 #include <Level.pb.h>
+#include "single_player/State.h"
+#include <box2d/b2_world.h>
 #include <functional>
 #include <optional>
 #include <string>
 
 namespace m2 {
 	class Level final {
-	public:
-		enum class Type {
-			NO_TYPE,
-			SINGLE_PLAYER,
-			LEVEL_EDITOR,
-			PIXEL_EDITOR,
-			SHEET_EDITOR
-		};
-
-	private:
-		Type _type{};
 		std::optional<std::filesystem::path> _lb_path;
 		std::optional<pb::Level> _lb;
 		std::string _name;
@@ -61,10 +52,7 @@ namespace m2 {
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
 		std::vector<std::function<void()>> deferred_actions;
-		std::optional<ledit::State> level_editor_state;
-		std::optional<pedit::State> pixel_editor_state;
-		std::optional<sedit::State> sheet_editor_state;
-		std::optional<DynamicImageLoader> dynamic_image_loader;
+		std::variant<std::monostate, splayer::State, ledit::State, pedit::State, sedit::State> type_state;
 		std::optional<DynamicGridLinesLoader> dynamic_grid_lines_loader;
 		std::optional<DynamicGridLinesLoader> dynamic_sheet_grid_lines_loader;
 
@@ -75,7 +63,6 @@ namespace m2 {
 		void_expected reset_sheet_editor();
 
 		// Accessors
-		[[nodiscard]] Type type() const { return _type; }
 		std::optional<std::filesystem::path> path() const { return _lb_path; }
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }

@@ -3,6 +3,7 @@
 
 #define MAYBE [[maybe_unused]]
 #define IF(cond) if (cond) cond
+#define IF_TYPE(ref, type) if (std::holds_alternative<type>(ref)) std::get<type>(ref)
 
 namespace m2 {
 	constexpr float PI = 3.141592653589793f;

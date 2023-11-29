@@ -36,7 +36,6 @@ m2::Level::~Level() {
 }
 
 m2::void_expected m2::Level::init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
-	_type = Type::SINGLE_PLAYER;
 	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
 		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
@@ -48,6 +47,7 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	}
 	_name = name;
 	_projection_type = _lb->projection_type();
+	type_state.emplace<splayer::State>();
 
 	m2g::pre_single_player_level_init(_name, *_lb);
 
@@ -119,9 +119,9 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 }
 
 m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_path) {
-	_type = Type::LEVEL_EDITOR;
 	_lb_path = lb_path;
-	level_editor_state = ledit::State{};
+	type_state.emplace<ledit::State>();
+	auto& le_state = std::get<ledit::State>(type_state);
 
 	if (std::filesystem::exists(lb_path)) {
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
@@ -135,7 +135,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 					auto sprite_type = layer.background_rows(y).items(x);
 					if (sprite_type) {
 						auto position = VecF{x, y};
-						level_editor_state->bg_placeholders[l][position.iround()] = std::make_pair(obj::create_background_placeholder(position, GAME.get_sprite(sprite_type), static_cast<BackgroundLayer>(l)), sprite_type); // HERE
+						le_state.bg_placeholders[l][position.iround()] = std::make_pair(obj::create_background_placeholder(position, GAME.get_sprite(sprite_type), static_cast<BackgroundLayer>(l)), sprite_type); // HERE
 					}
 				}
 			}
@@ -143,7 +143,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
 			auto position = m2::VecF{fg_object.position()};
-			level_editor_state->fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()])), fg_object);
+			le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()])), fg_object);
 		}
 	}
 
@@ -164,10 +164,11 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 }
 
 m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path, int x_offset, int y_offset) {
-	_type = Type::PIXEL_EDITOR;
 	_lb_path = path;
-	pixel_editor_state = pedit::State{};
-	pixel_editor_state->image_offset = VecI{x_offset, y_offset};
+	type_state.emplace<pedit::State>();
+	auto& pe_state = std::get<pedit::State>(type_state);
+
+	pe_state.image_offset = VecI{x_offset, y_offset};
 
 	if (std::filesystem::exists(path)) {
 		// Load image
@@ -176,17 +177,17 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path
 			return make_unexpected("Unable to load image " + path.string() + ": " + IMG_GetError());
 		}
 		// Convert to a more conventional format
-		pixel_editor_state->image_surface.reset(SDL_ConvertSurfaceFormat(tmp_surface.get(), SDL_PIXELFORMAT_BGRA32, 0));
-		if (not pixel_editor_state->image_surface) {
+		pe_state.image_surface.reset(SDL_ConvertSurfaceFormat(tmp_surface.get(), SDL_PIXELFORMAT_BGRA32, 0));
+		if (not pe_state.image_surface) {
 			return make_unexpected("Unable to convert image format: " + std::string(SDL_GetError()));
 		}
 		// Iterate over pixels
-		SDL_LockSurface(pixel_editor_state->image_surface.get());
+		SDL_LockSurface(pe_state.image_surface.get());
 		// Activate paint mode
-		pixel_editor_state->activate_paint_mode();
+		pe_state.activate_paint_mode();
 
-		const auto& off = pixel_editor_state->image_offset;
-		const auto& sur = *pixel_editor_state->image_surface;
+		const auto& off = pe_state.image_offset;
+		const auto& sur = *pe_state.image_surface;
 		auto y_max = std::min(128, sur.h - off.y);
 		auto x_max = std::min(128, sur.w - off.x);
 		for (int y = off.y; y < y_max; ++y) {
@@ -200,14 +201,14 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path
 				SDL_Color color;
 				SDL_GetRGBA(*pixel, sur.format, &color.r, &color.g, &color.b, &color.a);
 				// Select color
-				pixel_editor_state->selected_color = color;
+				pe_state.selected_color = color;
 				// Paint pixel
 				pedit::State::PaintMode::paint_color(VecI{x, y});
 			}
 		}
 
-		pixel_editor_state->deactivate_mode();
-		SDL_UnlockSurface(pixel_editor_state->image_surface.get());
+		pe_state.deactivate_mode();
+		SDL_UnlockSurface(pe_state.image_surface.get());
 	}
 
 	// Create default objects
@@ -227,13 +228,12 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path
 }
 
 m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path) {
-	_type = Type::SHEET_EDITOR;
 	_lb_path = path;
 
 	// Create state
 	auto state = sedit::State::create(*_lb_path);
 	m2_reflect_failure(state);
-	sheet_editor_state.emplace(std::move(*state));
+	type_state.emplace<sedit::State>(std::move(*state));
 
 	// Create default objects
 	player_id = m2::obj::create_god();

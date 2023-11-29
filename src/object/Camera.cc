@@ -24,7 +24,12 @@ m2::Id m2::obj::create_camera() {
 		camera.position = player.position;
 
 		// Move dynamic loaders if they exist
-		IF(LEVEL.dynamic_image_loader)->move(GAME.viewport_to_2d_world_rect_m());
+		std::visit(overloaded {
+			[](sedit::State& ss) {
+				if (auto* dil = ss.dynamic_image_loader()) { dil->move(GAME.viewport_to_2d_world_rect_m()); }
+			},
+			[](MAYBE auto& _) {}
+		}, LEVEL.type_state);
 		IF(LEVEL.dynamic_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
 		IF(LEVEL.dynamic_sheet_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
 

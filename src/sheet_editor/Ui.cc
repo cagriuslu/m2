@@ -13,7 +13,7 @@ const widget::TextBlueprint right_hud_set_button = {
 					[](sedit::State::BackgroundColliderMode& mode) { mode.set(); },
 					[](sedit::State::ForegroundColliderMode& mode) { mode.set(); },
 					[](const auto&) {},
-			}, LEVEL.sheet_editor_state->mode);
+			}, std::get<sedit::State>(LEVEL.type_state).mode);
 			return Action::CONTINUE;
 		}
 };
@@ -24,7 +24,7 @@ const widget::TextBlueprint right_hud_set_rect_button = {
 					[](sedit::State::ForegroundCompanionMode& mode) { mode.add_rect(); },
 					[](sedit::State::RectMode& mode) { mode.set_rect(); },
 					[](const auto&) {},
-			}, LEVEL.sheet_editor_state->mode);
+			}, std::get<sedit::State>(LEVEL.type_state).mode);
 			return Action::CONTINUE;
 		}
 };
@@ -35,7 +35,7 @@ const widget::TextBlueprint right_hud_set_center_button = {
 					[](sedit::State::ForegroundCompanionMode& mode) { mode.set_center(); },
 					[](sedit::State::RectMode& mode) { mode.set_center(); },
 					[](const auto&) {},
-			}, LEVEL.sheet_editor_state->mode);
+			}, std::get<sedit::State>(LEVEL.type_state).mode);
 			return Action::CONTINUE;
 		}
 };
@@ -48,7 +48,7 @@ const widget::TextBlueprint right_hud_reset_button = {
 				[](sedit::State::BackgroundColliderMode& mode) { mode.reset(); },
 				[](sedit::State::ForegroundColliderMode& mode) { mode.reset(); },
 				[](const auto&) {},
-			}, LEVEL.sheet_editor_state->mode);
+			}, std::get<sedit::State>(LEVEL.type_state).mode);
 			return Action::CONTINUE;
 		}
 };
@@ -177,7 +177,7 @@ const ui::Blueprint m2::ui::sheet_editor_right_hud = {
 const widget::TextBlueprint left_hud_foreground_companion_button = {
 		.initial_text = "FComp",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.sheet_editor_state->activate_foreground_companion_mode();
+			std::get<sedit::State>(LEVEL.type_state).activate_foreground_companion_mode();
 
 			LEVEL.right_hud_ui_state.emplace(&sheet_editor_foreground_companion_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
@@ -187,7 +187,7 @@ const widget::TextBlueprint left_hud_foreground_companion_button = {
 const widget::TextBlueprint left_hud_rect_button = {
 		.initial_text = "Rect",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.sheet_editor_state->activate_rect_mode();
+			std::get<sedit::State>(LEVEL.type_state).activate_rect_mode();
 
 			LEVEL.right_hud_ui_state.emplace(&sheet_editor_rect_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
@@ -197,7 +197,7 @@ const widget::TextBlueprint left_hud_rect_button = {
 const widget::TextBlueprint left_hud_background_collider_button = {
 		.initial_text = "BColl",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.sheet_editor_state->activate_background_collider_mode();
+			std::get<sedit::State>(LEVEL.type_state).activate_background_collider_mode();
 
 			LEVEL.right_hud_ui_state.emplace(&sheet_editor_background_collider_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
@@ -207,7 +207,7 @@ const widget::TextBlueprint left_hud_background_collider_button = {
 const widget::TextBlueprint left_hud_foreground_collider_button = {
 		.initial_text = "FColl",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.sheet_editor_state->activate_foreground_collider_mode();
+			std::get<sedit::State>(LEVEL.type_state).activate_foreground_collider_mode();
 
 			LEVEL.right_hud_ui_state.emplace(&sheet_editor_foreground_collider_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
@@ -217,7 +217,7 @@ const widget::TextBlueprint left_hud_foreground_collider_button = {
 const widget::TextBlueprint left_hud_cancel_button = {
 		.initial_text = "Cancel",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.sheet_editor_state->deactivate_mode();
+			std::get<sedit::State>(LEVEL.type_state).deactivate_mode();
 
 			LEVEL.right_hud_ui_state.emplace(&sheet_editor_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
@@ -288,7 +288,7 @@ widget::ImageBlueprint sprite_display = {
 };
 const widget::TextSelectionBlueprint sprite_selection = {
 		.on_create = [](MAYBE const widget::TextSelection& self) -> std::optional<widget::TextSelectionBlueprint::Options> {
-			const auto& pb_sheets = LEVEL.sheet_editor_state->sprite_sheets();
+			const auto& pb_sheets = std::get<sedit::State>(LEVEL.type_state).sprite_sheets();
 			// Gather the list of sprites
 			std::vector<m2g::pb::SpriteType> sprite_types;
 			std::for_each(pb_sheets.sheets().cbegin(), pb_sheets.sheets().cend(), [&sprite_types](const auto& sheet) {
@@ -308,7 +308,7 @@ const widget::TextSelectionBlueprint sprite_selection = {
 		.on_action = [](const widget::TextSelection& self) -> ui::Action {
 			m2g::pb::SpriteType selected_sprite_type;
 			if (m2g::pb::SpriteType_Parse(self.selection(), &selected_sprite_type)) {
-				LEVEL.sheet_editor_state->set_sprite_type(selected_sprite_type);
+				std::get<sedit::State>(LEVEL.type_state).set_sprite_type(selected_sprite_type);
 				return Action::CONTINUE;
 			} else {
 				throw M2FATAL("Implementation error: Unknown sprite type ended up in sprite selection list");
@@ -349,12 +349,12 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 								.initial_text = "SELECT",
 								.kb_shortcut = SDL_SCANCODE_RETURN,
 								.on_action = [](MAYBE const widget::Text& self) -> Action {
-									if (not std::holds_alternative<std::monostate>(LEVEL.sheet_editor_state->mode)) {
-										LEVEL.sheet_editor_state->deactivate_mode();
+									if (not std::holds_alternative<std::monostate>(std::get<sedit::State>(LEVEL.type_state).mode)) {
+										std::get<sedit::State>(LEVEL.type_state).deactivate_mode();
 										LEVEL.right_hud_ui_state.emplace(&sheet_editor_right_hud);
 										LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 									}
-									LEVEL.sheet_editor_state->select();
+									std::get<sedit::State>(LEVEL.type_state).select();
 									return Action::RETURN;
 								}
 						}

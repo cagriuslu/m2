@@ -171,11 +171,11 @@ void m2::Game::handle_menu_event() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
 		const ui::Blueprint* pause_menu{};
-		if (const auto type = level().type(); type == Level::Type::SINGLE_PLAYER) {
+		if (std::holds_alternative<splayer::State>(level().type_state)) {
 			pause_menu = m2g::ui::pause_menu();
-		} else if (type == Level::Type::LEVEL_EDITOR) {
+		} else if (std::holds_alternative<ledit::State>(level().type_state)) {
 			pause_menu = &level_editor::ui::menu;
-		} else if (type == Level::Type::SHEET_EDITOR) {
+		} else if (std::holds_alternative<sedit::State>(level().type_state)) {
 			pause_menu = &ui::sheet_editor_main_menu;
 		}
 
@@ -284,14 +284,15 @@ namespace {
 	}
 }
 void m2::Game::draw_background() {
-	if (_level->type() == Level::Type::LEVEL_EDITOR) {
+	if (std::holds_alternative<ledit::State>(_level->type_state)) {
+		const auto& le = std::get<ledit::State>(_level->type_state);
 		std::visit(overloaded {
-			[&](MAYBE const ledit::State::PaintMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
-			[&](MAYBE const ledit::State::EraseMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
-			[&](MAYBE const ledit::State::PickMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
-			[&](MAYBE const ledit::State::SelectMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(_level->level_editor_state->selected_layer)]); },
+			[&](MAYBE const ledit::State::PaintMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]); },
+			[&](MAYBE const ledit::State::EraseMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]); },
+			[&](MAYBE const ledit::State::PickMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]); },
+			[&](MAYBE const ledit::State::SelectMode& mode) { draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]); },
 			[&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
-		}, _level->level_editor_state->mode);
+		}, le.mode);
 	} else {
 		draw_all_background_layers(*_level);
 	}

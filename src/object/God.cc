@@ -53,48 +53,51 @@ namespace {
 	}
 
 	void handle_primary_button_press(const VecI& mouse_coordinates_i) {
-		if (LEVEL.type() == Level::Type::LEVEL_EDITOR) {
-			std::visit(m2::overloaded {
+		std::visit(overloaded {
+			[=](ledit::State& le) {
+				std::visit(overloaded {
 					[=](ledit::State::PaintMode& v) { v.paint_sprite(mouse_coordinates_i); },
 					[=](ledit::State::EraseMode& v) { v.erase_position(mouse_coordinates_i); },
 					[=](ledit::State::PlaceMode& v) { v.place_object(mouse_coordinates_i); },
-					[=](ledit::State::RemoveMode& v) { v.remove_object(mouse_coordinates_i); },
+					[=](MAYBE ledit::State::RemoveMode& v) { ledit::State::RemoveMode::remove_object(mouse_coordinates_i); },
 					[=](ledit::State::PickMode& v) {
 						if (v.pick_foreground) {
-							if (auto level_object = v.lookup_foreground_object(mouse_coordinates_i); level_object) {
+							if (const auto level_object = v.lookup_foreground_object(mouse_coordinates_i); level_object) {
 								level_editor_pick_foreground(*level_object);
 							}
 						} else {
-							if (auto picked_sprite_type = v.lookup_background_sprite(mouse_coordinates_i); picked_sprite_type) {
+							if (const auto picked_sprite_type = v.lookup_background_sprite(mouse_coordinates_i); picked_sprite_type) {
 								level_editor_pick_background(*picked_sprite_type);
 							}
 						}
 					},
-					[=](ledit::State::ShiftMode& v) { v.shift(mouse_coordinates_i); },
-					[](MAYBE auto& v) {}
-			}, LEVEL.level_editor_state->mode);
-		} else if (LEVEL.type() == Level::Type::PIXEL_EDITOR) {
-			std::visit(m2::overloaded {
+					[=](const ledit::State::ShiftMode& v) { v.shift(mouse_coordinates_i); },
+					DEFAULT_OVERLOAD
+				}, le.mode);
+			},
+			[=](pedit::State& pe) {
+				std::visit(overloaded {
 					[=](pedit::State::PaintMode& v) { v.paint_color(mouse_coordinates_i); },
 					[=](pedit::State::EraseMode& v) { v.erase_color(mouse_coordinates_i); },
 					[=](pedit::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates_i); },
-					[](MAYBE auto& v) {}
-			}, LEVEL.pixel_editor_state->mode);
-		}
+					DEFAULT_OVERLOAD
+				}, pe.mode);
+			},
+			DEFAULT_OVERLOAD
+		}, LEVEL.type_state);
 	}
 
 	void handle_secondary_button_press(MAYBE const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
-		if (LEVEL.type() == Level::Type::SHEET_EDITOR) {
-			std::visit(m2::overloaded {
-					[=](sedit::State::ForegroundCompanionMode& v) {
-						v.secondary_selection_position = mouse_coordinates_h;
-					},
-					[=](sedit::State::RectMode& v) {
-						v.secondary_selection_position = mouse_coordinates_h;
-					},
-					[](MAYBE auto&) {}
-			}, LEVEL.sheet_editor_state->mode);
-		}
+		std::visit(overloaded {
+			[=](sedit::State& se) {
+				std::visit(overloaded {
+					[=](sedit::State::ForegroundCompanionMode& v) { v.secondary_selection_position = mouse_coordinates_h; },
+					[=](sedit::State::RectMode& v) { v.secondary_selection_position = mouse_coordinates_h; },
+					DEFAULT_OVERLOAD
+				}, se.mode);
+			},
+			DEFAULT_OVERLOAD
+		}, LEVEL.type_state);
 	}
 
 	void handle_mouse_events(const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
@@ -136,7 +139,7 @@ m2::Id m2::obj::create_god() {
 		handle_mouse_events(GAME.mouse_position_world_m().iround(), GAME.mouse_position_world_m().hround());
 
 		// Change zoom
-		if (LEVEL.type() == Level::Type::SHEET_EDITOR) {
+		if (std::holds_alternative<sedit::State>(LEVEL.type_state)) {
 			if (GAME.events.pop_key_press(Key::MINUS)) {
 				GAME.set_zoom(1.1f); // Increase game height
 			} else if (GAME.events.pop_key_press(Key::PLUS)) {
@@ -145,19 +148,23 @@ m2::Id m2::obj::create_god() {
 		}
 	};
 
-	obj.add_graphic().post_draw = [](MAYBE m2::Graphic& gfx) {
+	obj.add_graphic().post_draw = [](MAYBE Graphic& gfx) {
 		// Check if level editor select mode is active
-		if (LEVEL.type() == Level::Type::LEVEL_EDITOR) {
-			std::visit(m2::overloaded {
+		std::visit(overloaded {
+			[=](ledit::State& le) {
+				std::visit(overloaded {
 					[](const ledit::State::SelectMode& mode) { mode.on_draw(); },
-					[](MAYBE const auto&) {}
-			}, LEVEL.level_editor_state->mode);
-		} else if (LEVEL.type() == Level::Type::SHEET_EDITOR) {
-			std::visit(m2::overloaded {
+					DEFAULT_OVERLOAD
+				}, le.mode);
+			},
+			[=](sedit::State& se) {
+				std::visit(overloaded {
 					[](const auto& mode) { mode.on_draw(); },
 					[](MAYBE const std::monostate&) {}
-			}, LEVEL.sheet_editor_state->mode);
-		}
+				}, se.mode);
+			},
+			[](MAYBE auto& _) {}
+		}, LEVEL.type_state);
 	};
 
 	return id;

@@ -15,10 +15,10 @@ const widget::IntegerSelectionBlueprint layer_selection = {
 		.max_value = 3,
 		.initial_value = 0,
 		.on_create = [](MAYBE const widget::IntegerSelection& self) -> std::optional<int> {
-			return I(LEVEL.level_editor_state->selected_layer);
+			return I(std::get<ledit::State>(LEVEL.type_state).selected_layer);
 		},
 		.on_action = [](const widget::IntegerSelection& self) -> Action {
-			LEVEL.level_editor_state->selected_layer = static_cast<BackgroundLayer>(self.value());
+			std::get<ledit::State>(LEVEL.type_state).selected_layer = static_cast<BackgroundLayer>(self.value());
 			return Action::CONTINUE;
 		}
 };
@@ -28,7 +28,7 @@ const widget::TextBlueprint paint_mode_title = {
 };
 const widget::ImageSelectionBlueprint paint_mode_image_selection = {
 		.on_action = [](const widget::ImageSelection& self) -> Action {
-			std::get<ledit::State::PaintMode>(LEVEL.level_editor_state->mode).select_sprite_type(self.selection());
+			std::get<ledit::State::PaintMode>(std::get<ledit::State>(LEVEL.type_state).mode).select_sprite_type(self.selection());
 			return Action::CONTINUE;
 		}
 };
@@ -83,7 +83,7 @@ const widget::TextSelectionBlueprint place_mode_right_hud_object_type_selection 
 		.on_action = [](const widget::TextSelection& self) -> Action {
 			auto object_type = m2g::pb::ObjectType::NO_OBJECT;
 			m2g::pb::ObjectType_Parse(self.selection(), &object_type);
-			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_object_type(object_type);
+			std::get<ledit::State::PlaceMode>(std::get<ledit::State>(LEVEL.type_state).mode).select_object_type(object_type);
 			return Action::CONTINUE;
 		}
 };
@@ -91,7 +91,7 @@ const widget::TextSelectionBlueprint place_mode_right_hud_group_type_selection =
 		.on_action = [](const widget::TextSelection& self) -> Action {
 			auto group_type = m2g::pb::GroupType::NO_GROUP;
 			m2g::pb::GroupType_Parse(self.selection(), &group_type);
-			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_group_type(group_type);
+			std::get<ledit::State::PlaceMode>(std::get<ledit::State>(LEVEL.type_state).mode).select_group_type(group_type);
 			return Action::CONTINUE;
 		}
 };
@@ -100,7 +100,7 @@ const widget::IntegerSelectionBlueprint place_mode_right_hud_group_instance_sele
 		.max_value = 999,
 		.initial_value = 0,
 		.on_action = [](const widget::IntegerSelection& self) -> Action {
-			std::get<ledit::State::PlaceMode>(LEVEL.level_editor_state->mode).select_group_instance(self.value());
+			std::get<ledit::State::PlaceMode>(std::get<ledit::State>(LEVEL.type_state).mode).select_group_instance(self.value());
 			return Action::CONTINUE;
 		}
 };
@@ -158,9 +158,9 @@ const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
 		.initial_list = {"Background", "Foreground"},
 		.on_action = [](const widget::TextSelection& self) -> Action {
 			if (const auto& selection = self.selection(); selection == "Background") {
-				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = false;
+				std::get<ledit::State::PickMode>(std::get<ledit::State>(LEVEL.type_state).mode).pick_foreground = false;
 			} else if (selection == "Foreground") {
-				std::get<ledit::State::PickMode>(LEVEL.level_editor_state->mode).pick_foreground = true;
+				std::get<ledit::State::PickMode>(std::get<ledit::State>(LEVEL.type_state).mode).pick_foreground = true;
 			}
 			return Action::CONTINUE;
 		}
@@ -194,49 +194,49 @@ const widget::TextBlueprint select_mode_title = {
 const widget::TextBlueprint select_mode_right_hud_shift_right_button = {
 		.initial_text = "Shift Right",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).shift_right();
+			std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).shift_right();
 			return Action::CONTINUE;
 		}
 };
 const widget::TextBlueprint select_mode_right_hud_shift_down_button = {
 		.initial_text = "Shift Down",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).shift_down();
+			std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).shift_down();
 			return Action::CONTINUE;
 		}
 };
 const widget::TextBlueprint select_mode_right_hud_copy_button = {
 		.initial_text = "Copy",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).copy();
+			std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).copy();
 			return Action::CONTINUE;
 		}
 };
 const widget::TextBlueprint select_mode_right_hud_paste_bg_button = {
 		.initial_text = "Paste BG",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).paste_bg();
+			std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).paste_bg();
 			return Action::CONTINUE;
 		}
 };
 const widget::TextBlueprint select_mode_right_hud_paste_fg_button = {
 		.initial_text = "Paste FG",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).paste_fg();
+			std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).paste_fg();
 			return Action::CONTINUE;
 		}
 };
 const widget::TextBlueprint select_mode_right_hud_erase_button = {
 		.initial_text = "Erase",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).erase();
+			std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).erase();
 			return Action::CONTINUE;
 		}
 };
 const widget::TextBlueprint select_mode_right_hud_remove_button = {
 		.initial_text = "Remove",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			std::get<ledit::State::SelectMode>(LEVEL.level_editor_state->mode).remove();
+			std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).remove();
 			return Action::CONTINUE;
 		}
 };
@@ -300,11 +300,11 @@ const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_select
 		.initial_list = {"Right", "Down", "Right & Down"},
 		.on_action = [](const widget::TextSelection& self) -> Action {
 			if (const auto& selection = self.selection(); selection == "Right") {
-				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT;
+				std::get<ledit::State::ShiftMode>(std::get<ledit::State>(LEVEL.type_state).mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT;
 			} else if (selection == "Down") {
-				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::DOWN;
+				std::get<ledit::State::ShiftMode>(std::get<ledit::State>(LEVEL.type_state).mode).shift_type = ledit::State::ShiftMode::ShiftType::DOWN;
 			} else if (selection == "Right & Down") {
-				std::get<ledit::State::ShiftMode>(LEVEL.level_editor_state->mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT_N_DOWN;
+				std::get<ledit::State::ShiftMode>(std::get<ledit::State>(LEVEL.type_state).mode).shift_type = ledit::State::ShiftMode::ShiftType::RIGHT_N_DOWN;
 			}
 			return Action::CONTINUE;
 		}
@@ -331,7 +331,7 @@ const widget::TextBlueprint left_hud_paint_button = {
 		.initial_text = std::string{level_editor::paint_button_label},
 		.kb_shortcut = SDL_SCANCODE_P,
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-				LEVEL.level_editor_state->activate_paint_mode();
+			std::get<ledit::State>(LEVEL.type_state).activate_paint_mode();
 			// Fill tile selector with editor-enabled sprites
 			auto& list = std::get<widget::ImageSelectionBlueprint>(paint_mode_right_hud.widgets[2].variant).list;
 			std::copy(std::begin(GAME.level_editor_background_sprites), std::end(GAME.level_editor_background_sprites), std::back_inserter(list));
@@ -345,7 +345,7 @@ const widget::TextBlueprint left_hud_erase_button = {
 		.initial_text = "ERASE",
 		.kb_shortcut = SDL_SCANCODE_E,
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->activate_erase_mode();
+			std::get<ledit::State>(LEVEL.type_state).activate_erase_mode();
 			LEVEL.right_hud_ui_state.emplace(&erase_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
@@ -355,7 +355,7 @@ const widget::TextBlueprint left_hud_place_button = {
 		.initial_text = std::string{level_editor::place_button_label},
 		.kb_shortcut = SDL_SCANCODE_O,
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->activate_place_mode();
+			std::get<ledit::State>(LEVEL.type_state).activate_place_mode();
 			// Fill object type selector with editor-enabled object types
 			auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
 			if (object_type_selection.initial_list.empty()) {
@@ -380,7 +380,7 @@ const widget::TextBlueprint left_hud_remove_button = {
 		.initial_text = "REMOVE",
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->activate_remove_mode();
+			std::get<ledit::State>(LEVEL.type_state).activate_remove_mode();
 			LEVEL.right_hud_ui_state.emplace(&remove_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
@@ -390,7 +390,7 @@ const widget::TextBlueprint left_hud_pick_button = {
 		.initial_text = "PICK",
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->activate_pick_mode();
+			std::get<ledit::State>(LEVEL.type_state).activate_pick_mode();
 			LEVEL.right_hud_ui_state.emplace(&pick_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
@@ -399,7 +399,7 @@ const widget::TextBlueprint left_hud_pick_button = {
 const widget::TextBlueprint left_hud_select_button = {
 		.initial_text = "SELECT",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->activate_select_mode();
+			std::get<ledit::State>(LEVEL.type_state).activate_select_mode();
 			LEVEL.right_hud_ui_state.emplace(&select_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
@@ -408,7 +408,7 @@ const widget::TextBlueprint left_hud_select_button = {
 const widget::TextBlueprint left_hud_shift_button = {
 		.initial_text = "SHIFT",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->activate_shift_mode();
+			std::get<ledit::State>(LEVEL.type_state).activate_shift_mode();
 			LEVEL.right_hud_ui_state.emplace(&shift_mode_right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
@@ -418,7 +418,7 @@ const widget::TextBlueprint left_hud_cancel_button = {
 		.initial_text = "CANCEL",
 		.kb_shortcut = SDL_SCANCODE_X,
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
-			LEVEL.level_editor_state->deactivate_mode();
+			std::get<ledit::State>(LEVEL.type_state).deactivate_mode();
 			LEVEL.right_hud_ui_state.emplace(&level_editor::ui::right_hud);
 			LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 			return Action::CONTINUE;
@@ -520,7 +520,7 @@ const widget::TextBlueprint save_button = {
 	.initial_text = "Save",
 	.kb_shortcut = SDL_SCANCODE_S,
 	.on_action = [](MAYBE const widget::Text& self) -> Action {
-		LEVEL.level_editor_state->save();
+		ledit::State::save();
 		return Action::CONTINUE;
 	}
 };

@@ -3,6 +3,8 @@
 #include <tl/expected.hpp>
 #include <string>
 
+#define DEFAULT_OVERLOAD [](MAYBE auto& _){}
+
 namespace m2 {
 	int I(auto t) { return static_cast<int>(t); }
 	unsigned U(auto t) { return static_cast<unsigned>(t); }
