@@ -28,12 +28,6 @@ namespace m2g {
 
 	/// Z component of the focus position, which has the same XY position as the player
 	extern float focus_point_height;
-	/// Z component of perspective camera
-	extern float camera_height;
-	/// Distance between the camera and the player position
-	extern float camera_distance;
-	/// Horizontal field-of-view of camera, in degrees
-	extern float horizontal_field_of_view;
 	/// Z component of the xy-plane for camera to mouse ray-casts
 	extern const float xy_plane_z_component;
 

@@ -5,48 +5,26 @@
 #include <m2/Object.h>
 
 namespace {
-	float camera_y_offset_m(const m2::pb::ProjectionType projection_type) {
-		// Do not recalculate unless the height or the distance has changed
-		static auto prev_camera_height = INFINITY;
-		static auto prev_camera_distance = INFINITY;
-		static float offset{};
-		if (prev_camera_height != m2g::camera_height || prev_camera_distance != m2g::camera_distance) {
-			prev_camera_height = m2g::camera_height;
-			prev_camera_distance = m2g::camera_distance;
-			if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_YZ) {
-				offset = sqrtf(m2g::camera_distance * m2g::camera_distance - m2g::camera_height * m2g::camera_height);
-			} else if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_XYZ) {
-				offset = sqrtf(m2g::camera_distance * m2g::camera_distance - m2g::camera_height * m2g::camera_height) / m2::SQROOT_2;
-			} else {
-				throw M2FATAL("Invalid ProjectionType");
-			}
-		}
-		return offset;
-	}
-	float camera_x_offset_m(const m2::pb::ProjectionType projection_type) {
-		if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_YZ) {
-			return 0.0f;
-		}
-		if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_XYZ) {
-			return camera_y_offset_m(projection_type);
-		}
-		throw M2FATAL("Invalid ProjectionType");
-	}
-	float camera_z_offset_m() {
-		return m2g::camera_height;
-	}
-
 	float camera_sin() {
-		return m2g::camera_height / m2g::camera_distance;
+		// Do not recalculate unless the camera offset changed
+		static m3::VecF prev_camera_offset;
+		static float sin{};
+
+		if (const auto camera_offset = LEVEL.camera_offset(); prev_camera_offset != camera_offset) {
+			prev_camera_offset = camera_offset;
+
+			sin = camera_offset.z / camera_offset.length();
+		}
+		return sin;
 	}
 	float camera_cos() {
-		// Do not recalculate unless the height or the distance has changed
-		static auto prev_camera_height = INFINITY;
-		static auto prev_camera_distance = INFINITY;
+		// Do not recalculate unless the camera offset changed
+		static m3::VecF prev_camera_offset;
 		static float cos{};
-		if (prev_camera_height != m2g::camera_height || prev_camera_distance != m2g::camera_distance) {
-			prev_camera_height = m2g::camera_height;
-			prev_camera_distance = m2g::camera_distance;
+
+		if (const auto camera_offset = LEVEL.camera_offset(); prev_camera_offset != camera_offset) {
+			prev_camera_offset = camera_offset;
+
 			cos = sqrtf(1.0f - camera_sin() * camera_sin());
 		}
 		return cos;
@@ -54,7 +32,7 @@ namespace {
 }
 
 bool m2::is_projection_type_parallel(const pb::ProjectionType pt) {
-	return pt == pb::PARALLEL_TOP || pt == pb::PARALLEL_FRONT || pt == pb::PARALLEL_ISOMETRIC || pt == pb::PARALLEL_THREE_QUARTERS;
+	return pt == pb::PARALLEL || pt == pb::PARALLEL_ISOMETRIC;
 }
 bool m2::is_projection_type_perspective(const pb::ProjectionType pt) {
 	return pt == pb::PERSPECTIVE_YZ || pt == pb::PERSPECTIVE_XYZ;
@@ -77,72 +55,66 @@ m2::VecF m2::screen_origin_to_sprite_center_dstpx(const VecF& position, const Sp
 	return screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx(effect_type);
 }
 
-m3::VecF m3::camera_position_m(const m2::pb::ProjectionType projection_type) {
+m3::VecF m3::camera_position_m() {
 	const auto* camera = LEVEL.objects.get(LEVEL.camera_id);
 	const auto raw_camera_position = VecF{camera->position.x, camera->position.y, 0.0f};
-	const auto camera_position = raw_camera_position + VecF{camera_x_offset_m(projection_type), camera_y_offset_m(projection_type), camera_z_offset_m()};
+	const auto camera_position = raw_camera_position + LEVEL.camera_offset();
 	return camera_position;
 }
 m3::VecF m3::focus_position_m() {
 	auto* player = LEVEL.player();
 	return {player->position.x, player->position.y, m2g::focus_point_height};
 }
-float m3::visible_width_m(const m2::pb::ProjectionType projection_type) {
+float m3::visible_width_m() {
 	// Do not recalculate unless the distance or FOV has changed
-	static auto prev_camera_distance = INFINITY;
-	static auto prev_horizontal_field_of_view = INFINITY;
-	static float visible_width{};
-	if (prev_camera_distance != m2g::camera_distance || prev_horizontal_field_of_view != m2g::horizontal_field_of_view) {
-		prev_camera_distance = m2g::camera_distance;
-		prev_horizontal_field_of_view = m2g::horizontal_field_of_view;
+	static m3::VecF prev_camera_offset;
+	static auto prev_horizontal_fov = INFINITY;
 
-		const auto tan_of_half_horizontal_fov = tanf(m2::to_radians(m2g::horizontal_field_of_view) / 2.0f);
-		if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_YZ) {
-			visible_width = 2 * m2g::camera_distance * tan_of_half_horizontal_fov;
-		} else if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_XYZ) {
-			visible_width = 2 * m2g::camera_distance * tan_of_half_horizontal_fov * m2::SQROOT_2;
-		} else {
-			throw M2FATAL("Invalid ProjectionType");
-		}
+	static float visible_width{};
+	if (const auto camera_offset = LEVEL.camera_offset(); prev_camera_offset != camera_offset || prev_horizontal_fov != LEVEL.horizontal_fov()) {
+		prev_camera_offset = camera_offset;
+		prev_horizontal_fov = LEVEL.horizontal_fov();
+
+		const auto tan_of_half_horizontal_fov = tanf(m2::to_radians(LEVEL.horizontal_fov()) / 2.0f);
+		visible_width = 2 * camera_offset.length() * tan_of_half_horizontal_fov;
 	}
 	return visible_width;
 }
-float m3::ppm(const m2::pb::ProjectionType projection_type) {
-	return static_cast<float>(GAME.dimensions().game.w) / visible_width_m(projection_type);
+float m3::ppm() {
+	return static_cast<float>(GAME.dimensions().game.w) / visible_width_m();
 }
 
-m3::Line m3::camera_to_position_line(const m2::pb::ProjectionType projection_type, const VecF& position) {
-	return Line::from_points(camera_position_m(projection_type), position);
+m3::Line m3::camera_to_position_line(const VecF& position) {
+	return Line::from_points(camera_position_m(), position);
 }
-m3::Plane m3::focus_to_camera_plane(const m2::pb::ProjectionType projection_type) {
-	const auto camera_position_in_meters = camera_position_m(projection_type);
-	const auto focus_position_in_meters = focus_position_m();
-	const auto normal = camera_position_in_meters - focus_position_in_meters;
-	return Plane{normal, focus_position_in_meters};
+m3::Plane m3::focus_to_camera_plane() {
+	const auto focus_position = focus_position_m();
+	const auto normal = camera_position_m() - focus_position;
+	return Plane{normal, focus_position};
 }
-std::optional<m3::VecF> m3::projection(const m2::pb::ProjectionType projection_type, const VecF& position) {
-	auto [intersection_point, forward_intersection] = focus_to_camera_plane(projection_type)
-			.intersection(camera_to_position_line(projection_type, position));
+std::optional<m3::VecF> m3::projection(const VecF& position) {
+	auto [intersection_point, forward_intersection] = focus_to_camera_plane()
+			.intersection(camera_to_position_line(position));
 	if (not forward_intersection) {
 		return {};
 	}
 	return intersection_point;
 }
-std::optional<m3::VecF> m3::focus_to_projection_m(const m2::pb::ProjectionType projection_type, const VecF& position) {
-	const auto proj = projection(projection_type, position);
+std::optional<m3::VecF> m3::focus_to_projection_m(const VecF& position) {
+	const auto proj = projection(position);
 	if (not proj) {
 		return std::nullopt;
 	}
 	return *proj - focus_position_m();
 }
-std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(const m2::pb::ProjectionType projection_type, const VecF& position) {
-	const auto focus_to_projection = focus_to_projection_m(projection_type, position);
+std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(const VecF& position) {
+	const auto focus_to_projection = focus_to_projection_m(position);
 	if (not focus_to_projection) {
 		return {};
 	}
 
 	float horizontal_projection, vertical_projection;
-	if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_YZ) {
+	if (LEVEL.projection_type() == m2::pb::PERSPECTIVE_YZ) {
 		static const auto unit_vector_along_x = VecF{1.0f, 0.0f, 0.0f};
 		horizontal_projection = focus_to_projection->dot(unit_vector_along_x);
 		const auto projection_x = VecF{horizontal_projection, 0.0f, 0.0f};
@@ -153,7 +125,7 @@ std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(co
 		const auto projection_y_length = projection_y.length();
 		const auto projection_y_sign = 0 <= projection_y.y ? 1.0f : -1.0f;
 		vertical_projection = projection_y_length * projection_y_sign;
-	} else if (projection_type == m2::pb::ProjectionType::PERSPECTIVE_XYZ) {
+	} else if (LEVEL.projection_type() == m2::pb::PERSPECTIVE_XYZ) {
 		static const auto horizontal_unit_vector = VecF{m2::SQROOT_2, -m2::SQROOT_2, 0.0f};
 		horizontal_projection = focus_to_projection->dot(horizontal_unit_vector);
 
@@ -164,16 +136,16 @@ std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(co
 	}
 	return m2::VecF{horizontal_projection, vertical_projection};
 }
-std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_dstpx(const m2::pb::ProjectionType projection_type, const VecF& position) {
-	const auto focus_to_projection_along_camera_plane = focus_to_projection_in_camera_plane_coordinates_m(projection_type, position);
+std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_dstpx(const VecF& position) {
+	const auto focus_to_projection_along_camera_plane = focus_to_projection_in_camera_plane_coordinates_m(position);
 	if (not focus_to_projection_along_camera_plane) {
 		return {};
 	}
-	const auto pixels_per_meter = ppm(projection_type);
+	const auto pixels_per_meter = ppm();
 	return *focus_to_projection_along_camera_plane * pixels_per_meter;
 }
-std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx(const m2::pb::ProjectionType projection_type, const VecF& position) {
-	const auto focus_to_projection_along_camera_plane_px = focus_to_projection_in_camera_plane_coordinates_dstpx(projection_type, position);
+std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx(const VecF& position) {
+	const auto focus_to_projection_along_camera_plane_px = focus_to_projection_in_camera_plane_coordinates_dstpx(position);
 	if (not focus_to_projection_along_camera_plane_px) {
 		return {};
 	}
@@ -183,7 +155,7 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx
 m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(const uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_effect(default_draw_addons), sprite(&sprite) {}
 
-void m2::Graphic::default_draw(Graphic& gfx) {
+void m2::Graphic::default_draw(const Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only draws sprites
 		return;
@@ -198,7 +170,7 @@ void m2::Graphic::default_draw(Graphic& gfx) {
 	}
 }
 
-void m2::Graphic::default_draw_addons(Graphic& gfx) {
+void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only works if there is a sprite
 		return;
@@ -210,8 +182,8 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 	SDL_Rect dst_rect{};
 
 	if (is_projection_type_parallel(LEVEL.projection_type())) {
-		auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
-		auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.parent().position,
+		const auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
+		const auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.parent().position,
 				*gfx.sprite, gfx.draw_sprite_effect);
 		dst_rect = SDL_Rect{
 				(int) roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
@@ -220,13 +192,12 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 				GAME.dimensions().ppm * 12 / 100 // 0.15 m height
 		};
 	} else {
-		auto obj_position = gfx.parent().position;
+		const auto obj_position = gfx.parent().position;
 		// Place add-on below the sprite
-		auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
-		auto projected_addon_position = m3::screen_origin_to_projection_along_camera_plane_dstpx(LEVEL.projection_type(), addon_position);
-		if (projected_addon_position) {
-			auto rect = RectI::centered_around(VecI{*projected_addon_position}, GAME.dimensions().ppm, GAME.dimensions().ppm * 12 / 100);
-			dst_rect = (SDL_Rect) rect;
+		const auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
+		if (const auto projected_addon_position = screen_origin_to_projection_along_camera_plane_dstpx(addon_position)) {
+			const auto rect = RectI::centered_around(VecI{*projected_addon_position}, GAME.dimensions().ppm, GAME.dimensions().ppm * 12 / 100);
+			dst_rect = static_cast<SDL_Rect>(rect);
 		}
 	}
 
@@ -235,15 +206,15 @@ void m2::Graphic::default_draw_addons(Graphic& gfx) {
 	SDL_RenderFillRect(GAME.renderer, &dst_rect);
 
 	// Green part
-	float percentage = (*gfx.draw_addon_health_bar) < 0.0f ? 0.0f : (1.0f < *gfx.draw_addon_health_bar) ? 1.0f : *gfx.draw_addon_health_bar;
-	auto green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, I(roundf(percentage * F(dst_rect.w - 2))), dst_rect.h - 2};
+	const float percentage = (*gfx.draw_addon_health_bar) < 0.0f ? 0.0f : (1.0f < *gfx.draw_addon_health_bar) ? 1.0f : *gfx.draw_addon_health_bar;
+	const auto green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, I(roundf(percentage * F(dst_rect.w - 2))), dst_rect.h - 2};
 	SDL_SetRenderDrawColor(GAME.renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(GAME.renderer, &green_rect);
 }
 
 void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
-	auto screen_origin_to_cell_center_px = screen_origin_to_position_dstpx(VecF{cell});
-	auto rect = SDL_Rect{
+	const auto screen_origin_to_cell_center_px = screen_origin_to_position_dstpx(VecF{cell});
+	const auto rect = SDL_Rect{
 		(int)roundf(screen_origin_to_cell_center_px.x) - (GAME.dimensions().ppm / 2),
 		(int)roundf(screen_origin_to_cell_center_px.y) - (GAME.dimensions().ppm / 2),
 		GAME.dimensions().ppm,
@@ -256,9 +227,9 @@ void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
 }
 
 void m2::Graphic::color_rect(const RectF& world_coordinates_m, SDL_Color color) {
-	auto screen_origin_to_top_left_px = screen_origin_to_position_dstpx(world_coordinates_m.top_left());
-	auto screen_origin_to_bottom_right_px = screen_origin_to_position_dstpx(world_coordinates_m.bottom_right());
-	auto rect = SDL_Rect{
+	const auto screen_origin_to_top_left_px = screen_origin_to_position_dstpx(world_coordinates_m.top_left());
+	const auto screen_origin_to_bottom_right_px = screen_origin_to_position_dstpx(world_coordinates_m.bottom_right());
+	const auto rect = SDL_Rect{
 			(int)roundf(screen_origin_to_top_left_px.x),
 			(int)roundf(screen_origin_to_top_left_px.y),
 			(int)roundf(screen_origin_to_bottom_right_px.x - screen_origin_to_top_left_px.x),
@@ -271,14 +242,14 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, SDL_Color color) 
 }
 
 void m2::Graphic::color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color) {
-	auto center_position_px = screen_origin_to_position_dstpx(center_position_m);
-	auto radius_px = radius_m * GAME.dimensions().ppm;
+	const auto center_position_px = screen_origin_to_position_dstpx(center_position_m);
+	const auto radius_px = radius_m * GAME.dimensions().ppm;
 	sdl::draw_disk(GAME.renderer, center_position_px, color, radius_px, color);
 }
 
 void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-	auto draw_position = VecI{screen_origin_to_position_dstpx(world_position)};
+	const auto draw_position = VecI{screen_origin_to_position_dstpx(world_position)};
 	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y - 9, draw_position.x + 10, draw_position.y + 10);
 	SDL_RenderDrawLine(GAME.renderer, draw_position.x - 9, draw_position.y + 9, draw_position.x + 10, draw_position.y - 10);
 }
@@ -286,12 +257,12 @@ void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 	if (is_projection_type_parallel(LEVEL.projection_type())) {
-		auto p1 = static_cast<VecI>(screen_origin_to_position_dstpx(world_position_1));
-		auto p2 = static_cast<VecI>(screen_origin_to_position_dstpx(world_position_2));
+		const auto p1 = static_cast<VecI>(screen_origin_to_position_dstpx(world_position_1));
+		const auto p2 = static_cast<VecI>(screen_origin_to_position_dstpx(world_position_2));
 		SDL_RenderDrawLine(GAME.renderer, p1.x, p1.y, p2.x, p2.y);
 	} else {
-		auto p1 = m3::screen_origin_to_projection_along_camera_plane_dstpx(LEVEL.projection_type(), world_position_1);
-		auto p2 = m3::screen_origin_to_projection_along_camera_plane_dstpx(LEVEL.projection_type(), world_position_2);
+		const auto p1 = m3::screen_origin_to_projection_along_camera_plane_dstpx(m3::VecF{world_position_1});
+		const auto p2 = m3::screen_origin_to_projection_along_camera_plane_dstpx(m3::VecF{world_position_2});
 		if (p1 && p2) {
 			SDL_RenderDrawLineF(GAME.renderer, p1->x, p1->y, p2->x, p2->y);
 		}
@@ -299,13 +270,13 @@ void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_posi
 }
 
 void m2::Graphic::draw_vertical_line(float x, SDL_Color color) {
-	auto x_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{x, 0.0f}).x));
+	const auto x_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{x, 0.0f}).x));
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(GAME.renderer, x_px, GAME.dimensions().game.y, x_px, GAME.dimensions().game.y + GAME.dimensions().game.h);
 }
 
 void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
-	auto y_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{0.0f, y}).y));
+	const auto y_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{0.0f, y}).y));
 	SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(GAME.renderer, GAME.dimensions().game.x, y_px, GAME.dimensions().game.x + GAME.dimensions().game.w, y_px);
 }

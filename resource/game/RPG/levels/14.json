@@ -1,6 +1,6 @@
 {
   "identifier": "Find the blue flag to exit the level.",
-  "projectionType": "PARALLEL_THREE_QUARTERS",
+  "projectionType": "PARALLEL",
   "backgroundLayers": [
     {},
     {

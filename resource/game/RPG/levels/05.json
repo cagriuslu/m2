@@ -1,6 +1,6 @@
 {
   "identifier": "RangedWeaponTutorialClosed",
-  "projectionType": "PARALLEL_THREE_QUARTERS",
+  "projectionType": "PARALLEL",
   "backgroundLayers": [
     {},
     {

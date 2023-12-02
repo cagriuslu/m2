@@ -198,11 +198,29 @@ namespace m2 {
 				throw M2ERROR("Pool out of bounds");
 			}
 		}
+    	const T& operator[](Id id) const {
+    		const T* t = get(id);
+    		if (t) {
+    			return *t;
+    		} else {
+    			throw M2ERROR("Pool out of bounds");
+    		}
+        }
 	private:
 		Item* get_array_item(Id id) {
 			if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
 				const auto candidate_idx = (id & 0xFFFFFFull);
 				auto& item = _array[candidate_idx];
+				if (item.id == (id & 0xFFFFFFFFFFFFull)) {
+					return &item;
+				}
+			}
+			return nullptr;
+		}
+    	const Item* get_array_item(Id id) const {
+			if (_shifted_pool_id == (id & 0xFFFF000000000000ull)) {
+				const auto candidate_idx = (id & 0xFFFFFFull);
+				const auto& item = _array[candidate_idx];
 				if (item.id == (id & 0xFFFFFFFFFFFFull)) {
 					return &item;
 				}
@@ -216,6 +234,13 @@ namespace m2 {
 				return &item->data;
 			}
             return nullptr;
+        }
+    	const T* get(Id id) const {
+        	auto* item = get_array_item(id);
+        	if (item) {
+        		return &item->data;
+        	}
+        	return nullptr;
         }
         Id get_id(const T* data) const {
             const auto* byte_ptr = reinterpret_cast<const uint8_t*>(data);

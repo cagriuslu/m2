@@ -11,6 +11,7 @@ namespace m2 {
 	constexpr float PI_MUL3_DIV2 = 4.71238898038469f;
 	constexpr float PI_DIV2 = 1.570796326794897f;
 	constexpr float SQROOT_2 = 1.414213562373095f;
+	extern const std::string empty_string;
 
 	enum class BackgroundLayer {
 		L0 = 0,

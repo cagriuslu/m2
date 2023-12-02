@@ -46,7 +46,6 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 		_lb = std::get<pb::Level>(level_path_or_blueprint);
 	}
 	_name = name;
-	_projection_type = _lb->projection_type();
 	type_state.emplace<splayer::State>();
 
 	m2g::pre_single_player_level_init(_name, *_lb);
@@ -255,11 +254,15 @@ m2::void_expected m2::Level::reset_sheet_editor() {
 	objects.clear();
 
 	// Create default objects
-	player_id = m2::obj::create_god();
-	m2::obj::create_camera();
-	m2::obj::create_origin();
+	player_id = obj::create_god();
+	obj::create_camera();
+	obj::create_origin();
 
 	return {};
+}
+
+float m2::Level::horizontal_fov() const {
+	return _lb ? _lb->horizontal_fov() : GAME.dimensions().width_m;
 }
 
 m2::sdl::ticks_t m2::Level::get_level_duration() const {

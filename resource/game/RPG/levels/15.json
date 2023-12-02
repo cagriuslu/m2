@@ -1,5 +1,8 @@
 {
   "projectionType": "PERSPECTIVE_YZ",
+  "cameraOffset": 5.0,
+  "cameraZOffset": 5.0,
+  "horizontalFov": 90.0,
   "backgroundLayers": [
     {
       "backgroundRows": [

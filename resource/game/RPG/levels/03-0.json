@@ -1,6 +1,6 @@
 {
   "identifier": "FlagTutorialClosed",
-  "projectionType": "PARALLEL_THREE_QUARTERS",
+  "projectionType": "PARALLEL",
   "backgroundLayers": [
     {},
     {

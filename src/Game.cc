@@ -329,7 +329,7 @@ void m2::Game::debug_draw() {
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
-				if (const auto projected_p = screen_origin_to_projection_along_camera_plane_dstpx(_level->projection_type(), p); projected_p) {
+				if (const auto projected_p = screen_origin_to_projection_along_camera_plane_dstpx(p); projected_p) {
 					SDL_RenderDrawPointF(GAME.renderer, projected_p->x, projected_p->y);
 				}
 			}
@@ -375,37 +375,17 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 	}
 }
 
-void m2::Game::recalculate_mouse_position() {
-	const auto mouse_position = events.mouse_position();
-	const auto screen_center_to_mouse_position_px = VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
-	_screen_center_to_mouse_position_m = VecF{F(screen_center_to_mouse_position_px.x) / F(_dims.ppm), F(screen_center_to_mouse_position_px.y) / F(_dims.ppm)};
-
-	if (is_projection_type_perspective(_level->projection_type())) {
-		// Mouse moves on the plane centered at the player looking towards the camera
-		// Find m3::VecF of the mouse position in the world starting from the player position
-		const auto sin_of_player_to_camera_angle = m2g::camera_height / m2g::camera_distance;
-		const auto cos_of_player_to_camera_angle = sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
-
-		const auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * sin_of_player_to_camera_angle;
-		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm(_level->projection_type())) * cos_of_player_to_camera_angle;
-		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm(_level->projection_type());
-		const auto player_position = m3::focus_position_m();
-		const auto mouse_position_world_m = m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
-
-		// Create Line from camera to mouse position
-		const auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(_level->projection_type()), mouse_position_world_m);
-		// Get the xy-plane
-		const auto plane = m3::Plane::xy_plane(m2g::xy_plane_z_component);
-		// Get the intersection
-		if (const auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse); forward_intersection) {
-			_mouse_position_world_m = VecF{intersection_point.x, intersection_point.y};
-		} else {
-			_mouse_position_world_m = VecF{-intersection_point.x, -10000.0f}; // Infinity is 10KM
-		}
-	} else {
-		const auto camera_position = _level->objects[_level->camera_id].position;
-		_mouse_position_world_m = _screen_center_to_mouse_position_m + camera_position;
+const m2::VecF& m2::Game::mouse_position_world_m() const {
+	if (not _mouse_position_world_m) {
+		recalculate_mouse_position2();
 	}
+	return *_mouse_position_world_m;
+}
+const m2::VecF& m2::Game::screen_center_to_mouse_position_m() const {
+	if (not _screen_center_to_mouse_position_m) {
+		recalculate_mouse_position2();
+	}
+	return *_screen_center_to_mouse_position_m;
 }
 
 m2::VecF m2::Game::pixel_to_2d_world_m(const VecI& pixel_position) {
@@ -451,4 +431,37 @@ void m2::Game::execute_deferred_actions() {
 		action();
 	}
 	_level->deferred_actions.clear();
+}
+
+void m2::Game::recalculate_mouse_position2() const {
+	const auto mouse_position = events.mouse_position();
+	const auto screen_center_to_mouse_position_px = VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
+	_screen_center_to_mouse_position_m = VecF{F(screen_center_to_mouse_position_px.x) / F(_dims.ppm), F(screen_center_to_mouse_position_px.y) / F(_dims.ppm)};
+
+	if (is_projection_type_perspective(_level->projection_type())) {
+		// Mouse moves on the plane centered at the player looking towards the camera
+		// Find m3::VecF of the mouse position in the world starting from the player position
+		const auto sin_of_player_to_camera_angle = LEVEL.camera_offset().z / LEVEL.camera_offset().length();
+		const auto cos_of_player_to_camera_angle = sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
+
+		const auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm()) * sin_of_player_to_camera_angle;
+		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm()) * cos_of_player_to_camera_angle;
+		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm();
+		const auto player_position = m3::focus_position_m();
+		const auto mouse_position_world_m = m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
+
+		// Create Line from camera to mouse position
+		const auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(), mouse_position_world_m);
+		// Get the xy-plane
+		const auto plane = m3::Plane::xy_plane(m2g::xy_plane_z_component);
+		// Get the intersection
+		if (const auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse); forward_intersection) {
+			_mouse_position_world_m = VecF{intersection_point.x, intersection_point.y};
+		} else {
+			_mouse_position_world_m = VecF{-intersection_point.x, -10000.0f}; // Infinity is 10KM
+		}
+	} else {
+		const auto camera_position = _level->objects[_level->camera_id].position;
+		_mouse_position_world_m = *_screen_center_to_mouse_position_m + camera_position;
+	}
 }

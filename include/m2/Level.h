@@ -9,6 +9,7 @@
 #include "ui/State.h"
 #include "DrawList.h"
 #include "Pathfinder.h"
+#include "m3/VecF.h"
 #include "Meta.h"
 #include <Level.pb.h>
 #include "single_player/State.h"
@@ -22,7 +23,6 @@ namespace m2 {
 		std::optional<std::filesystem::path> _lb_path;
 		std::optional<pb::Level> _lb;
 		std::string _name;
-		pb::ProjectionType _projection_type{pb::PARALLEL_TOP};
 
 	public:
 		~Level();
@@ -66,8 +66,10 @@ namespace m2 {
 		std::optional<std::filesystem::path> path() const { return _lb_path; }
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }
-		const std::string& identifier() const { return _lb->identifier(); }
-		pb::ProjectionType projection_type() const { return _projection_type; }
+		const std::string& identifier() const { return _lb ? _lb->identifier() : empty_string; }
+		pb::ProjectionType projection_type() const { return _lb ? _lb->projection_type() : pb::ProjectionType::PARALLEL; }
+		m3::VecF camera_offset() const { return _lb ? m3::VecF{projection_type() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f, _lb->camera_offset(), _lb->camera_z_offset()} : m3::VecF{}; }
+		float horizontal_fov() const;
 		Object* player() { return objects.get(player_id); }
 		Object* camera() { return objects.get(camera_id); }
 		sdl::ticks_t get_level_duration() const;

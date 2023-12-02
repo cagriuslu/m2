@@ -15,9 +15,6 @@ const bool m2g::gravity = false;
 const bool m2g::world_is_static = true;
 const bool m2g::lightning = false;
 float m2g::focus_point_height = 2.0f;
-float m2g::camera_height = 5.0f;
-float m2g::camera_distance = 7.0f;
-float m2g::horizontal_field_of_view = 90.0f;
 const float m2g::xy_plane_z_component = 0.75f;
 const bool m2g::camera_is_listener = true;
 

@@ -6,6 +6,7 @@ namespace {
 	std::unique_ptr<std::mt19937> random_number_engine;
 	std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
 }
+const std::string m2::empty_string;
 
 std::string m2::to_string(BackgroundLayer layer) {
 	return to_string(I(layer));

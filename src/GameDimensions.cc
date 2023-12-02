@@ -1,6 +1,6 @@
 #include <m2/Game.h>
 
-m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window_height) : height_m(game_height_m) {
+m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window_height) : height_m(game_height_m), width_m(static_cast<float>(height_m) * GAME_ASPECT_RATIO_MUL / GAME_ASPECT_RATIO_DIV) {
 	window = RectI{0, 0, window_width, window_height};
 
 	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;

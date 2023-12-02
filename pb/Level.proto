@@ -25,31 +25,29 @@ message BackgroundLayer {
 }
 
 enum ProjectionType {
-  // Only the top side of objects are visible. Example: Tanks
-  PARALLEL_TOP = 0;
+  // Parallel lines stay parallel
+  PARALLEL = 0;
 
-  // Only the front side of objects are visible. Example: Super Mario Bros
-  PARALLEL_FRONT = 1;
-
-  // Top, front, and right side of objects are visible. Example: AoE II
-  PARALLEL_ISOMETRIC = 2;
-
-  // Top and front side of objects are visible. Example: Pokémon Gold
-  PARALLEL_THREE_QUARTERS = 3;
+  PARALLEL_ISOMETRIC = 1;
 
   // Lines parallel to Y-axis intersect at -Y infinity.
   // Lines parallel to Z-axis intersect at -Z infinity. Example: Paper Mario
-  PERSPECTIVE_YZ = 4;
+  PERSPECTIVE_YZ = 2;
 
   // Lines parallel to X-axis intersect at -X infinity.
   // Lines parallel to Y-axis intersect at -Y infinity.
   // Lines parallel to Z-axis intersect at -Z infinity. Example: Half-life
-  PERSPECTIVE_XYZ = 5;
+  PERSPECTIVE_XYZ = 3;
 }
 
 message Level {
-  string identifier = 1; // To recognize the level independent of it's name
+  string identifier = 1; // To recognize the level from the code
   ProjectionType projection_type = 2;
-  repeated BackgroundLayer background_layers = 3; // First element is the front-most background
-  repeated LevelObject objects = 4;
+
+  float camera_offset = 3; // X or Y component of the camera offset from the player in meters
+  float camera_z_offset = 4; // Z component of the camera in PERSPECTIVE projection in meters
+  float horizontal_fov = 5; // Horizontal FOV of the camera in PERSPECTIVE projection in degrees
+
+  repeated BackgroundLayer background_layers = 6; // First element is the front-most background
+  repeated LevelObject objects = 7;
 }
