@@ -12,7 +12,7 @@
 
 using namespace m2;
 
-int main(int argc, char **argv) {
+int main(const int argc, char **argv) {
 	DEBUG_FN();
 
 	LOG_DEBUG("Processing command line arguments...");
@@ -20,8 +20,7 @@ int main(int argc, char **argv) {
 		LOG_TRACE("Processing argument %s...", argv[i]);
 		std::string arg{argv[i]};
 		if (constexpr std::string_view log_level_opt = "--log-level="; arg.starts_with(log_level_opt)) {
-			auto opt = arg.substr(log_level_opt.size());
-			if (not pb::LogLevel_Parse(opt, &current_log_level)) {
+			if (const auto opt = arg.substr(log_level_opt.size()); not LogLevel_Parse(opt, &current_log_level)) {
 				LOG_WARN("Invalid log level", opt);
 			}
 			LOG_INFO("New log level", current_log_level);
@@ -30,7 +29,7 @@ int main(int argc, char **argv) {
 			silent = true;
 		} else if (constexpr std::string_view slowdown_opt = "--slowdown="; arg.starts_with(slowdown_opt)) {
 			auto opt = arg.substr(slowdown_opt.size());
-			if (auto slowdown_factor = strtol(opt.c_str(), nullptr, 0); 1 <= slowdown_factor) {
+			if (auto const slowdown_factor = strtol(opt.c_str(), nullptr, 0); 1 <= slowdown_factor) {
 				time_slowdown_factor = static_cast<int>(slowdown_factor);
 				LOG_INFO("New slowdown factor", time_slowdown_factor);
 			} else {
