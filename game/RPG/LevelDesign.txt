@@ -49,10 +49,10 @@ Tutorial ideas:
 Level ideas:
 1) Walking:
    - Open: Make a level where the exit is hidden behind a bush. (FlagTutorialOpen)
-   - Closed: A labyrinth with endless corridors, with rooms in between. You cannot pass from every room to another, but it's hard to see this in a first glance.
+   - Closed: A labyrinth with endless corridors, with rooms in between. You cannot pass from every room to another, but it's hard to see this in a first glance. ()
 
 2) Dash:
-   - Closed: There are towers and drops in between them. Since there's no jumping, you have to dash in-between.
+   - Closed: There are towers and drops in between them. Since there's no jumping, you have to dash in-between. ()
    - Open: There are canals on the ground, you cannot jump in-between them, you have to dash.
 
 4) Ranged:
@@ -67,7 +67,7 @@ Level ideas:
 
 8) Melee:
    - Closed: Melee enemies are attacking you in a closed space.
-   - Closed: You are in a labyrinth with very strong & fast enemies.
+   - Closed: You are in a labyrinth with very strong & fast enemies. ()
    - Open: There are enemies hidden behind bushes. They're fast and jumping on you.
 
 10) Melee & Dash:
@@ -84,7 +84,7 @@ Level ideas:
     - Open: There are enemies chasing you, and at the same time escaping from you.
 
 18) Machine gun & Dash:
-    - Open & Closed: Jumping in-between safe zones, there are enemies following you.
+    - Open & Closed: Jumping in-between safe zones, there are enemies following you. ()
     - Open: Jumping in-between safe zones, enemies are following you flying. But they escape after hitting you.
 
 20) Machine gun & Ranged:

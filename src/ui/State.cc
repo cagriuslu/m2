@@ -316,6 +316,8 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 					GAME.console_output.emplace_back(".. file_name - open level editor with file");
 				}
 				return std::make_pair(Action::CONTINUE, std::string{});
+			} else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
+
 			} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
 				if (std::smatch match_results; std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
 					auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
@@ -370,6 +372,7 @@ const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprin
 				GAME.console_output.emplace_back("Available commands:");
 				GAME.console_output.emplace_back("help - display this help");
 				GAME.console_output.emplace_back("ledit - open level editor");
+				GAME.console_output.emplace_back("medit - open midi editor");
 				GAME.console_output.emplace_back("pedit - open pixel editor");
 				GAME.console_output.emplace_back("sedit - open sheet editor");
 				GAME.console_output.emplace_back("set - set game variable");
