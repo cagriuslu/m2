@@ -151,19 +151,19 @@ m2::Id m2::obj::create_god() {
 	obj.add_graphic().post_draw = [](MAYBE Graphic& gfx) {
 		// Check if level editor select mode is active
 		std::visit(overloaded {
-			[=](ledit::State& le) {
+			[](ledit::State& le) {
 				std::visit(overloaded {
 					[](const ledit::State::SelectMode& mode) { mode.on_draw(); },
 					DEFAULT_OVERLOAD
 				}, le.mode);
 			},
-			[=](sedit::State& se) {
+			[](sedit::State& se) {
 				std::visit(overloaded {
 					[](const auto& mode) { mode.on_draw(); },
 					[](MAYBE const std::monostate&) {}
 				}, se.mode);
 			},
-			[](MAYBE auto& _) {}
+			DEFAULT_OVERLOAD
 		}, LEVEL.type_state);
 	};
 

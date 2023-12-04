@@ -28,7 +28,7 @@ m2::Id m2::obj::create_camera() {
 			[](sedit::State& ss) {
 				if (auto* dil = ss.dynamic_image_loader()) { dil->move(GAME.viewport_to_2d_world_rect_m()); }
 			},
-			[](MAYBE auto& _) {}
+			DEFAULT_OVERLOAD
 		}, LEVEL.type_state);
 		IF(LEVEL.dynamic_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
 		IF(LEVEL.dynamic_sheet_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
