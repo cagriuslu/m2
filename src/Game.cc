@@ -88,8 +88,8 @@ m2::Game::Game() {
 	sprite_sheets = load_sprite_sheets(resource_dir / "SpriteSheets.json", renderer);
 	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
-	level_editor_object_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
-	_items = load_items(resource_dir / "Items.json");
+	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
+	_items = protobuf::LUT<m2::pb::Item, FullItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
 	animations = load_animations(resource_dir / "Animations.json");
 	_songs = load_songs(resource_dir / "Songs.json");
 }

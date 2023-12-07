@@ -20,7 +20,7 @@ rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLA
 
 m2::void_expected rpg::Player::init(m2::Object& obj) {
 	auto id = obj.id();
-	auto main_sprite_type = GAME.level_editor_object_sprites[m2g::pb::PLAYER];
+	auto main_sprite_type = GAME.object_main_sprites[m2g::pb::PLAYER];
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;

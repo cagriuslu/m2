@@ -3,7 +3,7 @@
 #include <m2/box2d/Detail.h>
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj, m2g::pb::ObjectType& type) {
-	auto sprite_type = GAME.level_editor_object_sprites[type];
+	auto sprite_type = GAME.object_main_sprites[type];
 	auto& sprite = GAME.get_sprite(sprite_type);
 
 	auto& phy = obj.add_physique();

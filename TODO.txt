@@ -24,3 +24,4 @@ RPG
 - Chaser gets stuck sometimes, either solve properly, or add detection
 - Build all game mechanics
 - Make THE MOST MINIMAL levels to showcase the engine, do not make an enjoyable game.
+- Remove Enemy.proto, have a LUT in memory

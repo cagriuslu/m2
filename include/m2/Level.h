@@ -67,7 +67,7 @@ namespace m2 {
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }
 		const std::string& identifier() const { return _lb ? _lb->identifier() : empty_string; }
-		pb::ProjectionType projection_type() const { return _lb ? _lb->projection_type() : pb::ProjectionType::PARALLEL; }
+		pb::ProjectionType projection_type() const { return (std::holds_alternative<splayer::State>(type_state) && _lb) ? _lb->projection_type() : pb::ProjectionType::PARALLEL; }
 		m3::VecF camera_offset() const { return _lb ? m3::VecF{projection_type() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f, _lb->camera_offset(), _lb->camera_z_offset()} : m3::VecF{}; }
 		float horizontal_fov() const;
 		Object* player() { return objects.get(player_id); }

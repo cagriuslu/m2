@@ -47,7 +47,7 @@ void m2::ledit::State::PlaceMode::select_object_type(m2g::pb::ObjectType object_
 	}
 	if (object_type) {
 		selected_object_type = object_type;
-		selected_sprite_ghost_id = obj::create_ghost(GAME.get_sprite(GAME.level_editor_object_sprites[object_type]));
+		selected_sprite_ghost_id = obj::create_ghost(GAME.get_sprite(GAME.object_main_sprites[object_type]));
 	}
 }
 void m2::ledit::State::PlaceMode::select_group_type(m2g::pb::GroupType group_type) { selected_group_type = group_type; }
@@ -63,7 +63,7 @@ void m2::ledit::State::PlaceMode::place_object(const VecI& position) const {
 		level_object.set_type(selected_object_type);
 		level_object.mutable_group()->set_type(selected_group_type);
 		level_object.mutable_group()->set_instance(selected_group_instance);
-		std::get<ledit::State>(LEVEL.type_state).fg_placeholders[position] = std::make_pair(obj::create_foreground_placeholder(VecF{position}, GAME.get_sprite(GAME.level_editor_object_sprites[selected_object_type])), level_object);
+		std::get<ledit::State>(LEVEL.type_state).fg_placeholders[position] = std::make_pair(obj::create_foreground_placeholder(VecF{position}, GAME.get_sprite(GAME.object_main_sprites[selected_object_type])), level_object);
 	}
 }
 m2::ledit::State::PlaceMode::~PlaceMode() {
@@ -176,7 +176,7 @@ void m2::ledit::State::SelectMode::paste_fg() {
 					level_object.mutable_position()->set_x(new_position.x);
 					level_object.mutable_position()->set_y(new_position.y);
 					RemoveMode::remove_object(new_position);
-					std::get<ledit::State>(LEVEL.type_state).fg_placeholders[new_position] = std::make_pair(obj::create_foreground_placeholder(VecF{new_position}, GAME.get_sprite(GAME.level_editor_object_sprites[level_object.type()])), level_object);
+					std::get<ledit::State>(LEVEL.type_state).fg_placeholders[new_position] = std::make_pair(obj::create_foreground_placeholder(VecF{new_position}, GAME.get_sprite(GAME.object_main_sprites[level_object.type()])), level_object);
 				}
 			});
 		}
@@ -228,7 +228,7 @@ void m2::ledit::State::activate_erase_mode() {
 }
 void m2::ledit::State::activate_place_mode() {
 	mode.emplace<PlaceMode>();
-	std::get<PlaceMode>(mode).select_object_type(GAME.level_editor_object_sprites.begin()->first);
+	std::get<PlaceMode>(mode).select_object_type(GAME.object_main_sprites.begin()->first);
 	std::get<PlaceMode>(mode).select_group_type(m2g::pb::GroupType::NO_GROUP);
 	std::get<PlaceMode>(mode).select_group_instance(0);
 }

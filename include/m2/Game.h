@@ -3,6 +3,7 @@
 #include "Level.h"
 #include "Shape.h"
 #include "AudioManager.h"
+#include "protobuf/LUT.h"
 #include "Sprite.h"
 #include "m2/Events.h"
 #include "DrawList.h"
@@ -34,6 +35,11 @@ namespace m2 {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m; // Doesn't mean much in 2.5D mode
 
+		////////////////////////////////////////////////////////////////////////
+		////////////////////////////// RESOURCES ///////////////////////////////
+		////////////////////////////////////////////////////////////////////////
+		protobuf::LUT<m2::pb::Item, FullItem> _items;
+
 	public:
 		static Game* _instance;
 
@@ -52,7 +58,6 @@ namespace m2 {
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		std::vector<Sprite> _sprites;
-		std::vector<FullItem> _items;
 		std::vector<Song> _songs;
 
 		std::optional<Level> _level;
@@ -87,7 +92,7 @@ namespace m2 {
 		std::vector<SpriteSheet> sprite_sheets;
 		std::optional<SpriteEffectsSheet> sprite_effects_sheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
-		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> level_editor_object_sprites;
+		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
 		std::optional<ShapesSheet> shapes_sheet;
 		std::optional<DynamicSheet> dynamic_sheet;
 		std::vector<Animation> animations;
@@ -128,7 +133,7 @@ namespace m2 {
 		// Accessors
 		const Dimensions& dimensions() const { return _dims; }
 		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[protobuf::enum_index(sprite_type)]; }
-		SmartPointer<const Item> get_item(const m2g::pb::ItemType item_type) const { return make_static<const Item>(&_items[protobuf::enum_index(item_type)]); }
+		SmartPointer<const Item> get_item(const m2g::pb::ItemType item_type) const { return make_static<const Item>(&_items[item_type]); }
 		const Song& get_song(m2g::pb::SongType song_type);
 		float delta_time_s() const { return _delta_time_s; }
 		const VecF& mouse_position_world_m() const;

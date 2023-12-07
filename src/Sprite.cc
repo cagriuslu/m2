@@ -359,8 +359,8 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_
 		}
 		has_encountered[index] = true;
 
-		if (object.level_editor_sprite_type()) {
-			object_sprite_map[object.type()] = object.level_editor_sprite_type();
+		if (object.main_sprite()) {
+			object_sprite_map[object.type()] = object.main_sprite();
 		}
 	}
 

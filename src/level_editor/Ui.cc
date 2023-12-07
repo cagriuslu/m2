@@ -359,7 +359,7 @@ const widget::TextBlueprint left_hud_place_button = {
 			// Fill object type selector with editor-enabled object types
 			auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
 			if (object_type_selection.initial_list.empty()) {
-				for (auto& [obj_type, spt] : GAME.level_editor_object_sprites) {
+				for (auto& [obj_type, spt] : GAME.object_main_sprites) {
 					object_type_selection.initial_list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
 				}
 			}

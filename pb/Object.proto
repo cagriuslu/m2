@@ -3,10 +3,12 @@ package m2.pb;
 
 import "m2g_ObjectType.proto";
 import "m2g_SpriteType.proto";
+import "m2g_AnimationType.proto";
 
 message Object {
   m2g.pb.ObjectType type = 1;
-  m2g.pb.SpriteType level_editor_sprite_type = 3;
+  m2g.pb.SpriteType main_sprite = 2;
+  m2g.pb.AnimationType animation = 3;
 }
 
 message Objects {

@@ -122,7 +122,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	type_state.emplace<ledit::State>();
 	auto& le_state = std::get<ledit::State>(type_state);
 
-	if (std::filesystem::exists(lb_path)) {
+	if (std::filesystem::exists(*_lb_path)) {
 		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		_lb.emplace(*lb);
@@ -142,7 +142,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
 			auto position = m2::VecF{fg_object.position()};
-			le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, GAME.get_sprite(GAME.level_editor_object_sprites[fg_object.type()])), fg_object);
+			le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, GAME.get_sprite(GAME.object_main_sprites[fg_object.type()])), fg_object);
 		}
 	}
 

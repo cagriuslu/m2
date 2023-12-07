@@ -18,7 +18,7 @@ namespace {
 		dynamic_cast<ui::widget::Text*>(widget)->trigger_action();
 		// Right hud points to `place_mode_right_hud`, select the object type
 		auto object_type_index = 0;
-		for (const auto& level_editor_object : GAME.level_editor_object_sprites) {
+		for (const auto& level_editor_object : GAME.object_main_sprites) {
 			if (level_editor_object.first == level_object.type()) {
 				dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[1]).select(object_type_index);
 				break;
