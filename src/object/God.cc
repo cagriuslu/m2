@@ -26,7 +26,7 @@ namespace {
 			++object_type_index;
 		}
 		// Select group type
-		auto group_type_index = protobuf::enum_index(level_object.group().type());
+		auto group_type_index = pb::enum_index(level_object.group().type());
 		dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[2]).select(group_type_index);
 		// Select group instance
 		auto group_instance = level_object.group().instance();

@@ -89,7 +89,7 @@ m2::Game::Game() {
 	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
-	_items = protobuf::LUT<m2::pb::Item, FullItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
+	_items = pb::LUT<m2::pb::Item, FullItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
 	animations = load_animations(resource_dir / "Animations.json");
 	_songs = load_songs(resource_dir / "Songs.json");
 }
@@ -143,7 +143,7 @@ void m2::Game::reset_state() {
 }
 
 const m2::Song& m2::Game::get_song(const m2g::pb::SongType song_type) {
-	return _songs[protobuf::enum_index(song_type)];
+	return _songs[pb::enum_index(song_type)];
 }
 
 void m2::Game::handle_quit_event() {

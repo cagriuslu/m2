@@ -38,7 +38,7 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		protobuf::LUT<m2::pb::Item, FullItem> _items;
+		pb::LUT<m2::pb::Item, FullItem> _items;
 
 	public:
 		static Game* _instance;
@@ -132,7 +132,7 @@ namespace m2 {
 
 		// Accessors
 		const Dimensions& dimensions() const { return _dims; }
-		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[protobuf::enum_index(sprite_type)]; }
+		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
 		SmartPointer<const Item> get_item(const m2g::pb::ItemType item_type) const { return make_static<const Item>(&_items[item_type]); }
 		const Song& get_song(m2g::pb::SongType song_type);
 		float delta_time_s() const { return _delta_time_s; }

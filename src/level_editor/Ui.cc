@@ -366,8 +366,8 @@ const widget::TextBlueprint left_hud_place_button = {
 			// Fill group type selector
 			auto& group_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[2].variant);
 			if (group_type_selection.initial_list.empty()) {
-				for (int e  = 0; e < protobuf::enum_value_count<m2g::pb::GroupType>(); ++e) {
-					group_type_selection.initial_list.emplace_back(protobuf::enum_name<m2g::pb::GroupType>(e));
+				for (int e  = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
+					group_type_selection.initial_list.emplace_back(pb::enum_name<m2g::pb::GroupType>(e));
 				}
 			}
 

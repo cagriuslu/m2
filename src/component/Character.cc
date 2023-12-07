@@ -75,16 +75,16 @@ bool m2::Character::use_item(const Iterator& item_it, float resource_multiplier)
 		}
 	} else if (1 < item_it->get_cost_count()) {
 		// Merge costs
-		auto resource_count = protobuf::enum_value_count<m2g::pb::ResourceType>();
+		auto resource_count = pb::enum_value_count<m2g::pb::ResourceType>();
 		auto* merged_costs = (float*) alloca(resource_count * sizeof(float));
 		memset(merged_costs, 0, resource_count * sizeof(float));
 		for (size_t i = 0; i < item_it->get_cost_count(); ++i) {
 			const auto cost = item_it->get_cost_by_index(i);
-			merged_costs[protobuf::enum_index(cost.first)] += cost.second * resource_multiplier;
+			merged_costs[pb::enum_index(cost.first)] += cost.second * resource_multiplier;
 		}
 		// Check if all costs are covered
 		for (int i = 0; i < resource_count; ++i) {
-			if (0.0f < merged_costs[i] && get_resource(protobuf::enum_value<m2g::pb::ResourceType>(i)) < merged_costs[i]) {
+			if (0.0f < merged_costs[i] && get_resource(pb::enum_value<m2g::pb::ResourceType>(i)) < merged_costs[i]) {
 				return false;
 			}
 		}
@@ -302,7 +302,7 @@ void m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
 }
 
 int m2::FullCharacter::resource_type_index(m2g::pb::ResourceType resource_type) {
-	return protobuf::enum_index<m2g::pb::ResourceType>(resource_type);
+	return pb::enum_index<m2g::pb::ResourceType>(resource_type);
 }
 
 m2::Character& m2::get_character_base(CharacterVariant& v) {

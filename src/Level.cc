@@ -38,7 +38,7 @@ m2::Level::~Level() {
 m2::void_expected m2::Level::init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
 	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
 		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
-		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
+		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		_lb = *lb;
 	} else {
@@ -123,7 +123,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	auto& le_state = std::get<ledit::State>(type_state);
 
 	if (std::filesystem::exists(*_lb_path)) {
-		auto lb = protobuf::json_file_to_message<pb::Level>(*_lb_path);
+		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
 		_lb.emplace(*lb);
 		// Create background tiles

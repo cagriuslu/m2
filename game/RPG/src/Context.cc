@@ -4,10 +4,10 @@
 
 rpg::Context::Context() {
 	// Load enemies
-	enemies = m2_move_or_throw_error(m2::protobuf::json_file_to_message<pb::Enemies>(GAME.resource_dir / "Enemies.json"));
+	enemies = m2_move_or_throw_error(m2::pb::json_file_to_message<pb::Enemies>(GAME.resource_dir / "Enemies.json"));
 	// Load progress
 	progress_file_path = GAME.resource_dir / "Progress.json";
-	auto expect_progress = m2::protobuf::json_file_to_message<rpg::pb::Progress>(progress_file_path);
+	auto expect_progress = m2::pb::json_file_to_message<rpg::pb::Progress>(progress_file_path);
 	if (expect_progress) {
 		progress.CopyFrom(*expect_progress);
 	} else {
@@ -30,7 +30,7 @@ const rpg::pb::Enemy *rpg::Context::get_enemy(m2g::pb::ObjectType object_type) c
 }
 
 void rpg::Context::save_progress() const {
-	m2::protobuf::message_to_json_file(progress, progress_file_path);
+	m2::pb::message_to_json_file(progress, progress_file_path);
 }
 
 const m2::ui::Blueprint *rpg::Context::main_menu() {

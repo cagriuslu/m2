@@ -257,13 +257,13 @@ void m2::ledit::State::save() {
 
 	for (int i = 0; i < I(BackgroundLayer::n); ++i) {
 		for (const auto& [position, pair] : std::get<ledit::State>(LEVEL.type_state).bg_placeholders[i]) {
-			protobuf::mutable_get_or_create(level.mutable_background_layers(), i);
-			auto* row = protobuf::mutable_get_or_create(level.mutable_background_layers(i)->mutable_background_rows(), position.y); // Get or create row
-			*(protobuf::mutable_get_or_create(row->mutable_items(), position.x)) = pair.second; // Set sprite type
+			pb::mutable_get_or_create(level.mutable_background_layers(), i);
+			auto* row = pb::mutable_get_or_create(level.mutable_background_layers(i)->mutable_background_rows(), position.y); // Get or create row
+			*(pb::mutable_get_or_create(row->mutable_items(), position.x)) = pair.second; // Set sprite type
 		}
 	}
 	for (const auto& [position, pair] : std::get<ledit::State>(LEVEL.type_state).fg_placeholders) {
 		level.add_objects()->CopyFrom(pair.second);
 	}
-	protobuf::message_to_json_file(level, *LEVEL.path());
+	pb::message_to_json_file(level, *LEVEL.path());
 }

@@ -19,7 +19,7 @@ static TextBlueprint entry_variant_1 = {
 		.initial_text = "RANDOM LEVEL",
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text &self) {
-			auto expect_lb = m2::protobuf::json_file_to_message<m2::pb::Level>("resource/game/MINE/levels/sp000.json");
+			auto expect_lb = m2::pb::json_file_to_message<m2::pb::Level>("resource/game/MINE/levels/sp000.json");
 			if (!expect_lb) {
 				throw M2ERROR("Unable to load level");
 			}
@@ -33,10 +33,10 @@ static TextBlueprint entry_variant_1 = {
 					auto noise = m2::perlin({x * 0.4f, y * 0.4f}, 1.0f);
 					auto st = (noise < 0.5f) ? GRASSLAND_DIRT_1 : DUNGEON_COAL_1;
 
-					m2::protobuf::mutable_get_or_create(lb.mutable_background_layers(), 0);
-					auto *sprite_array = m2::protobuf::mutable_get_or_create(
+					m2::pb::mutable_get_or_create(lb.mutable_background_layers(), 0);
+					auto *sprite_array = m2::pb::mutable_get_or_create(
 							lb.mutable_background_layers(0)->mutable_background_rows(), y);
-					auto *sprite = m2::protobuf::mutable_get_or_create(sprite_array->mutable_items(), x);
+					auto *sprite = m2::pb::mutable_get_or_create(sprite_array->mutable_items(), x);
 					*sprite = st;
 				}
 			}

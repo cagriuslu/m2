@@ -365,7 +365,7 @@ expected<m2::sedit::State> m2::sedit::State::create(const std::filesystem::path&
 	// If path exists,
 	if (std::filesystem::exists(path)) {
 		// Check if the file is a valid pb::SpriteSheets
-		if (auto msg = protobuf::json_file_to_message<pb::SpriteSheets>(path); !msg) {
+		if (auto msg = pb::json_file_to_message<pb::SpriteSheets>(path); !msg) {
 			return make_unexpected(msg.error());
 		}
 	}
@@ -376,7 +376,7 @@ const m2::pb::SpriteSheets& m2::sedit::State::sprite_sheets() const {
 	// If path exists,
 	if (std::filesystem::exists(_path)) {
 		// Check if the file is a valid pb::SpriteSheets
-		if (auto msg = protobuf::json_file_to_message<pb::SpriteSheets>(_path); msg) {
+		if (auto msg = pb::json_file_to_message<pb::SpriteSheets>(_path); msg) {
 			_sprite_sheets = *msg;
 		} else {
 			throw M2ERROR("File is not a valid m2::pb::SpriteSheets: " + _path.string());
@@ -402,14 +402,14 @@ void m2::sedit::State::modify_selected_sprite(const std::function<void(pb::Sprit
 	// If path exists,
 	if (std::filesystem::exists(_path)) {
 		// Check if the file is a valid pb::SpriteSheets
-		if (auto sprite_sheets = protobuf::json_file_to_message<pb::SpriteSheets>(_path); sprite_sheets) {
+		if (auto sprite_sheets = pb::json_file_to_message<pb::SpriteSheets>(_path); sprite_sheets) {
 			for (int i = 0; i < sprite_sheets->sheets_size(); ++i) {
 				auto* mutable_sheet = sprite_sheets->mutable_sheets(i);
 				for (int j = 0; j < mutable_sheet->sprites_size(); ++j) {
 					auto* mutable_sprite = mutable_sheet->mutable_sprites(j);
 					if (mutable_sprite->type() == _selected_sprite_type) {
 						modifier(*mutable_sprite);
-						protobuf::message_to_json_file(*sprite_sheets, _path);
+						pb::message_to_json_file(*sprite_sheets, _path);
 						return;
 					}
 				}

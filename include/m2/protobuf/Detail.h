@@ -6,7 +6,7 @@
 #include <google/protobuf/generated_enum_reflection.h>
 #include <string>
 
-namespace m2::protobuf {
+namespace m2::pb {
 	template <typename ProtoType>
 	expected<ProtoType> json_string_to_message(const std::string& str) {
 		ProtoType message;

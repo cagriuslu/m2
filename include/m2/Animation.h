@@ -14,7 +14,7 @@ namespace m2 {
 		Animation() = default;
 		explicit Animation(pb::Animation pb);
 		const pb::Animation& animation() const { return _animation; }
-		const pb::AnimationState& state(m2g::pb::AnimationStateType anim_state_type) const { return _states[protobuf::enum_index(anim_state_type)]; }
+		const pb::AnimationState& state(m2g::pb::AnimationStateType anim_state_type) const { return _states[pb::enum_index(anim_state_type)]; }
 	};
 	std::vector<Animation> load_animations(const std::filesystem::path& path);
 }
