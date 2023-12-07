@@ -15,6 +15,4 @@ namespace m2 {
 		[[nodiscard]] inline size_t sample_count() const { return _samples.size(); }
 		[[nodiscard]] inline const AudioSample* data() const { return _samples.data(); }
 	};
-
-	std::vector<Song> load_songs(const std::filesystem::path& path);
 }

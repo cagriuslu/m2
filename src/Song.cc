@@ -8,35 +8,3 @@ m2::Song::Song(const pb::Song &song) {
 	_samples.resize(song_size);
 	synth::mix_song(_samples.begin(), _samples.end(), song.synth_song());
 }
-
-std::vector<m2::Song> m2::load_songs(const std::filesystem::path& path) {
-	auto songs = pb::json_file_to_message<pb::Songs>(path);
-	if (!songs) {
-		throw M2ERROR(songs.error());
-	}
-
-	std::vector<Song> songs_vector(pb::enum_value_count<m2g::pb::SongType>());
-	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::SongType>());
-
-	for (const auto& song : songs->songs()) {
-		LOGF_DEBUG("Loading song %s...", pb::enum_name(song.type()).c_str());
-		auto index = pb::enum_index(song.type());
-		// Check if the song is already loaded
-		if (is_loaded[index]) {
-			throw M2ERROR("Song has duplicate definition: " + std::to_string(song.type()));
-		}
-		// Load song
-		songs_vector[index] = Song{song};
-		is_loaded[index] = true;
-		LOG_DEBUG("Loaded song");
-	}
-
-	// Check if every item is loaded
-	for (int e = 0; e < pb::enum_value_count<m2g::pb::SongType>(); ++e) {
-		if (!is_loaded[e]) {
-			throw M2ERROR("Song is not defined: " + pb::enum_name<m2g::pb::SongType>(e));
-		}
-	}
-
-	return songs_vector;
-}

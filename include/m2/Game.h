@@ -30,17 +30,11 @@
 #define HUD_ASPECT_RATIO_DIV (GAME_AND_HUD_ASPECT_RATIO_DIV * GAME_ASPECT_RATIO_DIV * 2)
 
 namespace m2 {
-	struct Game {
-	private:
+	class Game {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m; // Doesn't mean much in 2.5D mode
 
-		////////////////////////////////////////////////////////////////////////
-		////////////////////////////// RESOURCES ///////////////////////////////
-		////////////////////////////////////////////////////////////////////////
-		pb::LUT<m2::pb::Item, FullItem> _items;
-
-	public:
+	public: // private
 		static Game* _instance;
 
 		struct Dimensions {
@@ -58,7 +52,6 @@ namespace m2 {
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		std::vector<Sprite> _sprites;
-		std::vector<Song> _songs;
 
 		std::optional<Level> _level;
 		float _delta_time_s{};
@@ -95,7 +88,9 @@ namespace m2 {
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
 		std::optional<ShapesSheet> shapes_sheet;
 		std::optional<DynamicSheet> dynamic_sheet;
-		std::vector<Animation> animations;
+		pb::LUT<m2::pb::Item, FullItem> items;
+		pb::LUT<m2::pb::Animation, Animation> animations;
+		pb::LUT<m2::pb::Song, Song> songs;
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// CONFIG ////////////////////////////////
@@ -133,8 +128,7 @@ namespace m2 {
 		// Accessors
 		const Dimensions& dimensions() const { return _dims; }
 		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
-		SmartPointer<const Item> get_item(const m2g::pb::ItemType item_type) const { return make_static<const Item>(&_items[item_type]); }
-		const Song& get_song(m2g::pb::SongType song_type);
+		SmartPointer<const Item> get_item(const m2g::pb::ItemType item_type) const { return make_static<const Item>(&items[item_type]); }
 		float delta_time_s() const { return _delta_time_s; }
 		const VecF& mouse_position_world_m() const;
 		const VecF& screen_center_to_mouse_position_m() const;

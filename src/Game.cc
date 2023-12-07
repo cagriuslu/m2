@@ -89,9 +89,9 @@ m2::Game::Game() {
 	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
-	_items = pb::LUT<m2::pb::Item, FullItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
-	animations = load_animations(resource_dir / "Animations.json");
-	_songs = load_songs(resource_dir / "Songs.json");
+	items = pb::LUT<m2::pb::Item, FullItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
+	animations = pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
+	songs = pb::LUT<m2::pb::Song, Song>::load(resource_dir / "Songs.json", &m2::pb::Songs::songs);
 }
 
 m2::Game::~Game() {
@@ -140,10 +140,6 @@ m2::void_expected m2::Game::load_sheet_editor(const std::string& sheet_path) {
 
 void m2::Game::reset_state() {
 	events.clear();
-}
-
-const m2::Song& m2::Game::get_song(const m2g::pb::SongType song_type) {
-	return _songs[pb::enum_index(song_type)];
 }
 
 void m2::Game::handle_quit_event() {

@@ -12,6 +12,7 @@
 - Try bgfx
 - Add timer widget that executes an action after some time
 - Level editor'da SELECT ile Paste BG yapinca eski tile'lar silinmiyor olabilir
+- SmartPointer gereksiz olabilir mi, gozden gecir
 
 Pixel Editor
 - Draw transparency pattern

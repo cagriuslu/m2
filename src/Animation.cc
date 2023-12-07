@@ -11,34 +11,3 @@ m2::Animation::Animation(pb::Animation pb) : _animation(std::move(pb)) {
 		_states[pb::enum_index(state.type())] = state;
 	}
 }
-
-std::vector<m2::Animation> m2::load_animations(const std::filesystem::path& path) {
-	auto animations = pb::json_file_to_message<pb::Animations>(path);
-	if (!animations) {
-		throw M2ERROR(animations.error());
-	}
-
-	std::vector<Animation> animations_vector(pb::enum_value_count<AnimationType>());
-	std::vector<bool> is_loaded(pb::enum_value_count<AnimationType>());
-
-	// Load animations
-	for (const auto& animation : animations->animations()) {
-		auto index = pb::enum_index(animation.type());
-		// Check if animation is already loaded
-		if (is_loaded[index]) {
-			throw M2ERROR("Animation has duplicate definition: " + AnimationType_Name(animation.type()));
-		}
-		// Load animation
-		animations_vector[index] = Animation{animation};
-		is_loaded[index] = true;
-	}
-
-	// Check if every animation is loaded
-	for (int i = 0; i < pb::enum_value_count<AnimationType>(); ++i) {
-		if (!is_loaded[i]) {
-			throw M2ERROR("Animation is not defined: " + pb::enum_name<AnimationType>(i));
-		}
-	}
-
-	return animations_vector;
-}

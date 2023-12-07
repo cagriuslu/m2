@@ -184,36 +184,6 @@ bool m2::FullItem::has_attribute(m2g::pb::AttributeType type) const {
 	return get_attribute(type) != 0.0f;
 }
 
-std::vector<m2::FullItem> m2::load_items(const std::filesystem::path& items_path) {
-	auto items = pb::json_file_to_message<pb::Items>(items_path);
-	if (!items) {
-		throw M2ERROR(items.error());
-	}
-
-	std::vector<FullItem> items_vector(pb::enum_value_count<m2g::pb::ItemType>());
-	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::ItemType>());
-
-	for (const auto& item : items->items()) {
-		auto index = pb::enum_index(item.type());
-		// Check if the item is already loaded
-		if (is_loaded[index]) {
-			throw M2ERROR("Item has duplicate definition: " + pb::enum_name(item.type()));
-		}
-		// Load item
-		items_vector[index] = FullItem{item};
-		is_loaded[index] = true;
-	}
-
-	// Check if every item is loaded
-	for (int i = 0; i < pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		if (!is_loaded[i]) {
-			throw M2ERROR("Item is not defined: " + pb::enum_name<m2g::pb::ItemType>(i));
-		}
-	}
-
-	return items_vector;
-}
-
 float m2::get_resource_amount(const m2::pb::Resource& resource) {
 	if (resource.has_amount()) {
 		return static_cast<float>(resource.amount());

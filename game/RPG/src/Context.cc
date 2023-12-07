@@ -66,7 +66,7 @@ const m2::ui::Blueprint *rpg::Context::main_menu() {
 						.on_action = [=](MAYBE const m2::ui::widget::Text &self) {
 							Context::get_instance().alive_enemy_count = 0;
 							m2_succeed_or_throw_error(GAME.load_single_player(level_json, level_name));
-							GAME.audio_manager->play(&GAME.get_song(m2g::pb::SONG_MAIN_THEME),
+							GAME.audio_manager->play(&GAME.songs[m2g::pb::SONG_MAIN_THEME],
 									m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 							return m2::ui::Action::RETURN;
 						}
