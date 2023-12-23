@@ -1,6 +1,5 @@
 - Sound doesn't play if object dies
-- m2 command line argument'larini direkt consola redirect et
-- Protobuf loading yaparken duplicate type'a sahip liste load etmesi bir pattern'a donustur
+- Redirect command line arguments to m2 terminal
 - Override ppm doesn't work for dropped items
 - SDL_ComposeCustomBlendMode
 - Enable VSync, do something while waiting for VSync
@@ -11,15 +10,14 @@
 - Add width to pathfinder smoothing algorithm
 - Try bgfx
 - Add timer widget that executes an action after some time
-- Level editor'da SELECT ile Paste BG yapinca eski tile'lar silinmiyor olabilir
-- SmartPointer gereksiz olabilir mi, gozden gecir
+- SmartPointer may be useless, think about it
 
 Pixel Editor
 - Draw transparency pattern
 - Implement SAVE
 
 RPG
-- Enemy load ederken background ve foreground collider'larin center offsetleri ignore ediliyor
+- Center offset's of background and foreground colliders are ignored while loading enemies
 - Take inspiration from: Elden Ring, Diablo 1-2
 - Build tutorial levels: Machine Gun, Explosive Weapon, Long Sword, Axe, Stun
 - Chaser gets stuck sometimes, either solve properly, or add detection
