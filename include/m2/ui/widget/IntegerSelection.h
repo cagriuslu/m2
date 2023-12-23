@@ -4,7 +4,7 @@
 
 namespace m2::ui::widget {
 	class IntegerSelection : public Widget {
-		sdl::FontTexture _font_texture;
+		sdl::FontTexture _font_texture, _plus_texture, _minus_texture;
 		bool _inc_depressed{};
 		bool _dec_depressed{};
 
@@ -15,9 +15,9 @@ namespace m2::ui::widget {
 		Action on_update() override;
 		void on_draw() override;
 
-		int value() const { return _font_texture.int_value(); }
+		[[nodiscard]] int value() const { return _font_texture.int_value(); }
 
 	private:
-		const IntegerSelectionBlueprint& integer_selection_blueprint() const { return std::get<IntegerSelectionBlueprint>(blueprint->variant); }
+		[[nodiscard]] const IntegerSelectionBlueprint& integer_selection_blueprint() const { return std::get<IntegerSelectionBlueprint>(blueprint->variant); }
 	};
 }

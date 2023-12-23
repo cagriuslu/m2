@@ -2,9 +2,11 @@
 #include "../Action.h"
 #include "../../Events.h"
 #include "../Widget.h"
+#include "../../sdl/Font.h"
 
 namespace m2::ui::widget {
 	class ImageSelection : public Widget {
+		sdl::FontTexture _plus_texture, _minus_texture;
 		unsigned _selection{};
 		bool _inc_depressed{};
 		bool _dec_depressed{};
@@ -15,6 +17,6 @@ namespace m2::ui::widget {
 		Action select(unsigned index);
 		void on_draw() override;
 
-		inline m2g::pb::SpriteType selection() const { return std::get<ImageSelectionBlueprint>(blueprint->variant).list[_selection]; }
+		[[nodiscard]] inline m2g::pb::SpriteType selection() const { return std::get<ImageSelectionBlueprint>(blueprint->variant).list[_selection]; }
 	};
 }

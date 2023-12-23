@@ -6,7 +6,7 @@ namespace m2::ui::widget {
 	class TextSelection : public Widget {
 		std::vector<std::string> _list;
 		unsigned _selection{};
-		sdl::FontTexture _font_texture;
+		sdl::FontTexture _font_texture, _plus_texture, _minus_texture;
 		bool _inc_depressed{};
 		bool _dec_depressed{};
 
@@ -17,9 +17,9 @@ namespace m2::ui::widget {
 		Action select(unsigned index);
 		void on_draw() override;
 
-		inline const std::string& selection() const { return _list[_selection]; }
+		[[nodiscard]] inline const std::string& selection() const { return _list[_selection]; }
 
 	private:
-		const TextSelectionBlueprint& text_selection_blueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }
+		[[nodiscard]] const TextSelectionBlueprint& text_selection_blueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }
 	};
 }
