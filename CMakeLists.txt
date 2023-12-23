@@ -118,10 +118,18 @@ add_subdirectory(game)
 file(GLOB PROTO_FILES "pb/*.proto")
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
+# Post-build actions
+add_custom_command(
+        OUTPUT ${CMAKE_SOURCE_DIR}/resource.zip
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E tar cf ${CMAKE_SOURCE_DIR}/resource.zip --format=zip ${CMAKE_SOURCE_DIR}/resource/
+        DEPENDS ${CMAKE_SOURCE_DIR}/resource
+)
+
 file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h")
 file(GLOB M2_PRIVATE_HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h")
 file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc")
-add_executable(m2 WIN32 ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
+add_executable(m2 WIN32 ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${CMAKE_SOURCE_DIR}/resource.zip)
 if (NOT WIN32)
     target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
 endif()
@@ -133,9 +141,9 @@ if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
     # Copy DLLs
     add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} ${SDL2_DLLS} ${SDL2_image_DLLS} ${SDL2_ttf_DLLS} $<TARGET_FILE_DIR:m2>
-        COMMAND_EXPAND_LISTS
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} ${SDL2_DLLS} ${SDL2_image_DLLS} ${SDL2_ttf_DLLS} $<TARGET_FILE_DIR:m2>
+            COMMAND_EXPAND_LISTS
     )
 
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE") # Temporary
@@ -160,7 +168,8 @@ if(GTest_FOUND)
         #target_compile_options(test PRIVATE /analyze) # Code inspections
         # Copy DLLs
         add_custom_command(
-                TARGET test POST_BUILD
+                TARGET test
+                POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} ${SDL2_DLLS} ${SDL2_image_DLLS} ${SDL2_ttf_DLLS} $<TARGET_FILE_DIR:test>
                 COMMAND_EXPAND_LISTS
         )
