@@ -7,4 +7,6 @@ namespace m2::sdl {
         void operator()(SDL_Texture* t) const { SDL_DestroyTexture(t); }
     };
     using TextureUniquePtr = std::unique_ptr<SDL_Texture, TextureDeleter>;
+
+    TextureUniquePtr capture_screen_as_texture();
 }

@@ -80,12 +80,7 @@ Action State::execute(const RectI rect) {
 	};
 
 	// Get screenshot
-	int w, h;
-	SDL_GetRendererOutputSize(GAME.renderer, &w, &h);
-	auto *surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
-	SDL_RenderReadPixels(GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
-	const std::unique_ptr<SDL_Texture, sdl::TextureDeleter> texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
-	SDL_FreeSurface(surface);
+	const auto screen_capture = sdl::capture_screen_as_texture();
 
 	Action return_value;
 
@@ -143,7 +138,7 @@ Action State::execute(const RectI rect) {
 		// Clear screen
 		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
 		SDL_RenderClear(GAME.renderer);
-		SDL_RenderCopy(GAME.renderer, texture.get(), nullptr, nullptr);
+		SDL_RenderCopy(GAME.renderer, screen_capture.get(), nullptr, nullptr);
 		draw();
 		// Present
 		SDL_RenderPresent(GAME.renderer);
