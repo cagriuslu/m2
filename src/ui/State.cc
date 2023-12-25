@@ -82,10 +82,11 @@ Action State::execute(const RectI rect) {
 	// Get screenshot
 	const auto screen_capture = sdl::capture_screen_as_texture();
 
-	Action return_value;
-
+	// Update initial positions
 	update_positions(rect);
-	if ((return_value = update_contents()) != Action::CONTINUE) {
+
+	// Update initial contents
+	if (const Action return_value = update_contents(); return_value != Action::CONTINUE) {
 		return return_value;
 	}
 
@@ -96,9 +97,12 @@ Action State::execute(const RectI rect) {
 		////////////////////////////////////////////////////////////////////////
 		events.clear();
 		if (events.gather()) {
+			// Handle quit action
 			if (events.pop_quit()) {
 				return Action::QUIT;
 			}
+
+			// Handle console action
 			if (events.pop_key_press(Key::CONSOLE) &&
 					blueprint != &console_ui) { // Do not open console on top of console
 				LOG_INFO("Opening console");
@@ -112,6 +116,8 @@ Action State::execute(const RectI rect) {
 					LOG_WARN("Console returned unexpected action", static_cast<int>(action));
 				}
 			}
+
+			// Handle resize action
 			if (const auto window_resize = events.pop_window_resize(); window_resize) {
 				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
 				update_positions(RectI{
@@ -121,7 +127,9 @@ Action State::execute(const RectI rect) {
 						static_cast<int>(round(relation_to_window.h * static_cast<float>(winrect.h)))
 				});
 			}
-			if ((return_value = handle_events(events)) != Action::CONTINUE) {
+
+			// Handle events
+			if (const Action return_value = handle_events(events); return_value != Action::CONTINUE) {
 				return return_value;
 			}
 		}
@@ -131,15 +139,19 @@ Action State::execute(const RectI rect) {
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		// Draw ui
-		if ((return_value = update_contents()) != Action::CONTINUE) {
+		// Update contents
+		if (const Action return_value = update_contents(); return_value != Action::CONTINUE) {
 			return return_value;
 		}
+
 		// Clear screen
 		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
 		SDL_RenderClear(GAME.renderer);
 		SDL_RenderCopy(GAME.renderer, screen_capture.get(), nullptr, nullptr);
+
+		// Draw UI elements
 		draw();
+
 		// Present
 		SDL_RenderPresent(GAME.renderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////

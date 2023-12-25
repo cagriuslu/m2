@@ -7,7 +7,7 @@
 #include <SDL.h>
 
 namespace m2::ui {
-	// Forwards declaration
+	// Forward declaration
 	struct State;
 
 	struct Widget {
@@ -30,7 +30,7 @@ namespace m2::ui {
 		virtual Action on_update();
 		virtual void on_draw();
 
-		[[nodiscard]] inline State& parent() const { return *_parent; }
+		[[nodiscard]] State& parent() const { return *_parent; }
 
 		// Helpers
 		static void draw_background_color(const RectI& rect, const SDL_Color& color);
