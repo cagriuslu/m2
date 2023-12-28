@@ -78,7 +78,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Primary weapon
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			auto shoot = [&](const m2::Item& weapon) {
-				auto& projectile = m2::create_object(obj.position, id).first;
+				auto& projectile = m2::create_object(obj.position, {}, id).first;
 				rpg::create_projectile(projectile, vector_to_mouse, weapon, true);
 				// Knock-back
 				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
@@ -102,7 +102,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Secondary weapon
 		if (GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY)) {
 			auto slash = [&](const m2::Item& weapon) {
-				auto& melee = m2::create_object(obj.position, id).first;
+				auto& melee = m2::create_object(obj.position, {}, id).first;
 				rpg::create_blade(melee, vector_to_mouse, weapon, true);
 			};
 

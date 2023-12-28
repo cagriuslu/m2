@@ -193,7 +193,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				case pb::CAPABILITY_RANGED: {
 					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
 					if (it && obj.character().use_item(it)) {
-						auto& projectile = m2::create_object(obj.position, obj.id()).first;
+						auto& projectile = m2::create_object(obj.position, {}, obj.id()).first;
 						auto shoot_direction = LEVEL.player()->position - obj.position;
 						rpg::create_projectile(projectile, shoot_direction, *it, false);
 						// Knock-back
@@ -204,7 +204,7 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				case pb::CAPABILITY_MELEE: {
 					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 					if (it && obj.character().use_item(it)) {
-						auto& melee = m2::create_object(obj.position, obj.id()).first;
+						auto& melee = m2::create_object(obj.position, {}, obj.id()).first;
 						rpg::create_blade(melee, LEVEL.player()->position - obj.position, *it, false);
 					}
 					break;

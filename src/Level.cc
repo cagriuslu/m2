@@ -76,7 +76,7 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	// Create foreground objects
 	for (const auto& fg_object : _lb->objects()) {
         LOGF_TRACE("Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(), fg_object.position().y());
-		auto [obj, id] = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f});
+		auto [obj, id] = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f}, fg_object.type());
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {

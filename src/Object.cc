@@ -4,11 +4,13 @@
 #include "m2/component/Graphic.h"
 #include "m2/component/Light.h"
 
-m2::Object::Object(const m2::VecF &position, ObjectId parent_id) : position(position), _parent_id(parent_id) {}
+m2::Object::Object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) : position(position),
+		_object_type(type), _parent_id(parent_id) {}
 
 m2::Object::Object(Object&& other) noexcept :
 		position(other.position),
 		impl(std::move(other.impl)),
+		_object_type(other._object_type),
 		_parent_id(other._parent_id),
 		_group_id(other._group_id),
 		_index_in_group(other._index_in_group),
@@ -19,6 +21,7 @@ m2::Object::Object(Object&& other) noexcept :
 		_sound_emitter_id(other._sound_emitter_id),
 		_character_id(other._character_id) {
 	other._group_id = {};
+	other._object_type = {};
 	other._parent_id = 0;
 	other._index_in_group = 0;
 	other._physique_id = 0;
@@ -31,6 +34,7 @@ m2::Object::Object(Object&& other) noexcept :
 m2::Object& m2::Object::operator=(Object&& other) noexcept {
 	std::swap(position, other.position);
 	std::swap(impl, other.impl);
+	std::swap(_object_type, other._object_type);
 	std::swap(_parent_id, other._parent_id);
 	std::swap(_group_id, other._group_id);
 	std::swap(_index_in_group, other._index_in_group);
@@ -226,8 +230,8 @@ void m2::Object::remove_character() {
 	}
 }
 
-std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::VecF &position, ObjectId parent_id) {
-    return LEVEL.objects.alloc(position, parent_id);
+std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
+    return LEVEL.objects.alloc(position, type, parent_id);
 }
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {
 	return [id]() {

@@ -33,7 +33,7 @@ namespace m2 {
         std::unique_ptr<ObjectImpl> impl;
 
         Object() = default;
-        explicit Object(const m2::VecF& position, ObjectId parent_id = 0);
+        Object(const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
         // Copy not allowed
         Object(const Object& other) = delete;
         Object& operator=(const Object& other) = delete;
@@ -44,6 +44,7 @@ namespace m2 {
         ~Object();
 
 		[[nodiscard]] ObjectId id() const;
+		[[nodiscard]] m2g::pb::ObjectType object_type() const { return _object_type; }
 		[[nodiscard]] ObjectId parent_id() const;
 		[[nodiscard]] GroupId group_id() const;
 	    [[nodiscard]] PhysiqueId physique_id() const;
@@ -85,6 +86,7 @@ namespace m2 {
 
 	private:
 		mutable std::optional<ObjectId> _id;
+		m2g::pb::ObjectType _object_type{};
 		ObjectId _parent_id{};
 		GroupId _group_id{};
 	    IndexInGroup _index_in_group{};
@@ -97,7 +99,7 @@ namespace m2 {
 		CharacterId _character_id{};
     };
 
-    std::pair<Object&, ObjectId> create_object(const m2::VecF& position, ObjectId parent_id = 0);
+    std::pair<Object&, ObjectId> create_object(const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
 	std::function<void(void)> create_object_deleter(ObjectId id);
 	std::function<void(void)> create_physique_deleter(ObjectId id);
 	std::function<void(void)> create_graphic_deleter(ObjectId id);
