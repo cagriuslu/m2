@@ -1,0 +1,42 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "DEBUG",
+      "hidden": true,
+      "generator": "Unix Makefiles",
+      "cacheVariables": {
+        "DEBUG": "ON"
+      }
+    },
+    {
+      "name": "RPG-DEBUG",
+      "inherits": ["DEBUG"],
+      "binaryDir": "/Users/uslu/Builds/M2-RPG-DEBUG",
+      "cacheVariables": {
+        "GAME": "RPG"
+      }
+    },
+    {
+      "name": "MINE-DEBUG",
+      "inherits": ["DEBUG"],
+      "binaryDir": "/Users/uslu/Builds/M2-MINE-DEBUG",
+      "cacheVariables": {
+        "GAME": "MINE"
+      }
+    },
+    {
+      "name": "CuZn-DEBUG",
+      "inherits": ["DEBUG"],
+      "binaryDir": "/Users/uslu/Builds/M2-CuZn-DEBUG",
+      "cacheVariables": {
+        "GAME": "CuZn"
+      }
+    }
+  ]
+}
