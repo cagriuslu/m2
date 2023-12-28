@@ -1,0 +1,6 @@
+syntax = "proto3";
+package m2g.pb;
+
+enum ObjectType {
+  NO_OBJECT = 0;
+}
