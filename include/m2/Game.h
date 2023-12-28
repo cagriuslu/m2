@@ -13,6 +13,8 @@
 #include <m2g_ObjectType.pb.h>
 #include <m2/Pool.h>
 #include <SDL.h>
+#include "network/ServerThread.h"
+#include "network/ClientThread.h"
 #include <SDL2/SDL_ttf.h>
 #include <vector>
 #include "Meta.h"
@@ -34,7 +36,7 @@ namespace m2 {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m; // Doesn't mean much in 2.5D mode
 
-	public: // private
+	public: // TODO private
 		static Game* _instance;
 
 		struct Dimensions {
@@ -54,6 +56,9 @@ namespace m2 {
 		std::vector<Sprite> _sprites;
 
 		std::optional<Level> _level;
+		int32_t _sender_id;
+		std::optional<network::ServerThread> _server_thread;
+		std::optional<network::ClientThread> _client_thread;
 		float _delta_time_s{};
 
 	public:
@@ -118,8 +123,15 @@ namespace m2 {
 		// Initialization
 		void initialize_context();
 
+		// Network management
+		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
+		void_expected join_game(mplayer::Type type, const std::string& addr);
+		int32_t sender_id() const { return _sender_id; }
+		network::ServerThread& server_thread() { return *_server_thread; }
+		network::ClientThread& client_thread() { return *_client_thread; }
 		// Level management
 		void_expected load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected load_multi_player(mplayer::Type type, const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected load_level_editor(const std::string& level_resource_path);
 		void_expected load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		void_expected load_sheet_editor(const std::string& sheet_path);

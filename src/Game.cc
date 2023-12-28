@@ -30,6 +30,11 @@ void m2::Game::destroy_instance() {
 
 m2::Game::Game() {
 	DEBUG_FN();
+
+	auto tmp_sender_id = randf();
+	_sender_id = *reinterpret_cast<int32_t*>(&tmp_sender_id);
+	LOG_INFO("Sender ID", _sender_id);
+
 	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
 //	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
 //		LOG_WARN("Failed to set opengl as render hint");
@@ -112,6 +117,14 @@ void m2::Game::initialize_context() {
 	context = m2g::create_context();
 }
 
+m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
+	_server_thread.emplace(type, max_connection_count);
+	return {};
+}
+m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& addr) {
+	_client_thread.emplace(type, addr);
+	return {};
+}
 m2::void_expected m2::Game::load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	reset_state();

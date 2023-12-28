@@ -1,0 +1,15 @@
+TurnBased
+=========
+TCP is used for turn based multiplayer. Before the level is created, the host creates a ServerThread and a ClientThread.
+The guests create one ClientThread each. ServerThread starts listening, and ClientThreads connect to it. After
+connection, the clients can signal being ready by sending a ping to the server (NetworkMessage without a payload) and
+report their sender_ids. sender_id is a random number. It is used to ensure if the connection drops, and the client
+tries to reconnect, the server recognizes the client.
+
+Every time a client is connected or disconnected, the server sends a ServerUpdate to report the players waiting in the
+lobby.
+
+After enough clients are connected and all of them have signaled as ready, the host can close the lobby by calling
+ServerThread.close_lobby(). After this call, no new clients are accepted. Existing clients can drop and reconnect, as
+long as they use the same sender_id. Then, the host initializes a level, and calls ServerThread.server_update(), which
+contains all the necessary data for clients to initialize their levels.
