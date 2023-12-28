@@ -1,0 +1,90 @@
+{
+  "objects": [
+    {
+      "type": "NO_OBJECT"
+    },
+    {
+      "type": "PLAYER",
+      "mainSprite": "PLAYER_LOOKDOWN_00",
+      "animation": "ANIMATION_TYPE_PLAYER_MOVEMENT"
+    },
+    {
+      "type": "SKELETON",
+      "mainSprite": "SKELETON_LOOKDOWN_00",
+      "animation": "ANIMATION_TYPE_SKELETON_MOVEMENT"
+    },
+    {
+      "type": "CASTLE_FINISH_POINT",
+      "mainSprite": "CASTLE_FINISH_POINT_SPRITE"
+    },
+    {
+      "type": "CUTEOPUS",
+      "mainSprite": "CUTEOPUS_LOOKDOWN_00",
+      "animation": "ANIMATION_TYPE_CUTEOPUS_MOVEMENT"
+    },
+    {
+      "type": "MACHINE_GUN_ITEM_DROP",
+      "mainSprite": "MACHINE_GUN_ICON"
+    },
+    {
+      "type": "EXPLOSIVE_ITEM_DROP",
+      "mainSprite": "EXPLOSIVE_ICON"
+    },
+    {
+      "type": "LONG_SWORD_ITEM_DROP",
+      "mainSprite": "LONGSWORD_ICON"
+    },
+    {
+      "type": "AXE_ITEM_DROP",
+      "mainSprite": "AXE_ICON"
+    },
+    {
+      "type": "BUSH_01",
+      "mainSprite": "SPRITE_BUSH_01"
+    },
+    {
+      "type": "FLOWER_ORANGE_02",
+      "mainSprite": "SPRITE_FLOWER_ORANGE_02"
+    },
+    {
+      "type": "FLOWER_PINK_03",
+      "mainSprite": "SPRITE_FLOWER_PINK_03"
+    },
+    {
+      "type": "FLOWER_WHITE_05",
+      "mainSprite": "SPRITE_FLOWER_WHITE_05"
+    },
+    {
+      "type": "PINE_01",
+      "mainSprite": "SPRITE_PINE_01"
+    },
+    {
+      "type": "PINE_DEAD_02",
+      "mainSprite": "SPRITE_PINE_DEAD_02"
+    },
+    {
+      "type": "ROCK_03",
+      "mainSprite": "SPRITE_ROCK_03"
+    },
+    {
+      "type": "TREE_03",
+      "mainSprite": "SPRITE_TREE_03"
+    },
+    {
+      "type": "TREE_DEAD_03",
+      "mainSprite": "SPRITE_TREE_DEAD_03"
+    },
+    {
+      "type": "FENCE_HORIZONTAL",
+      "mainSprite": "SPRITE_FENCE"
+    },
+    {
+      "type": "FENCE_VERTICAL",
+      "mainSprite": "SPRITE_FENCE"
+    },
+    {
+      "type": "SPIKES",
+      "mainSprite": "SPIKES_OUT"
+    }
+  ]
+}

@@ -1,0 +1,2111 @@
+{
+  "sheets": [
+    {
+      "resource": "resource/game/RPG/icons/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
+      "ppm": 16,
+      "sprites": [
+        {},
+        {
+          "type": "GUN_BULLET",
+          "regular": {
+            "rect": {
+              "x": 16,
+              "y": 1440,
+              "w": 16,
+              "h": 16
+            },
+            "originalRotation": -0.75,
+            "overridePpm": 32,
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": 5
+              },
+              "circRadiusPx": 3
+            }
+          }
+        },
+        {
+          "type": "MACHINE_GUN_BULLET",
+          "regular": {
+            "rect": {
+              "y": 1456,
+              "w": 16,
+              "h": 16
+            },
+            "originalRotation": -0.75,
+            "overridePpm": 32,
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": 5
+              },
+              "circRadiusPx": 3
+            }
+          }
+        },
+        {
+          "type": "EXPLOSIVE_BULLET",
+          "regular": {
+            "rect": {
+              "x": 208,
+              "y": 1344,
+              "w": 16,
+              "h": 16
+            },
+            "overridePpm": 32,
+            "foregroundCollider": {
+              "circRadiusPx": 8
+            }
+          }
+        },
+        {
+          "type": "SWORD",
+          "regular": {
+            "rect": {
+              "x": 112,
+              "y": 1712,
+              "w": 16,
+              "h": 16
+            },
+            "originalRotation": -0.75,
+            "centerOffsetPx": {
+              "x": -13
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": 13
+              },
+              "rectDimsPx": {
+                "w": 26,
+                "h": 5
+              }
+            }
+          }
+        },
+        {
+          "type": "LONGSWORD_ICON",
+          "regular": {
+            "rect": {
+              "x": 240,
+              "y": 1712,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 8
+            }
+          }
+        },
+        {
+          "type": "AXE_ICON",
+          "regular": {
+            "rect": {
+              "x": 240,
+              "y": 1232,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 8
+            }
+          }
+        },
+        {
+          "type": "AXE",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 1456,
+              "w": 16,
+              "h": 16
+            },
+            "originalRotation": -0.75,
+            "centerOffsetPx": {
+              "x": -13
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": 13
+              },
+              "rectDimsPx": {
+                "w": 26,
+                "h": 5
+              }
+            }
+          }
+        },
+        {
+          "type": "SPRITE_HP_POTION_20",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 640,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "y": 3
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 5
+            }
+          }
+        },
+        {
+          "type": "SPRITE_HP_POTION_80",
+          "regular": {
+            "rect": {
+              "x": 224,
+              "y": 576,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "y": 3
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 5
+            }
+          }
+        },
+        {
+          "type": "MACHINE_GUN_ICON",
+          "regular": {
+            "rect": {
+              "x": 112,
+              "y": 1408,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 8
+            }
+          }
+        },
+        {
+          "type": "EXPLOSIVE_ICON",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 1216,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/castle.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "GRASS_GROUND",
+          "regular": {
+            "rect": {
+              "x": 112,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_TOP_LEFT_CORNER_TOWER",
+          "regular": {
+            "rect": {
+              "x": 16,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "rectDimsPx": {
+                "w": 16,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_TOP_RIGHT_CORNER_TOWER",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "rectDimsPx": {
+                "w": 16,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_BOTTOM_LEFT_CORNER_TOWER",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "y": 5.5
+                  },
+                  "rects": [
+                    {
+                      "x": 16,
+                      "y": 151,
+                      "w": 16,
+                      "h": 9
+                    },
+                    {
+                      "x": 16,
+                      "y": 147,
+                      "w": 12,
+                      "h": 4
+                    },
+                    {
+                      "x": 17,
+                      "y": 146,
+                      "w": 10,
+                      "h": 1
+                    },
+                    {
+                      "x": 18,
+                      "y": 145,
+                      "w": 3,
+                      "h": 1
+                    },
+                    {
+                      "x": 23,
+                      "y": 145,
+                      "w": 3,
+                      "h": 1
+                    }
+                  ]
+                }
+              }
+            ],
+            "rect": {
+              "x": 16,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 5
+              }
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": -4.5
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_BOTTOM_RIGHT_CORNER_TOWER",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "y": 5.5
+                  },
+                  "rects": [
+                    {
+                      "x": 48,
+                      "y": 151,
+                      "w": 16,
+                      "h": 9
+                    },
+                    {
+                      "x": 52,
+                      "y": 147,
+                      "w": 12,
+                      "h": 4
+                    },
+                    {
+                      "x": 53,
+                      "y": 146,
+                      "w": 10,
+                      "h": 1
+                    },
+                    {
+                      "x": 54,
+                      "y": 145,
+                      "w": 3,
+                      "h": 1
+                    },
+                    {
+                      "x": 59,
+                      "y": 145,
+                      "w": 3,
+                      "h": 1
+                    }
+                  ]
+                }
+              }
+            ],
+            "rect": {
+              "x": 48,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 5
+              }
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": 4.5
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_TOP_LEFT_CORNER",
+          "regular": {
+            "rect": {
+              "x": 16,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": -1
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 10
+              }
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": -4.5,
+                "y": 6
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 4
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_TOP_RIGHT_CORNER",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": -1
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 10
+              }
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": 4.5,
+                "y": 6
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 4
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_TOP_WALL",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "rectDimsPx": {
+                "w": 16,
+                "h": 8
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_LEFT_WALL",
+          "regular": {
+            "rect": {
+              "x": 16,
+              "y": 128,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": -4
+              },
+              "rectDimsPx": {
+                "w": 6,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_RIGHT_WALL",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 128,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 4
+              },
+              "rectDimsPx": {
+                "w": 6,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_BOTTOM_WALL",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "y": 5.5
+                  },
+                  "rects": [
+                    {
+                      "x": 32,
+                      "y": 151,
+                      "w": 16,
+                      "h": 9
+                    },
+                    {
+                      "x": 36,
+                      "y": 149,
+                      "w": 9,
+                      "h": 2
+                    }
+                  ]
+                }
+              }
+            ],
+            "rect": {
+              "x": 32,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 5
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_INNER_CORNER_BOTTOM_RIGHT",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "x": 4.5,
+                    "y": 5.5
+                  },
+                  "rects": [
+                    {
+                      "x": 73,
+                      "y": 117,
+                      "w": 7,
+                      "h": 11
+                    }
+                  ]
+                }
+              }
+            ],
+            "rect": {
+              "x": 64,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 4.5,
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 5
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_INNER_CORNER_BOTTOM_LEFT",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "x": -4.5,
+                    "y": 5.5
+                  },
+                  "rects": [
+                    {
+                      "x": 80,
+                      "y": 117,
+                      "w": 7,
+                      "h": 11
+                    }
+                  ]
+                }
+              }
+            ],
+            "rect": {
+              "x": 80,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": -4.5,
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 5
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_INNER_CORNER_TOP_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 128,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 4.5,
+                "y": -2
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 12
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_INNER_CORNER_TOP_LEFT",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 128,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": -4.5,
+                "y": -2
+              },
+              "rectDimsPx": {
+                "w": 7,
+                "h": 12
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_GROUND",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 128,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_FINISH_POINT_SPRITE",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_GRAYSCALE"
+              }
+            ],
+            "rect": {
+              "x": 272,
+              "y": 224,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 6
+            }
+          }
+        },
+        {
+          "type": "CASTLE_WALL",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 176,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_LEFT",
+          "regular": {
+            "rect": {
+              "x": 304,
+              "y": 176,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_LEFT_TOP",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "y": -2.5
+                  },
+                  "rects": [
+                    {
+                      "x": 304,
+                      "y": 151,
+                      "w": 16,
+                      "h": 9
+                    },
+                    {
+                      "x": 308,
+                      "y": 149,
+                      "w": 9,
+                      "h": 2
+                    }
+                  ]
+                }
+              }
+            ],
+            "rect": {
+              "x": 304,
+              "y": 144,
+              "w": 16,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": -8
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 5
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 368,
+              "y": 176,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_WALL_STAIRS_RIGHT_TOP",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
+                "foregroundCompanion": {
+                  "centerOffsetPx": {
+                    "y": -2.5
+                  },
+                  "rects": [
+                    {
+                      "x": 372,
+                      "y": 149,
+                      "w": 9,
+                      "h": 2
+                    },
+                    {
+                      "x": 368,
+                      "y": 151,
+                      "w": 16,
+                      "h": 9
+                    }
+                  ]
+                }
+              }
+            ],
+            "rect": {
+              "x": 368,
+              "y": 144,
+              "w": 16,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": -8
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 5.5
+              },
+              "rectDimsPx": {
+                "w": 16,
+                "h": 5
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_LEFT",
+          "regular": {
+            "rect": {
+              "x": 320,
+              "y": 192,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": -6.5,
+                "y": -2
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 12
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_MID",
+          "regular": {
+            "rect": {
+              "x": 336,
+              "y": 192,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_BOTTOM_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 352,
+              "y": 192,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 6.5,
+                "y": -2
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 12
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_LEFT",
+          "regular": {
+            "rect": {
+              "x": 320,
+              "y": 160,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": -6.5
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_MID",
+          "regular": {
+            "rect": {
+              "x": 336,
+              "y": 160,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 352,
+              "y": 160,
+              "w": 16,
+              "h": 16
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 6.5
+              },
+              "rectDimsPx": {
+                "w": 3,
+                "h": 16
+              }
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_TOP_LEFT",
+          "regular": {
+            "rect": {
+              "x": 320,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_TOP_MID",
+          "regular": {
+            "rect": {
+              "x": 336,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CASTLE_STAIRS_TOP_RIGHT",
+          "regular": {
+            "rect": {
+              "x": 352,
+              "y": 144,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/chara6.png",
+      "ppm": 26,
+      "sprites": [
+        {
+          "type": "PLAYER_LOOKDOWN_00",
+          "regular": {
+            "rect": {
+              "x": 26,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 10
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 7.5
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "y": -10
+              },
+              "circRadiusPx": 9.5
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKDOWN_01",
+          "regular": {
+            "rect": {
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKDOWN_02",
+          "regular": {
+            "rect": {
+              "x": 52,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKLEFT_00",
+          "regular": {
+            "rect": {
+              "x": 26,
+              "y": 36,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKLEFT_01",
+          "regular": {
+            "rect": {
+              "y": 36,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKLEFT_02",
+          "regular": {
+            "rect": {
+              "x": 52,
+              "y": 36,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKRIGHT_00",
+          "regular": {
+            "rect": {
+              "x": 26,
+              "y": 72,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKRIGHT_01",
+          "regular": {
+            "rect": {
+              "y": 72,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKRIGHT_02",
+          "regular": {
+            "rect": {
+              "x": 52,
+              "y": 72,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKUP_00",
+          "regular": {
+            "rect": {
+              "x": 26,
+              "y": 108,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKUP_01",
+          "regular": {
+            "rect": {
+              "y": 108,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        },
+        {
+          "type": "PLAYER_LOOKUP_02",
+          "regular": {
+            "rect": {
+              "x": 52,
+              "y": 108,
+              "w": 26,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "y": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "Comment": "Sheet has extra 32 rows on top. Sprites have arbitrary separation in-between",
+      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/monster2.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "CUTEOPUS_LOOKDOWN_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 425,
+              "y": 32,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 7
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "y": -8.5
+              },
+              "circRadiusPx": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKDOWN_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 365,
+              "y": 32,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKDOWN_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 485,
+              "y": 32,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKLEFT_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 425,
+              "y": 96,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKLEFT_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 365,
+              "y": 96,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKLEFT_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 485,
+              "y": 96,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKRIGHT_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 425,
+              "y": 160,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKRIGHT_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 365,
+              "y": 160,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKRIGHT_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 485,
+              "y": 160,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKUP_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 425,
+              "y": 224,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKUP_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 365,
+              "y": 224,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "CUTEOPUS_LOOKUP_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "b": 180,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 485,
+              "y": 224,
+              "w": 33,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 8.5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/monster4.png",
+      "ppm": 26,
+      "sprites": [
+        {
+          "type": "SKELETON_LOOKDOWN_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 614,
+              "y": 28,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 6
+              },
+              "circRadiusPx": 3.5
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "y": -4
+              },
+              "circRadiusPx": 6
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKDOWN_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 554,
+              "y": 28,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKDOWN_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 674,
+              "y": 28,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKLEFT_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 614,
+              "y": 92,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKLEFT_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 554,
+              "y": 92,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKLEFT_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 674,
+              "y": 92,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKRIGHT_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 614,
+              "y": 156,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKRIGHT_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 554,
+              "y": 156,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKRIGHT_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 674,
+              "y": 156,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKUP_00",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 614,
+              "y": 220,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKUP_01",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 554,
+              "y": 220,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        },
+        {
+          "type": "SKELETON_LOOKUP_02",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_MASK",
+                "maskColor": {
+                  "r": 255,
+                  "a": 255
+                }
+              }
+            ],
+            "rect": {
+              "x": 674,
+              "y": 220,
+              "w": 24,
+              "h": 36
+            },
+            "centerOffsetPx": {
+              "x": -0.5,
+              "y": 8.5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/custom/skeleton-corpse.png",
+      "ppm": 26,
+      "sprites": [
+        {
+          "type": "SKELETON_CORPSE",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_IMAGE_ADJUSTMENT",
+                "imageAdjustment": {
+                  "brightnessMultiplier": 0.5
+                }
+              }
+            ],
+            "rect": {
+              "w": 26,
+              "h": 26
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/custom/cuteopus-corpse.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "CUTEOPUS_CORPSE",
+          "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_IMAGE_ADJUSTMENT",
+                "imageAdjustment": {
+                  "brightnessMultiplier": 0.5
+                }
+              }
+            ],
+            "rect": {
+              "w": 32,
+              "h": 32
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/custom/long-sword.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "LONGSWORD",
+          "regular": {
+            "rect": {
+              "w": 32,
+              "h": 32
+            },
+            "originalRotation": -0.75,
+            "centerOffsetPx": {
+              "x": -25
+            },
+            "foregroundCollider": {
+              "originOffsetPx": {
+                "x": 25
+              },
+              "rectDimsPx": {
+                "w": 50,
+                "h": 5
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Bush/bush_1.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_BUSH_01",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/orange/flower_orange_2.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_FLOWER_ORANGE_02",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/pink/flower_pink_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_FLOWER_PINK_03",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/white/flower_white_5.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_FLOWER_WHITE_05",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine/pine_1.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_PINE_01",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 2,
+                "y": 1.5
+              },
+              "circRadiusPx": 4.0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine_dead/pine_dead_2.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_PINE_DEAD_02",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 1.5,
+                "y": 2
+              },
+              "circRadiusPx": 3.5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Rock/rock_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_ROCK_03",
+          "regular": {
+            "rect": {
+              "w": 48,
+              "h": 32
+            },
+            "centerOffsetPx": {
+              "y": 14
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "y": 2
+              },
+              "circRadiusPx": 8
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree/tree_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_TREE_03",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 2,
+                "y": 2
+              },
+              "circRadiusPx": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree_dead/tree_dead_3.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "SPRITE_TREE_DEAD_03",
+          "regular": {
+            "rect": {
+              "w": 80,
+              "h": 112
+            },
+            "centerOffsetPx": {
+              "y": 54
+            },
+            "backgroundCollider": {
+              "originOffsetPx": {
+                "x": 2,
+                "y": 2
+              },
+              "circRadiusPx": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/dungeon.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "SPIKES_IN",
+          "regular": {
+            "rect": {
+              "x": 208,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "x": 0.5,
+              "y": 1.5
+            },
+            "backgroundCollider": {
+              "circRadiusPx": 5.5
+            }
+          }
+        },
+        {
+          "type": "SPIKES_OUT",
+          "regular": {
+            "rect": {
+              "x": 176,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "x": 0.5,
+              "y": 1.5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/outside.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "SPRITE_FENCE",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 80,
+              "w": 16,
+              "h": 16
+            },
+            "centerOffsetPx": {
+              "y": 6.5
+            },
+            "backgroundCollider": {
+              "rectDimsPx": {
+                "w": 16,
+                "h": 3
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

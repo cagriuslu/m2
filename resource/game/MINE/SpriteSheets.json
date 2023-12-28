@@ -1,0 +1,129 @@
+{
+  "sheets": [
+    {
+      "resource": "resource/game/MINE/cartoonrpgcharacters1/PNG/DWARF/6.png",
+      "ppm": 162,
+      "sprites": [
+        {
+          "type": "NO_SPRITE"
+        },
+        {
+          "type": "DWARF_FULL",
+          "regular": {
+            "rect": {"x": 0, "y": 0, "w": 162, "h": 176},
+            "centerOffsetPx" : {"x": -40, "y": 53},
+            "backgroundCollider": {
+              "originOffsetPx": {"x": -40, "y": 53},
+              "circRadiusPx": 35
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/MINE/2D Game art bundle 2018/Character Sprite/Big Guy/PNG/Big Guy 01/PNG Sequences/Idle/Idle_000.png",
+      "ppm": 400,
+      "sprites": [
+        {
+          "type": "BLACKSMITH_FULL",
+          "regular": {
+            "rect": {"x": 0, "y": 0, "w": 471, "h": 438},
+            "centerOffsetPx" : {"x": 0, "y": 0}
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/MINE/2dhandpainted/Dungeon@64x64.png",
+      "ppm": 64,
+      "sprites": [
+        {
+          "type": "DUNGEON_BEDROCK_1",
+          "regular": {
+            "rect": {"x": 576, "y": 320, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "DUNGEON_BEDROCK_2",
+          "regular": {
+            "rect": {"x": 640, "y": 320, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "DUNGEON_COAL_1",
+          "regular": {
+            "rect": {"x": 576, "y": 384, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "DUNGEON_COAL_2",
+          "regular": {
+            "rect": {"x": 640, "y": 384, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/MINE/2dhandpainted/Grassland@64x64.png",
+      "ppm": 64,
+      "sprites": [
+        {
+          "type": "GRASSLAND_DIRT_WITH_GRASS_1",
+          "regular": {
+            "rect": {"x": 128, "y": 576, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "GRASSLAND_DIRT_WITH_GRASS_2",
+          "regular": {
+            "rect": {"x": 192, "y": 576, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "GRASSLAND_DIRT_1",
+          "regular": {
+            "rect": {"x": 128, "y": 640, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "GRASSLAND_DIRT_2",
+          "regular": {
+            "rect": {"x": 192, "y": 640, "w": 64, "h": 64},
+            "backgroundCollider": {
+              "rectDimsPx": {"w": 64, "h": 64}
+            },
+            "isBackgroundTile": true
+          }
+        }
+      ]
+    }
+  ]
+}

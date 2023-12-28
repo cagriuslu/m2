@@ -1,0 +1,15 @@
+{
+  "objects": [
+    {
+      "type": "NO_OBJECT"
+    },
+    {
+      "type": "DWARF",
+      "mainSprite": "DWARF_FULL"
+    },
+    {
+      "type": "BLACKSMITH",
+      "mainSprite": "BLACKSMITH_FULL"
+    }
+  ]
+}

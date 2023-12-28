@@ -1,0 +1,849 @@
+{
+  "identifier": "WalkingTutorialOpen",
+  "projectionType": "PERSPECTIVE_YZ",
+  "cameraOffset": 5.0,
+  "cameraZOffset": 5.0,
+  "horizontalFov": 90.0,
+  "backgroundLayers": [
+    {},
+    {},
+    {},
+    {
+      "backgroundRows": [
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        },
+        {
+          "items": [
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND",
+            "GRASS_GROUND"
+          ]
+        }
+      ]
+    }
+  ],
+  "objects": [
+    {
+      "position": {
+        "x": 6,
+        "y": 11
+      },
+      "type": "FLOWER_ORANGE_02",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 3
+      },
+      "type": "FLOWER_PINK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 8
+      },
+      "type": "FLOWER_PINK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 9
+      },
+      "type": "FLOWER_PINK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 11
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 8
+      },
+      "type": "PINE_01",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 8
+      },
+      "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 11
+      },
+      "type": "ROCK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 12
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 11
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 9
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 8
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 2
+      },
+      "type": "FLOWER_PINK_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 9,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 2
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 8,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 2
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 11,
+        "y": 10
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 2
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 12
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 9,
+        "y": 8
+      },
+      "type": "CASTLE_FINISH_POINT",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 11
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 9
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 10
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 10
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 9
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 8
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 10
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 12
+      },
+      "type": "TREE_03",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 8
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 7
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 6
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 4
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 5
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 2
+      },
+      "type": "PLAYER",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 5,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 4
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 3
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 7,
+        "y": 2
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 6
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 10
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 9,
+        "y": 12
+      },
+      "type": "FLOWER_WHITE_05",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 6,
+        "y": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 5
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 2
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 3
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 2,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 4
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 13
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 4
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 4,
+        "y": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 4
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 9,
+        "y": 7
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 1,
+        "y": 10
+      },
+      "type": "FENCE_VERTICAL",
+      "group": {}
+    },
+    {
+      "position": {
+        "x": 3,
+        "y": 1
+      },
+      "type": "FENCE_HORIZONTAL",
+      "group": {}
+    }
+  ]
+}

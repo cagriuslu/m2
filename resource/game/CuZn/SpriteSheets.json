@@ -1,0 +1,13 @@
+{
+  "sheets": [
+    {
+      "resource": "resource/game/CuZn/png/dummy.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "NO_SPRITE"
+        }
+      ]
+    }
+  ]
+}
