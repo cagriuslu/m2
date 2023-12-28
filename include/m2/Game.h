@@ -93,7 +93,7 @@ namespace m2 {
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
 		std::optional<ShapesSheet> shapes_sheet;
 		std::optional<DynamicSheet> dynamic_sheet;
-		pb::LUT<m2::pb::Item, FullItem> items;
+		pb::LUT<m2::pb::Item, NamedItem> named_items;
 		pb::LUT<m2::pb::Animation, Animation> animations;
 		pb::LUT<m2::pb::Song, Song> songs;
 
@@ -140,7 +140,7 @@ namespace m2 {
 		// Accessors
 		const Dimensions& dimensions() const { return _dims; }
 		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
-		SmartPointer<const Item> get_item(const m2g::pb::ItemType item_type) const { return make_static<const Item>(&items[item_type]); }
+		const NamedItem& get_named_item(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
 		float delta_time_s() const { return _delta_time_s; }
 		const VecF& mouse_position_world_m() const;
 		const VecF& screen_center_to_mouse_position_m() const;

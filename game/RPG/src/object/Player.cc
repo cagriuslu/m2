@@ -39,15 +39,15 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	auto& gfx = obj.add_graphic(GAME.get_sprite(main_sprite_type));
 
 	auto& chr = obj.add_full_character();
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
 	if (LEVEL.identifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
-		chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
+		chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_REUSABLE_GUN));
 	}
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.set_max_resource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.add_resource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
@@ -151,12 +151,12 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			// Get hit by an enemy
 			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
 		} else if (data.has_item_type()) {
-			auto item = GAME.get_item(data.item_type());
+			auto item = GAME.get_named_item(data.item_type());
 			// Player can hold only one special weapon of certain type, get rid of the previous one
 			constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
 			constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
 			for (size_t i = 0; i < special_categories.size(); ++i) {
-				if (auto sp = special_categories[i]; sp == item->category()) {
+				if (auto sp = special_categories[i]; sp == item.category()) {
 					if (auto it = self.find_items(sp); it) {
 						self.remove_item(it); // Remove weapon
 						self.clear_resource(special_ammo_type[i]); // Also remove any ammo
@@ -165,7 +165,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 				}
 			}
 			// Add item
-			self.add_item(std::move(item));
+			self.add_named_item(item);
 		}
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {

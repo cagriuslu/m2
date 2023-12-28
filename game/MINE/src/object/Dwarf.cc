@@ -24,8 +24,8 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	obj.add_graphic(GAME.get_sprite(SpriteType::DWARF_FULL));
 
 	auto& chr = obj.add_full_character();
-	chr.add_item(GAME.get_item(ITEM_REUSABLE_JUMP));
-	chr.add_item(GAME.get_item(ITEM_AUTOMATIC_JUMP_ENERGY));
+	chr.add_named_item(GAME.get_named_item(ITEM_REUSABLE_JUMP));
+	chr.add_named_item(GAME.get_named_item(ITEM_AUTOMATIC_JUMP_ENERGY));
 
 	phy.pre_step = [&obj, &chr](m2::Physique& phy) {
 		// Character movement

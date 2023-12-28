@@ -47,7 +47,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 
 	// Add character
 	auto& chr = obj.add_tiny_character();
-	chr.add_item(GAME.get_item(ITEM_AUTOMATIC_TTL));
+	chr.add_named_item(GAME.get_named_item(ITEM_AUTOMATIC_TTL));
 	chr.add_resource(RESOURCE_TTL, average_ttl);
 
 	chr.update = [](m2::Character& chr) {

@@ -112,7 +112,7 @@ bool m2::TinyItem::has_attribute(m2g::pb::AttributeType attribute_type) const {
 	return false;
 }
 
-m2::FullItem::FullItem(pb::Item item) : _item(std::move(item)) {
+m2::NamedItem::NamedItem(pb::Item item) : _item(std::move(item)) {
 	for (const auto& cost : _item.costs()) {
 		_costs[pb::enum_index(cost.type())] = get_resource_amount(cost);
 	}
@@ -127,60 +127,60 @@ m2::FullItem::FullItem(pb::Item item) : _item(std::move(item)) {
 	}
 }
 
-std::pair<m2g::pb::ResourceType, float> m2::FullItem::get_cost_by_index(size_t i) const {
+std::pair<m2g::pb::ResourceType, float> m2::NamedItem::get_cost_by_index(size_t i) const {
 	const auto& cost = _item.costs((int) i);
 	return std::make_pair(cost.type(), get_resource_amount(cost));
 }
-float m2::FullItem::get_cost(m2g::pb::ResourceType type) const {
+float m2::NamedItem::get_cost(m2g::pb::ResourceType type) const {
 	return _costs[pb::enum_index(type)];
 }
-float m2::FullItem::try_get_cost(m2g::pb::ResourceType type, float default_value) const {
+float m2::NamedItem::try_get_cost(m2g::pb::ResourceType type, float default_value) const {
 	auto value = get_cost(type);
 	return value != 0.0f ? value : default_value;
 }
-bool m2::FullItem::has_cost(m2g::pb::ResourceType type) const {
+bool m2::NamedItem::has_cost(m2g::pb::ResourceType type) const {
 	return get_cost(type) != 0.0f;
 }
-std::pair<m2g::pb::ResourceType, float> m2::FullItem::get_benefit_by_index(size_t i) const {
+std::pair<m2g::pb::ResourceType, float> m2::NamedItem::get_benefit_by_index(size_t i) const {
 	const auto& benefit = _item.benefits((int) i);
 	return std::make_pair(benefit.type(), get_resource_amount(benefit));
 }
-float m2::FullItem::get_benefit(m2g::pb::ResourceType type) const {
+float m2::NamedItem::get_benefit(m2g::pb::ResourceType type) const {
 	return _benefits[pb::enum_index(type)];
 }
-float m2::FullItem::try_get_benefit(m2g::pb::ResourceType type, float default_value) const {
+float m2::NamedItem::try_get_benefit(m2g::pb::ResourceType type, float default_value) const {
 	auto value = get_benefit(type);
 	return value != 0.0f ? value : default_value;
 }
-bool m2::FullItem::has_benefit(m2g::pb::ResourceType type) const {
+bool m2::NamedItem::has_benefit(m2g::pb::ResourceType type) const {
 	return get_benefit(type) != 0.0f;
 }
-std::pair<m2g::pb::ResourceType, float> m2::FullItem::get_acquire_benefit_by_index(size_t i) const {
+std::pair<m2g::pb::ResourceType, float> m2::NamedItem::get_acquire_benefit_by_index(size_t i) const {
 	const auto& acquire_benefit = _item.acquire_benefits((int) i);
 	return std::make_pair(acquire_benefit.type(), get_resource_amount(acquire_benefit));
 }
-float m2::FullItem::get_acquire_benefit(m2g::pb::ResourceType type) const {
+float m2::NamedItem::get_acquire_benefit(m2g::pb::ResourceType type) const {
 	return _acquire_benefits[pb::enum_index(type)];
 }
-float m2::FullItem::try_get_acquire_benefit(m2g::pb::ResourceType type, float default_value) const {
+float m2::NamedItem::try_get_acquire_benefit(m2g::pb::ResourceType type, float default_value) const {
 	auto value = get_acquire_benefit(type);
 	return value != 0.0f ? value : default_value;
 }
-bool m2::FullItem::has_acquire_benefit(m2g::pb::ResourceType type) const {
+bool m2::NamedItem::has_acquire_benefit(m2g::pb::ResourceType type) const {
 	return get_acquire_benefit(type) != 0.0f;
 }
-std::pair<m2g::pb::AttributeType, float> m2::FullItem::get_attribute_by_index(size_t i) const {
+std::pair<m2g::pb::AttributeType, float> m2::NamedItem::get_attribute_by_index(size_t i) const {
 	const auto& attr = _item.attributes((int) i);
 	return std::make_pair(attr.type(), attr.amount());
 }
-float m2::FullItem::get_attribute(m2g::pb::AttributeType type) const {
+float m2::NamedItem::get_attribute(m2g::pb::AttributeType type) const {
 	return _attributes[pb::enum_index(type)];
 }
-float m2::FullItem::try_get_attribute(m2g::pb::AttributeType type, float default_value) const {
+float m2::NamedItem::try_get_attribute(m2g::pb::AttributeType type, float default_value) const {
 	auto value = get_attribute(type);
 	return value != 0.0f ? value : default_value;
 }
-bool m2::FullItem::has_attribute(m2g::pb::AttributeType type) const {
+bool m2::NamedItem::has_attribute(m2g::pb::AttributeType type) const {
 	return get_attribute(type) != 0.0f;
 }
 

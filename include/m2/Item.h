@@ -5,8 +5,8 @@
 #include <string>
 
 namespace m2 {
-
-	// Item exposes all fields in pb::Item explicitly because TinyItem does not hold a pb::Item
+	// Item should not be stored, because it wouldn't be clear how it should be stored.
+	// Use UnnamedItem and NamedItem instead. UnnamedItems are owned, NamedItems are referenced.
 	class Item {
 	public:
 		virtual ~Item() = default;
@@ -44,9 +44,11 @@ namespace m2 {
 		[[nodiscard]] virtual m2g::pb::SpriteType ui_sprite() const = 0;
 	};
 
+	// Represents an item that doesn't have a protobuf correspondent.
+	class UnnamedItem : public Item {};
+
 	/// TinyItem can represent an item with only one cost, benefit, and attribute.
-	/// Usually used for effects between characters.
-	class TinyItem final : public Item {
+	class TinyItem final : public UnnamedItem {
 		m2g::pb::ItemType _type{};
 		m2g::pb::ItemCategory _category{};
 		pb::Usage _usage{};
@@ -93,9 +95,9 @@ namespace m2 {
 		[[nodiscard]] inline m2g::pb::SpriteType ui_sprite() const override { return _ui_sprite; }
 	};
 
-	/// FullItem represents a full protobuf-backed item. It can have as many costs, benefits, and attributes as possible.
+	/// Represents a protobuf-backed item. It can have as many costs, benefits, and attributes as possible.
 	/// This class uses high memory, and is slow to construct. It should only be used when fast resource/attribute lookup is necessary.
-	class FullItem final : public Item {
+	class NamedItem final : public Item {
 		pb::Item _item;
 		std::vector<float> _costs = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
 		std::vector<float> _benefits = std::vector<float>(pb::enum_value_count<m2g::pb::ResourceType>());
@@ -103,8 +105,8 @@ namespace m2 {
 		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>());
 
 	public:
-		FullItem() = default;
-		explicit FullItem(pb::Item item);
+		NamedItem() = default;
+		explicit NamedItem(pb::Item item);
 
 		[[nodiscard]] inline m2g::pb::ItemType type() const override { return _item.type(); }
 		[[nodiscard]] inline m2g::pb::ItemCategory category() const override { return _item.category(); }

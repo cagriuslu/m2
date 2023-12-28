@@ -83,7 +83,8 @@ namespace m2 {
 		[[nodiscard]] virtual Iterator find_items(m2g::pb::ItemCategory item_cat) = 0;
 		[[nodiscard]] virtual Iterator begin_items() const = 0;
 		[[nodiscard]] virtual Iterator end_items() const = 0;
-		virtual void add_item(SmartPointer<const Item>&& item) = 0;
+		virtual void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) = 0; // Item is moved
+		virtual void add_named_item(const NamedItem& item) = 0;
 		bool use_item(const Iterator& item_it, float resource_multiplier = 1.0f);
 		virtual void remove_item(const Iterator& item) = 0;
 
@@ -97,7 +98,7 @@ namespace m2 {
 		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
 	};
 
-	/// TinyCharacter can hold only one item, and can have only one resource
+	/// TinyCharacter can hold only one unnamed item, one named item, and can have only one resource
 	class TinyCharacter : public Character {
 		SmartPointer<const Item> _item;
 		std::optional<std::pair<m2g::pb::ResourceType, internal::ResourceAmount>> _resource;
@@ -112,7 +113,8 @@ namespace m2 {
 		Iterator find_items(m2g::pb::ItemCategory item_cat) override;
 		[[nodiscard]] Iterator begin_items() const override;
 		[[nodiscard]] Iterator end_items() const override;
-		void add_item(SmartPointer<const Item>&& item) override;
+		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
+		void add_named_item(const NamedItem& item) override;
 		void remove_item(const Iterator& item) override;
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
@@ -140,7 +142,8 @@ namespace m2 {
 		Iterator find_items(m2g::pb::ItemCategory item_cat) override;
 		[[nodiscard]] Iterator begin_items() const override;
 		[[nodiscard]] Iterator end_items() const override;
-		void add_item(SmartPointer<const Item>&& item) override;
+		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
+		void add_named_item(const NamedItem& item) override;
 		void remove_item(const Iterator& item) override;
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;

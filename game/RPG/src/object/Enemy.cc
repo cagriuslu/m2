@@ -52,12 +52,12 @@ m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) 
 	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& chr = obj.add_full_character();
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_GUN));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.add_item(GAME.get_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_REUSABLE_GUN));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, Context::get_instance().get_enemy(object_type));

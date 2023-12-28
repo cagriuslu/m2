@@ -94,7 +94,7 @@ m2::Game::Game() {
 	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
-	items = pb::LUT<m2::pb::Item, FullItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
+	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
 	animations = pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
 	songs = pb::LUT<m2::pb::Song, Song>::load(resource_dir / "Songs.json", &m2::pb::Songs::songs);
 }

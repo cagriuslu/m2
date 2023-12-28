@@ -132,8 +132,19 @@ m2::Character::Iterator m2::TinyCharacter::begin_items() const {
 m2::Character::Iterator m2::TinyCharacter::end_items() const {
 	return {*this, tiny_character_iterator_incrementor, {}, 0, nullptr};
 }
-void m2::TinyCharacter::add_item(SmartPointer<const Item>&& item) {
-	_item = std::move(item);
+void m2::TinyCharacter::add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) {
+	_item = SmartPointer<const Item>{std::move(item)};
+	// Get acquire benefits
+	for (size_t i = 0; i < _item->get_acquire_benefit_count(); ++i) {
+		const auto benefit = _item->get_acquire_benefit_by_index(i);
+		add_resource(benefit.first, benefit.second);
+	}
+	if (_item->use_on_acquire()) {
+		use_item(begin_items());
+	}
+}
+void m2::TinyCharacter::add_named_item(const NamedItem& item) {
+	_item = SmartPointer<const Item>{&item};
 	// Get acquire benefits
 	for (size_t i = 0; i < _item->get_acquire_benefit_count(); ++i) {
 		const auto benefit = _item->get_acquire_benefit_by_index(i);
@@ -258,8 +269,19 @@ m2::Character::Iterator m2::FullCharacter::begin_items() const {
 m2::Character::Iterator m2::FullCharacter::end_items() const {
 	return {*this, full_character_iterator_incrementor, {}, 0, nullptr};
 }
-void m2::FullCharacter::add_item(SmartPointer<const Item>&& item) {
+void m2::FullCharacter::add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) {
 	_items.emplace_back(std::move(item));
+	// Get acquire benefits
+	for (size_t i = 0; i < _items.back()->get_acquire_benefit_count(); ++i) {
+		const auto benefit = _items.back()->get_acquire_benefit_by_index(i);
+		add_resource(benefit.first, benefit.second);
+	}
+	if (_items.back()->use_on_acquire()) {
+		use_item(Iterator{*this, full_character_iterator_incrementor, {}, _items.size() - 1, _items.back().get()});
+	}
+}
+void m2::FullCharacter::add_named_item(const NamedItem& item) {
+	_items.emplace_back(&item);
 	// Get acquire benefits
 	for (size_t i = 0; i < _items.back()->get_acquire_benefit_count(); ++i) {
 		const auto benefit = _items.back()->get_acquire_benefit_by_index(i);
