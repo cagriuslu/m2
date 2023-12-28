@@ -1,8 +1,6 @@
 file(GLOB GAME_PROTO_FILES "pb/*.proto")
 
 file(GLOB GAME_SOURCES
-        "include/m2g/*.h"
-        "include/m2g/*/*.h"
         "include/rpg/*.h"
         "include/rpg/*/*.h"
         "include/rpg/*/*/*.h"

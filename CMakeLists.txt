@@ -123,7 +123,7 @@ add_custom_command(
         OUTPUT ${CMAKE_SOURCE_DIR}/resource.zip
         COMMAND ${CMAKE_COMMAND}
         ARGS -E tar cf ${CMAKE_SOURCE_DIR}/resource.zip --format=zip ${CMAKE_SOURCE_DIR}/resource/
-        DEPENDS ${CMAKE_SOURCE_DIR}/resource
+        DEPENDS ${CMAKE_SOURCE_DIR}/resource    # TODO this does not check if a new directory is created inside
 )
 
 file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h")
