@@ -10,7 +10,8 @@ namespace m2::ui::widget {
     struct HiddenBlueprint {
         SDL_Scancode kb_shortcut{};
 
-        std::function<Action(const Hidden& self)> on_action;
-        std::function<Action(const Hidden& self)> on_update;
+		std::function<void(const Hidden& self)> on_create{};
+        std::function<Action(const Hidden& self)> on_action{};
+        std::function<Action(const Hidden& self)> on_update{};
     };
 }

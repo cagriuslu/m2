@@ -4,7 +4,7 @@
 namespace m2::ui::widget {
     class Hidden final : public Widget {
     public:
-        explicit Hidden(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {}
+        Hidden(State* parent, const WidgetBlueprint* blueprint);
 
         Action on_event(Events& events) override;
         Action on_update() override;

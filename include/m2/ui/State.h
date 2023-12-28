@@ -27,11 +27,22 @@ namespace m2::ui {
 
 	public:
 		// Helpers
-		template<typename WidgetT>
+
+		template <typename WidgetBlueprintT>
 		[[nodiscard]] Widget* find_first_widget_of_blueprint_type() const {
 			for (auto& w : widgets) {
-				if (std::holds_alternative<WidgetT>(w->blueprint->variant)) {
+				if (std::holds_alternative<WidgetBlueprintT>(w->blueprint->variant)) {
 					return w.get();
+				}
+			}
+			return nullptr;
+		}
+
+		template <typename WidgetT>
+		[[nodiscard]] WidgetT* find_first_widget_of_type() const {
+			for (auto& w : widgets) {
+				if (dynamic_cast<WidgetT*>(w.get()) != nullptr) {
+					return dynamic_cast<WidgetT*>(w.get());
 				}
 			}
 			return nullptr;

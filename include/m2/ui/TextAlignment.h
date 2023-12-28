@@ -2,7 +2,7 @@
 
 namespace m2::ui {
 	enum class TextAlignment {
-		CENTER,
+		CENTER = 0,
 		LEFT,
 		RIGHT
 	};

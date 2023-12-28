@@ -10,6 +10,6 @@ namespace m2::ui::widget {
 		float initial_progress{};
 		SDL_Color bar_color{};
 
-		std::function<float(const ProgressBar& self)> on_update;
+		std::function<float(const ProgressBar& self)> on_update{};
 	};
 }

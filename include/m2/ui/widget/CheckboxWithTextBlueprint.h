@@ -13,6 +13,6 @@ namespace m2::ui::widget {
 		bool initial_state{};
 		SDL_Scancode kb_shortcut{};
 
-		std::function<Action(const CheckboxWithText& self)> on_action;
+		std::function<Action(const CheckboxWithText& self)> on_action{};
 	};
 }

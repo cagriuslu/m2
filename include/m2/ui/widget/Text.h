@@ -10,5 +10,8 @@ namespace m2::ui::widget {
 		explicit Text(State* parent, const WidgetBlueprint* blueprint);
 		Action on_update() override;
 		void on_draw() override;
+
+	private:
+		[[nodiscard]] const TextBlueprint& text_blueprint() const { return std::get<TextBlueprint>(blueprint->variant); }
 	};
 }
