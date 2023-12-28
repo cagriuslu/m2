@@ -13,3 +13,8 @@ After enough clients are connected and all of them have signaled as ready, the h
 ServerThread.close_lobby(). After this call, no new clients are accepted. Existing clients can drop and reconnect, as
 long as they use the same sender_id. Then, the host initializes a level, and calls ServerThread.server_update(), which
 contains all the necessary data for clients to initialize their levels.
+
+In turn based games, the physics world does not exist. The game state is stored in objects with Character, and their
+positions. A real life player is represented by an object, who might have child objects on the map.
+Groups are not supported. Characters can hold resources and named items. Unnamed items are not supported. Resource
+limits are not supported.

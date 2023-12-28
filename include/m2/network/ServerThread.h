@@ -46,6 +46,7 @@ namespace m2::network {
 		~ServerThread();
 
 		// Accessors
+		[[nodiscard]] mplayer::Type type() const { return _type; }
 		bool is_listening();
 		size_t client_count();
 

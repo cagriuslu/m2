@@ -96,6 +96,9 @@ void m2g::post_single_player_level_init(MAYBE const std::string& name, const m2:
 	}
 }
 
+void m2g::pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
 
 m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {

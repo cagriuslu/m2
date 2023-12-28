@@ -36,85 +36,13 @@ m2::Level::~Level() {
 }
 
 m2::void_expected m2::Level::init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
-	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
-		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
-		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
-		m2_reflect_failure(lb);
-		_lb = *lb;
-	} else {
-		_lb_path = {};
-		_lb = std::get<pb::Level>(level_path_or_blueprint);
-	}
-	_name = name;
 	type_state.emplace<splayer::State>();
+	return init_any_player(level_path_or_blueprint, name, true, m2g::pre_single_player_level_init, m2g::post_single_player_level_init);
+}
 
-	m2g::pre_single_player_level_init(_name, *_lb);
-
-	left_hud_ui_state.emplace(m2g::ui::left_hud());
-	right_hud_ui_state.emplace(m2g::ui::right_hud());
-	message_box_ui_state.emplace(&ui::message_box_ui);
-
-	world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
-	contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
-	world->SetContactListener(contact_listener);
-
-	// Create background tiles
-	for (int l = 0; l < _lb->background_layers_size(); ++l) {
-		const auto& layer = _lb->background_layers(l);
-		for (int y = 0; y < layer.background_rows_size(); ++y) {
-			for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
-				auto sprite_type = layer.background_rows(y).items(x);
-				if (sprite_type) {
-					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto [tile_obj, tile_id] = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
-					m2g::post_tile_create(tile_obj, sprite_type);
-					LOG_TRACE("Created tile", tile_id);
-				}
-			}
-		}
-	}
-	// Create foreground objects
-	for (const auto& fg_object : _lb->objects()) {
-        LOGF_TRACE("Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(), fg_object.position().y());
-		auto [obj, id] = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f}, fg_object.type());
-
-		// Assign to group
-		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
-			GroupId group_id{fg_object.group()};
-
-			Group *group;
-			auto group_it = groups.find(group_id);
-			if (group_it != groups.end()) {
-				group = group_it->second.get();
-			} else {
-				group = m2g::create_group(group_id.type);
-				groups[group_id] = std::unique_ptr<Group>(group);
-			}
-			obj.set_group(group_id, group->add_member(id));
-		}
-
-		auto load_result = m2g::init_fg_object(obj, fg_object.type());
-		m2_reflect_failure(load_result);
-        LOG_TRACE("Created object", id);
-	}
-	// Init pathfinder map
-	pathfinder = Pathfinder{*_lb};
-
-	// Create default objects
-	m2::obj::create_camera();
-	m2::obj::create_pointer();
-
-	// Init HUD
-	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
-	left_hud_ui_state->update_contents();
-	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
-	right_hud_ui_state->update_contents();
-	message_box_ui_state->update_positions(GAME.dimensions().message_box);
-	message_box_ui_state->update_contents();
-
-	m2g::post_single_player_level_init(_name, *_lb);
-
-	return {};
+m2::void_expected m2::Level::init_multi_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+	type_state.emplace<mplayer::State>();
+	return init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
 }
 
 m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_path) {
@@ -282,4 +210,89 @@ void m2::Level::display_message(const std::string& msg, float timeout) {
 	message = msg;
 	message_box_ui_state->widgets[0]->disable_after = timeout;
 	message_box_ui_state->widgets[0]->enabled = true;
+}
+
+m2::void_expected m2::Level::init_any_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name, bool physical_world, std::function<void(const std::string&, const pb::Level&)> pre_level_init, std::function<void(const std::string&, const pb::Level&)> post_level_init) {
+	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
+		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
+		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
+		m2_reflect_failure(lb);
+		_lb = *lb;
+	} else {
+		_lb_path = {};
+		_lb = std::get<pb::Level>(level_path_or_blueprint);
+	}
+	_name = name;
+
+	pre_level_init(_name, *_lb);
+
+	left_hud_ui_state.emplace(m2g::ui::left_hud());
+	right_hud_ui_state.emplace(m2g::ui::right_hud());
+	message_box_ui_state.emplace(&ui::message_box_ui);
+
+	if (physical_world) {
+		world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
+		contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
+		world->SetContactListener(contact_listener);
+	}
+
+	// Create background tiles
+	for (int l = 0; l < _lb->background_layers_size(); ++l) {
+		const auto& layer = _lb->background_layers(l);
+		for (int y = 0; y < layer.background_rows_size(); ++y) {
+			for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
+				if (const auto sprite_type = layer.background_rows(y).items(x); sprite_type) {
+					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
+					auto [tile_obj, tile_id] = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
+					m2g::post_tile_create(tile_obj, sprite_type);
+					LOG_TRACE("Created tile", tile_id);
+				}
+			}
+		}
+	}
+	// Create foreground objects
+	for (const auto& fg_object : _lb->objects()) {
+        LOGF_TRACE("Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(), fg_object.position().y());
+		auto [obj, id] = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f}, fg_object.type());
+
+		// Assign to group
+		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
+			GroupId group_id{fg_object.group()};
+
+			Group *group;
+			auto group_it = groups.find(group_id);
+			if (group_it != groups.end()) {
+				group = group_it->second.get();
+			} else {
+				group = m2g::create_group(group_id.type);
+				groups[group_id] = std::unique_ptr<Group>(group);
+			}
+			obj.set_group(group_id, group->add_member(id));
+		}
+
+		auto load_result = m2g::init_fg_object(obj, fg_object.type());
+		m2_reflect_failure(load_result);
+        LOG_TRACE("Created object", id);
+	}
+
+	if (physical_world) {
+		// Init pathfinder map
+		pathfinder = Pathfinder{*_lb};
+	}
+
+	// Create default objects
+	obj::create_camera();
+	obj::create_pointer();
+
+	// Init HUD
+	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
+	left_hud_ui_state->update_contents();
+	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
+	right_hud_ui_state->update_contents();
+	message_box_ui_state->update_positions(GAME.dimensions().message_box);
+	message_box_ui_state->update_contents();
+
+	post_level_init(_name, *_lb);
+
+	return {};
 }

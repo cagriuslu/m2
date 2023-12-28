@@ -2,8 +2,28 @@ syntax = "proto3";
 package m2.pb;
 
 import "m2g_Network.proto";
+import "m2g_ObjectType.proto";
+import "m2g_ItemType.proto";
+import "Item.proto";
+import "VecF.proto";
 
-message ServerUpdate {}
+message ServerUpdate {
+  // 0-based index of the receiver
+  int32 receiver_index = 1;
+
+  // ObjectId of the objects that belong to players. The size of this list also represents the player count.
+  // player_object_id[receiver_index] is the object that represents the receiver.
+  repeated uint64 player_object_id = 2;
+
+  message ObjectDescriptor {
+    VecF position = 1;
+    m2g.pb.ObjectType object_type = 2;
+    uint64 parent_id = 3;
+    repeated m2g.pb.ItemType named_items = 4;
+    repeated Resource resources = 5;
+  }
+  map<uint64, ObjectDescriptor> objects = 3; // object_id to ObjectDescriptor map
+}
 
 message ClientUpdate {}
 

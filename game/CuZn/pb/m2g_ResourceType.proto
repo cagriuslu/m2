@@ -3,4 +3,6 @@ package m2g.pb;
 
 enum ResourceType {
   NO_RESOURCE = 0;
+
+  MONEY = 1;
 }

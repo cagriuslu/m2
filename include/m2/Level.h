@@ -13,6 +13,8 @@
 #include "Meta.h"
 #include <Level.pb.h>
 #include "single_player/State.h"
+#include "multi_player/State.h"
+#include "multi_player/Type.h"
 #include <box2d/b2_world.h>
 #include <functional>
 #include <optional>
@@ -52,11 +54,12 @@ namespace m2 {
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
 		std::vector<std::function<void()>> deferred_actions;
-		std::variant<std::monostate, splayer::State, ledit::State, pedit::State, sedit::State> type_state;
+		std::variant<std::monostate, splayer::State, mplayer::State, ledit::State, pedit::State, sedit::State> type_state;
 		std::optional<DynamicGridLinesLoader> dynamic_grid_lines_loader;
 		std::optional<DynamicGridLinesLoader> dynamic_sheet_grid_lines_loader;
 
 		void_expected init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected init_multi_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
 		void_expected init_level_editor(const std::filesystem::path& lb_path);
 		void_expected init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
 		void_expected init_sheet_editor(const std::filesystem::path& path);
@@ -77,5 +80,8 @@ namespace m2 {
 		// Modifiers
 		void begin_game_loop();
 		void display_message(const std::string& msg, float timeout = 5.0f);
+
+	private:
+		void_expected init_any_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name, bool physical_world, std::function<void(const std::string&, const pb::Level&)> pre_level_init, std::function<void(const std::string&, const pb::Level&)> post_level_init);
 	};
 }
