@@ -11,6 +11,7 @@
       "hidden": true,
       "generator": "Unix Makefiles",
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
         "DEBUG": "ON"
       }
     },

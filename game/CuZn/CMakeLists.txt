@@ -1,7 +1,7 @@
 file(GLOB GAME_PROTO_FILES "pb/*.proto")
 
 file(GLOB GAME_SOURCES
-        "include/CuZn/*.h"
+        "include/cuzn/*.h"
         "src/*.h"   "src/*.cc"
         "src/*/*.h" "src/*/*.cc"
         "src/*/*/*.h" "src/*/*/*.cc")

@@ -119,17 +119,17 @@ file(GLOB PROTO_FILES "pb/*.proto")
 protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES}")
 
 # Post-build actions
-add_custom_command(
-        OUTPUT ${CMAKE_SOURCE_DIR}/resource.zip
-        COMMAND ${CMAKE_COMMAND}
-        ARGS -E tar cf ${CMAKE_SOURCE_DIR}/resource.zip --format=zip ${CMAKE_SOURCE_DIR}/resource/
-        DEPENDS ${CMAKE_SOURCE_DIR}/resource    # TODO this does not check if a new directory is created inside
-)
+#add_custom_command(
+#        OUTPUT ${CMAKE_SOURCE_DIR}/resource.zip
+#        COMMAND ${CMAKE_COMMAND}
+#        ARGS -E tar cf ${CMAKE_SOURCE_DIR}/resource.zip --format=zip ${CMAKE_SOURCE_DIR}/resource/
+#        DEPENDS ${CMAKE_SOURCE_DIR}/resource    # TODO this does not check if a new directory is created inside
+#)
 
 file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h")
 file(GLOB M2_PRIVATE_HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h")
 file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc")
-add_executable(m2 WIN32 ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${CMAKE_SOURCE_DIR}/resource.zip)
+add_executable(m2 WIN32 ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
 if (NOT WIN32)
     target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
 endif()
