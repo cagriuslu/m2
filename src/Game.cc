@@ -131,11 +131,17 @@ m2::void_expected m2::Game::load_single_player(const std::variant<std::filesyste
 	_level.emplace();
 	return _level->init_single_player(level_path_or_blueprint, level_name);
 }
-m2::void_expected m2::Game::load_multi_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+m2::void_expected m2::Game::load_multi_player_as_host(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
-	return _level->init_multi_player(level_path_or_blueprint, level_name);
+	return _level->init_multi_player_as_host(level_path_or_blueprint, level_name);
+}
+m2::void_expected m2::Game::load_multi_player_as_guest(pb::NetworkMessage&& server_update, const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+	_level.reset();
+	reset_state();
+	_level.emplace();
+	return _level->init_multi_player_as_guest(std::move(server_update), level_path_or_blueprint, level_name);
 }
 m2::void_expected m2::Game::load_level_editor(const std::string& level_resource_path) {
 	_level.reset();

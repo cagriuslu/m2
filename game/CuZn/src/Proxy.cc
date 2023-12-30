@@ -1,4 +1,7 @@
 #include <m2/Proxy.h>
+#include <cuzn/object/HumanPlayer.h>
+#include <m2/Game.h>
+#include <m2/multi_player/State.h>
 
 const std::string_view m2g::game_name = "CuZn";
 const int m2g::default_game_height_m = 16;
@@ -59,11 +62,37 @@ void m2g::post_single_player_level_init(MAYBE const std::string& name, MAYBE con
 void m2g::pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
-void m2g::post_tile_create(m2::Object& obj, pb::SpriteType sprite_type) {
-}
+std::vector<m2::ObjectId> m2g::multi_player_object_ids;
 
-m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {
-	return m2::make_unexpected("Invalid object type");
+void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
+
+m2::void_expected m2g::init_fg_object(m2::Object& obj) {
+	m2::void_expected init_result;
+	switch (obj.object_type()) {
+		case pb::HUMAN_PLAYER:
+			init_result = cuzn::init_human_player(obj);
+			break;
+		default:
+			return m2::make_unexpected("Invalid object type");
+	}
+	m2_reflect_failure(init_result);
+
+	if (obj.object_type() == m2g::pb::ObjectType::HUMAN_PLAYER) {
+		multi_player_object_ids.emplace_back(obj.id());
+
+		// If host
+		if (GAME.is_server() && LEVEL.player_id == 0) {
+			// Save player ID
+			LEVEL.player_id = obj.id();
+		}
+		// If guest
+		if (std::get<m2::mplayer::State>(LEVEL.type_state).last_server_update()->server_update().receiver_index() == m2::I(multi_player_object_ids.size() - 1)) {
+			// Save player ID
+			LEVEL.player_id = obj.id();
+		}
+	}
+
+	return {};
 }
 
 m2::Group* m2g::create_group(MAYBE pb::GroupType group_type) {

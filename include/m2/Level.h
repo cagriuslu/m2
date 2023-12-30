@@ -59,7 +59,8 @@ namespace m2 {
 		std::optional<DynamicGridLinesLoader> dynamic_sheet_grid_lines_loader;
 
 		void_expected init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected init_multi_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected init_multi_player_as_host(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
+		void_expected init_multi_player_as_guest(pb::NetworkMessage&& server_update, const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name);
 		void_expected init_level_editor(const std::filesystem::path& lb_path);
 		void_expected init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
 		void_expected init_sheet_editor(const std::filesystem::path& path);

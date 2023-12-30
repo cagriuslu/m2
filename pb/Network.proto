@@ -13,16 +13,17 @@ message ServerUpdate {
 
   // ObjectId of the objects that belong to players. The size of this list also represents the player count.
   // player_object_id[receiver_index] is the object that represents the receiver.
-  repeated uint64 player_object_id = 2;
+  repeated uint64 player_object_ids = 2;
 
   message ObjectDescriptor {
-    VecF position = 1;
-    m2g.pb.ObjectType object_type = 2;
-    uint64 parent_id = 3;
-    repeated m2g.pb.ItemType named_items = 4;
-    repeated Resource resources = 5;
+    uint64 object_id = 1;
+    VecF position = 2;
+    m2g.pb.ObjectType object_type = 3;
+    uint64 parent_id = 4;
+    repeated m2g.pb.ItemType named_items = 5;
+    repeated Resource resources = 6;
   }
-  map<uint64, ObjectDescriptor> objects = 3; // object_id to ObjectDescriptor map
+  repeated ObjectDescriptor objects = 3; // Object with Characters
 }
 
 message ClientUpdate {}

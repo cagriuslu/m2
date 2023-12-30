@@ -88,28 +88,28 @@ m2::expected<m2::network::Socket> m2::network::Socket::accept() {
 	return Socket{new_socket, child_address.sin_addr.s_addr, child_address.sin_port};
 }
 
-m2::expected<size_t> m2::network::Socket::send(const uint8_t* buffer, size_t length) {
+m2::expected<ssize_t> m2::network::Socket::send(const uint8_t* buffer, size_t length) {
 	auto send_result = ::send(_fd, buffer, length, 0);
 	if (send_result == -1) {
 		if (errno == EAGAIN) {
-			return 0;
+			return -1;
 		} else {
 			return m2::make_unexpected(strerror(errno));
 		}
 	} else {
-		return static_cast<size_t>(send_result);
+		return send_result;
 	}
 }
 
-m2::expected<size_t> m2::network::Socket::recv(uint8_t* buffer, size_t length) {
+m2::expected<ssize_t> m2::network::Socket::recv(uint8_t* buffer, size_t length) {
 	auto recv_result = ::recv(_fd, buffer, length, 0);
 	if (recv_result == -1) {
 		if (errno == EAGAIN) {
-			return 0;
+			return -1;
 		} else {
 			return m2::make_unexpected(strerror(errno));
 		}
 	} else {
-		return static_cast<size_t>(recv_result);
+		return recv_result;
 	}
 }

@@ -40,8 +40,13 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 	return init_any_player(level_path_or_blueprint, name, true, m2g::pre_single_player_level_init, m2g::post_single_player_level_init);
 }
 
-m2::void_expected m2::Level::init_multi_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+m2::void_expected m2::Level::init_multi_player_as_host(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
 	type_state.emplace<mplayer::State>();
+	return init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+}
+
+m2::void_expected m2::Level::init_multi_player_as_guest(pb::NetworkMessage&& server_update, const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+	type_state.emplace<mplayer::State>(std::move(server_update));
 	return init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
 }
 
@@ -270,7 +275,7 @@ m2::void_expected m2::Level::init_any_player(const std::variant<std::filesystem:
 			obj.set_group(group_id, group->add_member(id));
 		}
 
-		auto load_result = m2g::init_fg_object(obj, fg_object.type());
+		auto load_result = m2g::init_fg_object(obj);
 		m2_reflect_failure(load_result);
         LOG_TRACE("Created object", id);
 	}

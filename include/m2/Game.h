@@ -127,11 +127,13 @@ namespace m2 {
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		void_expected join_game(mplayer::Type type, const std::string& addr);
 		int32_t sender_id() const { return _sender_id; }
+		bool is_server() const { return static_cast<bool>(_server_thread); }
 		network::ServerThread& server_thread() { return *_server_thread; }
 		network::ClientThread& client_thread() { return *_client_thread; }
 		// Level management
 		void_expected load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
-		void_expected load_multi_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected load_multi_player_as_host(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected load_multi_player_as_guest(pb::NetworkMessage&& server_update, const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected load_level_editor(const std::string& level_resource_path);
 		void_expected load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		void_expected load_sheet_editor(const std::string& sheet_path);

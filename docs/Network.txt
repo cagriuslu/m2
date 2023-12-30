@@ -17,4 +17,4 @@ contains all the necessary data for clients to initialize their levels.
 In turn based games, the physics world does not exist. The game state is stored in objects with Character, and their
 positions. A real life player is represented by an object, who might have child objects on the map.
 Groups are not supported. Characters can hold resources and named items. Unnamed items are not supported. Resource
-limits are not supported.
+limits are also not supported.

@@ -82,11 +82,24 @@ namespace m2 {
 		}
 		return std::move(*e);
 	}
+	template <typename T>
+	T&& _move_or_throw_message(const char* file, int line, std::optional<T>&& o, const char* message) {
+		if (!o) {
+			throw Error{file, line, message};
+		}
+		return std::move(*o);
+	}
 
 	template <typename T>
 	void _succeed_or_throw_error(const char* file, int line, const expected<T>& e) {
 		if (!e) {
 			throw Error{file, line, e.error()};
+		}
+	}
+	template <typename T>
+	void _succeed_or_throw_message(const char* file, int line, const std::optional<T>& o, const char* message) {
+		if (!o) {
+			throw Error{file, line, message};
 		}
 	}
 }
@@ -108,4 +121,6 @@ namespace m2 {
 	} while (false)
 
 #define m2_move_or_throw_error(v) (::m2::_move_or_throw_error(__FILE__, __LINE__, (v)))
+#define m2_move_or_throw_message(v, msg) (::m2::_move_or_throw_message(__FILE__, __LINE__, (v), msg))
 #define m2_succeed_or_throw_error(v) (::m2::_succeed_or_throw_error(__FILE__, __LINE__, (v)))
+#define m2_succeed_or_throw_message(v, msg) (::m2::_succeed_or_throw_message(__FILE__, __LINE__, (v), msg))

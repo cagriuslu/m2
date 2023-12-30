@@ -56,6 +56,11 @@ namespace m2g {
 	void pre_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
 	void post_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
 
+	/// Maps 0-based client indexes to the object IDs in this game instance
+	/// For the server, the first item would contain the ObjectId of the player.
+	/// For the client with index 1, the second item would contain the ObjectId of the player.
+	extern std::vector<m2::ObjectId> multi_player_object_ids;
+
 	/// Called after a tile is created
 	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
 

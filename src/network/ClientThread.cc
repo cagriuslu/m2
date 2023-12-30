@@ -15,6 +15,11 @@ m2::network::ClientThread::~ClientThread() {
 	_thread.join();
 }
 
+bool m2::network::ClientThread::is_not_connected() {
+	const std::lock_guard lock(_mutex);
+	return _state == State::NotReady;
+}
+
 bool m2::network::ClientThread::is_connected() {
 	const std::lock_guard lock(_mutex);
 	return _state == State::Connected;
@@ -38,14 +43,28 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 	set_state_locked(state ? State::Ready : State::Connected);
 }
 
+std::optional<m2::pb::NetworkMessage> m2::network::ClientThread::pop_server_update() {
+	const std::lock_guard lock(_mutex);
+	if (_last_server_update) {
+		auto tmp = std::move(_last_server_update);
+		_last_server_update.reset();
+		return tmp;
+	}
+	return std::nullopt;
+}
+
 size_t m2::network::ClientThread::message_count_locked() {
 	const std::lock_guard lock(_mutex);
 	return _message_queue.size();
 }
 
+void m2::network::ClientThread::set_state_unlocked(State state) {
+	_state = state;
+}
+
 void m2::network::ClientThread::set_state_locked(State state) {
 	const std::lock_guard lock(_mutex);
-	_state = state;
+	set_state_unlocked(state);
 }
 
 void m2::network::ClientThread::queue_ping_locked(int32_t sender_id) {
@@ -81,45 +100,87 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 		}
 	};
 
-	auto socket = Socket::create_tcp();
-	if (not socket) {
-		LOG_FATAL("Socket creation failed", socket.error());
-		return;
-	}
-
-	auto connect_success = socket->connect(client_thread->_addr, 1162);
-	if (not connect_success) {
-		LOG_FATAL("Connect failed", connect_success.error());
-		return;
-	}
-	client_thread->set_state_locked(State::Connected);
-	LOG_INFO("Connected");
-
+	std::optional<Socket> socket;
 	FdSet read_set, write_set;
-	read_set.add_fd(socket->fd());
 
 	while (!is_quit()) {
-		auto select_result = select(read_set, write_set, 100);
-		if (not select_result) {
-			LOG_FATAL("Select failed", select_result.error());
-			return;
-		}
-
-		if (*select_result == 0) {
-			// Timeout
-			LOG_TRACE("Select timeout");
-		} else {
-			// TODO check sockets
-		}
-
-		// Write outgoing messages
-		size_t msg_count = client_thread->message_count_locked();
-		for (size_t i = 0; i < msg_count; ++i) {
-			auto expect_msg = pop_message();
-			if (not expect_msg) {
-				break; // No message left in queue
+		if (client_thread->is_not_connected()) {
+			auto expect_socket = Socket::create_tcp();
+			if (not expect_socket) {
+				LOG_FATAL("Socket creation failed", expect_socket.error());
+				return;
 			}
-			send_message_locked(*socket, *expect_msg);
+			socket = std::move(*expect_socket);
+
+			auto connect_success = socket->connect(client_thread->_addr, 1162);
+			if (not connect_success) {
+				LOG_FATAL("Connect failed", connect_success.error());
+				return;
+			}
+			LOG_INFO("Connected");
+			client_thread->set_state_locked(State::Connected);
+			read_set.add_fd(socket->fd());
+		} else {
+			auto select_result = select(read_set, write_set, 100);
+			if (not select_result) {
+				LOG_FATAL("Select failed", select_result.error());
+				return;
+			}
+
+			if (0 < *select_result) {
+				const std::lock_guard lock(client_thread->_mutex);
+				if (not read_set.is_set(socket->fd())) {
+					// Skip if no messages have been received
+					continue;
+				}
+
+				auto recv_success = socket->recv(client_thread->_read_buffer, sizeof(client_thread->_read_buffer));
+				if (not recv_success) {
+					LOG_ERROR("Receive failed", recv_success.error());
+					continue;
+				}
+				if (*recv_success == 0) {
+					LOG_ERROR("Server disconnected");
+					read_set.remove_fd(socket->fd());
+					socket.reset();
+					client_thread->set_state_unlocked(State::NotReady);
+					continue;
+				}
+
+				// Parse message
+				std::string json_str{client_thread->_read_buffer, static_cast<size_t>(*recv_success)};
+				auto expect_message = pb::json_string_to_message<pb::NetworkMessage>(json_str);
+				if (not expect_message) {
+					LOG_ERROR("Received bad message", json_str);
+					continue;
+				}
+
+				if (expect_message->game_hash() != game_hash()) {
+					LOG_ERROR("Received message of unknown origin", json_str);
+					continue;
+				}
+
+				if (not expect_message->has_server_command() && not expect_message->has_server_update()) {
+					LOG_INFO("Received ping");
+				} else if (expect_message->has_server_update()) {
+					LOG_INFO("Received ServerUpdate");
+					std::vector<ObjectId> tmp{expect_message->server_update().player_object_ids().begin(), expect_message->server_update().player_object_ids().end()};
+					client_thread->_last_server_update = std::move(*expect_message);
+					client_thread->set_state_unlocked(State::Started);
+				} else {
+					// TODO process other incoming messages
+				}
+			}
+
+			// Write outgoing messages
+			size_t msg_count = client_thread->message_count_locked();
+			for (size_t i = 0; i < msg_count; ++i) {
+				auto expect_msg = pop_message();
+				if (not expect_msg) {
+					break; // No message left in queue
+				}
+				send_message_locked(*socket, *expect_msg);
+			}
 		}
 	}
 }

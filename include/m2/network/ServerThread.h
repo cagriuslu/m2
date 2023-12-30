@@ -6,6 +6,8 @@
 #include <deque>
 #include <mutex>
 
+#include "m2/Object.h"
+
 namespace m2::network {
 	class ServerThread {
 		enum class State {
@@ -16,7 +18,7 @@ namespace m2::network {
 			Started,
 		};
 		struct Client {
-			Socket socket;
+			std::optional<Socket> socket;
 			std::optional<int32_t> sender_id;
 		};
 		struct QueueMessage {
@@ -24,6 +26,7 @@ namespace m2::network {
 			pb::NetworkMessage message;
 		};
 
+		// Main thread variables
 		const mplayer::Type _type;
 		const unsigned _max_connection_count;
 		std::thread _thread;
@@ -52,14 +55,16 @@ namespace m2::network {
 
 		// Modifiers
 		bool close_lobby();
-		void server_update(int destination);
+		void server_update();
 		void queue_server_command(int destination, const m2g::pb::ServerCommand& cmd);
 
 	private:
 		size_t message_count_locked();
 		void set_state_locked(State state);
 		void queue_message_unlocked(const QueueMessage& msg);
+		void queue_message_unlocked(QueueMessage&& msg);
 		void queue_message_locked(const QueueMessage& msg);
+		void queue_message_locked(QueueMessage&& msg);
 		static void thread_func(ServerThread* server_thread);
 	};
 }

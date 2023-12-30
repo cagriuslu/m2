@@ -25,13 +25,16 @@ namespace m2::network {
 		expected<Socket> accept();
 
 		/// Returns number of bytes sent. If it's less than the length, the socket out buffer might be full.
-		m2::expected<size_t> send(const uint8_t* buffer, size_t length);
-		m2::expected<size_t> send(const int8_t* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
-		m2::expected<size_t> send(const char* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
+		/// If it's -1, EAGAIN has occured. Otherwise, error string is returned.
+		m2::expected<ssize_t> send(const uint8_t* buffer, size_t length);
+		m2::expected<ssize_t> send(const int8_t* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
+		m2::expected<ssize_t> send(const char* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
 
-		m2::expected<size_t> recv(uint8_t* buffer, size_t length);
-		m2::expected<size_t> recv(int8_t* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
-		m2::expected<size_t> recv(char* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
+		/// Returns the number of bytes received. If it's 0, the socket is shut down from the other side.
+		/// If it's -1, EAGAIN has occured. Otherwise, error string is returned.
+		m2::expected<ssize_t> recv(uint8_t* buffer, size_t length);
+		m2::expected<ssize_t> recv(int8_t* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
+		m2::expected<ssize_t> recv(char* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
 
 		[[nodiscard]] int fd() const { return _fd; }
 	};
