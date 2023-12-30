@@ -5,4 +5,5 @@ enum ObjectType {
   NO_OBJECT = 0;
 
   HUMAN_PLAYER = 1;
+  INCOME_LEVEL_MARKER = 2;
 }

@@ -34,6 +34,7 @@ namespace m2 {
 		inline bool operator==(const VecF& other) const { return (x == other.x) && (y == other.y); }
 		inline explicit operator bool() const { return (x != 0.0f) || (y != 0.0f); }
 		inline explicit operator b2Vec2() const { return b2Vec2{x, y}; }
+		inline explicit operator pb::VecF() const { pb::VecF v; v.set_x(x); v.set_y(y); return v; }
 		inline explicit operator SDL_FPoint() const { return SDL_FPoint{x, y}; }
 
 		[[nodiscard]] inline bool is_nan() const { return isnan(x) || isnan(y); }

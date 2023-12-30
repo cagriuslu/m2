@@ -61,8 +61,11 @@ void m2g::pre_single_player_level_init(MAYBE const std::string& name, MAYBE cons
 void m2g::post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 void m2g::pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
-
 std::vector<m2::ObjectId> m2g::multi_player_object_ids;
+
+int m2g::turn_based_multi_player_turn_holder() {
+	return 0; // TODO fix
+}
 
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
 
@@ -85,8 +88,8 @@ m2::void_expected m2g::init_fg_object(m2::Object& obj) {
 			// Save player ID
 			LEVEL.player_id = obj.id();
 		}
-		// If guest
-		if (std::get<m2::mplayer::State>(LEVEL.type_state).last_server_update()->server_update().receiver_index() == m2::I(multi_player_object_ids.size() - 1)) {
+		// At this point, the ServerUpdate is not yet processed
+		else if (GAME.client_thread().peek_unprocessed_server_update()->receiver_index() == m2::I(multi_player_object_ids.size() - 1)) {
 			// Save player ID
 			LEVEL.player_id = obj.id();
 		}

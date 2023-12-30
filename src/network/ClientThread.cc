@@ -43,14 +43,68 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 	set_state_locked(state ? State::Ready : State::Connected);
 }
 
-std::optional<m2::pb::NetworkMessage> m2::network::ClientThread::pop_server_update() {
+std::optional<m2::pb::ServerUpdate> m2::network::ClientThread::peek_unprocessed_server_update() {
 	const std::lock_guard lock(_mutex);
-	if (_last_server_update) {
-		auto tmp = std::move(_last_server_update);
-		_last_server_update.reset();
-		return tmp;
+	if (_unprocessed_server_update) {
+		return _unprocessed_server_update->server_update();
+	} else {
+		return std::nullopt;
 	}
-	return std::nullopt;
+}
+
+m2::expected<bool> m2::network::ClientThread::process_server_update() {
+	const std::lock_guard lock(_mutex);
+	if (not fetch_server_update_unlocked()) {
+		// No ServerUpdate to process
+		return false;
+	}
+
+	if (not _prev_processed_server_update) {
+		// This will be the first ServerUpdate, that started the game.
+		// Only do verification as level initialization should have initialized the same exact game state
+		const auto& server_update = _last_processed_server_update->server_update();
+
+		if (m2g::multi_player_object_ids.size() != Z(server_update.player_object_ids_size())) {
+			return make_unexpected("Server and local player count doesn't match");
+		}
+
+		if (LEVEL.player_id != m2g::multi_player_object_ids[server_update.receiver_index()]) {
+			return make_unexpected("Player ID doesn't match the ID found in local player list");
+		}
+
+		if (LEVEL.characters.size() != Z(server_update.objects_with_character_size())) {
+			return make_unexpected("Server and local have different number of characters");
+		}
+
+		int i = 0;
+		for (auto char_it = LEVEL.characters.begin(); char_it != LEVEL.characters.end() && i < server_update.objects_with_character_size(); ++char_it, ++i) {
+			auto [local_character_variant, _] = *char_it;
+			auto server_character = server_update.objects_with_character(i);
+
+			auto success = std::visit(overloaded {
+					[&server_character](const auto& v) -> m2::void_expected {
+						if (v.parent().position != VecF{server_character.position()}) {
+							return make_unexpected("Server and local position mismatch");
+						}
+						if (v.parent().object_type() != server_character.object_type()) {
+							return make_unexpected("Server and local object type mismatch");
+						}
+						if (std::distance(v.begin_items(), v.end_items()) != server_character.named_items_size()) {
+							return make_unexpected("Server and local item count mismatch");
+						}
+						// TODO other checks
+						return {};
+					}
+			}, *local_character_variant);
+			m2_reflect_failure(success);
+		}
+
+		return true; // Successfully processed one ServerUpdate
+	}
+
+	// TODO actual ServerUpdate
+
+	return {};
 }
 
 size_t m2::network::ClientThread::message_count_locked() {
@@ -73,6 +127,17 @@ void m2::network::ClientThread::queue_ping_locked(int32_t sender_id) {
 	msg.set_game_hash(game_hash());
 	msg.set_sender_id(sender_id);
 	_message_queue.emplace_back(std::move(msg));
+}
+
+bool m2::network::ClientThread::fetch_server_update_unlocked() {
+	if (_unprocessed_server_update) {
+		if (_last_processed_server_update) {
+			_prev_processed_server_update = std::move(_last_processed_server_update);
+		}
+		_last_processed_server_update = std::move(_unprocessed_server_update);
+		return true;
+	}
+	return false;
 }
 
 void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
@@ -165,7 +230,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				} else if (expect_message->has_server_update()) {
 					LOG_INFO("Received ServerUpdate");
 					std::vector<ObjectId> tmp{expect_message->server_update().player_object_ids().begin(), expect_message->server_update().player_object_ids().end()};
-					client_thread->_last_server_update = std::move(*expect_message);
+					client_thread->_unprocessed_server_update = std::move(*expect_message);
 					client_thread->set_state_unlocked(State::Started);
 				} else {
 					// TODO process other incoming messages

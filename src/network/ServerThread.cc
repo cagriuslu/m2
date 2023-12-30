@@ -6,6 +6,7 @@
 #include <m2/ProxyDetail.h>
 #include <m2/Log.h>
 #include <m2/Meta.h>
+#include <m2/Game.h>
 
 #define PORT (1162)
 
@@ -43,6 +44,8 @@ bool m2::network::ServerThread::close_lobby() {
 }
 
 void m2::network::ServerThread::server_update() {
+	auto turn_holder = m2g::turn_based_multi_player_turn_holder();
+
 	auto count = client_count();
 	for (size_t i = 1; i < count; ++i) { // Server update is not sent to self
 		QueueMessage qm;
@@ -50,10 +53,39 @@ void m2::network::ServerThread::server_update() {
 		qm.message.set_game_hash(game_hash());
 		qm.message.set_sender_id(0);
 		qm.message.mutable_server_update()->set_receiver_index(I(i));
+		qm.message.mutable_server_update()->set_turn_holder_index(turn_holder);
 		for (auto player_id : m2g::multi_player_object_ids) {
 			qm.message.mutable_server_update()->add_player_object_ids(player_id);
 		}
-		// TODO
+		for (auto char_it : LEVEL.characters) { // Iterate over characters
+			auto [char_variant, char_id] = char_it;
+			auto* object_descriptor = qm.message.mutable_server_update()->add_objects_with_character();
+
+			// For any Character type
+			std::visit(overloaded {
+					[object_descriptor](const auto& v) {
+						object_descriptor->set_object_id(v.parent().id());
+						object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.parent().position));
+						object_descriptor->set_object_type(v.parent().object_type());
+						object_descriptor->set_parent_id(v.parent().parent_id());
+						for (auto item_it = v.begin_items(); item_it != v.end_items(); ++item_it) {
+							const auto* item_ptr = item_it.get();
+							const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
+							if (!named_item_ptr) {
+								throw M2FATAL("ServerUpdate does not support unnamed items");
+							}
+							object_descriptor->add_named_items(named_item_ptr->type());
+						}
+						pb::for_each_enum_value<m2g::pb::ResourceType>([&v, object_descriptor](m2g::pb::ResourceType rt) {
+							if (v.has_resource(rt)) {
+								auto* resource = object_descriptor->add_resources();
+								resource->set_type(rt);
+								resource->set_amount(v.get_resource(rt));
+							}
+						});
+					}
+			}, *char_variant);
+		}
 
 		queue_message_locked(std::move(qm));
 	}
@@ -125,6 +157,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		if (msg.destination < server_thread->_clients.size()) {
 			if (server_thread->_clients[msg.destination].socket) {
 				if (auto expect_json_str = pb::message_to_json_string(msg.message); expect_json_str) {
+					LOG_DEBUG("Server sending message", *expect_json_str);
 					auto send_success = server_thread->_clients[msg.destination].socket->send(expect_json_str->data(), expect_json_str->size());
 					if (not send_success) {
 						LOG_ERROR("Send error", send_success.error());

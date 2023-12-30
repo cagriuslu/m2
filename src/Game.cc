@@ -119,6 +119,18 @@ void m2::Game::initialize_context() {
 
 m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
 	_server_thread.emplace(type, max_connection_count);
+
+	// Wait until the server is up
+	while (not _server_thread->is_listening()) { SDL_Delay(25); }
+
+	join_game(type, "127.0.0.1");
+
+	// Wait until the client is connected
+	while (not _client_thread->is_connected()) { SDL_Delay(25); }
+
+	// Set client as ready
+	_client_thread->set_ready_blocking(true);
+
 	return {};
 }
 m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& addr) {
@@ -137,11 +149,11 @@ m2::void_expected m2::Game::load_multi_player_as_host(const std::variant<std::fi
 	_level.emplace();
 	return _level->init_multi_player_as_host(level_path_or_blueprint, level_name);
 }
-m2::void_expected m2::Game::load_multi_player_as_guest(pb::NetworkMessage&& server_update, const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+m2::void_expected m2::Game::load_multi_player_as_guest(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
-	return _level->init_multi_player_as_guest(std::move(server_update), level_path_or_blueprint, level_name);
+	return _level->init_multi_player_as_guest(level_path_or_blueprint, level_name);
 }
 m2::void_expected m2::Game::load_level_editor(const std::string& level_resource_path) {
 	_level.reset();

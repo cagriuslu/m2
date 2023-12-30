@@ -61,6 +61,8 @@ namespace m2g {
 	/// For the client with index 1, the second item would contain the ObjectId of the player.
 	extern std::vector<m2::ObjectId> multi_player_object_ids;
 
+	int turn_based_multi_player_turn_holder();
+
 	/// Called after a tile is created
 	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
 

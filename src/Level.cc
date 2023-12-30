@@ -42,12 +42,25 @@ m2::void_expected m2::Level::init_single_player(const std::variant<std::filesyst
 
 m2::void_expected m2::Level::init_multi_player_as_host(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
 	type_state.emplace<mplayer::State>();
-	return init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+
+	auto success = init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+	m2_reflect_failure(success);
+
+	GAME.server_thread().server_update();
+
+	return {};
 }
 
-m2::void_expected m2::Level::init_multi_player_as_guest(pb::NetworkMessage&& server_update, const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
-	type_state.emplace<mplayer::State>(std::move(server_update));
-	return init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+m2::void_expected m2::Level::init_multi_player_as_guest(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+	type_state.emplace<mplayer::State>();
+
+	auto success = init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+	m2_reflect_failure(success);
+
+	auto expect_server_update = GAME.client_thread().process_server_update();
+	m2_reflect_failure(expect_server_update);
+
+	return {};
 }
 
 m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_path) {

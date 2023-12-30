@@ -5,6 +5,9 @@
     },
     {
       "type": "HUMAN_PLAYER"
+    },
+    {
+      "type": "INCOME_LEVEL_MARKER"
     }
   ]
 }

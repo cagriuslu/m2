@@ -11,19 +11,21 @@ message ServerUpdate {
   // 0-based index of the receiver
   int32 receiver_index = 1;
 
+  int32 turn_holder_index = 2;
+
   // ObjectId of the objects that belong to players. The size of this list also represents the player count.
   // player_object_id[receiver_index] is the object that represents the receiver.
-  repeated uint64 player_object_ids = 2;
+  repeated uint64 player_object_ids = 3;
 
   message ObjectDescriptor {
     uint64 object_id = 1;
     VecF position = 2;
     m2g.pb.ObjectType object_type = 3;
     uint64 parent_id = 4;
-    repeated m2g.pb.ItemType named_items = 5;
-    repeated Resource resources = 6;
+    repeated m2g.pb.ItemType named_items = 6;
+    repeated Resource resources = 7;
   }
-  repeated ObjectDescriptor objects = 3; // Object with Characters
+  repeated ObjectDescriptor objects_with_character = 4; // The order is the same as Character pool
 }
 
 message ClientUpdate {}
@@ -32,7 +34,7 @@ message NetworkMessage {
   int32 game_hash = 1;
   int32 sender_id = 2; // 0 for servers
 
-  // If both is null, the message is just a ping
+  // If all is null, the message is just a ping
   oneof type {
     m2g.pb.ServerCommand server_command = 3;
     m2.pb.ServerUpdate server_update = 4;

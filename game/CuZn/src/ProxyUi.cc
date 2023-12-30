@@ -22,11 +22,11 @@ static TextBlueprint client_status = {
 			} else if (GAME.client_thread().is_ready()) {
 				return std::make_pair(Action::CONTINUE, "READY");
 			} else if (GAME.client_thread().is_started()) {
-				auto server_update = GAME.client_thread().pop_server_update();
+				auto server_update = GAME.client_thread().peek_unprocessed_server_update();
 				m2_succeed_or_throw_message(server_update, "Client state is Started, but ServerUpdate not found");
+				auto player_count = server_update->player_object_ids_size();
 
-				auto player_count = server_update->server_update().player_object_ids_size();
-				const auto expect_success = GAME.load_multi_player_as_guest(std::move(*server_update), GAME.levels_dir / (std::to_string(player_count) + ".json"));
+				const auto expect_success = GAME.load_multi_player_as_guest(GAME.levels_dir / (std::to_string(player_count) + ".json"));
 				m2_succeed_or_throw_error(expect_success);
 
 				return std::make_pair(Action::RETURN, std::nullopt);
@@ -74,6 +74,9 @@ static const Blueprint client_lobby = {
 };
 
 static TextBlueprint ip_label = { .initial_text = "IP" };
+static TextInputBlueprint id_addr = {
+		.initial_text = "127.0.0.1"
+};
 static TextBlueprint connect_button = {
 		.initial_text = "CONNECT",
 		.on_action = [](MAYBE const widget::Text &self) {
@@ -97,7 +100,7 @@ static const Blueprint ip_port_form = {
 						.x = 65, .y = 30, .w = 40, .h = 10,
 						.border_width_px = 1,
 						.padding_width_px = 5,
-						.variant = TextInputBlueprint{}
+						.variant = id_addr
 				},
 				WidgetBlueprint{
 						.x = 70, .y = 50, .w = 20, .h = 10,
@@ -113,18 +116,6 @@ static TextBlueprint client_count = {
 		.initial_text = "0",
 		.on_create = [](MAYBE const Text& self) -> std::optional<std::string> {
 			GAME.host_game(m2::mplayer::Type::TurnBased, 4);
-
-			// Wait until the server is up
-			while (GAME.server_thread().is_listening() == false) { SDL_Delay(25); }
-
-			GAME.join_game(m2::mplayer::Type::TurnBased, "127.0.0.1");
-
-			// Wait until the client is connected
-			while (GAME.client_thread().is_connected() == false) { SDL_Delay(25); }
-
-			// Set client as ready
-			GAME.client_thread().set_ready_blocking(true);
-
 			return std::nullopt;
 		},
 		.on_update = [](MAYBE const Text& self) -> std::pair<Action,std::optional<std::string>> {
@@ -140,7 +131,6 @@ static TextBlueprint client_count = {
 				if (GAME.server_thread().close_lobby()) {
 					const auto expect_success = GAME.load_multi_player_as_host(GAME.levels_dir / (std::to_string(GAME.server_thread().client_count()) + ".json"));
 					m2_succeed_or_throw_error(expect_success);
-					GAME.server_thread().server_update();
 					return Action::RETURN;
 				}
 			}

@@ -23,7 +23,7 @@ namespace m2::network {
 		std::mutex _mutex;
 		State _state{State::NotReady};
 		std::deque<pb::NetworkMessage> _message_queue;
-		std::optional<pb::NetworkMessage> _last_server_update;
+		std::optional<pb::NetworkMessage> _prev_processed_server_update, _last_processed_server_update, _unprocessed_server_update;
 
 		// Thread variables
 		char _read_buffer[65536]{};
@@ -44,13 +44,15 @@ namespace m2::network {
 
 		// Modifiers
 		void set_ready_blocking(bool state);
-		std::optional<pb::NetworkMessage> pop_server_update();
+		std::optional<pb::ServerUpdate> peek_unprocessed_server_update();
+		expected<bool> process_server_update();
 
 	private:
 		size_t message_count_locked();
 		void set_state_unlocked(State state);
 		void set_state_locked(State state);
 		void queue_ping_locked(int32_t sender_id);
+		bool fetch_server_update_unlocked();
 		static void thread_func(ClientThread* client_thread);
 	};
 }

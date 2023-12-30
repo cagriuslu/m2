@@ -121,4 +121,11 @@ namespace m2::pb {
 		static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
 		return descriptor->FindValueByNumber(enum_value)->name();
 	}
+
+	template <typename EnumT>
+	void for_each_enum_value(const std::function<void(EnumT)>& op) {
+		for (int i = 0; i < enum_value_count<EnumT>(); ++i) {
+			op(enum_value<EnumT>(i));
+		}
+	}
 }
