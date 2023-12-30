@@ -84,8 +84,8 @@ void m2g::post_tile_create(m2::Object& obj, pb::SpriteType sprite_type) {
 	}
 }
 
-m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {
-	switch (object_type) {
+m2::void_expected m2g::init_fg_object(m2::Object& obj) {
+	switch (obj.object_type()) {
 		case pb::ObjectType::DWARF:
 			return create_dwarf(obj);
 		case pb::ObjectType::BLACKSMITH:

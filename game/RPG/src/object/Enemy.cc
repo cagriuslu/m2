@@ -33,8 +33,8 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 	}
 }
 
-m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) {
-	auto main_sprite_type = GAME.object_main_sprites[object_type];
+m2::void_expected Enemy::init(m2::Object& obj) {
+	auto main_sprite_type = GAME.object_main_sprites[obj.object_type()];
 
 	auto& gfx = obj.add_graphic(GAME.get_sprite(main_sprite_type));
 
@@ -60,7 +60,7 @@ m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) 
 	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
-    obj.impl = std::make_unique<Enemy>(obj, Context::get_instance().get_enemy(object_type));
+    obj.impl = std::make_unique<Enemy>(obj, Context::get_instance().get_enemy(obj.object_type()));
 	auto& impl = dynamic_cast<Enemy&>(*obj.impl);
 
 	// Increment enemy counter
@@ -78,7 +78,7 @@ m2::void_expected Enemy::init(m2::Object& obj, m2g::pb::ObjectType object_type) 
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
-	chr.on_interaction = [&, obj_type = object_type](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) {
+	chr.on_interaction = [&, obj_type = obj.object_type()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) {
 		if (data.has_hit_damage()) {
 			// Deduct HP
 			self.remove_resource(RESOURCE_HP, data.hit_damage());

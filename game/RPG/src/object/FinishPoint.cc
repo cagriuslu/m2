@@ -2,8 +2,8 @@
 #include <rpg/Context.h>
 #include <m2/box2d/Detail.h>
 
-m2::void_expected rpg::init_finish_point(m2::Object& obj, m2g::pb::ObjectType& type) {
-	auto sprite_type = GAME.object_main_sprites[type];
+m2::void_expected rpg::init_finish_point(m2::Object& obj) {
+	auto sprite_type = GAME.object_main_sprites[obj.object_type()];
 	auto& sprite = GAME.get_sprite(sprite_type);
 
 	auto& phy = obj.add_physique();

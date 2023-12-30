@@ -60,7 +60,7 @@ namespace m2g {
 	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
 
 	/// Foreground object loaded
-	m2::void_expected init_fg_object(m2::Object& obj, pb::ObjectType object_type);
+	m2::void_expected init_fg_object(m2::Object& obj);
 
 	/// Create Group for the given type
 	m2::Group* create_group(pb::GroupType group_type);

@@ -101,17 +101,17 @@ void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE cons
 
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}
 
-m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_type) {
+m2::void_expected m2g::init_fg_object(m2::Object& obj) {
 	using namespace rpg;
-	switch (object_type) {
+	switch (obj.object_type()) {
 		case pb::ObjectType::PLAYER:
 			return Player::init(obj);
 		case pb::ObjectType::SKELETON:
-			return Enemy::init(obj, object_type);
+			return Enemy::init(obj);
 		case pb::ObjectType::CASTLE_FINISH_POINT:
-			return rpg::init_finish_point(obj, object_type);
+			return rpg::init_finish_point(obj);
 		case pb::ObjectType::CUTEOPUS:
-			return Enemy::init(obj, object_type);
+			return Enemy::init(obj);
 		case pb::ObjectType::MACHINE_GUN_ITEM_DROP:
 			return rpg::create_dropped_item(obj, m2g::pb::ITEM_REUSABLE_MACHINE_GUN);
 		case pb::ObjectType::EXPLOSIVE_ITEM_DROP:
@@ -131,7 +131,7 @@ m2::void_expected m2g::init_fg_object(m2::Object& obj, pb::ObjectType object_typ
 		case pb::TREE_DEAD_03:
 		case pb::FENCE_HORIZONTAL:
 		case pb::FENCE_VERTICAL:
-			return rpg::create_decoration(obj, object_type, GAME.object_main_sprites[object_type]);
+			return rpg::create_decoration(obj, GAME.object_main_sprites[obj.object_type()]);
 		case pb::SPIKES:
 			return rpg::create_spikes(obj);
 		default:

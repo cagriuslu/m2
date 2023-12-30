@@ -2,6 +2,9 @@
   "objects": [
     {
       "type": "NO_OBJECT"
+    },
+    {
+      "type": "HUMAN_PLAYER"
     }
   ]
 }

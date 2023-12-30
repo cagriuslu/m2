@@ -12,11 +12,11 @@ namespace rpg {
 
 	m2::void_expected create_corpse(m2::Object& obj, m2g::pb::SpriteType);
 
-	m2::void_expected create_decoration(m2::Object& obj, m2g::pb::ObjectType object_type, m2g::pb::SpriteType sprite_type);
+	m2::void_expected create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type);
 
 	m2::void_expected create_dropped_item(m2::Object& obj, m2g::pb::ItemType item_type);
 
-	m2::void_expected init_finish_point(m2::Object& obj, m2g::pb::ObjectType& type);
+	m2::void_expected init_finish_point(m2::Object& obj);
 
 	m2::void_expected create_projectile(m2::Object& obj, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend);
 
