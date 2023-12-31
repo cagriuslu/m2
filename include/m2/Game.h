@@ -59,6 +59,7 @@ namespace m2 {
 		int32_t _sender_id;
 		std::optional<network::ServerThread> _server_thread;
 		std::optional<network::ClientThread> _client_thread;
+		bool _server_update_necessary{};
 		float _delta_time_s{};
 
 	public:

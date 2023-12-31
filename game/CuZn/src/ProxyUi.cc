@@ -232,7 +232,23 @@ const Blueprint pause_menu_blueprint = {
 
 const Blueprint left_hud_blueprint = {
 		.w = 19, .h = 72,
-		.border_width_px = 2
+		.border_width_px = 2,
+		.widgets = {
+				WidgetBlueprint{
+						.x = 2, .y = 2, .w = 15, .h = 8,
+						.variant = TextBlueprint{
+								.initial_text = "LOAN",
+								.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+									if (GAME.client_thread().is_our_turn()) {
+										pb::ClientCommand cc;
+										cc.mutable_first_action()->mutable_loan_action();
+										GAME.client_thread().queue_client_command(cc);
+									}
+									return Action::CONTINUE;
+								}
+						}
+				}
+		}
 };
 
 const Blueprint right_hud_blueprint = {

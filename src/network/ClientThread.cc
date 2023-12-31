@@ -8,39 +8,34 @@
 #include <m2/Meta.h>
 
 m2::network::ClientThread::ClientThread(mplayer::Type type, std::string addr) : _type(type), _addr(std::move(addr)),
-		_thread(ClientThread::thread_func, this) {}
+		_thread(ClientThread::thread_func, this) {
+	DEBUG_FN();
+}
 
 m2::network::ClientThread::~ClientThread() {
-	set_state_locked(State::Quit);
+	DEBUG_FN();
+	set_state_locked(pb::CLIENT_QUIT);
 	_thread.join();
 }
 
 bool m2::network::ClientThread::is_not_connected() {
 	const std::lock_guard lock(_mutex);
-	return _state == State::NotReady;
+	return _state == pb::CLIENT_NOT_READY;
 }
 
 bool m2::network::ClientThread::is_connected() {
 	const std::lock_guard lock(_mutex);
-	return _state == State::Connected;
+	return _state == pb::CLIENT_CONNECTED;
 }
 
 bool m2::network::ClientThread::is_ready() {
 	const std::lock_guard lock(_mutex);
-	return _state == State::Ready;
+	return _state == pb::CLIENT_READY;
 }
 
 bool m2::network::ClientThread::is_started() {
 	const std::lock_guard lock(_mutex);
-	return _state == State::Started;
-}
-
-void m2::network::ClientThread::set_ready_blocking(bool state) {
-	queue_ping_locked(state ? GAME.sender_id() : 0);
-	while (message_count_locked()) {
-		SDL_Delay(100); // Wait until output queue is empty
-	}
-	set_state_locked(state ? State::Ready : State::Connected);
+	return _state == pb::CLIENT_STARTED;
 }
 
 std::optional<m2::pb::ServerUpdate> m2::network::ClientThread::peek_unprocessed_server_update() {
@@ -52,7 +47,39 @@ std::optional<m2::pb::ServerUpdate> m2::network::ClientThread::peek_unprocessed_
 	}
 }
 
+std::optional<m2::pb::ServerUpdate> m2::network::ClientThread::last_processed_server_update() {
+	const std::lock_guard lock(_mutex);
+	if (_last_processed_server_update) {
+		return _last_processed_server_update->server_update();
+	} else {
+		return std::nullopt;
+	}
+}
+
+bool m2::network::ClientThread::is_our_turn() {
+	auto server_update = last_processed_server_update();
+	if (server_update) {
+		return server_update->turn_holder_index() == server_update->receiver_index();
+	} else {
+		// Check if we're the host
+		if (GAME.is_server()) {
+			return GAME.server_thread().turn_holder_index() == 0;
+		}
+		return false;
+	}
+}
+
+void m2::network::ClientThread::set_ready_blocking(bool state) {
+	DEBUG_FN();
+	queue_ping_locked(state ? GAME.sender_id() : 0);
+	while (message_count_locked()) {
+		SDL_Delay(100); // Wait until output queue is empty
+	}
+	set_state_locked(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
+}
+
 m2::expected<bool> m2::network::ClientThread::process_server_update() {
+	TRACE_FN();
 	const std::lock_guard lock(_mutex);
 	if (not fetch_server_update_unlocked()) {
 		// No ServerUpdate to process
@@ -60,6 +87,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 	}
 
 	if (not _prev_processed_server_update) {
+		LOG_DEBUG("Processing first ServerUpdate");
 		// This will be the first ServerUpdate, that started the game.
 		// Only do verification as level initialization should have initialized the same exact game state
 		const auto& server_update = _last_processed_server_update->server_update();
@@ -102,9 +130,22 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 		return true; // Successfully processed one ServerUpdate
 	}
 
+	const auto& server_update = _last_processed_server_update->server_update();
+	const auto& prev_server_update = _prev_processed_server_update->server_update();
 	// TODO actual ServerUpdate
 
 	return {};
+}
+
+void m2::network::ClientThread::queue_client_command(const m2g::pb::ClientCommand& cmd) {
+	DEBUG_FN();
+	pb::NetworkMessage msg;
+	msg.set_game_hash(game_hash());
+	msg.set_sender_id(GAME.sender_id());
+	msg.mutable_client_command()->CopyFrom(cmd);
+
+	const std::lock_guard lock(_mutex);
+	_message_queue.emplace_back(std::move(msg));
 }
 
 size_t m2::network::ClientThread::message_count_locked() {
@@ -112,16 +153,18 @@ size_t m2::network::ClientThread::message_count_locked() {
 	return _message_queue.size();
 }
 
-void m2::network::ClientThread::set_state_unlocked(State state) {
+void m2::network::ClientThread::set_state_unlocked(pb::ClientState state) {
+	LOG_DEBUG("Setting new state", pb::enum_name(state));
 	_state = state;
 }
 
-void m2::network::ClientThread::set_state_locked(State state) {
+void m2::network::ClientThread::set_state_locked(pb::ClientState state) {
 	const std::lock_guard lock(_mutex);
 	set_state_unlocked(state);
 }
 
 void m2::network::ClientThread::queue_ping_locked(int32_t sender_id) {
+	DEBUG_FN();
 	const std::lock_guard lock(_mutex);
 	pb::NetworkMessage msg;
 	msg.set_game_hash(game_hash());
@@ -131,23 +174,27 @@ void m2::network::ClientThread::queue_ping_locked(int32_t sender_id) {
 
 bool m2::network::ClientThread::fetch_server_update_unlocked() {
 	if (_unprocessed_server_update) {
+		LOG_DEBUG("Fetching server update");
 		if (_last_processed_server_update) {
 			_prev_processed_server_update = std::move(_last_processed_server_update);
 		}
 		_last_processed_server_update = std::move(_unprocessed_server_update);
+		_unprocessed_server_update.reset();
 		return true;
 	}
 	return false;
 }
 
 void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
+	DEBUG_FN();
 	auto is_quit = [client_thread]() {
 		const std::lock_guard lock(client_thread->_mutex);
-		return client_thread->_state == State::Quit;
+		return client_thread->_state == pb::CLIENT_QUIT;
 	};
 	auto pop_message = [client_thread]() -> std::optional<pb::NetworkMessage> {
 		const std::lock_guard lock(client_thread->_mutex);
 		if (!client_thread->_message_queue.empty()) {
+			LOG_DEBUG("Popping message from outgoing queue");
 			auto tmp = std::move(client_thread->_message_queue.front());
 			client_thread->_message_queue.pop_front();
 			return std::move(tmp);
@@ -158,6 +205,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 	auto send_message_locked = [client_thread](Socket& socket, const pb::NetworkMessage& msg) {
 		const std::lock_guard lock(client_thread->_mutex);
 		if (auto expect_json_str = pb::message_to_json_string(msg); expect_json_str) {
+			LOG_DEBUG("Will send message", *expect_json_str);
 			auto send_success = socket.send(expect_json_str->data(), expect_json_str->size());
 			if (not send_success) {
 				LOG_ERROR("Send error", send_success.error());
@@ -176,14 +224,15 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				return;
 			}
 			socket = std::move(*expect_socket);
+			LOG_INFO("Socket created");
 
 			auto connect_success = socket->connect(client_thread->_addr, 1162);
 			if (not connect_success) {
 				LOG_FATAL("Connect failed", connect_success.error());
 				return;
 			}
-			LOG_INFO("Connected");
-			client_thread->set_state_locked(State::Connected);
+			LOG_INFO("Socket connected");
+			client_thread->set_state_locked(pb::CLIENT_CONNECTED);
 			read_set.add_fd(socket->fd());
 		} else {
 			auto select_result = select(read_set, write_set, 100);
@@ -208,7 +257,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					LOG_ERROR("Server disconnected");
 					read_set.remove_fd(socket->fd());
 					socket.reset();
-					client_thread->set_state_unlocked(State::NotReady);
+					client_thread->set_state_unlocked(pb::CLIENT_NOT_READY);
 					continue;
 				}
 
@@ -228,10 +277,9 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				if (not expect_message->has_server_command() && not expect_message->has_server_update()) {
 					LOG_INFO("Received ping");
 				} else if (expect_message->has_server_update()) {
-					LOG_INFO("Received ServerUpdate");
-					std::vector<ObjectId> tmp{expect_message->server_update().player_object_ids().begin(), expect_message->server_update().player_object_ids().end()};
+					LOG_INFO("Received ServerUpdate", json_str);
 					client_thread->_unprocessed_server_update = std::move(*expect_message);
-					client_thread->set_state_unlocked(State::Started);
+					client_thread->set_state_unlocked(pb::CLIENT_STARTED);
 				} else {
 					// TODO process other incoming messages
 				}

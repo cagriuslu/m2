@@ -7,6 +7,22 @@ import "m2g_ItemType.proto";
 import "Item.proto";
 import "VecF.proto";
 
+enum ServerState {
+  SERVER_NOT_READY = 0;
+  SERVER_QUIT = 1;
+  SERVER_LISTENING = 2;
+  SERVER_READY = 3; // Lobby closed
+  SERVER_STARTED = 4;
+}
+
+enum ClientState {
+  CLIENT_NOT_READY = 0;
+  CLIENT_QUIT = 1;
+  CLIENT_CONNECTED = 2;
+  CLIENT_READY = 3;
+  CLIENT_STARTED = 4;
+}
+
 message ServerUpdate {
   // 0-based index of the receiver
   int32 receiver_index = 1;

@@ -7,21 +7,13 @@
 
 namespace m2::network {
 	class ClientThread {
-		enum class State {
-			NotReady,
-			Quit,
-			Connected,
-			Ready,
-			Started,
-		};
-
 		const mplayer::Type _type;
 		const std::string _addr;
 		std::thread _thread;
 
 		// Shared variables
 		std::mutex _mutex;
-		State _state{State::NotReady};
+		pb::ClientState _state{pb::ClientState::CLIENT_NOT_READY};
 		std::deque<pb::NetworkMessage> _message_queue;
 		std::optional<pb::NetworkMessage> _prev_processed_server_update, _last_processed_server_update, _unprocessed_server_update;
 
@@ -41,16 +33,19 @@ namespace m2::network {
 		bool is_connected();
 		bool is_ready();
 		bool is_started();
+		std::optional<pb::ServerUpdate> peek_unprocessed_server_update();
+		std::optional<pb::ServerUpdate> last_processed_server_update();
+		bool is_our_turn();
 
 		// Modifiers
 		void set_ready_blocking(bool state);
-		std::optional<pb::ServerUpdate> peek_unprocessed_server_update();
 		expected<bool> process_server_update();
+		void queue_client_command(const m2g::pb::ClientCommand& cmd);
 
 	private:
 		size_t message_count_locked();
-		void set_state_unlocked(State state);
-		void set_state_locked(State state);
+		void set_state_unlocked(pb::ClientState state);
+		void set_state_locked(pb::ClientState state);
 		void queue_ping_locked(int32_t sender_id);
 		bool fetch_server_update_unlocked();
 		static void thread_func(ClientThread* client_thread);

@@ -229,6 +229,16 @@ void m2::Game::execute_pre_step() {
 	for (const auto& [phy, _] : _level->physics) {
 		IF(phy->pre_step)(*phy);
 	}
+	if (_server_thread) {
+		auto client_command = _server_thread->pop_client_command();
+		if (client_command) {
+			auto new_turn_holder = m2g::handle_client_command(_server_thread->turn_holder_index(), client_command->client_command());
+			if (new_turn_holder) {
+				_server_thread->set_turn_holder_index(*new_turn_holder);
+				_server_update_necessary = true;
+			}
+		}
+	}
 	execute_deferred_actions();
 }
 
@@ -272,6 +282,17 @@ void m2::Game::execute_step() {
 }
 
 void m2::Game::execute_post_step() {
+	if (_server_thread) {
+		if (_server_update_necessary) {
+			// Publish ServerUpdate
+			_server_thread->server_update();
+			_server_update_necessary = false;
+		}
+	} else if (_client_thread) {
+		// Handle ServerUpdate
+		auto expect_server_update = GAME.client_thread().process_server_update();
+		m2_succeed_or_throw_error(expect_server_update);
+	}
 	for (const auto& [phy, _] : _level->physics) {
 		IF(phy->post_step)(*phy);
 	}

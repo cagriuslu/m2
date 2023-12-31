@@ -7,6 +7,7 @@
 #include "component/Graphic.h"
 #include "Meta.h"
 #include <m2g_GroupType.pb.h>
+#include <Network.pb.h>
 #include <Level.pb.h>
 #include <string_view>
 #include <array>
@@ -61,7 +62,8 @@ namespace m2g {
 	/// For the client with index 1, the second item would contain the ObjectId of the player.
 	extern std::vector<m2::ObjectId> multi_player_object_ids;
 
-	int turn_based_multi_player_turn_holder();
+	/// Return the new turn_holder_index if command is accepted and a ServerUpdate is necessary.
+	std::optional<int> handle_client_command(int turn_holder_index, const m2g::pb::ClientCommand& client_command);
 
 	/// Called after a tile is created
 	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);

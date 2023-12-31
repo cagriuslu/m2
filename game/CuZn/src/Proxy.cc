@@ -63,8 +63,11 @@ void m2g::pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const
 void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 std::vector<m2::ObjectId> m2g::multi_player_object_ids;
 
-int m2g::turn_based_multi_player_turn_holder() {
-	return 0; // TODO fix
+std::optional<int> m2g::handle_client_command(int turn_holder_index, const m2g::pb::ClientCommand& client_command) {
+	LOG_INFO("Received command from client", turn_holder_index);
+
+	// Increment turn holder
+	return (turn_holder_index + 1) % GAME.server_thread().client_count();
 }
 
 void m2g::post_tile_create(MAYBE m2::Object& obj, MAYBE pb::SpriteType sprite_type) {}

@@ -61,7 +61,6 @@ void m2g::post_single_player_level_init(MAYBE const std::string& name, MAYBE con
 void m2g::pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 std::vector<m2::ObjectId> m2g::multi_player_object_ids;
-int m2g::turn_based_multi_player_turn_holder() { return 0; }
 
 void m2g::post_tile_create(m2::Object& obj, pb::SpriteType sprite_type) {
 	switch (sprite_type) {

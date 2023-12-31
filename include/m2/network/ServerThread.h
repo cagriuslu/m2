@@ -10,13 +10,6 @@
 
 namespace m2::network {
 	class ServerThread {
-		enum class State {
-			NotReady,
-			Quit,
-			Listening,
-			Ready, // Lobby closed
-			Started,
-		};
 		struct Client {
 			std::optional<Socket> socket;
 			std::optional<int32_t> sender_id;
@@ -33,9 +26,11 @@ namespace m2::network {
 
 		// Shared variables
 		std::mutex _mutex;
-		State _state{State::NotReady};
+		pb::ServerState _state{pb::ServerState::SERVER_NOT_READY};
 		std::vector<Client> _clients;
-		std::deque<QueueMessage> _message_queue;
+		int _turn_holder_index{};
+		std::deque<QueueMessage> _outgoing_message_queue;
+		std::optional<pb::NetworkMessage> _received_client_command;
 
 		// Thread variables
 		char _read_buffer[65536]{};
@@ -52,15 +47,18 @@ namespace m2::network {
 		[[nodiscard]] mplayer::Type type() const { return _type; }
 		bool is_listening();
 		size_t client_count();
+		int turn_holder_index();
+		std::optional<pb::NetworkMessage> pop_client_command();
 
 		// Modifiers
 		bool close_lobby();
+		void set_turn_holder_index(int);
 		void server_update();
 		void queue_server_command(int destination, const m2g::pb::ServerCommand& cmd);
 
 	private:
 		size_t message_count_locked();
-		void set_state_locked(State state);
+		void set_state_locked(pb::ServerState state);
 		void queue_message_unlocked(const QueueMessage& msg);
 		void queue_message_unlocked(QueueMessage&& msg);
 		void queue_message_locked(const QueueMessage& msg);
