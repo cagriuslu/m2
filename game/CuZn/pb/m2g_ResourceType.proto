@@ -3,6 +3,7 @@ package m2g.pb;
 
 enum ResourceType {
   NO_RESOURCE = 0;
-
-  MONEY = 1;
+  VICTORY_POINTS = 1;
+  INCOME_POINTS = 2;
+  MONEY = 3;
 }

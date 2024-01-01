@@ -2,6 +2,90 @@
   "items": [
     {
       "type": "NO_ITEM"
+    },
+    {
+      "type": "WILD_LOCATION_CARD"
+    },
+    {
+      "type": "WILD_FACTORY_CARD"
+    },
+    {
+      "type": "FABRIC_FACTORY_CARD"
+    },
+    {
+      "type": "TOOL_SHOP_CARD"
+    },
+    {
+      "type": "CIDER_MILL_CARD"
+    },
+    {
+      "type": "WOOD_MILL_CARD"
+    },
+    {
+      "type": "GLASS_FACTORY_CARD"
+    },
+    {
+      "type": "ROPE_FACTORY_CARD"
+    },
+    {
+      "type": "GRONINGEN_CARD"
+    },
+    {
+      "type": "ZWOLLE_CARD"
+    },
+    {
+      "type": "LEEUWARDEN_CARD"
+    },
+    {
+      "type": "DEN_HELDER_CARD"
+    },
+    {
+      "type": "AMSTERDAM_CARD"
+    },
+    {
+      "type": "LELYSTAD_CARD"
+    },
+    {
+      "type": "DIEMEN_CARD"
+    },
+    {
+      "type": "APPELDOORN_CARD"
+    },
+    {
+      "type": "UTRECHT_CARD"
+    },
+    {
+      "type": "ARNHEM_CARD"
+    },
+    {
+      "type": "GOUDA_CARD"
+    },
+    {
+      "type": "ROTTERDAM_CARD"
+    },
+    {
+      "type": "SHERTOGENBOSCH_CARD"
+    },
+    {
+      "type": "BREAD_CARD"
+    },
+    {
+      "type": "DEN_HAAG_CARD"
+    },
+    {
+      "type": "TILBURG_CARD"
+    },
+    {
+      "type": "EINDHOVEN_CARD"
+    },
+    {
+      "type": "VENLO_CARD"
+    },
+    {
+      "type": "NIJMEGEN_CARD"
+    },
+    {
+      "type": "MASSTRICH_CARD"
     }
   ]
 }
