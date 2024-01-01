@@ -5,7 +5,7 @@ enum ObjectType {
   NO_OBJECT = 0;
   HUMAN_PLAYER = 1;
   MERCHANT = 2;
-  FACTORY_TILE = 3;
-  PATH = 4;
-  ROAD = 5;
+  TILE = 3;
+  GUARDS = 4;
+  KNIGHTS = 5;
 }

@@ -9,5 +9,5 @@ enum ResourceType {
   IS_FLIPPED = 4;
   WOOD_CUBE = 5;
   TOOL_CRATE = 6;
-  CIDER_BARREL = 7;
+  FOOD_CRATE = 7;
 }

@@ -40,7 +40,7 @@
       ]
     },
     {
-      "type": "FABRIC_FACTORY_CARD",
+      "type": "EXPLOSIVE_FACTORY_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -76,7 +76,7 @@
       ]
     },
     {
-      "type": "CIDER_MILL_CARD",
+      "type": "KITCHEN_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -112,7 +112,7 @@
       ]
     },
     {
-      "type": "GLASS_FACTORY_CARD",
+      "type": "JEWELLERY_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -130,7 +130,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_CARD",
+      "type": "PRINTING_PRESS_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -508,7 +508,7 @@
       ]
     },
     {
-      "type": "FABRIC_FACTORY_TILE_I",
+      "type": "EXPLOSIVE_FACTORY_TILEI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -528,7 +528,7 @@
           "amount": 12.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -542,7 +542,7 @@
       ]
     },
     {
-      "type": "FABRIC_FACTORY_TILE_II",
+      "type": "EXPLOSIVE_FACTORY_TILEII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -566,7 +566,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -576,7 +576,7 @@
       ]
     },
     {
-      "type": "FABRIC_FACTORY_TILE_III",
+      "type": "EXPLOSIVE_FACTORY_TILEIII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -604,7 +604,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -614,7 +614,7 @@
       ]
     },
     {
-      "type": "FABRIC_FACTORY_TILE_IV",
+      "type": "EXPLOSIVE_FACTORY_TILEIV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -642,7 +642,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -680,7 +680,7 @@
           "amount": 2.0
         },
         {
-          "type": "TOOLS_BONUS",
+          "type": "TOOL_BONUS",
           "amount": 4.0
         },
         {
@@ -714,7 +714,7 @@
           "amount": 1.0
         },
         {
-          "type": "TOOLS_BONUS",
+          "type": "TOOL_BONUS",
           "amount": 4.0
         },
         {
@@ -748,7 +748,7 @@
           "amount": 1.0
         },
         {
-          "type": "TOOLS_BONUS",
+          "type": "TOOL_BONUS",
           "amount": 5.0
         },
         {
@@ -782,7 +782,7 @@
           "amount": 1.0
         },
         {
-          "type": "TOOLS_BONUS",
+          "type": "TOOL_BONUS",
           "amount": 6.0
         },
         {
@@ -792,7 +792,7 @@
       ]
     },
     {
-      "type": "CIDER_MILL_TILE_I",
+      "type": "KITCHEN_TILE_I",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -820,11 +820,11 @@
           "amount": 2.0
         },
         {
-          "type": "CIDER_BONUS_FIRST_ERA",
+          "type": "FOOD_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "CIDER_BONUS_SECOND_ERA",
+          "type": "FOOD_BONUS_SECOND_ERA",
           "amount": 1.0
         },
         {
@@ -834,7 +834,7 @@
       ]
     },
     {
-      "type": "CIDER_MILL_TILE_II",
+      "type": "KITCHEN_TILE_II",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -858,11 +858,11 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_BONUS_FIRST_ERA",
+          "type": "FOOD_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "CIDER_BONUS_SECOND_ERA",
+          "type": "FOOD_BONUS_SECOND_ERA",
           "amount": 2.0
         },
         {
@@ -872,7 +872,7 @@
       ]
     },
     {
-      "type": "CIDER_MILL_TILE_III",
+      "type": "KITCHEN_TILE_III",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -896,11 +896,11 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_BONUS_FIRST_ERA",
+          "type": "FOOD_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "CIDER_BONUS_SECOND_ERA",
+          "type": "FOOD_BONUS_SECOND_ERA",
           "amount": 2.0
         },
         {
@@ -910,7 +910,7 @@
       ]
     },
     {
-      "type": "CIDER_MILL_TILE_IV",
+      "type": "KITCHEN_TILE_IV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -938,11 +938,11 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_BONUS_FIRST_ERA",
+          "type": "FOOD_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "CIDER_BONUS_SECOND_ERA",
+          "type": "FOOD_BONUS_SECOND_ERA",
           "amount": 2.0
         },
         {
@@ -1084,7 +1084,7 @@
       ]
     },
     {
-      "type": "GLASS_FACTORY_TILE_I",
+      "type": "JEWELLERY_TILEI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1108,7 +1108,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1122,7 +1122,7 @@
       ]
     },
     {
-      "type": "GLASS_FACTORY_TILE_II",
+      "type": "JEWELLERY_TILEII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1146,7 +1146,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1156,7 +1156,7 @@
       ]
     },
     {
-      "type": "GLASS_FACTORY_TILE_III",
+      "type": "JEWELLERY_TILEIII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1180,7 +1180,7 @@
           "amount": 2.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 2.0
         },
         {
@@ -1194,7 +1194,7 @@
       ]
     },
     {
-      "type": "GLASS_FACTORY_TILE_IV",
+      "type": "JEWELLERY_TILEIV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1218,7 +1218,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1228,7 +1228,7 @@
       ]
     },
     {
-      "type": "GLASS_FACTORY_TILE_V",
+      "type": "JEWELLERY_TILEV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1252,7 +1252,7 @@
           "amount": 2.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 2.0
         },
         {
@@ -1266,7 +1266,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_I",
+      "type": "PRINTING_PRESS_TILE_I",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1290,7 +1290,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1304,7 +1304,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_II",
+      "type": "PRINTING_PRESS_TILE_II",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1328,7 +1328,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1338,7 +1338,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_III",
+      "type": "PRINTING_PRESS_TILE_III",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1368,7 +1368,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_IV",
+      "type": "PRINTING_PRESS_TILE_IV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1392,7 +1392,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1402,7 +1402,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_V",
+      "type": "PRINTING_PRESS_TILE_V",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1426,7 +1426,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 2.0
         },
         {
@@ -1436,7 +1436,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_VI",
+      "type": "PRINTING_PRESS_TILE_VI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1456,7 +1456,7 @@
           "amount": 20.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1466,7 +1466,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_VII",
+      "type": "PRINTING_PRESS_TILE_VII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1500,7 +1500,7 @@
       ]
     },
     {
-      "type": "ROPE_FACTORY_TILE_VIII",
+      "type": "PRINTING_PRESS_TILE_VIII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1524,7 +1524,7 @@
           "amount": 2.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {
@@ -1534,46 +1534,46 @@
       ]
     },
     {
-      "type": "ROPE_MERCHANT_LICENSE",
+      "type": "PRINTING_PRESS_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
       "usage": "REUSABLE"
     },
     {
-      "type": "FABRIC_MERCHANT_LICENSE",
+      "type": "EXPLOSIVE_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
       "usage": "REUSABLE"
     },
     {
-      "type": "GLASS_MERCHANT_LICENSE",
+      "type": "JEWELLERY_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
       "usage": "REUSABLE"
     },
     {
-      "type": "FABRIC_FACTORY_GROUNDS",
+      "type": "EXPLOSIVE_FACTORY_GROUNDS",
       "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
     },
     {
-      "type": "TOOL_FACTORY_GROUNDS",
+      "type": "TOOL_SHOP_GROUNDS",
       "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
     },
     {
-      "type": "CIDER_FACTORY_GROUNDS",
+      "type": "KITCHEN_GROUNDS",
       "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
     },
     {
-      "type": "WOOD_FACTORY_GROUNDS",
+      "type": "WOOD_MILL_GROUNDS",
       "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
     },
     {
-      "type": "GLASS_FACTORY_GROUNDS",
+      "type": "JEWELLERY_GROUNDS",
       "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
     },
     {
-      "type": "ROPE_FACTORY_GROUNDS",
+      "type": "PRINTING_PRESS_FACTORY_GROUNDS",
       "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
     },
     {
-      "type": "PATH_LICENSE",
+      "type": "GUARDS_LICENSE",
       "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
       "attributes": [
         {
@@ -1587,7 +1587,7 @@
       ]
     },
     {
-      "type": "ROAD_LICENSE",
+      "type": "KNIGHTS_LICENSE",
       "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
       "attributes": [
         {
@@ -1605,7 +1605,7 @@
       ]
     },
     {
-      "type": "SECOND_ROAD_LICENSE",
+      "type": "SECOND_KNIGHTS_LICENSE",
       "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
       "attributes": [
         {
@@ -1617,7 +1617,7 @@
           "amount": 1.0
         },
         {
-          "type": "CIDER_COST",
+          "type": "FOOD_COST",
           "amount": 1.0
         },
         {

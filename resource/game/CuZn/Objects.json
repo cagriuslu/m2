@@ -10,13 +10,13 @@
       "type": "MERCHANT"
     },
     {
-      "type": "FACTORY_TILE"
+      "type": "TILE"
     },
     {
-      "type": "PATH"
+      "type": "GUARDS"
     },
     {
-      "type": "ROAD"
+      "type": "KNIGHTS"
     }
   ]
 }
