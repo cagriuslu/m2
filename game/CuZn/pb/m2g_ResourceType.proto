@@ -6,4 +6,8 @@ enum ResourceType {
   VICTORY_POINTS = 1;
   INCOME_POINTS = 2;
   MONEY = 3;
+  IS_FLIPPED = 4;
+  WOOD_CUBE = 5;
+  TOOL_CRATE = 6;
+  CIDER_BARREL = 7;
 }

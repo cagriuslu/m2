@@ -4,88 +4,1627 @@
       "type": "NO_ITEM"
     },
     {
-      "type": "WILD_LOCATION_CARD"
+      "type": "WILD_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 4.0
+        }
+      ]
     },
     {
-      "type": "WILD_FACTORY_CARD"
+      "type": "WILD_FACTORY_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 4.0
+        }
+      ]
     },
     {
-      "type": "FABRIC_FACTORY_CARD"
+      "type": "FABRIC_FACTORY_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 6.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 8.0
+        }
+      ]
     },
     {
-      "type": "TOOL_SHOP_CARD"
+      "type": "TOOL_SHOP_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 4.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 4.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 4.0
+        }
+      ]
     },
     {
-      "type": "CIDER_MILL_CARD"
+      "type": "CIDER_MILL_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 5.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 5.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 5.0
+        }
+      ]
     },
     {
-      "type": "WOOD_MILL_CARD"
+      "type": "WOOD_MILL_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
     },
     {
-      "type": "GLASS_FACTORY_CARD"
+      "type": "GLASS_FACTORY_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
     },
     {
-      "type": "ROPE_FACTORY_CARD"
+      "type": "ROPE_FACTORY_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 6.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 8.0
+        }
+      ]
     },
     {
-      "type": "GRONINGEN_CARD"
+      "type": "GRONINGEN_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "ZWOLLE_CARD"
+      "type": "ZWOLLE_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
     },
     {
-      "type": "LEEUWARDEN_CARD"
+      "type": "LEEUWARDEN_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "DEN_HELDER_CARD"
+      "type": "DEN_HELDER_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
     },
     {
-      "type": "AMSTERDAM_CARD"
+      "type": "AMSTERDAM_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "LELYSTAD_CARD"
+      "type": "LELYSTAD_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 0.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "DIEMEN_CARD"
+      "type": "DIEMEN_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "APPELDOORN_CARD"
+      "type": "APPELDOORN_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "UTRECHT_CARD"
+      "type": "UTRECHT_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "ARNHEM_CARD"
+      "type": "ARNHEM_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 1.0
+        }
+      ]
     },
     {
-      "type": "GOUDA_CARD"
+      "type": "GOUDA_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 1.0
+        }
+      ]
     },
     {
-      "type": "ROTTERDAM_CARD"
+      "type": "ROTTERDAM_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
     },
     {
-      "type": "SHERTOGENBOSCH_CARD"
+      "type": "SHERTOGENBOSCH_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "BREAD_CARD"
+      "type": "BREDA_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "DEN_HAAG_CARD"
+      "type": "DEN_HAAG_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "TILBURG_CARD"
+      "type": "TILBURG_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 2.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 2.0
+        }
+      ]
     },
     {
-      "type": "EINDHOVEN_CARD"
+      "type": "EINDHOVEN_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
     },
     {
-      "type": "VENLO_CARD"
+      "type": "VENLO_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
     },
     {
-      "type": "NIJMEGEN_CARD"
+      "type": "NIJMEGEN_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 1.0
+        }
+      ]
     },
     {
-      "type": "MASSTRICH_CARD"
+      "type": "MASSTRICH_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 1.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "FABRIC_FACTORY_TILE_I",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 12.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "FORBIDDEN_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 3.0
+        }
+      ]
+    },
+    {
+      "type": "FABRIC_FACTORY_TILE_II",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 14.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "FABRIC_FACTORY_TILE_III",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 9.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 16.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 3.0
+        }
+      ]
+    },
+    {
+      "type": "FABRIC_FACTORY_TILE_IV",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 12.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 18.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 3.0
+        }
+      ]
+    },
+    {
+      "type": "TOOL_SHOP_TILE_I",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 5.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "FORBIDDEN_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "TOOLS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "TOOL_SHOP_TILE_II",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 7.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "TOOLS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "TOOL_SHOP_TILE_III",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 7.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 9.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "TOOLS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "TOOL_SHOP_TILE_IV",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 9.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 12.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "TOOLS_BONUS",
+          "amount": 6.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "CIDER_MILL_TILE_I",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 5.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "FORBIDDEN_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "CIDER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_BONUS_SECOND_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "CIDER_MILL_TILE_II",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 7.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_BONUS_SECOND_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "CIDER_MILL_TILE_III",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 7.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 9.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_BONUS_SECOND_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "CIDER_MILL_TILE_IV",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 10.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 9.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "FORBIDDEN_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_BONUS_SECOND_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "WOOD_MILL_TILE_I",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 5.0
+        },
+        {
+          "type": "FORBIDDEN_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "WOOD_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "WOOD_MILL_TILE_II",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 7.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 7.0
+        },
+        {
+          "type": "WOOD_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "WOOD_MILL_TILE_III",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 6.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 8.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "WOOD_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "WOOD_MILL_TILE_IV",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 10.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "WOOD_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "GLASS_FACTORY_TILE_I",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 10.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 17.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "DEVELOPMENT_BAN",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "GLASS_FACTORY_TILE_II",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 0.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "GLASS_FACTORY_TILE_III",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 11.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 22.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 2.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 2.0
+        },
+        {
+          "type": "DEVELOPMENT_BAN",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "GLASS_FACTORY_TILE_IV",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 0.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "GLASS_FACTORY_TILE_V",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 20.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 24.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 2.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 2.0
+        },
+        {
+          "type": "FORBIDDEN_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_I",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 8.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "FORBIDDEN_ERA",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_II",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 5.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 10.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_III",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 0.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 12.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_IV",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 3.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 6.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 8.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_V",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 8.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 2.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 16.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 2.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_VI",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 7.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 6.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 20.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_VII",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 9.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 4.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 0.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 16.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_FACTORY_TILE_VIII",
+      "category": "ITEM_CATEGORY_TILE",
+      "attributes": [
+        {
+          "type": "VICTORY_POINTS_BONUS",
+          "amount": 11.0
+        },
+        {
+          "type": "INCOME_POINTS_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "LINK_BONUS",
+          "amount": 1.0
+        },
+        {
+          "type": "MONEY_COST",
+          "amount": 20.0
+        },
+        {
+          "type": "TOOL_COST",
+          "amount": 2.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "ROPE_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "usage": "REUSABLE"
+    },
+    {
+      "type": "FABRIC_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "usage": "REUSABLE"
+    },
+    {
+      "type": "GLASS_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "usage": "REUSABLE"
+    },
+    {
+      "type": "FABRIC_FACTORY_GROUNDS",
+      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
+    },
+    {
+      "type": "TOOL_FACTORY_GROUNDS",
+      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
+    },
+    {
+      "type": "CIDER_FACTORY_GROUNDS",
+      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
+    },
+    {
+      "type": "WOOD_FACTORY_GROUNDS",
+      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
+    },
+    {
+      "type": "GLASS_FACTORY_GROUNDS",
+      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
+    },
+    {
+      "type": "ROPE_FACTORY_GROUNDS",
+      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
+    },
+    {
+      "type": "PATH_LICENSE",
+      "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
+      "attributes": [
+        {
+          "type": "MONEY_COST",
+          "amount": 3.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 14.0
+        }
+      ]
+    },
+    {
+      "type": "ROAD_LICENSE",
+      "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
+      "attributes": [
+        {
+          "type": "MONEY_COST",
+          "amount": 5.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 14.0
+        }
+      ]
+    },
+    {
+      "type": "SECOND_ROAD_LICENSE",
+      "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
+      "attributes": [
+        {
+          "type": "MONEY_COST",
+          "amount": 10.0
+        },
+        {
+          "type": "WOOD_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "CIDER_COST",
+          "amount": 1.0
+        },
+        {
+          "type": "EACH_PLAYER_COUNT",
+          "amount": 14.0
+        }
+      ]
     }
   ]
 }

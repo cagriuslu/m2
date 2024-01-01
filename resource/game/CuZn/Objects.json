@@ -7,115 +7,16 @@
       "type": "HUMAN_PLAYER"
     },
     {
-      "type": "ROPE_MERCHANT"
+      "type": "MERCHANT"
     },
     {
-      "type": "FABRIC_MERCHANT"
+      "type": "FACTORY_TILE"
     },
     {
-      "type": "GLASS_MERCHANT"
-    },
-    {
-      "type": "WILD_MERCHANT"
-    },
-    {
-      "type": "FABRIC_FACTORY_LEVEL_I"
-    },
-    {
-      "type": "FABRIC_FACTORY_LEVEL_II"
-    },
-    {
-      "type": "FABRIC_FACTORY_LEVEL_III"
-    },
-    {
-      "type": "FABRIC_FACTORY_LEVEL_IV"
-    },
-    {
-      "type": "TOOL_SHOP_LEVEL_I"
-    },
-    {
-      "type": "TOOL_SHOP_LEVEL_II"
-    },
-    {
-      "type": "TOOL_SHOP_LEVEL_III"
-    },
-    {
-      "type": "TOOL_SHOP_LEVEL_IV"
-    },
-    {
-      "type": "CIDER_MILL_I"
-    },
-    {
-      "type": "CIDER_MILL_II"
-    },
-    {
-      "type": "CIDER_MILL_III"
-    },
-    {
-      "type": "CIDER_MILL_IV"
-    },
-    {
-      "type": "WOOD_MILL_I"
-    },
-    {
-      "type": "WOOD_MILL_II"
-    },
-    {
-      "type": "WOOD_MILL_III"
-    },
-    {
-      "type": "WOOD_MILL_IV"
-    },
-    {
-      "type": "GLASS_FACTORY_I"
-    },
-    {
-      "type": "GLASS_FACTORY_II"
-    },
-    {
-      "type": "GLASS_FACTORY_III"
-    },
-    {
-      "type": "GLASS_FACTORY_IV"
-    },
-    {
-      "type": "GLASS_FACTORY_V"
-    },
-    {
-      "type": "ROPE_FACTORY_I"
-    },
-    {
-      "type": "ROPE_FACTORY_II"
-    },
-    {
-      "type": "ROPE_FACTORY_III"
-    },
-    {
-      "type": "ROPE_FACTORY_IV"
-    },
-    {
-      "type": "ROPE_FACTORY_V"
-    },
-    {
-      "type": "ROPE_FACTORY_VI"
-    },
-    {
-      "type": "ROPE_FACTORY_VII"
-    },
-    {
-      "type": "ROPE_FACTORY_VIII"
+      "type": "PATH"
     },
     {
       "type": "ROAD"
-    },
-    {
-      "type": "WOOD_CUBE"
-    },
-    {
-      "type": "TOOL_CRATE"
-    },
-    {
-      "type": "CIDER_BARREL"
     }
   ]
 }
