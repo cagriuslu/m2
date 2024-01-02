@@ -1,24 +1,17 @@
 #pragma once
+#include "server/Client.h"
 #include "../multi_player/Type.h"
 #include "Socket.h"
 #include <Network.pb.h>
 #include <thread>
 #include <deque>
 #include <mutex>
-
+#include "server/Client.h"
 #include "m2/Object.h"
+#include <queue>
 
 namespace m2::network {
 	class ServerThread {
-		struct Client {
-			std::optional<Socket> socket;
-			std::optional<int32_t> sender_id;
-		};
-		struct QueueMessage {
-			unsigned destination;
-			pb::NetworkMessage message;
-		};
-
 		// Main thread variables
 		const mplayer::Type _type;
 		const unsigned _max_connection_count;
@@ -27,13 +20,12 @@ namespace m2::network {
 		// Shared variables
 		std::mutex _mutex;
 		pb::ServerState _state{pb::ServerState::SERVER_NOT_READY};
-		std::vector<Client> _clients;
-		int _turn_holder_index{};
-		std::deque<QueueMessage> _outgoing_message_queue;
+		std::vector<server::Client> _clients;
+		unsigned _turn_holder{};
 		std::optional<pb::NetworkMessage> _received_client_command;
 
 		// Thread variables
-		char _read_buffer[65536]{};
+		char _read_buffer[65536]{}; // Shared among all clients
 
 	public:
 		ServerThread(mplayer::Type type, unsigned max_connection_count);
@@ -47,22 +39,20 @@ namespace m2::network {
 		[[nodiscard]] mplayer::Type type() const { return _type; }
 		bool is_listening();
 		size_t client_count();
-		int turn_holder_index();
-		std::optional<pb::NetworkMessage> pop_client_command();
+		unsigned turn_holder();
+		std::optional<pb::NetworkMessage> pop_turn_holder_command();
 
 		// Modifiers
-		bool close_lobby();
-		void set_turn_holder_index(int);
+		void_expected close_lobby();
+		void set_turn_holder_index(unsigned);
 		void server_update();
-		void queue_server_command(int destination, const m2g::pb::ServerCommand& cmd);
 
 	private:
-		size_t message_count_locked();
 		void set_state_locked(pb::ServerState state);
-		void queue_message_unlocked(const QueueMessage& msg);
-		void queue_message_unlocked(QueueMessage&& msg);
-		void queue_message_locked(const QueueMessage& msg);
-		void queue_message_locked(QueueMessage&& msg);
+
+		// Thread functions
 		static void thread_func(ServerThread* server_thread);
+		[[nodiscard]] bool is_quit();
+		int prepare_read_set(fd_set* set); // Return max fd
 	};
 }

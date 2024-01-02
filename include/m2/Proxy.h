@@ -63,7 +63,7 @@ namespace m2g {
 	extern std::vector<m2::ObjectId> multi_player_object_ids;
 
 	/// Return the new turn_holder_index if command is accepted and a ServerUpdate is necessary.
-	std::optional<int> handle_client_command(int turn_holder_index, const m2g::pb::ClientCommand& client_command);
+	std::optional<int> handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command);
 
 	/// Called after a tile is created
 	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);

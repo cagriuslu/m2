@@ -63,7 +63,7 @@ void m2g::pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const
 void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 std::vector<m2::ObjectId> m2g::multi_player_object_ids;
 
-std::optional<int> m2g::handle_client_command(int turn_holder_index, const m2g::pb::ClientCommand& client_command) {
+std::optional<int> m2g::handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 
 	// Increment turn holder

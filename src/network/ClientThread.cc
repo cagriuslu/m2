@@ -1,7 +1,6 @@
 #include <m2/network/ClientThread.h>
 #include <m2/network/Socket.h>
 #include <m2/network/Detail.h>
-#include <m2/network/FdSet.h>
 #include <m2/Game.h>
 #include <m2/ProxyDetail.h>
 #include <m2/Log.h>
@@ -63,7 +62,7 @@ bool m2::network::ClientThread::is_our_turn() {
 	} else {
 		// Check if we're the host
 		if (GAME.is_server()) {
-			return GAME.server_thread().turn_holder_index() == 0;
+			return GAME.server_thread().turn_holder() == 0;
 		}
 		return false;
 	}
@@ -214,8 +213,6 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 	};
 
 	std::optional<Socket> socket;
-	FdSet read_set, write_set;
-
 	while (!is_quit()) {
 		if (client_thread->is_not_connected()) {
 			auto expect_socket = Socket::create_tcp();
@@ -231,11 +228,14 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				LOG_FATAL("Connect failed", connect_success.error());
 				return;
 			}
-			LOG_INFO("Socket connected");
+			LOG_INFO("Connected");
 			client_thread->set_state_locked(pb::CLIENT_CONNECTED);
-			read_set.add_fd(socket->fd());
 		} else {
-			auto select_result = select(read_set, write_set, 100);
+			fd_set read_set;
+			FD_ZERO(&read_set);
+			FD_SET(socket->fd(), &read_set);
+
+			auto select_result = select(socket->fd(), &read_set, nullptr, 100);
 			if (not select_result) {
 				LOG_FATAL("Select failed", select_result.error());
 				return;
@@ -243,7 +243,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 
 			if (0 < *select_result) {
 				const std::lock_guard lock(client_thread->_mutex);
-				if (not read_set.is_set(socket->fd())) {
+				if (not FD_ISSET(socket->fd(), &read_set)) {
 					// Skip if no messages have been received
 					continue;
 				}
@@ -255,7 +255,6 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				}
 				if (*recv_success == 0) {
 					LOG_ERROR("Server disconnected");
-					read_set.remove_fd(socket->fd());
 					socket.reset();
 					client_thread->set_state_unlocked(pb::CLIENT_NOT_READY);
 					continue;

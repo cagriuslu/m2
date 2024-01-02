@@ -230,9 +230,9 @@ void m2::Game::execute_pre_step() {
 		IF(phy->pre_step)(*phy);
 	}
 	if (_server_thread) {
-		auto client_command = _server_thread->pop_client_command();
+		auto client_command = _server_thread->pop_turn_holder_command();
 		if (client_command) {
-			auto new_turn_holder = m2g::handle_client_command(_server_thread->turn_holder_index(), client_command->client_command());
+			auto new_turn_holder = m2g::handle_client_command(_server_thread->turn_holder(), client_command->client_command());
 			if (new_turn_holder) {
 				_server_thread->set_turn_holder_index(*new_turn_holder);
 				_server_update_necessary = true;
