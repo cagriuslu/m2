@@ -92,7 +92,7 @@ m2::void_expected m2g::init_fg_object(m2::Object& obj) {
 			LEVEL.player_id = obj.id();
 		}
 		// At this point, the ServerUpdate is not yet processed
-		else if (GAME.client_thread().peek_unprocessed_server_update()->receiver_index() == m2::I(multi_player_object_ids.size() - 1)) {
+		else if (GAME.client_thread().peek_unprocessed_server_update()->receiver_index() == (multi_player_object_ids.size() - 1)) {
 			// Save player ID
 			LEVEL.player_id = obj.id();
 		}

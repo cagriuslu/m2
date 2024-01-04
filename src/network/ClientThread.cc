@@ -70,10 +70,20 @@ bool m2::network::ClientThread::is_our_turn() {
 
 void m2::network::ClientThread::set_ready_blocking(bool state) {
 	DEBUG_FN();
-	queue_ping_locked(state ? GAME.sender_id() : 0);
+
+	{
+		// Send ping with/without sender_id
+		const std::lock_guard lock(_mutex);
+		pb::NetworkMessage msg;
+		msg.set_game_hash(game_hash());
+		msg.set_sender_id(state ? GAME.sender_id() : 0);
+		_message_queue.emplace_back(std::move(msg));
+	}
+
 	while (message_count_locked()) {
 		SDL_Delay(100); // Wait until output queue is empty
 	}
+
 	set_state_locked(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
 }
 
@@ -162,15 +172,6 @@ void m2::network::ClientThread::set_state_locked(pb::ClientState state) {
 	set_state_unlocked(state);
 }
 
-void m2::network::ClientThread::queue_ping_locked(int32_t sender_id) {
-	DEBUG_FN();
-	const std::lock_guard lock(_mutex);
-	pb::NetworkMessage msg;
-	msg.set_game_hash(game_hash());
-	msg.set_sender_id(sender_id);
-	_message_queue.emplace_back(std::move(msg));
-}
-
 bool m2::network::ClientThread::fetch_server_update_unlocked() {
 	if (_unprocessed_server_update) {
 		LOG_DEBUG("Fetching server update");
@@ -186,10 +187,6 @@ bool m2::network::ClientThread::fetch_server_update_unlocked() {
 
 void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 	DEBUG_FN();
-	auto is_quit = [client_thread]() {
-		const std::lock_guard lock(client_thread->_mutex);
-		return client_thread->_state == pb::CLIENT_QUIT;
-	};
 	auto pop_message = [client_thread]() -> std::optional<pb::NetworkMessage> {
 		const std::lock_guard lock(client_thread->_mutex);
 		if (!client_thread->_message_queue.empty()) {
@@ -213,7 +210,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 	};
 
 	std::optional<Socket> socket;
-	while (!is_quit()) {
+	while (not client_thread->is_quit()) {
 		if (client_thread->is_not_connected()) {
 			auto expect_socket = Socket::create_tcp();
 			if (not expect_socket) {
@@ -295,4 +292,9 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 			}
 		}
 	}
+}
+
+bool m2::network::ClientThread::is_quit() {
+	const std::lock_guard lock(_mutex);
+	return _state == pb::ClientState::CLIENT_QUIT;
 }

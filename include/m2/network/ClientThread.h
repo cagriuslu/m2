@@ -46,8 +46,9 @@ namespace m2::network {
 		size_t message_count_locked();
 		void set_state_unlocked(pb::ClientState state);
 		void set_state_locked(pb::ClientState state);
-		void queue_ping_locked(int32_t sender_id);
 		bool fetch_server_update_unlocked();
+
 		static void thread_func(ClientThread* client_thread);
+		[[nodiscard]] bool is_quit();
 	};
 }
