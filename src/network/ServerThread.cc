@@ -39,7 +39,8 @@ std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder
 	const std::lock_guard lock(_mutex);
 	auto opt_message = _clients[_turn_holder].pop_incoming_message();
 	if (opt_message) {
-		LOG_DEBUG("Popping client command");
+		auto json_str = pb::message_to_json_string(*opt_message);
+		LOG_DEBUG("Popping client command", _turn_holder, json_str->c_str());
 	}
 	return opt_message;
 }
@@ -112,6 +113,7 @@ void m2::network::ServerThread::server_update() {
 
 		{
 			const std::lock_guard lock(_mutex);
+			LOG_DEBUG("Queueing outgoing message to client", i);
 			_clients[i].push_outgoing_message(std::move(message));
 		}
 	}
@@ -194,6 +196,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 						// Skip if no messages have been received from this client
 						continue;
 					}
+					LOG_DEBUG("Client socket is readable", i);
 
 					auto fetch_success = client.fetch_incoming_messages(server_thread->_read_buffer, sizeof(server_thread->_read_buffer));
 					if (not fetch_success) {
@@ -203,9 +206,10 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 					}
 
 					// Process message
-					if (auto opt_message = client.pop_incoming_message(); opt_message) {
+					if (auto opt_message = client.peak_incoming_message(); opt_message) {
 						if (not opt_message->has_client_command() && not opt_message->has_client_update()) {
 							LOG_INFO("Received ping", i);
+							client.pop_incoming_message(); // Pop the message from the incoming queue
 							if (auto sender_id = opt_message->sender_id(); sender_id) {
 								if (not client.is_ready()) {
 									LOG_INFO("Client ready", i, sender_id);
@@ -215,6 +219,9 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 								LOG_INFO("Client not ready", i, client.sender_id());
 								client.clear_ready();
 							}
+						} else if (opt_message->has_client_command()) {
+							auto json_str = pb::message_to_json_string(*opt_message);
+							LOG_DEBUG("Received client command", i, *json_str);
 						}
 					}
 				}
@@ -232,12 +239,15 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		// Write outgoing messages
 		{
 			const std::lock_guard lock(server_thread->_mutex);
-			for (auto& client : server_thread->_clients) {
+			for (size_t i = 0; i < server_thread->_clients.size(); ++i) {
+				auto& client = server_thread->_clients[i];
 				auto flush_success = client.flush_outgoing_messages();
 				if (not flush_success) {
 					LOG_ERROR("Failed to send message", flush_success.error());
 					server_thread->_clients.clear();
 					return;
+				} else if (*flush_success) {
+					LOG_DEBUG("Message sent to client", i);
 				}
 			}
 		}

@@ -27,7 +27,8 @@ namespace m2::network::server {
 		void clear_ready() { _sender_id.reset(); }
 
 		void_expected fetch_incoming_messages(char* read_buffer, size_t read_buffer_length);
-		void_expected flush_outgoing_messages();
+		expected<bool> flush_outgoing_messages();
+		std::optional<pb::NetworkMessage> peak_incoming_message();
 		std::optional<pb::NetworkMessage> pop_incoming_message();
 		void push_outgoing_message(pb::NetworkMessage&& msg);
 	};

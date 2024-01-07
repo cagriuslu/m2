@@ -26,7 +26,7 @@ m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* rea
 	return {};
 }
 
-m2::void_expected m2::network::server::Client::flush_outgoing_messages() {
+m2::expected<bool> m2::network::server::Client::flush_outgoing_messages() {
 	auto msg_count = _outgoing_queue.size(); // Read message count separate to prevent deadloops
 	for (size_t i = 0; i < msg_count; ++i) {
 		auto msg = std::move(_outgoing_queue.front());
@@ -38,7 +38,14 @@ m2::void_expected m2::network::server::Client::flush_outgoing_messages() {
 		auto send_success = _socket->send(expect_string->data(), expect_string->size());
 		m2_reflect_failure(send_success);
 	}
-	return {};
+	return (0 < msg_count);
+}
+
+std::optional<m2::pb::NetworkMessage> m2::network::server::Client::peak_incoming_message() {
+	if (not _incoming_queue.empty()) {
+		return _incoming_queue.front();
+	}
+	return std::nullopt;
 }
 
 std::optional<m2::pb::NetworkMessage> m2::network::server::Client::pop_incoming_message() {

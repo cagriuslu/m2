@@ -68,6 +68,13 @@ bool m2::network::ClientThread::is_our_turn() {
 	}
 }
 
+unsigned m2::network::ClientThread::total_player_count() {
+	if (auto server_update = last_processed_server_update(); server_update) {
+		return server_update->player_object_ids_size();
+	}
+	return 0;
+}
+
 void m2::network::ClientThread::set_ready_blocking(bool state) {
 	DEBUG_FN();
 
@@ -119,7 +126,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 			auto server_character = server_update.objects_with_character(i);
 
 			auto success = std::visit(overloaded {
-					[&server_character](const auto& v) -> m2::void_expected {
+					[this, &server_character](const auto& v) -> m2::void_expected {
 						if (v.parent().position != VecF{server_character.position()}) {
 							return make_unexpected("Server and local position mismatch");
 						}
@@ -130,18 +137,42 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 							return make_unexpected("Server and local item count mismatch");
 						}
 						// TODO other checks
+
+						// Map server ObjectIDs to local ObjectIDs
+						_server_to_local_map[server_character.object_id()] = std::make_pair(v.object_id, true);
+
 						return {};
 					}
 			}, *local_character_variant);
 			m2_reflect_failure(success);
 		}
 
+		// Check if server_to_local_map contains all the players in the game
+		for (auto player_object_id : server_update.player_object_ids()) {
+			if (auto it = _server_to_local_map.find(player_object_id); it == _server_to_local_map.end()) {
+				return make_unexpected("Server to local object ID map does not contain a player's ID");
+			}
+		}
+
 		return true; // Successfully processed one ServerUpdate
 	}
 
+	LOG_DEBUG("Processing ServerUpdate");
 	const auto& server_update = _last_processed_server_update->server_update();
 	const auto& prev_server_update = _prev_processed_server_update->server_update();
+
+	// Check that the player IDs haven't changed
+	if (prev_server_update.player_object_ids_size() != server_update.player_object_ids_size()) {
+		return make_unexpected("Number of players have changed");
+	}
+	for (int i = 0; i < prev_server_update.player_object_ids_size(); ++i) {
+		if (prev_server_update.player_object_ids(i) != server_update.player_object_ids(i)) {
+			return make_unexpected("A player's ID has changed");
+		}
+	}
+
 	// TODO actual ServerUpdate
+
 
 	return {};
 }
@@ -261,7 +292,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				std::string json_str{client_thread->_read_buffer, static_cast<size_t>(*recv_success)};
 				auto expect_message = pb::json_string_to_message<pb::NetworkMessage>(json_str);
 				if (not expect_message) {
-					LOG_ERROR("Received bad message", json_str);
+					LOG_ERROR("Received bad message", expect_message.error(), json_str);
 					continue;
 				}
 
@@ -275,7 +306,9 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				} else if (expect_message->has_server_update()) {
 					LOG_INFO("Received ServerUpdate", json_str);
 					client_thread->_unprocessed_server_update = std::move(*expect_message);
-					client_thread->set_state_unlocked(pb::CLIENT_STARTED);
+					if (client_thread->_state != pb::CLIENT_STARTED) {
+						client_thread->set_state_unlocked(pb::CLIENT_STARTED);
+					}
 				} else {
 					// TODO process other incoming messages
 				}

@@ -16,6 +16,7 @@ namespace m2::network {
 		pb::ClientState _state{pb::ClientState::CLIENT_NOT_READY};
 		std::deque<pb::NetworkMessage> _message_queue;
 		std::optional<pb::NetworkMessage> _prev_processed_server_update, _last_processed_server_update, _unprocessed_server_update;
+		std::unordered_map<ObjectId,std::pair<ObjectId,bool>> _server_to_local_map;
 
 		// Thread variables
 		char _read_buffer[65536]{};
@@ -36,6 +37,7 @@ namespace m2::network {
 		std::optional<pb::ServerUpdate> peek_unprocessed_server_update();
 		std::optional<pb::ServerUpdate> last_processed_server_update();
 		bool is_our_turn();
+		unsigned total_player_count();
 
 		// Modifiers
 		void set_ready_blocking(bool state);
