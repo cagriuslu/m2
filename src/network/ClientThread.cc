@@ -171,8 +171,59 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 		}
 	}
 
-	// TODO actual ServerUpdate
+	// Mark local objects as false
+	for (auto& kv_pair : _server_to_local_map) {
+		kv_pair.second.second = false;
+	}
+	// Iterate over ServerUpdate objects w/ character
+	for (const auto& object_desc : server_update.objects_with_character()) {
+		Character* character{};
+		auto server_object_id = object_desc.object_id();
+		if (auto it = _server_to_local_map.find(server_object_id); it != _server_to_local_map.end()) {
+			LOG_DEBUG("Server object is still alive", server_object_id, it->first);
 
+			// Get the character
+			character = LEVEL.objects.get(it->second.first)->get_character();
+
+			// Mark object as visited
+			it->second.second = true;
+		} else {
+			LOG_DEBUG("Server has created an object", server_object_id);
+
+			// Create object
+			auto [obj, id] = m2::create_object(m2::VecF{object_desc.position()}, object_desc.object_type(), object_desc.parent_id());
+			auto load_result = m2g::init_fg_object(obj);
+			m2_reflect_failure(load_result);
+
+			// Get the character
+			character = obj.get_character();
+
+			// Add object to the map, marked as visited
+			_server_to_local_map[server_object_id] = std::make_pair(id, true);
+		}
+
+		// Update items
+		character->clear_items();
+		for (auto named_item_type : object_desc.named_items()) {
+			character->add_named_item_no_benefits(GAME.get_named_item(static_cast<m2g::pb::ItemType>(named_item_type)));
+		}
+		// Update resources
+		character->clear_resources();
+		for (const auto& resource : object_desc.resources()) {
+			character->add_resource(resource.type(), get_resource_amount(resource));
+		}
+	}
+	// Iterate over map
+	for (auto it = _server_to_local_map.cbegin(); it != _server_to_local_map.cend(); /* no increment */) {
+		if (it->second.second == false) {
+			auto object_to_delete = it->second.first;
+			LOG_DEBUG("Object hasn't been visited by ServerUpdate, scheduling for deletion", it->second.first);
+			GAME.add_deferred_action(create_object_deleter(object_to_delete));
+			it = _server_to_local_map.erase(it); // Erase from map
+		} else {
+			++it;
+		}
+	}
 
 	return {};
 }

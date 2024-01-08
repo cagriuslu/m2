@@ -85,8 +85,10 @@ namespace m2 {
 		[[nodiscard]] virtual Iterator end_items() const = 0;
 		virtual void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) = 0; // Item is moved
 		virtual void add_named_item(const NamedItem& item) = 0;
+		virtual void add_named_item_no_benefits(const NamedItem& item) = 0;
 		bool use_item(const Iterator& item_it, float resource_multiplier = 1.0f);
 		virtual void remove_item(const Iterator& item) = 0;
+		virtual void clear_items() = 0;
 
 		[[nodiscard]] virtual bool has_resource(m2g::pb::ResourceType resource_type) const = 0;
 		[[nodiscard]] virtual float get_resource(m2g::pb::ResourceType resource_type) const = 0;
@@ -96,6 +98,7 @@ namespace m2 {
 		virtual float add_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual float remove_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
+		virtual void clear_resources() = 0;
 	};
 
 	/// TinyCharacter can hold only one unnamed item, one named item, and can have only one resource
@@ -115,7 +118,9 @@ namespace m2 {
 		[[nodiscard]] Iterator end_items() const override;
 		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
 		void add_named_item(const NamedItem& item) override;
+		void add_named_item_no_benefits(const NamedItem& item) override;
 		void remove_item(const Iterator& item) override;
+		void clear_items() override;
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
@@ -125,6 +130,7 @@ namespace m2 {
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
+		void clear_resources() override;
 	};
 
 	/// FullCharacter can hold any number of items, and can have any Resource
@@ -144,7 +150,9 @@ namespace m2 {
 		[[nodiscard]] Iterator end_items() const override;
 		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
 		void add_named_item(const NamedItem& item) override;
+		void add_named_item_no_benefits(const NamedItem& item) override;
 		void remove_item(const Iterator& item) override;
+		void clear_items() override;
 
 		[[nodiscard]] bool has_resource(m2g::pb::ResourceType resource_type) const override;
 		[[nodiscard]] float get_resource(m2g::pb::ResourceType resource_type) const override;
@@ -154,6 +162,7 @@ namespace m2 {
 		float add_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
+		void clear_resources() override;
 
 	private:
 		static int resource_type_index(m2g::pb::ResourceType resource_type);

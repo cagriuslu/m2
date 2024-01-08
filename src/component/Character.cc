@@ -154,10 +154,16 @@ void m2::TinyCharacter::add_named_item(const NamedItem& item) {
 		use_item(begin_items());
 	}
 }
+void m2::TinyCharacter::add_named_item_no_benefits(const NamedItem& item) {
+	_item = SmartPointer<const Item>{&item};
+}
 void m2::TinyCharacter::remove_item(const Iterator& item) {
 	if (item != end_items()) {
 		_item = {};
 	}
+}
+void m2::TinyCharacter::clear_items() {
+	_item = {};
 }
 bool m2::TinyCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
 	return _resource && _resource->first == resource_type && _resource->second.has_amount();
@@ -196,6 +202,9 @@ void m2::TinyCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
 	if (_resource && _resource->first == resource_type) {
 		_resource->second.clear_amount();
 	}
+}
+void m2::TinyCharacter::clear_resources() {
+	_resource = std::nullopt;
 }
 
 void m2::full_character_iterator_incrementor(m2::Character::Iterator& it) {
@@ -291,12 +300,18 @@ void m2::FullCharacter::add_named_item(const NamedItem& item) {
 		use_item(Iterator{*this, full_character_iterator_incrementor, {}, _items.size() - 1, _items.back().get()});
 	}
 }
+void m2::FullCharacter::add_named_item_no_benefits(const NamedItem& item) {
+	_items.emplace_back(&item);
+}
 void m2::FullCharacter::remove_item(const Iterator& item) {
 	if (item != end_items()) {
 		auto it = _items.cbegin();
 		std::advance(it, item.get_index());
 		_items.erase(it);
 	}
+}
+void m2::FullCharacter::clear_items() {
+	_items.clear();
 }
 bool m2::FullCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
 	return _resources[resource_type_index(resource_type)].has_amount();
@@ -321,6 +336,10 @@ float m2::FullCharacter::remove_resource(m2g::pb::ResourceType resource_type, fl
 }
 void m2::FullCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
 	_resources[resource_type_index(resource_type)].clear_amount();
+}
+void m2::FullCharacter::clear_resources() {
+	_resources.clear();
+	_resources.resize(pb::enum_value_count<m2g::pb::ResourceType>());
 }
 
 int m2::FullCharacter::resource_type_index(m2g::pb::ResourceType resource_type) {
