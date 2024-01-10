@@ -61,6 +61,10 @@ void m2g::pre_single_player_level_init(MAYBE const std::string& name, MAYBE cons
 void m2g::post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 void m2g::pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 void m2g::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+void m2g::multi_player_level_host_populate() {
+
+}
+
 std::vector<m2::ObjectId> m2g::multi_player_object_ids;
 
 std::optional<int> m2g::handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command) {

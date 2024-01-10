@@ -56,6 +56,7 @@ namespace m2g {
 	void post_single_player_level_init(const std::string& name, const m2::pb::Level& level);
 	void pre_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
 	void post_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
+	void multi_player_level_host_populate();
 
 	/// Maps 0-based client indexes to the object IDs in this game instance
 	/// For the server, the first item would contain the ObjectId of the player.

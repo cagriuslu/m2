@@ -47,6 +47,13 @@ m2::void_expected m2::Level::init_multi_player_as_host(const std::variant<std::f
 	auto success = init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
 	m2_reflect_failure(success);
 
+	// Execute the first server update
+	GAME.server_thread().server_update();
+
+	// Populate level
+	m2g::multi_player_level_host_populate();
+
+	// Execute second server update
 	GAME.server_thread().server_update();
 
 	return {};
