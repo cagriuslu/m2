@@ -5,39 +5,11 @@
     },
     {
       "type": "WILD_LOCATION_CARD",
-      "category": "ITEM_CATEGORY_CARD",
-      "attributes": [
-        {
-          "type": "GLOBAL_COUNT_2_PLAYER",
-          "amount": 2.0
-        },
-        {
-          "type": "GLOBAL_COUNT_3_PLAYER",
-          "amount": 3.0
-        },
-        {
-          "type": "GLOBAL_COUNT_4_PLAYER",
-          "amount": 4.0
-        }
-      ]
+      "category": "ITEM_CATEGORY_CARD"
     },
     {
       "type": "WILD_FACTORY_CARD",
-      "category": "ITEM_CATEGORY_CARD",
-      "attributes": [
-        {
-          "type": "GLOBAL_COUNT_2_PLAYER",
-          "amount": 2.0
-        },
-        {
-          "type": "GLOBAL_COUNT_3_PLAYER",
-          "amount": 3.0
-        },
-        {
-          "type": "GLOBAL_COUNT_4_PLAYER",
-          "amount": 4.0
-        }
-      ]
+      "category": "ITEM_CATEGORY_CARD"
     },
     {
       "type": "EXPLOSIVE_FACTORY_CARD",
@@ -506,6 +478,26 @@
           "amount": 1.0
         }
       ]
+    },
+    {
+      "type": "ANTWERPEN_CARD",
+      "category": "ITEM_CATEGORY_CARD"
+    },
+    {
+      "type": "HARWICH_CARD",
+      "category": "ITEM_CATEGORY_CARD"
+    },
+    {
+      "type": "COLOGNE_CARD",
+      "category": "ITEM_CATEGORY_CARD"
+    },
+    {
+      "type": "BREMEN_CARD",
+      "category": "ITEM_CATEGORY_CARD"
+    },
+    {
+      "type": "NEWCASTLE_CARD",
+      "category": "ITEM_CATEGORY_CARD"
     },
     {
       "type": "EXPLOSIVE_FACTORY_TILEI",
@@ -1532,45 +1524,6 @@
           "amount": 2.0
         }
       ]
-    },
-    {
-      "type": "PRINTING_PRESS_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "usage": "REUSABLE"
-    },
-    {
-      "type": "EXPLOSIVE_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "usage": "REUSABLE"
-    },
-    {
-      "type": "JEWELLERY_MERCHANT_LICENSE",
-      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
-      "usage": "REUSABLE"
-    },
-    {
-      "type": "EXPLOSIVE_FACTORY_GROUNDS",
-      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
-    },
-    {
-      "type": "TOOL_SHOP_GROUNDS",
-      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
-    },
-    {
-      "type": "KITCHEN_GROUNDS",
-      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
-    },
-    {
-      "type": "WOOD_MILL_GROUNDS",
-      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
-    },
-    {
-      "type": "JEWELLERY_GROUNDS",
-      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
-    },
-    {
-      "type": "PRINTING_PRESS_FACTORY_GROUNDS",
-      "category": "ITEM_CATEGORY_FACTORY_GROUNDS"
     },
     {
       "type": "GUARDS_LICENSE",

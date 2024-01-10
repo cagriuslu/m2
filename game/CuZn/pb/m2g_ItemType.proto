@@ -34,68 +34,68 @@ enum ItemType {
     VENLO_CARD = 26; // Coventry
     NIJMEGEN_CARD = 27; // Nuneaton
     MASSTRICH_CARD = 28; // Redditch
-    // ANTWERPEN = Gloucester
-    // HARWICH = Shrewsbury
-    // COLOGNE = Oxford
-    // BREMEN = Nottingham
-    // NEWCASTLE = Warrington
 
-    EXPLOSIVE_FACTORY_TILEI = 29; // x3
-    EXPLOSIVE_FACTORY_TILEII = 30; // x2
-    EXPLOSIVE_FACTORY_TILEIII = 31; // x3
-    EXPLOSIVE_FACTORY_TILEIV = 32; // x3
+    // No instances for HUMAN_PLAYERs
+    ANTWERPEN_CARD = 29; // Gloucester
+    HARWICH_CARD = 30; // Shrewsbury
+    COLOGNE_CARD = 31; // Oxford
+    BREMEN_CARD = 32; // Nottingham
+    NEWCASTLE_CARD = 33; // Warrington
 
-    TOOL_SHOP_TILE_I = 33; // x1
-    TOOL_SHOP_TILE_II = 34; // x1
-    TOOL_SHOP_TILE_III = 35; // x1
-    TOOL_SHOP_TILE_IV = 36; // x1
+    EXPLOSIVE_FACTORY_TILEI = 34; // x3
+    EXPLOSIVE_FACTORY_TILEII = 35; // x2
+    EXPLOSIVE_FACTORY_TILEIII = 36; // x3
+    EXPLOSIVE_FACTORY_TILEIV = 37; // x3
 
-    KITCHEN_TILE_I = 37; // x2
-    KITCHEN_TILE_II = 38; // x2
-    KITCHEN_TILE_III = 39; // x2
-    KITCHEN_TILE_IV = 40; // x1
+    TOOL_SHOP_TILE_I = 38; // x1
+    TOOL_SHOP_TILE_II = 39; // x1
+    TOOL_SHOP_TILE_III = 40; // x1
+    TOOL_SHOP_TILE_IV = 41; // x1
 
-    WOOD_MILL_TILE_I = 41; // x1
-    WOOD_MILL_TILE_II = 42; // x2
-    WOOD_MILL_TILE_III = 43; // x2
-    WOOD_MILL_TILE_IV = 44; // x2
+    KITCHEN_TILE_I = 42; // x2
+    KITCHEN_TILE_II = 43; // x2
+    KITCHEN_TILE_III = 44; // x2
+    KITCHEN_TILE_IV = 45; // x1
 
-    JEWELLERY_TILEI = 45; // x1
-    JEWELLERY_TILEII = 46; // x1
-    JEWELLERY_TILEIII = 47; // x1
-    JEWELLERY_TILEIV = 48; // x1
-    JEWELLERY_TILEV = 49; // x1
+    WOOD_MILL_TILE_I = 46; // x1
+    WOOD_MILL_TILE_II = 47; // x2
+    WOOD_MILL_TILE_III = 48; // x2
+    WOOD_MILL_TILE_IV = 49; // x2
 
-    PRINTING_PRESS_TILE_I = 50; // x1
-    PRINTING_PRESS_TILE_II = 51; // x2
-    PRINTING_PRESS_TILE_III = 52; // x1
-    PRINTING_PRESS_TILE_IV = 53; // x1
-    PRINTING_PRESS_TILE_V = 54; // x2
-    PRINTING_PRESS_TILE_VI = 55; // x1
-    PRINTING_PRESS_TILE_VII = 56; // x1
-    PRINTING_PRESS_TILE_VIII = 57; // x2
+    JEWELLERY_TILEI = 50; // x1
+    JEWELLERY_TILEII = 51; // x1
+    JEWELLERY_TILEIII = 52; // x1
+    JEWELLERY_TILEIV = 53; // x1
+    JEWELLERY_TILEV = 54; // x1
 
-    PRINTING_PRESS_MERCHANT_LICENSE = 58;
-    EXPLOSIVE_MERCHANT_LICENSE = 59;
-    JEWELLERY_MERCHANT_LICENSE = 60;
+    PRINTING_PRESS_TILE_I = 55; // x1
+    PRINTING_PRESS_TILE_II = 56; // x2
+    PRINTING_PRESS_TILE_III = 57; // x1
+    PRINTING_PRESS_TILE_IV = 58; // x1
+    PRINTING_PRESS_TILE_V = 59; // x2
+    PRINTING_PRESS_TILE_VI = 60; // x1
+    PRINTING_PRESS_TILE_VII = 61; // x1
+    PRINTING_PRESS_TILE_VIII = 62; // x2
 
-    EXPLOSIVE_FACTORY_GROUNDS = 61;
-    TOOL_SHOP_GROUNDS = 62;
-    KITCHEN_GROUNDS = 63;
-    WOOD_MILL_GROUNDS = 64;
-    JEWELLERY_GROUNDS = 65;
-    PRINTING_PRESS_FACTORY_GROUNDS = 66;
-
-    GUARDS_LICENSE = 67;
-    KNIGHTS_LICENSE = 68;
-    SECOND_KNIGHTS_LICENSE = 69;
+    GUARDS_LICENSE = 63;
+    KNIGHTS_LICENSE = 64;
+    SECOND_KNIGHTS_LICENSE = 65;
 }
 
 enum ItemCategory {
     NO_ITEM_CATEGORY = 0;
-    ITEM_CATEGORY_CARD = 1; // Given to HUMAN_PLAYER objects
-    ITEM_CATEGORY_TILE = 2; // Given to HUMAN_PLAYER and TILE objects
-    ITEM_CATEGORY_MERCHANT_LICENSE = 3; // Given to MERCHANT objects
-    ITEM_CATEGORY_FACTORY_GROUNDS = 4; // Given to background tiles
-    ITEM_CATEGORY_INFRASTRUCTURE_LICENSE = 5; // Given to HUMAN_PLAYER objects
+
+    // Given to HUMAN_PLAYERs to hold onto as cards
+    // Given to city background tiles to signify their locations and available industries
+    // Given to path background tiles to signify which two cities the path connects
+    // Given to merchants to signify which industries they deal with
+    ITEM_CATEGORY_CARD = 1;
+
+    // Given to HUMAN_PLAYERs to signify the tiles held by them
+    // Given to TILEs to signify a built industry
+    ITEM_CATEGORY_TILE = 2;
+
+    // Given to HUMAN_PLAYERs to signify the path tiles held by them
+    // Given to background tiles to signify which type of path can be built
+    ITEM_CATEGORY_INFRASTRUCTURE_LICENSE = 6;
 }

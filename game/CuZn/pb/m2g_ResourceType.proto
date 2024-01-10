@@ -5,9 +5,10 @@ enum ResourceType {
   NO_RESOURCE = 0;
   VICTORY_POINTS = 1;
   INCOME_POINTS = 2;
-  MONEY = 3;
-  IS_FLIPPED = 4;
-  WOOD_CUBE = 5;
-  TOOL_CRATE = 6;
-  FOOD_CRATE = 7;
+  DEBT_POINTS = 3;
+  MONEY = 4;
+  IS_FLIPPED = 5;
+  WOOD_CUBE = 6;
+  TOOL_CRATE = 7;
+  FOOD_CRATE = 8;
 }
