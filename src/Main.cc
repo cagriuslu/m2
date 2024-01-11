@@ -7,6 +7,7 @@
 #include <SDL2/SDL_image.h>
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
+#include <m2/command_line/SpriteSheets.h>
 
 #define BREAK_IF_QUIT() if (GAME.quit) break
 
@@ -35,6 +36,10 @@ int main(const int argc, char **argv) {
 			} else {
 				LOG_WARN("Invalid slowdown factor", opt);
 			}
+		} else if (arg == "--sprite-sheets") {
+			LOG_INFO("Generating sprite sheets");
+			printf("%s\n", generate_sprite_sheets_skeleton().c_str());
+			return 0;
 		} else {
 			LOG_WARN("Unknown command line argument", arg);
 		}
