@@ -37,6 +37,115 @@ bool m2::RectI::point_in_rect(const VecI& p) const {
 	return (p.x >= x) && (p.x < (x + w)) && (p.y >= y) && (p.y < (y + h));
 }
 
+void m2::RectI::for_each_cell(const std::function<void(const VecI&)>& op) const {
+	for (auto j = y; j < y + h; ++j) {
+		for (auto i = x; i < x + w; ++i) {
+			op({i, j});
+		}
+	}
+}
+
+void m2::RectI::for_difference(const RectI& new_rect, const std::function<void(const VecI&)>& on_addition, const std::function<void(const VecI&)>& on_removal) const {
+	auto intersection = intersect(new_rect);
+	if (not intersection) {
+		// Unload all
+		for_each_cell(on_removal);
+		// Load all new
+		new_rect.for_each_cell(on_addition);
+		return;
+	}
+
+	// ***********
+	// *    1    *
+	// *---***---*
+	// * 3 *n* 4 *
+	// *---***---*
+	// *    2    *
+	// ***********
+
+	// Unload 1st rectangle
+	if (y < new_rect.y) {
+		for (auto j = y; j < new_rect.y; ++j) {
+			for (auto i = x; i < x + w; ++i) {
+				on_removal({i, j});
+			}
+		}
+	}
+	// Unload 2nd rectangle
+	if (new_rect.y2() < y2()) {
+		for (auto j = new_rect.y2(); j < y2(); ++j) {
+			for (auto i = x; i < x + w; ++i) {
+				on_removal({i, j});
+			}
+		}
+	}
+	// Unload 3rd rectangle
+	if (x < new_rect.x) {
+		auto y_start = std::max(y, new_rect.y);
+		auto y_limit = std::min(y2(), new_rect.y2());
+		for (auto j = y_start; j < y_limit; ++j) {
+			for (auto i = x; i < new_rect.x; ++i) {
+				on_removal({i, j});
+			}
+		}
+	}
+	// Unload 4th rectangle
+	if (new_rect.x2() < x2()) {
+		auto y_start = std::max(y, new_rect.y);
+		auto y_limit = std::min(y2(), new_rect.y2());
+		for (auto j = y_start; j < y_limit; ++j) {
+			for (auto i = new_rect.x2(); i < x2(); ++i) {
+				on_removal({i, j});
+			}
+		}
+	}
+
+	// ***********
+	// *n   1    *
+	// *---***---*
+	// * 3 * * 4 *
+	// *---***---*
+	// *    2    *
+	// ***********
+
+	// Load 1st rectangle
+	if (new_rect.y < y) {
+		for (auto j = new_rect.y; j < y; ++j) {
+			for (auto i = new_rect.x; i < new_rect.x2(); ++i) {
+				on_addition({i, j});
+			}
+		}
+	}
+	// Load 2nd rectangle
+	if (y2() < new_rect.y2()) {
+		for (auto j = y2(); j < new_rect.y2(); ++j) {
+			for (auto i = new_rect.x; i < new_rect.x2(); ++i) {
+				on_addition({i, j});
+			}
+		}
+	}
+	// Load 3rd rectangle
+	if (new_rect.x < x) {
+		auto y_start = std::max(y, new_rect.y);
+		auto y_limit = std::min(y2(), new_rect.y2());
+		for (auto j = y_start; j < y_limit; ++j) {
+			for (auto i = new_rect.x; i < x; ++i) {
+				on_addition({i, j});
+			}
+		}
+	}
+	// Load 4th rectangle
+	if (x2() < new_rect.x2()) {
+		auto y_start = std::max(y, new_rect.y);
+		auto y_limit = std::min(y2(), new_rect.y2());
+		for (auto j = y_start; j < y_limit; ++j) {
+			for (auto i = x2(); i < new_rect.x2(); ++i) {
+				on_addition({i, j});
+			}
+		}
+	}
+}
+
 m2::RectI m2::RectI::trim(int amount) const {
 	return RectI{x + amount, y + amount, w - amount - amount, h - amount - amount};
 }

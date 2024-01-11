@@ -4,6 +4,7 @@
 #include <SDL2/SDL_rect.h>
 #include <string>
 #include <optional>
+#include <functional>
 
 namespace m2 {
 	struct RectF;
@@ -25,6 +26,11 @@ namespace m2 {
 		explicit operator SDL_Rect() const;
 		explicit operator SDL_FRect() const;
 		[[nodiscard]] bool point_in_rect(const VecI&) const;
+		[[nodiscard]] int x2() const { return x + w; }
+		[[nodiscard]] int y2() const { return y + h; }
+		void for_each_cell(const std::function<void(const VecI&)>& op) const;
+		void for_difference(const RectI& new_rect, const std::function<void(const VecI&)>& on_addition,
+				const std::function<void(const VecI&)>& on_removal) const;
 
 		[[nodiscard]] RectI trim(int amount) const;
 		[[nodiscard]] RectI trim_left(int amount) const;

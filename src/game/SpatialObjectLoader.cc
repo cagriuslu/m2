@@ -2,41 +2,25 @@
 #include <unordered_set>
 
 void m2::SpatialObjectLoader::move(const m2::RectF &viewport) {
-	// TODO this is a very naive, low performance implementation
-
 	// Expand the viewport by 1
 	auto expanded_viewport = viewport.expand(1.0f);
 	auto expanded_viewport_cells = RectI::from_intersecting_cells(expanded_viewport);
 
-	std::unordered_set<VecI, VecIHash> loaded_positions;
-	// Extract keys of loaded object into set
-	transform(_loaded_objs.begin(), _loaded_objs.end(), // Iterate over loaded objects
-			std::inserter(loaded_positions, loaded_positions.end()), // Inserter into loaded positions
-			[](const auto& kv_pair) { return kv_pair.first; }); // Extract the keys
-
-	// Load everything in viewport
-	for (auto y = expanded_viewport_cells.y; y < expanded_viewport_cells.y + expanded_viewport_cells.h; ++y) {
-		for (auto x = expanded_viewport_cells.x; x < expanded_viewport_cells.x + expanded_viewport_cells.w; ++x) {
-			auto position = VecI{x, y};
-			// Check if load has been called for the position already
-			if (_loaded_objs.contains(position)) {
-				// Remove from loaded positions
-				loaded_positions.erase(position);
-			} else {
-				// Call load
-				_loaded_objs[position] = load(position);
-			}
-		}
-	}
-
-	// Unload leftover positions in loaded_positions
-	for (const auto& position : loaded_positions) {
-		auto id = _loaded_objs[position];
-		if (id) {
-			unload(id);
-		}
-		_loaded_objs.erase(position);
-	}
+	_prev_viewport.for_difference(
+			expanded_viewport_cells,
+			[this](const VecI& pos) {
+				_loaded_objects[pos] = load(pos);
+			},
+			[this](const VecI& pos) {
+				auto it = _loaded_objects.find(pos);
+				if (it != _loaded_objects.end()) {
+					if (it->second) {
+						unload(it->second);
+					}
+					_loaded_objects.erase(it);
+				}
+			});
+	_prev_viewport = expanded_viewport_cells;
 
 	// Verticals
 	if (_loaded_verticals.empty()) {

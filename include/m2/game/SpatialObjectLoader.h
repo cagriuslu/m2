@@ -4,10 +4,12 @@
 #include "../RectF.h"
 #include <unordered_map>
 #include <optional>
+#include <deque>
 
 namespace m2 {
 	class SpatialObjectLoader {
-		std::unordered_map<VecI, ObjectId, VecIHash> _loaded_objs;
+		RectI _prev_viewport;
+		std::unordered_map<VecI, ObjectId, VecIHash> _loaded_objects;
 		std::map<int, ObjectId> _loaded_verticals, _loaded_horizontals;
 
 	public:
