@@ -39,6 +39,10 @@ m2::Key m2g::scancode_to_key(SDL_Scancode scancode) {
 			return Key::ENTER;
 		case SDL_SCANCODE_BACKSPACE:
 			return Key::BACKSPACE;
+		case SDL_SCANCODE_MINUS:
+			return Key::MINUS;
+		case SDL_SCANCODE_EQUALS:
+			return Key::PLUS;
 		default:
 			return Key::UNKNOWN;
 	}
@@ -54,7 +58,9 @@ const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> m2g::key_to_
 		SDL_SCANCODE_SPACE,
 		SDL_SCANCODE_GRAVE,
 		SDL_SCANCODE_RETURN,
-		SDL_SCANCODE_BACKSPACE
+		SDL_SCANCODE_BACKSPACE,
+		SDL_SCANCODE_MINUS,
+		SDL_SCANCODE_EQUALS
 };
 
 void m2g::pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}

@@ -87,6 +87,7 @@ message Sprite {
   m2g.pb.SpriteType type = 2;
   oneof variant {
     RegularSprite regular = 3;
+    m2g.pb.SpriteType duplicate_of = 4;
   }
 }
 
