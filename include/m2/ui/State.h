@@ -3,6 +3,10 @@
 
 namespace m2::ui {
 	struct State {
+	private:
+		bool _prev_text_input_state{};
+
+	public:
 		bool enabled{true};
 		const Blueprint* blueprint{};
 		RectI rect_px{};

@@ -21,7 +21,7 @@ AbstractButton::AbstractButton(State* parent, const WidgetBlueprint *blueprint) 
 
 Action AbstractButton::on_event(Events &events) {
 	// Return early if there is no action callback
-	bool has_action_callback = std::visit(overloaded {
+	const bool has_action_callback = std::visit(overloaded {
 			[](const TextBlueprint& v) -> bool { return (bool) v.on_action; },
 			[](const ImageBlueprint& v) -> bool { return (bool) v.on_action; },
 			[](const CheckboxWithTextBlueprint& v) -> bool { return (bool) v.on_action; },

@@ -29,7 +29,10 @@ namespace {
 	constexpr auto draw_widget = [](const auto &w) { w->on_draw(); };
 }
 
-State::State(const Blueprint *blueprint) : blueprint(blueprint) {
+State::State(const Blueprint *blueprint) : _prev_text_input_state(SDL_IsTextInputActive()), blueprint(blueprint) {
+	// Previous text input state is saved, not disable it to start with a clean slate
+	SDL_StopTextInput();
+
 	for (const auto &widget_blueprint: blueprint->widgets) {
 		// Create widget
 		widgets.push_back(create_widget_state(widget_blueprint));
@@ -65,6 +68,12 @@ Action State::create_execute_sync(const Blueprint *blueprint, const RectI rect) 
 
 State::~State() {
 	clear_focus();
+
+	if (_prev_text_input_state) {
+		SDL_StartTextInput();
+	} else {
+		SDL_StopTextInput();
+	}
 }
 
 Action State::execute(const RectI rect) {
