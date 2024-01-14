@@ -1,19 +1,21 @@
-#include <m2/Level.h>
-#include <m2/Proxy.h>
-#include <m2/Meta.h>
-#include <m2/object/Tile.h>
-#include <m2/object/God.h>
-#include <m2/level_editor/Ui.h>
-#include <m2/object/Origin.h>
-#include <m2/object/Camera.h>
-#include <m2/object/Pointer.h>
-#include <m2/object/Placeholder.h>
-#include <m2/pixel_editor/Ui.h>
-#include <m2/sheet_editor/Ui.h>
-#include <m2/protobuf/Detail.h>
-#include <m2/box2d/Detail.h>
 #include <SDL2/SDL_image.h>
 #include <m2/Game.h>
+#include <m2/Level.h>
+#include <m2/Meta.h>
+#include <m2/Proxy.h>
+#include <m2/box2d/Detail.h>
+#include <m2/bulk_sheet_editor/Ui.h>
+#include <m2/level_editor/Ui.h>
+#include <m2/object/Camera.h>
+#include <m2/object/God.h>
+#include <m2/object/Origin.h>
+#include <m2/object/Placeholder.h>
+#include <m2/object/Pointer.h>
+#include <m2/object/Tile.h>
+#include <m2/pixel_editor/Ui.h>
+#include <m2/protobuf/Detail.h>
+#include <m2/sheet_editor/Ui.h>
+
 #include <filesystem>
 #include <iterator>
 
@@ -35,16 +37,20 @@ m2::Level::~Level() {
 	world = nullptr;
 }
 
-m2::void_expected m2::Level::init_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+m2::void_expected m2::Level::init_single_player(
+    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	type_state.emplace<splayer::State>();
-	return init_any_player(level_path_or_blueprint, name, true, m2g::pre_single_player_level_init, m2g::post_single_player_level_init);
+	return init_any_player(
+	    level_path_or_blueprint, name, true, m2g::pre_single_player_level_init, m2g::post_single_player_level_init);
 }
 
-m2::void_expected m2::Level::init_multi_player_as_host(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+m2::void_expected m2::Level::init_multi_player_as_host(
+    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	DEBUG_FN();
 	type_state.emplace<mplayer::State>();
 
-	auto success = init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+	auto success = init_any_player(
+	    level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
 	m2_reflect_failure(success);
 
 	// Execute the first server update
@@ -59,11 +65,13 @@ m2::void_expected m2::Level::init_multi_player_as_host(const std::variant<std::f
 	return {};
 }
 
-m2::void_expected m2::Level::init_multi_player_as_guest(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name) {
+m2::void_expected m2::Level::init_multi_player_as_guest(
+    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	DEBUG_FN();
 	type_state.emplace<mplayer::State>();
 
-	auto success = init_any_player(level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+	auto success = init_any_player(
+	    level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
 	m2_reflect_failure(success);
 
 	auto expect_server_update = GAME.client_thread().process_server_update();
@@ -89,7 +97,10 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 					auto sprite_type = layer.background_rows(y).items(x);
 					if (sprite_type) {
 						auto position = VecF{x, y};
-						le_state.bg_placeholders[l][position.iround()] = std::make_pair(obj::create_background_placeholder(position, GAME.get_sprite(sprite_type), static_cast<BackgroundLayer>(l)), sprite_type); // HERE
+						le_state.bg_placeholders[l][position.iround()] = std::make_pair(
+						    obj::create_background_placeholder(
+						        position, GAME.get_sprite(sprite_type), static_cast<BackgroundLayer>(l)),
+						    sprite_type);  // HERE
 					}
 				}
 			}
@@ -97,7 +108,10 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
 			auto position = m2::VecF{fg_object.position()};
-			le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, GAME.get_sprite(GAME.object_main_sprites[fg_object.type()])), fg_object);
+			le_state.fg_placeholders[position.iround()] = std::make_pair(
+			    obj::create_foreground_placeholder(
+			        position, GAME.get_sprite(GAME.object_main_sprites[fg_object.type()])),
+			    fg_object);
 		}
 	}
 
@@ -117,7 +131,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	return {};
 }
 
-m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path, int x_offset, int y_offset) {
+m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset) {
 	_lb_path = path;
 	type_state.emplace<pedit::State>();
 	auto& pe_state = std::get<pedit::State>(type_state);
@@ -182,12 +196,12 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path &path
 }
 
 m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path) {
-	_lb_path = path;
-
 	// Create state
-	auto state = sedit::State::create(*_lb_path);
+	auto state = sedit::State::create(path);
 	m2_reflect_failure(state);
 	type_state.emplace<sedit::State>(std::move(*state));
+
+	message_box_ui_state.emplace(&ui::message_box_ui);
 
 	// Create default objects
 	player_id = m2::obj::create_god();
@@ -201,6 +215,34 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	right_hud_ui_state.emplace(&ui::sheet_editor_right_hud);
 	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
+	message_box_ui_state->update_positions(GAME.dimensions().message_box);
+	message_box_ui_state->update_contents();
+
+	return {};
+}
+
+m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path& path) {
+	// Create state
+	auto state = bsedit::State::create(path);
+	m2_reflect_failure(state);
+	type_state.emplace<bsedit::State>(std::move(*state));
+
+	message_box_ui_state.emplace(&ui::message_box_ui);
+
+	// Create default objects
+	player_id = m2::obj::create_god();
+	m2::obj::create_camera();
+	m2::obj::create_origin();
+
+	// UI Hud
+	left_hud_ui_state.emplace(&ui::bulk_sheet_editor_left_hud);
+	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
+	left_hud_ui_state->update_contents();
+	right_hud_ui_state.emplace(&ui::bulk_sheet_editor_right_hud);
+	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
+	right_hud_ui_state->update_contents();
+	message_box_ui_state->update_positions(GAME.dimensions().message_box);
+	message_box_ui_state->update_contents();
 
 	return {};
 }
@@ -215,10 +257,18 @@ m2::void_expected m2::Level::reset_sheet_editor() {
 
 	return {};
 }
+m2::void_expected m2::Level::reset_bulk_sheet_editor() {
+	objects.clear();
 
-float m2::Level::horizontal_fov() const {
-	return _lb ? _lb->horizontal_fov() : GAME.dimensions().width_m;
+	// Create default objects
+	player_id = obj::create_god();
+	obj::create_camera();
+	obj::create_origin();
+
+	return {};
 }
+
+float m2::Level::horizontal_fov() const { return _lb ? _lb->horizontal_fov() : GAME.dimensions().width_m; }
 
 m2::sdl::ticks_t m2::Level::get_level_duration() const {
 	return sdl::get_ticks_since(*level_start_ticks, GAME.pause_ticks - *level_start_pause_ticks);
@@ -239,7 +289,10 @@ void m2::Level::display_message(const std::string& msg, float timeout) {
 	message_box_ui_state->widgets[0]->enabled = true;
 }
 
-m2::void_expected m2::Level::init_any_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& name, bool physical_world, std::function<void(const std::string&, const pb::Level&)> pre_level_init, std::function<void(const std::string&, const pb::Level&)> post_level_init) {
+m2::void_expected m2::Level::init_any_player(
+    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
+    bool physical_world, std::function<void(const std::string&, const pb::Level&)> pre_level_init,
+    std::function<void(const std::string&, const pb::Level&)> post_level_init) {
 	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
 		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
@@ -259,7 +312,8 @@ m2::void_expected m2::Level::init_any_player(const std::variant<std::filesystem:
 
 	if (physical_world) {
 		world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
-		contact_listener = new m2::box2d::ContactListener(m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
+		contact_listener = new m2::box2d::ContactListener(
+		    m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
 		world->SetContactListener(contact_listener);
 	}
 
@@ -270,7 +324,8 @@ m2::void_expected m2::Level::init_any_player(const std::variant<std::filesystem:
 			for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
 				if (const auto sprite_type = layer.background_rows(y).items(x); sprite_type) {
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto [tile_obj, tile_id] = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
+					auto [tile_obj, tile_id] = obj::create_tile(
+					    static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
 					m2g::post_tile_create(tile_obj, sprite_type);
 					LOG_TRACE("Created tile", tile_id);
 				}
@@ -279,14 +334,16 @@ m2::void_expected m2::Level::init_any_player(const std::variant<std::filesystem:
 	}
 	// Create foreground objects
 	for (const auto& fg_object : _lb->objects()) {
-        LOGF_TRACE("Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(), fg_object.position().y());
+		LOGF_TRACE(
+		    "Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(),
+		    fg_object.position().y());
 		auto [obj, id] = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f}, fg_object.type());
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
 			GroupId group_id{fg_object.group()};
 
-			Group *group;
+			Group* group;
 			auto group_it = groups.find(group_id);
 			if (group_it != groups.end()) {
 				group = group_it->second.get();
@@ -299,7 +356,7 @@ m2::void_expected m2::Level::init_any_player(const std::variant<std::filesystem:
 
 		auto load_result = m2g::init_fg_object(obj);
 		m2_reflect_failure(load_result);
-        LOG_TRACE("Created object", id);
+		LOG_TRACE("Created object", id);
 	}
 
 	if (physical_world) {

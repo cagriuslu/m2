@@ -7,7 +7,7 @@
 
 namespace m2::network {
 	class ClientThread {
-		const mplayer::Type _type;
+		MAYBE const mplayer::Type _type;
 		const std::string _addr;
 		std::thread _thread;
 

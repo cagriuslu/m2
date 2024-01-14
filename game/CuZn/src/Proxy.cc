@@ -73,7 +73,7 @@ void m2g::multi_player_level_host_populate() {
 
 std::vector<m2::ObjectId> m2g::multi_player_object_ids;
 
-std::optional<int> m2g::handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command) {
+std::optional<int> m2g::handle_client_command(unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 
 	// Increment turn holder

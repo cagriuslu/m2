@@ -1,11 +1,13 @@
 #pragma once
-#include "../Meta.h"
-#include "../CircF.h"
-#include "../ui/State.h"
-#include "../sheet_editor/DynamicImageLoader.h"
-#include <m2g_SpriteType.pb.h>
 #include <Sprite.pb.h>
+#include <m2g_SpriteType.pb.h>
+
 #include <filesystem>
+
+#include "../CircF.h"
+#include "../Meta.h"
+#include "../sheet_editor/DynamicImageLoader.h"
+#include "../ui/State.h"
 
 namespace m2::sedit {
 	struct State {
@@ -63,8 +65,8 @@ namespace m2::sedit {
 			void on_draw() const;
 
 			void set();
-			std::optional<m2::RectF> current_rect; // wrt sprite center
-			std::optional<CircF> current_circ; // wrt sprite center
+			std::optional<m2::RectF> current_rect;  // wrt sprite center
+			std::optional<CircF> current_circ;  // wrt sprite center
 			void reset();
 		};
 		struct ForegroundColliderMode {
@@ -78,20 +80,22 @@ namespace m2::sedit {
 			void on_draw() const;
 
 			void set();
-			std::optional<m2::RectF> current_rect; // wrt sprite center
-			std::optional<CircF> current_circ; // wrt sprite center
+			std::optional<m2::RectF> current_rect;  // wrt sprite center
+			std::optional<CircF> current_circ;  // wrt sprite center
 			void reset();
 		};
-		std::variant<std::monostate, ForegroundCompanionMode, RectMode, BackgroundColliderMode, ForegroundColliderMode> mode;
+		std::variant<std::monostate, ForegroundCompanionMode, RectMode, BackgroundColliderMode, ForegroundColliderMode>
+		    mode;
 
 		static m2::expected<State> create(const std::filesystem::path& path);
 
-		const pb::SpriteSheets& sprite_sheets() const; // This function re-reads the file every time it's called.
-		const pb::Sprite& selected_sprite() const; // This function re-reads the file every time it's called.
-		void modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier); // This function re-reads the file every time it's called.
-		RectI selected_sprite_rect() const; // This function re-reads the file every time it's called.
-		VecF selected_sprite_center() const; // This function re-reads the file every time it's called.
-		VecF selected_sprite_origin() const; // This function re-reads the file every time it's called.
+		const pb::SpriteSheets& sprite_sheets() const;  // This function re-reads the file every time it's called.
+		const pb::Sprite& selected_sprite() const;  // This function re-reads the file every time it's called.
+		void modify_selected_sprite(const std::function<void(pb::Sprite&)>&
+		                                modifier);  // This function re-reads the file every time it's called.
+		RectI selected_sprite_rect() const;  // This function re-reads the file every time it's called.
+		VecF selected_sprite_center() const;  // This function re-reads the file every time it's called.
+		VecF selected_sprite_origin() const;  // This function re-reads the file every time it's called.
 		DynamicImageLoader* dynamic_image_loader() { return _dynamic_image_loader ? &*_dynamic_image_loader : nullptr; }
 
 		// To be used by the main menu
@@ -105,7 +109,10 @@ namespace m2::sedit {
 		void activate_background_collider_mode();
 		void activate_foreground_collider_mode();
 
-	private:
+	   private:
 		inline explicit State(std::filesystem::path path) : _path(std::move(path)) {}
 	};
-}
+
+	void modify_sprite_in_sheet(
+	    const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier);
+}  // namespace m2::sedit

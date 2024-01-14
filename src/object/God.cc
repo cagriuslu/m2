@@ -1,9 +1,9 @@
+#include <m2/Game.h>
 #include <m2/object/God.h>
 #include <m2/ui/widget/ImageSelection.h>
-#include <m2/ui/widget/TextSelection.h>
-#include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/IntegerSelection.h>
-#include <m2/Game.h>
+#include <m2/ui/widget/Text.h>
+#include <m2/ui/widget/TextSelection.h>
 
 using namespace m2;
 
@@ -20,7 +20,8 @@ namespace {
 		auto object_type_index = 0;
 		for (const auto& level_editor_object : GAME.object_main_sprites) {
 			if (level_editor_object.first == level_object.type()) {
-				dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[1]).select(object_type_index);
+				dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[1])
+				    .select(object_type_index);
 				break;
 			}
 			++object_type_index;
@@ -45,7 +46,8 @@ namespace {
 		auto sprite_type_index = 0;
 		for (const auto& sprite_type : GAME.level_editor_background_sprites) {
 			if (sprite_type == picked_sprite_type) {
-				dynamic_cast<ui::widget::ImageSelection&>(*LEVEL.right_hud_ui_state->widgets[2]).select(sprite_type_index);
+				dynamic_cast<ui::widget::ImageSelection&>(*LEVEL.right_hud_ui_state->widgets[2])
+				    .select(sprite_type_index);
 				break;
 			}
 			++sprite_type_index;
@@ -53,51 +55,61 @@ namespace {
 	}
 
 	void handle_primary_button_press(const VecI& mouse_coordinates_i) {
-		std::visit(overloaded {
-			[=](ledit::State& le) {
-				std::visit(overloaded {
-					[=](ledit::State::PaintMode& v) { v.paint_sprite(mouse_coordinates_i); },
-					[=](ledit::State::EraseMode& v) { v.erase_position(mouse_coordinates_i); },
-					[=](ledit::State::PlaceMode& v) { v.place_object(mouse_coordinates_i); },
-					[=](MAYBE ledit::State::RemoveMode& v) { ledit::State::RemoveMode::remove_object(mouse_coordinates_i); },
-					[=](ledit::State::PickMode& v) {
-						if (v.pick_foreground) {
-							if (const auto level_object = v.lookup_foreground_object(mouse_coordinates_i); level_object) {
-								level_editor_pick_foreground(*level_object);
-							}
-						} else {
-							if (const auto picked_sprite_type = v.lookup_background_sprite(mouse_coordinates_i); picked_sprite_type) {
-								level_editor_pick_background(*picked_sprite_type);
-							}
-						}
-					},
-					[=](const ledit::State::ShiftMode& v) { v.shift(mouse_coordinates_i); },
-					DEFAULT_OVERLOAD
-				}, le.mode);
-			},
-			[=](pedit::State& pe) {
-				std::visit(overloaded {
-					[=](pedit::State::PaintMode& v) { v.paint_color(mouse_coordinates_i); },
-					[=](pedit::State::EraseMode& v) { v.erase_color(mouse_coordinates_i); },
-					[=](pedit::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates_i); },
-					DEFAULT_OVERLOAD
-				}, pe.mode);
-			},
-			DEFAULT_OVERLOAD
-		}, LEVEL.type_state);
+		std::visit(
+		    overloaded{
+		        [=](ledit::State& le) {
+			        std::visit(
+			            overloaded{
+			                [=](ledit::State::PaintMode& v) { v.paint_sprite(mouse_coordinates_i); },
+			                [=](ledit::State::EraseMode& v) { v.erase_position(mouse_coordinates_i); },
+			                [=](ledit::State::PlaceMode& v) { v.place_object(mouse_coordinates_i); },
+			                [=](MAYBE ledit::State::RemoveMode& v) {
+				                ledit::State::RemoveMode::remove_object(mouse_coordinates_i);
+			                },
+			                [=](ledit::State::PickMode& v) {
+				                if (v.pick_foreground) {
+					                if (const auto level_object = v.lookup_foreground_object(mouse_coordinates_i);
+					                    level_object) {
+						                level_editor_pick_foreground(*level_object);
+					                }
+				                } else {
+					                if (const auto picked_sprite_type = v.lookup_background_sprite(mouse_coordinates_i);
+					                    picked_sprite_type) {
+						                level_editor_pick_background(*picked_sprite_type);
+					                }
+				                }
+			                },
+			                [=](const ledit::State::ShiftMode& v) { v.shift(mouse_coordinates_i); }, DEFAULT_OVERLOAD},
+			            le.mode);
+		        },
+		        [=](pedit::State& pe) {
+			        std::visit(
+			            overloaded{
+			                [=](pedit::State::PaintMode& v) { v.paint_color(mouse_coordinates_i); },
+			                [=](pedit::State::EraseMode& v) { v.erase_color(mouse_coordinates_i); },
+			                [=](pedit::State::ColorPickerMode& v) { v.pick_color(mouse_coordinates_i); },
+			                DEFAULT_OVERLOAD},
+			            pe.mode);
+		        },
+		        DEFAULT_OVERLOAD},
+		    LEVEL.type_state);
 	}
 
 	void handle_secondary_button_press(MAYBE const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
-		std::visit(overloaded {
-			[=](sedit::State& se) {
-				std::visit(overloaded {
-					[=](sedit::State::ForegroundCompanionMode& v) { v.secondary_selection_position = mouse_coordinates_h; },
-					[=](sedit::State::RectMode& v) { v.secondary_selection_position = mouse_coordinates_h; },
-					DEFAULT_OVERLOAD
-				}, se.mode);
-			},
-			DEFAULT_OVERLOAD
-		}, LEVEL.type_state);
+		std::visit(
+		    overloaded{
+		        [=](sedit::State& se) {
+			        std::visit(
+			            overloaded{
+			                [=](sedit::State::ForegroundCompanionMode& v) {
+				                v.secondary_selection_position = mouse_coordinates_h;
+			                },
+			                [=](sedit::State::RectMode& v) { v.secondary_selection_position = mouse_coordinates_h; },
+			                DEFAULT_OVERLOAD},
+			            se.mode);
+		        },
+		        DEFAULT_OVERLOAD},
+		    LEVEL.type_state);
 	}
 
 	void handle_mouse_events(const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
@@ -112,7 +124,7 @@ namespace {
 			handle_secondary_button_press(mouse_coordinates_i, mouse_coordinates_h);
 		}
 	}
-}
+}  // namespace
 
 m2::Id m2::obj::create_god() {
 	auto [obj, id] = create_object(VecF{});
@@ -139,32 +151,32 @@ m2::Id m2::obj::create_god() {
 		handle_mouse_events(GAME.mouse_position_world_m().iround(), GAME.mouse_position_world_m().hround());
 
 		// Change zoom
-		if (std::holds_alternative<sedit::State>(LEVEL.type_state)) {
+		if (std::holds_alternative<sedit::State>(LEVEL.type_state) ||
+		    std::holds_alternative<bsedit::State>(LEVEL.type_state)) {
 			if (GAME.events.pop_key_press(Key::MINUS)) {
-				GAME.set_zoom(1.1f); // Increase game height
+				GAME.set_zoom(1.1f);  // Increase game height
 			} else if (GAME.events.pop_key_press(Key::PLUS)) {
-				GAME.set_zoom(0.9f); // Decrease game height
+				GAME.set_zoom(0.9f);  // Decrease game height
 			}
 		}
 	};
 
 	obj.add_graphic().post_draw = [](MAYBE Graphic& gfx) {
 		// Check if level editor select mode is active
-		std::visit(overloaded {
-			[](ledit::State& le) {
-				std::visit(overloaded {
-					[](const ledit::State::SelectMode& mode) { mode.on_draw(); },
-					DEFAULT_OVERLOAD
-				}, le.mode);
-			},
-			[](sedit::State& se) {
-				std::visit(overloaded {
-					[](const auto& mode) { mode.on_draw(); },
-					[](MAYBE const std::monostate&) {}
-				}, se.mode);
-			},
-			DEFAULT_OVERLOAD
-		}, LEVEL.type_state);
+		std::visit(
+		    overloaded{
+		        [](ledit::State& le) {
+			        std::visit(
+			            overloaded{[](const ledit::State::SelectMode& mode) { mode.on_draw(); }, DEFAULT_OVERLOAD},
+			            le.mode);
+		        },
+		        [](sedit::State& se) {
+			        std::visit(
+			            overloaded{[](const auto& mode) { mode.on_draw(); }, [](MAYBE const std::monostate&) {}},
+			            se.mode);
+		        },
+		        [](bsedit::State& se) { se.on_draw(); }, DEFAULT_OVERLOAD},
+		    LEVEL.type_state);
 	};
 
 	return id;

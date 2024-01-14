@@ -1,25 +1,27 @@
 #pragma once
-#include "Proxy.h"
-#include "Level.h"
-#include "Shape.h"
+#include <SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <m2/Object.h>
+#include <m2/Pool.h>
+#include <m2g_ObjectType.pb.h>
+
+#include <filesystem>
+#include <vector>
+
+#include "Animation.h"
 #include "AudioManager.h"
-#include "protobuf/LUT.h"
+#include "DrawList.h"
+#include "Item.h"
+#include "Level.h"
+#include "Meta.h"
+#include "Proxy.h"
+#include "Shape.h"
+#include "Song.h"
 #include "Sprite.h"
 #include "m2/Events.h"
-#include "DrawList.h"
-#include "Song.h"
-#include "Animation.h"
-#include <m2/Object.h>
-#include <m2g_ObjectType.pb.h>
-#include <m2/Pool.h>
-#include <SDL.h>
-#include "network/ServerThread.h"
 #include "network/ClientThread.h"
-#include <SDL2/SDL_ttf.h>
-#include <vector>
-#include "Meta.h"
-#include "Item.h"
-#include <filesystem>
+#include "network/ServerThread.h"
+#include "protobuf/LUT.h"
 
 #define GAME (m2::Game::instance())
 #define LEVEL (GAME.level())
@@ -28,19 +30,20 @@
 #define GAME_AND_HUD_ASPECT_RATIO_DIV (9)
 #define GAME_ASPECT_RATIO_MUL (5)
 #define GAME_ASPECT_RATIO_DIV (4)
-#define HUD_ASPECT_RATIO_MUL (GAME_AND_HUD_ASPECT_RATIO_MUL * GAME_ASPECT_RATIO_DIV - GAME_ASPECT_RATIO_MUL * GAME_AND_HUD_ASPECT_RATIO_DIV)
+#define HUD_ASPECT_RATIO_MUL \
+	(GAME_AND_HUD_ASPECT_RATIO_MUL * GAME_ASPECT_RATIO_DIV - GAME_ASPECT_RATIO_MUL * GAME_AND_HUD_ASPECT_RATIO_DIV)
 #define HUD_ASPECT_RATIO_DIV (GAME_AND_HUD_ASPECT_RATIO_DIV * GAME_ASPECT_RATIO_DIV * 2)
 
 namespace m2 {
 	class Game {
 		mutable std::optional<VecF> _mouse_position_world_m;
-		mutable std::optional<VecF> _screen_center_to_mouse_position_m; // Doesn't mean much in 2.5D mode
+		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
 
-	public: // TODO private
+	   public:  // TODO private
 		static Game* _instance;
 
 		struct Dimensions {
-			int height_m{20}; // Controls the zoom of the game
+			int height_m{20};  // Controls the zoom of the game
 			float width_m{};
 			int ppm{};
 			RectI window{}, game{}, game_and_hud{};
@@ -62,7 +65,7 @@ namespace m2 {
 		bool _server_update_necessary{};
 		float _delta_time_s{};
 
-	public:
+	   public:
 		static void create_instance();
 		inline static Game& instance() { return *_instance; }
 		static void destroy_instance();
@@ -72,11 +75,11 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		SDL_Window* window{};
 		SDL_Cursor* cursor{};
-		SDL_Renderer *renderer{};
-		SDL_Texture *light_texture{};
+		SDL_Renderer* renderer{};
+		SDL_Texture* light_texture{};
 		std::optional<AudioManager> audio_manager;
 		uint32_t pixel_format{};
-		TTF_Font *font{};
+		TTF_Font* font{};
 		bool quit{};
 
 		////////////////////////////////////////////////////////////////////////
@@ -107,16 +110,16 @@ namespace m2 {
 		static constexpr int velocity_iterations{8};
 		static constexpr int position_iterations{3};
 		static constexpr float max_hearing_distance_m{20.0f};
-		static constexpr float min_hearing_facing_away{0.1f}; // Ratio
+		static constexpr float min_hearing_facing_away{0.1f};  // Ratio
 
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// MISC /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		void* context{};
 		Events events;
-		sdl::ticks_t pause_ticks{}; // Ticks spent outside of game
-		std::optional<sdl::ticks_t> ui_begin_ticks; // Exists only if there is an ongoing sync UI
-        std::vector<std::string> console_output;
+		sdl::ticks_t pause_ticks{};  // Ticks spent outside of game
+		std::optional<sdl::ticks_t> ui_begin_ticks;  // Exists only if there is an ongoing sync UI
+		std::vector<std::string> console_output;
 
 		Game();
 		~Game();
@@ -132,17 +135,26 @@ namespace m2 {
 		network::ServerThread& server_thread() { return *_server_thread; }
 		network::ClientThread& client_thread() { return *_client_thread; }
 		// Level management
-		void_expected load_single_player(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
-		void_expected load_multi_player_as_host(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
-		void_expected load_multi_player_as_guest(const std::variant<std::filesystem::path,pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected load_single_player(
+		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint,
+		    const std::string& level_name = "");
+		void_expected load_multi_player_as_host(
+		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint,
+		    const std::string& level_name = "");
+		void_expected load_multi_player_as_guest(
+		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint,
+		    const std::string& level_name = "");
 		void_expected load_level_editor(const std::string& level_resource_path);
 		void_expected load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
-		void_expected load_sheet_editor(const std::string& sheet_path);
+		void_expected load_sheet_editor();
+		void_expected load_bulk_sheet_editor();
 		Level& level() { return *_level; }
 
 		// Accessors
 		const Dimensions& dimensions() const { return _dims; }
-		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
+		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const {
+			return _sprites[pb::enum_index(sprite_type)];
+		}
 		const NamedItem& get_named_item(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
 		float delta_time_s() const { return _delta_time_s; }
 		const VecF& mouse_position_world_m() const;
@@ -177,13 +189,16 @@ namespace m2 {
 		void add_pause_ticks(const sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void recalculate_dimensions(int window_width, int window_height, int game_height_m = 0);
 		void set_zoom(float game_height_multiplier);
-		void reset_mouse_position() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
+		void reset_mouse_position() {
+			_mouse_position_world_m = std::nullopt;
+			_screen_center_to_mouse_position_m = std::nullopt;
+		}
 		void recalculate_directional_audio();
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
 
-	private:
+	   private:
 		void reset_state();
 		void recalculate_mouse_position2() const;
 	};
-}
+}  // namespace m2

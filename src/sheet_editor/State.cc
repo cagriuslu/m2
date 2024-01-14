@@ -1,8 +1,8 @@
-#include <m2/sheet_editor/State.h>
-#include <m2/protobuf/Detail.h>
 #include <m2/Game.h>
 #include <m2/game/Selection.h>
 #include <m2/object/Line.h>
+#include <m2/protobuf/Detail.h>
+#include <m2/sheet_editor/State.h>
 
 using namespace m2;
 using namespace m2::sedit;
@@ -14,7 +14,7 @@ namespace {
 	constexpr SDL_Color CONFIRMED_SELECTION_COLOR = {0, 255, 0, 80};
 	constexpr SDL_Color CROSS_COLOR = {0, 127, 255, 255};
 	constexpr SDL_Color CONFIRMED_CROSS_COLOR = {0, 255, 0, 255};
-}
+}  // namespace
 
 State::ForegroundCompanionMode::ForegroundCompanionMode() {
 	const auto& sprite = std::get<sedit::State>(LEVEL.type_state).selected_sprite();
@@ -33,9 +33,7 @@ State::ForegroundCompanionMode::ForegroundCompanionMode() {
 	// Enable selection
 	Events::enable_primary_selection(RectI{GAME.dimensions().game});
 }
-State::ForegroundCompanionMode::~ForegroundCompanionMode() {
-	Events::disable_primary_selection();
-}
+State::ForegroundCompanionMode::~ForegroundCompanionMode() { Events::disable_primary_selection(); }
 void State::ForegroundCompanionMode::on_draw() const {
 	// Draw selection
 	if (auto positions = SelectionResult{GAME.events}.primary_cell_selection_position_m(); positions) {
@@ -59,7 +57,7 @@ void State::ForegroundCompanionMode::add_rect() {
 	// If rect is selected
 	if (selection_results.is_primary_selection_finished()) {
 		auto positions = selection_results.primary_int_selection_position_m();
-		auto rect = RectI::from_corners(positions->first, positions->second); // wrt sprite coordinates
+		auto rect = RectI::from_corners(positions->first, positions->second);  // wrt sprite coordinates
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			// Iterate over effects
 			for (int i = 0; i < sprite.regular().effects_size(); ++i) {
@@ -81,7 +79,8 @@ void State::ForegroundCompanionMode::add_rect() {
 void State::ForegroundCompanionMode::set_center() {
 	// Store center selection
 	if (secondary_selection_position) {
-		auto center_offset = *secondary_selection_position - std::get<sedit::State>(LEVEL.type_state).selected_sprite_center(); // new offset from sprite center
+		auto center_offset = *secondary_selection_position -
+		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_center();  // new offset from sprite center
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			// Iterate over effects
 			for (int i = 0; i < sprite.regular().effects_size(); ++i) {
@@ -123,14 +122,12 @@ State::RectMode::RectMode() {
 	// Set center
 	current_center = VecF{sprite.regular().center_offset_px()};
 	// Enable selection
-	Events::enable_primary_selection(RectI{GAME.dimensions().game});
+	Events::enable_primary_selection(GAME.dimensions().game);
 }
-State::RectMode::~RectMode() {
-	Events::disable_primary_selection();
-}
+State::RectMode::~RectMode() { Events::disable_primary_selection(); }
 void State::RectMode::on_draw() const {
 	// Draw selection
-	if (auto positions = SelectionResult{GAME.events}.primary_cell_selection_position_m(); positions) {
+	if (const auto positions = SelectionResult{GAME.events}.primary_cell_selection_position_m(); positions) {
 		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);
 	}
 	// Draw center selection
@@ -152,7 +149,7 @@ void State::RectMode::set_rect() {
 	if (selection_results.is_primary_selection_finished()) {
 		LOG_DEBUG("Primary selection");
 		auto positions = selection_results.primary_int_selection_position_m();
-		auto rect = RectI::from_corners(positions->first, positions->second); // wrt sprite coordinates
+		auto rect = RectI::from_corners(positions->first, positions->second);  // wrt sprite coordinates
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_rect()->set_x(rect.x);
 			sprite.mutable_regular()->mutable_rect()->set_y(rect.y);
@@ -166,7 +163,8 @@ void State::RectMode::set_rect() {
 void State::RectMode::set_center() {
 	// Store center selection
 	if (secondary_selection_position) {
-		auto center_offset = *secondary_selection_position - std::get<sedit::State>(LEVEL.type_state).selected_sprite_center(); // new offset from sprite center
+		auto center_offset = *secondary_selection_position -
+		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_center();  // new offset from sprite center
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_center_offset_px()->set_x(center_offset.x);
 			sprite.mutable_regular()->mutable_center_offset_px()->set_y(center_offset.y);
@@ -189,7 +187,8 @@ void State::RectMode::reset() {
 State::BackgroundColliderMode::BackgroundColliderMode() {
 	const auto& sprite = std::get<sedit::State>(LEVEL.type_state).selected_sprite();
 	if (sprite.regular().has_background_collider()) {
-		auto collider_origin = VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().background_collider().origin_offset_px()};
+		auto collider_origin =
+		    VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().background_collider().origin_offset_px()};
 		if (sprite.regular().background_collider().has_rect_dims_px()) {
 			current_rect = RectF{collider_origin, VecF{sprite.regular().background_collider().rect_dims_px()}};
 		} else if (sprite.regular().background_collider().has_circ_radius_px()) {
@@ -235,9 +234,10 @@ void State::BackgroundColliderMode::set() {
 	if (selection_results.is_primary_selection_finished()) {
 		LOG_DEBUG("Primary selection");
 		auto positions = selection_results.primary_halfcell_selection_position_m();
-		auto rect = RectF::from_corners(positions->first, positions->second); // wrt sprite coordinates
-		auto origin_offset = rect.center() - std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin(); // new offset from sprite origin
-		auto dims = VecF{rect.w, rect.h}; // new dims
+		auto rect = RectF::from_corners(positions->first, positions->second);  // wrt sprite coordinates
+		auto origin_offset = rect.center() -
+		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
+		auto dims = VecF{rect.w, rect.h};  // new dims
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
@@ -253,7 +253,8 @@ void State::BackgroundColliderMode::set() {
 		auto positions = selection_results.secondary_halfcell_selection_position_m();
 		auto center = positions->first;
 		auto radius = positions->first.distance(positions->second);
-		auto origin_offset = center - std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin(); // new offset from sprite origin
+		auto origin_offset = center -
+		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
@@ -277,7 +278,8 @@ void State::BackgroundColliderMode::reset() {
 State::ForegroundColliderMode::ForegroundColliderMode() {
 	const auto& sprite = std::get<sedit::State>(LEVEL.type_state).selected_sprite();
 	if (sprite.regular().has_foreground_collider()) {
-		auto collider_origin = VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().foreground_collider().origin_offset_px()};
+		auto collider_origin =
+		    VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().foreground_collider().origin_offset_px()};
 		if (sprite.regular().foreground_collider().has_rect_dims_px()) {
 			current_rect = RectF{collider_origin, VecF{sprite.regular().foreground_collider().rect_dims_px()}};
 		} else if (sprite.regular().foreground_collider().has_circ_radius_px()) {
@@ -322,9 +324,10 @@ void State::ForegroundColliderMode::set() {
 	if (selection_results.is_primary_selection_finished()) {
 		LOG_DEBUG("Primary selection");
 		auto positions = selection_results.primary_halfcell_selection_position_m();
-		auto rect = RectF::from_corners(positions->first, positions->second); // wrt sprite coordinates
-		auto origin_offset = rect.center() - std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin(); // new offset from sprite origin
-		auto dims = VecF{rect.w, rect.h}; // new dims
+		auto rect = RectF::from_corners(positions->first, positions->second);  // wrt sprite coordinates
+		auto origin_offset = rect.center() -
+		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
+		auto dims = VecF{rect.w, rect.h};  // new dims
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
@@ -340,7 +343,8 @@ void State::ForegroundColliderMode::set() {
 		auto positions = selection_results.secondary_halfcell_selection_position_m();
 		auto center = positions->first;
 		auto radius = positions->first.distance(positions->second);
-		auto origin_offset = center - std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin(); // new offset from sprite origin
+		auto origin_offset = center -
+		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
@@ -399,33 +403,10 @@ const pb::Sprite& m2::sedit::State::selected_sprite() const {
 }
 
 void m2::sedit::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) {
-	// If path exists,
-	if (std::filesystem::exists(_path)) {
-		// Check if the file is a valid pb::SpriteSheets
-		if (auto sprite_sheets = pb::json_file_to_message<pb::SpriteSheets>(_path); sprite_sheets) {
-			for (int i = 0; i < sprite_sheets->sheets_size(); ++i) {
-				auto* mutable_sheet = sprite_sheets->mutable_sheets(i);
-				for (int j = 0; j < mutable_sheet->sprites_size(); ++j) {
-					auto* mutable_sprite = mutable_sheet->mutable_sprites(j);
-					if (mutable_sprite->type() == _selected_sprite_type) {
-						modifier(*mutable_sprite);
-						pb::message_to_json_file(*sprite_sheets, _path);
-						return;
-					}
-				}
-			}
-			throw M2ERROR("Sprite not found in SpriteSheets");
-		} else {
-			throw M2ERROR("File is not a valid m2::pb::SpriteSheets: " + _path.string());
-		}
-	} else {
-		throw M2ERROR("Can't modify nonexistent file");
-	}
+	modify_sprite_in_sheet(_path, _selected_sprite_type, modifier);
 }
 
-RectI m2::sedit::State::selected_sprite_rect() const {
-	return RectI{selected_sprite().regular().rect()};
-}
+RectI m2::sedit::State::selected_sprite_rect() const { return RectI{selected_sprite().regular().rect()}; }
 
 VecF m2::sedit::State::selected_sprite_center() const {
 	// Rect needs to be shifted to fit into cells
@@ -437,9 +418,7 @@ VecF m2::sedit::State::selected_sprite_origin() const {
 	return selected_sprite_center() + VecF{selected_sprite().regular().center_offset_px()};
 }
 
-void m2::sedit::State::set_sprite_type(m2g::pb::SpriteType sprite_type) {
-	_selected_sprite_type = sprite_type;
-}
+void m2::sedit::State::set_sprite_type(m2g::pb::SpriteType sprite_type) { _selected_sprite_type = sprite_type; }
 
 void m2::sedit::State::select() {
 	// Get rid of previously created pixels, lines, etc.
@@ -470,31 +449,44 @@ void m2::sedit::State::select() {
 				// Move God to center if rect is already selected
 				LEVEL.player()->position = selected_sprite_center();
 
-				// Break from two loops
-				goto image_loader_loaded;
+				return;
 			}
 		}
 	}
-	image_loader_loaded:
-	return;
 }
 
-void m2::sedit::State::deactivate_mode() {
-	mode.emplace<std::monostate>();
-}
+void m2::sedit::State::deactivate_mode() { mode.emplace<std::monostate>(); }
 
-void m2::sedit::State::activate_foreground_companion_mode() {
-	mode.emplace<ForegroundCompanionMode>();
-}
+void m2::sedit::State::activate_foreground_companion_mode() { mode.emplace<ForegroundCompanionMode>(); }
 
-void m2::sedit::State::activate_rect_mode() {
-	mode.emplace<RectMode>();
-}
+void m2::sedit::State::activate_rect_mode() { mode.emplace<RectMode>(); }
 
-void m2::sedit::State::activate_background_collider_mode() {
-	mode.emplace<BackgroundColliderMode>();
-}
+void m2::sedit::State::activate_background_collider_mode() { mode.emplace<BackgroundColliderMode>(); }
 
-void m2::sedit::State::activate_foreground_collider_mode() {
-	mode.emplace<ForegroundColliderMode>();
+void m2::sedit::State::activate_foreground_collider_mode() { mode.emplace<ForegroundColliderMode>(); }
+
+void m2::sedit::modify_sprite_in_sheet(
+    const std::filesystem::path& path, m2g::pb::SpriteType type, const std::function<void(pb::Sprite&)>& modifier) {
+	// If path exists,
+	if (std::filesystem::exists(path)) {
+		// Check if the file is a valid pb::SpriteSheets
+		if (auto sprite_sheets = pb::json_file_to_message<pb::SpriteSheets>(path); sprite_sheets) {
+			for (int i = 0; i < sprite_sheets->sheets_size(); ++i) {
+				auto* mutable_sheet = sprite_sheets->mutable_sheets(i);
+				for (int j = 0; j < mutable_sheet->sprites_size(); ++j) {
+					auto* mutable_sprite = mutable_sheet->mutable_sprites(j);
+					if (mutable_sprite->type() == type) {
+						modifier(*mutable_sprite);
+						message_to_json_file(*sprite_sheets, path);
+						return;
+					}
+				}
+			}
+			throw M2ERROR("Sprite not found in SpriteSheets");
+		} else {
+			throw M2ERROR("File is not a valid m2::pb::SpriteSheets: " + path.string());
+		}
+	} else {
+		throw M2ERROR("Can't modify nonexistent file");
+	}
 }

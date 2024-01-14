@@ -11,6 +11,7 @@
 - Try bgfx
 - Add timer widget that executes an action after some time
 - SmartPointer may be useless, think about it
+- sedit ve bsedit'te, selection aktif iken window resize edilirse selection bozuluyor
 
 Pixel Editor
 - Draw transparency pattern
