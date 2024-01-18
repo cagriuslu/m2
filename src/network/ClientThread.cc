@@ -2,7 +2,6 @@
 #include <m2/network/Socket.h>
 #include <m2/network/Detail.h>
 #include <m2/Game.h>
-#include <m2/ProxyDetail.h>
 #include <m2/Log.h>
 #include <m2/Meta.h>
 
@@ -82,7 +81,7 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 		// Send ping with/without sender_id
 		const std::lock_guard lock(_mutex);
 		pb::NetworkMessage msg;
-		msg.set_game_hash(game_hash());
+		msg.set_game_hash(GAME.hash());
 		msg.set_sender_id(state ? GAME.sender_id() : 0);
 		_message_queue.emplace_back(std::move(msg));
 	}
@@ -108,11 +107,11 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 		// Only do verification as level initialization should have initialized the same exact game state
 		const auto& server_update = _last_processed_server_update->server_update();
 
-		if (m2g::multi_player_object_ids.size() != Z(server_update.player_object_ids_size())) {
+		if (PROXY.multi_player_object_ids.size() != Z(server_update.player_object_ids_size())) {
 			return make_unexpected("Server and local player count doesn't match");
 		}
 
-		if (LEVEL.player_id != m2g::multi_player_object_ids[server_update.receiver_index()]) {
+		if (LEVEL.player_id != PROXY.multi_player_object_ids[server_update.receiver_index()]) {
 			return make_unexpected("Player ID doesn't match the ID found in local player list");
 		}
 
@@ -192,7 +191,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 
 			// Create object
 			auto [obj, id] = m2::create_object(m2::VecF{object_desc.position()}, object_desc.object_type(), object_desc.parent_id());
-			auto load_result = m2g::init_fg_object(obj);
+			auto load_result = PROXY.init_fg_object(obj);
 			m2_reflect_failure(load_result);
 
 			// Get the character
@@ -231,7 +230,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 void m2::network::ClientThread::queue_client_command(const m2g::pb::ClientCommand& cmd) {
 	DEBUG_FN();
 	pb::NetworkMessage msg;
-	msg.set_game_hash(game_hash());
+	msg.set_game_hash(GAME.hash());
 	msg.set_sender_id(GAME.sender_id());
 	msg.mutable_client_command()->CopyFrom(cmd);
 
@@ -347,7 +346,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					continue;
 				}
 
-				if (expect_message->game_hash() != game_hash()) {
+				if (expect_message->game_hash() != GAME.hash()) {
 					LOG_ERROR("Received message of unknown origin", json_str);
 					continue;
 				}

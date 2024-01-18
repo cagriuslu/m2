@@ -51,13 +51,13 @@ m2::Id m2::obj::create_camera() {
 		//			camera.position = player.position;
 		//		}
 
-		if (m2g::camera_is_listener) {
+		if (PROXY.camera_is_listener) {
 			LEVEL.left_listener->position = camera.position;
 			LEVEL.right_listener->position = camera.position;
 		}
 	};
 
-	if (m2g::camera_is_listener) {
+	if (PROXY.camera_is_listener) {
 		LEVEL.left_listener =
 		    SoundListener{.position = LEVEL.player()->position, .direction = PI, .listen_angle = PI_DIV2};
 		LEVEL.right_listener =

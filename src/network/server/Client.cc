@@ -1,6 +1,6 @@
 #include <m2/network/server/Client.h>
 #include <m2/protobuf/Detail.h>
-#include <m2/ProxyDetail.h>
+#include <m2/Game.h>
 #include <string>
 
 m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* read_buffer, size_t read_buffer_length) {
@@ -18,7 +18,7 @@ m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* rea
 	m2_reflect_failure(recv_success);
 
 	// Check game_hash
-	if (expect_message->game_hash() != game_hash()) {
+	if (expect_message->game_hash() != GAME.hash()) {
 		return make_unexpected("Client game hash mismatch");
 	}
 

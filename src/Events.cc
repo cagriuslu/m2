@@ -39,7 +39,7 @@ bool m2::Events::gather() {
 				if (e.key.repeat == 0) {
 					// Game keys
 					key_press_count++;
-					keys_pressed[u(m2g::scancode_to_key(e.key.keysym.scancode))]++;
+					keys_pressed[u(PROXY.scancode_to_key(e.key.keysym.scancode))]++;
 					// UI keys
 					if (ui_keys_pressed.size() < ui_key_press_count_limit) {
 						ui_keys_pressed.push_back(e.key.keysym.scancode);
@@ -51,7 +51,7 @@ bool m2::Events::gather() {
 			case SDL_KEYUP:
 				if (e.key.repeat == 0) {
 					key_release_count++;
-					keys_released[u(m2g::scancode_to_key(e.key.keysym.scancode))]++;
+					keys_released[u(PROXY.scancode_to_key(e.key.keysym.scancode))]++;
 				}
 				break;
 			case SDL_MOUSEMOTION:
@@ -119,7 +119,7 @@ bool m2::Events::gather() {
 		sdl_keys_down[i] = raw_keyboard_state[i];
 	}
 	for (unsigned i = 1; i < u(m2::Key::end); i++) {
-		auto scancode = m2g::key_to_scancode[i];
+		auto scancode = PROXY.key_to_scancode[i];
 		keys_down[i] = (scancode != SDL_SCANCODE_UNKNOWN) && raw_keyboard_state[scancode];
 	}
 

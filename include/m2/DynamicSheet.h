@@ -18,7 +18,7 @@ namespace m2 {
 		explicit DynamicSheet(SDL_Renderer* renderer);
 		[[nodiscard]] SDL_Texture* texture() const;
 		std::pair<SDL_Surface*, RectI> alloc(int w, int h);
-		SDL_Texture* recreate_texture();
+		SDL_Texture* recreate_texture(bool lightning);
 	protected:
 		[[nodiscard]] inline int width() const { return _surface->w; }
 		[[nodiscard]] inline int height() const { return _surface->h; }

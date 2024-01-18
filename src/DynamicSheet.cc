@@ -1,6 +1,6 @@
 #include <m2/DynamicSheet.h>
-#include <m2/Proxy.h>
 #include <m2/Exception.h>
+#include <m2/Game.h>
 
 m2::DynamicSheet::DynamicSheet(SDL_Renderer *renderer) : _renderer(renderer) {
 	int bpp;
@@ -39,12 +39,12 @@ std::pair<SDL_Surface*, m2::RectI> m2::DynamicSheet::alloc(int w, int h) {
 	_h += h;
 	return retval;
 }
-SDL_Texture* m2::DynamicSheet::recreate_texture() {
+SDL_Texture* m2::DynamicSheet::recreate_texture(bool lightning) {
 	_texture.reset(SDL_CreateTextureFromSurface(_renderer, _surface.get()));
 	if (not _texture) {
 		throw M2ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
-	if (m2g::lightning) {
+	if (lightning) {
 		// Darken the texture. TODO darken only for sprite effects
 		SDL_SetTextureColorMod(_texture.get(), 127, 127, 127);
 	}

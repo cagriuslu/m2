@@ -7,7 +7,7 @@
 #include <SDL2/SDL_image.h>
 #include <m2/Game.h>
 
-m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer) : _sprite_sheet(sprite_sheet) {
+m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer, bool lightning) : _sprite_sheet(sprite_sheet) {
 	_surface.reset(IMG_Load(sprite_sheet.resource().c_str()));
 	if (not _surface) {
 		throw M2ERROR("SDL Error while loading " + sprite_sheet.resource() + ": " + IMG_GetError());
@@ -17,7 +17,7 @@ m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* 
 		throw M2ERROR("SDL Error while creating texture from surface" + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
 	SDL_SetTextureBlendMode(_texture.get(), SDL_BLENDMODE_BLEND);
-	if (m2g::lightning) {
+	if (lightning) {
 		// Darken the texture
 		SDL_SetTextureColorMod(_texture.get(), 127, 127, 127);
 	}
@@ -33,7 +33,7 @@ SDL_Texture* m2::SpriteSheet::texture() const {
 }
 
 m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
-m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, const pb::RectI &rect, const pb::Color& mask_color) {
+m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, const pb::RectI &rect, const pb::Color& mask_color, bool lightning) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -67,11 +67,11 @@ m2::RectI m2::SpriteEffectsSheet::create_mask_effect(const SpriteSheet &sheet, c
 	SDL_UnlockSurface(dst_surface);
 	SDL_UnlockSurface(src_surface);
 
-	recreate_texture();
+	recreate_texture(lightning);
 
 	return dst_rect;
 }
-m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI& rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces) {
+m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI& rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces, bool lightning) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	for (const auto& rect_piece : rect_pieces) {
@@ -85,11 +85,11 @@ m2::RectI m2::SpriteEffectsSheet::create_foreground_companion_effect(const Sprit
 		SDL_BlitSurface(sheet.surface(), &blit_src_rect, dst_surface, &blit_dst_rect);
 	}
 
-	recreate_texture();
+	recreate_texture(lightning);
 
 	return dst_rect;
 }
-m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect) {
+m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect, bool lightning) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -125,11 +125,11 @@ m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(const SpriteSheet& she
 	SDL_UnlockSurface(dst_surface);
 	SDL_UnlockSurface(src_surface);
 
-	recreate_texture();
+	recreate_texture(lightning);
 
 	return dst_rect;
 }
-m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment) {
+m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment, bool lightning) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -167,12 +167,12 @@ m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(const SpriteShe
 	SDL_UnlockSurface(dst_surface);
 	SDL_UnlockSurface(src_surface);
 
-	recreate_texture();
+	recreate_texture(lightning);
 
 	return dst_rect;
 }
 
-m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite) :
+m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, bool lightning) :
 	_sprite_sheet(&sprite_sheet),
 	_sprite(sprite),
 	_effects_sheet(&sprite_effects_sheet),
@@ -207,18 +207,18 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 			// Create effect
 			switch (effect.type()) {
 				case pb::SPRITE_EFFECT_FOREGROUND_COMPANION:
-					_effects[index] = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.regular().rect(), effect.foreground_companion().rects());
+					_effects[index] = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.regular().rect(), effect.foreground_companion().rects(), lightning);
 					_foreground_companion_center_offset_px = VecF{effect.foreground_companion().center_offset_px()};
 					_foreground_companion_center_offset_m = VecF{effect.foreground_companion().center_offset_px()} / (float)_ppm;
 					break;
 				case pb::SPRITE_EFFECT_MASK:
-					_effects[index] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.regular().rect(), effect.mask_color());
+					_effects[index] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.regular().rect(), effect.mask_color(), lightning);
 					break;
 				case pb::SPRITE_EFFECT_GRAYSCALE:
-					_effects[index] = sprite_effects_sheet.create_grayscale_effect(sprite_sheet, sprite.regular().rect());
+					_effects[index] = sprite_effects_sheet.create_grayscale_effect(sprite_sheet, sprite.regular().rect(), lightning);
 					break;
 				case pb::SPRITE_EFFECT_IMAGE_ADJUSTMENT:
-					_effects[index] = sprite_effects_sheet.create_image_adjustment_effect(sprite_sheet, sprite.regular().rect(), effect.image_adjustment());
+					_effects[index] = sprite_effects_sheet.create_image_adjustment_effect(sprite_sheet, sprite.regular().rect(), effect.image_adjustment(), lightning);
 					break;
 				default:
 					throw M2ERROR("Encountered a sprite with unknown sprite effect: " + std::to_string(sprite.type()));
@@ -287,19 +287,19 @@ m2::VecF m2::Sprite::center_to_origin_srcpx(pb::SpriteEffectType effect_type) co
 	}
 }
 
-std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer *renderer) {
+std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer *renderer, bool lightning) {
 	auto sheets = pb::json_file_to_message<pb::SpriteSheets>(sprite_sheets_path);
 	if (!sheets) {
 		throw M2ERROR(sheets.error());
 	}
 	std::vector<m2::SpriteSheet> sheets_vector;
 	std::for_each(sheets->sheets().begin(), sheets->sheets().end(), [&](const auto& sheet) {
-		sheets_vector.emplace_back(sheet, renderer);
+		sheets_vector.emplace_back(sheet, renderer, lightning);
 	});
 	return sheets_vector;
 }
 
-std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet) {
+std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet, bool lightning) {
 	std::vector<Sprite> sprites_vector(pb::enum_value_count<m2g::pb::SpriteType>());
 	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::SpriteType>());
 
@@ -312,7 +312,7 @@ std::vector<m2::Sprite> m2::load_sprites(const std::vector<SpriteSheet>& sprite_
 				throw M2ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
 			}
 			// Load sprite
-			sprites_vector[index] = Sprite{sprite_sheet, sprite_effects_sheet, sprite};
+			sprites_vector[index] = Sprite{sprite_sheet, sprite_effects_sheet, sprite, lightning};
 			is_loaded[index] = true;
 		}
 	}

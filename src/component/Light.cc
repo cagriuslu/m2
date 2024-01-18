@@ -9,7 +9,7 @@
 m2::Light::Light(Id object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}
 
 void m2::Light::default_draw(Light& lig) {
-	if (not m2g::lightning) {
+	if (not PROXY.lightning) {
 		return;
 	}
 

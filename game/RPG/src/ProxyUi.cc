@@ -1,5 +1,4 @@
-#include <m2/Proxy.h>
-#include <rpg/Context.h>
+#include <m2g/Proxy.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
 
@@ -97,18 +96,18 @@ const Blueprint left_hud_blueprint = {
 		}
 };
 
-const m2::ui::Blueprint *m2g::ui::main_menu() {
-	return rpg::Context::get_instance().main_menu();
+const m2::ui::Blueprint* m2g::Proxy::main_menu() {
+	return PROXY.generate_main_menu();
 }
 
-const m2::ui::Blueprint *m2g::ui::pause_menu() {
+const m2::ui::Blueprint* m2g::Proxy::pause_menu() {
 	return &pause_menu_blueprint;
 }
 
-const m2::ui::Blueprint *m2g::ui::left_hud() {
+const m2::ui::Blueprint* m2g::Proxy::left_hud() {
 	return &left_hud_blueprint;
 }
 
-const m2::ui::Blueprint *m2g::ui::right_hud() {
-	return rpg::Context::get_instance().right_hud();
+const m2::ui::Blueprint* m2g::Proxy::right_hud() {
+	return PROXY.generate_right_hud();
 }

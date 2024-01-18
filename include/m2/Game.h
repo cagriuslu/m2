@@ -4,8 +4,10 @@
 #include <m2/Object.h>
 #include <m2/Pool.h>
 #include <m2g_ObjectType.pb.h>
+#include <m2g/Proxy.h>
 
 #include <filesystem>
+#include <functional>
 #include <vector>
 
 #include "Animation.h"
@@ -24,6 +26,7 @@
 #include "protobuf/LUT.h"
 
 #define GAME (m2::Game::instance())
+#define PROXY (GAME._proxy)
 #define LEVEL (GAME.level())
 
 #define GAME_AND_HUD_ASPECT_RATIO_MUL (16)
@@ -41,6 +44,7 @@ namespace m2 {
 
 	   public:  // TODO private
 		static Game* _instance;
+		::m2g::Proxy _proxy{};
 
 		struct Dimensions {
 			int height_m{20};  // Controls the zoom of the game
@@ -115,7 +119,6 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		///////////////////////////////// MISC /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		void* context{};
 		Events events;
 		sdl::ticks_t pause_ticks{};  // Ticks spent outside of game
 		std::optional<sdl::ticks_t> ui_begin_ticks;  // Exists only if there is an ongoing sync UI
@@ -124,9 +127,9 @@ namespace m2 {
 		Game();
 		~Game();
 
-		// Initialization
-		void initialize_context();
-
+		// Proxy management
+		Proxy& proxy() { return _proxy; }
+		int32_t hash() const { return I(std::hash<std::string>{}(_proxy.game_name)); }
 		// Network management
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		void_expected join_game(mplayer::Type type, const std::string& addr);

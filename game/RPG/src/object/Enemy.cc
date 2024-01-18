@@ -5,7 +5,6 @@
 #include "m2/Game.h"
 #include "rpg/group/ItemGroup.h"
 #include <rpg/Detail.h>
-#include <rpg/Context.h>
 #include <m2/M2.h>
 #include <m2/box2d/Detail.h>
 #include <rpg/Data.h>
@@ -60,12 +59,11 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	chr.add_named_item(GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
-    obj.impl = std::make_unique<Enemy>(obj, Context::get_instance().get_enemy(obj.object_type()));
+    obj.impl = std::make_unique<Enemy>(obj, PROXY.get_enemy(obj.object_type()));
 	auto& impl = dynamic_cast<Enemy&>(*obj.impl);
 
 	// Increment enemy counter
-	auto& context = Context::get_instance();
-	context.alive_enemy_count++;
+	PROXY.alive_enemy_count++;
 
 	phy.pre_step = [&](MAYBE m2::Physique& phy) {
 		std::visit(m2::overloaded {
@@ -117,8 +115,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 					}
 				}
 				// Decrement enemy counter
-				auto& context = Context::get_instance();
-				context.alive_enemy_count--;
+				PROXY.alive_enemy_count--;
 				// Delete self
 				LOG_INFO("Enemy died");
 				GAME.add_deferred_action(m2::create_object_deleter(self.object_id));

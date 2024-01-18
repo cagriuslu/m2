@@ -24,7 +24,10 @@ void m2::Game::create_instance() {
 		throw M2FATAL("Cannot create multiple instance of Game");
 	}
 	_instance = new Game();
-	_instance->initialize_context();
+
+	// User might access GAME from the following function
+	// We have to call it after GAME is fully constructed
+	_instance->_proxy.load_resources();
 }
 void m2::Game::destroy_instance() {
 	DEBUG_FN();
@@ -48,7 +51,7 @@ m2::Game::Game() {
 		LOG_WARN("Failed to set line render method");
 	}
 
-	recalculate_dimensions(800, 450, m2g::default_game_height_m);
+	recalculate_dimensions(800, 450, _proxy.default_game_height_m);
 	if ((window = SDL_CreateWindow(
 	         "m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _dims.window.w, _dims.window.h,
 	         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
@@ -94,11 +97,11 @@ m2::Game::Game() {
 
 	// Load game resources
 	const std::filesystem::path _resource_dir("resource");
-	resource_dir = _resource_dir / "game" / m2g::game_name;
-	levels_dir = _resource_dir / "game" / m2g::game_name / "levels";
+	resource_dir = _resource_dir / "game" / _proxy.game_name;
+	levels_dir = _resource_dir / "game" / _proxy.game_name / "levels";
 
-	sprite_sheets = load_sprite_sheets(resource_dir / "SpriteSheets.json", renderer);
-	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet);
+	sprite_sheets = load_sprite_sheets(resource_dir / "SpriteSheets.json", renderer, _proxy.lightning);
+	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet, _proxy.lightning);
 	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
 	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
@@ -109,20 +112,10 @@ m2::Game::Game() {
 
 m2::Game::~Game() {
 	_level.reset();
-	if (context) {
-		m2g::destroy_context(context);
-		context = nullptr;
-	}
 	audio_manager.reset();
 	SDL_DestroyRenderer(renderer);
 	SDL_FreeCursor(cursor);
 	SDL_DestroyWindow(window);
-}
-
-void m2::Game::initialize_context() {
-	// User might access GAME from the following function
-	// We have to call it after GAME is fully constructed
-	context = m2g::create_context();
 }
 
 m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
@@ -226,7 +219,7 @@ void m2::Game::handle_menu_event() {
 		// Select the correct pause menu
 		const ui::Blueprint* pause_menu{};
 		if (std::holds_alternative<splayer::State>(level().type_state)) {
-			pause_menu = m2g::ui::pause_menu();
+			pause_menu = _proxy.pause_menu();
 		} else if (std::holds_alternative<ledit::State>(level().type_state)) {
 			pause_menu = &level_editor::ui::menu;
 		} else if (std::holds_alternative<sedit::State>(level().type_state)) {
@@ -256,7 +249,7 @@ void m2::Game::execute_pre_step() {
 		auto client_command = _server_thread->pop_turn_holder_command();
 		if (client_command) {
 			auto new_turn_holder =
-			    m2g::handle_client_command(_server_thread->turn_holder(), client_command->client_command());
+			    _proxy.handle_client_command(_server_thread->turn_holder(), client_command->client_command());
 			if (new_turn_holder) {
 				_server_thread->set_turn_holder_index(*new_turn_holder);
 				_server_update_necessary = true;
@@ -298,7 +291,7 @@ void m2::Game::execute_step() {
 	}
 	// Re-sort draw list
 	_level->draw_list.update();
-	if (not m2g::world_is_static) {
+	if (not _proxy.world_is_static) {
 		// If the world is NOT static, the pathfinder's cache should be cleared, because the objects might have been
 		// moved
 		_level->pathfinder->clear_cache();
@@ -550,7 +543,7 @@ void m2::Game::recalculate_mouse_position2() const {
 		// Create Line from camera to mouse position
 		const auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(), mouse_position_world_m);
 		// Get the xy-plane
-		const auto plane = m3::Plane::xy_plane(m2g::xy_plane_z_component);
+		const auto plane = m3::Plane::xy_plane(_proxy.xy_plane_z_component);
 		// Get the intersection
 		if (const auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse);
 		    forward_intersection) {

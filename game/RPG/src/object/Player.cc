@@ -3,7 +3,6 @@
 #include "m2/Game.h"
 #include <rpg/Detail.h>
 #include "m2/Controls.h"
-#include <rpg/Context.h>
 #include <m2/game/CharacterMovement.h>
 #include <rpg/Objects.h>
 #include <m2/box2d/Detail.h>
@@ -126,7 +125,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Check if died
 		if (not chr.has_resource(m2g::pb::RESOURCE_HP)) {
 			LOG_INFO("You died");
-			if (m2::ui::State::create_execute_sync(rpg::Context::get_instance().you_died_menu()) == m2::ui::Action::QUIT) {
+			if (m2::ui::State::create_execute_sync(PROXY.you_died_menu()) == m2::ui::Action::QUIT) {
 				GAME.quit = true;
 			}
 		}
@@ -137,7 +136,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			chr.remove_item(special_it);
 		}
 		// Show/hide ammo display
-		rpg::Context::get_instance().set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
+		PROXY.set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.on_collision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		if (auto* other_char = other.parent().get_character(); other_char && 10.0f < m2::VecF{me.body->GetLinearVelocity()}.length()) {

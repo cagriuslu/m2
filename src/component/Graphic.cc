@@ -63,7 +63,7 @@ m3::VecF m3::camera_position_m() {
 }
 m3::VecF m3::focus_position_m() {
 	auto* player = LEVEL.player();
-	return {player->position.x, player->position.y, m2g::focus_point_height};
+	return {player->position.x, player->position.y, PROXY.focus_point_height};
 }
 float m3::visible_width_m() {
 	// Do not recalculate unless the distance or FOV has changed

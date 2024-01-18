@@ -41,7 +41,7 @@ m2::void_expected m2::Level::init_single_player(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	type_state.emplace<splayer::State>();
 	return init_any_player(
-	    level_path_or_blueprint, name, true, m2g::pre_single_player_level_init, m2g::post_single_player_level_init);
+	    level_path_or_blueprint, name, true, &m2g::Proxy::pre_single_player_level_init, &m2g::Proxy::post_single_player_level_init);
 }
 
 m2::void_expected m2::Level::init_multi_player_as_host(
@@ -50,14 +50,14 @@ m2::void_expected m2::Level::init_multi_player_as_host(
 	type_state.emplace<mplayer::State>();
 
 	auto success = init_any_player(
-	    level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_init, &m2g::Proxy::post_multi_player_level_init);
 	m2_reflect_failure(success);
 
 	// Execute the first server update
 	GAME.server_thread().server_update();
 
 	// Populate level
-	m2g::multi_player_level_host_populate();
+	PROXY.multi_player_level_host_populate();
 
 	// Execute second server update
 	GAME.server_thread().server_update();
@@ -71,7 +71,7 @@ m2::void_expected m2::Level::init_multi_player_as_guest(
 	type_state.emplace<mplayer::State>();
 
 	auto success = init_any_player(
-	    level_path_or_blueprint, name, false, m2g::pre_multi_player_level_init, m2g::post_multi_player_level_init);
+	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_init, &m2g::Proxy::post_multi_player_level_init);
 	m2_reflect_failure(success);
 
 	auto expect_server_update = GAME.client_thread().process_server_update();
@@ -291,8 +291,8 @@ void m2::Level::display_message(const std::string& msg, float timeout) {
 
 m2::void_expected m2::Level::init_any_player(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
-    bool physical_world, std::function<void(const std::string&, const pb::Level&)> pre_level_init,
-    std::function<void(const std::string&, const pb::Level&)> post_level_init) {
+    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
+    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&)) {
 	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
 		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
@@ -304,14 +304,14 @@ m2::void_expected m2::Level::init_any_player(
 	}
 	_name = name;
 
-	pre_level_init(_name, *_lb);
+	(PROXY.*pre_level_init)(_name, *_lb);
 
-	left_hud_ui_state.emplace(m2g::ui::left_hud());
-	right_hud_ui_state.emplace(m2g::ui::right_hud());
+	left_hud_ui_state.emplace(PROXY.left_hud());
+	right_hud_ui_state.emplace(PROXY.right_hud());
 	message_box_ui_state.emplace(&ui::message_box_ui);
 
 	if (physical_world) {
-		world = new b2World(m2g::gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
+		world = new b2World(PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
 		contact_listener = new m2::box2d::ContactListener(
 		    m2::Physique::default_begin_contact_cb, m2::Physique::default_end_contact_cb);
 		world->SetContactListener(contact_listener);
@@ -326,7 +326,7 @@ m2::void_expected m2::Level::init_any_player(
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
 					auto [tile_obj, tile_id] = obj::create_tile(
 					    static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, GAME.get_sprite(sprite_type));
-					m2g::post_tile_create(tile_obj, sprite_type);
+					PROXY.post_tile_create(tile_obj, sprite_type);
 					LOG_TRACE("Created tile", tile_id);
 				}
 			}
@@ -348,13 +348,13 @@ m2::void_expected m2::Level::init_any_player(
 			if (group_it != groups.end()) {
 				group = group_it->second.get();
 			} else {
-				group = m2g::create_group(group_id.type);
+				group = PROXY.create_group(group_id.type);
 				groups[group_id] = std::unique_ptr<Group>(group);
 			}
 			obj.set_group(group_id, group->add_member(id));
 		}
 
-		auto load_result = m2g::init_fg_object(obj);
+		auto load_result = PROXY.init_fg_object(obj);
 		m2_reflect_failure(load_result);
 		LOG_TRACE("Created object", id);
 	}
@@ -376,7 +376,7 @@ m2::void_expected m2::Level::init_any_player(
 	message_box_ui_state->update_positions(GAME.dimensions().message_box);
 	message_box_ui_state->update_contents();
 
-	post_level_init(_name, *_lb);
+	(PROXY.*post_level_init)(_name, *_lb);
 
 	return {};
 }

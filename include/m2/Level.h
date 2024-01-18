@@ -2,6 +2,7 @@
 #include <Level.pb.h>
 #include <box2d/b2_world.h>
 #include <m2/game/DynamicGridLinesLoader.h>
+#include <m2g/Proxy.h>
 
 #include <functional>
 #include <optional>
@@ -105,7 +106,7 @@ namespace m2 {
 	   private:
 		void_expected init_any_player(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
-		    bool physical_world, std::function<void(const std::string&, const pb::Level&)> pre_level_init,
-		    std::function<void(const std::string&, const pb::Level&)> post_level_init);
+		    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
+		    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&));
 	};
 }  // namespace m2

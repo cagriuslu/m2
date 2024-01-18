@@ -12,66 +12,82 @@
 #include <string_view>
 #include <array>
 
-namespace m2g {
-	/// Name of the game, which is used to discover the resources
-	extern const std::string_view game_name;
+namespace m2 {
+	class Proxy {
+	   public:
+		// TODO make these private, give access to Game, implement getters
+		Proxy() = default;
 
-	extern const int default_game_height_m;
+		/// Name of the game, which is used to discover the resources
+		const std::string game_name = "<game-name>";
 
-	/// Should the b2World have gravity towards downwards direction
-	extern const bool gravity;
+		const int default_game_height_m = 16;
 
-	/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
-	extern const bool world_is_static;
+		/// Should the world have gravity towards downwards direction
+		const bool gravity = false;
 
-	/// Is lightning enabled? Darkens the textures.
-	extern const bool lightning;
+		/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
+		const bool world_is_static = true;
 
-	/// Z component of the focus position, which has the same XY position as the player
-	extern float focus_point_height;
-	/// Z component of the xy-plane for camera to mouse ray-casts
-	extern const float xy_plane_z_component;
+		/// Is lightning enabled? Darkens the textures.
+		const bool lightning = false;
 
-	/// Is the camera also a sound listener
-	extern const bool camera_is_listener;
+		/// Z component of the focus position, which has the same XY position as the player
+		float focus_point_height = 2.0f;
 
-	/// Context
-	void* create_context();
-	void destroy_context(void* context);
+		/// Z component of the xy-plane for camera to mouse ray-casts
+		const float xy_plane_z_component = 0.75f;
 
-	/// UI
-	namespace ui {
-		const m2::ui::Blueprint* main_menu();
-		const m2::ui::Blueprint* pause_menu();
-		const m2::ui::Blueprint* left_hud();
-		const m2::ui::Blueprint* right_hud();
-	}
+		/// Is the camera also a sound listener
+		const bool camera_is_listener = false;
 
-	/// Controls
-	m2::Key scancode_to_key(SDL_Scancode scancode);
-	extern const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> key_to_scancode;
+		void load_resources() {}
 
-	/// Called before/after a level is loaded
-	void pre_single_player_level_init(const std::string& name, const m2::pb::Level& level);
-	void post_single_player_level_init(const std::string& name, const m2::pb::Level& level);
-	void pre_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
-	void post_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
-	void multi_player_level_host_populate();
+		// UI
+		const m2::ui::Blueprint* main_menu() { return nullptr; }
+		const m2::ui::Blueprint* pause_menu() { return nullptr; }
+		const m2::ui::Blueprint* left_hud() { return nullptr; }
+		const m2::ui::Blueprint* right_hud() { return nullptr; }
 
-	/// Maps 0-based client indexes to the object IDs in this game instance
-	/// For the server, the first item would contain the ObjectId of the player.
-	/// For the client with index 1, the second item would contain the ObjectId of the player.
-	extern std::vector<m2::ObjectId> multi_player_object_ids;
+		// Controls
+		m2::Key scancode_to_key(SDL_Scancode scancode);
+		const std::array<SDL_Scancode, static_cast<unsigned>(m2::Key::end)> key_to_scancode = {
+		    SDL_SCANCODE_UNKNOWN,
+		    SDL_SCANCODE_ESCAPE,
+		    SDL_SCANCODE_W,
+		    SDL_SCANCODE_S,
+		    SDL_SCANCODE_A,
+		    SDL_SCANCODE_D,
+		    SDL_SCANCODE_SPACE,
+		    SDL_SCANCODE_GRAVE,
+		    SDL_SCANCODE_RETURN,
+		    SDL_SCANCODE_BACKSPACE,
+		    SDL_SCANCODE_MINUS,
+		    SDL_SCANCODE_EQUALS
+		};
 
-	/// Return the new turn_holder_index if command is accepted and a ServerUpdate is necessary.
-	std::optional<int> handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command);
+		// Called before/after a level is loaded
+		void pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+		void post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+		void pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+		void post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+		void multi_player_level_host_populate() {}
 
-	/// Called after a tile is created
-	void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
+		/// Maps 0-based client indexes to the object IDs in this game instance
+		/// For the server, the first item would contain the ObjectId of the player.
+		/// For the client with index 1, the second item would contain the ObjectId of the player.
+		std::vector<m2::ObjectId> multi_player_object_ids;
 
-	/// Foreground object loaded
-	m2::void_expected init_fg_object(m2::Object& obj);
+		/// Return the new turn_holder_index if command is accepted and a ServerUpdate is necessary.
+		std::optional<int> handle_client_command(MAYBE unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) { return std::nullopt; }
 
-	/// Create Group for the given type
-	m2::Group* create_group(pb::GroupType group_type);
+		/// Called after a tile is created
+		void post_tile_create(MAYBE m2::Object& obj, MAYBE m2g::pb::SpriteType sprite_type) {}
+
+		/// Load foreground object
+		m2::void_expected init_fg_object(MAYBE m2::Object& obj) { return {}; }
+
+		/// Create Group for the given type
+		m2::Group* create_group(MAYBE m2g::pb::GroupType group_type) { return nullptr; }
+	};
 }

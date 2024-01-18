@@ -19,7 +19,7 @@ namespace m2 {
 		std::unique_ptr<SDL_Texture, sdl::TextureDeleter> _texture;
 
 	public:
-		SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer);
+		SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer, bool lightning);
 		[[nodiscard]] const pb::SpriteSheet& sprite_sheet() const;
 		[[nodiscard]] SDL_Surface* surface() const;
 		[[nodiscard]] SDL_Texture* texture() const;
@@ -29,10 +29,10 @@ namespace m2 {
 	public:
 		explicit SpriteEffectsSheet(SDL_Renderer* renderer);
 		using DynamicSheet::texture;
-		RectI create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color);
-		RectI create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces);
-		RectI create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect);
-		RectI create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment);
+		RectI create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color, bool lightning);
+		RectI create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI &rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces, bool lightning);
+		RectI create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI &rect, bool lightning);
+		RectI create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI &rect, const pb::ImageAdjustment& image_adjustment, bool lightning);
 
 		[[nodiscard]] inline int texture_width() const { return width(); }
 		[[nodiscard]] inline int texture_height() const { return height(); }
@@ -63,7 +63,7 @@ namespace m2 {
 
 	public:
 		Sprite() = default;
-		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite);
+		Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, bool lightning);
 
 		// Accessors
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const;
@@ -102,8 +102,8 @@ namespace m2 {
 		}
 	};
 
-	std::vector<SpriteSheet> load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer* renderer);
-	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet);
+	std::vector<SpriteSheet> load_sprite_sheets(const std::filesystem::path& sprite_sheets_path, SDL_Renderer* renderer, bool lightning);
+	std::vector<Sprite> load_sprites(const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet, bool lightning);
 	std::vector<m2g::pb::SpriteType> list_level_editor_background_sprites(const std::vector<SpriteSheet>& sprite_sheets);
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(const std::filesystem::path& objects_path);
 }

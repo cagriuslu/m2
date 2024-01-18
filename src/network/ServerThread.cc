@@ -2,7 +2,6 @@
 #include <m2/network/Socket.h>
 #include <m2/network/Detail.h>
 #include <m2/protobuf/Detail.h>
-#include <m2/ProxyDetail.h>
 #include <m2/Log.h>
 #include <m2/Meta.h>
 #include <m2/Game.h>
@@ -74,11 +73,11 @@ void m2::network::ServerThread::server_update() {
 	auto count = client_count();
 	for (size_t i = 1; i < count; ++i) { // ServerUpdate is not sent to self
 		pb::NetworkMessage message;
-		message.set_game_hash(game_hash());
+		message.set_game_hash(GAME.hash());
 		message.set_sender_id(0);
 		message.mutable_server_update()->set_receiver_index(i);
 		message.mutable_server_update()->set_turn_holder_index(turn);
-		for (auto player_id : m2g::multi_player_object_ids) {
+		for (auto player_id : PROXY.multi_player_object_ids) {
 			message.mutable_server_update()->add_player_object_ids(player_id);
 		}
 		for (auto char_it : LEVEL.characters) { // Iterate over characters

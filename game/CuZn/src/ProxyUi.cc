@@ -256,18 +256,18 @@ const Blueprint right_hud_blueprint = {
 		.border_width_px = 2
 };
 
-const m2::ui::Blueprint *m2g::ui::main_menu() {
+const m2::ui::Blueprint* m2g::Proxy::main_menu() {
 	return &main_menu_blueprint;
 }
 
-const m2::ui::Blueprint *m2g::ui::pause_menu() {
+const m2::ui::Blueprint* m2g::Proxy::pause_menu() {
 	return &pause_menu_blueprint;
 }
 
-const m2::ui::Blueprint *m2g::ui::left_hud() {
+const m2::ui::Blueprint* m2g::Proxy::left_hud() {
 	return &left_hud_blueprint;
 }
 
-const m2::ui::Blueprint *m2g::ui::right_hud() {
+const m2::ui::Blueprint* m2g::Proxy::right_hud() {
 	return &right_hud_blueprint;
 }

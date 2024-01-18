@@ -1,5 +1,4 @@
 #include <rpg/Objects.h>
-#include <rpg/Context.h>
 #include <m2/box2d/Detail.h>
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj) {
@@ -21,18 +20,17 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 
 	phy.on_collision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		// Check enemy counter
-		auto& context = rpg::Context::get_instance();
-		if (context.alive_enemy_count == 0) {
+		if (PROXY.alive_enemy_count == 0) {
 			// Finish game
 			GAME.add_deferred_action([]() {
 				auto level_duration = LEVEL.get_level_duration();
 				LOG_INFO("Level duration", level_duration);
-				rpg::Context::get_instance().progress.mutable_level_completion_times()->operator[](LEVEL.name()) = level_duration;
+				PROXY.progress.mutable_level_completion_times()->operator[](LEVEL.name()) = level_duration;
 				LOG_INFO("Saving progress...");
-				rpg::Context::get_instance().save_progress();
+				PROXY.save_progress();
 				LOG_INFO("Progress saved");
 
-				if (m2::ui::State::create_execute_sync(m2g::ui::main_menu()) == m2::ui::Action::QUIT) {
+				if (m2::ui::State::create_execute_sync(PROXY.main_menu()) == m2::ui::Action::QUIT) {
 					GAME.quit = true;
 				}
 			});
@@ -40,8 +38,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	};
 	gfx.pre_draw = [](MAYBE m2::Graphic& gfx) {
 		// Check enemy counter, adjust sprite effect
-		auto& context = rpg::Context::get_instance();
-		gfx.draw_sprite_effect = context.alive_enemy_count ? m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE : m2::pb::SpriteEffectType::NO_SPRITE_EFFECT;
+		gfx.draw_sprite_effect = PROXY.alive_enemy_count ? m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE : m2::pb::SpriteEffectType::NO_SPRITE_EFFECT;
 	};
 
 	return {};
