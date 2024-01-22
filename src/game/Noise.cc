@@ -1,6 +1,8 @@
-#include <m2/Noise.h>
-#include <m2/VecI.h>
+#include "m2/game/Noise.h"
+
 #include <cmath>
+
+#include "m2/VecI.h"
 
 namespace internal::perlin {
 	// Permutation table
