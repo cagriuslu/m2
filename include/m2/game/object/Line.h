@@ -1,5 +1,5 @@
 #pragma once
-#include "../Object.h"
+#include "m2/Object.h"
 
 namespace m2::obj {
 	Id create_vertical_line(float x, SDL_Color color);

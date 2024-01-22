@@ -1,7 +1,7 @@
 #include <SDL2/SDL_image.h>
 #include <m2/Game.h>
 #include <m2/bulk_sheet_editor/DynamicSpriteSheetLoader.h>
-#include <m2/object/TexturePatch.h>
+#include <m2/game/object/TexturePatch.h>
 
 m2::expected<m2::DynamicSpriteSheetLoader> m2::DynamicSpriteSheetLoader::create(
     const std::filesystem::path& image_path, int image_ppm) {

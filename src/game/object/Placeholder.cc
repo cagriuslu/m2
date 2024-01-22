@@ -1,4 +1,4 @@
-#include <m2/object/Placeholder.h>
+#include "m2/game/object/Placeholder.h"
 
 m2::Id m2::obj::create_background_placeholder(const VecF& pos, const Sprite& sprite, BackgroundLayer layer) {
 	auto [obj, id] = create_object(pos);

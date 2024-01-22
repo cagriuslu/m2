@@ -1,5 +1,6 @@
-#include <m2/object/Origin.h>
-#include <m2/Game.h>
+#include "m2/game/object/Origin.h"
+
+#include "m2/Game.h"
 
 m2::Id m2::obj::create_origin() {
 	auto obj_pair = create_object(VecF{});

@@ -1,5 +1,5 @@
 #include <m2/game/DynamicGridLinesLoader.h>
-#include <m2/object/Line.h>
+#include <m2/game/object/Line.h>
 #include "m2/Game.h"
 
 m2::ObjectId m2::DynamicGridLinesLoader::load_vertical(int x) {

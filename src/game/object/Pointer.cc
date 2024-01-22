@@ -1,6 +1,7 @@
-#include <m2/object/Pointer.h>
-#include <m2/Object.h>
+#include "m2/game/object/Pointer.h"
+
 #include "m2/Game.h"
+#include "m2/Object.h"
 
 m2::Id m2::obj::create_pointer() {
     auto obj_pair = m2::create_object({});

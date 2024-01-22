@@ -1,6 +1,6 @@
 #include <m2/Game.h>
 #include <m2/game/Selection.h>
-#include <m2/object/Line.h>
+#include <m2/game/object/Line.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/sheet_editor/State.h>
 

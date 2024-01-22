@@ -1,5 +1,6 @@
-#include <m2/Game.h>
-#include <m2/object/TexturePatch.h>
+#include "m2/game/object/TexturePatch.h"
+
+#include "m2/Game.h"
 
 m2::Id m2::obj::create_texture_patch(const VecF& pos, SDL_Texture* texture, RectI rect, int ppm) {
 	auto [obj, id] = create_object(pos);

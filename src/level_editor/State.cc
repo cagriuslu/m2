@@ -1,7 +1,7 @@
 #include <m2/level_editor/State.h>
 #include <m2/Game.h>
-#include <m2/object/Ghost.h>
-#include <m2/object/Placeholder.h>
+#include <m2/game/object/Ghost.h>
+#include <m2/game/object/Placeholder.h>
 #include <m2/game/Selection.h>
 
 namespace {

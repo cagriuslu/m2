@@ -1,5 +1,5 @@
 #include <m2/sheet_editor/DynamicImageLoader.h>
-#include <m2/object/Pixel.h>
+#include <m2/game/object/Pixel.h>
 #include <m2/Game.h>
 #include <SDL2/SDL_image.h>
 

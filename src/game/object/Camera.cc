@@ -1,8 +1,8 @@
-#include <m2/object/Camera.h>
-#include <m2/object/Line.h>
+#include "m2/game/object/Camera.h"
 
 #include "m2/Game.h"
 #include "m2/Object.h"
+#include "m2/game/object/Line.h"
 
 // TODO this depends on the physics loop freq rather than time
 #define CAMERA_JUMP_RATIO (4.0f / 50.0f)

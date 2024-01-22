@@ -1,5 +1,6 @@
-#include <m2/object/Ghost.h>
-#include <m2/Game.h>
+#include "m2/game/object/Ghost.h"
+
+#include "m2/Game.h"
 
 m2::Id m2::obj::create_ghost(const Sprite& sprite) {
 	auto [obj, id] = m2::create_object(GAME.mouse_position_world_m().round());

@@ -1,9 +1,10 @@
-#include <m2/Game.h>
-#include <m2/object/God.h>
-#include <m2/ui/widget/ImageSelection.h>
-#include <m2/ui/widget/IntegerSelection.h>
-#include <m2/ui/widget/Text.h>
-#include <m2/ui/widget/TextSelection.h>
+#include "m2/game/object/God.h"
+
+#include "m2/Game.h"
+#include "m2/ui/widget/ImageSelection.h"
+#include "m2/ui/widget/IntegerSelection.h"
+#include "m2/ui/widget/Text.h"
+#include "m2/ui/widget/TextSelection.h"
 
 using namespace m2;
 

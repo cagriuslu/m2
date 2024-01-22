@@ -1,7 +1,8 @@
-#include <m2/object/Tile.h>
-#include <m2/Object.h>
-#include <m2/Game.h>
-#include <m2/box2d/Detail.h>
+#include "m2/game/object/Tile.h"
+
+#include "m2/Game.h"
+#include "m2/Object.h"
+#include "m2/box2d/Detail.h"
 
 std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const VecF& position, const m2::Sprite& sprite) {
     auto obj_pair = create_object(position);

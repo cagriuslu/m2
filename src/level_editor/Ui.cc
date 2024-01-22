@@ -1,6 +1,6 @@
 #include <m2/level_editor/Ui.h>
 #include "m2/Game.h"
-#include "m2/object/Ghost.h"
+#include "m2/game/object/Ghost.h"
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/ui/widget/IntegerSelection.h>
 #include <m2/ui/widget/ImageSelection.h>

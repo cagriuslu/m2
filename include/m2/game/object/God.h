@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/Object.h>
+#include "m2/Object.h"
 
 namespace m2::obj {
 	struct God : public ObjectImpl {

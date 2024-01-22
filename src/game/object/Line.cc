@@ -1,4 +1,4 @@
-#include <m2/object/Line.h>
+#include "m2/game/object/Line.h"
 
 m2::Id m2::obj::create_vertical_line(float x, SDL_Color color) {
 	auto [obj, id] = create_object(VecF{x, 0.0f});

@@ -1,6 +1,6 @@
 #include <m2/pixel_editor/State.h>
 #include <m2/Game.h>
-#include <m2/object/Pixel.h>
+#include <m2/game/object/Pixel.h>
 
 void m2::pedit::State::PaintMode::paint_color(const VecI& position) {
 	// Delete existing pixel, if there is one

@@ -1,7 +1,7 @@
 #pragma once
-#include <m2/Object.h>
-#include <m2/Sprite.h>
-#include <m2/VecF.h>
+#include "m2/Object.h"
+#include "m2/Sprite.h"
+#include "m2/VecF.h"
 
 namespace m2::obj {
 	Id create_background_placeholder(const VecF& pos, const Sprite& sprite, BackgroundLayer layer);
