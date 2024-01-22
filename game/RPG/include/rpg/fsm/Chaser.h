@@ -1,10 +1,12 @@
 #pragma once
-#include "m2/Object.h"
-#include "m2/Pathfinder.h"
-#include "m2/Fsm.h"
 #include <Enemy.pb.h>
-#include <list>
+
 #include <functional>
+#include <list>
+
+#include "m2/Fsm.h"
+#include "m2/Object.h"
+#include "m2/game/Pathfinder.h"
 
 namespace rpg {
 	enum class ChaserMode {

@@ -1,17 +1,19 @@
-#include <rpg/object/Enemy.h>
-#include <m2/game/CharacterMovement.h>
-#include <rpg/Objects.h>
-#include <m2/Object.h>
-#include "m2/Game.h"
-#include "rpg/group/ItemGroup.h"
-#include <rpg/Detail.h>
-#include <m2/M2.h>
-#include <m2/box2d/Detail.h>
-#include <rpg/Data.h>
 #include <m2/Group.h>
+#include <m2/M2.h>
+#include <m2/Object.h>
+#include <m2/box2d/Detail.h>
+#include <m2/game/CharacterMovement.h>
 #include <m2g_Interaction.pb.h>
-#include <m2/Pathfinder.h>
+#include <rpg/Data.h>
+#include <rpg/Detail.h>
+#include <rpg/Objects.h>
+#include <rpg/object/Enemy.h>
+
 #include <deque>
+
+#include "m2/Game.h"
+#include "m2/game/Pathfinder.h"
+#include "rpg/group/ItemGroup.h"
 
 using namespace rpg;
 using namespace m2g;

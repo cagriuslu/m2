@@ -3,14 +3,13 @@
 #include <SDL2/SDL_ttf.h>
 #include <m2/Object.h>
 #include <m2/Pool.h>
-#include <m2g_ObjectType.pb.h>
 #include <m2g/Proxy.h>
+#include <m2g_ObjectType.pb.h>
 
 #include <filesystem>
 #include <functional>
 #include <vector>
 
-#include "Animation.h"
 #include "AudioManager.h"
 #include "DrawList.h"
 #include "Item.h"
@@ -21,6 +20,7 @@
 #include "Song.h"
 #include "Sprite.h"
 #include "m2/Events.h"
+#include "m2/game/Animation.h"
 #include "network/ClientThread.h"
 #include "network/ServerThread.h"
 #include "protobuf/LUT.h"

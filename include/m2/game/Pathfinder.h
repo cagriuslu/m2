@@ -1,10 +1,12 @@
 #pragma once
-#include <m2/VecI.h>
-#include <m2/VecF.h>
-#include "Meta.h"
 #include <Level.pb.h>
-#include <unordered_set>
+
 #include <list>
+#include <unordered_set>
+
+#include "m2/Meta.h"
+#include "m2/VecF.h"
+#include "m2/VecI.h"
 
 namespace m2 {
 	using Path = std::vector<VecI>;

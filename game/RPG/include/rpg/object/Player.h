@@ -1,11 +1,11 @@
 #pragma once
-#include <m2/Animation.h>
 #include <m2/Meta.h>
 #include <m2g_ItemType.pb.h>
 
 #include <vector>
 
 #include "m2/Object.h"
+#include "m2/game/Animation.h"
 #include "m2/game/fsm/AnimationFsm.h"
 
 namespace rpg {

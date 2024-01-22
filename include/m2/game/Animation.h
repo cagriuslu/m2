@@ -1,9 +1,11 @@
 #pragma once
-#include "Fsm.h"
-#include "Object.h"
-#include <m2g_SpriteType.pb.h>
 #include <Animation.pb.h>
+#include <m2g_SpriteType.pb.h>
+
 #include <vector>
+
+#include "m2/Fsm.h"
+#include "m2/Object.h"
 
 namespace m2 {
 	class Animation {

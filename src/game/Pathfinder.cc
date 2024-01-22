@@ -1,14 +1,16 @@
-#include "m2/Pathfinder.h"
+#include "m2/game/Pathfinder.h"
+
+#include <cfloat>
+#include <list>
+#include <map>
+#include <unordered_map>
+
 #include "m2/Component.h"
 #include "m2/Game.h"
-#include <m2/box2d/RayCast.h>
-#include <m2/VecI.h>
-#include <m2/box2d/Detail.h>
-#include <m2/M2.h>
-#include <cfloat>
-#include <unordered_map>
-#include <map>
-#include <list>
+#include "m2/M2.h"
+#include "m2/VecI.h"
+#include "m2/box2d/Detail.h"
+#include "m2/box2d/RayCast.h"
 
 m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	const auto& first_layer = lb.background_layers(0);

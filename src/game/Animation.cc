@@ -1,7 +1,9 @@
-#include <m2/Animation.h>
-#include <m2/protobuf/Detail.h>
-#include <m2/Exception.h>
+#include "m2/game/Animation.h"
+
 #include <utility>
+
+#include "m2/Exception.h"
+#include "m2/protobuf/Detail.h"
 
 using namespace m2g::pb;
 
