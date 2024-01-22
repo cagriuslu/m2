@@ -1,8 +1,9 @@
 #pragma once
-#include "../Fsm.h"
-#include "../Object.h"
-#include "../Animation.h"
 #include <Animation.pb.h>
+
+#include "m2/Animation.h"
+#include "m2/Fsm.h"
+#include "m2/Object.h"
 
 namespace m2 {
 	class AnimationFsmState {};

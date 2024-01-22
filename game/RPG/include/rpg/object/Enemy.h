@@ -1,12 +1,14 @@
 #pragma once
-#include <m2/fsm/AnimationFsm.h>
+#include <m2/Meta.h>
+
+#include <variant>
+
 #include "m2/Object.h"
+#include "m2/game/fsm/AnimationFsm.h"
 #include "rpg/fsm/Chaser.h"
 #include "rpg/fsm/Escaper.h"
 #include "rpg/fsm/HitNRunner.h"
 #include "rpg/fsm/Patroller.h"
-#include <m2/Meta.h>
-#include <variant>
 
 namespace rpg {
     struct Enemy : public m2::ObjectImpl {
