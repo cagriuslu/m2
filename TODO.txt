@@ -13,6 +13,11 @@
 - SmartPointer may be useless, think about it
 - sedit ve bsedit'te, selection aktif iken window resize edilirse selection bozuluyor
 
+Level Editor
+- Grid'i kapatinca grid silinmiyor
+- Buyuk bir kare secimi yaptim. diagonal eksende sprite'lar vardi, baska yoktu. Bir cell yana kayip paste yapinca ortalik yamuldu.
+  Paste yaparken kendi yapistiridigi seyleri de kopyaladi
+
 Pixel Editor
 - Draw transparency pattern
 - Implement SAVE
