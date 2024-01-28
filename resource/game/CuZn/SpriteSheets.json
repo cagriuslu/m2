@@ -1,145 +1,207 @@
 {
   "sheets": [
     {
-      "Comment": "Auto-generated",
-      "resource": "resource/game/CuZn/png/dummy.png",
-      "ppm": 16,
+      "resource": "resource/game/CuZn/png/guiicons/armor.png",
+      "ppm": 512,
       "sprites": [
-        {},
         {
-          "type": "GRONINGEN_EXPLOSIVE_PRESS"
-        },
-        {
-          "type": "GRONINGEN_WOOD"
-        },
-        {
-          "type": "GRONINGEN_JEWELLERY"
-        },
-        {
-          "type": "ZWOLLE_EXPLOSIVE_KITCHEN"
-        },
-        {
-          "type": "ZWOLLE_EXPLOSIVE_PRESS"
-        },
-        {
-          "type": "ZWOLLE_TOOL"
-        },
-        {
-          "type": "LEEUWARDEN_EXPLOSIVE_PRESS"
-        },
-        {
-          "type": "LEEUWARDEN_EXPLOSIVE_WOOD"
-        },
-        {
-          "type": "DEN_HELDER_EXPLOSIVE_PRESS"
-        },
-        {
-          "type": "DEN_HELDER_JEWELLERY_TOOL"
-        },
-        {
-          "type": "DEN_HELDER_PRESS"
-        },
-        {
-          "type": "AMSTERDAM_EXPLOSIVE_KITCHEN"
-        },
-        {
-          "type": "AMSTERDAM_PRESS_WOOD"
-        },
+          "type": "APPELDOORN_GOUDA_GUARD"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/book_food.png",
+      "ppm": 512,
+      "sprites": [
         {
           "type": "LELYSTAD_PRESS_KITCHEN"
-        },
-        {
-          "type": "LELYSTAD_EXPLOSIVE_KITCHEN"
         },
         {
           "type": "DIEMEN_PRESS_KITCHEN"
         },
         {
-          "type": "DIEMEN_JEWELLERY"
+          "type": "GOUDA_PRESS_KITCHEN"
+        },
+        {
+          "type": "NIJMEGEN_PRESS_KITCHEN"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/book_wood.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "AMSTERDAM_PRESS_WOOD"
         },
         {
           "type": "APPELDOORN_PRESS_WOOD"
         },
         {
-          "type": "APPELDOORN_KITCHEN"
-        },
-        {
           "type": "UTRECHT_PRESS_WOOD"
         },
         {
-          "type": "UTRECHT_WOOD"
+          "type": "DEN_HAAG_PRESS_WOOD"
+        },
+        {
+          "type": "VENLO_PRESS_WOOD"
+        },
+        {
+          "type": "MASSTRICH_PRESS_WOOD"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/book.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "DEN_HELDER_PRESS"
+        },
+        {
+          "type": "DEN_HAAG_PRESS"
+        },
+        {
+          "type": "EINDHOVEN_PRESS"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/boomb_book.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "GRONINGEN_EXPLOSIVE_PRESS"
+        },
+        {
+          "type": "ZWOLLE_EXPLOSIVE_PRESS"
+        },
+        {
+          "type": "LEEUWARDEN_EXPLOSIVE_PRESS"
+        },
+        {
+          "type": "DEN_HELDER_EXPLOSIVE_PRESS"
+        },
+        {
+          "type": "EINDHOVEN_EXPLOSIVE_PRESS"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/boomb_food.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "ZWOLLE_EXPLOSIVE_KITCHEN"
+        },
+        {
+          "type": "AMSTERDAM_EXPLOSIVE_KITCHEN"
+        },
+        {
+          "type": "LELYSTAD_EXPLOSIVE_KITCHEN"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/boomb_wood.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "LEEUWARDEN_EXPLOSIVE_WOOD"
         },
         {
           "type": "ARNHEM_EXPLOSIVE_WOOD"
         },
         {
+          "type": "BREDA_EXPLOSIVE_WOOD"
+        },
+        {
+          "type": "NIJMEGEN_EXPLOSIVE_WOOD"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/boomb.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "BREDA_EXPLOSIVE"
+        },
+        {
+          "type": "TILBURG_EXPLOSIVE"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/food.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "APPELDOORN_KITCHEN"
+        },
+        {
+          "type": "STANDALONE_KITCHEN"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/hammer_book.png",
+      "ppm": 512,
+      "sprites": [
+        {
           "type": "GOUDA_TOOL_PRESS"
         },
         {
-          "type": "GOUDA_PRESS_KITCHEN"
-        },
+          "type": "VENLO_TOOL_PRESS"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/hammer_food.png",
+      "ppm": 512,
+      "sprites": [
         {
           "type": "ROTTERDAM_TOOL_KITCHEN"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/hammer.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "ZWOLLE_TOOL"
         },
         {
           "type": "ROTTERDAM_TOOL"
+        },
+        {
+          "type": "SHERTOGENBOSCH_TOOL"
+        },
+        {
+          "type": "EINDHOVEN_TOOL"
+        },
+        {
+          "type": "MASSTRICH_TOOL"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/money.png",
+      "ppm": 512,
+      "sprites": [
+        {},
+        {
+          "type": "GRONINGEN_WOOD"
+        },
+        {
+          "type": "UTRECHT_WOOD"
         },
         {
           "type": "ROTTERDAM_WOOD"
         },
         {
           "type": "SHERTOGENBOSCH_WOOD"
-        },
-        {
-          "type": "SHERTOGENBOSCH_TOOL"
-        },
-        {
-          "type": "BREDA_EXPLOSIVE_WOOD"
-        },
-        {
-          "type": "BREDA_EXPLOSIVE"
-        },
-        {
-          "type": "DEN_HAAG_PRESS"
-        },
-        {
-          "type": "DEN_HAAG_PRESS_WOOD"
-        },
-        {
-          "type": "TILBURG_EXPLOSIVE"
-        },
-        {
-          "type": "EINDHOVEN_EXPLOSIVE_PRESS"
-        },
-        {
-          "type": "EINDHOVEN_PRESS"
-        },
-        {
-          "type": "EINDHOVEN_TOOL"
-        },
-        {
-          "type": "VENLO_JEWELLERY"
-        },
-        {
-          "type": "VENLO_PRESS_WOOD"
-        },
-        {
-          "type": "VENLO_TOOL_PRESS"
-        },
-        {
-          "type": "NIJMEGEN_PRESS_KITCHEN"
-        },
-        {
-          "type": "NIJMEGEN_EXPLOSIVE_WOOD"
-        },
-        {
-          "type": "MASSTRICH_PRESS_WOOD"
-        },
-        {
-          "type": "MASSTRICH_TOOL"
-        },
-        {
-          "type": "KITCHEN"
         },
         {
           "type": "ANTWERPEN"
@@ -155,15 +217,39 @@
         },
         {
           "type": "NEWCASTLE"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/trinket_hammer.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "DEN_HELDER_JEWELLERY_TOOL"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/trinket.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "GRONINGEN_JEWELLERY"
         },
+        {
+          "type": "DIEMEN_JEWELLERY"
+        },
+        {
+          "type": "VENLO_JEWELLERY"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/war_armor.png",
+      "ppm": 512,
+      "sprites": [
         {
           "type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
-        },
-        {
-          "type": "GRONINGEN_LEEUWARDEN_KNIGHT"
-        },
-        {
-          "type": "ZWOLLE_LELYSTAD_KNIGHT"
         },
         {
           "type": "ZWOLLE_APPELDOORN_GUARD_KNIGHT"
@@ -181,9 +267,6 @@
           "type": "DEN_HELDER_NEWCASTLE_GUARD_KNIGHT"
         },
         {
-          "type": "AMSTERDAM_LELYSTAD_KNIGHT"
-        },
-        {
           "type": "AMSTERDAM_DIEMEN_GUARD_KNIGHT"
         },
         {
@@ -193,13 +276,7 @@
           "type": "DIEMEN_UTRECHT_GUARD_KNIGHT"
         },
         {
-          "type": "APPELDOORN_UTRECHT_KNIGHT"
-        },
-        {
           "type": "APPELDOORN_ARNHEM_GUARD_KNIGHT"
-        },
-        {
-          "type": "APPELDOORN_GOUDA_GUARD"
         },
         {
           "type": "UTRECHT_KITCHEN1_GUARD_KNIGHT"
@@ -209,9 +286,6 @@
         },
         {
           "type": "UTRECHT_DEN_HAAG_GUARD_KNIGHT"
-        },
-        {
-          "type": "ARNHEM_GOUDA_KNIGHT"
         },
         {
           "type": "ARNHEM_EINDHOVEN_GUARD_KNIGHT"
@@ -256,22 +330,43 @@
           "type": "EINDHOVEN_VENLO_GUARD_KNIGHT"
         },
         {
-          "type": "EINDHOVEN_NIJMEGEN_KNIGHT"
-        },
-        {
-          "type": "EINDHOVEN_MASSTRICH_KNIGHT"
-        },
-        {
           "type": "EINDHOVEN_COLOGNE_GUARD_KNIGHT"
-        },
-        {
-          "type": "VENLO_NIJMEGEN_KNIGHT"
         },
         {
           "type": "MASSTRICH_ANTWERPEN_GUARD_KNIGHT"
         },
         {
           "type": "MASSTRICH_COLOGNE_GUARD_KNIGHT"
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/guiicons/war.png",
+      "ppm": 512,
+      "sprites": [
+        {
+          "type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+        },
+        {
+          "type": "ZWOLLE_LELYSTAD_KNIGHT"
+        },
+        {
+          "type": "AMSTERDAM_LELYSTAD_KNIGHT"
+        },
+        {
+          "type": "APPELDOORN_UTRECHT_KNIGHT"
+        },
+        {
+          "type": "ARNHEM_GOUDA_KNIGHT"
+        },
+        {
+          "type": "EINDHOVEN_NIJMEGEN_KNIGHT"
+        },
+        {
+          "type": "EINDHOVEN_MASSTRICH_KNIGHT"
+        },
+        {
+          "type": "VENLO_NIJMEGEN_KNIGHT"
         }
       ]
     },
