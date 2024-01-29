@@ -85,6 +85,8 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	type_state.emplace<ledit::State>();
 	auto& le_state = std::get<ledit::State>(type_state);
 
+	message_box_ui_state.emplace(&ui::message_box_ui);
+
 	if (std::filesystem::exists(*_lb_path)) {
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
 		m2_reflect_failure(lb);
@@ -127,6 +129,8 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	right_hud_ui_state.emplace(&level_editor::ui::right_hud);
 	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 	right_hud_ui_state->update_contents();
+	message_box_ui_state->update_positions(GAME.dimensions().message_box);
+	message_box_ui_state->update_contents();
 
 	return {};
 }
