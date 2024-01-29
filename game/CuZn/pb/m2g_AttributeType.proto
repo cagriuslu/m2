@@ -19,10 +19,10 @@ enum AttributeType {
     FOOD_BONUS_SECOND_ERA = 12;
     WOOD_BONUS = 13;
     TOOL_BONUS = 14;
-    EACH_PLAYER_COUNT = 15;
+    EACH_PLAYER_COUNT = 15; // How many can be held by each player
 
     // ITEM_CATEGORY_CARD
-    GLOBAL_COUNT_2_PLAYER = 16;
-    GLOBAL_COUNT_3_PLAYER = 17;
-    GLOBAL_COUNT_4_PLAYER = 18;
+    GLOBAL_COUNT_2_PLAYER = 16; // How many exists in the game for a 2-player game
+    GLOBAL_COUNT_3_PLAYER = 17; // How many exists in the game for a 3-player game
+    GLOBAL_COUNT_4_PLAYER = 18; // How many exists in the game for a 4-player game
 }

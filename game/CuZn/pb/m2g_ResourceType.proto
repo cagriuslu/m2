@@ -3,10 +3,14 @@ package m2g.pb;
 
 enum ResourceType {
   NO_RESOURCE = 0;
+
+  // For HUMAN_PLAYERs
   VICTORY_POINTS = 1;
   INCOME_POINTS = 2;
   DEBT_POINTS = 3;
   MONEY = 4;
+
+  // For TILES
   IS_FLIPPED = 5;
   WOOD_CUBE = 6;
   TOOL_CRATE = 7;
