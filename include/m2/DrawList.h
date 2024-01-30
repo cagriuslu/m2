@@ -1,30 +1,36 @@
 #pragma once
-#include "Object.h"
-#include "VecF.h"
 #include <map>
 #include <unordered_map>
+
+#include "Object.h"
 #include "SpinLock.h"
+#include "VecF.h"
 
 namespace m2 {
 	/// A list that orders the items with their Y-positions
 	class DrawList {
-	public:
+	   public:
 		struct DrawItem {
 			ObjectId obj_id;
 			GraphicId gfx_id;
 		};
 
-	private:
+	   private:
+		/// Special Vec2f comparator that sorts based on Y-axis because that's how we draw items
 		struct Vec2fComparator {
 			bool operator()(const VecF& lhs, const VecF& rhs) const;
 		};
+
+		/// A map is used to order the items
 		std::multimap<VecF, DrawItem, Vec2fComparator> draw_map;
+
+		/// A map that maps an ObjectId to an item in the draw_map
 		std::unordered_map<ObjectId, decltype(draw_map)::iterator> id_lookup;
 
+		/// A queue of updates
 		std::vector<std::pair<ObjectId, VecF>> update_queue;
-		SpinLock update_queue_lock;
 
-	public:
+	   public:
 		struct ConstIterator {
 			decltype(draw_map)::const_iterator map_it;
 
@@ -33,12 +39,19 @@ namespace m2 {
 			GraphicId operator*() const;
 		};
 
+		/// Add new object to the DrawList
 		void insert(ObjectId id);
+
+		/// Queue a position update for an object for later
 		void queue_update(ObjectId id, const VecF& pos);
+
+		/// Apply the queued updates
 		void update();
+
+		/// Remove an object from the DrawList
 		void remove(ObjectId id);
 
 		[[nodiscard]] ConstIterator begin() const;
 		[[nodiscard]] ConstIterator end() const;
 	};
-}
+}  // namespace m2

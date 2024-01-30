@@ -25,13 +25,10 @@ void m2::DrawList::insert(ObjectId id) {
 }
 
 void m2::DrawList::queue_update(ObjectId id, const VecF& pos) {
-	update_queue_lock.lock();
 	update_queue.emplace_back(id, pos);
-	update_queue_lock.unlock();
 }
 
 void m2::DrawList::update() {
-	update_queue_lock.lock(); // Not necessary, just in case
 	for (auto& [id, pos]: update_queue) {
 		auto id_lookup_it = id_lookup.find(id);
 		if (id_lookup_it != id_lookup.end()) {
@@ -42,7 +39,6 @@ void m2::DrawList::update() {
 		}
 	}
 	update_queue.clear();
-	update_queue_lock.unlock();
 }
 
 void m2::DrawList::remove(ObjectId id) {
