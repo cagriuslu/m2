@@ -228,52 +228,6 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	}
 }
 
-const m2::SpriteSheet& m2::Sprite::sprite_sheet() const {
-	return *_sprite_sheet;
-}
-SDL_Texture* m2::Sprite::effects_texture() const {
-	if (_effects_sheet) {
-		return _effects_sheet->texture();
-	}
-	return nullptr;
-}
-m2::RectI m2::Sprite::effect_rect(pb::SpriteEffectType effect_type) const {
-	return _effects[pb::enum_index(effect_type)];
-}
-bool m2::Sprite::has_foreground_companion() const {
-	return _foreground_companion_center_offset_m.has_value();
-}
-m2::VecF m2::Sprite::foreground_companion_center_offset_px() const {
-	return _foreground_companion_center_offset_px.value();
-}
-m2::VecF m2::Sprite::foreground_companion_center_offset_m() const {
-	return _foreground_companion_center_offset_m.value();
-}
-float m2::Sprite::original_rotation_radians() const {
-	return _original_rotation_radians;
-}
-int m2::Sprite::ppm() const {
-	return _ppm;
-}
-m2::VecF m2::Sprite::background_collider_center_offset_m() const {
-	return _background_collider_center_offset_m;
-}
-m2::VecF m2::Sprite::background_collider_rect_dims_m() const {
-	return _background_collider_rect_dims_m;
-}
-float m2::Sprite::background_collider_circ_radius_m() const {
-	return _background_collider_circ_radius_m;
-}
-m2::VecF m2::Sprite::foreground_collider_center_offset_m() const {
-	return _foreground_collider_center_offset_m;
-}
-m2::VecF m2::Sprite::foreground_collider_rect_dims_m() const {
-	return _foreground_collider_rect_dims_m;
-}
-float m2::Sprite::foreground_collider_circ_radius_m() const {
-	return _foreground_collider_circ_radius_m;
-}
-
 float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
 	return static_cast<float>(GAME.dimensions().ppm) / static_cast<float>(ppm());
 }
