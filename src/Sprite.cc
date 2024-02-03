@@ -187,7 +187,7 @@ m2::Sprite::Sprite(
       _original_rotation_radians(sprite.regular().original_rotation() * m2::PI),
       _ppm(sprite.regular().override_ppm() ? sprite.regular().override_ppm() : sprite_sheet.sprite_sheet().ppm()),
       _center_to_origin_vec_px(sprite.regular().center_to_origin_vec_px()),
-      _center_offset_m(_center_to_origin_vec_px / (float)_ppm),
+      _center_to_origin_vec_m(_center_to_origin_vec_px / (float)_ppm),
       _background_collider_type(
           sprite.regular().has_background_collider()
               ? (sprite.regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE

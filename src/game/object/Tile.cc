@@ -48,7 +48,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const
 }
 
 std::pair<m2::Object&, m2::Id> m2::obj::create_tile_foreground_companion(const VecF& position, const m2::Sprite& sprite) {
-	auto obj_pair = create_object(position - sprite.center_offset_m() + sprite.foreground_companion_center_to_origin_vec_m());
+	auto obj_pair = create_object(position - sprite.center_to_origin_vec_m() + sprite.foreground_companion_center_to_origin_vec_m());
 	auto& companion = obj_pair.first;
 
 	auto& gfx = companion.add_graphic(sprite);
