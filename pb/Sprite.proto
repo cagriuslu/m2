@@ -77,17 +77,21 @@ message RegularSprite {
   repeated RectI foreground_companion_rects = 10; // w.r.t SpriteSheet coordinates
 }
 
+message Duplicate {
+  m2g.pb.SpriteType original_type = 1;
+}
+
 message Sprite {
-  string __comment__ = 1;
+  string comment = 1;
   m2g.pb.SpriteType type = 2;
   oneof variant {
     RegularSprite regular = 3;
-    m2g.pb.SpriteType duplicate_of = 4;
+    Duplicate duplicate = 4;
   }
 }
 
 message SpriteSheet {
-  string __comment__ = 1;
+  string comment = 1;
   string resource = 2;
   int32 ppm = 3; // Pixels per meter
   repeated Sprite sprites = 4;

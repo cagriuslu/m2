@@ -19,7 +19,7 @@ message SynthNote {
 }
 
 message SynthTrack {
-    string __comment__ = 1;
+    string comment = 1;
     SoundWaveShape shape = 2;
     float volume = 3;  // [0,1]
     float balance = 4; // [-1,1] left to right
