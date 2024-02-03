@@ -74,7 +74,7 @@ namespace m2 {
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const { return *_sprite_sheet; }
 		[[nodiscard]] inline const SpriteEffectsSheet* effects_sheet() const { return _effects_sheet; }
 		[[nodiscard]] SDL_Texture* effects_texture() const { return _effects_sheet ? _effects_sheet->texture() : nullptr; }
-		[[nodiscard]] RectI effect_rect(pb::SpriteEffectType effect_type) const { return _effects[pb::enum_index(effect_type)]; }
+		[[nodiscard]] const RectI& effect_rect(pb::SpriteEffectType effect_type) const { return _effects[pb::enum_index(effect_type)]; }
 		[[nodiscard]] bool has_foreground_companion() const { return _foreground_companion_center_to_origin_vec_m.has_value(); }
 		[[nodiscard]] VecF foreground_companion_center_to_origin_vec_px() const { return _foreground_companion_center_to_origin_vec_px.value(); }
 		[[nodiscard]] VecF foreground_companion_center_to_origin_vec_m() const { return _foreground_companion_center_to_origin_vec_m.value(); }

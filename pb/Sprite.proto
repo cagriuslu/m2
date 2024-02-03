@@ -19,7 +19,7 @@ message ImageAdjustment {
 }
 
 enum SpriteEffectType {
-  NO_SPRITE_EFFECT = 0;
+  __NO_SPRITE_EFFECT = 0; // Shouldn't be used in the code, instead use IsForegroundCompanion{false}
   SPRITE_EFFECT_MASK = 1;
   SPRITE_EFFECT_GRAYSCALE = 2;
   SPRITE_EFFECT_IMAGE_ADJUSTMENT = 3;
