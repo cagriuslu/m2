@@ -40,8 +40,8 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	// Add physics
 	auto& phy = obj.add_physique();
 	auto bp = m2::box2d::example_bullet_body_blueprint();
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(sprite.foreground_collider_center_offset_m().x);
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(sprite.foreground_collider_center_offset_m().y);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(sprite.foreground_collider_origin_to_origin_vec_m().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(sprite.foreground_collider_origin_to_origin_vec_m().y);
 	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(sprite.foreground_collider_circ_radius_m());
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
 	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);

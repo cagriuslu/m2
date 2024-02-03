@@ -11,9 +11,9 @@
           "type": "DWARF_FULL",
           "regular": {
             "rect": {"x": 0, "y": 0, "w": 162, "h": 176},
-            "centerOffsetPx" : {"x": -40, "y": 53},
+            "centerToOriginVecPx" : {"x": -40, "y": 53},
             "backgroundCollider": {
-              "originOffsetPx": {"x": -40, "y": 53},
+              "originToOriginVecPx": {"x": -40, "y": 53},
               "circRadiusPx": 35
             }
           }
@@ -28,7 +28,7 @@
           "type": "BLACKSMITH_FULL",
           "regular": {
             "rect": {"x": 0, "y": 0, "w": 471, "h": 438},
-            "centerOffsetPx" : {"x": 0, "y": 0}
+            "centerToOriginVecPx" : {"x": 0, "y": 0}
           }
         }
       ]

@@ -17,7 +17,7 @@
             "originalRotation": -0.75,
             "overridePpm": 32,
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 5
               },
               "circRadiusPx": 3
@@ -35,7 +35,7 @@
             "originalRotation": -0.75,
             "overridePpm": 32,
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 5
               },
               "circRadiusPx": 3
@@ -67,11 +67,11 @@
               "h": 16
             },
             "originalRotation": -0.75,
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -13
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 13
               },
               "rectDimsPx": {
@@ -119,11 +119,11 @@
               "h": 16
             },
             "originalRotation": -0.75,
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -13
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 13
               },
               "rectDimsPx": {
@@ -142,7 +142,7 @@
               "w": 16,
               "h": 16
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 3
             },
             "backgroundCollider": {
@@ -159,7 +159,7 @@
               "w": 16,
               "h": 16
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 3
             },
             "backgroundCollider": {
@@ -256,7 +256,7 @@
               {
                 "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
                 "foregroundCompanion": {
-                  "centerOffsetPx": {
+                  "centerToOriginVecPx": {
                     "y": 5.5
                   },
                   "rects": [
@@ -301,7 +301,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": 5.5
               },
               "rectDimsPx": {
@@ -310,7 +310,7 @@
               }
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": -4.5
               },
               "rectDimsPx": {
@@ -328,7 +328,7 @@
               {
                 "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
                 "foregroundCompanion": {
-                  "centerOffsetPx": {
+                  "centerToOriginVecPx": {
                     "y": 5.5
                   },
                   "rects": [
@@ -373,7 +373,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": 5.5
               },
               "rectDimsPx": {
@@ -382,7 +382,7 @@
               }
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 4.5
               },
               "rectDimsPx": {
@@ -403,7 +403,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": -1
               },
               "rectDimsPx": {
@@ -412,7 +412,7 @@
               }
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": -4.5,
                 "y": 6
               },
@@ -434,7 +434,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": -1
               },
               "rectDimsPx": {
@@ -443,7 +443,7 @@
               }
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 4.5,
                 "y": 6
               },
@@ -483,7 +483,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": -4
               },
               "rectDimsPx": {
@@ -504,7 +504,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 4
               },
               "rectDimsPx": {
@@ -522,7 +522,7 @@
               {
                 "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
                 "foregroundCompanion": {
-                  "centerOffsetPx": {
+                  "centerToOriginVecPx": {
                     "y": 5.5
                   },
                   "rects": [
@@ -549,7 +549,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": 5.5
               },
               "rectDimsPx": {
@@ -567,7 +567,7 @@
               {
                 "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
                 "foregroundCompanion": {
-                  "centerOffsetPx": {
+                  "centerToOriginVecPx": {
                     "x": 4.5,
                     "y": 5.5
                   },
@@ -589,7 +589,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 4.5,
                 "y": 5.5
               },
@@ -608,7 +608,7 @@
               {
                 "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
                 "foregroundCompanion": {
-                  "centerOffsetPx": {
+                  "centerToOriginVecPx": {
                     "x": -4.5,
                     "y": 5.5
                   },
@@ -630,7 +630,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": -4.5,
                 "y": 5.5
               },
@@ -652,7 +652,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 4.5,
                 "y": -2
               },
@@ -674,7 +674,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": -4.5,
                 "y": -2
               },
@@ -748,7 +748,7 @@
               {
                 "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
                 "foregroundCompanion": {
-                  "centerOffsetPx": {
+                  "centerToOriginVecPx": {
                     "y": -2.5
                   },
                   "rects": [
@@ -774,11 +774,11 @@
               "w": 16,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": -8
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": 5.5
               },
               "rectDimsPx": {
@@ -808,7 +808,7 @@
               {
                 "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
                 "foregroundCompanion": {
-                  "centerOffsetPx": {
+                  "centerToOriginVecPx": {
                     "y": -2.5
                   },
                   "rects": [
@@ -834,11 +834,11 @@
               "w": 16,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": -8
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": 5.5
               },
               "rectDimsPx": {
@@ -859,7 +859,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": -6.5,
                 "y": -2
               },
@@ -893,7 +893,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 6.5,
                 "y": -2
               },
@@ -915,7 +915,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": -6.5
               },
               "rectDimsPx": {
@@ -948,7 +948,7 @@
               "h": 16
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 6.5
               },
               "rectDimsPx": {
@@ -1009,7 +1009,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 10
             },
@@ -1017,7 +1017,7 @@
               "circRadiusPx": 7.5
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": -10
               },
               "circRadiusPx": 9.5
@@ -1031,7 +1031,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1044,7 +1044,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1058,7 +1058,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1071,7 +1071,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1085,7 +1085,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1099,7 +1099,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1112,7 +1112,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1126,7 +1126,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1140,7 +1140,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1153,7 +1153,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1167,7 +1167,7 @@
               "w": 26,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 10
             }
           }
@@ -1197,14 +1197,14 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             },
             "backgroundCollider": {
               "circRadiusPx": 7
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": -8.5
               },
               "circRadiusPx": 8.5
@@ -1229,7 +1229,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1252,7 +1252,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1275,7 +1275,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1298,7 +1298,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1321,7 +1321,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1344,7 +1344,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1367,7 +1367,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1390,7 +1390,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1413,7 +1413,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1436,7 +1436,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1459,7 +1459,7 @@
               "w": 33,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 8.5
             }
           }
@@ -1488,18 +1488,18 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": 6
               },
               "circRadiusPx": 3.5
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": -4
               },
               "circRadiusPx": 6
@@ -1524,7 +1524,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1548,7 +1548,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1572,7 +1572,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1596,7 +1596,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1620,7 +1620,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1644,7 +1644,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1668,7 +1668,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1692,7 +1692,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1716,7 +1716,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1740,7 +1740,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1764,7 +1764,7 @@
               "w": 24,
               "h": 36
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -0.5,
               "y": 8.5
             }
@@ -1830,11 +1830,11 @@
               "h": 32
             },
             "originalRotation": -0.75,
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": -25
             },
             "foregroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 25
               },
               "rectDimsPx": {
@@ -1857,7 +1857,7 @@
               "w": 48,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 14
             }
           }
@@ -1875,7 +1875,7 @@
               "w": 48,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 14
             }
           }
@@ -1893,7 +1893,7 @@
               "w": 48,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 14
             }
           }
@@ -1911,7 +1911,7 @@
               "w": 48,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 14
             }
           }
@@ -1929,11 +1929,11 @@
               "w": 80,
               "h": 112
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 54
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 2,
                 "y": 1.5
               },
@@ -1954,11 +1954,11 @@
               "w": 80,
               "h": 112
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 54
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 1.5,
                 "y": 2
               },
@@ -1979,11 +1979,11 @@
               "w": 48,
               "h": 32
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 14
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "y": 2
               },
               "circRadiusPx": 8
@@ -2003,11 +2003,11 @@
               "w": 80,
               "h": 112
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 54
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 2,
                 "y": 2
               },
@@ -2028,11 +2028,11 @@
               "w": 80,
               "h": 112
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 54
             },
             "backgroundCollider": {
-              "originOffsetPx": {
+              "originToOriginVecPx": {
                 "x": 2,
                 "y": 2
               },
@@ -2055,7 +2055,7 @@
               "w": 16,
               "h": 16
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": 0.5,
               "y": 1.5
             },
@@ -2073,7 +2073,7 @@
               "w": 16,
               "h": 16
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "x": 0.5,
               "y": 1.5
             }
@@ -2094,7 +2094,7 @@
               "w": 16,
               "h": 16
             },
-            "centerOffsetPx": {
+            "centerToOriginVecPx": {
               "y": 6.5
             },
             "backgroundCollider": {

@@ -26,7 +26,7 @@ State::ForegroundCompanionMode::ForegroundCompanionMode() {
 				current_rects.emplace_back(rect);
 			}
 			// Set center
-			current_center = VecF{effect.foreground_companion().center_offset_px()};
+			current_center = VecF{effect.foreground_companion().center_to_origin_vec_px()};
 			break;
 		}
 	}
@@ -87,8 +87,8 @@ void State::ForegroundCompanionMode::set_center() {
 				auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
 				if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
 					// Set center
-					mutable_effect->mutable_foreground_companion()->mutable_center_offset_px()->set_x(center_offset.x);
-					mutable_effect->mutable_foreground_companion()->mutable_center_offset_px()->set_y(center_offset.y);
+					mutable_effect->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_x(center_offset.x);
+					mutable_effect->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_y(center_offset.y);
 					break;
 				}
 			}
@@ -103,7 +103,7 @@ void State::ForegroundCompanionMode::reset() {
 		for (int i = 0; i < sprite.regular().effects_size(); ++i) {
 			auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
 			if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
-				mutable_effect->mutable_foreground_companion()->clear_center_offset_px();
+				mutable_effect->mutable_foreground_companion()->clear_center_to_origin_vec_px();
 				mutable_effect->mutable_foreground_companion()->clear_rects();
 				break;
 			}
@@ -120,7 +120,7 @@ State::RectMode::RectMode() {
 	// Set rect
 	current_rect = RectI{sprite.regular().rect()};
 	// Set center
-	current_center = VecF{sprite.regular().center_offset_px()};
+	current_center = VecF{sprite.regular().center_to_origin_vec_px()};
 	// Enable selection
 	Events::enable_primary_selection(GAME.dimensions().game);
 }
@@ -166,8 +166,8 @@ void State::RectMode::set_center() {
 		auto center_offset = *secondary_selection_position -
 		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_center();  // new offset from sprite center
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_center_offset_px()->set_x(center_offset.x);
-			sprite.mutable_regular()->mutable_center_offset_px()->set_y(center_offset.y);
+			sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_x(center_offset.x);
+			sprite.mutable_regular()->mutable_center_to_origin_vec_px()->set_y(center_offset.y);
 		});
 		current_center = center_offset;
 		secondary_selection_position = std::nullopt;
@@ -176,7 +176,7 @@ void State::RectMode::set_center() {
 void State::RectMode::reset() {
 	std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_rect();
-		sprite.mutable_regular()->clear_center_offset_px();
+		sprite.mutable_regular()->clear_center_to_origin_vec_px();
 	});
 	current_rect = std::nullopt;
 	current_center = std::nullopt;
@@ -188,7 +188,7 @@ State::BackgroundColliderMode::BackgroundColliderMode() {
 	const auto& sprite = std::get<sedit::State>(LEVEL.type_state).selected_sprite();
 	if (sprite.regular().has_background_collider()) {
 		auto collider_origin =
-		    VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().background_collider().origin_offset_px()};
+		    VecF{sprite.regular().center_to_origin_vec_px()} + VecF{sprite.regular().background_collider().origin_to_origin_vec_px()};
 		if (sprite.regular().background_collider().has_rect_dims_px()) {
 			current_rect = RectF{collider_origin, VecF{sprite.regular().background_collider().rect_dims_px()}};
 		} else if (sprite.regular().background_collider().has_circ_radius_px()) {
@@ -239,8 +239,8 @@ void State::BackgroundColliderMode::set() {
 		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
 		auto dims = VecF{rect.w, rect.h};  // new dims
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_to_origin_vec_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_to_origin_vec_px()->set_y(origin_offset.y);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_w(dims.x);
 			sprite.mutable_regular()->mutable_background_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
@@ -256,8 +256,8 @@ void State::BackgroundColliderMode::set() {
 		auto origin_offset = center -
 		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_to_origin_vec_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_background_collider()->mutable_origin_to_origin_vec_px()->set_y(origin_offset.y);
 			sprite.mutable_regular()->mutable_background_collider()->set_circ_radius_px(radius);
 		});
 		current_rect = std::nullopt;
@@ -279,7 +279,7 @@ State::ForegroundColliderMode::ForegroundColliderMode() {
 	const auto& sprite = std::get<sedit::State>(LEVEL.type_state).selected_sprite();
 	if (sprite.regular().has_foreground_collider()) {
 		auto collider_origin =
-		    VecF{sprite.regular().center_offset_px()} + VecF{sprite.regular().foreground_collider().origin_offset_px()};
+		    VecF{sprite.regular().center_to_origin_vec_px()} + VecF{sprite.regular().foreground_collider().origin_to_origin_vec_px()};
 		if (sprite.regular().foreground_collider().has_rect_dims_px()) {
 			current_rect = RectF{collider_origin, VecF{sprite.regular().foreground_collider().rect_dims_px()}};
 		} else if (sprite.regular().foreground_collider().has_circ_radius_px()) {
@@ -329,8 +329,8 @@ void State::ForegroundColliderMode::set() {
 		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
 		auto dims = VecF{rect.w, rect.h};  // new dims
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_to_origin_vec_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_to_origin_vec_px()->set_y(origin_offset.y);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_rect_dims_px()->set_w(dims.x);
 			sprite.mutable_regular()->mutable_foreground_collider()->mutable_rect_dims_px()->set_h(dims.y);
 		});
@@ -346,8 +346,8 @@ void State::ForegroundColliderMode::set() {
 		auto origin_offset = center -
 		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_origin();  // new offset from sprite origin
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_x(origin_offset.x);
-			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_offset_px()->set_y(origin_offset.y);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_to_origin_vec_px()->set_x(origin_offset.x);
+			sprite.mutable_regular()->mutable_foreground_collider()->mutable_origin_to_origin_vec_px()->set_y(origin_offset.y);
 			sprite.mutable_regular()->mutable_foreground_collider()->set_circ_radius_px(radius);
 		});
 		current_rect = std::nullopt;
@@ -415,7 +415,7 @@ VecF m2::sedit::State::selected_sprite_center() const {
 }
 
 VecF m2::sedit::State::selected_sprite_origin() const {
-	return selected_sprite_center() + VecF{selected_sprite().regular().center_offset_px()};
+	return selected_sprite_center() + VecF{selected_sprite().regular().center_to_origin_vec_px()};
 }
 
 void m2::sedit::State::set_sprite_type(m2g::pb::SpriteType sprite_type) { _selected_sprite_type = sprite_type; }

@@ -16,8 +16,10 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const
 			bp.set_allow_sleep(true);
 			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.background_collider_rect_dims_m().x);
 			bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.background_collider_rect_dims_m().y);
-            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.background_collider_center_offset_m().x);
-            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.background_collider_center_offset_m().y);
+            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(
+			    sprite.background_collider_origin_to_origin_vec_m().x);
+            bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(
+			    sprite.background_collider_origin_to_origin_vec_m().y);
 			bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 		} else if (sprite.background_collider_type() == box2d::ColliderType::CIRCLE) {
 			throw M2FATAL("Circular tile background_collider unimplemented");
@@ -27,8 +29,8 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const
         if (sprite.foreground_collider_type() == box2d::ColliderType::RECTANGLE) {
             bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.foreground_collider_rect_dims_m().x);
             bp.mutable_foreground_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.foreground_collider_rect_dims_m().y);
-            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.foreground_collider_center_offset_m().x);
-            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.foreground_collider_center_offset_m().y);
+            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.foreground_collider_origin_to_origin_vec_m().x);
+            bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.foreground_collider_origin_to_origin_vec_m().y);
             bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
         } else if (sprite.foreground_collider_type() == box2d::ColliderType::CIRCLE) {
             throw M2FATAL("Circular tile foreground_collider unimplemented");
@@ -46,7 +48,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const
 }
 
 std::pair<m2::Object&, m2::Id> m2::obj::create_tile_foreground_companion(const VecF& position, const m2::Sprite& sprite) {
-	auto obj_pair = create_object(position - sprite.center_offset_m() + sprite.foreground_companion_center_offset_m());
+	auto obj_pair = create_object(position - sprite.center_offset_m() + sprite.foreground_companion_center_to_origin_vec_m());
 	auto& companion = obj_pair.first;
 
 	auto& gfx = companion.add_graphic(sprite);

@@ -8,7 +8,7 @@
           "type": "APPELDOORN_GOUDA_GUARD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -22,7 +22,7 @@
           "type": "LELYSTAD_PRESS_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -30,7 +30,7 @@
           "type": "DIEMEN_PRESS_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -38,7 +38,7 @@
           "type": "GOUDA_PRESS_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -46,7 +46,7 @@
           "type": "NIJMEGEN_PRESS_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -60,7 +60,7 @@
           "type": "AMSTERDAM_PRESS_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -68,7 +68,7 @@
           "type": "APPELDOORN_PRESS_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -76,7 +76,7 @@
           "type": "UTRECHT_PRESS_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -84,7 +84,7 @@
           "type": "DEN_HAAG_PRESS_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -92,7 +92,7 @@
           "type": "VENLO_PRESS_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -100,7 +100,7 @@
           "type": "MASSTRICH_PRESS_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -114,7 +114,7 @@
           "type": "DEN_HELDER_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -122,7 +122,7 @@
           "type": "DEN_HAAG_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -130,7 +130,7 @@
           "type": "EINDHOVEN_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -144,7 +144,7 @@
           "type": "GRONINGEN_EXPLOSIVE_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -152,7 +152,7 @@
           "type": "ZWOLLE_EXPLOSIVE_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -160,7 +160,7 @@
           "type": "LEEUWARDEN_EXPLOSIVE_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -168,7 +168,7 @@
           "type": "DEN_HELDER_EXPLOSIVE_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -176,7 +176,7 @@
           "type": "EINDHOVEN_EXPLOSIVE_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -190,7 +190,7 @@
           "type": "ZWOLLE_EXPLOSIVE_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -198,7 +198,7 @@
           "type": "AMSTERDAM_EXPLOSIVE_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -206,7 +206,7 @@
           "type": "LELYSTAD_EXPLOSIVE_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -220,7 +220,7 @@
           "type": "LEEUWARDEN_EXPLOSIVE_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -228,7 +228,7 @@
           "type": "ARNHEM_EXPLOSIVE_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -236,7 +236,7 @@
           "type": "BREDA_EXPLOSIVE_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -244,7 +244,7 @@
           "type": "NIJMEGEN_EXPLOSIVE_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -258,7 +258,7 @@
           "type": "BREDA_EXPLOSIVE",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -266,7 +266,7 @@
           "type": "TILBURG_EXPLOSIVE",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -280,7 +280,7 @@
           "type": "APPELDOORN_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -288,7 +288,7 @@
           "type": "STANDALONE_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -302,7 +302,7 @@
           "type": "GOUDA_TOOL_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -310,7 +310,7 @@
           "type": "VENLO_TOOL_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -324,7 +324,7 @@
           "type": "ROTTERDAM_TOOL_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -338,7 +338,7 @@
           "type": "ZWOLLE_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -346,7 +346,7 @@
           "type": "ROTTERDAM_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -354,7 +354,7 @@
           "type": "SHERTOGENBOSCH_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -362,7 +362,7 @@
           "type": "EINDHOVEN_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -370,7 +370,7 @@
           "type": "MASSTRICH_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -391,7 +391,7 @@
           "type": "DEN_HELDER_JEWELLERY_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -405,7 +405,7 @@
           "type": "GRONINGEN_JEWELLERY",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -413,7 +413,7 @@
           "type": "DIEMEN_JEWELLERY",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -421,7 +421,7 @@
           "type": "VENLO_JEWELLERY",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -435,7 +435,7 @@
           "type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -443,7 +443,7 @@
           "type": "ZWOLLE_APPELDOORN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -451,7 +451,7 @@
           "type": "ZWOLLE_BREMEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -459,7 +459,7 @@
           "type": "LEEUWARDEN_DEN_HELDER_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -467,7 +467,7 @@
           "type": "DEN_HELDER_AMSTERDAM_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -475,7 +475,7 @@
           "type": "DEN_HELDER_NEWCASTLE_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -483,7 +483,7 @@
           "type": "AMSTERDAM_DIEMEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -491,7 +491,7 @@
           "type": "AMSTERDAM_APPELDOORN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -499,7 +499,7 @@
           "type": "DIEMEN_UTRECHT_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -507,7 +507,7 @@
           "type": "APPELDOORN_ARNHEM_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -515,7 +515,7 @@
           "type": "UTRECHT_KITCHEN1_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -523,7 +523,7 @@
           "type": "UTRECHT_GOUDA_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -531,7 +531,7 @@
           "type": "UTRECHT_DEN_HAAG_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -539,7 +539,7 @@
           "type": "ARNHEM_EINDHOVEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -547,7 +547,7 @@
           "type": "ARNHEM_NIJMEGEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -555,7 +555,7 @@
           "type": "GOUDA_DEN_HAAG_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -563,7 +563,7 @@
           "type": "GOUDA_EINDHOVEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -571,7 +571,7 @@
           "type": "ROTTERDAM_BREDA_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -579,7 +579,7 @@
           "type": "ROTTERDAM_DEN_HAAG_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -587,7 +587,7 @@
           "type": "ROTTERDAM_HARWICH_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -595,7 +595,7 @@
           "type": "SHERTOGENBOSCH_BREDA_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -603,7 +603,7 @@
           "type": "SHERTOGENBOSCH_DEN_HAAG_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -611,7 +611,7 @@
           "type": "SHERTOGENBOSCH_EINDHOVEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -619,7 +619,7 @@
           "type": "BREDA_TILBURG_KITCHEN2_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -627,7 +627,7 @@
           "type": "TILBURG_EINDHOVEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -635,7 +635,7 @@
           "type": "TILBURG_ANTWERPEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -643,7 +643,7 @@
           "type": "EINDHOVEN_VENLO_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -651,7 +651,7 @@
           "type": "EINDHOVEN_COLOGNE_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -659,7 +659,7 @@
           "type": "MASSTRICH_ANTWERPEN_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -667,7 +667,7 @@
           "type": "MASSTRICH_COLOGNE_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -681,7 +681,7 @@
           "type": "GRONINGEN_LEEUWARDEN_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -689,7 +689,7 @@
           "type": "ZWOLLE_LELYSTAD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -697,7 +697,7 @@
           "type": "AMSTERDAM_LELYSTAD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -705,7 +705,7 @@
           "type": "APPELDOORN_UTRECHT_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -713,7 +713,7 @@
           "type": "ARNHEM_GOUDA_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -721,7 +721,7 @@
           "type": "EINDHOVEN_NIJMEGEN_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -729,7 +729,7 @@
           "type": "EINDHOVEN_MASSTRICH_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -737,7 +737,7 @@
           "type": "VENLO_NIJMEGEN_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }
@@ -751,7 +751,7 @@
           "type": "GRONINGEN_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -759,7 +759,7 @@
           "type": "UTRECHT_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -767,7 +767,7 @@
           "type": "ROTTERDAM_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         },
@@ -775,7 +775,7 @@
           "type": "SHERTOGENBOSCH_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerOffsetPx": { "x": -256, "y": -256 },
+            "centerToOriginVecPx": { "x": -256, "y": -256 },
             "isBackgroundTile": true
           }
         }

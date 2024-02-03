@@ -131,7 +131,7 @@ void bsedit::State::set_rect() {
 void bsedit::State::reset() {
 	modify_selected_sprite([&](pb::Sprite& sprite) {
 		sprite.mutable_regular()->clear_rect();
-		sprite.mutable_regular()->clear_center_offset_px();
+		sprite.mutable_regular()->clear_center_to_origin_vec_px();
 	});
 	select_sprite(_selected_sprite.first);  // Reset rect
 	GAME.events.reset_primary_selection();

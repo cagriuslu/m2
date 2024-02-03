@@ -179,18 +179,18 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_rect(sprite.regular().rect()),
 	_original_rotation_radians(sprite.regular().original_rotation() * m2::PI),
 	_ppm(sprite.regular().override_ppm() ? sprite.regular().override_ppm() : sprite_sheet.sprite_sheet().ppm()),
-	_center_offset_px(sprite.regular().center_offset_px()),
-	_center_offset_m(_center_offset_px / (float) _ppm),
+      _center_to_origin_vec_px(sprite.regular().center_to_origin_vec_px()),
+	_center_offset_m(_center_to_origin_vec_px / (float) _ppm),
 	_background_collider_type(sprite.regular().has_background_collider()
 			? (sprite.regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE : box2d::ColliderType::CIRCLE)
 			: box2d::ColliderType::NONE),
-	_background_collider_center_offset_m(VecF{sprite.regular().background_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _background_collider_origin_offset_m
+      _background_collider_origin_to_origin_vec_m(VecF{sprite.regular().background_collider().origin_to_origin_vec_px()} / (float)_ppm),
 	_background_collider_rect_dims_m(VecF{sprite.regular().background_collider().rect_dims_px()} / (float)_ppm),
 	_background_collider_circ_radius_m(sprite.regular().background_collider().circ_radius_px() / (float)_ppm),
 	_foreground_collider_type(sprite.regular().has_foreground_collider()
 				? (sprite.regular().foreground_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE : box2d::ColliderType::CIRCLE)
 				: box2d::ColliderType::NONE),
-	_foreground_collider_center_offset_m(VecF{sprite.regular().foreground_collider().origin_offset_px()} / (float)_ppm), // TODO rename to _foreground_collider_origin_offset_m
+      _foreground_collider_origin_to_origin_vec_m(VecF{sprite.regular().foreground_collider().origin_to_origin_vec_px()} / (float)_ppm), // TODO rename to _foreground_collider_origin_offset_m
 	_foreground_collider_rect_dims_m(VecF{sprite.regular().foreground_collider().rect_dims_px()} / (float)_ppm),
 	_foreground_collider_circ_radius_m(sprite.regular().foreground_collider().circ_radius_px() / (float)_ppm),
 	_is_background_tile(sprite.regular().is_background_tile()) {
@@ -208,8 +208,8 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 			switch (effect.type()) {
 				case pb::SPRITE_EFFECT_FOREGROUND_COMPANION:
 					_effects[index] = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.regular().rect(), effect.foreground_companion().rects(), lightning);
-					_foreground_companion_center_offset_px = VecF{effect.foreground_companion().center_offset_px()};
-					_foreground_companion_center_offset_m = VecF{effect.foreground_companion().center_offset_px()} / (float)_ppm;
+					_foreground_companion_center_to_origin_vec_px = VecF{effect.foreground_companion().center_to_origin_vec_px()};
+					_foreground_companion_center_to_origin_vec_m = VecF{effect.foreground_companion().center_to_origin_vec_px()} / (float)_ppm;
 					break;
 				case pb::SPRITE_EFFECT_MASK:
 					_effects[index] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.regular().rect(), effect.mask_color(), lightning);
@@ -233,11 +233,11 @@ float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
 }
 m2::VecF m2::Sprite::center_to_origin_srcpx(pb::SpriteEffectType effect_type) const {
 	if (effect_type == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && has_foreground_companion()) {
-		return foreground_companion_center_offset_px();
+		return foreground_companion_center_to_origin_vec_px();
 	} else {
 		return original_rotation_radians() != 0.0f
-				? center_offset_px().rotate(original_rotation_radians())
-				: center_offset_px();
+				? center_to_origin_vec_px().rotate(original_rotation_radians())
+				: center_to_origin_vec_px();
 	}
 }
 

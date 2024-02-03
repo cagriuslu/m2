@@ -13,8 +13,10 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		m2::pb::BodyBlueprint bp;
 		bp.set_type(m2::pb::BodyType::STATIC);
 		bp.set_allow_sleep(true);
-		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(sprite.background_collider_center_offset_m().x);
-		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.background_collider_center_offset_m().y);
+		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_x(
+		    sprite.background_collider_origin_to_origin_vec_m().x);
+		bp.mutable_background_fixture()->mutable_rect()->mutable_center_offset()->set_y(
+		    sprite.background_collider_origin_to_origin_vec_m().y);
 		bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_w(sprite.background_collider_rect_dims_m().x);
 		bp.mutable_background_fixture()->mutable_rect()->mutable_dims()->set_h(sprite.background_collider_rect_dims_m().y);
 		if (obj.object_type() == m2g::pb::FENCE_VERTICAL) {
@@ -28,8 +30,10 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		m2::pb::BodyBlueprint bp;
 		bp.set_type(m2::pb::BodyType::STATIC);
 		bp.set_allow_sleep(true);
-		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_x(sprite.background_collider_center_offset_m().x);
-		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_y(sprite.background_collider_center_offset_m().y);
+		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_x(
+		    sprite.background_collider_origin_to_origin_vec_m().x);
+		bp.mutable_background_fixture()->mutable_circ()->mutable_center_offset()->set_y(
+		    sprite.background_collider_origin_to_origin_vec_m().y);
 		bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.background_collider_circ_radius_m());
 		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 
