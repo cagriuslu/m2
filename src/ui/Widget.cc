@@ -1,17 +1,14 @@
-#include <m2/ui/Widget.h>
 #include <m2/Game.h>
+#include <m2/ui/Widget.h>
 
 using namespace m2::ui;
 
-Widget::Widget(State* parent, const WidgetBlueprint* blueprint) : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
+Widget::Widget(State* parent, const WidgetBlueprint* blueprint)
+    : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
 
-void Widget::on_position_update(const RectI& rect_px_) {
-	this->rect_px = rect_px_;
-}
+void Widget::on_position_update(const RectI& rect_px_) { this->rect_px = rect_px_; }
 
-Action Widget::on_event(MAYBE Events &events) {
-	return Action::CONTINUE;
-}
+Action Widget::on_event(MAYBE Events& events) { return Action::CONTINUE; }
 
 void Widget::on_focus_change() {}
 
@@ -101,22 +98,21 @@ void Widget::draw_text(const RectI& rect, SDL_Texture& texture, TextAlignment al
 
 void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
 	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
-	auto sprite_aspect_ratio = (float) src_rect.w / (float) src_rect.h;
-	auto widget_aspect_ratio = (float) dst_rect.w / (float) dst_rect.h;
+	auto sprite_aspect_ratio = (float)src_rect.w / (float)src_rect.h;
+	auto widget_aspect_ratio = (float)dst_rect.w / (float)dst_rect.h;
 
 	float sprite_size_multiplier =
-			sprite_aspect_ratio < widget_aspect_ratio // Compare aspect ratios of sprite and widget
-					? (float) dst_rect.h / (float) src_rect.h // Widget is wider than the sprite
-					: (float) dst_rect.w / (float) src_rect.w; // Sprite is wider than the widget
+	    sprite_aspect_ratio < widget_aspect_ratio  // Compare aspect ratios of sprite and widget
+	    ? (float)dst_rect.h / (float)src_rect.h  // Widget is wider than the sprite
+	    : (float)dst_rect.w / (float)src_rect.w;  // Sprite is wider than the widget
 
 	auto actual_dst_rect = SDL_Rect{
-			.x = dst_rect.x + (dst_rect.w - iround(src_rect.w * sprite_size_multiplier)) / 2,
-			.y = dst_rect.y + (dst_rect.h - iround(src_rect.h * sprite_size_multiplier)) / 2,
-			.w = iround(src_rect.w * sprite_size_multiplier),
-			.h = iround(src_rect.h * sprite_size_multiplier)
-	};
+	    .x = dst_rect.x + (dst_rect.w - iround(src_rect.w * sprite_size_multiplier)) / 2,
+	    .y = dst_rect.y + (dst_rect.h - iround(src_rect.h * sprite_size_multiplier)) / 2,
+	    .w = iround(src_rect.w * sprite_size_multiplier),
+	    .h = iround(src_rect.h * sprite_size_multiplier)};
 
-	SDL_RenderCopy(GAME.renderer, sprite.sprite_sheet().texture(), &src_rect, &actual_dst_rect);
+	SDL_RenderCopy(GAME.renderer, sprite.texture(DrawVariant{}), &src_rect, &actual_dst_rect);
 }
 
 void Widget::draw_border(const RectI& rect, unsigned border_width_px, const SDL_Color& color) {

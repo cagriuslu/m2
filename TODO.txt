@@ -12,7 +12,6 @@
 - Add timer widget that executes an action after some time
 - SmartPointer may be useless, think about it
 - sedit ve bsedit'te, selection aktif iken window resize edilirse selection bozuluyor
-- Add new sprite type "Text", that can be placed on the world
 
 Level Editor
 - Grid'i kapatinca grid silinmiyor

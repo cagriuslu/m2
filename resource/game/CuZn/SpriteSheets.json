@@ -1450,5 +1450,14 @@
         }
       ]
     }
+  ],
+  "textLabels": [
+    {
+      "type": "TEXT_LABEL_DIEMEN",
+      "text": "Diemen",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    }
   ]
 }

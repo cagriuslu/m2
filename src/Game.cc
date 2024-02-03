@@ -100,9 +100,14 @@ m2::Game::Game() {
 	resource_dir = _resource_dir / "game" / _proxy.game_name;
 	levels_dir = _resource_dir / "game" / _proxy.game_name / "levels";
 
-	sprite_sheets = load_sprite_sheets(resource_dir / "SpriteSheets.json", renderer, _proxy.lightning);
-	_sprites = load_sprites(sprite_sheets, *sprite_effects_sheet, _proxy.lightning);
-	level_editor_background_sprites = list_level_editor_background_sprites(sprite_sheets);
+	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(resource_dir / "SpriteSheets.json");
+	if (!sheets_pb) {
+		throw M2ERROR(sheets_pb.error());
+	}
+	sprite_sheets = load_sprite_sheets(*sheets_pb, renderer, _proxy.lightning);
+	_sprites =
+	    load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, font, renderer, _proxy.lightning);
+	level_editor_background_sprites = list_level_editor_background_sprites(_sprites);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
 	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
 	animations =

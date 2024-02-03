@@ -1,14 +1,14 @@
-#include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/Game.h>
 #include <m2/sdl/Font.h>
+#include <m2/ui/widget/CheckboxWithText.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-CheckboxWithText::CheckboxWithText(State* parent, const WidgetBlueprint *blueprint) : AbstractButton(parent, blueprint),
-		_state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state) {
-	_font_texture = m2_move_or_throw_error(
-			sdl::FontTexture::create(std::get<CheckboxWithTextBlueprint>(blueprint->variant).text));
+CheckboxWithText::CheckboxWithText(State* parent, const WidgetBlueprint* blueprint)
+    : AbstractButton(parent, blueprint), _state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state) {
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(
+	    GAME.font, GAME.renderer, std::get<CheckboxWithTextBlueprint>(blueprint->variant).text));
 }
 
 void CheckboxWithText::on_draw() {
@@ -20,7 +20,9 @@ void CheckboxWithText::on_draw() {
 	SDL_RenderFillRect(GAME.renderer, &filled_dstrect);
 	if (!_state) {
 		auto empty_dstrect = SDL_Rect{rect_px.x + 1, rect_px.y + 1, rect_px.h - 2, rect_px.h - 2};
-		SDL_SetRenderDrawColor(GAME.renderer, blueprint->background_color.r, blueprint->background_color.g, blueprint->background_color.b, blueprint->background_color.a);
+		SDL_SetRenderDrawColor(
+		    GAME.renderer, blueprint->background_color.r, blueprint->background_color.g, blueprint->background_color.b,
+		    blueprint->background_color.a);
 		SDL_RenderFillRect(GAME.renderer, &empty_dstrect);
 	}
 	// Text

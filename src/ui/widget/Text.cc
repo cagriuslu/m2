@@ -1,6 +1,6 @@
-#include <m2/ui/widget/Text.h>
-#include <m2/sdl/Font.h>
 #include <m2/Game.h>
+#include <m2/sdl/Font.h>
+#include <m2/ui/widget/Text.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -17,7 +17,7 @@ Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(par
 		}
 	}
 
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(initial_text));
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, initial_text));
 }
 
 Action Text::on_update() {
@@ -31,9 +31,10 @@ Action Text::on_update() {
 	}
 
 	if (text_blueprint().on_update) {
-		auto[action, optional_string] = text_blueprint().on_update(*this);
+		auto [action, optional_string] = text_blueprint().on_update(*this);
 		if (action == Action::CONTINUE && optional_string) {
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(*optional_string));
+			_font_texture =
+			    m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, *optional_string));
 		}
 		return action;
 	} else {
@@ -52,5 +53,6 @@ void Text::on_draw() {
 		auto text_rect = rect_px.trim(blueprint->padding_width_px);
 		draw_text(text_rect, *texture, text_blueprint().alignment);
 	}
-	draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
+	draw_border(
+	    rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }

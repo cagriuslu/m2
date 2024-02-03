@@ -239,6 +239,7 @@ m2::Sprite::Sprite(
 		_foreground_companion_center_to_origin_vec_m =
 		    VecF{original_sprite->regular().foreground_companion_center_to_origin_vec_px()} / (float)_ppm;
 	}
+
 	// Create effects
 	if (original_sprite->has_regular() && original_sprite->regular().effects_size()) {
 		_effects.resize(pb::enum_value_count<pb::SpriteEffectType>());
@@ -272,8 +273,22 @@ m2::Sprite::Sprite(
 	}
 }
 
+m2::Sprite::Sprite(TTF_Font* font, SDL_Renderer* renderer, const pb::TextLabel& text_label) {
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(font, renderer, text_label.text()));
+	_rect = RectI{0, 0, _font_texture->w(), _font_texture->h()};
+	_ppm = I(roundf(F(_rect.h) / text_label.height_m()));
+	_is_background_tile = text_label.is_background_tile();
+	if (text_label.pull_half_cell()) {
+		_center_to_origin_vec_m = VecF{0.5f, 0.0f};
+		_center_to_origin_vec_px = _center_to_origin_vec_m * F(_ppm);
+	}
+}
+
 SDL_Texture* m2::Sprite::texture(DrawVariant draw_variant) const {
-	if (std::holds_alternative<IsForegroundCompanion>(draw_variant) &&
+	if (_font_texture) {
+		return _font_texture->texture();
+	} else if (
+	    std::holds_alternative<IsForegroundCompanion>(draw_variant) &&
 	    not std::get<IsForegroundCompanion>(draw_variant)) {
 		return sprite_sheet().texture();
 	} else {
@@ -303,7 +318,7 @@ const m2::RectI& m2::Sprite::rect(DrawVariant draw_variant) const {
 }
 
 float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
-	return static_cast<float>(GAME.dimensions().ppm) / static_cast<float>(ppm());
+	return static_cast<float>(GAME.dimensions().ppm) / static_cast<float>(_ppm);
 }
 m2::VecF m2::Sprite::center_to_origin_srcpx(DrawVariant draw_variant) const {
 	if (std::holds_alternative<IsForegroundCompanion>(draw_variant) && std::get<IsForegroundCompanion>(draw_variant)) {
@@ -315,20 +330,18 @@ m2::VecF m2::Sprite::center_to_origin_srcpx(DrawVariant draw_variant) const {
 }
 
 std::vector<m2::SpriteSheet> m2::load_sprite_sheets(
-    const std::filesystem::path& sprite_sheets_path, SDL_Renderer* renderer, bool lightning) {
-	auto sheets = pb::json_file_to_message<pb::SpriteSheets>(sprite_sheets_path);
-	if (!sheets) {
-		throw M2ERROR(sheets.error());
-	}
+    const pb::SpriteSheets& sprite_sheets, SDL_Renderer* renderer, bool lightning) {
 	std::vector<m2::SpriteSheet> sheets_vector;
-	std::for_each(sheets->sheets().begin(), sheets->sheets().end(), [&](const auto& sheet) {
+	std::for_each(sprite_sheets.sheets().begin(), sprite_sheets.sheets().end(), [&](const auto& sheet) {
 		sheets_vector.emplace_back(sheet, renderer, lightning);
 	});
 	return sheets_vector;
 }
 
 std::vector<m2::Sprite> m2::load_sprites(
-    const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet, bool lightning) {
+    const std::vector<SpriteSheet>& sprite_sheets,
+    const ::google::protobuf::RepeatedPtrField<pb::TextLabel>& text_labels, SpriteEffectsSheet& sprite_effects_sheet,
+    TTF_Font* font, SDL_Renderer* renderer, bool lightning) {
 	std::vector<Sprite> sprites_vector(pb::enum_value_count<m2g::pb::SpriteType>());
 	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::SpriteType>());
 
@@ -341,9 +354,19 @@ std::vector<m2::Sprite> m2::load_sprites(
 				throw M2ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
 			}
 			// Load sprite
-			sprites_vector[index] = Sprite{sprite_sheets, sprite_sheet, sprite_effects_sheet, sprite, lightning};  //
+			sprites_vector[index] = Sprite{sprite_sheets, sprite_sheet, sprite_effects_sheet, sprite, lightning};
 			is_loaded[index] = true;
 		}
+	}
+	for (const auto& text_label : text_labels) {
+		auto index = pb::enum_index(text_label.type());
+		// Check if the sprite is already loaded
+		if (is_loaded[index]) {
+			throw M2ERROR("Sprite has duplicate definition: " + std::to_string(text_label.type()));
+		}
+		// Load sprite
+		sprites_vector[index] = Sprite{font, renderer, text_label};
+		is_loaded[index] = true;
 	}
 
 	// Check if every sprite type is loaded
@@ -356,19 +379,16 @@ std::vector<m2::Sprite> m2::load_sprites(
 	return sprites_vector;
 }
 
-std::vector<m2g::pb::SpriteType> m2::list_level_editor_background_sprites(
-    const std::vector<SpriteSheet>& sprite_sheets) {
-	std::vector<m2g::pb::SpriteType> sprites_vector;
+std::vector<m2g::pb::SpriteType> m2::list_level_editor_background_sprites(const std::vector<Sprite>& sprites) {
+	std::vector<m2g::pb::SpriteType> sprite_types_vector;
 
-	for (const auto& sprite_sheet : sprite_sheets) {
-		for (const auto& sprite : sprite_sheet.sprite_sheet().sprites()) {
-			if (sprite.regular().is_background_tile()) {
-				sprites_vector.push_back(sprite.type());
-			}
+	for (int i = 0; i < pb::enum_value_count<m2g::pb::SpriteType>(); ++i) {
+		if (sprites[i].is_background_tile()) {
+			sprite_types_vector.push_back(pb::enum_value<m2g::pb::SpriteType>(i));
 		}
 	}
 
-	return sprites_vector;
+	return sprite_types_vector;
 }
 
 std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_sprites(

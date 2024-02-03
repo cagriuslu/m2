@@ -1,7 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <Sprite.pb.h>
-#include <m2/protobuf/Detail.h>
 #include <m2g_ObjectType.pb.h>
 
 #include <filesystem>
@@ -13,7 +12,9 @@
 #include "RectI.h"
 #include "VecF.h"
 #include "box2d/Body.h"
+#include "protobuf/Detail.h"
 #include "sdl/Detail.h"
+#include "sdl/Font.h"
 
 namespace m2 {
 	using IsForegroundCompanion = bool;
@@ -72,11 +73,15 @@ namespace m2 {
 		float _foreground_collider_circ_radius_m{};
 		bool _is_background_tile{};
 
+		// Text label
+		std::optional<sdl::FontTexture> _font_texture;
+
 	   public:
 		Sprite() = default;
 		Sprite(
 		    const std::vector<SpriteSheet>& sprite_sheets, const SpriteSheet& sprite_sheet,
 		    SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, bool lightning);
+		Sprite(TTF_Font* font, SDL_Renderer* renderer, const pb::TextLabel& text_label);
 
 		// Accessors
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const { return *_sprite_sheet; }
@@ -135,11 +140,12 @@ namespace m2 {
 	};
 
 	std::vector<SpriteSheet> load_sprite_sheets(
-	    const std::filesystem::path& sprite_sheets_path, SDL_Renderer* renderer, bool lightning);
+	    const pb::SpriteSheets& sprite_sheets, SDL_Renderer* renderer, bool lightning);
 	std::vector<Sprite> load_sprites(
-	    const std::vector<SpriteSheet>& sprite_sheets, SpriteEffectsSheet& sprite_effects_sheet, bool lightning);
-	std::vector<m2g::pb::SpriteType> list_level_editor_background_sprites(
-	    const std::vector<SpriteSheet>& sprite_sheets);
+	    const std::vector<SpriteSheet>& sprite_sheets,
+	    const ::google::protobuf::RepeatedPtrField<pb::TextLabel>& text_labels,
+	    SpriteEffectsSheet& sprite_effects_sheet, TTF_Font* font, SDL_Renderer* renderer, bool lightning);
+	std::vector<m2g::pb::SpriteType> list_level_editor_background_sprites(const std::vector<Sprite>& sprites);
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(
 	    const std::filesystem::path& objects_path);
 }  // namespace m2

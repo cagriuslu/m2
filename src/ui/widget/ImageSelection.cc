@@ -1,14 +1,15 @@
-#include <m2/ui/widget/ImageSelection.h>
-#include <m2/ui/widget/Image.h>
 #include <m2/Game.h>
+#include <m2/ui/widget/Image.h>
+#include <m2/ui/widget/ImageSelection.h>
 
 using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-ImageSelection::ImageSelection(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint),
-		_plus_texture(m2_move_or_throw_error(sdl::FontTexture::create("+"))),
-		_minus_texture(m2_move_or_throw_error(sdl::FontTexture::create("-"))) {
+ImageSelection::ImageSelection(State* parent, const WidgetBlueprint* blueprint)
+    : Widget(parent, blueprint),
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "-"))) {
 	select(0);
 }
 
@@ -39,7 +40,8 @@ Action ImageSelection::on_event(Events& events) {
 	} else {
 		// Check if scrolled
 		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect); 0 < scroll_amount) {
-			auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), image_selection.list.size() - _selection - 1);
+			auto min_scroll_amount =
+			    std::min(static_cast<size_t>(scroll_amount), image_selection.list.size() - _selection - 1);
 			if (min_scroll_amount) {
 				return select(_selection + min_scroll_amount);
 			}

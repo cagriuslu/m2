@@ -1,6 +1,7 @@
-#include <m2/ui/widget/TextInput.h>
-#include <m2/sdl/Font.h>
+#include <m2/Game.h>
 #include <m2/Log.h>
+#include <m2/sdl/Font.h>
+#include <m2/ui/widget/TextInput.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -10,7 +11,7 @@ namespace {
 		LOG_DEBUG("Stopping text input");
 		SDL_StopTextInput();
 	}
-}
+}  // namespace
 
 TextInput::TextInput(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
 	const auto& te_blueprint = std::get<TextInputBlueprint>(blueprint->variant);
@@ -67,7 +68,7 @@ Action TextInput::on_update() {
 
 	// Generate new texture is the string has changed
 	if (not _font_texture || str != _font_texture.string_value()) {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(str));
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, str));
 	}
 
 	return Action::CONTINUE;

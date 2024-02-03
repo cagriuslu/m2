@@ -1,5 +1,5 @@
-#include <m2/ui/widget/TextSelection.h>
 #include <m2/Game.h>
+#include <m2/ui/widget/TextSelection.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -17,12 +17,13 @@ namespace {
 			throw M2ERROR("TextSelection list cannot have duplicates");
 		}
 	}
-}
+}  // namespace
 
-TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint),
-		_list(text_selection_blueprint().initial_list),
-		_plus_texture(m2_move_or_throw_error(sdl::FontTexture::create("+"))),
-		_minus_texture(m2_move_or_throw_error(sdl::FontTexture::create("-"))) {
+TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint)
+    : Widget(parent, blueprint),
+      _list(text_selection_blueprint().initial_list),
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "-"))) {
 	throw_if_list_has_duplicates(_list);
 
 	// on_create
@@ -42,7 +43,7 @@ TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint) : 
 
 Action TextSelection::on_update() {
 	if (text_selection_blueprint().on_update) {
-		auto[action, optional_list] = text_selection_blueprint().on_update(*this);
+		auto [action, optional_list] = text_selection_blueprint().on_update(*this);
 		if (action == Action::CONTINUE && optional_list) {
 			// Save new list
 			_list = *optional_list;
@@ -99,13 +100,13 @@ Action TextSelection::on_event(Events& events) {
 Action TextSelection::select(unsigned index) {
 	_selection = index;
 	if (!_list.empty()) {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(_list[_selection]));
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, _list[_selection]));
 
 		if (text_selection_blueprint().on_action) {
 			return text_selection_blueprint().on_action(*this);
 		}
 	} else {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create("<EMPTY>"));
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "<EMPTY>"));
 	}
 	return Action::CONTINUE;
 }
@@ -114,7 +115,7 @@ void TextSelection::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 
 	if (const auto texture = _font_texture.texture(); texture) {
-		auto text_rect = rect_px.trim_right(rect_px.h / 2).trim((int) blueprint->padding_width_px);
+		auto text_rect = rect_px.trim_right(rect_px.h / 2).trim((int)blueprint->padding_width_px);
 		draw_text(text_rect, *texture, TextAlignment::LEFT);
 	}
 

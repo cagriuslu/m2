@@ -1,22 +1,23 @@
-#include <m2/ui/widget/IntegerSelection.h>
 #include <m2/Game.h>
 #include <m2/sdl/Font.h>
+#include <m2/ui/widget/IntegerSelection.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint),
-		_plus_texture(m2_move_or_throw_error(sdl::FontTexture::create("+"))),
-		_minus_texture(m2_move_or_throw_error(sdl::FontTexture::create("-"))) {
+IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint* blueprint)
+    : Widget(parent, blueprint),
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "-"))) {
 	const auto inital_value = std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value;
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(inital_value));
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, inital_value));
 
 	// Execute on_create
 	if (integer_selection_blueprint().on_create) {
 		auto opt_value = integer_selection_blueprint().on_create(*this);
 		if (opt_value) {
 			// Save new value
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(*opt_value));
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, *opt_value));
 		}
 	}
 }
@@ -50,7 +51,7 @@ Action IntegerSelection::on_event(Events& events) {
 }
 
 Action IntegerSelection::select(int v) {
-	_font_texture = std::move(*sdl::FontTexture::create(v));
+	_font_texture = std::move(*sdl::FontTexture::create(GAME.font, GAME.renderer, v));
 
 	const auto& integer_selection = std::get<IntegerSelectionBlueprint>(blueprint->variant);
 	const auto& action_callback = integer_selection.on_action;
@@ -65,7 +66,7 @@ Action IntegerSelection::on_update() {
 	if (pb_blueprint.on_update) {
 		auto optional_value = pb_blueprint.on_update(*this);
 		if (optional_value) {
-			_font_texture = std::move(*sdl::FontTexture::create(*optional_value));
+			_font_texture = std::move(*sdl::FontTexture::create(GAME.font, GAME.renderer, *optional_value));
 		}
 	}
 	return Action::CONTINUE;
