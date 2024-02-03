@@ -53,7 +53,6 @@ namespace m2 {
 		const SpriteSheet* _sprite_sheet{};
 		const SpriteEffectsSheet* _effects_sheet{};
 
-		pb::Sprite _sprite;
 		std::vector<RectI> _effects;
 		std::optional<RectI> _foreground_companion_sprite_effects_sheet_rect;
 		std::optional<VecF> _foreground_companion_center_to_origin_vec_px;
@@ -76,8 +75,8 @@ namespace m2 {
 	   public:
 		Sprite() = default;
 		Sprite(
-		    const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite,
-		    bool lightning);
+		    const std::vector<SpriteSheet>& sprite_sheets, const SpriteSheet& sprite_sheet,
+		    SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, bool lightning);
 
 		// Accessors
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const { return *_sprite_sheet; }

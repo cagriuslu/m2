@@ -5,7 +5,6 @@ import "m2g_SpriteType.proto";
 import "RectI.proto";
 import "VecF.proto";
 import "Dim2f.proto";
-import "M2.proto";
 
 message Color {
   uint32 r = 1;
@@ -45,8 +44,6 @@ message Collider {
 
 message RegularSprite {
   // List of effects that might be used during the game
-  // Effects are only generated for regular sprites, not for sprites with backgrounds.
-  // TODO convert to Map
   repeated SpriteEffect effects = 1;
 
   // Coordinates of the sprite in sheet
@@ -74,7 +71,8 @@ message RegularSprite {
 
   // Vector from the center of the (rect) to the position that should be the origin of the Foreground Companion
   VecF foreground_companion_center_to_origin_vec_px = 9;
-  repeated RectI foreground_companion_rects = 10; // w.r.t SpriteSheet coordinates
+  // w.r.t SpriteSheet coordinates
+  repeated RectI foreground_companion_rects = 10;
 }
 
 message Duplicate {

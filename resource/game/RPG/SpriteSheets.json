@@ -1126,7 +1126,7 @@
       ]
     },
     {
-      "Comment": "Sheet has extra 32 rows on top. Sprites have arbitrary separation in-between",
+      "comment": "Sheet has extra 32 rows on top. Sprites have arbitrary separation in-between",
       "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/monster2.png",
       "ppm": 32,
       "sprites": [

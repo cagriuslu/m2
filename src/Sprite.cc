@@ -179,49 +179,71 @@ m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(
 }
 
 m2::Sprite::Sprite(
-    const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, bool lightning)
-    : _sprite_sheet(&sprite_sheet),
-      _effects_sheet(&sprite_effects_sheet),
-      _sprite(sprite),
-      _rect(sprite.regular().rect()),
-      _original_rotation_radians(sprite.regular().original_rotation() * m2::PI),
-      _ppm(sprite.regular().override_ppm() ? sprite.regular().override_ppm() : sprite_sheet.sprite_sheet().ppm()),
-      _center_to_origin_vec_px(sprite.regular().center_to_origin_vec_px()),
-      _center_to_origin_vec_m(_center_to_origin_vec_px / (float)_ppm),
-      _background_collider_type(
-          sprite.regular().has_background_collider()
-              ? (sprite.regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
-                                                                           : box2d::ColliderType::CIRCLE)
-              : box2d::ColliderType::NONE),
-      _background_collider_origin_to_origin_vec_m(
-          VecF{sprite.regular().background_collider().origin_to_origin_vec_px()} / (float)_ppm),
-      _background_collider_rect_dims_m(VecF{sprite.regular().background_collider().rect_dims_px()} / (float)_ppm),
-      _background_collider_circ_radius_m(sprite.regular().background_collider().circ_radius_px() / (float)_ppm),
-      _foreground_collider_type(
-          sprite.regular().has_foreground_collider()
-              ? (sprite.regular().foreground_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
-                                                                           : box2d::ColliderType::CIRCLE)
-              : box2d::ColliderType::NONE),
-      _foreground_collider_origin_to_origin_vec_m(
-          VecF{sprite.regular().foreground_collider().origin_to_origin_vec_px()} /
-          (float)_ppm),  // TODO rename to _foreground_collider_origin_offset_m
-      _foreground_collider_rect_dims_m(VecF{sprite.regular().foreground_collider().rect_dims_px()} / (float)_ppm),
-      _foreground_collider_circ_radius_m(sprite.regular().foreground_collider().circ_radius_px() / (float)_ppm),
-      _is_background_tile(sprite.regular().is_background_tile()) {
+    const std::vector<SpriteSheet>& sprite_sheets, const SpriteSheet& sprite_sheet,
+    SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, bool lightning)
+    : _sprite_sheet(&sprite_sheet), _effects_sheet(&sprite_effects_sheet) {
+	const pb::Sprite* original_sprite{};
+	if (sprite.has_duplicate()) {
+		// Lookup original sprite
+		for (const auto& ss : sprite_sheets) {
+			for (const auto& s : ss.sprite_sheet().sprites()) {
+				if (s.type() == sprite.duplicate().original_type()) {
+					original_sprite = &s;
+					break;  // Early out
+				}
+			}
+			if (original_sprite) {
+				break;  // Early out
+			}
+		}
+	} else {
+		original_sprite = &sprite;
+	}
+
+	_rect = RectI{original_sprite->regular().rect()};
+	_original_rotation_radians = original_sprite->regular().original_rotation() * m2::PI;
+	_ppm = original_sprite->regular().override_ppm() ? original_sprite->regular().override_ppm()
+	                                                 : sprite_sheet.sprite_sheet().ppm();
+	_center_to_origin_vec_px = VecF{original_sprite->regular().center_to_origin_vec_px()};
+	_center_to_origin_vec_m = _center_to_origin_vec_px / (float)_ppm,
+	_background_collider_type = original_sprite->regular().has_background_collider()
+	    ? (original_sprite->regular().background_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
+	                                                                           : box2d::ColliderType::CIRCLE)
+	    : box2d::ColliderType::NONE;
+	_background_collider_origin_to_origin_vec_m =
+	    VecF{original_sprite->regular().background_collider().origin_to_origin_vec_px()} / (float)_ppm;
+
+	_background_collider_rect_dims_m =
+	    VecF{original_sprite->regular().background_collider().rect_dims_px()} / (float)_ppm;
+	_background_collider_circ_radius_m =
+	    original_sprite->regular().background_collider().circ_radius_px() / (float)_ppm;
+	_foreground_collider_type = original_sprite->regular().has_foreground_collider()
+	    ? (original_sprite->regular().foreground_collider().has_rect_dims_px() ? box2d::ColliderType::RECTANGLE
+	                                                                           : box2d::ColliderType::CIRCLE)
+	    : box2d::ColliderType::NONE;
+	_foreground_collider_origin_to_origin_vec_m =
+	    VecF{original_sprite->regular().foreground_collider().origin_to_origin_vec_px()} / (float)_ppm;
+	_foreground_collider_rect_dims_m =
+	    VecF{original_sprite->regular().foreground_collider().rect_dims_px()} / (float)_ppm;
+	_foreground_collider_circ_radius_m =
+	    original_sprite->regular().foreground_collider().circ_radius_px() / (float)_ppm;
+	_is_background_tile = original_sprite->regular().is_background_tile();
+
 	// Create foreground companion
-	if (sprite.has_regular() && sprite.regular().foreground_companion_rects_size()) {
+	if (original_sprite->has_regular() && original_sprite->regular().foreground_companion_rects_size()) {
 		_foreground_companion_sprite_effects_sheet_rect = sprite_effects_sheet.create_foreground_companion_effect(
-		    sprite_sheet, sprite.regular().rect(), sprite.regular().foreground_companion_rects(), lightning);
+		    sprite_sheet, original_sprite->regular().rect(), original_sprite->regular().foreground_companion_rects(),
+		    lightning);
 		_foreground_companion_center_to_origin_vec_px =
-		    VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
+		    VecF{original_sprite->regular().foreground_companion_center_to_origin_vec_px()};
 		_foreground_companion_center_to_origin_vec_m =
-		    VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()} / (float)_ppm;
+		    VecF{original_sprite->regular().foreground_companion_center_to_origin_vec_px()} / (float)_ppm;
 	}
 	// Create effects
-	if (sprite.has_regular() && sprite.regular().effects_size()) {
+	if (original_sprite->has_regular() && original_sprite->regular().effects_size()) {
 		_effects.resize(pb::enum_value_count<pb::SpriteEffectType>());
 		std::vector<bool> is_created(pb::enum_value_count<pb::SpriteEffectType>());
-		for (const auto& effect : sprite.regular().effects()) {
+		for (const auto& effect : original_sprite->regular().effects()) {
 			auto index = pb::enum_index(effect.type());
 			// Check if the effect is already created
 			if (is_created[index]) {
@@ -231,18 +253,19 @@ m2::Sprite::Sprite(
 			switch (effect.type()) {
 				case pb::SPRITE_EFFECT_MASK:
 					_effects[index] = sprite_effects_sheet.create_mask_effect(
-					    sprite_sheet, sprite.regular().rect(), effect.mask_color(), lightning);
+					    sprite_sheet, original_sprite->regular().rect(), effect.mask_color(), lightning);
 					break;
 				case pb::SPRITE_EFFECT_GRAYSCALE:
-					_effects[index] =
-					    sprite_effects_sheet.create_grayscale_effect(sprite_sheet, sprite.regular().rect(), lightning);
+					_effects[index] = sprite_effects_sheet.create_grayscale_effect(
+					    sprite_sheet, original_sprite->regular().rect(), lightning);
 					break;
 				case pb::SPRITE_EFFECT_IMAGE_ADJUSTMENT:
 					_effects[index] = sprite_effects_sheet.create_image_adjustment_effect(
-					    sprite_sheet, sprite.regular().rect(), effect.image_adjustment(), lightning);
+					    sprite_sheet, original_sprite->regular().rect(), effect.image_adjustment(), lightning);
 					break;
 				default:
-					throw M2ERROR("Encountered a sprite with unknown sprite effect: " + std::to_string(sprite.type()));
+					throw M2ERROR(
+					    "Encountered a sprite with unknown sprite effect: " + std::to_string(original_sprite->type()));
 			}
 			is_created[index] = true;
 		}
@@ -318,7 +341,7 @@ std::vector<m2::Sprite> m2::load_sprites(
 				throw M2ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
 			}
 			// Load sprite
-			sprites_vector[index] = Sprite{sprite_sheet, sprite_effects_sheet, sprite, lightning};
+			sprites_vector[index] = Sprite{sprite_sheets, sprite_sheet, sprite_effects_sheet, sprite, lightning};  //
 			is_loaded[index] = true;
 		}
 	}
