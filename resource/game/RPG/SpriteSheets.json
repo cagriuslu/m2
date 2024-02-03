@@ -252,48 +252,6 @@
         {
           "type": "CASTLE_BOTTOM_LEFT_CORNER_TOWER",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
-                "foregroundCompanion": {
-                  "centerToOriginVecPx": {
-                    "y": 5.5
-                  },
-                  "rects": [
-                    {
-                      "x": 16,
-                      "y": 151,
-                      "w": 16,
-                      "h": 9
-                    },
-                    {
-                      "x": 16,
-                      "y": 147,
-                      "w": 12,
-                      "h": 4
-                    },
-                    {
-                      "x": 17,
-                      "y": 146,
-                      "w": 10,
-                      "h": 1
-                    },
-                    {
-                      "x": 18,
-                      "y": 145,
-                      "w": 3,
-                      "h": 1
-                    },
-                    {
-                      "x": 23,
-                      "y": 145,
-                      "w": 3,
-                      "h": 1
-                    }
-                  ]
-                }
-              }
-            ],
             "rect": {
               "x": 16,
               "y": 144,
@@ -318,54 +276,47 @@
                 "h": 16
               }
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "foregroundCompanionCenterToOriginVecPx": {
+              "y": 5.5
+            },
+            "foregroundCompanionRects": [
+              {
+                "x": 16,
+                "y": 151,
+                "w": 16,
+                "h": 9
+              },
+              {
+                "x": 16,
+                "y": 147,
+                "w": 12,
+                "h": 4
+              },
+              {
+                "x": 17,
+                "y": 146,
+                "w": 10,
+                "h": 1
+              },
+              {
+                "x": 18,
+                "y": 145,
+                "w": 3,
+                "h": 1
+              },
+              {
+                "x": 23,
+                "y": 145,
+                "w": 3,
+                "h": 1
+              }
+            ]
           }
         },
         {
           "type": "CASTLE_BOTTOM_RIGHT_CORNER_TOWER",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
-                "foregroundCompanion": {
-                  "centerToOriginVecPx": {
-                    "y": 5.5
-                  },
-                  "rects": [
-                    {
-                      "x": 48,
-                      "y": 151,
-                      "w": 16,
-                      "h": 9
-                    },
-                    {
-                      "x": 52,
-                      "y": 147,
-                      "w": 12,
-                      "h": 4
-                    },
-                    {
-                      "x": 53,
-                      "y": 146,
-                      "w": 10,
-                      "h": 1
-                    },
-                    {
-                      "x": 54,
-                      "y": 145,
-                      "w": 3,
-                      "h": 1
-                    },
-                    {
-                      "x": 59,
-                      "y": 145,
-                      "w": 3,
-                      "h": 1
-                    }
-                  ]
-                }
-              }
-            ],
             "rect": {
               "x": 48,
               "y": 144,
@@ -390,7 +341,42 @@
                 "h": 16
               }
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "foregroundCompanionCenterToOriginVecPx": {
+              "y": 5.5
+            },
+            "foregroundCompanionRects": [
+              {
+                "x": 48,
+                "y": 151,
+                "w": 16,
+                "h": 9
+              },
+              {
+                "x": 52,
+                "y": 147,
+                "w": 12,
+                "h": 4
+              },
+              {
+                "x": 53,
+                "y": 146,
+                "w": 10,
+                "h": 1
+              },
+              {
+                "x": 54,
+                "y": 145,
+                "w": 3,
+                "h": 1
+              },
+              {
+                "x": 59,
+                "y": 145,
+                "w": 3,
+                "h": 1
+              }
+            ]
           }
         },
         {
@@ -518,30 +504,6 @@
         {
           "type": "CASTLE_BOTTOM_WALL",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
-                "foregroundCompanion": {
-                  "centerToOriginVecPx": {
-                    "y": 5.5
-                  },
-                  "rects": [
-                    {
-                      "x": 32,
-                      "y": 151,
-                      "w": 16,
-                      "h": 9
-                    },
-                    {
-                      "x": 36,
-                      "y": 149,
-                      "w": 9,
-                      "h": 2
-                    }
-                  ]
-                }
-              }
-            ],
             "rect": {
               "x": 32,
               "y": 144,
@@ -557,31 +519,29 @@
                 "h": 5
               }
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "foregroundCompanionCenterToOriginVecPx": {
+              "y": 5.5
+            },
+            "foregroundCompanionRects": [
+              {
+                "x": 32,
+                "y": 151,
+                "w": 16,
+                "h": 9
+              },
+              {
+                "x": 36,
+                "y": 149,
+                "w": 9,
+                "h": 2
+              }
+            ]
           }
         },
         {
           "type": "CASTLE_INNER_CORNER_BOTTOM_RIGHT",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
-                "foregroundCompanion": {
-                  "centerToOriginVecPx": {
-                    "x": 4.5,
-                    "y": 5.5
-                  },
-                  "rects": [
-                    {
-                      "x": 73,
-                      "y": 117,
-                      "w": 7,
-                      "h": 11
-                    }
-                  ]
-                }
-              }
-            ],
             "rect": {
               "x": 64,
               "y": 112,
@@ -598,31 +558,24 @@
                 "h": 5
               }
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "foregroundCompanionCenterToOriginVecPx": {
+              "x": 4.5,
+              "y": 5.5
+            },
+            "foregroundCompanionRects": [
+              {
+                "x": 73,
+                "y": 117,
+                "w": 7,
+                "h": 11
+              }
+            ]
           }
         },
         {
           "type": "CASTLE_INNER_CORNER_BOTTOM_LEFT",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
-                "foregroundCompanion": {
-                  "centerToOriginVecPx": {
-                    "x": -4.5,
-                    "y": 5.5
-                  },
-                  "rects": [
-                    {
-                      "x": 80,
-                      "y": 117,
-                      "w": 7,
-                      "h": 11
-                    }
-                  ]
-                }
-              }
-            ],
             "rect": {
               "x": 80,
               "y": 112,
@@ -639,7 +592,19 @@
                 "h": 5
               }
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "foregroundCompanionCenterToOriginVecPx": {
+              "x": -4.5,
+              "y": 5.5
+            },
+            "foregroundCompanionRects": [
+              {
+                "x": 80,
+                "y": 117,
+                "w": 7,
+                "h": 11
+              }
+            ]
           }
         },
         {
@@ -744,30 +709,6 @@
         {
           "type": "CASTLE_WALL_STAIRS_LEFT_TOP",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
-                "foregroundCompanion": {
-                  "centerToOriginVecPx": {
-                    "y": -2.5
-                  },
-                  "rects": [
-                    {
-                      "x": 304,
-                      "y": 151,
-                      "w": 16,
-                      "h": 9
-                    },
-                    {
-                      "x": 308,
-                      "y": 149,
-                      "w": 9,
-                      "h": 2
-                    }
-                  ]
-                }
-              }
-            ],
             "rect": {
               "x": 304,
               "y": 144,
@@ -786,7 +727,24 @@
                 "h": 5
               }
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "foregroundCompanionCenterToOriginVecPx": {
+              "y": -2.5
+            },
+            "foregroundCompanionRects": [
+              {
+                "x": 304,
+                "y": 151,
+                "w": 16,
+                "h": 9
+              },
+              {
+                "x": 308,
+                "y": 149,
+                "w": 9,
+                "h": 2
+              }
+            ]
           }
         },
         {
@@ -804,30 +762,6 @@
         {
           "type": "CASTLE_WALL_STAIRS_RIGHT_TOP",
           "regular": {
-            "effects": [
-              {
-                "type": "SPRITE_EFFECT_FOREGROUND_COMPANION",
-                "foregroundCompanion": {
-                  "centerToOriginVecPx": {
-                    "y": -2.5
-                  },
-                  "rects": [
-                    {
-                      "x": 372,
-                      "y": 149,
-                      "w": 9,
-                      "h": 2
-                    },
-                    {
-                      "x": 368,
-                      "y": 151,
-                      "w": 16,
-                      "h": 9
-                    }
-                  ]
-                }
-              }
-            ],
             "rect": {
               "x": 368,
               "y": 144,
@@ -846,7 +780,24 @@
                 "h": 5
               }
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "foregroundCompanionCenterToOriginVecPx": {
+              "y": -2.5
+            },
+            "foregroundCompanionRects": [
+              {
+                "x": 372,
+                "y": 149,
+                "w": 9,
+                "h": 2
+              },
+              {
+                "x": 368,
+                "y": 151,
+                "w": 16,
+                "h": 9
+              }
+            ]
           }
         },
         {

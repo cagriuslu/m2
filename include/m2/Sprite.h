@@ -14,6 +14,9 @@
 #include <m2/protobuf/Detail.h>
 
 namespace m2 {
+	using IsForegroundCompanion = bool;
+	using DrawVariant = std::variant<IsForegroundCompanion, pb::SpriteEffectType>;
+
 	class SpriteSheet final {
 		pb::SpriteSheet _sprite_sheet;
 		std::unique_ptr<SDL_Surface, sdl::SurfaceDeleter> _surface;
@@ -45,8 +48,9 @@ namespace m2 {
 
 		const SpriteEffectsSheet* _effects_sheet{};
 		std::vector<RectI> _effects;
-		std::optional<VecF> _foreground_companion_center_to_origin_vec_px{};
-		std::optional<VecF> _foreground_companion_center_to_origin_vec_m{};
+		std::optional<RectI> _foreground_companion_sprite_effects_sheet_rect;
+		std::optional<VecF> _foreground_companion_center_to_origin_vec_px;
+		std::optional<VecF> _foreground_companion_center_to_origin_vec_m;
 		RectI _rect;
 		float _original_rotation_radians{};
 		int _ppm{};
@@ -89,17 +93,21 @@ namespace m2 {
 		[[nodiscard]] float foreground_collider_circ_radius_m() const { return _foreground_collider_circ_radius_m; }
 		[[nodiscard]] inline bool is_background_tile() const { return _is_background_tile; }
 
+		SDL_Texture* texture(DrawVariant draw_variant) const;
+		VecF texture_total_dimensions(DrawVariant draw_variant) const;
+		const RectI& rect(DrawVariant draw_variant) const;
+
 		/// Ratio of screen pixels to sprite pixels
 		/// Multiply sprite dimensions (srcpx) with this number to convert them to screen dimensions (dstpx).
 		[[nodiscard]] float sheet_to_screen_pixel_multiplier() const;
 
 		/// Returns a vector from the sprite's center pixel to the sprite's origin.
-		[[nodiscard]] VecF center_to_origin_srcpx(pb::SpriteEffectType effect_type) const;
+		[[nodiscard]] VecF center_to_origin_srcpx(DrawVariant draw_variant) const;
 
 		/// Returns a vector from the sprite's center pixel to the sprite's graphical origin in screen dimensions (dstpx).
-		[[nodiscard]] inline VecF center_to_origin_dstpx(pb::SpriteEffectType effect_type) const {
+		[[nodiscard]] inline VecF center_to_origin_dstpx(DrawVariant draw_variant) const {
 			// Convert from source pixels to destination pixels
-			return center_to_origin_srcpx(effect_type) * sheet_to_screen_pixel_multiplier();
+			return center_to_origin_srcpx(draw_variant) * sheet_to_screen_pixel_multiplier();
 		}
 	};
 

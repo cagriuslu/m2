@@ -18,17 +18,13 @@ namespace {
 
 State::ForegroundCompanionMode::ForegroundCompanionMode() {
 	const auto& sprite = std::get<sedit::State>(LEVEL.type_state).selected_sprite();
-	// Iterate over effects
-	for (const auto& effect : sprite.regular().effects()) {
-		if (effect.type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
-			// Iterate over rects
-			for (const auto& rect : effect.foreground_companion().rects()) {
-				current_rects.emplace_back(rect);
-			}
-			// Set center
-			current_center = VecF{effect.foreground_companion().center_to_origin_vec_px()};
-			break;
+	if (sprite.has_regular() && sprite.regular().foreground_companion_rects_size()) {
+		// Iterate over rects
+		for (const auto& rect : sprite.regular().foreground_companion_rects()) {
+			current_rects.emplace_back(rect);
 		}
+		// Set center
+		current_center = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
 	}
 	// Enable selection
 	Events::enable_primary_selection(RectI{GAME.dimensions().game});
@@ -59,18 +55,11 @@ void State::ForegroundCompanionMode::add_rect() {
 		auto positions = selection_results.primary_int_selection_position_m();
 		auto rect = RectI::from_corners(positions->first, positions->second);  // wrt sprite coordinates
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-			// Iterate over effects
-			for (int i = 0; i < sprite.regular().effects_size(); ++i) {
-				auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
-				if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
-					auto* new_rect = mutable_effect->mutable_foreground_companion()->add_rects();
-					new_rect->set_x(rect.x);
-					new_rect->set_y(rect.y);
-					new_rect->set_w(rect.w);
-					new_rect->set_h(rect.h);
-					break;
-				}
-			}
+			auto* new_rect = sprite.mutable_regular()->add_foreground_companion_rects();
+			new_rect->set_x(rect.x);
+			new_rect->set_y(rect.y);
+			new_rect->set_w(rect.w);
+			new_rect->set_h(rect.h);
 		});
 		current_rects.emplace_back(rect);
 		GAME.events.reset_primary_selection();
@@ -82,16 +71,8 @@ void State::ForegroundCompanionMode::set_center() {
 		auto center_offset = *secondary_selection_position -
 		    std::get<sedit::State>(LEVEL.type_state).selected_sprite_center();  // new offset from sprite center
 		std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-			// Iterate over effects
-			for (int i = 0; i < sprite.regular().effects_size(); ++i) {
-				auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
-				if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
-					// Set center
-					mutable_effect->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_x(center_offset.x);
-					mutable_effect->mutable_foreground_companion()->mutable_center_to_origin_vec_px()->set_y(center_offset.y);
-					break;
-				}
-			}
+			sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_x(center_offset.x);
+			sprite.mutable_regular()->mutable_foreground_companion_center_to_origin_vec_px()->set_y(center_offset.y);
 		});
 		current_center = center_offset;
 		secondary_selection_position = std::nullopt;
@@ -99,15 +80,8 @@ void State::ForegroundCompanionMode::set_center() {
 }
 void State::ForegroundCompanionMode::reset() {
 	std::get<sedit::State>(LEVEL.type_state).modify_selected_sprite([&](pb::Sprite& sprite) {
-		// Iterate over effects
-		for (int i = 0; i < sprite.regular().effects_size(); ++i) {
-			auto* mutable_effect = sprite.mutable_regular()->mutable_effects(i);
-			if (mutable_effect->type() == pb::SpriteEffectType::SPRITE_EFFECT_FOREGROUND_COMPANION) {
-				mutable_effect->mutable_foreground_companion()->clear_center_to_origin_vec_px();
-				mutable_effect->mutable_foreground_companion()->clear_rects();
-				break;
-			}
-		}
+		sprite.mutable_regular()->clear_foreground_companion_center_to_origin_vec_px();
+		sprite.mutable_regular()->clear_foreground_companion_rects();
 	});
 	current_rects.clear();
 	current_center = std::nullopt;

@@ -154,7 +154,11 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		using namespace m2::pb;
 		impl.animation_fsm.time(GAME.delta_time_s());
 		gfx.draw_addon_health_bar = chr.get_resource(RESOURCE_HP);
-		gfx.draw_sprite_effect = chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL) ? SPRITE_EFFECT_MASK : NO_SPRITE_EFFECT;
+		if (chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL)) {
+			gfx.draw_variant = SPRITE_EFFECT_MASK;
+		} else {
+			gfx.draw_variant = m2::IsForegroundCompanion{false};
+		}
 	};
 	phy.on_debug_draw = [&impl](m2::Physique& phy) {
 		m2::Physique::default_debug_draw(phy);

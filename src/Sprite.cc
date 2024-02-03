@@ -194,6 +194,12 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	_foreground_collider_rect_dims_m(VecF{sprite.regular().foreground_collider().rect_dims_px()} / (float)_ppm),
 	_foreground_collider_circ_radius_m(sprite.regular().foreground_collider().circ_radius_px() / (float)_ppm),
 	_is_background_tile(sprite.regular().is_background_tile()) {
+	// Create foreground companion
+	if (sprite.has_regular() && sprite.regular().foreground_companion_rects_size()) {
+		_foreground_companion_sprite_effects_sheet_rect = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.regular().rect(), sprite.regular().foreground_companion_rects(), lightning);
+		_foreground_companion_center_to_origin_vec_px = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
+		_foreground_companion_center_to_origin_vec_m = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()} / (float)_ppm;
+	}
 	// Create effects
 	if (sprite.has_regular() && sprite.regular().effects_size()) {
 		_effects.resize(pb::enum_value_count<pb::SpriteEffectType>());
@@ -206,11 +212,6 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 			}
 			// Create effect
 			switch (effect.type()) {
-				case pb::SPRITE_EFFECT_FOREGROUND_COMPANION:
-					_effects[index] = sprite_effects_sheet.create_foreground_companion_effect(sprite_sheet, sprite.regular().rect(), effect.foreground_companion().rects(), lightning);
-					_foreground_companion_center_to_origin_vec_px = VecF{effect.foreground_companion().center_to_origin_vec_px()};
-					_foreground_companion_center_to_origin_vec_m = VecF{effect.foreground_companion().center_to_origin_vec_px()} / (float)_ppm;
-					break;
 				case pb::SPRITE_EFFECT_MASK:
 					_effects[index] = sprite_effects_sheet.create_mask_effect(sprite_sheet, sprite.regular().rect(), effect.mask_color(), lightning);
 					break;
@@ -228,16 +229,47 @@ m2::Sprite::Sprite(const SpriteSheet& sprite_sheet, SpriteEffectsSheet& sprite_e
 	}
 }
 
+SDL_Texture* m2::Sprite::texture(DrawVariant draw_variant) const {
+	if (std::holds_alternative<IsForegroundCompanion>(draw_variant) &&
+	    not std::get<IsForegroundCompanion>(draw_variant)) {
+		return sprite_sheet().texture();
+	} else {
+		return effects_texture();
+	}
+}
+
+m2::VecF m2::Sprite::texture_total_dimensions(DrawVariant draw_variant) const {
+	if (std::holds_alternative<IsForegroundCompanion>(draw_variant) &&
+	    not std::get<IsForegroundCompanion>(draw_variant)) {
+		return {sprite_sheet().surface()->w, sprite_sheet().surface()->h};
+	} else {
+		return {effects_sheet()->texture_width(), effects_sheet()->texture_height()};
+	}
+}
+
+const m2::RectI& m2::Sprite::rect(DrawVariant draw_variant) const {
+	if (std::holds_alternative<IsForegroundCompanion>(draw_variant)) {
+		if (std::get<IsForegroundCompanion>(draw_variant)) {
+			return *_foreground_companion_sprite_effects_sheet_rect;
+		} else {
+			return rect();
+		}
+	} else {
+		return effect_rect(std::get<pb::SpriteEffectType>(draw_variant));
+	}
+}
+
 float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
 	return static_cast<float>(GAME.dimensions().ppm) / static_cast<float>(ppm());
 }
-m2::VecF m2::Sprite::center_to_origin_srcpx(pb::SpriteEffectType effect_type) const {
-	if (effect_type == pb::SPRITE_EFFECT_FOREGROUND_COMPANION && has_foreground_companion()) {
+m2::VecF m2::Sprite::center_to_origin_srcpx(DrawVariant draw_variant) const {
+	if (std::holds_alternative<IsForegroundCompanion>(draw_variant) &&
+	    std::get<IsForegroundCompanion>(draw_variant)) {
 		return foreground_companion_center_to_origin_vec_px();
 	} else {
 		return original_rotation_radians() != 0.0f
-				? center_to_origin_vec_px().rotate(original_rotation_radians())
-				: center_to_origin_vec_px();
+		    ? center_to_origin_vec_px().rotate(original_rotation_radians())
+		    : center_to_origin_vec_px();
 	}
 }
 

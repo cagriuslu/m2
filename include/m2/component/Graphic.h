@@ -27,7 +27,7 @@ namespace m2 {
 
 	/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
 	/// Returns screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx() if sprite is non-NULL.
-	VecF screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type);
+	VecF screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, DrawVariant draw_variant);
 }
 
 namespace m3 {
@@ -75,13 +75,14 @@ namespace m3 {
 namespace m2 {
 	struct Graphic : public Component {
 		using Callback = std::function<void(Graphic&)>;
+
 		Callback pre_draw{};
 		Callback on_draw{};
 		Callback on_effect{}; // For drawing the health bar??
 		Callback post_draw{};
 
 		const Sprite* sprite{};
-		pb::SpriteEffectType draw_sprite_effect{pb::NO_SPRITE_EFFECT};
+		DrawVariant draw_variant;
 		float draw_angle{}; // Rads
 		float z{};
 		std::optional<float> draw_addon_health_bar; /// [0,1]
@@ -103,6 +104,6 @@ namespace m2 {
 		static void draw_horizontal_line(float y, SDL_Color color);
 	};
 
-	void draw_real_2d(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type, float angle);
-	void draw_fake_3d(const VecF& position, const Sprite& sprite, pb::SpriteEffectType effect_type, float angle, bool is_foreground, float z);
+	void draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant draw_variant, float angle);
+	void draw_fake_3d(const VecF& position, const Sprite& sprite, DrawVariant draw_variant, float angle, bool is_foreground, float z);
 }

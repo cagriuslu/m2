@@ -51,8 +51,8 @@ m2::VecF m2::screen_origin_to_position_dstpx(const VecF& position) {
 	return camera_to_position_dstpx(position) + VecF{GAME.dimensions().window.w / 2, GAME.dimensions().window.h / 2 };
 }
 
-m2::VecF m2::screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, const pb::SpriteEffectType effect_type) {
-	return screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx(effect_type);
+m2::VecF m2::screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, DrawVariant draw_variant) {
+	return screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx(draw_variant);
 }
 
 m3::VecF m3::camera_position_m() {
@@ -164,9 +164,9 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 	if (is_projection_type_perspective(LEVEL.projection_type())) {
 		// Check if foreground or background
 		const bool is_foreground = LEVEL.graphics.get_id(&gfx);
-		draw_fake_3d(gfx.parent().position, *gfx.sprite, gfx.draw_sprite_effect, gfx.draw_angle, is_foreground, gfx.z);
+		draw_fake_3d(gfx.parent().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle, is_foreground, gfx.z);
 	} else {
-		draw_real_2d(gfx.parent().position, *gfx.sprite, gfx.draw_sprite_effect, gfx.draw_angle);
+		draw_real_2d(gfx.parent().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle);
 	}
 }
 
@@ -184,7 +184,7 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 	if (is_projection_type_parallel(LEVEL.projection_type())) {
 		const auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
 		const auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.parent().position,
-				*gfx.sprite, gfx.draw_sprite_effect);
+				*gfx.sprite, gfx.draw_variant);
 		dst_rect = SDL_Rect{
 				(int) roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
 				(int) roundf(screen_origin_to_sprite_center_px_vec.y) + (src_rect.h * GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1

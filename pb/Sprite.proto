@@ -14,31 +14,22 @@ message Color {
   uint32 a = 4;
 }
 
-// Only background tiles can have foreground companion
-message ForegroundCompanion {
-  // Vector from the center of the (rect) to the position that should be the origin
-  VecF center_to_origin_vec_px = 1;
-  repeated RectI rects = 2; // w.r.t SpriteSheet coordinates
-}
-
 message ImageAdjustment {
   float brightness_multiplier = 1;
 }
 
 enum SpriteEffectType {
   NO_SPRITE_EFFECT = 0;
-  SPRITE_EFFECT_FOREGROUND_COMPANION = 1;
-  SPRITE_EFFECT_MASK = 2;
-  SPRITE_EFFECT_GRAYSCALE = 3;
-  SPRITE_EFFECT_IMAGE_ADJUSTMENT = 4;
+  SPRITE_EFFECT_MASK = 1;
+  SPRITE_EFFECT_GRAYSCALE = 2;
+  SPRITE_EFFECT_IMAGE_ADJUSTMENT = 3;
 }
 
 message SpriteEffect {
   SpriteEffectType type = 1;
   oneof effect_arg {
-    ForegroundCompanion foreground_companion = 2;
-    Color mask_color = 3;
-    ImageAdjustment image_adjustment = 4;
+    Color mask_color = 2;
+    ImageAdjustment image_adjustment = 3;
   }
 }
 
@@ -80,6 +71,10 @@ message RegularSprite {
 
   // If the tile is a background tile, it'll show up in the PAINT list of the level editor.
   bool is_background_tile = 8;
+
+  // Vector from the center of the (rect) to the position that should be the origin of the Foreground Companion
+  VecF foreground_companion_center_to_origin_vec_px = 9;
+  repeated RectI foreground_companion_rects = 10; // w.r.t SpriteSheet coordinates
 }
 
 message Sprite {

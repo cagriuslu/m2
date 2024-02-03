@@ -52,7 +52,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile_foreground_companion(const V
 	auto& companion = obj_pair.first;
 
 	auto& gfx = companion.add_graphic(sprite);
-	gfx.draw_sprite_effect = pb::SPRITE_EFFECT_FOREGROUND_COMPANION;
+	gfx.draw_variant = IsForegroundCompanion{true};
 
 	return obj_pair;
 }
