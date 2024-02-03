@@ -36,6 +36,19 @@ Action ImageSelection::on_event(Events& events) {
 		if (0 < _selection) {
 			select(_selection - 1);
 		}
+	} else {
+		// Check if scrolled
+		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect); 0 < scroll_amount) {
+			auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), image_selection.list.size() - _selection - 1);
+			if (min_scroll_amount) {
+				return select(_selection + min_scroll_amount);
+			}
+		} else if (scroll_amount < 0) {
+			auto min_scroll_amount = std::min(static_cast<unsigned>(-scroll_amount), _selection);
+			if (min_scroll_amount) {
+				return select(_selection - min_scroll_amount);
+			}
+		}
 	}
 	return Action::CONTINUE;
 }
