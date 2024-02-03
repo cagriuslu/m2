@@ -380,22 +380,7 @@
       "resource": "resource/game/CuZn/png/guiicons/money.png",
       "ppm": 512,
       "sprites": [
-        {},
-        {
-          "type": "ANTWERPEN"
-        },
-        {
-          "type": "HARWICH"
-        },
-        {
-          "type": "COLOGNE"
-        },
-        {
-          "type": "BREMEN"
-        },
-        {
-          "type": "NEWCASTLE"
-        }
+        {}
       ]
     },
     {
@@ -1226,6 +1211,105 @@
             "rect": {
               "x": 352,
               "y": 384,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "ANTWERPEN_1",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "ANTWERPEN_2",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "HARWICH_1",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "COLOGNE_1",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "COLOGNE_2",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "BREMEN_1",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "BREMEN_2",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "NEWCASTLE_1",
+          "regular": {
+            "rect": {
+              "x": 768,
+              "w": 32,
+              "h": 32
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "NEWCASTLE_2",
+          "regular": {
+            "rect": {
+              "x": 768,
               "w": 32,
               "h": 32
             },
