@@ -1453,8 +1453,176 @@
   ],
   "textLabels": [
     {
+      "type": "TEXT_LABEL_NEWCASTLE",
+      "text": "Newcastle",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_DEN_HELDER",
+      "text": "Den Helder",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_LEEUWARDEN",
+      "text": "Leeuwarden",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_GRONINGEN",
+      "text": "Groningen",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_AMSTERDAM",
+      "text": "Amsterdam",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_LELYSTAD",
+      "text": "Lelystad",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_ZWOLLE",
+      "text": "Zwolle",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_BREMEN",
+      "text": "Bremen",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
       "type": "TEXT_LABEL_DIEMEN",
       "text": "Diemen",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_APPELDOORN",
+      "text": "Appeldoorn",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_UTRECHT",
+      "text": "Utrecht",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_ARNHEM",
+      "text": "Arnhem",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_HARWICH",
+      "text": "Harwich",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_ROTTERDAM",
+      "text": "Rotterdam",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_DEN_HAAG",
+      "text": "Den Haag",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_GOUDA",
+      "text": "Gouda",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_NIJMEGEN",
+      "text": "Nijmegen",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_BREDA",
+      "text": "Breda",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_SHERTOGENBOSCH",
+      "text": "sHertogenbosch",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_EINDHOVEN",
+      "text": "Eindhoven",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_VENLO",
+      "text": "Venlo",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_TILBURG",
+      "text": "Tilburg",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_MAASTRICHT",
+      "text": "Maastricht",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_COLOGNE",
+      "text": "Cologne",
+      "heightM": 1,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_ANTWERPEN",
+      "text": "Antwerpen",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
