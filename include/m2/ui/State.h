@@ -57,6 +57,6 @@ namespace m2::ui {
 	RectI calculate_widget_rect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
 	Widget* find_text_widget(State& state, const std::string& text);
 
-	extern const Blueprint console_ui;
+	extern Blueprint console_ui;
 	extern const Blueprint message_box_ui;
 }

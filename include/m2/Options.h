@@ -7,4 +7,6 @@ namespace m2 {
 	extern bool silent;
 
 	extern int time_slowdown_factor;
+
+	extern std::string console_command;
 }

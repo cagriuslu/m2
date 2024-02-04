@@ -37,6 +37,7 @@
 
 #define TRACE_FN() LOG_TRACE("f", __FUNCTION__)
 #define DEBUG_FN() LOG_DEBUG("f", __FUNCTION__)
+#define INFO_FN() LOG_INFO("f", __FUNCTION__)
 
 namespace m2 {
 	void log_stacktrace();

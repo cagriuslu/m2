@@ -8,43 +8,43 @@
 #include <m2/ThreadPool.h>
 #include <m2/Log.h>
 #include <m2/command_line/SpriteSheets.h>
+#include <m2/detail/ArgumentParser.h>
 
 #define BREAK_IF_QUIT() if (GAME.quit) break
 
 using namespace m2;
 
 int main(const int argc, char **argv) {
-	DEBUG_FN();
+	INFO_FN();
 
-	LOG_DEBUG("Processing command line arguments...");
-	for (int i = 1; i < argc; i++) {
-		LOG_TRACE("Processing argument %s...", argv[i]);
-		std::string arg{argv[i]};
-		if (constexpr std::string_view log_level_opt = "--log-level="; arg.starts_with(log_level_opt)) {
-			if (const auto opt = arg.substr(log_level_opt.size()); not LogLevel_Parse(opt, &current_log_level)) {
-				LOG_WARN("Invalid log level", opt);
-			}
-			LOG_INFO("New log level", current_log_level);
-		} else if (arg == "--silent") {
-			LOG_INFO("Silent");
-			silent = true;
-		} else if (constexpr std::string_view slowdown_opt = "--slowdown="; arg.starts_with(slowdown_opt)) {
-			auto opt = arg.substr(slowdown_opt.size());
-			if (auto const slowdown_factor = strtol(opt.c_str(), nullptr, 0); 1 <= slowdown_factor) {
-				time_slowdown_factor = static_cast<int>(slowdown_factor);
-				LOG_INFO("New slowdown factor", time_slowdown_factor);
-			} else {
-				LOG_WARN("Invalid slowdown factor", opt);
-			}
-		} else if (arg == "--sprite-sheets") {
-			LOG_INFO("Generating sprite sheets");
-			printf("%s\n", generate_sprite_sheets_skeleton().c_str());
-			return 0;
+	auto arg_list = to_argument_list(argc, argv);
+	if (auto log_level_opt = parse_argument(arg_list, "log-level"); log_level_opt) {
+		if (not LogLevel_Parse(*log_level_opt, &current_log_level)) {
+			LOG_WARN("Invalid log level", *log_level_opt);
+		}
+		LOG_INFO("New log level", current_log_level);
+	}
+	if (auto silent_opt = parse_argument(arg_list, "silent"); silent_opt) {
+		LOG_INFO("Silent");
+		silent = true;
+	}
+	if (auto slowdown_opt = parse_argument(arg_list, "slowdown"); slowdown_opt) {
+		if (auto const slowdown_factor = strtol(slowdown_opt->c_str(), nullptr, 0); 1 <= slowdown_factor) {
+			time_slowdown_factor = static_cast<int>(slowdown_factor);
+			LOG_INFO("New slowdown factor", time_slowdown_factor);
 		} else {
-			LOG_WARN("Unknown command line argument", arg);
+			LOG_WARN("Invalid slowdown factor", *slowdown_opt);
 		}
 	}
-	LOG_DEBUG("Processed command line arguments");
+	if (auto sprite_sheets_opt = parse_argument(arg_list, "sprite_sheets"); sprite_sheets_opt) {
+		LOG_INFO("Generating sprite sheets");
+		printf("%s\n", generate_sprite_sheets_skeleton().c_str());
+		return 0;
+	}
+	if (auto console_opt = parse_argument(arg_list, "console"); console_opt) {
+		console_command = *console_opt;
+		LOG_INFO("Console command", *console_opt);
+	}
 
 	//ThreadPool thread_pool;
 

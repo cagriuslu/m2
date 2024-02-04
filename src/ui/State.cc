@@ -29,6 +29,90 @@ namespace {
 	constexpr auto is_widget_focused = [](const auto &w) { return w->focused; };
 	// Actions
 	constexpr auto draw_widget = [](const auto &w) { w->on_draw(); };
+
+	Action handle_console_command(const std::string &command) {
+		GAME.console_output.emplace_back(">> " + command);
+
+		if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
+			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
+				auto load_result = GAME.load_level_editor(GAME.levels_dir / match_results.str(1));
+				if (load_result) {
+					return Action::CLEAR_STACK;
+				}
+				GAME.console_output.emplace_back(load_result.error());
+			} else {
+				GAME.console_output.emplace_back("ledit usage:");
+				GAME.console_output.emplace_back(".. file_name - open level editor with file");
+			}
+			return Action::CONTINUE;
+		} else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
+			// MIDI editor (?)
+		} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
+			if (std::smatch match_results;
+			    std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
+				auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
+				auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
+				auto load_result = GAME.load_pixel_editor(
+				    match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
+				if (load_result) {
+					return Action::CLEAR_STACK;
+				}
+				GAME.console_output.emplace_back(load_result.error());
+			} else {
+				GAME.console_output.emplace_back("pedit usage:");
+				GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
+			}
+			return Action::CONTINUE;
+		} else if (command == "sedit") {
+			auto load_result = GAME.load_sheet_editor();
+			if (load_result) {
+				// Execute main menu the first time the sheet editor is run
+				auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
+				return main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result;
+			}
+			GAME.console_output.emplace_back(load_result.error());
+			return Action::CONTINUE;
+		} else if (command == "bsedit") {
+			auto load_result = GAME.load_bulk_sheet_editor();
+			if (load_result) {
+				// Execute main menu the first time the bulk sheet editor is run
+				auto main_menu_result = State::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
+				return main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result;
+			}
+			GAME.console_output.emplace_back(load_result.error());
+			return Action::CONTINUE;
+		} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
+			if (std::smatch match_results;
+			    std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
+				if (auto parameter = match_results.str(1); parameter == "game_height") {
+					auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
+					GAME.recalculate_dimensions(
+					    GAME.dimensions().window.w, GAME.dimensions().window.h, new_game_height);
+					return Action::CONTINUE;
+				}
+				GAME.console_output.emplace_back("Unknown parameter");
+			} else {
+				// TODO print help
+			}
+		} else if (command == "quit") {
+			return Action::QUIT;
+		} else if (command == "close") {
+			return Action::RETURN;
+		} else if (command.empty()) {
+			// Do nothing
+		} else {
+			GAME.console_output.emplace_back("Available commands:");
+			GAME.console_output.emplace_back("help - display this help");
+			GAME.console_output.emplace_back("ledit - open level editor");
+			GAME.console_output.emplace_back("medit - open midi editor");
+			GAME.console_output.emplace_back("pedit - open pixel editor");
+			GAME.console_output.emplace_back("sedit - open sheet editor");
+			GAME.console_output.emplace_back("set - set game variable");
+			GAME.console_output.emplace_back("close - close the console");
+			GAME.console_output.emplace_back("quit - quit game");
+		}
+		return Action::CONTINUE;
+	}
 }  // namespace
 
 State::State(const Blueprint *blueprint) : _prev_text_input_state(SDL_IsTextInputActive()), blueprint(blueprint) {
@@ -113,8 +197,13 @@ Action State::execute(const RectI rect) {
 			}
 
 			// Handle console action
-			if (events.pop_key_press(Key::CONSOLE) &&
+			if ((not console_command.empty() || events.pop_key_press(Key::CONSOLE)) &&
 			    blueprint != &console_ui) {  // Do not open console on top of console
+
+				// Initialize console with command
+				std::get<widget::TextInputBlueprint>(console_ui.widgets[24].variant).initial_text = console_command;
+				console_command.clear();
+
 				LOG_INFO("Opening console");
 				if (auto action = create_execute_sync(&console_ui); action == Action::RETURN) {
 					// Continue with the prev UI
@@ -317,95 +406,6 @@ m2::ui::Widget *m2::ui::find_text_widget(State &state, const std::string &text) 
 	return (it != state.widgets.end()) ? it->get() : nullptr;
 }
 
-const WidgetBlueprint::Variant command_input_variant = widget::TextInputBlueprint{
-    .initial_text = "",
-    .on_action = [](const widget::TextInput &self) -> std::pair<Action, std::optional<std::string>> {
-	    const auto &command = self.text_input();
-	    GAME.console_output.emplace_back(">> " + command);
-
-	    if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
-		    if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
-			    auto load_result = GAME.load_level_editor(GAME.levels_dir / match_results.str(1));
-			    if (load_result) {
-				    return std::make_pair(Action::CLEAR_STACK, std::string{});
-			    }
-			    GAME.console_output.emplace_back(load_result.error());
-		    } else {
-			    GAME.console_output.emplace_back("ledit usage:");
-			    GAME.console_output.emplace_back(".. file_name - open level editor with file");
-		    }
-		    return std::make_pair(Action::CONTINUE, std::string{});
-	    } else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
-	    } else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
-		    if (std::smatch match_results;
-		        std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
-			    auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
-			    auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
-			    auto load_result = GAME.load_pixel_editor(
-			        match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
-			    if (load_result) {
-				    return std::make_pair(Action::CLEAR_STACK, std::string{});
-			    }
-			    GAME.console_output.emplace_back(load_result.error());
-		    } else {
-			    GAME.console_output.emplace_back("pedit usage:");
-			    GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
-		    }
-		    return std::make_pair(Action::CONTINUE, std::string{});
-	    } else if (command == "sedit") {
-		    auto load_result = GAME.load_sheet_editor();
-		    if (load_result) {
-			    // Execute main menu the first time the sheet editor is run
-			    auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
-			    return std::make_pair(
-			        main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result, std::string{});
-		    }
-		    GAME.console_output.emplace_back(load_result.error());
-		    return std::make_pair(Action::CONTINUE, std::string{});
-	    } else if (command == "bsedit") {
-		    auto load_result = GAME.load_bulk_sheet_editor();
-		    if (load_result) {
-			    // Execute main menu the first time the bulk sheet editor is run
-			    auto main_menu_result = State::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
-			    return std::make_pair(
-			        main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result, std::string{});
-		    }
-		    GAME.console_output.emplace_back(load_result.error());
-		    return std::make_pair(Action::CONTINUE, std::string{});
-	    } else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
-		    if (std::smatch match_results;
-		        std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
-			    if (auto parameter = match_results.str(1); parameter == "game_height") {
-				    auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
-				    GAME.recalculate_dimensions(
-				        GAME.dimensions().window.w, GAME.dimensions().window.h, new_game_height);
-				    return std::make_pair(Action::CONTINUE, std::string{});
-			    }
-			    GAME.console_output.emplace_back("Unknown parameter");
-		    } else {
-			    // TODO print help
-		    }
-	    } else if (command == "quit") {
-		    return std::make_pair(Action::QUIT, std::string{});
-	    } else if (command == "close") {
-		    return std::make_pair(Action::RETURN, std::string{});
-	    } else if (command.empty()) {
-		    // Do nothing
-	    } else {
-		    GAME.console_output.emplace_back("Available commands:");
-		    GAME.console_output.emplace_back("help - display this help");
-		    GAME.console_output.emplace_back("ledit - open level editor");
-		    GAME.console_output.emplace_back("medit - open midi editor");
-		    GAME.console_output.emplace_back("pedit - open pixel editor");
-		    GAME.console_output.emplace_back("sedit - open sheet editor");
-		    GAME.console_output.emplace_back("set - set game variable");
-		    GAME.console_output.emplace_back("close - close the console");
-		    GAME.console_output.emplace_back("quit - quit game");
-	    }
-
-	    return std::make_pair(Action::CONTINUE, std::string{});
-    }};
-
 template <unsigned INDEX>
 widget::TextBlueprint command_output_variant() {
 	return {
@@ -419,36 +419,60 @@ widget::TextBlueprint command_output_variant() {
 	    }};
 }
 
-const Blueprint m2::ui::console_ui = {
+Blueprint m2::ui::console_ui = {
     .w = 1,
     .h = 25,
     .border_width_px = 0,
     .background_color = {0, 0, 0, 255},
     .widgets = {
-        WidgetBlueprint{.x = 0, .y = 0, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<23>()},
-        WidgetBlueprint{.x = 0, .y = 1, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<22>()},
-        WidgetBlueprint{.x = 0, .y = 2, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<21>()},
-        WidgetBlueprint{.x = 0, .y = 3, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<20>()},
-        WidgetBlueprint{.x = 0, .y = 4, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<19>()},
-        WidgetBlueprint{.x = 0, .y = 5, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<18>()},
-        WidgetBlueprint{.x = 0, .y = 6, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<17>()},
-        WidgetBlueprint{.x = 0, .y = 7, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<16>()},
-        WidgetBlueprint{.x = 0, .y = 8, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<15>()},
-        WidgetBlueprint{.x = 0, .y = 9, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<14>()},
-        WidgetBlueprint{.x = 0, .y = 10, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<13>()},
-        WidgetBlueprint{.x = 0, .y = 11, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<12>()},
-        WidgetBlueprint{.x = 0, .y = 12, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<11>()},
-        WidgetBlueprint{.x = 0, .y = 13, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<10>()},
-        WidgetBlueprint{.x = 0, .y = 14, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<9>()},
-        WidgetBlueprint{.x = 0, .y = 15, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<8>()},
-        WidgetBlueprint{.x = 0, .y = 16, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<7>()},
-        WidgetBlueprint{.x = 0, .y = 17, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<6>()},
-        WidgetBlueprint{.x = 0, .y = 18, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<5>()},
-        WidgetBlueprint{.x = 0, .y = 19, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<4>()},
-        WidgetBlueprint{.x = 0, .y = 20, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<3>()},
-        WidgetBlueprint{.x = 0, .y = 21, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<2>()},
-        WidgetBlueprint{.x = 0, .y = 22, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<1>()},
-        WidgetBlueprint{.x = 0, .y = 23, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<0>()},
+        WidgetBlueprint{
+            .x = 0, .y = 0, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<23>()},
+        WidgetBlueprint{
+            .x = 0, .y = 1, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<22>()},
+        WidgetBlueprint{
+            .x = 0, .y = 2, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<21>()},
+        WidgetBlueprint{
+            .x = 0, .y = 3, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<20>()},
+        WidgetBlueprint{
+            .x = 0, .y = 4, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<19>()},
+        WidgetBlueprint{
+            .x = 0, .y = 5, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<18>()},
+        WidgetBlueprint{
+            .x = 0, .y = 6, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<17>()},
+        WidgetBlueprint{
+            .x = 0, .y = 7, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<16>()},
+        WidgetBlueprint{
+            .x = 0, .y = 8, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<15>()},
+        WidgetBlueprint{
+            .x = 0, .y = 9, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<14>()},
+        WidgetBlueprint{
+            .x = 0, .y = 10, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<13>()},
+        WidgetBlueprint{
+            .x = 0, .y = 11, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<12>()},
+        WidgetBlueprint{
+            .x = 0, .y = 12, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<11>()},
+        WidgetBlueprint{
+            .x = 0, .y = 13, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<10>()},
+        WidgetBlueprint{
+            .x = 0, .y = 14, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<9>()},
+        WidgetBlueprint{
+            .x = 0, .y = 15, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<8>()},
+        WidgetBlueprint{
+            .x = 0, .y = 16, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<7>()},
+        WidgetBlueprint{
+            .x = 0, .y = 17, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<6>()},
+        WidgetBlueprint{
+            .x = 0, .y = 18, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<5>()},
+        WidgetBlueprint{
+            .x = 0, .y = 19, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<4>()},
+        WidgetBlueprint{
+            .x = 0, .y = 20, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<3>()},
+        WidgetBlueprint{
+            .x = 0, .y = 21, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<2>()},
+        WidgetBlueprint{
+            .x = 0, .y = 22, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<1>()},
+        WidgetBlueprint{
+            .x = 0, .y = 23, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<0>()},
         WidgetBlueprint{
             .initially_focused = true,
             .x = 0,
@@ -456,7 +480,12 @@ const Blueprint m2::ui::console_ui = {
             .w = 1,
             .h = 1,
             .background_color = SDL_Color{27, 27, 27, 255},
-            .variant = command_input_variant}}};
+            .variant = widget::TextInputBlueprint{
+                .initial_text = "", // May be overriden with console_command on startup
+                .on_action = [](const widget::TextInput &self) -> std::pair<Action, std::optional<std::string>> {
+	                const auto &command = self.text_input();
+	                return std::make_pair(handle_console_command(command), std::string{});
+                }}}}};
 
 const Blueprint m2::ui::message_box_ui = {
     .w = 1,
