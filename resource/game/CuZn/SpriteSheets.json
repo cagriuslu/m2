@@ -109,7 +109,13 @@
           }
         },
         {
-          "type": "EINDHOVEN_PRESS",
+          "type": "EINDHOVEN_PRESS_1",
+          "duplicate": {
+            "original_type": "DEN_HELDER_PRESS"
+          }
+        },
+        {
+          "type": "EINDHOVEN_PRESS_2",
           "duplicate": {
             "original_type": "DEN_HELDER_PRESS"
           }
@@ -193,7 +199,13 @@
           }
         },
         {
-          "type": "ARNHEM_EXPLOSIVE_WOOD",
+          "type": "ARNHEM_EXPLOSIVE_WOOD_1",
+          "duplicate": {
+            "original_type": "LEEUWARDEN_EXPLOSIVE_WOOD"
+          }
+        },
+        {
+          "type": "ARNHEM_EXPLOSIVE_WOOD_2",
           "duplicate": {
             "original_type": "LEEUWARDEN_EXPLOSIVE_WOOD"
           }
@@ -225,7 +237,13 @@
           }
         },
         {
-          "type": "TILBURG_EXPLOSIVE",
+          "type": "TILBURG_EXPLOSIVE_1",
+          "duplicate": {
+            "original_type": "BREDA_EXPLOSIVE"
+          }
+        },
+        {
+          "type": "TILBURG_EXPLOSIVE_2",
           "duplicate": {
             "original_type": "BREDA_EXPLOSIVE"
           }
@@ -245,7 +263,13 @@
           }
         },
         {
-          "type": "STANDALONE_KITCHEN",
+          "type": "STANDALONE_KITCHEN_1",
+          "duplicate": {
+            "original_type": "APPELDOORN_KITCHEN"
+          }
+        },
+        {
+          "type": "STANDALONE_KITCHEN_2",
           "duplicate": {
             "original_type": "APPELDOORN_KITCHEN"
           }

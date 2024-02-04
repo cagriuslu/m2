@@ -12,6 +12,8 @@
 - Add timer widget that executes an action after some time
 - SmartPointer may be useless, think about it
 - sedit ve bsedit'te, selection aktif iken window resize edilirse selection bozuluyor
+- There should be a mechanism to introduce multiple variations for a single sprite type. Then maybe they can be selected to show at random.
+  Or the level editor can generate random and save. (Ex. Grass Variations)
 
 Level Editor
 - Grid'i kapatinca grid silinmiyor
