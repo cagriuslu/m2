@@ -2,7 +2,7 @@
 #include "m2/Game.h"
 #include "m2/game/object/Ghost.h"
 #include <m2/ui/widget/TextSelection.h>
-#include <m2/ui/widget/IntegerSelection.h>
+#include <m2/ui/widget/IntegerInput.h>
 #include <m2/ui/widget/ImageSelection.h>
 #include <m2/ui/widget/Text.h>
 
@@ -10,14 +10,14 @@ using namespace m2;
 using namespace m2::ui;
 
 // Common widgets
-const widget::IntegerSelectionBlueprint layer_selection = {
+const widget::IntegerInputBlueprint layer_selection = {
 		.min_value = 0,
 		.max_value = 3,
 		.initial_value = 0,
-		.on_create = [](MAYBE const widget::IntegerSelection& self) -> std::optional<int> {
+		.on_create = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
 			return I(std::get<ledit::State>(LEVEL.type_state).selected_layer);
 		},
-		.on_action = [](const widget::IntegerSelection& self) -> Action {
+		.on_action = [](const widget::IntegerInput& self) -> Action {
 			std::get<ledit::State>(LEVEL.type_state).selected_layer = static_cast<BackgroundLayer>(self.value());
 			return Action::CONTINUE;
 		}
@@ -95,11 +95,11 @@ const widget::TextSelectionBlueprint place_mode_right_hud_group_type_selection =
 			return Action::CONTINUE;
 		}
 };
-const widget::IntegerSelectionBlueprint place_mode_right_hud_group_instance_selection = {
+const widget::IntegerInputBlueprint place_mode_right_hud_group_instance_selection = {
 		.min_value = 0,
 		.max_value = 999,
 		.initial_value = 0,
-		.on_action = [](const widget::IntegerSelection& self) -> Action {
+		.on_action = [](const widget::IntegerInput& self) -> Action {
 			std::get<ledit::State::PlaceMode>(std::get<ledit::State>(LEVEL.type_state).mode).select_group_instance(self.value());
 			return Action::CONTINUE;
 		}

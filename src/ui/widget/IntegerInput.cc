@@ -1,15 +1,15 @@
 #include <m2/Game.h>
 #include <m2/sdl/Font.h>
-#include <m2/ui/widget/IntegerSelection.h>
+#include <m2/ui/widget/IntegerInput.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint* blueprint)
+IntegerInput::IntegerInput(State* parent, const WidgetBlueprint* blueprint)
     : Widget(parent, blueprint),
       _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "+"))),
       _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "-"))) {
-	const auto inital_value = std::get<IntegerSelectionBlueprint>(blueprint->variant).initial_value;
+	const auto inital_value = std::get<IntegerInputBlueprint>(blueprint->variant).initial_value;
 	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, inital_value));
 
 	// Execute on_create
@@ -22,13 +22,13 @@ IntegerSelection::IntegerSelection(State* parent, const WidgetBlueprint* bluepri
 	}
 }
 
-Action IntegerSelection::on_event(Events& events) {
+Action IntegerInput::on_event(Events& events) {
 	auto rect = RectI{rect_px};
 	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 
-	const auto& integer_selection = std::get<IntegerSelectionBlueprint>(blueprint->variant);
+	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
 
 	if (!_inc_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
 		_inc_depressed = true;
@@ -50,10 +50,10 @@ Action IntegerSelection::on_event(Events& events) {
 	return Action::CONTINUE;
 }
 
-Action IntegerSelection::select(int v) {
+Action IntegerInput::select(int v) {
 	_font_texture = std::move(*sdl::FontTexture::create(GAME.font, GAME.renderer, v));
 
-	const auto& integer_selection = std::get<IntegerSelectionBlueprint>(blueprint->variant);
+	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
 	const auto& action_callback = integer_selection.on_action;
 	if (action_callback) {
 		return action_callback(*this);
@@ -61,8 +61,8 @@ Action IntegerSelection::select(int v) {
 	return Action::CONTINUE;
 }
 
-Action IntegerSelection::on_update() {
-	auto& pb_blueprint = std::get<IntegerSelectionBlueprint>(blueprint->variant);
+Action IntegerInput::on_update() {
+	auto& pb_blueprint = std::get<IntegerInputBlueprint>(blueprint->variant);
 	if (pb_blueprint.on_update) {
 		auto optional_value = pb_blueprint.on_update(*this);
 		if (optional_value) {
@@ -72,7 +72,7 @@ Action IntegerSelection::on_update() {
 	return Action::CONTINUE;
 }
 
-void IntegerSelection::on_draw() {
+void IntegerInput::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 
 	if (const auto texture = _font_texture.texture(); texture) {

@@ -1,6 +1,6 @@
 #include <m2/pixel_editor/Ui.h>
 #include <m2/Game.h>
-#include <m2/ui/widget/IntegerSelection.h>
+#include <m2/ui/widget/IntegerInput.h>
 
 using namespace m2;
 
@@ -99,14 +99,14 @@ const ui::Blueprint m2::ui::pixel_editor_left_hud = {
 		}
 };
 
-const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_red_selection = {
+const ui::widget::IntegerInputBlueprint pixel_editor_right_hud_red_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const ui::widget::IntegerSelection& self) -> std::optional<int> {
+		.on_update = [](MAYBE const ui::widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.r;
 		},
-		.on_action = [](const ui::widget::IntegerSelection& self) -> ui::Action {
+		.on_action = [](const ui::widget::IntegerInput& self) -> ui::Action {
 			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
 					.r = (uint8_t) self.value(),
 					.g = std::get<pedit::State>(LEVEL.type_state).selected_color.g,
@@ -115,14 +115,14 @@ const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_red_selection
 			return ui::Action::CONTINUE;
 		}
 };
-const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_green_selection = {
+const ui::widget::IntegerInputBlueprint pixel_editor_right_hud_green_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const ui::widget::IntegerSelection& self) -> std::optional<int> {
+		.on_update = [](MAYBE const ui::widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.g;
 		},
-		.on_action = [](const ui::widget::IntegerSelection& self) -> ui::Action {
+		.on_action = [](const ui::widget::IntegerInput& self) -> ui::Action {
 			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
 					.r = std::get<pedit::State>(LEVEL.type_state).selected_color.r,
 					.g = (uint8_t) self.value(),
@@ -131,14 +131,14 @@ const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_green_selecti
 			return ui::Action::CONTINUE;
 		}
 };
-const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_blue_selection = {
+const ui::widget::IntegerInputBlueprint pixel_editor_right_hud_blue_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const ui::widget::IntegerSelection& self) -> std::optional<int> {
+		.on_update = [](MAYBE const ui::widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.b;
 		},
-		.on_action = [](const ui::widget::IntegerSelection& self) -> ui::Action {
+		.on_action = [](const ui::widget::IntegerInput& self) -> ui::Action {
 			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
 					.r = std::get<pedit::State>(LEVEL.type_state).selected_color.r,
 					.g = std::get<pedit::State>(LEVEL.type_state).selected_color.g,
@@ -147,14 +147,14 @@ const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_blue_selectio
 			return ui::Action::CONTINUE;
 		}
 };
-const ui::widget::IntegerSelectionBlueprint pixel_editor_right_hud_alpha_selection = {
+const ui::widget::IntegerInputBlueprint pixel_editor_right_hud_alpha_selection = {
 		.min_value = 0,
 		.max_value = 255,
 		.initial_value = 0,
-		.on_update = [](MAYBE const ui::widget::IntegerSelection& self) -> std::optional<int> {
+		.on_update = [](MAYBE const ui::widget::IntegerInput& self) -> std::optional<int> {
 			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.a;
 		},
-		.on_action = [](const ui::widget::IntegerSelection& self) -> ui::Action {
+		.on_action = [](const ui::widget::IntegerInput& self) -> ui::Action {
 			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
 					.r = std::get<pedit::State>(LEVEL.type_state).selected_color.r,
 					.g = std::get<pedit::State>(LEVEL.type_state).selected_color.g,

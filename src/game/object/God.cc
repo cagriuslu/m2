@@ -2,7 +2,7 @@
 
 #include "m2/Game.h"
 #include "m2/ui/widget/ImageSelection.h"
-#include "m2/ui/widget/IntegerSelection.h"
+#include "m2/ui/widget/IntegerInput.h"
 #include "m2/ui/widget/Text.h"
 #include "m2/ui/widget/TextSelection.h"
 
@@ -32,7 +32,7 @@ namespace {
 		dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[2]).select(group_type_index);
 		// Select group instance
 		auto group_instance = level_object.group().instance();
-		dynamic_cast<ui::widget::IntegerSelection&>(*LEVEL.right_hud_ui_state->widgets[3]).select((int)group_instance);
+		dynamic_cast<ui::widget::IntegerInput&>(*LEVEL.right_hud_ui_state->widgets[3]).select((int)group_instance);
 	}
 
 	void level_editor_pick_background(m2g::pb::SpriteType picked_sprite_type) {
