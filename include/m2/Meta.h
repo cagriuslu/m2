@@ -83,6 +83,7 @@ namespace m2 {
 		}
 		return std::move(*e);
 	}
+
 	template <typename T>
 	T&& _move_or_throw_message(const char* file, int line, std::optional<T>&& o, const char* message) {
 		if (!o) {
@@ -97,6 +98,7 @@ namespace m2 {
 			throw Error{file, line, e.error()};
 		}
 	}
+
 	template <typename T>
 	void _succeed_or_throw_message(const char* file, int line, const std::optional<T>& o, const char* message) {
 		if (!o) {

@@ -9,6 +9,7 @@
 #include "widget/TextBlueprint.h"
 #include "widget/TextInputBlueprint.h"
 #include "widget/TextSelectionBlueprint.h"
+#include "widget/TextListSelectionBlueprint.h"
 #include <SDL.h>
 #include <variant>
 
@@ -18,7 +19,7 @@ namespace m2::ui {
 		bool initially_focused{false};
 		int x{}, y{}, w{1}, h{1}; // unitless
 		unsigned border_width_px{1};
-		unsigned padding_width_px{};
+		int padding_width_px{};
 		SDL_Color background_color{};
 
 		using Variant = std::variant<
@@ -30,6 +31,7 @@ namespace m2::ui {
 				widget::TextInputBlueprint,
 				widget::ImageSelectionBlueprint,
 				widget::TextSelectionBlueprint,
+				widget::TextListSelectionBlueprint,
 				widget::IntegerInputBlueprint,
 				widget::CheckboxWithTextBlueprint>;
 		Variant variant;

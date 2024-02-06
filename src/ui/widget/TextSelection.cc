@@ -59,8 +59,7 @@ Action TextSelection::on_update() {
 }
 
 Action TextSelection::on_event(Events& events) {
-	auto rect = RectI{rect_px};
-	auto buttons_rect = rect.trim_left(rect.w - rect.h / 2);
+	auto buttons_rect = rect_px.trim_left(rect_px.w - rect_px.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 
@@ -82,7 +81,7 @@ Action TextSelection::on_event(Events& events) {
 		}
 	} else {
 		// Check if scrolled
-		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect); 0 < scroll_amount) {
+		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect_px); 0 < scroll_amount) {
 			auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _list.size() - _selection - 1);
 			if (min_scroll_amount) {
 				return select(_selection + min_scroll_amount);
@@ -97,25 +96,11 @@ Action TextSelection::on_event(Events& events) {
 	return Action::CONTINUE;
 }
 
-Action TextSelection::select(unsigned index) {
-	_selection = index;
-	if (!_list.empty()) {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, _list[_selection]));
-
-		if (text_selection_blueprint().on_action) {
-			return text_selection_blueprint().on_action(*this);
-		}
-	} else {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "<EMPTY>"));
-	}
-	return Action::CONTINUE;
-}
-
 void TextSelection::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 
-	if (const auto texture = _font_texture.texture(); texture) {
-		auto text_rect = rect_px.trim_right(rect_px.h / 2).trim((int)blueprint->padding_width_px);
+	if (auto* texture = _font_texture.texture(); texture) {
+		auto text_rect = rect_px.trim_right(rect_px.h / 2).trim(blueprint->padding_width_px);
 		draw_text(text_rect, *texture, TextAlignment::LEFT);
 	}
 
@@ -129,4 +114,18 @@ void TextSelection::on_draw() {
 	draw_border(dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);
+}
+
+Action TextSelection::select(unsigned index) {
+	_selection = index;
+	if (!_list.empty()) {
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, _list[_selection]));
+
+		if (text_selection_blueprint().on_action) {
+			return text_selection_blueprint().on_action(*this);
+		}
+	} else {
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "<EMPTY>"));
+	}
+	return Action::CONTINUE;
 }

@@ -174,6 +174,9 @@ m2::RectI m2::RectI::trim_to_square() const {
 m2::RectI m2::RectI::expand(int amount) const {
 	return trim(-amount);
 }
+m2::RectI m2::RectI::horizontal_split(int split_count, int piece_idx) const {
+    return RectI{x, y + h * piece_idx / split_count, w, h / split_count};
+}
 std::optional<m2::RectI> m2::RectI::intersect(const m2::RectI& other) const {
 	auto a = static_cast<SDL_Rect>(*this);
 	auto b = static_cast<SDL_Rect>(other);

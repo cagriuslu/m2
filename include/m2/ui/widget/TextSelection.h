@@ -14,9 +14,9 @@ namespace m2::ui::widget {
 		explicit TextSelection(State* parent, const WidgetBlueprint* blueprint);
 		Action on_update() override;
 		Action on_event(Events& events) override;
-		Action select(unsigned index);
 		void on_draw() override;
 
+		Action select(unsigned index);
 		[[nodiscard]] inline const std::string& selection() const { return _list[_selection]; }
 
 	private:

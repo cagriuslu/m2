@@ -12,6 +12,9 @@ namespace m2::ui::widget {
 		using Options = std::vector<std::string>;
 		Options initial_list;
 
+		/// If larger than 0, the list becomes a dropdown.
+		int line_count{}; // TODO not yet implemented
+
 		std::function<std::optional<Options>(const TextSelection &self)> on_create{};
 		std::function<std::pair<Action, std::optional<Options>>(const TextSelection &self)> on_update{};
 		std::function<Action(const TextSelection &self)> on_action{};

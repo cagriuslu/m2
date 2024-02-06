@@ -39,6 +39,7 @@ namespace m2 {
 		[[nodiscard]] RectI trim_bottom(int amount) const;
 		[[nodiscard]] RectI trim_to_square() const;
 		[[nodiscard]] RectI expand(int amount) const;
+		[[nodiscard]] RectI horizontal_split(int split_count, int piece_idx) const;
 		[[nodiscard]] std::optional<RectI> intersect(const RectI& other) const;
 
 	};
