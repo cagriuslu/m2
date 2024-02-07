@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace m2::ui::widget {
 	// Forward declaration
@@ -8,7 +8,7 @@ namespace m2::ui::widget {
 
 	struct TextListSelectionBlueprint {
 		using Options = std::vector<std::string>;
-		Options initial_list;
+		Options initial_list{};
 		int line_count{1};
 		bool allow_multiple_selection{};
 
@@ -16,4 +16,4 @@ namespace m2::ui::widget {
 		std::function<std::pair<Action, std::optional<Options>>(const TextListSelection &self)> on_update{};
 		std::function<Action(const TextListSelection &self)> on_action{};
 	};
-}
+}  // namespace m2::ui::widget

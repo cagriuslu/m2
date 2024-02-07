@@ -1,4 +1,5 @@
 #include <m2/level_editor/State.h>
+#include <m2/level_editor/Ui.h>
 #include <m2/Game.h>
 #include <m2/game/object/Ghost.h>
 #include <m2/game/object/Placeholder.h>
@@ -200,6 +201,29 @@ void m2::ledit::State::SelectMode::remove() {
 			ledit::State::RemoveMode::remove_object(cell);
 		});
 	}
+}
+m2::ui::Action m2::ledit::State::SelectMode::rfill() {
+	if (auto selection_result = SelectionResult{GAME.events}; selection_result.is_primary_selection_finished()) {
+		auto positions = selection_result.primary_int_selection_position_m();
+
+		auto action = ui::State::create_execute_sync(&level_editor::ui::fill_dialog);
+		if (action == ui::Action::RETURN && not rfill_sprite_types.empty()) {
+			positions->first.for_each_cell_in_between(positions->second, [&](const VecI& cell) {
+				auto index = rand(static_cast<uint32_t>(rfill_sprite_types.size()));
+				auto sprite_type = rfill_sprite_types[index];
+				EraseMode::erase_position(cell, std::get<ledit::State>(LEVEL.type_state).selected_layer);
+				std::get<ledit::State>(LEVEL.type_state)
+				    .bg_placeholders[I(std::get<ledit::State>(LEVEL.type_state).selected_layer)][cell] = std::make_pair(
+				    obj::create_background_placeholder(
+				        VecF{cell}, GAME.get_sprite(sprite_type),
+				        std::get<ledit::State>(LEVEL.type_state).selected_layer),
+				    sprite_type);
+			});
+		} else {
+			return action;
+		}
+	}
+	return ui::Action::CONTINUE;
 }
 void m2::ledit::State::ShiftMode::shift(MAYBE const VecI& position) const {
 	if (shift_type == ShiftType::RIGHT) {

@@ -1,4 +1,5 @@
 #pragma once
+#include "../ui/Action.h"
 #include "Detail.h"
 
 namespace m2::ledit {
@@ -38,7 +39,7 @@ namespace m2::ledit {
 		};
 		struct SelectMode {
 			std::optional<BackgroundLayer> clipboard_layer;
-			std::optional<m2::VecI> clipboard_position_1, clipboard_position_2; // TopLeft, BottomRight
+			std::optional<m2::VecI> clipboard_position_1, clipboard_position_2;  // TopLeft, BottomRight
 
 			SelectMode();
 			// Disable copy, default move
@@ -56,20 +57,19 @@ namespace m2::ledit {
 			void paste_fg();
 			void erase();
 			void remove();
+			std::vector<m2g::pb::SpriteType> rfill_sprite_types;  // Filled by UI
+			ui::Action rfill();
 		};
 		struct ShiftMode {
-			enum class ShiftType {
-				RIGHT,
-				DOWN,
-				RIGHT_N_DOWN
-			} shift_type;
+			enum class ShiftType { RIGHT, DOWN, RIGHT_N_DOWN } shift_type;
 
 			void shift(const VecI& position) const;
 		};
 
-		std::variant<std::monostate,PaintMode,EraseMode,PlaceMode,RemoveMode,PickMode,SelectMode,ShiftMode> mode;
-		std::array<level_editor::BackgroundPlaceholderMap, static_cast<int>(BackgroundLayer::n)> bg_placeholders; // TODO Map2i might be used instead
-		level_editor::ForegroundPlaceholderMap fg_placeholders; // TODO Map2i might be used instead
+		std::variant<std::monostate, PaintMode, EraseMode, PlaceMode, RemoveMode, PickMode, SelectMode, ShiftMode> mode;
+		std::array<level_editor::BackgroundPlaceholderMap, static_cast<int>(BackgroundLayer::n)>
+		    bg_placeholders;  // TODO Map2i might be used instead
+		level_editor::ForegroundPlaceholderMap fg_placeholders;  // TODO Map2i might be used instead
 		BackgroundLayer selected_layer{};
 
 		void deactivate_mode();
@@ -82,4 +82,4 @@ namespace m2::ledit {
 		void activate_shift_mode();
 		static void save();
 	};
-}
+}  // namespace m2::ledit

@@ -14,6 +14,8 @@ namespace m2::ui::widget {
 		Action on_event(Events& events) override;
 		void on_draw() override;
 
+		std::vector<std::string> selection() const;
+
 	   private:
 		void prepare_list(const std::vector<std::string>& entries);
 		[[nodiscard]] const TextListSelectionBlueprint& text_list_selection_blueprint() const {

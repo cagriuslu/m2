@@ -3,7 +3,8 @@
 #include <m2/ui/widget/IntegerInput.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
-
+#include <m2/ui/widget/TextListSelection.h>
+#include <m2/protobuf/Detail.h>
 #include "m2/Game.h"
 #include "m2/game/object/Ghost.h"
 
@@ -172,7 +173,55 @@ const widget::TextBlueprint select_mode_right_hud_remove_button = {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).remove();
 	    return Action::CONTINUE;
     }};
-const widget::TextBlueprint select_mode_right_hud_fill_button = {.initial_text = "RFill"};
+const Blueprint m2::level_editor::ui::fill_dialog = {
+    .w = 160,
+    .h = 90,
+    .background_color = {0, 0, 0, 255},
+    .widgets = {
+        WidgetBlueprint{
+            .x = 5, .y = 5, .w = 150, .h = 70,
+            .border_width_px = 1,
+            .variant = widget::TextListSelectionBlueprint{
+                .line_count = 10,
+                .allow_multiple_selection = true,
+                .on_create = [](MAYBE const widget::TextListSelection &self) -> std::optional<widget::TextListSelectionBlueprint::Options> {
+	                std::vector<std::string> list;
+	                for (auto sprite : GAME.level_editor_background_sprites) {
+		                list.emplace_back(pb::enum_name(sprite));
+	                }
+	                return list;
+                }
+            }
+        },
+        WidgetBlueprint{
+            .x = 60, .y = 80, .w = 40, .h = 5,
+            .border_width_px = 1,
+            .variant = widget::TextBlueprint {
+                .initial_text = "Fill",
+                .on_action = [](MAYBE const widget::Text& self) -> Action {
+	                auto text_list_selection = self.parent().find_first_widget_of_type<widget::TextListSelection>();
+
+	                std::vector<m2g::pb::SpriteType> sprite_types;
+	                for (const auto& sprite_name : text_list_selection->selection()) {
+		                auto expect_enum = enum_value(m2g::pb::SpriteType, sprite_name);
+		                if (expect_enum) {
+			                sprite_types.emplace_back(*expect_enum);
+		                }
+	                }
+	                std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).rfill_sprite_types = sprite_types;
+
+	                return Action::RETURN;
+                }
+            }
+        }
+    }
+};
+const widget::TextBlueprint select_mode_right_hud_fill_button = {
+    .initial_text = "RFill",
+    .on_action = [](MAYBE const widget::Text& self) -> Action {
+	    return std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).rfill();
+    }
+};
 const Blueprint select_mode_right_hud = {
     .w = 19,
     .h = 72,

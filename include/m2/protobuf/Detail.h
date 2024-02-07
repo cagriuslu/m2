@@ -1,10 +1,12 @@
 #pragma once
-#include "../Meta.h"
+#include <google/protobuf/generated_enum_reflection.h>
+#include <google/protobuf/util/json_util.h>
+
+#include <string>
+
 #include "../Exception.h"
 #include "../FileSystem.h"
-#include <google/protobuf/util/json_util.h>
-#include <google/protobuf/generated_enum_reflection.h>
-#include <string>
+#include "../Meta.h"
 
 namespace m2::pb {
 	template <typename ProtoType>
@@ -36,7 +38,8 @@ namespace m2::pb {
 	void_expected message_to_json_file(const google::protobuf::Message& message, const std::filesystem::path& path);
 
 	template <typename T>
-	T* mutable_get_or_create(::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index, const T& fill_value = {}) {
+	T* mutable_get_or_create(
+	    ::google::protobuf::RepeatedField<T>* mutable_repeated_field, int index, const T& fill_value = {}) {
 		T* t = nullptr;
 		while (mutable_repeated_field->size() <= index) {
 			t = mutable_repeated_field->Add();
@@ -110,6 +113,16 @@ namespace m2::pb {
 		return static_cast<EnumT>(descriptor->value(index)->number());
 	}
 
+	template <typename EnumT, typename ParserT>
+	expected<EnumT> _enum_value(ParserT* parser, const std::string& name) {
+		EnumT en;
+		if (parser(name, &en)) {
+			return en;
+		} else {
+			return make_unexpected("Unable to parse as enum: " + name);
+		}
+	}
+
 	template <typename EnumT>
 	const std::string& enum_name(int index) {
 		static const auto* const descriptor = ::google::protobuf::GetEnumDescriptor<EnumT>();
@@ -128,4 +141,6 @@ namespace m2::pb {
 			op(enum_value<EnumT>(i));
 		}
 	}
-}
+}  // namespace m2::pb
+
+#define enum_value(type, enum_name) (m2::pb::_enum_value<type>(type##_Parse, (enum_name)))
