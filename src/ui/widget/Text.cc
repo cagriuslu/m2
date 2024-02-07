@@ -26,19 +26,19 @@ Action Text::on_update() {
 		if (*disable_after <= 0.0f) {
 			disable_after = {};
 			enabled = false;
-			return Action::CONTINUE;
+			return make_continue_action();
 		}
 	}
 
 	if (text_blueprint().on_update) {
 		auto [action, optional_string] = text_blueprint().on_update(*this);
-		if (action == Action::CONTINUE && optional_string) {
+		if (is_continue(action) && optional_string) {
 			_font_texture =
 			    m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, *optional_string));
 		}
-		return action;
+		return std::move(action);
 	} else {
-		return Action::CONTINUE;
+		return make_continue_action();
 	}
 }
 

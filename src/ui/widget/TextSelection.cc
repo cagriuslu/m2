@@ -44,7 +44,7 @@ TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint)
 Action TextSelection::on_update() {
 	if (text_selection_blueprint().on_update) {
 		auto [action, optional_list] = text_selection_blueprint().on_update(*this);
-		if (action == Action::CONTINUE && optional_list) {
+		if (is_continue(action) && optional_list) {
 			// Save new list
 			_list = *optional_list;
 			// Verify list
@@ -52,9 +52,9 @@ Action TextSelection::on_update() {
 			// Select default item
 			select(0);
 		}
-		return action;
+		return std::move(action);
 	} else {
-		return Action::CONTINUE;
+		return make_continue_action();
 	}
 }
 
@@ -93,7 +93,7 @@ Action TextSelection::on_event(Events& events) {
 			}
 		}
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 void TextSelection::on_draw() {
@@ -127,5 +127,5 @@ Action TextSelection::select(unsigned index) {
 	} else {
 		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "<EMPTY>"));
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }

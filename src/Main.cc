@@ -69,7 +69,7 @@ int main(const int argc, char **argv) {
 	GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
 	LOG_DEBUG("Executing entry UI...");
-	if (m2::ui::State::create_execute_sync(PROXY.main_menu()) == m2::ui::Action::QUIT) {
+	if (auto action = m2::ui::State::create_execute_sync(PROXY.main_menu()); m2::ui::is_quit(action)) {
 		LOG_INFO("Entry UI returned QUIT");
 		return 0;
 	}

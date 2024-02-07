@@ -15,6 +15,7 @@
 - There should be a mechanism to introduce multiple variations for a single sprite type. Then maybe they can be selected to show at random.
   Or the level editor can generate random and save. (Ex. Grass Variations)
 - Sync bir UI push'la, sonra ekrani resize et. Sycn UI return ettigi zaman geri donulen UI window dimensionlari adjust edilmemis oluyor
+- Butun make_return_action<Void>() larin ustunden gec, obje return edilmesi gerekiyorsa return et.
 
 Level Editor
 - Grid'i kapatinca grid silinmiyor

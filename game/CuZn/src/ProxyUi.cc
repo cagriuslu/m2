@@ -10,7 +10,7 @@ using namespace m2g::pb;
 
 namespace {
 	auto quit_button_action = [](MAYBE const widget::Text &self) {
-		return Action::QUIT;
+		return make_quit_action();
 	};
 }
 
@@ -18,9 +18,9 @@ static TextBlueprint client_status = {
 		.initial_text = "CONNECTING",
 		.on_update = [](MAYBE const Text& self) -> std::pair<Action,std::optional<std::string>> {
 			if (GAME.client_thread().is_connected()) {
-				return std::make_pair(Action::CONTINUE, "CONNECTED");
+				return std::make_pair(make_continue_action(), "CONNECTED");
 			} else if (GAME.client_thread().is_ready()) {
-				return std::make_pair(Action::CONTINUE, "READY");
+				return std::make_pair(make_continue_action(), "READY");
 			} else if (GAME.client_thread().is_started()) {
 				auto server_update = GAME.client_thread().peek_unprocessed_server_update();
 				m2_succeed_or_throw_message(server_update, "Client state is Started, but ServerUpdate not found");
@@ -29,9 +29,9 @@ static TextBlueprint client_status = {
 				const auto expect_success = GAME.load_multi_player_as_guest(GAME.levels_dir / (std::to_string(player_count) + ".json"));
 				m2_succeed_or_throw_error(expect_success);
 
-				return std::make_pair(Action::RETURN, std::nullopt);
+				return std::make_pair(make_return_action<m2::Void>(), std::nullopt);
 			} else {
-				return std::make_pair(Action::CONTINUE, "CONNECTING...");
+				return std::make_pair(make_continue_action(), "CONNECTING...");
 			}
 		}
 };
@@ -39,11 +39,11 @@ static TextBlueprint ready_button = {
 		.initial_text = "...",
 		.on_update = [](MAYBE const Text& self) -> std::pair<Action,std::optional<std::string>> {
 			if (GAME.client_thread().is_connected()) {
-				return std::make_pair(Action::CONTINUE, "SET READY");
+				return std::make_pair(make_continue_action(), "SET READY");
 			} else if (GAME.client_thread().is_ready()) {
-				return std::make_pair(Action::CONTINUE, "CLEAR READY");
+				return std::make_pair(make_continue_action(), "CLEAR READY");
 			} else {
-				return std::make_pair(Action::CONTINUE, "...");
+				return std::make_pair(make_continue_action(), "...");
 			}
 		},
 		.on_action = [](MAYBE const Text& self) -> Action {
@@ -52,7 +52,7 @@ static TextBlueprint ready_button = {
 			} else if (GAME.client_thread().is_ready()) {
 				GAME.client_thread().set_ready_blocking(false);
 			}
-			return Action::CONTINUE;
+			return make_continue_action();
 		}
 };
 static const Blueprint client_lobby = {
@@ -121,9 +121,9 @@ static TextBlueprint client_count = {
 		.on_update = [](MAYBE const Text& self) -> std::pair<Action,std::optional<std::string>> {
 			auto client_count = GAME.server_thread().client_count();
 			if (client_count < 2) {
-				return std::make_pair(Action::CONTINUE, std::to_string(client_count));
+				return std::make_pair(make_continue_action(), std::to_string(client_count));
 			} else {
-				return std::make_pair(Action::CONTINUE, std::to_string(client_count) + " - START!");
+				return std::make_pair(make_continue_action(), std::to_string(client_count) + " - START!");
 			}
 		},
 		.on_action = [](MAYBE const Text& self) -> Action {
@@ -131,10 +131,10 @@ static TextBlueprint client_count = {
 				if (GAME.server_thread().close_lobby()) {
 					const auto expect_success = GAME.load_multi_player_as_host(GAME.levels_dir / (std::to_string(GAME.server_thread().client_count()) + ".json"));
 					m2_succeed_or_throw_error(expect_success);
-					return Action::RETURN;
+					return make_return_action<m2::Void>(); // TODO Return value
 				}
 			}
-			return Action::CONTINUE;
+			return make_continue_action();
 		}
 };
 static const Blueprint server_lobby = {
@@ -203,7 +203,7 @@ const Blueprint main_menu_blueprint = {
 static TextBlueprint resume_button = {
 		.initial_text = "RESUME",
 		.on_action = [](MAYBE const widget::Text &self) {
-			return Action::RETURN;
+			return make_return_action<m2::Void>(); // TODO Return value
 		}
 };
 static TextBlueprint pause_menu_quit_button = {
@@ -244,7 +244,7 @@ const Blueprint left_hud_blueprint = {
 										cc.mutable_first_action()->mutable_loan_action();
 										GAME.client_thread().queue_client_command(cc);
 									}
-									return Action::CONTINUE;
+									return make_continue_action();
 								}
 						}
 				}

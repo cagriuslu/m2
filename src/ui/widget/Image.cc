@@ -21,12 +21,12 @@ Action Image::on_update() {
 	auto& image_blueprint = std::get<ImageBlueprint>(blueprint->variant);
 	if (image_blueprint.on_update) {
 		auto[action, opt_sprite] = image_blueprint.on_update(*this);
-		if (action == Action::CONTINUE && opt_sprite) {
+		if (is_continue(action) && opt_sprite) {
 			_sprite =  lookup_sprite(*opt_sprite);
 		}
-		return action;
+		return std::move(action);
 	} else {
-		return Action::CONTINUE;
+		return make_continue_action();
 	}
 }
 

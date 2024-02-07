@@ -47,7 +47,7 @@ Action IntegerInput::on_event(Events& events) {
 			select(value() - 1);
 		}
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 Action IntegerInput::select(int v) {
@@ -58,7 +58,7 @@ Action IntegerInput::select(int v) {
 	if (action_callback) {
 		return action_callback(*this);
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 Action IntegerInput::on_update() {
@@ -69,7 +69,7 @@ Action IntegerInput::on_update() {
 			_font_texture = std::move(*sdl::FontTexture::create(GAME.font, GAME.renderer, *optional_value));
 		}
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 void IntegerInput::on_draw() {

@@ -38,14 +38,14 @@ namespace {
 			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
 				auto load_result = GAME.load_level_editor(GAME.levels_dir / match_results.str(1));
 				if (load_result) {
-					return Action::CLEAR_STACK;
+					return make_clear_stack_action();
 				}
 				GAME.console_output.emplace_back(load_result.error());
 			} else {
 				GAME.console_output.emplace_back("ledit usage:");
 				GAME.console_output.emplace_back(".. file_name - open level editor with file");
 			}
-			return Action::CONTINUE;
+			return make_continue_action();
 		} else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
 			// MIDI editor (?)
 		} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
@@ -56,32 +56,32 @@ namespace {
 				auto load_result = GAME.load_pixel_editor(
 				    match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
 				if (load_result) {
-					return Action::CLEAR_STACK;
+					return make_clear_stack_action();
 				}
 				GAME.console_output.emplace_back(load_result.error());
 			} else {
 				GAME.console_output.emplace_back("pedit usage:");
 				GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 			}
-			return Action::CONTINUE;
+			return make_continue_action();
 		} else if (command == "sedit") {
 			auto load_result = GAME.load_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
 				auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
-				return main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result;
+				return is_return(main_menu_result) ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			GAME.console_output.emplace_back(load_result.error());
-			return Action::CONTINUE;
+			return make_continue_action();
 		} else if (command == "bsedit") {
 			auto load_result = GAME.load_bulk_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
 				auto main_menu_result = State::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
-				return main_menu_result == Action::RETURN ? Action::CLEAR_STACK : main_menu_result;
+				return is_return(main_menu_result) ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			GAME.console_output.emplace_back(load_result.error());
-			return Action::CONTINUE;
+			return make_continue_action();
 		} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
 			if (std::smatch match_results;
 			    std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
@@ -89,16 +89,16 @@ namespace {
 					auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
 					GAME.recalculate_dimensions(
 					    GAME.dimensions().window.w, GAME.dimensions().window.h, new_game_height);
-					return Action::CONTINUE;
+					return make_continue_action();
 				}
 				GAME.console_output.emplace_back("Unknown parameter");
 			} else {
 				// TODO print help
 			}
 		} else if (command == "quit") {
-			return Action::QUIT;
+			return make_quit_action();
 		} else if (command == "close") {
-			return Action::RETURN;
+			return make_return_action<Void>();
 		} else if (command.empty()) {
 			// Do nothing
 		} else {
@@ -112,7 +112,7 @@ namespace {
 			GAME.console_output.emplace_back("close - close the console");
 			GAME.console_output.emplace_back("quit - quit game");
 		}
-		return Action::CONTINUE;
+		return make_continue_action();
 	}
 }  // namespace
 
@@ -145,7 +145,7 @@ Action State::create_execute_sync(const Blueprint *blueprint, const RectI rect) 
 		GAME.ui_begin_ticks = sdl::get_ticks();
 		// Execute state
 		State state{blueprint};
-		const auto action = state.execute(rect);
+		auto action = state.execute(rect);
 		// Add pause ticks
 		GAME.add_pause_ticks(sdl::get_ticks_since(*GAME.ui_begin_ticks));
 		GAME.ui_begin_ticks.reset();
@@ -181,7 +181,8 @@ Action State::execute(const RectI rect) {
 	update_positions(rect);
 
 	// Update initial contents
-	if (const Action return_value = update_contents(); return_value != Action::CONTINUE) {
+	if (Action return_value = update_contents(); not is_continue(return_value)) {
+		LOG_DEBUG("Update action is not continue");
 		return return_value;
 	}
 
@@ -194,7 +195,7 @@ Action State::execute(const RectI rect) {
 		if (events.gather()) {
 			// Handle quit action
 			if (events.pop_quit()) {
-				return Action::QUIT;
+				return make_quit_action();
 			}
 
 			// Handle console action
@@ -206,14 +207,12 @@ Action State::execute(const RectI rect) {
 				console_command.clear();
 
 				LOG_INFO("Opening console");
-				if (auto action = create_execute_sync(&console_ui); action == Action::RETURN) {
+				if (auto action = create_execute_sync(&console_ui); is_return(action)) {
 					// Continue with the prev UI
 					LOG_DEBUG("Console returned");
-				} else if (action == Action::CLEAR_STACK || action == Action::QUIT) {
-					LOG_DEBUG("Console returned", static_cast<int>(action));
+				} else if (is_clear_stack(action) || is_quit(action)) {
+					LOG_DEBUG("Console clear stack or quit");
 					return action;
-				} else {
-					LOG_WARN("Console returned unexpected action", static_cast<int>(action));
 				}
 			}
 
@@ -230,7 +229,7 @@ Action State::execute(const RectI rect) {
 			}
 
 			// Handle events
-			if (const Action return_value = handle_events(events); return_value != Action::CONTINUE) {
+			if (Action return_value = handle_events(events); not is_continue(return_value)) {
 				return return_value;
 			}
 		}
@@ -241,7 +240,7 @@ Action State::execute(const RectI rect) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Update contents
-		if (const Action return_value = update_contents(); return_value != Action::CONTINUE) {
+		if (Action return_value = update_contents(); not is_continue(return_value)) {
 			return return_value;
 		}
 
@@ -273,45 +272,40 @@ void State::update_positions(const RectI &rect) {
 Action State::handle_events(Events &events) {
 	// Return if State not enabled
 	if (!enabled) {
-		return Action::CONTINUE;
+		return make_continue_action();
 	}
 
 	if (blueprint->cancellable && events.pop_key_press(Key::MENU)) {
-		return Action::RETURN;
+		return make_return_action<Void>();
 	}
 
 	for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		switch (const auto action = widget->on_event(events); action) {
-			case Action::CONTINUE:
-				continue;
-			case Action::GAIN_FOCUS:
-			case Action::LOSE_FOCUS:
-				set_widget_focus_state(*widget, action == Action::GAIN_FOCUS);
-				break;
-			default:
-				return action;
+		if (auto action = widget->on_event(events); is_continue(action)) {
+			if (const auto& focus_state = as_continue(action).focus; focus_state) {
+				set_widget_focus_state(*widget, focus_state.value());
+			}
+			continue;
+		} else {
+			return action;
 		}
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 Action State::update_contents() {
 	// Return if State not enabled
 	if (!enabled) {
-		return Action::CONTINUE;
+		return make_continue_action();
 	}
 
 	for (const auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		switch (const auto action = widget->on_update(); action) {
-			case Action::CONTINUE:
-			case Action::GAIN_FOCUS:
-			case Action::LOSE_FOCUS:
-				continue;
-			default:
-				return action;
+		if (auto action = widget->on_update(); not is_continue(action)) {
+			return action;
+		} else {
+			continue;
 		}
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 void State::draw() {
@@ -416,7 +410,7 @@ widget::TextBlueprint command_output_variant() {
 	    .alignment = TextAlignment::LEFT,
 	    .on_update = [](MAYBE const widget::Text &self) -> std::pair<Action, std::optional<std::string>> {
 		    return {
-		        Action::CONTINUE,
+		        make_continue_action(),
 		        INDEX < GAME.console_output.size() ? GAME.console_output[GAME.console_output.size() - INDEX - 1]
 		                                           : std::string()};
 	    }};
@@ -504,5 +498,5 @@ const Blueprint m2::ui::message_box_ui = {
         .background_color = SDL_Color{127, 127, 127, 127},
         .variant =
             widget::TextBlueprint{.alignment = TextAlignment::LEFT, .on_update = [](MAYBE const widget::Text &self) {
-	                                  return std::make_pair(Action::CONTINUE, LEVEL.message);
+	                                  return std::make_pair(make_continue_action(), LEVEL.message);
                                   }}}}};

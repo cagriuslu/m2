@@ -18,12 +18,12 @@ Action Hidden::on_event(Events& events) {
             }
         }
     }
-    return Action::CONTINUE;
+    return make_continue_action();
 }
 
 Action Hidden::on_update() {
     if (hidden_blueprint().on_update) {
         return hidden_blueprint().on_update(*this);
     }
-    return Action::CONTINUE;
+    return make_continue_action();
 }

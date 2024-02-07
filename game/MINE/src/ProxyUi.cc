@@ -12,7 +12,7 @@ using namespace m2g::pb;
 
 namespace {
 	auto quit_button_action = [](MAYBE const widget::Text &self) {
-		return Action::QUIT;
+		return make_quit_action();
 	};
 }
 
@@ -43,7 +43,7 @@ static TextBlueprint entry_variant_1 = {
 			}
 
 			GAME.load_single_player(lb);
-			return Action::RETURN;
+			return make_return_action<Void>(); // TODO Return value
 		}
 };
 static TextBlueprint entry_variant_2 = {
@@ -54,7 +54,7 @@ static TextBlueprint entry_variant_2 = {
 			if (!success) {
 				LOG_ERROR("Unable to load level", success.error());
 			}
-			return Action::RETURN;
+			return make_return_action<Void>(); // TODO Return value
 		}
 };
 static TextBlueprint entry_variant_3 = {
@@ -92,7 +92,7 @@ static TextBlueprint pause_variant_1 = {
 		.alignment = TextAlignment::CENTER,
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text &self) {
-			return Action::RETURN;
+			return make_return_action<Void>(); // TODO Return value
 		}
 };
 static TextBlueprint pause_variant_2 = {

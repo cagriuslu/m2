@@ -213,7 +213,7 @@ void m2::Game::handle_window_resize_event() {
 
 void m2::Game::handle_console_event() {
 	if (events.pop_key_press(Key::CONSOLE)) {
-		if (ui::State::create_execute_sync(&ui::console_ui) == ui::Action::QUIT) {
+		if (auto action = ui::State::create_execute_sync(&ui::console_ui); ui::is_quit(action)) {
 			quit = true;
 		}
 	}
@@ -234,8 +234,10 @@ void m2::Game::handle_menu_event() {
 		}
 
 		// Execute pause menu if found, exit if QUIT is returned
-		if (pause_menu && ui::State::create_execute_sync(pause_menu) == ui::Action::QUIT) {
-			quit = true;
+		if (pause_menu) {
+			if (auto action = ui::State::create_execute_sync(pause_menu); ui::is_quit(action)) {
+				quit = true;
+			}
 		}
 	}
 }

@@ -8,11 +8,11 @@ Widget::Widget(State* parent, const WidgetBlueprint* blueprint)
 
 void Widget::on_position_update(const RectI& rect_px_) { this->rect_px = rect_px_; }
 
-Action Widget::on_event(MAYBE Events& events) { return Action::CONTINUE; }
+Action Widget::on_event(MAYBE Events& events) { return make_continue_action(); }
 
 void Widget::on_focus_change() {}
 
-Action Widget::on_update() { return Action::CONTINUE; }
+Action Widget::on_update() { return make_continue_action(); }
 
 void Widget::on_draw() {}
 

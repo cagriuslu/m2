@@ -11,7 +11,7 @@ Action ProgressBar::on_update() {
 	if (pb_blueprint.on_update) {
 		_progress = pb_blueprint.on_update(*this);
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 void ProgressBar::on_draw() {

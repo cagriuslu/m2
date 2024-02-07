@@ -52,7 +52,7 @@ Action ImageSelection::on_event(Events& events) {
 			}
 		}
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 Action ImageSelection::select(unsigned index) {
@@ -65,7 +65,7 @@ Action ImageSelection::select(unsigned index) {
 			return action_callback(*this);
 		}
 	}
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 void ImageSelection::on_draw() {

@@ -22,12 +22,12 @@ TextListSelection::TextListSelection(State* parent, const WidgetBlueprint* bluep
 Action TextListSelection::on_update() {
 	if (text_list_selection_blueprint().on_update) {
 		auto [action, optional_list] = text_list_selection_blueprint().on_update(*this);
-		if (action == Action::CONTINUE && optional_list) {
+		if (is_continue(action) && optional_list) {
 			prepare_list(*optional_list);
 		}
-		return action;
+		return std::move(action);
 	} else {
-		return Action::CONTINUE;
+		return make_continue_action();
 	}
 }
 
@@ -93,7 +93,7 @@ Action TextListSelection::on_event(Events& events) {
 		}
 	}
 
-	return Action::CONTINUE;
+	return make_continue_action();
 }
 
 void TextListSelection::on_draw() {
