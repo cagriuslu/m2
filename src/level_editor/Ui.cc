@@ -240,6 +240,9 @@ const widget::TextBlueprint select_mode_right_hud_remove_button = {
 			return Action::CONTINUE;
 		}
 };
+const widget::TextBlueprint select_mode_right_hud_fill_button = {
+    .initial_text = "RFill"
+};
 const Blueprint select_mode_right_hud = {
 		.w = 19, .h = 72,
 		.border_width_px = 1,
@@ -289,7 +292,12 @@ const Blueprint select_mode_right_hud = {
 						.x = 4, .y = 37, .w = 11, .h = 3,
 						.border_width_px = 1,
 						.variant = select_mode_right_hud_remove_button
-				}
+				},
+        WidgetBlueprint{
+            .x = 4, .y = 41, .w = 11, .h = 3,
+            .border_width_px = 1,
+            .variant = select_mode_right_hud_fill_button
+        }
 		}
 };
 
