@@ -672,21 +672,63 @@
       ]
     },
     {
-      "resource": "resource/game/CuZn/png/fantasylandsset1/_PNG/FLSET1_ground.png",
-      "ppm": 32,
+      "resource": "resource/game/CuZn/png/CowsAndHorses/Grass.png",
+      "ppm": 16,
       "sprites": [
         {
-          "type": "GRASS",
+          "type": "GRASS_1",
           "regular": {
             "rect": {
-              "x": 384,
-              "y": 256,
-              "w": 32,
-              "h": 32
+              "x": 0,
+              "y": 0,
+              "w": 16,
+              "h": 16
             },
             "isBackgroundTile": true
           }
         },
+        {
+          "type": "GRASS_2",
+          "regular": {
+            "rect": {
+              "x": 16,
+              "y": 0,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "GRASS_3",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "GRASS_4",
+          "regular": {
+            "rect": {
+              "x": 16,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/fantasylandsset1/_PNG/FLSET1_ground.png",
+      "ppm": 32,
+      "sprites": [
         {
           "type": "GRASS_STONE_DECORATION_2",
           "regular": {
