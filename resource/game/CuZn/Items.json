@@ -12,7 +12,7 @@
       "category": "ITEM_CATEGORY_CARD"
     },
     {
-      "type": "EXPLOSIVE_FACTORY_CARD",
+      "type": "COTTON_MILL_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "type": "TOOL_SHOP_CARD",
+      "type": "IRON_WORKS_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "type": "KITCHEN_CARD",
+      "type": "BREWERY_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -66,7 +66,7 @@
       ]
     },
     {
-      "type": "WOOD_MILL_CARD",
+      "type": "COAL_MINE_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -84,7 +84,7 @@
       ]
     },
     {
-      "type": "JEWELLERY_CARD",
+      "type": "POTTERY_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_CARD",
+      "type": "MANUFACTURED_GOODS_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -500,7 +500,7 @@
       "category": "ITEM_CATEGORY_CARD"
     },
     {
-      "type": "EXPLOSIVE_FACTORY_TILEI",
+      "type": "COTTON_MILL_TILEI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -534,7 +534,7 @@
       ]
     },
     {
-      "type": "EXPLOSIVE_FACTORY_TILEII",
+      "type": "COTTON_MILL_TILEII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -554,7 +554,7 @@
           "amount": 14.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
@@ -568,7 +568,7 @@
       ]
     },
     {
-      "type": "EXPLOSIVE_FACTORY_TILEIII",
+      "type": "COTTON_MILL_TILEIII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -588,11 +588,11 @@
           "amount": 16.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -606,7 +606,7 @@
       ]
     },
     {
-      "type": "EXPLOSIVE_FACTORY_TILEIV",
+      "type": "COTTON_MILL_TILEIV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -626,11 +626,11 @@
           "amount": 18.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -644,7 +644,7 @@
       ]
     },
     {
-      "type": "TOOL_SHOP_TILE_I",
+      "type": "IRON_WORKS_TILE_I",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -664,7 +664,7 @@
           "amount": 5.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
@@ -672,7 +672,7 @@
           "amount": 2.0
         },
         {
-          "type": "TOOL_BONUS",
+          "type": "IRON_WORKS_BONUS",
           "amount": 4.0
         },
         {
@@ -682,7 +682,7 @@
       ]
     },
     {
-      "type": "TOOL_SHOP_TILE_II",
+      "type": "IRON_WORKS_TILE_II",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -702,11 +702,11 @@
           "amount": 7.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
-          "type": "TOOL_BONUS",
+          "type": "IRON_WORKS_BONUS",
           "amount": 4.0
         },
         {
@@ -716,7 +716,7 @@
       ]
     },
     {
-      "type": "TOOL_SHOP_TILE_III",
+      "type": "IRON_WORKS_TILE_III",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -736,11 +736,11 @@
           "amount": 9.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
-          "type": "TOOL_BONUS",
+          "type": "IRON_WORKS_BONUS",
           "amount": 5.0
         },
         {
@@ -750,7 +750,7 @@
       ]
     },
     {
-      "type": "TOOL_SHOP_TILE_IV",
+      "type": "IRON_WORKS_TILE_IV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -770,11 +770,11 @@
           "amount": 12.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
-          "type": "TOOL_BONUS",
+          "type": "IRON_WORKS_BONUS",
           "amount": 6.0
         },
         {
@@ -784,7 +784,7 @@
       ]
     },
     {
-      "type": "KITCHEN_TILE_I",
+      "type": "BREWERY_TILE_I",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -804,7 +804,7 @@
           "amount": 5.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -826,7 +826,7 @@
       ]
     },
     {
-      "type": "KITCHEN_TILE_II",
+      "type": "BREWERY_TILE_II",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -846,7 +846,7 @@
           "amount": 7.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -864,7 +864,7 @@
       ]
     },
     {
-      "type": "KITCHEN_TILE_III",
+      "type": "BREWERY_TILE_III",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -884,7 +884,7 @@
           "amount": 9.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -902,7 +902,7 @@
       ]
     },
     {
-      "type": "KITCHEN_TILE_IV",
+      "type": "BREWERY_TILE_IV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -922,7 +922,7 @@
           "amount": 9.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -944,7 +944,7 @@
       ]
     },
     {
-      "type": "WOOD_MILL_TILE_I",
+      "type": "COAL_MINE_TILE_I",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -968,7 +968,7 @@
           "amount": 2.0
         },
         {
-          "type": "WOOD_BONUS",
+          "type": "COAL_MINE_BONUS",
           "amount": 2.0
         },
         {
@@ -978,7 +978,7 @@
       ]
     },
     {
-      "type": "WOOD_MILL_TILE_II",
+      "type": "COAL_MINE_TILE_II",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -998,7 +998,7 @@
           "amount": 7.0
         },
         {
-          "type": "WOOD_BONUS",
+          "type": "COAL_MINE_BONUS",
           "amount": 3.0
         },
         {
@@ -1008,7 +1008,7 @@
       ]
     },
     {
-      "type": "WOOD_MILL_TILE_III",
+      "type": "COAL_MINE_TILE_III",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1028,11 +1028,11 @@
           "amount": 8.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
-          "type": "WOOD_BONUS",
+          "type": "COAL_MINE_BONUS",
           "amount": 4.0
         },
         {
@@ -1042,7 +1042,7 @@
       ]
     },
     {
-      "type": "WOOD_MILL_TILE_IV",
+      "type": "COAL_MINE_TILE_IV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1062,11 +1062,11 @@
           "amount": 10.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
-          "type": "WOOD_BONUS",
+          "type": "COAL_MINE_BONUS",
           "amount": 5.0
         },
         {
@@ -1076,7 +1076,7 @@
       ]
     },
     {
-      "type": "JEWELLERY_TILEI",
+      "type": "POTTERY_TILEI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1096,7 +1096,7 @@
           "amount": 17.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -1114,7 +1114,7 @@
       ]
     },
     {
-      "type": "JEWELLERY_TILEII",
+      "type": "POTTERY_TILEII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1134,7 +1134,7 @@
           "amount": 0.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
@@ -1148,7 +1148,7 @@
       ]
     },
     {
-      "type": "JEWELLERY_TILEIII",
+      "type": "POTTERY_TILEIII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1168,7 +1168,7 @@
           "amount": 22.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 2.0
         },
         {
@@ -1186,7 +1186,7 @@
       ]
     },
     {
-      "type": "JEWELLERY_TILEIV",
+      "type": "POTTERY_TILEIV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1206,7 +1206,7 @@
           "amount": 0.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
@@ -1220,7 +1220,7 @@
       ]
     },
     {
-      "type": "JEWELLERY_TILEV",
+      "type": "POTTERY_TILEV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1240,7 +1240,7 @@
           "amount": 24.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 2.0
         },
         {
@@ -1258,7 +1258,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_I",
+      "type": "MANUFACTURED_GOODS_TILE_I",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1278,7 +1278,7 @@
           "amount": 8.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
@@ -1296,7 +1296,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_II",
+      "type": "MANUFACTURED_GOODS_TILE_II",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1316,7 +1316,7 @@
           "amount": 10.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -1330,7 +1330,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_III",
+      "type": "MANUFACTURED_GOODS_TILE_III",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1350,7 +1350,7 @@
           "amount": 12.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 2.0
         },
         {
@@ -1360,7 +1360,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_IV",
+      "type": "MANUFACTURED_GOODS_TILE_IV",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1380,7 +1380,7 @@
           "amount": 8.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -1394,7 +1394,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_V",
+      "type": "MANUFACTURED_GOODS_TILE_V",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1414,7 +1414,7 @@
           "amount": 16.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
@@ -1428,7 +1428,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_VI",
+      "type": "MANUFACTURED_GOODS_TILE_VI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1458,7 +1458,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_VII",
+      "type": "MANUFACTURED_GOODS_TILE_VII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1478,11 +1478,11 @@
           "amount": 16.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 1.0
         },
         {
@@ -1492,7 +1492,7 @@
       ]
     },
     {
-      "type": "PRINTING_PRESS_TILE_VIII",
+      "type": "MANUFACTURED_GOODS_TILE_VIII",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
         {
@@ -1512,7 +1512,7 @@
           "amount": 20.0
         },
         {
-          "type": "TOOL_COST",
+          "type": "IRON_WORKS_COST",
           "amount": 2.0
         },
         {
@@ -1526,7 +1526,7 @@
       ]
     },
     {
-      "type": "GUARDS_LICENSE",
+      "type": "CANAL_LICENSE",
       "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
       "attributes": [
         {
@@ -1540,7 +1540,7 @@
       ]
     },
     {
-      "type": "KNIGHTS_LICENSE",
+      "type": "RAILROAD_LICENSE",
       "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
       "attributes": [
         {
@@ -1548,7 +1548,7 @@
           "amount": 5.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {
@@ -1558,7 +1558,7 @@
       ]
     },
     {
-      "type": "SECOND_KNIGHTS_LICENSE",
+      "type": "SECOND_RAILROAD_LICENSE",
       "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
       "attributes": [
         {
@@ -1566,7 +1566,7 @@
           "amount": 10.0
         },
         {
-          "type": "WOOD_COST",
+          "type": "COAL_MINE_COST",
           "amount": 1.0
         },
         {

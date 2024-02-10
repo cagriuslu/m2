@@ -10,15 +10,15 @@ enum AttributeType {
     LINK_BONUS = 3;
     DEVELOPMENT_BONUS = 4;
     MONEY_COST = 5;
-    WOOD_COST = 6;
-    TOOL_COST = 7;
+    COAL_MINE_COST = 6;
+    IRON_WORKS_COST = 7;
     FOOD_COST = 8;
     FORBIDDEN_ERA = 9;
     DEVELOPMENT_BAN = 10;
     FOOD_BONUS_FIRST_ERA = 11;
     FOOD_BONUS_SECOND_ERA = 12;
-    WOOD_BONUS = 13;
-    TOOL_BONUS = 14;
+    COAL_MINE_BONUS = 13;
+    IRON_WORKS_BONUS = 14;
     EACH_PLAYER_COUNT = 15; // How many can be held by each player
 
     // ITEM_CATEGORY_CARD

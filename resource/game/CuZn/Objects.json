@@ -13,10 +13,10 @@
       "type": "TILE"
     },
     {
-      "type": "GUARDS"
+      "type": "CANAL"
     },
     {
-      "type": "KNIGHTS"
+      "type": "RAILROAD"
     }
   ]
 }

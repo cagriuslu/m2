@@ -6,6 +6,6 @@ enum ObjectType {
   HUMAN_PLAYER = 1;
   MERCHANT = 2; // External merchant tile
   TILE = 3; // When a factory is placed
-  GUARDS = 4;
-  KNIGHTS = 5;
+  CANAL = 4;
+  RAILROAD = 5;
 }
