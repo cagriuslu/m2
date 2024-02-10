@@ -1,680 +1,10 @@
 {
   "sheets": [
     {
-      "resource": "resource/game/CuZn/png/guiicons/armor.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "BURTON_UPON_TRENT_WALSALL_CANAL",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/book_food.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "STAFFORD_MANUFACTURED_GOODS_BREWERY",
-          "duplicate": {
-            "original_type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
-          }
-        },
-        {
-          "type": "WALSALL_MANUFACTURED_GOODS_BREWERY",
-          "duplicate": {
-            "original_type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
-          }
-        },
-        {
-          "type": "NUNEATON_MANUFACTURED_GOODS_BREWERY",
-          "duplicate": {
-            "original_type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/book_wood.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "STONE_MANUFACTURED_GOODS_COAL_MINE",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "BURTON_UPON_TRENT_MANUFACTURED_GOODS_COAL_MINE",
-          "duplicate": {
-            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
-          }
-        },
-        {
-          "type": "CANNOCK_MANUFACTURED_GOODS_COAL_MINE",
-          "duplicate": {
-            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
-          }
-        },
-        {
-          "type": "WOLFERHAMPTON_MANUFACTURED_GOODS_COAL_MINE",
-          "duplicate": {
-            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
-          }
-        },
-        {
-          "type": "COVENTRY_MANUFACTURED_GOODS_COAL_MINE",
-          "duplicate": {
-            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
-          }
-        },
-        {
-          "type": "REDDITCH_MANUFACTURED_GOODS_COAL_MINE",
-          "duplicate": {
-            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/book.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "STOKE_ON_TRENT_MANUFACTURED_GOODS",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "WOLFERHAMPTON_MANUFACTURED_GOODS",
-          "duplicate": {
-            "original_type": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_MANUFACTURED_GOODS_1",
-          "duplicate": {
-            "original_type": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_MANUFACTURED_GOODS_2",
-          "duplicate": {
-            "original_type": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/boomb_book.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DERBY_COTTON_MILL_MANUFACTURED_GOODS",
-          "duplicate": {
-            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
-          }
-        },
-        {
-          "type": "LEEK_COTTON_MILL_MANUFACTURED_GOODS",
-          "duplicate": {
-            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
-          }
-        },
-        {
-          "type": "STOKE_ON_TRENT_COTTON_MILL_MANUFACTURED_GOODS",
-          "duplicate": {
-            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_COTTON_MILL_MANUFACTURED_GOODS",
-          "duplicate": {
-            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/boomb_food.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "DERBY_COTTON_MILL_BREWERY",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "STONE_COTTON_MILL_BREWERY",
-          "duplicate": {
-            "original_type": "DERBY_COTTON_MILL_BREWERY"
-          }
-        },
-        {
-          "type": "UTTOXETER_COTTON_MILL_BREWERY",
-          "duplicate": {
-            "original_type": "DERBY_COTTON_MILL_BREWERY"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/boomb_wood.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "LEEK_COTTON_MILL_COAL_MINE",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "TAMWORTH_COTTON_MILL_COAL_MINE_1",
-          "duplicate": {
-            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
-          }
-        },
-        {
-          "type": "TAMWORTH_COTTON_MILL_COAL_MINE_2",
-          "duplicate": {
-            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
-          }
-        },
-        {
-          "type": "KIDDERMINSTER_COTTON_MILL_COAL_MINE",
-          "duplicate": {
-            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
-          }
-        },
-        {
-          "type": "NUNEATON_COTTON_MILL_COAL_MINE",
-          "duplicate": {
-            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/boomb.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "KIDDERMINSTER_COTTON_MILL",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "WORCESTER_COTTON_MILL_1",
-          "duplicate": {
-            "original_type": "KIDDERMINSTER_COTTON_MILL"
-          }
-        },
-        {
-          "type": "WORCESTER_COTTON_MILL_2",
-          "duplicate": {
-            "original_type": "KIDDERMINSTER_COTTON_MILL"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/food.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "BURTON_UPON_TRENT_BREWERY",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "STANDALONE_BREWERY_1",
-          "duplicate": {
-            "original_type": "BURTON_UPON_TRENT_BREWERY"
-          }
-        },
-        {
-          "type": "STANDALONE_BREWERY_2",
-          "duplicate": {
-            "original_type": "BURTON_UPON_TRENT_BREWERY"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/hammer_book.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "COVENTRY_IRON_WORKS_MANUFACTURED_GOODS",
-          "duplicate": {
-            "original_type": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/hammer_food.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "COALBROOKEDALE_IRON_WORKS_BREWERY",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/hammer.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "DERBY_IRON_WORKS",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "COALBROOKEDALE_IRON_WORKS",
-          "duplicate": {
-            "original_type": "DERBY_IRON_WORKS"
-          }
-        },
-        {
-          "type": "DUDLEY_IRON_WORKS",
-          "duplicate": {
-            "original_type": "DERBY_IRON_WORKS"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_IRON_WORKS",
-          "duplicate": {
-            "original_type": "DERBY_IRON_WORKS"
-          }
-        },
-        {
-          "type": "REDDITCH_IRON_WORKS",
-          "duplicate": {
-            "original_type": "DERBY_IRON_WORKS"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/money.png",
-      "ppm": 512,
-      "sprites": [
-        {}
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/trinket_hammer.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "STOKE_ON_TRENT_POTTERY_IRON_WORKS",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/trinket.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "BELPER_POTTERY",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "STAFFORD_POTTERY",
-          "duplicate": {
-            "original_type": "BELPER_POTTERY"
-          }
-        },
-        {
-          "type": "COVENTRY_POTTERY",
-          "duplicate": {
-            "original_type": "BELPER_POTTERY"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/war_armor.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "BELPER_DERBY_CANAL_RAILROAD",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DERBY_BURTON_UPON_TRENT_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "DERBY_NOTTINGHAM_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "LEEK_STOKE_ON_TRENT_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "STOKE_ON_TRENT_STONE_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "STOKE_ON_TRENT_WARRINGTON_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "STONE_STAFFORD_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "STONE_BURTON_UPON_TRENT_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "STAFFORD_CANNOCK_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "BURTON_UPON_TRENT_TAMWORTH_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "CANNOCK_BREWERY1_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "CANNOCK_WALSALL_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "CANNOCK_WOLFERHAMPTON_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "TAMWORTH_BIRMINGHAM_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "TAMWORTH_NUNEATON_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "WALSALL_WOLFERHAMPTON_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "WALSALL_BIRMINGHAM_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "COALBROOKEDALE_KIDDERMINSTER_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "COALBROOKEDALE_WOLFERHAMPTON_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "COALBROOKEDALE_SHREWSBURY_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "DUDLEY_KIDDERMINSTER_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "DUDLEY_WOLFERHAMPTON_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "DUDLEY_BIRMINGHAM_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "KIDDERMINSTER_WORCESTER_BREWERY2_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "WORCESTER_BIRMINGHAM_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "WORCESTER_GLOUCESTER_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_COVENTRY_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_OXFORD_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "REDDITCH_GLOUCESTER_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        },
-        {
-          "type": "REDDITCH_OXFORD_CANAL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/war.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "BELPER_LEEK_RAILROAD",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DERBY_UTTOXETER_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
-          }
-        },
-        {
-          "type": "STONE_UTTOXETER_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
-          }
-        },
-        {
-          "type": "BURTON_UPON_TRENT_CANNOCK_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
-          }
-        },
-        {
-          "type": "TAMWORTH_WALSALL_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_NUNEATON_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
-          }
-        },
-        {
-          "type": "BIRMINGHAM_REDDITCH_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
-          }
-        },
-        {
-          "type": "COVENTRY_NUNEATON_RAILROAD",
-          "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/guiicons/wood.png",
-      "ppm": 512,
-      "sprites": [
-        {
-          "type": "BELPER_COAL_MINE",
-          "regular": {
-            "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
-            "centerToOriginVecPx": { "x": -256, "y": -256 },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "CANNOCK_COAL_MINE",
-          "duplicate": {
-            "original_type": "BELPER_COAL_MINE"
-          }
-        },
-        {
-          "type": "COALBROOKEDALE_COAL_MINE",
-          "duplicate": {
-            "original_type": "BELPER_COAL_MINE"
-          }
-        },
-        {
-          "type": "DUDLEY_COAL_MINE",
-          "duplicate": {
-            "original_type": "BELPER_COAL_MINE"
-          }
-        }
-      ]
-    },
-    {
       "resource": "resource/game/CuZn/png/CuZn.png",
       "ppm": 16,
       "sprites": [
+        {},
         {
           "type": "GRASS_1",
           "regular": {
@@ -1186,6 +516,562 @@
             },
             "centerToOriginVecPx": { "x": 0, "y": -8 },
             "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "BURTON_UPON_TRENT_WALSALL_CANAL",
+          "duplicate": {
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
+          }
+        },
+        {
+          "type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY",
+          "regular": {
+            "rect": { "x": 96, "y": 208, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "STAFFORD_MANUFACTURED_GOODS_BREWERY",
+          "duplicate": {
+            "original_type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
+          }
+        },
+        {
+          "type": "WALSALL_MANUFACTURED_GOODS_BREWERY",
+          "duplicate": {
+            "original_type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
+          }
+        },
+        {
+          "type": "NUNEATON_MANUFACTURED_GOODS_BREWERY",
+          "duplicate": {
+            "original_type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
+          }
+        },
+        {
+          "type": "STONE_MANUFACTURED_GOODS_COAL_MINE",
+          "regular": {
+            "rect": { "x": 128, "y": 208, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "BURTON_UPON_TRENT_MANUFACTURED_GOODS_COAL_MINE",
+          "duplicate": {
+            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+          }
+        },
+        {
+          "type": "CANNOCK_MANUFACTURED_GOODS_COAL_MINE",
+          "duplicate": {
+            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+          }
+        },
+        {
+          "type": "WOLFERHAMPTON_MANUFACTURED_GOODS_COAL_MINE",
+          "duplicate": {
+            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+          }
+        },
+        {
+          "type": "COVENTRY_MANUFACTURED_GOODS_COAL_MINE",
+          "duplicate": {
+            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+          }
+        },
+        {
+          "type": "REDDITCH_MANUFACTURED_GOODS_COAL_MINE",
+          "duplicate": {
+            "original_type": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+          }
+        },
+        {
+          "type": "STOKE_ON_TRENT_MANUFACTURED_GOODS",
+          "regular": {
+            "rect": { "x": 0, "y": 208, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "WOLFERHAMPTON_MANUFACTURED_GOODS",
+          "duplicate": {
+            "original_type": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_MANUFACTURED_GOODS_1",
+          "duplicate": {
+            "original_type": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_MANUFACTURED_GOODS_2",
+          "duplicate": {
+            "original_type": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS",
+          "regular": {
+            "rect": { "x": 160, "y": 272, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "DERBY_COTTON_MILL_MANUFACTURED_GOODS",
+          "duplicate": {
+            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "LEEK_COTTON_MILL_MANUFACTURED_GOODS",
+          "duplicate": {
+            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "STOKE_ON_TRENT_COTTON_MILL_MANUFACTURED_GOODS",
+          "duplicate": {
+            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_COTTON_MILL_MANUFACTURED_GOODS",
+          "duplicate": {
+            "original_type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "DERBY_COTTON_MILL_BREWERY",
+          "regular": {
+            "rect": { "x": 128, "y": 272, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "STONE_COTTON_MILL_BREWERY",
+          "duplicate": {
+            "original_type": "DERBY_COTTON_MILL_BREWERY"
+          }
+        },
+        {
+          "type": "UTTOXETER_COTTON_MILL_BREWERY",
+          "duplicate": {
+            "original_type": "DERBY_COTTON_MILL_BREWERY"
+          }
+        },
+        {
+          "type": "LEEK_COTTON_MILL_COAL_MINE",
+          "regular": {
+            "rect": { "x": 96, "y": 272, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "TAMWORTH_COTTON_MILL_COAL_MINE_1",
+          "duplicate": {
+            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
+          }
+        },
+        {
+          "type": "TAMWORTH_COTTON_MILL_COAL_MINE_2",
+          "duplicate": {
+            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
+          }
+        },
+        {
+          "type": "KIDDERMINSTER_COTTON_MILL_COAL_MINE",
+          "duplicate": {
+            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
+          }
+        },
+        {
+          "type": "NUNEATON_COTTON_MILL_COAL_MINE",
+          "duplicate": {
+            "original_type": "LEEK_COTTON_MILL_COAL_MINE"
+          }
+        },
+        {
+          "type": "KIDDERMINSTER_COTTON_MILL",
+          "regular": {
+            "rect": { "x": 0, "y": 272, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "WORCESTER_COTTON_MILL_1",
+          "duplicate": {
+            "original_type": "KIDDERMINSTER_COTTON_MILL"
+          }
+        },
+        {
+          "type": "WORCESTER_COTTON_MILL_2",
+          "duplicate": {
+            "original_type": "KIDDERMINSTER_COTTON_MILL"
+          }
+        },
+        {
+          "type": "BURTON_UPON_TRENT_BREWERY",
+          "regular": {
+            "rect": { "x": 0, "y": 176, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "STANDALONE_BREWERY_1",
+          "duplicate": {
+            "original_type": "BURTON_UPON_TRENT_BREWERY"
+          }
+        },
+        {
+          "type": "STANDALONE_BREWERY_2",
+          "duplicate": {
+            "original_type": "BURTON_UPON_TRENT_BREWERY"
+          }
+        },
+        {
+          "type": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS",
+          "regular": {
+            "rect": { "x": 128, "y": 240, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "COVENTRY_IRON_WORKS_MANUFACTURED_GOODS",
+          "duplicate": {
+            "original_type": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "COALBROOKEDALE_IRON_WORKS_BREWERY",
+          "regular": {
+            "rect": { "x": 96, "y": 240, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "DERBY_IRON_WORKS",
+          "regular": {
+            "rect": { "x": 0, "y": 240, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "COALBROOKEDALE_IRON_WORKS",
+          "duplicate": {
+            "original_type": "DERBY_IRON_WORKS"
+          }
+        },
+        {
+          "type": "DUDLEY_IRON_WORKS",
+          "duplicate": {
+            "original_type": "DERBY_IRON_WORKS"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_IRON_WORKS",
+          "duplicate": {
+            "original_type": "DERBY_IRON_WORKS"
+          }
+        },
+        {
+          "type": "REDDITCH_IRON_WORKS",
+          "duplicate": {
+            "original_type": "DERBY_IRON_WORKS"
+          }
+        },
+        {
+          "type": "STOKE_ON_TRENT_POTTERY_IRON_WORKS",
+          "regular": {
+            "rect": { "x": 96, "y": 304, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "BELPER_POTTERY",
+          "regular": {
+            "rect": { "x": 0, "y": 304, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "STAFFORD_POTTERY",
+          "duplicate": {
+            "original_type": "BELPER_POTTERY"
+          }
+        },
+        {
+          "type": "COVENTRY_POTTERY",
+          "duplicate": {
+            "original_type": "BELPER_POTTERY"
+          }
+        },
+        {
+          "type": "BELPER_DERBY_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
+          }
+        },
+        {
+          "type": "DERBY_BURTON_UPON_TRENT_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "DERBY_NOTTINGHAM_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "LEEK_STOKE_ON_TRENT_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "STOKE_ON_TRENT_STONE_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "STOKE_ON_TRENT_WARRINGTON_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "STONE_STAFFORD_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "STONE_BURTON_UPON_TRENT_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "STAFFORD_CANNOCK_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "BURTON_UPON_TRENT_TAMWORTH_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "CANNOCK_BREWERY1_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "CANNOCK_WALSALL_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "CANNOCK_WOLFERHAMPTON_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "TAMWORTH_BIRMINGHAM_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "TAMWORTH_NUNEATON_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "WALSALL_WOLFERHAMPTON_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "WALSALL_BIRMINGHAM_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "COALBROOKEDALE_KIDDERMINSTER_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "COALBROOKEDALE_WOLFERHAMPTON_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "COALBROOKEDALE_SHREWSBURY_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "DUDLEY_KIDDERMINSTER_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "DUDLEY_WOLFERHAMPTON_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "DUDLEY_BIRMINGHAM_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "KIDDERMINSTER_WORCESTER_BREWERY2_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "WORCESTER_BIRMINGHAM_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "WORCESTER_GLOUCESTER_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_COVENTRY_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_OXFORD_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "REDDITCH_GLOUCESTER_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "REDDITCH_OXFORD_CANAL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+          }
+        },
+        {
+          "type": "BELPER_LEEK_RAILROAD",
+          "duplicate": {
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
+          }
+        },
+        {
+          "type": "DERBY_UTTOXETER_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_LEEK_RAILROAD"
+          }
+        },
+        {
+          "type": "STONE_UTTOXETER_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_LEEK_RAILROAD"
+          }
+        },
+        {
+          "type": "BURTON_UPON_TRENT_CANNOCK_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_LEEK_RAILROAD"
+          }
+        },
+        {
+          "type": "TAMWORTH_WALSALL_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_LEEK_RAILROAD"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_NUNEATON_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_LEEK_RAILROAD"
+          }
+        },
+        {
+          "type": "BIRMINGHAM_REDDITCH_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_LEEK_RAILROAD"
+          }
+        },
+        {
+          "type": "COVENTRY_NUNEATON_RAILROAD",
+          "duplicate": {
+            "original_type": "BELPER_LEEK_RAILROAD"
+          }
+        },
+        {
+          "type": "BELPER_COAL_MINE",
+          "regular": {
+            "rect": { "x": 0, "y": 144, "w": 32, "h": 32 },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANNOCK_COAL_MINE",
+          "duplicate": {
+            "original_type": "BELPER_COAL_MINE"
+          }
+        },
+        {
+          "type": "COALBROOKEDALE_COAL_MINE",
+          "duplicate": {
+            "original_type": "BELPER_COAL_MINE"
+          }
+        },
+        {
+          "type": "DUDLEY_COAL_MINE",
+          "duplicate": {
+            "original_type": "BELPER_COAL_MINE"
           }
         }
       ]
