@@ -672,7 +672,7 @@
       ]
     },
     {
-      "resource": "resource/game/CuZn/png/CowsAndHorses/Grass.png",
+      "resource": "resource/game/CuZn/png/CuZn.png",
       "ppm": 16,
       "sprites": [
         {
@@ -703,8 +703,8 @@
           "type": "GRASS_3",
           "regular": {
             "rect": {
-              "x": 0,
-              "y": 16,
+              "x": 32,
+              "y": 0,
               "w": 16,
               "h": 16
             },
@@ -715,8 +715,473 @@
           "type": "GRASS_4",
           "regular": {
             "rect": {
+              "x": 48,
+              "y": 0,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_VERTICAL_1",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_VERTICAL_2",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 32,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_HORIZONTAL_1",
+          "regular": {
+            "rect": {
               "x": 16,
               "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_HORIZONTAL_2",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_RIGHT_TO_BOTTOM_LEFT_1",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_RIGHT_TO_BOTTOM_LEFT_2",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_RIGHT_TO_BOTTOM_LEFT_3",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 32,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_RIGHT_TO_BOTTOM_LEFT_4",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 32,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_LEFT_TO_BOTTOM_RIGHT_1",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_LEFT_TO_BOTTOM_RIGHT_2",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 16,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_LEFT_TO_BOTTOM_RIGHT_3",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 32,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_TOP_LEFT_TO_BOTTOM_RIGHT_4",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 32,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_VERTICAL",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_HORIZONTAL",
+          "regular": {
+            "rect": {
+              "x": 16,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_1",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_2",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_3",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 64,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_4",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 64,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_1",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_2",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 48,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_3",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 64,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_4",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 64,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_1",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 80,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_2",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 80,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_3",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 96,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_4",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 96,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_1",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 80,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_2",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 80,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_3",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 96,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_4",
+          "regular": {
+            "rect": {
+              "x": 96,
+              "y": 96,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "INDUSTRY_BACKGROUND",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 112,
+              "w": 32,
+              "h": 32
+            },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_OR_RAILWAY_BACKGROUND_1",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_OR_RAILWAY_BACKGROUND_2",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "centerToOriginVecPx": { "x": -8, "y": 0 },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "CANAL_OR_RAILWAY_BACKGROUND_3",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "centerToOriginVecPx": { "x": 0, "y": -8 },
+            "isBackgroundTile": true
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/CowsAndHorses/GrassDirt-Vertical.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "GRASS_DIRT_VERTICAL",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/CowsAndHorses/GrassCobblestone-Vertical.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "GRASS_COBBLESTONE_VERTICAL",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        }
+      ]
+    },
+    {
+      "resource": "resource/game/CuZn/png/CowsAndHorses/GrassDirtCobblestone-Vertical.png",
+      "ppm": 16,
+      "sprites": [
+        {
+          "type": "GRASS_DIRT_COBBLESTONE_VERTICAL",
+          "regular": {
+            "rect": {
+              "x": 0,
+              "y": 0,
               "w": 16,
               "h": 16
             },
@@ -729,114 +1194,6 @@
       "resource": "resource/game/CuZn/png/fantasylandsset1/_PNG/FLSET1_ground.png",
       "ppm": 32,
       "sprites": [
-        {
-          "type": "GRASS_STONE_DECORATION_2",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 672,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_STONE_DECORATION_5",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 704,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_STONE_DECORATION_8",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 736,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_WHITE_DECORATION_2",
-          "regular": {
-            "rect": {
-              "x": 384,
-              "y": 672,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_WHITE_DECORATION_4",
-          "regular": {
-            "rect": {
-              "x": 448,
-              "y": 672,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_FLOWER_DECORATION_1",
-          "regular": {
-            "rect": {
-              "x": 352,
-              "y": 768,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_FLOWER_DECORATION_2",
-          "regular": {
-            "rect": {
-              "x": 384,
-              "y": 768,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_FLOWER_DECORATION_3",
-          "regular": {
-            "rect": {
-              "x": 352,
-              "y": 800,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "GRASS_FLOWER_DECORATION_4",
-          "regular": {
-            "rect": {
-              "x": 384,
-              "y": 800,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
         {
           "type": "DIRT_ROAD_INNER_TOP_LEFT_CORNER",
           "regular": {

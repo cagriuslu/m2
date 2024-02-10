@@ -21,7 +21,7 @@ enum ItemType {
     AMSTERDAM_CARD = 13; // Stone
     LELYSTAD_CARD = 14; // Uttoxeter
     DIEMEN_CARD = 15; // Stafford
-    APPELDOORN_CARD = 16; // Burton-on-Trent
+    APPELDOORN_CARD = 16; // Burton-upon-Trent
     UTRECHT_CARD = 17; // Cannock
     ARNHEM_CARD = 18; // Tamworth
     GOUDA_CARD = 19; // Walsall
