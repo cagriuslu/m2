@@ -120,7 +120,7 @@
       ]
     },
     {
-      "type": "GRONINGEN_CARD",
+      "type": "BELPER_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -138,7 +138,7 @@
       ]
     },
     {
-      "type": "ZWOLLE_CARD",
+      "type": "DERBY_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -156,7 +156,7 @@
       ]
     },
     {
-      "type": "LEEUWARDEN_CARD",
+      "type": "LEEK_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -174,7 +174,7 @@
       ]
     },
     {
-      "type": "DEN_HELDER_CARD",
+      "type": "STOKE_ON_TRENT_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -192,7 +192,7 @@
       ]
     },
     {
-      "type": "AMSTERDAM_CARD",
+      "type": "STONE_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -210,7 +210,7 @@
       ]
     },
     {
-      "type": "LELYSTAD_CARD",
+      "type": "UTTOXETER_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -228,7 +228,7 @@
       ]
     },
     {
-      "type": "DIEMEN_CARD",
+      "type": "STAFFORD_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -246,7 +246,7 @@
       ]
     },
     {
-      "type": "APPELDOORN_CARD",
+      "type": "BURTON_UPON_TRENT_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -264,7 +264,7 @@
       ]
     },
     {
-      "type": "UTRECHT_CARD",
+      "type": "CANNOCK_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -282,7 +282,7 @@
       ]
     },
     {
-      "type": "ARNHEM_CARD",
+      "type": "TAMWORTH_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -300,7 +300,7 @@
       ]
     },
     {
-      "type": "GOUDA_CARD",
+      "type": "WALSALL_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -318,7 +318,7 @@
       ]
     },
     {
-      "type": "ROTTERDAM_CARD",
+      "type": "COALBROOKEDALE_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -336,7 +336,7 @@
       ]
     },
     {
-      "type": "SHERTOGENBOSCH_CARD",
+      "type": "DUDLEY_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -354,7 +354,7 @@
       ]
     },
     {
-      "type": "BREDA_CARD",
+      "type": "KIDDERMINSTER_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -372,7 +372,7 @@
       ]
     },
     {
-      "type": "DEN_HAAG_CARD",
+      "type": "WOLFERHAMPTON_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -390,7 +390,7 @@
       ]
     },
     {
-      "type": "TILBURG_CARD",
+      "type": "WORCESTER_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -408,25 +408,7 @@
       ]
     },
     {
-      "type": "EINDHOVEN_CARD",
-      "category": "ITEM_CATEGORY_CARD",
-      "attributes": [
-        {
-          "type": "GLOBAL_COUNT_2_PLAYER",
-          "amount": 3.0
-        },
-        {
-          "type": "GLOBAL_COUNT_3_PLAYER",
-          "amount": 3.0
-        },
-        {
-          "type": "GLOBAL_COUNT_4_PLAYER",
-          "amount": 3.0
-        }
-      ]
-    },
-    {
-      "type": "VENLO_CARD",
+      "type": "BIRMINGHAM_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -444,7 +426,25 @@
       ]
     },
     {
-      "type": "NIJMEGEN_CARD",
+      "type": "COVENTRY_CARD",
+      "category": "ITEM_CATEGORY_CARD",
+      "attributes": [
+        {
+          "type": "GLOBAL_COUNT_2_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_3_PLAYER",
+          "amount": 3.0
+        },
+        {
+          "type": "GLOBAL_COUNT_4_PLAYER",
+          "amount": 3.0
+        }
+      ]
+    },
+    {
+      "type": "NUNEATON_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -462,7 +462,7 @@
       ]
     },
     {
-      "type": "MASSTRICH_CARD",
+      "type": "REDDITCH_CARD",
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
@@ -480,23 +480,23 @@
       ]
     },
     {
-      "type": "ANTWERPEN_CARD",
+      "type": "GLOUCESTER_CARD",
       "category": "ITEM_CATEGORY_CARD"
     },
     {
-      "type": "HARWICH_CARD",
+      "type": "SHREWSBURY_CARD",
       "category": "ITEM_CATEGORY_CARD"
     },
     {
-      "type": "COLOGNE_CARD",
+      "type": "OXFORD_CARD",
       "category": "ITEM_CATEGORY_CARD"
     },
     {
-      "type": "BREMEN_CARD",
+      "type": "NOTTINGHAM_CARD",
       "category": "ITEM_CATEGORY_CARD"
     },
     {
-      "type": "NEWCASTLE_CARD",
+      "type": "WARRINGTON_CARD",
       "category": "ITEM_CATEGORY_CARD"
     },
     {

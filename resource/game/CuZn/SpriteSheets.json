@@ -5,7 +5,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "APPELDOORN_GOUDA_GUARD",
+          "type": "BURTON_UPON_TRENT_WALSALL_GUARD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -19,7 +19,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "LELYSTAD_PRESS_KITCHEN",
+          "type": "UTTOXETER_PRESS_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -27,21 +27,21 @@
           }
         },
         {
-          "type": "DIEMEN_PRESS_KITCHEN",
+          "type": "STAFFORD_PRESS_KITCHEN",
           "duplicate": {
-            "original_type": "LELYSTAD_PRESS_KITCHEN"
+            "original_type": "UTTOXETER_PRESS_KITCHEN"
           }
         },
         {
-          "type": "GOUDA_PRESS_KITCHEN",
+          "type": "WALSALL_PRESS_KITCHEN",
           "duplicate": {
-            "original_type": "LELYSTAD_PRESS_KITCHEN"
+            "original_type": "UTTOXETER_PRESS_KITCHEN"
           }
         },
         {
-          "type": "NIJMEGEN_PRESS_KITCHEN",
+          "type": "NUNEATON_PRESS_KITCHEN",
           "duplicate": {
-            "original_type": "LELYSTAD_PRESS_KITCHEN"
+            "original_type": "UTTOXETER_PRESS_KITCHEN"
           }
         }
       ]
@@ -51,7 +51,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "AMSTERDAM_PRESS_WOOD",
+          "type": "STONE_PRESS_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -59,33 +59,33 @@
           }
         },
         {
-          "type": "APPELDOORN_PRESS_WOOD",
+          "type": "BURTON_UPON_TRENT_PRESS_WOOD",
           "duplicate": {
-            "original_type": "AMSTERDAM_PRESS_WOOD"
+            "original_type": "STONE_PRESS_WOOD"
           }
         },
         {
-          "type": "UTRECHT_PRESS_WOOD",
+          "type": "CANNOCK_PRESS_WOOD",
           "duplicate": {
-            "original_type": "AMSTERDAM_PRESS_WOOD"
+            "original_type": "STONE_PRESS_WOOD"
           }
         },
         {
-          "type": "DEN_HAAG_PRESS_WOOD",
+          "type": "WOLFERHAMPTON_PRESS_WOOD",
           "duplicate": {
-            "original_type": "AMSTERDAM_PRESS_WOOD"
+            "original_type": "STONE_PRESS_WOOD"
           }
         },
         {
-          "type": "VENLO_PRESS_WOOD",
+          "type": "COVENTRY_PRESS_WOOD",
           "duplicate": {
-            "original_type": "AMSTERDAM_PRESS_WOOD"
+            "original_type": "STONE_PRESS_WOOD"
           }
         },
         {
-          "type": "MASSTRICH_PRESS_WOOD",
+          "type": "REDDITCH_PRESS_WOOD",
           "duplicate": {
-            "original_type": "AMSTERDAM_PRESS_WOOD"
+            "original_type": "STONE_PRESS_WOOD"
           }
         }
       ]
@@ -95,7 +95,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "DEN_HELDER_PRESS",
+          "type": "STOKE_ON_TRENT_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -103,21 +103,21 @@
           }
         },
         {
-          "type": "DEN_HAAG_PRESS",
+          "type": "WOLFERHAMPTON_PRESS",
           "duplicate": {
-            "original_type": "DEN_HELDER_PRESS"
+            "original_type": "STOKE_ON_TRENT_PRESS"
           }
         },
         {
-          "type": "EINDHOVEN_PRESS_1",
+          "type": "BIRMINGHAM_PRESS_1",
           "duplicate": {
-            "original_type": "DEN_HELDER_PRESS"
+            "original_type": "STOKE_ON_TRENT_PRESS"
           }
         },
         {
-          "type": "EINDHOVEN_PRESS_2",
+          "type": "BIRMINGHAM_PRESS_2",
           "duplicate": {
-            "original_type": "DEN_HELDER_PRESS"
+            "original_type": "STOKE_ON_TRENT_PRESS"
           }
         }
       ]
@@ -127,7 +127,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "GRONINGEN_EXPLOSIVE_PRESS",
+          "type": "BELPER_EXPLOSIVE_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -135,27 +135,27 @@
           }
         },
         {
-          "type": "ZWOLLE_EXPLOSIVE_PRESS",
+          "type": "DERBY_EXPLOSIVE_PRESS",
           "duplicate": {
-            "original_type": "GRONINGEN_EXPLOSIVE_PRESS"
+            "original_type": "BELPER_EXPLOSIVE_PRESS"
           }
         },
         {
-          "type": "LEEUWARDEN_EXPLOSIVE_PRESS",
+          "type": "LEEK_EXPLOSIVE_PRESS",
           "duplicate": {
-            "original_type": "GRONINGEN_EXPLOSIVE_PRESS"
+            "original_type": "BELPER_EXPLOSIVE_PRESS"
           }
         },
         {
-          "type": "DEN_HELDER_EXPLOSIVE_PRESS",
+          "type": "STOKE_ON_TRENT_EXPLOSIVE_PRESS",
           "duplicate": {
-            "original_type": "GRONINGEN_EXPLOSIVE_PRESS"
+            "original_type": "BELPER_EXPLOSIVE_PRESS"
           }
         },
         {
-          "type": "EINDHOVEN_EXPLOSIVE_PRESS",
+          "type": "BIRMINGHAM_EXPLOSIVE_PRESS",
           "duplicate": {
-            "original_type": "GRONINGEN_EXPLOSIVE_PRESS"
+            "original_type": "BELPER_EXPLOSIVE_PRESS"
           }
         }
       ]
@@ -165,7 +165,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "ZWOLLE_EXPLOSIVE_KITCHEN",
+          "type": "DERBY_EXPLOSIVE_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -173,15 +173,15 @@
           }
         },
         {
-          "type": "AMSTERDAM_EXPLOSIVE_KITCHEN",
+          "type": "STONE_EXPLOSIVE_KITCHEN",
           "duplicate": {
-            "original_type": "ZWOLLE_EXPLOSIVE_KITCHEN"
+            "original_type": "DERBY_EXPLOSIVE_KITCHEN"
           }
         },
         {
-          "type": "LELYSTAD_EXPLOSIVE_KITCHEN",
+          "type": "UTTOXETER_EXPLOSIVE_KITCHEN",
           "duplicate": {
-            "original_type": "ZWOLLE_EXPLOSIVE_KITCHEN"
+            "original_type": "DERBY_EXPLOSIVE_KITCHEN"
           }
         }
       ]
@@ -191,7 +191,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "LEEUWARDEN_EXPLOSIVE_WOOD",
+          "type": "LEEK_EXPLOSIVE_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -199,27 +199,27 @@
           }
         },
         {
-          "type": "ARNHEM_EXPLOSIVE_WOOD_1",
+          "type": "TAMWORTH_EXPLOSIVE_WOOD_1",
           "duplicate": {
-            "original_type": "LEEUWARDEN_EXPLOSIVE_WOOD"
+            "original_type": "LEEK_EXPLOSIVE_WOOD"
           }
         },
         {
-          "type": "ARNHEM_EXPLOSIVE_WOOD_2",
+          "type": "TAMWORTH_EXPLOSIVE_WOOD_2",
           "duplicate": {
-            "original_type": "LEEUWARDEN_EXPLOSIVE_WOOD"
+            "original_type": "LEEK_EXPLOSIVE_WOOD"
           }
         },
         {
-          "type": "BREDA_EXPLOSIVE_WOOD",
+          "type": "KIDDERMINSTER_EXPLOSIVE_WOOD",
           "duplicate": {
-            "original_type": "LEEUWARDEN_EXPLOSIVE_WOOD"
+            "original_type": "LEEK_EXPLOSIVE_WOOD"
           }
         },
         {
-          "type": "NIJMEGEN_EXPLOSIVE_WOOD",
+          "type": "NUNEATON_EXPLOSIVE_WOOD",
           "duplicate": {
-            "original_type": "LEEUWARDEN_EXPLOSIVE_WOOD"
+            "original_type": "LEEK_EXPLOSIVE_WOOD"
           }
         }
       ]
@@ -229,7 +229,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "BREDA_EXPLOSIVE",
+          "type": "KIDDERMINSTER_EXPLOSIVE",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -237,15 +237,15 @@
           }
         },
         {
-          "type": "TILBURG_EXPLOSIVE_1",
+          "type": "WORCESTER_EXPLOSIVE_1",
           "duplicate": {
-            "original_type": "BREDA_EXPLOSIVE"
+            "original_type": "KIDDERMINSTER_EXPLOSIVE"
           }
         },
         {
-          "type": "TILBURG_EXPLOSIVE_2",
+          "type": "WORCESTER_EXPLOSIVE_2",
           "duplicate": {
-            "original_type": "BREDA_EXPLOSIVE"
+            "original_type": "KIDDERMINSTER_EXPLOSIVE"
           }
         }
       ]
@@ -255,7 +255,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "APPELDOORN_KITCHEN",
+          "type": "BURTON_UPON_TRENT_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -265,13 +265,13 @@
         {
           "type": "STANDALONE_KITCHEN_1",
           "duplicate": {
-            "original_type": "APPELDOORN_KITCHEN"
+            "original_type": "BURTON_UPON_TRENT_KITCHEN"
           }
         },
         {
           "type": "STANDALONE_KITCHEN_2",
           "duplicate": {
-            "original_type": "APPELDOORN_KITCHEN"
+            "original_type": "BURTON_UPON_TRENT_KITCHEN"
           }
         }
       ]
@@ -281,7 +281,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "GOUDA_TOOL_PRESS",
+          "type": "WALSALL_TOOL_PRESS",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -289,9 +289,9 @@
           }
         },
         {
-          "type": "VENLO_TOOL_PRESS",
+          "type": "COVENTRY_TOOL_PRESS",
           "duplicate": {
-            "original_type": "GOUDA_TOOL_PRESS"
+            "original_type": "WALSALL_TOOL_PRESS"
           }
         }
       ]
@@ -301,7 +301,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "ROTTERDAM_TOOL_KITCHEN",
+          "type": "COALBROOKEDALE_TOOL_KITCHEN",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -315,7 +315,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "ZWOLLE_TOOL",
+          "type": "DERBY_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -323,27 +323,27 @@
           }
         },
         {
-          "type": "ROTTERDAM_TOOL",
+          "type": "COALBROOKEDALE_TOOL",
           "duplicate": {
-            "original_type": "ZWOLLE_TOOL"
+            "original_type": "DERBY_TOOL"
           }
         },
         {
-          "type": "SHERTOGENBOSCH_TOOL",
+          "type": "DUDLEY_TOOL",
           "duplicate": {
-            "original_type": "ZWOLLE_TOOL"
+            "original_type": "DERBY_TOOL"
           }
         },
         {
-          "type": "EINDHOVEN_TOOL",
+          "type": "BIRMINGHAM_TOOL",
           "duplicate": {
-            "original_type": "ZWOLLE_TOOL"
+            "original_type": "DERBY_TOOL"
           }
         },
         {
-          "type": "MASSTRICH_TOOL",
+          "type": "REDDITCH_TOOL",
           "duplicate": {
-            "original_type": "ZWOLLE_TOOL"
+            "original_type": "DERBY_TOOL"
           }
         }
       ]
@@ -360,7 +360,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "DEN_HELDER_JEWELLERY_TOOL",
+          "type": "STOKE_ON_TRENT_JEWELLERY_TOOL",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -374,7 +374,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "GRONINGEN_JEWELLERY",
+          "type": "BELPER_JEWELLERY",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -382,15 +382,15 @@
           }
         },
         {
-          "type": "DIEMEN_JEWELLERY",
+          "type": "STAFFORD_JEWELLERY",
           "duplicate": {
-            "original_type": "GRONINGEN_JEWELLERY"
+            "original_type": "BELPER_JEWELLERY"
           }
         },
         {
-          "type": "VENLO_JEWELLERY",
+          "type": "COVENTRY_JEWELLERY",
           "duplicate": {
-            "original_type": "GRONINGEN_JEWELLERY"
+            "original_type": "BELPER_JEWELLERY"
           }
         }
       ]
@@ -400,7 +400,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT",
+          "type": "BELPER_DERBY_GUARD_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -408,177 +408,177 @@
           }
         },
         {
-          "type": "ZWOLLE_APPELDOORN_GUARD_KNIGHT",
+          "type": "DERBY_BURTON_UPON_TRENT_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "ZWOLLE_BREMEN_GUARD_KNIGHT",
+          "type": "DERBY_NOTTINGHAM_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "LEEUWARDEN_DEN_HELDER_GUARD_KNIGHT",
+          "type": "LEEK_STOKE_ON_TRENT_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "DEN_HELDER_AMSTERDAM_GUARD_KNIGHT",
+          "type": "STOKE_ON_TRENT_STONE_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "DEN_HELDER_NEWCASTLE_GUARD_KNIGHT",
+          "type": "STOKE_ON_TRENT_WARRINGTON_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "AMSTERDAM_DIEMEN_GUARD_KNIGHT",
+          "type": "STONE_STAFFORD_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "AMSTERDAM_APPELDOORN_GUARD_KNIGHT",
+          "type": "STONE_BURTON_UPON_TRENT_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "DIEMEN_UTRECHT_GUARD_KNIGHT",
+          "type": "STAFFORD_CANNOCK_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "APPELDOORN_ARNHEM_GUARD_KNIGHT",
+          "type": "BURTON_UPON_TRENT_TAMWORTH_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "UTRECHT_KITCHEN1_GUARD_KNIGHT",
+          "type": "CANNOCK_KITCHEN1_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "UTRECHT_GOUDA_GUARD_KNIGHT",
+          "type": "CANNOCK_WALSALL_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "UTRECHT_DEN_HAAG_GUARD_KNIGHT",
+          "type": "CANNOCK_WOLFERHAMPTON_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "ARNHEM_EINDHOVEN_GUARD_KNIGHT",
+          "type": "TAMWORTH_BIRMINGHAM_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "ARNHEM_NIJMEGEN_GUARD_KNIGHT",
+          "type": "TAMWORTH_NUNEATON_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "GOUDA_DEN_HAAG_GUARD_KNIGHT",
+          "type": "WALSALL_WOLFERHAMPTON_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "GOUDA_EINDHOVEN_GUARD_KNIGHT",
+          "type": "WALSALL_BIRMINGHAM_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "ROTTERDAM_BREDA_GUARD_KNIGHT",
+          "type": "COALBROOKEDALE_KIDDERMINSTER_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "ROTTERDAM_DEN_HAAG_GUARD_KNIGHT",
+          "type": "COALBROOKEDALE_WOLFERHAMPTON_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "ROTTERDAM_HARWICH_GUARD_KNIGHT",
+          "type": "COALBROOKEDALE_SHREWSBURY_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "SHERTOGENBOSCH_BREDA_GUARD_KNIGHT",
+          "type": "DUDLEY_KIDDERMINSTER_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "SHERTOGENBOSCH_DEN_HAAG_GUARD_KNIGHT",
+          "type": "DUDLEY_WOLFERHAMPTON_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "SHERTOGENBOSCH_EINDHOVEN_GUARD_KNIGHT",
+          "type": "DUDLEY_BIRMINGHAM_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "BREDA_TILBURG_KITCHEN2_GUARD_KNIGHT",
+          "type": "KIDDERMINSTER_WORCESTER_KITCHEN2_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "TILBURG_EINDHOVEN_GUARD_KNIGHT",
+          "type": "WORCESTER_BIRMINGHAM_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "TILBURG_ANTWERPEN_GUARD_KNIGHT",
+          "type": "WORCESTER_GLOUCESTER_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "EINDHOVEN_VENLO_GUARD_KNIGHT",
+          "type": "BIRMINGHAM_COVENTRY_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "EINDHOVEN_COLOGNE_GUARD_KNIGHT",
+          "type": "BIRMINGHAM_OXFORD_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "MASSTRICH_ANTWERPEN_GUARD_KNIGHT",
+          "type": "REDDITCH_GLOUCESTER_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         },
         {
-          "type": "MASSTRICH_COLOGNE_GUARD_KNIGHT",
+          "type": "REDDITCH_OXFORD_GUARD_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_ZWOLLE_GUARD_KNIGHT"
+            "original_type": "BELPER_DERBY_GUARD_KNIGHT"
           }
         }
       ]
@@ -588,7 +588,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "GRONINGEN_LEEUWARDEN_KNIGHT",
+          "type": "BELPER_LEEK_KNIGHT",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -596,45 +596,45 @@
           }
         },
         {
-          "type": "ZWOLLE_LELYSTAD_KNIGHT",
+          "type": "DERBY_UTTOXETER_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+            "original_type": "BELPER_LEEK_KNIGHT"
           }
         },
         {
-          "type": "AMSTERDAM_LELYSTAD_KNIGHT",
+          "type": "STONE_UTTOXETER_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+            "original_type": "BELPER_LEEK_KNIGHT"
           }
         },
         {
-          "type": "APPELDOORN_UTRECHT_KNIGHT",
+          "type": "BURTON_UPON_TRENT_CANNOCK_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+            "original_type": "BELPER_LEEK_KNIGHT"
           }
         },
         {
-          "type": "ARNHEM_GOUDA_KNIGHT",
+          "type": "TAMWORTH_WALSALL_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+            "original_type": "BELPER_LEEK_KNIGHT"
           }
         },
         {
-          "type": "EINDHOVEN_NIJMEGEN_KNIGHT",
+          "type": "BIRMINGHAM_NUNEATON_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+            "original_type": "BELPER_LEEK_KNIGHT"
           }
         },
         {
-          "type": "EINDHOVEN_MASSTRICH_KNIGHT",
+          "type": "BIRMINGHAM_REDDITCH_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+            "original_type": "BELPER_LEEK_KNIGHT"
           }
         },
         {
-          "type": "VENLO_NIJMEGEN_KNIGHT",
+          "type": "COVENTRY_NUNEATON_KNIGHT",
           "duplicate": {
-            "original_type": "GRONINGEN_LEEUWARDEN_KNIGHT"
+            "original_type": "BELPER_LEEK_KNIGHT"
           }
         }
       ]
@@ -644,7 +644,7 @@
       "ppm": 512,
       "sprites": [
         {
-          "type": "GRONINGEN_WOOD",
+          "type": "BELPER_WOOD",
           "regular": {
             "rect": { "x": 0, "y": 0, "w": 1024, "h": 1024 },
             "centerToOriginVecPx": { "x": -256, "y": -256 },
@@ -652,21 +652,21 @@
           }
         },
         {
-          "type": "UTRECHT_WOOD",
+          "type": "CANNOCK_WOOD",
           "duplicate": {
-            "original_type": "GRONINGEN_WOOD"
+            "original_type": "BELPER_WOOD"
           }
         },
         {
-          "type": "ROTTERDAM_WOOD",
+          "type": "COALBROOKEDALE_WOOD",
           "duplicate": {
-            "original_type": "GRONINGEN_WOOD"
+            "original_type": "BELPER_WOOD"
           }
         },
         {
-          "type": "SHERTOGENBOSCH_WOOD",
+          "type": "DUDLEY_WOOD",
           "duplicate": {
-            "original_type": "GRONINGEN_WOOD"
+            "original_type": "BELPER_WOOD"
           }
         }
       ]
@@ -1097,6 +1097,60 @@
           }
         },
         {
+          "type": "GLOUCESTER_1",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "GLOUCESTER_2",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "SHREWSBURY_1",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "OXFORD_1",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "OXFORD_2",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "NOTTINGHAM_1",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "NOTTINGHAM_2",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "WARRINGTON_1",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
+          "type": "WARRINGTON_2",
+          "duplicate": {
+            "original_type": "INDUSTRY_BACKGROUND"
+          }
+        },
+        {
           "type": "CANAL_OR_RAILWAY_BACKGROUND_1",
           "regular": {
             "rect": {
@@ -1135,917 +1189,180 @@
           }
         }
       ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/CowsAndHorses/GrassDirt-Vertical.png",
-      "ppm": 16,
-      "sprites": [
-        {
-          "type": "GRASS_DIRT_VERTICAL",
-          "regular": {
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "w": 16,
-              "h": 16
-            },
-            "isBackgroundTile": true
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/CowsAndHorses/GrassCobblestone-Vertical.png",
-      "ppm": 16,
-      "sprites": [
-        {
-          "type": "GRASS_COBBLESTONE_VERTICAL",
-          "regular": {
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "w": 16,
-              "h": 16
-            },
-            "isBackgroundTile": true
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/CowsAndHorses/GrassDirtCobblestone-Vertical.png",
-      "ppm": 16,
-      "sprites": [
-        {
-          "type": "GRASS_DIRT_COBBLESTONE_VERTICAL",
-          "regular": {
-            "rect": {
-              "x": 0,
-              "y": 0,
-              "w": 16,
-              "h": 16
-            },
-            "isBackgroundTile": true
-          }
-        }
-      ]
-    },
-    {
-      "resource": "resource/game/CuZn/png/fantasylandsset1/_PNG/FLSET1_ground.png",
-      "ppm": 32,
-      "sprites": [
-        {
-          "type": "DIRT_ROAD_INNER_TOP_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 256,
-              "y": 224,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_TOP_EDGE",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 224,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_TOP_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 320,
-              "y": 224,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_LEFT_EDGE",
-          "regular": {
-            "rect": {
-              "x": 256,
-              "y": 256,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 256,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_RIGHT_EDGE",
-          "regular": {
-            "rect": {
-              "x": 320,
-              "y": 256,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_BOTTOM_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 256,
-              "y": 288,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_BOTTOM_EDGE",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 288,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_BOTTOM_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 320,
-              "y": 288,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_OUTER_TOP_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 352,
-              "y": 224,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_OUTER_TOP_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 416,
-              "y": 224,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_OUTER_BOTTOM_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 352,
-              "y": 288,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_OUTER_BOTTOM_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 416,
-              "y": 288,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_TOP_RIGHT_BOTTOM_LEFT_CORNERS",
-          "regular": {
-            "rect": {
-              "x": 480,
-              "y": 224,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_TOP_LEFT_BOTTOM_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 480,
-              "y": 256,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_CORRIDOR_TOP",
-          "regular": {
-            "rect": {
-              "x": 256,
-              "y": 320,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_CORRIDOR_VERTICAL",
-          "regular": {
-            "rect": {
-              "x": 256,
-              "y": 352,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_CORRIDOR_BOTTOM",
-          "regular": {
-            "rect": {
-              "x": 256,
-              "y": 384,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_CORRIDOR_MIDDLE",
-          "regular": {
-            "rect": {
-              "x": 320,
-              "y": 352,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_CORRIDOR_LEFT",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 416,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_CORRIDOR_HORIZONTAL",
-          "regular": {
-            "rect": {
-              "x": 320,
-              "y": 416,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_CORRIDOR_RIGHT",
-          "regular": {
-            "rect": {
-              "x": 352,
-              "y": 416,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_CORRIDOR_TOP_LEFT",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 320,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_CORRIDOR_TOP_RIGHT",
-          "regular": {
-            "rect": {
-              "x": 352,
-              "y": 320,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_CORRIDOR_BOTTOM_LEFT",
-          "regular": {
-            "rect": {
-              "x": 288,
-              "y": 384,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DIRT_ROAD_INNER_CORRIDOR_BOTTOM_RIGHT",
-          "regular": {
-            "rect": {
-              "x": 352,
-              "y": 384,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "ANTWERPEN_1",
-          "regular": {
-            "rect": {
-              "x": 768,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "ANTWERPEN_2",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "HARWICH_1",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "COLOGNE_1",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "COLOGNE_2",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "BREMEN_1",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "BREMEN_2",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "NEWCASTLE_1",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "NEWCASTLE_2",
-          "duplicate": {
-            "original_type": "ANTWERPEN_1"
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_TOP_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 768,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_TOP_EDGE",
-          "regular": {
-            "rect": {
-              "x": 800,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_TOP_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 832,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_LEFT_EDGE",
-          "regular": {
-            "rect": {
-              "x": 768,
-              "y": 32,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH",
-          "regular": {
-            "rect": {
-              "x": 800,
-              "y": 32,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_RIGHT_EDGE",
-          "regular": {
-            "rect": {
-              "x": 832,
-              "y": 32,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_BOTTOM_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 768,
-              "y": 64,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_BOTTOM_EDGE",
-          "regular": {
-            "rect": {
-              "x": 800,
-              "y": 64,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_BOTTOM_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 832,
-              "y": 64,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_OUTER_TOP_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 864,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_OUTER_TOP_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 928,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_OUTER_BOTTOM_LEFT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 864,
-              "y": 64,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_OUTER_BOTTOM_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 928,
-              "y": 64,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_TOP_RIGHT_BOTTOM_LEFT_CORNERS",
-          "regular": {
-            "rect": {
-              "x": 992,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_TOP_LEFT_BOTTOM_RIGHT_CORNER",
-          "regular": {
-            "rect": {
-              "x": 992,
-              "y": 32,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_CORRIDOR_TOP",
-          "regular": {
-            "rect": {
-              "x": 768,
-              "y": 96,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_CORRIDOR_VERTICAL",
-          "regular": {
-            "rect": {
-              "x": 768,
-              "y": 128,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_CORRIDOR_BOTTOM",
-          "regular": {
-            "rect": {
-              "x": 768,
-              "y": 160,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_CORRIDOR_MIDDLE",
-          "regular": {
-            "rect": {
-              "x": 832,
-              "y": 128,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_CORRIDOR_LEFT",
-          "regular": {
-            "rect": {
-              "x": 800,
-              "y": 192,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_CORRIDOR_HORIZONTAL",
-          "regular": {
-            "rect": {
-              "x": 832,
-              "y": 192,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_CORRIDOR_RIGHT",
-          "regular": {
-            "rect": {
-              "x": 864,
-              "y": 192,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_CORRIDOR_TOP_LEFT",
-          "regular": {
-            "rect": {
-              "x": 800,
-              "y": 96,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_CORRIDOR_TOP_RIGHT",
-          "regular": {
-            "rect": {
-              "x": 864,
-              "y": 96,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_CORRIDOR_BOTTOM_LEFT",
-          "regular": {
-            "rect": {
-              "x": 800,
-              "y": 160,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        },
-        {
-          "type": "DARK_PATH_INNER_CORRIDOR_BOTTOM_RIGHT",
-          "regular": {
-            "rect": {
-              "x": 864,
-              "y": 160,
-              "w": 32,
-              "h": 32
-            },
-            "isBackgroundTile": true
-          }
-        }
-      ]
     }
   ],
   "textLabels": [
     {
-      "type": "TEXT_LABEL_NEWCASTLE",
-      "text": "Newcastle",
+      "type": "TEXT_LABEL_WARRINGTON",
+      "text": "WARRINGTON",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_DEN_HELDER",
-      "text": "Den Helder",
+      "type": "TEXT_LABEL_STOKE_ON_TRENT",
+      "text": "STOKE ON TRENT",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_LEEUWARDEN",
-      "text": "Leeuwarden",
+      "type": "TEXT_LABEL_LEEK",
+      "text": "LEEK",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_GRONINGEN",
-      "text": "Groningen",
+      "type": "TEXT_LABEL_BELPER",
+      "text": "BELPER",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_AMSTERDAM",
-      "text": "Amsterdam",
+      "type": "TEXT_LABEL_STONE",
+      "text": "STONE",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_LELYSTAD",
-      "text": "Lelystad",
+      "type": "TEXT_LABEL_UTTOXETER",
+      "text": "UTTOXETER",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_ZWOLLE",
-      "text": "Zwolle",
+      "type": "TEXT_LABEL_DERBY",
+      "text": "DERBY",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_BREMEN",
-      "text": "Bremen",
+      "type": "TEXT_LABEL_NOTTINGHAM",
+      "text": "NOTTINGHAM",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_DIEMEN",
-      "text": "Diemen",
+      "type": "TEXT_LABEL_STAFFORD",
+      "text": "STAFFORD",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_APPELDOORN",
-      "text": "Appeldoorn",
+      "type": "TEXT_LABEL_BURTON_UPON_TRENT",
+      "text": "BURTON UPON TRENT",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_UTRECHT",
-      "text": "Utrecht",
+      "type": "TEXT_LABEL_CANNOCK",
+      "text": "CANNOCK",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_ARNHEM",
-      "text": "Arnhem",
+      "type": "TEXT_LABEL_TAMWORTH",
+      "text": "TAMWORTH",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_HARWICH",
-      "text": "Harwich",
+      "type": "TEXT_LABEL_SHREWSBURY",
+      "text": "SHREWSBURY",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_ROTTERDAM",
-      "text": "Rotterdam",
+      "type": "TEXT_LABEL_COALBROOKEDALE",
+      "text": "COALBROOKEDALE",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_DEN_HAAG",
-      "text": "Den Haag",
+      "type": "TEXT_LABEL_WOLFERHAMPTON",
+      "text": "WOLFERHAMPTON",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_GOUDA",
-      "text": "Gouda",
+      "type": "TEXT_LABEL_WALSALL",
+      "text": "WALSALL",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_NIJMEGEN",
-      "text": "Nijmegen",
+      "type": "TEXT_LABEL_NUNEATON",
+      "text": "NUNEATON",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_BREDA",
-      "text": "Breda",
+      "type": "TEXT_LABEL_KIDDERMINSTER",
+      "text": "KIDDERMINSTER",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_SHERTOGENBOSCH",
-      "text": "sHertogenbosch",
+      "type": "TEXT_LABEL_DUDLEY",
+      "text": "DUDLEY",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_EINDHOVEN",
-      "text": "Eindhoven",
+      "type": "TEXT_LABEL_BIRMINGHAM",
+      "text": "BIRMINGHAM",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_VENLO",
-      "text": "Venlo",
+      "type": "TEXT_LABEL_COVENTRY",
+      "text": "COVENTRY",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_TILBURG",
-      "text": "Tilburg",
+      "type": "TEXT_LABEL_WORCESTER",
+      "text": "WORCESTER",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
       "type": "TEXT_LABEL_MAASTRICHT",
-      "text": "Maastricht",
+      "text": "MAASTRICHT",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_COLOGNE",
-      "text": "Cologne",
+      "type": "TEXT_LABEL_OXFORD",
+      "text": "OXFORD",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_ANTWERPEN",
-      "text": "Antwerpen",
+      "type": "TEXT_LABEL_GLOUCESTER",
+      "text": "GLOUCESTER",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
