@@ -519,9 +519,22 @@
           }
         },
         {
+          "type": "CANAL_OR_RAILWAY_BACKGROUND_4",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
           "type": "BURTON_UPON_TRENT_WALSALL_CANAL",
           "duplicate": {
-            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
@@ -823,181 +836,181 @@
         {
           "type": "BELPER_DERBY_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_2"
           }
         },
         {
           "type": "DERBY_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "DERBY_NOTTINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "LEEK_STOKE_ON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "STOKE_ON_TRENT_STONE_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_2"
           }
         },
         {
           "type": "STOKE_ON_TRENT_WARRINGTON_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "STONE_STAFFORD_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_2"
           }
         },
         {
           "type": "STONE_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "STAFFORD_CANNOCK_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_2"
           }
         },
         {
           "type": "BURTON_UPON_TRENT_TAMWORTH_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "CANNOCK_BREWERY1_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "CANNOCK_WALSALL_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "CANNOCK_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_2"
           }
         },
         {
           "type": "TAMWORTH_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_4"
           }
         },
         {
           "type": "TAMWORTH_NUNEATON_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "WALSALL_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "WALSALL_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "COALBROOKEDALE_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "COALBROOKEDALE_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "COALBROOKEDALE_SHREWSBURY_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "DUDLEY_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "DUDLEY_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "DUDLEY_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "KIDDERMINSTER_WORCESTER_BREWERY2_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "WORCESTER_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "WORCESTER_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_2"
           }
         },
         {
           "type": "BIRMINGHAM_COVENTRY_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
           "type": "BIRMINGHAM_OXFORD_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "REDDITCH_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "REDDITCH_OXFORD_CANAL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_DERBY_CANAL_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_3"
           }
         },
         {
@@ -1009,43 +1022,43 @@
         {
           "type": "DERBY_UTTOXETER_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "STONE_UTTOXETER_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "BURTON_UPON_TRENT_CANNOCK_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "TAMWORTH_WALSALL_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "BIRMINGHAM_NUNEATON_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "BIRMINGHAM_REDDITCH_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
           "type": "COVENTRY_NUNEATON_RAILROAD",
           "duplicate": {
-            "original_type": "BELPER_LEEK_RAILROAD"
+            "original_type": "CANAL_OR_RAILWAY_BACKGROUND_1"
           }
         },
         {
@@ -1233,8 +1246,8 @@
       "pullHalfCell": true
     },
     {
-      "type": "TEXT_LABEL_MAASTRICHT",
-      "text": "MAASTRICHT",
+      "type": "TEXT_LABEL_REDDITCH",
+      "text": "REDDITCH",
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
