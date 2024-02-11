@@ -46,7 +46,7 @@ m2::void_expected m2::Level::init_single_player(
 
 m2::void_expected m2::Level::init_multi_player_as_host(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
-	DEBUG_FN();
+	INFO_FN();
 	type_state.emplace<mplayer::State>();
 
 	auto success = init_any_player(
@@ -57,7 +57,7 @@ m2::void_expected m2::Level::init_multi_player_as_host(
 	GAME.server_thread().server_update();
 
 	// Populate level
-	PROXY.multi_player_level_host_populate();
+	PROXY.multi_player_level_host_populate(_name, *_lb);
 
 	// Execute second server update
 	GAME.server_thread().server_update();

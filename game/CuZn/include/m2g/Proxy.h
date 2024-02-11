@@ -11,6 +11,8 @@ namespace m2g {
 		const m2::ui::Blueprint* left_hud();
 		const m2::ui::Blueprint* right_hud();
 
+		void multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level);
+
 		std::optional<int> handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command);
 		m2::void_expected init_fg_object(MAYBE m2::Object& obj);
 	};

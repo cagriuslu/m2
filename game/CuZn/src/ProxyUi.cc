@@ -113,26 +113,27 @@ static const Blueprint ip_port_form = {
 
 static TextBlueprint client_count_label = { .initial_text = "Client count:" };
 static TextBlueprint client_count = {
-		.initial_text = "0",
-		.on_update = [](MAYBE const Text& self) -> std::pair<Action,std::optional<std::string>> {
-			auto client_count = GAME.server_thread().client_count();
-			if (client_count < 2) {
-				return std::make_pair(make_continue_action(), std::to_string(client_count));
-			} else {
-				return std::make_pair(make_continue_action(), std::to_string(client_count) + " - START!");
-			}
-		},
-		.on_action = [](MAYBE const Text& self) -> Action {
-			if (2 <= GAME.server_thread().client_count()) {
-				if (GAME.server_thread().close_lobby()) {
-					const auto expect_success = GAME.load_multi_player_as_host(GAME.levels_dir / (std::to_string(GAME.server_thread().client_count()) + ".json"));
-					m2_succeed_or_throw_error(expect_success);
-					return make_return_action<m2::Void>(); // TODO Return value
-				}
-			}
-			return make_continue_action();
-		}
-};
+    .initial_text = "0",
+    .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
+	    auto client_count = GAME.server_thread().client_count();
+	    if (client_count < 2) {
+		    return std::make_pair(make_continue_action(), std::to_string(client_count));
+	    } else {
+		    return std::make_pair(make_continue_action(), std::to_string(client_count) + " - START!");
+	    }
+    },
+    .on_action = [](MAYBE const Text& self) -> Action {
+	    if (2 <= GAME.server_thread().client_count()) {
+		    LOG_INFO("Enough clients have connected");
+		    if (GAME.server_thread().close_lobby()) {
+			    const auto expect_success = GAME.load_multi_player_as_host(
+			        GAME.levels_dir / (std::to_string(GAME.server_thread().client_count()) + ".json"), "Default");
+			    m2_succeed_or_throw_error(expect_success);
+			    return make_return_action<m2::Void>();  // TODO Return value
+		    }
+	    }
+	    return make_continue_action();
+    }};
 static const Blueprint server_lobby = {
 		.w = 160, .h = 90,
 		.border_width_px = 0,

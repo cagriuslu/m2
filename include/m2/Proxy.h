@@ -66,12 +66,18 @@ namespace m2 {
 		    SDL_SCANCODE_EQUALS
 		};
 
-		// Called before/after a level is loaded
+		/// Called before/after a single player level is loaded
 		void pre_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 		void post_single_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
+
+		/// These functions must be identical between the host and the client, because the levels are expected to be
+		/// identical after they are initialized.
 		void pre_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 		void post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
-		void multi_player_level_host_populate() {}
+
+		/// After the levels are initialized (identically), host can populate the random parts of the level, after which
+		/// second ServerUpdate will be published.
+		void multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
 		/// Maps 0-based client indexes to the object IDs in this game instance
 		/// For the server, the first item would contain the ObjectId of the player.

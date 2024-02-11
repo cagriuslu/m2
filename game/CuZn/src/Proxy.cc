@@ -3,6 +3,11 @@
 #include <m2/Game.h>
 #include <m2/multi_player/State.h>
 
+void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
+	auto client_count = GAME.server_thread().client_count();
+	// TODO
+}
+
 std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 
