@@ -7,7 +7,7 @@
 
 m2::network::ClientThread::ClientThread(mplayer::Type type, std::string addr) : _type(type), _addr(std::move(addr)),
 		_thread(ClientThread::thread_func, this) {
-	DEBUG_FN();
+	INFO_FN();
 }
 
 m2::network::ClientThread::~ClientThread() {
@@ -75,7 +75,7 @@ unsigned m2::network::ClientThread::total_player_count() {
 }
 
 void m2::network::ClientThread::set_ready_blocking(bool state) {
-	DEBUG_FN();
+	INFO_FN();
 
 	{
 		// Send ping with/without sender_id
@@ -94,7 +94,8 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 }
 
 m2::expected<bool> m2::network::ClientThread::process_server_update() {
-	TRACE_FN();
+	DEBUG_FN();
+
 	const std::lock_guard lock(_mutex);
 	if (not fetch_server_update_unlocked()) {
 		// No ServerUpdate to process
@@ -228,7 +229,8 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 }
 
 void m2::network::ClientThread::queue_client_command(const m2g::pb::ClientCommand& cmd) {
-	DEBUG_FN();
+	INFO_FN();
+
 	pb::NetworkMessage msg;
 	msg.set_game_hash(GAME.hash());
 	msg.set_sender_id(GAME.sender_id());
@@ -267,7 +269,8 @@ bool m2::network::ClientThread::fetch_server_update_unlocked() {
 }
 
 void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
-	DEBUG_FN();
+	INFO_FN();
+
 	auto pop_message = [client_thread]() -> std::optional<pb::NetworkMessage> {
 		const std::lock_guard lock(client_thread->_mutex);
 		if (!client_thread->_message_queue.empty()) {

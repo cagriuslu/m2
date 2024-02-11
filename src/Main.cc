@@ -46,40 +46,38 @@ int main(const int argc, char **argv) {
 		LOG_INFO("Console command", *console_opt);
 	}
 
-	//ThreadPool thread_pool;
-
 	LOG_DEBUG("Initializing SDL...");
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
-		LOG_FATAL("SDL error", SDL_GetError());
+		LOG_FATAL("SDL_Init error", SDL_GetError());
 		return -1;
 	}
-	LOG_DEBUG("Initialized SDL, initializing SDL_image...");
+	LOG_DEBUG("SDL initialized, initializing SDL_image...");
 	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-		LOG_FATAL("SDL error", IMG_GetError());
+		LOG_FATAL("IMG_Init error", IMG_GetError());
 		return -1;
 	}
-	LOG_DEBUG("Initialized SDL_image, initializing SDL_ttf...");
+	LOG_DEBUG("SDL_image initialized, initializing SDL_ttf...");
 	if (TTF_Init() != 0) {
-		LOG_FATAL("SDL error", TTF_GetError());
+		LOG_FATAL("TTF_Init error", TTF_GetError());
 		return -1;
 	}
-	LOG_DEBUG("Initialized SDL_ttf");
+	LOG_DEBUG("SDL_ttf initialized");
 
 	Game::create_instance();
 	GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
-	LOG_DEBUG("Executing entry UI...");
+	LOG_DEBUG("Executing main menu...");
 	if (auto action = m2::ui::State::create_execute_sync(PROXY.main_menu()); m2::ui::is_quit(action)) {
-		LOG_INFO("Entry UI returned QUIT");
+		LOG_INFO("Main menu returned QUIT");
 		return 0;
 	}
-	LOG_DEBUG("Executed entry UI");
+	LOG_DEBUG("Main menu executed");
 
 	sdl::Stopwatch since_last_phy(GAME.pause_ticks);
 	sdl::Stopwatch since_last_gfx(GAME.pause_ticks);
 	sdl::Stopwatch since_last_fps(GAME.pause_ticks);
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
-	LOG_DEBUG("Initial ticks", GAME.pause_ticks);
+	LOG_DEBUG("Initial pause ticks", GAME.pause_ticks);
 	while (!GAME.quit) {
 		LEVEL.begin_game_loop();
 

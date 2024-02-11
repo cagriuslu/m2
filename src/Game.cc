@@ -124,12 +124,15 @@ m2::Game::~Game() {
 }
 
 m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
+	INFO_FN();
+
 	_server_thread.emplace(type, max_connection_count);
 
 	// Wait until the server is up
 	while (not _server_thread->is_listening()) {
 		SDL_Delay(25);
 	}
+	LOG_INFO("Server is up, joining the game...");
 
 	join_game(type, "127.0.0.1");
 
@@ -137,9 +140,11 @@ m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connectio
 	while (not _client_thread->is_connected()) {
 		SDL_Delay(25);
 	}
+	LOG_INFO("Self client connected");
 
 	// Set client as ready
 	_client_thread->set_ready_blocking(true);
+	LOG_INFO("Self client set as ready");
 
 	return {};
 }

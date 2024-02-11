@@ -10,7 +10,7 @@
 
 m2::network::ServerThread::ServerThread(mplayer::Type type, unsigned max_connection_count) : _type(type),
 	_max_connection_count(max_connection_count), _thread(ServerThread::thread_func, this) {
-	DEBUG_FN();
+	INFO_FN();
 }
 
 m2::network::ServerThread::~ServerThread() {
@@ -35,6 +35,7 @@ unsigned m2::network::ServerThread::turn_holder() {
 }
 
 std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder_command() {
+	INFO_FN();
 	const std::lock_guard lock(_mutex);
 	auto opt_message = _clients[_turn_holder].pop_incoming_message();
 	if (opt_message) {
@@ -45,6 +46,7 @@ std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder
 }
 
 m2::void_expected m2::network::ServerThread::close_lobby() {
+	INFO_FN();
 	{
 		// Check if all clients reported as ready
 		const std::lock_guard lock(_mutex);
@@ -55,7 +57,7 @@ m2::void_expected m2::network::ServerThread::close_lobby() {
 		}
 	}
 
-	LOG_INFO("Closing lobby");
+	LOG_INFO("Lobby closed");
 	set_state_locked(pb::ServerState::SERVER_READY);
 	return {};
 }
@@ -67,7 +69,7 @@ void m2::network::ServerThread::set_turn_holder_index(unsigned idx) {
 }
 
 void m2::network::ServerThread::server_update() {
-	DEBUG_FN();
+	INFO_FN();
 	auto turn = turn_holder();
 
 	auto count = client_count();
@@ -125,7 +127,7 @@ void m2::network::ServerThread::set_state_locked(pb::ServerState state) {
 }
 
 void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
-	DEBUG_FN();
+	INFO_FN();
 
 	auto listen_socket = Socket::create_tcp();
 	if (not listen_socket) {
@@ -252,7 +254,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		}
 	}
 
-	LOG_DEBUG("Quit");
+	LOG_INFO("Quit");
 }
 
 bool m2::network::ServerThread::is_quit() {

@@ -114,10 +114,6 @@ static const Blueprint ip_port_form = {
 static TextBlueprint client_count_label = { .initial_text = "Client count:" };
 static TextBlueprint client_count = {
 		.initial_text = "0",
-		.on_create = [](MAYBE const Text& self) -> std::optional<std::string> {
-			GAME.host_game(m2::mplayer::Type::TurnBased, 4);
-			return std::nullopt;
-		},
 		.on_update = [](MAYBE const Text& self) -> std::pair<Action,std::optional<std::string>> {
 			auto client_count = GAME.server_thread().client_count();
 			if (client_count < 2) {
@@ -166,6 +162,7 @@ static TextBlueprint join_button = {
 static TextBlueprint host_button = {
 		.initial_text = "HOST",
 		.on_action = [](MAYBE const widget::Text &self) {
+	    	GAME.host_game(m2::mplayer::Type::TurnBased, 4);
 			return m2::ui::State::create_execute_sync(&server_lobby);
 		}
 };
