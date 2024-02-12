@@ -27,10 +27,11 @@ message ServerUpdate {
   // 0-based index of the receiver
   uint32 receiver_index = 1;
 
+  // 0-based index of the current turn holder
   uint32 turn_holder_index = 2;
 
-  // ObjectId of the objects that belong to players. The size of this list also represents the player count.
-  // player_object_id[receiver_index] is the object that represents the receiver.
+  // ObjectId of the objects that belong to players on the server side. The size of this list also represents the total
+  // player count in the game. player_object_id[receiver_index] represents the receiver of the message.
   repeated uint64 player_object_ids = 3;
 
   message ObjectDescriptor {
@@ -48,7 +49,9 @@ message ClientUpdate {}
 
 message NetworkMessage {
   int32 game_hash = 1;
-  int32 sender_id = 2; // 0 for servers
+
+  // 0-based index of the sender. Server is 0.
+  int32 sender_id = 2;
 
   // If all is null, the message is just a ping
   oneof type {

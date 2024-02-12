@@ -24,9 +24,9 @@ bool m2::network::ServerThread::is_listening() {
 	return _state == pb::ServerState::SERVER_LISTENING;
 }
 
-size_t m2::network::ServerThread::client_count() {
+int m2::network::ServerThread::client_count() {
 	const std::lock_guard lock(_mutex);
-	return _clients.size();
+	return I(_clients.size());
 }
 
 unsigned m2::network::ServerThread::turn_holder() {
@@ -35,7 +35,7 @@ unsigned m2::network::ServerThread::turn_holder() {
 }
 
 std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder_command() {
-	INFO_FN();
+	TRACE_FN();
 	const std::lock_guard lock(_mutex);
 	auto opt_message = _clients[_turn_holder].pop_incoming_message();
 	if (opt_message) {

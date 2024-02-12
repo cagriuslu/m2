@@ -67,9 +67,22 @@ bool m2::network::ClientThread::is_our_turn() {
 	}
 }
 
-unsigned m2::network::ClientThread::total_player_count() {
+int m2::network::ClientThread::total_player_count() {
 	if (auto server_update = last_processed_server_update(); server_update) {
 		return server_update->player_object_ids_size();
+	}
+	if (auto server_update = peek_unprocessed_server_update(); server_update) {
+		return server_update->player_object_ids_size();
+	}
+	return 0;
+}
+
+int m2::network::ClientThread::receiver_index() {
+	if (auto server_update = last_processed_server_update(); server_update) {
+		return server_update->receiver_index();
+	}
+	if (auto server_update = peek_unprocessed_server_update(); server_update) {
+		return server_update->receiver_index();
 	}
 	return 0;
 }
@@ -97,10 +110,19 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 	DEBUG_FN();
 
 	const std::lock_guard lock(_mutex);
-	if (not fetch_server_update_unlocked()) {
+
+	// Shift the ServerUpdate
+	if (not _unprocessed_server_update) {
 		// No ServerUpdate to process
 		return false;
 	}
+
+	LOG_DEBUG("Shifting server update: prev << last << unprocessed << null");
+	if (_last_processed_server_update) {
+		_prev_processed_server_update = std::move(_last_processed_server_update);
+	}
+	_last_processed_server_update = std::move(_unprocessed_server_update);
+	_unprocessed_server_update.reset();
 
 	if (not _prev_processed_server_update) {
 		LOG_DEBUG("Processing first ServerUpdate");
@@ -253,19 +275,6 @@ void m2::network::ClientThread::set_state_unlocked(pb::ClientState state) {
 void m2::network::ClientThread::set_state_locked(pb::ClientState state) {
 	const std::lock_guard lock(_mutex);
 	set_state_unlocked(state);
-}
-
-bool m2::network::ClientThread::fetch_server_update_unlocked() {
-	if (_unprocessed_server_update) {
-		LOG_DEBUG("Fetching server update");
-		if (_last_processed_server_update) {
-			_prev_processed_server_update = std::move(_last_processed_server_update);
-		}
-		_last_processed_server_update = std::move(_unprocessed_server_update);
-		_unprocessed_server_update.reset();
-		return true;
-	}
-	return false;
 }
 
 void m2::network::ClientThread::thread_func(ClientThread* client_thread) {

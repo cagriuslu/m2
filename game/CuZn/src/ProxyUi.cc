@@ -26,7 +26,7 @@ static TextBlueprint client_status = {
 				m2_succeed_or_throw_message(server_update, "Client state is Started, but ServerUpdate not found");
 				auto player_count = server_update->player_object_ids_size();
 
-				const auto expect_success = GAME.load_multi_player_as_guest(GAME.levels_dir / (std::to_string(player_count) + ".json"));
+				const auto expect_success = GAME.load_multi_player_as_guest(GAME.levels_dir / "Map.json", std::to_string(player_count));
 				m2_succeed_or_throw_error(expect_success);
 
 				return std::make_pair(make_return_action<m2::Void>(), std::nullopt);
@@ -126,8 +126,9 @@ static TextBlueprint client_count = {
 	    if (2 <= GAME.server_thread().client_count()) {
 		    LOG_INFO("Enough clients have connected");
 		    if (GAME.server_thread().close_lobby()) {
+			    auto client_count = GAME.server_thread().client_count();
 			    const auto expect_success = GAME.load_multi_player_as_host(
-			        GAME.levels_dir / (std::to_string(GAME.server_thread().client_count()) + ".json"), "Default");
+			        GAME.levels_dir / "Map.json", std::to_string(client_count));
 			    m2_succeed_or_throw_error(expect_success);
 			    return make_return_action<m2::Void>();  // TODO Return value
 		    }

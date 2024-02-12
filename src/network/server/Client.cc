@@ -31,7 +31,7 @@ m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* rea
 }
 
 m2::expected<bool> m2::network::server::Client::flush_outgoing_messages() {
-	DEBUG_FN();
+	TRACE_FN();
 
 	auto msg_count = _outgoing_queue.size(); // Read message count separate to prevent deadlocks
 	for (size_t i = 0; i < msg_count; ++i) {

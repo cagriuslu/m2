@@ -15,6 +15,11 @@ namespace m2::network {
 		std::mutex _mutex;
 		pb::ClientState _state{pb::ClientState::CLIENT_NOT_READY};
 		std::deque<pb::NetworkMessage> _message_queue;
+
+		/// When a ServerUpdate is received from the server, it's placed in _unprocessed_server_update.
+		/// peek_unprocessed_server_update() can be used to take a peek at it.
+		/// When process_server_update() is called, ServerUpdate is shifted as follows:
+		/// _prev_processed_server_update << _last_processed_server_update << _unprocessed_server_update << std::nullopt
 		std::optional<pb::NetworkMessage> _prev_processed_server_update, _last_processed_server_update, _unprocessed_server_update;
 		std::unordered_map<ObjectId,std::pair<ObjectId,bool>> _server_to_local_map;
 
@@ -37,7 +42,8 @@ namespace m2::network {
 		std::optional<pb::ServerUpdate> peek_unprocessed_server_update();
 		std::optional<pb::ServerUpdate> last_processed_server_update();
 		bool is_our_turn();
-		unsigned total_player_count();
+		int total_player_count();
+		int receiver_index();
 
 		// Modifiers
 		void set_ready_blocking(bool state);
@@ -48,7 +54,6 @@ namespace m2::network {
 		size_t message_count_locked();
 		void set_state_unlocked(pb::ClientState state);
 		void set_state_locked(pb::ClientState state);
-		bool fetch_server_update_unlocked();
 
 		static void thread_func(ClientThread* client_thread);
 		[[nodiscard]] bool is_quit();

@@ -3,6 +3,29 @@
 #include <m2/Game.h>
 #include <m2/multi_player/State.h>
 
+void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
+	auto client_count = GAME.is_server() ? GAME.server_thread().client_count() : GAME.client_thread().total_player_count();
+
+	// Add human players
+	for (auto i = 0; i < client_count; ++i) {
+		auto [client_obj, client_id] = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
+		auto client_init_result = cuzn::init_human_player(client_obj);
+		m2_succeed_or_throw_error(client_init_result);
+		PROXY.multi_player_object_ids.emplace_back(client_id);
+
+		if (GAME.is_server()) {
+			if (i == 0) {
+				LEVEL.player_id = client_id;
+			}
+		} else {
+			// At this point, the ServerUpdate is not yet processed
+			if (i == GAME.client_thread().receiver_index()) {
+				LEVEL.player_id = client_id;
+			}
+		}
+	}
+}
+
 void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	auto client_count = GAME.server_thread().client_count();
 	// TODO
@@ -18,28 +41,10 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 m2::void_expected m2g::Proxy::init_fg_object(m2::Object& obj) {
 	m2::void_expected init_result;
 	switch (obj.object_type()) {
-		case pb::HUMAN_PLAYER:
-			init_result = cuzn::init_human_player(obj);
-			break;
 		default:
 			return m2::make_unexpected("Invalid object type");
 	}
 	m2_reflect_failure(init_result);
-
-	if (obj.object_type() == m2g::pb::ObjectType::HUMAN_PLAYER) {
-		PROXY.multi_player_object_ids.emplace_back(obj.id());
-
-		// If host
-		if (GAME.is_server() && LEVEL.player_id == 0) {
-			// Save player ID
-			LEVEL.player_id = obj.id();
-		}
-		// At this point, the ServerUpdate is not yet processed
-		else if (GAME.client_thread().peek_unprocessed_server_update()->receiver_index() == (PROXY.multi_player_object_ids.size() - 1)) {
-			// Save player ID
-			LEVEL.player_id = obj.id();
-		}
-	}
 
 	return {};
 }
