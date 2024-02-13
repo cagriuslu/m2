@@ -16,15 +16,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 6.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 8.0
         }
       ]
@@ -34,15 +34,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 4.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 4.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 4.0
         }
       ]
@@ -52,15 +52,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 5.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 5.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 5.0
         }
       ]
@@ -70,15 +70,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
       ]
@@ -88,15 +88,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
       ]
@@ -106,15 +106,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 6.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 8.0
         }
       ]
@@ -124,15 +124,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -142,15 +142,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
       ]
@@ -160,15 +160,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -178,15 +178,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 3.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
       ]
@@ -196,15 +196,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -214,15 +214,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -232,15 +232,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -250,15 +250,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -268,15 +268,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -286,15 +286,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
       ]
@@ -304,15 +304,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
       ]
@@ -322,15 +322,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 3.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 3.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
       ]
@@ -340,15 +340,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -358,15 +358,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -376,15 +376,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -394,15 +394,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 2.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
       ]
@@ -412,15 +412,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 3.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 3.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
       ]
@@ -430,15 +430,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 3.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 3.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
       ]
@@ -448,15 +448,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
       ]
@@ -466,15 +466,15 @@
       "category": "ITEM_CATEGORY_CARD",
       "attributes": [
         {
-          "type": "GLOBAL_COUNT_2_PLAYER",
+          "type": "COUNT_IN_2_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_3_PLAYER",
+          "type": "COUNT_IN_3_PLAYER_GAME",
           "amount": 1.0
         },
         {
-          "type": "GLOBAL_COUNT_4_PLAYER",
+          "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
       ]
@@ -528,7 +528,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 3.0
         }
       ]
@@ -562,7 +562,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -600,7 +600,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 3.0
         }
       ]
@@ -638,7 +638,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 3.0
         }
       ]
@@ -676,7 +676,7 @@
           "amount": 4.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -710,7 +710,7 @@
           "amount": 4.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -744,7 +744,7 @@
           "amount": 5.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -778,7 +778,7 @@
           "amount": 6.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -820,7 +820,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -858,7 +858,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -896,7 +896,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -938,7 +938,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -972,7 +972,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1002,7 +1002,7 @@
           "amount": 3.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -1036,7 +1036,7 @@
           "amount": 4.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -1070,7 +1070,7 @@
           "amount": 5.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -1108,7 +1108,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1142,7 +1142,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1180,7 +1180,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1214,7 +1214,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1252,7 +1252,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1290,7 +1290,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1324,7 +1324,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -1354,7 +1354,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1388,7 +1388,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1422,7 +1422,7 @@
           "amount": 2.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -1452,7 +1452,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1486,7 +1486,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
       ]
@@ -1520,7 +1520,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
       ]
@@ -1534,7 +1534,7 @@
           "amount": 3.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 14.0
         }
       ]
@@ -1552,7 +1552,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 14.0
         }
       ]
@@ -1574,7 +1574,7 @@
           "amount": 1.0
         },
         {
-          "type": "EACH_PLAYER_COUNT",
+          "type": "POSSESSION_LIMIT",
           "amount": 14.0
         }
       ]
