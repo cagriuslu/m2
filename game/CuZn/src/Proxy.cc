@@ -28,6 +28,33 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 
 void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	auto client_count = GAME.server_thread().client_count();
+
+	// Figure out the attribute to use for card selection
+	m2g::pb::AttributeType count_attr = [=]() {
+		switch (client_count) {
+			case 2:
+				return m2g::pb::COUNT_IN_2_PLAYER_GAME;
+			case 3:
+				return m2g::pb::COUNT_IN_3_PLAYER_GAME;
+			case 4:
+				return m2g::pb::COUNT_IN_4_PLAYER_GAME;
+			default:
+				throw M2ERROR("Invalid client count");
+		}
+	}();
+
+	// Prepare the draw deck
+	std::vector<m2g::pb::ItemType> draw_deck;
+	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
+		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
+		const auto& item = GAME.get_named_item(item_type);
+		if (item.category() == pb::ITEM_CATEGORY_CARD) {
+			auto card_count = static_cast<int>(item.get_attribute(count_attr));
+			draw_deck.insert(draw_deck.end(), card_count, item.type());
+		}
+	}
+	LOG_DEBUG("DrawDeck", draw_deck);
+
 	// TODO
 }
 

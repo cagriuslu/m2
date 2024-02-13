@@ -203,7 +203,7 @@ const Blueprint m2::level_editor::ui::fill_dialog = {
 
 	                std::vector<m2g::pb::SpriteType> sprite_types;
 	                for (const auto& sprite_name : text_list_selection->selection()) {
-		                auto expect_enum = enum_value(m2g::pb::SpriteType, sprite_name);
+		                auto expect_enum = m2_pb_enum_value(m2g::pb::SpriteType, sprite_name);
 		                if (expect_enum) {
 			                sprite_types.emplace_back(*expect_enum);
 		                }

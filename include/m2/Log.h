@@ -1,6 +1,7 @@
 #pragma once
 #include "Options.h"
 #include "M2.h"
+#include "protobuf/Detail.h"
 #include <string>
 #if _MSC_VER > 1400
 #include <sal.h>

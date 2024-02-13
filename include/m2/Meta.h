@@ -127,3 +127,7 @@ namespace m2 {
 #define m2_move_or_throw_message(v, msg) (::m2::_move_or_throw_message(__FILE__, __LINE__, (v), msg))
 #define m2_succeed_or_throw_error(v) (::m2::_succeed_or_throw_error(__FILE__, __LINE__, (v)))
 #define m2_succeed_or_throw_message(v, msg) (::m2::_succeed_or_throw_message(__FILE__, __LINE__, (v), msg))
+
+#define _m2_token_concat(x, y) x ## y
+#define m2_token_concat(x, y) _m2_token_concat(x, y)
+#define m2_repeat(n) for (int m2_token_concat(_, __LINE__) = 0; m2_token_concat(_, __LINE__) < (n); ++m2_token_concat(_, __LINE__))

@@ -4,7 +4,7 @@ package m2g.pb;
 enum ItemType {
     NO_ITEM = 0;
 
-    // These two cards don't go into the draw pile, thus their counts in game are zero
+    // These two cards don't go into the draw deck, thus their counts in game are zero.
     WILD_LOCATION_CARD = 1;
     WILD_FACTORY_CARD = 2;
 
