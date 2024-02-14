@@ -16,5 +16,8 @@ namespace m2g {
 
 		std::optional<int> handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command);
 		m2::void_expected init_fg_object(MAYBE m2::Object& obj);
+
+	   private:
+		std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count);
 	};
 }  // namespace m2g

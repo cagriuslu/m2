@@ -12,7 +12,7 @@ enum ResourceType {
 
   // For TILES
   IS_FLIPPED = 5;
-  COAL_MINE_CUBE = 6;
-  IRON_WORKS_CRATE = 7;
-  FOOD_CRATE = 8;
+  COAL_CUBE_COUNT = 6;
+  IRON_CUBE_COUNT = 7;
+  BEER_BARREL_COUNT = 8;
 }

@@ -480,26 +480,6 @@
       ]
     },
     {
-      "type": "GLOUCESTER_CARD",
-      "category": "ITEM_CATEGORY_CARD"
-    },
-    {
-      "type": "SHREWSBURY_CARD",
-      "category": "ITEM_CATEGORY_CARD"
-    },
-    {
-      "type": "OXFORD_CARD",
-      "category": "ITEM_CATEGORY_CARD"
-    },
-    {
-      "type": "NOTTINGHAM_CARD",
-      "category": "ITEM_CATEGORY_CARD"
-    },
-    {
-      "type": "WARRINGTON_CARD",
-      "category": "ITEM_CATEGORY_CARD"
-    },
-    {
       "type": "COTTON_MILL_TILEI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [
@@ -520,7 +500,7 @@
           "amount": 12.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -554,11 +534,11 @@
           "amount": 14.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -588,15 +568,15 @@
           "amount": 16.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -626,15 +606,15 @@
           "amount": 18.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -664,7 +644,7 @@
           "amount": 5.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
@@ -672,7 +652,7 @@
           "amount": 2.0
         },
         {
-          "type": "IRON_WORKS_BONUS",
+          "type": "IRON_BONUS",
           "amount": 4.0
         },
         {
@@ -702,11 +682,11 @@
           "amount": 7.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "IRON_WORKS_BONUS",
+          "type": "IRON_BONUS",
           "amount": 4.0
         },
         {
@@ -736,11 +716,11 @@
           "amount": 9.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "IRON_WORKS_BONUS",
+          "type": "IRON_BONUS",
           "amount": 5.0
         },
         {
@@ -770,11 +750,11 @@
           "amount": 12.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "IRON_WORKS_BONUS",
+          "type": "IRON_BONUS",
           "amount": 6.0
         },
         {
@@ -804,7 +784,7 @@
           "amount": 5.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
@@ -812,11 +792,11 @@
           "amount": 2.0
         },
         {
-          "type": "FOOD_BONUS_FIRST_ERA",
+          "type": "BEER_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "FOOD_BONUS_SECOND_ERA",
+          "type": "BEER_BONUS_SECOND_ERA",
           "amount": 1.0
         },
         {
@@ -846,15 +826,15 @@
           "amount": 7.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_BONUS_FIRST_ERA",
+          "type": "BEER_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "FOOD_BONUS_SECOND_ERA",
+          "type": "BEER_BONUS_SECOND_ERA",
           "amount": 2.0
         },
         {
@@ -884,15 +864,15 @@
           "amount": 9.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_BONUS_FIRST_ERA",
+          "type": "BEER_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "FOOD_BONUS_SECOND_ERA",
+          "type": "BEER_BONUS_SECOND_ERA",
           "amount": 2.0
         },
         {
@@ -922,7 +902,7 @@
           "amount": 9.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
@@ -930,11 +910,11 @@
           "amount": 1.0
         },
         {
-          "type": "FOOD_BONUS_FIRST_ERA",
+          "type": "BEER_BONUS_FIRST_ERA",
           "amount": 1.0
         },
         {
-          "type": "FOOD_BONUS_SECOND_ERA",
+          "type": "BEER_BONUS_SECOND_ERA",
           "amount": 2.0
         },
         {
@@ -968,7 +948,7 @@
           "amount": 2.0
         },
         {
-          "type": "COAL_MINE_BONUS",
+          "type": "COAL_BONUS",
           "amount": 2.0
         },
         {
@@ -998,7 +978,7 @@
           "amount": 7.0
         },
         {
-          "type": "COAL_MINE_BONUS",
+          "type": "COAL_BONUS",
           "amount": 3.0
         },
         {
@@ -1028,11 +1008,11 @@
           "amount": 8.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "COAL_MINE_BONUS",
+          "type": "COAL_BONUS",
           "amount": 4.0
         },
         {
@@ -1062,11 +1042,11 @@
           "amount": 10.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "COAL_MINE_BONUS",
+          "type": "COAL_BONUS",
           "amount": 5.0
         },
         {
@@ -1096,11 +1076,11 @@
           "amount": 17.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1134,11 +1114,11 @@
           "amount": 0.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1168,11 +1148,11 @@
           "amount": 22.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 2.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 2.0
         },
         {
@@ -1206,11 +1186,11 @@
           "amount": 0.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1240,11 +1220,11 @@
           "amount": 24.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 2.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 2.0
         },
         {
@@ -1278,11 +1258,11 @@
           "amount": 8.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1316,11 +1296,11 @@
           "amount": 10.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1350,7 +1330,7 @@
           "amount": 12.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 2.0
         },
         {
@@ -1380,11 +1360,11 @@
           "amount": 8.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1414,11 +1394,11 @@
           "amount": 16.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 2.0
         },
         {
@@ -1448,7 +1428,7 @@
           "amount": 20.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1478,11 +1458,11 @@
           "amount": 16.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 1.0
         },
         {
@@ -1512,11 +1492,11 @@
           "amount": 20.0
         },
         {
-          "type": "IRON_WORKS_COST",
+          "type": "IRON_COST",
           "amount": 2.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {
@@ -1548,7 +1528,7 @@
           "amount": 5.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
@@ -1566,11 +1546,11 @@
           "amount": 10.0
         },
         {
-          "type": "COAL_MINE_COST",
+          "type": "COAL_COST",
           "amount": 1.0
         },
         {
-          "type": "FOOD_COST",
+          "type": "BEER_COST",
           "amount": 1.0
         },
         {

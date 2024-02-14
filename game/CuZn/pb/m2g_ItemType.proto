@@ -8,12 +8,12 @@ enum ItemType {
     WILD_LOCATION_CARD = 1;
     WILD_FACTORY_CARD = 2;
 
-    COTTON_MILL_CARD = 3;
+    COTTON_MILL_CARD = 3; // 2x merchant + 1x wild merchant
     IRON_WORKS_CARD = 4;
     BREWERY_CARD = 5;
     COAL_MINE_CARD = 6;
-    POTTERY_CARD = 7;
-    MANUFACTURED_GOODS_CARD = 8;
+    POTTERY_CARD = 7; // 1x merchant + 1x wild merchant
+    MANUFACTURED_GOODS_CARD = 8; // 2x merchant + 1x wild merchant
 
     BELPER_CARD = 9;
     DERBY_CARD = 10;
@@ -35,13 +35,6 @@ enum ItemType {
     COVENTRY_CARD = 26;
     NUNEATON_CARD = 27;
     REDDITCH_CARD = 28;
-
-    // No instances for HUMAN_PLAYERs
-    GLOUCESTER_CARD = 29;
-    SHREWSBURY_CARD = 30;
-    OXFORD_CARD = 31;
-    NOTTINGHAM_CARD = 32;
-    WARRINGTON_CARD = 33;
 
     COTTON_MILL_TILEI = 34; // x3
     COTTON_MILL_TILEII = 35; // x2
@@ -87,9 +80,7 @@ enum ItemCategory {
     NO_ITEM_CATEGORY = 0;
 
     // Given to HUMAN_PLAYERs to hold onto as cards
-    // Given to city background tiles to signify their locations and available industries
-    // Given to path background tiles to signify which two cities the path connects
-    // Given to merchants to signify which industries they deal with
+    // Given to MERCHANTs to signify which industries they deal with
     ITEM_CATEGORY_CARD = 1;
 
     // Given to HUMAN_PLAYERs to signify the tiles held by them
@@ -97,6 +88,5 @@ enum ItemCategory {
     ITEM_CATEGORY_TILE = 2;
 
     // Given to HUMAN_PLAYERs to signify the path tiles held by them
-    // Given to background tiles to signify which type of path can be built
     ITEM_CATEGORY_INFRASTRUCTURE_LICENSE = 6;
 }
