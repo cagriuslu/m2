@@ -427,57 +427,70 @@
           }
         },
         {
+          "type": "MERCHANT_BACKGROUND",
+          "regular": {
+            "rect": {
+              "x": 80,
+              "y": 112,
+              "w": 32,
+              "h": 32
+            },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
           "type": "GLOUCESTER_1",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "GLOUCESTER_2",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "SHREWSBURY_1",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "OXFORD_1",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "OXFORD_2",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "NOTTINGHAM_1",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "NOTTINGHAM_2",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "WARRINGTON_1",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
           "type": "WARRINGTON_2",
           "duplicate": {
-            "original_type": "INDUSTRY_BACKGROUND"
+            "original_type": "MERCHANT_BACKGROUND"
           }
         },
         {
