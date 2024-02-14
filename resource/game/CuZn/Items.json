@@ -480,6 +480,96 @@
       ]
     },
     {
+      "type": "COTTON_MILL_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "attributes": [
+        {
+          "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
+          "amount": 1.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
+          "amount": 1.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "POTTERY_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "attributes": [
+        {
+          "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
+          "amount": 0.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
+          "amount": 1.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "MANUFACTURED_GOODS_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "attributes": [
+        {
+          "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
+          "amount": 1.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
+          "amount": 1.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
+          "amount": 2.0
+        }
+      ]
+    },
+    {
+      "type": "WILD_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "attributes": [
+        {
+          "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
+          "amount": 1.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
+          "amount": 1.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
+          "amount": 1.0
+        }
+      ]
+    },
+    {
+      "type": "NO_MERCHANT_LICENSE",
+      "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
+      "attributes": [
+        {
+          "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
+          "amount": 2.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_3_PLAYER_GAME",
+          "amount": 3.0
+        },
+        {
+          "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
+          "amount": 3.0
+        }
+      ]
+    },
+    {
       "type": "COTTON_MILL_TILEI",
       "category": "ITEM_CATEGORY_TILE",
       "attributes": [

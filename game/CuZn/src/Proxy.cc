@@ -47,6 +47,14 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 	return (turn_holder_index + 1) % GAME.server_thread().client_count();
 }
 
+void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
+	// Store the positions of the merchants
+    if (pb::GLOUCESTER_1 <= sprite_type && sprite_type <= pb::WARRINGTON_2) {
+		auto pos = m2::VecI{floorf(obj.position.x), floorf(obj.position.y)};
+		_merchant_positions[pos] = sprite_type;
+	}
+}
+
 m2::void_expected m2g::Proxy::init_fg_object(m2::Object& obj) {
 	m2::void_expected init_result;
 	switch (obj.object_type()) {
@@ -56,6 +64,55 @@ m2::void_expected m2g::Proxy::init_fg_object(m2::Object& obj) {
 	m2_reflect_failure(init_result);
 
 	return {};
+}
+
+std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_merchant_license_list(int client_count) {
+	// Figure out the attribute to use for card selection
+	m2g::pb::AttributeType count_attr = [=]() {
+		switch (client_count) {
+			case 2:
+				return m2g::pb::MERCHANT_COUNT_IN_2_PLAYER_GAME;
+			case 3:
+				return m2g::pb::MERCHANT_COUNT_IN_3_PLAYER_GAME;
+			case 4:
+				return m2g::pb::MERCHANT_COUNT_IN_4_PLAYER_GAME;
+			default:
+				throw M2ERROR("Invalid client count");
+		}
+	}();
+
+	// Prepare the list
+	std::vector<m2g::pb::ItemType> merchant_license_list;
+	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
+		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
+		const auto& item = GAME.get_named_item(item_type);
+		if (item.category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
+			auto license_count = static_cast<int>(item.get_attribute(count_attr));
+			merchant_license_list.insert(merchant_license_list.end(), license_count, item.type());
+		}
+	}
+
+	// Shuffle the licenses
+	std::random_device rd;
+	std::mt19937 license_shuffler(rd());
+	std::shuffle(merchant_license_list.begin(), merchant_license_list.end(), license_shuffler);
+
+	return merchant_license_list;
+}
+
+std::vector<m2g::pb::SpriteType> m2g::Proxy::pick_merchants(int client_count) {
+	switch (client_count) {
+		case 2:
+			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1, pb::OXFORD_2};
+		case 3:
+			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1,
+			        pb::OXFORD_2,     pb::WARRINGTON_1, pb::WARRINGTON_2};
+		case 4:
+			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1,    pb::OXFORD_2,
+			        pb::NOTTINGHAM_1, pb::NOTTINGHAM_2, pb::WARRINGTON_1, pb::WARRINGTON_2};
+		default:
+			throw M2ERROR("Invalid client count");
+	}
 }
 
 std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_draw_deck(int client_count) {

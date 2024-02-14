@@ -94,6 +94,8 @@ enum SpriteType {
   REDDITCH_GLOUCESTER_CANAL_RAILROAD = 88;
   REDDITCH_OXFORD_CANAL_RAILROAD = 89;
 
+  // The order of the merchant sprites should not be modified carelessly.
+  // GLOUCESTER_1 and WARRINGTON_2 are used as boundaries.
   GLOUCESTER_1 = 90;
   GLOUCESTER_2 = 91;
   SHREWSBURY_1 = 92;

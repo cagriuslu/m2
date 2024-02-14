@@ -25,4 +25,7 @@ enum AttributeType {
     COUNT_IN_2_PLAYER_GAME = 16; // How many exists in the game for a 2-player game
     COUNT_IN_3_PLAYER_GAME = 17; // How many exists in the game for a 3-player game
     COUNT_IN_4_PLAYER_GAME = 18; // How many exists in the game for a 4-player game
+    MERCHANT_COUNT_IN_2_PLAYER_GAME = 19;
+    MERCHANT_COUNT_IN_3_PLAYER_GAME = 20;
+    MERCHANT_COUNT_IN_4_PLAYER_GAME = 21;
 }
