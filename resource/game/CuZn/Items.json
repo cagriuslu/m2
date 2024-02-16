@@ -495,7 +495,8 @@
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "gameSprite": "COTTON_MILL"
     },
     {
       "type": "POTTERY_MERCHANT_LICENSE",
@@ -513,7 +514,8 @@
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
-      ]
+      ],
+      "gameSprite": "POTTERY"
     },
     {
       "type": "MANUFACTURED_GOODS_MERCHANT_LICENSE",
@@ -531,7 +533,8 @@
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "gameSprite": "MANUFACTURED_GOODS"
     },
     {
       "type": "WILD_MERCHANT_LICENSE",
@@ -549,7 +552,8 @@
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
-      ]
+      ],
+      "gameSprite": "COTTON_MILL_POTTERY_MANUFACTURED_GOODS"
     },
     {
       "type": "NO_MERCHANT_LICENSE",
@@ -567,7 +571,8 @@
           "type": "MERCHANT_COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "gameSprite": "NO_SPRITE"
     },
     {
       "type": "COTTON_MILL_TILEI",

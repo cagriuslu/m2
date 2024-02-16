@@ -1,5 +1,6 @@
 #include <m2/Proxy.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <cuzn/object/Merchant.h>
 #include <m2/Game.h>
 #include <m2/multi_player/State.h>
 #include <random>
@@ -25,10 +26,34 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 			}
 		}
 	}
+
+	// Add merchants
+	auto active_merchants = pick_active_merchants(client_count);
+	for (const auto& merchant_sprite : active_merchants) {
+		// Lookup the location of the merchant
+		auto posF = m2::VecF{_merchant_positions[merchant_sprite]} + m2::VecF{0.5f, 0.5f};
+		// Create merchant object
+		auto [merchant_obj, merchant_id] = m2::create_object(posF, m2g::pb::ObjectType::MERCHANT);
+		cuzn::init_merchant(merchant_obj);
+		// Store for later
+		_merchant_object_ids[merchant_sprite] = merchant_id;
+	}
 }
 
 void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	auto client_count = GAME.server_thread().client_count();
+
+	// Prepare active merchant license list
+	auto merchant_license_list = prepare_merchant_license_list(client_count);
+	if (merchant_license_list.size() != _merchant_object_ids.size()) {
+		throw M2ERROR("Merchant count and merchant license count mismatch");
+	}
+	// Assign licenses to merchants
+	int i = 0;
+	for (const auto& merchant : _merchant_object_ids) {
+		LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(merchant_license_list[i]));
+		LEVEL.objects[merchant.second].character().add_named_item(GAME.get_named_item(merchant_license_list[i++]));
+	}
 
 	// Prepare draw deck
 	auto draw_deck = prepare_draw_deck(client_count);
@@ -51,7 +76,8 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	// Store the positions of the merchants
     if (pb::GLOUCESTER_1 <= sprite_type && sprite_type <= pb::WARRINGTON_2) {
 		auto pos = m2::VecI{floorf(obj.position.x), floorf(obj.position.y)};
-		_merchant_positions[pos] = sprite_type;
+		_merchant_positions[sprite_type] = pos;
+		_position_merchants[pos] = sprite_type;
 	}
 }
 
@@ -100,7 +126,7 @@ std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_merchant_license_list(int cli
 	return merchant_license_list;
 }
 
-std::vector<m2g::pb::SpriteType> m2g::Proxy::pick_merchants(int client_count) {
+std::vector<m2g::pb::SpriteType> m2g::Proxy::pick_active_merchants(int client_count) {
 	switch (client_count) {
 		case 2:
 			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1, pb::OXFORD_2};

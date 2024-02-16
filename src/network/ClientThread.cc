@@ -107,7 +107,7 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 }
 
 m2::expected<bool> m2::network::ClientThread::process_server_update() {
-	DEBUG_FN();
+	TRACE_FN();
 
 	const std::lock_guard lock(_mutex);
 
@@ -202,7 +202,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 		Character* character{};
 		auto server_object_id = object_desc.object_id();
 		if (auto it = _server_to_local_map.find(server_object_id); it != _server_to_local_map.end()) {
-			LOG_DEBUG("Server object is still alive", server_object_id, it->first);
+			LOG_TRACE("Server object is still alive", server_object_id, it->first);
 
 			// Get the character
 			character = LEVEL.objects.get(it->second.first)->get_character();
@@ -239,7 +239,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 	for (auto it = _server_to_local_map.cbegin(); it != _server_to_local_map.cend(); /* no increment */) {
 		if (it->second.second == false) {
 			auto object_to_delete = it->second.first;
-			LOG_DEBUG("Object hasn't been visited by ServerUpdate, scheduling for deletion", it->second.first);
+			LOG_DEBUG("Local object hasn't been visited by ServerUpdate, scheduling for deletion", it->second.first);
 			GAME.add_deferred_action(create_object_deleter(object_to_delete));
 			it = _server_to_local_map.erase(it); // Erase from map
 		} else {
@@ -332,7 +332,6 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 			}
 
 			if (0 < *select_result) {
-				const std::lock_guard lock(client_thread->_mutex);
 				if (not FD_ISSET(socket->fd(), &read_set)) {
 					// Skip if no messages have been received
 					continue;
@@ -346,7 +345,10 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				if (*recv_success == 0) {
 					LOG_ERROR("Server disconnected");
 					socket.reset();
+
+					const std::lock_guard lock(client_thread->_mutex);
 					client_thread->set_state_unlocked(pb::CLIENT_NOT_READY);
+
 					continue;
 				}
 
@@ -367,6 +369,12 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					LOG_INFO("Received ping");
 				} else if (expect_message->has_server_update()) {
 					LOG_INFO("Received ServerUpdate", json_str);
+					while (client_thread->_unprocessed_server_update) {
+						// In turn based multiplayer, the first ServerUpdate is important
+						SDL_Delay(100); // Wait until server update is processed
+					}
+
+					const std::lock_guard lock(client_thread->_mutex);
 					client_thread->_unprocessed_server_update = std::move(*expect_message);
 					if (client_thread->_state != pb::CLIENT_STARTED) {
 						client_thread->set_state_unlocked(pb::CLIENT_STARTED);

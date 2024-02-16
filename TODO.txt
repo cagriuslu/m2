@@ -16,6 +16,9 @@
   Or the level editor can generate random and save. (Ex. Grass Variations)
 - Sync bir UI push'la, sonra ekrani resize et. Sycn UI return ettigi zaman geri donulen UI window dimensionlari adjust edilmemis oluyor
 - Butun make_return_action<Void>() larin ustunden gec, obje return edilmesi gerekiyorsa return et.
+- In multiplayer more, each ServerUpdate should be self contain, and they could be lost. Right now the first ServerUpdate has significance while creating the game
+  This should not be the case. There could be another message that signifies that the game should be started with such and such parameters.
+  Then each ServerUpdate can hold the same value.
 
 Level Editor
 - Grid'i kapatinca grid silinmiyor

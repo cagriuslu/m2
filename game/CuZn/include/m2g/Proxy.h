@@ -3,7 +3,9 @@
 
 namespace m2g {
 	class Proxy : public m2::Proxy {
-		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> _merchant_positions;
+		std::unordered_map<m2g::pb::SpriteType, m2::VecI> _merchant_positions;
+		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> _position_merchants;
+		std::unordered_map<m2g::pb::SpriteType, m2::Id> _merchant_object_ids; // Contains only active merchants
 
 	   public:
 		const std::string game_name = "CuZn";
@@ -22,7 +24,7 @@ namespace m2g {
 
 	   private:
 		std::vector<m2g::pb::ItemType> prepare_merchant_license_list(int client_count);
-		std::vector<m2g::pb::SpriteType> pick_merchants(int client_count);
+		std::vector<m2g::pb::SpriteType> pick_active_merchants(int client_count);
 		std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count);
 	};
 }  // namespace m2g

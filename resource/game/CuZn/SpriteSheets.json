@@ -494,6 +494,37 @@
           }
         },
         {
+          "type": "COTTON_MILL",
+          "duplicate": {
+            "original_type": "KIDDERMINSTER_COTTON_MILL"
+          }
+        },
+        {
+          "type": "POTTERY",
+          "duplicate": {
+            "original_type": "BELPER_POTTERY"
+          }
+        },
+        {
+          "type": "MANUFACTURED_GOODS",
+          "duplicate": {
+            "original_type": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+          }
+        },
+        {
+          "type": "COTTON_MILL_POTTERY_MANUFACTURED_GOODS",
+          "regular": {
+            "rect": {
+              "x": 128,
+              "y": 304,
+              "w": 32,
+              "h": 32
+            },
+            "centerToOriginVecPx": { "x": -8, "y": -8 },
+            "isBackgroundTile": true
+          }
+        },
+        {
           "type": "CANAL_OR_RAILWAY_BACKGROUND_1",
           "regular": {
             "rect": {
