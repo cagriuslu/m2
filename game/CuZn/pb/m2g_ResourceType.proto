@@ -10,7 +10,7 @@ enum ResourceType {
   DEBT_POINTS = 3;
   MONEY = 4;
 
-  // For TILES
+  // For TILEs and MERCHANTs
   IS_FLIPPED = 5;
   COAL_CUBE_COUNT = 6;
   IRON_CUBE_COUNT = 7;

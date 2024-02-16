@@ -115,6 +115,11 @@ enum SpriteType {
   MANUFACTURED_GOODS = 303;
   COTTON_MILL_POTTERY_MANUFACTURED_GOODS = 304;
 
+  // Resources
+  COAL_CUBE = 401;
+  IRON_CUBE = 402;
+  BEER_BARREL = 403;
+
   // Terrain
   GRASS_1 = 1001;
   GRASS_2 = 1011;

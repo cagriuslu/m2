@@ -50,9 +50,16 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 	}
 	// Assign licenses to merchants
 	int i = 0;
-	for (const auto& merchant : _merchant_object_ids) {
-		LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(merchant_license_list[i]));
-		LEVEL.objects[merchant.second].character().add_named_item(GAME.get_named_item(merchant_license_list[i++]));
+	for (const auto& merchant_id : _merchant_object_ids) {
+		auto license = merchant_license_list[i++];
+		auto& merchant = LEVEL.objects[merchant_id.second];
+
+		LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
+		merchant.character().add_named_item(GAME.get_named_item(license));
+		// Add beer to non-NO_LICENSE merchants
+		if (license != m2g::pb::NO_MERCHANT_LICENSE) {
+			merchant.character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+		}
 	}
 
 	// Prepare draw deck
