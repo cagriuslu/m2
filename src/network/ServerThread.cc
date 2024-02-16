@@ -73,7 +73,7 @@ void m2::network::ServerThread::server_update() {
 	auto turn = turn_holder();
 
 	auto count = client_count();
-	for (size_t i = 1; i < count; ++i) { // ServerUpdate is not sent to self
+	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
 		pb::NetworkMessage message;
 		message.set_game_hash(GAME.hash());
 		message.set_sender_id(0);

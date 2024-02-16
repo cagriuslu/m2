@@ -10,7 +10,7 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 	chr.add_resource(m2g::pb::MONEY, 17.0f);
 
 	auto& gfx = obj.add_graphic();
-	gfx.pre_draw = [&o = obj](m2::Graphic& _) {
+	gfx.pre_draw = [&o = obj](MAYBE m2::Graphic& _) {
 		m2::VecF move_direction;
 		if (GAME.events.is_key_down(m2::Key::UP)) {
 			move_direction.y -= 1.0f;

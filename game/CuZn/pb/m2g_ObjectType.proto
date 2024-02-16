@@ -8,4 +8,5 @@ enum ObjectType {
   TILE = 3; // When a factory is placed
   CANAL = 4;
   RAILROAD = 5;
+  MARKET = 6;
 }

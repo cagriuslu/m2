@@ -1,6 +1,7 @@
 #include <m2/Proxy.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/object/Merchant.h>
+#include <cuzn/object/Market.h>
 #include <m2/Game.h>
 #include <m2/multi_player/State.h>
 #include <random>
@@ -38,6 +39,11 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 		// Store for later
 		_merchant_object_ids[merchant_sprite] = merchant_id;
 	}
+
+	// Add market
+	auto [market_obj, market_id] = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET);
+	cuzn::init_market(market_obj);
+	_market_object_id = market_id;
 }
 
 void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
@@ -61,6 +67,10 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 			merchant.character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
 		}
 	}
+
+	// Initialize market
+	_coal_market.emplace(cuzn::COAL_MARKET_INITIAL_COUNT, m2g::pb::COAL_CUBE_COUNT, _market_object_id);
+	_iron_market.emplace(cuzn::IRON_MARKET_INITIAL_COUNT, m2g::pb::IRON_CUBE_COUNT, _market_object_id);
 
 	// Prepare draw deck
 	auto draw_deck = prepare_draw_deck(client_count);

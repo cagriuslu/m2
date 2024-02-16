@@ -1,11 +1,17 @@
 #pragma once
 #include <m2/Proxy.h>
+#include <cuzn/Market.h>
 
 namespace m2g {
 	class Proxy : public m2::Proxy {
 		std::unordered_map<m2g::pb::SpriteType, m2::VecI> _merchant_positions;
 		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> _position_merchants;
 		std::unordered_map<m2g::pb::SpriteType, m2::Id> _merchant_object_ids; // Contains only active merchants
+
+		m2::Id _market_object_id;
+		// Only the host initializes these fields
+		std::optional<cuzn::Market<cuzn::COAL_MARKET_CAPACITY>> _coal_market;
+		std::optional<cuzn::Market<cuzn::IRON_MARKET_CAPACITY>> _iron_market;
 
 	   public:
 		const std::string game_name = "CuZn";
