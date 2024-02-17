@@ -20,8 +20,8 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 		}
 	}
 
-	auto& gfx = obj.add_graphic();
-	gfx.pre_draw = [&o = obj](MAYBE m2::Graphic& _) {
+	auto& phy = obj.add_physique();
+	phy.pre_step = [&o = obj](MAYBE m2::Physique& _) {
 		m2::VecF move_direction;
 		if (GAME.events.is_key_down(m2::Key::UP)) {
 			move_direction.y -= 1.0f;

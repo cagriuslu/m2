@@ -231,7 +231,8 @@ const Blueprint pause_menu_blueprint = {
 
 const Blueprint left_hud_blueprint = {
 		.w = 19, .h = 72,
-		.border_width_px = 2,
+		.border_width_px = 0,
+	.background_color = {0, 0, 0, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 2, .y = 2, .w = 15, .h = 8,
@@ -252,7 +253,8 @@ const Blueprint left_hud_blueprint = {
 
 const Blueprint right_hud_blueprint = {
 		.w = 19, .h = 72,
-		.border_width_px = 2
+		.border_width_px = 0,
+	.background_color = {0, 0, 0, 255},
 };
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() {
