@@ -269,12 +269,13 @@ void State::update_positions(const RectI &rect) {
 	}
 }
 
-Action State::handle_events(Events &events) {
+Action State::handle_events(Events& events) {
 	// Return if State not enabled
 	if (!enabled) {
 		return make_continue_action();
 	}
 
+	// If the UI is cancellable, check if MENU button is pressed
 	if (blueprint->cancellable && events.pop_key_press(Key::MENU)) {
 		return make_return_action<Void>();
 	}
@@ -289,6 +290,13 @@ Action State::handle_events(Events &events) {
 			return action;
 		}
 	}
+
+	// Clear mouse events if it's inside the UI rect
+	events.clear_mouse_button_presses(rect_px);
+	events.clear_mouse_button_releases(rect_px);
+	events.clear_mouse_wheel_scrolls(rect_px);
+	events.clear_mouse_button_down(rect_px);
+
 	return make_continue_action();
 }
 

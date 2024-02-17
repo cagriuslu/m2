@@ -48,33 +48,45 @@ namespace m2 {
 		void clear();
 		bool gather();
 
+		// Quit
 		bool pop_quit();
+		// Window resize
 		std::optional<VecI> pop_window_resize();
+		// Key presses
 		bool pop_key_press(Key k);
 		bool pop_ui_key_press(SDL_Scancode scode);
 		bool pop_key_release(Key k);
-		bool peak_mouse_button_press(MouseButton mb);
+		// Mouse button
+		bool peek_mouse_button_press(MouseButton mb);
 		bool pop_mouse_button_press(MouseButton mb);
-		bool peak_mouse_button_press(MouseButton mb, const RectI& rect);
+		bool peek_mouse_button_press(MouseButton mb, const RectI& rect);
 		bool pop_mouse_button_press(MouseButton mb, const RectI& rect);
-		bool peak_mouse_button_release(MouseButton mb);
+		void clear_mouse_button_presses(const RectI& rect);
+		bool peek_mouse_button_release(MouseButton mb);
 		bool pop_mouse_button_release(MouseButton mb);
-		bool peak_mouse_button_release(MouseButton mb, const RectI& rect);
+		bool peek_mouse_button_release(MouseButton mb, const RectI& rect);
 		bool pop_mouse_button_release(MouseButton mb, const RectI& rect);
+		void clear_mouse_button_releases(const RectI& rect);
+		// Mouse scroll
 		int32_t pop_mouse_wheel_vertical_scroll();
 		int32_t pop_mouse_wheel_vertical_scroll(const RectI& rect);
 		int32_t pop_mouse_wheel_horizontal_scroll();
 		int32_t pop_mouse_wheel_horizontal_scroll(const RectI& rect);
+		void clear_mouse_wheel_scrolls(const RectI& rect);
+		// Text input
 		std::optional<std::string> pop_text_input();
 
+		// Continuous states
 		bool is_sdl_key_down(SDL_Scancode sc) const;
 		bool is_key_down(Key k) const;
 		bool is_mouse_button_down(MouseButton mb) const;
+		void clear_mouse_button_down(const RectI& rect);
 		VecI mouse_position() const;
 
+		// Selection
 		std::pair<std::optional<VecF>, std::optional<VecF>> primary_selection_position_m() const;
 		std::pair<std::optional<VecF>, std::optional<VecF>> secondary_selection_position_m() const;
-
+		// Selection management
 		static void enable_primary_selection(const RectI& screen_rect);
 		static void enable_secondary_selection(const RectI& screen_rect);
 		static void reset_primary_selection();

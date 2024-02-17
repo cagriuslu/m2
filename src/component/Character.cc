@@ -175,6 +175,10 @@ float m2::TinyCharacter::get_max_resource(m2g::pb::ResourceType resource_type) c
 	return (_resource.first == resource_type) ? _resource.second.max_amount() : INFINITY;
 }
 void m2::TinyCharacter::set_max_resource(m2g::pb::ResourceType resource_type, float max) {
+	if (_resource.first == m2g::pb::NO_RESOURCE) {
+		set_resource(resource_type, 0.0f);
+	}
+
 	if (_resource.first == resource_type) {
 		_resource.second.set_max_amount(max);
 	} else {
@@ -186,6 +190,10 @@ float m2::TinyCharacter::set_resource(m2g::pb::ResourceType resource_type, float
 	return _resource.second.amount();
 }
 float m2::TinyCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
+	if (_resource.first == m2g::pb::NO_RESOURCE) {
+		set_resource(resource_type, 0.0f);
+	}
+
 	if (_resource.first == resource_type) {
 		return _resource.second.add_amount(amount);
 	} else {
