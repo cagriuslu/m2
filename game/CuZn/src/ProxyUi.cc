@@ -215,10 +215,9 @@ const Blueprint right_hud_blueprint = {
             .border_width_px = 0,
             .variant =
                 TextBlueprint{
-                    .initial_text = {},
                     .alignment = m2::ui::TextAlignment::LEFT,
                     .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
-	                    // Lookup money
+	                    // Lookup victory points
 	                    auto vp = m2::I(LEVEL.player()->character().get_attribute(VICTORY_POINTS));
 	                    auto text = std::string{"VP:"} + std::to_string(vp);
 	                    return std::make_pair(make_continue_action(), text);
@@ -230,14 +229,33 @@ const Blueprint right_hud_blueprint = {
             .h = 8,
             .border_width_px = 0,
             .variant = TextBlueprint{
-                .initial_text = {},
                 .alignment = m2::ui::TextAlignment::LEFT,
                 .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
 	                // Lookup money
 	                auto money = m2::I(LEVEL.player()->character().get_resource(MONEY));
 	                auto text = std::string{"Money:"} + std::to_string(money);
 	                return std::make_pair(make_continue_action(), text);
-                }}}}};
+                }
+            }
+        },
+        WidgetBlueprint{
+            .x = 2,
+            .y = 20,
+            .w = 15,
+            .h = 8,
+            .border_width_px = 1,
+            .variant = TextBlueprint{
+                .alignment = m2::ui::TextAlignment::LEFT,
+                .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
+	                // Lookup cards
+	                auto card_count = LEVEL.player()->character().count_item(m2g::pb::ITEM_CATEGORY_CARD);
+	                auto text = std::string{"Cards:"} + std::to_string(card_count);
+	                return std::make_pair(make_continue_action(), text);
+                }
+            }
+        }
+    }
+};
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 

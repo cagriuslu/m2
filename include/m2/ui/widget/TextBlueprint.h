@@ -9,7 +9,7 @@ namespace m2::ui::widget {
 	class Text;
 
 	struct TextBlueprint {
-		std::string initial_text;
+		std::string initial_text{};
 		TextAlignment alignment{};
 		bool is_toggle{}; // TODO
 		SDL_Scancode kb_shortcut{};
