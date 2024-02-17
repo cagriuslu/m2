@@ -42,32 +42,30 @@ enum ItemType {
     WILD_MERCHANT_LICENSE = 32;
     NO_MERCHANT_LICENSE = 33;
 
+    // Industry tiles
+    // The order of the industry tiles should not be modified carelessly.
+    // COTTON_MILL_TILEI and MANUFACTURED_GOODS_TILE_VIII are used as boundaries.
     COTTON_MILL_TILEI = 34; // x3
     COTTON_MILL_TILEII = 35; // x2
     COTTON_MILL_TILEIII = 36; // x3
     COTTON_MILL_TILEIV = 37; // x3
-
     IRON_WORKS_TILE_I = 38; // x1
     IRON_WORKS_TILE_II = 39; // x1
     IRON_WORKS_TILE_III = 40; // x1
     IRON_WORKS_TILE_IV = 41; // x1
-
     BREWERY_TILE_I = 42; // x2
     BREWERY_TILE_II = 43; // x2
     BREWERY_TILE_III = 44; // x2
     BREWERY_TILE_IV = 45; // x1
-
     COAL_MINE_TILE_I = 46; // x1
     COAL_MINE_TILE_II = 47; // x2
     COAL_MINE_TILE_III = 48; // x2
     COAL_MINE_TILE_IV = 49; // x2
-
     POTTERY_TILEI = 50; // x1
     POTTERY_TILEII = 51; // x1
     POTTERY_TILEIII = 52; // x1
     POTTERY_TILEIV = 53; // x1
     POTTERY_TILEV = 54; // x1
-
     MANUFACTURED_GOODS_TILE_I = 55; // x1
     MANUFACTURED_GOODS_TILE_II = 56; // x2
     MANUFACTURED_GOODS_TILE_III = 57; // x1
