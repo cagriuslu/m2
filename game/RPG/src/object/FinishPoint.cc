@@ -30,7 +30,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 				PROXY.save_progress();
 				LOG_INFO("Progress saved");
 
-				if (m2::ui::State::create_execute_sync(PROXY.main_menu()) == m2::ui::Action::QUIT) {
+				if (auto result = m2::ui::State::create_execute_sync(PROXY.main_menu()); m2::ui::is_quit(result)) {
 					GAME.quit = true;
 				}
 			});

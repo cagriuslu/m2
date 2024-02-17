@@ -9,14 +9,14 @@ static widget::TextBlueprint resume_button = {
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text &self) {
 			LOG_DEBUG("Resume button pressed");
-			return make_return_action<Void>(); // TODO Return value
+			return make_return_action<m2::Void>(); // TODO Return value
 		}
 };
 static widget::TextBlueprint quit_button = {
 		.initial_text = "Quit",
 		.kb_shortcut = SDL_SCANCODE_Q,
 		.on_action = [](MAYBE const widget::Text &self) {
-			return m2::ui::Action::QUIT;
+			return make_quit_action();
 		}
 };
 const Blueprint pause_menu_blueprint = {
