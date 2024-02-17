@@ -29,22 +29,3 @@ drawers.
 # Group Subsystem
 A group is a club an object can become a member of. It has a type, and it can have multiple instances. A group's
 lifetime is independent of its members.
-
-# Character Subsystem
-Character components can hold resources and items.
-
-Resources represent a non-negative amount of certain type.
-
-Items are completely abstract, no physical representations. They have a certain type and a category for identification.
-It has different usage types such as: Consumable (item disappears after use), Reusable (item doesn't disappear after
-use), Automatic (item is used automatically every physics loop), Passive (item cannot be used, only held).
-Items have a use_on_acquire flag which signifies that the item cannot be held, and it's used upon acquire.
-Items can have costs (required resources to use the item), benefits (resources gained upon use), and attributes (a value
-of certain type).
-
-Character has an update callback to process the effects of items with automatic effects. They can also have a generic
-update callback. Interactions between characters are usually done in the form of interactions. Interactions have two
-parts, the causer and the effected. Interactions with a resource exchange usually happens like this: Interaction is
-triggered by a physics or collision handler. In the causer's create_interaction callback, it prepares InteractionData
-that contains the details, and returns it. The effected's on_interaction callback is called with the data. If an item
-is transferred, and it has use_on_acquire flag, it's used immediately.

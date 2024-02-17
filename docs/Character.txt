@@ -1,0 +1,23 @@
+Character components can have items, resources, and attributes.
+
+Resources represent a non-negative amount of certain resource type. Resources are not allowed to go below zero, because
+item usage system depends on resources being available to decide whether an item can be used or not.
+
+Attributes are like resources, except that the value of them can get below zero. Item attributes are immutable, but
+character attributes are variable. Attributes are not taken into account when acquiring or using an item.
+
+Items are completely abstract entities. They have a certain type and a category for identification. They have different
+usage types such as: Consumable (item disappears after use), Reusable (item doesn't disappear after use), Automatic
+(item is used automatically every physics loop), Passive (item cannot be used, only held). Items have a use_on_acquire
+flag which signifies that the item cannot be held, and it's used upon acquire. Items can have costs (required resources
+to use the item), benefits (resources gained upon use), and immutable attributes (a value of certain attribute type).
+
+Character has an update callback to process the effects of items with automatic effects. They also have a user
+customizable, periyodic update callback. Although it's possible for one game object to give items or resources to
+another directly, the preferred way of interactions between objects is to prepare a m2g::pb::InteractionData, and give
+it to the other object using character().execute_interaction(interaction_data) function. This is because it's usually
+safer for the object itself to be aware of such interactions, rather than their states being modified by external
+parties. If a certain other action needs to be taken after such exchange, the effected should be aware of the exchange
+explictly. Ex. There can be multiple sources of damage. If each source decreses the health of an enemy, each one has to
+trigger the death of the enemy as well. However, it the damage were to be represented as an interaction, the damage
+sources can trigger this interaction, and the enemy can handle the death scenario itself, in one place.
