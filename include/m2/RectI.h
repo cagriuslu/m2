@@ -41,7 +41,7 @@ namespace m2 {
 		[[nodiscard]] RectI expand(int amount) const;
 		[[nodiscard]] RectI horizontal_split(int split_count, int piece_idx) const;
 		[[nodiscard]] std::optional<RectI> intersect(const RectI& other) const;
-
+		[[nodiscard]] RectI ratio(const RectF& ratio_rect) const;
 	};
 
 	std::string to_string(const RectI&);

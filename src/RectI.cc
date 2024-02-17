@@ -187,6 +187,14 @@ std::optional<m2::RectI> m2::RectI::intersect(const m2::RectI& other) const {
 		return {};
 	}
 }
+m2::RectI m2::RectI::ratio(const RectF& ratio_rect) const {
+	return RectI{
+		I(roundf(F(w) * ratio_rect.x)),
+		I(roundf(F(h) * ratio_rect.y)),
+	    I(roundf(F(w) * ratio_rect.w)),
+	    I(roundf(F(h) * ratio_rect.h))
+	};
+}
 
 std::string m2::to_string(const m2::RectI& v) {
 	std::stringstream ss;

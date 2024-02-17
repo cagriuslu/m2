@@ -250,6 +250,9 @@ void m2::Game::handle_menu_event() {
 void m2::Game::handle_hud_events() {
 	IF(_level->left_hud_ui_state)->handle_events(events);
 	IF(_level->right_hud_ui_state)->handle_events(events);
+	for (auto& custom_ui : _level->custom_ui_state) {
+		IF(custom_ui.second)->handle_events(events);
+	}
 	IF(_level->message_box_ui_state)->handle_events(events);  // For disable_after
 }
 
@@ -345,6 +348,9 @@ void m2::Game::execute_pre_draw() {
 void m2::Game::update_hud_contents() {
 	IF(_level->left_hud_ui_state)->update_contents();
 	IF(_level->right_hud_ui_state)->update_contents();
+	for (auto& custom_ui : _level->custom_ui_state) {
+		IF(custom_ui.second)->update_contents();
+	}
 	IF(_level->message_box_ui_state)->update_contents();
 }
 
@@ -435,6 +441,9 @@ void m2::Game::debug_draw() {
 void m2::Game::draw_hud() {
 	IF(_level->left_hud_ui_state)->draw();
 	IF(_level->right_hud_ui_state)->draw();
+	for (auto& custom_ui : _level->custom_ui_state) {
+		IF(custom_ui.second)->draw();
+	}
 	IF(_level->message_box_ui_state)->draw();
 }
 
@@ -464,6 +473,9 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 	if (_level) {
 		IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
 		IF(_level->right_hud_ui_state)->update_positions(_dims.right_hud);
+		for (auto& custom_ui : _level->custom_ui_state) {
+			IF (custom_ui.second)->update_positions(_dims.game_and_hud.ratio(custom_ui.first));
+		}
 		IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
 	}
 }

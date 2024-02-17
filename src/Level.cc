@@ -288,6 +288,15 @@ void m2::Level::begin_game_loop() {
 	}
 }
 
+void m2::Level::add_custom_ui(int index, m2::RectF position_ratio, const m2::ui::Blueprint* blueprint) {
+	custom_ui_state[index].first = position_ratio;
+	custom_ui_state[index].second.emplace(blueprint);
+	custom_ui_state[index].second->update_positions(GAME.dimensions().game_and_hud.ratio(position_ratio));
+}
+void m2::Level::remove_custom_ui(int index) {
+	custom_ui_state[index].second.reset();
+}
+
 void m2::Level::display_message(const std::string& msg, float timeout) {
 	message = msg;
 	message_box_ui_state->widgets[0]->disable_after = timeout;
