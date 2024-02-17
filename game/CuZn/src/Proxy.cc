@@ -40,7 +40,7 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 		_merchant_object_ids[merchant_sprite] = merchant_id;
 	}
 
-	// Add market
+	// Add market object
 	auto [market_obj, market_id] = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET);
 	cuzn::init_market(market_obj);
 	_market_object_id = market_id;
@@ -55,16 +55,18 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 		throw M2ERROR("Merchant count and merchant license count mismatch");
 	}
 	// Assign licenses to merchants
-	int i = 0;
-	for (const auto& merchant_id : _merchant_object_ids) {
-		auto license = merchant_license_list[i++];
-		auto& merchant = LEVEL.objects[merchant_id.second];
+	{
+		int i = 0;
+		for (const auto& merchant_id : _merchant_object_ids) {
+			auto license = merchant_license_list[i++];
+			auto& merchant = LEVEL.objects[merchant_id.second];
 
-		LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
-		merchant.character().add_named_item(GAME.get_named_item(license));
-		// Add beer to non-NO_LICENSE merchants
-		if (license != m2g::pb::NO_MERCHANT_LICENSE) {
-			merchant.character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+			LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
+			merchant.character().add_named_item(GAME.get_named_item(license));
+			// Add beer to non-NO_LICENSE merchants
+			if (license != m2g::pb::NO_MERCHANT_LICENSE) {
+				merchant.character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+			}
 		}
 	}
 
@@ -77,6 +79,14 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 	// In the canal era, we discard client_count number of cards from the deck
 	m2_repeat(client_count) {
 		draw_deck.pop_back();
+	}
+	// Give 8 cards to each player
+	for (const auto& player_object_id : PROXY.multi_player_object_ids) {
+		// Draw card
+		auto card = draw_deck.back();
+		draw_deck.pop_back();
+		// Add card
+		LEVEL.objects[player_object_id].character().add_named_item(GAME.get_named_item(card));
 	}
 
 	// TODO
