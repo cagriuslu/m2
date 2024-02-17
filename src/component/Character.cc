@@ -166,45 +166,61 @@ void m2::TinyCharacter::clear_items() {
 	_item = {};
 }
 bool m2::TinyCharacter::has_resource(m2g::pb::ResourceType resource_type) const {
-	return _resource && _resource->first == resource_type && _resource->second.has_amount();
+	return _resource.first == resource_type && _resource.second.has_amount();
 }
 float m2::TinyCharacter::get_resource(m2g::pb::ResourceType resource_type) const {
-	return (_resource && _resource->first == resource_type) ? _resource->second.amount() : float{};
+	return (_resource.first == resource_type) ? _resource.second.amount() : float{};
 }
 float m2::TinyCharacter::get_max_resource(m2g::pb::ResourceType resource_type) const {
-	return (_resource && _resource->first == resource_type) ? _resource->second.max_amount() : INFINITY;
+	return (_resource.first == resource_type) ? _resource.second.max_amount() : INFINITY;
 }
 void m2::TinyCharacter::set_max_resource(m2g::pb::ResourceType resource_type, float max) {
-	if (_resource && _resource->first == resource_type) {
-		_resource->second.set_max_amount(max);
+	if (_resource.first == resource_type) {
+		_resource.second.set_max_amount(max);
+	} else {
+		LOG_WARN("Attempt to set max resource amount, but TinyCharacter doesn't carry that resource");
 	}
 }
 float m2::TinyCharacter::set_resource(m2g::pb::ResourceType resource_type, float amount) {
-	if (_resource && _resource->first == resource_type) {
-		return _resource->second.set_amount(amount);
-	} else {
-		_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
-		return _resource->second.amount();
-	}
+	_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
+	return _resource.second.amount();
 }
 float m2::TinyCharacter::add_resource(m2g::pb::ResourceType resource_type, float amount) {
-	if (_resource && _resource->first == resource_type) {
-		return _resource->second.add_amount(amount);
+	if (_resource.first == resource_type) {
+		return _resource.second.add_amount(amount);
 	} else {
-		_resource = std::make_pair(resource_type, internal::ResourceAmount{amount});
-		return _resource->second.amount();
+		LOG_WARN("Attempt to add/remove resource, but TinyCharacter doesn't carry that resource");
+		return 0.0f;
 	}
 }
 float m2::TinyCharacter::remove_resource(m2g::pb::ResourceType resource_type, float amount) {
 	return add_resource(resource_type, -amount);
 }
 void m2::TinyCharacter::clear_resource(m2g::pb::ResourceType resource_type) {
-	if (_resource && _resource->first == resource_type) {
-		_resource->second.clear_amount();
+	if (_resource.first == resource_type) {
+		_resource.second.clear_amount();
 	}
 }
 void m2::TinyCharacter::clear_resources() {
-	_resource = std::nullopt;
+	_resource.second.clear_amount();
+}
+bool m2::TinyCharacter::has_attribute(m2g::pb::AttributeType attribute_type) const {
+	return _attribute.first == attribute_type && _attribute.second != 0.0f;
+}
+float m2::TinyCharacter::get_attribute(m2g::pb::AttributeType attribute_type) const {
+	return (_attribute.first == attribute_type) ? _attribute.second : float{};
+}
+float m2::TinyCharacter::set_attribute(m2g::pb::AttributeType attribute_type, float value) {
+	_attribute = std::make_pair(attribute_type, value);
+	return _attribute.second;
+}
+void m2::TinyCharacter::clear_attribute(m2g::pb::AttributeType attribute_type) {
+	if (_attribute.first == attribute_type) {
+		_attribute.second = 0;
+	}
+}
+void m2::TinyCharacter::clear_attributes() {
+	_attribute.second = 0;
 }
 
 void m2::full_character_iterator_incrementor(m2::Character::Iterator& it) {
@@ -341,9 +357,28 @@ void m2::FullCharacter::clear_resources() {
 	_resources.clear();
 	_resources.resize(pb::enum_value_count<m2g::pb::ResourceType>());
 }
-
+bool m2::FullCharacter::has_attribute(m2g::pb::AttributeType attribute_type) const {
+	return _attributes[attribute_type_index(attribute_type)] != 0.0f;
+}
+float m2::FullCharacter::get_attribute(m2g::pb::AttributeType attribute_type) const {
+	return _attributes[attribute_type_index(attribute_type)];
+}
+float m2::FullCharacter::set_attribute(m2g::pb::AttributeType attribute_type, float value) {
+	_attributes[attribute_type_index(attribute_type)] = value;
+	return value;
+}
+void m2::FullCharacter::clear_attribute(m2g::pb::AttributeType attribute_type) {
+	_attributes[attribute_type_index(attribute_type)] = 0.0f;
+}
+void m2::FullCharacter::clear_attributes() {
+	_attributes.clear();
+	_attributes.resize(pb::enum_value_count<m2g::pb::AttributeType>());
+}
 int m2::FullCharacter::resource_type_index(m2g::pb::ResourceType resource_type) {
 	return pb::enum_index<m2g::pb::ResourceType>(resource_type);
+}
+int m2::FullCharacter::attribute_type_index(m2g::pb::AttributeType attribute_type) {
+	return pb::enum_index<m2g::pb::AttributeType>(attribute_type);
 }
 
 m2::Character& m2::get_character_base(CharacterVariant& v) {

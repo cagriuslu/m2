@@ -99,12 +99,19 @@ namespace m2 {
 		virtual float remove_resource(m2g::pb::ResourceType resource_type, float amount) = 0;
 		virtual void clear_resource(m2g::pb::ResourceType resource_type) = 0;
 		virtual void clear_resources() = 0;
+
+		[[nodiscard]] virtual bool has_attribute(m2g::pb::AttributeType attribute_type) const = 0;
+		[[nodiscard]] virtual float get_attribute(m2g::pb::AttributeType attribute_type) const = 0;
+		virtual float set_attribute(m2g::pb::AttributeType attribute_type, float value) = 0;
+		virtual void clear_attribute(m2g::pb::AttributeType attribute_type) = 0;
+		virtual void clear_attributes() = 0;
 	};
 
 	/// TinyCharacter can hold only one unnamed item, one named item, and can have only one resource
 	class TinyCharacter : public Character {
 		SmartPointer<const Item> _item;
-		std::optional<std::pair<m2g::pb::ResourceType, internal::ResourceAmount>> _resource;
+		std::pair<m2g::pb::ResourceType, internal::ResourceAmount> _resource;
+		std::pair<m2g::pb::AttributeType, float> _attribute;
 
 	public:
 		TinyCharacter() = default;
@@ -131,12 +138,19 @@ namespace m2 {
 		float remove_resource(m2g::pb::ResourceType resource_type, float amount) override;
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
 		void clear_resources() override;
+
+		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType attribute_type) const override;
+		[[nodiscard]] float get_attribute(m2g::pb::AttributeType attribute_type) const override;
+		float set_attribute(m2g::pb::AttributeType attribute_type, float value) override;
+		void clear_attribute(m2g::pb::AttributeType attribute_type) override;
+		void clear_attributes() override;
 	};
 
 	/// FullCharacter can hold any number of items, and can have any Resource
 	class FullCharacter : public Character {
 		std::vector<SmartPointer<const Item>> _items;
 		std::vector<internal::ResourceAmount> _resources = std::vector<internal::ResourceAmount>(pb::enum_value_count<m2g::pb::ResourceType>());
+		std::vector<float> _attributes = std::vector<float>(pb::enum_value_count<m2g::pb::AttributeType>());
 
 	public:
 		FullCharacter() = default;
@@ -164,8 +178,15 @@ namespace m2 {
 		void clear_resource(m2g::pb::ResourceType resource_type) override;
 		void clear_resources() override;
 
+		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType attribute_type) const override;
+		[[nodiscard]] float get_attribute(m2g::pb::AttributeType attribute_type) const override;
+		float set_attribute(m2g::pb::AttributeType attribute_type, float value) override;
+		void clear_attribute(m2g::pb::AttributeType attribute_type) override;
+		void clear_attributes() override;
+
 	private:
 		static int resource_type_index(m2g::pb::ResourceType resource_type);
+		static int attribute_type_index(m2g::pb::AttributeType attribute_type);
 		friend void full_character_iterator_incrementor(Character::Iterator& it);
 	};
 
