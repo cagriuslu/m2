@@ -1,14 +1,13 @@
 ﻿---
 BasedOnStyle: Google
 AlignAfterOpenBracket: AlwaysBreak
-AlignOperands: 'false'
-AlignTrailingComments: 'false'
-ColumnLimit: '120'
-ConstructorInitializerIndentWidth: '4'
-ContinuationIndentWidth: '4'
-IndentWidth: '4'
+AlignOperands: false
+AlignTrailingComments: false
+ColumnLimit: 120
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+IndentWidth: 4
 NamespaceIndentation: All
-TabWidth: '4'
+TabWidth: 4
 UseTab: ForIndentation
-
 ...

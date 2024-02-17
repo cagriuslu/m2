@@ -1,7 +1,7 @@
 #include <m2/Game.h>
-#include <m2g/Proxy.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
+#include <m2g/Proxy.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -206,7 +206,38 @@ const Blueprint right_hud_blueprint = {
     .h = 72,
     .border_width_px = 0,
     .background_color = {0, 0, 0, 255},
-};
+    .widgets = {
+        WidgetBlueprint{
+            .x = 2,
+            .y = 2,
+            .w = 15,
+            .h = 8,
+            .border_width_px = 0,
+            .variant =
+                TextBlueprint{
+                    .initial_text = {},
+                    .alignment = m2::ui::TextAlignment::LEFT,
+                    .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
+	                    // Lookup money
+	                    auto money = m2::I(LEVEL.player()->character().get_resource(MONEY));
+	                    auto text = std::string{"Money:"} + std::to_string(money);
+	                    return std::make_pair(make_continue_action(), text);
+                    }}},
+        WidgetBlueprint{
+            .x = 2,
+            .y = 11,
+            .w = 15,
+            .h = 8,
+            .border_width_px = 0,
+            .variant = TextBlueprint{
+                .initial_text = {},
+                .alignment = m2::ui::TextAlignment::LEFT,
+                .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
+	                // Lookup money
+	                auto money = m2::I(LEVEL.player()->character().get_resource(MONEY));
+	                auto text = std::string{"Money:"} + std::to_string(money);
+	                return std::make_pair(make_continue_action(), text);
+                }}}}};
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 

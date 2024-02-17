@@ -4,6 +4,8 @@
 #include <m2/protobuf/Detail.h>
 
 m2::void_expected cuzn::init_human_player(m2::Object& obj) {
+	DEBUG_FN();
+
 	auto& chr = obj.add_full_character();
 	chr.add_resource(m2g::pb::VICTORY_POINTS, 0.0f);
 	chr.add_resource(m2g::pb::INCOME_POINTS, 0.0f);
