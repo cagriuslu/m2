@@ -20,7 +20,9 @@ namespace cuzn {
 
 	   public:
 		explicit Market(int initial_resource_count, m2g::pb::ResourceType resource_type, m2::Id market_object_id = 0)
-		    : _resource_count(initial_resource_count), _resource_type(resource_type), _market_object_id(market_object_id) {}
+		    : _resource_count(initial_resource_count),
+		      _resource_type(resource_type),
+		      _market_object_id(market_object_id) {}
 
 		[[nodiscard]] int resource_count() const { return _resource_count; }
 		[[nodiscard]] int resource_demand_count() const { return Capacity - _resource_count; }

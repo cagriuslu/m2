@@ -1,12 +1,12 @@
 #pragma once
-#include <m2/Proxy.h>
 #include <cuzn/Market.h>
+#include <m2/Proxy.h>
 
 namespace m2g {
 	class Proxy : public m2::Proxy {
 		std::unordered_map<m2g::pb::SpriteType, m2::VecI> _merchant_positions;
 		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> _position_merchants;
-		std::unordered_map<m2g::pb::SpriteType, m2::Id> _merchant_object_ids; // Contains only active merchants
+		std::unordered_map<m2g::pb::SpriteType, m2::Id> _merchant_object_ids;  // Contains only active merchants
 
 		m2::Id _market_object_id;
 		// Only the host initializes these fields
@@ -24,7 +24,8 @@ namespace m2g {
 		void post_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
 		void multi_player_level_host_populate(const std::string& name, const m2::pb::Level& level);
 
-		std::optional<int> handle_client_command(unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command);
+		std::optional<int> handle_client_command(
+		    unsigned turn_holder_index, const m2g::pb::ClientCommand& client_command);
 		void post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type);
 		m2::void_expected init_fg_object(m2::Object& obj);
 
