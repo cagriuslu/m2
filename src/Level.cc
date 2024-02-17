@@ -375,11 +375,11 @@ m2::void_expected m2::Level::init_any_player(
 
 	// Init HUD
 	left_hud_ui_state->update_positions(GAME.dimensions().left_hud);
-	left_hud_ui_state->update_contents();
+	//left_hud_ui_state->update_contents(); // Update should happen after the level is full initialized
 	right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
-	right_hud_ui_state->update_contents();
+	//right_hud_ui_state->update_contents();
 	message_box_ui_state->update_positions(GAME.dimensions().message_box);
-	message_box_ui_state->update_contents();
+	//message_box_ui_state->update_contents();
 
 	(PROXY.*post_level_init)(_name, *_lb);
 
