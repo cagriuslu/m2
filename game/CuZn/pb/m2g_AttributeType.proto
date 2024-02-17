@@ -4,28 +4,35 @@ package m2g.pb;
 enum AttributeType {
     NO_ATTRIBUTE = 0;
 
+    // For HUMAN_PLAYERs
+    VICTORY_POINTS = 1;
+    INCOME_POINTS = 2;
+
+    // For TILEs
+    IS_FLIPPED = 3;
+
     // ITEM_CATEGORY_TILE, ITEM_CATEGORY_INFRASTRUCTURE_LICENSE
-    VICTORY_POINTS_BONUS = 1;
-    INCOME_POINTS_BONUS = 2;
-    LINK_BONUS = 3;
-    DEVELOPMENT_BONUS = 4;
-    MONEY_COST = 5;
-    COAL_COST = 6;
-    IRON_COST = 7;
-    BEER_COST = 8;
-    FORBIDDEN_ERA = 9;
-    DEVELOPMENT_BAN = 10;
-    BEER_BONUS_FIRST_ERA = 11;
-    BEER_BONUS_SECOND_ERA = 12;
-    COAL_BONUS = 13;
-    IRON_BONUS = 14;
-    POSSESSION_LIMIT = 15; // How many of such items can be held by each player
+    VICTORY_POINTS_BONUS = 4;
+    INCOME_POINTS_BONUS = 5;
+    LINK_BONUS = 6;
+    DEVELOPMENT_BONUS = 7;
+    MONEY_COST = 8;
+    COAL_COST = 9;
+    IRON_COST = 10;
+    BEER_COST = 11;
+    FORBIDDEN_ERA = 12;
+    DEVELOPMENT_BAN = 13;
+    BEER_BONUS_FIRST_ERA = 14;
+    BEER_BONUS_SECOND_ERA = 15;
+    COAL_BONUS = 16;
+    IRON_BONUS = 17;
+    POSSESSION_LIMIT = 18; // How many of such items can be held by each player
 
     // ITEM_CATEGORY_CARD
-    COUNT_IN_2_PLAYER_GAME = 16; // How many exists in the game for a 2-player game
-    COUNT_IN_3_PLAYER_GAME = 17; // How many exists in the game for a 3-player game
-    COUNT_IN_4_PLAYER_GAME = 18; // How many exists in the game for a 4-player game
-    MERCHANT_COUNT_IN_2_PLAYER_GAME = 19;
-    MERCHANT_COUNT_IN_3_PLAYER_GAME = 20;
-    MERCHANT_COUNT_IN_4_PLAYER_GAME = 21;
+    COUNT_IN_2_PLAYER_GAME = 19; // How many exists in the game for a 2-player game
+    COUNT_IN_3_PLAYER_GAME = 20; // How many exists in the game for a 3-player game
+    COUNT_IN_4_PLAYER_GAME = 21; // How many exists in the game for a 4-player game
+    MERCHANT_COUNT_IN_2_PLAYER_GAME = 22;
+    MERCHANT_COUNT_IN_3_PLAYER_GAME = 23;
+    MERCHANT_COUNT_IN_4_PLAYER_GAME = 24;
 }

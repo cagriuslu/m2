@@ -219,8 +219,8 @@ const Blueprint right_hud_blueprint = {
                     .alignment = m2::ui::TextAlignment::LEFT,
                     .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
 	                    // Lookup money
-	                    auto money = m2::I(LEVEL.player()->character().get_resource(MONEY));
-	                    auto text = std::string{"Money:"} + std::to_string(money);
+	                    auto vp = m2::I(LEVEL.player()->character().get_attribute(VICTORY_POINTS));
+	                    auto text = std::string{"VP:"} + std::to_string(vp);
 	                    return std::make_pair(make_continue_action(), text);
                     }}},
         WidgetBlueprint{
