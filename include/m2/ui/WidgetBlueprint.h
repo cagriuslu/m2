@@ -17,9 +17,9 @@ namespace m2::ui {
 	struct WidgetBlueprint {
 		bool initially_enabled{true};
 		bool initially_focused{false};
-		int x{}, y{}, w{1}, h{1}; // unitless
-		unsigned border_width_px{1};
-		int padding_width_px{};
+		int x{}, y{}, w{1}, h{1}; // unitless // TODO convert to float
+		unsigned border_width_px{1}; // TODO the unit of border width cannot be pixels, use FontSize instead
+		int padding_width_px{}; // TODO the unit of padding cannot be pixels, use FontSize instead
 		SDL_Color background_color{};
 
 		using Variant = std::variant<
