@@ -80,11 +80,15 @@ void ImageSelection::on_draw() {
 
 	auto buttons_rect = rect_px.trim_top(rect_px.w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
-	draw_text(inc_button_rect, *_plus_texture.texture(), TextAlignment::CENTER);
+	draw_text(
+	    calculate_text_rect(inc_button_rect, 0, 0, 0, TextAlignment::CENTER, _plus_texture.texture()),
+	    _plus_texture.texture());
 	draw_border(inc_button_rect, blueprint->border_width_px);
 
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
-	draw_text(dec_button_rect, *_minus_texture.texture(), TextAlignment::CENTER);
+	draw_text(
+	    calculate_text_rect(dec_button_rect, 0, 0, 0, TextAlignment::CENTER, _minus_texture.texture()),
+	    _minus_texture.texture());
 	draw_border(dec_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);

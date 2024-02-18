@@ -3,18 +3,8 @@
 
 using namespace m2::ui;
 
-Widget::Widget(State* parent, const WidgetBlueprint* blueprint)
-    : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
-
-void Widget::on_position_update(const RectI& rect_px_) { this->rect_px = rect_px_; }
-
-Action Widget::on_event(MAYBE Events& events) { return make_continue_action(); }
-
-void Widget::on_focus_change() {}
-
-Action Widget::on_update() { return make_continue_action(); }
-
-void Widget::on_draw() {}
+constexpr int DEFAULT_FONT_LETTER_WIDTH = 2;
+constexpr int DEFAULT_FONT_LETTER_HEIGHT = 5;
 
 void Widget::draw_background_color(const RectI& rect, const SDL_Color& color) {
 	if (color.r || color.g || color.b || color.a) {
@@ -26,74 +16,71 @@ void Widget::draw_background_color(const RectI& rect, const SDL_Color& color) {
 	}
 }
 
-void Widget::draw_text(const RectI& rect, SDL_Texture& texture, TextAlignment align) {
-	int text_w = 0, text_h = 0;
-	SDL_QueryTexture(&texture, nullptr, nullptr, &text_w, &text_h);
+m2::RectI m2::ui::Widget::calculate_text_rect(
+    float font_size_unitless, TextAlignment align, SDL_Texture* text_texture) const {
+	return calculate_text_rect(
+	    rect_px, blueprint->padding_width_px, blueprint->h, font_size_unitless, align, text_texture);
+}
 
-	// Current font has 2x5 letters
-	int letter_w = 2;
-	int letter_h = 5;
-	// Current font is rendered with 280px
-	if (text_h != 280) {
+m2::RectI m2::ui::Widget::calculate_text_rect(
+    RectI container, int padding_width_px, int container_height_unitless, float font_size_unitless, TextAlignment align,
+    SDL_Texture* text_texture) {
+	auto texture_dimensions = sdl::texture_dimensions(text_texture);
+	// Validate font dimensions (calculations depend on it)
+	if (texture_dimensions.y != 280) {
+		// Current font supposed to have been rendered with 280px
 		throw M2FATAL("Unexpected font height");
 	}
-	if ((text_w % 112) != 0) {
+	if ((texture_dimensions.x % 112) != 0) {
 		throw M2FATAL("Unexpected font aspect ratio");
 	}
-	int char_count = text_w / 112;
 
-	// Do the math one order above
-	auto rect_w_1000 = rect.w * 1000;
-	auto rect_h_1000 = rect.h * 1000;
-	// Decide whether to squeeze from the sides, or top and bottom
-	auto height_multiplier_1000 = rect_h_1000 / text_h;
-	auto ideal_width_1000 = text_w * height_multiplier_1000;
-	int provisional_text_w, provisional_text_h;
-	if (ideal_width_1000 < rect_w_1000) {
-		// Rect is wider than the text
-		provisional_text_w = text_w * height_multiplier_1000 / 1000;
-		provisional_text_h = rect.h;
+	// Apply padding to container
+	container = container.trim(padding_width_px);
+
+	if (font_size_unitless == 0.0f) {
+		// That's it. Fill the container with the text.
 	} else {
-		// Rect is taller than the text
-		auto width_multiplier_1000 = rect_w_1000 / text_w;
-		provisional_text_w = rect.w;
-		provisional_text_h = text_h * width_multiplier_1000 / 1000;
-	}
-	// Make sure the width is an integer multiple of character count
-	provisional_text_w /= char_count;
-	provisional_text_w *= char_count;
-	// Apply correction based on letter aspect ratio
-	int final_text_w, final_text_h;
-	int letter_scale_h_1000 = 1000 * provisional_text_h / letter_h;
-	int letter_scale_w_1000 = 1000 * provisional_text_w / letter_w;
-	if (letter_scale_h_1000 < letter_scale_w_1000) {
-		// Height is correct, apply correction to width
-		int expected_letter_w = letter_w * letter_scale_h_1000 / 1000;
-		final_text_w = char_count * expected_letter_w;
-		final_text_h = letter_h * letter_scale_h_1000 / 1000;
-	} else {
-		// Width is correct, apply correction to height
-		int expected_letter_h = letter_h * letter_scale_w_1000 / 1000;
-		final_text_w = letter_w * letter_scale_w_1000 / 1000;
-		final_text_h = expected_letter_h;
+		// Trim the container from the top and the bottom wrt given font size
+		auto container_height_px_f = F(container.h);
+		auto new_height_px_f = container_height_px_f * font_size_unitless / F(container_height_unitless);
+		auto difference = container_height_px_f - new_height_px_f;
+		auto trim_amount = I(roundf(difference / 2.0f));
+		container = container.trim_top(trim_amount);
+		container = container.trim_bottom(trim_amount);
 	}
 
-	SDL_Rect dstrect{};
-	dstrect.y = rect.y + rect.h / 2 - final_text_h / 2;
-	dstrect.w = final_text_w;
-	dstrect.h = final_text_h;
+	// Fit the font into the container with correct aspect ratio
+	int char_count = texture_dimensions.x / 112;
+	// Squeeze the rect with respect to the character dimensions
+	auto chars_width = char_count * DEFAULT_FONT_LETTER_WIDTH;
+	auto char_height = DEFAULT_FONT_LETTER_HEIGHT;
+	VecI text_dimensions = container.dimensions().aspect_ratio_dimensions(chars_width, char_height);
+
+	RectI text_rect;
 	switch (align) {
 		case TextAlignment::LEFT:
-			dstrect.x = rect.x;
+			text_rect.x = container.x;
 			break;
 		case TextAlignment::RIGHT:
-			dstrect.x = rect.x + rect.w - final_text_w;
+			text_rect.x = container.x + container.w - text_dimensions.x;
 			break;
 		default:
-			dstrect.x = rect.x + rect.w / 2 - final_text_w / 2;
+			text_rect.x = container.x + container.w / 2 - text_dimensions.x / 2;
 			break;
 	}
-	SDL_RenderCopy(GAME.renderer, &texture, nullptr, &dstrect);
+	text_rect.y = container.y + container.h / 2 - text_dimensions.y / 2;
+	text_rect.w = text_dimensions.x;
+	text_rect.h = text_dimensions.y;
+	return text_rect;
+}
+
+void m2::ui::Widget::draw_text(const RectI& rect, SDL_Texture* text_texture, const RGB& color_mod) {
+	// Color modulate the texture
+	SDL_SetTextureColorMod(text_texture, color_mod.r, color_mod.g, color_mod.b);
+	// Draw texture
+	auto sdl_rect = static_cast<SDL_Rect>(rect);
+	SDL_RenderCopy(GAME.renderer, text_texture, nullptr, &sdl_rect);
 }
 
 void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {

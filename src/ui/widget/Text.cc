@@ -45,13 +45,9 @@ Action Text::on_update() {
 void Text::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 	if (const auto texture = _font_texture.texture(); texture) {
-		if (depressed) {
-			SDL_SetTextureColorMod(texture, 127, 127, 127);
-		} else {
-			SDL_SetTextureColorMod(texture, 255, 255, 255);
-		}
-		auto text_rect = rect_px.trim(blueprint->padding_width_px);
-		draw_text(text_rect, *texture, text_blueprint().alignment);
+		draw_text(
+		    calculate_text_rect(text_blueprint().font_size, text_blueprint().alignment, texture), texture,
+		    depressed ? RGB{127, 127, 127} : RGB{255, 255, 255});
 	}
 	draw_border(
 	    rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});

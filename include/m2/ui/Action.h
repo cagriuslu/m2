@@ -38,15 +38,21 @@ namespace m2::ui {
 		/// Without value
 		Return() = default;
 		/// With value
-		Return(T&& value) : ReturnBase(), value(std::move(value)) {}
+		explicit Return(T&& value) : ReturnBase(), value(std::move(value)) {}
 	};
 	template <typename T>
-	Action make_return_action() { return std::make_unique<Return<T>>(); }
+	Action make_return_action() {
+		return std::make_unique<Return<T>>();
+	}
 	template <typename T>
-	Action make_return_action(T&& value) { return std::make_unique<Return<T>>(std::move(value)); }
+	Action make_return_action(T&& value) {
+		return std::make_unique<Return<T>>(std::forward<T>(value));
+	}
 	inline bool is_return(const Action& action) { return dynamic_cast<const ReturnBase*>(action.get()); }
 	template <typename T>
-	inline const Return<T>& as_return(const Action& action) { return dynamic_cast<const Return<T>&>(*action); }
+	inline const Return<T>& as_return(const Action& action) {
+		return dynamic_cast<const Return<T>&>(*action);
+	}
 
 	struct ClearStack : public ActionBase {};
 	inline Action make_clear_stack_action() { return std::make_unique<ClearStack>(); }
@@ -55,4 +61,4 @@ namespace m2::ui {
 	struct Quit : public ActionBase {};
 	inline Action make_quit_action() { return std::make_unique<Quit>(); }
 	inline bool is_quit(const Action& action) { return dynamic_cast<const Quit*>(action.get()); }
-}
+}  // namespace m2::ui

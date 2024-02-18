@@ -102,14 +102,16 @@ void TextListSelection::on_draw() {
 	for (auto i = 0; i < text_list_selection_blueprint().line_count; ++i) {
 		// If the entry is in window
 		if (_top_index + i < I(_list.size())) {
-			auto text_rect = rect_px.horizontal_split(text_list_selection_blueprint().line_count, i)
-			                     .trim(blueprint->padding_width_px);
+			auto text_rect = rect_px.horizontal_split(text_list_selection_blueprint().line_count, i);
 			// If selected
 			if (_list[_top_index + i].second) {
 				draw_background_color(text_rect, {0, 0, 255, 127});
 			}
 			// Draw text
-			draw_text(text_rect, *_list[_top_index + i].first.texture(), TextAlignment::LEFT);
+			auto texture = _list[_top_index + i].first.texture();
+			draw_text(
+			    calculate_text_rect(text_rect, blueprint->padding_width_px, 0, 0, TextAlignment::LEFT, texture),
+			    texture);
 		}
 	}
 
@@ -118,12 +120,16 @@ void TextListSelection::on_draw() {
 	draw_border(scroll_bar_rect, blueprint->border_width_px);
 
 	auto up_arrow_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count, 0);
-	draw_text(up_arrow_rect, *_up_arrow_texture.texture(), TextAlignment::CENTER);
+	draw_text(
+	    calculate_text_rect(up_arrow_rect, 0, 0, 0, TextAlignment::CENTER, _up_arrow_texture.texture()),
+	    _up_arrow_texture.texture());
 	draw_border(up_arrow_rect, blueprint->border_width_px);
 
 	auto down_button_rect = scroll_bar_rect.horizontal_split(
 	    text_list_selection_blueprint().line_count, text_list_selection_blueprint().line_count - 1);
-	draw_text(down_button_rect, *_down_arrow_texture.texture(), TextAlignment::CENTER);
+	draw_text(
+	    calculate_text_rect(down_button_rect, 0, 0, 0, TextAlignment::CENTER, _down_arrow_texture.texture()),
+	    _down_arrow_texture.texture());
 	draw_border(down_button_rect, blueprint->border_width_px);
 
 	draw_border(rect_px, blueprint->border_width_px);

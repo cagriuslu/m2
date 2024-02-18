@@ -208,19 +208,16 @@ const Blueprint cards_blueprint = {
     .h = 40,
     .border_width_px = 1,
     .background_color = {0, 0, 0, 255},
-    .widgets = {
-        WidgetBlueprint{
-            .x = 55, .y = 0, .w = 5, .h = 5,
-            .variant = TextBlueprint{
-                .initial_text = "X",
-                .on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-	                LEVEL.remove_custom_ui(CARDS_CUSTOM_UI_INDEX);
-	                return make_return_action<m2::Void>();
-                }
-            }
-        }
-    }
-};
+    .widgets = {WidgetBlueprint{
+        .x = 55,
+        .y = 0,
+        .w = 5,
+        .h = 5,
+        .variant = TextBlueprint{
+            .initial_text = "X", .on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+	            LEVEL.remove_custom_ui(CARDS_CUSTOM_UI_INDEX);
+	            return make_return_action<m2::Void>();
+            }}}}};
 
 const Blueprint right_hud_blueprint = {
     .w = 19,
@@ -230,12 +227,13 @@ const Blueprint right_hud_blueprint = {
     .widgets = {
         WidgetBlueprint{
             .x = 2,
-            .y = 2,
+            .y = 0,
             .w = 15,
-            .h = 8,
+            .h = 6,
             .border_width_px = 0,
             .variant =
                 TextBlueprint{
+                    .font_size = 4.5f,
                     .alignment = m2::ui::TextAlignment::LEFT,
                     .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
 	                    // Lookup victory points
@@ -245,27 +243,28 @@ const Blueprint right_hud_blueprint = {
                     }}},
         WidgetBlueprint{
             .x = 2,
-            .y = 11,
+            .y = 6,
             .w = 15,
-            .h = 8,
+            .h = 6,
             .border_width_px = 0,
-            .variant = TextBlueprint{
-                .alignment = m2::ui::TextAlignment::LEFT,
-                .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
-	                // Lookup money
-	                auto money = m2::I(LEVEL.player()->character().get_resource(MONEY));
-	                auto text = std::string{"Money:"} + std::to_string(money);
-	                return std::make_pair(make_continue_action(), text);
-                }
-            }
-        },
+            .variant =
+                TextBlueprint{
+                    .font_size = 4.5f,
+                    .alignment = m2::ui::TextAlignment::LEFT,
+                    .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
+	                    // Lookup money
+	                    auto money = m2::I(LEVEL.player()->character().get_resource(MONEY));
+	                    auto text = std::string{"Money:"} + std::to_string(money);
+	                    return std::make_pair(make_continue_action(), text);
+                    }}},
         WidgetBlueprint{
             .x = 2,
-            .y = 20,
+            .y = 12,
             .w = 15,
-            .h = 8,
+            .h = 6,
             .border_width_px = 1,
             .variant = TextBlueprint{
+                .font_size = 4.5f,
                 .alignment = m2::ui::TextAlignment::LEFT,
                 .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
 	                // Lookup cards
@@ -276,11 +275,7 @@ const Blueprint right_hud_blueprint = {
                 .on_action = [](MAYBE const Text& self) -> Action {
 	                LEVEL.add_custom_ui(CARDS_CUSTOM_UI_INDEX, m2::RectF{0.1f, 0.1f, 0.8f, 0.8}, &cards_blueprint);
 	                return make_continue_action();
-                }
-            }
-        }
-    }
-};
+                }}}}};
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
