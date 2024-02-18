@@ -84,11 +84,13 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 	m2_repeat(client_count) { draw_deck.pop_back(); }
 	// Give 8 cards to each player
 	for (const auto& player_object_id : PROXY.multi_player_object_ids) {
-		// Draw card
-		auto card = draw_deck.back();
-		draw_deck.pop_back();
-		// Add card
-		LEVEL.objects[player_object_id].character().add_named_item(GAME.get_named_item(card));
+		m2_repeat(8) {
+			// Draw card
+			auto card = draw_deck.back();
+			draw_deck.pop_back();
+			// Add card
+			LEVEL.objects[player_object_id].character().add_named_item(GAME.get_named_item(card));
+		}
 	}
 
 	// TODO
