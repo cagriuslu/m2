@@ -8,6 +8,8 @@ using namespace m2::ui::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
+constexpr int CARDS_CUSTOM_UI_INDEX = 0;
+
 namespace {
 	auto quit_button_action = [](MAYBE const widget::Text& self) { return make_quit_action(); };
 }  // namespace
@@ -201,6 +203,25 @@ const Blueprint left_hud_blueprint = {
 	            return make_continue_action();
             }}}}};
 
+const Blueprint cards_blueprint = {
+    .w = 60,
+    .h = 40,
+    .border_width_px = 1,
+    .background_color = {0, 0, 0, 255},
+    .widgets = {
+        WidgetBlueprint{
+            .x = 55, .y = 0, .w = 5, .h = 5,
+            .variant = TextBlueprint{
+                .initial_text = "X",
+                .on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+	                LEVEL.remove_custom_ui(CARDS_CUSTOM_UI_INDEX);
+	                return make_return_action<m2::Void>();
+                }
+            }
+        }
+    }
+};
+
 const Blueprint right_hud_blueprint = {
     .w = 19,
     .h = 72,
@@ -251,6 +272,10 @@ const Blueprint right_hud_blueprint = {
 	                auto card_count = LEVEL.player()->character().count_item(m2g::pb::ITEM_CATEGORY_CARD);
 	                auto text = std::string{"Cards:"} + std::to_string(card_count);
 	                return std::make_pair(make_continue_action(), text);
+                },
+                .on_action = [](MAYBE const Text& self) -> Action {
+	                LEVEL.add_custom_ui(CARDS_CUSTOM_UI_INDEX, m2::RectF{0.1f, 0.1f, 0.8f, 0.8}, &cards_blueprint);
+	                return make_continue_action();
                 }
             }
         }
