@@ -248,11 +248,13 @@ void m2::Game::handle_menu_event() {
 }
 
 void m2::Game::handle_hud_events() {
-	IF(_level->left_hud_ui_state)->handle_events(events);
-	IF(_level->right_hud_ui_state)->handle_events(events);
-	for (auto& custom_ui : _level->custom_ui_state) {
+	// The order of event handling is the reverse of the drawing order because custom_ui_states are assumed to be in
+	// front the HUDs.
+	for (auto& custom_ui : _level->custom_ui_state) { // TODO iterate backwards
 		IF(custom_ui.second)->handle_events(events);
 	}
+	IF(_level->left_hud_ui_state)->handle_events(events);
+	IF(_level->right_hud_ui_state)->handle_events(events);
 	IF(_level->message_box_ui_state)->handle_events(events);  // For disable_after
 }
 
@@ -474,7 +476,10 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 		IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
 		IF(_level->right_hud_ui_state)->update_positions(_dims.right_hud);
 		for (auto& custom_ui : _level->custom_ui_state) {
-			IF (custom_ui.second)->update_positions(_dims.game_and_hud.ratio(custom_ui.first));
+			auto new_position = _dims.game_and_hud.ratio(custom_ui.first);
+			new_position.x += _dims.left_envelope.w;
+			new_position.y += _dims.top_envelope.h;
+			IF (custom_ui.second)->update_positions(new_position);
 		}
 		IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
 	}
