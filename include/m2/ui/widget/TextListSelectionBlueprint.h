@@ -11,6 +11,7 @@ namespace m2::ui::widget {
 		Options initial_list{};
 		int line_count{1};
 		bool allow_multiple_selection{};
+		bool show_scroll_bar{true};
 
 		std::function<std::optional<Options>(const TextListSelection &self)> on_create{};
 		std::function<std::pair<Action, std::optional<Options>>(const TextListSelection &self)> on_update{};

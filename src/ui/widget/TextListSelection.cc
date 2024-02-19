@@ -115,22 +115,24 @@ void TextListSelection::on_draw() {
 		}
 	}
 
-	auto scroll_bar_rect = rect_px.trim_left(rect_px.w - rect_px.h / text_list_selection_blueprint().line_count);
-	draw_background_color(scroll_bar_rect, {0, 0, 0, 255});
-	draw_border(scroll_bar_rect, blueprint->border_width_px);
+	if (text_list_selection_blueprint().show_scroll_bar) {
+		auto scroll_bar_rect = rect_px.trim_left(rect_px.w - rect_px.h / text_list_selection_blueprint().line_count);
+		draw_background_color(scroll_bar_rect, {0, 0, 0, 255});
+		draw_border(scroll_bar_rect, blueprint->border_width_px);
 
-	auto up_arrow_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count, 0);
-	draw_text(
-	    calculate_text_rect(up_arrow_rect, 0, 0, 0, TextAlignment::CENTER, _up_arrow_texture.texture()),
-	    _up_arrow_texture.texture());
-	draw_border(up_arrow_rect, blueprint->border_width_px);
+		auto up_arrow_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count, 0);
+		draw_text(
+		    calculate_text_rect(up_arrow_rect, 0, 0, 0, TextAlignment::CENTER, _up_arrow_texture.texture()),
+		    _up_arrow_texture.texture());
+		draw_border(up_arrow_rect, blueprint->border_width_px);
 
-	auto down_button_rect = scroll_bar_rect.horizontal_split(
-	    text_list_selection_blueprint().line_count, text_list_selection_blueprint().line_count - 1);
-	draw_text(
-	    calculate_text_rect(down_button_rect, 0, 0, 0, TextAlignment::CENTER, _down_arrow_texture.texture()),
-	    _down_arrow_texture.texture());
-	draw_border(down_button_rect, blueprint->border_width_px);
+		auto down_button_rect = scroll_bar_rect.horizontal_split(
+		    text_list_selection_blueprint().line_count, text_list_selection_blueprint().line_count - 1);
+		draw_text(
+		    calculate_text_rect(down_button_rect, 0, 0, 0, TextAlignment::CENTER, _down_arrow_texture.texture()),
+		    _down_arrow_texture.texture());
+		draw_border(down_button_rect, blueprint->border_width_px);
+	}
 
 	draw_border(rect_px, blueprint->border_width_px);
 }

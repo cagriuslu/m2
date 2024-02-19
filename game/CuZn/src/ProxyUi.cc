@@ -9,6 +9,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 constexpr int CARDS_CUSTOM_UI_INDEX = 0;
+constexpr int TILES_CUSTOM_UI_INDEX = 1;
 
 namespace {
 	auto quit_button_action = [](MAYBE const widget::Text& self) { return make_quit_action(); };
@@ -210,10 +211,10 @@ const Blueprint cards_blueprint = {
     .background_color = {0, 0, 0, 255},
     .widgets = {
         WidgetBlueprint{
-            .x = 55,
+            .x = 57,
             .y = 0,
-            .w = 5,
-            .h = 5,
+            .w = 3,
+            .h = 3,
             .variant =
                 TextBlueprint{
                     .initial_text = "X",
@@ -229,11 +230,154 @@ const Blueprint cards_blueprint = {
             .variant = TextListSelectionBlueprint{
                 .line_count = 8,
                 .allow_multiple_selection = false,
+                .show_scroll_bar = false,
                 .on_create =
                     [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
 	                TextListSelectionBlueprint::Options options;
 	                // Iterate over the cards of the player
 	                for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_CARD);
+	                     item_it != LEVEL.player()->character().end_items(); ++item_it) {
+		                options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+	                }
+	                return options;
+                }}}}};
+
+const Blueprint tiles_blueprint = {
+    .w = 60,
+    .h = 40,
+    .border_width_px = 1,
+    .background_color = {0, 0, 0, 255},
+    .widgets = {
+        WidgetBlueprint{
+            .x = 57,
+            .y = 0,
+            .w = 3,
+            .h = 3,
+            .variant =
+                TextBlueprint{
+                    .initial_text = "X",
+                    .on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+	                    LEVEL.remove_custom_ui(TILES_CUSTOM_UI_INDEX);
+	                    return make_return_action<m2::Void>();
+                    }}},
+        WidgetBlueprint{
+            .x = 3,
+            .y = 3,
+            .w = 18,
+            .h = 17,
+            .variant =
+                TextListSelectionBlueprint{
+                    .line_count = 5,
+                    .allow_multiple_selection = false,
+                    .show_scroll_bar = false,
+                    .on_create =
+                        [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+	                    TextListSelectionBlueprint::Options options;
+	                    // Iterate over the cotton tiles of the player
+	                    for (auto item_it =
+	                             LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE);
+	                         item_it != LEVEL.player()->character().end_items(); ++item_it) {
+		                    options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+	                    }
+	                    return options;
+                    }}},
+        WidgetBlueprint{
+            .x = 21,
+            .y = 3,
+            .w = 18,
+            .h = 17,
+            .variant =
+                TextListSelectionBlueprint{
+                    .line_count = 5,
+                    .allow_multiple_selection = false,
+                    .show_scroll_bar = false,
+                    .on_create =
+                        [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+	                    TextListSelectionBlueprint::Options options;
+	                    // Iterate over the cotton tiles of the player
+	                    for (auto item_it =
+	                             LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE);
+	                         item_it != LEVEL.player()->character().end_items(); ++item_it) {
+		                    options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+	                    }
+	                    return options;
+                    }}},
+        WidgetBlueprint{
+            .x = 39,
+            .y = 3,
+            .w = 18,
+            .h = 17,
+            .variant =
+                TextListSelectionBlueprint{
+                    .line_count = 5,
+                    .allow_multiple_selection = false,
+                    .show_scroll_bar = false,
+                    .on_create =
+                        [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+	                    TextListSelectionBlueprint::Options options;
+	                    // Iterate over the cotton tiles of the player
+	                    for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_BREWERY_TILE);
+	                         item_it != LEVEL.player()->character().end_items(); ++item_it) {
+		                    options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+	                    }
+	                    return options;
+                    }}},
+        WidgetBlueprint{
+            .x = 3,
+            .y = 20,
+            .w = 18,
+            .h = 17,
+            .variant =
+                TextListSelectionBlueprint{
+                    .line_count = 5,
+                    .allow_multiple_selection = false,
+                    .show_scroll_bar = false,
+                    .on_create =
+                        [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+	                    TextListSelectionBlueprint::Options options;
+	                    // Iterate over the cotton tiles of the player
+	                    for (auto item_it =
+	                             LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE);
+	                         item_it != LEVEL.player()->character().end_items(); ++item_it) {
+		                    options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+	                    }
+	                    return options;
+                    }}},
+        WidgetBlueprint{
+            .x = 21,
+            .y = 20,
+            .w = 18,
+            .h = 17,
+            .variant =
+                TextListSelectionBlueprint{
+                    .line_count = 5,
+                    .allow_multiple_selection = false,
+                    .show_scroll_bar = false,
+                    .on_create =
+                        [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+	                    TextListSelectionBlueprint::Options options;
+	                    // Iterate over the cotton tiles of the player
+	                    for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_POTTERY_TILE);
+	                         item_it != LEVEL.player()->character().end_items(); ++item_it) {
+		                    options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+	                    }
+	                    return options;
+                    }}},
+        WidgetBlueprint{
+            .x = 39,
+            .y = 20,
+            .w = 18,
+            .h = 17,
+            .variant = TextListSelectionBlueprint{
+                .line_count = 5,
+                .allow_multiple_selection = false,
+                .show_scroll_bar = false,
+                .on_create =
+                    [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+	                TextListSelectionBlueprint::Options options;
+	                // Iterate over the cotton tiles of the player
+	                for (auto item_it =
+	                         LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE);
 	                     item_it != LEVEL.player()->character().end_items(); ++item_it) {
 		                options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
 	                }
@@ -284,17 +428,27 @@ const Blueprint right_hud_blueprint = {
             .w = 15,
             .h = 6,
             .border_width_px = 1,
+            .variant =
+                TextBlueprint{
+                    .initial_text = "Cards",
+                    .font_size = 4.5f,
+                    .alignment = m2::ui::TextAlignment::LEFT,
+                    .on_action = [](MAYBE const Text& self) -> Action {
+	                    LEVEL.add_custom_ui(CARDS_CUSTOM_UI_INDEX, m2::RectF{0.1f, 0.1f, 0.8f, 0.8f}, &cards_blueprint);
+	                    return make_continue_action();
+                    }}},
+        WidgetBlueprint{
+            .x = 2,
+            .y = 18,
+            .w = 15,
+            .h = 6,
+            .border_width_px = 1,
             .variant = TextBlueprint{
+                .initial_text = "Tiles",
                 .font_size = 4.5f,
                 .alignment = m2::ui::TextAlignment::LEFT,
-                .on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
-	                // Lookup cards
-	                auto card_count = LEVEL.player()->character().count_item(m2g::pb::ITEM_CATEGORY_CARD);
-	                auto text = std::string{"Cards:"} + std::to_string(card_count);
-	                return std::make_pair(make_continue_action(), text);
-                },
                 .on_action = [](MAYBE const Text& self) -> Action {
-	                LEVEL.add_custom_ui(CARDS_CUSTOM_UI_INDEX, m2::RectF{0.1f, 0.1f, 0.8f, 0.8}, &cards_blueprint);
+	                LEVEL.add_custom_ui(TILES_CUSTOM_UI_INDEX, m2::RectF{0.1f, 0.1f, 0.8f, 0.8f}, &tiles_blueprint);
 	                return make_continue_action();
                 }}}}};
 

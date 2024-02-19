@@ -88,11 +88,16 @@ enum ItemCategory {
 
     // Given to HUMAN_PLAYERs to signify the tiles held by them
     // Given to TILEs to signify a built industry
-    ITEM_CATEGORY_TILE = 2;
+    ITEM_CATEGORY_COTTON_MILL_TILE = 2;
+    ITEM_CATEGORY_IRON_WORKS_TILE = 3;
+    ITEM_CATEGORY_BREWERY_TILE = 4;
+    ITEM_CATEGORY_COAL_MINE_TILE = 5;
+    ITEM_CATEGORY_POTTERY_TILE = 6;
+    ITEM_CATEGORY_MANUFACTURED_GOODS_TILE = 7;
 
     // Given to HUMAN_PLAYERs to signify the path tiles held by them
-    ITEM_CATEGORY_INFRASTRUCTURE_LICENSE = 3;
+    ITEM_CATEGORY_INFRASTRUCTURE_LICENSE = 8;
 
     // Given to MERCHANTs to signify which industries they deal with
-    ITEM_CATEGORY_MERCHANT_LICENSE = 4;
+    ITEM_CATEGORY_MERCHANT_LICENSE = 9;
 }

@@ -576,7 +576,7 @@
     },
     {
       "type": "COTTON_MILL_TILEI",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -610,7 +610,7 @@
     },
     {
       "type": "COTTON_MILL_TILEII",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -644,7 +644,7 @@
     },
     {
       "type": "COTTON_MILL_TILEIII",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -682,7 +682,7 @@
     },
     {
       "type": "COTTON_MILL_TILEIV",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -720,7 +720,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_I",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -758,7 +758,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_II",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -792,7 +792,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_III",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -826,7 +826,7 @@
     },
     {
       "type": "IRON_WORKS_TILE_IV",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -860,7 +860,7 @@
     },
     {
       "type": "BREWERY_TILE_I",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -902,7 +902,7 @@
     },
     {
       "type": "BREWERY_TILE_II",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -940,7 +940,7 @@
     },
     {
       "type": "BREWERY_TILE_III",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -978,7 +978,7 @@
     },
     {
       "type": "BREWERY_TILE_IV",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1020,7 +1020,7 @@
     },
     {
       "type": "COAL_MINE_TILE_I",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1054,7 +1054,7 @@
     },
     {
       "type": "COAL_MINE_TILE_II",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1084,7 +1084,7 @@
     },
     {
       "type": "COAL_MINE_TILE_III",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1118,7 +1118,7 @@
     },
     {
       "type": "COAL_MINE_TILE_IV",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1152,7 +1152,7 @@
     },
     {
       "type": "POTTERY_TILEI",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1190,7 +1190,7 @@
     },
     {
       "type": "POTTERY_TILEII",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1224,7 +1224,7 @@
     },
     {
       "type": "POTTERY_TILEIII",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1262,7 +1262,7 @@
     },
     {
       "type": "POTTERY_TILEIV",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1296,7 +1296,7 @@
     },
     {
       "type": "POTTERY_TILEV",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1334,7 +1334,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_I",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1372,7 +1372,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_II",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1406,7 +1406,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_III",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1436,7 +1436,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_IV",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1470,7 +1470,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_V",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1504,7 +1504,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VI",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1534,7 +1534,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VII",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
@@ -1568,7 +1568,7 @@
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VIII",
-      "category": "ITEM_CATEGORY_TILE",
+      "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
           "type": "VICTORY_POINTS_BONUS",
