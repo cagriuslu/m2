@@ -208,16 +208,37 @@ const Blueprint cards_blueprint = {
     .h = 40,
     .border_width_px = 1,
     .background_color = {0, 0, 0, 255},
-    .widgets = {WidgetBlueprint{
-        .x = 55,
-        .y = 0,
-        .w = 5,
-        .h = 5,
-        .variant = TextBlueprint{
-            .initial_text = "X", .on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-	            LEVEL.remove_custom_ui(CARDS_CUSTOM_UI_INDEX);
-	            return make_return_action<m2::Void>();
-            }}}}};
+    .widgets = {
+        WidgetBlueprint{
+            .x = 55,
+            .y = 0,
+            .w = 5,
+            .h = 5,
+            .variant =
+                TextBlueprint{
+                    .initial_text = "X",
+                    .on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+	                    LEVEL.remove_custom_ui(CARDS_CUSTOM_UI_INDEX);
+	                    return make_return_action<m2::Void>();
+                    }}},
+        WidgetBlueprint{
+            .x = 5,
+            .y = 5,
+            .w = 50,
+            .h = 30,
+            .variant = TextListSelectionBlueprint{
+                .line_count = 8,
+                .allow_multiple_selection = false,
+                .on_create =
+                    [](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+	                TextListSelectionBlueprint::Options options;
+	                // Iterate over the cards of the player
+	                for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_CARD);
+	                     item_it != LEVEL.player()->character().end_items(); ++item_it) {
+		                options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+	                }
+	                return options;
+                }}}}};
 
 const Blueprint right_hud_blueprint = {
     .w = 19,
