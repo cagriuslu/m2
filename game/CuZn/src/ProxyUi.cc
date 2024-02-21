@@ -1,6 +1,7 @@
 #include <m2/Game.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
+#include <m2/ui/widget/TextListSelection.h>
 #include <m2g/Proxy.h>
 
 using namespace m2::ui;
@@ -330,137 +331,61 @@ const Blueprint tiles_blueprint = {
 			}
 		},
 		WidgetBlueprint{
+			.name = "IndustryTypeSelection",
 			.x = 3,
 			.y = 3,
 			.w = 18,
-			.h = 17,
+			.h = 34,
 			.variant =
 			TextListSelectionBlueprint{
-				.line_count = 5,
+				.initial_list = {m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_BREWERY_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_POTTERY_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)},
+				.line_count = 10,
 				.allow_multiple_selection = false,
 				.show_scroll_bar = false,
-				.on_create =
-				[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
-					TextListSelectionBlueprint::Options options;
-					// Iterate over the cotton tiles of the player
-					for (auto item_it =
-						LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE);
-						item_it != LEVEL.player()->character().end_items(); ++item_it) {
-						options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+				.on_action = [](const TextListSelection &self) -> Action {
+					// Look for the other widget
+					auto* tile_selection_widget = self.parent().find_first_widget_by_name<TextListSelection>("TileSelection");
+					if (tile_selection_widget) {
+						// Trigger the other widget to recreate itself
+						tile_selection_widget->recreate();
 					}
-					return options;
+					return make_continue_action();
 				}
 			}
 		},
 		WidgetBlueprint{
+			.name = "TileSelection",
 			.x = 21,
 			.y = 3,
 			.w = 18,
-			.h = 17,
+			.h = 34,
 			.variant =
 			TextListSelectionBlueprint{
-				.line_count = 5,
+				.line_count = 10,
 				.allow_multiple_selection = false,
 				.show_scroll_bar = false,
-				.on_create =
-				[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
-					TextListSelectionBlueprint::Options options;
-					// Iterate over the cotton tiles of the player
-					for (auto item_it =
-						LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE);
-						item_it != LEVEL.player()->character().end_items(); ++item_it) {
-						options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+				.on_create = [](const TextListSelection &self) -> std::optional<TextListSelectionBlueprint::Options> {
+					// Look for the other widget
+					auto* industry_type_selection_widget = self.parent().find_first_widget_by_name<TextListSelection>("IndustryTypeSelection");
+					if (industry_type_selection_widget) {
+						// Get selection
+						auto selection = industry_type_selection_widget->selection();
+						if (selection.size() == 1) {
+							ItemCategory cat;
+							if (m2g::pb::ItemCategory_Parse(selection[0], &cat)) {
+								TextListSelectionBlueprint::Options options;
+								for (auto item_it = LEVEL.player()->character().find_items(cat);
+									item_it != LEVEL.player()->character().end_items(); ++item_it) {
+									options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+								}
+								return options;
+							} else {
+								throw M2ERROR("Unable to parse ItemCategory");
+							}
+						}
 					}
-					return options;
-				}
-			}
-		},
-		WidgetBlueprint{
-			.x = 39,
-			.y = 3,
-			.w = 18,
-			.h = 17,
-			.variant =
-			TextListSelectionBlueprint{
-				.line_count = 5,
-				.allow_multiple_selection = false,
-				.show_scroll_bar = false,
-				.on_create =
-				[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
-					TextListSelectionBlueprint::Options options;
-					// Iterate over the cotton tiles of the player
-					for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_BREWERY_TILE);
-						item_it != LEVEL.player()->character().end_items(); ++item_it) {
-						options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
-					}
-					return options;
-				}
-			}
-		},
-		WidgetBlueprint{
-			.x = 3,
-			.y = 20,
-			.w = 18,
-			.h = 17,
-			.variant =
-			TextListSelectionBlueprint{
-				.line_count = 5,
-				.allow_multiple_selection = false,
-				.show_scroll_bar = false,
-				.on_create =
-				[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
-					TextListSelectionBlueprint::Options options;
-					// Iterate over the cotton tiles of the player
-					for (auto item_it =
-						LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE);
-						item_it != LEVEL.player()->character().end_items(); ++item_it) {
-						options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
-					}
-					return options;
-				}
-			}
-		},
-		WidgetBlueprint{
-			.x = 21,
-			.y = 20,
-			.w = 18,
-			.h = 17,
-			.variant =
-			TextListSelectionBlueprint{
-				.line_count = 5,
-				.allow_multiple_selection = false,
-				.show_scroll_bar = false,
-				.on_create =
-				[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
-					TextListSelectionBlueprint::Options options;
-					// Iterate over the cotton tiles of the player
-					for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_POTTERY_TILE);
-						item_it != LEVEL.player()->character().end_items(); ++item_it) {
-						options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
-					}
-					return options;
-				}
-			}
-		},
-		WidgetBlueprint{
-			.x = 39,
-			.y = 20,
-			.w = 18,
-			.h = 17,
-			.variant = TextListSelectionBlueprint{
-				.line_count = 5,
-				.allow_multiple_selection = false,
-				.show_scroll_bar = false,
-				.on_create =
-				[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
-					TextListSelectionBlueprint::Options options;
-					// Iterate over the cotton tiles of the player
-					for (auto item_it =
-						LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE);
-						item_it != LEVEL.player()->character().end_items(); ++item_it) {
-						options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
-					}
-					return options;
+					// Return empty list
+					return TextListSelectionBlueprint::Options{};
 				}
 			}
 		}
@@ -521,7 +446,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					LEVEL.add_custom_ui(CARDS_CUSTOM_UI_INDEX, m2::RectF{0.1f, 0.1f, 0.8f, 0.8f}, &cards_blueprint);
+					LEVEL.add_custom_ui(CARDS_CUSTOM_UI_INDEX, m2::RectF{0.05f, 0.05f, 0.9f, 0.9f}, &cards_blueprint);
 					return make_continue_action();
 				}
 			}
@@ -537,7 +462,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					LEVEL.add_custom_ui(TILES_CUSTOM_UI_INDEX, m2::RectF{0.1f, 0.1f, 0.8f, 0.8f}, &tiles_blueprint);
+					LEVEL.add_custom_ui(TILES_CUSTOM_UI_INDEX, m2::RectF{0.05f, 0.05f, 0.9f, 0.9f}, &tiles_blueprint);
 					return make_continue_action();
 				}
 			}

@@ -14,7 +14,12 @@ namespace m2::ui::widget {
 		Action on_event(Events& events) override;
 		void on_draw() override;
 
+		// Accessors
 		std::vector<std::string> selection() const;
+
+		// Modifiers
+		void recreate();
+		Action trigger_action(/* TODO */);
 
 	   private:
 		void prepare_list(const std::vector<std::string>& entries);

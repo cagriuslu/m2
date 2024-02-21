@@ -15,6 +15,7 @@
 
 namespace m2::ui {
 	struct WidgetBlueprint {
+		std::string name{};
 		bool initially_enabled{true};
 		bool initially_focused{false};
 		int x{}, y{}, w{1}, h{1}; // unitless // TODO convert to float

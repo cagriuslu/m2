@@ -38,7 +38,7 @@ TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint)
 	}
 
 	// Select default item
-	select(0);
+	trigger_action(0);
 }
 
 Action TextSelection::on_update() {
@@ -50,7 +50,7 @@ Action TextSelection::on_update() {
 			// Verify list
 			throw_if_list_has_duplicates(*optional_list);
 			// Select default item
-			select(0);
+			trigger_action(0);
 		}
 		return std::move(action);
 	} else {
@@ -72,24 +72,24 @@ Action TextSelection::on_event(Events& events) {
 	} else if (_inc_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, inc_button_rect)) {
 		_inc_depressed = false;
 		if (_selection + 1 < _list.size()) {
-			return select(_selection + 1);
+			return trigger_action(_selection + 1);
 		}
 	} else if (_dec_depressed && events.pop_mouse_button_release(MouseButton::PRIMARY, dec_button_rect)) {
 		_dec_depressed = false;
 		if (0 < _selection) {
-			return select(_selection - 1);
+			return trigger_action(_selection - 1);
 		}
 	} else {
 		// Check if scrolled
 		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect_px); 0 < scroll_amount) {
 			auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _list.size() - _selection - 1);
 			if (min_scroll_amount) {
-				return select(_selection + min_scroll_amount);
+				return trigger_action(_selection + min_scroll_amount);
 			}
 		} else if (scroll_amount < 0) {
 			auto min_scroll_amount = std::min(static_cast<unsigned>(-scroll_amount), _selection);
 			if (min_scroll_amount) {
-				return select(_selection - min_scroll_amount);
+				return trigger_action(_selection - min_scroll_amount);
 			}
 		}
 	}
@@ -122,8 +122,8 @@ void TextSelection::on_draw() {
 	draw_border(rect_px, blueprint->border_width_px);
 }
 
-Action TextSelection::select(unsigned index) {
-	_selection = index;
+Action TextSelection::trigger_action(unsigned new_selection) {
+	_selection = new_selection;
 	if (!_list.empty()) {
 		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, _list[_selection]));
 

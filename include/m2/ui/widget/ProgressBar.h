@@ -9,5 +9,8 @@ namespace m2::ui::widget {
 		explicit ProgressBar(State* parent, const WidgetBlueprint* blueprint);
 		Action on_update() override;
 		void on_draw() override;
+
+		// Modifiers
+		void recreate();
 	};
 }

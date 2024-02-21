@@ -15,7 +15,12 @@ namespace m2::ui::widget {
 		Action on_update() override;
 		void on_draw() override;
 
+		// Accessors
 		[[nodiscard]] int value() const { return _font_texture.int_value(); }
+
+		// Modifiers
+		void recreate();
+		Action trigger_action(int new_value);
 
 	private:
 		[[nodiscard]] const IntegerInputBlueprint& integer_selection_blueprint() const { return std::get<IntegerInputBlueprint>(blueprint->variant); }

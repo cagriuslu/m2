@@ -8,15 +8,7 @@ TextListSelection::TextListSelection(State* parent, const WidgetBlueprint* bluep
     : Widget(parent, blueprint),
       _up_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "^"))),
       _down_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "v"))) {
-	prepare_list(text_list_selection_blueprint().initial_list);
-
-	// on_create
-	if (text_list_selection_blueprint().on_create) {
-		auto opt_list = text_list_selection_blueprint().on_create(*this);
-		if (opt_list) {
-			prepare_list(*opt_list);
-		}
-	}
+	recreate();
 }
 
 Action TextListSelection::on_update() {
@@ -75,6 +67,10 @@ Action TextListSelection::on_event(Events& events) {
 				if (_list[pressed_item].second) {
 					// Deselect
 					_list[pressed_item].second = false;
+					// on_action
+					if (text_list_selection_blueprint().on_action) {
+						return text_list_selection_blueprint().on_action(*this);
+					}
 				} else {
 					// Clear selection if necessary
 					if (not text_list_selection_blueprint().allow_multiple_selection) {
@@ -145,6 +141,18 @@ std::vector<std::string> TextListSelection::selection() const {
 		}
 	}
 	return list;
+}
+
+void TextListSelection::recreate() {
+	prepare_list(text_list_selection_blueprint().initial_list);
+
+	// on_create
+	if (text_list_selection_blueprint().on_create) {
+		auto opt_list = text_list_selection_blueprint().on_create(*this);
+		if (opt_list) {
+			prepare_list(*opt_list);
+		}
+	}
 }
 
 void TextListSelection::prepare_list(const std::vector<std::string>& entries) {

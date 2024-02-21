@@ -11,7 +11,12 @@ namespace m2::ui::widget {
 		explicit CheckboxWithText(State* parent, const WidgetBlueprint* blueprint);
 		void on_draw() override;
 
+		// Accessors
 		bool state() const { return _state; }
+
+		// Modifiers
+		void recreate();
+		Action trigger_action(bool new_state);
 
 		friend struct AbstractButton;
 	};

@@ -51,6 +51,19 @@ namespace m2::ui {
 			}
 			return nullptr;
 		}
+
+		template <typename WidgetT>
+		[[nodiscard]] WidgetT* find_first_widget_by_name(const std::string& name) const {
+			for (auto& w : widgets) {
+				if (dynamic_cast<WidgetT*>(w.get()) != nullptr) {
+					auto* widget_state = dynamic_cast<WidgetT*>(w.get());
+					if (widget_state->blueprint->name == name) {
+						return widget_state;
+					}
+				}
+			}
+			return nullptr;
+		}
 	};
 
 	// Helpers

@@ -17,6 +17,10 @@ namespace m2::ui::widget {
 		Action select(unsigned index);
 		void on_draw() override;
 
+		// Modifiers
+		void recreate();
+		Action trigger_action(unsigned new_selection);
+
 		[[nodiscard]] inline m2g::pb::SpriteType selection() const { return std::get<ImageSelectionBlueprint>(blueprint->variant).list[_selection]; }
 	};
 }

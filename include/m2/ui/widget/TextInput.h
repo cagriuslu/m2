@@ -15,6 +15,11 @@ namespace m2::ui::widget {
 		Action on_update() override;
 		void on_draw() override;
 
+		// Accessors
 		std::string text_input() const { return _text_input.str(); }
+
+		// Modifiers
+		void recreate();
+		Action trigger_action(std::string new_value);
 	};
 }

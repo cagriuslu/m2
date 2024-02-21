@@ -9,7 +9,8 @@ namespace m2::ui::widget {
 		explicit AbstractButton(State* parent, const WidgetBlueprint* blueprint);
 		Action on_event(Events& events) final;
 
-		// Helpers for external usage
+		// Modifiers
+		void recreate();
 		Action trigger_action();
 	};
 }
