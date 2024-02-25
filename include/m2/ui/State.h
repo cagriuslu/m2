@@ -5,6 +5,7 @@ namespace m2::ui {
 	struct State {
 	private:
 		bool _prev_text_input_state{};
+		std::unique_ptr<Blueprint> _managed_blueprint; // blueprint will point here if this object exists
 
 	public:
 		bool enabled{true};
@@ -13,7 +14,7 @@ namespace m2::ui {
 		std::vector<std::unique_ptr<Widget>> widgets;
 
 		State() = default;
-		explicit State(const Blueprint* blueprint);
+		explicit State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint);
 		static Action create_execute_sync(const Blueprint* blueprint);
 		static Action create_execute_sync(const Blueprint* blueprint, RectI rect);
 		~State();

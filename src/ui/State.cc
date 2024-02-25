@@ -116,7 +116,14 @@ namespace {
 	}
 }  // namespace
 
-State::State(const Blueprint *blueprint) : _prev_text_input_state(SDL_IsTextInputActive()), blueprint(blueprint) {
+State::State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> bp) : _prev_text_input_state(SDL_IsTextInputActive()) {
+	if (std::holds_alternative<const Blueprint*>(bp)) {
+		blueprint = std::get<const Blueprint*>(bp);
+	} else {
+		_managed_blueprint = std::move(std::get<std::unique_ptr<Blueprint>>(bp));
+		blueprint = _managed_blueprint.get();
+	}
+
 	// Previous text input state is saved, not disable it to start with a clean slate
 	SDL_StopTextInput();
 
