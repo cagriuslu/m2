@@ -52,11 +52,15 @@ namespace m2 {
 		Id camera_id{}, player_id{}, pointer_id{};
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
+
+		// All these UI states operate alongside the game world. They do not block the world simulation.
 		std::optional<ui::State> left_hud_ui_state, right_hud_ui_state;
-		// Rect represents the position ratio of the UI in reference to the Dimensions.game_and_hud
+		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
+		std::pair<RectF, std::optional<ui::State>> custom_ui_dialog_state;
 		std::array<std::pair<RectF, std::optional<ui::State>>, 8> custom_ui_state;
 		std::optional<std::string> message;
 		std::optional<ui::State> message_box_ui_state;
+
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
 		std::vector<std::function<void()>> deferred_actions;
@@ -104,7 +108,9 @@ namespace m2 {
 		// Modifiers
 		void begin_game_loop();
 		void add_custom_ui(int index, RectF position_ratio, const ui::Blueprint* blueprint);
+		void add_custom_ui_dialog(RectF position_ratio, const ui::Blueprint* blueprint);
 		void remove_custom_ui(int index);
+		void remove_custom_ui_dialog();
 		void display_message(const std::string& msg, float timeout = 5.0f);
 
 	   private:

@@ -248,14 +248,21 @@ void m2::Game::handle_menu_event() {
 }
 
 void m2::Game::handle_hud_events() {
+	if (_level->custom_ui_dialog_state.second) {
+		_level->custom_ui_dialog_state.second->handle_events(events);
+		// If there's a UI dialog, no events will be delivered to rest of the UI states and the game world
+		events.clear();
+		// handle_events of others are executed regardless, because there may be timing related actions
+	}
+
 	// The order of event handling is the reverse of the drawing order because custom_ui_states are assumed to be in
 	// front the HUDs.
 	for (auto& custom_ui : _level->custom_ui_state) { // TODO iterate backwards
 		IF(custom_ui.second)->handle_events(events);
 	}
+	IF(_level->message_box_ui_state)->handle_events(events);  // For disable_after
 	IF(_level->left_hud_ui_state)->handle_events(events);
 	IF(_level->right_hud_ui_state)->handle_events(events);
-	IF(_level->message_box_ui_state)->handle_events(events);  // For disable_after
 }
 
 void m2::Game::execute_pre_step() {
@@ -350,10 +357,11 @@ void m2::Game::execute_pre_draw() {
 void m2::Game::update_hud_contents() {
 	IF(_level->left_hud_ui_state)->update_contents();
 	IF(_level->right_hud_ui_state)->update_contents();
+	IF(_level->message_box_ui_state)->update_contents();
 	for (auto& custom_ui : _level->custom_ui_state) {
 		IF(custom_ui.second)->update_contents();
 	}
-	IF(_level->message_box_ui_state)->update_contents();
+	IF(_level->custom_ui_dialog_state.second)->update_contents();
 }
 
 void m2::Game::clear_back_buffer() const {
@@ -443,10 +451,11 @@ void m2::Game::debug_draw() {
 void m2::Game::draw_hud() {
 	IF(_level->left_hud_ui_state)->draw();
 	IF(_level->right_hud_ui_state)->draw();
+	IF(_level->message_box_ui_state)->draw();
 	for (auto& custom_ui : _level->custom_ui_state) {
 		IF(custom_ui.second)->draw();
 	}
-	IF(_level->message_box_ui_state)->draw();
+	IF(_level->custom_ui_dialog_state.second)->draw();
 }
 
 void m2::Game::draw_envelopes() const {
@@ -479,7 +488,7 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 		for (auto& custom_ui : _level->custom_ui_state) {
 			IF (custom_ui.second)->update_positions(_dims.game_and_hud.ratio(custom_ui.first));
 		}
-		IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
+		IF (_level->custom_ui_dialog_state.second)->update_positions(_dims.game_and_hud.ratio(_level->custom_ui_dialog_state.first));
 	}
 }
 

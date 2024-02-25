@@ -9,9 +9,6 @@ using namespace m2::ui::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
-constexpr int CARDS_CUSTOM_UI_INDEX = 0;
-constexpr int TILES_CUSTOM_UI_INDEX = 1;
-
 namespace {
 	auto quit_button_action = [](MAYBE const widget::Text& self) { return make_quit_action(); };
 }  // namespace
@@ -281,7 +278,7 @@ const Blueprint cards_blueprint = {
 			TextBlueprint{
 				.initial_text = "X",
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					LEVEL.remove_custom_ui(CARDS_CUSTOM_UI_INDEX);
+					LEVEL.remove_custom_ui_dialog();
 					return make_return_action<m2::Void>();
 				}
 			}
@@ -325,7 +322,7 @@ const Blueprint tiles_blueprint = {
 			TextBlueprint{
 				.initial_text = "X",
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					LEVEL.remove_custom_ui(TILES_CUSTOM_UI_INDEX);
+					LEVEL.remove_custom_ui_dialog();
 					return make_return_action<m2::Void>();
 				}
 			}
@@ -446,7 +443,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					LEVEL.add_custom_ui(CARDS_CUSTOM_UI_INDEX, m2::RectF{0.05f, 0.05f, 0.9f, 0.9f}, &cards_blueprint);
+					LEVEL.add_custom_ui_dialog(m2::RectF{0.15f, 0.15f, 0.7f, 0.7f}, &cards_blueprint);
 					return make_continue_action();
 				}
 			}
@@ -462,7 +459,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					LEVEL.add_custom_ui(TILES_CUSTOM_UI_INDEX, m2::RectF{0.05f, 0.05f, 0.9f, 0.9f}, &tiles_blueprint);
+					LEVEL.add_custom_ui_dialog(m2::RectF{0.05f, 0.05f, 0.9f, 0.9f}, &tiles_blueprint);
 					return make_continue_action();
 				}
 			}

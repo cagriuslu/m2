@@ -293,8 +293,16 @@ void m2::Level::add_custom_ui(int index, m2::RectF position_ratio, const m2::ui:
 	custom_ui_state[index].second.emplace(blueprint);
 	custom_ui_state[index].second->update_positions(GAME.dimensions().game_and_hud.ratio(position_ratio));
 }
+void m2::Level::add_custom_ui_dialog(RectF position_ratio, const ui::Blueprint* blueprint) {
+	custom_ui_dialog_state.first = position_ratio;
+	custom_ui_dialog_state.second.emplace(blueprint);
+	custom_ui_dialog_state.second->update_positions(GAME.dimensions().game_and_hud.ratio(position_ratio));
+}
 void m2::Level::remove_custom_ui(int index) {
 	custom_ui_state[index].second.reset();
+}
+void m2::Level::remove_custom_ui_dialog() {
+	custom_ui_dialog_state.second.reset();
 }
 
 void m2::Level::display_message(const std::string& msg, float timeout) {
