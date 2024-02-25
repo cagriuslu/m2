@@ -18,7 +18,7 @@ namespace m2::ui {
 		std::optional<bool> focus;
 
 		Continue() = default;
-		Continue(bool focus) : ActionBase(), focus(focus) {}
+		explicit Continue(bool focus) : ActionBase(), focus(focus) {}
 	};
 	inline Action make_continue_action() { return std::make_unique<Continue>(); }
 	inline Action make_continue_action(bool focus) { return std::make_unique<Continue>(focus); }
@@ -43,6 +43,10 @@ namespace m2::ui {
 	template <typename T>
 	Action make_return_action() {
 		return std::make_unique<Return<T>>();
+	}
+	template <typename T>
+	Action make_return_action(T value) {
+		return std::make_unique<Return<T>>(std::forward<T>(value));
 	}
 	template <typename T>
 	Action make_return_action(T&& value) {
