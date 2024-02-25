@@ -137,21 +137,21 @@ State::State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> bp) : _p
 	}
 }
 
-Action State::create_execute_sync(const Blueprint *blueprint) {
-	return create_execute_sync(blueprint, GAME.dimensions().window);
+Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint) {
+	return create_execute_sync(std::move(blueprint), GAME.dimensions().window);
 }
 
-Action State::create_execute_sync(const Blueprint *blueprint, const RectI rect) {
+Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, const RectI rect) {
 	// Check if there are other blocking UIs
 	if (GAME.ui_begin_ticks) {
 		// Execute state without keeping time
-		State state{blueprint};
+		State state{std::move(blueprint)};
 		return state.execute(rect);
 	} else {
 		// Save begin ticks for later and other nested UIs
 		GAME.ui_begin_ticks = sdl::get_ticks();
 		// Execute state
-		State state{blueprint};
+		State state{std::move(blueprint)};
 		auto action = state.execute(rect);
 		// Add pause ticks
 		GAME.add_pause_ticks(sdl::get_ticks_since(*GAME.ui_begin_ticks));

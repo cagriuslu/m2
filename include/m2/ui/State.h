@@ -15,8 +15,8 @@ namespace m2::ui {
 
 		State() = default;
 		explicit State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint);
-		static Action create_execute_sync(const Blueprint* blueprint);
-		static Action create_execute_sync(const Blueprint* blueprint, RectI rect);
+		static Action create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint);
+		static Action create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, RectI rect);
 		~State();
 
 		Action execute(RectI rect);

@@ -3,6 +3,7 @@
 #include <m2/ui/widget/TextInput.h>
 #include <m2/ui/widget/TextListSelection.h>
 #include <m2g/Proxy.h>
+#include <cuzn/Ui.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -263,50 +264,6 @@ const Blueprint left_hud_blueprint = {
 	}
 };
 
-const Blueprint cards_blueprint = {
-	.w = 60,
-	.h = 40,
-	.border_width_px = 1,
-	.background_color = {0, 0, 0, 255},
-	.widgets = {
-		WidgetBlueprint{
-			.x = 57,
-			.y = 0,
-			.w = 3,
-			.h = 3,
-			.variant =
-			TextBlueprint{
-				.initial_text = "X",
-				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					LEVEL.remove_custom_ui_dialog();
-					return make_return_action<m2::Void>();
-				}
-			}
-		},
-		WidgetBlueprint{
-			.x = 5,
-			.y = 5,
-			.w = 50,
-			.h = 30,
-			.variant = TextListSelectionBlueprint{
-				.line_count = 8,
-				.allow_multiple_selection = false,
-				.show_scroll_bar = false,
-				.on_create =
-				[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
-					TextListSelectionBlueprint::Options options;
-					// Iterate over the cards of the player
-					for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_CARD);
-						item_it != LEVEL.player()->character().end_items(); ++item_it) {
-						options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
-					}
-					return options;
-				}
-			}
-		}
-	}
-};
-
 const Blueprint tiles_blueprint = {
 	.w = 60,
 	.h = 40,
@@ -443,7 +400,9 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					LEVEL.add_custom_ui_dialog(m2::RectF{0.15f, 0.15f, 0.7f, 0.7f}, &cards_blueprint);
+					LEVEL.add_custom_ui_dialog(
+						m2::RectF{0.15f, 0.15f, 0.7f, 0.7f},
+						std::make_unique<Blueprint>(cuzn::generate_cards_window(false)));
 					return make_continue_action();
 				}
 			}
