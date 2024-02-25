@@ -189,8 +189,8 @@ std::optional<m2::RectI> m2::RectI::intersect(const m2::RectI& other) const {
 }
 m2::RectI m2::RectI::ratio(const RectF& ratio_rect) const {
 	return RectI{
-		I(roundf(F(w) * ratio_rect.x)),
-		I(roundf(F(h) * ratio_rect.y)),
+		I(roundf(F(x) + F(w) * ratio_rect.x)),
+		I(roundf(F(y) + F(h) * ratio_rect.y)),
 	    I(roundf(F(w) * ratio_rect.w)),
 	    I(roundf(F(h) * ratio_rect.h))
 	};

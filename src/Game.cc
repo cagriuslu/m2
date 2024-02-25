@@ -475,11 +475,9 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 	if (_level) {
 		IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
 		IF(_level->right_hud_ui_state)->update_positions(_dims.right_hud);
+		IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
 		for (auto& custom_ui : _level->custom_ui_state) {
-			auto new_position = _dims.game_and_hud.ratio(custom_ui.first);
-			new_position.x += _dims.left_envelope.w;
-			new_position.y += _dims.top_envelope.h;
-			IF (custom_ui.second)->update_positions(new_position);
+			IF (custom_ui.second)->update_positions(_dims.game_and_hud.ratio(custom_ui.first));
 		}
 		IF(_level->message_box_ui_state)->update_positions(_dims.message_box);
 	}
