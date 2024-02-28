@@ -96,8 +96,7 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 	// TODO
 }
 
-std::optional<int> m2g::Proxy::handle_client_command(
-    unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
+std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 
 	// Increment turn holder
@@ -110,6 +109,23 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		auto pos = m2::VecI{floorf(obj.position.x), floorf(obj.position.y)};
 		_merchant_positions[sprite_type] = pos;
 		_position_merchants[pos] = sprite_type;
+	}
+
+	// Store the positions of the industries build locations
+	if (pb::BELPER_COTTON_MILL_MANUFACTURED_GOODS <= sprite_type && sprite_type <= pb::STANDALONE_BREWERY_2) {
+		// Verify that ppm of the industry tiles are double of the sprite sheet
+		if (GAME.get_sprite(sprite_type).ppm() != GAME.get_sprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
+			throw M2ERROR("Sprite ppm mismatch");
+		}
+
+		// Object position has {0.5f, 0.5f} offset
+		auto industry_position = m2::RectF{
+			obj.position.x - 0.5f,
+			obj.position.y - 0.5f,
+			2.0f,
+			2.0f
+		};
+		_industry_positions.emplace_back(industry_position, sprite_type);
 	}
 }
 
@@ -205,4 +221,12 @@ std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_draw_deck(int client_count) {
 	std::shuffle(draw_deck.begin(), draw_deck.end(), card_shuffler);
 
 	return draw_deck;
+}
+
+m2g::Proxy& m2g::Proxy::get_instance() {
+	return dynamic_cast<m2g::Proxy&>(GAME.proxy());
+}
+
+void m2g::Proxy::user_journey_deleter() {
+	get_instance().user_journey.reset();
 }

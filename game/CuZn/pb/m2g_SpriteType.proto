@@ -5,6 +5,8 @@ enum SpriteType {
   NO_SPRITE = 0;
 
   // Industries
+  // The order of the industries should not be modified carelessly.
+  // BELPER_COTTON_MILL_MANUFACTURED_GOODS and STANDALONE_BREWERY_2 are used as boundaries.
   BELPER_COTTON_MILL_MANUFACTURED_GOODS = 1;
   BELPER_COAL_MINE = 2;
   BELPER_POTTERY = 3;

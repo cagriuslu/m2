@@ -17,6 +17,7 @@ namespace m2 {
 	   public:
 		// TODO make these private, give access to Game, implement getters
 		Proxy() = default;
+		virtual ~Proxy() = default;
 
 		/// Name of the game, which is used to discover the resources
 		const std::string game_name = "<game-name>";
