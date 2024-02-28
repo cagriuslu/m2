@@ -27,7 +27,7 @@ Blueprint cuzn::generate_cards_window(bool return_selection) {
 					.on_action = [return_selection](MAYBE const Text& self) -> Action {
 						if (not return_selection) {
 							// Remove self from custom UI dialog
-							LEVEL.remove_custom_ui_dialog();
+							LEVEL.remove_custom_ui_dialog_deferred();
 						}
 						return make_return_action<m2::Void>();
 					}

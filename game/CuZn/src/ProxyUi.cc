@@ -279,7 +279,7 @@ const Blueprint tiles_blueprint = {
 			TextBlueprint{
 				.initial_text = "X",
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					LEVEL.remove_custom_ui_dialog();
+					LEVEL.remove_custom_ui_dialog_deferred();
 					return make_return_action<m2::Void>();
 				}
 			}

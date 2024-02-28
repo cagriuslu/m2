@@ -110,8 +110,11 @@ namespace m2 {
 		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
 		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
 		void remove_custom_ui(int index);
+		void remove_custom_ui_deferred(int index);
 		void remove_custom_ui_dialog();
+		void remove_custom_ui_dialog_deferred();
 		void display_message(const std::string& msg, float timeout = 5.0f);
+		void remove_message();
 
 	   private:
 		void_expected init_any_player(

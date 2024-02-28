@@ -301,14 +301,23 @@ void m2::Level::add_custom_ui_dialog(RectF position_ratio, std::variant<const ui
 void m2::Level::remove_custom_ui(int index) {
 	custom_ui_state[index].second.reset();
 }
+void m2::Level::remove_custom_ui_deferred(int index) {
+	GAME.add_deferred_action([this,index]() { this->remove_custom_ui(index); });
+}
 void m2::Level::remove_custom_ui_dialog() {
 	custom_ui_dialog_state.second.reset();
 }
-
+void m2::Level::remove_custom_ui_dialog_deferred() {
+	GAME.add_deferred_action([this]() { this->remove_custom_ui_dialog(); });
+}
 void m2::Level::display_message(const std::string& msg, float timeout) {
 	message = msg;
 	message_box_ui_state->widgets[0]->disable_after = timeout;
 	message_box_ui_state->widgets[0]->enabled = true;
+}
+void m2::Level::remove_message() {
+	message.reset();
+	message_box_ui_state->widgets[0]->enabled = false;
 }
 
 m2::void_expected m2::Level::init_any_player(
