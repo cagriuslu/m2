@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <m2/Log.h>
 
 m2::expected<m2::network::Socket> m2::network::Socket::create_tcp() {
 	int socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -39,7 +40,7 @@ m2::network::Socket::~Socket() {
 	}
 }
 
-m2::void_expected m2::network::Socket::bind(uint16_t port) {
+m2::expected<bool> m2::network::Socket::bind(uint16_t port) {
 	sockaddr_in sin{};
 	sin.sin_len = sizeof(sin);
 	sin.sin_family = AF_INET;
@@ -47,11 +48,15 @@ m2::void_expected m2::network::Socket::bind(uint16_t port) {
 	sin.sin_addr.s_addr = INADDR_ANY;
 	int bind_result = ::bind(_fd, (sockaddr*) &sin, sizeof(sin));
 	if (bind_result == -1) {
-		return m2::make_unexpected(strerror(errno));
+		if (errno == EADDRINUSE) {
+			return false;
+		} else {
+			return m2::make_unexpected(strerror(errno));
+		}
 	}
 
 	_port = port;
-	return {};
+	return true;
 }
 
 m2::void_expected m2::network::Socket::listen(int queue_size) {

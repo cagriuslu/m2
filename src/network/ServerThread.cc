@@ -136,12 +136,28 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	}
 	LOG_DEBUG("Socket created");
 
-	auto bind_success = listen_socket->bind(PORT);
-	if (not bind_success) {
-		LOG_FATAL("Bind failed", bind_success.error());
+	// Try binding to the socket multiple times.
+	bool binded = false;
+	m2_repeat(32) { // The socket may linger up to 30 secs
+		auto bind_result = listen_socket->bind(PORT);
+		if (not bind_result) {
+			LOG_FATAL("Bind failed", bind_result.error());
+			return;
+		}
+		if (not *bind_result) {
+			LOG_INFO("Socket is busy, retrying");
+			m2::sdl::delay(1000);
+		} else {
+			LOG_DEBUG("Socket binded");
+			binded = true;
+			break;
+		}
+	}
+	if (not binded) {
+		LOG_FATAL("Bind failed: Address already in use");
+		abort(); // TODO remove later. Eases development.
 		return;
 	}
-	LOG_DEBUG("Socket binded");
 
 	auto listen_success = listen_socket->listen(I(server_thread->_max_connection_count));
 	if (not listen_success) {

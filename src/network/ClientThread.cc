@@ -14,6 +14,9 @@ m2::network::ClientThread::~ClientThread() {
 	DEBUG_FN();
 	set_state_locked(pb::CLIENT_QUIT);
 	_thread.join();
+
+	// Give some time for the client thread to initiate TCP shutdown
+	m2::sdl::delay(250);
 }
 
 bool m2::network::ClientThread::is_not_connected() {

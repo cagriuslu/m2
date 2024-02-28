@@ -64,6 +64,8 @@ namespace m2 {
 
 		std::optional<Level> _level;
 		int32_t _sender_id;
+		// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
+		// This is important for the server thread to not linger too much.
 		std::optional<network::ServerThread> _server_thread;
 		std::optional<network::ClientThread> _client_thread;
 		bool _server_update_necessary{};

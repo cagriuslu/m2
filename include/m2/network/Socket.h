@@ -19,22 +19,23 @@ namespace m2::network {
 		Socket& operator=(Socket&& other) noexcept;
 		~Socket();
 
-		void_expected bind(uint16_t port);
+		/// Returns true if successful. Returns false if failed due to EADDRINUSE. Otherwise, returns unexpected.
+		expected<bool> bind(uint16_t port);
 		void_expected listen(int queue_size);
 		void_expected connect(const std::string& ip_addr, uint16_t port);
 		expected<Socket> accept();
 
 		/// Returns number of bytes sent. If it's less than the length, the socket out buffer might be full.
 		/// If it's -1, EAGAIN has occured. Otherwise, error string is returned.
-		m2::expected<ssize_t> send(const uint8_t* buffer, size_t length);
-		m2::expected<ssize_t> send(const int8_t* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
-		m2::expected<ssize_t> send(const char* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
+		expected<ssize_t> send(const uint8_t* buffer, size_t length);
+		expected<ssize_t> send(const int8_t* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
+		expected<ssize_t> send(const char* buffer, size_t length) { return send(reinterpret_cast<const uint8_t*>(buffer), length); }
 
 		/// Returns the number of bytes received. If it's 0, the socket is shut down from the other side.
 		/// If it's -1, EAGAIN has occured. Otherwise, error string is returned.
-		m2::expected<ssize_t> recv(uint8_t* buffer, size_t length);
-		m2::expected<ssize_t> recv(int8_t* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
-		m2::expected<ssize_t> recv(char* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
+		expected<ssize_t> recv(uint8_t* buffer, size_t length);
+		expected<ssize_t> recv(int8_t* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
+		expected<ssize_t> recv(char* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
 
 		[[nodiscard]] int fd() const { return _fd; }
 	};
