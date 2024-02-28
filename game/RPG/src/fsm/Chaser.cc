@@ -23,8 +23,8 @@ namespace {
 	}
 }
 
-rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(ChaserMode::Idle), obj(obj), ai(ai), home_position(obj->position) {
-	init();
+rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(obj), ai(ai), home_position(obj->position) {
+	init(ChaserMode::Idle);
 }
 
 std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_signal(const ChaserFsmSignal &s) {

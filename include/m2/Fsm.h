@@ -33,18 +33,30 @@ namespace m2 {
 	template <typename StateEnum, typename SignalT>
 	class FsmBase {
 		static_assert(std::is_base_of_v<FsmSignalBase,SignalT> == true);
-		StateEnum _state;
+		std::optional<StateEnum> _state;
 		float _alarm{NAN};
 
 	protected:
-		explicit FsmBase(StateEnum initial_state) : _state(std::move(initial_state)) {}
+		FsmBase() = default;
 	public:
 		virtual ~FsmBase() = default;
 
 		/// This function should be called after construction because handle_signal virtual function is unavailable
 		/// during construction.
-		void init() {
+		void init(StateEnum initial_state) {
+			if (_state) {
+				throw M2FATAL("FSM already initialized");
+			}
+			_state = initial_state;
 			signal(SignalT{FsmSignalType::EnterState});
+		}
+
+		/// This function should be called explicityly before shutting down the finite state machine.
+		void deinit() {
+			if (_state) {
+				signal(SignalT{FsmSignalType::ExitState});
+				_state.reset();
+			}
 		}
 
 		/// Arm the alarm
@@ -78,7 +90,7 @@ namespace m2 {
 		}
 
 	protected:
-		const StateEnum& state() const { return _state; }
+		const StateEnum& state() const { return *_state; }
 
 		/// If StateEnum is returned, ExitState and EnterState signals will be called.
 		/// If std::nullopt is returned, the state stays the same.

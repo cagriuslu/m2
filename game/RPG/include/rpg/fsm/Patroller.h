@@ -14,7 +14,9 @@ namespace rpg {
 
 	class PatrollerFsm : public m2::FsmBase<PatrollerMode, PatrollerFsmSignal> {
 	public:
-		PatrollerFsm(MAYBE const m2::Object* obj, MAYBE const pb::Ai* ai) : FsmBase(PatrollerMode::Idle) {}
+		PatrollerFsm(MAYBE const m2::Object* obj, MAYBE const pb::Ai* ai) : FsmBase() {
+			init(PatrollerMode::Idle);
+		}
 
 	protected:
 		inline std::optional<PatrollerMode> handle_signal(MAYBE const PatrollerFsmSignal& s) override { return {}; }

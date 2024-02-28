@@ -2,8 +2,8 @@
 
 #include "m2/Game.h"
 
-m2::AnimationFsm::AnimationFsm(m2g::pb::AnimationType animation_type, GraphicId gfx_id) : FsmBase({}), animation(GAME.animations[animation_type]), gfx_id(gfx_id), anim_state(GAME.animations[animation_type].animation().initial_state()), state_index(0) {
-	init();
+m2::AnimationFsm::AnimationFsm(m2g::pb::AnimationType animation_type, GraphicId gfx_id) : FsmBase(), animation(GAME.animations[animation_type]), gfx_id(gfx_id), anim_state(GAME.animations[animation_type].animation().initial_state()), state_index(0) {
+	init({});
 }
 
 std::optional<m2::AnimationFsmState> m2::AnimationFsm::handle_signal(const AnimationFsmSignal& signal) {

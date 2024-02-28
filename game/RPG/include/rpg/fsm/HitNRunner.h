@@ -14,7 +14,9 @@ namespace rpg {
 
 	class HitNRunnerFsm : public m2::FsmBase<HitNRunnerMode, HitNRunnerFsmSignal> {
 	public:
-		HitNRunnerFsm(MAYBE const m2::Object* obj, MAYBE const pb::Ai* ai) : FsmBase(HitNRunnerMode::Idle) {}
+		HitNRunnerFsm(MAYBE const m2::Object* obj, MAYBE const pb::Ai* ai) : FsmBase() {
+			init(HitNRunnerMode::Idle);
+		}
 
 	protected:
 		inline std::optional<HitNRunnerMode> handle_signal(MAYBE const HitNRunnerFsmSignal& s) override { return {}; }

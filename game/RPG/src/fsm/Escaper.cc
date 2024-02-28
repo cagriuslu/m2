@@ -11,8 +11,8 @@ namespace {
 	}
 }
 
-rpg::EscaperFsm::EscaperFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(EscaperMode::Idle), obj(obj), ai(ai) {
-	init();
+rpg::EscaperFsm::EscaperFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(obj), ai(ai) {
+	init(EscaperMode::Idle);
 }
 
 std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_signal(const EscaperFsmSignal& s) {
