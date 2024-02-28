@@ -280,7 +280,6 @@ void m2::Game::execute_pre_step() {
 			}
 		}
 	}
-	execute_deferred_actions();
 }
 
 void m2::Game::update_characters() {
@@ -292,7 +291,6 @@ void m2::Game::update_characters() {
 		auto& chr = get_character_base(*character);
 		IF(chr.update)(chr);
 	}
-	execute_deferred_actions();
 }
 
 void m2::Game::execute_step() {
@@ -320,7 +318,6 @@ void m2::Game::execute_step() {
 		// moved
 		_level->pathfinder->clear_cache();
 	}
-	execute_deferred_actions();
 }
 
 void m2::Game::execute_post_step() {
@@ -338,14 +335,12 @@ void m2::Game::execute_post_step() {
 	for (const auto& [phy, _] : _level->physics) {
 		IF(phy->post_step)(*phy);
 	}
-	execute_deferred_actions();
 }
 
 void m2::Game::update_sounds() {
 	for (const auto& [sound_emitter, _] : _level->sound_emitters) {
 		IF(sound_emitter->update)(*sound_emitter);
 	}
-	execute_deferred_actions();
 }
 
 void m2::Game::execute_pre_draw() {

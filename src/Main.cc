@@ -95,6 +95,7 @@ int main(const int argc, char **argv) {
 			GAME.handle_console_event();
 			GAME.handle_menu_event();
 			GAME.handle_hud_events();
+			GAME.execute_deferred_actions();
 		}
 		BREAK_IF_QUIT();
 		GAME.reset_mouse_position();
@@ -111,10 +112,15 @@ int main(const int argc, char **argv) {
 			GAME._delta_time_s = GAME.phy_period;
 
 			GAME.execute_pre_step();
+			GAME.execute_deferred_actions();
 			GAME.update_characters();
+			GAME.execute_deferred_actions();
 			GAME.execute_step();
+			GAME.execute_deferred_actions();
 			GAME.execute_post_step();
+			GAME.execute_deferred_actions();
 			GAME.update_sounds();
+			GAME.execute_deferred_actions();
 			GAME.recalculate_directional_audio();
 		}
 		if (last_phy_count == 4) {
