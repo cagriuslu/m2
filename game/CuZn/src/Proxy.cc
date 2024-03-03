@@ -36,12 +36,12 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 	auto active_merchants = pick_active_merchants(client_count);
 	for (const auto& merchant_sprite : active_merchants) {
 		// Lookup the location of the merchant
-		auto posF = m2::VecF{_merchant_positions[merchant_sprite]} + m2::VecF{0.5f, 0.5f};
+		auto posF = m2::VecF{merchant_positions[merchant_sprite]} + m2::VecF{0.5f, 0.5f};
 		// Create merchant object
 		auto [merchant_obj, merchant_id] = m2::create_object(posF, m2g::pb::ObjectType::MERCHANT);
 		cuzn::init_merchant(merchant_obj);
 		// Store for later
-		_merchant_object_ids[merchant_sprite] = merchant_id;
+		merchant_object_ids[merchant_sprite] = merchant_id;
 	}
 
 	// Add market object
@@ -55,13 +55,13 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 
 	// Prepare active merchant license list
 	auto merchant_license_list = prepare_merchant_license_list(client_count);
-	if (merchant_license_list.size() != _merchant_object_ids.size()) {
+	if (merchant_license_list.size() != merchant_object_ids.size()) {
 		throw M2ERROR("Merchant count and merchant license count mismatch");
 	}
 	// Assign licenses to merchants
 	{
 		int i = 0;
-		for (const auto& merchant_id : _merchant_object_ids) {
+		for (const auto& merchant_id : merchant_object_ids) {
 			auto license = merchant_license_list[i++];
 			auto& merchant = LEVEL.objects[merchant_id.second];
 
@@ -107,8 +107,8 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	// Store the positions of the merchants
 	if (pb::GLOUCESTER_1 <= sprite_type && sprite_type <= pb::WARRINGTON_2) {
 		auto pos = m2::VecI{floorf(obj.position.x), floorf(obj.position.y)};
-		_merchant_positions[sprite_type] = pos;
-		_position_merchants[pos] = sprite_type;
+		merchant_positions[sprite_type] = pos;
+		position_merchants[pos] = sprite_type;
 	}
 
 	// Store the positions of the industries build locations
@@ -125,7 +125,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 			2.0f,
 			2.0f
 		};
-		_industry_positions.emplace_back(industry_position, sprite_type);
+		industry_positions.emplace_back(industry_position, sprite_type);
 	}
 }
 
@@ -209,7 +209,7 @@ std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_draw_deck(int client_count) {
 	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
 		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
 		const auto& item = GAME.get_named_item(item_type);
-		if (item.category() == pb::ITEM_CATEGORY_CARD) {
+		if (item.category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.category() == pb::ITEM_CATEGORY_LOCATION_CARD) {
 			auto card_count = static_cast<int>(item.get_attribute(count_attr));
 			draw_deck.insert(draw_deck.end(), card_count, item.type());
 		}

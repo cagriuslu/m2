@@ -6,11 +6,6 @@
 
 namespace m2g {
 	class Proxy : public m2::Proxy {
-		std::unordered_map<m2g::pb::SpriteType, m2::VecI> _merchant_positions;
-		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> _position_merchants;
-		std::unordered_map<m2g::pb::SpriteType, m2::Id> _merchant_object_ids;  // Contains only active merchants
-		std::vector<std::pair<m2::RectF, m2g::pb::SpriteType>> _industry_positions;
-
 		m2::Id _market_object_id;
 		// Only the host initializes these fields
 		std::optional<cuzn::Market < cuzn::COAL_MARKET_CAPACITY>> _coal_market;
@@ -38,6 +33,10 @@ namespace m2g {
 
 	public:
 		static Proxy& get_instance();
+		std::unordered_map<m2g::pb::SpriteType, m2::VecI> merchant_positions;
+		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> position_merchants;
+		std::unordered_map<m2g::pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
+		std::vector<std::pair<m2::RectF, m2g::pb::SpriteType>> industry_positions;
 		std::optional<std::variant<cuzn::BuildJourney>> user_journey;
 		static void user_journey_deleter();
 	};

@@ -47,7 +47,15 @@ Blueprint cuzn::generate_cards_window(bool return_selection) {
 					[](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
 						TextListSelectionBlueprint::Options options;
 						// Iterate over the cards of the player
-						for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_CARD);
+						for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_WILD_CARD);
+							item_it != LEVEL.player()->character().end_items(); ++item_it) {
+							options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+						}
+						for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD);
+							item_it != LEVEL.player()->character().end_items(); ++item_it) {
+							options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
+						}
+						for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_LOCATION_CARD);
 							item_it != LEVEL.player()->character().end_items(); ++item_it) {
 							options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
 						}
