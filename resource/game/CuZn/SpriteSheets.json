@@ -493,19 +493,19 @@
         {
           "type": "COTTON_MILL",
           "duplicate": {
-            "originalType": "KIDDERMINSTER_COTTON_MILL"
+            "originalType": "SPRITE_COTTON_MILL"
           }
         },
         {
           "type": "POTTERY",
           "duplicate": {
-            "originalType": "BELPER_POTTERY"
+            "originalType": "SPRITE_POTTERY"
           }
         },
         {
           "type": "MANUFACTURED_GOODS",
           "duplicate": {
-            "originalType": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_MANUFACTURED_GOODS"
           }
         },
         {
@@ -625,7 +625,7 @@
           }
         },
         {
-          "type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY",
+          "type": "SPRITE_MANUFACTURED_GOODS_BREWERY",
           "regular": {
             "rect": {
               "x": 96,
@@ -637,29 +637,40 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["MANUFACTURED_GOODS_CARD", "BREWERY_CARD"]
+          }
+        },
+        {
+          "type": "UTTOXETER_MANUFACTURED_GOODS_BREWERY",
+          "duplicate": {
+            "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
+            "additionalNamedItems": ["UTTOXETER_CARD"]
           }
         },
         {
           "type": "STAFFORD_MANUFACTURED_GOODS_BREWERY",
           "duplicate": {
-            "originalType": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
+            "additionalNamedItems": ["STAFFORD_CARD"]
           }
         },
         {
           "type": "WALSALL_MANUFACTURED_GOODS_BREWERY",
           "duplicate": {
-            "originalType": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
+            "additionalNamedItems": ["WALSALL_CARD"]
           }
         },
         {
           "type": "NUNEATON_MANUFACTURED_GOODS_BREWERY",
           "duplicate": {
-            "originalType": "UTTOXETER_MANUFACTURED_GOODS_BREWERY"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_BREWERY",
+            "additionalNamedItems": ["NUNEATON_CARD"]
           }
         },
         {
-          "type": "STONE_MANUFACTURED_GOODS_COAL_MINE",
+          "type": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
           "regular": {
             "rect": {
               "x": 128,
@@ -671,41 +682,54 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["MANUFACTURED_GOODS_CARD", "COAL_MINE_CARD"]
+          }
+        },
+        {
+          "type": "STONE_MANUFACTURED_GOODS_COAL_MINE",
+          "duplicate": {
+            "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
+            "additionalNamedItems": ["STONE_CARD"]
           }
         },
         {
           "type": "BURTON_UPON_TRENT_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
-            "originalType": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
+            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD"]
           }
         },
         {
           "type": "CANNOCK_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
-            "originalType": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
+            "additionalNamedItems": ["CANNOCK_CARD"]
           }
         },
         {
           "type": "WOLFERHAMPTON_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
-            "originalType": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
+            "additionalNamedItems": ["WOLFERHAMPTON_CARD"]
           }
         },
         {
           "type": "COVENTRY_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
-            "originalType": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
+            "additionalNamedItems": ["COVENTRY_CARD"]
           }
         },
         {
           "type": "REDDITCH_MANUFACTURED_GOODS_COAL_MINE",
           "duplicate": {
-            "originalType": "STONE_MANUFACTURED_GOODS_COAL_MINE"
+            "originalType": "SPRITE_MANUFACTURED_GOODS_COAL_MINE",
+            "additionalNamedItems": ["REDDITCH_CARD"]
           }
         },
         {
-          "type": "STOKE_ON_TRENT_MANUFACTURED_GOODS",
+          "type": "SPRITE_MANUFACTURED_GOODS",
           "regular": {
             "rect": {
               "y": 208,
@@ -716,29 +740,40 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["MANUFACTURED_GOODS_CARD"]
+          }
+        },
+        {
+          "type": "STOKE_ON_TRENT_MANUFACTURED_GOODS",
+          "duplicate": {
+            "originalType": "SPRITE_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["STOKE_ON_TRENT_CARD"]
           }
         },
         {
           "type": "WOLFERHAMPTON_MANUFACTURED_GOODS",
           "duplicate": {
-            "originalType": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["WOLFERHAMPTON_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_MANUFACTURED_GOODS_1",
           "duplicate": {
-            "originalType": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["BIRMINGHAM_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_MANUFACTURED_GOODS_2",
           "duplicate": {
-            "originalType": "STOKE_ON_TRENT_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["BIRMINGHAM_CARD"]
           }
         },
         {
-          "type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS",
+          "type": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
           "regular": {
             "rect": {
               "x": 160,
@@ -750,35 +785,47 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["COTTON_MILL_CARD", "MANUFACTURED_GOODS_CARD"]
+          }
+        },
+        {
+          "type": "BELPER_COTTON_MILL_MANUFACTURED_GOODS",
+          "duplicate": {
+            "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["BELPER_CARD"]
           }
         },
         {
           "type": "DERBY_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
-            "originalType": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["DERBY_CARD"]
           }
         },
         {
           "type": "LEEK_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
-            "originalType": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["LEEK_CARD"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
-            "originalType": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["STOKE_ON_TRENT_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_COTTON_MILL_MANUFACTURED_GOODS",
           "duplicate": {
-            "originalType": "BELPER_COTTON_MILL_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_COTTON_MILL_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["BIRMINGHAM_CARD"]
           }
         },
         {
-          "type": "DERBY_COTTON_MILL_BREWERY",
+          "type": "SPRITE_COTTON_MILL_BREWERY",
           "regular": {
             "rect": {
               "x": 128,
@@ -790,23 +837,33 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["COTTON_MILL_CARD", "BREWERY_CARD"]
+          }
+        },
+        {
+          "type": "DERBY_COTTON_MILL_BREWERY",
+          "duplicate": {
+            "originalType": "SPRITE_COTTON_MILL_BREWERY",
+            "additionalNamedItems": ["DERBY_CARD"]
           }
         },
         {
           "type": "STONE_COTTON_MILL_BREWERY",
           "duplicate": {
-            "originalType": "DERBY_COTTON_MILL_BREWERY"
+            "originalType": "SPRITE_COTTON_MILL_BREWERY",
+            "additionalNamedItems": ["STONE_CARD"]
           }
         },
         {
           "type": "UTTOXETER_COTTON_MILL_BREWERY",
           "duplicate": {
-            "originalType": "DERBY_COTTON_MILL_BREWERY"
+            "originalType": "SPRITE_COTTON_MILL_BREWERY",
+            "additionalNamedItems": ["UTTOXETER_CARD"]
           }
         },
         {
-          "type": "LEEK_COTTON_MILL_COAL_MINE",
+          "type": "SPRITE_COTTON_MILL_COAL_MINE",
           "regular": {
             "rect": {
               "x": 96,
@@ -818,35 +875,47 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["COTTON_MILL_CARD", "COAL_MINE_CARD"]
+          }
+        },
+        {
+          "type": "LEEK_COTTON_MILL_COAL_MINE",
+          "duplicate": {
+            "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
+            "additionalNamedItems": ["LEEK_CARD"]
           }
         },
         {
           "type": "TAMWORTH_COTTON_MILL_COAL_MINE_1",
           "duplicate": {
-            "originalType": "LEEK_COTTON_MILL_COAL_MINE"
+            "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
+            "additionalNamedItems": ["TAMWORTH_CARD"]
           }
         },
         {
           "type": "TAMWORTH_COTTON_MILL_COAL_MINE_2",
           "duplicate": {
-            "originalType": "LEEK_COTTON_MILL_COAL_MINE"
+            "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
+            "additionalNamedItems": ["TAMWORTH_CARD"]
           }
         },
         {
           "type": "KIDDERMINSTER_COTTON_MILL_COAL_MINE",
           "duplicate": {
-            "originalType": "LEEK_COTTON_MILL_COAL_MINE"
+            "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
+            "additionalNamedItems": ["KIDDERMINSTER_CARD"]
           }
         },
         {
           "type": "NUNEATON_COTTON_MILL_COAL_MINE",
           "duplicate": {
-            "originalType": "LEEK_COTTON_MILL_COAL_MINE"
+            "originalType": "SPRITE_COTTON_MILL_COAL_MINE",
+            "additionalNamedItems": ["NUNEATON_CARD"]
           }
         },
         {
-          "type": "KIDDERMINSTER_COTTON_MILL",
+          "type": "SPRITE_COTTON_MILL",
           "regular": {
             "rect": {
               "y": 272,
@@ -857,23 +926,33 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["COTTON_MILL_CARD"]
+          }
+        },
+        {
+          "type": "KIDDERMINSTER_COTTON_MILL",
+          "duplicate": {
+            "originalType": "SPRITE_COTTON_MILL",
+            "additionalNamedItems": ["KIDDERMINSTER_CARD"]
           }
         },
         {
           "type": "WORCESTER_COTTON_MILL_1",
           "duplicate": {
-            "originalType": "KIDDERMINSTER_COTTON_MILL"
+            "originalType": "SPRITE_COTTON_MILL",
+            "additionalNamedItems": ["WORCESTER_CARD"]
           }
         },
         {
           "type": "WORCESTER_COTTON_MILL_2",
           "duplicate": {
-            "originalType": "KIDDERMINSTER_COTTON_MILL"
+            "originalType": "SPRITE_COTTON_MILL",
+            "additionalNamedItems": ["WORCESTER_CARD"]
           }
         },
         {
-          "type": "BURTON_UPON_TRENT_BREWERY",
+          "type": "SPRITE_BREWERY",
           "regular": {
             "rect": {
               "y": 176,
@@ -884,23 +963,33 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["BREWERY_CARD"]
+          }
+        },
+        {
+          "type": "BURTON_UPON_TRENT_BREWERY",
+          "duplicate": {
+            "originalType": "SPRITE_BREWERY",
+            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD"]
           }
         },
         {
           "type": "STANDALONE_BREWERY_1",
           "duplicate": {
-            "originalType": "BURTON_UPON_TRENT_BREWERY"
+            "originalType": "SPRITE_BREWERY",
+            "additionalNamedItems": ["STANDALONE_LOCATION_1_CARD"]
           }
         },
         {
           "type": "STANDALONE_BREWERY_2",
           "duplicate": {
-            "originalType": "BURTON_UPON_TRENT_BREWERY"
+            "originalType": "SPRITE_BREWERY",
+            "additionalNamedItems": ["STANDALONE_LOCATION_2_CARD"]
           }
         },
         {
-          "type": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS",
+          "type": "SPRITE_IRON_WORKS_MANUFACTURED_GOODS",
           "regular": {
             "rect": {
               "x": 128,
@@ -912,17 +1001,26 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["IRON_WORKS_CARD", "MANUFACTURED_GOODS_CARD"]
+          }
+        },
+        {
+          "type": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS",
+          "duplicate": {
+            "originalType": "SPRITE_IRON_WORKS_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["WALSALL_CARD"]
           }
         },
         {
           "type": "COVENTRY_IRON_WORKS_MANUFACTURED_GOODS",
           "duplicate": {
-            "originalType": "WALSALL_IRON_WORKS_MANUFACTURED_GOODS"
+            "originalType": "SPRITE_IRON_WORKS_MANUFACTURED_GOODS",
+            "additionalNamedItems": ["COVENTRY_CARD"]
           }
         },
         {
-          "type": "COALBROOKEDALE_IRON_WORKS_BREWERY",
+          "type": "SPRITE_IRON_WORKS_BREWERY",
           "regular": {
             "rect": {
               "x": 96,
@@ -934,11 +1032,19 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["IRON_WORKS_CARD", "BREWERY_CARD"]
           }
         },
         {
-          "type": "DERBY_IRON_WORKS",
+          "type": "COALBROOKEDALE_IRON_WORKS_BREWERY",
+          "duplicate": {
+            "originalType": "SPRITE_IRON_WORKS_BREWERY",
+            "additionalNamedItems": ["COALBROOKEDALE_CARD"]
+          }
+        },
+        {
+          "type": "SPRITE_IRON_WORKS",
           "regular": {
             "rect": {
               "y": 240,
@@ -949,35 +1055,47 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["IRON_WORKS_CARD"]
+          }
+        },
+        {
+          "type": "DERBY_IRON_WORKS",
+          "duplicate": {
+            "originalType": "SPRITE_IRON_WORKS",
+            "additionalNamedItems": ["DERBY_CARD"]
           }
         },
         {
           "type": "COALBROOKEDALE_IRON_WORKS",
           "duplicate": {
-            "originalType": "DERBY_IRON_WORKS"
+            "originalType": "SPRITE_IRON_WORKS",
+            "additionalNamedItems": ["COALBROOKEDALE_CARD"]
           }
         },
         {
           "type": "DUDLEY_IRON_WORKS",
           "duplicate": {
-            "originalType": "DERBY_IRON_WORKS"
+            "originalType": "SPRITE_IRON_WORKS",
+            "additionalNamedItems": ["DUDLEY_CARD"]
           }
         },
         {
           "type": "BIRMINGHAM_IRON_WORKS",
           "duplicate": {
-            "originalType": "DERBY_IRON_WORKS"
+            "originalType": "SPRITE_IRON_WORKS",
+            "additionalNamedItems": ["BIRMINGHAM_CARD"]
           }
         },
         {
           "type": "REDDITCH_IRON_WORKS",
           "duplicate": {
-            "originalType": "DERBY_IRON_WORKS"
+            "originalType": "SPRITE_IRON_WORKS",
+            "additionalNamedItems": ["REDDITCH_CARD"]
           }
         },
         {
-          "type": "STOKE_ON_TRENT_POTTERY_IRON_WORKS",
+          "type": "SPRITE_POTTERY_IRON_WORKS",
           "regular": {
             "rect": {
               "x": 96,
@@ -989,11 +1107,19 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["POTTERY_CARD", "IRON_WORKS_CARD"]
           }
         },
         {
-          "type": "BELPER_POTTERY",
+          "type": "STOKE_ON_TRENT_POTTERY_IRON_WORKS",
+          "duplicate": {
+            "originalType": "SPRITE_POTTERY_IRON_WORKS",
+            "additionalNamedItems": ["STOKE_ON_TRENT_CARD"]
+          }
+        },
+        {
+          "type": "SPRITE_POTTERY",
           "regular": {
             "rect": {
               "y": 304,
@@ -1004,19 +1130,29 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["POTTERY_CARD"]
+          }
+        },
+        {
+          "type": "BELPER_POTTERY",
+          "duplicate": {
+            "originalType": "SPRITE_POTTERY",
+            "additionalNamedItems": ["BELPER_CARD"]
           }
         },
         {
           "type": "STAFFORD_POTTERY",
           "duplicate": {
-            "originalType": "BELPER_POTTERY"
+            "originalType": "SPRITE_POTTERY",
+            "additionalNamedItems": ["STAFFORD_CARD"]
           }
         },
         {
           "type": "COVENTRY_POTTERY",
           "duplicate": {
-            "originalType": "BELPER_POTTERY"
+            "originalType": "SPRITE_POTTERY",
+            "additionalNamedItems": ["COVENTRY_CARD"]
           }
         },
         {
@@ -1248,7 +1384,7 @@
           }
         },
         {
-          "type": "BELPER_COAL_MINE",
+          "type": "SPRITE_COAL_MINE",
           "regular": {
             "rect": {
               "y": 144,
@@ -1259,25 +1395,36 @@
               "x": -8,
               "y": -8
             },
-            "isBackgroundTile": true
+            "isBackgroundTile": true,
+            "namedItems": ["COAL_MINE_CARD"]
+          }
+        },
+        {
+          "type": "BELPER_COAL_MINE",
+          "duplicate": {
+            "originalType": "SPRITE_COAL_MINE",
+            "additionalNamedItems": ["BELPER_CARD"]
           }
         },
         {
           "type": "CANNOCK_COAL_MINE",
           "duplicate": {
-            "originalType": "BELPER_COAL_MINE"
+            "originalType": "SPRITE_COAL_MINE",
+            "additionalNamedItems": ["CANNOCK_CARD"]
           }
         },
         {
           "type": "COALBROOKEDALE_COAL_MINE",
           "duplicate": {
-            "originalType": "BELPER_COAL_MINE"
+            "originalType": "SPRITE_COAL_MINE",
+            "additionalNamedItems": ["COALBROOKEDALE_CARD"]
           }
         },
         {
           "type": "DUDLEY_COAL_MINE",
           "duplicate": {
-            "originalType": "BELPER_COAL_MINE"
+            "originalType": "SPRITE_COAL_MINE",
+            "additionalNamedItems": ["DUDLEY_CARD"]
           }
         }
       ]
