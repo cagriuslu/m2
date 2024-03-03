@@ -120,6 +120,7 @@ namespace m2 {
 		[[nodiscard]] VecF foreground_collider_rect_dims_m() const { return _foreground_collider_rect_dims_m; }
 		[[nodiscard]] float foreground_collider_circ_radius_m() const { return _foreground_collider_circ_radius_m; }
 		[[nodiscard]] inline bool is_background_tile() const { return _is_background_tile; }
+		[[nodiscard]] const std::vector<m2g::pb::ItemType>& named_items() const { return _named_items; }
 
 		SDL_Texture* texture(DrawVariant draw_variant) const;
 		VecF texture_total_dimensions(DrawVariant draw_variant) const;
