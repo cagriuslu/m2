@@ -20,15 +20,20 @@ namespace m2 {
 		static inline RectF centered_around(const VecF& center, float w, float h) { return {center.x - w / 2.0f, center.y - h / 2.0f, w, h}; }
 		static RectF from_corners(const VecF& corner1, const VecF& corner2);
 
+		// Operators
 		explicit operator bool() const;
 		explicit operator SDL_FRect() const;
 		explicit operator SDL_Rect() const;
+
+		// Accessors
 		[[nodiscard]] inline VecF top_left() const { return VecF{x, y}; }
 		[[nodiscard]] inline VecF top_right() const { return VecF{x + w, y}; }
 		[[nodiscard]] inline VecF bottom_left() const { return VecF{x, y + h}; }
 		[[nodiscard]] inline VecF bottom_right() const { return VecF{x + w, y + h}; }
-
 		[[nodiscard]] float area() const;
+		[[nodiscard]] bool point_in_rect(const VecF&) const;
+
+		// Immutable modifiers
 		[[nodiscard]] RectF shift(const VecF& direction) const; // Shifts the rect
 		[[nodiscard]] RectF shift_origin(const VecF& direction) const; // Shifts the origin of the coordinate system
 		[[nodiscard]] RectF expand(float amount) const;

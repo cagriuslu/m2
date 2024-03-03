@@ -31,6 +31,10 @@ m2::RectF::operator SDL_Rect() const {
 float m2::RectF::area() const {
 	return w * h;
 }
+bool m2::RectF::point_in_rect(const VecF& point) const {
+	return (point.x >= x) && (point.x <= (x + w)) && (point.y >= y) && (point.y <= (y + h));
+}
+
 m2::RectF m2::RectF::shift(const VecF& direction) const {
 	return {x + direction.x, y + direction.y, w, h};
 }
