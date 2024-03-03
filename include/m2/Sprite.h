@@ -72,6 +72,7 @@ namespace m2 {
 		VecF _foreground_collider_rect_dims_m;
 		float _foreground_collider_circ_radius_m{};
 		bool _is_background_tile{};
+		std::vector<m2g::pb::ItemType> _named_items;
 
 		// Text label
 		std::optional<sdl::FontTexture> _font_texture;

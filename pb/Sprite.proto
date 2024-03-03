@@ -5,6 +5,7 @@ import "m2g_SpriteType.proto";
 import "RectI.proto";
 import "VecF.proto";
 import "Dim2f.proto";
+import "m2g_ItemType.proto";
 
 message Color {
   uint32 r = 1;
@@ -73,10 +74,16 @@ message RegularSprite {
   VecF foreground_companion_center_to_origin_vec_px = 9;
   // w.r.t SpriteSheet coordinates
   repeated RectI foreground_companion_rects = 10;
+
+  // Sprites can hold immutable items just to simplify attribute lookup
+  repeated m2g.pb.ItemType named_items = 11;
 }
 
 message Duplicate {
   m2g.pb.SpriteType original_type = 1;
+
+  // Sprites can hold immutable items just to simplify attribute lookup
+  repeated m2g.pb.ItemType additional_named_items = 2;
 }
 
 message Sprite {

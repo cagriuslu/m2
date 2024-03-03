@@ -229,6 +229,16 @@ m2::Sprite::Sprite(
 	    original_sprite->regular().foreground_collider().circ_radius_px() / (float)_ppm;
 	_is_background_tile = original_sprite->regular().is_background_tile();
 
+	// Fill named items
+	for (const auto& named_item : original_sprite->regular().named_items()) {
+		_named_items.emplace_back(static_cast<m2g::pb::ItemType>(named_item));
+	}
+	if (sprite.has_duplicate()) {
+		for (const auto& named_item : sprite.duplicate().additional_named_items()) {
+			_named_items.emplace_back(static_cast<m2g::pb::ItemType>(named_item));
+		}
+	}
+
 	// Create foreground companion
 	if (original_sprite->has_regular() && original_sprite->regular().foreground_companion_rects_size()) {
 		_foreground_companion_sprite_effects_sheet_rect = sprite_effects_sheet.create_foreground_companion_effect(
