@@ -89,3 +89,40 @@ Blueprint cuzn::generate_cards_window(bool return_selection) {
 		}
 	};
 }
+
+m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
+	return Blueprint{
+		.w = 60, .h = 40,
+		.border_width_px = 1,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			WidgetBlueprint{
+				.x = 57, .y = 0, .w = 3, .h = 3,
+				.variant = TextBlueprint{
+					.initial_text = "X",
+					.on_action = [](MAYBE const Text& self) -> Action {
+						return make_return_action<m2::Void>();
+					}
+				}
+			},
+			WidgetBlueprint{
+				.x = 5, .y = 14, .w = 50, .h = 5,
+				.variant = TextBlueprint{
+					.initial_text = m2g::pb::ItemType_Name(industry_1),
+					.on_action = [industry_1](MAYBE const Text& self) -> Action {
+						return make_return_action<m2g::pb::ItemType>(industry_1);
+					}
+				}
+			},
+			WidgetBlueprint{
+				.x = 5, .y = 21, .w = 50, .h = 5,
+				.variant = TextBlueprint{
+					.initial_text = m2g::pb::ItemType_Name(industry_2),
+					.on_action = [industry_2](MAYBE const Text& self) -> Action {
+						return make_return_action<m2g::pb::ItemType>(industry_2);
+					}
+				}
+			}
+		}
+	};
+}
