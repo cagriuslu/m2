@@ -10,14 +10,21 @@
 
 namespace m2 {
 	using Id = uint64_t;
-
     extern uint16_t g_pool_id;
+
+	// Transformers
+	constexpr auto to_only_data = [](const auto &pair) { return pair.first; };
+	constexpr auto to_only_id = [](const auto &pair) { return pair.second; };
 
     template <typename T, uint64_t Capacity = 65536>
     struct Pool {
         static_assert(Capacity <= 16777216);
 
         struct Iterator {
+			using iterator_category = std::forward_iterator_tag;
+			using value_type = std::pair<T*,Id>;
+			using difference_type = std::ptrdiff_t;
+
             Pool<T,Capacity>* pool{};
             T* data{};
             Id id{};
@@ -45,7 +52,7 @@ namespace m2 {
             bool operator==(const Iterator& other) const {
                 return id == other.id;
             }
-            std::pair<T*,Id> operator*() {
+            std::pair<T*,Id> operator*() const {
                 return {data, id};
             }
         };

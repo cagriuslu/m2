@@ -2,6 +2,9 @@
 #include "Exception.h"
 #include <tl/expected.hpp>
 #include <string>
+#include <vector>
+#include <set>
+#include <ranges>
 
 #define DEFAULT_OVERLOAD [](MAYBE const auto& _){}
 
@@ -31,6 +34,18 @@ namespace m2 {
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+	// Converts a range into an std::vector
+	template<std::ranges::range R>
+	constexpr auto to_vector(R&& r) {
+		using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
+		return std::vector<elem_t>{r.begin(), r.end()};
+	}
+	template<std::ranges::range R>
+	constexpr auto to_set(R&& r) {
+		using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
+		return std::set<elem_t>{r.begin(), r.end()};
+	}
 
 	template <typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>
 	OutputIt transform_copy_if(InputIt first, InputIt last, OutputIt destination, UnaryPredicate predicate, UnaryOperation operation) {

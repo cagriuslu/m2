@@ -4,6 +4,8 @@
 #include <m2/protobuf/Detail.h>
 #include <cstdlib>
 
+static_assert(std::forward_iterator<m2::Pool<m2::CharacterVariant>::Iterator>);
+
 float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
 	if (max_amount < 0.0f) {
 		throw M2ERROR("Negative max resource");
@@ -389,6 +391,18 @@ int m2::FullCharacter::attribute_type_index(m2g::pb::AttributeType attribute_typ
 	return pb::enum_index<m2g::pb::AttributeType>(attribute_type);
 }
 
+const m2::Character& m2::get_character_base(const CharacterVariant& v) {
+	return *get_character_base(&v);
+}
+const m2::Character* m2::get_character_base(const CharacterVariant* v) {
+	if (!v) {
+		return nullptr;
+	}
+	return std::visit(overloaded {
+		[](const TinyCharacter& v) -> const Character* { return &v; },
+		[](const FullCharacter& v) -> const Character* { return &v; },
+	}, *v);
+}
 m2::Character& m2::get_character_base(CharacterVariant& v) {
 	return *get_character_base(&v);
 }
@@ -400,4 +414,8 @@ m2::Character* m2::get_character_base(CharacterVariant* v) {
 			[](TinyCharacter& v) -> Character* { return &v; },
 			[](FullCharacter& v) -> Character* { return &v; },
 	}, *v);
+}
+
+m2::Character* m2::to_character_base(CharacterVariant* v) {
+	return get_character_base(v);
 }

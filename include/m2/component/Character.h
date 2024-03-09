@@ -191,6 +191,11 @@ namespace m2 {
 	};
 
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
+	const Character& get_character_base(const CharacterVariant& v);
+	const Character* get_character_base(const CharacterVariant* v);
 	Character& get_character_base(CharacterVariant& v);
 	Character* get_character_base(CharacterVariant* v);
+
+	// Transformer
+	Character* to_character_base(CharacterVariant* v);
 }

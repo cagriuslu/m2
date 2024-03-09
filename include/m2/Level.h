@@ -42,8 +42,7 @@ namespace m2 {
 		DrawList draw_list;
 		Pool<Physique> physics;
 		Pool<Graphic> graphics;
-		std::array<Pool<Graphic>, static_cast<int>(BackgroundLayer::n)>
-		    terrain_graphics;  // First pool is the front-most terrain
+		std::array<Pool<Graphic>, static_cast<int>(BackgroundLayer::n)> terrain_graphics;  // First pool is the front-most terrain
 		Pool<Light> lights;
 		Pool<SoundEmitter> sound_emitters;
 		Pool<CharacterVariant> characters;

@@ -33,10 +33,14 @@ namespace m2g {
 
 	public:
 		static Proxy& get_instance();
+
+		// Once the level is created, these should not be modified.
 		std::unordered_map<m2g::pb::SpriteType, m2::VecI> merchant_positions;
 		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> position_merchants;
 		std::unordered_map<m2g::pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
 		std::vector<std::pair<m2::RectF, m2g::pb::SpriteType>> industry_positions;
+		std::unordered_map<m2g::pb::SpriteType, m2::RectF> position_industries;
+
 		std::optional<std::variant<cuzn::BuildJourney>> user_journey;
 		static void user_journey_deleter();
 	};
