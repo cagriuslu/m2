@@ -5,7 +5,7 @@ std::vector<std::string> m2::to_argument_list(int argc, char** argv) {
 	std::vector<std::string> list;
 	for (int i = 1; i < argc; ++i) {
 		std::string arg{argv[i]};
-		LOG_INFO("Argument: ", arg);
+		LOG_INFO("Argument", arg);
 		list.emplace_back(std::move(arg));
 	}
 	return list;
