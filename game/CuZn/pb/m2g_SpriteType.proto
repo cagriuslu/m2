@@ -4,7 +4,7 @@ package m2g.pb;
 enum SpriteType {
   NO_SPRITE = 0;
 
-  // Industry visuals, these sprites are duplicated by each location
+  // Industry visuals, these sprites are duplicated by each industry location
   SPRITE_BREWERY = 1;
   SPRITE_COAL_MINE = 2;
   SPRITE_COTTON_MILL = 3;

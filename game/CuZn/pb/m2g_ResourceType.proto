@@ -6,9 +6,10 @@ enum ResourceType {
 
   // For HUMAN_PLAYERs
   MONEY = 1;
+  ERA = 2;
 
   // For TILEs and MERCHANTs
-  COAL_CUBE_COUNT = 2;
-  IRON_CUBE_COUNT = 3;
-  BEER_BARREL_COUNT = 4;
+  COAL_CUBE_COUNT = 3;
+  IRON_CUBE_COUNT = 4;
+  BEER_BARREL_COUNT = 5;
 }

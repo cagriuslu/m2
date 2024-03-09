@@ -149,7 +149,7 @@
     },
     {
       "type": "BELPER_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -167,7 +167,7 @@
     },
     {
       "type": "DERBY_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -185,7 +185,7 @@
     },
     {
       "type": "LEEK_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -203,7 +203,7 @@
     },
     {
       "type": "STOKE_ON_TRENT_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -221,7 +221,7 @@
     },
     {
       "type": "STONE_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -239,7 +239,7 @@
     },
     {
       "type": "UTTOXETER_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -257,7 +257,7 @@
     },
     {
       "type": "STAFFORD_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -275,7 +275,7 @@
     },
     {
       "type": "BURTON_UPON_TRENT_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -293,7 +293,7 @@
     },
     {
       "type": "CANNOCK_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -311,7 +311,7 @@
     },
     {
       "type": "TAMWORTH_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -329,7 +329,7 @@
     },
     {
       "type": "WALSALL_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -347,7 +347,7 @@
     },
     {
       "type": "COALBROOKEDALE_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -365,7 +365,7 @@
     },
     {
       "type": "DUDLEY_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -383,7 +383,7 @@
     },
     {
       "type": "KIDDERMINSTER_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -401,7 +401,7 @@
     },
     {
       "type": "WOLFERHAMPTON_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -419,7 +419,7 @@
     },
     {
       "type": "WORCESTER_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -437,7 +437,7 @@
     },
     {
       "type": "BIRMINGHAM_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -455,7 +455,7 @@
     },
     {
       "type": "COVENTRY_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -473,7 +473,7 @@
     },
     {
       "type": "NUNEATON_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -491,7 +491,7 @@
     },
     {
       "type": "REDDITCH_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD",
       "attributes": [
         {
           "type": "COUNT_IN_2_PLAYER_GAME",
@@ -509,39 +509,31 @@
     },
     {
       "type": "STANDALONE_LOCATION_1_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
-      "attributes": [
-        {
-          "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
-        },
-        {
-          "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 0.0
-        },
-        {
-          "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 0.0
-        }
-      ]
+      "category": "ITEM_CATEGORY_CITY_CARD"
     },
     {
       "type": "STANDALONE_LOCATION_2_CARD",
-      "category": "ITEM_CATEGORY_LOCATION_CARD",
-      "attributes": [
-        {
-          "type": "COUNT_IN_2_PLAYER_GAME",
-          "amount": 0.0
-        },
-        {
-          "type": "COUNT_IN_3_PLAYER_GAME",
-          "amount": 0.0
-        },
-        {
-          "type": "COUNT_IN_4_PLAYER_GAME",
-          "amount": 0.0
-        }
-      ]
+      "category": "ITEM_CATEGORY_CITY_CARD"
+    },
+    {
+      "type": "GLOUCESTER_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD"
+    },
+    {
+      "type": "SHREWSBURY_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD"
+    },
+    {
+      "type": "OXFORD_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD"
+    },
+    {
+      "type": "NOTTINGHAM_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD"
+    },
+    {
+      "type": "WARRINGTON_CARD",
+      "category": "ITEM_CATEGORY_CITY_CARD"
     },
     {
       "type": "COTTON_MILL_MERCHANT_LICENSE",

@@ -17,17 +17,10 @@ namespace m2 {
     struct Pool {
         static_assert(Capacity <= 16777216);
 
-        struct Item {
-            T data;
-			// If allocated: 0(16bit) | key(24bit) | index(24bit)
-			// Else: 0(16bit) | 0(24bit) | nextFreeIndex(24bit)
-            Id id;
-        };
-
         struct Iterator {
-            Pool<T,Capacity> *pool;
-            T* data;
-            Id id;
+            Pool<T,Capacity>* pool{};
+            T* data{};
+            Id id{};
 
             Iterator& operator++() {
                 const uint64_t curr_index = id & 0xFFFFFFull;
@@ -44,6 +37,11 @@ namespace m2 {
                 id = 0;
                 return *this;
             }
+			Iterator operator++(int) {
+				auto temp = *this;
+				++*this;
+				return temp;
+			}
             bool operator==(const Iterator& other) const {
                 return id == other.id;
             }
@@ -51,7 +49,12 @@ namespace m2 {
                 return {data, id};
             }
         };
-
+		struct Item {
+			T data;
+			// If allocated: 0(16bit) | key(24bit) | index(24bit)
+			// Else: 0(16bit) | 0(24bit) | nextFreeIndex(24bit)
+			Id id;
+		};
 		struct Array {
 			std::array<Item,Capacity> array;
 			inline Array() {
@@ -79,8 +82,8 @@ namespace m2 {
 	    uint64_t _highest_allocated_index{0};
 	    uint64_t _lowest_allocated_index{0};
 	    uint64_t _next_free_index{0};
-    public:
 
+    public:
         Pool() {
 			if (g_pool_id == 0) {
 				LOG_WARN("Pool ID overflowed");

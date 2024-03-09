@@ -209,7 +209,7 @@ std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_draw_deck(int client_count) {
 	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
 		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
 		const auto& item = GAME.get_named_item(item_type);
-		if (item.category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.category() == pb::ITEM_CATEGORY_LOCATION_CARD) {
+		if (item.category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.category() == pb::ITEM_CATEGORY_CITY_CARD) {
 			auto card_count = static_cast<int>(item.get_attribute(count_attr));
 			draw_deck.insert(draw_deck.end(), card_count, item.type());
 		}

@@ -55,7 +55,7 @@ Blueprint cuzn::generate_cards_window(bool return_selection) {
 							item_it != LEVEL.player()->character().end_items(); ++item_it) {
 							options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
 						}
-						for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_LOCATION_CARD);
+						for (auto item_it = LEVEL.player()->character().find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD);
 							item_it != LEVEL.player()->character().end_items(); ++item_it) {
 							options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
 						}
