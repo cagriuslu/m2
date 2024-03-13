@@ -48,10 +48,6 @@ namespace m2::ui {
 	Action make_return_action(T value) {
 		return std::make_unique<Return<T>>(std::forward<T>(value));
 	}
-	template <typename T>
-	Action make_return_action(T&& value) {
-		return std::make_unique<Return<T>>(std::forward<T>(value));
-	}
 	inline bool is_return(const Action& action) { return dynamic_cast<const ReturnBase*>(action.get()); }
 	template <typename T>
 	inline const Return<T>& as_return(const Action& action) {
