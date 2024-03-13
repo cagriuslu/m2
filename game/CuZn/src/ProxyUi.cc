@@ -228,7 +228,16 @@ const Blueprint left_hud_blueprint = {
 	.background_color = {0, 0, 0, 255},
 	.widgets = {
 		WidgetBlueprint{
-			.x = 2, .y = 2, .w = 15, .h = 6, .variant = TextBlueprint{.initial_text = "Build", .font_size = 4.5f}
+			.x = 2, .y = 2, .w = 15, .h = 6,
+			.variant = TextBlueprint{
+				.initial_text = "Build",
+				.font_size = 4.5f,
+				.on_action = [](MAYBE const Text& self) -> Action {
+					LOG_INFO("Beginning BuildJourney");
+					m2g::Proxy::get_instance().user_journey.emplace(cuzn::BuildJourney{});
+					return make_continue_action();
+				}
+			}
 		},
 		WidgetBlueprint{
 			.x = 2, .y = 9, .w = 15, .h = 6, .variant = TextBlueprint{.initial_text = "Network", .font_size = 4.5f}
@@ -279,7 +288,6 @@ const Blueprint tiles_blueprint = {
 			TextBlueprint{
 				.initial_text = "X",
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					LEVEL.remove_custom_ui_dialog_deferred();
 					return make_return_action<m2::Void>();
 				}
 			}

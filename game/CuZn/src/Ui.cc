@@ -9,7 +9,7 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Blueprint cuzn::generate_cards_window(bool return_selection) {
+Blueprint cuzn::generate_cards_window(bool has_return_button) {
 	return Blueprint{
 		.w = 60,
 		.h = 40,
@@ -24,11 +24,7 @@ Blueprint cuzn::generate_cards_window(bool return_selection) {
 				.variant =
 				TextBlueprint{
 					.initial_text = "X",
-					.on_action = [return_selection](MAYBE const Text& self) -> Action {
-						if (not return_selection) {
-							// Remove self from custom UI dialog
-							LEVEL.remove_custom_ui_dialog_deferred();
-						}
+					.on_action = [](MAYBE const Text& self) -> Action {
 						return make_return_action<m2::Void>();
 					}
 				}
@@ -65,7 +61,7 @@ Blueprint cuzn::generate_cards_window(bool return_selection) {
 			},
 			// TODO Card details
 			WidgetBlueprint{
-				.initially_enabled = return_selection,
+				.initially_enabled = has_return_button,
 				.x = 40,
 				.y = 30,
 				.w = 15,
@@ -120,6 +116,71 @@ m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType ind
 					.initial_text = m2g::pb::ItemType_Name(industry_2),
 					.on_action = [industry_2](MAYBE const Text& self) -> Action {
 						return make_return_action<m2g::pb::ItemType>(industry_2);
+					}
+				}
+			}
+		}
+	};
+}
+
+m2::ui::Blueprint cuzn::generate_build_confirmation(m2g::pb::ItemType card, m2g::pb::ItemType city, m2g::pb::ItemType industry) {
+	auto card_name = GAME.get_named_item(card).in_game_name();
+	auto city_name = GAME.get_named_item(city).in_game_name();
+	auto industry_name = GAME.get_named_item(industry).in_game_name();
+	return Blueprint{
+		.w = 60, .h = 40,
+		.border_width_px = 1,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			WidgetBlueprint{
+				.x = 5, .y = 5, .w = 50, .h = 5,
+				.border_width_px = 0,
+				.variant = TextBlueprint{
+					.initial_text = "Build " + industry_name + " in " + city_name,
+					.font_size = 4.5f,
+					.alignment = m2::ui::TextAlignment::LEFT
+				}
+			},
+			WidgetBlueprint{
+				.x = 5, .y = 10, .w = 50, .h = 5,
+				.border_width_px = 0,
+				.variant = TextBlueprint{
+					.initial_text = "using " + card_name + " card?",
+					.font_size = 4.5f,
+					.alignment = m2::ui::TextAlignment::LEFT
+				}
+			},
+			WidgetBlueprint{
+				.x = 5, .y = 30, .w = 15, .h = 5,
+				.variant = TextBlueprint{
+					.initial_text = "Cancel",
+					.on_action = [](MAYBE const Text& self) -> Action {
+						// Check if a user journey is active
+						if (auto& user_journey = m2g::Proxy::get_instance().user_journey; user_journey) {
+							// Check if BuildJourney is active
+							if (std::holds_alternative<BuildJourney>(*user_journey)) {
+								// Deliver cancellation to BuildJourney
+								std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal(true));
+							}
+						}
+						return make_return_action<m2::Void>();
+					}
+				}
+			},
+			WidgetBlueprint{
+				.x = 25, .y = 30, .w = 30, .h = 5,
+				.variant = TextBlueprint{
+					.initial_text = "OK",
+					.on_action = [](MAYBE const Text& self) -> Action {
+						// Check if a user journey is active
+						if (auto& user_journey = m2g::Proxy::get_instance().user_journey; user_journey) {
+							// Check if BuildJourney is active
+							if (std::holds_alternative<BuildJourney>(*user_journey)) {
+								// Deliver cancellation to BuildJourney
+								std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal(false));
+							}
+						}
+						return make_return_action<m2::Void>();
 					}
 				}
 			}
