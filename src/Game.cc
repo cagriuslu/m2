@@ -15,6 +15,7 @@
 #include <ranges>
 
 #include "m2/component/Graphic.h"
+#include <m2/ui/Action.h>
 
 m2::Game* m2::Game::_instance;
 
@@ -249,7 +250,11 @@ void m2::Game::handle_menu_event() {
 
 void m2::Game::handle_hud_events() {
 	if (_level->custom_ui_dialog_state.second) {
-		_level->custom_ui_dialog_state.second->handle_events(events);
+		auto action = _level->custom_ui_dialog_state.second->handle_events(events);
+		if (ui::is_return(action)) {
+			// If the dialog returned, remove the state
+			_level->custom_ui_dialog_state.second.reset();
+		} // TODO handle quit
 		// If there's a UI dialog, no events will be delivered to rest of the UI states and the game world
 		events.clear();
 		// handle_events of others are executed regardless, because there may be timing related actions
@@ -258,7 +263,13 @@ void m2::Game::handle_hud_events() {
 	// The order of event handling is the reverse of the drawing order because custom_ui_states are assumed to be in
 	// front the HUDs.
 	for (auto& custom_ui : _level->custom_ui_state) { // TODO iterate backwards
-		IF(custom_ui.second)->handle_events(events);
+		if (custom_ui.second) {
+			auto action = custom_ui.second->handle_events(events);
+			if (ui::is_return(action)) {
+				// If UI returned, remove the state
+				custom_ui.second.reset();
+			} // TODO handle quit
+		}
 	}
 	IF(_level->message_box_ui_state)->handle_events(events);  // For disable_after
 	IF(_level->left_hud_ui_state)->handle_events(events);

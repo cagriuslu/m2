@@ -108,10 +108,10 @@ namespace m2 {
 		void begin_game_loop();
 		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
 		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
-		void remove_custom_ui(int index);
-		void remove_custom_ui_deferred(int index);
-		void remove_custom_ui_dialog();
-		void remove_custom_ui_dialog_deferred();
+		void remove_custom_ui(int index); // Should not be called from the UI itself
+		void remove_custom_ui_deferred(int index); // Can be called from the UI itself
+		void remove_custom_ui_dialog(); // Should not be called from the UI itself
+		void remove_custom_ui_dialog_deferred(); // Can be called from the UI itself
 		void display_message(const std::string& msg, float timeout = 5.0f);
 		void remove_message();
 
