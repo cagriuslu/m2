@@ -39,6 +39,7 @@ message Item {
   repeated Attribute attributes = 8;
   m2g.pb.SpriteType game_sprite = 9;
   m2g.pb.SpriteType ui_sprite = 10;
+  string in_game_name = 11;
 }
 
 message Items {

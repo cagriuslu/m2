@@ -55,6 +55,7 @@ enum ItemType {
   // Industry tiles
   // The order of the industry tiles should not be modified carelessly.
   // COTTON_MILL_TILEI and MANUFACTURED_GOODS_TILE_VIII are used as boundaries.
+  // Higher enum values are considered higher level tiles.
   COTTON_MILL_TILEI = 201; // x3
   COTTON_MILL_TILEII = 202; // x2
   COTTON_MILL_TILEIII = 203; // x3

@@ -19,7 +19,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 4.0
         }
-      ]
+      ],
+      "inGameName": "Wild Location"
     },
     {
       "type": "WILD_INDUSTRY_CARD",
@@ -37,7 +38,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 4.0
         }
-      ]
+      ],
+      "inGameName": "Wild Industry"
     },
     {
       "type": "COTTON_MILL_CARD",
@@ -55,7 +57,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 8.0
         }
-      ]
+      ],
+      "inGameName": "Cotton Mill"
     },
     {
       "type": "IRON_WORKS_CARD",
@@ -73,7 +76,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 4.0
         }
-      ]
+      ],
+      "inGameName": "Iron Works"
     },
     {
       "type": "BREWERY_CARD",
@@ -91,7 +95,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 5.0
         }
-      ]
+      ],
+      "inGameName": "Brewery"
     },
     {
       "type": "COAL_MINE_CARD",
@@ -109,7 +114,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "Coal Mine"
     },
     {
       "type": "POTTERY_CARD",
@@ -127,7 +133,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "Pottery"
     },
     {
       "type": "MANUFACTURED_GOODS_CARD",
@@ -145,7 +152,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 8.0
         }
-      ]
+      ],
+      "inGameName": "Manufactured Goods"
     },
     {
       "type": "BELPER_CARD",
@@ -163,7 +171,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Belper"
     },
     {
       "type": "DERBY_CARD",
@@ -181,7 +190,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "Derby"
     },
     {
       "type": "LEEK_CARD",
@@ -199,7 +209,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Leek"
     },
     {
       "type": "STOKE_ON_TRENT_CARD",
@@ -217,7 +228,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "Stoke-on-Trent"
     },
     {
       "type": "STONE_CARD",
@@ -235,7 +247,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Stone"
     },
     {
       "type": "UTTOXETER_CARD",
@@ -253,7 +266,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Uttoxeter"
     },
     {
       "type": "STAFFORD_CARD",
@@ -271,7 +285,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Stafford"
     },
     {
       "type": "BURTON_UPON_TRENT_CARD",
@@ -289,7 +304,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Burton-upon-Trent"
     },
     {
       "type": "CANNOCK_CARD",
@@ -307,7 +323,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Cannock"
     },
     {
       "type": "TAMWORTH_CARD",
@@ -325,7 +342,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "Tamworth"
     },
     {
       "type": "WALSALL_CARD",
@@ -343,7 +361,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "Walsall"
     },
     {
       "type": "COALBROOKEDALE_CARD",
@@ -361,7 +380,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "Coalbrookedale"
     },
     {
       "type": "DUDLEY_CARD",
@@ -379,7 +399,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Dudley"
     },
     {
       "type": "KIDDERMINSTER_CARD",
@@ -397,7 +418,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Kidderminster"
     },
     {
       "type": "WOLFERHAMPTON_CARD",
@@ -415,7 +437,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Wolferhampton"
     },
     {
       "type": "WORCESTER_CARD",
@@ -433,7 +456,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "Worcester"
     },
     {
       "type": "BIRMINGHAM_CARD",
@@ -451,7 +475,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "Birmingham"
     },
     {
       "type": "COVENTRY_CARD",
@@ -469,7 +494,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "Coventry"
     },
     {
       "type": "NUNEATON_CARD",
@@ -487,7 +513,8 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "Nuneaton"
     },
     {
       "type": "REDDITCH_CARD",
@@ -505,35 +532,43 @@
           "type": "COUNT_IN_4_PLAYER_GAME",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "Redditch"
     },
     {
       "type": "STANDALONE_LOCATION_1_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD"
+      "category": "ITEM_CATEGORY_CITY_CARD",
+      "inGameName": "Standalone Farm 1"
     },
     {
       "type": "STANDALONE_LOCATION_2_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD"
+      "category": "ITEM_CATEGORY_CITY_CARD",
+      "inGameName": "Standalone Farm 2"
     },
     {
       "type": "GLOUCESTER_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD"
+      "category": "ITEM_CATEGORY_CITY_CARD",
+      "inGameName": "Gloucester"
     },
     {
       "type": "SHREWSBURY_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD"
+      "category": "ITEM_CATEGORY_CITY_CARD",
+      "inGameName": "Shrewsbury"
     },
     {
       "type": "OXFORD_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD"
+      "category": "ITEM_CATEGORY_CITY_CARD",
+      "inGameName": "Oxford"
     },
     {
       "type": "NOTTINGHAM_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD"
+      "category": "ITEM_CATEGORY_CITY_CARD",
+      "inGameName": "Nottingham"
     },
     {
       "type": "WARRINGTON_CARD",
-      "category": "ITEM_CATEGORY_CITY_CARD"
+      "category": "ITEM_CATEGORY_CITY_CARD",
+      "inGameName": "Warrington"
     },
     {
       "type": "COTTON_MILL_MERCHANT_LICENSE",

@@ -134,6 +134,7 @@ namespace m2 {
 		[[nodiscard]] bool has_attribute(m2g::pb::AttributeType) const override;
 		[[nodiscard]] inline m2g::pb::SpriteType game_sprite() const override { return _item.game_sprite(); }
 		[[nodiscard]] inline m2g::pb::SpriteType ui_sprite() const override { return _item.ui_sprite(); }
+		[[nodiscard]] const std::string& in_game_name() const { return _item.in_game_name(); }
 	};
 
 	float get_resource_amount(const pb::Resource& resource);
