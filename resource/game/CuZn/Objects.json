@@ -13,10 +13,7 @@
       "type": "TILE"
     },
     {
-      "type": "CANAL"
-    },
-    {
-      "type": "RAILROAD"
+      "type": "CANAL_OR_RAILROAD"
     },
     {
       "type": "MARKET"
