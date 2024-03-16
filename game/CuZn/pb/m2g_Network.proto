@@ -1,27 +1,31 @@
 syntax = "proto3";
 package m2g.pb;
 
+import "m2g_ItemType.proto";
+import "m2g_SpriteType.proto";
+
 message ServerCommand {}
 
 message ClientCommand {
-  message Action {
-    message BuildAction {}
-    message NetworkAction {}
-    message SellAction {}
-    message LoanAction {}
-    message DevelopAction {}
-    message ScoutAction {}
-
-    oneof type {
-      BuildAction build_action = 1;
-      NetworkAction network_action = 2;
-      SellAction sell_action = 3;
-      LoanAction loan_action = 4;
-      DevelopAction develop_action = 5;
-      ScoutAction scout_action = 6;
-    }
+  message BuildAction {
+    ItemType card = 1;
+    SpriteType location = 2;
+    ItemType industry = 3;
+    repeated SpriteType coal_sources = 4;
+    repeated SpriteType iron_sources = 5;
   }
+  message NetworkAction {}
+  message SellAction {}
+  message LoanAction {}
+  message DevelopAction {}
+  message ScoutAction {}
 
-  Action first_action = 1;
-  Action second_action = 2;
+  oneof type {
+    BuildAction build_action = 1;
+    NetworkAction network_action = 2;
+    SellAction sell_action = 3;
+    LoanAction loan_action = 4;
+    DevelopAction develop_action = 5;
+    ScoutAction scout_action = 6;
+  }
 }

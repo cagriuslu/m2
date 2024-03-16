@@ -104,7 +104,7 @@ m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType ind
 			WidgetBlueprint{
 				.x = 5, .y = 14, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.initial_text = m2g::pb::ItemType_Name(industry_1),
+					.initial_text = GAME.get_named_item(industry_1).in_game_name(),
 					.on_action = [industry_1](MAYBE const Text& self) -> Action {
 						return make_return_action<m2g::pb::ItemType>(industry_1);
 					}
@@ -113,7 +113,7 @@ m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType ind
 			WidgetBlueprint{
 				.x = 5, .y = 21, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.initial_text = m2g::pb::ItemType_Name(industry_2),
+					.initial_text = GAME.get_named_item(industry_2).in_game_name(),
 					.on_action = [industry_2](MAYBE const Text& self) -> Action {
 						return make_return_action<m2g::pb::ItemType>(industry_2);
 					}

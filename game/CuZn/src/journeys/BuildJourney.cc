@@ -218,7 +218,21 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_confirmation_result(b
 	} else {
 		LOG_INFO("Build action confirmed");
 		LEVEL.display_message("Building location...");
-		// TODO send ClientCommand
+
+		m2g::pb::ClientCommand cc;
+		cc.mutable_build_action()->set_card(_selected_card);
+		cc.mutable_build_action()->set_location(_selected_location);
+		cc.mutable_build_action()->set_industry(_selected_industry);
+		for (const auto& resource_source : _resource_sources) {
+			if (resource_source.first == COAL_CUBE_COUNT) {
+				cc.mutable_build_action()->add_coal_sources(resource_source.second);
+			} else if (resource_source.first == IRON_CUBE_COUNT) {
+				cc.mutable_build_action()->add_iron_sources(resource_source.second);
+			} else {
+				throw M2ERROR("Unexpected resource type");
+			}
+		}
+		GAME.client_thread().queue_client_command(cc);
 	}
 	GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;

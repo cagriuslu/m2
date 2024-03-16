@@ -62,7 +62,7 @@ bool m2::network::ClientThread::is_our_turn() {
 	if (server_update) {
 		return server_update->turn_holder_index() == server_update->receiver_index();
 	} else {
-		// Check if we're the host
+		// Check if we're the host, because the host doesn't receive server updates.
 		if (GAME.is_server()) {
 			return GAME.server_thread().turn_holder() == 0;
 		}

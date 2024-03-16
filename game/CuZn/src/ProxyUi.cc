@@ -233,8 +233,12 @@ const Blueprint left_hud_blueprint = {
 				.initial_text = "Build",
 				.font_size = 4.5f,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					LOG_INFO("Beginning BuildJourney");
-					m2g::Proxy::get_instance().user_journey.emplace(cuzn::BuildJourney{});
+					if (GAME.client_thread().is_our_turn()) {
+						LOG_INFO("Beginning BuildJourney");
+						m2g::Proxy::get_instance().user_journey.emplace(cuzn::BuildJourney{});
+					} else {
+						LEVEL.display_message("It's not your turn");
+					}
 					return make_continue_action();
 				}
 			}
@@ -260,7 +264,7 @@ const Blueprint left_hud_blueprint = {
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 					if (GAME.client_thread().is_our_turn()) {
 						pb::ClientCommand cc;
-						cc.mutable_first_action()->mutable_loan_action();
+						cc.mutable_loan_action();
 						GAME.client_thread().queue_client_command(cc);
 					}
 					return make_continue_action();

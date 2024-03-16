@@ -99,6 +99,10 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 
+	if (client_command.has_build_action()) {
+		// TODO
+	}
+
 	// Increment turn holder
 	return (turn_holder_index + 1) % GAME.server_thread().client_count();
 }
