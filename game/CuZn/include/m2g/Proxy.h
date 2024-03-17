@@ -38,8 +38,7 @@ namespace m2g {
 		std::unordered_map<m2g::pb::SpriteType, m2::VecI> merchant_positions;
 		std::unordered_map<m2::VecI, m2g::pb::SpriteType, m2::VecIHash> position_merchants;
 		std::unordered_map<m2g::pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
-		std::vector<std::pair<m2::RectF, m2g::pb::SpriteType>> industry_positions;
-		std::unordered_map<m2g::pb::SpriteType, m2::RectF> position_industries;
+		std::unordered_map<m2g::pb::SpriteType, m2::RectF> industry_positions;
 
 		std::optional<std::variant<cuzn::BuildJourney>> user_journey;
 		static void user_journey_deleter();

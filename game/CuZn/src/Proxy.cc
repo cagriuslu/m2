@@ -129,8 +129,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 			2.0f,
 			2.0f
 		};
-		industry_positions.emplace_back(industry_position, sprite_type);
-		position_industries[sprite_type] = industry_position;
+		industry_positions[sprite_type] = industry_position;
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_position);
 	}
 }

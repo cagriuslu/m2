@@ -8,7 +8,7 @@ m2::Object* cuzn::find_tile_at_location(m2g::pb::SpriteType location) {
 		// If the character belongs to a tile
 		if (chr.parent().object_type() == m2g::pb::TILE) {
 			// If the object is located inside the rectangle of the given locatiom
-			if (PROXY.position_industries[location].point_in_rect(chr.parent().position)) {
+			if (PROXY.industry_positions[location].point_in_rect(chr.parent().position)) {
 				return &chr.parent();
 			}
 		}

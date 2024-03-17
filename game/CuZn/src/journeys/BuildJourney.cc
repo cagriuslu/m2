@@ -127,49 +127,47 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_ent
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mouse_click_signal(const m2::VecF& world_position) {
 	LOG_DEBUG("Received mouse click", world_position);
-	for (const auto& rect_and_type : m2g::Proxy::get_instance().industry_positions) {
-		if (rect_and_type.first.point_in_rect(world_position)) {
-			_selected_location = rect_and_type.second;
-			LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(_selected_location));
+	if (auto selected_loc = std::find_if(PROXY.industry_positions.begin(), PROXY.industry_positions.end(),
+			[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
+		selected_loc != PROXY.industry_positions.end()) {
+		_selected_location = selected_loc->first;
+		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(_selected_location));
 
-			// Check if there's a need to make an industry selection based on the card and the sprite
-			auto selectable_industries = cuzn::selectable_industries(_selected_card, _selected_location);
-			if (selectable_industries.empty()) {
-				LEVEL.display_message("Selected position cannot be built with the selected card", 10.0f);
-				return std::nullopt;
-			} else if (selectable_industries.size() == 2) {
-				LOG_INFO("Asking player to pick an industry...");
-				bool cancelled{};
-				m2::ui::State::create_execute_sync(
-					std::make_unique<m2::ui::Blueprint>(generate_industry_selection_window(selectable_industries[0], selectable_industries[1])),
-					GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
-					.if_void_return([&]() {
-						LOG_INFO("Cancelling Build action...");
-						GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
-						cancelled = true;
-					})
-					.if_return<m2g::pb::ItemType>([&](auto selected_industry) {
-						LOG_INFO("Selected industry", m2g::pb::ItemType_Name(selected_industry));
-						_selected_industry = selected_industry;
-					});
-				if (cancelled) {
-					return std::nullopt;
-				}
-			} else if (selectable_industries.size() == 1) {
-				_selected_industry = selectable_industries[0];
-			} else {
-				throw M2ERROR("Implementation error, more than 2 selectable industries");
-			}
-
-			// Check if the player can build the selected industry
-			auto tile_type = can_player_build_industry(LEVEL.player()->character(), _selected_location, _selected_industry);
-			if (not tile_type) {
-				LOG_INFO("Cancelling Build action...");
-				LEVEL.display_message(tile_type.error());
-				GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
+		// Check if there's a need to make an industry selection based on the card and the sprite
+		if (auto selectable_industries = cuzn::selectable_industries(_selected_card, _selected_location); selectable_industries.empty()) {
+			LEVEL.display_message("Selected position cannot be built with the selected card", 10.0f);
+			return std::nullopt;
+		} else if (selectable_industries.size() == 2) {
+			LOG_INFO("Asking player to pick an industry...");
+			bool cancelled{};
+			m2::ui::State::create_execute_sync(
+				std::make_unique<m2::ui::Blueprint>(generate_industry_selection_window(selectable_industries[0], selectable_industries[1])),
+				GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+				.if_void_return([&]() {
+					LOG_INFO("Cancelling Build action...");
+					GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
+					cancelled = true;
+				})
+				.if_return<m2g::pb::ItemType>([&](auto selected_industry) {
+					LOG_INFO("Selected industry", m2g::pb::ItemType_Name(selected_industry));
+					_selected_industry = selected_industry;
+				});
+			if (cancelled) {
 				return std::nullopt;
 			}
+		} else if (selectable_industries.size() == 1) {
+			_selected_industry = selectable_industries[0];
+		} else {
+			throw M2ERROR("Implementation error, more than 2 selectable industries");
+		}
 
+		// Check if the player can build the selected industry
+		if (auto tile_type = can_player_build_industry(LEVEL.player()->character(), _selected_location, _selected_industry); not tile_type) {
+			LOG_INFO("Cancelling Build action...");
+			LEVEL.display_message(tile_type.error());
+			GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
+			return std::nullopt;
+		} else {
 			// Create empty entries in resource_sources for every required resource
 			_resource_sources.insert(_resource_sources.end(),
 				iround(GAME.get_named_item(*tile_type).get_attribute(m2g::pb::COAL_COST)),
@@ -177,12 +175,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mou
 			_resource_sources.insert(_resource_sources.end(),
 				iround(GAME.get_named_item(*tile_type).get_attribute(m2g::pb::IRON_COST)),
 				std::make_pair(m2g::pb::IRON_CUBE_COUNT, NO_SPRITE));
-
-			if (_resource_sources.empty()) {
-				return BuildJourneyStep::EXPECT_CONFIRMATION;
-			} else {
-				return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
-			}
+			return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 		}
 	}
 	LOG_DEBUG("Selected position was not on an industry");
