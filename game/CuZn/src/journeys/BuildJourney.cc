@@ -162,7 +162,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mou
 		}
 
 		// Check if the player can build the selected industry
-		if (auto tile_type = can_player_build_industry(LEVEL.player()->character(), _selected_location, _selected_industry); not tile_type) {
+		if (auto tile_type = can_player_build_industry(LEVEL.player()->character(), _selected_card, _selected_location, _selected_industry); not tile_type) {
 			LOG_INFO("Cancelling Build action...");
 			LEVEL.display_message(tile_type.error());
 			GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);

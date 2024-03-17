@@ -58,56 +58,6 @@ std::vector<m2g::pb::ItemType> cuzn::industries_on_location(m2g::pb::SpriteType 
 	return industries;
 }
 
-std::vector<m2g::pb::ItemType> cuzn::selectable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
-	if (not is_card(selected_card)) {
-		throw M2ERROR("Item is not a card");
-	}
-	if (not is_industry_location(selected_location)) {
-		throw M2ERROR("Sprite is not an industry location");
-	}
-
-	const auto& selected_card_item = GAME.get_named_item(selected_card);
-	const auto& selected_sprite_sprite = GAME.get_sprite(selected_location);
-	// Lookup industries on the sprite
-	std::vector<m2g::pb::ItemType> selected_sprite_industries;
-	std::copy_if(selected_sprite_sprite.named_items().begin(), selected_sprite_sprite.named_items().end(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
-		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
-	});
-	if (selected_sprite_industries.empty()) {
-		throw M2ERROR("Selected sprite does not hold any industry cards");
-	}
-	// Look up the location of the sprite
-	auto location_card_it = std::find_if(selected_sprite_sprite.named_items().begin(), selected_sprite_sprite.named_items().end(), [](auto item_type) {
-		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
-	});
-	if (location_card_it == selected_sprite_sprite.named_items().end()) {
-		throw M2ERROR("Selected sprite does not hold a location card");
-	}
-	m2g::pb::ItemType selected_sprite_location = *location_card_it;
-
-	// If the card is wild card
-	if (selected_card_item.category() == ITEM_CATEGORY_WILD_CARD) {
-		// Any industry in the selected location can be built
-		return selected_sprite_industries;
-	} else if (selected_card_item.category() == ITEM_CATEGORY_INDUSTRY_CARD) {
-		// Check if the selected industry exists in the sprite's industries
-		auto industry_card_it = std::find(selected_sprite_industries.begin(), selected_sprite_industries.end(), selected_card);
-		if (industry_card_it == selected_sprite_industries.end()) {
-			return {}; // No selectable industries
-		} else {
-			return {selected_card}; // Only the selected industry card is selectable
-		}
-	} else { // ITEM_CATEGORY_CITY_CARD
-		// Check if the card belongs to this location
-		if (selected_card == selected_sprite_location) {
-			// Any industry in the selected location can be built
-			return selected_sprite_industries;
-		} else {
-			return {}; // No selectable industries
-		}
-	}
-}
-
 m2g::pb::ItemCategory cuzn::industry_card_to_tile_category(m2g::pb::ItemType industry_card) {
 	switch (industry_card) {
 		case COTTON_MILL_CARD:

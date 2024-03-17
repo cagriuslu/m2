@@ -4,7 +4,65 @@
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Game.h>
 
-m2::expected<m2g::pb::ItemType> cuzn::can_player_build_industry(m2::Character& player, m2g::pb::SpriteType location, m2g::pb::ItemType industry) {
+using namespace m2g;
+using namespace m2g::pb;
+
+std::vector<m2g::pb::ItemType> cuzn::selectable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
+	if (not is_card(selected_card)) {
+		throw M2ERROR("Item is not a card");
+	}
+	if (not is_industry_location(selected_location)) {
+		throw M2ERROR("Sprite is not an industry location");
+	}
+
+	const auto& selected_card_item = GAME.get_named_item(selected_card);
+	const auto& selected_sprite_sprite = GAME.get_sprite(selected_location);
+	// Lookup industries on the sprite
+	std::vector<m2g::pb::ItemType> selected_sprite_industries;
+	std::copy_if(selected_sprite_sprite.named_items().begin(), selected_sprite_sprite.named_items().end(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
+		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
+	});
+	if (selected_sprite_industries.empty()) {
+		throw M2ERROR("Selected sprite does not hold any industry cards");
+	}
+	// Look up the location of the sprite
+	auto location_card_it = std::find_if(selected_sprite_sprite.named_items().begin(), selected_sprite_sprite.named_items().end(), [](auto item_type) {
+		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
+	});
+	if (location_card_it == selected_sprite_sprite.named_items().end()) {
+		throw M2ERROR("Selected sprite does not hold a location card");
+	}
+	m2g::pb::ItemType selected_sprite_location = *location_card_it;
+
+	// If the card is wild card
+	if (selected_card_item.category() == ITEM_CATEGORY_WILD_CARD) {
+		// Any industry in the selected location can be built
+		return selected_sprite_industries;
+	} else if (selected_card_item.category() == ITEM_CATEGORY_INDUSTRY_CARD) {
+		// Check if the selected industry exists in the sprite's industries
+		auto industry_card_it = std::find(selected_sprite_industries.begin(), selected_sprite_industries.end(), selected_card);
+		if (industry_card_it == selected_sprite_industries.end()) {
+			return {}; // No selectable industries
+		} else {
+			return {selected_card}; // Only the selected industry card is selectable
+		}
+	} else { // ITEM_CATEGORY_CITY_CARD
+		// Check if the card belongs to this location
+		if (selected_card == selected_sprite_location) {
+			// Any industry in the selected location can be built
+			return selected_sprite_industries;
+		} else {
+			return {}; // No selectable industries
+		}
+	}
+}
+
+m2::expected<m2g::pb::ItemType> cuzn::can_player_build_industry(m2::Character& player, m2g::pb::ItemType card, m2g::pb::SpriteType location, m2g::pb::ItemType industry) {
+	// Ensure that the player holds the given card
+	if (player.find_items(card) == player.end_items()) {
+		return m2::make_unexpected("Player doesn't hold the given card");
+	}
+
 	// Ensure that the location contains the given industry
 	auto industries = industries_on_location(location);
 	if (std::find(industries.begin(), industries.end(), industry) == industries.end()) {
@@ -14,6 +72,12 @@ m2::expected<m2g::pb::ItemType> cuzn::can_player_build_industry(m2::Character& p
 	// Check if the location already has a tile
 	if (find_tile_at_location(location)) {
 		return m2::make_unexpected("Location already has a tile built");
+	}
+
+	// Ensure that the given card can build the industry in the given location
+	auto selectable_industries = cuzn::selectable_industries(card, location);
+	if (std::find(selectable_industries.begin(), selectable_industries.end(), industry) == selectable_industries.end()) {
+		return m2::make_unexpected("Selected card cannot build the industry on given location");
 	}
 
 	// Find the city of the location

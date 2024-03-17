@@ -17,9 +17,6 @@ namespace cuzn {
 	/// Returns the industries in that given industry location
 	std::vector<m2g::pb::ItemType> industries_on_location(m2g::pb::SpriteType location);
 
-	/// Returns the different industries in selected_location that can be built by the given selected_card
-	std::vector<m2g::pb::ItemType> selectable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location);
-
 	/// Convert an industry card representing an industry to an item category representing a tile type
 	m2g::pb::ItemCategory industry_card_to_tile_category(m2g::pb::ItemType industry_card);
 }
