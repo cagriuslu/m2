@@ -27,7 +27,7 @@ namespace {
 							// Deliver cancel signal to BuildJourney
 							std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal());
 						}
-						return make_return_action<m2::Void>();
+						return make_return_action();
 					}
 				}
 			}
@@ -101,18 +101,19 @@ std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const Bu
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_initial_enter_signal() {
 	LOG_INFO("Asking player to pick a card...");
-	auto picked_card = m2::ui::State::create_execute_sync(std::make_unique<m2::ui::Blueprint>(generate_cards_window(true)), GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}));
-	if (auto* void_return = dynamic_cast<m2::ui::Return<m2::Void>*>(picked_card.get()); void_return) {
-		LOG_INFO("Cancelling Build action...");
-		GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
-		return std::nullopt;
-	} else if (auto* card_return = dynamic_cast<m2::ui::Return<m2g::pb::ItemType>*>(picked_card.get()); card_return) {
-		LOG_INFO("Selected card", m2g::pb::ItemType_Name(*card_return->value));
-		_selected_card = *card_return->value;
-		return BuildJourneyStep::EXPECT_INDUSTRY_LOCATION;
-	} else {
-		throw M2ERROR("Unexpected action");
-	}
+	std::optional<BuildJourneyStep> next_state;
+	m2::ui::State::create_execute_sync(std::make_unique<m2::ui::Blueprint>(generate_cards_window(true)), GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+		.if_void_return([&]() {
+			LOG_INFO("Cancelling Build action...");
+			GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
+			next_state = std::nullopt;
+		})
+		.if_return<m2g::pb::ItemType>([&](auto picked_card) {
+			LOG_INFO("Selected card", m2g::pb::ItemType_Name(picked_card));
+			_selected_card = picked_card;
+			next_state = BuildJourneyStep::EXPECT_INDUSTRY_LOCATION;
+		});
+	return next_state;
 }
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_enter_signal() {
@@ -138,21 +139,21 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mou
 				return std::nullopt;
 			} else if (selectable_industries.size() == 2) {
 				LOG_INFO("Asking player to pick an industry...");
-				auto picked_industry = m2::ui::State::create_execute_sync(
-					std::make_unique<m2::ui::Blueprint>(
-						generate_industry_selection_window(selectable_industries[0], selectable_industries[1])
-					),
-					GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f})
-				);
-				if (auto* void_return = dynamic_cast<m2::ui::Return<m2::Void>*>(picked_industry.get()); void_return) {
-					LOG_INFO("Cancelling Build action...");
-					GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
+				bool cancelled{};
+				m2::ui::State::create_execute_sync(
+					std::make_unique<m2::ui::Blueprint>(generate_industry_selection_window(selectable_industries[0], selectable_industries[1])),
+					GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+					.if_void_return([&]() {
+						LOG_INFO("Cancelling Build action...");
+						GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
+						cancelled = true;
+					})
+					.if_return<m2g::pb::ItemType>([&](auto selected_industry) {
+						LOG_INFO("Selected industry", m2g::pb::ItemType_Name(selected_industry));
+						_selected_industry = selected_industry;
+					});
+				if (cancelled) {
 					return std::nullopt;
-				} else if (auto* card_return = dynamic_cast<m2::ui::Return<m2g::pb::ItemType>*>(picked_industry.get()); card_return) {
-					LOG_INFO("Selected industry", m2g::pb::ItemType_Name(*card_return->value));
-					_selected_industry = *card_return->value;
-				} else {
-					throw M2ERROR("Unexpected action");
 				}
 			} else if (selectable_industries.size() == 1) {
 				_selected_industry = selectable_industries[0];

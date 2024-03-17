@@ -30,7 +30,7 @@ static TextBlueprint client_status = {
 				GAME.load_multi_player_as_guest(GAME.levels_dir / "Map.json", std::to_string(player_count));
 			m2_succeed_or_throw_error(expect_success);
 
-			return std::make_pair(make_return_action<m2::Void>(), std::nullopt);
+			return std::make_pair(make_return_action(), std::nullopt);
 		} else {
 			return std::make_pair(make_continue_action(), "CONNECTING...");
 		}
@@ -122,7 +122,7 @@ static TextBlueprint client_count = {
 				const auto expect_success =
 					GAME.load_multi_player_as_host(GAME.levels_dir / "Map.json", std::to_string(client_count));
 				m2_succeed_or_throw_error(expect_success);
-				return make_return_action<m2::Void>();  // TODO Return value
+				return make_return_action();  // TODO Return value
 			}
 		}
 		return make_continue_action();
@@ -201,7 +201,7 @@ const Blueprint pause_menu_blueprint = {
 			.padding_width_px = 5,
 			.variant = TextBlueprint{
 				.initial_text = "RESUME", .on_action = [](MAYBE const widget::Text& self) {
-					return make_return_action<m2::Void>();  // TODO Return value
+					return make_return_action();  // TODO Return value
 				}
 			}
 		},
@@ -292,7 +292,7 @@ const Blueprint tiles_blueprint = {
 			TextBlueprint{
 				.initial_text = "X",
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					return make_return_action<m2::Void>();
+					return make_return_action();
 				}
 			}
 		},

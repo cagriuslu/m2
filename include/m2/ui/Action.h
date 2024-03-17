@@ -1,15 +1,16 @@
 #pragma once
+
+#include <m2/M2.h>
 #include <memory>
 
 namespace m2::ui {
 	class ActionBase {
-	   protected:
+	protected:
 		ActionBase() = default;
 
-	   public:
+	public:
 		virtual ~ActionBase() = default;
 	};
-	using Action = std::unique_ptr<ActionBase>;
 
 	struct Continue : public ActionBase {
 		/// If set and true, focus is requested.
@@ -18,47 +19,96 @@ namespace m2::ui {
 		std::optional<bool> focus;
 
 		Continue() = default;
+
 		explicit Continue(bool focus) : ActionBase(), focus(focus) {}
 	};
-	inline Action make_continue_action() { return std::make_unique<Continue>(); }
-	inline Action make_continue_action(bool focus) { return std::make_unique<Continue>(focus); }
-	inline bool is_continue(const Action& action) { return dynamic_cast<const Continue*>(action.get()); }
-	inline const Continue& as_continue(const Action& action) { return dynamic_cast<const Continue&>(*action); }
 
 	class ReturnBase : public ActionBase {
-		/// This class is introduces as a base class of all Return<T> classes.
-		/// This allows us to check whether a given Action is of Return<T> type or not.
-	   protected:
+		/// Base class of all Return<T> classes.
+		/// Enables checking whether an Action is of any Return<T> type.
+	protected:
 		ReturnBase() = default;
 	};
-	template <typename T>
-	struct Return : public ReturnBase {
-		std::optional<T> value;
 
-		/// Without value
-		Return() = default;
-		/// With value
+	template <typename T = m2::Void>
+	struct Return : public ReturnBase {
+		T value;
+
 		explicit Return(T&& value) : ReturnBase(), value(std::move(value)) {}
 	};
-	template <typename T>
-	Action make_return_action() {
-		return std::make_unique<Return<T>>();
-	}
-	template <typename T>
-	Action make_return_action(T value) {
-		return std::make_unique<Return<T>>(std::forward<T>(value));
-	}
-	inline bool is_return(const Action& action) { return dynamic_cast<const ReturnBase*>(action.get()); }
-	template <typename T>
-	inline const Return<T>& as_return(const Action& action) {
-		return dynamic_cast<const Return<T>&>(*action);
-	}
 
 	struct ClearStack : public ActionBase {};
-	inline Action make_clear_stack_action() { return std::make_unique<ClearStack>(); }
-	inline bool is_clear_stack(const Action& action) { return dynamic_cast<const ClearStack*>(action.get()); }
 
 	struct Quit : public ActionBase {};
-	inline Action make_quit_action() { return std::make_unique<Quit>(); }
-	inline bool is_quit(const Action& action) { return dynamic_cast<const Quit*>(action.get()); }
+
+	class Action {
+		std::unique_ptr<ActionBase> _ptr;
+
+	public:
+		explicit Action(std::unique_ptr<ActionBase> ptr) : _ptr(std::move(ptr)) {}
+
+		[[nodiscard]] bool is_continue() const { return dynamic_cast<const Continue*>(_ptr.get()); }
+
+		const Action& if_continue(const std::function<void()>& handler) const {
+			if (is_continue()) { handler(); }
+			return *this;
+		}
+
+		const Action& if_continue_with_focus_state(const std::function<void(bool)>& handler) const {
+			if (const auto* continue_action = dynamic_cast<const Continue*>(_ptr.get())) {
+				if (continue_action->focus) {
+					handler(*continue_action->focus);
+				}
+			}
+			return *this;
+		}
+
+		[[nodiscard]] bool is_return() const { return dynamic_cast<const ReturnBase*>(_ptr.get()); }
+
+		template <typename T>
+		[[nodiscard]] bool is_return() const { return dynamic_cast<const Return<T>*>(_ptr.get()); }
+
+		const Action& if_any_return(const std::function<void()>& handler) const {
+			if (is_return()) { handler(); }
+			return *this;
+		}
+
+		const Action& if_void_return(const std::function<void()>& handler) const {
+			if (const auto* return_action = dynamic_cast<const Return<m2::Void>*>(_ptr.get())) { handler(); }
+			return *this;
+		}
+
+		template <typename T>
+		const Action& if_return(const std::function<void(const T&)>& handler) const {
+			if (const auto* return_action = dynamic_cast<const Return<T>*>(_ptr.get())) { handler(return_action->value); }
+			return *this;
+		}
+
+		[[nodiscard]] bool is_clear_stack() const { return dynamic_cast<const ClearStack*>(_ptr.get()); }
+
+		const Action& if_clear_stack(const std::function<void()>& handler) const {
+			if (is_clear_stack()) { handler(); }
+			return *this;
+		}
+
+		[[nodiscard]] bool is_quit() const { return dynamic_cast<const Quit*>(_ptr.get()); }
+
+		const Action& if_quit(const std::function<void()>& handler) const {
+			if (is_quit()) { handler(); }
+			return *this;
+		}
+	};
+
+	inline Action make_continue_action() { return Action{std::make_unique<Continue>()}; }
+
+	inline Action make_continue_action(bool focus) { return Action{std::make_unique<Continue>(focus)}; }
+
+	inline Action make_return_action() { return Action{std::make_unique<Return<Void>>(Void{})}; }
+
+	template <typename T>
+	Action make_return_action(T value) { return Action{std::make_unique<Return<T>>(std::forward<T>(value))}; }
+
+	inline Action make_clear_stack_action() { return Action{std::make_unique<ClearStack>()}; }
+
+	inline Action make_quit_action() { return Action{std::make_unique<Quit>()}; }
 }  // namespace m2::ui

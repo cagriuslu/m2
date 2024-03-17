@@ -69,7 +69,7 @@ namespace {
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
 				auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
-				return is_return(main_menu_result) ? make_clear_stack_action() : std::move(main_menu_result);
+				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			GAME.console_output.emplace_back(load_result.error());
 			return make_continue_action();
@@ -78,7 +78,7 @@ namespace {
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
 				auto main_menu_result = State::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
-				return is_return(main_menu_result) ? make_clear_stack_action() : std::move(main_menu_result);
+				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			GAME.console_output.emplace_back(load_result.error());
 			return make_continue_action();
@@ -98,7 +98,7 @@ namespace {
 		} else if (command == "quit") {
 			return make_quit_action();
 		} else if (command == "close") {
-			return make_return_action<Void>();
+			return make_return_action();
 		} else if (command.empty()) {
 			// Do nothing
 		} else {
@@ -188,7 +188,7 @@ Action State::execute(const RectI rect) {
 	update_positions(rect);
 
 	// Update initial contents
-	if (Action return_value = update_contents(); not is_continue(return_value)) {
+	if (auto return_value = update_contents(); not return_value.is_continue()) {
 		LOG_DEBUG("Update action is not continue");
 		return return_value;
 	}
@@ -214,10 +214,10 @@ Action State::execute(const RectI rect) {
 				console_command.clear();
 
 				LOG_INFO("Opening console");
-				if (auto action = create_execute_sync(&console_ui); is_return(action)) {
+				if (auto action = create_execute_sync(&console_ui); action.is_return()) {
 					// Continue with the prev UI
 					LOG_DEBUG("Console returned");
-				} else if (is_clear_stack(action) || is_quit(action)) {
+				} else if (action.is_clear_stack() || action.is_quit()) {
 					LOG_DEBUG("Console clear stack or quit");
 					return action;
 				}
@@ -236,7 +236,7 @@ Action State::execute(const RectI rect) {
 			}
 
 			// Handle events
-			if (Action return_value = handle_events(events); not is_continue(return_value)) {
+			if (auto return_value = handle_events(events); not return_value.is_continue()) {
 				return return_value;
 			}
 		}
@@ -247,7 +247,7 @@ Action State::execute(const RectI rect) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Update contents
-		if (Action return_value = update_contents(); not is_continue(return_value)) {
+		if (auto return_value = update_contents(); not return_value.is_continue()) {
 			return return_value;
 		}
 
@@ -284,14 +284,14 @@ Action State::handle_events(Events& events) {
 
 	// If the UI is cancellable, check if MENU button is pressed
 	if (blueprint->cancellable && events.pop_key_press(Key::MENU)) {
-		return make_return_action<Void>();
+		return make_return_action();
 	}
 
 	for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		if (auto action = widget->on_event(events); is_continue(action)) {
-			if (const auto& focus_state = as_continue(action).focus; focus_state) {
-				set_widget_focus_state(*widget, focus_state.value());
-			}
+		if (auto action = widget->on_event(events); action.is_continue()) {
+			action.if_continue_with_focus_state([&](bool focus_state) {
+				set_widget_focus_state(*widget, focus_state);
+			});
 			continue;
 		} else {
 			return action;
@@ -314,7 +314,7 @@ Action State::update_contents() {
 	}
 
 	for (const auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		if (auto action = widget->on_update(); not is_continue(action)) {
+		if (auto action = widget->on_update(); not action.is_continue()) {
 			return action;
 		} else {
 			continue;

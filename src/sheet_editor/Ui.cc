@@ -355,7 +355,7 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 										LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 									}
 									std::get<sedit::State>(LEVEL.type_state).select();
-									return make_return_action<Void>(); // TODO Return value
+									return make_return_action(); // TODO Return value
 								}
 						}
 				}

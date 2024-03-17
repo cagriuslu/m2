@@ -113,7 +113,7 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
 		                LEVEL.right_hud_ui_state.emplace(&bulk_sheet_editor_right_hud);
 		                LEVEL.right_hud_ui_state->update_positions(GAME.dimensions().right_hud);
 		                // TODO return selection instead
-		                return make_return_action<Void>();
+		                return make_return_action();
 	                } else {
 		                return make_continue_action();
 	                }

@@ -210,7 +210,7 @@ const Blueprint m2::level_editor::ui::fill_dialog = {
 	                }
 	                std::get<ledit::State::SelectMode>(std::get<ledit::State>(LEVEL.type_state).mode).rfill_sprite_types = sprite_types;
 
-	                return make_return_action<Void>(); // TODO Return value
+	                return make_return_action(); // TODO Return value
                 }
             }
         }

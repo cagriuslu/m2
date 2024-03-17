@@ -30,6 +30,7 @@ void m2::Game::create_instance() {
 	// We have to call it after GAME is fully constructed
 	_instance->_proxy.load_resources();
 }
+
 void m2::Game::destroy_instance() {
 	DEBUG_FN();
 	delete _instance;
@@ -54,8 +55,8 @@ m2::Game::Game() {
 
 	recalculate_dimensions(800, 450, _proxy.default_game_height_m);
 	if ((window = SDL_CreateWindow(
-	         "m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _dims.window.w, _dims.window.h,
-	         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
+		"m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _dims.window.w, _dims.window.h,
+		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_SetWindowMinimumSize(window, 712, 400);
@@ -69,7 +70,7 @@ m2::Game::Game() {
 
 	// SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Unset: pixelated sprites, "1": filtered sprites
 	if ((renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE)) ==
-	    nullptr) {  // TODO: SDL_RENDERER_PRESENTVSYNC
+		nullptr) {  // TODO: SDL_RENDERER_PRESENTVSYNC
 		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_RendererInfo info;
@@ -107,12 +108,12 @@ m2::Game::Game() {
 	}
 	sprite_sheets = load_sprite_sheets(*sheets_pb, renderer, _proxy.lightning);
 	_sprites =
-	    load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, font, renderer, _proxy.lightning);
+		load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, font, renderer, _proxy.lightning);
 	level_editor_background_sprites = list_level_editor_background_sprites(_sprites);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
 	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
 	animations =
-	    pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
+		pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
 	songs = pb::LUT<m2::pb::Song, Song>::load(resource_dir / "Songs.json", &m2::pb::Songs::songs);
 }
 
@@ -149,39 +150,45 @@ m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connectio
 
 	return {};
 }
+
 m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& addr) {
 	_client_thread.emplace(type, addr);
 	return {};
 }
+
 m2::void_expected m2::Game::load_single_player(
-    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
 	return _level->init_single_player(level_path_or_blueprint, level_name);
 }
+
 m2::void_expected m2::Game::load_multi_player_as_host(
-    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
 	return _level->init_multi_player_as_host(level_path_or_blueprint, level_name);
 }
+
 m2::void_expected m2::Game::load_multi_player_as_guest(
-    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
+	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
 	return _level->init_multi_player_as_guest(level_path_or_blueprint, level_name);
 }
+
 m2::void_expected m2::Game::load_level_editor(const std::string& level_resource_path) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
 	return _level->init_level_editor(level_resource_path);
 }
+
 m2::void_expected m2::Game::load_pixel_editor(
-    const std::string& image_resource_path, const int x_offset, const int y_offset) {
+	const std::string& image_resource_path, const int x_offset, const int y_offset) {
 	_level.reset();
 	reset_state();
 	_level.emplace();
@@ -219,7 +226,7 @@ void m2::Game::handle_window_resize_event() {
 
 void m2::Game::handle_console_event() {
 	if (events.pop_key_press(Key::CONSOLE)) {
-		if (auto action = ui::State::create_execute_sync(&ui::console_ui); ui::is_quit(action)) {
+		if (ui::State::create_execute_sync(&ui::console_ui).is_quit()) {
 			quit = true;
 		}
 	}
@@ -240,21 +247,20 @@ void m2::Game::handle_menu_event() {
 		}
 
 		// Execute pause menu if found, exit if QUIT is returned
-		if (pause_menu) {
-			if (auto action = ui::State::create_execute_sync(pause_menu); ui::is_quit(action)) {
-				quit = true;
-			}
+		if (pause_menu && ui::State::create_execute_sync(pause_menu).is_quit()) {
+			quit = true;
 		}
 	}
 }
 
 void m2::Game::handle_hud_events() {
 	if (_level->custom_ui_dialog_state.second) {
-		auto action = _level->custom_ui_dialog_state.second->handle_events(events);
-		if (ui::is_return(action)) {
-			// If the dialog returned, remove the state
-			_level->custom_ui_dialog_state.second.reset();
-		} // TODO handle quit
+		_level->custom_ui_dialog_state.second->handle_events(events)
+			.if_any_return([this]() {
+				// If the dialog returned, remove the state
+				_level->custom_ui_dialog_state.second.reset();
+			});
+		// TODO handle quit
 		// If there's a UI dialog, no events will be delivered to rest of the UI states and the game world
 		events.clear();
 		// handle_events of others are executed regardless, because there may be timing related actions
@@ -264,11 +270,12 @@ void m2::Game::handle_hud_events() {
 	// front the HUDs.
 	for (auto& custom_ui : _level->custom_ui_state) { // TODO iterate backwards
 		if (custom_ui.second) {
-			auto action = custom_ui.second->handle_events(events);
-			if (ui::is_return(action)) {
+			custom_ui.second->handle_events(events)
+			.if_any_return([&custom_ui]() {
 				// If UI returned, remove the state
 				custom_ui.second.reset();
-			} // TODO handle quit
+			});
+			// TODO handle quit
 		}
 	}
 	IF(_level->message_box_ui_state)->handle_events(events);  // For disable_after
@@ -284,7 +291,7 @@ void m2::Game::execute_pre_step() {
 		auto client_command = _server_thread->pop_turn_holder_command();
 		if (client_command) {
 			auto new_turn_holder =
-			    _proxy.handle_client_command(_server_thread->turn_holder(), client_command->client_command());
+				_proxy.handle_client_command(_server_thread->turn_holder(), client_command->client_command());
 			if (new_turn_holder) {
 				_server_thread->set_turn_holder_index(*new_turn_holder);
 				_server_update_necessary = true;
@@ -382,6 +389,7 @@ namespace {
 			IF(gfx->on_effect)(*gfx);
 		}
 	}
+
 	void draw_all_background_layers(m2::Level& level) {
 		// Draw all background layers
 		for (auto& terrain_graphics : std::ranges::reverse_view(level.terrain_graphics)) {
@@ -393,22 +401,22 @@ void m2::Game::draw_background() {
 	if (std::holds_alternative<ledit::State>(_level->type_state)) {
 		const auto& le = std::get<ledit::State>(_level->type_state);
 		std::visit(
-		    overloaded{
-		        [&](MAYBE const ledit::State::PaintMode& mode) {
-			        draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
-		        },
-		        [&](MAYBE const ledit::State::EraseMode& mode) {
-			        draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
-		        },
-		        [&](MAYBE const ledit::State::PickMode& mode) {
-			        draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
-		        },
-		        [&](MAYBE const ledit::State::SelectMode& mode) {
-			        draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
-		        },
-		        [&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
-		    },
-		    le.mode);
+			overloaded{
+				[&](MAYBE const ledit::State::PaintMode& mode) {
+					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+				},
+				[&](MAYBE const ledit::State::EraseMode& mode) {
+					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+				},
+				[&](MAYBE const ledit::State::PickMode& mode) {
+					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+				},
+				[&](MAYBE const ledit::State::SelectMode& mode) {
+					draw_one_background_layer(_level->terrain_graphics[I(le.selected_layer)]);
+				},
+				[&](MAYBE const auto& mode) { draw_all_background_layers(*_level); },
+			},
+			le.mode);
 	} else {
 		draw_all_background_layers(*_level);
 	}
@@ -486,7 +494,7 @@ void m2::Game::recalculate_dimensions(const int window_width, const int window_h
 
 void m2::Game::set_zoom(const float game_height_multiplier) {
 	recalculate_dimensions(
-	    _dims.window.w, _dims.window.h, iround(static_cast<float>(_dims.height_m) * game_height_multiplier));
+		_dims.window.w, _dims.window.h, iround(static_cast<float>(_dims.height_m) * game_height_multiplier));
 	if (_level) {
 		IF(_level->left_hud_ui_state)->update_positions(_dims.left_hud);
 		IF(_level->right_hud_ui_state)->update_positions(_dims.right_hud);
@@ -504,6 +512,7 @@ const m2::VecF& m2::Game::mouse_position_world_m() const {
 	}
 	return *_mouse_position_world_m;
 }
+
 const m2::VecF& m2::Game::screen_center_to_mouse_position_m() const {
 	if (not _screen_center_to_mouse_position_m) {
 		recalculate_mouse_position2();
@@ -513,9 +522,9 @@ const m2::VecF& m2::Game::screen_center_to_mouse_position_m() const {
 
 m2::VecF m2::Game::pixel_to_2d_world_m(const VecI& pixel_position) {
 	const auto screen_center_to_pixel_position_px =
-	    VecI{pixel_position.x - (_dims.window.w / 2), pixel_position.y - (_dims.window.h / 2)};
+		VecI{pixel_position.x - (_dims.window.w / 2), pixel_position.y - (_dims.window.h / 2)};
 	const auto screen_center_to_pixel_position_m = VecF{
-	    F(screen_center_to_pixel_position_px.x) / F(_dims.ppm), F(screen_center_to_pixel_position_px.y) / F(_dims.ppm)};
+		F(screen_center_to_pixel_position_px.x) / F(_dims.ppm), F(screen_center_to_pixel_position_px.y) / F(_dims.ppm)};
 	const auto camera_position = _level->objects[_level->camera_id].position;
 	return screen_center_to_pixel_position_m + camera_position;
 }
@@ -523,7 +532,7 @@ m2::VecF m2::Game::pixel_to_2d_world_m(const VecI& pixel_position) {
 m2::RectF m2::Game::viewport_to_2d_world_rect_m() {
 	const auto top_left = pixel_to_2d_world_m(VecI{dimensions().game.x, dimensions().game.y});
 	const auto bottom_right =
-	    pixel_to_2d_world_m(VecI{dimensions().game.x + dimensions().game.w, dimensions().game.y + dimensions().game.h});
+		pixel_to_2d_world_m(VecI{dimensions().game.x + dimensions().game.w, dimensions().game.y + dimensions().game.h});
 	return RectF::from_corners(top_left, bottom_right);
 }
 
@@ -539,11 +548,11 @@ void m2::Game::recalculate_directional_audio() {
 				}
 				// Left listener
 				const auto left_volume =
-				    _level->left_listener ? _level->left_listener->volume_of(sound_position) : 0.0f;
+					_level->left_listener ? _level->left_listener->volume_of(sound_position) : 0.0f;
 				audio_manager->set_playback_left_volume(playback_id, left_volume);
 				// Right listener
 				const auto right_volume =
-				    _level->right_listener ? _level->right_listener->volume_of(sound_position) : 0.0f;
+					_level->right_listener ? _level->right_listener->volume_of(sound_position) : 0.0f;
 				audio_manager->set_playback_right_volume(playback_id, right_volume);
 			}
 		}
@@ -564,23 +573,23 @@ void m2::Game::execute_deferred_actions() {
 void m2::Game::recalculate_mouse_position2() const {
 	const auto mouse_position = events.mouse_position();
 	const auto screen_center_to_mouse_position_px =
-	    VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
+		VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
 	_screen_center_to_mouse_position_m = VecF{
-	    F(screen_center_to_mouse_position_px.x) / F(_dims.ppm), F(screen_center_to_mouse_position_px.y) / F(_dims.ppm)};
+		F(screen_center_to_mouse_position_px.x) / F(_dims.ppm), F(screen_center_to_mouse_position_px.y) / F(_dims.ppm)};
 
 	if (is_projection_type_perspective(_level->projection_type())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
 		const auto sin_of_player_to_camera_angle = LEVEL.camera_offset().z / LEVEL.camera_offset().length();
 		const auto cos_of_player_to_camera_angle =
-		    sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
+			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 
 		const auto y_offset = (F(screen_center_to_mouse_position_px.y) / m3::ppm()) * sin_of_player_to_camera_angle;
 		const auto z_offset = -(F(screen_center_to_mouse_position_px.y) / m3::ppm()) * cos_of_player_to_camera_angle;
 		const auto x_offset = F(screen_center_to_mouse_position_px.x) / m3::ppm();
 		const auto player_position = m3::focus_position_m();
 		const auto mouse_position_world_m =
-		    m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
+			m3::VecF{player_position.x + x_offset, player_position.y + y_offset, player_position.z + z_offset};
 
 		// Create Line from camera to mouse position
 		const auto ray_to_mouse = m3::Line::from_points(m3::camera_position_m(), mouse_position_world_m);
@@ -588,7 +597,7 @@ void m2::Game::recalculate_mouse_position2() const {
 		const auto plane = m3::Plane::xy_plane(_proxy.xy_plane_z_component);
 		// Get the intersection
 		if (const auto [intersection_point, forward_intersection] = plane.intersection(ray_to_mouse);
-		    forward_intersection) {
+			forward_intersection) {
 			_mouse_position_world_m = VecF{intersection_point.x, intersection_point.y};
 		} else {
 			_mouse_position_world_m = VecF{-intersection_point.x, -10000.0f};  // Infinity is 10KM

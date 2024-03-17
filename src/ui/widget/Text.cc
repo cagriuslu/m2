@@ -32,7 +32,7 @@ Action Text::on_update() {
 
 	if (text_blueprint().on_update) {
 		auto [action, optional_string] = text_blueprint().on_update(*this);
-		if (is_continue(action) && optional_string) {
+		if (action.is_continue() && optional_string) {
 			_font_texture =
 			    m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, *optional_string));
 		}

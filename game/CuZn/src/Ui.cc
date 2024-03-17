@@ -25,7 +25,7 @@ Blueprint cuzn::generate_cards_window(bool has_return_button) {
 				TextBlueprint{
 					.initial_text = "X",
 					.on_action = [](MAYBE const Text& self) -> Action {
-						return make_return_action<m2::Void>();
+						return make_return_action();
 					}
 				}
 			},
@@ -97,7 +97,7 @@ m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType ind
 				.variant = TextBlueprint{
 					.initial_text = "X",
 					.on_action = [](MAYBE const Text& self) -> Action {
-						return make_return_action<m2::Void>();
+						return make_return_action();
 					}
 				}
 			},
@@ -163,7 +163,7 @@ m2::ui::Blueprint cuzn::generate_build_confirmation(m2g::pb::ItemType card, m2g:
 								std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal(true));
 							}
 						}
-						return make_return_action<m2::Void>();
+						return make_return_action();
 					}
 				}
 			},
@@ -180,7 +180,7 @@ m2::ui::Blueprint cuzn::generate_build_confirmation(m2g::pb::ItemType card, m2g:
 								std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal(false));
 							}
 						}
-						return make_return_action<m2::Void>();
+						return make_return_action();
 					}
 				}
 			}

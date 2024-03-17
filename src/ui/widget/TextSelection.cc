@@ -44,7 +44,7 @@ TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint)
 Action TextSelection::on_update() {
 	if (text_selection_blueprint().on_update) {
 		auto [action, optional_list] = text_selection_blueprint().on_update(*this);
-		if (is_continue(action) && optional_list) {
+		if (action.is_continue() && optional_list) {
 			// Save new list
 			_list = *optional_list;
 			// Verify list

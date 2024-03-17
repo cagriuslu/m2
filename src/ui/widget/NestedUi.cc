@@ -40,7 +40,7 @@ void NestedUi::on_position_update(const RectI& rect_px_) {
 
 Action NestedUi::on_event(Events &events) {
 	auto nested_action = _ui->handle_events(events);
-	if (is_continue(nested_action)) {
+	if (nested_action.is_continue()) {
 		// Handle scroll, value is negative on scroll down
 		if (auto vertical_scroll_count = -events.pop_mouse_wheel_vertical_scroll(RectI{rect_px}); vertical_scroll_count) {
 			_inner_y = std::clamp(_inner_y + vertical_scroll_count, 0, _ui->blueprint->h - std::get<NestedUiBlueprint>(blueprint->variant).inner_h);

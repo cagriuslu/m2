@@ -139,7 +139,7 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 			        m2_succeed_or_throw_error(GAME.load_single_player(level_json, level_name));
 			        GAME.audio_manager->play(&GAME.songs[m2g::pb::SONG_MAIN_THEME],
 			                                 m2::AudioManager::PlayPolicy::LOOP, 0.5f);
-			        return m2::ui::make_return_action<m2::Void>();
+			        return m2::ui::make_return_action();
 		        }
 		    }
 		});
@@ -223,7 +223,7 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) -> m2::ui::Action {
 			        alive_enemy_count = 0;
 			        m2_succeed_or_throw_error(GAME.load_single_player(*lb_path, LEVEL.name()));
-			        return m2::ui::make_return_action<m2::Void>();
+			        return m2::ui::make_return_action();
 		        }
 		    }
 		});

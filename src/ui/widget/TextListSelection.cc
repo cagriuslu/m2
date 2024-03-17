@@ -14,7 +14,7 @@ TextListSelection::TextListSelection(State* parent, const WidgetBlueprint* bluep
 Action TextListSelection::on_update() {
 	if (text_list_selection_blueprint().on_update) {
 		auto [action, optional_list] = text_list_selection_blueprint().on_update(*this);
-		if (is_continue(action) && optional_list) {
+		if (action.is_continue() && optional_list) {
 			prepare_list(*optional_list);
 		}
 		return std::move(action);
