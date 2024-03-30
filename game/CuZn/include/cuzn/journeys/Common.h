@@ -1,8 +1,12 @@
 #pragma once
 #include <m2/Fsm.h>
 #include <m2/VecF.h>
+#include <m2/ui/Blueprint.h>
 
 namespace cuzn {
+	extern const m2::ui::Blueprint journey_cancel_button;
+	constexpr int JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX = 0;
+
 	class PositionOrCancelSignal : public m2::FsmSignalBase {
 		std::optional<m2::VecF> _world_position;
 		bool _cancel{};

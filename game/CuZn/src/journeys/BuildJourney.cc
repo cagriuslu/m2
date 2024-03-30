@@ -11,31 +11,6 @@ using namespace m2g;
 using namespace m2g::pb;
 using namespace cuzn;
 
-namespace {
-	const Blueprint cancel_button{
-		.border_width_px = 0,
-		.widgets = {
-			WidgetBlueprint{
-				.background_color = {0, 0, 0, 255},
-				.variant = widget::TextBlueprint{
-					.initial_text = "Cancel",
-					.on_action = [](MAYBE const widget::Text& self) -> Action {
-						// Create and send a cancel signal to the current user journey
-						auto& user_journey = m2g::Proxy::get_instance().user_journey;
-						// Check if BuildJourney is active
-						if (std::holds_alternative<BuildJourney>(*user_journey)) {
-							// Deliver cancel signal to BuildJourney
-							std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_cancel_signal());
-						}
-						return make_return_action();
-					}
-				}
-			}
-		}
-	};
-	constexpr int CANCEL_BUTTON_CUSTOM_UI_INDEX = 0;
-}
-
 cuzn::BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal>() {
 	DEBUG_FN();
 	init(BuildJourneyStep::INITIAL_STEP);
@@ -49,7 +24,7 @@ std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const Po
 				case m2::FsmSignalType::ExitState: return std::nullopt;
 				default: throw M2ERROR("Unexpected signal");
 			}
-		case BuildJourneyStep::EXPECT_INDUSTRY_LOCATION:
+		case BuildJourneyStep::EXPECT_LOCATION:
 			switch (s.type()) {
 				case m2::FsmSignalType::EnterState: return handle_industry_location_enter_signal();
 				case m2::FsmSignalType::Custom:
@@ -84,7 +59,6 @@ std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const Po
 				default: throw M2ERROR("Unexpected signal");
 			}
 	}
-	return std::nullopt;
 }
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_initial_enter_signal() {
@@ -99,7 +73,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_initial_enter_signal(
 		.if_return<m2g::pb::ItemType>([&](auto picked_card) {
 			LOG_INFO("Selected card", m2g::pb::ItemType_Name(picked_card));
 			_selected_card = picked_card;
-			next_state = BuildJourneyStep::EXPECT_INDUSTRY_LOCATION;
+			next_state = BuildJourneyStep::EXPECT_LOCATION;
 		});
 	return next_state;
 }
@@ -109,7 +83,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_ent
 	LEVEL.left_hud_ui_state->enabled = false;
 	LEVEL.right_hud_ui_state->enabled = false;
 	LEVEL.display_message("Pick location");
-	LEVEL.add_custom_ui(CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &cancel_button);
+	LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
 	return std::nullopt;
 }
 
@@ -182,7 +156,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_exi
 	LEVEL.left_hud_ui_state->enabled = true;
 	LEVEL.right_hud_ui_state->enabled = true;
 	LEVEL.remove_message();
-	LEVEL.remove_custom_ui_deferred(CANCEL_BUTTON_CUSTOM_UI_INDEX);
+	LEVEL.remove_custom_ui_deferred(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
 	return std::nullopt;
 }
 

@@ -7,7 +7,7 @@
 namespace cuzn {
 	enum class BuildJourneyStep {
 		INITIAL_STEP = 0,
-		EXPECT_INDUSTRY_LOCATION,
+		EXPECT_LOCATION,
 		EXPECT_RESOURCE_SOURCE,
 		EXPECT_CONFIRMATION,
 	};
