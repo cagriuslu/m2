@@ -160,7 +160,7 @@ m2::ui::Blueprint cuzn::generate_build_confirmation(m2g::pb::ItemType card, m2g:
 							// Check if BuildJourney is active
 							if (std::holds_alternative<BuildJourney>(*user_journey)) {
 								// Deliver cancellation to BuildJourney
-								std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal(true));
+								std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_cancel_signal(true));
 							}
 						}
 						return make_return_action();
@@ -177,7 +177,7 @@ m2::ui::Blueprint cuzn::generate_build_confirmation(m2g::pb::ItemType card, m2g:
 							// Check if BuildJourney is active
 							if (std::holds_alternative<BuildJourney>(*user_journey)) {
 								// Deliver cancellation to BuildJourney
-								std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal(false));
+								std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_cancel_signal(false));
 							}
 						}
 						return make_return_action();

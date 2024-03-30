@@ -25,7 +25,7 @@ namespace {
 						// Check if BuildJourney is active
 						if (std::holds_alternative<BuildJourney>(*user_journey)) {
 							// Deliver cancel signal to BuildJourney
-							std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_cancel_signal());
+							std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_cancel_signal());
 						}
 						return make_return_action();
 					}
@@ -36,24 +36,12 @@ namespace {
 	constexpr int CANCEL_BUTTON_CUSTOM_UI_INDEX = 0;
 }
 
-BuildJourneySignal BuildJourneySignal::create_mouse_click_signal(m2::VecF world_position) {
-	auto signal = BuildJourneySignal{m2::FsmSignalType::Custom};
-	signal._world_position = world_position;
-	return signal;
-}
-
-BuildJourneySignal BuildJourneySignal::create_cancel_signal(bool cancelled) {
-	auto signal = BuildJourneySignal{m2::FsmSignalType::Custom};
-	signal._cancel = cancelled;
-	return signal;
-}
-
-cuzn::BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, BuildJourneySignal>() {
+cuzn::BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal>() {
 	DEBUG_FN();
 	init(BuildJourneyStep::INITIAL_STEP);
 }
 
-std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const BuildJourneySignal& s) {
+std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const PositionOrCancelSignal& s) {
 	switch (state()) {
 		case BuildJourneyStep::INITIAL_STEP:
 			switch (s.type()) {

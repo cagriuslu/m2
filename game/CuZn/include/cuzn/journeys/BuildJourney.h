@@ -1,4 +1,5 @@
 #pragma once
+#include "Common.h"
 #include <m2/Fsm.h>
 #include <m2/VecF.h>
 #include <m2/Object.h>
@@ -11,21 +12,7 @@ namespace cuzn {
 		EXPECT_CONFIRMATION,
 	};
 
-	class BuildJourneySignal : public m2::FsmSignalBase {
-		std::optional<m2::VecF> _world_position;
-		bool _cancel{};
-
-	public:
-		using m2::FsmSignalBase::FsmSignalBase;
-		static BuildJourneySignal create_mouse_click_signal(m2::VecF world_position);
-		static BuildJourneySignal create_cancel_signal(bool cancelled = true);
-
-		// Accessors
-		[[nodiscard]] const m2::VecF* world_position() const { return _world_position ? &*_world_position : nullptr; }
-		[[nodiscard]] bool cancel() const { return _cancel; }
-	};
-
-	class BuildJourney : public m2::FsmBase<BuildJourneyStep, BuildJourneySignal> {
+	class BuildJourney : public m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal> {
 		m2g::pb::ItemType _selected_card{};
 		m2g::pb::SpriteType _selected_location{};
 		m2g::pb::ItemType _selected_industry{};
@@ -35,7 +22,7 @@ namespace cuzn {
 		BuildJourney();
 
 	protected:
-		std::optional<BuildJourneyStep> handle_signal(const BuildJourneySignal& s) override;
+		std::optional<BuildJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
 		std::optional<BuildJourneyStep> handle_initial_enter_signal();
 		std::optional<BuildJourneyStep> handle_industry_location_enter_signal();
 		std::optional<BuildJourneyStep> handle_industry_location_mouse_click_signal(const m2::VecF&);

@@ -57,7 +57,7 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 				// Check if BuildJourney is active
 				if (std::holds_alternative<BuildJourney>(*user_journey)) {
 					// Deliver mouse click to BuildJourney
-					std::get<BuildJourney>(*user_journey).signal(BuildJourneySignal::create_mouse_click_signal(GAME.mouse_position_world_m()));
+					std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_mouse_click_signal(GAME.mouse_position_world_m()));
 				}
 			}
 		}
