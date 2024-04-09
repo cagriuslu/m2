@@ -106,6 +106,8 @@ namespace m2 {
 
 		// Modifiers
 		void begin_game_loop();
+		void enable_hud();
+		void disable_hud();
 		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
 		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
 		void remove_custom_ui(int index); // Should not be called from the UI itself

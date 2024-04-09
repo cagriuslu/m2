@@ -288,6 +288,16 @@ void m2::Level::begin_game_loop() {
 	}
 }
 
+void m2::Level::enable_hud() {
+	left_hud_ui_state->enabled = true;
+	right_hud_ui_state->enabled = true;
+}
+
+void m2::Level::disable_hud() {
+	left_hud_ui_state->enabled = false;
+	right_hud_ui_state->enabled = false;
+}
+
 void m2::Level::add_custom_ui(int index, m2::RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint) {
 	custom_ui_state[index].first = position_ratio;
 	custom_ui_state[index].second.emplace(std::move(blueprint));

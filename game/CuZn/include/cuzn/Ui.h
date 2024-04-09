@@ -4,6 +4,7 @@
 namespace cuzn {
 	/// The Blueprint will be used to select a card and return it from sync UI execution.
 	m2::ui::Blueprint generate_cards_window(bool has_return_button);
+	std::optional<m2g::pb::ItemType> ask_for_card_selection();
 
 	m2::ui::Blueprint generate_industry_selection_window(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2);
 

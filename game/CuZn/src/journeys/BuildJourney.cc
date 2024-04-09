@@ -62,26 +62,19 @@ std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const Po
 }
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_initial_enter_signal() {
-	LOG_INFO("Asking player to pick a card...");
-	std::optional<BuildJourneyStep> next_state;
-	m2::ui::State::create_execute_sync(std::make_unique<m2::ui::Blueprint>(generate_cards_window(true)), GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
-		.if_void_return([&]() {
-			LOG_INFO("Cancelling Build action...");
-			GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
-			next_state = std::nullopt;
-		})
-		.if_return<m2g::pb::ItemType>([&](auto picked_card) {
-			LOG_INFO("Selected card", m2g::pb::ItemType_Name(picked_card));
-			_selected_card = picked_card;
-			next_state = BuildJourneyStep::EXPECT_LOCATION;
-		});
-	return next_state;
+	if (auto selected_card = ask_for_card_selection(); selected_card) {
+		_selected_card = *selected_card;
+		return BuildJourneyStep::EXPECT_LOCATION;
+	} else {
+		// Cancelled
+		GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
+		return std::nullopt;
+	}
 }
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_enter_signal() {
 	LOG_DEBUG("Expecting build location, disabling hud...");
-	LEVEL.left_hud_ui_state->enabled = false;
-	LEVEL.right_hud_ui_state->enabled = false;
+	LEVEL.disable_hud();
 	LEVEL.display_message("Pick location");
 	LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
 	return std::nullopt;
@@ -153,8 +146,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_can
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_exit_signal() {
 	LOG_DEBUG("Re-enabling hud...");
-	LEVEL.left_hud_ui_state->enabled = true;
-	LEVEL.right_hud_ui_state->enabled = true;
+	LEVEL.enable_hud();
 	LEVEL.remove_message();
 	LEVEL.remove_custom_ui_deferred(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
 	return std::nullopt;

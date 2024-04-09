@@ -86,6 +86,20 @@ Blueprint cuzn::generate_cards_window(bool has_return_button) {
 	};
 }
 
+std::optional<m2g::pb::ItemType> cuzn::ask_for_card_selection() {
+	LOG_INFO("Asking player to select a card...");
+	std::optional<m2g::pb::ItemType> selected_card;
+	m2::ui::State::create_execute_sync(std::make_unique<m2::ui::Blueprint>(generate_cards_window(true)), GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+		.if_void_return([&]() {
+			LOG_INFO("Card selection cancelled");
+		})
+		.if_return<m2g::pb::ItemType>([&selected_card](auto picked_card) {
+			LOG_INFO("Card selected", m2g::pb::ItemType_Name(picked_card));
+			selected_card = picked_card;
+		});
+	return selected_card;
+}
+
 m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
 	return Blueprint{
 		.w = 60, .h = 40,
