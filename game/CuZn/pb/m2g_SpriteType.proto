@@ -74,6 +74,8 @@ enum SpriteType {
   STANDALONE_BREWERY_2 = 63;
 
   // Infrastructure
+  // The order of the infrastructures should not be modified carelessly.
+  // BELPER_DERBY_CANAL_RAILROAD and REDDITCH_OXFORD_CANAL_RAILROAD are used as boundaries.
   BELPER_DERBY_CANAL_RAILROAD = 101;
   BELPER_LEEK_RAILROAD = 102;
   DERBY_UTTOXETER_RAILROAD = 103;
