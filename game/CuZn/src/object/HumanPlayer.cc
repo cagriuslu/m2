@@ -1,4 +1,6 @@
 #include <cuzn/object/HumanPlayer.h>
+#include <cuzn/journeys/BuildJourney.h>
+#include <cuzn/journeys/NetworkJourney.h>
 #include <m2/Controls.h>
 #include <m2/Game.h>
 #include <m2/protobuf/Detail.h>
@@ -53,12 +55,13 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 		// Check if mouse button pressed
 		if (GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY)) {
 			// Check if a user journey is active
-			if (auto& user_journey = m2g::Proxy::get_instance().user_journey; user_journey) {
-				// Check if BuildJourney is active
-				if (std::holds_alternative<BuildJourney>(*user_journey)) {
-					// Deliver mouse click to BuildJourney
-					std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_mouse_click_signal(GAME.mouse_position_world_m()));
-				}
+			if (auto& user_journey = m2g::Proxy::get_instance().user_journey) {
+				// Deliver position signal to current Journey
+				std::visit(m2::overloaded {
+					[](auto& j) {
+						j.signal(PositionOrCancelSignal::create_mouse_click_signal(GAME.mouse_position_world_m()));
+					}
+				}, *user_journey);
 			}
 		}
 	};
