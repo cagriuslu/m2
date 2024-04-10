@@ -91,21 +91,11 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mou
 			LEVEL.display_message("Selected position cannot be built with the selected card", 10.0f);
 			return std::nullopt;
 		} else if (selectable_industries.size() == 2) {
-			LOG_INFO("Asking player to pick an industry...");
-			bool cancelled{};
-			m2::ui::State::create_execute_sync(
-				std::make_unique<m2::ui::Blueprint>(generate_industry_selection_window(selectable_industries[0], selectable_industries[1])),
-				GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
-				.if_void_return([&]() {
-					LOG_INFO("Cancelling Build action...");
-					GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
-					cancelled = true;
-				})
-				.if_return<m2g::pb::ItemType>([&](auto selected_industry) {
-					LOG_INFO("Selected industry", m2g::pb::ItemType_Name(selected_industry));
-					_selected_industry = selected_industry;
-				});
-			if (cancelled) {
+			if (auto selected_industry = ask_for_industry_selection(selectable_industries[0], selectable_industries[1]); selected_industry) {
+				_selected_industry = *selected_industry;
+			} else {
+				// Cancelled
+				GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
 				return std::nullopt;
 			}
 		} else if (selectable_industries.size() == 1) {

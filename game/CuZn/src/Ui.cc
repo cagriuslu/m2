@@ -137,6 +137,22 @@ m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType ind
 	};
 }
 
+std::optional<m2g::pb::ItemType> cuzn::ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
+	LOG_INFO("Asking player to select an industry...");
+	std::optional<m2g::pb::ItemType> selected_industry;
+	m2::ui::State::create_execute_sync(
+		std::make_unique<m2::ui::Blueprint>(generate_industry_selection_window(industry_1, industry_2)),
+		GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+		.if_void_return([&]() {
+			LOG_INFO("Industry selection cancelled");
+		})
+		.if_return<m2g::pb::ItemType>([&](auto industry) {
+			LOG_INFO("Industry selected", m2g::pb::ItemType_Name(industry));
+			selected_industry = industry;
+		});
+	return selected_industry;
+}
+
 m2::ui::Blueprint cuzn::generate_build_confirmation(m2g::pb::ItemType card, m2g::pb::ItemType city, m2g::pb::ItemType industry) {
 	auto card_name = GAME.get_named_item(card).in_game_name();
 	auto city_name = GAME.get_named_item(city).in_game_name();
