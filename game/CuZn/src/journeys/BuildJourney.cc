@@ -82,10 +82,8 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_ent
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mouse_click_signal(const m2::VecF& world_position) {
 	LOG_DEBUG("Received mouse click", world_position);
-	if (auto selected_loc = std::find_if(PROXY.industry_positions.begin(), PROXY.industry_positions.end(),
-			[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
-		selected_loc != PROXY.industry_positions.end()) {
-		_selected_location = selected_loc->first;
+	if (auto selected_loc = industry_location_on_position(world_position)) {
+		_selected_location = *selected_loc;
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(_selected_location));
 
 		// Check if there's a need to make an industry selection based on the card and the sprite

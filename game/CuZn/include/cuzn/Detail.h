@@ -2,6 +2,7 @@
 #include <m2g_ItemType.pb.h>
 #include <m2g_SpriteType.pb.h>
 #include <m2/component/Character.h>
+#include <m2/VecF.h>
 #include <m2/M2.h>
 
 namespace cuzn {
@@ -19,4 +20,7 @@ namespace cuzn {
 
 	/// Convert an industry card representing an industry to an item category representing a tile type
 	m2g::pb::ItemCategory industry_card_to_tile_category(m2g::pb::ItemType industry_card);
+
+	/// Returns the industry located on the given position
+	std::optional<m2g::pb::SpriteType> industry_location_on_position(const m2::VecF& world_position);
 }

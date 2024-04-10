@@ -76,3 +76,13 @@ m2g::pb::ItemCategory cuzn::industry_card_to_tile_category(m2g::pb::ItemType ind
 			throw M2ERROR("Item is not an industry card");
 	}
 }
+
+std::optional<m2g::pb::SpriteType> cuzn::industry_location_on_position(const m2::VecF& world_position) {
+	auto it = std::find_if(PROXY.industry_positions.begin(), PROXY.industry_positions.end(),
+			[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
+	if (it != PROXY.industry_positions.end()) {
+		return it->first;
+	} else {
+		return std::nullopt;
+	}
+}
