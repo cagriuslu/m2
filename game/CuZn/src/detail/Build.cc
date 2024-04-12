@@ -1,4 +1,4 @@
-#include <cuzn/Build.h>
+#include <cuzn/detail/Build.h>
 #include <cuzn/Detail.h>
 #include <cuzn/object/Tile.h>
 #include <cuzn/object/HumanPlayer.h>
@@ -7,7 +7,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-std::vector<m2g::pb::ItemType> cuzn::selectable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
+std::vector<cuzn::Industry> cuzn::buildable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
 	if (not is_card(selected_card)) {
 		throw M2ERROR("Item is not a card");
 	}
@@ -18,21 +18,21 @@ std::vector<m2g::pb::ItemType> cuzn::selectable_industries(m2g::pb::ItemType sel
 	const auto& selected_card_item = GAME.get_named_item(selected_card);
 	const auto& selected_sprite_sprite = GAME.get_sprite(selected_location);
 	// Lookup industries on the sprite
-	std::vector<m2g::pb::ItemType> selected_sprite_industries;
-	std::copy_if(selected_sprite_sprite.named_items().begin(), selected_sprite_sprite.named_items().end(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
+	std::vector<ItemType> selected_sprite_industries;
+	std::ranges::copy_if(selected_sprite_sprite.named_items(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
 		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
 	});
 	if (selected_sprite_industries.empty()) {
 		throw M2ERROR("Selected sprite does not hold any industry cards");
 	}
 	// Look up the location of the sprite
-	auto location_card_it = std::find_if(selected_sprite_sprite.named_items().begin(), selected_sprite_sprite.named_items().end(), [](auto item_type) {
+	auto location_card_it = std::ranges::find_if(selected_sprite_sprite.named_items(), [](auto item_type) {
 		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
 	});
 	if (location_card_it == selected_sprite_sprite.named_items().end()) {
 		throw M2ERROR("Selected sprite does not hold a location card");
 	}
-	m2g::pb::ItemType selected_sprite_location = *location_card_it;
+	ItemType selected_sprite_location = *location_card_it;
 
 	// If the card is wild card
 	if (selected_card_item.category() == ITEM_CATEGORY_WILD_CARD) {
@@ -42,9 +42,9 @@ std::vector<m2g::pb::ItemType> cuzn::selectable_industries(m2g::pb::ItemType sel
 		// Check if the selected industry exists in the sprite's industries
 		auto industry_card_it = std::find(selected_sprite_industries.begin(), selected_sprite_industries.end(), selected_card);
 		if (industry_card_it == selected_sprite_industries.end()) {
-			return {}; // No selectable industries
+			return {}; // No buildable industries
 		} else {
-			return {selected_card}; // Only the selected industry card is selectable
+			return {selected_card}; // Only the selected industry card is buildable
 		}
 	} else { // ITEM_CATEGORY_CITY_CARD
 		// Check if the card belongs to this location
@@ -52,47 +52,41 @@ std::vector<m2g::pb::ItemType> cuzn::selectable_industries(m2g::pb::ItemType sel
 			// Any industry in the selected location can be built
 			return selected_sprite_industries;
 		} else {
-			return {}; // No selectable industries
+			return {}; // No buildable industries
 		}
 	}
 }
 
-m2::expected<m2g::pb::ItemType> cuzn::can_player_build_industry(m2::Character& player, m2g::pb::ItemType card, m2g::pb::SpriteType location, m2g::pb::ItemType industry) {
-	// Ensure that the player holds the given card
-	if (player.find_items(card) == player.end_items()) {
+m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, m2g::pb::ItemType card, m2g::pb::SpriteType location, m2g::pb::ItemType industry) {
+	if (not player_has_card(player, card)) {
 		return m2::make_unexpected("Player doesn't hold the given card");
 	}
-
-	// Ensure that the location contains the given industry
-	auto industries = industries_on_location(location);
-	if (std::find(industries.begin(), industries.end(), industry) == industries.end()) {
+	if (not location_has_industry(location, industry)) {
 		throw M2ERROR("Location does not contain the industry");
 	}
-
-	// Check if the location already has a tile
 	if (find_tile_at_location(location)) {
 		return m2::make_unexpected("Location already has a tile built");
 	}
 
-	// Ensure that the given card can build the industry in the given location
-	auto selectable_industries = cuzn::selectable_industries(card, location);
-	if (std::find(selectable_industries.begin(), selectable_industries.end(), industry) == selectable_industries.end()) {
+	auto buildable_industries = cuzn::buildable_industries(card, location);
+	if (std::ranges::find(buildable_industries, industry) == buildable_industries.end()) {
 		return m2::make_unexpected("Selected card cannot build the industry on given location");
 	}
 
-	// Find the city of the location
 	auto city = city_of_location(location);
-	// Find all the locations in the city
-	auto locations = locations_in_city(city);
-	// Remove the given location
-	locations.erase(std::remove(locations.begin(), locations.end(), location), locations.end());
-
 	// Check if this location is part of the player's network, or they don't have a network.
 	if (auto cities_in_network = get_cities_in_network(player); not cities_in_network.empty() && not cities_in_network.contains(city)) {
 		return m2::make_unexpected("City is not in player's network");
 	}
 
+	// Find all the locations in the city
+	auto locations = locations_in_city(city);
+	// Remove the given location
+	locations.erase(std::remove(locations.begin(), locations.end(), location), locations.end());
+
+
 	// If there's more than one industry on this location, check if there's another location in the city with only this industry.
+	auto industries = industries_on_location(location);
 	if (1 < industries.size()) {
 		// Gather locations that only has the industry
 		std::vector<m2g::pb::SpriteType> locations_with_only_the_industry;
@@ -142,4 +136,8 @@ m2::expected<m2g::pb::ItemType> cuzn::can_player_build_industry(m2::Character& p
 	}
 
 	return *tile_type;
+}
+
+m2::expected<m2g::pb::ItemType> cuzn::can_player_build_infrastructure(m2::Character& player, ItemType card, SpriteType location) {
+
 }

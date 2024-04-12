@@ -4,15 +4,27 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-bool cuzn::is_card(m2g::pb::ItemType item) {
-	const auto& card_item = GAME.get_named_item(item);
+bool cuzn::is_card(Card card) {
+	const auto& card_item = GAME.get_named_item(card);
 	return (card_item.category() == ITEM_CATEGORY_WILD_CARD ||
 		card_item.category() == ITEM_CATEGORY_INDUSTRY_CARD ||
 		card_item.category() == ITEM_CATEGORY_CITY_CARD);
 }
 
-bool cuzn::is_industry_location(m2g::pb::SpriteType sprite) {
-	return (BELPER_COTTON_MILL_MANUFACTURED_GOODS <= sprite && sprite <= STANDALONE_BREWERY_2);
+bool cuzn::is_industry(Industry industry) {
+	return (COTTON_MILL_CARD <= industry && industry <= MANUFACTURED_GOODS_CARD);
+}
+
+bool cuzn::is_industry_location(IndustryLocation location) {
+	return (BELPER_COTTON_MILL_MANUFACTURED_GOODS <= location && location <= STANDALONE_BREWERY_2);
+}
+
+bool cuzn::is_infrastructure_location(InfrastructureLocation location) {
+	return (BELPER_DERBY_CANAL_RAILROAD <= location && location <= REDDITCH_OXFORD_CANAL_RAILROAD);
+}
+
+bool cuzn::player_has_card(m2::Character& player, m2g::pb::ItemType card) {
+	return player.find_items(card) != player.end_items();
 }
 
 m2g::pb::ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
@@ -56,6 +68,11 @@ std::vector<m2g::pb::ItemType> cuzn::industries_on_location(m2g::pb::SpriteType 
 		}
 	}
 	return industries;
+}
+
+bool cuzn::location_has_industry(SpriteType location, ItemType industry) {
+	auto industries = industries_on_location(location);
+	return std::ranges::find(industries, industry) != industries.end();
 }
 
 m2g::pb::ItemCategory cuzn::industry_card_to_tile_category(m2g::pb::ItemType industry_card) {

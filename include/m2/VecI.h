@@ -52,7 +52,7 @@ namespace m2 {
 	std::string to_string(const std::vector<VecI>&);
 
 	struct VecIHash {
-		inline size_t operator()(const VecI& a) const {
+		size_t operator()(const VecI& a) const {
 			return std::hash<uint64_t>{}((uint64_t)a.x | ((uint64_t)a.y << 32));
 		}
 	};

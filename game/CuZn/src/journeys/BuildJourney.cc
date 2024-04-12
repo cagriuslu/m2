@@ -1,7 +1,7 @@
 #include <cuzn/journeys/BuildJourney.h>
 #include <m2/ui/State.h>
 #include <cuzn/Detail.h>
-#include <cuzn/Build.h>
+#include <cuzn/detail/Build.h>
 #include <cuzn/Ui.h>
 #include <m2/Game.h>
 
@@ -87,7 +87,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mou
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(_selected_location));
 
 		// Check if there's a need to make an industry selection based on the card and the sprite
-		if (auto selectable_industries = cuzn::selectable_industries(_selected_card, _selected_location); selectable_industries.empty()) {
+		if (auto selectable_industries = buildable_industries(_selected_card, _selected_location); selectable_industries.empty()) {
 			LEVEL.display_message("Selected position cannot be built with the selected card", 10.0f);
 			return std::nullopt;
 		} else if (selectable_industries.size() == 2) {

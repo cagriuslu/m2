@@ -1,9 +1,8 @@
+#include <m2g/Proxy.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/object/Market.h>
 #include <cuzn/object/Merchant.h>
 #include <m2/Game.h>
-#include <m2/Proxy.h>
-#include <m2/multi_player/State.h>
 
 #include <random>
 
@@ -158,6 +157,14 @@ m2::void_expected m2g::Proxy::init_fg_object(m2::Object& obj) {
 	return {};
 }
 
+m2g::Proxy& m2g::Proxy::get_instance() {
+	return dynamic_cast<m2g::Proxy&>(GAME.proxy());
+}
+
+void m2g::Proxy::user_journey_deleter() {
+	get_instance().user_journey.reset();
+}
+
 std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_merchant_license_list(int client_count) {
 	// Figure out the attribute to use for card selection
 	m2g::pb::AttributeType count_attr = [=]() {
@@ -239,12 +246,4 @@ std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_draw_deck(int client_count) {
 	std::shuffle(draw_deck.begin(), draw_deck.end(), card_shuffler);
 
 	return draw_deck;
-}
-
-m2g::Proxy& m2g::Proxy::get_instance() {
-	return dynamic_cast<m2g::Proxy&>(GAME.proxy());
-}
-
-void m2g::Proxy::user_journey_deleter() {
-	get_instance().user_journey.reset();
 }
