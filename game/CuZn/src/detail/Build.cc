@@ -1,6 +1,6 @@
 #include <cuzn/detail/Build.h>
 #include <cuzn/Detail.h>
-#include <cuzn/object/Tile.h>
+#include <cuzn/object/Factory.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Game.h>
 
@@ -62,7 +62,7 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 	if (not player_has_card(player, card)) {
 		return m2::make_unexpected("Player doesn't hold the given card");
 	}
-	if (find_tile_at_location(location)) {
+	if (find_factory_at_location(location)) {
 		return m2::make_unexpected("Location already has a tile built");
 	}
 
@@ -95,7 +95,7 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 		// If there's a location with only the given industry
 		for (auto location_with_only_the_industry : locations_with_only_the_industry) {
 			// Check if those locations are built already
-			if (find_tile_at_location(location_with_only_the_industry)) {
+			if (find_factory_at_location(location_with_only_the_industry)) {
 				return m2::make_unexpected("Cannot build industry while the city has an empty location with only that industry");
 			}
 		}
@@ -106,7 +106,7 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 		// Iterate over other locations in the city
 		for (const auto& other_location : locations) {
 			// If the location has a tile built
-			if (auto* tile_obj = find_tile_at_location(other_location); tile_obj) {
+			if (auto* tile_obj = find_factory_at_location(other_location); tile_obj) {
 				// If the parent of the tile is the given player
 				if (tile_obj->parent_id() == player.parent().id()) {
 					return m2::make_unexpected("Cannot build multiple industries in same city in first era");

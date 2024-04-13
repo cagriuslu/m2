@@ -4,8 +4,8 @@
 #include <m2/Controls.h>
 #include <m2/Game.h>
 #include <m2/protobuf/Detail.h>
-#include <cuzn/object/Tile.h>
-#include <cuzn/object/CanalOrRailroad.h>
+#include <cuzn/object/Factory.h>
+#include <cuzn/object/Road.h>
 #include <ranges>
 
 namespace {
@@ -99,16 +99,16 @@ std::set<m2g::pb::ItemType> cuzn::get_cities_in_network(m2::Character& player) {
 		| std::views::transform(m2::to_only_data)
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(by_character_parent_id(player.parent().id()))
-		| std::views::filter(is_tile_character)
-		| std::views::transform(to_first_city_card_of_tile_character);
+		| std::views::filter(is_factory_character)
+		| std::views::transform(to_city_card_of_factory_character);
 	cities.insert(cities_range.begin(), cities_range.end());
 
 	auto canals_or_railroads_range = LEVEL.characters
 		| std::views::transform(m2::to_only_data)
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(by_character_parent_id(player.parent().id()))
-		| std::views::filter(is_canal_or_railroad_character)
-		| std::views::transform(to_first_two_city_cards_of_canal_or_railroad_character);
+		| std::views::filter(is_road_character)
+		| std::views::transform(to_city_cards_of_road_character);
 	for (const auto& cards : canals_or_railroads_range) {
 		cities.emplace(cards.first);
 		cities.emplace(cards.second);

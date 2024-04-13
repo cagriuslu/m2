@@ -10,10 +10,10 @@
       "type": "MERCHANT"
     },
     {
-      "type": "TILE"
+      "type": "FACTORY"
     },
     {
-      "type": "CANAL_OR_RAILROAD"
+      "type": "ROAD"
     },
     {
       "type": "MARKET"

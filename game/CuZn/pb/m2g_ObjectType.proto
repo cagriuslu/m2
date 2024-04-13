@@ -4,8 +4,8 @@ package m2g.pb;
 enum ObjectType {
   NO_OBJECT = 0;
   HUMAN_PLAYER = 1;
-  MERCHANT = 2; // External merchant tile
-  TILE = 3; // When a factory is placed
-  CANAL_OR_RAILROAD = 4;
+  MERCHANT = 2;
+  FACTORY = 3;
+  ROAD = 4;
   MARKET = 5;
 }

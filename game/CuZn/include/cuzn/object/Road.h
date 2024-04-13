@@ -5,10 +5,10 @@
 
 namespace cuzn {
 	// Filters
-	constexpr auto is_canal_or_railroad_character = [](m2::Character* chr) { return chr->parent().object_type() == m2g::pb::CANAL_OR_RAILROAD; };
+	constexpr auto is_road_character = [](m2::Character* chr) { return chr->parent().object_type() == m2g::pb::ROAD; };
 	// Transformers
-	constexpr auto to_first_two_city_cards_of_canal_or_railroad_character = [](m2::Character* chr)  {
-		if (not is_canal_or_railroad_character(chr)) {
+	constexpr auto to_city_cards_of_road_character = [](m2::Character* chr)  {
+		if (not is_road_character(chr)) {
 			throw M2ERROR("Character doesn't belong to canal or railroad");
 		}
 		auto it = chr->find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD);
