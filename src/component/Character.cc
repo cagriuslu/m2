@@ -395,27 +395,23 @@ const m2::Character& m2::get_character_base(const CharacterVariant& v) {
 	return *get_character_base(&v);
 }
 const m2::Character* m2::get_character_base(const CharacterVariant* v) {
-	if (!v) {
-		return nullptr;
-	}
 	return std::visit(overloaded {
-		[](const TinyCharacter& v) -> const Character* { return &v; },
-		[](const FullCharacter& v) -> const Character* { return &v; },
+		[](const auto& v) -> const Character* { return &v; }
 	}, *v);
 }
 m2::Character& m2::get_character_base(CharacterVariant& v) {
 	return *get_character_base(&v);
 }
 m2::Character* m2::get_character_base(CharacterVariant* v) {
-	if (!v) {
-		return nullptr;
-	}
 	return std::visit(overloaded {
-			[](TinyCharacter& v) -> Character* { return &v; },
-			[](FullCharacter& v) -> Character* { return &v; },
+			[](auto& vv) -> Character* { return &vv; }
 	}, *v);
 }
 
 m2::Character* m2::to_character_base(CharacterVariant* v) {
 	return get_character_base(v);
+}
+
+m2::Object* m2::to_character_parent(Character* v) {
+	return &v->parent();
 }

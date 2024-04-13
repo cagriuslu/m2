@@ -280,3 +280,9 @@ std::function<void(void)> m2::create_character_deleter(ObjectId id) {
 		}
 	};
 }
+
+std::function<bool(m2::Object*)> m2::object_in_rect_filter(const RectF& rect) {
+	return [rect](m2::Object* o) -> bool {
+		return rect.point_in_rect(o->position);
+	};
+}

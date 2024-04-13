@@ -56,14 +56,14 @@ std::vector<cuzn::Industry> cuzn::buildable_industries(m2g::pb::ItemType selecte
 }
 
 m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, ItemType card, SpriteType location, ItemType industry) {
-	if (not location_has_industry(location, industry)) {
-		return m2::make_unexpected("Location does not contain the industry");
-	}
 	if (not player_has_card(player, card)) {
 		return m2::make_unexpected("Player doesn't hold the given card");
 	}
 	if (find_factory_at_location(location)) {
-		return m2::make_unexpected("Location already has a tile built");
+		return m2::make_unexpected("Location already has a factory built");
+	}
+	if (not location_has_industry(location, industry)) {
+		return m2::make_unexpected("Location does not contain the industry");
 	}
 
 	auto buildable_industries = cuzn::buildable_industries(card, location);

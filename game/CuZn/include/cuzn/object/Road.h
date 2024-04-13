@@ -16,4 +16,8 @@ namespace cuzn {
 		auto second = (++it)->type();
 		return std::make_pair(first, second);
 	};
+
+	// TODO init road
+
+	m2::Object* find_road_at_location(m2g::pb::SpriteType location);
 }

@@ -196,6 +196,7 @@ namespace m2 {
 	Character& get_character_base(CharacterVariant& v);
 	Character* get_character_base(CharacterVariant* v);
 
-	// Transformer
+	// Transformers
 	Character* to_character_base(CharacterVariant* v);
+	Object* to_character_parent(Character* v);
 }
