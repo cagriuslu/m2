@@ -36,7 +36,7 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 		m2_repeat(possession_limit) { chr.add_named_item(item); }
 	}
 
-	// Add infrastructure tiles
+	// Add network tiles
 	const auto& canal_item = GAME.get_named_item(m2g::pb::CANAL_LICENSE);
 	auto canal_possession_limit = m2::I(canal_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
 	m2_repeat(canal_possession_limit) { chr.add_named_item(canal_item); }

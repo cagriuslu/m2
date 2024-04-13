@@ -137,7 +137,3 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, m2
 
 	return *tile_type;
 }
-
-m2::expected<m2g::pb::ItemType> cuzn::can_player_build_infrastructure(m2::Character& player, ItemType card, SpriteType location) {
-
-}

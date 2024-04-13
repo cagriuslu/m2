@@ -9,12 +9,12 @@ namespace cuzn {
 	using Card = m2g::pb::ItemType;
 	using Industry = m2g::pb::ItemType;
 	using IndustryLocation = m2g::pb::SpriteType;
-	using InfrastructureLocation = m2g::pb::SpriteType;
+	using NetworkLocation = m2g::pb::SpriteType;
 
 	bool is_card(Card card);
 	bool is_industry(Industry industry);
 	bool is_industry_location(IndustryLocation location);
-	bool is_infrastructure_location(InfrastructureLocation location);
+	bool is_network_location(NetworkLocation location);
 
 	bool player_has_card(m2::Character& player, m2g::pb::ItemType card);
 
@@ -34,6 +34,6 @@ namespace cuzn {
 	/// Returns the industry located on the given position
 	std::optional<m2g::pb::SpriteType> industry_location_on_position(const m2::VecF& world_position);
 
-	/// Returns the infrastructure located on the given position
-	std::optional<m2g::pb::SpriteType> infrastructure_location_on_position(const m2::VecF& world_position);
+	/// Returns the network located on the given position
+	std::optional<m2g::pb::SpriteType> network_location_on_position(const m2::VecF& world_position);
 }

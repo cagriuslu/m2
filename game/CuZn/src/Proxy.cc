@@ -132,17 +132,17 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_position);
 	}
 
-	// Store the positions of the infrastructure build locations
+	// Store the positions of the network locations
 	if (pb::BELPER_DERBY_CANAL_RAILROAD <= sprite_type && sprite_type <= pb::REDDITCH_OXFORD_CANAL_RAILROAD) {
 		// Object position has {0.5f, 0.5f} offset
-		auto infrastructure_position = m2::RectF{
+		auto network_position = m2::RectF{
 			obj.position.x - 0.5f,
 			obj.position.y - 0.5f,
 			1.0f,
 			1.0f
 		};
-		infrastructure_positions[sprite_type] = infrastructure_position;
-		LOG_DEBUG("Infrastructure position", m2g::pb::SpriteType_Name(sprite_type), infrastructure_position);
+		network_positions[sprite_type] = network_position;
+		LOG_DEBUG("Network position", m2g::pb::SpriteType_Name(sprite_type), network_position);
 	}
 }
 

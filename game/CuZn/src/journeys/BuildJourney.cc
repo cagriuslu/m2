@@ -87,19 +87,19 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_mou
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(_selected_location));
 
 		// Check if there's a need to make an industry selection based on the card and the sprite
-		if (auto selectable_industries = buildable_industries(_selected_card, _selected_location); selectable_industries.empty()) {
+		if (auto buildable_inds = buildable_industries(_selected_card, _selected_location); buildable_inds.empty()) {
 			LEVEL.display_message("Selected position cannot be built with the selected card", 10.0f);
 			return std::nullopt;
-		} else if (selectable_industries.size() == 2) {
-			if (auto selected_industry = ask_for_industry_selection(selectable_industries[0], selectable_industries[1]); selected_industry) {
+		} else if (buildable_inds.size() == 2) {
+			if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
 				_selected_industry = *selected_industry;
 			} else {
 				// Cancelled
 				GAME.add_deferred_action(m2g::Proxy::user_journey_deleter);
 				return std::nullopt;
 			}
-		} else if (selectable_industries.size() == 1) {
-			_selected_industry = selectable_industries[0];
+		} else if (buildable_inds.size() == 1) {
+			_selected_industry = buildable_inds[0];
 		} else {
 			throw M2ERROR("Implementation error, more than 2 selectable industries");
 		}

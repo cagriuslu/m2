@@ -1693,7 +1693,7 @@
     },
     {
       "type": "CANAL_LICENSE",
-      "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
+      "category": "ITEM_CATEGORY_NETWORK_LICENSE",
       "attributes": [
         {
           "type": "MONEY_COST",
@@ -1707,7 +1707,7 @@
     },
     {
       "type": "RAILROAD_LICENSE",
-      "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
+      "category": "ITEM_CATEGORY_NETWORK_LICENSE",
       "attributes": [
         {
           "type": "MONEY_COST",
@@ -1725,7 +1725,7 @@
     },
     {
       "type": "SECOND_RAILROAD_LICENSE",
-      "category": "ITEM_CATEGORY_INFRASTRUCTURE_LICENSE",
+      "category": "ITEM_CATEGORY_NETWORK_LICENSE",
       "attributes": [
         {
           "type": "MONEY_COST",

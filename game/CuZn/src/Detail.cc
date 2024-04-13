@@ -19,7 +19,7 @@ bool cuzn::is_industry_location(IndustryLocation location) {
 	return (BELPER_COTTON_MILL_MANUFACTURED_GOODS <= location && location <= STANDALONE_BREWERY_2);
 }
 
-bool cuzn::is_infrastructure_location(InfrastructureLocation location) {
+bool cuzn::is_network_location(NetworkLocation location) {
 	return (BELPER_DERBY_CANAL_RAILROAD <= location && location <= REDDITCH_OXFORD_CANAL_RAILROAD);
 }
 
@@ -104,10 +104,10 @@ std::optional<m2g::pb::SpriteType> cuzn::industry_location_on_position(const m2:
 	}
 }
 
-std::optional<m2g::pb::SpriteType> cuzn::infrastructure_location_on_position(const m2::VecF& world_position) {
-	auto it = std::find_if(PROXY.infrastructure_positions.begin(), PROXY.infrastructure_positions.end(),
+std::optional<m2g::pb::SpriteType> cuzn::network_location_on_position(const m2::VecF& world_position) {
+	auto it = std::find_if(PROXY.network_positions.begin(), PROXY.network_positions.end(),
 		[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
-	if (it != PROXY.infrastructure_positions.end()) {
+	if (it != PROXY.network_positions.end()) {
 		return it->first;
 	} else {
 		return std::nullopt;
