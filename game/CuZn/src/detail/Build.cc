@@ -43,23 +43,21 @@ std::vector<cuzn::Industry> cuzn::buildable_industries(m2g::pb::ItemType selecte
 		auto industry_card_it = std::find(selected_sprite_industries.begin(), selected_sprite_industries.end(), selected_card);
 		if (industry_card_it == selected_sprite_industries.end()) {
 			return {}; // No buildable industries
-		} else {
-			return {selected_card}; // Only the selected industry card is buildable
 		}
+		return {selected_card}; // Only the selected industry card is buildable
 	} else { // ITEM_CATEGORY_CITY_CARD
 		// Check if the card belongs to this location
 		if (selected_card == selected_sprite_location) {
 			// Any industry in the selected location can be built
 			return selected_sprite_industries;
-		} else {
-			return {}; // No buildable industries
 		}
+		return {}; // No buildable industries
 	}
 }
 
 m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, ItemType card, SpriteType location, ItemType industry) {
 	if (not location_has_industry(location, industry)) {
-		throw M2ERROR("Location does not contain the industry");
+		return m2::make_unexpected("Location does not contain the industry");
 	}
 	if (not player_has_card(player, card)) {
 		return m2::make_unexpected("Player doesn't hold the given card");
@@ -83,7 +81,6 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 	auto locations = locations_in_city(city);
 	// Remove the given location
 	locations.erase(std::remove(locations.begin(), locations.end(), location), locations.end());
-
 
 	// If there's more than one industry on this location, check if there's another location in the city with only this industry.
 	auto industries = industries_on_location(location);

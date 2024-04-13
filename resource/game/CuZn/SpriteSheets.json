@@ -191,7 +191,7 @@
           }
         },
         {
-          "type": "RAILWAY_VERTICAL",
+          "type": "RAILROAD_VERTICAL",
           "regular": {
             "rect": {
               "y": 48,
@@ -202,7 +202,7 @@
           }
         },
         {
-          "type": "RAILWAY_HORIZONTAL",
+          "type": "RAILROAD_HORIZONTAL",
           "regular": {
             "rect": {
               "x": 16,
@@ -214,7 +214,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_1",
+          "type": "RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_1",
           "regular": {
             "rect": {
               "x": 48,
@@ -226,7 +226,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_2",
+          "type": "RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_2",
           "regular": {
             "rect": {
               "x": 64,
@@ -238,7 +238,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_3",
+          "type": "RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_3",
           "regular": {
             "rect": {
               "x": 48,
@@ -250,7 +250,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_4",
+          "type": "RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_4",
           "regular": {
             "rect": {
               "x": 64,
@@ -262,7 +262,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_1",
+          "type": "RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_1",
           "regular": {
             "rect": {
               "x": 80,
@@ -274,7 +274,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_2",
+          "type": "RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_2",
           "regular": {
             "rect": {
               "x": 96,
@@ -286,7 +286,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_3",
+          "type": "RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_3",
           "regular": {
             "rect": {
               "x": 80,
@@ -298,7 +298,7 @@
           }
         },
         {
-          "type": "RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_4",
+          "type": "RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_4",
           "regular": {
             "rect": {
               "x": 96,
@@ -310,7 +310,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_1",
+          "type": "CANAL_AND_RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_1",
           "regular": {
             "rect": {
               "x": 48,
@@ -322,7 +322,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_2",
+          "type": "CANAL_AND_RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_2",
           "regular": {
             "rect": {
               "x": 64,
@@ -334,7 +334,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_3",
+          "type": "CANAL_AND_RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_3",
           "regular": {
             "rect": {
               "x": 48,
@@ -346,7 +346,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_RIGHT_TO_BOTTOM_LEFT_4",
+          "type": "CANAL_AND_RAILROAD_TOP_RIGHT_TO_BOTTOM_LEFT_4",
           "regular": {
             "rect": {
               "x": 64,
@@ -358,7 +358,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_1",
+          "type": "CANAL_AND_RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_1",
           "regular": {
             "rect": {
               "x": 80,
@@ -370,7 +370,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_2",
+          "type": "CANAL_AND_RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_2",
           "regular": {
             "rect": {
               "x": 96,
@@ -382,7 +382,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_3",
+          "type": "CANAL_AND_RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_3",
           "regular": {
             "rect": {
               "x": 80,
@@ -394,7 +394,7 @@
           }
         },
         {
-          "type": "CANAL_AND_RAILWAY_TOP_LEFT_TO_BOTTOM_RIGHT_4",
+          "type": "CANAL_AND_RAILROAD_TOP_LEFT_TO_BOTTOM_RIGHT_4",
           "regular": {
             "rect": {
               "x": 96,
@@ -561,7 +561,7 @@
           }
         },
         {
-          "type": "CANAL_OR_RAILWAY_BACKGROUND_1",
+          "type": "CANAL_OR_RAILROAD_BACKGROUND_1",
           "regular": {
             "rect": {
               "x": 32,
@@ -573,7 +573,7 @@
           }
         },
         {
-          "type": "CANAL_OR_RAILWAY_BACKGROUND_2",
+          "type": "CANAL_OR_RAILROAD_BACKGROUND_2",
           "regular": {
             "rect": {
               "x": 32,
@@ -588,7 +588,7 @@
           }
         },
         {
-          "type": "CANAL_OR_RAILWAY_BACKGROUND_3",
+          "type": "CANAL_OR_RAILROAD_BACKGROUND_3",
           "regular": {
             "rect": {
               "x": 32,
@@ -603,7 +603,7 @@
           }
         },
         {
-          "type": "CANAL_OR_RAILWAY_BACKGROUND_4",
+          "type": "CANAL_OR_RAILROAD_BACKGROUND_4",
           "regular": {
             "rect": {
               "x": 32,
@@ -621,7 +621,7 @@
         {
           "type": "BURTON_UPON_TRENT_WALSALL_CANAL",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
@@ -1158,229 +1158,229 @@
         {
           "type": "BELPER_DERBY_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
           }
         },
         {
           "type": "DERBY_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "DERBY_NOTTINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "LEEK_STOKE_ON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "STOKE_ON_TRENT_STONE_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
           }
         },
         {
           "type": "STOKE_ON_TRENT_WARRINGTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "STONE_STAFFORD_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
           }
         },
         {
           "type": "STONE_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "STAFFORD_CANNOCK_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
           }
         },
         {
           "type": "BURTON_UPON_TRENT_TAMWORTH_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "CANNOCK_BREWERY1_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "CANNOCK_WALSALL_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "CANNOCK_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
           }
         },
         {
           "type": "TAMWORTH_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_4"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_4"
           }
         },
         {
           "type": "TAMWORTH_NUNEATON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "WALSALL_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "WALSALL_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "COALBROOKEDALE_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "COALBROOKEDALE_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "COALBROOKEDALE_SHREWSBURY_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "DUDLEY_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "DUDLEY_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "DUDLEY_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "KIDDERMINSTER_WORCESTER_BREWERY2_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "WORCESTER_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "WORCESTER_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
           }
         },
         {
           "type": "BIRMINGHAM_COVENTRY_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "BIRMINGHAM_OXFORD_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "REDDITCH_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "REDDITCH_OXFORD_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
           }
         },
         {
           "type": "BELPER_LEEK_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "DERBY_UTTOXETER_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "STONE_UTTOXETER_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "BURTON_UPON_TRENT_CANNOCK_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "TAMWORTH_WALSALL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "BIRMINGHAM_NUNEATON_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "BIRMINGHAM_REDDITCH_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
           "type": "COVENTRY_NUNEATON_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILWAY_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
           }
         },
         {
