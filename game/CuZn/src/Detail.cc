@@ -137,7 +137,7 @@ std::vector<m2g::pb::SpriteType> cuzn::locations_in_city(m2g::pb::ItemType city_
 	return industry_locations;
 }
 
-std::vector<m2g::pb::ItemType> cuzn::industries_on_location(m2g::pb::SpriteType location) {
+std::vector<ItemType> cuzn::industries_on_location(SpriteType location) {
 	if (not is_industry_location(location)) {
 		throw M2ERROR("Sprite is not an industry location");
 	}

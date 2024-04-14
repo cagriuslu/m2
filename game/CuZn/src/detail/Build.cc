@@ -78,33 +78,29 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 	}
 
 	// Find all the locations in the city
-	auto locations = locations_in_city(city);
+	auto other_locations_in_city = locations_in_city(city);
 	// Remove the given location
-	locations.erase(std::remove(locations.begin(), locations.end(), location), locations.end());
+	other_locations_in_city.erase(std::remove(other_locations_in_city.begin(), other_locations_in_city.end(), location), other_locations_in_city.end());
 
 	// If there's more than one industry on this location, check if there's another location in the city with only this industry.
+	// The location with only one industry must be built before building the factory on a multi-industry location.
 	auto industries = industries_on_location(location);
 	if (1 < industries.size()) {
-		// Gather locations that only has the industry
-		std::vector<m2g::pb::SpriteType> locations_with_only_the_industry;
-		std::copy_if(locations.begin(), locations.end(), std::back_inserter(locations_with_only_the_industry),
-			[industry](m2g::pb::SpriteType loc) {
-			auto industries = industries_on_location(loc);
-			return (industries.size() == 1 && industries[0] == industry);
-		});
-		// If there's a location with only the given industry
-		for (auto location_with_only_the_industry : locations_with_only_the_industry) {
-			// Check if those locations are built already
-			if (find_factory_at_location(location_with_only_the_industry)) {
-				return m2::make_unexpected("Cannot build industry while the city has an empty location with only that industry");
-			}
+		auto other_locations_with_only_the_industry = other_locations_in_city
+			| std::views::filter([industry](SpriteType loc) {
+				const auto industries = industries_on_location(loc);
+				return (industries.size() == 1 && industries[0] == industry);
+			});
+		auto all_other_locations_occupied = std::ranges::all_of(other_locations_with_only_the_industry, find_factory_at_location);
+		if (not all_other_locations_occupied) {
+			return m2::make_unexpected("Cannot build industry while the city has an empty location with only that industry");
 		}
 	}
 
 	// Check if it's the first era and the player already has a tile in the city
 	if (player.get_resource(m2g::pb::ERA) == 1.0f) {
 		// Iterate over other locations in the city
-		for (const auto& other_location : locations) {
+		for (const auto& other_location : other_locations_in_city) {
 			// If the location has a tile built
 			if (auto* tile_obj = find_factory_at_location(other_location); tile_obj) {
 				// If the parent of the tile is the given player

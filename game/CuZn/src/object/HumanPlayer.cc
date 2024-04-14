@@ -95,30 +95,29 @@ std::optional<m2g::pb::ItemType> cuzn::get_next_buildable_tile(m2::Character& pl
 std::set<m2g::pb::ItemType> cuzn::get_cities_in_network(m2::Character& player) {
 	std::set<m2g::pb::ItemType> cities;
 
-	auto cities_range = LEVEL.characters
+	auto cities_view = LEVEL.characters
 		| std::views::transform(m2::to_only_data)
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(by_character_parent_id(player.parent().id()))
 		| std::views::filter(is_factory_character)
 		| std::views::transform(to_city_card_of_factory_character);
-	cities.insert(cities_range.begin(), cities_range.end());
+	cities.insert(cities_view.begin(), cities_view.end());
 
-	auto canals_or_railroads_range = LEVEL.characters
+	auto roads_view = LEVEL.characters
 		| std::views::transform(m2::to_only_data)
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(by_character_parent_id(player.parent().id()))
 		| std::views::filter(is_road_character)
 		| std::views::transform(to_city_cards_of_road_character);
-	for (const auto& cards : canals_or_railroads_range) {
-		cities.emplace(cards.first);
-		cities.emplace(cards.second);
+	for (const auto& road_cities : roads_view) {
+		std::ranges::copy(road_cities, std::back_inserter(cities));
 	}
 
 	return cities;
 }
 
-std::set<m2g::pb::ItemType> cuzn::get_canals_in_network(m2::Character& player) {
-	// TODO
+std::set<m2g::pb::SpriteType> cuzn::get_canals_in_network(m2::Character& player) {
+	std::set<m2g::pb::SpriteType>
 }
 
 std::set<m2g::pb::ItemType> cuzn::get_railroads_in_network(m2::Character& player) {
