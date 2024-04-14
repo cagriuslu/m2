@@ -621,7 +621,8 @@
         {
           "type": "BURTON_UPON_TRENT_WALSALL_CANAL",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD", "WALSALL_CARD", "CANAL_LICENSE"]
           }
         },
         {
@@ -1158,229 +1159,267 @@
         {
           "type": "BELPER_DERBY_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
+            "additionalNamedItems": ["BELPER_CARD", "DERBY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DERBY_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["DERBY_CARD", "BURTON_UPON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DERBY_NOTTINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["DERBY_CARD", "NOTTINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "LEEK_STOKE_ON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["LEEK_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_STONE_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
+            "additionalNamedItems": ["STONE_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STOKE_ON_TRENT_WARRINGTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["WARRINGTON_CARD", "STOKE_ON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STONE_STAFFORD_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
+            "additionalNamedItems": ["STONE_CARD", "STAFFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STONE_BURTON_UPON_TRENT_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["STONE_CARD", "BURTON_UPON_TRENT_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STAFFORD_CANNOCK_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
+            "additionalNamedItems": ["STAFFORD_CARD", "CANNOCK_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BURTON_UPON_TRENT_TAMWORTH_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD", "TAMWORTH_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "CANNOCK_BREWERY1_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["CANNOCK_CARD", "STANDALONE_LOCATION_1_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "CANNOCK_WALSALL_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["CANNOCK_CARD", "WALSALL_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "CANNOCK_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
+            "additionalNamedItems": ["CANNOCK_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "TAMWORTH_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_4"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_4",
+            "additionalNamedItems": ["TAMWORTH_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "TAMWORTH_NUNEATON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["TAMWORTH_CARD", "NUNEATON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WALSALL_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["WALSALL_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WALSALL_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["WALSALL_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COALBROOKEDALE_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["COALBROOKEDALE_CARD", "KIDDERMINSTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COALBROOKEDALE_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["COALBROOKEDALE_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COALBROOKEDALE_SHREWSBURY_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["COALBROOKEDALE_CARD", "SHREWSBURY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DUDLEY_KIDDERMINSTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["DUDLEY_CARD", "KIDDERMINSTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DUDLEY_WOLFERHAMPTON_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["DUDLEY_CARD", "WOLFERHAMPTON_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DUDLEY_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["DUDLEY_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "KIDDERMINSTER_WORCESTER_BREWERY2_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["KIDDERMINSTER_CARD", "WORCESTER_CARD", "STANDALONE_LOCATION_2_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WORCESTER_BIRMINGHAM_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["WORCESTER_CARD", "BIRMINGHAM_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "WORCESTER_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_2",
+            "additionalNamedItems": ["WORCESTER_CARD", "GLOUCESTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_COVENTRY_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["BIRMINGHAM_CARD", "COVENTRY_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_OXFORD_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["BIRMINGHAM_CARD", "OXFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "REDDITCH_GLOUCESTER_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["REDDITCH_CARD", "GLOUCESTER_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "REDDITCH_OXFORD_CANAL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_3",
+            "additionalNamedItems": ["REDDITCH_CARD", "OXFORD_CARD", "CANAL_LICENSE", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BELPER_LEEK_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["BELPER_CARD", "LEEK_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "DERBY_UTTOXETER_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["DERBY_CARD", "UTTOXETER_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "STONE_UTTOXETER_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["STONE_CARD", "UTTOXETER_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BURTON_UPON_TRENT_CANNOCK_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["BURTON_UPON_TRENT_CARD", "CANNOCK_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "TAMWORTH_WALSALL_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["TAMWORTH_CARD", "WALSALL_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_NUNEATON_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["BIRMINGHAM_CARD", "NUNEATON_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "BIRMINGHAM_REDDITCH_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["BIRMINGHAM_CARD", "REDDITCH_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
           "type": "COVENTRY_NUNEATON_RAILROAD",
           "duplicate": {
-            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1"
+            "originalType": "CANAL_OR_RAILROAD_BACKGROUND_1",
+            "additionalNamedItems": ["COVENTRY_CARD", "NUNEATON_CARD", "RAILROAD_LICENSE"]
           }
         },
         {
