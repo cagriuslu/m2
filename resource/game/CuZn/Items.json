@@ -1692,53 +1692,14 @@
       ]
     },
     {
-      "type": "CANAL_LICENSE",
-      "category": "ITEM_CATEGORY_NETWORK_LICENSE",
-      "attributes": [
-        {
-          "type": "MONEY_COST",
-          "amount": 3.0
-        },
-        {
-          "type": "POSSESSION_LIMIT",
-          "amount": 14.0
-        }
-      ]
+      "type": "CANAL_LICENSE"
     },
     {
-      "type": "RAILROAD_LICENSE",
-      "category": "ITEM_CATEGORY_NETWORK_LICENSE",
-      "attributes": [
-        {
-          "type": "MONEY_COST",
-          "amount": 5.0
-        },
-        {
-          "type": "COAL_COST",
-          "amount": 1.0
-        },
-        {
-          "type": "POSSESSION_LIMIT",
-          "amount": 14.0
-        }
-      ]
+      "type": "RAILROAD_LICENSE"
     },
     {
-      "type": "SECOND_RAILROAD_LICENSE",
-      "category": "ITEM_CATEGORY_NETWORK_LICENSE",
+      "type": "ROAD_TILE",
       "attributes": [
-        {
-          "type": "MONEY_COST",
-          "amount": 10.0
-        },
-        {
-          "type": "COAL_COST",
-          "amount": 1.0
-        },
-        {
-          "type": "BEER_COST",
-          "amount": 1.0
-        },
         {
           "type": "POSSESSION_LIMIT",
           "amount": 14.0

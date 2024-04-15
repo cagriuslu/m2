@@ -19,8 +19,6 @@ namespace cuzn {
 	bool is_canal_license(m2g::pb::ItemType item);
 	bool is_railroad_license(m2g::pb::ItemType item);
 
-	bool player_has_card(m2::Character& player, m2g::pb::ItemType card);
-
 	/// Returns the city card for that given industry location sprite
 	m2g::pb::ItemType city_of_location(m2g::pb::SpriteType location);
 

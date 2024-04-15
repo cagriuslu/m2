@@ -112,7 +112,7 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 	}
 
 	// Check if the player has a tile to build
-	auto tile_type = get_next_buildable_tile(player, industry_card_to_tile_category(industry));
+	auto tile_type = get_next_buildable_factory(player, industry_card_to_tile_category(industry));
 	if (not tile_type) {
 		return m2::make_unexpected("Player doesn't have tiles left of selected industry");
 	}

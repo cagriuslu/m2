@@ -86,10 +86,9 @@ enum ItemType {
   MANUFACTURED_GOODS_TILE_VII = 228; // x1
   MANUFACTURED_GOODS_TILE_VIII = 229; // x2
 
-  // ITEM_CATEGORY_NETWORK_LICENSE
-  CANAL_LICENSE = 301;
-  RAILROAD_LICENSE = 302;
-  SECOND_RAILROAD_LICENSE = 303; // ?
+  CANAL_LICENSE = 301; // Given to Sprites to signify canal
+  RAILROAD_LICENSE = 302; // Given to Sprites to signify railroad
+  ROAD_TILE = 303; // Given to HumanPlayers as a tile
 }
 
 enum ItemCategory {
@@ -112,9 +111,6 @@ enum ItemCategory {
   ITEM_CATEGORY_COAL_MINE_TILE = 7;
   ITEM_CATEGORY_POTTERY_TILE = 8;
   ITEM_CATEGORY_MANUFACTURED_GOODS_TILE = 9;
-
-  // Given to HUMAN_PLAYERs to signify the path tiles held by them
-  ITEM_CATEGORY_NETWORK_LICENSE = 10;
 
   // Given to MERCHANTs to signify which industries they deal with
   ITEM_CATEGORY_MERCHANT_LICENSE = 11;

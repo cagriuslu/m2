@@ -37,12 +37,9 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 	}
 
 	// Add network tiles
-	const auto& canal_item = GAME.get_named_item(m2g::pb::CANAL_LICENSE);
-	auto canal_possession_limit = m2::I(canal_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
-	m2_repeat(canal_possession_limit) { chr.add_named_item(canal_item); }
-	const auto& railroad_item = GAME.get_named_item(m2g::pb::RAILROAD_LICENSE);
-	auto railroad_possession_limit = m2::I(railroad_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
-	m2_repeat(railroad_possession_limit) { chr.add_named_item(railroad_item); }
+	const auto& road_item = GAME.get_named_item(m2g::pb::ROAD_TILE);
+	auto road_possession_limit = m2::I(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
+	m2_repeat(road_possession_limit) { chr.add_named_item(road_item); }
 
 	auto& phy = obj.add_physique();
 	phy.pre_step = [&o = obj](MAYBE m2::Physique& _) {
@@ -78,7 +75,15 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 	return {};
 }
 
-std::optional<m2g::pb::ItemType> cuzn::get_next_buildable_tile(m2::Character& player, m2g::pb::ItemCategory tile_category) {
+bool cuzn::player_has_card(m2::Character& player, m2g::pb::ItemType card) {
+	return player.find_items(card) != player.end_items();
+}
+
+bool cuzn::player_has_road(m2::Character& player) {
+	return player.find_items(m2g::pb::ROAD_TILE) != player.end_items();
+}
+
+std::optional<m2g::pb::ItemType> cuzn::get_next_buildable_factory(m2::Character& player, m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;
 	for (auto item_it = player.find_items(tile_category); item_it != player.end_items(); ++item_it) {

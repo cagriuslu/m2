@@ -112,10 +112,6 @@ bool cuzn::is_railroad_license(m2g::pb::ItemType item) {
 	return item == m2g::pb::RAILROAD_LICENSE;
 }
 
-bool cuzn::player_has_card(m2::Character& player, m2g::pb::ItemType card) {
-	return player.find_items(card) != player.end_items();
-}
-
 m2g::pb::ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
 	if (not is_industry_location(location)) {
 		throw M2ERROR("Sprite is not an industry location");
