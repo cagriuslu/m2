@@ -117,9 +117,37 @@ std::set<m2g::pb::ItemType> cuzn::get_cities_in_network(m2::Character& player) {
 }
 
 std::set<m2g::pb::SpriteType> cuzn::get_canals_in_network(m2::Character& player) {
-	std::set<m2g::pb::SpriteType>
+	std::set<m2g::pb::SpriteType> canals;
+
+	std::ranges::for_each(get_cities_in_network(player), [&canals](m2g::pb::ItemType city) {
+		// Iterate and find all the canals that have the city as one of it's legs
+		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
+			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
+			const auto& road_location = GAME.get_sprite(road_location_type);
+			if (std::ranges::any_of(road_location.named_items(), is_canal_license) &&
+				std::ranges::count(road_location.named_items(), city)) {
+				canals.insert(road_location_type);
+			}
+		}
+	});
+
+	return canals;
 }
 
-std::set<m2g::pb::ItemType> cuzn::get_railroads_in_network(m2::Character& player) {
-	// TODO
+std::set<m2g::pb::SpriteType> cuzn::get_railroads_in_network(m2::Character& player) {
+	std::set<m2g::pb::SpriteType> railroads;
+
+	std::ranges::for_each(get_cities_in_network(player), [&railroads](m2g::pb::ItemType city) {
+		// Iterate and find all the railroads that have the city as one of it's legs
+		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
+			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
+			const auto& road_location = GAME.get_sprite(road_location_type);
+			if (std::ranges::any_of(road_location.named_items(), is_railroad_license) &&
+				std::ranges::count(road_location.named_items(), city)) {
+				railroads.insert(road_location_type);
+			}
+		}
+	});
+
+	return railroads;
 }

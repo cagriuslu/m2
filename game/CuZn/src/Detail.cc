@@ -104,6 +104,14 @@ bool cuzn::is_railroad_location(NetworkLocation location) {
 	}
 }
 
+bool cuzn::is_canal_license(m2g::pb::ItemType item) {
+	return item == m2g::pb::CANAL_LICENSE;
+}
+
+bool cuzn::is_railroad_license(m2g::pb::ItemType item) {
+	return item == m2g::pb::RAILROAD_LICENSE;
+}
+
 bool cuzn::player_has_card(m2::Character& player, m2g::pb::ItemType card) {
 	return player.find_items(card) != player.end_items();
 }

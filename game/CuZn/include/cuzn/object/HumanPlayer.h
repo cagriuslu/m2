@@ -10,5 +10,5 @@ namespace cuzn {
 	std::optional<m2g::pb::ItemType> get_next_buildable_tile(m2::Character& player, m2g::pb::ItemCategory tile_category);
 	std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player);
 	std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player);
-	std::set<m2g::pb::ItemType> get_railroads_in_network(m2::Character& player);
+	std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player);
 }

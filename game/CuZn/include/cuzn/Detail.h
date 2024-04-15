@@ -16,6 +16,8 @@ namespace cuzn {
 	bool is_industry_location(IndustryLocation location);
 	bool is_canal_location(NetworkLocation location);
 	bool is_railroad_location(NetworkLocation location);
+	bool is_canal_license(m2g::pb::ItemType item);
+	bool is_railroad_license(m2g::pb::ItemType item);
 
 	bool player_has_card(m2::Character& player, m2g::pb::ItemType card);
 
