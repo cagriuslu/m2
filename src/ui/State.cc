@@ -32,18 +32,18 @@ namespace {
 	constexpr auto draw_widget = [](const auto &w) { w->on_draw(); };
 
 	Action handle_console_command(const std::string &command) {
-		GAME.console_output.emplace_back(">> " + command);
+		M2_GAME.console_output.emplace_back(">> " + command);
 
 		if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
 			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
-				auto load_result = GAME.load_level_editor(GAME.levels_dir / match_results.str(1));
+				auto load_result = M2_GAME.load_level_editor(M2_GAME.levels_dir / match_results.str(1));
 				if (load_result) {
 					return make_clear_stack_action();
 				}
-				GAME.console_output.emplace_back(load_result.error());
+				M2_GAME.console_output.emplace_back(load_result.error());
 			} else {
-				GAME.console_output.emplace_back("ledit usage:");
-				GAME.console_output.emplace_back(".. file_name - open level editor with file");
+				M2_GAME.console_output.emplace_back("ledit usage:");
+				M2_GAME.console_output.emplace_back(".. file_name - open level editor with file");
 			}
 			return make_continue_action();
 		} else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
@@ -53,45 +53,45 @@ namespace {
 			    std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
 				auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
 				auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
-				auto load_result = GAME.load_pixel_editor(
+				auto load_result = M2_GAME.load_pixel_editor(
 				    match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
 				if (load_result) {
 					return make_clear_stack_action();
 				}
-				GAME.console_output.emplace_back(load_result.error());
+				M2_GAME.console_output.emplace_back(load_result.error());
 			} else {
-				GAME.console_output.emplace_back("pedit usage:");
-				GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
+				M2_GAME.console_output.emplace_back("pedit usage:");
+				M2_GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 			}
 			return make_continue_action();
 		} else if (command == "sedit") {
-			auto load_result = GAME.load_sheet_editor();
+			auto load_result = M2_GAME.load_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
 				auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
 				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
-			GAME.console_output.emplace_back(load_result.error());
+			M2_GAME.console_output.emplace_back(load_result.error());
 			return make_continue_action();
 		} else if (command == "bsedit") {
-			auto load_result = GAME.load_bulk_sheet_editor();
+			auto load_result = M2_GAME.load_bulk_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
 				auto main_menu_result = State::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
 				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
-			GAME.console_output.emplace_back(load_result.error());
+			M2_GAME.console_output.emplace_back(load_result.error());
 			return make_continue_action();
 		} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
 			if (std::smatch match_results;
 			    std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
 				if (auto parameter = match_results.str(1); parameter == "game_height") {
 					auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
-					GAME.recalculate_dimensions(
-					    GAME.dimensions().window.w, GAME.dimensions().window.h, new_game_height);
+					M2_GAME.recalculate_dimensions(
+					    M2_GAME.dimensions().window.w, M2_GAME.dimensions().window.h, new_game_height);
 					return make_continue_action();
 				}
-				GAME.console_output.emplace_back("Unknown parameter");
+				M2_GAME.console_output.emplace_back("Unknown parameter");
 			} else {
 				// TODO print help
 			}
@@ -102,15 +102,15 @@ namespace {
 		} else if (command.empty()) {
 			// Do nothing
 		} else {
-			GAME.console_output.emplace_back("Available commands:");
-			GAME.console_output.emplace_back("help - display this help");
-			GAME.console_output.emplace_back("ledit - open level editor");
-			GAME.console_output.emplace_back("medit - open midi editor");
-			GAME.console_output.emplace_back("pedit - open pixel editor");
-			GAME.console_output.emplace_back("sedit - open sheet editor");
-			GAME.console_output.emplace_back("set - set game variable");
-			GAME.console_output.emplace_back("close - close the console");
-			GAME.console_output.emplace_back("quit - quit game");
+			M2_GAME.console_output.emplace_back("Available commands:");
+			M2_GAME.console_output.emplace_back("help - display this help");
+			M2_GAME.console_output.emplace_back("ledit - open level editor");
+			M2_GAME.console_output.emplace_back("medit - open midi editor");
+			M2_GAME.console_output.emplace_back("pedit - open pixel editor");
+			M2_GAME.console_output.emplace_back("sedit - open sheet editor");
+			M2_GAME.console_output.emplace_back("set - set game variable");
+			M2_GAME.console_output.emplace_back("close - close the console");
+			M2_GAME.console_output.emplace_back("quit - quit game");
 		}
 		return make_continue_action();
 	}
@@ -138,24 +138,24 @@ State::State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> bp) : _p
 }
 
 Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint) {
-	return create_execute_sync(std::move(blueprint), GAME.dimensions().window);
+	return create_execute_sync(std::move(blueprint), M2_GAME.dimensions().window);
 }
 
 Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, const RectI rect) {
 	// Check if there are other blocking UIs
-	if (GAME.ui_begin_ticks) {
+	if (M2_GAME.ui_begin_ticks) {
 		// Execute state without keeping time
 		State state{std::move(blueprint)};
 		return state.execute(rect);
 	} else {
 		// Save begin ticks for later and other nested UIs
-		GAME.ui_begin_ticks = sdl::get_ticks();
+		M2_GAME.ui_begin_ticks = sdl::get_ticks();
 		// Execute state
 		State state{std::move(blueprint)};
 		auto action = state.execute(rect);
 		// Add pause ticks
-		GAME.add_pause_ticks(sdl::get_ticks_since(*GAME.ui_begin_ticks));
-		GAME.ui_begin_ticks.reset();
+		M2_GAME.add_pause_ticks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
+		M2_GAME.ui_begin_ticks.reset();
 		return action;
 	}
 }
@@ -174,7 +174,7 @@ Action State::execute(const RectI rect) {
 	DEBUG_FN();
 
 	// Save relation to window, use in case of resize
-	const auto &winrect = GAME.dimensions().window;
+	const auto &winrect = M2_GAME.dimensions().window;
 	const auto relation_to_window = RectF{
 	    static_cast<float>(rect.x - winrect.x) / static_cast<float>(winrect.w),
 	    static_cast<float>(rect.y - winrect.y) / static_cast<float>(winrect.h),
@@ -225,7 +225,7 @@ Action State::execute(const RectI rect) {
 
 			// Handle resize action
 			if (const auto window_resize = events.pop_window_resize(); window_resize) {
-				GAME.recalculate_dimensions(window_resize->x, window_resize->y);
+				M2_GAME.recalculate_dimensions(window_resize->x, window_resize->y);
 				update_positions(RectI{
 				    static_cast<int>(
 				        round(static_cast<float>(winrect.x) + relation_to_window.x * static_cast<float>(winrect.w))),
@@ -252,15 +252,15 @@ Action State::execute(const RectI rect) {
 		}
 
 		// Clear screen
-		SDL_SetRenderDrawColor(GAME.renderer, 0, 0, 0, 255);
-		SDL_RenderClear(GAME.renderer);
-		SDL_RenderCopy(GAME.renderer, screen_capture.get(), nullptr, nullptr);
+		SDL_SetRenderDrawColor(M2_GAME.renderer, 0, 0, 0, 255);
+		SDL_RenderClear(M2_GAME.renderer);
+		SDL_RenderCopy(M2_GAME.renderer, screen_capture.get(), nullptr, nullptr);
 
 		// Draw UI elements
 		draw();
 
 		// Present
-		SDL_RenderPresent(GAME.renderer);
+		SDL_RenderPresent(M2_GAME.renderer);
 		/////////////////////////// END OF GRAPHICS ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 	}
@@ -426,7 +426,7 @@ widget::TextBlueprint command_output_variant() {
 	    .on_update = [](MAYBE const widget::Text &self) -> std::pair<Action, std::optional<std::string>> {
 		    return {
 		        make_continue_action(),
-		        INDEX < GAME.console_output.size() ? GAME.console_output[GAME.console_output.size() - INDEX - 1]
+		        INDEX < M2_GAME.console_output.size() ? M2_GAME.console_output[M2_GAME.console_output.size() - INDEX - 1]
 		                                           : std::string()};
 	    }};
 }
@@ -513,5 +513,5 @@ const Blueprint m2::ui::message_box_ui = {
         .background_color = SDL_Color{127, 127, 127, 127},
         .variant =
             widget::TextBlueprint{.alignment = TextAlignment::LEFT, .on_update = [](MAYBE const widget::Text &self) {
-	                                  return std::make_pair(make_continue_action(), LEVEL.message);
+	                                  return std::make_pair(make_continue_action(), M2_LEVEL.message);
                                   }}}}};

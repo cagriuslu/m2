@@ -10,7 +10,7 @@ m2::expected<m2::DynamicSpriteSheetLoader> m2::DynamicSpriteSheetLoader::create(
 	if (!surface) {
 		return make_unexpected("Unable to load image " + image_path.string() + ": " + IMG_GetError());
 	}
-	sdl::TextureUniquePtr texture(SDL_CreateTextureFromSurface(GAME.renderer, surface.get()));
+	sdl::TextureUniquePtr texture(SDL_CreateTextureFromSurface(M2_GAME.renderer, surface.get()));
 	if (!texture) {
 		return make_unexpected("Unable to create texture from surface: " + std::string(SDL_GetError()));
 	}
@@ -39,4 +39,4 @@ m2::ObjectId m2::DynamicSpriteSheetLoader::load(const VecI& position) {
 	    RectI{position.x * _image_ppm, position.y * _image_ppm, _image_ppm, _image_ppm}, _image_ppm);
 }
 
-void m2::DynamicSpriteSheetLoader::unload(ObjectId id) { GAME.add_deferred_action(create_object_deleter(id)); }
+void m2::DynamicSpriteSheetLoader::unload(ObjectId id) { M2_DEFER(create_object_deleter(id)); }

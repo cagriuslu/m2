@@ -42,7 +42,7 @@ static TextBlueprint entry_variant_1 = {
 				}
 			}
 
-			GAME.load_single_player(lb);
+			M2_GAME.load_single_player(lb);
 			return make_return_action(); // TODO Return value
 		}
 };
@@ -50,7 +50,7 @@ static TextBlueprint entry_variant_2 = {
 		.initial_text = "NEW GAME",
 		.kb_shortcut = SDL_SCANCODE_N,
 		.on_action = [](MAYBE const widget::Text &self) {
-			auto success = GAME.load_single_player("resource/game/MINE/levels/sp000.json");
+			auto success = M2_GAME.load_single_player("resource/game/MINE/levels/sp000.json");
 			if (!success) {
 				LOG_ERROR("Unable to load level", success.error());
 			}

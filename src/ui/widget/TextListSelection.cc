@@ -6,8 +6,8 @@ using namespace m2::ui::widget;
 
 TextListSelection::TextListSelection(State* parent, const WidgetBlueprint* blueprint)
     : Widget(parent, blueprint),
-      _up_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "^"))),
-      _down_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "v"))) {
+      _up_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "^"))),
+      _down_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "v"))) {
 	recreate();
 }
 
@@ -158,6 +158,6 @@ void TextListSelection::recreate() {
 void TextListSelection::prepare_list(const std::vector<std::string>& entries) {
 	_list.clear();
 	for (const auto& entry : entries) {
-		_list.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, entry)), false);
+		_list.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, entry)), false);
 	}
 }

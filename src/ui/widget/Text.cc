@@ -17,12 +17,12 @@ Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(par
 		}
 	}
 
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, initial_text));
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, initial_text));
 }
 
 Action Text::on_update() {
 	if (disable_after) {
-		*disable_after -= GAME.delta_time_s();
+		*disable_after -= M2_GAME.delta_time_s();
 		if (*disable_after <= 0.0f) {
 			disable_after = {};
 			enabled = false;
@@ -34,7 +34,7 @@ Action Text::on_update() {
 		auto [action, optional_string] = text_blueprint().on_update(*this);
 		if (action.is_continue() && optional_string) {
 			_font_texture =
-			    m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, *optional_string));
+			    m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, *optional_string));
 		}
 		return std::move(action);
 	} else {

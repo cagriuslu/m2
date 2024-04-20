@@ -17,7 +17,7 @@ m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	for (int y = 0; y < first_layer.background_rows_size(); ++y) {
 		for (int x = 0; x < first_layer.background_rows(y).items_size(); ++x) {
 			auto sprite_type = first_layer.background_rows(y).items(x);
-			if (sprite_type && GAME.get_sprite(sprite_type).background_collider_type() != box2d::ColliderType::NONE) {
+			if (sprite_type && M2_GAME.get_sprite(sprite_type).background_collider_type() != box2d::ColliderType::NONE) {
 				_blocked_locations.emplace(x, y);
 			}
 		}
@@ -172,7 +172,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 	for (auto point2_it = reverse_path.begin() + 1; point2_it != reverse_path.end(); ++point2_it) {
 		auto* point2 = &(*point2_it);
 
-		bool eyesight = m2::box2d::check_eyesight(*LEVEL.world, m2::VecF{*point1}, m2::VecF{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
+		bool eyesight = m2::box2d::check_eyesight(*M2_LEVEL.world, m2::VecF{*point1}, m2::VecF{*point2}, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
 		if (point2_it == std::prev(reverse_path.end(), 1)) {
 			if (not eyesight) {
 				// If we are processing the last point AND there is no eyesight, add the previous point
@@ -199,7 +199,7 @@ m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_dista
 }
 
 bool m2::Pathfinder::check_eyesight(const VecI& from, const VecI& to) {
-	return box2d::check_eyesight(*LEVEL.world, VecF{from} + VecF{0.5f, 0.5f}, VecF{to} + VecF{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
+	return box2d::check_eyesight(*M2_LEVEL.world, VecF{from} + VecF{0.5f, 0.5f}, VecF{to} + VecF{0.5f, 0.5f}, box2d::FIXTURE_CATEGORY_OBSTACLE);
 }
 
 void m2::Pathfinder::draw_path(const Path& path, SDL_Color color) {

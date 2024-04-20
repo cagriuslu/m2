@@ -5,12 +5,12 @@ m2::SoundEmitter::SoundEmitter(Id object_id) : Component(object_id) {}
 
 float m2::SoundListener::volume_of(const VecF& emitter_position) const {
 	auto distance = emitter_position.distance(position);
-	if (GAME.max_hearing_distance_m < distance) {
+	if (M2_GAME.max_hearing_distance_m < distance) {
 		return 0.0f;
 	}
 
 	// Calculate volume drop-off based on distance
-	auto hear_ratio = (GAME.max_hearing_distance_m - distance) / GAME.max_hearing_distance_m;
+	auto hear_ratio = (M2_GAME.max_hearing_distance_m - distance) / M2_GAME.max_hearing_distance_m;
 
 	// Check if angle difference to hearing edge is less than zero
 	auto listener_to_sound_vector = emitter_position - position;
@@ -24,7 +24,7 @@ float m2::SoundListener::volume_of(const VecF& emitter_position) const {
 		return hear_ratio;
 	} else {
 		// Apply both distance and angle
-		auto volume_due_to_angle = std::lerp(GAME.min_hearing_facing_away, 1.0f, (PI - angle_diff_to_hearing_edge) / PI);
+		auto volume_due_to_angle = std::lerp(M2_GAME.min_hearing_facing_away, 1.0f, (PI - angle_diff_to_hearing_edge) / PI);
 		return hear_ratio * volume_due_to_angle;
 	}
 }

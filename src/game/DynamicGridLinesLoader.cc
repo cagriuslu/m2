@@ -16,5 +16,5 @@ m2::ObjectId m2::DynamicGridLinesLoader::load_horizontal(int y) {
 }
 
 void m2::DynamicGridLinesLoader::unload(ObjectId id) {
-	GAME.add_deferred_action(create_object_deleter(id));
+	M2_DEFER(create_object_deleter(id));
 }

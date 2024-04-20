@@ -8,8 +8,8 @@ using namespace m2::ui::widget;
 
 ImageSelection::ImageSelection(State* parent, const WidgetBlueprint* blueprint)
     : Widget(parent, blueprint),
-      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "+"))),
-      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "-"))) {
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "-"))) {
 	select(0);
 }
 
@@ -73,7 +73,7 @@ void ImageSelection::on_draw() {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto& sprite = GAME.get_sprite(image_selection.list[_selection]);
+		const auto& sprite = M2_GAME.get_sprite(image_selection.list[_selection]);
 		auto image_rect = rect_px.trim_bottom(rect_px.h - rect_px.w);
 		draw_sprite(sprite, image_rect);
 	}

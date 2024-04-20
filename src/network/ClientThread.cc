@@ -63,8 +63,8 @@ bool m2::network::ClientThread::is_our_turn() {
 		return server_update->turn_holder_index() == server_update->receiver_index();
 	} else {
 		// Check if we're the host, because the host doesn't receive server updates.
-		if (GAME.is_server()) {
-			return GAME.server_thread().turn_holder() == 0;
+		if (M2_GAME.is_server()) {
+			return M2_GAME.server_thread().turn_holder() == 0;
 		}
 		return false;
 	}
@@ -97,8 +97,8 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 		// Send ping with/without sender_id
 		const std::lock_guard lock(_mutex);
 		pb::NetworkMessage msg;
-		msg.set_game_hash(GAME.hash());
-		msg.set_sender_id(state ? GAME.sender_id() : 0);
+		msg.set_game_hash(M2_GAME.hash());
+		msg.set_sender_id(state ? M2_GAME.sender_id() : 0);
 		_message_queue.emplace_back(std::move(msg));
 	}
 
@@ -133,20 +133,20 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 		// Only do verification as level initialization should have initialized the same exact game state
 		const auto& server_update = _last_processed_server_update->server_update();
 
-		if (PROXY.multi_player_object_ids.size() != Z(server_update.player_object_ids_size())) {
+		if (M2G_PROXY.multi_player_object_ids.size() != Z(server_update.player_object_ids_size())) {
 			return make_unexpected("Server and local player count doesn't match");
 		}
 
-		if (LEVEL.player_id != PROXY.multi_player_object_ids[server_update.receiver_index()]) {
+		if (M2_LEVEL.player_id != M2G_PROXY.multi_player_object_ids[server_update.receiver_index()]) {
 			return make_unexpected("Player ID doesn't match the ID found in local player list");
 		}
 
-		if (LEVEL.characters.size() != Z(server_update.objects_with_character_size())) {
+		if (M2_LEVEL.characters.size() != Z(server_update.objects_with_character_size())) {
 			return make_unexpected("Server and local have different number of characters");
 		}
 
 		int i = 0;
-		for (auto char_it = LEVEL.characters.begin(); char_it != LEVEL.characters.end() && i < server_update.objects_with_character_size(); ++char_it, ++i) {
+		for (auto char_it = M2_LEVEL.characters.begin(); char_it != M2_LEVEL.characters.end() && i < server_update.objects_with_character_size(); ++char_it, ++i) {
 			auto [local_character_variant, _] = *char_it;
 			auto server_character = server_update.objects_with_character(i);
 
@@ -208,7 +208,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 			LOG_TRACE("Server object is still alive", server_object_id, it->first);
 
 			// Get the character
-			character = LEVEL.objects.get(it->second.first)->get_character();
+			character = M2_LEVEL.objects.get(it->second.first)->get_character();
 
 			// Mark object as visited
 			it->second.second = true;
@@ -217,7 +217,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 
 			// Create object
 			auto [obj, id] = m2::create_object(m2::VecF{object_desc.position()}, object_desc.object_type(), object_desc.parent_id());
-			auto load_result = PROXY.init_fg_object(obj);
+			auto load_result = M2G_PROXY.init_fg_object(obj);
 			m2_reflect_failure(load_result);
 
 			// Get the character
@@ -230,7 +230,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 		// Update items
 		character->clear_items();
 		for (auto named_item_type : object_desc.named_items()) {
-			character->add_named_item_no_benefits(GAME.get_named_item(static_cast<m2g::pb::ItemType>(named_item_type)));
+			character->add_named_item_no_benefits(M2_GAME.get_named_item(static_cast<m2g::pb::ItemType>(named_item_type)));
 		}
 		// Update resources
 		character->clear_resources();
@@ -243,7 +243,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 		if (it->second.second == false) {
 			auto object_to_delete = it->second.first;
 			LOG_DEBUG("Local object hasn't been visited by ServerUpdate, scheduling for deletion", it->second.first);
-			GAME.add_deferred_action(create_object_deleter(object_to_delete));
+			M2_DEFER(create_object_deleter(object_to_delete));
 			it = _server_to_local_map.erase(it); // Erase from map
 		} else {
 			++it;
@@ -257,8 +257,8 @@ void m2::network::ClientThread::queue_client_command(const m2g::pb::ClientComman
 	INFO_FN();
 
 	pb::NetworkMessage msg;
-	msg.set_game_hash(GAME.hash());
-	msg.set_sender_id(GAME.sender_id());
+	msg.set_game_hash(M2_GAME.hash());
+	msg.set_sender_id(M2_GAME.sender_id());
 	msg.mutable_client_command()->CopyFrom(cmd);
 
 	const std::lock_guard lock(_mutex);
@@ -363,7 +363,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					continue;
 				}
 
-				if (expect_message->game_hash() != GAME.hash()) {
+				if (expect_message->game_hash() != M2_GAME.hash()) {
 					LOG_ERROR("Received message of unknown origin", json_str);
 					continue;
 				}

@@ -2,7 +2,7 @@
 #include <m2/Game.h>
 
 m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
-	const auto& sprite = GAME.get_sprite(sprite_type);
+	const auto& sprite = M2_GAME.get_sprite(sprite_type);
 
 	auto& gfx = obj.add_graphic(sprite);
 	if (obj.object_type() == m2g::pb::FENCE_VERTICAL) {
@@ -25,7 +25,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 
 		auto& phy = obj.add_physique();
-		phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
+		phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 	} else if (sprite.background_collider_type() == m2::box2d::ColliderType::CIRCLE) {
 		m2::pb::BodyBlueprint bp;
 		bp.set_type(m2::pb::BodyType::STATIC);
@@ -38,7 +38,7 @@ m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sp
 		bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 
 		auto& phy = obj.add_physique();
-		phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
+		phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 	}
 
 	return {};

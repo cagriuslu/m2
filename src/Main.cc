@@ -10,7 +10,7 @@
 #include <m2/command_line/SpriteSheets.h>
 #include <m2/detail/ArgumentParser.h>
 
-#define BREAK_IF_QUIT() if (GAME.quit) break
+#define BREAK_IF_QUIT() if (M2_GAME.quit) break
 
 using namespace m2;
 
@@ -64,22 +64,22 @@ int main(const int argc, char **argv) {
 	LOG_DEBUG("SDL_ttf initialized");
 
 	Game::create_instance();
-	GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
+	M2_GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
 	LOG_DEBUG("Executing main menu...");
-	if (m2::ui::State::create_execute_sync(PROXY.main_menu()).is_quit()) {
+	if (m2::ui::State::create_execute_sync(M2G_PROXY.main_menu()).is_quit()) {
 		LOG_INFO("Main menu returned QUIT");
 		return 0;
 	}
 	LOG_DEBUG("Main menu executed");
 
-	sdl::Stopwatch since_last_phy(GAME.pause_ticks);
-	sdl::Stopwatch since_last_gfx(GAME.pause_ticks);
-	sdl::Stopwatch since_last_fps(GAME.pause_ticks);
+	sdl::Stopwatch since_last_phy(M2_GAME.pause_ticks);
+	sdl::Stopwatch since_last_gfx(M2_GAME.pause_ticks);
+	sdl::Stopwatch since_last_fps(M2_GAME.pause_ticks);
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
-	LOG_DEBUG("Initial pause ticks", GAME.pause_ticks);
-	while (!GAME.quit) {
-		LEVEL.begin_game_loop();
+	LOG_DEBUG("Initial pause ticks", M2_GAME.pause_ticks);
+	while (!M2_GAME.quit) {
+		M2_LEVEL.begin_game_loop();
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
@@ -87,41 +87,41 @@ int main(const int argc, char **argv) {
 		if (last_phy_count) {
 			// Clear the events only if the physics step has executed
 			// Otherwise some keys/buttons may not have been handled
-			GAME.events.clear();
+			M2_GAME.events.clear();
 		}
-		if (GAME.events.gather()) {
-			GAME.handle_quit_event();
-			GAME.handle_window_resize_event();
-			GAME.handle_console_event();
-			GAME.handle_menu_event();
-			GAME.handle_hud_events();
-			GAME.execute_deferred_actions();
+		if (M2_GAME.events.gather()) {
+			M2_GAME.handle_quit_event();
+			M2_GAME.handle_window_resize_event();
+			M2_GAME.handle_console_event();
+			M2_GAME.handle_menu_event();
+			M2_GAME.handle_hud_events();
+			M2_GAME.execute_deferred_actions();
 		}
 		BREAK_IF_QUIT();
-		GAME.reset_mouse_position();
+		M2_GAME.reset_mouse_position();
 
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		for (last_phy_count = 0;
 			// Up to 4 times, if enough time has passed since last phy, if game hasn't quit
-			last_phy_count < 4 && GAME.phy_period_ticks <= since_last_phy.measure() && !GAME.quit;
+			last_phy_count < 4 && M2_GAME.phy_period_ticks <= since_last_phy.measure() && !M2_GAME.quit;
 			// Increment phy counters, subtract period from stopwatch
-			++last_phy_count, ++phy_count, since_last_phy.subtract_from_lap(GAME.phy_period_ticks)) {
-			// Advance time by GAME.phy_period
-			GAME._delta_time_s = GAME.phy_period;
+			++last_phy_count, ++phy_count, since_last_phy.subtract_from_lap(M2_GAME.phy_period_ticks)) {
+			// Advance time by M2_GAME.phy_period
+			M2_GAME._delta_time_s = M2_GAME.phy_period;
 
-			GAME.execute_pre_step();
-			GAME.execute_deferred_actions();
-			GAME.update_characters();
-			GAME.execute_deferred_actions();
-			GAME.execute_step();
-			GAME.execute_deferred_actions();
-			GAME.execute_post_step();
-			GAME.execute_deferred_actions();
-			GAME.update_sounds();
-			GAME.execute_deferred_actions();
-			GAME.recalculate_directional_audio();
+			M2_GAME.execute_pre_step();
+			M2_GAME.execute_deferred_actions();
+			M2_GAME.update_characters();
+			M2_GAME.execute_deferred_actions();
+			M2_GAME.execute_step();
+			M2_GAME.execute_deferred_actions();
+			M2_GAME.execute_post_step();
+			M2_GAME.execute_deferred_actions();
+			M2_GAME.update_sounds();
+			M2_GAME.execute_deferred_actions();
+			M2_GAME.recalculate_directional_audio();
 		}
 		if (last_phy_count == 4) {
 			since_last_phy.new_lap();
@@ -133,19 +133,19 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		// Measure and advance time
 		since_last_gfx.measure();
-		GAME._delta_time_s = static_cast<float>(since_last_gfx.last()) / 1000.0f;
+		M2_GAME._delta_time_s = static_cast<float>(since_last_gfx.last()) / 1000.0f;
 
-		GAME.execute_pre_draw();
-		GAME.update_hud_contents();
-		GAME.clear_back_buffer();
-		GAME.draw_background();
-		GAME.draw_foreground();
-		GAME.draw_lights();
-		GAME.execute_post_draw();
-		GAME.debug_draw();
-		GAME.draw_hud();
-		GAME.draw_envelopes();
-		GAME.flip_buffers();
+		M2_GAME.execute_pre_draw();
+		M2_GAME.update_hud_contents();
+		M2_GAME.clear_back_buffer();
+		M2_GAME.draw_background();
+		M2_GAME.draw_foreground();
+		M2_GAME.draw_lights();
+		M2_GAME.execute_post_draw();
+		M2_GAME.debug_draw();
+		M2_GAME.draw_hud();
+		M2_GAME.draw_envelopes();
+		M2_GAME.flip_buffers();
 		++gfx_count;
 
 		if (since_last_fps.measure(); 5000 < since_last_fps.lap()) {

@@ -25,9 +25,11 @@
 #include "network/ServerThread.h"
 #include "protobuf/LUT.h"
 
-#define GAME (m2::Game::instance())
-#define PROXY (GAME._proxy)
-#define LEVEL (GAME.level())
+#define M2_GAME (m2::Game::instance())
+#define M2_DEFER(f) (M2_GAME.add_deferred_action(f))
+#define M2G_PROXY (M2_GAME._proxy)
+#define M2_LEVEL (M2_GAME.level())
+#define M2_PLAYER (*M2_LEVEL.player())
 
 #define GAME_AND_HUD_ASPECT_RATIO_MUL (16)
 #define GAME_AND_HUD_ASPECT_RATIO_DIV (9)

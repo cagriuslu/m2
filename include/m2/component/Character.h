@@ -53,19 +53,19 @@ namespace m2 {
 			using reference = const Item&;
 			using iterator_category = std::forward_iterator_tag;
 
-			inline Iterator(const Character& character, Incrementor incrementor, Filter filter, size_t index, const Item* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _item_ptr(ptr) {}
-			inline Iterator& operator++() { _incrementor(*this); return *this; }
-			inline bool operator==(const Iterator& other) const { return _item_ptr == other._item_ptr; }
-			inline explicit operator bool() { return _item_ptr; }
-			inline const Item& operator*() const { return *_item_ptr; }
-			inline const Item* operator->() const { return _item_ptr; }
+			Iterator(const Character& character, Incrementor incrementor, Filter filter, size_t index, const Item* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _item_ptr(ptr) {}
+			Iterator& operator++() { _incrementor(*this); return *this; }
+			bool operator==(const Iterator& other) const { return _item_ptr == other._item_ptr; }
+			explicit operator bool() { return _item_ptr; }
+			const Item& operator*() const { return *_item_ptr; }
+			const Item* operator->() const { return _item_ptr; }
 
-			[[nodiscard]] inline const Character& character() const { return _character; }
-			[[nodiscard]] inline Filter get_filter() const { return _filter; }
-			[[nodiscard]] inline const Item* get() const { return _item_ptr; }
-			inline void set(const Item* ptr) { _item_ptr = ptr; }
-			[[nodiscard]] inline size_t get_index() const { return _index; }
-			inline void set_index(size_t index) { _index = index; }
+			[[nodiscard]] const Character& character() const { return _character; }
+			[[nodiscard]] Filter get_filter() const { return _filter; }
+			[[nodiscard]] const Item* get() const { return _item_ptr; }
+			void set(const Item* ptr) { _item_ptr = ptr; }
+			[[nodiscard]] size_t get_index() const { return _index; }
+			void set_index(size_t index) { _index = index; }
 		};
 
 		Character() = default;

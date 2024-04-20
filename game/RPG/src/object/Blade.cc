@@ -25,7 +25,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	const float start_angle = direction_angle + swing_angle / 2.0f;
 	const float swing_speed = swing_angle / average_ttl;
 
-	const auto& sprite = GAME.get_sprite(melee_weapon.game_sprite());
+	const auto& sprite = M2_GAME.get_sprite(melee_weapon.game_sprite());
 
 	// Add physics
 	auto& phy = obj.add_physique();
@@ -36,7 +36,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.foreground_collider_origin_to_origin_vec_m().y);
 	bp.mutable_foreground_fixture()->set_is_sensor(true);
 	bp.mutable_foreground_fixture()->set_category(is_friend ? m2::pb::FixtureCategory::FRIEND_OFFENSE_ON_FOREGROUND : m2::pb::FixtureCategory::FOE_OFFENSE_ON_FOREGROUND);
-	phy.body = m2::box2d::create_body(*LEVEL.world, obj.physique_id(), obj.position, bp);
+	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 	phy.body->SetTransform(static_cast<b2Vec2>(obj.position), start_angle);
 	phy.body->SetAngularVelocity(-swing_speed);
 
@@ -47,12 +47,12 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 
 	// Add character
 	auto& chr = obj.add_tiny_character();
-	chr.add_named_item(GAME.get_named_item(ITEM_AUTOMATIC_TTL));
+	chr.add_named_item(M2_GAME.get_named_item(ITEM_AUTOMATIC_TTL));
 	chr.add_resource(RESOURCE_TTL, average_ttl);
 
 	chr.update = [](m2::Character& chr) {
 		if (!chr.has_resource(RESOURCE_TTL)) {
-			GAME.add_deferred_action(m2::create_object_deleter(chr.object_id));
+			M2_DEFER(m2::create_object_deleter(chr.object_id));
 		}
 	};
 	phy.on_collision = [average_damage, damage_accuracy](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
@@ -71,7 +71,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 			obj.graphic().draw_angle = curr_angle;
 		} else {
 			// Originator died
-			GAME.add_deferred_action(m2::create_object_deleter(phy.object_id));
+			M2_DEFER(m2::create_object_deleter(phy.object_id));
 		}
 	};
 

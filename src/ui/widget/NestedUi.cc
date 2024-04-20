@@ -60,7 +60,7 @@ Action NestedUi::on_update() {
 
 void NestedUi::on_draw() {
 	auto sdl_rect = static_cast<SDL_Rect>(rect_px);
-	SDL_RenderSetClipRect(GAME.renderer, &sdl_rect);
+	SDL_RenderSetClipRect(M2_GAME.renderer, &sdl_rect);
 	_ui->draw();
-	SDL_RenderSetClipRect(GAME.renderer, nullptr);
+	SDL_RenderSetClipRect(M2_GAME.renderer, nullptr);
 }

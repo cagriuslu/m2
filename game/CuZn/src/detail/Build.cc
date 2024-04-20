@@ -15,19 +15,19 @@ std::vector<cuzn::Industry> cuzn::buildable_industries(m2g::pb::ItemType selecte
 		throw M2ERROR("Sprite is not an industry location");
 	}
 
-	const auto& selected_card_item = GAME.get_named_item(selected_card);
-	const auto& selected_sprite_sprite = GAME.get_sprite(selected_location);
+	const auto& selected_card_item = M2_GAME.get_named_item(selected_card);
+	const auto& selected_sprite_sprite = M2_GAME.get_sprite(selected_location);
 	// Lookup industries on the sprite
 	std::vector<ItemType> selected_sprite_industries;
 	std::ranges::copy_if(selected_sprite_sprite.named_items(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
-		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
+		return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
 	});
 	if (selected_sprite_industries.empty()) {
 		throw M2ERROR("Selected sprite does not hold any industry cards");
 	}
 	// Look up the location of the sprite
 	auto location_card_it = std::ranges::find_if(selected_sprite_sprite.named_items(), [](auto item_type) {
-		return (GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
+		return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
 	});
 	if (location_card_it == selected_sprite_sprite.named_items().end()) {
 		throw M2ERROR("Selected sprite does not hold a location card");
@@ -116,7 +116,7 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 	if (not tile_type) {
 		return m2::make_unexpected("Player doesn't have tiles left of selected industry");
 	}
-	const auto& tile = GAME.get_named_item(*tile_type);
+	const auto& tile = M2_GAME.get_named_item(*tile_type);
 
 	// Check if the tile can be built in this era
 	if (player.get_resource(m2g::pb::ERA) == tile.get_attribute(m2g::pb::FORBIDDEN_ERA)) {

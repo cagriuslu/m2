@@ -44,5 +44,5 @@ m2::ObjectId m2::DynamicImageLoader::load(const VecI& position) {
 }
 
 void m2::DynamicImageLoader::unload(ObjectId id) {
-	GAME.add_deferred_action(create_object_deleter(id));
+	M2_DEFER(create_object_deleter(id));
 }

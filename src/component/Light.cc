@@ -9,18 +9,18 @@
 m2::Light::Light(Id object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}
 
 void m2::Light::default_draw(Light& lig) {
-	if (not PROXY.lightning) {
+	if (not M2G_PROXY.lightning) {
 		return;
 	}
 
-	auto& obj = LEVEL.objects[lig.object_id];
+	auto& obj = M2_LEVEL.objects[lig.object_id];
 
 	// Check if dynamic lightning
 	auto category_bits = lig.dynamic_category_bits;
 	if (category_bits) {
 		// Check if the object is inside the object
 		bool inside_body = false;
-		box2d::query(*LEVEL.world, Aabb{obj.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
+		box2d::query(*M2_LEVEL.world, Aabb{obj.position, 0.005f}, [&inside_body, category_bits](b2Fixture& fixture) {
 			if (fixture.GetFilterData().categoryBits & category_bits) {
 				inside_body = true;
 				return false;
@@ -41,13 +41,13 @@ void m2::Light::default_draw(Light& lig) {
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px), .color = {max_brightness, max_brightness, max_brightness, 0}});
 
 				// Ray cast towards full_span_m
-				auto distance = box2d::check_distance(*LEVEL.world, obj.position, obj.position + full_span_m, category_bits);
+				auto distance = box2d::check_distance(*M2_LEVEL.world, obj.position, obj.position + full_span_m, category_bits);
 				// Calculate brightness based on collision distance
 				auto brightness = (uint8_t)roundf((float)max_brightness * (1.0f - distance / lig.radius_m));
 				// Cut-off vector
 				auto span_m = full_span_m.with_length(distance);
 				// Cut-off vector in pixels
-				auto span_px = span_m * GAME.dimensions().ppm;
+				auto span_px = span_m * M2_GAME.dimensions().ppm;
 				// Second point of the triangle
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px + span_px), .color = {brightness, brightness, brightness, 0}});
 
@@ -58,18 +58,18 @@ void m2::Light::default_draw(Light& lig) {
 				// Third point of the triangle
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px + span2_px), .color = {brightness, brightness, brightness, 0}});
 			}
-			SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_MUL);
-			SDL_RenderGeometry(GAME.renderer, nullptr, vertices.data(), (int)vertices.size(), nullptr, 0);
-			SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
+			SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_MUL);
+			SDL_RenderGeometry(M2_GAME.renderer, nullptr, vertices.data(), (int)vertices.size(), nullptr, 0);
+			SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 		}
 	} else {
 		auto position_px = screen_origin_to_position_dstpx(obj.position);
 		MAYBE auto dstrect = SDL_Rect{
-				(int)roundf(position_px.x - lig.radius_m * GAME.dimensions().ppm),
-				(int)roundf(position_px.y - lig.radius_m * GAME.dimensions().ppm),
-				(int)roundf((float)lig.radius_m * GAME.dimensions().ppm * 2.0f),
-				(int)roundf((float)lig.radius_m * GAME.dimensions().ppm * 2.0f)
+				(int)roundf(position_px.x - lig.radius_m * M2_GAME.dimensions().ppm),
+				(int)roundf(position_px.y - lig.radius_m * M2_GAME.dimensions().ppm),
+				(int)roundf((float)lig.radius_m * M2_GAME.dimensions().ppm * 2.0f),
+				(int)roundf((float)lig.radius_m * M2_GAME.dimensions().ppm * 2.0f)
 		};
-		SDL_RenderCopy(GAME.renderer, GAME.light_texture, nullptr, &dstrect);
+		SDL_RenderCopy(M2_GAME.renderer, M2_GAME.light_texture, nullptr, &dstrect);
 	}
 }

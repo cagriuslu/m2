@@ -57,7 +57,7 @@ void bsedit::State::select_resource(const std::string& resource) {
 
 bool bsedit::State::select() {
 	// Get rid of previously created pixels, lines, etc.
-	LEVEL.reset_bulk_sheet_editor();
+	M2_LEVEL.reset_bulk_sheet_editor();
 
 	const auto& sprite_sheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets
@@ -74,7 +74,7 @@ bool bsedit::State::select() {
 				throw M2ERROR("Failed to load the image: " + sprite_sheet.resource());
 			}
 			_dynamic_sprite_sheet_loader.emplace(std::move(*image_loader));
-			LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
+			M2_LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
 
 			// Creates lines showing the boundaries of the sheet
 			obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});
@@ -84,7 +84,7 @@ bool bsedit::State::select() {
 			obj::create_horizontal_line(F(image_size.y / sprite_sheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
 
 			// Enable selection
-			Events::enable_primary_selection(GAME.dimensions().game);
+			Events::enable_primary_selection(M2_GAME.dimensions().game);
 
 			return true;
 		}
@@ -99,7 +99,7 @@ void bsedit::State::select_sprite(m2g::pb::SpriteType type) {
 			_selected_sprite = std::make_pair(type, RectI{sprite.regular().rect()});
 
 			const auto sprite_name = pb::enum_name(type);
-			LEVEL.display_message(sprite_name, 8.0f);
+			M2_LEVEL.display_message(sprite_name, 8.0f);
 			return;
 		}
 	}
@@ -111,7 +111,7 @@ void bsedit::State::modify_selected_sprite(const std::function<void(pb::Sprite&)
 }
 
 void bsedit::State::set_rect() {
-	auto selection_results = SelectionResult{GAME.events};
+	auto selection_results = SelectionResult{M2_GAME.events};
 	// If rect is selected
 	if (selection_results.is_primary_selection_finished()) {
 		LOG_DEBUG("Primary selection");
@@ -124,7 +124,7 @@ void bsedit::State::set_rect() {
 			sprite.mutable_regular()->mutable_rect()->set_h(rect.h * _selected_resource.second);
 		});
 		select_sprite(_selected_sprite.first);  // Reset rect
-		GAME.events.reset_primary_selection();
+		M2_GAME.events.reset_primary_selection();
 	}
 }
 
@@ -134,12 +134,12 @@ void bsedit::State::reset() {
 		sprite.mutable_regular()->clear_center_to_origin_vec_px();
 	});
 	select_sprite(_selected_sprite.first);  // Reset rect
-	GAME.events.reset_primary_selection();
+	M2_GAME.events.reset_primary_selection();
 }
 
 void bsedit::State::on_draw() const {
 	// Draw selection
-	if (auto positions = SelectionResult{GAME.events}.primary_cell_selection_position_m(); positions) {
+	if (auto positions = SelectionResult{M2_GAME.events}.primary_cell_selection_position_m(); positions) {
 		Graphic::color_rect(RectF::from_corners(positions->first, positions->second), SELECTION_COLOR);
 	}
 	// Draw currectly selected sprite's rect

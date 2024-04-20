@@ -11,10 +11,10 @@ lobby. (Not yet implemented)
 
 After enough clients are connected and all of them have signaled as ready, the host can close the lobby by calling
 ServerThread.close_lobby(). After this call, no new clients are accepted. Existing clients can drop and reconnect, as
-long as they use the same sender_id. Then, the host initializes a level by calling GAME.init_multi_player_as_host(),
+long as they use the same sender_id. Then, the host initializes a level by calling M2_GAME.init_multi_player_as_host(),
 which calls ServerThread.server_update() (contains all the necessary data for clients to initialize their levels). The
 server's and the client's levels should be in identical states right now. Then, init_multi_player_as_host() calls
-PROXY.multi_player_level_host_populate() for proxy to populate the level further based on number of players, randomness,
+M2G_PROXY.multi_player_level_host_populate() for proxy to populate the level further based on number of players, randomness,
 etc. Afterward, another ServerUpdate is published by init_multi_player_as_host().
 
 In turn based games, the physics world does not exist. The game state is stored in objects with Character, and their

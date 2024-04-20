@@ -46,15 +46,15 @@ namespace m2::box2d {
 }
 
 void m2::box2d::BodyDeleter::operator()(b2Body* body) {
-	if (LEVEL.world->IsLocked()) {
+	if (M2_LEVEL.world->IsLocked()) {
 		throw std::runtime_error("b2Body is destroyed during physics step");
 	} else {
-		LEVEL.world->DestroyBody(body);
+		M2_LEVEL.world->DestroyBody(body);
 	}
 }
 
 m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, m2::VecF position, const pb::BodyBlueprint& blueprint) {
-	if (LEVEL.world->IsLocked()) {
+	if (M2_LEVEL.world->IsLocked()) {
 		throw M2ERROR("b2Body is created during physics step");
 	}
 

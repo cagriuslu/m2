@@ -5,7 +5,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 bool cuzn::is_card(Card card) {
-	const auto& card_item = GAME.get_named_item(card);
+	const auto& card_item = M2_GAME.get_named_item(card);
 	return (card_item.category() == ITEM_CATEGORY_WILD_CARD ||
 		card_item.category() == ITEM_CATEGORY_INDUSTRY_CARD ||
 		card_item.category() == ITEM_CATEGORY_CITY_CARD);
@@ -113,11 +113,11 @@ bool cuzn::is_railroad_license(m2g::pb::ItemType item) {
 }
 
 bool is_canal_era() {
-	return LEVEL.player()->character().get_resource(ERA) == 1.0f;
+	return M2_PLAYER.character().get_resource(ERA) == 1.0f;
 }
 
 bool is_railroad_era() {
-	return LEVEL.player()->character().get_resource(ERA) == 2.0f;
+	return M2_PLAYER.character().get_resource(ERA) == 2.0f;
 }
 
 ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
@@ -125,8 +125,8 @@ ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
 		throw M2ERROR("Sprite is not an industry location");
 	}
 
-	for (const auto& named_item : GAME.get_sprite(location).named_items()) {
-		if (GAME.get_named_item(named_item).category() == ITEM_CATEGORY_CITY_CARD) {
+	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
+		if (M2_GAME.get_named_item(named_item).category() == ITEM_CATEGORY_CITY_CARD) {
 			return named_item;
 		}
 	}
@@ -134,7 +134,7 @@ ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
 }
 
 std::vector<m2g::pb::SpriteType> cuzn::locations_in_city(m2g::pb::ItemType city_card) {
-	if (GAME.get_named_item(city_card).category() != ITEM_CATEGORY_CITY_CARD) {
+	if (M2_GAME.get_named_item(city_card).category() != ITEM_CATEGORY_CITY_CARD) {
 		throw M2ERROR("Card does not belong to a city");
 	}
 
@@ -155,8 +155,8 @@ std::vector<ItemType> cuzn::industries_on_location(SpriteType location) {
 	}
 
 	std::vector<m2g::pb::ItemType> industries;
-	for (const auto& named_item : GAME.get_sprite(location).named_items()) {
-		if (GAME.get_named_item(named_item).category() == ITEM_CATEGORY_INDUSTRY_CARD) {
+	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
+		if (M2_GAME.get_named_item(named_item).category() == ITEM_CATEGORY_INDUSTRY_CARD) {
 			industries.emplace_back(named_item);
 		}
 	}
@@ -188,9 +188,9 @@ m2g::pb::ItemCategory cuzn::industry_card_to_tile_category(m2g::pb::ItemType ind
 }
 
 std::optional<m2g::pb::SpriteType> cuzn::industry_location_on_position(const m2::VecF& world_position) {
-	auto it = std::find_if(PROXY.industry_positions.begin(), PROXY.industry_positions.end(),
+	auto it = std::find_if(M2G_PROXY.industry_positions.begin(), M2G_PROXY.industry_positions.end(),
 			[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
-	if (it != PROXY.industry_positions.end()) {
+	if (it != M2G_PROXY.industry_positions.end()) {
 		return it->first;
 	} else {
 		return std::nullopt;
@@ -198,9 +198,9 @@ std::optional<m2g::pb::SpriteType> cuzn::industry_location_on_position(const m2:
 }
 
 std::optional<m2g::pb::SpriteType> cuzn::network_location_on_position(const m2::VecF& world_position) {
-	auto it = std::find_if(PROXY.network_positions.begin(), PROXY.network_positions.end(),
+	auto it = std::find_if(M2G_PROXY.network_positions.begin(), M2G_PROXY.network_positions.end(),
 		[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
-	if (it != PROXY.network_positions.end()) {
+	if (it != M2G_PROXY.network_positions.end()) {
 		return it->first;
 	} else {
 		return std::nullopt;

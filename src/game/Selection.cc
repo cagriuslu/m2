@@ -3,7 +3,7 @@
 
 using namespace m2;
 
-SelectionResult::SelectionResult(const Events &events) : _mouse_position_m(GAME.mouse_position_world_m()), _primary_selection_position_m(events.primary_selection_position_m()), _secondary_selection_position_m(events.secondary_selection_position_m()) {}
+SelectionResult::SelectionResult(const Events &events) : _mouse_position_m(M2_GAME.mouse_position_world_m()), _primary_selection_position_m(events.primary_selection_position_m()), _secondary_selection_position_m(events.secondary_selection_position_m()) {}
 
 std::optional<std::pair<VecI, VecI>> SelectionResult::primary_int_selection_position_m() const {
 	return selection_position_int_m(_primary_selection_position_m);

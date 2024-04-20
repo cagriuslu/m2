@@ -39,7 +39,7 @@ bool m2::Events::gather() {
 				if (e.key.repeat == 0) {
 					// Game keys
 					key_press_count++;
-					keys_pressed[u(PROXY.scancode_to_key(e.key.keysym.scancode))]++;
+					keys_pressed[u(M2G_PROXY.scancode_to_key(e.key.keysym.scancode))]++;
 					// UI keys
 					if (ui_keys_pressed.size() < ui_key_press_count_limit) {
 						ui_keys_pressed.push_back(e.key.keysym.scancode);
@@ -51,7 +51,7 @@ bool m2::Events::gather() {
 			case SDL_KEYUP:
 				if (e.key.repeat == 0) {
 					key_release_count++;
-					keys_released[u(PROXY.scancode_to_key(e.key.keysym.scancode))]++;
+					keys_released[u(M2G_PROXY.scancode_to_key(e.key.keysym.scancode))]++;
 				}
 				break;
 			case SDL_MOUSEMOTION:
@@ -62,7 +62,7 @@ bool m2::Events::gather() {
 				mouse_buttons_pressed[u(m2::button_to_mouse_button(e.button.button))]++;
 				if (primary_selection_screen_rect_px &&
 				    peek_mouse_button_press(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
-					primary_selection_position_1_m = GAME.mouse_position_world_m();
+					primary_selection_position_1_m = M2_GAME.mouse_position_world_m();
 					primary_selection_position_2_m = std::nullopt;
 					secondary_selection_position_1_m = std::nullopt;
 					secondary_selection_position_2_m = std::nullopt;
@@ -71,7 +71,7 @@ bool m2::Events::gather() {
 				    peek_mouse_button_press(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
 					primary_selection_position_1_m = std::nullopt;
 					primary_selection_position_2_m = std::nullopt;
-					secondary_selection_position_1_m = GAME.mouse_position_world_m();
+					secondary_selection_position_1_m = M2_GAME.mouse_position_world_m();
 					secondary_selection_position_2_m = std::nullopt;
 				}
 				break;
@@ -80,7 +80,7 @@ bool m2::Events::gather() {
 				mouse_buttons_released[u(m2::button_to_mouse_button(e.button.button))]++;
 				if (primary_selection_screen_rect_px &&
 				    peek_mouse_button_release(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
-					primary_selection_position_2_m = GAME.mouse_position_world_m();
+					primary_selection_position_2_m = M2_GAME.mouse_position_world_m();
 					secondary_selection_position_1_m = std::nullopt;
 					secondary_selection_position_2_m = std::nullopt;
 				}
@@ -88,7 +88,7 @@ bool m2::Events::gather() {
 				    peek_mouse_button_release(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
 					primary_selection_position_1_m = std::nullopt;
 					primary_selection_position_2_m = std::nullopt;
-					secondary_selection_position_2_m = GAME.mouse_position_world_m();
+					secondary_selection_position_2_m = M2_GAME.mouse_position_world_m();
 				}
 				break;
 			case SDL_MOUSEWHEEL:
@@ -119,7 +119,7 @@ bool m2::Events::gather() {
 		sdl_keys_down[i] = raw_keyboard_state[i];
 	}
 	for (unsigned i = 1; i < u(m2::Key::end); i++) {
-		auto scancode = PROXY.key_to_scancode[i];
+		auto scancode = M2G_PROXY.key_to_scancode[i];
 		keys_down[i] = (scancode != SDL_SCANCODE_UNKNOWN) && raw_keyboard_state[scancode];
 	}
 

@@ -21,7 +21,7 @@ m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* rea
 	m2_reflect_failure(recv_success);
 
 	// Check game_hash
-	if (expect_message->game_hash() != GAME.hash()) {
+	if (expect_message->game_hash() != M2_GAME.hash()) {
 		return make_unexpected("Client game hash mismatch");
 	}
 

@@ -347,7 +347,7 @@ void m2::Game::execute_post_step() {
 		}
 	} else if (_client_thread) {
 		// Handle ServerUpdate
-		auto expect_server_update = GAME.client_thread().process_server_update();
+		auto expect_server_update = M2_GAME.client_thread().process_server_update();
 		m2_succeed_or_throw_error(expect_server_update);
 	}
 	for (const auto& [phy, _] : _level->physics) {
@@ -449,12 +449,12 @@ void m2::Game::debug_draw() {
 	}
 
 	if (is_projection_type_perspective(_level->projection_type())) {
-		SDL_SetRenderDrawColor(GAME.renderer, 255, 255, 255, 127);
+		SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 127);
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
 				m3::VecF p = {x, y, 0};
 				if (const auto projected_p = screen_origin_to_projection_along_camera_plane_dstpx(p); projected_p) {
-					SDL_RenderDrawPointF(GAME.renderer, projected_p->x, projected_p->y);
+					SDL_RenderDrawPointF(M2_GAME.renderer, projected_p->x, projected_p->y);
 				}
 			}
 		}
@@ -580,7 +580,7 @@ void m2::Game::recalculate_mouse_position2() const {
 	if (is_projection_type_perspective(_level->projection_type())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
-		const auto sin_of_player_to_camera_angle = LEVEL.camera_offset().z / LEVEL.camera_offset().length();
+		const auto sin_of_player_to_camera_angle = M2_LEVEL.camera_offset().z / M2_LEVEL.camera_offset().length();
 		const auto cos_of_player_to_camera_angle =
 			sqrtf(1.0f - sin_of_player_to_camera_angle * sin_of_player_to_camera_angle);
 

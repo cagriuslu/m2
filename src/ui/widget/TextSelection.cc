@@ -22,8 +22,8 @@ namespace {
 TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint)
     : Widget(parent, blueprint),
       _list(text_selection_blueprint().initial_list),
-      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "+"))),
-      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "-"))) {
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "-"))) {
 	throw_if_list_has_duplicates(_list);
 
 	// on_create
@@ -125,13 +125,13 @@ void TextSelection::on_draw() {
 Action TextSelection::trigger_action(unsigned new_selection) {
 	_selection = new_selection;
 	if (!_list.empty()) {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, _list[_selection]));
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, _list[_selection]));
 
 		if (text_selection_blueprint().on_action) {
 			return text_selection_blueprint().on_action(*this);
 		}
 	} else {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, "<EMPTY>"));
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "<EMPTY>"));
 	}
 	return make_continue_action();
 }

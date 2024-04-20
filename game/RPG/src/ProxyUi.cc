@@ -44,8 +44,8 @@ static widget::ProgressBarBlueprint hp_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 0, 0, 255},
 		.on_update = [](MAYBE const widget::ProgressBar& self) -> float {
-			if (LEVEL.player()) {
-				return LEVEL.player()->character().get_resource(m2g::pb::RESOURCE_HP);
+			if (M2_LEVEL.player()) {
+				return M2_PLAYER.character().get_resource(m2g::pb::RESOURCE_HP);
 			}
 			return 0.0f;
 		}
@@ -57,10 +57,10 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 		.initial_progress = 1.0f,
 		.bar_color = SDL_Color{255, 255, 0, 255},
 		.on_update = [](MAYBE const widget::ProgressBar& self) {
-			if (LEVEL.player()) {
+			if (M2_LEVEL.player()) {
 				// Check if player has DASH capability
-				if (LEVEL.player()->character().has_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
-					float counter = LEVEL.player()->character().get_resource(m2g::pb::RESOURCE_DASH_ENERGY);
+				if (M2_PLAYER.character().has_item(m2g::pb::ITEM_REUSABLE_DASH_2S)) {
+					float counter = M2_PLAYER.character().get_resource(m2g::pb::RESOURCE_DASH_ENERGY);
 					float cooldown = 2.0f;
 					counter = (cooldown <= counter) ? cooldown : counter;
 					return counter / cooldown;
@@ -97,7 +97,7 @@ const Blueprint left_hud_blueprint = {
 };
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() {
-	return PROXY.generate_main_menu();
+	return M2G_PROXY.generate_main_menu();
 }
 
 const m2::ui::Blueprint* m2g::Proxy::pause_menu() {
@@ -109,5 +109,5 @@ const m2::ui::Blueprint* m2g::Proxy::left_hud() {
 }
 
 const m2::ui::Blueprint* m2g::Proxy::right_hud() {
-	return PROXY.generate_right_hud();
+	return M2G_PROXY.generate_right_hud();
 }

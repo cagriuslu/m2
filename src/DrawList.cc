@@ -19,7 +19,7 @@ m2::GraphicId m2::DrawList::ConstIterator::operator*() const {
 }
 
 void m2::DrawList::insert(ObjectId id) {
-	auto& obj = LEVEL.objects[id];
+	auto& obj = M2_LEVEL.objects[id];
 	auto it = draw_map.insert({obj.position, {id, obj.graphic_id()}});
 	id_lookup.insert({id, it});
 }

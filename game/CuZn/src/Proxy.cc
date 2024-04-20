@@ -10,23 +10,23 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 	DEBUG_FN();
 
 	auto client_count =
-	    GAME.is_server() ? GAME.server_thread().client_count() : GAME.client_thread().total_player_count();
+	    M2_GAME.is_server() ? M2_GAME.server_thread().client_count() : M2_GAME.client_thread().total_player_count();
 
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
 		auto [client_obj, client_id] = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
 		auto client_init_result = cuzn::init_human_player(client_obj);
 		m2_succeed_or_throw_error(client_init_result);
-		PROXY.multi_player_object_ids.emplace_back(client_id);
+		M2G_PROXY.multi_player_object_ids.emplace_back(client_id);
 
-		if (GAME.is_server()) {
+		if (M2_GAME.is_server()) {
 			if (i == 0) {
-				LEVEL.player_id = client_id;
+				M2_LEVEL.player_id = client_id;
 			}
 		} else {
 			// At this point, the ServerUpdate is not yet processed
-			if (i == GAME.client_thread().receiver_index()) {
-				LEVEL.player_id = client_id;
+			if (i == M2_GAME.client_thread().receiver_index()) {
+				M2_LEVEL.player_id = client_id;
 			}
 		}
 	}
@@ -50,7 +50,7 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 }
 
 void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
-	auto client_count = GAME.server_thread().client_count();
+	auto client_count = M2_GAME.server_thread().client_count();
 
 	// Prepare active merchant license list
 	auto merchant_license_list = prepare_merchant_license_list(client_count);
@@ -62,10 +62,10 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 		int i = 0;
 		for (const auto& merchant_id : merchant_object_ids) {
 			auto license = merchant_license_list[i++];
-			auto& merchant = LEVEL.objects[merchant_id.second];
+			auto& merchant = M2_LEVEL.objects[merchant_id.second];
 
 			LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
-			merchant.character().add_named_item(GAME.get_named_item(license));
+			merchant.character().add_named_item(M2_GAME.get_named_item(license));
 			// Add beer to non-NO_LICENSE merchants
 			if (license != m2g::pb::NO_MERCHANT_LICENSE) {
 				merchant.character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
@@ -82,13 +82,13 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 	// In the canal era, we discard client_count number of cards from the deck
 	m2_repeat(client_count) { draw_deck.pop_back(); }
 	// Give 8 cards to each player
-	for (const auto& player_object_id : PROXY.multi_player_object_ids) {
+	for (const auto& player_object_id : M2G_PROXY.multi_player_object_ids) {
 		m2_repeat(8) {
 			// Draw card
 			auto card = draw_deck.back();
 			draw_deck.pop_back();
 			// Add card
-			LEVEL.objects[player_object_id].character().add_named_item(GAME.get_named_item(card));
+			M2_LEVEL.objects[player_object_id].character().add_named_item(M2_GAME.get_named_item(card));
 		}
 	}
 
@@ -103,7 +103,7 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 	}
 
 	// Increment turn holder
-	return (turn_holder_index + 1) % GAME.server_thread().client_count();
+	return (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
 }
 
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
@@ -117,7 +117,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	// Store the positions of the industries build locations
 	if (pb::BELPER_COTTON_MILL_MANUFACTURED_GOODS <= sprite_type && sprite_type <= pb::STANDALONE_BREWERY_2) {
 		// Verify that ppm of the industry tiles are double of the sprite sheet
-		if (GAME.get_sprite(sprite_type).ppm() != GAME.get_sprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
+		if (M2_GAME.get_sprite(sprite_type).ppm() != M2_GAME.get_sprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
 			throw M2ERROR("Sprite ppm mismatch");
 		}
 
@@ -158,7 +158,7 @@ m2::void_expected m2g::Proxy::init_fg_object(m2::Object& obj) {
 }
 
 m2g::Proxy& m2g::Proxy::get_instance() {
-	return dynamic_cast<m2g::Proxy&>(GAME.proxy());
+	return dynamic_cast<m2g::Proxy&>(M2_GAME.proxy());
 }
 
 void m2g::Proxy::user_journey_deleter() {
@@ -184,7 +184,7 @@ std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_merchant_license_list(int cli
 	std::vector<m2g::pb::ItemType> merchant_license_list;
 	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
 		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
-		const auto& item = GAME.get_named_item(item_type);
+		const auto& item = M2_GAME.get_named_item(item_type);
 		if (item.category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
 			auto license_count = static_cast<int>(item.get_attribute(count_attr));
 			merchant_license_list.insert(merchant_license_list.end(), license_count, item.type());
@@ -233,7 +233,7 @@ std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_draw_deck(int client_count) {
 	std::vector<m2g::pb::ItemType> draw_deck;
 	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
 		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
-		const auto& item = GAME.get_named_item(item_type);
+		const auto& item = M2_GAME.get_named_item(item_type);
 		if (item.category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.category() == pb::ITEM_CATEGORY_CITY_CARD) {
 			auto card_count = static_cast<int>(item.get_attribute(count_attr));
 			draw_deck.insert(draw_deck.end(), card_count, item.type());

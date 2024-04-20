@@ -74,7 +74,7 @@ m2::sdl::ticks_t m2::sdl::get_ticks_since(ticks_t last_ticks, ticks_t pause_tick
 
 int m2::sdl::get_refresh_rate() {
 	SDL_DisplayMode dm{};
-	SDL_GetWindowDisplayMode(GAME.window, &dm);
+	SDL_GetWindowDisplayMode(M2_GAME.window, &dm);
 	return dm.refresh_rate;
 }
 

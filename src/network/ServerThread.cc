@@ -75,14 +75,14 @@ void m2::network::ServerThread::server_update() {
 	auto count = client_count();
 	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
 		pb::NetworkMessage message;
-		message.set_game_hash(GAME.hash());
+		message.set_game_hash(M2_GAME.hash());
 		message.set_sender_id(0);
 		message.mutable_server_update()->set_receiver_index(i);
 		message.mutable_server_update()->set_turn_holder_index(turn);
-		for (auto player_id : PROXY.multi_player_object_ids) {
+		for (auto player_id : M2G_PROXY.multi_player_object_ids) {
 			message.mutable_server_update()->add_player_object_ids(player_id);
 		}
-		for (auto char_it : LEVEL.characters) { // Iterate over characters
+		for (auto char_it : M2_LEVEL.characters) { // Iterate over characters
 			auto [char_variant, char_id] = char_it;
 			auto* object_descriptor = message.mutable_server_update()->add_objects_with_character();
 

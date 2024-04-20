@@ -10,9 +10,9 @@
 
 void m2g::Proxy::load_resources() {
 	// Load enemies
-	enemies = m2_move_or_throw_error(m2::pb::json_file_to_message<rpg::pb::Enemies>(GAME.resource_dir / "Enemies.json"));
+	enemies = m2_move_or_throw_error(m2::pb::json_file_to_message<rpg::pb::Enemies>(M2_GAME.resource_dir / "Enemies.json"));
 	// Load progress
-	progress_file_path = GAME.resource_dir / "Progress.json";
+	progress_file_path = M2_GAME.resource_dir / "Progress.json";
 	auto expect_progress = m2::pb::json_file_to_message<rpg::pb::Progress>(progress_file_path);
 	if (expect_progress) {
 		progress.CopyFrom(*expect_progress);
@@ -24,21 +24,21 @@ void m2g::Proxy::load_resources() {
 void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, const m2::pb::Level& level) {
 	const auto& id = level.identifier();
 	if (id == "WalkingTutorialClosed") {
-		LEVEL.display_message("Use W,A,S,D to walk.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use W,A,S,D to walk.", rpg::MESSAGE_TIMEOUT);
 	} else if (id == "WalkingTutorialOpen") {
-		LEVEL.display_message("Some levels will be outdoors.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Some levels will be outdoors.", rpg::MESSAGE_TIMEOUT);
 	} else if (id == "FlagTutorialClosed") {
-		LEVEL.display_message("Find the blue flag to exit the level.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Find the blue flag to exit the level.", rpg::MESSAGE_TIMEOUT);
 	} else if (id == "FlagTutorialOpen") {
-		LEVEL.display_message("Find the blue flag to exit the level.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Find the blue flag to exit the level.", rpg::MESSAGE_TIMEOUT);
 	} else if (id == "DashTutorialClosed") {
-		LEVEL.display_message("Use SPACE button while walking to dash.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use SPACE button while walking to dash.", rpg::MESSAGE_TIMEOUT);
 	} else if (id == "RangedWeaponTutorialClosed") {
-		LEVEL.display_message("Use left mouse button to shoot bullets.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use left mouse button to shoot bullets.", rpg::MESSAGE_TIMEOUT);
 	} else if (id == "MeleeTutorialClosed") {
-		LEVEL.display_message("Use right mouse button to melee.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use right mouse button to melee.", rpg::MESSAGE_TIMEOUT);
 	} else if (id == "AllMustBeKilledTutorialOpen") {
-		LEVEL.display_message("All enemies must be killed to complete the level successfully.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("All enemies must be killed to complete the level successfully.", rpg::MESSAGE_TIMEOUT);
 	}
 }
 
@@ -72,7 +72,7 @@ m2::void_expected m2g::Proxy::init_fg_object(m2::Object& obj) {
 		case pb::TREE_DEAD_03:
 		case pb::FENCE_HORIZONTAL:
 		case pb::FENCE_VERTICAL:
-			return rpg::create_decoration(obj, GAME.object_main_sprites[obj.object_type()]);
+			return rpg::create_decoration(obj, M2_GAME.object_main_sprites[obj.object_type()]);
 		case pb::SPIKES:
 			return rpg::create_spikes(obj);
 		default:
@@ -111,7 +111,7 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 	    .background_color = SDL_Color{20, 20, 20, 255}
 	};
 
-	auto level_jsons = m2::list_files(GAME.resource_dir / "levels", ".json");
+	auto level_jsons = m2::list_files(M2_GAME.resource_dir / "levels", ".json");
 	for (int i = 0; i < (ssize_t) level_jsons.size(); ++i) {
 		const auto &level_json = level_jsons[i];
 		auto level_name = level_json.stem().string();
@@ -136,8 +136,8 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 		        .initial_text = level_display_name,
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) {
 			        alive_enemy_count = 0;
-			        m2_succeed_or_throw_error(GAME.load_single_player(level_json, level_name));
-			        GAME.audio_manager->play(&GAME.songs[m2g::pb::SONG_MAIN_THEME],
+			        m2_succeed_or_throw_error(M2_GAME.load_single_player(level_json, level_name));
+			        M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_MAIN_THEME],
 			                                 m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 			        return m2::ui::make_return_action();
 		        }
@@ -183,7 +183,7 @@ const m2::ui::Blueprint* m2g::Proxy::generate_right_hud() {
 	    .variant = m2::ui::widget::ProgressBarBlueprint{
 	        .bar_color = SDL_Color{0, 127, 255, 255},
 	        .on_update = [](MAYBE const m2::ui::widget::ProgressBar& self) {
-		        if (auto *player = LEVEL.player(); player) {
+		        if (auto *player = M2_LEVEL.player(); player) {
 			        if (auto ammo = player->character().get_resource(
 			                m2g::pb::RESOURCE_SPECIAL_RANGED_WEAPON_AMMO); ammo != 0.0f) {
 				        if (auto weapon = player->character().find_items(
@@ -202,8 +202,8 @@ const m2::ui::Blueprint* m2g::Proxy::generate_right_hud() {
 }
 
 void m2g::Proxy::set_ammo_display_state(bool enabled) {
-	LEVEL.right_hud_ui_state->widgets[0]->enabled = enabled;
-	LEVEL.right_hud_ui_state->widgets[1]->enabled = enabled;
+	M2_LEVEL.right_hud_ui_state->widgets[0]->enabled = enabled;
+	M2_LEVEL.right_hud_ui_state->widgets[1]->enabled = enabled;
 }
 
 const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
@@ -213,7 +213,7 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 	    .background_color = SDL_Color{127, 0, 0, 127}
 	};
 
-	auto lb_path = LEVEL.path();
+	auto lb_path = M2_LEVEL.path();
 	if (lb_path) {
 		_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 		    .x = 70, .y = 70, .w = 20, .h = 6,
@@ -222,7 +222,7 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 		        .initial_text = "Retry",
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) -> m2::ui::Action {
 			        alive_enemy_count = 0;
-			        m2_succeed_or_throw_error(GAME.load_single_player(*lb_path, LEVEL.name()));
+			        m2_succeed_or_throw_error(M2_GAME.load_single_player(*lb_path, M2_LEVEL.name()));
 			        return m2::ui::make_return_action();
 		        }
 		    }

@@ -55,9 +55,9 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				// Compose the "object origin" to "current shape centroid" vector
 				auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 
-				if (is_projection_type_parallel(LEVEL.projection_type())) {
-					int rect_w = I(roundf(width * F(GAME.dimensions().ppm)));
-					int rect_h = I(roundf(height * F(GAME.dimensions().ppm)));
+				if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
+					int rect_w = I(roundf(width * F(M2_GAME.dimensions().ppm)));
+					int rect_h = I(roundf(height * F(M2_GAME.dimensions().ppm)));
 					auto screen_origin_to_sprite_center_px = screen_origin_to_position_dstpx(position + center_offset_m);
 					auto dst_rect = SDL_Rect{
 							(int)roundf(screen_origin_to_sprite_center_px.x) - (rect_w / 2),
@@ -65,8 +65,8 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 							rect_w,
 							rect_h
 					};
-					SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-					SDL_RenderDrawRect(GAME.renderer, &dst_rect);
+					SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+					SDL_RenderDrawRect(M2_GAME.renderer, &dst_rect);
 				} else {
 					auto center_position_2d = position + center_offset_m;
 					auto center_position = m3::VecF{center_position_2d};
@@ -80,7 +80,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					auto point_3 = m3::screen_origin_to_projection_along_camera_plane_dstpx(
 							center_position.offset_x(width / 2.0f).offset_y(height / 2.0f));
 					if (point_0 && point_1 && point_2 && point_3) {
-						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+						SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 						std::array<SDL_FPoint, 5> points = {
 								SDL_FPoint{point_0->x, point_0->y},
 								SDL_FPoint{point_1->x, point_1->y},
@@ -88,7 +88,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 								SDL_FPoint{point_2->x, point_2->y},
 								SDL_FPoint{point_0->x, point_0->y}
 						};
-						SDL_RenderDrawLinesF(GAME.renderer, points.data(), points.size());
+						SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), points.size());
 					}
 				}
 				break;
@@ -99,10 +99,10 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				auto circumference = aabb.upperBound.x - aabb.lowerBound.x;
 				auto radius = circumference / 2.0f;
 
-				if (is_projection_type_parallel(LEVEL.projection_type())) {
+				if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
 					// Calculate circumference in pixels
-					int R = I(roundf(circumference * F(GAME.dimensions().ppm)));
-					auto [texture, src_rect] = GAME.shapes_sheet->get_circle(color, R, R, 16);
+					int R = I(roundf(circumference * F(M2_GAME.dimensions().ppm)));
+					auto [texture, src_rect] = M2_GAME.shapes_sheet->get_circle(color, R, R, 16);
 					// Calculate destination Rect
 					auto screen_origin_to_sprite_center_px = screen_origin_to_position_dstpx(position + center_offset_m);
 					auto dst_rect = SDL_Rect{
@@ -112,7 +112,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 							src_rect.h
 					};
 					// Render shape
-					if (SDL_RenderCopy(GAME.renderer, texture, &src_rect, &dst_rect)) {
+					if (SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &dst_rect)) {
 						throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 					}
 				} else {
@@ -128,7 +128,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					auto vertical_point_b = m3::screen_origin_to_projection_along_camera_plane_dstpx(
 							center_position.offset_y(radius));
 					if (horizontal_point_a && horizontal_point_b && vertical_point_a && vertical_point_b) {
-						SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
+						SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 						std::array<SDL_FPoint, 5> points = {
 								SDL_FPoint{horizontal_point_a->x, horizontal_point_a->y},
 								SDL_FPoint{vertical_point_a->x, vertical_point_a->y},
@@ -136,7 +136,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 								SDL_FPoint{vertical_point_b->x, vertical_point_b->y},
 								SDL_FPoint{horizontal_point_a->x, horizontal_point_a->y}
 						};
-						SDL_RenderDrawLinesF(GAME.renderer, points.data(), points.size());
+						SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), points.size());
 					}
 				}
 				break;
@@ -152,8 +152,8 @@ void m2::Physique::default_begin_contact_cb(b2Contact& b2_contact) {
 
 	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
-	auto& phy_a = LEVEL.physics[physique_id_a];
-	auto& phy_b = LEVEL.physics[physique_id_b];
+	auto& phy_a = M2_LEVEL.physics[physique_id_a];
+	auto& phy_b = M2_LEVEL.physics[physique_id_b];
 	if (phy_a.on_collision) {
 		phy_a.on_collision(phy_a, phy_b, contact);
 	}
@@ -164,8 +164,8 @@ void m2::Physique::default_begin_contact_cb(b2Contact& b2_contact) {
 void m2::Physique::default_end_contact_cb(b2Contact& b2_contact) {
 	Id physique_id_a = b2_contact.GetFixtureA()->GetBody()->GetUserData().pointer;
 	Id physique_id_b = b2_contact.GetFixtureB()->GetBody()->GetUserData().pointer;
-	auto& phy_a = LEVEL.physics[physique_id_a];
-	auto& phy_b = LEVEL.physics[physique_id_b];
+	auto& phy_a = M2_LEVEL.physics[physique_id_a];
+	auto& phy_b = M2_LEVEL.physics[physique_id_b];
 	if (phy_a.off_collision) {
 		phy_a.off_collision(phy_a, phy_b);
 	}

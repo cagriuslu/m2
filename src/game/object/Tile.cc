@@ -37,7 +37,7 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const
         }
 
         auto& phy = obj_pair.first.add_physique();
-        phy.body = m2::box2d::create_body(*LEVEL.world, obj_pair.first.physique_id(), obj_pair.first.position, bp);
+        phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj_pair.first.physique_id(), obj_pair.first.position, bp);
 	}
 
 	if (sprite.has_foreground_companion()) {

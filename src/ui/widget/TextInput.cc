@@ -68,7 +68,7 @@ Action TextInput::on_update() {
 
 	// Generate new texture is the string has changed
 	if (not _font_texture || str != _font_texture.string_value()) {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(GAME.font, GAME.renderer, str));
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, str));
 	}
 
 	return make_continue_action();

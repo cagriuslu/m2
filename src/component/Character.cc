@@ -117,7 +117,7 @@ namespace {
 m2::TinyCharacter::TinyCharacter(uint64_t object_id) : Character(object_id) {}
 void m2::TinyCharacter::automatic_update() {
 	if (_item && _item->usage() == pb::AUTOMATIC) {
-		use_item(begin_items(), GAME.delta_time_s());
+		use_item(begin_items(), M2_GAME.delta_time_s());
 	}
 }
 m2::Character::Iterator m2::TinyCharacter::find_items(m2g::pb::ItemType item_type) {
@@ -273,7 +273,7 @@ m2::FullCharacter::FullCharacter(uint64_t object_id) : Character(object_id) {}
 void m2::FullCharacter::automatic_update() {
 	for (auto it = begin_items(); it != end_items(); ++it) {
 		if (it->usage() == pb::AUTOMATIC) {
-			use_item(it, GAME.delta_time_s());
+			use_item(it, M2_GAME.delta_time_s());
 		}
 	}
 }

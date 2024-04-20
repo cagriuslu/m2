@@ -11,7 +11,7 @@ using namespace m2;
 namespace {
 	void level_editor_pick_foreground(const pb::LevelObject& level_object) {
 		// Find the Place button
-		auto* widget = ui::find_text_widget(*LEVEL.left_hud_ui_state, m2::level_editor::place_button_label.data());
+		auto* widget = ui::find_text_widget(*M2_LEVEL.left_hud_ui_state, m2::level_editor::place_button_label.data());
 		if (!widget) {
 			return;
 		}
@@ -19,9 +19,9 @@ namespace {
 		dynamic_cast<ui::widget::Text*>(widget)->trigger_action();
 		// Right hud points to `place_mode_right_hud`, select the object type
 		auto object_type_index = 0;
-		for (const auto& level_editor_object : GAME.object_main_sprites) {
+		for (const auto& level_editor_object : M2_GAME.object_main_sprites) {
 			if (level_editor_object.first == level_object.type()) {
-				dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[1])
+				dynamic_cast<ui::widget::TextSelection&>(*M2_LEVEL.right_hud_ui_state->widgets[1])
 				    .trigger_action(object_type_index);
 				break;
 			}
@@ -29,15 +29,15 @@ namespace {
 		}
 		// Select group type
 		auto group_type_index = pb::enum_index(level_object.group().type());
-		dynamic_cast<ui::widget::TextSelection&>(*LEVEL.right_hud_ui_state->widgets[2]).trigger_action(group_type_index);
+		dynamic_cast<ui::widget::TextSelection&>(*M2_LEVEL.right_hud_ui_state->widgets[2]).trigger_action(group_type_index);
 		// Select group instance
 		auto group_instance = level_object.group().instance();
-		dynamic_cast<ui::widget::IntegerInput&>(*LEVEL.right_hud_ui_state->widgets[3]).select((int)group_instance);
+		dynamic_cast<ui::widget::IntegerInput&>(*M2_LEVEL.right_hud_ui_state->widgets[3]).select((int)group_instance);
 	}
 
 	void level_editor_pick_background(m2g::pb::SpriteType picked_sprite_type) {
 		// Find the Place button
-		auto* widget = ui::find_text_widget(*LEVEL.left_hud_ui_state, m2::level_editor::paint_button_label.data());
+		auto* widget = ui::find_text_widget(*M2_LEVEL.left_hud_ui_state, m2::level_editor::paint_button_label.data());
 		if (!widget) {
 			return;
 		}
@@ -45,9 +45,9 @@ namespace {
 		dynamic_cast<ui::widget::Text*>(widget)->trigger_action();
 		// Right hud points to `paint_mode_right_hud`, select the sprite type
 		auto sprite_type_index = 0;
-		for (const auto& sprite_type : GAME.level_editor_background_sprites) {
+		for (const auto& sprite_type : M2_GAME.level_editor_background_sprites) {
 			if (sprite_type == picked_sprite_type) {
-				dynamic_cast<ui::widget::ImageSelection&>(*LEVEL.right_hud_ui_state->widgets[2])
+				dynamic_cast<ui::widget::ImageSelection&>(*M2_LEVEL.right_hud_ui_state->widgets[2])
 				    .select(sprite_type_index);
 				break;
 			}
@@ -93,7 +93,7 @@ namespace {
 			            pe.mode);
 		        },
 		        DEFAULT_OVERLOAD},
-		    LEVEL.type_state);
+		    M2_LEVEL.type_state);
 	}
 
 	void handle_secondary_button_press(MAYBE const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
@@ -110,7 +110,7 @@ namespace {
 			            se.mode);
 		        },
 		        DEFAULT_OVERLOAD},
-		    LEVEL.type_state);
+		    M2_LEVEL.type_state);
 	}
 
 	void handle_mouse_events(const VecI& mouse_coordinates_i, const VecF& mouse_coordinates_h) {
@@ -119,9 +119,9 @@ namespace {
 			return;
 		}
 		// Check if mouse pressed
-		if (GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
+		if (M2_GAME.events.pop_mouse_button_press(MouseButton::PRIMARY)) {
 			handle_primary_button_press(mouse_coordinates_i);
-		} else if (GAME.events.pop_mouse_button_press(MouseButton::SECONDARY)) {
+		} else if (M2_GAME.events.pop_mouse_button_press(MouseButton::SECONDARY)) {
 			handle_secondary_button_press(mouse_coordinates_i, mouse_coordinates_h);
 		}
 	}
@@ -133,31 +133,31 @@ m2::Id m2::obj::create_god() {
 
 	obj.add_physique().pre_step = [&o = obj](MAYBE Physique& phy) {
 		m2::VecF move_direction;
-		if (GAME.events.is_key_down(Key::UP)) {
+		if (M2_GAME.events.is_key_down(Key::UP)) {
 			move_direction.y -= 1.0f;
 		}
-		if (GAME.events.is_key_down(Key::DOWN)) {
+		if (M2_GAME.events.is_key_down(Key::DOWN)) {
 			move_direction.y += 1.0f;
 		}
-		if (GAME.events.is_key_down(Key::LEFT)) {
+		if (M2_GAME.events.is_key_down(Key::LEFT)) {
 			move_direction.x -= 1.0f;
 		}
-		if (GAME.events.is_key_down(Key::RIGHT)) {
+		if (M2_GAME.events.is_key_down(Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		o.position += move_direction.normalize() * ((float)GAME.delta_time_s() * GAME.dimensions().height_m);
+		o.position += move_direction.normalize() * ((float)M2_GAME.delta_time_s() * M2_GAME.dimensions().height_m);
 		// Prevent God from going into negative quadrants
 		o.position = o.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
-		handle_mouse_events(GAME.mouse_position_world_m().iround(), GAME.mouse_position_world_m().hround());
+		handle_mouse_events(M2_GAME.mouse_position_world_m().iround(), M2_GAME.mouse_position_world_m().hround());
 
 		// Change zoom
-		if (std::holds_alternative<sedit::State>(LEVEL.type_state) ||
-		    std::holds_alternative<bsedit::State>(LEVEL.type_state)) {
-			if (GAME.events.pop_key_press(Key::MINUS)) {
-				GAME.set_zoom(1.1f);  // Increase game height
-			} else if (GAME.events.pop_key_press(Key::PLUS)) {
-				GAME.set_zoom(0.9f);  // Decrease game height
+		if (std::holds_alternative<sedit::State>(M2_LEVEL.type_state) ||
+		    std::holds_alternative<bsedit::State>(M2_LEVEL.type_state)) {
+			if (M2_GAME.events.pop_key_press(Key::MINUS)) {
+				M2_GAME.set_zoom(1.1f);  // Increase game height
+			} else if (M2_GAME.events.pop_key_press(Key::PLUS)) {
+				M2_GAME.set_zoom(0.9f);  // Decrease game height
 			}
 		}
 	};
@@ -177,7 +177,7 @@ m2::Id m2::obj::create_god() {
 			            se.mode);
 		        },
 		        [](bsedit::State& se) { se.on_draw(); }, DEFAULT_OVERLOAD},
-		    LEVEL.type_state);
+		    M2_LEVEL.type_state);
 	};
 
 	return id;

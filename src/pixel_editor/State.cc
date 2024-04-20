@@ -4,26 +4,26 @@
 
 void m2::pedit::State::PaintMode::paint_color(const VecI& position) {
 	// Delete existing pixel, if there is one
-	auto it = std::get<pedit::State>(LEVEL.type_state).pixels.find(position);
-	if (it != std::get<pedit::State>(LEVEL.type_state).pixels.end()) {
-		GAME.add_deferred_action(create_object_deleter(it->second.first));
-		std::get<pedit::State>(LEVEL.type_state).pixels.erase(it);
+	auto it = std::get<pedit::State>(M2_LEVEL.type_state).pixels.find(position);
+	if (it != std::get<pedit::State>(M2_LEVEL.type_state).pixels.end()) {
+		M2_DEFER(create_object_deleter(it->second.first));
+		std::get<pedit::State>(M2_LEVEL.type_state).pixels.erase(it);
 	}
-	auto pixel_id = obj::create_pixel(static_cast<VecF>(position), std::get<pedit::State>(LEVEL.type_state).selected_color);
-	std::get<pedit::State>(LEVEL.type_state).pixels[position] = std::make_pair(pixel_id, std::get<pedit::State>(LEVEL.type_state).selected_color);
+	auto pixel_id = obj::create_pixel(static_cast<VecF>(position), std::get<pedit::State>(M2_LEVEL.type_state).selected_color);
+	std::get<pedit::State>(M2_LEVEL.type_state).pixels[position] = std::make_pair(pixel_id, std::get<pedit::State>(M2_LEVEL.type_state).selected_color);
 }
 void m2::pedit::State::EraseMode::erase_color(const VecI &position) {
-	auto it = std::get<pedit::State>(LEVEL.type_state).pixels.find(position);
-	if (it != std::get<pedit::State>(LEVEL.type_state).pixels.end()) {
-		GAME.add_deferred_action(create_object_deleter(it->second.first));
-		std::get<pedit::State>(LEVEL.type_state).pixels.erase(it);
+	auto it = std::get<pedit::State>(M2_LEVEL.type_state).pixels.find(position);
+	if (it != std::get<pedit::State>(M2_LEVEL.type_state).pixels.end()) {
+		M2_DEFER(create_object_deleter(it->second.first));
+		std::get<pedit::State>(M2_LEVEL.type_state).pixels.erase(it);
 	}
 }
 void m2::pedit::State::ColorPickerMode::pick_color(const VecI &position) {
-	auto it = std::get<pedit::State>(LEVEL.type_state).pixels.find(position);
-	if (it != std::get<pedit::State>(LEVEL.type_state).pixels.end()) {
+	auto it = std::get<pedit::State>(M2_LEVEL.type_state).pixels.find(position);
+	if (it != std::get<pedit::State>(M2_LEVEL.type_state).pixels.end()) {
 		LOG_DEBUG("Selected color");
-		std::get<pedit::State>(LEVEL.type_state).select_color(it->second.second);
+		std::get<pedit::State>(M2_LEVEL.type_state).select_color(it->second.second);
 	}
 }
 void m2::pedit::State::deactivate_mode() {

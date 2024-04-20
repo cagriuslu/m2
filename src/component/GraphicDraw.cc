@@ -7,10 +7,10 @@ void m2::draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant dr
 
 	auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(position, sprite, draw_variant);
 	auto dst_rect = SDL_Rect{
-			(int)roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * GAME.dimensions().ppm / sprite_ppm / 2),
-			(int)roundf(screen_origin_to_sprite_center_px_vec.y) - (src_rect.h * GAME.dimensions().ppm / sprite_ppm / 2),
-			src_rect.w * GAME.dimensions().ppm / sprite_ppm,
-			src_rect.h * GAME.dimensions().ppm / sprite_ppm
+			(int)roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * M2_GAME.dimensions().ppm / sprite_ppm / 2),
+			(int)roundf(screen_origin_to_sprite_center_px_vec.y) - (src_rect.h * M2_GAME.dimensions().ppm / sprite_ppm / 2),
+			src_rect.w * M2_GAME.dimensions().ppm / sprite_ppm,
+			src_rect.h * M2_GAME.dimensions().ppm / sprite_ppm
 	};
 
 	// Sprite is rotated around this point
@@ -22,7 +22,7 @@ void m2::draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant dr
 
 	auto src_rect_sdl = static_cast<SDL_Rect>(src_rect);
 	auto original_rotation = sprite.original_rotation_radians();
-	if (SDL_RenderCopyEx(GAME.renderer, sprite.texture(draw_variant), &src_rect_sdl, &dst_rect, m2::to_degrees(angle - original_rotation), &center_point, SDL_FLIP_NONE)) {
+	if (SDL_RenderCopyEx(M2_GAME.renderer, sprite.texture(draw_variant), &src_rect_sdl, &dst_rect, m2::to_degrees(angle - original_rotation), &center_point, SDL_FLIP_NONE)) {
 		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }
@@ -43,22 +43,22 @@ void m2::draw_fake_3d(const VecF& position, const Sprite& sprite, DrawVariant dr
 	if (is_foreground) {
 		auto sprite_x_offset_in_dest_px = sprite.center_to_origin_dstpx(draw_variant).x;
 		auto point_0_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				position.y,
 				(float)src_rect.h / (float)sprite.ppm()
 		};
 		auto point_1_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				position.y,
 				(float)src_rect.h / (float)sprite.ppm()
 		};
 		auto point_2_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				position.y,
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				position.y,
 				0.0f
 		};
@@ -85,23 +85,23 @@ void m2::draw_fake_3d(const VecF& position, const Sprite& sprite, DrawVariant dr
 		auto sprite_x_offset_in_dest_px = sprite.center_to_origin_dstpx(draw_variant).x;
 		auto sprite_y_offset_in_dest_px = sprite.center_to_origin_dstpx(draw_variant).y;
 		auto point_0_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				0.0f
 		};
 		auto point_1_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				0.0f
 		};
 		auto point_2_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / GAME.dimensions().ppm),
-				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
 				0.0f
 		};
 
@@ -162,7 +162,7 @@ void m2::draw_fake_3d(const VecF& position, const Sprite& sprite, DrawVariant dr
 
 		static const int indices[6] = {0, 1, 2, 2, 1, 3};
 
-		SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
-		SDL_RenderGeometry(GAME.renderer, sprite.texture(draw_variant), vertices, 4, indices, 6);
+		SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+		SDL_RenderGeometry(M2_GAME.renderer, sprite.texture(draw_variant), vertices, 4, indices, 6);
 	}
 }

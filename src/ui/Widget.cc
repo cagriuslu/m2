@@ -8,11 +8,11 @@ constexpr int DEFAULT_FONT_LETTER_HEIGHT = 5;
 
 void Widget::draw_background_color(const RectI& rect, const SDL_Color& color) {
 	if (color.r || color.g || color.b || color.a) {
-		SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-		SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+		SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 
 		const auto sdl_rect = static_cast<SDL_Rect>(rect);
-		SDL_RenderFillRect(GAME.renderer, &sdl_rect);
+		SDL_RenderFillRect(M2_GAME.renderer, &sdl_rect);
 	}
 }
 
@@ -80,7 +80,7 @@ void m2::ui::Widget::draw_text(const RectI& rect, SDL_Texture* text_texture, con
 	SDL_SetTextureColorMod(text_texture, color_mod.r, color_mod.g, color_mod.b);
 	// Draw texture
 	auto sdl_rect = static_cast<SDL_Rect>(rect);
-	SDL_RenderCopy(GAME.renderer, text_texture, nullptr, &sdl_rect);
+	SDL_RenderCopy(M2_GAME.renderer, text_texture, nullptr, &sdl_rect);
 }
 
 void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
@@ -99,15 +99,15 @@ void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
 	    .w = iround(src_rect.w * sprite_size_multiplier),
 	    .h = iround(src_rect.h * sprite_size_multiplier)};
 
-	SDL_RenderCopy(GAME.renderer, sprite.texture(DrawVariant{}), &src_rect, &actual_dst_rect);
+	SDL_RenderCopy(M2_GAME.renderer, sprite.texture(DrawVariant{}), &src_rect, &actual_dst_rect);
 }
 
 void Widget::draw_border(const RectI& rect, unsigned border_width_px, const SDL_Color& color) {
 	if (border_width_px) {
-		SDL_SetRenderDrawColor(GAME.renderer, color.r, color.g, color.b, color.a);
-		SDL_SetRenderDrawBlendMode(GAME.renderer, SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+		SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 
 		auto sdl_rect = static_cast<SDL_Rect>(rect);
-		SDL_RenderDrawRect(GAME.renderer, &sdl_rect);
+		SDL_RenderDrawRect(M2_GAME.renderer, &sdl_rect);
 	}
 }

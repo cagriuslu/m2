@@ -4,16 +4,16 @@
 m2::sdl::TextureUniquePtr m2::sdl::capture_screen_as_texture() {
 	// Get screen size
 	int w, h;
-	SDL_GetRendererOutputSize(GAME.renderer, &w, &h);
+	SDL_GetRendererOutputSize(M2_GAME.renderer, &w, &h);
 
 	// Create surface
 	auto* surface = SDL_CreateRGBSurface(0, w, h, 24, 0xFF, 0xFF00, 0xFF0000, 0);
 
 	// Read pixels into surface
-	SDL_RenderReadPixels(GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
+	SDL_RenderReadPixels(M2_GAME.renderer, nullptr, SDL_PIXELFORMAT_RGB24, surface->pixels, surface->pitch);
 
 	// Create texture
-	TextureUniquePtr texture(SDL_CreateTextureFromSurface(GAME.renderer, surface));
+	TextureUniquePtr texture(SDL_CreateTextureFromSurface(M2_GAME.renderer, surface));
 
 	// Free surface
 	SDL_FreeSurface(surface);

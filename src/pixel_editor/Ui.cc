@@ -9,7 +9,7 @@ const widget::TextBlueprint pixel_editor_left_hud_paint_button = {
 		.initial_text = "Paint",
 		.kb_shortcut = SDL_SCANCODE_P,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).activate_paint_mode();
+			std::get<pedit::State>(M2_LEVEL.type_state).activate_paint_mode();
 			return make_continue_action();
 		}
 };
@@ -17,7 +17,7 @@ const widget::TextBlueprint pixel_editor_left_hud_erase_button = {
 		.initial_text = "Erase",
 		.kb_shortcut = SDL_SCANCODE_E,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).activate_erase_mode();
+			std::get<pedit::State>(M2_LEVEL.type_state).activate_erase_mode();
 			return make_continue_action();
 		}
 };
@@ -25,7 +25,7 @@ const widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 		.initial_text = "Pick",
 		.kb_shortcut = SDL_SCANCODE_C,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).activate_color_picker_mode();
+			std::get<pedit::State>(M2_LEVEL.type_state).activate_color_picker_mode();
 			return make_continue_action();
 		}
 };
@@ -33,7 +33,7 @@ const widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 		.initial_text = "Cancel",
 		.kb_shortcut = SDL_SCANCODE_X,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).deactivate_mode();
+			std::get<pedit::State>(M2_LEVEL.type_state).deactivate_mode();
 			return make_continue_action();
 		}
 };
@@ -41,10 +41,10 @@ const widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 		.initial_text = "Grid",
 		.kb_shortcut = SDL_SCANCODE_G,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
-			if (LEVEL.dynamic_grid_lines_loader) {
-				LEVEL.dynamic_grid_lines_loader.reset();
+			if (M2_LEVEL.dynamic_grid_lines_loader) {
+				M2_LEVEL.dynamic_grid_lines_loader.reset();
 			} else {
-				LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 127});
+				M2_LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 127});
 			}
 			return make_continue_action();
 		}
@@ -105,14 +105,14 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_red_selection = {
 		.max_value = 255,
 		.initial_value = 0,
 		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
-			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.r;
+			return (int) std::get<pedit::State>(M2_LEVEL.type_state).selected_color.r;
 		},
 		.on_action = [](const widget::IntegerInput& self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
+			std::get<pedit::State>(M2_LEVEL.type_state).select_color(SDL_Color{
 					.r = (uint8_t) self.value(),
-					.g = std::get<pedit::State>(LEVEL.type_state).selected_color.g,
-					.b = std::get<pedit::State>(LEVEL.type_state).selected_color.b,
-					.a = std::get<pedit::State>(LEVEL.type_state).selected_color.a});
+					.g = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.g,
+					.b = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.b,
+					.a = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.a});
 			return make_continue_action();
 		}
 };
@@ -121,14 +121,14 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_green_selection = {
 		.max_value = 255,
 		.initial_value = 0,
 		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
-			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.g;
+			return (int) std::get<pedit::State>(M2_LEVEL.type_state).selected_color.g;
 		},
 		.on_action = [](const widget::IntegerInput& self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
-					.r = std::get<pedit::State>(LEVEL.type_state).selected_color.r,
+			std::get<pedit::State>(M2_LEVEL.type_state).select_color(SDL_Color{
+					.r = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.r,
 					.g = (uint8_t) self.value(),
-					.b = std::get<pedit::State>(LEVEL.type_state).selected_color.b,
-					.a = std::get<pedit::State>(LEVEL.type_state).selected_color.a});
+					.b = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.b,
+					.a = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.a});
 			return make_continue_action();
 		}
 };
@@ -137,14 +137,14 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_blue_selection = {
 		.max_value = 255,
 		.initial_value = 0,
 		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
-			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.b;
+			return (int) std::get<pedit::State>(M2_LEVEL.type_state).selected_color.b;
 		},
 		.on_action = [](const widget::IntegerInput& self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
-					.r = std::get<pedit::State>(LEVEL.type_state).selected_color.r,
-					.g = std::get<pedit::State>(LEVEL.type_state).selected_color.g,
+			std::get<pedit::State>(M2_LEVEL.type_state).select_color(SDL_Color{
+					.r = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.r,
+					.g = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.g,
 					.b = (uint8_t) self.value(),
-					.a = std::get<pedit::State>(LEVEL.type_state).selected_color.a});
+					.a = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.a});
 			return make_continue_action();
 		}
 };
@@ -153,13 +153,13 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_alpha_selection = {
 		.max_value = 255,
 		.initial_value = 0,
 		.on_update = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
-			return (int) std::get<pedit::State>(LEVEL.type_state).selected_color.a;
+			return (int) std::get<pedit::State>(M2_LEVEL.type_state).selected_color.a;
 		},
 		.on_action = [](const widget::IntegerInput& self) -> Action {
-			std::get<pedit::State>(LEVEL.type_state).select_color(SDL_Color{
-					.r = std::get<pedit::State>(LEVEL.type_state).selected_color.r,
-					.g = std::get<pedit::State>(LEVEL.type_state).selected_color.g,
-					.b = std::get<pedit::State>(LEVEL.type_state).selected_color.b,
+			std::get<pedit::State>(M2_LEVEL.type_state).select_color(SDL_Color{
+					.r = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.r,
+					.g = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.g,
+					.b = std::get<pedit::State>(M2_LEVEL.type_state).selected_color.b,
 					.a = (uint8_t) self.value()});
 			return make_continue_action();
 		}

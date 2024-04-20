@@ -72,7 +72,7 @@ void m2::AudioManager::set_playback_right_volume(PlaybackId id, float volume) {
 }
 
 void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, int length) {
-	auto& audio_manager = *GAME.audio_manager;
+	auto& audio_manager = *M2_GAME.audio_manager;
 	auto* out_stream = reinterpret_cast<AudioSample*>(stream);
 	auto out_length = (size_t) length / sizeof(AudioSample); // in samples
 

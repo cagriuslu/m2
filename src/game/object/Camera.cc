@@ -10,7 +10,7 @@
 
 m2::Id m2::obj::create_camera() {
 	// Start at player's location
-	auto* player = LEVEL.objects.get(LEVEL.player_id);
+	auto* player = M2_LEVEL.objects.get(M2_LEVEL.player_id);
 	auto obj_pair = create_object(player ? player->position : VecF{});
 
 	// Create implementation
@@ -20,7 +20,7 @@ m2::Id m2::obj::create_camera() {
 	auto& phy = camera.add_physique();
 	phy.post_step = [&camera](MAYBE Physique& phy) {
 		//		auto* camera_data = dynamic_cast<m2::obj::Camera*>(camera.impl.get());
-		auto& player = LEVEL.objects[LEVEL.player_id];
+		auto& player = M2_LEVEL.objects[M2_LEVEL.player_id];
 		camera.position = player.position;
 
 		// Move dynamic loaders if they exist
@@ -28,42 +28,42 @@ m2::Id m2::obj::create_camera() {
 		    overloaded{
 		        [](sedit::State& ss) {
 			        if (auto* dil = ss.dynamic_image_loader()) {
-				        dil->move(GAME.viewport_to_2d_world_rect_m());
+				        dil->move(M2_GAME.viewport_to_2d_world_rect_m());
 			        }
 		        },
 		        [](bsedit::State& ss) {
 			        if (auto* dil = ss.dynamic_sprite_sheet_loader()) {
-				        dil->move(GAME.viewport_to_2d_world_rect_m());
+				        dil->move(M2_GAME.viewport_to_2d_world_rect_m());
 			        }
 		        },
 		        DEFAULT_OVERLOAD},
-		    LEVEL.type_state);
-		IF(LEVEL.dynamic_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
-		IF(LEVEL.dynamic_sheet_grid_lines_loader)->move(GAME.viewport_to_2d_world_rect_m());
+		    M2_LEVEL.type_state);
+		IF(M2_LEVEL.dynamic_grid_lines_loader)->move(M2_GAME.viewport_to_2d_world_rect_m());
+		IF(M2_LEVEL.dynamic_sheet_grid_lines_loader)->move(M2_GAME.viewport_to_2d_world_rect_m());
 
 		// Mouse lookahead disabled temporarily
-		//		if (GAME.level->type() == Level::Type::SINGLE_PLAYER) {
+		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {
 		//			// Give an offset to the camera's location based on the position of the mouse
-		//			m2::VecF offsetWRTScreenCenter = GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
+		//			m2::VecF offsetWRTScreenCenter = M2_GAME.mousePositionWRTScreenCenter_m.ceil_length(OFFSET_LIMIT);
 		//			camera_data->offset = camera_data->offset.lerp(offsetWRTScreenCenter, 0.5f * CAMERA_JUMP_RATIO);
 		//			camera.position = camera.position.lerp(player.position + camera_data->offset, CAMERA_JUMP_RATIO);
 		//		} else {
 		//			camera.position = player.position;
 		//		}
 
-		if (PROXY.camera_is_listener) {
-			LEVEL.left_listener->position = camera.position;
-			LEVEL.right_listener->position = camera.position;
+		if (M2G_PROXY.camera_is_listener) {
+			M2_LEVEL.left_listener->position = camera.position;
+			M2_LEVEL.right_listener->position = camera.position;
 		}
 	};
 
-	if (PROXY.camera_is_listener) {
-		LEVEL.left_listener =
-		    SoundListener{.position = LEVEL.player()->position, .direction = PI, .listen_angle = PI_DIV2};
-		LEVEL.right_listener =
-		    SoundListener{.position = LEVEL.player()->position, .direction = 0.0f, .listen_angle = PI_DIV2};
+	if (M2G_PROXY.camera_is_listener) {
+		M2_LEVEL.left_listener =
+		    SoundListener{.position = M2_PLAYER.position, .direction = PI, .listen_angle = PI_DIV2};
+		M2_LEVEL.right_listener =
+		    SoundListener{.position = M2_PLAYER.position, .direction = 0.0f, .listen_angle = PI_DIV2};
 	}
 
-	LEVEL.camera_id = obj_pair.second;
+	M2_LEVEL.camera_id = obj_pair.second;
 	return obj_pair.second;
 }

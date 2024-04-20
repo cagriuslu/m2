@@ -1,7 +1,7 @@
 #pragma once
 
 #include <m2/Object.h>
-#include <array>
+#include <set>
 
 namespace cuzn {
 	// Filters
@@ -11,7 +11,11 @@ namespace cuzn {
 		if (not is_road_character(chr)) {
 			throw M2ERROR("Character doesn't belong to canal or railroad");
 		}
-		return std::set<m2g::pb::ItemType>{chr->find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD), chr->end_items()};
+		std::set<m2g::pb::ItemType> city_cards;
+		for (auto it = chr->find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD); it != chr->end_items(); ++it) {
+			city_cards.insert(it->type());
+		}
+		return city_cards;
 	};
 
 	// TODO init road
