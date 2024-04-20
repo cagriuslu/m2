@@ -112,7 +112,15 @@ bool cuzn::is_railroad_license(m2g::pb::ItemType item) {
 	return item == m2g::pb::RAILROAD_LICENSE;
 }
 
-m2g::pb::ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
+bool is_canal_era() {
+	return LEVEL.player()->character().get_resource(ERA) == 1.0f;
+}
+
+bool is_railroad_era() {
+	return LEVEL.player()->character().get_resource(ERA) == 2.0f;
+}
+
+ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
 	if (not is_industry_location(location)) {
 		throw M2ERROR("Sprite is not an industry location");
 	}

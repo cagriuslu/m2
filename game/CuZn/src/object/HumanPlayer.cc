@@ -75,12 +75,18 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 	return {};
 }
 
+size_t cuzn::player_card_count(m2::Character& player) {
+	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD)
+	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD)
+	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
+}
+
 bool cuzn::player_has_card(m2::Character& player, m2g::pb::ItemType card) {
 	return player.find_items(card) != player.end_items();
 }
 
-bool cuzn::player_has_road(m2::Character& player) {
-	return player.find_items(m2g::pb::ROAD_TILE) != player.end_items();
+size_t cuzn::player_road_count(m2::Character& player) {
+	return player.count_item(m2g::pb::ROAD_TILE);
 }
 
 std::optional<m2g::pb::ItemType> cuzn::get_next_buildable_factory(m2::Character& player, m2g::pb::ItemCategory tile_category) {

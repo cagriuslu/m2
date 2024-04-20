@@ -73,7 +73,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_initial_enter_signal(
 }
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_enter_signal() {
-	LOG_DEBUG("Expecting build location, disabling hud...");
+	LOG_DEBUG("Expecting build location...");
 	LEVEL.disable_hud();
 	LEVEL.display_message("Pick location");
 	LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
@@ -133,7 +133,6 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_can
 }
 
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_industry_location_exit_signal() {
-	LOG_DEBUG("Re-enabling hud...");
 	LEVEL.enable_hud();
 	LEVEL.remove_message();
 	LEVEL.remove_custom_ui_deferred(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);

@@ -18,6 +18,8 @@ namespace cuzn {
 	bool is_railroad_location(NetworkLocation location);
 	bool is_canal_license(m2g::pb::ItemType item);
 	bool is_railroad_license(m2g::pb::ItemType item);
+	bool is_canal_era();
+	bool is_railroad_era();
 
 	/// Returns the city card for that given industry location sprite
 	m2g::pb::ItemType city_of_location(m2g::pb::SpriteType location);
