@@ -112,11 +112,11 @@ bool cuzn::is_railroad_license(m2g::pb::ItemType item) {
 	return item == m2g::pb::RAILROAD_LICENSE;
 }
 
-bool is_canal_era() {
+bool cuzn::is_canal_era() {
 	return M2_PLAYER.character().get_resource(ERA) == 1.0f;
 }
 
-bool is_railroad_era() {
+bool cuzn::is_railroad_era() {
 	return M2_PLAYER.character().get_resource(ERA) == 2.0f;
 }
 
@@ -133,7 +133,7 @@ ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
 	throw M2ERROR("Industry does not belong to a city");
 }
 
-std::vector<m2g::pb::SpriteType> cuzn::locations_in_city(m2g::pb::ItemType city_card) {
+std::vector<SpriteType> cuzn::locations_in_city(m2g::pb::ItemType city_card) {
 	if (M2_GAME.get_named_item(city_card).category() != ITEM_CATEGORY_CITY_CARD) {
 		throw M2ERROR("Card does not belong to a city");
 	}
@@ -204,5 +204,15 @@ std::optional<m2g::pb::SpriteType> cuzn::network_location_on_position(const m2::
 		return it->first;
 	} else {
 		return std::nullopt;
+	}
+}
+
+std::vector<std::pair<m2g::pb::ResourceType, float>> cuzn::road_costs(bool double_railroad) {
+	if (is_canal_era()) {
+		return {{MONEY, 3.0f}};
+	} else if (!double_railroad) {
+		return {{MONEY, 5.0f}, {COAL_CUBE_COUNT, 1.0f}};
+	} else {
+		return {{MONEY, 15.0f}, {COAL_CUBE_COUNT, 2.0f}, {BEER_BARREL_COUNT, 1.0f}};
 	}
 }

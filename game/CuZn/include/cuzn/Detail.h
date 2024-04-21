@@ -39,4 +39,6 @@ namespace cuzn {
 
 	/// Returns the network located on the given position
 	std::optional<m2g::pb::SpriteType> network_location_on_position(const m2::VecF& world_position);
+
+	std::vector<std::pair<m2g::pb::ResourceType, float>> road_costs(bool double_railroad = false);
 }

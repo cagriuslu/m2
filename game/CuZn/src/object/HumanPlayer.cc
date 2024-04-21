@@ -90,6 +90,10 @@ size_t cuzn::player_road_count(m2::Character& player) {
 	return player.count_item(m2g::pb::ROAD_TILE);
 }
 
+float cuzn::player_money(m2::Character& player) {
+	return player.get_resource(m2g::pb::MONEY);
+}
+
 std::optional<m2g::pb::ItemType> cuzn::get_next_buildable_factory(m2::Character& player, m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;

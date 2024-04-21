@@ -106,8 +106,10 @@ std::optional<m2g::pb::ItemType> cuzn::ask_for_card_selection(m2g::pb::ItemType 
 	return selected_card;
 }
 
-m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
-	return Blueprint{
+std::optional<m2g::pb::ItemType> cuzn::ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
+	LOG_INFO("Asking player to select an industry...");
+
+	auto blueprint = Blueprint{
 		.w = 60, .h = 40,
 		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
@@ -141,13 +143,10 @@ m2::ui::Blueprint cuzn::generate_industry_selection_window(m2g::pb::ItemType ind
 			}
 		}
 	};
-}
 
-std::optional<m2g::pb::ItemType> cuzn::ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
-	LOG_INFO("Asking player to select an industry...");
 	std::optional<m2g::pb::ItemType> selected_industry;
 	m2::ui::State::create_execute_sync(
-		std::make_unique<m2::ui::Blueprint>(generate_industry_selection_window(industry_1, industry_2)),
+		std::make_unique<m2::ui::Blueprint>(blueprint),
 		M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
 		.if_void_return([&]() {
 			LOG_INFO("Industry selection cancelled");
@@ -159,72 +158,7 @@ std::optional<m2g::pb::ItemType> cuzn::ask_for_industry_selection(m2g::pb::ItemT
 	return selected_industry;
 }
 
-m2::ui::Blueprint cuzn::generate_build_confirmation(m2g::pb::ItemType card, m2g::pb::ItemType city, m2g::pb::ItemType industry) {
-	auto card_name = M2_GAME.get_named_item(card).in_game_name();
-	auto city_name = M2_GAME.get_named_item(city).in_game_name();
-	auto industry_name = M2_GAME.get_named_item(industry).in_game_name();
-	return Blueprint{
-		.w = 60, .h = 40,
-		.border_width_px = 1,
-		.background_color = {0, 0, 0, 255},
-		.widgets = {
-			WidgetBlueprint{
-				.x = 5, .y = 5, .w = 50, .h = 5,
-				.border_width_px = 0,
-				.variant = TextBlueprint{
-					.initial_text = "Build " + industry_name + " in " + city_name,
-					.font_size = 4.5f,
-					.alignment = m2::ui::TextAlignment::LEFT
-				}
-			},
-			WidgetBlueprint{
-				.x = 5, .y = 10, .w = 50, .h = 5,
-				.border_width_px = 0,
-				.variant = TextBlueprint{
-					.initial_text = "using " + card_name + " card?",
-					.font_size = 4.5f,
-					.alignment = m2::ui::TextAlignment::LEFT
-				}
-			},
-			WidgetBlueprint{
-				.x = 5, .y = 30, .w = 15, .h = 5,
-				.variant = TextBlueprint{
-					.initial_text = "Cancel",
-					.on_action = [](MAYBE const Text& self) -> Action {
-						// Check if a user journey is active
-						if (auto& user_journey = m2g::Proxy::get_instance().user_journey; user_journey) {
-							// Check if BuildJourney is active
-							if (std::holds_alternative<BuildJourney>(*user_journey)) {
-								// Deliver cancellation to BuildJourney
-								std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_cancel_signal(true));
-							}
-						}
-						return make_return_action();
-					}
-				}
-			},
-			WidgetBlueprint{
-				.x = 25, .y = 30, .w = 30, .h = 5,
-				.variant = TextBlueprint{
-					.initial_text = "OK",
-					.on_action = [](MAYBE const Text& self) -> Action {
-						// Check if a user journey is active
-						if (auto& user_journey = m2g::Proxy::get_instance().user_journey; user_journey) {
-							// Check if BuildJourney is active
-							if (std::holds_alternative<BuildJourney>(*user_journey)) {
-								// Deliver cancellation to BuildJourney
-								std::get<BuildJourney>(*user_journey).signal(PositionOrCancelSignal::create_cancel_signal(false));
-							}
-						}
-						return make_return_action();
-					}
-				}
-			}
-		}
-	};
-}
-
-bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text) {
+bool cuzn::ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text) {
 	auto blueprint = Blueprint{
 		.w = 60, .h = 40,
 		.border_width_px = 1,
