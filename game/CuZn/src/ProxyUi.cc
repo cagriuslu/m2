@@ -249,7 +249,13 @@ const Blueprint left_hud_blueprint = {
 				.initial_text = "Network",
 				.font_size = 4.5f,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					//return;
+					if (M2_GAME.client_thread().is_our_turn()) {
+						LOG_INFO("Beginning BuildJourney");
+						m2g::Proxy::get_instance().user_journey.emplace(cuzn::NetworkJourney{});
+					} else {
+						M2_LEVEL.display_message("It's not your turn");
+					}
+					return make_continue_action();
 				}
 			}
 		},
