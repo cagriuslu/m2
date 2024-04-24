@@ -35,6 +35,38 @@ namespace m2 {
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
+	// Range utilities
+
+	template <typename FirstT, typename SecondT>
+	constexpr auto to_first_of(const std::pair<FirstT,SecondT>& p) { return p.first; }
+	template <typename FirstT, typename SecondT>
+	constexpr auto to_second_of(const std::pair<FirstT,SecondT>& p) { return p.second; }
+
+	template <typename FirstT, typename SecondT>
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_first_equals(const FirstT& f) {
+		return [&f](const std::pair<FirstT,SecondT>& p) -> bool {
+			return p.first == f;
+		};
+	}
+	template <typename FirstT, typename SecondT>
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_first_not_equals(const FirstT& f) {
+		return [&f](const std::pair<FirstT,SecondT>& p) -> bool {
+			return p.first != f;
+		};
+	}
+	template <typename FirstT, typename SecondT>
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_second_equals(const SecondT& s) {
+		return [&s](const std::pair<FirstT,SecondT>& p) -> bool {
+			return p.second == s;
+		};
+	}
+	template <typename FirstT, typename SecondT>
+	constexpr std::function<bool(const std::pair<FirstT,SecondT>&)> is_second_not_equals(const SecondT& s) {
+		return [&s](const std::pair<FirstT,SecondT>& p) -> bool {
+			return p.second != s;
+		};
+	}
+
 	// Converts a range into an std::vector
 	template<std::ranges::range R>
 	constexpr auto to_vector(R&& r) {
@@ -46,6 +78,8 @@ namespace m2 {
 		using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
 		return std::set<elem_t>{r.begin(), r.end()};
 	}
+
+	// Algorithms
 
 	template <typename InputIt, typename OutputIt, typename UnaryPredicate, typename UnaryOperation>
 	OutputIt transform_copy_if(InputIt first, InputIt last, OutputIt destination, UnaryPredicate predicate, UnaryOperation operation) {
@@ -67,17 +101,6 @@ namespace m2 {
 		for(++next; next != last; ++first, ++next) {
 			operation(*first, *next);
 		}
-	}
-
-	template <typename It>
-	bool is_identical(It first1, It last1, It first2, It last2) {
-		for (; first1 != last1 && first2 != last2; ++first1, ++first2) {
-			if (*first1 != *first2) {
-				return false;
-			}
-		}
-		// Check if end has been reached for both container
-		return first1 == last1 && first2 == last2;
 	}
 
 	struct Void {};
