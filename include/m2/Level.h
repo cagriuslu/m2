@@ -55,7 +55,9 @@ namespace m2 {
 		// All these UI states operate alongside the game world. They do not block the world simulation.
 		std::optional<ui::State> left_hud_ui_state, right_hud_ui_state;
 		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
+		// If there's an active dialog, all events are delivered to it. World is still simulated, but button and mouse presses won't be delivered to the world objects.
 		std::pair<RectF, std::optional<ui::State>> custom_ui_dialog_state;
+		// Non-dialog custom UI only handles the events falling on it, allows through the world events.
 		std::array<std::pair<RectF, std::optional<ui::State>>, 8> custom_ui_state;
 		std::optional<std::string> message;
 		std::optional<ui::State> message_box_ui_state;
@@ -110,10 +112,13 @@ namespace m2 {
 		void disable_hud();
 		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
 		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
-		void remove_custom_ui(int index); // Should not be called from the UI itself
-		void remove_custom_ui_deferred(int index); // Can be called from the UI itself
-		void remove_custom_ui_dialog(); // Should not be called from the UI itself
-		void remove_custom_ui_dialog_deferred(); // Can be called from the UI itself
+		void remove_custom_ui(int index); // Should not be called from the custom UI itself
+		void remove_custom_ui_deferred(int index); // Can be called from the custom UI itself
+		void remove_custom_ui_dialog(); // Should not be called from the custom UI itself
+		void remove_custom_ui_dialog_deferred(); // Can be called from the custom UI itself
+
+		/// If `timeout` is negative, the timeout is disabled and the message is displayed forever.
+		/// Else, the message is dismissed after `timeout` seconds.
 		void display_message(const std::string& msg, float timeout = 5.0f);
 		void remove_message();
 

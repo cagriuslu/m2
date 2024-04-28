@@ -324,7 +324,9 @@ void m2::Level::remove_custom_ui_dialog_deferred() {
 }
 void m2::Level::display_message(const std::string& msg, float timeout) {
 	message = msg;
-	message_box_ui_state->widgets[0]->disable_after = timeout;
+	if (0.0f <= timeout) {
+		message_box_ui_state->widgets[0]->disable_after = timeout;
+	}
 	message_box_ui_state->widgets[0]->enabled = true;
 }
 void m2::Level::remove_message() {
