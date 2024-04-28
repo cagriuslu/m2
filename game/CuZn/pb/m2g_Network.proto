@@ -14,7 +14,15 @@ message ClientCommand {
     repeated SpriteType coal_sources = 4;
     repeated SpriteType iron_sources = 5;
   }
-  message NetworkAction {}
+  message NetworkAction {
+    ItemType card_1 = 1;
+    ItemType card_2 = 2;
+    SpriteType location_1 = 3;
+    SpriteType location_2 = 4;
+    SpriteType coal_source_1 = 5;
+    SpriteType coal_source_2 = 6;
+    SpriteType beer_source_2 = 7;
+  }
   message SellAction {}
   message LoanAction {}
   message DevelopAction {}
