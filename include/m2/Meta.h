@@ -17,6 +17,7 @@ namespace m2 {
 	inline int iround(float t) { return static_cast<int>(roundf(t)); }
 	inline unsigned uround(float t) { return static_cast<unsigned>(roundf(t)); }
 
+	std::string to_string(bool);
 	std::string to_string(int);
 	std::string to_string(unsigned int);
 	std::string to_string(long);

@@ -76,7 +76,6 @@ void m2::network::ServerThread::server_update() {
 	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
 		pb::NetworkMessage message;
 		message.set_game_hash(M2_GAME.hash());
-		message.set_sender_id(0);
 		message.mutable_server_update()->set_receiver_index(i);
 		message.mutable_server_update()->set_turn_holder_index(turn);
 		for (auto player_id : M2G_PROXY.multi_player_object_ids) {
@@ -224,18 +223,10 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 
 					// Process message
 					if (auto opt_message = client.peak_incoming_message(); opt_message) {
-						if (not opt_message->has_client_command() && not opt_message->has_client_update()) {
-							LOG_INFO("Received ping", i);
+						if (opt_message->has_ready()) {
 							client.pop_incoming_message(); // Pop the message from the incoming queue
-							if (auto sender_id = opt_message->sender_id(); sender_id) {
-								if (not client.is_ready()) {
-									LOG_INFO("Client ready", i, sender_id);
-									client.set_ready(sender_id);
-								}
-							} else {
-								LOG_INFO("Client not ready", i, client.sender_id());
-								client.clear_ready();
-							}
+							LOG_INFO("Client state", opt_message->ready());
+							client.set_ready(opt_message->ready());
 						} else if (opt_message->has_client_command()) {
 							auto json_str = pb::message_to_json_string(*opt_message);
 							LOG_DEBUG("Received client command", i, *json_str);

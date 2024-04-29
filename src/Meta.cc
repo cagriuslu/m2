@@ -1,6 +1,10 @@
 #include <m2/Meta.h>
 #include <cstdio>
 
+std::string m2::to_string(bool b) {
+	return b ? "true" : "false";
+}
+
 std::string m2::to_string(int n) {
 	return std::to_string(n);
 }

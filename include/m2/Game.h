@@ -65,7 +65,6 @@ namespace m2 {
 		std::vector<Sprite> _sprites;
 
 		std::optional<Level> _level;
-		int32_t _sender_id;
 		// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
 		// This is important for the server thread to not linger too much.
 		std::optional<network::ServerThread> _server_thread;
@@ -137,7 +136,6 @@ namespace m2 {
 		// Network management
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		void_expected join_game(mplayer::Type type, const std::string& addr);
-		int32_t sender_id() const { return _sender_id; }
 		bool is_server() const { return static_cast<bool>(_server_thread); }
 		network::ServerThread& server_thread() { return *_server_thread; }
 		network::ClientThread& client_thread() { return *_client_thread; }

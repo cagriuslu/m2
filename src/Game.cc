@@ -40,10 +40,6 @@ void m2::Game::destroy_instance() {
 m2::Game::Game() {
 	DEBUG_FN();
 
-	auto tmp_sender_id = randf();
-	_sender_id = *reinterpret_cast<int32_t*>(&tmp_sender_id);
-	LOG_INFO("Sender ID", _sender_id);
-
 	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
 	//	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
 	//		LOG_WARN("Failed to set opengl as render hint");

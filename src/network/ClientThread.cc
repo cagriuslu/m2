@@ -98,7 +98,7 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 		const std::lock_guard lock(_mutex);
 		pb::NetworkMessage msg;
 		msg.set_game_hash(M2_GAME.hash());
-		msg.set_sender_id(state ? M2_GAME.sender_id() : 0);
+		msg.set_ready(state);
 		_message_queue.emplace_back(std::move(msg));
 	}
 
@@ -258,7 +258,6 @@ void m2::network::ClientThread::queue_client_command(const m2g::pb::ClientComman
 
 	pb::NetworkMessage msg;
 	msg.set_game_hash(M2_GAME.hash());
-	msg.set_sender_id(M2_GAME.sender_id());
 	msg.mutable_client_command()->CopyFrom(cmd);
 
 	const std::lock_guard lock(_mutex);

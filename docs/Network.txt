@@ -2,20 +2,17 @@ TurnBased
 =========
 TCP is used for turn based multiplayer. Before the level is created, the host creates a ServerThread and a ClientThread.
 The guests create one ClientThread each. ServerThread starts listening, and ClientThreads connect to it. After
-connection, the clients can signal being ready by sending a ping to the server (NetworkMessage without a payload) and
-report their sender_ids. sender_id is a random number. It is used to ensure if the connection drops, and the client
-tries to reconnect, the server recognizes the client.
+connection, the clients can signal being ready by sending a NetworkMessage(ready = true) to the server.
 
 Every time a client is connected or disconnected, the server sends a ServerUpdate to report the players waiting in the
 lobby. (Not yet implemented)
 
 After enough clients are connected and all of them have signaled as ready, the host can close the lobby by calling
-ServerThread.close_lobby(). After this call, no new clients are accepted. Existing clients can drop and reconnect, as
-long as they use the same sender_id. Then, the host initializes a level by calling M2_GAME.init_multi_player_as_host(),
-which calls ServerThread.server_update() (contains all the necessary data for clients to initialize their levels). The
-server's and the client's levels should be in identical states right now. Then, init_multi_player_as_host() calls
-M2G_PROXY.multi_player_level_host_populate() for proxy to populate the level further based on number of players, randomness,
-etc. Afterward, another ServerUpdate is published by init_multi_player_as_host().
+ServerThread.close_lobby(). After this call, no new clients are accepted. Then, the host initializes a level by calling
+M2_GAME.init_multi_player_as_host(), which calls ServerThread.server_update() (contains all the necessary data for
+clients to initialize their levels). The server's and the client's levels should be in identical states right now. Then,
+init_multi_player_as_host() calls M2G_PROXY.multi_player_level_host_populate() for proxy to populate the level further
+based on number of players, randomness, etc. Afterward, another ServerUpdate is published by init_multi_player_as_host().
 
 In turn based games, the physics world does not exist. The game state is stored in objects with Character, and their
 positions. A real life player is represented by an object, who might have child objects on the map.

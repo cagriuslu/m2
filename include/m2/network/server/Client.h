@@ -6,7 +6,7 @@
 namespace m2::network::server {
 	class Client {
 		std::optional<Socket> _socket;
-		std::optional<int32_t> _sender_id;
+		bool _is_ready;
 		std::queue<pb::NetworkMessage> _incoming_queue, _outgoing_queue;
 
 	public:
@@ -21,10 +21,9 @@ namespace m2::network::server {
 
 		/// Returns if the client is ready.
 		/// Clients report their sender_id if they are ready. Or clear it if they become unready.
-		[[nodiscard]] bool is_ready() const { return static_cast<bool>(_sender_id); }
-		[[nodiscard]] int32_t sender_id() const { return *_sender_id; }
-		void set_ready(int32_t sender_id) { _sender_id = sender_id; }
-		void clear_ready() { _sender_id.reset(); }
+		[[nodiscard]] bool is_ready() const { return _is_ready; }
+		void set_ready(bool state) { _is_ready = state; }
+		void clear_ready() { _is_ready = false; }
 
 		void_expected fetch_incoming_messages(char* read_buffer, size_t read_buffer_length);
 		expected<bool> flush_outgoing_messages();

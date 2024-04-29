@@ -49,12 +49,8 @@ message ClientUpdate {}
 
 message NetworkMessage {
   int32 game_hash = 1;
-
-  // 0-based index of the sender. Server is 0.
-  int32 sender_id = 2;
-
-  // If all is null, the message is just a ping
   oneof type {
+    bool ready = 2;
     m2g.pb.ServerCommand server_command = 3;
     m2.pb.ServerUpdate server_update = 4;
     m2g.pb.ClientCommand client_command = 5;
