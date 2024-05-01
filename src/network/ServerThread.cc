@@ -46,19 +46,16 @@ std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder
 }
 
 m2::void_expected m2::network::ServerThread::close_lobby() {
-	INFO_FN();
+	LOG_INFO("Closing lobby...");
 	{
-		// Check if all clients reported as ready
+		// Check if all clients are ready
 		const std::lock_guard lock(_mutex);
-		for (auto& client : _clients) {
-			if (not client.is_ready()) {
-				return make_unexpected("Not every client is ready");
-			}
+		if (not std::ranges::all_of(_clients, server::is_client_ready)) {
+			return make_unexpected("Not every client is ready");
 		}
+		set_state_unlocked(pb::ServerState::SERVER_READY);
 	}
-
 	LOG_INFO("Lobby closed");
-	set_state_locked(pb::ServerState::SERVER_READY);
 	return {};
 }
 
@@ -70,8 +67,8 @@ void m2::network::ServerThread::set_turn_holder_index(unsigned idx) {
 
 void m2::network::ServerThread::server_update() {
 	INFO_FN();
-	auto turn = turn_holder();
 
+	auto turn = turn_holder();
 	auto count = client_count();
 	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
 		pb::NetworkMessage message;
@@ -113,6 +110,12 @@ void m2::network::ServerThread::server_update() {
 
 		{
 			const std::lock_guard lock(_mutex);
+
+			// Make sure the state is set as READY
+			if (_state != pb::SERVER_READY) {
+				set_state_unlocked(pb::SERVER_READY);
+			}
+
 			LOG_DEBUG("Queueing outgoing message to client", i);
 			_clients[i].push_outgoing_message(std::move(message));
 		}
@@ -120,8 +123,12 @@ void m2::network::ServerThread::server_update() {
 }
 
 void m2::network::ServerThread::set_state_locked(pb::ServerState state) {
-	LOG_DEBUG("Setting new state", pb::enum_name(state));
 	const std::lock_guard lock(_mutex);
+	set_state_unlocked(state);
+}
+
+void m2::network::ServerThread::set_state_unlocked(pb::ServerState state) {
+	LOG_DEBUG("Setting new state", pb::enum_name(state));
 	_state = state;
 }
 
@@ -214,22 +221,41 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 					}
 					LOG_DEBUG("Client socket is readable", i);
 
-					auto fetch_success = client.fetch_incoming_messages(server_thread->_read_buffer, sizeof(server_thread->_read_buffer));
-					if (not fetch_success) {
-						LOG_ERROR("Failed to fetch message", fetch_success.error());
+					if (auto expect_msg = client.save_incoming_message(server_thread->_read_buffer, sizeof(server_thread->_read_buffer)); not expect_msg) {
+						LOG_ERROR("Failed to save message", expect_msg.error());
 						server_thread->_clients.clear();
 						return;
-					}
-
-					// Process message
-					if (auto opt_message = client.peak_incoming_message(); opt_message) {
-						if (opt_message->has_ready()) {
-							client.pop_incoming_message(); // Pop the message from the incoming queue
-							LOG_INFO("Client state", opt_message->ready());
-							client.set_ready(opt_message->ready());
-						} else if (opt_message->has_client_command()) {
-							auto json_str = pb::message_to_json_string(*opt_message);
-							LOG_DEBUG("Received client command", i, *json_str);
+					} else {
+						if (auto optional_msg = *expect_msg; not optional_msg) {
+							// Check if a soft error occurred
+							// Client might still have an unprocessed incoming message,
+							// or the client connection might have dropped.
+							// These errors should not cause the server to shut down.
+						} else if (optional_msg->has_ready()) {
+							// Check ready message
+							if (server_thread->_state == pb::SERVER_LISTENING) {
+								LOG_INFO("Client state", optional_msg->ready());
+								client.set_ready(optional_msg->ready());
+							} else {
+								LOG_WARN("Received ready signal while the server wasn't listening");
+							}
+							client.pop_incoming_message(); // Pop the message from the client
+						} else {
+							// Process other messages
+							if (server_thread->_turn_holder != i) {
+								LOG_WARN("Dropping message received from a non-turn-holder client", i);
+								client.pop_incoming_message();
+							} else {
+								// Process ClientCommand
+								if (optional_msg->has_client_command()) {
+									auto json_str = pb::message_to_json_string(*optional_msg);
+									LOG_DEBUG("Received ClientCommand", i, *json_str);
+									// Processing of the message will be done by the game loop
+								} else {
+									// TODO process other client messages
+									client.pop_incoming_message(); // TEMP
+								}
+							}
 						}
 					}
 				}

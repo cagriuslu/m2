@@ -49,6 +49,7 @@ namespace m2::network {
 
 	private:
 		void set_state_locked(pb::ServerState state);
+		void set_state_unlocked(pb::ServerState state);
 
 		// Thread functions
 		static void thread_func(ServerThread* server_thread);

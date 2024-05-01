@@ -3,8 +3,13 @@
 #include <m2/Game.h>
 #include <string>
 
-m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* read_buffer, size_t read_buffer_length) {
+m2::expected<std::optional<m2::pb::NetworkMessage>> m2::network::server::Client::save_incoming_message(char* read_buffer, size_t read_buffer_length) {
 	DEBUG_FN();
+
+	if (_incoming_msg) {
+		LOG_WARN("There's an unprocessed incoming message");
+		return std::nullopt; // This is not an important error, we may try again
+	}
 
 	auto recv_success = _socket->recv(read_buffer, read_buffer_length);
 	m2_reflect_failure(recv_success);
@@ -12,7 +17,7 @@ m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* rea
 	if (*recv_success == 0) {
 		LOG_WARN("Client socket closed, closing our side of the socket");
 		_socket.reset();
-		return {}; // This is not an important error, the client may connect again
+		return std::nullopt; // This is not an important error
 	}
 
 	// Parse message
@@ -25,15 +30,33 @@ m2::void_expected m2::network::server::Client::fetch_incoming_messages(char* rea
 		return make_unexpected("Client game hash mismatch");
 	}
 
-	LOG_DEBUG("Queueing incoming client message");
-	_incoming_queue.push(std::move(*expect_message));
-	return {};
+	LOG_DEBUG("Saving incoming client message");
+	_incoming_msg.emplace(std::move(*expect_message));
+	return _incoming_msg;
+}
+
+std::optional<m2::pb::NetworkMessage> m2::network::server::Client::peak_incoming_message() {
+	return _incoming_msg;
+}
+
+std::optional<m2::pb::NetworkMessage> m2::network::server::Client::pop_incoming_message() {
+	if (_incoming_msg) {
+		auto msg = std::move(*_incoming_msg);
+		_incoming_msg.reset();
+		return std::move(msg);
+	}
+	return std::nullopt;
+}
+
+void m2::network::server::Client::push_outgoing_message(pb::NetworkMessage&& msg) {
+	DEBUG_FN();
+	_outgoing_queue.emplace(std::move(msg));
 }
 
 m2::expected<bool> m2::network::server::Client::flush_outgoing_messages() {
 	TRACE_FN();
 
-	auto msg_count = _outgoing_queue.size(); // Read message count separate to prevent deadlocks
+	auto msg_count = _outgoing_queue.size(); // Read message count separately to prevent deadlocks
 	for (size_t i = 0; i < msg_count; ++i) {
 		auto msg = std::move(_outgoing_queue.front());
 		_outgoing_queue.pop();
@@ -45,25 +68,4 @@ m2::expected<bool> m2::network::server::Client::flush_outgoing_messages() {
 		m2_reflect_failure(send_success);
 	}
 	return (0 < msg_count);
-}
-
-std::optional<m2::pb::NetworkMessage> m2::network::server::Client::peak_incoming_message() {
-	if (not _incoming_queue.empty()) {
-		return _incoming_queue.front();
-	}
-	return std::nullopt;
-}
-
-std::optional<m2::pb::NetworkMessage> m2::network::server::Client::pop_incoming_message() {
-	if (not _incoming_queue.empty()) {
-		auto msg = std::move(_incoming_queue.front());
-		_incoming_queue.pop();
-		return std::move(msg);
-	}
-	return std::nullopt;
-}
-
-void m2::network::server::Client::push_outgoing_message(pb::NetworkMessage&& msg) {
-	DEBUG_FN();
-	_outgoing_queue.emplace(std::move(msg));
 }

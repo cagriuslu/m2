@@ -371,15 +371,18 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					LOG_INFO("Received ping");
 				} else if (expect_message->has_server_update()) {
 					LOG_INFO("Received ServerUpdate", json_str);
+					// Wait until the previous ServerUpdate is processed
 					while (client_thread->_unprocessed_server_update) {
-						// In turn based multiplayer, the first ServerUpdate is important
-						SDL_Delay(100); // Wait until server update is processed
+						SDL_Delay(100); // Yield the thread while waiting
 					}
 
-					const std::lock_guard lock(client_thread->_mutex);
-					client_thread->_unprocessed_server_update = std::move(*expect_message);
-					if (client_thread->_state != pb::CLIENT_STARTED) {
-						client_thread->set_state_unlocked(pb::CLIENT_STARTED);
+					{
+						const std::lock_guard lock(client_thread->_mutex);
+						client_thread->_unprocessed_server_update = std::move(*expect_message);
+						if (client_thread->_state != pb::CLIENT_STARTED) {
+							// Set the state as STARTED when the first ServerUpdate is received.
+							client_thread->set_state_unlocked(pb::CLIENT_STARTED);
+						}
 					}
 				} else {
 					// TODO process other incoming messages

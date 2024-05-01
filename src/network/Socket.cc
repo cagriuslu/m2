@@ -1,4 +1,5 @@
 #include <m2/network/Socket.h>
+#include <m2/network/Detail.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
@@ -104,6 +105,17 @@ m2::expected<ssize_t> m2::network::Socket::send(const uint8_t* buffer, size_t le
 	} else {
 		return send_result;
 	}
+}
+
+bool m2::network::Socket::is_readable() const {
+	fd_set read_set;
+	FD_ZERO(&read_set);
+	FD_SET(_fd, &read_set);
+	auto select_result = network::select(_fd, &read_set, nullptr, 0);
+	if (not select_result) {
+		throw M2ERROR("Select failed: " + select_result.error());
+	}
+	return 0 < *select_result;
 }
 
 m2::expected<ssize_t> m2::network::Socket::recv(uint8_t* buffer, size_t length) {
