@@ -41,9 +41,11 @@ message ServerUpdate {
   uint32 turn_holder_index = 2;
 
   // ObjectId of the objects that belong to players on the server side. The size of this list also represents the total
-  // player count in the game. player_object_id[receiver_index] represents the receiver of the message.
+  // player count in the game. player_object_id[receiver_index] corresponds to the receiver of the message.
   repeated uint64 player_object_ids = 3;
 
+  // Both object_id and parent_id refer to the objects on the server side. It's client's responsibility to create the
+  // same object tree locally.
   message ObjectDescriptor {
     uint64 object_id = 1;
     VecF position = 2;
@@ -52,7 +54,7 @@ message ServerUpdate {
     repeated m2g.pb.ItemType named_items = 6;
     repeated Resource resources = 7;
   }
-  repeated ObjectDescriptor objects_with_character = 4; // The order is the same as Character pool
+  repeated ObjectDescriptor objects_with_character = 4;
 }
 
 message ClientUpdate {}

@@ -21,6 +21,9 @@ namespace m2::network {
 		/// When process_server_update() is called, ServerUpdate is shifted as follows:
 		/// _prev_processed_server_update << _last_processed_server_update << _unprocessed_server_update << std::nullopt
 		std::optional<pb::NetworkMessage> _prev_processed_server_update, _last_processed_server_update, _unprocessed_server_update;
+
+		/// Mapping of server object IDs to local object IDs. The boolean represents if the object has been visited during
+		/// the processing of ServerUpdate or not. If an object is not visited, it must have been deleted on the server side.
 		std::unordered_map<ObjectId,std::pair<ObjectId,bool>> _server_to_local_map;
 
 		// Thread variables
@@ -47,7 +50,7 @@ namespace m2::network {
 
 		// Modifiers
 		void set_ready_blocking(bool state);
-		expected<bool> process_server_update();
+		void_expected process_server_update();
 		void queue_client_command(const m2g::pb::ClientCommand& cmd);
 
 	private:

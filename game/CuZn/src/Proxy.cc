@@ -19,15 +19,8 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 		m2_succeed_or_throw_error(client_init_result);
 		M2G_PROXY.multi_player_object_ids.emplace_back(client_id);
 
-		if (M2_GAME.is_server()) {
-			if (i == 0) {
-				M2_LEVEL.player_id = client_id;
-			}
-		} else {
-			// At this point, the ServerUpdate is not yet processed
-			if (i == M2_GAME.client_thread().receiver_index()) {
-				M2_LEVEL.player_id = client_id;
-			}
+		if (i == M2_GAME.client_thread().receiver_index()) {
+			M2_LEVEL.player_id = client_id;
 		}
 	}
 

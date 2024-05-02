@@ -36,6 +36,12 @@ Any command produced by the clients other than the turn holder will be dropped b
 for them to be processed. If Proxy::handle_client_command returns a value, a server update will be sent during post-step.
 - The client game loop will periodically check for ServerUpdate during post-step, and will process it if it's received.
 
+Both on the server and the client side, after the level is initialized (usually in Proxy::post_multi_player_level_init),
+Proxy.multi_player_object_ids should contain the IDs of the objects that'll correspond to human players. The order of the
+IDs should reflect the order of the human players on the server, but the actual ID values doesn't need to be the same.
+This can be achieved by clients selecting the object ID at index ClientThread::receiver_index as the game player (by setting
+the Level::player_id).
+
 In turn based games, the physics world does not exist. The game state is stored in objects with Character, and their
 positions. A real life player is represented by an object, who might have child objects on the map.
 Groups are not supported. Characters can hold resources and named items. Unnamed items and resource limits are not supported.

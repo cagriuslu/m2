@@ -5,6 +5,22 @@
 #include <m2/Log.h>
 #include <m2/Meta.h>
 
+namespace {
+	template <typename NamedItemListT, typename ResourceListT>
+	void update_character(m2::Character* c, const NamedItemListT& named_items, const ResourceListT& resources) {
+		// Update items
+		c->clear_items();
+		for (auto named_item_type : named_items) {
+			c->add_named_item_no_benefits(M2_GAME.get_named_item(static_cast<m2g::pb::ItemType>(named_item_type)));
+		}
+		// Update resources
+		c->clear_resources();
+		for (const auto& resource : resources) {
+			c->add_resource(resource.type(), m2::get_resource_amount(resource));
+		}
+	};
+}
+
 m2::network::ClientThread::ClientThread(mplayer::Type type, std::string addr) : _type(type), _addr(std::move(addr)),
 		_thread(ClientThread::thread_func, this) {
 	INFO_FN();
@@ -87,7 +103,7 @@ int m2::network::ClientThread::receiver_index() {
 	if (auto server_update = peek_unprocessed_server_update(); server_update) {
 		return server_update->receiver_index();
 	}
-	return 0;
+	return 0; // Else, the ClientThread must be the server's client.
 }
 
 void m2::network::ClientThread::set_ready_blocking(bool state) {
@@ -109,7 +125,7 @@ void m2::network::ClientThread::set_ready_blocking(bool state) {
 	set_state_locked(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
 }
 
-m2::expected<bool> m2::network::ClientThread::process_server_update() {
+m2::void_expected m2::network::ClientThread::process_server_update() {
 	TRACE_FN();
 
 	const std::lock_guard lock(_mutex);
@@ -117,7 +133,7 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 	// Shift the ServerUpdate
 	if (not _unprocessed_server_update) {
 		// No ServerUpdate to process
-		return false;
+		return {};
 	}
 
 	LOG_DEBUG("Shifting server update: prev << last << unprocessed << null");
@@ -179,68 +195,102 @@ m2::expected<bool> m2::network::ClientThread::process_server_update() {
 			}
 		}
 
-		return true; // Successfully processed one ServerUpdate
+		return {}; // Successfully processed the first ServerUpdate
 	}
 
 	LOG_DEBUG("Processing ServerUpdate");
 	const auto& server_update = _last_processed_server_update->server_update();
-	const auto& prev_server_update = _prev_processed_server_update->server_update();
-
-	// Check that the player IDs haven't changed
-	if (prev_server_update.player_object_ids_size() != server_update.player_object_ids_size()) {
-		return make_unexpected("Number of players have changed");
-	}
-	for (int i = 0; i < prev_server_update.player_object_ids_size(); ++i) {
-		if (prev_server_update.player_object_ids(i) != server_update.player_object_ids(i)) {
-			return make_unexpected("A player's ID has changed");
+	{
+		const auto& prev_server_update = _prev_processed_server_update->server_update();
+		// Check that the player IDs haven't changed
+		if (prev_server_update.player_object_ids_size() != server_update.player_object_ids_size()) {
+			return make_unexpected("Number of players have changed");
+		}
+		for (int i = 0; i < prev_server_update.player_object_ids_size(); ++i) {
+			if (prev_server_update.player_object_ids(i) != server_update.player_object_ids(i)) {
+				return make_unexpected("A player's ID has changed");
+			}
 		}
 	}
 
-	// Mark local objects as false
-	for (auto& kv_pair : _server_to_local_map) {
-		kv_pair.second.second = false;
-	}
+	// Mark local objects as unvisited
+	std::ranges::for_each(_server_to_local_map, [](auto& kv_pair) { kv_pair.second.second = false; });
+
+	struct ObjectToCreate {
+		ObjectId server_object_id;
+		pb::VecF position;
+		m2g::pb::ObjectType object_type;
+		ObjectId server_object_parent_id;
+		std::vector<int> named_items;
+		std::vector<m2::pb::Resource> resources;
+	};
+	std::vector<ObjectToCreate> objects_to_be_created;
+
 	// Iterate over ServerUpdate objects w/ character
 	for (const auto& object_desc : server_update.objects_with_character()) {
-		Character* character{};
-		auto server_object_id = object_desc.object_id();
-		if (auto it = _server_to_local_map.find(server_object_id); it != _server_to_local_map.end()) {
-			LOG_TRACE("Server object is still alive", server_object_id, it->first);
-
-			// Get the character
-			character = M2_LEVEL.objects.get(it->second.first)->get_character();
-
+		if (auto it = _server_to_local_map.find(object_desc.object_id()); it != _server_to_local_map.end()) {
+			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
+			// Update the character
+			auto* character = M2_LEVEL.objects.get(it->second.first)->get_character();
+			update_character(character, object_desc.named_items(), object_desc.resources());
 			// Mark object as visited
 			it->second.second = true;
 		} else {
-			LOG_DEBUG("Server has created an object", server_object_id);
-
-			// Create object
-			auto [obj, id] = m2::create_object(m2::VecF{object_desc.position()}, object_desc.object_type(), object_desc.parent_id());
-			auto load_result = M2G_PROXY.init_fg_object(obj);
-			m2_reflect_failure(load_result);
-
-			// Get the character
-			character = obj.get_character();
-
-			// Add object to the map, marked as visited
-			_server_to_local_map[server_object_id] = std::make_pair(id, true);
-		}
-
-		// Update items
-		character->clear_items();
-		for (auto named_item_type : object_desc.named_items()) {
-			character->add_named_item_no_benefits(M2_GAME.get_named_item(static_cast<m2g::pb::ItemType>(named_item_type)));
-		}
-		// Update resources
-		character->clear_resources();
-		for (const auto& resource : object_desc.resources()) {
-			character->add_resource(resource.type(), get_resource_amount(resource));
+			// Add details about the object that'll be created into a list
+			objects_to_be_created.push_back({object_desc.object_id(), object_desc.position(), object_desc.object_type(),
+				object_desc.parent_id(), {object_desc.named_items().begin(), object_desc.named_items().end()},
+				{object_desc.resources().begin(), object_desc.resources().end()}});
 		}
 	}
-	// Iterate over map
+
+	// Create new objects. This is more complicated than updating existing objects because of the parent relationships.
+	// - Objects without a parent can be created directly.
+	// - Objects with a parent which is already created can also be created directly, referring to the local object as the parent.
+	// - Objects with a parent which is not yet created cannot be created directly. We need to iterate the objects_to_be_created
+	//   list over and over again until all parents are created.
+	while (not objects_to_be_created.empty()) {
+		// Loop until all objects are created
+
+		// Iterate over objects to be created
+		auto it = objects_to_be_created.begin();
+		while (it != objects_to_be_created.end()) {
+			// If the new object has no parent
+			if (it->server_object_parent_id == 0) {
+				// Simply, create the object
+				LOG_DEBUG("Server has created an object", it->server_object_id);
+				auto [obj, id] = m2::create_object(m2::VecF{it->position}, it->object_type, 0);
+				auto load_result = M2G_PROXY.init_fg_object(obj);
+				m2_reflect_failure(load_result);
+				// Update the character
+				auto* character = obj.get_character();
+				update_character(character, it->named_items, it->resources);
+				// Add object to the map, marked as visited
+				_server_to_local_map[it->server_object_id] = std::make_pair(id, true);
+				// Delete the object details from the objects_to_be_created vector
+				it = objects_to_be_created.erase(it);
+			} else if (auto parent_it = _server_to_local_map.find(it->server_object_parent_id); parent_it != _server_to_local_map.end()) {
+				// If the object has a parent that's already created, create the object by looking up the corresponding parent
+				LOG_DEBUG("Server has created an object", it->server_object_id);
+				auto [obj, id] = m2::create_object(m2::VecF{it->position}, it->object_type, parent_it->second.first);
+				auto load_result = M2G_PROXY.init_fg_object(obj);
+				m2_reflect_failure(load_result);
+				// Update the character
+				auto* character = obj.get_character();
+				update_character(character, it->named_items, it->resources);
+				// Add object to the map, marked as visited
+				_server_to_local_map[it->server_object_id] = std::make_pair(id, true);
+				// Delete the object details from the objects_to_be_created vector
+				it = objects_to_be_created.erase(it);
+			} else {
+				LOG_TRACE("Server has created an object with a parent, but the parent is not created locally yet", it->server_object_id, it->server_object_parent_id);
+				++it;
+			}
+		}
+	}
+
+	// Iterate over map, delete the objects that haven't been visited, as they must have been deleted on the server side
 	for (auto it = _server_to_local_map.cbegin(); it != _server_to_local_map.cend(); /* no increment */) {
-		if (it->second.second == false) {
+		if (!it->second.second) {
 			auto object_to_delete = it->second.first;
 			LOG_DEBUG("Local object hasn't been visited by ServerUpdate, scheduling for deletion", it->second.first);
 			M2_DEFER(create_object_deleter(object_to_delete));

@@ -15,21 +15,14 @@
 /// Debug: Everything that is attempted and completed
 /// Trace: Like Debug, but for each frame
 
-// In Release mode, calls to trace logs are disable to prevent unnecessary function calls
-#ifdef DEBUG
-#define LOGF_TRACE(fmt, ...)
-#define LOG_TRACE(msg, ...)
-#else
 #define LOGF_TRACE(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
-#define LOG_TRACE(msg, ...) ::m2::detail::log(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
-#endif
-
 #define LOGF_DEBUG(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::DBG, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_INFO(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::INF, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_WARN(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::WRN, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_ERROR(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::ERR, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_FATAL(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::FTL, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 
+#define LOG_TRACE(msg, ...) ::m2::detail::log(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_DEBUG(msg, ...) ::m2::detail::log(::m2::pb::LogLevel::DBG, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_INFO(msg, ...) ::m2::detail::log(::m2::pb::LogLevel::INF, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_WARN(msg, ...) ::m2::detail::log(::m2::pb::LogLevel::WRN, __FILE__, __LINE__, (msg), ##__VA_ARGS__)

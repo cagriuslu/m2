@@ -68,57 +68,56 @@ void m2::network::ServerThread::set_turn_holder_index(unsigned idx) {
 void m2::network::ServerThread::server_update() {
 	INFO_FN();
 
-	auto turn = turn_holder();
+	// Prepare the ServerUpdate except the receiver_index field
+	pb::NetworkMessage message;
+	message.set_game_hash(M2_GAME.hash());
+	message.mutable_server_update()->set_turn_holder_index(turn_holder());
+	for (auto player_id : M2G_PROXY.multi_player_object_ids) {
+		message.mutable_server_update()->add_player_object_ids(player_id);
+	}
+	for (auto char_it : M2_LEVEL.characters) { // Iterate over characters
+		auto [char_variant, char_id] = char_it;
+		auto* object_descriptor = message.mutable_server_update()->add_objects_with_character();
+
+		// For any Character type
+		std::visit(overloaded {
+			[object_descriptor](const auto& v) {
+				object_descriptor->set_object_id(v.parent().id());
+				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.parent().position));
+				object_descriptor->set_object_type(v.parent().object_type());
+				object_descriptor->set_parent_id(v.parent().parent_id());
+				for (auto item_it = v.begin_items(); item_it != v.end_items(); ++item_it) {
+					const auto* item_ptr = item_it.get();
+					const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
+					if (!named_item_ptr) {
+						throw M2FATAL("ServerUpdate does not support unnamed items");
+					}
+					object_descriptor->add_named_items(named_item_ptr->type());
+				}
+				pb::for_each_enum_value<m2g::pb::ResourceType>([&v, object_descriptor](m2g::pb::ResourceType rt) {
+					if (v.has_resource(rt)) {
+						auto* resource = object_descriptor->add_resources();
+						resource->set_type(rt);
+						resource->set_amount(v.get_resource(rt));
+					}
+				});
+			}
+		}, *char_variant);
+	}
+
+	// Send to clients.
 	auto count = client_count();
 	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
-		pb::NetworkMessage message;
-		message.set_game_hash(M2_GAME.hash());
+		const std::lock_guard lock(_mutex);
+
+		// Make sure the state is set as READY
+		if (_state != pb::SERVER_READY) {
+			set_state_unlocked(pb::SERVER_READY);
+		}
+
+		LOG_DEBUG("Queueing outgoing message to client", i);
 		message.mutable_server_update()->set_receiver_index(i);
-		message.mutable_server_update()->set_turn_holder_index(turn);
-		for (auto player_id : M2G_PROXY.multi_player_object_ids) {
-			message.mutable_server_update()->add_player_object_ids(player_id);
-		}
-		for (auto char_it : M2_LEVEL.characters) { // Iterate over characters
-			auto [char_variant, char_id] = char_it;
-			auto* object_descriptor = message.mutable_server_update()->add_objects_with_character();
-
-			// For any Character type
-			std::visit(overloaded {
-					[object_descriptor](const auto& v) {
-						object_descriptor->set_object_id(v.parent().id());
-						object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.parent().position));
-						object_descriptor->set_object_type(v.parent().object_type());
-						object_descriptor->set_parent_id(v.parent().parent_id());
-						for (auto item_it = v.begin_items(); item_it != v.end_items(); ++item_it) {
-							const auto* item_ptr = item_it.get();
-							const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
-							if (!named_item_ptr) {
-								throw M2FATAL("ServerUpdate does not support unnamed items");
-							}
-							object_descriptor->add_named_items(named_item_ptr->type());
-						}
-						pb::for_each_enum_value<m2g::pb::ResourceType>([&v, object_descriptor](m2g::pb::ResourceType rt) {
-							if (v.has_resource(rt)) {
-								auto* resource = object_descriptor->add_resources();
-								resource->set_type(rt);
-								resource->set_amount(v.get_resource(rt));
-							}
-						});
-					}
-			}, *char_variant);
-		}
-
-		{
-			const std::lock_guard lock(_mutex);
-
-			// Make sure the state is set as READY
-			if (_state != pb::SERVER_READY) {
-				set_state_unlocked(pb::SERVER_READY);
-			}
-
-			LOG_DEBUG("Queueing outgoing message to client", i);
-			_clients[i].push_outgoing_message(std::move(message));
-		}
+		_clients[i].push_outgoing_message(std::move(message));
 	}
 }
 
