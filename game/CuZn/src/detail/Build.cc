@@ -71,7 +71,7 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 		return m2::make_unexpected("Selected card cannot build the industry on given location");
 	}
 
-	auto city = city_of_location(location);
+	auto city = city_of_industry_location(location);
 	// Check if this location is part of the player's network, or they don't have a network.
 	if (auto cities_in_network = get_cities_in_network(player); not cities_in_network.empty() && not cities_in_network.contains(city)) {
 		return m2::make_unexpected("City is not in player's network");
@@ -112,7 +112,7 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 	}
 
 	// Check if the player has a tile to build
-	auto tile_type = get_next_buildable_factory(player, industry_card_to_tile_category(industry));
+	auto tile_type = get_next_buildable_factory(player, industry_tile_category_of_industry(industry));
 	if (not tile_type) {
 		return m2::make_unexpected("Player doesn't have tiles left of selected industry");
 	}

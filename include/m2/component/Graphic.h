@@ -78,7 +78,7 @@ namespace m2 {
 
 		Callback pre_draw{};
 		Callback on_draw{};
-		Callback on_effect{}; // For drawing the health bar??
+		Callback on_addon{};
 		Callback post_draw{};
 
 		const Sprite* sprite{};

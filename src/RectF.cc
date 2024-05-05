@@ -5,7 +5,7 @@
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
-m2::RectF::RectF(const VecF& offset_from_origin, const VecF& dims) : x(offset_from_origin.x - dims.x / 2.0f), y(offset_from_origin.y - dims.y / 2.0f), w(dims.x), h(dims.y) {}
+m2::RectF::RectF(const VecF& xy, float w, float h) : x(xy.x), y(xy.y), w(w), h(h) {}
 m2::RectF::RectF(const RectI& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}
 m2::RectF::RectF(const SDL_FRect& r) : x(r.x), y(r.y), w(r.w), h(r.h) {}
 m2::RectF::RectF(const SDL_Rect& r) : x(static_cast<float>(r.x)), y(static_cast<float>(r.y)), w(static_cast<float>(r.w)), h(static_cast<float>(r.h)) {}

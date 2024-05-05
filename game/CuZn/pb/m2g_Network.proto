@@ -9,8 +9,8 @@ message ServerCommand {}
 message ClientCommand {
   message BuildAction {
     ItemType card = 1;
-    SpriteType location = 2;
-    ItemType industry = 3;
+    SpriteType industry_location = 2;
+    ItemType industry_tile = 3;
     repeated SpriteType coal_sources = 4;
     repeated SpriteType iron_sources = 5;
   }

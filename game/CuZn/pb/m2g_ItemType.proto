@@ -8,6 +8,7 @@ enum ItemType {
   WILD_LOCATION_CARD = 1;
   WILD_INDUSTRY_CARD = 2;
 
+  // These cards are also used as `Industry` enum.
   COTTON_MILL_CARD = 3;
   IRON_WORKS_CARD = 4;
   BREWERY_CARD = 5;
@@ -15,6 +16,7 @@ enum ItemType {
   POTTERY_CARD = 7;
   MANUFACTURED_GOODS_CARD = 8;
 
+  // These cards are also used as `City` enum.
   BELPER_CARD = 9;
   DERBY_CARD = 10;
   LEEK_CARD = 11;

@@ -382,7 +382,7 @@ namespace {
 	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrain_graphics) {
 		for (const auto& [gfx, _] : terrain_graphics) {
 			IF(gfx->on_draw)(*gfx);
-			IF(gfx->on_effect)(*gfx);
+			IF(gfx->on_addon)(*gfx);
 		}
 	}
 
@@ -422,7 +422,7 @@ void m2::Game::draw_foreground() {
 	for (const auto& gfx_id : _level->draw_list) {
 		auto& gfx = _level->graphics[gfx_id];
 		IF(gfx.on_draw)(gfx);
-		IF(gfx.on_effect)(gfx);
+		IF(gfx.on_addon)(gfx);
 	}
 }
 

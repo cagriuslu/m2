@@ -152,7 +152,7 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx
 }
 
 m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
-m2::Graphic::Graphic(const uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_effect(default_draw_addons), sprite(&sprite) {}
+m2::Graphic::Graphic(const uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_addon(default_draw_addons), sprite(&sprite) {}
 
 void m2::Graphic::default_draw(const Graphic& gfx) {
 	if (not gfx.sprite) {

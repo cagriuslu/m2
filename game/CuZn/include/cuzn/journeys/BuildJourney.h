@@ -1,5 +1,6 @@
 #pragma once
 #include "Common.h"
+#include <cuzn/Detail.h>
 #include <m2/Fsm.h>
 #include <m2/VecF.h>
 #include <m2/Object.h>
@@ -16,6 +17,7 @@ namespace cuzn {
 		m2g::pb::ItemType _selected_card{};
 		m2g::pb::SpriteType _selected_location{};
 		m2g::pb::ItemType _selected_industry{};
+		IndustryTile _industry_tile{};
 		std::vector<std::pair<m2g::pb::ResourceType, m2g::pb::SpriteType>> _resource_sources;
 
 	public:

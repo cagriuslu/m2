@@ -11,8 +11,35 @@ bool cuzn::is_card(Card card) {
 		card_item.category() == ITEM_CATEGORY_CITY_CARD);
 }
 
+bool cuzn::is_city(City city) {
+	const auto& card_item = M2_GAME.get_named_item(city);
+	return card_item.category() == ITEM_CATEGORY_CITY_CARD;
+}
+
 bool cuzn::is_industry(Industry industry) {
 	return (COTTON_MILL_CARD <= industry && industry <= MANUFACTURED_GOODS_CARD);
+}
+
+bool cuzn::is_industry_tile(IndustryTile industry_tile) {
+	return (COTTON_MILL_TILEI <= industry_tile && industry_tile <= MANUFACTURED_GOODS_TILE_VIII);
+}
+
+bool cuzn::is_industry_tile_category(IndustryTileCategory category) {
+	return (ITEM_CATEGORY_COTTON_MILL_TILE <= category && category <= ITEM_CATEGORY_MANUFACTURED_GOODS_TILE);
+}
+
+bool cuzn::is_industry_sprite(IndustrySprite industry_sprite) {
+	switch (industry_sprite) {
+		case SPRITE_BREWERY:
+		case SPRITE_COAL_MINE:
+		case SPRITE_COTTON_MILL:
+		case SPRITE_IRON_WORKS:
+		case SPRITE_MANUFACTURED_GOODS:
+		case SPRITE_POTTERY:
+			return true;
+		default:
+			return false;
+	}
 }
 
 bool cuzn::is_industry_location(IndustryLocation location) {
@@ -120,7 +147,7 @@ bool cuzn::is_railroad_era() {
 	return M2_PLAYER.character().get_resource(ERA) == 2.0f;
 }
 
-ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
+cuzn::City cuzn::city_of_industry_location(IndustryLocation location) {
 	if (not is_industry_location(location)) {
 		throw M2ERROR("Sprite is not an industry location");
 	}
@@ -133,42 +160,32 @@ ItemType cuzn::city_of_location(m2g::pb::SpriteType location) {
 	throw M2ERROR("Industry does not belong to a city");
 }
 
-std::vector<SpriteType> cuzn::locations_in_city(m2g::pb::ItemType city_card) {
-	if (M2_GAME.get_named_item(city_card).category() != ITEM_CATEGORY_CITY_CARD) {
-		throw M2ERROR("Card does not belong to a city");
-	}
-
-	std::vector<m2g::pb::SpriteType> industry_locations;
-	// Iterate over industries
-	for (auto industry_location = BELPER_COTTON_MILL_MANUFACTURED_GOODS; industry_location <= STANDALONE_BREWERY_2;
-		industry_location = static_cast<m2g::pb::SpriteType>(m2::I(industry_location) + 1)) {
-		if (city_of_location(industry_location) == city_card) {
-			industry_locations.emplace_back(industry_location);
-		}
-	}
-	return industry_locations;
+cuzn::Industry cuzn::industry_of_industry_tile(IndustryTile industry_tile) {
+	return industry_of_industry_tile_category(
+		industry_tile_category_of_industry_tile(
+			industry_tile));
 }
 
-std::vector<ItemType> cuzn::industries_on_location(SpriteType location) {
-	if (not is_industry_location(location)) {
-		throw M2ERROR("Sprite is not an industry location");
+cuzn::Industry cuzn::industry_of_industry_tile_category(cuzn::IndustryTileCategory category) {
+	switch (category) {
+		case ITEM_CATEGORY_COTTON_MILL_TILE:
+			return COTTON_MILL_CARD;
+		case ITEM_CATEGORY_IRON_WORKS_TILE:
+			return IRON_WORKS_CARD;
+		case ITEM_CATEGORY_BREWERY_TILE:
+			return BREWERY_CARD;
+		case ITEM_CATEGORY_COAL_MINE_TILE:
+			return COAL_MINE_CARD;
+		case ITEM_CATEGORY_POTTERY_TILE:
+			return POTTERY_CARD;
+		case ITEM_CATEGORY_MANUFACTURED_GOODS_TILE:
+			return MANUFACTURED_GOODS_CARD;
+		default:
+			throw M2ERROR("ItemCategory is not an industry item category");
 	}
-
-	std::vector<m2g::pb::ItemType> industries;
-	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
-		if (M2_GAME.get_named_item(named_item).category() == ITEM_CATEGORY_INDUSTRY_CARD) {
-			industries.emplace_back(named_item);
-		}
-	}
-	return industries;
 }
 
-bool cuzn::location_has_industry(SpriteType location, ItemType industry) {
-	auto industries = industries_on_location(location);
-	return std::ranges::find(industries, industry) != industries.end();
-}
-
-m2g::pb::ItemCategory cuzn::industry_card_to_tile_category(m2g::pb::ItemType industry_card) {
+cuzn::IndustryTileCategory cuzn::industry_tile_category_of_industry(Industry industry_card) {
 	switch (industry_card) {
 		case COTTON_MILL_CARD:
 			return ITEM_CATEGORY_COTTON_MILL_TILE;
@@ -187,9 +204,68 @@ m2g::pb::ItemCategory cuzn::industry_card_to_tile_category(m2g::pb::ItemType ind
 	}
 }
 
-std::optional<m2g::pb::SpriteType> cuzn::industry_location_on_position(const m2::VecF& world_position) {
+cuzn::IndustryTileCategory cuzn::industry_tile_category_of_industry_tile(IndustryTile industry_tile) {
+	const auto& item = M2_GAME.get_named_item(industry_tile);
+	return item.category();
+}
+
+cuzn::IndustrySprite cuzn::industry_sprite_of_industry(Industry industry) {
+	switch (industry) {
+		case COTTON_MILL_CARD:
+			return SPRITE_COTTON_MILL;
+		case IRON_WORKS_CARD:
+			return SPRITE_IRON_WORKS;
+		case BREWERY_CARD:
+			return SPRITE_BREWERY;
+		case COAL_MINE_CARD:
+			return SPRITE_COAL_MINE;
+		case POTTERY_CARD:
+			return SPRITE_POTTERY;
+		case MANUFACTURED_GOODS_CARD:
+			return SPRITE_MANUFACTURED_GOODS;
+		default:
+			throw M2ERROR("Invalid industry card");
+	}
+}
+
+std::vector<cuzn::IndustryLocation> cuzn::locations_in_city(City city_card) {
+	if (not is_city(city_card)) {
+		throw M2ERROR("Card does not belong to a city");
+	}
+
+	std::vector<m2g::pb::SpriteType> industry_locations;
+	// Iterate over industries
+	for (auto industry_location = BELPER_COTTON_MILL_MANUFACTURED_GOODS; industry_location <= STANDALONE_BREWERY_2;
+		industry_location = static_cast<m2g::pb::SpriteType>(m2::I(industry_location) + 1)) {
+		if (city_of_industry_location(industry_location) == city_card) {
+			industry_locations.emplace_back(industry_location);
+		}
+	}
+	return industry_locations;
+}
+
+std::vector<cuzn::Industry> cuzn::industries_on_location(IndustryLocation location) {
+	if (not is_industry_location(location)) {
+		throw M2ERROR("Sprite is not an industry location");
+	}
+
+	std::vector<m2g::pb::ItemType> industries;
+	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
+		if (M2_GAME.get_named_item(named_item).category() == ITEM_CATEGORY_INDUSTRY_CARD) {
+			industries.emplace_back(named_item);
+		}
+	}
+	return industries;
+}
+
+bool cuzn::location_has_industry(IndustryLocation location, Industry industry) {
+	auto industries = industries_on_location(location);
+	return std::ranges::find(industries, industry) != industries.end();
+}
+
+std::optional<cuzn::IndustryLocation> cuzn::industry_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.industry_positions.begin(), M2G_PROXY.industry_positions.end(),
-			[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
+			[&](const auto& pos_and_type) { return pos_and_type.second.second.point_in_rect(world_position); });
 	if (it != M2G_PROXY.industry_positions.end()) {
 		return it->first;
 	} else {
@@ -197,22 +273,23 @@ std::optional<m2g::pb::SpriteType> cuzn::industry_location_on_position(const m2:
 	}
 }
 
-std::optional<m2g::pb::SpriteType> cuzn::network_location_on_position(const m2::VecF& world_position) {
+m2::VecF cuzn::position_of_industry_location(IndustryLocation industry_location) {
+	if (not is_industry_location(industry_location)) {
+		throw M2ERROR("Invalid industry location");
+	}
+	if (auto it = M2G_PROXY.industry_positions.find(industry_location); it != M2G_PROXY.industry_positions.end()) {
+		return it->second.first;
+	} else {
+		throw M2ERROR("Industry location not found in position map");
+	}
+}
+
+std::optional<cuzn::NetworkLocation> cuzn::network_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.network_positions.begin(), M2G_PROXY.network_positions.end(),
 		[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
 	if (it != M2G_PROXY.network_positions.end()) {
 		return it->first;
 	} else {
 		return std::nullopt;
-	}
-}
-
-std::vector<std::pair<m2g::pb::ResourceType, float>> cuzn::road_costs(bool double_railroad) {
-	if (is_canal_era()) {
-		return {{MONEY, 3.0f}};
-	} else if (!double_railroad) {
-		return {{MONEY, 5.0f}, {COAL_CUBE_COUNT, 1.0f}};
-	} else {
-		return {{MONEY, 15.0f}, {COAL_CUBE_COUNT, 2.0f}, {BEER_BARREL_COUNT, 1.0f}};
 	}
 }

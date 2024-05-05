@@ -164,7 +164,7 @@ State::BackgroundColliderMode::BackgroundColliderMode() {
 		auto collider_origin =
 		    VecF{sprite.regular().center_to_origin_vec_px()} + VecF{sprite.regular().background_collider().origin_to_origin_vec_px()};
 		if (sprite.regular().background_collider().has_rect_dims_px()) {
-			current_rect = RectF{collider_origin, VecF{sprite.regular().background_collider().rect_dims_px()}};
+			current_rect = RectF::centered_around(collider_origin, VecF{sprite.regular().background_collider().rect_dims_px()});
 		} else if (sprite.regular().background_collider().has_circ_radius_px()) {
 			auto radius = sprite.regular().background_collider().circ_radius_px();
 			current_circ = CircF{collider_origin, radius};
@@ -255,7 +255,7 @@ State::ForegroundColliderMode::ForegroundColliderMode() {
 		auto collider_origin =
 		    VecF{sprite.regular().center_to_origin_vec_px()} + VecF{sprite.regular().foreground_collider().origin_to_origin_vec_px()};
 		if (sprite.regular().foreground_collider().has_rect_dims_px()) {
-			current_rect = RectF{collider_origin, VecF{sprite.regular().foreground_collider().rect_dims_px()}};
+			current_rect = RectF::centered_around(collider_origin, VecF{sprite.regular().foreground_collider().rect_dims_px()});
 		} else if (sprite.regular().foreground_collider().has_circ_radius_px()) {
 			auto radius = sprite.regular().foreground_collider().circ_radius_px();
 			current_circ = CircF{collider_origin, radius};

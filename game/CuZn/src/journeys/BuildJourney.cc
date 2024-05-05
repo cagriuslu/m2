@@ -104,12 +104,13 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_mouse_click_
 		}
 
 		// Check if the player has a factory to build
-		auto tile_type = get_next_buildable_factory(M2_PLAYER.character(), industry_card_to_tile_category(_selected_industry));
+		auto tile_type = get_next_buildable_factory(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
 			M2_LEVEL.display_message("Player doesn't have an industry tile of appropriate type");
 			M2_DEFER(m2g::Proxy::user_journey_deleter);
 			return std::nullopt;
 		}
+		_industry_tile = *tile_type;
 
 		// Create empty entries in resource_sources for every required resource
 		_resource_sources.insert(_resource_sources.end(),
@@ -140,7 +141,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_exit_signal(
 std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_confirmation_enter_signal() {
 	LOG_INFO("Asking for confirmation...");
 	auto card_name = M2_GAME.get_named_item(_selected_card).in_game_name();
-	auto city_name = M2_GAME.get_named_item(city_of_location(_selected_location)).in_game_name();
+	auto city_name = M2_GAME.get_named_item(city_of_industry_location(_selected_location)).in_game_name();
 	auto industry_name = M2_GAME.get_named_item(_selected_industry).in_game_name();
 	if (ask_for_confirmation("Build " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		LOG_INFO("Build action confirmed");
@@ -148,8 +149,8 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_confirmation_enter_si
 
 		m2g::pb::ClientCommand cc;
 		cc.mutable_build_action()->set_card(_selected_card);
-		cc.mutable_build_action()->set_location(_selected_location);
-		cc.mutable_build_action()->set_industry(_selected_industry);
+		cc.mutable_build_action()->set_industry_location(_selected_location);
+		cc.mutable_build_action()->set_industry_tile(_industry_tile);
 		for (const auto& resource_source : _resource_sources) {
 			if (resource_source.first == COAL_CUBE_COUNT) {
 				cc.mutable_build_action()->add_coal_sources(resource_source.second);

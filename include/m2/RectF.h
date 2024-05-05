@@ -12,12 +12,13 @@ namespace m2 {
 
 		RectF();
 		RectF(float x, float y, float w, float h);
-		RectF(const VecF& offset_from_origin, const VecF& dims);
+		RectF(const VecF& xy, float w, float h);
 		explicit RectF(const RectI& r);
 		explicit RectF(const SDL_FRect& r);
 		explicit RectF(const SDL_Rect& r);
 		explicit RectF(const pb::RectI& r);
 		static inline RectF centered_around(const VecF& center, float w, float h) { return {center.x - w / 2.0f, center.y - h / 2.0f, w, h}; }
+		static inline RectF centered_around(const VecF& center, const VecF& dims) { return centered_around(center, dims.x, dims.y); }
 		static RectF from_corners(const VecF& corner1, const VecF& corner2);
 
 		// Operators

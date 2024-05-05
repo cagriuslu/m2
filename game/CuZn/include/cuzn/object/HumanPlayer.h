@@ -7,6 +7,7 @@
 namespace cuzn {
 	m2::void_expected init_human_player(m2::Object& obj);
 
+	// Accessors
 	size_t player_card_count(m2::Character& player);
 	bool player_has_card(m2::Character& player, m2g::pb::ItemType card);
 	size_t player_road_count(m2::Character& player);

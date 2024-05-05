@@ -6,6 +6,16 @@
 using namespace m2g;
 using namespace m2g::pb;
 
+std::vector<std::pair<m2g::pb::ResourceType, float>> cuzn::road_costs(bool double_railroad) {
+	if (is_canal_era()) {
+		return {{MONEY, 3.0f}};
+	} else if (!double_railroad) {
+		return {{MONEY, 5.0f}, {COAL_CUBE_COUNT, 1.0f}};
+	} else {
+		return {{MONEY, 15.0f}, {COAL_CUBE_COUNT, 2.0f}, {BEER_BARREL_COUNT, 1.0f}};
+	}
+}
+
 m2::expected<ItemType> cuzn::can_player_build_network(m2::Character& player, ItemType card, SpriteType location) {
 	if (not player_has_card(player, card)) {
 		return m2::make_unexpected("Player doesn't hold the given card");

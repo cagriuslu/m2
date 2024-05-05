@@ -5,6 +5,8 @@
 #include <m2/M2.h>
 
 namespace cuzn {
+	std::vector<std::pair<m2g::pb::ResourceType, float>> road_costs(bool double_railroad = false);
+
 	/// Validates whether player can build the given network in the given location using the given card.
 	/// Returns the next buildable tile type from player's inventory.
 	/// Coal and iron requirements of the tile is not validated.
