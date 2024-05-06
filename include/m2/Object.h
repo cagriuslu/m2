@@ -70,6 +70,7 @@ namespace m2 {
 		Physique& add_physique();
 		Graphic& add_graphic();
 		Graphic& add_graphic(const Sprite& sprite);
+		Graphic& add_graphic(m2g::pb::SpriteType);
 		Graphic& add_terrain_graphic(BackgroundLayer layer);
 		Graphic& add_terrain_graphic(BackgroundLayer layer, const Sprite& sprite);
 		Light& add_light();

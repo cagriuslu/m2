@@ -399,7 +399,7 @@ m2::void_expected m2::Level::init_any_player(
 			obj.set_group(group_id, group->add_member(id));
 		}
 
-		auto load_result = M2G_PROXY.init_fg_object(obj);
+		auto load_result = M2G_PROXY.init_level_blueprint_fg_object(obj);
 		m2_reflect_failure(load_result);
 		LOG_TRACE("Created object", id);
 	}

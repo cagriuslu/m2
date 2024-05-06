@@ -17,6 +17,7 @@ enum ItemType {
   MANUFACTURED_GOODS_CARD = 8;
 
   // These cards are also used as `City` enum.
+  // The order should not be modified carelessly.
   BELPER_CARD = 9;
   DERBY_CARD = 10;
   LEEK_CARD = 11;
@@ -55,8 +56,7 @@ enum ItemType {
   NO_MERCHANT_LICENSE = 105;
 
   // Industry tiles
-  // The order of the industry tiles should not be modified carelessly.
-  // COTTON_MILL_TILEI and MANUFACTURED_GOODS_TILE_VIII are used as boundaries.
+  // The order should not be modified carelessly.
   // Higher enum values are considered higher level tiles.
   COTTON_MILL_TILEI = 201; // x3
   COTTON_MILL_TILEII = 202; // x2
@@ -105,8 +105,7 @@ enum ItemCategory {
 
   // Given to HUMAN_PLAYERs to signify the tiles held by them
   // Given to TILEs to signify a built industry
-  // The order of these values should not be modified carelessly.
-  // ITEM_CATEGORY_COTTON_MILL_TILE and ITEM_CATEGORY_MANUFACTURED_GOODS_TILE are used as boundaries.
+  // The order should not be modified carelessly.
   ITEM_CATEGORY_COTTON_MILL_TILE = 4;
   ITEM_CATEGORY_IRON_WORKS_TILE = 5;
   ITEM_CATEGORY_BREWERY_TILE = 6;

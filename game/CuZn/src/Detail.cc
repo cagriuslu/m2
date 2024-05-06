@@ -12,8 +12,7 @@ bool cuzn::is_card(Card card) {
 }
 
 bool cuzn::is_city(City city) {
-	const auto& card_item = M2_GAME.get_named_item(city);
-	return card_item.category() == ITEM_CATEGORY_CITY_CARD;
+	return (BELPER_CARD <= city && city <= STANDALONE_LOCATION_2_CARD);
 }
 
 bool cuzn::is_industry(Industry industry) {
@@ -291,5 +290,20 @@ std::optional<cuzn::NetworkLocation> cuzn::network_location_on_position(const m2
 		return it->first;
 	} else {
 		return std::nullopt;
+	}
+}
+
+SDL_Color cuzn::generate_player_color(unsigned index) {
+	switch (index) {
+		case 0:
+			return SDL_Color{165, 42, 42, 255};
+		case 1:
+			return SDL_Color{173, 255, 47, 255};
+		case 2:
+			return SDL_Color{32, 178, 170, 255};
+		case 3:
+			return SDL_Color{255, 165, 0, 255};
+		default:
+			throw M2ERROR("Invalid player index");
 	}
 }

@@ -91,8 +91,11 @@ namespace m2 {
 		/// Called after a tile is created
 		void post_tile_create(MAYBE m2::Object& obj, MAYBE m2g::pb::SpriteType sprite_type) {}
 
-		/// Load foreground object
-		m2::void_expected init_fg_object(MAYBE m2::Object& obj) { return {}; }
+		/// Load foreground object from a level blueprint
+		m2::void_expected init_level_blueprint_fg_object(MAYBE m2::Object& obj) { return {}; }
+		/// Load foreground object from a ServerUpdate. The item and resources should NOT be added to the character,
+		/// because that'll be done automatically after the initialization.
+		m2::void_expected init_server_update_fg_object(MAYBE m2::Object& obj, MAYBE const std::vector<m2g::pb::ItemType>& named_item_types, MAYBE const std::vector<m2::pb::Resource>& resources) { return {}; }
 
 		/// Create Group for the given type
 		m2::Group* create_group(MAYBE m2g::pb::GroupType group_type) { return nullptr; }

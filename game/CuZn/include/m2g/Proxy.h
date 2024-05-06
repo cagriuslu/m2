@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cuzn/Market.h>
+#include <cuzn/detail/Market.h>
 #include <cuzn/Detail.h>
 #include <cuzn/detail/Build.h>
 #include <m2/Proxy.h>
@@ -25,7 +25,9 @@ namespace m2g {
 		std::optional<int> handle_client_command(
 			unsigned turn_holder_index, const pb::ClientCommand& client_command);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
-		m2::void_expected init_fg_object(m2::Object& obj);
+		m2::void_expected init_level_blueprint_fg_object(m2::Object& obj);
+		m2::void_expected init_server_update_fg_object(m2::Object&,
+			const std::vector<m2g::pb::ItemType>&, const std::vector<m2::pb::Resource>&);
 
 	private:
 		m2::Id _market_object_id{};
@@ -35,6 +37,7 @@ namespace m2g {
 
 	public:
 		// Once the level is created, these should not be modified.
+		std::vector<SDL_Color> player_colors;
 		std::unordered_map<pb::SpriteType, m2::VecI> merchant_positions;
 		std::unordered_map<m2::VecI, pb::SpriteType, m2::VecIHash> position_merchants;
 		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
@@ -43,6 +46,8 @@ namespace m2g {
 
 		std::optional<std::variant<cuzn::BuildJourney, cuzn::NetworkJourney>> user_journey;
 		static void user_journey_deleter();
+
+		unsigned player_index(m2::Id id) const;
 
 	private:
 		std::vector<pb::ItemType> prepare_merchant_license_list(int client_count);

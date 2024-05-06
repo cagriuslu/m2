@@ -49,4 +49,6 @@ namespace cuzn {
 	std::optional<IndustryLocation> industry_location_on_position(const m2::VecF& world_position);
 	m2::VecF position_of_industry_location(IndustryLocation industry_location);
 	std::optional<NetworkLocation> network_location_on_position(const m2::VecF& world_position);
+
+	SDL_Color generate_player_color(unsigned index);
 }

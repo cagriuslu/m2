@@ -149,6 +149,9 @@ m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
     LOG_TRACE("Added graphic component", _graphic_id);
 	return graphic_pair.first;
 }
+m2::Graphic& m2::Object::add_graphic(m2g::pb::SpriteType sprite_type) {
+	return add_graphic(M2_GAME.get_sprite(sprite_type));
+}
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
 	auto terrain_graphic_pair = M2_LEVEL.terrain_graphics[I(layer)].alloc();
 	_terrain_graphic_id = std::make_pair(terrain_graphic_pair.second, layer);

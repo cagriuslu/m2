@@ -221,7 +221,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 		pb::VecF position;
 		m2g::pb::ObjectType object_type;
 		ObjectId server_object_parent_id;
-		std::vector<int> named_items;
+		std::vector<m2g::pb::ItemType> named_items;
 		std::vector<m2::pb::Resource> resources;
 	};
 	std::vector<ObjectToCreate> objects_to_be_created;
@@ -236,9 +236,15 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 			// Mark object as visited
 			it->second.second = true;
 		} else {
+			auto int_list_to_item_list = [](const auto& begin, const auto& end) {
+				std::vector<m2g::pb::ItemType> item_list;
+				for (auto it = begin; it != end; ++it) { item_list.emplace_back(static_cast<m2g::pb::ItemType>(*it)); }
+				return item_list;
+			};
+
 			// Add details about the object that'll be created into a list
 			objects_to_be_created.push_back({object_desc.object_id(), object_desc.position(), object_desc.object_type(),
-				object_desc.parent_id(), {object_desc.named_items().begin(), object_desc.named_items().end()},
+				object_desc.parent_id(), int_list_to_item_list(object_desc.named_items().begin(), object_desc.named_items().end()),
 				{object_desc.resources().begin(), object_desc.resources().end()}});
 		}
 	}
@@ -259,7 +265,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 				// Simply, create the object
 				LOG_DEBUG("Server has created an object", it->server_object_id);
 				auto [obj, id] = m2::create_object(m2::VecF{it->position}, it->object_type, 0);
-				auto load_result = M2G_PROXY.init_fg_object(obj);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(obj, it->named_items, it->resources);
 				m2_reflect_failure(load_result);
 				// Update the character
 				auto* character = obj.get_character();
@@ -272,7 +278,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 				// If the object has a parent that's already created, create the object by looking up the corresponding parent
 				LOG_DEBUG("Server has created an object", it->server_object_id);
 				auto [obj, id] = m2::create_object(m2::VecF{it->position}, it->object_type, parent_it->second.first);
-				auto load_result = M2G_PROXY.init_fg_object(obj);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(obj, it->named_items, it->resources);
 				m2_reflect_failure(load_result);
 				// Update the character
 				auto* character = obj.get_character();

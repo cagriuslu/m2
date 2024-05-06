@@ -2,9 +2,12 @@
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/object/Market.h>
 #include <cuzn/object/Merchant.h>
+#include <cuzn/object/Factory.h>
 #include <m2/Game.h>
 
 #include <random>
+
+using namespace cuzn;
 
 void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();
@@ -15,9 +18,10 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
 		auto [client_obj, client_id] = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
-		auto client_init_result = cuzn::init_human_player(client_obj);
+		auto client_init_result = init_human_player(client_obj);
 		m2_succeed_or_throw_error(client_init_result);
-		M2G_PROXY.multi_player_object_ids.emplace_back(client_id);
+		multi_player_object_ids.emplace_back(client_id);
+		player_colors.emplace_back(generate_player_color(i));
 
 		if (i == M2_GAME.client_thread().receiver_index()) {
 			M2_LEVEL.player_id = client_id;
@@ -31,14 +35,14 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 		auto posF = m2::VecF{merchant_positions[merchant_sprite]} + m2::VecF{0.5f, 0.5f};
 		// Create merchant object
 		auto [merchant_obj, merchant_id] = m2::create_object(posF, m2g::pb::ObjectType::MERCHANT);
-		cuzn::init_merchant(merchant_obj);
+		init_merchant(merchant_obj);
 		// Store for later
 		merchant_object_ids[merchant_sprite] = merchant_id;
 	}
 
 	// Add market object
 	auto [market_obj, market_id] = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET);
-	cuzn::init_market(market_obj);
+	init_market(market_obj);
 	_market_object_id = market_id;
 }
 
@@ -67,8 +71,8 @@ void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name,
 	}
 
 	// Initialize market
-	_coal_market.emplace(cuzn::COAL_MARKET_INITIAL_COUNT, m2g::pb::COAL_CUBE_COUNT, _market_object_id);
-	_iron_market.emplace(cuzn::IRON_MARKET_INITIAL_COUNT, m2g::pb::IRON_CUBE_COUNT, _market_object_id);
+	_coal_market.emplace(COAL_MARKET_INITIAL_COUNT, m2g::pb::COAL_CUBE_COUNT, _market_object_id);
+	_iron_market.emplace(IRON_MARKET_INITIAL_COUNT, m2g::pb::IRON_CUBE_COUNT, _market_object_id);
 
 	// Prepare draw deck
 	auto draw_deck = prepare_draw_deck(client_count);
@@ -92,7 +96,16 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 	LOG_INFO("Received command from client", turn_holder_index);
 
 	if (client_command.has_build_action()) {
-		// TODO
+		// TODO verify whether the player can build it
+
+		auto [obj, id] = m2::create_object(
+			position_of_industry_location(client_command.build_action().industry_location()),
+			m2g::pb::FACTORY,
+			M2G_PROXY.multi_player_object_ids[turn_holder_index]);
+		auto success = init_factory(obj,
+			city_of_industry_location(client_command.build_action().industry_location()),
+			client_command.build_action().industry_tile());
+		// TODO check result
 	}
 
 	// Increment turn holder
@@ -115,14 +128,14 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		}
 
 		// Object position has {0.5f, 0.5f} offset
-		auto industry_position = m2::RectF{
+		auto industry_cell_rect = m2::RectF{
 			obj.position.x - 0.5f,
 			obj.position.y - 0.5f,
 			2.0f,
 			2.0f
 		};
-		industry_positions[sprite_type] = industry_position;
-		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_position);
+		industry_positions[sprite_type] = std::make_pair(obj.position, industry_cell_rect);
+		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_cell_rect);
 	}
 
 	// Store the positions of the network locations
@@ -139,15 +152,25 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	}
 }
 
-m2::void_expected m2g::Proxy::init_fg_object(m2::Object& obj) {
-	m2::void_expected init_result;
+m2::void_expected m2g::Proxy::init_level_blueprint_fg_object(MAYBE m2::Object& obj) {
+	return m2::make_unexpected("Invalid object type");
+}
+
+m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, const std::vector<m2g::pb::ItemType>& items,
+	MAYBE const std::vector<m2::pb::Resource>& resources) {
 	switch (obj.object_type()) {
+		case pb::FACTORY: {
+			auto city = std::ranges::find_if(items, cuzn::is_city);
+			auto industry_tile = std::ranges::find_if(items, cuzn::is_industry_tile);
+			if (city != items.end() && industry_tile != items.end()) {
+				return init_factory(obj, *city, *industry_tile);
+			} else {
+				return m2::make_unexpected("Unable to find city or industry tile of the object received from the server");
+			}
+		}
 		default:
 			return m2::make_unexpected("Invalid object type");
 	}
-	m2_reflect_failure(init_result);
-
-	return {};
 }
 
 m2g::Proxy& m2g::Proxy::get_instance() {
@@ -156,6 +179,15 @@ m2g::Proxy& m2g::Proxy::get_instance() {
 
 void m2g::Proxy::user_journey_deleter() {
 	get_instance().user_journey.reset();
+}
+
+unsigned m2g::Proxy::player_index(m2::Id id) const {
+	auto it = std::find(multi_player_object_ids.begin(), multi_player_object_ids.end(), id);
+	if (it != multi_player_object_ids.end()) {
+		return std::distance(multi_player_object_ids.begin(), it);
+	} else {
+		throw M2ERROR("Invalid player ID");
+	}
 }
 
 std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_merchant_license_list(int client_count) {
