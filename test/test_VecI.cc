@@ -85,5 +85,5 @@ TEST(VecI, utils) {
 TEST(VecI, to_string) {
 	using namespace m2;
 
-	EXPECT_STREQ(to_string(VecI{10,20}).c_str(), "{x:10,y:20}");
+	EXPECT_STREQ(to_string(VecI{10,20}).c_str(), "{\"y\":\"20\",\"x\":\"10\",}");
 }

@@ -35,9 +35,9 @@ m2::PlaybackId m2::AudioManager::play(const Song* song, PlayPolicy policy, float
 	}
 
 	std::unique_lock<std::mutex> lock{playbacks_mutex};
-	auto id = playbacks.emplace(song, volume, policy);
+	auto it = playbacks.emplace(song, volume, policy);
 	SDL_PauseAudioDevice(sdl_audio_device_id, 0);
-	return id;
+	return it.id();
 }
 
 void m2::AudioManager::stop(PlaybackId id) {
@@ -98,18 +98,18 @@ void m2::AudioManager::audio_callback(MAYBE void* user_data, uint8_t* stream, in
 	};
 
 	std::unique_lock<std::mutex> lock{audio_manager.playbacks_mutex};
-	for (auto [playback, id] : audio_manager.playbacks) {
+	for (auto it = audio_manager.playbacks.begin(); it != audio_manager.playbacks.end(); ++it) {
 		// Copy the samples left in the playback buffer
-		auto samples_left_playback_buffer = playback->song->sample_count() - playback->next_sample;
+		auto samples_left_playback_buffer = it->song->sample_count() - it->next_sample;
 		auto min_len = std::min(samples_left_playback_buffer, out_length);
-		copy(playback, min_len);
+		copy(&*it, min_len);
 
-		if (playback->play_policy == PlayPolicy::ONCE && playback->next_sample == 0) {
+		if (it->play_policy == PlayPolicy::ONCE && it->next_sample == 0) {
 			// Playback finished
-			audio_manager.playbacks.free(id);
+			audio_manager.playbacks.free(it.id());
 		} else {
 			// Playback wrapped around and there is space in output buffer
-			copy(playback, out_length - min_len);
+			copy(&*it, out_length - min_len);
 		}
 	}
 }

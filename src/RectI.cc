@@ -33,7 +33,7 @@ m2::RectI::operator SDL_Rect() const {
 m2::RectI::operator SDL_FRect() const {
 	return SDL_FRect{static_cast<float>(x), static_cast<float>(y), static_cast<float>(w), static_cast<float>(h)};
 }
-bool m2::RectI::point_in_rect(const VecI& p) const {
+bool m2::RectI::contains(const VecI& p) const {
 	return (p.x >= x) && (p.x < (x + w)) && (p.y >= y) && (p.y < (y + h));
 }
 

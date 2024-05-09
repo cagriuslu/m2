@@ -1,4 +1,5 @@
 #include <m2/sdl/Detail.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
 

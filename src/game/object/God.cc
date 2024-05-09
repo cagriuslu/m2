@@ -128,10 +128,12 @@ namespace {
 }  // namespace
 
 m2::Id m2::obj::create_god() {
-	auto [obj, id] = create_object(VecF{});
-	obj.impl = std::make_unique<God>();
+	auto it = create_object({});
+	it->impl = std::make_unique<God>();
 
-	obj.add_physique().pre_step = [&o = obj](MAYBE Physique& phy) {
+	it->add_physique().pre_step = [](MAYBE Physique& phy) {
+		auto& obj = phy.parent();
+
 		m2::VecF move_direction;
 		if (M2_GAME.events.is_key_down(Key::UP)) {
 			move_direction.y -= 1.0f;
@@ -145,9 +147,9 @@ m2::Id m2::obj::create_god() {
 		if (M2_GAME.events.is_key_down(Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		o.position += move_direction.normalize() * ((float)M2_GAME.delta_time_s() * M2_GAME.dimensions().height_m);
+		obj.position += move_direction.normalize() * ((float)M2_GAME.delta_time_s() * M2_GAME.dimensions().height_m);
 		// Prevent God from going into negative quadrants
-		o.position = o.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
+		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
 		handle_mouse_events(M2_GAME.mouse_position_world_m().iround(), M2_GAME.mouse_position_world_m().hround());
 
@@ -162,7 +164,7 @@ m2::Id m2::obj::create_god() {
 		}
 	};
 
-	obj.add_graphic().post_draw = [](MAYBE Graphic& gfx) {
+	it->add_graphic().post_draw = [](MAYBE Graphic& gfx) {
 		// Check if level editor select mode is active
 		std::visit(
 		    overloaded{
@@ -180,5 +182,5 @@ m2::Id m2::obj::create_god() {
 		    M2_LEVEL.type_state);
 	};
 
-	return id;
+	return it.id();
 }

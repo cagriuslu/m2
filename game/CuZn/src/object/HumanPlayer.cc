@@ -2,6 +2,7 @@
 #include <cuzn/journeys/BuildJourney.h>
 #include <cuzn/journeys/NetworkJourney.h>
 #include <m2/Controls.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/protobuf/Detail.h>
 #include <cuzn/object/Factory.h>
@@ -12,8 +13,8 @@
 namespace {
 	// Filters
 	auto by_character_parent_id(m2::Id parent_id) {
-		return [parent_id](m2::Character* chr) {
-			return chr->parent().parent_id() == parent_id;
+		return [parent_id](m2::Character& chr) {
+			return chr.parent().parent_id() == parent_id;
 		};
 	}
 }
@@ -113,7 +114,6 @@ std::set<m2g::pb::ItemType> cuzn::get_cities_in_network(m2::Character& player) {
 	std::set<m2g::pb::ItemType> cities;
 
 	auto cities_view = M2_LEVEL.characters
-		| std::views::transform(m2::to_only_data)
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(by_character_parent_id(player.parent().id()))
 		| std::views::filter(is_factory_character)
@@ -121,7 +121,6 @@ std::set<m2g::pb::ItemType> cuzn::get_cities_in_network(m2::Character& player) {
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = M2_LEVEL.characters
-		| std::views::transform(m2::to_only_data)
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(by_character_parent_id(player.parent().id()))
 		| std::views::filter(is_road_character)

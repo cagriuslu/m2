@@ -1,4 +1,5 @@
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <m2/protobuf/Detail.h>
 #include <m2g/Proxy.h>
 #include <m2g_SpriteType.pb.h>

@@ -1,3 +1,4 @@
+- Find all functions that return a reference. They may cause assidental copies.
 - Sound doesn't play if object dies
 - Redirect command line arguments to m2 terminal
 - Override ppm doesn't work for dropped items

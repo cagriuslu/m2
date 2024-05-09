@@ -39,7 +39,7 @@ namespace m2 {
 		virtual ~Group() = default;
 
 		[[nodiscard]] inline uint64_t member_count() const { return _members.size(); }
-		inline IndexInGroup add_member(Id object_id) { return _members.emplace(object_id) & 0xFF; }
+		inline IndexInGroup add_member(Id object_id) { return _members.emplace(object_id).id() & 0xFF; }
 		inline void remove_member(IndexInGroup index) { _members.free_index(index); }
 	};
 }

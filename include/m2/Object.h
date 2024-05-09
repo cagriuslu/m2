@@ -101,8 +101,7 @@ namespace m2 {
 		CharacterId _character_id{};
 	};
 
-	std::pair<Object&, ObjectId> create_object(
-	    const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
+	Pool<Object>::Iterator create_object(const m2::VecF& position, m2g::pb::ObjectType type = {}, ObjectId parent_id = 0);
 	std::function<void(void)> create_object_deleter(ObjectId id);
 	std::function<void(void)> create_physique_deleter(ObjectId id);
 	std::function<void(void)> create_graphic_deleter(ObjectId id);
@@ -112,5 +111,5 @@ namespace m2 {
 	std::function<void(void)> create_character_deleter(ObjectId id);
 
 	// Filters
-	std::function<bool(Object*)> object_in_rect_filter(const RectF& rect);
+	std::function<bool(Object&)> rect_contains_object_filter(const RectF& rect);
 }  // namespace m2

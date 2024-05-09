@@ -1,4 +1,5 @@
 #include <rpg/Objects.h>
+#include <m2/Log.h>
 #include <m2/box2d/Detail.h>
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj) {

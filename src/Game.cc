@@ -1,4 +1,5 @@
-#include "m2/Game.h"
+#include <m2/Game.h>
+#include <m2/Log.h>
 
 #include <Level.pb.h>
 #include <SDL2/SDL_image.h>
@@ -280,8 +281,8 @@ void m2::Game::handle_hud_events() {
 }
 
 void m2::Game::execute_pre_step() {
-	for (const auto& [phy, _] : _level->physics) {
-		IF(phy->pre_step)(*phy);
+	for (auto& phy : _level->physics) {
+		IF(phy.pre_step)(phy);
 	}
 	if (_server_thread) {
 		auto client_command = _server_thread->pop_turn_holder_command();
@@ -297,12 +298,12 @@ void m2::Game::execute_pre_step() {
 }
 
 void m2::Game::update_characters() {
-	for (const auto& [character, _] : _level->characters) {
-		auto& chr = get_character_base(*character);
+	for (auto& character : _level->characters) {
+		auto& chr = to_character_base(character);
 		chr.automatic_update();
 	}
-	for (const auto& [character, _] : _level->characters) {
-		auto& chr = get_character_base(*character);
+	for (auto& character : _level->characters) {
+		auto& chr = to_character_base(character);
 		IF(chr.update)(chr);
 	}
 }
@@ -313,14 +314,14 @@ void m2::Game::execute_step() {
 		_level->world->Step(phy_period, velocity_iterations, position_iterations);
 		LOG_TRACE("World stepped");
 		// Update positions
-		for (const auto& [phy, _] : _level->physics) {
-			if (phy->body) {
-				auto& object = phy->parent();
+		for (auto& phy : _level->physics) {
+			if (phy.body) {
+				auto& object = phy.parent();
 				auto old_pos = object.position;
 				// Update draw list
-				object.position = m2::VecF{phy->body->GetPosition()};
+				object.position = m2::VecF{phy.body->GetPosition()};
 				if (old_pos != object.position) {
-					_level->draw_list.queue_update(phy->object_id, object.position);
+					_level->draw_list.queue_update(phy.object_id, object.position);
 				}
 			}
 		}
@@ -346,20 +347,20 @@ void m2::Game::execute_post_step() {
 		auto expect_server_update = M2_GAME.client_thread().process_server_update();
 		m2_succeed_or_throw_error(expect_server_update);
 	}
-	for (const auto& [phy, _] : _level->physics) {
-		IF(phy->post_step)(*phy);
+	for (auto& phy : _level->physics) {
+		IF(phy.post_step)(phy);
 	}
 }
 
 void m2::Game::update_sounds() {
-	for (const auto& [sound_emitter, _] : _level->sound_emitters) {
-		IF(sound_emitter->update)(*sound_emitter);
+	for (auto& sound_emitter : _level->sound_emitters) {
+		IF(sound_emitter.update)(sound_emitter);
 	}
 }
 
 void m2::Game::execute_pre_draw() {
-	for (const auto& [gfx, _] : _level->graphics) {
-		IF(gfx->pre_draw)(*gfx);
+	for (auto& gfx : _level->graphics) {
+		IF(gfx.pre_draw)(gfx);
 	}
 }
 
@@ -380,9 +381,9 @@ void m2::Game::clear_back_buffer() const {
 
 namespace {
 	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrain_graphics) {
-		for (const auto& [gfx, _] : terrain_graphics) {
-			IF(gfx->on_draw)(*gfx);
-			IF(gfx->on_addon)(*gfx);
+		for (auto& gfx : terrain_graphics) {
+			IF(gfx.on_draw)(gfx);
+			IF(gfx.on_addon)(gfx);
 		}
 	}
 
@@ -427,21 +428,21 @@ void m2::Game::draw_foreground() {
 }
 
 void m2::Game::draw_lights() {
-	for (const auto& [light, _] : _level->lights) {
-		IF(light->on_draw)(*light);
+	for (auto& light : _level->lights) {
+		IF(light.on_draw)(light);
 	}
 }
 
 void m2::Game::execute_post_draw() {
-	for (const auto& [gfx, _] : _level->graphics) {
-		IF(gfx->post_draw)(*gfx);
+	for (auto& gfx : _level->graphics) {
+		IF(gfx.post_draw)(gfx);
 	}
 }
 
 void m2::Game::debug_draw() {
 #ifdef DEBUG
-	for (const auto& [phy, _] : _level->physics) {
-		IF(phy->on_debug_draw)(*phy);
+	for (auto& phy : _level->physics) {
+		IF(phy.on_debug_draw)(phy);
 	}
 
 	if (is_projection_type_perspective(_level->projection_type())) {
@@ -535,10 +536,10 @@ m2::RectF m2::Game::viewport_to_2d_world_rect_m() {
 void m2::Game::recalculate_directional_audio() {
 	if (_level->left_listener || _level->right_listener) {
 		// Loop over sounds
-		for (const auto& [sound_emitter, _] : _level->sound_emitters) {
-			const auto& sound_position = sound_emitter->parent().position;
+		for (auto& sound_emitter : _level->sound_emitters) {
+			const auto& sound_position = sound_emitter.parent().position;
 			// Loop over playbacks
-			for (const auto playback_id : sound_emitter->playbacks) {
+			for (const auto playback_id : sound_emitter.playbacks) {
 				if (!audio_manager->has_playback(playback_id)) {
 					continue;  // Playback may have finished (if it's ONCE)
 				}

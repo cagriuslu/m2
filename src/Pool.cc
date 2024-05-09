@@ -1,3 +1,6 @@
 #include <m2/Pool.h>
 
-uint16_t m2::g_pool_id = 1;
+m2::ShiftedPoolId m2::next_shifted_pool_id() {
+	static PoolId global_pool_id = 1;
+	return static_cast<uint64_t>(global_pool_id++) << 48;
+}

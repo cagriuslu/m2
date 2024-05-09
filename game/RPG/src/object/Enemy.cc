@@ -1,5 +1,6 @@
 #include <m2/Group.h>
 #include <m2/M2.h>
+#include <m2/Log.h>
 #include <m2/Object.h>
 #include <m2/box2d/Detail.h>
 #include <m2/game/CharacterMovement.h>
@@ -111,7 +112,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 						auto optional_item = item_group->pop_item();
 						if (optional_item) {
 							M2_DEFER([=]() {
-								create_dropped_item(m2::create_object(drop_position).first, *optional_item);
+								create_dropped_item(*m2::create_object(drop_position), *optional_item);
 							});
 						}
 					}
@@ -124,13 +125,11 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 				// Create corpse
 				if (obj_type == ObjectType::SKELETON) {
 					M2_DEFER([pos = obj.position]() {
-						auto& corpse = m2::create_object(pos).first;
-						create_corpse(corpse, m2g::pb::SKELETON_CORPSE);
+						create_corpse(*m2::create_object(pos), m2g::pb::SKELETON_CORPSE);
 					});
 				} else if (obj_type == ObjectType::CUTEOPUS) {
 					M2_DEFER([pos = obj.position]() {
-						auto& corpse = m2::create_object(pos).first;
-						create_corpse(corpse, m2g::pb::CUTEOPUS_CORPSE);
+						create_corpse(*m2::create_object(pos), m2g::pb::CUTEOPUS_CORPSE);
 					});
 				}
 			} else {
@@ -196,9 +195,9 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				case pb::CAPABILITY_RANGED: {
 					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_RANGED_WEAPON);
 					if (it && obj.character().use_item(it)) {
-						auto& projectile = m2::create_object(obj.position, {}, obj.id()).first;
 						auto shoot_direction = M2_PLAYER.position - obj.position;
-						rpg::create_projectile(projectile, shoot_direction, *it, false);
+						rpg::create_projectile(*m2::create_object(obj.position, {}, obj.id()),
+							shoot_direction, *it, false);
 						// Knock-back
 						obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(shoot_direction.angle_rads() + m2::PI) * 5000.0f), true);
 					}
@@ -207,8 +206,8 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 				case pb::CAPABILITY_MELEE: {
 					auto it = obj.character().find_items(m2g::pb::ITEM_CATEGORY_DEFAULT_MELEE_WEAPON);
 					if (it && obj.character().use_item(it)) {
-						auto& melee = m2::create_object(obj.position, {}, obj.id()).first;
-						rpg::create_blade(melee, M2_PLAYER.position - obj.position, *it, false);
+						rpg::create_blade(*m2::create_object(obj.position, {}, obj.id()),
+							M2_PLAYER.position - obj.position, *it, false);
 					}
 					break;
 				}

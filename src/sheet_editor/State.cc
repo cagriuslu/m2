@@ -1,8 +1,9 @@
+#include <m2/sheet_editor/State.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/game/Selection.h>
 #include <m2/game/object/Line.h>
 #include <m2/protobuf/Detail.h>
-#include <m2/sheet_editor/State.h>
 
 using namespace m2;
 using namespace m2::sedit;

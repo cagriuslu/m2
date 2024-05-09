@@ -1,4 +1,5 @@
 #include <m2/pixel_editor/State.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/game/object/Pixel.h>
 

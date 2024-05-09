@@ -1,5 +1,6 @@
 #include <m2/Object.h>
 #include "m2/Game.h"
+#include <m2/Log.h>
 #include "m2/component/Physique.h"
 #include "m2/component/Graphic.h"
 #include "m2/component/Light.h"
@@ -96,7 +97,7 @@ m2::Character* m2::Object::get_character() const {
 	if (not character_variant) {
 		return nullptr;
 	}
-	return get_character_base(character_variant);
+	return &to_character_base(*character_variant);
 }
 
 m2::Object* m2::Object::parent() const {
@@ -122,7 +123,7 @@ m2::SoundEmitter& m2::Object::sound_emitter() const {
 }
 m2::Character& m2::Object::character() const {
     auto& it = M2_LEVEL.characters[_character_id];
-    return get_character_base(it);
+    return to_character_base(it);
 }
 
 void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
@@ -131,72 +132,63 @@ void m2::Object::set_group(const GroupId& group_id, IndexInGroup group_index) {
 }
 
 m2::Physique& m2::Object::add_physique() {
-	auto physique_pair = M2_LEVEL.physics.alloc();
-	_physique_id = physique_pair.second;
-	physique_pair.first = Physique{id()};
+	auto phy = M2_LEVEL.physics.emplace(id());
+	_physique_id = phy.id();
     LOG_TRACE("Added physique component", _physique_id);
-	return physique_pair.first;
+	return *phy;
 }
 m2::Graphic& m2::Object::add_graphic() {
-	auto graphic_pair = M2_LEVEL.graphics.alloc();
-	_graphic_id = graphic_pair.second;
-	graphic_pair.first = Graphic{id()};
+	auto gfx = M2_LEVEL.graphics.emplace(id());
+	_graphic_id = gfx.id();
 	M2_LEVEL.draw_list.insert(id());
     LOG_TRACE("Added graphic component", _graphic_id);
-	return graphic_pair.first;
+	return *gfx;
 }
 m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
-	auto graphic_pair = M2_LEVEL.graphics.alloc();
-	_graphic_id = graphic_pair.second;
-	graphic_pair.first = Graphic{id(), sprite};
+	auto gfx = M2_LEVEL.graphics.emplace(id(), sprite);
+	_graphic_id = gfx.id();
 	M2_LEVEL.draw_list.insert(id());
     LOG_TRACE("Added graphic component", _graphic_id);
-	return graphic_pair.first;
+	return *gfx;
 }
 m2::Graphic& m2::Object::add_graphic(m2g::pb::SpriteType sprite_type) {
 	return add_graphic(M2_GAME.get_sprite(sprite_type));
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
-	auto terrain_graphic_pair = M2_LEVEL.terrain_graphics[I(layer)].alloc();
-	_terrain_graphic_id = std::make_pair(terrain_graphic_pair.second, layer);
-	terrain_graphic_pair.first = Graphic{id()};
+	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id());
+	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
-	return terrain_graphic_pair.first;
+	return *terrain_gfx;
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const Sprite& sprite) {
-	auto terrain_graphic_pair = M2_LEVEL.terrain_graphics[I(layer)].alloc();
-	_terrain_graphic_id = std::make_pair(terrain_graphic_pair.second, layer);
-	terrain_graphic_pair.first = Graphic{id(), sprite};
+	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id(), sprite);
+	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
     LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
-	return terrain_graphic_pair.first;
+	return *terrain_gfx;
 }
 m2::Light& m2::Object::add_light() {
-	auto light_pair = M2_LEVEL.lights.alloc();
-	_light_id = light_pair.second;
-	light_pair.first = Light{id()};
+	auto light = M2_LEVEL.lights.emplace(id());
+	_light_id = light.id();
     LOG_TRACE("Added light component", _light_id);
-	return light_pair.first;
+	return *light;
 }
 m2::SoundEmitter& m2::Object::add_sound_emitter() {
-	auto sound_pair = M2_LEVEL.sound_emitters.alloc();
-	_sound_emitter_id = sound_pair.second;
-	sound_pair.first = SoundEmitter{id()};
+	auto sound = M2_LEVEL.sound_emitters.emplace(id());
+	_sound_emitter_id = sound.id();
 	LOG_TRACE("Added sound component", _sound_emitter_id);
-	return sound_pair.first;
+	return *sound;
 }
 m2::Character& m2::Object::add_tiny_character() {
-    auto character_pair = M2_LEVEL.characters.alloc();
-    _character_id = character_pair.second;
-    character_pair.first = TinyCharacter{id()};
+    auto character = M2_LEVEL.characters.emplace(TinyCharacter{id()});
+    _character_id = character.id();
     LOG_TRACE("Added tiny character", _character_id);
-    return std::get<TinyCharacter>(character_pair.first);
+    return std::get<TinyCharacter>(*character);
 }
 m2::Character& m2::Object::add_full_character() {
-    auto character_pair = M2_LEVEL.characters.alloc();
-    _character_id = character_pair.second;
-    character_pair.first = FullCharacter{id()};
+    auto character = M2_LEVEL.characters.emplace(FullCharacter{id()});
+    _character_id = character.id();
     LOG_TRACE("Added full character", _character_id);
-    return std::get<FullCharacter>(character_pair.first);
+    return std::get<FullCharacter>(*character);
 }
 
 void m2::Object::remove_physique() {
@@ -237,8 +229,8 @@ void m2::Object::remove_character() {
 	}
 }
 
-std::pair<m2::Object&, m2::ObjectId> m2::create_object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
-    return M2_LEVEL.objects.alloc(position, type, parent_id);
+m2::Pool<m2::Object>::Iterator m2::create_object(const m2::VecF &position, m2g::pb::ObjectType type, ObjectId parent_id) {
+    return M2_LEVEL.objects.emplace(position, type, parent_id);
 }
 std::function<void(void)> m2::create_object_deleter(ObjectId id) {
 	return [id]() {
@@ -288,8 +280,8 @@ std::function<void(void)> m2::create_character_deleter(ObjectId id) {
 	};
 }
 
-std::function<bool(m2::Object*)> m2::object_in_rect_filter(const RectF& rect) {
-	return [rect](m2::Object* o) -> bool {
-		return rect.point_in_rect(o->position);
+std::function<bool(m2::Object&)> m2::rect_contains_object_filter(const RectF& rect) {
+	return [rect](m2::Object& o) -> bool {
+		return rect.contains(o.position);
 	};
 }

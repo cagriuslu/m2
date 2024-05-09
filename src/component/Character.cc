@@ -1,5 +1,6 @@
 #include <m2/component/Character.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <algorithm>
 #include <m2/protobuf/Detail.h>
 #include <cstdlib>
@@ -391,27 +392,12 @@ int m2::FullCharacter::attribute_type_index(m2g::pb::AttributeType attribute_typ
 	return pb::enum_index<m2g::pb::AttributeType>(attribute_type);
 }
 
-const m2::Character& m2::get_character_base(const CharacterVariant& v) {
-	return *get_character_base(&v);
-}
-const m2::Character* m2::get_character_base(const CharacterVariant* v) {
+m2::Character& m2::to_character_base(CharacterVariant& v) {
 	return std::visit(overloaded {
-		[](const auto& v) -> const Character* { return &v; }
-	}, *v);
-}
-m2::Character& m2::get_character_base(CharacterVariant& v) {
-	return *get_character_base(&v);
-}
-m2::Character* m2::get_character_base(CharacterVariant* v) {
-	return std::visit(overloaded {
-			[](auto& vv) -> Character* { return &vv; }
-	}, *v);
+			[](auto& vv) -> Character& { return vv; }
+	}, v);
 }
 
-m2::Character* m2::to_character_base(CharacterVariant* v) {
-	return get_character_base(v);
-}
-
-m2::Object* m2::to_character_parent(Character* v) {
-	return &v->parent();
+m2::Object& m2::to_character_parent(Character& v) {
+	return v.parent();
 }

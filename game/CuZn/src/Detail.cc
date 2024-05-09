@@ -264,7 +264,7 @@ bool cuzn::location_has_industry(IndustryLocation location, Industry industry) {
 
 std::optional<cuzn::IndustryLocation> cuzn::industry_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.industry_positions.begin(), M2G_PROXY.industry_positions.end(),
-			[&](const auto& pos_and_type) { return pos_and_type.second.second.point_in_rect(world_position); });
+			[&](const auto& pos_and_type) { return pos_and_type.second.second.contains(world_position); });
 	if (it != M2G_PROXY.industry_positions.end()) {
 		return it->first;
 	} else {
@@ -285,7 +285,7 @@ m2::VecF cuzn::position_of_industry_location(IndustryLocation industry_location)
 
 std::optional<cuzn::NetworkLocation> cuzn::network_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.network_positions.begin(), M2G_PROXY.network_positions.end(),
-		[&](const auto& pos_and_type) { return pos_and_type.second.point_in_rect(world_position); });
+		[&](const auto& pos_and_type) { return pos_and_type.second.contains(world_position); });
 	if (it != M2G_PROXY.network_positions.end()) {
 		return it->first;
 	} else {

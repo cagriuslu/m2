@@ -11,10 +11,10 @@
 m2::Id m2::obj::create_camera() {
 	// Start at player's location
 	auto* player = M2_LEVEL.objects.get(M2_LEVEL.player_id);
-	auto obj_pair = create_object(player ? player->position : VecF{});
+	auto it = create_object(player ? player->position : VecF{});
 
 	// Create implementation
-	auto& camera = obj_pair.first;
+	auto& camera = *it;
 	camera.impl = std::make_unique<m2::obj::Camera>();
 
 	auto& phy = camera.add_physique();
@@ -64,6 +64,5 @@ m2::Id m2::obj::create_camera() {
 		    SoundListener{.position = M2_PLAYER.position, .direction = 0.0f, .listen_angle = PI_DIV2};
 	}
 
-	M2_LEVEL.camera_id = obj_pair.second;
-	return obj_pair.second;
+	return M2_LEVEL.camera_id = it.id();
 }

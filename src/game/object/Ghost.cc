@@ -3,11 +3,10 @@
 #include "m2/Game.h"
 
 m2::Id m2::obj::create_ghost(const Sprite& sprite) {
-	auto [obj, id] = m2::create_object(M2_GAME.mouse_position_world_m().round());
-	obj.add_graphic(sprite);
-	obj.add_physique().pre_step = [&obj = obj](MAYBE Physique& phy) {
-		obj.position = M2_GAME.mouse_position_world_m().round();
+	auto it = m2::create_object(M2_GAME.mouse_position_world_m().round());
+	it->add_graphic(sprite);
+	it->add_physique().pre_step = [](MAYBE Physique& phy) {
+		phy.parent().position = M2_GAME.mouse_position_world_m().round();
 	};
-
-	return id;
+	return it.id();
 }

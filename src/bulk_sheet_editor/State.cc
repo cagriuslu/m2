@@ -1,4 +1,5 @@
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <m2/RectF.h>
 #include <m2/bulk_sheet_editor/State.h>
 #include <m2/game/Selection.h>

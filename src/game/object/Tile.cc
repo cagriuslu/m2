@@ -4,9 +4,9 @@
 #include "m2/Object.h"
 #include "m2/box2d/Detail.h"
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const VecF& position, const m2::Sprite& sprite) {
-    auto obj_pair = create_object(position);
-	obj_pair.first.add_terrain_graphic(layer, sprite);
+m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const VecF& position, const m2::Sprite& sprite) {
+    auto it = create_object(position);
+	it->add_terrain_graphic(layer, sprite);
 
 	if (sprite.background_collider_type() != box2d::ColliderType::NONE) {
         m2::pb::BodyBlueprint bp;
@@ -36,23 +36,22 @@ std::pair<m2::Object&, m2::Id> m2::obj::create_tile(BackgroundLayer layer, const
             throw M2FATAL("Circular tile foreground_collider unimplemented");
         }
 
-        auto& phy = obj_pair.first.add_physique();
-        phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj_pair.first.physique_id(), obj_pair.first.position, bp);
+        auto& phy = it->add_physique();
+        phy.body = m2::box2d::create_body(*M2_LEVEL.world, it->physique_id(), it->position, bp);
 	}
 
 	if (sprite.has_foreground_companion()) {
 		obj::create_tile_foreground_companion(position, sprite);
 	}
 
-    return obj_pair;
+    return it;
 }
 
-std::pair<m2::Object&, m2::Id> m2::obj::create_tile_foreground_companion(const VecF& position, const m2::Sprite& sprite) {
-	auto obj_pair = create_object(position - sprite.center_to_origin_vec_m() + sprite.foreground_companion_center_to_origin_vec_m());
-	auto& companion = obj_pair.first;
+m2::Pool<m2::Object>::Iterator m2::obj::create_tile_foreground_companion(const VecF& position, const m2::Sprite& sprite) {
+	auto it = create_object(position - sprite.center_to_origin_vec_m() + sprite.foreground_companion_center_to_origin_vec_m());
 
-	auto& gfx = companion.add_graphic(sprite);
+	auto& gfx = it->add_graphic(sprite);
 	gfx.draw_variant = IsForegroundCompanion{true};
 
-	return obj_pair;
+	return it;
 }

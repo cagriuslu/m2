@@ -1,4 +1,5 @@
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <m2/String.h>
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/sdl/Detail.h>

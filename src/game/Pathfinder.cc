@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include "m2/Component.h"
+#include <m2/Log.h>
 #include "m2/Game.h"
 #include "m2/M2.h"
 #include "m2/VecI.h"

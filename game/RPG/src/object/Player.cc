@@ -1,5 +1,6 @@
 #include <rpg/object/Player.h>
 #include <m2/Object.h>
+#include "m2/Log.h"
 #include "m2/Game.h"
 #include <rpg/Detail.h>
 #include "m2/Controls.h"
@@ -77,8 +78,8 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Primary weapon
 		if (M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			auto shoot = [&](const m2::Item& weapon) {
-				auto& projectile = m2::create_object(obj.position, {}, id).first;
-				rpg::create_projectile(projectile, vector_to_mouse, weapon, true);
+				rpg::create_projectile(*m2::create_object(obj.position, {}, id),
+					vector_to_mouse, weapon, true);
 				// Knock-back
 				phy.body->ApplyForceToCenter(static_cast<b2Vec2>(m2::VecF::from_angle(vector_to_mouse.angle_rads() + m2::PI) * 50000.0f), true);
 			};
@@ -101,8 +102,8 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Secondary weapon
 		if (M2_GAME.events.is_mouse_button_down(m2::MouseButton::SECONDARY)) {
 			auto slash = [&](const m2::Item& weapon) {
-				auto& melee = m2::create_object(obj.position, {}, id).first;
-				rpg::create_blade(melee, vector_to_mouse, weapon, true);
+				rpg::create_blade(*m2::create_object(obj.position, {}, id),
+					vector_to_mouse, weapon, true);
 			};
 
 			// Check if there is a special melee weapon and try to use the item

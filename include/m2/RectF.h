@@ -32,7 +32,8 @@ namespace m2 {
 		[[nodiscard]] inline VecF bottom_left() const { return VecF{x, y + h}; }
 		[[nodiscard]] inline VecF bottom_right() const { return VecF{x + w, y + h}; }
 		[[nodiscard]] float area() const;
-		[[nodiscard]] bool point_in_rect(const VecF&) const;
+		[[nodiscard]] bool contains(const VecF&) const;
+		[[nodiscard]] bool contains(const RectF&) const;
 
 		// Immutable modifiers
 		[[nodiscard]] RectF shift(const VecF& direction) const; // Shifts the rect

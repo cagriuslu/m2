@@ -1,4 +1,5 @@
 #include <SDL2/SDL_image.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/Level.h>
 #include <m2/Meta.h>
@@ -369,10 +370,10 @@ m2::void_expected m2::Level::init_any_player(
 			for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
 				if (const auto sprite_type = layer.background_rows(y).items(x); sprite_type) {
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto [tile_obj, tile_id] = obj::create_tile(
+					auto it = obj::create_tile(
 					    static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, M2_GAME.get_sprite(sprite_type));
-					M2G_PROXY.post_tile_create(tile_obj, sprite_type);
-					LOG_TRACE("Created tile", tile_id);
+					M2G_PROXY.post_tile_create(*it, sprite_type);
+					LOG_TRACE("Created tile", it.id());
 				}
 			}
 		}
@@ -382,7 +383,7 @@ m2::void_expected m2::Level::init_any_player(
 		LOGF_TRACE(
 		    "Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(),
 		    fg_object.position().y());
-		auto [obj, id] = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f}, fg_object.type());
+		auto it = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f}, fg_object.type());
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
@@ -396,12 +397,12 @@ m2::void_expected m2::Level::init_any_player(
 				group = M2G_PROXY.create_group(group_id.type);
 				groups[group_id] = std::unique_ptr<Group>(group);
 			}
-			obj.set_group(group_id, group->add_member(id));
+			it->set_group(group_id, group->add_member(it.id()));
 		}
 
-		auto load_result = M2G_PROXY.init_level_blueprint_fg_object(obj);
+		auto load_result = M2G_PROXY.init_level_blueprint_fg_object(*it);
 		m2_reflect_failure(load_result);
-		LOG_TRACE("Created object", id);
+		LOG_TRACE("Created object", it.id());
 	}
 
 	if (physical_world) {

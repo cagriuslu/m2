@@ -5,7 +5,6 @@
 #include "m2/sdl/Stopwatch.h"
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
-#include <m2/ThreadPool.h>
 #include <m2/Log.h>
 #include <m2/command_line/SpriteSheets.h>
 #include <m2/detail/ArgumentParser.h>

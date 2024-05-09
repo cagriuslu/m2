@@ -4,6 +4,7 @@
 #include <cuzn/detail/Build.h>
 #include <cuzn/Ui.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 
 using namespace m2;

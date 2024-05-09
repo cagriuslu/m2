@@ -3,6 +3,7 @@
 #include <rpg/object/Enemy.h>
 #include <rpg/object/Player.h>
 #include <rpg/Objects.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <rpg/Defs.h>
 #include <m2/protobuf/Detail.h>

@@ -3,6 +3,7 @@
 #include <cuzn/object/Market.h>
 #include <cuzn/object/Merchant.h>
 #include <cuzn/object/Factory.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 
 #include <random>
@@ -17,14 +18,14 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
-		auto [client_obj, client_id] = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
-		auto client_init_result = init_human_player(client_obj);
+		auto it = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
+		auto client_init_result = init_human_player(*it);
 		m2_succeed_or_throw_error(client_init_result);
-		multi_player_object_ids.emplace_back(client_id);
+		multi_player_object_ids.emplace_back(it.id());
 		player_colors.emplace_back(generate_player_color(i));
 
 		if (i == M2_GAME.client_thread().receiver_index()) {
-			M2_LEVEL.player_id = client_id;
+			M2_LEVEL.player_id = it.id();
 		}
 	}
 
@@ -34,16 +35,16 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 		// Lookup the location of the merchant
 		auto posF = m2::VecF{merchant_positions[merchant_sprite]} + m2::VecF{0.5f, 0.5f};
 		// Create merchant object
-		auto [merchant_obj, merchant_id] = m2::create_object(posF, m2g::pb::ObjectType::MERCHANT);
-		init_merchant(merchant_obj);
+		auto it = m2::create_object(posF, m2g::pb::ObjectType::MERCHANT);
+		init_merchant(*it);
 		// Store for later
-		merchant_object_ids[merchant_sprite] = merchant_id;
+		merchant_object_ids[merchant_sprite] = it.id();
 	}
 
 	// Add market object
-	auto [market_obj, market_id] = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET);
-	init_market(market_obj);
-	_market_object_id = market_id;
+	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET);
+	init_market(*it);
+	_market_object_id = it.id();
 }
 
 void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
@@ -98,11 +99,11 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 	if (client_command.has_build_action()) {
 		// TODO verify whether the player can build it
 
-		auto [obj, id] = m2::create_object(
+		auto it = m2::create_object(
 			position_of_industry_location(client_command.build_action().industry_location()),
 			m2g::pb::FACTORY,
 			M2G_PROXY.multi_player_object_ids[turn_holder_index]);
-		auto success = init_factory(obj,
+		auto success = init_factory(*it,
 			city_of_industry_location(client_command.build_action().industry_location()),
 			client_command.build_action().industry_tile());
 		// TODO check result

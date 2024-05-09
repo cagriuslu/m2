@@ -163,9 +163,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 
 		int i = 0;
 		for (auto char_it = M2_LEVEL.characters.begin(); char_it != M2_LEVEL.characters.end() && i < server_update.objects_with_character_size(); ++char_it, ++i) {
-			auto [local_character_variant, _] = *char_it;
 			auto server_character = server_update.objects_with_character(i);
-
 			auto success = std::visit(overloaded {
 					[this, &server_character](const auto& v) -> m2::void_expected {
 						if (v.parent().position != VecF{server_character.position()}) {
@@ -184,7 +182,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 
 						return {};
 					}
-			}, *local_character_variant);
+			}, *char_it);
 			m2_reflect_failure(success);
 		}
 
@@ -264,27 +262,27 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 			if (it->server_object_parent_id == 0) {
 				// Simply, create the object
 				LOG_DEBUG("Server has created an object", it->server_object_id);
-				auto [obj, id] = m2::create_object(m2::VecF{it->position}, it->object_type, 0);
-				auto load_result = M2G_PROXY.init_server_update_fg_object(obj, it->named_items, it->resources);
+				auto obj_it = m2::create_object(m2::VecF{it->position}, it->object_type, 0);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
 				m2_reflect_failure(load_result);
 				// Update the character
-				auto* character = obj.get_character();
+				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources);
 				// Add object to the map, marked as visited
-				_server_to_local_map[it->server_object_id] = std::make_pair(id, true);
+				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.id(), true);
 				// Delete the object details from the objects_to_be_created vector
 				it = objects_to_be_created.erase(it);
 			} else if (auto parent_it = _server_to_local_map.find(it->server_object_parent_id); parent_it != _server_to_local_map.end()) {
 				// If the object has a parent that's already created, create the object by looking up the corresponding parent
 				LOG_DEBUG("Server has created an object", it->server_object_id);
-				auto [obj, id] = m2::create_object(m2::VecF{it->position}, it->object_type, parent_it->second.first);
-				auto load_result = M2G_PROXY.init_server_update_fg_object(obj, it->named_items, it->resources);
+				auto obj_it = m2::create_object(m2::VecF{it->position}, it->object_type, parent_it->second.first);
+				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
 				m2_reflect_failure(load_result);
 				// Update the character
-				auto* character = obj.get_character();
+				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources);
 				// Add object to the map, marked as visited
-				_server_to_local_map[it->server_object_id] = std::make_pair(id, true);
+				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.id(), true);
 				// Delete the object details from the objects_to_be_created vector
 				it = objects_to_be_created.erase(it);
 			} else {

@@ -188,10 +188,10 @@ bool m2::Events::pop_mouse_button_press(m2::MouseButton mb) {
 	}
 }
 bool Events::peek_mouse_button_press(MouseButton mb, const RectI& rect) {
-	return mouse_buttons_pressed[u(mb)] && rect.point_in_rect(mouse_position());
+	return mouse_buttons_pressed[u(mb)] && rect.contains(mouse_position());
 }
 bool m2::Events::pop_mouse_button_press(m2::MouseButton mb, const RectI& rect) {
-	if (mouse_buttons_pressed[u(mb)] && rect.point_in_rect(mouse_position())) {
+	if (mouse_buttons_pressed[u(mb)] && rect.contains(mouse_position())) {
 		mouse_buttons_pressed[u(mb)]--;
 		mouse_button_press_count--;
 		return true;
@@ -200,7 +200,7 @@ bool m2::Events::pop_mouse_button_press(m2::MouseButton mb, const RectI& rect) {
 	}
 }
 void m2::Events::clear_mouse_button_presses(const RectI& rect) {
-	if (rect.point_in_rect(mouse_position())) {
+	if (rect.contains(mouse_position())) {
 		mouse_buttons_pressed = {};
 		mouse_button_press_count = 0;
 	}
@@ -216,10 +216,10 @@ bool m2::Events::pop_mouse_button_release(m2::MouseButton mb) {
 	}
 }
 bool Events::peek_mouse_button_release(MouseButton mb, const RectI& rect) {
-	return mouse_buttons_released[u(mb)] && rect.point_in_rect(mouse_position());
+	return mouse_buttons_released[u(mb)] && rect.contains(mouse_position());
 }
 bool m2::Events::pop_mouse_button_release(MouseButton mb, const RectI& rect) {
-	if (mouse_buttons_released[u(mb)] && rect.point_in_rect(mouse_position())) {
+	if (mouse_buttons_released[u(mb)] && rect.contains(mouse_position())) {
 		mouse_buttons_released[u(mb)]--;
 		mouse_button_release_count--;
 		return true;
@@ -228,7 +228,7 @@ bool m2::Events::pop_mouse_button_release(MouseButton mb, const RectI& rect) {
 	}
 }
 void m2::Events::clear_mouse_button_releases(const RectI& rect) {
-	if (rect.point_in_rect(mouse_position())) {
+	if (rect.contains(mouse_position())) {
 		mouse_buttons_released = {};
 		mouse_button_release_count = 0;
 	}
@@ -240,7 +240,7 @@ int32_t m2::Events::pop_mouse_wheel_vertical_scroll() {
 	return value;
 }
 int32_t m2::Events::pop_mouse_wheel_vertical_scroll(const RectI& rect) {
-	if (rect.point_in_rect(mouse_position())) {
+	if (rect.contains(mouse_position())) {
 		auto value = mouse_wheel_vertical_scroll_count;
 		mouse_wheel_vertical_scroll_count = 0;
 		return value;
@@ -253,7 +253,7 @@ int32_t m2::Events::pop_mouse_wheel_horizontal_scroll() {
 	return value;
 }
 int32_t m2::Events::pop_mouse_wheel_horizontal_scroll(const RectI& rect) {
-	if (rect.point_in_rect(mouse_position())) {
+	if (rect.contains(mouse_position())) {
 		auto value = mouse_wheel_horizontal_scroll_count;
 		mouse_wheel_horizontal_scroll_count = 0;
 		return value;
@@ -261,7 +261,7 @@ int32_t m2::Events::pop_mouse_wheel_horizontal_scroll(const RectI& rect) {
 	return 0;
 }
 void m2::Events::clear_mouse_wheel_scrolls(const RectI& rect) {
-	if (rect.point_in_rect(mouse_position())) {
+	if (rect.contains(mouse_position())) {
 		mouse_wheel_vertical_scroll_count = 0;
 		mouse_wheel_horizontal_scroll_count = 0;
 	}
@@ -281,7 +281,7 @@ bool m2::Events::is_sdl_key_down(SDL_Scancode sc) const { return sdl_keys_down[s
 bool m2::Events::is_key_down(Key k) const { return keys_down[u(k)]; }
 bool m2::Events::is_mouse_button_down(MouseButton mb) const { return mouse_buttons_down[u(mb)]; }
 void m2::Events::clear_mouse_button_down(const RectI& rect) {
-	if (rect.point_in_rect(mouse_position())) {
+	if (rect.contains(mouse_position())) {
 		mouse_buttons_down = {};
 	}
 }

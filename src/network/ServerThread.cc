@@ -75,8 +75,7 @@ void m2::network::ServerThread::server_update() {
 	for (auto player_id : M2G_PROXY.multi_player_object_ids) {
 		message.mutable_server_update()->add_player_object_ids(player_id);
 	}
-	for (auto char_it : M2_LEVEL.characters) { // Iterate over characters
-		auto [char_variant, char_id] = char_it;
+	for (auto& char_variant : M2_LEVEL.characters) { // Iterate over characters
 		auto* object_descriptor = message.mutable_server_update()->add_objects_with_character();
 
 		// For any Character type
@@ -102,7 +101,7 @@ void m2::network::ServerThread::server_update() {
 					}
 				});
 			}
-		}, *char_variant);
+		}, char_variant);
 	}
 
 	// Send to clients.

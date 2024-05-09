@@ -34,7 +34,7 @@ namespace m2 {
 
 		// Accessors
 		[[nodiscard]] VecI dimensions() const { return {w, h}; }
-		[[nodiscard]] bool point_in_rect(const VecI&) const;
+		[[nodiscard]] bool contains(const VecI&) const;
 		[[nodiscard]] int x2() const { return x + w; }
 		[[nodiscard]] int y2() const { return y + h; }
 		void for_each_cell(const std::function<void(const VecI&)>& op) const;

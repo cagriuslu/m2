@@ -1,6 +1,7 @@
 #include <rpg/fsm/Escaper.h>
 #include <m2/box2d/RayCast.h>
 #include <m2/box2d/Detail.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/VecF.h>
 #include <rpg/object/Enemy.h>

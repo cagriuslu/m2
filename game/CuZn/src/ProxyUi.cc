@@ -1,4 +1,5 @@
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
 #include <m2/ui/widget/TextListSelection.h>

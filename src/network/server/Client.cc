@@ -1,5 +1,6 @@
 #include <m2/network/server/Client.h>
 #include <m2/protobuf/Detail.h>
+#include <m2/Log.h>
 #include <m2/Game.h>
 #include <string>
 
