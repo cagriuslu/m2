@@ -92,7 +92,11 @@ m2::CharacterId m2::Object::character_id() const {
 }
 
 m2::Character* m2::Object::get_character() const {
-	return get_character_base(M2_LEVEL.characters.get(_character_id));
+	auto* character_variant = M2_LEVEL.characters.get(_character_id);
+	if (not character_variant) {
+		return nullptr;
+	}
+	return get_character_base(character_variant);
 }
 
 m2::Object* m2::Object::parent() const {
