@@ -181,10 +181,10 @@ std::optional<m2::RectI> m2::RectI::intersect(const m2::RectI& other) const {
 	auto a = static_cast<SDL_Rect>(*this);
 	auto b = static_cast<SDL_Rect>(other);
 	SDL_Rect result;
-	if (SDL_IntersectRect(&a, &b, &result)) {
+	if (SDL_IntersectRect(&a, &b, &result) == SDL_TRUE) {
 		return RectI{result};
 	} else {
-		return {};
+		return std::nullopt;
 	}
 }
 m2::RectI m2::RectI::ratio(const RectF& ratio_rect) const {

@@ -1,6 +1,8 @@
 #include <m2/RectF.h>
+#include <m2/M2.h>
 #include <m2/RectI.h>
 #include <m2/Meta.h>
+#include <sdl2/SDL.h>
 #include <sstream>
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
@@ -31,12 +33,26 @@ m2::RectF::operator SDL_Rect() const {
 float m2::RectF::area() const {
 	return w * h;
 }
-bool m2::RectF::contains(const VecF& point) const {
-	return (point.x >= x) && (point.x <= (x + w)) && (point.y >= y) && (point.y <= (y + h));
+
+bool m2::RectF::equals(const RectF& other, float tolerance) const {
+	return is_near(x, other.x, tolerance)
+		&& is_near(y, other.y, tolerance)
+		&& is_near(x + w, other.x + other.w, tolerance)
+		&& is_near(y + h, other.y + other.h, tolerance);
 }
 
-bool m2::RectF::contains(const RectF& other) const {
-	return x <= other.x && y <= other.y && (other.x + other.w) <= (x + w) && (other.y + other.h) <= (y + h);
+bool m2::RectF::contains(const VecF& point, float tolerance) const {
+	return is_less_or_equal(x, point.x, tolerance)
+		&& is_less_or_equal(point.x, x + w, tolerance)
+		&& is_less_or_equal(y, point.y, tolerance)
+		&& is_less_or_equal(point.y, y + h, tolerance);
+}
+
+bool m2::RectF::contains(const RectF& other, float tolerance) const {
+	return is_less_or_equal(x, other.x, tolerance)
+		&& is_less_or_equal(other.x + other.w, x + w, tolerance)
+		&& is_less_or_equal(y, other.y, tolerance)
+		&& is_less_or_equal(other.y + other.h, y + h, tolerance);
 }
 
 m2::RectF m2::RectF::shift(const VecF& direction) const {
@@ -48,38 +64,38 @@ m2::RectF m2::RectF::shift_origin(const VecF& direction) const {
 m2::RectF m2::RectF::expand(float amount) const {
 	return {x - amount, y - amount, w + amount + amount, h + amount + amount};
 }
-std::optional<m2::RectF> m2::RectF::intersect(const RectF& other) const {
+std::optional<m2::RectF> m2::RectF::intersect(const RectF& other, float tolerance) const {
 	if (not (*this) || not other) {
 		return {};
 	}
 
 	// Stolen from SDL_IntersectRect
-	float Amin, Amax, Bmin, Bmax;
+	float a_min, a_max, b_min, b_max;
 	RectF result;
 
 	// Horizontal intersection
-	Amin = this->x;
-	Amax = Amin + this->w;
-	Bmin = other.x;
-	Bmax = Bmin + other.w;
-	if (Bmin > Amin)
-		Amin = Bmin;
-	result.x = Amin;
-	if (Bmax < Amax)
-		Amax = Bmax;
-	result.w = Amax - Amin;
+	a_min = this->x;
+	a_max = a_min + this->w;
+	b_min = other.x;
+	b_max = b_min + other.w;
+	if (is_less_or_equal(a_min, b_min, tolerance))
+		a_min = b_min;
+	result.x = a_min;
+	if (is_less(b_max, a_max, tolerance))
+		a_max = b_max;
+	result.w = a_max - a_min;
 
 	// Vertical intersection
-	Amin = this->y;
-	Amax = Amin + this->h;
-	Bmin = other.y;
-	Bmax = Bmin + other.h;
-	if (Bmin > Amin)
-		Amin = Bmin;
-	result.y = Amin;
-	if (Bmax < Amax)
-		Amax = Bmax;
-	result.h = Amax - Amin;
+	a_min = this->y;
+	a_max = a_min + this->h;
+	b_min = other.y;
+	b_max = b_min + other.h;
+	if (is_less_or_equal(a_min, b_min, tolerance))
+		a_min = b_min;
+	result.y = a_min;
+	if (is_less(b_max, a_max, tolerance))
+		a_max = b_max;
+	result.h = a_max - a_min;
 
 	return result ? result : std::optional<m2::RectF>{};
 }

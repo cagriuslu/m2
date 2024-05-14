@@ -70,6 +70,7 @@ namespace m2 {
 			}
         };
 		//</editor-fold>
+
 		//<editor-fold desc="Item">
 		struct Item {
 			T data;
@@ -105,18 +106,6 @@ namespace m2 {
 		[[nodiscard]] bool empty() const { return !_size; }
 		[[nodiscard]] bool contains(Id id) const { return get(id); }
 		[[nodiscard]] bool contains(const T* data) const { return get_id(data); }
-		T& operator[](Id id) {
-			if (auto* t = get(id)) {
-				return *t;
-			}
-			throw M2ERROR("Pool out of bounds");
-		}
-		const T& operator[](Id id) const {
-			if (const auto* t = get(id)) {
-				return *t;
-			}
-			throw M2ERROR("Pool out of bounds");
-		}
 		T* get(Id id) {
 			if (auto* item = get_array_item(id)) {
 				return &item->data;
@@ -128,6 +117,18 @@ namespace m2 {
 				return &item->data;
 			}
 			return nullptr;
+		}
+		T& operator[](Id id) {
+			if (auto* t = get(id)) {
+				return *t;
+			}
+			throw M2ERROR("Out of bounds");
+		}
+		const T& operator[](Id id) const {
+			if (const auto* t = get(id)) {
+				return *t;
+			}
+			throw M2ERROR("Out of bounds");
 		}
 		Id get_id(const T* data) const {
 			const auto* byte_ptr = reinterpret_cast<const uint8_t*>(data);

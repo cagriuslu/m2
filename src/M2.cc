@@ -38,5 +38,14 @@ float m2::apply_accuracy(float value, float max_swing, float accuracy) {
 }
 
 bool m2::is_near(float a, float b, float tolerance) {
-	return fabsf(a - b) < tolerance;
+	return fabsf(b - a) < fabsf(tolerance);
+}
+bool m2::is_far(float a, float b, float tolerance) {
+	return fabsf(tolerance) < fabsf(b - a);
+}
+bool m2::is_less(float a, float b, float tolerance) {
+	return fabsf(tolerance) < (b - a);
+}
+bool m2::is_less_or_equal(float a, float b, float tolerance) {
+	return fabsf(tolerance) < (b - a) || is_near(a, b, tolerance);
 }

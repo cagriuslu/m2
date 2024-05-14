@@ -26,7 +26,13 @@ namespace m2 {
 	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max)
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
 	float apply_accuracy(float value, float max_swing, float accuracy); /// Returns value ± value * accuracy%
-	bool is_near(float a, float b, float tolerance);
+
+	// Floating point comparisons
+	bool is_near(float a, float b, float tolerance); // a == b
+	bool is_far(float a, float b, float tolerance); // a != b
+	bool is_less(float a, float b, float tolerance); // a < b
+	bool is_less_or_equal(float a, float b, float tolerance); // a <= b
+
 	constexpr float to_radians(float degrees) { return degrees * ::m2::PI / 180.0f; }
 	constexpr float to_radians(int degrees) { return to_radians(static_cast<float>(degrees)); }
 	constexpr float to_degrees(float radians) { return radians / ::m2::PI * 180.0f; }
