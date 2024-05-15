@@ -14,11 +14,13 @@ static TextBlueprint client_count = {
 	.initial_text = "0",
 	.on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
 		auto client_count = M2_GAME.server_thread().client_count();
-		if (client_count < 2) {
-			return std::make_pair(make_continue_action(), std::to_string(client_count));
-		} else {
-			return std::make_pair(make_continue_action(), std::to_string(client_count) + " - START!");
+		auto ready_client_count = M2_GAME.server_thread().ready_client_count();
+		auto text = std::to_string(ready_client_count) + "/" + std::to_string(client_count);
+		// Check if ready to start
+		if (client_count != 1 && client_count == ready_client_count) {
+			text += " - START!";
 		}
+		return std::make_pair(make_continue_action(), text);
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
 		if (2 <= M2_GAME.server_thread().client_count()) {

@@ -29,6 +29,17 @@ int m2::network::ServerThread::client_count() {
 	return I(_clients.size());
 }
 
+int m2::network::ServerThread::ready_client_count() {
+	const std::lock_guard lock(_mutex);
+	int sum = 0;
+	for (const auto& client: _clients) {
+		if (client.is_ready()) {
+			++sum;
+		}
+	}
+	return sum;
+}
+
 unsigned m2::network::ServerThread::turn_holder() {
 	const std::lock_guard lock(_mutex);
 	return _turn_holder;

@@ -39,6 +39,7 @@ namespace m2::network {
 		[[nodiscard]] mplayer::Type type() const { return _type; }
 		bool is_listening();
 		int client_count();
+		int ready_client_count();
 		unsigned turn_holder();
 		std::optional<pb::NetworkMessage> pop_turn_holder_command();
 
