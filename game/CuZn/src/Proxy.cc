@@ -5,10 +5,26 @@
 #include <cuzn/object/Factory.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
+#include <m2/ui/widget/Text.h>
+#include <m2/ui/widget/TextInput.h>
+#include <m2/ui/widget/TextListSelection.h>
+#include <cuzn/ui/Client.h>
+#include <cuzn/ui/PauseMenu.h>
+#include <cuzn/ui/MainMenu.h>
+#include <cuzn/ui/LeftHud.h>
+#include <cuzn/ui/RightHud.h>
 
 #include <random>
 
 using namespace cuzn;
+
+const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
+
+const m2::ui::Blueprint* m2g::Proxy::pause_menu() { return &pause_menu_blueprint; }
+
+const m2::ui::Blueprint* m2g::Proxy::left_hud() { return &left_hud_blueprint; }
+
+const m2::ui::Blueprint* m2g::Proxy::right_hud() { return &right_hud_blueprint; }
 
 void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();

@@ -1,7 +1,11 @@
 #pragma once
+
 #include <m2/ui/Blueprint.h>
+#include <m2/ui/widget/Text.h>
 
 namespace cuzn {
+	constexpr auto quit_button_action = [](MAYBE const m2::ui::widget::Text& self) { return m2::ui::make_quit_action(); };
+
 	/// The Blueprint will be used to select a card and return it from sync UI execution.
 	/// If exclude_card is given, one instance of that card is excluded from the list.
 	/// This is used for making 2 successive card selections, to exclude the first selected card from the second selection.

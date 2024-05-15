@@ -1,7 +1,7 @@
 #include <cuzn/journeys/NetworkJourney.h>
 #include <cuzn/Detail.h>
 #include <cuzn/detail/Network.h>
-#include <cuzn/Ui.h>
+#include <cuzn/ui/Detail.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Game.h>
 #include <m2/Log.h>

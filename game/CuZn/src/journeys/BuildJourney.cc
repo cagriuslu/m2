@@ -2,7 +2,7 @@
 #include <m2/ui/State.h>
 #include <cuzn/Detail.h>
 #include <cuzn/detail/Build.h>
-#include <cuzn/Ui.h>
+#include <cuzn/ui/Detail.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Log.h>
 #include <m2/Game.h>

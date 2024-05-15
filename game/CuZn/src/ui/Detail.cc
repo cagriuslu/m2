@@ -1,4 +1,4 @@
-#include <cuzn/Ui.h>
+#include <cuzn/ui/Detail.h>
 #include <m2/Level.h>
 #include <m2/ui/Action.h>
 #include <m2/Log.h>
