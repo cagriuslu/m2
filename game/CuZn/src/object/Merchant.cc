@@ -1,4 +1,5 @@
 #include <cuzn/object/Merchant.h>
+#include <cuzn/detail/Graphic.h>
 #include <m2/Game.h>
 
 void cuzn::init_merchant(m2::Object& obj) {
@@ -14,14 +15,7 @@ void cuzn::init_merchant(m2::Object& obj) {
 	gfx.on_draw = [&c = chr, pos = obj.position](m2::Graphic& g) {
 		// First, draw the merchant sprite
 		m2::Graphic::default_draw(g);
-
-		// Second, draw the beer barrl if exists
-		auto beer_barrel_count = c.get_resource(m2g::pb::BEER_BARREL_COUNT);
-		if (beer_barrel_count == 1.0f) {
-			draw_real_2d(
-			    pos + m2::VecF{1, 1}, M2_GAME.get_sprite(m2g::pb::BEER_BARREL), m2::IsForegroundCompanion{false}, 0.0f);
-		} else if (beer_barrel_count != 0.0f) {
-			throw M2ERROR(std::string("Invalid beer barrel count: ") + std::to_string(beer_barrel_count));
-		}
+		// Then, draw the resources
+		cuzn::draw_resources(c);
 	};
 }

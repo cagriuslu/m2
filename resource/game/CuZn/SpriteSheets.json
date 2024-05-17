@@ -1644,6 +1644,36 @@
       "heightM": 1,
       "isBackgroundTile": true,
       "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_1X",
+      "text": "1x",
+      "heightM": 1
+    },
+    {
+      "type": "TEXT_LABEL_2X",
+      "text": "2x",
+      "heightM": 1
+    },
+    {
+      "type": "TEXT_LABEL_3X",
+      "text": "3x",
+      "heightM": 1
+    },
+    {
+      "type": "TEXT_LABEL_4X",
+      "text": "4x",
+      "heightM": 1
+    },
+    {
+      "type": "TEXT_LABEL_5X",
+      "text": "5x",
+      "heightM": 1
+    },
+    {
+      "type": "TEXT_LABEL_6X",
+      "text": "6x",
+      "heightM": 1
     }
   ]
 }

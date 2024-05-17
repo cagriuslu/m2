@@ -33,7 +33,7 @@ m2::void_expected cuzn::init_factory(m2::Object& obj, City city, IndustryTile in
 	chr.add_named_item(M2_GAME.get_named_item(industry));
 	chr.add_named_item(M2_GAME.get_named_item(city));
 	chr.add_named_item(M2_GAME.get_named_item(industry_tile));
-	// TODO add resources
+	// TODO look up and add resources
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 
