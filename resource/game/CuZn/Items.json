@@ -575,6 +575,14 @@
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
       "attributes": [
         {
+          "type": "BEER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "BEER_BONUS_SECOND_ERA",
+          "amount": 1.0
+        },
+        {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
           "amount": 1.0
         },
@@ -593,6 +601,14 @@
       "type": "POTTERY_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
       "attributes": [
+        {
+          "type": "BEER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "BEER_BONUS_SECOND_ERA",
+          "amount": 1.0
+        },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
           "amount": 0.0
@@ -613,6 +629,14 @@
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
       "attributes": [
         {
+          "type": "BEER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "BEER_BONUS_SECOND_ERA",
+          "amount": 1.0
+        },
+        {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
           "amount": 1.0
         },
@@ -631,6 +655,14 @@
       "type": "WILD_MERCHANT_LICENSE",
       "category": "ITEM_CATEGORY_MERCHANT_LICENSE",
       "attributes": [
+        {
+          "type": "BEER_BONUS_FIRST_ERA",
+          "amount": 1.0
+        },
+        {
+          "type": "BEER_BONUS_SECOND_ERA",
+          "amount": 1.0
+        },
         {
           "type": "MERCHANT_COUNT_IN_2_PLAYER_GAME",
           "amount": 1.0

@@ -1,5 +1,6 @@
 #include <cuzn/object/Factory.h>
 #include <m2/Game.h>
+#include <cuzn/detail/Graphic.h>
 #include <m2/Log.h>
 
 m2::Object* cuzn::find_factory_at_location(m2g::pb::SpriteType location) {
@@ -36,14 +37,13 @@ m2::void_expected cuzn::init_factory(m2::Object& obj, City city, IndustryTile in
 	// TODO look up and add resources
 
 	auto color = M2G_PROXY.player_colors[parent_index];
-
 	auto& _gfx = obj.add_graphic(industry_sprite_of_industry(industry));
 	_gfx.on_draw = [color](m2::Graphic& gfx) {
 		auto top_left_cell_pos = gfx.parent().position;
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};
 		m2::Graphic::color_rect(cell_rect, color); // Draw background
 		m2::Graphic::default_draw(gfx); // Draw industry
-		// TODO draw resources
+		cuzn::draw_resources(gfx.parent().character()); // Resources
 	};
 
 	return {};

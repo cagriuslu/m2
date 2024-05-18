@@ -47,11 +47,6 @@ namespace m2g {
 		std::optional<std::variant<cuzn::BuildJourney, cuzn::NetworkJourney>> user_journey;
 		static void user_journey_deleter();
 
-		unsigned player_index(m2::Id id) const;
-
-	private:
-		std::vector<pb::ItemType> prepare_merchant_license_list(int client_count);
-		std::vector<pb::SpriteType> pick_active_merchants(int client_count);
-		std::vector<pb::ItemType> prepare_draw_deck(int client_count);
+		[[nodiscard]] unsigned player_index(m2::Id id) const;
 	};
 }  // namespace m2g

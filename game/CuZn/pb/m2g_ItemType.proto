@@ -53,7 +53,7 @@ enum ItemType {
   POTTERY_MERCHANT_LICENSE = 102;
   MANUFACTURED_GOODS_MERCHANT_LICENSE = 103;
   WILD_MERCHANT_LICENSE = 104;
-  NO_MERCHANT_LICENSE = 105;
+  NO_MERCHANT_LICENSE = 105; // Given to deactivated merchants
 
   // Industry tiles
   // The order should not be modified carelessly.

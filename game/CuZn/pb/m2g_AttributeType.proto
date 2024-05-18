@@ -12,27 +12,27 @@ enum AttributeType {
     IS_FLIPPED = 3;
 
     // ITEM_CATEGORY_TILE
-    VICTORY_POINTS_BONUS = 4;
-    INCOME_POINTS_BONUS = 5;
-    LINK_BONUS = 6;
+    VICTORY_POINTS_BONUS = 4; // Number of victory points gained when the factory is sold
+    INCOME_POINTS_BONUS = 5; // Number of income points gained when the factory is sold
+    LINK_BONUS = 6; // Number of links a factory have
     DEVELOPMENT_BONUS = 7;
-    MONEY_COST = 8;
-    COAL_COST = 9;
-    IRON_COST = 10;
-    BEER_COST = 11;
+    MONEY_COST = 8; // Amount of money required to build a factory
+    COAL_COST = 9; // Amount of coal cubes required to build a factory
+    IRON_COST = 10; // Amount of iron cubes required to build a factory
+    BEER_COST = 11; // Amount of beer barrels required to sell a factory
     FORBIDDEN_ERA = 12;
     DEVELOPMENT_BAN = 13;
-    BEER_BONUS_FIRST_ERA = 14;
-    BEER_BONUS_SECOND_ERA = 15;
-    COAL_BONUS = 16;
-    IRON_BONUS = 17;
-    POSSESSION_LIMIT = 18; // How many of such items can be held by each player
+    BEER_BONUS_FIRST_ERA = 14; // Number of beer barrels gained when this factory is built
+    BEER_BONUS_SECOND_ERA = 15; // Number of beer barrels gained when this factory is built
+    COAL_BONUS = 16; // Number of coal cubes gained when this factory is built
+    IRON_BONUS = 17; // Number of iron cubes gained when this factory is built
+    POSSESSION_LIMIT = 18; // How many of such items can be held by each player (factory and road tiles)
 
     // ITEM_CATEGORY_CARD
     COUNT_IN_2_PLAYER_GAME = 19; // How many exists in the game for a 2-player game
     COUNT_IN_3_PLAYER_GAME = 20; // How many exists in the game for a 3-player game
     COUNT_IN_4_PLAYER_GAME = 21; // How many exists in the game for a 4-player game
-    MERCHANT_COUNT_IN_2_PLAYER_GAME = 22;
-    MERCHANT_COUNT_IN_3_PLAYER_GAME = 23;
-    MERCHANT_COUNT_IN_4_PLAYER_GAME = 24;
+    MERCHANT_COUNT_IN_2_PLAYER_GAME = 22; // Merchant license count in a 2 player game
+    MERCHANT_COUNT_IN_3_PLAYER_GAME = 23; // Merchant license count in a 3 player game
+    MERCHANT_COUNT_IN_4_PLAYER_GAME = 24; // Merchant license count in a 4 player game
 }

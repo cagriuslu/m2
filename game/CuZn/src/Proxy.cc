@@ -14,8 +14,6 @@
 #include <cuzn/ui/LeftHud.h>
 #include <cuzn/ui/RightHud.h>
 
-#include <random>
-
 using namespace cuzn;
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
@@ -45,9 +43,8 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 		}
 	}
 
-	// Add merchants
-	auto active_merchants = pick_active_merchants(client_count);
-	for (const auto& merchant_sprite : active_merchants) {
+	// Add all merchants (without license) since all merchants can deal in coal
+	for (const auto& merchant_sprite : active_merchant_locations()) {
 		// Lookup the location of the merchant
 		auto posF = m2::VecF{merchant_positions[merchant_sprite]} + m2::VecF{0.5f, 0.5f};
 		// Create merchant object
@@ -66,24 +63,27 @@ void m2g::Proxy::post_multi_player_level_init(MAYBE const std::string& name, MAY
 void m2g::Proxy::multi_player_level_host_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	auto client_count = M2_GAME.server_thread().client_count();
 
-	// Prepare active merchant license list
-	auto merchant_license_list = prepare_merchant_license_list(client_count);
-	if (merchant_license_list.size() != merchant_object_ids.size()) {
-		throw M2ERROR("Merchant count and merchant license count mismatch");
-	}
-	// Assign licenses to merchants
+	// Assign licenses to active merchants
 	{
-		int i = 0;
-		for (const auto& merchant_id : merchant_object_ids) {
-			auto license = merchant_license_list[i++];
-			auto& merchant = M2_LEVEL.objects[merchant_id.second];
+		auto merchant_licenses = prepare_merchant_license_list(client_count);
+		auto active_merchant_locations = cuzn::active_merchant_locations(client_count);
+		if (merchant_licenses.size() != active_merchant_locations.size()) {
+			throw M2ERROR("Merchant count mismatch");
+		}
+
+		for (const auto& merchant_location : active_merchant_locations) {
+			// Pop license from the list
+			auto license = merchant_licenses.back();
+			merchant_licenses.pop_back();
+			const auto& license_item = M2_GAME.get_named_item(license);
+
+			// Retrieve merchant object
+			auto merchant_object_id = merchant_object_ids[merchant_location];
+			auto& merchant_char = M2_LEVEL.objects[merchant_object_id].character();
 
 			LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
-			merchant.character().add_named_item(M2_GAME.get_named_item(license));
-			// Add beer to non-NO_LICENSE merchants
-			if (license != m2g::pb::NO_MERCHANT_LICENSE) {
-				merchant.character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
-			}
+			merchant_char.add_named_item(license_item);
+			merchant_char.add_resource(pb::BEER_BARREL_COUNT, license_item.get_attribute(pb::BEER_BONUS_FIRST_ERA));
 		}
 	}
 
@@ -205,87 +205,4 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 	} else {
 		throw M2ERROR("Invalid player ID");
 	}
-}
-
-std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_merchant_license_list(int client_count) {
-	// Figure out the attribute to use for card selection
-	m2g::pb::AttributeType count_attr = [=]() {
-		switch (client_count) {
-			case 2:
-				return m2g::pb::MERCHANT_COUNT_IN_2_PLAYER_GAME;
-			case 3:
-				return m2g::pb::MERCHANT_COUNT_IN_3_PLAYER_GAME;
-			case 4:
-				return m2g::pb::MERCHANT_COUNT_IN_4_PLAYER_GAME;
-			default:
-				throw M2ERROR("Invalid client count");
-		}
-	}();
-
-	// Prepare the list
-	std::vector<m2g::pb::ItemType> merchant_license_list;
-	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
-		const auto& item = M2_GAME.get_named_item(item_type);
-		if (item.category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
-			auto license_count = static_cast<int>(item.get_attribute(count_attr));
-			merchant_license_list.insert(merchant_license_list.end(), license_count, item.type());
-		}
-	}
-
-	// Shuffle the licenses
-	std::random_device rd;
-	std::mt19937 license_shuffler(rd());
-	std::shuffle(merchant_license_list.begin(), merchant_license_list.end(), license_shuffler);
-
-	return merchant_license_list;
-}
-
-std::vector<m2g::pb::SpriteType> m2g::Proxy::pick_active_merchants(int client_count) {
-	switch (client_count) {
-		case 2:
-			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1, pb::OXFORD_2};
-		case 3:
-			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1,
-			        pb::OXFORD_2,     pb::WARRINGTON_1, pb::WARRINGTON_2};
-		case 4:
-			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1,    pb::OXFORD_2,
-			        pb::NOTTINGHAM_1, pb::NOTTINGHAM_2, pb::WARRINGTON_1, pb::WARRINGTON_2};
-		default:
-			throw M2ERROR("Invalid client count");
-	}
-}
-
-std::vector<m2g::pb::ItemType> m2g::Proxy::prepare_draw_deck(int client_count) {
-	// Figure out the attribute to use for card selection
-	m2g::pb::AttributeType count_attr = [=]() {
-		switch (client_count) {
-			case 2:
-				return m2g::pb::COUNT_IN_2_PLAYER_GAME;
-			case 3:
-				return m2g::pb::COUNT_IN_3_PLAYER_GAME;
-			case 4:
-				return m2g::pb::COUNT_IN_4_PLAYER_GAME;
-			default:
-				throw M2ERROR("Invalid client count");
-		}
-	}();
-
-	// Prepare deck
-	std::vector<m2g::pb::ItemType> draw_deck;
-	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
-		const auto& item = M2_GAME.get_named_item(item_type);
-		if (item.category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.category() == pb::ITEM_CATEGORY_CITY_CARD) {
-			auto card_count = static_cast<int>(item.get_attribute(count_attr));
-			draw_deck.insert(draw_deck.end(), card_count, item.type());
-		}
-	}
-
-	// Shuffle the cards
-	std::random_device rd;
-	std::mt19937 card_shuffler(rd());
-	std::shuffle(draw_deck.begin(), draw_deck.end(), card_shuffler);
-
-	return draw_deck;
 }
