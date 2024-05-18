@@ -140,11 +140,11 @@ bool cuzn::is_railroad_license(m2g::pb::ItemType item) {
 }
 
 bool cuzn::is_canal_era() {
-	return M2_PLAYER.character().get_resource(ERA) == 1.0f;
+	return m2::is_equal(M2_PLAYER.character().get_resource(ERA), 1.0f, 0.001f);
 }
 
 bool cuzn::is_railroad_era() {
-	return M2_PLAYER.character().get_resource(ERA) == 2.0f;
+	return m2::is_equal(M2_PLAYER.character().get_resource(ERA), 2.0f, 0.001f);
 }
 
 cuzn::City cuzn::city_of_industry_location(IndustryLocation location) {

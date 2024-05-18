@@ -43,6 +43,12 @@ bool m2::is_near(float a, float b, float tolerance) {
 bool m2::is_far(float a, float b, float tolerance) {
 	return fabsf(tolerance) < fabsf(b - a);
 }
+bool m2::is_equal(float a, float b, float tolerance) {
+	return is_near(a, b, tolerance);
+}
+bool m2::is_not_equal(float a, float b, float tolerance) {
+	return not is_near(a, b, tolerance);
+}
 bool m2::is_less(float a, float b, float tolerance) {
 	return fabsf(tolerance) < (b - a);
 }

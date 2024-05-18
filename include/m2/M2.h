@@ -30,6 +30,8 @@ namespace m2 {
 	// Floating point comparisons
 	bool is_near(float a, float b, float tolerance); // a == b
 	bool is_far(float a, float b, float tolerance); // a != b
+	bool is_equal(float a, float b, float tolerance); // a == b
+	bool is_not_equal(float a, float b, float tolerance); // a != b
 	bool is_less(float a, float b, float tolerance); // a < b
 	bool is_less_or_equal(float a, float b, float tolerance); // a <= b
 

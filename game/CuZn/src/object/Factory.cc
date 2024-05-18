@@ -3,7 +3,10 @@
 #include <cuzn/detail/Graphic.h>
 #include <m2/Log.h>
 
-m2::Object* cuzn::find_factory_at_location(m2g::pb::SpriteType location) {
+using namespace m2g;
+using namespace cuzn;
+
+m2::Object* cuzn::find_factory_at_location(pb::SpriteType location) {
 	auto factories = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
@@ -33,8 +36,15 @@ m2::void_expected cuzn::init_factory(m2::Object& obj, City city, IndustryTile in
 	auto& chr = obj.add_full_character();
 	chr.add_named_item(M2_GAME.get_named_item(industry));
 	chr.add_named_item(M2_GAME.get_named_item(city));
-	chr.add_named_item(M2_GAME.get_named_item(industry_tile));
-	// TODO look up and add resources
+	const auto& tile_item = M2_GAME.get_named_item(industry_tile);
+	chr.add_named_item(tile_item);
+	chr.add_resource(pb::COAL_CUBE_COUNT, tile_item.get_attribute(pb::COAL_BONUS));
+	chr.add_resource(pb::IRON_CUBE_COUNT, tile_item.get_attribute(pb::IRON_BONUS));
+	if (is_canal_era()) {
+		chr.add_resource(pb::BEER_BARREL_COUNT, tile_item.get_attribute(pb::BEER_BONUS_FIRST_ERA));
+	} else {
+		chr.add_resource(pb::BEER_BARREL_COUNT, tile_item.get_attribute(pb::BEER_BONUS_SECOND_ERA));
+	}
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.add_graphic(industry_sprite_of_industry(industry));
@@ -43,7 +53,7 @@ m2::void_expected cuzn::init_factory(m2::Object& obj, City city, IndustryTile in
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};
 		m2::Graphic::color_rect(cell_rect, color); // Draw background
 		m2::Graphic::default_draw(gfx); // Draw industry
-		cuzn::draw_resources(gfx.parent().character()); // Resources
+		draw_resources(gfx.parent().character()); // Resources
 	};
 
 	return {};
