@@ -15,18 +15,18 @@ The client game may call ClientThread::set_ready_blocking again to signify itsel
 - The server game should call ServerThread::close_lobby to close the lobby for further connections. This call
 won't succeed unless all the clients are ready.
 - The server game should call Game::load_multi_player_as_host to start the game. This function first initializes the given
-level. During the initialization, Proxy::pre_multi_player_level_init and Proxy::post_multi_player_level_init functions will
+level. During the initialization, Proxy::pre_multi_player_level_client_init and Proxy::post_multi_player_level_client_init functions will
 be called. The execution of these functions should not differ in the server and the client. Then, ServerThread::server_update
 will be called automatically, which will publish the initial state of the game to the clients.
 - If ClientThread::is_started returns true on the client side, the game may call ClientThread::peek_unprocessed_server_update
 to have a peek at the ServerUpdate. At this point, the most important information in the ServerUpdate is the number of players.
 - The client game should call Game::load_multi_player_as_guest to start the game with the same parameters as the server.
-This function first initializes the given level. During the initialization, Proxy::pre_multi_player_level_init and
-Proxy::post_multi_player_level_init functions will be called. The execution of these functions should not differ in the
+This function first initializes the given level. During the initialization, Proxy::pre_multi_player_level_client_init and
+Proxy::post_multi_player_level_client_init functions will be called. The execution of these functions should not differ in the
 server and the client. Then, ClientThread::process_server_update will be called automatically to consume the first ServerUpdate.
 This initial call will only validate the client game state against the server game state. The client game should return
 to the game loop after Game::load_multi_player_as_guest returns.
-- On the server side, Game::load_multi_player_as_host function will then call Proxy::multi_player_level_host_populate for
+- On the server side, Game::load_multi_player_as_host function will then call Proxy::multi_player_level_server_populate for
 the server game to populate the level further based on number of players, randomness, etc. Lastly,
 ServerThread::server_update will automatically be called again to publish the customized state of the game to the clients.
 The server game should return to the game loop after Game::load_multi_player_as_host returns.
@@ -36,7 +36,7 @@ Any command produced by the clients other than the turn holder will be dropped b
 for them to be processed. If Proxy::handle_client_command returns a value, a server update will be sent during post-step.
 - The client game loop will periodically check for ServerUpdate during post-step, and will process it if it's received.
 
-Both on the server and the client side, after the level is initialized (usually in Proxy::post_multi_player_level_init),
+Both on the server and the client side, after the level is initialized (usually in Proxy::post_multi_player_level_client_init),
 Proxy.multi_player_object_ids should contain the IDs of the objects that'll correspond to human players. The order of the
 IDs should reflect the order of the human players on the server, but the actual ID values doesn't need to be the same.
 This can be achieved by clients selecting the object ID at index ClientThread::receiver_index as the game player (by setting

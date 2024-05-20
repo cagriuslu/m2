@@ -51,14 +51,14 @@ m2::void_expected m2::Level::init_multi_player_as_host(
 	type_state.emplace<mplayer::State>();
 
 	auto success = init_any_player(
-	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_init, &m2g::Proxy::post_multi_player_level_init);
+	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 	m2_reflect_failure(success);
 
 	// Execute the first server update
 	M2_GAME.server_thread().server_update();
 
 	// Populate level
-	M2G_PROXY.multi_player_level_host_populate(_name, *_lb);
+	M2G_PROXY.multi_player_level_server_populate(_name, *_lb);
 
 	// Execute second server update
 	M2_GAME.server_thread().server_update();
@@ -72,7 +72,7 @@ m2::void_expected m2::Level::init_multi_player_as_guest(
 	type_state.emplace<mplayer::State>();
 
 	auto success = init_any_player(
-	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_init, &m2g::Proxy::post_multi_player_level_init);
+	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 	m2_reflect_failure(success);
 
 	// Consume the ServerUpdate that caused the level to be initialized

@@ -20,8 +20,8 @@ namespace m2g {
 		const m2::ui::Blueprint* left_hud();
 		const m2::ui::Blueprint* right_hud();
 
-		void post_multi_player_level_init(const std::string& name, const m2::pb::Level& level);
-		void multi_player_level_host_populate(const std::string& name, const m2::pb::Level& level);
+		void post_multi_player_level_client_init(const std::string& name, const m2::pb::Level& level);
+		void multi_player_level_server_populate(const std::string& name, const m2::pb::Level& level);
 		std::optional<int> handle_client_command(
 			unsigned turn_holder_index, const pb::ClientCommand& client_command);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
