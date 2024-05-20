@@ -13,6 +13,7 @@
 #include <cuzn/ui/MainMenu.h>
 #include <cuzn/ui/LeftHud.h>
 #include <cuzn/ui/RightHud.h>
+#include <cuzn/detail/SetUp.h>
 
 using namespace cuzn;
 
