@@ -16,15 +16,17 @@ float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
 }
 
 m2::Character::Character(uint64_t object_id) : Component(object_id) {}
-void m2::Character::execute_interaction(Character& initiator, const m2g::pb::InteractionData& data) {
+std::optional<m2g::pb::InteractionData> m2::Character::execute_interaction(Character& initiator, const m2g::pb::InteractionData& data) {
 	if (this->on_interaction) {
-		this->on_interaction(*this, &initiator, data);
+		return this->on_interaction(*this, &initiator, data);
 	}
+	return std::nullopt;
 }
-void m2::Character::execute_interaction(const m2g::pb::InteractionData& data) {
+std::optional<m2g::pb::InteractionData> m2::Character::execute_interaction(const m2g::pb::InteractionData& data) {
 	if (this->on_interaction) {
-		this->on_interaction(*this, nullptr, data);
+		return this->on_interaction(*this, nullptr, data);
 	}
+	return std::nullopt;
 }
 bool m2::Character::has_item(m2g::pb::ItemType item_type) const {
     for (auto it = begin_items(); it != end_items(); ++it) {

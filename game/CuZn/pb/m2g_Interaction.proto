@@ -1,8 +1,11 @@
 syntax = "proto3";
 package m2g.pb;
 
-enum InteractionType {
-    NO_INTERACTION = 0;
+message InteractionData {
+  oneof type {
+    int32 ask_coal_cost = 1;
+    int32 return_coal_cost = 2;
+    int32 ask_iron_cost = 3;
+    int32 return_iron_cost = 4;
+  }
 }
-
-message InteractionData {}

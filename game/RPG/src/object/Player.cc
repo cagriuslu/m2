@@ -146,7 +146,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			other_char->execute_interaction(data);
 		}
 	};
-	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) {
+	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
 		if (data.has_hit_damage()) {
 			// Get hit by an enemy
 			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
@@ -167,6 +167,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			// Add item
 			self.add_named_item(item);
 		}
+		return std::nullopt;
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		impl.animation_fsm.time(M2_GAME.delta_time_s());

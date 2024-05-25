@@ -34,7 +34,7 @@ namespace m2 {
 	class Character : public Component {
 	public:
 		std::function<void(Character& self)> update;
-		std::function<void(Character& self, Character* other, const m2g::pb::InteractionData& data)> on_interaction;
+		std::function<std::optional<m2g::pb::InteractionData>(Character& self, Character* other, const m2g::pb::InteractionData& data)> on_interaction;
 
 		class Iterator {
 		public:
@@ -72,8 +72,8 @@ namespace m2 {
 		explicit Character(uint64_t object_id);
 
 		virtual void automatic_update() = 0;
-		void execute_interaction(Character& initiator, const m2g::pb::InteractionData& data);
-		void execute_interaction(const m2g::pb::InteractionData& data);
+		std::optional<m2g::pb::InteractionData> execute_interaction(Character& initiator, const m2g::pb::InteractionData& data);
+		std::optional<m2g::pb::InteractionData> execute_interaction(const m2g::pb::InteractionData& data);
 
 		[[nodiscard]] bool has_item(m2g::pb::ItemType item_type) const;
 		[[nodiscard]] bool has_item(m2g::pb::ItemCategory item_cat) const;

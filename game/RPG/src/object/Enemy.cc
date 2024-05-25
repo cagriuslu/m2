@@ -79,7 +79,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			[](MAYBE auto& v) { }
 		}, impl.ai_fsm);
 	};
-	chr.on_interaction = [&, obj_type = obj.object_type()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) {
+	chr.on_interaction = [&, obj_type = obj.object_type()](m2::Character& self, MAYBE m2::Character* other, const InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
 		if (data.has_hit_damage()) {
 			// Deduct HP
 			self.remove_resource(RESOURCE_HP, data.hit_damage());
@@ -142,6 +142,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		} else if (data.has_stun_duration()) {
 			self.set_resource(m2g::pb::RESOURCE_STUN_TTL, data.stun_duration());
 		}
+		return std::nullopt;
 	};
 	phy.post_step = [&](MAYBE m2::Physique& phy) {
 		m2::VecF velocity = m2::VecF{phy.body->GetLinearVelocity()};

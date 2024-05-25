@@ -1,8 +1,4 @@
 syntax = "proto3";
 package m2g.pb;
 
-enum InteractionType {
-    NO_INTERACTION = 0;
-}
-
 message InteractionData {}

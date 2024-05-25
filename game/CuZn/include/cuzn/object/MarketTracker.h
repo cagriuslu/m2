@@ -1,0 +1,8 @@
+#pragma once
+#include <m2/Object.h>
+
+namespace cuzn {
+	// The market is modeled as a game object that tracks the state of the market.
+	// This enables the ServerUpdate mechanism to update the market state automatically.
+	void init_market(m2::Object& obj);
+}

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cuzn/detail/Market.h>
 #include <cuzn/Detail.h>
 #include <cuzn/detail/Build.h>
 #include <m2/Proxy.h>
@@ -31,9 +30,6 @@ namespace m2g {
 
 	private:
 		m2::Id _market_object_id{};
-		// Only the host initializes these fields
-		std::optional<cuzn::Market<cuzn::COAL_MARKET_CAPACITY>> _coal_market;
-		std::optional<cuzn::Market<cuzn::IRON_MARKET_CAPACITY>> _iron_market;
 
 	public:
 		// Once the level is created, these should not be modified.

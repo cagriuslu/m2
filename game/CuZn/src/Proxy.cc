@@ -1,6 +1,6 @@
 #include <m2g/Proxy.h>
 #include <cuzn/object/HumanPlayer.h>
-#include <cuzn/object/Market.h>
+#include <cuzn/object/MarketTracker.h>
 #include <cuzn/object/Merchant.h>
 #include <cuzn/object/Factory.h>
 #include <m2/Log.h>
@@ -56,7 +56,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	}
 
 	// Add market object
-	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET);
+	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET_TRACKER);
 	init_market(*it);
 	_market_object_id = it.id();
 }
@@ -87,10 +87,6 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 			merchant_char.add_resource(pb::BEER_BARREL_COUNT, license_item.get_attribute(pb::BEER_BONUS_FIRST_ERA));
 		}
 	}
-
-	// Initialize market
-	_coal_market.emplace(COAL_MARKET_INITIAL_COUNT, m2g::pb::COAL_CUBE_COUNT, _market_object_id);
-	_iron_market.emplace(IRON_MARKET_INITIAL_COUNT, m2g::pb::IRON_CUBE_COUNT, _market_object_id);
 
 	// Prepare draw deck
 	auto draw_deck = prepare_draw_deck(client_count);
