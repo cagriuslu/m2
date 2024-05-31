@@ -13,7 +13,14 @@ bool cuzn::is_card(Card card) {
 }
 
 bool cuzn::is_city(City city) {
+	return is_industry_city(city) || is_merchant_city(city);
+}
+
+bool cuzn::is_industry_city(IndustryCity city) {
 	return (BELPER_CARD <= city && city <= STANDALONE_LOCATION_2_CARD);
+}
+bool cuzn::is_merchant_city(MerchantCity city) {
+	return (GLOUCESTER_CARD <= city && city <= WARRINGTON_CARD);
 }
 
 bool cuzn::is_industry(Industry industry) {
@@ -42,12 +49,20 @@ bool cuzn::is_industry_sprite(IndustrySprite industry_sprite) {
 	}
 }
 
+bool cuzn::is_location(Location location) {
+	return is_industry_location(location) || is_merchant_location(location);
+}
+
 bool cuzn::is_industry_location(IndustryLocation location) {
 	return (BELPER_COTTON_MILL_MANUFACTURED_GOODS <= location && location <= STANDALONE_BREWERY_2);
 }
 
-bool cuzn::is_canal_location(NetworkLocation location) {
-	switch (location) {
+bool cuzn::is_merchant_location(MerchantLocation location) {
+	return GLOUCESTER_1 <= location && location <= WARRINGTON_2;
+}
+
+bool cuzn::is_canal(Connection connection) {
+	switch (connection) {
 		case BELPER_DERBY_CANAL_RAILROAD:
 		case DERBY_BURTON_UPON_TRENT_CANAL_RAILROAD:
 		case DERBY_NOTTINGHAM_CANAL_RAILROAD:
@@ -85,8 +100,8 @@ bool cuzn::is_canal_location(NetworkLocation location) {
 	}
 }
 
-bool cuzn::is_railroad_location(NetworkLocation location) {
-	switch (location) {
+bool cuzn::is_railroad(Connection connection) {
+	switch (connection) {
 		case BELPER_DERBY_CANAL_RAILROAD:
 		case BELPER_LEEK_RAILROAD:
 		case DERBY_UTTOXETER_RAILROAD:
@@ -147,9 +162,14 @@ bool cuzn::is_railroad_era() {
 	return m2::is_equal(M2_PLAYER.character().get_resource(ERA), 2.0f, 0.001f);
 }
 
-cuzn::City cuzn::city_of_industry_location(IndustryLocation location) {
-	if (not is_industry_location(location)) {
-		throw M2ERROR("Sprite is not an industry location");
+bool cuzn::location_has_industry(IndustryLocation location, Industry industry) {
+	auto industries = industries_on_location(location);
+	return std::ranges::find(industries, industry) != industries.end();
+}
+
+cuzn::City cuzn::city_of_location(Location location) {
+	if (not is_location(location)) {
+		throw M2ERROR("Sprite is not a location");
 	}
 
 	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
@@ -228,7 +248,29 @@ cuzn::IndustrySprite cuzn::industry_sprite_of_industry(Industry industry) {
 	}
 }
 
-std::vector<cuzn::IndustryLocation> cuzn::locations_in_city(City city_card) {
+cuzn::MerchantLocation cuzn::merchant_location_of_merchant_city(MerchantCity city) {
+	if (not is_merchant_city(city)) {
+		throw M2ERROR("Invalid merchant city");
+	}
+
+	std::optional<cuzn::MerchantLocation> location;
+	M2_GAME.for_each_sprite([&location, city](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
+		if (is_merchant_location(sprite_type)) {
+			auto it = std::ranges::find(sprite.named_items(), city);
+			if (it != sprite.named_items().end()) {
+				location = sprite_type;
+				return false;
+			}
+		}
+		return true;
+	});
+	if (not location) {
+		throw M2ERROR("Unable to find location of merchant city");
+	}
+	return *location;
+}
+
+std::vector<cuzn::IndustryLocation> cuzn::industry_locations_in_city(City city_card) {
 	if (not is_city(city_card)) {
 		throw M2ERROR("Card does not belong to a city");
 	}
@@ -237,11 +279,38 @@ std::vector<cuzn::IndustryLocation> cuzn::locations_in_city(City city_card) {
 	// Iterate over industries
 	for (auto industry_location = BELPER_COTTON_MILL_MANUFACTURED_GOODS; industry_location <= STANDALONE_BREWERY_2;
 		industry_location = static_cast<m2g::pb::SpriteType>(m2::I(industry_location) + 1)) {
-		if (city_of_industry_location(industry_location) == city_card) {
+		if (city_of_location(industry_location) == city_card) {
 			industry_locations.emplace_back(industry_location);
 		}
 	}
 	return industry_locations;
+}
+
+std::vector<cuzn::Connection> cuzn::connections_from_city(City city_card) {
+	std::vector<cuzn::Connection> connections;
+	M2_GAME.for_each_sprite([&connections, city_card](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
+		auto city_license = std::ranges::find(sprite.named_items(), city_card);
+		if (city_license != sprite.named_items().end()) {
+			auto canal_license = std::ranges::find(sprite.named_items(), CANAL_LICENSE);
+			auto railroad_license = std::ranges::find(sprite.named_items(), RAILROAD_LICENSE);
+			if (canal_license != sprite.named_items().end() || railroad_license != sprite.named_items().end()) {
+				connections.emplace_back(sprite_type);
+			}
+		}
+		return true;
+	});
+	return connections;
+}
+
+std::vector<cuzn::City> cuzn::cities_from_connection(Connection connection) {
+	std::vector<City> cities;
+	auto connection_items = M2_GAME.get_sprite(connection).named_items();
+	for (auto item_type : connection_items) {
+		if (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD) {
+			cities.emplace_back(item_type);
+		}
+	}
+	return cities;
 }
 
 std::vector<cuzn::Industry> cuzn::industries_on_location(IndustryLocation location) {
@@ -258,9 +327,19 @@ std::vector<cuzn::Industry> cuzn::industries_on_location(IndustryLocation locati
 	return industries;
 }
 
-bool cuzn::location_has_industry(IndustryLocation location, Industry industry) {
-	auto industries = industries_on_location(location);
-	return std::ranges::find(industries, industry) != industries.end();
+SDL_Color cuzn::generate_player_color(unsigned index) {
+	switch (index) {
+		case 0:
+			return SDL_Color{165, 42, 42, 255};
+		case 1:
+			return SDL_Color{173, 255, 47, 255};
+		case 2:
+			return SDL_Color{32, 178, 170, 255};
+		case 3:
+			return SDL_Color{255, 165, 0, 255};
+		default:
+			throw M2ERROR("Invalid player index");
+	}
 }
 
 std::optional<cuzn::IndustryLocation> cuzn::industry_location_on_position(const m2::VecF& world_position) {
@@ -271,6 +350,15 @@ std::optional<cuzn::IndustryLocation> cuzn::industry_location_on_position(const 
 	} else {
 		return std::nullopt;
 	}
+}
+
+std::optional<cuzn::MerchantLocation> cuzn::merchant_location_on_position(const m2::VecF& world_position) {
+	auto it = std::find_if(M2G_PROXY.merchant_positions.begin(), M2G_PROXY.merchant_positions.end(),
+		[&](const auto& pos_and_type) { return pos_and_type.second.second.contains(world_position); });
+	if (it != M2G_PROXY.merchant_positions.end()) {
+		return it->first;
+	}
+	return std::nullopt;
 }
 
 m2::VecF cuzn::position_of_industry_location(IndustryLocation industry_location) {
@@ -284,27 +372,12 @@ m2::VecF cuzn::position_of_industry_location(IndustryLocation industry_location)
 	}
 }
 
-std::optional<cuzn::NetworkLocation> cuzn::network_location_on_position(const m2::VecF& world_position) {
-	auto it = std::find_if(M2G_PROXY.network_positions.begin(), M2G_PROXY.network_positions.end(),
-		[&](const auto& pos_and_type) { return pos_and_type.second.contains(world_position); });
-	if (it != M2G_PROXY.network_positions.end()) {
+std::optional<cuzn::Connection> cuzn::connection_on_position(const m2::VecF& world_position) {
+	auto it = std::find_if(M2G_PROXY.connection_positions.begin(), M2G_PROXY.connection_positions.end(),
+		[&](const auto& pos_and_type) { return pos_and_type.second.second.contains(world_position); });
+	if (it != M2G_PROXY.connection_positions.end()) {
 		return it->first;
 	} else {
 		return std::nullopt;
-	}
-}
-
-SDL_Color cuzn::generate_player_color(unsigned index) {
-	switch (index) {
-		case 0:
-			return SDL_Color{165, 42, 42, 255};
-		case 1:
-			return SDL_Color{173, 255, 47, 255};
-		case 2:
-			return SDL_Color{32, 178, 170, 255};
-		case 3:
-			return SDL_Color{255, 165, 0, 255};
-		default:
-			throw M2ERROR("Invalid player index");
 	}
 }

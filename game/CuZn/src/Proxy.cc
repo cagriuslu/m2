@@ -14,6 +14,7 @@
 #include <cuzn/ui/LeftHud.h>
 #include <cuzn/ui/RightHud.h>
 #include <cuzn/detail/SetUp.h>
+#include <m2/game/Detail.h>
 
 using namespace cuzn;
 
@@ -46,10 +47,8 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 
 	// Add all merchants (without license) since all merchants can deal in coal
 	for (const auto& merchant_sprite : active_merchant_locations()) {
-		// Lookup the location of the merchant
-		auto posF = m2::VecF{merchant_positions[merchant_sprite]} + m2::VecF{0.5f, 0.5f};
 		// Create merchant object
-		auto it = m2::create_object(posF, m2g::pb::ObjectType::MERCHANT);
+		auto it = m2::create_object(merchant_positions[merchant_sprite].first, m2g::pb::ObjectType::MERCHANT);
 		init_merchant(*it);
 		// Store for later
 		merchant_object_ids[merchant_sprite] = it.id();
@@ -117,7 +116,7 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 			m2g::pb::FACTORY,
 			M2G_PROXY.multi_player_object_ids[turn_holder_index]);
 		auto success = init_factory(*it,
-			city_of_industry_location(client_command.build_action().industry_location()),
+			city_of_location(client_command.build_action().industry_location()),
 			client_command.build_action().industry_tile());
 		// TODO check result
 	}
@@ -128,41 +127,31 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
 	// Store the positions of the merchants
-	if (pb::GLOUCESTER_1 <= sprite_type && sprite_type <= pb::WARRINGTON_2) {
-		auto pos = m2::VecI{floorf(obj.position.x), floorf(obj.position.y)};
-		merchant_positions[sprite_type] = pos;
-		position_merchants[pos] = sprite_type;
+	if (is_merchant_location(sprite_type)) {
+		// Object position has {0.5f, 0.5f} offset
+		auto merchant_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
+		merchant_positions[sprite_type] = std::make_pair(obj.position, merchant_cell_rect);
+		LOG_DEBUG("Merchant position", m2g::pb::SpriteType_Name(sprite_type), merchant_cell_rect);
 	}
 
 	// Store the positions of the industries build locations
-	if (pb::BELPER_COTTON_MILL_MANUFACTURED_GOODS <= sprite_type && sprite_type <= pb::STANDALONE_BREWERY_2) {
+	else if (is_industry_location(sprite_type)) {
 		// Verify that ppm of the industry tiles are double of the sprite sheet
 		if (M2_GAME.get_sprite(sprite_type).ppm() != M2_GAME.get_sprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
 			throw M2ERROR("Sprite ppm mismatch");
 		}
-
 		// Object position has {0.5f, 0.5f} offset
-		auto industry_cell_rect = m2::RectF{
-			obj.position.x - 0.5f,
-			obj.position.y - 0.5f,
-			2.0f,
-			2.0f
-		};
+		auto industry_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
 		industry_positions[sprite_type] = std::make_pair(obj.position, industry_cell_rect);
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_cell_rect);
 	}
 
-	// Store the positions of the network locations
-	if (pb::BELPER_DERBY_CANAL_RAILROAD <= sprite_type && sprite_type <= pb::REDDITCH_OXFORD_CANAL_RAILROAD) {
+	// Store the positions of the connection locations
+	else if (is_canal(sprite_type) || is_railroad(sprite_type)) {
 		// Object position has {0.5f, 0.5f} offset
-		auto network_position = m2::RectF{
-			obj.position.x - 0.5f,
-			obj.position.y - 0.5f,
-			1.0f,
-			1.0f
-		};
-		network_positions[sprite_type] = network_position;
-		LOG_DEBUG("Network position", m2g::pb::SpriteType_Name(sprite_type), network_position);
+		auto connection_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 1.0f, 1.0f};
+		connection_positions[sprite_type] = std::make_pair(obj.position, connection_cell_rect);
+		LOG_DEBUG("Connection position", m2g::pb::SpriteType_Name(sprite_type), connection_cell_rect);
 	}
 }
 

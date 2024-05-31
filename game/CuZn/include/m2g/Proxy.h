@@ -34,11 +34,10 @@ namespace m2g {
 	public:
 		// Once the level is created, these should not be modified.
 		std::vector<SDL_Color> player_colors;
-		std::unordered_map<pb::SpriteType, m2::VecI> merchant_positions;
-		std::unordered_map<m2::VecI, pb::SpriteType, m2::VecIHash> position_merchants;
+		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> merchant_positions;
 		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> industry_positions; // Exact position and cell rectangle
-		std::unordered_map<pb::SpriteType, m2::RectF> network_positions;
+		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
 
 		std::optional<std::variant<cuzn::BuildJourney, cuzn::NetworkJourney>> user_journey;
 		static void user_journey_deleter();

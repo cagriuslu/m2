@@ -6,7 +6,7 @@ m2::Object* cuzn::find_road_at_location(m2g::pb::SpriteType location) {
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_road_character)
 		| std::views::transform(m2::to_character_parent)
-		| std::views::filter(m2::rect_contains_object_filter(M2G_PROXY.network_positions[location]));
+		| std::views::filter(m2::rect_contains_object_filter(M2G_PROXY.connection_positions[location].second));
 	if (auto road_it = roads.begin(); road_it != roads.end()) {
 		return &*road_it;
 	}

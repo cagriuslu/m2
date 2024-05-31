@@ -112,8 +112,12 @@ namespace m2 {
 		void disable_hud();
 		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
 		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
-		void remove_custom_ui(int index); // Should not be called from the custom UI itself
-		void remove_custom_ui_deferred(int index); // Can be called from the custom UI itself
+		// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
+		// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
+		void remove_custom_ui(int index);
+		// Removes the custom UI at next step. Can be called from anywhere, but BEWARE, if any other custom UI is added
+		// before the current step completes, that'll be removed as well.
+		void remove_custom_ui_deferred(int index);
 		void remove_custom_ui_dialog(); // Should not be called from the custom UI itself
 		void remove_custom_ui_dialog_deferred(); // Can be called from the custom UI itself
 

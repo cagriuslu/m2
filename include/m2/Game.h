@@ -157,10 +157,10 @@ namespace m2 {
 
 		// Accessors
 		const Dimensions& dimensions() const { return _dims; }
-		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const {
-			return _sprites[pb::enum_index(sprite_type)];
-		}
+		const Sprite& get_sprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
+		void for_each_sprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
 		const NamedItem& get_named_item(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
+		void for_each_named_item(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
 		float delta_time_s() const { return _delta_time_s; }
 		const VecF& mouse_position_world_m() const;
 		const VecF& screen_center_to_mouse_position_m() const;

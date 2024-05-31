@@ -1,3 +1,6 @@
+- Custom UI mechanism is broken. Calling remove_deferred, and then adding a new UI causes the newly added UI to be
+  removed instead of just removing the old UI. Instead, implement a ticketing system where once the custom UI is created,
+  we return a pointer or iterator that can be used for removal.
 - Get rid of all floating point equality comparison, they're meaningless.
 - Find all functions that return a reference. They may cause accidental copies.
 - Sound doesn't play if object dies

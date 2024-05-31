@@ -71,14 +71,14 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 		return m2::make_unexpected("Selected card cannot build the industry on given location");
 	}
 
-	auto city = city_of_industry_location(location);
+	auto city = city_of_location(location);
 	// Check if this location is part of the player's network, or they don't have a network.
 	if (auto cities_in_network = get_cities_in_network(player); not cities_in_network.empty() && not cities_in_network.contains(city)) {
 		return m2::make_unexpected("City is not in player's network");
 	}
 
 	// Find all the locations in the city
-	auto other_locations_in_city = locations_in_city(city);
+	auto other_locations_in_city = industry_locations_in_city(city);
 	// Remove the given location
 	other_locations_in_city.erase(std::remove(other_locations_in_city.begin(), other_locations_in_city.end(), location), other_locations_in_city.end());
 

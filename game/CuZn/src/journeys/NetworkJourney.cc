@@ -116,7 +116,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal()
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_signal(const m2::VecF& world_position) {
 	LOG_DEBUG("Received mouse click", world_position);
-	if (auto selected_loc = network_location_on_position(world_position)) {
+	if (auto selected_loc = connection_on_position(world_position)) {
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
 		if (!_selected_location_1) {
 			_selected_location_1 = *selected_loc;

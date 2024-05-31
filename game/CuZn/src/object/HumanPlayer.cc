@@ -39,7 +39,7 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 		m2_repeat(possession_limit) { chr.add_named_item(item); }
 	}
 
-	// Add network tiles
+	// Add connection tiles
 	const auto& road_item = M2_GAME.get_named_item(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = m2::I(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
 	m2_repeat(road_possession_limit) { chr.add_named_item(road_item); }

@@ -503,6 +503,24 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 	}
 }
 
+void m2::Game::for_each_sprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
+	for (int i = 0; i < pb::enum_value_count<m2g::pb::SpriteType>(); ++i) {
+		auto type = pb::enum_value<m2g::pb::SpriteType>(i);
+		if (!op(type, get_sprite(type))) {
+			return;
+		}
+	}
+}
+
+void m2::Game::for_each_named_item(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const {
+	for (int i = 0; i < pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
+		auto type = pb::enum_value<m2g::pb::ItemType>(i);
+		if (!op(type, get_named_item(type))) {
+			return;
+		}
+	}
+}
+
 const m2::VecF& m2::Game::mouse_position_world_m() const {
 	if (not _mouse_position_world_m) {
 		recalculate_mouse_position2();

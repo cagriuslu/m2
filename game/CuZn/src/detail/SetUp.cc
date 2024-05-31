@@ -39,22 +39,21 @@ std::vector<m2g::pb::ItemType> cuzn::prepare_merchant_license_list(int client_co
 	}();
 
 	// Prepare the list
-	std::vector<m2g::pb::ItemType> merchant_license_list;
-	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
-		const auto& item = M2_GAME.get_named_item(item_type);
+	std::vector<m2g::pb::ItemType> merchant_licenses;
+	M2_GAME.for_each_named_item([&merchant_licenses, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::NamedItem& item) {
 		if (item.category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
 			auto license_count = static_cast<int>(item.get_attribute(count_attr));
-			merchant_license_list.insert(merchant_license_list.end(), license_count, item.type());
+			merchant_licenses.insert(merchant_licenses.end(), license_count, item.type());
 		}
-	}
+		return true;
+	});
 
 	// Shuffle the licenses
 	std::random_device rd;
 	std::mt19937 license_shuffler(rd());
-	std::shuffle(merchant_license_list.begin(), merchant_license_list.end(), license_shuffler);
+	std::shuffle(merchant_licenses.begin(), merchant_licenses.end(), license_shuffler);
 
-	return merchant_license_list;
+	return merchant_licenses;
 }
 
 std::vector<m2g::pb::ItemType> cuzn::prepare_draw_deck(int client_count) {
@@ -74,14 +73,13 @@ std::vector<m2g::pb::ItemType> cuzn::prepare_draw_deck(int client_count) {
 
 	// Prepare deck
 	std::vector<m2g::pb::ItemType> draw_deck;
-	for (auto i = 0; i < m2::pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
-		auto item_type = m2::pb::enum_value<m2g::pb::ItemType>(i);
-		const auto& item = M2_GAME.get_named_item(item_type);
+	M2_GAME.for_each_named_item([&draw_deck, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::NamedItem& item) {
 		if (item.category() == pb::ITEM_CATEGORY_INDUSTRY_CARD || item.category() == pb::ITEM_CATEGORY_CITY_CARD) {
 			auto card_count = static_cast<int>(item.get_attribute(count_attr));
 			draw_deck.insert(draw_deck.end(), card_count, item.type());
 		}
-	}
+		return true;
+	});
 
 	// Shuffle the cards
 	std::random_device rd;

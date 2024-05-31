@@ -16,7 +16,16 @@
       "type": "ROAD"
     },
     {
-      "type": "MARKET"
+      "type": "MARKET_TRACKER"
+    },
+    {
+      "type": "INCOME_POINTS_TRACKER"
+    },
+    {
+      "type": "VICTORY_POINTS_TRACKER"
+    },
+    {
+      "type": "SPENT_MONEY_TRACKER"
     }
   ]
 }

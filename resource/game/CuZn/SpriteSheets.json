@@ -439,55 +439,64 @@
         {
           "type": "GLOUCESTER_1",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["GLOUCESTER_CARD"]
           }
         },
         {
           "type": "GLOUCESTER_2",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["GLOUCESTER_CARD"]
           }
         },
         {
           "type": "SHREWSBURY_1",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["SHREWSBURY_CARD"]
           }
         },
         {
           "type": "OXFORD_1",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["OXFORD_CARD"]
           }
         },
         {
           "type": "OXFORD_2",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["OXFORD_CARD"]
           }
         },
         {
           "type": "NOTTINGHAM_1",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["NOTTINGHAM_CARD"]
           }
         },
         {
           "type": "NOTTINGHAM_2",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["NOTTINGHAM_CARD"]
           }
         },
         {
           "type": "WARRINGTON_1",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["WARRINGTON_CARD"]
           }
         },
         {
           "type": "WARRINGTON_2",
           "duplicate": {
-            "originalType": "MERCHANT_BACKGROUND"
+            "originalType": "MERCHANT_BACKGROUND",
+            "additionalNamedItems": ["WARRINGTON_CARD"]
           }
         },
         {
