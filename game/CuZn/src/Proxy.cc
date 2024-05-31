@@ -15,6 +15,7 @@
 #include <cuzn/ui/RightHud.h>
 #include <cuzn/detail/SetUp.h>
 #include <m2/game/Detail.h>
+#include "cuzn/object/Road.h"
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
@@ -117,6 +118,15 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 			city_of_location(client_command.build_action().industry_location()),
 			client_command.build_action().industry_tile());
 		// TODO check result
+	} else if (client_command.has_network_action()) {
+		// TODO verify whether the player can network
+
+		auto it = m2::create_object(
+			position_of_connection(client_command.network_action().connection_1()),
+			m2g::pb::ROAD,
+			M2G_PROXY.multi_player_object_ids[turn_holder_index]);
+		auto success = init_road(*it, client_command.network_action().connection_1());
+		// TODO check result
 	}
 
 	// Increment turn holder
@@ -146,9 +156,12 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 
 	// Store the positions of the connection locations
 	else if (is_canal(sprite_type) || is_railroad(sprite_type)) {
-		// Object position has {0.5f, 0.5f} offset
-		auto connection_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 1.0f, 1.0f};
-		connection_positions[sprite_type] = std::make_pair(obj.position, connection_cell_rect);
+		m2::RectF connection_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 1.0f, 1.0f};
+		// Different canal or railroad backgrounds have different offsets
+		auto original_type = M2_GAME.get_sprite(sprite_type).original_type();
+		auto offset = connection_sprite_world_offset(*original_type);
+		connection_cell_rect = connection_cell_rect.shift(offset);
+		connection_positions[sprite_type] = std::make_pair(obj.position + offset, connection_cell_rect);
 		LOG_DEBUG("Connection position", m2g::pb::SpriteType_Name(sprite_type), connection_cell_rect);
 	}
 }
@@ -167,6 +180,13 @@ m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, cons
 				return init_factory(obj, *city, *industry_tile);
 			} else {
 				return m2::make_unexpected("Unable to find city or industry tile of the object received from the server");
+			}
+		}
+		case pb::ROAD: {
+			if (auto connection = connection_on_position(obj.position)) {
+				return init_road(obj, *connection);
+			} else {
+				return m2::make_unexpected("Unable to find connection from object location");
 			}
 		}
 		default:

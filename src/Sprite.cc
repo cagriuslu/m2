@@ -196,6 +196,7 @@ m2::Sprite::Sprite(
 				break;  // Early out
 			}
 		}
+		_original_type = sprite.duplicate().original_type();
 	} else {
 		original_sprite = &sprite;
 	}

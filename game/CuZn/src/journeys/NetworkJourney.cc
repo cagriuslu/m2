@@ -106,9 +106,9 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal() {
-	LOG_DEBUG("Expecting industry location...");
+	LOG_DEBUG("Expecting connection...");
 	M2_LEVEL.disable_hud();
-	M2_LEVEL.display_message("Pick location", -1.0f);
+	M2_LEVEL.display_message("Pick connection", -1.0f);
 	M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
 	return std::nullopt;
 }
@@ -117,16 +117,16 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_si
 	LOG_DEBUG("Received mouse click", world_position);
 	if (auto selected_loc = connection_on_position(world_position)) {
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
-		if (!_selected_location_1) {
-			_selected_location_1 = *selected_loc;
-		} else if (_build_double_railroads && !_selected_location_2) {
-			_selected_location_2 = *selected_loc;
+		if (!_selected_connection_1) {
+			_selected_connection_1 = *selected_loc;
+		} else if (_build_double_railroads && !_selected_connection_2) {
+			_selected_connection_2 = *selected_loc;
 		} else {
 			throw M2ERROR("Implementation error");
 		}
 
 		// If selection done
-		if (!_build_double_railroads || _selected_location_2) {
+		if (!_build_double_railroads || _selected_connection_2) {
 			return _resource_sources.empty() ? NetworkJourneyStep::EXPECT_CONFIRMATION : NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 		}
 	}
@@ -155,11 +155,26 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 		LOG_INFO("Network action confirmed");
 
 		m2g::pb::ClientCommand cc;
-		cc.mutable_network_action();
+		cc.mutable_network_action()->set_card_1(_selected_card_1);
+		cc.mutable_network_action()->set_connection_1(_selected_connection_1);
+		if (_build_double_railroads) {
+			cc.mutable_network_action()->set_card_2(_selected_card_2);
+			cc.mutable_network_action()->set_connection_2(_selected_connection_2);
+		}
+		for (const auto& resource_source : _resource_sources) {
+			if (resource_source.first == COAL_CUBE_COUNT) {
+				cc.mutable_network_action()->add_coal_sources(resource_source.second);
+			} else if (resource_source.first == BEER_BARREL_COUNT) {
+				cc.mutable_network_action()->set_beer_source(resource_source.second);
+			} else {
+				throw M2ERROR("Unexpected resource type");
+			}
+		}
 		M2_GAME.client_thread().queue_client_command(cc);
 	} else {
 		LOG_INFO("Cancelling Network action...");
 	}
+	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }

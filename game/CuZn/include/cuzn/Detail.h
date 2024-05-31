@@ -31,6 +31,7 @@ bool is_industry_sprite(IndustrySprite industry_sprite);
 bool is_location(Location location);
 bool is_industry_location(IndustryLocation location);
 bool is_merchant_location(MerchantLocation location);
+bool is_connection(Connection connection);
 bool is_canal(Connection connection);
 bool is_railroad(Connection connection);
 bool is_canal_license(m2g::pb::ItemType item);
@@ -63,9 +64,12 @@ std::vector<Industry> industries_on_location(IndustryLocation location);
 
 SDL_Color generate_player_color(unsigned index);
 
+m2::VecF connection_sprite_world_offset(m2g::pb::SpriteType original_type);
+
 // Locators
 
 std::optional<IndustryLocation> industry_location_on_position(const m2::VecF& world_position);
 std::optional<MerchantLocation> merchant_location_on_position(const m2::VecF& world_position);
 m2::VecF position_of_industry_location(IndustryLocation industry_location);
 std::optional<Connection> connection_on_position(const m2::VecF& world_position);
+m2::VecF position_of_connection(Connection connection);

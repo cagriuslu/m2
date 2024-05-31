@@ -138,6 +138,10 @@ enum SpriteType {
   IRON_CUBE = 402;
   BEER_BARREL = 403;
 
+  // Connections
+  SPRITE_CANAL = 501;
+  SPRITE_RAILROAD = 502;
+
   // Terrain
   GRASS_1 = 1001;
   GRASS_2 = 1011;

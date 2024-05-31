@@ -212,6 +212,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_cancel_signal() {
 	for (auto [factory, resource_type] : _reserved_resources) {
 		factory->character().add_resource(resource_type, 1.0f);
 	}
+	_reserved_resources.clear();
 	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
@@ -252,6 +253,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal()
 		for (auto [factory, resource_type] : _reserved_resources) {
 			factory->character().add_resource(resource_type, 1.0f);
 		}
+		_reserved_resources.clear();
 	}
 	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);

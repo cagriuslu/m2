@@ -61,6 +61,10 @@ bool is_merchant_location(MerchantLocation location) {
 	return GLOUCESTER_1 <= location && location <= WARRINGTON_2;
 }
 
+bool is_connection(Connection connection) {
+	return is_canal(connection) || is_railroad(connection);
+}
+
 bool is_canal(Connection connection) {
 	switch (connection) {
 		case BELPER_DERBY_CANAL_RAILROAD:
@@ -342,6 +346,20 @@ SDL_Color generate_player_color(unsigned index) {
 	}
 }
 
+m2::VecF connection_sprite_world_offset(m2g::pb::SpriteType original_type) {
+	if (original_type == pb::CANAL_OR_RAILROAD_BACKGROUND_1) {
+		return {};
+	} else if (original_type == pb::CANAL_OR_RAILROAD_BACKGROUND_2) {
+		return {0.5f, 0.0f};
+	} else if (original_type == pb::CANAL_OR_RAILROAD_BACKGROUND_3) {
+		return {0.0f, 0.5f};
+	} else if (original_type == pb::CANAL_OR_RAILROAD_BACKGROUND_4) {
+		return {0.5f, 0.5f};
+	} else {
+		throw M2ERROR("Invalid connection sprite");
+	}
+}
+
 std::optional<IndustryLocation> industry_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.industry_positions.begin(), M2G_PROXY.industry_positions.end(),
 			[&](const auto& pos_and_type) { return pos_and_type.second.second.contains(world_position); });
@@ -379,5 +397,16 @@ std::optional<Connection> connection_on_position(const m2::VecF& world_position)
 		return it->first;
 	} else {
 		return std::nullopt;
+	}
+}
+
+m2::VecF position_of_connection(Connection connection) {
+	if (not is_connection(connection)) {
+		throw M2ERROR("Invalid connection");
+	}
+	if (auto it = M2G_PROXY.connection_positions.find(connection); it != M2G_PROXY.connection_positions.end()) {
+		return it->second.first;
+	} else {
+		throw M2ERROR("Connection not found in position map");
 	}
 }

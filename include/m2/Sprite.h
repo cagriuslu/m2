@@ -54,6 +54,7 @@ namespace m2 {
 		const SpriteSheet* _sprite_sheet{};
 		const SpriteEffectsSheet* _effects_sheet{};
 
+		std::optional<m2g::pb::SpriteType> _original_type;
 		std::vector<RectI> _effects;
 		std::optional<RectI> _foreground_companion_sprite_effects_sheet_rect;
 		std::optional<VecF> _foreground_companion_center_to_origin_vec_px;
@@ -87,6 +88,7 @@ namespace m2 {
 		// Accessors
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const { return *_sprite_sheet; }
 		[[nodiscard]] inline const SpriteEffectsSheet* effects_sheet() const { return _effects_sheet; }
+		[[nodiscard]] std::optional<m2g::pb::SpriteType> original_type() const { return _original_type; }
 		[[nodiscard]] SDL_Texture* effects_texture() const {
 			return _effects_sheet ? _effects_sheet->texture() : nullptr;
 		}

@@ -570,6 +570,30 @@
           }
         },
         {
+          "type": "SPRITE_CANAL",
+          "regular": {
+            "rect": {
+              "x": 48,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
+          "type": "SPRITE_RAILROAD",
+          "regular": {
+            "rect": {
+              "x": 64,
+              "y": 112,
+              "w": 16,
+              "h": 16
+            },
+            "isBackgroundTile": true
+          }
+        },
+        {
           "type": "CANAL_OR_RAILROAD_BACKGROUND_1",
           "regular": {
             "rect": {

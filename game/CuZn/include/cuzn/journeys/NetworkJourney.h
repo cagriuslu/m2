@@ -15,7 +15,7 @@ enum class NetworkJourneyStep {
 class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, PositionOrCancelSignal> {
 	bool _build_double_railroads{};
 	m2g::pb::ItemType _selected_card_1{}, _selected_card_2{};
-	m2g::pb::SpriteType _selected_location_1{}, _selected_location_2{};
+	m2g::pb::SpriteType _selected_connection_1{}, _selected_connection_2{};
 	std::vector<std::pair<m2g::pb::ResourceType, m2g::pb::SpriteType>> _resource_sources;
 
 public:
