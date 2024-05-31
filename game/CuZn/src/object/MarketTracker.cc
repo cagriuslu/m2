@@ -46,7 +46,7 @@ void cuzn::init_market(m2::Object& obj) {
 	chr.set_resource(m2g::pb::COAL_CUBE_COUNT, COAL_MARKET_INITIAL_COUNT);
 	chr.set_resource(m2g::pb::IRON_CUBE_COUNT, IRON_MARKET_INITIAL_COUNT);
 
-	chr.on_interaction = [](m2::Character& self, m2::Character* other, const m2g::pb::InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
+	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character* other, const m2g::pb::InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
 		if (data.has_ask_coal_cost()) {
 			auto ask_count = data.ask_coal_cost();
 			auto current_coal_count = m2::iround(self.get_resource(m2g::pb::COAL_CUBE_COUNT));

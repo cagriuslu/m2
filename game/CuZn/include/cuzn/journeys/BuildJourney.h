@@ -14,11 +14,12 @@ namespace cuzn {
 	};
 
 	class BuildJourney : public m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal> {
-		m2g::pb::ItemType _selected_card{};
-		m2g::pb::SpriteType _selected_location{};
-		m2g::pb::ItemType _selected_industry{};
+		Card _selected_card{};
+		IndustryLocation _selected_location{};
+		Industry _selected_industry{};
 		IndustryTile _industry_tile{};
-		std::vector<std::pair<m2g::pb::ResourceType, m2g::pb::SpriteType>> _resource_sources;
+		std::vector<std::pair<m2g::pb::ResourceType, Location>> _resource_sources;
+		std::vector<std::pair<m2::Object*, m2g::pb::ResourceType>> _reserved_resources;
 
 	public:
 		BuildJourney();
@@ -30,6 +31,12 @@ namespace cuzn {
 		std::optional<BuildJourneyStep> handle_location_mouse_click_signal(const m2::VecF&);
 		std::optional<BuildJourneyStep> handle_location_cancel_signal();
 		std::optional<BuildJourneyStep> handle_location_exit_signal();
+		std::optional<BuildJourneyStep> handle_resource_enter_signal();
+		std::optional<BuildJourneyStep> handle_resource_mouse_click_signal(const m2::VecF&);
+		std::optional<BuildJourneyStep> handle_resource_cancel_signal();
+		std::optional<BuildJourneyStep> handle_resource_exit_signal();
 		std::optional<BuildJourneyStep> handle_confirmation_enter_signal();
+
+		decltype(_resource_sources)::iterator get_next_unspecified_resource();
 	};
 }

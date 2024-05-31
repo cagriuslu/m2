@@ -15,4 +15,5 @@ namespace cuzn {
 
 	/// Returns industry or merchant locations starting from the given city
 	std::set<cuzn::Location> location_network_from_industry_city(cuzn::IndustryCity city);
+	bool is_industry_city_connected_to_location(cuzn::IndustryCity city, cuzn::Location location);
 }

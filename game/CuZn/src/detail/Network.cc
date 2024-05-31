@@ -81,8 +81,14 @@ std::set<cuzn::Location> cuzn::location_network_from_industry_city(cuzn::Industr
 	if (not is_industry_city(city)) {
 		throw M2ERROR("Invalid industry city");
 	}
+
 	std::set<cuzn::Location> locations;
 	std::set<cuzn::IndustryCity> processed_cities;
 	recursive_location_network_from_industry_city(locations, processed_cities, city);
 	return locations;
+}
+
+bool cuzn::is_industry_city_connected_to_location(cuzn::IndustryCity city, cuzn::Location location) {
+	auto network = location_network_from_industry_city(city);
+	return network.contains(location);
 }

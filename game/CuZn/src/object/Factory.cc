@@ -11,7 +11,7 @@ m2::Object* cuzn::find_factory_at_location(pb::SpriteType location) {
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
 		| std::views::transform(m2::to_character_parent)
-		| std::views::filter(m2::rect_contains_object_filter(M2G_PROXY.industry_positions[location].second));
+		| std::views::filter(m2::is_object_in_area(M2G_PROXY.industry_positions[location].second));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
 		return &*factory_it;
 	}

@@ -111,5 +111,5 @@ namespace m2 {
 	std::function<void(void)> create_character_deleter(ObjectId id);
 
 	// Filters
-	std::function<bool(Object&)> rect_contains_object_filter(const RectF& rect);
+	std::function<bool(Object&)> is_object_in_area(const RectF& rect);
 }  // namespace m2
