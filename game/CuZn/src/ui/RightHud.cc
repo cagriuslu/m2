@@ -91,7 +91,7 @@ static const Blueprint tiles_blueprint = {
 	}
 };
 
-const Blueprint cuzn::right_hud_blueprint = {
+const Blueprint right_hud_blueprint = {
 	.w = 19,
 	.h = 72,
 	.border_width_px = 0,
@@ -147,7 +147,7 @@ const Blueprint cuzn::right_hud_blueprint = {
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(
 						m2::RectF{0.15f, 0.15f, 0.7f, 0.7f},
-						std::make_unique<Blueprint>(cuzn::generate_cards_window(false)));
+						std::make_unique<Blueprint>(generate_cards_window(false)));
 					return make_continue_action();
 				}
 			}

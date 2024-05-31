@@ -4,9 +4,8 @@
 #include <m2/Log.h>
 
 using namespace m2g;
-using namespace cuzn;
 
-m2::Object* cuzn::find_factory_at_location(pb::SpriteType location) {
+m2::Object* find_factory_at_location(pb::SpriteType location) {
 	auto factories = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
@@ -18,7 +17,7 @@ m2::Object* cuzn::find_factory_at_location(pb::SpriteType location) {
 	return nullptr;
 }
 
-m2::void_expected cuzn::init_factory(m2::Object& obj, City city, IndustryTile industry_tile) {
+m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry_tile) {
 	DEBUG_FN();
 
 	if (not is_city(city)) {

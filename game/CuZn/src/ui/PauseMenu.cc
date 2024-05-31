@@ -10,7 +10,7 @@ using namespace m2::ui::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
-const Blueprint cuzn::pause_menu_blueprint = {
+const Blueprint pause_menu_blueprint = {
 	.w = 100,
 	.h = 100,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},

@@ -13,14 +13,13 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
-using namespace cuzn;
 
-cuzn::BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal>() {
+BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal>() {
 	DEBUG_FN();
 	init(BuildJourneyStep::INITIAL_STEP);
 }
 
-std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const PositionOrCancelSignal& s) {
+std::optional<BuildJourneyStep> BuildJourney::handle_signal(const PositionOrCancelSignal& s) {
 	switch (state()) {
 		case BuildJourneyStep::INITIAL_STEP:
 			switch (s.type()) {
@@ -66,7 +65,7 @@ std::optional<cuzn::BuildJourneyStep> cuzn::BuildJourney::handle_signal(const Po
 	}
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_initial_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
 	if (auto selected_card = ask_for_card_selection(); selected_card) {
 		_selected_card = *selected_card;
 		return BuildJourneyStep::EXPECT_LOCATION;
@@ -76,7 +75,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_initial_enter_signal(
 	}
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 	LOG_DEBUG("Expecting build location...");
 	M2_LEVEL.disable_hud();
 	M2_LEVEL.display_message("Pick location");
@@ -84,7 +83,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_enter_signal
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_mouse_click_signal(const m2::VecF& world_position) {
+std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal(const m2::VecF& world_position) {
 	LOG_DEBUG("Received mouse click", world_position);
 	if (auto selected_loc = industry_location_on_position(world_position)) {
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
@@ -129,20 +128,20 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_mouse_click_
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_cancel_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_location_cancel_signal() {
 	LOG_INFO("Cancelling Build action...");
 	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_location_exit_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_resource_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 	// Check if there's an unspecified resource left
 	if (auto unspecified_resource = get_next_unspecified_resource(); unspecified_resource != _resource_sources.end()) {
 		LOG_DEBUG("Expecting resource source...");
@@ -163,7 +162,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_resource_enter_signal
 	}
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_resource_mouse_click_signal(const m2::VecF& world_position) {
+std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal(const m2::VecF& world_position) {
 	LOG_DEBUG("Received mouse click", world_position);
 
 	auto unspecified_resource = get_next_unspecified_resource();
@@ -207,7 +206,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_resource_mouse_click_
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_resource_cancel_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_resource_cancel_signal() {
 	LOG_INFO("Cancelling Build action...");
 	// Return the reserved resources
 	for (auto [factory, resource_type] : _reserved_resources) {
@@ -218,13 +217,13 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_resource_cancel_signa
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_resource_exit_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_confirmation_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal() {
 	LOG_INFO("Asking for confirmation...");
 	auto card_name = M2_GAME.get_named_item(_selected_card).in_game_name();
 	auto city_name = M2_GAME.get_named_item(city_of_location(_selected_location)).in_game_name();
@@ -259,7 +258,7 @@ std::optional<BuildJourneyStep> cuzn::BuildJourney::handle_confirmation_enter_si
 	return std::nullopt;
 }
 
-decltype(cuzn::BuildJourney::_resource_sources)::iterator cuzn::BuildJourney::get_next_unspecified_resource() {
+decltype(BuildJourney::_resource_sources)::iterator BuildJourney::get_next_unspecified_resource() {
 	return std::find_if(_resource_sources.begin(), _resource_sources.end(), [](const auto& r) {
 		return r.second == NO_SPRITE;
 	});

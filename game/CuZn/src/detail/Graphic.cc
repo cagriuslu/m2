@@ -3,7 +3,7 @@
 #include <m2/Object.h>
 #include <m2/Game.h>
 
-void cuzn::draw_resources(m2::Character& chr) {
+void draw_resources(m2::Character& chr) {
 	auto coal_count = m2::iround(chr.get_resource(m2g::pb::COAL_CUBE_COUNT));
 	auto iron_count = m2::iround(chr.get_resource(m2g::pb::IRON_CUBE_COUNT));
 	auto beer_count = m2::iround(chr.get_resource(m2g::pb::BEER_BARREL_COUNT));

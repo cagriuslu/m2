@@ -37,7 +37,7 @@ static TextBlueprint client_count = {
 	}
 };
 
-const Blueprint cuzn::server_lobby = {
+const Blueprint server_lobby = {
 	.w = 160,
 	.h = 90,
 	.border_width_px = 0,

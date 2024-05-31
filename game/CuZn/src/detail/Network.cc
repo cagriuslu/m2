@@ -6,7 +6,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-std::vector<std::pair<m2g::pb::ResourceType, float>> cuzn::road_costs(bool double_railroad) {
+std::vector<std::pair<m2g::pb::ResourceType, float>> road_costs(bool double_railroad) {
 	if (is_canal_era()) {
 		return {{MONEY, 3.0f}};
 	} else if (!double_railroad) {
@@ -16,7 +16,7 @@ std::vector<std::pair<m2g::pb::ResourceType, float>> cuzn::road_costs(bool doubl
 	}
 }
 
-m2::expected<ItemType> cuzn::can_player_build_connection(m2::Character& player, ItemType card, SpriteType location) {
+m2::expected<ItemType> can_player_build_connection(m2::Character& player, ItemType card, SpriteType location) {
 	if (not player_has_card(player, card)) {
 		return m2::make_unexpected("Player doesn't hold the given card");
 	}
@@ -52,23 +52,23 @@ m2::expected<ItemType> cuzn::can_player_build_connection(m2::Character& player, 
 }
 
 namespace {
-	void recursive_location_network_from_industry_city(std::set<cuzn::Location>& locations, std::set<cuzn::IndustryCity>& processed_cities, cuzn::IndustryCity city) {
+	void recursive_location_network_from_industry_city(std::set<Location>& locations, std::set<IndustryCity>& processed_cities, IndustryCity city) {
 		// Add locations in the same city
-		auto locs_in_city = cuzn::industry_locations_in_city(city);
+		auto locs_in_city = industry_locations_in_city(city);
 		for (auto loc : locs_in_city) {
 			locations.emplace(loc);
 		}
 		processed_cities.emplace(city);
 
 		// Iterate over connections
-		for (auto conn : cuzn::connections_from_city(city)) {
+		for (auto conn : connections_from_city(city)) {
 			// Only if the connection is built
-			if (cuzn::find_road_at_location(conn)) {
+			if (find_road_at_location(conn)) {
 				// Iterate over cities of connection
-				for (auto conn_city : cuzn::cities_from_connection(conn)) {
-					if (cuzn::is_merchant_city(conn_city)) {
-						locations.emplace(cuzn::merchant_location_of_merchant_city(conn_city));
-					} else if (cuzn::is_industry_city(conn_city) && not processed_cities.contains(conn_city)) {
+				for (auto conn_city : cities_from_connection(conn)) {
+					if (is_merchant_city(conn_city)) {
+						locations.emplace(merchant_location_of_merchant_city(conn_city));
+					} else if (is_industry_city(conn_city) && not processed_cities.contains(conn_city)) {
 						recursive_location_network_from_industry_city(locations, processed_cities, city);
 					}
 				}
@@ -77,18 +77,18 @@ namespace {
 	}
 }
 
-std::set<cuzn::Location> cuzn::location_network_from_industry_city(cuzn::IndustryCity city) {
+std::set<Location> location_network_from_industry_city(IndustryCity city) {
 	if (not is_industry_city(city)) {
 		throw M2ERROR("Invalid industry city");
 	}
 
-	std::set<cuzn::Location> locations;
-	std::set<cuzn::IndustryCity> processed_cities;
+	std::set<Location> locations;
+	std::set<IndustryCity> processed_cities;
 	recursive_location_network_from_industry_city(locations, processed_cities, city);
 	return locations;
 }
 
-bool cuzn::is_industry_city_connected_to_location(cuzn::IndustryCity city, cuzn::Location location) {
+bool is_industry_city_connected_to_location(IndustryCity city, Location location) {
 	auto network = location_network_from_industry_city(city);
 	return network.contains(location);
 }

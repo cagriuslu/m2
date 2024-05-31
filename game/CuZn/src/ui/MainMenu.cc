@@ -12,7 +12,7 @@ using namespace m2::ui::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
-const Blueprint cuzn::main_menu_blueprint = {
+const Blueprint main_menu_blueprint = {
 	.w = 160,
 	.h = 90,
 	.border_width_px = 0,
@@ -24,7 +24,7 @@ const Blueprint cuzn::main_menu_blueprint = {
 			.padding_width_px = 5,
 			.variant = TextBlueprint{
 				.initial_text = "JOIN", .on_action = [](MAYBE const widget::Text& self) {
-					return m2::ui::State::create_execute_sync(&cuzn::ip_port_form);
+					return m2::ui::State::create_execute_sync(&ip_port_form);
 				}
 			}
 		},
@@ -35,7 +35,7 @@ const Blueprint cuzn::main_menu_blueprint = {
 			.variant = TextBlueprint{
 				.initial_text = "HOST", .on_action = [](MAYBE const widget::Text& self) {
 					M2_GAME.host_game(m2::mplayer::Type::TurnBased, 4);
-					return m2::ui::State::create_execute_sync(&cuzn::server_lobby);
+					return m2::ui::State::create_execute_sync(&server_lobby);
 				}
 			}
 		},

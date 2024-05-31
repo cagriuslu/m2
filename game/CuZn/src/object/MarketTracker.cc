@@ -41,7 +41,7 @@ namespace {
 	}
 }
 
-void cuzn::init_market(m2::Object& obj) {
+void init_market(m2::Object& obj) {
 	auto& chr = obj.add_full_character();
 	chr.set_resource(m2g::pb::COAL_CUBE_COUNT, COAL_MARKET_INITIAL_COUNT);
 	chr.set_resource(m2g::pb::IRON_CUBE_COUNT, IRON_MARKET_INITIAL_COUNT);

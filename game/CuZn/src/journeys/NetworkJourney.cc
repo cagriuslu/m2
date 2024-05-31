@@ -11,7 +11,6 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
-using namespace cuzn;
 
 NetworkJourney::NetworkJourney() : FsmBase() {
 	DEBUG_FN();

@@ -5,9 +5,8 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
-using namespace cuzn;
 
-const m2::ui::Blueprint cuzn::journey_cancel_button{
+const m2::ui::Blueprint journey_cancel_button{
 	.border_width_px = 0,
 	.widgets = {
 		WidgetBlueprint{

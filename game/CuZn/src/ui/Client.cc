@@ -65,7 +65,7 @@ static const Blueprint client_lobby = {
 	}
 };
 
-const Blueprint cuzn::ip_port_form = {
+const Blueprint ip_port_form = {
 	.w = 160,
 	.h = 90,
 	.border_width_px = 0,

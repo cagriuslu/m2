@@ -39,7 +39,7 @@ namespace m2g {
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> industry_positions; // Exact position and cell rectangle
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
 
-		std::optional<std::variant<cuzn::BuildJourney, cuzn::NetworkJourney>> user_journey;
+		std::optional<std::variant<BuildJourney, NetworkJourney>> user_journey;
 		static void user_journey_deleter();
 
 		[[nodiscard]] unsigned player_index(m2::Id id) const;

@@ -19,7 +19,7 @@ namespace {
 	}
 }
 
-m2::void_expected cuzn::init_human_player(m2::Object& obj) {
+m2::void_expected init_human_player(m2::Object& obj) {
 	DEBUG_FN();
 
 	auto& chr = obj.add_full_character();
@@ -78,25 +78,25 @@ m2::void_expected cuzn::init_human_player(m2::Object& obj) {
 	return {};
 }
 
-size_t cuzn::player_card_count(m2::Character& player) {
+size_t player_card_count(m2::Character& player) {
 	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD)
 	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD)
 	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
 }
 
-bool cuzn::player_has_card(m2::Character& player, m2g::pb::ItemType card) {
+bool player_has_card(m2::Character& player, m2g::pb::ItemType card) {
 	return player.find_items(card) != player.end_items();
 }
 
-size_t cuzn::player_road_count(m2::Character& player) {
+size_t player_road_count(m2::Character& player) {
 	return player.count_item(m2g::pb::ROAD_TILE);
 }
 
-float cuzn::player_money(m2::Character& player) {
+float player_money(m2::Character& player) {
 	return player.get_resource(m2g::pb::MONEY);
 }
 
-std::optional<m2g::pb::ItemType> cuzn::get_next_buildable_factory(m2::Character& player, m2g::pb::ItemCategory tile_category) {
+std::optional<m2g::pb::ItemType> get_next_buildable_factory(m2::Character& player, m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;
 	for (auto item_it = player.find_items(tile_category); item_it != player.end_items(); ++item_it) {
@@ -110,7 +110,7 @@ std::optional<m2g::pb::ItemType> cuzn::get_next_buildable_factory(m2::Character&
 	}
 }
 
-std::set<m2g::pb::ItemType> cuzn::get_cities_in_network(m2::Character& player) {
+std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 	std::set<m2g::pb::ItemType> cities;
 
 	auto cities_view = M2_LEVEL.characters
@@ -132,7 +132,7 @@ std::set<m2g::pb::ItemType> cuzn::get_cities_in_network(m2::Character& player) {
 	return cities;
 }
 
-std::set<m2g::pb::SpriteType> cuzn::get_canals_in_network(m2::Character& player) {
+std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player) {
 	std::set<m2g::pb::SpriteType> canals;
 
 	std::ranges::for_each(get_cities_in_network(player), [&canals](m2g::pb::ItemType city) {
@@ -150,7 +150,7 @@ std::set<m2g::pb::SpriteType> cuzn::get_canals_in_network(m2::Character& player)
 	return canals;
 }
 
-std::set<m2g::pb::SpriteType> cuzn::get_railroads_in_network(m2::Character& player) {
+std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player) {
 	std::set<m2g::pb::SpriteType> railroads;
 
 	std::ranges::for_each(get_cities_in_network(player), [&railroads](m2g::pb::ItemType city) {

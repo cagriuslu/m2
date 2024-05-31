@@ -8,7 +8,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-std::vector<m2g::pb::SpriteType> cuzn::active_merchant_locations(int client_count) {
+std::vector<m2g::pb::SpriteType> active_merchant_locations(int client_count) {
 	switch (client_count) {
 		case 2:
 			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1, pb::OXFORD_2};
@@ -23,7 +23,7 @@ std::vector<m2g::pb::SpriteType> cuzn::active_merchant_locations(int client_coun
 	}
 }
 
-std::vector<m2g::pb::ItemType> cuzn::prepare_merchant_license_list(int client_count) {
+std::vector<m2g::pb::ItemType> prepare_merchant_license_list(int client_count) {
 	// Figure out the attribute to use for card selection
 	m2g::pb::AttributeType count_attr = [=]() {
 		switch (client_count) {
@@ -56,7 +56,7 @@ std::vector<m2g::pb::ItemType> cuzn::prepare_merchant_license_list(int client_co
 	return merchant_licenses;
 }
 
-std::vector<m2g::pb::ItemType> cuzn::prepare_draw_deck(int client_count) {
+std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count) {
 	// Figure out the attribute to use for card selection
 	m2g::pb::AttributeType count_attr = [=]() {
 		switch (client_count) {

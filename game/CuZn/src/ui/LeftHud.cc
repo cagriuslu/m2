@@ -17,7 +17,7 @@ namespace {
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (M2_GAME.client_thread().is_our_turn()) {
 				LOG_INFO("Beginning BuildJourney");
-				m2g::Proxy::get_instance().user_journey.emplace(cuzn::BuildJourney{});
+				m2g::Proxy::get_instance().user_journey.emplace(BuildJourney{});
 			} else {
 				M2_LEVEL.display_message("It's not your turn");
 			}
@@ -31,7 +31,7 @@ namespace {
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (M2_GAME.client_thread().is_our_turn()) {
 				LOG_INFO("Beginning BuildJourney");
-				m2g::Proxy::get_instance().user_journey.emplace(cuzn::NetworkJourney{});
+				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
 			} else {
 				M2_LEVEL.display_message("It's not your turn");
 			}
@@ -59,7 +59,7 @@ namespace {
 	const auto scout_button = TextBlueprint{.initial_text = "Scout", .font_size = 4.5f};
 }
 
-const Blueprint cuzn::left_hud_blueprint = {
+const Blueprint left_hud_blueprint = {
 	.w = 19,
 	.h = 72,
 	.border_width_px = 0,

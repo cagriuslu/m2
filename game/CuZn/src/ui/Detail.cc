@@ -11,7 +11,7 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Blueprint cuzn::generate_cards_window(bool has_return_button, m2g::pb::ItemType exclude_card) {
+Blueprint generate_cards_window(bool has_return_button, m2g::pb::ItemType exclude_card) {
 	return Blueprint{
 		.w = 60,
 		.h = 40,
@@ -93,7 +93,7 @@ Blueprint cuzn::generate_cards_window(bool has_return_button, m2g::pb::ItemType 
 	};
 }
 
-std::optional<m2g::pb::ItemType> cuzn::ask_for_card_selection(m2g::pb::ItemType exclude_card) {
+std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card) {
 	LOG_INFO("Asking player to select a card...");
 	std::optional<m2g::pb::ItemType> selected_card;
 	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window(true, exclude_card)), M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
@@ -107,7 +107,7 @@ std::optional<m2g::pb::ItemType> cuzn::ask_for_card_selection(m2g::pb::ItemType 
 	return selected_card;
 }
 
-std::optional<m2g::pb::ItemType> cuzn::ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
+std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
 	LOG_INFO("Asking player to select an industry...");
 
 	auto blueprint = Blueprint{
@@ -159,7 +159,7 @@ std::optional<m2g::pb::ItemType> cuzn::ask_for_industry_selection(m2g::pb::ItemT
 	return selected_industry;
 }
 
-bool cuzn::ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text) {
+bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text) {
 	auto blueprint = Blueprint{
 		.w = 60, .h = 40,
 		.border_width_px = 1,

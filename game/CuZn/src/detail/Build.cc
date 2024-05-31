@@ -7,7 +7,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-std::vector<cuzn::Industry> cuzn::buildable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
+std::vector<Industry> buildable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
 	if (not is_card(selected_card)) {
 		throw M2ERROR("Item is not a card");
 	}
@@ -55,7 +55,7 @@ std::vector<cuzn::Industry> cuzn::buildable_industries(m2g::pb::ItemType selecte
 	}
 }
 
-m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, ItemType card, SpriteType location, ItemType industry) {
+m2::expected<ItemType> can_player_build_industry(m2::Character& player, ItemType card, SpriteType location, ItemType industry) {
 	if (not player_has_card(player, card)) {
 		return m2::make_unexpected("Player doesn't hold the given card");
 	}
@@ -66,8 +66,8 @@ m2::expected<ItemType> cuzn::can_player_build_industry(m2::Character& player, It
 		return m2::make_unexpected("Location does not contain the industry");
 	}
 
-	auto buildable_industries = cuzn::buildable_industries(card, location);
-	if (std::ranges::find(buildable_industries, industry) == buildable_industries.end()) {
+	auto buildable_inds = buildable_industries(card, location);
+	if (std::ranges::find(buildable_inds, industry) == buildable_inds.end()) {
 		return m2::make_unexpected("Selected card cannot build the industry on given location");
 	}
 

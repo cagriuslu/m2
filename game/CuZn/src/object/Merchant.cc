@@ -2,7 +2,7 @@
 #include <cuzn/detail/Graphic.h>
 #include <m2/Game.h>
 
-void cuzn::init_merchant(m2::Object& obj) {
+void init_merchant(m2::Object& obj) {
 	auto& chr = obj.add_full_character();
 
 	auto& gfx = obj.add_graphic();
@@ -13,6 +13,6 @@ void cuzn::init_merchant(m2::Object& obj) {
 	};
 	gfx.on_draw = [&chr](m2::Graphic& g) {
 		m2::Graphic::default_draw(g); // Merchant sprite
-		cuzn::draw_resources(chr); // Resources
+		draw_resources(chr); // Resources
 	};
 }

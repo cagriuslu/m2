@@ -16,8 +16,6 @@
 #include <cuzn/detail/SetUp.h>
 #include <m2/game/Detail.h>
 
-using namespace cuzn;
-
 const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
 const m2::ui::Blueprint* m2g::Proxy::pause_menu() { return &pause_menu_blueprint; }
@@ -66,12 +64,12 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	// Assign licenses to active merchants
 	{
 		auto merchant_licenses = prepare_merchant_license_list(client_count);
-		auto active_merchant_locations = cuzn::active_merchant_locations(client_count);
-		if (merchant_licenses.size() != active_merchant_locations.size()) {
+		auto active_merchant_locs = active_merchant_locations(client_count);
+		if (merchant_licenses.size() != active_merchant_locs.size()) {
 			throw M2ERROR("Merchant count mismatch");
 		}
 
-		for (const auto& merchant_location : active_merchant_locations) {
+		for (const auto& merchant_location : active_merchant_locs) {
 			// Pop license from the list
 			auto license = merchant_licenses.back();
 			merchant_licenses.pop_back();
@@ -163,8 +161,8 @@ m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, cons
 	MAYBE const std::vector<m2::pb::Resource>& resources) {
 	switch (obj.object_type()) {
 		case pb::FACTORY: {
-			auto city = std::ranges::find_if(items, cuzn::is_city);
-			auto industry_tile = std::ranges::find_if(items, cuzn::is_industry_tile);
+			auto city = std::ranges::find_if(items, is_city);
+			auto industry_tile = std::ranges::find_if(items, is_industry_tile);
 			if (city != items.end() && industry_tile != items.end()) {
 				return init_factory(obj, *city, *industry_tile);
 			} else {
