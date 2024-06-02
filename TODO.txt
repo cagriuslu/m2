@@ -1,3 +1,4 @@
+- More verbose logging, function names usually don't mean much
 - TextList doesn't register clicks on the rightmost side of the line
 - Custom UI mechanism is broken. Calling remove_deferred, and then adding a new UI causes the newly added UI to be
   removed instead of just removing the old UI. Instead, implement a ticketing system where once the custom UI is created,

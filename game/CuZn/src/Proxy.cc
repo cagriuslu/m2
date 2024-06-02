@@ -137,6 +137,10 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 			turn_holder_object_id);
 		auto success = init_road(*it, client_command.network_action().connection_1());
 		// TODO check result
+	} else if (client_command.has_loan_action()) {
+		// TODO action
+
+		card_to_discard = client_command.loan_action().card();
 	}
 
 	// Discard card from player
@@ -153,27 +157,36 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 	auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), (size_t)0, [](size_t sum, const std::vector<Card>& v) { return sum + v.size(); });
 	card_count += _draw_deck.size();
 
+	auto next_turn_holder_index = (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
 	// If no cards left
 	if (card_count == 0) {
 		// TODO end era or game
-		return (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
-	} else if (card_count % 2) {
+		return next_turn_holder_index;
+	} else if (_is_first_turn) {
+		// Draw single card
+		auto card = _draw_deck.back();
+		_draw_deck.pop_back();
+		turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
+
+		if (next_turn_holder_index == 0) {
+			// No longer first turn
+			_is_first_turn = false;
+		}
+		return next_turn_holder_index;
+	} else if (not _is_first_turn && card_count % 2) {
 		// If there are odd number of cards, the turn holder does not change
 		return turn_holder_index;
 	} else {
 		// If there are even number of cards, the turn holder changes.
 		// Draw cards for the player
 		if (not _draw_deck.empty()) {
-			if (_draw_deck.size() < 2) {
-				throw M2ERROR("Invalid number of cards in deck");
-			}
 			m2_repeat(2) {
 				auto card = _draw_deck.back();
 				_draw_deck.pop_back();
 				turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
 			}
 		}
-		return (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
+		return next_turn_holder_index;
 	}
 }
 

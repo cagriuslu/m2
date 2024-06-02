@@ -22,7 +22,9 @@ message ClientCommand {
     SpriteType beer_source = 6;
   }
   message SellAction {}
-  message LoanAction {}
+  message LoanAction {
+    ItemType card = 1;
+  }
   message DevelopAction {}
   message ScoutAction {}
 

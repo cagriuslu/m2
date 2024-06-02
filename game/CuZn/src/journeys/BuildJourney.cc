@@ -171,7 +171,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal
 		// Check if location has a built factory
 		if (auto* factory = find_factory_at_location(*industry_loc)) {
 			// Check if factory has the required resource
-			if (m2::is_less_or_equal(1.0f, factory->character().get_resource(unspecified_resource->first), 0.005f)) {
+			if (m2::is_less_or_equal(1.0f, factory->character().get_resource(unspecified_resource->first), 0.001f)) {
 				// Check if the factory is connected
 				if (is_industry_city_connected_to_location(city_of_location(_selected_location), *industry_loc)) {
 					// Deduct resource
