@@ -1,3 +1,4 @@
+- TextList doesn't register clicks on the rightmost side of the line
 - Custom UI mechanism is broken. Calling remove_deferred, and then adding a new UI causes the newly added UI to be
   removed instead of just removing the old UI. Instead, implement a ticketing system where once the custom UI is created,
   we return a pointer or iterator that can be used for removal.
@@ -43,3 +44,6 @@ RPG
 - Build all game mechanics
 - Make THE MOST MINIMAL levels to showcase the engine, do not make an enjoyable game.
 - Remove Enemy.proto, have a LUT in memory
+
+CuZn
+- Check if already industry/network built

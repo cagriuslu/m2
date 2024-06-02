@@ -109,9 +109,10 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 
 std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
+	auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
+	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 
 	std::optional<Card> card_to_discard;
-
 	if (client_command.has_build_action()) {
 		// TODO verify whether the player can build it
 
@@ -120,7 +121,7 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 		auto it = m2::create_object(
 			position_of_industry_location(client_command.build_action().industry_location()),
 			m2g::pb::FACTORY,
-			M2G_PROXY.multi_player_object_ids[turn_holder_index]);
+			turn_holder_object_id);
 		auto success = init_factory(*it,
 			city_of_location(client_command.build_action().industry_location()),
 			client_command.build_action().industry_tile());
@@ -133,15 +134,13 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 		auto it = m2::create_object(
 			position_of_connection(client_command.network_action().connection_1()),
 			m2g::pb::ROAD,
-			M2G_PROXY.multi_player_object_ids[turn_holder_index]);
+			turn_holder_object_id);
 		auto success = init_road(*it, client_command.network_action().connection_1());
 		// TODO check result
 	}
 
 	// Discard card from player
 	if (card_to_discard) {
-		auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
-		auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 		auto card_it = turn_holder_character.find_items(*card_to_discard);
 		turn_holder_character.remove_item(card_it);
 	}
@@ -162,8 +161,18 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 		// If there are odd number of cards, the turn holder does not change
 		return turn_holder_index;
 	} else {
-		// If there are even number of cards, the turn holder changes
-		// TODO draw cards to the current player
+		// If there are even number of cards, the turn holder changes.
+		// Draw cards for the player
+		if (not _draw_deck.empty()) {
+			if (_draw_deck.size() < 2) {
+				throw M2ERROR("Invalid number of cards in deck");
+			}
+			m2_repeat(2) {
+				auto card = _draw_deck.back();
+				_draw_deck.pop_back();
+				turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
+			}
+		}
 		return (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
 	}
 }
