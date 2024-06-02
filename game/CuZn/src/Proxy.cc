@@ -162,18 +162,20 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 	if (card_count == 0) {
 		// TODO end era or game
 		return next_turn_holder_index;
-	} else if (_is_first_turn) {
+	} else if (is_first_turn()) {
 		// Draw single card
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
 		turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
 
 		if (next_turn_holder_index == 0) {
-			// No longer first turn
-			_is_first_turn = false;
+			LOG_INFO("First turn ended");
+			for (auto multi_player_id : M2G_PROXY.multi_player_object_ids) {
+				M2_LEVEL.objects[multi_player_id].character().clear_resource(pb::IS_FIRST_TURN);
+			}
 		}
 		return next_turn_holder_index;
-	} else if (not _is_first_turn && card_count % 2) {
+	} else if (not is_first_turn() && card_count % 2) {
 		// If there are odd number of cards, the turn holder does not change
 		return turn_holder_index;
 	} else {

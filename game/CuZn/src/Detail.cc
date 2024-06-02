@@ -166,6 +166,10 @@ bool is_railroad_era() {
 	return m2::is_equal(M2_PLAYER.character().get_resource(ERA), 2.0f, 0.001f);
 }
 
+bool is_first_turn() {
+	return m2::is_equal(M2_PLAYER.character().get_resource(IS_FIRST_TURN), 1.0f, 0.001f);
+}
+
 bool location_has_industry(IndustryLocation location, Industry industry) {
 	auto industries = industries_on_location(location);
 	return std::ranges::find(industries, industry) != industries.end();

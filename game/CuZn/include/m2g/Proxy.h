@@ -40,7 +40,6 @@ namespace m2g {
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
 
 		// Server only fields
-		bool _is_first_turn{true};
 		std::vector<Card> _draw_deck;
 
 		std::optional<std::variant<BuildJourney, NetworkJourney>> user_journey;
