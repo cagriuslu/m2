@@ -16,6 +16,8 @@
 #include <cuzn/detail/SetUp.h>
 #include <m2/game/Detail.h>
 #include "cuzn/object/Road.h"
+#include <algorithm>
+#include <numeric>
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
@@ -100,6 +102,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 			M2_LEVEL.objects[player_object_id].character().add_named_item(M2_GAME.get_named_item(card));
 		}
 	}
+	_draw_deck = std::move(draw_deck);
 
 	// TODO
 }
@@ -107,8 +110,12 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 
+	std::optional<Card> card_to_discard;
+
 	if (client_command.has_build_action()) {
 		// TODO verify whether the player can build it
+
+		card_to_discard = client_command.build_action().card();
 
 		auto it = m2::create_object(
 			position_of_industry_location(client_command.build_action().industry_location()),
@@ -121,6 +128,8 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 	} else if (client_command.has_network_action()) {
 		// TODO verify whether the player can network
 
+		card_to_discard = client_command.network_action().card();
+
 		auto it = m2::create_object(
 			position_of_connection(client_command.network_action().connection_1()),
 			m2g::pb::ROAD,
@@ -129,8 +138,34 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 		// TODO check result
 	}
 
-	// Increment turn holder
-	return (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
+	// Discard card from player
+	if (card_to_discard) {
+		auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
+		auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
+		auto card_it = turn_holder_character.find_items(*card_to_discard);
+		turn_holder_character.remove_item(card_it);
+	}
+
+	// Count the cards in the game
+	auto player_card_lists = M2G_PROXY.multi_player_object_ids
+		| std::views::transform(m2::lookup_object_from_id)
+		| std::views::transform(m2::to_character_of_object)
+		| std::views::transform(m2::generate_named_item_types_transformer({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
+	auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), (size_t)0, [](size_t sum, const std::vector<Card>& v) { return sum + v.size(); });
+	card_count += _draw_deck.size();
+
+	// If no cards left
+	if (card_count == 0) {
+		// TODO end era or game
+		return (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
+	} else if (card_count % 2) {
+		// If there are odd number of cards, the turn holder does not change
+		return turn_holder_index;
+	} else {
+		// If there are even number of cards, the turn holder changes
+		// TODO draw cards to the current player
+		return (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
+	}
 }
 
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {

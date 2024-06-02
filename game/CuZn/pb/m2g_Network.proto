@@ -15,8 +15,7 @@ message ClientCommand {
     repeated SpriteType iron_sources = 5;
   }
   message NetworkAction {
-    ItemType card_1 = 1;
-    ItemType card_2 = 2;
+    ItemType card = 1;
     SpriteType connection_1 = 3;
     SpriteType connection_2 = 4;
     repeated SpriteType coal_sources = 5;

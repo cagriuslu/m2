@@ -62,6 +62,26 @@ size_t m2::Character::count_item(m2g::pb::ItemCategory item_cat) const {
     }
     return count;
 }
+std::vector<m2g::pb::ItemType> m2::Character::named_item_types() const {
+	std::vector<m2g::pb::ItemType> types;
+	for (auto it = begin_items(); it != end_items(); ++it) {
+		auto* item = it.get();
+		if (auto* named_item = dynamic_cast<const NamedItem*>(item)) {
+			types.emplace_back(named_item->type());
+		}
+	}
+	return types;
+}
+std::vector<m2g::pb::ItemType> m2::Character::named_item_types(m2g::pb::ItemCategory item_cat) const {
+	std::vector<m2g::pb::ItemType> types;
+	for (auto it = find_items(item_cat); it != end_items(); ++it) {
+		auto* item = it.get();
+		if (auto* named_item = dynamic_cast<const NamedItem*>(item)) {
+			types.emplace_back(named_item->type());
+		}
+	}
+	return types;
+}
 bool m2::Character::use_item(const Iterator& item_it, float resource_multiplier) {
 	if (item_it == end_items()) {
 		return false;
@@ -123,11 +143,11 @@ void m2::TinyCharacter::automatic_update() {
 		use_item(begin_items(), M2_GAME.delta_time_s());
 	}
 }
-m2::Character::Iterator m2::TinyCharacter::find_items(m2g::pb::ItemType item_type) {
+m2::Character::Iterator m2::TinyCharacter::find_items(m2g::pb::ItemType item_type) const {
 	return {*this, tiny_character_iterator_incrementor, item_type, 0,
 			_item && _item->type() == item_type ? _item.get() : nullptr};
 }
-m2::Character::Iterator m2::TinyCharacter::find_items(m2g::pb::ItemCategory cat) {
+m2::Character::Iterator m2::TinyCharacter::find_items(m2g::pb::ItemCategory cat) const {
 	return {*this, tiny_character_iterator_incrementor, cat, 0,
 			_item && _item->category() == cat ? _item.get() : nullptr};
 }
@@ -280,7 +300,7 @@ void m2::FullCharacter::automatic_update() {
 		}
 	}
 }
-m2::Character::Iterator m2::FullCharacter::find_items(m2g::pb::ItemType item_type) {
+m2::Character::Iterator m2::FullCharacter::find_items(m2g::pb::ItemType item_type) const {
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const auto& item = _items[i];
 		if (item.get()->type() == item_type) {
@@ -289,7 +309,7 @@ m2::Character::Iterator m2::FullCharacter::find_items(m2g::pb::ItemType item_typ
 	}
 	return end_items();
 }
-m2::Character::Iterator m2::FullCharacter::find_items(m2g::pb::ItemCategory cat) {
+m2::Character::Iterator m2::FullCharacter::find_items(m2g::pb::ItemCategory cat) const {
 	for (size_t i = 0; i < _items.size(); ++i) {
 		const auto& item = _items[i];
 		if (item.get()->category() == cat) {
@@ -400,6 +420,19 @@ m2::Character& m2::to_character_base(CharacterVariant& v) {
 	}, v);
 }
 
-m2::Object& m2::to_character_parent(Character& v) {
-	return v.parent();
+std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_transformer(m2g::pb::ItemCategory item_category) {
+	return [item_category](m2::Character& c) -> std::vector<m2g::pb::ItemType> {
+		return c.named_item_types(item_category);
+	};
+}
+
+std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_transformer(std::initializer_list<m2g::pb::ItemCategory>&& item_categories) {
+	return [item_categories](m2::Character& c) -> std::vector<m2g::pb::ItemType> {
+		std::vector<m2g::pb::ItemType> types;
+		for (auto cat : item_categories) {
+			auto _tmp = c.named_item_types(cat);
+			types.insert(types.cend(), _tmp.begin(), _tmp.end());
+		}
+		return types;
+	};
 }

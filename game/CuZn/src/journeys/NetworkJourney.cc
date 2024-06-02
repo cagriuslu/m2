@@ -87,16 +87,8 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	}
 
 	// Card selection
-	if (auto selected_card_1 = ask_for_card_selection(); selected_card_1) {
-		_selected_card_1 = *selected_card_1;
-		if (_build_double_railroads) {
-			if (auto selected_card_2 = ask_for_card_selection(_selected_card_1); selected_card_2) {
-				_selected_card_2 = *selected_card_2;
-			} else {
-				M2_DEFER(m2g::Proxy::user_journey_deleter);
-				return std::nullopt;
-			}
-		}
+	if (auto selected_card = ask_for_card_selection(); selected_card) {
+		_selected_card = *selected_card;
 	} else {
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
@@ -155,10 +147,9 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 		LOG_INFO("Network action confirmed");
 
 		m2g::pb::ClientCommand cc;
-		cc.mutable_network_action()->set_card_1(_selected_card_1);
+		cc.mutable_network_action()->set_card(_selected_card);
 		cc.mutable_network_action()->set_connection_1(_selected_connection_1);
 		if (_build_double_railroads) {
-			cc.mutable_network_action()->set_card_2(_selected_card_2);
 			cc.mutable_network_action()->set_connection_2(_selected_connection_2);
 		}
 		for (const auto& resource_source : _resource_sources) {

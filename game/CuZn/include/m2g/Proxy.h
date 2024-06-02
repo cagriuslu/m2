@@ -39,6 +39,9 @@ namespace m2g {
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> industry_positions; // Exact position and cell rectangle
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
 
+		// Server only fields
+		std::vector<Card> _draw_deck;
+
 		std::optional<std::variant<BuildJourney, NetworkJourney>> user_journey;
 		static void user_journey_deleter();
 

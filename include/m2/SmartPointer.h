@@ -42,7 +42,13 @@ namespace m2 {
 		T* operator->() {
 			return get();
 		}
+		const T* operator->() const {
+			return get();
+		}
 		T& operator*() {
+			return *get();
+		}
+		const T& operator*() const {
 			return *get();
 		}
 	};

@@ -79,10 +79,12 @@ namespace m2 {
 		[[nodiscard]] bool has_item(m2g::pb::ItemCategory item_cat) const;
 		[[nodiscard]] size_t count_item(m2g::pb::ItemType item_type) const;
 		[[nodiscard]] size_t count_item(m2g::pb::ItemCategory item_cat) const;
-		[[nodiscard]] virtual Iterator find_items(m2g::pb::ItemType item_type) = 0;
-		[[nodiscard]] virtual Iterator find_items(m2g::pb::ItemCategory item_cat) = 0;
+		[[nodiscard]] virtual Iterator find_items(m2g::pb::ItemType item_type) const = 0;
+		[[nodiscard]] virtual Iterator find_items(m2g::pb::ItemCategory item_cat) const = 0;
 		[[nodiscard]] virtual Iterator begin_items() const = 0;
 		[[nodiscard]] virtual Iterator end_items() const = 0;
+		[[nodiscard]] std::vector<m2g::pb::ItemType> named_item_types() const;
+		[[nodiscard]] std::vector<m2g::pb::ItemType> named_item_types(m2g::pb::ItemCategory item_cat) const;
 		virtual void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) = 0; // Item is moved
 		virtual void add_named_item(const NamedItem& item) = 0;
 		virtual void add_named_item_no_benefits(const NamedItem& item) = 0;
@@ -119,8 +121,8 @@ namespace m2 {
 
 		void automatic_update() override;
 
-		Iterator find_items(m2g::pb::ItemType item_type) override;
-		Iterator find_items(m2g::pb::ItemCategory item_cat) override;
+		Iterator find_items(m2g::pb::ItemType item_type) const override;
+		Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
 		[[nodiscard]] Iterator begin_items() const override;
 		[[nodiscard]] Iterator end_items() const override;
 		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
@@ -158,8 +160,8 @@ namespace m2 {
 
 		void automatic_update() override;
 
-		Iterator find_items(m2g::pb::ItemType item_type) override;
-		Iterator find_items(m2g::pb::ItemCategory item_cat) override;
+		Iterator find_items(m2g::pb::ItemType item_type) const override;
+		Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
 		[[nodiscard]] Iterator begin_items() const override;
 		[[nodiscard]] Iterator end_items() const override;
 		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
@@ -191,6 +193,9 @@ namespace m2 {
 	};
 
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
+
+	// Filters and Transforms
 	Character& to_character_base(CharacterVariant& v);
-	Object& to_character_parent(Character& v);
+	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_transformer(m2g::pb::ItemCategory item_category);
+	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_transformer(std::initializer_list<m2g::pb::ItemCategory>&& item_categories);
 }
