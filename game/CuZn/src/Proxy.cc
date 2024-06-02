@@ -138,7 +138,11 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 		auto success = init_road(*it, client_command.network_action().connection_1());
 		// TODO check result
 	} else if (client_command.has_loan_action()) {
-		// TODO action
+		auto income_points = m2::iround(turn_holder_character.get_attribute(m2g::pb::INCOME_POINTS));
+		auto income_level = level_from_income_points(income_points);
+		auto new_income_level = std::max(-10, income_level - 3);
+		auto new_income_points = highest_income_points_of_level(new_income_level);
+		turn_holder_character.set_attribute(pb::INCOME_POINTS, static_cast<float>(new_income_points));
 
 		card_to_discard = client_command.loan_action().card();
 	}
