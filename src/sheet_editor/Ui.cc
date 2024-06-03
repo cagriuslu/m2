@@ -1,13 +1,14 @@
 #include <m2/sheet_editor/Ui.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/TextSelection.h>
+#include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/Image.h>
 
 using namespace m2;
 using namespace m2::ui;
 
 const widget::TextBlueprint right_hud_set_button = {
-		.initial_text = "Set",
+		.text = "Set",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::visit(m2::overloaded {
 					[](sedit::State::BackgroundColliderMode& mode) { mode.set(); },
@@ -18,7 +19,7 @@ const widget::TextBlueprint right_hud_set_button = {
 		}
 };
 const widget::TextBlueprint right_hud_set_rect_button = {
-		.initial_text = "Set Rect",
+		.text = "Set Rect",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::visit(m2::overloaded {
 					[](sedit::State::ForegroundCompanionMode& mode) { mode.add_rect(); },
@@ -29,7 +30,7 @@ const widget::TextBlueprint right_hud_set_rect_button = {
 		}
 };
 const widget::TextBlueprint right_hud_set_center_button = {
-		.initial_text = "Set Center",
+		.text = "Set Center",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::visit(m2::overloaded {
 					[](sedit::State::ForegroundCompanionMode& mode) { mode.set_center(); },
@@ -40,7 +41,7 @@ const widget::TextBlueprint right_hud_set_center_button = {
 		}
 };
 const widget::TextBlueprint right_hud_reset_button = {
-		.initial_text = "Reset",
+		.text = "Reset",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::visit(m2::overloaded {
 				[](sedit::State::ForegroundCompanionMode& mode) { mode.reset(); },
@@ -54,7 +55,7 @@ const widget::TextBlueprint right_hud_reset_button = {
 };
 
 const widget::TextBlueprint foreground_companion_mode_title = {
-		.initial_text = "FComp"
+		.text = "FComp"
 };
 Blueprint sheet_editor_foreground_companion_mode_right_hud = {
 		.w = 19, .h = 72,
@@ -85,7 +86,7 @@ Blueprint sheet_editor_foreground_companion_mode_right_hud = {
 };
 
 const widget::TextBlueprint rect_mode_title = {
-		.initial_text = "Rect"
+		.text = "Rect"
 };
 Blueprint sheet_editor_rect_mode_right_hud = {
 		.w = 19, .h = 72,
@@ -116,7 +117,7 @@ Blueprint sheet_editor_rect_mode_right_hud = {
 };
 
 const widget::TextBlueprint background_collider_mode_title = {
-		.initial_text = "BColl"
+		.text = "BColl"
 };
 Blueprint sheet_editor_background_collider_mode_right_hud = {
 		.w = 19, .h = 72,
@@ -142,7 +143,7 @@ Blueprint sheet_editor_background_collider_mode_right_hud = {
 };
 
 const widget::TextBlueprint foreground_collider_mode_title = {
-		.initial_text = "FColl"
+		.text = "FColl"
 };
 Blueprint sheet_editor_foreground_collider_mode_right_hud = {
 		.w = 19, .h = 72,
@@ -175,7 +176,7 @@ const ui::Blueprint m2::ui::sheet_editor_right_hud = {
 };
 
 const widget::TextBlueprint left_hud_foreground_companion_button = {
-		.initial_text = "FComp",
+		.text = "FComp",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_foreground_companion_mode();
 
@@ -185,7 +186,7 @@ const widget::TextBlueprint left_hud_foreground_companion_button = {
 		}
 };
 const widget::TextBlueprint left_hud_rect_button = {
-		.initial_text = "Rect",
+		.text = "Rect",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_rect_mode();
 
@@ -195,7 +196,7 @@ const widget::TextBlueprint left_hud_rect_button = {
 		}
 };
 const widget::TextBlueprint left_hud_background_collider_button = {
-		.initial_text = "BColl",
+		.text = "BColl",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_background_collider_mode();
 
@@ -205,7 +206,7 @@ const widget::TextBlueprint left_hud_background_collider_button = {
 		}
 };
 const widget::TextBlueprint left_hud_foreground_collider_button = {
-		.initial_text = "FColl",
+		.text = "FColl",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_foreground_collider_mode();
 
@@ -215,7 +216,7 @@ const widget::TextBlueprint left_hud_foreground_collider_button = {
 		}
 };
 const widget::TextBlueprint left_hud_cancel_button = {
-		.initial_text = "Cancel",
+		.text = "Cancel",
 		.on_action = [](MAYBE const widget::Text& self) -> Action {
 			std::get<sedit::State>(M2_LEVEL.type_state).deactivate_mode();
 
@@ -225,10 +226,11 @@ const widget::TextBlueprint left_hud_cancel_button = {
 		}
 };
 const widget::TextBlueprint left_hud_coordinates = {
-		.initial_text = "0.0:0.0",
-		.on_update = [](MAYBE const widget::Text& self) {
+		.text = "0.0:0.0",
+		.on_update = [](MAYBE widget::Text& self) {
 			auto mouse_position = M2_GAME.mouse_position_world_m().hround();
-			return std::make_pair(make_continue_action(), m2::to_string(mouse_position.x, 1) + ':' + m2::to_string(mouse_position.y, 1));
+			self.set_text(m2::to_string(mouse_position.x, 1) + ':' + m2::to_string(mouse_position.y, 1));
+			return make_continue_action();
 		}
 };
 const Blueprint m2::ui::sheet_editor_left_hud = {
@@ -336,7 +338,7 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 						.border_width_px = 1,
 						.padding_width_px = 2,
 						.variant = widget::TextBlueprint{
-								.initial_text = "QUIT",
+								.text = "QUIT",
 								.kb_shortcut = SDL_SCANCODE_Q,
 								.on_action = [](MAYBE const widget::Text& self) -> Action { return make_quit_action(); },
 						}
@@ -346,7 +348,7 @@ const Blueprint m2::ui::sheet_editor_main_menu = {
 						.border_width_px = 1,
 						.padding_width_px = 2,
 						.variant = widget::TextBlueprint{
-								.initial_text = "SELECT",
+								.text = "SELECT",
 								.kb_shortcut = SDL_SCANCODE_RETURN,
 								.on_action = [](MAYBE const widget::Text& self) -> Action {
 									if (not std::holds_alternative<std::monostate>(std::get<sedit::State>(M2_LEVEL.type_state).mode)) {

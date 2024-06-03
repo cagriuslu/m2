@@ -6,7 +6,7 @@
 using namespace m2::ui;
 
 static widget::TextBlueprint resume_button = {
-		.initial_text = "Resume",
+		.text = "Resume",
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text &self) {
 			LOG_DEBUG("Resume button pressed");
@@ -14,7 +14,7 @@ static widget::TextBlueprint resume_button = {
 		}
 };
 static widget::TextBlueprint quit_button = {
-		.initial_text = "Quit",
+		.text = "Quit",
 		.kb_shortcut = SDL_SCANCODE_Q,
 		.on_action = [](MAYBE const widget::Text &self) {
 			return make_quit_action();
@@ -39,7 +39,7 @@ const Blueprint pause_menu_blueprint = {
 };
 
 static widget::TextBlueprint hp_label = {
-		.initial_text = "HP"
+		.text = "HP"
 };
 static widget::ProgressBarBlueprint hp_progress_bar = {
 		.initial_progress = 1.0f,
@@ -52,7 +52,7 @@ static widget::ProgressBarBlueprint hp_progress_bar = {
 		}
 };
 static widget::TextBlueprint dash_label = {
-		.initial_text = "DASH COOLDOWN"
+		.text = "DASH COOLDOWN"
 };
 static widget::ProgressBarBlueprint dash_progress_bar = {
 		.initial_progress = 1.0f,

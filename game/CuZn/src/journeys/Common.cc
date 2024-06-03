@@ -12,7 +12,7 @@ const m2::ui::Blueprint journey_cancel_button{
 		WidgetBlueprint{
 			.background_color = {0, 0, 0, 255},
 			.variant = widget::TextBlueprint{
-				.initial_text = "Cancel",
+				.text = "Cancel",
 				.on_action = [](MAYBE const widget::Text& self) -> Action {
 					// Create and send a cancel signal to the current user journey
 					auto& user_journey = m2g::Proxy::get_instance().user_journey;

@@ -411,7 +411,7 @@ m2::ui::Widget *m2::ui::find_text_widget(State &state, const std::string &text) 
 	    [=](const auto *blueprint) {
 		    const auto *text_variant = std::get_if<ui::widget::TextBlueprint>(&blueprint->variant);
 		    // If widget is Text and the button is labelled correctly
-		    return text_variant && text_variant->initial_text == text;
+		    return text_variant && text_variant->text == text;
 	    },
 	    // Projection
 	    [](const auto &unique_blueprint) { return unique_blueprint->blueprint; });
@@ -422,13 +422,13 @@ m2::ui::Widget *m2::ui::find_text_widget(State &state, const std::string &text) 
 template <unsigned INDEX>
 widget::TextBlueprint command_output_variant() {
 	return {
-	    .initial_text = "",
+	    .text = "",
 	    .alignment = TextAlignment::LEFT,
-	    .on_update = [](MAYBE const widget::Text &self) -> std::pair<Action, std::optional<std::string>> {
-		    return {
-		        make_continue_action(),
-		        INDEX < M2_GAME.console_output.size() ? M2_GAME.console_output[M2_GAME.console_output.size() - INDEX - 1]
-		                                           : std::string()};
+	    .on_update = [](MAYBE widget::Text &self) {
+			self.set_text(INDEX < M2_GAME.console_output.size()
+				? M2_GAME.console_output[M2_GAME.console_output.size() - INDEX - 1]
+				: std::string());
+		    return make_continue_action();
 	    }};
 }
 
@@ -513,6 +513,14 @@ const Blueprint m2::ui::message_box_ui = {
         .border_width_px = 0,
         .background_color = SDL_Color{127, 127, 127, 127},
         .variant =
-            widget::TextBlueprint{.alignment = TextAlignment::LEFT, .on_update = [](MAYBE const widget::Text &self) {
-	                                  return std::make_pair(make_continue_action(), M2_LEVEL.message);
-                                  }}}}};
+            widget::TextBlueprint{
+				.alignment = TextAlignment::LEFT,
+				.on_update = [](MAYBE widget::Text &self) {
+					if (M2_LEVEL.message) {
+						self.set_text(*M2_LEVEL.message);
+					}
+					return make_continue_action();
+				}
+		}
+	}}
+};

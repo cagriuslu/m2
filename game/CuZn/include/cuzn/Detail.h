@@ -4,6 +4,7 @@
 #include <m2/component/Character.h>
 #include <m2/VecF.h>
 #include <m2/M2.h>
+#include <m2/Color.h>
 
 using Card = m2g::pb::ItemType;
 using City = m2g::pb::ItemType;
@@ -60,10 +61,10 @@ std::vector<Connection> connections_from_city(City city_card);
 
 std::vector<City> cities_from_connection(Connection connection);
 
-/// Returns the industries in that given industry location
 std::vector<Industry> industries_on_location(IndustryLocation location);
 
-SDL_Color generate_player_color(unsigned index);
+m2::RGB generate_player_color(unsigned index);
+std::string generate_player_name(unsigned index);
 
 m2::VecF connection_sprite_world_offset(m2g::pb::SpriteType original_type);
 

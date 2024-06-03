@@ -6,12 +6,12 @@ using namespace m2;
 using namespace m2::ui;
 
 const widget::TextBlueprint right_hud_set_rect_button = {
-    .initial_text = "Set Rect", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Set Rect", .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).set_rect();
 	    return make_continue_action();
     }};
 const widget::TextBlueprint right_hud_reset_button = {
-    .initial_text = "Reset", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Reset", .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).reset();
 	    return make_continue_action();
     }};
@@ -94,7 +94,7 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
             .padding_width_px = 2,
             .variant =
                 widget::TextBlueprint{
-                    .initial_text = "QUIT",
+                    .text = "QUIT",
                     .kb_shortcut = SDL_SCANCODE_Q,
                     .on_action = [](MAYBE const widget::Text& self) -> Action { return make_quit_action(); },
                 }},
@@ -106,7 +106,7 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
             .border_width_px = 1,
             .padding_width_px = 2,
             .variant = widget::TextBlueprint{
-                .initial_text = "SELECT",
+                .text = "SELECT",
                 .kb_shortcut = SDL_SCANCODE_RETURN,
                 .on_action = [](MAYBE const widget::Text& self) -> Action {
 	                if (std::get<bsedit::State>(M2_LEVEL.type_state).select()) {
@@ -132,7 +132,7 @@ const Blueprint ui::bulk_sheet_editor_pause_menu = {
         .border_width_px = 1,
         .padding_width_px = 2,
         .variant = widget::TextBlueprint{
-            .initial_text = "QUIT",
+            .text = "QUIT",
             .kb_shortcut = SDL_SCANCODE_Q,
             .on_action = [](MAYBE const widget::Text& self) -> Action { return make_quit_action(); },
         }}}};

@@ -341,16 +341,31 @@ std::vector<Industry> industries_on_location(IndustryLocation location) {
 	return industries;
 }
 
-SDL_Color generate_player_color(unsigned index) {
+m2::RGB generate_player_color(unsigned index) {
 	switch (index) {
 		case 0:
-			return SDL_Color{165, 42, 42, 255};
+			return m2::RGB{0, 255, 255};
 		case 1:
-			return SDL_Color{173, 255, 47, 255};
+			return m2::RGB{255, 0, 255};
 		case 2:
-			return SDL_Color{32, 178, 170, 255};
+			return m2::RGB{255, 255, 0};
 		case 3:
-			return SDL_Color{255, 165, 0, 255};
+			return m2::RGB{0, 255, 0};
+		default:
+			throw M2ERROR("Invalid player index");
+	}
+}
+
+std::string generate_player_name(unsigned index) {
+	switch (index) {
+		case 0:
+			return "Cyan";
+		case 1:
+			return "Pink";
+		case 2:
+			return "Yellow";
+		case 3:
+			return "Green";
 		default:
 			throw M2ERROR("Invalid player index");
 	}

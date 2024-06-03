@@ -11,8 +11,8 @@ using namespace m2g;
 using namespace m2g::pb;
 
 static TextBlueprint client_count = {
-	.initial_text = "0",
-	.on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
+	.text = "0",
+	.on_update = [](MAYBE Text& self) {
 		auto client_count = M2_GAME.server_thread().client_count();
 		auto ready_client_count = M2_GAME.server_thread().ready_client_count();
 		auto text = std::to_string(ready_client_count) + "/" + std::to_string(client_count);
@@ -20,7 +20,8 @@ static TextBlueprint client_count = {
 		if (client_count != 1 && client_count == ready_client_count) {
 			text += " - START!";
 		}
-		return std::make_pair(make_continue_action(), text);
+		self.set_text(text);
+		return make_continue_action();
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
 		if (2 <= M2_GAME.server_thread().client_count()) {
@@ -50,7 +51,7 @@ const Blueprint server_lobby = {
 			.h = 10,
 			.border_width_px = 0,
 			.padding_width_px = 5,
-			.variant = TextBlueprint{.initial_text = "Client count:"}
+			.variant = TextBlueprint{.text = "Client count:"}
 		},
 		WidgetBlueprint{
 			.x = 80, .y = 40, .w = 40, .h = 10,

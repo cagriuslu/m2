@@ -25,7 +25,7 @@ Blueprint generate_cards_window(bool has_return_button, m2g::pb::ItemType exclud
 				.h = 3,
 				.variant =
 				TextBlueprint{
-					.initial_text = "X",
+					.text = "X",
 					.on_action = [](MAYBE const Text& self) -> Action {
 						return make_return_action();
 					}
@@ -74,7 +74,7 @@ Blueprint generate_cards_window(bool has_return_button, m2g::pb::ItemType exclud
 				.w = 15,
 				.h = 5,
 				.variant = TextBlueprint{
-					.initial_text = "Select",
+					.text = "Select",
 					.on_action = [](const Text& self) -> Action {
 						// Find the other blueprint
 						auto* card_selection = self.parent().find_first_widget_by_name<TextListSelection>("CardSelection");
@@ -118,7 +118,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 			WidgetBlueprint{
 				.x = 57, .y = 0, .w = 3, .h = 3,
 				.variant = TextBlueprint{
-					.initial_text = "X",
+					.text = "X",
 					.on_action = [](MAYBE const Text& self) -> Action {
 						return make_return_action();
 					}
@@ -127,7 +127,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 			WidgetBlueprint{
 				.x = 5, .y = 14, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.initial_text = M2_GAME.get_named_item(industry_1).in_game_name(),
+					.text = M2_GAME.get_named_item(industry_1).in_game_name(),
 					.on_action = [industry_1](MAYBE const Text& self) -> Action {
 						return make_return_action<m2g::pb::ItemType>(industry_1);
 					}
@@ -136,7 +136,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 			WidgetBlueprint{
 				.x = 5, .y = 21, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.initial_text = M2_GAME.get_named_item(industry_2).in_game_name(),
+					.text = M2_GAME.get_named_item(industry_2).in_game_name(),
 					.on_action = [industry_2](MAYBE const Text& self) -> Action {
 						return make_return_action<m2g::pb::ItemType>(industry_2);
 					}
@@ -169,7 +169,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 				.x = 5, .y = 5, .w = 50, .h = 5,
 				.border_width_px = 0,
 				.variant = TextBlueprint{
-					.initial_text = question1,
+					.text = question1,
 					.font_size = 4.5f,
 					.alignment = TextAlignment::LEFT
 				}
@@ -178,7 +178,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 				.x = 5, .y = 10, .w = 50, .h = 5,
 				.border_width_px = 0,
 				.variant = TextBlueprint{
-					.initial_text = question2,
+					.text = question2,
 					.font_size = 4.5f,
 					.alignment = TextAlignment::LEFT
 				}
@@ -186,7 +186,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 			WidgetBlueprint{
 				.x = 5, .y = 30, .w = 15, .h = 5,
 				.variant = TextBlueprint{
-					.initial_text = decline_text,
+					.text = decline_text,
 					.on_action = [](MAYBE const Text& self) -> Action {
 						return make_return_action<bool>(false);
 					}
@@ -195,7 +195,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 			WidgetBlueprint{
 				.x = 25, .y = 30, .w = 30, .h = 5,
 				.variant = TextBlueprint{
-					.initial_text = accept_text,
+					.text = accept_text,
 					.on_action = [](MAYBE const Text& self) -> Action {
 						return make_return_action<bool>(true);
 					}

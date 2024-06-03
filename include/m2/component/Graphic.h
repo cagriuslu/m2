@@ -8,6 +8,7 @@
 #include "../RectF.h"
 #include <Level.pb.h>
 #include <functional>
+#include <m2/Color.h>
 
 namespace m2 {
 	bool is_projection_type_parallel(pb::ProjectionType pt);
@@ -97,6 +98,7 @@ namespace m2 {
 		/// Color the world cell with the given color
 		static void color_cell(const VecI& cell, SDL_Color color);
 		static void color_rect(const RectF& world_coordinates_m, SDL_Color color);
+		static void color_rect(const RectF& world_coordinates_m, const RGB& color);
 		static void color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color);
 		static void draw_cross(const VecF& world_position, SDL_Color color);
 		static void draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);

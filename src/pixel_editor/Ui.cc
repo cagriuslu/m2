@@ -6,7 +6,7 @@ using namespace m2;
 using namespace m2::ui;
 
 const widget::TextBlueprint pixel_editor_left_hud_paint_button = {
-		.initial_text = "Paint",
+		.text = "Paint",
 		.kb_shortcut = SDL_SCANCODE_P,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
 			std::get<pedit::State>(M2_LEVEL.type_state).activate_paint_mode();
@@ -14,7 +14,7 @@ const widget::TextBlueprint pixel_editor_left_hud_paint_button = {
 		}
 };
 const widget::TextBlueprint pixel_editor_left_hud_erase_button = {
-		.initial_text = "Erase",
+		.text = "Erase",
 		.kb_shortcut = SDL_SCANCODE_E,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
 			std::get<pedit::State>(M2_LEVEL.type_state).activate_erase_mode();
@@ -22,7 +22,7 @@ const widget::TextBlueprint pixel_editor_left_hud_erase_button = {
 		}
 };
 const widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
-		.initial_text = "Pick",
+		.text = "Pick",
 		.kb_shortcut = SDL_SCANCODE_C,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
 			std::get<pedit::State>(M2_LEVEL.type_state).activate_color_picker_mode();
@@ -30,7 +30,7 @@ const widget::TextBlueprint pixel_editor_left_hud_color_picker_button = {
 		}
 };
 const widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
-		.initial_text = "Cancel",
+		.text = "Cancel",
 		.kb_shortcut = SDL_SCANCODE_X,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
 			std::get<pedit::State>(M2_LEVEL.type_state).deactivate_mode();
@@ -38,7 +38,7 @@ const widget::TextBlueprint pixel_editor_left_hud_cancel_button = {
 		}
 };
 const widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
-		.initial_text = "Grid",
+		.text = "Grid",
 		.kb_shortcut = SDL_SCANCODE_G,
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
 			if (M2_LEVEL.dynamic_grid_lines_loader) {
@@ -50,7 +50,7 @@ const widget::TextBlueprint pixel_editor_left_hud_gridlines_button = {
 		}
 };
 const widget::TextBlueprint pixel_editor_left_hud_save_button = {
-		.initial_text = "Save",
+		.text = "Save",
 		.on_action = [](MAYBE const widget::Text &self) -> Action {
 			//execute_blocking(&level_editor_save_confirmation);
 			// TODO

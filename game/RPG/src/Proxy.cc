@@ -134,7 +134,7 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 		    .w = x_button_width, .h = y_button_width,
 		    .border_width_px = 1,
 		    .variant = m2::ui::widget::TextBlueprint{
-		        .initial_text = level_display_name,
+		        .text = level_display_name,
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) {
 			        alive_enemy_count = 0;
 			        m2_succeed_or_throw_error(M2_GAME.load_single_player(level_json, level_name));
@@ -151,7 +151,7 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 	    .x = 75, .y = 78, .w = 10, .h = 6,
 	    .border_width_px = 1,
 	    .variant = m2::ui::widget::TextBlueprint{
-	        .initial_text = "Quit",
+	        .text = "Quit",
 	        .kb_shortcut = SDL_SCANCODE_Q,
 	        .on_action = [](MAYBE const m2::ui::widget::Text &self) {
 		        return m2::ui::make_quit_action();
@@ -174,7 +174,7 @@ const m2::ui::Blueprint* m2g::Proxy::generate_right_hud() {
 	    .x = 2, .y = 66, .w = 15, .h = 2,
 	    .border_width_px = 0,
 	    .variant = m2::ui::widget::TextBlueprint{
-	        .initial_text = "AMMO"
+	        .text = "AMMO"
 	    }
 	});
 	_right_hud.widgets.emplace_back(m2::ui::WidgetBlueprint{
@@ -220,7 +220,7 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 		    .x = 70, .y = 70, .w = 20, .h = 6,
 		    .border_width_px = 1,
 		    .variant = m2::ui::widget::TextBlueprint{
-		        .initial_text = "Retry",
+		        .text = "Retry",
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) -> m2::ui::Action {
 			        alive_enemy_count = 0;
 			        m2_succeed_or_throw_error(M2_GAME.load_single_player(*lb_path, M2_LEVEL.name()));
@@ -234,7 +234,7 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 	    .x = 55, .y = 80, .w = 20, .h = 6,
 	    .border_width_px = 1,
 	    .variant = m2::ui::widget::TextBlueprint{
-	        .initial_text = "Main Menu",
+	        .text = "Main Menu",
 	        .on_action = [&](MAYBE const m2::ui::widget::Text &self) {
 		        return m2::ui::State::create_execute_sync(&_main_menu);
 	        }
@@ -245,7 +245,7 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 	    .x = 85, .y = 80, .w = 20, .h = 6,
 	    .border_width_px = 1,
 	    .variant = m2::ui::widget::TextBlueprint{
-	        .initial_text = "Quit",
+	        .text = "Quit",
 	        .on_action = [](MAYBE const m2::ui::widget::Text &self) {
 		        return m2::ui::make_quit_action();
 	        }

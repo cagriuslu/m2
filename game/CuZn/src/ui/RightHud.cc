@@ -23,7 +23,7 @@ static const Blueprint tiles_blueprint = {
 			.h = 3,
 			.variant =
 			TextBlueprint{
-				.initial_text = "X",
+				.text = "X",
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 					return make_return_action();
 				}
@@ -99,7 +99,7 @@ const Blueprint right_hud_blueprint = {
 	.widgets = {
 		WidgetBlueprint{
 			.x = 2,
-			.y = 0,
+			.y = 1,
 			.w = 15,
 			.h = 6,
 			.border_width_px = 0,
@@ -107,17 +107,16 @@ const Blueprint right_hud_blueprint = {
 			TextBlueprint{
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
-				.on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
-					// Lookup victory points
+				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::I(M2_PLAYER.character().get_attribute(VICTORY_POINTS));
-					auto text = std::string{"VP:"} + std::to_string(vp);
-					return std::make_pair(make_continue_action(), text);
+					self.set_text(std::string{"Points:"} + std::to_string(vp));
+					return make_continue_action();
 				}
 			}
 		},
 		WidgetBlueprint{
 			.x = 2,
-			.y = 6,
+			.y = 8,
 			.w = 15,
 			.h = 6,
 			.border_width_px = 0,
@@ -125,23 +124,39 @@ const Blueprint right_hud_blueprint = {
 			TextBlueprint{
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
-				.on_update = [](MAYBE const Text& self) -> std::pair<Action, std::optional<std::string>> {
-					// Lookup money
-					auto money = m2::I(M2_PLAYER.character().get_resource(MONEY));
-					auto text = std::string{"Money:"} + std::to_string(money);
-					return std::make_pair(make_continue_action(), text);
+				.on_update = [](MAYBE Text& self) {
+					auto vp = m2::I(M2_PLAYER.character().get_attribute(INCOME_POINTS));
+					self.set_text(std::string{"Income:"} + std::to_string(vp));
+					return make_continue_action();
 				}
 			}
 		},
 		WidgetBlueprint{
 			.x = 2,
-			.y = 12,
+			.y = 15,
+			.w = 15,
+			.h = 6,
+			.border_width_px = 0,
+			.variant =
+			TextBlueprint{
+				.font_size = 4.5f,
+				.alignment = m2::ui::TextAlignment::LEFT,
+				.on_update = [](MAYBE Text& self) {
+					auto money = m2::I(M2_PLAYER.character().get_resource(MONEY));
+					self.set_text(std::string{"Cash:£"} + std::to_string(money));
+					return make_continue_action();
+				}
+			}
+		},
+		WidgetBlueprint{
+			.x = 2,
+			.y = 22,
 			.w = 15,
 			.h = 6,
 			.border_width_px = 1,
 			.variant =
 			TextBlueprint{
-				.initial_text = "Cards",
+				.text = "Cards",
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {
@@ -154,12 +169,12 @@ const Blueprint right_hud_blueprint = {
 		},
 		WidgetBlueprint{
 			.x = 2,
-			.y = 18,
+			.y = 29,
 			.w = 15,
 			.h = 6,
 			.border_width_px = 1,
 			.variant = TextBlueprint{
-				.initial_text = "Tiles",
+				.text = "Tiles",
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {

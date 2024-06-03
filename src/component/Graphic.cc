@@ -239,6 +239,9 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, SDL_Color color) 
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 	SDL_RenderFillRect(M2_GAME.renderer, &rect);
 }
+void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGB& color) {
+	color_rect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, 255});
+}
 
 void m2::Graphic::color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color) {
 	const auto center_position_px = screen_origin_to_position_dstpx(center_position_m);

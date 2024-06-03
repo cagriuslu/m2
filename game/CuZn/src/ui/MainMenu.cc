@@ -23,7 +23,7 @@ const Blueprint main_menu_blueprint = {
 			.border_width_px = 1,
 			.padding_width_px = 5,
 			.variant = TextBlueprint{
-				.initial_text = "JOIN", .on_action = [](MAYBE const widget::Text& self) {
+				.text = "JOIN", .on_action = [](MAYBE const widget::Text& self) {
 					return m2::ui::State::create_execute_sync(&ip_port_form);
 				}
 			}
@@ -33,7 +33,7 @@ const Blueprint main_menu_blueprint = {
 			.border_width_px = 1,
 			.padding_width_px = 5,
 			.variant = TextBlueprint{
-				.initial_text = "HOST", .on_action = [](MAYBE const widget::Text& self) {
+				.text = "HOST", .on_action = [](MAYBE const widget::Text& self) {
 					M2_GAME.host_game(m2::mplayer::Type::TurnBased, 4);
 					return m2::ui::State::create_execute_sync(&server_lobby);
 				}
@@ -44,7 +44,7 @@ const Blueprint main_menu_blueprint = {
 			.border_width_px = 1,
 			.padding_width_px = 5,
 			.variant = TextBlueprint{
-				.initial_text = "QUIT", .kb_shortcut = SDL_SCANCODE_Q, .on_action = quit_button_action
+				.text = "QUIT", .kb_shortcut = SDL_SCANCODE_Q, .on_action = quit_button_action
 			}
 		}
 	}
