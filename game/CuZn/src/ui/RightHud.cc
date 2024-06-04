@@ -161,8 +161,8 @@ const Blueprint right_hud_blueprint = {
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(
-						m2::RectF{0.15f, 0.15f, 0.7f, 0.7f},
-						std::make_unique<Blueprint>(generate_cards_window(false)));
+						cards_window_ratio(),
+						std::make_unique<Blueprint>(generate_cards_window()));
 					return make_continue_action();
 				}
 			}

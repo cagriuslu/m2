@@ -11,7 +11,7 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Blueprint generate_cards_window(bool has_return_button, m2g::pb::ItemType exclude_card) {
+Blueprint generate_cards_window(m2g::pb::ItemType exclude_card) {
 	return Blueprint{
 		.w = 60,
 		.h = 40,
@@ -19,62 +19,34 @@ Blueprint generate_cards_window(bool has_return_button, m2g::pb::ItemType exclud
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
-				.x = 57,
-				.y = 0,
-				.w = 3,
-				.h = 3,
-				.variant =
-				TextBlueprint{
-					.text = "X",
-					.on_action = [](MAYBE const Text& self) -> Action {
-						return make_return_action();
-					}
-				}
-			},
-			WidgetBlueprint{
 				.name = "CardSelection",
-				.x = 5,
-				.y = 5,
-				.w = 30,
+				.x = 2,
+				.y = 2,
+				.w = 56,
 				.h = 30,
 				.variant = TextListSelectionBlueprint{
 					.line_count = 8,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_create =
-					[&exclude_card](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+					.on_create = [&exclude_card](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+						auto cards = m2::generate_named_item_types_transformer(
+							{m2g::pb::ITEM_CATEGORY_CITY_CARD, m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD, m2g::pb::ITEM_CATEGORY_WILD_CARD})(M2_PLAYER.character())
+							| std::views::filter([exclude_card](auto item_type) { return exclude_card != item_type; });
 						TextListSelectionBlueprint::Options options;
-						// Iterate over the cards of the player
-						for (auto item_it = M2_PLAYER.character().find_items(m2g::pb::ITEM_CATEGORY_WILD_CARD);
-							item_it != M2_PLAYER.character().end_items(); ++item_it) {
-							options.emplace_back(ItemType_Name(item_it->type()));
-						}
-						for (auto item_it = M2_PLAYER.character().find_items(m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD);
-							item_it != M2_PLAYER.character().end_items(); ++item_it) {
-							options.emplace_back(ItemType_Name(item_it->type()));
-						}
-						for (auto item_it = M2_PLAYER.character().find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD);
-							item_it != M2_PLAYER.character().end_items(); ++item_it) {
-							options.emplace_back(ItemType_Name(item_it->type()));
-						}
-						if (exclude_card) {
-							if (auto it = std::find(options.begin(), options.end(), ItemType_Name(exclude_card)); it != options.end()) {
-								options.erase(it);
-							}
-						}
+						std::ranges::for_each(cards, [&options](auto item_type) {
+							options.emplace_back(M2_GAME.get_named_item(item_type).in_game_name());
+						});
 						return options;
 					}
 				}
 			},
-			// TODO Card details
 			WidgetBlueprint{
-				.initially_enabled = has_return_button,
-				.x = 40,
-				.y = 30,
-				.w = 15,
-				.h = 5,
+				.x = 2,
+				.y = 34,
+				.w = 56,
+				.h = 4,
 				.variant = TextBlueprint{
-					.text = "Select",
+					.text = "OK",
 					.on_action = [](const Text& self) -> Action {
 						// Find the other blueprint
 						auto* card_selection = self.parent().find_first_widget_by_name<TextListSelection>("CardSelection");
@@ -84,8 +56,7 @@ Blueprint generate_cards_window(bool has_return_button, m2g::pb::ItemType exclud
 								return make_return_action<m2g::pb::ItemType>(item_type);
 							}
 						}
-						// Else, don't return
-						return make_continue_action();
+						return make_return_action();
 					}
 				}
 			}
@@ -93,10 +64,14 @@ Blueprint generate_cards_window(bool has_return_button, m2g::pb::ItemType exclud
 	};
 }
 
+m2::RectF cards_window_ratio() {
+	return m2::RectF{0.25f, 0.15f, 0.5f, 0.7f};
+}
+
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card) {
 	LOG_INFO("Asking player to select a card...");
 	std::optional<m2g::pb::ItemType> selected_card;
-	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window(true, exclude_card)), M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window(exclude_card)), M2_GAME.dimensions().game_and_hud.ratio(cards_window_ratio()))
 		.if_void_return([&]() {
 			LOG_INFO("Card selection cancelled");
 		})

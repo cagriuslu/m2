@@ -81,7 +81,7 @@ const Blueprint left_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					auto text = std::string{"Color: "} + generate_player_name(M2_GAME.client_thread().receiver_index());
+					auto text = std::string{"Color:"} + generate_player_name(M2_GAME.client_thread().receiver_index());
 					self.set_text(text);
 					self.set_color(generate_player_color(M2_GAME.client_thread().receiver_index()));
 					return make_continue_action();
