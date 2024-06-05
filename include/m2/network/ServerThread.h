@@ -21,7 +21,7 @@ namespace m2::network {
 		std::mutex _mutex;
 		pb::ServerState _state{pb::ServerState::SERVER_NOT_READY};
 		std::vector<server::Client> _clients;
-		unsigned _turn_holder{};
+		int _turn_holder{};
 		std::optional<pb::NetworkMessage> _received_client_command;
 
 		// Thread variables
@@ -40,12 +40,12 @@ namespace m2::network {
 		bool is_listening();
 		int client_count();
 		int ready_client_count();
-		unsigned turn_holder();
+		int turn_holder_index();
 		std::optional<pb::NetworkMessage> pop_turn_holder_command();
 
 		// Modifiers
 		void_expected close_lobby();
-		void set_turn_holder_index(unsigned);
+		void set_turn_holder(int index);
 		void server_update();
 
 	private:

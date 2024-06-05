@@ -44,9 +44,10 @@ namespace m2::network {
 		bool is_started();
 		std::optional<pb::ServerUpdate> peek_unprocessed_server_update();
 		std::optional<pb::ServerUpdate> last_processed_server_update();
-		bool is_our_turn();
+		int turn_holder_index();
 		int total_player_count();
 		int receiver_index();
+		bool is_turn();
 
 		// Modifiers
 		void set_ready_blocking(bool state);

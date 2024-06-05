@@ -73,16 +73,16 @@ std::optional<m2::pb::ServerUpdate> m2::network::ClientThread::last_processed_se
 	}
 }
 
-bool m2::network::ClientThread::is_our_turn() {
-	auto server_update = last_processed_server_update();
-	if (server_update) {
-		return server_update->turn_holder_index() == server_update->receiver_index();
+int m2::network::ClientThread::turn_holder_index() {
+	if (auto server_update = last_processed_server_update()) {
+		return server_update->turn_holder_index();
 	} else {
 		// Check if we're the host, because the host doesn't receive server updates.
 		if (M2_GAME.is_server()) {
-			return M2_GAME.server_thread().turn_holder() == 0;
+			return M2_GAME.server_thread().turn_holder_index();
+		} else {
+			throw M2ERROR("Turn queried before game begins");
 		}
-		return false;
 	}
 }
 
@@ -104,6 +104,10 @@ int m2::network::ClientThread::receiver_index() {
 		return server_update->receiver_index();
 	}
 	return 0; // Else, the ClientThread must be the server's client.
+}
+
+bool m2::network::ClientThread::is_turn() {
+	return turn_holder_index() == receiver_index();
 }
 
 void m2::network::ClientThread::set_ready_blocking(bool state) {

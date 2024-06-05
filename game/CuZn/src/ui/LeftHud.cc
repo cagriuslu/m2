@@ -15,7 +15,7 @@ namespace {
 		.text = "Build",
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (M2_GAME.client_thread().is_our_turn()) {
+			if (M2_GAME.client_thread().is_turn()) {
 				LOG_INFO("Beginning BuildJourney");
 				m2g::Proxy::get_instance().user_journey.emplace(BuildJourney{});
 			} else {
@@ -29,7 +29,7 @@ namespace {
 		.text = "Network",
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (M2_GAME.client_thread().is_our_turn()) {
+			if (M2_GAME.client_thread().is_turn()) {
 				LOG_INFO("Beginning BuildJourney");
 				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
 			} else {
@@ -47,7 +47,7 @@ namespace {
 		.text = "Loan",
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-			if (M2_GAME.client_thread().is_our_turn()) {
+			if (M2_GAME.client_thread().is_turn()) {
 				LOG_INFO("Loan action");
 				if (auto selected_card = ask_for_card_selection(); selected_card) {
 					auto card_name = M2_GAME.get_named_item(*selected_card).in_game_name();
@@ -94,7 +94,7 @@ const Blueprint left_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					if (M2_GAME.client_thread().is_our_turn()) {
+					if (M2_GAME.client_thread().is_turn()) {
 						self.set_text("Your turn");
 					} else {
 						self.set_text("Wait turn");

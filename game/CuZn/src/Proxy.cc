@@ -142,6 +142,7 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 		auto new_income_level = std::max(-10, income_level - 3);
 		auto new_income_points = highest_income_points_of_level(new_income_level);
 		turn_holder_character.set_attribute(pb::INCOME_POINTS, static_cast<float>(new_income_points));
+		turn_holder_character.add_resource(pb::MONEY, 30.0f);
 
 		card_to_discard = client_command.loan_action().card();
 	}

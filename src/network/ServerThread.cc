@@ -40,7 +40,7 @@ int m2::network::ServerThread::ready_client_count() {
 	return sum;
 }
 
-unsigned m2::network::ServerThread::turn_holder() {
+int m2::network::ServerThread::turn_holder_index() {
 	const std::lock_guard lock(_mutex);
 	return _turn_holder;
 }
@@ -70,7 +70,7 @@ m2::void_expected m2::network::ServerThread::close_lobby() {
 	return {};
 }
 
-void m2::network::ServerThread::set_turn_holder_index(unsigned idx) {
+void m2::network::ServerThread::set_turn_holder(int idx) {
 	LOG_INFO("New turn holder index", idx);
 	const std::lock_guard lock(_mutex);
 	_turn_holder = idx;
@@ -82,7 +82,7 @@ void m2::network::ServerThread::server_update() {
 	// Prepare the ServerUpdate except the receiver_index field
 	pb::NetworkMessage message;
 	message.set_game_hash(M2_GAME.hash());
-	message.mutable_server_update()->set_turn_holder_index(turn_holder());
+	message.mutable_server_update()->set_turn_holder_index(turn_holder_index());
 	for (auto player_id : M2G_PROXY.multi_player_object_ids) {
 		message.mutable_server_update()->add_player_object_ids(player_id);
 	}
@@ -251,7 +251,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 							client.pop_incoming_message(); // Pop the message from the client
 						} else {
 							// Process other messages
-							if (server_thread->_turn_holder != i) {
+							if (server_thread->_turn_holder != I(i)) {
 								LOG_WARN("Dropping message received from a non-turn-holder client", i);
 								client.pop_incoming_message();
 							} else {

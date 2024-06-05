@@ -35,10 +35,10 @@ enum ClientState {
 
 message ServerUpdate {
   // 0-based index of the receiver
-  uint32 receiver_index = 1;
+  int32 receiver_index = 1;
 
   // 0-based index of the current turn holder
-  uint32 turn_holder_index = 2;
+  int32 turn_holder_index = 2;
 
   // ObjectId of the objects that belong to players on the server side. The size of this list also represents the total
   // player count in the game. player_object_id[receiver_index] corresponds to the receiver of the message.
