@@ -1,7 +1,7 @@
 #include <cuzn/ui/RightHud.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
-#include <m2/ui/widget/TextListSelection.h>
+#include <m2/ui/widget/TextSelection.h>
 #include <cuzn/ui/Detail.h>
 #include <m2/Game.h>
 
@@ -36,17 +36,23 @@ static const Blueprint tiles_blueprint = {
 			.w = 18,
 			.h = 34,
 			.variant =
-			TextListSelectionBlueprint{
-				.initial_list = {m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_BREWERY_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_POTTERY_TILE), m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)},
+			TextSelectionBlueprint{
+				.initial_list = {
+					{m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE), static_cast<int>(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE)},
+					{m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE), static_cast<int>(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE)},
+					{m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_BREWERY_TILE), static_cast<int>(m2g::pb::ITEM_CATEGORY_BREWERY_TILE)},
+					{m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE), static_cast<int>(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE)},
+					{m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_POTTERY_TILE), static_cast<int>(m2g::pb::ITEM_CATEGORY_POTTERY_TILE)},
+					{m2g::pb::ItemCategory_Name(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE), static_cast<int>(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)}},
 				.line_count = 10,
 				.allow_multiple_selection = false,
 				.show_scroll_bar = false,
-				.on_action = [](const TextListSelection &self) -> Action {
+				.on_action = [](const TextSelection &self) -> Action {
 					// Look for the other widget
-					auto* tile_selection_widget = self.parent().find_first_widget_by_name<TextListSelection>("TileSelection");
+					auto* tile_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("TileSelection");
 					if (tile_selection_widget) {
 						// Trigger the other widget to recreate itself
-						tile_selection_widget->recreate();
+						tile_selection_widget->reset();
 					}
 					return make_continue_action();
 				}
@@ -59,32 +65,25 @@ static const Blueprint tiles_blueprint = {
 			.w = 18,
 			.h = 34,
 			.variant =
-			TextListSelectionBlueprint{
+			TextSelectionBlueprint{
 				.line_count = 10,
 				.allow_multiple_selection = false,
 				.show_scroll_bar = false,
-				.on_create = [](const TextListSelection &self) -> std::optional<TextListSelectionBlueprint::Options> {
+				.on_create = [](TextSelection &self) {
 					// Look for the other widget
-					auto* industry_type_selection_widget = self.parent().find_first_widget_by_name<TextListSelection>("IndustryTypeSelection");
-					if (industry_type_selection_widget) {
+					if (auto* industry_type_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("IndustryTypeSelection")) {
 						// Get selection
-						auto selection = industry_type_selection_widget->selection();
-						if (selection.size() == 1) {
-							ItemCategory cat;
-							if (m2g::pb::ItemCategory_Parse(selection[0], &cat)) {
-								TextListSelectionBlueprint::Options options;
-								for (auto item_it = M2_PLAYER.character().find_items(cat);
-									 item_it != M2_PLAYER.character().end_items(); ++item_it) {
-									options.emplace_back(m2g::pb::ItemType_Name(item_it->type()));
-								}
-								return options;
-							} else {
-								throw M2ERROR("Unable to parse ItemCategory");
+						auto selections = industry_type_selection_widget->selections();
+						if (selections.size() == 1) {
+							auto cat = static_cast<ItemCategory>(std::get<int>(selections[0]));
+							TextSelectionBlueprint::Options options;
+							for (auto item_it = M2_PLAYER.character().find_items(cat);
+								 item_it != M2_PLAYER.character().end_items(); ++item_it) {
+								options.emplace_back(m2g::pb::ItemType_Name(item_it->type()), m2::I(item_it->type()));
 							}
+							self.set_options(options);
 						}
 					}
-					// Return empty list
-					return TextListSelectionBlueprint::Options{};
 				}
 			}
 		}

@@ -4,7 +4,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/Text.h>
-#include <m2/ui/widget/TextListSelection.h>
+#include <m2/ui/widget/TextSelection.h>
 #include <cuzn/journeys/BuildJourney.h>
 
 using namespace m2;
@@ -24,19 +24,19 @@ Blueprint generate_cards_window(m2g::pb::ItemType exclude_card) {
 				.y = 2,
 				.w = 56,
 				.h = 30,
-				.variant = TextListSelectionBlueprint{
+				.variant = TextSelectionBlueprint{
 					.line_count = 8,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_create = [&exclude_card](MAYBE const TextListSelection& self) -> std::optional<TextListSelectionBlueprint::Options> {
+					.on_create = [&exclude_card](MAYBE TextSelection& self) {
 						auto cards = m2::generate_named_item_types_transformer(
 							{m2g::pb::ITEM_CATEGORY_CITY_CARD, m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD, m2g::pb::ITEM_CATEGORY_WILD_CARD})(M2_PLAYER.character())
 							| std::views::filter([exclude_card](auto item_type) { return exclude_card != item_type; });
-						TextListSelectionBlueprint::Options options;
+						TextSelectionBlueprint::Options options;
 						std::ranges::for_each(cards, [&options](auto item_type) {
-							options.emplace_back(M2_GAME.get_named_item(item_type).in_game_name());
+							options.emplace_back(m2g::pb::ItemType_Name(item_type), static_cast<int>(item_type));
 						});
-						return options;
+						self.set_options(options);
 					}
 				}
 			},
@@ -49,10 +49,9 @@ Blueprint generate_cards_window(m2g::pb::ItemType exclude_card) {
 					.text = "OK",
 					.on_action = [](const Text& self) -> Action {
 						// Find the other blueprint
-						auto* card_selection = self.parent().find_first_widget_by_name<TextListSelection>("CardSelection");
-						if (card_selection && not card_selection->selection().empty()) {
-							m2g::pb::ItemType item_type;
-							if (m2g::pb::ItemType_Parse(card_selection->selection()[0], &item_type)) {
+						if (auto* card_selection = self.parent().find_first_widget_by_name<TextSelection>("CardSelection")) {
+							if (auto selections = card_selection->selections(); not selections.empty()) {
+								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 								return make_return_action<m2g::pb::ItemType>(item_type);
 							}
 						}

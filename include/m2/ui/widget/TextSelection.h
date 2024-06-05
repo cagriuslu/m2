@@ -1,14 +1,20 @@
 #pragma once
-#include <m2/ui/Widget.h>
 #include <m2/sdl/Font.h>
+#include <m2/ui/Widget.h>
 
 namespace m2::ui::widget {
 	class TextSelection : public Widget {
-		std::vector<std::string> _list;
-		unsigned _selection{};
-		sdl::FontTexture _font_texture, _plus_texture, _minus_texture;
-		bool _inc_depressed{};
-		bool _dec_depressed{};
+		TextSelectionBlueprint::Options _list;
+		std::vector<sdl::FontTexture> _option_texts;
+		std::vector<bool> _selections;
+
+		// Applicable to +/- selection mode
+		sdl::FontTexture _plus_texture, _minus_texture;
+		bool _plus_depressed{}, _minus_depressed{};
+
+		// Applicable to scrollable list
+		int _top_index{};
+		sdl::FontTexture _up_arrow_texture, _down_arrow_texture;
 
 	public:
 		explicit TextSelection(State* parent, const WidgetBlueprint* blueprint);
@@ -17,13 +23,16 @@ namespace m2::ui::widget {
 		void on_draw() override;
 
 		// Accessors
-		[[nodiscard]] inline const std::string& selection() const { return _list[_selection]; }
+		[[nodiscard]] std::vector<TextSelectionBlueprint::ValueVariant> selections() const;
 
 		// Modifiers
-		void recreate();
-		Action trigger_action(unsigned new_selection);
+		void reset();
+		void set_options(TextSelectionBlueprint::Options options);
+		void set_selection(int index);
 
 	private:
-		[[nodiscard]] const TextSelectionBlueprint& text_selection_blueprint() const { return std::get<TextSelectionBlueprint>(blueprint->variant); }
+		[[nodiscard]] const TextSelectionBlueprint& text_list_selection_blueprint() const;
+		Action increment_selection(int count);
+		Action decrement_selection(int count);
 	};
 }

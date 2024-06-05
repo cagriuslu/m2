@@ -27,26 +27,24 @@ const Blueprint ui::bulk_sheet_editor_right_hud = {
             .w = 15,
             .h = 3,
             .variant = widget::TextSelectionBlueprint{
-                .on_create =
-                    [](MAYBE const widget::TextSelection& self) -> std::optional<widget::TextSelectionBlueprint::Options> {
-	                if (auto selected_ss = std::get<bsedit::State>(M2_LEVEL.type_state).selected_sprite_sheet();
-	                    selected_ss) {
+                .on_create = [](MAYBE widget::TextSelection& self) {
+	                if (auto selected_ss = std::get<bsedit::State>(M2_LEVEL.type_state).selected_sprite_sheet()) {
 		                widget::TextSelectionBlueprint::Options options;
 		                for (const auto& sprite : selected_ss->sprites()) {
-			                options.emplace_back(pb::enum_name<>(sprite.type()));
+			                options.emplace_back(pb::enum_name<>(sprite.type()), I(sprite.type()));
 		                }
-		                return options;
+						self.set_options(options);
 	                }
-	                return std::nullopt;
                 },
-                .on_action = [](const widget::TextSelection& self) -> Action {
-	                m2g::pb::SpriteType selected_sprite_type;
-	                if (SpriteType_Parse(self.selection(), &selected_sprite_type)) {
+                .on_action = [](widget::TextSelection& self) -> Action {
+	                if (auto selected_sprite_type = static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0]))) {
 		                std::get<bsedit::State>(M2_LEVEL.type_state).select_sprite(selected_sprite_type);
 		                return make_continue_action();
 	                }
 	                throw M2FATAL("Implementation error: Unknown sprite type ended up in sprite selection list");
-                }}},
+                }
+			}
+		},
         WidgetBlueprint{.x = 2, .y = 6, .w = 15, .h = 4, .border_width_px = 1, .variant = right_hud_set_rect_button},
         WidgetBlueprint{.x = 2, .y = 11, .w = 15, .h = 4, .border_width_px = 1, .variant = right_hud_reset_button}}};
 
@@ -54,21 +52,21 @@ const Blueprint ui::bulk_sheet_editor_left_hud = {
     .w = 19, .h = 72, .border_width_px = 1, .background_color = {0, 0, 0, 255}, .widgets = {}};
 
 const widget::TextSelectionBlueprint resource_selection = {
-    .on_create = [](MAYBE const widget::TextSelection& self) -> std::optional<widget::TextSelectionBlueprint::Options> {
+    .on_create = [](MAYBE widget::TextSelection& self) {
 	    const auto& pb_sheets = std::get<bsedit::State>(M2_LEVEL.type_state).sprite_sheets();
 	    // Gather the list of resources
-	    std::vector<std::string> resources;
+		widget::TextSelectionBlueprint::Options resources;
 	    std::for_each(pb_sheets.sheets().cbegin(), pb_sheets.sheets().cend(), [&resources](const auto& sheet) {
 		    if (!sheet.resource().empty()) {
-			    resources.emplace_back(sheet.resource());
+			    resources.emplace_back(sheet.resource(), sheet.resource());
 		    }
 	    });
 	    // Sort the list
 	    std::sort(resources.begin(), resources.end());
-	    return resources;
+		self.set_options(resources);
     },
     .on_action = [](const widget::TextSelection& self) -> ui::Action {
-	    std::get<bsedit::State>(M2_LEVEL.type_state).select_resource(self.selection());
+	    std::get<bsedit::State>(M2_LEVEL.type_state).select_resource(std::get<std::string>(self.selections()[0]));
 	    return make_continue_action();
     }};
 const Blueprint ui::bulk_sheet_editor_main_menu = {

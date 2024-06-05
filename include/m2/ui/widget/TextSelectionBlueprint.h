@@ -1,22 +1,28 @@
 #pragma once
-
 #include <string>
 #include <vector>
-#include <functional>
 
 namespace m2::ui::widget {
 	// Forward declaration
 	class TextSelection;
 
 	struct TextSelectionBlueprint {
-		using Options = std::vector<std::string>;
-		Options initial_list;
+		using ValueVariant = std::variant<std::string, int>;
+		using Option = std::pair<std::string, ValueVariant>; // <DisplayName, Value>
+		using Options = std::vector<Option>;
+		Options initial_list{};
 
-		/// If larger than 0, the list becomes a dropdown.
-		int line_count{}; // TODO not yet implemented
+		// 0: Selection with +/- buttons
+		// 1: Dropdown
+		// 2: Scrollable list
+		int line_count{};
 
-		std::function<std::optional<Options>(const TextSelection &self)> on_create{};
-		std::function<std::pair<Action, std::optional<Options>>(const TextSelection &self)> on_update{};
-		std::function<Action(const TextSelection &self)> on_action{};
+		// Applicable only to scrollable list
+		bool allow_multiple_selection{};
+		bool show_scroll_bar{true};
+
+		std::function<void(TextSelection& self)> on_create{};
+		std::function<Action(TextSelection& self)> on_update{};
+		std::function<Action(TextSelection& self)> on_action{};
 	};
-}
+}  // namespace m2::ui::widget

@@ -3,7 +3,6 @@
 #include <m2/ui/widget/IntegerInput.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextSelection.h>
-#include <m2/ui/widget/TextListSelection.h>
 #include <m2/protobuf/Detail.h>
 #include "m2/Game.h"
 #include "m2/game/object/Ghost.h"
@@ -55,17 +54,14 @@ const Blueprint erase_mode_right_hud = {
 
 const widget::TextBlueprint place_mode_title = {.text = "PLACE"};
 const widget::TextSelectionBlueprint place_mode_right_hud_object_type_selection = {
-    .on_action = [](const widget::TextSelection& self) -> Action {
-	    auto object_type = m2g::pb::ObjectType::NO_OBJECT;
-	    m2g::pb::ObjectType_Parse(self.selection(), &object_type);
-	    std::get<ledit::State::PlaceMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode)
-	        .select_object_type(object_type);
+    .on_action = [](widget::TextSelection& self) -> Action {
+	    auto object_type = static_cast<m2g::pb::ObjectType>(std::get<int>(self.selections()[0]));
+	    std::get<ledit::State::PlaceMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).select_object_type(object_type);
 	    return make_continue_action();
     }};
 const widget::TextSelectionBlueprint place_mode_right_hud_group_type_selection = {
-    .on_action = [](const widget::TextSelection& self) -> Action {
-	    auto group_type = m2g::pb::GroupType::NO_GROUP;
-	    m2g::pb::GroupType_Parse(self.selection(), &group_type);
+    .on_action = [](widget::TextSelection& self) -> Action {
+	    auto group_type = static_cast<m2g::pb::GroupType>(std::get<int>(self.selections()[0]));
 	    std::get<ledit::State::PlaceMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).select_group_type(group_type);
 	    return make_continue_action();
     }};
@@ -117,8 +113,9 @@ const Blueprint remove_mode_right_hud = {
 
 const widget::TextBlueprint pick_mode_title = {.text = "PICK"};
 const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
-    .initial_list = {"Background", "Foreground"}, .on_action = [](const widget::TextSelection& self) -> Action {
-	    if (const auto& selection = self.selection(); selection == "Background") {
+    .initial_list = {{"Background", "Background"}, {"Foreground", "Foreground"}},
+	.on_action = [](const widget::TextSelection& self) -> Action {
+	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Background") {
 		    std::get<ledit::State::PickMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).pick_foreground = false;
 	    } else if (selection == "Foreground") {
 		    std::get<ledit::State::PickMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).pick_foreground = true;
@@ -181,15 +178,15 @@ const Blueprint m2::level_editor::ui::fill_dialog = {
         WidgetBlueprint{
             .x = 5, .y = 5, .w = 150, .h = 70,
             .border_width_px = 1,
-            .variant = widget::TextListSelectionBlueprint{
+            .variant = widget::TextSelectionBlueprint{
                 .line_count = 10,
                 .allow_multiple_selection = true,
-                .on_create = [](MAYBE const widget::TextListSelection &self) -> std::optional<widget::TextListSelectionBlueprint::Options> {
-	                std::vector<std::string> list;
+                .on_create = [](MAYBE widget::TextSelection &self) {
+					widget::TextSelectionBlueprint::Options options;
 	                for (auto sprite : M2_GAME.level_editor_background_sprites) {
-		                list.emplace_back(pb::enum_name(sprite));
+						options.emplace_back(pb::enum_name(sprite), I(sprite));
 	                }
-	                return list;
+					self.set_options(options);
                 }
             }
         },
@@ -199,14 +196,11 @@ const Blueprint m2::level_editor::ui::fill_dialog = {
             .variant = widget::TextBlueprint {
                 .text = "Fill",
                 .on_action = [](MAYBE const widget::Text& self) -> Action {
-	                auto text_list_selection = self.parent().find_first_widget_of_type<widget::TextListSelection>();
+	                auto text_list_selection = self.parent().find_first_widget_of_type<widget::TextSelection>();
 
 	                std::vector<m2g::pb::SpriteType> sprite_types;
-	                for (const auto& sprite_name : text_list_selection->selection()) {
-		                auto expect_enum = m2_pb_enum_value(m2g::pb::SpriteType, sprite_name);
-		                if (expect_enum) {
-			                sprite_types.emplace_back(*expect_enum);
-		                }
+	                for (const auto& selection : text_list_selection->selections()) {
+						sprite_types.emplace_back(static_cast<m2g::pb::SpriteType>(std::get<int>(selection)));
 	                }
 	                std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).rfill_sprite_types = sprite_types;
 
@@ -254,8 +248,8 @@ const Blueprint select_mode_right_hud = {
 
 const widget::TextBlueprint shift_mode_title = {.text = "SHIFT"};
 const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
-    .initial_list = {"Right", "Down", "Right & Down"}, .on_action = [](const widget::TextSelection& self) -> Action {
-	    if (const auto& selection = self.selection(); selection == "Right") {
+    .initial_list = {{"Right", "Right"}, {"Down", "Down"}, {"Right & Down", "Right & Down"}}, .on_action = [](const widget::TextSelection& self) -> Action {
+	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Right") {
 		    std::get<ledit::State::ShiftMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).shift_type =
 		        ledit::State::ShiftMode::ShiftType::RIGHT;
 	    } else if (selection == "Down") {
@@ -313,14 +307,14 @@ const widget::TextBlueprint left_hud_place_button = {
 	    auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
 	    if (object_type_selection.initial_list.empty()) {
 		    for (auto& [obj_type, spt] : M2_GAME.object_main_sprites) {
-			    object_type_selection.initial_list.emplace_back(m2g::pb::ObjectType_Name(obj_type));
+			    object_type_selection.initial_list.emplace_back(m2g::pb::ObjectType_Name(obj_type), I(obj_type));
 		    }
 	    }
 	    // Fill group type selector
 	    auto& group_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[2].variant);
 	    if (group_type_selection.initial_list.empty()) {
 		    for (int e = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
-			    group_type_selection.initial_list.emplace_back(pb::enum_name<m2g::pb::GroupType>(e));
+			    group_type_selection.initial_list.emplace_back(pb::enum_name<m2g::pb::GroupType>(e), pb::enum_value<m2g::pb::GroupType>(e));
 		    }
 	    }
 

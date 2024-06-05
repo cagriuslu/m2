@@ -22,14 +22,14 @@ namespace {
 		for (const auto& level_editor_object : M2_GAME.object_main_sprites) {
 			if (level_editor_object.first == level_object.type()) {
 				dynamic_cast<ui::widget::TextSelection&>(*M2_LEVEL.right_hud_ui_state->widgets[1])
-				    .trigger_action(object_type_index);
+				    .set_selection(object_type_index);
 				break;
 			}
 			++object_type_index;
 		}
 		// Select group type
 		auto group_type_index = pb::enum_index(level_object.group().type());
-		dynamic_cast<ui::widget::TextSelection&>(*M2_LEVEL.right_hud_ui_state->widgets[2]).trigger_action(group_type_index);
+		dynamic_cast<ui::widget::TextSelection&>(*M2_LEVEL.right_hud_ui_state->widgets[2]).set_selection(group_type_index);
 		// Select group instance
 		auto group_instance = level_object.group().instance();
 		dynamic_cast<ui::widget::IntegerInput&>(*M2_LEVEL.right_hud_ui_state->widgets[3]).select((int)group_instance);

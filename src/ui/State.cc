@@ -16,7 +16,6 @@
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
-#include <m2/ui/widget/TextListSelection.h>
 #include <m2/ui/widget/TextSelection.h>
 
 #include <ranges>
@@ -355,8 +354,6 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget
 		state = std::make_unique<ImageSelection>(this, &widget_blueprint);
 	} else if (std::holds_alternative<TextSelectionBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<TextSelection>(this, &widget_blueprint);
-	} else if (std::holds_alternative<TextListSelectionBlueprint>(widget_blueprint.variant)) {
-		state = std::make_unique<TextListSelection>(this, &widget_blueprint);
 	} else if (std::holds_alternative<IntegerInputBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<IntegerInput>(this, &widget_blueprint);
 	} else if (std::holds_alternative<CheckboxWithTextBlueprint>(widget_blueprint.variant)) {

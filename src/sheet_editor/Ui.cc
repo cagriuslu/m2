@@ -279,17 +279,14 @@ const Blueprint m2::ui::sheet_editor_left_hud = {
 widget::ImageBlueprint sprite_display = {
 		.on_update = [](const widget::Image& self) -> std::pair<Action,std::optional<m2g::pb::SpriteType>> {
 			auto* text_selection_widget = self.parent().find_first_widget_of_blueprint_type<widget::TextSelectionBlueprint>();
-			auto selected_sprite_name = dynamic_cast<widget::TextSelection*>(text_selection_widget)->selection();
-			m2g::pb::SpriteType selected_sprite_type;
-			if (m2g::pb::SpriteType_Parse(selected_sprite_name, &selected_sprite_type)) {
-				return std::make_pair(make_continue_action(), selected_sprite_type);
-			} else {
-				throw M2FATAL("Implementation error: Unknown sprite type ended up in sprite selection list");
-			}
+			m2g::pb::SpriteType selected_sprite_type = static_cast<m2g::pb::SpriteType>(
+				std::get<int>(
+					dynamic_cast<widget::TextSelection*>(text_selection_widget)->selections()[0]));
+			return std::make_pair(make_continue_action(), selected_sprite_type);
 		}
 };
 const widget::TextSelectionBlueprint sprite_selection = {
-		.on_create = [](MAYBE const widget::TextSelection& self) -> std::optional<widget::TextSelectionBlueprint::Options> {
+		.on_create = [](MAYBE widget::TextSelection& self) {
 			const auto& pb_sheets = std::get<sedit::State>(M2_LEVEL.type_state).sprite_sheets();
 			// Gather the list of sprites
 			std::vector<m2g::pb::SpriteType> sprite_types;
@@ -301,20 +298,16 @@ const widget::TextSelectionBlueprint sprite_selection = {
 			// Sort the list
 			std::sort(sprite_types.begin(), sprite_types.end());
 			// Transform to sprite type names
-			widget::TextSelectionBlueprint::Options sprite_type_names;
-			std::transform(sprite_types.cbegin(), sprite_types.cend(), std::back_inserter(sprite_type_names), [](const auto& sprite_type) {
-				return m2g::pb::SpriteType_Name(sprite_type);
+			widget::TextSelectionBlueprint::Options options;
+			std::transform(sprite_types.begin(), sprite_types.end(), std::back_inserter(options), [](const auto& sprite_type) {
+				return std::make_pair(m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type));
 			});
-			return sprite_type_names;
+			self.set_options(options);
 		},
-		.on_action = [](const widget::TextSelection& self) -> ui::Action {
-			m2g::pb::SpriteType selected_sprite_type;
-			if (m2g::pb::SpriteType_Parse(self.selection(), &selected_sprite_type)) {
-				std::get<sedit::State>(M2_LEVEL.type_state).set_sprite_type(selected_sprite_type);
-				return make_continue_action();
-			} else {
-				throw M2FATAL("Implementation error: Unknown sprite type ended up in sprite selection list");
-			}
+		.on_action = [](widget::TextSelection& self) -> ui::Action {
+			std::get<sedit::State>(M2_LEVEL.type_state).set_sprite_type(
+				static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0])));
+			return make_continue_action();
 		}
 };
 const Blueprint m2::ui::sheet_editor_main_menu = {

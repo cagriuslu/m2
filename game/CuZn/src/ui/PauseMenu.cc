@@ -1,7 +1,6 @@
 #include <cuzn/ui/PauseMenu.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
-#include <m2/ui/widget/TextListSelection.h>
 #include <cuzn/ui/Detail.h>
 #include <m2/Game.h>
 

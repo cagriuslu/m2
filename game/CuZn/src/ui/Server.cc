@@ -3,7 +3,6 @@
 #include <m2/Log.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
-#include <m2/ui/widget/TextListSelection.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;

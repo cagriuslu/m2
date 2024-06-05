@@ -9,7 +9,6 @@
 #include "widget/TextBlueprint.h"
 #include "widget/TextInputBlueprint.h"
 #include "widget/TextSelectionBlueprint.h"
-#include "widget/TextListSelectionBlueprint.h"
 #include <SDL.h>
 #include <variant>
 
@@ -32,7 +31,6 @@ namespace m2::ui {
 				widget::TextInputBlueprint,
 				widget::ImageSelectionBlueprint,
 				widget::TextSelectionBlueprint,
-				widget::TextListSelectionBlueprint,
 				widget::IntegerInputBlueprint,
 				widget::CheckboxWithTextBlueprint>;
 		Variant variant;
