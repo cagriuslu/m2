@@ -338,6 +338,7 @@ void m2::network::ClientThread::set_state_locked(pb::ClientState state) {
 }
 
 void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
+	init_thread_logger("CL");
 	INFO_FN();
 
 	auto pop_message = [client_thread]() -> std::optional<pb::NetworkMessage> {

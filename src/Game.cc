@@ -21,11 +21,12 @@
 m2::Game* m2::Game::_instance;
 
 void m2::Game::create_instance() {
-	DEBUG_FN();
+	LOG_DEBUG_INC("Creating Game instance...");
 	if (_instance) {
 		throw M2FATAL("Cannot create multiple instance of Game");
 	}
 	_instance = new Game();
+	LOG_DEBUG_DEC("Game instance created");
 
 	// User might access GAME from the following function
 	// We have to call it after GAME is fully constructed
@@ -39,8 +40,6 @@ void m2::Game::destroy_instance() {
 }
 
 m2::Game::Game() {
-	DEBUG_FN();
-
 	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
 	//	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
 	//		LOG_WARN("Failed to set opengl as render hint");
@@ -123,27 +122,25 @@ m2::Game::~Game() {
 }
 
 m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
-	INFO_FN();
-
+	LOG_INFO_INC("Hosting game...");
 	_server_thread.emplace(type, max_connection_count);
-
 	// Wait until the server is up
 	while (not _server_thread->is_listening()) {
 		SDL_Delay(25);
 	}
-	LOG_INFO("Server is up, joining the game...");
+	LOG_INFO_DEC("Server is listening");
 
+	LOG_INFO_INC("Joining the game as client...");
 	join_game(type, "127.0.0.1");
-
 	// Wait until the client is connected
 	while (not _client_thread->is_connected()) {
 		SDL_Delay(25);
 	}
-	LOG_INFO("Self client connected");
+	LOG_INFO_DEC("Client connected");
 
-	// Set client as ready
+	LOG_INFO_INC("Becoming ready...");
 	_client_thread->set_ready_blocking(true);
-	LOG_INFO("Self client set as ready");
+	LOG_INFO_DEC("Became ready");
 
 	return {};
 }

@@ -171,7 +171,7 @@ State::~State() {
 }
 
 Action State::execute(const RectI rect) {
-	DEBUG_FN();
+	LOG_DEBUG("Executing UI");
 
 	// Save relation to window, use in case of resize
 	const auto &winrect = M2_GAME.dimensions().window;

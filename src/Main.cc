@@ -14,6 +14,7 @@
 using namespace m2;
 
 int main(const int argc, char **argv) {
+	init_thread_logger("MN");
 	INFO_FN();
 
 	auto arg_list = to_argument_list(argc, argv);
@@ -65,12 +66,12 @@ int main(const int argc, char **argv) {
 	Game::create_instance();
 	M2_GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
-	LOG_DEBUG("Executing main menu...");
+	LOG_DEBUG_INC("Executing main menu...");
 	if (m2::ui::State::create_execute_sync(M2G_PROXY.main_menu()).is_quit()) {
 		LOG_INFO("Main menu returned QUIT");
 		return 0;
 	}
-	LOG_DEBUG("Main menu executed");
+	LOG_DEBUG_DEC("Main menu returned");
 
 	sdl::Stopwatch since_last_phy(M2_GAME.pause_ticks);
 	sdl::Stopwatch since_last_gfx(M2_GAME.pause_ticks);

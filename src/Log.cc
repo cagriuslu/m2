@@ -1,8 +1,29 @@
 #include <m2/Log.h>
 #include <m2/M2.h>
 #include <cstdarg>
+#include <thread>
 
-static bool unexpected_event_occured = false;
+namespace {
+	bool unexpected_event_occured = false;
+	std::vector<std::pair<std::thread::id, std::string>> thread_names;
+
+	const char* lookup_thread_name() {
+		auto id = std::this_thread::get_id();
+		for (const auto& pair : thread_names) {
+			if (pair.first == id) {
+				return pair.second.c_str();
+			}
+		}
+		return "  ";
+	}
+}
+
+std::mutex m2::detail::log_mutex;
+thread_local int m2::detail::thread_indentation{0};
+
+void m2::init_thread_logger(const char* thread_name) {
+	thread_names.emplace_back(std::this_thread::get_id(), thread_name);
+}
 
 void m2::log_stacktrace() {
 #ifdef _WIN32
@@ -64,7 +85,7 @@ void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 	};
 	const char* file_name_padding = file_name_paddings[file_name_capitals_len];
 
-	fprintf(stderr, "[%c %09lld %s%s %03d] ", lvl_char, (long long)now, file_name_padding, file_name_capitals, line % 1000);
+	fprintf(stderr, "[%c %09lld %s%s %03d %s] ", lvl_char, (long long)now, file_name_padding, file_name_capitals, line % 1000, lookup_thread_name());
 }
 
 #if _MSC_VER > 1400
