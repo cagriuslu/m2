@@ -53,6 +53,7 @@ message ServerUpdate {
     uint64 parent_id = 4;
     repeated m2g.pb.ItemType named_items = 6;
     repeated Resource resources = 7;
+    repeated Attribute attributes = 8;
   }
   repeated ObjectDescriptor objects_with_character = 4;
 }

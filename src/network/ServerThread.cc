@@ -111,6 +111,13 @@ void m2::network::ServerThread::server_update() {
 						resource->set_amount(v.get_resource(rt));
 					}
 				});
+				pb::for_each_enum_value<m2g::pb::AttributeType>([&v, object_descriptor](m2g::pb::AttributeType at) {
+					if (v.has_attribute(at)) {
+						auto* attribute = object_descriptor->add_attributes();
+						attribute->set_type(at);
+						attribute->set_amount(v.get_attribute(at));
+					}
+				});
 			}
 		}, char_variant);
 	}

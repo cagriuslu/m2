@@ -6,8 +6,8 @@
 #include <m2/Meta.h>
 
 namespace {
-	template <typename NamedItemListT, typename ResourceListT>
-	void update_character(m2::Character* c, const NamedItemListT& named_items, const ResourceListT& resources) {
+	template <typename NamedItemListT, typename ResourceListT, typename AttributeListT>
+	void update_character(m2::Character* c, const NamedItemListT& named_items, const ResourceListT& resources, const AttributeListT& attributes) {
 		// Update items
 		c->clear_items();
 		for (auto named_item_type : named_items) {
@@ -18,7 +18,12 @@ namespace {
 		for (const auto& resource : resources) {
 			c->add_resource(resource.type(), m2::get_resource_amount(resource));
 		}
-	};
+		// Update attributes
+		c->clear_attributes();
+		for (const auto& attribute : attributes) {
+			c->set_attribute(attribute.type(), attribute.amount());
+		}
+	}
 }
 
 m2::network::ClientThread::ClientThread(mplayer::Type type, std::string addr) : _type(type), _addr(std::move(addr)),
@@ -225,6 +230,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 		ObjectId server_object_parent_id;
 		std::vector<m2g::pb::ItemType> named_items;
 		std::vector<m2::pb::Resource> resources;
+		std::vector<m2::pb::Attribute> attributes;
 	};
 	std::vector<ObjectToCreate> objects_to_be_created;
 
@@ -234,7 +240,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 			LOG_TRACE("Server object is still alive", object_desc.object_id(), it->first);
 			// Update the character
 			auto* character = M2_LEVEL.objects.get(it->second.first)->get_character();
-			update_character(character, object_desc.named_items(), object_desc.resources());
+			update_character(character, object_desc.named_items(), object_desc.resources(), object_desc.attributes());
 			// Mark object as visited
 			it->second.second = true;
 		} else {
@@ -247,7 +253,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 			// Add details about the object that'll be created into a list
 			objects_to_be_created.push_back({object_desc.object_id(), object_desc.position(), object_desc.object_type(),
 				object_desc.parent_id(), int_list_to_item_list(object_desc.named_items().begin(), object_desc.named_items().end()),
-				{object_desc.resources().begin(), object_desc.resources().end()}});
+				{object_desc.resources().begin(), object_desc.resources().end()}, {object_desc.attributes().begin(), object_desc.attributes().end()}});
 		}
 	}
 
@@ -271,7 +277,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 				m2_reflect_failure(load_result);
 				// Update the character
 				auto* character = obj_it->get_character();
-				update_character(character, it->named_items, it->resources);
+				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.id(), true);
 				// Delete the object details from the objects_to_be_created vector
@@ -284,7 +290,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 				m2_reflect_failure(load_result);
 				// Update the character
 				auto* character = obj_it->get_character();
-				update_character(character, it->named_items, it->resources);
+				update_character(character, it->named_items, it->resources, it->attributes);
 				// Add object to the map, marked as visited
 				_server_to_local_map[it->server_object_id] = std::make_pair(obj_it.id(), true);
 				// Delete the object details from the objects_to_be_created vector
