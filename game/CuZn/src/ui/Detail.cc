@@ -191,3 +191,42 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }
+
+void display_blocking_message(const std::string& line1, const std::string& line2) {
+	auto blueprint = Blueprint{
+		.w = 60, .h = 40,
+		.border_width_px = 1,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			WidgetBlueprint{
+				.x = 5, .y = 5, .w = 50, .h = 5,
+				.border_width_px = 0,
+				.variant = TextBlueprint{
+					.text = line1,
+					.font_size = 4.5f,
+					.alignment = TextAlignment::LEFT
+				}
+			},
+			WidgetBlueprint{
+				.x = 5, .y = 10, .w = 50, .h = 5,
+				.border_width_px = 0,
+				.variant = TextBlueprint{
+					.text = line2,
+					.font_size = 4.5f,
+					.alignment = TextAlignment::LEFT
+				}
+			},
+			WidgetBlueprint{
+				.x = 5, .y = 30, .w = 50, .h = 5,
+				.variant = TextBlueprint{
+					.text = "OK",
+					.on_action = [](MAYBE const Text& self) -> Action {
+						return make_return_action();
+					}
+				}
+			}
+		}
+	};
+
+	State::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}));
+}

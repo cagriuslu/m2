@@ -78,6 +78,17 @@ std::optional<m2::pb::ServerUpdate> m2::network::ClientThread::last_processed_se
 	}
 }
 
+std::optional<m2g::pb::ServerCommand> m2::network::ClientThread::pop_server_command() {
+	const std::lock_guard lock(_mutex);
+	if (_unprocessed_server_command) {
+		auto tmp = _unprocessed_server_command->server_command();
+		_unprocessed_server_command.reset();
+		return std::move(tmp);
+	} else {
+		return std::nullopt;
+	}
+}
+
 int m2::network::ClientThread::turn_holder_index() {
 	if (auto server_update = last_processed_server_update()) {
 		return server_update->turn_holder_index();
@@ -438,8 +449,17 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 				} else if (expect_message->has_server_update()) {
 					LOG_INFO("Received ServerUpdate", json_str);
 					// Wait until the previous ServerUpdate is processed
-					while (client_thread->_unprocessed_server_update) {
-						SDL_Delay(100); // Yield the thread while waiting
+					while (true) {
+						bool has_unprocessed_server_update;
+						{
+							const std::lock_guard lock(client_thread->_mutex);
+							has_unprocessed_server_update = static_cast<bool>(client_thread->_unprocessed_server_update);
+						}
+						if (has_unprocessed_server_update) {
+							SDL_Delay(100); // Yield the thread while waiting
+						} else {
+							break;
+						}
 					}
 
 					{
@@ -450,8 +470,28 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 							client_thread->set_state_unlocked(pb::CLIENT_STARTED);
 						}
 					}
+				} else if (expect_message->has_server_command()) {
+					LOG_INFO("Received ServerCommand", json_str);
+					// Wait until the previous ServerCommand is processed
+					while (true) {
+						bool has_unprocessed_server_command;
+						{
+							const std::lock_guard lock(client_thread->_mutex);
+							has_unprocessed_server_command = static_cast<bool>(client_thread->_unprocessed_server_command);
+						}
+						if (has_unprocessed_server_command) {
+							SDL_Delay(100); // Yield the thread while waiting
+						} else {
+							break;
+						}
+					}
+
+					{
+						const std::lock_guard lock(client_thread->_mutex);
+						client_thread->_unprocessed_server_command = std::move(*expect_message);
+					}
 				} else {
-					// TODO process other incoming messages
+					throw M2ERROR("Unsupported message");
 				}
 			}
 

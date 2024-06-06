@@ -290,6 +290,12 @@ void m2::Game::execute_pre_step() {
 			}
 		}
 	}
+	if (_client_thread) {
+		// Handle ServerCommand
+		if (auto server_command = M2_GAME.client_thread().pop_server_command()) {
+			_proxy.handle_server_command(*server_command);
+		}
+	}
 }
 
 void m2::Game::update_characters() {

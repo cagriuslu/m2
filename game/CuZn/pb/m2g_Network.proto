@@ -4,7 +4,11 @@ package m2g.pb;
 import "m2g_ItemType.proto";
 import "m2g_SpriteType.proto";
 
-message ServerCommand {}
+message ServerCommand {
+  oneof type {
+    string display_blocking_message = 1;
+  }
+}
 
 message ClientCommand {
   message BuildAction {

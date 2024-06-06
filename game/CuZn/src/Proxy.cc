@@ -15,6 +15,7 @@
 #include <cuzn/detail/SetUp.h>
 #include <m2/game/Detail.h>
 #include "cuzn/object/Road.h"
+#include "cuzn/ui/Detail.h"
 #include <algorithm>
 #include <numeric>
 
@@ -106,7 +107,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	// TODO
 }
 
-std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
+std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
 	auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
@@ -145,6 +146,15 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 		turn_holder_character.add_resource(pb::MONEY, 30.0f);
 
 		card_to_discard = client_command.loan_action().card();
+	}
+
+	// Send update to clients
+	pb::ServerCommand sc;
+	sc.set_display_blocking_message("Action taken");
+	for (int i = 0; i < M2_GAME.server_thread().client_count(); ++i) {
+		if (i != turn_holder_index) {
+			M2_GAME.server_thread().send_server_command(sc, i);
+		}
 	}
 
 	// Discard card from player
@@ -193,6 +203,14 @@ std::optional<int> m2g::Proxy::handle_client_command(unsigned turn_holder_index,
 			}
 		}
 		return next_turn_holder_index;
+	}
+}
+
+void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
+	if (server_command.has_display_blocking_message()) {
+		display_blocking_message(server_command.display_blocking_message(), "");
+	} else {
+		throw M2ERROR("Unsupported server command");
 	}
 }
 

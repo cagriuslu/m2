@@ -21,6 +21,7 @@ namespace m2::network {
 		/// When process_server_update() is called, ServerUpdate is shifted as follows:
 		/// _prev_processed_server_update << _last_processed_server_update << _unprocessed_server_update << std::nullopt
 		std::optional<pb::NetworkMessage> _prev_processed_server_update, _last_processed_server_update, _unprocessed_server_update;
+		std::optional<pb::NetworkMessage> _unprocessed_server_command;
 
 		/// Mapping of server object IDs to local object IDs. The boolean represents if the object has been visited during
 		/// the processing of ServerUpdate or not. If an object is not visited, it must have been deleted on the server side.
@@ -44,6 +45,7 @@ namespace m2::network {
 		bool is_started();
 		std::optional<pb::ServerUpdate> peek_unprocessed_server_update();
 		std::optional<pb::ServerUpdate> last_processed_server_update();
+		std::optional<m2g::pb::ServerCommand> pop_server_command();
 		int turn_holder_index();
 		int total_player_count();
 		int receiver_index();

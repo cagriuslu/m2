@@ -130,14 +130,28 @@ void m2::network::ServerThread::send_server_update() {
 			set_state_unlocked(pb::SERVER_READY);
 		}
 
-		LOG_DEBUG("Queueing outgoing message to client", i);
+		LOG_DEBUG("Queueing ServerUpdate to client", i);
 		message.mutable_server_update()->set_receiver_index(i);
 		_clients[i].push_outgoing_message(std::move(message));
 	}
 }
 
 void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand& command, int receiver_index) {
+	LOG_INFO("Sending server command to index", receiver_index);
 
+	if (receiver_index < 0 || client_count() <= receiver_index) {
+		throw M2ERROR("Client index not found");
+	}
+
+	pb::NetworkMessage message;
+	message.set_game_hash(M2_GAME.hash());
+	message.mutable_server_command()->CopyFrom(command);
+
+	{
+		const std::lock_guard lock(_mutex);
+		LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
+		_clients[receiver_index].push_outgoing_message(std::move(message));
+	}
 }
 
 void m2::network::ServerThread::set_state_locked(pb::ServerState state) {
