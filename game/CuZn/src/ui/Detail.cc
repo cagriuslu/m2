@@ -11,19 +11,27 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Blueprint generate_cards_window(m2g::pb::ItemType exclude_card) {
+Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card) {
 	return Blueprint{
-		.w = 60,
-		.h = 40,
+		.w = 24,
+		.h = 24,
 		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
+				.x = 1,
+				.y = 1,
+				.w = 22,
+				.h = 2,
+				.border_width_px = 0,
+				.variant = TextBlueprint{ .text = msg }
+			},
+			WidgetBlueprint{
 				.name = "CardSelection",
-				.x = 2,
-				.y = 2,
-				.w = 56,
-				.h = 30,
+				.x = 1,
+				.y = 4,
+				.w = 22,
+				.h = 16,
 				.variant = TextSelectionBlueprint{
 					.line_count = 8,
 					.allow_multiple_selection = false,
@@ -41,10 +49,10 @@ Blueprint generate_cards_window(m2g::pb::ItemType exclude_card) {
 				}
 			},
 			WidgetBlueprint{
-				.x = 2,
-				.y = 34,
-				.w = 56,
-				.h = 4,
+				.x = 1,
+				.y = 21,
+				.w = 22,
+				.h = 2,
 				.variant = TextBlueprint{
 					.text = "OK",
 					.on_action = [](const Text& self) -> Action {
@@ -70,7 +78,7 @@ m2::RectF cards_window_ratio() {
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card) {
 	LOG_INFO("Asking player to select a card...");
 	std::optional<m2g::pb::ItemType> selected_card;
-	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window(exclude_card)), M2_GAME.dimensions().game_and_hud.ratio(cards_window_ratio()))
+	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window("Select card to discard", exclude_card)), M2_GAME.dimensions().game_and_hud.ratio(cards_window_ratio()))
 		.if_void_return([&]() {
 			LOG_INFO("Card selection cancelled");
 		})

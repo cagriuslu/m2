@@ -161,7 +161,7 @@ const Blueprint right_hud_blueprint = {
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(
 						cards_window_ratio(),
-						std::make_unique<Blueprint>(generate_cards_window()));
+						std::make_unique<Blueprint>(generate_cards_window("Cards")));
 					return make_continue_action();
 				}
 			}
