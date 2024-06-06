@@ -116,20 +116,21 @@ bool m2::network::ClientThread::is_turn() {
 }
 
 void m2::network::ClientThread::set_ready_blocking(bool state) {
-	INFO_FN();
+	LOG_INFO("Setting ready state", state);
 
 	{
-		// Send ping with/without sender_id
 		const std::lock_guard lock(_mutex);
 		pb::NetworkMessage msg;
 		msg.set_game_hash(M2_GAME.hash());
 		msg.set_ready(state);
+		LOG_DEBUG("Readiness message queued");
 		_message_queue.emplace_back(std::move(msg));
 	}
 
 	while (message_count_locked()) {
 		SDL_Delay(100); // Wait until output queue is empty
 	}
+	LOG_DEBUG("Output queue flushed");
 
 	set_state_locked(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
 }
@@ -334,7 +335,7 @@ size_t m2::network::ClientThread::message_count_locked() {
 }
 
 void m2::network::ClientThread::set_state_unlocked(pb::ClientState state) {
-	LOG_DEBUG("Setting new state", pb::enum_name(state));
+	LOG_DEBUG("Setting state", pb::enum_name(state));
 	_state = state;
 }
 
@@ -345,7 +346,7 @@ void m2::network::ClientThread::set_state_locked(pb::ClientState state) {
 
 void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 	init_thread_logger("CL");
-	INFO_FN();
+	LOG_INFO("ClientThread function");
 
 	auto pop_message = [client_thread]() -> std::optional<pb::NetworkMessage> {
 		const std::lock_guard lock(client_thread->_mutex);

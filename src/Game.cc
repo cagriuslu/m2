@@ -21,12 +21,12 @@
 m2::Game* m2::Game::_instance;
 
 void m2::Game::create_instance() {
-	LOG_DEBUG_INC("Creating Game instance...");
+	LOG_DEBUG("Creating Game instance...");
 	if (_instance) {
 		throw M2FATAL("Cannot create multiple instance of Game");
 	}
 	_instance = new Game();
-	LOG_DEBUG_DEC("Game instance created");
+	LOG_DEBUG("Game instance created");
 
 	// User might access GAME from the following function
 	// We have to call it after GAME is fully constructed
@@ -122,25 +122,23 @@ m2::Game::~Game() {
 }
 
 m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
-	LOG_INFO_INC("Hosting game...");
+	LOG_INFO("Creating server instance...");
 	_server_thread.emplace(type, max_connection_count);
 	// Wait until the server is up
 	while (not _server_thread->is_listening()) {
 		SDL_Delay(25);
 	}
-	LOG_INFO_DEC("Server is listening");
 
-	LOG_INFO_INC("Joining the game as client...");
+	LOG_INFO("Server is listening, joining the game as client...");
 	join_game(type, "127.0.0.1");
 	// Wait until the client is connected
 	while (not _client_thread->is_connected()) {
 		SDL_Delay(25);
 	}
-	LOG_INFO_DEC("Client connected");
+	LOG_INFO("Client connected, becoming ready...");
 
-	LOG_INFO_INC("Becoming ready...");
 	_client_thread->set_ready_blocking(true);
-	LOG_INFO_DEC("Became ready");
+	LOG_INFO("Became ready");
 
 	return {};
 }

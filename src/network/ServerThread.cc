@@ -9,9 +9,7 @@
 #define PORT (1162)
 
 m2::network::ServerThread::ServerThread(mplayer::Type type, unsigned max_connection_count) : _type(type),
-	_max_connection_count(max_connection_count), _thread(ServerThread::thread_func, this) {
-	INFO_FN();
-}
+	_max_connection_count(max_connection_count), _thread(ServerThread::thread_func, this) {}
 
 m2::network::ServerThread::~ServerThread() {
 	DEBUG_FN();
@@ -144,13 +142,13 @@ void m2::network::ServerThread::set_state_locked(pb::ServerState state) {
 }
 
 void m2::network::ServerThread::set_state_unlocked(pb::ServerState state) {
-	LOG_DEBUG("Setting new state", pb::enum_name(state));
+	LOG_DEBUG("Setting state", pb::ServerState_Name(state));
 	_state = state;
 }
 
 void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	init_thread_logger("SR");
-	INFO_FN();
+	LOG_INFO("ServerThread function");
 
 	auto listen_socket = Socket::create_tcp();
 	if (not listen_socket) {
@@ -168,10 +166,9 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 			return;
 		}
 		if (not *bind_result) {
-			LOG_INFO("Socket is busy, retrying");
+			LOG_INFO("Socket is busy, retry binding");
 			m2::sdl::delay(1000);
 		} else {
-			LOG_DEBUG("Socket binded");
 			binded = true;
 			break;
 		}
@@ -181,6 +178,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		abort(); // TODO remove later. Eases development.
 		return;
 	}
+	LOG_DEBUG("Socket bound");
 
 	auto listen_success = listen_socket->listen(I(server_thread->_max_connection_count));
 	if (not listen_success) {
@@ -206,19 +204,19 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		if (0 < *select_result) { // If select haven't timed-out
 			// Check main socket
 			if (FD_ISSET(listen_socket->fd(), &read_set)) {
+				LOG_TRACE("Main socket is readable");
+
 				auto client_socket = listen_socket->accept();
 				if (not client_socket) {
 					LOG_FATAL("Accept failed", select_result.error());
 					server_thread->_clients.clear();
 					return;
 				}
-				LOG_DEBUG("Accepted new connection");
-
 				if (server_thread->_max_connection_count <= server_thread->_clients.size()) {
 					// Reject new connection, do not store client socket
 					LOG_DEBUG("Closing connection because of connection limit");
 				} else {
-					LOG_INFO("New client connected", server_thread->_clients.size());
+					LOG_INFO("New client connected with index", server_thread->_clients.size());
 					server_thread->_clients.emplace_back(std::move(*client_socket));
 				}
 			}
@@ -236,7 +234,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 						// Skip if no messages have been received from this client
 						continue;
 					}
-					LOG_DEBUG("Client socket is readable", i);
+					LOG_DEBUG("Client socket with index is readable", i);
 
 					if (auto expect_msg = client.save_incoming_message(server_thread->_read_buffer, sizeof(server_thread->_read_buffer)); not expect_msg) {
 						LOG_ERROR("Failed to save message", expect_msg.error());

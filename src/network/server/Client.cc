@@ -5,10 +5,8 @@
 #include <string>
 
 m2::expected<std::optional<m2::pb::NetworkMessage>> m2::network::server::Client::save_incoming_message(char* read_buffer, size_t read_buffer_length) {
-	DEBUG_FN();
-
 	if (_incoming_msg) {
-		LOG_WARN("There's an unprocessed incoming message");
+		LOG_WARN("Found unread message in inbox, skipping reading new ones");
 		return std::nullopt; // This is not an important error, we may try again
 	}
 
@@ -16,7 +14,7 @@ m2::expected<std::optional<m2::pb::NetworkMessage>> m2::network::server::Client:
 	m2_reflect_failure(recv_success);
 
 	if (*recv_success == 0) {
-		LOG_WARN("Client socket closed, closing our side of the socket");
+		LOG_WARN("Client closed socket, closing our side as well");
 		_socket.reset();
 		return std::nullopt; // This is not an important error
 	}
@@ -31,7 +29,7 @@ m2::expected<std::optional<m2::pb::NetworkMessage>> m2::network::server::Client:
 		return make_unexpected("Client game hash mismatch");
 	}
 
-	LOG_DEBUG("Saving incoming client message");
+	LOG_DEBUG("Saved incoming client message");
 	_incoming_msg.emplace(std::move(*expect_message));
 	return _incoming_msg;
 }
