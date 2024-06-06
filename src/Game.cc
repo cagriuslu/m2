@@ -334,7 +334,7 @@ void m2::Game::execute_post_step() {
 	if (_server_thread) {
 		if (_server_update_necessary) {
 			// Publish ServerUpdate
-			_server_thread->server_update();
+			_server_thread->send_server_update();
 			_server_update_necessary = false;
 		}
 	} else if (_client_thread) {

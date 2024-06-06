@@ -74,7 +74,7 @@ void m2::network::ServerThread::set_turn_holder(int idx) {
 	_turn_holder = idx;
 }
 
-void m2::network::ServerThread::server_update() {
+void m2::network::ServerThread::send_server_update() {
 	INFO_FN();
 
 	// Prepare the ServerUpdate except the receiver_index field
@@ -134,6 +134,10 @@ void m2::network::ServerThread::server_update() {
 		message.mutable_server_update()->set_receiver_index(i);
 		_clients[i].push_outgoing_message(std::move(message));
 	}
+}
+
+void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand& command, int receiver_index) {
+
 }
 
 void m2::network::ServerThread::set_state_locked(pb::ServerState state) {

@@ -55,13 +55,13 @@ m2::void_expected m2::Level::init_multi_player_as_host(
 	m2_reflect_failure(success);
 
 	// Execute the first server update
-	M2_GAME.server_thread().server_update();
+	M2_GAME.server_thread().send_server_update();
 
 	// Populate level
 	M2G_PROXY.multi_player_level_server_populate(_name, *_lb);
 
 	// Execute second server update
-	M2_GAME.server_thread().server_update();
+	M2_GAME.server_thread().send_server_update();
 
 	return {};
 }
