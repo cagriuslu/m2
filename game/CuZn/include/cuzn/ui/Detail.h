@@ -12,6 +12,9 @@ m2::ui::Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemTyp
 m2::RectF cards_window_ratio();
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card = m2g::pb::NO_ITEM);
 
+m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile = m2g::pb::NO_ITEM);
+m2::RectF tiles_window_ratio();
+
 std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2);
 
 bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text);

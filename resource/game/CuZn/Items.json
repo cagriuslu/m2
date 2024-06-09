@@ -729,7 +729,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "I (CO)"
     },
     {
       "type": "COTTON_MILL_TILEII",
@@ -763,7 +764,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "II"
     },
     {
       "type": "COTTON_MILL_TILEIII",
@@ -801,7 +803,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "III"
     },
     {
       "type": "COTTON_MILL_TILEIV",
@@ -839,7 +842,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 3.0
         }
-      ]
+      ],
+      "inGameName": "IV"
     },
     {
       "type": "IRON_WORKS_TILE_I",
@@ -877,7 +881,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "I (CO)"
     },
     {
       "type": "IRON_WORKS_TILE_II",
@@ -911,7 +916,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "II"
     },
     {
       "type": "IRON_WORKS_TILE_III",
@@ -945,7 +951,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "III"
     },
     {
       "type": "IRON_WORKS_TILE_IV",
@@ -979,7 +986,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "IV"
     },
     {
       "type": "BREWERY_TILE_I",
@@ -1021,7 +1029,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "I (CO)"
     },
     {
       "type": "BREWERY_TILE_II",
@@ -1059,7 +1068,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "II"
     },
     {
       "type": "BREWERY_TILE_III",
@@ -1097,7 +1107,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "III"
     },
     {
       "type": "BREWERY_TILE_IV",
@@ -1139,7 +1150,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "IV (RRO)"
     },
     {
       "type": "COAL_MINE_TILE_I",
@@ -1173,7 +1185,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "I (CO)"
     },
     {
       "type": "COAL_MINE_TILE_II",
@@ -1203,7 +1216,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "II"
     },
     {
       "type": "COAL_MINE_TILE_III",
@@ -1237,7 +1251,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "III"
     },
     {
       "type": "COAL_MINE_TILE_IV",
@@ -1271,7 +1286,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "IV"
     },
     {
       "type": "POTTERY_TILEI",
@@ -1309,7 +1325,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "I (ND)"
     },
     {
       "type": "POTTERY_TILEII",
@@ -1343,7 +1360,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "II"
     },
     {
       "type": "POTTERY_TILEIII",
@@ -1381,7 +1399,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "III (ND)"
     },
     {
       "type": "POTTERY_TILEIV",
@@ -1415,7 +1434,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "IV"
     },
     {
       "type": "POTTERY_TILEV",
@@ -1453,7 +1473,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "V (RRO)"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_I",
@@ -1491,7 +1512,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "I (CO)"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_II",
@@ -1525,7 +1547,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "II"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_III",
@@ -1555,7 +1578,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "III"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_IV",
@@ -1589,7 +1613,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "IV"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_V",
@@ -1623,7 +1648,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "V"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VI",
@@ -1653,7 +1679,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "VI"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VII",
@@ -1687,7 +1714,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 1.0
         }
-      ]
+      ],
+      "inGameName": "VII"
     },
     {
       "type": "MANUFACTURED_GOODS_TILE_VIII",
@@ -1721,7 +1749,8 @@
           "type": "POSSESSION_LIMIT",
           "amount": 2.0
         }
-      ]
+      ],
+      "inGameName": "VIII"
     },
     {
       "type": "CANAL_LICENSE"
