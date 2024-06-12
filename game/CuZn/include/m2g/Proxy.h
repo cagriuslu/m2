@@ -5,6 +5,7 @@
 #include <m2/Proxy.h>
 #include <cuzn/journeys/BuildJourney.h>
 #include <cuzn/journeys/NetworkJourney.h>
+#include <cuzn/journeys/DevelopJourney.h>
 #include <m2/Cache.h>
 
 namespace m2g {
@@ -40,12 +41,15 @@ namespace m2g {
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> industry_positions; // Exact position and cell rectangle
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
 
-		// Server only fields
-		std::vector<Card> _draw_deck;
-
-		std::optional<std::variant<BuildJourney, NetworkJourney>> user_journey;
+		// User journeys
+		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney>> user_journey;
 		static void user_journey_deleter();
 
+		// Accessors
 		[[nodiscard]] unsigned player_index(m2::Id id) const;
+		[[nodiscard]] m2::Character& market_character() const;
+
+		// Server only fields
+		std::vector<Card> _draw_deck;
 	};
 }  // namespace m2g

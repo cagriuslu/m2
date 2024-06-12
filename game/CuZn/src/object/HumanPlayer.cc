@@ -97,6 +97,15 @@ float player_money(m2::Character& player) {
 	return player.get_resource(m2g::pb::MONEY);
 }
 
+size_t player_tile_count(m2::Character& player) {
+	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_COAL_MINE_TILE)
+		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_IRON_WORKS_TILE)
+		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_BREWERY_TILE)
+		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_COTTON_MILL_TILE)
+		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)
+		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_POTTERY_TILE);
+}
+
 std::optional<m2g::pb::ItemType> get_next_buildable_factory(m2::Character& player, m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;

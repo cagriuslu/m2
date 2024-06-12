@@ -146,14 +146,16 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 					.line_count = 11,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_create = [](TextSelection &self) {
+					.on_create = [exclude_tile](TextSelection &self) {
 						// Look for the other widget
 						auto* industry_type_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("IndustryTypeSelection");
 						if (auto selections = industry_type_selection_widget->selections(); not selections.empty()) {
 							auto cat = static_cast<m2g::pb::ItemCategory>(std::get<int>(selections[0]));
 							TextSelectionBlueprint::Options options;
 							for (auto item_it = M2_PLAYER.character().find_items(cat); item_it != M2_PLAYER.character().end_items(); ++item_it) {
-								options.emplace_back(M2_GAME.get_named_item(item_it->type()).in_game_name(), m2::I(item_it->type()));
+								if (item_it->type() != exclude_tile) {
+									options.emplace_back(M2_GAME.get_named_item(item_it->type()).in_game_name(), m2::I(item_it->type()));
+								}
 							}
 							self.set_options(options);
 						}
@@ -347,6 +349,20 @@ m2::RectF tiles_window_ratio() {
 	return m2::RectF{0.05f, 0.05f, 0.9f, 0.9f};
 }
 
+std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclude_tile) {
+	LOG_INFO("Asking player to select a tile...");
+	std::optional<m2g::pb::ItemType> selected_tile;
+	State::create_execute_sync(std::make_unique<Blueprint>(generate_tiles_window("Select tile to develop", exclude_tile)), M2_GAME.dimensions().game_and_hud.ratio(tiles_window_ratio()))
+		.if_void_return([&]() {
+			LOG_INFO("Tile selection cancelled");
+		})
+		.if_return<m2g::pb::ItemType>([&selected_tile](auto picked_tile) {
+			LOG_INFO("Tile selected", m2g::pb::ItemType_Name(picked_tile));
+			selected_tile = picked_tile;
+		});
+	return selected_tile;
+}
+
 std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
 	LOG_INFO("Asking player to select an industry...");
 
@@ -487,4 +503,34 @@ void display_blocking_message(const std::string& line1, const std::string& line2
 	};
 
 	State::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}));
+}
+
+m2::RGB generate_player_color(unsigned index) {
+	switch (index) {
+		case 0:
+			return m2::RGB{0, 255, 255};
+		case 1:
+			return m2::RGB{255, 0, 255};
+		case 2:
+			return m2::RGB{255, 255, 0};
+		case 3:
+			return m2::RGB{0, 255, 0};
+		default:
+			throw M2ERROR("Invalid player index");
+	}
+}
+
+std::string generate_player_name(unsigned index) {
+	switch (index) {
+		case 0:
+			return "Cyan";
+		case 1:
+			return "Pink";
+		case 2:
+			return "Yellow";
+		case 3:
+			return "Green";
+		default:
+			throw M2ERROR("Invalid player index");
+	}
 }

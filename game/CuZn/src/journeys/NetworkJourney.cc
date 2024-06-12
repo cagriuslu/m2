@@ -62,12 +62,13 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	if (player_road_count(M2_PLAYER.character()) == 0) {
 		M2_LEVEL.display_message("You are out of road tiles.");
 		LOG_INFO("Insufficient roads, cancelling NetworkJourney...");
+		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
 
 	// Ask if double railroads should be built
-	if (is_railroad_era() && 1 < player_card_count(M2_PLAYER.character()) && 1 < player_road_count(M2_PLAYER.character())) {
+	if (is_railroad_era() && 1 < player_road_count(M2_PLAYER.character())) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
 	}
 
@@ -78,6 +79,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 			| std::views::transform(m2::to_second_of<m2g::pb::ResourceType, float>)).front()) {
 		M2_LEVEL.display_message("Insufficient money.");
 		LOG_INFO("Insufficient money, cancelling NetworkJourney...");
+		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	} else {
@@ -87,9 +89,10 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	}
 
 	// Card selection
-	if (auto selected_card = ask_for_card_selection(); selected_card) {
+	if (auto selected_card = ask_for_card_selection()) {
 		_selected_card = *selected_card;
 	} else {
+		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}

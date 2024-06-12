@@ -14,9 +14,13 @@ std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclud
 
 m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile = m2g::pb::NO_ITEM);
 m2::RectF tiles_window_ratio();
+std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclude_tile = m2g::pb::NO_ITEM);
 
 std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2);
 
 bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text);
 
 void display_blocking_message(const std::string& line1, const std::string& line2);
+
+m2::RGB generate_player_color(unsigned index);
+std::string generate_player_name(unsigned index);

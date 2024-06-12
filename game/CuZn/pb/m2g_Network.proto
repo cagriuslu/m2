@@ -29,7 +29,13 @@ message ClientCommand {
   message LoanAction {
     ItemType card = 1;
   }
-  message DevelopAction {}
+  message DevelopAction {
+    ItemType card = 1;
+    ItemType industry_tile_1 = 2;
+    ItemType industry_tile_2 = 3;
+    SpriteType iron_sources_1 = 4;
+    SpriteType iron_sources_2 = 5;
+  }
   message ScoutAction {}
 
   oneof type {

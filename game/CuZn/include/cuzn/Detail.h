@@ -63,9 +63,6 @@ std::vector<City> cities_from_connection(Connection connection);
 
 std::vector<Industry> industries_on_location(IndustryLocation location);
 
-m2::RGB generate_player_color(unsigned index);
-std::string generate_player_name(unsigned index);
-
 m2::VecF connection_sprite_world_offset(m2g::pb::SpriteType original_type);
 
 // Locators

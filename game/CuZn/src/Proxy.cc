@@ -137,6 +137,32 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			turn_holder_object_id);
 		auto success = init_road(*it, client_command.network_action().connection_1());
 		// TODO check result
+	} else if (client_command.has_develop_action()) {
+		// TODO verify player can develop
+
+		card_to_discard = client_command.develop_action().card();
+		// Remove tiles from the player
+		turn_holder_character.remove_item(turn_holder_character.find_items(client_command.develop_action().industry_tile_1()));
+		if (client_command.develop_action().industry_tile_2()) {
+			turn_holder_character.remove_item(turn_holder_character.find_items(client_command.develop_action().industry_tile_2()));
+		}
+		// Remove iron from industries or market
+		if (is_industry_location(client_command.develop_action().iron_sources_1())) {
+			find_factory_at_location(client_command.develop_action().iron_sources_1())->character().remove_resource(pb::IRON_CUBE_COUNT, 1.0f);
+		} else if (is_merchant_location(client_command.develop_action().iron_sources_1())) {
+			// TODO
+		} else {
+			throw M2ERROR("Invalid iron source");
+		}
+		// TODO remove duplication
+		if (is_industry_location(client_command.develop_action().iron_sources_2())) {
+			find_factory_at_location(client_command.develop_action().iron_sources_2())->character().remove_resource(pb::IRON_CUBE_COUNT, 1.0f);
+		} else if (is_merchant_location(client_command.develop_action().iron_sources_2())) {
+			// TODO
+		} else {
+			throw M2ERROR("Invalid iron source");
+		}
+
 	} else if (client_command.has_loan_action()) {
 		auto income_points = m2::iround(turn_holder_character.get_attribute(m2g::pb::INCOME_POINTS));
 		auto income_level = level_from_income_points(income_points);
@@ -290,4 +316,8 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 	} else {
 		throw M2ERROR("Invalid player ID");
 	}
+}
+
+m2::Character& m2g::Proxy::market_character() const {
+	return M2_LEVEL.objects[_market_object_id].character();
 }

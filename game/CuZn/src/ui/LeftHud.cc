@@ -4,6 +4,7 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include "cuzn/ui/Detail.h"
+#include "cuzn/journeys/DevelopJourney.h"
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -39,7 +40,19 @@ namespace {
 		}
 	};
 
-	const auto develop_button = TextBlueprint{.text = "Develop", .font_size = 4.5f};
+	const auto develop_button = TextBlueprint{
+		.text = "Develop",
+		.font_size = 4.5f,
+		.on_action = [](MAYBE const Text& self) -> Action {
+			if (M2_GAME.client_thread().is_turn()) {
+				LOG_INFO("Beginning DevelopJourney");
+				m2g::Proxy::get_instance().user_journey.emplace(DevelopJourney{});
+			} else {
+				M2_LEVEL.display_message("It's not your turn");
+			}
+			return make_continue_action();
+		}
+	};
 
 	const auto sell_button = TextBlueprint{.text = "Sell", .font_size = 4.5f};
 

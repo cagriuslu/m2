@@ -70,6 +70,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
 		_selected_card = *selected_card;
 		return BuildJourneyStep::EXPECT_LOCATION;
 	} else {
+		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
@@ -96,6 +97,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 			if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
 				_selected_industry = *selected_industry;
 			} else {
+				deinit();
 				M2_DEFER(m2g::Proxy::user_journey_deleter);
 				return std::nullopt;
 			}
@@ -110,6 +112,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 		auto tile_type = get_next_buildable_factory(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
 			M2_LEVEL.display_message("Player doesn't have an industry tile of appropriate type");
+			deinit();
 			M2_DEFER(m2g::Proxy::user_journey_deleter);
 			return std::nullopt;
 		}
@@ -173,6 +176,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal
 			// Check if factory has the required resource
 			if (m2::is_less_or_equal(1.0f, factory->character().get_resource(unspecified_resource->first), 0.001f)) {
 				// Check if the factory is connected
+				// TODO require connection only for certain cases
 				if (is_industry_city_connected_to_location(city_of_location(_selected_location), *industry_loc)) {
 					// Deduct resource
 					factory->character().remove_resource(unspecified_resource->first, 1.0f);

@@ -1,4 +1,5 @@
 #include <cuzn/object/MarketTracker.h>
+#include "m2/Game.h"
 
 namespace {
 	constexpr int COAL_MARKET_CAPACITY = 14;
@@ -45,25 +46,24 @@ void init_market(m2::Object& obj) {
 	auto& chr = obj.add_full_character();
 	chr.set_resource(m2g::pb::COAL_CUBE_COUNT, COAL_MARKET_INITIAL_COUNT);
 	chr.set_resource(m2g::pb::IRON_CUBE_COUNT, IRON_MARKET_INITIAL_COUNT);
+}
 
-	chr.on_interaction = [](m2::Character& self, MAYBE m2::Character* other, const m2g::pb::InteractionData& data) -> std::optional<m2g::pb::InteractionData> {
-		if (data.has_ask_coal_cost()) {
-			auto ask_count = data.ask_coal_cost();
-			auto current_coal_count = m2::iround(self.get_resource(m2g::pb::COAL_CUBE_COUNT));
-			auto cost = calculate_cost(COAL_MARKET_CAPACITY, current_coal_count, ask_count);
+int market_coal_cost(int coal_count) {
+	auto current_coal_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	return calculate_cost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
+}
 
-			m2g::pb::InteractionData response;
-			response.set_return_coal_cost(cost);
-			return response;
-		} else if (data.has_ask_iron_cost()) {
-			auto ask_count = data.ask_iron_cost();
-			auto current_iron_count = m2::iround(self.get_resource(m2g::pb::IRON_CUBE_COUNT));
-			auto cost = calculate_cost(IRON_MARKET_CAPACITY, current_iron_count, ask_count);
+int market_iron_cost(int iron_count) {
+	auto current_iron_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	return calculate_cost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
+}
 
-			m2g::pb::InteractionData response;
-			response.set_return_iron_cost(cost);
-			return response;
-		}
-		return std::nullopt;
-	};
+std::pair<int,int> market_coal_revenue(int count) {
+	auto current_coal_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	return calculate_revenue(COAL_MARKET_CAPACITY, current_coal_count, count);
+}
+
+std::pair<int,int> market_iron_revenue(int count) {
+	auto current_iron_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	return calculate_revenue(IRON_MARKET_CAPACITY, current_iron_count, count);
 }
