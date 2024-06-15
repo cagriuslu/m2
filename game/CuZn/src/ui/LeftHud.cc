@@ -3,8 +3,9 @@
 #include <m2/ui/widget/TextInput.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include "cuzn/ui/Detail.h"
-#include "cuzn/journeys/DevelopJourney.h"
+#include <cuzn/ui/Detail.h>
+#include <cuzn/journeys/DevelopJourney.h>
+#include <cuzn/journeys/LoanJourney.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -61,17 +62,7 @@ namespace {
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 			if (M2_GAME.client_thread().is_turn()) {
-				LOG_INFO("Loan action");
-				if (auto selected_card = ask_for_card_selection(); selected_card) {
-					auto card_name = M2_GAME.get_named_item(*selected_card).in_game_name();
-					if (ask_for_confirmation("Take a loan using ", card_name + " card?", "OK", "Cancel")) {
-						LOG_INFO("Loan action confirmed");
-						pb::ClientCommand cc;
-						cc.mutable_loan_action()->set_card(*selected_card);
-						M2_GAME.client_thread().queue_client_command(cc);
-					}
-				}
-				LOG_INFO("Loan action cancelled");
+				execute_loan_journey();
 			}
 			return make_continue_action();
 		}
