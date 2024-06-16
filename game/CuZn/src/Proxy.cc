@@ -164,6 +164,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		}
 
 	} else if (client_command.has_loan_action()) {
+		// TODO check
 		auto income_points = m2::iround(turn_holder_character.get_attribute(m2g::pb::INCOME_POINTS));
 		auto income_level = level_from_income_points(income_points);
 		auto new_income_level = std::max(-10, income_level - 3);
@@ -172,6 +173,16 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		turn_holder_character.add_resource(pb::MONEY, 30.0f);
 
 		card_to_discard = client_command.loan_action().card();
+	} else if (client_command.has_scout_action()) {
+		// TODO check
+		auto card_1_it = turn_holder_character.find_items(client_command.scout_action().card_1());
+		auto card_2_it = turn_holder_character.find_items(client_command.scout_action().card_2());
+		turn_holder_character.remove_item(card_1_it);
+		turn_holder_character.remove_item(card_2_it);
+		turn_holder_character.add_named_item(M2_GAME.get_named_item(pb::WILD_INDUSTRY_CARD));
+		turn_holder_character.add_named_item(M2_GAME.get_named_item(pb::WILD_LOCATION_CARD));
+
+		card_to_discard = client_command.scout_action().card_0();
 	}
 
 	// Send update to clients

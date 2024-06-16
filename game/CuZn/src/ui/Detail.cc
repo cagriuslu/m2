@@ -11,7 +11,7 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card) {
+Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
 	return Blueprint{
 		.w = 24,
 		.h = 24,
@@ -36,13 +36,19 @@ Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclud
 					.line_count = 8,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_create = [&exclude_card](MAYBE TextSelection& self) {
+					.on_create = [=](MAYBE TextSelection& self) {
 						auto cards = m2::generate_named_item_types_transformer(
-							{m2g::pb::ITEM_CATEGORY_CITY_CARD, m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD, m2g::pb::ITEM_CATEGORY_WILD_CARD})(M2_PLAYER.character())
-							| std::views::filter([exclude_card](auto item_type) { return exclude_card != item_type; });
+							{m2g::pb::ITEM_CATEGORY_CITY_CARD, m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD, m2g::pb::ITEM_CATEGORY_WILD_CARD})(M2_PLAYER.character());
+						Card filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
 						TextSelectionBlueprint::Options options;
-						std::ranges::for_each(cards, [&options](auto item_type) {
-							options.emplace_back(M2_GAME.get_named_item(item_type).in_game_name(), static_cast<int>(item_type));
+						std::ranges::for_each(cards, [&filter_card_1, &filter_card_2, &options](auto item_type) {
+							if (filter_card_1 && item_type == filter_card_1) {
+								filter_card_1 = static_cast<Card>(0);
+							} else if (filter_card_2 && item_type == filter_card_2) {
+								filter_card_2 = static_cast<Card>(0);
+							} else {
+								options.emplace_back(M2_GAME.get_named_item(item_type).in_game_name(), static_cast<int>(item_type));
+							}
 						});
 						self.set_options(options);
 					}
@@ -75,10 +81,10 @@ m2::RectF cards_window_ratio() {
 	return m2::RectF{0.30f, 0.10f, 0.4f, 0.8f};
 }
 
-std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card) {
+std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
 	LOG_INFO("Asking player to select a card...");
 	std::optional<m2g::pb::ItemType> selected_card;
-	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window("Select card to discard", exclude_card)), M2_GAME.dimensions().game_and_hud.ratio(cards_window_ratio()))
+	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2)), M2_GAME.dimensions().game_and_hud.ratio(cards_window_ratio()))
 		.if_void_return([&]() {
 			LOG_INFO("Card selection cancelled");
 		})

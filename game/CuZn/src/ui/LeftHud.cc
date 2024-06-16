@@ -6,6 +6,7 @@
 #include <cuzn/ui/Detail.h>
 #include <cuzn/journeys/DevelopJourney.h>
 #include <cuzn/journeys/LoanJourney.h>
+#include <cuzn/journeys/ScoutJourney.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -68,7 +69,16 @@ namespace {
 		}
 	};
 
-	const auto scout_button = TextBlueprint{.text = "Scout", .font_size = 4.5f};
+	const auto scout_button = TextBlueprint{
+		.text = "Scout",
+		.font_size = 4.5f,
+		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+			if (M2_GAME.client_thread().is_turn()) {
+				execute_scout_journey();
+			}
+			return make_continue_action();
+		}
+	};
 }
 
 const Blueprint left_hud_blueprint = {
