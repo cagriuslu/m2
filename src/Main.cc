@@ -18,17 +18,17 @@ int main(const int argc, char **argv) {
 	INFO_FN();
 
 	auto arg_list = to_argument_list(argc, argv);
-	if (auto log_level_opt = parse_argument(arg_list, "log-level"); log_level_opt) {
+	if (auto log_level_opt = parse_argument(arg_list, "log-level")) {
 		if (not LogLevel_Parse(*log_level_opt, &current_log_level)) {
 			LOG_WARN("Invalid log level", *log_level_opt);
 		}
 		LOG_INFO("New log level", current_log_level);
 	}
-	if (auto silent_opt = parse_argument(arg_list, "silent"); silent_opt) {
+	if (auto silent_opt = parse_argument(arg_list, "silent")) {
 		LOG_INFO("Silent");
 		silent = true;
 	}
-	if (auto slowdown_opt = parse_argument(arg_list, "slowdown"); slowdown_opt) {
+	if (auto slowdown_opt = parse_argument(arg_list, "slowdown")) {
 		if (auto const slowdown_factor = strtol(slowdown_opt->c_str(), nullptr, 0); 1 <= slowdown_factor) {
 			time_slowdown_factor = static_cast<int>(slowdown_factor);
 			LOG_INFO("New slowdown factor", time_slowdown_factor);
@@ -36,14 +36,18 @@ int main(const int argc, char **argv) {
 			LOG_WARN("Invalid slowdown factor", *slowdown_opt);
 		}
 	}
-	if (auto sprite_sheets_opt = parse_argument(arg_list, "sprite_sheets"); sprite_sheets_opt) {
+	if (auto sprite_sheets_opt = parse_argument(arg_list, "sprite-sheets")) {
 		LOG_INFO("Generating sprite sheets");
 		printf("%s\n", generate_sprite_sheets_skeleton().c_str());
 		return 0;
 	}
-	if (auto console_opt = parse_argument(arg_list, "console"); console_opt) {
+	if (auto console_opt = parse_argument(arg_list, "console")) {
 		console_command = *console_opt;
 		LOG_INFO("Console command", *console_opt);
+	}
+	if (auto god_mode_opt = parse_argument(arg_list, "god-mode")) {
+		LOG_INFO("God mode");
+		god_mode = true;
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {

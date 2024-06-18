@@ -54,7 +54,6 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() 
 	if (player_tile_count(M2_PLAYER.character()) == 0) {
 		M2_LEVEL.display_message("You are out of factory tiles.");
 		LOG_INFO("Insufficient factory tiles, cancelling DevelopJourney...");
-		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
@@ -67,7 +66,6 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() 
 	if (auto selected_card = ask_for_card_selection()) {
 		_selected_card = *selected_card;
 	} else {
-		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
@@ -79,13 +77,11 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() 
 			if (auto selected_tile_2 = ask_for_tile_selection(*selected_tile)) {
 				_selected_tile_2 = *selected_tile_2;
 			} else {
-				deinit();
 				M2_DEFER(m2g::Proxy::user_journey_deleter);
 				return std::nullopt;
 			}
 		}
 	} else {
-		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
@@ -114,7 +110,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_si
 		// Check if location has a built factory
 		if (auto* factory = find_factory_at_location(*industry_loc)) {
 			// Check if factory has the required resource
-			if (m2::is_less_or_equal(1.0f, IRON_CUBE_COUNT, 0.001f)) {
+			if (m2::god_mode || m2::is_less_or_equal(1.0f, IRON_CUBE_COUNT, 0.001f)) {
 				// Deduct resource
 				factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 				// Save source
@@ -170,7 +166,6 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_cancel_signal(
 		_reserved_source_2->character().add_resource(IRON_CUBE_COUNT, 1.0f);
 		_reserved_source_2 = nullptr;
 	}
-	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }
@@ -209,7 +204,6 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_confirmation_enter_sign
 			_reserved_source_2 = nullptr;
 		}
 	}
-	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }

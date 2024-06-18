@@ -25,7 +25,11 @@ message ClientCommand {
     repeated SpriteType coal_sources = 5;
     SpriteType beer_source = 6;
   }
-  message SellAction {}
+  message SellAction {
+    ItemType card = 1;
+    SpriteType industry_location = 2;
+    repeated SpriteType beer_sources = 3;
+  }
   message LoanAction {
     ItemType card = 1;
   }

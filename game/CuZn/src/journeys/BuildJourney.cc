@@ -70,7 +70,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
 		_selected_card = *selected_card;
 		return BuildJourneyStep::EXPECT_LOCATION;
 	} else {
-		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
@@ -97,7 +96,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 			if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
 				_selected_industry = *selected_industry;
 			} else {
-				deinit();
 				M2_DEFER(m2g::Proxy::user_journey_deleter);
 				return std::nullopt;
 			}
@@ -112,7 +110,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 		auto tile_type = get_next_buildable_factory(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
 			M2_LEVEL.display_message("Player doesn't have an industry tile of appropriate type");
-			deinit();
 			M2_DEFER(m2g::Proxy::user_journey_deleter);
 			return std::nullopt;
 		}
@@ -133,7 +130,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 
 std::optional<BuildJourneyStep> BuildJourney::handle_location_cancel_signal() {
 	LOG_INFO("Cancelling Build action...");
-	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }
@@ -174,10 +170,9 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal
 		// Check if location has a built factory
 		if (auto* factory = find_factory_at_location(*industry_loc)) {
 			// Check if factory has the required resource
-			if (m2::is_less_or_equal(1.0f, factory->character().get_resource(unspecified_resource->first), 0.001f)) {
+			if (m2::god_mode || m2::is_less_or_equal(1.0f, factory->character().get_resource(unspecified_resource->first), 0.001f)) {
 				// Check if the factory is connected
-				// TODO require connection only for certain cases
-				if (is_industry_city_connected_to_location(city_of_location(_selected_location), *industry_loc)) {
+				if (m2::god_mode || unspecified_resource->first == IRON_CUBE_COUNT || is_industry_city_connected_to_location(city_of_location(_selected_location), *industry_loc)) {
 					// Deduct resource
 					factory->character().remove_resource(unspecified_resource->first, 1.0f);
 					// Specify resource source
@@ -198,7 +193,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal
 	} else if (auto merchant_loc = merchant_location_on_position(world_position)) {
 		LOG_DEBUG("Merchant location", m2g::pb::SpriteType_Name(*merchant_loc));
 		// Check if the merchant is connected
-		if (is_industry_city_connected_to_location(city_of_location(_selected_location), *merchant_loc)) {
+		if (m2::god_mode || unspecified_resource->first == IRON_CUBE_COUNT || is_industry_city_connected_to_location(city_of_location(_selected_location), *merchant_loc)) {
 			// Specify resource source
 			unspecified_resource->second = *merchant_loc;
 			// Re-enter resource selection
@@ -217,7 +212,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_cancel_signal() {
 		factory->character().add_resource(resource_type, 1.0f);
 	}
 	_reserved_resources.clear();
-	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }
@@ -259,7 +253,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal()
 		}
 		_reserved_resources.clear();
 	}
-	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }

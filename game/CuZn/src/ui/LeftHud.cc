@@ -7,6 +7,7 @@
 #include <cuzn/journeys/DevelopJourney.h>
 #include <cuzn/journeys/LoanJourney.h>
 #include <cuzn/journeys/ScoutJourney.h>
+#include <cuzn/journeys/SellJourney.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -56,7 +57,19 @@ namespace {
 		}
 	};
 
-	const auto sell_button = TextBlueprint{.text = "Sell", .font_size = 4.5f};
+	const auto sell_button = TextBlueprint{
+		.text = "Sell",
+		.font_size = 4.5f,
+		.on_action = [](MAYBE const Text& self) -> Action {
+			if (M2_GAME.client_thread().is_turn()) {
+				LOG_INFO("Beginning SellJourney");
+				m2g::Proxy::get_instance().user_journey.emplace(SellJourney{});
+			} else {
+				M2_LEVEL.display_message("It's not your turn");
+			}
+			return make_continue_action();
+		}
+	};
 
 	const auto loan_button = TextBlueprint{
 		.text = "Loan",

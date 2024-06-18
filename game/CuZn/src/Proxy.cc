@@ -137,6 +137,15 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			turn_holder_object_id);
 		auto success = init_road(*it, client_command.network_action().connection_1());
 		// TODO check result
+	} else if (client_command.has_sell_action()) {
+		// TODO check
+
+		card_to_discard = client_command.sell_action().card();
+
+		auto* factory = find_factory_at_location(client_command.sell_action().industry_location());
+		// TODO check
+		factory->character().set_resource(pb::IS_SOLD, 1.0f);
+		// TODO get benefits
 	} else if (client_command.has_develop_action()) {
 		// TODO verify player can develop
 
@@ -317,6 +326,9 @@ m2g::Proxy& m2g::Proxy::get_instance() {
 }
 
 void m2g::Proxy::user_journey_deleter() {
+	std::visit(m2::overloaded {
+		[](auto& uj){ uj.deinit(); }
+	}, *get_instance().user_journey);
 	get_instance().user_journey.reset();
 }
 

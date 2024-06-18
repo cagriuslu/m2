@@ -6,6 +6,7 @@
 #include <cuzn/journeys/BuildJourney.h>
 #include <cuzn/journeys/NetworkJourney.h>
 #include <cuzn/journeys/DevelopJourney.h>
+#include <cuzn/journeys/SellJourney.h>
 #include <m2/Cache.h>
 
 namespace m2g {
@@ -42,7 +43,7 @@ namespace m2g {
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
 
 		// User journeys
-		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney>> user_journey;
+		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney, SellJourney>> user_journey;
 		static void user_journey_deleter();
 
 		// Accessors

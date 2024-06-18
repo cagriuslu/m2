@@ -51,6 +51,10 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 		auto top_left_cell_pos = gfx.parent().position;
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};
 		m2::Graphic::color_rect(cell_rect, color); // Draw background
+		if (m2::is_equal(1.0f, gfx.parent().character().get_resource(m2g::pb::IS_SOLD), 0.005f)) {
+			auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.x - 0.5f, top_left_cell_pos.y + 0.5f, 2.0f, 1.0f};
+			m2::Graphic::color_rect(bottom_half_cell_rect, m2::RGB{0, 0, 0}); // Draw black bottom half
+		}
 		m2::Graphic::default_draw(gfx); // Draw industry
 		draw_resources(gfx.parent().character()); // Resources
 	};

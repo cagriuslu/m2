@@ -62,7 +62,6 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	if (player_road_count(M2_PLAYER.character()) == 0) {
 		M2_LEVEL.display_message("You are out of road tiles.");
 		LOG_INFO("Insufficient roads, cancelling NetworkJourney...");
-		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
@@ -73,13 +72,12 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	}
 
 	// Check player money, calculate required resources
-	if (auto costs = road_costs(_build_double_railroads);
-		player_money(M2_PLAYER.character()) < (costs
+	if (auto costs = road_costs(_build_double_railroads); not m2::god_mode &&
+			player_money(M2_PLAYER.character()) < (costs
 			| std::views::filter(m2::is_first_equals<m2g::pb::ResourceType, float>(MONEY))
 			| std::views::transform(m2::to_second_of<m2g::pb::ResourceType, float>)).front()) {
 		M2_LEVEL.display_message("Insufficient money.");
 		LOG_INFO("Insufficient money, cancelling NetworkJourney...");
-		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	} else {
@@ -92,7 +90,6 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	if (auto selected_card = ask_for_card_selection()) {
 		_selected_card = *selected_card;
 	} else {
-		deinit();
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
@@ -131,7 +128,6 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_si
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_cancel_signal() {
 	LOG_INFO("Cancelling Network action...");
-	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }
@@ -168,7 +164,6 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 	} else {
 		LOG_INFO("Cancelling Network action...");
 	}
-	deinit();
 	M2_DEFER(m2g::Proxy::user_journey_deleter);
 	return std::nullopt;
 }

@@ -9,4 +9,6 @@ namespace m2 {
 	extern int time_slowdown_factor;
 
 	extern std::string console_command;
+
+	extern bool god_mode;
 }
