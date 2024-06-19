@@ -77,7 +77,7 @@ const Blueprint right_hud_blueprint = {
 			TextBlueprint{
 				.text = "Cards",
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.alignment = m2::ui::TextAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(
 						cards_window_ratio(),
@@ -95,7 +95,7 @@ const Blueprint right_hud_blueprint = {
 			.variant = TextBlueprint{
 				.text = "Tiles",
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.alignment = m2::ui::TextAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(tiles_window_ratio(), std::make_unique<Blueprint>(generate_tiles_window("Tiles")));
 					return make_continue_action();

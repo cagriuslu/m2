@@ -1707,6 +1707,41 @@
       "type": "TEXT_LABEL_6X",
       "text": "6x",
       "heightM": 0.75
+    },
+    {
+      "type": "TEXT_LABEL_PLUS_5_MONEY",
+      "text": "(+5 Money)",
+      "heightM": 0.75,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_PLUS_3_POINTS",
+      "text": "(+3 Points)",
+      "heightM": 0.75,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_PLUS_4_POINTS",
+      "text": "(+4 Points)",
+      "heightM": 0.75,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_PLUS_2_INCOME",
+      "text": "(+2 Income)",
+      "heightM": 0.75,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
+    },
+    {
+      "type": "TEXT_LABEL_1_FREE_DEVELOP",
+      "text": "(1 Free Develop)",
+      "heightM": 0.75,
+      "isBackgroundTile": true,
+      "pullHalfCell": true
     }
   ]
 }
