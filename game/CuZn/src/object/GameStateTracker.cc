@@ -1,4 +1,4 @@
-#include <cuzn/object/MarketTracker.h>
+#include <cuzn/object/GameStateTracker.h>
 #include "m2/Game.h"
 
 namespace {
@@ -42,28 +42,29 @@ namespace {
 	}
 }
 
-void init_market(m2::Object& obj) {
+void init_game_state_tracker(m2::Object& obj) {
 	auto& chr = obj.add_full_character();
+	// Hold the resources belonging to the market
 	chr.set_resource(m2g::pb::COAL_CUBE_COUNT, COAL_MARKET_INITIAL_COUNT);
 	chr.set_resource(m2g::pb::IRON_CUBE_COUNT, IRON_MARKET_INITIAL_COUNT);
 }
 
 int market_coal_cost(int coal_count) {
-	auto current_coal_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	auto current_coal_count = m2::iround(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
 	return calculate_cost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
 }
 
 int market_iron_cost(int iron_count) {
-	auto current_iron_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	auto current_iron_count = m2::iround(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 	return calculate_cost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
 }
 
 std::pair<int,int> market_coal_revenue(int count) {
-	auto current_coal_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	auto current_coal_count = m2::iround(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
 	return calculate_revenue(COAL_MARKET_CAPACITY, current_coal_count, count);
 }
 
 std::pair<int,int> market_iron_revenue(int count) {
-	auto current_iron_count = m2::iround(M2G_PROXY.market_character().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	auto current_iron_count = m2::iround(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 	return calculate_revenue(IRON_MARKET_CAPACITY, current_iron_count, count);
 }

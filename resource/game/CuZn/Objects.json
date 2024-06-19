@@ -16,7 +16,7 @@
       "type": "ROAD"
     },
     {
-      "type": "MARKET_TRACKER"
+      "type": "GAME_STATE_TRACKER"
     },
     {
       "type": "INCOME_POINTS_TRACKER"

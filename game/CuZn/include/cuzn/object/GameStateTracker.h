@@ -3,7 +3,7 @@
 
 // The market is modeled as a game object that tracks the state of the market.
 // This enables the ServerUpdate mechanism to update the market state automatically.
-void init_market(m2::Object& obj);
+void init_game_state_tracker(m2::Object& obj);
 
 // Query cost of buying the resource from the market
 int market_coal_cost(int coal_count);

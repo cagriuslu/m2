@@ -32,7 +32,7 @@ namespace m2g {
 			const std::vector<m2g::pb::ItemType>&, const std::vector<m2::pb::Resource>&);
 
 	private:
-		m2::Id _market_object_id{};
+		m2::Id _game_state_tracker_id{};
 
 	public:
 		// Once the level is created, these should not be modified.
@@ -48,7 +48,7 @@ namespace m2g {
 
 		// Accessors
 		[[nodiscard]] unsigned player_index(m2::Id id) const;
-		[[nodiscard]] m2::Character& market_character() const;
+		[[nodiscard]] m2::Character& game_state_tracker() const;
 
 		// Server only fields
 		std::vector<Card> _draw_deck;

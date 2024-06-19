@@ -1,6 +1,6 @@
 #include <m2g/Proxy.h>
 #include <cuzn/object/HumanPlayer.h>
-#include <cuzn/object/MarketTracker.h>
+#include <cuzn/object/GameStateTracker.h>
 #include <cuzn/object/Merchant.h>
 #include <cuzn/object/Factory.h>
 #include <m2/Log.h>
@@ -55,10 +55,10 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 		merchant_object_ids[merchant_sprite] = it.id();
 	}
 
-	// Add market object
-	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::MARKET_TRACKER);
-	init_market(*it);
-	_market_object_id = it.id();
+	// Add Game State Tracker object
+	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
+	init_game_state_tracker(*it);
+	_game_state_tracker_id = it.id();
 }
 
 void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
@@ -103,8 +103,8 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 		}
 	}
 	_draw_deck = std::move(draw_deck);
-
-	// TODO
+	// Store draw deck size to Game State Tracker
+	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 }
 
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
@@ -218,10 +218,10 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	card_count += _draw_deck.size();
 
 	auto next_turn_holder_index = (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
+	std::optional<int> new_turn_holder_index = next_turn_holder_index;
 	// If no cards left
 	if (card_count == 0) {
 		// TODO end era or game
-		return next_turn_holder_index;
 	} else if (is_first_turn()) {
 		// Draw single card
 		auto card = _draw_deck.back();
@@ -234,10 +234,9 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 				M2_LEVEL.objects[multi_player_id].character().clear_resource(pb::IS_FIRST_TURN);
 			}
 		}
-		return next_turn_holder_index;
 	} else if (not is_first_turn() && card_count % 2) {
 		// If there are odd number of cards, the turn holder does not change
-		return turn_holder_index;
+		new_turn_holder_index = turn_holder_index;
 	} else {
 		// If there are even number of cards, the turn holder changes.
 		// Draw cards for the player
@@ -248,8 +247,11 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 				turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
 			}
 		}
-		return next_turn_holder_index;
 	}
+
+	// Store draw deck size to Game State Tracker
+	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
+	return new_turn_holder_index;
 }
 
 void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
@@ -341,6 +343,6 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 	}
 }
 
-m2::Character& m2g::Proxy::market_character() const {
-	return M2_LEVEL.objects[_market_object_id].character();
+m2::Character& m2g::Proxy::game_state_tracker() const {
+	return M2_LEVEL.objects[_game_state_tracker_id].character();
 }

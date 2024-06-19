@@ -27,7 +27,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					auto vp = m2::I(M2_PLAYER.character().get_attribute(VICTORY_POINTS));
+					auto vp = m2::iround(M2_PLAYER.character().get_attribute(VICTORY_POINTS));
 					self.set_text(std::string{"Points:"} + std::to_string(vp));
 					return make_continue_action();
 				}
@@ -44,7 +44,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					auto vp = m2::I(M2_PLAYER.character().get_attribute(INCOME_POINTS));
+					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
 					self.set_text(std::string{"Income:"} + std::to_string(vp));
 					return make_continue_action();
 				}
@@ -61,7 +61,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					auto money = m2::I(M2_PLAYER.character().get_resource(MONEY));
+					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
 					self.set_text(std::string{"Cash:£"} + std::to_string(money));
 					return make_continue_action();
 				}
@@ -101,6 +101,23 @@ const Blueprint right_hud_blueprint = {
 					return make_continue_action();
 				}
 			}
-		}
+		},
+		WidgetBlueprint{
+			.x = 2,
+			.y = 36,
+			.w = 15,
+			.h = 6,
+			.border_width_px = 0,
+			.variant =
+			TextBlueprint{
+				.font_size = 4.5f,
+				.alignment = m2::ui::TextAlignment::LEFT,
+				.on_update = [](MAYBE Text& self) {
+					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
+					self.set_text(std::string{"Deck:"} + std::to_string(dds));
+					return make_continue_action();
+				}
+			}
+		},
 	}
 };
