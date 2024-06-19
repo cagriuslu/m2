@@ -62,6 +62,12 @@ m2::void_expected init_human_player(m2::Object& obj) {
 		}
 		o.position += move_direction.normalize() * ((float)M2_GAME.delta_time_s() * M2_GAME.dimensions().height_m);
 
+		if (M2_GAME.events.pop_key_press(m2::Key::MINUS)) {
+			M2_GAME.set_zoom(1.1f);  // Increase game height
+		} else if (M2_GAME.events.pop_key_press(m2::Key::PLUS)) {
+			M2_GAME.set_zoom(0.9f);  // Decrease game height
+		}
+
 		// Check if mouse button pressed
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY)) {
 			// Check if a user journey is active
