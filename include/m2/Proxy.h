@@ -86,6 +86,7 @@ namespace m2 {
 		std::vector<m2::ObjectId> multi_player_object_ids;
 
 		/// Return the new turn_holder_index if command is accepted and a ServerUpdate is necessary.
+		/// Return -1 if the game ended.
 		std::optional<int> handle_client_command(MAYBE int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) { return std::nullopt; }
 		void handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command) {}
 

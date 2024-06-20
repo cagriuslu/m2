@@ -47,6 +47,10 @@ void init_game_state_tracker(m2::Object& obj) {
 	// Hold the resources belonging to the market
 	chr.set_resource(m2g::pb::COAL_CUBE_COUNT, COAL_MARKET_INITIAL_COUNT);
 	chr.set_resource(m2g::pb::IRON_CUBE_COUNT, IRON_MARKET_INITIAL_COUNT);
+	// Era
+	chr.clear_resource(m2g::pb::IS_RAILROAD_ERA);
+	// Turn
+	chr.set_resource(m2g::pb::IS_FIRST_TURN, 1.0f);
 }
 
 int market_coal_cost(int coal_count) {

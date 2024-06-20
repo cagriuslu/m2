@@ -67,7 +67,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	}
 
 	// Ask if double railroads should be built
-	if (is_railroad_era() && 1 < player_road_count(M2_PLAYER.character())) {
+	if (M2G_PROXY.is_railroad_era() && 1 < player_road_count(M2_PLAYER.character())) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
 	}
 

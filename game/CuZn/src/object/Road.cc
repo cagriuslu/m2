@@ -30,7 +30,7 @@ m2::void_expected init_road(m2::Object& obj, Connection connection) {
 	auto parent_id = obj.parent_id();
 	auto parent_index = M2G_PROXY.player_index(parent_id);
 	auto color = M2G_PROXY.player_colors[parent_index];
-	auto& _gfx = obj.add_graphic(is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
+	auto& _gfx = obj.add_graphic(M2G_PROXY.is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
 	_gfx.on_draw = [color](m2::Graphic& gfx) {
 		auto connection_position = gfx.parent().position;
 		auto cell_rect = m2::RectF{connection_position - 0.75f, 1.5f, 1.5f};

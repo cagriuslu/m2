@@ -37,9 +37,6 @@ bool is_canal(Connection connection);
 bool is_railroad(Connection connection);
 bool is_canal_license(m2g::pb::ItemType item);
 bool is_railroad_license(m2g::pb::ItemType item);
-bool is_canal_era();
-bool is_railroad_era();
-bool is_first_turn();
 bool location_has_industry(IndustryLocation location, Industry industry);
 
 // Converters

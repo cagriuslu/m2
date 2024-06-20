@@ -98,7 +98,7 @@ m2::expected<ItemType> can_player_build_industry(m2::Character& player, ItemType
 	}
 
 	// Check if it's the first era and the player already has a tile in the city
-	if (player.get_resource(m2g::pb::ERA) == 1.0f) {
+	if (M2G_PROXY.is_canal_era()) {
 		// Iterate over other locations in the city
 		for (const auto& other_location : other_locations_in_city) {
 			// If the location has a tile built
@@ -119,7 +119,9 @@ m2::expected<ItemType> can_player_build_industry(m2::Character& player, ItemType
 	const auto& tile = M2_GAME.get_named_item(*tile_type);
 
 	// Check if the tile can be built in this era
-	if (player.get_resource(m2g::pb::ERA) == tile.get_attribute(m2g::pb::FORBIDDEN_ERA)) {
+	auto forbidden_era = tile.get_attribute(m2g::pb::FORBIDDEN_ERA);
+	if ((m2::is_equal(forbidden_era, 1.0f, 0.001f) && M2G_PROXY.is_canal_era()) ||
+		(m2::is_equal(forbidden_era, 2.0f, 0.001f) && M2G_PROXY.is_railroad_era())) {
 		return m2::make_unexpected("The next tile of selected industry cannot be built in this era");
 	}
 

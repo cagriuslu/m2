@@ -49,8 +49,16 @@ namespace m2g {
 		// Accessors
 		[[nodiscard]] unsigned player_index(m2::Id id) const;
 		[[nodiscard]] m2::Character& game_state_tracker() const;
+		[[nodiscard]] bool is_first_turn() const;
+		[[nodiscard]] bool is_canal_era() const;
+		[[nodiscard]] bool is_railroad_era() const;
 
 		// Server only fields
 		std::vector<Card> _draw_deck;
+		using PlayerIndex = int;
+		std::list<PlayerIndex> _waiting_players; // Front of the list is the next player
+		using SpentMoney = int;
+		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players; // Front of the list played first
+		void determine_player_orders();
 	};
 }  // namespace m2g

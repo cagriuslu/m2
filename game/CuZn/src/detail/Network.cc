@@ -2,12 +2,13 @@
 #include <cuzn/object/Road.h>
 #include <cuzn/Detail.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <m2/Game.h>
 
 using namespace m2g;
 using namespace m2g::pb;
 
 std::vector<std::pair<m2g::pb::ResourceType, float>> road_costs(bool double_railroad) {
-	if (is_canal_era()) {
+	if (M2G_PROXY.is_canal_era()) {
 		return {{MONEY, 3.0f}};
 	} else if (!double_railroad) {
 		return {{MONEY, 5.0f}, {COAL_CUBE_COUNT, 1.0f}};
@@ -24,12 +25,11 @@ m2::expected<ItemType> can_player_build_connection(m2::Character& player, ItemTy
 		return m2::make_unexpected("Location already has a road built");
 	}
 
-	auto era = player.get_resource(ERA);
-	if (era == 1.0f) {
+	if (M2G_PROXY.is_canal_era()) {
 		if (not is_canal(location)) {
 			return m2::make_unexpected("The location has no canal");
 		}
-	} else if (era == 2.0f) {
+	} else if (M2G_PROXY.is_railroad_era()) {
 		if (not is_railroad(location)) {
 			return m2::make_unexpected("The location has no railroad");
 		}

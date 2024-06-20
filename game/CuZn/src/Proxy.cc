@@ -105,6 +105,11 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	_draw_deck = std::move(draw_deck);
 	// Store draw deck size to Game State Tracker
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
+
+	// Don't put the first player on the list
+	for (int i = 1; i < M2_GAME.server_thread().client_count(); ++i) {
+		_waiting_players.emplace_back(i);
+	}
 }
 
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
@@ -113,10 +118,12 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 
 	std::optional<Card> card_to_discard;
+	SpentMoney money_spent = 0;
 	if (client_command.has_build_action()) {
 		// TODO verify whether the player can build it
 
 		card_to_discard = client_command.build_action().card();
+		money_spent += 5;
 
 		auto it = m2::create_object(
 			position_of_industry_location(client_command.build_action().industry_location()),
@@ -130,6 +137,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// TODO verify whether the player can network
 
 		card_to_discard = client_command.network_action().card();
+		money_spent += 5;
 
 		auto it = m2::create_object(
 			position_of_connection(client_command.network_action().connection_1()),
@@ -150,6 +158,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// TODO verify player can develop
 
 		card_to_discard = client_command.develop_action().card();
+		money_spent += 2;
+
 		// Remove tiles from the player
 		turn_holder_character.remove_item(turn_holder_character.find_items(client_command.develop_action().industry_tile_1()));
 		if (client_command.develop_action().industry_tile_2()) {
@@ -208,6 +218,12 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		auto card_it = turn_holder_character.find_items(*card_to_discard);
 		turn_holder_character.remove_item(card_it);
 	}
+	// Record spent money
+	if (not _played_players.empty() && _played_players.back().first == turn_holder_index) {
+		_played_players.back().second += money_spent;
+	} else {
+		_played_players.emplace_back(turn_holder_index, money_spent);
+	}
 
 	// Count the cards in the game
 	auto player_card_lists = M2G_PROXY.multi_player_object_ids
@@ -217,41 +233,57 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), (size_t)0, [](size_t sum, const std::vector<Card>& v) { return sum + v.size(); });
 	card_count += _draw_deck.size();
 
-	auto next_turn_holder_index = (turn_holder_index + 1) % M2_GAME.server_thread().client_count();
-	std::optional<int> new_turn_holder_index = next_turn_holder_index;
-	// If no cards left
-	if (card_count == 0) {
-		// TODO end era or game
+	if (_waiting_players.empty() && card_count == 0) {
+		// If no cards left in the game
+		if (M2G_PROXY.is_canal_era()) {
+			// TODO end era
+
+			determine_player_orders();
+		} else {
+			// TODO end game
+		}
 	} else if (is_first_turn()) {
 		// Draw single card
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
 		turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
 
-		if (next_turn_holder_index == 0) {
+		// Check if first turn finished
+		if (_waiting_players.empty()) {
 			LOG_INFO("First turn ended");
-			for (auto multi_player_id : M2G_PROXY.multi_player_object_ids) {
-				M2_LEVEL.objects[multi_player_id].character().clear_resource(pb::IS_FIRST_TURN);
-			}
+			game_state_tracker().clear_resource(pb::IS_FIRST_TURN);
+
+			determine_player_orders();
 		}
 	} else if (not is_first_turn() && card_count % 2) {
 		// If there are odd number of cards, the turn holder does not change
-		new_turn_holder_index = turn_holder_index;
+		// Push to the front of the waiting players, so that it's popped first below.
+		_waiting_players.push_front(turn_holder_index);
 	} else {
 		// If there are even number of cards, the turn holder changes.
 		// Draw cards for the player
 		if (not _draw_deck.empty()) {
 			m2_repeat(2) {
-				auto card = _draw_deck.back();
-				_draw_deck.pop_back();
+				auto card = _draw_deck.back(); _draw_deck.pop_back();
 				turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
 			}
+		}
+
+		if (_waiting_players.empty()) {
+			determine_player_orders();
 		}
 	}
 
 	// Store draw deck size to Game State Tracker
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
-	return new_turn_holder_index;
+
+	if (not _waiting_players.empty()) {
+		auto tmp = _waiting_players.front(); _waiting_players.pop_front();
+		return tmp;
+	} else {
+		// TODO Game ended
+		return -1;
+	}
 }
 
 void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
@@ -345,4 +377,42 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 
 m2::Character& m2g::Proxy::game_state_tracker() const {
 	return M2_LEVEL.objects[_game_state_tracker_id].character();
+}
+
+bool m2g::Proxy::is_first_turn() const {
+	return m2::is_equal(game_state_tracker().get_resource(pb::IS_FIRST_TURN), 1.0f, 0.001f);
+}
+
+bool m2g::Proxy::is_canal_era() const {
+	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 0.0f, 0.001f);
+}
+
+bool m2g::Proxy::is_railroad_era() const {
+	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
+}
+
+void m2g::Proxy::determine_player_orders() {
+	if (not _waiting_players.empty()) {
+		throw M2ERROR("Cannot determine player orders while there are players still waiting their turns");
+	}
+
+	while (not _played_players.empty()) {
+		// Find the first player who spent the least amount of money
+		SpentMoney spent_money = INT32_MAX;
+		PlayerIndex player_index = _played_players.front().first; // If no one spent any money, move the first player
+		for (auto [a_player_index, a_spent_money] : _played_players) {
+			if (a_spent_money < spent_money) {
+				spent_money = a_spent_money;
+				player_index = a_player_index;
+			}
+		}
+
+		// Remove the selected player from the list
+		auto it = std::remove_if(_played_players.begin(), _played_players.end(), [player_index](const auto& pair) {
+			return pair.first == player_index;
+		});
+		_played_players.erase(it);
+
+		_waiting_players.emplace_back(player_index);
+	}
 }

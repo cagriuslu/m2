@@ -6,8 +6,6 @@ enum ResourceType {
 
   // For HUMAN_PLAYERs
   MONEY = 1;
-  ERA = 2;
-  IS_FIRST_TURN = 3;
 
   // For TILEs and MERCHANTs
   COAL_CUBE_COUNT = 11; // Also used by GAME_STATE_TRACKER
@@ -27,4 +25,6 @@ enum ResourceType {
 
   // For GAME_STATE_TRACKER
   DRAW_DECK_SIZE = 41;
+  IS_RAILROAD_ERA = 42;
+  IS_FIRST_TURN = 43;
 }
