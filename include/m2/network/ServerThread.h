@@ -42,12 +42,14 @@ namespace m2::network {
 		int ready_client_count();
 		int turn_holder_index();
 		std::optional<pb::NetworkMessage> pop_turn_holder_command();
+		bool is_shutdown();
 
 		// Modifiers
 		void_expected close_lobby();
 		void set_turn_holder(int index);
 		void send_server_update();
 		void send_server_command(const m2g::pb::ServerCommand& command, int receiver_index);
+		void shutdown();
 
 	private:
 		void set_state_locked(pb::ServerState state);

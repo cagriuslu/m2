@@ -283,10 +283,14 @@ void m2::Game::execute_pre_step() {
 		auto client_command = _server_thread->pop_turn_holder_command();
 		if (client_command) {
 			auto new_turn_holder =
-				_proxy.handle_client_command(_server_thread->turn_holder_index(), client_command->client_command());
+				_proxy.handle_client_command(_server_thread->turn_holder_index(), client_command->client_command()); ////////
 			if (new_turn_holder) {
-				_server_thread->set_turn_holder(*new_turn_holder);
-				_server_update_necessary = true;
+				if (*new_turn_holder < 0) {
+					_server_thread->shutdown();
+				} else {
+					_server_thread->set_turn_holder(*new_turn_holder);
+					_server_update_necessary = true;
+				}
 			}
 		}
 	}

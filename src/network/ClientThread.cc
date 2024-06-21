@@ -126,6 +126,11 @@ bool m2::network::ClientThread::is_turn() {
 	return turn_holder_index() == receiver_index();
 }
 
+bool m2::network::ClientThread::is_shutdown() {
+	const std::lock_guard lock(_mutex);
+	return _state == pb::CLIENT_SHUTDOWN;
+}
+
 void m2::network::ClientThread::set_ready_blocking(bool state) {
 	LOG_INFO("Setting ready state", state);
 
@@ -382,7 +387,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 	};
 
 	std::optional<Socket> socket;
-	while (not client_thread->is_quit()) {
+	while (not client_thread->is_quit() && not client_thread->is_shutdown()) {
 		if (client_thread->is_not_connected()) {
 			auto expect_socket = Socket::create_tcp();
 			if (not expect_socket) {
@@ -444,10 +449,14 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					continue;
 				}
 
-				if (not expect_message->has_server_command() && not expect_message->has_server_update()) {
-					LOG_INFO("Received ping");
+				if (expect_message->has_shutdown() && expect_message->shutdown()) {
+					LOG_INFO("Client received shutdown message");
+					const std::lock_guard lock(client_thread->_mutex);
+					client_thread->set_state_unlocked(pb::CLIENT_SHUTDOWN);
+
+					continue;
 				} else if (expect_message->has_server_update()) {
-					LOG_INFO("Received ServerUpdate", json_str);
+					LOG_INFO("Client received ServerUpdate", json_str);
 					// Wait until the previous ServerUpdate is processed
 					while (true) {
 						bool has_unprocessed_server_update;

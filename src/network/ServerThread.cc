@@ -54,6 +54,11 @@ std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder
 	return opt_message;
 }
 
+bool m2::network::ServerThread::is_shutdown() {
+	const std::lock_guard lock(_mutex);
+	return _state == pb::ServerState::SERVER_SHUTDOWN;
+}
+
 m2::void_expected m2::network::ServerThread::close_lobby() {
 	LOG_INFO("Closing lobby...");
 	{
@@ -132,7 +137,7 @@ void m2::network::ServerThread::send_server_update() {
 
 		LOG_DEBUG("Queueing ServerUpdate to client", i);
 		message.mutable_server_update()->set_receiver_index(i);
-		_clients[i].push_outgoing_message(std::move(message));
+		_clients[i].push_outgoing_message(message);
 	}
 }
 
@@ -152,6 +157,28 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 		LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
 		_clients[receiver_index].push_outgoing_message(std::move(message));
 	}
+}
+
+void m2::network::ServerThread::shutdown() {
+	LOG_INFO("Shutting down the server");
+	const std::lock_guard lock(_mutex);
+
+	pb::NetworkMessage msg;
+	msg.set_game_hash(M2_GAME.hash());
+	msg.set_shutdown(true);
+
+	// Send to clients
+	auto count = I(_clients.size());
+	for (auto i = 0; i < count; ++i) {
+		LOG_DEBUG("Queueing Shutdown message to client", i);
+		_clients[i].push_outgoing_message(msg);
+	}
+	// Flush output queues
+	for (auto i = 0; i < count; ++i) {
+		_clients[i].flush_outgoing_messages();
+	}
+
+	set_state_unlocked(pb::SERVER_SHUTDOWN);
 }
 
 void m2::network::ServerThread::set_state_locked(pb::ServerState state) {
@@ -206,7 +233,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	LOG_INFO("Socket listening on port", PORT);
 	server_thread->set_state_locked(pb::ServerState::SERVER_LISTENING);
 
-	while (not server_thread->is_quit()) {
+	while (not server_thread->is_quit() && not server_thread->is_shutdown()) {
 		fd_set read_set;
 		auto max_fd = server_thread->prepare_read_set(&read_set);
 		FD_SET(listen_socket->fd(), &read_set); // Add listen socket as well
@@ -320,7 +347,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		}
 	}
 
-	LOG_INFO("Quit");
+	LOG_INFO("Server thread is quiting");
 }
 
 bool m2::network::ServerThread::is_quit() {

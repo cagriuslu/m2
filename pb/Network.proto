@@ -18,6 +18,8 @@ enum ServerState {
   SERVER_READY = 3;
   // Signifies that the game has started.
   SERVER_STARTED = 4;
+  // Signifies that the server has been shut down.
+  SERVER_SHUTDOWN = 5;
 }
 
 enum ClientState {
@@ -31,6 +33,8 @@ enum ClientState {
   CLIENT_READY = 3;
   // Signifies that the initial ServerUpdate is received, thus the game has begun.
   CLIENT_STARTED = 4;
+  // Signifies that the server has shut down the game, and the client have terminated the connection.
+  CLIENT_SHUTDOWN = 5;
 }
 
 message ServerUpdate {
@@ -74,5 +78,7 @@ message NetworkMessage {
     m2g.pb.ClientCommand client_command = 5;
     // Sent by the game engine automatically (not yet implemented, no known use case)
     m2.pb.ClientUpdate client_update = 6;
+    // Signifies the end of the game
+    bool shutdown = 7;
   }
 }

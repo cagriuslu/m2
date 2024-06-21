@@ -50,6 +50,7 @@ namespace m2::network {
 		int total_player_count();
 		int receiver_index();
 		bool is_turn();
+		bool is_shutdown();
 
 		// Modifiers
 		void set_ready_blocking(bool state);

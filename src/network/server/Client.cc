@@ -47,7 +47,7 @@ std::optional<m2::pb::NetworkMessage> m2::network::server::Client::pop_incoming_
 	return std::nullopt;
 }
 
-void m2::network::server::Client::push_outgoing_message(pb::NetworkMessage&& msg) {
+void m2::network::server::Client::push_outgoing_message(pb::NetworkMessage msg) {
 	DEBUG_FN();
 	_outgoing_queue.emplace(std::move(msg));
 }
