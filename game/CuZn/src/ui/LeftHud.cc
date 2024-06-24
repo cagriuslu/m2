@@ -7,6 +7,7 @@
 #include <cuzn/journeys/DevelopJourney.h>
 #include <cuzn/journeys/LoanJourney.h>
 #include <cuzn/journeys/ScoutJourney.h>
+#include <cuzn/journeys/PassJourney.h>
 #include <cuzn/journeys/SellJourney.h>
 
 using namespace m2::ui;
@@ -92,6 +93,17 @@ namespace {
 			return make_continue_action();
 		}
 	};
+
+	const auto pass_button = TextBlueprint{
+		.text = "Pass",
+		.font_size = 4.5f,
+		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+			if (M2_GAME.client_thread().is_turn()) {
+				execute_pass_journey();
+			}
+			return make_continue_action();
+		}
+	};
 }
 
 const Blueprint left_hud_blueprint = {
@@ -135,6 +147,7 @@ const Blueprint left_hud_blueprint = {
 		WidgetBlueprint{.x = 2, .y = 30, .w = 15, .h = 6, .variant = develop_button},
 		WidgetBlueprint{.x = 2, .y = 37, .w = 15, .h = 6, .variant = sell_button},
 		WidgetBlueprint{.x = 2, .y = 44, .w = 15, .h = 6, .variant = loan_button},
-		WidgetBlueprint{.x = 2, .y = 51, .w = 15, .h = 6, .variant = scout_button}
+		WidgetBlueprint{.x = 2, .y = 51, .w = 15, .h = 6, .variant = scout_button},
+		WidgetBlueprint{.x = 2, .y = 58, .w = 15, .h = 6, .variant = pass_button},
 	}
 };

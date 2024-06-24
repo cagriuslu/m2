@@ -202,6 +202,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		turn_holder_character.add_named_item(M2_GAME.get_named_item(pb::WILD_LOCATION_CARD));
 
 		card_to_discard = client_command.scout_action().card_0();
+	} else if (client_command.has_pass_action()) {
+		card_to_discard = client_command.pass_action().card();
 	}
 
 	// Send update to clients
