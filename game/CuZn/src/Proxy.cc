@@ -185,7 +185,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	} else if (client_command.has_loan_action()) {
 		// TODO check
 		auto income_points = m2::iround(turn_holder_character.get_attribute(m2g::pb::INCOME_POINTS));
-		auto income_level = level_from_income_points(income_points);
+		auto income_level = income_level_from_income_points(income_points);
 		auto new_income_level = std::max(-10, income_level - 3);
 		auto new_income_points = highest_income_points_of_level(new_income_level);
 		turn_holder_character.set_attribute(pb::INCOME_POINTS, static_cast<float>(new_income_points));
@@ -240,6 +240,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		if (M2G_PROXY.is_canal_era()) {
 			// TODO end era
 
+			gain_incomes();
 			determine_player_orders();
 		} else {
 			// TODO end game
@@ -255,6 +256,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			LOG_INFO("First turn ended");
 			game_state_tracker().clear_resource(pb::IS_FIRST_TURN);
 
+			gain_incomes();
 			determine_player_orders();
 		}
 	} else if (not is_first_turn() && card_count % 2) {
@@ -272,6 +274,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		}
 
 		if (_waiting_players.empty()) {
+			gain_incomes();
 			determine_player_orders();
 		}
 	}
@@ -416,5 +419,20 @@ void m2g::Proxy::determine_player_orders() {
 		_played_players.erase(it);
 
 		_waiting_players.emplace_back(player_index);
+	}
+}
+
+void m2g::Proxy::gain_incomes() {
+	for (auto player_id : M2G_PROXY.multi_player_object_ids) {
+		// Lookup player
+		auto& player_character = M2_LEVEL.objects[player_id].character();
+		auto income_points = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
+		auto income_level = income_level_from_income_points(income_points);
+		auto player_money = m2::iround(player_character.get_resource(pb::MONEY));
+		auto new_player_money = player_money + income_level;
+		if (new_player_money < 0) {
+			// TODO ask client to sell stuff
+		}
+		player_character.add_resource(pb::MONEY, m2::F(std::clamp(new_player_money, 0, INT32_MAX)));
 	}
 }

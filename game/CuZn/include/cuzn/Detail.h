@@ -70,5 +70,5 @@ m2::VecF position_of_industry_location(IndustryLocation industry_location);
 std::optional<Connection> connection_on_position(const m2::VecF& world_position);
 m2::VecF position_of_connection(Connection connection);
 
-int level_from_income_points(int ip);
+int income_level_from_income_points(int ip);
 int highest_income_points_of_level(int level);

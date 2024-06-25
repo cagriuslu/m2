@@ -394,7 +394,7 @@ m2::VecF position_of_connection(Connection connection) {
 	}
 }
 
-int level_from_income_points(int ip) {
+int income_level_from_income_points(int ip) {
 	if (ip < -10 || 89 < ip) {
 		throw M2ERROR("Invalid income points");
 	}

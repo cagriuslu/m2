@@ -60,5 +60,6 @@ namespace m2g {
 		using SpentMoney = int;
 		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players; // Front of the list played first
 		void determine_player_orders();
+		void gain_incomes();
 	};
 }  // namespace m2g
