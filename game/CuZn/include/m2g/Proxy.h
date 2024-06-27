@@ -59,7 +59,6 @@ namespace m2g {
 		std::list<PlayerIndex> _waiting_players; // Front of the list is the next player
 		using SpentMoney = int;
 		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players; // Front of the list played first
-		void determine_player_orders();
-		void gain_incomes();
+		std::optional<std::pair<PlayerIndex, m2g::pb::ServerCommand>> prepare_next_round(); // Returns the index of the player that should liquidate assets
 	};
 }  // namespace m2g
