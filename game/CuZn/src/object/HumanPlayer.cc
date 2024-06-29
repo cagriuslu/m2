@@ -124,6 +124,14 @@ std::optional<m2g::pb::ItemType> get_next_buildable_factory(m2::Character& playe
 	}
 }
 
+size_t player_built_factory_count(m2::Character& player) {
+	auto factories_view = M2_LEVEL.characters
+					   | std::views::transform(m2::to_character_base)
+					   | std::views::filter(by_character_parent_id(player.parent().id()))
+					   | std::views::filter(is_factory_character);
+	return std::distance(factories_view.begin(), factories_view.end());
+}
+
 std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 	std::set<m2g::pb::ItemType> cities;
 

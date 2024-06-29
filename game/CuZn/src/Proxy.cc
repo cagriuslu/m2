@@ -343,6 +343,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
 	if (server_command.has_display_blocking_message()) {
 		display_blocking_message(server_command.display_blocking_message(), "");
+	} else if (server_command.has_liquidate_assets_for_loan()) {
+		LOG_INFO("Received liquidate command");
 	} else {
 		throw M2ERROR("Unsupported server command");
 	}
@@ -454,7 +456,8 @@ namespace {
 			auto income_points = m2::iround(player_character.get_attribute(m2g::pb::INCOME_POINTS));
 			auto income_level = income_level_from_income_points(income_points);
 			auto player_money = m2::iround(player_character.get_resource(m2g::pb::MONEY));
-			if (player_money + income_level < 0) {
+			// Check if player money would go below zero, and the player has at least one factory to sell
+			if (player_money + income_level < 0 && player_built_factory_count(player_character)) {
 				return std::make_pair(i, -(player_money + income_level));
 			}
 		}
@@ -467,6 +470,7 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 
 	// First, before preparing the next round, check if liquidation is necessary.
 	if (auto liquidation = check_if_liquidation_necessary()) {
+		LOG_INFO("Liquidation is necessary");
 		// Prepare the ServerCommand and return
 		m2g::pb::ServerCommand sc;
 		sc.set_liquidate_assets_for_loan(liquidation->second);
