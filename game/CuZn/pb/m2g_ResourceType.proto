@@ -27,4 +27,5 @@ enum ResourceType {
   DRAW_DECK_SIZE = 41;
   IS_RAILROAD_ERA = 42;
   IS_FIRST_TURN = 43;
+  IS_LIQUIDATING = 44;
 }

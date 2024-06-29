@@ -117,7 +117,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 
-	if (m2::I(_played_players.size()) == M2_GAME.server_thread().client_count() && _waiting_players.empty()) {
+	if (m2::is_equal(game_state_tracker().get_resource(pb::IS_LIQUIDATING), 1.0f, 0.001f)) {
 		// If all players have played and there are no waiting players, we must be in-between rounds.
 		// Only LiquidateAction is allowed to be executed.
 		if (not client_command.has_liquidate_action()) {
@@ -129,6 +129,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// TODO liquidate stuff
 
 		// TODO continue with new round
+		game_state_tracker().set_resource(pb::IS_LIQUIDATING, 0.0f);
 	} else {
 		// LiquidateAction is not allowed
 		if (client_command.has_liquidate_action()) {
@@ -324,8 +325,9 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	if (liquidation_necessary) {
+		// Set the liquidation state so that client commands are handled properly
+		game_state_tracker().set_resource(pb::IS_LIQUIDATING, 1.0f);
 		LOG_INFO("Sending liquidation command to player", liquidation_necessary->first);
-		// Send liquidation command
 		M2_GAME.server_thread().send_server_command(liquidation_necessary->second, liquidation_necessary->first);
 		// Give turn holder index to that player so that they can respond
 		return liquidation_necessary->first;
