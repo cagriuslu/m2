@@ -365,7 +365,9 @@ void m2::Game::update_sounds() {
 
 void m2::Game::execute_pre_draw() {
 	for (auto& gfx : _level->graphics) {
-		IF(gfx.pre_draw)(gfx);
+		if (gfx.enabled) {
+			IF(gfx.pre_draw)(gfx);
+		}
 	}
 }
 
@@ -387,8 +389,10 @@ void m2::Game::clear_back_buffer() const {
 namespace {
 	void draw_one_background_layer(m2::Pool<m2::Graphic>& terrain_graphics) {
 		for (auto& gfx : terrain_graphics) {
-			IF(gfx.on_draw)(gfx);
-			IF(gfx.on_addon)(gfx);
+			if (gfx.enabled && gfx.draw) {
+				IF(gfx.on_draw)(gfx);
+				IF(gfx.on_addon)(gfx);
+			}
 		}
 	}
 
@@ -427,8 +431,10 @@ void m2::Game::draw_background() {
 void m2::Game::draw_foreground() {
 	for (const auto& gfx_id : _level->draw_list) {
 		auto& gfx = _level->graphics[gfx_id];
-		IF(gfx.on_draw)(gfx);
-		IF(gfx.on_addon)(gfx);
+		if (gfx.enabled && gfx.draw) {
+			IF(gfx.on_draw)(gfx);
+			IF(gfx.on_addon)(gfx);
+		}
 	}
 }
 
@@ -440,7 +446,9 @@ void m2::Game::draw_lights() {
 
 void m2::Game::execute_post_draw() {
 	for (auto& gfx : _level->graphics) {
-		IF(gfx.post_draw)(gfx);
+		if (gfx.enabled) {
+			IF(gfx.post_draw)(gfx);
+		}
 	}
 }
 

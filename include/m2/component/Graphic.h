@@ -77,6 +77,9 @@ namespace m2 {
 	struct Graphic : public Component {
 		using Callback = std::function<void(Graphic&)>;
 
+		bool enabled{true};
+		bool draw{true};
+
 		Callback pre_draw{};
 		Callback on_draw{};
 		Callback on_addon{};
