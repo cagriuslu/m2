@@ -281,21 +281,22 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 					}
 					LOG_DEBUG("Client socket with index is readable", i);
 
-					if (auto expect_msg = client.save_incoming_message(server_thread->_read_buffer, sizeof(server_thread->_read_buffer)); not expect_msg) {
-						LOG_ERROR("Failed to save message", expect_msg.error());
+					// The size of the buffer is passed as one character short, so that there's always a null at the end
+					if (auto expect_new_message = client.save_incoming_message(server_thread->_read_buffer, sizeof(server_thread->_read_buffer) - 1); not expect_new_message) {
+						LOG_ERROR("Failed to save message", expect_new_message.error());
 						server_thread->_clients.clear();
 						return;
 					} else {
-						if (auto optional_msg = *expect_msg; not optional_msg) {
-							// Check if a soft error occurred
+						if (auto is_new_message_received = *expect_new_message; not is_new_message_received) {
+							// A soft error occurred
 							// Client might still have an unprocessed incoming message,
 							// or the client connection might have dropped.
 							// These errors should not cause the server to shut down.
-						} else if (optional_msg->has_ready()) {
+						} else if (client.peak_incoming_message()->has_ready()) {
 							// Check ready message
 							if (server_thread->_state == pb::SERVER_LISTENING) {
-								LOG_INFO("Client state", optional_msg->ready());
-								client.set_ready(optional_msg->ready());
+								LOG_INFO("Client state", client.peak_incoming_message()->ready());
+								client.set_ready(client.peak_incoming_message()->ready());
 							} else {
 								LOG_WARN("Received ready signal while the server wasn't listening");
 							}
@@ -307,10 +308,10 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 								client.pop_incoming_message();
 							} else {
 								// Process ClientCommand
-								if (optional_msg->has_client_command()) {
-									auto json_str = pb::message_to_json_string(*optional_msg);
+								if (client.peak_incoming_message()->has_client_command()) {
+									auto json_str = pb::message_to_json_string(*client.peak_incoming_message());
 									LOG_DEBUG("Received ClientCommand", i, *json_str);
-									// Processing of the message will be done by the game loop
+									// Processing of the message will be done by the game loop, don't pop it.
 								} else {
 									// TODO process other client messages
 									client.pop_incoming_message(); // TEMP

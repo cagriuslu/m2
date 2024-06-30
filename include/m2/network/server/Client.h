@@ -8,6 +8,7 @@ namespace m2::network::server {
 		std::optional<Socket> _socket;
 		bool _is_ready{};
 		std::optional<pb::NetworkMessage> _incoming_msg;
+		std::optional<pb::NetworkMessage> _buffered_incoming_msg;
 		std::queue<pb::NetworkMessage> _outgoing_queue;
 
 	public:
@@ -26,8 +27,11 @@ namespace m2::network::server {
 		void set_ready(bool state) { _is_ready = state; }
 		void clear_ready() { _is_ready = false; }
 
-		m2::expected<std::optional<pb::NetworkMessage>> save_incoming_message(char* read_buffer, size_t read_buffer_length);
-		std::optional<pb::NetworkMessage> peak_incoming_message();
+		/// Returns true if a message was saved successfully.
+		/// Returns false if the inbox is full, or the client is disconnected (might connect again).
+		/// Returns unexpected if an error occurs.
+		m2::expected<bool> save_incoming_message(char* read_buffer, size_t read_buffer_length);
+		const std::optional<pb::NetworkMessage>& peak_incoming_message();
 		std::optional<pb::NetworkMessage> pop_incoming_message();
 		void push_outgoing_message(pb::NetworkMessage msg);
 		expected<bool> flush_outgoing_messages();

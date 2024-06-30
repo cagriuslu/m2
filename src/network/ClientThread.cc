@@ -379,7 +379,8 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 		const std::lock_guard lock(client_thread->_mutex);
 		if (auto expect_json_str = pb::message_to_json_string(msg); expect_json_str) {
 			LOG_DEBUG("Will send message", *expect_json_str);
-			auto send_success = socket.send(expect_json_str->data(), expect_json_str->size());
+			// Send null character as a separator between messages
+			auto send_success = socket.send(expect_json_str->c_str(), expect_json_str->size() + 1);
 			if (not send_success) {
 				LOG_ERROR("Send error", send_success.error());
 			}
@@ -387,6 +388,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 	};
 
 	std::optional<Socket> socket;
+	check_quit_or_shutdown:
 	while (not client_thread->is_quit() && not client_thread->is_shutdown()) {
 		if (client_thread->is_not_connected()) {
 			auto expect_socket = Socket::create_tcp();
@@ -421,7 +423,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					continue;
 				}
 
-				auto recv_success = socket->recv(client_thread->_read_buffer, sizeof(client_thread->_read_buffer));
+				auto recv_success = socket->recv(client_thread->_read_buffer, sizeof(client_thread->_read_buffer) - 1);
 				if (not recv_success) {
 					LOG_ERROR("Receive failed", recv_success.error());
 					continue;
@@ -436,71 +438,72 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 					continue;
 				}
 
-				// Parse message
-				std::string json_str{client_thread->_read_buffer, static_cast<size_t>(*recv_success)};
-				auto expect_message = pb::json_string_to_message<pb::NetworkMessage>(json_str);
-				if (not expect_message) {
-					LOG_ERROR("Received bad message", expect_message.error(), json_str);
-					continue;
-				}
+				size_t processed_bytes = 0;
+				while (processed_bytes < static_cast<size_t>(*recv_success)) {
+					std::string json_str{client_thread->_read_buffer + processed_bytes};
+					processed_bytes += json_str.size() + 1;
+					auto expect_message = pb::json_string_to_message<pb::NetworkMessage>(json_str);
+					if (not expect_message) {
+						LOG_ERROR("Received bad message", expect_message.error(), json_str);
+						continue;
+					}
+					if (expect_message->game_hash() != M2_GAME.hash()) {
+						LOG_ERROR("Received message of unknown origin", json_str);
+						continue;
+					}
 
-				if (expect_message->game_hash() != M2_GAME.hash()) {
-					LOG_ERROR("Received message of unknown origin", json_str);
-					continue;
-				}
+					if (expect_message->has_shutdown() && expect_message->shutdown()) {
+						LOG_INFO("Client received shutdown message");
+						const std::lock_guard lock(client_thread->_mutex);
+						client_thread->set_state_unlocked(pb::CLIENT_SHUTDOWN);
+						goto check_quit_or_shutdown;
+					} else if (expect_message->has_server_update()) {
+						LOG_INFO("Client received ServerUpdate", json_str);
+						// Wait until the previous ServerUpdate is processed
+						while (true) {
+							bool has_unprocessed_server_update;
+							{
+								const std::lock_guard lock(client_thread->_mutex);
+								has_unprocessed_server_update = static_cast<bool>(client_thread->_unprocessed_server_update);
+							}
+							if (has_unprocessed_server_update) {
+								SDL_Delay(100); // Yield the thread while waiting
+							} else {
+								break;
+							}
+						}
 
-				if (expect_message->has_shutdown() && expect_message->shutdown()) {
-					LOG_INFO("Client received shutdown message");
-					const std::lock_guard lock(client_thread->_mutex);
-					client_thread->set_state_unlocked(pb::CLIENT_SHUTDOWN);
-
-					continue;
-				} else if (expect_message->has_server_update()) {
-					LOG_INFO("Client received ServerUpdate", json_str);
-					// Wait until the previous ServerUpdate is processed
-					while (true) {
-						bool has_unprocessed_server_update;
 						{
 							const std::lock_guard lock(client_thread->_mutex);
-							has_unprocessed_server_update = static_cast<bool>(client_thread->_unprocessed_server_update);
+							client_thread->_unprocessed_server_update = std::move(*expect_message);
+							if (client_thread->_state != pb::CLIENT_STARTED) {
+								// Set the state as STARTED when the first ServerUpdate is received.
+								client_thread->set_state_unlocked(pb::CLIENT_STARTED);
+							}
 						}
-						if (has_unprocessed_server_update) {
-							SDL_Delay(100); // Yield the thread while waiting
-						} else {
-							break;
+					} else if (expect_message->has_server_command()) {
+						LOG_INFO("Received ServerCommand", json_str);
+						// Wait until the previous ServerCommand is processed
+						while (true) {
+							bool has_unprocessed_server_command;
+							{
+								const std::lock_guard lock(client_thread->_mutex);
+								has_unprocessed_server_command = static_cast<bool>(client_thread->_unprocessed_server_command);
+							}
+							if (has_unprocessed_server_command) {
+								SDL_Delay(100); // Yield the thread while waiting
+							} else {
+								break;
+							}
 						}
-					}
 
-					{
-						const std::lock_guard lock(client_thread->_mutex);
-						client_thread->_unprocessed_server_update = std::move(*expect_message);
-						if (client_thread->_state != pb::CLIENT_STARTED) {
-							// Set the state as STARTED when the first ServerUpdate is received.
-							client_thread->set_state_unlocked(pb::CLIENT_STARTED);
-						}
-					}
-				} else if (expect_message->has_server_command()) {
-					LOG_INFO("Received ServerCommand", json_str);
-					// Wait until the previous ServerCommand is processed
-					while (true) {
-						bool has_unprocessed_server_command;
 						{
 							const std::lock_guard lock(client_thread->_mutex);
-							has_unprocessed_server_command = static_cast<bool>(client_thread->_unprocessed_server_command);
+							client_thread->_unprocessed_server_command = std::move(*expect_message);
 						}
-						if (has_unprocessed_server_command) {
-							SDL_Delay(100); // Yield the thread while waiting
-						} else {
-							break;
-						}
+					} else {
+						throw M2ERROR("Unsupported message");
 					}
-
-					{
-						const std::lock_guard lock(client_thread->_mutex);
-						client_thread->_unprocessed_server_command = std::move(*expect_message);
-					}
-				} else {
-					throw M2ERROR("Unsupported message");
 				}
 			}
 
