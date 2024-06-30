@@ -137,5 +137,9 @@ namespace m2 {
 		[[nodiscard]] const std::string& in_game_name() const { return _item.in_game_name(); }
 	};
 
+	// Transformers
+	const NamedItem& to_named_item(m2g::pb::ItemType item_type);
+	std::function<float(const NamedItem&)> generate_to_attribute_value_transformer(m2g::pb::AttributeType attribute_type);
+
 	float get_resource_amount(const pb::Resource& resource);
 }

@@ -72,3 +72,11 @@ std::pair<int,int> market_iron_revenue(int count) {
 	auto current_iron_count = m2::iround(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 	return calculate_revenue(IRON_MARKET_CAPACITY, current_iron_count, count);
 }
+
+bool is_liquidating() {
+	return m2::is_equal(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IS_LIQUIDATING), 1.0f, 0.001f);
+}
+
+void set_is_liquidating(bool state) {
+	M2G_PROXY.game_state_tracker().set_resource(m2g::pb::IS_LIQUIDATING, state ? 1.0f : 0.0f);
+}

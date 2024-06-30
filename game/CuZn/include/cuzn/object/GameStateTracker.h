@@ -14,3 +14,5 @@ int market_iron_cost(int iron_count);
 std::pair<int,int> market_coal_revenue(int count);
 std::pair<int,int> market_iron_revenue(int count);
 
+bool is_liquidating();
+void set_is_liquidating(bool state);

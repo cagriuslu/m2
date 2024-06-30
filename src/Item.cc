@@ -1,7 +1,7 @@
 #include <m2/Item.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Exception.h>
-
+#include <m2/Game.h>
 #include <utility>
 
 m2::TinyItem::TinyItem(m2g::pb::ItemType type, m2g::pb::ItemCategory category, pb::Usage usage, bool use_on_acquire,
@@ -182,6 +182,16 @@ float m2::NamedItem::try_get_attribute(m2g::pb::AttributeType type, float defaul
 }
 bool m2::NamedItem::has_attribute(m2g::pb::AttributeType type) const {
 	return get_attribute(type) != 0.0f;
+}
+
+const m2::NamedItem& m2::to_named_item(m2g::pb::ItemType item_type) {
+	return M2_GAME.get_named_item(item_type);
+}
+
+std::function<float(const m2::NamedItem&)> m2::generate_to_attribute_value_transformer(m2g::pb::AttributeType attribute_type) {
+	return [attribute_type](const m2::NamedItem& item) -> float {
+		return item.get_attribute(attribute_type);
+	};
 }
 
 float m2::get_resource_amount(const m2::pb::Resource& resource) {

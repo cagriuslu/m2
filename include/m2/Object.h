@@ -112,6 +112,7 @@ namespace m2 {
 
 	// Filters and Transforms
 	Object& lookup_object_from_id(ObjectId id);
+	inline Character& to_character_of_object_unsafe(Object* o) { return o->character(); }
 	inline Character& to_character_of_object(Object& o) { return o.character(); }
 	inline Object& to_component_parent(Character& v) { return v.parent(); }
 	std::function<bool(Object&)> generate_is_object_in_area_filter(const RectF& rect);
