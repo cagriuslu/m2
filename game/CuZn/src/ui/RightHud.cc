@@ -27,7 +27,7 @@ const Blueprint right_hud_blueprint = {
 				.font_size = 4.5f,
 				.alignment = m2::ui::TextAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					auto vp = m2::iround(M2_PLAYER.character().get_attribute(VICTORY_POINTS));
+					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
 					self.set_text(std::string{"Points:"} + std::to_string(vp));
 					return make_continue_action();
 				}

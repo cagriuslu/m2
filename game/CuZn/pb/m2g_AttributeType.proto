@@ -5,7 +5,6 @@ enum AttributeType {
     NO_ATTRIBUTE = 0;
 
     // For HUMAN_PLAYERs
-    VICTORY_POINTS = 1;
     INCOME_POINTS = 2;
 
     // For TILEs
