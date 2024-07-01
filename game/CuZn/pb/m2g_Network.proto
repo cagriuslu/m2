@@ -50,7 +50,7 @@ message ClientCommand {
     ItemType card = 1;
   }
   message LiquidateAction {
-    SpriteType locations_to_sell = 1;
+    repeated SpriteType locations_to_sell = 1;
   }
 
   oneof type {

@@ -5,7 +5,6 @@
 #include <cuzn/object/Factory.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
-#include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
 #include <cuzn/ui/Client.h>
 #include <cuzn/ui/PauseMenu.h>
@@ -13,6 +12,7 @@
 #include <cuzn/ui/LeftHud.h>
 #include <cuzn/ui/RightHud.h>
 #include <cuzn/detail/SetUp.h>
+#include <cuzn/detail/Liquidate.h>
 #include <m2/game/Detail.h>
 #include "cuzn/object/Road.h"
 #include "cuzn/ui/Detail.h"
@@ -117,19 +117,24 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 
-	if (m2::is_equal(game_state_tracker().get_resource(pb::IS_LIQUIDATING), 1.0f, 0.001f)) {
-		// If all players have played and there are no waiting players, we must be in-between rounds.
-		// Only LiquidateAction is allowed to be executed.
+	if (is_liquidating()) {
 		if (not client_command.has_liquidate_action()) {
 			LOG_WARN("Received unexpected command while expecting LiquidateAction");
 			return std::nullopt;
+		} else if (auto expect_factories_and_gain = can_player_liquidate_factories(turn_holder_character, client_command.liquidate_action())) {
+			LOG_INFO("Liquidating factories");
+			for (auto* factory : expect_factories_and_gain->first) {
+				// Delete object immediately
+				m2::create_object_deleter(factory->id())();
+			}
+			// Gain money
+			turn_holder_character.add_resource(pb::MONEY, m2::F(expect_factories_and_gain->second));
+			// No longer liquidating
+			set_is_liquidating(false);
+		} else {
+			LOG_WARN("Player sent invalid liquidate command", expect_factories_and_gain.error());
+			return std::nullopt;
 		}
-		LOG_INFO("Liquidating factories");
-
-		// TODO liquidate stuff
-
-		// TODO continue with new round
-		game_state_tracker().set_resource(pb::IS_LIQUIDATING, 0.0f);
 	} else {
 		// LiquidateAction is not allowed
 		if (client_command.has_liquidate_action()) {
@@ -325,8 +330,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	if (liquidation_necessary) {
-		// Set the liquidation state so that client commands are handled properly
-		game_state_tracker().set_resource(pb::IS_LIQUIDATING, 1.0f);
+		set_is_liquidating(true); // Set the liquidation state so that client commands are handled properly
 		LOG_INFO("Sending liquidation command to player", liquidation_necessary->first);
 		M2_GAME.server_thread().send_server_command(liquidation_necessary->second, liquidation_necessary->first);
 		// Give turn holder index to that player so that they can respond
@@ -346,7 +350,9 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 	if (server_command.has_display_blocking_message()) {
 		display_blocking_message(server_command.display_blocking_message(), "");
 	} else if (server_command.has_liquidate_assets_for_loan()) {
-		LOG_INFO("Received liquidate command");
+		LOG_INFO("Received liquidate command, beginning liquidation journey");
+		auto money_to_be_paid = server_command.liquidate_assets_for_loan();
+		M2G_PROXY.user_journey.emplace(LiquidationJourney{money_to_be_paid});
 	} else {
 		throw M2ERROR("Unsupported server command");
 	}
@@ -449,29 +455,11 @@ bool m2g::Proxy::is_railroad_era() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
 }
 
-namespace {
-	std::optional<std::pair<m2g::Proxy::PlayerIndex, int>> check_if_liquidation_necessary() {
-		for (int i = 0; i < m2::I(M2G_PROXY.multi_player_object_ids.size()); ++i) {
-			auto player_id = M2G_PROXY.multi_player_object_ids[i];
-			// Lookup player
-			auto& player_character = M2_LEVEL.objects[player_id].character();
-			auto income_points = m2::iround(player_character.get_attribute(m2g::pb::INCOME_POINTS));
-			auto income_level = income_level_from_income_points(income_points);
-			auto player_money = m2::iround(player_character.get_resource(m2g::pb::MONEY));
-			// Check if player money would go below zero, and the player has at least one factory to sell
-			if (player_money + income_level < 0 && player_built_factory_count(player_character)) {
-				return std::make_pair(i, -(player_money + income_level));
-			}
-		}
-		return std::nullopt;
-	}
-}
-
 std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::Proxy::prepare_next_round() {
 	LOG_INFO("Prepare next round");
 
 	// First, before preparing the next round, check if liquidation is necessary.
-	if (auto liquidation = check_if_liquidation_necessary()) {
+	if (auto liquidation = is_liquidation_necessary()) {
 		LOG_INFO("Liquidation is necessary");
 		// Prepare the ServerCommand and return
 		m2g::pb::ServerCommand sc;
@@ -489,7 +477,8 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 		LOG_DEBUG("Player gained money", income_level);
 		auto new_player_money = player_money + income_level;
 		if (new_player_money < 0) {
-			throw M2ERROR("Player doesn't have enough money to pay its loan. Liquidation step is skipped.");
+			LOG_INFO("Player doesn't have enough money to pay its loan, they'll lose victory points", new_player_money);
+			player_character.add_resource(pb::VICTORY_POINTS, m2::F(new_player_money));
 		}
 		player_character.set_resource(pb::MONEY, m2::F(std::clamp(new_player_money, 0, INT32_MAX)));
 	}
