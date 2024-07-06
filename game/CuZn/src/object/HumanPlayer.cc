@@ -9,6 +9,7 @@
 #include <cuzn/object/Road.h>
 #include <cuzn/Detail.h>
 #include <ranges>
+#include <numeric>
 
 namespace {
 	// Filters
@@ -93,6 +94,16 @@ bool player_has_card(m2::Character& player, m2g::pb::ItemType card) {
 
 size_t player_road_count(m2::Character& player) {
 	return player.count_item(m2g::pb::ROAD_TILE);
+}
+
+int player_link_count(m2::Character& player) {
+	auto road_characters = M2_LEVEL.characters
+					  | std::views::transform(m2::to_character_base)
+					  | std::views::filter(by_character_parent_id(player.parent().id()))
+					  | std::views::filter(is_road_character);
+	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
+		return acc + link_count_of_road_character(road_char);
+	});
 }
 
 float player_money(m2::Character& player) {
