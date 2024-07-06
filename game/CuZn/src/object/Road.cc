@@ -1,17 +1,37 @@
 #include <cuzn/object/Road.h>
 #include <m2/Game.h>
 #include "m2/Log.h"
+#include <cuzn/object/Factory.h>
+#include <numeric>
 
 m2::Object* find_road_at_location(m2g::pb::SpriteType location) {
 	auto roads = M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
-		| std::views::filter(is_road_character)
-		| std::views::transform(m2::to_component_parent)
-		| std::views::filter(m2::generate_is_object_in_area_filter(M2G_PROXY.connection_positions[location].second));
+				 | std::views::transform(m2::to_character_base)
+				 | std::views::filter(is_road_character)
+				 | std::views::transform(m2::to_component_parent)
+				 | std::views::filter(m2::generate_is_object_in_area_filter(M2G_PROXY.connection_positions[location].second));
 	if (auto road_it = roads.begin(); road_it != roads.end()) {
 		return &*road_it;
 	}
 	return nullptr;
+}
+
+int link_count_of_road_character(m2::Character& chr) {
+	if (not is_road_character(chr)) {
+		throw M2ERROR("Character doesn't belong to canal or railroad");
+	}
+
+	auto cities = to_city_cards_of_road_character(chr);
+	return std::accumulate(cities.begin(), cities.end(), 0, [](int acc, City city) -> int {
+		auto locations = industry_locations_in_city(city);
+		return acc + std::accumulate(locations.begin(), locations.end(), 0, [](int acc, IndustryLocation location) -> int {
+			if (auto* factory = find_factory_at_location(location)) {
+				auto industry_tile = to_industry_tile_of_factory_character(factory->character());
+				return acc + m2::iround(M2_GAME.get_named_item(industry_tile).get_attribute(m2g::pb::LINK_BONUS));
+			}
+			return acc;
+		});
+	});
 }
 
 m2::void_expected init_road(m2::Object& obj, Connection connection) {
