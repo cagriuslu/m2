@@ -14,6 +14,7 @@ namespace m2 {
 		explicit Component(Id object_id);
 		virtual ~Component() = default;
 
+		[[nodiscard]] Id parent_id() const { return object_id; }
         [[nodiscard]] Object& parent() const;
 	};
 }

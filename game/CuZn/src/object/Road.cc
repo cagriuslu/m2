@@ -16,6 +16,22 @@ m2::Object* find_road_at_location(m2g::pb::SpriteType location) {
 	return nullptr;
 }
 
+void remove_all_roads() {
+	std::vector<m2::ObjectId> ids;
+	ids.reserve(28); // Reserve an average amount of space
+	std::ranges::transform(
+		M2_LEVEL.characters
+		| std::views::transform(m2::to_character_base)
+		| std::views::filter(is_road_character),
+		std::back_inserter(ids),
+		[](auto& chr) { return chr.parent_id(); });
+
+	// Delete objects immediately
+	std::ranges::for_each(ids, [](m2::ObjectId id) {
+		M2_LEVEL.objects.free(id);
+	});
+}
+
 int link_count_of_road_character(m2::Character& chr) {
 	if (not is_road_character(chr)) {
 		throw M2ERROR("Character doesn't belong to canal or railroad");

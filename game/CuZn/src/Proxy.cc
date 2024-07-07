@@ -125,7 +125,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			LOG_INFO("Liquidating factories");
 			for (auto* factory : expect_factories_and_gain->first) {
 				// Delete object immediately
-				m2::create_object_deleter(factory->id())();
+				M2_LEVEL.objects.free(factory->id());
 			}
 			// Gain money
 			turn_holder_character.add_resource(pb::MONEY, m2::F(expect_factories_and_gain->second));
@@ -281,7 +281,27 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			liquidation_necessary = prepare_next_round();
 			if (not liquidation_necessary) {
 				LOG_INFO("Ending canal era");
-				// TODO end era
+
+				// Score links
+				std::ranges::for_each(
+					M2G_PROXY.multi_player_object_ids
+					| std::views::transform(m2::lookup_object_from_id)
+					| std::views::transform(m2::to_character_of_object),
+					[](m2::Character& player) {
+						player.add_resource(pb::VICTORY_POINTS, m2::F(player_link_count(player)));
+					});
+				// Remove all connections
+				remove_all_roads();
+
+				// TODO score flipped tiles
+				// TODO remove obsolete tiles from the board
+				// TODO reset merchant beer
+				// TODO shuffle draw deck
+				// TODO draw new hands
+
+				game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
+
+				liquidation_necessary = prepare_next_round();
 			}
 		} else {
 			LOG_INFO("Ending game");
