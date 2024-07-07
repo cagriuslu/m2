@@ -88,3 +88,15 @@ std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count) {
 
 	return draw_deck;
 }
+
+void give_8_cards_to_each_player(std::vector<m2g::pb::ItemType>& deck) {
+	for (const auto& player_object_id : M2G_PROXY.multi_player_object_ids) {
+		m2_repeat(8) {
+			// Draw card
+			auto card = deck.back();
+			deck.pop_back();
+			// Add card
+			M2_LEVEL.objects[player_object_id].character().add_named_item(M2_GAME.get_named_item(card));
+		}
+	}
+}

@@ -5,12 +5,6 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-namespace {
-	std::vector<int> income_point_level_points = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-												   3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-												   4, 4, 4, 4, 4, 4, 4, 4, 4, 3};
-}
-
 bool is_card(Card card) {
 	const auto& card_item = M2_GAME.get_named_item(card);
 	return (card_item.category() == ITEM_CATEGORY_WILD_CARD ||
@@ -398,6 +392,12 @@ m2::VecF position_of_connection(Connection connection) {
 	} else {
 		throw M2ERROR("Connection not found in position map");
 	}
+}
+
+namespace {
+	std::vector<int> income_point_level_points = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+												  3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+												  4, 4, 4, 4, 4, 4, 4, 4, 4, 3};
 }
 
 int income_level_from_income_points(int ip) {

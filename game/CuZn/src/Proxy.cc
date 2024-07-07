@@ -84,24 +84,14 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 
 			LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
 			merchant_char.add_named_item(license_item);
-			merchant_char.add_resource(pb::BEER_BARREL_COUNT, license_item.get_attribute(pb::BEER_BONUS_FIRST_ERA));
+			merchant_char.add_resource(pb::BEER_BARREL_COUNT, 1.0f);
 		}
 	}
 
 	// Prepare draw deck
 	auto draw_deck = prepare_draw_deck(client_count);
-	// In the canal era, we discard client_count number of cards from the deck
-	m2_repeat(client_count) { draw_deck.pop_back(); }
-	// Give 8 cards to each player
-	for (const auto& player_object_id : M2G_PROXY.multi_player_object_ids) {
-		m2_repeat(8) {
-			// Draw card
-			auto card = draw_deck.back();
-			draw_deck.pop_back();
-			// Add card
-			M2_LEVEL.objects[player_object_id].character().add_named_item(M2_GAME.get_named_item(card));
-		}
-	}
+	m2_repeat(client_count) { draw_deck.pop_back(); } // In the canal era, we discard client_count number of cards from the deck
+	give_8_cards_to_each_player(draw_deck);
 	_draw_deck = std::move(draw_deck);
 	// Store draw deck size to Game State Tracker
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
@@ -303,10 +293,18 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 					});
 				remove_obsolete_factories();
 
-				// TODO reset merchant beer
-				// TODO shuffle draw deck
-				// TODO draw new hands
+				// Reset merchant beer
+				for (const auto& [_, merchant_id] : merchant_object_ids) {
+					M2_LEVEL.objects[merchant_id].character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+				}
 
+				// Shuffle the draw deck
+				auto draw_deck = prepare_draw_deck(M2_GAME.server_thread().client_count());
+				give_8_cards_to_each_player(draw_deck);
+				_draw_deck = std::move(draw_deck);
+				// Store draw deck size to Game State Tracker
+				game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
+				
 				game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
 
 				liquidation_necessary = prepare_next_round();
