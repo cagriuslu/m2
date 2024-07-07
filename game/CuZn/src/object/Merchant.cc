@@ -6,7 +6,7 @@ m2::Object* find_merchant_at_location(m2g::pb::SpriteType location) {
 	auto merchants = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_merchant_character)
-		| std::views::transform(m2::to_component_parent)
+		| std::views::transform(m2::to_parent_of_component)
 		| std::views::filter(m2::generate_is_object_in_area_filter(M2G_PROXY.merchant_positions[location].second));
 	if (auto merchant_it = merchants.begin(); merchant_it != merchants.end()) {
 		return &*merchant_it;

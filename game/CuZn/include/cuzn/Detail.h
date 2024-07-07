@@ -27,6 +27,7 @@ bool is_industry_city(IndustryCity city);
 bool is_merchant_city(MerchantCity city);
 bool is_industry(Industry industry);
 bool is_industry_tile(IndustryTile industry_tile);
+bool is_industry_tile_level_1(IndustryTile industry_tile);
 bool is_industry_tile_category(IndustryTileCategory category);
 bool is_industry_sprite(IndustrySprite industry_sprite);
 bool is_location(Location location);

@@ -9,12 +9,29 @@ m2::Object* find_factory_at_location(pb::SpriteType location) {
 	auto factories = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
-		| std::views::transform(m2::to_component_parent)
+		| std::views::transform(m2::to_parent_of_component)
 		| std::views::filter(m2::generate_is_object_in_area_filter(M2G_PROXY.industry_positions[location].second));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
 		return &*factory_it;
 	}
 	return nullptr;
+}
+
+void remove_obsolete_factories() {
+	std::vector<m2::ObjectId> ids;
+	ids.reserve(20); // Reserve an average amount of space
+	std::ranges::copy(
+		M2_LEVEL.characters
+		| std::views::transform(m2::to_character_base)
+		| std::views::filter(is_factory_character)
+		| std::views::filter(is_factory_level_1)
+		| std::views::transform(m2::to_parent_id_of_component),
+		std::back_inserter(ids));
+
+	// Delete objects immediately
+	std::ranges::for_each(ids, [](m2::ObjectId id) {
+		M2_LEVEL.objects.free(id);
+	});
 }
 
 m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry_tile) {

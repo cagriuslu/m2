@@ -194,7 +194,7 @@ namespace m2 {
 
 	using CharacterVariant = std::variant<TinyCharacter,FullCharacter>;
 
-	// Filters and Transforms
+	// Filters and Transformers
 	Character& to_character_base(CharacterVariant& v);
 	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_transformer(m2g::pb::ItemCategory item_category);
 	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_transformer(std::initializer_list<m2g::pb::ItemCategory>&& item_categories);

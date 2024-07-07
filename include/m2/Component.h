@@ -17,4 +17,7 @@ namespace m2 {
 		[[nodiscard]] Id parent_id() const { return object_id; }
         [[nodiscard]] Object& parent() const;
 	};
+
+	// Transformers
+	constexpr Id to_parent_id_of_component(Component& cmp) { return cmp.parent_id(); }
 }

@@ -280,12 +280,12 @@ std::function<void(void)> m2::create_character_deleter(ObjectId id) {
 	};
 }
 
-m2::Object& m2::lookup_object_from_id(ObjectId id) {
-	return M2_LEVEL.objects[id];
-}
-
 std::function<bool(m2::Object&)> m2::generate_is_object_in_area_filter(const RectF& rect) {
 	return [rect](m2::Object& o) -> bool {
 		return rect.contains(o.position);
 	};
+}
+
+m2::Object& m2::to_object_with_id(ObjectId id) {
+	return M2_LEVEL.objects[id];
 }

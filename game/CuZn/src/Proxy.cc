@@ -267,7 +267,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 
 	// Count the cards in the game
 	auto player_card_lists = M2G_PROXY.multi_player_object_ids
-		| std::views::transform(m2::lookup_object_from_id)
+		| std::views::transform(m2::to_object_with_id)
 		| std::views::transform(m2::to_character_of_object)
 		| std::views::transform(m2::generate_named_item_types_transformer({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
 	auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), (size_t)0, [](size_t sum, const std::vector<Card>& v) { return sum + v.size(); });
@@ -285,16 +285,24 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 				// Score links
 				std::ranges::for_each(
 					M2G_PROXY.multi_player_object_ids
-					| std::views::transform(m2::lookup_object_from_id)
+					| std::views::transform(m2::to_object_with_id)
 					| std::views::transform(m2::to_character_of_object),
 					[](m2::Character& player) {
 						player.add_resource(pb::VICTORY_POINTS, m2::F(player_link_count(player)));
 					});
-				// Remove all connections
 				remove_all_roads();
 
-				// TODO score flipped tiles
-				// TODO remove obsolete tiles from the board
+				// Score sold factories
+				std::ranges::for_each(M2_LEVEL.characters
+					| std::views::transform(m2::to_character_base)
+					| std::views::filter(is_factory_character)
+					| std::views::filter(is_factory_sold),
+					[](m2::Character& factory) {
+						auto& player = factory.parent();
+						player.character().add_resource(pb::VICTORY_POINTS, factory.get_attribute(pb::VICTORY_POINTS_BONUS));
+					});
+				remove_obsolete_factories();
+
 				// TODO reset merchant beer
 				// TODO shuffle draw deck
 				// TODO draw new hands

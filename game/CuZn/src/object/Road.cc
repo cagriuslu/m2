@@ -8,7 +8,7 @@ m2::Object* find_road_at_location(m2g::pb::SpriteType location) {
 	auto roads = M2_LEVEL.characters
 				 | std::views::transform(m2::to_character_base)
 				 | std::views::filter(is_road_character)
-				 | std::views::transform(m2::to_component_parent)
+				 | std::views::transform(m2::to_parent_of_component)
 				 | std::views::filter(m2::generate_is_object_in_area_filter(M2G_PROXY.connection_positions[location].second));
 	if (auto road_it = roads.begin(); road_it != roads.end()) {
 		return &*road_it;
@@ -19,12 +19,12 @@ m2::Object* find_road_at_location(m2g::pb::SpriteType location) {
 void remove_all_roads() {
 	std::vector<m2::ObjectId> ids;
 	ids.reserve(28); // Reserve an average amount of space
-	std::ranges::transform(
+	std::ranges::copy(
 		M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(is_road_character),
-		std::back_inserter(ids),
-		[](auto& chr) { return chr.parent_id(); });
+		| std::views::filter(is_road_character)
+		| std::views::transform(m2::to_parent_id_of_component),
+		std::back_inserter(ids));
 
 	// Delete objects immediately
 	std::ranges::for_each(ids, [](m2::ObjectId id) {
