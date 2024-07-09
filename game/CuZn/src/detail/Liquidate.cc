@@ -1,4 +1,5 @@
 #include <cuzn/detail/Liquidate.h>
+#include <cuzn/detail/Income.h>
 #include <m2/Game.h>
 #include <cuzn/object/Factory.h>
 #include <cuzn/object/HumanPlayer.h>

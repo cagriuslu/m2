@@ -1,6 +1,7 @@
 #include <m2g/Proxy.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/object/GameStateTracker.h>
+#include <cuzn/detail/Income.h>
 #include <cuzn/object/Merchant.h>
 #include <cuzn/object/Factory.h>
 #include <m2/Log.h>

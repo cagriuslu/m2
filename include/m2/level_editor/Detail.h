@@ -17,7 +17,7 @@ namespace m2::level_editor {
 				std::is_same<std::remove_cvref_t<PlaceholderMapType>, ForegroundPlaceholderMap>(), "Given type is not a known placeholder map");
 		// Gather the placeholders that need to be moved
 		std::vector<VecI> placeholders_to_move;
-		transform_copy_if(placeholders.begin(), placeholders.end(), std::back_inserter(placeholders_to_move),
+		transform_if(placeholders.begin(), placeholders.end(), std::back_inserter(placeholders_to_move),
 				[=](const typename PlaceholderMapType::value_type& kv) {
 					const auto& pos = kv.first;
 					return x1 <= pos.x && pos.x <= x2 && y1 <= pos.y && pos.y <= y2;
