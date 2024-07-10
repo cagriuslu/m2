@@ -92,6 +92,18 @@ bool player_has_card(m2::Character& player, m2g::pb::ItemType card) {
 	return player.find_items(card) != player.end_items();
 }
 
+std::list<Card> player_cards(m2::Character& player) {
+	std::list<Card> card_list;
+	for (auto it = player.begin_items(); it != player.end_items(); ++it) {
+		if (it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD
+			|| it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD
+			|| it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD) {
+			card_list.emplace_back(it->type());
+		}
+	}
+	return card_list;
+}
+
 size_t player_road_count(m2::Character& player) {
 	return player.count_item(m2g::pb::ROAD_TILE);
 }
