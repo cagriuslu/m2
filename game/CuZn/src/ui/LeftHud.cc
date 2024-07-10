@@ -142,12 +142,47 @@ const Blueprint left_hud_blueprint = {
 				}
 			}
 		},
-		WidgetBlueprint{.x = 2, .y = 16, .w = 15, .h = 6, .variant = build_button},
-		WidgetBlueprint{.x = 2, .y = 23, .w = 15, .h = 6, .variant = network_button},
-		WidgetBlueprint{.x = 2, .y = 30, .w = 15, .h = 6, .variant = develop_button},
-		WidgetBlueprint{.x = 2, .y = 37, .w = 15, .h = 6, .variant = sell_button},
-		WidgetBlueprint{.x = 2, .y = 44, .w = 15, .h = 6, .variant = loan_button},
-		WidgetBlueprint{.x = 2, .y = 51, .w = 15, .h = 6, .variant = scout_button},
-		WidgetBlueprint{.x = 2, .y = 58, .w = 15, .h = 6, .variant = pass_button},
+		WidgetBlueprint{
+			.name = "BuildButton",
+			.initially_enabled = false,
+			.x = 2, .y = 16, .w = 15, .h = 6,
+			.variant = build_button
+		},
+		WidgetBlueprint{
+			.name = "NetworkButton",
+			.initially_enabled = false,
+			.x = 2, .y = 23, .w = 15, .h = 6,
+			.variant = network_button
+		},
+		WidgetBlueprint{
+			.name = "DevelopButton",
+			.initially_enabled = false,
+			.x = 2, .y = 30, .w = 15, .h = 6,
+			.variant = develop_button
+		},
+		WidgetBlueprint{
+			.name = "SellButton",
+			.initially_enabled = false,
+			.x = 2, .y = 37, .w = 15, .h = 6,
+			.variant = sell_button
+		},
+		WidgetBlueprint{
+			.name = "LoanButton",
+			.initially_enabled = false,
+			.x = 2, .y = 44, .w = 15, .h = 6,
+			.variant = loan_button
+		},
+		WidgetBlueprint{
+			.name = "ScoutButton",
+			.initially_enabled = false,
+			.x = 2, .y = 51, .w = 15, .h = 6,
+			.variant = scout_button
+		},
+		WidgetBlueprint{
+			.name = "PassButton",
+			.initially_enabled = false,
+			.x = 2, .y = 58, .w = 15, .h = 6,
+			.variant = pass_button
+		},
 	}
 };

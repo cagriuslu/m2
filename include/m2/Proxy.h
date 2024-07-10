@@ -89,6 +89,7 @@ namespace m2 {
 		/// Return -1 if the game ended.
 		std::optional<int> handle_client_command(MAYBE int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) { return std::nullopt; }
 		void handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command) {}
+		void post_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {}
 
 		/// Called after a tile is created
 		void post_tile_create(MAYBE m2::Object& obj, MAYBE m2g::pb::SpriteType sprite_type) {}
@@ -96,7 +97,7 @@ namespace m2 {
 		/// Load foreground object from a level blueprint
 		m2::void_expected init_level_blueprint_fg_object(MAYBE m2::Object& obj) { return {}; }
 		/// Load foreground object from a ServerUpdate. The item and resources should NOT be added to the character,
-		/// because that'll be done automatically after the initialization.
+		/// because those will be added automatically after the initialization.
 		m2::void_expected init_server_update_fg_object(MAYBE m2::Object& obj, MAYBE const std::vector<m2g::pb::ItemType>& named_item_types, MAYBE const std::vector<m2::pb::Resource>& resources) { return {}; }
 
 		/// Create Group for the given type

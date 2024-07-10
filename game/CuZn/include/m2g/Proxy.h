@@ -27,6 +27,7 @@ namespace m2g {
 		std::optional<int> handle_client_command(
 			int turn_holder_index, const pb::ClientCommand& client_command);
 		void handle_server_command(const pb::ServerCommand& server_command);
+		void post_server_update(const m2::pb::ServerUpdate& server_update);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
 		m2::void_expected init_level_blueprint_fg_object(m2::Object& obj);
 		m2::void_expected init_server_update_fg_object(m2::Object&,
@@ -53,6 +54,10 @@ namespace m2g {
 		[[nodiscard]] bool is_first_turn() const;
 		[[nodiscard]] bool is_canal_era() const;
 		[[nodiscard]] bool is_railroad_era() const;
+
+		// Modifiers
+		void enable_action_buttons();
+		void disable_action_buttons();
 
 		// Server only fields
 		std::vector<Card> _draw_deck;

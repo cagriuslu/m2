@@ -25,7 +25,7 @@ m2::void_expected init_human_player(m2::Object& obj) {
 
 	auto& chr = obj.add_full_character();
 	chr.set_resource(m2g::pb::MONEY, 17.0f);
-	chr.set_attribute(m2g::pb::INCOME_POINTS, -10.0f);
+	chr.set_attribute(m2g::pb::INCOME_POINTS, 0.0f);
 
 	// Add industry tiles
 	for (auto industry_tile = m2g::pb::COTTON_MILL_TILEI;

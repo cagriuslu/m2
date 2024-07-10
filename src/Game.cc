@@ -351,6 +351,7 @@ void m2::Game::execute_post_step() {
 		// Handle ServerUpdate
 		auto expect_server_update = M2_GAME.client_thread().process_server_update();
 		m2_succeed_or_throw_error(expect_server_update);
+		_proxy.post_server_update(*M2_GAME.client_thread().last_processed_server_update());
 	}
 	for (auto& phy : _level->physics) {
 		IF(phy.post_step)(phy);

@@ -101,6 +101,9 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	for (int i = 1; i < M2_GAME.server_thread().client_count(); ++i) {
 		_waiting_players.emplace_back(i);
 	}
+
+	// First turn holder is the server, enable action buttons
+	enable_action_buttons();
 }
 
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
@@ -356,21 +359,29 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	// Store draw deck size to Game State Tracker
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
+	int next_turn_holder;
 	if (liquidation_necessary) {
 		set_is_liquidating(true); // Set the liquidation state so that client commands are handled properly
 		LOG_INFO("Sending liquidation command to player", liquidation_necessary->first);
 		M2_GAME.server_thread().send_server_command(liquidation_necessary->second, liquidation_necessary->first);
 		// Give turn holder index to that player so that they can respond
-		return liquidation_necessary->first;
+		next_turn_holder = liquidation_necessary->first;
 	} else {
 		if (not _waiting_players.empty()) {
-			auto tmp = _waiting_players.front(); _waiting_players.pop_front();
-			return tmp;
+			next_turn_holder = _waiting_players.front();
+			_waiting_players.pop_front();
 		} else {
 			// TODO Game ended
-			return -1;
+			next_turn_holder = -1;
 		}
 	}
+
+	if (next_turn_holder == 0) {
+		enable_action_buttons();
+	} else {
+		disable_action_buttons();
+	}
+	return next_turn_holder;
 }
 
 void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
@@ -382,6 +393,14 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 		M2G_PROXY.user_journey.emplace(LiquidationJourney{money_to_be_paid});
 	} else {
 		throw M2ERROR("Unsupported server command");
+	}
+}
+
+void m2g::Proxy::post_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {
+	if (M2_GAME.client_thread().is_turn()) {
+		enable_action_buttons();
+	} else {
+		disable_action_buttons();
 	}
 }
 
@@ -480,6 +499,25 @@ bool m2g::Proxy::is_canal_era() const {
 
 bool m2g::Proxy::is_railroad_era() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
+}
+
+namespace {
+	std::initializer_list<std::string> action_button_names = {"BuildButton", "NetworkButton", "DevelopButton",
+		"SellButton", "LoanButton", "ScoutButton", "PassButton"};
+}
+
+void m2g::Proxy::enable_action_buttons() {
+	for (const auto& button_name : action_button_names) {
+		auto* button = M2_LEVEL.left_hud_ui_state->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
+		button->enabled = true;
+	}
+}
+
+void m2g::Proxy::disable_action_buttons() {
+	for (const auto& button_name : action_button_names) {
+		auto* button = M2_LEVEL.left_hud_ui_state->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
+		button->enabled = false;
+	}
 }
 
 std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::Proxy::prepare_next_round() {
