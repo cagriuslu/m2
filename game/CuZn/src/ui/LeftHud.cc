@@ -87,8 +87,10 @@ namespace {
 		.text = "Scout",
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-			if (M2_GAME.client_thread().is_turn()) {
+			if (auto scout_prerequisite = can_player_attempt_to_scout(M2_PLAYER.character())) {
 				execute_scout_journey();
+			} else {
+				M2_LEVEL.display_message(scout_prerequisite.error());
 			}
 			return make_continue_action();
 		}

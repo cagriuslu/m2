@@ -13,6 +13,7 @@
 #include <cuzn/ui/LeftHud.h>
 #include <cuzn/ui/RightHud.h>
 #include <cuzn/detail/SetUp.h>
+#include <cuzn/journeys/ScoutJourney.h>
 #include <cuzn/detail/Liquidate.h>
 #include <m2/game/Detail.h>
 #include "cuzn/object/Road.h"
@@ -217,18 +218,14 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 
 			card_to_discard = client_command.loan_action().card();
 		} else if (client_command.has_scout_action()) {
-			LOG_INFO("Processing scout action");
-			// TODO check
-			auto card_1_it = turn_holder_character.find_items(client_command.scout_action().card_1());
-			auto card_2_it = turn_holder_character.find_items(client_command.scout_action().card_2());
-			turn_holder_character.remove_item(card_1_it);
-			turn_holder_character.remove_item(card_2_it);
-			turn_holder_character.add_named_item(M2_GAME.get_named_item(pb::WILD_INDUSTRY_CARD));
-			turn_holder_character.add_named_item(M2_GAME.get_named_item(pb::WILD_LOCATION_CARD));
-
-			card_to_discard = client_command.scout_action().card_0();
+			LOG_INFO("Validating scout action");
+			if (not can_player_scout(turn_holder_character, client_command.scout_action())) {
+				return std::nullopt;
+			}
+			LOG_INFO("Executing scout action");
+			card_to_discard = execute_scout_action(turn_holder_character, client_command.scout_action());
 		} else if (client_command.has_pass_action()) {
-			LOG_INFO("Processing pass action");
+			LOG_INFO("Executing pass action");
 			card_to_discard = client_command.pass_action().card();
 		}
 
