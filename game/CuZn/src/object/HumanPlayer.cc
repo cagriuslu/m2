@@ -122,6 +122,10 @@ float player_money(m2::Character& player) {
 	return player.get_resource(m2g::pb::MONEY);
 }
 
+int player_income_points(m2::Character& player) {
+	return m2::iround(player.get_attribute(m2g::pb::INCOME_POINTS));
+}
+
 size_t player_tile_count(m2::Character& player) {
 	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_COAL_MINE_TILE)
 		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_IRON_WORKS_TILE)

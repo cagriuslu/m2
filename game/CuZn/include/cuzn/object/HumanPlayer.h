@@ -14,6 +14,7 @@ std::list<Card> player_cards(m2::Character& player);
 size_t player_road_count(m2::Character& player);
 int player_link_count(m2::Character& player);
 float player_money(m2::Character& player);
+int player_income_points(m2::Character& player);
 size_t player_tile_count(m2::Character& player);
 std::optional<m2g::pb::ItemType> get_next_buildable_factory(m2::Character& player, m2g::pb::ItemCategory tile_category);
 size_t player_built_factory_count(m2::Character& player);

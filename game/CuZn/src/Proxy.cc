@@ -14,6 +14,7 @@
 #include <cuzn/ui/RightHud.h>
 #include <cuzn/detail/SetUp.h>
 #include <cuzn/journeys/ScoutJourney.h>
+#include <cuzn/journeys/LoanJourney.h>
 #include <cuzn/detail/Liquidate.h>
 #include <m2/game/Detail.h>
 #include "cuzn/object/Road.h"
@@ -207,16 +208,12 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			}
 
 		} else if (client_command.has_loan_action()) {
-			LOG_INFO("Processing loan action");
-			// TODO check
-			auto income_points = m2::iround(turn_holder_character.get_attribute(m2g::pb::INCOME_POINTS));
-			auto income_level = income_level_from_income_points(income_points);
-			auto new_income_level = std::max(-10, income_level - 3);
-			auto new_income_points = highest_income_points_of_level(new_income_level);
-			turn_holder_character.set_attribute(pb::INCOME_POINTS, static_cast<float>(new_income_points));
-			turn_holder_character.add_resource(pb::MONEY, 30.0f);
-
-			card_to_discard = client_command.loan_action().card();
+			LOG_INFO("Validating loan action");
+			if (not can_player_loan(turn_holder_character, client_command.loan_action())) {
+				return std::nullopt;
+			}
+			LOG_INFO("Executing loan action");
+			card_to_discard = execute_loan_action(turn_holder_character, client_command.loan_action());
 		} else if (client_command.has_scout_action()) {
 			LOG_INFO("Validating scout action");
 			if (not can_player_scout(turn_holder_character, client_command.scout_action())) {

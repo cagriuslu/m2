@@ -76,8 +76,10 @@ namespace {
 		.text = "Loan",
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-			if (M2_GAME.client_thread().is_turn()) {
+			if (auto loan_prerequisite = can_player_attempt_to_loan(M2_PLAYER.character())) {
 				execute_loan_journey();
+			} else {
+				M2_LEVEL.display_message(loan_prerequisite.error());
 			}
 			return make_continue_action();
 		}
