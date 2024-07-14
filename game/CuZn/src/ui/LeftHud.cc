@@ -30,20 +30,6 @@ namespace {
 		}
 	};
 
-	const auto network_button = TextBlueprint{
-		.text = "Network",
-		.font_size = 4.5f,
-		.on_action = [](MAYBE const Text& self) -> Action {
-			if (M2_GAME.client_thread().is_turn()) {
-				LOG_INFO("Beginning BuildJourney");
-				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
-			} else {
-				M2_LEVEL.display_message("It's not your turn");
-			}
-			return make_continue_action();
-		}
-	};
-
 	const auto develop_button = TextBlueprint{
 		.text = "Develop",
 		.font_size = 4.5f,
@@ -51,20 +37,6 @@ namespace {
 			if (M2_GAME.client_thread().is_turn()) {
 				LOG_INFO("Beginning DevelopJourney");
 				m2g::Proxy::get_instance().user_journey.emplace(DevelopJourney{});
-			} else {
-				M2_LEVEL.display_message("It's not your turn");
-			}
-			return make_continue_action();
-		}
-	};
-
-	const auto sell_button = TextBlueprint{
-		.text = "Sell",
-		.font_size = 4.5f,
-		.on_action = [](MAYBE const Text& self) -> Action {
-			if (M2_GAME.client_thread().is_turn()) {
-				LOG_INFO("Beginning SellJourney");
-				m2g::Proxy::get_instance().user_journey.emplace(SellJourney{});
 			} else {
 				M2_LEVEL.display_message("It's not your turn");
 			}
@@ -85,6 +57,31 @@ namespace {
 		}
 	};
 
+	const auto network_button = TextBlueprint{
+		.text = "Network",
+		.font_size = 4.5f,
+		.on_action = [](MAYBE const Text& self) -> Action {
+			if (M2_GAME.client_thread().is_turn()) {
+				LOG_INFO("Beginning BuildJourney");
+				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
+			} else {
+				M2_LEVEL.display_message("It's not your turn");
+			}
+			return make_continue_action();
+		}
+	};
+
+	const auto pass_button = TextBlueprint{
+		.text = "Pass",
+		.font_size = 4.5f,
+		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+			if (M2_GAME.client_thread().is_turn()) {
+				execute_pass_journey();
+			}
+			return make_continue_action();
+		}
+	};
+
 	const auto scout_button = TextBlueprint{
 		.text = "Scout",
 		.font_size = 4.5f,
@@ -98,12 +95,15 @@ namespace {
 		}
 	};
 
-	const auto pass_button = TextBlueprint{
-		.text = "Pass",
+	const auto sell_button = TextBlueprint{
+		.text = "Sell",
 		.font_size = 4.5f,
-		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+		.on_action = [](MAYBE const Text& self) -> Action {
 			if (M2_GAME.client_thread().is_turn()) {
-				execute_pass_journey();
+				LOG_INFO("Beginning SellJourney");
+				m2g::Proxy::get_instance().user_journey.emplace(SellJourney{});
+			} else {
+				M2_LEVEL.display_message("It's not your turn");
 			}
 			return make_continue_action();
 		}
@@ -152,29 +152,30 @@ const Blueprint left_hud_blueprint = {
 			.x = 2, .y = 16, .w = 15, .h = 6,
 			.variant = build_button
 		},
-		WidgetBlueprint{
-			.name = "NetworkButton",
-			.initially_enabled = false,
-			.x = 2, .y = 23, .w = 15, .h = 6,
-			.variant = network_button
-		},
-		WidgetBlueprint{
-			.name = "DevelopButton",
-			.initially_enabled = false,
-			.x = 2, .y = 30, .w = 15, .h = 6,
-			.variant = develop_button
-		},
+
 		WidgetBlueprint{
 			.name = "SellButton",
 			.initially_enabled = false,
-			.x = 2, .y = 37, .w = 15, .h = 6,
+			.x = 2, .y = 23, .w = 15, .h = 6,
 			.variant = sell_button
+		},
+		WidgetBlueprint{
+			.name = "NetworkButton",
+			.initially_enabled = false,
+			.x = 2, .y = 30, .w = 15, .h = 6,
+			.variant = network_button
 		},
 		WidgetBlueprint{
 			.name = "LoanButton",
 			.initially_enabled = false,
-			.x = 2, .y = 44, .w = 15, .h = 6,
+			.x = 2, .y = 37, .w = 15, .h = 6,
 			.variant = loan_button
+		},
+		WidgetBlueprint{
+			.name = "DevelopButton",
+			.initially_enabled = false,
+			.x = 2, .y = 44, .w = 15, .h = 6,
+			.variant = develop_button
 		},
 		WidgetBlueprint{
 			.name = "ScoutButton",
