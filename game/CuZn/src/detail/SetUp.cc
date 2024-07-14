@@ -8,7 +8,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-std::vector<m2g::pb::SpriteType> active_merchant_locations(int client_count) {
+std::vector<m2g::pb::SpriteType> possibly_active_merchant_locations(int client_count) {
 	switch (client_count) {
 		case 2:
 			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1, pb::OXFORD_2};
@@ -42,7 +42,7 @@ std::vector<m2g::pb::ItemType> prepare_merchant_license_list(int client_count) {
 	std::vector<m2g::pb::ItemType> merchant_licenses;
 	M2_GAME.for_each_named_item([&merchant_licenses, count_attr](MAYBE m2g::pb::ItemType item_type, const m2::NamedItem& item) {
 		if (item.category() == pb::ITEM_CATEGORY_MERCHANT_LICENSE) {
-			auto license_count = static_cast<int>(item.get_attribute(count_attr));
+			auto license_count = m2::iround(item.get_attribute(count_attr));
 			merchant_licenses.insert(merchant_licenses.end(), license_count, item.type());
 		}
 		return true;

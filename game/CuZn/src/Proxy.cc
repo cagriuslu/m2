@@ -49,8 +49,8 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 		}
 	}
 
-	// Add all merchants (without license) since all merchants can deal in coal
-	for (const auto& merchant_sprite : active_merchant_locations()) {
+	// Add all merchants (without any license) since all merchants can deal in coal and iron
+	for (const auto& merchant_sprite : possibly_active_merchant_locations()) {
 		// Create merchant object
 		auto it = m2::create_object(merchant_positions[merchant_sprite].first, m2g::pb::ObjectType::MERCHANT);
 		init_merchant(*it);
@@ -69,25 +69,24 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 
 	// Assign licenses to active merchants
 	{
-		auto merchant_licenses = prepare_merchant_license_list(client_count);
-		auto active_merchant_locs = active_merchant_locations(client_count);
-		if (merchant_licenses.size() != active_merchant_locs.size()) {
+		auto merchant_licenses = prepare_merchant_license_list(client_count); // Contains some active licenses, and some NO_MERCHANT_LICENSE
+		auto possibly_active_merchant_locs = possibly_active_merchant_locations(client_count);
+		if (merchant_licenses.size() != possibly_active_merchant_locs.size()) {
 			throw M2_ERROR("Merchant count mismatch");
 		}
 
-		for (const auto& merchant_location : active_merchant_locs) {
+		for (const auto& possibly_active_merchant_loc : possibly_active_merchant_locs) {
 			// Pop license from the list
 			auto license = merchant_licenses.back();
 			merchant_licenses.pop_back();
-			const auto& license_item = M2_GAME.get_named_item(license);
-
-			// Retrieve merchant object
-			auto merchant_object_id = merchant_object_ids[merchant_location];
-			auto& merchant_char = M2_LEVEL.objects[merchant_object_id].character();
-
-			LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
-			merchant_char.add_named_item(license_item);
-			merchant_char.add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+			if (license != pb::NO_MERCHANT_LICENSE) {
+				// Retrieve merchant object
+				auto merchant_object_id = merchant_object_ids[possibly_active_merchant_loc];
+				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].character();
+				LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
+				merchant_char.add_named_item(M2_GAME.get_named_item(license));
+				merchant_char.add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+			}
 		}
 	}
 
