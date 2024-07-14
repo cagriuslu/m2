@@ -9,6 +9,7 @@
 #include <cuzn/journeys/SellJourney.h>
 #include <cuzn/journeys/LiquidationJourney.h>
 #include <m2/Cache.h>
+#include <m2/game/Graph.h>
 
 namespace m2g {
 	class Proxy : public m2::Proxy {
@@ -43,6 +44,7 @@ namespace m2g {
 		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> industry_positions; // Exact position and cell rectangle
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
+		m2::Graph connection_graph; // Nodes are City (m2g::pb::ItemType)
 
 		// User journeys
 		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney, SellJourney, LiquidationJourney>> user_journey;
