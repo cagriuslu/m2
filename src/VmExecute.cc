@@ -7,33 +7,33 @@ using namespace m2::vm;
 namespace {
 	void assert_stack_size(const Vm::Stack& stack, size_t sz) {
 		if (stack.size() < sz) {
-			throw M2ERROR("Stack doesn't have enough items");
+			throw M2_ERROR("Stack doesn't have enough items");
 		}
 	}
 	void assert_is_number(const Vm::StackValue& value) {
 		if (not std::holds_alternative<int>(value) && not std::holds_alternative<float>(value)) {
-			throw M2ERROR("Stack value is not a number: " + to_string(value));
+			throw M2_ERROR("Stack value is not a number: " + to_string(value));
 		}
 	}
 	void assert_is_int(const Vm::StackValue& value) {
 		if (not std::holds_alternative<int>(value)) {
-			throw M2ERROR("Stack value is not an integer: " + to_string(value));
+			throw M2_ERROR("Stack value is not an integer: " + to_string(value));
 		}
 	}
 	void assert_is_index(const Vm::StackValue& value) {
 		if (not std::holds_alternative<int>(value) && not std::holds_alternative<std::string>(value)) {
-			throw M2ERROR("Stack value is not an index: " + to_string(value));
+			throw M2_ERROR("Stack value is not an index: " + to_string(value));
 		}
 	}
 	void assert_is_obj(const Vm::StackValue& value) {
 		if (not std::holds_alternative<Vm::Object>(value)) {
-			throw M2ERROR("Stack value is not an object: " + to_string(value));
+			throw M2_ERROR("Stack value is not an object: " + to_string(value));
 		}
 	}
 	Vm::InstructionIndex assert_label(const Vm::Labels& labels, const std::string& label_name) {
 		auto it = labels.find(label_name);
 		if (it == labels.end()) {
-			throw M2ERROR("Label not found in function " + label_name);
+			throw M2_ERROR("Label not found in function " + label_name);
 		}
 		return it->second;
 	}
@@ -140,7 +140,7 @@ namespace {
 		auto index_str = as_index(index);
 		auto it = std::get<Vm::Object>(obj).map.find(index_str);
 		if (it == std::get<Vm::Object>(obj).map.end()) {
-			throw M2ERROR("Object does not contain member " + index_str + ": " + to_string(obj));
+			throw M2_ERROR("Object does not contain member " + index_str + ": " + to_string(obj));
 		}
 		out = it->second;
 	}
@@ -178,7 +178,7 @@ namespace {
 		assert_is_obj(obj);
 		auto it = std::get<Vm::Object>(obj).map.find(index);
 		if (it == std::get<Vm::Object>(obj).map.end()) {
-			throw M2ERROR("Object does not contain member " + index + ": " + to_string(obj));
+			throw M2_ERROR("Object does not contain member " + index + ": " + to_string(obj));
 		}
 		out = it->second;
 	}
@@ -206,7 +206,7 @@ m2::expected<m2::Vm::ReturnValue> m2::Vm::execute(const std::string &func) const
 void m2::Vm::execute_recursively(Stack& stack, const std::string& func) const {
 	auto f = _functions.find(func);
 	if (f == _functions.end()) {
-		throw M2ERROR("Function not found: " + func);
+		throw M2_ERROR("Function not found: " + func);
 	}
 	const auto& [commands, labels] = f->second;
 
@@ -336,10 +336,10 @@ void m2::Vm::execute_recursively(Stack& stack, const std::string& func) const {
 					break;
 				}
 				default:
-					throw M2ERROR("Unknown instruction");
+					throw M2_ERROR("Unknown instruction");
 			}
 		} catch (const Error& err) {
-			throw M2ERROR(S(err.what()) +  "\n   in function " + func + " instruction " + to_string(i));
+			throw M2_ERROR(S(err.what()) +  "\n   in function " + func + " instruction " + to_string(i));
 		}
 	}
 }

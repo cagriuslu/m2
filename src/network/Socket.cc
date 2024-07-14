@@ -113,7 +113,7 @@ bool m2::network::Socket::is_readable() const {
 	FD_SET(_fd, &read_set);
 	auto select_result = network::select(_fd, &read_set, nullptr, 0);
 	if (not select_result) {
-		throw M2ERROR("Select failed: " + select_result.error());
+		throw M2_ERROR("Select failed: " + select_result.error());
 	}
 	return 0 < *select_result;
 }

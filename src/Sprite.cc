@@ -1,6 +1,6 @@
 #include <Object.pb.h>
 #include <SDL2/SDL_image.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
 #include <m2/Proxy.h>
@@ -11,11 +11,11 @@ m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* 
     : _sprite_sheet(sprite_sheet) {
 	_surface.reset(IMG_Load(sprite_sheet.resource().c_str()));
 	if (not _surface) {
-		throw M2ERROR("SDL Error while loading " + sprite_sheet.resource() + ": " + IMG_GetError());
+		throw M2_ERROR("SDL Error while loading " + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
 	_texture.reset(SDL_CreateTextureFromSurface(renderer, _surface.get()));
 	if (not _texture) {
-		throw M2ERROR(
+		throw M2_ERROR(
 		    "SDL Error while creating texture from surface" + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
 	SDL_SetTextureBlendMode(_texture.get(), SDL_BLENDMODE_BLEND);
@@ -40,7 +40,7 @@ m2::RectI m2::SpriteEffectsSheet::create_mask_effect(
 	// Check pixel stride
 	auto* src_surface = sheet.surface();
 	if (src_surface->format->BytesPerPixel != 4 || dst_surface->format->BytesPerPixel != 4) {
-		throw M2FATAL("Surface has unsupported pixel format");
+		throw M2_ERROR("Surface has unsupported pixel format");
 	}
 
 	// Prepare mask color
@@ -100,7 +100,7 @@ m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(
 	// Check pixel stride
 	auto* src_surface = sheet.surface();
 	if (src_surface->format->BytesPerPixel != 4 || dst_surface->format->BytesPerPixel != 4) {
-		throw M2FATAL("Surface has unsupported pixel format");
+		throw M2_ERROR("Surface has unsupported pixel format");
 	}
 
 	SDL_LockSurface(src_surface);
@@ -141,7 +141,7 @@ m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(
 	// Check pixel stride
 	auto* src_surface = sheet.surface();
 	if (src_surface->format->BytesPerPixel != 4 || dst_surface->format->BytesPerPixel != 4) {
-		throw M2FATAL("Surface has unsupported pixel format");
+		throw M2_ERROR("Surface has unsupported pixel format");
 	}
 
 	SDL_LockSurface(src_surface);
@@ -259,7 +259,7 @@ m2::Sprite::Sprite(
 			auto index = pb::enum_index(effect.type());
 			// Check if the effect is already created
 			if (is_created[index]) {
-				throw M2ERROR("Sprite has duplicate effect definition: " + std::to_string(effect.type()));
+				throw M2_ERROR("Sprite has duplicate effect definition: " + std::to_string(effect.type()));
 			}
 			// Create effect
 			switch (effect.type()) {
@@ -276,7 +276,7 @@ m2::Sprite::Sprite(
 					    sprite_sheet, original_sprite->regular().rect(), effect.image_adjustment(), lightning);
 					break;
 				default:
-					throw M2ERROR(
+					throw M2_ERROR(
 					    "Encountered a sprite with unknown sprite effect: " + std::to_string(original_sprite->type()));
 			}
 			is_created[index] = true;
@@ -362,7 +362,7 @@ std::vector<m2::Sprite> m2::load_sprites(
 			auto index = pb::enum_index(sprite.type());
 			// Check if the sprite is already loaded
 			if (is_loaded[index]) {
-				throw M2ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
+				throw M2_ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
 			}
 			// Load sprite
 			sprites_vector[index] = Sprite{sprite_sheets, sprite_sheet, sprite_effects_sheet, sprite, lightning};
@@ -373,7 +373,7 @@ std::vector<m2::Sprite> m2::load_sprites(
 		auto index = pb::enum_index(text_label.type());
 		// Check if the sprite is already loaded
 		if (is_loaded[index]) {
-			throw M2ERROR("Sprite has duplicate definition: " + std::to_string(text_label.type()));
+			throw M2_ERROR("Sprite has duplicate definition: " + std::to_string(text_label.type()));
 		}
 		// Load sprite
 		sprites_vector[index] = Sprite{font, renderer, text_label};
@@ -383,7 +383,7 @@ std::vector<m2::Sprite> m2::load_sprites(
 	// Check if every sprite type is loaded
 	for (int e = 0; e < pb::enum_value_count<m2g::pb::SpriteType>(); ++e) {
 		if (!is_loaded[e]) {
-			throw M2ERROR("Sprite is not defined: " + pb::enum_name<m2g::pb::SpriteType>(e));
+			throw M2_ERROR("Sprite is not defined: " + pb::enum_name<m2g::pb::SpriteType>(e));
 		}
 	}
 
@@ -406,7 +406,7 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_
     const std::filesystem::path& objects_path) {
 	auto objects = pb::json_file_to_message<pb::Objects>(objects_path);
 	if (!objects) {
-		throw M2ERROR(objects.error());
+		throw M2_ERROR(objects.error());
 	}
 
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_sprite_map;
@@ -417,7 +417,7 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_
 		auto index = pb::enum_index(object.type());
 		// Check if object type already exists
 		if (has_encountered[index]) {
-			throw M2ERROR("Object has duplicate definition: " + std::to_string(object.type()));
+			throw M2_ERROR("Object has duplicate definition: " + std::to_string(object.type()));
 		}
 		has_encountered[index] = true;
 
@@ -429,7 +429,7 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_
 	// Check if every object type is encountered
 	for (int e = 0; e < pb::enum_value_count<m2g::pb::ObjectType>(); ++e) {
 		if (!has_encountered[e]) {
-			throw M2ERROR("Object is not defined: " + pb::enum_name<m2g::pb::ObjectType>(e));
+			throw M2_ERROR("Object is not defined: " + pb::enum_name<m2g::pb::ObjectType>(e));
 		}
 	}
 

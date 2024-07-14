@@ -1,6 +1,6 @@
 #include <cuzn/detail/SetUp.h>
 #include <m2g_SpriteType.pb.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Game.h>
 #include <random>
@@ -19,7 +19,7 @@ std::vector<m2g::pb::SpriteType> active_merchant_locations(int client_count) {
 			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1,    pb::OXFORD_2,
 					pb::NOTTINGHAM_1, pb::NOTTINGHAM_2, pb::WARRINGTON_1, pb::WARRINGTON_2};
 		default:
-			throw M2ERROR("Invalid client count");
+			throw M2_ERROR("Invalid client count");
 	}
 }
 
@@ -34,7 +34,7 @@ std::vector<m2g::pb::ItemType> prepare_merchant_license_list(int client_count) {
 			case 4:
 				return m2g::pb::MERCHANT_COUNT_IN_4_PLAYER_GAME;
 			default:
-				throw M2ERROR("Invalid client count");
+				throw M2_ERROR("Invalid client count");
 		}
 	}();
 
@@ -67,7 +67,7 @@ std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count) {
 			case 4:
 				return m2g::pb::COUNT_IN_4_PLAYER_GAME;
 			default:
-				throw M2ERROR("Invalid client count");
+				throw M2_ERROR("Invalid client count");
 		}
 	}();
 

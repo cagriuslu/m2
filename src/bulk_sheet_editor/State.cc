@@ -53,7 +53,7 @@ void bsedit::State::select_resource(const std::string& resource) {
 			return;
 		}
 	}
-	throw M2ERROR("Selected resource is not found in SpriteSheets");
+	throw M2_ERROR("Selected resource is not found in SpriteSheets");
 }
 
 bool bsedit::State::select() {
@@ -72,7 +72,7 @@ bool bsedit::State::select() {
 			// Reload dynamic image loader with the resource
 			auto image_loader = DynamicSpriteSheetLoader::create(sprite_sheet.resource(), sprite_sheet.ppm());
 			if (!image_loader) {
-				throw M2ERROR("Failed to load the image: " + sprite_sheet.resource());
+				throw M2_ERROR("Failed to load the image: " + sprite_sheet.resource());
 			}
 			_dynamic_sprite_sheet_loader.emplace(std::move(*image_loader));
 			M2_LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
@@ -104,7 +104,7 @@ void bsedit::State::select_sprite(m2g::pb::SpriteType type) {
 			return;
 		}
 	}
-	throw M2ERROR("Selected sprite has been removed from the SpriteSheet");
+	throw M2_ERROR("Selected sprite has been removed from the SpriteSheet");
 }
 
 void bsedit::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) const {

@@ -9,10 +9,10 @@ using namespace m2g::pb;
 
 std::vector<Industry> buildable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
 	if (not is_card(selected_card)) {
-		throw M2ERROR("Item is not a card");
+		throw M2_ERROR("Item is not a card");
 	}
 	if (not is_industry_location(selected_location)) {
-		throw M2ERROR("Sprite is not an industry location");
+		throw M2_ERROR("Sprite is not an industry location");
 	}
 
 	const auto& selected_card_item = M2_GAME.get_named_item(selected_card);
@@ -23,14 +23,14 @@ std::vector<Industry> buildable_industries(m2g::pb::ItemType selected_card, m2g:
 		return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
 	});
 	if (selected_sprite_industries.empty()) {
-		throw M2ERROR("Selected sprite does not hold any industry cards");
+		throw M2_ERROR("Selected sprite does not hold any industry cards");
 	}
 	// Look up the location of the sprite
 	auto location_card_it = std::ranges::find_if(selected_sprite_sprite.named_items(), [](auto item_type) {
 		return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
 	});
 	if (location_card_it == selected_sprite_sprite.named_items().end()) {
-		throw M2ERROR("Selected sprite does not hold a location card");
+		throw M2_ERROR("Selected sprite does not hold a location card");
 	}
 	ItemType selected_sprite_location = *location_card_it;
 

@@ -1,5 +1,5 @@
 #include <m2/AudioManager.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/Game.h>
 #include <m2/Options.h>
 
@@ -19,10 +19,10 @@ m2::AudioManager::AudioManager() {
 	want.userdata = nullptr; // Passing `this` won't work, object may be moved/copied
 	sdl_audio_device_id = SDL_OpenAudioDevice(nullptr, 0, &want, &sdl_audio_spec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE);
 	if (!sdl_audio_device_id) {
-		throw M2FATAL("SDL_OpenAudioDevice error: " + std::string{SDL_GetError()});
+		throw M2_ERROR("SDL_OpenAudioDevice error: " + std::string{SDL_GetError()});
 	}
 	if (want.format != sdl_audio_spec.format) {
-		throw M2FATAL("Undesired audio format");
+		throw M2_ERROR("Undesired audio format");
 	}
 }
 m2::AudioManager::~AudioManager() {
@@ -31,7 +31,7 @@ m2::AudioManager::~AudioManager() {
 
 m2::PlaybackId m2::AudioManager::play(const Song* song, PlayPolicy policy, float volume) {
 	if (song->sample_count() < sdl_audio_spec.samples) {
-		throw M2ERROR("Playing short audio is not supported");
+		throw M2_ERROR("Playing short audio is not supported");
 	}
 
 	std::unique_lock<std::mutex> lock{playbacks_mutex};

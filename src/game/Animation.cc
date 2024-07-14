@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "m2/Exception.h"
+#include "m2/Error.h"
 #include "m2/protobuf/Detail.h"
 
 using namespace m2g::pb;

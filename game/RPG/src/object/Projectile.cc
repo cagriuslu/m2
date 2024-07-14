@@ -13,13 +13,13 @@ using namespace m2g::pb;
 m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intended_direction, const m2::Item& ranged_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!ranged_weapon.has_attribute(ATTRIBUTE_LINEAR_SPEED)) {
-		throw M2ERROR("Ranged weapon has no linear speed");
+		throw M2_ERROR("Ranged weapon has no linear speed");
 	}
 	if (!ranged_weapon.has_attribute(ATTRIBUTE_AVERAGE_DAMAGE)) {
-		throw M2ERROR("Ranged weapon has no average damage");
+		throw M2_ERROR("Ranged weapon has no average damage");
 	}
 	if (!ranged_weapon.has_attribute(ATTRIBUTE_AVERAGE_TTL)) {
-		throw M2ERROR("Ranged weapon has no average TTL");
+		throw M2_ERROR("Ranged weapon has no average TTL");
 	}
 
 	float linear_speed = ranged_weapon.get_attribute(ATTRIBUTE_LINEAR_SPEED);

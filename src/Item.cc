@@ -1,6 +1,6 @@
 #include <m2/Item.h>
 #include <m2/protobuf/Detail.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/Game.h>
 #include <utility>
 
@@ -15,7 +15,7 @@ std::pair<m2g::pb::ResourceType, float> m2::TinyItem::get_cost_by_index(size_t i
 	if (i == 0) {
 		return _cost;
 	} else {
-		throw M2ERROR("Out of bounds cost index");
+		throw M2_ERROR("Out of bounds cost index");
 	}
 }
 float m2::TinyItem::get_cost(m2g::pb::ResourceType resource_type) const {
@@ -40,7 +40,7 @@ std::pair<m2g::pb::ResourceType, float> m2::TinyItem::get_benefit_by_index(size_
 	if (i == 0) {
 		return _benefit;
 	} else {
-		throw M2ERROR("Out of bounds cost index");
+		throw M2_ERROR("Out of bounds cost index");
 	}
 }
 float m2::TinyItem::get_benefit(m2g::pb::ResourceType resource_type) const {
@@ -65,7 +65,7 @@ std::pair<m2g::pb::ResourceType, float> m2::TinyItem::get_acquire_benefit_by_ind
 	if (i == 0) {
 		return _acquire_benefit;
 	} else {
-		throw M2ERROR("Out of bounds cost index");
+		throw M2_ERROR("Out of bounds cost index");
 	}
 }
 float m2::TinyItem::get_acquire_benefit(m2g::pb::ResourceType resource_type) const {
@@ -90,7 +90,7 @@ std::pair<m2g::pb::AttributeType, float> m2::TinyItem::get_attribute_by_index(si
 	if (i == 0) {
 		return _attribute;
 	} else {
-		throw M2ERROR("Out of bounds cost index");
+		throw M2_ERROR("Out of bounds cost index");
 	}
 }
 float m2::TinyItem::get_attribute(m2g::pb::AttributeType attribute_type) const {

@@ -1,5 +1,5 @@
 #include <m2/game/Graph.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/M2.h>
 #include <deque>
 
@@ -15,10 +15,10 @@ m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& ge
 
 void m2::Graph::add_edge(Node from, Edge edge) {
 	if (from == edge.node) {
-		throw M2ERROR("Source and destination nodes are the same");
+		throw M2_ERROR("Source and destination nodes are the same");
 	}
 	if (is_less(edge.cost, 0.0f, _tolerance)) {
-		throw M2ERROR("Negative edge cost");
+		throw M2_ERROR("Negative edge cost");
 	}
 	// Check if the node already exists
 	auto src_node_it = _edges.find(from);
@@ -28,7 +28,7 @@ void m2::Graph::add_edge(Node from, Edge edge) {
 			return e.node == dst_node;
 		});
 		if (dst_node_it != src_node_it->second.end()) {
-			throw M2ERROR("Edge already exists");
+			throw M2_ERROR("Edge already exists");
 		}
 		src_node_it->second.emplace_back(edge); // Add to edges
 	} else {

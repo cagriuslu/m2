@@ -1,5 +1,5 @@
 #pragma once
-#include "Exception.h"
+#include "Error.h"
 #include <array>
 #include <optional>
 #include <functional>
@@ -93,7 +93,7 @@ namespace m2 {
 		// Constructors
         Pool() {
 			if (_shifted_pool_id == 0) {
-				throw M2FATAL("PoolId overflow");
+				throw M2_ERROR("PoolId overflow");
 			}
 			for (uint64_t i = 0; i < Capacity; ++i) {
 				// Each item points to the next item as next free index.
@@ -122,13 +122,13 @@ namespace m2 {
 			if (auto* t = get(id)) {
 				return *t;
 			}
-			throw M2ERROR("Out of bounds");
+			throw M2_ERROR("Out of bounds");
 		}
 		const T& operator[](Id id) const {
 			if (const auto* t = get(id)) {
 				return *t;
 			}
-			throw M2ERROR("Out of bounds");
+			throw M2_ERROR("Out of bounds");
 		}
 		Id get_id(const T* data) const {
 			const auto* byte_ptr = reinterpret_cast<const uint8_t*>(data);
@@ -161,7 +161,7 @@ namespace m2 {
 		template <typename... Args>
 		Iterator emplace(Args&&... args) {
 			if (Capacity <= _size) {
-				throw M2ERROR("Max pool size exceeded");
+				throw M2_ERROR("Max pool size exceeded");
 			}
 			// Find the item that will be allocated
 			const uint64_t index_to_alloc = _next_free_index;

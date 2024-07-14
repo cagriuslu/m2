@@ -1,6 +1,6 @@
 #pragma once
 #include "../Synth.h"
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <type_traits>
 
 namespace m2::synth {
@@ -10,7 +10,7 @@ namespace m2::synth {
 		static_assert(std::is_same<AudioSample, std::remove_cvref_t<decltype(*last)>>(), "ForwardIterator does not point to AudioSample or derivative");
 		if (note_shape != pb::NOISE) {
 			if (note_frequency < 0.0f || 24000.0f < note_frequency) {
-				throw M2ERROR("Frequency out-of-bounds");
+				throw M2_ERROR("Frequency out-of-bounds");
 			}
 		}
 
@@ -29,7 +29,7 @@ namespace m2::synth {
 				case pb::NOISE:
 					return 2.0f * randf() - 1.0f;
 				default:
-					throw M2ERROR("Unknown sound wave shape");
+					throw M2_ERROR("Unknown sound wave shape");
 			}
 		};
 

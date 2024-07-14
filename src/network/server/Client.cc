@@ -32,7 +32,7 @@ m2::expected<bool> m2::network::server::Client::save_incoming_message(char* read
 	} else if (_incoming_msg.has_value() && not _buffered_incoming_msg.has_value()) {
 		_buffered_incoming_msg.emplace(std::move(*expect_first_message));
 	} else {
-		throw M2FATAL("Invalid buffer state");
+		throw M2_ERROR("Invalid buffer state");
 	}
 	LOG_DEBUG("Saved incoming client message");
 

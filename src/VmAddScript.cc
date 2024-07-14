@@ -1,6 +1,6 @@
 #include <m2/Vm.h>
 #include <m2/FileSystem.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/Log.h>
 #include <sstream>
 
@@ -26,7 +26,7 @@ namespace {
 			// Success
 			return id.str();
 		} else {
-			throw M2ERROR("Unexpected identifier character: " + std::to_string(c));
+			throw M2_ERROR("Unexpected identifier character: " + std::to_string(c));
 		}
 	}
 
@@ -70,7 +70,7 @@ namespace {
 						c = '\\';
 						break;
 					default:
-						throw M2ERROR(std::string("Unexpected escape character") + (char) c);
+						throw M2_ERROR(std::string("Unexpected escape character") + (char) c);
 				}
 			}
 			out << (char)c;
@@ -102,7 +102,7 @@ namespace {
 				return (int) strtol(str.c_str(), nullptr, 10);
 			}
 		} else {
-			throw M2ERROR("Unexpected digit character: " + std::to_string(c));
+			throw M2_ERROR("Unexpected digit character: " + std::to_string(c));
 		}
 	}
 
@@ -110,7 +110,7 @@ namespace {
 		auto n = fetch_number(ss);
 		if (not std::holds_alternative<int>(n)) {
 			std::visit(m2::overloaded {
-				[](float f) { throw M2ERROR("Expected integer: " + std::to_string(f)); }
+				[](float f) { throw M2_ERROR("Expected integer: " + std::to_string(f)); }
 			}, n);
 		}
 		return std::get<int>(n);
@@ -163,7 +163,7 @@ namespace {
 				if (is_whitespace(c)) {
 					return WHITESPACE;
 				}
-				throw M2ERROR(std::string("Unexpected character: ") + c);
+				throw M2_ERROR(std::string("Unexpected character: ") + c);
 			}
 		}
 	}
@@ -181,7 +181,7 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 			// Save current function
 			if (_functions.contains(*current_function)) {
 				// Check for multiple definitions
-				throw M2ERROR(std::string("Multiple definition of function: ") + *current_function);
+				throw M2_ERROR(std::string("Multiple definition of function: ") + *current_function);
 			}
 			_functions[*current_function] = std::make_pair(current_commands, current_labels);
 			current_commands.clear();
@@ -204,14 +204,14 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 					// Start current function
 					current_function = func_name;
 				} else {
-					throw M2ERROR("Expected function name");
+					throw M2_ERROR("Expected function name");
 				}
 			} else if (c == DEFINE_LABEL) {
 				// Record label
 				auto label = fetch_identifier(ss);
 				if (current_labels.contains(label)) {
 					// Check for multiple definitions
-					throw M2ERROR(std::string("Multiple definition of label: ") + label);
+					throw M2_ERROR(std::string("Multiple definition of label: ") + label);
 				}
 				current_labels[label] = current_commands.size();
 			} else if (current_function) {
@@ -240,10 +240,10 @@ m2::void_expected m2::Vm::add_script(const std::string& script) {
 						current_commands.emplace_back(c, fetch_until_char(ss, '"'));
 						break;
 					default:
-						throw M2ERROR(std::string("Unexpected instruction type: ") + std::to_string(inst_type));
+						throw M2_ERROR(std::string("Unexpected instruction type: ") + std::to_string(inst_type));
 				}
 			} else {
-				throw M2ERROR("Expected function before instruction");
+				throw M2_ERROR("Expected function before instruction");
 			}
 		}
 		save_function();

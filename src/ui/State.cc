@@ -359,7 +359,7 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget
 	} else if (std::holds_alternative<CheckboxWithTextBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<CheckboxWithText>(this, &widget_blueprint);
 	} else {
-		throw M2FATAL("Implementation");
+		throw M2_ERROR("Implementation");
 	}
 
 	return state;

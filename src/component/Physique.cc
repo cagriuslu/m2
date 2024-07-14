@@ -113,7 +113,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 					};
 					// Render shape
 					if (SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &dst_rect)) {
-						throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
+						throw M2_ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 					}
 				} else {
 					auto center_position_2d = position + center_offset_m;
@@ -142,7 +142,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				break;
 			}
 			default:
-				throw M2FATAL("Unsupported shape");
+				throw M2_ERROR("Unsupported shape");
 		}
 	}
 }

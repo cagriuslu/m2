@@ -23,7 +23,7 @@ static TextBlueprint entry_variant_1 = {
 		.on_action = [](MAYBE const widget::Text &self) {
 			auto expect_lb = m2::pb::json_file_to_message<m2::pb::Level>("resource/game/MINE/levels/sp000.json");
 			if (!expect_lb) {
-				throw M2ERROR("Unable to load level");
+				throw M2_ERROR("Unable to load level");
 			}
 			m2::pb::Level lb = std::move(*expect_lb);
 

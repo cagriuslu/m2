@@ -11,15 +11,15 @@ namespace m2::synth {
 		static_assert(std::is_same<AudioSample, std::remove_cvref_t<decltype(*first)>>(), "ForwardIterator does not point to AudioSample or derivative");
 		static_assert(std::is_same<AudioSample, std::remove_cvref_t<decltype(*last)>>(), "ForwardIterator does not point to AudioSample or derivative");
 		if (bpm == 0 || 10000 < bpm) {
-			throw M2ERROR("BPM out-of-bounds");
+			throw M2_ERROR("BPM out-of-bounds");
 		}
 
 		for (const auto& note : track.notes()) {
 			if (to_float(note.start_beat()) < 0.0f) {
-				throw M2ERROR("Start out-of-bounds");
+				throw M2_ERROR("Start out-of-bounds");
 			}
 			if (to_float(note.duration()) < 0.0f) {
-				throw M2ERROR("Duration out-of-bounds");
+				throw M2_ERROR("Duration out-of-bounds");
 			}
 
 			auto note_first = first + note_sample_count(note.start_beat(), bpm, SampleRate);

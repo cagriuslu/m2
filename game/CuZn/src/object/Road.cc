@@ -34,7 +34,7 @@ void remove_all_roads() {
 
 int link_count_of_road_character(m2::Character& chr) {
 	if (not is_road_character(chr)) {
-		throw M2ERROR("Character doesn't belong to canal or railroad");
+		throw M2_ERROR("Character doesn't belong to canal or railroad");
 	}
 
 	auto cities = to_city_cards_of_road_character(chr);
@@ -54,7 +54,7 @@ m2::void_expected init_road(m2::Object& obj, Connection connection) {
 	DEBUG_FN();
 
 	if (not is_connection(connection)) {
-		throw M2ERROR("Invalid connection");
+		throw M2_ERROR("Invalid connection");
 	}
 
 	// Add the city cards to the character

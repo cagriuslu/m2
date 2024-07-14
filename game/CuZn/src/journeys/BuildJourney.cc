@@ -25,7 +25,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_signal(const PositionOrCanc
 			switch (s.type()) {
 				case m2::FsmSignalType::EnterState: return handle_initial_enter_signal();
 				case m2::FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case BuildJourneyStep::EXPECT_LOCATION:
 			switch (s.type()) {
@@ -36,10 +36,10 @@ std::optional<BuildJourneyStep> BuildJourney::handle_signal(const PositionOrCanc
 					} else if (s.cancel()) {
 						return handle_location_cancel_signal();
 					}
-					throw M2ERROR("Unexpected signal");
+					throw M2_ERROR("Unexpected signal");
 				}
 				case m2::FsmSignalType::ExitState: return handle_location_exit_signal();
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case BuildJourneyStep::EXPECT_RESOURCE_SOURCE:
 			switch (s.type()) {
@@ -50,17 +50,17 @@ std::optional<BuildJourneyStep> BuildJourney::handle_signal(const PositionOrCanc
 					} else if (s.cancel()) {
 						return handle_resource_cancel_signal();
 					}
-					throw M2ERROR("Unexpected signal");
+					throw M2_ERROR("Unexpected signal");
 				}
 				case FsmSignalType::ExitState: return handle_resource_exit_signal();
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 			return std::nullopt;
 		case BuildJourneyStep::EXPECT_CONFIRMATION:
 			switch (s.type()) {
 				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
 				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 	}
 }
@@ -102,7 +102,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 		} else if (buildable_inds.size() == 1) {
 			_selected_industry = buildable_inds[0];
 		} else {
-			throw M2ERROR("Implementation error, more than 2 selectable industries in one location");
+			throw M2_ERROR("Implementation error, more than 2 selectable industries in one location");
 		}
 		_selected_location = *selected_loc;
 
@@ -153,7 +153,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 		} else if (unspecified_resource->first == IRON_CUBE_COUNT) {
 			M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick an iron source");
 		} else {
-			throw M2ERROR("Unexpected resource in resource list");
+			throw M2_ERROR("Unexpected resource in resource list");
 		}
 		return std::nullopt;
 	} else {
@@ -241,7 +241,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal()
 			} else if (resource_source.first == IRON_CUBE_COUNT) {
 				cc.mutable_build_action()->add_iron_sources(resource_source.second);
 			} else {
-				throw M2ERROR("Unexpected resource type");
+				throw M2_ERROR("Unexpected resource type");
 			}
 		}
 		M2_GAME.client_thread().queue_client_command(cc);

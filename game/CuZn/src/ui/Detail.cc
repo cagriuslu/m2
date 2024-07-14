@@ -522,7 +522,7 @@ m2::RGB generate_player_color(unsigned index) {
 		case 3:
 			return m2::RGB{0, 255, 0};
 		default:
-			throw M2ERROR("Invalid player index");
+			throw M2_ERROR("Invalid player index");
 	}
 }
 
@@ -537,6 +537,6 @@ std::string generate_player_name(unsigned index) {
 		case 3:
 			return "Green";
 		default:
-			throw M2ERROR("Invalid player index");
+			throw M2_ERROR("Invalid player index");
 	}
 }

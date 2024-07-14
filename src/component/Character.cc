@@ -9,7 +9,7 @@ static_assert(std::forward_iterator<m2::Pool<m2::CharacterVariant>::Iterator>);
 
 float m2::internal::ResourceAmount::set_max_amount(float max_amount) {
 	if (max_amount < 0.0f) {
-		throw M2ERROR("Negative max resource");
+		throw M2_ERROR("Negative max resource");
 	}
 	_max_amount = max_amount;
 	return set_amount(_amount);
@@ -286,7 +286,7 @@ void m2::full_character_iterator_incrementor(m2::Character::Iterator& it) {
 			}
 		}
 	} else {
-		throw M2FATAL("Invalid iterator filter");
+		throw M2_ERROR("Invalid iterator filter");
 	}
 	// Item not found
 	it.set(nullptr);

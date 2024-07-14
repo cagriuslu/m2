@@ -38,10 +38,10 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 	DEBUG_FN();
 
 	if (not is_city(city)) {
-		throw M2ERROR("Invalid city");
+		throw M2_ERROR("Invalid city");
 	}
 	if (not is_industry_tile(industry_tile)) {
-		throw M2ERROR("Invalid industry tile");
+		throw M2_ERROR("Invalid industry tile");
 	}
 
 	auto parent_id = obj.parent_id();

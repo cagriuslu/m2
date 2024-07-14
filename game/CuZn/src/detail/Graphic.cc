@@ -14,7 +14,7 @@ void draw_resources(m2::Character& chr) {
 	}
 	// Check if more than one resource is non-zero
 	if (1 < nonzero_resource_type_count) {
-		throw M2ERROR("Factory holds more than one type of resources");
+		throw M2_ERROR("Factory holds more than one type of resources");
 	}
 
 	const auto& pos = chr.parent().position;

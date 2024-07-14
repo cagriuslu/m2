@@ -358,7 +358,7 @@ const m2::pb::SpriteSheets& m2::sedit::State::sprite_sheets() const {
 		if (auto msg = pb::json_file_to_message<pb::SpriteSheets>(_path); msg) {
 			_sprite_sheets = *msg;
 		} else {
-			throw M2ERROR("File is not a valid m2::pb::SpriteSheets: " + _path.string());
+			throw M2_ERROR("File is not a valid m2::pb::SpriteSheets: " + _path.string());
 		}
 	} else {
 		_sprite_sheets = {};
@@ -374,7 +374,7 @@ const pb::Sprite& m2::sedit::State::selected_sprite() const {
 			}
 		}
 	}
-	throw M2ERROR("Sprite sheet does not contain selected sprite");
+	throw M2_ERROR("Sprite sheet does not contain selected sprite");
 }
 
 void m2::sedit::State::modify_selected_sprite(const std::function<void(pb::Sprite&)>& modifier) {
@@ -408,7 +408,7 @@ void m2::sedit::State::select() {
 			if (sprite.type() == _selected_sprite_type) {
 				auto image_loader = DynamicImageLoader::create(sprite_sheet.resource());
 				if (!image_loader) {
-					throw M2ERROR("Failed to load the image: " + sprite_sheet.resource());
+					throw M2_ERROR("Failed to load the image: " + sprite_sheet.resource());
 				}
 				_dynamic_image_loader.emplace(std::move(*image_loader));
 				M2_LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
@@ -457,11 +457,11 @@ void m2::sedit::modify_sprite_in_sheet(
 					}
 				}
 			}
-			throw M2ERROR("Sprite not found in SpriteSheets");
+			throw M2_ERROR("Sprite not found in SpriteSheets");
 		} else {
-			throw M2ERROR("File is not a valid m2::pb::SpriteSheets: " + path.string());
+			throw M2_ERROR("File is not a valid m2::pb::SpriteSheets: " + path.string());
 		}
 	} else {
-		throw M2ERROR("Can't modify nonexistent file");
+		throw M2_ERROR("Can't modify nonexistent file");
 	}
 }

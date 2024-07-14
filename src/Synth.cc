@@ -1,6 +1,6 @@
 #include <m2/Synth.h>
 #include <m2/Rational.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 
 size_t m2::synth::note_sample_count(const pb::Rational& beats, SynthBpm bpm, unsigned sample_rate) {
 	// SampleRate * beats * SecondsPerBeat

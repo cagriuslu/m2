@@ -1,5 +1,5 @@
 #include <m2/Shape.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/sdl/Detail.h>
 
 bool m2::ShapesSheet::ShapeKey::operator==(const ShapeKey &other) const {

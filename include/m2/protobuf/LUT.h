@@ -25,7 +25,7 @@ namespace m2::pb {
 		static LUT load(const std::filesystem::path& envelope_path, const ::google::protobuf::RepeatedPtrField<ProtoItemT>& (EnvelopeT::*list_accessor)() const, LoadedItemArgs... args) {
 			auto envelope = pb::json_file_to_message<EnvelopeT>(envelope_path);
 			if (!envelope) {
-				throw M2ERROR(envelope.error());
+				throw M2_ERROR(envelope.error());
 			}
 
 			using KeyT = decltype(std::declval<ProtoItemT>().type());
@@ -36,7 +36,7 @@ namespace m2::pb {
 				auto index = pb::enum_index(item.type());
 				// Check if the item is already loaded
 				if (is_loaded[index]) {
-					throw M2ERROR("Item has duplicate definition: " + pb::enum_name(item.type()));
+					throw M2_ERROR("Item has duplicate definition: " + pb::enum_name(item.type()));
 				}
 				// Load item
 				items[index] = LoadedItemT{item, args...};
@@ -46,7 +46,7 @@ namespace m2::pb {
 			// Check if every item is loaded
 			for (int i = 0; i < pb::enum_value_count<KeyT>(); ++i) {
 				if (!is_loaded[i]) {
-					throw M2ERROR("Item is not defined: " + pb::enum_name<KeyT>(i));
+					throw M2_ERROR("Item is not defined: " + pb::enum_name<KeyT>(i));
 				}
 			}
 

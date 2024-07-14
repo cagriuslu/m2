@@ -23,7 +23,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_signal(const PositionOr
 			switch (s.type()) {
 				case FsmSignalType::EnterState: return handle_initial_enter_signal();
 				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case NetworkJourneyStep::EXPECT_LOCATION:
 			switch (s.type()) {
@@ -34,30 +34,30 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_signal(const PositionOr
 					} else if (s.cancel()) {
 						return handle_location_cancel_signal();
 					}
-					throw M2ERROR("Unexpected signal");
+					throw M2_ERROR("Unexpected signal");
 				}
 				case FsmSignalType::ExitState: return handle_location_exit_signal();
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case NetworkJourneyStep::EXPECT_RESOURCE_SOURCE:
 			switch (s.type()) {
 				case FsmSignalType::EnterState:break;
 				case FsmSignalType::Custom:break;
 				case FsmSignalType::ExitState:break;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case NetworkJourneyStep::EXPECT_CONFIRMATION:
 			switch (s.type()) {
 				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
 				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 	}
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() {
 	if (player_card_count(M2_PLAYER.character()) == 0) {
-		throw M2ERROR("Player has no cards but NetworkJourney is triggered. The game should have ended instead");
+		throw M2_ERROR("Player has no cards but NetworkJourney is triggered. The game should have ended instead");
 	}
 	if (player_road_count(M2_PLAYER.character()) == 0) {
 		M2_LEVEL.display_message("You are out of road tiles.");
@@ -114,7 +114,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_si
 		} else if (_build_double_railroads && !_selected_connection_2) {
 			_selected_connection_2 = *selected_loc;
 		} else {
-			throw M2ERROR("Implementation error");
+			throw M2_ERROR("Implementation error");
 		}
 
 		// If selection done
@@ -157,7 +157,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 			} else if (resource_source.first == BEER_BARREL_COUNT) {
 				cc.mutable_network_action()->set_beer_source(resource_source.second);
 			} else {
-				throw M2ERROR("Unexpected resource type");
+				throw M2_ERROR("Unexpected resource type");
 			}
 		}
 		M2_GAME.client_thread().queue_client_command(cc);

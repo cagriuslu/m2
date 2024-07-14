@@ -20,10 +20,10 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_signal(const Po
 			if (auto world_position = s.world_position(); world_position) {
 				return handle_location_mouse_click_signal(*world_position);
 			}
-			throw M2ERROR("Unexpected signal");
+			throw M2_ERROR("Unexpected signal");
 		}
 		case m2::FsmSignalType::ExitState: return handle_location_exit_signal();
-		default: throw M2ERROR("Unexpected signal");
+		default: throw M2_ERROR("Unexpected signal");
 	}
 }
 

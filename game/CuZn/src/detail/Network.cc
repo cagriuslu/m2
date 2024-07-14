@@ -34,7 +34,7 @@ m2::expected<ItemType> can_player_build_connection(m2::Character& player, ItemTy
 			return m2::make_unexpected("The location has no railroad");
 		}
 	} else {
-		throw M2ERROR("Invalid era");
+		throw M2_ERROR("Invalid era");
 	}
 
 	// Check if this location is part of the player's network, or they don't have a network
@@ -79,7 +79,7 @@ namespace {
 
 std::set<Location> location_network_from_industry_city(IndustryCity city) {
 	if (not is_industry_city(city)) {
-		throw M2ERROR("Invalid industry city");
+		throw M2_ERROR("Invalid industry city");
 	}
 
 	std::set<Location> locations;

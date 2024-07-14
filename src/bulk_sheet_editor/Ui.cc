@@ -41,7 +41,7 @@ const Blueprint ui::bulk_sheet_editor_right_hud = {
 		                std::get<bsedit::State>(M2_LEVEL.type_state).select_sprite(selected_sprite_type);
 		                return make_continue_action();
 	                }
-	                throw M2FATAL("Implementation error: Unknown sprite type ended up in sprite selection list");
+	                throw M2_ERROR("Implementation error: Unknown sprite type ended up in sprite selection list");
                 }
 			}
 		},

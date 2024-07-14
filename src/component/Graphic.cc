@@ -131,7 +131,7 @@ std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(co
 		const auto vertical_unit_vector = VecF{camera_sin() / m2::SQROOT_2, camera_sin() / m2::SQROOT_2, -camera_cos()};
 		vertical_projection = focus_to_projection->dot(vertical_unit_vector);
 	} else {
-		throw M2FATAL("Invalid ProjectionType");
+		throw M2_ERROR("Invalid ProjectionType");
 	}
 	return m2::VecF{horizontal_projection, vertical_projection};
 }

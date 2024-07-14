@@ -120,7 +120,7 @@ void m2::sdl::set_pixel(SDL_Surface* surface, int x, int y, uint32_t pixel) {
 }
 std::optional<uint32_t> m2::sdl::get_pixel(const SDL_Surface* surface, int x, int y) {
 	if (surface->format->format != SDL_PIXELFORMAT_BGRA32) {
-		throw M2FATAL("get_pixel is called with a surface with an unsupported pixel format");
+		throw M2_ERROR("get_pixel is called with a surface with an unsupported pixel format");
 	}
 	if (x < 0 || y < 0) {
 		return std::nullopt;

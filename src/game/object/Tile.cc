@@ -22,7 +22,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const
 			    sprite.background_collider_origin_to_origin_vec_m().y);
 			bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 		} else if (sprite.background_collider_type() == box2d::ColliderType::CIRCLE) {
-			throw M2FATAL("Circular tile background_collider unimplemented");
+			throw M2_ERROR("Circular tile background_collider unimplemented");
 		}
 
         // Use foreground collider as a secondary background collider
@@ -33,7 +33,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile(BackgroundLayer layer, const
             bp.mutable_foreground_fixture()->mutable_rect()->mutable_center_offset()->set_y(sprite.foreground_collider_origin_to_origin_vec_m().y);
             bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
         } else if (sprite.foreground_collider_type() == box2d::ColliderType::CIRCLE) {
-            throw M2FATAL("Circular tile foreground_collider unimplemented");
+            throw M2_ERROR("Circular tile foreground_collider unimplemented");
         }
 
         auto& phy = it->add_physique();

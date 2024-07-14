@@ -49,7 +49,7 @@ std::optional<std::pair<VecF, VecF>> SelectionResult::selection_position_m(const
 		} else if (rounding_type == RoundingType::CONTINUOUS) {
 			return position;
 		} else {
-			throw M2FATAL("Implementation error");
+			throw M2_ERROR("Implementation error");
 		}
 	};
 

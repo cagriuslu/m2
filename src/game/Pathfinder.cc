@@ -149,7 +149,7 @@ m2::Path m2::Pathfinder::find_grid_path(const VecI& from, const VecI& to, float 
 
 m2::Path m2::Pathfinder::smoothen_path(const Path& reverse_path, float max_distance_m) {
 	if (reverse_path.size() < 2) {
-		throw M2ERROR("Path contains less than two points");
+		throw M2_ERROR("Path contains less than two points");
 	}
 
 	Path smooth_path{reverse_path.front()}; // insert `to`

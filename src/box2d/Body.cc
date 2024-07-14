@@ -55,7 +55,7 @@ void m2::box2d::BodyDeleter::operator()(b2Body* body) {
 
 m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, m2::VecF position, const pb::BodyBlueprint& blueprint) {
 	if (M2_LEVEL.world->IsLocked()) {
-		throw M2ERROR("b2Body is created during physics step");
+		throw M2_ERROR("b2Body is created during physics step");
 	}
 
 	b2BodyDef bodyDef;
@@ -67,7 +67,7 @@ m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, 
 	b2Body* body = world.CreateBody(&bodyDef);
 	if (!body) {
 		// Most probably this function is called during physics step
-		throw M2ERROR("CreateBody returned null");
+		throw M2_ERROR("CreateBody returned null");
 	}
 
 	auto fixture_creator = [&body](const pb::Fixture& fixture_blueprint) {

@@ -58,7 +58,7 @@ Action TextSelection::on_event(Events& events) {
 		}
 	} else if (line_count == 1) {
 		// Dropdown
-		throw M2ERROR("Not yet implemented");
+		throw M2_ERROR("Not yet implemented");
 	} else {
 		// Scrollable selection
 		auto scroll_bar_rect = rect_px.trim_left(rect_px.w - rect_px.h / I(text_list_selection_blueprint().line_count));
@@ -147,7 +147,7 @@ void TextSelection::on_draw() {
 		draw_border(dec_button_rect, blueprint->border_width_px);
 	} else if (line_count == 1) {
 		// Dropdown
-		throw M2ERROR("Not yet implemented");
+		throw M2_ERROR("Not yet implemented");
 	} else {
 		// Scrollable selection
 		for (auto i = 0; i < text_list_selection_blueprint().line_count; ++i) {

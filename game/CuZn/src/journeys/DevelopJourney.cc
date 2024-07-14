@@ -21,7 +21,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const PositionOr
 			switch (s.type()) {
 				case FsmSignalType::EnterState: return handle_initial_enter_signal();
 				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 			break;
 		case DevelopJourneyStep::EXPECT_RESOURCE_SOURCE:
@@ -33,23 +33,23 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const PositionOr
 					} else if (s.cancel()) {
 						return handle_resource_cancel_signal();
 					}
-					throw M2ERROR("Unexpected signal");
+					throw M2_ERROR("Unexpected signal");
 				}
 				case FsmSignalType::ExitState: return handle_resource_exit_signal();
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case DevelopJourneyStep::EXPECT_CONFIRMATION:
 			switch (s.type()) {
 				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
 				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 	}
 }
 
 std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() {
 	if (player_card_count(M2_PLAYER.character()) == 0) {
-		throw M2ERROR("Player has no cards but DevelopJourney is triggered. The game should have ended instead");
+		throw M2_ERROR("Player has no cards but DevelopJourney is triggered. The game should have ended instead");
 	}
 	if (player_tile_count(M2_PLAYER.character()) == 0) {
 		M2_LEVEL.display_message("You are out of factory tiles.");
@@ -127,7 +127,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_si
 					_reserved_source_2 = factory;
 					return DevelopJourneyStep::EXPECT_CONFIRMATION;
 				} else {
-					throw M2ERROR("Invalid state");
+					throw M2_ERROR("Invalid state");
 				}
 			} else {
 				LOG_DEBUG("Industry doesn't have the required resource");
@@ -149,7 +149,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_si
 			_iron_source_2 = *merchant_loc;
 			return DevelopJourneyStep::EXPECT_CONFIRMATION;
 		} else {
-			throw M2ERROR("Invalid state");
+			throw M2_ERROR("Invalid state");
 		}
 	}
 	return std::nullopt;

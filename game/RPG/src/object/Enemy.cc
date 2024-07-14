@@ -31,7 +31,7 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 			break;
 		case pb::Ai::kPatrol:
 		default:
-			throw M2ERROR("Not yet implemented");
+			throw M2_ERROR("Not yet implemented");
 	}
 }
 
@@ -213,9 +213,9 @@ void rpg::Enemy::attack_if_close(m2::Object& obj, const pb::Ai& ai) {
 					break;
 				}
 				case pb::CAPABILITY_EXPLOSIVE:
-					throw M2ERROR("Chaser explosive weapon not implemented");
+					throw M2_ERROR("Chaser explosive weapon not implemented");
 				case pb::CAPABILITY_KAMIKAZE:
-					throw M2ERROR("Chaser kamikaze not implemented");
+					throw M2_ERROR("Chaser kamikaze not implemented");
 				default:
 					break;
 			}

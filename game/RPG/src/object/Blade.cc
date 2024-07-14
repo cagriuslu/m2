@@ -11,10 +11,10 @@ using namespace m2g::pb;
 m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, const m2::Item &melee_weapon, bool is_friend) {
 	// Check if weapon has necessary attributes
 	if (!melee_weapon.has_attribute(ATTRIBUTE_AVERAGE_DAMAGE)) {
-		throw M2ERROR("Melee weapon has no average damage");
+		throw M2_ERROR("Melee weapon has no average damage");
 	}
 	if (!melee_weapon.has_attribute(ATTRIBUTE_AVERAGE_TTL)) {
-		throw M2ERROR("Melee weapon has no average TTL");
+		throw M2_ERROR("Melee weapon has no average TTL");
 	}
 	float average_damage = melee_weapon.get_attribute(ATTRIBUTE_AVERAGE_DAMAGE);
 	float damage_accuracy = melee_weapon.try_get_attribute(ATTRIBUTE_DAMAGE_ACCURACY, 1.0f);

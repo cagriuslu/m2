@@ -23,7 +23,7 @@ void m2::draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant dr
 	auto src_rect_sdl = static_cast<SDL_Rect>(src_rect);
 	auto original_rotation = sprite.original_rotation_radians();
 	if (SDL_RenderCopyEx(M2_GAME.renderer, sprite.texture(draw_variant), &src_rect_sdl, &dst_rect, m2::to_degrees(angle - original_rotation), &center_point, SDL_FLIP_NONE)) {
-		throw M2ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
+		throw M2_ERROR("SDL error while drawing: " + std::string(SDL_GetError()));
 	}
 }
 

@@ -97,7 +97,7 @@ int m2::network::ClientThread::turn_holder_index() {
 		if (M2_GAME.is_server()) {
 			return M2_GAME.server_thread().turn_holder_index();
 		} else {
-			throw M2ERROR("Turn queried before game begins");
+			throw M2_ERROR("Turn queried before game begins");
 		}
 	}
 }
@@ -502,7 +502,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 							client_thread->_unprocessed_server_command = std::move(*expect_message);
 						}
 					} else {
-						throw M2ERROR("Unsupported message");
+						throw M2_ERROR("Unsupported message");
 					}
 				}
 			}

@@ -11,10 +11,10 @@ NestedUi::NestedUi(State* parent, const WidgetBlueprint *blueprint) : Widget(par
 	const auto& nested_blueprint = std::get<NestedUiBlueprint>(blueprint->variant);
 
 	if (nested_blueprint.inner_w == 0 || blueprint->w < nested_blueprint.inner_w) {
-		throw M2ERROR("Unexpected inner width");
+		throw M2_ERROR("Unexpected inner width");
 	}
 	if (nested_blueprint.inner_h == 0 || blueprint->h < nested_blueprint.inner_h) {
-		throw M2ERROR("Unexpected inner height");
+		throw M2_ERROR("Unexpected inner height");
 	}
 
 	_ui = std::make_unique<State>(nested_blueprint.ui);

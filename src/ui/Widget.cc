@@ -29,10 +29,10 @@ m2::RectI m2::ui::Widget::calculate_text_rect(
 	// Validate font dimensions (calculations depend on it)
 	if (texture_dimensions.y != 280) {
 		// Current font supposed to have been rendered with 280px
-		throw M2FATAL("Unexpected font height");
+		throw M2_ERROR("Unexpected font height");
 	}
 	if ((texture_dimensions.x % 112) != 0) {
-		throw M2FATAL("Unexpected font aspect ratio");
+		throw M2_ERROR("Unexpected font aspect ratio");
 	}
 
 	// Apply padding to container

@@ -103,7 +103,7 @@ void m2::network::ServerThread::send_server_update() {
 					const auto* item_ptr = item_it.get();
 					const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);
 					if (!named_item_ptr) {
-						throw M2FATAL("ServerUpdate does not support unnamed items");
+						throw M2_ERROR("ServerUpdate does not support unnamed items");
 					}
 					object_descriptor->add_named_items(named_item_ptr->type());
 				}
@@ -145,7 +145,7 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 	LOG_INFO("Sending server command to index", receiver_index);
 
 	if (receiver_index < 0 || client_count() <= receiver_index) {
-		throw M2ERROR("Client index not found");
+		throw M2_ERROR("Client index not found");
 	}
 
 	pb::NetworkMessage message;

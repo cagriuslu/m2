@@ -171,7 +171,7 @@ bool location_has_industry(IndustryLocation location, Industry industry) {
 
 City city_of_location(Location location) {
 	if (not is_location(location)) {
-		throw M2ERROR("Sprite is not a location");
+		throw M2_ERROR("Sprite is not a location");
 	}
 
 	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
@@ -179,7 +179,7 @@ City city_of_location(Location location) {
 			return named_item;
 		}
 	}
-	throw M2ERROR("Industry does not belong to a city");
+	throw M2_ERROR("Industry does not belong to a city");
 }
 
 Industry industry_of_industry_tile(IndustryTile industry_tile) {
@@ -203,7 +203,7 @@ Industry industry_of_industry_tile_category(IndustryTileCategory category) {
 		case ITEM_CATEGORY_MANUFACTURED_GOODS_TILE:
 			return MANUFACTURED_GOODS_CARD;
 		default:
-			throw M2ERROR("ItemCategory is not an industry item category");
+			throw M2_ERROR("ItemCategory is not an industry item category");
 	}
 }
 
@@ -222,7 +222,7 @@ IndustryTileCategory industry_tile_category_of_industry(Industry industry_card) 
 		case MANUFACTURED_GOODS_CARD:
 			return ITEM_CATEGORY_MANUFACTURED_GOODS_TILE;
 		default:
-			throw M2ERROR("Item is not an industry card");
+			throw M2_ERROR("Item is not an industry card");
 	}
 }
 
@@ -246,13 +246,13 @@ IndustrySprite industry_sprite_of_industry(Industry industry) {
 		case MANUFACTURED_GOODS_CARD:
 			return SPRITE_MANUFACTURED_GOODS;
 		default:
-			throw M2ERROR("Invalid industry card");
+			throw M2_ERROR("Invalid industry card");
 	}
 }
 
 MerchantLocation merchant_location_of_merchant_city(MerchantCity city) {
 	if (not is_merchant_city(city)) {
-		throw M2ERROR("Invalid merchant city");
+		throw M2_ERROR("Invalid merchant city");
 	}
 
 	std::optional<MerchantLocation> location;
@@ -267,14 +267,14 @@ MerchantLocation merchant_location_of_merchant_city(MerchantCity city) {
 		return true;
 	});
 	if (not location) {
-		throw M2ERROR("Unable to find location of merchant city");
+		throw M2_ERROR("Unable to find location of merchant city");
 	}
 	return *location;
 }
 
 std::vector<IndustryLocation> industry_locations_in_city(City city_card) {
 	if (not is_city(city_card)) {
-		throw M2ERROR("Card does not belong to a city");
+		throw M2_ERROR("Card does not belong to a city");
 	}
 
 	std::vector<m2g::pb::SpriteType> industry_locations;
@@ -317,7 +317,7 @@ std::vector<City> cities_from_connection(Connection connection) {
 
 std::vector<Industry> industries_on_location(IndustryLocation location) {
 	if (not is_industry_location(location)) {
-		throw M2ERROR("Sprite is not an industry location");
+		throw M2_ERROR("Sprite is not an industry location");
 	}
 
 	std::vector<m2g::pb::ItemType> industries;
@@ -339,7 +339,7 @@ m2::VecF connection_sprite_world_offset(m2g::pb::SpriteType original_type) {
 	} else if (original_type == pb::CANAL_OR_RAILROAD_BACKGROUND_4) {
 		return {0.5f, 0.5f};
 	} else {
-		throw M2ERROR("Invalid connection sprite");
+		throw M2_ERROR("Invalid connection sprite");
 	}
 }
 
@@ -364,12 +364,12 @@ std::optional<MerchantLocation> merchant_location_on_position(const m2::VecF& wo
 
 m2::VecF position_of_industry_location(IndustryLocation industry_location) {
 	if (not is_industry_location(industry_location)) {
-		throw M2ERROR("Invalid industry location");
+		throw M2_ERROR("Invalid industry location");
 	}
 	if (auto it = M2G_PROXY.industry_positions.find(industry_location); it != M2G_PROXY.industry_positions.end()) {
 		return it->second.first;
 	} else {
-		throw M2ERROR("Industry location not found in position map");
+		throw M2_ERROR("Industry location not found in position map");
 	}
 }
 
@@ -385,11 +385,11 @@ std::optional<Connection> connection_on_position(const m2::VecF& world_position)
 
 m2::VecF position_of_connection(Connection connection) {
 	if (not is_connection(connection)) {
-		throw M2ERROR("Invalid connection");
+		throw M2_ERROR("Invalid connection");
 	}
 	if (auto it = M2G_PROXY.connection_positions.find(connection); it != M2G_PROXY.connection_positions.end()) {
 		return it->second.first;
 	} else {
-		throw M2ERROR("Connection not found in position map");
+		throw M2_ERROR("Connection not found in position map");
 	}
 }

@@ -72,7 +72,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 		auto merchant_licenses = prepare_merchant_license_list(client_count);
 		auto active_merchant_locs = active_merchant_locations(client_count);
 		if (merchant_licenses.size() != active_merchant_locs.size()) {
-			throw M2ERROR("Merchant count mismatch");
+			throw M2_ERROR("Merchant count mismatch");
 		}
 
 		for (const auto& merchant_location : active_merchant_locs) {
@@ -196,7 +196,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			} else if (is_merchant_location(client_command.develop_action().iron_sources_1())) {
 				// TODO
 			} else {
-				throw M2ERROR("Invalid iron source");
+				throw M2_ERROR("Invalid iron source");
 			}
 			// TODO remove duplication
 			if (is_industry_location(client_command.develop_action().iron_sources_2())) {
@@ -204,7 +204,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			} else if (is_merchant_location(client_command.develop_action().iron_sources_2())) {
 				// TODO
 			} else {
-				throw M2ERROR("Invalid iron source");
+				throw M2_ERROR("Invalid iron source");
 			}
 
 		} else if (client_command.has_loan_action()) {
@@ -386,7 +386,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 		auto money_to_be_paid = server_command.liquidate_assets_for_loan();
 		M2G_PROXY.user_journey.emplace(LiquidationJourney{money_to_be_paid});
 	} else {
-		throw M2ERROR("Unsupported server command");
+		throw M2_ERROR("Unsupported server command");
 	}
 }
 
@@ -411,7 +411,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	else if (is_industry_location(sprite_type)) {
 		// Verify that ppm of the industry tiles are double of the sprite sheet
 		if (M2_GAME.get_sprite(sprite_type).ppm() != M2_GAME.get_sprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
-			throw M2ERROR("Sprite ppm mismatch");
+			throw M2_ERROR("Sprite ppm mismatch");
 		}
 		// Object position has {0.5f, 0.5f} offset
 		auto industry_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
@@ -475,7 +475,7 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 	if (it != multi_player_object_ids.end()) {
 		return std::distance(multi_player_object_ids.begin(), it);
 	} else {
-		throw M2ERROR("Invalid player ID");
+		throw M2_ERROR("Invalid player ID");
 	}
 }
 
@@ -544,7 +544,7 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 
 	// Determine player orders
 	if (not _waiting_players.empty()) {
-		throw M2ERROR("Cannot determine player orders while there are players still waiting their turns");
+		throw M2_ERROR("Cannot determine player orders while there are players still waiting their turns");
 	}
 	while (not _played_players.empty()) {
 		// Find the first player who spent the least amount of money

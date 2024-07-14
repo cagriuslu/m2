@@ -3,7 +3,7 @@
 
 #include <Level.pb.h>
 #include <SDL2/SDL_image.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 #include <m2/Object.h>
 #include <m2/Sprite.h>
 #include <m2/String.h>
@@ -23,7 +23,7 @@ m2::Game* m2::Game::_instance;
 void m2::Game::create_instance() {
 	LOG_DEBUG("Creating Game instance...");
 	if (_instance) {
-		throw M2FATAL("Cannot create multiple instance of Game");
+		throw M2_ERROR("Cannot create multiple instance of Game");
 	}
 	_instance = new Game();
 	LOG_DEBUG("Game instance created");
@@ -53,7 +53,7 @@ m2::Game::Game() {
 	if ((window = SDL_CreateWindow(
 		"m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _dims.window.w, _dims.window.h,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
-		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_SetWindowMinimumSize(window, 712, 400);
 	SDL_StopTextInput();  // Text input begins activated (sometimes)
@@ -61,13 +61,13 @@ m2::Game::Game() {
 	cursor = SdlUtils_CreateCursor();
 	SDL_SetCursor(cursor);
 	if ((pixel_format = SDL_GetWindowPixelFormat(window)) == SDL_PIXELFORMAT_UNKNOWN) {
-		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 
 	// SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Unset: pixelated sprites, "1": filtered sprites
 	if ((renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE)) ==
 		nullptr) {  // TODO: SDL_RENDERER_PRESENTVSYNC
-		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(renderer, &info);
@@ -75,17 +75,17 @@ m2::Game::Game() {
 
 	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
 	if (lightSurface == nullptr) {
-		throw M2FATAL("SDL error: " + std::string{IMG_GetError()});
+		throw M2_ERROR("SDL error: " + std::string{IMG_GetError()});
 	}
 	if ((light_texture = SDL_CreateTextureFromSurface(renderer, lightSurface)) == nullptr) {
-		throw M2FATAL("SDL error: " + std::string{SDL_GetError()});
+		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_FreeSurface(lightSurface);
 	SDL_SetTextureBlendMode(light_texture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 	if ((font = TTF_OpenFont("resource/fonts/VT323/VT323-Regular.ttf", 280)) == nullptr) {
-		throw M2FATAL("SDL error: " + std::string{TTF_GetError()});
+		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 
 	audio_manager.emplace();
@@ -100,7 +100,7 @@ m2::Game::Game() {
 
 	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(resource_dir / "SpriteSheets.json");
 	if (!sheets_pb) {
-		throw M2ERROR(sheets_pb.error());
+		throw M2_ERROR(sheets_pb.error());
 	}
 	sprite_sheets = load_sprite_sheets(*sheets_pb, renderer, _proxy.lightning);
 	_sprites =

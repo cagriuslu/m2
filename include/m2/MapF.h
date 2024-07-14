@@ -195,13 +195,13 @@ namespace m2 {
 			if (auto* t = get(id)) {
 				return *t;
 			}
-			throw M2ERROR("Out of bounds");
+			throw M2_ERROR("Out of bounds");
 		}
 		const T& operator[](Id id) const {
 			if (const auto* t = get(id)) {
 				return *t;
 			}
-			throw M2ERROR("Out of bounds");
+			throw M2_ERROR("Out of bounds");
 		}
 		[[nodiscard]] const RectF& area() const { return _root_quadrant.area(); }
 		//</editor-fold>
@@ -274,7 +274,7 @@ namespace m2 {
 					return;
 				}
 			}
-			throw M2FATAL("Attempt to erase item from wrong quadrant");
+			throw M2_ERROR("Attempt to erase item from wrong quadrant");
 		}
 		void move(Id id, const RectF& new_area) {
 			auto* pool_item = Pool<detail::MapPoolItemF<T>,Capacity>::get(id);

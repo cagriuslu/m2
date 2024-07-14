@@ -1,5 +1,5 @@
 #include <m2/DynamicTexture.h>
-#include <m2/Exception.h>
+#include <m2/Error.h>
 
 namespace {
 	constexpr int default_texture_width = 512;
@@ -8,7 +8,7 @@ namespace {
 m2::DynamicTexture::DynamicTexture(SDL_Renderer *renderer) : _renderer(renderer) {
 	auto* texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_BGRA32, SDL_TEXTUREACCESS_TARGET, default_texture_width, default_texture_width);
 	if (!texture) {
-		throw M2FATAL("Unable to create texture: " + std::string{SDL_GetError()});
+		throw M2_ERROR("Unable to create texture: " + std::string{SDL_GetError()});
 	}
 	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND); // Allow transparent pixels
 	// Clear the texture with transparent pixels
@@ -30,7 +30,7 @@ SDL_Texture* m2::DynamicTexture::texture() const {
 SDL_Rect m2::DynamicTexture::alloc(int w, int h) {
 	// Check if the width is enough
 	if (default_texture_width < w) {
-		throw M2ERROR("DynamicTexture width would exceed");
+		throw M2_ERROR("DynamicTexture width would exceed");
 	}
 
 	// Resize texture if necessary
@@ -39,14 +39,14 @@ SDL_Rect m2::DynamicTexture::alloc(int w, int h) {
 	if (texture_height < _h + h) {
 		auto* new_texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_BGRA32, SDL_TEXTUREACCESS_TARGET, default_texture_width, texture_height * 3 / 2);
 		if (!new_texture) {
-			throw M2FATAL("Unable to recreate texture: " + std::string{SDL_GetError()});
+			throw M2_ERROR("Unable to recreate texture: " + std::string{SDL_GetError()});
 		}
 		if (SDL_SetRenderTarget(_renderer, new_texture)) {
-			throw M2FATAL("Unable to set render target: " + std::string{SDL_GetError()});
+			throw M2_ERROR("Unable to set render target: " + std::string{SDL_GetError()});
 		}
 		SDL_Rect dest_rect{0, 0, default_texture_width, texture_height};
 		if (SDL_RenderCopy(_renderer, _texture.get(), nullptr, &dest_rect)) {
-			throw M2FATAL("Unable to copy texture: " + std::string{SDL_GetError()});
+			throw M2_ERROR("Unable to copy texture: " + std::string{SDL_GetError()});
 		}
 		_texture.reset(new_texture);
 	}

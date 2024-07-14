@@ -22,7 +22,7 @@ std::optional<SellJourneyStep> SellJourney::handle_signal(const PositionOrCancel
 			switch (s.type()) {
 				case m2::FsmSignalType::EnterState: return handle_initial_enter_signal();
 				case m2::FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case SellJourneyStep::EXPECT_LOCATION:
 			switch (s.type()) {
@@ -33,10 +33,10 @@ std::optional<SellJourneyStep> SellJourney::handle_signal(const PositionOrCancel
 					} else if (s.cancel()) {
 						return handle_location_cancel_signal();
 					}
-					throw M2ERROR("Unexpected signal");
+					throw M2_ERROR("Unexpected signal");
 				}
 				case m2::FsmSignalType::ExitState: return handle_location_exit_signal();
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 		case SellJourneyStep::EXPECT_RESOURCE_SOURCE:
 			switch (s.type()) {
@@ -47,17 +47,17 @@ std::optional<SellJourneyStep> SellJourney::handle_signal(const PositionOrCancel
 					} else if (s.cancel()) {
 						return handle_resource_cancel_signal();
 					}
-					throw M2ERROR("Unexpected signal");
+					throw M2_ERROR("Unexpected signal");
 				}
 				case FsmSignalType::ExitState: return handle_resource_exit_signal();
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 			return std::nullopt;
 		case SellJourneyStep::EXPECT_CONFIRMATION:
 			switch (s.type()) {
 				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
 				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2ERROR("Unexpected signal");
+				default: throw M2_ERROR("Unexpected signal");
 			}
 	}
 }

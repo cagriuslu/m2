@@ -1,6 +1,6 @@
 #pragma once
 #include "protobuf/Detail.h"
-#include "Exception.h"
+#include "Error.h"
 #include "Meta.h"
 #include <google/protobuf/message.h>
 #include <string>
@@ -45,7 +45,7 @@ namespace m2 {
 		/// during construction.
 		void init(StateEnum initial_state) {
 			if (_state) {
-				throw M2FATAL("FSM already initialized");
+				throw M2_ERROR("FSM already initialized");
 			}
 			_state = initial_state;
 			signal(SignalT{FsmSignalType::EnterState});
@@ -62,7 +62,7 @@ namespace m2 {
 		/// Arm the alarm
 		void arm(float duration_s) {
 			if (duration_s < 0.0f) {
-				throw M2ERROR("Invalid alarm duration");
+				throw M2_ERROR("Invalid alarm duration");
 			}
 			_alarm = duration_s;
 		}
