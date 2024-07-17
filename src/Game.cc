@@ -588,6 +588,14 @@ void m2::Game::recalculate_directional_audio() {
 	}
 }
 
+void m2::Game::enable_dimming_with_exceptions(std::set<ObjectId> exceptions) {
+	_dimming_exceptions = std::move(exceptions);
+}
+
+void m2::Game::disable_dimming_with_exceptions() {
+	_dimming_exceptions.reset();
+}
+
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
 	_level->deferred_actions.push_back(action);
 }

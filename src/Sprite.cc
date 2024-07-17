@@ -298,9 +298,7 @@ m2::Sprite::Sprite(TTF_Font* font, SDL_Renderer* renderer, const pb::TextLabel& 
 SDL_Texture* m2::Sprite::texture(DrawVariant draw_variant) const {
 	if (_font_texture) {
 		return _font_texture->texture();
-	} else if (
-	    std::holds_alternative<IsForegroundCompanion>(draw_variant) &&
-	    not std::get<IsForegroundCompanion>(draw_variant)) {
+	} else if (std::holds_alternative<IsForegroundCompanion>(draw_variant) && not std::get<IsForegroundCompanion>(draw_variant)) {
 		return sprite_sheet().texture();
 	} else {
 		return effects_texture();

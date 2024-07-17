@@ -160,12 +160,26 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 		return;
 	}
 
+	// Dim the sprite if dimming mode is enabled
+	bool dim = false;
+	if (const auto& dimming_exceptions = M2_GAME.dimming_exceptions()) {
+		if (not dimming_exceptions->contains(gfx.parent_id())) {
+			dim = true;
+			SDL_SetTextureColorMod(gfx.sprite->texture(gfx.draw_variant), 85, 85, 85);
+		}
+	}
+
 	if (is_projection_type_perspective(M2_LEVEL.projection_type())) {
 		// Check if foreground or background
 		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
 		draw_fake_3d(gfx.parent().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle, is_foreground, gfx.z);
 	} else {
 		draw_real_2d(gfx.parent().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle);
+	}
+
+	// If dimming was active, we need to un-dim.
+	if (dim) {
+		SDL_SetTextureColorMod(gfx.sprite->texture(gfx.draw_variant), 255, 255, 255);
 	}
 }
 
