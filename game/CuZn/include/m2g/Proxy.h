@@ -42,7 +42,7 @@ namespace m2g {
 		std::vector<m2::RGB> player_colors;
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> merchant_positions;
 		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
-		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> industry_positions; // Exact position and cell rectangle
+		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> industry_positions; // Exact position, cell rectangle, tile object ID
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
 		m2::Graph connection_graph; // Nodes are City (m2g::pb::ItemType)
 
@@ -56,6 +56,7 @@ namespace m2g {
 		[[nodiscard]] bool is_first_turn() const;
 		[[nodiscard]] bool is_canal_era() const;
 		[[nodiscard]] bool is_railroad_era() const;
+		[[nodiscard]] std::set<m2::ObjectId> object_ids_of_industry_location_bg_tiles(const std::set<IndustryLocation>&) const;
 
 		// Modifiers
 		void enable_action_buttons();

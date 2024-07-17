@@ -413,7 +413,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		}
 		// Object position has {0.5f, 0.5f} offset
 		auto industry_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
-		industry_positions[sprite_type] = std::make_pair(obj.position, industry_cell_rect);
+		industry_positions[sprite_type] = std::make_tuple(obj.position, industry_cell_rect, obj.id());
 		LOG_DEBUG("Industry position", m2g::pb::SpriteType_Name(sprite_type), industry_cell_rect);
 	}
 	// Store the positions of the connection locations
@@ -505,6 +505,14 @@ bool m2g::Proxy::is_canal_era() const {
 
 bool m2g::Proxy::is_railroad_era() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
+}
+
+std::set<m2::ObjectId> m2g::Proxy::object_ids_of_industry_location_bg_tiles(const std::set<IndustryLocation>& industry_locations) const {
+	std::set<m2::ObjectId> ids;
+	for (const auto& industry_location : industry_locations) {
+		ids.insert(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[industry_location]));
+	}
+	return ids;
 }
 
 namespace {

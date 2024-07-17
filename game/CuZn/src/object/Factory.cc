@@ -10,7 +10,7 @@ m2::Object* find_factory_at_location(pb::SpriteType location) {
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
 		| std::views::transform(m2::to_parent_of_component)
-		| std::views::filter(m2::generate_is_object_in_area_filter(M2G_PROXY.industry_positions[location].second));
+		| std::views::filter(m2::generate_is_object_in_area_filter(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
 		return &*factory_it;
 	}

@@ -52,6 +52,8 @@ MerchantLocation merchant_location_of_merchant_city(MerchantCity city);
 
 // Generators
 
+std::set<IndustryLocation> all_industry_locations();
+
 /// Returns the industry locations in that given city
 std::vector<IndustryLocation> industry_locations_in_city(City city_card);
 

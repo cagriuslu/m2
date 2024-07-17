@@ -39,6 +39,13 @@ constexpr auto to_industry_tile_of_factory_character = [](m2::Character& chr) {
 	auto industry_tile_category = industry_tile_category_of_industry(industry);
 	return chr.find_items(industry_tile_category)->type();
 };
+/// Given a factory character, return the industry location SpriteType
+constexpr auto to_industry_location_of_factory_character = [](m2::Character& chr) -> IndustryLocation {
+	if (not is_factory_character(chr)) {
+		throw M2_ERROR("Character doesn't belong to a factory");
+	}
+	return *industry_location_on_position(chr.parent().position);
+};
 
 // Filter
 constexpr auto is_factory_level_1 = [](m2::Character& chr) {

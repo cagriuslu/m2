@@ -272,6 +272,16 @@ MerchantLocation merchant_location_of_merchant_city(MerchantCity city) {
 	return *location;
 }
 
+std::set<IndustryLocation> all_industry_locations() {
+	std::set<IndustryLocation> industry_locations;
+	for (auto location = BELPER_COTTON_MILL_MANUFACTURED_GOODS;
+		location <= STANDALONE_BREWERY_2;
+		location = static_cast<IndustryLocation>(m2::I(location) + 1)) {
+		industry_locations.insert(location);
+	}
+	return industry_locations;;
+}
+
 std::vector<IndustryLocation> industry_locations_in_city(City city_card) {
 	if (not is_city(city_card)) {
 		throw M2_ERROR("Card does not belong to a city");
@@ -345,7 +355,7 @@ m2::VecF connection_sprite_world_offset(m2g::pb::SpriteType original_type) {
 
 std::optional<IndustryLocation> industry_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.industry_positions.begin(), M2G_PROXY.industry_positions.end(),
-			[&](const auto& pos_and_type) { return pos_and_type.second.second.contains(world_position); });
+			[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).contains(world_position); });
 	if (it != M2G_PROXY.industry_positions.end()) {
 		return it->first;
 	} else {
@@ -367,7 +377,7 @@ m2::VecF position_of_industry_location(IndustryLocation industry_location) {
 		throw M2_ERROR("Invalid industry location");
 	}
 	if (auto it = M2G_PROXY.industry_positions.find(industry_location); it != M2G_PROXY.industry_positions.end()) {
-		return it->second.first;
+		return std::get<m2::VecF>(it->second);
 	} else {
 		throw M2_ERROR("Industry location not found in position map");
 	}

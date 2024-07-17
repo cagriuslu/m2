@@ -5,13 +5,14 @@
 #include <m2/VecF.h>
 #include <m2/Object.h>
 
+m2::void_expected can_player_attempt_to_build(m2::Character& player);
+
 enum class BuildJourneyStep {
 	INITIAL_STEP = 0,
 	EXPECT_LOCATION,
 	EXPECT_RESOURCE_SOURCE,
 	EXPECT_CONFIRMATION,
 };
-
 class BuildJourney : public m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal> {
 	Card _selected_card{};
 	IndustryLocation _selected_location{};
@@ -38,3 +39,7 @@ protected:
 
 	decltype(_resource_sources)::iterator get_next_unspecified_resource();
 };
+
+bool can_player_build(); // TODO
+
+Card execute_build_action(); // TODO

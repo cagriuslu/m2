@@ -14,6 +14,70 @@ using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
 
+namespace {
+	std::set<IndustryLocation> buildable_industry_locations_in_network_with_card(m2::Character& player, Card card) {
+		if (not is_card(card)) {
+			throw M2_ERROR("Item is not a card");
+		}
+		if (not player_has_card(player, card)) {
+			throw M2_ERROR("Player does not own the given card");
+		}
+
+		// Gather industry locations in player's network
+		std::set<IndustryLocation> industry_locations_in_network;
+		if (auto cities_in_network = get_cities_in_network(player); cities_in_network.empty() || card == WILD_LOCATION_CARD) {
+			// If there are no locations in network, or the wild location card is selected, all locations are considered in-network
+			industry_locations_in_network = all_industry_locations();
+		} else {
+			if (M2G_PROXY.is_canal_era()) {
+				// If canal era, remove the cities where there is already an industry of player
+				for (const auto& built_factory_location : player_built_factory_locations(player)) {
+					cities_in_network.erase(city_of_location(built_factory_location));
+				}
+			}
+
+			for (const auto& city : cities_in_network) {
+				// Insert locations in cities
+				auto locs_in_city = industry_locations_in_city(city);
+				industry_locations_in_network.insert(locs_in_city.begin(), locs_in_city.end());
+			}
+		}
+
+		// Filter industry_locations_in_network by card
+		if (card == WILD_LOCATION_CARD || card == WILD_INDUSTRY_CARD) {
+			// No filtering
+			return industry_locations_in_network;
+		} else if (M2_GAME.named_items[card].category() == ITEM_CATEGORY_INDUSTRY_CARD) {
+			// Filter by industry
+			auto filtered_locations = industry_locations_in_network | std::views::filter([card](IndustryLocation location) {
+				auto industries = industries_on_location(location);
+				return std::find(industries.begin(), industries.end(), card) != industries.end();
+			});
+			return {filtered_locations.begin(), filtered_locations.end()};
+		} else if (M2_GAME.named_items[card].category() == ITEM_CATEGORY_CITY_CARD) {
+			// Filter by city
+			auto filtered_locations = industry_locations_in_network | std::views::filter([card](IndustryLocation location) {
+				return city_of_location(location) == card;
+			});
+			return {filtered_locations.begin(), filtered_locations.end()};
+		} else {
+			throw M2_ERROR("Invalid card category");
+		}
+	}
+}
+
+m2::void_expected can_player_attempt_to_build(m2::Character& player) {
+	if (player_card_count(player) < 1) {
+		return m2::make_unexpected("Build action requires a card");
+	}
+
+	if (player_tile_count(player) < 1) {
+		return m2::make_unexpected("Build action requires an industry tile");
+	}
+
+	return {};
+}
+
 BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal>() {
 	DEBUG_FN();
 	init(BuildJourneyStep::INITIAL_STEP);
@@ -80,6 +144,9 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 	M2_LEVEL.disable_hud();
 	M2_LEVEL.display_message("Pick location");
 	M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+	// Dim places outside the player's network
+	auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
+	M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_industry_location_bg_tiles(buildable_locs));
 	return std::nullopt;
 }
 
@@ -137,6 +204,8 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_cancel_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
+	// Disable dimming
+	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
 
