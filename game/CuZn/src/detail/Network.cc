@@ -67,7 +67,8 @@ namespace {
 				// Iterate over cities of connection
 				for (auto conn_city : cities_from_connection(conn)) {
 					if (is_merchant_city(conn_city)) {
-						locations.emplace(merchant_location_of_merchant_city(conn_city));
+						auto merchant_locations = merchant_locations_of_merchant_city(conn_city);
+						locations.insert(merchant_locations.begin(), merchant_locations.end());
 					} else if (is_industry_city(conn_city) && not processed_cities.contains(conn_city)) {
 						recursive_location_network_from_industry_city(locations, processed_cities, city);
 					}

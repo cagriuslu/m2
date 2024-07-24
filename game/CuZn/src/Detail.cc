@@ -250,26 +250,24 @@ IndustrySprite industry_sprite_of_industry(Industry industry) {
 	}
 }
 
-MerchantLocation merchant_location_of_merchant_city(MerchantCity city) {
+std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity city) {
 	if (not is_merchant_city(city)) {
 		throw M2_ERROR("Invalid merchant city");
 	}
 
-	std::optional<MerchantLocation> location;
-	M2_GAME.for_each_sprite([&location, city](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
+	std::vector<MerchantLocation> locations;
+	M2_GAME.for_each_sprite([&locations, city](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
 		if (is_merchant_location(sprite_type)) {
-			auto it = std::ranges::find(sprite.named_items(), city);
-			if (it != sprite.named_items().end()) {
-				location = sprite_type;
-				return false;
+			if (std::ranges::find(sprite.named_items(), city) != sprite.named_items().end()) {
+				locations.emplace_back(sprite_type);
 			}
 		}
 		return true;
 	});
-	if (not location) {
+	if (locations.empty()) {
 		throw M2_ERROR("Unable to find location of merchant city");
 	}
-	return *location;
+	return locations;
 }
 
 std::set<IndustryLocation> all_industry_locations() {

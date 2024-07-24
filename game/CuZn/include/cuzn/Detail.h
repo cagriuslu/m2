@@ -48,7 +48,7 @@ Industry industry_of_industry_tile_category(IndustryTileCategory category);
 IndustryTileCategory industry_tile_category_of_industry(Industry industry_card);
 IndustryTileCategory industry_tile_category_of_industry_tile(IndustryTile industry_tile);
 IndustrySprite industry_sprite_of_industry(Industry industry);
-MerchantLocation merchant_location_of_merchant_city(MerchantCity city);
+std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity city); // TODO one city might have more than one merchant location
 
 // Generators
 
