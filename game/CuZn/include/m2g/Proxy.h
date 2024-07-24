@@ -44,7 +44,7 @@ namespace m2g {
 		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> industry_positions; // Exact position, cell rectangle, tile object ID
 		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> connection_positions;
-		m2::Graph connection_graph; // Nodes are City (m2g::pb::ItemType)
+		m2::Graph available_connections_graph; // Nodes are City (m2g::pb::ItemType) // TODO instead of holding onto this object, maybe recreate it by looking at sprites each time it's needed
 
 		// User journeys
 		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney, SellJourney, LiquidationJourney>> user_journey;

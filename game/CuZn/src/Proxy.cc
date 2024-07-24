@@ -428,15 +428,15 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		// Fill graph
 		auto cities = cities_from_connection(sprite_type);
 		if (cities.size() == 2) {
-			connection_graph.add_edge(cities[0], {cities[1], 1.0f});
-			connection_graph.add_edge(cities[1], {cities[0], 1.0f});
+			available_connections_graph.add_edge(cities[0], {cities[1], 1.0f});
+			available_connections_graph.add_edge(cities[1], {cities[0], 1.0f});
 		} else if (cities.size() == 3) {
-			connection_graph.add_edge(cities[0], {cities[1], 1.0f});
-			connection_graph.add_edge(cities[1], {cities[0], 1.0f});
-			connection_graph.add_edge(cities[0], {cities[2], 1.0f});
-			connection_graph.add_edge(cities[2], {cities[0], 1.0f});
-			connection_graph.add_edge(cities[1], {cities[2], 1.0f});
-			connection_graph.add_edge(cities[2], {cities[1], 1.0f});
+			available_connections_graph.add_edge(cities[0], {cities[1], 1.0f});
+			available_connections_graph.add_edge(cities[1], {cities[0], 1.0f});
+			available_connections_graph.add_edge(cities[0], {cities[2], 1.0f});
+			available_connections_graph.add_edge(cities[2], {cities[0], 1.0f});
+			available_connections_graph.add_edge(cities[1], {cities[2], 1.0f});
+			available_connections_graph.add_edge(cities[2], {cities[1], 1.0f});
 		} else {
 			throw M2_ERROR("Invalid connection");
 		}

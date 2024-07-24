@@ -6,10 +6,13 @@
 
 // Accessors
 m2::Object* find_road_at_location(m2g::pb::SpriteType location);
+
 // Modifiers
 void remove_all_roads();
+
 // Filters
 constexpr auto is_road_character = [](m2::Character& chr) { return chr.parent().object_type() == m2g::pb::ROAD; };
+
 // Transformers
 constexpr auto to_city_cards_of_road_character = [](m2::Character& chr) -> std::set<m2g::pb::ItemType> {
 	if (not is_road_character(chr)) {
