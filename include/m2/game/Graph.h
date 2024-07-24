@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <map>
 #include <vector>
 #include <functional>
 #include <optional>
@@ -28,5 +29,7 @@ namespace m2 {
 		// Returns the nodes that can be reached from the `source` while spending at most `inclusive_cost`.
 		// If there are multiple paths, the shortest one's cost is returned.
 		[[nodiscard]] std::unordered_map<Node, float> reachable_nodes_from(Node source, float inclusive_cost) const;
+
+		static std::multimap<float, Node> order_by_cost(const std::unordered_map<Node, float>&);
 	};
 }

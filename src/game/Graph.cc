@@ -101,3 +101,11 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 	}
 	return reachable_nodes;
 }
+
+std::multimap<float, m2::Graph::Node> m2::Graph::order_by_cost(const std::unordered_map<Node, float>& nodes) {
+	std::multimap<float, m2::Graph::Node> ordered_map;
+	for (const auto& [node, cost] : nodes) {
+		ordered_map.emplace(cost, node);
+	}
+	return ordered_map;
+}
