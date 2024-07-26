@@ -41,9 +41,9 @@ void m2::Game::destroy_instance() {
 
 m2::Game::Game() {
 	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
-	//	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
-	//		LOG_WARN("Failed to set opengl as render hint");
-	//	}
+	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
+		LOG_WARN("Failed to set opengl as render hint");
+	}
 	// Use the driver line API
 	if (SDL_SetHint(SDL_HINT_RENDER_LINE_METHOD, "2") == false) {
 		LOG_WARN("Failed to set line render method");
