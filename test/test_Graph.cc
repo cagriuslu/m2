@@ -19,7 +19,7 @@ TEST(Graph, basic) {
 	m2::Graph graph{generator};
 
 	auto reachable = graph.reachable_nodes_from(50, 75.0f);
-	EXPECT_EQ(reachable.size(), 5);
+	EXPECT_EQ(reachable.size(), 6);
 }
 
 TEST(Graph, reachable_nodes_from) {
@@ -36,7 +36,7 @@ TEST(Graph, reachable_nodes_from) {
 	graph.add_edge(-2, {-3, 1.0f});
 
 	auto reachable = graph.reachable_nodes_from(0, 2.0f);
-	EXPECT_EQ(reachable.size(), 4);
+	EXPECT_EQ(reachable.size(), 5);
 	EXPECT_TRUE(reachable.contains(1));
 	EXPECT_TRUE(reachable.contains(2));
 	EXPECT_TRUE(reachable.contains(-1));

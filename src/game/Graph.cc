@@ -53,6 +53,7 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 
 	// Visit each node in nodes_to_visit, accumulate all reachable nodes into reachable_nodes map
 	std::unordered_map<Node, float> reachable_nodes;
+	reachable_nodes[source] = 0.0f; // Add the source node as reachable with no cost
 	while (not nodes_to_visit.empty()) {
 		// Visit node
 		auto visit = nodes_to_visit.front();
