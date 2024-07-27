@@ -165,7 +165,8 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 	if (const auto& dimming_exceptions = M2_GAME.dimming_exceptions()) {
 		if (not dimming_exceptions->contains(gfx.parent_id())) {
 			dim = true;
-			SDL_SetTextureColorMod(gfx.sprite->texture(gfx.draw_variant), 85, 85, 85);
+			static uint8_t mod = uround(M2G_PROXY.dimming_factor * F(255));
+			SDL_SetTextureColorMod(gfx.sprite->texture(gfx.draw_variant), mod, mod, mod);
 		}
 	}
 

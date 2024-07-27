@@ -42,6 +42,9 @@ namespace m2 {
 		/// Is the camera also a sound listener
 		const bool camera_is_listener = false;
 
+		/// Dimming factor of the graphics when dimming is enabled
+		const float dimming_factor = 0.333f;
+
 		void load_resources() {}
 
 		// UI
