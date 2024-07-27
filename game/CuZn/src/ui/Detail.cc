@@ -472,7 +472,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 	return selection;
 }
 
-bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text) {
+bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::sdl::TextureUniquePtr background_texture) {
 	auto blueprint = Blueprint{
 		.w = 44, .h = 12,
 		.border_width_px = 1,
@@ -509,7 +509,7 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	}; // 1 + 32 + 1 + 4 + 1 + 4 + 1
 
 	bool selection;
-	State::create_execute_sync(&blueprint, M2_GAME.dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}))
+	State::create_execute_sync(&blueprint, M2_GAME.dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }

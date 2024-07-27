@@ -116,7 +116,8 @@ namespace {
 	}
 }  // namespace
 
-State::State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> bp) : _prev_text_input_state(SDL_IsTextInputActive()) {
+State::State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> bp, sdl::TextureUniquePtr background_texture)
+	: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const Blueprint*>(bp)) {
 		blueprint = std::get<const Blueprint*>(bp);
 	} else {
@@ -141,7 +142,7 @@ Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr
 	return create_execute_sync(std::move(blueprint), M2_GAME.dimensions().window);
 }
 
-Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, const RectI rect) {
+Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, const RectI rect, sdl::TextureUniquePtr background_texture) {
 	// Check if there are other blocking UIs
 	if (M2_GAME.ui_begin_ticks) {
 		// Execute state without keeping time
@@ -151,7 +152,7 @@ Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr
 		// Save begin ticks for later and other nested UIs
 		M2_GAME.ui_begin_ticks = sdl::get_ticks();
 		// Execute state
-		State state{std::move(blueprint)};
+		State state{std::move(blueprint), std::move(background_texture)};
 		auto action = state.execute(rect);
 		// Add pause ticks
 		M2_GAME.add_pause_ticks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
@@ -181,8 +182,10 @@ Action State::execute(const RectI rect) {
 	    static_cast<float>(rect.w) / static_cast<float>(winrect.w),
 	    static_cast<float>(rect.h) / static_cast<float>(winrect.h)};
 
-	// Get screenshot
-	const auto screen_capture = sdl::capture_screen_as_texture();
+	// Get a screenshot if background_texture is not already provided
+	if (not _background_texture) {
+		_background_texture = sdl::capture_screen_as_texture();
+	}
 
 	// Update initial positions
 	update_positions(rect);
@@ -254,7 +257,7 @@ Action State::execute(const RectI rect) {
 		// Clear screen
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 0, 0, 0, 255);
 		SDL_RenderClear(M2_GAME.renderer);
-		SDL_RenderCopy(M2_GAME.renderer, screen_capture.get(), nullptr, nullptr);
+		SDL_RenderCopy(M2_GAME.renderer, _background_texture.get(), nullptr, nullptr);
 
 		// Draw UI elements
 		draw();

@@ -565,6 +565,33 @@ m2::RectF m2::Game::viewport_to_2d_world_rect_m() {
 	return RectF::from_corners(top_left, bottom_right);
 }
 
+m2::sdl::TextureUniquePtr m2::Game::draw_game_to_texture(m2::VecF camera_position) {
+	// Temporarily change camera position
+	auto prev_camera_position = level().camera()->position;
+	level().camera()->position = camera_position;
+
+	// Create an empty render target
+	auto render_target = sdl::create_drawable_texture_of_screen_size();
+	// Temporarily change render target
+	auto prev_render_target = SDL_GetRenderTarget(renderer);
+	SDL_SetRenderTarget(renderer, render_target.get());
+
+	// Draw
+	clear_back_buffer();
+	draw_background();
+	draw_foreground();
+	draw_lights();
+	draw_envelopes();
+
+	// Reinstate old render target
+	SDL_SetRenderTarget(renderer, prev_render_target);
+
+	// Reinstate old camera position
+	level().camera()->position = prev_camera_position;
+
+	return render_target;
+}
+
 void m2::Game::recalculate_directional_audio() {
 	if (_level->left_listener || _level->right_listener) {
 		// Loop over sounds

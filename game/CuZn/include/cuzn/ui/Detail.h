@@ -19,7 +19,7 @@ std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclud
 std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2);
 
 bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text);
-bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text);
+bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::sdl::TextureUniquePtr background_texture);
 
 void display_blocking_message(const std::string& line1, const std::string& line2);
 

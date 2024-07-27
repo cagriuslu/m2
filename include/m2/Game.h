@@ -168,6 +168,7 @@ namespace m2 {
 		const VecF& screen_center_to_mouse_position_m() const;
 		VecF pixel_to_2d_world_m(const VecI& pixel_position);
 		RectF viewport_to_2d_world_rect_m();
+		sdl::TextureUniquePtr draw_game_to_texture(m2::VecF camera_position);
 
 		// Handlers
 		void handle_quit_event();

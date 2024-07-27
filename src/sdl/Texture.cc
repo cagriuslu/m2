@@ -1,6 +1,15 @@
 #include <m2/Game.h>
 #include <m2/sdl/Texture.h>
 
+m2::sdl::TextureUniquePtr m2::sdl::create_drawable_texture_of_screen_size() {
+	// Get screen size
+	int w, h;
+	SDL_GetRendererOutputSize(M2_GAME.renderer, &w, &h);
+
+	// Create texture
+	return TextureUniquePtr{SDL_CreateTexture(M2_GAME.renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_TARGET, w, h)};
+}
+
 m2::sdl::TextureUniquePtr m2::sdl::capture_screen_as_texture() {
 	// Get screen size
 	int w, h;
