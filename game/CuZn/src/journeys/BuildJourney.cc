@@ -3,6 +3,7 @@
 #include <cuzn/Detail.h>
 #include <cuzn/detail/Build.h>
 #include <cuzn/ui/Detail.h>
+#include <cuzn/Coal.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
@@ -204,7 +205,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_cancel_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
-	// Disable dimming
+	// Disable dimming in case it was enabled
 	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
@@ -212,14 +213,62 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 	// Check if there's an unspecified resource left
 	if (auto unspecified_resource = get_next_unspecified_resource(); unspecified_resource != _resource_sources.end()) {
-		LOG_DEBUG("Expecting resource source...");
-		M2_LEVEL.disable_hud();
-		M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
-
 		auto index = std::distance(_resource_sources.begin(), unspecified_resource) + 1;
 		if (unspecified_resource->first == COAL_CUBE_COUNT) {
-			M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick a coal source");
+			auto selected_city = city_of_location(_selected_location);
+			auto closest_mines_with_coal = find_closest_connected_coal_mines_with_coal(selected_city);
+			if (closest_mines_with_coal.empty()) {
+				// No reachable coal mines with coal, check the coal market
+				if (auto coal_market_city = find_connected_coal_market_with_coal(selected_city)) {
+					// Move player screen to the location
+					M2_PLAYER.position = M2G_PROXY.merchant_positions[merchant_locations_of_merchant_city(*coal_market_city)[0]].first;
+					LOG_DEBUG("Asking player if they want to buy coal from the market...");
+					if (ask_for_confirmation_bottom("Buy coal from market?", "Yes", "No")) {
+						LOG_DEBUG("Player agreed");
+						// Specify resource source
+						unspecified_resource->second = merchant_locations_of_merchant_city(*coal_market_city)[0];
+						// Re-enter resource selection
+						return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
+					} else {
+						LOG_INFO("Player declined, cancelling Build action...");
+						M2_DEFER(m2g::Proxy::user_journey_deleter);
+					}
+				} else {
+					M2_LEVEL.display_message("Coal required but none available in network");
+					M2_DEFER(m2g::Proxy::user_journey_deleter);
+				}
+			} else if (closest_mines_with_coal.size() == 1) {
+				// Only one viable coal mine with coal is in the vicinity, confirm with the player.
+				// Move player screen to the location
+				M2_PLAYER.position = std::get<m2::VecF>(M2G_PROXY.industry_positions[closest_mines_with_coal[0]]);
+				LOG_DEBUG("Asking player if they want to buy coal from the closest mine...");
+				if (ask_for_confirmation_bottom("Buy coal from shown location?", "Yes", "No")) {
+					LOG_DEBUG("Player agreed");
+					// Specify resource source
+					unspecified_resource->second = closest_mines_with_coal[0];
+					// Re-enter resource selection
+					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
+				} else {
+					LOG_INFO("Player declined, cancelling Build action...");
+					M2_DEFER(m2g::Proxy::user_journey_deleter);
+				}
+			} else {
+				// TODO Debug
+				std::set<ObjectId> coal_mine_object_ids;
+				std::transform(closest_mines_with_coal.begin(), closest_mines_with_coal.end(),
+					std::inserter(coal_mine_object_ids, coal_mine_object_ids.begin()),
+					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
+				M2_GAME.enable_dimming_with_exceptions(coal_mine_object_ids);
+				LOG_DEBUG("Asking player to pick a coal source...");
+
+				M2_LEVEL.disable_hud();
+				M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+				M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick a coal source");
+			}
 		} else if (unspecified_resource->first == IRON_CUBE_COUNT) {
+			LOG_DEBUG("Asking player to pick an iron source...");
+			M2_LEVEL.disable_hud();
+			M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
 			M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick an iron source");
 		} else {
 			throw M2_ERROR("Unexpected resource in resource list");
@@ -288,6 +337,8 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_cancel_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
+	// Disable dimming in case it was enabled
+	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
 
