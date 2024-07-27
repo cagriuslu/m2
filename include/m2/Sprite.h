@@ -17,8 +17,8 @@
 #include "sdl/Font.h"
 
 namespace m2 {
-	using IsForegroundCompanion = bool;
-	using DrawVariant = std::variant<IsForegroundCompanion, pb::SpriteEffectType>;
+	struct ForegroundCompanion {};
+	using DrawVariant = std::variant<std::monostate, ForegroundCompanion, pb::SpriteEffectType>; // monostate = default variant
 
 	class SpriteSheet final {
 		pb::SpriteSheet _sprite_sheet;
@@ -124,7 +124,7 @@ namespace m2 {
 		[[nodiscard]] inline bool is_background_tile() const { return _is_background_tile; }
 		[[nodiscard]] const std::vector<m2g::pb::ItemType>& named_items() const { return _named_items; }
 
-		SDL_Texture* texture(DrawVariant draw_variant) const;
+		SDL_Texture* texture(DrawVariant draw_variant = {}) const;
 		VecF texture_total_dimensions(DrawVariant draw_variant) const;
 		const RectI& rect(DrawVariant draw_variant) const;
 

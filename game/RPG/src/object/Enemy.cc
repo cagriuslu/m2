@@ -157,7 +157,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		if (chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL)) {
 			gfx.draw_variant = SPRITE_EFFECT_MASK;
 		} else {
-			gfx.draw_variant = m2::IsForegroundCompanion{false};
+			gfx.draw_variant = {};
 		}
 	};
 	phy.on_debug_draw = [&impl](m2::Physique& phy) {

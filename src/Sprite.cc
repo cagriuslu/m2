@@ -298,7 +298,7 @@ m2::Sprite::Sprite(TTF_Font* font, SDL_Renderer* renderer, const pb::TextLabel& 
 SDL_Texture* m2::Sprite::texture(DrawVariant draw_variant) const {
 	if (_font_texture) {
 		return _font_texture->texture();
-	} else if (std::holds_alternative<IsForegroundCompanion>(draw_variant) && not std::get<IsForegroundCompanion>(draw_variant)) {
+	} else if (std::holds_alternative<std::monostate>(draw_variant)) {
 		return sprite_sheet().texture();
 	} else {
 		return effects_texture();
@@ -306,8 +306,7 @@ SDL_Texture* m2::Sprite::texture(DrawVariant draw_variant) const {
 }
 
 m2::VecF m2::Sprite::texture_total_dimensions(DrawVariant draw_variant) const {
-	if (std::holds_alternative<IsForegroundCompanion>(draw_variant) &&
-	    not std::get<IsForegroundCompanion>(draw_variant)) {
+	if (std::holds_alternative<std::monostate>(draw_variant)) {
 		return {sprite_sheet().surface()->w, sprite_sheet().surface()->h};
 	} else {
 		return {effects_sheet()->texture_width(), effects_sheet()->texture_height()};
@@ -315,12 +314,10 @@ m2::VecF m2::Sprite::texture_total_dimensions(DrawVariant draw_variant) const {
 }
 
 const m2::RectI& m2::Sprite::rect(DrawVariant draw_variant) const {
-	if (std::holds_alternative<IsForegroundCompanion>(draw_variant)) {
-		if (std::get<IsForegroundCompanion>(draw_variant)) {
-			return *_foreground_companion_sprite_effects_sheet_rect;
-		} else {
-			return rect();
-		}
+	if (std::holds_alternative<std::monostate>(draw_variant)) {
+		return rect();
+	} else if (std::holds_alternative<ForegroundCompanion>(draw_variant)) {
+		return *_foreground_companion_sprite_effects_sheet_rect;
 	} else {
 		return effect_rect(std::get<pb::SpriteEffectType>(draw_variant));
 	}
@@ -330,7 +327,7 @@ float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
 	return static_cast<float>(M2_GAME.dimensions().ppm) / static_cast<float>(_ppm);
 }
 m2::VecF m2::Sprite::center_to_origin_srcpx(DrawVariant draw_variant) const {
-	if (std::holds_alternative<IsForegroundCompanion>(draw_variant) && std::get<IsForegroundCompanion>(draw_variant)) {
+	if (std::holds_alternative<ForegroundCompanion>(draw_variant)) {
 		return foreground_companion_center_to_origin_vec_px();
 	} else {
 		return original_rotation_radians() != 0.0f ? center_to_origin_vec_px().rotate(original_rotation_radians())

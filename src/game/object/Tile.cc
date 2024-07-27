@@ -51,7 +51,7 @@ m2::Pool<m2::Object>::Iterator m2::obj::create_tile_foreground_companion(const V
 	auto it = create_object(position - sprite.center_to_origin_vec_m() + sprite.foreground_companion_center_to_origin_vec_m());
 
 	auto& gfx = it->add_graphic(sprite);
-	gfx.draw_variant = IsForegroundCompanion{true};
+	gfx.draw_variant = ForegroundCompanion{};
 
 	return it;
 }

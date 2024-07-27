@@ -42,7 +42,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 		if (M2G_PROXY.alive_enemy_count) {
 			gfx.draw_variant = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 		} else {
-			gfx.draw_variant = m2::IsForegroundCompanion{false};
+			gfx.draw_variant = {};
 		}
 	};
 
