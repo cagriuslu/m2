@@ -220,10 +220,10 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 			if (closest_mines_with_coal.empty()) {
 				// No reachable coal mines with coal, check the coal market
 				if (auto coal_market_city = find_connected_coal_market_with_coal(selected_city)) {
-					// Move player screen to the location
-					M2_PLAYER.position = M2G_PROXY.merchant_positions[merchant_locations_of_merchant_city(*coal_market_city)[0]].first;
+					// Get a game drawing centered at the merchant location
+					auto background = M2_GAME.draw_game_to_texture(M2G_PROXY.merchant_positions[merchant_locations_of_merchant_city(*coal_market_city)[0]].first);
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
-					if (ask_for_confirmation_bottom("Buy coal from market?", "Yes", "No")) {
+					if (ask_for_confirmation_bottom("Buy coal from market?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
 						// Specify resource source
 						unspecified_resource->second = merchant_locations_of_merchant_city(*coal_market_city)[0];
@@ -239,10 +239,10 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				}
 			} else if (closest_mines_with_coal.size() == 1) {
 				// Only one viable coal mine with coal is in the vicinity, confirm with the player.
-				// Move player screen to the location
-				M2_PLAYER.position = std::get<m2::VecF>(M2G_PROXY.industry_positions[closest_mines_with_coal[0]]);
+				// Get a game drawing centered at the industry location
+				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[closest_mines_with_coal[0]]));
 				LOG_DEBUG("Asking player if they want to buy coal from the closest mine...");
-				if (ask_for_confirmation_bottom("Buy coal from shown location?", "Yes", "No")) {
+				if (ask_for_confirmation_bottom("Buy coal from shown location?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Specify resource source
 					unspecified_resource->second = closest_mines_with_coal[0];

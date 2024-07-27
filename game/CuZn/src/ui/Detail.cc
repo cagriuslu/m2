@@ -483,7 +483,6 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 				.border_width_px = 0,
 				.variant = TextBlueprint{
 					.text = question,
-					.font_size = 4.5f,
 					.alignment = TextAlignment::LEFT
 				}
 			},
