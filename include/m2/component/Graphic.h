@@ -107,6 +107,10 @@ namespace m2 {
 		static void draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color);
 		static void draw_vertical_line(float x, SDL_Color color);
 		static void draw_horizontal_line(float y, SDL_Color color);
+
+		// Global Modifiers
+		static bool dim_rendering_if_necessary(Id object_id, SDL_Texture* texture);
+		static void undim_rendering(SDL_Texture* texture);
 	};
 
 	void draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant draw_variant, float angle);

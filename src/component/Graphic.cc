@@ -161,14 +161,7 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 	}
 
 	// Dim the sprite if dimming mode is enabled
-	bool dim = false;
-	if (const auto& dimming_exceptions = M2_GAME.dimming_exceptions()) {
-		if (not dimming_exceptions->contains(gfx.parent_id())) {
-			dim = true;
-			static uint8_t mod = uround(M2G_PROXY.dimming_factor * F(255));
-			SDL_SetTextureColorMod(gfx.sprite->texture(gfx.draw_variant), mod, mod, mod);
-		}
-	}
+	bool dimmed = dim_rendering_if_necessary(gfx.parent_id(), gfx.sprite->texture(gfx.draw_variant));
 
 	if (is_projection_type_perspective(M2_LEVEL.projection_type())) {
 		// Check if foreground or background
@@ -179,8 +172,8 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 	}
 
 	// If dimming was active, we need to un-dim.
-	if (dim) {
-		SDL_SetTextureColorMod(gfx.sprite->texture(gfx.draw_variant), 255, 255, 255);
+	if (dimmed) {
+		undim_rendering(gfx.sprite->texture(gfx.draw_variant));
 	}
 }
 
@@ -296,4 +289,20 @@ void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
 	const auto y_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{0.0f, y}).y));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.dimensions().game.x, y_px, M2_GAME.dimensions().game.x + M2_GAME.dimensions().game.w, y_px);
+}
+
+bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture) {
+	// Dim the sprite if dimming mode is enabled
+	if (const auto& dimming_exceptions = M2_GAME.dimming_exceptions()) {
+		if (not dimming_exceptions->contains(object_id)) {
+			static uint8_t mod = uround(M2G_PROXY.dimming_factor * F(255));
+			SDL_SetTextureColorMod(texture, mod, mod, mod);
+			return true;
+		}
+	}
+	return false;
+}
+
+void m2::Graphic::undim_rendering(SDL_Texture* texture) {
+	SDL_SetTextureColorMod(texture, 255, 255, 255);
 }

@@ -70,7 +70,12 @@ m2::void_expected init_road(m2::Object& obj, Connection connection) {
 	_gfx.on_draw = [color](m2::Graphic& gfx) {
 		auto connection_position = gfx.parent().position;
 		auto cell_rect = m2::RectF{connection_position - 0.75f, 1.5f, 1.5f};
-		m2::Graphic::color_rect(cell_rect, color); // Draw background
+
+		// Draw background with player's color
+		auto background_color = (M2_GAME.dimming_exceptions() && not M2_GAME.dimming_exceptions()->contains(gfx.parent_id()))
+								? color * M2G_PROXY.dimming_factor : color;
+		m2::Graphic::color_rect(cell_rect, background_color);
+
 		m2::Graphic::default_draw(gfx); // Draw connection
 	};
 
