@@ -3,7 +3,7 @@
 #include <cuzn/Detail.h>
 #include <cuzn/detail/Build.h>
 #include <cuzn/ui/Detail.h>
-#include <cuzn/Coal.h>
+#include <cuzn/ConsumingCoal.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Log.h>
 #include <m2/Game.h>

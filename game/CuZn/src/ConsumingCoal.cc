@@ -1,4 +1,4 @@
-#include <cuzn/Coal.h>
+#include <cuzn/ConsumingCoal.h>
 #include <m2/game/Graph.h>
 #include <m2/Game.h>
 #include <cuzn/object/Road.h>
