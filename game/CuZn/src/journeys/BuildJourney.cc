@@ -9,6 +9,7 @@
 #include <m2/Game.h>
 #include "cuzn/object/Factory.h"
 #include "cuzn/detail/Network.h"
+#include <cuzn/object/GameStateTracker.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -220,13 +221,21 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 			if (closest_mines_with_coal.empty()) {
 				// No reachable coal mines with coal, check the coal market
 				if (auto coal_market_city = find_connected_coal_market_with_coal(selected_city)) {
+					// If no reachable coal has left on the map, all the remaining coal must come from the market
+					auto remaining_unspecified_coal_count = std::count(_resource_sources.begin(), _resource_sources.end(),
+						std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
+					// Calculate the cost of buying coal
+					auto cost_of_buying = market_coal_cost(m2::I(remaining_unspecified_coal_count));
+					// Merchant location
+					auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
 					// Get a game drawing centered at the merchant location
-					auto background = M2_GAME.draw_game_to_texture(M2G_PROXY.merchant_positions[merchant_locations_of_merchant_city(*coal_market_city)[0]].first);
+					auto background = M2_GAME.draw_game_to_texture(M2G_PROXY.merchant_positions[merchant_location].first);
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
-					if (ask_for_confirmation_bottom("Buy coal from market?", "Yes", "No", std::move(background))) {
+					if (ask_for_confirmation_bottom("Buy " + std::to_string(remaining_unspecified_coal_count) + " coal from market for £" + std::to_string(cost_of_buying) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
-						// Specify resource source
-						unspecified_resource->second = merchant_locations_of_merchant_city(*coal_market_city)[0];
+						// Specify resource sources
+						std::replace(_resource_sources.begin(), _resource_sources.end(),
+							std::make_pair(COAL_CUBE_COUNT, NO_SPRITE), std::make_pair(COAL_CUBE_COUNT, merchant_location));
 						// Re-enter resource selection
 						return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 					} else {
@@ -242,7 +251,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				// Get a game drawing centered at the industry location
 				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[closest_mines_with_coal[0]]));
 				LOG_DEBUG("Asking player if they want to buy coal from the closest mine...");
-				if (ask_for_confirmation_bottom("Buy coal from shown location?", "Yes", "No", std::move(background))) {
+				if (ask_for_confirmation_bottom("Buy coal from shown mine for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Specify resource source
 					unspecified_resource->second = closest_mines_with_coal[0];
@@ -253,11 +262,12 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 					M2_DEFER(m2g::Proxy::user_journey_deleter);
 				}
 			} else {
-				// TODO Debug
+				// Look-up ObjectIDs of closest coal mines
 				std::set<ObjectId> coal_mine_object_ids;
 				std::transform(closest_mines_with_coal.begin(), closest_mines_with_coal.end(),
 					std::inserter(coal_mine_object_ids, coal_mine_object_ids.begin()),
 					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
+				// Enable dimming except the coal mines
 				M2_GAME.enable_dimming_with_exceptions(coal_mine_object_ids);
 				LOG_DEBUG("Asking player to pick a coal source...");
 
