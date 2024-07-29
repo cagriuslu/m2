@@ -4,6 +4,7 @@
 #include <cuzn/detail/Build.h>
 #include <cuzn/ui/Detail.h>
 #include <cuzn/ConsumingCoal.h>
+#include <cuzn/ConsumingIron.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
@@ -217,8 +218,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 		auto index = std::distance(_resource_sources.begin(), unspecified_resource) + 1;
 		if (unspecified_resource->first == COAL_CUBE_COUNT) {
 			auto selected_city = city_of_location(_selected_location);
-			auto closest_mines_with_coal = find_closest_connected_coal_mines_with_coal(selected_city);
-			if (closest_mines_with_coal.empty()) {
+			if (auto closest_mines_with_coal = find_closest_connected_coal_mines_with_coal(selected_city); closest_mines_with_coal.empty()) {
 				// No reachable coal mines with coal, check the coal market
 				if (auto coal_market_city = find_connected_coal_market_with_coal(selected_city)) {
 					// If no reachable coal has left on the map, all the remaining coal must come from the market
@@ -276,10 +276,53 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick a coal source");
 			}
 		} else if (unspecified_resource->first == IRON_CUBE_COUNT) {
-			LOG_DEBUG("Asking player to pick an iron source...");
-			M2_LEVEL.disable_hud();
-			M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
-			M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick an iron source");
+			if (auto iron_industries = find_iron_industries_with_iron(); iron_industries.empty()) {
+				// If no iron has left on the map, all the remaining iron must come from the market
+				auto remaining_unspecified_iron_count = std::count(_resource_sources.begin(), _resource_sources.end(),
+					std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
+				// Calculate the cost of buying iron
+				auto cost_of_buying = market_iron_cost(m2::I(remaining_unspecified_iron_count));
+				LOG_DEBUG("Asking player if they want to buy iron from the market...");
+				if (ask_for_confirmation("Buy " + std::to_string(remaining_unspecified_iron_count) + " iron from market for £" + std::to_string(cost_of_buying) + "?", "", "Yes", "No")) {
+					LOG_DEBUG("Player agreed");
+					// Specify resource sources
+					std::replace(_resource_sources.begin(), _resource_sources.end(),
+						std::make_pair(IRON_CUBE_COUNT, NO_SPRITE), std::make_pair(IRON_CUBE_COUNT, GLOUCESTER_1));
+					// Re-enter resource selection
+					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
+				} else {
+					LOG_INFO("Player declined, cancelling Build action...");
+					M2_DEFER(m2g::Proxy::user_journey_deleter);
+				}
+			} else if (iron_industries.size() == 1) {
+				// Only one viable iron industry with iron is in the vicinity, confirm with the player.
+				// Get a game drawing centered at the industry location
+				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[iron_industries[0]]));
+				LOG_DEBUG("Asking player if they want to buy iron from the closest industry...");
+				if (ask_for_confirmation_bottom("Buy iron from shown industry for free?", "Yes", "No", std::move(background))) {
+					LOG_DEBUG("Player agreed");
+					// Specify resource source
+					unspecified_resource->second = iron_industries[0];
+					// Re-enter resource selection
+					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
+				} else {
+					LOG_INFO("Player declined, cancelling Build action...");
+					M2_DEFER(m2g::Proxy::user_journey_deleter);
+				}
+			} else {
+				// Look-up ObjectIDs of the applicable industries
+				std::set<ObjectId> iron_industry_object_ids;
+				std::transform(iron_industries.begin(), iron_industries.end(),
+					std::inserter(iron_industry_object_ids, iron_industry_object_ids.begin()),
+					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
+				// Enable dimming except the iron industries
+				M2_GAME.enable_dimming_with_exceptions(iron_industry_object_ids);
+				LOG_DEBUG("Asking player to pick an iron source...");
+
+				M2_LEVEL.disable_hud();
+				M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+				M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick an iron source");
+			}
 		} else {
 			throw M2_ERROR("Unexpected resource in resource list");
 		}
