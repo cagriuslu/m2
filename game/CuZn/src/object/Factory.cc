@@ -34,6 +34,15 @@ void remove_obsolete_factories() {
 	});
 }
 
+std::function<bool(m2::Character&)> is_factory_of_type(Industry i) {
+	return [i](m2::Character& chr) -> bool {
+		if (not is_factory_character(chr)) {
+			throw M2_ERROR("Character doesn't belong to a factory");
+		}
+		return chr.has_item(i);
+	};
+}
+
 m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry_tile) {
 	DEBUG_FN();
 

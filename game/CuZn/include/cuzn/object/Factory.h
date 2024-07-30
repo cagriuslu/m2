@@ -17,6 +17,7 @@ constexpr auto is_factory_sold = [](m2::Character& chr) {
 	}
 	return m2::is_equal(chr.get_resource(m2g::pb::IS_SOLD), 1.0f, 0.001f);
 };
+std::function<bool(m2::Character&)> is_factory_of_type(Industry i);
 
 // Transformers
 constexpr auto to_city_card_of_factory_character = [](m2::Character& chr) {

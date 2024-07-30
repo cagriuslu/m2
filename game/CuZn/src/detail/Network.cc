@@ -78,7 +78,7 @@ namespace {
 	}
 }
 
-std::set<Location> location_network_from_industry_city(IndustryCity city) {
+std::set<Location> reachable_locations_from_industry_city(IndustryCity city) {
 	if (not is_industry_city(city)) {
 		throw M2_ERROR("Invalid industry city");
 	}
@@ -90,7 +90,7 @@ std::set<Location> location_network_from_industry_city(IndustryCity city) {
 }
 
 bool is_industry_city_connected_to_location(IndustryCity city, Location location) {
-	auto network = location_network_from_industry_city(city);
+	auto network = reachable_locations_from_industry_city(city);
 	return network.contains(location);
 }
 
