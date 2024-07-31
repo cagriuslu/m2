@@ -31,12 +31,6 @@ bool is_industry_tile(IndustryTile industry_tile) {
 	return (COTTON_MILL_TILEI <= industry_tile && industry_tile <= MANUFACTURED_GOODS_TILE_VIII);
 }
 
-bool is_industry_tile_level_1(IndustryTile industry_tile) {
-	static std::set<IndustryTile> level_1_tiles{COTTON_MILL_TILEI, IRON_WORKS_TILE_I, BREWERY_TILE_I, COAL_MINE_TILE_I,
-		POTTERY_TILEI, MANUFACTURED_GOODS_TILE_I};
-	return level_1_tiles.contains(industry_tile);
-}
-
 bool is_industry_tile_category(IndustryTileCategory category) {
 	return (ITEM_CATEGORY_COTTON_MILL_TILE <= category && category <= ITEM_CATEGORY_MANUFACTURED_GOODS_TILE);
 }

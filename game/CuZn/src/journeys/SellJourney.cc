@@ -90,7 +90,7 @@ std::optional<SellJourneyStep> SellJourney::handle_location_mouse_click_signal(c
 		// Search for a factory on the selected location
 		if (auto* factory = find_factory_at_location(*selected_loc)) {
 			// Check the type of the industry
-			auto industry = to_industry_card_of_factory_character(factory->character());
+			auto industry = to_industry_of_factory_character(factory->character());
 			if (industry == COTTON_MILL_CARD || industry == POTTERY_CARD || industry == MANUFACTURED_GOODS_CARD) {
 				// Check if the owner of the factory is the player
 				if (factory->parent_id() == M2_PLAYER.id()) {
@@ -217,7 +217,7 @@ std::optional<SellJourneyStep> SellJourney::handle_confirmation_enter_signal() {
 	LOG_INFO("Asking for confirmation...");
 	auto card_name = M2_GAME.get_named_item(_selected_card).in_game_name();
 	auto city_name = M2_GAME.get_named_item(city_of_location(_selected_location)).in_game_name();
-	auto industry = to_industry_card_of_factory_character(find_factory_at_location(_selected_location)->character());
+	auto industry = to_industry_of_factory_character(find_factory_at_location(_selected_location)->character());
 	auto industry_name = M2_GAME.get_named_item(industry).in_game_name();
 	if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		LOG_INFO("Sell action confirmed");

@@ -9,7 +9,7 @@ m2::Object* find_road_at_location(m2g::pb::SpriteType location) {
 				 | std::views::transform(m2::to_character_base)
 				 | std::views::filter(is_road_character)
 				 | std::views::transform(m2::to_parent_of_component)
-				 | std::views::filter(m2::generate_is_object_in_area_filter(M2G_PROXY.connection_positions[location].second));
+				 | std::views::filter(m2::is_object_in_area(M2G_PROXY.connection_positions[location].second));
 	if (auto road_it = roads.begin(); road_it != roads.end()) {
 		return &*road_it;
 	}

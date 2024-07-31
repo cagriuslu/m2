@@ -173,7 +173,7 @@ std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(by_character_parent_id(player.parent().id()))
 		| std::views::filter(is_factory_character)
-		| std::views::transform(to_city_card_of_factory_character);
+		| std::views::transform(to_city_of_factory_character);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = M2_LEVEL.characters

@@ -4,13 +4,14 @@
 #include <m2/Log.h>
 
 using namespace m2g;
+using namespace m2g::pb;
 
-m2::Object* find_factory_at_location(pb::SpriteType location) {
+m2::Object* find_factory_at_location(Location location) {
 	auto factories = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
 		| std::views::transform(m2::to_parent_of_component)
-		| std::views::filter(m2::generate_is_object_in_area_filter(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
+		| std::views::filter(m2::is_object_in_area(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
 		return &*factory_it;
 	}
@@ -34,13 +35,51 @@ void remove_obsolete_factories() {
 	});
 }
 
-std::function<bool(m2::Character&)> is_factory_of_type(Industry i) {
-	return [i](m2::Character& chr) -> bool {
-		if (not is_factory_character(chr)) {
-			throw M2_ERROR("Character doesn't belong to a factory");
-		}
-		return chr.has_item(i);
-	};
+bool is_factory_character(m2::Character& chr) {
+	return chr.parent().object_type() == m2g::pb::FACTORY;
+}
+
+bool is_factory_sold(m2::Character& chr) {
+	if (not is_factory_character(chr)) {
+		throw M2_ERROR("Character doesn't belong to a factory");
+	}
+	return m2::is_equal(chr.get_resource(m2g::pb::IS_SOLD), 1.0f, 0.001f);
+}
+
+bool is_factory_level_1(m2::Character& chr) {
+	static std::set<IndustryTile> level_1_tiles{COTTON_MILL_TILEI, IRON_WORKS_TILE_I, BREWERY_TILE_I, COAL_MINE_TILE_I,
+		POTTERY_TILEI, MANUFACTURED_GOODS_TILE_I};
+	return level_1_tiles.contains(to_industry_tile_of_factory_character(chr));
+}
+
+City to_city_of_factory_character(m2::Character& chr) {
+	if (not is_factory_character(chr)) {
+		throw M2_ERROR("Character doesn't belong to a factory");
+	}
+	return chr.find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD)->type();
+}
+
+Industry to_industry_of_factory_character(m2::Character& chr) {
+	if (not is_factory_character(chr)) {
+		throw M2_ERROR("Character doesn't belong to a factory");
+	}
+	return chr.find_items(m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD)->type();
+}
+
+IndustryTile to_industry_tile_of_factory_character(m2::Character& chr) {
+	if (not is_factory_character(chr)) {
+		throw M2_ERROR("Character doesn't belong to a factory");
+	}
+	auto industry = to_industry_of_factory_character(chr);
+	auto industry_tile_category = industry_tile_category_of_industry(industry);
+	return chr.find_items(industry_tile_category)->type();
+}
+
+IndustryLocation to_industry_location_of_factory_character(m2::Character& chr) {
+	if (not is_factory_character(chr)) {
+		throw M2_ERROR("Character doesn't belong to a factory");
+	}
+	return *industry_location_on_position(chr.parent().position);
 }
 
 m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry_tile) {

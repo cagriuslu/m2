@@ -67,7 +67,7 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_mouse_
 			if (factory->parent_id() == M2_PLAYER.id()) {
 				// Ask for confirmation
 				auto city_name = M2_GAME.get_named_item(city_of_location(*selected_loc)).in_game_name();
-				auto industry = to_industry_card_of_factory_character(factory->character());
+				auto industry = to_industry_of_factory_character(factory->character());
 				auto industry_name = M2_GAME.get_named_item(industry).in_game_name();
 				auto sell_return = liquidation_return_of_factory_character(factory->character());
 				if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "for £" + std::to_string(sell_return) + "?", "Yes", "No")) {

@@ -110,9 +110,11 @@ namespace m2 {
 	std::function<void(void)> create_sound_emitter_deleter(ObjectId id);
 	std::function<void(void)> create_character_deleter(ObjectId id);
 
-	// Filters and Transformers
-	std::function<bool(Object&)> generate_is_object_in_area_filter(const RectF& rect);
-	Object& to_object_with_id(ObjectId id);
+	// Filters
+	// Filter Generators
+	std::function<bool(Object&)> is_object_in_area(const RectF& rect);
+	// Transformers
+	Object& to_object_of_id(ObjectId id);
 	inline Character& to_character_of_object_unsafe(Object* o) { return o->character(); }
 	inline Character& to_character_of_object(Object& o) { return o.character(); }
 	inline Object& to_parent_of_component(Character& v) { return v.parent(); }

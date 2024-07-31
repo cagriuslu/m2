@@ -18,6 +18,8 @@ namespace m2 {
         [[nodiscard]] Object& parent() const;
 	};
 
+	// Filter Generators
+	constexpr auto is_component_of_parent(Id parent_id) { return [parent_id](const Component& c) { return c.object_id == parent_id; }; }
 	// Transformers
-	constexpr Id to_parent_id_of_component(Component& cmp) { return cmp.parent_id(); }
+	constexpr Id to_parent_id_of_component(const Component& cmp) { return cmp.parent_id(); }
 }
