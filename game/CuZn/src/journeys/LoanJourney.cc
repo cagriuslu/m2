@@ -50,6 +50,7 @@ bool can_player_loan(m2::Character& player, const m2g::pb::ClientCommand_LoanAct
 	// Check if the player holds the selected card
 	if (player.find_items(loan_action.card()) == player.end_items()) {
 		LOG_WARN("Player does not have the selected card", m2::pb::enum_name(loan_action.card()));
+		return false;
 	}
 
 	return true;
