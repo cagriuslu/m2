@@ -56,7 +56,7 @@ std::vector<Industry> buildable_industries(m2g::pb::ItemType selected_card, m2g:
 }
 
 m2::expected<ItemType> can_player_build_industry(m2::Character& player, ItemType card, SpriteType location, ItemType industry) {
-	if (not player_has_card(player, card)) {
+	if (player.find_items(card) == player.end_items()) {
 		return m2::make_unexpected("Player doesn't hold the given card");
 	}
 	if (find_factory_at_location(location)) {

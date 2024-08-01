@@ -88,10 +88,6 @@ size_t player_card_count(m2::Character& player) {
 	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
 }
 
-bool player_has_card(m2::Character& player, m2g::pb::ItemType card) {
-	return player.find_items(card) != player.end_items();
-}
-
 std::list<Card> player_cards(m2::Character& player) {
 	std::list<Card> card_list;
 	for (auto it = player.begin_items(); it != player.end_items(); ++it) {
@@ -104,10 +100,6 @@ std::list<Card> player_cards(m2::Character& player) {
 	return card_list;
 }
 
-size_t player_road_count(m2::Character& player) {
-	return player.count_item(m2g::pb::ROAD_TILE);
-}
-
 int player_link_count(m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
 					  | std::views::transform(m2::to_character_base)
@@ -116,10 +108,6 @@ int player_link_count(m2::Character& player) {
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
 		return acc + link_count_of_road_character(road_char);
 	});
-}
-
-float player_money(m2::Character& player) {
-	return player.get_resource(m2g::pb::MONEY);
 }
 
 int player_income_points(m2::Character& player) {

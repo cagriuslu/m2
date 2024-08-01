@@ -59,7 +59,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	if (player_card_count(M2_PLAYER.character()) == 0) {
 		throw M2_ERROR("Player has no cards but NetworkJourney is triggered. The game should have ended instead");
 	}
-	if (player_road_count(M2_PLAYER.character()) == 0) {
+	if (M2_PLAYER.character().count_item(m2g::pb::ROAD_TILE) == 0) {
 		M2_LEVEL.display_message("You are out of road tiles.");
 		LOG_INFO("Insufficient roads, cancelling NetworkJourney...");
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
@@ -67,13 +67,13 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	}
 
 	// Ask if double railroads should be built
-	if (M2G_PROXY.is_railroad_era() && 1 < player_road_count(M2_PLAYER.character())) {
+	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.character().count_item(m2g::pb::ROAD_TILE)) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
 	}
 
 	// Check player money, calculate required resources
 	if (auto costs = road_costs(_build_double_railroads); not m2::god_mode &&
-			player_money(M2_PLAYER.character()) < (costs
+			M2_PLAYER.character().get_resource(m2g::pb::MONEY) < (costs
 			| std::views::filter(m2::is_first_equals<m2g::pb::ResourceType, float>(MONEY))
 			| std::views::transform(m2::to_second_of<m2g::pb::ResourceType, float>)).front()) {
 		M2_LEVEL.display_message("Insufficient money.");

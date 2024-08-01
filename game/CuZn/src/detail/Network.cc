@@ -18,7 +18,7 @@ std::vector<std::pair<m2g::pb::ResourceType, float>> road_costs(bool double_rail
 }
 
 m2::expected<ItemType> can_player_build_connection(m2::Character& player, ItemType card, SpriteType location) {
-	if (not player_has_card(player, card)) {
+	if (player.find_items(card) == player.end_items()) {
 		return m2::make_unexpected("Player doesn't hold the given card");
 	}
 	if (find_road_at_location(location)) {

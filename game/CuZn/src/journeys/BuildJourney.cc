@@ -22,7 +22,7 @@ namespace {
 		if (not is_card(card)) {
 			throw M2_ERROR("Item is not a card");
 		}
-		if (not player_has_card(player, card)) {
+		if (player.find_items(card) == player.end_items()) {
 			throw M2_ERROR("Player does not own the given card");
 		}
 
