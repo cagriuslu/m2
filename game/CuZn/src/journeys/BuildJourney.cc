@@ -177,7 +177,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 		_selected_location = *selected_loc;
 
 		// Check if the player has a factory to build
-		auto tile_type = get_next_buildable_factory(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
+		auto tile_type = get_next_buildable_industry_tile(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
 			M2_LEVEL.display_message("Player doesn't have an industry tile of appropriate type");
 			M2_DEFER(m2g::Proxy::user_journey_deleter);
@@ -434,4 +434,56 @@ decltype(BuildJourney::_resource_sources)::iterator BuildJourney::get_next_unspe
 	return std::find_if(_resource_sources.begin(), _resource_sources.end(), [](const auto& r) {
 		return r.second == NO_SPRITE;
 	});
+}
+
+bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
+	// Check if prerequisites are met
+	if (auto prerequisite = can_player_attempt_to_build(player); not prerequisite) {
+		LOG_WARN("Player does not meet build prerequisites", prerequisite.error());
+		return false;
+	}
+
+	// Check if the player hold the selected card
+	if (not is_card(build_action.card())) {
+		LOG_WARN("Selected card is not a card");
+		return false;
+	}
+	if (player.find_items(build_action.card()) == player.end_items()) {
+		LOG_WARN("Player does not have the selected card");
+		return false;
+	}
+
+	// Check if the player has the selected tile
+	if (not is_industry_tile(build_action.industry_tile())) {
+		LOG_WARN("Selected industry tile is not an industry tile");
+		return false;
+	}
+	if (player.find_items(build_action.industry_tile()) == player.end_items()) {
+		LOG_WARN("Player does not have the selected tile");
+		return false;
+	}
+	// Check if the tile is the next tile
+	auto industry_tile_category = M2_GAME.get_named_item(build_action.industry_tile()).category();
+	if (auto next_industry_tile = get_next_buildable_industry_tile(player, industry_tile_category);
+		not next_industry_tile || *next_industry_tile != build_action.industry_tile()) {
+		LOG_WARN("Player cannot use the selected tile");
+		return false;
+	}
+
+	// Check if the player has enough money
+	if (player.get_resource(MONEY) < M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) {
+		LOG_WARN("Player does not have enough money");
+		return false;
+	}
+
+	// Check if the player can build the industry with the selected card
+	if (not buildable_industry_locations_in_network_with_card(player, build_action.card()).contains(build_action.industry_location())) {
+		LOG_WARN("Selected industry location is not reachable or cannot be built with the selected card");
+		return false;
+	}
+
+	// Check if the player can use the selected resources
+	// TODO Currently, client's resource selection is very advanced. Implement the validation later.
+
+	return true;
 }

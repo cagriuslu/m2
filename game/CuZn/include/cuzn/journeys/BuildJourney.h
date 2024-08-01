@@ -40,6 +40,7 @@ protected:
 	decltype(_resource_sources)::iterator get_next_unspecified_resource();
 };
 
-bool can_player_build(); // TODO
+// For the server
+bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
 
 Card execute_build_action(); // TODO
