@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cuzn/Detail.h>
-#include <cuzn/detail/Build.h>
 #include <m2/Proxy.h>
 #include <cuzn/journeys/BuildJourney.h>
 #include <cuzn/journeys/NetworkJourney.h>

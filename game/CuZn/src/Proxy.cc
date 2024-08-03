@@ -140,20 +140,14 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		std::optional<Card> card_to_discard;
 		SpentMoney money_spent = 0;
 		if (client_command.has_build_action()) {
-			LOG_INFO("Processing build action");
-			// TODO verify whether the player can build it
-
-			card_to_discard = client_command.build_action().card();
-			money_spent += 5;
-
-			auto it = m2::create_object(
-				position_of_industry_location(client_command.build_action().industry_location()),
-				m2g::pb::FACTORY,
-				turn_holder_object_id);
-			auto success = init_factory(*it,
-				city_of_location(client_command.build_action().industry_location()),
-				client_command.build_action().industry_tile());
-			// TODO check result
+			LOG_INFO("Validating build action");
+			if (not can_player_build(turn_holder_character, client_command.build_action())) {
+				return std::nullopt;
+			}
+			LOG_INFO("Executing build action");
+			auto card_money_pair = execute_build_action(turn_holder_character, client_command.build_action());
+			card_to_discard = card_money_pair.first;
+			money_spent += card_money_pair.second;
 		} else if (client_command.has_network_action()) {
 			LOG_INFO("Processing network action");
 			// TODO verify whether the player can network

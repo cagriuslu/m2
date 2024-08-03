@@ -5,6 +5,7 @@
 #include <cuzn/object/Road.h>
 #include <cuzn/object/Factory.h>
 #include <cuzn/Detail.h>
+#include <m2/Log.h>
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -13,12 +14,16 @@ std::vector<IndustryLocation> find_closest_connected_coal_mines_with_coal(City c
 	auto active_connections = create_active_connections_graph();
 	// Find all reachable cities and their costs
 	auto reachable_cities = active_connections.reachable_nodes_from(city, 100.0f);
+	for (const auto& reachable_city : reachable_cities) {
+		LOG_DEBUG("Reachable city", m2::pb::enum_name(static_cast<IndustryLocation>(reachable_city.first)), reachable_city.second);
+	}
 	// Order cities by cost
 	auto cities_ordered_by_cost = m2::Graph::order_by_cost(reachable_cities);
 	// Find the closest coal mines with the same lowest cost
 	std::vector<IndustryLocation> industry_locations;
 	float closest_coal_mine_cost = 0.0f;
 	for (const auto& [cost, node] : cities_ordered_by_cost) {
+		LOG_DEBUG("City in network", m2::pb::enum_name(static_cast<IndustryLocation>(node)), cost);
 		if (not industry_locations.empty() && m2::is_less(closest_coal_mine_cost, cost, 0.001)) {
 			// If some coal mines are found and there aren't any other cities as close, stop searching.
 			break;

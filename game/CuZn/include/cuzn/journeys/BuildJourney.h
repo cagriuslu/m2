@@ -23,6 +23,7 @@ class BuildJourney : public m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal
 
 public:
 	BuildJourney();
+	~BuildJourney() override;
 
 protected:
 	std::optional<BuildJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
@@ -43,4 +44,4 @@ protected:
 // For the server
 bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
 
-Card execute_build_action(); // TODO
+std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);

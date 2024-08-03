@@ -40,7 +40,8 @@ std::unordered_map<m2::Graph::Node, float> m2::Graph::reachable_nodes_from(Node 
 	// Check if there are any edges from the source
 	auto source_it = _edges.find(source);
 	if (source_it == _edges.end()) {
-		return {};
+		// Only return the source city
+		return {{source, 0.0f}};
 	}
 
 	// Add the first set of edges from the source into the nodes_to_visit list

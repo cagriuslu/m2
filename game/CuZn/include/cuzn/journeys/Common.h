@@ -6,6 +6,7 @@
 extern const m2::ui::Blueprint journey_cancel_button;
 constexpr int JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX = 0;
 
+// Used by various Journey state machines to carry mouse click position, or cancel button press.
 class PositionOrCancelSignal : public m2::FsmSignalBase {
 	std::optional<m2::VecF> _world_position;
 	bool _cancel{};
