@@ -33,11 +33,10 @@ namespace {
 		.text = "Develop",
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (M2_GAME.client_thread().is_turn()) {
-				LOG_INFO("Beginning DevelopJourney");
+			if (auto develop_prerequisite = can_player_attempt_to_develop(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(DevelopJourney{});
 			} else {
-				M2_LEVEL.display_message("It's not your turn");
+				M2_LEVEL.display_message(develop_prerequisite.error());
 			}
 			return make_continue_action();
 		}

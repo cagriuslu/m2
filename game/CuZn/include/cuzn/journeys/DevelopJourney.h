@@ -3,6 +3,8 @@
 #include <cuzn/Detail.h>
 #include <m2/Fsm.h>
 
+m2::void_expected can_player_attempt_to_develop(m2::Character& player);
+
 enum class DevelopJourneyStep {
 	INITIAL_STEP = 0,
 	EXPECT_RESOURCE_SOURCE,
@@ -18,7 +20,8 @@ class DevelopJourney : public m2::FsmBase<DevelopJourneyStep, PositionOrCancelSi
 	
 public:
 	DevelopJourney();
-	
+	~DevelopJourney() override;
+
 protected:
 	std::optional<DevelopJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
 	std::optional<DevelopJourneyStep> handle_initial_enter_signal();
