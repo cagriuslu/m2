@@ -501,6 +501,18 @@ bool m2g::Proxy::is_railroad_era() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
 }
 
+bool m2g::Proxy::is_liquidating() const {
+	return m2::is_equal(game_state_tracker().get_resource(m2g::pb::IS_LIQUIDATING), 1.0f, 0.001f);
+}
+
+int m2g::Proxy::empty_slots_in_coal_market() const {
+	return COAL_MARKET_CAPACITY - m2::iround(game_state_tracker().get_resource(pb::COAL_CUBE_COUNT));
+}
+
+int m2g::Proxy::empty_slots_in_iron_market() const {
+	return IRON_MARKET_CAPACITY - m2::iround(game_state_tracker().get_resource(pb::IRON_CUBE_COUNT));
+}
+
 std::set<m2::ObjectId> m2g::Proxy::object_ids_of_industry_location_bg_tiles(const std::set<IndustryLocation>& industry_locations) const {
 	std::set<m2::ObjectId> ids;
 	for (const auto& industry_location : industry_locations) {
@@ -582,4 +594,16 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 
 	// Liquidation not necessary
 	return std::nullopt;
+}
+
+void m2g::Proxy::set_is_liquidating(bool state) {
+	game_state_tracker().set_resource(m2g::pb::IS_LIQUIDATING, state ? 1.0f : 0.0f);
+}
+
+void m2g::Proxy::buy_coal_from_market() {
+	game_state_tracker().remove_resource(pb::COAL_CUBE_COUNT, 1.0f);
+}
+
+void m2g::Proxy::buy_iron_from_market() {
+	game_state_tracker().remove_resource(pb::IRON_CUBE_COUNT, 1.0f);
 }

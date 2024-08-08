@@ -42,7 +42,7 @@ std::vector<IndustryLocation> find_closest_connected_coal_mines_with_coal(City c
 	return industry_locations;
 }
 
-std::optional<MerchantCity> find_connected_coal_market_with_coal(City city) {
+std::optional<MerchantCity> find_connected_coal_market(City city) {
 	auto active_connections = create_active_connections_graph();
 	// Find all reachable cities and their costs
 	auto reachable_cities = active_connections.reachable_nodes_from(city, 100.0f);

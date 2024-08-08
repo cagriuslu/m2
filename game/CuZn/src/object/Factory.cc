@@ -102,13 +102,6 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 	chr.add_named_item(M2_GAME.get_named_item(city));
 	const auto& tile_item = M2_GAME.get_named_item(industry_tile);
 	chr.add_named_item(tile_item);
-	chr.add_resource(pb::COAL_CUBE_COUNT, tile_item.get_attribute(pb::COAL_BONUS));
-	chr.add_resource(pb::IRON_CUBE_COUNT, tile_item.get_attribute(pb::IRON_BONUS));
-	if (M2G_PROXY.is_canal_era()) {
-		chr.add_resource(pb::BEER_BARREL_COUNT, tile_item.get_attribute(pb::BEER_BONUS_FIRST_ERA));
-	} else {
-		chr.add_resource(pb::BEER_BARREL_COUNT, tile_item.get_attribute(pb::BEER_BONUS_SECOND_ERA));
-	}
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.add_graphic(industry_sprite_of_industry(industry));

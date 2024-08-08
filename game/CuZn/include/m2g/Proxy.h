@@ -55,6 +55,9 @@ namespace m2g {
 		[[nodiscard]] bool is_first_turn() const;
 		[[nodiscard]] bool is_canal_era() const;
 		[[nodiscard]] bool is_railroad_era() const;
+		[[nodiscard]] bool is_liquidating() const;
+		[[nodiscard]] int empty_slots_in_coal_market() const;
+		[[nodiscard]] int empty_slots_in_iron_market() const;
 		[[nodiscard]] std::set<m2::ObjectId> object_ids_of_industry_location_bg_tiles(const std::set<IndustryLocation>&) const;
 
 		// Modifiers
@@ -68,5 +71,8 @@ namespace m2g {
 		using SpentMoney = int;
 		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players; // Front of the list played first
 		std::optional<std::pair<PlayerIndex, m2g::pb::ServerCommand>> prepare_next_round(); // Returns the index of the player that should liquidate assets
+		void set_is_liquidating(bool state);
+		void buy_coal_from_market();
+		void buy_iron_from_market();
 	};
 }  // namespace m2g

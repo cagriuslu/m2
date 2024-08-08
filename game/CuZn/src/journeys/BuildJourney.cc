@@ -283,7 +283,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 			auto selected_city = city_of_location(_selected_location);
 			if (auto closest_mines_with_coal = find_closest_connected_coal_mines_with_coal(selected_city); closest_mines_with_coal.empty()) {
 				// No reachable coal mines with coal, check the coal market
-				if (auto coal_market_city = find_connected_coal_market_with_coal(selected_city)) {
+				if (auto coal_market_city = find_connected_coal_market(selected_city)) {
 					// If no reachable coal has left on the map, all the remaining coal must come from the market
 					auto remaining_unspecified_coal_count = std::count(_resource_sources.begin(), _resource_sources.end(),
 						std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
@@ -577,7 +577,7 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 			}
 		} else if (is_merchant_location(location)) {
 			// Check that find_closest_connected_coal_mines_with_coal returns empty, and there's a connection to some merchant
-			if (find_closest_connected_coal_mines_with_coal(city).empty() && find_connected_coal_market_with_coal(city)) {
+			if (find_closest_connected_coal_mines_with_coal(city).empty() && find_connected_coal_market(city)) {
 				// Specify resource source
 				next_unspecified_coal_resource->second = location;
 			} else {
@@ -660,13 +660,10 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	// Assume validation is done
 
 	// Take tile from player
-	auto tile_category = M2_GAME.get_named_item(build_action.industry_tile()).category();
-	auto tile = get_next_buildable_industry_tile(player, tile_category);
-	player.remove_item(player.find_items(*tile));
-
-	// Create factory on the map
-	auto it = m2::create_object(position_of_industry_location(build_action.industry_location()), m2g::pb::FACTORY, player.parent_id());
-	init_factory(*it, city_of_location(build_action.industry_location()), build_action.industry_tile());
+	const auto& tile_item = M2_GAME.get_named_item(build_action.industry_tile());
+	auto tile_category = tile_item.category();
+	auto tile_type = get_next_buildable_industry_tile(player, tile_category);
+	player.remove_item(player.find_items(*tile_type));
 
 	// Take resources
 	for (const auto& coal_source : build_action.coal_sources()) {
@@ -674,6 +671,8 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 		if (is_industry_location(location)) {
 			auto* factory = find_factory_at_location(location);
 			factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
+		} else if (is_merchant_location(location)) {
+			M2G_PROXY.buy_coal_from_market();
 		}
 	}
 	for (const auto& iron_source : build_action.iron_sources()) {
@@ -681,7 +680,38 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 		if (is_industry_location(location)) {
 			auto* factory = find_factory_at_location(location);
 			factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
+		} else if (is_merchant_location(location)) {
+			M2G_PROXY.buy_iron_from_market();
 		}
+	}
+
+	// Create factory on the map
+	auto it = m2::create_object(position_of_industry_location(build_action.industry_location()), m2g::pb::FACTORY, player.parent_id());
+	auto city = city_of_location(build_action.industry_location());
+	init_factory(*it, city, build_action.industry_tile());
+	// Give resources to factory, sell to market at the same time
+	if (tile_category == ITEM_CATEGORY_COAL_MINE_TILE) {
+		// If there's a connection to coal market
+		if (find_connected_coal_market(city)) {
+			auto gained_resource_count = m2::iround(tile_item.get_attribute(COAL_BONUS));
+			auto sellable_resource_count = std::min(gained_resource_count, M2G_PROXY.empty_slots_in_coal_market());
+			// Sell to market
+			M2G_PROXY.game_state_tracker().add_resource(COAL_CUBE_COUNT, m2::F(sellable_resource_count));
+			// Keep the rest
+			it->character().add_resource(COAL_CUBE_COUNT, m2::F(gained_resource_count - sellable_resource_count));
+		} else {
+			it->character().add_resource(COAL_CUBE_COUNT, tile_item.get_attribute(COAL_BONUS));
+		}
+	} else if (tile_category == ITEM_CATEGORY_IRON_WORKS_TILE) {
+		auto gained_resource_count = m2::iround(tile_item.get_attribute(IRON_BONUS));
+		auto sellable_resource_count = std::min(gained_resource_count, M2G_PROXY.empty_slots_in_iron_market());
+		// Sell to market
+		M2G_PROXY.game_state_tracker().add_resource(IRON_CUBE_COUNT, m2::F(sellable_resource_count));
+		// Keep the rest
+		it->character().add_resource(IRON_CUBE_COUNT, m2::F(gained_resource_count - sellable_resource_count));
+	} else if (tile_category == ITEM_CATEGORY_BREWERY_TILE) {
+		it->character().add_resource(BEER_BARREL_COUNT, tile_item.get_attribute(
+			M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA));
 	}
 
 	// TODO flip exhausted industries

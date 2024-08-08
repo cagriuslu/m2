@@ -2,11 +2,6 @@
 #include "m2/Game.h"
 
 namespace {
-	constexpr int COAL_MARKET_CAPACITY = 14;
-	constexpr int IRON_MARKET_CAPACITY = 10;
-	constexpr int COAL_MARKET_INITIAL_COUNT = 13;
-	constexpr int IRON_MARKET_INITIAL_COUNT = 8;
-
 	// Returns the cost of buying `to_buy` number of items from the market
 	int calculate_cost(int capacity, int current_resource_count, int to_buy) {
 		auto cost_of_one = [&](int resource_count) {
@@ -51,6 +46,8 @@ void init_game_state_tracker(m2::Object& obj) {
 	chr.clear_resource(m2g::pb::IS_RAILROAD_ERA);
 	// Turn
 	chr.set_resource(m2g::pb::IS_FIRST_TURN, 1.0f);
+	// Is liquidating?
+	chr.clear_resource(m2g::pb::IS_LIQUIDATING);
 }
 
 int market_coal_cost(int coal_count) {
@@ -71,12 +68,4 @@ std::pair<int,int> market_coal_revenue(int count) {
 std::pair<int,int> market_iron_revenue(int count) {
 	auto current_iron_count = m2::iround(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 	return calculate_revenue(IRON_MARKET_CAPACITY, current_iron_count, count);
-}
-
-bool is_liquidating() {
-	return m2::is_equal(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IS_LIQUIDATING), 1.0f, 0.001f);
-}
-
-void set_is_liquidating(bool state) {
-	M2G_PROXY.game_state_tracker().set_resource(m2g::pb::IS_LIQUIDATING, state ? 1.0f : 0.0f);
 }
