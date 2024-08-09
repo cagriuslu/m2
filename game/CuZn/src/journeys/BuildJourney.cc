@@ -685,6 +685,16 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 		}
 	}
 
+	// Calculate the cost before building the industry
+	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {
+		return is_merchant_location(static_cast<Location>(coal_source));
+	});
+	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
+		return is_merchant_location(static_cast<Location>(iron_source));
+	});
+	auto cost = m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
+		market_coal_cost(m2::I(coal_from_market)) + market_iron_cost(m2::I(iron_from_market));
+
 	// Create factory on the map
 	auto it = m2::create_object(position_of_industry_location(build_action.industry_location()), m2g::pb::FACTORY, player.parent_id());
 	auto city = city_of_location(build_action.industry_location());
@@ -714,17 +724,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 			M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA));
 	}
 
-	// TODO flip exhausted industries
-
-	// Calculate cost
-	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {
-		return is_merchant_location(static_cast<Location>(coal_source));
-	});
-	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
-		return is_merchant_location(static_cast<Location>(iron_source));
-	});
-	auto cost = m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
-		market_coal_cost(m2::I(coal_from_market)) + market_iron_cost(m2::I(iron_from_market));
+	flip_exhausted_factories();
 
 	return std::make_pair(build_action.card(), cost);
 }

@@ -8,6 +8,7 @@ m2::Object* find_factory_at_location(Location location);
 
 // Global Modifiers
 void remove_obsolete_factories();
+void flip_exhausted_factories();
 
 // Filters
 bool is_factory_character(m2::Character& chr);

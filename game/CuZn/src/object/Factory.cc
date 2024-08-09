@@ -35,6 +35,35 @@ void remove_obsolete_factories() {
 	});
 }
 
+void flip_exhausted_factories() {
+	std::ranges::for_each(
+		M2_LEVEL.characters
+			| std::views::transform(m2::to_character_base)
+			| std::views::filter(is_factory_character),
+		[](m2::Character& chr) {
+			auto is_coal_mine_exhausted = to_industry_of_factory_character(chr) == COAL_MINE_CARD
+				&& m2::is_equal(chr.get_resource(COAL_CUBE_COUNT), 0.0f, 0.001f);
+			auto is_iron_works_exhausted = to_industry_of_factory_character(chr) == IRON_WORKS_CARD
+				&& m2::is_equal(chr.get_resource(IRON_CUBE_COUNT), 0.0f, 0.001f);
+			auto is_brewery_exhausted = to_industry_of_factory_character(chr) == BREWERY_CARD
+				&& m2::is_equal(chr.get_resource(BEER_BARREL_COUNT), 0.0f, 0.001f);
+			if (is_coal_mine_exhausted || is_iron_works_exhausted || is_brewery_exhausted) {
+				auto tile_type = to_industry_tile_of_factory_character(chr);
+				const auto& tile_item = M2_GAME.get_named_item(tile_type);
+				// Earn income points
+				auto income_bonus = tile_item.get_attribute(INCOME_POINTS_BONUS);
+				auto curr_income_points = chr.parent().character().get_attribute(INCOME_POINTS);
+				chr.parent().character().set_attribute(INCOME_POINTS, curr_income_points + income_bonus);
+				// Earn victory points
+				auto victory_point_bonus = tile_item.get_attribute(VICTORY_POINTS_BONUS);
+				auto curr_victory_points = chr.parent().character().get_resource(VICTORY_POINTS);
+				chr.parent().character().set_resource(VICTORY_POINTS, curr_victory_points + victory_point_bonus);
+				// Flip the tile
+				chr.set_resource(IS_SOLD, 1.0f);
+			}
+		});
+}
+
 bool is_factory_character(m2::Character& chr) {
 	return chr.parent().object_type() == m2g::pb::FACTORY;
 }
