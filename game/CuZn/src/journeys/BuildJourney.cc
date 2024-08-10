@@ -506,7 +506,7 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 	}
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
 	// Check if the tile is the next tile
-	auto selected_industry_tile = M2_GAME.get_named_item(build_action.industry_tile());
+	const auto& selected_industry_tile = M2_GAME.get_named_item(build_action.industry_tile());
 	auto next_industry_tile = get_next_buildable_industry_tile(player, selected_industry_tile.category());
 	if (not next_industry_tile || *next_industry_tile != build_action.industry_tile()) {
 		LOG_WARN("Player cannot use the selected tile");
@@ -665,6 +665,16 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	auto tile_type = get_next_buildable_industry_tile(player, tile_category);
 	player.remove_item(player.find_items(*tile_type));
 
+	// Calculate the cost before building the industry
+	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {
+		return is_merchant_location(static_cast<Location>(coal_source));
+	});
+	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
+		return is_merchant_location(static_cast<Location>(iron_source));
+	});
+	auto cost = m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
+				market_coal_cost(m2::I(coal_from_market)) + market_iron_cost(m2::I(iron_from_market));
+
 	// Take resources
 	for (const auto& coal_source : build_action.coal_sources()) {
 		auto location = static_cast<Location>(coal_source);
@@ -684,16 +694,6 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 			M2G_PROXY.buy_iron_from_market();
 		}
 	}
-
-	// Calculate the cost before building the industry
-	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {
-		return is_merchant_location(static_cast<Location>(coal_source));
-	});
-	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
-		return is_merchant_location(static_cast<Location>(iron_source));
-	});
-	auto cost = m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
-		market_coal_cost(m2::I(coal_from_market)) + market_iron_cost(m2::I(iron_from_market));
 
 	// Create factory on the map
 	auto it = m2::create_object(position_of_industry_location(build_action.industry_location()), m2g::pb::FACTORY, player.parent_id());

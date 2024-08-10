@@ -20,7 +20,7 @@ enum AttributeType {
     IRON_COST = 10; // Amount of iron cubes required to build a factory
     BEER_COST = 11; // Amount of beer barrels required to sell a factory
     FORBIDDEN_ERA = 12; // 0: not forbidden, 1: forbidden in canal era, 2: forbidden in railroad era
-    DEVELOPMENT_BAN = 13;
+    DEVELOPMENT_BAN = 13; // 1: Factory cannot be developed
     BEER_BONUS_FIRST_ERA = 14; // Number of beer barrels gained when this factory is built
     BEER_BONUS_SECOND_ERA = 15; // Number of beer barrels gained when this factory is built
     COAL_BONUS = 16; // Number of coal cubes gained when this factory is built

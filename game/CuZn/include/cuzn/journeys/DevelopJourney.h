@@ -31,3 +31,9 @@ protected:
 	std::optional<DevelopJourneyStep> handle_resource_exit_signal();
 	std::optional<DevelopJourneyStep> handle_confirmation_enter_signal();
 };
+
+// For the server
+bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);
+
+// For the server
+std::pair<Card,int> execute_develop_action(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);

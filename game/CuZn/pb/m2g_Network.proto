@@ -30,6 +30,7 @@ message ClientCommand {
     ItemType card = 1;
     SpriteType industry_location = 2;
     repeated SpriteType beer_sources = 3;
+    ItemType merchant_develop_benefit_industry_tile = 4;
   }
   message LoanAction {
     ItemType card = 1;

@@ -107,6 +107,12 @@ namespace m2 {
 	public:
 		NamedItem() = default;
 		explicit NamedItem(pb::Item item);
+		// Prevent accidental copying
+		NamedItem(const NamedItem& other) = delete;
+		NamedItem& operator=(const NamedItem& other) = delete;
+		// Move allowed
+		NamedItem(NamedItem&& other) = default;
+		NamedItem& operator=(NamedItem&& other) = default;
 
 		[[nodiscard]] inline m2g::pb::ItemType type() const override { return _item.type(); }
 		[[nodiscard]] inline m2g::pb::ItemCategory category() const override { return _item.category(); }

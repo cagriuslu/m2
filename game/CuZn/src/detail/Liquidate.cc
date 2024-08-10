@@ -7,7 +7,7 @@
 
 int liquidation_return_of_factory_character(m2::Character& chr) {
 	auto industry_tile_type = to_industry_tile_of_factory_character(chr);
-	auto industry_tile_item = M2_GAME.get_named_item(industry_tile_type);
+	const auto& industry_tile_item = M2_GAME.get_named_item(industry_tile_type);
 	auto money_cost_f = industry_tile_item.get_attribute(m2g::pb::MONEY_COST);
 	auto money_cost_i = m2::iround(money_cost_f);
 	auto rounded_down_half_cost = money_cost_i >> 1;

@@ -172,34 +172,14 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			factory->character().set_resource(pb::IS_SOLD, 1.0f);
 			// TODO get benefits
 		} else if (client_command.has_develop_action()) {
-			LOG_INFO("Processing develop action");
-			// TODO verify player can develop
-
-			card_to_discard = client_command.develop_action().card();
-			money_spent += 2;
-
-			// Remove tiles from the player
-			turn_holder_character.remove_item(turn_holder_character.find_items(client_command.develop_action().industry_tile_1()));
-			if (client_command.develop_action().industry_tile_2()) {
-				turn_holder_character.remove_item(turn_holder_character.find_items(client_command.develop_action().industry_tile_2()));
+			LOG_INFO("Validating develop action");
+			if (not can_player_develop(turn_holder_character, client_command.develop_action())) {
+				return std::nullopt;
 			}
-			// Remove iron from industries or market
-			if (is_industry_location(client_command.develop_action().iron_sources_1())) {
-				find_factory_at_location(client_command.develop_action().iron_sources_1())->character().remove_resource(pb::IRON_CUBE_COUNT, 1.0f);
-			} else if (is_merchant_location(client_command.develop_action().iron_sources_1())) {
-				// TODO
-			} else {
-				throw M2_ERROR("Invalid iron source");
-			}
-			// TODO remove duplication
-			if (is_industry_location(client_command.develop_action().iron_sources_2())) {
-				find_factory_at_location(client_command.develop_action().iron_sources_2())->character().remove_resource(pb::IRON_CUBE_COUNT, 1.0f);
-			} else if (is_merchant_location(client_command.develop_action().iron_sources_2())) {
-				// TODO
-			} else {
-				throw M2_ERROR("Invalid iron source");
-			}
-
+			LOG_INFO("Executing develop action");
+			auto card_money_pair = execute_develop_action(turn_holder_character, client_command.develop_action());
+			card_to_discard = card_money_pair.first;
+			money_spent += card_money_pair.second;
 		} else if (client_command.has_loan_action()) {
 			LOG_INFO("Validating loan action");
 			if (not can_player_loan(turn_holder_character, client_command.loan_action())) {

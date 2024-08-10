@@ -151,7 +151,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			// Get hit by an enemy
 			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
 		} else if (data.has_item_type()) {
-			auto item = M2_GAME.get_named_item(data.item_type());
+			const auto& item = M2_GAME.get_named_item(data.item_type());
 			// Player can hold only one special weapon of certain type, get rid of the previous one
 			constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
 			constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
