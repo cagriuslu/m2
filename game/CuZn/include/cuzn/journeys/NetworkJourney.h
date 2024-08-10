@@ -4,6 +4,9 @@
 #include <m2g_ResourceType.pb.h>
 #include <m2/Fsm.h>
 #include <m2/VecF.h>
+#include <m2/component/Character.h>
+
+m2::void_expected can_player_attempt_to_network(m2::Character& player);
 
 enum class NetworkJourneyStep {
 	INITIAL_STEP = 0,

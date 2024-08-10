@@ -3,6 +3,7 @@
 #include <cuzn/detail/Network.h>
 #include <cuzn/ui/Detail.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <cuzn/object/Road.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <m2g/Proxy.h>
@@ -11,6 +12,49 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
+
+namespace {
+	std::vector<std::pair<m2g::pb::ResourceType, m2g::pb::SpriteType>> required_resources_for_network(bool double_railroad) {
+		if (M2G_PROXY.is_canal_era()) {
+			return {};
+		} else if (!double_railroad) {
+			return {{COAL_CUBE_COUNT, NO_SPRITE}};
+		} else {
+			return {{COAL_CUBE_COUNT, NO_SPRITE}, {COAL_CUBE_COUNT, NO_SPRITE}, {BEER_BARREL_COUNT, NO_SPRITE}};
+		}
+	}
+
+	std::set<Connection> buildable_connections_in_network(m2::Character& player) {
+		// Gather connections in player's network
+		std::set<Connection> connections_in_network = get_connections_in_network(player);
+		if (connections_in_network.empty()) {
+			connections_in_network = M2G_PROXY.is_canal_era() ? all_canals() : all_railroads();
+		}
+
+		// Filter built locations
+		for (auto it = connections_in_network.begin(); it != connections_in_network.end(); ) {
+			if (find_road_at_location(*it)) {
+				it = connections_in_network.erase(it);
+			} else {
+				++it;
+			}
+		}
+
+		return connections_in_network;
+	}
+}
+
+m2::void_expected can_player_attempt_to_network(m2::Character& player) {
+	if (player_card_count(player) < 1) {
+		return m2::make_unexpected("Network action requires a card");
+	}
+
+	if (player_available_road_count(player) < 1) {
+		return m2::make_unexpected("Network action requires a link tile");
+	}
+
+	return {};
+}
 
 NetworkJourney::NetworkJourney() : FsmBase() {
 	DEBUG_FN();
@@ -56,45 +100,19 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_signal(const PositionOr
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() {
-	if (player_card_count(M2_PLAYER.character()) == 0) {
-		throw M2_ERROR("Player has no cards but NetworkJourney is triggered. The game should have ended instead");
-	}
-	if (M2_PLAYER.character().count_item(m2g::pb::ROAD_TILE) == 0) {
-		M2_LEVEL.display_message("You are out of road tiles.");
-		LOG_INFO("Insufficient roads, cancelling NetworkJourney...");
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
-		return std::nullopt;
-	}
-
 	// Ask if double railroads should be built
 	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.character().count_item(m2g::pb::ROAD_TILE)) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
 	}
+	_resource_sources = required_resources_for_network(_build_double_railroads);
 
-	// Check player money, calculate required resources
-	if (auto costs = road_costs(_build_double_railroads); not m2::god_mode &&
-			M2_PLAYER.character().get_resource(m2g::pb::MONEY) < (costs
-			| std::views::filter(m2::is_first_equals<m2g::pb::ResourceType, float>(MONEY))
-			| std::views::transform(m2::to_second_of<m2g::pb::ResourceType, float>)).front()) {
-		M2_LEVEL.display_message("Insufficient money.");
-		LOG_INFO("Insufficient money, cancelling NetworkJourney...");
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
-		return std::nullopt;
-	} else {
-		for (const auto& cost : costs | std::views::filter(m2::is_first_not_equals<m2g::pb::ResourceType, float>(MONEY))) {
-			_resource_sources.insert(_resource_sources.end(), iround(cost.second), std::make_pair(cost.first, NO_SPRITE));
-		}
-	}
-
-	// Card selection
 	if (auto selected_card = ask_for_card_selection()) {
 		_selected_card = *selected_card;
+		return NetworkJourneyStep::EXPECT_LOCATION;
 	} else {
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}
-
-	return NetworkJourneyStep::EXPECT_LOCATION;
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal() {
@@ -102,6 +120,9 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal()
 	M2_LEVEL.disable_hud();
 	M2_LEVEL.display_message("Pick connection", -1.0f);
 	M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+	// Dim places outside the player's network
+	auto buildable_conns = buildable_connections_in_network(M2_PLAYER.character());
+	M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(buildable_conns));
 	return std::nullopt;
 }
 
@@ -136,6 +157,8 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() 
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_message();
 	M2_LEVEL.remove_custom_ui_deferred(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
+	// Disable dimming in case it was enabled
+	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
 

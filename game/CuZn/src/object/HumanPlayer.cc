@@ -123,6 +123,10 @@ size_t player_tile_count(m2::Character& player) {
 		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_POTTERY_TILE);
 }
 
+size_t player_available_road_count(m2::Character& player) {
+	return player.count_item(m2g::pb::ROAD_TILE);
+}
+
 std::optional<m2g::pb::ItemType> get_next_buildable_industry_tile(m2::Character& player, m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;
@@ -210,4 +214,12 @@ std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player) {
 	});
 
 	return railroads;
+}
+
+std::set<m2g::pb::SpriteType> get_connections_in_network(m2::Character& player) {
+	if (M2G_PROXY.is_canal_era()) {
+		return get_canals_in_network(player);
+	} else {
+		return get_railroads_in_network(player);
+	}
 }

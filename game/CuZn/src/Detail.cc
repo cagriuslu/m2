@@ -271,7 +271,29 @@ std::set<IndustryLocation> all_industry_locations() {
 		location = static_cast<IndustryLocation>(m2::I(location) + 1)) {
 		industry_locations.insert(location);
 	}
-	return industry_locations;;
+	return industry_locations;
+}
+
+std::set<Connection> all_canals() {
+	std::set<IndustryLocation> connections;
+	for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
+		auto connection = static_cast<Connection>(i);
+		if (is_canal(connection)) {
+			connections.insert(connection);
+		}
+	}
+	return connections;
+}
+
+std::set<Connection> all_railroads() {
+	std::set<IndustryLocation> connections;
+	for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
+		auto connection = static_cast<Connection>(i);
+		if (is_railroad(connection)) {
+			connections.insert(connection);
+		}
+	}
+	return connections;
 }
 
 std::vector<IndustryLocation> industry_locations_in_city(City city_card) {
@@ -377,7 +399,7 @@ m2::VecF position_of_industry_location(IndustryLocation industry_location) {
 
 std::optional<Connection> connection_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.connection_positions.begin(), M2G_PROXY.connection_positions.end(),
-		[&](const auto& pos_and_type) { return pos_and_type.second.second.contains(world_position); });
+		[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).contains(world_position); });
 	if (it != M2G_PROXY.connection_positions.end()) {
 		return it->first;
 	} else {
@@ -390,7 +412,7 @@ m2::VecF position_of_connection(Connection connection) {
 		throw M2_ERROR("Invalid connection");
 	}
 	if (auto it = M2G_PROXY.connection_positions.find(connection); it != M2G_PROXY.connection_positions.end()) {
-		return it->second.first;
+		return std::get<m2::VecF>(it->second);
 	} else {
 		throw M2_ERROR("Connection not found in position map");
 	}

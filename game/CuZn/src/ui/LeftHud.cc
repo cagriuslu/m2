@@ -59,11 +59,10 @@ namespace {
 		.text = "Network",
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (M2_GAME.client_thread().is_turn()) {
-				LOG_INFO("Beginning BuildJourney");
+			if (auto network_prerequisite = can_player_attempt_to_network(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
 			} else {
-				M2_LEVEL.display_message("It's not your turn");
+				M2_LEVEL.display_message(network_prerequisite.error());
 			}
 			return make_continue_action();
 		}

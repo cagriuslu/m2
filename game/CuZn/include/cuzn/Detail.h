@@ -52,6 +52,8 @@ std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity c
 // Generators
 
 std::set<IndustryLocation> all_industry_locations();
+std::set<Connection> all_canals();
+std::set<Connection> all_railroads();
 
 /// Returns the industry locations in that given city
 std::vector<IndustryLocation> industry_locations_in_city(City city_card);

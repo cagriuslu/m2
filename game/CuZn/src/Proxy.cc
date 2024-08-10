@@ -397,7 +397,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 		auto original_type = M2_GAME.get_sprite(sprite_type).original_type(); // Connection sprites are duplicate of another
 		auto offset = connection_sprite_world_offset(*original_type);
 		connection_cell_rect = connection_cell_rect.shift(offset);
-		connection_positions[sprite_type] = std::make_pair(obj.position + offset, connection_cell_rect);
+		connection_positions[sprite_type] = std::make_tuple(obj.position + offset, connection_cell_rect, obj.id());
 		LOG_DEBUG("Connection position", m2g::pb::SpriteType_Name(sprite_type), connection_cell_rect);
 		// Fill graph
 		auto cities = cities_from_connection(sprite_type);
@@ -497,6 +497,14 @@ std::set<m2::ObjectId> m2g::Proxy::object_ids_of_industry_location_bg_tiles(cons
 	std::set<m2::ObjectId> ids;
 	for (const auto& industry_location : industry_locations) {
 		ids.insert(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[industry_location]));
+	}
+	return ids;
+}
+
+std::set<m2::ObjectId> m2g::Proxy::object_ids_of_connection_bg_tiles(const std::set<Connection>& connections) const {
+	std::set<m2::ObjectId> ids;
+	for (const auto& connection : connections) {
+		ids.insert(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[connection]));
 	}
 	return ids;
 }
