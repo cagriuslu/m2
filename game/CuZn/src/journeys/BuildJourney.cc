@@ -208,7 +208,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 	LOG_DEBUG("Expecting build location...");
 	M2_LEVEL.disable_hud();
-	M2_LEVEL.display_message("Pick location");
+	M2_LEVEL.display_message("Pick location", -1.0f);
 	M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
 	// Dim places outside the player's network
 	auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
@@ -269,6 +269,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_cancel_signal() {
 
 std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
+	M2_LEVEL.remove_message();
 	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
 	// Disable dimming in case it was enabled
 	M2_GAME.disable_dimming_with_exceptions();
