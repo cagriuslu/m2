@@ -180,10 +180,16 @@ std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 	return cities;
 }
 
-std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player) {
+std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Connection provisional_extra_connection) {
 	std::set<m2g::pb::SpriteType> canals;
 
-	std::ranges::for_each(get_cities_in_network(player), [&canals](m2g::pb::ItemType city) {
+	auto cities_in_network = get_cities_in_network(player);
+	if (provisional_extra_connection) {
+		auto extra_cities = cities_from_connection(provisional_extra_connection);
+		cities_in_network.insert(extra_cities.begin(), extra_cities.end());
+	}
+
+	std::ranges::for_each(cities_in_network, [&canals](m2g::pb::ItemType city) {
 		// Iterate and find all the canals that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
@@ -198,10 +204,16 @@ std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player) {
 	return canals;
 }
 
-std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player) {
+std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player, Connection provisional_extra_connection) {
 	std::set<m2g::pb::SpriteType> railroads;
 
-	std::ranges::for_each(get_cities_in_network(player), [&railroads](m2g::pb::ItemType city) {
+	auto cities_in_network = get_cities_in_network(player);
+	if (provisional_extra_connection) {
+		auto extra_cities = cities_from_connection(provisional_extra_connection);
+		cities_in_network.insert(extra_cities.begin(), extra_cities.end());
+	}
+
+	std::ranges::for_each(cities_in_network, [&railroads](m2g::pb::ItemType city) {
 		// Iterate and find all the railroads that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
@@ -216,10 +228,10 @@ std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player) {
 	return railroads;
 }
 
-std::set<m2g::pb::SpriteType> get_connections_in_network(m2::Character& player) {
+std::set<m2g::pb::SpriteType> get_connections_in_network(m2::Character& player, Connection provisional_extra_connection) {
 	if (M2G_PROXY.is_canal_era()) {
-		return get_canals_in_network(player);
+		return get_canals_in_network(player, provisional_extra_connection);
 	} else {
-		return get_railroads_in_network(player);
+		return get_railroads_in_network(player, provisional_extra_connection);
 	}
 }

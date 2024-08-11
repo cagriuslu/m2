@@ -19,6 +19,6 @@ size_t player_built_factory_count(m2::Character& player);
 std::set<IndustryLocation> player_built_factory_locations(m2::Character& player);
 
 std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player);
-std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player);
-std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player);
-std::set<m2g::pb::SpriteType> get_connections_in_network(m2::Character& player);
+std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Connection provisional_extra_connection = {});
+std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player, Connection provisional_extra_connection = {});
+std::set<m2g::pb::SpriteType> get_connections_in_network(m2::Character& player, Connection provisional_extra_connection = {});
