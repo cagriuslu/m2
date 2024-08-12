@@ -44,4 +44,5 @@ protected:
 // For the server
 bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
 
+// For the server
 std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);

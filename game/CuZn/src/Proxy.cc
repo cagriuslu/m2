@@ -149,18 +149,14 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			card_to_discard = card_money_pair.first;
 			money_spent += card_money_pair.second;
 		} else if (client_command.has_network_action()) {
-			LOG_INFO("Processing network action");
-			// TODO verify whether the player can network
-
-			card_to_discard = client_command.network_action().card();
-			money_spent += 5;
-
-			auto it = m2::create_object(
-				position_of_connection(client_command.network_action().connection_1()),
-				m2g::pb::ROAD,
-				turn_holder_object_id);
-			auto success = init_road(*it, client_command.network_action().connection_1());
-			// TODO check result
+			LOG_INFO("Validating network action");
+			if (not can_player_network(turn_holder_character, client_command.network_action())) {
+				return std::nullopt;
+			}
+			LOG_INFO("Executing network action");
+			auto card_money_pair = execute_network_action(turn_holder_character, client_command.network_action());
+			card_to_discard = card_money_pair.first;
+			money_spent += card_money_pair.second;
 		} else if (client_command.has_sell_action()) {
 			LOG_INFO("Processing sell action");
 			// TODO check

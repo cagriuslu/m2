@@ -4,7 +4,7 @@
 #include <cuzn/detail/Network.h>
 #include <cuzn/object/Merchant.h>
 
-std::set<Location> find_breweries_with_beer(m2::Character& player, City city, std::optional<MerchantLocation> selling_to) {
+std::set<Location> find_breweries_with_beer(m2::Character& player, City city, std::optional<MerchantLocation> selling_to, City city_2) {
 	std::set<Location> locations;
 
 	// Look-up player's own breweries with beer
@@ -17,7 +17,12 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 	locations.insert(player_breweries_with_beer.begin(), player_breweries_with_beer.end());
 
 	// Look-up breweries reachable from the city
-	auto reachable_breweries_with_beer = reachable_locations_from_industry_city(city)
+	auto reachable_locations = reachable_locations_from_industry_city(city);
+	if (city_2 && is_industry_city(city_2)) {
+		auto reachable_locations_2 = reachable_locations_from_industry_city(city_2);
+		reachable_locations.insert(reachable_locations_2.begin(), reachable_locations_2.end());
+	}
+	auto reachable_breweries_with_beer = reachable_locations
 		| std::views::filter(is_industry_location)
 		| std::views::filter(find_factory_at_location)
 		| std::views::transform(find_factory_at_location)

@@ -339,6 +339,17 @@ std::vector<City> cities_from_connection(Connection connection) {
 	return cities;
 }
 
+std::array<City, 2> major_cities_from_connection(Connection connection) {
+	auto cities = cities_from_connection(connection);
+
+	cities.erase(std::remove(cities.begin(), cities.end(), STANDALONE_LOCATION_2_CARD), cities.end());
+	if (cities.size() != 2) {
+		throw M2_ERROR("Invalid connection");
+	}
+
+	return {cities[0], cities[1]};
+}
+
 std::vector<Industry> industries_on_location(IndustryLocation location) {
 	if (not is_industry_location(location)) {
 		throw M2_ERROR("Sprite is not an industry location");

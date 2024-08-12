@@ -61,6 +61,8 @@ std::vector<IndustryLocation> industry_locations_in_city(City city_card);
 std::vector<Connection> connections_from_city(City city_card);
 
 std::vector<City> cities_from_connection(Connection connection);
+// Only major cities of a connection is returned. Excludes STANDALONE_LOCATION_2_CARD but includes STANDALONE_LOCATION_1_CARD
+std::array<City, 2> major_cities_from_connection(Connection connection);
 
 std::vector<Industry> industries_on_location(IndustryLocation location);
 

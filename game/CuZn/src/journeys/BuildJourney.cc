@@ -93,14 +93,6 @@ namespace {
 		if (selected_sprite_industries.empty()) {
 			throw M2_ERROR("Selected sprite does not hold any industry cards");
 		}
-		// Look up the location of the sprite
-		auto location_card_it = std::ranges::find_if(selected_sprite_sprite.named_items(), [](auto item_type) {
-			return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
-		});
-		if (location_card_it == selected_sprite_sprite.named_items().end()) {
-			throw M2_ERROR("Selected sprite does not hold a location card");
-		}
-		ItemType selected_sprite_location = *location_card_it;
 
 		// If the card is wild card
 		if (selected_card_item.category() == ITEM_CATEGORY_WILD_CARD) {
@@ -114,6 +106,14 @@ namespace {
 			}
 			return {selected_card}; // Only the selected industry card is buildable
 		} else { // ITEM_CATEGORY_CITY_CARD
+			// Look up the location of the sprite
+			auto location_card_it = std::ranges::find_if(selected_sprite_sprite.named_items(), [](auto item_type) {
+				return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
+			});
+			if (location_card_it == selected_sprite_sprite.named_items().end()) {
+				throw M2_ERROR("Selected sprite does not hold a location card");
+			}
+			ItemType selected_sprite_location = *location_card_it;
 			// Check if the card belongs to this location
 			if (selected_card == selected_sprite_location) {
 				// Any industry in the selected location can be built
@@ -220,6 +220,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 	LOG_DEBUG("Received mouse click", world_position);
 	if (auto selected_loc = industry_location_on_position(world_position)) {
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
+		// TODO verify that the location can be buildable, otherwise ignore the click
 
 		// Check if there's a need to make an industry selection based on the card and the sprite
 		if (auto buildable_inds = buildable_industries(_selected_card, *selected_loc); buildable_inds.empty()) {
@@ -279,7 +280,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 	// Check if there's an unspecified resource left
 	if (auto unspecified_resource = get_next_unspecified_resource(); unspecified_resource != _resource_sources.end()) {
-		auto index = std::distance(_resource_sources.begin(), unspecified_resource) + 1;
 		if (unspecified_resource->first == COAL_CUBE_COUNT) {
 			auto selected_city = city_of_location(_selected_location);
 			if (auto closest_mines_with_coal = find_closest_connected_coal_mines_with_coal(selected_city); closest_mines_with_coal.empty()) {
@@ -341,7 +341,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 
 				M2_LEVEL.disable_hud();
 				M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
-				M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick a coal source");
+				M2_LEVEL.display_message("Pick a coal source");
 			}
 		} else if (unspecified_resource->first == IRON_CUBE_COUNT) {
 			if (auto iron_industries = find_iron_industries_with_iron(); iron_industries.empty()) {
@@ -393,7 +393,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 
 				M2_LEVEL.disable_hud();
 				M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
-				M2_LEVEL.display_message(std::to_string(index) +  "/" + std::to_string(_resource_sources.size()) + ": Pick an iron source");
+				M2_LEVEL.display_message("Pick an iron source");
 			}
 		} else {
 			throw M2_ERROR("Unexpected resource in resource list");

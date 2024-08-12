@@ -111,3 +111,16 @@ std::multimap<float, m2::Graph::Node> m2::Graph::order_by_cost(const std::unorde
 	}
 	return ordered_map;
 }
+
+std::unordered_map<m2::Graph::Node, float> m2::Graph::merge_reachable_nodes(const std::unordered_map<Node, float>& nodes_1,
+	const std::unordered_map<Node, float>& nodes_2) {
+	auto copy_of_nodes_1 = nodes_1;
+	for (const auto& [node, cost] : nodes_2) {
+		if (auto it = copy_of_nodes_1.find(node); it == copy_of_nodes_1.end() || cost < it->second) {
+			// If the node doesn't exist in the copy, or it exists but the cost is higher,
+			// insert the node from second map.
+			copy_of_nodes_1[node] = cost;
+		}
+	}
+	return copy_of_nodes_1;
+}

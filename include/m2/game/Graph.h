@@ -31,5 +31,8 @@ namespace m2 {
 		[[nodiscard]] std::unordered_map<Node, float> reachable_nodes_from(Node source, float inclusive_cost) const;
 
 		static std::multimap<float, Node> order_by_cost(const std::unordered_map<Node, float>&);
+		// If two sources are deemed equal, the reachable_nodes maps of those sources can be merged.
+		// If a node appears in both maps, the one with the lowest cost is used.
+		static std::unordered_map<Node, float> merge_reachable_nodes(const std::unordered_map<Node, float>& nodes_1, const std::unordered_map<Node, float>& nodes_2);
 	};
 }
