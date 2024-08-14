@@ -4,7 +4,7 @@
 #include <functional>
 #include <list>
 
-#include "m2/Fsm.h"
+#include "m2/game/Fsm.h"
 #include "m2/Object.h"
 #include "m2/game/Pathfinder.h"
 

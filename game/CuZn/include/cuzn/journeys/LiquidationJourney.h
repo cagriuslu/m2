@@ -1,6 +1,6 @@
 #pragma once
 #include <cuzn/Detail.h>
-#include <m2/Fsm.h>
+#include <m2/game/Fsm.h>
 #include "Common.h"
 
 enum class LiquidationJourneyStep {

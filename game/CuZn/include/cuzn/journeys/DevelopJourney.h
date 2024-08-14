@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include <cuzn/Detail.h>
-#include <m2/Fsm.h>
+#include <m2/game/Fsm.h>
 
 m2::void_expected can_player_attempt_to_develop(m2::Character& player);
 

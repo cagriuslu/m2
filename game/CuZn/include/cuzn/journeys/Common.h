@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/Fsm.h>
+#include <m2/game/Fsm.h>
 #include <m2/VecF.h>
 #include <m2/ui/Blueprint.h>
 

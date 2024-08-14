@@ -1,7 +1,7 @@
 #pragma once
-#include "protobuf/Detail.h"
-#include "Error.h"
-#include "Meta.h"
+#include "../protobuf/Detail.h"
+#include "../Error.h"
+#include "../Meta.h"
 #include <google/protobuf/message.h>
 #include <string>
 #include <optional>

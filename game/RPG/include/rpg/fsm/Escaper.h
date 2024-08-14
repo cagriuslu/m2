@@ -1,6 +1,6 @@
 #pragma once
 #include "m2/Object.h"
-#include "m2/Fsm.h"
+#include "m2/game/Fsm.h"
 #include <Enemy.pb.h>
 
 namespace rpg {

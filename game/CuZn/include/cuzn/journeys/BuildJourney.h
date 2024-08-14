@@ -1,7 +1,7 @@
 #pragma once
 #include "Common.h"
 #include <cuzn/Detail.h>
-#include <m2/Fsm.h>
+#include <m2/game/Fsm.h>
 #include <m2/VecF.h>
 #include <m2/Object.h>
 

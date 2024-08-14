@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "m2/Fsm.h"
+#include "m2/game/Fsm.h"
 #include "m2/Object.h"
 
 namespace m2 {

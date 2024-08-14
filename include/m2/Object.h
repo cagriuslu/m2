@@ -12,7 +12,7 @@
 #include "component/Physique.h"
 #include "component/SoundEmitter.h"
 #include "m2/Component.h"
-#include "m2/Fsm.h"
+#include "m2/game/Fsm.h"
 #include "m2/VecF.h"
 
 namespace m2 {
