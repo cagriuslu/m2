@@ -3,6 +3,8 @@
 #include <m2/Fsm.h>
 #include "Common.h"
 
+m2::void_expected can_player_attempt_to_sell(m2::Character& player);
+
 enum class SellJourneyStep {
 	INITIAL_STEP = 0,
 	EXPECT_LOCATION,

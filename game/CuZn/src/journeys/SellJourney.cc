@@ -5,11 +5,24 @@
 #include "cuzn/object/Factory.h"
 #include "cuzn/object/Merchant.h"
 #include <cuzn/detail/Network.h>
+#include <cuzn/object/HumanPlayer.h>
 
 using namespace m2;
 using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
+
+m2::void_expected can_player_attempt_to_sell(m2::Character& player) {
+	if (player_card_count(player) < 1) {
+		return m2::make_unexpected("Sell action requires a card");
+	}
+
+	if (player_built_factory_count(player) < 1) {
+		return m2::make_unexpected("Sell action requires a built factory");
+	}
+
+	return {};
+}
 
 SellJourney::SellJourney() : m2::FsmBase<SellJourneyStep, PositionOrCancelSignal>() {
 	DEBUG_FN();
