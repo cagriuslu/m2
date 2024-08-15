@@ -27,6 +27,10 @@ bool is_industry(Industry industry) {
 	return (COTTON_MILL_CARD <= industry && industry <= MANUFACTURED_GOODS_CARD);
 }
 
+bool is_sellable_industry(Industry industry) {
+	return industry == COTTON_MILL_CARD || industry == POTTERY_CARD || industry == MANUFACTURED_GOODS_CARD;
+}
+
 bool is_industry_tile(IndustryTile industry_tile) {
 	return (COTTON_MILL_TILEI <= industry_tile && industry_tile <= MANUFACTURED_GOODS_TILE_VIII);
 }
