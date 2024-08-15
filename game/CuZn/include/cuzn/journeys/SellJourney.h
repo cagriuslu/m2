@@ -8,6 +8,7 @@ m2::void_expected can_player_attempt_to_sell(m2::Character& player);
 enum class SellJourneyStep {
 	INITIAL_STEP = 0,
 	EXPECT_LOCATION,
+	EXPECT_MERCHANT_LOCATION,
 	EXPECT_RESOURCE_SOURCE,
 	EXPECT_CONFIRMATION,
 };
@@ -28,6 +29,10 @@ protected:
 	std::optional<SellJourneyStep> handle_location_mouse_click_signal(const m2::VecF&);
 	std::optional<SellJourneyStep> handle_location_cancel_signal();
 	std::optional<SellJourneyStep> handle_location_exit_signal();
+	std::optional<SellJourneyStep> handle_merchant_location_enter_signal();
+	std::optional<SellJourneyStep> handle_merchant_location_mouse_click_signal(const m2::VecF&);
+	std::optional<SellJourneyStep> handle_merchant_location_cancel_signal();
+	std::optional<SellJourneyStep> handle_merchant_location_exit_signal();
 	std::optional<SellJourneyStep> handle_resource_enter_signal();
 	std::optional<SellJourneyStep> handle_resource_mouse_click_signal(const m2::VecF&);
 	std::optional<SellJourneyStep> handle_resource_cancel_signal();

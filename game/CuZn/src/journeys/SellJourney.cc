@@ -30,49 +30,68 @@ SellJourney::SellJourney() : m2::FsmBase<SellJourneyStep, PositionOrCancelSignal
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_signal(const PositionOrCancelSignal& s) {
-	switch (state()) {
-		case SellJourneyStep::INITIAL_STEP:
-			switch (s.type()) {
-				case m2::FsmSignalType::EnterState: return handle_initial_enter_signal();
-				case m2::FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
+	struct Handlers {
+		std::optional<SellJourneyStep> (SellJourney::*enter_handler)();
+		std::optional<SellJourneyStep> (SellJourney::*mouse_click_handler)(const m2::VecF&);
+		std::optional<SellJourneyStep> (SellJourney::*cancel_click_handler)();
+		std::optional<SellJourneyStep> (SellJourney::*exit_handler)();
+	};
+	std::initializer_list<std::pair<SellJourneyStep, Handlers>> handlers = {
+		{SellJourneyStep::INITIAL_STEP, {
+			&SellJourney::handle_initial_enter_signal,
+			nullptr,
+			nullptr,
+			nullptr
+		}},
+		{SellJourneyStep::EXPECT_LOCATION, {
+			&SellJourney::handle_location_enter_signal,
+			&SellJourney::handle_location_mouse_click_signal,
+			&SellJourney::handle_location_cancel_signal,
+			&SellJourney::handle_location_exit_signal
+		}},
+		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, {
+			&SellJourney::handle_merchant_location_enter_signal,
+			&SellJourney::handle_merchant_location_mouse_click_signal,
+			&SellJourney::handle_merchant_location_cancel_signal,
+			&SellJourney::handle_merchant_location_exit_signal
+		}},
+		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, {
+			&SellJourney::handle_resource_enter_signal,
+			&SellJourney::handle_resource_mouse_click_signal,
+			&SellJourney::handle_resource_cancel_signal,
+			&SellJourney::handle_resource_exit_signal
+		}},
+		{SellJourneyStep::EXPECT_CONFIRMATION, {
+			&SellJourney::handle_confirmation_enter_signal,
+			nullptr,
+			nullptr,
+			nullptr
+		}},
+	};
+
+	auto handler_it = std::ranges::find_if(handlers, [this](const auto& pair) { return pair.first == state(); });
+	switch (s.type()) {
+		case FsmSignalType::EnterState:
+			if (handler_it->second.enter_handler) {
+				return std::invoke(handler_it->second.enter_handler, this);
 			}
-		case SellJourneyStep::EXPECT_LOCATION:
-			switch (s.type()) {
-				case m2::FsmSignalType::EnterState: return handle_location_enter_signal();
-				case m2::FsmSignalType::Custom: {
-					if (auto world_position = s.world_position(); world_position) {
-						return handle_location_mouse_click_signal(*world_position);
-					} else if (s.cancel()) {
-						return handle_location_cancel_signal();
-					}
-					throw M2_ERROR("Unexpected signal");
-				}
-				case m2::FsmSignalType::ExitState: return handle_location_exit_signal();
-				default: throw M2_ERROR("Unexpected signal");
+			break;
+		case FsmSignalType::Custom:
+			if (auto world_position = s.world_position(); world_position && handler_it->second.mouse_click_handler) {
+				return std::invoke(handler_it->second.mouse_click_handler, this, *world_position);
+			} else if (s.cancel() && handler_it->second.cancel_click_handler) {
+				return std::invoke(handler_it->second.cancel_click_handler, this);
 			}
-		case SellJourneyStep::EXPECT_RESOURCE_SOURCE:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_resource_enter_signal();
-				case FsmSignalType::Custom: {
-					if (auto world_position = s.world_position(); world_position) {
-						return handle_resource_mouse_click_signal(*world_position);
-					} else if (s.cancel()) {
-						return handle_resource_cancel_signal();
-					}
-					throw M2_ERROR("Unexpected signal");
-				}
-				case FsmSignalType::ExitState: return handle_resource_exit_signal();
-				default: throw M2_ERROR("Unexpected signal");
+			break;
+		case FsmSignalType::ExitState:
+			if (handler_it->second.exit_handler) {
+				return std::invoke(handler_it->second.exit_handler, this);
 			}
-			return std::nullopt;
-		case SellJourneyStep::EXPECT_CONFIRMATION:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
-				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
-			}
+			break;
+		default:
+			throw M2_ERROR("Unexpected signal");
 	}
+	return std::nullopt;
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_initial_enter_signal() {
@@ -140,6 +159,22 @@ std::optional<SellJourneyStep> SellJourney::handle_location_cancel_signal() {
 std::optional<SellJourneyStep> SellJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
+	return std::nullopt;
+}
+
+std::optional<SellJourneyStep> SellJourney::handle_merchant_location_enter_signal() {
+	return std::nullopt;
+}
+
+std::optional<SellJourneyStep> SellJourney::handle_merchant_location_mouse_click_signal(const m2::VecF&) {
+	return std::nullopt;
+}
+
+std::optional<SellJourneyStep> SellJourney::handle_merchant_location_cancel_signal() {
+	return std::nullopt;
+}
+
+std::optional<SellJourneyStep> SellJourney::handle_merchant_location_exit_signal() {
 	return std::nullopt;
 }
 
