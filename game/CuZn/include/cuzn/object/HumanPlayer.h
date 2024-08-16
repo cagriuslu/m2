@@ -15,8 +15,12 @@ int player_income_points(m2::Character& player);
 size_t player_tile_count(m2::Character& player);
 size_t player_available_road_count(m2::Character& player);
 std::optional<m2g::pb::ItemType> get_next_buildable_industry_tile(m2::Character& player, m2g::pb::ItemCategory tile_category);
+/// Returns the number of industries belonging to the player
 size_t player_built_factory_count(m2::Character& player);
+/// Returns the locations of the industries belonging to the player
 std::set<IndustryLocation> player_built_factory_locations(m2::Character& player);
+/// Returns the locations of the industries of type COTTON, POTTERY, and MANUFACTURED_GOODS belonging to the player
+std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& player);
 
 std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player);
 std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Connection provisional_extra_connection = {});

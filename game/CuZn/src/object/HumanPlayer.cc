@@ -11,15 +11,6 @@
 #include <ranges>
 #include <numeric>
 
-namespace {
-	// Filters
-	auto by_character_parent_id(m2::Id parent_id) {
-		return [parent_id](m2::Character& chr) {
-			return chr.parent().parent_id() == parent_id;
-		};
-	}
-}
-
 m2::void_expected init_human_player(m2::Object& obj) {
 	DEBUG_FN();
 
@@ -67,8 +58,9 @@ m2::void_expected init_human_player(m2::Object& obj) {
 
 		// Check if mouse button pressed
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY)) {
-			// Check if a user journey is active
-			if (auto& user_journey = m2g::Proxy::get_instance().user_journey) {
+			if (auto& sub_journey = M2G_PROXY.sub_journey) {
+				sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.mouse_position_world_m()));
+			} else if (auto& user_journey = m2g::Proxy::get_instance().user_journey) {
 				// Deliver position signal to current Journey
 				std::visit(m2::overloaded{
 					[](auto& j) {
@@ -103,7 +95,7 @@ std::list<Card> player_cards(m2::Character& player) {
 int player_link_count(m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
 					  | std::views::transform(m2::to_character_base)
-					  | std::views::filter(by_character_parent_id(player.parent().id()))
+					  | std::views::filter(m2::is_component_of_parent(player.parent().id()))
 					  | std::views::filter(is_road_character);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
 		return acc + link_count_of_road_character(road_char);
@@ -143,18 +135,30 @@ std::optional<m2g::pb::ItemType> get_next_buildable_industry_tile(m2::Character&
 
 size_t player_built_factory_count(m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
-					   | std::views::transform(m2::to_character_base)
-					   | std::views::filter(by_character_parent_id(player.parent().id()))
-					   | std::views::filter(is_factory_character);
+		| std::views::transform(m2::to_character_base)
+		| std::views::filter(m2::is_component_of_parent(player.parent().id()))
+		| std::views::filter(is_factory_character);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
 
 std::set<IndustryLocation> player_built_factory_locations(m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
-						  | std::views::transform(m2::to_character_base)
-						  | std::views::filter(by_character_parent_id(player.parent().id()))
-						  | std::views::filter(is_factory_character)
-						  | std::views::transform(to_industry_location_of_factory_character);
+		| std::views::transform(m2::to_character_base)
+		| std::views::filter(m2::is_component_of_parent(player.parent().id()))
+		| std::views::filter(is_factory_character)
+		| std::views::transform(to_industry_location_of_factory_character);
+	return {factories_view.begin(), factories_view.end()};
+}
+
+std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& player) {
+	auto factories_view = M2_LEVEL.characters
+		| std::views::transform(m2::to_character_base)
+		| std::views::filter(m2::is_component_of_parent(player.parent().id()))
+		| std::views::filter(is_factory_character)
+		| std::views::filter([](m2::Character& c) {
+			return c.has_item(m2g::pb::COTTON_MILL_CARD) || c.has_item(m2g::pb::POTTERY_CARD) || c.has_item(m2g::pb::MANUFACTURED_GOODS_CARD);
+		})
+		| std::views::transform(to_industry_location_of_factory_character);
 	return {factories_view.begin(), factories_view.end()};
 }
 
@@ -163,14 +167,14 @@ std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 
 	auto cities_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(by_character_parent_id(player.parent().id()))
+		| std::views::filter(m2::is_component_of_parent(player.parent().id()))
 		| std::views::filter(is_factory_character)
 		| std::views::transform(to_city_of_factory_character);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(by_character_parent_id(player.parent().id()))
+		| std::views::filter(m2::is_component_of_parent(player.parent().id()))
 		| std::views::filter(is_road_character)
 		| std::views::transform(to_city_cards_of_road_character);
 	for (const auto& road_cities : roads_view) {
