@@ -499,10 +499,10 @@ std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb:
 	}
 
 	// Create the road on the map
-	auto it = m2::create_object(position_of_connection(network_action.connection_1()), m2g::pb::ROAD, player.parent_id());
+	auto it = m2::create_object(position_of_connection(network_action.connection_1()), m2g::pb::ROAD, player.owner_id());
 	init_road(*it, network_action.connection_1());
 	if (network_action.connection_2()) {
-		auto it_2 = m2::create_object(position_of_connection(network_action.connection_2()), m2g::pb::ROAD, player.parent_id());
+		auto it_2 = m2::create_object(position_of_connection(network_action.connection_2()), m2g::pb::ROAD, player.owner_id());
 		init_road(*it_2, network_action.connection_1());
 	}
 

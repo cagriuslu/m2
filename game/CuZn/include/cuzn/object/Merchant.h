@@ -4,7 +4,7 @@
 #include <cuzn/Detail.h>
 
 // Filters
-constexpr auto is_merchant_character = [](m2::Character& chr) { return chr.parent().object_type() == m2g::pb::MERCHANT; };
+constexpr auto is_merchant_character = [](m2::Character& chr) { return chr.owner().object_type() == m2g::pb::MERCHANT; };
 bool can_merchant_buy_sellable_industry(m2::Character& chr, SellableIndustry ind);
 
 // Accessors

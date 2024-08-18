@@ -321,12 +321,12 @@ void m2::Game::execute_step() {
 		// Update positions
 		for (auto& phy : _level->physics) {
 			if (phy.body) {
-				auto& object = phy.parent();
+				auto& object = phy.owner();
 				auto old_pos = object.position;
 				// Update draw list
 				object.position = m2::VecF{phy.body->GetPosition()};
 				if (old_pos != object.position) {
-					_level->draw_list.queue_update(phy.object_id, object.position);
+					_level->draw_list.queue_update(phy.owner_id(), object.position);
 				}
 			}
 		}
@@ -596,7 +596,7 @@ void m2::Game::recalculate_directional_audio() {
 	if (_level->left_listener || _level->right_listener) {
 		// Loop over sounds
 		for (auto& sound_emitter : _level->sound_emitters) {
-			const auto& sound_position = sound_emitter.parent().position;
+			const auto& sound_position = sound_emitter.owner().position;
 			// Loop over playbacks
 			for (const auto playback_id : sound_emitter.playbacks) {
 				if (!audio_manager->has_playback(playback_id)) {

@@ -73,7 +73,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 				chr.set_resource(RESOURCE_EXPLOSION_TTL, 1.0f); // 1.0f is just symbolic
 			} else {
 				LOG_DEBUG("Destroying self");
-				M2_DEFER(m2::create_object_deleter(chr.object_id));
+				M2_DEFER(m2::create_object_deleter(chr.owner_id()));
 			}
 		}
 	};
@@ -82,11 +82,11 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 			LOG_DEBUG("Explosive hit a target during flight, will explode next step");
 			chr.set_resource(RESOURCE_TTL, 0.0f); // Clear TTL, chr.update will create the explosion
 		} else {
-			if (auto* other_char = other.parent().get_character(); other_char) {
+			if (auto* other_char = other.owner().get_character(); other_char) {
 				InteractionData data;
 				if (is_explosive && chr.has_resource(RESOURCE_EXPLOSION_TTL)) {
 					LOG_DEBUG("Explosive damage");
-					auto distance = chr.parent().position.distance(other.parent().position);
+					auto distance = chr.owner().position.distance(other.owner().position);
 					auto damage_ratio = distance / damage_radius;
 					if (damage_ratio < 1.1f) {
 						// Calculate damage
@@ -110,7 +110,7 @@ m2::void_expected rpg::create_projectile(m2::Object& obj, const m2::VecF& intend
 	phy.post_step = [&chr](m2::Physique& phy) {
 		if (chr.has_resource(RESOURCE_EXPLOSION_TTL)) {
 			LOG_DEBUG("Exploded");
-			M2_DEFER(m2::create_object_deleter(phy.object_id));
+			M2_DEFER(m2::create_object_deleter(phy.owner_id()));
 		}
 	};
 

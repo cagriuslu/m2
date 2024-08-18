@@ -53,7 +53,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 			impl.trigger_timer = m2::Timer{};
 		} else if (gfx.sprite == &spikes_out) {
 			// Spikes are out
-			if (auto* other_char = other.parent().get_character(); other_char){
+			if (auto* other_char = other.owner().get_character(); other_char){
 				m2g::pb::InteractionData data;
 				data.set_hit_damage(1.0f);
 				other_char->execute_interaction(data);

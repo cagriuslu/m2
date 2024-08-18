@@ -7,20 +7,23 @@ namespace m2 {
     // Forward declaration
     struct Object;
 
-	struct Component {
-		Id object_id{0};
+	class Component {
+	protected:
+		Id _owner_id{0};
 
+	public:
 		Component() = default;
-		explicit Component(Id object_id);
+		explicit Component(Id owner_id);
 		virtual ~Component() = default;
 
-		[[nodiscard]] Id parent_id() const { return object_id; }
-        [[nodiscard]] Object& parent() const;
+		[[nodiscard]] Id owner_id() const { return _owner_id; }
+        [[nodiscard]] Object& owner() const;
 	};
 
 	// Filter Generators
-	constexpr auto is_component_of_object(Id object_id) { return [object_id](const Component& c) { return c.object_id == object_id; }; }
+	constexpr auto is_component_of_object(Id object_id) { return [object_id](const Component& c) { return c.owner_id() == object_id; }; }
 	std::function<bool(const Component&)> is_component_of_child_object_of_parent(Id parent_id);
 	// Transformers
-	constexpr Id to_parent_id_of_component(const Component& cmp) { return cmp.parent_id(); }
+	constexpr Id to_owner_id_of_component(const Component& cmp) { return cmp.owner_id(); }
+	constexpr Object& to_owner_of_component(const Component& cmp) { return cmp.owner(); }
 }

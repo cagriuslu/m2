@@ -53,7 +53,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		// Mouse button
 		if (M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			m2::box2d::find_objects_near_position_under_mouse(obj.position, 2.0f, [](m2::Physique& other_phy) -> bool {
-				auto& obj_under_mouse = other_phy.parent();
+				auto& obj_under_mouse = other_phy.owner();
 				// If object under mouse has character
 				if (obj_under_mouse.character_id()) {
 					auto& chr_under_mouse = obj_under_mouse.character();
@@ -68,7 +68,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 						// If object under mouse runs out of HP
 						if (hp == 0.0f) {
 							// Delete object
-							M2_DEFER(m2::create_object_deleter(chr_under_mouse.object_id));
+							M2_DEFER(m2::create_object_deleter(chr_under_mouse.owner_id()));
 						}
 					}
 					// Stop searching
@@ -84,8 +84,8 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		if (other.body && m2::box2d::has_obstacle(other.body.get())) {
 			// Check is contact normal points upwards
 			if (abs(contact.normal.x) <= -contact.normal.y) {
-				chr.set_resource(RESOURCE_IS_GROUNDED_X, other.parent().position.x);
-				chr.set_resource(RESOURCE_IS_GROUNDED_Y, other.parent().position.y);
+				chr.set_resource(RESOURCE_IS_GROUNDED_X, other.owner().position.x);
+				chr.set_resource(RESOURCE_IS_GROUNDED_Y, other.owner().position.y);
 			}
 		}
 	};
@@ -93,7 +93,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 		// Check if in contact with obstacle
 		if (other.body && m2::box2d::has_obstacle(other.body.get())) {
 			// Check if the other object is the grounding object
-			if (chr.get_resource(RESOURCE_IS_GROUNDED_X) == other.parent().position.x && chr.get_resource(RESOURCE_IS_GROUNDED_Y) == other.parent().position.y) {
+			if (chr.get_resource(RESOURCE_IS_GROUNDED_X) == other.owner().position.x && chr.get_resource(RESOURCE_IS_GROUNDED_Y) == other.owner().position.y) {
 				chr.set_resource(RESOURCE_IS_GROUNDED_X, 0.0f);
 				chr.set_resource(RESOURCE_IS_GROUNDED_Y, 0.0f);
 			}

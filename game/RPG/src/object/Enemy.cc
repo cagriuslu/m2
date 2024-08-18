@@ -104,8 +104,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 			if (not self.has_resource(RESOURCE_HP)) {
 				// Drop item
 				auto drop_position = obj.position;
-				m2::Group* group = obj.group();
-				if (group) {
+				if (m2::Group* group = obj.get_group()) {
 					// Check if the object belongs to item group
 					auto* item_group = dynamic_cast<ItemGroup*>(group);
 					if (item_group) {
@@ -121,7 +120,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 				M2G_PROXY.alive_enemy_count--;
 				// Delete self
 				LOG_INFO("Enemy died");
-				M2_DEFER(m2::create_object_deleter(self.object_id));
+				M2_DEFER(m2::create_object_deleter(self.owner_id()));
 				// Create corpse
 				if (obj_type == ObjectType::SKELETON) {
 					M2_DEFER([pos = obj.position]() {

@@ -140,7 +140,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		M2G_PROXY.set_ammo_display_state((bool) chr.find_items(m2g::pb::ITEM_CATEGORY_SPECIAL_RANGED_WEAPON));
 	};
 	phy.on_collision = [](MAYBE m2::Physique& me, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.parent().get_character(); other_char && 10.0f < m2::VecF{me.body->GetLinearVelocity()}.length()) {
+		if (auto* other_char = other.owner().get_character(); other_char && 10.0f < m2::VecF{me.body->GetLinearVelocity()}.length()) {
 			InteractionData data;
 			data.set_stun_duration(2.0f);
 			other_char->execute_interaction(data);

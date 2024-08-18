@@ -255,7 +255,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 					| std::views::filter(is_factory_character)
 					| std::views::filter(is_factory_sold),
 					[](m2::Character& factory) {
-						auto& player = factory.parent();
+						auto& player = factory.owner();
 						player.character().add_resource(pb::VICTORY_POINTS, factory.get_attribute(pb::VICTORY_POINTS_BONUS));
 					});
 				remove_obsolete_factories();

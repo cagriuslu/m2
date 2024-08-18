@@ -72,7 +72,7 @@ m2::expected<std::pair<std::vector<m2::Object*>, int>> can_player_liquidate_fact
 		// Search for a factory in the given location
 		if (auto* factory = find_factory_at_location(location)) {
 			// Check if the factory belongs to the player
-			if (factory->parent_id() == player.parent().id()) {
+			if (factory->parent_id() == player.owner().id()) {
 				factory_objects.emplace_back(factory);
 				auto liquidation_return = liquidation_return_of_factory_character(factory->character());
 				ordered_location_and_liquidation_return_pairs.emplace(LocationAndLiquidationReturnPair{location, liquidation_return});

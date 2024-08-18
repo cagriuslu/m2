@@ -10,7 +10,7 @@ m2::Object* find_factory_at_location(Location location) {
 	auto factories = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
-		| std::views::transform(m2::to_parent_of_component)
+		| std::views::transform(m2::to_owner_of_component)
 		| std::views::filter(m2::is_object_in_area(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
 		return &*factory_it;
@@ -35,7 +35,7 @@ void remove_obsolete_factories() {
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)
 		| std::views::filter(is_factory_level_1)
-		| std::views::transform(m2::to_parent_id_of_component),
+		| std::views::transform(m2::to_owner_id_of_component),
 		std::back_inserter(ids));
 
 	// Delete objects immediately
@@ -61,12 +61,12 @@ void flip_exhausted_factories() {
 				const auto& tile_item = M2_GAME.get_named_item(tile_type);
 				// Earn income points
 				auto income_bonus = tile_item.get_attribute(INCOME_POINTS_BONUS);
-				auto curr_income_points = chr.parent().character().get_attribute(INCOME_POINTS);
-				chr.parent().character().set_attribute(INCOME_POINTS, curr_income_points + income_bonus);
+				auto curr_income_points = chr.owner().character().get_attribute(INCOME_POINTS);
+				chr.owner().character().set_attribute(INCOME_POINTS, curr_income_points + income_bonus);
 				// Earn victory points
 				auto victory_point_bonus = tile_item.get_attribute(VICTORY_POINTS_BONUS);
-				auto curr_victory_points = chr.parent().character().get_resource(VICTORY_POINTS);
-				chr.parent().character().set_resource(VICTORY_POINTS, curr_victory_points + victory_point_bonus);
+				auto curr_victory_points = chr.owner().character().get_resource(VICTORY_POINTS);
+				chr.owner().character().set_resource(VICTORY_POINTS, curr_victory_points + victory_point_bonus);
 				// Flip the tile
 				chr.set_resource(IS_SOLD, 1.0f);
 			}
@@ -74,7 +74,7 @@ void flip_exhausted_factories() {
 }
 
 bool is_factory_character(m2::Character& chr) {
-	return chr.parent().object_type() == m2g::pb::FACTORY;
+	return chr.owner().object_type() == m2g::pb::FACTORY;
 }
 
 bool is_factory_sold(m2::Character& chr) {
@@ -117,7 +117,7 @@ IndustryLocation to_industry_location_of_factory_character(m2::Character& chr) {
 	if (not is_factory_character(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	return *industry_location_on_position(chr.parent().position);
+	return *industry_location_on_position(chr.owner().position);
 }
 
 m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry_tile) {
@@ -143,16 +143,16 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.add_graphic(industry_sprite_of_industry(industry));
 	_gfx.on_draw = [color](m2::Graphic& gfx) {
-		auto top_left_cell_pos = gfx.parent().position;
+		auto top_left_cell_pos = gfx.owner().position;
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};
 
 		// Draw background with player's color
-		auto background_color = (M2_GAME.dimming_exceptions() && not M2_GAME.dimming_exceptions()->contains(gfx.parent_id()))
+		auto background_color = (M2_GAME.dimming_exceptions() && not M2_GAME.dimming_exceptions()->contains(gfx.owner_id()))
 			? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::color_rect(cell_rect, background_color);
 
 		// If sold, draw the black bottom half
-		if (m2::is_equal(1.0f, gfx.parent().character().get_resource(m2g::pb::IS_SOLD), 0.005f)) {
+		if (m2::is_equal(1.0f, gfx.owner().character().get_resource(m2g::pb::IS_SOLD), 0.005f)) {
 			auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.x - 0.5f, top_left_cell_pos.y + 0.5f, 2.0f, 1.0f};
 			m2::Graphic::color_rect(bottom_half_cell_rect, m2::RGB{0, 0, 0});
 		}
@@ -161,7 +161,7 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 		m2::Graphic::default_draw(gfx);
 
 		// Draw the resources
-		draw_resources(gfx.parent().character());
+		draw_resources(gfx.owner().character());
 	};
 
 	return {};

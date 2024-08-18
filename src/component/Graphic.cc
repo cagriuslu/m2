@@ -161,14 +161,14 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 	}
 
 	// Dim the sprite if dimming mode is enabled
-	bool dimmed = dim_rendering_if_necessary(gfx.parent_id(), gfx.sprite->texture(gfx.draw_variant));
+	bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), gfx.sprite->texture(gfx.draw_variant));
 
 	if (is_projection_type_perspective(M2_LEVEL.projection_type())) {
 		// Check if foreground or background
 		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
-		draw_fake_3d(gfx.parent().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle, is_foreground, gfx.z);
+		draw_fake_3d(gfx.owner().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle, is_foreground, gfx.z);
 	} else {
-		draw_real_2d(gfx.parent().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle);
+		draw_real_2d(gfx.owner().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle);
 	}
 
 	// If dimming was active, we need to un-dim.
@@ -190,7 +190,7 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 
 	if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
 		const auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
-		const auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.parent().position,
+		const auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.owner().position,
 				*gfx.sprite, gfx.draw_variant);
 		dst_rect = SDL_Rect{
 				(int) roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * M2_GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
@@ -199,7 +199,7 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 				M2_GAME.dimensions().ppm * 12 / 100 // 0.15 m height
 		};
 	} else {
-		const auto obj_position = gfx.parent().position;
+		const auto obj_position = gfx.owner().position;
 		// Place add-on below the sprite
 		const auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
 		if (const auto projected_addon_position = screen_origin_to_projection_along_camera_plane_dstpx(addon_position)) {

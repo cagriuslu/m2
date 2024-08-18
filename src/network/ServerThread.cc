@@ -95,10 +95,10 @@ void m2::network::ServerThread::send_server_update() {
 		// For any Character type
 		std::visit(overloaded {
 			[object_descriptor](const auto& v) {
-				object_descriptor->set_object_id(v.parent().id());
-				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.parent().position));
-				object_descriptor->set_object_type(v.parent().object_type());
-				object_descriptor->set_parent_id(v.parent().parent_id());
+				object_descriptor->set_object_id(v.owner().id());
+				object_descriptor->mutable_position()->CopyFrom(static_cast<pb::VecF>(v.owner().position));
+				object_descriptor->set_object_type(v.owner().object_type());
+				object_descriptor->set_parent_id(v.owner().parent_id());
 				for (auto item_it = v.begin_items(); item_it != v.end_items(); ++item_it) {
 					const auto* item_ptr = item_it.get();
 					const auto* named_item_ptr = dynamic_cast<const NamedItem*>(item_ptr);

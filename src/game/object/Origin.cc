@@ -7,7 +7,7 @@ m2::Id m2::obj::create_origin() {
 
 	auto& gfx = it->add_graphic();
 	gfx.on_draw = [](m2::Graphic &gfx) {
-		Graphic::draw_cross(gfx.parent().position, SDL_Color{255, 0, 0, 255});
+		Graphic::draw_cross(gfx.owner().position, SDL_Color{255, 0, 0, 255});
 	};
 
 	return it.id();

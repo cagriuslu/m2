@@ -8,7 +8,7 @@ m2::Object* find_road_at_location(m2g::pb::SpriteType location) {
 	auto roads = M2_LEVEL.characters
 				 | std::views::transform(m2::to_character_base)
 				 | std::views::filter(is_road_character)
-				 | std::views::transform(m2::to_parent_of_component)
+				 | std::views::transform(m2::to_owner_of_component)
 				 | std::views::filter(m2::is_object_in_area(std::get<m2::RectF>( M2G_PROXY.connection_positions[location])));
 	if (auto road_it = roads.begin(); road_it != roads.end()) {
 		return &*road_it;
@@ -23,7 +23,7 @@ void remove_all_roads() {
 		M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_road_character)
-		| std::views::transform(m2::to_parent_id_of_component),
+		| std::views::transform(m2::to_owner_id_of_component),
 		std::back_inserter(ids));
 
 	// Delete objects immediately
@@ -68,11 +68,11 @@ m2::void_expected init_road(m2::Object& obj, Connection connection) {
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.add_graphic(M2G_PROXY.is_canal_era() ? m2g::pb::SPRITE_CANAL : m2g::pb::SPRITE_RAILROAD);
 	_gfx.on_draw = [color](m2::Graphic& gfx) {
-		auto connection_position = gfx.parent().position;
+		auto connection_position = gfx.owner().position;
 		auto cell_rect = m2::RectF{connection_position - 0.75f, 1.5f, 1.5f};
 
 		// Draw background with player's color
-		auto background_color = (M2_GAME.dimming_exceptions() && not M2_GAME.dimming_exceptions()->contains(gfx.parent_id()))
+		auto background_color = (M2_GAME.dimming_exceptions() && not M2_GAME.dimming_exceptions()->contains(gfx.owner_id()))
 								? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::color_rect(cell_rect, background_color);
 

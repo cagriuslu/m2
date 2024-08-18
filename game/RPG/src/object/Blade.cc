@@ -52,11 +52,11 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 
 	chr.update = [](m2::Character& chr) {
 		if (!chr.has_resource(RESOURCE_TTL)) {
-			M2_DEFER(m2::create_object_deleter(chr.object_id));
+			M2_DEFER(m2::create_object_deleter(chr.owner_id()));
 		}
 	};
 	phy.on_collision = [average_damage, damage_accuracy](MAYBE m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.parent().get_character(); other_char) {
+		if (auto* other_char = other.owner().get_character(); other_char) {
 			InteractionData data;
 			data.set_hit_damage(m2::apply_accuracy(average_damage, average_damage, damage_accuracy));
 			other_char->execute_interaction(data);
@@ -64,14 +64,13 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 		}
 	};
 	phy.post_step = [&](m2::Physique& phy) {
-		auto* originator = obj.parent();
-		if (originator) {
+		if (auto* originator = obj.get_parent()) {
 			float curr_angle = phy.body->GetAngle();
 			phy.body->SetTransform(static_cast<b2Vec2>(originator->position), curr_angle);
 			obj.graphic().draw_angle = curr_angle;
 		} else {
 			// Originator died
-			M2_DEFER(m2::create_object_deleter(phy.object_id));
+			M2_DEFER(m2::create_object_deleter(phy.owner_id()));
 		}
 	};
 

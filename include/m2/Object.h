@@ -56,9 +56,9 @@ namespace m2 {
 		[[nodiscard]] CharacterId character_id() const;
 
 		[[nodiscard]] Character* get_character() const;
+		[[nodiscard]] Object* get_parent() const;
+		[[nodiscard]] Group* get_group() const;
 
-		[[nodiscard]] Object* parent() const;
-		[[nodiscard]] Group* group() const;
 		[[nodiscard]] Physique& physique() const;
 		[[nodiscard]] Graphic& graphic() const;
 		[[nodiscard]] Graphic& terrain_graphic() const;
@@ -117,5 +117,4 @@ namespace m2 {
 	Object& to_object_of_id(ObjectId id);
 	inline Character& to_character_of_object_unsafe(Object* o) { return o->character(); }
 	inline Character& to_character_of_object(Object& o) { return o.character(); }
-	inline Object& to_parent_of_component(Character& v) { return v.parent(); }
 }  // namespace m2

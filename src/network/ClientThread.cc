@@ -192,10 +192,10 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 			auto server_character = server_update.objects_with_character(i);
 			auto success = std::visit(overloaded {
 					[this, &server_character](const auto& v) -> m2::void_expected {
-						if (v.parent().position != VecF{server_character.position()}) {
+						if (v.owner().position != VecF{server_character.position()}) {
 							return make_unexpected("Server and local position mismatch");
 						}
-						if (v.parent().object_type() != server_character.object_type()) {
+						if (v.owner().object_type() != server_character.object_type()) {
 							return make_unexpected("Server and local object type mismatch");
 						}
 						if (std::distance(v.begin_items(), v.end_items()) != server_character.named_items_size()) {
@@ -204,7 +204,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 						// TODO other checks
 
 						// Map server ObjectIDs to local ObjectIDs
-						_server_to_local_map[server_character.object_id()] = std::make_pair(v.object_id, true);
+						_server_to_local_map[server_character.object_id()] = std::make_pair(v.owner_id(), true);
 
 						return {};
 					}

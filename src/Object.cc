@@ -99,13 +99,13 @@ m2::Character* m2::Object::get_character() const {
 	}
 	return &to_character_base(*character_variant);
 }
-
-m2::Object* m2::Object::parent() const {
+m2::Object* m2::Object::get_parent() const {
     return _parent_id ? M2_LEVEL.objects.get(_parent_id) : nullptr;
 }
-m2::Group* m2::Object::group() const {
+m2::Group* m2::Object::get_group() const {
 	return _group_id ? M2_LEVEL.groups[_group_id].get() : nullptr;
 }
+
 m2::Physique& m2::Object::physique() const {
 	return M2_LEVEL.physics[_physique_id];
 }

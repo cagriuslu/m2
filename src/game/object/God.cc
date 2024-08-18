@@ -132,7 +132,7 @@ m2::Id m2::obj::create_god() {
 	it->impl = std::make_unique<God>();
 
 	it->add_physique().pre_step = [](MAYBE Physique& phy) {
-		auto& obj = phy.parent();
+		auto& obj = phy.owner();
 
 		m2::VecF move_direction;
 		if (M2_GAME.events.is_key_down(Key::UP)) {

@@ -19,12 +19,12 @@ m2::void_expected rpg::create_dropped_item(m2::Object &obj, m2g::pb::ItemType it
 	obj.add_graphic(sprite);
 
 	phy.on_collision = [item_type](m2::Physique& phy, m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
-		if (auto* other_char = other.parent().get_character(); other_char) {
+		if (auto* other_char = other.owner().get_character(); other_char) {
 			m2g::pb::InteractionData data;
 			data.set_item_type(item_type);
 			other_char->execute_interaction(data);
 		}
-		M2_DEFER(m2::create_object_deleter(phy.object_id));
+		M2_DEFER(m2::create_object_deleter(phy.owner_id()));
 	};
 
 	return {};
