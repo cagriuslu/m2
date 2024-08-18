@@ -154,6 +154,10 @@ bool is_railroad(Connection connection) {
 	}
 }
 
+bool is_poi(POI poi) {
+	return is_location(poi) || is_connection(poi);
+}
+
 bool is_canal_license(m2g::pb::ItemType item) {
 	return item == m2g::pb::CANAL_LICENSE;
 }
@@ -245,6 +249,19 @@ IndustrySprite industry_sprite_of_industry(Industry industry) {
 			return SPRITE_MANUFACTURED_GOODS;
 		default:
 			throw M2_ERROR("Invalid industry card");
+	}
+}
+
+m2g::pb::ItemType merchant_license_type_of_sellable_industry(SellableIndustry sellable_industry) {
+	switch (sellable_industry) {
+		case m2g::pb::COTTON_MILL_CARD:
+			return COTTON_MILL_MERCHANT_LICENSE;
+		case m2g::pb::POTTERY_CARD:
+			return POTTERY_MERCHANT_LICENSE;
+		case m2g::pb::MANUFACTURED_GOODS_CARD:
+			return MANUFACTURED_GOODS_MERCHANT_LICENSE;
+		default:
+			throw M2_ERROR("Invalid sellable industry");
 	}
 }
 
@@ -394,7 +411,7 @@ std::optional<IndustryLocation> industry_location_on_position(const m2::VecF& wo
 
 std::optional<MerchantLocation> merchant_location_on_position(const m2::VecF& world_position) {
 	auto it = std::find_if(M2G_PROXY.merchant_positions.begin(), M2G_PROXY.merchant_positions.end(),
-		[&](const auto& pos_and_type) { return pos_and_type.second.second.contains(world_position); });
+		[&](const auto& pos_and_type) { return std::get<m2::RectF>(pos_and_type.second).contains(world_position); });
 	if (it != M2G_PROXY.merchant_positions.end()) {
 		return it->first;
 	}

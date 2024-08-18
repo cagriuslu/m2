@@ -213,7 +213,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 					// Merchant location
 					auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
 					// Get a game drawing centered at the merchant location
-					auto background = M2_GAME.draw_game_to_texture(M2G_PROXY.merchant_positions[merchant_location].first);
+					auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
 					if (ask_for_confirmation_bottom("Buy 1 coal from market for £" + std::to_string(market_coal_cost(1)) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
@@ -499,10 +499,10 @@ std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb:
 	}
 
 	// Create the road on the map
-	auto it = m2::create_object(position_of_connection(network_action.connection_1()), m2g::pb::ROAD, M2_PLAYER.id());
+	auto it = m2::create_object(position_of_connection(network_action.connection_1()), m2g::pb::ROAD, player.parent_id());
 	init_road(*it, network_action.connection_1());
 	if (network_action.connection_2()) {
-		auto it_2 = m2::create_object(position_of_connection(network_action.connection_2()), m2g::pb::ROAD, M2_PLAYER.id());
+		auto it_2 = m2::create_object(position_of_connection(network_action.connection_2()), m2g::pb::ROAD, player.parent_id());
 		init_road(*it_2, network_action.connection_1());
 	}
 

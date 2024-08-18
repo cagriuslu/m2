@@ -18,6 +18,15 @@ m2::Object* find_factory_at_location(Location location) {
 	return nullptr;
 }
 
+int required_beer_count_to_sell(IndustryLocation location) {
+	if (auto* factory = find_factory_at_location(location); not factory) {
+		throw M2_ERROR("Invalid factory location");
+	} else {
+		auto industry_tile = to_industry_tile_of_factory_character(factory->character());
+		return m2::iround(M2_GAME.get_named_item(industry_tile).get_attribute(BEER_COST));
+	}
+}
+
 void remove_obsolete_factories() {
 	std::vector<m2::ObjectId> ids;
 	ids.reserve(20); // Reserve an average amount of space
@@ -129,8 +138,7 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 	auto& chr = obj.add_full_character();
 	chr.add_named_item(M2_GAME.get_named_item(industry));
 	chr.add_named_item(M2_GAME.get_named_item(city));
-	const auto& tile_item = M2_GAME.get_named_item(industry_tile);
-	chr.add_named_item(tile_item);
+	chr.add_named_item(M2_GAME.get_named_item(industry_tile));
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.add_graphic(industry_sprite_of_industry(industry));

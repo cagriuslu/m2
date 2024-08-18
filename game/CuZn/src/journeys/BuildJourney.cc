@@ -53,6 +53,8 @@ namespace {
 			}
 		}
 
+		// TODO take "use location with only the industry first" into account
+
 		// Filter industry_locations_in_network by card
 		if (card == WILD_LOCATION_CARD || card == WILD_INDUSTRY_CARD) {
 			// No filtering
@@ -293,7 +295,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 					// Merchant location
 					auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
 					// Get a game drawing centered at the merchant location
-					auto background = M2_GAME.draw_game_to_texture(M2G_PROXY.merchant_positions[merchant_location].first);
+					auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
 					if (ask_for_confirmation_bottom("Buy " + std::to_string(remaining_unspecified_coal_count) + " coal from market for £" + std::to_string(cost_of_buying) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");

@@ -7,6 +7,7 @@
 #include <cuzn/journeys/DevelopJourney.h>
 #include <cuzn/journeys/SellJourney.h>
 #include <cuzn/journeys/LiquidationJourney.h>
+#include <cuzn/journeys/subjourneys/POISelectionJourney.h>
 #include <m2/Cache.h>
 #include <m2/game/Graph.h>
 
@@ -39,15 +40,18 @@ namespace m2g {
 	public:
 		// Once the level is created, these should not be modified.
 		std::vector<m2::RGB> player_colors;
-		std::unordered_map<pb::SpriteType, std::pair<m2::VecF,m2::RectF>> merchant_positions;
+		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> merchant_positions;
 		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> industry_positions; // Exact position, cell rectangle, tile object ID
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> connection_positions;
 		m2::Graph available_connections_graph; // Nodes are City (m2g::pb::ItemType) // TODO instead of holding onto this object, maybe recreate it by looking at sprites each time it's needed
 
 		// User journeys
-		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney, SellJourney, LiquidationJourney>> user_journey;
+		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney, LiquidationJourney>> user_journey;
+		std::optional<std::variant<SellJourney>> main_journeys;
+		std::optional<POISelectionJourney> sub_journey;
 		static void user_journey_deleter();
+		static void main_journey_deleter();
 
 		// Accessors
 		[[nodiscard]] unsigned player_index(m2::Id id) const;

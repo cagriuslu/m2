@@ -97,7 +97,7 @@ namespace {
 		.font_size = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto sell_prerequisite = can_player_attempt_to_sell(M2_PLAYER.character())) {
-				m2g::Proxy::get_instance().user_journey.emplace(SellJourney{});
+				m2g::Proxy::get_instance().main_journeys.emplace(SellJourney{});
 			} else {
 				M2_LEVEL.display_message(sell_prerequisite.error());
 			}

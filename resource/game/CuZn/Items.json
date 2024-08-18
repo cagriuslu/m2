@@ -548,26 +548,56 @@
     {
       "type": "GLOUCESTER_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
+      "attributes": [
+        {
+          "type": "MERCHANT_BONUS_DEVELOP",
+          "amount": 1.0
+        }
+      ],
       "inGameName": "Gloucester"
     },
     {
       "type": "SHREWSBURY_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
+      "attributes": [
+        {
+          "type": "MERCHANT_BONUS_VICTORY_POINTS",
+          "amount": 4.0
+        }
+      ],
       "inGameName": "Shrewsbury"
     },
     {
       "type": "OXFORD_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
+      "attributes": [
+        {
+          "type": "MERCHANT_BONUS_INCOME",
+          "amount": 2.0
+        }
+      ],
       "inGameName": "Oxford"
     },
     {
       "type": "NOTTINGHAM_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
+      "attributes": [
+        {
+          "type": "MERCHANT_BONUS_VICTORY_POINTS",
+          "amount": 3.0
+        }
+      ],
       "inGameName": "Nottingham"
     },
     {
       "type": "WARRINGTON_CARD",
       "category": "ITEM_CATEGORY_CITY_CARD",
+      "attributes": [
+        {
+          "type": "MERCHANT_BONUS_MONEY",
+          "amount": 5.0
+        }
+      ],
       "inGameName": "Warrington"
     },
     {

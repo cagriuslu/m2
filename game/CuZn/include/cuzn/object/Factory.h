@@ -5,6 +5,7 @@
 
 // Accessors
 m2::Object* find_factory_at_location(Location location);
+int required_beer_count_to_sell(IndustryLocation location);
 
 // Global Modifiers
 void remove_obsolete_factories();

@@ -52,7 +52,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	// Add all merchants (without any license) since all merchants can deal in coal and iron
 	for (const auto& merchant_sprite : possibly_active_merchant_locations()) {
 		// Create merchant object
-		auto it = m2::create_object(merchant_positions[merchant_sprite].first, m2g::pb::ObjectType::MERCHANT);
+		auto it = m2::create_object(std::get<m2::VecF>(merchant_positions[merchant_sprite]), m2g::pb::ObjectType::MERCHANT);
 		init_merchant(*it);
 		// Store for later
 		merchant_object_ids[merchant_sprite] = it.id();
@@ -372,7 +372,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	if (is_merchant_location(sprite_type)) {
 		// Object position has {0.5f, 0.5f} offset
 		auto merchant_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 2.0f, 2.0f};
-		merchant_positions[sprite_type] = std::make_pair(obj.position, merchant_cell_rect);
+		merchant_positions[sprite_type] = std::make_tuple(obj.position, merchant_cell_rect, obj.id());
 		LOG_DEBUG("Merchant position", m2g::pb::SpriteType_Name(sprite_type), merchant_cell_rect);
 	}
 	// Store the positions of the industries build locations
@@ -450,6 +450,13 @@ void m2g::Proxy::user_journey_deleter() {
 		[](auto& uj){ uj.deinit(); }
 	}, *get_instance().user_journey);
 	get_instance().user_journey.reset();
+}
+
+void m2g::Proxy::main_journey_deleter() {
+	std::visit(m2::overloaded {
+		[](auto& uj){ uj.deinit(); }
+	}, *get_instance().main_journeys);
+	get_instance().main_journeys.reset();
 }
 
 unsigned m2g::Proxy::player_index(m2::Id id) const {

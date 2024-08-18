@@ -19,7 +19,8 @@ namespace m2 {
 	};
 
 	// Filter Generators
-	constexpr auto is_component_of_parent(Id parent_id) { return [parent_id](const Component& c) { return c.object_id == parent_id; }; }
+	constexpr auto is_component_of_object(Id object_id) { return [object_id](const Component& c) { return c.object_id == object_id; }; }
+	std::function<bool(const Component&)> is_component_of_child_object_of_parent(Id parent_id);
 	// Transformers
 	constexpr Id to_parent_id_of_component(const Component& cmp) { return cmp.parent_id(); }
 }

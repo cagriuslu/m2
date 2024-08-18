@@ -29,8 +29,9 @@ message ClientCommand {
   message SellAction {
     ItemType card = 1;
     SpriteType industry_location = 2;
-    repeated SpriteType beer_sources = 3;
-    ItemType merchant_develop_benefit_industry_tile = 4;
+    SpriteType merchant_location = 3;
+    repeated SpriteType beer_sources = 4;
+    ItemType merchant_develop_benefit_industry_tile = 5;
   }
   message LoanAction {
     ItemType card = 1;

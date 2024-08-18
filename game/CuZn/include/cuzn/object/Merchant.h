@@ -1,9 +1,11 @@
 #pragma once
 #include <m2/Object.h>
 #include <m2g_ItemType.pb.h>
+#include <cuzn/Detail.h>
 
 // Filters
 constexpr auto is_merchant_character = [](m2::Character& chr) { return chr.parent().object_type() == m2g::pb::MERCHANT; };
+bool can_merchant_buy_sellable_industry(m2::Character& chr, SellableIndustry ind);
 
 // Accessors
 m2::Object* find_merchant_at_location(m2g::pb::SpriteType location);

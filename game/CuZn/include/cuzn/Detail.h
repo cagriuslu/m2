@@ -11,6 +11,7 @@ using City = m2g::pb::ItemType;
 using IndustryCity = City;
 using MerchantCity = City;
 using Industry = m2g::pb::ItemType;
+using SellableIndustry = m2g::pb::ItemType;
 using IndustryTile = m2g::pb::ItemType;
 using IndustryTileCategory = m2g::pb::ItemCategory;
 using IndustrySprite = m2g::pb::SpriteType;
@@ -18,6 +19,7 @@ using Location = m2g::pb::SpriteType;
 using IndustryLocation = Location;
 using MerchantLocation = Location;
 using Connection = m2g::pb::SpriteType;
+using POI = m2g::pb::SpriteType; // Location or Connection
 
 // Assertions
 
@@ -36,6 +38,7 @@ bool is_merchant_location(MerchantLocation location);
 bool is_connection(Connection connection);
 bool is_canal(Connection connection);
 bool is_railroad(Connection connection);
+bool is_poi(POI lc);
 bool is_canal_license(m2g::pb::ItemType item);
 bool is_railroad_license(m2g::pb::ItemType item);
 bool location_has_industry(IndustryLocation location, Industry industry);
@@ -48,7 +51,8 @@ Industry industry_of_industry_tile_category(IndustryTileCategory category);
 IndustryTileCategory industry_tile_category_of_industry(Industry industry_card);
 IndustryTileCategory industry_tile_category_of_industry_tile(IndustryTile industry_tile);
 IndustrySprite industry_sprite_of_industry(Industry industry);
-std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity city); // TODO one city might have more than one merchant location
+m2g::pb::ItemType merchant_license_type_of_sellable_industry(SellableIndustry sellable_industry);
+std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity city);
 
 // Generators
 
