@@ -1,5 +1,6 @@
 #include <cuzn/journeys/SellJourney.h>
 #include <m2/Log.h>
+#include <m2/M2.h>
 #include <cuzn/ui/Detail.h>
 #include <m2/Game.h>
 #include "cuzn/object/Factory.h"
@@ -258,11 +259,9 @@ std::optional<SellJourneyStep> SellJourney::handle_resource_exit_signal() {
 
 std::optional<SellJourneyStep> SellJourney::handle_develop_benefit_industry_tile_enter_signal() {
 	// Check if merchant bonus is free develop
-	auto merchant_city = city_of_location(_merchant_location);
-	if (M2_GAME.get_named_item(merchant_city).has_attribute(MERCHANT_BONUS_DEVELOP)) {
+	if (is_merchant_benefit_develop(_merchant_location)) {
 		// Check if using merchant beer
-		if (std::any_of(_beer_sources.begin(), _beer_sources.end(),
-			[merchant_city](Location l) { return city_of_location(l) == merchant_city; })) {
+		if (does_contain_location_from_city(_beer_sources, city_of_location(_merchant_location))) {
 			// Ask if player wants to develop
 			if (ask_for_confirmation("Merchant offers 1 free develop action.", "Use it?", "Yes", "No")) {
 				// Ask for tile selection
@@ -308,24 +307,66 @@ Industry SellJourney::selected_industry() const {
 	return to_industry_of_factory_character(find_factory_at_location(_selected_location)->character());
 }
 
-bool can_player_sell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
-	// Check if prerequisites are met
-	if (auto prerequisite = can_player_attempt_to_sell(player); not prerequisite) {
-		LOG_WARN("Player does not meet sell prerequisites", prerequisite.error());
-		return false;
+m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
+	auto prerequisite = can_player_attempt_to_sell(player);
+	m2_reflect_unexpected(prerequisite);
+
+	// Validate the card
+	m2_return_unexpected_message_unless(is_card(sell_action.card()), "Selected card is not a card");
+	m2_return_unexpected_message_unless(does_player_hold_card(player, sell_action.card()), "Player does not hold the selected card");
+
+	// Validate the factory
+	m2_return_unexpected_message_unless(is_industry_location(sell_action.industry_location()), "Selected location is not an industry location");
+	auto* factory = find_factory_at_location(sell_action.industry_location());
+	m2_return_unexpected_message_unless(factory, "Selected location does not have a built factory");
+	m2_return_unexpected_message_unless(factory->parent_id() == player.owner_id(), "Selected factory does not belong to the player");
+	m2_return_unexpected_message_unless(is_sellable_industry(to_industry_of_factory_character(factory->character())), "Selected factory is not sellable");
+
+	// Validate the merchant
+	m2_return_unexpected_message_unless(is_merchant_location(sell_action.merchant_location()), "Selected merchant location is not a merchant location");
+	auto merchants = merchants_buying_industry_on_location(sell_action.industry_location());
+	m2_return_unexpected_message_unless(merchants.contains(sell_action.merchant_location()), "Selected merchant cannot buy the selected industry");
+
+	// Validate the beer sources
+	if (auto required_beer_count = required_beer_count_to_sell(sell_action.industry_location())) {
+		m2_return_unexpected_message_unless(required_beer_count == sell_action.beer_sources_size(), "Invalid number of beer sources are provided");
+		std::vector<m2::Object*> reserved_beers;
+		for (const auto& beer_source_i : sell_action.beer_sources()) {
+			auto beer_source = static_cast<Location>(beer_source_i);
+			auto breweries = find_breweries_with_beer(player, city_of_location(sell_action.industry_location()), sell_action.merchant_location());
+			m2_return_unexpected_message_unless(breweries.contains(beer_source), "Selected beer source cannot be used");
+			// Reserve the resource
+			if (is_industry_location(beer_source)) {
+				auto* source_factory = find_factory_at_location(beer_source);
+				source_factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+				reserved_beers.emplace_back(factory);
+			} else if (is_merchant_location(beer_source)) {
+				auto* source_merchant = find_merchant_at_location(beer_source);
+				source_merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+				reserved_beers.emplace_back(source_merchant);
+			}
+		}
+		// Give back the reserved resources
+		for (auto* source : reserved_beers) {
+			source->character().add_resource(BEER_BARREL_COUNT, 1.0f);
+		}
+	} else {
+		m2_return_unexpected_message_unless(sell_action.beer_sources_size() == 0, "Beer not required but beer sources are provided");
 	}
 
-	// Check if the player holds the selected card
-	if (not is_card(sell_action.card())) {
-		LOG_WARN("Selected card is not a card");
-		return false;
-	}
-	if (player.find_items(sell_action.card()) == player.end_items()) {
-		LOG_WARN("Player does not have the selected card");
-		return false;
+	// Validate merchant develop benefit
+	if (auto tile = sell_action.merchant_develop_benefit_industry_tile()) {
+		m2_return_unexpected_message_unless(is_merchant_benefit_develop(sell_action.merchant_location()),
+			"Selected merchant does not offer develop benefit but a tile to develop has been provided");
+		m2_return_unexpected_message_unless(does_contain_location_from_city(sell_action.beer_sources(), city_of_location(sell_action.merchant_location())),
+			"Develop benefit tile is provided but merchant beer is not used");
+		m2_return_unexpected_message_unless(is_industry_tile(tile),
+			"Selected develop benefit tile is not an industry tile");
+		m2_return_unexpected_message_unless(get_next_industry_tile_of_category(player, industry_tile_category_of_industry_tile(tile)) == tile,
+			"Selected develop benefit tile is not the next tile to develop in the category");
+		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.get_named_item(tile).get_attribute(DEVELOPMENT_BAN), 0.0f, 0.001),
+			"Selected develop benefit tile cannot be developed");
 	}
 
-	// TODO
-
-	return true;
+	return {};
 }

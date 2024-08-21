@@ -269,7 +269,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 
 	// Check if the tiles are the next tiles
 	const auto& selected_industry_tile_1 = M2_GAME.get_named_item(develop_action.industry_tile_1());
-	auto next_industry_tile_1 = get_next_buildable_industry_tile(player, selected_industry_tile_1.category());
+	auto next_industry_tile_1 = get_next_industry_tile_of_category(player, selected_industry_tile_1.category());
 	if (not next_industry_tile_1 || *next_industry_tile_1 != develop_action.industry_tile_1()) {
 		LOG_WARN("Player cannot develop the selected tile");
 		return false;
@@ -279,7 +279,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 		player.remove_item(player.find_items(develop_action.industry_tile_1()));
 		// Check the tile
 		const auto& selected_industry_tile_2 = M2_GAME.get_named_item(develop_action.industry_tile_2());
-		auto next_industry_tile_2 = get_next_buildable_industry_tile(player, selected_industry_tile_2.category());
+		auto next_industry_tile_2 = get_next_industry_tile_of_category(player, selected_industry_tile_2.category());
 		auto success = true;
 		if (not next_industry_tile_2 || *next_industry_tile_2 != develop_action.industry_tile_2()) {
 			LOG_WARN("Player cannot develop the selected tile");

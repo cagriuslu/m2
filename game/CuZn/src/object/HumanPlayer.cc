@@ -115,11 +115,7 @@ size_t player_tile_count(m2::Character& player) {
 		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_POTTERY_TILE);
 }
 
-size_t player_available_road_count(m2::Character& player) {
-	return player.count_item(m2g::pb::ROAD_TILE);
-}
-
-std::optional<m2g::pb::ItemType> get_next_buildable_industry_tile(m2::Character& player, m2g::pb::ItemCategory tile_category) {
+std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Character& player, m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;
 	for (auto item_it = player.find_items(tile_category); item_it != player.end_items(); ++item_it) {

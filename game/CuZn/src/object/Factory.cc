@@ -73,10 +73,6 @@ void flip_exhausted_factories() {
 		});
 }
 
-bool is_factory_character(m2::Character& chr) {
-	return chr.owner().object_type() == m2g::pb::FACTORY;
-}
-
 bool is_factory_sold(m2::Character& chr) {
 	if (not is_factory_character(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");

@@ -150,7 +150,7 @@ namespace m2 {
 
 #define m2_reflect_unexpected(v)           \
 	do {                                   \
-		if (!(v)) {                        \
+		if (not (v)) {                     \
 			return ::m2::make_unexpected(  \
 					std::move((v).error()) \
 			);                             \
@@ -159,7 +159,7 @@ namespace m2 {
 
 #define m2_return_unexpected_message_unless(cond, msg) \
 	do {                                               \
-		if (!(cond)) {                                 \
+		if (not (cond)) {                              \
 				return ::m2::make_unexpected(msg);     \
 		}                                              \
 	} while (false)

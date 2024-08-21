@@ -65,6 +65,11 @@ bool is_merchant_location(MerchantLocation location) {
 	return GLOUCESTER_1 <= location && location <= WARRINGTON_2;
 }
 
+bool is_merchant_benefit_develop(MerchantLocation location) {
+	auto merchant_city = city_of_location(location);
+	return M2_GAME.get_named_item(merchant_city).has_attribute(MERCHANT_BONUS_DEVELOP);
+}
+
 bool is_connection(Connection connection) {
 	return is_canal(connection) || is_railroad(connection);
 }

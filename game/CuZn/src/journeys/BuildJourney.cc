@@ -243,7 +243,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 		_selected_location = *selected_loc;
 
 		// Check if the player has a factory to build
-		auto tile_type = get_next_buildable_industry_tile(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
+		auto tile_type = get_next_industry_tile_of_category(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
 			M2_LEVEL.display_message("Player doesn't have an industry tile of appropriate type");
 			M2_DEFER(m2g::Proxy::user_journey_deleter);
@@ -510,7 +510,7 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
 	// Check if the tile is the next tile
 	const auto& selected_industry_tile = M2_GAME.get_named_item(build_action.industry_tile());
-	auto next_industry_tile = get_next_buildable_industry_tile(player, selected_industry_tile.category());
+	auto next_industry_tile = get_next_industry_tile_of_category(player, selected_industry_tile.category());
 	if (not next_industry_tile || *next_industry_tile != build_action.industry_tile()) {
 		LOG_WARN("Player cannot use the selected tile");
 		return false;
@@ -665,7 +665,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	// Take tile from player
 	const auto& tile_item = M2_GAME.get_named_item(build_action.industry_tile());
 	auto tile_category = tile_item.category();
-	auto tile_type = get_next_buildable_industry_tile(player, tile_category);
+	auto tile_type = get_next_industry_tile_of_category(player, tile_category);
 	player.remove_item(player.find_items(*tile_type));
 
 	// Calculate the cost before building the industry
