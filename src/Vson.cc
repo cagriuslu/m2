@@ -68,22 +68,22 @@ const m2::Vson* m2::Vson::query(const std::string& path) const {
 
 m2::expected<std::string> m2::Vson::query_string_value(const std::string& path) const {
 	const auto* vson = query(path);
-	m2_fail_unless(vson, "VSON path not found");
-	m2_fail_unless(vson->is_string(), "VSON value not string");
+	m2_return_unexpected_message_unless(vson, "VSON path not found");
+	m2_return_unexpected_message_unless(vson->is_string(), "VSON value not string");
 	return vson->string_value();
 }
 
 m2::expected<long> m2::Vson::query_long_value(const std::string& path) const {
 	const auto* vson = query(path);
-	m2_fail_unless(vson, "VSON path not found");
-	m2_fail_unless(vson->is_string(), "VSON value not string");
+	m2_return_unexpected_message_unless(vson, "VSON path not found");
+	m2_return_unexpected_message_unless(vson->is_string(), "VSON value not string");
 	return vson->long_value();
 }
 
 m2::expected<double> m2::Vson::query_double_value(const std::string& path) const {
 	const auto* vson = query(path);
-	m2_fail_unless(vson, "VSON path not found");
-	m2_fail_unless(vson->is_string(), "VSON value not string");
+	m2_return_unexpected_message_unless(vson, "VSON path not found");
+	m2_return_unexpected_message_unless(vson->is_string(), "VSON value not string");
 	return vson->double_value();
 }
 
@@ -310,7 +310,7 @@ static m2::expected<m2::Vson> parse_object(std::stringstream& ss) {
 				// Parse value
 				ss.unget();
 				auto value = parse_unknown_value(ss);
-				m2_reflect_failure(value);
+				m2_reflect_unexpected(value);
 				obj[key] = *value;
 				// Next state
 				state = EXPECT_COMMA_OR_SPACE;
@@ -350,7 +350,7 @@ static m2::expected<m2::Vson> parse_array(std::stringstream& ss) {
 			} else {
 				ss.unget();
 				auto value = parse_unknown_value(ss);
-				m2_reflect_failure(value);
+				m2_reflect_unexpected(value);
 				arr.push_back(*value);
 				state = EXPECT_COMMA_OR_SPACE; // Next state
 			}
@@ -429,16 +429,16 @@ static m2::expected<m2::Vson> parse_unknown_value(std::stringstream& ss) {
 m2::expected<m2::Vson> m2::Vson::parse_string(const std::string& str) {
 	std::stringstream ss(str);
 	auto optional_vson = parse_unknown_value(ss);
-	m2_reflect_failure(optional_vson);
+	m2_reflect_unexpected(optional_vson);
 	int c;
 	while ((c = ss.get()) != EOF) {
-		m2_fail_unless(isspace(c), "Extra characters after VSON");
+		m2_return_unexpected_message_unless(isspace(c), "Extra characters after VSON");
 	}
 	return optional_vson;
 }
 m2::expected<m2::Vson> m2::Vson::parse_file(const std::string &fpath) {
 	FILE* file = fopen(fpath.c_str(), "r");
-	m2_fail_unless(file, "Unable to open file");
+	m2_return_unexpected_message_unless(file, "Unable to open file");
 	std::stringstream ss;
 	while (not feof(file)) {
 		char buffer[512];

@@ -209,7 +209,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 						return {};
 					}
 			}, *char_it);
-			m2_reflect_failure(success);
+			m2_reflect_unexpected(success);
 		}
 
 		// Check if server_to_local_map contains all the players in the game
@@ -291,7 +291,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 				LOG_DEBUG("Server has created an object", it->server_object_id);
 				auto obj_it = m2::create_object(m2::VecF{it->position}, it->object_type, 0);
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
-				m2_reflect_failure(load_result);
+				m2_reflect_unexpected(load_result);
 				// Update the character
 				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources, it->attributes);
@@ -304,7 +304,7 @@ m2::void_expected m2::network::ClientThread::process_server_update() {
 				LOG_DEBUG("Server has created an object", it->server_object_id);
 				auto obj_it = m2::create_object(m2::VecF{it->position}, it->object_type, parent_it->second.first);
 				auto load_result = M2G_PROXY.init_server_update_fg_object(*obj_it, it->named_items, it->resources);
-				m2_reflect_failure(load_result);
+				m2_reflect_unexpected(load_result);
 				// Update the character
 				auto* character = obj_it->get_character();
 				update_character(character, it->named_items, it->resources, it->attributes);

@@ -3,7 +3,7 @@
 
 m2::expected<std::string> m2::read_file(const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "r");
-	m2_fail_unless(file, "Unable to open file " + path.string());
+	m2_return_unexpected_message_unless(file, "Unable to open file " + path.string());
 
 	std::stringstream ss;
 	while (not feof(file)) {
@@ -17,7 +17,7 @@ m2::expected<std::string> m2::read_file(const std::filesystem::path& path) {
 
 m2::void_expected m2::write_to_file(const std::string& str, const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "w");
-	m2_fail_unless(file, "Unable to open file " + path.string());
+	m2_return_unexpected_message_unless(file, "Unable to open file " + path.string());
 	auto size = str.size();
 	bool success = (fwrite(str.data(), 1, size, file) == size);
 	fclose(file);

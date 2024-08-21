@@ -35,7 +35,7 @@ namespace {
 m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(
     TTF_Font* font, SDL_Renderer* renderer, int number, SDL_Color color) {
 	auto expect_texture = generate_font_texture(font, renderer, std::to_string(number), color);
-	m2_reflect_failure(expect_texture);
+	m2_reflect_unexpected(expect_texture);
 	return FontTexture{
 	    std::get<0>(*expect_texture), number, std::get<1>(*expect_texture), std::get<2>(*expect_texture)};
 }
@@ -43,7 +43,7 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(
 m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(
     TTF_Font* font, SDL_Renderer* renderer, float number, SDL_Color color) {
 	auto expect_texture = generate_font_texture(font, renderer, std::to_string(number), color);
-	m2_reflect_failure(expect_texture);
+	m2_reflect_unexpected(expect_texture);
 	return FontTexture{
 	    std::get<0>(*expect_texture), number, std::get<1>(*expect_texture), std::get<2>(*expect_texture)};
 }
@@ -54,6 +54,6 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create(
 		return FontTexture{nullptr, text, 0, 0};
 	}
 	auto expect_texture = generate_font_texture(font, renderer, text, color);
-	m2_reflect_failure(expect_texture);
+	m2_reflect_unexpected(expect_texture);
 	return FontTexture{std::get<0>(*expect_texture), text, std::get<1>(*expect_texture), std::get<2>(*expect_texture)};
 }

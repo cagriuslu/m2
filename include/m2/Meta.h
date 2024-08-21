@@ -69,12 +69,13 @@ namespace m2 {
 		};
 	}
 
-	// Converts a range into an std::vector
+	// Converts a range into std::vector
 	template<std::ranges::range R>
 	constexpr auto to_vector(R&& r) {
 		using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
 		return std::vector<elem_t>{r.begin(), r.end()};
 	}
+	// Converts a range into std::set
 	template<std::ranges::range R>
 	constexpr auto to_set(R&& r) {
 		using elem_t = std::decay_t<std::ranges::range_value_t<R>>;
@@ -114,40 +115,40 @@ namespace m2 {
 	template <typename E>
 	auto make_unexpected(E&& e) { return tl::make_unexpected(std::forward<E>(e)); }
 
-	// Convenience functions using expected
-
-	template <typename T>
-	T&& _move_or_throw_error(const char* file, int line, expected<T>&& e) {
-		if (!e) {
-			throw Error{file, line, e.error()};
+	namespace detail {
+		template <typename T>
+		T&& _move_or_throw_error(const char* file, int line, expected<T>&& e) {
+			if (!e) {
+				throw Error{file, line, e.error()};
+			}
+			return std::move(*e);
 		}
-		return std::move(*e);
-	}
 
-	template <typename T>
-	T&& _move_or_throw_message(const char* file, int line, std::optional<T>&& o, const char* message) {
-		if (!o) {
-			throw Error{file, line, message};
+		template <typename T>
+		T&& _move_or_throw_message(const char* file, int line, std::optional<T>&& o, const char* message) {
+			if (!o) {
+				throw Error{file, line, message};
+			}
+			return std::move(*o);
 		}
-		return std::move(*o);
-	}
 
-	template <typename T>
-	void _succeed_or_throw_error(const char* file, int line, const expected<T>& e) {
-		if (!e) {
-			throw Error{file, line, e.error()};
+		template <typename T>
+		void _succeed_or_throw_error(const char* file, int line, const expected<T>& e) {
+			if (!e) {
+				throw Error{file, line, e.error()};
+			}
 		}
-	}
 
-	template <typename T>
-	void _succeed_or_throw_message(const char* file, int line, const std::optional<T>& o, const char* message) {
-		if (!o) {
-			throw Error{file, line, message};
+		template <typename T>
+		void _succeed_or_throw_message(const char* file, int line, const std::optional<T>& o, const char* message) {
+			if (!o) {
+				throw Error{file, line, message};
+			}
 		}
 	}
 }
 
-#define m2_reflect_failure(v)              \
+#define m2_reflect_unexpected(v)           \
 	do {                                   \
 		if (!(v)) {                        \
 			return ::m2::make_unexpected(  \
@@ -156,18 +157,23 @@ namespace m2 {
 		}                                  \
 	} while (false)
 
-#define m2_fail_unless(cond, err)                  \
-	do {                                           \
-		if (!(cond)) {                             \
-				return ::m2::make_unexpected(err); \
-		}                                          \
+#define m2_return_unexpected_message_unless(cond, msg) \
+	do {                                               \
+		if (!(cond)) {                                 \
+				return ::m2::make_unexpected(msg);     \
+		}                                              \
 	} while (false)
 
-#define m2_move_or_throw_error(v) (::m2::_move_or_throw_error(__FILE__, __LINE__, (v)))
-#define m2_move_or_throw_message(v, msg) (::m2::_move_or_throw_message(__FILE__, __LINE__, (v), msg))
-#define m2_succeed_or_throw_error(v) (::m2::_succeed_or_throw_error(__FILE__, __LINE__, (v)))
-#define m2_succeed_or_throw_message(v, msg) (::m2::_succeed_or_throw_message(__FILE__, __LINE__, (v), msg))
+/// Return the r-value reference to v if it contains a value, otherwise throw the contained error
+#define m2_move_or_throw_error(v) (::m2::detail::_move_or_throw_error(__FILE__, __LINE__, (v)))
+/// Return the r-value reference to v if it contains a value, otherwise throw the message
+#define m2_move_or_throw_message(v, msg) (::m2::detail::_move_or_throw_message(__FILE__, __LINE__, (v), msg))
+
+/// Do nothing if v contains a value, otherwise throw the contained error
+#define m2_succeed_or_throw_error(v) (::m2::detail::_succeed_or_throw_error(__FILE__, __LINE__, (v)))
+/// Do nothing if v contains a value, otherwise throw the message
+#define m2_succeed_or_throw_message(v, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (v), msg))
 
 #define _m2_token_concat(x, y) x ## y
 #define m2_token_concat(x, y) _m2_token_concat(x, y)
-#define m2_repeat(n) for (int m2_token_concat(_, __LINE__) = 0; m2_token_concat(_, __LINE__) < (n); ++m2_token_concat(_, __LINE__))
+#define m2_repeat(n) for (int m2_token_concat(_i, __LINE__) = 0; m2_token_concat(_i, __LINE__) < (n); ++m2_token_concat(_i, __LINE__))

@@ -25,7 +25,7 @@ namespace m2 {
 		template <typename ProtoType>
 		expected<ProtoType> json_file_to_message(const std::filesystem::path& path) {
 			auto str = read_file(path);
-			m2_reflect_failure(str);
+			m2_reflect_unexpected(str);
 
 			ProtoType message;
 			auto status = google::protobuf::util::JsonStringToMessage(str.value(), &message);

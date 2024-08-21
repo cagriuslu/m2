@@ -11,7 +11,7 @@ m2::expected<bool> m2::network::server::Client::save_incoming_message(char* read
 	}
 
 	auto recv_success = _socket->recv(read_buffer, read_buffer_length);
-	m2_reflect_failure(recv_success);
+	m2_reflect_unexpected(recv_success);
 
 	if (*recv_success == 0) {
 		LOG_WARN("Client closed socket, closing our side as well");
@@ -22,7 +22,7 @@ m2::expected<bool> m2::network::server::Client::save_incoming_message(char* read
 	// Parse the first message up to the null character
 	std::string first_json_str{read_buffer};
 	auto expect_first_message = pb::json_string_to_message<pb::NetworkMessage>(first_json_str);
-	m2_reflect_failure(expect_first_message);
+	m2_reflect_unexpected(expect_first_message);
 	// Check game_hash
 	if (expect_first_message->game_hash() != M2_GAME.hash()) {
 		return make_unexpected("Client game hash mismatch");
@@ -45,7 +45,7 @@ m2::expected<bool> m2::network::server::Client::save_incoming_message(char* read
 
 		std::string second_json_str{read_buffer + first_json_str.size() + 1};
 		auto expect_second_message = pb::json_string_to_message<pb::NetworkMessage>(second_json_str);
-		m2_reflect_failure(expect_second_message);
+		m2_reflect_unexpected(expect_second_message);
 		// Check game_hash
 		if (expect_second_message->game_hash() != M2_GAME.hash()) {
 			return make_unexpected("Client game hash mismatch");
@@ -91,11 +91,11 @@ m2::expected<bool> m2::network::server::Client::flush_outgoing_messages() {
 		_outgoing_queue.pop();
 
 		auto expect_string = pb::message_to_json_string(msg);
-		m2_reflect_failure(expect_string);
+		m2_reflect_unexpected(expect_string);
 
 		// Send the null character at the end of the message as a separator between messages
 		auto send_success = _socket->send(expect_string->c_str(), expect_string->size() + 1);
-		m2_reflect_failure(send_success);
+		m2_reflect_unexpected(send_success);
 	}
 	return (0 < msg_count);
 }

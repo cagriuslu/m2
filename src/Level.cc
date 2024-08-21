@@ -52,7 +52,7 @@ m2::void_expected m2::Level::init_multi_player_as_host(
 
 	auto success = init_any_player(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
-	m2_reflect_failure(success);
+	m2_reflect_unexpected(success);
 
 	// Execute the first server update
 	M2_GAME.server_thread().send_server_update();
@@ -73,11 +73,11 @@ m2::void_expected m2::Level::init_multi_player_as_guest(
 
 	auto success = init_any_player(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
-	m2_reflect_failure(success);
+	m2_reflect_unexpected(success);
 
 	// Consume the ServerUpdate that caused the level to be initialized
 	auto expect_server_update = M2_GAME.client_thread().process_server_update();
-	m2_reflect_failure(expect_server_update);
+	m2_reflect_unexpected(expect_server_update);
 
 	return {};
 }
@@ -91,7 +91,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 
 	if (std::filesystem::exists(*_lb_path)) {
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
-		m2_reflect_failure(lb);
+		m2_reflect_unexpected(lb);
 		_lb.emplace(*lb);
 		// Create background tiles
 		for (int l = 0; l < lb->background_layers_size(); ++l) {
@@ -204,7 +204,7 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path& path
 m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path) {
 	// Create state
 	auto state = sedit::State::create(path);
-	m2_reflect_failure(state);
+	m2_reflect_unexpected(state);
 	type_state.emplace<sedit::State>(std::move(*state));
 
 	message_box_ui_state.emplace(&ui::message_box_ui);
@@ -230,7 +230,7 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path& path) {
 	// Create state
 	auto state = bsedit::State::create(path);
-	m2_reflect_failure(state);
+	m2_reflect_unexpected(state);
 	type_state.emplace<bsedit::State>(std::move(*state));
 
 	message_box_ui_state.emplace(&ui::message_box_ui);
@@ -342,7 +342,7 @@ m2::void_expected m2::Level::init_any_player(
 	if (std::holds_alternative<std::filesystem::path>(level_path_or_blueprint)) {
 		_lb_path = std::get<std::filesystem::path>(level_path_or_blueprint);
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
-		m2_reflect_failure(lb);
+		m2_reflect_unexpected(lb);
 		_lb = *lb;
 	} else {
 		_lb_path = {};
@@ -401,7 +401,7 @@ m2::void_expected m2::Level::init_any_player(
 		}
 
 		auto load_result = M2G_PROXY.init_level_blueprint_fg_object(*it);
-		m2_reflect_failure(load_result);
+		m2_reflect_unexpected(load_result);
 		LOG_TRACE("Created object", it.id());
 	}
 
