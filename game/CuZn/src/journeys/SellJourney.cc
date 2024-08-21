@@ -307,3 +307,25 @@ std::optional<SellJourneyStep> SellJourney::handle_confirmation_enter_signal() {
 Industry SellJourney::selected_industry() const {
 	return to_industry_of_factory_character(find_factory_at_location(_selected_location)->character());
 }
+
+bool can_player_sell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
+	// Check if prerequisites are met
+	if (auto prerequisite = can_player_attempt_to_sell(player); not prerequisite) {
+		LOG_WARN("Player does not meet sell prerequisites", prerequisite.error());
+		return false;
+	}
+
+	// Check if the player holds the selected card
+	if (not is_card(sell_action.card())) {
+		LOG_WARN("Selected card is not a card");
+		return false;
+	}
+	if (player.find_items(sell_action.card()) == player.end_items()) {
+		LOG_WARN("Player does not have the selected card");
+		return false;
+	}
+
+	// TODO
+
+	return true;
+}

@@ -14,7 +14,6 @@ enum class SellJourneyStep {
 	EXPECT_DEVELOP_BENEFIT_INDUSTRY_TILE,
 	EXPECT_CONFIRMATION,
 };
-
 class SellJourney : public m2::FsmBase<SellJourneyStep, POIOrCancelSignal> {
 	Card _selected_card{};
 	IndustryLocation _selected_location{};
@@ -48,3 +47,5 @@ protected:
 private:
 	[[nodiscard]] Industry selected_industry() const;
 };
+
+bool can_player_sell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action);
