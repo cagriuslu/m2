@@ -107,23 +107,31 @@ namespace m2 {
 		sdl::ticks_t get_level_duration() const;
 
 		// Modifiers
+
 		void begin_game_loop();
+		/// Show the HUD UI elements. HUD is set to be shown at start of the game.
 		void enable_hud();
+		/// Hides the HUD UI elements. UI elements would get disabled, thus they won't receive any events or updates.
 		void disable_hud();
+		/// Adds a UI element on to the game screen, above the HUD. The UI doesn't block the game loop and consumes only
+		/// the events meant for itself.
 		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
+		/// Displays a UI element as a dialog, above the HUD. The UI doesn't block the game loop but consumes all events
+		/// except the time passed event. Mouse movement, button and key presses are not delivered to HUD, other UI
+		/// elements and the game until the display is discarded either by returning or being destroyed.
 		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
-		// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
-		// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
+		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
+		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
 		void remove_custom_ui(int index);
-		// Removes the custom UI at next step. Can be called from anywhere, but BEWARE, if any other custom UI is added
-		// before the current step completes, that'll be removed as well.
+		/// Removes the custom UI at next step. Can be called from anywhere, but BEWARE, if any other custom UI is added
+		/// before the current step completes, that'll be removed as well.
 		void remove_custom_ui_deferred(int index);
 		void remove_custom_ui_dialog(); // Should not be called from the custom UI itself
 		void remove_custom_ui_dialog_deferred(); // Can be called from the custom UI itself
-
 		/// If `timeout` is negative, the timeout is disabled and the message is displayed forever.
 		/// Else, the message is dismissed after `timeout` seconds.
 		void display_message(const std::string& msg, float timeout = 5.0f);
+		/// Removes the message immediately.
 		void remove_message();
 
 	   private:
