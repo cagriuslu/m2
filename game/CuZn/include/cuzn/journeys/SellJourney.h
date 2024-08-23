@@ -49,3 +49,5 @@ private:
 };
 
 m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action);
+
+Card execute_sell_action(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action);

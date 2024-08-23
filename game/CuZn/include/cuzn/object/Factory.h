@@ -11,6 +11,9 @@ int required_beer_count_to_sell(IndustryLocation location);
 void remove_obsolete_factories();
 void flip_exhausted_factories();
 
+// Modifiers
+void sell_factory(m2::Character& factory_chr);
+
 // Filters
 inline bool is_factory_character(m2::Character& chr) { return chr.owner().object_type() == m2g::pb::FACTORY; }
 bool is_factory_sold(m2::Character& chr);

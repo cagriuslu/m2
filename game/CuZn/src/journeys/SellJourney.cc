@@ -370,3 +370,31 @@ m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCo
 
 	return {};
 }
+
+Card execute_sell_action(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
+	// Assume validation is done
+
+	// Take resources
+	for (const auto& beer_source_i : sell_action.beer_sources()) {
+		auto beer_source = static_cast<Location>(beer_source_i);
+		if (is_industry_location(beer_source)) {
+			auto* source_factory = find_factory_at_location(beer_source);
+			source_factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+		} else if (is_merchant_location(beer_source)) {
+			auto* source_merchant = find_merchant_at_location(beer_source);
+			source_merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+		}
+	}
+
+	sell_factory(find_factory_at_location(sell_action.industry_location())->character());
+
+	// Merchant develop benefit
+	if (sell_action.merchant_develop_benefit_industry_tile()) {
+		// Take tile from player
+		player.remove_item(player.find_items(sell_action.merchant_develop_benefit_industry_tile()));
+	}
+
+	flip_exhausted_factories();
+
+	return sell_action.card();
+}

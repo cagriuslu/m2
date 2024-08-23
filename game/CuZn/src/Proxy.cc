@@ -137,63 +137,55 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			return std::nullopt;
 		}
 
-		std::optional<Card> card_to_discard;
-		SpentMoney money_spent = 0;
+		std::pair<Card,int> card_to_discard_and_money_spent{};
 		if (client_command.has_build_action()) {
 			LOG_INFO("Validating build action");
 			if (not can_player_build(turn_holder_character, client_command.build_action())) {
 				return std::nullopt;
 			}
 			LOG_INFO("Executing build action");
-			auto card_money_pair = execute_build_action(turn_holder_character, client_command.build_action());
-			card_to_discard = card_money_pair.first;
-			money_spent += card_money_pair.second;
+			card_to_discard_and_money_spent = execute_build_action(turn_holder_character, client_command.build_action());
 		} else if (client_command.has_network_action()) {
 			LOG_INFO("Validating network action");
 			if (not can_player_network(turn_holder_character, client_command.network_action())) {
 				return std::nullopt;
 			}
 			LOG_INFO("Executing network action");
-			auto card_money_pair = execute_network_action(turn_holder_character, client_command.network_action());
-			card_to_discard = card_money_pair.first;
-			money_spent += card_money_pair.second;
+			card_to_discard_and_money_spent = execute_network_action(turn_holder_character, client_command.network_action());
 		} else if (client_command.has_sell_action()) {
-			LOG_INFO("Processing sell action");
-			// TODO check
-
-			card_to_discard = client_command.sell_action().card();
-
-			auto* factory = find_factory_at_location(client_command.sell_action().industry_location());
-			// TODO check
-			factory->character().set_resource(pb::IS_SOLD, 1.0f);
-			// TODO get benefits
+			LOG_INFO("Validating sell action");
+			if (auto success = can_player_sell(turn_holder_character, client_command.sell_action()); not success) {
+				LOG_WARN("Sell validation failed", success.error());
+				return std::nullopt;
+			}
+			LOG_INFO("Executing sell action");
+			card_to_discard_and_money_spent.first = execute_sell_action(turn_holder_character, client_command.sell_action());
 		} else if (client_command.has_develop_action()) {
 			LOG_INFO("Validating develop action");
 			if (not can_player_develop(turn_holder_character, client_command.develop_action())) {
 				return std::nullopt;
 			}
 			LOG_INFO("Executing develop action");
-			auto card_money_pair = execute_develop_action(turn_holder_character, client_command.develop_action());
-			card_to_discard = card_money_pair.first;
-			money_spent += card_money_pair.second;
+			card_to_discard_and_money_spent = execute_develop_action(turn_holder_character, client_command.develop_action());
 		} else if (client_command.has_loan_action()) {
 			LOG_INFO("Validating loan action");
 			if (not can_player_loan(turn_holder_character, client_command.loan_action())) {
 				return std::nullopt;
 			}
 			LOG_INFO("Executing loan action");
-			card_to_discard = execute_loan_action(turn_holder_character, client_command.loan_action());
+			card_to_discard_and_money_spent.first = execute_loan_action(turn_holder_character, client_command.loan_action());
 		} else if (client_command.has_scout_action()) {
 			LOG_INFO("Validating scout action");
 			if (not can_player_scout(turn_holder_character, client_command.scout_action())) {
 				return std::nullopt;
 			}
 			LOG_INFO("Executing scout action");
-			card_to_discard = execute_scout_action(turn_holder_character, client_command.scout_action());
+			card_to_discard_and_money_spent.first = execute_scout_action(turn_holder_character, client_command.scout_action());
 		} else if (client_command.has_pass_action()) {
 			LOG_INFO("Executing pass action");
-			card_to_discard = client_command.pass_action().card();
+			card_to_discard_and_money_spent.first = client_command.pass_action().card();
 		}
+		auto [card_to_discard, money_spent] = card_to_discard_and_money_spent;
 
 		// Send update to clients
 		LOG_DEBUG("Sending action summary to clients");
@@ -207,8 +199,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 
 		// Discard card from player
 		if (card_to_discard) {
-			LOG_INFO("Discard card from player", M2_GAME.get_named_item(*card_to_discard).in_game_name());
-			auto card_it = turn_holder_character.find_items(*card_to_discard);
+			LOG_INFO("Discard card from player", M2_GAME.get_named_item(card_to_discard).in_game_name());
+			auto card_it = turn_holder_character.find_items(card_to_discard);
 			turn_holder_character.remove_item(card_it);
 		}
 
