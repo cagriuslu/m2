@@ -481,6 +481,14 @@ bool m2g::Proxy::is_liquidating() const {
 	return m2::is_equal(game_state_tracker().get_resource(m2g::pb::IS_LIQUIDATING), 1.0f, 0.001f);
 }
 
+int m2g::Proxy::market_coal_count() const {
+	return m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
+}
+
+int m2g::Proxy::market_iron_count() const {
+	return m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
+}
+
 int m2g::Proxy::market_coal_cost(int coal_count) const {
 	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
 	return calculate_cost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);

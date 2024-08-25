@@ -60,6 +60,8 @@ namespace m2g {
 		[[nodiscard]] bool is_canal_era() const;
 		[[nodiscard]] bool is_railroad_era() const;
 		[[nodiscard]] bool is_liquidating() const;
+		[[nodiscard]] int market_coal_count() const;
+		[[nodiscard]] int market_iron_count() const;
 		[[nodiscard]] int market_coal_cost(int coal_count) const; // Query cost of buying coal from the market
 		[[nodiscard]] int market_iron_cost(int iron_count) const; // Query cost of buying iron from the market
 		// first: number of items that can be sold, second: revenue of selling

@@ -4,6 +4,7 @@
 #include <m2/ui/widget/TextSelection.h>
 #include <cuzn/ui/Detail.h>
 #include <cuzn/ui/Cards.h>
+#include <cuzn/ui/Market.h>
 #include <cuzn/ui/Tiles.h>
 #include <m2/Game.h>
 
@@ -121,5 +122,21 @@ const Blueprint right_hud_blueprint = {
 				}
 			}
 		},
+		WidgetBlueprint{
+			.x = 2,
+			.y = 43,
+			.w = 15,
+			.h = 6,
+			.border_width_px = 1,
+			.variant = TextBlueprint{
+				.text = "Market",
+				.font_size = 4.5f,
+				.alignment = m2::ui::TextAlignment::CENTER,
+				.on_action = [](MAYBE const Text& self) -> Action {
+					M2_LEVEL.add_custom_ui_dialog(market_window_ratio(), std::make_unique<Blueprint>(generate_market_window()));
+					return make_continue_action();
+				}
+			}
+		}
 	}
 };
