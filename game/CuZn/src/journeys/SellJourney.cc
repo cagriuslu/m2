@@ -2,6 +2,8 @@
 #include <m2/Log.h>
 #include <m2/M2.h>
 #include <cuzn/ui/Detail.h>
+#include <cuzn/ui/Cards.h>
+#include <cuzn/ui/Tiles.h>
 #include <m2/Game.h>
 #include "cuzn/object/Factory.h"
 #include "cuzn/object/Merchant.h"

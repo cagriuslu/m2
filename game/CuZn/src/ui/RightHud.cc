@@ -3,6 +3,8 @@
 #include <m2/ui/widget/TextInput.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <cuzn/ui/Detail.h>
+#include <cuzn/ui/Cards.h>
+#include <cuzn/ui/Tiles.h>
 #include <m2/Game.h>
 
 using namespace m2::ui;

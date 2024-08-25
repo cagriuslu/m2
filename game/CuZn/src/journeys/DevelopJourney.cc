@@ -1,7 +1,9 @@
 #include <cuzn/journeys/DevelopJourney.h>
 #include <m2/Log.h>
 #include "m2/Game.h"
-#include "cuzn/ui/Detail.h"
+#include <cuzn/ui/Detail.h>
+#include <cuzn/ui/Cards.h>
+#include <cuzn/ui/Tiles.h>
 #include <cuzn/ConsumingIron.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/object/Factory.h>

@@ -3,6 +3,7 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <cuzn/ui/Detail.h>
+#include <cuzn/ui/Cards.h>
 #include <m2/protobuf/Detail.h>
 
 m2::void_expected can_player_attempt_to_scout(m2::Character& player) {

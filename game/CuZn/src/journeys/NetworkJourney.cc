@@ -2,6 +2,7 @@
 #include <cuzn/Detail.h>
 #include <cuzn/detail/Network.h>
 #include <cuzn/ui/Detail.h>
+#include <cuzn/ui/Cards.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/ConsumingCoal.h>
 #include <cuzn/ConsumingBeer.h>
