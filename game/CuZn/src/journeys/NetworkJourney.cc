@@ -216,7 +216,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 					// Get a game drawing centered at the merchant location
 					auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
-					if (ask_for_confirmation_bottom("Buy 1 coal from market for £" + std::to_string(market_coal_cost(1)) + "?", "Yes", "No", std::move(background))) {
+					if (ask_for_confirmation_bottom("Buy 1 coal from market for £" + std::to_string(M2G_PROXY.market_coal_cost(1)) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
 						// Specify resource source
 						unspecified_resource->source = merchant_location;
@@ -458,7 +458,7 @@ bool can_player_network(m2::Character& player, const m2g::pb::ClientCommand_Netw
 		return is_merchant_location(static_cast<Location>(coal_source));
 	});
 	// Check if the player has enough money
-	if (m2::iround(player.get_resource(MONEY)) < road_cost(network_action.connection_2()) + market_coal_cost(m2::I(coal_from_market))) {
+	if (m2::iround(player.get_resource(MONEY)) < road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market))) {
 		LOG_WARN("Player does not have enough money");
 		return false;
 	}
@@ -481,7 +481,7 @@ std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb:
 	auto coal_from_market = std::ranges::count_if(network_action.coal_sources(), [](const auto& coal_source) {
 		return is_merchant_location(static_cast<Location>(coal_source));
 	});
-	auto cost = road_cost(network_action.connection_2()) + market_coal_cost(m2::I(coal_from_market));
+	auto cost = road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market));
 
 	// Take resources
 	for (const auto& coal_source : network_action.coal_sources()) {

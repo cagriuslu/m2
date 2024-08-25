@@ -114,7 +114,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 			// If no iron has left on the map, all the remaining iron must come from the market
 			auto remaining_unspecified_iron_count = (_iron_source_1 == 0 && (_develop_double_tiles && _iron_source_2 == 0)) ? 2 : 1;
 			// Calculate the cost of buying iron
-			auto cost_of_buying = market_iron_cost(m2::I(remaining_unspecified_iron_count));
+			auto cost_of_buying = M2G_PROXY.market_iron_cost(m2::I(remaining_unspecified_iron_count));
 			LOG_DEBUG("Asking player if they want to buy iron from the market...");
 			if (ask_for_confirmation("Buy " + std::to_string(remaining_unspecified_iron_count) + " iron from market for £" + std::to_string(cost_of_buying) + "?", "", "Yes", "No")) {
 				LOG_DEBUG("Player agreed");
@@ -370,7 +370,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 	// Check if the player has enough money to buy the resources
 	auto iron_from_market = is_merchant_location(develop_action.iron_sources_1()) ? 1 : 0;
 	iron_from_market += develop_action.industry_tile_2() && is_merchant_location(develop_action.iron_sources_2()) ? 1 : 0;
-	if (m2::iround(player.get_resource(MONEY)) < market_iron_cost(iron_from_market)) {
+	if (m2::iround(player.get_resource(MONEY)) < M2G_PROXY.market_iron_cost(iron_from_market)) {
 		LOG_WARN("Player does not have enough money");
 		return false;
 	}
@@ -384,7 +384,7 @@ std::pair<Card,int> execute_develop_action(m2::Character& player, const m2g::pb:
 	// Calculate the cost of buying the resources
 	auto iron_from_market = is_merchant_location(develop_action.iron_sources_1()) ? 1 : 0;
 	iron_from_market += develop_action.industry_tile_2() && is_merchant_location(develop_action.iron_sources_2()) ? 1 : 0;
-	auto cost = market_iron_cost(iron_from_market);
+	auto cost = M2G_PROXY.market_iron_cost(iron_from_market);
 
 	// Take resources
 	if (is_industry_location(develop_action.iron_sources_1())) {

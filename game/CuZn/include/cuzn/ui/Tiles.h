@@ -1,5 +1,4 @@
 #pragma once
-
 #include <m2/ui/Blueprint.h>
 #include <m2/RectF.h>
 #include <m2g_ItemType.pb.h>

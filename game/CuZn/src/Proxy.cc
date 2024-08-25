@@ -13,6 +13,7 @@
 #include <cuzn/ui/LeftHud.h>
 #include <cuzn/ui/RightHud.h>
 #include <cuzn/detail/SetUp.h>
+#include <cuzn/detail/Market.h>
 #include <cuzn/journeys/ScoutJourney.h>
 #include <cuzn/journeys/LoanJourney.h>
 #include <cuzn/detail/Liquidate.h>
@@ -480,12 +481,24 @@ bool m2g::Proxy::is_liquidating() const {
 	return m2::is_equal(game_state_tracker().get_resource(m2g::pb::IS_LIQUIDATING), 1.0f, 0.001f);
 }
 
-int m2g::Proxy::empty_slots_in_coal_market() const {
-	return COAL_MARKET_CAPACITY - m2::iround(game_state_tracker().get_resource(pb::COAL_CUBE_COUNT));
+int m2g::Proxy::market_coal_cost(int coal_count) const {
+	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	return calculate_cost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
 }
 
-int m2g::Proxy::empty_slots_in_iron_market() const {
-	return IRON_MARKET_CAPACITY - m2::iround(game_state_tracker().get_resource(pb::IRON_CUBE_COUNT));
+int m2g::Proxy::market_iron_cost(int iron_count) const {
+	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	return calculate_cost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
+}
+
+std::pair<int,int> m2g::Proxy::market_coal_revenue(int count) const {
+	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
+	return calculate_revenue(COAL_MARKET_CAPACITY, current_coal_count, count);
+}
+
+std::pair<int,int> m2g::Proxy::market_iron_revenue(int count) const {
+	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
+	return calculate_revenue(IRON_MARKET_CAPACITY, current_iron_count, count);
 }
 
 std::set<m2::ObjectId> m2g::Proxy::object_ids_of_industry_location_bg_tiles(const std::set<IndustryLocation>& industry_locations) const {
@@ -589,4 +602,12 @@ void m2g::Proxy::buy_coal_from_market() {
 
 void m2g::Proxy::buy_iron_from_market() {
 	game_state_tracker().remove_resource(pb::IRON_CUBE_COUNT, 1.0f);
+}
+
+void m2g::Proxy::sell_coal_to_market(int count) {
+	game_state_tracker().add_resource(pb::COAL_CUBE_COUNT, m2::F(count));
+}
+
+void m2g::Proxy::sell_iron_to_market(int count) {
+	game_state_tracker().add_resource(pb::IRON_CUBE_COUNT, m2::F(count));
 }

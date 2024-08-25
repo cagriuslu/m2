@@ -292,7 +292,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 					auto remaining_unspecified_coal_count = std::count(_resource_sources.begin(), _resource_sources.end(),
 						std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
 					// Calculate the cost of buying coal
-					auto cost_of_buying = market_coal_cost(m2::I(remaining_unspecified_coal_count));
+					auto cost_of_buying = M2G_PROXY.market_coal_cost(m2::I(remaining_unspecified_coal_count));
 					// Merchant location
 					auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
 					// Get a game drawing centered at the merchant location
@@ -352,7 +352,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				auto remaining_unspecified_iron_count = std::count(_resource_sources.begin(), _resource_sources.end(),
 					std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
 				// Calculate the cost of buying iron
-				auto cost_of_buying = market_iron_cost(m2::I(remaining_unspecified_iron_count));
+				auto cost_of_buying = M2G_PROXY.market_iron_cost(m2::I(remaining_unspecified_iron_count));
 				LOG_DEBUG("Asking player if they want to buy iron from the market...");
 				if (ask_for_confirmation("Buy " + std::to_string(remaining_unspecified_iron_count) + " iron from market for £" + std::to_string(cost_of_buying) + "?", "", "Yes", "No")) {
 					LOG_DEBUG("Player agreed");
@@ -652,7 +652,7 @@ return_resources:
 	});
 	// Check if the player has enough money
 	if (m2::iround(player.get_resource(MONEY)) < m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
-			market_coal_cost(m2::I(coal_from_market)) + market_iron_cost(m2::I(iron_from_market))) {
+		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market))) {
 		LOG_WARN("Player does not have enough money");
 		return false;
 	}
@@ -677,7 +677,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
 	auto cost = m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
-				market_coal_cost(m2::I(coal_from_market)) + market_iron_cost(m2::I(iron_from_market));
+		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market));
 
 	// Take resources
 	for (const auto& coal_source : build_action.coal_sources()) {
@@ -708,21 +708,25 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 		// If there's a connection to coal market
 		if (find_connected_coal_market(city)) {
 			auto gained_resource_count = m2::iround(tile_item.get_attribute(COAL_BONUS));
-			auto sellable_resource_count = std::min(gained_resource_count, M2G_PROXY.empty_slots_in_coal_market());
+			auto [sell_count, revenue] = M2G_PROXY.market_coal_revenue(gained_resource_count);
 			// Sell to market
-			M2G_PROXY.game_state_tracker().add_resource(COAL_CUBE_COUNT, m2::F(sellable_resource_count));
+			M2G_PROXY.sell_coal_to_market(sell_count);
+			// Gain revenue
+			player.add_resource(MONEY, m2::F(revenue));
 			// Keep the rest
-			it->character().add_resource(COAL_CUBE_COUNT, m2::F(gained_resource_count - sellable_resource_count));
+			it->character().add_resource(COAL_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
 		} else {
 			it->character().add_resource(COAL_CUBE_COUNT, tile_item.get_attribute(COAL_BONUS));
 		}
 	} else if (tile_category == ITEM_CATEGORY_IRON_WORKS_TILE) {
 		auto gained_resource_count = m2::iround(tile_item.get_attribute(IRON_BONUS));
-		auto sellable_resource_count = std::min(gained_resource_count, M2G_PROXY.empty_slots_in_iron_market());
+		auto [sell_count, revenue] = M2G_PROXY.market_iron_revenue(gained_resource_count);
 		// Sell to market
-		M2G_PROXY.game_state_tracker().add_resource(IRON_CUBE_COUNT, m2::F(sellable_resource_count));
+		M2G_PROXY.sell_iron_to_market(sell_count);
+		// Gain revenue
+		player.add_resource(MONEY, m2::F(revenue));
 		// Keep the rest
-		it->character().add_resource(IRON_CUBE_COUNT, m2::F(gained_resource_count - sellable_resource_count));
+		it->character().add_resource(IRON_CUBE_COUNT, m2::F(gained_resource_count - sell_count));
 	} else if (tile_category == ITEM_CATEGORY_BREWERY_TILE) {
 		it->character().add_resource(BEER_BARREL_COUNT, tile_item.get_attribute(
 			M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA));

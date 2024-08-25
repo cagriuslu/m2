@@ -60,8 +60,11 @@ namespace m2g {
 		[[nodiscard]] bool is_canal_era() const;
 		[[nodiscard]] bool is_railroad_era() const;
 		[[nodiscard]] bool is_liquidating() const;
-		[[nodiscard]] int empty_slots_in_coal_market() const;
-		[[nodiscard]] int empty_slots_in_iron_market() const;
+		[[nodiscard]] int market_coal_cost(int coal_count) const; // Query cost of buying coal from the market
+		[[nodiscard]] int market_iron_cost(int iron_count) const; // Query cost of buying iron from the market
+		// first: number of items that can be sold, second: revenue of selling
+		[[nodiscard]] std::pair<int,int> market_coal_revenue(int count) const; // Query revenue of selling coal to the market
+		[[nodiscard]] std::pair<int,int> market_iron_revenue(int count) const; // Query revenue of selling iron to the market
 		[[nodiscard]] std::set<m2::ObjectId> object_ids_of_industry_location_bg_tiles(const std::set<IndustryLocation>&) const;
 		[[nodiscard]] std::set<m2::ObjectId> object_ids_of_connection_bg_tiles(const std::set<Connection>&) const;
 
@@ -79,5 +82,7 @@ namespace m2g {
 		void set_is_liquidating(bool state);
 		void buy_coal_from_market();
 		void buy_iron_from_market();
+		void sell_coal_to_market(int count);
+		void sell_iron_to_market(int count);
 	};
 }  // namespace m2g
