@@ -83,7 +83,10 @@ namespace m2 {
 		/// second ServerUpdate will be published.
 		void multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {}
 
-		/// Maps 0-based client indexes to the object IDs in this game instance
+		/// Maps 0-based client indexes to the IDs of the objects that represent a client in this game instance.
+		/// While loading the level, this vector should be filled with IDs of identical player objects.
+		/// Then in post_multi_player_level_client_init, M2_GAME.client_thread().receiver_index() can be queried to
+		/// learn the 0-based index of this game instance, and the corresponding object can be assigned to M2_PLAYER.
 		/// For the server, the first item would contain the ObjectId of the player.
 		/// For the client with index 1, the second item would contain the ObjectId of the player.
 		std::vector<m2::ObjectId> multi_player_object_ids;
