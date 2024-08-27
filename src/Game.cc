@@ -275,6 +275,20 @@ void m2::Game::handle_hud_events() {
 	IF(_level->right_hud_ui_state)->handle_events(events);
 }
 
+void m2::Game::handle_client_shutdown() {
+	if (_client_thread && _client_thread->is_shutdown()) {
+		// First, destroy server and client threads
+		if (_server_thread) {
+			_server_thread.reset();
+		}
+		_client_thread.reset();
+		// Execute main menu
+		if (ui::State::create_execute_sync(_proxy.pause_menu()).is_quit()) {
+			quit = true;
+		}
+	}
+}
+
 void m2::Game::execute_pre_step() {
 	for (auto& phy : _level->physics) {
 		IF(phy.pre_step)(phy);
