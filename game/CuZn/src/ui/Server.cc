@@ -40,7 +40,7 @@ static TextBlueprint client_count = {
 const Blueprint server_lobby = {
 	.w = 160,
 	.h = 90,
-	.border_width_px = 0,
+	.border_width = 0,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
 		WidgetBlueprint{
@@ -48,14 +48,11 @@ const Blueprint server_lobby = {
 			.y = 40,
 			.w = 40,
 			.h = 10,
-			.border_width_px = 0,
-			.padding_width_px = 5,
+			.border_width = 0,
 			.variant = TextBlueprint{.text = "Client count:"}
 		},
 		WidgetBlueprint{
 			.x = 80, .y = 40, .w = 40, .h = 10,
-			.border_width_px = 1,
-			.padding_width_px = 5,
 			.variant = client_count
 		},
 	}

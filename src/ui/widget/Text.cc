@@ -36,11 +36,11 @@ void Text::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 	if (const auto texture = _font_texture.texture(); texture) {
 		draw_text(
-		    calculate_text_rect(text_blueprint().font_size, text_blueprint().alignment, texture), texture,
+		    calculate_text_rect(text_blueprint().font_size, text_blueprint().horizontal_alignment, texture), texture,
 		    depressed ? _color_override / 2.0f : _color_override);
 	}
-	draw_border(
-	    rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
+	auto border_color = depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255};
+	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px(), border_color);
 }
 
 void Text::set_text(const std::string& t) {

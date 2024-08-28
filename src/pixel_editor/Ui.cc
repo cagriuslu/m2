@@ -59,42 +59,29 @@ const widget::TextBlueprint pixel_editor_left_hud_save_button = {
 };
 const Blueprint m2::ui::pixel_editor_left_hud = {
 		.w = 19, .h = 72,
-		.border_width_px = 1,
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 4, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_left_hud_paint_button
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 8, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_left_hud_erase_button
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 12, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_left_hud_color_picker_button
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 16, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_left_hud_cancel_button
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 60, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_left_hud_gridlines_button
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 64, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_left_hud_save_button
 				},
 		}
@@ -166,30 +153,21 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_alpha_selection = {
 };
 const Blueprint m2::ui::pixel_editor_right_hud = {
 		.w = 19, .h = 72,
-		.border_width_px = 1,
 		.widgets = {
 				WidgetBlueprint{
 						.x = 4, .y = 4, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_right_hud_red_selection
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 8, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_right_hud_green_selection
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 12, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_right_hud_blue_selection
 				},
 				WidgetBlueprint{
 						.x = 4, .y = 16, .w = 11, .h = 3,
-						.border_width_px = 1,
-						.padding_width_px = 2,
 						.variant = pixel_editor_right_hud_alpha_selection
 				},
 		}

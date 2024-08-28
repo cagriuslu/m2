@@ -16,7 +16,7 @@ using namespace m2g::pb;
 const Blueprint right_hud_blueprint = {
 	.w = 19,
 	.h = 72,
-	.border_width_px = 0,
+	.border_width = 0,
 	.background_color = {0, 0, 0, 255},
 	.widgets = {
 		WidgetBlueprint{
@@ -24,11 +24,11 @@ const Blueprint right_hud_blueprint = {
 			.y = 1,
 			.w = 15,
 			.h = 6,
-			.border_width_px = 0,
+			.border_width = 0,
 			.variant =
 			TextBlueprint{
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
 					self.set_text(std::string{"Points:"} + std::to_string(vp));
@@ -41,11 +41,11 @@ const Blueprint right_hud_blueprint = {
 			.y = 8,
 			.w = 15,
 			.h = 6,
-			.border_width_px = 0,
+			.border_width = 0,
 			.variant =
 			TextBlueprint{
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
 					self.set_text(std::string{"Income:"} + std::to_string(vp));
@@ -58,11 +58,11 @@ const Blueprint right_hud_blueprint = {
 			.y = 15,
 			.w = 15,
 			.h = 6,
-			.border_width_px = 0,
+			.border_width = 0,
 			.variant =
 			TextBlueprint{
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
 					self.set_text(std::string{"Cash:£"} + std::to_string(money));
@@ -75,12 +75,11 @@ const Blueprint right_hud_blueprint = {
 			.y = 22,
 			.w = 15,
 			.h = 6,
-			.border_width_px = 1,
 			.variant =
 			TextBlueprint{
 				.text = "Cards",
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::CENTER,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(
 						cards_window_ratio(),
@@ -94,11 +93,10 @@ const Blueprint right_hud_blueprint = {
 			.y = 29,
 			.w = 15,
 			.h = 6,
-			.border_width_px = 1,
 			.variant = TextBlueprint{
 				.text = "Tiles",
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::CENTER,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(tiles_window_ratio(), std::make_unique<Blueprint>(generate_tiles_window("Tiles")));
 					return make_continue_action();
@@ -110,11 +108,11 @@ const Blueprint right_hud_blueprint = {
 			.y = 36,
 			.w = 15,
 			.h = 6,
-			.border_width_px = 0,
+			.border_width = 0,
 			.variant =
 			TextBlueprint{
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
 					self.set_text(std::string{"Deck:"} + std::to_string(dds));
@@ -127,11 +125,10 @@ const Blueprint right_hud_blueprint = {
 			.y = 43,
 			.w = 15,
 			.h = 6,
-			.border_width_px = 1,
 			.variant = TextBlueprint{
 				.text = "Market",
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::CENTER,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(market_window_ratio(), std::make_unique<Blueprint>(generate_market_window()));
 					return make_continue_action();

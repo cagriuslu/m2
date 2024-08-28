@@ -69,20 +69,14 @@ const Blueprint main_menu_blueprint = {
 		.widgets = {
 				WidgetBlueprint{
 						.x = 45, .y = 15, .w = 10, .h = 10,
-						.border_width_px = 1,
-						.padding_width_px = 5,
 						.variant = entry_variant_1
 				},
 				WidgetBlueprint{
 						.x = 45, .y = 35, .w = 10, .h = 10,
-						.border_width_px = 1,
-						.padding_width_px = 5,
 						.variant = entry_variant_2
 				},
 				WidgetBlueprint{
 						.x = 45, .y = 55, .w = 10, .h = 10,
-						.border_width_px = 1,
-						.padding_width_px = 5,
 						.variant = entry_variant_3
 				}
 		}
@@ -90,7 +84,7 @@ const Blueprint main_menu_blueprint = {
 
 static TextBlueprint pause_variant_1 = {
 		.text = "RESUME GAME",
-		.alignment = TextAlignment::CENTER,
+		.horizontal_alignment = TextHorizontalAlignment::CENTER,
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text &self) {
 			return make_return_action(); // TODO Return value
@@ -107,14 +101,10 @@ const Blueprint pause_menu_blueprint = {
 		.widgets = {
 				WidgetBlueprint{
 						.x = 45, .y = 35, .w = 10, .h = 10,
-						.border_width_px = 1,
-						.padding_width_px = 5,
 						.variant = pause_variant_1
 				},
 				WidgetBlueprint{
 						.x = 45, .y = 55, .w = 10, .h = 10,
-						.border_width_px = 1,
-						.padding_width_px = 5,
 						.variant = pause_variant_2
 				}
 		}
@@ -122,12 +112,12 @@ const Blueprint pause_menu_blueprint = {
 
 const Blueprint left_hud_blueprint = {
 		.w = 19, .h = 72,
-		.border_width_px = 2
+		.widgets = {}
 };
 
 const Blueprint right_hud_blueprint = {
 		.w = 19, .h = 72,
-		.border_width_px = 2
+		.widgets = {}
 };
 
 const m2::ui::Blueprint* m2g::Proxy::main_menu() {

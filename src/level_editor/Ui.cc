@@ -33,23 +33,21 @@ const widget::ImageSelectionBlueprint paint_mode_image_selection = {
 Blueprint paint_mode_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width_px = 0, .variant = paint_mode_title},
-        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .border_width_px = 1, .variant = layer_selection},
+        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = paint_mode_title},
+        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
         WidgetBlueprint{
-            .x = 4, .y = 13, .w = 11, .h = 14, .border_width_px = 1, .variant = paint_mode_image_selection}}};
+            .x = 4, .y = 13, .w = 11, .h = 14, .variant = paint_mode_image_selection}}};
 
 const widget::TextBlueprint erase_mode_title = {.text = "ERASE"};
 const Blueprint erase_mode_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width_px = 0, .variant = erase_mode_title},
-        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .border_width_px = 1, .variant = layer_selection},
+        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = erase_mode_title},
+        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
     }};
 
 const widget::TextBlueprint place_mode_title = {.text = "PLACE"};
@@ -74,42 +72,34 @@ const widget::IntegerInputBlueprint place_mode_right_hud_group_instance_selectio
 Blueprint place_mode_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width_px = 0, .variant = place_mode_title},
+        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = place_mode_title},
         WidgetBlueprint{
             .x = 4,
             .y = 6,
             .w = 11,
             .h = 4,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = place_mode_right_hud_object_type_selection},
         WidgetBlueprint{
             .x = 4,
             .y = 11,
             .w = 11,
             .h = 4,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = place_mode_right_hud_group_type_selection},
         WidgetBlueprint{
             .x = 4,
             .y = 16,
             .w = 11,
             .h = 4,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = place_mode_right_hud_group_instance_selection}}};
 
 const widget::TextBlueprint remove_mode_title = {.text = "REMOVE"};
 const Blueprint remove_mode_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
-    .widgets = {WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width_px = 0, .variant = remove_mode_title}}};
+    .widgets = {WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = remove_mode_title}}};
 
 const widget::TextBlueprint pick_mode_title = {.text = "PICK"};
 const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
@@ -125,13 +115,12 @@ const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
 const Blueprint pick_mode_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width_px = 0, .variant = pick_mode_title},
+        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = pick_mode_title},
         WidgetBlueprint{
-            .x = 4, .y = 6, .w = 11, .h = 4, .border_width_px = 1, .variant = pick_mode_right_hud_ground_selection},
-        WidgetBlueprint{.x = 4, .y = 11, .w = 11, .h = 6, .border_width_px = 1, .variant = layer_selection},
+            .x = 4, .y = 6, .w = 11, .h = 4, .variant = pick_mode_right_hud_ground_selection},
+        WidgetBlueprint{.x = 4, .y = 11, .w = 11, .h = 6, .variant = layer_selection},
     }};
 
 const widget::TextBlueprint select_mode_title = {.text = "SELECT"};
@@ -177,7 +166,6 @@ const Blueprint m2::level_editor::ui::fill_dialog = {
     .widgets = {
         WidgetBlueprint{
             .x = 5, .y = 5, .w = 150, .h = 70,
-            .border_width_px = 1,
             .variant = widget::TextSelectionBlueprint{
                 .line_count = 10,
                 .allow_multiple_selection = true,
@@ -192,7 +180,6 @@ const Blueprint m2::level_editor::ui::fill_dialog = {
         },
         WidgetBlueprint{
             .x = 60, .y = 80, .w = 40, .h = 5,
-            .border_width_px = 1,
             .variant = widget::TextBlueprint {
                 .text = "Fill",
                 .on_action = [](MAYBE const widget::Text& self) -> Action {
@@ -219,32 +206,30 @@ const widget::TextBlueprint select_mode_right_hud_fill_button = {
 const Blueprint select_mode_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width_px = 0, .variant = select_mode_title},
-        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .border_width_px = 1, .variant = layer_selection},
+        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = select_mode_title},
+        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
         WidgetBlueprint{
             .x = 4,
             .y = 13,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
             .variant = select_mode_right_hud_shift_right_button},
         WidgetBlueprint{
-            .x = 4, .y = 17, .w = 11, .h = 3, .border_width_px = 1, .variant = select_mode_right_hud_shift_down_button},
+            .x = 4, .y = 17, .w = 11, .h = 3, .variant = select_mode_right_hud_shift_down_button},
         WidgetBlueprint{
-            .x = 4, .y = 21, .w = 11, .h = 3, .border_width_px = 1, .variant = select_mode_right_hud_copy_button},
+            .x = 4, .y = 21, .w = 11, .h = 3, .variant = select_mode_right_hud_copy_button},
         WidgetBlueprint{
-            .x = 4, .y = 25, .w = 11, .h = 3, .border_width_px = 1, .variant = select_mode_right_hud_paste_bg_button},
+            .x = 4, .y = 25, .w = 11, .h = 3, .variant = select_mode_right_hud_paste_bg_button},
         WidgetBlueprint{
-            .x = 4, .y = 29, .w = 11, .h = 3, .border_width_px = 1, .variant = select_mode_right_hud_paste_fg_button},
+            .x = 4, .y = 29, .w = 11, .h = 3, .variant = select_mode_right_hud_paste_fg_button},
         WidgetBlueprint{
-            .x = 4, .y = 33, .w = 11, .h = 3, .border_width_px = 1, .variant = select_mode_right_hud_erase_button},
+            .x = 4, .y = 33, .w = 11, .h = 3, .variant = select_mode_right_hud_erase_button},
         WidgetBlueprint{
-            .x = 4, .y = 37, .w = 11, .h = 3, .border_width_px = 1, .variant = select_mode_right_hud_remove_button},
+            .x = 4, .y = 37, .w = 11, .h = 3, .variant = select_mode_right_hud_remove_button},
         WidgetBlueprint{
-            .x = 4, .y = 41, .w = 11, .h = 3, .border_width_px = 1, .variant = select_mode_right_hud_fill_button}}};
+            .x = 4, .y = 41, .w = 11, .h = 3, .variant = select_mode_right_hud_fill_button}}};
 
 const widget::TextBlueprint shift_mode_title = {.text = "SHIFT"};
 const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
@@ -264,16 +249,14 @@ const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_select
 const Blueprint shift_mode_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width_px = 0, .variant = shift_mode_title},
+        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = shift_mode_title},
         WidgetBlueprint{
             .x = 4,
             .y = 6,
             .w = 11,
             .h = 4,
-            .border_width_px = 1,
             .variant = shift_mode_right_hud_shift_direction_selection}}};
 
 const widget::TextBlueprint left_hud_paint_button = {
@@ -375,7 +358,6 @@ const widget::TextBlueprint left_hud_coordinates = {
 const Blueprint level_editor::ui::left_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {50, 50, 50, 255},
     .widgets = {
         WidgetBlueprint{
@@ -383,77 +365,59 @@ const Blueprint level_editor::ui::left_hud = {
             .y = 2,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_paint_button},
         WidgetBlueprint{
             .x = 4,
             .y = 6,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_erase_button},
         WidgetBlueprint{
             .x = 4,
             .y = 10,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_place_button},
         WidgetBlueprint{
             .x = 4,
             .y = 14,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_remove_button},
         WidgetBlueprint{
             .x = 4,
             .y = 18,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_pick_button},
         WidgetBlueprint{
             .x = 4,
             .y = 22,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_select_button},
         WidgetBlueprint{
             .x = 4,
             .y = 26,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_shift_button},
         WidgetBlueprint{
             .x = 4,
             .y = 30,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_cancel_button},
         WidgetBlueprint{
             .x = 4,
             .y = 66,
             .w = 11,
             .h = 3,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = left_hud_gridlines_button},
-        WidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width_px = 0, .variant = left_hud_coordinates}}};
+        WidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width = 0, .variant = left_hud_coordinates}}};
 
 const Blueprint level_editor::ui::right_hud = {
-    .w = 19, .h = 72, .border_width_px = 1, .background_color = {50, 50, 50, 255}};
+    .w = 19, .h = 72, .background_color = {50, 50, 50, 255}};
 
 const widget::TextBlueprint save_button = {
     .text = "Save", .kb_shortcut = SDL_SCANCODE_S, .on_action = [](MAYBE const widget::Text& self) -> Action {
@@ -467,11 +431,11 @@ const widget::TextBlueprint quit_button = {
 const Blueprint level_editor::ui::menu = {
     .w = 160,
     .h = 90,
-    .border_width_px = 0,
+    .border_width = 0,
     .background_color = {50, 50, 50, 255},
     .cancellable = true,
     .widgets = {
         WidgetBlueprint{
-            .x = 70, .y = 40, .w = 20, .h = 10, .border_width_px = 1, .padding_width_px = 2, .variant = save_button},
+            .x = 70, .y = 40, .w = 20, .h = 10, .variant = save_button},
         WidgetBlueprint{
-            .x = 70, .y = 70, .w = 20, .h = 10, .border_width_px = 1, .padding_width_px = 2, .variant = quit_button}}};
+            .x = 70, .y = 70, .w = 20, .h = 10, .variant = quit_button}}};

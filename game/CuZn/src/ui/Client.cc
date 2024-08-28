@@ -58,22 +58,22 @@ static TextBlueprint ready_button = {
 static const Blueprint client_lobby = {
 	.w = 160,
 	.h = 90,
-	.border_width_px = 0,
+	.border_width = 0,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
-		WidgetBlueprint{.x = 60, .y = 30, .w = 40, .h = 10, .border_width_px = 0, .variant = client_status},
-		WidgetBlueprint{.x = 60, .y = 50, .w = 40, .h = 10, .border_width_px = 1, .variant = ready_button}
+		WidgetBlueprint{.x = 60, .y = 30, .w = 40, .h = 10, .border_width = 0, .variant = client_status},
+		WidgetBlueprint{.x = 60, .y = 50, .w = 40, .h = 10, .variant = ready_button}
 	}
 };
 
 const Blueprint ip_port_form = {
 	.w = 160,
 	.h = 90,
-	.border_width_px = 0,
+	.border_width = 0,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
 		WidgetBlueprint{.x = 55, .y = 30, .w = 10, .h = 10,
-			.border_width_px = 0,
+			.border_width = 0,
 			.variant = TextBlueprint{.text = "IP"}
 		},
 		WidgetBlueprint{
@@ -82,8 +82,6 @@ const Blueprint ip_port_form = {
 			.y = 30,
 			.w = 40,
 			.h = 10,
-			.border_width_px = 1,
-			.padding_width_px = 5,
 			.variant = TextInputBlueprint{.initial_text = "127.0.0.1"}
 		},
 		WidgetBlueprint{
@@ -91,8 +89,6 @@ const Blueprint ip_port_form = {
 			.y = 50,
 			.w = 20,
 			.h = 10,
-			.border_width_px = 1,
-			.padding_width_px = 5,
 			.variant = TextBlueprint{
 				.text = "CONNECT", .on_action = [](MAYBE const widget::Text& self) {
 					auto* ip_input_widget = self.parent().find_first_widget_of_type<TextInput>();

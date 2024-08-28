@@ -18,7 +18,6 @@ const widget::TextBlueprint right_hud_reset_button = {
 const Blueprint ui::bulk_sheet_editor_right_hud = {
     .w = 19,
     .h = 72,
-    .border_width_px = 1,
     .background_color = {0, 0, 0, 255},
     .widgets = {
         WidgetBlueprint{
@@ -45,11 +44,11 @@ const Blueprint ui::bulk_sheet_editor_right_hud = {
                 }
 			}
 		},
-        WidgetBlueprint{.x = 2, .y = 6, .w = 15, .h = 4, .border_width_px = 1, .variant = right_hud_set_rect_button},
-        WidgetBlueprint{.x = 2, .y = 11, .w = 15, .h = 4, .border_width_px = 1, .variant = right_hud_reset_button}}};
+        WidgetBlueprint{.x = 2, .y = 6, .w = 15, .h = 4, .variant = right_hud_set_rect_button},
+        WidgetBlueprint{.x = 2, .y = 11, .w = 15, .h = 4, .variant = right_hud_reset_button}}};
 
 const Blueprint ui::bulk_sheet_editor_left_hud = {
-    .w = 19, .h = 72, .border_width_px = 1, .background_color = {0, 0, 0, 255}, .widgets = {}};
+    .w = 19, .h = 72, .background_color = {0, 0, 0, 255}, .widgets = {}};
 
 const widget::TextSelectionBlueprint resource_selection = {
     .on_create = [](MAYBE widget::TextSelection& self) {
@@ -72,7 +71,7 @@ const widget::TextSelectionBlueprint resource_selection = {
 const Blueprint ui::bulk_sheet_editor_main_menu = {
     .w = 160,
     .h = 90,
-    .border_width_px = 0,
+    .border_width = 0,
     .background_color = {0, 0, 0, 255},
     .widgets = {
         WidgetBlueprint{
@@ -80,16 +79,12 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
             .y = 55,
             .w = 90,
             .h = 10,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = resource_selection},
         WidgetBlueprint{
             .x = 35,
             .y = 70,
             .w = 40,
             .h = 10,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant =
                 widget::TextBlueprint{
                     .text = "QUIT",
@@ -101,8 +96,6 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
             .y = 70,
             .w = 40,
             .h = 10,
-            .border_width_px = 1,
-            .padding_width_px = 2,
             .variant = widget::TextBlueprint{
                 .text = "SELECT",
                 .kb_shortcut = SDL_SCANCODE_RETURN,
@@ -120,15 +113,13 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
 const Blueprint ui::bulk_sheet_editor_pause_menu = {
     .w = 160,
     .h = 90,
-    .border_width_px = 0,
+    .border_width = 0,
     .background_color = {0, 0, 0, 255},
     .widgets = {WidgetBlueprint{
         .x = 60,
         .y = 40,
         .w = 40,
         .h = 10,
-        .border_width_px = 1,
-        .padding_width_px = 2,
         .variant = widget::TextBlueprint{
             .text = "QUIT",
             .kb_shortcut = SDL_SCANCODE_Q,

@@ -18,8 +18,11 @@ namespace m2::ui {
 		bool initially_enabled{true};
 		bool initially_focused{false};
 		int x{}, y{}, w{1}, h{1}; // unitless // TODO convert to float
-		unsigned border_width_px{1}; // TODO the unit of border width cannot be pixels, use FontSize instead
-		int padding_width_px{}; // TODO the unit of padding cannot be pixels, use FontSize instead
+
+		// Unitless border width. If non-zero, the drawn border is at least 1 pixel. Border is drawn *inside* the Rect
+		// of the widget, thus it behaves like a padding at the same time.
+		float border_width{0.001f};
+
 		SDL_Color background_color{};
 
 		using Variant = std::variant<

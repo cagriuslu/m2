@@ -109,15 +109,15 @@ namespace {
 const Blueprint left_hud_blueprint = {
 	.w = 19,
 	.h = 72,
-	.border_width_px = 0,
+	.border_width = 0,
 	.background_color = {0, 0, 0, 255},
 	.widgets = {
 		WidgetBlueprint{
 			.x = 2, .y = 2, .w = 15, .h = 6,
-			.border_width_px = 0,
+			.border_width = 0,
 			.variant = TextBlueprint{
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto text = std::string{"Color:"} + generate_player_name(M2_GAME.client_thread().receiver_index());
 					self.set_text(text);
@@ -128,10 +128,10 @@ const Blueprint left_hud_blueprint = {
 		},
 		WidgetBlueprint{
 			.x = 2, .y = 9, .w = 15, .h = 6,
-			.border_width_px = 0,
+			.border_width = 0,
 			.variant = TextBlueprint{
 				.font_size = 4.5f,
-				.alignment = m2::ui::TextAlignment::LEFT,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					if (M2_GAME.client_thread().is_turn()) {
 						self.set_text("Your turn");

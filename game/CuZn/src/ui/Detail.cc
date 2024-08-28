@@ -16,7 +16,6 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 
 	auto blueprint = Blueprint{
 		.w = 60, .h = 40,
-		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
@@ -66,25 +65,24 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text) {
 	auto blueprint = Blueprint{
 		.w = 60, .h = 40,
-		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
 				.x = 5, .y = 5, .w = 50, .h = 5,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = question1,
 					.font_size = 4.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
 				.x = 5, .y = 10, .w = 50, .h = 5,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = question2,
 					.font_size = 4.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
@@ -117,15 +115,14 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::sdl::TextureUniquePtr background_texture) {
 	auto blueprint = Blueprint{
 		.w = 44, .h = 12,
-		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
 				.x = 1, .y = 1, .w = 32, .h = 10,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = question,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
@@ -158,25 +155,24 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 void display_blocking_message(const std::string& line1, const std::string& line2) {
 	auto blueprint = Blueprint{
 		.w = 60, .h = 40,
-		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
 				.x = 5, .y = 5, .w = 50, .h = 5,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = line1,
 					.font_size = 4.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
 				.x = 5, .y = 10, .w = 50, .h = 5,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = line2,
 					.font_size = 4.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{

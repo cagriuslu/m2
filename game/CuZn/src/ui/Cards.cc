@@ -16,7 +16,6 @@ Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclud
 	return Blueprint{
 		.w = 24,
 		.h = 24,
-		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
@@ -24,7 +23,7 @@ Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclud
 				.y = 1,
 				.w = 22,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{ .text = msg }
 			},
 			WidgetBlueprint{

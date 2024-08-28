@@ -18,7 +18,6 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 	return Blueprint{
 		.w = 61,
 		.h = 26,
-		.border_width_px = 1,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
@@ -26,7 +25,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 1,
 				.w = 59,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{ .text = msg }
 			},
 			WidgetBlueprint{
@@ -145,11 +144,11 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 4,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Build requirements:",
 					.font_size = 1.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
@@ -158,10 +157,10 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 6,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.font_size = 1.9f,
-					.alignment = TextAlignment::RIGHT
+					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
 			WidgetBlueprint{
@@ -169,11 +168,11 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 8,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Resource gain:",
 					.font_size = 1.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
@@ -182,10 +181,10 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 10,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.font_size = 1.9f,
-					.alignment = TextAlignment::RIGHT
+					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
 			WidgetBlueprint{
@@ -193,11 +192,11 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 12,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Sell requirements:",
 					.font_size = 1.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
@@ -206,10 +205,10 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 14,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.font_size = 1.9f,
-					.alignment = TextAlignment::RIGHT
+					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
 			WidgetBlueprint{
@@ -217,11 +216,11 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 16,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Sell benefits:",
 					.font_size = 1.5f,
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{
@@ -230,10 +229,10 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 18,
 				.w = 29,
 				.h = 2,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.font_size = 1.9f,
-					.alignment = TextAlignment::RIGHT
+					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
 			WidgetBlueprint{
@@ -241,10 +240,10 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.y = 21,
 				.w = 59,
 				.h = 1,
-				.border_width_px = 0,
+				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "CO = Canal Only   RRO = Railroad Only   ND = No Develop",
-					.alignment = TextAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
 			WidgetBlueprint{

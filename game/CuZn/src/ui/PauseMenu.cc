@@ -16,8 +16,6 @@ const Blueprint pause_menu_blueprint = {
 	.widgets = {
 		WidgetBlueprint{
 			.x = 45, .y = 35, .w = 10, .h = 10,
-			.border_width_px = 1,
-			.padding_width_px = 5,
 			.variant = TextBlueprint{
 				.text = "RESUME", .on_action = [](MAYBE const widget::Text& self) {
 					return make_return_action();  // TODO Return value
@@ -29,8 +27,6 @@ const Blueprint pause_menu_blueprint = {
 			.y = 55,
 			.w = 10,
 			.h = 10,
-			.border_width_px = 1,
-			.padding_width_px = 5,
 			.variant = TextBlueprint{
 				.text = "QUIT",
 				.kb_shortcut = SDL_SCANCODE_Q,

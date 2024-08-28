@@ -28,9 +28,9 @@ void CheckboxWithText::on_draw() {
 	// Text
 	if (const auto texture = _font_texture.texture(); texture) {
 		auto text_rect = calculate_text_rect(
-		    rect_px.trim_left(rect_px.h), blueprint->padding_width_px, 0, 0, TextAlignment::LEFT, texture);
+		    rect_px.trim_left(rect_px.h), 0, 0, TextHorizontalAlignment::LEFT, texture);
 		draw_text(text_rect, texture);
 	}
 	// Border
-	draw_border(rect_px, blueprint->border_width_px);
+	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }

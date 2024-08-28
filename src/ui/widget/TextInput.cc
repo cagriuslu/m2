@@ -77,7 +77,7 @@ Action TextInput::on_update() {
 void TextInput::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 	if (const auto texture = _font_texture.texture(); texture) {
-		draw_text(calculate_text_rect(0, TextAlignment::LEFT, texture), texture);
+		draw_text(calculate_text_rect(0, TextHorizontalAlignment::LEFT, texture), texture);
 	}
-	draw_border(rect_px, blueprint->border_width_px);
+	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }

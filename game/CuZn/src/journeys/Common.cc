@@ -7,7 +7,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 const m2::ui::Blueprint journey_cancel_button{
-	.border_width_px = 0,
+	.border_width = 0,
 	.widgets = {
 		WidgetBlueprint{
 			.background_color = {0, 0, 0, 255},

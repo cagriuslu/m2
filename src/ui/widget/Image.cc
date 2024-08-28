@@ -37,7 +37,7 @@ void Image::on_draw() {
 	if (_sprite.second) {
 		draw_sprite(*_sprite.second, rect_px);
 	}
-	draw_border(rect_px, blueprint->border_width_px, depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
+	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px(), depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }
 
 void Image::set_sprite(m2g::pb::SpriteType s) {

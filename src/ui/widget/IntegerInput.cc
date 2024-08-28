@@ -78,22 +78,22 @@ void IntegerInput::on_draw() {
 	if (const auto texture = _font_texture.texture(); texture) {
 		draw_text(
 		    calculate_text_rect(
-		        rect_px.trim_right(rect_px.h / 2), blueprint->padding_width_px, 0, 0, TextAlignment::LEFT, texture),
+		        rect_px.trim_right(rect_px.h / 2), 0, 0, TextHorizontalAlignment::LEFT, texture),
 		    texture);
 	}
 
 	auto buttons_rect = rect_px.trim_left(rect_px.w - rect_px.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	draw_text(
-	    calculate_text_rect(inc_button_rect, 0, 0, 0, TextAlignment::CENTER, _plus_texture.texture()),
+	    calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()),
 	    _plus_texture.texture());
-	draw_border(inc_button_rect, blueprint->border_width_px);
+	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 	draw_text(
-	    calculate_text_rect(dec_button_rect, 0, 0, 0, TextAlignment::CENTER, _minus_texture.texture()),
+	    calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()),
 	    _minus_texture.texture());
-	draw_border(dec_button_rect, blueprint->border_width_px);
+	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
-	draw_border(rect_px, blueprint->border_width_px);
+	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }

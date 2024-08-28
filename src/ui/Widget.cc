@@ -16,14 +16,34 @@ void Widget::draw_background_color(const RectI& rect, const SDL_Color& color) {
 	}
 }
 
-m2::RectI m2::ui::Widget::calculate_text_rect(
-    float font_size_unitless, TextAlignment align, SDL_Texture* text_texture) const {
-	return calculate_text_rect(
-	    rect_px, blueprint->padding_width_px, blueprint->h, font_size_unitless, align, text_texture);
+int m2::ui::Widget::vertical_border_width_px() const {
+	if (blueprint->border_width == 0.0f) {
+		return 0;
+	} else {
+		// Pixels per unit
+		float pixel_pitch = F(rect_px.w) / F(blueprint->w);
+		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+	}
+}
+
+int m2::ui::Widget::horizontal_border_width_px() const {
+	if (blueprint->border_width == 0.0f) {
+		return 0;
+	} else {
+		// Pixels per unit
+		float pixel_pitch = F(rect_px.h) / F(blueprint->h);
+		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+	}
 }
 
 m2::RectI m2::ui::Widget::calculate_text_rect(
-    RectI container, int padding_width_px, int container_height_unitless, float font_size_unitless, TextAlignment align,
+    float font_size_unitless, TextHorizontalAlignment align, SDL_Texture* text_texture) const {
+	return calculate_text_rect(
+	    rect_px, blueprint->h, font_size_unitless, align, text_texture);
+}
+
+m2::RectI m2::ui::Widget::calculate_text_rect(
+    RectI container, int container_height_unitless, float font_size_unitless, TextHorizontalAlignment align,
     SDL_Texture* text_texture) {
 	auto texture_dimensions = sdl::texture_dimensions(text_texture);
 	// Validate font dimensions (calculations depend on it)
@@ -34,9 +54,6 @@ m2::RectI m2::ui::Widget::calculate_text_rect(
 	if ((texture_dimensions.x % 112) != 0) {
 		throw M2_ERROR("Unexpected font aspect ratio");
 	}
-
-	// Apply padding to container
-	container = container.trim(padding_width_px);
 
 	if (font_size_unitless == 0.0f) {
 		// That's it. Fill the container with the text.
@@ -59,10 +76,10 @@ m2::RectI m2::ui::Widget::calculate_text_rect(
 
 	RectI text_rect;
 	switch (align) {
-		case TextAlignment::LEFT:
+		case TextHorizontalAlignment::LEFT:
 			text_rect.x = container.x;
 			break;
-		case TextAlignment::RIGHT:
+		case TextHorizontalAlignment::RIGHT:
 			text_rect.x = container.x + container.w - text_dimensions.x;
 			break;
 		default:
@@ -110,4 +127,17 @@ void Widget::draw_border(const RectI& rect, unsigned border_width_px, const SDL_
 		auto sdl_rect = static_cast<SDL_Rect>(rect);
 		SDL_RenderDrawRect(M2_GAME.renderer, &sdl_rect);
 	}
+}
+
+void Widget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+
+	SDL_Rect left_right_top_bottom[4] = {
+		{.x = rect.x, .y = rect.y, .w = vertical_border_width_px, .h = rect.h},
+		{.x = rect.x2() - vertical_border_width_px, .y = rect.y, .w = vertical_border_width_px, .h = rect.h},
+		{.x = rect.x, .y = rect.y, .w = rect.w, .h = horizontal_border_width_px},
+		{.x = rect.x, .y = rect.y2() - horizontal_border_width_px, .w = rect.w, .h = horizontal_border_width_px}
+	};
+	SDL_RenderFillRects(M2_GAME.renderer, left_right_top_bottom, 4);
 }

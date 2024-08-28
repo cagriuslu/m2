@@ -27,6 +27,9 @@ namespace m2::ui {
         void draw();
 
 	private:
+		[[nodiscard]] int vertical_border_width_px() const;
+		[[nodiscard]] int horizontal_border_width_px() const;
+
 		std::unique_ptr<Widget> create_widget_state(const WidgetBlueprint& widget_blueprint);
 		void set_widget_focus_state(Widget& w, bool state);
 		void clear_focus();

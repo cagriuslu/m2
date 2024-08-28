@@ -28,5 +28,5 @@ void ProgressBar::on_draw() {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g, pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
 	SDL_RenderFillRect(M2_GAME.renderer, &filled_dstrect);
 	// Foreground
-	draw_border(rect_px, blueprint->border_width_px);
+	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }

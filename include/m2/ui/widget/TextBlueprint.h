@@ -5,7 +5,7 @@
 #include <variant>
 
 #include "../Action.h"
-#include "../TextAlignment.h"
+#include "../Detail.h"
 #include "../../Color.h"
 
 namespace m2::ui::widget {
@@ -15,9 +15,8 @@ namespace m2::ui::widget {
 	struct TextBlueprint {
 		std::string text{};
 		float font_size{};  // unitless, '0' -> fill the widget
-		TextAlignment alignment{};
+		TextHorizontalAlignment horizontal_alignment{};
 		RGB color{255, 255, 255};
-		bool is_toggle{};  // TODO
 		SDL_Scancode kb_shortcut{};
 
 		std::function<void(Text& self)> on_create{};

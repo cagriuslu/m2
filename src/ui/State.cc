@@ -334,7 +334,27 @@ void State::draw() {
 
 	Widget::draw_background_color(rect_px, blueprint->background_color);
 	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), draw_widget);
-	Widget::draw_border(rect_px, blueprint->border_width_px);
+	Widget::draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
+}
+
+int State::vertical_border_width_px() const {
+	if (blueprint->border_width == 0.0f) {
+		return 0;
+	} else {
+		// Pixels per unit
+		float pixel_pitch = F(rect_px.w) / F(blueprint->w);
+		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+	}
+}
+
+int State::horizontal_border_width_px() const {
+	if (blueprint->border_width == 0.0f) {
+		return 0;
+	} else {
+		// Pixels per unit
+		float pixel_pitch = F(rect_px.h) / F(blueprint->h);
+		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+	}
 }
 
 std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget_blueprint) {
@@ -423,7 +443,7 @@ template <unsigned INDEX>
 widget::TextBlueprint command_output_variant() {
 	return {
 	    .text = "",
-	    .alignment = TextAlignment::LEFT,
+	    .horizontal_alignment = TextHorizontalAlignment::LEFT,
 	    .on_update = [](MAYBE widget::Text &self) {
 			self.set_text(INDEX < M2_GAME.console_output.size()
 				? M2_GAME.console_output[M2_GAME.console_output.size() - INDEX - 1]
@@ -435,57 +455,57 @@ widget::TextBlueprint command_output_variant() {
 Blueprint m2::ui::console_ui = {
     .w = 1,
     .h = 25,
-    .border_width_px = 0,
+    .border_width = 0,
     .background_color = {0, 0, 0, 255},
     .widgets = {
         WidgetBlueprint{
-            .x = 0, .y = 0, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<23>()},
+            .x = 0, .y = 0, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<23>()},
         WidgetBlueprint{
-            .x = 0, .y = 1, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<22>()},
+            .x = 0, .y = 1, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<22>()},
         WidgetBlueprint{
-            .x = 0, .y = 2, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<21>()},
+            .x = 0, .y = 2, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<21>()},
         WidgetBlueprint{
-            .x = 0, .y = 3, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<20>()},
+            .x = 0, .y = 3, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<20>()},
         WidgetBlueprint{
-            .x = 0, .y = 4, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<19>()},
+            .x = 0, .y = 4, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<19>()},
         WidgetBlueprint{
-            .x = 0, .y = 5, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<18>()},
+            .x = 0, .y = 5, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<18>()},
         WidgetBlueprint{
-            .x = 0, .y = 6, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<17>()},
+            .x = 0, .y = 6, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<17>()},
         WidgetBlueprint{
-            .x = 0, .y = 7, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<16>()},
+            .x = 0, .y = 7, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<16>()},
         WidgetBlueprint{
-            .x = 0, .y = 8, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<15>()},
+            .x = 0, .y = 8, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<15>()},
         WidgetBlueprint{
-            .x = 0, .y = 9, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<14>()},
+            .x = 0, .y = 9, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<14>()},
         WidgetBlueprint{
-            .x = 0, .y = 10, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<13>()},
+            .x = 0, .y = 10, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<13>()},
         WidgetBlueprint{
-            .x = 0, .y = 11, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<12>()},
+            .x = 0, .y = 11, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<12>()},
         WidgetBlueprint{
-            .x = 0, .y = 12, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<11>()},
+            .x = 0, .y = 12, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<11>()},
         WidgetBlueprint{
-            .x = 0, .y = 13, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<10>()},
+            .x = 0, .y = 13, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<10>()},
         WidgetBlueprint{
-            .x = 0, .y = 14, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<9>()},
+            .x = 0, .y = 14, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<9>()},
         WidgetBlueprint{
-            .x = 0, .y = 15, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<8>()},
+            .x = 0, .y = 15, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<8>()},
         WidgetBlueprint{
-            .x = 0, .y = 16, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<7>()},
+            .x = 0, .y = 16, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<7>()},
         WidgetBlueprint{
-            .x = 0, .y = 17, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<6>()},
+            .x = 0, .y = 17, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<6>()},
         WidgetBlueprint{
-            .x = 0, .y = 18, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<5>()},
+            .x = 0, .y = 18, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<5>()},
         WidgetBlueprint{
-            .x = 0, .y = 19, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<4>()},
+            .x = 0, .y = 19, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<4>()},
         WidgetBlueprint{
-            .x = 0, .y = 20, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<3>()},
+            .x = 0, .y = 20, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<3>()},
         WidgetBlueprint{
-            .x = 0, .y = 21, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<2>()},
+            .x = 0, .y = 21, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<2>()},
         WidgetBlueprint{
-            .x = 0, .y = 22, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<1>()},
+            .x = 0, .y = 22, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<1>()},
         WidgetBlueprint{
-            .x = 0, .y = 23, .w = 1, .h = 1, .border_width_px = 0, .variant = command_output_variant<0>()},
+            .x = 0, .y = 23, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<0>()},
         WidgetBlueprint{
             .initially_focused = true,
             .x = 0,
@@ -503,18 +523,18 @@ Blueprint m2::ui::console_ui = {
 const Blueprint m2::ui::message_box_ui = {
     .w = 1,
     .h = 1,
-    .border_width_px = 0,
+    .border_width = 0,
     .widgets = {WidgetBlueprint{
         .initially_enabled = false,
         .x = 0,
         .y = 0,
         .w = 1,
         .h = 1,
-        .border_width_px = 0,
+        .border_width = 0,
         .background_color = SDL_Color{127, 127, 127, 127},
         .variant =
             widget::TextBlueprint{
-				.alignment = TextAlignment::LEFT,
+				.horizontal_alignment = TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE widget::Text &self) {
 					if (M2_LEVEL.message) {
 						self.set_text(*M2_LEVEL.message);

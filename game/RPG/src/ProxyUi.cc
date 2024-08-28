@@ -22,17 +22,15 @@ static widget::TextBlueprint quit_button = {
 };
 const Blueprint pause_menu_blueprint = {
 		.w = 160, .h = 90,
-		.border_width_px = 0,
+		.border_width = 0,
 		.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 75, .y = 42, .w = 10, .h = 6,
-						.border_width_px = 1,
 						.variant = resume_button
 				},
 				WidgetBlueprint{
 						.x = 75, .y = 78, .w = 10, .h = 6,
-						.border_width_px = 1,
 						.variant = quit_button
 				}
 		}
@@ -72,12 +70,11 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 };
 const Blueprint left_hud_blueprint = {
 		.w = 19, .h = 72,
-		.border_width_px = 2,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 				WidgetBlueprint{
 						.x = 2, .y = 60, .w = 15, .h = 2,
-						.border_width_px = 0,
+						.border_width = 0,
 						.variant = hp_label
 				},
 				WidgetBlueprint{
@@ -86,12 +83,11 @@ const Blueprint left_hud_blueprint = {
 				},
 				WidgetBlueprint{
 						.x = 2, .y = 66, .w = 15, .h = 2,
-						.border_width_px = 0,
+						.border_width = 0,
 						.variant = dash_label
 				},
 				WidgetBlueprint{
 						.x = 2, .y = 68, .w = 15, .h = 2,
-						.border_width_px = 1,
 						.variant = dash_progress_bar
 				}
 		}

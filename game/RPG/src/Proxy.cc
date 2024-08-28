@@ -108,7 +108,7 @@ void m2g::Proxy::save_progress() const {
 const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 	_main_menu = m2::ui::Blueprint{
 	    .w = 160, .h = 90,
-	    .border_width_px = 0,
+	    .border_width = 0,
 	    .background_color = SDL_Color{20, 20, 20, 255}
 	};
 
@@ -132,7 +132,6 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 		    .x = x_padding + col * (x_button_width + button_gap),
 		    .y = y_padding + row * (y_button_width + button_gap),
 		    .w = x_button_width, .h = y_button_width,
-		    .border_width_px = 1,
 		    .variant = m2::ui::widget::TextBlueprint{
 		        .text = level_display_name,
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) {
@@ -149,7 +148,6 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 	LOG_DEBUG("Adding quit button");
 	_main_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 	    .x = 75, .y = 78, .w = 10, .h = 6,
-	    .border_width_px = 1,
 	    .variant = m2::ui::widget::TextBlueprint{
 	        .text = "Quit",
 	        .kb_shortcut = SDL_SCANCODE_Q,
@@ -165,14 +163,14 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 const m2::ui::Blueprint* m2g::Proxy::generate_right_hud() {
 	_right_hud = m2::ui::Blueprint{
 	    .w = 19, .h = 72,
-	    .border_width_px = 2,
-	    .background_color = {0, 0, 0, 255}
+	    .background_color = {0, 0, 0, 255},
+		.widgets = {}
 	};
 
 	_right_hud.widgets.emplace_back(m2::ui::WidgetBlueprint{
 	    .initially_enabled = false,
 	    .x = 2, .y = 66, .w = 15, .h = 2,
-	    .border_width_px = 0,
+	    .border_width = 0,
 	    .variant = m2::ui::widget::TextBlueprint{
 	        .text = "AMMO"
 	    }
@@ -180,7 +178,6 @@ const m2::ui::Blueprint* m2g::Proxy::generate_right_hud() {
 	_right_hud.widgets.emplace_back(m2::ui::WidgetBlueprint{
 	    .initially_enabled = false,
 	    .x = 2, .y = 68, .w = 15, .h = 2,
-	    .border_width_px = 1,
 	    .variant = m2::ui::widget::ProgressBarBlueprint{
 	        .bar_color = SDL_Color{0, 127, 255, 255},
 	        .on_update = [](MAYBE const m2::ui::widget::ProgressBar& self) {
@@ -210,7 +207,7 @@ void m2g::Proxy::set_ammo_display_state(bool enabled) {
 const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 	_you_died_menu = m2::ui::Blueprint{
 	    .w = 160, .h = 90,
-	    .border_width_px = 0,
+	    .border_width = 0,
 	    .background_color = SDL_Color{127, 0, 0, 127}
 	};
 
@@ -218,7 +215,6 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 	if (lb_path) {
 		_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 		    .x = 70, .y = 70, .w = 20, .h = 6,
-		    .border_width_px = 1,
 		    .variant = m2::ui::widget::TextBlueprint{
 		        .text = "Retry",
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) -> m2::ui::Action {
@@ -232,7 +228,6 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 
 	_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 	    .x = 55, .y = 80, .w = 20, .h = 6,
-	    .border_width_px = 1,
 	    .variant = m2::ui::widget::TextBlueprint{
 	        .text = "Main Menu",
 	        .on_action = [&](MAYBE const m2::ui::widget::Text &self) {
@@ -243,7 +238,6 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 
 	_you_died_menu.widgets.emplace_back(m2::ui::WidgetBlueprint{
 	    .x = 85, .y = 80, .w = 20, .h = 6,
-	    .border_width_px = 1,
 	    .variant = m2::ui::widget::TextBlueprint{
 	        .text = "Quit",
 	        .on_action = [](MAYBE const m2::ui::widget::Text &self) {
