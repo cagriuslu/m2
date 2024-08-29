@@ -6,6 +6,7 @@ using namespace m2::ui;
 using namespace m2::ui::widget;
 
 Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint) {
+	// During construction, the rect_px of the widget is not yet determined. Font texture should be generated later.
 	set_text(text_blueprint().text);
 	_color_override = text_blueprint().color;
 
@@ -33,19 +34,84 @@ Action Text::on_update() {
 
 void Text::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
-	if (const auto texture = _font_texture.texture(); texture) {
-		sdl::render_texture_with_color_mod(texture,
-			calculate_text_rect(text_blueprint().font_size, text_blueprint().horizontal_alignment, texture),
-		    depressed ? _color_override / 2.0f : _color_override);
+
+	// Generate font texture if necessary
+	if (_string != _font_texture.string()) {
+		if (text_blueprint().word_wrap) {
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font,
+				M2_GAME.font_letter_width, widget_width_in_chars(), text_blueprint().horizontal_alignment, _string));
+		} else {
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, _string));
+		}
+	}
+
+	if (const auto texture = _font_texture.texture()) {
+		{
+			// Clip to widget area
+			auto drawable_rect = rect_px.trim_left(vertical_border_width_px());
+			drawable_rect = drawable_rect.trim_right(vertical_border_width_px());
+			drawable_rect = drawable_rect.trim_top(horizontal_border_width_px());
+			drawable_rect = drawable_rect.trim_bottom(horizontal_border_width_px());
+			auto drawable_rect_sdl = static_cast<SDL_Rect>(drawable_rect);
+			SDL_RenderSetClipRect(M2_GAME.renderer, &drawable_rect_sdl);
+		}
+
+		if (text_blueprint().word_wrap) {
+			// Find the ratio at which a font letter width becomes widget letter width
+			auto squeeze_ration = F(M2_GAME.font_letter_width) / widget_letter_width_in_pixels();
+			// TODO implement vertical alignment
+			auto destination = RectI{
+				rect_px.x + vertical_border_width_px(),
+				rect_px.y + horizontal_border_width_px(),
+				iround(F(sdl::texture_dimensions(texture).x) / squeeze_ration),
+				iround(F(sdl::texture_dimensions(texture).y) / squeeze_ration)
+			};
+			sdl::render_texture_with_color_mod(texture, destination,
+				depressed ? _color_override / 2.0f : _color_override);
+		} else {
+			sdl::render_texture_with_color_mod(texture,
+				calculate_text_rect(text_blueprint().font_size, text_blueprint().horizontal_alignment, texture),
+				depressed ? _color_override / 2.0f : _color_override);
+		}
+
+		// Unclip
+		SDL_RenderSetClipRect(M2_GAME.renderer, nullptr);
 	}
 	auto border_color = depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255};
 	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px(), border_color);
 }
 
-void Text::set_text(const std::string& t) {
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, t));
+void Text::set_text(const std::string& text) {
+	_string = text;
+	_font_texture = {};
 }
 
 void Text::set_color(RGB&& c) {
 	_color_override = c;
+}
+
+int Text::widget_width_in_chars() const {
+	// This function shouldn't be called if font size is 0.
+	if (text_blueprint().font_size == 0.0f) {
+		throw M2_ERROR("Font size is 0");
+	}
+
+	// Calculate how many pixels there are per horizontal 'unit'
+	auto horizontal_pixels_per_unit = F(rect_px.w) / F(blueprint->w);
+	// Calculate the width of the drawable area in pixels
+	auto max_text_width_px = rect_px.w - vertical_border_width_px() - vertical_border_width_px();
+	// Calculate how many 'units' there are in the horizontal drawable area
+	auto max_text_width_in_units = F(max_text_width_px) / horizontal_pixels_per_unit;
+	// Calculate a letter's width in 'units'
+	auto font_letter_width_in_units = text_blueprint().font_size * M2_GAME.font_letter_width / M2_GAME.font_letter_height;
+	// Calculate how many letters fit in the horizontal drawable area
+	return I(max_text_width_in_units / font_letter_width_in_units);
+}
+
+float Text::widget_letter_width_in_pixels() const {
+	// Calculate how many pixels there are per horizontal 'unit'
+	auto horizontal_pixels_per_unit = F(rect_px.w) / F(blueprint->w);
+	// Calculate a letter's width in 'units'
+	auto font_letter_width_in_units = text_blueprint().font_size * M2_GAME.font_letter_width / M2_GAME.font_letter_height;
+	return font_letter_width_in_units * horizontal_pixels_per_unit;
 }

@@ -152,27 +152,20 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	return selection;
 }
 
-void display_blocking_message(const std::string& line1, const std::string& line2) {
+void display_blocking_message(const std::string& message) {
 	auto blueprint = Blueprint{
 		.w = 60, .h = 40,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
-				.x = 5, .y = 5, .w = 50, .h = 5,
+				.x = 5, .y = 5, .w = 50, .h = 20,
 				.border_width = 0,
 				.variant = TextBlueprint{
-					.text = line1,
-					.font_size = 4.5f,
-					.horizontal_alignment = TextHorizontalAlignment::LEFT
-				}
-			},
-			WidgetBlueprint{
-				.x = 5, .y = 10, .w = 50, .h = 5,
-				.border_width = 0,
-				.variant = TextBlueprint{
-					.text = line2,
-					.font_size = 4.5f,
-					.horizontal_alignment = TextHorizontalAlignment::LEFT
+					.text = message,
+					.font_size = 3.0f,
+					.horizontal_alignment = TextHorizontalAlignment::LEFT,
+					.vertical_alignment = TextVerticalAlignment::TOP,
+					.word_wrap = true
 				}
 			},
 			WidgetBlueprint{

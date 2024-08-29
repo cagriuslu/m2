@@ -342,7 +342,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 
 void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
 	if (server_command.has_display_blocking_message()) {
-		display_blocking_message(server_command.display_blocking_message(), "");
+		display_blocking_message(server_command.display_blocking_message());
 	} else if (server_command.has_liquidate_assets_for_loan()) {
 		LOG_INFO("Received liquidate command, beginning liquidation journey");
 		auto money_to_be_paid = server_command.liquidate_assets_for_loan();
