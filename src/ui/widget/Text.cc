@@ -6,8 +6,7 @@ using namespace m2::ui;
 using namespace m2::ui::widget;
 
 Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint) {
-	auto initial_text = text_blueprint().text;
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, initial_text));
+	set_text(text_blueprint().text);
 	_color_override = text_blueprint().color;
 
 	if (text_blueprint().on_create) {

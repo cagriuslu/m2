@@ -148,31 +148,31 @@ namespace m2 {
 	}
 }
 
-#define m2_reflect_unexpected(v)           \
-	do {                                   \
-		if (not (v)) {                     \
-			return ::m2::make_unexpected(  \
-					std::move((v).error()) \
-			);                             \
-		}                                  \
-	} while (false)
-
-#define m2_return_unexpected_message_unless(cond, msg) \
+#define m2_reflect_unexpected(expected_type)           \
 	do {                                               \
-		if (not (cond)) {                              \
-				return ::m2::make_unexpected(msg);     \
+		if (not (expected_type)) {                     \
+			return ::m2::make_unexpected(              \
+					std::move((expected_type).error()) \
+			);                                         \
 		}                                              \
 	} while (false)
 
+#define m2_return_unexpected_message_unless(condition, msg) \
+	do {                                                    \
+		if (not (condition)) {                              \
+				return ::m2::make_unexpected(msg);          \
+		}                                                   \
+	} while (false)
+
 /// Return the r-value reference to v if it contains a value, otherwise throw the contained error
-#define m2_move_or_throw_error(v) (::m2::detail::_move_or_throw_error(__FILE__, __LINE__, (v)))
+#define m2_move_or_throw_error(expected_type) (::m2::detail::_move_or_throw_error(__FILE__, __LINE__, (expected_type)))
 /// Return the r-value reference to v if it contains a value, otherwise throw the message
-#define m2_move_or_throw_message(v, msg) (::m2::detail::_move_or_throw_message(__FILE__, __LINE__, (v), msg))
+#define m2_move_or_throw_message(optional_type, msg) (::m2::detail::_move_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
 
 /// Do nothing if v contains a value, otherwise throw the contained error
-#define m2_succeed_or_throw_error(v) (::m2::detail::_succeed_or_throw_error(__FILE__, __LINE__, (v)))
+#define m2_succeed_or_throw_error(expected_type) (::m2::detail::_succeed_or_throw_error(__FILE__, __LINE__, (expected_type)))
 /// Do nothing if v contains a value, otherwise throw the message
-#define m2_succeed_or_throw_message(v, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (v), msg))
+#define m2_succeed_or_throw_message(optional_type, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
 
 #define _m2_token_concat(x, y) x ## y
 #define m2_token_concat(x, y) _m2_token_concat(x, y)

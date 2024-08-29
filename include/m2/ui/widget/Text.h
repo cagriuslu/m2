@@ -5,6 +5,7 @@
 namespace m2::ui::widget {
 	class Text : public AbstractButton {
 		sdl::FontTexture _font_texture;
+		// Instead of generating colored font textures, generate white text and color the text before rendering.
 		RGB _color_override;
 
 	public:

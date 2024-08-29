@@ -1,39 +1,67 @@
-#include <SDL2/SDL_ttf.h>
-#include <m2/Game.h>
 #include <m2/sdl/FontTexture.h>
+#include <m2/sdl/Surface.h>
 
 namespace {
-	m2::expected<SDL_Texture*> generate_font_texture(
-	    TTF_Font* font, SDL_Renderer* renderer, const std::string& str, SDL_Color color) {
-		// Render to surface
-		SDL_Surface* surf = TTF_RenderUTF8_Blended(font, str.c_str(), color);
-		if (!surf) {
-			return m2::make_unexpected(TTF_GetError());
+	int text_horizontal_alignment_to_ttf_wrap_alignment(m2::ui::TextHorizontalAlignment horizontal_alignment) {
+		switch (horizontal_alignment) {
+			case m2::ui::TextHorizontalAlignment::LEFT:
+				return TTF_WRAPPED_ALIGN_LEFT;
+			case m2::ui::TextHorizontalAlignment::RIGHT:
+				return TTF_WRAPPED_ALIGN_RIGHT;
+			default:
+				return TTF_WRAPPED_ALIGN_CENTER;
 		}
+	}
 
+	SDL_Texture* create_texture_with_linear_filtering(SDL_Renderer* renderer, SDL_Surface* surface) {
 		// Store previous render quality
 		const char* prev_render_quality = SDL_GetHint(SDL_HINT_RENDER_SCALE_QUALITY);
-		// Create texture with linear filtering
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");  // Linear filtering is less crisp, but more readable when small
-
+		// Linear filtering is less crisp, but more readable when small
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
 		// Create texture
-		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surf);
-		SDL_FreeSurface(surf);  // Free surface right away
-		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality);  // Reinstate previous render quality right away
-
-		if (!texture) {
-			return m2::make_unexpected(SDL_GetError());
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+		// Store error for later
+		const char* error = nullptr;
+		if (not texture) {
+			error = SDL_GetError();
+		}
+		// Reinstate previous render quality
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, prev_render_quality);
+		// Reinstate error
+		if (error) {
+			SDL_SetError("%s", error);
 		}
 		return texture;
 	}
-}  // namespace
+}
 
 m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(TTF_Font* font, SDL_Renderer* renderer, const std::string& text, SDL_Color color) {
 	if (text.empty()) {
 		return FontTexture{nullptr, text};
 	}
 
-	auto expect_texture = generate_font_texture(font, renderer, text, color);
-	m2_reflect_unexpected(expect_texture);
-	return FontTexture{*expect_texture, text};
+	// Render to surface
+	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(font, text.c_str(), color)};
+	m2_return_unexpected_message_unless(surface, TTF_GetError());
+	// Render to texture
+	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
+	m2_return_unexpected_message_unless(texture, SDL_GetError());
+	return FontTexture{texture, text};
+}
+
+m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font,
+	int font_letter_width, int width_in_chars, ui::TextHorizontalAlignment horizontal_alignment,
+	const std::string& text, SDL_Color color) {
+	if (text.empty()) {
+		return FontTexture{nullptr, text};
+	}
+
+	// Render to surface
+	TTF_SetFontWrappedAlign(font, text_horizontal_alignment_to_ttf_wrap_alignment(horizontal_alignment));
+	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, font_letter_width * width_in_chars)};
+	m2_return_unexpected_message_unless(surface, TTF_GetError());
+	// Render to texture
+	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
+	m2_return_unexpected_message_unless(texture, SDL_GetError());
+	return FontTexture{texture, text};
 }
