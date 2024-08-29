@@ -9,17 +9,17 @@ namespace {
 	std::vector<sdl::FontTexture> generate_option_texts(const TextSelectionBlueprint::Options& options) {
 		std::vector<sdl::FontTexture> texts;
 		for (const auto& option : options) {
-			texts.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, option.first)));
+			texts.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, option.first)));
 		}
 		return texts;
 	}
 }
 
 TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint),
-	_plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "+"))),
-	_minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "-"))),
-	_up_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "^"))),
-	_down_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "v"))) {
+	_plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "+"))),
+	_minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "-"))),
+	_up_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "^"))),
+	_down_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "v"))) {
 	reset();
 }
 
@@ -127,23 +127,22 @@ void TextSelection::on_draw() {
 	if (auto line_count = text_list_selection_blueprint().line_count; line_count == 0) {
 		if (auto current_selection = std::find(_selections.begin(), _selections.end(), true); current_selection != _selections.end()) {
 			auto current_selection_index = std::distance(_selections.begin(), current_selection);
-			draw_text(calculate_text_rect(rect_px.trim_right(rect_px.h / 2), 0, 0, TextHorizontalAlignment::LEFT,
-				_option_texts[current_selection_index].texture()), _option_texts[current_selection_index].texture());
+			sdl::render_texture_with_color_mod(_option_texts[current_selection_index].texture(),
+				calculate_text_rect(rect_px.trim_right(rect_px.h / 2), 0, 0, TextHorizontalAlignment::LEFT,
+					_option_texts[current_selection_index].texture()));
 		}
 
 		// + button
 		auto buttons_rect = rect_px.trim_left(rect_px.w - rect_px.h / 2);
 		auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
-		draw_text(
-			calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()),
-			_plus_texture.texture());
+		sdl::render_texture_with_color_mod(_plus_texture.texture(),
+			calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()));
 		draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 		// - button
 		auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-		draw_text(
-			calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()),
-			_minus_texture.texture());
+		sdl::render_texture_with_color_mod(_minus_texture.texture(),
+			calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()));
 		draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 	} else if (line_count == 1) {
 		// Dropdown
@@ -160,9 +159,8 @@ void TextSelection::on_draw() {
 				}
 				// Draw text
 				auto texture = _option_texts[_top_index + i].texture();
-				draw_text(
-					calculate_text_rect(text_rect, 0, 0, TextHorizontalAlignment::LEFT, texture),
-					texture);
+				sdl::render_texture_with_color_mod(texture,
+					calculate_text_rect(text_rect, 0, 0, TextHorizontalAlignment::LEFT, texture));
 			}
 		}
 
@@ -172,16 +170,14 @@ void TextSelection::on_draw() {
 			draw_border(scroll_bar_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 			auto up_arrow_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count, 0);
-			draw_text(
-				calculate_text_rect(up_arrow_rect, 0, 0, TextHorizontalAlignment::CENTER, _up_arrow_texture.texture()),
-				_up_arrow_texture.texture());
+			sdl::render_texture_with_color_mod(_up_arrow_texture.texture(),
+				calculate_text_rect(up_arrow_rect, 0, 0, TextHorizontalAlignment::CENTER, _up_arrow_texture.texture()));
 			draw_border(up_arrow_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 			auto down_button_rect = scroll_bar_rect.horizontal_split(
 				text_list_selection_blueprint().line_count, text_list_selection_blueprint().line_count - 1);
-			draw_text(
-				calculate_text_rect(down_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _down_arrow_texture.texture()),
-				_down_arrow_texture.texture());
+			sdl::render_texture_with_color_mod(_down_arrow_texture.texture(),
+				calculate_text_rect(down_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _down_arrow_texture.texture()));
 			draw_border(down_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 	}

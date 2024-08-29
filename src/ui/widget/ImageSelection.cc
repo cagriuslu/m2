@@ -8,8 +8,8 @@ using namespace m2::ui::widget;
 
 ImageSelection::ImageSelection(State* parent, const WidgetBlueprint* blueprint)
     : Widget(parent, blueprint),
-      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "+"))),
-      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "-"))) {
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "-"))) {
 	select(0);
 }
 
@@ -80,15 +80,13 @@ void ImageSelection::on_draw() {
 
 	auto buttons_rect = rect_px.trim_top(rect_px.w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
-	draw_text(
-	    calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()),
-	    _plus_texture.texture());
+	sdl::render_texture_with_color_mod(_plus_texture.texture(),
+	    calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
-	draw_text(
-	    calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()),
-	    _minus_texture.texture());
+	sdl::render_texture_with_color_mod(_minus_texture.texture(),
+	    calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());

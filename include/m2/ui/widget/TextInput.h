@@ -1,6 +1,6 @@
 #pragma once
 #include "../Widget.h"
-#include <m2/sdl/Font.h>
+#include <m2/sdl/FontTexture.h>
 #include <sstream>
 
 namespace m2::ui::widget {

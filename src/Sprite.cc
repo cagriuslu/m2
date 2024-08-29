@@ -285,8 +285,9 @@ m2::Sprite::Sprite(
 }
 
 m2::Sprite::Sprite(TTF_Font* font, SDL_Renderer* renderer, const pb::TextLabel& text_label) {
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(font, renderer, text_label.text()));
-	_rect = RectI{0, 0, _font_texture->w(), _font_texture->h()};
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(font, renderer, text_label.text()));
+	auto dims = _font_texture->texture_dimensions();
+	_rect = RectI{0, 0, dims.x, dims.y};
 	_ppm = I(roundf(F(_rect.h) / text_label.height_m()));
 	_is_background_tile = text_label.is_background_tile();
 	if (text_label.pull_half_cell()) {

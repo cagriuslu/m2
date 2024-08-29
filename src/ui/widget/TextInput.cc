@@ -1,6 +1,6 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/sdl/Font.h>
+#include <m2/sdl/FontTexture.h>
 #include <m2/ui/widget/TextInput.h>
 
 using namespace m2::ui;
@@ -67,8 +67,8 @@ Action TextInput::on_update() {
 	}
 
 	// Generate new texture is the string has changed
-	if (not _font_texture || str != _font_texture.string_value()) {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, str));
+	if (not _font_texture || str != _font_texture.string()) {
+		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, str));
 	}
 
 	return make_continue_action();
@@ -77,7 +77,7 @@ Action TextInput::on_update() {
 void TextInput::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 	if (const auto texture = _font_texture.texture(); texture) {
-		draw_text(calculate_text_rect(0, TextHorizontalAlignment::LEFT, texture), texture);
+		sdl::render_texture_with_color_mod(texture, calculate_text_rect(0, TextHorizontalAlignment::LEFT, texture));
 	}
 	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }

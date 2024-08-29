@@ -1,5 +1,5 @@
 #include <m2/Game.h>
-#include <m2/sdl/Font.h>
+#include <m2/sdl/FontTexture.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 
 using namespace m2::ui;
@@ -7,7 +7,7 @@ using namespace m2::ui::widget;
 
 CheckboxWithText::CheckboxWithText(State* parent, const WidgetBlueprint* blueprint)
     : AbstractButton(parent, blueprint), _state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state) {
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(
 	    M2_GAME.font, M2_GAME.renderer, std::get<CheckboxWithTextBlueprint>(blueprint->variant).text));
 }
 
@@ -27,9 +27,8 @@ void CheckboxWithText::on_draw() {
 	}
 	// Text
 	if (const auto texture = _font_texture.texture(); texture) {
-		auto text_rect = calculate_text_rect(
-		    rect_px.trim_left(rect_px.h), 0, 0, TextHorizontalAlignment::LEFT, texture);
-		draw_text(text_rect, texture);
+		auto text_rect = calculate_text_rect(rect_px.trim_left(rect_px.h), 0, 0, TextHorizontalAlignment::LEFT, texture);
+		sdl::render_texture_with_color_mod(texture, text_rect);
 	}
 	// Border
 	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());

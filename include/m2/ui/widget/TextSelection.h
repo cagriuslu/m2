@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/sdl/Font.h>
+#include <m2/sdl/FontTexture.h>
 #include <m2/ui/Widget.h>
 
 namespace m2::ui::widget {

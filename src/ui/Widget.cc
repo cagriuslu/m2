@@ -92,14 +92,6 @@ m2::RectI m2::ui::Widget::calculate_text_rect(
 	return text_rect;
 }
 
-void m2::ui::Widget::draw_text(const RectI& rect, SDL_Texture* text_texture, const RGB& color_mod) {
-	// Color modulate the texture
-	SDL_SetTextureColorMod(text_texture, color_mod.r, color_mod.g, color_mod.b);
-	// Draw texture
-	auto sdl_rect = static_cast<SDL_Rect>(rect);
-	SDL_RenderCopy(M2_GAME.renderer, text_texture, nullptr, &sdl_rect);
-}
-
 void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
 	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
 	auto sprite_aspect_ratio = (float)src_rect.w / (float)src_rect.h;

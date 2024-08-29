@@ -84,7 +84,10 @@ m2::Game::Game() {
 	SDL_SetTextureBlendMode(light_texture, SDL_BLENDMODE_MUL);
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
-	if ((font = TTF_OpenFont("resource/fonts/VT323/VT323-Regular.ttf", 280)) == nullptr) {
+	// Open font
+	font_letter_width = 112;
+	font_letter_height = 280;
+	if ((font = TTF_OpenFont("resource/fonts/VT323/VT323-Regular.ttf", font_letter_height)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 

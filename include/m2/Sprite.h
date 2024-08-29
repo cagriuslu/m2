@@ -14,7 +14,7 @@
 #include "box2d/Body.h"
 #include "protobuf/Detail.h"
 #include "sdl/Detail.h"
-#include "sdl/Font.h"
+#include "sdl/FontTexture.h"
 
 namespace m2 {
 	struct ForegroundCompanion {};

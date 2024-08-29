@@ -2,7 +2,7 @@
 #include "../Action.h"
 #include "../../Events.h"
 #include "../Widget.h"
-#include "../../sdl/Font.h"
+#include "../../sdl/FontTexture.h"
 
 namespace m2::ui::widget {
 	class ImageSelection : public Widget {

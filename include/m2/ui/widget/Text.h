@@ -1,6 +1,6 @@
 #pragma once
 #include "AbstractButton.h"
-#include <m2/sdl/Font.h>
+#include <m2/sdl/FontTexture.h>
 
 namespace m2::ui::widget {
 	class Text : public AbstractButton {
@@ -13,7 +13,7 @@ namespace m2::ui::widget {
 		void on_draw() override;
 
 		// Accessors
-		[[nodiscard]] std::string_view text() const { return _font_texture.string_value(); }
+		[[nodiscard]] std::string_view text() const { return _font_texture.string(); }
 		[[nodiscard]] const RGB& color() const { return _color_override; }
 
 		// Modifiers

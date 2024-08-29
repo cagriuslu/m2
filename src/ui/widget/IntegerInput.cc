@@ -1,23 +1,23 @@
 #include <m2/Game.h>
-#include <m2/sdl/Font.h>
+#include <m2/sdl/FontTexture.h>
 #include <m2/ui/widget/IntegerInput.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
 IntegerInput::IntegerInput(State* parent, const WidgetBlueprint* blueprint)
-    : Widget(parent, blueprint),
-      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "+"))),
-      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, "-"))) {
-	const auto inital_value = std::get<IntegerInputBlueprint>(blueprint->variant).initial_value;
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, inital_value));
+    : Widget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "-"))) {
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(_value)));
 
 	// Execute on_create
 	if (integer_selection_blueprint().on_create) {
 		auto opt_value = integer_selection_blueprint().on_create(*this);
 		if (opt_value) {
 			// Save new value
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, *opt_value));
+			_value = *opt_value;
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(*opt_value)));
 		}
 	}
 }
@@ -51,7 +51,8 @@ Action IntegerInput::on_event(Events& events) {
 }
 
 Action IntegerInput::select(int v) {
-	_font_texture = std::move(*sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, v));
+	_value = v;
+	_font_texture = std::move(*sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(v)));
 
 	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
 	const auto& action_callback = integer_selection.on_action;
@@ -66,7 +67,8 @@ Action IntegerInput::on_update() {
 	if (pb_blueprint.on_update) {
 		auto optional_value = pb_blueprint.on_update(*this);
 		if (optional_value) {
-			_font_texture = std::move(*sdl::FontTexture::create(M2_GAME.font, M2_GAME.renderer, *optional_value));
+			_value = *optional_value;
+			_font_texture = std::move(*sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(*optional_value)));
 		}
 	}
 	return make_continue_action();
@@ -76,23 +78,19 @@ void IntegerInput::on_draw() {
 	draw_background_color(rect_px, blueprint->background_color);
 
 	if (const auto texture = _font_texture.texture(); texture) {
-		draw_text(
-		    calculate_text_rect(
-		        rect_px.trim_right(rect_px.h / 2), 0, 0, TextHorizontalAlignment::LEFT, texture),
-		    texture);
+		sdl::render_texture_with_color_mod(texture,
+			calculate_text_rect(rect_px.trim_right(rect_px.h / 2), 0, 0, TextHorizontalAlignment::LEFT, texture));
 	}
 
 	auto buttons_rect = rect_px.trim_left(rect_px.w - rect_px.h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
-	draw_text(
-	    calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()),
-	    _plus_texture.texture());
+	sdl::render_texture_with_color_mod(_plus_texture.texture(),
+	    calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
-	draw_text(
-	    calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()),
-	    _minus_texture.texture());
+	sdl::render_texture_with_color_mod(_minus_texture.texture(),
+	    calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
