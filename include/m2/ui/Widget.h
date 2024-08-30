@@ -52,7 +52,6 @@ namespace m2::ui {
 
 		static void draw_background_color(const RectI& rect, const SDL_Color& color);
 		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);
-		static void draw_border(const RectI& rect, unsigned border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 
 		// Allow State to use the utilities

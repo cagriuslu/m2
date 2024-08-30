@@ -111,16 +111,6 @@ void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
 	SDL_RenderCopy(M2_GAME.renderer, sprite.texture(DrawVariant{}), &src_rect, &actual_dst_rect);
 }
 
-void Widget::draw_border(const RectI& rect, unsigned border_width_px, const SDL_Color& color) {
-	if (border_width_px) {
-		SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-		SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-
-		auto sdl_rect = static_cast<SDL_Rect>(rect);
-		SDL_RenderDrawRect(M2_GAME.renderer, &sdl_rect);
-	}
-}
-
 void Widget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
