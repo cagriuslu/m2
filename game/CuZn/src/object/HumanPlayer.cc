@@ -56,6 +56,21 @@ m2::void_expected init_human_player(m2::Object& obj) {
 			M2_GAME.set_zoom(0.9f);  // Decrease game height
 		}
 
+		// Limit the player inside the level
+		const auto& dims = M2_GAME.dimensions();
+		if (o.position.x < dims.width_m / 2.0f) {
+			o.position.x = dims.width_m / 2.0f; // Left
+		}
+		if (M2_LEVEL.background_boundary().x2() < o.position.x + dims.width_m / 2.0f) {
+			o.position.x = M2_LEVEL.background_boundary().x2() - dims.width_m / 2.0f; // Right
+		}
+		if (o.position.y < m2::F(dims.height_m) / 2.0f) {
+			o.position.y = m2::F(dims.height_m) / 2.0f; // Top
+		}
+		if (M2_LEVEL.background_boundary().y2() < o.position.y + m2::F(dims.height_m) / 2.0f) {
+			o.position.y = M2_LEVEL.background_boundary().y2() - m2::F(dims.height_m) / 2.0f; // Bottom
+		}
+
 		// Check if mouse button pressed
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY)) {
 			if (auto& sub_journey = M2G_PROXY.sub_journey) {

@@ -38,9 +38,12 @@ namespace m2 {
 		[[nodiscard]] int x2() const { return x + w; }
 		[[nodiscard]] int y2() const { return y + h; }
 		void for_each_cell(const std::function<void(const VecI&)>& op) const;
-		void for_difference(
-		    const RectI& new_rect, const std::function<void(const VecI&)>& on_addition,
+		void for_difference(const RectI& new_rect, const std::function<void(const VecI&)>& on_addition,
 		    const std::function<void(const VecI&)>& on_removal) const;
+		[[nodiscard]] VecI top_left() const { return {x, y}; }
+		[[nodiscard]] VecI top_right() const { return {x2(), y}; }
+		[[nodiscard]] VecI bottom_left() const { return {x, y2()}; }
+		[[nodiscard]] VecI bottom_right() const { return {x2(), y2()}; }
 
 		// Immutable modifiers
 		[[nodiscard]] RectI trim(int amount) const;

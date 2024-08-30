@@ -30,6 +30,9 @@ namespace m2 {
 		std::optional<pb::Level> _lb;
 		std::string _name;
 
+		// Inclusive rectangle that contains all terrain graphics inside
+		RectI _background_boundary;
+
 	   public:
 		~Level();
 
@@ -51,6 +54,7 @@ namespace m2 {
 		Id camera_id{}, player_id{}, pointer_id{};
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
+		[[nodiscard]] const RectI& background_boundary() const { return _background_boundary; }
 
 		// All these UI states operate alongside the game world. They do not block the world simulation.
 		std::optional<ui::State> left_hud_ui_state, right_hud_ui_state;

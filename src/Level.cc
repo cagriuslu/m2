@@ -369,6 +369,16 @@ m2::void_expected m2::Level::init_any_player(
 		for (int y = 0; y < layer.background_rows_size(); ++y) {
 			for (int x = 0; x < layer.background_rows(y).items_size(); ++x) {
 				if (const auto sprite_type = layer.background_rows(y).items(x); sprite_type) {
+					// Adjust the background boundary
+					_background_boundary.x = std::min(_background_boundary.x, x);
+					_background_boundary.y = std::min(_background_boundary.y, y);
+					if (_background_boundary.x2() < x) {
+						_background_boundary.w = x - _background_boundary.x;
+					}
+					if (_background_boundary.y2() < y) {
+						_background_boundary.h = y - _background_boundary.y;
+					}
+
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
 					auto it = obj::create_tile(
 					    static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, M2_GAME.get_sprite(sprite_type));
@@ -378,6 +388,7 @@ m2::void_expected m2::Level::init_any_player(
 			}
 		}
 	}
+	LOG_DEBUG("Background boundary", _background_boundary);
 	// Create foreground objects
 	for (const auto& fg_object : _lb->objects()) {
 		LOGF_TRACE(
