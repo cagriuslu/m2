@@ -2,6 +2,7 @@
 #include <m2/M2.h>
 #include <cstdarg>
 #include <thread>
+#include <execinfo.h>
 
 namespace {
 	bool unexpected_event_occured = false;
@@ -27,8 +28,6 @@ void m2::init_thread_logger(const char* thread_name) {
 
 void m2::log_stacktrace() {
 #ifdef _WIN32
-	// Not yet supported
-#elif __APPLE__
 	// Not yet supported
 #else
 	void* callstack[128];
