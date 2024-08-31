@@ -51,7 +51,7 @@ namespace m2::ui {
 		// Calculates and returns the drawable area (rect_px - border - padding)
 		[[nodiscard]] RectI drawable_area() const;
 
-		static RectI calculate_text_rect(RectI container, TextHorizontalAlignment align, SDL_Texture* text_texture);
+		static RectI calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align);
 
 		static void draw_rectangle(const RectI& rect, const SDL_Color& color);
 		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);

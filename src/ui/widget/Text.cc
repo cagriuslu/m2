@@ -66,7 +66,7 @@ void Text::on_draw() {
 				depressed ? _color_override / 2.0f : _color_override);
 		} else {
 			sdl::render_texture_with_color_mod(texture,
-				calculate_text_rect(drawable_area(), text_blueprint().horizontal_alignment, texture),
+				calculate_text_rect(texture, drawable_area(), text_blueprint().horizontal_alignment),
 				depressed ? _color_override / 2.0f : _color_override);
 		}
 

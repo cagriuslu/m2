@@ -3,9 +3,6 @@
 
 using namespace m2::ui;
 
-constexpr int DEFAULT_FONT_LETTER_WIDTH = 2;
-constexpr int DEFAULT_FONT_LETTER_HEIGHT = 5;
-
 void m2::ui::Widget::draw_background_color() const {
 	const auto& color = blueprint->background_color;
 	if (color.r || color.g || color.b || color.a) {
@@ -55,7 +52,7 @@ m2::RectI m2::ui::Widget::drawable_area() const {
 	return rect_px.trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
 }
 
-m2::RectI m2::ui::Widget::calculate_text_rect(RectI drawable_area, TextHorizontalAlignment align, SDL_Texture* text_texture) {
+m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align) {
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto font_texture_dimensions = sdl::texture_dimensions(text_texture);
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(font_texture_dimensions.x, font_texture_dimensions.y);
