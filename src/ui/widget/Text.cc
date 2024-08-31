@@ -5,11 +5,8 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint) {
-	// During construction, the rect_px of the widget is not yet determined. Font texture should be generated later.
-	set_text(text_blueprint().text);
-	_color_override = text_blueprint().color;
-
+Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
+	_string_cache_or_font_texture(text_blueprint().text), _color_override(text_blueprint().color) {
 	if (text_blueprint().on_create) {
 		text_blueprint().on_create(*this);
 	}
@@ -36,16 +33,17 @@ void Text::on_draw() {
 	draw_background_color();
 
 	// Generate font texture if necessary
-	if (_string != _font_texture.string()) {
+	if (std::holds_alternative<std::string>(_string_cache_or_font_texture)) {
+		auto string = std::get<std::string>(_string_cache_or_font_texture);
 		if (text_blueprint().wrapped_font_size_in_units != 0.0f) {
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size,
-				M2G_PROXY.default_font_letter_width, widget_width_in_chars(), text_blueprint().horizontal_alignment, _string));
+			_string_cache_or_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size,
+				M2G_PROXY.default_font_letter_width, widget_width_in_chars(), text_blueprint().horizontal_alignment, string));
 		} else {
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, _string));
+			_string_cache_or_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, string));
 		}
 	}
 
-	if (const auto texture = _font_texture.texture()) {
+	if (const auto texture = std::get<sdl::FontTexture>(_string_cache_or_font_texture).texture()) {
 		{
 			// Clip to widget area
 			auto drawable_area_sdl = static_cast<SDL_Rect>(drawable_area());
@@ -77,9 +75,25 @@ void Text::on_draw() {
 	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px(), border_color);
 }
 
+std::string_view Text::text() const {
+	if (std::holds_alternative<std::string>(_string_cache_or_font_texture)) {
+		return std::get<std::string>(_string_cache_or_font_texture);
+	} else if (std::holds_alternative<sdl::FontTexture>(_string_cache_or_font_texture)) {
+		return std::get<sdl::FontTexture>(_string_cache_or_font_texture).string();
+	}
+	return {};
+}
+
 void Text::set_text(const std::string& text) {
-	_string = text;
-	_font_texture = {};
+	if (std::holds_alternative<std::string>(_string_cache_or_font_texture)) {
+		if (std::get<std::string>(_string_cache_or_font_texture) != text) {
+			_string_cache_or_font_texture = text;
+		}
+	} else if (std::holds_alternative<sdl::FontTexture>(_string_cache_or_font_texture)) {
+		if (std::get<sdl::FontTexture>(_string_cache_or_font_texture).string() != text) {
+			_string_cache_or_font_texture = text;
+		}
+	}
 }
 
 void Text::set_color(RGB&& c) {

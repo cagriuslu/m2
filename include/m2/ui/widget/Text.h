@@ -4,8 +4,11 @@
 
 namespace m2::ui::widget {
 	class Text : public AbstractButton {
-		std::string _string;
-		sdl::FontTexture _font_texture;
+		// During initialization, FontTexture may fail to be created because font may not be available, and
+		// drawable_area is not yet determined. In this case, the string is cached until draw time, at which FontTexture
+		// can replace the cached string.
+		std::variant<std::string, sdl::FontTexture> _string_cache_or_font_texture;
+
 		// Instead of generating colored font textures, generate white text and color the text before rendering.
 		RGB _color_override;
 
@@ -15,7 +18,7 @@ namespace m2::ui::widget {
 		void on_draw() override;
 
 		// Accessors
-		[[nodiscard]] std::string_view text() const { return _string; }
+		[[nodiscard]] std::string_view text() const;
 		[[nodiscard]] const RGB& color() const { return _color_override; }
 
 		// Modifiers

@@ -120,7 +120,6 @@ const Blueprint right_hud_blueprint = {
 			.h = 6,
 			.variant = TextBlueprint{
 				.text = "Market",
-//				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(market_window_ratio(), std::make_unique<Blueprint>(generate_market_window()));
