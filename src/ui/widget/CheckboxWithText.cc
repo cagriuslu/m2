@@ -27,7 +27,7 @@ void CheckboxWithText::on_draw() {
 	}
 	// Text
 	if (const auto texture = _font_texture.texture(); texture) {
-		auto text_rect = calculate_text_rect(rect_px.trim_left(rect_px.h), 0, 0, TextHorizontalAlignment::LEFT, texture);
+		auto text_rect = calculate_text_rect(rect_px.trim_left(rect_px.h), TextHorizontalAlignment::LEFT, texture);
 		sdl::render_texture_with_color_mod(texture, text_rect);
 	}
 	// Border

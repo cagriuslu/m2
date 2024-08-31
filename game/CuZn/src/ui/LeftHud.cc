@@ -18,7 +18,6 @@ using namespace m2g::pb;
 namespace {
 	const auto build_button = TextBlueprint{
 		.text = "Build",
-		.font_size_in_units = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto build_prerequisite = can_player_attempt_to_build(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(BuildJourney{});
@@ -31,7 +30,6 @@ namespace {
 
 	const auto develop_button = TextBlueprint{
 		.text = "Develop",
-		.font_size_in_units = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto develop_prerequisite = can_player_attempt_to_develop(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(DevelopJourney{});
@@ -44,7 +42,6 @@ namespace {
 
 	const auto loan_button = TextBlueprint{
 		.text = "Loan",
-		.font_size_in_units = 4.5f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 			if (auto loan_prerequisite = can_player_attempt_to_loan(M2_PLAYER.character())) {
 				execute_loan_journey();
@@ -57,7 +54,6 @@ namespace {
 
 	const auto network_button = TextBlueprint{
 		.text = "Network",
-		.font_size_in_units = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto network_prerequisite = can_player_attempt_to_network(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
@@ -70,7 +66,6 @@ namespace {
 
 	const auto pass_button = TextBlueprint{
 		.text = "Pass",
-		.font_size_in_units = 4.5f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 			if (M2_GAME.client_thread().is_turn()) {
 				execute_pass_journey();
@@ -81,7 +76,6 @@ namespace {
 
 	const auto scout_button = TextBlueprint{
 		.text = "Scout",
-		.font_size_in_units = 4.5f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 			if (auto scout_prerequisite = can_player_attempt_to_scout(M2_PLAYER.character())) {
 				execute_scout_journey();
@@ -94,7 +88,6 @@ namespace {
 
 	const auto sell_button = TextBlueprint{
 		.text = "Sell",
-		.font_size_in_units = 4.5f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto sell_prerequisite = can_player_attempt_to_sell(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(SellJourney{});
@@ -116,7 +109,6 @@ const Blueprint left_hud_blueprint = {
 			.x = 2, .y = 2, .w = 15, .h = 6,
 			.border_width = 0,
 			.variant = TextBlueprint{
-				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto text = std::string{"Color:"} + generate_player_name(M2_GAME.client_thread().receiver_index());
@@ -130,7 +122,6 @@ const Blueprint left_hud_blueprint = {
 			.x = 2, .y = 9, .w = 15, .h = 6,
 			.border_width = 0,
 			.variant = TextBlueprint{
-				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					if (M2_GAME.client_thread().is_turn()) {

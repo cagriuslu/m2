@@ -191,6 +191,21 @@ m2::RectI m2::RectI::trim_to_aspect_ratio(int desired_w, int desired_h) const {
 		return this->trim_left(width_diff / 2).trim_right(width_diff / 2);
 	}
 }
+m2::RectI m2::RectI::align_left_to(int _x) const {
+	return {_x, y, w, h};
+}
+m2::RectI m2::RectI::align_right_to(int _x) const {
+	return {_x - w, y, w, h};
+}
+m2::RectI m2::RectI::align_top_to(int _y) const {
+	return {x, _y, w, h};
+}
+m2::RectI m2::RectI::align_bottom_to(int _y) const {
+	return {x, _y - h, w, h};
+}
+m2::RectI m2::RectI::align_center_to(int _x, int _y) const {
+	return {_x - w/2, _y - h/2, w, h};
+}
 m2::RectI m2::RectI::expand(int amount) const {
 	return trim(-amount);
 }

@@ -55,6 +55,11 @@ namespace m2 {
 		[[nodiscard]] RectI trim_bottom(int amount) const;
 		[[nodiscard]] RectI trim_to_square() const;
 		[[nodiscard]] RectI trim_to_aspect_ratio(int w, int h) const; // Result is not exact, but a close approximation
+		[[nodiscard]] RectI align_left_to(int _x) const;
+		[[nodiscard]] RectI align_right_to(int _x) const;
+		[[nodiscard]] RectI align_top_to(int _y) const;
+		[[nodiscard]] RectI align_bottom_to(int _y) const;
+		[[nodiscard]] RectI align_center_to(int _x, int _y) const;
 		[[nodiscard]] RectI expand(int amount) const;
 		[[nodiscard]] RectI horizontal_split(int split_count, int piece_idx) const;
 		[[nodiscard]] std::optional<RectI> intersect(const RectI& other) const;

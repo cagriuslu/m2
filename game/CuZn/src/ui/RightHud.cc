@@ -27,7 +27,6 @@ const Blueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
@@ -44,7 +43,6 @@ const Blueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
@@ -61,7 +59,6 @@ const Blueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
@@ -78,7 +75,6 @@ const Blueprint right_hud_blueprint = {
 			.variant =
 			TextBlueprint{
 				.text = "Cards",
-				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(
@@ -95,7 +91,6 @@ const Blueprint right_hud_blueprint = {
 			.h = 6,
 			.variant = TextBlueprint{
 				.text = "Tiles",
-				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(tiles_window_ratio(), std::make_unique<Blueprint>(generate_tiles_window("Tiles")));
@@ -111,8 +106,6 @@ const Blueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.font_size_in_units = 4.5f,
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
 					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
 					self.set_text(std::string{"Deck:"} + std::to_string(dds));
@@ -127,7 +120,7 @@ const Blueprint right_hud_blueprint = {
 			.h = 6,
 			.variant = TextBlueprint{
 				.text = "Market",
-				.font_size_in_units = 4.5f,
+//				.font_size_in_units = 4.5f,
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(market_window_ratio(), std::make_unique<Blueprint>(generate_market_window()));

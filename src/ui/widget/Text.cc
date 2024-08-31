@@ -37,7 +37,7 @@ void Text::on_draw() {
 
 	// Generate font texture if necessary
 	if (_string != _font_texture.string()) {
-		if (text_blueprint().word_wrap) {
+		if (text_blueprint().wrapped_font_size_in_units != 0.0f) {
 			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size,
 				M2G_PROXY.default_font_letter_width, widget_width_in_chars(), text_blueprint().horizontal_alignment, _string));
 		} else {
@@ -52,21 +52,21 @@ void Text::on_draw() {
 			SDL_RenderSetClipRect(M2_GAME.renderer, &drawable_area_sdl);
 		}
 
-		if (text_blueprint().word_wrap) {
+		if (text_blueprint().wrapped_font_size_in_units != 0.0f) {
 			// Find the ratio at which a font letter width becomes widget letter width
-			auto squeeze_ration = F(M2G_PROXY.default_font_letter_width) / widget_letter_width_in_pixels();
+			auto squeeze_ratio = F(M2G_PROXY.default_font_letter_width) / widget_letter_width_in_pixels();
 			// TODO implement vertical alignment
 			auto destination = RectI{
 				rect_px.x + vertical_border_width_px(),
 				rect_px.y + horizontal_border_width_px(),
-				iround(F(sdl::texture_dimensions(texture).x) / squeeze_ration),
-				iround(F(sdl::texture_dimensions(texture).y) / squeeze_ration)
+				iround(F(sdl::texture_dimensions(texture).x) / squeeze_ratio),
+				iround(F(sdl::texture_dimensions(texture).y) / squeeze_ratio)
 			};
 			sdl::render_texture_with_color_mod(texture, destination,
 				depressed ? _color_override / 2.0f : _color_override);
 		} else {
 			sdl::render_texture_with_color_mod(texture,
-				calculate_text_rect(text_blueprint().font_size_in_units, text_blueprint().horizontal_alignment, texture),
+				calculate_text_rect(drawable_area(), text_blueprint().horizontal_alignment, texture),
 				depressed ? _color_override / 2.0f : _color_override);
 		}
 
@@ -88,7 +88,7 @@ void Text::set_color(RGB&& c) {
 
 int Text::widget_width_in_chars() const {
 	// This function shouldn't be called if font size is 0.
-	if (text_blueprint().font_size_in_units == 0.0f) {
+	if (text_blueprint().wrapped_font_size_in_units == 0.0f) {
 		throw M2_ERROR("Font size is 0");
 	}
 
@@ -99,7 +99,7 @@ int Text::widget_width_in_chars() const {
 	// Calculate how many 'units' there are in the horizontal drawable area
 	auto max_text_width_in_units = F(max_text_width_px) / horizontal_pixels_per_unit;
 	// Calculate a letter's width in 'units'
-	auto font_letter_width_in_units = text_blueprint().font_size_in_units * M2G_PROXY.default_font_letter_width / M2G_PROXY.default_font_size;
+	auto font_letter_width_in_units = text_blueprint().wrapped_font_size_in_units * M2G_PROXY.default_font_letter_width / M2G_PROXY.default_font_size;
 	// Calculate how many letters fit in the horizontal drawable area
 	return I(max_text_width_in_units / font_letter_width_in_units);
 }
@@ -108,6 +108,6 @@ float Text::widget_letter_width_in_pixels() const {
 	// Calculate how many pixels there are per horizontal 'unit'
 	auto horizontal_pixels_per_unit = F(rect_px.w) / F(blueprint->w);
 	// Calculate a letter's width in 'units'
-	auto font_letter_width_in_units = text_blueprint().font_size_in_units * M2G_PROXY.default_font_letter_width / M2G_PROXY.default_font_size;
+	auto font_letter_width_in_units = text_blueprint().wrapped_font_size_in_units * M2G_PROXY.default_font_letter_width / M2G_PROXY.default_font_size;
 	return font_letter_width_in_units * horizontal_pixels_per_unit;
 }

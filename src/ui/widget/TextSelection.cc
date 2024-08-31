@@ -128,7 +128,7 @@ void TextSelection::on_draw() {
 		if (auto current_selection = std::find(_selections.begin(), _selections.end(), true); current_selection != _selections.end()) {
 			auto current_selection_index = std::distance(_selections.begin(), current_selection);
 			sdl::render_texture_with_color_mod(_option_texts[current_selection_index].texture(),
-				calculate_text_rect(rect_px.trim_right(rect_px.h / 2), 0, 0, TextHorizontalAlignment::LEFT,
+				calculate_text_rect(rect_px.trim_right(rect_px.h / 2), TextHorizontalAlignment::LEFT,
 					_option_texts[current_selection_index].texture()));
 		}
 
@@ -136,13 +136,13 @@ void TextSelection::on_draw() {
 		auto buttons_rect = rect_px.trim_left(rect_px.w - rect_px.h / 2);
 		auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 		sdl::render_texture_with_color_mod(_plus_texture.texture(),
-			calculate_text_rect(inc_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _plus_texture.texture()));
+			calculate_text_rect(inc_button_rect, TextHorizontalAlignment::CENTER, _plus_texture.texture()));
 		draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 		// - button
 		auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 		sdl::render_texture_with_color_mod(_minus_texture.texture(),
-			calculate_text_rect(dec_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _minus_texture.texture()));
+			calculate_text_rect(dec_button_rect, TextHorizontalAlignment::CENTER, _minus_texture.texture()));
 		draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 	} else if (line_count == 1) {
 		// Dropdown
@@ -160,7 +160,7 @@ void TextSelection::on_draw() {
 				// Draw text
 				auto texture = _option_texts[_top_index + i].texture();
 				sdl::render_texture_with_color_mod(texture,
-					calculate_text_rect(text_rect, 0, 0, TextHorizontalAlignment::LEFT, texture));
+					calculate_text_rect(text_rect, TextHorizontalAlignment::LEFT, texture));
 			}
 		}
 
@@ -171,13 +171,13 @@ void TextSelection::on_draw() {
 
 			auto up_arrow_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count, 0);
 			sdl::render_texture_with_color_mod(_up_arrow_texture.texture(),
-				calculate_text_rect(up_arrow_rect, 0, 0, TextHorizontalAlignment::CENTER, _up_arrow_texture.texture()));
+				calculate_text_rect(up_arrow_rect, TextHorizontalAlignment::CENTER, _up_arrow_texture.texture()));
 			draw_border(up_arrow_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 			auto down_button_rect = scroll_bar_rect.horizontal_split(
 				text_list_selection_blueprint().line_count, text_list_selection_blueprint().line_count - 1);
 			sdl::render_texture_with_color_mod(_down_arrow_texture.texture(),
-				calculate_text_rect(down_button_rect, 0, 0, TextHorizontalAlignment::CENTER, _down_arrow_texture.texture()));
+				calculate_text_rect(down_button_rect, TextHorizontalAlignment::CENTER, _down_arrow_texture.texture()));
 			draw_border(down_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 		}
 	}

@@ -14,11 +14,16 @@ namespace m2::ui::widget {
 
 	struct TextBlueprint {
 		std::string text{};
-		float font_size_in_units{}; // Height of one line of text in UI units. '0' fills the widget.
+
 		TextHorizontalAlignment horizontal_alignment{};
+
 		TextVerticalAlignment vertical_alignment{};
-		bool word_wrap{}; // If true, font_size_in_units must be non-zero
+
+		// If non-zero, word wrapping is enabled, and font size is fixed to the given number of units.
+		float wrapped_font_size_in_units{};
+
 		RGB color{255, 255, 255};
+
 		SDL_Scancode kb_shortcut{};
 
 		std::function<void(Text& self)> on_create{};

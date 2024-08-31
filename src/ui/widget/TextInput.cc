@@ -77,7 +77,7 @@ Action TextInput::on_update() {
 void TextInput::on_draw() {
 	draw_background_color();
 	if (const auto texture = _font_texture.texture(); texture) {
-		sdl::render_texture_with_color_mod(texture, calculate_text_rect(0, TextHorizontalAlignment::LEFT, texture));
+		sdl::render_texture_with_color_mod(texture, calculate_text_rect(rect_px, TextHorizontalAlignment::LEFT, texture));
 	}
 	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }

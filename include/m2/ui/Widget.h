@@ -51,12 +51,7 @@ namespace m2::ui {
 		// Calculates and returns the drawable area (rect_px - border - padding)
 		[[nodiscard]] RectI drawable_area() const;
 
-		/// Calculate the text rect assuming that the whole widget will be filled with the text
-		RectI calculate_text_rect(float font_size_unitless, TextHorizontalAlignment align, SDL_Texture* text_texture) const;
-		/// If font_size_unitless is zero, the whole container will be filled with the text.
-		/// container_height_unitless can be left empty in this case.
-		static RectI calculate_text_rect(RectI container, int container_height_unitless, float font_size_unitless,
-			TextHorizontalAlignment align, SDL_Texture* text_texture);
+		static RectI calculate_text_rect(RectI container, TextHorizontalAlignment align, SDL_Texture* text_texture);
 
 		static void draw_rectangle(const RectI& rect, const SDL_Color& color);
 		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);

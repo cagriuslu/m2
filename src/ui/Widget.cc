@@ -55,58 +55,20 @@ m2::RectI m2::ui::Widget::drawable_area() const {
 	return rect_px.trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
 }
 
-m2::RectI m2::ui::Widget::calculate_text_rect(float font_size_unitless, TextHorizontalAlignment align,
-	SDL_Texture* text_texture) const {
-	return calculate_text_rect(rect_px, blueprint->h, font_size_unitless, align, text_texture);
-}
+m2::RectI m2::ui::Widget::calculate_text_rect(RectI drawable_area, TextHorizontalAlignment align, SDL_Texture* text_texture) {
+	// Fit the font into the drawable_area with correct aspect ratio
+	auto font_texture_dimensions = sdl::texture_dimensions(text_texture);
+	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(font_texture_dimensions.x, font_texture_dimensions.y);
 
-m2::RectI m2::ui::Widget::calculate_text_rect(RectI container, int container_height_unitless, float font_size_unitless,
-	TextHorizontalAlignment align, SDL_Texture* text_texture) {
-	auto texture_dimensions = sdl::texture_dimensions(text_texture);
-	// Validate font dimensions (calculations depend on it)
-	if (texture_dimensions.y != 280) {
-		// Current font supposed to have been rendered with 280px
-		throw M2_ERROR("Unexpected font height");
-	}
-	if ((texture_dimensions.x % 112) != 0) {
-		throw M2_ERROR("Unexpected font aspect ratio");
-	}
-
-	if (font_size_unitless == 0.0f) {
-		// That's it. Fill the container with the text.
-	} else {
-		// Trim the container from the top and the bottom wrt given font size
-		auto container_height_px_f = F(container.h);
-		auto new_height_px_f = container_height_px_f * font_size_unitless / F(container_height_unitless);
-		auto difference = container_height_px_f - new_height_px_f;
-		auto trim_amount = I(roundf(difference / 2.0f));
-		container = container.trim_top(trim_amount);
-		container = container.trim_bottom(trim_amount);
-	}
-
-	// Fit the font into the container with correct aspect ratio
-	int char_count = texture_dimensions.x / 112;
-	// Squeeze the rect with respect to the character dimensions
-	auto chars_width = char_count * DEFAULT_FONT_LETTER_WIDTH;
-	auto char_height = DEFAULT_FONT_LETTER_HEIGHT;
-	VecI text_dimensions = container.dimensions().aspect_ratio_dimensions(chars_width, char_height);
-
-	RectI text_rect;
+	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {
 		case TextHorizontalAlignment::LEFT:
-			text_rect.x = container.x;
-			break;
+			return unaligned_destination.align_left_to(drawable_area.x);
 		case TextHorizontalAlignment::RIGHT:
-			text_rect.x = container.x + container.w - text_dimensions.x;
-			break;
+			return unaligned_destination.align_right_to(drawable_area.x2());
 		default:
-			text_rect.x = container.x + container.w / 2 - text_dimensions.x / 2;
-			break;
+			return unaligned_destination;
 	}
-	text_rect.y = container.y + container.h / 2 - text_dimensions.y / 2;
-	text_rect.w = text_dimensions.x;
-	text_rect.h = text_dimensions.y;
-	return text_rect;
 }
 
 void Widget::draw_rectangle(const m2::RectI& rect, const SDL_Color& color) {
