@@ -57,8 +57,8 @@ void Text::on_draw() {
 			auto squeeze_ratio = F(M2G_PROXY.default_font_letter_width) / widget_letter_width_in_pixels();
 			// TODO implement vertical alignment
 			auto destination = RectI{
-				rect_px.x + vertical_border_width_px(),
-				rect_px.y + horizontal_border_width_px(),
+				rect_px.x + vertical_border_width_px() + vertical_padding_width_px(),
+				rect_px.y + horizontal_border_width_px() + horizontal_padding_width_px(),
 				iround(F(sdl::texture_dimensions(texture).x) / squeeze_ratio),
 				iround(F(sdl::texture_dimensions(texture).y) / squeeze_ratio)
 			};
@@ -95,7 +95,7 @@ int Text::widget_width_in_chars() const {
 	// Calculate how many pixels there are per horizontal 'unit'
 	auto horizontal_pixels_per_unit = F(rect_px.w) / F(blueprint->w);
 	// Calculate the width of the drawable area in pixels
-	auto max_text_width_px = rect_px.w - vertical_border_width_px() - vertical_border_width_px();
+	auto max_text_width_px = rect_px.w - vertical_border_width_px() - vertical_border_width_px() - vertical_padding_width_px() - vertical_padding_width_px();
 	// Calculate how many 'units' there are in the horizontal drawable area
 	auto max_text_width_in_units = F(max_text_width_px) / horizontal_pixels_per_unit;
 	// Calculate a letter's width in 'units'
@@ -105,6 +105,11 @@ int Text::widget_width_in_chars() const {
 }
 
 float Text::widget_letter_width_in_pixels() const {
+	// This function shouldn't be called if font size is 0.
+	if (text_blueprint().wrapped_font_size_in_units == 0.0f) {
+		throw M2_ERROR("Font size is 0");
+	}
+
 	// Calculate how many pixels there are per horizontal 'unit'
 	auto horizontal_pixels_per_unit = F(rect_px.w) / F(blueprint->w);
 	// Calculate a letter's width in 'units'

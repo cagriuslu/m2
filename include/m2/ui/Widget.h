@@ -42,8 +42,8 @@ namespace m2::ui {
 
 		void draw_background_color() const;
 
-		// Calculates and returns the number of pixels per UI unit in its current size of the Widget
-		[[nodiscard]] float pixels_per_unit() const;
+		[[nodiscard]] float horizontal_pixels_per_unit() const;
+		[[nodiscard]] float vertical_pixels_per_unit() const;
 		[[nodiscard]] int vertical_border_width_px() const;
 		[[nodiscard]] int horizontal_border_width_px() const;
 		[[nodiscard]] int vertical_padding_width_px() const;
