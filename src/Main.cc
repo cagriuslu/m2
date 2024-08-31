@@ -14,7 +14,7 @@
 using namespace m2;
 
 int main(const int argc, char **argv) {
-	init_thread_logger("MN");
+	set_thread_name_for_logging("MN");
 	INFO_FN();
 
 	auto arg_list = to_argument_list(argc, argv);

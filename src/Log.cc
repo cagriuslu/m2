@@ -22,7 +22,7 @@ namespace {
 std::mutex m2::detail::log_mutex;
 thread_local int m2::detail::thread_indentation{0};
 
-void m2::init_thread_logger(const char* thread_name) {
+void m2::set_thread_name_for_logging(const char* thread_name) {
 	thread_names.emplace_back(std::this_thread::get_id(), thread_name);
 }
 

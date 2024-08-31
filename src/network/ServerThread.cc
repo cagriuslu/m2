@@ -192,7 +192,7 @@ void m2::network::ServerThread::set_state_unlocked(pb::ServerState state) {
 }
 
 void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
-	init_thread_logger("SR");
+	set_thread_name_for_logging("SR");
 	LOG_INFO("ServerThread function");
 
 	auto listen_socket = Socket::create_tcp();

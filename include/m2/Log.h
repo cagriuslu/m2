@@ -10,7 +10,7 @@
 
 /// When to use which debug level:
 /// Fatal: Unable to continue, will crash immediately
-/// Error: A necessary operation failed, will crash gracefully unless recovered
+/// Error: A necessary operation failed, behavior may be unpredictable
 /// Warn: An optional operation failed, behavior may be unpredictable
 /// Info: Minimal indication of expected operation
 /// Debug: Everything that is attempted and completed
@@ -35,7 +35,8 @@
 #define INFO_FN() LOG_INFO("f", __FUNCTION__)
 
 namespace m2 {
-	void init_thread_logger(const char* thread_name);
+	// Sets the name of the thread so that it could be used during logging
+	void set_thread_name_for_logging(const char* thread_name);
 
 	void log_stacktrace();
 
