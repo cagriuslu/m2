@@ -26,6 +26,7 @@
 - In multiplayer more, each ServerUpdate should be self contain, and they could be lost. Right now the first ServerUpdate has significance while creating the game
   This should not be the case. There could be another message that signifies that the game should be started with such and such parameters.
   Then each ServerUpdate can hold the same value.
+- Game'e eklenen custom non-blocking UI'lara bir handle donelim, sonra onu delete edebilelim.
 
 Level Editor
 - Grid'i kapatinca grid silinmiyor
@@ -47,4 +48,4 @@ RPG
 - Remove Enemy.proto, have a LUT in memory
 
 CuZn
-- Check if already industry/network built
+- Implement a screen to show other player's victory points, money, cards, etc
