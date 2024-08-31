@@ -37,6 +37,8 @@ namespace m2 {
 		[[nodiscard]] bool contains(const VecI&) const;
 		[[nodiscard]] int x2() const { return x + w; }
 		[[nodiscard]] int y2() const { return y + h; }
+		[[nodiscard]] int x_center() const { return x + w / 2; }
+		[[nodiscard]] int y_center() const { return y + h / 2; }
 		void for_each_cell(const std::function<void(const VecI&)>& op) const;
 		void for_difference(const RectI& new_rect, const std::function<void(const VecI&)>& on_addition,
 		    const std::function<void(const VecI&)>& on_removal) const;

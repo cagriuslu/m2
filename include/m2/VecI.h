@@ -46,7 +46,7 @@ namespace m2 {
 		// Immutable modifiers
 		/// Assuming that VecI represents dimensions, find the dimension with the same aspect ration, but the width is
 		/// the integer multiple of the given number
-		[[nodiscard]] VecI aspect_ratio_dimensions(int w, int h) const;
+		[[nodiscard]] VecI aspect_ratio_dimensions(int w, int h) const; // TODO too complex of a function, get rid of this, is this really necessary. use RectI::trim_to_aspect_ration instead
 	};
 	std::string to_string(const m2::VecI&);
 	std::string to_string(const std::vector<VecI>&);
