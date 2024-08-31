@@ -171,6 +171,26 @@ m2::RectI m2::RectI::trim_to_square() const {
 	}
 	return *this;
 }
+m2::RectI m2::RectI::trim_to_aspect_ratio(int desired_w, int desired_h) const {
+	auto desired_aspect_ratio = F(desired_w) / F(desired_h);
+	auto current_aspect_ratio = F(w) / F(h);
+	if (desired_aspect_ratio == current_aspect_ratio) {
+		return *this;
+	}
+
+	// If desired aspect ratio is wider than current aspect ratio
+	if (current_aspect_ratio < desired_aspect_ratio) {
+		// Trim top and bottom
+		auto desired_height = iround(F(w) / desired_aspect_ratio);
+		auto height_diff = h - desired_height;
+		return this->trim_top(height_diff / 2).trim_bottom(height_diff / 2);
+	} else {
+		// If desired aspect ratio is longer than current aspect ratio, trim left and right
+		auto desired_width = iround(F(h) * desired_aspect_ratio);
+		auto width_diff = w - desired_width;
+		return this->trim_left(width_diff / 2).trim_right(width_diff / 2);
+	}
+}
 m2::RectI m2::RectI::expand(int amount) const {
 	return trim(-amount);
 }
