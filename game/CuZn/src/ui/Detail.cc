@@ -72,7 +72,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = question1,
-					.font_size = 4.5f,
+					.font_size_in_units = 4.5f,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
@@ -81,7 +81,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = question2,
-					.font_size = 4.5f,
+					.font_size_in_units = 4.5f,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
@@ -162,7 +162,7 @@ void display_blocking_message(const std::string& message) {
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = message,
-					.font_size = 3.0f,
+					.font_size_in_units = 3.0f,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT,
 					.vertical_alignment = TextVerticalAlignment::TOP,
 					.word_wrap = true

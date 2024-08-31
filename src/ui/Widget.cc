@@ -13,12 +13,15 @@ void m2::ui::Widget::draw_background_color() const {
 	}
 }
 
+float m2::ui::Widget::pixels_per_unit() const {
+	return F(rect_px.w) / F(blueprint->w);
+}
+
 int m2::ui::Widget::vertical_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
-		float pixel_pitch = F(rect_px.w) / F(blueprint->w); // Pixels per unit
-		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+		return std::max(1, iround(pixels_per_unit() * blueprint->border_width));
 	}
 }
 
@@ -26,8 +29,7 @@ int m2::ui::Widget::horizontal_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
-		float pixel_pitch = F(rect_px.h) / F(blueprint->h); // Pixels per unit
-		return std::max(1, iround(pixel_pitch * blueprint->border_width));
+		return std::max(1, iround(pixels_per_unit() * blueprint->border_width));
 	}
 }
 
@@ -35,8 +37,7 @@ int m2::ui::Widget::vertical_padding_width_px() const {
 	if (blueprint->padding_width == 0.0f) {
 		return 0;
 	} else {
-		float pixel_pitch = F(rect_px.w) / F(blueprint->w); // Pixels per unit
-		return iround(pixel_pitch * blueprint->padding_width);
+		return iround(pixels_per_unit() * blueprint->padding_width);
 	}
 }
 
@@ -44,8 +45,7 @@ int m2::ui::Widget::horizontal_padding_width_px() const {
 	if (blueprint->padding_width == 0.0f) {
 		return 0;
 	} else {
-		float pixel_pitch = F(rect_px.h) / F(blueprint->h); // Pixels per unit
-		return iround(pixel_pitch * blueprint->padding_width);
+		return iround(pixels_per_unit() * blueprint->padding_width);
 	}
 }
 

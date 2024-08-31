@@ -147,7 +147,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Build requirements:",
-					.font_size = 1.5f,
+					.font_size_in_units = 1.5f,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
@@ -159,7 +159,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.h = 2,
 				.border_width = 0,
 				.variant = TextBlueprint{
-					.font_size = 1.9f,
+					.font_size_in_units = 1.9f,
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
@@ -171,7 +171,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Resource gain:",
-					.font_size = 1.5f,
+					.font_size_in_units = 1.5f,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
@@ -183,7 +183,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.h = 2,
 				.border_width = 0,
 				.variant = TextBlueprint{
-					.font_size = 1.9f,
+					.font_size_in_units = 1.9f,
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
@@ -195,7 +195,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Sell requirements:",
-					.font_size = 1.5f,
+					.font_size_in_units = 1.5f,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
@@ -207,7 +207,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.h = 2,
 				.border_width = 0,
 				.variant = TextBlueprint{
-					.font_size = 1.9f,
+					.font_size_in_units = 1.9f,
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
@@ -219,7 +219,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.border_width = 0,
 				.variant = TextBlueprint{
 					.text = "Sell benefits:",
-					.font_size = 1.5f,
+					.font_size_in_units = 1.5f,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
@@ -231,7 +231,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 				.h = 2,
 				.border_width = 0,
 				.variant = TextBlueprint{
-					.font_size = 1.9f,
+					.font_size_in_units = 1.9f,
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
