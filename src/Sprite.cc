@@ -284,8 +284,8 @@ m2::Sprite::Sprite(
 	}
 }
 
-m2::Sprite::Sprite(TTF_Font* font, SDL_Renderer* renderer, const pb::TextLabel& text_label) {
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(font, renderer, text_label.text()));
+m2::Sprite::Sprite(SDL_Renderer* renderer, TTF_Font* font, int font_size, const pb::TextLabel& text_label) {
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(renderer, font, font_size, text_label.text()));
 	auto dims = _font_texture->texture_dimensions();
 	_rect = RectI{0, 0, dims.x, dims.y};
 	_ppm = I(roundf(F(_rect.h) / text_label.height_m()));
@@ -348,7 +348,7 @@ std::vector<m2::SpriteSheet> m2::load_sprite_sheets(
 std::vector<m2::Sprite> m2::load_sprites(
     const std::vector<SpriteSheet>& sprite_sheets,
     const ::google::protobuf::RepeatedPtrField<pb::TextLabel>& text_labels, SpriteEffectsSheet& sprite_effects_sheet,
-    TTF_Font* font, SDL_Renderer* renderer, bool lightning) {
+	SDL_Renderer* renderer, TTF_Font* font, int font_size, bool lightning) {
 	std::vector<Sprite> sprites_vector(pb::enum_value_count<m2g::pb::SpriteType>());
 	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::SpriteType>());
 
@@ -372,7 +372,7 @@ std::vector<m2::Sprite> m2::load_sprites(
 			throw M2_ERROR("Sprite has duplicate definition: " + std::to_string(text_label.type()));
 		}
 		// Load sprite
-		sprites_vector[index] = Sprite{font, renderer, text_label};
+		sprites_vector[index] = Sprite{renderer, font, font_size, text_label};
 		is_loaded[index] = true;
 	}
 

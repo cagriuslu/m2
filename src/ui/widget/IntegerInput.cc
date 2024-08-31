@@ -7,9 +7,9 @@ using namespace m2::ui::widget;
 
 IntegerInput::IntegerInput(State* parent, const WidgetBlueprint* blueprint)
     : Widget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
-      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "+"))),
-      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "-"))) {
-	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(_value)));
+      _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+      _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
+	_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, to_string(_value)));
 
 	// Execute on_create
 	if (integer_selection_blueprint().on_create) {
@@ -17,7 +17,7 @@ IntegerInput::IntegerInput(State* parent, const WidgetBlueprint* blueprint)
 		if (opt_value) {
 			// Save new value
 			_value = *opt_value;
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(*opt_value)));
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, to_string(*opt_value)));
 		}
 	}
 }
@@ -52,7 +52,7 @@ Action IntegerInput::on_event(Events& events) {
 
 Action IntegerInput::select(int v) {
 	_value = v;
-	_font_texture = std::move(*sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(v)));
+	_font_texture = std::move(*sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, to_string(v)));
 
 	const auto& integer_selection = std::get<IntegerInputBlueprint>(blueprint->variant);
 	const auto& action_callback = integer_selection.on_action;
@@ -68,7 +68,7 @@ Action IntegerInput::on_update() {
 		auto optional_value = pb_blueprint.on_update(*this);
 		if (optional_value) {
 			_value = *optional_value;
-			_font_texture = std::move(*sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, to_string(*optional_value)));
+			_font_texture = std::move(*sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, to_string(*optional_value)));
 		}
 	}
 	return make_continue_action();

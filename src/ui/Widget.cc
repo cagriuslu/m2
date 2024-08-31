@@ -36,15 +36,13 @@ int m2::ui::Widget::horizontal_border_width_px() const {
 	}
 }
 
-m2::RectI m2::ui::Widget::calculate_text_rect(
-    float font_size_unitless, TextHorizontalAlignment align, SDL_Texture* text_texture) const {
-	return calculate_text_rect(
-	    rect_px, blueprint->h, font_size_unitless, align, text_texture);
+m2::RectI m2::ui::Widget::calculate_text_rect(float font_size_unitless, TextHorizontalAlignment align,
+	SDL_Texture* text_texture) const {
+	return calculate_text_rect(rect_px, blueprint->h, font_size_unitless, align, text_texture);
 }
 
-m2::RectI m2::ui::Widget::calculate_text_rect(
-    RectI container, int container_height_unitless, float font_size_unitless, TextHorizontalAlignment align,
-    SDL_Texture* text_texture) {
+m2::RectI m2::ui::Widget::calculate_text_rect(RectI container, int container_height_unitless, float font_size_unitless,
+	TextHorizontalAlignment align, SDL_Texture* text_texture) {
 	auto texture_dimensions = sdl::texture_dimensions(text_texture);
 	// Validate font dimensions (calculations depend on it)
 	if (texture_dimensions.y != 280) {

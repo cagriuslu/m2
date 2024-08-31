@@ -88,7 +88,6 @@ namespace m2 {
 		std::optional<AudioManager> audio_manager;
 		uint32_t pixel_format{};
 		TTF_Font* font{};
-		int font_letter_width{}, font_letter_height{};
 		bool quit{};
 
 		////////////////////////////////////////////////////////////////////////

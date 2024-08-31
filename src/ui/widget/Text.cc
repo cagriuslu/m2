@@ -38,10 +38,10 @@ void Text::on_draw() {
 	// Generate font texture if necessary
 	if (_string != _font_texture.string()) {
 		if (text_blueprint().word_wrap) {
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font,
-				M2_GAME.font_letter_width, widget_width_in_chars(), text_blueprint().horizontal_alignment, _string));
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size,
+				M2G_PROXY.default_font_letter_width, widget_width_in_chars(), text_blueprint().horizontal_alignment, _string));
 		} else {
-			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, _string));
+			_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, _string));
 		}
 	}
 
@@ -58,7 +58,7 @@ void Text::on_draw() {
 
 		if (text_blueprint().word_wrap) {
 			// Find the ratio at which a font letter width becomes widget letter width
-			auto squeeze_ration = F(M2_GAME.font_letter_width) / widget_letter_width_in_pixels();
+			auto squeeze_ration = F(M2G_PROXY.default_font_letter_width) / widget_letter_width_in_pixels();
 			// TODO implement vertical alignment
 			auto destination = RectI{
 				rect_px.x + vertical_border_width_px(),
@@ -103,7 +103,7 @@ int Text::widget_width_in_chars() const {
 	// Calculate how many 'units' there are in the horizontal drawable area
 	auto max_text_width_in_units = F(max_text_width_px) / horizontal_pixels_per_unit;
 	// Calculate a letter's width in 'units'
-	auto font_letter_width_in_units = text_blueprint().font_size * M2_GAME.font_letter_width / M2_GAME.font_letter_height;
+	auto font_letter_width_in_units = text_blueprint().font_size * M2G_PROXY.default_font_letter_width / M2G_PROXY.default_font_size;
 	// Calculate how many letters fit in the horizontal drawable area
 	return I(max_text_width_in_units / font_letter_width_in_units);
 }
@@ -112,6 +112,6 @@ float Text::widget_letter_width_in_pixels() const {
 	// Calculate how many pixels there are per horizontal 'unit'
 	auto horizontal_pixels_per_unit = F(rect_px.w) / F(blueprint->w);
 	// Calculate a letter's width in 'units'
-	auto font_letter_width_in_units = text_blueprint().font_size * M2_GAME.font_letter_width / M2_GAME.font_letter_height;
+	auto font_letter_width_in_units = text_blueprint().font_size * M2G_PROXY.default_font_letter_width / M2G_PROXY.default_font_size;
 	return font_letter_width_in_units * horizontal_pixels_per_unit;
 }

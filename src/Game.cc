@@ -85,9 +85,7 @@ m2::Game::Game() {
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 	// Open font
-	font_letter_width = 112;
-	font_letter_height = 280;
-	if ((font = TTF_OpenFont("resource/fonts/VT323/VT323-Regular.ttf", font_letter_height)) == nullptr) {
+	if ((font = TTF_OpenFont(_proxy.default_font_path.c_str(), _proxy.default_font_size)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 
@@ -107,7 +105,7 @@ m2::Game::Game() {
 	}
 	sprite_sheets = load_sprite_sheets(*sheets_pb, renderer, _proxy.lightning);
 	_sprites =
-		load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, font, renderer, _proxy.lightning);
+		load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, renderer, font, _proxy.default_font_size, _proxy.lightning);
 	level_editor_background_sprites = list_level_editor_background_sprites(_sprites);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
 	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);

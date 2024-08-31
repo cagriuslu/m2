@@ -35,12 +35,13 @@ namespace {
 	}
 }
 
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(TTF_Font* font, SDL_Renderer* renderer, const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int font_size, const std::string& text, SDL_Color color) {
 	if (text.empty()) {
 		return FontTexture{nullptr, text};
 	}
 
 	// Render to surface
+	TTF_SetFontSize(font, font_size);
 	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(font, text.c_str(), color)};
 	m2_return_unexpected_message_unless(surface, TTF_GetError());
 	// Render to texture
@@ -49,7 +50,7 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(TTF_Font*
 	return FontTexture{texture, text};
 }
 
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font,
+m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int font_size,
 	int font_letter_width, int width_in_chars, ui::TextHorizontalAlignment horizontal_alignment,
 	const std::string& text, SDL_Color color) {
 	if (text.empty()) {
@@ -57,6 +58,7 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Rend
 	}
 
 	// Render to surface
+	TTF_SetFontSize(font, font_size);
 	TTF_SetFontWrappedAlign(font, text_horizontal_alignment_to_ttf_wrap_alignment(horizontal_alignment));
 	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, font_letter_width * width_in_chars)};
 	m2_return_unexpected_message_unless(surface, TTF_GetError());

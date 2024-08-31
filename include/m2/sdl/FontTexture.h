@@ -14,11 +14,11 @@ namespace m2::sdl {
 
 	   public:
 		FontTexture() = default;
-		static expected<FontTexture> create_nowrap(TTF_Font* font, SDL_Renderer* renderer,
+		static expected<FontTexture> create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int font_size,
 			const std::string& text, SDL_Color color = {255, 255, 255, 255});
-		static expected<FontTexture> create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int font_letter_width,
-			int width_in_chars, ui::TextHorizontalAlignment horizontal_alignment, const std::string& text,
-			SDL_Color color = {255, 255, 255, 255});
+		static expected<FontTexture> create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int font_size,
+			int font_letter_width, int width_in_chars, ui::TextHorizontalAlignment horizontal_alignment,
+			const std::string& text, SDL_Color color = {255, 255, 255, 255});
 
 		// Can be null if the string is empty
 		[[nodiscard]] SDL_Texture* texture() const { return _texture.get(); }

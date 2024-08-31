@@ -83,7 +83,7 @@ namespace m2 {
 		Sprite(
 		    const std::vector<SpriteSheet>& sprite_sheets, const SpriteSheet& sprite_sheet,
 		    SpriteEffectsSheet& sprite_effects_sheet, const pb::Sprite& sprite, bool lightning);
-		Sprite(TTF_Font* font, SDL_Renderer* renderer, const pb::TextLabel& text_label);
+		Sprite(SDL_Renderer* renderer, TTF_Font* font, int font_size, const pb::TextLabel& text_label);
 
 		// Accessors
 		[[nodiscard]] const SpriteSheet& sprite_sheet() const { return *_sprite_sheet; }
@@ -148,7 +148,7 @@ namespace m2 {
 	std::vector<Sprite> load_sprites(
 	    const std::vector<SpriteSheet>& sprite_sheets,
 	    const ::google::protobuf::RepeatedPtrField<pb::TextLabel>& text_labels,
-	    SpriteEffectsSheet& sprite_effects_sheet, TTF_Font* font, SDL_Renderer* renderer, bool lightning);
+	    SpriteEffectsSheet& sprite_effects_sheet, SDL_Renderer* renderer, TTF_Font* font, int font_size, bool lightning);
 	std::vector<m2g::pb::SpriteType> list_level_editor_background_sprites(const std::vector<Sprite>& sprites);
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(
 	    const std::filesystem::path& objects_path);

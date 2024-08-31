@@ -9,17 +9,17 @@ namespace {
 	std::vector<sdl::FontTexture> generate_option_texts(const TextSelectionBlueprint::Options& options) {
 		std::vector<sdl::FontTexture> texts;
 		for (const auto& option : options) {
-			texts.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, option.first)));
+			texts.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, option.first)));
 		}
 		return texts;
 	}
 }
 
 TextSelection::TextSelection(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint),
-	_plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "+"))),
-	_minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "-"))),
-	_up_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "^"))),
-	_down_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.font, M2_GAME.renderer, "v"))) {
+	_plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
+	_minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))),
+	_up_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "^"))),
+	_down_arrow_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "v"))) {
 	reset();
 }
 
