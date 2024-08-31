@@ -121,7 +121,7 @@ Action TextSelection::on_event(Events& events) {
 }
 
 void TextSelection::on_draw() {
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 
 	// +/- selection
 	if (auto line_count = text_list_selection_blueprint().line_count; line_count == 0) {
@@ -155,7 +155,7 @@ void TextSelection::on_draw() {
 				auto text_rect = rect_px.horizontal_split(text_list_selection_blueprint().line_count, i);
 				// If selected
 				if (_selections[_top_index + i]) {
-					draw_background_color(text_rect, {0, 0, 255, 127});
+					draw_rectangle(text_rect, {0, 0, 255, 127});
 				}
 				// Draw text
 				auto texture = _option_texts[_top_index + i].texture();
@@ -166,7 +166,7 @@ void TextSelection::on_draw() {
 
 		if (text_list_selection_blueprint().show_scroll_bar) {
 			auto scroll_bar_rect = rect_px.trim_left(rect_px.w - rect_px.h / text_list_selection_blueprint().line_count);
-			draw_background_color(scroll_bar_rect, {0, 0, 0, 255});
+			draw_rectangle(scroll_bar_rect, {0, 0, 0, 255});
 			draw_border(scroll_bar_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 			auto up_arrow_rect = scroll_bar_rect.horizontal_split(text_list_selection_blueprint().line_count, 0);

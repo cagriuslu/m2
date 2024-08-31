@@ -332,7 +332,7 @@ void State::draw() {
 		return;
 	}
 
-	Widget::draw_background_color(rect_px, blueprint->background_color);
+	Widget::draw_rectangle(rect_px, blueprint->background_color);
 	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), draw_widget);
 	Widget::draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }

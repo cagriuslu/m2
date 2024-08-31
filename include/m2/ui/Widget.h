@@ -40,8 +40,14 @@ namespace m2::ui {
 	   protected:
 		// Utilities for child classes to use
 
+		void draw_background_color() const;
+
 		[[nodiscard]] int vertical_border_width_px() const;
 		[[nodiscard]] int horizontal_border_width_px() const;
+		[[nodiscard]] int vertical_padding_width_px() const;
+		[[nodiscard]] int horizontal_padding_width_px() const;
+		// Calculates and returns the drawable area (rect_px - border - padding)
+		[[nodiscard]] RectI drawable_area() const;
 
 		/// Calculate the text rect assuming that the whole widget will be filled with the text
 		RectI calculate_text_rect(float font_size_unitless, TextHorizontalAlignment align, SDL_Texture* text_texture) const;
@@ -50,7 +56,7 @@ namespace m2::ui {
 		static RectI calculate_text_rect(RectI container, int container_height_unitless, float font_size_unitless,
 			TextHorizontalAlignment align, SDL_Texture* text_texture);
 
-		static void draw_background_color(const RectI& rect, const SDL_Color& color);
+		static void draw_rectangle(const RectI& rect, const SDL_Color& color);
 		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);
 		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 

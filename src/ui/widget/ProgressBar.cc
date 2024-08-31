@@ -17,7 +17,7 @@ Action ProgressBar::on_update() {
 void ProgressBar::on_draw() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);
 	// Background
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 	// Bar
 	auto filled_dstrect = SDL_Rect{
 			rect_px.x,

@@ -6,13 +6,10 @@ using namespace m2::ui;
 constexpr int DEFAULT_FONT_LETTER_WIDTH = 2;
 constexpr int DEFAULT_FONT_LETTER_HEIGHT = 5;
 
-void Widget::draw_background_color(const RectI& rect, const SDL_Color& color) {
+void m2::ui::Widget::draw_background_color() const {
+	const auto& color = blueprint->background_color;
 	if (color.r || color.g || color.b || color.a) {
-		SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-		SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
-
-		const auto sdl_rect = static_cast<SDL_Rect>(rect);
-		SDL_RenderFillRect(M2_GAME.renderer, &sdl_rect);
+		draw_rectangle(rect_px, color);
 	}
 }
 
@@ -20,8 +17,7 @@ int m2::ui::Widget::vertical_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
-		// Pixels per unit
-		float pixel_pitch = F(rect_px.w) / F(blueprint->w);
+		float pixel_pitch = F(rect_px.w) / F(blueprint->w); // Pixels per unit
 		return std::max(1, iround(pixel_pitch * blueprint->border_width));
 	}
 }
@@ -30,10 +26,33 @@ int m2::ui::Widget::horizontal_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
-		// Pixels per unit
-		float pixel_pitch = F(rect_px.h) / F(blueprint->h);
+		float pixel_pitch = F(rect_px.h) / F(blueprint->h); // Pixels per unit
 		return std::max(1, iround(pixel_pitch * blueprint->border_width));
 	}
+}
+
+int m2::ui::Widget::vertical_padding_width_px() const {
+	if (blueprint->padding_width == 0.0f) {
+		return 0;
+	} else {
+		float pixel_pitch = F(rect_px.w) / F(blueprint->w); // Pixels per unit
+		return iround(pixel_pitch * blueprint->padding_width);
+	}
+}
+
+int m2::ui::Widget::horizontal_padding_width_px() const {
+	if (blueprint->padding_width == 0.0f) {
+		return 0;
+	} else {
+		float pixel_pitch = F(rect_px.h) / F(blueprint->h); // Pixels per unit
+		return iround(pixel_pitch * blueprint->padding_width);
+	}
+}
+
+m2::RectI m2::ui::Widget::drawable_area() const {
+	auto vertical_excess = vertical_border_width_px() + vertical_padding_width_px();
+	auto horizontal_excess = horizontal_border_width_px() + horizontal_padding_width_px();
+	return rect_px.trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
 }
 
 m2::RectI m2::ui::Widget::calculate_text_rect(float font_size_unitless, TextHorizontalAlignment align,
@@ -88,6 +107,14 @@ m2::RectI m2::ui::Widget::calculate_text_rect(RectI container, int container_hei
 	text_rect.w = text_dimensions.x;
 	text_rect.h = text_dimensions.y;
 	return text_rect;
+}
+
+void Widget::draw_rectangle(const m2::RectI& rect, const SDL_Color& color) {
+	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
+
+	const auto sdl_rect = static_cast<SDL_Rect>(rect);
+	SDL_RenderFillRect(M2_GAME.renderer, &sdl_rect);
 }
 
 void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {

@@ -13,7 +13,7 @@ CheckboxWithText::CheckboxWithText(State* parent, const WidgetBlueprint* bluepri
 
 void CheckboxWithText::on_draw() {
 	// Background
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 	// Checkbox
 	auto filled_dstrect = SDL_Rect{rect_px.x, rect_px.y, rect_px.h, rect_px.h};
 	SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 255);

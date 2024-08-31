@@ -22,6 +22,8 @@ namespace m2::ui {
 		// Unitless border width. If non-zero, the drawn border is at least 1 pixel. Border is drawn *inside* the Rect
 		// of the widget, thus it behaves like a padding at the same time.
 		float border_width{0.001f};
+		// Unitless padding width. Padding is *inside* the border.
+		float padding_width{0.0f};
 
 		SDL_Color background_color{};
 

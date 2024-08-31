@@ -33,7 +33,7 @@ Action Image::on_update() {
 }
 
 void Image::on_draw() {
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 	if (_sprite.second) {
 		draw_sprite(*_sprite.second, rect_px);
 	}

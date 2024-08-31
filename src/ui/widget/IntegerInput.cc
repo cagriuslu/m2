@@ -75,7 +75,7 @@ Action IntegerInput::on_update() {
 }
 
 void IntegerInput::on_draw() {
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 
 	if (const auto texture = _font_texture.texture(); texture) {
 		sdl::render_texture_with_color_mod(texture,

@@ -69,7 +69,7 @@ Action ImageSelection::select(unsigned index) {
 }
 
 void ImageSelection::on_draw() {
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {

@@ -75,7 +75,7 @@ Action TextInput::on_update() {
 }
 
 void TextInput::on_draw() {
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 	if (const auto texture = _font_texture.texture(); texture) {
 		sdl::render_texture_with_color_mod(texture, calculate_text_rect(0, TextHorizontalAlignment::LEFT, texture));
 	}

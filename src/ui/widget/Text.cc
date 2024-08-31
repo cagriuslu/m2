@@ -33,7 +33,7 @@ Action Text::on_update() {
 }
 
 void Text::on_draw() {
-	draw_background_color(rect_px, blueprint->background_color);
+	draw_background_color();
 
 	// Generate font texture if necessary
 	if (_string != _font_texture.string()) {
