@@ -168,6 +168,20 @@ if (WIN32)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 elseif(APPLE)
     target_link_libraries(m2 "-framework Foundation" m)
+
+	set_target_properties(m2 PROPERTIES
+			OUTPUT_NAME "${GAME}"
+			MACOSX_BUNDLE_BUNDLE_NAME "${GAME}"
+			MACOSX_BUNDLE_BUNDLE_VERSION "0.1.0"
+			MACOSX_BUNDLE_COPYRIGHT "2024 Cagri Uslu"
+			MACOSX_BUNDLE_GUI_IDENTIFIER "dev.uslu.${GAME}")
+
+	# Put the icon into the .app/Contents/Resources
+	add_custom_command(
+			TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/resource/game/${GAME}/${GAME}.icns $<TARGET_FILE_DIR:m2>/../Resources
+			COMMAND_EXPAND_LISTS
+	)
 endif()
 
 if(GTest_FOUND)
