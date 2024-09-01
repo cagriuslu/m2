@@ -33,6 +33,7 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
     file(GLOB Protobuf_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin/*.dll")
 endif()
+set(Protobuf_USE_STATIC_LIBS ON)
 find_package(Protobuf REQUIRED)
 include_directories(SYSTEM ${Protobuf_INCLUDE_DIRS})
 include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
@@ -67,11 +68,10 @@ if (WIN32)
     set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../include")
     set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../lib")
     file(GLOB SDL2_image_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image/bin/*.dll" "${CMAKE_CURRENT_BINARY_DIR}/lib/png/bin/*.dll" "${CMAKE_CURRENT_BINARY_DIR}/lib/z/bin/*.dll")
-else()
+elseif(APPLE)
     set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../../include")
     set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../../lib")
 endif()
-set(SDL2_image_LIBRARIES "SDL2_image")
 
 # SDL2_ttf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf/lib")
@@ -84,11 +84,12 @@ if (WIN32)
     set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../include")
     set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../lib")
     file(GLOB SDL2_ttf_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf/bin/*.dll")
-else()
+elseif(APPLE)
     set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../../../include")
     set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../../../lib")
+	# Since we're statically linking to SDL2_ttf, we need to statically link to freetype as well
+	set(Freetype_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/freetype/lib/libfreetype.a")
 endif()
-set(SDL2_ttf_LIBRARIES "SDL2_ttf")
 
 if(DEBUG)
     # GTest
@@ -147,10 +148,12 @@ add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS}
 if (NOT WIN32)
     target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
 endif()
+
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
 target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-target_link_libraries(m2 box2d ${SDL2_image_LIBRARIES} ${SDL2_ttf_LIBRARIES} ${SDL2_LIBRARIES} ${Protobuf_LIBRARIES} expected)
+target_link_libraries(m2 box2d SDL2_image SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_STATIC_LIBRARIES} protobuf::libprotobuf expected)
+
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
     # Copy DLLs
