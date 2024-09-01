@@ -1,6 +1,29 @@
 #include <m2/FileSystem.h>
 #include <sstream>
 
+#if defined(__APPLE__)
+#include <CoreFoundation/CFBundle.h>
+#endif
+
+std::filesystem::path m2::resource_path() {
+#if defined(__APPLE__)
+	auto main_bundle_handle = CFBundleGetMainBundle();
+	auto resources_directory_url_ref = CFBundleCopyResourcesDirectoryURL(main_bundle_handle);
+	auto resources_directory_absolute_url_ref = CFURLCopyAbsoluteURL(resources_directory_url_ref);
+	auto resources_directory_string_ref = CFURLCopyPath(resources_directory_absolute_url_ref);
+
+	std::string resources_directory{CFStringGetCStringPtr(resources_directory_string_ref, kCFStringEncodingUTF8)};
+
+	CFRelease(resources_directory_string_ref);
+	CFRelease(resources_directory_absolute_url_ref);
+	CFRelease(resources_directory_url_ref);
+
+	return resources_directory;
+#else
+	return "";
+#endif
+}
+
 m2::expected<std::string> m2::read_file(const std::filesystem::path& path) {
 	FILE* file = fopen(path.string().c_str(), "r");
 	m2_return_unexpected_message_unless(file, "Unable to open file " + path.string());

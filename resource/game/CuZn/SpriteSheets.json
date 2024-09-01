@@ -1,7 +1,7 @@
 {
   "sheets": [
     {
-      "resource": "resource/game/CuZn/png/CuZn.png",
+      "resource": "game/CuZn/png/CuZn.png",
       "ppm": 16,
       "sprites": [
         {},

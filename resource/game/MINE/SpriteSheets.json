@@ -1,7 +1,7 @@
 {
   "sheets": [
     {
-      "resource": "resource/game/MINE/cartoonrpgcharacters1/PNG/DWARF/6.png",
+      "resource": "game/MINE/cartoonrpgcharacters1/PNG/DWARF/6.png",
       "ppm": 162,
       "sprites": [
         {
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "resource": "resource/game/MINE/2D Game art bundle 2018/Character Sprite/Big Guy/PNG/Big Guy 01/PNG Sequences/Idle/Idle_000.png",
+      "resource": "game/MINE/2D Game art bundle 2018/Character Sprite/Big Guy/PNG/Big Guy 01/PNG Sequences/Idle/Idle_000.png",
       "ppm": 400,
       "sprites": [
         {
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "resource": "resource/game/MINE/2dhandpainted/Dungeon@64x64.png",
+      "resource": "game/MINE/2dhandpainted/Dungeon@64x64.png",
       "ppm": 64,
       "sprites": [
         {
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "resource": "resource/game/MINE/2dhandpainted/Grassland@64x64.png",
+      "resource": "game/MINE/2dhandpainted/Grassland@64x64.png",
       "ppm": 64,
       "sprites": [
         {

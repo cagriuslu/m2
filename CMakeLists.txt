@@ -129,7 +129,21 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES
 file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h")
 file(GLOB M2_PRIVATE_HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h")
 file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc")
-add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS})
+if(APPLE)
+	# Put resources into the .app
+	file(GLOB_RECURSE BUNDLE_RESOURCES "${CMAKE_SOURCE_DIR}/resource/*")
+	foreach (ABSOLUTE_PATH_TO_RESOURCE ${BUNDLE_RESOURCES})
+		file(RELATIVE_PATH RELATIVE_PATH_TO_RESOURCE "${CMAKE_SOURCE_DIR}/resource" ${ABSOLUTE_PATH_TO_RESOURCE})
+		get_filename_component(RELATIVE_PATH_TO_RESOURCES_DIRECTORY ${RELATIVE_PATH_TO_RESOURCE} DIRECTORY)
+		# Set it's location inside the app package (under Resources)
+		set_property(SOURCE ${ABSOLUTE_PATH_TO_RESOURCE} PROPERTY MACOSX_PACKAGE_LOCATION "Resources/${RELATIVE_PATH_TO_RESOURCES_DIRECTORY}")
+		# Add the file to the 'Resources' folder group in Xcode. This also preserves folder structure.
+		source_group("Resources/${RELATIVE_PATH_TO_RESOURCES_DIRECTORY}" FILES "${ABSOLUTE_PATH_TO_RESOURCE}")
+	endforeach ()
+endif()
+
+add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${BUNDLE_RESOURCES})
+
 if (NOT WIN32)
     target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
 endif()
@@ -149,8 +163,8 @@ if (WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE") # Temporary
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT m2)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
-elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    target_link_libraries(m2 m)
+elseif(APPLE)
+    target_link_libraries(m2 "-framework Foundation" m)
 endif()
 
 if(GTest_FOUND)

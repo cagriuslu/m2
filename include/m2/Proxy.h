@@ -24,7 +24,7 @@ namespace m2 {
 
 		const int default_game_height_m = 16;
 
-		const std::string default_font_path = "resource/fonts/VT323/VT323-Regular.ttf";
+		const std::string default_font_path = "fonts/VT323/VT323-Regular.ttf";
 		const int default_font_size = 280; // Also corresponds to font letter height
 		const int default_font_letter_width = 112;
 

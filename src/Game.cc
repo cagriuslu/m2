@@ -11,10 +11,9 @@
 #include <m2/level_editor/Ui.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/Ui.h>
-
+#include <m2/FileSystem.h>
 #include <filesystem>
 #include <ranges>
-
 #include "m2/component/Graphic.h"
 #include <m2/ui/Action.h>
 
@@ -73,7 +72,7 @@ m2::Game::Game() {
 	SDL_GetRendererInfo(renderer, &info);
 	LOG_INFO("Renderer", info.name);
 
-	SDL_Surface* lightSurface = IMG_Load("resource/RadialGradient-WhiteBlack.png");
+	SDL_Surface* lightSurface = IMG_Load((resource_path() / "RadialGradient-WhiteBlack.png").c_str());
 	if (lightSurface == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{IMG_GetError()});
 	}
@@ -85,7 +84,7 @@ m2::Game::Game() {
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 	// Open font
-	if ((font = TTF_OpenFont(_proxy.default_font_path.c_str(), _proxy.default_font_size)) == nullptr) {
+	if ((font = TTF_OpenFont((resource_path() / _proxy.default_font_path).c_str(), _proxy.default_font_size)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 
@@ -95,9 +94,8 @@ m2::Game::Game() {
 	dynamic_sheet = DynamicSheet{renderer};
 
 	// Load game resources
-	const std::filesystem::path _resource_dir("resource");
-	resource_dir = _resource_dir / "game" / _proxy.game_name;
-	levels_dir = _resource_dir / "game" / _proxy.game_name / "levels";
+	resource_dir = resource_path() / "game" / _proxy.game_name;
+	levels_dir = resource_path() / "game" / _proxy.game_name / "levels";
 
 	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(resource_dir / "SpriteSheets.json");
 	if (!sheets_pb) {

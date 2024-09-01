@@ -1,7 +1,7 @@
 {
   "sheets": [
     {
-      "resource": "resource/game/RPG/icons/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
+      "resource": "game/RPG/icons/7soulsrpggraphics_iconpack/Pack 1B-Renamed/_sheet.png",
       "ppm": 16,
       "sprites": [
         {},
@@ -198,7 +198,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/castle.png",
+      "resource": "game/RPG/terrain/fantasyrpgtilesetpack/castle.png",
       "ppm": 16,
       "sprites": [
         {
@@ -949,7 +949,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/chara6.png",
+      "resource": "game/RPG/characters/monsterstimefantasyrpgspritepack/chara6.png",
       "ppm": 26,
       "sprites": [
         {
@@ -1127,7 +1127,7 @@
     },
     {
       "comment": "Sheet has extra 32 rows on top. Sprites have arbitrary separation in-between",
-      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/monster2.png",
+      "resource": "game/RPG/characters/monsterstimefantasyrpgspritepack/monster2.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1418,7 +1418,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/characters/monsterstimefantasyrpgspritepack/monster4.png",
+      "resource": "game/RPG/characters/monsterstimefantasyrpgspritepack/monster4.png",
       "ppm": 26,
       "sprites": [
         {
@@ -1724,7 +1724,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/custom/skeleton-corpse.png",
+      "resource": "game/RPG/custom/skeleton-corpse.png",
       "ppm": 26,
       "sprites": [
         {
@@ -1747,7 +1747,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/custom/cuteopus-corpse.png",
+      "resource": "game/RPG/custom/cuteopus-corpse.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1770,7 +1770,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/custom/long-sword.png",
+      "resource": "game/RPG/custom/long-sword.png",
       "ppm": 16,
       "sprites": [
         {
@@ -1798,7 +1798,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Bush/bush_1.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Bush/bush_1.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1816,7 +1816,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/orange/flower_orange_2.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/orange/flower_orange_2.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1834,7 +1834,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/pink/flower_pink_3.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/pink/flower_pink_3.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1852,7 +1852,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/white/flower_white_5.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Flower/white/flower_white_5.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1870,7 +1870,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine/pine_1.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine/pine_1.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1895,7 +1895,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine_dead/pine_dead_2.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Pine_dead/pine_dead_2.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1920,7 +1920,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Rock/rock_3.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Rock/rock_3.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1944,7 +1944,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree/tree_3.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree/tree_3.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1969,7 +1969,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree_dead/tree_dead_3.png",
+      "resource": "game/RPG/terrain/Forest Environment Pixel Art Tileset/Sprites/Decor/Tree_dead/tree_dead_3.png",
       "ppm": 32,
       "sprites": [
         {
@@ -1994,7 +1994,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/dungeon.png",
+      "resource": "game/RPG/terrain/fantasyrpgtilesetpack/dungeon.png",
       "ppm": 16,
       "sprites": [
         {
@@ -2033,7 +2033,7 @@
       ]
     },
     {
-      "resource": "resource/game/RPG/terrain/fantasyrpgtilesetpack/outside.png",
+      "resource": "game/RPG/terrain/fantasyrpgtilesetpack/outside.png",
       "ppm": 16,
       "sprites": [
         {

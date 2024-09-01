@@ -5,6 +5,7 @@
 #include <m2g_SpriteType.pb.h>
 
 #include "m2/game/Noise.h"
+#include <m2/FileSystem.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -21,7 +22,7 @@ static TextBlueprint entry_variant_1 = {
 		.text = "RANDOM LEVEL",
 		.kb_shortcut = SDL_SCANCODE_R,
 		.on_action = [](MAYBE const widget::Text &self) {
-			auto expect_lb = m2::pb::json_file_to_message<m2::pb::Level>("resource/game/MINE/levels/sp000.json");
+			auto expect_lb = m2::pb::json_file_to_message<m2::pb::Level>(m2::resource_path() / "game/MINE/levels/sp000.json");
 			if (!expect_lb) {
 				throw M2_ERROR("Unable to load level");
 			}
@@ -51,7 +52,7 @@ static TextBlueprint entry_variant_2 = {
 		.text = "NEW GAME",
 		.kb_shortcut = SDL_SCANCODE_N,
 		.on_action = [](MAYBE const widget::Text &self) {
-			auto success = M2_GAME.load_single_player("resource/game/MINE/levels/sp000.json");
+			auto success = M2_GAME.load_single_player(m2::resource_path() / "game/MINE/levels/sp000.json");
 			if (!success) {
 				LOG_ERROR("Unable to load level", success.error());
 			}

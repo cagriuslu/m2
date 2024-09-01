@@ -9,7 +9,7 @@
 
 m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer, bool lightning)
     : _sprite_sheet(sprite_sheet) {
-	_surface.reset(IMG_Load(sprite_sheet.resource().c_str()));
+	_surface.reset(IMG_Load((resource_path() / sprite_sheet.resource()).c_str()));
 	if (not _surface) {
 		throw M2_ERROR("SDL Error while loading " + sprite_sheet.resource() + ": " + IMG_GetError());
 	}
