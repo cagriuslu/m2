@@ -4,6 +4,7 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <m2/Meta.h>
+#include <unistd.h>
 
 namespace {
 	template <typename NamedItemListT, typename ResourceListT, typename AttributeListT>
@@ -399,7 +400,12 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 			socket = std::move(*expect_socket);
 			LOG_INFO("Socket created");
 
+			// Start ping broadcast
+			client_thread->_ping_broadcast_thread.emplace();
+			sleep(5); // Wait some time before attempting to connect
+
 			auto connect_success = socket->connect(client_thread->_addr, 1162);
+			client_thread->_ping_broadcast_thread.reset(); // Stop ping broadcast
 			if (not connect_success) {
 				LOG_FATAL("Connect failed", connect_success.error());
 				return;

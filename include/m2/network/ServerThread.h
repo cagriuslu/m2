@@ -9,6 +9,7 @@
 #include "server/Client.h"
 #include "m2/Object.h"
 #include <queue>
+#include "PingBroadcastThread.h"
 
 namespace m2::network {
 	class ServerThread {
@@ -26,6 +27,7 @@ namespace m2::network {
 
 		// Thread variables
 		char _read_buffer[65536]{}; // Shared among all clients
+		std::optional<PingBroadcastThread> _ping_broadcast_thread;
 
 	public:
 		ServerThread(mplayer::Type type, unsigned max_connection_count);

@@ -67,6 +67,8 @@ m2::void_expected m2::network::ServerThread::close_lobby() {
 		if (not std::ranges::all_of(_clients, server::is_client_ready)) {
 			return make_unexpected("Not every client is ready");
 		}
+		// Stop ping broadcast
+		_ping_broadcast_thread.reset();
 		set_state_unlocked(pb::ServerState::SERVER_READY);
 	}
 	LOG_INFO("Lobby closed");
@@ -232,6 +234,9 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	}
 	LOG_INFO("Socket listening on port", PORT);
 	server_thread->set_state_locked(pb::ServerState::SERVER_LISTENING);
+
+	// Start ping broadcast
+	server_thread->_ping_broadcast_thread.emplace();
 
 	while (not server_thread->is_quit() && not server_thread->is_shutdown()) {
 		fd_set read_set;

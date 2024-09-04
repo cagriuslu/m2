@@ -4,6 +4,7 @@
 #include <deque>
 #include <mutex>
 #include "../Object.h"
+#include "PingBroadcastThread.h"
 
 namespace m2::network {
 	class ClientThread {
@@ -29,6 +30,7 @@ namespace m2::network {
 
 		// Thread variables
 		char _read_buffer[65536]{};
+		std::optional<PingBroadcastThread> _ping_broadcast_thread;
 
 	public:
 		ClientThread(mplayer::Type type, std::string addr);
