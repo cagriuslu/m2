@@ -58,17 +58,27 @@ m2::void_expected init_human_player(m2::Object& obj) {
 
 		// Limit the player inside the level
 		const auto& dims = M2_GAME.dimensions();
-		if (o.position.x < dims.width_m / 2.0f) {
-			o.position.x = dims.width_m / 2.0f; // Left
+		// If the map is zoomed out so much that the black space is showing on the left and the right
+		if (M2_LEVEL.background_boundary().w < dims.width_m) {
+			o.position.x = M2_LEVEL.background_boundary().x_center();
+		} else {
+			if (o.position.x < dims.width_m / 2.0f) {
+				o.position.x = dims.width_m / 2.0f; // Left
+			}
+			if (M2_LEVEL.background_boundary().x2() < o.position.x + dims.width_m / 2.0f) {
+				o.position.x = M2_LEVEL.background_boundary().x2() - dims.width_m / 2.0f; // Right
+			}
 		}
-		if (M2_LEVEL.background_boundary().x2() < o.position.x + dims.width_m / 2.0f) {
-			o.position.x = M2_LEVEL.background_boundary().x2() - dims.width_m / 2.0f; // Right
-		}
-		if (o.position.y < m2::F(dims.height_m) / 2.0f) {
-			o.position.y = m2::F(dims.height_m) / 2.0f; // Top
-		}
-		if (M2_LEVEL.background_boundary().y2() < o.position.y + m2::F(dims.height_m) / 2.0f) {
-			o.position.y = M2_LEVEL.background_boundary().y2() - m2::F(dims.height_m) / 2.0f; // Bottom
+		// If the map is zoomed out so much that the black space is showing on the top and the bottom
+		if (M2_LEVEL.background_boundary().h < dims.height_m) {
+			o.position.y = M2_LEVEL.background_boundary().y_center();
+		} else {
+			if (o.position.y < m2::F(dims.height_m) / 2.0f) {
+				o.position.y = m2::F(dims.height_m) / 2.0f; // Top
+			}
+			if (M2_LEVEL.background_boundary().y2() < o.position.y + m2::F(dims.height_m) / 2.0f) {
+				o.position.y = M2_LEVEL.background_boundary().y2() - m2::F(dims.height_m) / 2.0f; // Bottom
+			}
 		}
 
 		// Check if mouse button pressed
