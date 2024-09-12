@@ -3,16 +3,16 @@
 
 namespace m2::ui {
 	// Forward declaration
-	struct State;
+	struct Panel;
 }
 
 namespace m2::ui::widget {
 	class NestedUi : public Widget {
-		std::unique_ptr<State> _ui;
+		std::unique_ptr<Panel> _ui;
 		int _inner_x{}, _inner_y{};
 
 	public:
-		explicit NestedUi(State* parent, const WidgetBlueprint* blueprint);
+		explicit NestedUi(Panel* parent, const WidgetBlueprint* blueprint);
 		void on_position_update(const RectI& rect_px) final;
 		Action on_event(Events& events) final;
 		Action on_update() final;

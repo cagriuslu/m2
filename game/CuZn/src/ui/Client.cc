@@ -55,7 +55,7 @@ static TextBlueprint ready_button = {
 	}
 };
 
-static const Blueprint client_lobby = {
+static const PanelBlueprint client_lobby = {
 	.w = 160,
 	.h = 90,
 	.border_width = 0,
@@ -66,7 +66,7 @@ static const Blueprint client_lobby = {
 	}
 };
 
-const Blueprint ip_port_form = {
+const PanelBlueprint ip_port_form = {
 	.w = 160,
 	.h = 90,
 	.border_width = 0,
@@ -93,7 +93,7 @@ const Blueprint ip_port_form = {
 				.text = "CONNECT", .on_action = [](MAYBE const widget::Text& self) {
 					auto* ip_input_widget = self.parent().find_first_widget_of_type<TextInput>();
 					M2_GAME.join_game(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());
-					return m2::ui::State::create_execute_sync(&client_lobby);
+					return m2::ui::Panel::create_execute_sync(&client_lobby);
 				}
 			}
 		}

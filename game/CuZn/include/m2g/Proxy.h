@@ -18,10 +18,10 @@ namespace m2g {
 
 		const std::string game_name = "CuZn";
 
-		const m2::ui::Blueprint* main_menu();
-		const m2::ui::Blueprint* pause_menu();
-		const m2::ui::Blueprint* left_hud();
-		const m2::ui::Blueprint* right_hud();
+		const m2::ui::PanelBlueprint* main_menu();
+		const m2::ui::PanelBlueprint* pause_menu();
+		const m2::ui::PanelBlueprint* left_hud();
+		const m2::ui::PanelBlueprint* right_hud();
 
 		void post_multi_player_level_client_init(const std::string& name, const m2::pb::Level& level);
 		void multi_player_level_server_populate(const std::string& name, const m2::pb::Level& level);

@@ -3,7 +3,7 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Hidden::Hidden(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
+Hidden::Hidden(Panel* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
 	// Execute on_create
 	if (hidden_blueprint().on_create) {
 		hidden_blueprint().on_create(*this);

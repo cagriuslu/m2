@@ -15,7 +15,7 @@ const widget::TextBlueprint right_hud_reset_button = {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).reset();
 	    return make_continue_action();
     }};
-const Blueprint ui::bulk_sheet_editor_right_hud = {
+const PanelBlueprint ui::bulk_sheet_editor_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {0, 0, 0, 255},
@@ -47,7 +47,7 @@ const Blueprint ui::bulk_sheet_editor_right_hud = {
         WidgetBlueprint{.x = 2, .y = 6, .w = 15, .h = 4, .variant = right_hud_set_rect_button},
         WidgetBlueprint{.x = 2, .y = 11, .w = 15, .h = 4, .variant = right_hud_reset_button}}};
 
-const Blueprint ui::bulk_sheet_editor_left_hud = {
+const PanelBlueprint ui::bulk_sheet_editor_left_hud = {
     .w = 19, .h = 72, .background_color = {0, 0, 0, 255}, .widgets = {}};
 
 const widget::TextSelectionBlueprint resource_selection = {
@@ -68,7 +68,7 @@ const widget::TextSelectionBlueprint resource_selection = {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).select_resource(std::get<std::string>(self.selections()[0]));
 	    return make_continue_action();
     }};
-const Blueprint ui::bulk_sheet_editor_main_menu = {
+const PanelBlueprint ui::bulk_sheet_editor_main_menu = {
     .w = 160,
     .h = 90,
     .border_width = 0,
@@ -101,8 +101,8 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
                 .kb_shortcut = SDL_SCANCODE_RETURN,
                 .on_action = [](MAYBE const widget::Text& self) -> Action {
 	                if (std::get<bsedit::State>(M2_LEVEL.type_state).select()) {
-		                M2_LEVEL.right_hud_ui_state.emplace(&bulk_sheet_editor_right_hud);
-		                M2_LEVEL.right_hud_ui_state->update_positions(M2_GAME.dimensions().right_hud);
+		                M2_LEVEL.right_hud_ui_panel.emplace(&bulk_sheet_editor_right_hud);
+		                M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
 		                // TODO return selection instead
 		                return make_return_action();
 	                } else {
@@ -110,7 +110,7 @@ const Blueprint ui::bulk_sheet_editor_main_menu = {
 	                }
                 }}}}};
 
-const Blueprint ui::bulk_sheet_editor_pause_menu = {
+const PanelBlueprint ui::bulk_sheet_editor_pause_menu = {
     .w = 160,
     .h = 90,
     .border_width = 0,

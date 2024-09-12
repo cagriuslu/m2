@@ -206,7 +206,7 @@ m2::ui::Action m2::ledit::State::SelectMode::rfill() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 
-		auto action = ui::State::create_execute_sync(&level_editor::ui::fill_dialog);
+		auto action = ui::Panel::create_execute_sync(&level_editor::ui::fill_dialog);
 		if (action.is_return() && not rfill_sprite_types.empty()) {
 			positions->first.for_each_cell_in_between(positions->second, [&](const VecI& cell) {
 				auto index = rand(static_cast<uint32_t>(rfill_sprite_types.size()));

@@ -1,13 +1,13 @@
 #include <m2/ui/widget/NestedUi.h>
-#include <m2/ui/State.h>
-#include <m2/ui/Blueprint.h>
+#include <m2/ui/Panel.h>
+#include <m2/ui/PanelBlueprint.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-NestedUi::NestedUi(State* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint) {
+NestedUi::NestedUi(Panel* parent, const WidgetBlueprint *blueprint) : Widget(parent, blueprint) {
 	const auto& nested_blueprint = std::get<NestedUiBlueprint>(blueprint->variant);
 
 	if (nested_blueprint.inner_w == 0 || blueprint->w < nested_blueprint.inner_w) {
@@ -17,7 +17,7 @@ NestedUi::NestedUi(State* parent, const WidgetBlueprint *blueprint) : Widget(par
 		throw M2_ERROR("Unexpected inner height");
 	}
 
-	_ui = std::make_unique<State>(nested_blueprint.ui);
+	_ui = std::make_unique<Panel>(nested_blueprint.ui);
 }
 
 void NestedUi::on_position_update(const RectI& rect_px_) {

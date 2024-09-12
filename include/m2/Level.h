@@ -22,7 +22,7 @@
 #include "sheet_editor/DynamicImageLoader.h"
 #include "sheet_editor/State.h"
 #include "single_player/State.h"
-#include "ui/State.h"
+#include "ui/Panel.h"
 
 namespace m2 {
 	class Level final {
@@ -56,15 +56,15 @@ namespace m2 {
 		/// Inclusive rectangle that contains all terrain graphics inside
 		[[nodiscard]] const RectI& background_boundary() const { return _background_boundary; }
 
-		// All these UI states operate alongside the game world. They do not block the world simulation.
-		std::optional<ui::State> left_hud_ui_state, right_hud_ui_state;
+		// All these UI panels operate alongside the game world. They do not block the world simulation.
+		std::optional<ui::Panel> left_hud_ui_panel, right_hud_ui_panel;
 		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
 		// If there's an active dialog, all events are delivered to it. World is still simulated, but button and mouse presses won't be delivered to the world objects.
-		std::pair<RectF, std::optional<ui::State>> custom_ui_dialog_state;
+		std::pair<RectF, std::optional<ui::Panel>> custom_ui_dialog_panel;
 		// Non-dialog custom UI only handles the events falling on it, allows through the world events.
-		std::array<std::pair<RectF, std::optional<ui::State>>, 8> custom_ui_state;
+		std::array<std::pair<RectF, std::optional<ui::Panel>>, 8> custom_ui_panel;
 		std::optional<std::string> message;
-		std::optional<ui::State> message_box_ui_state;
+		std::optional<ui::Panel> message_box_ui_panel;
 
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
@@ -119,11 +119,11 @@ namespace m2 {
 		void disable_hud();
 		/// Adds a UI element on to the game screen, above the HUD. The UI doesn't block the game loop and consumes only
 		/// the events meant for itself.
-		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
+		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
 		/// Displays a UI element as a dialog, above the HUD. The UI doesn't block the game loop but consumes all events
 		/// except the time passed event. Mouse movement, button and key presses are not delivered to HUD, other UI
 		/// elements and the game until the display is discarded either by returning or being destroyed.
-		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::Blueprint*, std::unique_ptr<ui::Blueprint>> blueprint);
+		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
 		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
 		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
 		void remove_custom_ui(int index);

@@ -11,10 +11,10 @@ namespace m2g {
 
 		void load_resources();
 
-		const m2::ui::Blueprint* main_menu();
-		const m2::ui::Blueprint* pause_menu();
-		const m2::ui::Blueprint* left_hud();
-		const m2::ui::Blueprint* right_hud();
+		const m2::ui::PanelBlueprint* main_menu();
+		const m2::ui::PanelBlueprint* pause_menu();
+		const m2::ui::PanelBlueprint* left_hud();
+		const m2::ui::PanelBlueprint* right_hud();
 
 		void post_single_player_level_init(const std::string& name, const m2::pb::Level& level);
 		m2::void_expected init_level_blueprint_fg_object(m2::Object& obj);
@@ -30,14 +30,14 @@ namespace m2g {
 		rpg::pb::Progress progress;
 		void save_progress() const;
 
-		m2::ui::Blueprint _main_menu;
-		const m2::ui::Blueprint* generate_main_menu();
+		m2::ui::PanelBlueprint _main_menu;
+		const m2::ui::PanelBlueprint* generate_main_menu();
 
-		m2::ui::Blueprint _right_hud;
-		const m2::ui::Blueprint* generate_right_hud();
+		m2::ui::PanelBlueprint _right_hud;
+		const m2::ui::PanelBlueprint* generate_right_hud();
 		void set_ammo_display_state(bool enabled);
 
-		m2::ui::Blueprint _you_died_menu;
-		const m2::ui::Blueprint* you_died_menu();
+		m2::ui::PanelBlueprint _you_died_menu;
+		const m2::ui::PanelBlueprint* you_died_menu();
 	};
 }

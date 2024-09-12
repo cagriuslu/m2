@@ -4,7 +4,7 @@
 #include <vector>
 
 namespace m2::ui {
-	struct Blueprint {
+	struct PanelBlueprint {
 		int w{1}, h{1}; // unitless
 
 		// Unitless border width. If non-zero, the drawn border is at least 1 pixel. Border is drawn *inside* the Rect

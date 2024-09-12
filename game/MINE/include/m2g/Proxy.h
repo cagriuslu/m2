@@ -8,10 +8,10 @@ namespace m2g {
 		const bool gravity = true;
 		const bool world_is_static = false;
 
-		const m2::ui::Blueprint* main_menu();
-		const m2::ui::Blueprint* pause_menu();
-		const m2::ui::Blueprint* left_hud();
-		const m2::ui::Blueprint* right_hud();
+		const m2::ui::PanelBlueprint* main_menu();
+		const m2::ui::PanelBlueprint* pause_menu();
+		const m2::ui::PanelBlueprint* left_hud();
+		const m2::ui::PanelBlueprint* right_hud();
 
 		void post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type);
 		m2::void_expected init_level_blueprint_fg_object(m2::Object& obj);

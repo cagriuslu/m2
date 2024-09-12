@@ -6,7 +6,7 @@ using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
 
-const m2::ui::Blueprint journey_cancel_button{
+const m2::ui::PanelBlueprint journey_cancel_button{
 	.border_width = 0,
 	.widgets = {
 		WidgetBlueprint{

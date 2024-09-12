@@ -10,7 +10,7 @@ namespace m2::ui::widget {
 		bool _dec_depressed{};
 
 	public:
-		explicit IntegerInput(State* parent, const WidgetBlueprint* blueprint);
+		explicit IntegerInput(Panel* parent, const WidgetBlueprint* blueprint);
 		Action on_event(Events& events) override;
 		Action select(int value);
 		Action on_update() override;

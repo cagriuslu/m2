@@ -6,7 +6,7 @@ namespace m2::ui::widget {
 		float _progress;
 
 	public:
-		explicit ProgressBar(State* parent, const WidgetBlueprint* blueprint);
+		explicit ProgressBar(Panel* parent, const WidgetBlueprint* blueprint);
 		Action on_update() override;
 		void on_draw() override;
 

@@ -6,7 +6,7 @@ namespace m2::ui::widget {
 		SDL_Scancode kb_shortcut;
 		bool depressed;
 
-		explicit AbstractButton(State* parent, const WidgetBlueprint* blueprint);
+		explicit AbstractButton(Panel* parent, const WidgetBlueprint* blueprint);
 		Action on_event(Events& events) final;
 
 		// Modifiers

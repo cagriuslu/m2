@@ -1,5 +1,5 @@
 #pragma once
 
-#include <m2/ui/Blueprint.h>
+#include <m2/ui/PanelBlueprint.h>
 
-extern const m2::ui::Blueprint ip_port_form;
+extern const m2::ui::PanelBlueprint ip_port_form;

@@ -12,8 +12,8 @@ m2::RectF cards_window_ratio() {
 	return m2::RectF{0.30f, 0.10f, 0.4f, 0.8f};
 }
 
-Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
-	return Blueprint{
+PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
+	return PanelBlueprint{
 		.w = 24,
 		.h = 24,
 		.background_color = {0, 0, 0, 255},
@@ -80,7 +80,7 @@ Blueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclud
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
 	LOG_INFO("Asking player to select a card...");
 	std::optional<m2g::pb::ItemType> selected_card;
-	State::create_execute_sync(std::make_unique<Blueprint>(generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2)), M2_GAME.dimensions().game_and_hud.ratio(cards_window_ratio()))
+	Panel::create_execute_sync(std::make_unique<PanelBlueprint>(generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2)), M2_GAME.dimensions().game_and_hud.ratio(cards_window_ratio()))
 		.if_void_return([&]() {
 			LOG_INFO("Card selection cancelled");
 		})

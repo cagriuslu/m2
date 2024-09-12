@@ -10,7 +10,7 @@ m2::RectF market_window_ratio() {
 	return m2::RectF{0.35f, 0.05f, 0.3f, 0.9f};
 }
 
-m2::ui::Blueprint generate_market_window() {
+m2::ui::PanelBlueprint generate_market_window() {
 	return {
 		.w = 34,
 		.h = 78,

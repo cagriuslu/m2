@@ -5,7 +5,7 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-IntegerInput::IntegerInput(State* parent, const WidgetBlueprint* blueprint)
+IntegerInput::IntegerInput(Panel* parent, const WidgetBlueprint* blueprint)
     : Widget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
       _plus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
       _minus_texture(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {

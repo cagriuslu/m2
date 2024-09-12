@@ -13,7 +13,7 @@ namespace {
 	}
 }  // namespace
 
-TextInput::TextInput(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
+TextInput::TextInput(Panel* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
 	const auto& te_blueprint = std::get<TextInputBlueprint>(blueprint->variant);
 	_text_input << te_blueprint.initial_text;
 }

@@ -13,7 +13,7 @@ using namespace m2::ui::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
-const Blueprint right_hud_blueprint = {
+const PanelBlueprint right_hud_blueprint = {
 	.w = 19,
 	.h = 72,
 	.border_width = 0,
@@ -79,7 +79,7 @@ const Blueprint right_hud_blueprint = {
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_ui_dialog(
 						cards_window_ratio(),
-						std::make_unique<Blueprint>(generate_cards_window("Cards")));
+						std::make_unique<PanelBlueprint>(generate_cards_window("Cards")));
 					return make_continue_action();
 				}
 			}
@@ -93,7 +93,7 @@ const Blueprint right_hud_blueprint = {
 				.text = "Tiles",
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_ui_dialog(tiles_window_ratio(), std::make_unique<Blueprint>(generate_tiles_window("Tiles")));
+					M2_LEVEL.add_custom_ui_dialog(tiles_window_ratio(), std::make_unique<PanelBlueprint>(generate_tiles_window("Tiles")));
 					return make_continue_action();
 				}
 			}
@@ -122,7 +122,7 @@ const Blueprint right_hud_blueprint = {
 				.text = "Market",
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_ui_dialog(market_window_ratio(), std::make_unique<Blueprint>(generate_market_window()));
+					M2_LEVEL.add_custom_ui_dialog(market_window_ratio(), std::make_unique<PanelBlueprint>(generate_market_window()));
 					return make_continue_action();
 				}
 			}

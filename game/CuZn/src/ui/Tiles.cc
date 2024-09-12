@@ -3,7 +3,7 @@
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/Widget.h>
-#include <m2/ui/State.h>
+#include <m2/ui/Panel.h>
 #include <m2/Log.h>
 
 using namespace m2;
@@ -14,8 +14,8 @@ m2::RectF tiles_window_ratio() {
 	return m2::RectF{0.05f, 0.05f, 0.9f, 0.9f};
 }
 
-m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
-	return Blueprint{
+m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
+	return PanelBlueprint{
 		.w = 61,
 		.h = 26,
 		.background_color = {0, 0, 0, 255},
@@ -264,7 +264,7 @@ m2::ui::Blueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemTyp
 std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclude_tile) {
 	LOG_INFO("Asking player to select a tile...");
 	std::optional<m2g::pb::ItemType> selected_tile;
-	State::create_execute_sync(std::make_unique<Blueprint>(generate_tiles_window("Select tile to develop", exclude_tile)), M2_GAME.dimensions().game_and_hud.ratio(tiles_window_ratio()))
+	Panel::create_execute_sync(std::make_unique<PanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)), M2_GAME.dimensions().game_and_hud.ratio(tiles_window_ratio()))
 		.if_void_return([&]() {
 			LOG_INFO("Tile selection cancelled");
 		})

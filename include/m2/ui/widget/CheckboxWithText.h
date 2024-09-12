@@ -8,7 +8,7 @@ namespace m2::ui::widget {
 		sdl::FontTexture _font_texture;
 
 	public:
-		explicit CheckboxWithText(State* parent, const WidgetBlueprint* blueprint);
+		explicit CheckboxWithText(Panel* parent, const WidgetBlueprint* blueprint);
 		void on_draw() override;
 
 		// Accessors

@@ -2,23 +2,23 @@
 #include "Widget.h"
 
 namespace m2::ui {
-	struct State {
+	struct Panel {
 	private:
 		bool _prev_text_input_state{};
 		sdl::TextureUniquePtr _background_texture;
-		std::unique_ptr<Blueprint> _managed_blueprint; // blueprint will point here if this object exists
+		std::unique_ptr<PanelBlueprint> _managed_blueprint; // blueprint will point here if this object exists
 
 	public:
 		bool enabled{true};
-		const Blueprint* blueprint{};
+		const PanelBlueprint* blueprint{};
 		RectI rect_px{};
 		std::vector<std::unique_ptr<Widget>> widgets;
 
-		State() = default;
-		explicit State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, sdl::TextureUniquePtr background_texture = {});
-		static Action create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint);
-		static Action create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, RectI rect, sdl::TextureUniquePtr background_texture = {});
-		~State();
+		Panel() = default;
+		explicit Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint, sdl::TextureUniquePtr background_texture = {});
+		static Action create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint);
+		static Action create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint, RectI rect, sdl::TextureUniquePtr background_texture = {});
+		~Panel();
 
 		Action execute(RectI rect);
         void update_positions(const RectI& rect);
@@ -73,8 +73,8 @@ namespace m2::ui {
 
 	// Helpers
 	RectI calculate_widget_rect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
-	Widget* find_text_widget(State& state, const std::string& text);
+	Widget* find_text_widget(Panel& state, const std::string& text);
 
-	extern Blueprint console_ui;
-	extern const Blueprint message_box_ui;
+	extern PanelBlueprint console_ui;
+	extern const PanelBlueprint message_box_ui;
 }

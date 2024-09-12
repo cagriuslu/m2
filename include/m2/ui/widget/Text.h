@@ -13,7 +13,7 @@ namespace m2::ui::widget {
 		RGB _color_override;
 
 	public:
-		explicit Text(State* parent, const WidgetBlueprint* blueprint);
+		explicit Text(Panel* parent, const WidgetBlueprint* blueprint);
 		Action on_update() override;
 		void on_draw() override;
 

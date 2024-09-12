@@ -9,7 +9,7 @@ namespace m2::ui::widget {
 		sdl::FontTexture _font_texture;
 
 	public:
-		explicit TextInput(State* parent, const WidgetBlueprint* blueprint);
+		explicit TextInput(Panel* parent, const WidgetBlueprint* blueprint);
 		Action on_event(Events& events) override;
 		void on_focus_change() override;
 		Action on_update() override;

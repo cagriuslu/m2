@@ -4,8 +4,8 @@
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/Ui.h>
-#include <m2/ui/Blueprint.h>
-#include <m2/ui/State.h>
+#include <m2/ui/PanelBlueprint.h>
+#include <m2/ui/Panel.h>
 #include <m2/ui/WidgetBlueprint.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/Hidden.h>
@@ -68,7 +68,7 @@ namespace {
 			auto load_result = M2_GAME.load_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
-				auto main_menu_result = State::create_execute_sync(&m2::ui::sheet_editor_main_menu);
+				auto main_menu_result = Panel::create_execute_sync(&m2::ui::sheet_editor_main_menu);
 				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
@@ -77,7 +77,7 @@ namespace {
 			auto load_result = M2_GAME.load_bulk_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
-				auto main_menu_result = State::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
+				auto main_menu_result = Panel::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
 				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
@@ -116,12 +116,12 @@ namespace {
 	}
 }  // namespace
 
-State::State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> bp, sdl::TextureUniquePtr background_texture)
+Panel::Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> bp, sdl::TextureUniquePtr background_texture)
 	: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
-	if (std::holds_alternative<const Blueprint*>(bp)) {
-		blueprint = std::get<const Blueprint*>(bp);
+	if (std::holds_alternative<const PanelBlueprint*>(bp)) {
+		blueprint = std::get<const PanelBlueprint*>(bp);
 	} else {
-		_managed_blueprint = std::move(std::get<std::unique_ptr<Blueprint>>(bp));
+		_managed_blueprint = std::move(std::get<std::unique_ptr<PanelBlueprint>>(bp));
 		blueprint = _managed_blueprint.get();
 	}
 
@@ -138,22 +138,22 @@ State::State(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> bp, sdl:
 	}
 }
 
-Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint) {
+Action Panel::create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint) {
 	return create_execute_sync(std::move(blueprint), M2_GAME.dimensions().window);
 }
 
-Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr<Blueprint>> blueprint, const RectI rect, sdl::TextureUniquePtr background_texture) {
+Action Panel::create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint, const RectI rect, sdl::TextureUniquePtr background_texture) {
 	// Check if there are other blocking UIs
 	if (M2_GAME.ui_begin_ticks) {
-		// Execute state without keeping time
-		State state{std::move(blueprint)};
-		return state.execute(rect);
+		// Execute panel without keeping time
+		Panel panel{std::move(blueprint)};
+		return panel.execute(rect);
 	} else {
 		// Save begin ticks for later and other nested UIs
 		M2_GAME.ui_begin_ticks = sdl::get_ticks();
-		// Execute state
-		State state{std::move(blueprint), std::move(background_texture)};
-		auto action = state.execute(rect);
+		// Execute panel
+		Panel panel{std::move(blueprint), std::move(background_texture)};
+		auto action = panel.execute(rect);
 		// Add pause ticks
 		M2_GAME.add_pause_ticks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
 		M2_GAME.ui_begin_ticks.reset();
@@ -161,7 +161,7 @@ Action State::create_execute_sync(std::variant<const Blueprint*, std::unique_ptr
 	}
 }
 
-State::~State() {
+Panel::~Panel() {
 	clear_focus();
 
 	if (_prev_text_input_state) {
@@ -171,7 +171,7 @@ State::~State() {
 	}
 }
 
-Action State::execute(const RectI rect) {
+Action Panel::execute(const RectI rect) {
 	LOG_DEBUG("Executing UI");
 
 	// Save relation to window, use in case of resize
@@ -269,7 +269,7 @@ Action State::execute(const RectI rect) {
 	}
 }
 
-void State::update_positions(const RectI &rect) {
+void Panel::update_positions(const RectI &rect) {
 	this->rect_px = rect;
 	for (const auto &widget_state : widgets) {
 		auto widget_rect = calculate_widget_rect(
@@ -279,8 +279,8 @@ void State::update_positions(const RectI &rect) {
 	}
 }
 
-Action State::handle_events(Events& events) {
-	// Return if State not enabled
+Action Panel::handle_events(Events& events) {
+	// Return if Panel not enabled
 	if (!enabled) {
 		return make_continue_action();
 	}
@@ -310,8 +310,8 @@ Action State::handle_events(Events& events) {
 	return make_continue_action();
 }
 
-Action State::update_contents() {
-	// Return if State not enabled
+Action Panel::update_contents() {
+	// Return if Panel not enabled
 	if (!enabled) {
 		return make_continue_action();
 	}
@@ -326,8 +326,8 @@ Action State::update_contents() {
 	return make_continue_action();
 }
 
-void State::draw() {
-	// Return if State not enabled
+void Panel::draw() {
+	// Return if Panel not enabled
 	if (!enabled) {
 		return;
 	}
@@ -337,7 +337,7 @@ void State::draw() {
 	Widget::draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
 }
 
-int State::vertical_border_width_px() const {
+int Panel::vertical_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
@@ -347,7 +347,7 @@ int State::vertical_border_width_px() const {
 	}
 }
 
-int State::horizontal_border_width_px() const {
+int Panel::horizontal_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
@@ -357,7 +357,7 @@ int State::horizontal_border_width_px() const {
 	}
 }
 
-std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget_blueprint) {
+std::unique_ptr<Widget> Panel::create_widget_state(const WidgetBlueprint &widget_blueprint) {
 	std::unique_ptr<Widget> state;
 
 	using namespace m2::ui::widget;
@@ -388,7 +388,7 @@ std::unique_ptr<Widget> State::create_widget_state(const WidgetBlueprint &widget
 	return state;
 }
 
-void State::set_widget_focus_state(Widget &w, const bool state) {
+void Panel::set_widget_focus_state(Widget &w, const bool state) {
 	if (state) {
 		if (!w.focused) {
 			// Clear existing focus
@@ -406,7 +406,7 @@ void State::set_widget_focus_state(Widget &w, const bool state) {
 	}
 }
 
-void State::clear_focus() {
+void Panel::clear_focus() {
 	// Check if there's an already focused widget
 	std::ranges::for_each(
 	    widgets | std::views::filter(is_widget_focused), [&](const auto &it) { set_widget_focus_state(*it, false); });
@@ -424,7 +424,7 @@ RectI ui::calculate_widget_rect(
 	    static_cast<int>(roundf(static_cast<float>(child_h) * pixels_per_unit_h))};
 }
 
-m2::ui::Widget *m2::ui::find_text_widget(State &state, const std::string &text) {
+m2::ui::Widget *m2::ui::find_text_widget(Panel &state, const std::string &text) {
 	const auto it = std::ranges::find_if(
 	    state.widgets,
 	    // Predicate
@@ -452,7 +452,7 @@ widget::TextBlueprint command_output_variant() {
 	    }};
 }
 
-Blueprint m2::ui::console_ui = {
+PanelBlueprint m2::ui::console_ui = {
     .w = 1,
     .h = 25,
     .border_width = 0,
@@ -520,7 +520,7 @@ Blueprint m2::ui::console_ui = {
 	                return std::make_pair(handle_console_command(command), std::string{});
                 }}}}};
 
-const Blueprint m2::ui::message_box_ui = {
+const PanelBlueprint m2::ui::message_box_ui = {
     .w = 1,
     .h = 1,
     .border_width = 0,

@@ -23,13 +23,13 @@
 #include <algorithm>
 #include <numeric>
 
-const m2::ui::Blueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
+const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
-const m2::ui::Blueprint* m2g::Proxy::pause_menu() { return &pause_menu_blueprint; }
+const m2::ui::PanelBlueprint* m2g::Proxy::pause_menu() { return &pause_menu_blueprint; }
 
-const m2::ui::Blueprint* m2g::Proxy::left_hud() { return &left_hud_blueprint; }
+const m2::ui::PanelBlueprint* m2g::Proxy::left_hud() { return &left_hud_blueprint; }
 
-const m2::ui::Blueprint* m2g::Proxy::right_hud() { return &right_hud_blueprint; }
+const m2::ui::PanelBlueprint* m2g::Proxy::right_hud() { return &right_hud_blueprint; }
 
 void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();
@@ -532,14 +532,14 @@ namespace {
 
 void m2g::Proxy::enable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.left_hud_ui_state->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
+		auto* button = M2_LEVEL.left_hud_ui_panel->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
 		button->enabled = true;
 	}
 }
 
 void m2g::Proxy::disable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.left_hud_ui_state->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
+		auto* button = M2_LEVEL.left_hud_ui_panel->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
 		button->enabled = false;
 	}
 }

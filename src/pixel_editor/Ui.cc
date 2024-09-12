@@ -57,7 +57,7 @@ const widget::TextBlueprint pixel_editor_left_hud_save_button = {
 			return make_continue_action();
 		}
 };
-const Blueprint m2::ui::pixel_editor_left_hud = {
+const PanelBlueprint m2::ui::pixel_editor_left_hud = {
 		.w = 19, .h = 72,
 		.widgets = {
 				WidgetBlueprint{
@@ -151,7 +151,7 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_alpha_selection = {
 			return make_continue_action();
 		}
 };
-const Blueprint m2::ui::pixel_editor_right_hud = {
+const PanelBlueprint m2::ui::pixel_editor_right_hud = {
 		.w = 19, .h = 72,
 		.widgets = {
 				WidgetBlueprint{

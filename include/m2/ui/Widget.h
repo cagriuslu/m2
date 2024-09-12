@@ -11,12 +11,12 @@
 
 namespace m2::ui {
 	// Forward declaration
-	struct State;
+	struct Panel;
 
 	// Base class of all widgets instances
 	struct Widget {
 	   private:
-		State* _parent;
+		Panel* _parent;
 
 	   public:
 		bool enabled{true};
@@ -25,7 +25,7 @@ namespace m2::ui {
 		const WidgetBlueprint* blueprint;
 		RectI rect_px{};
 
-		Widget(State* parent, const WidgetBlueprint* blueprint)
+		Widget(Panel* parent, const WidgetBlueprint* blueprint)
 		    : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
 		virtual ~Widget() = default;
 
@@ -35,7 +35,7 @@ namespace m2::ui {
 		virtual Action on_update() { return make_continue_action(); }
 		virtual void on_draw() {}
 
-		[[nodiscard]] State& parent() const { return *_parent; }
+		[[nodiscard]] Panel& parent() const { return *_parent; }
 
 	   protected:
 		// Utilities for child classes to use
@@ -57,7 +57,7 @@ namespace m2::ui {
 		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);
 		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 
-		// Allow State to use the utilities
-		friend struct State;
+		// Allow Panel to use the utilities
+		friend struct Panel;
 	};
 }  // namespace m2::ui

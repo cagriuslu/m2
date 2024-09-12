@@ -2,11 +2,11 @@
 
 namespace m2::ui {
 	// Forward declaration
-	struct Blueprint;
+	struct PanelBlueprint;
 
 	namespace widget {
 		struct NestedUiBlueprint {
-			const Blueprint* ui{};
+			const PanelBlueprint* ui{};
 			int inner_w{}, inner_h{}; // Zero means nested UI should fit the available space
 		};
 	}

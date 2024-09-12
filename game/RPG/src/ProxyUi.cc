@@ -20,7 +20,7 @@ static widget::TextBlueprint quit_button = {
 			return make_quit_action();
 		}
 };
-const Blueprint pause_menu_blueprint = {
+const PanelBlueprint pause_menu_blueprint = {
 		.w = 160, .h = 90,
 		.border_width = 0,
 		.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
@@ -68,7 +68,7 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 			return 0.0f;
 		}
 };
-const Blueprint left_hud_blueprint = {
+const PanelBlueprint left_hud_blueprint = {
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -93,18 +93,18 @@ const Blueprint left_hud_blueprint = {
 		}
 };
 
-const m2::ui::Blueprint* m2g::Proxy::main_menu() {
+const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() {
 	return M2G_PROXY.generate_main_menu();
 }
 
-const m2::ui::Blueprint* m2g::Proxy::pause_menu() {
+const m2::ui::PanelBlueprint* m2g::Proxy::pause_menu() {
 	return &pause_menu_blueprint;
 }
 
-const m2::ui::Blueprint* m2g::Proxy::left_hud() {
+const m2::ui::PanelBlueprint* m2g::Proxy::left_hud() {
 	return &left_hud_blueprint;
 }
 
-const m2::ui::Blueprint* m2g::Proxy::right_hud() {
+const m2::ui::PanelBlueprint* m2g::Proxy::right_hud() {
 	return M2G_PROXY.generate_right_hud();
 }

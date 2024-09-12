@@ -126,7 +126,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		// Check if died
 		if (not chr.has_resource(m2g::pb::RESOURCE_HP)) {
 			LOG_INFO("You died");
-			if (m2::ui::State::create_execute_sync(M2G_PROXY.you_died_menu()).is_quit()) {
+			if (m2::ui::Panel::create_execute_sync(M2G_PROXY.you_died_menu()).is_quit()) {
 				M2_GAME.quit = true;
 			}
 		}

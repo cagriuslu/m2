@@ -7,7 +7,7 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-AbstractButton::AbstractButton(State* parent, const WidgetBlueprint *blueprint) :
+AbstractButton::AbstractButton(Panel* parent, const WidgetBlueprint *blueprint) :
 		Widget(parent, blueprint),
 		kb_shortcut(
 				std::visit(overloaded {

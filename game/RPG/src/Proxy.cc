@@ -105,8 +105,8 @@ void m2g::Proxy::save_progress() const {
 	m2::pb::message_to_json_file(progress, progress_file_path);
 }
 
-const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
-	_main_menu = m2::ui::Blueprint{
+const m2::ui::PanelBlueprint* m2g::Proxy::generate_main_menu() {
+	_main_menu = m2::ui::PanelBlueprint{
 	    .w = 160, .h = 90,
 	    .border_width = 0,
 	    .background_color = SDL_Color{20, 20, 20, 255}
@@ -160,8 +160,8 @@ const m2::ui::Blueprint* m2g::Proxy::generate_main_menu() {
 	return &_main_menu;
 }
 
-const m2::ui::Blueprint* m2g::Proxy::generate_right_hud() {
-	_right_hud = m2::ui::Blueprint{
+const m2::ui::PanelBlueprint* m2g::Proxy::generate_right_hud() {
+	_right_hud = m2::ui::PanelBlueprint{
 	    .w = 19, .h = 72,
 	    .background_color = {0, 0, 0, 255},
 		.widgets = {}
@@ -200,12 +200,12 @@ const m2::ui::Blueprint* m2g::Proxy::generate_right_hud() {
 }
 
 void m2g::Proxy::set_ammo_display_state(bool enabled) {
-	M2_LEVEL.right_hud_ui_state->widgets[0]->enabled = enabled;
-	M2_LEVEL.right_hud_ui_state->widgets[1]->enabled = enabled;
+	M2_LEVEL.right_hud_ui_panel->widgets[0]->enabled = enabled;
+	M2_LEVEL.right_hud_ui_panel->widgets[1]->enabled = enabled;
 }
 
-const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
-	_you_died_menu = m2::ui::Blueprint{
+const m2::ui::PanelBlueprint* m2g::Proxy::you_died_menu() {
+	_you_died_menu = m2::ui::PanelBlueprint{
 	    .w = 160, .h = 90,
 	    .border_width = 0,
 	    .background_color = SDL_Color{127, 0, 0, 127}
@@ -231,7 +231,7 @@ const m2::ui::Blueprint* m2g::Proxy::you_died_menu() {
 	    .variant = m2::ui::widget::TextBlueprint{
 	        .text = "Main Menu",
 	        .on_action = [&](MAYBE const m2::ui::widget::Text &self) {
-		        return m2::ui::State::create_execute_sync(&_main_menu);
+		        return m2::ui::Panel::create_execute_sync(&_main_menu);
 	        }
 	    }
 	});

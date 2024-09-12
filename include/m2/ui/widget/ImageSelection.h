@@ -12,7 +12,7 @@ namespace m2::ui::widget {
 		bool _dec_depressed{};
 
 	public:
-		explicit ImageSelection(State* parent, const WidgetBlueprint* blueprint);
+		explicit ImageSelection(Panel* parent, const WidgetBlueprint* blueprint);
 		Action on_event(Events& events) override;
 		Action select(unsigned index);
 		void on_draw() override;

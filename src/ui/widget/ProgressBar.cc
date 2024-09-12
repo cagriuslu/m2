@@ -4,7 +4,7 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-ProgressBar::ProgressBar(State* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint), _progress(std::get<ProgressBarBlueprint>(blueprint->variant).initial_progress) {}
+ProgressBar::ProgressBar(Panel* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint), _progress(std::get<ProgressBarBlueprint>(blueprint->variant).initial_progress) {}
 
 Action ProgressBar::on_update() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);

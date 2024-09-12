@@ -1,9 +1,9 @@
 #pragma once
 #include <m2/game/Fsm.h>
 #include <m2/VecF.h>
-#include <m2/ui/Blueprint.h>
+#include <m2/ui/PanelBlueprint.h>
 
-extern const m2::ui::Blueprint journey_cancel_button;
+extern const m2::ui::PanelBlueprint journey_cancel_button;
 constexpr int JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX = 0;
 
 // Used by various Journey state machines to carry mouse click position, or cancel button press.

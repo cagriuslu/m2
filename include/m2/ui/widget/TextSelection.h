@@ -17,7 +17,7 @@ namespace m2::ui::widget {
 		sdl::FontTexture _up_arrow_texture, _down_arrow_texture;
 
 	public:
-		explicit TextSelection(State* parent, const WidgetBlueprint* blueprint);
+		explicit TextSelection(Panel* parent, const WidgetBlueprint* blueprint);
 		Action on_update() override;
 		Action on_event(Events& events) override;
 		void on_draw() override;

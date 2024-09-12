@@ -5,7 +5,7 @@
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-Text::Text(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
+Text::Text(Panel* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
 	_string_cache_or_font_texture(text_blueprint().text), _color_override(text_blueprint().color) {
 	if (text_blueprint().on_create) {
 		text_blueprint().on_create(*this);

@@ -99,7 +99,7 @@ namespace {
 	};
 }
 
-const Blueprint left_hud_blueprint = {
+const PanelBlueprint left_hud_blueprint = {
 	.w = 19,
 	.h = 72,
 	.border_width = 0,

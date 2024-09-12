@@ -11,7 +11,7 @@ namespace {
 	}
 }
 
-Image::Image(State* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint) {
+Image::Image(Panel* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint) {
 	_sprite = std::make_pair(image_blueprint().initial_sprite, lookup_sprite(image_blueprint().initial_sprite));
 
 	if (image_blueprint().on_create) {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <m2/ui/Blueprint.h>
+#include <m2/ui/PanelBlueprint.h>
 #include <m2/ui/widget/Text.h>
 
 constexpr auto quit_button_action = [](MAYBE const m2::ui::widget::Text& self) { return m2::ui::make_quit_action(); };

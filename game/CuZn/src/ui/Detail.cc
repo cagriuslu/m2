@@ -14,7 +14,7 @@ using namespace m2::ui::widget;
 std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2) {
 	LOG_INFO("Asking player to select an industry...");
 
-	auto blueprint = Blueprint{
+	auto blueprint = PanelBlueprint{
 		.w = 60, .h = 40,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -49,8 +49,8 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 	};
 
 	std::optional<m2g::pb::ItemType> selected_industry;
-	m2::ui::State::create_execute_sync(
-		std::make_unique<m2::ui::Blueprint>(blueprint),
+	m2::ui::Panel::create_execute_sync(
+		std::make_unique<m2::ui::PanelBlueprint>(blueprint),
 		M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
 		.if_void_return([&]() {
 			LOG_INFO("Industry selection cancelled");
@@ -63,7 +63,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 }
 
 bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text) {
-	auto blueprint = Blueprint{
+	auto blueprint = PanelBlueprint{
 		.w = 60, .h = 40,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -105,13 +105,13 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 	};
 
 	bool selection;
-	State::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+	Panel::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }
 
 bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::sdl::TextureUniquePtr background_texture) {
-	auto blueprint = Blueprint{
+	auto blueprint = PanelBlueprint{
 		.w = 44, .h = 12,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -145,13 +145,13 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	}; // 1 + 32 + 1 + 4 + 1 + 4 + 1
 
 	bool selection;
-	State::create_execute_sync(&blueprint, M2_GAME.dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
+	Panel::create_execute_sync(&blueprint, M2_GAME.dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }
 
 void display_blocking_message(const std::string& message) {
-	auto blueprint = Blueprint{
+	auto blueprint = PanelBlueprint{
 		.w = 60, .h = 40,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -177,7 +177,7 @@ void display_blocking_message(const std::string& message) {
 		}
 	};
 
-	State::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}));
+	Panel::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}));
 }
 
 m2::RGB generate_player_color(unsigned index) {
