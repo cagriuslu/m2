@@ -56,12 +56,11 @@ namespace m2 {
 		/// Inclusive rectangle that contains all terrain graphics inside
 		[[nodiscard]] const RectI& background_boundary() const { return _background_boundary; }
 
-		// All these UI panels operate alongside the game world. They do not block the world simulation.
 		std::optional<ui::Panel> left_hud_ui_panel, right_hud_ui_panel;
 		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
-		// If there's an active dialog, all events are delivered to it. World is still simulated, but button and mouse presses won't be delivered to the world objects.
-		std::pair<RectF, std::optional<ui::Panel>> custom_ui_dialog_panel;
-		// Non-dialog custom UI only handles the events falling on it, allows through the world events.
+		// If there's an active blocking panel, all events are delivered to it. World is still simulated, but button and mouse presses won't be delivered to the world objects.
+		std::pair<RectF, std::optional<ui::Panel>> custom_blocking_ui_panel;
+		// Non-blocking custom UI only handles the events falling on it, allows through the world events.
 		std::array<std::pair<RectF, std::optional<ui::Panel>>, 8> custom_ui_panel;
 		std::optional<std::string> message;
 		std::optional<ui::Panel> message_box_ui_panel;
@@ -120,18 +119,18 @@ namespace m2 {
 		/// Adds a UI element on to the game screen, above the HUD. The UI doesn't block the game loop and consumes only
 		/// the events meant for itself.
 		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
-		/// Displays a UI element as a dialog, above the HUD. The UI doesn't block the game loop but consumes all events
+		/// Displays a UI element as a blocking panel, above the HUD. The UI doesn't block the game loop but consumes all events
 		/// except the time passed event. Mouse movement, button and key presses are not delivered to HUD, other UI
 		/// elements and the game until the display is discarded either by returning or being destroyed.
-		void add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
+		void add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
 		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
 		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
 		void remove_custom_ui(int index);
 		/// Removes the custom UI at next step. Can be called from anywhere, but BEWARE, if any other custom UI is added
 		/// before the current step completes, that'll be removed as well.
 		void remove_custom_ui_deferred(int index);
-		void remove_custom_ui_dialog(); // Should not be called from the custom UI itself
-		void remove_custom_ui_dialog_deferred(); // Can be called from the custom UI itself
+		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
+		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
 		/// If `timeout` is negative, the timeout is disabled and the message is displayed forever.
 		/// Else, the message is dismissed after `timeout` seconds.
 		void display_message(const std::string& msg, float timeout = 5.0f);

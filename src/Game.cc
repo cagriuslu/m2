@@ -245,14 +245,14 @@ void m2::Game::handle_menu_event() {
 }
 
 void m2::Game::handle_hud_events() {
-	if (_level->custom_ui_dialog_panel.second) {
-		_level->custom_ui_dialog_panel.second->handle_events(events)
+	if (_level->custom_blocking_ui_panel.second) {
+		_level->custom_blocking_ui_panel.second->handle_events(events)
 			.if_any_return([this]() {
-				// If the dialog returned, remove the state
-				_level->custom_ui_dialog_panel.second.reset();
+				// If the blocking panel returned, remove the state
+				_level->custom_blocking_ui_panel.second.reset();
 			});
 		// TODO handle quit
-		// If there's a UI dialog, no events will be delivered to rest of the UI states and the game world
+		// If there's a blocking UI panel, no events will be delivered to rest of the UI states and the game world
 		events.clear();
 		// handle_events of others are executed regardless, because there may be timing related actions
 	}
@@ -392,7 +392,7 @@ void m2::Game::update_hud_contents() {
 	for (auto& custom_ui : _level->custom_ui_panel) {
 		IF(custom_ui.second)->update_contents();
 	}
-	IF(_level->custom_ui_dialog_panel.second)->update_contents();
+	IF(_level->custom_blocking_ui_panel.second)->update_contents();
 }
 
 void m2::Game::clear_back_buffer() const {
@@ -493,7 +493,7 @@ void m2::Game::draw_hud() {
 	for (auto& custom_ui : _level->custom_ui_panel) {
 		IF(custom_ui.second)->draw();
 	}
-	IF(_level->custom_ui_dialog_panel.second)->draw();
+	IF(_level->custom_blocking_ui_panel.second)->draw();
 }
 
 void m2::Game::draw_envelopes() const {
@@ -526,7 +526,7 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 		for (auto& custom_ui : _level->custom_ui_panel) {
 			IF (custom_ui.second)->update_positions(_dims.game_and_hud.ratio(custom_ui.first));
 		}
-		IF (_level->custom_ui_dialog_panel.second)->update_positions(_dims.game_and_hud.ratio(_level->custom_ui_dialog_panel.first));
+		IF (_level->custom_blocking_ui_panel.second)->update_positions(_dims.game_and_hud.ratio(_level->custom_blocking_ui_panel.first));
 	}
 }
 

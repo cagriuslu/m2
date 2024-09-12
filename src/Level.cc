@@ -306,10 +306,10 @@ void m2::Level::add_custom_ui(int index, m2::RectF position_ratio, std::variant<
 	custom_ui_panel[index].second.emplace(std::move(blueprint));
 	custom_ui_panel[index].second->update_positions(M2_GAME.dimensions().game_and_hud.ratio(position_ratio));
 }
-void m2::Level::add_custom_ui_dialog(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint) {
-	custom_ui_dialog_panel.first = position_ratio;
-	custom_ui_dialog_panel.second.emplace(std::move(blueprint));
-	custom_ui_dialog_panel.second->update_positions(M2_GAME.dimensions().game_and_hud.ratio(position_ratio));
+void m2::Level::add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint) {
+	custom_blocking_ui_panel.first = position_ratio;
+	custom_blocking_ui_panel.second.emplace(std::move(blueprint));
+	custom_blocking_ui_panel.second->update_positions(M2_GAME.dimensions().game_and_hud.ratio(position_ratio));
 }
 void m2::Level::remove_custom_ui(int index) {
 	custom_ui_panel[index].second.reset();
@@ -317,11 +317,11 @@ void m2::Level::remove_custom_ui(int index) {
 void m2::Level::remove_custom_ui_deferred(int index) {
 	M2_DEFER(([this,index]() { this->remove_custom_ui(index); }));
 }
-void m2::Level::remove_custom_ui_dialog() {
-	custom_ui_dialog_panel.second.reset();
+void m2::Level::remove_custom_blocking_ui_panel() {
+	custom_blocking_ui_panel.second.reset();
 }
-void m2::Level::remove_custom_ui_dialog_deferred() {
-	M2_DEFER([this]() { this->remove_custom_ui_dialog(); });
+void m2::Level::remove_custom_blocking_ui_panel_deferred() {
+	M2_DEFER([this]() { this->remove_custom_blocking_ui_panel(); });
 }
 void m2::Level::display_message(const std::string& msg, float timeout) {
 	message = msg;

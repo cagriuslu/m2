@@ -77,7 +77,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.text = "Cards",
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_ui_dialog(
+					M2_LEVEL.add_custom_blocking_ui_panel(
 						cards_window_ratio(),
 						std::make_unique<PanelBlueprint>(generate_cards_window("Cards")));
 					return make_continue_action();
@@ -93,7 +93,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.text = "Tiles",
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_ui_dialog(tiles_window_ratio(), std::make_unique<PanelBlueprint>(generate_tiles_window("Tiles")));
+					M2_LEVEL.add_custom_blocking_ui_panel(tiles_window_ratio(), std::make_unique<PanelBlueprint>(generate_tiles_window("Tiles")));
 					return make_continue_action();
 				}
 			}
@@ -122,7 +122,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.text = "Market",
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_ui_dialog(market_window_ratio(), std::make_unique<PanelBlueprint>(generate_market_window()));
+					M2_LEVEL.add_custom_blocking_ui_panel(market_window_ratio(), std::make_unique<PanelBlueprint>(generate_market_window()));
 					return make_continue_action();
 				}
 			}
