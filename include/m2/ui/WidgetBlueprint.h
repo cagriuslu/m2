@@ -4,7 +4,6 @@
 #include "widget/HiddenBlueprint.h"
 #include "widget/ImageSelectionBlueprint.h"
 #include "widget/IntegerInputBlueprint.h"
-#include "widget/NestedUiBlueprint.h"
 #include "widget/ProgressBarBlueprint.h"
 #include "widget/TextBlueprint.h"
 #include "widget/TextInputBlueprint.h"
@@ -28,7 +27,6 @@ namespace m2::ui {
 		SDL_Color background_color{};
 
 		using Variant = std::variant<
-				widget::NestedUiBlueprint,
 				widget::HiddenBlueprint,
 				widget::ImageBlueprint,
 				widget::TextBlueprint,

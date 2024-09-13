@@ -22,7 +22,7 @@ const PanelBlueprint main_menu_blueprint = {
 			.border_width = 1.0f,
 			.variant = TextBlueprint{
 				.text = "JOIN", .on_action = [](MAYBE const widget::Text& self) {
-					return m2::ui::Panel::create_execute_sync(&ip_port_form);
+					return m2::ui::Panel::create_and_run_blocking(&ip_port_form);
 				}
 			}
 		},
@@ -32,7 +32,7 @@ const PanelBlueprint main_menu_blueprint = {
 			.variant = TextBlueprint{
 				.text = "HOST", .on_action = [](MAYBE const widget::Text& self) {
 					M2_GAME.host_game(m2::mplayer::Type::TurnBased, 4);
-					return m2::ui::Panel::create_execute_sync(&server_lobby);
+					return m2::ui::Panel::create_and_run_blocking(&server_lobby);
 				}
 			}
 		},

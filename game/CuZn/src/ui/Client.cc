@@ -93,7 +93,7 @@ const PanelBlueprint ip_port_form = {
 				.text = "CONNECT", .on_action = [](MAYBE const widget::Text& self) {
 					auto* ip_input_widget = self.parent().find_first_widget_of_type<TextInput>();
 					M2_GAME.join_game(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());
-					return m2::ui::Panel::create_execute_sync(&client_lobby);
+					return m2::ui::Panel::create_and_run_blocking(&client_lobby);
 				}
 			}
 		}

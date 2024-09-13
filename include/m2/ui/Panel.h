@@ -1,27 +1,45 @@
 #pragma once
+#include "PanelBlueprint.h"
 #include "Widget.h"
+#include "../RectI.h"
+#include "../RectF.h"
 
 namespace m2::ui {
 	struct Panel {
 	private:
 		bool _prev_text_input_state{};
-		sdl::TextureUniquePtr _background_texture;
-		std::unique_ptr<PanelBlueprint> _managed_blueprint; // blueprint will point here if this object exists
+		std::unique_ptr<PanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
+		RectF _relation_to_game_and_hud_dims;
+		sdl::TextureUniquePtr _background_texture; // TODO if the screen is resized, background looks bad
 
+		// Modifiers
+		Action run_blocking();
 	public:
 		bool enabled{true};
 		const PanelBlueprint* blueprint{};
-		RectI rect_px{};
 		std::vector<std::unique_ptr<Widget>> widgets;
 
 		Panel() = default;
-		explicit Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint, sdl::TextureUniquePtr background_texture = {});
-		static Action create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint);
-		static Action create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint, RectI rect, sdl::TextureUniquePtr background_texture = {});
+		explicit Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+			std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
+			sdl::TextureUniquePtr background_texture = {});
+		static Action create_and_run_blocking(
+			std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+			std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
+			sdl::TextureUniquePtr background_texture = {});
+		// Copy not allowed
+		Panel(const Panel& other) = delete;
+		Panel& operator=(const Panel& other) = delete;
+		// Move is allowed
+		Panel(Panel&& other) noexcept = default;
+		Panel& operator=(Panel&& other) noexcept = default;
 		~Panel();
 
-		Action execute(RectI rect);
-        void update_positions(const RectI& rect);
+		// Accessors
+		[[nodiscard]] RectI rect_px() const;
+
+		// Modifiers
+        void update_positions();
         Action handle_events(Events& events);
         Action update_contents();
         void draw();

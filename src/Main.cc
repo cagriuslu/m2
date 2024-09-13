@@ -70,7 +70,7 @@ int main(const int argc, char **argv) {
 	M2_GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
 	LOG_DEBUG("Executing main menu...");
-	if (m2::ui::Panel::create_execute_sync(M2G_PROXY.main_menu()).is_quit()) {
+	if (m2::ui::Panel::create_and_run_blocking(M2G_PROXY.main_menu()).is_quit()) {
 		LOG_INFO("Main menu returned QUIT");
 		return 0;
 	}

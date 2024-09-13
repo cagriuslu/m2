@@ -12,7 +12,6 @@
 #include <m2/ui/widget/Image.h>
 #include <m2/ui/widget/ImageSelection.h>
 #include <m2/ui/widget/IntegerInput.h>
-#include <m2/ui/widget/NestedUi.h>
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
@@ -68,7 +67,7 @@ namespace {
 			auto load_result = M2_GAME.load_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
-				auto main_menu_result = Panel::create_execute_sync(&m2::ui::sheet_editor_main_menu);
+				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::sheet_editor_main_menu);
 				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
@@ -77,7 +76,7 @@ namespace {
 			auto load_result = M2_GAME.load_bulk_sheet_editor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
-				auto main_menu_result = Panel::create_execute_sync(&m2::ui::bulk_sheet_editor_main_menu);
+				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::bulk_sheet_editor_main_menu);
 				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
@@ -116,79 +115,13 @@ namespace {
 	}
 }  // namespace
 
-Panel::Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> bp, sdl::TextureUniquePtr background_texture)
-	: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
-	if (std::holds_alternative<const PanelBlueprint*>(bp)) {
-		blueprint = std::get<const PanelBlueprint*>(bp);
-	} else {
-		_managed_blueprint = std::move(std::get<std::unique_ptr<PanelBlueprint>>(bp));
-		blueprint = _managed_blueprint.get();
-	}
-
-	// Previous text input state is saved, not disable it to start with a clean slate
-	SDL_StopTextInput();
-
-	for (const auto &widget_blueprint : blueprint->widgets) {
-		// Create widget
-		widgets.push_back(create_widget_state(widget_blueprint));
-		// Check if focus is requested
-		if (widget_blueprint.initially_focused) {
-			set_widget_focus_state(*widgets.back(), true);
-		}
-	}
-}
-
-Action Panel::create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint) {
-	return create_execute_sync(std::move(blueprint), M2_GAME.dimensions().window);
-}
-
-Action Panel::create_execute_sync(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> blueprint, const RectI rect, sdl::TextureUniquePtr background_texture) {
-	// Check if there are other blocking UIs
-	if (M2_GAME.ui_begin_ticks) {
-		// Execute panel without keeping time
-		Panel panel{std::move(blueprint)};
-		return panel.execute(rect);
-	} else {
-		// Save begin ticks for later and other nested UIs
-		M2_GAME.ui_begin_ticks = sdl::get_ticks();
-		// Execute panel
-		Panel panel{std::move(blueprint), std::move(background_texture)};
-		auto action = panel.execute(rect);
-		// Add pause ticks
-		M2_GAME.add_pause_ticks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
-		M2_GAME.ui_begin_ticks.reset();
-		return action;
-	}
-}
-
-Panel::~Panel() {
-	clear_focus();
-
-	if (_prev_text_input_state) {
-		SDL_StartTextInput();
-	} else {
-		SDL_StopTextInput();
-	}
-}
-
-Action Panel::execute(const RectI rect) {
+Action Panel::run_blocking() {
 	LOG_DEBUG("Executing UI");
-
-	// Save relation to window, use in case of resize
-	const auto &winrect = M2_GAME.dimensions().window;
-	const auto relation_to_window = RectF{
-	    static_cast<float>(rect.x - winrect.x) / static_cast<float>(winrect.w),
-	    static_cast<float>(rect.y - winrect.y) / static_cast<float>(winrect.h),
-	    static_cast<float>(rect.w) / static_cast<float>(winrect.w),
-	    static_cast<float>(rect.h) / static_cast<float>(winrect.h)};
 
 	// Get a screenshot if background_texture is not already provided
 	if (not _background_texture) {
 		_background_texture = sdl::capture_screen_as_texture();
 	}
-
-	// Update initial positions
-	update_positions(rect);
 
 	// Update initial contents
 	if (auto return_value = update_contents(); not return_value.is_continue()) {
@@ -210,14 +143,14 @@ Action Panel::execute(const RectI rect) {
 
 			// Handle console action
 			if ((not console_command.empty() || events.pop_key_press(Key::CONSOLE)) &&
-			    blueprint != &console_ui) {  // Do not open console on top of console
+				blueprint != &console_ui) {  // Do not open console on top of console
 
 				// Initialize console with command
 				std::get<widget::TextInputBlueprint>(console_ui.widgets[24].variant).initial_text = console_command;
 				console_command.clear();
 
 				LOG_INFO("Opening console");
-				if (auto action = create_execute_sync(&console_ui); action.is_return()) {
+				if (auto action = create_and_run_blocking(&console_ui); action.is_return()) {
 					// Continue with the prev UI
 					LOG_DEBUG("Console returned");
 				} else if (action.is_clear_stack() || action.is_quit()) {
@@ -229,13 +162,7 @@ Action Panel::execute(const RectI rect) {
 			// Handle resize action
 			if (const auto window_resize = events.pop_window_resize(); window_resize) {
 				M2_GAME.recalculate_dimensions(window_resize->x, window_resize->y);
-				update_positions(RectI{
-				    static_cast<int>(
-				        round(static_cast<float>(winrect.x) + relation_to_window.x * static_cast<float>(winrect.w))),
-				    static_cast<int>(
-				        round(static_cast<float>(winrect.y) + relation_to_window.y * static_cast<float>(winrect.h))),
-				    static_cast<int>(round(relation_to_window.w * static_cast<float>(winrect.w))),
-				    static_cast<int>(round(relation_to_window.h * static_cast<float>(winrect.h)))});
+				update_positions();
 			}
 
 			// Handle events
@@ -269,8 +196,96 @@ Action Panel::execute(const RectI rect) {
 	}
 }
 
-void Panel::update_positions(const RectI &rect) {
-	this->rect_px = rect;
+Panel::Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
+	sdl::TextureUniquePtr background_texture)
+	: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
+	if (std::holds_alternative<const PanelBlueprint*>(static_or_unique_blueprint)) {
+		// Static blueprint
+		blueprint = std::get<const PanelBlueprint*>(static_or_unique_blueprint);
+	} else {
+		// Unique blueprint
+		_owned_blueprint = std::move(std::get<std::unique_ptr<PanelBlueprint>>(static_or_unique_blueprint));
+		blueprint = _owned_blueprint.get(); // Point `blueprint` to owned_blueprint
+	}
+
+	if (std::holds_alternative<std::monostate>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
+		// Fullscreen
+		_relation_to_game_and_hud_dims = {0.0f, 0.0f, 1.0f, 1.0f};
+	} else if (std::holds_alternative<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
+		// Pixel dims, convert to "relation to game_and_hud dimensions"
+		const auto& pixel_rect = std::get<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
+		const auto& game_and_hud_dims = M2_GAME.dimensions().game_and_hud;
+		_relation_to_game_and_hud_dims = RectF{
+			F(pixel_rect.x - game_and_hud_dims.x) / F(game_and_hud_dims.w),
+			F(pixel_rect.y - game_and_hud_dims.y) / F(game_and_hud_dims.h),
+			F(pixel_rect.w) / F(game_and_hud_dims.w),
+			F(pixel_rect.h) / F(game_and_hud_dims.h)};
+	} else {
+		// Relation to game_and_hud
+		_relation_to_game_and_hud_dims = std::get<RectF>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
+	}
+
+	// Previous text input state is saved. We can now disable it to start with a clean slate
+	SDL_StopTextInput();
+
+	// Create widgets
+	for (const auto &widget_blueprint : blueprint->widgets) {
+		widgets.push_back(create_widget_state(widget_blueprint));
+		// Check if focus is requested
+		if (widget_blueprint.initially_focused) {
+			set_widget_focus_state(*widgets.back(), true);
+		}
+	}
+
+	// Update initial positions
+	update_positions();
+}
+
+Action Panel::create_and_run_blocking(
+	std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+	std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
+	sdl::TextureUniquePtr background_texture) {
+	// Check if there are other blocking UI panels
+	if (M2_GAME.ui_begin_ticks) {
+		// Execute panel without keeping time
+		Panel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
+		return panel.run_blocking();
+	} else {
+		// Save begin ticks for later and other nested UIs
+		M2_GAME.ui_begin_ticks = sdl::get_ticks();
+		// Execute panel
+		Panel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
+		auto action = panel.run_blocking();
+		// Add pause ticks
+		M2_GAME.add_pause_ticks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
+		M2_GAME.ui_begin_ticks.reset();
+		// Return
+		return action;
+	}
+}
+
+Panel::~Panel() {
+	clear_focus();
+
+	if (_prev_text_input_state) {
+		SDL_StartTextInput();
+	} else {
+		SDL_StopTextInput();
+	}
+}
+
+RectI Panel::rect_px() const {
+	const auto& game_and_hud_dims = M2_GAME.dimensions().game_and_hud;
+	return RectI{
+		iround(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
+		iround(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),
+		iround(_relation_to_game_and_hud_dims.w * F(game_and_hud_dims.w)),
+		iround(_relation_to_game_and_hud_dims.h * F(game_and_hud_dims.h))};
+}
+
+void Panel::update_positions() {
+	auto rect = rect_px();
 	for (const auto &widget_state : widgets) {
 		auto widget_rect = calculate_widget_rect(
 		    rect, blueprint->w, blueprint->h, widget_state->blueprint->x, widget_state->blueprint->y,
@@ -302,10 +317,11 @@ Action Panel::handle_events(Events& events) {
 	}
 
 	// Clear mouse events if it's inside the UI rect
-	events.clear_mouse_button_presses(rect_px);
-	events.clear_mouse_button_releases(rect_px);
-	events.clear_mouse_wheel_scrolls(rect_px);
-	events.clear_mouse_button_down(rect_px);
+	auto rect = rect_px();
+	events.clear_mouse_button_presses(rect);
+	events.clear_mouse_button_releases(rect);
+	events.clear_mouse_wheel_scrolls(rect);
+	events.clear_mouse_button_down(rect);
 
 	return make_continue_action();
 }
@@ -332,9 +348,10 @@ void Panel::draw() {
 		return;
 	}
 
-	Widget::draw_rectangle(rect_px, blueprint->background_color);
+	auto rect = rect_px();
+	Widget::draw_rectangle(rect, blueprint->background_color);
 	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), draw_widget);
-	Widget::draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
+	Widget::draw_border(rect, vertical_border_width_px(), horizontal_border_width_px());
 }
 
 int Panel::vertical_border_width_px() const {
@@ -342,7 +359,7 @@ int Panel::vertical_border_width_px() const {
 		return 0;
 	} else {
 		// Pixels per unit
-		float pixel_pitch = F(rect_px.w) / F(blueprint->w);
+		float pixel_pitch = F(rect_px().w) / F(blueprint->w);
 		return std::max(1, iround(pixel_pitch * blueprint->border_width));
 	}
 }
@@ -352,7 +369,7 @@ int Panel::horizontal_border_width_px() const {
 		return 0;
 	} else {
 		// Pixels per unit
-		float pixel_pitch = F(rect_px.h) / F(blueprint->h);
+		float pixel_pitch = F(rect_px().h) / F(blueprint->h);
 		return std::max(1, iround(pixel_pitch * blueprint->border_width));
 	}
 }
@@ -361,9 +378,7 @@ std::unique_ptr<Widget> Panel::create_widget_state(const WidgetBlueprint &widget
 	std::unique_ptr<Widget> state;
 
 	using namespace m2::ui::widget;
-	if (std::holds_alternative<NestedUiBlueprint>(widget_blueprint.variant)) {
-		state = std::make_unique<NestedUi>(this, &widget_blueprint);
-	} else if (std::holds_alternative<HiddenBlueprint>(widget_blueprint.variant)) {
+	if (std::holds_alternative<HiddenBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<Hidden>(this, &widget_blueprint);
 	} else if (std::holds_alternative<TextBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<Text>(this, &widget_blueprint);

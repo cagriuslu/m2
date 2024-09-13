@@ -59,9 +59,9 @@ namespace m2 {
 		std::optional<ui::Panel> left_hud_ui_panel, right_hud_ui_panel;
 		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
 		// If there's an active blocking panel, all events are delivered to it. World is still simulated, but button and mouse presses won't be delivered to the world objects.
-		std::pair<RectF, std::optional<ui::Panel>> custom_blocking_ui_panel;
+		std::optional<ui::Panel> custom_blocking_ui_panel;
 		// Non-blocking custom UI only handles the events falling on it, allows through the world events.
-		std::array<std::pair<RectF, std::optional<ui::Panel>>, 8> custom_ui_panel;
+		std::array<std::optional<ui::Panel>, 8> custom_ui_panel;
 		std::optional<std::string> message;
 		std::optional<ui::Panel> message_box_ui_panel;
 

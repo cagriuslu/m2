@@ -101,8 +101,7 @@ const PanelBlueprint ui::bulk_sheet_editor_main_menu = {
                 .kb_shortcut = SDL_SCANCODE_RETURN,
                 .on_action = [](MAYBE const widget::Text& self) -> Action {
 	                if (std::get<bsedit::State>(M2_LEVEL.type_state).select()) {
-		                M2_LEVEL.right_hud_ui_panel.emplace(&bulk_sheet_editor_right_hud);
-		                M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+		                M2_LEVEL.right_hud_ui_panel.emplace(&bulk_sheet_editor_right_hud, M2_GAME.dimensions().right_hud);
 		                // TODO return selection instead
 		                return make_return_action();
 	                } else {

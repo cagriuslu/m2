@@ -264,7 +264,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclude_tile) {
 	LOG_INFO("Asking player to select a tile...");
 	std::optional<m2g::pb::ItemType> selected_tile;
-	Panel::create_execute_sync(std::make_unique<PanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)), M2_GAME.dimensions().game_and_hud.ratio(tiles_window_ratio()))
+	Panel::create_and_run_blocking(std::make_unique<PanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)), tiles_window_ratio())
 		.if_void_return([&]() {
 			LOG_INFO("Tile selection cancelled");
 		})

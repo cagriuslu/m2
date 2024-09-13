@@ -217,7 +217,7 @@ void m2::Game::handle_window_resize_event() {
 
 void m2::Game::handle_console_event() {
 	if (events.pop_key_press(Key::CONSOLE)) {
-		if (ui::Panel::create_execute_sync(&ui::console_ui).is_quit()) {
+		if (ui::Panel::create_and_run_blocking(&ui::console_ui).is_quit()) {
 			quit = true;
 		}
 	}
@@ -238,18 +238,18 @@ void m2::Game::handle_menu_event() {
 		}
 
 		// Execute pause menu if found, exit if QUIT is returned
-		if (pause_menu && ui::Panel::create_execute_sync(pause_menu).is_quit()) {
+		if (pause_menu && ui::Panel::create_and_run_blocking(pause_menu).is_quit()) {
 			quit = true;
 		}
 	}
 }
 
 void m2::Game::handle_hud_events() {
-	if (_level->custom_blocking_ui_panel.second) {
-		_level->custom_blocking_ui_panel.second->handle_events(events)
+	if (_level->custom_blocking_ui_panel) {
+		_level->custom_blocking_ui_panel->handle_events(events)
 			.if_any_return([this]() {
 				// If the blocking panel returned, remove the state
-				_level->custom_blocking_ui_panel.second.reset();
+				_level->custom_blocking_ui_panel.reset();
 			});
 		// TODO handle quit
 		// If there's a blocking UI panel, no events will be delivered to rest of the UI states and the game world
@@ -260,11 +260,11 @@ void m2::Game::handle_hud_events() {
 	// The order of event handling is the reverse of the drawing order because custom_ui_panels are assumed to be in
 	// front the HUDs.
 	for (auto& custom_ui : _level->custom_ui_panel) { // TODO iterate backwards
-		if (custom_ui.second) {
-			custom_ui.second->handle_events(events)
+		if (custom_ui) {
+			custom_ui->handle_events(events)
 			.if_any_return([&custom_ui]() {
 				// If UI returned, remove the state
-				custom_ui.second.reset();
+				custom_ui.reset();
 			});
 			// TODO handle quit
 		}
@@ -282,7 +282,7 @@ void m2::Game::handle_client_shutdown() {
 		}
 		_client_thread.reset();
 		// Execute main menu
-		if (ui::Panel::create_execute_sync(_proxy.pause_menu()).is_quit()) {
+		if (ui::Panel::create_and_run_blocking(_proxy.pause_menu()).is_quit()) {
 			quit = true;
 		}
 	}
@@ -390,9 +390,9 @@ void m2::Game::update_hud_contents() {
 	IF(_level->right_hud_ui_panel)->update_contents();
 	IF(_level->message_box_ui_panel)->update_contents();
 	for (auto& custom_ui : _level->custom_ui_panel) {
-		IF(custom_ui.second)->update_contents();
+		IF(custom_ui)->update_contents();
 	}
-	IF(_level->custom_blocking_ui_panel.second)->update_contents();
+	IF(_level->custom_blocking_ui_panel)->update_contents();
 }
 
 void m2::Game::clear_back_buffer() const {
@@ -491,9 +491,9 @@ void m2::Game::draw_hud() {
 	IF(_level->right_hud_ui_panel)->draw();
 	IF(_level->message_box_ui_panel)->draw();
 	for (auto& custom_ui : _level->custom_ui_panel) {
-		IF(custom_ui.second)->draw();
+		IF(custom_ui)->draw();
 	}
-	IF(_level->custom_blocking_ui_panel.second)->draw();
+	IF(_level->custom_blocking_ui_panel)->draw();
 }
 
 void m2::Game::draw_envelopes() const {
@@ -520,13 +520,13 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 	recalculate_dimensions(
 		_dims.window.w, _dims.window.h, iround(static_cast<float>(_dims.height_m) * game_height_multiplier));
 	if (_level) {
-		IF(_level->left_hud_ui_panel)->update_positions(_dims.left_hud);
-		IF(_level->right_hud_ui_panel)->update_positions(_dims.right_hud);
-		IF(_level->message_box_ui_panel)->update_positions(_dims.message_box);
+		IF(_level->left_hud_ui_panel)->update_positions();
+		IF(_level->right_hud_ui_panel)->update_positions();
+		IF(_level->message_box_ui_panel)->update_positions();
 		for (auto& custom_ui : _level->custom_ui_panel) {
-			IF (custom_ui.second)->update_positions(_dims.game_and_hud.ratio(custom_ui.first));
+			IF (custom_ui)->update_positions();
 		}
-		IF (_level->custom_blocking_ui_panel.second)->update_positions(_dims.game_and_hud.ratio(_level->custom_blocking_ui_panel.first));
+		IF (_level->custom_blocking_ui_panel)->update_positions();
 	}
 }
 

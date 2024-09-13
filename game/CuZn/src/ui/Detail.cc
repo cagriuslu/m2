@@ -49,9 +49,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 	};
 
 	std::optional<m2g::pb::ItemType> selected_industry;
-	m2::ui::Panel::create_execute_sync(
-		std::make_unique<m2::ui::PanelBlueprint>(blueprint),
-		M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+	m2::ui::Panel::create_and_run_blocking(std::make_unique<m2::ui::PanelBlueprint>(blueprint), RectF{0.15f, 0.15f, 0.7f, 0.7f})
 		.if_void_return([&]() {
 			LOG_INFO("Industry selection cancelled");
 		})
@@ -105,7 +103,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 	};
 
 	bool selection;
-	Panel::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}))
+	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f})
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }
@@ -145,7 +143,7 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	}; // 1 + 32 + 1 + 4 + 1 + 4 + 1
 
 	bool selection;
-	Panel::create_execute_sync(&blueprint, M2_GAME.dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
+	Panel::create_and_run_blocking(&blueprint, M2_GAME.dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }
@@ -177,7 +175,7 @@ void display_blocking_message(const std::string& message) {
 		}
 	};
 
-	Panel::create_execute_sync(&blueprint, M2_GAME.dimensions().game_and_hud.ratio({0.15f, 0.15f, 0.7f, 0.7f}));
+	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f});
 }
 
 m2::RGB generate_player_color(unsigned index) {

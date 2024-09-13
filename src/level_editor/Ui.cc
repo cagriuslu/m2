@@ -270,15 +270,13 @@ const widget::TextBlueprint left_hud_paint_button = {
 	        std::begin(M2_GAME.level_editor_background_sprites), std::end(M2_GAME.level_editor_background_sprites),
 	        std::back_inserter(list));
 
-	    M2_LEVEL.right_hud_ui_panel.emplace(&paint_mode_right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&paint_mode_right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_erase_button = {
     .text = "ERASE", .kb_shortcut = SDL_SCANCODE_E, .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_erase_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&erase_mode_right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&erase_mode_right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_place_button = {
@@ -301,43 +299,37 @@ const widget::TextBlueprint left_hud_place_button = {
 		    }
 	    }
 
-	    M2_LEVEL.right_hud_ui_panel.emplace(&place_mode_right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&place_mode_right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_remove_button = {
     .text = "REMOVE", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_remove_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&remove_mode_right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&remove_mode_right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_pick_button = {
     .text = "PICK", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_pick_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&pick_mode_right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&pick_mode_right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_select_button = {
     .text = "SELECT", .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_select_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&select_mode_right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&select_mode_right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_shift_button = {
     .text = "SHIFT", .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_shift_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&shift_mode_right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&shift_mode_right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_cancel_button = {
     .text = "CANCEL", .kb_shortcut = SDL_SCANCODE_X, .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<ledit::State>(M2_LEVEL.type_state).deactivate_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&level_editor::ui::right_hud);
-	    M2_LEVEL.right_hud_ui_panel->update_positions(M2_GAME.dimensions().right_hud);
+	    M2_LEVEL.right_hud_ui_panel.emplace(&level_editor::ui::right_hud, M2_GAME.dimensions().right_hud);
 	    return make_continue_action();
     }};
 const widget::TextBlueprint left_hud_gridlines_button = {
@@ -417,7 +409,7 @@ const PanelBlueprint level_editor::ui::left_hud = {
         WidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width = 0, .variant = left_hud_coordinates}}};
 
 const PanelBlueprint level_editor::ui::right_hud = {
-    .w = 19, .h = 72, .background_color = {50, 50, 50, 255}};
+    .w = 19, .h = 72, .background_color = {50, 50, 50, 255}, .widgets = {}};
 
 const widget::TextBlueprint save_button = {
     .text = "Save", .kb_shortcut = SDL_SCANCODE_S, .on_action = [](MAYBE const widget::Text& self) -> Action {

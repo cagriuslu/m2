@@ -231,7 +231,7 @@ const m2::ui::PanelBlueprint* m2g::Proxy::you_died_menu() {
 	    .variant = m2::ui::widget::TextBlueprint{
 	        .text = "Main Menu",
 	        .on_action = [&](MAYBE const m2::ui::widget::Text &self) {
-		        return m2::ui::Panel::create_execute_sync(&_main_menu);
+		        return m2::ui::Panel::create_and_run_blocking(&_main_menu);
 	        }
 	    }
 	});
