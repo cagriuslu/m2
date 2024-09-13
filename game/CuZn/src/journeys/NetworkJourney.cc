@@ -143,7 +143,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal()
 	LOG_DEBUG("Expecting connection...");
 	M2_LEVEL.disable_hud();
 	M2_LEVEL.display_message("Pick connection", -1.0f);
-	M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+	_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
 	// Dim places outside the player's network
 	_buildable_connections = buildable_connections_in_network(M2_PLAYER.character());
 	M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
@@ -183,7 +183,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_cancel_signal(
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_message();
-	M2_LEVEL.remove_custom_ui_deferred(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
+	M2_LEVEL.remove_custom_nonblocking_ui_panel(_cancel_button_panel);
 	// Disable dimming in case it was enabled
 	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;
@@ -260,7 +260,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 				LOG_DEBUG("Asking player to pick a coal source...");
 
 				M2_LEVEL.disable_hud();
-				M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+				_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
 				M2_LEVEL.display_message("Pick a coal source");
 			}
 		} else if (unspecified_resource->resource_type == BEER_BARREL_COUNT) {
@@ -297,7 +297,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 				LOG_DEBUG("Asking player to pick a beer source...");
 
 				M2_LEVEL.disable_hud();
-				M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+				_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
 				M2_LEVEL.display_message("Pick a beer source");
 			}
 		} else {
@@ -339,7 +339,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_cancel_signal(
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_exit_signal() {
 	M2_LEVEL.enable_hud();
-	M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
+	M2_LEVEL.remove_custom_nonblocking_ui_panel(_cancel_button_panel);
 	// Disable dimming in case it was enabled
 	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;

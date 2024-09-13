@@ -25,12 +25,18 @@
 #include "ui/Panel.h"
 
 namespace m2 {
+	// Forward iterator
+	class Game;
+
 	class Level final {
 		std::optional<std::filesystem::path> _lb_path;
 		std::optional<pb::Level> _lb;
 		std::string _name;
 
 		RectI _background_boundary;
+
+		// Non-blocking custom UI only handles the events falling on it, allows through the world events.
+		std::list<ui::Panel> _custom_nonblocking_ui_panels;
 
 	   public:
 		~Level();
@@ -60,8 +66,6 @@ namespace m2 {
 		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
 		// If there's an active blocking panel, all events are delivered to it. World is still simulated, but button and mouse presses won't be delivered to the world objects.
 		std::optional<ui::Panel> custom_blocking_ui_panel;
-		// Non-blocking custom UI only handles the events falling on it, allows through the world events.
-		std::array<std::optional<ui::Panel>, 8> custom_ui_panel;
 		std::optional<std::string> message;
 		std::optional<ui::Panel> message_box_ui_panel;
 
@@ -116,21 +120,23 @@ namespace m2 {
 		void enable_hud();
 		/// Hides the HUD UI elements. UI elements would get disabled, thus they won't receive any events or updates.
 		void disable_hud();
-		/// Adds a UI element on to the game screen, above the HUD. The UI doesn't block the game loop and consumes only
-		/// the events meant for itself.
-		void add_custom_ui(int index, RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
+
+		/// Adds a UI element that is drawn above the HUD. The UI doesn't block the game loop and consumes only the
+		/// events meant for itself.
+		std::list<ui::Panel>::iterator add_custom_nonblocking_ui_panel(ui::Panel&& panel);
+		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
+		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
+		void remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it);
+		/// Removes the custom UI at next step. Can be called from anywhere.
+		void remove_custom_nonblocking_ui_panel_deferred(std::list<ui::Panel>::iterator it);
+
 		/// Displays a UI element as a blocking panel, above the HUD. The UI doesn't block the game loop but consumes all events
 		/// except the time passed event. Mouse movement, button and key presses are not delivered to HUD, other UI
 		/// elements and the game until the display is discarded either by returning or being destroyed.
 		void add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
-		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
-		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
-		void remove_custom_ui(int index);
-		/// Removes the custom UI at next step. Can be called from anywhere, but BEWARE, if any other custom UI is added
-		/// before the current step completes, that'll be removed as well.
-		void remove_custom_ui_deferred(int index);
 		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
 		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
+
 		/// If `timeout` is negative, the timeout is disabled and the message is displayed forever.
 		/// Else, the message is dismissed after `timeout` seconds.
 		void display_message(const std::string& msg, float timeout = 5.0f);
@@ -142,5 +148,7 @@ namespace m2 {
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
 		    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
 		    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&));
+
+		friend class Game;
 	};
 }  // namespace m2

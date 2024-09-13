@@ -38,7 +38,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			// Display message
 			M2_LEVEL.display_message(_message, -1.0f);
 			// Display cancel button
-			M2_LEVEL.add_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX, m2::RectF{0.775f, 0.1f, 0.15f, 0.1f}, &journey_cancel_button);
+			_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(m2::ui::Panel{&journey_cancel_button, m2::RectF{0.775f, 0.1f, 0.15f, 0.1f}});
 			break;
 		}
 		case m2::FsmSignalType::Custom: {
@@ -64,7 +64,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			break;
 		}
 		case m2::FsmSignalType::ExitState: {
-			M2_LEVEL.remove_custom_ui(JOURNEY_CANCEL_BUTTON_CUSTOM_UI_INDEX);
+			M2_LEVEL.remove_custom_nonblocking_ui_panel(_cancel_button_panel);
 			M2_LEVEL.remove_message();
 			M2_LEVEL.enable_hud();
 			M2_GAME.disable_dimming_with_exceptions();

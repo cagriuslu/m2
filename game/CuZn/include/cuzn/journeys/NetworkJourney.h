@@ -7,6 +7,8 @@
 #include <m2/component/Character.h>
 #include <cuzn/Detail.h>
 #include <m2/Object.h>
+#include <m2/ui/Panel.h>
+#include <list>
 
 m2::void_expected can_player_attempt_to_network(m2::Character& player);
 
@@ -24,6 +26,8 @@ class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, PositionOrCancelSi
 		Location source{};
 		m2::Object* reserved_object{};
 	};
+
+	std::list<m2::ui::Panel>::iterator _cancel_button_panel;
 
 	bool _build_double_railroads{};
 	m2g::pb::ItemType _selected_card{};

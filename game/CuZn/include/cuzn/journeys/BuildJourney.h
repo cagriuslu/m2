@@ -4,6 +4,7 @@
 #include <m2/game/Fsm.h>
 #include <m2/VecF.h>
 #include <m2/Object.h>
+#include <m2/ui/Panel.h>
 
 m2::void_expected can_player_attempt_to_build(m2::Character& player);
 
@@ -14,6 +15,8 @@ enum class BuildJourneyStep {
 	EXPECT_CONFIRMATION,
 };
 class BuildJourney : public m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal> {
+	std::list<m2::ui::Panel>::iterator _cancel_button_panel;
+
 	Card _selected_card{};
 	IndustryLocation _selected_location{};
 	Industry _selected_industry{};

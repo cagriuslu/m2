@@ -257,17 +257,14 @@ void m2::Game::handle_hud_events() {
 		// handle_events of others are executed regardless, because there may be timing related actions
 	}
 
-	// The order of event handling is the reverse of the drawing order because custom_ui_panels are assumed to be in
-	// front the HUDs.
-	for (auto& custom_ui : _level->custom_ui_panel) { // TODO iterate backwards
-		if (custom_ui) {
-			custom_ui->handle_events(events)
-			.if_any_return([&custom_ui]() {
-				// If UI returned, remove the state
-				custom_ui.reset();
+	// The order of event handling is the reverse of the drawing order
+	for (auto &panel : std::ranges::reverse_view(_level->_custom_nonblocking_ui_panels)) {
+		panel.handle_events(events)
+			.if_any_return([&panel]() {
+				panel = ui::Panel(); // If UI returned, reset the panel. We cannot delete it, the iterator is held by the client
+				// TODO returned object is lost, maybe we can store it inside Panel
 			});
-			// TODO handle quit
-		}
+		// TODO handle quit
 	}
 	IF(_level->message_box_ui_panel)->handle_events(events);  // For disable_after
 	IF(_level->left_hud_ui_panel)->handle_events(events);
@@ -389,8 +386,8 @@ void m2::Game::update_hud_contents() {
 	IF(_level->left_hud_ui_panel)->update_contents();
 	IF(_level->right_hud_ui_panel)->update_contents();
 	IF(_level->message_box_ui_panel)->update_contents();
-	for (auto& custom_ui : _level->custom_ui_panel) {
-		IF(custom_ui)->update_contents();
+	for (auto &panel : _level->_custom_nonblocking_ui_panels) {
+		panel.update_contents();
 	}
 	IF(_level->custom_blocking_ui_panel)->update_contents();
 }
@@ -490,8 +487,8 @@ void m2::Game::draw_hud() {
 	IF(_level->left_hud_ui_panel)->draw();
 	IF(_level->right_hud_ui_panel)->draw();
 	IF(_level->message_box_ui_panel)->draw();
-	for (auto& custom_ui : _level->custom_ui_panel) {
-		IF(custom_ui)->draw();
+	for (auto &panel : _level->_custom_nonblocking_ui_panels) {
+		panel.draw();
 	}
 	IF(_level->custom_blocking_ui_panel)->draw();
 }
@@ -523,8 +520,8 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 		IF(_level->left_hud_ui_panel)->update_positions();
 		IF(_level->right_hud_ui_panel)->update_positions();
 		IF(_level->message_box_ui_panel)->update_positions();
-		for (auto& custom_ui : _level->custom_ui_panel) {
-			IF (custom_ui)->update_positions();
+		for (auto &panel : _level->_custom_nonblocking_ui_panels) {
+			panel.update_positions();
 		}
 		IF (_level->custom_blocking_ui_panel)->update_positions();
 	}

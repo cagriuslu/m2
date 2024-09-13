@@ -290,17 +290,17 @@ void m2::Level::disable_hud() {
 	LOG_DEBUG("HUD disabled");
 }
 
-void m2::Level::add_custom_ui(int index, m2::RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint) {
-	custom_ui_panel[index].emplace(std::move(blueprint), position_ratio);
+std::list<m2::ui::Panel>::iterator m2::Level::add_custom_nonblocking_ui_panel(ui::Panel&& panel) {
+	return _custom_nonblocking_ui_panels.insert(_custom_nonblocking_ui_panels.end(), std::move(panel));
+}
+void m2::Level::remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it) {
+	_custom_nonblocking_ui_panels.erase(it);
+}
+void m2::Level::remove_custom_nonblocking_ui_panel_deferred(std::list<ui::Panel>::iterator it) {
+	M2_DEFER(([this,it]() { _custom_nonblocking_ui_panels.erase(it); }));
 }
 void m2::Level::add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint) {
 	custom_blocking_ui_panel.emplace(std::move(blueprint), position_ratio);
-}
-void m2::Level::remove_custom_ui(int index) {
-	custom_ui_panel[index].reset();
-}
-void m2::Level::remove_custom_ui_deferred(int index) {
-	M2_DEFER(([this,index]() { this->remove_custom_ui(index); }));
 }
 void m2::Level::remove_custom_blocking_ui_panel() {
 	custom_blocking_ui_panel.reset();
