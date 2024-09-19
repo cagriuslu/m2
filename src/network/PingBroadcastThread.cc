@@ -1,7 +1,7 @@
 #include <m2/network/PingBroadcastThread.h>
 #include <m2/Log.h>
-#include <unistd.h>
 #include <cstdlib>
+#include <m2/mt/WaitOnCondition.h>
 
 using namespace m2;
 using namespace m2::network;
@@ -31,8 +31,8 @@ void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
 	LOG_INFO("PingBroadcastThread function");
 
 	while (not context->is_quit()) {
-		// Ping the broadcast address only once with 5 second timeout
-		auto retval = system("ping -c 1 -t 5 255.255.255.255 1>/dev/null 2>/dev/null");
+		// Ping the broadcast address only once with some timeout
+		auto retval = system("ping -c 1 -t 1 255.255.255.255 1>/dev/null 2>/dev/null");
 		if (retval == 0) {
 			// Received at least one packet
 		} else if (retval == 2) {
@@ -41,9 +41,10 @@ void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
 			LOG_WARN("Error while pinging the broadcast address", retval);
 		}
 
-		if (not context->is_quit()) {
-			sleep(5);
-		}
+		// Wait some time before pinging again
+		m2::mt::wait_on_condition(5000, [&context]() -> bool {
+			return context->is_quit();
+		});
 	}
 
 	LOG_INFO("PingBroadcastThread is quitting");

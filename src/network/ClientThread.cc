@@ -402,7 +402,7 @@ void m2::network::ClientThread::thread_func(ClientThread* client_thread) {
 
 			// Start ping broadcast
 			client_thread->_ping_broadcast_thread.emplace();
-			sleep(5); // Wait some time before attempting to connect
+			sleep(2); // Wait some time before attempting to connect
 
 			auto connect_success = socket->connect(client_thread->_addr, 1162);
 			client_thread->_ping_broadcast_thread.reset(); // Stop ping broadcast
