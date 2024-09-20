@@ -12,15 +12,12 @@ using namespace m2g::pb;
 static TextBlueprint client_status = {
 	.text = "CONNECTING",
 	.on_update = [](MAYBE Text& self) {
-		if (M2_GAME.client_thread().is_connected()) {
+		if (M2_GAME.real_client_thread().is_connected()) {
 			self.set_text("CONNECTED");
-		} else if (M2_GAME.client_thread().is_ready()) {
+		} else if (M2_GAME.real_client_thread().is_ready()) {
 			self.set_text("READY");
-		} else if (M2_GAME.client_thread().is_started()) {
-			auto server_update = M2_GAME.client_thread().peek_unprocessed_server_update();
-			m2_succeed_or_throw_message(server_update, "Client state is Started, but ServerUpdate not found");
-			auto player_count = server_update->player_object_ids_size();
-
+		} else if (M2_GAME.real_client_thread().is_started()) {
+			auto player_count = M2_GAME.real_client_thread().total_player_count();
 			const auto expect_success =
 				M2_GAME.load_multi_player_as_guest(M2_GAME.levels_dir / "Map.json", std::to_string(player_count));
 			m2_succeed_or_throw_error(expect_success);
@@ -36,9 +33,9 @@ static TextBlueprint client_status = {
 static TextBlueprint ready_button = {
 	.text = "...",
 	.on_update = [](MAYBE Text& self) {
-		if (M2_GAME.client_thread().is_connected()) {
+		if (M2_GAME.real_client_thread().is_connected()) {
 			self.set_text("SET READY");
-		} else if (M2_GAME.client_thread().is_ready()) {
+		} else if (M2_GAME.real_client_thread().is_ready()) {
 			self.set_text("CLEAR READY");
 		} else {
 			self.set_text("...");
@@ -46,10 +43,10 @@ static TextBlueprint ready_button = {
 		return make_continue_action();
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
-		if (M2_GAME.client_thread().is_connected()) {
-			M2_GAME.client_thread().set_ready_blocking(true);
-		} else if (M2_GAME.client_thread().is_ready()) {
-			M2_GAME.client_thread().set_ready_blocking(false);
+		if (M2_GAME.real_client_thread().is_connected()) {
+			M2_GAME.real_client_thread().set_ready(true);
+		} else if (M2_GAME.real_client_thread().is_ready()) {
+			M2_GAME.real_client_thread().set_ready(false);
 		}
 		return make_continue_action();
 	}

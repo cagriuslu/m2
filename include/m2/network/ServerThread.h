@@ -14,8 +14,8 @@
 namespace m2::network {
 	class ServerThread {
 		// Main thread variables
-		const mplayer::Type _type;
-		const unsigned _max_connection_count;
+		const mplayer::Type _type{};
+		const unsigned _max_connection_count{};
 		std::thread _thread;
 
 		// Shared variables
@@ -30,6 +30,7 @@ namespace m2::network {
 		std::optional<PingBroadcastThread> _ping_broadcast_thread;
 
 	public:
+		ServerThread() = default;
 		ServerThread(mplayer::Type type, unsigned max_connection_count);
 		ServerThread(const ServerThread& other) = delete;
 		ServerThread& operator=(const ServerThread& other) = delete;
@@ -43,6 +44,7 @@ namespace m2::network {
 		int client_count();
 		int ready_client_count();
 		int turn_holder_index();
+		inline bool is_our_turn() { return turn_holder_index() == 0; }
 		std::optional<pb::NetworkMessage> pop_turn_holder_command();
 		bool is_shutdown();
 

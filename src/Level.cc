@@ -75,8 +75,8 @@ m2::void_expected m2::Level::init_multi_player_as_guest(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
 	m2_reflect_unexpected(success);
 
-	// Consume the ServerUpdate that caused the level to be initialized
-	auto expect_server_update = M2_GAME.client_thread().process_server_update();
+	// Consume the initial ServerUpdate that triggered the level to be initialized
+	auto expect_server_update = M2_GAME.real_client_thread().process_server_update();
 	m2_reflect_unexpected(expect_server_update);
 
 	return {};

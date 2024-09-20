@@ -49,7 +49,7 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_enter_
 		for (const auto& loc : _selected_locations) {
 			cc.mutable_liquidate_action()->add_locations_to_sell(loc);
 		}
-		M2_GAME.client_thread().queue_client_command(cc);
+		M2_GAME.queue_client_command(cc);
 		M2_DEFER(m2g::Proxy::user_journey_deleter);
 		return std::nullopt;
 	}

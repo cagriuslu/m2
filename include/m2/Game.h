@@ -21,7 +21,8 @@
 #include "Sprite.h"
 #include "m2/Events.h"
 #include "m2/game/Animation.h"
-#include "network/ClientThread.h"
+#include "network/HostClientThread.h"
+#include "network/RealClientThread.h"
 #include "network/ServerThread.h"
 #include "protobuf/LUT.h"
 
@@ -40,9 +41,17 @@
 #define HUD_ASPECT_RATIO_DIV (GAME_AND_HUD_ASPECT_RATIO_DIV * GAME_ASPECT_RATIO_DIV * 2)
 
 namespace m2 {
+	using ServerThreads = std::pair<network::ServerThread, network::HostClientThread>;
+
 	class Game {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
+
+		// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
+		// This is important for the server thread to not linger too much.
+		std::variant<std::monostate, ServerThreads, network::RealClientThread> _multi_player_threads;
+		//std::list<>
+		bool _server_update_necessary{};
 
 	   public:  // TODO private
 		static Game* _instance;
@@ -65,11 +74,6 @@ namespace m2 {
 		std::vector<Sprite> _sprites;
 
 		std::optional<Level> _level;
-		// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
-		// This is important for the server thread to not linger too much.
-		std::optional<network::ServerThread> _server_thread;
-		std::optional<network::ClientThread> _client_thread;
-		bool _server_update_necessary{};
 		std::optional<std::set<ObjectId>> _dimming_exceptions;
 		float _delta_time_s{};
 
@@ -137,9 +141,15 @@ namespace m2 {
 		// Network management
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		void_expected join_game(mplayer::Type type, const std::string& addr);
-		bool is_server() const { return static_cast<bool>(_server_thread); }
-		network::ServerThread& server_thread() { return *_server_thread; }
-		network::ClientThread& client_thread() { return *_client_thread; }
+		bool is_server() const { return std::holds_alternative<ServerThreads>(_multi_player_threads); }
+		bool is_real_client() const { return std::holds_alternative<network::RealClientThread>(_multi_player_threads); }
+		network::ServerThread& server_thread() { return std::get<ServerThreads>(_multi_player_threads).first; }
+		network::HostClientThread& host_client_thread() { return std::get<ServerThreads>(_multi_player_threads).second; }
+		network::RealClientThread& real_client_thread() { return std::get<network::RealClientThread>(_multi_player_threads); }
+		int total_player_count();
+		int self_index();
+		bool is_our_turn();
+		void queue_client_command(const m2g::pb::ClientCommand& cmd);
 		// Level management
 		void_expected load_single_player(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint,

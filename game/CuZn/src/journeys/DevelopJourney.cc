@@ -232,7 +232,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_confirmation_enter_sign
 		cc.mutable_develop_action()->set_industry_tile_2(_selected_tile_2);
 		cc.mutable_develop_action()->set_iron_sources_1(_iron_source_1);
 		cc.mutable_develop_action()->set_iron_sources_2(_iron_source_2);
-		M2_GAME.client_thread().queue_client_command(cc);
+		M2_GAME.queue_client_command(cc);
 	} else {
 		LOG_INFO("Cancelling Develop action...");
 	}

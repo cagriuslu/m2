@@ -34,8 +34,8 @@ const m2::ui::PanelBlueprint* m2g::Proxy::right_hud() { return &right_hud_bluepr
 void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();
 
-	auto client_count =
-	    M2_GAME.is_server() ? M2_GAME.server_thread().client_count() : M2_GAME.client_thread().total_player_count();
+	auto client_count = M2_GAME.total_player_count();
+	auto self_index = M2_GAME.self_index();
 
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
@@ -45,7 +45,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 		multi_player_object_ids.emplace_back(it.id());
 		player_colors.emplace_back(generate_player_color(i));
 
-		if (i == M2_GAME.client_thread().receiver_index()) {
+		if (i == self_index) {
 			M2_LEVEL.player_id = it.id();
 		}
 	}
@@ -353,7 +353,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 }
 
 void m2g::Proxy::post_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {
-	if (M2_GAME.client_thread().is_turn()) {
+	if (M2_GAME.is_our_turn()) {
 		enable_action_buttons();
 	} else {
 		disable_action_buttons();

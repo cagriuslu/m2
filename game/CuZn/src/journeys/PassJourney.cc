@@ -13,7 +13,7 @@ void execute_pass_journey() {
 
 			m2g::pb::ClientCommand cc;
 			cc.mutable_pass_action()->set_card(*selected_card);
-			M2_GAME.client_thread().queue_client_command(cc);
+			M2_GAME.queue_client_command(cc);
 
 			return;
 		}

@@ -35,7 +35,7 @@ void execute_scout_journey() {
 					cc.mutable_scout_action()->set_card_0(*selected_card_0);
 					cc.mutable_scout_action()->set_card_1(*selected_card_1);
 					cc.mutable_scout_action()->set_card_2(*selected_card_2);
-					M2_GAME.client_thread().queue_client_command(cc);
+					M2_GAME.queue_client_command(cc);
 
 					return;
 				}

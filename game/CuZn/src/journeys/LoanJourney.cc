@@ -33,7 +33,7 @@ void execute_loan_journey() {
 
 			pb::ClientCommand cc;
 			cc.mutable_loan_action()->set_card(*selected_card);
-			M2_GAME.client_thread().queue_client_command(cc);
+			M2_GAME.queue_client_command(cc);
 
 			return;
 		}

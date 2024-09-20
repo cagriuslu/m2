@@ -14,7 +14,10 @@ m2::network::ServerThread::ServerThread(mplayer::Type type, unsigned max_connect
 m2::network::ServerThread::~ServerThread() {
 	DEBUG_FN();
 	set_state_locked(pb::ServerState::SERVER_QUIT);
-	_thread.join();
+	if (_thread.joinable()) {
+		// If the object is default created, thread may not be joinable
+		_thread.join();
+	}
 }
 
 bool m2::network::ServerThread::is_listening() {

@@ -366,7 +366,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 				throw M2_ERROR("Unexpected resource type");
 			}
 		}
-		M2_GAME.client_thread().queue_client_command(cc);
+		M2_GAME.queue_client_command(cc);
 	} else {
 		LOG_INFO("Cancelling Network action...");
 	}

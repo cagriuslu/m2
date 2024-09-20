@@ -67,7 +67,7 @@ namespace {
 	const auto pass_button = TextBlueprint{
 		.text = "Pass",
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-			if (M2_GAME.client_thread().is_turn()) {
+			if (M2_GAME.is_our_turn()) {
 				execute_pass_journey();
 			}
 			return make_continue_action();
@@ -111,9 +111,9 @@ const PanelBlueprint left_hud_blueprint = {
 			.variant = TextBlueprint{
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					auto text = std::string{"Color:"} + generate_player_name(M2_GAME.client_thread().receiver_index());
+					auto text = std::string{"Color:"} + generate_player_name(M2_GAME.self_index());
 					self.set_text(text);
-					self.set_color(generate_player_color(M2_GAME.client_thread().receiver_index()));
+					self.set_color(generate_player_color(M2_GAME.self_index()));
 					return make_continue_action();
 				}
 			}
@@ -124,7 +124,7 @@ const PanelBlueprint left_hud_blueprint = {
 			.variant = TextBlueprint{
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.on_update = [](MAYBE Text& self) {
-					if (M2_GAME.client_thread().is_turn()) {
+					if (M2_GAME.is_our_turn()) {
 						self.set_text("Your turn");
 					} else {
 						self.set_text("Wait turn");

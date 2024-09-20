@@ -121,30 +121,75 @@ m2::Game::~Game() {
 }
 
 m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
+	if (not std::holds_alternative<std::monostate>(_multi_player_threads)) {
+		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
+	}
+
 	LOG_INFO("Creating server instance...");
-	_server_thread.emplace(type, max_connection_count);
+	_multi_player_threads.emplace<ServerThreads>();
+	server_thread().~ServerThread(); // Destruct the default object
+	new (&server_thread()) network::ServerThread(type, max_connection_count);
+
 	// Wait until the server is up
-	while (not _server_thread->is_listening()) {
+	while (not server_thread().is_listening()) {
 		SDL_Delay(25);
 	}
+	// TODO prevent other clients from joining until the host client joins
 
-	LOG_INFO("Server is listening, joining the game as client...");
-	join_game(type, "127.0.0.1");
-	// Wait until the client is connected
-	while (not _client_thread->is_connected()) {
-		SDL_Delay(25);
-	}
-	LOG_INFO("Client connected, becoming ready...");
-
-	_client_thread->set_ready_blocking(true);
-	LOG_INFO("Became ready");
+	LOG_INFO("Server is listening, joining the game as a host client...");
+	host_client_thread().~HostClientThread(); // Destruct the default object
+	new (&host_client_thread()) network::HostClientThread(type);
 
 	return {};
 }
 
 m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& addr) {
-	_client_thread.emplace(type, addr);
+	if (not std::holds_alternative<std::monostate>(_multi_player_threads)) {
+		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
+	}
+
+	_multi_player_threads.emplace<network::RealClientThread>(type, addr);
 	return {};
+}
+
+int m2::Game::total_player_count() {
+	if (is_server()) {
+		return server_thread().client_count();
+	} else if (is_real_client()) {
+		return real_client_thread().total_player_count();
+	} else {
+		throw M2_ERROR("Not a multiplayer game");
+	}
+}
+
+int m2::Game::self_index() {
+	if (is_server()) {
+		return 0;
+	} else if (is_real_client()) {
+		return real_client_thread().self_index();
+	} else {
+		throw M2_ERROR("Not a multiplayer game");
+	}
+}
+
+bool m2::Game::is_our_turn() {
+	if (is_server()) {
+		return server_thread().is_our_turn();
+	} else if (is_real_client()) {
+		return real_client_thread().is_our_turn();
+	} else {
+		throw M2_ERROR("Not a multiplayer game");
+	}
+}
+
+void m2::Game::queue_client_command(const m2g::pb::ClientCommand& cmd) {
+	if (is_server()) {
+		host_client_thread().queue_client_command(cmd);
+	} else if (is_real_client()) {
+		real_client_thread().queue_client_command(cmd);
+	} else {
+		throw M2_ERROR("Not a multiplayer game");
+	}
 }
 
 m2::void_expected m2::Game::load_single_player(
@@ -272,12 +317,8 @@ void m2::Game::handle_hud_events() {
 }
 
 void m2::Game::handle_client_shutdown() {
-	if (_client_thread && _client_thread->is_shutdown()) {
-		// First, destroy server and client threads
-		if (_server_thread) {
-			_server_thread.reset();
-		}
-		_client_thread.reset();
+	if ((is_server() && host_client_thread().is_shutdown()) || (is_real_client() && real_client_thread().is_shutdown())) {
+		_multi_player_threads = std::monostate{};
 		// Execute main menu
 		if (ui::Panel::create_and_run_blocking(_proxy.pause_menu()).is_quit()) {
 			quit = true;
@@ -289,24 +330,24 @@ void m2::Game::execute_pre_step() {
 	for (auto& phy : _level->physics) {
 		IF(phy.pre_step)(phy);
 	}
-	if (_server_thread) {
-		auto client_command = _server_thread->pop_turn_holder_command();
-		if (client_command) {
-			auto new_turn_holder =
-				_proxy.handle_client_command(_server_thread->turn_holder_index(), client_command->client_command());
+	if (is_server()) {
+		if (auto client_command = server_thread().pop_turn_holder_command()) {
+			auto new_turn_holder = _proxy.handle_client_command(server_thread().turn_holder_index(), client_command->client_command());
 			if (new_turn_holder) {
 				if (*new_turn_holder < 0) {
-					_server_thread->shutdown();
+					server_thread().shutdown();
 				} else {
-					_server_thread->set_turn_holder(*new_turn_holder);
+					server_thread().set_turn_holder(*new_turn_holder);
 					_server_update_necessary = true;
 				}
 			}
 		}
-	}
-	if (_client_thread) {
-		// Handle ServerCommand
-		if (auto server_command = M2_GAME.client_thread().pop_server_command()) {
+
+		if (auto server_command = host_client_thread().pop_server_command()) {
+			_proxy.handle_server_command(*server_command);
+		}
+	} else if (is_real_client()) {
+		if (auto server_command = real_client_thread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
 	}
@@ -351,18 +392,19 @@ void m2::Game::execute_step() {
 }
 
 void m2::Game::execute_post_step() {
-	if (_server_thread) {
+	if (is_server()) {
 		if (_server_update_necessary) {
 			// Publish ServerUpdate
-			_server_thread->send_server_update();
+			server_thread().send_server_update();
 			_server_update_necessary = false;
 		}
-	} else if (_client_thread) {
+	} else if (is_real_client()) {
 		// Handle ServerUpdate
-		auto expect_server_update = M2_GAME.client_thread().process_server_update();
-		m2_succeed_or_throw_error(expect_server_update);
-		_proxy.post_server_update(*M2_GAME.client_thread().last_processed_server_update());
+		auto expect_success = real_client_thread().process_server_update();
+		m2_succeed_or_throw_error(expect_success);
+		_proxy.post_server_update(*real_client_thread().last_processed_server_update());
 	}
+
 	for (auto& phy : _level->physics) {
 		IF(phy.post_step)(phy);
 	}
