@@ -360,6 +360,30 @@ void m2g::Proxy::post_server_update(MAYBE const m2::pb::ServerUpdate& server_upd
 	}
 }
 
+void m2g::Proxy::bot_handle_server_update(const m2::pb::ServerUpdate& server_update) {
+	auto receiver_index = server_update.receiver_index();
+	// If it's bot's turn, pass turn
+	if (receiver_index == server_update.turn_holder_index()) {
+		auto player_object_id = server_update.player_object_ids(receiver_index);
+		auto object_it = std::find_if(server_update.objects_with_character().begin(), server_update.objects_with_character().end(), [player_object_id](const m2::pb::ServerUpdate_ObjectDescriptor& obj_desc) {
+			return obj_desc.object_id() == player_object_id;
+		});
+		// Find any card
+		auto card_it = std::find_if(object_it->named_items().begin(), object_it->named_items().end(), [](int item_type) {
+			return is_card(static_cast<m2g::pb::ItemType>(item_type));
+		});
+		// Pass turn
+		LOG_INFO("Bot passing turn");
+		m2g::pb::ClientCommand cc;
+		cc.mutable_pass_action()->set_card(static_cast<m2g::pb::ItemType>(*card_it));
+		M2_GAME.find_bot(receiver_index).queue_client_command(cc);
+	}
+}
+
+void m2g::Proxy::bot_handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command, MAYBE int receiver_index) {
+	INFO_FN();
+}
+
 void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
 	// Store the positions of the merchants
 	if (is_merchant_location(sprite_type)) {
