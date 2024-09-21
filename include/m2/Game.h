@@ -23,6 +23,7 @@
 #include "m2/game/Animation.h"
 #include "network/HostClientThread.h"
 #include "network/RealClientThread.h"
+#include "network/BotClientThread.h"
 #include "network/ServerThread.h"
 #include "protobuf/LUT.h"
 
@@ -42,6 +43,7 @@
 
 namespace m2 {
 	using ServerThreads = std::pair<network::ServerThread, network::HostClientThread>;
+	using BotAndIndexThread = std::pair<network::BotClientThread,int>;
 
 	class Game {
 		mutable std::optional<VecF> _mouse_position_world_m;
@@ -50,7 +52,7 @@ namespace m2 {
 		// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
 		// This is important for the server thread to not linger too much.
 		std::variant<std::monostate, ServerThreads, network::RealClientThread> _multi_player_threads;
-		//std::list<>
+		std::list<BotAndIndexThread> _bot_threads; // thread,receiver_index pairs (receiver_index is initially -1)
 		bool _server_update_necessary{};
 
 	   public:  // TODO private
@@ -141,6 +143,8 @@ namespace m2 {
 		// Network management
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		void_expected join_game(mplayer::Type type, const std::string& addr);
+		void add_bot();
+		network::BotClientThread& find_bot(int receiver_index);
 		bool is_server() const { return std::holds_alternative<ServerThreads>(_multi_player_threads); }
 		bool is_real_client() const { return std::holds_alternative<network::RealClientThread>(_multi_player_threads); }
 		network::ServerThread& server_thread() { return std::get<ServerThreads>(_multi_player_threads).first; }

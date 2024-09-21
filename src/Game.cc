@@ -152,6 +152,25 @@ m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& add
 	return {};
 }
 
+void m2::Game::add_bot() {
+	if (not is_server()) {
+		throw M2_ERROR("Only server can add bots");
+	}
+
+	auto it = _bot_threads.emplace(_bot_threads.end());
+	it->first.~BotClientThread(); // Destruct the default object
+	new (&it->first) network::BotClientThread(server_thread().type());
+	it->second = -1; // Index is initially unknown
+}
+
+m2::network::BotClientThread& m2::Game::find_bot(int receiver_index) {
+	auto it = std::find_if(_bot_threads.begin(), _bot_threads.end(), is_second_equals<network::BotClientThread, int>(receiver_index));
+	if (it == _bot_threads.end()) {
+		throw M2_ERROR("Bot not found");
+	}
+	return it->first;
+}
+
 int m2::Game::total_player_count() {
 	if (is_server()) {
 		return server_thread().client_count();
@@ -205,7 +224,40 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 	_level.reset();
 	reset_state();
 	_level.emplace();
-	return _level->init_multi_player_as_host(level_path_or_blueprint, level_name);
+
+	auto success = _level->init_multi_player_as_host(level_path_or_blueprint, level_name);
+	m2_reflect_unexpected(success);
+
+	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
+	M2_GAME.server_thread().send_server_update();
+
+	// If there are bots, we need to handle the first server update
+	std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	for (auto& [bot, index] : _bot_threads) {
+		auto server_update = bot.pop_server_update();
+		if (not server_update) {
+			throw M2_ERROR("Bot hasn't received the ServerUpdate");
+		}
+		index = server_update->receiver_index();
+	}
+
+	// Populate level
+	M2G_PROXY.multi_player_level_server_populate(level_name, *_level->_lb);
+
+	// Execute second server update, which will fully initialize client levels.
+	M2_GAME.server_thread().send_server_update();
+
+	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
+	std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	for (auto& [bot, index] : _bot_threads) {
+		auto server_update = bot.pop_server_update();
+		if (not server_update) {
+			throw M2_ERROR("Bot hasn't received the ServerUpdate");
+		}
+		index = server_update->receiver_index();
+	}
+
+	return success;
 }
 
 m2::void_expected m2::Game::load_multi_player_as_guest(
@@ -213,7 +265,15 @@ m2::void_expected m2::Game::load_multi_player_as_guest(
 	_level.reset();
 	reset_state();
 	_level.emplace();
-	return _level->init_multi_player_as_guest(level_path_or_blueprint, level_name);
+
+	auto success = _level->init_multi_player_as_guest(level_path_or_blueprint, level_name);
+	m2_reflect_unexpected(success);
+
+	// Consume the initial ServerUpdate that triggered the level to be initialized
+	auto expect_server_update = M2_GAME.real_client_thread().process_server_update();
+	m2_reflect_unexpected(expect_server_update);
+
+	return success;
 }
 
 m2::void_expected m2::Game::load_level_editor(const std::string& level_resource_path) {
@@ -331,6 +391,16 @@ void m2::Game::execute_pre_step() {
 		IF(phy.pre_step)(phy);
 	}
 	if (is_server()) {
+		if (not _bot_threads.empty()) {
+			// Check if any of the bots need to handle the ServerUpdate
+			for (auto& [bot, _] : _bot_threads) {
+				if (auto server_update = bot.pop_server_update()) {
+					_proxy.bot_handle_server_update(*server_update);
+				}
+			}
+		}
+
+		// Handle client command
 		if (auto client_command = server_thread().pop_turn_holder_command()) {
 			auto new_turn_holder = _proxy.handle_client_command(server_thread().turn_holder_index(), client_command->client_command());
 			if (new_turn_holder) {
@@ -343,10 +413,20 @@ void m2::Game::execute_pre_step() {
 			}
 		}
 
+		// Handle server command
 		if (auto server_command = host_client_thread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
+		if (not _bot_threads.empty()) {
+			// Check if any of the bots need to handle the ServerCommand
+			for (auto& [bot, index] : _bot_threads) {
+				if (auto server_command = bot.pop_server_command()) {
+					_proxy.bot_handle_server_command(*server_command, index);
+				}
+			}
+		}
 	} else if (is_real_client()) {
+		// Handle server command
 		if (auto server_command = real_client_thread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}

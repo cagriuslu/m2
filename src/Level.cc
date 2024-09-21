@@ -49,37 +49,16 @@ m2::void_expected m2::Level::init_multi_player_as_host(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	INFO_FN();
 	type_state.emplace<mplayer::State>();
-
-	auto success = init_any_player(
+	return init_any_player(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
-	m2_reflect_unexpected(success);
-
-	// Execute the first server update
-	M2_GAME.server_thread().send_server_update();
-
-	// Populate level
-	M2G_PROXY.multi_player_level_server_populate(_name, *_lb);
-
-	// Execute second server update
-	M2_GAME.server_thread().send_server_update();
-
-	return {};
 }
 
 m2::void_expected m2::Level::init_multi_player_as_guest(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name) {
 	DEBUG_FN();
 	type_state.emplace<mplayer::State>();
-
-	auto success = init_any_player(
+	return init_any_player(
 	    level_path_or_blueprint, name, false, &m2g::Proxy::pre_multi_player_level_client_init, &m2g::Proxy::post_multi_player_level_client_init);
-	m2_reflect_unexpected(success);
-
-	// Consume the initial ServerUpdate that triggered the level to be initialized
-	auto expect_server_update = M2_GAME.real_client_thread().process_server_update();
-	m2_reflect_unexpected(expect_server_update);
-
-	return {};
 }
 
 m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_path) {

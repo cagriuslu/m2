@@ -13,7 +13,6 @@ namespace m2::network {
 
 		// Accessors
 		bool is_shutdown();
-		// Accessors (only available if is_started() is true)
 		inline std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }
 
 		// Modifiers
