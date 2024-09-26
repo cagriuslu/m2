@@ -22,6 +22,7 @@
 #include "cuzn/ui/Detail.h"
 #include <algorithm>
 #include <numeric>
+#include <cuzn/ui/CustomHud.h>
 
 const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
@@ -63,6 +64,12 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
 	init_game_state_tracker(*it);
 	_game_state_tracker_id = it.id();
+
+	// Add custom UI panel to the level
+	_custom_hud_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+		m2::ui::Panel{
+			std::make_unique<m2::ui::PanelBlueprint>(generate_custom_hud_blueprint(client_count)),
+		    custom_hud_window_ration()});
 }
 
 void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
@@ -103,9 +110,6 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	for (int i = 1; i < M2_GAME.server_thread().client_count(); ++i) {
 		_waiting_players.emplace_back(i);
 	}
-
-	// First turn holder is the server, enable action buttons
-	enable_action_buttons();
 }
 
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
@@ -332,11 +336,6 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		}
 	}
 
-	if (next_turn_holder == 0) {
-		enable_action_buttons();
-	} else {
-		disable_action_buttons();
-	}
 	return next_turn_holder;
 }
 
@@ -352,7 +351,13 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 	}
 }
 
-void m2g::Proxy::post_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {
+void m2g::Proxy::post_server_update() {
+	// Refresh custom hud
+	*_custom_hud_panel = m2::ui::Panel{
+		std::make_unique<m2::ui::PanelBlueprint>(generate_custom_hud_blueprint(M2_GAME.total_player_count())),
+		custom_hud_window_ration()};
+
+	// Enable/disable buttons
 	if (M2_GAME.is_our_turn()) {
 		enable_action_buttons();
 	} else {

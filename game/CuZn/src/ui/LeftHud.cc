@@ -109,9 +109,10 @@ const PanelBlueprint left_hud_blueprint = {
 			.x = 2, .y = 2, .w = 15, .h = 6,
 			.border_width = 0,
 			.variant = TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
-				.on_update = [](MAYBE Text& self) {
-					auto text = std::string{"Color:"} + generate_player_name(M2_GAME.self_index());
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.wrapped_font_size_in_units = 3.0f,
+				.on_create = [](MAYBE Text& self) {
+					auto text = std::string{"Your color: "} + generate_player_name(M2_GAME.self_index());
 					self.set_text(text);
 					self.set_color(generate_player_color(M2_GAME.self_index()));
 					return make_continue_action();
@@ -122,7 +123,8 @@ const PanelBlueprint left_hud_blueprint = {
 			.x = 2, .y = 9, .w = 15, .h = 6,
 			.border_width = 0,
 			.variant = TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.wrapped_font_size_in_units = 3.0f,
 				.on_update = [](MAYBE Text& self) {
 					if (M2_GAME.is_our_turn()) {
 						self.set_text("Your turn");

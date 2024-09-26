@@ -256,6 +256,9 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 
 	// Execute second server update, which will fully initialize client levels.
 	M2_GAME.server_thread().send_server_update();
+	// Act as if ServerUpdate is received on the server-side as well
+	LOG_DEBUG("Calling server-side post_server_update...");
+	_proxy.post_server_update();
 
 	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
 	std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -484,15 +487,21 @@ void m2::Game::execute_step() {
 void m2::Game::execute_post_step() {
 	if (is_server()) {
 		if (_server_update_necessary) {
-			// Publish ServerUpdate
+			LOG_DEBUG("Server update is necessary, sending ServerUpdate...");
 			server_thread().send_server_update();
-			_server_update_necessary = false;
+			_server_update_necessary = false; // Unset flag
+
+			// Act as if ServerUpdate is received on the server-side as well
+			LOG_DEBUG("Calling server-side post_server_update...");
+			_proxy.post_server_update();
 		}
 	} else if (is_real_client()) {
 		// Handle ServerUpdate
 		auto expect_success = real_client_thread().process_server_update();
 		m2_succeed_or_throw_error(expect_success);
-		_proxy.post_server_update(*real_client_thread().last_processed_server_update());
+
+		LOG_DEBUG("Calling client-side post_server_update...");
+		_proxy.post_server_update();
 	}
 
 	for (auto& phy : _level->physics) {

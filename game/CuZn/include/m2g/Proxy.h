@@ -28,7 +28,7 @@ namespace m2g {
 		std::optional<int> handle_client_command(
 			int turn_holder_index, const pb::ClientCommand& client_command);
 		void handle_server_command(const pb::ServerCommand& server_command);
-		void post_server_update(const m2::pb::ServerUpdate& server_update);
+		void post_server_update();
 		void bot_handle_server_update(const m2::pb::ServerUpdate& server_update);
 		void bot_handle_server_command(const m2g::pb::ServerCommand& server_command, int receiver_index);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);
@@ -38,6 +38,7 @@ namespace m2g {
 
 	private:
 		m2::Id _game_state_tracker_id{};
+		std::list<m2::ui::Panel>::iterator _custom_hud_panel;
 
 	public:
 		// Once the level is created, these should not be modified.

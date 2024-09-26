@@ -99,7 +99,9 @@ namespace m2 {
 		/// Return -1 if the game ended.
 		std::optional<int> handle_client_command(MAYBE int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) { return std::nullopt; }
 		void handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command) {}
-		void post_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {}
+		/// For the server, called after the ServerUpdate is published (except the initial ServerUpdate).
+		/// For the client, called after the ServerUpdate is received and processed by the engine.
+		void post_server_update() {}
 		void bot_handle_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {}
 		void bot_handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command, MAYBE int receiver_index) {}
 
