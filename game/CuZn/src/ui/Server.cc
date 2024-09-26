@@ -59,7 +59,7 @@ const PanelBlueprint server_lobby = {
 			.x = 60, .y = 60, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "Add Bot",
-				.on_action = [](const m2::ui::widget::Text& self) -> m2::ui::Action {
+				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 					M2_GAME.add_bot();
 					return make_continue_action();
 				}

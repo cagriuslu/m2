@@ -13,6 +13,7 @@ namespace m2::ui {
 
 		SDL_Color background_color{};
 		bool cancellable{}; // TODO if there are multiple UI states, it's hard to tell which one needs to be cancelled. Handle cancellations with a hidden button
+		bool ignore_events{false};
 		std::vector<WidgetBlueprint> widgets;
 	};
 }

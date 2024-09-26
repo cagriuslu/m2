@@ -381,7 +381,7 @@ void m2::Game::handle_hud_events() {
 			});
 		// TODO handle quit
 	}
-	IF(_level->message_box_ui_panel)->handle_events(events);  // For disable_after
+	IF(_level->message_box_ui_panel)->handle_events(events);
 	IF(_level->left_hud_ui_panel)->handle_events(events);
 	IF(_level->right_hud_ui_panel)->handle_events(events);
 }
@@ -517,7 +517,7 @@ void m2::Game::execute_pre_draw() {
 void m2::Game::update_hud_contents() {
 	IF(_level->left_hud_ui_panel)->update_contents();
 	IF(_level->right_hud_ui_panel)->update_contents();
-	IF(_level->message_box_ui_panel)->update_contents();
+	IF(_level->message_box_ui_panel)->update_contents(); // For disable_after
 	for (auto &panel : _level->_custom_nonblocking_ui_panels) {
 		panel.update_contents();
 	}

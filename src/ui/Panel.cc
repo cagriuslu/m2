@@ -299,6 +299,10 @@ Action Panel::handle_events(Events& events) {
 	if (!enabled) {
 		return make_continue_action();
 	}
+	// Return if Panel is set to ignore events
+	if (blueprint->ignore_events) {
+		return make_continue_action();
+	}
 
 	// If the UI is cancellable, check if MENU button is pressed
 	if (blueprint->cancellable && events.pop_key_press(Key::MENU)) {
@@ -539,6 +543,7 @@ const PanelBlueprint m2::ui::message_box_ui = {
     .w = 1,
     .h = 1,
     .border_width = 0,
+	.ignore_events = true,
     .widgets = {WidgetBlueprint{
         .initially_enabled = false,
         .x = 0,
