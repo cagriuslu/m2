@@ -127,8 +127,16 @@ int player_link_count(m2::Character& player) {
 	});
 }
 
+int player_victory_points(m2::Character& player) {
+	return m2::iround(player.get_resource(m2g::pb::VICTORY_POINTS));
+}
+
 int player_income_points(m2::Character& player) {
 	return m2::iround(player.get_attribute(m2g::pb::INCOME_POINTS));
+}
+
+int player_money(m2::Character& player) {
+	return m2::iround(player.get_resource(m2g::pb::MONEY));
 }
 
 size_t player_tile_count(m2::Character& player) {

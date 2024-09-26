@@ -12,7 +12,9 @@ size_t player_card_count(m2::Character& player);
 std::list<Card> player_cards(m2::Character& player);
 inline bool does_player_hold_card(m2::Character& player, Card card) { return player.find_items(card) != player.end_items(); }
 int player_link_count(m2::Character& player);
+int player_victory_points(m2::Character& player);
 int player_income_points(m2::Character& player);
+int player_money(m2::Character& player);
 size_t player_tile_count(m2::Character& player);
 inline size_t player_available_road_count(m2::Character& player) { return player.count_item(m2g::pb::ROAD_TILE); }
 std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Character& player, m2g::pb::ItemCategory tile_category);
