@@ -152,6 +152,7 @@ namespace m2 {
 		network::RealClientThread& real_client_thread() { return std::get<network::RealClientThread>(_multi_player_threads); }
 		int total_player_count();
 		int self_index();
+		int turn_holder_index();
 		bool is_our_turn();
 		void queue_client_command(const m2g::pb::ClientCommand& cmd);
 		// Level management

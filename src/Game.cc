@@ -191,6 +191,16 @@ int m2::Game::self_index() {
 	}
 }
 
+int m2::Game::turn_holder_index() {
+	if (is_server()) {
+		return server_thread().turn_holder_index();
+	} else if (is_real_client()) {
+		return real_client_thread().turn_holder_index();
+	} else {
+		throw M2_ERROR("Not a multiplayer game");
+	}
+}
+
 bool m2::Game::is_our_turn() {
 	if (is_server()) {
 		return server_thread().is_our_turn();
