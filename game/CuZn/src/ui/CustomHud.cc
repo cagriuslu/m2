@@ -84,7 +84,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		bp.widgets.emplace_back(WidgetBlueprint{
 			.x = 70 - ((i + 1) * 10), .y = 15, .w = 10, .h = 5,
 			.border_width = 0.0f,
-			.variant = TextBlueprint{ .text = std::to_string(player_income_points(M2_LEVEL.objects[M2G_PROXY.multi_player_object_ids[i]].character())) }
+			.variant = TextBlueprint{ .text = std::to_string(M2G_PROXY.player_spent_money(i)) }
 		});
 	}
 

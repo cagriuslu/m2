@@ -215,6 +215,16 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		} else {
 			_played_players.emplace_back(turn_holder_index, money_spent);
 		}
+
+		// Save spent money to game state tracker so that it's shared among clients
+		for (int i = 0; i < M2_GAME.total_player_count(); ++i) {
+			auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + i);
+			game_state_tracker().set_resource(money_spent_by_player_enum, 0.0f);
+		}
+		for (auto [player_index, spent_money] : _played_players) {
+			auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
+			game_state_tracker().set_resource(money_spent_by_player_enum, m2::F(spent_money));
+		}
 	}
 
 	// Determine next player
@@ -526,6 +536,11 @@ int m2g::Proxy::market_coal_cost(int coal_count) const {
 int m2g::Proxy::market_iron_cost(int iron_count) const {
 	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 	return calculate_cost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
+}
+
+int m2g::Proxy::player_spent_money(int player_index) const {
+	auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
+	return m2::iround(game_state_tracker().get_resource(money_spent_by_player_enum));
 }
 
 std::pair<int,int> m2g::Proxy::market_coal_revenue(int count) const {

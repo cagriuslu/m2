@@ -67,6 +67,7 @@ namespace m2g {
 		[[nodiscard]] int market_iron_count() const;
 		[[nodiscard]] int market_coal_cost(int coal_count) const; // Query cost of buying coal from the market
 		[[nodiscard]] int market_iron_cost(int iron_count) const; // Query cost of buying iron from the market
+		[[nodiscard]] int player_spent_money(int player_index) const;
 		// first: number of items that can be sold, second: revenue of selling
 		[[nodiscard]] std::pair<int,int> market_coal_revenue(int count) const; // Query revenue of selling coal to the market
 		[[nodiscard]] std::pair<int,int> market_iron_revenue(int count) const; // Query revenue of selling iron to the market
