@@ -34,8 +34,11 @@ namespace m2::network {
 		inline bool is_our_turn() { return self_index() == turn_holder_index(); }
 
 		// Modifiers
+
 		inline void set_ready(bool state) { locked_set_ready_sync(state); }
 		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
-		void_expected process_server_update();
+		/// Returns true if a ServerUpdate is processed, otherwise returns false.
+		/// Returns unexpected if an error occurs.
+		expected<bool> process_server_update();
 	};
 }

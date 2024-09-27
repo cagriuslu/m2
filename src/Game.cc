@@ -499,9 +499,10 @@ void m2::Game::execute_post_step() {
 		// Handle ServerUpdate
 		auto expect_success = real_client_thread().process_server_update();
 		m2_succeed_or_throw_error(expect_success);
-
-		LOG_DEBUG("Calling client-side post_server_update...");
-		_proxy.post_server_update();
+		if (expect_success.value()) {
+			LOG_DEBUG("Calling client-side post_server_update...");
+			_proxy.post_server_update();
+		}
 	}
 
 	for (auto& phy : _level->physics) {

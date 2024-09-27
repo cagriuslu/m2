@@ -84,13 +84,13 @@ int m2::network::RealClientThread::turn_holder_index() {
 	}
 }
 
-m2::void_expected m2::network::RealClientThread::process_server_update() {
+m2::expected<bool> m2::network::RealClientThread::process_server_update() {
 	TRACE_FN();
 
 	auto unprocessed_server_update = locked_pop_server_update();
 	if (not unprocessed_server_update) {
 		LOG_TRACE("No ServerUpdate to process");
-		return {};
+		return false;
 	}
 
 	LOG_DEBUG("Shifting server update: prev << last << unprocessed << null");
@@ -149,7 +149,7 @@ m2::void_expected m2::network::RealClientThread::process_server_update() {
 			}
 		}
 
-		return {}; // Successfully processed the first ServerUpdate
+		return true; // Successfully processed the first ServerUpdate
 	}
 
 	LOG_DEBUG("Processing ServerUpdate");
@@ -261,5 +261,5 @@ m2::void_expected m2::network::RealClientThread::process_server_update() {
 		}
 	}
 
-	return {};
+	return true;
 }
