@@ -15,7 +15,7 @@ enum class BuildJourneyStep {
 	EXPECT_CONFIRMATION,
 };
 class BuildJourney : public m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal> {
-	std::list<m2::ui::Panel>::iterator _cancel_button_panel;
+	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
 
 	Card _selected_card{};
 	IndustryLocation _selected_location{};

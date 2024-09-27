@@ -183,7 +183,10 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_cancel_signal(
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
 	M2_LEVEL.remove_message();
-	M2_LEVEL.remove_custom_nonblocking_ui_panel(_cancel_button_panel);
+	if (_cancel_button_panel) {
+		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
+		_cancel_button_panel.reset();
+	}
 	// Disable dimming in case it was enabled
 	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;
@@ -339,7 +342,10 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_cancel_signal(
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_exit_signal() {
 	M2_LEVEL.enable_hud();
-	M2_LEVEL.remove_custom_nonblocking_ui_panel(_cancel_button_panel);
+	if (_cancel_button_panel) {
+		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
+		_cancel_button_panel.reset();
+	}
 	// Disable dimming in case it was enabled
 	M2_GAME.disable_dimming_with_exceptions();
 	return std::nullopt;

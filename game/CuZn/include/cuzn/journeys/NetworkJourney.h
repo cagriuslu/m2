@@ -27,7 +27,7 @@ class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, PositionOrCancelSi
 		m2::Object* reserved_object{};
 	};
 
-	std::list<m2::ui::Panel>::iterator _cancel_button_panel;
+	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
 
 	bool _build_double_railroads{};
 	m2g::pb::ItemType _selected_card{};

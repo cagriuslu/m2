@@ -12,7 +12,7 @@ enum class POISelectionJourneyStep {
 };
 
 class POISelectionJourney : public m2::FsmBase<POISelectionJourneyStep, PositionOrCancelSignal> {
-	std::list<m2::ui::Panel>::iterator _cancel_button_panel;
+	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
 
 	std::set<POI> _pois;
 	std::string _message;

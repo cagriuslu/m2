@@ -14,7 +14,7 @@ enum class DevelopJourneyStep {
 };
 
 class DevelopJourney : public m2::FsmBase<DevelopJourneyStep, PositionOrCancelSignal> {
-	std::list<m2::ui::Panel>::iterator _cancel_button_panel;
+	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
 
 	bool _develop_double_tiles{};
 	Card _selected_card{};

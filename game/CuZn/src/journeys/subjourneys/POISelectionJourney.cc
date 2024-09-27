@@ -64,7 +64,10 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			break;
 		}
 		case m2::FsmSignalType::ExitState: {
-			M2_LEVEL.remove_custom_nonblocking_ui_panel(_cancel_button_panel);
+			if (_cancel_button_panel) {
+				M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
+				_cancel_button_panel.reset();
+			}
 			M2_LEVEL.remove_message();
 			M2_LEVEL.enable_hud();
 			M2_GAME.disable_dimming_with_exceptions();
