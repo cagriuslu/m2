@@ -20,6 +20,7 @@ namespace m2::ui::widget {
 		TextVerticalAlignment vertical_alignment{};
 
 		// If non-zero, word wrapping is enabled, and font size is fixed to the given number of units.
+		// Otherwise, the drawable area is filled with the text.
 		float wrapped_font_size_in_units{};
 
 		RGB color{255, 255, 255};

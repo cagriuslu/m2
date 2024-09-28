@@ -14,8 +14,7 @@ ImageSelection::ImageSelection(Panel* parent, const WidgetBlueprint* blueprint)
 }
 
 Action ImageSelection::on_event(Events& events) {
-	auto rect = RectI{rect_px};
-	auto buttons_rect = rect.trim_top(rect.w);
+	auto buttons_rect = rect().trim_top(rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
 
@@ -39,7 +38,7 @@ Action ImageSelection::on_event(Events& events) {
 		}
 	} else {
 		// Check if scrolled
-		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect); 0 < scroll_amount) {
+		if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect()); 0 < scroll_amount) {
 			auto min_scroll_amount =
 			    std::min(static_cast<size_t>(scroll_amount), image_selection.list.size() - _selection - 1);
 			if (min_scroll_amount) {
@@ -74,11 +73,11 @@ void ImageSelection::on_draw() {
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
 		const auto& sprite = M2_GAME.get_sprite(image_selection.list[_selection]);
-		auto image_rect = rect_px.trim_bottom(rect_px.h - rect_px.w);
+		auto image_rect = rect().trim_bottom(rect().h - rect().w);
 		draw_sprite(sprite, image_rect);
 	}
 
-	auto buttons_rect = rect_px.trim_top(rect_px.w);
+	auto buttons_rect = rect().trim_top(rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	sdl::render_texture_with_color_mod(_plus_texture.texture(),
 		calculate_text_rect(_plus_texture.texture(), inc_button_rect, TextHorizontalAlignment::CENTER));
@@ -89,5 +88,5 @@ void ImageSelection::on_draw() {
 		calculate_text_rect(_minus_texture.texture(), dec_button_rect, TextHorizontalAlignment::CENTER));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
-	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

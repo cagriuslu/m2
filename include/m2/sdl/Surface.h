@@ -1,6 +1,6 @@
 #pragma once
-
 #include <SDL2/SDL.h>
+#include <memory>
 
 namespace m2::sdl {
     struct SurfaceDeleter {

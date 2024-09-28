@@ -37,12 +37,12 @@ Action AbstractButton::on_event(Events &events) {
 	} else {
 		if (not depressed) {
 			// Check if mouse pressed inside the rect
-			if (events.pop_mouse_button_press(MouseButton::PRIMARY, rect_px)) {
+			if (events.pop_mouse_button_press(MouseButton::PRIMARY, rect())) {
 				depressed = true;
 			}
 		} else {
 			// Check if mouse released inside the rect
-			if (events.pop_mouse_button_release(MouseButton::PRIMARY, rect_px)) {
+			if (events.pop_mouse_button_release(MouseButton::PRIMARY, rect())) {
 				depressed = false;
 				run_action = true;
 			} else if (events.pop_mouse_button_release(MouseButton::PRIMARY)) {

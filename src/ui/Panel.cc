@@ -290,7 +290,7 @@ void Panel::update_positions() {
 		auto widget_rect = calculate_widget_rect(
 		    rect, blueprint->w, blueprint->h, widget_state->blueprint->x, widget_state->blueprint->y,
 		    widget_state->blueprint->w, widget_state->blueprint->h);
-		widget_state->on_position_update(widget_rect);
+		widget_state->set_rect(widget_rect);
 	}
 }
 

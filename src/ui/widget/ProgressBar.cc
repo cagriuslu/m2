@@ -20,13 +20,13 @@ void ProgressBar::on_draw() {
 	draw_background_color();
 	// Bar
 	auto filled_dstrect = SDL_Rect{
-			rect_px.x,
-			rect_px.y,
-			(int)roundf((float)rect_px.w * _progress),
-			rect_px.h
+			rect().x,
+			rect().y,
+			(int)roundf((float)rect().w * _progress),
+			rect().h
 	};
 	SDL_SetRenderDrawColor(M2_GAME.renderer, pb_blueprint.bar_color.r, pb_blueprint.bar_color.g, pb_blueprint.bar_color.b, pb_blueprint.bar_color.a);
 	SDL_RenderFillRect(M2_GAME.renderer, &filled_dstrect);
 	// Foreground
-	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

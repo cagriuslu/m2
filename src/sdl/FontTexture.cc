@@ -50,17 +50,15 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(SDL_Rende
 	return FontTexture{texture, text};
 }
 
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int font_size,
-	int font_letter_width, int width_in_chars, ui::TextHorizontalAlignment horizontal_alignment,
-	const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font,
+	int width_px, ui::TextHorizontalAlignment horizontal_alignment, const std::string& text, SDL_Color color) {
 	if (text.empty()) {
 		return FontTexture{nullptr, text};
 	}
 
 	// Render to surface
-	TTF_SetFontSize(font, font_size);
 	TTF_SetFontWrappedAlign(font, text_horizontal_alignment_to_ttf_wrap_alignment(horizontal_alignment));
-	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, font_letter_width * width_in_chars)};
+	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, width_px)};
 	m2_return_unexpected_message_unless(surface, TTF_GetError());
 	// Render to texture
 	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());

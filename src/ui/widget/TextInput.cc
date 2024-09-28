@@ -19,7 +19,7 @@ TextInput::TextInput(Panel* parent, const WidgetBlueprint* blueprint) : Widget(p
 }
 
 Action TextInput::on_event(Events& events) {
-	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{rect_px})) {
+	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{rect()})) {
 		LOG_INFO("Regaining focus");
 		return make_continue_action(true);
 	}
@@ -77,7 +77,7 @@ Action TextInput::on_update() {
 void TextInput::on_draw() {
 	draw_background_color();
 	if (const auto texture = _font_texture.texture(); texture) {
-		sdl::render_texture_with_color_mod(texture, calculate_text_rect(texture, rect_px, TextHorizontalAlignment::LEFT));
+		sdl::render_texture_with_color_mod(texture, calculate_text_rect(texture, rect(), TextHorizontalAlignment::LEFT));
 	}
-	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

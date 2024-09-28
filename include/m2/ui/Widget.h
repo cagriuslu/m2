@@ -15,43 +15,51 @@ namespace m2::ui {
 
 	// Base class of all widgets instances
 	struct Widget {
-	   private:
+	private:
 		Panel* _parent;
+		RectI _rect_px{}; // Position on screen
 
-	   public:
+	public:
 		bool enabled{true};
 		bool focused{false};
 		std::optional<float> disable_after;  // TODO only implemented for Text
 		const WidgetBlueprint* blueprint;
-		RectI rect_px{};
 
 		Widget(Panel* parent, const WidgetBlueprint* blueprint)
 		    : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
 		virtual ~Widget() = default;
 
-		virtual void on_position_update(const RectI& rect_px_) { this->rect_px = rect_px_; }
+		// Accessors
+		[[nodiscard]] Panel& parent() const { return *_parent; }
+		[[nodiscard]] const RectI& rect() const { return _rect_px; }
+
+		// Modifiers
+		void set_rect(const RectI& rect_px) { _rect_px = rect_px; on_resize(); }
 		virtual Action on_event(MAYBE Events& events) { return make_continue_action(); }
 		virtual void on_focus_change() {}
 		virtual Action on_update() { return make_continue_action(); }
 		virtual void on_draw() {}
 
-		[[nodiscard]] Panel& parent() const { return *_parent; }
+	protected:
+		// Virtual functions for children to implement
+		virtual void on_resize() {}
 
-	   protected:
 		// Utilities for child classes to use
 
 		void draw_background_color() const;
 
-		[[nodiscard]] float horizontal_pixels_per_unit() const;
-		[[nodiscard]] float vertical_pixels_per_unit() const;
+		[[nodiscard]] float horizontal_pixels_per_unit() const { return F(rect().w) / F(blueprint->w); }
+		[[nodiscard]] float vertical_pixels_per_unit() const { return F(rect().h) / F(blueprint->h); }
 		[[nodiscard]] int vertical_border_width_px() const;
 		[[nodiscard]] int horizontal_border_width_px() const;
 		[[nodiscard]] int vertical_padding_width_px() const;
 		[[nodiscard]] int horizontal_padding_width_px() const;
-		// Calculates and returns the drawable area (rect_px - border - padding)
+		// Calculates and returns the drawable area (rect() - border - padding)
 		[[nodiscard]] RectI drawable_area() const;
 
 		static RectI calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align);
+		/// Calculate the rect of the text to fill the drawable_area. font_letter_width/height doesn't need to be exact, as long as their ratio is correct.
+		static RectI calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length, int font_letter_width, int font_letter_height);
 
 		static void draw_rectangle(const RectI& rect, const SDL_Color& color);
 		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);

@@ -35,9 +35,9 @@ Action Image::on_update() {
 void Image::on_draw() {
 	draw_background_color();
 	if (_sprite.second) {
-		draw_sprite(*_sprite.second, rect_px);
+		draw_sprite(*_sprite.second, rect());
 	}
-	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px(), depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
+	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px(), depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255});
 }
 
 void Image::set_sprite(m2g::pb::SpriteType s) {

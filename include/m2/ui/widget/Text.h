@@ -4,13 +4,11 @@
 
 namespace m2::ui::widget {
 	class Text : public AbstractButton {
-		// During initialization, FontTexture may fail to be created because font may not be available, and
-		// drawable_area is not yet determined. In this case, the string is cached until draw time, at which FontTexture
-		// can replace the cached string.
-		std::variant<std::string, sdl::FontTexture> _string_cache_or_font_texture;
-
-		// Instead of generating colored font textures, generate white text and color the text before rendering.
-		RGB _color_override;
+		std::string _current_text;
+		/// Instead of generating colored font texture, generate white text and color the text before rendering.
+		RGB _current_color;
+		/// During initialization, the destination cannot yet be determined.
+		std::optional<std::tuple<sdl::FontTexture, RectI>> _font_texture_and_destination_rect_cache;
 
 	public:
 		explicit Text(Panel* parent, const WidgetBlueprint* blueprint);
@@ -18,16 +16,17 @@ namespace m2::ui::widget {
 		void on_draw() override;
 
 		// Accessors
-		[[nodiscard]] std::string_view text() const;
-		[[nodiscard]] const RGB& color() const { return _color_override; }
+		[[nodiscard]] std::string_view text() const { return _current_text; }
+		[[nodiscard]] const RGB& color() const { return _current_color; }
 
 		// Modifiers
 		void set_text(const std::string&);
-		void set_color(RGB&&);
+		void set_color(RGB&& c) { _current_color = c; }
+
+	protected:
+		void on_resize() override { _font_texture_and_destination_rect_cache = std::nullopt; }
 
 	private:
 		[[nodiscard]] const TextBlueprint& text_blueprint() const { return std::get<TextBlueprint>(blueprint->variant); }
-		[[nodiscard]] int widget_width_in_chars() const;
-		[[nodiscard]] float widget_letter_width_in_pixels() const;
 	};
 }

@@ -15,11 +15,11 @@ void CheckboxWithText::on_draw() {
 	// Background
 	draw_background_color();
 	// Checkbox
-	auto filled_dstrect = SDL_Rect{rect_px.x, rect_px.y, rect_px.h, rect_px.h};
+	auto filled_dstrect = SDL_Rect{rect().x, rect().y, rect().h, rect().h};
 	SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 255);
 	SDL_RenderFillRect(M2_GAME.renderer, &filled_dstrect);
 	if (!_state) {
-		auto empty_dstrect = SDL_Rect{rect_px.x + 1, rect_px.y + 1, rect_px.h - 2, rect_px.h - 2};
+		auto empty_dstrect = SDL_Rect{rect().x + 1, rect().y + 1, rect().h - 2, rect().h - 2};
 		SDL_SetRenderDrawColor(
 		    M2_GAME.renderer, blueprint->background_color.r, blueprint->background_color.g, blueprint->background_color.b,
 		    blueprint->background_color.a);
@@ -27,9 +27,9 @@ void CheckboxWithText::on_draw() {
 	}
 	// Text
 	if (const auto texture = _font_texture.texture(); texture) {
-		auto text_rect = calculate_text_rect(texture, rect_px.trim_left(rect_px.h), TextHorizontalAlignment::LEFT);
+		auto text_rect = calculate_text_rect(texture, rect().trim_left(rect().h), TextHorizontalAlignment::LEFT);
 		sdl::render_texture_with_color_mod(texture, text_rect);
 	}
 	// Border
-	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

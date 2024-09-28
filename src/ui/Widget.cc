@@ -6,16 +6,8 @@ using namespace m2::ui;
 void m2::ui::Widget::draw_background_color() const {
 	const auto& color = blueprint->background_color;
 	if (color.r || color.g || color.b || color.a) {
-		draw_rectangle(rect_px, color);
+		draw_rectangle(rect(), color);
 	}
-}
-
-float m2::ui::Widget::horizontal_pixels_per_unit() const {
-	return F(rect_px.w) / F(blueprint->w);
-}
-
-float m2::ui::Widget::vertical_pixels_per_unit() const {
-	return F(rect_px.h) / F(blueprint->h);
 }
 
 int m2::ui::Widget::vertical_border_width_px() const {
@@ -53,13 +45,28 @@ int m2::ui::Widget::horizontal_padding_width_px() const {
 m2::RectI m2::ui::Widget::drawable_area() const {
 	auto vertical_excess = vertical_border_width_px() + vertical_padding_width_px();
 	auto horizontal_excess = horizontal_border_width_px() + horizontal_padding_width_px();
-	return rect_px.trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
+	return rect().trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
 }
 
 m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align) {
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto font_texture_dimensions = sdl::texture_dimensions(text_texture);
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(font_texture_dimensions.x, font_texture_dimensions.y);
+
+	// If drawable area is wider than the font, horizontal alignment is necessary.
+	switch (align) {
+		case TextHorizontalAlignment::LEFT:
+			return unaligned_destination.align_left_to(drawable_area.x);
+		case TextHorizontalAlignment::RIGHT:
+			return unaligned_destination.align_right_to(drawable_area.x2());
+		default:
+			return unaligned_destination;
+	}
+}
+
+m2::RectI m2::ui::Widget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length, int font_letter_width, int font_letter_height) {
+	// Fit the font into the drawable_area with correct aspect ratio
+	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(text_length * font_letter_width, font_letter_height);
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {

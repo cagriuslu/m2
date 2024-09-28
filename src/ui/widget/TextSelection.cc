@@ -33,7 +33,7 @@ Action TextSelection::on_update() {
 Action TextSelection::on_event(Events& events) {
 	// +/- selection
 	if (auto line_count = text_list_selection_blueprint().line_count; line_count == 0) {
-		auto buttons_rect = rect_px.trim_left(rect_px.w - rect_px.h / 2);
+		auto buttons_rect = rect().trim_left(rect().w - rect().h / 2);
 		auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 		auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 		if (!_plus_depressed && events.pop_mouse_button_press(MouseButton::PRIMARY, inc_button_rect)) {
@@ -50,7 +50,7 @@ Action TextSelection::on_event(Events& events) {
 			return decrement_selection(1);
 		} else {
 			// Check if scrolled
-			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect_px); 0 < scroll_amount) {
+			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect()); 0 < scroll_amount) {
 				return increment_selection(scroll_amount);
 			} else if (scroll_amount < 0) {
 				return decrement_selection(scroll_amount);
@@ -61,7 +61,7 @@ Action TextSelection::on_event(Events& events) {
 		throw M2_ERROR("Not yet implemented");
 	} else {
 		// Scrollable selection
-		auto scroll_bar_rect = rect_px.trim_left(rect_px.w - rect_px.h / I(text_list_selection_blueprint().line_count));
+		auto scroll_bar_rect = rect().trim_left(rect().w - rect().h / I(text_list_selection_blueprint().line_count));
 		auto up_arrow_rect = scroll_bar_rect.horizontal_split(I(text_list_selection_blueprint().line_count), 0);
 		auto down_button_rect = scroll_bar_rect.horizontal_split(I(text_list_selection_blueprint().line_count),
 			I(text_list_selection_blueprint().line_count) - 1);
@@ -77,7 +77,7 @@ Action TextSelection::on_event(Events& events) {
 			}
 		} else {
 			// Check if scrolled via mouse
-			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect_px); 0 < scroll_amount) {
+			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect()); 0 < scroll_amount) {
 				auto min_scroll_amount = std::min(static_cast<size_t>(scroll_amount), _list.size() - _top_index - text_list_selection_blueprint().line_count);
 				if (min_scroll_amount) {
 					_top_index += I(min_scroll_amount);
@@ -94,7 +94,7 @@ Action TextSelection::on_event(Events& events) {
 		for (auto i = 0; i < text_list_selection_blueprint().line_count; ++i) {
 			// If the entry is in window
 			if (_top_index + i < I(_list.size())) {
-				auto text_rect = rect_px.horizontal_split(text_list_selection_blueprint().line_count, i).trim_right(scroll_bar_rect.w);
+				auto text_rect = rect().horizontal_split(text_list_selection_blueprint().line_count, i).trim_right(scroll_bar_rect.w);
 				if (events.pop_mouse_button_press(MouseButton::PRIMARY, text_rect)) {
 					int pressed_item = _top_index + i;
 					if (_selections[pressed_item]) {
@@ -129,12 +129,12 @@ void TextSelection::on_draw() {
 			auto current_selection_index = std::distance(_selections.begin(), current_selection);
 			sdl::render_texture_with_color_mod(_option_texts[current_selection_index].texture(),
 				calculate_text_rect(
-					_option_texts[current_selection_index].texture(), rect_px.trim_right(
-						rect_px.h / 2), TextHorizontalAlignment::LEFT));
+					_option_texts[current_selection_index].texture(), rect().trim_right(
+						rect().h / 2), TextHorizontalAlignment::LEFT));
 		}
 
 		// + button
-		auto buttons_rect = rect_px.trim_left(rect_px.w - rect_px.h / 2);
+		auto buttons_rect = rect().trim_left(rect().w - rect().h / 2);
 		auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 		sdl::render_texture_with_color_mod(_plus_texture.texture(),
 			calculate_text_rect(_plus_texture.texture(), inc_button_rect, TextHorizontalAlignment::CENTER));
@@ -153,7 +153,7 @@ void TextSelection::on_draw() {
 		for (auto i = 0; i < text_list_selection_blueprint().line_count; ++i) {
 			// If the entry is in window
 			if (_top_index + i < I(_list.size())) {
-				auto text_rect = rect_px.horizontal_split(text_list_selection_blueprint().line_count, i);
+				auto text_rect = rect().horizontal_split(text_list_selection_blueprint().line_count, i);
 				// If selected
 				if (_selections[_top_index + i]) {
 					draw_rectangle(text_rect, {0, 0, 255, 127});
@@ -166,7 +166,7 @@ void TextSelection::on_draw() {
 		}
 
 		if (text_list_selection_blueprint().show_scroll_bar) {
-			auto scroll_bar_rect = rect_px.trim_left(rect_px.w - rect_px.h / text_list_selection_blueprint().line_count);
+			auto scroll_bar_rect = rect().trim_left(rect().w - rect().h / text_list_selection_blueprint().line_count);
 			draw_rectangle(scroll_bar_rect, {0, 0, 0, 255});
 			draw_border(scroll_bar_rect, vertical_border_width_px(), horizontal_border_width_px());
 
@@ -183,7 +183,7 @@ void TextSelection::on_draw() {
 		}
 	}
 
-	draw_border(rect_px, vertical_border_width_px(), horizontal_border_width_px());
+	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
 std::vector<TextSelectionBlueprint::ValueVariant> TextSelection::selections() const {
