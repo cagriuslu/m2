@@ -24,9 +24,15 @@ namespace m2 {
 
 		const int default_game_height_m = 16;
 
+//		const std::string default_font_path = "fonts/Courier_Prime/CourierPrime-Regular.ttf";
+//		const std::string default_font_path = "fonts/Kode_Mono/KodeMono-VariableFont_wght.ttf";
+//		const std::string default_font_path = "fonts/Martian_Mono/MartianMono-VariableFont_wdth,wght.ttf";
+//		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
+//		const std::string default_font_path = "fonts/Share_Tech_Mono/ShareTechMono-Regular.ttf";
+//		const std::string default_font_path = "fonts/Syne_Mono/SyneMono-Regular.ttf";
 		const std::string default_font_path = "fonts/VT323/VT323-Regular.ttf";
-		const int default_font_size = 280; // Also corresponds to font letter height
-		const int default_font_letter_width = 112;
+//		const std::string default_font_path = "fonts/Xanh_Mono/XanhMono-Regular.ttf";
+		const int default_font_size = 240;
 
 		/// Should the world have gravity towards downwards direction
 		const bool gravity = false;

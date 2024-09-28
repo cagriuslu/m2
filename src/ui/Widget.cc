@@ -64,9 +64,11 @@ m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI d
 	}
 }
 
-m2::RectI m2::ui::Widget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length, int font_letter_width, int font_letter_height) {
+m2::RectI m2::ui::Widget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
 	// Fit the font into the drawable_area with correct aspect ratio
-	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(text_length * font_letter_width, font_letter_height);
+	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(
+		I(text_length * M2_GAME.font_letter_width_to_height_ratio().n()),
+			M2_GAME.font_letter_width_to_height_ratio().d());
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {

@@ -5,9 +5,7 @@
 #include <m2/Pool.h>
 #include <m2g/Proxy.h>
 #include <m2g_ObjectType.pb.h>
-#include "sdl/FontGenerator.h"
 #include "Cache.h"
-#include "sdl/Font.h"
 
 #include <filesystem>
 #include <functional>
@@ -61,7 +59,7 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		Cache<sdl::FontUniquePtr, sdl::FontGenerator, sdl::FontCacheHashFunction, int> _variant_size_font_cache;
+		Rational _font_letter_width_to_height_ratio; // letter w/h
 
 	   public:  // TODO private
 		static Game* _instance;
@@ -122,10 +120,7 @@ namespace m2 {
 		pb::LUT<m2::pb::Item, NamedItem> named_items;
 		pb::LUT<m2::pb::Animation, Animation> animations;
 		pb::LUT<m2::pb::Song, Song> songs;
-		/// Returns a font handle that has the given size. On first call with a certain size, the default font file is
-		/// re-opened with the given size. This helps preserve the Glyph cache for each different font sizes.
-		/// The fonts returned by this function should not be closed as the ownership belongs to the Game class.
-		TTF_Font* get_font_with_size(int size) { return _variant_size_font_cache(size).get(); }
+		const Rational& font_letter_width_to_height_ratio() const { return _font_letter_width_to_height_ratio; }
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// CONFIG ////////////////////////////////

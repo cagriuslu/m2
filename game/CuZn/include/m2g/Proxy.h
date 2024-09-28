@@ -17,6 +17,8 @@ namespace m2g {
 		static Proxy& get_instance();
 
 		const std::string game_name = "CuZn";
+		const int default_game_height_m = 24;
+		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
 
 		const m2::ui::PanelBlueprint* main_menu();
 		const m2::ui::PanelBlueprint* pause_menu();

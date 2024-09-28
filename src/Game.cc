@@ -87,6 +87,22 @@ m2::Game::Game() {
 	if ((font = TTF_OpenFont((resource_path() / _proxy.default_font_path).c_str(), _proxy.default_font_size)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
+	// Check font properties
+	if (not TTF_FontFaceIsFixedWidth(font)) {
+		// Many calculations related to text assumes a monospaced font
+		throw M2_ERROR("Font is not monospaced");
+	}
+	int font_letter_width, font_letter_height;
+	if (TTF_SizeUTF8(font, "A", &font_letter_width, &font_letter_height)) {
+		throw M2_ERROR("Unable to measure the font letter size");
+	}
+	LOG_INFO("Font letter size", font_letter_width, font_letter_height); // 34,16
+	_font_letter_width_to_height_ratio = Rational{font_letter_width, font_letter_height};
+	// Font size, is the size of the letter from the baseline (ascent).
+	// Descent, is the (negated) size of the tails from the baseline.
+	// Font height is ascent + descent + line gap.
+	// You can request a certain font size, but you may not get an exact font.
+	// Height and ascent can be queried. For width, you need to render.
 
 	audio_manager.emplace();
 	sprite_effects_sheet = SpriteEffectsSheet{renderer};

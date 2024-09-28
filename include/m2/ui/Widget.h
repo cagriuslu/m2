@@ -58,8 +58,8 @@ namespace m2::ui {
 		[[nodiscard]] RectI drawable_area() const;
 
 		static RectI calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align);
-		/// Calculate the rect of the text to fill the drawable_area. font_letter_width/height doesn't need to be exact, as long as their ratio is correct.
-		static RectI calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length, int font_letter_width, int font_letter_height);
+		/// Calculate the rect of the text to fill the drawable_area
+		static RectI calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length);
 
 		static void draw_rectangle(const RectI& rect, const SDL_Color& color);
 		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);
