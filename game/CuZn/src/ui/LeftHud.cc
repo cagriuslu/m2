@@ -113,10 +113,10 @@ const PanelBlueprint left_hud_blueprint = {
 	.background_color = {0, 0, 0, 255},
 	.widgets = {
 		WidgetBlueprint{
-			.x = 2, .y = 2, .w = 15, .h = 6,
+			.x = 0, .y = 2, .w = 19, .h = 8,
 			.border_width = 0,
 			.variant = TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 				.wrapped_font_size_in_units = 2.5f,
 				.on_create = [](MAYBE Text& self) {
 					auto text = std::string{"Your color: "} + generate_player_name(M2_GAME.self_index());
