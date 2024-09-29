@@ -51,8 +51,7 @@ void Text::on_draw() {
 			: m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
 				M2G_PROXY.default_font_size, _current_text));
 		auto destination_rect = text_blueprint().wrapped_font_size_in_units != 0.0f
-			? RectI{drawable_area().x, drawable_area().y, sdl::texture_dimensions(font_texture.texture()).x,
-					sdl::texture_dimensions(font_texture.texture()).y}
+			? calculate_wrapped_text_rect(drawable_area(), text_blueprint().vertical_alignment, sdl::texture_dimensions(font_texture.texture()).y)
 			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(_current_text.length()));
 		_font_texture_and_destination_rect_cache = std::make_tuple(std::move(font_texture), destination_rect);
 	}

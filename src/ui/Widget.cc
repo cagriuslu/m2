@@ -64,6 +64,19 @@ m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI d
 	}
 }
 
+m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(RectI drawable_area, TextVerticalAlignment align, int font_texture_height_px) {
+	auto unaligned_destination = RectI{drawable_area.x, -1 /* will be aligned below */, drawable_area.w, font_texture_height_px};
+
+	switch (align) {
+		case TextVerticalAlignment::TOP:
+			return unaligned_destination.align_top_to(drawable_area.y);
+		case TextVerticalAlignment::BOTTOM:
+			return unaligned_destination.align_bottom_to(drawable_area.y2());
+		default:
+			return unaligned_destination.align_top_to(drawable_area.y_center() - font_texture_height_px / 2);
+	}
+}
+
 m2::RectI m2::ui::Widget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(
