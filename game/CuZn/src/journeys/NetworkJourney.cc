@@ -142,7 +142,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal() {
 	LOG_DEBUG("Expecting connection...");
 	M2_LEVEL.disable_hud();
-	M2_LEVEL.display_message("Pick connection", -1.0f);
+	M2_LEVEL.display_message("Pick connection");
 	_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
 	// Dim places outside the player's network
 	_buildable_connections = buildable_connections_in_network(M2_PLAYER.character());

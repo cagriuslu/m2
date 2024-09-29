@@ -22,7 +22,6 @@ namespace m2::ui {
 	public:
 		bool enabled{true};
 		bool focused{false};
-		std::optional<float> disable_after;  // TODO only implemented for Text
 		const WidgetBlueprint* blueprint;
 
 		Widget(Panel* parent, const WidgetBlueprint* blueprint)

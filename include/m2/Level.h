@@ -137,10 +137,7 @@ namespace m2 {
 		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
 		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
 
-		/// If `timeout` is negative, the timeout is disabled and the message is displayed forever.
-		/// Else, the message is dismissed after `timeout` seconds.
-		void display_message(const std::string& msg, float timeout = 5.0f);
-		/// Removes the message immediately.
+		void display_message(const std::string& msg);
 		void remove_message();
 
 	   private:

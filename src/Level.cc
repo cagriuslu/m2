@@ -290,11 +290,8 @@ void m2::Level::remove_custom_blocking_ui_panel() {
 void m2::Level::remove_custom_blocking_ui_panel_deferred() {
 	M2_DEFER([this]() { this->remove_custom_blocking_ui_panel(); });
 }
-void m2::Level::display_message(const std::string& msg, float timeout) {
+void m2::Level::display_message(const std::string& msg) {
 	message = msg;
-	if (0.0f <= timeout) {
-		message_box_ui_panel->widgets[0]->disable_after = timeout;
-	}
 	message_box_ui_panel->widgets[0]->enabled = true;
 }
 void m2::Level::remove_message() {

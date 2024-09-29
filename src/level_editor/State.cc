@@ -19,7 +19,7 @@ void m2::ledit::State::PaintMode::select_sprite_type(m2g::pb::SpriteType sprite_
 		selected_sprite_ghost_id = obj::create_ghost(M2_GAME.get_sprite(sprite_type));
 
 		const auto sprite_name = pb::enum_name(sprite_type);
-		M2_LEVEL.display_message(sprite_name, 8.0f);
+		M2_LEVEL.display_message(sprite_name);
 	}
 }
 void m2::ledit::State::PaintMode::paint_sprite(const VecI& position) {

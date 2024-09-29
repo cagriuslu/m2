@@ -14,15 +14,6 @@ Text::Text(Panel* parent, const WidgetBlueprint* blueprint) : AbstractButton(par
 }
 
 Action Text::on_update() {
-	if (disable_after) {
-		*disable_after -= M2_GAME.delta_time_s();
-		if (*disable_after <= 0.0f) {
-			disable_after = {};
-			enabled = false;
-			return make_continue_action();
-		}
-	}
-
 	if (text_blueprint().on_update) {
 		return text_blueprint().on_update(*this);
 	} else {

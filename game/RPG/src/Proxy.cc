@@ -25,21 +25,21 @@ void m2g::Proxy::load_resources() {
 void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, const m2::pb::Level& level) {
 	const auto& id = level.identifier();
 	if (id == "WalkingTutorialClosed") {
-		M2_LEVEL.display_message("Use W,A,S,D to walk.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use W,A,S,D to walk.");
 	} else if (id == "WalkingTutorialOpen") {
-		M2_LEVEL.display_message("Some levels will be outdoors.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Some levels will be outdoors.");
 	} else if (id == "FlagTutorialClosed") {
-		M2_LEVEL.display_message("Find the blue flag to exit the level.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Find the blue flag to exit the level.");
 	} else if (id == "FlagTutorialOpen") {
-		M2_LEVEL.display_message("Find the blue flag to exit the level.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Find the blue flag to exit the level.");
 	} else if (id == "DashTutorialClosed") {
-		M2_LEVEL.display_message("Use SPACE button while walking to dash.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use SPACE button while walking to dash.");
 	} else if (id == "RangedWeaponTutorialClosed") {
-		M2_LEVEL.display_message("Use left mouse button to shoot bullets.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use left mouse button to shoot bullets.");
 	} else if (id == "MeleeTutorialClosed") {
-		M2_LEVEL.display_message("Use right mouse button to melee.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("Use right mouse button to melee.");
 	} else if (id == "AllMustBeKilledTutorialOpen") {
-		M2_LEVEL.display_message("All enemies must be killed to complete the level successfully.", rpg::MESSAGE_TIMEOUT);
+		M2_LEVEL.display_message("All enemies must be killed to complete the level successfully.");
 	}
 }
 
