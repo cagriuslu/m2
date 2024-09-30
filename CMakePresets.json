@@ -16,7 +16,7 @@
       }
     },
     {
-      "name": "RPG-DEBUG",
+      "name": "RPG",
       "inherits": ["DEBUG"],
       "binaryDir": "/Users/uslu/Builds/M2-RPG-DEBUG",
       "cacheVariables": {
@@ -24,7 +24,7 @@
       }
     },
     {
-      "name": "MINE-DEBUG",
+      "name": "MINE",
       "inherits": ["DEBUG"],
       "binaryDir": "/Users/uslu/Builds/M2-MINE-DEBUG",
       "cacheVariables": {
@@ -32,12 +32,91 @@
       }
     },
     {
-      "name": "CuZn-DEBUG",
+      "name": "CuZn",
       "inherits": ["DEBUG"],
       "binaryDir": "/Users/uslu/Builds/M2-CuZn-DEBUG",
       "cacheVariables": {
         "GAME": "CuZn"
       }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "RPG-libprotobuf",
+      "configurePreset": "RPG",
+      "targets": "libprotobuf"
+    },
+    {
+      "name": "RPG-libSDL2",
+      "configurePreset": "RPG",
+      "targets": "libSDL2"
+    },
+    {
+      "name": "RPG-libSDL2_image",
+      "configurePreset": "RPG",
+      "targets": "libSDL2_image"
+    },
+    {
+      "name": "RPG-libSDL2_ttf",
+      "configurePreset": "RPG",
+      "targets": "libSDL2_ttf"
+    },
+    {
+      "name": "RPG-libgtest",
+      "configurePreset": "RPG",
+      "targets": "libgtest"
+    },
+
+    {
+      "name": "MINE-libprotobuf",
+      "configurePreset": "MINE",
+      "targets": "libprotobuf"
+    },
+    {
+      "name": "MINE-libSDL2",
+      "configurePreset": "MINE",
+      "targets": "libSDL2"
+    },
+    {
+      "name": "MINE-libSDL2_image",
+      "configurePreset": "MINE",
+      "targets": "libSDL2_image"
+    },
+    {
+      "name": "MINE-libSDL2_ttf",
+      "configurePreset": "MINE",
+      "targets": "libSDL2_ttf"
+    },
+    {
+      "name": "MINE-libgtest",
+      "configurePreset": "MINE",
+      "targets": "libgtest"
+    },
+
+    {
+      "name": "CuZn-libprotobuf",
+      "configurePreset": "CuZn",
+      "targets": "libprotobuf"
+    },
+    {
+      "name": "CuZn-libSDL2",
+      "configurePreset": "CuZn",
+      "targets": "libSDL2"
+    },
+    {
+      "name": "CuZn-libSDL2_image",
+      "configurePreset": "CuZn",
+      "targets": "libSDL2_image"
+    },
+    {
+      "name": "CuZn-libSDL2_ttf",
+      "configurePreset": "CuZn",
+      "targets": "libSDL2_ttf"
+    },
+    {
+      "name": "CuZn-libgtest",
+      "configurePreset": "CuZn",
+      "targets": "libgtest"
     }
   ]
 }
