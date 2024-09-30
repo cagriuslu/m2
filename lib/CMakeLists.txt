@@ -1,10 +1,12 @@
 add_subdirectory(box2d)
 add_subdirectory(expected)
-add_subdirectory(freetype)
 add_subdirectory(googletest)
-add_subdirectory(png)
 add_subdirectory(protobuf)
 add_subdirectory(SDL2)
-add_subdirectory(SDL2_image)
-add_subdirectory(SDL2_ttf)
+
 add_subdirectory(z)
+add_subdirectory(png)
+add_subdirectory(SDL2_image)
+
+add_subdirectory(freetype)
+add_subdirectory(SDL2_ttf)
