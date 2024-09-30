@@ -21,6 +21,7 @@ project(m2 C CXX ASM)
 
 # Load external libraries
 add_subdirectory(lib)
+FetchContent_MakeAvailable(libbox2d libexpected)
 
 # protobuf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin")

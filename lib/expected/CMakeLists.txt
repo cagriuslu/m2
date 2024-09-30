@@ -1,13 +1,8 @@
-include(ExternalProject)
-ExternalProject_Add(
+include(FetchContent)
+FetchContent_Declare(
     libexpected
     URL ${CMAKE_CURRENT_LIST_DIR}/expected-1.1.0.tar.gz
     URL_HASH SHA256=1db357f46dd2b24447156aaf970c4c40a793ef12a8a9c2ad9e096d9801368df6
-    CMAKE_ARGS -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET} -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DEXPECTED_BUILD_PACKAGE=OFF -DEXPECTED_BUILD_TESTS=OFF -DEXPECTED_BUILD_PACKAGE_DEB=OFF
 )
-
-add_library(expected INTERFACE )
-add_dependencies(expected libexpected)
-set_target_properties(expected PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}/include"
-)
+set(EXPECTED_BUILD_PACKAGE OFF CACHE INTERNAL "Disable expected packages")
+set(EXPECTED_BUILD_TESTS OFF CACHE INTERNAL "Disable expected testing")
