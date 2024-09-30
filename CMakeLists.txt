@@ -38,12 +38,6 @@ find_package(Protobuf REQUIRED)
 include_directories(SYSTEM ${Protobuf_INCLUDE_DIRS})
 include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
-# box2d
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/box2d/lib")
-    message(WARNING "libbox2d needs to be built first")
-    return()
-endif()
-
 # SDL2
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2/lib")
     message(WARNING "libSDL2 needs to be built first")
