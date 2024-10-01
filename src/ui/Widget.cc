@@ -64,16 +64,33 @@ m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI d
 	}
 }
 
-m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(RectI drawable_area, TextVerticalAlignment align, int font_texture_height_px) {
-	auto unaligned_destination = RectI{drawable_area.x, -1 /* will be aligned below */, drawable_area.w, font_texture_height_px};
+m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
+	auto font_texture_dimensions = sdl::texture_dimensions(text_texture);
+	if (drawable_area.w < font_texture_dimensions.x) {
+		throw M2_ERROR("Font should have been generated at most as wide as the drawable area");
+	}
+	RectI unaligned = RectI{-1, -1, font_texture_dimensions.x, font_texture_dimensions.y};
 
-	switch (align) {
-		case TextVerticalAlignment::TOP:
-			return unaligned_destination.align_top_to(drawable_area.y);
-		case TextVerticalAlignment::BOTTOM:
-			return unaligned_destination.align_bottom_to(drawable_area.y2());
+	RectI horizontally_aligned;
+	switch (align_h) {
+		case TextHorizontalAlignment::LEFT:
+			horizontally_aligned = unaligned.align_left_to(drawable_area.x);
+			break;
+		case TextHorizontalAlignment::RIGHT:
+			horizontally_aligned = unaligned.align_right_to(drawable_area.x2());
+			break;
 		default:
-			return unaligned_destination.align_top_to(drawable_area.y_center() - font_texture_height_px / 2);
+			horizontally_aligned = unaligned.align_left_to(drawable_area.x_center() - font_texture_dimensions.x / 2);
+			break;
+	}
+
+	switch (align_v) {
+		case TextVerticalAlignment::TOP:
+			return horizontally_aligned.align_top_to(drawable_area.y);
+		case TextVerticalAlignment::BOTTOM:
+			return horizontally_aligned.align_bottom_to(drawable_area.y2());
+		default:
+			return horizontally_aligned.align_top_to(drawable_area.y_center() - font_texture_dimensions.y / 2);
 	}
 }
 
