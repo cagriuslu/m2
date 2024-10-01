@@ -309,6 +309,11 @@ Action Panel::handle_events(Events& events) {
 		return make_return_action();
 	}
 
+	// First, deliver the event to the panel
+	if (blueprint->on_event) {
+		blueprint->on_event(*this, events);
+	}
+	// Then, deliver the event to the widgets
 	for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
 		if (auto action = widget->on_event(events); action.is_continue()) {
 			action.if_continue_with_focus_state([&](bool focus_state) {

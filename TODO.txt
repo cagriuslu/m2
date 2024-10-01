@@ -46,6 +46,3 @@ RPG
 - Build all game mechanics
 - Make THE MOST MINIMAL levels to showcase the engine, do not make an enjoyable game.
 - Remove Enemy.proto, have a LUT in memory
-
-CuZn
-- Implement a screen to show other player's victory points, money, cards, etc
