@@ -17,6 +17,8 @@ namespace m2g {
 		static Proxy& get_instance();
 
 		const std::string game_name = "CuZn";
+		const int game_aspect_ratio_mul = 3;
+		const int game_aspect_ratio_div = 2;
 		const int default_game_height_m = 32;
 		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
 

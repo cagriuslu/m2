@@ -668,7 +668,7 @@ void m2::Game::draw_envelopes() const {
 void m2::Game::flip_buffers() const { SDL_RenderPresent(renderer); }
 
 void m2::Game::recalculate_dimensions(const int window_width, const int window_height, const int game_height_m) {
-	_dims = Dimensions{game_height_m == 0 ? _dims.height_m : game_height_m, window_width, window_height};
+	_dims = Dimensions{game_height_m == 0 ? _dims.height_m : game_height_m, window_width, window_height, _proxy.game_aspect_ratio_mul, _proxy.game_aspect_ratio_div};
 }
 
 void m2::Game::set_zoom(const float game_height_multiplier) {

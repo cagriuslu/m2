@@ -1,52 +1,59 @@
 #pragma once
-#include <SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <m2/Object.h>
-#include <m2/Pool.h>
-#include <m2g/Proxy.h>
-#include <m2g_ObjectType.pb.h>
-#include "Cache.h"
-
-#include <filesystem>
-#include <functional>
-#include <vector>
-
 #include "AudioManager.h"
+#include "Cache.h"
 #include "DrawList.h"
+#include "Events.h"
 #include "Item.h"
 #include "Level.h"
 #include "Meta.h"
+#include "Object.h"
+#include "Pool.h"
 #include "Proxy.h"
 #include "Shape.h"
 #include "Song.h"
 #include "Sprite.h"
-#include "m2/Events.h"
-#include "m2/game/Animation.h"
+#include "game/Animation.h"
 #include "network/HostClientThread.h"
 #include "network/RealClientThread.h"
 #include "network/BotClientThread.h"
 #include "network/ServerThread.h"
 #include "protobuf/LUT.h"
+#include <m2g_ObjectType.pb.h>
+#include <m2g/Proxy.h>
+#include <SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <filesystem>
+#include <functional>
+#include <vector>
 
 #define M2_GAME (m2::Game::instance())
 #define M2_DEFER(f) (M2_GAME.add_deferred_action(f))
-#define M2G_PROXY (M2_GAME._proxy)
+#define M2G_PROXY (M2_GAME.proxy())
 #define M2_LEVEL (M2_GAME.level())
 #define M2_PLAYER (*M2_LEVEL.player())
-
-#define GAME_AND_HUD_ASPECT_RATIO_MUL (16)
-#define GAME_AND_HUD_ASPECT_RATIO_DIV (9)
-#define GAME_ASPECT_RATIO_MUL (5)
-#define GAME_ASPECT_RATIO_DIV (4)
-#define HUD_ASPECT_RATIO_MUL \
-	(GAME_AND_HUD_ASPECT_RATIO_MUL * GAME_ASPECT_RATIO_DIV - GAME_ASPECT_RATIO_MUL * GAME_AND_HUD_ASPECT_RATIO_DIV)
-#define HUD_ASPECT_RATIO_DIV (GAME_AND_HUD_ASPECT_RATIO_DIV * GAME_ASPECT_RATIO_DIV * 2)
 
 namespace m2 {
 	using ServerThreads = std::pair<network::ServerThread, network::HostClientThread>;
 	using BotAndIndexThread = std::pair<network::BotClientThread,int>;
 
 	class Game {
+	public:
+		struct Dimensions {
+			int height_m{20};  // Controls the zoom of the game
+			float width_m{};
+			int ppm{};
+			RectI window{}, game{}, game_and_hud{};
+			RectI top_envelope{}, bottom_envelope{}, left_envelope{}, right_envelope{};
+			RectI left_hud{}, right_hud{}, message_box{};
+			Dimensions() = default;
+			Dimensions(int game_height_m, int window_width, int window_height, int game_aspect_ratio_mul, int game_aspect_ratio_div);
+		};
+
+	private:
+		static Game* _instance;
+		::m2g::Proxy _proxy{};
+		Dimensions _dims;
+
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
 
@@ -60,35 +67,19 @@ namespace m2 {
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		Rational _font_letter_width_to_height_ratio; // letter w/h
-
-	   public:  // TODO private
-		static Game* _instance;
-		::m2g::Proxy _proxy{};
-
-		struct Dimensions {
-			int height_m{20};  // Controls the zoom of the game
-			float width_m{};
-			int ppm{};
-			RectI window{}, game{}, game_and_hud{};
-			RectI top_envelope{}, bottom_envelope{}, left_envelope{}, right_envelope{};
-			RectI left_hud{}, right_hud{}, message_box{};
-			Dimensions() = default;
-			Dimensions(int game_height_m, int window_width, int window_height);
-		} _dims;
-
-		////////////////////////////////////////////////////////////////////////
-		////////////////////////////// RESOURCES ///////////////////////////////
-		////////////////////////////////////////////////////////////////////////
 		std::vector<Sprite> _sprites;
 
+	public:  // TODO private
 		std::optional<Level> _level;
 		std::optional<std::set<ObjectId>> _dimming_exceptions;
 		float _delta_time_s{};
 
 	   public:
 		static void create_instance();
-		inline static Game& instance() { return *_instance; }
+		static Game& instance() { return *_instance; }
 		static void destroy_instance();
+
+		::m2g::Proxy& proxy() { return _proxy; }
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// WINDOW ////////////////////////////////
@@ -145,7 +136,6 @@ namespace m2 {
 		~Game();
 
 		// Proxy management
-		Proxy& proxy() { return _proxy; }
 		int32_t hash() const { return I(std::hash<std::string>{}(_proxy.game_name)); }
 		// Network management
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
@@ -220,10 +210,7 @@ namespace m2 {
 		void add_pause_ticks(const sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void recalculate_dimensions(int window_width, int window_height, int game_height_m = 0);
 		void set_zoom(float game_height_multiplier);
-		void reset_mouse_position() {
-			_mouse_position_world_m = std::nullopt;
-			_screen_center_to_mouse_position_m = std::nullopt;
-		}
+		void reset_mouse_position() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
 		void recalculate_directional_audio();
 		/// Enable dimming mode with exceptions where sprite sheets are dimmed for all objects except the exceptions.
 		void enable_dimming_with_exceptions(std::set<ObjectId> exceptions);

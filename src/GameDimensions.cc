@@ -1,6 +1,19 @@
 #include <m2/Game.h>
 
-m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window_height) : height_m(game_height_m), width_m(static_cast<float>(height_m) * GAME_ASPECT_RATIO_MUL / GAME_ASPECT_RATIO_DIV) {
+constexpr int GAME_AND_HUD_ASPECT_RATIO_MUL = 16;
+constexpr int GAME_AND_HUD_ASPECT_RATIO_DIV = 9;
+
+namespace {
+	constexpr int hud_aspect_ratio_mul(int game_aspect_ratio_mul, int game_aspect_ratio_div) {
+		return (GAME_AND_HUD_ASPECT_RATIO_MUL * game_aspect_ratio_div - game_aspect_ratio_mul * GAME_AND_HUD_ASPECT_RATIO_DIV);
+	}
+
+	constexpr int hud_aspect_ratio_div(int game_aspect_ratio_div) {
+		return (GAME_AND_HUD_ASPECT_RATIO_DIV * game_aspect_ratio_div * 2);
+	}
+}
+
+m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window_height, int game_aspect_ratio_mul, int game_aspect_ratio_div) : height_m(game_height_m), width_m(static_cast<float>(height_m * game_aspect_ratio_mul) / static_cast<float>(game_aspect_ratio_div)) {
 	window = RectI{0, 0, window_width, window_height};
 
 	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
@@ -14,9 +27,9 @@ m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window
 	}
 
 	int game_height = ppm * height_m;
-	int game_width = game_height * GAME_ASPECT_RATIO_MUL / GAME_ASPECT_RATIO_DIV;
+	int game_width = game_height * game_aspect_ratio_mul / game_aspect_ratio_div;
 	int hud_height = game_height;
-	int hud_width = game_height * HUD_ASPECT_RATIO_MUL / HUD_ASPECT_RATIO_DIV;
+	int hud_width = game_height * hud_aspect_ratio_mul(game_aspect_ratio_mul, game_aspect_ratio_div) / hud_aspect_ratio_div(game_aspect_ratio_div);
 
 	int top_envelope_size = (window_height - game_height) / 2;
 	int bottom_envelope_size = (window_height - game_height) - top_envelope_size;

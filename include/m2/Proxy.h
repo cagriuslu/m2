@@ -22,6 +22,9 @@ namespace m2 {
 		/// Name of the game, which is used to discover the resources
 		const std::string game_name = "<game-name>";
 
+		const int game_aspect_ratio_mul = 5;
+		const int game_aspect_ratio_div = 4;
+
 		const int default_game_height_m = 16;
 
 //		const std::string default_font_path = "fonts/Courier_Prime/CourierPrime-Regular.ttf";
