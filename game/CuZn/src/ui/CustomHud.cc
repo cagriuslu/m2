@@ -20,7 +20,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		.background_color = {0, 0, 0, 255},
 		.on_update = [](Panel& panel) -> Action {
 			if (panel.rect_px().contains(sdl::mouse_position())) {
-				panel.set_timeout(1.0f);
+				panel.set_timeout(0.5f);
 			}
 			return make_continue_action();
 		},
@@ -28,7 +28,10 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 			WidgetBlueprint{
 				.x = 0, .y = 0, .w = 30, .h = 5,
 				.border_width = 0.0f,
-				.variant = TextBlueprint{ .text = "Current Player", .horizontal_alignment = TextHorizontalAlignment::LEFT }
+				.variant = TextBlueprint{
+					.text = "Current Player",
+					.horizontal_alignment = TextHorizontalAlignment::LEFT
+				}
 			}
 		}
 	};

@@ -15,7 +15,7 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 	// Add player names
 	auto bp = PanelBlueprint{
 		.w = 70,
-		.h = 8,
+		.h = 9,
 		.border_width = 0.0f,
 		.background_color = {0, 0, 0, 45},
 		.on_event = [=](Panel& panel, Events& events) -> Action {
@@ -47,7 +47,7 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 					.wrapped_font_size_in_units = 4.0f }
 			},
 			WidgetBlueprint{
-				.x = 34, .y = 5, .w = 3, .h = 3,
+				.x = 33, .y = 5, .w = 4, .h = 4,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{ .text = "V" }
 			}
