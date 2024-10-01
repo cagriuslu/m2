@@ -303,7 +303,7 @@ void Panel::update_positions() {
 
 Action Panel::handle_events(Events& events) {
 	// Return if Panel not enabled
-	if (!enabled) {
+	if (not _is_valid || not enabled) {
 		return make_continue_action();
 	}
 	// Return if Panel is set to ignore events
@@ -344,7 +344,7 @@ Action Panel::handle_events(Events& events) {
 
 Action Panel::update_contents(float delta_time_s) {
 	// Return if Panel not enabled
-	if (!enabled) {
+	if (not _is_valid || not enabled) {
 		return make_continue_action();
 	}
 
@@ -376,7 +376,7 @@ Action Panel::update_contents(float delta_time_s) {
 
 void Panel::draw() {
 	// Return if Panel not enabled
-	if (!enabled) {
+	if (not _is_valid || not enabled) {
 		return;
 	}
 

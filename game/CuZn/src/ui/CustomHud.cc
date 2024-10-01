@@ -3,6 +3,7 @@
 #include <cuzn/ui/Detail.h>
 #include <m2/Game.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <m2/sdl/Detail.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -16,8 +17,13 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		.w = 70,
 		.h = 20,
 		.border_width = 0.0f,
-		.background_color = {0, 0, 0, 45},
-		.ignore_events = true,
+		.background_color = {0, 0, 0, 255},
+		.on_update = [](Panel& panel) -> Action {
+			if (panel.rect_px().contains(sdl::mouse_position())) {
+				panel.set_timeout(1.0f);
+			}
+			return make_continue_action();
+		},
 		.widgets = {
 			WidgetBlueprint{
 				.x = 0, .y = 0, .w = 30, .h = 5,

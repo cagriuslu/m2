@@ -40,9 +40,10 @@ namespace m2g {
 
 	private:
 		m2::Id _game_state_tracker_id{};
-		std::list<m2::ui::Panel>::iterator _custom_hud_panel;
-
+		std::list<m2::ui::Panel>::iterator _status_bar_panel;
 	public:
+		std::optional<std::list<m2::ui::Panel>::iterator> custom_hud_panel;
+
 		// Once the level is created, these should not be modified.
 		std::vector<m2::RGB> player_colors;
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> merchant_positions;

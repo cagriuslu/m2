@@ -79,6 +79,12 @@ int m2::sdl::get_refresh_rate() {
 	return dm.refresh_rate;
 }
 
+m2::VecI m2::sdl::mouse_position() {
+	VecI p;
+	SDL_GetMouseState(&p.x, &p.y);
+	return p;
+}
+
 int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count) {
 	std::vector<SDL_Point> points{piece_count + 1};
 	for (unsigned i = 0; i < piece_count; ++i) {

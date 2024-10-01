@@ -2,6 +2,7 @@
 #include "../Meta.h"
 #include "../VecI.h"
 #include <RectI.pb.h>
+#include "../RectI.h"
 #include <SDL2/SDL.h>
 
 SDL_Cursor* SdlUtils_CreateCursor();
@@ -13,6 +14,7 @@ namespace m2::sdl {
 	ticks_t get_ticks_since(ticks_t last_ticks, ticks_t pause_ticks = 0);
 
 	int get_refresh_rate();
+	VecI mouse_position();
 
 	int draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count);
 	int draw_disk(SDL_Renderer* renderer, const VecF& center_position_px, const SDL_Color& center_color, float radius_px, const SDL_Color& edge_color, unsigned steps = 96);

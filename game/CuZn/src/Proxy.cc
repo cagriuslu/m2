@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <numeric>
 #include <cuzn/ui/CustomHud.h>
+#include <cuzn/ui/StatusBar.h>
 
 const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
@@ -65,11 +66,12 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	init_game_state_tracker(*it);
 	_game_state_tracker_id = it.id();
 
-	// Add custom UI panel to the level
-	_custom_hud_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+	// Add status bar panel to the level
+	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
 		m2::ui::Panel{
-			std::make_unique<m2::ui::PanelBlueprint>(generate_custom_hud_blueprint(client_count)),
-		    custom_hud_window_ration()});
+			std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(client_count)),
+			status_bar_window_ratio()
+		});
 }
 
 void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
@@ -362,10 +364,15 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 }
 
 void m2g::Proxy::post_server_update() {
-	// Refresh custom hud
-	*_custom_hud_panel = m2::ui::Panel{
-		std::make_unique<m2::ui::PanelBlueprint>(generate_custom_hud_blueprint(M2_GAME.total_player_count())),
-		custom_hud_window_ration()};
+	// Delete the custom hud and refresh the status bar
+	if (custom_hud_panel) {
+		M2_LEVEL.remove_custom_nonblocking_ui_panel(*custom_hud_panel);
+		custom_hud_panel = std::nullopt;
+	}
+	*_status_bar_panel = m2::ui::Panel{
+		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.total_player_count())),
+		status_bar_window_ratio()
+	};
 
 	// Enable/disable buttons
 	if (M2_GAME.is_our_turn()) {
