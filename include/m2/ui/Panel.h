@@ -7,6 +7,7 @@
 namespace m2::ui {
 	struct Panel {
 	private:
+		bool _is_valid{false}; // If default constructed, Panel is not a valid panel.
 		bool _prev_text_input_state{};
 		std::unique_ptr<PanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		RectF _relation_to_game_and_hud_dims;
@@ -37,6 +38,7 @@ namespace m2::ui {
 		~Panel();
 
 		// Accessors
+		[[nodiscard]] bool is_valid() const { return _is_valid; }
 		[[nodiscard]] RectI rect_px() const;
 
 		// Modifiers

@@ -545,7 +545,13 @@ void m2::Game::update_hud_contents() {
 	IF(_level->right_hud_ui_panel)->update_contents(_delta_time_s);
 	IF(_level->message_box_ui_panel)->update_contents(_delta_time_s);
 	for (auto &panel : _level->_custom_nonblocking_ui_panels) {
-		panel.update_contents(_delta_time_s);
+		panel.update_contents(_delta_time_s)
+			.if_any_return([&panel]() {
+				// If returned, reset the panel. We cannot delete it, the iterator is held by the client
+				panel = ui::Panel{};
+				// TODO returned object is lost, maybe we can store it inside Panel
+			});
+		// TODO handle quit
 	}
 	IF(_level->custom_blocking_ui_panel)->update_contents(_delta_time_s);
 }

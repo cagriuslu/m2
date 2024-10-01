@@ -204,7 +204,7 @@ Action Panel::run_blocking() {
 Panel::Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
 std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
 	sdl::TextureUniquePtr background_texture)
-	: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
+	: _is_valid(true), _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const PanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
 		blueprint = std::get<const PanelBlueprint*>(static_or_unique_blueprint);
@@ -353,6 +353,11 @@ Action Panel::update_contents(float delta_time_s) {
 		return make_return_action();
 	}
 
+	if (blueprint->on_update) {
+		if (auto action = blueprint->on_update(*this); not action.is_continue()) {
+			return action;
+		}
+	}
 	for (const auto &widget : widgets | std::views::filter(is_widget_enabled)) {
 		if (auto action = widget->on_update(); not action.is_continue()) {
 			return action;

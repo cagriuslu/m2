@@ -20,8 +20,9 @@ namespace m2::ui {
 		bool ignore_events{false}; // If true, no events are delivered to the Panel
 		float timeout_s{}; // If set, the Panel is destroyed once the timeout runs out
 
-		std::function<void(Panel&)> on_create;
-		std::function<Action(Panel& self, Events& events)> on_event;
+		std::function<void(Panel&)> on_create{};
+		std::function<Action(Panel& self, Events& events)> on_event{};
+		std::function<Action(Panel& self)> on_update{};
 
 		std::vector<WidgetBlueprint> widgets;
 	};
