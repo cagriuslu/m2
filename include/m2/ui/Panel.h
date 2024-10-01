@@ -11,6 +11,7 @@ namespace m2::ui {
 		std::unique_ptr<PanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		RectF _relation_to_game_and_hud_dims;
 		sdl::TextureUniquePtr _background_texture; // TODO if the screen is resized, background looks bad
+		std::optional<float> _timeout_s;
 
 		// Modifiers
 		Action run_blocking();
@@ -39,9 +40,12 @@ namespace m2::ui {
 		[[nodiscard]] RectI rect_px() const;
 
 		// Modifiers
+		void set_timeout(float in_seconds) { _timeout_s = in_seconds; }
+
+		// Lifecycle Management
         void update_positions();
         Action handle_events(Events& events);
-        Action update_contents();
+        Action update_contents(float delta_time_s);
         void draw();
 
 	private:

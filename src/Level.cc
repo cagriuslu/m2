@@ -105,10 +105,10 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 
 	// UI Hud
 	left_hud_ui_panel.emplace(&level_editor::ui::left_hud, M2_GAME.dimensions().left_hud);
-	left_hud_ui_panel->update_contents();
+	left_hud_ui_panel->update_contents(0.0f);
 	right_hud_ui_panel.emplace(&level_editor::ui::right_hud, M2_GAME.dimensions().right_hud);
-	right_hud_ui_panel->update_contents();
-	message_box_ui_panel->update_contents();
+	right_hud_ui_panel->update_contents(0.0f);
+	message_box_ui_panel->update_contents(0.0f);
 
 	return {};
 }
@@ -168,9 +168,9 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path& path
 
 	// UI Hud
 	left_hud_ui_panel.emplace(&ui::pixel_editor_left_hud, M2_GAME.dimensions().left_hud);
-	left_hud_ui_panel->update_contents();
+	left_hud_ui_panel->update_contents(0.0f);
 	right_hud_ui_panel.emplace(&ui::pixel_editor_right_hud, M2_GAME.dimensions().right_hud);
-	right_hud_ui_panel->update_contents();
+	right_hud_ui_panel->update_contents(0.0f);
 
 	return {};
 }
@@ -190,10 +190,10 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 
 	// UI Hud
 	left_hud_ui_panel.emplace(&ui::sheet_editor_left_hud, M2_GAME.dimensions().left_hud);
-	left_hud_ui_panel->update_contents();
+	left_hud_ui_panel->update_contents(0.0f);
 	right_hud_ui_panel.emplace(&ui::sheet_editor_right_hud, M2_GAME.dimensions().right_hud);
-	right_hud_ui_panel->update_contents();
-	message_box_ui_panel->update_contents();
+	right_hud_ui_panel->update_contents(0.0f);
+	message_box_ui_panel->update_contents(0.0f);
 
 	return {};
 }
@@ -213,10 +213,10 @@ m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path&
 
 	// UI Hud
 	left_hud_ui_panel.emplace(&ui::bulk_sheet_editor_left_hud, M2_GAME.dimensions().left_hud);
-	left_hud_ui_panel->update_contents();
+	left_hud_ui_panel->update_contents(0.0f);
 	right_hud_ui_panel.emplace(&ui::bulk_sheet_editor_right_hud, M2_GAME.dimensions().right_hud);
-	right_hud_ui_panel->update_contents();
-	message_box_ui_panel->update_contents();
+	right_hud_ui_panel->update_contents(0.0f);
+	message_box_ui_panel->update_contents(0.0f);
 
 	return {};
 }

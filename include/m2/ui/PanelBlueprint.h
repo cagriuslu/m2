@@ -18,7 +18,9 @@ namespace m2::ui {
 
 		bool cancellable{}; // TODO if there are multiple UI states, it's hard to tell which one needs to be cancelled. Handle cancellations with a hidden button
 		bool ignore_events{false}; // If true, no events are delivered to the Panel
+		float timeout_s{}; // If set, the Panel is destroyed once the timeout runs out
 
+		std::function<void(Panel&)> on_create;
 		std::function<Action(Panel& self, Events& events)> on_event;
 
 		std::vector<WidgetBlueprint> widgets;

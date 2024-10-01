@@ -541,13 +541,13 @@ void m2::Game::execute_pre_draw() {
 }
 
 void m2::Game::update_hud_contents() {
-	IF(_level->left_hud_ui_panel)->update_contents();
-	IF(_level->right_hud_ui_panel)->update_contents();
-	IF(_level->message_box_ui_panel)->update_contents();
+	IF(_level->left_hud_ui_panel)->update_contents(_delta_time_s);
+	IF(_level->right_hud_ui_panel)->update_contents(_delta_time_s);
+	IF(_level->message_box_ui_panel)->update_contents(_delta_time_s);
 	for (auto &panel : _level->_custom_nonblocking_ui_panels) {
-		panel.update_contents();
+		panel.update_contents(_delta_time_s);
 	}
-	IF(_level->custom_blocking_ui_panel)->update_contents();
+	IF(_level->custom_blocking_ui_panel)->update_contents(_delta_time_s);
 }
 
 void m2::Game::clear_back_buffer() const {

@@ -124,13 +124,18 @@ Action Panel::run_blocking() {
 	}
 
 	// Update initial contents
-	if (auto return_value = update_contents(); not return_value.is_continue()) {
+	if (auto return_value = update_contents(0.0f); not return_value.is_continue()) {
 		LOG_DEBUG("Update action is not continue");
 		return return_value;
 	}
 
 	Events events;
+	auto last_loop_ticks = sdl::get_ticks();
 	while (true) {
+		auto current_ticks = sdl::get_ticks();
+		auto delta_time_s = F(current_ticks - last_loop_ticks) / 1000.0f;
+		last_loop_ticks = current_ticks;
+
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
 		////////////////////////////////////////////////////////////////////////
@@ -177,7 +182,7 @@ Action Panel::run_blocking() {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Update contents
-		if (auto return_value = update_contents(); not return_value.is_continue()) {
+		if (auto return_value = update_contents(delta_time_s); not return_value.is_continue()) {
 			return return_value;
 		}
 
@@ -240,6 +245,8 @@ std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_
 
 	// Update initial positions
 	update_positions();
+
+	IF(blueprint->on_create)(*this);
 }
 
 Action Panel::create_and_run_blocking(
@@ -335,10 +342,15 @@ Action Panel::handle_events(Events& events) {
 	return make_continue_action();
 }
 
-Action Panel::update_contents() {
+Action Panel::update_contents(float delta_time_s) {
 	// Return if Panel not enabled
 	if (!enabled) {
 		return make_continue_action();
+	}
+
+	// Check if timed out
+	if (_timeout_s && *_timeout_s < 0.0f) {
+		return make_return_action();
 	}
 
 	for (const auto &widget : widgets | std::views::filter(is_widget_enabled)) {
@@ -348,6 +360,12 @@ Action Panel::update_contents() {
 			continue;
 		}
 	}
+
+	// Decrement timeout
+	if (_timeout_s) {
+		*_timeout_s -= delta_time_s;
+	}
+
 	return make_continue_action();
 }
 
