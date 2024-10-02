@@ -11,9 +11,13 @@ namespace m2 {
 	template <typename T, uint64_t Capacity = 65536> class MapF;
 
 	namespace detail {
+		// The struct that's held inside Quadrants and _foreign_items
 		struct MapContainerItemF {
+			// Copy area here for quick access
 			RectF area;
+			// ID of the object inside the Pool (MapF)
 			Id id{};
+
 			MapContainerItemF(RectF&& area, Id id) : area(area), id(id) {}
 			MapContainerItemF(const RectF& area, Id id) : area(area), id(id) {}
 		};
@@ -25,11 +29,11 @@ namespace m2 {
 			// The quadrant shouldn't be divided unless there are ITEM_COUNT_THRESHOLD items.
 			static constexpr unsigned ITEM_COUNT_THRESHOLD = 64 / sizeof(m2::Id);
 
-			MapF<T,Capacity>& _map; // Back-pointer
+			MapF<T,Capacity>& _map; // Back-pointer to the map, mostly used to look up the object from the Pool
 			RectF _area; // The plot of land managed by this Quadrant
 			float _tolerance;
-			std::deque<MapContainerItemF> _items{}; // Items that lay on multiple quadrants, or all items until the quadrants are created
-			bool _dirty{}; // Signifies that _items contain an item that would wholly fit into a child
+			std::deque<MapContainerItemF> _items{}; // Items that lay on multiple quadrants, or all items until the child quadrants are created
+			bool _dirty{}; // Signifies that _items contain an item that could wholly fit into a child, but the children are not created yet.
 			std::array<std::pair<RectF, std::unique_ptr<Quadrant>>, 4> _children{}; // Children Quadrants. Order: TL, TR, BL, BR
 
 		public:
@@ -156,16 +160,25 @@ namespace m2 {
 			friend class MapF<T,Capacity>;
 		};
 
+		// The stored object is wrapped inside MapPoolItemF before being placed in the Pool
 		template <typename T>
 		struct MapPoolItemF {
-			std::deque<MapContainerItemF>* container{}; // Back-pointer
+			// Back-pointer to either MapF::_foreign_items, or Quadrant::_items. If the object lays outside the area
+			// managed by the Map, this points to MapF::_foreign_items. Otherwise, it points to some Quadrant::_items in
+			// some Quadrant.
+			std::deque<MapContainerItemF>* container{};
+			// Area taken up by the object
 			RectF area;
+			// Object itself
 			T t;
+
+			// Constructor only constructs the object itself.
 			template <typename... Args>
 			explicit MapPoolItemF(Args&&... args) : t(std::forward<Args>(args)...) {}
 		};
 	}
 
+	// MapF extends Pool privately. The items are stored in the inherited Pool.
 	template <typename T, uint64_t Capacity>
 	class MapF : private Pool<detail::MapPoolItemF<T>,Capacity> {
 		float _tolerance;
@@ -255,10 +268,14 @@ namespace m2 {
 		std::pair<T&, Id> emplace(const RectF& area, Args&&... args) {
 			// Insert item into Pool
 			auto pool_it = Pool<detail::MapPoolItemF<T>,Capacity>::emplace(std::forward<Args>(args)...);
+			// Store area
 			pool_it->area = area;
+			// Point back-pointer to the correct container
 			if (_root_quadrant.area().contains(area, _tolerance)) {
-				pool_it->container = _root_quadrant.insert({area, pool_it.id()}); // Adjust back-pointer
+				// Object fits inside the managed area, insert to one of the quadrants
+				pool_it->container = _root_quadrant.insert({area, pool_it.id()});
 			} else {
+				// Object doesn't fit inside the managed area, insert to _foreign_items
 				_foreign_items.emplace_back(area, pool_it.id());
 				pool_it->container = &_foreign_items;
 			}
@@ -287,8 +304,9 @@ namespace m2 {
 					break;
 				}
 			}
+			// Reinsert
 			if (_root_quadrant.area().contains(new_area, _tolerance)) {
-				pool_item->container = _root_quadrant.insert({new_area, id}); // Adjust back-pointer
+				pool_item->container = _root_quadrant.insert({new_area, id});
 			} else {
 				_foreign_items.emplace_back(new_area, id);
 				pool_item->container = &_foreign_items;
