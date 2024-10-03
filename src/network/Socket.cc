@@ -6,17 +6,8 @@
 #include <arpa/inet.h>
 #include <m2/Log.h>
 
-m2::expected<m2::network::Socket> m2::network::Socket::create_tcp() {
+m2::expected<m2::network::Socket> m2::network::Socket::create() {
 	int socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (socket_result == -1) {
-		return m2::make_unexpected(strerror(errno));
-	}
-
-	return Socket{socket_result};
-}
-
-m2::expected<m2::network::Socket> m2::network::Socket::create_udp() {
-	int socket_result = ::socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (socket_result == -1) {
 		return m2::make_unexpected(strerror(errno));
 	}
@@ -105,17 +96,6 @@ m2::expected<ssize_t> m2::network::Socket::send(const uint8_t* buffer, size_t le
 	} else {
 		return send_result;
 	}
-}
-
-bool m2::network::Socket::is_readable() const {
-	fd_set read_set;
-	FD_ZERO(&read_set);
-	FD_SET(_fd, &read_set);
-	auto select_result = network::select(_fd, &read_set, nullptr, 0);
-	if (not select_result) {
-		throw M2_ERROR("Select failed: " + select_result.error());
-	}
-	return 0 < *select_result;
 }
 
 m2::expected<ssize_t> m2::network::Socket::recv(uint8_t* buffer, size_t length) {

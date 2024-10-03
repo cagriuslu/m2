@@ -62,6 +62,7 @@ namespace m2::network {
 		// Thread functions
 		static void thread_func(ServerThread* server_thread);
 		[[nodiscard]] bool is_quit();
+		std::vector<int> locked_all_client_fds();
 		int prepare_read_set(fd_set* set); // Return max fd
 	};
 }

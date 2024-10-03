@@ -200,7 +200,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	set_thread_name_for_logging("SR");
 	LOG_INFO("ServerThread function");
 
-	auto listen_socket = Socket::create_tcp();
+	auto listen_socket = Socket::create();
 	if (not listen_socket) {
 		LOG_FATAL("Socket creation failed", listen_socket.error());
 		return;
@@ -362,6 +362,17 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 bool m2::network::ServerThread::is_quit() {
 	const std::lock_guard lock(_mutex);
 	return _state == pb::ServerState::SERVER_QUIT;
+}
+
+std::vector<int> m2::network::ServerThread::locked_all_client_fds() {
+	std::vector<int> fds;
+	const std::lock_guard lock(_mutex);
+	for (auto& client : _clients) {
+		if (client.is_still_connected()) {
+			fds.push_back(client.socket().fd());
+		}
+	}
+	return fds;
 }
 
 int m2::network::ServerThread::prepare_read_set(fd_set* set) {

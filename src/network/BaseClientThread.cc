@@ -135,7 +135,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 			// If not yet connected
 
 			// Create socket
-			auto expect_socket = Socket::create_tcp();
+			auto expect_socket = Socket::create();
 			if (not expect_socket) {
 				LOG_FATAL("Socket creation failed", expect_socket.error());
 				return;
