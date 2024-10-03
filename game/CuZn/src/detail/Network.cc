@@ -26,7 +26,7 @@ namespace {
 						auto merchant_locations = merchant_locations_of_merchant_city(conn_city);
 						locations.insert(merchant_locations.begin(), merchant_locations.end());
 					} else if (is_industry_city(conn_city) && not processed_cities.contains(conn_city)) {
-						recursive_location_network_from_industry_city(locations, processed_cities, city);
+						recursive_location_network_from_industry_city(locations, processed_cities, conn_city);
 					}
 				}
 			}
