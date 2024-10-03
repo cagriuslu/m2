@@ -142,7 +142,7 @@ void m2::network::ServerThread::send_server_update() {
 
 		LOG_DEBUG("Queueing ServerUpdate to client", i);
 		message.mutable_server_update()->set_receiver_index(i);
-		_clients[i].push_outgoing_message(message);
+		_clients[i].queue_outgoing_message(message);
 	}
 }
 
@@ -160,7 +160,7 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 	{
 		const std::lock_guard lock(_mutex);
 		LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
-		_clients[receiver_index].push_outgoing_message(std::move(message));
+		_clients[receiver_index].queue_outgoing_message(std::move(message));
 	}
 }
 
@@ -176,7 +176,7 @@ void m2::network::ServerThread::shutdown() {
 	auto count = I(_clients.size());
 	for (auto i = 0; i < count; ++i) {
 		LOG_DEBUG("Queueing Shutdown message to client", i);
-		_clients[i].push_outgoing_message(msg);
+		_clients[i].queue_outgoing_message(msg);
 	}
 	// Flush output queues
 	for (auto i = 0; i < count; ++i) {

@@ -33,7 +33,7 @@ namespace m2::network::server {
 		m2::expected<bool> save_incoming_message(char* read_buffer, size_t read_buffer_length);
 		const std::optional<pb::NetworkMessage>& peak_incoming_message();
 		std::optional<pb::NetworkMessage> pop_incoming_message();
-		void push_outgoing_message(pb::NetworkMessage msg);
+		void queue_outgoing_message(pb::NetworkMessage msg);
 		expected<bool> flush_outgoing_messages();
 	};
 
