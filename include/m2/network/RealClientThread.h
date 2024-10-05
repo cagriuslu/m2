@@ -35,7 +35,7 @@ namespace m2::network {
 
 		// Modifiers
 
-		inline void set_ready(bool state) { locked_set_ready_sync(state); }
+		inline void set_ready(bool state) { locked_set_ready(state); }
 		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
 		/// Returns true if a ServerUpdate is processed, otherwise returns false.
 		/// Returns unexpected if an error occurs.

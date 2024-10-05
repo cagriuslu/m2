@@ -60,7 +60,7 @@ m2::void_expected m2::network::Socket::listen(int queue_size) {
 	return {};
 }
 
-m2::void_expected m2::network::Socket::connect(const std::string& ip_addr, uint16_t port) {
+m2::expected<bool> m2::network::Socket::connect(const std::string& ip_addr, uint16_t port) {
 	sockaddr_in sin{};
 	sin.sin_len = sizeof(sin);
 	sin.sin_family = AF_INET;
@@ -68,10 +68,13 @@ m2::void_expected m2::network::Socket::connect(const std::string& ip_addr, uint1
 	sin.sin_addr.s_addr = inet_addr(ip_addr.c_str());
 	int connect_result = ::connect(_fd, (sockaddr*) &sin, sizeof(sin));
 	if (connect_result == -1) {
+		if (errno == ECONNREFUSED || errno == EHOSTUNREACH || errno == ENETUNREACH || errno == ETIMEDOUT) {
+			// Connection failed due to reasons not under our control
+			return false;
+		}
 		return m2::make_unexpected(strerror(errno));
 	}
-
-	return {};
+	return true;
 }
 
 m2::expected<std::optional<m2::network::Socket>> m2::network::Socket::accept() {

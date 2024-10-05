@@ -5,6 +5,7 @@
 #include <m2/Log.h>
 #include <m2/Meta.h>
 #include <m2/Game.h>
+#include <algorithm>
 
 #define PORT (1162)
 
@@ -32,13 +33,7 @@ int m2::network::ServerThread::client_count() {
 
 int m2::network::ServerThread::ready_client_count() {
 	const std::lock_guard lock(_mutex);
-	int sum = 0;
-	for (const auto& client: _clients) {
-		if (client.is_ready()) {
-			++sum;
-		}
-	}
-	return sum;
+	return I(std::ranges::count_if(_clients, [](const auto& client) { return client.is_ready; }));
 }
 
 int m2::network::ServerThread::turn_holder_index() {
@@ -187,7 +182,7 @@ void m2::network::ServerThread::shutdown() {
 	}
 	// Flush output queues
 	for (auto i = 0; i < count; ++i) {
-		_clients[i].flush_and_shutdown(10000);
+		_clients[i].flush_and_shutdown();
 	}
 
 	set_state_unlocked(pb::SERVER_SHUTDOWN);
@@ -244,18 +239,51 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	// Start ping broadcast
 	server_thread->_ping_broadcast_thread.emplace();
 
-	while (not server_thread->is_quit() && not server_thread->is_shutdown()) {
+	while (not server_thread->locked_is_quit() && not server_thread->is_shutdown()) {
+		// Process one incoming message from each client
+		{
+			const std::lock_guard lock(server_thread->_mutex);
+			for (auto i = 0; i < I(server_thread->_clients.size()); ++i) {
+				auto& client = server_thread->_clients[i];
+				if (client.has_incoming_data(false)) {
+					const auto* peak = client.peak_incoming_message();
+					if (peak->has_ready()) {
+						// Check ready message
+						if (server_thread->_state == pb::SERVER_LISTENING) {
+							LOG_INFO("Recording client readiness", i, peak->ready());
+							client.is_ready = peak->ready();
+						} else {
+							LOG_WARN("Received ready signal while the server wasn't listening");
+						}
+						client.pop_incoming_message(); // Pop the message from the client
+					} else {
+						// Process other messages
+						if (server_thread->_turn_holder != i) {
+							LOG_WARN("Dropping message received from a non-turn-holder client", i);
+							client.pop_incoming_message();
+						} else {
+							// Process ClientCommand
+							if (peak->has_client_command()) {
+								LOG_INFO("ClientCommand is received from client, will be processed by the game loop", i);
+							} else {
+								client.pop_incoming_message(); // Not yet implemented
+							}
+						}
+					}
+				}
+			}
+		}
+
 		// Prepare read set for select
 		fd_set read_set;
-		auto read_max_fd = server_thread->prepare_fd_set(&read_set);
+		auto read_max_fd = server_thread->prepare_read_fd_set(&read_set);
 		FD_SET(listen_socket->fd(), &read_set); // Add main socket as well
 		read_max_fd = std::max(read_max_fd, listen_socket->fd());
 		// Prepare write set for select
 		fd_set write_set;
-		auto write_max_fd = server_thread->prepare_fd_set(&write_set);
-
+		auto write_max_fd = server_thread->prepare_write_fd_set(&write_set);
 		// Select
-		auto select_result = select(std::max(read_max_fd, write_max_fd), &read_set, &write_set, 100);
+		auto select_result = select(std::max(read_max_fd, write_max_fd), &read_set, &write_set, 250);
 		if (not select_result) {
 			throw M2_ERROR("Select failed: " + select_result.error());
 		}
@@ -289,59 +317,19 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		// Check readable clients
 		{
 			const std::lock_guard lock(server_thread->_mutex);
-			for (size_t i = 0; i < server_thread->_clients.size(); ++i) {
+			for (auto i = 0; i < I(server_thread->_clients.size()); ++i) {
 				auto& client = server_thread->_clients[i];
 				if (not client.is_still_connected()) {
 					// Skip client if it's connection has dropped
 					continue;
 				}
-				if (not FD_ISSET(client.socket().fd(), &read_set)) {
-					// Skip if no messages have been received from this client
-					continue;
-				}
-				LOG_DEBUG("Client is readable", i);
-
-				if (auto read_result = client.read_incoming_data(); not read_result) {
-					LOG_WARN("Socket error occurred, closing connection to client", i, read_result.error());
-					client.clear_socket();
-				} else {
-					if (*read_result == SocketManager::ReadResult::MESSAGE_RECEIVED) {
-						const auto* peak = client.peak_incoming_message();
-						if (peak->has_ready()) {
-							// Check ready message
-							if (server_thread->_state == pb::SERVER_LISTENING) {
-								LOG_INFO("Client readiness", peak->ready());
-								client.set_ready(peak->ready());
-							} else {
-								LOG_WARN("Received ready signal while the server wasn't listening");
-							}
-							client.pop_incoming_message(); // Pop the message from the client
-						} else {
-							// Process other messages
-							if (server_thread->_turn_holder != I(i)) {
-								LOG_WARN("Dropping message received from a non-turn-holder client", i);
-								client.pop_incoming_message();
-							} else {
-								// Process ClientCommand
-								if (peak->has_client_command()) {
-									LOG_INFO("ClientCommand is received from client, will be processed by the game loop", i);
-								} else {
-									client.pop_incoming_message(); // Not yet implemented
-								}
-							}
-						}
-					} else if (*read_result == SocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
-						// We will try next time
-					} else {
-						LOG_WARN("A data related error occurred, closing connection to client", i, static_cast<int>(*read_result));
-						client.clear_socket();
-					}
-				}
+				// Read from socket
+				client.has_incoming_data(FD_ISSET(client.fd(), &read_set));
 			}
 
 			// If the lobby is not yet closed, remove disconnected clients
 			if (server_thread->_state == pb::ServerState::SERVER_LISTENING) {
-				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(), [](const auto& client) {
+				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(), [](auto& client) {
 					return not client.is_still_connected();
 				});
 				server_thread->_clients.erase(erase_it, server_thread->_clients.end());
@@ -352,30 +340,13 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		// Check writeable clients
 		{
 			const std::lock_guard lock(server_thread->_mutex);
-			for (size_t i = 0; i < server_thread->_clients.size(); ++i) {
-				auto& client = server_thread->_clients[i];
-				if (not client.is_still_connected()) {
-					// Skip if the connection has dropped
+			for (auto & client : server_thread->_clients) {
+				if (not client.is_still_connected() || not FD_ISSET(client.fd(), &write_set)) {
+					// Skip if the connection has dropped or the socket is not writeable
 					continue;
 				}
-				if (not FD_ISSET(client.socket().fd(), &write_set)) {
-					// Skip if socket is not writeable
-					continue;
-				}
-				LOG_TRACE("Client is writeable", i);
-
-				if (auto send_result = client.send_outgoing_data(); not send_result) {
-					LOG_WARN("Socket error occurred, closing connection to client", i, send_result.error());
-					client.clear_socket();
-				} else {
-					if (*send_result == SocketManager::SendResult::OK) {
-						// Nice
-					} else if (*send_result == SocketManager::SendResult::INVALID_MESSAGE) {
-						throw M2_ERROR("An invalid outgoing message was queue to client" + std::to_string(i));
-					} else if (*send_result == SocketManager::SendResult::BUFFER_WOULD_OVERFLOW) {
-						throw M2_ERROR("A too large outgoing message was queue to client" + std::to_string(i));
-					}
-				}
+				// Write to socket
+				client.send_outgoing_data();
 			}
 		}
 	}
@@ -383,19 +354,34 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	LOG_INFO("Server thread is quiting");
 }
 
-bool m2::network::ServerThread::is_quit() {
+bool m2::network::ServerThread::locked_is_quit() {
 	const std::lock_guard lock(_mutex);
 	return _state == pb::ServerState::SERVER_QUIT;
 }
 
-int m2::network::ServerThread::prepare_fd_set(fd_set* set) {
+int m2::network::ServerThread::prepare_read_fd_set(fd_set* set) {
 	FD_ZERO(set);
 
 	const std::lock_guard lock(_mutex);
 	int max = 0;
 	for (auto& client : _clients) {
 		if (client.is_still_connected()) {
-			auto fd = client.socket().fd();
+			auto fd = client.fd();
+			FD_SET(fd, set);
+			max = std::max(max, fd);
+		}
+	}
+	return max;
+}
+
+int m2::network::ServerThread::prepare_write_fd_set(fd_set* set) {
+	FD_ZERO(set);
+
+	const std::lock_guard lock(_mutex);
+	int max = 0;
+	for (auto& client : _clients) {
+		if (client.is_still_connected() && client.has_outgoing_data()) {
+			auto fd = client.fd();
 			FD_SET(fd, set);
 			max = std::max(max, fd);
 		}

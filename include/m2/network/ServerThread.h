@@ -9,6 +9,7 @@
 #include "m2/Object.h"
 #include <queue>
 #include "PingBroadcastThread.h"
+#include "ClientManager.h"
 
 namespace m2::network {
 	class ServerThread {
@@ -19,8 +20,8 @@ namespace m2::network {
 
 		// Shared variables
 		std::mutex _mutex;
-		pb::ServerState _state{pb::ServerState::SERVER_NOT_READY};
-		std::vector<SocketManager> _clients;
+		pb::ServerState _state{pb::ServerState::SERVER_INITIAL_STATE};
+		std::vector<ClientManager> _clients;
 		int _turn_holder{};
 		std::optional<pb::NetworkMessage> _received_client_command;
 
@@ -59,7 +60,8 @@ namespace m2::network {
 
 		// Thread functions
 		static void thread_func(ServerThread* server_thread);
-		[[nodiscard]] bool is_quit();
-		int prepare_fd_set(fd_set* set); // Return max fd
+		[[nodiscard]] bool locked_is_quit();
+		int prepare_read_fd_set(fd_set* set); // Return max fd
+		int prepare_write_fd_set(fd_set* set); // Return max fd
 	};
 }

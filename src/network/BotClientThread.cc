@@ -11,6 +11,6 @@ m2::network::BotClientThread::BotClientThread(mplayer::Type type)
 	}
 	LOG_INFO("BotClientThread connected, becoming ready...");
 
-	locked_set_ready_sync(true);
+	locked_set_ready(true);
 	LOG_INFO("BotClientThread became ready");
 }

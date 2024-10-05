@@ -24,7 +24,11 @@ namespace m2::network {
 		/// Returns true if successful. Returns false if failed due to EADDRINUSE. Otherwise, returns unexpected.
 		expected<bool> bind(uint16_t port);
 		void_expected listen(int queue_size);
-		void_expected connect(const std::string& ip_addr, uint16_t port);
+		/// Tries to connect to the given IP address and port. Returns true if the socket is successfully connected.
+		/// Returns false if the connection failed due to external reasons (no route to host, timeout, connection
+		/// refused, etc.). Returns unexpected if an unrecoverable error occurs. If unexpected, there's no point
+		/// retrying the connection. If false is returned, the same socket can be used to retry connection.
+		expected<bool> connect(const std::string& ip_addr, uint16_t port);
 		/// Returns another Socket instance that's connected to the client. Returns std::nullopt if the client
 		/// connection was aborted by the time it was accepted. Returns unexpected if a socket error occurs.
 		expected<std::optional<Socket>> accept();

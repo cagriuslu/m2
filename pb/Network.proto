@@ -9,7 +9,7 @@ import "VecF.proto";
 
 enum ServerState {
   // Default state of the ServerThread. In this state, the ServerThread is not yet listening.
-  SERVER_NOT_READY = 0;
+  SERVER_INITIAL_STATE = 0;
   // Signifies to ServerThread that the thread should quit.
   SERVER_QUIT = 1;
   // Signifies that the ServerThread is listening for new client connections.
@@ -24,7 +24,7 @@ enum ServerState {
 
 enum ClientState {
   // Default state of the ClientThread.
-  CLIENT_NOT_READY = 0;
+  CLIENT_INITIAL_STATE = 0;
   // Signifies to ClientThread that the thread should quit.
   CLIENT_QUIT = 1;
   // Signifies that the ClientThread has successfully connected to the server, but is not ready.
@@ -35,6 +35,8 @@ enum ClientState {
   CLIENT_STARTED = 4;
   // Signifies that the server has shut down the game, and the client have terminated the connection.
   CLIENT_SHUTDOWN = 5;
+  // TODO
+  CLIENT_RECONNECTING = 6;
 }
 
 message ServerUpdate {

@@ -11,7 +11,7 @@ m2::network::HostClientThread::HostClientThread(mplayer::Type type)
 	}
 	LOG_INFO("HostClientThread connected, becoming ready...");
 
-	locked_set_ready_sync(true);
+	locked_set_ready(true);
 	LOG_INFO("HostClientThread became ready");
 }
 

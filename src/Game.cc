@@ -256,9 +256,10 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
 	M2_GAME.server_thread().send_server_update();
-
+	// Manually set the HostClientThread state to STARTED, because it doesn't receive ServerUpdates
+	M2_GAME.host_client_thread().start_if_ready();
 	// If there are bots, we need to handle the first server update
-	std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	std::this_thread::sleep_for(std::chrono::milliseconds(250)); // TODO why?
 	for (auto& [bot, index] : _bot_threads) {
 		auto server_update = bot.pop_server_update();
 		if (not server_update) {
@@ -435,6 +436,7 @@ void m2::Game::execute_pre_step() {
 			if (new_turn_holder) {
 				if (*new_turn_holder < 0) {
 					server_thread().shutdown();
+					// TODO remove threads, push main menu
 				} else {
 					server_thread().set_turn_holder(*new_turn_holder);
 					_server_update_necessary = true;
