@@ -130,19 +130,20 @@ void m2::network::ServerThread::send_server_update() {
 		}, char_variant);
 	}
 
-	// Send to clients.
+	// Make sure the state is set as READY
+	if (_state != pb::SERVER_READY) {
+		set_state_unlocked(pb::SERVER_READY);
+	}
+
+	// Send to clients
 	auto count = client_count();
 	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
 		const std::lock_guard lock(_mutex);
-
-		// Make sure the state is set as READY
-		if (_state != pb::SERVER_READY) {
-			set_state_unlocked(pb::SERVER_READY);
+		if (_clients[i].is_still_connected()) {
+			LOG_DEBUG("Queueing ServerUpdate to client", i);
+			message.mutable_server_update()->set_receiver_index(i);
+			_clients[i].queue_outgoing_message(message);
 		}
-
-		LOG_DEBUG("Queueing ServerUpdate to client", i);
-		message.mutable_server_update()->set_receiver_index(i);
-		_clients[i].queue_outgoing_message(message);
 	}
 }
 
@@ -159,8 +160,12 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 
 	{
 		const std::lock_guard lock(_mutex);
-		LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
-		_clients[receiver_index].queue_outgoing_message(std::move(message));
+		if (_clients[receiver_index].is_still_connected()) {
+			LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
+			_clients[receiver_index].queue_outgoing_message(std::move(message));
+		} else {
+			LOG_WARN("Attempted to queue ServerCommand but client is disconnected");
+		}
 	}
 }
 
@@ -175,12 +180,14 @@ void m2::network::ServerThread::shutdown() {
 	// Send to clients
 	auto count = I(_clients.size());
 	for (auto i = 0; i < count; ++i) {
-		LOG_DEBUG("Queueing Shutdown message to client", i);
-		_clients[i].queue_outgoing_message(msg);
+		if (_clients[i].is_still_connected()) {
+			LOG_DEBUG("Queueing Shutdown message to client", i);
+			_clients[i].queue_outgoing_message(msg);
+		}
 	}
 	// Flush output queues
 	for (auto i = 0; i < count; ++i) {
-		_clients[i].flush_outgoing_messages();
+		_clients[i].flush_and_shutdown(10000);
 	}
 
 	set_state_unlocked(pb::SERVER_SHUTDOWN);
@@ -197,13 +204,13 @@ void m2::network::ServerThread::set_state_unlocked(pb::ServerState state) {
 }
 
 void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
+	std::this_thread::sleep_for(std::chrono::seconds(1)); // Sleep one second to be sure that ServerThread is properly constructed. // TODO use cond_var
 	set_thread_name_for_logging("SR");
 	LOG_INFO("ServerThread function");
 
 	auto listen_socket = Socket::create();
 	if (not listen_socket) {
-		LOG_FATAL("Socket creation failed", listen_socket.error());
-		return;
+		throw M2_ERROR("Socket creation failed: " + listen_socket.error());
 	}
 	LOG_DEBUG("Socket created");
 
@@ -212,8 +219,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	m2_repeat(32) { // The socket may linger up to 30 secs
 		auto bind_result = listen_socket->bind(PORT);
 		if (not bind_result) {
-			LOG_FATAL("Bind failed", bind_result.error());
-			return;
+			throw M2_ERROR("Bind failed: " + bind_result.error());
 		}
 		if (not *bind_result) {
 			LOG_INFO("Socket is busy, retry binding");
@@ -224,16 +230,13 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		}
 	}
 	if (not binded) {
-		LOG_FATAL("Bind failed: Address already in use");
-		abort(); // TODO remove later. Eases development.
-		return;
+		throw M2_ERROR("Bind failed: Address already in use");
 	}
 	LOG_DEBUG("Socket bound");
 
 	auto listen_success = listen_socket->listen(I(server_thread->_max_connection_count));
 	if (not listen_success) {
-		LOG_FATAL("Listen failed", listen_success.error());
-		return;
+		throw M2_ERROR("Listen failed: " + listen_success.error());
 	}
 	LOG_INFO("Socket listening on port", PORT);
 	server_thread->set_state_locked(pb::ServerState::SERVER_LISTENING);
@@ -242,69 +245,73 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	server_thread->_ping_broadcast_thread.emplace();
 
 	while (not server_thread->is_quit() && not server_thread->is_shutdown()) {
+		// Prepare read set for select
 		fd_set read_set;
-		auto max_fd = server_thread->prepare_read_set(&read_set);
-		FD_SET(listen_socket->fd(), &read_set); // Add listen socket as well
-		max_fd = std::max(max_fd, listen_socket->fd());
+		auto read_max_fd = server_thread->prepare_fd_set(&read_set);
+		FD_SET(listen_socket->fd(), &read_set); // Add main socket as well
+		read_max_fd = std::max(read_max_fd, listen_socket->fd());
+		// Prepare write set for select
+		fd_set write_set;
+		auto write_max_fd = server_thread->prepare_fd_set(&write_set);
 
-		auto select_result = select(max_fd, &read_set, nullptr, 100);
+		// Select
+		auto select_result = select(std::max(read_max_fd, write_max_fd), &read_set, &write_set, 100);
 		if (not select_result) {
-			LOG_FATAL("Select failed", select_result.error());
-			server_thread->_clients.clear();
-			return;
+			throw M2_ERROR("Select failed: " + select_result.error());
+		}
+		if (*select_result == 0) {
+			// Time out occurred
+			continue;
 		}
 
-		if (0 < *select_result) { // If select haven't timed-out
-			// Check main socket
-			if (FD_ISSET(listen_socket->fd(), &read_set)) {
-				LOG_TRACE("Main socket is readable");
+		// Check main socket
+		if (FD_ISSET(listen_socket->fd(), &read_set)) {
+			LOG_INFO("Main socket is readable");
 
-				auto client_socket = listen_socket->accept();
-				if (not client_socket) {
-					LOG_FATAL("Accept failed", select_result.error());
-					server_thread->_clients.clear();
-					return;
-				}
+			auto client_socket = listen_socket->accept();
+			if (not client_socket) {
+				throw M2_ERROR("Accept failed: " + client_socket.error());
+			} else if (not client_socket->has_value()) {
+				LOG_WARN("Client aborted connection by the time it was accepted");
+			} else {
 				if (server_thread->_max_connection_count <= server_thread->_clients.size()) {
 					// Reject new connection, do not store client socket
-					LOG_DEBUG("Closing connection because of connection limit");
+					LOG_DEBUG("Closing new connection because of connection limit");
 				} else {
 					LOG_INFO("New client connected with index", server_thread->_clients.size());
-					server_thread->_clients.emplace_back(std::move(*client_socket));
+					// TODO wat if old client is reconnected?
+					// TODO wat if the game has already started?
+					server_thread->_clients.emplace_back(std::move(**client_socket), server_thread->_clients.size());
 				}
 			}
+		}
 
-			// Check clients
-			{
-				const std::lock_guard lock(server_thread->_mutex);
-				for (size_t i = 0; i < server_thread->_clients.size(); ++i) {
-					auto& client = server_thread->_clients[i];
-					if (not client.is_still_connected()) {
-						// Skip client if it's connection has dropped
-						continue;
-					}
-					if (not FD_ISSET(client.socket().fd(), &read_set)) {
-						// Skip if no messages have been received from this client
-						continue;
-					}
-					LOG_DEBUG("Client socket with index is readable", i);
+		// Check readable clients
+		{
+			const std::lock_guard lock(server_thread->_mutex);
+			for (size_t i = 0; i < server_thread->_clients.size(); ++i) {
+				auto& client = server_thread->_clients[i];
+				if (not client.is_still_connected()) {
+					// Skip client if it's connection has dropped
+					continue;
+				}
+				if (not FD_ISSET(client.socket().fd(), &read_set)) {
+					// Skip if no messages have been received from this client
+					continue;
+				}
+				LOG_DEBUG("Client is readable", i);
 
-					// The size of the buffer is passed as one character short, so that there's always a null at the end
-					if (auto expect_new_message = client.save_incoming_message(server_thread->_read_buffer, sizeof(server_thread->_read_buffer) - 1); not expect_new_message) {
-						LOG_ERROR("Failed to save message", expect_new_message.error());
-						server_thread->_clients.clear();
-						return;
-					} else {
-						if (auto is_new_message_received = *expect_new_message; not is_new_message_received) {
-							// A soft error occurred
-							// Client might still have an unprocessed incoming message,
-							// or the client connection might have dropped.
-							// These errors should not cause the server to shut down.
-						} else if (client.peak_incoming_message()->has_ready()) {
+				if (auto read_result = client.read_incoming_data(); not read_result) {
+					LOG_WARN("Socket error occurred, closing connection to client", i, read_result.error());
+					client.clear_socket();
+				} else {
+					if (*read_result == server::Client::ReadResult::MESSAGE_RECEIVED) {
+						const auto* peak = client.peak_incoming_message();
+						if (peak->has_ready()) {
 							// Check ready message
 							if (server_thread->_state == pb::SERVER_LISTENING) {
-								LOG_INFO("Client state", client.peak_incoming_message()->ready());
-								client.set_ready(client.peak_incoming_message()->ready());
+								LOG_INFO("Client readiness", peak->ready());
+								client.set_ready(peak->ready());
 							} else {
 								LOG_WARN("Received ready signal while the server wasn't listening");
 							}
@@ -316,41 +323,58 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 								client.pop_incoming_message();
 							} else {
 								// Process ClientCommand
-								if (client.peak_incoming_message()->has_client_command()) {
-									auto json_str = pb::message_to_json_string(*client.peak_incoming_message());
-									LOG_DEBUG("Received ClientCommand", i, *json_str);
-									// Processing of the message will be done by the game loop, don't pop it.
+								if (peak->has_client_command()) {
+									LOG_INFO("ClientCommand is received from client, will be processed by the game loop", i);
 								} else {
-									// TODO process other client messages
-									client.pop_incoming_message(); // TEMP
+									client.pop_incoming_message(); // Not yet implemented
 								}
 							}
 						}
+					} else if (*read_result == server::Client::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
+						// We will try next time
+					} else {
+						LOG_WARN("A data related error occurred, closing connection to client", i, static_cast<int>(*read_result));
+						client.clear_socket();
 					}
 				}
+			}
 
-				// If the lobby is not yet closed, remove disconnected clients
-				if (server_thread->_state == pb::ServerState::SERVER_LISTENING) {
-					auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(), [](const auto& client) {
-						return not client.is_still_connected();
-					});
-					server_thread->_clients.erase(erase_it, server_thread->_clients.end());
-				}
+			// If the lobby is not yet closed, remove disconnected clients
+			if (server_thread->_state == pb::ServerState::SERVER_LISTENING) {
+				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(), [](const auto& client) {
+					return not client.is_still_connected();
+				});
+				server_thread->_clients.erase(erase_it, server_thread->_clients.end());
 			}
 		}
+		// Give a breather to the mutex
 
-		// Write outgoing messages
+		// Check writeable clients
 		{
 			const std::lock_guard lock(server_thread->_mutex);
 			for (size_t i = 0; i < server_thread->_clients.size(); ++i) {
 				auto& client = server_thread->_clients[i];
-				auto flush_success = client.flush_outgoing_messages();
-				if (not flush_success) {
-					LOG_ERROR("Failed to send message", flush_success.error());
-					server_thread->_clients.clear();
-					return;
-				} else if (*flush_success) {
-					LOG_DEBUG("Message sent to client", i);
+				if (not client.is_still_connected()) {
+					// Skip if the connection has dropped
+					continue;
+				}
+				if (not FD_ISSET(client.socket().fd(), &write_set)) {
+					// Skip if socket is not writeable
+					continue;
+				}
+				LOG_TRACE("Client is writeable", i);
+
+				if (auto send_result = client.send_outgoing_data(); not send_result) {
+					LOG_WARN("Socket error occurred, closing connection to client", i, send_result.error());
+					client.clear_socket();
+				} else {
+					if (*send_result == server::Client::SendResult::OK) {
+						// Nice
+					} else if (*send_result == server::Client::SendResult::INVALID_MESSAGE) {
+						throw M2_ERROR("An invalid outgoing message was queue to client" + std::to_string(i));
+					} else if (*send_result == server::Client::SendResult::BUFFER_WOULD_OVERFLOW) {
+						throw M2_ERROR("A too large outgoing message was queue to client" + std::to_string(i));
+					}
 				}
 			}
 		}
@@ -364,18 +388,7 @@ bool m2::network::ServerThread::is_quit() {
 	return _state == pb::ServerState::SERVER_QUIT;
 }
 
-std::vector<int> m2::network::ServerThread::locked_all_client_fds() {
-	std::vector<int> fds;
-	const std::lock_guard lock(_mutex);
-	for (auto& client : _clients) {
-		if (client.is_still_connected()) {
-			fds.push_back(client.socket().fd());
-		}
-	}
-	return fds;
-}
-
-int m2::network::ServerThread::prepare_read_set(fd_set* set) {
+int m2::network::ServerThread::prepare_fd_set(fd_set* set) {
 	FD_ZERO(set);
 
 	const std::lock_guard lock(_mutex);

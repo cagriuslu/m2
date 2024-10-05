@@ -74,21 +74,23 @@ m2::void_expected m2::network::Socket::connect(const std::string& ip_addr, uint1
 	return {};
 }
 
-m2::expected<m2::network::Socket> m2::network::Socket::accept() {
+m2::expected<std::optional<m2::network::Socket>> m2::network::Socket::accept() {
 	sockaddr_in child_address{};
 	socklen_t child_address_len{};
 	int new_socket = ::accept(_fd, (sockaddr*) &child_address, &child_address_len);
 	if (new_socket == -1) {
+		if (errno == ECONNABORTED) {
+			return std::nullopt;
+		}
 		return m2::make_unexpected(strerror(errno));
 	}
-
 	return Socket{new_socket, child_address.sin_addr.s_addr, child_address.sin_port};
 }
 
 m2::expected<ssize_t> m2::network::Socket::send(const uint8_t* buffer, size_t length) {
 	auto send_result = ::send(_fd, buffer, length, 0);
 	if (send_result == -1) {
-		if (errno == EAGAIN) {
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
 			return -1;
 		} else {
 			return m2::make_unexpected(strerror(errno));
@@ -101,11 +103,12 @@ m2::expected<ssize_t> m2::network::Socket::send(const uint8_t* buffer, size_t le
 m2::expected<ssize_t> m2::network::Socket::recv(uint8_t* buffer, size_t length) {
 	auto recv_result = ::recv(_fd, buffer, length, 0);
 	if (recv_result == -1) {
-		if (errno == EAGAIN) {
-			return -1;
-		} else {
-			return m2::make_unexpected(strerror(errno));
+		if (errno == EAGAIN || errno == EWOULDBLOCK) {
+			return 0;
 		}
+		return m2::make_unexpected(strerror(errno));
+	} else if (recv_result == 0) {
+		return m2::make_unexpected("Peer shut connection down");
 	} else {
 		return recv_result;
 	}

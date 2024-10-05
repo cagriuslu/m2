@@ -26,7 +26,6 @@ namespace m2::network {
 		std::optional<pb::NetworkMessage> _received_client_command;
 
 		// Thread variables
-		char _read_buffer[65536]{}; // Shared among all clients
 		std::optional<PingBroadcastThread> _ping_broadcast_thread;
 
 	public:
@@ -62,7 +61,6 @@ namespace m2::network {
 		// Thread functions
 		static void thread_func(ServerThread* server_thread);
 		[[nodiscard]] bool is_quit();
-		std::vector<int> locked_all_client_fds();
-		int prepare_read_set(fd_set* set); // Return max fd
+		int prepare_fd_set(fd_set* set); // Return max fd
 	};
 }
