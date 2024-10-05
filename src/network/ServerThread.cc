@@ -1,5 +1,5 @@
 #include <m2/network/ServerThread.h>
-#include <m2/network/Socket.h>
+#include <m2/network/TcpSocket.h>
 #include <m2/network/Detail.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Log.h>
@@ -203,11 +203,11 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	set_thread_name_for_logging("SR");
 	LOG_INFO("ServerThread function");
 
-	auto listen_socket = Socket::create();
+	auto listen_socket = TcpSocket::create();
 	if (not listen_socket) {
-		throw M2_ERROR("Socket creation failed: " + listen_socket.error());
+		throw M2_ERROR("TcpSocket creation failed: " + listen_socket.error());
 	}
-	LOG_DEBUG("Socket created");
+	LOG_DEBUG("TcpSocket created");
 
 	// Try binding to the socket multiple times.
 	bool binded = false;
@@ -217,7 +217,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 			throw M2_ERROR("Bind failed: " + bind_result.error());
 		}
 		if (not *bind_result) {
-			LOG_INFO("Socket is busy, retry binding");
+			LOG_INFO("TcpSocket is busy, retry binding");
 			m2::sdl::delay(1000);
 		} else {
 			binded = true;
@@ -227,13 +227,13 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	if (not binded) {
 		throw M2_ERROR("Bind failed: Address already in use");
 	}
-	LOG_DEBUG("Socket bound");
+	LOG_DEBUG("TcpSocket bound");
 
 	auto listen_success = listen_socket->listen(I(server_thread->_max_connection_count));
 	if (not listen_success) {
 		throw M2_ERROR("Listen failed: " + listen_success.error());
 	}
-	LOG_INFO("Socket listening on port", PORT);
+	LOG_INFO("TcpSocket listening on port", PORT);
 	server_thread->set_state_locked(pb::ServerState::SERVER_LISTENING);
 
 	// Start ping broadcast

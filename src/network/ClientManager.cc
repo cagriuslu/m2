@@ -9,7 +9,7 @@ bool m2::network::ClientManager::has_incoming_data(bool is_socket_readable) {
 			clear_socket_and_reset_queues();
 			return false;
 		}
-		if (*read_result != SocketManager::ReadResult::MESSAGE_RECEIVED && *read_result != SocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
+		if (*read_result != TcpSocketManager::ReadResult::MESSAGE_RECEIVED && *read_result != TcpSocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
 			LOG_WARN("Invalid data received from client, closing connection", _socket_manager->index(), static_cast<int>(*read_result));
 			clear_socket_and_reset_queues();
 			return false;
@@ -51,7 +51,7 @@ void m2::network::ClientManager::send_outgoing_data() {
 		clear_socket_and_reset_queues();
 		return;
 	}
-	if (*send_result != SocketManager::SendResult::OK) {
+	if (*send_result != TcpSocketManager::SendResult::OK) {
 		throw M2_ERROR("An invalid or too large outgoing message was queued to client: " + std::to_string(_socket_manager->index()) + " " + std::to_string(static_cast<int>(*send_result)));
 	}
 }

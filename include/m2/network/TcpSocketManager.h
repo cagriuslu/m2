@@ -1,11 +1,11 @@
 #pragma once
-#include "Socket.h"
+#include "TcpSocket.h"
 #include "../Meta.h"
 #include <queue>
 
 namespace m2::network {
-	class SocketManager {
-		Socket _socket;
+	class TcpSocketManager {
+		TcpSocket _socket;
 		int _index; // Used for logging
 
 		std::array<char, 65536> _incoming_buffer{};
@@ -16,9 +16,9 @@ namespace m2::network {
 		size_t _outgoing_buffer_bytes_left{};
 
 	public:
-		SocketManager(Socket&& s, int index) : _socket(std::move(s)),_index(index) {}
+		TcpSocketManager(TcpSocket&& s, int index) : _socket(std::move(s)),_index(index) {}
 
-		Socket& socket() { return _socket; }
+		TcpSocket& socket() { return _socket; }
 		[[nodiscard]] int index() const { return _index; }
 
 		enum class ReadResult {

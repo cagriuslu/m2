@@ -1,11 +1,11 @@
 #include <m2/network/BaseClientThread.h>
-#include <m2/network/Socket.h>
+#include <m2/network/TcpSocket.h>
 #include <m2/network/Detail.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <m2/Meta.h>
 #include <unistd.h>
-#include <m2/network/SocketManager.h>
+#include <m2/network/TcpSocketManager.h>
 
 m2::network::detail::BaseClientThread::BaseClientThread(mplayer::Type type, std::string addr, bool ping_broadcast)
 	: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _thread(BaseClientThread::base_client_thread_func, this) {
@@ -144,7 +144,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 		return thread_manager->_received_server_update || thread_manager->_received_server_command;
 	};
 
-	std::optional<SocketManager> socket_manager;
+	std::optional<TcpSocketManager> socket_manager;
 	while (locked_should_continue_running(thread_manager)) {
 		if (auto state = thread_manager->locked_get_client_state(); state == pb::CLIENT_INITIAL_STATE || state == pb::CLIENT_RECONNECTING) {
 			if (socket_manager) {
@@ -155,13 +155,13 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 			// TODO implement reconnection (clear all queues and buffers first)
 
 			// Create socket
-			auto expect_socket = Socket::create();
+			auto expect_socket = TcpSocket::create();
 			if (not expect_socket) {
-				LOG_FATAL("Socket creation failed", expect_socket.error());
+				LOG_FATAL("TcpSocket creation failed", expect_socket.error());
 				return;
 			}
 			socket_manager.emplace(std::move(*expect_socket), -1);
-			LOG_INFO("Socket created");
+			LOG_INFO("TcpSocket created");
 
 			// Start ping broadcast if enabled
 			if (thread_manager->_ping_broadcast) {
@@ -266,7 +266,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 					socket_manager.reset();
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
-				} else if (*read_result != SocketManager::ReadResult::MESSAGE_RECEIVED && *read_result != SocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
+				} else if (*read_result != TcpSocketManager::ReadResult::MESSAGE_RECEIVED && *read_result != TcpSocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
 					LOG_WARN("Invalid data received from server, closing connection", static_cast<int>(*read_result));
 					// TODO maybe do not trust the server?
 					socket_manager.reset();
@@ -284,7 +284,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 					socket_manager.reset();
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
-				} else if (*send_result != SocketManager::SendResult::OK) {
+				} else if (*send_result != TcpSocketManager::SendResult::OK) {
 					throw M2_ERROR("An invalid or too large outgoing message was queued to server: " + std::to_string(static_cast<int>(*send_result)));
 				}
 			}

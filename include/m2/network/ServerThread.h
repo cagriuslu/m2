@@ -1,7 +1,7 @@
 #pragma once
-#include "SocketManager.h"
+#include "TcpSocketManager.h"
 #include "../multi_player/Type.h"
-#include "Socket.h"
+#include "TcpSocket.h"
 #include <Network.pb.h>
 #include <thread>
 #include <deque>

@@ -2,22 +2,21 @@
 #include "../Meta.h"
 
 namespace m2::network {
-	// TODO rename to TcpSocket
-	class Socket {
+	class TcpSocket {
 		int _fd{-1};
 		in_addr_t _addr{};
 		in_port_t _port{};
 
-		explicit Socket(int fd) : _fd(fd) {}
-		Socket(int fd, in_addr_t addr, in_port_t port) : _fd(fd), _addr(addr), _port(port) {}
+		explicit TcpSocket(int fd) : _fd(fd) {}
+		TcpSocket(int fd, in_addr_t addr, in_port_t port) : _fd(fd), _addr(addr), _port(port) {}
 
 	public:
-		static expected<Socket> create();
-		Socket(const Socket& other) = delete;
-		Socket& operator=(const Socket& other) = delete;
-		Socket(Socket&& other) noexcept;
-		Socket& operator=(Socket&& other) noexcept;
-		~Socket();
+		static expected<TcpSocket> create();
+		TcpSocket(const TcpSocket& other) = delete;
+		TcpSocket& operator=(const TcpSocket& other) = delete;
+		TcpSocket(TcpSocket&& other) noexcept;
+		TcpSocket& operator=(TcpSocket&& other) noexcept;
+		~TcpSocket();
 
 		[[nodiscard]] int fd() const { return _fd; }
 
@@ -29,9 +28,9 @@ namespace m2::network {
 		/// refused, etc.). Returns unexpected if an unrecoverable error occurs. If unexpected, there's no point
 		/// retrying the connection. If false is returned, the same socket can be used to retry connection.
 		expected<bool> connect(const std::string& ip_addr, uint16_t port);
-		/// Returns another Socket instance that's connected to the client. Returns std::nullopt if the client
+		/// Returns another TcpSocket instance that's connected to the client. Returns std::nullopt if the client
 		/// connection was aborted by the time it was accepted. Returns unexpected if a socket error occurs.
-		expected<std::optional<Socket>> accept();
+		expected<std::optional<TcpSocket>> accept();
 
 		/// Returns number of bytes queued into kernel's output buffer. If the output buffer is full, returned value may
 		/// be zero, or less than `length`. If -1 is returned, EAGAIN/EWOULDBLOCK has occurred, meaning that the socket

@@ -5,7 +5,7 @@
 #include <mutex>
 #include "../Object.h"
 #include "PingBroadcastThread.h"
-#include "SocketManager.h"
+#include "TcpSocketManager.h"
 
 namespace m2::network::detail {
 	/// Base class of ClientThreads

@@ -1,14 +1,14 @@
 #pragma once
-#include "SocketManager.h"
+#include "TcpSocketManager.h"
 
 namespace m2::network {
 	class ClientManager {
-		std::optional<SocketManager> _socket_manager;
+		std::optional<TcpSocketManager> _socket_manager;
 		std::queue<pb::NetworkMessage> _incoming_queue{};
 		std::queue<pb::NetworkMessage> _outgoing_queue{};
 
 	public:
-		ClientManager(Socket&& socket, int index) : _socket_manager(SocketManager{std::move(socket), index}) {}
+		ClientManager(TcpSocket&& socket, int index) : _socket_manager(TcpSocketManager{std::move(socket), index}) {}
 
 		bool is_ready{};
 

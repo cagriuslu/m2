@@ -1,4 +1,4 @@
-#include <m2/network/Socket.h>
+#include <m2/network/TcpSocket.h>
 #include <m2/network/Detail.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -6,33 +6,33 @@
 #include <arpa/inet.h>
 #include <m2/Log.h>
 
-m2::expected<m2::network::Socket> m2::network::Socket::create() {
+m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create() {
 	int socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (socket_result == -1) {
 		return m2::make_unexpected(strerror(errno));
 	}
 
-	return Socket{socket_result};
+	return TcpSocket{socket_result};
 }
 
-m2::network::Socket::Socket(Socket&& other) noexcept {
+m2::network::TcpSocket::TcpSocket(TcpSocket&& other) noexcept {
 	*this = std::move(other);
 }
 
-m2::network::Socket& m2::network::Socket::operator=(Socket&& other) noexcept {
+m2::network::TcpSocket& m2::network::TcpSocket::operator=(TcpSocket&& other) noexcept {
 	std::swap(_fd, other._fd);
 	std::swap(_addr, other._addr);
 	std::swap(_port, other._port);
 	return *this;
 }
 
-m2::network::Socket::~Socket() {
+m2::network::TcpSocket::~TcpSocket() {
 	if (0 <= _fd) {
 		close(_fd);
 	}
 }
 
-m2::expected<bool> m2::network::Socket::bind(uint16_t port) {
+m2::expected<bool> m2::network::TcpSocket::bind(uint16_t port) {
 	sockaddr_in sin{};
 	sin.sin_len = sizeof(sin);
 	sin.sin_family = AF_INET;
@@ -51,7 +51,7 @@ m2::expected<bool> m2::network::Socket::bind(uint16_t port) {
 	return true;
 }
 
-m2::void_expected m2::network::Socket::listen(int queue_size) {
+m2::void_expected m2::network::TcpSocket::listen(int queue_size) {
 	int listen_result = ::listen(_fd, queue_size);
 	if (listen_result == -1) {
 		return m2::make_unexpected(strerror(errno));
@@ -60,7 +60,7 @@ m2::void_expected m2::network::Socket::listen(int queue_size) {
 	return {};
 }
 
-m2::expected<bool> m2::network::Socket::connect(const std::string& ip_addr, uint16_t port) {
+m2::expected<bool> m2::network::TcpSocket::connect(const std::string& ip_addr, uint16_t port) {
 	sockaddr_in sin{};
 	sin.sin_len = sizeof(sin);
 	sin.sin_family = AF_INET;
@@ -77,7 +77,7 @@ m2::expected<bool> m2::network::Socket::connect(const std::string& ip_addr, uint
 	return true;
 }
 
-m2::expected<std::optional<m2::network::Socket>> m2::network::Socket::accept() {
+m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::accept() {
 	sockaddr_in child_address{};
 	socklen_t child_address_len{};
 	int new_socket = ::accept(_fd, (sockaddr*) &child_address, &child_address_len);
@@ -87,10 +87,10 @@ m2::expected<std::optional<m2::network::Socket>> m2::network::Socket::accept() {
 		}
 		return m2::make_unexpected(strerror(errno));
 	}
-	return Socket{new_socket, child_address.sin_addr.s_addr, child_address.sin_port};
+	return TcpSocket{new_socket, child_address.sin_addr.s_addr, child_address.sin_port};
 }
 
-m2::expected<ssize_t> m2::network::Socket::send(const uint8_t* buffer, size_t length) {
+m2::expected<ssize_t> m2::network::TcpSocket::send(const uint8_t* buffer, size_t length) {
 	auto send_result = ::send(_fd, buffer, length, 0);
 	if (send_result == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -103,7 +103,7 @@ m2::expected<ssize_t> m2::network::Socket::send(const uint8_t* buffer, size_t le
 	}
 }
 
-m2::expected<ssize_t> m2::network::Socket::recv(uint8_t* buffer, size_t length) {
+m2::expected<ssize_t> m2::network::TcpSocket::recv(uint8_t* buffer, size_t length) {
 	auto recv_result = ::recv(_fd, buffer, length, 0);
 	if (recv_result == -1) {
 		if (errno == EAGAIN || errno == EWOULDBLOCK) {
