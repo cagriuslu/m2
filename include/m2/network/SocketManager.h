@@ -1,10 +1,10 @@
 #pragma once
-#include "../Socket.h"
-#include "../../Meta.h"
+#include "Socket.h"
+#include "../Meta.h"
 #include <queue>
 
-namespace m2::network::server {
-	class Client {
+namespace m2::network {
+	class SocketManager {
 		std::optional<Socket> _socket;
 		int _index; // Used for logging
 		bool _is_ready{};
@@ -19,7 +19,7 @@ namespace m2::network::server {
 		size_t _outgoing_buffer_bytes_left{};
 
 	public:
-		explicit Client(Socket&& s, int index) : _socket(std::move(s)), _index(index) {}
+		explicit SocketManager(Socket&& s, int index) : _socket(std::move(s)), _index(index) {}
 
 		/// Returns if the client is still connected.
 		/// Once the lobby is closed, a client can disconnect. This object is kept in case the client comes back.
@@ -67,5 +67,5 @@ namespace m2::network::server {
 	};
 
 	// Filters
-	inline bool is_client_ready(const Client& c) { return c.is_ready(); }
+	inline bool is_client_ready(const SocketManager& c) { return c.is_ready(); }
 }

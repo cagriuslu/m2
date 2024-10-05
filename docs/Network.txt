@@ -30,7 +30,7 @@ to the game loop after Game::load_multi_player_as_guest returns.
 the server game to populate the level further based on number of players, randomness, etc. Lastly,
 ServerThread::send_server_update will automatically be called again to publish the customized state of the game to the clients.
 The server game should return to the game loop after Game::load_multi_player_as_host returns.
-- After the game begins, the clients should report their intended actions to the server using Client::queue_client_command.
+- After the game begins, the clients should report their intended actions to the server using SocketManager::queue_client_command.
 Any command produced by the clients other than the turn holder will be dropped by the server.
 - The server game loop will periodically check for ClientCommands during pre-step, and will call Proxy::handle_client_command
 for them to be processed. If Proxy::handle_client_command returns a value, a server update will be sent during post-step.

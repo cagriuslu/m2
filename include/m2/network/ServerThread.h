@@ -1,12 +1,11 @@
 #pragma once
-#include "server/Client.h"
+#include "SocketManager.h"
 #include "../multi_player/Type.h"
 #include "Socket.h"
 #include <Network.pb.h>
 #include <thread>
 #include <deque>
 #include <mutex>
-#include "server/Client.h"
 #include "m2/Object.h"
 #include <queue>
 #include "PingBroadcastThread.h"
@@ -21,7 +20,7 @@ namespace m2::network {
 		// Shared variables
 		std::mutex _mutex;
 		pb::ServerState _state{pb::ServerState::SERVER_NOT_READY};
-		std::vector<server::Client> _clients;
+		std::vector<SocketManager> _clients;
 		int _turn_holder{};
 		std::optional<pb::NetworkMessage> _received_client_command;
 

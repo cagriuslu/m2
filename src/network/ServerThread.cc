@@ -67,7 +67,7 @@ m2::void_expected m2::network::ServerThread::close_lobby() {
 	{
 		// Check if all clients are ready
 		const std::lock_guard lock(_mutex);
-		if (not std::ranges::all_of(_clients, server::is_client_ready)) {
+		if (not std::ranges::all_of(_clients, is_client_ready)) {
 			return make_unexpected("Not every client is ready");
 		}
 		// Stop ping broadcast
@@ -305,7 +305,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 					LOG_WARN("Socket error occurred, closing connection to client", i, read_result.error());
 					client.clear_socket();
 				} else {
-					if (*read_result == server::Client::ReadResult::MESSAGE_RECEIVED) {
+					if (*read_result == SocketManager::ReadResult::MESSAGE_RECEIVED) {
 						const auto* peak = client.peak_incoming_message();
 						if (peak->has_ready()) {
 							// Check ready message
@@ -330,7 +330,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 								}
 							}
 						}
-					} else if (*read_result == server::Client::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
+					} else if (*read_result == SocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
 						// We will try next time
 					} else {
 						LOG_WARN("A data related error occurred, closing connection to client", i, static_cast<int>(*read_result));
@@ -368,11 +368,11 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 					LOG_WARN("Socket error occurred, closing connection to client", i, send_result.error());
 					client.clear_socket();
 				} else {
-					if (*send_result == server::Client::SendResult::OK) {
+					if (*send_result == SocketManager::SendResult::OK) {
 						// Nice
-					} else if (*send_result == server::Client::SendResult::INVALID_MESSAGE) {
+					} else if (*send_result == SocketManager::SendResult::INVALID_MESSAGE) {
 						throw M2_ERROR("An invalid outgoing message was queue to client" + std::to_string(i));
-					} else if (*send_result == server::Client::SendResult::BUFFER_WOULD_OVERFLOW) {
+					} else if (*send_result == SocketManager::SendResult::BUFFER_WOULD_OVERFLOW) {
 						throw M2_ERROR("A too large outgoing message was queue to client" + std::to_string(i));
 					}
 				}

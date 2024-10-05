@@ -1,17 +1,17 @@
-#include <m2/network/server/Client.h>
+#include <m2/network/SocketManager.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <string>
 #include <m2/sdl/Detail.h>
 
-m2::expected<m2::network::server::Client::ReadResult> m2::network::server::Client::read_incoming_data() {
+m2::expected<m2::network::SocketManager::ReadResult> m2::network::SocketManager::read_incoming_data() {
 	if (not is_still_connected()) {
 		return m2::make_unexpected("Client is already disconnected");
 	}
 
 	if (_incoming_buffer.size() <= _incoming_buffer_next_available_position) {
-		return Client::ReadResult::BUFFER_OVERFLOW;
+		return SocketManager::ReadResult::BUFFER_OVERFLOW;
 	}
 
 	// Assuming that the socket is already readable, read from the next available position at the buffer
@@ -54,12 +54,12 @@ m2::expected<m2::network::server::Client::ReadResult> m2::network::server::Clien
 		auto message = pb::json_string_to_message<pb::NetworkMessage>(possible_message);
 		if (not message) {
 			LOG_ERROR("Invalid message received from client", _index, message.error());
-			return Client::ReadResult::INVALID_MESSAGE;
+			return SocketManager::ReadResult::INVALID_MESSAGE;
 		}
 		// Check game_hash
 		if (message->game_hash() != M2_GAME.hash()) {
 			LOG_ERROR("Game hash mismatch", _index, possible_message);
-			return Client::ReadResult::GAME_HASH_MISMATCH;
+			return SocketManager::ReadResult::GAME_HASH_MISMATCH;
 		}
 		LOG_INFO("Saving message to incoming queue of client", _index, possible_message);
 		_incoming_queue.emplace(std::move(*message));
@@ -75,10 +75,10 @@ m2::expected<m2::network::server::Client::ReadResult> m2::network::server::Clien
 		_incoming_buffer_next_available_position -= vacuum_count;
 	}
 
-	return _incoming_queue.empty() ? Client::ReadResult::INCOMPLETE_MESSAGE_RECEIVED : Client::ReadResult::MESSAGE_RECEIVED;
+	return _incoming_queue.empty() ? SocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED : SocketManager::ReadResult::MESSAGE_RECEIVED;
 }
 
-const m2::pb::NetworkMessage* m2::network::server::Client::peak_incoming_message() {
+const m2::pb::NetworkMessage* m2::network::SocketManager::peak_incoming_message() {
 	if (_incoming_queue.empty()) {
 		return nullptr;
 	} else {
@@ -86,7 +86,7 @@ const m2::pb::NetworkMessage* m2::network::server::Client::peak_incoming_message
 	}
 }
 
-std::optional<m2::pb::NetworkMessage> m2::network::server::Client::pop_incoming_message() {
+std::optional<m2::pb::NetworkMessage> m2::network::SocketManager::pop_incoming_message() {
 	if (_incoming_queue.empty()) {
 		return std::nullopt;
 	}
@@ -98,12 +98,12 @@ std::optional<m2::pb::NetworkMessage> m2::network::server::Client::pop_incoming_
 	return std::move(msg);
 }
 
-void m2::network::server::Client::queue_outgoing_message(pb::NetworkMessage msg) {
+void m2::network::SocketManager::queue_outgoing_message(pb::NetworkMessage msg) {
 	DEBUG_FN();
 	_outgoing_queue.emplace(std::move(msg));
 }
 
-m2::expected<m2::network::server::Client::SendResult> m2::network::server::Client::send_outgoing_data() {
+m2::expected<m2::network::SocketManager::SendResult> m2::network::SocketManager::send_outgoing_data() {
 	if (not is_still_connected()) {
 		return m2::make_unexpected("Client is already disconnected");
 	}
@@ -150,7 +150,7 @@ m2::expected<m2::network::server::Client::SendResult> m2::network::server::Clien
 	return SendResult::OK;
 }
 
-void m2::network::server::Client::flush_and_shutdown(int timeout_ms) {
+void m2::network::SocketManager::flush_and_shutdown(int timeout_ms) {
 	if (not is_still_connected()) {
 		return;
 	}
