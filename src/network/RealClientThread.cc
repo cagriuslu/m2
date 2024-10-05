@@ -28,6 +28,10 @@ m2::network::RealClientThread::RealClientThread(mplayer::Type type, std::string 
 	INFO_FN();
 }
 
+const char* m2::network::RealClientThread::thread_name() const {
+	return "RC";
+}
+
 bool m2::network::RealClientThread::is_connected() {
 	return locked_get_client_state() == pb::CLIENT_CONNECTED;
 }

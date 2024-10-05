@@ -2,7 +2,7 @@
 #include "BaseClientThread.h"
 
 namespace m2::network {
-	class BotClientThread : private detail::BaseClientThread {
+	class BotClientThread final : private detail::BaseClientThread {
 	public:
 		BotClientThread() = default;
 		explicit BotClientThread(mplayer::Type type);
@@ -10,6 +10,8 @@ namespace m2::network {
 		BotClientThread& operator=(const BotClientThread& other) = delete;
 		BotClientThread(BotClientThread&& other) = delete;
 		BotClientThread& operator=(BotClientThread&& other) = delete;
+
+		const char* thread_name() const override;
 
 		// Accessors
 		inline std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }

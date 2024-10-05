@@ -123,8 +123,7 @@ void m2::network::detail::BaseClientThread::locked_set_state(pb::ClientState sta
 
 void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientThread* thread_manager) {
 	std::this_thread::sleep_for(std::chrono::seconds(1)); // Sleep one second to be sure that BaseClientThread is properly constructed. // TODO use cond_var
-	// TODO detect the type of client and use the correct name for logging
-	set_thread_name_for_logging("CL");
+	set_thread_name_for_logging(thread_manager->thread_name());
 	LOG_INFO("BaseClientThread function");
 
 	auto locked_should_continue_running = [](BaseClientThread* thread_manager) {

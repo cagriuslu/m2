@@ -35,6 +35,8 @@ namespace m2::network::detail {
 		BaseClientThread& operator=(BaseClientThread&& other) = delete;
 		virtual ~BaseClientThread();
 
+		virtual const char* thread_name() const = 0;
+
 		// Accessors
 		pb::ClientState locked_get_client_state();
 		bool locked_has_server_update();

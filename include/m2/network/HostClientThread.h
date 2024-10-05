@@ -2,7 +2,7 @@
 #include "BaseClientThread.h"
 
 namespace m2::network {
-	class HostClientThread : private detail::BaseClientThread {
+	class HostClientThread final : private detail::BaseClientThread {
 	public:
 		HostClientThread() = default;
 		explicit HostClientThread(mplayer::Type type);
@@ -10,6 +10,8 @@ namespace m2::network {
 		HostClientThread& operator=(const HostClientThread& other) = delete;
 		HostClientThread(HostClientThread&& other) = delete;
 		HostClientThread& operator=(HostClientThread&& other) = delete;
+
+		const char* thread_name() const override;
 
 		// Accessors
 		bool is_shutdown();

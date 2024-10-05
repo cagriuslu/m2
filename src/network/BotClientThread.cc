@@ -14,3 +14,7 @@ m2::network::BotClientThread::BotClientThread(mplayer::Type type)
 	locked_set_ready(true);
 	LOG_INFO("BotClientThread became ready");
 }
+
+const char* m2::network::BotClientThread::thread_name() const {
+	return "BC";
+}

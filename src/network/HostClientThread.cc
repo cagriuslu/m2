@@ -15,6 +15,10 @@ m2::network::HostClientThread::HostClientThread(mplayer::Type type)
 	LOG_INFO("HostClientThread became ready");
 }
 
+const char* m2::network::HostClientThread::thread_name() const {
+	return "HC";
+}
+
 bool m2::network::HostClientThread::is_shutdown() {
 	return locked_get_client_state() == pb::CLIENT_SHUTDOWN;
 }

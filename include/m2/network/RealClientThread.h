@@ -2,7 +2,7 @@
 #include "BaseClientThread.h"
 
 namespace m2::network {
-	class RealClientThread : private detail::BaseClientThread {
+	class RealClientThread final : private detail::BaseClientThread {
 		/// When a ServerUpdate is received from the server, it's placed in BaseClientThread::_received_server_update.
 		/// peek_unprocessed_server_update() can be used to take a peek at it.
 		/// When process_server_update() is called, ServerUpdate is shifted as follows:
@@ -19,6 +19,8 @@ namespace m2::network {
 		RealClientThread& operator=(const RealClientThread& other) = delete;
 		RealClientThread(RealClientThread&& other) = delete;
 		RealClientThread& operator=(RealClientThread&& other) = delete;
+
+		const char* thread_name() const override;
 
 		// Accessors
 		bool is_connected();

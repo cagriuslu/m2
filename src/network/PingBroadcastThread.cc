@@ -27,7 +27,7 @@ bool PingBroadcastThread::is_quit() {
 }
 
 void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
-	set_thread_name_for_logging("SA");
+	set_thread_name_for_logging("PN");
 	LOG_INFO("PingBroadcastThread function");
 
 	while (not context->is_quit()) {
