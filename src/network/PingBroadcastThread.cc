@@ -6,7 +6,9 @@
 using namespace m2;
 using namespace m2::network;
 
-PingBroadcastThread::PingBroadcastThread() : _thread(PingBroadcastThread::thread_func, this) {}
+PingBroadcastThread::PingBroadcastThread() : _thread(PingBroadcastThread::thread_func, this) {
+	_latch.count_down();
+}
 
 PingBroadcastThread::~PingBroadcastThread() {
 	{
@@ -27,6 +29,7 @@ bool PingBroadcastThread::is_quit() {
 }
 
 void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
+	context->_latch.wait();
 	set_thread_name_for_logging("PN");
 	LOG_INFO("PingBroadcastThread function");
 

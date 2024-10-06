@@ -10,6 +10,7 @@
 #include <queue>
 #include "PingBroadcastThread.h"
 #include "ClientManager.h"
+#include <latch>
 
 namespace m2::network {
 	class ServerThread {
@@ -19,6 +20,7 @@ namespace m2::network {
 		std::thread _thread;
 
 		// Shared variables
+		std::latch _latch{1};
 		std::mutex _mutex;
 		pb::ServerState _state{pb::ServerState::SERVER_INITIAL_STATE};
 		std::vector<ClientManager> _clients;

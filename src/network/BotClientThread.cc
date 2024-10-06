@@ -3,7 +3,7 @@
 
 m2::network::BotClientThread::BotClientThread(mplayer::Type type)
 	: detail::BaseClientThread(type, "127.0.0.1", false) {
-	INFO_FN();
+	latch();
 
 	// Wait until the bot is connected
 	while (locked_get_client_state() != pb::CLIENT_CONNECTED) {

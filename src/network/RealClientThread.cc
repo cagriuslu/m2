@@ -25,7 +25,7 @@ namespace {
 
 m2::network::RealClientThread::RealClientThread(mplayer::Type type, std::string addr)
 	: detail::BaseClientThread{type, std::move(addr), true} {
-	INFO_FN();
+	latch();
 }
 
 const char* m2::network::RealClientThread::thread_name() const {

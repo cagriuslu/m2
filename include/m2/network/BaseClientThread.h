@@ -6,6 +6,7 @@
 #include "../Object.h"
 #include "PingBroadcastThread.h"
 #include "TcpSocketManager.h"
+#include <latch>
 
 namespace m2::network::detail {
 	/// Base class of ClientThreads
@@ -14,9 +15,11 @@ namespace m2::network::detail {
 		MAYBE const mplayer::Type _type{};
 		const std::string _addr;
 		const bool _ping_broadcast{};
+		uint64_t _ready_token{};
 		std::thread _thread;
 
 		// Shared variables
+		std::latch _latch{1};
 		std::mutex _mutex;
 		pb::ClientState _state{pb::ClientState::CLIENT_INITIAL_STATE};
 		std::queue<pb::NetworkMessage> _outgoing_queue, _incoming_queue;
@@ -25,6 +28,9 @@ namespace m2::network::detail {
 
 		// Thread variables
 		std::optional<PingBroadcastThread> _ping_broadcast_thread;
+
+	protected:
+		void latch() { _latch.count_down(); } // This function must be called from the inherited class' constructor
 
 	public:
 		BaseClientThread() = default; // Does nothing

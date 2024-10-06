@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <mutex>
+#include <latch>
 
 namespace m2::network {
 	// When connecting two macOS machines, I've observed two machines may fail to connect to each other because one
@@ -14,6 +15,7 @@ namespace m2::network {
 		std::thread _thread;
 
 		// Shared variables
+		std::latch _latch{1};
 		std::mutex _mutex;
 		bool _quit{};
 

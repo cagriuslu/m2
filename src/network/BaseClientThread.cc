@@ -3,13 +3,11 @@
 #include <m2/network/Detail.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
-#include <m2/Meta.h>
-#include <unistd.h>
 #include <m2/network/TcpSocketManager.h>
 
 m2::network::detail::BaseClientThread::BaseClientThread(mplayer::Type type, std::string addr, bool ping_broadcast)
-	: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _thread(BaseClientThread::base_client_thread_func, this) {
-	INFO_FN();
+	: _type(type), _addr(std::move(addr)), _ping_broadcast(ping_broadcast), _ready_token(m2::rand_nonzero()), _thread(BaseClientThread::base_client_thread_func, this) {
+	LOG_INFO("Constructing ClientThread with ready-token", _ready_token);
 }
 
 m2::network::detail::BaseClientThread::~BaseClientThread() {
@@ -75,9 +73,9 @@ void m2::network::detail::BaseClientThread::locked_set_ready(bool state) {
 		const std::lock_guard lock(_mutex);
 		pb::NetworkMessage msg;
 		msg.set_game_hash(M2_GAME.hash());
-		msg.set_ready(state);
-		LOG_DEBUG("Readiness message queued");
+		msg.mutable_client_update()->set_ready_token(_ready_token);
 		_outgoing_queue.push(std::move(msg));
+		LOG_DEBUG("Readiness message queued");
 	}
 
 	auto locked_has_outgoing_message = [this]() {
@@ -85,10 +83,10 @@ void m2::network::detail::BaseClientThread::locked_set_ready(bool state) {
 		return not _outgoing_queue.empty();
 	};
 
-	while (locked_has_outgoing_message()) {
+	do {
 		// Wait until output queue is empty
 		std::this_thread::sleep_for(std::chrono::milliseconds(250));
-	}
+	} while (locked_has_outgoing_message());
 	locked_set_state(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
 }
 
@@ -122,7 +120,7 @@ void m2::network::detail::BaseClientThread::locked_set_state(pb::ClientState sta
 }
 
 void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientThread* thread_manager) {
-	std::this_thread::sleep_for(std::chrono::seconds(1)); // Sleep one second to be sure that BaseClientThread is properly constructed. // TODO use cond_var
+	thread_manager->_latch.wait();
 	set_thread_name_for_logging(thread_manager->thread_name());
 	LOG_INFO("BaseClientThread function");
 

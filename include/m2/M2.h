@@ -25,6 +25,7 @@ namespace m2 {
 	uint32_t rand(uint32_t max); /// Generates numbers from set [0, max). Uses randf internally, thus shouldn't be used for large numbers.
 	uint64_t rand(uint64_t max); /// Generates numbers from set [0, max). Uses randf internally, thus shouldn't be used for large numbers.
 	uint64_t rand(); /// Generates full range 64-bit random numbers.
+	uint64_t rand_nonzero(); /// Generates full range 64-bit random numbers.
 	float randf(); /// Generates numbers from set [0.0f, 1.0f)
 	float apply_accuracy(float value, float max_swing, float accuracy); /// Returns value ± value * accuracy%
 

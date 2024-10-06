@@ -3,7 +3,7 @@
 
 m2::network::HostClientThread::HostClientThread(mplayer::Type type)
 	: detail::BaseClientThread(type, "127.0.0.1", false) {
-	INFO_FN();
+	latch();
 
 	// Wait until the client is connected
 	while (not is_connected()) {

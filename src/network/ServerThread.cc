@@ -10,7 +10,9 @@
 #define PORT (1162)
 
 m2::network::ServerThread::ServerThread(mplayer::Type type, unsigned max_connection_count) : _type(type),
-	_max_connection_count(max_connection_count), _thread(ServerThread::thread_func, this) {}
+	_max_connection_count(max_connection_count), _thread(ServerThread::thread_func, this) {
+	_latch.count_down();
+}
 
 m2::network::ServerThread::~ServerThread() {
 	DEBUG_FN();
@@ -33,7 +35,7 @@ int m2::network::ServerThread::client_count() {
 
 int m2::network::ServerThread::ready_client_count() {
 	const std::lock_guard lock(_mutex);
-	return I(std::ranges::count_if(_clients, [](const auto& client) { return client.is_ready; }));
+	return I(std::ranges::count_if(_clients, is_client_ready));
 }
 
 int m2::network::ServerThread::turn_holder_index() {
@@ -199,7 +201,7 @@ void m2::network::ServerThread::set_state_unlocked(pb::ServerState state) {
 }
 
 void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
-	std::this_thread::sleep_for(std::chrono::seconds(1)); // Sleep one second to be sure that ServerThread is properly constructed. // TODO use cond_var
+	server_thread->_latch.wait();
 	set_thread_name_for_logging("SR");
 	LOG_INFO("ServerThread function");
 
@@ -246,29 +248,26 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 			for (auto i = 0; i < I(server_thread->_clients.size()); ++i) {
 				auto& client = server_thread->_clients[i];
 				if (client.has_incoming_data(false)) {
-					const auto* peak = client.peak_incoming_message();
-					if (peak->has_ready()) {
-						// Check ready message
+					if (const auto* peak = client.peak_incoming_message(); peak->has_client_update()) {
 						if (server_thread->_state == pb::SERVER_LISTENING) {
-							LOG_INFO("Recording client readiness", i, peak->ready());
-							client.is_ready = peak->ready();
+							client.ready_token = peak->client_update().ready_token();
+							LOG_INFO("Received client ready token", i, client.ready_token);
 						} else {
-							LOG_WARN("Received ready signal while the server wasn't listening");
+							LOG_WARN("Received unexpected ClientUpdate", i);
+							client.set_misbehaved();
 						}
-						client.pop_incoming_message(); // Pop the message from the client
-					} else {
-						// Process other messages
+						client.pop_incoming_message(); // Message handled
+					} else if (peak->has_client_command()) {
 						if (server_thread->_turn_holder != i) {
-							LOG_WARN("Dropping message received from a non-turn-holder client", i);
-							client.pop_incoming_message();
+							LOG_WARN("Received ClientCommand from a non-turn-holder client", i);
+							client.set_misbehaved();
+							client.pop_incoming_message(); // Message handled
 						} else {
-							// Process ClientCommand
-							if (peak->has_client_command()) {
-								LOG_INFO("ClientCommand is received from client, will be processed by the game loop", i);
-							} else {
-								client.pop_incoming_message(); // Not yet implemented
-							}
+							LOG_INFO("ClientCommand is received, will be processed by game loop", i);
 						}
+					} else {
+						LOG_WARN("Received unexpected message from client", i);
+						client.set_misbehaved();
 					}
 				}
 			}

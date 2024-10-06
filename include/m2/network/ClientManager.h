@@ -6,14 +6,19 @@ namespace m2::network {
 		std::optional<TcpSocketManager> _socket_manager;
 		std::queue<pb::NetworkMessage> _incoming_queue{};
 		std::queue<pb::NetworkMessage> _outgoing_queue{};
+		bool _misbehaved{}; /// If true, the client did something to misbehave.
 
 	public:
 		ClientManager(TcpSocket&& socket, int index) : _socket_manager(TcpSocketManager{std::move(socket), index}) {}
 
-		bool is_ready{};
+		uint64_t ready_token{}; /// If 0, client isn't ready.
+		bool untrusted{}; /// If true, the client disconnected, and needs to show the correct ready_token to be trusted.
 
-		[[nodiscard]] bool is_still_connected() { return static_cast<bool>(_socket_manager); }
+		[[nodiscard]] bool is_still_connected() const { return static_cast<bool>(_socket_manager); }
 		[[nodiscard]] int fd() { return _socket_manager ? _socket_manager->socket().fd() : -1; }
+
+		void set_misbehaved();
+		[[nodiscard]] bool has_misbehaved() const { return _misbehaved; }
 
 		/// Returns true if there's some message to process. If the socket is readable, more data will be fetched.
 		/// Otherwise only the local buffers will be checked.
@@ -37,5 +42,5 @@ namespace m2::network {
 	};
 
 	// Filters
-	inline bool is_client_ready(const ClientManager& c) { return c.is_ready; }
+	inline bool is_client_ready(const ClientManager& c) { return c.is_still_connected() && c.ready_token; }
 }

@@ -1,6 +1,11 @@
 #include <m2/network/ClientManager.h>
 #include <m2/Log.h>
 
+void m2::network::ClientManager::set_misbehaved() {
+	clear_socket_and_reset_queues();
+	_misbehaved = true;
+}
+
 bool m2::network::ClientManager::has_incoming_data(bool is_socket_readable) {
 	if (is_socket_readable) {
 		auto read_result = _socket_manager->read_incoming_data(_incoming_queue);
@@ -66,5 +71,5 @@ void m2::network::ClientManager::clear_socket_and_reset_queues() {
 	_socket_manager.reset();
 	_incoming_queue = {};
 	_outgoing_queue = {};
-	is_ready = false;
+	untrusted = true;
 }
