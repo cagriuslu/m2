@@ -3,8 +3,10 @@
 #include <memory>
 
 namespace {
-	std::unique_ptr<std::mt19937> random_number_engine;
-	std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution;
+	std::unique_ptr<std::mt19937> random_number_engine_f;
+	std::unique_ptr<std::uniform_real_distribution<float>> random_number_distribution_f;
+	std::unique_ptr<std::mt19937> random_number_engine_i;
+	std::unique_ptr<std::uniform_real_distribution<uint64_t>> random_number_distribution_i;
 }
 const std::string m2::empty_string;
 
@@ -20,14 +22,24 @@ uint64_t m2::rand(uint64_t max) {
 	return static_cast<uint64_t>(static_cast<double>(max) * m2::randf());
 }
 
-float m2::randf() {
-	if (!random_number_distribution) {
+uint64_t m2::rand() {
+	if (!random_number_distribution_i) {
 		// Seed with std::random_device
 		std::random_device rd;
-		random_number_engine = std::make_unique<std::mt19937>(rd());
-		random_number_distribution = std::make_unique<std::uniform_real_distribution<float>>(0.0f, 1.0f);
+		random_number_engine_i = std::make_unique<std::mt19937>(rd());
+		random_number_distribution_i = std::make_unique<std::uniform_real_distribution<uint64_t>>();
 	}
-	return (*random_number_distribution)(*random_number_engine);
+	return (*random_number_distribution_i)(*random_number_engine_i);
+}
+
+float m2::randf() {
+	if (!random_number_distribution_f) {
+		// Seed with std::random_device
+		std::random_device rd;
+		random_number_engine_f = std::make_unique<std::mt19937>(rd());
+		random_number_distribution_f = std::make_unique<std::uniform_real_distribution<float>>(0.0f, 1.0f);
+	}
+	return (*random_number_distribution_f)(*random_number_engine_f);
 }
 
 float m2::apply_accuracy(float value, float max_swing, float accuracy) {
