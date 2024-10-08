@@ -61,14 +61,25 @@ std::optional<m2g::pb::ServerCommand> m2::network::detail::BaseClientThread::loc
 	}
 }
 
-void m2::network::detail::BaseClientThread::locked_set_ready(bool state) {
-	LOG_INFO("Will send ready state", state);
+void m2::network::detail::BaseClientThread::locked_set_ready(bool ready) {
+	auto state = locked_get_client_state();
+	if (ready) {
+		if (state != pb::CLIENT_CONNECTED && state != pb::CLIENT_RECONNECTED) {
+			throw M2_ERROR("Unexpected state while signaling readiness");
+		}
+	} else {
+		if (state != pb::CLIENT_READY) {
+			throw M2_ERROR("Unexpected state while signaling unreadiness");
+		}
+	}
+
+	LOG_INFO("Will send ready state", ready);
 
 	{
 		const std::lock_guard lock(_mutex);
 		pb::NetworkMessage msg;
 		msg.set_game_hash(M2_GAME.hash());
-		msg.mutable_client_update()->set_ready_token(_ready_token);
+		msg.mutable_client_update()->set_ready_token(ready ? _ready_token : 0);
 		_outgoing_queue.push(std::move(msg));
 		LOG_DEBUG("Readiness message queued");
 	}
@@ -123,7 +134,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 		auto current_state = thread_manager->locked_get_client_state();
 		return current_state != pb::CLIENT_SHUTDOWN
 			&& current_state != pb::CLIENT_QUIT
-			&& current_state != pb::CLIENT_TIMEOUT_QUIT;
+			&& current_state != pb::CLIENT_RECONNECTION_TIMEOUT_QUIT;
 	};
 	auto locked_has_outgoing_message = [](BaseClientThread* thread_manager) {
 		const std::lock_guard lock(thread_manager->_mutex);
@@ -142,7 +153,8 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 	std::variant<std::monostate, TcpSocketManager, sdl::ticks_t> socket_manager_or_ticks_disconnected_at;
 	std::optional<PingBroadcastThread> ping_broadcast_thread;
 	while (locked_should_continue_running(thread_manager)) {
-		if (auto state = thread_manager->locked_get_client_state(); state == pb::CLIENT_INITIAL_STATE || state == pb::CLIENT_RECONNECTING) {
+		if (auto state = thread_manager->locked_get_client_state();
+			state == pb::CLIENT_INITIAL_STATE || state == pb::CLIENT_RECONNECTING) {
 			// Sanity check
 			if (std::holds_alternative<TcpSocketManager>(socket_manager_or_ticks_disconnected_at)) {
 				throw M2_ERROR("Unexpected socket");
@@ -155,7 +167,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 				}
 				if (std::get<sdl::ticks_t>(socket_manager_or_ticks_disconnected_at) + 30000 < sdl::get_ticks()) {
 					LOG_WARN("Time out while trying to reconnect to server");
-					thread_manager->unlocked_set_state(pb::CLIENT_TIMEOUT_QUIT);
+					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTION_TIMEOUT_QUIT);
 					continue;
 				}
 			}
@@ -180,14 +192,34 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 				if (not *connect_success) {
 					LOG_INFO("Connection timed out, will try in 1 second");
 					std::this_thread::sleep_for(std::chrono::seconds(1));
-					// We cannot reuse the socket for retry
+					// We cannot reuse the socket for retrying
 				} else {
 					LOG_INFO("Established connection to server");
 					ping_broadcast_thread.reset(); // Stop ping broadcast
-					socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
 					if (state == pb::CLIENT_INITIAL_STATE) {
-						thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
+						// If the server has reached the maximum number of players, it'll accept connections and
+						// immediately close them. We need to check if the socket is still connected.
+						// Prepare read set for select
+						fd_set read_set; FD_ZERO(&read_set); FD_SET(socket->fd(), &read_set);
+						// Select
+						auto select_result = select(socket->fd(), &read_set, nullptr, 1000);
+						if (not select_result) {
+							throw M2_ERROR("Select failed: " + select_result.error());
+						}
+						if (*select_result == 0) {
+							// Timeout occurred, all good
+							socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
+							thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
+						} else if (FD_ISSET(socket->fd(), &read_set)) {
+							// Server should not have sent anything until we signalled as ready.
+							LOG_WARN("Connection was closed from server because the socket is readable immediately upon connection");
+							// This means (most likely) that the server has disconnected the socket.
+							thread_manager->locked_set_state(pb::CLIENT_QUIT);
+						} else {
+							throw M2_ERROR("Unexpected select result");
+						}
 					} else if (state == pb::CLIENT_RECONNECTING) {
+						socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
 						thread_manager->locked_set_state(pb::CLIENT_RECONNECTED);
 					} else {
 						throw M2_ERROR("Unexpected state");

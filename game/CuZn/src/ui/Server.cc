@@ -11,6 +11,7 @@ using namespace m2g::pb;
 
 static TextBlueprint client_count = {
 	.text = "0",
+	.wrapped_font_size_in_units = 5.0f,
 	.on_update = [](MAYBE Text& self) {
 		auto client_count = M2_GAME.server_thread().client_count();
 		auto ready_client_count = M2_GAME.server_thread().ready_client_count();
@@ -27,10 +28,9 @@ static TextBlueprint client_count = {
 			LOG_INFO("Enough clients have connected");
 			if (M2_GAME.server_thread().close_lobby()) {
 				auto client_count = M2_GAME.server_thread().client_count();
-				const auto expect_success =
-					M2_GAME.load_multi_player_as_host(M2_GAME.levels_dir / "Map.json", std::to_string(client_count));
+				const auto expect_success = M2_GAME.load_multi_player_as_host(M2_GAME.levels_dir / "Map.json", std::to_string(client_count));
 				m2_succeed_or_throw_error(expect_success);
-				return make_return_action();  // TODO Return value
+				return make_clear_stack_action();
 			}
 		}
 		return make_continue_action();
@@ -44,24 +44,38 @@ const PanelBlueprint server_lobby = {
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
 		WidgetBlueprint{
-			.x = 40,
-			.y = 40,
-			.w = 40,
-			.h = 10,
+			.x = 40, .y = 20, .w = 40, .h = 10,
 			.border_width = 0,
-			.variant = TextBlueprint{.text = "Client count:"}
+			.variant = TextBlueprint{
+				.text = "CLIENT COUNT:",
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::RIGHT,
+				.wrapped_font_size_in_units = 5.0f,
+			}
 		},
 		WidgetBlueprint{
-			.x = 80, .y = 40, .w = 40, .h = 10,
+			.x = 80, .y = 20, .w = 40, .h = 10,
 			.variant = client_count
+		},
+		WidgetBlueprint{
+			.x = 60, .y = 40, .w = 40, .h = 10,
+			.variant = TextBlueprint{
+				.text = "ADD BOT",
+				.wrapped_font_size_in_units = 5.0f,
+				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+					M2_GAME.add_bot();
+					return make_continue_action();
+				}
+			}
 		},
 		WidgetBlueprint{
 			.x = 60, .y = 60, .w = 40, .h = 10,
 			.variant = TextBlueprint{
-				.text = "Add Bot",
-				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					M2_GAME.add_bot();
-					return make_continue_action();
+				.text = "CANCEL",
+				.wrapped_font_size_in_units = 5.0f,
+				.on_action = [](MAYBE const Text& self) -> Action {
+					M2_GAME.leave_game();
+					// TODO kill bots if any
+					return make_return_action();
 				}
 			}
 		}

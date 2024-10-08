@@ -172,21 +172,34 @@ m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& add
 	_multi_player_threads.emplace<network::RealClientThread>(type, addr);
 	return {};
 }
+void m2::Game::leave_game() {
+	_multi_player_threads = std::monostate{};
+}
 
-void m2::Game::add_bot() {
+bool m2::Game::add_bot() {
 	if (not is_server()) {
 		throw M2_ERROR("Only server can add bots");
 	}
 
+	// Create an instance at the end of the list
 	auto it = _bot_threads.emplace(_bot_threads.end());
 	LOG_INFO("Joining the game as bot client...");
+
 	LOG_DEBUG("Destroying temporary BotClientThread...");
 	it->first.~BotClientThread(); // Destruct the default object
 	LOG_DEBUG("Temporary BotClientThread destroyed, creating real BotClientThread");
+
 	new (&it->first) network::BotClientThread(server_thread().type());
 	LOG_DEBUG("Real BotClientThread created");
 
-	it->second = -1; // Index is initially unknown
+	if (it->first.is_active()) {
+		it->second = -1; // Index is initially unknown
+		return true;
+	} else {
+		LOG_WARN("BotClientThread failed to connect, destroying client");
+		_bot_threads.erase(it);
+		return false;
+	}
 }
 
 m2::network::BotClientThread& m2::Game::find_bot(int receiver_index) {
@@ -450,7 +463,7 @@ void m2::Game::handle_network_events() {
 		}
 
 		// Check if the client has disconnected
-		if (real_client_thread().has_timed_out()) {
+		if (real_client_thread().has_reconnection_timed_out()) {
 			_proxy.handle_disconnection_from_server();
 			// TODO handle
 		}

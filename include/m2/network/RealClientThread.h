@@ -24,27 +24,44 @@ namespace m2::network {
 
 		// Accessors
 
-		bool is_connected();
-		bool is_ready();
-		bool is_started();
-		bool is_shutdown();
+		/// Check whether the client has successfully connected to the server.
+		bool is_connected() { return locked_get_client_state() == pb::CLIENT_CONNECTED; }
+		/// Check whether the client has successfully signified to the server that it's ready.
+		bool is_ready() { return locked_get_client_state() == pb::CLIENT_READY; }
+		/// Check whether the game has started or not.
+		bool is_started() { return locked_get_client_state() == pb::CLIENT_STARTED; }
+		/// Check whether the client has successfully reconnect to the server after a disconnection or not.
 		bool is_reconnected() { return locked_get_client_state() == pb::CLIENT_RECONNECTED; }
-		bool has_timed_out() { return locked_get_client_state() == pb::CLIENT_TIMEOUT_QUIT; }
+		/// Check whether the client has timed out while trying to reconnect to the server.
+		bool has_reconnection_timed_out() { return locked_get_client_state() == pb::CLIENT_RECONNECTION_TIMEOUT_QUIT; }
+		/// Check whether the game has gracefully shutdown by the server.
+		bool is_shutdown() { return locked_get_client_state() == pb::CLIENT_SHUTDOWN; }
+		/// Check whether the thread has quited. This happens if the connection is rejected by the server, most likely due to player count reaching the limit.
+		bool is_quit() { return locked_get_client_state() == pb::CLIENT_QUIT; }
+		/// Check whether the server has shown an unexpected behavior.
 		bool is_server_unrecognized() { return locked_get_client_state() == pb::CLIENT_MISBEHAVING_SERVER_QUIT; }
+
 		// Accessors (only available if is_started() is true)
+
+		/// Query the total number of players in the game.
 		int total_player_count();
-		std::optional<pb::ServerUpdate> last_processed_server_update();
+		/// Try to pop the ServerCommand.
 		inline std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }
+		/// Query the index of this game instance in server's client list.
 		int self_index();
+		/// Query the index of the current turn holder.
 		int turn_holder_index();
+		/// Compare self_index and turn_holder_index to check if it's our turn.
 		inline bool is_our_turn() { return self_index() == turn_holder_index(); }
 
 		// Modifiers
 
+		/// Signal readiness to server.
 		inline void set_ready(bool state) { locked_set_ready(state); }
+		/// Queue a ClientCommand to be sent to the server.
 		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
-		/// Returns true if a ServerUpdate is processed, otherwise returns false.
-		/// Returns unexpected if an error occurs.
+		/// Returns true if there was a ServerUpdate and it was processed, otherwise returns false.
+		/// Returns unexpected if an error occurs while processing.
 		expected<bool> process_server_update();
 	};
 }

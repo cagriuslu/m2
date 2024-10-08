@@ -140,7 +140,8 @@ namespace m2 {
 		// Network management
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		void_expected join_game(mplayer::Type type, const std::string& addr);
-		void add_bot();
+		void leave_game();
+		bool add_bot();
 		network::BotClientThread& find_bot(int receiver_index);
 		bool is_server() const { return std::holds_alternative<ServerThreads>(_multi_player_threads); }
 		bool is_real_client() const { return std::holds_alternative<network::RealClientThread>(_multi_player_threads); }
@@ -166,6 +167,7 @@ namespace m2 {
 		void_expected load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		void_expected load_sheet_editor();
 		void_expected load_bulk_sheet_editor();
+		bool has_level() const { return static_cast<bool>(_level); }
 		Level& level() { return *_level; }
 
 		// Accessors

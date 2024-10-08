@@ -40,7 +40,7 @@ enum ClientState {
   // Signifies to ClientThread that the thread should quit.
   CLIENT_QUIT = 7;
   // Signifies that ClientThread is quitting because it's timed out trying to connect to the server.
-  CLIENT_TIMEOUT_QUIT = 8;
+  CLIENT_RECONNECTION_TIMEOUT_QUIT = 8;
   // Signifies that ClientThread is quitting because the server misbehaved.
   CLIENT_MISBEHAVING_SERVER_QUIT = 9;
 }

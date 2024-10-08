@@ -5,16 +5,24 @@ m2::network::BotClientThread::BotClientThread(mplayer::Type type)
 	: detail::BaseClientThread(type, "127.0.0.1", false) {
 	latch();
 
-	// Wait until the bot is connected
-	while (locked_get_client_state() != pb::CLIENT_CONNECTED) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(25));
-	}
-	LOG_INFO("BotClientThread connected, becoming ready...");
+	// Wait until the bot is connected. The Bot thread waits 1 second to ensure that the connection to host is not
+	// closed from the host side. We need to wait longer than 1 second to be sure.
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
-	locked_set_ready(true);
-	LOG_INFO("BotClientThread became ready");
+	if (locked_get_client_state() == pb::CLIENT_CONNECTED) {
+		LOG_INFO("BotClientThread connected, becoming ready...");
+		locked_set_ready(true);
+		LOG_INFO("BotClientThread became ready");
+	} else {
+		LOG_WARN("BotClientThread was unable to connect, player count limit may have reached");
+	}
 }
 
 const char* m2::network::BotClientThread::thread_name() const {
 	return "BC";
+}
+
+bool m2::network::BotClientThread::is_active() {
+	auto state = locked_get_client_state();
+	return state == pb::CLIENT_READY || state == pb::CLIENT_STARTED;
 }

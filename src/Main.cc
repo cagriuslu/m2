@@ -76,12 +76,17 @@ int main(const int argc, char **argv) {
 	}
 	LOG_DEBUG("Main menu returned");
 
+	// Check if there's a level
+	if (not M2_GAME.has_level()) {
+		LOG_WARN("Main menu didn't initialize a level");
+	}
+
 	sdl::Stopwatch since_last_phy(M2_GAME.pause_ticks);
 	sdl::Stopwatch since_last_gfx(M2_GAME.pause_ticks);
 	sdl::Stopwatch since_last_fps(M2_GAME.pause_ticks);
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
 	LOG_DEBUG("Initial pause ticks", M2_GAME.pause_ticks);
-	while (!M2_GAME.quit) {
+	while (M2_GAME.has_level() && !M2_GAME.quit) {
 		M2_LEVEL.begin_game_loop();
 
 		////////////////////////////////////////////////////////////////////////

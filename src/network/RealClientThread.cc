@@ -32,22 +32,6 @@ const char* m2::network::RealClientThread::thread_name() const {
 	return "RC";
 }
 
-bool m2::network::RealClientThread::is_connected() {
-	return locked_get_client_state() == pb::CLIENT_CONNECTED;
-}
-
-bool m2::network::RealClientThread::is_ready() {
-	return locked_get_client_state() == pb::CLIENT_READY;
-}
-
-bool m2::network::RealClientThread::is_started() {
-	return locked_get_client_state() == pb::CLIENT_STARTED;
-}
-
-bool m2::network::RealClientThread::is_shutdown() {
-	return locked_get_client_state() == pb::CLIENT_SHUTDOWN;
-}
-
 int m2::network::RealClientThread::total_player_count() {
 	if (_last_processed_server_update) {
 		// Game is already running
@@ -58,10 +42,6 @@ int m2::network::RealClientThread::total_player_count() {
 	} else {
 		throw M2_ERROR("Game not yet started");
 	}
-}
-
-std::optional<m2::pb::ServerUpdate> m2::network::RealClientThread::last_processed_server_update() {
-	return _last_processed_server_update;
 }
 
 int m2::network::RealClientThread::self_index() {

@@ -162,10 +162,10 @@ void m2::network::ServerThread::send_server_update() {
 
 	pb::NetworkMessage message = prepare_server_update();
 	{
-		const std::lock_guard lock(_mutex);
 		// Send to clients
 		auto count = client_count();
 		for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
+			const std::lock_guard lock(_mutex);
 			if (_clients[i].is_ready()) {
 				LOG_DEBUG("Queueing ServerUpdate to client", i);
 				message.mutable_server_update()->set_receiver_index(i);

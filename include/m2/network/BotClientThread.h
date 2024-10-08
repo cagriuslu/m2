@@ -14,7 +14,8 @@ namespace m2::network {
 		const char* thread_name() const override;
 
 		// Accessors
-		inline std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }
+		bool is_active();
+		std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }
 
 		// Modifiers
 		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
