@@ -21,6 +21,8 @@ namespace m2 {
 
 		/// Short identifier of the game which is used to discover the resources.
 		const std::string game_identifier = "<game-identifier>";
+		/// Friendly name of the game that's use as the window title.
+		const std::string game_friendly_name = "<game-friendly-name>";
 
 		const int game_aspect_ratio_mul = 5;
 		const int game_aspect_ratio_div = 4;

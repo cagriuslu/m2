@@ -49,9 +49,8 @@ m2::Game::Game() {
 	}
 
 	recalculate_dimensions(800, 450, _proxy.default_game_height_m);
-	if ((window = SDL_CreateWindow(
-		"m2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, _dims.window.w, _dims.window.h,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
+	if ((window = SDL_CreateWindow(_proxy.game_friendly_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		_dims.window.w, _dims.window.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 	SDL_SetWindowMinimumSize(window, 712, 400);
