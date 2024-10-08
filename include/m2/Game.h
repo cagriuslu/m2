@@ -188,7 +188,7 @@ namespace m2 {
 		void handle_console_event();
 		void handle_menu_event();
 		void handle_hud_events();
-		void handle_client_shutdown();
+		void handle_network_events();
 		void execute_pre_step();
 		void update_characters();
 		void execute_step();

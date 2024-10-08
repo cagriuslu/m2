@@ -98,7 +98,7 @@ int main(const int argc, char **argv) {
 			M2_GAME.handle_console_event();
 			M2_GAME.handle_menu_event();
 			M2_GAME.handle_hud_events();
-			M2_GAME.handle_client_shutdown();
+			M2_GAME.handle_network_events();
 			M2_GAME.execute_deferred_actions();
 		}
 		BREAK_IF_QUIT();

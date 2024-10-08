@@ -143,8 +143,11 @@ m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connectio
 
 	LOG_INFO("Creating server instance...");
 	_multi_player_threads.emplace<ServerThreads>();
+	LOG_DEBUG("Destroying temporary ServerThread...");
 	server_thread().~ServerThread(); // Destruct the default object
+	LOG_DEBUG("Temporary ServerThread destroyed, creating real ServerThread...");
 	new (&server_thread()) network::ServerThread(type, max_connection_count);
+	LOG_DEBUG("Real ServerThread created");
 
 	// Wait until the server is up
 	while (not server_thread().is_listening()) {
@@ -152,9 +155,12 @@ m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connectio
 	}
 	// TODO prevent other clients from joining until the host client joins
 
-	LOG_INFO("Server is listening, joining the game as a host client...");
+	LOG_INFO("Server is listening, joining the game as host client...");
+	LOG_DEBUG("Destroying temporary HostClientThread...");
 	host_client_thread().~HostClientThread(); // Destruct the default object
+	LOG_DEBUG("Temporary HostClientThread destroyed, creating real HostClientThread");
 	new (&host_client_thread()) network::HostClientThread(type);
+	LOG_DEBUG("Real HostClientThread created");
 
 	return {};
 }
@@ -174,8 +180,13 @@ void m2::Game::add_bot() {
 	}
 
 	auto it = _bot_threads.emplace(_bot_threads.end());
+	LOG_INFO("Joining the game as bot client...");
+	LOG_DEBUG("Destroying temporary BotClientThread...");
 	it->first.~BotClientThread(); // Destruct the default object
+	LOG_DEBUG("Temporary BotClientThread destroyed, creating real BotClientThread");
 	new (&it->first) network::BotClientThread(server_thread().type());
+	LOG_DEBUG("Real BotClientThread created");
+
 	it->second = -1; // Index is initially unknown
 }
 
@@ -259,7 +270,7 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 	// Manually set the HostClientThread state to STARTED, because it doesn't receive ServerUpdates
 	M2_GAME.host_client_thread().start_if_ready();
 	// If there are bots, we need to handle the first server update
-	std::this_thread::sleep_for(std::chrono::milliseconds(250)); // TODO why?
+	std::this_thread::sleep_for(std::chrono::seconds(1)); // TODO why? system takes some time to deliver the data to bots, even though they are on the same machine
 	for (auto& [bot, index] : _bot_threads) {
 		auto server_update = bot.pop_server_update();
 		if (not server_update) {
@@ -278,7 +289,7 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 	_proxy.post_server_update();
 
 	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
-	std::this_thread::sleep_for(std::chrono::milliseconds(250));
+	std::this_thread::sleep_for(std::chrono::seconds(1));
 	for (auto& [bot, index] : _bot_threads) {
 		auto server_update = bot.pop_server_update();
 		if (not server_update) {
@@ -406,12 +417,49 @@ void m2::Game::handle_hud_events() {
 	IF(_level->right_hud_ui_panel)->handle_events(events);
 }
 
-void m2::Game::handle_client_shutdown() {
+void m2::Game::handle_network_events() {
+	// Check if the game ended
 	if ((is_server() && host_client_thread().is_shutdown()) || (is_real_client() && real_client_thread().is_shutdown())) {
 		_multi_player_threads = std::monostate{};
+		_bot_threads.clear();
 		// Execute main menu
-		if (ui::Panel::create_and_run_blocking(_proxy.pause_menu()).is_quit()) {
+		if (ui::Panel::create_and_run_blocking(_proxy.main_menu()).is_quit()) {
 			quit = true;
+		}
+	}
+
+	if (is_server()) {
+		// Check if a client has disconnected
+		if (auto disconnected_client_index = server_thread().disconnected_client()) {
+			auto action = _proxy.handle_disconnected_client(*disconnected_client_index);
+			// TODO handle
+		}
+
+		// Check if a client has misbehaved
+		if (auto misbehaved_client_index = server_thread().misbehaved_client()) {
+			auto action = _proxy.handle_misbehaving_client(*misbehaved_client_index);
+			// TODO handle
+		}
+	}
+
+	if (is_real_client()) {
+		// Check if the client has reconnected and needs to be set as ready
+		if (real_client_thread().is_reconnected()) {
+			// Set as ready using the same ready_token
+			M2_GAME.real_client_thread().set_ready(true);
+			// Expect ServerUpdate, handle it normally
+		}
+
+		// Check if the client has disconnected
+		if (real_client_thread().has_timed_out()) {
+			_proxy.handle_disconnection_from_server();
+			// TODO handle
+		}
+
+		// Check if the server has behaved unexpectedly
+		if (real_client_thread().is_server_unrecognized()) {
+			_proxy.handle_unrecognized_server();
+			// TODO handle
 		}
 	}
 }
@@ -436,12 +484,16 @@ void m2::Game::execute_pre_step() {
 			if (new_turn_holder) {
 				if (*new_turn_holder < 0) {
 					server_thread().shutdown();
-					// TODO remove threads, push main menu
+					// TODO remove threads, push main menu, maybe do this in handle_network_events?
 				} else {
 					server_thread().set_turn_holder(*new_turn_holder);
 					_server_update_necessary = true;
 				}
 			}
+		}
+		// Handle reconnected client
+		if (server_thread().has_reconnected_client()) {
+			_server_update_necessary = true;
 		}
 
 		// Handle server command

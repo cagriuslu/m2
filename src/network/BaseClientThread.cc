@@ -24,12 +24,10 @@ m2::pb::ClientState m2::network::detail::BaseClientThread::locked_get_client_sta
 	const std::lock_guard lock(_mutex);
 	return _state;
 }
-
 bool m2::network::detail::BaseClientThread::locked_has_server_update() {
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_update);
 }
-
 const m2::pb::ServerUpdate* m2::network::detail::BaseClientThread::locked_peek_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
@@ -38,7 +36,6 @@ const m2::pb::ServerUpdate* m2::network::detail::BaseClientThread::locked_peek_s
 		return nullptr;
 	}
 }
-
 std::optional<m2::pb::ServerUpdate> m2::network::detail::BaseClientThread::locked_pop_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
@@ -49,12 +46,10 @@ std::optional<m2::pb::ServerUpdate> m2::network::detail::BaseClientThread::locke
 		return std::nullopt;
 	}
 }
-
 bool m2::network::detail::BaseClientThread::locked_has_server_command() {
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_command);
 }
-
 std::optional<m2g::pb::ServerCommand> m2::network::detail::BaseClientThread::locked_pop_server_command() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_command) {
@@ -126,7 +121,9 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 
 	auto locked_should_continue_running = [](BaseClientThread* thread_manager) {
 		auto current_state = thread_manager->locked_get_client_state();
-		return current_state != pb::CLIENT_QUIT && current_state != pb::CLIENT_SHUTDOWN;
+		return current_state != pb::CLIENT_SHUTDOWN
+			&& current_state != pb::CLIENT_QUIT
+			&& current_state != pb::CLIENT_TIMEOUT_QUIT;
 	};
 	auto locked_has_outgoing_message = [](BaseClientThread* thread_manager) {
 		const std::lock_guard lock(thread_manager->_mutex);
@@ -141,50 +138,68 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 		return thread_manager->_received_server_update || thread_manager->_received_server_command;
 	};
 
-	std::optional<TcpSocketManager> socket_manager;
+
+	std::variant<std::monostate, TcpSocketManager, sdl::ticks_t> socket_manager_or_ticks_disconnected_at;
+	std::optional<PingBroadcastThread> ping_broadcast_thread;
 	while (locked_should_continue_running(thread_manager)) {
 		if (auto state = thread_manager->locked_get_client_state(); state == pb::CLIENT_INITIAL_STATE || state == pb::CLIENT_RECONNECTING) {
-			if (socket_manager) {
-				throw M2_ERROR("Implementation error, unexpected socket");
+			// Sanity check
+			if (std::holds_alternative<TcpSocketManager>(socket_manager_or_ticks_disconnected_at)) {
+				throw M2_ERROR("Unexpected socket");
 			}
 
-			// Not yet connected
-			// TODO implement reconnection (clear all queues and buffers first)
+			// Check if we should give up trying to reconnect
+			if (state == pb::CLIENT_RECONNECTING) {
+				if (not std::holds_alternative<sdl::ticks_t>(socket_manager_or_ticks_disconnected_at)) {
+					throw M2_ERROR("Expected ticks disconnected at");
+				}
+				if (std::get<sdl::ticks_t>(socket_manager_or_ticks_disconnected_at) + 30000 < sdl::get_ticks()) {
+					LOG_WARN("Time out while trying to reconnect to server");
+					thread_manager->unlocked_set_state(pb::CLIENT_TIMEOUT_QUIT);
+					continue;
+				}
+			}
 
-			// Create socket
-			auto expect_socket = TcpSocket::create();
-			if (not expect_socket) {
-				LOG_FATAL("TcpSocket creation failed", expect_socket.error());
+			// Socket not yet created, or we just got disconnected. Create socket.
+			auto socket = TcpSocket::create();
+			if (not socket) {
+				LOG_FATAL("TcpSocket creation failed", socket.error());
 				return;
 			}
-			socket_manager.emplace(std::move(*expect_socket), -1);
-			LOG_INFO("TcpSocket created");
-
 			// Start ping broadcast if enabled
-			if (thread_manager->_ping_broadcast) {
-				thread_manager->_ping_broadcast_thread.emplace();
-				std::this_thread::sleep_for(std::chrono::milliseconds(2000)); // Wait some time before attempting to connect
+			if (thread_manager->_ping_broadcast && not ping_broadcast_thread) {
+				ping_broadcast_thread.emplace();
+				// Wait some time before attempting to connect
+				std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 			}
 
 			// Attempt to connect
-			auto connect_success = socket_manager->socket().connect(thread_manager->_addr, 1162);
-			if (not connect_success) {
+			if (auto connect_success = socket->connect(thread_manager->_addr, 1162); not connect_success) {
 				throw M2_ERROR("Connect failed: " + connect_success.error());
 			} else {
 				if (not *connect_success) {
-					// Wait some time and try again
+					LOG_INFO("Connection timed out, will try in 1 second");
 					std::this_thread::sleep_for(std::chrono::seconds(1));
+					// We cannot reuse the socket for retry
 				} else {
-					LOG_INFO("Client established connection");
-					thread_manager->_ping_broadcast_thread.reset(); // Stop ping broadcast
-					thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
+					LOG_INFO("Established connection to server");
+					ping_broadcast_thread.reset(); // Stop ping broadcast
+					socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
+					if (state == pb::CLIENT_INITIAL_STATE) {
+						thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
+					} else if (state == pb::CLIENT_RECONNECTING) {
+						thread_manager->locked_set_state(pb::CLIENT_RECONNECTED);
+					} else {
+						throw M2_ERROR("Unexpected state");
+					}
 				}
 			}
 		} else {
-			if (not socket_manager) {
-				throw M2_ERROR("Implementation error, expected socket");
+			if (not std::holds_alternative<TcpSocketManager>(socket_manager_or_ticks_disconnected_at)) {
+				throw M2_ERROR("Expected socket");
 			}
-			// Already connected, ready, or started
+			auto& socket_manager = std::get<TcpSocketManager>(socket_manager_or_ticks_disconnected_at);
+			// Connected, reconnected, ready, or started
 
 			// Wait until the previous ServerUpdate & ServerCommand is processed
 			while (locked_has_unprocessed_server_update_or_command(thread_manager)) {
@@ -202,15 +217,25 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 					LOG_INFO("Shutdown found in incoming queue");
 					thread_manager->unlocked_set_state(pb::CLIENT_SHUTDOWN);
 				} else if (front_message.has_server_update()) {
-					if (thread_manager->_state == pb::CLIENT_CONNECTED) {
-						LOG_WARN("ServerUpdate received while not ready, closing connection to server");
-						// TODO maybe do not trust the server?
-						socket_manager.reset();
-						thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
+					if (thread_manager->_state == pb::CLIENT_CONNECTED || thread_manager->_state == pb::CLIENT_RECONNECTED) {
+						LOG_WARN("ServerUpdate received from server while not ready, closing client");
+						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
+						continue;
 					} else if (not thread_manager->_received_server_update) {
 						// Ensure that the state is STARTED
 						if (thread_manager->_state == pb::CLIENT_READY) {
 							thread_manager->unlocked_set_state(pb::CLIENT_STARTED);
+						}
+						auto received_level_token = front_message.server_update().level_token();
+						if (thread_manager->_level_token == 0) {
+							// Record level token
+							thread_manager->_level_token = received_level_token;
+						} else if (thread_manager->_level_token == received_level_token) {
+							// All good
+						} else {
+							LOG_WARN("Mismatching level token after reconnection, closing client");
+							thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
+							continue;
 						}
 						LOG_INFO("ServerUpdate found in incoming queue");
 						auto* server_update = front_message.release_server_update();
@@ -219,33 +244,30 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 					}
 				} else if (front_message.has_server_command()) {
 					if (thread_manager->_state != pb::CLIENT_STARTED) {
-						LOG_WARN("ServerCommand received while not started, closing connection to server");
-						// TODO maybe do not trust the server?
-						socket_manager.reset();
-						thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
-					} else if (not thread_manager->_received_server_command) {
-						LOG_INFO("ServerCommand found in incoming queue");
-						auto* server_command = front_message.release_server_command();
-						thread_manager->_received_server_command.emplace(std::move(*server_command));
-						delete server_command;
+						LOG_WARN("ServerCommand received from server while not ready, closing client");
+						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
+						continue;
 					}
+					LOG_INFO("ServerCommand found in incoming queue");
+					auto* server_command = front_message.release_server_command();
+					thread_manager->_received_server_command.emplace(std::move(*server_command));
+					delete server_command;
 				} else {
-					LOG_WARN("Unsupported message received from server, closing connection");
-					// TODO maybe do not trust the server?
-					socket_manager.reset();
-					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
+					LOG_WARN("Unsupported message received from server, closing client");
+					thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
+					continue;
 				}
 			}
 
 			// Prepare sets for select
 			fd_set read_set, write_set;
 			FD_ZERO(&read_set); FD_ZERO(&write_set);
-			FD_SET(socket_manager->socket().fd(), &read_set);
-			if (socket_manager->has_outgoing_data() || locked_has_outgoing_message(thread_manager)) {
-				FD_SET(socket_manager->socket().fd(), &write_set);
+			FD_SET(socket_manager.socket().fd(), &read_set);
+			if (socket_manager.has_outgoing_data() || locked_has_outgoing_message(thread_manager)) {
+				FD_SET(socket_manager.socket().fd(), &write_set);
 			}
 			// Select
-			auto select_result = select(socket_manager->socket().fd(), &read_set, &write_set, 250);
+			auto select_result = select(socket_manager.socket().fd(), &read_set, &write_set, 250);
 			if (not select_result) {
 				throw M2_ERROR("Select failed: " + select_result.error());
 			}
@@ -255,30 +277,28 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 			}
 
 			// If there's anything to read
-			if (FD_ISSET(socket_manager->socket().fd(), &read_set)) {
+			if (FD_ISSET(socket_manager.socket().fd(), &read_set)) {
 				const std::lock_guard lock(thread_manager->_mutex);
-				auto read_result = socket_manager->read_incoming_data(thread_manager->_incoming_queue);
+				auto read_result = socket_manager.read_incoming_data(thread_manager->_incoming_queue);
 				if (not read_result) {
 					LOG_WARN("Error occurred while reading, closing connection to server", read_result.error());
-					socket_manager.reset();
+					socket_manager_or_ticks_disconnected_at.emplace<sdl::ticks_t>(sdl::get_ticks());
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
 				} else if (*read_result != TcpSocketManager::ReadResult::MESSAGE_RECEIVED && *read_result != TcpSocketManager::ReadResult::INCOMPLETE_MESSAGE_RECEIVED) {
-					LOG_WARN("Invalid data received from server, closing connection", static_cast<int>(*read_result));
-					// TODO maybe do not trust the server?
-					socket_manager.reset();
-					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
+					LOG_WARN("Invalid data received from server, closing client", static_cast<int>(*read_result));
+					thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 					continue;
 				}
 			}
 
 			// If there's anything to write
-			if (FD_ISSET(socket_manager->socket().fd(), &write_set)) {
+			if (FD_ISSET(socket_manager.socket().fd(), &write_set)) {
 				const std::lock_guard lock(thread_manager->_mutex);
-				auto send_result = socket_manager->send_outgoing_data(thread_manager->_outgoing_queue);
+				auto send_result = socket_manager.send_outgoing_data(thread_manager->_outgoing_queue);
 				if (not send_result) {
 					LOG_WARN("Error occurred while writing, closing connection to server", send_result.error());
-					socket_manager.reset();
+					socket_manager_or_ticks_disconnected_at.emplace<sdl::ticks_t>(sdl::get_ticks());
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
 				} else if (*send_result != TcpSocketManager::SendResult::OK) {

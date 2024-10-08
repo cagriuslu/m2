@@ -23,10 +23,14 @@ namespace m2::network {
 		const char* thread_name() const override;
 
 		// Accessors
+
 		bool is_connected();
 		bool is_ready();
 		bool is_started();
 		bool is_shutdown();
+		bool is_reconnected() { return locked_get_client_state() == pb::CLIENT_RECONNECTED; }
+		bool has_timed_out() { return locked_get_client_state() == pb::CLIENT_TIMEOUT_QUIT; }
+		bool is_server_unrecognized() { return locked_get_client_state() == pb::CLIENT_MISBEHAVING_SERVER_QUIT; }
 		// Accessors (only available if is_started() is true)
 		int total_player_count();
 		std::optional<pb::ServerUpdate> last_processed_server_update();

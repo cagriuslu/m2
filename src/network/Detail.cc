@@ -1,6 +1,15 @@
 #include <m2/network/Detail.h>
 #include <sys/select.h>
 
+std::string m2::to_string(const std::pair<in_addr_t,in_port_t>& address_and_port) {
+	auto first = (static_cast<uint32_t>(address_and_port.first) & 0xFF000000u ) >> 24;
+	auto second = (static_cast<uint32_t>(address_and_port.first) & 0xFF0000u) >> 16;
+	auto third = (static_cast<uint32_t>(address_and_port.first) & 0xFF00u) >> 8;
+	auto forth = (static_cast<uint32_t>(address_and_port.first) & 0xFFu) >> 0;
+	auto port = static_cast<uint32_t>(address_and_port.second);
+	return std::to_string(first) + "." + std::to_string(second) + "." + std::to_string(third) + "." + std::to_string(forth) + ":" + std::to_string(port);
+}
+
 m2::expected<int> m2::network::select(int max_fd, fd_set* read, fd_set* write, uint64_t timeout_ms) {
 	timeval tv{};
 	tv.tv_sec = static_cast<int64_t>(timeout_ms) / 1000;

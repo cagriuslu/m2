@@ -10,45 +10,55 @@ import "VecF.proto";
 enum ServerState {
   // Default state of the ServerThread. In this state, the ServerThread is not yet listening.
   SERVER_INITIAL_STATE = 0;
-  // Signifies to ServerThread that the thread should quit.
-  SERVER_QUIT = 1;
   // Signifies that the ServerThread is listening for new client connections.
-  SERVER_LISTENING = 2;
+  SERVER_LISTENING = 1;
   // Signifies that the lobby has been closed, but the game hasn't started yet.
-  SERVER_READY = 3;
+  SERVER_READY = 2;
   // Signifies that the game has started.
-  SERVER_STARTED = 4;
+  SERVER_STARTED = 3;
   // Signifies that the server has been shut down.
-  SERVER_SHUTDOWN = 5;
+  SERVER_SHUTDOWN = 4;
+  // Signifies to ServerThread that the thread should quit.
+  SERVER_QUIT = 5;
 }
 
 enum ClientState {
   // Default state of the ClientThread.
   CLIENT_INITIAL_STATE = 0;
-  // Signifies to ClientThread that the thread should quit.
-  CLIENT_QUIT = 1;
   // Signifies that the ClientThread has successfully connected to the server, but is not ready.
-  CLIENT_CONNECTED = 2;
+  CLIENT_CONNECTED = 1;
   // Signifies that the ClientThread is ready to begin the game.
-  CLIENT_READY = 3;
+  CLIENT_READY = 2;
   // Signifies that the initial ServerUpdate is received, thus the game has begun.
-  CLIENT_STARTED = 4;
+  CLIENT_STARTED = 3;
+  // Signifies that the client has disconnected from the server, and trying to re-establish the connection.
+  CLIENT_RECONNECTING = 4;
+  // Signifies that the client has reconnected to the server, and requires the level to be started.
+  CLIENT_RECONNECTED = 5;
   // Signifies that the server has shut down the game, and the client have terminated the connection.
-  CLIENT_SHUTDOWN = 5;
-  // TODO
-  CLIENT_RECONNECTING = 6;
+  CLIENT_SHUTDOWN = 6;
+  // Signifies to ClientThread that the thread should quit.
+  CLIENT_QUIT = 7;
+  // Signifies that ClientThread is quitting because it's timed out trying to connect to the server.
+  CLIENT_TIMEOUT_QUIT = 8;
+  // Signifies that ClientThread is quitting because the server misbehaved.
+  CLIENT_MISBEHAVING_SERVER_QUIT = 9;
 }
 
 message ServerUpdate {
+  // (Hopefully) unique token for each created level. Use by the client to verify that upon reconnection, they connect
+  // to the same game instance.
+  uint64 level_token = 1;
+
   // 0-based index of the receiver
-  int32 receiver_index = 1;
+  int32 receiver_index = 2;
 
   // 0-based index of the current turn holder
-  int32 turn_holder_index = 2;
+  int32 turn_holder_index = 3;
 
   // ObjectId of the objects that belong to players on the server side. The size of this list also represents the total
   // player count in the game. player_object_id[receiver_index] corresponds to the receiver of the message.
-  repeated uint64 player_object_ids = 3;
+  repeated uint64 player_object_ids = 4;
 
   // Both object_id and parent_id refer to the objects on the server side. It's client's responsibility to create the
   // same object tree locally.
@@ -61,7 +71,7 @@ message ServerUpdate {
     repeated Resource resources = 7;
     repeated Attribute attributes = 8;
   }
-  repeated ObjectDescriptor objects_with_character = 4;
+  repeated ObjectDescriptor objects_with_character = 5;
 }
 
 message ClientUpdate {

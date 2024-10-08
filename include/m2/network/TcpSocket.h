@@ -19,6 +19,7 @@ namespace m2::network {
 		~TcpSocket();
 
 		[[nodiscard]] int fd() const { return _fd; }
+		[[nodiscard]] std::pair<in_addr_t,in_port_t> address_and_port() const { return std::make_pair(_addr, _port); }
 
 		/// Returns true if successful. Returns false if failed due to EADDRINUSE. Otherwise, returns unexpected.
 		expected<bool> bind(uint16_t port);

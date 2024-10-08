@@ -24,6 +24,7 @@ namespace m2::network {
 		std::mutex _mutex;
 		pb::ServerState _state{pb::ServerState::SERVER_INITIAL_STATE};
 		std::vector<ClientManager> _clients;
+		bool _has_reconnected_client{};
 		int _turn_holder{};
 		std::optional<pb::NetworkMessage> _received_client_command;
 
@@ -47,16 +48,21 @@ namespace m2::network {
 		int turn_holder_index();
 		inline bool is_our_turn() { return turn_holder_index() == 0; }
 		std::optional<pb::NetworkMessage> pop_turn_holder_command();
+		bool has_reconnected_client();
+		std::optional<int> disconnected_client();
+		std::optional<int> misbehaved_client();
 		bool is_shutdown();
 
 		// Modifiers
 		void_expected close_lobby();
 		void set_turn_holder(int index);
+		pb::NetworkMessage prepare_server_update();
 		void send_server_update();
 		void send_server_command(const m2g::pb::ServerCommand& command, int receiver_index);
 		void shutdown();
 
 	private:
+		pb::ServerState locked_get_state();
 		void set_state_locked(pb::ServerState state);
 		void set_state_unlocked(pb::ServerState state);
 

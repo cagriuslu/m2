@@ -54,6 +54,31 @@ std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder
 	return opt_message;
 }
 
+bool m2::network::ServerThread::has_reconnected_client() {
+	const std::lock_guard lock(_mutex);
+	return _has_reconnected_client;
+}
+std::optional<int> m2::network::ServerThread::disconnected_client() {
+	const std::lock_guard lock(_mutex);
+	for (auto i = 0; i < I(_clients.size()); ++i) {
+		if (auto disconnected_since = _clients[i].disconnected_or_untrusted_since();
+			disconnected_since && *disconnected_since + 15000 < sdl::get_ticks()) {
+			return i;
+		}
+	}
+	return std::nullopt;
+}
+
+std::optional<int> m2::network::ServerThread::misbehaved_client() {
+	const std::lock_guard lock(_mutex);
+	for (auto i = 0; i < I(_clients.size()); ++i) {
+		if (_clients[i].has_misbehaved()) {
+			return i;
+		}
+	}
+	return std::nullopt;
+}
+
 bool m2::network::ServerThread::is_shutdown() {
 	const std::lock_guard lock(_mutex);
 	return _state == pb::ServerState::SERVER_SHUTDOWN;
@@ -81,9 +106,7 @@ void m2::network::ServerThread::set_turn_holder(int idx) {
 	_turn_holder = idx;
 }
 
-void m2::network::ServerThread::send_server_update() {
-	INFO_FN();
-
+m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update() {
 	// Prepare the ServerUpdate except the receiver_index field
 	pb::NetworkMessage message;
 	message.set_game_hash(M2_GAME.hash());
@@ -127,20 +150,30 @@ void m2::network::ServerThread::send_server_update() {
 		}, char_variant);
 	}
 
+	return message;
+}
+void m2::network::ServerThread::send_server_update() {
+	INFO_FN();
+
 	// Make sure the state is set as READY
 	if (_state != pb::SERVER_READY) {
 		set_state_unlocked(pb::SERVER_READY);
 	}
 
-	// Send to clients
-	auto count = client_count();
-	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
+	pb::NetworkMessage message = prepare_server_update();
+	{
 		const std::lock_guard lock(_mutex);
-		if (_clients[i].is_still_connected()) {
-			LOG_DEBUG("Queueing ServerUpdate to client", i);
-			message.mutable_server_update()->set_receiver_index(i);
-			_clients[i].queue_outgoing_message(message);
+		// Send to clients
+		auto count = client_count();
+		for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
+			if (_clients[i].is_ready()) {
+				LOG_DEBUG("Queueing ServerUpdate to client", i);
+				message.mutable_server_update()->set_receiver_index(i);
+				_clients[i].queue_outgoing_message(message);
+			}
 		}
+		// Clear reconnected client
+		_has_reconnected_client = false;
 	}
 }
 
@@ -157,7 +190,7 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 
 	{
 		const std::lock_guard lock(_mutex);
-		if (_clients[receiver_index].is_still_connected()) {
+		if (_clients[receiver_index].is_ready()) {
 			LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
 			_clients[receiver_index].queue_outgoing_message(std::move(message));
 		} else {
@@ -177,7 +210,7 @@ void m2::network::ServerThread::shutdown() {
 	// Send to clients
 	auto count = I(_clients.size());
 	for (auto i = 0; i < count; ++i) {
-		if (_clients[i].is_still_connected()) {
+		if (_clients[i].is_ready()) {
 			LOG_DEBUG("Queueing Shutdown message to client", i);
 			_clients[i].queue_outgoing_message(msg);
 		}
@@ -190,11 +223,14 @@ void m2::network::ServerThread::shutdown() {
 	set_state_unlocked(pb::SERVER_SHUTDOWN);
 }
 
+m2::pb::ServerState m2::network::ServerThread::locked_get_state() {
+	const std::lock_guard lock(_mutex);
+	return _state;
+}
 void m2::network::ServerThread::set_state_locked(pb::ServerState state) {
 	const std::lock_guard lock(_mutex);
 	set_state_unlocked(state);
 }
-
 void m2::network::ServerThread::set_state_unlocked(pb::ServerState state) {
 	LOG_DEBUG("Setting state", pb::ServerState_Name(state));
 	_state = state;
@@ -250,8 +286,16 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 				if (client.has_incoming_data(false)) {
 					if (const auto* peak = client.peak_incoming_message(); peak->has_client_update()) {
 						if (server_thread->_state == pb::SERVER_LISTENING) {
-							client.ready_token = peak->client_update().ready_token();
-							LOG_INFO("Received client ready token", i, client.ready_token);
+							LOG_INFO("Received client ready token", i, peak->client_update().ready_token());
+							client.set_ready_token(peak->client_update().ready_token()); // TODO handle response
+						} else if (server_thread->_state == pb::SERVER_STARTED && client.is_untrusted()) {
+							if (client.set_ready_token(peak->client_update().ready_token())) {
+								LOG_INFO("Previously reconnected client has presented the correct ready token, will send ServerUpdate", i);
+								server_thread->_has_reconnected_client = true;
+							} else {
+								LOG_INFO("Previously reconnected client presented incorrect ready token, disconnecting client", i);
+								client.honorably_disconnect();
+							}
 						} else {
 							LOG_WARN("Received unexpected ClientUpdate", i);
 							client.set_misbehaved();
@@ -302,13 +346,29 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 				LOG_WARN("Client aborted connection by the time it was accepted");
 			} else {
 				if (server_thread->_max_connection_count <= server_thread->_clients.size()) {
-					// Reject new connection, do not store client socket
-					LOG_DEBUG("Closing new connection because of connection limit");
-				} else {
-					LOG_INFO("New client connected with index", server_thread->_clients.size());
-					// TODO wat if old client is reconnected?
-					// TODO wat if the game has already started?
+					LOG_INFO("Refusing connection because of connection limit", (*client_socket)->address_and_port());
+				} else if (auto state = server_thread->locked_get_state(); state == pb::SERVER_LISTENING) {
+					LOG_INFO("New client connected with index", server_thread->_clients.size(), (*client_socket)->address_and_port());
 					server_thread->_clients.emplace_back(std::move(**client_socket), server_thread->_clients.size());
+				} else if (state == pb::SERVER_READY) {
+					LOG_INFO("Refusing connection to closed lobby", (*client_socket)->address_and_port());
+				} else if (state == pb::SERVER_STARTED) {
+					const std::lock_guard lock(server_thread->_mutex);
+					// Check if there's a disconnected client
+					bool found = false;
+					for (int i = 0; i < I(server_thread->_clients.size()) && not found; ++i) {
+						auto& client = server_thread->_clients[i];
+						if (client.is_disconnected() && client.address_and_port() == (*client_socket)->address_and_port()) {
+							LOG_INFO("Previously connected client with index connected again", i, (*client_socket)->address_and_port());
+							client.untrusted_client_reconnected(std::move(**client_socket));
+							found = true;
+						}
+					}
+					if (not found) {
+						LOG_INFO("Refusing connection after game started", (*client_socket)->address_and_port());
+					}
+				} else {
+					throw M2_ERROR("Unexpected state");
 				}
 			}
 		}
@@ -318,7 +378,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 			const std::lock_guard lock(server_thread->_mutex);
 			for (auto i = 0; i < I(server_thread->_clients.size()); ++i) {
 				auto& client = server_thread->_clients[i];
-				if (not client.is_still_connected()) {
+				if (not client.is_connected()) {
 					// Skip client if it's connection has dropped
 					continue;
 				}
@@ -328,9 +388,8 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 
 			// If the lobby is not yet closed, remove disconnected clients
 			if (server_thread->_state == pb::ServerState::SERVER_LISTENING) {
-				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(), [](auto& client) {
-					return not client.is_still_connected();
-				});
+				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(),
+					[](auto& client) { return client.is_disconnected_or_untrusted(); });
 				server_thread->_clients.erase(erase_it, server_thread->_clients.end());
 			}
 		}
@@ -340,7 +399,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		{
 			const std::lock_guard lock(server_thread->_mutex);
 			for (auto & client : server_thread->_clients) {
-				if (not client.is_still_connected() || not FD_ISSET(client.fd(), &write_set)) {
+				if (not client.is_ready() || not FD_ISSET(client.fd(), &write_set)) {
 					// Skip if the connection has dropped or the socket is not writeable
 					continue;
 				}
@@ -364,7 +423,7 @@ int m2::network::ServerThread::prepare_read_fd_set(fd_set* set) {
 	const std::lock_guard lock(_mutex);
 	int max = 0;
 	for (auto& client : _clients) {
-		if (client.is_still_connected()) {
+		if (client.is_connected()) {
 			auto fd = client.fd();
 			FD_SET(fd, set);
 			max = std::max(max, fd);
@@ -379,7 +438,7 @@ int m2::network::ServerThread::prepare_write_fd_set(fd_set* set) {
 	const std::lock_guard lock(_mutex);
 	int max = 0;
 	for (auto& client : _clients) {
-		if (client.is_still_connected() && client.has_outgoing_data()) {
+		if (client.is_ready() && client.has_outgoing_data()) {
 			auto fd = client.fd();
 			FD_SET(fd, set);
 			max = std::max(max, fd);

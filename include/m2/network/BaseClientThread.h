@@ -27,7 +27,7 @@ namespace m2::network::detail {
 		std::optional<m2g::pb::ServerCommand> _received_server_command;
 
 		// Thread variables
-		std::optional<PingBroadcastThread> _ping_broadcast_thread;
+		uint64_t _level_token{};
 
 	protected:
 		void latch() { _latch.count_down(); } // This function must be called from the inherited class' constructor
@@ -44,6 +44,7 @@ namespace m2::network::detail {
 		virtual const char* thread_name() const = 0;
 
 		// Accessors
+
 		pb::ClientState locked_get_client_state();
 		bool locked_has_server_update();
 		const pb::ServerUpdate* locked_peek_server_update();
@@ -52,6 +53,7 @@ namespace m2::network::detail {
 		std::optional<m2g::pb::ServerCommand> locked_pop_server_command();
 
 		// Modifiers
+
 		void locked_set_ready(bool state);
 		/// Only for HostClientThread and BotClientThread
 		void locked_start_if_ready();

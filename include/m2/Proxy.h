@@ -104,15 +104,38 @@ namespace m2 {
 		/// For the client with index 1, the second item would contain the ObjectId of the player.
 		std::vector<m2::ObjectId> multi_player_object_ids;
 
-		/// Return the new turn_holder_index if command is accepted and a ServerUpdate is necessary.
-		/// Return -1 if the game ended.
+		/// Should be implemented from the perspective of a server. Implementation should return the new turn holder
+		/// index if the command is accepted and a ServerUpdate is necessary. Implementation should return std::nullopt
+		/// if the command should be ignored and no ServerUpdate is necessary. Implementation should return -1 if the
+		/// game ended.
 		std::optional<int> handle_client_command(MAYBE int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) { return std::nullopt; }
+		/// Should be implemented from the perspective of a client.
 		void handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command) {}
-		/// For the server, called after the ServerUpdate is published (except the initial ServerUpdate).
-		/// For the client, called after the ServerUpdate is received and processed by the engine.
+		/// Should be implemented from the perspective of a client. For the server, this function is called after the
+		/// ServerUpdate is published (except the initial ServerUpdate). For the client, it's called after the
+		/// ServerUpdate is received and processed by the engine.
 		void post_server_update() {}
+		/// Should be implemented from the perspective of a bot.
 		void bot_handle_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {}
+		/// Should be implemented from the perspective of a bot.
 		void bot_handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command, MAYBE int receiver_index) {}
+		/// Should be implemented from the perspective of a real client. The client has disconnected from the server and
+		/// 30 seconds has passed while trying to reconnect. Implementation should display the appropriate message and
+		/// return. Once returned, current level will be destroyed and main menu will be triggerred.
+		void handle_disconnection_from_server() {}
+		/// Should be implemented from the perspective of a real client. The server has behaved unexpectedly, and it's
+		/// possibly not a recognized server. Implementation should display the appropriate message and return. Once
+		/// returned, current level will be destroyed and main menu will be triggerred.
+		void handle_unrecognized_server() {}
+		/// Should be implemented from the perspective of a server. The client with the given index has disconnected
+		/// from the server and hasn't reconnected for 15 seconds, or hasn't signalled as ready for another 15 seconds.
+		/// Implementation should return true if the client should be replaced with a bot. Implementation should return
+		/// false if the level should be destroyed and main menu is triggered.
+		bool handle_disconnected_client(MAYBE int receiver_index) { return false; }
+		/// Should be implemented from the perspective of a server. The client with the given index has misbehaved
+		/// (sent invalid/unexpected message). Implementation should return true if the client should be replaced with a
+		/// bot. Implementation should return false if level should be destroyed and main menu triggerred.
+		bool handle_misbehaving_client(MAYBE int receiver_index) { return false; }
 
 		/// Called after a tile is created
 		void post_tile_create(MAYBE m2::Object& obj, MAYBE m2g::pb::SpriteType sprite_type) {}

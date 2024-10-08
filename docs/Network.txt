@@ -45,3 +45,6 @@ the Level::player_id).
 In turn based games, the physics world does not exist. The game state is stored in objects with Character, and their
 positions. A real life player is represented by an object, who might have child objects on the map.
 Groups are not supported. Characters can hold resources, attributes, and named items. Unnamed items and resource limits are not supported.
+
+// TODO explain reconnection mechanism
+// TODO make an exercise, list everything that can go wrong, map the state transitions of each thread, think about what would happen if those errors happened
