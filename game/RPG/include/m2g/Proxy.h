@@ -6,7 +6,7 @@
 namespace m2g {
 	class Proxy : public m2::Proxy {
 	   public:
-		const std::string game_name = "RPG";
+		const std::string game_identifier = "RPG";
 		const bool camera_is_listener = true;
 
 		void load_resources();

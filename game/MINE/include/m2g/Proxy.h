@@ -4,7 +4,7 @@
 namespace m2g {
 	class Proxy : public m2::Proxy {
 	   public:
-		const std::string game_name = "MINE";
+		const std::string game_identifier = "MINE";
 		const bool gravity = true;
 		const bool world_is_static = false;
 

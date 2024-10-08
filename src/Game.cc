@@ -110,8 +110,8 @@ m2::Game::Game() {
 	dynamic_sheet = DynamicSheet{renderer};
 
 	// Load game resources
-	resource_dir = resource_path() / "game" / _proxy.game_name;
-	levels_dir = resource_path() / "game" / _proxy.game_name / "levels";
+	resource_dir = resource_path() / "game" / _proxy.game_identifier;
+	levels_dir = resource_path() / "game" / _proxy.game_identifier / "levels";
 
 	auto sheets_pb = pb::json_file_to_message<pb::SpriteSheets>(resource_dir / "SpriteSheets.json");
 	if (!sheets_pb) {

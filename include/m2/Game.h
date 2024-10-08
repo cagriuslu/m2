@@ -136,7 +136,7 @@ namespace m2 {
 		~Game();
 
 		// Proxy management
-		int32_t hash() const { return I(std::hash<std::string>{}(_proxy.game_name)); }
+		int32_t hash() const { return I(std::hash<std::string>{}(_proxy.game_identifier)); }
 		// Network management
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		void_expected join_game(mplayer::Type type, const std::string& addr);

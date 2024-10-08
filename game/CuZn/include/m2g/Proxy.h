@@ -16,7 +16,7 @@ namespace m2g {
 	public:
 		static Proxy& get_instance();
 
-		const std::string game_name = "CuZn";
+		const std::string game_identifier = "CuZn";
 		const int game_aspect_ratio_mul = 3;
 		const int game_aspect_ratio_div = 2;
 		const int default_game_height_m = 32;

@@ -19,8 +19,8 @@ namespace m2 {
 		Proxy() = default;
 		virtual ~Proxy() = default;
 
-		/// Name of the game, which is used to discover the resources
-		const std::string game_name = "<game-name>";
+		/// Short identifier of the game which is used to discover the resources.
+		const std::string game_identifier = "<game-identifier>";
 
 		const int game_aspect_ratio_mul = 5;
 		const int game_aspect_ratio_div = 4;
