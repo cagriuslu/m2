@@ -3,6 +3,8 @@
 #include <m2/Log.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
+#include <m2/network/Detail.h>
+#include <numeric>
 
 using namespace m2::ui;
 using namespace m2::ui::widget;
@@ -21,6 +23,7 @@ static TextBlueprint client_count = {
 			text += " - START!";
 		}
 		self.set_text(text);
+
 		return make_continue_action();
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
@@ -44,7 +47,34 @@ const PanelBlueprint server_lobby = {
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
 		WidgetBlueprint{
-			.x = 40, .y = 20, .w = 40, .h = 10,
+			.x = 35, .y = 5, .w = 40, .h = 20,
+			.border_width = 0,
+			.variant = TextBlueprint{
+				.text = "LISTENING ON:",
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::RIGHT,
+				.vertical_alignment = m2::ui::TextVerticalAlignment::CENTER,
+				.wrapped_font_size_in_units = 5.0f
+			}
+		},
+		WidgetBlueprint{
+			.x = 85, .y = 5, .w = 60, .h = 20,
+			.border_width = 0,
+			.variant = TextBlueprint{
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
+				.vertical_alignment = m2::ui::TextVerticalAlignment::CENTER,
+				.wrapped_font_size_in_units = 5.0f,
+				.on_create = [](Text& self) {
+					if (auto addresses = m2::network::get_ip_addresses()) {
+						auto addresses_str = std::accumulate(addresses->begin(), addresses->end(), std::string{}, [](std::string&& ss, const std::string& s) {
+							return ss.empty() ? s : (ss + " " + s);
+						});
+						self.set_text(addresses_str);
+					}
+				}
+			}
+		},
+		WidgetBlueprint{
+			.x = 35, .y = 35, .w = 40, .h = 10,
 			.border_width = 0,
 			.variant = TextBlueprint{
 				.text = "CLIENT COUNT:",
@@ -53,11 +83,11 @@ const PanelBlueprint server_lobby = {
 			}
 		},
 		WidgetBlueprint{
-			.x = 80, .y = 20, .w = 40, .h = 10,
+			.x = 85, .y = 35, .w = 40, .h = 10,
 			.variant = client_count
 		},
 		WidgetBlueprint{
-			.x = 60, .y = 40, .w = 40, .h = 10,
+			.x = 60, .y = 55, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "ADD BOT",
 				.wrapped_font_size_in_units = 5.0f,
@@ -68,7 +98,7 @@ const PanelBlueprint server_lobby = {
 			}
 		},
 		WidgetBlueprint{
-			.x = 60, .y = 60, .w = 40, .h = 10,
+			.x = 60, .y = 75, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
