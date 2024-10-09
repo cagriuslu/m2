@@ -217,6 +217,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		} else {
 			_played_players.emplace_back(turn_holder_index, money_spent);
 		}
+		// Deduct money from player
+		turn_holder_character.remove_resource(pb::MONEY, m2::F(money_spent));
 
 		// Save spent money to game state tracker so that it's shared among clients
 		for (int i = 0; i < M2_GAME.total_player_count(); ++i) {
