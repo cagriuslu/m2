@@ -31,6 +31,11 @@ namespace {
 			// If there are no locations in network, or the wild location card is selected, all locations are considered in-network
 			industry_locations_in_network = all_industry_locations();
 		} else {
+			if (M2_GAME.named_items[card].category() == ITEM_CATEGORY_CITY_CARD) {
+				// If the card is a city card, add the city to list of cities
+				cities_in_network.insert(card);
+			}
+
 			if (M2G_PROXY.is_canal_era()) {
 				// If canal era, remove the cities where there is already an industry of player
 				for (const auto& built_factory_location : player_built_factory_locations(player)) {
@@ -53,8 +58,6 @@ namespace {
 				++it;
 			}
 		}
-
-		// TODO take "use location with only the industry first" into account
 
 		// Filter industry_locations_in_network by card
 		if (card == WILD_LOCATION_CARD || card == WILD_INDUSTRY_CARD) {
