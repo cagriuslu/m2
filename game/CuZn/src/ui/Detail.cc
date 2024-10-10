@@ -108,6 +108,60 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 	return selection;
 }
 
+std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& question, const std::string& accept_text, const std::string& decline_text) {
+	auto blueprint = PanelBlueprint{
+		.w = 80, .h = 45,
+		.background_color = {0, 0, 0, 255},
+		.widgets = {
+			WidgetBlueprint{
+				.x = 5, .y = 5, .w = 70, .h = 25,
+				.border_width = 0,
+				.variant = TextBlueprint{
+					.text = question,
+					.horizontal_alignment = TextHorizontalAlignment::LEFT,
+					.vertical_alignment = m2::ui::TextVerticalAlignment::TOP,
+					.wrapped_font_size_in_units = 3.0f
+				}
+			},
+			WidgetBlueprint{
+				.x = 5, .y = 35, .w = 20, .h = 5,
+				.variant = TextBlueprint{
+					.text = accept_text,
+					.wrapped_font_size_in_units = 3.0f,
+					.on_action = [](MAYBE const Text& self) -> Action {
+						return make_return_action<bool>(true);
+					}
+				}
+			},
+			WidgetBlueprint{
+				.x = 30, .y = 35, .w = 20, .h = 5,
+				.variant = TextBlueprint{
+					.text = decline_text,
+					.wrapped_font_size_in_units = 3.0f,
+					.on_action = [](MAYBE const Text& self) -> Action {
+						return make_return_action<bool>(false);
+					}
+				}
+			},
+			WidgetBlueprint{
+				.x = 55, .y = 35, .w = 20, .h = 5,
+				.variant = TextBlueprint{
+					.text = "Cancel",
+					.wrapped_font_size_in_units = 3.0f,
+					.on_action = [](MAYBE const Text& self) -> Action {
+						return make_return_action();
+					}
+				}
+			}
+		}
+	};
+
+	std::optional<bool> selection;
+	Panel::create_and_run_blocking(&blueprint, RectF{0.25f, 0.25f, 0.5f, 0.5f})
+		.if_return<bool>([&](auto result) { selection = result; });
+	return selection;
+}
+
 bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::sdl::TextureUniquePtr background_texture) {
 	auto blueprint = PanelBlueprint{
 		.w = 44, .h = 12,

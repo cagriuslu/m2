@@ -77,7 +77,12 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const PositionOr
 
 std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() {
 	if (1 < player_tile_count(M2_PLAYER.character())) {
-		_develop_double_tiles = ask_for_confirmation("Develop two industries?", "", "Yes", "No");
+		if (auto selection = ask_for_confirmation_with_cancellation("Develop two industries at once? (Requires 2 Irons instead of 1 Iron)", "Yes", "No"); not selection) {
+			M2_DEFER(m2g::Proxy::user_journey_deleter);
+			return std::nullopt;
+		} else {
+			_develop_double_tiles = *selection;
+		}
 	}
 
 	// Card selection
