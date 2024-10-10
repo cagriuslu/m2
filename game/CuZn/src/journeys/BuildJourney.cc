@@ -212,7 +212,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 	LOG_DEBUG("Expecting build location...");
 	M2_LEVEL.disable_hud();
 	M2_LEVEL.display_message("Pick location");
-	_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
 	auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
 	M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_industry_location_bg_tiles(buildable_locs));
@@ -346,7 +346,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				LOG_DEBUG("Asking player to pick a coal source...");
 
 				M2_LEVEL.disable_hud();
-				_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+				_cancel_button_panel = add_cancel_button();
 				M2_LEVEL.display_message("Pick a coal source");
 			}
 		} else if (unspecified_resource->first == IRON_CUBE_COUNT) {
@@ -398,7 +398,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				LOG_DEBUG("Asking player to pick an iron source...");
 
 				M2_LEVEL.disable_hud();
-				_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+				_cancel_button_panel = add_cancel_button();
 				M2_LEVEL.display_message("Pick an iron source");
 			}
 		} else {

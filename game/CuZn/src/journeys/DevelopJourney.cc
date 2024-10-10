@@ -161,7 +161,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 			LOG_DEBUG("Asking player to pick an iron source...");
 
 			M2_LEVEL.disable_hud();
-			_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+			_cancel_button_panel = add_cancel_button();
 			M2_LEVEL.display_message("Pick an iron source");
 		}
 		return std::nullopt;

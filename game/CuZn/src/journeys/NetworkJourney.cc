@@ -143,7 +143,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal()
 	LOG_DEBUG("Expecting connection...");
 	M2_LEVEL.disable_hud();
 	M2_LEVEL.display_message("Pick connection");
-	_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
 	_buildable_connections = buildable_connections_in_network(M2_PLAYER.character());
 	M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
@@ -263,7 +263,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 				LOG_DEBUG("Asking player to pick a coal source...");
 
 				M2_LEVEL.disable_hud();
-				_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+				_cancel_button_panel = add_cancel_button();
 				M2_LEVEL.display_message("Pick a coal source");
 			}
 		} else if (unspecified_resource->resource_type == BEER_BARREL_COUNT) {
@@ -300,7 +300,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 				LOG_DEBUG("Asking player to pick a beer source...");
 
 				M2_LEVEL.disable_hud();
-				_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+				_cancel_button_panel = add_cancel_button();
 				M2_LEVEL.display_message("Pick a beer source");
 			}
 		} else {

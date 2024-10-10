@@ -38,7 +38,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			// Display message
 			M2_LEVEL.display_message(_message);
 			// Display cancel button
-			_cancel_button_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(m2::ui::Panel{&journey_cancel_button, m2::RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+			_cancel_button_panel = add_cancel_button();
 			break;
 		}
 		case m2::FsmSignalType::Custom: {

@@ -1,31 +1,38 @@
 #include <cuzn/journeys/Common.h>
 #include <m2g/Proxy.h>
+#include <m2/Game.h>
 
 using namespace m2;
 using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
 
-const m2::ui::PanelBlueprint journey_cancel_button{
-	.border_width = 0,
-	.widgets = {
-		WidgetBlueprint{
-			.background_color = {0, 0, 0, 255},
-			.variant = widget::TextBlueprint{
-				.text = "Cancel",
-				.on_action = [](MAYBE const widget::Text& self) -> Action {
-					// Create and send a cancel signal to the current user journey
-					auto& user_journey = m2g::Proxy::get_instance().user_journey;
-					// Deliver cancel signal to current Journey
-					std::visit(m2::overloaded {
-						[](auto& j) { j.signal(PositionOrCancelSignal::create_cancel_signal()); }
-					}, *user_journey);
-					return make_return_action();
+namespace {
+	const m2::ui::PanelBlueprint journey_cancel_button{
+		.border_width = 0,
+		.widgets = {
+			WidgetBlueprint{
+				.background_color = {0, 0, 0, 255},
+				.variant = widget::TextBlueprint{
+					.text = "Cancel",
+					.on_action = [](MAYBE const widget::Text& self) -> Action {
+						// Create and send a cancel signal to the current user journey
+						auto& user_journey = m2g::Proxy::get_instance().user_journey;
+						// Deliver cancel signal to current Journey
+						std::visit(m2::overloaded{
+							[](auto& j) { j.signal(PositionOrCancelSignal::create_cancel_signal()); }
+						}, *user_journey);
+						return make_return_action();
+					}
 				}
 			}
 		}
-	}
-};
+	};
+}
+
+std::list<m2::ui::Panel>::iterator add_cancel_button() {
+	return M2_LEVEL.add_custom_nonblocking_ui_panel(Panel{&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f}});
+}
 
 PositionOrCancelSignal PositionOrCancelSignal::create_mouse_click_signal(m2::VecF world_position) {
 	auto signal = PositionOrCancelSignal{m2::FsmSignalType::Custom};
