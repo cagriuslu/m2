@@ -30,7 +30,8 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
 					.text = "Current Player",
-					.horizontal_alignment = TextHorizontalAlignment::LEFT
+					.horizontal_alignment = TextHorizontalAlignment::LEFT,
+					.wrapped_font_size_in_units = 3.5f
 				}
 			}
 		}
@@ -43,7 +44,9 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 				.text = (i == turn_holder_index)
 					? "<" + generate_player_name(i) + ">"
 					:  generate_player_name(i),
-				.color = generate_player_color(i) }
+				.wrapped_font_size_in_units = 3.5f,
+				.color = generate_player_color(i)
+			}
 		});
 	}
 
@@ -51,7 +54,11 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 	bp.widgets.emplace_back(WidgetBlueprint{
 		.x = 0, .y = 5, .w = 30, .h = 5,
 		.border_width = 0.0f,
-		.variant = TextBlueprint{ .text = "Victory/Income Points", .horizontal_alignment = TextHorizontalAlignment::LEFT }
+		.variant = TextBlueprint{
+			.text = "Victory/Income Points",
+			.horizontal_alignment = TextHorizontalAlignment::LEFT,
+			.wrapped_font_size_in_units = 3.5f
+		}
 	});
 	for (int i = 0; i < player_count; ++i) {
 		auto& chr = M2_LEVEL.objects[M2G_PROXY.multi_player_object_ids[i]].character();
@@ -60,7 +67,8 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 			.border_width = 0.0f,
 			.variant = TextBlueprint{
 				.text = std::to_string(player_victory_points(chr))
-					+ "/" + std::to_string(player_income_points(chr))
+					+ "/" + std::to_string(player_income_points(chr)),
+				.wrapped_font_size_in_units = 3.5f
 			}
 		});
 	}
@@ -69,7 +77,11 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 	bp.widgets.emplace_back(WidgetBlueprint{
 		.x = 0, .y = 10, .w = 30, .h = 5,
 		.border_width = 0.0f,
-		.variant = TextBlueprint{ .text = "Money/Roads/Cards", .horizontal_alignment = TextHorizontalAlignment::LEFT }
+		.variant = TextBlueprint{
+			.text = "Money/Roads/Cards",
+			.horizontal_alignment = TextHorizontalAlignment::LEFT,
+			.wrapped_font_size_in_units = 3.5f
+		}
 	});
 	for (int i = 0; i < player_count; ++i) {
 		auto& chr = M2_LEVEL.objects[M2G_PROXY.multi_player_object_ids[i]].character();
@@ -79,7 +91,9 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 			.variant = TextBlueprint{
 				.text = std::to_string(player_money(chr))
 					+ "/" + std::to_string(player_available_road_count(chr))
-					+ "/" + std::to_string(player_card_count(chr)) }
+					+ "/" + std::to_string(player_card_count(chr)),
+				.wrapped_font_size_in_units = 3.5f
+			}
 		});
 	}
 
@@ -87,13 +101,20 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 	bp.widgets.emplace_back(WidgetBlueprint{
 		.x = 0, .y = 15, .w = 30, .h = 5,
 		.border_width = 0.0f,
-		.variant = TextBlueprint{ .text = "Money Spent", .horizontal_alignment = TextHorizontalAlignment::LEFT }
+		.variant = TextBlueprint{
+			.text = "Money Spent",
+			.horizontal_alignment = TextHorizontalAlignment::LEFT,
+			.wrapped_font_size_in_units = 3.5f
+		}
 	});
 	for (int i = 0; i < player_count; ++i) {
 		bp.widgets.emplace_back(WidgetBlueprint{
 			.x = 70 - ((i + 1) * 10), .y = 15, .w = 10, .h = 5,
 			.border_width = 0.0f,
-			.variant = TextBlueprint{ .text = std::to_string(M2G_PROXY.player_spent_money(i)) }
+			.variant = TextBlueprint{
+				.text = std::to_string(M2G_PROXY.player_spent_money(i)),
+				.wrapped_font_size_in_units = 3.5f
+			}
 		});
 	}
 
