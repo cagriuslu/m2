@@ -30,7 +30,7 @@ void Text::on_draw() {
 		auto font_size = text_blueprint().wrapped_font_size_in_units != 0.0f
 			// Integer rounding because iround might produce too big of a font
 			? I(vertical_pixels_per_unit() * text_blueprint().wrapped_font_size_in_units)
-			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(_current_text.length())).h;
+			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(m2::utf8_codepoint_count(_current_text.c_str()))).h;
 
 		// This clears the glyph caches, but that's the only option. As long as we don't call this every frame, it should be fine.
 		// We've tried reopening the same font with different sizes, it doesn't work as expected. An invalid font is returned.
@@ -43,7 +43,7 @@ void Text::on_draw() {
 				M2G_PROXY.default_font_size, _current_text));
 		auto destination_rect = text_blueprint().wrapped_font_size_in_units != 0.0f
 			? calculate_wrapped_text_rect(font_texture.texture(), drawable_area(), text_blueprint().horizontal_alignment, text_blueprint().vertical_alignment)
-			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(_current_text.length()));
+			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(m2::utf8_codepoint_count(_current_text.c_str())));
 		_font_texture_and_destination_rect_cache = std::make_tuple(std::move(font_texture), destination_rect);
 	}
 

@@ -72,3 +72,12 @@ bool m2::is_less(float a, float b, float tolerance) {
 bool m2::is_less_or_equal(float a, float b, float tolerance) {
 	return fabsf(tolerance) < (b - a) || is_near(a, b, tolerance);
 }
+
+size_t m2::utf8_codepoint_count(const char* s) {
+	size_t len = 0;
+	while (*s) {
+		len += ((*s & 0xc0) != 0x80) ? 1 : 0;
+		++s;
+	}
+	return len;
+}

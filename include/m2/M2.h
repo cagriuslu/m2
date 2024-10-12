@@ -40,4 +40,8 @@ namespace m2 {
 	constexpr float to_radians(float degrees) { return degrees * ::m2::PI / 180.0f; }
 	constexpr float to_radians(int degrees) { return to_radians(static_cast<float>(degrees)); }
 	constexpr float to_degrees(float radians) { return radians / ::m2::PI * 180.0f; }
+
+	/// Returns the number of codepoints in a UTF-8 string.
+	/// One codepoint does not always equate to one glyph, but it's a good estimation for most characters.
+	size_t utf8_codepoint_count(const char* s);
 }
