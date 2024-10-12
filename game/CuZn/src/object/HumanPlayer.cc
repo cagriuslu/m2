@@ -50,10 +50,13 @@ m2::void_expected init_human_player(m2::Object& obj) {
 		}
 		o.position += move_direction.normalize() * ((float)M2_GAME.delta_time_s() * M2_GAME.dimensions().height_m);
 
-		if (M2_GAME.events.pop_key_press(m2::Key::MINUS)) {
-			M2_GAME.set_zoom(1.1f);  // Increase game height
-		} else if (M2_GAME.events.pop_key_press(m2::Key::PLUS)) {
-			M2_GAME.set_zoom(0.9f);  // Decrease game height
+		const float zoom_step = 0.05f;
+		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.dimensions().game); 0 < scroll) {
+			// Zoom in by decreasing game height
+			M2_GAME.set_zoom(1.0f / (1.0f + zoom_step * m2::F(scroll)));
+		} else if (scroll < 0) {
+			// Zoom out by increasing game height
+			M2_GAME.set_zoom(1.0f + zoom_step * m2::F(-scroll));
 		}
 
 		// Limit the player inside the level
