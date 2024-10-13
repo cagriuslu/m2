@@ -298,7 +298,7 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 	M2_GAME.server_thread().send_server_update();
 	// Act as if ServerUpdate is received on the server-side as well
 	LOG_DEBUG("Calling server-side post_server_update...");
-	_proxy.post_server_update();
+	_proxy.post_server_update(false);
 
 	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
 	std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -325,8 +325,10 @@ m2::void_expected m2::Game::load_multi_player_as_guest(
 	// Consume the initial ServerUpdate that triggered the level to be initialized
 	auto expect_server_update = M2_GAME.real_client_thread().process_server_update();
 	m2_reflect_unexpected(expect_server_update);
+	m2_return_unexpected_message_unless(expect_server_update.value() == network::ServerUpdateStatus::PROCESSED,
+		"Unexpected ServerUpdate status");
 
-	return success;
+	return {};
 }
 
 m2::void_expected m2::Game::load_level_editor(const std::string& level_resource_path) {
@@ -432,15 +434,15 @@ void m2::Game::handle_hud_events() {
 void m2::Game::handle_network_events() {
 	// Check if the game ended
 	if ((is_server() && host_client_thread().is_shutdown()) || (is_real_client() && real_client_thread().is_shutdown())) {
+		_level.reset();
+		reset_state();
 		_multi_player_threads = std::monostate{};
 		_bot_threads.clear();
 		// Execute main menu
 		if (ui::Panel::create_and_run_blocking(_proxy.main_menu()).is_quit()) {
 			quit = true;
 		}
-	}
-
-	if (is_server()) {
+	} else if (is_server()) {
 		// Check if a client has disconnected
 		if (auto disconnected_client_index = server_thread().disconnected_client()) {
 			auto action = _proxy.handle_disconnected_client(*disconnected_client_index);
@@ -452,9 +454,7 @@ void m2::Game::handle_network_events() {
 			auto action = _proxy.handle_misbehaving_client(*misbehaved_client_index);
 			// TODO handle
 		}
-	}
-
-	if (is_real_client()) {
+	} else if (is_real_client()) {
 		// Check if the client has reconnected and needs to be set as ready
 		if (real_client_thread().is_reconnected()) {
 			// Set as ready using the same ready_token
@@ -495,8 +495,8 @@ void m2::Game::execute_pre_step() {
 			auto new_turn_holder = _proxy.handle_client_command(server_thread().turn_holder_index(), client_command->client_command());
 			if (new_turn_holder) {
 				if (*new_turn_holder < 0) {
-					server_thread().shutdown();
-					// TODO remove threads, push main menu, maybe do this in handle_network_events?
+					_server_update_necessary = true;
+					_server_update_with_shutdown = true;
 				} else {
 					server_thread().set_turn_holder(*new_turn_holder);
 					_server_update_necessary = true;
@@ -570,20 +570,33 @@ void m2::Game::execute_post_step() {
 	if (is_server()) {
 		if (_server_update_necessary) {
 			LOG_DEBUG("Server update is necessary, sending ServerUpdate...");
-			server_thread().send_server_update();
+			server_thread().send_server_update(_server_update_with_shutdown);
 			_server_update_necessary = false; // Unset flag
 
 			// Act as if ServerUpdate is received on the server-side as well
 			LOG_DEBUG("Calling server-side post_server_update...");
-			_proxy.post_server_update();
+			_proxy.post_server_update(_server_update_with_shutdown);
+
+			// Shutdown the game if necessary
+			if (_server_update_with_shutdown) {
+				if (not server_thread().is_shutdown()) {
+					throw M2_ERROR("Server should have shutdown itself");
+				}
+				_server_update_with_shutdown = false;
+				// Game will be restarted in handle_network_events
+			}
 		}
 	} else if (is_real_client()) {
 		// Handle ServerUpdate
-		auto expect_success = real_client_thread().process_server_update();
-		m2_succeed_or_throw_error(expect_success);
-		if (expect_success.value()) {
+		auto status = real_client_thread().process_server_update();
+		m2_succeed_or_throw_error(status);
+		if (*status == network::ServerUpdateStatus::PROCESSED || *status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
 			LOG_DEBUG("Calling client-side post_server_update...");
-			_proxy.post_server_update();
+			_proxy.post_server_update(*status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN);
+		}
+		if (*status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
+			real_client_thread().shutdown();
+			// Game will be restarted in handle_network_events
 		}
 	}
 

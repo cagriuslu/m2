@@ -56,12 +56,11 @@ namespace m2::network {
 		// Modifiers
 		void_expected close_lobby();
 		void set_turn_holder(int index);
-		pb::NetworkMessage prepare_server_update();
-		void send_server_update();
+		void send_server_update(bool shutdown_as_well = false);
 		void send_server_command(const m2g::pb::ServerCommand& command, int receiver_index);
-		void shutdown();
 
 	private:
+		pb::NetworkMessage prepare_server_update(bool shutdown);
 		pb::ServerState locked_get_state();
 		void set_state_locked(pb::ServerState state);
 		void set_state_unlocked(pb::ServerState state);

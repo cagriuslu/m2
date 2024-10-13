@@ -58,6 +58,7 @@ namespace m2::network::detail {
 		/// Only for HostClientThread and BotClientThread
 		void locked_start_if_ready();
 		void locked_queue_client_command(const m2g::pb::ClientCommand& cmd);
+		void locked_shutdown();
 
 	private:
 		// Private modifiers

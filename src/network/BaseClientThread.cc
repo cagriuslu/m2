@@ -95,13 +95,11 @@ void m2::network::detail::BaseClientThread::locked_set_ready(bool ready) {
 	} while (locked_has_outgoing_message());
 	locked_set_state(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
 }
-
 void m2::network::detail::BaseClientThread::locked_start_if_ready() {
 	if (locked_get_client_state() == pb::CLIENT_READY) {
 		locked_set_state(pb::CLIENT_STARTED);
 	}
 }
-
 void m2::network::detail::BaseClientThread::locked_queue_client_command(const m2g::pb::ClientCommand& cmd) {
 	INFO_FN();
 
@@ -113,6 +111,9 @@ void m2::network::detail::BaseClientThread::locked_queue_client_command(const m2
 		const std::lock_guard lock(_mutex);
 		_outgoing_queue.push(std::move(msg));
 	}
+}
+void m2::network::detail::BaseClientThread::locked_shutdown() {
+	locked_set_state(pb::CLIENT_SHUTDOWN);
 }
 
 void m2::network::detail::BaseClientThread::unlocked_set_state(pb::ClientState state) {
@@ -245,10 +246,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 				// Pop the front message
 				auto front_message = std::move(thread_manager->_incoming_queue.front());
 				thread_manager->_incoming_queue.pop();
-				if (front_message.has_shutdown() && front_message.shutdown()) {
-					LOG_INFO("Shutdown found in incoming queue");
-					thread_manager->unlocked_set_state(pb::CLIENT_SHUTDOWN);
-				} else if (front_message.has_server_update()) {
+				if (front_message.has_server_update()) {
 					if (thread_manager->_state == pb::CLIENT_CONNECTED || thread_manager->_state == pb::CLIENT_RECONNECTED) {
 						LOG_WARN("ServerUpdate received from server while not ready, closing client");
 						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);

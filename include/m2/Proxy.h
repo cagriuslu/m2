@@ -109,14 +109,15 @@ namespace m2 {
 		/// Should be implemented from the perspective of a server. Implementation should return the new turn holder
 		/// index if the command is accepted and a ServerUpdate is necessary. Implementation should return std::nullopt
 		/// if the command should be ignored and no ServerUpdate is necessary. Implementation should return -1 if the
-		/// game ended.
+		/// game ended (one final ServerUpdate is sent in this case).
 		std::optional<int> handle_client_command(MAYBE int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) { return std::nullopt; }
 		/// Should be implemented from the perspective of a client.
 		void handle_server_command(MAYBE const m2g::pb::ServerCommand& server_command) {}
 		/// Should be implemented from the perspective of a client. For the server, this function is called after the
 		/// ServerUpdate is published (except the initial ServerUpdate). For the client, it's called after the
-		/// ServerUpdate is received and processed by the engine.
-		void post_server_update() {}
+		/// ServerUpdate is received & processed by the engine. If shutdown is true, the shutdown flag is set in the
+		/// ServerUpdate and the server or the client will be shutdown after this call.
+		void post_server_update(MAYBE bool shutdown) {}
 		/// Should be implemented from the perspective of a bot.
 		void bot_handle_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {}
 		/// Should be implemented from the perspective of a bot.

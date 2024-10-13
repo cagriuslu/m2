@@ -366,7 +366,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 	}
 }
 
-void m2g::Proxy::post_server_update() {
+void m2g::Proxy::post_server_update(bool shutdown) {
 	// Delete the custom hud and refresh the status bar
 	if (custom_hud_panel) {
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*custom_hud_panel);
@@ -383,6 +383,8 @@ void m2g::Proxy::post_server_update() {
 	} else {
 		disable_action_buttons();
 	}
+
+	// TODO handle shutdown
 }
 
 void m2g::Proxy::bot_handle_server_update(const m2::pb::ServerUpdate& server_update) {

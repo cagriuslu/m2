@@ -72,6 +72,9 @@ message ServerUpdate {
     repeated Attribute attributes = 8;
   }
   repeated ObjectDescriptor objects_with_character = 5;
+
+  // If this flag is set, this ServerUpdate is the last one, and the client should shut down the game.
+  bool shutdown = 6;
 }
 
 message ClientUpdate {
@@ -91,7 +94,5 @@ message NetworkMessage {
     m2g.pb.ClientCommand client_command = 4;
     // Sent by the game engine automatically (not yet implemented, no known use case)
     m2.pb.ClientUpdate client_update = 5;
-    // Signifies the end of the game
-    bool shutdown = 6; // TODO move into ServerUpdate or ServerCommand
   }
 }

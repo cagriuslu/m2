@@ -61,7 +61,7 @@ namespace m2 {
 		// This is important for the server thread to not linger too much.
 		std::variant<std::monostate, ServerThreads, network::RealClientThread> _multi_player_threads;
 		std::list<BotAndIndexThread> _bot_threads; // thread,receiver_index pairs (receiver_index is initially -1)
-		bool _server_update_necessary{};
+		bool _server_update_necessary{}, _server_update_with_shutdown{};
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
@@ -135,13 +135,16 @@ namespace m2 {
 		Game();
 		~Game();
 
-		// Proxy management
 		int32_t hash() const { return I(std::hash<std::string>{}(_proxy.game_identifier)); }
-		// Network management
+		/// For server
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
+		/// For client
 		void_expected join_game(mplayer::Type type, const std::string& addr);
+		/// For client
 		void leave_game();
+		/// For server
 		bool add_bot();
+		/// For server
 		network::BotClientThread& find_bot(int receiver_index);
 		bool is_server() const { return std::holds_alternative<ServerThreads>(_multi_player_threads); }
 		bool is_real_client() const { return std::holds_alternative<network::RealClientThread>(_multi_player_threads); }

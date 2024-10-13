@@ -2,6 +2,15 @@
 #include "BaseClientThread.h"
 
 namespace m2::network {
+	enum class ServerUpdateStatus {
+		// There was no ServerUpdate
+		NOT_FOUND = 0,
+		// ServerUpdate is processed successfully
+		PROCESSED = 1,
+		// ServerUpdate is processed but it was containing the shutdown flag
+		PROCESSED_SHUTDOWN = 2
+	};
+
 	class RealClientThread final : private detail::BaseClientThread {
 		/// When a ServerUpdate is received from the server, it's placed in BaseClientThread::_received_server_update.
 		/// peek_unprocessed_server_update() can be used to take a peek at it.
@@ -62,6 +71,8 @@ namespace m2::network {
 		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
 		/// Returns true if there was a ServerUpdate and it was processed, otherwise returns false.
 		/// Returns unexpected if an error occurs while processing.
-		expected<bool> process_server_update();
+		expected<ServerUpdateStatus> process_server_update();
+		/// Shutdown the client. This should be called only if the last ServerUpdateStatus indicated shutdown.
+		void shutdown();
 	};
 }

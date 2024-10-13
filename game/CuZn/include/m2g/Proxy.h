@@ -32,7 +32,7 @@ namespace m2g {
 		void multi_player_level_server_populate(const std::string& name, const m2::pb::Level& level);
 		std::optional<int> handle_client_command(int turn_holder_index, const pb::ClientCommand& client_command);
 		void handle_server_command(const pb::ServerCommand& server_command);
-		void post_server_update();
+		void post_server_update(bool shutdown);
 		void bot_handle_server_update(const m2::pb::ServerUpdate& server_update);
 		void bot_handle_server_command(const m2g::pb::ServerCommand& server_command, int receiver_index);
 		void post_tile_create(m2::Object& obj, pb::SpriteType sprite_type);

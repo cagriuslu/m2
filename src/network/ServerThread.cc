@@ -106,7 +106,7 @@ void m2::network::ServerThread::set_turn_holder(int idx) {
 	_turn_holder = idx;
 }
 
-m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update() {
+m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(bool shutdown) {
 	// Prepare the ServerUpdate except the receiver_index field
 	pb::NetworkMessage message;
 	message.set_game_hash(M2_GAME.hash());
@@ -149,10 +149,11 @@ m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update() {
 			}
 		}, char_variant);
 	}
+	message.mutable_server_update()->set_shutdown(shutdown);
 
 	return message;
 }
-void m2::network::ServerThread::send_server_update() {
+void m2::network::ServerThread::send_server_update(bool shutdown_as_well) {
 	INFO_FN();
 
 	// Make sure the state is set as READY
@@ -160,20 +161,30 @@ void m2::network::ServerThread::send_server_update() {
 		set_state_unlocked(pb::SERVER_READY);
 	}
 
-	pb::NetworkMessage message = prepare_server_update();
-	{
-		// Send to clients
-		auto count = client_count();
-		for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
-			const std::lock_guard lock(_mutex);
-			if (_clients[i].is_ready()) {
-				LOG_DEBUG("Queueing ServerUpdate to client", i);
-				message.mutable_server_update()->set_receiver_index(i);
-				_clients[i].queue_outgoing_message(message);
-			}
+	// Prepare ServerUpdate
+	pb::NetworkMessage message = prepare_server_update(shutdown_as_well);
+	// Send to clients
+	auto count = client_count();
+	for (auto i = 1; i < count; ++i) { // ServerUpdate is not sent to self
+		const std::lock_guard lock(_mutex);
+		if (_clients[i].is_ready()) {
+			LOG_DEBUG("Queueing ServerUpdate to client", i);
+			message.mutable_server_update()->set_receiver_index(i);
+			_clients[i].queue_outgoing_message(message);
 		}
-		// Clear reconnected client
-		_has_reconnected_client = false;
+	}
+	// Clear reconnected client
+	_has_reconnected_client = false;
+
+	if (shutdown_as_well) {
+		LOG_INFO("Shutting down the server");
+		const std::lock_guard lock(_mutex);
+		// Flush output queues
+		for (auto i = 0; i < count; ++i) {
+			_clients[i].flush_and_shutdown();
+		}
+		// Set state
+		set_state_unlocked(pb::SERVER_SHUTDOWN);
 	}
 }
 
@@ -197,30 +208,6 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 			LOG_WARN("Attempted to queue ServerCommand but client is disconnected");
 		}
 	}
-}
-
-void m2::network::ServerThread::shutdown() {
-	LOG_INFO("Shutting down the server");
-	const std::lock_guard lock(_mutex);
-
-	pb::NetworkMessage msg;
-	msg.set_game_hash(M2_GAME.hash());
-	msg.set_shutdown(true);
-
-	// Send to clients
-	auto count = I(_clients.size());
-	for (auto i = 0; i < count; ++i) {
-		if (_clients[i].is_ready()) {
-			LOG_DEBUG("Queueing Shutdown message to client", i);
-			_clients[i].queue_outgoing_message(msg);
-		}
-	}
-	// Flush output queues
-	for (auto i = 0; i < count; ++i) {
-		_clients[i].flush_and_shutdown();
-	}
-
-	set_state_unlocked(pb::SERVER_SHUTDOWN);
 }
 
 m2::pb::ServerState m2::network::ServerThread::locked_get_state() {
