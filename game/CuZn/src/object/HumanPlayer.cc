@@ -11,8 +11,14 @@
 #include <ranges>
 #include <numeric>
 
+struct HumanPlayer : public m2::ObjectImpl {
+	std::optional<std::pair<m2::VecI, m2::VecF>> mouse_click_prev_position;
+};
+
 m2::void_expected init_human_player(m2::Object& obj) {
 	DEBUG_FN();
+
+	obj.impl = std::make_unique<HumanPlayer>();
 
 	auto& chr = obj.add_full_character();
 	chr.set_resource(m2g::pb::MONEY, 17.0f);
@@ -35,20 +41,21 @@ m2::void_expected init_human_player(m2::Object& obj) {
 
 	auto& phy = obj.add_physique();
 	phy.pre_step = [&o = obj](MAYBE m2::Physique& _) {
-		m2::VecF move_direction;
-		if (M2_GAME.events.is_key_down(m2::Key::UP)) {
-			move_direction.y -= 1.0f;
+		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
+		// Start map movement with mouse
+		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.dimensions().game)) {
+			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.mouse_position_world_m());
+		} else if (M2_GAME.events.pop_mouse_button_release(m2::MouseButton::PRIMARY)) {
+			// End map movement with mouse
+			impl.mouse_click_prev_position.reset();
 		}
-		if (M2_GAME.events.is_key_down(m2::Key::DOWN)) {
-			move_direction.y += 1.0f;
+		// Map movement is enabled
+		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {
+			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.mouse_position();
+			auto diff_m = m2::VecF{diff} / m2::F(M2_GAME.dimensions().ppm);
+			o.position += diff_m;
+			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.mouse_position_world_m());
 		}
-		if (M2_GAME.events.is_key_down(m2::Key::LEFT)) {
-			move_direction.x -= 1.0f;
-		}
-		if (M2_GAME.events.is_key_down(m2::Key::RIGHT)) {
-			move_direction.x += 1.0f;
-		}
-		o.position += move_direction.normalize() * ((float)M2_GAME.delta_time_s() * M2_GAME.dimensions().height_m);
 
 		const float zoom_step = 0.05f;
 		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.dimensions().game); 0 < scroll) {
@@ -85,7 +92,7 @@ m2::void_expected init_human_player(m2::Object& obj) {
 		}
 
 		// Check if mouse button pressed
-		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY)) {
+		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::SECONDARY)) {
 			if (auto& sub_journey = M2G_PROXY.sub_journey) {
 				sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.mouse_position_world_m()));
 			} else if (auto& user_journey = m2g::Proxy::get_instance().user_journey) {
