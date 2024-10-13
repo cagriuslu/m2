@@ -24,6 +24,7 @@
 #include <numeric>
 #include <cuzn/ui/CustomHud.h>
 #include <cuzn/ui/StatusBar.h>
+#include <cuzn/ui/Notification.h>
 
 const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
@@ -594,6 +595,19 @@ void m2g::Proxy::disable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
 		auto* button = M2_LEVEL.left_hud_ui_panel->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
 		button->enabled = false;
+	}
+}
+
+void m2g::Proxy::show_notification(const std::string& msg) {
+	remove_notification();
+	_notification_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+		m2::ui::Panel{std::make_unique<m2::ui::PanelBlueprint>(generate_notification_panel_blueprint(msg)),
+		    m2::RectF{0.1f, 0.96f, 0.8f, 0.04f}});
+}
+void m2g::Proxy::remove_notification() {
+	if (_notification_panel) {
+		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_notification_panel);
+		_notification_panel.reset();
 	}
 }
 

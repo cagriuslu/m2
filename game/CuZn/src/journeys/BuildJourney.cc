@@ -214,7 +214,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 	LOG_DEBUG("Expecting build location...");
 	M2_LEVEL.disable_hud();
-	M2_LEVEL.display_message("Pick location");
+	M2G_PROXY.show_notification("Pick a location using right mouse button");
 	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
 	auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
@@ -230,7 +230,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 
 		// Check if there's a need to make an industry selection based on the card and the sprite
 		if (auto buildable_inds = buildable_industries(_selected_card, *selected_loc); buildable_inds.empty()) {
-			M2_LEVEL.display_message("Selected position cannot be built with the selected card");
+			M2G_PROXY.show_notification("Selected position cannot be built with the selected card");
 			return std::nullopt;
 		} else if (buildable_inds.size() == 2) {
 			if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
@@ -249,7 +249,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 		// Check if the player has a factory to build
 		auto tile_type = get_next_industry_tile_of_category(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
-			M2_LEVEL.display_message("Player doesn't have an industry tile of appropriate type");
+			M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
 			M2_DEFER(m2g::Proxy::user_journey_deleter);
 			return std::nullopt;
 		}
@@ -276,7 +276,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_cancel_signal() {
 
 std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
-	M2_LEVEL.remove_message();
+	M2G_PROXY.remove_notification();
 	if (_cancel_button_panel) {
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
 		_cancel_button_panel.reset();
@@ -316,7 +316,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 						M2_DEFER(m2g::Proxy::user_journey_deleter);
 					}
 				} else {
-					M2_LEVEL.display_message("Coal required but none available in network");
+					M2G_PROXY.show_notification("Coal required but none available in network");
 					M2_DEFER(m2g::Proxy::user_journey_deleter);
 				}
 			} else if (closest_mines_with_coal.size() == 1) {
@@ -350,7 +350,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 
 				M2_LEVEL.disable_hud();
 				_cancel_button_panel = add_cancel_button();
-				M2_LEVEL.display_message("Pick a coal source");
+				M2G_PROXY.show_notification("Pick a coal source");
 			}
 		} else if (unspecified_resource->first == IRON_CUBE_COUNT) {
 			if (auto iron_industries = find_iron_industries_with_iron(); iron_industries.empty()) {
@@ -402,7 +402,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 
 				M2_LEVEL.disable_hud();
 				_cancel_button_panel = add_cancel_button();
-				M2_LEVEL.display_message("Pick an iron source");
+				M2G_PROXY.show_notification("Pick an iron source");
 			}
 		} else {
 			throw M2_ERROR("Unexpected resource in resource list");
@@ -462,7 +462,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal()
 	auto industry_name = M2_GAME.get_named_item(_selected_industry).in_game_name();
 	if (ask_for_confirmation("Build " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		LOG_INFO("Build action confirmed");
-		M2_LEVEL.display_message("Building location...");
+		M2G_PROXY.show_notification("Building location...");
 
 		m2g::pb::ClientCommand cc;
 		cc.mutable_build_action()->set_card(_selected_card);

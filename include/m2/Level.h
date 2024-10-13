@@ -137,8 +137,8 @@ namespace m2 {
 		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
 		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
 
-		void display_message(const std::string& msg);
-		void remove_message();
+		[[deprecated]] void display_message(const std::string& msg);
+		[[deprecated]] void remove_message();
 
 	   private:
 		void_expected init_any_player(

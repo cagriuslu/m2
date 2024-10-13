@@ -234,6 +234,11 @@ std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_
 	// Previous text input state is saved. We can now disable it to start with a clean slate
 	SDL_StopTextInput();
 
+	// Set timeout if necessary
+	if (blueprint->timeout_s != 0.0f) {
+		_timeout_s = blueprint->timeout_s;
+	}
+
 	// Create widgets
 	for (const auto &widget_blueprint : blueprint->widgets) {
 		widgets.push_back(create_widget_state(widget_blueprint));

@@ -167,7 +167,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 
 			M2_LEVEL.disable_hud();
 			_cancel_button_panel = add_cancel_button();
-			M2_LEVEL.display_message("Pick an iron source");
+			M2G_PROXY.show_notification("Pick an iron source");
 		}
 		return std::nullopt;
 	} else {

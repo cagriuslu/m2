@@ -23,7 +23,7 @@ namespace {
 			if (auto build_prerequisite = can_player_attempt_to_build(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(BuildJourney{});
 			} else {
-				M2_LEVEL.display_message(build_prerequisite.error());
+				M2G_PROXY.show_notification(build_prerequisite.error());
 			}
 			return make_continue_action();
 		}
@@ -36,7 +36,7 @@ namespace {
 			if (auto develop_prerequisite = can_player_attempt_to_develop(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(DevelopJourney{});
 			} else {
-				M2_LEVEL.display_message(develop_prerequisite.error());
+				M2G_PROXY.show_notification(develop_prerequisite.error());
 			}
 			return make_continue_action();
 		}
@@ -49,7 +49,7 @@ namespace {
 			if (auto loan_prerequisite = can_player_attempt_to_loan(M2_PLAYER.character())) {
 				execute_loan_journey();
 			} else {
-				M2_LEVEL.display_message(loan_prerequisite.error());
+				M2G_PROXY.show_notification(loan_prerequisite.error());
 			}
 			return make_continue_action();
 		}
@@ -62,7 +62,7 @@ namespace {
 			if (auto network_prerequisite = can_player_attempt_to_network(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
 			} else {
-				M2_LEVEL.display_message(network_prerequisite.error());
+				M2G_PROXY.show_notification(network_prerequisite.error());
 			}
 			return make_continue_action();
 		}
@@ -86,7 +86,7 @@ namespace {
 			if (auto scout_prerequisite = can_player_attempt_to_scout(M2_PLAYER.character())) {
 				execute_scout_journey();
 			} else {
-				M2_LEVEL.display_message(scout_prerequisite.error());
+				M2G_PROXY.show_notification(scout_prerequisite.error());
 			}
 			return make_continue_action();
 		}
@@ -99,7 +99,7 @@ namespace {
 			if (auto sell_prerequisite = can_player_attempt_to_sell(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(SellJourney{});
 			} else {
-				M2_LEVEL.display_message(sell_prerequisite.error());
+				M2G_PROXY.show_notification(sell_prerequisite.error());
 			}
 			return make_continue_action();
 		}

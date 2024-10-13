@@ -56,7 +56,7 @@ namespace m2::ui {
 		// Calculates and returns the drawable area (rect() - border - padding)
 		[[nodiscard]] RectI drawable_area() const;
 
-		static RectI calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align);
+		[[deprecated]] static RectI calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align);
 		/// Calculate the rect of the wrapped text to fill the drawable_area. The width of the font texture is assumed
 		/// to be drawable_area.w because `create_wrapped` functions generates textures with a desired width.
 		static RectI calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v);

@@ -42,7 +42,7 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_enter_
 		&& player_built_factory_count(M2_PLAYER.character()) - _selected_locations.size()) {
 		LOG_DEBUG("Expecting liquidation location...");
 		M2_LEVEL.disable_hud();
-		M2_LEVEL.display_message("Pick a factory to liquidate");
+		M2G_PROXY.show_notification("Pick a factory to liquidate");
 		return std::nullopt;
 	} else {
 		m2g::pb::ClientCommand cc;
@@ -80,7 +80,7 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_mouse_
 					LOG_DEBUG("Confirmation rejected");
 				}
 			} else {
-				M2_LEVEL.display_message("Selected industry doesn't belong to you");
+				M2G_PROXY.show_notification("Selected industry doesn't belong to you");
 			}
 		} else {
 			LOG_DEBUG("Selected position was not on a built industry");

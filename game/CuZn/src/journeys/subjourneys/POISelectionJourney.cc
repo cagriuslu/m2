@@ -36,7 +36,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			// Disable HUD
 			M2_LEVEL.disable_hud();
 			// Display message
-			M2_LEVEL.display_message(_message);
+			M2G_PROXY.show_notification(_message);
 			// Display cancel button
 			_cancel_button_panel = add_cancel_button();
 			break;
@@ -68,7 +68,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 				M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
 				_cancel_button_panel.reset();
 			}
-			M2_LEVEL.remove_message();
+			M2G_PROXY.remove_notification();
 			M2_LEVEL.enable_hud();
 			M2_GAME.disable_dimming_with_exceptions();
 			break;

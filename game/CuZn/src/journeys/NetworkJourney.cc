@@ -142,7 +142,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal() {
 	LOG_DEBUG("Expecting connection...");
 	M2_LEVEL.disable_hud();
-	M2_LEVEL.display_message("Pick connection");
+	M2G_PROXY.show_notification("Pick connection");
 	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
 	_buildable_connections = buildable_connections_in_network(M2_PLAYER.character());
@@ -182,7 +182,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_cancel_signal(
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() {
 	M2_LEVEL.enable_hud();
-	M2_LEVEL.remove_message();
+	M2G_PROXY.remove_notification();
 	if (_cancel_button_panel) {
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
 		_cancel_button_panel.reset();
@@ -230,7 +230,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 						M2_DEFER(m2g::Proxy::user_journey_deleter);
 					}
 				} else {
-					M2_LEVEL.display_message("Coal required but none available in network");
+					M2G_PROXY.show_notification("Coal required but none available in network");
 					M2_DEFER(m2g::Proxy::user_journey_deleter);
 				}
 			} else if (closest_mines_with_coal.size() == 1) {
@@ -264,11 +264,11 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 
 				M2_LEVEL.disable_hud();
 				_cancel_button_panel = add_cancel_button();
-				M2_LEVEL.display_message("Pick a coal source");
+				M2G_PROXY.show_notification("Pick a coal source");
 			}
 		} else if (unspecified_resource->resource_type == BEER_BARREL_COUNT) {
 			if (auto beer_sources = find_breweries_with_beer(M2_PLAYER.character(), major_cities[0], std::nullopt, major_cities[1]); beer_sources.empty()) {
-				M2_LEVEL.display_message("Beer required but none available in network");
+				M2G_PROXY.show_notification("Beer required but none available in network");
 				M2_DEFER(m2g::Proxy::user_journey_deleter);
 			} else if (beer_sources.size() == 1) {
 				auto industry_location = *beer_sources.begin(); // While networking, beer only comes from industries.
@@ -301,7 +301,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 
 				M2_LEVEL.disable_hud();
 				_cancel_button_panel = add_cancel_button();
-				M2_LEVEL.display_message("Pick a beer source");
+				M2G_PROXY.show_notification("Pick a beer source");
 			}
 		} else {
 			throw M2_ERROR("Unexpected resource in resource list");

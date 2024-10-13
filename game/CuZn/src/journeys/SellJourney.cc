@@ -211,7 +211,7 @@ std::optional<SellJourneyStep> SellJourney::handle_resource_enter_signal() {
 			unspecified_resource != _beer_sources.end()) {
 			auto beer_sources = find_breweries_with_beer(M2_PLAYER.character(), city_of_location(_selected_location), _merchant_location);
 			if (beer_sources.empty()) {
-				M2_LEVEL.display_message("Beer is required but none is available");
+				M2G_PROXY.show_notification("Beer is required but none is available");
 				M2_DEFER(m2g::Proxy::main_journey_deleter);
 				return std::nullopt;
 			} else {
@@ -270,7 +270,7 @@ std::optional<SellJourneyStep> SellJourney::handle_develop_benefit_industry_tile
 				if (auto selected_tile = ask_for_tile_selection()) {
 					// Check if tile can be developed
 					if (m2::is_equal(M2_GAME.get_named_item(*selected_tile).get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001)) {
-						M2_LEVEL.display_message("Selected industry cannot be developed");
+						M2G_PROXY.show_notification("Selected industry cannot be developed");
 						M2_DEFER(m2g::Proxy::main_journey_deleter);
 						return std::nullopt;
 					}
@@ -289,7 +289,7 @@ std::optional<SellJourneyStep> SellJourney::handle_confirmation_enter_signal() {
 	auto industry = to_industry_of_factory_character(find_factory_at_location(_selected_location)->character());
 	auto industry_name = M2_GAME.get_named_item(industry).in_game_name();
 	if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
-		M2_LEVEL.display_message("Selling location...");
+		M2G_PROXY.show_notification("Selling location...");
 
 		m2g::pb::ClientCommand cc;
 		cc.mutable_sell_action()->set_card(_selected_card);
