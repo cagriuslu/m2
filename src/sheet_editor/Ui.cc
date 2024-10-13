@@ -269,7 +269,7 @@ const widget::TextSelectionBlueprint sprite_selection = {
 			// Transform to sprite type names
 			widget::TextSelectionBlueprint::Options options;
 			std::transform(sprite_types.begin(), sprite_types.end(), std::back_inserter(options), [](const auto& sprite_type) {
-				return std::make_pair(m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type));
+				return widget::TextSelectionBlueprint::Option{m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type)};
 			});
 			self.set_options(options);
 		},

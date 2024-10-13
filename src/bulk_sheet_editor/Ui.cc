@@ -30,7 +30,12 @@ const PanelBlueprint ui::bulk_sheet_editor_right_hud = {
 	                if (auto selected_ss = std::get<bsedit::State>(M2_LEVEL.type_state).selected_sprite_sheet()) {
 		                widget::TextSelectionBlueprint::Options options;
 		                for (const auto& sprite : selected_ss->sprites()) {
-			                options.emplace_back(pb::enum_name<>(sprite.type()), I(sprite.type()));
+			                options.emplace_back(
+								widget::TextSelectionBlueprint::Option{
+									pb::enum_name<>(sprite.type()),
+									widget::TextSelectionBlueprint::ReturnValue{I(sprite.type())}
+								}
+							);
 		                }
 						self.set_options(options);
 	                }
@@ -57,11 +62,11 @@ const widget::TextSelectionBlueprint resource_selection = {
 		widget::TextSelectionBlueprint::Options resources;
 	    std::for_each(pb_sheets.sheets().cbegin(), pb_sheets.sheets().cend(), [&resources](const auto& sheet) {
 		    if (!sheet.resource().empty()) {
-			    resources.emplace_back(sheet.resource(), sheet.resource());
+			    resources.emplace_back(widget::TextSelectionBlueprint::Option{sheet.resource(), sheet.resource()});
 		    }
 	    });
 	    // Sort the list
-	    std::sort(resources.begin(), resources.end());
+	    std::sort(resources.begin(), resources.end(), widget::TextSelectionBlueprint::OptionsSorter);
 		self.set_options(resources);
     },
     .on_action = [](const widget::TextSelection& self) -> ui::Action {

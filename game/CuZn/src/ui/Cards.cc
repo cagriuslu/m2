@@ -8,6 +8,21 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
+namespace {
+	RGB cards_window_card_color(Card card) {
+		switch (M2_GAME.named_items[card].category()) {
+			case m2g::pb::ITEM_CATEGORY_WILD_CARD:
+				return {255, 200, 71};
+			case m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD:
+				return {255, 64, 64};
+			case m2g::pb::ITEM_CATEGORY_CITY_CARD:
+				return {123, 123, 255};
+			default:
+				return {255, 255, 255};
+		}
+	}
+}
+
 m2::RectF cards_window_ratio() {
 	return m2::RectF{0.30f, 0.10f, 0.4f, 0.8f};
 }
@@ -37,19 +52,36 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
 					.on_create = [=](MAYBE TextSelection& self) {
-						auto cards = m2::generate_named_item_types_filter(
+						auto card_filter = m2::generate_named_item_types_filter(
 							{m2g::pb::ITEM_CATEGORY_CITY_CARD,
 							 m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD,
-							 m2g::pb::ITEM_CATEGORY_WILD_CARD})(M2_PLAYER.character());
+							 m2g::pb::ITEM_CATEGORY_WILD_CARD});
+						auto cards = card_filter(M2_PLAYER.character());
+
 						Card filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
 						TextSelectionBlueprint::Options options;
-						std::ranges::for_each(cards, [&filter_card_1, &filter_card_2, &options](auto item_type) {
-							if (filter_card_1 && item_type == filter_card_1) {
+						std::ranges::for_each(cards, [&filter_card_1, &filter_card_2, &options](auto card) {
+							if (filter_card_1 && card == filter_card_1) {
 								filter_card_1 = static_cast<Card>(0);
-							} else if (filter_card_2 && item_type == filter_card_2) {
+							} else if (filter_card_2 && card == filter_card_2) {
 								filter_card_2 = static_cast<Card>(0);
 							} else {
-								options.emplace_back(M2_GAME.get_named_item(item_type).in_game_name(), static_cast<int>(item_type));
+								// Add options
+								options.emplace_back(
+									widget::TextSelectionBlueprint::Option{
+										M2_GAME.get_named_item(card).in_game_name(), static_cast<int>(card),
+										cards_window_card_color(card)});
+								// Sort first by type, then by alphabetically
+								std::sort(options.begin(), options.end(),
+									[](const widget::TextSelectionBlueprint::Option& a, const widget::TextSelectionBlueprint::Option& b) {
+									auto a_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(a.return_value))].category();
+									auto b_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(b.return_value))].category();
+									if (a_category != b_category) {
+										return a_category < b_category;
+									} else {
+										return a.text < b.text;
+									}
+								});
 							}
 						});
 						self.set_options(options);

@@ -172,7 +172,7 @@ const PanelBlueprint m2::level_editor::ui::fill_dialog = {
                 .on_create = [](MAYBE widget::TextSelection &self) {
 					widget::TextSelectionBlueprint::Options options;
 	                for (auto sprite : M2_GAME.level_editor_background_sprites) {
-						options.emplace_back(pb::enum_name(sprite), I(sprite));
+						options.emplace_back(widget::TextSelectionBlueprint::Option{pb::enum_name(sprite), I(sprite)});
 	                }
 					self.set_options(options);
                 }
@@ -288,14 +288,17 @@ const widget::TextBlueprint left_hud_place_button = {
 	    auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
 	    if (object_type_selection.initial_list.empty()) {
 		    for (auto& [obj_type, spt] : M2_GAME.object_main_sprites) {
-			    object_type_selection.initial_list.emplace_back(m2g::pb::ObjectType_Name(obj_type), I(obj_type));
+			    object_type_selection.initial_list.emplace_back(
+					widget::TextSelectionBlueprint::Option{m2g::pb::ObjectType_Name(obj_type), I(obj_type)});
 		    }
 	    }
 	    // Fill group type selector
 	    auto& group_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[2].variant);
 	    if (group_type_selection.initial_list.empty()) {
 		    for (int e = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
-			    group_type_selection.initial_list.emplace_back(pb::enum_name<m2g::pb::GroupType>(e), pb::enum_value<m2g::pb::GroupType>(e));
+			    group_type_selection.initial_list.emplace_back(
+					widget::TextSelectionBlueprint::Option{
+						pb::enum_name<m2g::pb::GroupType>(e), pb::enum_value<m2g::pb::GroupType>(e)});
 		    }
 	    }
 

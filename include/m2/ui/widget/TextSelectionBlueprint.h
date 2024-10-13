@@ -7,17 +7,25 @@ namespace m2::ui::widget {
 	class TextSelection;
 
 	struct TextSelectionBlueprint {
-		using ValueVariant = std::variant<std::string, int>;
-		using Option = std::pair<std::string, ValueVariant>; // <DisplayName, Value>
+		using ReturnValue = std::variant<std::string, int>;
+		struct Option {
+			std::string text;
+			ReturnValue return_value;
+			RGB text_color{255, 255, 255};
+		};
 		using Options = std::vector<Option>;
+		/// Convenience type that can sort options based on text
+		static constexpr auto OptionsSorter = [](const Option& a, const Option& b) { return a.text < b.text; };
+
+		/// Options
 		Options initial_list{};
 
-		// 0: Selection with +/- buttons
-		// 1: Dropdown
-		// 2: Scrollable list
+		/// 0: Selection with +/- buttons
+		/// 1: Dropdown
+		/// 2: Scrollable list
 		int line_count{};
 
-		// Applicable only to scrollable list
+		/// Applicable only to scrollable list
 		bool allow_multiple_selection{};
 		bool show_scroll_bar{true};
 

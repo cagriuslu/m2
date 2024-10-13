@@ -9,7 +9,7 @@ namespace {
 	std::vector<sdl::FontTexture> generate_option_texts(const TextSelectionBlueprint::Options& options) {
 		std::vector<sdl::FontTexture> texts;
 		for (const auto& option : options) {
-			texts.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, option.first)));
+			texts.emplace_back(m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, option.text)));
 		}
 		return texts;
 	}
@@ -130,7 +130,8 @@ void TextSelection::on_draw() {
 			sdl::render_texture_with_color_mod(_option_texts[current_selection_index].texture(),
 				calculate_text_rect(
 					_option_texts[current_selection_index].texture(), rect().trim_right(
-						rect().h / 2), TextHorizontalAlignment::LEFT));
+						rect().h / 2), TextHorizontalAlignment::LEFT),
+				_list[current_selection_index].text_color);
 		}
 
 		// + button
@@ -161,7 +162,8 @@ void TextSelection::on_draw() {
 				// Draw text
 				auto texture = _option_texts[_top_index + i].texture();
 				sdl::render_texture_with_color_mod(texture,
-					calculate_text_rect(texture, text_rect, TextHorizontalAlignment::LEFT));
+					calculate_text_rect(texture, text_rect, TextHorizontalAlignment::LEFT),
+					_list[_top_index + i].text_color);
 			}
 		}
 
@@ -186,11 +188,11 @@ void TextSelection::on_draw() {
 	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }
 
-std::vector<TextSelectionBlueprint::ValueVariant> TextSelection::selections() const {
-	std::vector<TextSelectionBlueprint::ValueVariant> selections;
+std::vector<TextSelectionBlueprint::ReturnValue> TextSelection::selections() const {
+	std::vector<TextSelectionBlueprint::ReturnValue> selections;
 	for (size_t i = 0; i < _selections.size(); ++i) {
 		if (_selections[i]) {
-			selections.emplace_back(_list[i].second);
+			selections.emplace_back(_list[i].return_value);
 		}
 	}
 	return selections;

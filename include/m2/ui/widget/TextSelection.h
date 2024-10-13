@@ -23,7 +23,7 @@ namespace m2::ui::widget {
 		void on_draw() override;
 
 		// Accessors
-		[[nodiscard]] std::vector<TextSelectionBlueprint::ValueVariant> selections() const;
+		[[nodiscard]] std::vector<TextSelectionBlueprint::ReturnValue> selections() const;
 
 		// Modifiers
 		void reset();

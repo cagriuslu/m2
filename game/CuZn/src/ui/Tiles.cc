@@ -78,7 +78,9 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 							TextSelectionBlueprint::Options options;
 							for (auto item_it = M2_PLAYER.character().find_items(cat); item_it != M2_PLAYER.character().end_items(); ++item_it) {
 								if (item_it->type() != exclude_tile) {
-									options.emplace_back(M2_GAME.get_named_item(item_it->type()).in_game_name(), m2::I(item_it->type()));
+									options.emplace_back(
+										widget::TextSelectionBlueprint::Option{
+											M2_GAME.get_named_item(item_it->type()).in_game_name(), m2::I(item_it->type())});
 								}
 							}
 							self.set_options(options);
