@@ -414,19 +414,12 @@ int m2::FullCharacter::attribute_type_index(m2g::pb::AttributeType attribute_typ
 	return pb::enum_index<m2g::pb::AttributeType>(attribute_type);
 }
 
-m2::Character& m2::to_character_base(CharacterVariant& v) {
-	return std::visit(overloaded {
-			[](auto& vv) -> Character& { return vv; }
-	}, v);
-}
-
-std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_transformer(m2g::pb::ItemCategory item_category) {
+std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_filter(m2g::pb::ItemCategory item_category) {
 	return [item_category](m2::Character& c) -> std::vector<m2g::pb::ItemType> {
 		return c.named_item_types(item_category);
 	};
 }
-
-std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_transformer(std::initializer_list<m2g::pb::ItemCategory>&& item_categories) {
+std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_filter(std::initializer_list<m2g::pb::ItemCategory>&& item_categories) {
 	return [item_categories](m2::Character& c) -> std::vector<m2g::pb::ItemType> {
 		std::vector<m2g::pb::ItemType> types;
 		for (auto cat : item_categories) {
@@ -435,4 +428,10 @@ std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named
 		}
 		return types;
 	};
+}
+
+m2::Character& m2::to_character_base(CharacterVariant& v) {
+	return std::visit(overloaded {
+			[](auto& vv) -> Character& { return vv; }
+	}, v);
 }

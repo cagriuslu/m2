@@ -238,7 +238,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto player_card_lists = M2G_PROXY.multi_player_object_ids
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object)
-		| std::views::transform(m2::generate_named_item_types_transformer({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
+		| std::views::transform(m2::generate_named_item_types_filter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
 	auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), (size_t)0, [](size_t sum, const std::vector<Card>& v) { return sum + v.size(); });
 	card_count += _draw_deck.size();
 

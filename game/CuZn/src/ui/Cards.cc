@@ -37,8 +37,10 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
 					.on_create = [=](MAYBE TextSelection& self) {
-						auto cards = m2::generate_named_item_types_transformer(
-							{m2g::pb::ITEM_CATEGORY_CITY_CARD, m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD, m2g::pb::ITEM_CATEGORY_WILD_CARD})(M2_PLAYER.character());
+						auto cards = m2::generate_named_item_types_filter(
+							{m2g::pb::ITEM_CATEGORY_CITY_CARD,
+							 m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD,
+							 m2g::pb::ITEM_CATEGORY_WILD_CARD})(M2_PLAYER.character());
 						Card filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
 						TextSelectionBlueprint::Options options;
 						std::ranges::for_each(cards, [&filter_card_1, &filter_card_2, &options](auto item_type) {
