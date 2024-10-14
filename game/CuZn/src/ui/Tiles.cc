@@ -170,7 +170,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 				.h = 2,
 				.border_width = 0,
 				.variant = TextBlueprint{
-					.text = "Resource gain:",
+					.text = "Acquired resources:",
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
