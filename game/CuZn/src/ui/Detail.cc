@@ -202,36 +202,6 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	return selection;
 }
 
-void display_blocking_message(const std::string& message) {
-	auto blueprint = PanelBlueprint{
-		.w = 60, .h = 40,
-		.background_color = {0, 0, 0, 255},
-		.widgets = {
-			WidgetBlueprint{
-				.x = 5, .y = 5, .w = 50, .h = 20,
-				.border_width = 0,
-				.variant = TextBlueprint{
-					.text = message,
-					.horizontal_alignment = TextHorizontalAlignment::LEFT,
-					.vertical_alignment = TextVerticalAlignment::TOP,
-					.wrapped_font_size_in_units = 3.0f
-				}
-			},
-			WidgetBlueprint{
-				.x = 5, .y = 30, .w = 50, .h = 5,
-				.variant = TextBlueprint{
-					.text = "OK",
-					.on_action = [](MAYBE const Text& self) -> Action {
-						return make_return_action();
-					}
-				}
-			}
-		}
-	};
-
-	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f});
-}
-
 m2::RGB generate_player_color(unsigned index) {
 	switch (index) {
 		case 0:

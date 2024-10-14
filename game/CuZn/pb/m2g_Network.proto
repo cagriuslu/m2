@@ -5,9 +5,14 @@ import "m2g_ItemType.proto";
 import "m2g_SpriteType.proto";
 
 message ServerCommand {
+  message ActionNotification {
+    int32 player_index = 1;
+    string notification = 2;
+  }
+
   oneof type {
-    string display_blocking_message = 1;
-    int32 liquidate_assets_for_loan = 2;
+    int32 liquidate_assets_for_loan = 1;
+    ActionNotification action_notification = 2;
   }
 }
 

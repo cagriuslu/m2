@@ -21,10 +21,12 @@
 #include "cuzn/object/Road.h"
 #include "cuzn/ui/Detail.h"
 #include <algorithm>
+#include <cuzn/ui/ActionNotification.h>
 #include <numeric>
 #include <cuzn/ui/CustomHud.h>
 #include <cuzn/ui/StatusBar.h>
 #include <cuzn/ui/Notification.h>
+#include <cuzn/detail/ActionNotification.h>
 
 const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
@@ -145,12 +147,21 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			return std::nullopt;
 		}
 
+		m2g::pb::ServerCommand action_notification_command;
+		m2g::pb::ServerCommand::ActionNotification* action_notification = action_notification_command.mutable_action_notification();
+		action_notification->set_player_index(turn_holder_index);
+
 		std::pair<Card,int> card_to_discard_and_money_spent{};
 		if (client_command.has_build_action()) {
 			LOG_INFO("Validating build action");
 			if (not can_player_build(turn_holder_character, client_command.build_action())) {
 				return std::nullopt;
 			}
+			// Build notification
+			action_notification->set_notification(
+				build_notification(
+					industry_of_industry_tile(client_command.build_action().industry_tile()),
+					city_of_location(client_command.build_action().industry_location())));
 			LOG_INFO("Executing build action");
 			card_to_discard_and_money_spent = execute_build_action(turn_holder_character, client_command.build_action());
 		} else if (client_command.has_network_action()) {
@@ -158,6 +169,15 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			if (not can_player_network(turn_holder_character, client_command.network_action())) {
 				return std::nullopt;
 			}
+			// Build notification
+			action_notification->set_notification(
+				network_notification(
+					cities_from_connection(client_command.network_action().connection_1())[0],
+					cities_from_connection(client_command.network_action().connection_1())[1],
+					client_command.network_action().connection_2()
+						? cities_from_connection(client_command.network_action().connection_2())[0] : m2g::pb::NO_ITEM,
+					client_command.network_action().connection_2()
+						? cities_from_connection(client_command.network_action().connection_2())[1] : m2g::pb::NO_ITEM));
 			LOG_INFO("Executing network action");
 			card_to_discard_and_money_spent = execute_network_action(turn_holder_character, client_command.network_action());
 		} else if (client_command.has_sell_action()) {
@@ -166,6 +186,11 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 				LOG_WARN("Sell validation failed", success.error());
 				return std::nullopt;
 			}
+			// Build notification
+			action_notification->set_notification(
+				sell_notification(
+					to_industry_of_factory_character(find_factory_at_location(client_command.sell_action().industry_location())->character()),
+					city_of_location(client_command.sell_action().industry_location())));
 			LOG_INFO("Executing sell action");
 			card_to_discard_and_money_spent.first = execute_sell_action(turn_holder_character, client_command.sell_action());
 		} else if (client_command.has_develop_action()) {
@@ -173,6 +198,12 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			if (not can_player_develop(turn_holder_character, client_command.develop_action())) {
 				return std::nullopt;
 			}
+			// Build notification
+			action_notification->set_notification(
+				develop_notification(
+					industry_of_industry_tile(client_command.develop_action().industry_tile_1()),
+					client_command.develop_action().industry_tile_2()
+						? industry_of_industry_tile(client_command.develop_action().industry_tile_2()) : m2g::pb::NO_ITEM));
 			LOG_INFO("Executing develop action");
 			card_to_discard_and_money_spent = execute_develop_action(turn_holder_character, client_command.develop_action());
 		} else if (client_command.has_loan_action()) {
@@ -180,6 +211,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			if (not can_player_loan(turn_holder_character, client_command.loan_action())) {
 				return std::nullopt;
 			}
+			// Build notification
+			action_notification->set_notification(loan_notification());
 			LOG_INFO("Executing loan action");
 			card_to_discard_and_money_spent.first = execute_loan_action(turn_holder_character, client_command.loan_action());
 		} else if (client_command.has_scout_action()) {
@@ -187,21 +220,22 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			if (not can_player_scout(turn_holder_character, client_command.scout_action())) {
 				return std::nullopt;
 			}
+			// Build notification
+			action_notification->set_notification(scout_notification());
 			LOG_INFO("Executing scout action");
 			card_to_discard_and_money_spent.first = execute_scout_action(turn_holder_character, client_command.scout_action());
 		} else if (client_command.has_pass_action()) {
+			// Build notification
+			action_notification->set_notification(pass_notification());
 			LOG_INFO("Executing pass action");
 			card_to_discard_and_money_spent.first = client_command.pass_action().card();
 		}
 		auto [card_to_discard, money_spent] = card_to_discard_and_money_spent;
 
-		// Send update to clients
-		LOG_DEBUG("Sending action summary to clients");
-		pb::ServerCommand sc;
-		sc.set_display_blocking_message("Action taken");
+		LOG_DEBUG("Sending action notification to clients");
 		for (int i = 0; i < M2_GAME.server_thread().client_count(); ++i) {
 			if (i != turn_holder_index) {
-				M2_GAME.server_thread().send_server_command(sc, i);
+				M2_GAME.server_thread().send_server_command(action_notification_command, i);
 			}
 		}
 
@@ -355,8 +389,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 }
 
 void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
-	if (server_command.has_display_blocking_message()) {
-		display_blocking_message(server_command.display_blocking_message());
+	if (server_command.has_action_notification()) {
+		display_action_notification(server_command.action_notification());
 	} else if (server_command.has_liquidate_assets_for_loan()) {
 		LOG_INFO("Received liquidate command, beginning liquidation journey");
 		auto money_to_be_paid = server_command.liquidate_assets_for_loan();
