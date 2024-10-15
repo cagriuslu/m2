@@ -315,9 +315,19 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 				auto draw_deck = prepare_draw_deck(M2_GAME.server_thread().client_count());
 				give_8_cards_to_each_player(draw_deck);
 				_draw_deck = std::move(draw_deck);
-				// Store draw deck size to Game State Tracker
-				game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
-				
+
+				// Give roads to players
+				const auto& road_item = M2_GAME.get_named_item(m2g::pb::ROAD_TILE);
+				auto road_possession_limit = m2::zround(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
+				std::ranges::for_each(M2G_PROXY.multi_player_object_ids
+					| std::views::transform(m2::to_object_of_id)
+					| std::views::transform(m2::to_character_of_object),
+					[&](m2::Character& human_player) {
+						while (human_player.count_item(m2g::pb::ROAD_TILE) < road_possession_limit) {
+							human_player.add_named_item(road_item);
+						}
+					});
+
 				game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
 
 				liquidation_necessary = prepare_next_round();
