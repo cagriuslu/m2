@@ -27,6 +27,7 @@
 #include <cuzn/ui/StatusBar.h>
 #include <cuzn/ui/Notification.h>
 #include <cuzn/detail/ActionNotification.h>
+#include <cuzn/ui/CanalEraResult.h>
 
 const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
@@ -306,6 +307,18 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 					});
 				remove_obsolete_factories();
 
+				// Send canal era results
+				m2g::pb::ServerCommand canal_era_result_command;
+				std::ranges::for_each(M2G_PROXY.multi_player_object_ids
+					| std::views::transform(m2::to_object_of_id)
+					| std::views::transform(m2::to_character_of_object),
+					[&](m2::Character& human_player) {
+						canal_era_result_command.mutable_canal_era_result()->add_victory_points(
+							m2::iround(human_player.get_resource(pb::VICTORY_POINTS)));
+					});
+				LOG_INFO("Sending CanalEraResult to clients");
+				M2_GAME.server_thread().send_server_command(canal_era_result_command, -1);
+
 				// Reset merchant beer
 				for (const auto& [_, merchant_id] : merchant_object_ids) {
 					M2_LEVEL.objects[merchant_id].character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
@@ -329,8 +342,6 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 					});
 
 				game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
-
-				liquidation_necessary = prepare_next_round();
 			}
 		} else {
 			LOG_INFO("Ending game");
@@ -405,6 +416,9 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 		LOG_INFO("Received liquidate command, beginning liquidation journey");
 		auto money_to_be_paid = server_command.liquidate_assets_for_loan();
 		M2G_PROXY.user_journey.emplace(LiquidationJourney{money_to_be_paid});
+	} else if (server_command.has_canal_era_result()) {
+		LOG_INFO("Received CanalEraResult command");
+		display_canal_era_result(server_command.canal_era_result());
 	} else {
 		throw M2_ERROR("Unsupported server command");
 	}

@@ -9,10 +9,14 @@ message ServerCommand {
     int32 player_index = 1;
     string notification = 2;
   }
+  message CanalEraResult {
+    repeated int32 victory_points = 1;
+  }
 
   oneof type {
     int32 liquidate_assets_for_loan = 1;
     ActionNotification action_notification = 2;
+    CanalEraResult canal_era_result = 3;
   }
 }
 

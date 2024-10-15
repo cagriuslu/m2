@@ -191,21 +191,32 @@ void m2::network::ServerThread::send_server_update(bool shutdown_as_well) {
 void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand& command, int receiver_index) {
 	LOG_INFO("Sending server command to index", receiver_index);
 
-	if (receiver_index < 0 || client_count() <= receiver_index) {
-		throw M2_ERROR("Client index not found");
-	}
+	// If -1 is given, send to all clients
+	if (receiver_index == -1) {
+		auto cc = client_count();
+		for (int i = 0; i < cc; ++i) {
+			send_server_command(command, i);
+		}
+		return;
+	} else {
+		// Otherwise, send to one client
 
-	pb::NetworkMessage message;
-	message.set_game_hash(M2_GAME.hash());
-	message.mutable_server_command()->CopyFrom(command);
+		if (receiver_index < 0 || client_count() <= receiver_index) {
+			throw M2_ERROR("Client index not found");
+		}
 
-	{
-		const std::lock_guard lock(_mutex);
-		if (_clients[receiver_index].is_ready()) {
-			LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
-			_clients[receiver_index].queue_outgoing_message(std::move(message));
-		} else {
-			LOG_WARN("Attempted to queue ServerCommand but client is disconnected");
+		pb::NetworkMessage message;
+		message.set_game_hash(M2_GAME.hash());
+		message.mutable_server_command()->CopyFrom(command);
+
+		{
+			const std::lock_guard lock(_mutex);
+			if (_clients[receiver_index].is_ready()) {
+				LOG_DEBUG("Queueing ServerCommand to client", receiver_index);
+				_clients[receiver_index].queue_outgoing_message(std::move(message));
+			} else {
+				LOG_WARN("Attempted to queue ServerCommand but client is disconnected");
+			}
 		}
 	}
 }

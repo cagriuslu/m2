@@ -57,7 +57,7 @@ namespace m2::network {
 		void_expected close_lobby();
 		void set_turn_holder(int index);
 		void send_server_update(bool shutdown_as_well = false);
-		void send_server_command(const m2g::pb::ServerCommand& command, int receiver_index);
+		void send_server_command(const m2g::pb::ServerCommand& command, int receiver_index = -1);
 
 	private:
 		pb::NetworkMessage prepare_server_update(bool shutdown);
