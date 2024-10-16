@@ -406,7 +406,7 @@ void m2::Game::handle_menu_event() {
 
 void m2::Game::handle_hud_events() {
 	if (_level->custom_blocking_ui_panel) {
-		_level->custom_blocking_ui_panel->handle_events(events)
+		_level->custom_blocking_ui_panel->handle_events(events, _level->is_panning())
 			.if_any_return([this]() {
 				// If the blocking panel returned, remove the state
 				_level->custom_blocking_ui_panel.reset();
@@ -419,16 +419,16 @@ void m2::Game::handle_hud_events() {
 
 	// The order of event handling is the reverse of the drawing order
 	for (auto &panel : std::ranges::reverse_view(_level->_custom_nonblocking_ui_panels)) {
-		panel.handle_events(events)
+		panel.handle_events(events, _level->is_panning())
 			.if_any_return([&panel]() {
 				panel = ui::Panel(); // If UI returned, reset the panel. We cannot delete it, the iterator is held by the client
 				// TODO returned object is lost, maybe we can store it inside Panel
 			});
 		// TODO handle quit
 	}
-	IF(_level->message_box_ui_panel)->handle_events(events);
-	IF(_level->left_hud_ui_panel)->handle_events(events);
-	IF(_level->right_hud_ui_panel)->handle_events(events);
+	IF(_level->message_box_ui_panel)->handle_events(events, _level->is_panning());
+	IF(_level->left_hud_ui_panel)->handle_events(events, _level->is_panning());
+	IF(_level->right_hud_ui_panel)->handle_events(events, _level->is_panning());
 }
 
 void m2::Game::handle_network_events() {
@@ -866,14 +866,6 @@ void m2::Game::recalculate_directional_audio() {
 			}
 		}
 	}
-}
-
-void m2::Game::enable_dimming_with_exceptions(std::set<ObjectId> exceptions) {
-	_dimming_exceptions = std::move(exceptions);
-}
-
-void m2::Game::disable_dimming_with_exceptions() {
-	_dimming_exceptions.reset();
 }
 
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {

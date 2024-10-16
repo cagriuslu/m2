@@ -147,7 +147,7 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 		auto cell_rect = m2::RectF{top_left_cell_pos - 0.5f, 2.0f, 2.0f};
 
 		// Draw background with player's color
-		auto background_color = (M2_GAME.dimming_exceptions() && not M2_GAME.dimming_exceptions()->contains(gfx.owner_id()))
+		auto background_color = (M2_LEVEL.dimming_exceptions() && not M2_LEVEL.dimming_exceptions()->contains(gfx.owner_id()))
 			? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::color_rect(cell_rect, background_color);
 

@@ -218,7 +218,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
 	auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
-	M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_industry_location_bg_tiles(buildable_locs));
+	M2_LEVEL.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_industry_location_bg_tiles(buildable_locs));
 	return std::nullopt;
 }
 
@@ -282,7 +282,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
 		_cancel_button_panel.reset();
 	}
 	// Disable dimming in case it was enabled
-	M2_GAME.disable_dimming_with_exceptions();
+	M2_LEVEL.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
 
@@ -345,7 +345,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 					std::inserter(coal_mine_object_ids, coal_mine_object_ids.begin()),
 					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
 				// Enable dimming except the coal mines
-				M2_GAME.enable_dimming_with_exceptions(coal_mine_object_ids);
+				M2_LEVEL.enable_dimming_with_exceptions(std::move(coal_mine_object_ids));
 				LOG_DEBUG("Asking player to pick a coal source...");
 
 				M2_LEVEL.disable_hud();
@@ -397,7 +397,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 					std::inserter(iron_industry_object_ids, iron_industry_object_ids.begin()),
 					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
 				// Enable dimming except the iron industries
-				M2_GAME.enable_dimming_with_exceptions(iron_industry_object_ids);
+				M2_LEVEL.enable_dimming_with_exceptions(std::move(iron_industry_object_ids));
 				LOG_DEBUG("Asking player to pick an iron source...");
 
 				M2_LEVEL.disable_hud();
@@ -422,7 +422,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal
 		// Check if location has a built factory
 		if (auto* factory = find_factory_at_location(*industry_loc)) {
 			// Check if the location is one of the dimming exceptions
-			if (M2_GAME.dimming_exceptions()->contains(factory->id())) {
+			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
 				// Reserve resource
 				factory->character().remove_resource(unspecified_resource->first, 1.0f);
 				// Specify resource source
@@ -450,7 +450,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
 		_cancel_button_panel.reset();
 	}
 	// Disable dimming in case it was enabled
-	M2_GAME.disable_dimming_with_exceptions();
+	M2_LEVEL.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
 

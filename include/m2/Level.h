@@ -34,11 +34,11 @@ namespace m2 {
 		std::string _name;
 
 		RectI _background_boundary;
-
-		// Non-blocking custom UI only handles the events falling on it, allows through the world events.
 		std::list<ui::Panel> _custom_nonblocking_ui_panels;
+		std::optional<std::set<ObjectId>> _dimming_exceptions;
+		bool _is_panning{};
 
-	   public:
+	public:
 		~Level();
 
 		// Objects are not meant to be iterated over, as it holds all types of objects. If a certain type of object
@@ -59,8 +59,6 @@ namespace m2 {
 		Id camera_id{}, player_id{}, pointer_id{};
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
-		/// Inclusive rectangle that contains all terrain graphics inside
-		[[nodiscard]] const RectI& background_boundary() const { return _background_boundary; }
 
 		std::optional<ui::Panel> left_hud_ui_panel, right_hud_ui_panel;
 		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
@@ -95,6 +93,8 @@ namespace m2 {
 		std::optional<std::filesystem::path> path() const { return _lb_path; }
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }
+		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
+		[[nodiscard]] const RectI& background_boundary() const { return _background_boundary; }
 		const std::string& identifier() const { return _lb ? _lb->identifier() : empty_string; }
 		pb::ProjectionType projection_type() const {
 			return ((std::holds_alternative<splayer::State>(type_state) ||
@@ -116,6 +116,14 @@ namespace m2 {
 		// Modifiers
 
 		void begin_game_loop();
+
+		// Features
+
+		/// "Dimming with exceptions" is a mod where sprite sheets are dimmed for all objects except the exceptions.
+		const std::optional<std::set<ObjectId>>& dimming_exceptions() const { return _dimming_exceptions; }
+		void enable_dimming_with_exceptions(std::set<ObjectId>&& exceptions);
+		void disable_dimming_with_exceptions();
+
 		/// Show the HUD UI elements. HUD is set to be shown at start of the game.
 		void enable_hud();
 		/// Hides the HUD UI elements. UI elements would get disabled, thus they won't receive any events or updates.
@@ -136,6 +144,12 @@ namespace m2 {
 		void add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
 		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
 		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
+
+		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
+		/// thought the mouse spills into UI elements.
+		bool is_panning() const {  return _is_panning; }
+		void enable_panning() { _is_panning = true; }
+		void disable_panning() { _is_panning = false; }
 
 		[[deprecated]] void display_message(const std::string& msg);
 		[[deprecated]] void remove_message();

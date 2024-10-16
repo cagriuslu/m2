@@ -293,7 +293,7 @@ void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
 
 bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture) {
 	// Dim the sprite if dimming mode is enabled
-	if (const auto& dimming_exceptions = M2_GAME.dimming_exceptions()) {
+	if (const auto& dimming_exceptions = M2_LEVEL.dimming_exceptions()) {
 		if (not dimming_exceptions->contains(object_id)) {
 			static uint8_t mod = uround(M2G_PROXY.dimming_factor * F(255));
 			SDL_SetTextureColorMod(texture, mod, mod, mod);

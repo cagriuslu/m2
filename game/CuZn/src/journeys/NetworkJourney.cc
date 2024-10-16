@@ -146,7 +146,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal()
 	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
 	_buildable_connections = buildable_connections_in_network(M2_PLAYER.character());
-	M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
+	M2_LEVEL.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
 	return std::nullopt;
 }
 
@@ -159,7 +159,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_si
 			_selected_connection_1 = *selected_loc;
 			// Update buildable connections with the new selection
 			_buildable_connections = buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1);
-			M2_GAME.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
+			M2_LEVEL.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
 		} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != *selected_loc) {
 			_selected_connection_2 = *selected_loc;
 		}
@@ -188,7 +188,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() 
 		_cancel_button_panel.reset();
 	}
 	// Disable dimming in case it was enabled
-	M2_GAME.disable_dimming_with_exceptions();
+	M2_LEVEL.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
 
@@ -259,7 +259,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 					std::inserter(coal_mine_object_ids, coal_mine_object_ids.begin()),
 					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
 				// Enable dimming except the coal mines
-				M2_GAME.enable_dimming_with_exceptions(coal_mine_object_ids);
+				M2_LEVEL.enable_dimming_with_exceptions(std::move(coal_mine_object_ids));
 				LOG_DEBUG("Asking player to pick a coal source...");
 
 				M2_LEVEL.disable_hud();
@@ -296,7 +296,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 					std::inserter(brewery_object_ids, brewery_object_ids.begin()),
 					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
 				// Enable dimming except the coal mines
-				M2_GAME.enable_dimming_with_exceptions(brewery_object_ids);
+				M2_LEVEL.enable_dimming_with_exceptions(std::move(brewery_object_ids));
 				LOG_DEBUG("Asking player to pick a beer source...");
 
 				M2_LEVEL.disable_hud();
@@ -321,7 +321,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_mouse_click_si
 		// Check if location has a built factory
 		if (auto* factory = find_factory_at_location(*industry_location)) {
 			// Check if the location is one of the dimming exceptions
-			if (M2_GAME.dimming_exceptions()->contains(factory->id())) {
+			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
 				// Reserve resource
 				factory->character().remove_resource(unspecified_resource->resource_type, 1.0f);
 				unspecified_resource->reserved_object = factory;
@@ -347,7 +347,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_exit_signal() 
 		_cancel_button_panel.reset();
 	}
 	// Disable dimming in case it was enabled
-	M2_GAME.disable_dimming_with_exceptions();
+	M2_LEVEL.disable_dimming_with_exceptions();
 	return std::nullopt;
 }
 

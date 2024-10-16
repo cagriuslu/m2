@@ -72,7 +72,7 @@ m2::void_expected init_road(m2::Object& obj, Connection connection) {
 		auto cell_rect = m2::RectF{connection_position - 0.75f, 1.5f, 1.5f};
 
 		// Draw background with player's color
-		auto background_color = (M2_GAME.dimming_exceptions() && not M2_GAME.dimming_exceptions()->contains(gfx.owner_id()))
+		auto background_color = (M2_LEVEL.dimming_exceptions() && not M2_LEVEL.dimming_exceptions()->contains(gfx.owner_id()))
 								? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::color_rect(cell_rect, background_color);
 

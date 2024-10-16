@@ -32,7 +32,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 				}
 			});
 			// Enable dimming with exceptions
-			M2_GAME.enable_dimming_with_exceptions({object_ids.begin(), object_ids.end()});
+			M2_LEVEL.enable_dimming_with_exceptions({object_ids.begin(), object_ids.end()});
 			// Disable HUD
 			M2_LEVEL.disable_hud();
 			// Display message
@@ -47,15 +47,15 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 				if (auto industry_location = industry_location_on_position(*world_position)) {
 					// Look up factory if exists, otherwise the background sprite
 					if (auto* factory = find_factory_at_location(*industry_location);
-						(factory && M2_GAME.dimming_exceptions()->contains(factory->id()))
-						|| M2_GAME.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
+						(factory && M2_LEVEL.dimming_exceptions()->contains(factory->id()))
+						|| M2_LEVEL.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
 						notify_main_journey(*industry_location);
 					}
 				} else if (auto merchant_location = merchant_location_on_position(*world_position);
-					merchant_location && M2_GAME.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[*merchant_location]))) {
+					merchant_location && M2_LEVEL.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[*merchant_location]))) {
 					notify_main_journey(*merchant_location);
 				} else if (auto connection = connection_on_position(*world_position);
-					connection && M2_GAME.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[*connection]))) {
+					connection && M2_LEVEL.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[*connection]))) {
 					notify_main_journey(*connection);
 				}
 			} else if (signal.cancel()) {
@@ -70,7 +70,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			}
 			M2G_PROXY.remove_notification();
 			M2_LEVEL.enable_hud();
-			M2_GAME.disable_dimming_with_exceptions();
+			M2_LEVEL.disable_dimming_with_exceptions();
 			break;
 		}
 		default: break;

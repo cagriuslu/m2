@@ -71,7 +71,6 @@ namespace m2 {
 
 	public:  // TODO private
 		std::optional<Level> _level;
-		std::optional<std::set<ObjectId>> _dimming_exceptions;
 		float _delta_time_s{};
 
 	   public:
@@ -179,7 +178,6 @@ namespace m2 {
 		void for_each_sprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
 		const NamedItem& get_named_item(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
 		void for_each_named_item(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
-		const std::optional<std::set<ObjectId>>& dimming_exceptions() const { return _dimming_exceptions; }
 		float delta_time_s() const { return _delta_time_s; }
 		const VecF& mouse_position_world_m() const;
 		const VecF& screen_center_to_mouse_position_m() const;
@@ -217,9 +215,7 @@ namespace m2 {
 		void set_zoom(float game_height_multiplier);
 		void reset_mouse_position() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
 		void recalculate_directional_audio();
-		/// Enable dimming mode with exceptions where sprite sheets are dimmed for all objects except the exceptions.
-		void enable_dimming_with_exceptions(std::set<ObjectId> exceptions);
-		void disable_dimming_with_exceptions();
+
 		void add_deferred_action(const std::function<void(void)>& action);
 		void execute_deferred_actions();
 

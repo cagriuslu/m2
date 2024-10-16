@@ -257,6 +257,14 @@ void m2::Level::begin_game_loop() {
 	}
 }
 
+void m2::Level::enable_dimming_with_exceptions(std::set<ObjectId>&& exceptions) {
+	_dimming_exceptions = std::move(exceptions);
+}
+
+void m2::Level::disable_dimming_with_exceptions() {
+	_dimming_exceptions.reset();
+}
+
 void m2::Level::enable_hud() {
 	left_hud_ui_panel->enabled = true;
 	right_hud_ui_panel->enabled = true;

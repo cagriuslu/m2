@@ -38,15 +38,20 @@ namespace m2::ui {
 		~Panel();
 
 		// Accessors
+
 		[[nodiscard]] bool is_valid() const { return _is_valid; }
 		[[nodiscard]] RectI rect_px() const;
 
 		// Modifiers
+
 		void set_timeout(float in_seconds) { _timeout_s = in_seconds; }
 
 		// Lifecycle Management
+
         void update_positions();
-        Action handle_events(Events& events);
+		/// Handle the events. If `is_panning` is true, the mouse state (button states) are not cleared after the
+		/// handling so that the game objects can still observe that the mouse buttons are down.
+        Action handle_events(Events& events, bool is_panning = false);
         Action update_contents(float delta_time_s);
         void draw();
 

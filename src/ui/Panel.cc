@@ -306,7 +306,7 @@ void Panel::update_positions() {
 	}
 }
 
-Action Panel::handle_events(Events& events) {
+Action Panel::handle_events(Events& events, bool is_panning) {
 	// Return if Panel not enabled
 	if (not _is_valid || not enabled) {
 		return make_continue_action();
@@ -337,12 +337,15 @@ Action Panel::handle_events(Events& events) {
 		}
 	}
 
-	// Clear mouse events if it's inside the UI rect
+	// Clear mouse events if the mouse is inside the UI element so that it isn't delivered to game objects. This
+	// behavior can partially be overwritten with Game::enable_panning().
 	auto rect = rect_px();
 	events.clear_mouse_button_presses(rect);
 	events.clear_mouse_button_releases(rect);
 	events.clear_mouse_wheel_scrolls(rect);
-	events.clear_mouse_button_down(rect);
+	if (not is_panning) {
+		events.clear_mouse_button_down(rect);
+	}
 
 	return make_continue_action();
 }

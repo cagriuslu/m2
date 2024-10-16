@@ -44,10 +44,13 @@ m2::void_expected init_human_player(m2::Object& obj) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.dimensions().game)) {
+			LOG_DEBUG("Begin panning");
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.mouse_position_world_m());
-		} else if (M2_GAME.events.pop_mouse_button_release(m2::MouseButton::PRIMARY)) {
-			// End map movement with mouse
+			M2_LEVEL.enable_panning();
+		} else if (impl.mouse_click_prev_position && not M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
+			LOG_DEBUG("End panning");
 			impl.mouse_click_prev_position.reset();
+			M2_LEVEL.disable_panning();
 		}
 		// Map movement is enabled
 		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {
@@ -57,7 +60,7 @@ m2::void_expected init_human_player(m2::Object& obj) {
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.mouse_position_world_m());
 		}
 
-		const float zoom_step = 0.05f;
+		constexpr float zoom_step = 0.05f;
 		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.dimensions().game); 0 < scroll) {
 			// Zoom in by decreasing game height
 			M2_GAME.set_zoom(1.0f / (1.0f + zoom_step * m2::F(scroll)));
