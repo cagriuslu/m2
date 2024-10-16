@@ -36,7 +36,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 				.h = 16,
 				.variant =
 				TextSelectionBlueprint{
-					.initial_list = {
+					.options = {
 						{"Cotton Mill", static_cast<int>(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE)},
 						{"Iron Works", static_cast<int>(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE)},
 						{"Brewery", static_cast<int>(m2g::pb::ITEM_CATEGORY_BREWERY_TILE)},
@@ -46,10 +46,19 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 					.line_count = 11,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_action = [](const TextSelection &self) -> Action {
-						// Look for the other widget
-						auto* tile_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("TileSelection");
-						tile_selection_widget->reset(); // Trigger the other widget to recreate itself
+					.on_action = [exclude_tile](const TextSelection &self) -> Action {
+						if (auto industry_type_selections = self.selections(); not industry_type_selections.empty()) {
+							auto cat = static_cast<m2g::pb::ItemCategory>(std::get<int>(industry_type_selections[0]));
+							TextSelectionBlueprint::Options options;
+							for (auto item_it = M2_PLAYER.character().find_items(cat); item_it != M2_PLAYER.character().end_items(); ++item_it) {
+								if (item_it->type() != exclude_tile) {
+									options.emplace_back(widget::TextSelectionBlueprint::Option{M2_GAME.get_named_item(item_it->type()).in_game_name(), m2::I(item_it->type())});
+								}
+							}
+							// Look for the other widget
+							auto* tile_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("TileSelection");
+							tile_selection_widget->set_options(std::move(options)); // Trigger the other widget to recreate itself
+						}
 						// Clear details
 						self.parent().find_first_widget_by_name<Text>("BuildRequirements")->set_text("");
 						self.parent().find_first_widget_by_name<Text>("ResourceGain")->set_text("");
@@ -70,22 +79,6 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 					.line_count = 11,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_create = [exclude_tile](TextSelection &self) {
-						// Look for the other widget
-						auto* industry_type_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("IndustryTypeSelection");
-						if (auto selections = industry_type_selection_widget->selections(); not selections.empty()) {
-							auto cat = static_cast<m2g::pb::ItemCategory>(std::get<int>(selections[0]));
-							TextSelectionBlueprint::Options options;
-							for (auto item_it = M2_PLAYER.character().find_items(cat); item_it != M2_PLAYER.character().end_items(); ++item_it) {
-								if (item_it->type() != exclude_tile) {
-									options.emplace_back(
-										widget::TextSelectionBlueprint::Option{
-											M2_GAME.get_named_item(item_it->type()).in_game_name(), m2::I(item_it->type())});
-								}
-							}
-							self.set_options(options);
-						}
-					},
 					.on_action = [](TextSelection &self) -> Action {
 						if (auto selections = self.selections(); not selections.empty()) {
 							auto selected_item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));

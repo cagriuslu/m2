@@ -271,7 +271,7 @@ const widget::TextSelectionBlueprint sprite_selection = {
 			std::transform(sprite_types.begin(), sprite_types.end(), std::back_inserter(options), [](const auto& sprite_type) {
 				return widget::TextSelectionBlueprint::Option{m2g::pb::SpriteType_Name(sprite_type), static_cast<int>(sprite_type)};
 			});
-			self.set_options(options);
+			self.set_options(std::move(options));
 		},
 		.on_action = [](widget::TextSelection& self) -> ui::Action {
 			std::get<sedit::State>(M2_LEVEL.type_state).set_sprite_type(

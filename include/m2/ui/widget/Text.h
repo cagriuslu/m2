@@ -8,7 +8,7 @@ namespace m2::ui::widget {
 		/// Instead of generating colored font texture, generate white text and color the text before rendering.
 		RGB _current_color;
 		/// During initialization, the destination cannot yet be determined.
-		std::optional<std::tuple<sdl::FontTexture, RectI>> _font_texture_and_destination_rect_cache;
+		std::optional<sdl::FontTextureAndDestination> _font_texture_and_destination_cache;
 
 	public:
 		explicit Text(Panel* parent, const WidgetBlueprint* blueprint);
@@ -24,7 +24,7 @@ namespace m2::ui::widget {
 		void set_color(RGB&& c) { _current_color = c; }
 
 	protected:
-		void on_resize() override { _font_texture_and_destination_rect_cache = std::nullopt; }
+		void on_resize() override { _font_texture_and_destination_cache = std::nullopt; }
 
 	private:
 		[[nodiscard]] const TextBlueprint& text_blueprint() const { return std::get<TextBlueprint>(blueprint->variant); }

@@ -37,7 +37,7 @@ const PanelBlueprint ui::bulk_sheet_editor_right_hud = {
 								}
 							);
 		                }
-						self.set_options(options);
+						self.set_options(std::move(options));
 	                }
                 },
                 .on_action = [](widget::TextSelection& self) -> Action {
@@ -67,7 +67,7 @@ const widget::TextSelectionBlueprint resource_selection = {
 	    });
 	    // Sort the list
 	    std::sort(resources.begin(), resources.end(), widget::TextSelectionBlueprint::OptionsSorter);
-		self.set_options(resources);
+		self.set_options(std::move(resources));
     },
     .on_action = [](const widget::TextSelection& self) -> ui::Action {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).select_resource(std::get<std::string>(self.selections()[0]));

@@ -103,7 +103,7 @@ const PanelBlueprint remove_mode_right_hud = {
 
 const widget::TextBlueprint pick_mode_title = {.text = "PICK"};
 const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
-    .initial_list = {{"Background", "Background"}, {"Foreground", "Foreground"}},
+    .options = {{"Background", "Background"}, {"Foreground", "Foreground"}},
 	.on_action = [](const widget::TextSelection& self) -> Action {
 	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Background") {
 		    std::get<ledit::State::PickMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).pick_foreground = false;
@@ -174,7 +174,7 @@ const PanelBlueprint m2::level_editor::ui::fill_dialog = {
 	                for (auto sprite : M2_GAME.level_editor_background_sprites) {
 						options.emplace_back(widget::TextSelectionBlueprint::Option{pb::enum_name(sprite), I(sprite)});
 	                }
-					self.set_options(options);
+					self.set_options(std::move(options));
                 }
             }
         },
@@ -233,7 +233,7 @@ const PanelBlueprint select_mode_right_hud = {
 
 const widget::TextBlueprint shift_mode_title = {.text = "SHIFT"};
 const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
-    .initial_list = {{"Right", "Right"}, {"Down", "Down"}, {"Right & Down", "Right & Down"}}, .on_action = [](const widget::TextSelection& self) -> Action {
+    .options = {{"Right", "Right"}, {"Down", "Down"}, {"Right & Down", "Right & Down"}}, .on_action = [](const widget::TextSelection& self) -> Action {
 	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Right") {
 		    std::get<ledit::State::ShiftMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).shift_type =
 		        ledit::State::ShiftMode::ShiftType::RIGHT;
@@ -286,17 +286,17 @@ const widget::TextBlueprint left_hud_place_button = {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_place_mode();
 	    // Fill object type selector with editor-enabled object types
 	    auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
-	    if (object_type_selection.initial_list.empty()) {
+	    if (object_type_selection.options.empty()) {
 		    for (auto& [obj_type, spt] : M2_GAME.object_main_sprites) {
-			    object_type_selection.initial_list.emplace_back(
+			    object_type_selection.options.emplace_back(
 					widget::TextSelectionBlueprint::Option{m2g::pb::ObjectType_Name(obj_type), I(obj_type)});
 		    }
 	    }
 	    // Fill group type selector
 	    auto& group_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[2].variant);
-	    if (group_type_selection.initial_list.empty()) {
+	    if (group_type_selection.options.empty()) {
 		    for (int e = 0; e < pb::enum_value_count<m2g::pb::GroupType>(); ++e) {
-			    group_type_selection.initial_list.emplace_back(
+			    group_type_selection.options.emplace_back(
 					widget::TextSelectionBlueprint::Option{
 						pb::enum_name<m2g::pb::GroupType>(e), pb::enum_value<m2g::pb::GroupType>(e)});
 		    }

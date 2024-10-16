@@ -46,6 +46,7 @@ namespace m2 {
 		[[nodiscard]] VecI top_right() const { return {x2(), y}; }
 		[[nodiscard]] VecI bottom_left() const { return {x, y2()}; }
 		[[nodiscard]] VecI bottom_right() const { return {x2(), y2()}; }
+		[[nodiscard]] VecI center() const { return {x_center(), y_center()}; }
 
 		// Immutable modifiers
 		[[nodiscard]] RectI trim(int amount) const;
