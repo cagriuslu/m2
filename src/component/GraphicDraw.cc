@@ -7,10 +7,13 @@ void m2::draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant dr
 
 	auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(position, sprite, draw_variant);
 	auto dst_rect = SDL_Rect{
-			(int)roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * M2_GAME.dimensions().ppm / sprite_ppm / 2),
-			(int)roundf(screen_origin_to_sprite_center_px_vec.y) - (src_rect.h * M2_GAME.dimensions().ppm / sprite_ppm / 2),
-			src_rect.w * M2_GAME.dimensions().ppm / sprite_ppm,
-			src_rect.h * M2_GAME.dimensions().ppm / sprite_ppm
+		// TODO This calculates switches to floating point, because non-integer multiple rendering is problematic, can cause empty vertical or horizontal lines. Think of a solution to this.
+		// TODO Both implementations (integer/floating point math) is prone to micro flickering while panning because the sprite are drawn at different sizes with one pixel difference.
+		// TODO The only solution to this is only drawing sprites are integer multiples.
+		iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm) / 2.0f)),
+		iround(screen_origin_to_sprite_center_px_vec.y - (F(src_rect.h) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm) / 2.0f)),
+		iround(F(src_rect.w) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm)),
+		iround(F(src_rect.h) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm))
 	};
 
 	// Sprite is rotated around this point

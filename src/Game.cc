@@ -53,7 +53,7 @@ m2::Game::Game() {
 		_dims.window.w, _dims.window.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
-	SDL_SetWindowMinimumSize(window, 712, 400);
+	SDL_SetWindowMinimumSize(window, 400, 225);
 	SDL_StopTextInput();  // Text input begins activated (sometimes)
 
 	cursor = SdlUtils_CreateCursor();
@@ -70,6 +70,10 @@ m2::Game::Game() {
 	SDL_RendererInfo info;
 	SDL_GetRendererInfo(renderer, &info);
 	LOG_INFO("Renderer", info.name);
+
+	// TODO If you want to use this, you have to use SDL_RenderGetLogicalSize on all places where you query the window size!!!
+	// May also require SDL_RenderSetIntegerScale
+	//SDL_RenderSetLogicalSize(renderer, 800, 450);
 
 	SDL_Surface* lightSurface = IMG_Load((resource_path() / "RadialGradient-WhiteBlack.png").c_str());
 	if (lightSurface == nullptr) {
