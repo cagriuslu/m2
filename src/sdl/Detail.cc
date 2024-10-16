@@ -59,6 +59,17 @@ SDL_Cursor* SdlUtils_CreateCursor() {
 	return SDL_CreateCursor(data, mask, side_size, side_size, side_size / 2 - 1, side_size / 2 - 1);
 }
 
+std::string m2::to_string(const SDL_Rect& rf) {
+	std::stringstream ss;
+	ss << "{x:" << rf.x << ",y:" << rf.y << ",w:" << rf.w << ",h:" << rf.h << "}";
+	return ss.str();
+}
+std::string m2::to_string(const SDL_FRect& rf) {
+	std::stringstream ss;
+	ss << "{x:" << rf.x << ",y:" << rf.y << ",w:" << rf.w << ",h:" << rf.h << "}";
+	return ss.str();
+}
+
 void m2::sdl::delay(ticks_t duration) {
 	if (0 < duration) {
 		SDL_Delay(duration);
