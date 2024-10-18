@@ -17,8 +17,7 @@ enum ResourceType {
   // For GAME_STATE_TRACKER
   DRAW_DECK_SIZE = 41;
   IS_RAILROAD_ERA = 42;
-  IS_FIRST_TURN = 43; // Only used by the server TODO convert to Proxy server-only member
-  IS_LIQUIDATING = 44; // Only used by the server TODO convert to Proxy server-only member
+  IS_LAST_ACTION_OF_PLAYER = 43;
   MONEY_SPENT_BY_PLAYER_0 = 45;
   MONEY_SPENT_BY_PLAYER_1 = 46;
   MONEY_SPENT_BY_PLAYER_2 = 47;

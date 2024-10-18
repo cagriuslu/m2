@@ -10,7 +10,5 @@ void init_game_state_tracker(m2::Object& obj) {
 	// Era
 	chr.clear_resource(m2g::pb::IS_RAILROAD_ERA);
 	// Turn
-	chr.set_resource(m2g::pb::IS_FIRST_TURN, 1.0f);
-	// Is liquidating?
-	chr.clear_resource(m2g::pb::IS_LIQUIDATING);
+	chr.set_resource(m2g::pb::IS_LAST_ACTION_OF_PLAYER, 1.0f);
 }

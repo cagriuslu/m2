@@ -167,5 +167,21 @@ const PanelBlueprint left_hud_blueprint = {
 			.x = 2, .y = 35, .w = 15, .h = 4,
 			.variant = pass_button
 		},
+		WidgetBlueprint{
+			.x = 0, .y = 64, .w = 19, .h = 8,
+			.border_width = 0,
+			.variant = TextBlueprint{
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
+				.wrapped_font_size_in_units = 2.5f,
+				.on_update = [](MAYBE Text& self) {
+					if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
+						self.set_text("Last action");
+					} else {
+						self.set_text("First action");
+					}
+					return make_continue_action();
+				}
+			}
+		}
 	}
 };

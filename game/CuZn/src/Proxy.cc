@@ -123,7 +123,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 
-	if (is_liquidating()) {
+	if (_is_liquidating) {
 		if (not client_command.has_liquidate_action()) {
 			LOG_WARN("Received unexpected command while expecting LiquidateAction");
 			return std::nullopt;
@@ -135,8 +135,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			}
 			// Gain money
 			turn_holder_character.add_resource(pb::MONEY, m2::F(expect_factories_and_gain->second));
-			// No longer liquidating
-			set_is_liquidating(false);
+			_is_liquidating = false; // No longer liquidating
 		} else {
 			LOG_WARN("Player sent invalid liquidate command", expect_factories_and_gain.error());
 			return std::nullopt;
@@ -347,35 +346,40 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			LOG_INFO("Ending game");
 			// TODO end game
 		}
-	} else if (is_first_turn()) {
+	} else if (_is_first_turn) {
+		// In first turn, the players have odd number of cards.
+		// That's the difference between the first turn and following last turns.
+
 		// Give card to player
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
 		turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
 
-		// Check if first turn finished
+		// Check if first turn finished for all players
 		if (_waiting_players.empty()) {
 			LOG_INFO("First turn ended");
-			game_state_tracker().clear_resource(pb::IS_FIRST_TURN);
-
+			_is_first_turn = false;
+			game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
 			liquidation_necessary = prepare_next_round();
 		} else {
 			// Otherwise, just fetch the next player from _waiting_players
 			LOG_INFO("Switch to next player");
 		}
-	} else if (not is_first_turn() && card_count % 2) {
+	} else if (not _is_first_turn && card_count % 2) {
 		// If there are odd number of cards, the turn holder does not change
 		// Push to the front of the waiting players, so that it's popped first below.
 		_waiting_players.push_front(turn_holder_index);
+		game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 1.0f);
 		LOG_INFO("Continuing with the same player");
-	} else {
-		// If there are even number of cards, the turn holder changes.
-		// Give cards to player
+	} else { // not is_first_turn() && (card_count % 2) == 0
+		// If there are even number of cards, the turn holder changes. Give cards to player
 		while (not _draw_deck.empty() && player_card_count(turn_holder_character) < 8) {
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
 			turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
 		}
+
+		game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
 
 		// Try to prepare the next round.
 		if (_waiting_players.empty()) {
@@ -391,7 +395,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 
 	int next_turn_holder;
 	if (liquidation_necessary) {
-		set_is_liquidating(true); // Set the liquidation state so that client commands are handled properly
+		_is_liquidating = true; // Set the liquidation state so that client commands are handled properly
 		LOG_INFO("Sending liquidation command to player", liquidation_necessary->first);
 		M2_GAME.server_thread().send_server_command(liquidation_necessary->second, liquidation_necessary->first);
 		// Give turn holder index to that player so that they can respond
@@ -574,8 +578,8 @@ m2::Character& m2g::Proxy::game_state_tracker() const {
 	return M2_LEVEL.objects[_game_state_tracker_id].character();
 }
 
-bool m2g::Proxy::is_first_turn() const {
-	return m2::is_equal(game_state_tracker().get_resource(pb::IS_FIRST_TURN), 1.0f, 0.001f);
+bool m2g::Proxy::is_last_action_of_player() const {
+	return m2::is_equal(game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 1.0f, 0.001f);
 }
 
 bool m2g::Proxy::is_canal_era() const {
@@ -584,10 +588,6 @@ bool m2g::Proxy::is_canal_era() const {
 
 bool m2g::Proxy::is_railroad_era() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
-}
-
-bool m2g::Proxy::is_liquidating() const {
-	return m2::is_equal(game_state_tracker().get_resource(m2g::pb::IS_LIQUIDATING), 1.0f, 0.001f);
 }
 
 int m2g::Proxy::market_coal_count() const {
@@ -725,10 +725,6 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 
 	// Liquidation not necessary
 	return std::nullopt;
-}
-
-void m2g::Proxy::set_is_liquidating(bool state) {
-	game_state_tracker().set_resource(m2g::pb::IS_LIQUIDATING, state ? 1.0f : 0.0f);
 }
 
 void m2g::Proxy::buy_coal_from_market() {

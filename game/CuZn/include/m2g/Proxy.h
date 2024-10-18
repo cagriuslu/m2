@@ -65,10 +65,9 @@ namespace m2g {
 		// Accessors
 		[[nodiscard]] unsigned player_index(m2::Id id) const;
 		[[nodiscard]] m2::Character& game_state_tracker() const;
-		[[nodiscard]] bool is_first_turn() const;
+		[[nodiscard]] bool is_last_action_of_player() const;
 		[[nodiscard]] bool is_canal_era() const;
 		[[nodiscard]] bool is_railroad_era() const;
-		[[nodiscard]] bool is_liquidating() const;
 		[[nodiscard]] int market_coal_count() const;
 		[[nodiscard]] int market_iron_count() const;
 		[[nodiscard]] int market_coal_cost(int coal_count) const; // Query cost of buying coal from the market
@@ -88,12 +87,13 @@ namespace m2g {
 
 		// Server only fields
 		std::vector<Card> _draw_deck;
+		bool _is_first_turn{true};
+		bool _is_liquidating{};
 		using PlayerIndex = int;
 		std::list<PlayerIndex> _waiting_players; // Front of the list is the next player
 		using SpentMoney = int;
 		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players; // Front of the list played first
 		std::optional<std::pair<PlayerIndex, m2g::pb::ServerCommand>> prepare_next_round(); // Returns the index of the player that should liquidate assets
-		void set_is_liquidating(bool state);
 		void buy_coal_from_market();
 		void buy_iron_from_market();
 		void sell_coal_to_market(int count);
