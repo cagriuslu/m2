@@ -27,8 +27,8 @@ m2::RectF cards_window_ratio() {
 	return m2::RectF{0.30f, 0.10f, 0.4f, 0.8f};
 }
 
-PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
-	return PanelBlueprint{
+PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2, bool cancel_button) {
+	auto panel_blueprint = PanelBlueprint{
 		.w = 24,
 		.h = 24,
 		.background_color = {0, 0, 0, 255},
@@ -91,7 +91,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 			WidgetBlueprint{
 				.x = 1,
 				.y = 21,
-				.w = 22,
+				.w = cancel_button ? 10 : 22,
 				.h = 2,
 				.variant = TextBlueprint{
 					.text = "OK",
@@ -109,6 +109,26 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 			}
 		}
 	};
+
+	if (cancel_button) {
+		panel_blueprint.widgets.emplace_back(
+			WidgetBlueprint{
+				.x = 13,
+				.y = 21,
+				.w = 10,
+				.h = 2,
+				.variant = TextBlueprint{
+					.text = "Cancel",
+					.on_action = [](MAYBE const Text& self) -> Action {
+						// Return empty return
+						return make_return_action();
+					}
+				}
+			}
+		);
+	}
+
+	return panel_blueprint;
 }
 
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
@@ -116,7 +136,7 @@ std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclud
 	std::optional<m2g::pb::ItemType> selected_card;
 	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
 	Panel::create_and_run_blocking(std::make_unique<PanelBlueprint>(
-		generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2)),
+		generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)),
 			cards_window_ratio(), std::move(background))
 		.if_void_return([&]() {
 			LOG_INFO("Card selection cancelled");
