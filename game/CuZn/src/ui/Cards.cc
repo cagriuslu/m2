@@ -114,7 +114,10 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
 	LOG_INFO("Asking player to select a card...");
 	std::optional<m2g::pb::ItemType> selected_card;
-	Panel::create_and_run_blocking(std::make_unique<PanelBlueprint>(generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2)), cards_window_ratio())
+	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	Panel::create_and_run_blocking(std::make_unique<PanelBlueprint>(
+		generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2)),
+			cards_window_ratio(), std::move(background))
 		.if_void_return([&]() {
 			LOG_INFO("Card selection cancelled");
 		})

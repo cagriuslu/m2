@@ -49,7 +49,8 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 	};
 
 	std::optional<m2g::pb::ItemType> selected_industry;
-	m2::ui::Panel::create_and_run_blocking(std::make_unique<m2::ui::PanelBlueprint>(blueprint), RectF{0.15f, 0.15f, 0.7f, 0.7f})
+	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	m2::ui::Panel::create_and_run_blocking(std::make_unique<m2::ui::PanelBlueprint>(blueprint), RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
 		.if_void_return([&]() {
 			LOG_INFO("Industry selection cancelled");
 		})
@@ -103,7 +104,8 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 	};
 
 	bool selection;
-	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f})
+	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }
@@ -157,7 +159,8 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 	};
 
 	std::optional<bool> selection;
-	Panel::create_and_run_blocking(&blueprint, RectF{0.25f, 0.25f, 0.5f, 0.5f})
+	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	Panel::create_and_run_blocking(&blueprint, RectF{0.25f, 0.25f, 0.5f, 0.5f}, std::move(background))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }

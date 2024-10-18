@@ -4,6 +4,7 @@
 #include <m2/ui/widget/TextBlueprint.h>
 #include <m2/ui/widget/Text.h>
 #include <cuzn/ui/Detail.h>
+#include <m2/Game.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -57,5 +58,6 @@ void display_canal_era_result(const m2g::pb::ServerCommand::CanalEraResult& cana
 			});
 	}
 
-	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f});
+	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background));
 }
