@@ -45,7 +45,7 @@ namespace m2g {
 		std::optional<std::list<m2::ui::Panel>::iterator> _notification_panel;
 
 	public:
-		std::optional<std::list<m2::ui::Panel>::iterator> custom_hud_panel;
+		std::optional<std::list<m2::ui::Panel>::iterator> custom_hud_panel, cards_panel;
 
 		// Once the level is created, these should not be modified.
 		std::vector<m2::RGB> player_colors;

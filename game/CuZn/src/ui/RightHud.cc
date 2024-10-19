@@ -77,9 +77,17 @@ const PanelBlueprint right_hud_blueprint = {
 				.text = "Cards",
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_blocking_ui_panel(
-						cards_window_ratio(),
-						std::make_unique<PanelBlueprint>(generate_cards_window("Cards")));
+					// Check if the panel is still active
+					if (M2G_PROXY.cards_panel && (*M2G_PROXY.cards_panel)->is_valid()) {
+						M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
+						M2G_PROXY.cards_panel.reset();
+					} else {
+						// Panel is not available, or have been self-destroyed
+						M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+							std::make_unique<PanelBlueprint>(generate_cards_window("Cards")),
+							cards_window_ratio()
+						);
+					}
 					return make_continue_action();
 				}
 			}
