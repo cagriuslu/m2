@@ -15,6 +15,8 @@ namespace m2::pb {
 	public:
 		LUT() = default;
 
+		[[nodiscard]] std::vector<LoadedItemT>::size_type size() const { return _vector.size(); }
+
 		template <typename KeyT = decltype(std::declval<ProtoItemT>().type())>
 		const LoadedItemT& operator[](KeyT key) const {
 			auto index = pb::enum_index(key);

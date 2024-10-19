@@ -123,12 +123,16 @@ m2::Game::Game() {
 	sprite_sheets = load_sprite_sheets(*sheets_pb, renderer, _proxy.lightning);
 	_sprites =
 		load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, renderer, font, _proxy.default_font_size, _proxy.lightning);
+	LOG_INFO("Loaded sprites", _sprites.size());
 	level_editor_background_sprites = list_level_editor_background_sprites(_sprites);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
+	LOG_INFO("Loaded objects", object_main_sprites.size());
 	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
-	animations =
-		pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
+	LOG_INFO("Loaded named items", named_items.size());
+	animations = pb::LUT<m2::pb::Animation, Animation>::load(resource_dir / "Animations.json", &m2::pb::Animations::animations);
+	LOG_INFO("Loaded animations", animations.size());
 	songs = pb::LUT<m2::pb::Song, Song>::load(resource_dir / "Songs.json", &m2::pb::Songs::songs);
+	LOG_INFO("Loaded songs", songs.size());
 }
 
 m2::Game::~Game() {

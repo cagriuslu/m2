@@ -2,6 +2,31 @@
   "songs": [
     {
       "type": "NO_SONG"
+    },
+    {
+      "type": "SONG_NOTIFICATION_SOUND",
+      "synthSong": {
+        "bpm": 480,
+        "tracks": [{
+          "shape": "TRIANGLE",
+          "volume": 1,
+          "balance": 0,
+          "notes": [
+            {
+              "startBeat": {"n": 1, "d": 1},
+              "duration": {"n": 1, "d": 2},
+              "frequency": 400,
+              "volume": 1
+            },
+            {
+              "startBeat": {"n": 2, "d": 1},
+              "duration": {"n": 1, "d": 2},
+              "frequency": 200,
+              "volume": 1
+            }
+          ]
+        }]
+      }
     }
   ]
 }

@@ -3,4 +3,5 @@ package m2g.pb;
 
 enum SongType {
     NO_SONG = 0;
+    SONG_NOTIFICATION_SOUND = 1;
 }
