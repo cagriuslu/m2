@@ -185,9 +185,12 @@ void TextSelection::on_draw() {
 				if (not current_line.font_texture_and_destination) {
 					auto font_size = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_line.blueprint_option.text.c_str()))).h;
 					auto font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, font_size, current_line.blueprint_option.text));
-					auto destination_rect = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_line.blueprint_option.text.c_str())));
-					current_line.font_texture_and_destination = sdl::FontTextureAndDestination{std::move(font_texture), destination_rect};
+					// Don't bother with destination_rect, because we're going to calculate that every time
+					current_line.font_texture_and_destination = sdl::FontTextureAndDestination{std::move(font_texture), {}};
 				}
+				// Upon scroll, the destination might still have changed, calculate it again.
+				auto destination_rect = calculate_filled_text_rect(text_rect, TextHorizontalAlignment::LEFT, I(m2::utf8_codepoint_count(current_line.blueprint_option.text.c_str())));
+				current_line.font_texture_and_destination->destination_rect = destination_rect;
 				sdl::render_texture_with_color_mod(current_line.font_texture_and_destination->font_texture.texture(),
 					current_line.font_texture_and_destination->destination_rect, current_line.blueprint_option.text_color);
 			}
