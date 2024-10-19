@@ -95,6 +95,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 				.h = 2,
 				.variant = TextBlueprint{
 					.text = "OK",
+					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.on_action = [](const Text& self) -> Action {
 						// Find the other blueprint
 						if (auto* card_selection = self.parent().find_first_widget_by_name<TextSelection>("CardSelection")) {

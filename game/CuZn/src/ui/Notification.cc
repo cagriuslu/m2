@@ -17,7 +17,8 @@ PanelBlueprint generate_notification_panel_blueprint(const std::string& msg) {
 				.variant = widget::TextBlueprint{
 					.text = msg,
 					.horizontal_alignment = TextHorizontalAlignment::LEFT,
-					.wrapped_font_size_in_units = 0.9f
+					.wrapped_font_size_in_units = 0.9f,
+					.kb_shortcut = SDL_SCANCODE_RETURN,
 				}
 			}
 		}

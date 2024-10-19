@@ -240,6 +240,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 				.h = 2,
 				.variant = TextBlueprint{
 					.text = "OK",
+					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.on_action = [](const Text& self) -> Action {
 						// Find the other blueprint
 						if (auto* tile_selection = self.parent().find_first_widget_by_name<TextSelection>("TileSelection")) {

@@ -121,6 +121,7 @@ const PanelBlueprint ip_port_form = {
 			.variant = TextBlueprint{
 				.text = "CONNECT",
 				.wrapped_font_size_in_units = 5.0f,
+				.kb_shortcut = SDL_SCANCODE_RETURN,
 				.on_action = [](MAYBE const widget::Text& self) {
 					auto* ip_input_widget = self.parent().find_first_widget_of_type<TextInput>();
 					M2_GAME.join_game(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());

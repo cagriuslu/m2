@@ -39,6 +39,7 @@ void display_action_notification(const m2g::pb::ServerCommand::ActionNotificatio
 				.variant = widget::TextBlueprint{
 					.text = "OK",
 					.wrapped_font_size_in_units = 3.0f,
+					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.on_action = [](MAYBE const widget::Text& self) -> Action {
 						return make_return_action();
 					}
