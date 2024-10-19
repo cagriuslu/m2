@@ -32,9 +32,9 @@ namespace m2::ui {
 		// Copy not allowed
 		Panel(const Panel& other) = delete;
 		Panel& operator=(const Panel& other) = delete;
-		// Move is allowed
-		Panel(Panel&& other) noexcept = default;
-		Panel& operator=(Panel&& other) noexcept = default;
+		// Move not allowed, because Widgets hold raw pointer to Panel
+		Panel(Panel&& other) noexcept = delete;
+		Panel& operator=(Panel&& other) noexcept = delete;
 		~Panel();
 
 		// Accessors

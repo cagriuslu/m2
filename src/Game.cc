@@ -429,7 +429,9 @@ void m2::Game::handle_hud_events() {
 	for (auto &panel : std::ranges::reverse_view(_level->_custom_nonblocking_ui_panels)) {
 		panel.handle_events(events, _level->is_panning())
 			.if_any_return([&panel]() {
-				panel = ui::Panel(); // If UI returned, reset the panel. We cannot delete it, the iterator is held by the client
+				// If UI returned, reset the panel. We cannot delete it, the iterator is held by the client,
+				// but we can replace it with a dummy object.
+				panel.~Panel(); new (&panel) ui::Panel();
 				// TODO returned object is lost, maybe we can store it inside Panel
 			});
 		// TODO handle quit
@@ -634,8 +636,9 @@ void m2::Game::update_hud_contents() {
 	for (auto &panel : _level->_custom_nonblocking_ui_panels) {
 		panel.update_contents(_delta_time_s)
 			.if_any_return([&panel]() {
-				// If returned, reset the panel. We cannot delete it, the iterator is held by the client
-				panel = ui::Panel{};
+				// If returned, reset the panel. We cannot delete it, the iterator is held by the client,
+				// but we can recreate the object with a dummy version.
+				panel.~Panel(); new (&panel) ui::Panel();
 				// TODO returned object is lost, maybe we can store it inside Panel
 			});
 		// TODO handle quit

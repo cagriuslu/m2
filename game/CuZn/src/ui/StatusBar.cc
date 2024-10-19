@@ -22,9 +22,9 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 			if (panel.rect_px().contains(events.mouse_position())) {
 				// Create custom hud if not already
 				if (not M2G_PROXY.custom_hud_panel) {
-					M2G_PROXY.custom_hud_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(m2::ui::Panel{
+					M2G_PROXY.custom_hud_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
 						std::make_unique<m2::ui::PanelBlueprint>(generate_custom_hud_blueprint(player_count)),
-						custom_hud_window_ratio()});
+						custom_hud_window_ratio());
 				}
 			}
 			return make_continue_action();

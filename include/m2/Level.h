@@ -131,7 +131,10 @@ namespace m2 {
 
 		/// Adds a UI element that is drawn above the HUD. The UI doesn't block the game loop and consumes only the
 		/// events meant for itself.
-		std::list<ui::Panel>::iterator add_custom_nonblocking_ui_panel(ui::Panel&& panel);
+		template <typename... Args>
+		std::list<ui::Panel>::iterator add_custom_nonblocking_ui_panel(Args&&... args) {
+			return _custom_nonblocking_ui_panels.emplace(_custom_nonblocking_ui_panels.end(), std::forward<Args>(args)...);
+		}
 		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
 		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
 		void remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it);

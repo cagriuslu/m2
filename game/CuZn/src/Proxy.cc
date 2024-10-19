@@ -72,10 +72,8 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 
 	// Add status bar panel to the level
 	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-		m2::ui::Panel{
-			std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(client_count)),
-			status_bar_window_ratio()
-		});
+		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(client_count)),
+		status_bar_window_ratio());
 }
 
 void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
@@ -434,10 +432,9 @@ void m2g::Proxy::post_server_update(bool shutdown) {
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*custom_hud_panel);
 		custom_hud_panel = std::nullopt;
 	}
-	*_status_bar_panel = m2::ui::Panel{
+	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
 		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.total_player_count())),
-		status_bar_window_ratio()
-	};
+		status_bar_window_ratio());
 
 	// Enable/disable buttons
 	if (M2_GAME.is_our_turn()) {
@@ -661,8 +658,7 @@ void m2g::Proxy::disable_action_buttons() {
 void m2g::Proxy::show_notification(const std::string& msg) {
 	remove_notification();
 	_notification_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-		m2::ui::Panel{std::make_unique<m2::ui::PanelBlueprint>(generate_notification_panel_blueprint(msg)),
-		    m2::RectF{0.1f, 0.96f, 0.8f, 0.04f}});
+		std::make_unique<m2::ui::PanelBlueprint>(generate_notification_panel_blueprint(msg)), m2::RectF{0.1f, 0.96f, 0.8f, 0.04f});
 }
 void m2g::Proxy::remove_notification() {
 	if (_notification_panel) {

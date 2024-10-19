@@ -277,10 +277,6 @@ void m2::Level::disable_hud() {
 	LOG_DEBUG("HUD disabled");
 }
 
-std::list<m2::ui::Panel>::iterator m2::Level::add_custom_nonblocking_ui_panel(ui::Panel&& panel) {
-	DEBUG_FN();
-	return _custom_nonblocking_ui_panels.insert(_custom_nonblocking_ui_panels.end(), std::move(panel));
-}
 void m2::Level::remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it) {
 	DEBUG_FN();
 	_custom_nonblocking_ui_panels.erase(it);

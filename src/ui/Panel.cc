@@ -241,7 +241,7 @@ std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_
 
 	// Create widgets
 	for (const auto &widget_blueprint : blueprint->widgets) {
-		widgets.push_back(create_widget_state(widget_blueprint));
+		widgets.emplace_back(create_widget_state(widget_blueprint));
 		// Check if focus is requested
 		if (widget_blueprint.initially_focused) {
 			set_widget_focus_state(*widgets.back(), true);
