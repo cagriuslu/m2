@@ -47,6 +47,8 @@ namespace m2 {
 			RectI left_hud{}, right_hud{}, message_box{};
 			Dimensions() = default;
 			Dimensions(int game_height_m, int window_width, int window_height, int game_aspect_ratio_mul, int game_aspect_ratio_div);
+			float hud_width_to_game_and_hud_width_ratio() const;
+			float game_width_to_game_and_hud_width_ration() const;
 		};
 
 	private:

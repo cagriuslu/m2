@@ -26,11 +26,19 @@ namespace {
 m2::RectF cards_window_ratio() {
 	return m2::RectF{0.30f, 0.10f, 0.4f, 0.8f};
 }
+m2::RectF cards_panel_ratio() {
+	return m2::RectF{
+		M2_GAME.dimensions().hud_width_to_game_and_hud_width_ratio() + M2_GAME.dimensions().game_width_to_game_and_hud_width_ration() - 0.16f,
+		0.6f,
+		0.16f,
+		0.4f};
+}
 
-PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2, bool cancel_button) {
+PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2, bool blocking_window) {
 	auto panel_blueprint = PanelBlueprint{
 		.w = 24,
 		.h = 24,
+		.border_width = blocking_window ? 0.001f : 0.0f,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
@@ -91,10 +99,10 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 			WidgetBlueprint{
 				.x = 1,
 				.y = 21,
-				.w = cancel_button ? 10 : 22,
+				.w = blocking_window ? 10 : 22,
 				.h = 2,
 				.variant = TextBlueprint{
-					.text = "OK",
+					.text = blocking_window ? "OK" : "Close",
 					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.on_action = [](const Text& self) -> Action {
 						// Find the other blueprint
@@ -111,7 +119,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 		}
 	};
 
-	if (cancel_button) {
+	if (blocking_window) {
 		panel_blueprint.widgets.emplace_back(
 			WidgetBlueprint{
 				.x = 13,

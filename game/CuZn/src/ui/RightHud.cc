@@ -85,7 +85,7 @@ const PanelBlueprint right_hud_blueprint = {
 						// Panel is not available, or have been self-destroyed
 						M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
 							std::make_unique<PanelBlueprint>(generate_cards_window("Cards")),
-							cards_window_ratio()
+							cards_panel_ratio()
 						);
 					}
 					return make_continue_action();

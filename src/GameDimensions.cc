@@ -4,10 +4,12 @@ constexpr int GAME_AND_HUD_ASPECT_RATIO_MUL = 16;
 constexpr int GAME_AND_HUD_ASPECT_RATIO_DIV = 9;
 
 namespace {
+	// Width/Height
 	constexpr int hud_aspect_ratio_mul(int game_aspect_ratio_mul, int game_aspect_ratio_div) {
 		return (GAME_AND_HUD_ASPECT_RATIO_MUL * game_aspect_ratio_div - game_aspect_ratio_mul * GAME_AND_HUD_ASPECT_RATIO_DIV);
 	}
 
+	// Width/Height
 	constexpr int hud_aspect_ratio_div(int game_aspect_ratio_div) {
 		return (GAME_AND_HUD_ASPECT_RATIO_DIV * game_aspect_ratio_div * 2);
 	}
@@ -48,4 +50,11 @@ m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window
 
 	auto message_box_height = game.h / 25;
 	message_box = RectI{game.x, game.y + game.h - message_box_height, game.w, message_box_height};
+}
+
+float m2::Game::Dimensions::hud_width_to_game_and_hud_width_ratio() const {
+	return F(left_hud.w) / F(game_and_hud.w);
+}
+float m2::Game::Dimensions::game_width_to_game_and_hud_width_ration() const {
+	return F(game.w) / F(game_and_hud.w);
 }
