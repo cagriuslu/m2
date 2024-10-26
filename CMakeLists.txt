@@ -125,6 +125,15 @@ protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS "${PROTO_FILES}" "${GAME_PROTO_FILES
 file(GLOB M2_PUBLIC_HEADERS "include/m2/*.h" "include/m2/*/*.h")
 file(GLOB M2_PRIVATE_HEADERS "src/*.h" "src/*/*.h" "src/*/*/*.h")
 file(GLOB M2_SOURCES "src/*.cc" "src/*/*.cc" "src/*/*/*.cc")
+# Add platform specific source files
+if (WIN32)
+    file(GLOB M2_PLATFORM_SPECIFIC_SOURCES "platform/windows/*.cc")
+elseif(APPLE)
+    file(GLOB M2_PLATFORM_SPECIFIC_SOURCES "platform/macos/*.cc" "platform/posix/*.cc")
+else()
+    file(GLOB M2_PLATFORM_SPECIFIC_SOURCES "platform/linux/*.cc" "platform/posix/*.cc")
+endif()
+
 if(APPLE)
 	# Put resources into the .app
 	file(GLOB_RECURSE BUNDLE_RESOURCES "${CMAKE_SOURCE_DIR}/resource/*")
@@ -138,7 +147,7 @@ if(APPLE)
 	endforeach ()
 endif()
 
-add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${BUNDLE_RESOURCES})
+add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${M2_PLATFORM_SPECIFIC_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${BUNDLE_RESOURCES})
 
 if (NOT WIN32)
     target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})

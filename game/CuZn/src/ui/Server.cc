@@ -3,7 +3,8 @@
 #include <m2/Log.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
-#include <m2/network/Detail.h>
+#include <m2/network/Select.h>
+#include <m2/network/IpAddressAndPort.h>
 #include <numeric>
 
 using namespace m2::ui;

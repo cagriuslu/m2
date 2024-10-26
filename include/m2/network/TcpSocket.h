@@ -2,7 +2,12 @@
 #include "../Meta.h"
 
 namespace m2::network {
+	namespace detail {
+		class PlatformSpecificTcpSocketData;
+	}
+
 	class TcpSocket {
+		detail::PlatformSpecificTcpSocketData* _platform_specific_data{};
 		int _fd{-1};
 		in_addr_t _addr{};
 		in_port_t _port{};

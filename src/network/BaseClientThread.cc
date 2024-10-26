@@ -1,6 +1,6 @@
 #include <m2/network/BaseClientThread.h>
 #include <m2/network/TcpSocket.h>
-#include <m2/network/Detail.h>
+#include <m2/network/Select.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
 #include <m2/network/TcpSocketManager.h>

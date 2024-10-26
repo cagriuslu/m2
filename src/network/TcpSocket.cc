@@ -1,5 +1,5 @@
 #include <m2/network/TcpSocket.h>
-#include <m2/network/Detail.h>
+#include <m2/network/Select.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
