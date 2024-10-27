@@ -2,7 +2,7 @@
 #include <m2/Log.h>
 
 m2::network::ClientManager::ClientManager(TcpSocket&& socket, int index)
-	: _index(index), _address_and_port(socket.address_and_port()),
+	: _index(index), _ip_address_and_port(socket.address_and_port()),
 	_state(Connected{TcpSocketManager{std::move(socket), index}}) {}
 
 bool m2::network::ClientManager::is_connected() const {
@@ -77,7 +77,7 @@ void m2::network::ClientManager::honorably_disconnect() {
 
 
 void m2::network::ClientManager::untrusted_client_reconnected(TcpSocket&& socket) {
-	if (socket.address_and_port() != address_and_port()) {
+	if (socket.address_and_port() != ip_address_and_port()) {
 		throw M2_ERROR("Address and/or port mismatch");
 	}
 	if (not std::holds_alternative<HonorablyDisconnected>(_state)) {

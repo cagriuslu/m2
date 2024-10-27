@@ -356,7 +356,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 					bool found = false;
 					for (int i = 0; i < I(server_thread->_clients.size()) && not found; ++i) {
 						auto& client = server_thread->_clients[i];
-						if (client.is_disconnected() && client.address_and_port() == (*client_socket)->address_and_port()) {
+						if (client.is_disconnected() && client.ip_address_and_port() == (*client_socket)->address_and_port()) {
 							LOG_INFO("Previously connected client with index connected again", i, (*client_socket)->address_and_port());
 							client.untrusted_client_reconnected(std::move(**client_socket));
 							found = true;

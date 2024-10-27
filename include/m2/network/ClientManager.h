@@ -1,5 +1,6 @@
 #pragma once
 #include "TcpSocketManager.h"
+#include "IpAddressAndPort.h"
 #include "../sdl/Detail.h"
 
 namespace m2::network {
@@ -34,7 +35,7 @@ namespace m2::network {
 		struct Shutdown {};
 
 		int _index;
-		std::pair<in_addr_t, in_port_t> _address_and_port;
+		IpAddressAndPort _ip_address_and_port;
 		std::variant<Connected, Ready, HonorablyDisconnected, ReconnectedUntrusted, Misbehaved, Shutdown> _state;
 
 	public:
@@ -42,7 +43,7 @@ namespace m2::network {
 
 		// Accessors
 
-		[[nodiscard]] std::pair<in_addr_t, in_port_t> address_and_port() const { return _address_and_port; }
+		[[nodiscard]] IpAddressAndPort ip_address_and_port() const { return _ip_address_and_port; }
 		[[nodiscard]] bool is_connected() const;
 		[[nodiscard]] int fd();
 		[[nodiscard]] bool is_ready() const;
