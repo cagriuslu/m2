@@ -432,6 +432,7 @@ void m2g::Proxy::post_server_update(bool shutdown) {
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*custom_hud_panel);
 		custom_hud_panel = std::nullopt;
 	}
+	M2_LEVEL.remove_custom_nonblocking_ui_panel(_status_bar_panel);
 	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
 		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.total_player_count())),
 		status_bar_window_ratio());
