@@ -315,89 +315,93 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 			}
 		}
 
-		// Prepare read set for select
-		fd_set read_set;
-		auto read_max_fd = server_thread->prepare_read_fd_set(&read_set);
-		FD_SET(listen_socket->fd(), &read_set); // Add main socket as well
-		read_max_fd = std::max(read_max_fd, listen_socket->fd());
-		// Prepare write set for select
-		fd_set write_set;
-		auto write_max_fd = server_thread->prepare_write_fd_set(&write_set);
-		// Select
-		auto select_result = select(std::max(read_max_fd, write_max_fd), &read_set, &write_set, 250);
-		if (not select_result) {
-			throw M2_ERROR("Select failed: " + select_result.error());
-		}
-		if (*select_result == 0) {
-			// Time out occurred
-			continue;
-		}
-
-		// Check main socket
-		if (FD_ISSET(listen_socket->fd(), &read_set)) {
-			LOG_INFO("Main socket is readable");
-
-			auto client_socket = listen_socket->accept();
-			if (not client_socket) {
-				throw M2_ERROR("Accept failed: " + client_socket.error());
-			} else if (not client_socket->has_value()) {
-				LOG_WARN("Client aborted connection by the time it was accepted");
-			} else {
-				if (server_thread->_max_connection_count <= server_thread->_clients.size()) {
-					LOG_INFO("Refusing connection because of connection limit", (*client_socket)->address_and_port());
-				} else if (auto state = server_thread->locked_get_state(); state == pb::SERVER_LISTENING) {
-					LOG_INFO("New client connected with index", server_thread->_clients.size(), (*client_socket)->address_and_port());
-					server_thread->_clients.emplace_back(std::move(**client_socket), server_thread->_clients.size());
-				} else if (state == pb::SERVER_READY) {
-					LOG_INFO("Refusing connection to closed lobby", (*client_socket)->address_and_port());
-				} else if (state == pb::SERVER_STARTED) {
-					const std::lock_guard lock(server_thread->_mutex);
-					// Check if there's a disconnected client
-					bool found = false;
-					for (int i = 0; i < I(server_thread->_clients.size()) && not found; ++i) {
-						auto& client = server_thread->_clients[i];
-						if (client.is_disconnected() && client.ip_address_and_port() == (*client_socket)->address_and_port()) {
-							LOG_INFO("Previously connected client with index connected again", i, (*client_socket)->address_and_port());
-							client.untrusted_client_reconnected(std::move(**client_socket));
-							found = true;
-						}
-					}
-					if (not found) {
-						LOG_INFO("Refusing connection after game started", (*client_socket)->address_and_port());
-					}
-				} else {
-					throw M2_ERROR("Unexpected state");
+		// Prepare socket handles for Select
+		TcpSocketHandles sockets_to_read, sockets_to_write;
+		{
+			// Add the main socket
+			sockets_to_read.emplace_back(&*listen_socket);
+			const std::lock_guard lock(server_thread->_mutex);
+			for (auto& client : server_thread->_clients) {
+				if (client.is_connected()) {
+					// Add connected sockets as readable
+					sockets_to_read.emplace_back(&client.tcp_socket());
+				}
+				if (client.is_ready() && client.has_outgoing_data()) {
+					// Add ready clients which have outgoing data as writeable
+					sockets_to_write.emplace_back(&client.tcp_socket());
 				}
 			}
 		}
-
-		// Check readable clients
+		// Select
+		auto select_result = Select{}(sockets_to_read, sockets_to_write, 250);
+		if (not select_result) {
+			throw M2_ERROR("Select failed: " + select_result.error());
+		}
+		if (*select_result == std::nullopt) {
+			// Timeout occurred
+			continue;
+		}
+		// Check readable sockets
 		{
 			const std::lock_guard lock(server_thread->_mutex);
-			for (auto i = 0; i < I(server_thread->_clients.size()); ++i) {
-				auto& client = server_thread->_clients[i];
+			auto& readable_sockets = select_result.value().value().first;
+			// Check if main socket is readable
+			if (std::find(readable_sockets.begin(), readable_sockets.end(), &*listen_socket) != readable_sockets.end()) {
+				LOG_INFO("Main socket is readable");
+				if (auto client_socket = listen_socket->accept(); not client_socket) {
+					throw M2_ERROR("Accept failed: " + client_socket.error());
+				} else if (not client_socket->has_value()) {
+					LOG_WARN("Client aborted connection by the time it was accepted");
+				} else {
+					if (server_thread->_max_connection_count <= server_thread->_clients.size()) {
+						LOG_INFO("Refusing connection because of connection limit", (*client_socket)->ip_address_and_port());
+					} else if (server_thread->_state == pb::SERVER_LISTENING) {
+						LOG_INFO("New client connected with index", server_thread->_clients.size(), (*client_socket)->ip_address_and_port());
+						server_thread->_clients.emplace_back(std::move(**client_socket), server_thread->_clients.size());
+					} else if (server_thread->_state == pb::SERVER_READY) {
+						LOG_INFO("Refusing connection to closed lobby", (*client_socket)->ip_address_and_port());
+					} else if (server_thread->_state == pb::SERVER_STARTED) {
+						// Check if there's a disconnected client
+						bool found = false;
+						for (int i = 0; i < I(server_thread->_clients.size()) && not found; ++i) {
+							auto& client = server_thread->_clients[i];
+							if (client.is_disconnected() && client.ip_address_and_port() == (*client_socket)->ip_address_and_port()) {
+								LOG_INFO("Previously connected client with index connected again", i, (*client_socket)->ip_address_and_port());
+								client.untrusted_client_reconnected(std::move(**client_socket));
+								found = true;
+							}
+						}
+						if (not found) {
+							LOG_INFO("Refusing connection after game started", (*client_socket)->ip_address_and_port());
+						}
+					} else {
+						throw M2_ERROR("Unexpected state");
+					}
+				}
+			}
+			// Check client sockets
+			for (auto& client : server_thread->_clients) {
 				if (not client.is_connected()) {
 					// Skip client if it's connection has dropped
 					continue;
 				}
 				// Read from socket
-				client.has_incoming_data(FD_ISSET(client.fd(), &read_set));
+				auto is_readable = std::find(readable_sockets.begin(), readable_sockets.end(), &client.tcp_socket()) != readable_sockets.end();
+				client.has_incoming_data(is_readable);
 			}
-
 			// If the lobby is not yet closed, remove disconnected clients
 			if (server_thread->_state == pb::ServerState::SERVER_LISTENING) {
 				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(),
-					[](auto& client) { return client.is_disconnected_or_untrusted(); });
+						[](auto& client) { return client.is_disconnected_or_untrusted(); });
 				server_thread->_clients.erase(erase_it, server_thread->_clients.end());
 			}
 		}
-		// Give a breather to the mutex
-
-		// Check writeable clients
+		// Give a breather to the mutex, then check writeable clients
 		{
 			const std::lock_guard lock(server_thread->_mutex);
-			for (auto & client : server_thread->_clients) {
-				if (not client.is_ready() || not FD_ISSET(client.fd(), &write_set)) {
+			auto& writeable_sockets = select_result.value().value().second;
+			for (auto& client : server_thread->_clients) {
+				if (not client.is_ready() || std::find(writeable_sockets.begin(), writeable_sockets.end(), &client.tcp_socket()) == writeable_sockets.end()) {
 					// Skip if the connection has dropped or the socket is not writeable
 					continue;
 				}
@@ -413,34 +417,4 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 bool m2::network::ServerThread::locked_is_quit() {
 	const std::lock_guard lock(_mutex);
 	return _state == pb::ServerState::SERVER_QUIT;
-}
-
-int m2::network::ServerThread::prepare_read_fd_set(fd_set* set) {
-	FD_ZERO(set);
-
-	const std::lock_guard lock(_mutex);
-	int max = 0;
-	for (auto& client : _clients) {
-		if (client.is_connected()) {
-			auto fd = client.fd();
-			FD_SET(fd, set);
-			max = std::max(max, fd);
-		}
-	}
-	return max;
-}
-
-int m2::network::ServerThread::prepare_write_fd_set(fd_set* set) {
-	FD_ZERO(set);
-
-	const std::lock_guard lock(_mutex);
-	int max = 0;
-	for (auto& client : _clients) {
-		if (client.is_ready() && client.has_outgoing_data()) {
-			auto fd = client.fd();
-			FD_SET(fd, set);
-			max = std::max(max, fd);
-		}
-	}
-	return max;
 }

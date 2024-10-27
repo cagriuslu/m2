@@ -45,7 +45,7 @@ namespace m2::network {
 
 		[[nodiscard]] IpAddressAndPort ip_address_and_port() const { return _ip_address_and_port; }
 		[[nodiscard]] bool is_connected() const;
-		[[nodiscard]] int fd();
+		[[nodiscard]] TcpSocket& tcp_socket();
 		[[nodiscard]] bool is_ready() const;
 		[[nodiscard]] bool is_disconnected() const;
 		[[nodiscard]] bool is_untrusted() const;

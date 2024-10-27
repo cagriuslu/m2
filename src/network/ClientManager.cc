@@ -2,19 +2,19 @@
 #include <m2/Log.h>
 
 m2::network::ClientManager::ClientManager(TcpSocket&& socket, int index)
-	: _index(index), _ip_address_and_port(socket.address_and_port()),
+	: _index(index), _ip_address_and_port(socket.ip_address_and_port()),
 	_state(Connected{TcpSocketManager{std::move(socket), index}}) {}
 
 bool m2::network::ClientManager::is_connected() const {
 	return std::holds_alternative<Connected>(_state) || std::holds_alternative<Ready>(_state)
 	    || std::holds_alternative<ReconnectedUntrusted>(_state);
 }
-int m2::network::ClientManager::fd() {
+m2::network::TcpSocket& m2::network::ClientManager::tcp_socket() {
 	return std::visit(m2::overloaded{
-			[](Connected& s) { return s.socket_manager.socket().fd(); },
-			[](Ready& s) { return s.socket_manager.socket().fd(); },
-			[](ReconnectedUntrusted& s) { return s.socket_manager.socket().fd(); },
-			[](auto&) -> int { throw M2_ERROR("fd unavailable, client is not connected"); },
+			[](Connected& s) -> TcpSocket& { return s.socket_manager.socket(); },
+			[](Ready& s) -> TcpSocket& { return s.socket_manager.socket(); },
+			[](ReconnectedUntrusted& s) -> TcpSocket& { return s.socket_manager.socket(); },
+			[](auto&) -> TcpSocket& { throw M2_ERROR("TcpSocket unavailable, client is not connected"); },
 		}, _state);
 }
 bool m2::network::ClientManager::is_ready() const {
@@ -77,7 +77,7 @@ void m2::network::ClientManager::honorably_disconnect() {
 
 
 void m2::network::ClientManager::untrusted_client_reconnected(TcpSocket&& socket) {
-	if (socket.address_and_port() != ip_address_and_port()) {
+	if (socket.ip_address_and_port() != ip_address_and_port()) {
 		throw M2_ERROR("Address and/or port mismatch");
 	}
 	if (not std::holds_alternative<HonorablyDisconnected>(_state)) {

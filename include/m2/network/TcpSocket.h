@@ -1,19 +1,23 @@
 #pragma once
+#include "IpAddressAndPort.h"
 #include "../Meta.h"
 
 namespace m2::network {
+	// Forward declarations
+	struct Select;
 	namespace detail {
-		class PlatformSpecificTcpSocketData;
+		struct PlatformSpecificTcpSocketData;
 	}
 
 	class TcpSocket {
 		detail::PlatformSpecificTcpSocketData* _platform_specific_data{};
-		int _fd{-1};
-		in_addr_t _addr{};
-		in_port_t _port{};
+		IpAddress _addr{};
+		Port _port{};
 
-		explicit TcpSocket(int fd) : _fd(fd) {}
-		TcpSocket(int fd, in_addr_t addr, in_port_t port) : _fd(fd), _addr(addr), _port(port) {}
+		// Server socket at the server and the client socket at the client are created with this constructor
+		explicit TcpSocket(int fd);
+		// Client sockets held by the server are created with this constructor
+		TcpSocket(int fd, IpAddress addr, Port port);
 
 	public:
 		static expected<TcpSocket> create();
@@ -23,8 +27,7 @@ namespace m2::network {
 		TcpSocket& operator=(TcpSocket&& other) noexcept;
 		~TcpSocket();
 
-		[[nodiscard]] int fd() const { return _fd; }
-		[[nodiscard]] std::pair<in_addr_t,in_port_t> address_and_port() const { return std::make_pair(_addr, _port); }
+		[[nodiscard]] IpAddressAndPort ip_address_and_port() const { return IpAddressAndPort{_addr, _port}; }
 
 		/// Returns true if successful. Returns false if failed due to EADDRINUSE. Otherwise, returns unexpected.
 		expected<bool> bind(uint16_t port);
@@ -54,5 +57,8 @@ namespace m2::network {
 		/// the system error string is returned. In this case, socket should be closed as no further data is expected.
 		expected<ssize_t> recv(uint8_t* buffer, size_t length);
 		expected<ssize_t> recv(char* buffer, size_t length) { return recv(reinterpret_cast<uint8_t*>(buffer), length); }
+
+		// Give Select class access to internals
+		friend Select;
 	};
 }

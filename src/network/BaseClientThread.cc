@@ -150,7 +150,6 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 		return thread_manager->_received_server_update || thread_manager->_received_server_command;
 	};
 
-
 	std::variant<std::monostate, TcpSocketManager, sdl::ticks_t> socket_manager_or_ticks_disconnected_at;
 	std::optional<PingBroadcastThread> ping_broadcast_thread;
 	while (locked_should_continue_running(thread_manager)) {
@@ -200,18 +199,19 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 					if (state == pb::CLIENT_INITIAL_STATE) {
 						// If the server has reached the maximum number of players, it'll accept connections and
 						// immediately close them. We need to check if the socket is still connected.
-						// Prepare read set for select
-						fd_set read_set; FD_ZERO(&read_set); FD_SET(socket->fd(), &read_set);
+						// Prepare socket handles for Select
+						TcpSocketHandles sockets_to_read;
+						sockets_to_read.emplace_back(&*socket);
 						// Select
-						auto select_result = select(socket->fd(), &read_set, nullptr, 1000);
+						auto select_result = Select{}(sockets_to_read, {}, 1000);
 						if (not select_result) {
 							throw M2_ERROR("Select failed: " + select_result.error());
 						}
-						if (*select_result == 0) {
+						if (*select_result == std::nullopt) {
 							// Timeout occurred, all good
 							socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
 							thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
-						} else if (FD_ISSET(socket->fd(), &read_set)) {
+						} else if (not select_result.value().value().first.empty()) {
 							// Server should not have sent anything until we signalled as ready.
 							LOG_WARN("Connection was closed from server because the socket is readable immediately upon connection");
 							// This means (most likely) that the server has disconnected the socket.
@@ -289,25 +289,23 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 				}
 			}
 
-			// Prepare sets for select
-			fd_set read_set, write_set;
-			FD_ZERO(&read_set); FD_ZERO(&write_set);
-			FD_SET(socket_manager.socket().fd(), &read_set);
+			// Prepare socket handles for Select
+			TcpSocketHandles sockets_to_read, sockets_to_write;
+			sockets_to_read.emplace_back(&socket_manager.socket());
 			if (socket_manager.has_outgoing_data() || locked_has_outgoing_message(thread_manager)) {
-				FD_SET(socket_manager.socket().fd(), &write_set);
+				sockets_to_write.emplace_back(&socket_manager.socket());
 			}
 			// Select
-			auto select_result = select(socket_manager.socket().fd(), &read_set, &write_set, 250);
+			auto select_result = Select{}(sockets_to_read, sockets_to_write, 250);
 			if (not select_result) {
 				throw M2_ERROR("Select failed: " + select_result.error());
 			}
-			if (*select_result == 0) {
-				// Time out occurred
+			if (not *select_result) {
+				// Timeout occurred
 				continue;
 			}
-
 			// If there's anything to read
-			if (FD_ISSET(socket_manager.socket().fd(), &read_set)) {
+			if (not select_result.value().value().first.empty()) {
 				const std::lock_guard lock(thread_manager->_mutex);
 				auto read_result = socket_manager.read_incoming_data(thread_manager->_incoming_queue);
 				if (not read_result) {
@@ -321,9 +319,8 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 					continue;
 				}
 			}
-
 			// If there's anything to write
-			if (FD_ISSET(socket_manager.socket().fd(), &write_set)) {
+			if (not select_result.value().value().second.empty()) {
 				const std::lock_guard lock(thread_manager->_mutex);
 				auto send_result = socket_manager.send_outgoing_data(thread_manager->_outgoing_queue);
 				if (not send_result) {
