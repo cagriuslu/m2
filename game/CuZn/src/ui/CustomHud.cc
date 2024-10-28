@@ -102,7 +102,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		.x = 0, .y = 15, .w = 30, .h = 5,
 		.border_width = 0.0f,
 		.variant = TextBlueprint{
-			.text = "Money Spent",
+			.text = "Money spent this turn",
 			.horizontal_alignment = TextHorizontalAlignment::LEFT,
 			.wrapped_font_size_in_units = 3.5f
 		}

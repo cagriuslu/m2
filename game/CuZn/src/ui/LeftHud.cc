@@ -116,6 +116,15 @@ const PanelBlueprint left_hud_blueprint = {
 			.x = 0, .y = 0, .w = 19, .h = 4,
 			.border_width = 0,
 			.variant = TextBlueprint{
+				.text = "Your player\nname:",
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.wrapped_font_size_in_units = 1.35f
+			}
+		},
+		WidgetBlueprint{
+			.x = 0, .y = 4, .w = 19, .h = 4,
+			.border_width = 0,
+			.variant = TextBlueprint{
 				.wrapped_font_size_in_units = 2.5f,
 				.on_create = [](MAYBE Text& self) {
 					auto text = generate_player_name(M2_GAME.self_index());
@@ -126,62 +135,70 @@ const PanelBlueprint left_hud_blueprint = {
 			}
 		},
 		WidgetBlueprint{
+			.x = 0, .y = 8, .w = 19, .h = 10,
+			.border_width = 0,
+			.variant = TextBlueprint{
+				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.wrapped_font_size_in_units = 1.35f,
+				.on_update = [](MAYBE Text& self) {
+					if (M2_GAME.is_our_turn()) {
+						if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
+							self.set_text("Take your\nlast action\nof this turn");
+						} else {
+							self.set_text("Take your\nfirst action\nof this turn");
+						}
+					} else {
+						if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
+							self.set_text("Current\nplayer will\ntake their\nlast action\nof this turn");
+						} else {
+							self.set_text("Current\nplayer will\ntake their\nfirst action\nof this turn");
+						}
+					}
+					return make_continue_action();
+				}
+			}
+		},
+		WidgetBlueprint{
 			.name = "BuildButton",
 			.initially_enabled = false,
-			.x = 2, .y = 5, .w = 15, .h = 4,
+			.x = 2, .y = 18, .w = 15, .h = 4,
 			.variant = build_button
 		},
 		WidgetBlueprint{
 			.name = "SellButton",
 			.initially_enabled = false,
-			.x = 2, .y = 10, .w = 15, .h = 4,
+			.x = 2, .y = 23, .w = 15, .h = 4,
 			.variant = sell_button
 		},
 		WidgetBlueprint{
 			.name = "NetworkButton",
 			.initially_enabled = false,
-			.x = 2, .y = 15, .w = 15, .h = 4,
+			.x = 2, .y = 28, .w = 15, .h = 4,
 			.variant = network_button
 		},
 		WidgetBlueprint{
 			.name = "LoanButton",
 			.initially_enabled = false,
-			.x = 2, .y = 20, .w = 15, .h = 4,
+			.x = 2, .y = 33, .w = 15, .h = 4,
 			.variant = loan_button
 		},
 		WidgetBlueprint{
 			.name = "DevelopButton",
 			.initially_enabled = false,
-			.x = 2, .y = 25, .w = 15, .h = 4,
+			.x = 2, .y = 38, .w = 15, .h = 4,
 			.variant = develop_button
 		},
 		WidgetBlueprint{
 			.name = "ScoutButton",
 			.initially_enabled = false,
-			.x = 2, .y = 30, .w = 15, .h = 4,
+			.x = 2, .y = 43, .w = 15, .h = 4,
 			.variant = scout_button
 		},
 		WidgetBlueprint{
 			.name = "PassButton",
 			.initially_enabled = false,
-			.x = 2, .y = 35, .w = 15, .h = 4,
+			.x = 2, .y = 48, .w = 15, .h = 4,
 			.variant = pass_button
-		},
-		WidgetBlueprint{
-			.x = 0, .y = 64, .w = 19, .h = 8,
-			.border_width = 0,
-			.variant = TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
-				.wrapped_font_size_in_units = 2.5f,
-				.on_update = [](MAYBE Text& self) {
-					if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
-						self.set_text("Last action");
-					} else {
-						self.set_text("First action");
-					}
-					return make_continue_action();
-				}
-			}
 		}
 	}
 };
