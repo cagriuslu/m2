@@ -178,13 +178,7 @@ void m2::network::ServerThread::send_server_update(bool shutdown_as_well) {
 
 	if (shutdown_as_well) {
 		LOG_INFO("Shutting down the server");
-		const std::lock_guard lock(_mutex);
-		// Flush output queues
-		for (auto i = 0; i < count; ++i) {
-			_clients[i].flush_and_shutdown();
-		}
-		// Set state
-		set_state_unlocked(pb::SERVER_SHUTDOWN);
+		set_state_locked(pb::SERVER_SHUTDOWN);
 	}
 }
 
@@ -408,6 +402,15 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 				// Write to socket
 				client.send_outgoing_data();
 			}
+		}
+	}
+
+	// If the server was shutdown (graceful closure of server), flush the clients.
+	if (server_thread->is_shutdown()) {
+		const std::lock_guard lock(server_thread->_mutex);
+		// Flush output queues
+		for (auto& client : server_thread->_clients) {
+			client.flush_and_shutdown();
 		}
 	}
 

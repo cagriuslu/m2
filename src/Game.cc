@@ -443,7 +443,7 @@ void m2::Game::handle_hud_events() {
 
 void m2::Game::handle_network_events() {
 	// Check if the game ended
-	if ((is_server() && host_client_thread().is_shutdown()) || (is_real_client() && real_client_thread().is_shutdown())) {
+	if ((is_server() && server_thread().is_shutdown()) || (is_real_client() && real_client_thread().is_shutdown())) {
 		_level.reset();
 		reset_state();
 		_multi_player_threads = std::monostate{};

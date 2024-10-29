@@ -8,6 +8,7 @@
 #include <m2/Game.h>
 #include <m2/ui/widget/TextInput.h>
 #include <cuzn/ui/Client.h>
+#include <cuzn/ui/GameResult.h>
 #include <cuzn/ui/PauseMenu.h>
 #include <cuzn/ui/MainMenu.h>
 #include <cuzn/ui/LeftHud.h>
@@ -437,14 +438,17 @@ void m2g::Proxy::post_server_update(bool shutdown) {
 		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.total_player_count())),
 		status_bar_window_ratio());
 
-	// Enable/disable buttons
-	if (M2_GAME.is_our_turn()) {
-		enable_action_buttons();
+	if (shutdown) {
+		LOG_INFO("Game is shutting down");
+		display_game_result();
 	} else {
-		disable_action_buttons();
+		// Enable/disable buttons
+		if (M2_GAME.is_our_turn()) {
+			enable_action_buttons();
+		} else {
+			disable_action_buttons();
+		}
 	}
-
-	// TODO handle shutdown
 }
 
 void m2g::Proxy::bot_handle_server_update(const m2::pb::ServerUpdate& server_update) {
