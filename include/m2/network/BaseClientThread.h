@@ -16,7 +16,6 @@ namespace m2::network::detail {
 		const std::string _addr;
 		const bool _ping_broadcast{};
 		uint64_t _ready_token{};
-		std::thread _thread;
 
 		// Shared variables
 		std::latch _latch{1};
@@ -26,8 +25,11 @@ namespace m2::network::detail {
 		std::optional<pb::ServerUpdate> _received_server_update;
 		std::optional<m2g::pb::ServerCommand> _received_server_command;
 
-		// Thread variables
+		// Inner thread variables
 		uint64_t _level_token{};
+
+		// Initialize the thread after the shared variables
+		std::thread _thread;
 
 	protected:
 		void latch() { _latch.count_down(); } // This function must be called from the inherited class' constructor

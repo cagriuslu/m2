@@ -17,19 +17,21 @@ namespace m2::network {
 		// Main thread variables
 		const mplayer::Type _type{};
 		const unsigned _max_connection_count{};
-		std::thread _thread;
 
 		// Shared variables
 		std::latch _latch{1};
-		std::mutex _mutex;
+		std::mutex _mutex{};
 		pb::ServerState _state{pb::ServerState::SERVER_INITIAL_STATE};
 		std::vector<ClientManager> _clients;
 		bool _has_reconnected_client{};
 		int _turn_holder{};
 		std::optional<pb::NetworkMessage> _received_client_command;
 
-		// Thread variables
+		// Inner thread variables
 		std::optional<PingBroadcastThread> _ping_broadcast_thread;
+
+		// Initialize the thread after the shared variables
+		std::thread _thread;
 
 	public:
 		ServerThread() = default;

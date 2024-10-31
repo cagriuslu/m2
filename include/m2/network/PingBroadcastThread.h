@@ -11,13 +11,13 @@ namespace m2::network {
 	// I've observed that macOS allows us to ping the broadcast address, and other macOS machine even respond to pings
 	// coming from the broadcast IP. Firewalls were disabled.
 	class PingBroadcastThread {
-		// Main thread variables
-		std::thread _thread;
-
 		// Shared variables
 		std::latch _latch{1};
-		std::mutex _mutex;
+		std::mutex _mutex{};
 		bool _quit{};
+
+		// Initialize the thread after the shared variables
+		std::thread _thread;
 
 	public:
 		PingBroadcastThread();
