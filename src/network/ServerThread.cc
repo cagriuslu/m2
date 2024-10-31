@@ -407,6 +407,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 
 	// If the server was shutdown (graceful closure of server), flush the clients.
 	if (server_thread->is_shutdown()) {
+		LOG_DEBUG("Flushing clients");
 		const std::lock_guard lock(server_thread->_mutex);
 		// Flush output queues
 		for (auto& client : server_thread->_clients) {

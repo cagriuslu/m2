@@ -18,6 +18,13 @@ m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create() {
 		return m2::make_unexpected(strerror(errno));
 	}
 
+	// Enable linger for 10 seconds, because when the game is finished, the server sends the final ServerUpdate and
+	// immediately closes the connection
+	linger l{.l_onoff = 1, .l_linger = 10};
+	if (setsockopt(socket_result, SOL_SOCKET, SO_LINGER, &l, sizeof(l)) == -1) {
+		LOG_WARN("Unable to enable TCP linger", std::string(strerror(errno)));
+	}
+
 	return TcpSocket{socket_result};
 }
 

@@ -15,6 +15,9 @@
 /// Info: Minimal indication of expected operation
 /// Debug: Everything that is attempted and completed
 /// Trace: Like Debug, but for each frame
+// TODO it doesn't make sense to have one type of TRACE level. We need to have Network/Game/Physics/etc. types of traces
+// TODO and we should be able to selectively enable them. Also we need to keep them quick if they're disabled. For
+// TODO example, by putting those calls inside if blocks.
 
 #define LOGF_TRACE(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::TRC, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)
 #define LOGF_DEBUG(fmt, ...) ::m2::detail::logf(::m2::pb::LogLevel::DBG, __FILE__, __LINE__, (fmt), ##__VA_ARGS__)

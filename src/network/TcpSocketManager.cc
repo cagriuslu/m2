@@ -118,10 +118,25 @@ m2::expected<m2::network::TcpSocketManager::SendResult> m2::network::TcpSocketMa
 }
 
 void m2::network::TcpSocketManager::flush(std::queue<pb::NetworkMessage>& read_from, int timeout_ms) {
+	auto has_anything_to_send = [&](){
+		return (has_outgoing_data() || not read_from.empty());
+	};
+
+	// Early out
+	if (not has_anything_to_send()) {
+		return;
+	}
+
 	auto start_ticks = sdl::get_ticks();
-	while ((start_ticks + timeout_ms < sdl::get_ticks()) && (has_outgoing_data() || not read_from.empty())) {
+	while ((sdl::get_ticks() - start_ticks < timeout_ms) && has_anything_to_send()) {
 		if (auto send_result = send_outgoing_data(read_from); not send_result || send_result != SendResult::OK) {
+			LOG_WARN("Error while flushing", send_result.error());
 			break;
 		}
+	}
+	if (read_from.empty()) {
+		LOG_DEBUG("Outgoing data has drained");
+	} else {
+		LOG_DEBUG("Timeout occurred while flushing");
 	}
 }
