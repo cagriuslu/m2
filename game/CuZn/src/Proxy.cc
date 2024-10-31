@@ -22,6 +22,7 @@
 #include "cuzn/object/Road.h"
 #include "cuzn/ui/Detail.h"
 #include <algorithm>
+#include <cuzn/Scoring.h>
 #include <cuzn/ui/ActionNotification.h>
 #include <numeric>
 #include <cuzn/ui/CustomHud.h>
@@ -237,6 +238,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 				M2_GAME.server_thread().send_server_command(action_notification_command, i);
 			}
 		}
+		// TODO when the game ends, this is sent to the host, but game ending calls post_server_update without network
+		//  delay, so the game result is shown before this action notification
 
 		// Discard card from player
 		if (card_to_discard) {
@@ -284,26 +287,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			if (not liquidation_necessary) {
 				LOG_INFO("Ending canal era");
 
-				// Score links
-				std::ranges::for_each(
-					M2G_PROXY.multi_player_object_ids
-					| std::views::transform(m2::to_object_of_id)
-					| std::views::transform(m2::to_character_of_object),
-					[](m2::Character& player) {
-						player.add_resource(pb::VICTORY_POINTS, m2::F(player_link_count(player)));
-					});
-				remove_all_roads();
-
-				// Score sold factories
-				std::ranges::for_each(M2_LEVEL.characters
-					| std::views::transform(m2::to_character_base)
-					| std::views::filter(is_factory_character)
-					| std::views::filter(is_factory_sold),
-					[](m2::Character& factory) {
-						auto& player = factory.owner();
-						player.character().add_resource(pb::VICTORY_POINTS, factory.get_attribute(pb::VICTORY_POINTS_BONUS));
-					});
-				remove_obsolete_factories();
+				score_links_and_remove_roads();
+				score_sold_factories_and_remove_obsolete();
 
 				// Send canal era results
 				m2g::pb::ServerCommand canal_era_result_command;
@@ -343,7 +328,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			}
 		} else {
 			LOG_INFO("Ending game");
-			// TODO end game
+			score_links_and_remove_roads();
+			score_sold_factories_and_remove_obsolete();
 		}
 	} else if (_is_first_turn) {
 		// In first turn, the players have odd number of cards.
