@@ -117,6 +117,12 @@
       "name": "CuZn-libgtest",
       "configurePreset": "CuZn",
       "targets": "libgtest"
+    },
+    {
+      "name": "CuZn",
+      "configurePreset": "CuZn",
+      "targets": "m2",
+      "jobs": 10
     }
   ]
 }
