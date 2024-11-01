@@ -9,7 +9,7 @@
     {
       "name": "DEBUG",
       "hidden": true,
-      "generator": "Unix Makefiles",
+      "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "DEBUG": "ON"
