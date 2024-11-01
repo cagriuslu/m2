@@ -74,74 +74,30 @@ SellJourney::~SellJourney() {
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_signal(const POIOrCancelSignal& s) {
-	struct Handlers {
-		std::optional<SellJourneyStep> (SellJourney::*enter_handler)();
-		std::optional<SellJourneyStep> (SellJourney::*location_handler)(Location);
-		std::optional<SellJourneyStep> (SellJourney::*cancel_handler)();
-		std::optional<SellJourneyStep> (SellJourney::*exit_handler)();
-	};
-	std::initializer_list<std::pair<SellJourneyStep, Handlers>> handlers = {
-		{SellJourneyStep::INITIAL_STEP, {
-			&SellJourney::handle_initial_enter_signal,
-			nullptr,
-			nullptr,
-			nullptr
-		}},
-		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, {
-			&SellJourney::handle_industry_location_enter_signal,
-			&SellJourney::handle_industry_location_poi_signal,
-			&SellJourney::handle_industry_location_cancel_signal,
-			&SellJourney::handle_industry_location_exit_signal
-		}},
-		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, {
-			&SellJourney::handle_merchant_location_enter_signal,
-			&SellJourney::handle_merchant_location_poi_signal,
-			&SellJourney::handle_merchant_location_cancel_signal,
-			&SellJourney::handle_merchant_location_exit_signal
-		}},
-		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, {
-			&SellJourney::handle_resource_enter_signal,
-			&SellJourney::handle_resource_poi_signal,
-			&SellJourney::handle_resource_cancel_signal,
-			&SellJourney::handle_resource_exit_signal
-		}},
-		{SellJourneyStep::EXPECT_DEVELOP_BENEFIT_INDUSTRY_TILE, {
-			&SellJourney::handle_develop_benefit_industry_tile_enter_signal,
-			nullptr,
-			nullptr,
-			nullptr
-		}},
-		{SellJourneyStep::EXPECT_CONFIRMATION, {
-			&SellJourney::handle_confirmation_enter_signal,
-			nullptr,
-			nullptr,
-			nullptr
-		}},
-	};
+	static std::initializer_list<std::tuple<
+			SellJourneyStep,
+			FsmSignalType,
+			std::optional<SellJourneyStep> (SellJourney::*)(),
+			std::optional<SellJourneyStep> (SellJourney::*)(const POIOrCancelSignal &)>> handlers = {
+			{SellJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &SellJourney::handle_initial_enter_signal, nullptr},
 
-	auto handler_it = std::ranges::find_if(handlers, [this](const auto& pair) { return pair.first == state(); });
-	switch (s.type()) {
-		case FsmSignalType::EnterState:
-			if (handler_it->second.enter_handler) {
-				return std::invoke(handler_it->second.enter_handler, this);
-			}
-			break;
-		case FsmSignalType::Custom:
-			if (auto poi = s.poi_or_cancel(); poi && handler_it->second.location_handler) {
-				return std::invoke(handler_it->second.location_handler, this, *poi);
-			} else if (handler_it->second.cancel_handler) {
-				return std::invoke(handler_it->second.cancel_handler, this);
-			}
-			break;
-		case FsmSignalType::ExitState:
-			if (handler_it->second.exit_handler) {
-				return std::invoke(handler_it->second.exit_handler, this);
-			}
-			break;
-		default:
-			throw M2_ERROR("Unexpected signal");
-	}
-	return std::nullopt;
+			{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_industry_location_enter_signal, nullptr},
+			{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_industry_location_poi_or_cancel_signal},
+			{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_industry_location_exit_signal, nullptr},
+
+			{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_merchant_location_enter_signal, nullptr},
+			{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_merchant_location_poi_or_cancel_signal},
+			{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_merchant_location_exit_signal, nullptr},
+
+			{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &SellJourney::handle_resource_enter_signal, nullptr},
+			{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &SellJourney::handle_resource_poi_or_cancel_signal},
+			{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &SellJourney::handle_resource_exit_signal, nullptr},
+
+			{SellJourneyStep::EXPECT_DEVELOP_BENEFIT_INDUSTRY_TILE, FsmSignalType::EnterState, &SellJourney::handle_develop_benefit_industry_tile_enter_signal, nullptr},
+
+			{SellJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &SellJourney::handle_confirmation_enter_signal, nullptr},
+	};
+	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_initial_enter_signal() {
@@ -161,14 +117,14 @@ std::optional<SellJourneyStep> SellJourney::handle_industry_location_enter_signa
 	return std::nullopt;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_industry_location_poi_signal(POI poi) {
-	_selected_location = poi;
-	return SellJourneyStep::EXPECT_MERCHANT_LOCATION;
-}
-
-std::optional<SellJourneyStep> SellJourney::handle_industry_location_cancel_signal() {
-	M2_DEFER(m2g::Proxy::main_journey_deleter);
-	return std::nullopt;
+std::optional<SellJourneyStep> SellJourney::handle_industry_location_poi_or_cancel_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {
+		_selected_location = *s.poi_or_cancel();
+		return SellJourneyStep::EXPECT_MERCHANT_LOCATION;
+	} else {
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
+		return std::nullopt;
+	}	
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_industry_location_exit_signal() {
@@ -184,14 +140,14 @@ std::optional<SellJourneyStep> SellJourney::handle_merchant_location_enter_signa
 	return std::nullopt;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_merchant_location_poi_signal(POI poi) {
-	_merchant_location = poi;
-	return SellJourneyStep::EXPECT_RESOURCE_SOURCE;
-}
-
-std::optional<SellJourneyStep> SellJourney::handle_merchant_location_cancel_signal() {
-	M2_DEFER(m2g::Proxy::main_journey_deleter);
-	return std::nullopt;
+std::optional<SellJourneyStep> SellJourney::handle_merchant_location_poi_or_cancel_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {
+		_merchant_location = *s.poi_or_cancel();
+		return SellJourneyStep::EXPECT_RESOURCE_SOURCE;
+	} else {
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
+		return std::nullopt;
+	}
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_merchant_location_exit_signal() {
@@ -229,26 +185,27 @@ std::optional<SellJourneyStep> SellJourney::handle_resource_enter_signal() {
 	}
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_resource_poi_signal(POI poi) {
-	// Reserve the resource
-	if (is_industry_location(poi)) {
-		auto* factory = find_factory_at_location(poi);
-		factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
-		_reserved_beers.emplace_back(factory);
-	} else if (is_merchant_location(poi)) {
-		auto* merchant = find_merchant_at_location(poi);
-		merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
-		_reserved_beers.emplace_back(merchant);
+std::optional<SellJourneyStep> SellJourney::handle_resource_poi_or_cancel_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {	
+		auto poi = *s.poi_or_cancel();
+		// Reserve the resource
+		if (is_industry_location(poi)) {
+			auto* factory = find_factory_at_location(poi);
+			factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+			_reserved_beers.emplace_back(factory);
+		} else if (is_merchant_location(poi)) {
+			auto* merchant = find_merchant_at_location(poi);
+			merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
+			_reserved_beers.emplace_back(merchant);
+		}
+		// Specify source
+		*std::find(_beer_sources.begin(), _beer_sources.end(), NO_SPRITE) = poi;
+		// Re-enter resource selection
+		return SellJourneyStep::EXPECT_RESOURCE_SOURCE;
+	} else {
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
+		return std::nullopt;
 	}
-	// Specify source
-	*std::find(_beer_sources.begin(), _beer_sources.end(), NO_SPRITE) = poi;
-	// Re-enter resource selection
-	return SellJourneyStep::EXPECT_RESOURCE_SOURCE;
-}
-
-std::optional<SellJourneyStep> SellJourney::handle_resource_cancel_signal() {
-	M2_DEFER(m2g::Proxy::main_journey_deleter);
-	return std::nullopt;
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_resource_exit_signal() {
