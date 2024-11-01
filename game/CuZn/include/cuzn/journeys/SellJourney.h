@@ -26,6 +26,8 @@ public:
 	SellJourney();
 	~SellJourney() override;
 
+	std::optional<POISelectionJourney> sub_journey;
+
 protected:
 	std::optional<SellJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
 	std::optional<SellJourneyStep> handle_initial_enter_signal();

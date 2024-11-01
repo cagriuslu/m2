@@ -112,8 +112,8 @@ std::optional<SellJourneyStep> SellJourney::handle_initial_enter_signal() {
 
 std::optional<SellJourneyStep> SellJourney::handle_industry_location_enter_signal() {
 	auto sellable_locations = sellable_factory_locations_with_merchant_connection(M2_PLAYER.character());
-	M2G_PROXY.sub_journey.emplace(sellable_locations, "Pick the industry to sell...");
-	M2G_PROXY.sub_journey->init(POISelectionJourneyStep::INITIAL_STEP);
+	sub_journey.emplace(sellable_locations, "Pick the industry to sell...");
+	sub_journey->init(POISelectionJourneyStep::INITIAL_STEP);
 	return std::nullopt;
 }
 
@@ -128,15 +128,15 @@ std::optional<SellJourneyStep> SellJourney::handle_industry_location_poi_or_canc
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_industry_location_exit_signal() {
-	M2G_PROXY.sub_journey->deinit();
-	M2G_PROXY.sub_journey.reset();
+	sub_journey->deinit();
+	sub_journey.reset();
 	return std::nullopt;
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_merchant_location_enter_signal() {
 	auto merchants_buying = merchants_buying_industry_on_location(_selected_location);
-	M2G_PROXY.sub_journey.emplace(merchants_buying, "Pick the merchant to sell to...");
-	M2G_PROXY.sub_journey->init(POISelectionJourneyStep::INITIAL_STEP);
+	sub_journey.emplace(merchants_buying, "Pick the merchant to sell to...");
+	sub_journey->init(POISelectionJourneyStep::INITIAL_STEP);
 	return std::nullopt;
 }
 
@@ -151,8 +151,8 @@ std::optional<SellJourneyStep> SellJourney::handle_merchant_location_poi_or_canc
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_merchant_location_exit_signal() {
-	M2G_PROXY.sub_journey->deinit();
-	M2G_PROXY.sub_journey.reset();
+	sub_journey->deinit();
+	sub_journey.reset();
 	return std::nullopt;
 }
 
@@ -171,8 +171,8 @@ std::optional<SellJourneyStep> SellJourney::handle_resource_enter_signal() {
 				M2_DEFER(m2g::Proxy::main_journey_deleter);
 				return std::nullopt;
 			} else {
-				M2G_PROXY.sub_journey.emplace(beer_sources, "Pick a beer source...");
-				M2G_PROXY.sub_journey->init(POISelectionJourneyStep::INITIAL_STEP);
+				sub_journey.emplace(beer_sources, "Pick a beer source...");
+				sub_journey->init(POISelectionJourneyStep::INITIAL_STEP);
 				return std::nullopt;
 			}
 		} else {
@@ -209,9 +209,9 @@ std::optional<SellJourneyStep> SellJourney::handle_resource_poi_or_cancel_signal
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_resource_exit_signal() {
-	if (M2G_PROXY.sub_journey) {
-		M2G_PROXY.sub_journey->deinit();
-		M2G_PROXY.sub_journey.reset();
+	if (sub_journey) {
+		sub_journey->deinit();
+		sub_journey.reset();
 	}
 	return std::nullopt;
 }

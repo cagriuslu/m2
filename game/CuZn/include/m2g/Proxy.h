@@ -58,7 +58,6 @@ namespace m2g {
 		// User journeys
 		std::optional<std::variant<BuildJourney, NetworkJourney, DevelopJourney, LiquidationJourney>> user_journey;
 		std::optional<std::variant<SellJourney>> main_journeys;
-		std::optional<POISelectionJourney> sub_journey;
 		static void user_journey_deleter();
 		static void main_journey_deleter();
 

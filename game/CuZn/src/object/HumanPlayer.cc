@@ -96,8 +96,10 @@ m2::void_expected init_human_player(m2::Object& obj) {
 
 		// Check if mouse button pressed
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::SECONDARY)) {
-			if (auto& sub_journey = M2G_PROXY.sub_journey) {
-				sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.mouse_position_world_m()));
+			if (M2G_PROXY.main_journeys) {
+				std::visit(m2::overloaded{
+					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.mouse_position_world_m())); }
+				}, *M2G_PROXY.main_journeys);
 			} else if (auto& user_journey = m2g::Proxy::get_instance().user_journey) {
 				// Deliver position signal to current Journey
 				std::visit(m2::overloaded{
