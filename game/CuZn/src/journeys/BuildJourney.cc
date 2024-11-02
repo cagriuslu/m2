@@ -148,6 +148,7 @@ BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, PositionOrCancelSig
 }
 
 BuildJourney::~BuildJourney() {
+	deinit();
 	// Return the reserved resources
 	for (auto [factory, resource_type] : _reserved_resources) {
 		factory->character().add_resource(resource_type, 1.0f);

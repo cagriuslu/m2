@@ -21,7 +21,7 @@ namespace {
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto build_prerequisite = can_player_attempt_to_build(M2_PLAYER.character())) {
-				m2g::Proxy::get_instance().user_journey.emplace(BuildJourney{});
+				m2g::Proxy::get_instance().user_journey.emplace(std::in_place_type<BuildJourney>); // Avoid a temporary
 			} else {
 				M2G_PROXY.show_notification(build_prerequisite.error());
 			}
@@ -34,7 +34,7 @@ namespace {
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto develop_prerequisite = can_player_attempt_to_develop(M2_PLAYER.character())) {
-				m2g::Proxy::get_instance().user_journey.emplace(DevelopJourney{});
+				m2g::Proxy::get_instance().user_journey.emplace(std::in_place_type<DevelopJourney>);
 			} else {
 				M2G_PROXY.show_notification(develop_prerequisite.error());
 			}
@@ -60,7 +60,7 @@ namespace {
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto network_prerequisite = can_player_attempt_to_network(M2_PLAYER.character())) {
-				m2g::Proxy::get_instance().user_journey.emplace(NetworkJourney{});
+				m2g::Proxy::get_instance().user_journey.emplace(std::in_place_type<NetworkJourney>);
 			} else {
 				M2G_PROXY.show_notification(network_prerequisite.error());
 			}
@@ -97,7 +97,7 @@ namespace {
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto sell_prerequisite = can_player_attempt_to_sell(M2_PLAYER.character())) {
-				m2g::Proxy::get_instance().main_journeys.emplace(SellJourney{});
+				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<SellJourney>);
 			} else {
 				M2G_PROXY.show_notification(sell_prerequisite.error());
 			}

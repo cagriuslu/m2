@@ -66,6 +66,7 @@ SellJourney::SellJourney() : m2::FsmBase<SellJourneyStep, POIOrCancelSignal>() {
 }
 
 SellJourney::~SellJourney() {
+	deinit();
 	// Return the reserved resources
 	for (auto* object : _reserved_beers) {
 		object->character().add_resource(BEER_BARREL_COUNT, 1.0f);

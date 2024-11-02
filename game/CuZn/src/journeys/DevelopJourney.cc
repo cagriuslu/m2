@@ -32,6 +32,7 @@ DevelopJourney::DevelopJourney() : FsmBase() {
 }
 
 DevelopJourney::~DevelopJourney() {
+	deinit();
 	// Return the reserved resources
 	if (_reserved_source_1) {
 		_reserved_source_1->character().add_resource(IRON_CUBE_COUNT, 1.0f);

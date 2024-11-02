@@ -179,13 +179,13 @@ m2::SoundEmitter& m2::Object::add_sound_emitter() {
 	return *sound;
 }
 m2::Character& m2::Object::add_tiny_character() {
-    auto character = M2_LEVEL.characters.emplace(TinyCharacter{id()});
+    auto character = M2_LEVEL.characters.emplace(std::in_place_type<TinyCharacter>, id());
     _character_id = character.id();
     LOG_TRACE("Added tiny character", _character_id);
     return std::get<TinyCharacter>(*character);
 }
 m2::Character& m2::Object::add_full_character() {
-    auto character = M2_LEVEL.characters.emplace(FullCharacter{id()});
+    auto character = M2_LEVEL.characters.emplace(std::in_place_type<FullCharacter>, id());
     _character_id = character.id();
     LOG_TRACE("Added full character", _character_id);
     return std::get<FullCharacter>(*character);

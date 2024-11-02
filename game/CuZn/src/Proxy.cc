@@ -404,7 +404,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 	} else if (server_command.has_liquidate_assets_for_loan()) {
 		LOG_INFO("Received liquidate command, beginning liquidation journey");
 		auto money_to_be_paid = server_command.liquidate_assets_for_loan();
-		M2G_PROXY.user_journey.emplace(LiquidationJourney{money_to_be_paid});
+		M2G_PROXY.user_journey.emplace(std::in_place_type<LiquidationJourney>, money_to_be_paid);
 	} else if (server_command.has_canal_era_result()) {
 		LOG_INFO("Received CanalEraResult command");
 		display_canal_era_result(server_command.canal_era_result());
@@ -540,16 +540,10 @@ m2g::Proxy& m2g::Proxy::get_instance() {
 }
 
 void m2g::Proxy::user_journey_deleter() {
-	std::visit(m2::overloaded {
-		[](auto& uj){ uj.deinit(); }
-	}, *get_instance().user_journey);
 	get_instance().user_journey.reset();
 }
 
 void m2g::Proxy::main_journey_deleter() {
-	std::visit(m2::overloaded {
-		[](auto& uj){ uj.deinit(); }
-	}, *get_instance().main_journeys);
 	get_instance().main_journeys.reset();
 }
 

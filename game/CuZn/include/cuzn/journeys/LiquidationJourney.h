@@ -13,6 +13,7 @@ class LiquidationJourney : public m2::FsmBase<LiquidationJourneyStep, PositionOr
 
 public:
 	explicit LiquidationJourney(int money_to_be_paid);
+	~LiquidationJourney() override { deinit(); }
 
 protected:
 	std::optional<LiquidationJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;

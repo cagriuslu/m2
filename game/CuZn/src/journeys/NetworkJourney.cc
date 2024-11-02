@@ -63,6 +63,7 @@ NetworkJourney::NetworkJourney() : FsmBase() {
 }
 
 NetworkJourney::~NetworkJourney() {
+	deinit();
 	for (auto& source : _resource_sources) {
 		if (source.reserved_object) {
 			source.reserved_object->character().add_resource(source.resource_type, 1.0f);

@@ -27,9 +27,12 @@ namespace m2 {
 		[[nodiscard]] inline FsmSignalType type() const { return _signal_type; }
 	};
 
-	/// Base class of all FSMs
-	/// State should contain information that effects the behavior drastically
-	/// Other data can be stored as derived class' member
+	/// Base class of all FSMs. Partition the behavior into states where a signal might be handled differently  from the
+	/// others. During or after construction, the child class must call init(initial_state) to initialize the machine.
+	/// deinit() must be called before or during the destructor to deinitialize the machine. Some FSMs (ex user
+	/// journeys) are designed to be singletons and have side effects. Make sure no unwanted temporaries are
+	/// constructed/destructed while creating these FSMs. Use std::in_place to store them in std::optional, or
+	/// std::in_place_type to store them in std::variant.
 	template <typename StateEnum, typename SignalT>
 	class FsmBase {
 		static_assert(std::is_base_of_v<FsmSignalBase,SignalT> == true);
@@ -41,8 +44,8 @@ namespace m2 {
 	public:
 		virtual ~FsmBase() = default;
 
-		/// This function should be called after construction because handle_signal virtual function is unavailable
-		/// during construction.
+		/// Must be called by the child class constructor because handle_signal will be called with Enter signal to
+		/// enter the initial state.
 		void init(StateEnum initial_state) {
 			if (_state) {
 				throw M2_ERROR("FSM already initialized");
@@ -51,7 +54,8 @@ namespace m2 {
 			signal(SignalT{FsmSignalType::EnterState});
 		}
 
-		/// This function should be called explicityly before shutting down the finite state machine.
+		/// Must be called by the child class destructor because handle_signal will be called with Exit signal to exit
+		/// the current state.
 		void deinit() {
 			if (_state) {
 				signal(SignalT{FsmSignalType::ExitState});
