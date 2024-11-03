@@ -80,23 +80,23 @@ std::optional<SellJourneyStep> SellJourney::handle_signal(const POIOrCancelSigna
 			FsmSignalType,
 			std::optional<SellJourneyStep> (SellJourney::*)(),
 			std::optional<SellJourneyStep> (SellJourney::*)(const POIOrCancelSignal &)>> handlers = {
-			{SellJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &SellJourney::handle_initial_enter_signal, nullptr},
+		{SellJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &SellJourney::handle_initial_enter_signal, nullptr},
 
-			{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_industry_location_enter_signal, nullptr},
-			{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_industry_location_poi_or_cancel_signal},
-			{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_industry_location_exit_signal, nullptr},
+		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_industry_location_enter_signal, nullptr},
+		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_industry_location_poi_or_cancel_signal},
+		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_industry_location_exit_signal, nullptr},
 
-			{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_merchant_location_enter_signal, nullptr},
-			{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_merchant_location_poi_or_cancel_signal},
-			{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_merchant_location_exit_signal, nullptr},
+		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_merchant_location_enter_signal, nullptr},
+		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_merchant_location_poi_or_cancel_signal},
+		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_merchant_location_exit_signal, nullptr},
 
-			{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &SellJourney::handle_resource_enter_signal, nullptr},
-			{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &SellJourney::handle_resource_poi_or_cancel_signal},
-			{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &SellJourney::handle_resource_exit_signal, nullptr},
+		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &SellJourney::handle_resource_enter_signal, nullptr},
+		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &SellJourney::handle_resource_poi_or_cancel_signal},
+		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &SellJourney::handle_resource_exit_signal, nullptr},
 
-			{SellJourneyStep::EXPECT_DEVELOP_BENEFIT_INDUSTRY_TILE, FsmSignalType::EnterState, &SellJourney::handle_develop_benefit_industry_tile_enter_signal, nullptr},
+		{SellJourneyStep::EXPECT_DEVELOP_BENEFIT_INDUSTRY_TILE, FsmSignalType::EnterState, &SellJourney::handle_develop_benefit_industry_tile_enter_signal, nullptr},
 
-			{SellJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &SellJourney::handle_confirmation_enter_signal, nullptr},
+		{SellJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &SellJourney::handle_confirmation_enter_signal, nullptr},
 	};
 	return handle_signal_using_handler_map(handlers, *this, s);
 }

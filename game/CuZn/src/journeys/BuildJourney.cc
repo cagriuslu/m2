@@ -9,7 +9,6 @@
 #include <m2/Game.h>
 #include <cuzn/object/Factory.h>
 #include <cuzn/detail/Network.h>
-#include <cuzn/object/GameStateTracker.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -157,49 +156,24 @@ BuildJourney::~BuildJourney() {
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_signal(const PositionOrCancelSignal& s) {
-	switch (state()) {
-		case BuildJourneyStep::INITIAL_STEP:
-			switch (s.type()) {
-				case m2::FsmSignalType::EnterState: return handle_initial_enter_signal();
-				case m2::FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
-			}
-		case BuildJourneyStep::EXPECT_LOCATION:
-			switch (s.type()) {
-				case m2::FsmSignalType::EnterState: return handle_location_enter_signal();
-				case m2::FsmSignalType::Custom: {
-					if (auto world_position = s.world_position(); world_position) {
-						return handle_location_mouse_click_signal(*world_position);
-					} else if (s.cancel()) {
-						return handle_location_cancel_signal();
-					}
-					throw M2_ERROR("Unexpected signal");
-				}
-				case m2::FsmSignalType::ExitState: return handle_location_exit_signal();
-				default: throw M2_ERROR("Unexpected signal");
-			}
-		case BuildJourneyStep::EXPECT_RESOURCE_SOURCE:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_resource_enter_signal();
-				case FsmSignalType::Custom: {
-					if (auto world_position = s.world_position(); world_position) {
-						return handle_resource_mouse_click_signal(*world_position);
-					} else if (s.cancel()) {
-						return handle_resource_cancel_signal();
-					}
-					throw M2_ERROR("Unexpected signal");
-				}
-				case FsmSignalType::ExitState: return handle_resource_exit_signal();
-				default: throw M2_ERROR("Unexpected signal");
-			}
-			return std::nullopt;
-		case BuildJourneyStep::EXPECT_CONFIRMATION:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
-				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
-			}
-	}
+	static const std::initializer_list<std::tuple<
+			BuildJourneyStep,
+			FsmSignalType,
+			std::optional<BuildJourneyStep>(BuildJourney::*)(),
+			std::optional<BuildJourneyStep>(BuildJourney::*)(const PositionOrCancelSignal&)>>& handlers = {
+		{BuildJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &BuildJourney::handle_initial_enter_signal, nullptr},
+
+		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &BuildJourney::handle_location_enter_signal, nullptr},
+		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::Custom, nullptr, &BuildJourney::handle_location_mouse_click_signal},
+		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::ExitState, &BuildJourney::handle_location_exit_signal, nullptr},
+
+		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &BuildJourney::handle_resource_enter_signal, nullptr},
+		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &BuildJourney::handle_resource_mouse_click_signal},
+		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &BuildJourney::handle_resource_exit_signal, nullptr},
+
+		{BuildJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &BuildJourney::handle_confirmation_enter_signal, nullptr},
+	};
+	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
@@ -218,61 +192,62 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 	M2G_PROXY.show_notification("Pick a location using right mouse button");
 	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
-	auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
+	const auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
 	M2_LEVEL.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_industry_location_bg_tiles(buildable_locs));
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal(const m2::VecF& world_position) {
-	LOG_DEBUG("Received mouse click", world_position);
-	if (auto selected_loc = industry_location_on_position(world_position)) {
-		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
-		// TODO verify that the location can be buildable, otherwise ignore the click
+std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal(const PositionOrCancelSignal& s) {
+	if (s.world_position()) {
+		const m2::VecF& world_position = *s.world_position();
+		LOG_DEBUG("Received mouse click", world_position);
+		if (auto selected_loc = industry_location_on_position(world_position)) {
+			LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
+			// TODO verify that the location can be buildable, otherwise ignore the click
 
-		// Check if there's a need to make an industry selection based on the card and the sprite
-		if (auto buildable_inds = buildable_industries(_selected_card, *selected_loc); buildable_inds.empty()) {
-			M2G_PROXY.show_notification("Selected position cannot be built with the selected card");
-			return std::nullopt;
-		} else if (buildable_inds.size() == 2) {
-			if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
-				_selected_industry = *selected_industry;
+			// Check if there's a need to make an industry selection based on the card and the sprite
+			if (auto buildable_inds = buildable_industries(_selected_card, *selected_loc); buildable_inds.empty()) {
+				M2G_PROXY.show_notification("Selected position cannot be built with the selected card");
+				return std::nullopt;
+			} else if (buildable_inds.size() == 2) {
+				if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
+					_selected_industry = *selected_industry;
+				} else {
+					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					return std::nullopt;
+				}
+			} else if (buildable_inds.size() == 1) {
+				_selected_industry = buildable_inds[0];
 			} else {
+				throw M2_ERROR("Implementation error, more than 2 selectable industries in one location");
+			}
+			_selected_location = *selected_loc;
+
+			// Check if the player has a factory to build
+			auto tile_type = get_next_industry_tile_of_category(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
+			if (not tile_type) {
+				M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
 				M2_DEFER(m2g::Proxy::user_journey_deleter);
 				return std::nullopt;
 			}
-		} else if (buildable_inds.size() == 1) {
-			_selected_industry = buildable_inds[0];
-		} else {
-			throw M2_ERROR("Implementation error, more than 2 selectable industries in one location");
-		}
-		_selected_location = *selected_loc;
+			_industry_tile = *tile_type;
 
-		// Check if the player has a factory to build
-		auto tile_type = get_next_industry_tile_of_category(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
-		if (not tile_type) {
-			M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
-			M2_DEFER(m2g::Proxy::user_journey_deleter);
-			return std::nullopt;
+			// Create empty entries in resource_sources for every required resource
+			_resource_sources.insert(_resource_sources.end(),
+				iround(M2_GAME.get_named_item(*tile_type).get_attribute(COAL_COST)),
+				std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
+			_resource_sources.insert(_resource_sources.end(),
+				iround(M2_GAME.get_named_item(*tile_type).get_attribute(IRON_COST)),
+				std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
+			return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 		}
-		_industry_tile = *tile_type;
-
-		// Create empty entries in resource_sources for every required resource
-		_resource_sources.insert(_resource_sources.end(),
-			iround(M2_GAME.get_named_item(*tile_type).get_attribute(COAL_COST)),
-			std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
-		_resource_sources.insert(_resource_sources.end(),
-			iround(M2_GAME.get_named_item(*tile_type).get_attribute(IRON_COST)),
-			std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
-		return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
+		LOG_DEBUG("Selected position was not on an industry");
+		return std::nullopt;
+	} else {
+		LOG_INFO("Cancelling Build action...");
+		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		return std::nullopt;
 	}
-	LOG_DEBUG("Selected position was not on an industry");
-	return std::nullopt;
-}
-
-std::optional<BuildJourneyStep> BuildJourney::handle_location_cancel_signal() {
-	LOG_INFO("Cancelling Build action...");
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
-	return std::nullopt;
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
@@ -414,34 +389,35 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 	}
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal(const m2::VecF& world_position) {
-	LOG_DEBUG("Received mouse click", world_position);
+std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal(const PositionOrCancelSignal& s) {
+	if (s.world_position()) {
+		const m2::VecF& world_position = *s.world_position();
+		LOG_DEBUG("Received mouse click", world_position);
 
-	auto unspecified_resource = get_next_unspecified_resource();
-	if (auto industry_loc = industry_location_on_position(world_position)) {
-		LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_loc));
-		// Check if location has a built factory
-		if (auto* factory = find_factory_at_location(*industry_loc)) {
-			// Check if the location is one of the dimming exceptions
-			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
-				// Reserve resource
-				factory->character().remove_resource(unspecified_resource->first, 1.0f);
-				// Specify resource source
-				unspecified_resource->second = *industry_loc;
-				// Reserve resource
-				_reserved_resources.emplace_back(factory, unspecified_resource->first);
-				// Re-enter resource selection
-				return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
+		auto unspecified_resource = get_next_unspecified_resource();
+		if (auto industry_loc = industry_location_on_position(world_position)) {
+			LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_loc));
+			// Check if location has a built factory
+			if (auto* factory = find_factory_at_location(*industry_loc)) {
+				// Check if the location is one of the dimming exceptions
+				if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
+					// Reserve resource
+					factory->character().remove_resource(unspecified_resource->first, 1.0f);
+					// Specify resource source
+					unspecified_resource->second = *industry_loc;
+					// Reserve resource
+					_reserved_resources.emplace_back(factory, unspecified_resource->first);
+					// Re-enter resource selection
+					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
+				}
 			}
 		}
+		return std::nullopt;
+	} else {
+		LOG_INFO("Cancelling Build action...");
+		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		return std::nullopt;
 	}
-	return std::nullopt;
-}
-
-std::optional<BuildJourneyStep> BuildJourney::handle_resource_cancel_signal() {
-	LOG_INFO("Cancelling Build action...");
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
-	return std::nullopt;
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
