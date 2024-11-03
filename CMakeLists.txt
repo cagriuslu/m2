@@ -8,7 +8,7 @@ endif()
 
 # Properties that needs to be set BEFORE project()
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-set(CMAKE_OSX_DEPLOYMENT_TARGET 12.6)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 13.3)
 if(NOT WIN32)
     cmake_policy(SET CMP0135 OLD)
 endif()
@@ -17,7 +17,7 @@ include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
 set(CMAKE_BUILD_PARALLEL_LEVEL ${PROCESSOR_COUNT})
 
-project(m2 C CXX ASM)
+project(m2 C CXX)
 
 # Load external libraries
 add_subdirectory(lib)
