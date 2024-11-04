@@ -6,7 +6,7 @@
 m2::expected<m2::DynamicSpriteSheetLoader> m2::DynamicSpriteSheetLoader::create(
     const std::filesystem::path& image_path, int image_ppm) {
 	// Load image
-	sdl::SurfaceUniquePtr surface(IMG_Load(image_path.c_str()));
+	sdl::SurfaceUniquePtr surface(IMG_Load(image_path.string().c_str()));
 	if (!surface) {
 		return make_unexpected("Unable to load image " + image_path.string() + ": " + IMG_GetError());
 	}

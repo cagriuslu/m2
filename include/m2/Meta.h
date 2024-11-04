@@ -5,6 +5,7 @@
 #include <vector>
 #include <set>
 #include <ranges>
+#include <optional>
 
 #define DEFAULT_OVERLOAD [](MAYBE const auto& _){}
 

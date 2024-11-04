@@ -7,116 +7,77 @@
   },
   "configurePresets": [
     {
+      "name": "POSIX",
+      "hidden": true,
+      "generator": "Ninja"
+    },
+    {
       "name": "DEBUG",
       "hidden": true,
-      "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "DEBUG": "ON"
       }
     },
     {
-      "name": "RPG-DEBUG",
-      "inherits": ["DEBUG"],
-      "binaryDir": "build/RPG-DEBUG",
+      "name": "RELEASE",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+
+    {
+      "name": "RPG",
+      "hidden": true,
       "cacheVariables": {
         "GAME": "RPG"
       }
     },
     {
-      "name": "MINE-DEBUG",
-      "inherits": ["DEBUG"],
-      "binaryDir": "build/MINE-DEBUG",
+      "name": "MINE",
+      "hidden": true,
       "cacheVariables": {
         "GAME": "MINE"
       }
     },
     {
-      "name": "CuZn-DEBUG",
-      "inherits": ["DEBUG"],
-      "binaryDir": "build/CuZn-DEBUG",
+      "name": "CuZn",
+      "hidden": true,
       "cacheVariables": {
         "GAME": "CuZn"
       }
-    }
-  ],
-  "buildPresets": [
-    {
-      "name": "RPG-libprotobuf",
-      "configurePreset": "RPG-DEBUG",
-      "targets": "libprotobuf"
-    },
-    {
-      "name": "RPG-libSDL2",
-      "configurePreset": "RPG-DEBUG",
-      "targets": "libSDL2"
-    },
-    {
-      "name": "RPG-libSDL2_image",
-      "configurePreset": "RPG-DEBUG",
-      "targets": "libSDL2_image"
-    },
-    {
-      "name": "RPG-libSDL2_ttf",
-      "configurePreset": "RPG-DEBUG",
-      "targets": "libSDL2_ttf"
-    },
-    {
-      "name": "RPG-libgtest",
-      "configurePreset": "RPG-DEBUG",
-      "targets": "libgtest"
     },
 
     {
-      "name": "MINE-libprotobuf",
-      "configurePreset": "MINE-DEBUG",
-      "targets": "libprotobuf"
+      "name": "RPG-POSIX-DEBUG",
+      "inherits": ["POSIX", "DEBUG", "RPG"],
+      "binaryDir": "build/RPG-DEBUG"
     },
     {
-      "name": "MINE-libSDL2",
-      "configurePreset": "MINE-DEBUG",
-      "targets": "libSDL2"
+      "name": "RPG-WIN-DEBUG",
+      "inherits": ["DEBUG", "RPG"],
+      "binaryDir": "build/RPG-DEBUG"
     },
     {
-      "name": "MINE-libSDL2_image",
-      "configurePreset": "MINE-DEBUG",
-      "targets": "libSDL2_image"
+      "name": "MINE-POSIX-DEBUG",
+      "inherits": ["POSIX", "DEBUG", "MINE"],
+      "binaryDir": "build/MINE-DEBUG"
     },
     {
-      "name": "MINE-libSDL2_ttf",
-      "configurePreset": "MINE-DEBUG",
-      "targets": "libSDL2_ttf"
+      "name": "MINE-WIN-DEBUG",
+      "inherits": ["DEBUG", "MINE"],
+      "binaryDir": "build/MINE-DEBUG"
     },
     {
-      "name": "MINE-libgtest",
-      "configurePreset": "MINE-DEBUG",
-      "targets": "libgtest"
-    },
-
-    {
-      "name": "CuZn-libprotobuf",
-      "configurePreset": "CuZn-DEBUG",
-      "targets": "libprotobuf"
+      "name": "CuZn-POSIX-DEBUG",
+      "inherits": ["POSIX", "DEBUG", "CuZn"],
+      "binaryDir": "build/CuZn-DEBUG"
     },
     {
-      "name": "CuZn-libSDL2",
-      "configurePreset": "CuZn-DEBUG",
-      "targets": "libSDL2"
-    },
-    {
-      "name": "CuZn-libSDL2_image",
-      "configurePreset": "CuZn-DEBUG",
-      "targets": "libSDL2_image"
-    },
-    {
-      "name": "CuZn-libSDL2_ttf",
-      "configurePreset": "CuZn-DEBUG",
-      "targets": "libSDL2_ttf"
-    },
-    {
-      "name": "CuZn-libgtest",
-      "configurePreset": "CuZn-DEBUG",
-      "targets": "libgtest"
+      "name": "CuZn-WIN-DEBUG",
+      "inherits": ["DEBUG", "CuZn"],
+      "binaryDir": "build/CuZn-DEBUG"
     }
   ]
 }

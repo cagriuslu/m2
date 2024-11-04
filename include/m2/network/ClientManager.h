@@ -2,6 +2,7 @@
 #include "TcpSocketManager.h"
 #include "IpAddressAndPort.h"
 #include "../sdl/Detail.h"
+#include <variant>
 
 namespace m2::network {
 	class ClientManager {

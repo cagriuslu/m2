@@ -3,6 +3,7 @@
 #include <m2/game/Fsm.h>
 #include "subjourneys/POISelectionJourney.h"
 #include "Common.h"
+#include <Network.pb.h>
 
 m2::void_expected can_player_attempt_to_sell(m2::Character& player);
 

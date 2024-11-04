@@ -2,7 +2,11 @@
 #include <m2/M2.h>
 #include <cstdarg>
 #include <thread>
+#ifdef _WIN32
+// Not yet supported
+#else
 #include <execinfo.h>
+#endif
 
 namespace {
 	bool unexpected_event_occured = false;

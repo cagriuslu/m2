@@ -15,6 +15,7 @@
 #include "protobuf/Detail.h"
 #include "sdl/Detail.h"
 #include "sdl/FontTexture.h"
+#include <variant>
 
 namespace m2 {
 	struct ForegroundCompanion {};

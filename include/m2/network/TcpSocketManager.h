@@ -1,6 +1,8 @@
 #pragma once
 #include "TcpSocket.h"
 #include "../Meta.h"
+#include <Network.pb.h>
+#include <array>
 #include <queue>
 
 namespace m2::network {

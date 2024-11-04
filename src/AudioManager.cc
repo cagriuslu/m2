@@ -14,7 +14,7 @@ m2::AudioManager::AudioManager() {
 	want.freq = DEFAULT_AUDIO_SAMPLE_RATE;
 	want.format = AUDIO_F32;
 	want.channels = 2;
-	want.samples = want.freq / AUDIO_CALLBACK_FREQUENCY;
+	want.samples = static_cast<uint16_t>(want.freq / AUDIO_CALLBACK_FREQUENCY);
 	want.callback = audio_callback;
 	want.userdata = nullptr; // Passing `this` won't work, object may be moved/copied
 	sdl_audio_device_id = SDL_OpenAudioDevice(nullptr, 0, &want, &sdl_audio_spec, SDL_AUDIO_ALLOW_FREQUENCY_CHANGE | SDL_AUDIO_ALLOW_SAMPLES_CHANGE);

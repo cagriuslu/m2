@@ -1,6 +1,7 @@
 #pragma once
 #include <m2/component/Character.h>
 #include <cuzn/Detail.h>
+#include <Network.pb.h>
 
 m2::void_expected can_player_attempt_to_scout(m2::Character& player);
 

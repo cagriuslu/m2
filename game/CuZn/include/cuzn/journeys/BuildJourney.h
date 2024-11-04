@@ -5,6 +5,7 @@
 #include <m2/VecF.h>
 #include <m2/Object.h>
 #include <m2/ui/Panel.h>
+#include <Network.pb.h>
 
 m2::void_expected can_player_attempt_to_build(m2::Character& player);
 

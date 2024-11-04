@@ -108,12 +108,10 @@ namespace {
 
 	int fetch_integer(std::stringstream& ss) {
 		auto n = fetch_number(ss);
-		if (not std::holds_alternative<int>(n)) {
-			std::visit(m2::overloaded {
-				[](float f) { throw M2_ERROR("Expected integer: " + std::to_string(f)); }
-			}, n);
-		}
-		return std::get<int>(n);
+		return std::visit(m2::overloaded {
+			[](int i) -> int { return i; },
+			[](float f) -> int { throw M2_ERROR("Expected integer: " + std::to_string(f)); }
+		}, n);
 	}
 
 	m2::vm::InstructionType determine_instruction_type(char c) {

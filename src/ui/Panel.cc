@@ -35,7 +35,7 @@ namespace {
 
 		if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
 			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
-				auto load_result = M2_GAME.load_level_editor(M2_GAME.levels_dir / match_results.str(1));
+				auto load_result = M2_GAME.load_level_editor((M2_GAME.levels_dir / match_results.str(1)).string());
 				if (load_result) {
 					return make_clear_stack_action();
 				}

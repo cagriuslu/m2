@@ -16,7 +16,7 @@ namespace m2 {
 		explicit Component(Id owner_id);
 		virtual ~Component() = default;
 
-		[[nodiscard]] Id owner_id() const { return _owner_id; }
+		[[nodiscard]] constexpr Id owner_id() const { return _owner_id; }
         [[nodiscard]] Object& owner() const;
 	};
 
@@ -25,5 +25,5 @@ namespace m2 {
 	std::function<bool(const Component&)> is_component_of_child_object_of_parent(Id parent_id);
 	// Transformers
 	constexpr Id to_owner_id_of_component(const Component& cmp) { return cmp.owner_id(); }
-	constexpr Object& to_owner_of_component(const Component& cmp) { return cmp.owner(); }
+	inline Object& to_owner_of_component(const Component& cmp) { return cmp.owner(); }
 }

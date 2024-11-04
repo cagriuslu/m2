@@ -21,7 +21,7 @@ namespace m2::synth {
 				case pb::SINE:
 					return sinf(PI_MUL2 * foc);
 				case pb::SQUARE:
-					return foc < 0.5f ? 1.0 : -1.0f;
+					return foc < 0.5f ? 1.0f : -1.0f;
 				case pb::TRIANGLE:
 					return foc < 0.25f ? (4.0f * foc) : (foc < 0.75f ? (-4.0f * foc + 2.0f) : (4.0f * foc - 4.0f));
 				case pb::SAWTOOTH:

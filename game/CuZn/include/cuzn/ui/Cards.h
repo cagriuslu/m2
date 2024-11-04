@@ -1,6 +1,7 @@
 #pragma once
 #include <m2/ui/PanelBlueprint.h>
 #include <m2/RectF.h>
+#include <m2g_ItemType.pb.h>
 
 m2::RectF cards_window_ratio();
 m2::RectF cards_panel_ratio();

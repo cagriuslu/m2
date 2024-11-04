@@ -113,7 +113,7 @@ const m2::ui::PanelBlueprint* m2g::Proxy::generate_main_menu() {
 	};
 
 	auto level_jsons = m2::list_files(M2_GAME.resource_dir / "levels", ".json");
-	for (int i = 0; i < (ssize_t) level_jsons.size(); ++i) {
+	for (int i = 0; i < (int) level_jsons.size(); ++i) {
 		const auto &level_json = level_jsons[i];
 		auto level_name = level_json.stem().string();
 		LOG_INFO("Adding level button", level_name);

@@ -20,7 +20,8 @@ std::filesystem::path m2::resource_path() {
 
 	return resources_directory;
 #else
-	return "";
+    // Assume that the resources are in the current directory
+	return "resource";
 #endif
 }
 

@@ -88,7 +88,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 								SDL_FPoint{point_2->x, point_2->y},
 								SDL_FPoint{point_0->x, point_0->y}
 						};
-						SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), points.size());
+						SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), I(points.size()));
 					}
 				}
 				break;

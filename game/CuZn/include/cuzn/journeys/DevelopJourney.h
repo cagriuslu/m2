@@ -3,6 +3,7 @@
 #include <cuzn/Detail.h>
 #include <m2/game/Fsm.h>
 #include <m2/ui/Panel.h>
+#include <Network.pb.h>
 #include <list>
 
 m2::void_expected can_player_attempt_to_develop(m2::Character& player);

@@ -75,7 +75,7 @@ m2::Game::Game() {
 	// May also require SDL_RenderSetIntegerScale
 	//SDL_RenderSetLogicalSize(renderer, 800, 450);
 
-	SDL_Surface* lightSurface = IMG_Load((resource_path() / "RadialGradient-WhiteBlack.png").c_str());
+	SDL_Surface* lightSurface = IMG_Load((resource_path() / "RadialGradient-WhiteBlack.png").string().c_str());
 	if (lightSurface == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{IMG_GetError()});
 	}
@@ -87,7 +87,7 @@ m2::Game::Game() {
 	SDL_SetTextureAlphaMod(light_texture, 0);
 	SDL_SetTextureColorMod(light_texture, 127, 127, 127);
 	// Open font
-	if ((font = TTF_OpenFont((resource_path() / _proxy.default_font_path).c_str(), _proxy.default_font_size)) == nullptr) {
+	if ((font = TTF_OpenFont((resource_path() / _proxy.default_font_path).string().c_str(), _proxy.default_font_size)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{TTF_GetError()});
 	}
 	// Check font properties

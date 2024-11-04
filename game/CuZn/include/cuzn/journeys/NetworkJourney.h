@@ -8,6 +8,7 @@
 #include <cuzn/Detail.h>
 #include <m2/Object.h>
 #include <m2/ui/Panel.h>
+#include <Network.pb.h>
 #include <list>
 
 m2::void_expected can_player_attempt_to_network(m2::Character& player);

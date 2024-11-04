@@ -116,10 +116,10 @@ m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, 
 }
 
 bool m2::box2d::has_obstacle(const b2Body* body) {
-	bool is_obstacle = false;
+	uint16_t is_obstacle = 0;
 	for (const auto* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext()) {
 		auto category_bits = fixture->GetFilterData().categoryBits;
-		is_obstacle |= category_bits & FIXTURE_CATEGORY_OBSTACLE;
+		is_obstacle |= (category_bits & FIXTURE_CATEGORY_OBSTACLE);
 	}
 	return is_obstacle;
 }

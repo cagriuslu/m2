@@ -1,4 +1,7 @@
 #pragma once
+#include <m2g_ItemType.pb.h>
+#include <m2g_SpriteType.pb.h>
+#include <vector>
 
 // Returns the merchant locations that might be active based on the client count. Returns all merchants by default.
 std::vector<m2g::pb::SpriteType> possibly_active_merchant_locations(int client_count = 4);

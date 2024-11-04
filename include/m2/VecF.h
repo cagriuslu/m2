@@ -7,6 +7,7 @@
 
 #include <array>
 #include <string>
+#include <optional>
 
 namespace m2 {
 	struct VecI;
@@ -34,10 +35,11 @@ namespace m2 {
 		}
 		inline VecF operator-(const VecF& rhs) const { return {x - rhs.x, y - rhs.y}; }
 		inline VecF operator-(const float& rhs) const { return {x - rhs, y - rhs}; }
+		inline VecF operator*(const int& rhs) const { return {x * static_cast<float>(rhs), y * static_cast<float>(rhs)}; }
 		inline VecF operator*(const float& rhs) const { return {x * rhs, y * rhs}; }
 		inline VecF operator/(const float& rhs) const { return {x / rhs, y / rhs}; }
-		inline VecF operator/(const int& rhs) const { return {x / (float)rhs, y / (float)rhs}; }
-		inline VecF operator/(const unsigned& rhs) const { return {x / (float)rhs, y / (float)rhs}; }
+		inline VecF operator/(const int& rhs) const { return {x / static_cast<float>(rhs), y / static_cast<float>(rhs)}; }
+		inline VecF operator/(const unsigned& rhs) const { return {x / static_cast<float>(rhs), y / static_cast<float>(rhs)}; }
 		inline bool operator==(const VecF& other) const { return (x == other.x) && (y == other.y); } // TODO use equals(other, tolerance) instead
 		inline explicit operator bool() const { return (x != 0.0f) || (y != 0.0f); }
 		inline explicit operator b2Vec2() const { return b2Vec2{x, y}; }

@@ -5,7 +5,7 @@
 
 m2::expected<m2::DynamicImageLoader> m2::DynamicImageLoader::create(const std::filesystem::path& image_path) {
 	// Load image
-	sdl::SurfaceUniquePtr tmp_surface(IMG_Load(image_path.c_str()));
+	sdl::SurfaceUniquePtr tmp_surface(IMG_Load(image_path.string().c_str()));
 	if (!tmp_surface) {
 		return make_unexpected("Unable to load image " + image_path.string() + ": " + IMG_GetError());
 	}

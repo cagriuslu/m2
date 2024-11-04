@@ -29,10 +29,8 @@ if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin")
     return()
 endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf")
-add_compile_definitions(PROTOBUF_USE_DLLS)
 if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251")
-    file(GLOB Protobuf_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin/*.dll")
 endif()
 set(Protobuf_USE_STATIC_LIBS ON)
 find_package(Protobuf REQUIRED)
@@ -48,7 +46,6 @@ list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2")
 find_package(SDL2 REQUIRED)
 if (WIN32)
     set(SDL2_INCLUDE_DIRS "${SDL2_DIR}/../include;${SDL2_DIR}/../include/SDL2") # On Windows, SDL2_INCLUDE_DIRS is not populated?!
-    file(GLOB SDL2_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2/bin/*.dll")
 endif()
 
 # SDL2_image
@@ -62,10 +59,11 @@ find_package(SDL2_image REQUIRED)
 if (WIN32)
     set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../include")
     set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../lib")
-    file(GLOB SDL2_image_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image/bin/*.dll" "${CMAKE_CURRENT_BINARY_DIR}/lib/png/bin/*.dll" "${CMAKE_CURRENT_BINARY_DIR}/lib/z/bin/*.dll")
+    set(SDL2_image_LIBNAME "SDL2_image::SDL2_image-static")
 elseif(APPLE)
     set(SDL2_image_INCLUDE_DIRS "${SDL2_image_DIR}/../../include")
     set(SDL2_image_LIBDIR "${SDL2_image_DIR}/../../lib")
+    set(SDL2_image_LIBNAME "SDL2_image")
 endif()
 
 # SDL2_ttf
@@ -78,7 +76,8 @@ find_package(SDL2_ttf REQUIRED)
 if (WIN32)
     set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../include")
     set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../lib")
-    file(GLOB SDL2_ttf_DLLS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf/bin/*.dll")
+    # Since we're statically linking to SDL2_ttf, we need to statically link to freetype as well
+    set(Freetype_LIBRARIES "${CMAKE_CURRENT_BINARY_DIR}/lib/freetype/lib/freetype.lib")
 elseif(APPLE)
     set(SDL2_ttf_INCLUDE_DIRS "${SDL2_ttf_DIR}/../../../include")
     set(SDL2_ttf_LIBDIR "${SDL2_ttf_DIR}/../../../lib")
@@ -149,24 +148,26 @@ endif()
 
 add_executable(m2 WIN32 MACOSX_BUNDLE ${M2_PUBLIC_HEADERS} ${M2_PRIVATE_HEADERS} ${M2_SOURCES} ${M2_PLATFORM_SPECIFIC_SOURCES} ${GAME_SOURCES} ${PROTO_SRCS} ${PROTO_HDRS} ${BUNDLE_RESOURCES})
 
-if (NOT WIN32)
+if (MSVC)
+    # Enable parallel build for MSVC
+    target_compile_options(m2 PRIVATE "/MP")
+    # This flag build the target using the static system library, not dynamic.
+    # Use MultiThreadedDebugDLL in debug build, otherwise use MultiThreadedDLL.
+    set_property(TARGET box2d PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    set_property(TARGET expected PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+    set_property(TARGET m2 PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+else()
+    # Enable precompiled headers on Posix platforms
     target_precompile_headers(m2 PRIVATE ${PROTO_HDRS})
 endif()
 
 target_include_directories(m2 PUBLIC include ${GAME_INCLUDE_DIRS})
 target_include_directories(m2 PUBLIC ${SDL2_INCLUDE_DIRS} ${SDL2_image_INCLUDE_DIRS} ${SDL2_ttf_INCLUDE_DIRS})
 target_link_directories(m2 PUBLIC ${SDL2_image_LIBDIR} ${SDL2_ttf_LIBDIR})
-target_link_libraries(m2 box2d SDL2_image SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_STATIC_LIBRARIES} protobuf::libprotobuf expected)
+target_link_libraries(m2 box2d ${SDL2_image_LIBNAME} SDL2_ttf ${Freetype_LIBRARIES} ${SDL2_STATIC_LIBRARIES} ${Protobuf_LIBRARIES} expected)
 
 if (WIN32)
     #target_compile_options(m2 PRIVATE /analyze) # Code inspections
-    # Copy DLLs
-    add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} ${SDL2_DLLS} ${SDL2_image_DLLS} ${SDL2_ttf_DLLS} $<TARGET_FILE_DIR:m2>
-            COMMAND_EXPAND_LISTS
-    )
-
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE") # Temporary
     set_property(DIRECTORY ${CMAKE_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT m2)
     set_target_properties(m2 PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
@@ -201,13 +202,6 @@ if(GTest_FOUND)
     target_link_libraries(test GTest::gtest GTest::gtest_main)
     if(WIN32)
         #target_compile_options(test PRIVATE /analyze) # Code inspections
-        # Copy DLLs
-        add_custom_command(
-                TARGET test
-                POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${Protobuf_DLLS} ${SDL2_DLLS} ${SDL2_image_DLLS} ${SDL2_ttf_DLLS} $<TARGET_FILE_DIR:test>
-                COMMAND_EXPAND_LISTS
-        )
     elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
         target_link_libraries(test m)
     endif()
