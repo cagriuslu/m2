@@ -17,11 +17,15 @@ namespace {
 					.text = "Cancel",
 					.on_action = [](MAYBE const widget::Text& self) -> Action {
 						// Create and send a cancel signal to the current user journey
-						auto& user_journey = m2g::Proxy::get_instance().user_journey;
-						// Deliver cancel signal to current Journey
-						std::visit(m2::overloaded{
-							[](auto& j) { j.signal(PositionOrCancelSignal::create_cancel_signal()); }
-						}, *user_journey);
+						if (M2G_PROXY.main_journeys) {
+							std::visit(m2::overloaded{
+									[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_cancel_signal()); }
+							}, *M2G_PROXY.main_journeys);
+						} else if (M2G_PROXY.user_journey) {
+							std::visit(m2::overloaded{
+									[](auto& j) { j.signal(PositionOrCancelSignal::create_cancel_signal()); }
+							}, *M2G_PROXY.user_journey);
+						}
 						return make_return_action();
 					}
 				}

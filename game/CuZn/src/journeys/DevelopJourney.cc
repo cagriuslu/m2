@@ -140,16 +140,16 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 		} else if (iron_industries.size() == 1) {
 			// Only one viable iron industry with iron is in the vicinity, confirm with the player.
 			// Get a game drawing centered at the industry location
-			auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[iron_industries[0]]));
+			auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*iron_industries.begin()]));
 			LOG_DEBUG("Asking player if they want to buy iron from the closest industry...");
 			if (ask_for_confirmation_bottom("Buy iron from shown industry for free?", "Yes", "No", std::move(background))) {
 				LOG_DEBUG("Player agreed");
 				// Reserve resource
-				auto* factory = find_factory_at_location(iron_industries[0]);
+				auto* factory = find_factory_at_location(*iron_industries.begin());
 				factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 				((_iron_source_1 == 0) ? _reserved_source_1 : _reserved_source_2) = factory;
 				// Specify resource source
-				((_iron_source_1 == 0) ? _iron_source_1 : _iron_source_2) = iron_industries[0];
+				((_iron_source_1 == 0) ? _iron_source_1 : _iron_source_2) = *iron_industries.begin();
 				// Re-enter resource selection
 				return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
 			} else {

@@ -5,6 +5,7 @@
 #include <m2/VecF.h>
 #include <m2/Object.h>
 #include <m2/ui/Panel.h>
+#include <cuzn/journeys/subjourneys/POISelectionJourney.h>
 #include <Network.pb.h>
 
 m2::void_expected can_player_attempt_to_build(m2::Character& player);
@@ -15,7 +16,7 @@ enum class BuildJourneyStep {
 	EXPECT_RESOURCE_SOURCE,
 	EXPECT_CONFIRMATION,
 };
-class BuildJourney : public m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal> {
+class BuildJourney : public m2::FsmBase<BuildJourneyStep, POIOrCancelSignal> {
 	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
 
 	Card _selected_card{};
@@ -29,14 +30,16 @@ public:
 	BuildJourney();
 	~BuildJourney() override;
 
+	std::optional<POISelectionJourney> sub_journey;
+
 protected:
-	std::optional<BuildJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
+	std::optional<BuildJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
 	std::optional<BuildJourneyStep> handle_initial_enter_signal();
 	std::optional<BuildJourneyStep> handle_location_enter_signal();
-	std::optional<BuildJourneyStep> handle_location_mouse_click_signal(const PositionOrCancelSignal& s);
+	std::optional<BuildJourneyStep> handle_location_mouse_click_signal(const POIOrCancelSignal& s);
 	std::optional<BuildJourneyStep> handle_location_exit_signal();
 	std::optional<BuildJourneyStep> handle_resource_enter_signal();
-	std::optional<BuildJourneyStep> handle_resource_mouse_click_signal(const PositionOrCancelSignal& s);
+	std::optional<BuildJourneyStep> handle_resource_mouse_click_signal(const POIOrCancelSignal& s);
 	std::optional<BuildJourneyStep> handle_resource_exit_signal();
 	std::optional<BuildJourneyStep> handle_confirmation_enter_signal();
 

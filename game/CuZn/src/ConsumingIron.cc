@@ -2,7 +2,7 @@
 #include <m2/Game.h>
 #include <cuzn/object/Factory.h>
 
-std::vector<IndustryLocation> find_iron_industries_with_iron() {
+std::set<IndustryLocation> find_iron_industries_with_iron() {
 	auto industry_locations = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(is_factory_character)

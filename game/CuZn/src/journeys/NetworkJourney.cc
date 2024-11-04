@@ -237,16 +237,16 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 			} else if (closest_mines_with_coal.size() == 1) {
 				// Only one viable coal mine with coal is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
-				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[closest_mines_with_coal[0]]));
+				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*closest_mines_with_coal.begin()]));
 				LOG_DEBUG("Asking player if they want to buy coal from the closest mine...");
 				if (ask_for_confirmation_bottom("Buy coal from shown mine for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
-					auto* factory = find_factory_at_location(closest_mines_with_coal[0]);
+					auto* factory = find_factory_at_location(*closest_mines_with_coal.begin());
 					factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
-					unspecified_resource->source = closest_mines_with_coal[0];
+					unspecified_resource->source = *closest_mines_with_coal.begin();
 					// Re-enter resource selection
 					return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 				} else {

@@ -141,7 +141,7 @@ m2::void_expected can_player_attempt_to_build(m2::Character& player) {
 	return {};
 }
 
-BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, PositionOrCancelSignal>() {
+BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, POIOrCancelSignal>() {
 	DEBUG_FN();
 	init(BuildJourneyStep::INITIAL_STEP);
 }
@@ -155,12 +155,12 @@ BuildJourney::~BuildJourney() {
 	_reserved_resources.clear();
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_signal(const PositionOrCancelSignal& s) {
+std::optional<BuildJourneyStep> BuildJourney::handle_signal(const POIOrCancelSignal& s) {
 	static const std::initializer_list<std::tuple<
 			BuildJourneyStep,
 			FsmSignalType,
 			std::optional<BuildJourneyStep>(BuildJourney::*)(),
-			std::optional<BuildJourneyStep>(BuildJourney::*)(const PositionOrCancelSignal&)>>& handlers = {
+			std::optional<BuildJourneyStep>(BuildJourney::*)(const POIOrCancelSignal&)>>& handlers = {
 		{BuildJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &BuildJourney::handle_initial_enter_signal, nullptr},
 
 		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &BuildJourney::handle_location_enter_signal, nullptr},
@@ -181,84 +181,66 @@ std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
 		_selected_card = *selected_card;
 		return BuildJourneyStep::EXPECT_LOCATION;
 	} else {
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
-	LOG_DEBUG("Expecting build location...");
-	M2_LEVEL.disable_hud();
-	M2G_PROXY.show_notification("Pick a location using right mouse button");
-	_cancel_button_panel = add_cancel_button();
-	// Dim places outside the player's network
-	const auto buildable_locs = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
-	M2_LEVEL.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_industry_location_bg_tiles(buildable_locs));
+	const auto buildable_locations = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
+	sub_journey.emplace(buildable_locations, "Pick a location using right mouse button...");
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal(const PositionOrCancelSignal& s) {
-	if (s.world_position()) {
-		const m2::VecF& world_position = *s.world_position();
-		LOG_DEBUG("Received mouse click", world_position);
-		if (auto selected_loc = industry_location_on_position(world_position)) {
-			LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
-			// TODO verify that the location can be buildable, otherwise ignore the click
+std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {
+		auto selected_location = *s.poi_or_cancel();
+		// TODO verify that the location can be buildable, otherwise ignore the click
 
-			// Check if there's a need to make an industry selection based on the card and the sprite
-			if (auto buildable_inds = buildable_industries(_selected_card, *selected_loc); buildable_inds.empty()) {
-				M2G_PROXY.show_notification("Selected position cannot be built with the selected card");
-				return std::nullopt;
-			} else if (buildable_inds.size() == 2) {
-				if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
-					_selected_industry = *selected_industry;
-				} else {
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
-					return std::nullopt;
-				}
-			} else if (buildable_inds.size() == 1) {
-				_selected_industry = buildable_inds[0];
+		// Check if there's a need to make an industry selection based on the card and the sprite
+		if (auto buildable_inds = buildable_industries(_selected_card, selected_location); buildable_inds.empty()) {
+			M2G_PROXY.show_notification("Selected position cannot be built with the selected card");
+			return std::nullopt;
+		} else if (buildable_inds.size() == 2) {
+			if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
+				_selected_industry = *selected_industry;
 			} else {
-				throw M2_ERROR("Implementation error, more than 2 selectable industries in one location");
-			}
-			_selected_location = *selected_loc;
-
-			// Check if the player has a factory to build
-			auto tile_type = get_next_industry_tile_of_category(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
-			if (not tile_type) {
-				M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
-				M2_DEFER(m2g::Proxy::user_journey_deleter);
+				M2_DEFER(m2g::Proxy::main_journey_deleter);
 				return std::nullopt;
 			}
-			_industry_tile = *tile_type;
+		} else if (buildable_inds.size() == 1) {
+			_selected_industry = buildable_inds[0];
+		} else {
+			throw M2_ERROR("Implementation error, more than 2 selectable industries in one location");
+		}
+		_selected_location = selected_location;
 
-			// Create empty entries in resource_sources for every required resource
-			_resource_sources.insert(_resource_sources.end(),
+		// Check if the player has a factory to build
+		auto tile_type = get_next_industry_tile_of_category(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
+		if (not tile_type) {
+			M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
+			M2_DEFER(m2g::Proxy::main_journey_deleter);
+			return std::nullopt;
+		}
+		_industry_tile = *tile_type;
+
+		// Create empty entries in resource_sources for every required resource
+		_resource_sources.insert(_resource_sources.end(),
 				iround(M2_GAME.get_named_item(*tile_type).get_attribute(COAL_COST)),
 				std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
-			_resource_sources.insert(_resource_sources.end(),
+		_resource_sources.insert(_resource_sources.end(),
 				iround(M2_GAME.get_named_item(*tile_type).get_attribute(IRON_COST)),
 				std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
-			return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
-		}
-		LOG_DEBUG("Selected position was not on an industry");
-		return std::nullopt;
+		return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 	} else {
 		LOG_INFO("Cancelling Build action...");
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
-	M2_LEVEL.enable_hud();
-	M2G_PROXY.remove_notification();
-	if (_cancel_button_panel) {
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
-		_cancel_button_panel.reset();
-	}
-	// Disable dimming in case it was enabled
-	M2_LEVEL.disable_dimming_with_exceptions();
+	sub_journey.reset();
 	return std::nullopt;
 }
 
@@ -289,44 +271,35 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 						return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 					} else {
 						LOG_INFO("Player declined, cancelling Build action...");
-						M2_DEFER(m2g::Proxy::user_journey_deleter);
+						M2_DEFER(m2g::Proxy::main_journey_deleter);
 					}
 				} else {
 					M2G_PROXY.show_notification("Coal required but none available in network");
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else if (closest_mines_with_coal.size() == 1) {
 				// Only one viable coal mine with coal is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
-				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[closest_mines_with_coal[0]]));
+				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*closest_mines_with_coal.begin()]));
 				LOG_DEBUG("Asking player if they want to buy coal from the closest mine...");
 				if (ask_for_confirmation_bottom("Buy coal from shown mine for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
-					auto* factory = find_factory_at_location(closest_mines_with_coal[0]);
+					auto* factory = find_factory_at_location(*closest_mines_with_coal.begin());
 					factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
 					_reserved_resources.emplace_back(factory, COAL_CUBE_COUNT);
 					// Specify resource source
-					unspecified_resource->second = closest_mines_with_coal[0];
+					unspecified_resource->second = *closest_mines_with_coal.begin();
 					// Re-enter resource selection
 					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 				} else {
 					LOG_INFO("Player declined, cancelling Build action...");
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else {
-				// Look-up ObjectIDs of closest coal mines
-				std::set<ObjectId> coal_mine_object_ids;
-				std::transform(closest_mines_with_coal.begin(), closest_mines_with_coal.end(),
-					std::inserter(coal_mine_object_ids, coal_mine_object_ids.begin()),
-					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
-				// Enable dimming except the coal mines
-				M2_LEVEL.enable_dimming_with_exceptions(std::move(coal_mine_object_ids));
-				LOG_DEBUG("Asking player to pick a coal source...");
-
-				M2_LEVEL.disable_hud();
-				_cancel_button_panel = add_cancel_button();
-				M2G_PROXY.show_notification("Pick a coal source");
+				// More than one coal mine are available at equal distance. Use POISelectionJourney to gather the
+				// preference of the player.
+				sub_journey.emplace(closest_mines_with_coal, "Pick a coal source using right mouse button...");
 			}
 		} else if (unspecified_resource->first == IRON_CUBE_COUNT) {
 			if (auto iron_industries = find_iron_industries_with_iron(); iron_industries.empty()) {
@@ -345,40 +318,29 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 				} else {
 					LOG_INFO("Player declined, cancelling Build action...");
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else if (iron_industries.size() == 1) {
 				// Only one viable iron industry with iron is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
-				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[iron_industries[0]]));
+				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*iron_industries.begin()]));
 				LOG_DEBUG("Asking player if they want to buy iron from the closest industry...");
 				if (ask_for_confirmation_bottom("Buy iron from shown industry for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
-					auto* factory = find_factory_at_location(iron_industries[0]);
+					auto* factory = find_factory_at_location(*iron_industries.begin());
 					factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 					_reserved_resources.emplace_back(factory, IRON_CUBE_COUNT);
 					// Specify resource source
-					unspecified_resource->second = iron_industries[0];
+					unspecified_resource->second = *iron_industries.begin();
 					// Re-enter resource selection
 					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 				} else {
 					LOG_INFO("Player declined, cancelling Build action...");
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else {
-				// Look-up ObjectIDs of the applicable industries
-				std::set<ObjectId> iron_industry_object_ids;
-				std::transform(iron_industries.begin(), iron_industries.end(),
-					std::inserter(iron_industry_object_ids, iron_industry_object_ids.begin()),
-					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
-				// Enable dimming except the iron industries
-				M2_LEVEL.enable_dimming_with_exceptions(std::move(iron_industry_object_ids));
-				LOG_DEBUG("Asking player to pick an iron source...");
-
-				M2_LEVEL.disable_hud();
-				_cancel_button_panel = add_cancel_button();
-				M2G_PROXY.show_notification("Pick an iron source");
+				sub_journey.emplace(iron_industries, "Pick an iron source using right mouse button...");
 			}
 		} else {
 			throw M2_ERROR("Unexpected resource in resource list");
@@ -389,45 +351,35 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 	}
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal(const PositionOrCancelSignal& s) {
-	if (s.world_position()) {
-		const m2::VecF& world_position = *s.world_position();
-		LOG_DEBUG("Received mouse click", world_position);
+std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {
+		auto industry_location = *s.poi_or_cancel();
 
 		auto unspecified_resource = get_next_unspecified_resource();
-		if (auto industry_loc = industry_location_on_position(world_position)) {
-			LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_loc));
-			// Check if location has a built factory
-			if (auto* factory = find_factory_at_location(*industry_loc)) {
-				// Check if the location is one of the dimming exceptions
-				if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
-					// Reserve resource
-					factory->character().remove_resource(unspecified_resource->first, 1.0f);
-					// Specify resource source
-					unspecified_resource->second = *industry_loc;
-					// Reserve resource
-					_reserved_resources.emplace_back(factory, unspecified_resource->first);
-					// Re-enter resource selection
-					return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
-				}
+		// Check if location has a built factory
+		if (auto* factory = find_factory_at_location(industry_location)) {
+			// Check if the location is one of the dimming exceptions
+			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
+				// Reserve resource
+				factory->character().remove_resource(unspecified_resource->first, 1.0f);
+				// Specify resource source
+				unspecified_resource->second = industry_location;
+				// Reserve resource
+				_reserved_resources.emplace_back(factory, unspecified_resource->first);
+				// Re-enter resource selection
+				return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 			}
 		}
 		return std::nullopt;
 	} else {
 		LOG_INFO("Cancelling Build action...");
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
-	M2_LEVEL.enable_hud();
-	if (_cancel_button_panel) {
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
-		_cancel_button_panel.reset();
-	}
-	// Disable dimming in case it was enabled
-	M2_LEVEL.disable_dimming_with_exceptions();
+	sub_journey.reset();
 	return std::nullopt;
 }
 
@@ -458,7 +410,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal()
 	} else {
 		LOG_INFO("Cancelling Build action...");
 	}
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
+	M2_DEFER(m2g::Proxy::main_journey_deleter);
 	return std::nullopt;
 }
 
