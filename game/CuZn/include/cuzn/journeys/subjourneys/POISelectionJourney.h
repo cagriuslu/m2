@@ -32,7 +32,13 @@ class POISelectionJourney : public m2::FsmBase<POISelectionJourneyStep, Position
 
 public:
 	explicit POISelectionJourney(std::set<POI> pois, std::string message)
-		: m2::FsmBase<POISelectionJourneyStep, PositionOrCancelSignal>(), _pois(std::move(pois)), _message(std::move(message)) {}
+			: m2::FsmBase<POISelectionJourneyStep, PositionOrCancelSignal>(), _pois(std::move(pois)),
+			_message(std::move(message)) {
+		init(POISelectionJourneyStep::INITIAL_STEP);
+	}
+	~POISelectionJourney() override {
+		deinit();
+	}
 
 protected:
 	std::optional<POISelectionJourneyStep> handle_signal(const PositionOrCancelSignal&) override;

@@ -27,9 +27,9 @@ namespace m2 {
 		[[nodiscard]] inline FsmSignalType type() const { return _signal_type; }
 	};
 
-	/// Base class of all FSMs. Partition the behavior into states where a signal might be handled differently  from the
-	/// others. During or after construction, the child class must call init(initial_state) to initialize the machine.
-	/// deinit() must be called before or during the destructor to deinitialize the machine. Some FSMs (ex user
+	/// Base class of all FSMs. Partition the behavior into states in which a signal might be handled differently from
+	/// the others. During or after construction, the child class must call init(initial_state) to initialize the
+	/// machine. deinit() must be called before or during the destructor to deinitialize the machine. Some FSMs (ex user
 	/// journeys) are designed to be singletons and have side effects. Make sure no unwanted temporaries are
 	/// constructed/destructed while creating these FSMs. Use std::in_place to store them in std::optional, or
 	/// std::in_place_type to store them in std::variant.

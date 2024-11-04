@@ -143,7 +143,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal() {
 	LOG_DEBUG("Expecting connection...");
 	M2_LEVEL.disable_hud();
-	M2G_PROXY.show_notification("Pick connection");
+	M2G_PROXY.show_notification("Pick connection using right mouse button...");
 	_cancel_button_panel = add_cancel_button();
 	// Dim places outside the player's network
 	_buildable_connections = buildable_connections_in_network(M2_PLAYER.character());
