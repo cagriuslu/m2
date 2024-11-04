@@ -31,8 +31,7 @@ protected:
 	std::optional<DevelopJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
 	std::optional<DevelopJourneyStep> handle_initial_enter_signal();
 	std::optional<DevelopJourneyStep> handle_resource_enter_signal();
-	std::optional<DevelopJourneyStep> handle_resource_mouse_click_signal(const m2::VecF&);
-	std::optional<DevelopJourneyStep> handle_resource_cancel_signal();
+	std::optional<DevelopJourneyStep> handle_resource_mouse_click_signal(const PositionOrCancelSignal&);
 	std::optional<DevelopJourneyStep> handle_resource_exit_signal();
 	std::optional<DevelopJourneyStep> handle_confirmation_enter_signal();
 };

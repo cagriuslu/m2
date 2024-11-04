@@ -45,35 +45,20 @@ DevelopJourney::~DevelopJourney() {
 }
 
 std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const PositionOrCancelSignal& s) {
-	switch (state()) {
-		case DevelopJourneyStep::INITIAL_STEP:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_initial_enter_signal();
-				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
-			}
-			break;
-		case DevelopJourneyStep::EXPECT_RESOURCE_SOURCE:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_resource_enter_signal();
-				case FsmSignalType::Custom: {
-					if (auto world_position = s.world_position(); world_position) {
-						return handle_resource_mouse_click_signal(*world_position);
-					} else if (s.cancel()) {
-						return handle_resource_cancel_signal();
-					}
-					throw M2_ERROR("Unexpected signal");
-				}
-				case FsmSignalType::ExitState: return handle_resource_exit_signal();
-				default: throw M2_ERROR("Unexpected signal");
-			}
-		case DevelopJourneyStep::EXPECT_CONFIRMATION:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
-				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
-			}
-	}
+	static std::initializer_list<std::tuple<
+			DevelopJourneyStep,
+			FsmSignalType,
+			std::optional<DevelopJourneyStep> (DevelopJourney::*)(),
+			std::optional<DevelopJourneyStep> (DevelopJourney::*)(const PositionOrCancelSignal &)>> handlers = {
+			{DevelopJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &DevelopJourney::handle_initial_enter_signal, nullptr},
+
+			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &DevelopJourney::handle_resource_enter_signal, nullptr},
+			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &DevelopJourney::handle_resource_mouse_click_signal},
+			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &DevelopJourney::handle_resource_exit_signal, nullptr},
+
+			{DevelopJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &DevelopJourney::handle_confirmation_enter_signal, nullptr},
+	};
+	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
 std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() {
@@ -176,43 +161,44 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 	}
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_signal(const m2::VecF& world_position) {
-	LOG_DEBUG("Received mouse click", world_position);
+std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_signal(const PositionOrCancelSignal& position_or_cancel) {
+	if (position_or_cancel.world_position()) {
+		const m2::VecF &world_position = *position_or_cancel.world_position();
+		LOG_DEBUG("Received mouse click", world_position);
 
-	if (auto industry_loc = industry_location_on_position(world_position)) {
-		LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_loc));
-		// Check if location has a built factory
-		if (auto* factory = find_factory_at_location(*industry_loc)) {
-			// Check if the location is one of the dimming exceptions
-			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
-				// Deduct resource
-				factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
-				// Save source
-				if (_iron_source_1 == 0) {
-					_iron_source_1 = *industry_loc;
-					_reserved_source_1 = factory;
-					if (_develop_double_tiles) {
-						return std::nullopt;
-					} else {
+		if (auto industry_loc = industry_location_on_position(world_position)) {
+			LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_loc));
+			// Check if location has a built factory
+			if (auto *factory = find_factory_at_location(*industry_loc)) {
+				// Check if the location is one of the dimming exceptions
+				if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
+					// Deduct resource
+					factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
+					// Save source
+					if (_iron_source_1 == 0) {
+						_iron_source_1 = *industry_loc;
+						_reserved_source_1 = factory;
+						if (_develop_double_tiles) {
+							return std::nullopt;
+						} else {
+							return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
+						}
+					} else if (_develop_double_tiles && _iron_source_2 == 0) {
+						_iron_source_2 = *industry_loc;
+						_reserved_source_2 = factory;
 						return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
+					} else {
+						throw M2_ERROR("Invalid state");
 					}
-				} else if (_develop_double_tiles && _iron_source_2 == 0) {
-					_iron_source_2 = *industry_loc;
-					_reserved_source_2 = factory;
-					return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
-				} else {
-					throw M2_ERROR("Invalid state");
 				}
 			}
 		}
+		return std::nullopt;
+	} else {
+		LOG_INFO("Cancelling Develop action...");
+		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		return std::nullopt;
 	}
-	return std::nullopt;
-}
-
-std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_cancel_signal() {
-	LOG_INFO("Cancelling Develop action...");
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
-	return std::nullopt;
 }
 
 std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_exit_signal() {
