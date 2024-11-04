@@ -1,6 +1,7 @@
 #pragma once
 #include "Common.h"
 #include <cuzn/Detail.h>
+#include "subjourneys/POISelectionJourney.h"
 #include <m2/game/Fsm.h>
 #include <m2/ui/Panel.h>
 #include <Network.pb.h>
@@ -14,7 +15,7 @@ enum class DevelopJourneyStep {
 	EXPECT_CONFIRMATION,
 };
 
-class DevelopJourney : public m2::FsmBase<DevelopJourneyStep, PositionOrCancelSignal> {
+class DevelopJourney : public m2::FsmBase<DevelopJourneyStep, POIOrCancelSignal> {
 	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
 
 	bool _develop_double_tiles{};
@@ -27,11 +28,13 @@ public:
 	DevelopJourney();
 	~DevelopJourney() override;
 
+	std::optional<POISelectionJourney> sub_journey{};
+
 protected:
-	std::optional<DevelopJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
+	std::optional<DevelopJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
 	std::optional<DevelopJourneyStep> handle_initial_enter_signal();
 	std::optional<DevelopJourneyStep> handle_resource_enter_signal();
-	std::optional<DevelopJourneyStep> handle_resource_mouse_click_signal(const PositionOrCancelSignal&);
+	std::optional<DevelopJourneyStep> handle_resource_mouse_click_signal(const POIOrCancelSignal&);
 	std::optional<DevelopJourneyStep> handle_resource_exit_signal();
 	std::optional<DevelopJourneyStep> handle_confirmation_enter_signal();
 };

@@ -34,7 +34,7 @@ namespace {
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
 			if (auto develop_prerequisite = can_player_attempt_to_develop(M2_PLAYER.character())) {
-				m2g::Proxy::get_instance().user_journey.emplace(std::in_place_type<DevelopJourney>);
+				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<DevelopJourney>);
 			} else {
 				M2G_PROXY.show_notification(develop_prerequisite.error());
 			}

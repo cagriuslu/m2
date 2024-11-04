@@ -44,12 +44,12 @@ DevelopJourney::~DevelopJourney() {
 	}
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const PositionOrCancelSignal& s) {
+std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const POIOrCancelSignal& s) {
 	static std::initializer_list<std::tuple<
 			DevelopJourneyStep,
 			FsmSignalType,
 			std::optional<DevelopJourneyStep> (DevelopJourney::*)(),
-			std::optional<DevelopJourneyStep> (DevelopJourney::*)(const PositionOrCancelSignal &)>> handlers = {
+			std::optional<DevelopJourneyStep> (DevelopJourney::*)(const POIOrCancelSignal &)>> handlers = {
 			{DevelopJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &DevelopJourney::handle_initial_enter_signal, nullptr},
 
 			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &DevelopJourney::handle_resource_enter_signal, nullptr},
@@ -64,7 +64,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const PositionOr
 std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() {
 	if (1 < player_tile_count(M2_PLAYER.character())) {
 		if (auto selection = ask_for_confirmation_with_cancellation("Develop two industries at once? (Requires 2 Irons instead of 1 Iron)", "Yes", "No"); not selection) {
-			M2_DEFER(m2g::Proxy::user_journey_deleter);
+			M2_DEFER(m2g::Proxy::main_journey_deleter);
 			return std::nullopt;
 		} else {
 			_develop_double_tiles = *selection;
@@ -75,7 +75,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() 
 	if (auto selected_card = ask_for_card_selection()) {
 		_selected_card = *selected_card;
 	} else {
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 
@@ -86,12 +86,12 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() 
 			if (auto selected_tile_2 = ask_for_tile_selection(*selected_tile)) {
 				_selected_tile_2 = *selected_tile_2;
 			} else {
-				M2_DEFER(m2g::Proxy::user_journey_deleter);
+				M2_DEFER(m2g::Proxy::main_journey_deleter);
 				return std::nullopt;
 			}
 		}
 	} else {
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 
@@ -120,7 +120,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 				return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
 			} else {
 				LOG_INFO("Player declined, cancelling Develop action...");
-				M2_DEFER(m2g::Proxy::user_journey_deleter);
+				M2_DEFER(m2g::Proxy::main_journey_deleter);
 			}
 		} else if (iron_industries.size() == 1) {
 			// Only one viable iron industry with iron is in the vicinity, confirm with the player.
@@ -139,21 +139,10 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 				return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
 			} else {
 				LOG_INFO("Player declined, cancelling Develop action...");
-				M2_DEFER(m2g::Proxy::user_journey_deleter);
+				M2_DEFER(m2g::Proxy::main_journey_deleter);
 			}
 		} else {
-			// Look-up ObjectIDs of the applicable industries
-			std::set<ObjectId> iron_industry_object_ids;
-			std::transform(iron_industries.begin(), iron_industries.end(),
-				std::inserter(iron_industry_object_ids, iron_industry_object_ids.begin()),
-				[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
-			// Enable dimming except the iron industries
-			M2_LEVEL.enable_dimming_with_exceptions(std::move(iron_industry_object_ids));
-			LOG_DEBUG("Asking player to pick an iron source...");
-
-			M2_LEVEL.disable_hud();
-			_cancel_button_panel = add_cancel_button();
-			M2G_PROXY.show_notification("Pick an iron source");
+			sub_journey.emplace(iron_industries, "Pick an iron source using right mouse button...");
 		}
 		return std::nullopt;
 	} else {
@@ -161,54 +150,44 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 	}
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_signal(const PositionOrCancelSignal& position_or_cancel) {
-	if (position_or_cancel.world_position()) {
-		const m2::VecF &world_position = *position_or_cancel.world_position();
-		LOG_DEBUG("Received mouse click", world_position);
+std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {
+		auto industry_location = *s.poi_or_cancel();
 
-		if (auto industry_loc = industry_location_on_position(world_position)) {
-			LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_loc));
-			// Check if location has a built factory
-			if (auto *factory = find_factory_at_location(*industry_loc)) {
-				// Check if the location is one of the dimming exceptions
-				if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
-					// Deduct resource
-					factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
-					// Save source
-					if (_iron_source_1 == 0) {
-						_iron_source_1 = *industry_loc;
-						_reserved_source_1 = factory;
-						if (_develop_double_tiles) {
-							return std::nullopt;
-						} else {
-							return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
-						}
-					} else if (_develop_double_tiles && _iron_source_2 == 0) {
-						_iron_source_2 = *industry_loc;
-						_reserved_source_2 = factory;
-						return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
+		// Check if location has a built factory
+		if (auto *factory = find_factory_at_location(industry_location)) {
+			// Check if the location is one of the dimming exceptions
+			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
+				// Deduct resource
+				factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
+				// Save source
+				if (_iron_source_1 == 0) {
+					_iron_source_1 = industry_location;
+					_reserved_source_1 = factory;
+					if (_develop_double_tiles) {
+						return std::nullopt;
 					} else {
-						throw M2_ERROR("Invalid state");
+						return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
 					}
+				} else if (_develop_double_tiles && _iron_source_2 == 0) {
+					_iron_source_2 = industry_location;
+					_reserved_source_2 = factory;
+					return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
+				} else {
+					throw M2_ERROR("Invalid state");
 				}
 			}
 		}
 		return std::nullopt;
 	} else {
 		LOG_INFO("Cancelling Develop action...");
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 }
 
 std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_exit_signal() {
-	M2_LEVEL.enable_hud();
-	if (_cancel_button_panel) {
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
-		_cancel_button_panel.reset();
-	}
-	// Disable dimming in case it was enabled
-	M2_LEVEL.disable_dimming_with_exceptions();
+	sub_journey.reset();
 	return std::nullopt;
 }
 
@@ -231,7 +210,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_confirmation_enter_sign
 	} else {
 		LOG_INFO("Cancelling Develop action...");
 	}
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
+	M2_DEFER(m2g::Proxy::main_journey_deleter);
 	return std::nullopt;
 }
 
@@ -308,7 +287,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 	if (is_industry_location(develop_action.iron_sources_1())) {
 		// If iron source is an industry, find_iron_industries_with_iron must return it
 		auto iron_industries = find_iron_industries_with_iron();
-		if (std::find(iron_industries.begin(), iron_industries.end(), develop_action.iron_sources_1()) == iron_industries.end()) {
+		if (iron_industries.find(develop_action.iron_sources_1()) == iron_industries.end()) {
 			LOG_WARN("Player provided an iron source from an industry that does not contain an iron");
 			return false;
 		} else {
@@ -334,7 +313,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 		if (is_industry_location(develop_action.iron_sources_2())) {
 			// If iron source is an industry, find_iron_industries_with_iron must return it
 			auto iron_industries = find_iron_industries_with_iron();
-			if (std::find(iron_industries.begin(), iron_industries.end(), develop_action.iron_sources_2()) == iron_industries.end()) {
+			if (iron_industries.find(develop_action.iron_sources_2()) == iron_industries.end()) {
 				LOG_WARN("Player provided an iron source from an industry that does not contain an iron");
 				resource_sources_are_valid = false;
 			} else {
