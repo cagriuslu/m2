@@ -18,6 +18,6 @@ public:
 protected:
 	std::optional<LiquidationJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
 	std::optional<LiquidationJourneyStep> handle_location_enter_signal();
-	std::optional<LiquidationJourneyStep> handle_location_mouse_click_signal(const m2::VecF&);
+	std::optional<LiquidationJourneyStep> handle_location_mouse_click_signal(const PositionOrCancelSignal&);
 	std::optional<LiquidationJourneyStep> handle_location_exit_signal();
 };
