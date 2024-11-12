@@ -81,48 +81,24 @@ NetworkJourney::~NetworkJourney() {
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_signal(const PositionOrCancelSignal& s) {
-	switch (state()) {
-		case NetworkJourneyStep::INITIAL_STEP:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_initial_enter_signal();
-				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
-			}
-		case NetworkJourneyStep::EXPECT_LOCATION:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_location_enter_signal();
-				case FsmSignalType::Custom: {
-					if (auto world_position = s.world_position(); world_position) {
-						return handle_location_mouse_click_signal(*world_position);
-					} else if (s.cancel()) {
-						return handle_location_cancel_signal();
-					}
-					throw M2_ERROR("Unexpected signal");
-				}
-				case FsmSignalType::ExitState: return handle_location_exit_signal();
-				default: throw M2_ERROR("Unexpected signal");
-			}
-		case NetworkJourneyStep::EXPECT_RESOURCE_SOURCE:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_resource_enter_signal();
-				case FsmSignalType::Custom: {
-					if (auto world_position = s.world_position(); world_position) {
-						return handle_resource_mouse_click_signal(*world_position);
-					} else if (s.cancel()) {
-						return handle_resource_cancel_signal();
-					}
-					throw M2_ERROR("Unexpected signal");
-				}
-				case FsmSignalType::ExitState: return handle_resource_exit_signal();
-				default: throw M2_ERROR("Unexpected signal");
-			}
-		case NetworkJourneyStep::EXPECT_CONFIRMATION:
-			switch (s.type()) {
-				case FsmSignalType::EnterState: return handle_confirmation_enter_signal();
-				case FsmSignalType::ExitState: return std::nullopt;
-				default: throw M2_ERROR("Unexpected signal");
-			}
-	}
+	static std::initializer_list<std::tuple<
+			NetworkJourneyStep,
+			FsmSignalType,
+			std::optional<NetworkJourneyStep> (NetworkJourney::*)(),
+			std::optional<NetworkJourneyStep> (NetworkJourney::*)(const PositionOrCancelSignal &)>> handlers = {
+			{NetworkJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &NetworkJourney::handle_initial_enter_signal, nullptr},
+
+			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &NetworkJourney::handle_location_enter_signal, nullptr},
+			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::Custom, nullptr, &NetworkJourney::handle_location_mouse_click_signal},
+			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::ExitState, &NetworkJourney::handle_location_exit_signal, nullptr},
+
+			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &NetworkJourney::handle_resource_enter_signal, nullptr},
+			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &NetworkJourney::handle_resource_mouse_click_signal},
+			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &NetworkJourney::handle_resource_exit_signal, nullptr},
+
+			{NetworkJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &NetworkJourney::handle_confirmation_enter_signal, nullptr}
+	};
+	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() {
@@ -151,34 +127,39 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal()
 	return std::nullopt;
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_signal(const m2::VecF& world_position) {
-	LOG_DEBUG("Received mouse click", world_position);
-	if (auto selected_loc = connection_on_position(world_position); selected_loc && _buildable_connections.contains(*selected_loc)) {
-		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
+std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_signal(const PositionOrCancelSignal& position_or_cancel) {
+	if (position_or_cancel.world_position()) {
+		const m2::VecF& world_position = *position_or_cancel.world_position();
+		LOG_DEBUG("Received mouse click", world_position);
+		if (auto selected_loc = connection_on_position(world_position); selected_loc && _buildable_connections.contains(
+				*selected_loc)) {
+			LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
 
-		if (!_selected_connection_1) {
-			_selected_connection_1 = *selected_loc;
-			// Update buildable connections with the new selection
-			_buildable_connections = buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1);
-			M2_LEVEL.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
-		} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != *selected_loc) {
-			_selected_connection_2 = *selected_loc;
-		}
+			if (!_selected_connection_1) {
+				_selected_connection_1 = *selected_loc;
+				// Update buildable connections with the new selection
+				_buildable_connections = buildable_connections_in_network(M2_PLAYER.character(),
+						_selected_connection_1);
+				M2_LEVEL.enable_dimming_with_exceptions(
+						M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
+			} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != *selected_loc) {
+				_selected_connection_2 = *selected_loc;
+			}
 
-		// If selection done
-		if ((not _build_double_railroads && _selected_connection_1) || _selected_connection_2) {
-			_resource_sources = required_resources_for_network();
-			return _resource_sources.empty() ? NetworkJourneyStep::EXPECT_CONFIRMATION : NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
+			// If selection done
+			if ((not _build_double_railroads && _selected_connection_1) || _selected_connection_2) {
+				_resource_sources = required_resources_for_network();
+				return _resource_sources.empty() ? NetworkJourneyStep::EXPECT_CONFIRMATION
+												 : NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
+			}
 		}
+		LOG_DEBUG("Selected position was not on a buildable connection");
+		return std::nullopt;
+	} else {
+		LOG_INFO("Cancelling Network action...");
+		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		return std::nullopt;
 	}
-	LOG_DEBUG("Selected position was not on a buildable connection");
-	return std::nullopt;
-}
-
-std::optional<NetworkJourneyStep> NetworkJourney::handle_location_cancel_signal() {
-	LOG_INFO("Cancelling Network action...");
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
-	return std::nullopt;
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() {
@@ -313,32 +294,33 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_mouse_click_signal(const m2::VecF& world_position) {
-	LOG_DEBUG("Received mouse click", world_position);
+std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_mouse_click_signal(const PositionOrCancelSignal& position_or_cancel) {
+	if (position_or_cancel.world_position()) {
+		const m2::VecF& world_position = *position_or_cancel.world_position();
+		LOG_DEBUG("Received mouse click", world_position);
 
-	auto unspecified_resource = get_next_unspecified_resource();
-	if (auto industry_location = industry_location_on_position(world_position)) {
-		LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_location));
-		// Check if location has a built factory
-		if (auto* factory = find_factory_at_location(*industry_location)) {
-			// Check if the location is one of the dimming exceptions
-			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
-				// Reserve resource
-				factory->character().remove_resource(unspecified_resource->resource_type, 1.0f);
-				unspecified_resource->reserved_object = factory;
-				unspecified_resource->source = *industry_location;
-				// Re-enter resource selection
-				return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
+		auto unspecified_resource = get_next_unspecified_resource();
+		if (auto industry_location = industry_location_on_position(world_position)) {
+			LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_location));
+			// Check if location has a built factory
+			if (auto *factory = find_factory_at_location(*industry_location)) {
+				// Check if the location is one of the dimming exceptions
+				if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
+					// Reserve resource
+					factory->character().remove_resource(unspecified_resource->resource_type, 1.0f);
+					unspecified_resource->reserved_object = factory;
+					unspecified_resource->source = *industry_location;
+					// Re-enter resource selection
+					return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
+				}
 			}
 		}
+		return std::nullopt;
+	} else {
+		LOG_INFO("Cancelling Network action...");
+		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		return std::nullopt;
 	}
-	return std::nullopt;
-}
-
-std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_cancel_signal() {
-	LOG_INFO("Cancelling Network action...");
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
-	return std::nullopt;
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_exit_signal() {
