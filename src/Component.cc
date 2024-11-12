@@ -8,6 +8,15 @@ m2::Object& m2::Component::owner() const {
     return *M2_LEVEL.objects.get(_owner_id);
 }
 
-std::function<bool(const m2::Component&)> m2::is_component_of_child_object_of_parent(Id parent_id) {
-	return [parent_id](const Component& c) { return c.owner().parent_id() == parent_id; };
+std::function<bool(const m2::Component&)> m2::is_component_of_parent_object(Id parent_id) {
+	return [parent_id](const Component& c) {
+		auto obj_id = c.owner_id();
+		while (obj_id) {
+			if (obj_id == parent_id) {
+				return true;
+			}
+			obj_id = M2_LEVEL.objects[obj_id].parent_id();
+		}
+		return false;
+	};
 }

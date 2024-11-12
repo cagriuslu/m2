@@ -21,8 +21,12 @@ namespace m2 {
 	};
 
 	// Filter Generators
+
+	/// Generates a filter that receives a Component, and returns true if the component belongs to object_id.
 	constexpr auto is_component_of_object(Id object_id) { return [object_id](const Component& c) { return c.owner_id() == object_id; }; }
-	std::function<bool(const Component&)> is_component_of_child_object_of_parent(Id parent_id);
+	/// Generates a filter that receives a Component, and returns true if the component belongs to any descendants of parent_id.
+	std::function<bool(const Component&)> is_component_of_parent_object(Id parent_id);
+
 	// Transformers
 	constexpr Id to_owner_id_of_component(const Component& cmp) { return cmp.owner_id(); }
 	inline Object& to_owner_of_component(const Component& cmp) { return cmp.owner(); }

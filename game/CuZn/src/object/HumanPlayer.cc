@@ -135,7 +135,7 @@ std::list<Card> player_cards(m2::Character& player) {
 int player_link_count(m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
 					  | std::views::transform(m2::to_character_base)
-					  | std::views::filter(m2::is_component_of_child_object_of_parent(player.owner_id()))
+					  | std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 					  | std::views::filter(is_road_character);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
 		return acc + link_count_of_road_character(road_char);
@@ -180,7 +180,7 @@ std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Characte
 size_t player_built_factory_count(m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(m2::is_component_of_child_object_of_parent(player.owner_id()))
+		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(is_factory_character);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
@@ -188,7 +188,7 @@ size_t player_built_factory_count(m2::Character& player) {
 std::set<IndustryLocation> player_built_factory_locations(m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(m2::is_component_of_child_object_of_parent(player.owner_id()))
+		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(is_factory_character)
 		| std::views::transform(to_industry_location_of_factory_character);
 	return {factories_view.begin(), factories_view.end()};
@@ -197,7 +197,7 @@ std::set<IndustryLocation> player_built_factory_locations(m2::Character& player)
 std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(m2::is_component_of_child_object_of_parent(player.owner_id()))
+		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(is_factory_character)
 		| std::views::filter([](m2::Character& c) {
 			return is_sellable_industry(to_industry_of_factory_character(c));
@@ -211,14 +211,14 @@ std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 
 	auto cities_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(m2::is_component_of_child_object_of_parent(player.owner_id()))
+		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(is_factory_character)
 		| std::views::transform(to_city_of_factory_character);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(m2::is_component_of_child_object_of_parent(player.owner_id()))
+		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(is_road_character)
 		| std::views::transform(to_city_cards_of_road_character);
 	for (const auto& road_cities : roads_view) {

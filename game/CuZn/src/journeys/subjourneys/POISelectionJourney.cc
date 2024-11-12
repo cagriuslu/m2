@@ -37,8 +37,10 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			M2_LEVEL.disable_hud();
 			// Display message
 			M2G_PROXY.show_notification(_message);
-			// Display cancel button
-			_cancel_button_panel = add_cancel_button();
+			if (_allow_cancellation) {
+				// Display cancel button
+				_cancel_button_panel = add_cancel_button();
+			}
 			break;
 		}
 		case m2::FsmSignalType::Custom: {
