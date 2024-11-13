@@ -33,7 +33,7 @@ namespace {
 		if (connections_in_network.empty()) {
 			connections_in_network = M2G_PROXY.is_canal_era() ? all_canals() : all_railroads();
 		}
-		// Filter built locations
+		// Filter out already built locations
 		for (auto it = connections_in_network.begin(); it != connections_in_network.end(); ) {
 			if (find_road_at_location(*it)) {
 				it = connections_in_network.erase(it);
@@ -80,12 +80,12 @@ NetworkJourney::~NetworkJourney() {
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_signal(const PositionOrCancelSignal& s) {
+std::optional<NetworkJourneyStep> NetworkJourney::handle_signal(const POIOrCancelSignal& s) {
 	static std::initializer_list<std::tuple<
 			NetworkJourneyStep,
 			FsmSignalType,
 			std::optional<NetworkJourneyStep> (NetworkJourney::*)(),
-			std::optional<NetworkJourneyStep> (NetworkJourney::*)(const PositionOrCancelSignal &)>> handlers = {
+			std::optional<NetworkJourneyStep> (NetworkJourney::*)(const POIOrCancelSignal &)>> handlers = {
 			{NetworkJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &NetworkJourney::handle_initial_enter_signal, nullptr},
 
 			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &NetworkJourney::handle_location_enter_signal, nullptr},
@@ -111,66 +111,45 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 		_selected_card = *selected_card;
 		return NetworkJourneyStep::EXPECT_LOCATION;
 	} else {
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal() {
-	LOG_DEBUG("Expecting connection...");
-	M2_LEVEL.disable_hud();
-	M2G_PROXY.show_notification("Pick connection using right mouse button...");
-	_cancel_button_panel = add_cancel_button();
-	// Dim places outside the player's network
-	_buildable_connections = buildable_connections_in_network(M2_PLAYER.character());
-	M2_LEVEL.enable_dimming_with_exceptions(M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
+	sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character()), "Pick connection using right mouse button...");
 	return std::nullopt;
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_signal(const PositionOrCancelSignal& position_or_cancel) {
-	if (position_or_cancel.world_position()) {
-		const m2::VecF& world_position = *position_or_cancel.world_position();
-		LOG_DEBUG("Received mouse click", world_position);
-		if (auto selected_loc = connection_on_position(world_position); selected_loc && _buildable_connections.contains(
-				*selected_loc)) {
-			LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(*selected_loc));
+std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {
+		auto selected_location = *s.poi_or_cancel();
+		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(selected_location));
 
-			if (!_selected_connection_1) {
-				_selected_connection_1 = *selected_loc;
-				// Update buildable connections with the new selection
-				_buildable_connections = buildable_connections_in_network(M2_PLAYER.character(),
-						_selected_connection_1);
-				M2_LEVEL.enable_dimming_with_exceptions(
-						M2G_PROXY.object_ids_of_connection_bg_tiles(_buildable_connections));
-			} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != *selected_loc) {
-				_selected_connection_2 = *selected_loc;
-			}
-
-			// If selection done
-			if ((not _build_double_railroads && _selected_connection_1) || _selected_connection_2) {
-				_resource_sources = required_resources_for_network();
-				return _resource_sources.empty() ? NetworkJourneyStep::EXPECT_CONFIRMATION
-												 : NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
-			}
+		if (!_selected_connection_1) {
+			_selected_connection_1 = selected_location;
+			// Update buildable connections with the new selection
+			sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1), "Pick connection using right mouse button...");
+		} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != selected_location) {
+			_selected_connection_2 = selected_location;
 		}
-		LOG_DEBUG("Selected position was not on a buildable connection");
+
+		// If selection done
+		if ((not _build_double_railroads && _selected_connection_1) || _selected_connection_2) {
+			_resource_sources = required_resources_for_network();
+			return _resource_sources.empty() ? NetworkJourneyStep::EXPECT_CONFIRMATION
+											 : NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
+		}
 		return std::nullopt;
 	} else {
 		LOG_INFO("Cancelling Network action...");
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() {
-	M2_LEVEL.enable_hud();
-	M2G_PROXY.remove_notification();
-	if (_cancel_button_panel) {
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
-		_cancel_button_panel.reset();
-	}
-	// Disable dimming in case it was enabled
-	M2_LEVEL.disable_dimming_with_exceptions();
+	sub_journey.reset();
 	return std::nullopt;
 }
 
@@ -209,11 +188,11 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 						return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 					} else {
 						LOG_INFO("Player declined, cancelling Network action...");
-						M2_DEFER(m2g::Proxy::user_journey_deleter);
+						M2_DEFER(m2g::Proxy::main_journey_deleter);
 					}
 				} else {
 					M2G_PROXY.show_notification("Coal required but none available in network");
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else if (closest_mines_with_coal.size() == 1) {
 				// Only one viable coal mine with coal is in the vicinity, confirm with the player.
@@ -232,26 +211,15 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 					return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 				} else {
 					LOG_INFO("Player declined, cancelling Network action...");
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else {
-				// Look-up ObjectIDs of closest coal mines
-				std::set<ObjectId> coal_mine_object_ids;
-				std::transform(closest_mines_with_coal.begin(), closest_mines_with_coal.end(),
-					std::inserter(coal_mine_object_ids, coal_mine_object_ids.begin()),
-					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
-				// Enable dimming except the coal mines
-				M2_LEVEL.enable_dimming_with_exceptions(std::move(coal_mine_object_ids));
-				LOG_DEBUG("Asking player to pick a coal source...");
-
-				M2_LEVEL.disable_hud();
-				_cancel_button_panel = add_cancel_button();
-				M2G_PROXY.show_notification("Pick a coal source");
+				sub_journey.emplace(closest_mines_with_coal, "Pick a coal source using the right mouse button...");
 			}
 		} else if (unspecified_resource->resource_type == BEER_BARREL_COUNT) {
 			if (auto beer_sources = find_breweries_with_beer(M2_PLAYER.character(), major_cities[0], std::nullopt, major_cities[1]); beer_sources.empty()) {
 				M2G_PROXY.show_notification("Beer required but none available in network");
-				M2_DEFER(m2g::Proxy::user_journey_deleter);
+				M2_DEFER(m2g::Proxy::main_journey_deleter);
 			} else if (beer_sources.size() == 1) {
 				auto industry_location = *beer_sources.begin(); // While networking, beer only comes from industries.
 				// Only one viable beer industry with beer is in the vicinity, confirm with the player.
@@ -270,20 +238,10 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 					return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 				} else {
 					LOG_INFO("Player declined, cancelling Build action...");
-					M2_DEFER(m2g::Proxy::user_journey_deleter);
+					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else {
-				std::set<ObjectId> brewery_object_ids; // Look-up ObjectIDs of closest breweries
-				std::transform(beer_sources.begin(), beer_sources.end(),
-					std::inserter(brewery_object_ids, brewery_object_ids.begin()),
-					[](IndustryLocation loc) { return find_factory_at_location(loc)->id(); });
-				// Enable dimming except the coal mines
-				M2_LEVEL.enable_dimming_with_exceptions(std::move(brewery_object_ids));
-				LOG_DEBUG("Asking player to pick a beer source...");
-
-				M2_LEVEL.disable_hud();
-				_cancel_button_panel = add_cancel_button();
-				M2G_PROXY.show_notification("Pick a beer source");
+				sub_journey.emplace(beer_sources, "Pick a beer source using right mouse button...");
 			}
 		} else {
 			throw M2_ERROR("Unexpected resource in resource list");
@@ -294,43 +252,33 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_mouse_click_signal(const PositionOrCancelSignal& position_or_cancel) {
-	if (position_or_cancel.world_position()) {
-		const m2::VecF& world_position = *position_or_cancel.world_position();
-		LOG_DEBUG("Received mouse click", world_position);
-
+std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_mouse_click_signal(const POIOrCancelSignal& s) {
+	if (s.poi_or_cancel()) {
+		auto selected_location = *s.poi_or_cancel();
 		auto unspecified_resource = get_next_unspecified_resource();
-		if (auto industry_location = industry_location_on_position(world_position)) {
-			LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(*industry_location));
-			// Check if location has a built factory
-			if (auto *factory = find_factory_at_location(*industry_location)) {
-				// Check if the location is one of the dimming exceptions
-				if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
-					// Reserve resource
-					factory->character().remove_resource(unspecified_resource->resource_type, 1.0f);
-					unspecified_resource->reserved_object = factory;
-					unspecified_resource->source = *industry_location;
-					// Re-enter resource selection
-					return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
-				}
+		LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(selected_location));
+		// Check if location has a built factory
+		if (auto *factory = find_factory_at_location(selected_location)) {
+			// Check if the location is one of the dimming exceptions
+			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
+				// Reserve resource
+				factory->character().remove_resource(unspecified_resource->resource_type, 1.0f);
+				unspecified_resource->reserved_object = factory;
+				unspecified_resource->source = selected_location;
+				// Re-enter resource selection
+				return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 			}
 		}
 		return std::nullopt;
 	} else {
 		LOG_INFO("Cancelling Network action...");
-		M2_DEFER(m2g::Proxy::user_journey_deleter);
+		M2_DEFER(m2g::Proxy::main_journey_deleter);
 		return std::nullopt;
 	}
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_exit_signal() {
-	M2_LEVEL.enable_hud();
-	if (_cancel_button_panel) {
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
-		_cancel_button_panel.reset();
-	}
-	// Disable dimming in case it was enabled
-	M2_LEVEL.disable_dimming_with_exceptions();
+	sub_journey.reset();
 	return std::nullopt;
 }
 
@@ -359,7 +307,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 	} else {
 		LOG_INFO("Cancelling Network action...");
 	}
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
+	M2_DEFER(m2g::Proxy::main_journey_deleter);
 	return std::nullopt;
 }
 

@@ -10,6 +10,7 @@
 #include <m2/ui/Panel.h>
 #include <Network.pb.h>
 #include <list>
+#include "subjourneys/POISelectionJourney.h"
 
 m2::void_expected can_player_attempt_to_network(m2::Character& player);
 
@@ -20,7 +21,7 @@ enum class NetworkJourneyStep {
 	EXPECT_CONFIRMATION,
 };
 
-class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, PositionOrCancelSignal> {
+class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, POIOrCancelSignal> {
 	struct ResourceSource {
 		Connection connection{};
 		m2g::pb::ResourceType resource_type{};
@@ -33,7 +34,6 @@ class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, PositionOrCancelSi
 	bool _build_double_railroads{};
 	m2g::pb::ItemType _selected_card{};
 	m2g::pb::SpriteType _selected_connection_1{}, _selected_connection_2{};
-	std::set<Connection> _buildable_connections; // Used as cache
 	std::vector<ResourceSource> _resource_sources;
 	m2::ObjectId _decoy_road_1{}, _decoy_road_2{};
 
@@ -41,14 +41,16 @@ public:
 	NetworkJourney();
 	~NetworkJourney() override;
 
+	std::optional<POISelectionJourney> sub_journey{};
+
 protected:
-	std::optional<NetworkJourneyStep> handle_signal(const PositionOrCancelSignal& s) override;
+	std::optional<NetworkJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
 	std::optional<NetworkJourneyStep> handle_initial_enter_signal();
 	std::optional<NetworkJourneyStep> handle_location_enter_signal();
-	std::optional<NetworkJourneyStep> handle_location_mouse_click_signal(const PositionOrCancelSignal&);
+	std::optional<NetworkJourneyStep> handle_location_mouse_click_signal(const POIOrCancelSignal&);
 	std::optional<NetworkJourneyStep> handle_location_exit_signal();
 	std::optional<NetworkJourneyStep> handle_resource_enter_signal();
-	std::optional<NetworkJourneyStep> handle_resource_mouse_click_signal(const PositionOrCancelSignal&);
+	std::optional<NetworkJourneyStep> handle_resource_mouse_click_signal(const POIOrCancelSignal&);
 	std::optional<NetworkJourneyStep> handle_resource_exit_signal();
 	std::optional<NetworkJourneyStep> handle_confirmation_enter_signal();
 

@@ -52,7 +52,7 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_enter_
 		}
 	}
 	// Otherwise, return from journey. Selected locations will be sent by the exit handler
-	M2_DEFER(m2g::Proxy::user_journey_deleter);
+	M2_DEFER(m2g::Proxy::main_journey_deleter);
 	return std::nullopt;
 }
 

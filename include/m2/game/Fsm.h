@@ -29,10 +29,11 @@ namespace m2 {
 
 	/// Base class of all FSMs. Partition the behavior into states in which a signal might be handled differently from
 	/// the others. During or after construction, the child class must call init(initial_state) to initialize the
-	/// machine. deinit() must be called before or during the destructor to deinitialize the machine. Some FSMs (ex user
-	/// journeys) are designed to be singletons and have side effects. Make sure no unwanted temporaries are
-	/// constructed/destructed while creating these FSMs. Use std::in_place to store them in std::optional, or
-	/// std::in_place_type to store them in std::variant.
+	/// machine. deinit() must be called before or during the destructor to deinitialize the machine. If you have to
+	/// send a signal from one FSM to another, make sure the sender outlives the receiver. Otherwise, use deferral
+	/// mechanism to queue the signal for later. Some FSMs (ex. user journeys) are designed to be singletons and have
+	/// side effects. Make sure no unwanted temporaries are constructed/destructed while creating these FSMs. Use
+	/// std::in_place to store them in std::optional, or std::in_place_type to store them in std::variant.
 	template <typename StateEnum, typename SignalT>
 	class FsmBase {
 		static_assert(std::is_base_of_v<FsmSignalBase,SignalT> == true);

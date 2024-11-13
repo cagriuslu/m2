@@ -5,9 +5,11 @@
 
 namespace {
 	void notify_main_journey(std::optional<POI> poi) {
-		std::visit(m2::overloaded{
-			[=](auto& j) { j.signal(POIOrCancelSignal{poi}); }
-		}, *M2G_PROXY.main_journeys);
+		M2_DEFER([=]() {
+			std::visit(m2::overloaded{
+					[=](auto& j) { j.signal(POIOrCancelSignal{poi}); }
+			}, *M2G_PROXY.main_journeys);
+		});
 	}
 }
 

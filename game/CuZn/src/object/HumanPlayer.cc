@@ -100,13 +100,6 @@ m2::void_expected init_human_player(m2::Object& obj) {
 				std::visit(m2::overloaded{
 					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.mouse_position_world_m())); }
 				}, *M2G_PROXY.main_journeys);
-			} else if (auto& user_journey = m2g::Proxy::get_instance().user_journey) {
-				// Deliver position signal to current Journey
-				std::visit(m2::overloaded{
-					[](auto& j) {
-						j.signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.mouse_position_world_m()));
-					}
-				}, *user_journey);
 			}
 		}
 	};

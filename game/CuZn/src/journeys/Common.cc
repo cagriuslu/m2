@@ -21,10 +21,6 @@ namespace {
 							std::visit(m2::overloaded{
 									[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_cancel_signal()); }
 							}, *M2G_PROXY.main_journeys);
-						} else if (M2G_PROXY.user_journey) {
-							std::visit(m2::overloaded{
-									[](auto& j) { j.signal(PositionOrCancelSignal::create_cancel_signal()); }
-							}, *M2G_PROXY.user_journey);
 						}
 						return make_return_action();
 					}

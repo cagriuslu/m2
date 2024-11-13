@@ -539,10 +539,6 @@ m2g::Proxy& m2g::Proxy::get_instance() {
 	return dynamic_cast<m2g::Proxy&>(M2_GAME.proxy());
 }
 
-void m2g::Proxy::user_journey_deleter() {
-	get_instance().user_journey.reset();
-}
-
 void m2g::Proxy::main_journey_deleter() {
 	get_instance().main_journeys.reset();
 }

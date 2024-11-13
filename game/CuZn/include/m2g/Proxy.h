@@ -56,9 +56,7 @@ namespace m2g {
 		m2::Graph available_connections_graph; // Nodes are City (m2g::pb::ItemType) // TODO instead of holding onto this object, maybe recreate it by looking at sprites each time it's needed
 
 		// User journeys
-		std::optional<std::variant<NetworkJourney>> user_journey;
-		std::optional<std::variant<BuildJourney, SellJourney, DevelopJourney, LiquidationJourney>> main_journeys;
-		static void user_journey_deleter();
+		std::optional<std::variant<BuildJourney, SellJourney, NetworkJourney, DevelopJourney, LiquidationJourney>> main_journeys;
 		static void main_journey_deleter();
 
 		// Accessors
