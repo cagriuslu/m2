@@ -1,0 +1,1 @@
+This game is meant to demonstrate a single player base building simulation game that plays like Rim World.

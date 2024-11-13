@@ -1,0 +1,1 @@
+This game is meant to demonstrate a multiplayer turn based board game that plays like Brass or Wingspan.
