@@ -15,13 +15,13 @@ namespace m2::network {
 		IpAddress _addr{};
 		Port _port{};
 
-		// Server socket at the server and the client socket at the client are created with this constructor
-		explicit TcpSocket(int fd);
-		// Client sockets held by the server are created with this constructor
-		TcpSocket(int fd, IpAddress addr, Port port);
+		/// Client sockets held by the server are created with this constructor. Platform specific data should be
+		/// initialized after calling this constructor.
+		TcpSocket(IpAddress addr, Port port) : _addr(addr), _port(port) {}
 
 	public:
-		static expected<TcpSocket> create();
+        static expected<TcpSocket> create_server(uint16_t port);
+        static expected<TcpSocket> create_client(const std::string& server_ip_addr, uint16_t server_port);
 		TcpSocket(const TcpSocket& other) = delete;
 		TcpSocket& operator=(const TcpSocket& other) = delete;
 		TcpSocket(TcpSocket&& other) noexcept;
@@ -31,13 +31,13 @@ namespace m2::network {
 		[[nodiscard]] IpAddressAndPort ip_address_and_port() const { return IpAddressAndPort{_addr, _port}; }
 
 		/// Returns true if successful. Returns false if failed due to EADDRINUSE. Otherwise, returns unexpected.
-		expected<bool> bind(uint16_t port);
+		expected<bool> bind();
 		void_expected listen(int queue_size);
-		/// Tries to connect to the given IP address and port. Returns true if the socket is successfully connected.
-		/// Returns false if the connection failed due to external reasons (no route to host, timeout, connection
-		/// refused, etc.). Returns unexpected if an unrecoverable error occurs. If unexpected, there's no point
-		/// retrying the connection. If false is returned, the same socket can be used to retry connection.
-		expected<bool> connect(const std::string& ip_addr, uint16_t port);
+		/// Tries to connect to the server. Returns true if the socket is successfully connected. Returns false if the
+		/// connection failed due to external reasons (no route to host, timeout, connection refused, etc.). Returns
+		/// unexpected if an unrecoverable error occurs. If unexpected, there's no point retrying the connection. If
+		/// false is returned, the same socket can be used to retry connection.
+		expected<bool> connect();
 		/// Returns another TcpSocket instance that's connected to the client. Returns std::nullopt if the client
 		/// connection was aborted by the time it was accepted. Returns unexpected if a socket error occurs.
 		expected<std::optional<TcpSocket>> accept();

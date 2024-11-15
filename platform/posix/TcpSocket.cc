@@ -7,25 +7,33 @@
 #include <arpa/inet.h>
 #include <m2/Log.h>
 
-m2::network::TcpSocket::TcpSocket(int fd)
-	: _platform_specific_data(new detail::PlatformSpecificTcpSocketData{.fd = fd}) {}
-m2::network::TcpSocket::TcpSocket(int fd, IpAddress addr, Port port)
-	: _platform_specific_data(new detail::PlatformSpecificTcpSocketData{.fd = fd}), _addr(addr), _port(port) {}
+m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create_server(uint16_t port) {
+    int socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (socket_result == -1) {
+        return m2::make_unexpected(strerror(errno));
+    }
 
-m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create() {
-	int socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (socket_result == -1) {
-		return m2::make_unexpected(strerror(errno));
-	}
+    // Enable linger for 10 seconds, because when the game is finished, the server sends the final ServerUpdate and
+    // immediately closes the connection
+    linger l{.l_onoff = 1, .l_linger = 10};
+    if (setsockopt(socket_result, SOL_SOCKET, SO_LINGER, &l, sizeof(l)) == -1) {
+        LOG_WARN("Unable to enable TCP linger", std::string(strerror(errno)));
+    }
 
-	// Enable linger for 10 seconds, because when the game is finished, the server sends the final ServerUpdate and
-	// immediately closes the connection
-	linger l{.l_onoff = 1, .l_linger = 10};
-	if (setsockopt(socket_result, SOL_SOCKET, SO_LINGER, &l, sizeof(l)) == -1) {
-		LOG_WARN("Unable to enable TCP linger", std::string(strerror(errno)));
-	}
+    TcpSocket tcp_socket{INADDR_ANY, port};
+    tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
+    return std::move(tcp_socket);
+}
 
-	return TcpSocket{socket_result};
+m2::expected<m2::network::TcpSocket> m2::network::TcpSocket::create_client(const std::string& server_ip_addr, uint16_t server_port) {
+    int socket_result = ::socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (socket_result == -1) {
+        return m2::make_unexpected(strerror(errno));
+    }
+
+    TcpSocket tcp_socket{inet_addr(server_ip_addr.c_str()), server_port};
+    tcp_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = socket_result};
+    return std::move(tcp_socket);
 }
 
 m2::network::TcpSocket::TcpSocket(TcpSocket&& other) noexcept {
@@ -48,12 +56,12 @@ m2::network::TcpSocket::~TcpSocket() {
 	}
 }
 
-m2::expected<bool> m2::network::TcpSocket::bind(uint16_t port) {
+m2::expected<bool> m2::network::TcpSocket::bind() {
 	sockaddr_in sin{};
 	sin.sin_len = sizeof(sin);
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
-	sin.sin_addr.s_addr = INADDR_ANY;
+	sin.sin_port = htons(_port);
+	sin.sin_addr.s_addr = _addr;
 	int bind_result = ::bind(_platform_specific_data->fd, (sockaddr*) &sin, sizeof(sin));
 	if (bind_result == -1) {
 		if (errno == EADDRINUSE) {
@@ -62,8 +70,6 @@ m2::expected<bool> m2::network::TcpSocket::bind(uint16_t port) {
 			return m2::make_unexpected(strerror(errno));
 		}
 	}
-
-	_port = port;
 	return true;
 }
 
@@ -76,12 +82,12 @@ m2::void_expected m2::network::TcpSocket::listen(int queue_size) {
 	return {};
 }
 
-m2::expected<bool> m2::network::TcpSocket::connect(const std::string& ip_addr, uint16_t port) {
+m2::expected<bool> m2::network::TcpSocket::connect() {
 	sockaddr_in sin{};
 	sin.sin_len = sizeof(sin);
 	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
-	sin.sin_addr.s_addr = inet_addr(ip_addr.c_str());
+	sin.sin_port = htons(_port);
+	sin.sin_addr.s_addr = _addr;
 	int connect_result = ::connect(_platform_specific_data->fd, (sockaddr*) &sin, sizeof(sin));
 	if (connect_result == -1) {
 		if (errno == ECONNREFUSED || errno == EHOSTUNREACH || errno == ENETUNREACH || errno == ETIMEDOUT) {
@@ -103,7 +109,10 @@ m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::acce
 		}
 		return m2::make_unexpected(strerror(errno));
 	}
-	return TcpSocket{new_socket, child_address.sin_addr.s_addr, child_address.sin_port};
+
+	TcpSocket child_socket{child_address.sin_addr.s_addr, child_address.sin_port};
+    child_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = new_socket};
+    return std::move(child_socket);
 }
 
 m2::expected<int> m2::network::TcpSocket::send(const uint8_t* buffer, size_t length) {
