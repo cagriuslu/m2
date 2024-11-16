@@ -58,10 +58,10 @@ enum ItemType {
   // Industry tiles
   // The order should not be modified carelessly.
   // Higher enum values are considered higher level tiles.
-  COTTON_MILL_TILEI = 201; // x3
-  COTTON_MILL_TILEII = 202; // x2
-  COTTON_MILL_TILEIII = 203; // x3
-  COTTON_MILL_TILEIV = 204; // x3
+  COTTON_MILL_TILE_I = 201; // x3
+  COTTON_MILL_TILE_II = 202; // x2
+  COTTON_MILL_TILE_III = 203; // x3
+  COTTON_MILL_TILE_IV = 204; // x3
   IRON_WORKS_TILE_I = 205; // x1
   IRON_WORKS_TILE_II = 206; // x1
   IRON_WORKS_TILE_III = 207; // x1
@@ -74,11 +74,11 @@ enum ItemType {
   COAL_MINE_TILE_II = 214; // x2
   COAL_MINE_TILE_III = 215; // x2
   COAL_MINE_TILE_IV = 216; // x2
-  POTTERY_TILEI = 217; // x1
-  POTTERY_TILEII = 218; // x1
-  POTTERY_TILEIII = 219; // x1
-  POTTERY_TILEIV = 220; // x1
-  POTTERY_TILEV = 221; // x1
+  POTTERY_TILE_I = 217; // x1
+  POTTERY_TILE_II = 218; // x1
+  POTTERY_TILE_III = 219; // x1
+  POTTERY_TILE_IV = 220; // x1
+  POTTERY_TILE_V = 221; // x1
   MANUFACTURED_GOODS_TILE_I = 222; // x1
   MANUFACTURED_GOODS_TILE_II = 223; // x2
   MANUFACTURED_GOODS_TILE_III = 224; // x1

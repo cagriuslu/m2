@@ -85,8 +85,8 @@ bool is_factory_sold(m2::Character& chr) {
 }
 
 bool is_factory_level_1(m2::Character& chr) {
-	static std::set<IndustryTile> level_1_tiles{COTTON_MILL_TILEI, IRON_WORKS_TILE_I, BREWERY_TILE_I, COAL_MINE_TILE_I,
-		POTTERY_TILEI, MANUFACTURED_GOODS_TILE_I};
+	static std::set<IndustryTile> level_1_tiles{COTTON_MILL_TILE_I, IRON_WORKS_TILE_I, BREWERY_TILE_I, COAL_MINE_TILE_I,
+		POTTERY_TILE_I, MANUFACTURED_GOODS_TILE_I};
 	return level_1_tiles.contains(to_industry_tile_of_factory_character(chr));
 }
 

@@ -63,7 +63,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const POIOrCance
 
 std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() {
 	if (1 < player_tile_count(M2_PLAYER.character())) {
-		if (auto selection = ask_for_confirmation_with_cancellation("Develop two industries at once? (Requires 2 Irons instead of 1 Iron)", "Yes", "No"); not selection) {
+		if (auto selection = ask_for_confirmation_with_cancellation("Develop two industries at once? (Requires 2 Irons instead of 1)", "Yes", "No"); not selection) {
 			M2_DEFER(m2g::Proxy::main_journey_deleter);
 			return std::nullopt;
 		} else {

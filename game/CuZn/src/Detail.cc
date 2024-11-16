@@ -32,7 +32,7 @@ bool is_sellable_industry(Industry industry) {
 }
 
 bool is_industry_tile(IndustryTile industry_tile) {
-	return (COTTON_MILL_TILEI <= industry_tile && industry_tile <= MANUFACTURED_GOODS_TILE_VIII);
+	return (COTTON_MILL_TILE_I <= industry_tile && industry_tile <= MANUFACTURED_GOODS_TILE_VIII);
 }
 
 bool is_industry_tile_category(IndustryTileCategory category) {
