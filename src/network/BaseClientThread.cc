@@ -173,20 +173,23 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 			}
 
 			// Socket not yet created, or we just got disconnected. Create socket.
-			auto socket = TcpSocket::create();
+			auto socket = TcpSocket::create_client(thread_manager->_addr, 1162);
 			if (not socket) {
 				LOG_FATAL("TcpSocket creation failed", socket.error());
 				return;
 			}
+            // Ping broadcast for Windows is not implemented
+#ifndef _WIN32
 			// Start ping broadcast if enabled
 			if (thread_manager->_ping_broadcast && not ping_broadcast_thread) {
 				ping_broadcast_thread.emplace();
 				// Wait some time before attempting to connect
 				std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 			}
+#endif
 
 			// Attempt to connect
-			if (auto connect_success = socket->connect(thread_manager->_addr, 1162); not connect_success) {
+			if (auto connect_success = socket->connect(); not connect_success) {
 				throw M2_ERROR("Connect failed: " + connect_success.error());
 			} else {
 				if (not *connect_success) {

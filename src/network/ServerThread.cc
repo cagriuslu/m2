@@ -233,7 +233,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	set_thread_name_for_logging("SR");
 	LOG_INFO("ServerThread function");
 
-	auto listen_socket = TcpSocket::create();
+	auto listen_socket = TcpSocket::create_server(PORT);
 	if (not listen_socket) {
 		throw M2_ERROR("TcpSocket creation failed: " + listen_socket.error());
 	}
@@ -242,7 +242,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	// Try binding to the socket multiple times.
 	bool binded = false;
 	m2_repeat(32) { // The socket may linger up to 30 secs
-		auto bind_result = listen_socket->bind(PORT);
+		auto bind_result = listen_socket->bind();
 		if (not bind_result) {
 			throw M2_ERROR("Bind failed: " + bind_result.error());
 		}
@@ -266,8 +266,11 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	LOG_INFO("TcpSocket listening on port", PORT);
 	server_thread->set_state_locked(pb::ServerState::SERVER_LISTENING);
 
+    // Ping broadcast for Windows is not implemented
+#ifndef _WIN32
 	// Start ping broadcast
 	server_thread->_ping_broadcast_thread.emplace();
+#endif
 
 	while (not server_thread->locked_is_quit() && not server_thread->is_shutdown()) {
 		// Process one incoming message from each client

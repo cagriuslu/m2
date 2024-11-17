@@ -32,7 +32,7 @@ m2::expected<std::optional<std::pair<m2::network::TcpSocketHandles, m2::network:
 	if (select_result == -1) {
 		return make_unexpected(strerror(errno));
 	} else if (select_result == 0) {
-		return std::nullopt;
+		return std::nullopt; // Timeout occurred
 	} else {
 		// Prepare selected handles
 		std::pair<TcpSocketHandles, TcpSocketHandles> selected_handles;
