@@ -2,7 +2,7 @@
 #include <m2/M2.h>
 #include <m2/RectI.h>
 #include <m2/Meta.h>
-#include <sdl2/SDL.h>
+#include <SDL2/SDL.h>
 #include <sstream>
 
 m2::RectF::RectF() : x(), y(), w(), h() {}

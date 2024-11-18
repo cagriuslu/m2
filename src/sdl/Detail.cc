@@ -2,6 +2,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/M2.h>
+#include <cmath>
 
 SDL_Cursor* SdlUtils_CreateCursor() {
     const char* str =
@@ -99,8 +100,8 @@ m2::VecI m2::sdl::mouse_position() {
 int m2::sdl::draw_circle(SDL_Renderer* renderer, SDL_Color color, SDL_Rect* dst_rect, unsigned piece_count) {
 	std::vector<SDL_Point> points{piece_count + 1};
 	for (unsigned i = 0; i < piece_count; ++i) {
-		int x = (int) std::roundf(std::cosf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->w / 2.0f);
-		int y = (int) std::roundf(std::sinf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->h / 2.0f);
+		int x = (int) std::roundf(cosf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->w / 2.0f);
+		int y = (int) std::roundf(sinf(m2::PI_MUL2 * (float)i / (float)piece_count) * (float)dst_rect->h / 2.0f);
 		points[i].x = dst_rect->x + dst_rect->w / 2 + x;
 		points[i].y = dst_rect->y + dst_rect->h / 2 + y;
 	}

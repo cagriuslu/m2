@@ -58,7 +58,9 @@ m2::network::TcpSocket::~TcpSocket() {
 
 m2::expected<bool> m2::network::TcpSocket::bind() {
 	sockaddr_in sin{};
+#ifdef __APPLE__
 	sin.sin_len = sizeof(sin);
+#endif
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(_port);
 	sin.sin_addr.s_addr = _addr;
@@ -84,7 +86,9 @@ m2::void_expected m2::network::TcpSocket::listen(int queue_size) {
 
 m2::expected<bool> m2::network::TcpSocket::connect() {
 	sockaddr_in sin{};
+#ifdef __APPLE__
 	sin.sin_len = sizeof(sin);
+#endif
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons(_port);
 	sin.sin_addr.s_addr = _addr;

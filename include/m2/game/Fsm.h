@@ -9,6 +9,7 @@
 #include <type_traits>
 #include <utility>
 #include <cmath>
+#include <cmath>
 
 namespace m2 {
 	enum class FsmSignalType {
@@ -78,7 +79,7 @@ namespace m2 {
 		/// Report the time passed to the state machine. This function needs to be called periodically for alarm
 		/// functionality to work.
 		void time(float delta_time_s) {
-			if (not isnan(_alarm)) {
+			if (not std::isnan(_alarm)) {
 				if (_alarm -= delta_time_s; _alarm <= 0.0f) {
 					_alarm = NAN;
 					signal(SignalT{FsmSignalType::Alarm});

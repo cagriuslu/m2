@@ -28,5 +28,5 @@ m2::Aabb::operator bool() const {
 }
 
 m2::Aabb::operator b2AABB() const {
-    return b2AABB{.lowerBound = b2Vec2{top_left}, .upperBound{bottom_right}};
+    return b2AABB{.lowerBound = b2Vec2{top_left}, .upperBound = b2Vec2{bottom_right}};
 }

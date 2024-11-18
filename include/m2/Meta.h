@@ -6,6 +6,7 @@
 #include <set>
 #include <ranges>
 #include <optional>
+#include <cmath>
 
 #define DEFAULT_OVERLOAD [](MAYBE const auto& _){}
 
