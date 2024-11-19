@@ -15,9 +15,8 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 	// Add player names
 	auto bp = PanelBlueprint{
 		.w = 70,
-		.h = 9,
+		.h = 8,
 		.border_width = 0.0f,
-		.background_color = {0, 0, 0, 45},
 		.on_event = [=](Panel& panel, Events& events) -> Action {
 			if (panel.rect_px().contains(events.mouse_position())) {
 				// Create custom hud if not already
@@ -30,7 +29,7 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 			return make_continue_action();
 		},
 		.on_update = [](MAYBE Panel& panel) -> Action {
-			// Clean up custom hud if already destroyed
+			// Clean up custom hud if not already destroyed
 			if (M2G_PROXY.custom_hud_panel && not (*M2G_PROXY.custom_hud_panel)->is_valid()) {
 				M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.custom_hud_panel);
 				M2G_PROXY.custom_hud_panel = std::nullopt;
@@ -38,18 +37,30 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 			return make_continue_action();
 		},
 		.widgets = {
+			// Gray background
+			WidgetBlueprint{
+				.x = 0, .y = 0, .w = 70, .h = 6,
+				.border_width = 0.0f,
+				.background_color = {0, 0, 0, 80},
+				.variant = TextBlueprint{}
+			},
 			WidgetBlueprint{
 				.x = 0, .y = 0, .w = 30, .h = 5,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
 					.text = "Current Player",
 					.horizontal_alignment = TextHorizontalAlignment::LEFT,
-					.wrapped_font_size_in_units = 4.0f }
+					.wrapped_font_size_in_units = 4.0f
+				}
 			},
 			WidgetBlueprint{
-				.x = 33, .y = 5, .w = 4, .h = 4,
+				.x = 33, .y = 6, .w = 4, .h = 2,
 				.border_width = 0.0f,
-				.variant = TextBlueprint{ .text = "V" }
+				.background_color = {0, 0, 0, 80},
+				.variant = TextBlueprint{
+					.text = "v",
+					.wrapped_font_size_in_units = 2.0f
+				}
 			}
 		}
 	};
