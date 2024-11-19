@@ -109,7 +109,10 @@ namespace m2 {
 		static void draw_horizontal_line(float y, SDL_Color color);
 
 		// Global Modifiers
+
+		/// If dimming_with_exceptions is enabled, and the given object_id is not in the exceptions, dim the given texture.
 		static bool dim_rendering_if_necessary(Id object_id, SDL_Texture* texture);
+		/// Undim the given texture
 		static void undim_rendering(SDL_Texture* texture);
 	};
 

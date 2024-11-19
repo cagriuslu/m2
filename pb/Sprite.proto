@@ -17,12 +17,21 @@ message Color {
 message ImageAdjustment {
   float brightness_multiplier = 1;
 }
+message BlurredDropShadow {
+  int32 blur_radius = 1; // The width (or height) of the convolution matrix will be (blur_radius * 2 + 1).
+  float standard_deviation = 2; // of Gaussian blur
+}
 
 enum SpriteEffectType {
   __NO_SPRITE_EFFECT = 0; // Shouldn't be used in the code, instead use IsForegroundCompanion{false}
+  // Creates a mask of the sprite where the non-transparent pixels of the sprite has a fixed color (mask_color).
   SPRITE_EFFECT_MASK = 1;
+  // Creates a grayscale version of the sprite.
   SPRITE_EFFECT_GRAYSCALE = 2;
+  // Creates an adjusted version of the sprite.
   SPRITE_EFFECT_IMAGE_ADJUSTMENT = 3;
+  // Creates a black blurred shadow of the sprite. The variant doesn't contain the sprite itself.
+  SPRITE_EFFECT_BLURRED_DROP_SHADOW = 4;
 }
 
 message SpriteEffect {
@@ -30,6 +39,7 @@ message SpriteEffect {
   oneof effect_arg {
     Color mask_color = 2;
     ImageAdjustment image_adjustment = 3;
+    BlurredDropShadow blurred_drop_shadow = 4;
   }
 }
 

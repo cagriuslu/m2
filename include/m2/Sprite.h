@@ -37,15 +37,11 @@ namespace m2 {
 	   public:
 		explicit SpriteEffectsSheet(SDL_Renderer* renderer);
 		using DynamicSheet::texture;
-		RectI create_mask_effect(
-		    const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color, bool lightning);
-		RectI create_foreground_companion_effect(
-		    const SpriteSheet& sheet, const pb::RectI& rect,
-		    const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces, bool lightning);
+		RectI create_mask_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color, bool lightning);
+		RectI create_foreground_companion_effect(const SpriteSheet& sheet, const pb::RectI& rect, const google::protobuf::RepeatedPtrField<pb::RectI>& rect_pieces, bool lightning);
 		RectI create_grayscale_effect(const SpriteSheet& sheet, const pb::RectI& rect, bool lightning);
-		RectI create_image_adjustment_effect(
-		    const SpriteSheet& sheet, const pb::RectI& rect, const pb::ImageAdjustment& image_adjustment,
-		    bool lightning);
+		RectI create_image_adjustment_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::ImageAdjustment& image_adjustment, bool lightning);
+		RectI create_blurred_drop_shadow_effect(const SpriteSheet& sheet, const pb::RectI& rect, int32_t blur_radius, float standard_deviation, bool lightning);
 
 		[[nodiscard]] inline int texture_width() const { return width(); }
 		[[nodiscard]] inline int texture_height() const { return height(); }

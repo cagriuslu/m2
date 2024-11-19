@@ -6,6 +6,8 @@
 #include <m2/Proxy.h>
 #include <m2/Sprite.h>
 #include <m2/protobuf/Detail.h>
+#include <m2/detail/Gaussian.h>
+#include <numeric>
 
 m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer, bool lightning)
     : _sprite_sheet(sprite_sheet) {
@@ -177,6 +179,71 @@ m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(
 
 	return dst_rect;
 }
+m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const SpriteSheet& sheet, const pb::RectI& rect, int32_t blur_radius, float standard_deviation, bool lightning) {
+	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
+
+	// Check pixel stride
+	auto* src_surface = sheet.surface();
+	if (src_surface->format->BytesPerPixel != 4 || dst_surface->format->BytesPerPixel != 4) {
+		throw M2_ERROR("Surface has unsupported pixel format");
+	}
+
+	// Create the image kernel
+	auto kernel = create_gaussian_kernel(blur_radius, standard_deviation);
+	// Size of the one side of the matrix
+	auto side_size = blur_radius * 2 + 1;
+
+	// Returns the normalized alpha channel value of the pixel at the given coordinate. If the coordinates lay outside
+	// the rect, 0 is returned. Assumes that the surface is already locked.
+	auto pixel_alpha_reader = [rect](SDL_Surface* surface, int x, int y) {
+		if (x < rect.x() || rect.x() + rect.w() <= x
+			|| y < rect.y() || rect.y() + rect.h() <= y) {
+			return 0.0f;
+		}
+		// Read src pixel
+		auto* src_pixels = static_cast<uint32_t*>(surface->pixels);
+		auto src_pixel = *(src_pixels + (x + y * surface->w));
+		// Decompose to RPG
+		uint8_t r, g, b, a;
+		SDL_GetRGBA(src_pixel, surface->format, &r, &g, &b, &a);
+		// Return the normalized alpha component
+		return static_cast<float>(a) / 255.0f;
+	};
+
+	SDL_LockSurface(src_surface);
+	SDL_LockSurface(dst_surface);
+
+	for (int y = rect.y(); y < rect.y() + rect.h(); ++y) {
+		for (int x = rect.x(); x < rect.x() + rect.w(); ++x) {
+			// Apply the kernel only to the alpha channel, other channels are full black
+			// Prepare the input by fetching the pixels from the surface
+			std::vector<float> input(kernel.size(), 0.0f);
+			for (int input_y = 0; input_y < side_size; ++input_y) {
+				for (int input_x = 0; input_x < side_size; ++input_x) {
+					input[input_y * side_size + input_x] = pixel_alpha_reader(src_surface, x + input_x - blur_radius, y + input_y - blur_radius);
+				}
+			}
+			// Multiply the corresponding elements with the kernel
+			std::vector<float> output(kernel.size(), 0.0f);
+			std::transform(input.begin(), input.end(), kernel.begin(), std::back_inserter(output), std::multiplies<float>{});
+			// Sum the elements
+			float sum = std::accumulate(output.begin(), output.end(), 0.0f);
+			// Convert back to int
+			auto an = iround(sum * 255.0f);
+			// Color dst pixel
+			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
+			auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + dst_rect.y) * dst_surface->w);
+			*dst_pixel = SDL_MapRGBA(dst_surface->format, 0, 0, 0, an);
+		}
+	}
+
+	SDL_UnlockSurface(dst_surface);
+	SDL_UnlockSurface(src_surface);
+
+	recreate_texture(lightning);
+
+	return dst_rect;
+}
 
 m2::Sprite::Sprite(
     const std::vector<SpriteSheet>& sprite_sheets, const SpriteSheet& sprite_sheet,
@@ -274,6 +341,9 @@ m2::Sprite::Sprite(
 				case pb::SPRITE_EFFECT_IMAGE_ADJUSTMENT:
 					_effects[index] = sprite_effects_sheet.create_image_adjustment_effect(
 					    sprite_sheet, original_sprite->regular().rect(), effect.image_adjustment(), lightning);
+					break;
+				case pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW:
+					_effects[index] = sprite_effects_sheet.create_blurred_drop_shadow_effect(sprite_sheet, original_sprite->regular().rect(), effect.blurred_drop_shadow().blur_radius(), effect.blurred_drop_shadow().standard_deviation(), lightning);
 					break;
 				default:
 					throw M2_ERROR(
