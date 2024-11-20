@@ -179,7 +179,7 @@ m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(
 
 	return dst_rect;
 }
-m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const SpriteSheet& sheet, const pb::RectI& rect, int32_t blur_radius, float standard_deviation, bool lightning) {
+m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const SpriteSheet& sheet, const pb::RectI& rect, const pb::BlurredDropShadow& blurred_drop_shadow, bool lightning) {
 	auto [dst_surface, dst_rect] = alloc(rect.w(), rect.h());
 
 	// Check pixel stride
@@ -189,9 +189,9 @@ m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const Sprite
 	}
 
 	// Create the image kernel
-	auto kernel = create_gaussian_kernel(blur_radius, standard_deviation);
+	auto kernel = create_gaussian_kernel(blurred_drop_shadow.blur_radius(), blurred_drop_shadow.standard_deviation());
 	// Size of the one side of the matrix
-	auto side_size = blur_radius * 2 + 1;
+	auto side_size = blurred_drop_shadow.blur_radius() * 2 + 1;
 
 	// Returns the normalized alpha channel value of the pixel at the given coordinate. If the coordinates lay outside
 	// the rect, 0 is returned. Assumes that the surface is already locked.
@@ -220,7 +220,7 @@ m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const Sprite
 			std::vector<float> input(kernel.size(), 0.0f);
 			for (int input_y = 0; input_y < side_size; ++input_y) {
 				for (int input_x = 0; input_x < side_size; ++input_x) {
-					input[input_y * side_size + input_x] = pixel_alpha_reader(src_surface, x + input_x - blur_radius, y + input_y - blur_radius);
+					input[input_y * side_size + input_x] = pixel_alpha_reader(src_surface, x + input_x - blurred_drop_shadow.blur_radius(), y + input_y - blurred_drop_shadow.blur_radius());
 				}
 			}
 			// Multiply the corresponding elements with the kernel
@@ -228,6 +228,10 @@ m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const Sprite
 			std::transform(input.begin(), input.end(), kernel.begin(), std::back_inserter(output), std::multiplies<float>{});
 			// Sum the elements
 			float sum = std::accumulate(output.begin(), output.end(), 0.0f);
+			// Apply final transparency
+			sum *= blurred_drop_shadow.final_transparency();
+			// Clamp to [0,1]
+			sum = std::clamp(sum, 0.0f, 1.0f);
 			// Convert back to int
 			auto an = iround(sum * 255.0f);
 			// Color dst pixel
@@ -343,7 +347,7 @@ m2::Sprite::Sprite(
 					    sprite_sheet, original_sprite->regular().rect(), effect.image_adjustment(), lightning);
 					break;
 				case pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW:
-					_effects[index] = sprite_effects_sheet.create_blurred_drop_shadow_effect(sprite_sheet, original_sprite->regular().rect(), effect.blurred_drop_shadow().blur_radius(), effect.blurred_drop_shadow().standard_deviation(), lightning);
+					_effects[index] = sprite_effects_sheet.create_blurred_drop_shadow_effect(sprite_sheet, original_sprite->regular().rect(), effect.blurred_drop_shadow(), lightning);
 					break;
 				default:
 					throw M2_ERROR(
