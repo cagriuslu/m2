@@ -880,14 +880,16 @@ void m2::Game::recalculate_directional_audio() {
 }
 
 void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
-	_level->deferred_actions.push_back(action);
+	_level->deferred_actions.push(action);
 }
 
 void m2::Game::execute_deferred_actions() {
-	for (auto& action : _level->deferred_actions) {
-		action();
+	// Execute deferred actions one by one. A deferred action may insert another deferred action into the queue. Thus we
+	// cannot iterate over the queue, we must pop one by one.
+	while (not _level->deferred_actions.empty()) {
+		_level->deferred_actions.front()();
+		_level->deferred_actions.pop();
 	}
-	_level->deferred_actions.clear();
 }
 
 void m2::Game::recalculate_mouse_position2() const {

@@ -16,6 +16,7 @@ namespace {
 std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const PositionOrCancelSignal& signal) {
 	switch (signal.type()) {
 		case m2::FsmSignalType::EnterState: {
+			LOG_INFO("Entering POISelectionJourney");
 			// Look-up the object IDs of the POIs
 			auto object_ids = _pois | std::views::transform([](POI poi) {
 				if (is_industry_location(poi)) {
@@ -68,6 +69,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			break;
 		}
 		case m2::FsmSignalType::ExitState: {
+			LOG_INFO("Exiting POISelectionJourney");
 			if (_cancel_button_panel) {
 				M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
 				_cancel_button_panel.reset();

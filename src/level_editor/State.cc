@@ -32,7 +32,7 @@ void m2::ledit::State::PaintMode::paint_sprite(const VecI& position) {
 }
 m2::ledit::State::PaintMode::~PaintMode() {
 	if (selected_sprite_ghost_id) {
-		M2_LEVEL.deferred_actions.push_back(create_object_deleter(selected_sprite_ghost_id));
+		M2_LEVEL.deferred_actions.push(create_object_deleter(selected_sprite_ghost_id));
 	}
 }
 void m2::ledit::State::EraseMode::erase_position(const VecI& position) {
@@ -41,7 +41,7 @@ void m2::ledit::State::EraseMode::erase_position(const VecI& position) {
 void m2::ledit::State::EraseMode::erase_position(const VecI &position, BackgroundLayer layer) {
 	auto placeholders_it = std::get<ledit::State>(M2_LEVEL.type_state).bg_placeholders[I(layer)].find(position);
 	if (placeholders_it != std::get<ledit::State>(M2_LEVEL.type_state).bg_placeholders[I(layer)].end()) {
-		M2_LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second.first));
+		M2_LEVEL.deferred_actions.push(create_object_deleter(placeholders_it->second.first));
 		std::get<ledit::State>(M2_LEVEL.type_state).bg_placeholders[I(layer)].erase(placeholders_it);
 	}
 }
@@ -72,13 +72,13 @@ void m2::ledit::State::PlaceMode::place_object(const VecI& position) const {
 }
 m2::ledit::State::PlaceMode::~PlaceMode() {
 	if (selected_sprite_ghost_id) {
-		M2_LEVEL.deferred_actions.push_back(create_object_deleter(selected_sprite_ghost_id));
+		M2_LEVEL.deferred_actions.push(create_object_deleter(selected_sprite_ghost_id));
 	}
 }
 void m2::ledit::State::RemoveMode::remove_object(const VecI &position) {
 	auto placeholders_it = std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders.find(position);
 	if (placeholders_it != std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders.end()) {
-		M2_LEVEL.deferred_actions.push_back(create_object_deleter(placeholders_it->second.first));
+		M2_LEVEL.deferred_actions.push(create_object_deleter(placeholders_it->second.first));
 		std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders.erase(placeholders_it);
 	}
 }

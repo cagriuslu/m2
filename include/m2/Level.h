@@ -69,7 +69,7 @@ namespace m2 {
 
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
-		std::vector<std::function<void()>> deferred_actions;
+		std::queue<std::function<void()>> deferred_actions;
 		std::variant<
 		    std::monostate, splayer::State, mplayer::State, ledit::State, pedit::State, sedit::State, bsedit::State>
 		    type_state;
