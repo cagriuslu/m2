@@ -536,6 +536,20 @@
         {
           "type": "COAL_CUBE",
           "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_BLURRED_DROP_SHADOW",
+                "blurredDropShadow": {
+                  "blurRadius": 2,
+                  "standardDeviation": 15,
+                  "finalTransparency": 1.0
+                }
+              }
+            ],
+            "defaultVariantDrawOrder": [
+              "SPRITE_EFFECT_BLURRED_DROP_SHADOW",
+              "__NO_SPRITE_EFFECT"
+            ],
             "rect": {
               "x": 32,
               "y": 128,
@@ -548,6 +562,20 @@
         {
           "type": "IRON_CUBE",
           "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_BLURRED_DROP_SHADOW",
+                "blurredDropShadow": {
+                  "blurRadius": 2,
+                  "standardDeviation": 15,
+                  "finalTransparency": 1.0
+                }
+              }
+            ],
+            "defaultVariantDrawOrder": [
+              "SPRITE_EFFECT_BLURRED_DROP_SHADOW",
+              "__NO_SPRITE_EFFECT"
+            ],
             "rect": {
               "x": 48,
               "y": 128,
@@ -560,6 +588,20 @@
         {
           "type": "BEER_BARREL",
           "regular": {
+            "effects": [
+              {
+                "type": "SPRITE_EFFECT_BLURRED_DROP_SHADOW",
+                "blurredDropShadow": {
+                  "blurRadius": 2,
+                  "standardDeviation": 15,
+                  "finalTransparency": 1.0
+                }
+              }
+            ],
+            "defaultVariantDrawOrder": [
+              "SPRITE_EFFECT_BLURRED_DROP_SHADOW",
+              "__NO_SPRITE_EFFECT"
+            ],
             "rect": {
               "x": 64,
               "y": 128,

@@ -26,9 +26,11 @@ void draw_resources(m2::Character& chr) {
 	m2::Graphic::dim_rendering_if_necessary(chr.owner_id(), M2_GAME.get_sprite(count_sprite_type).texture());
 	m2::Graphic::dim_rendering_if_necessary(chr.owner_id(), M2_GAME.get_sprite(sprite_type).texture());
 	// Draw count
-	m2::draw_real_2d(pos + m2::VecF{0.35f, 1.075f}, M2_GAME.get_sprite(count_sprite_type), {}, 0.0f);
+	m2::draw_real_2d(pos + m2::VecF{0.20f, 1.06f}, M2_GAME.get_sprite(count_sprite_type), {}, 0.0f);
 	// Draw resource
-	m2::draw_real_2d(pos + m2::VecF{1, 1}, M2_GAME.get_sprite(sprite_type), {}, 0.0f);
+	// We're not using a graphics component, so we have to draw the drop shadow ourselves.
+	m2::draw_real_2d(pos + m2::VecF{1.0f, 1.05f}, M2_GAME.get_sprite(sprite_type), m2::pb::SpriteEffectType{m2::pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW}, 0.0f);
+	m2::draw_real_2d(pos + m2::VecF{1.0f, 1.0f}, M2_GAME.get_sprite(sprite_type), {}, 0.0f);
 	// Undim
 	m2::Graphic::undim_rendering(M2_GAME.get_sprite(count_sprite_type).texture());
 	m2::Graphic::undim_rendering(M2_GAME.get_sprite(sprite_type).texture());
