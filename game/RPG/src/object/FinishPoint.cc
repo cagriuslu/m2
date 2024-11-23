@@ -17,7 +17,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& gfx = obj.add_graphic(sprite);
-	gfx.draw_variant = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
+	gfx.variant_draw_order[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 
 	phy.on_collision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
 		// Check enemy counter
@@ -40,9 +40,9 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	gfx.pre_draw = [](MAYBE m2::Graphic& gfx) {
 		// Check enemy counter, adjust sprite effect
 		if (M2G_PROXY.alive_enemy_count) {
-			gfx.draw_variant = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
+			gfx.variant_draw_order[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 		} else {
-			gfx.draw_variant = {};
+			gfx.variant_draw_order[0] = std::nullopt;
 		}
 	};
 

@@ -96,7 +96,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 						se.playbacks.emplace_back(playback_id);
 					} else {
 						// Playback finished, destroy self
-						M2_LEVEL.deferred_actions.emplace_back(m2::create_sound_emitter_deleter(obj.id()));
+						M2_LEVEL.deferred_actions.push(m2::create_sound_emitter_deleter(obj.id()));
 					}
 				};
 			}
@@ -154,9 +154,9 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 		impl.animation_fsm.time(M2_GAME.delta_time_s());
 		gfx.draw_addon_health_bar = chr.get_resource(RESOURCE_HP);
 		if (chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL)) {
-			gfx.draw_variant = SPRITE_EFFECT_MASK;
+			gfx.variant_draw_order[0] = SPRITE_EFFECT_MASK;
 		} else {
-			gfx.draw_variant = {};
+			gfx.variant_draw_order[0] = std::nullopt;
 		}
 	};
 	phy.on_debug_draw = [&impl](m2::Physique& phy) {

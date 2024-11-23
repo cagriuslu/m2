@@ -58,8 +58,13 @@ message RegularSprite {
   // List of effects that might be used during the game
   repeated SpriteEffect effects = 1;
 
+  // An array of SpriteEffectTypes describing how the Sprite should be drawn by the m2::Graphic::default_draw function.
+  // The variants are drawn in order, ie. the first variant in the array will be drawn first. Use __NO_SPRITE_EFFECT to
+  // describe the original sprite. If the array is empty, only the original sprite will be drawn.
+  repeated SpriteEffectType default_variant_draw_order = 2;
+
   // Coordinates of the sprite in sheet
-  RectI rect = 2;
+  RectI rect = 3;
 
   // Original rotation should be set according to the rotation of the sprite in the sprite sheet
   // Expects values in-between (-1, 1], which corresponds to -180, 180 degrees.
@@ -67,27 +72,27 @@ message RegularSprite {
   // Example: If the sprite points towards top-left on the sheet, it's original rotation is -0.75.
   // The graphics system will rotate the sprite back before drawing.
   // Collider parameters should assume the sprite is already rotated.
-  float original_rotation = 3;
+  float original_rotation = 4;
 
   // Override the PPm value of the sheet with this value if given.
-  int32 override_ppm = 4;
+  int32 override_ppm = 5;
 
   // Vector from the center of the (rect) to the position that should be the origin
-  VecF center_to_origin_vec_px = 5;
+  VecF center_to_origin_vec_px = 6;
 
-  Collider background_collider = 6;
-  Collider foreground_collider = 7;
+  Collider background_collider = 7;
+  Collider foreground_collider = 8;
 
   // If the tile is a background tile, it'll show up in the PAINT list of the level editor.
-  bool is_background_tile = 8;
+  bool is_background_tile = 9;
 
   // Vector from the center of the (rect) to the position that should be the origin of the Foreground Companion
-  VecF foreground_companion_center_to_origin_vec_px = 9;
+  VecF foreground_companion_center_to_origin_vec_px = 10;
   // w.r.t SpriteSheet coordinates
-  repeated RectI foreground_companion_rects = 10;
+  repeated RectI foreground_companion_rects = 11;
 
   // Sprites can hold immutable items just to simplify attribute lookup
-  repeated m2g.pb.ItemType named_items = 11;
+  repeated m2g.pb.ItemType named_items = 12;
 }
 
 message Duplicate {

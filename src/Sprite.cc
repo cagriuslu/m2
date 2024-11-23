@@ -272,6 +272,11 @@ m2::Sprite::Sprite(
 		original_sprite = &sprite;
 	}
 
+	std::transform(
+			original_sprite->regular().default_variant_draw_order().begin(),
+			original_sprite->regular().default_variant_draw_order().end(),
+			std::back_inserter(_default_variant_draw_order),
+			[](int t) { return static_cast<pb::SpriteEffectType>(t); });
 	_rect = RectI{original_sprite->regular().rect()};
 	_original_rotation_radians = original_sprite->regular().original_rotation() * m2::PI;
 	_ppm = original_sprite->regular().override_ppm() ? original_sprite->regular().override_ppm()

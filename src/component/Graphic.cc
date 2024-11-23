@@ -154,26 +154,53 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx
 m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(const uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_addon(default_draw_addons), sprite(&sprite) {}
 
+namespace detail {
+	void default_draw(const m2::Graphic* gfx, m2::DrawVariant draw_variant) {
+		if (m2::is_projection_type_perspective(M2_LEVEL.projection_type())) {
+			// Check if foreground or background
+			const bool is_foreground = M2_LEVEL.graphics.get_id(gfx);
+			draw_fake_3d(gfx->owner().position, *gfx->sprite, draw_variant, gfx->draw_angle, is_foreground, gfx->z);
+		} else {
+			draw_real_2d(gfx->owner().position, *gfx->sprite, draw_variant, gfx->draw_angle);
+		}
+	}
+}
+
 void m2::Graphic::default_draw(const Graphic& gfx) {
 	if (not gfx.sprite) {
 		// This function only draws sprites
 		return;
 	}
 
-	// Dim the sprite if dimming mode is enabled
-	bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), gfx.sprite->texture(gfx.draw_variant));
+	// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
+	bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), gfx.sprite->texture(DrawVariant{}));
 
-	if (is_projection_type_perspective(M2_LEVEL.projection_type())) {
-		// Check if foreground or background
-		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
-		draw_fake_3d(gfx.owner().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle, is_foreground, gfx.z);
-	} else {
-		draw_real_2d(gfx.owner().position, *gfx.sprite, gfx.draw_variant, gfx.draw_angle);
+	bool is_anything_drawn = false;
+	for (size_t i = 0; i < gfx.variant_draw_order.size(); ++i) {
+		if (const auto& draw_variant = gfx.variant_draw_order[i]) {
+			::detail::default_draw(&gfx, *draw_variant);
+			is_anything_drawn = true;
+		}
+	}
+	// If nothing is drawn, fallback to default variant draw order of the sprite
+	if (not is_anything_drawn) {
+		// If the default variant draw order list is empty, draw the default variant. This is the most common drawing branch.
+		if (gfx.sprite->default_variant_draw_order().empty()) {
+			::detail::default_draw(&gfx, DrawVariant{});
+		} else {
+			for (const auto& draw_variant : gfx.sprite->default_variant_draw_order()) {
+				if (draw_variant == pb::SpriteEffectType::__NO_SPRITE_EFFECT) {
+					::detail::default_draw(&gfx, DrawVariant{});
+				} else {
+					::detail::default_draw(&gfx, DrawVariant{draw_variant});
+				}
+			}
+		}
 	}
 
 	// If dimming was active, we need to un-dim.
 	if (dimmed) {
-		undim_rendering(gfx.sprite->texture(gfx.draw_variant));
+		undim_rendering(gfx.sprite->texture(DrawVariant{}));
 	}
 }
 
@@ -191,7 +218,7 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 	if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
 		const auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
 		const auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.owner().position,
-				*gfx.sprite, gfx.draw_variant);
+				*gfx.sprite, DrawVariant{});
 		dst_rect = SDL_Rect{
 				(int) roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * M2_GAME.dimensions().ppm / gfx.sprite->ppm() / 2),
 				(int) roundf(screen_origin_to_sprite_center_px_vec.y) + (src_rect.h * M2_GAME.dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1

@@ -86,7 +86,8 @@ namespace m2 {
 		Callback post_draw{};
 
 		const Sprite* sprite{};
-		DrawVariant draw_variant;
+		// If any of the entries exist, Sprite's default_variant_draw_order is overridden. First variant is drawn first.
+		std::array<std::optional<DrawVariant>, 2> variant_draw_order{};
 		float draw_angle{}; // Rads
 		float z{};
 		std::optional<float> draw_addon_health_bar; /// [0,1]
