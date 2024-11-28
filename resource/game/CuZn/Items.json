@@ -732,6 +732,10 @@
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 1.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 5.0
         },
@@ -767,6 +771,10 @@
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 2.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 5.0
         },
@@ -801,6 +809,10 @@
       "type": "COTTON_MILL_TILE_III",
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 3.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 9.0
@@ -841,6 +853,10 @@
       "category": "ITEM_CATEGORY_COTTON_MILL_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 4.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 12.0
         },
@@ -879,6 +895,10 @@
       "type": "IRON_WORKS_TILE_I",
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 1.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 3.0
@@ -919,6 +939,10 @@
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 2.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 5.0
         },
@@ -953,6 +977,10 @@
       "type": "IRON_WORKS_TILE_III",
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 3.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 7.0
@@ -989,6 +1017,10 @@
       "category": "ITEM_CATEGORY_IRON_WORKS_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 4.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 9.0
         },
@@ -1023,6 +1055,10 @@
       "type": "BREWERY_TILE_I",
       "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 1.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 4.0
@@ -1067,6 +1103,10 @@
       "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 2.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 5.0
         },
@@ -1106,6 +1146,10 @@
       "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 3.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 7.0
         },
@@ -1144,6 +1188,10 @@
       "type": "BREWERY_TILE_IV",
       "category": "ITEM_CATEGORY_BREWERY_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 4.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 10.0
@@ -1188,6 +1236,10 @@
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 1.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 1.0
         },
@@ -1223,6 +1275,10 @@
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 2.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 2.0
         },
@@ -1253,6 +1309,10 @@
       "type": "COAL_MINE_TILE_III",
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 3.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 3.0
@@ -1289,6 +1349,10 @@
       "category": "ITEM_CATEGORY_COAL_MINE_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 4.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 4.0
         },
@@ -1323,6 +1387,10 @@
       "type": "POTTERY_TILE_I",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 1.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 10.0
@@ -1363,6 +1431,10 @@
       "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 2.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 1.0
         },
@@ -1397,6 +1469,10 @@
       "type": "POTTERY_TILE_III",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 3.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 11.0
@@ -1437,6 +1513,10 @@
       "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 4.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 1.0
         },
@@ -1471,6 +1551,10 @@
       "type": "POTTERY_TILE_V",
       "category": "ITEM_CATEGORY_POTTERY_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 5.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 20.0
@@ -1511,6 +1595,10 @@
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 1.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 3.0
         },
@@ -1550,6 +1638,10 @@
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 2.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 5.0
         },
@@ -1585,6 +1677,10 @@
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 3.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 4.0
         },
@@ -1615,6 +1711,10 @@
       "type": "MANUFACTURED_GOODS_TILE_IV",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 4.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 3.0
@@ -1651,6 +1751,10 @@
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 5.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 8.0
         },
@@ -1686,6 +1790,10 @@
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
         {
+          "type": "TILE_LEVEL",
+          "amount": 6.0
+        },
+        {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 7.0
         },
@@ -1716,6 +1824,10 @@
       "type": "MANUFACTURED_GOODS_TILE_VII",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 7.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 9.0
@@ -1751,6 +1863,10 @@
       "type": "MANUFACTURED_GOODS_TILE_VIII",
       "category": "ITEM_CATEGORY_MANUFACTURED_GOODS_TILE",
       "attributes": [
+        {
+          "type": "TILE_LEVEL",
+          "amount": 8.0
+        },
         {
           "type": "VICTORY_POINTS_BONUS",
           "amount": 11.0
