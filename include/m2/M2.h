@@ -37,6 +37,9 @@ namespace m2 {
 	bool is_less(float a, float b, float tolerance); // a < b
 	bool is_less_or_equal(float a, float b, float tolerance); // a <= b
 	bool is_zero(float a, float tolerance);
+	bool is_nonzero(float a, float tolerance);
+	bool is_positive(float a, float tolerance);
+	bool is_negative(float a, float tolerance);
 	bool is_one(float a, float tolerance);
 
 	constexpr float to_radians(float degrees) { return degrees * ::m2::PI / 180.0f; }

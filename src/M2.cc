@@ -75,6 +75,15 @@ bool m2::is_less_or_equal(float a, float b, float tolerance) {
 bool m2::is_zero(float a, float tolerance) {
 	return is_equal(a, 0.0f, tolerance);
 }
+bool m2::is_nonzero(float a, float tolerance) {
+	return not is_zero(a, tolerance);
+}
+bool m2::is_positive(float a, float tolerance) {
+	return m2::is_less(0.0f, a, tolerance);
+}
+bool m2::is_negative(float a, float tolerance) {
+	return m2::is_less(a, 0.0f, tolerance);
+}
 bool m2::is_one(float a, float tolerance) {
 	return is_equal(a, 1.0f, tolerance);
 }
