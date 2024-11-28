@@ -10,6 +10,8 @@
 #include <cuzn/Detail.h>
 #include <ranges>
 #include <numeric>
+#include <cuzn/ConsumingCoal.h>
+#include <cuzn/ConsumingIron.h>
 
 struct HumanPlayer : public m2::ObjectImpl {
 	std::optional<std::pair<m2::VecI, m2::VecF>> mouse_click_prev_position;
@@ -197,6 +199,39 @@ std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& play
 		})
 		| std::views::transform(to_industry_location_of_factory_character);
 	return {factories_view.begin(), factories_view.end()};
+}
+
+m2::void_expected can_player_overbuild_on_location_with_card(m2::Character& player, IndustryLocation location, Card card) {
+	// Check the industry type of the already built factory
+	auto* factory = find_factory_at_location(location);
+	auto industry_of_factory = to_industry_of_factory_character(factory->character());
+
+	// Check if the selected card can build the same industry
+	if (card != m2g::pb::WILD_LOCATION_CARD && card != m2g::pb::WILD_INDUSTRY_CARD & card != industry_of_factory) {
+		return m2::make_unexpected("Selected card cannot overbuild the same industry type");
+	}
+
+	// Check if the factory belongs to the player
+	if (player.owner_id() == factory->parent_id()) {
+		// Any industry can be overbuilt
+		return {};
+	}
+
+	// Only coal mine or iron works can be overbuilt
+	if (industry_of_factory != m2g::pb::COAL_MINE_CARD && industry_of_factory != m2g::pb::IRON_WORKS_CARD) {
+		return m2::make_unexpected("Selected industry type cannot be overbuilt when it belongs to another player");
+	}
+	// There must be no resources left on the whole board of the type of the resource of the factory
+	if (industry_of_factory == m2g::pb::COAL_MINE_CARD) {
+		if (is_there_coal_on_the_board()) {
+			return m2::make_unexpected("Cannot overbuild coal mine while there are still coal on the board");
+		}
+	} else { // industry_of_factory == m2g::pb::IRON_WORKS_CARD
+		if (is_there_iron_on_the_board()) {
+			return m2::make_unexpected("Cannot overbuild iron works while there are still iron on the board");
+		}
+	}
+	return {};
 }
 
 std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {

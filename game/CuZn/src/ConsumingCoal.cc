@@ -67,3 +67,17 @@ std::optional<MerchantCity> find_connected_coal_market(City city, City city_2) {
 
 	return std::nullopt;
 }
+
+bool is_there_coal_on_the_board() {
+	// Iterate over factories
+	auto there_is_coal_mine_with_coal = std::ranges::any_of(
+			M2_LEVEL.characters
+				| std::views::transform(m2::to_character_base)
+				| std::views::filter(is_factory_character),
+			[](m2::Character& chr) {
+				return m2::is_positive(chr.get_resource(COAL_CUBE_COUNT), 0.001f);
+			});
+	// Check the market as well
+	return there_is_coal_mine_with_coal
+		|| m2::is_positive(M2G_PROXY.game_state_tracker().get_resource(COAL_CUBE_COUNT), 0.001f);
+}

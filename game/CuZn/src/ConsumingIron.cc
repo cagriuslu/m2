@@ -12,3 +12,17 @@ std::set<IndustryLocation> find_iron_industries_with_iron() {
 		| std::views::transform(to_industry_location_of_factory_character);
 	return {industry_locations.begin(), industry_locations.end()};
 }
+
+bool is_there_iron_on_the_board() {
+	// Iterate over factories
+	auto there_is_iron_works_with_iron = std::ranges::any_of(
+			M2_LEVEL.characters
+				| std::views::transform(m2::to_character_base)
+				| std::views::filter(is_factory_character),
+			[](m2::Character& chr) {
+				return m2::is_positive(chr.get_resource(m2g::pb::IRON_CUBE_COUNT), 0.001f);
+			});
+	// Check the market as well
+	return there_is_iron_works_with_iron
+		|| m2::is_positive(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT), 0.001f);
+}

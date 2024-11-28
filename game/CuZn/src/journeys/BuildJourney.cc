@@ -5,6 +5,7 @@
 #include <cuzn/ConsumingCoal.h>
 #include <cuzn/ConsumingIron.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <m2g/Proxy.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <cuzn/object/Factory.h>
@@ -49,16 +50,20 @@ namespace {
 			}
 		}
 
-		// Filter built locations
+		// Filter out already built locations
 		for (auto it = industry_locations_in_network.begin(); it != industry_locations_in_network.end(); ) {
 			if (find_factory_at_location(*it)) {
-				it = industry_locations_in_network.erase(it);
+				if (can_player_overbuild_on_location_with_card(player, *it, card)) {
+					++it;
+				} else {
+					it = industry_locations_in_network.erase(it);
+				}
 			} else {
 				++it;
 			}
 		}
 
-		// Filter industry_locations_in_network by card
+		// Filter by the type of the card
 		if (card == WILD_LOCATION_CARD || card == WILD_INDUSTRY_CARD) {
 			// No filtering
 			return industry_locations_in_network;
@@ -80,7 +85,7 @@ namespace {
 		}
 	}
 
-	std::vector<Industry> buildable_industries(m2g::pb::ItemType selected_card, m2g::pb::SpriteType selected_location) {
+	std::vector<Industry> buildable_industries_with_card_on_location(ItemType selected_card, SpriteType selected_location) {
 		if (not is_card(selected_card)) {
 			throw M2_ERROR("Item is not a card");
 		}
@@ -97,6 +102,12 @@ namespace {
 		});
 		if (selected_sprite_industries.empty()) {
 			throw M2_ERROR("Selected sprite does not hold any industry cards");
+		}
+
+		// If overbuilding
+		if (auto* factory = find_factory_at_location(selected_location)) {
+			// Only the type of the factory can be built
+			return {to_industry_of_factory_character(factory->character())};
 		}
 
 		// If the card is wild card
@@ -126,6 +137,16 @@ namespace {
 			}
 			return {}; // No buildable industries
 		}
+	}
+
+	bool is_next_tile_higher_level_than_built_tile(m2::Character& factory_character, IndustryTile next_industry_tile) {
+		auto built_industry_tile_type = to_industry_tile_of_factory_character(factory_character);
+		const auto& built_industry_tile_item = M2_GAME.get_named_item(built_industry_tile_type);
+		const auto& next_industry_tile_item = M2_GAME.get_named_item(next_industry_tile);
+		return is_less(
+				built_industry_tile_item.get_attribute(TILE_LEVEL),
+				next_industry_tile_item.get_attribute(TILE_LEVEL),
+				0.001f);
 	}
 }
 
@@ -195,10 +216,9 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
 std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal(const POIOrCancelSignal& s) {
 	if (s.poi_or_cancel()) {
 		auto selected_location = *s.poi_or_cancel();
-		// TODO verify that the location can be buildable, otherwise ignore the click
 
 		// Check if there's a need to make an industry selection based on the card and the sprite
-		if (auto buildable_inds = buildable_industries(_selected_card, selected_location); buildable_inds.empty()) {
+		if (auto buildable_inds = buildable_industries_with_card_on_location(_selected_card, selected_location); buildable_inds.empty()) {
 			M2G_PROXY.show_notification("Selected position cannot be built with the selected card");
 			return std::nullopt;
 		} else if (buildable_inds.size() == 2) {
@@ -221,6 +241,15 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 			M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
 			M2_DEFER(m2g::Proxy::main_journey_deleter);
 			return std::nullopt;
+		}
+		// If overbuilding
+		if (auto* factory = find_factory_at_location(selected_location)) {
+			// The next tile must be higher level than the built industry
+			if (not is_next_tile_higher_level_than_built_tile(factory->character(), *tile_type)) {
+				M2G_PROXY.show_notification("Overbuilding requires a higher level tile");
+				M2_DEFER(m2g::Proxy::main_journey_deleter);
+				return std::nullopt;
+			}
 		}
 		_industry_tile = *tile_type;
 
@@ -384,7 +413,6 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
 }
 
 std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal() {
-	// TODO check if player can afford buying
 	LOG_INFO("Asking for confirmation...");
 	auto card_name = M2_GAME.get_named_item(_selected_card).in_game_name();
 	auto city_name = M2_GAME.get_named_item(city_of_location(_selected_location)).in_game_name();
@@ -466,6 +494,17 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 	if (not buildable_industry_locations_in_network_with_card(player, build_action.card()).contains(build_action.industry_location())) {
 		LOG_WARN("Player selected an industry location that is not reachable or cannot be built with the selected card");
 		return false;
+	}
+	// If overbuilding, check if the built industry is selected
+	if (auto* factory = find_factory_at_location(build_action.industry_location())) {
+		if (to_industry_of_factory_character(factory->character()) != industry_of_industry_tile(build_action.industry_tile())) {
+			LOG_WARN("Player selected an industry type different from overbuilt industry");
+			return false;
+		}
+		if (not is_next_tile_higher_level_than_built_tile(factory->character(), build_action.industry_tile())) {
+			LOG_WARN("Player selected a tile with level not higher than overbuilt tile");
+			return false;
+		}
 	}
 	auto city = city_of_location(build_action.industry_location());
 	// If there's more than one industry on this location, check if there's another location in the city with only this industry.
@@ -637,6 +676,11 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 		}
 	}
 
+	// If overbuilding
+	if (auto* factory = find_factory_at_location(build_action.industry_location())) {
+		// Remove previous factory
+		M2_DEFER(m2::create_object_deleter(factory->id()));
+	}
 	// Create factory on the map
 	auto it = m2::create_object(position_of_industry_location(build_action.industry_location()), m2g::pb::FACTORY, player.owner_id());
 	auto city = city_of_location(build_action.industry_location());

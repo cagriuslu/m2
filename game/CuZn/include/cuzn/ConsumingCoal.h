@@ -8,3 +8,6 @@
 std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city, City city_2 = {});
 
 std::optional<MerchantCity> find_connected_coal_market(City city, City city_2 = {});
+
+/// Returns true if there's a coal on the board (including the Market)
+bool is_there_coal_on_the_board();
