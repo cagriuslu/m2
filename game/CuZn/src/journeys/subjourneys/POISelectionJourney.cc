@@ -38,6 +38,10 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			M2_LEVEL.enable_dimming_with_exceptions({object_ids.begin(), object_ids.end()});
 			// Disable HUD
 			M2_LEVEL.disable_hud();
+			// Destroy cards panel if exists
+			if (M2G_PROXY.cards_panel) {
+				M2G_PROXY.cards_panel.reset();
+			}
 			// Display message
 			M2G_PROXY.show_notification(_message);
 			if (_allow_cancellation) {
