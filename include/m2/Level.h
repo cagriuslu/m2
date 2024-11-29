@@ -23,6 +23,7 @@
 #include "sheet_editor/State.h"
 #include "single_player/State.h"
 #include "ui/Panel.h"
+#include <queue>
 
 namespace m2 {
 	// Forward iterator

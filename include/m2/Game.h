@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <functional>
 #include <vector>
+#include "Hash.h"
 
 #define M2_GAME (m2::Game::instance())
 #define M2_DEFER(f) (M2_GAME.add_deferred_action(f))
@@ -136,7 +137,7 @@ namespace m2 {
 		Game();
 		~Game();
 
-		int32_t hash() const { return I(std::hash<std::string>{}(_proxy.game_identifier)); }
+		int32_t hash() const { return ihash(_proxy.game_identifier); }
 		/// For server
 		void_expected host_game(mplayer::Type type, unsigned max_connection_count);
 		/// For client
