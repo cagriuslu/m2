@@ -2,6 +2,7 @@
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
 #include <m2/M2.h>
+#include <m2/Math.h>
 
 using namespace m2;
 

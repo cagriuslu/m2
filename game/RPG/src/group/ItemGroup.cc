@@ -1,5 +1,6 @@
 #include <rpg/group/ItemGroup.h>
 #include <m2/M2.h>
+#include <m2/Math.h>
 
 rpg::ItemGroup::ItemGroup(std::initializer_list<std::pair<m2g::pb::ItemType, float>>&& item_probabilities) : Group() {
 	// Accumulate probabilities

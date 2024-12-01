@@ -1,6 +1,7 @@
 #include <m2/math/Rational.h>
 #include <m2/M2.h>
 #include <numeric>
+#include <m2/Math.h>
 
 namespace m2::internal {
 

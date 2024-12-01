@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/Rational.h>
+#include <m2/math/Rational.h>
 
 using namespace m2;
 

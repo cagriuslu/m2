@@ -2,6 +2,7 @@
 #include "../Synth.h"
 #include <m2/Error.h>
 #include <type_traits>
+#include <m2/Math.h>
 
 namespace m2::synth {
 	template <typename ForwardIterator, unsigned SampleRate = 48000>

@@ -2,6 +2,7 @@
 #include <m2/Error.h>
 #include <m2/M2.h>
 #include <deque>
+#include <m2/Math.h>
 
 m2::Graph::Graph(const std::function<std::optional<std::pair<Node, Edge>>()>& generator, float tolerance) : _tolerance(tolerance) {
 	while (true) {

@@ -1,6 +1,7 @@
 #include <m2/detail/Gaussian.h>
 #include <m2/Error.h>
 #include <m2/M2.h>
+#include <m2/Math.h>
 
 std::vector<float> m2::create_gaussian_kernel(int radius, float standard_deviation) {
 	if (radius < 0) {

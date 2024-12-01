@@ -4,6 +4,7 @@
 #include <m2/Meta.h>
 #include <SDL2/SDL.h>
 #include <sstream>
+#include <m2/Math.h>
 
 m2::RectF::RectF() : x(), y(), w(), h() {}
 m2::RectF::RectF(float x, float y, float w, float h) : x(x), y(y), w(w), h(h) {}
