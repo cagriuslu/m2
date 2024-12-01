@@ -4,7 +4,7 @@
 
 #include <filesystem>
 
-#include "../CircF.h"
+#include "../math/CircF.h"
 #include "../Meta.h"
 #include "../sheet_editor/DynamicImageLoader.h"
 #include "../ui/Panel.h"
