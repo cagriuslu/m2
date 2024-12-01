@@ -1,4 +1,4 @@
-#include <m2/Hash.h>
+#include <m2/math/Hash.h>
 
 int32_t m2::ihash(const std::string& s) {
     int32_t h = 0x1ED980DD; // Random

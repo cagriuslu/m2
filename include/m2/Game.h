@@ -25,7 +25,7 @@
 #include <filesystem>
 #include <functional>
 #include <vector>
-#include "Hash.h"
+#include "math/Hash.h"
 
 #define M2_GAME (m2::Game::instance())
 #define M2_DEFER(f) (M2_GAME.add_deferred_action(f))
