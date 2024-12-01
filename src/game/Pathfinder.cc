@@ -9,7 +9,7 @@
 #include <m2/Log.h>
 #include "m2/Game.h"
 #include "m2/M2.h"
-#include "m2/VecI.h"
+#include "m2/math/VecI.h"
 #include "m2/box2d/Detail.h"
 #include "m2/box2d/RayCast.h"
 

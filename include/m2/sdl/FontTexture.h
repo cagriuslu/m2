@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../VecI.h"
+#include "../math/VecI.h"
 #include "Texture.h"
 #include "../ui/Detail.h"
 #include <SDL2/SDL_ttf.h>

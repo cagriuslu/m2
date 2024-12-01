@@ -3,7 +3,7 @@
 #include <m2g_ItemType.pb.h>
 #include <m2g_ResourceType.pb.h>
 #include <m2/game/Fsm.h>
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <m2/component/Character.h>
 #include <cuzn/Detail.h>
 #include <m2/Object.h>

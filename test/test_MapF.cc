@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <m2/MapF.h>
-#include <m2/RectF.h>
+#include <m2/math/RectF.h>
 
 TEST(MapF, size) {
 	m2::MapF<int> m{-5.0f, -5.0f, 10.0f, 10.0f};

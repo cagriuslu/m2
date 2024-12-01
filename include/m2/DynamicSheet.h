@@ -2,7 +2,7 @@
 #include "sdl/Detail.h"
 #include "sdl/Surface.h"
 #include "sdl/Texture.h"
-#include "RectI.h"
+#include "math/RectI.h"
 #include <SDL2/SDL.h>
 #include <memory>
 

@@ -2,7 +2,7 @@
 #include <m2g_ItemType.pb.h>
 #include <m2g_SpriteType.pb.h>
 #include <m2/component/Character.h>
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <m2/M2.h>
 #include <m2/video/Color.h>
 

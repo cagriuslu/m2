@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include <m2/RectI.h>
-#include <m2/RectF.h>
+#include <m2/math/RectI.h>
+#include <m2/math/RectF.h>
 
 using namespace m2;
 

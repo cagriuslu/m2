@@ -1,6 +1,6 @@
-#include <m2/RectF.h>
+#include <m2/math/RectF.h>
 #include <m2/M2.h>
-#include <m2/RectI.h>
+#include <m2/math/RectI.h>
 #include <m2/Meta.h>
 #include <SDL2/SDL.h>
 #include <sstream>

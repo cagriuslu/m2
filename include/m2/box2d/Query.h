@@ -4,7 +4,7 @@
 #include <box2d/b2_fixture.h>
 #include <m2/math/Aabb.h>
 #include <m2/component/Physique.h>
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <m2/Controls.h>
 #include <functional>
 

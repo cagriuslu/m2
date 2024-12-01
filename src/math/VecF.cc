@@ -1,6 +1,6 @@
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <m2/m3/VecF.h>
-#include <m2/VecI.h>
+#include <m2/math/VecI.h>
 #include <sstream>
 
 m2::VecF::VecF(const VecI& v) : VecF(v.x, v.y) {}

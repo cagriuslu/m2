@@ -1,4 +1,4 @@
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <m2/Object.h>
 #include "m2/Game.h"
 #include <rpg/Objects.h>

@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/game/Fsm.h>
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <m2/ui/PanelBlueprint.h>
 #include <list>
 

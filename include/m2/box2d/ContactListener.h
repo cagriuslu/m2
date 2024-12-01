@@ -1,5 +1,5 @@
 #pragma once
-#include "../VecF.h"
+#include "../math/VecF.h"
 #include <box2d/b2_world_callbacks.h>
 #include <box2d/b2_contact.h>
 #include <functional>

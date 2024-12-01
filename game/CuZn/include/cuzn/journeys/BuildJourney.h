@@ -2,7 +2,7 @@
 #include "Common.h"
 #include <cuzn/Detail.h>
 #include <m2/game/Fsm.h>
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <m2/Object.h>
 #include <m2/ui/Panel.h>
 #include <cuzn/journeys/subjourneys/POISelectionJourney.h>

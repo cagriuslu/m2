@@ -4,7 +4,7 @@
 
 #include "Object.h"
 #include "SpinLock.h"
-#include "VecF.h"
+#include "math/VecF.h"
 
 namespace m2 {
 	/// A list that orders the items with their Y-positions

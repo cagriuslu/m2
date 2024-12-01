@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-#include "m2/VecI.h"
+#include "m2/math/VecI.h"
 
 namespace internal::perlin {
 	// Permutation table

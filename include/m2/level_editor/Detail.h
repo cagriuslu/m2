@@ -1,7 +1,7 @@
 #pragma once
 #include <m2/Object.h>
 #include <m2/Pool.h>
-#include <m2/VecI.h>
+#include <m2/math/VecI.h>
 
 namespace m2::level_editor {
 	constexpr std::string_view paint_button_label = "PAINT";

@@ -1,8 +1,8 @@
 #pragma once
 #include "../Meta.h"
-#include "../VecI.h"
+#include "../math/VecI.h"
 #include <RectI.pb.h>
-#include "../RectI.h"
+#include "../math/RectI.h"
 #include <SDL2/SDL.h>
 
 SDL_Cursor* SdlUtils_CreateCursor();

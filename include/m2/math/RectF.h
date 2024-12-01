@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL2/SDL_rect.h>
 #include <RectI.pb.h>
-#include "VecF.h"
+#include "../math/VecF.h"
 #include <optional>
 
 namespace m2 {

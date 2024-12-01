@@ -9,8 +9,8 @@
 #include <string>
 
 #include "DynamicSheet.h"
-#include "RectI.h"
-#include "VecF.h"
+#include "math/RectI.h"
+#include "math/VecF.h"
 #include "box2d/Body.h"
 #include "protobuf/Detail.h"
 #include "sdl/Detail.h"

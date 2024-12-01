@@ -3,7 +3,7 @@
 #include <m2/box2d/Detail.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
-#include <m2/VecF.h>
+#include <m2/math/VecF.h>
 #include <rpg/object/Enemy.h>
 
 namespace {

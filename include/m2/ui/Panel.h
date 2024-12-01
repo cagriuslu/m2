@@ -1,8 +1,8 @@
 #pragma once
 #include "PanelBlueprint.h"
 #include "Widget.h"
-#include "../RectI.h"
-#include "../RectF.h"
+#include "../math/RectI.h"
+#include "../math/RectF.h"
 
 namespace m2::ui {
 	struct Panel {

@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/ui/PanelBlueprint.h>
-#include <m2/RectF.h>
+#include <m2/math/RectF.h>
 #include <m2g_ItemType.pb.h>
 
 m2::RectF tiles_window_ratio();

@@ -1,6 +1,6 @@
 #pragma once
 #include "../Object.h"
-#include "../VecI.h"
+#include "../math/VecI.h"
 #include <SDL.h>
 
 namespace m2::pedit {

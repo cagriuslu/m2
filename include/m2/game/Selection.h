@@ -1,6 +1,6 @@
 #pragma once
 #include "../Events.h"
-#include "../VecF.h"
+#include "../math/VecF.h"
 
 namespace m2 {
 	class SelectionResult {

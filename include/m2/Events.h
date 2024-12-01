@@ -1,8 +1,8 @@
 #pragma once
 #include <m2/Controls.h>
-#include "RectI.h"
-#include <m2/VecI.h>
-#include <m2/VecF.h>
+#include "math/RectI.h"
+#include <m2/math/VecI.h>
+#include <m2/math/VecF.h>
 #include <array>
 #include <optional>
 #include <sstream>

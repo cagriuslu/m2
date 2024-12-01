@@ -1,5 +1,5 @@
 #pragma once
-#include "../VecF.h"
+#include "../math/VecF.h"
 #include <BodyBlueprint.pb.h>
 #include "../Game.h"
 #include <box2d/b2_body.h>

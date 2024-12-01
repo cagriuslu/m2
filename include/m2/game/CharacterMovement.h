@@ -1,6 +1,6 @@
 #pragma once
 #include "../Controls.h"
-#include "../VecF.h"
+#include "../math/VecF.h"
 
 namespace m2 {
 	enum CharacterMovementDirection {

@@ -1,5 +1,5 @@
-#include <m2/RectI.h>
-#include <m2/RectF.h>
+#include <m2/math/RectI.h>
+#include <m2/math/RectF.h>
 #include <m2/Meta.h>
 #include <sstream>
 

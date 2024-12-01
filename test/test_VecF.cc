@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <m2/VecF.h>
-#include <m2/VecI.h>
+#include <m2/math/VecF.h>
+#include <m2/math/VecI.h>
 #include <m2/M2.h>
 
 using namespace m2;

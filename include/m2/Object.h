@@ -13,7 +13,7 @@
 #include "component/SoundEmitter.h"
 #include "m2/Component.h"
 #include "m2/game/Fsm.h"
-#include "m2/VecF.h"
+#include "m2/math/VecF.h"
 
 namespace m2 {
 	using ObjectId = Id;

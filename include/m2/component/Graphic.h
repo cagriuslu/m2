@@ -1,11 +1,11 @@
 #pragma once
 #include "../Component.h"
 #include "../Sprite.h"
-#include "../VecF.h"
+#include "../math/VecF.h"
 #include "../m3/VecF.h"
 #include "../m3/Line.h"
 #include "../m3/Plane.h"
-#include "../RectF.h"
+#include "../math/RectF.h"
 #include <Level.pb.h>
 #include <functional>
 #include <m2/video/Color.h>
