@@ -6,7 +6,7 @@
 
 #include "../Action.h"
 #include "../Detail.h"
-#include "../../Color.h"
+#include "../../video/Color.h"
 
 namespace m2::ui::widget {
 	// Forward declaration

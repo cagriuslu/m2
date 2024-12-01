@@ -8,7 +8,7 @@
 #include "../RectF.h"
 #include <Level.pb.h>
 #include <functional>
-#include <m2/Color.h>
+#include <m2/video/Color.h>
 
 namespace m2 {
 	bool is_projection_type_parallel(pb::ProjectionType pt);

@@ -2,7 +2,7 @@
 #include <SDL2/SDL.h>
 #include <m2/VecI.h>
 #include <m2/RectI.h>
-#include <m2/Color.h>
+#include <m2/video/Color.h>
 
 namespace m2::sdl {
 	struct TextureDeleter {

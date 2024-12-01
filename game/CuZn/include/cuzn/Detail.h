@@ -4,7 +4,7 @@
 #include <m2/component/Character.h>
 #include <m2/VecF.h>
 #include <m2/M2.h>
-#include <m2/Color.h>
+#include <m2/video/Color.h>
 
 using Card = m2g::pb::ItemType;
 using City = m2g::pb::ItemType;

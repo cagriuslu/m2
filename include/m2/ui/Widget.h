@@ -3,7 +3,7 @@
 
 #include <optional>
 
-#include "../Color.h"
+#include "../video/Color.h"
 #include "../Events.h"
 #include "../Sprite.h"
 #include "Action.h"

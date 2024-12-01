@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-#include "Meta.h"
+#include "../Meta.h"
 
 namespace m2 {
 	struct RGB {
