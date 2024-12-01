@@ -1,8 +1,8 @@
 #pragma once
-#include "Meta.h"
-#include "Song.h"
-#include "Synth.h"
-#include "Pool.h"
+#include "../Meta.h"
+#include "../Song.h"
+#include "../Synth.h"
+#include "../Pool.h"
 #include <SDL.h>
 #include <list>
 #include <memory>
