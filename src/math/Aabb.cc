@@ -1,4 +1,4 @@
-#include <m2/Aabb.h>
+#include <m2/math/Aabb.h>
 
 m2::Aabb::Aabb() : top_left(), bottom_right() {}
 

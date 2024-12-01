@@ -1,6 +1,6 @@
 #pragma once
-#include "VecF.h"
-#include "VecI.h"
+#include "../VecF.h"
+#include "../VecI.h"
 #include <box2d/b2_collision.h>
 
 namespace m2 {
