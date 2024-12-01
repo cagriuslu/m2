@@ -1,6 +1,6 @@
 #pragma once
 #include "../Synth.h"
-#include "../Rational.h"
+#include "../math/Rational.h"
 #include <Synth.pb.h>
 #include <vector>
 

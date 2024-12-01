@@ -1,4 +1,4 @@
-#include <m2/Rational.h>
+#include <m2/math/Rational.h>
 #include <m2/M2.h>
 #include <numeric>
 

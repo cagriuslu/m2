@@ -1,5 +1,5 @@
 #pragma once
-#include "Rational.h"
+#include "math/Rational.h"
 #include "M2.h"
 #include <Synth.pb.h>
 #include <vector>

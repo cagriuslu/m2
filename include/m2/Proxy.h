@@ -3,7 +3,7 @@
 #include "Group.h"
 #include "Object.h"
 #include "ui/PanelBlueprint.h"
-#include "Rational.h"
+#include "math/Rational.h"
 #include "component/Graphic.h"
 #include "Meta.h"
 #include <m2g_GroupType.pb.h>

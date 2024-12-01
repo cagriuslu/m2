@@ -1,5 +1,5 @@
 #include <m2/Meta.h>
-#include <m2/Rational.h>
+#include <m2/math/Rational.h>
 #include <m2/VecF.h>
 #include <m2/VecI.h>
 #include <m2/Vson.h>
