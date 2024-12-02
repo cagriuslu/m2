@@ -104,9 +104,9 @@ m2::expected<bool> m2::network::TcpSocket::connect() {
 }
 
 m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::accept() {
-	sockaddr_in child_address{};
-	socklen_t child_address_len{};
-	int new_socket = ::accept(_platform_specific_data->fd, (sockaddr*) &child_address, &child_address_len);
+	sockaddr child_address{};
+	socklen_t child_address_len = sizeof(sockaddr);
+	int new_socket = ::accept(_platform_specific_data->fd, &child_address, &child_address_len);
 	if (new_socket == -1) {
 		if (errno == ECONNABORTED) {
 			return std::nullopt;
@@ -114,7 +114,7 @@ m2::expected<std::optional<m2::network::TcpSocket>> m2::network::TcpSocket::acce
 		return m2::make_unexpected(strerror(errno));
 	}
 
-	TcpSocket child_socket{child_address.sin_addr.s_addr, child_address.sin_port};
+	TcpSocket child_socket{reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.s_addr, reinterpret_cast<sockaddr_in*>(&child_address)->sin_port};
     child_socket._platform_specific_data = new detail::PlatformSpecificTcpSocketData{.fd = new_socket};
     return std::move(child_socket);
 }
