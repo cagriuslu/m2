@@ -48,14 +48,15 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
 		auto it = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
-		auto client_init_result = init_human_player(*it);
-		m2_succeed_or_throw_error(client_init_result);
+		if (i == self_index) {
+			auto client_init_result = init_this_human_player_instance(*it);
+			m2_succeed_or_throw_error(client_init_result);
+		} else {
+			auto client_init_result = init_other_human_player_instance(*it);
+			m2_succeed_or_throw_error(client_init_result);
+		}
 		multi_player_object_ids.emplace_back(it.id());
 		player_colors.emplace_back(generate_player_color(i));
-
-		if (i == self_index) {
-			M2_LEVEL.player_id = it.id();
-		}
 	}
 
 	// Add all merchants (without any license) since all merchants can deal in coal and iron

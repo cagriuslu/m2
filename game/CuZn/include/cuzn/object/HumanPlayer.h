@@ -5,7 +5,8 @@
 #include <set>
 #include <cuzn/Detail.h>
 
-m2::void_expected init_human_player(m2::Object& obj);
+m2::void_expected init_this_human_player_instance(m2::Object& obj);
+m2::void_expected init_other_human_player_instance(m2::Object& obj);
 
 // Accessors
 size_t player_card_count(m2::Character& player);

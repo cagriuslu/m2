@@ -17,7 +17,7 @@ struct HumanPlayer : public m2::ObjectImpl {
 	std::optional<std::pair<m2::VecI, m2::VecF>> mouse_click_prev_position;
 };
 
-m2::void_expected init_human_player(m2::Object& obj) {
+m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 	DEBUG_FN();
 
 	obj.impl = std::make_unique<HumanPlayer>();
@@ -105,6 +105,37 @@ m2::void_expected init_human_player(m2::Object& obj) {
 			}
 		}
 	};
+
+	// Set the player ID so that the camera can find this
+	M2_LEVEL.player_id = obj.id();
+
+	return {};
+}
+m2::void_expected init_other_human_player_instance(m2::Object& obj) {
+	DEBUG_FN();
+
+	auto& chr = obj.add_full_character();
+
+	// TODO check if the following is really necessary. If the ServerUpdate is verified, it's necessary.
+	// TODO Otherwise, we don't need to fill the character with items and resources.
+
+	chr.set_resource(m2g::pb::MONEY, 17.0f);
+	chr.set_attribute(m2g::pb::INCOME_POINTS, 0.0f);
+
+	// Add industry tiles
+	for (auto industry_tile = m2g::pb::COTTON_MILL_TILE_I;
+		 industry_tile <= m2g::pb::MANUFACTURED_GOODS_TILE_VIII;
+		 industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
+		// Lookup possession count
+		const auto& item = M2_GAME.get_named_item(industry_tile);
+		auto possession_limit = m2::I(item.get_attribute(m2g::pb::POSSESSION_LIMIT));
+		m2_repeat(possession_limit) { chr.add_named_item(item); }
+		 }
+
+	// Add connection tiles
+	const auto& road_item = M2_GAME.get_named_item(m2g::pb::ROAD_TILE);
+	auto road_possession_limit = m2::I(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
+	m2_repeat(road_possession_limit) { chr.add_named_item(road_item); }
 
 	return {};
 }
