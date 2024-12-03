@@ -2,7 +2,7 @@
 #include "m2/Object.h"
 
 namespace m2::obj {
-    struct Camera : public ObjectImpl {
+    struct Camera : ObjectImpl {
         VecF offset;
     };
 

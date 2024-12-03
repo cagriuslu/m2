@@ -1,12 +1,7 @@
 #pragma once
-#include "../math/VecF.h"
 #include <BodyBlueprint.pb.h>
 #include "../Game.h"
-#include <box2d/b2_body.h>
-#include <box2d/b2_fixture.h>
 #include <box2d/b2_world.h>
-#include <memory>
-#include <unordered_map>
 
 namespace m2::box2d {
 	constexpr uint16_t FIXTURE_CATEGORY_OBSTACLE_ON_BACKGROUND = (0x0001);

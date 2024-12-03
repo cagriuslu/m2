@@ -8,7 +8,7 @@ namespace m2 {
 		int _step;
 
 	public:
-		inline explicit DynamicGridLinesLoader(SDL_Color color, int step = 1) : _color(color), _step(step) {}
+		explicit DynamicGridLinesLoader(SDL_Color color, int step = 1) : _color(color), _step(step) {}
 
 	protected:
 		ObjectId load_vertical(int x) override;

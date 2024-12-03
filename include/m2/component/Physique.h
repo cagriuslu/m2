@@ -2,11 +2,10 @@
 #include "../Component.h"
 #include "../box2d/ContactListener.h"
 #include "../box2d/Body.h"
-#include <box2d/b2_body.h>
 #include <functional>
 
 namespace m2 {
-	struct Physique : public Component {
+	struct Physique : Component {
 		static void default_debug_draw(Physique& phy);
 
 		using Callback = std::function<void(Physique&)>;

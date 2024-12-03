@@ -1,10 +1,6 @@
 #pragma once
-
 #include "../Object.h"
-#include "../math/RectF.h"
 #include <unordered_map>
-#include <optional>
-#include <deque>
 
 namespace m2 {
 	class SpatialObjectLoader {

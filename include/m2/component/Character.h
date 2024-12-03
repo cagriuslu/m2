@@ -5,8 +5,6 @@
 #include <m2g_Interaction.pb.h>
 #include <utility>
 #include <vector>
-#include <unordered_set>
-#include <unordered_map>
 #include <functional>
 #include <variant>
 
@@ -16,17 +14,17 @@ namespace m2 {
 			float _amount{};
 			float _max_amount{INFINITY};
 		public:
-			inline explicit ResourceAmount(float amount = 0.0f, float max_amount = INFINITY) { set_max_amount(max_amount); set_amount(amount); }
+			explicit ResourceAmount(float amount = 0.0f, float max_amount = INFINITY) { set_max_amount(max_amount); set_amount(amount); }
 
-			[[nodiscard]] inline float amount() const { return _amount; }
-			[[nodiscard]] inline bool has_amount() const { return 0.0f < _amount; }
+			[[nodiscard]] float amount() const { return _amount; }
+			[[nodiscard]] bool has_amount() const { return 0.0f < _amount; }
 
-			inline float set_amount(float amount) { return _amount = std::clamp(amount, 0.0f, _max_amount); }
-			inline float add_amount(float amount) { return set_amount(_amount + amount); }
-			inline float remove_amount(float amount) { return set_amount(_amount - amount); }
-			inline float clear_amount() { return _amount = 0.0f; }
+			float set_amount(float amount) { return _amount = std::clamp(amount, 0.0f, _max_amount); }
+			float add_amount(float amount) { return set_amount(_amount + amount); }
+			float remove_amount(float amount) { return set_amount(_amount - amount); }
+			void clear_amount() { _amount = 0.0f; }
 
-			[[nodiscard]] inline float max_amount() const { return _max_amount; }
+			[[nodiscard]] float max_amount() const { return _max_amount; }
 			float set_max_amount(float max_amount);
 		};
 	}
@@ -56,7 +54,7 @@ namespace m2 {
 			Iterator(const Character& character, Incrementor incrementor, Filter filter, size_t index, const Item* ptr) : _character(character), _incrementor(std::move(incrementor)), _filter(filter), _index(index), _item_ptr(ptr) {}
 			Iterator& operator++() { _incrementor(*this); return *this; }
 			bool operator==(const Iterator& other) const { return _item_ptr == other._item_ptr; }
-			explicit operator bool() { return _item_ptr; }
+			explicit operator bool() const { return _item_ptr; }
 			const Item& operator*() const { return *_item_ptr; }
 			const Item* operator->() const { return _item_ptr; }
 
@@ -121,8 +119,8 @@ namespace m2 {
 
 		void automatic_update() override;
 
-		Iterator find_items(m2g::pb::ItemType item_type) const override;
-		Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
+		[[nodiscard]] Iterator find_items(m2g::pb::ItemType item_type) const override;
+		[[nodiscard]] Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
 		[[nodiscard]] Iterator begin_items() const override;
 		[[nodiscard]] Iterator end_items() const override;
 		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;
@@ -160,8 +158,8 @@ namespace m2 {
 
 		void automatic_update() override;
 
-		Iterator find_items(m2g::pb::ItemType item_type) const override;
-		Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
+		[[nodiscard]] Iterator find_items(m2g::pb::ItemType item_type) const override;
+		[[nodiscard]] Iterator find_items(m2g::pb::ItemCategory item_cat) const override;
 		[[nodiscard]] Iterator begin_items() const override;
 		[[nodiscard]] Iterator end_items() const override;
 		void add_unnamed_item(std::unique_ptr<const UnnamedItem>&& item) override;

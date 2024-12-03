@@ -1,6 +1,5 @@
 #pragma once
 #include <vector>
-#include <tuple>
 
 namespace m2 {
 	/// Returns a 2D Gaussian kernel (commonly used in image processing) generated with the given parameters. The

@@ -11,10 +11,10 @@ namespace m2 {
 	class AnimationFsmSignal : public FsmSignalBase {
 		m2g::pb::AnimationStateType _animation_state;
 	public:
-		inline explicit AnimationFsmSignal(m2g::pb::AnimationStateType animation_state) : FsmSignalBase(FsmSignalType::Custom), _animation_state(animation_state) {}
+		explicit AnimationFsmSignal(m2g::pb::AnimationStateType animation_state) : FsmSignalBase(FsmSignalType::Custom), _animation_state(animation_state) {}
 		using FsmSignalBase::FsmSignalBase;
 
-		[[nodiscard]] inline m2g::pb::AnimationStateType animation_state_type() const { return _animation_state; }
+		[[nodiscard]] m2g::pb::AnimationStateType animation_state_type() const { return _animation_state; }
 	};
 
 	class AnimationFsm : public FsmBase<AnimationFsmState, AnimationFsmSignal> {

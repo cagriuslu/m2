@@ -6,7 +6,7 @@
 #include <list>
 
 namespace m2 {
-	struct SoundEmitter : public Component {
+	struct SoundEmitter : Component {
 		std::function<void(SoundEmitter&)> update{};
 
 		std::list<PlaybackId> playbacks; // Playback should be queued to AudioManager, then the ID should be added here

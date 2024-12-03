@@ -10,7 +10,7 @@ namespace m2 {
 
 	public:
 		Timer();
-		sdl::ticks_t ticks_since_start() const;
-		bool has_ticks_passed(sdl::ticks_t ticks) const;
+		[[nodiscard]] sdl::ticks_t ticks_since_start() const;
+		[[nodiscard]] bool has_ticks_passed(sdl::ticks_t ticks) const;
 	};
 }

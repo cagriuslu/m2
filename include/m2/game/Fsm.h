@@ -1,14 +1,9 @@
 #pragma once
-#include "../protobuf/Detail.h"
 #include "../Error.h"
-#include "../Meta.h"
-#include <google/protobuf/message.h>
-#include <string>
 #include <optional>
 #include <functional>
 #include <type_traits>
 #include <utility>
-#include <cmath>
 #include <cmath>
 
 namespace m2 {

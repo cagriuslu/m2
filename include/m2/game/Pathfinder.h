@@ -1,9 +1,6 @@
 #pragma once
 #include <Level.pb.h>
-
-#include <list>
 #include <unordered_set>
-
 #include "m2/Meta.h"
 #include "m2/math/VecF.h"
 #include "m2/math/VecI.h"
@@ -12,7 +9,7 @@ namespace m2 {
 	using Path = std::vector<VecI>;
 
 	class Pathfinder {
-		std::unordered_set<m2::VecI, m2::VecIHash> _blocked_locations;
+		std::unordered_set<VecI, VecIHash> _blocked_locations;
 
 		// Holds from which position should you approach another position, while trying to reach a certain destination.
 		// First key is the destination, first value is the corresponding approach map.

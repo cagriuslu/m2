@@ -1,6 +1,5 @@
 #pragma once
 #include <Animation.pb.h>
-#include <m2g_SpriteType.pb.h>
 
 #include <vector>
 

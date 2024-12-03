@@ -159,15 +159,9 @@ namespace m2 {
 		bool is_our_turn();
 		void queue_client_command(const m2g::pb::ClientCommand& cmd);
 		// Level management
-		void_expected load_single_player(
-		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint,
-		    const std::string& level_name = "");
-		void_expected load_multi_player_as_host(
-		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint,
-		    const std::string& level_name = "");
-		void_expected load_multi_player_as_guest(
-		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint,
-		    const std::string& level_name = "");
+		void_expected load_single_player(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected load_multi_player_as_host(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
+		void_expected load_multi_player_as_guest(const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name = "");
 		void_expected load_level_editor(const std::string& level_resource_path);
 		void_expected load_pixel_editor(const std::string& image_resource_path, int x_offset, int y_offset);
 		void_expected load_sheet_editor();

@@ -1,5 +1,8 @@
 #include <m2/math/FixedPoint.h>
 #include <cstdio>
+#include <array>
+#include <ranges>
+#include <algorithm>
 
 static int PrecisionPointToDecimalLut[] = {
 	50000000, // 1 / (2^1)

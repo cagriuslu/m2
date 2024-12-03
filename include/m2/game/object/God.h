@@ -2,7 +2,7 @@
 #include "m2/Object.h"
 
 namespace m2::obj {
-	struct God : public ObjectImpl {
+	struct God : ObjectImpl {
 		int dummy;
 	};
 
