@@ -4,7 +4,7 @@
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	auto sprite_type = M2_GAME.object_main_sprites[obj.object_type()];
-	auto& sprite = M2_GAME.get_sprite(sprite_type);
+	auto& sprite = M2_GAME.GetSprite(sprite_type);
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;

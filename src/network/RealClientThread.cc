@@ -8,7 +8,7 @@ namespace {
 		// Update items
 		c->clear_items();
 		for (auto named_item_type : named_items) {
-			c->add_named_item_no_benefits(M2_GAME.get_named_item(static_cast<m2g::pb::ItemType>(named_item_type)));
+			c->add_named_item_no_benefits(M2_GAME.GetNamedItem(static_cast<m2g::pb::ItemType>(named_item_type)));
 		}
 		// Update resources
 		c->clear_resources();

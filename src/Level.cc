@@ -66,7 +66,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	type_state.emplace<ledit::State>();
 	auto& le_state = std::get<ledit::State>(type_state);
 
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.dimensions().message_box);
+	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().message_box);
 
 	if (std::filesystem::exists(*_lb_path)) {
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
@@ -82,7 +82,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 						auto position = VecF{x, y};
 						le_state.bg_placeholders[l][position.iround()] = std::make_pair(
 						    obj::create_background_placeholder(
-						        position, M2_GAME.get_sprite(sprite_type), static_cast<BackgroundLayer>(l)),
+						        position, M2_GAME.GetSprite(sprite_type), static_cast<BackgroundLayer>(l)),
 						    sprite_type);  // HERE
 					}
 				}
@@ -93,7 +93,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 			auto position = m2::VecF{fg_object.position()};
 			le_state.fg_placeholders[position.iround()] = std::make_pair(
 			    obj::create_foreground_placeholder(
-			        position, M2_GAME.get_sprite(M2_GAME.object_main_sprites[fg_object.type()])),
+			        position, M2_GAME.GetSprite(M2_GAME.object_main_sprites[fg_object.type()])),
 			    fg_object);
 		}
 	}
@@ -104,9 +104,9 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&level_editor::ui::left_hud, M2_GAME.dimensions().left_hud);
+	left_hud_ui_panel.emplace(&level_editor::ui::left_hud, M2_GAME.Dimensions().left_hud);
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&level_editor::ui::right_hud, M2_GAME.dimensions().right_hud);
+	right_hud_ui_panel.emplace(&level_editor::ui::right_hud, M2_GAME.Dimensions().right_hud);
 	right_hud_ui_panel->update_contents(0.0f);
 	message_box_ui_panel->update_contents(0.0f);
 
@@ -167,9 +167,9 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path& path
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&ui::pixel_editor_left_hud, M2_GAME.dimensions().left_hud);
+	left_hud_ui_panel.emplace(&ui::pixel_editor_left_hud, M2_GAME.Dimensions().left_hud);
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&ui::pixel_editor_right_hud, M2_GAME.dimensions().right_hud);
+	right_hud_ui_panel.emplace(&ui::pixel_editor_right_hud, M2_GAME.Dimensions().right_hud);
 	right_hud_ui_panel->update_contents(0.0f);
 
 	return {};
@@ -181,7 +181,7 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	m2_reflect_unexpected(state);
 	type_state.emplace<sedit::State>(std::move(*state));
 
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.dimensions().message_box);
+	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().message_box);
 
 	// Create default objects
 	player_id = m2::obj::create_god();
@@ -189,9 +189,9 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&ui::sheet_editor_left_hud, M2_GAME.dimensions().left_hud);
+	left_hud_ui_panel.emplace(&ui::sheet_editor_left_hud, M2_GAME.Dimensions().left_hud);
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&ui::sheet_editor_right_hud, M2_GAME.dimensions().right_hud);
+	right_hud_ui_panel.emplace(&ui::sheet_editor_right_hud, M2_GAME.Dimensions().right_hud);
 	right_hud_ui_panel->update_contents(0.0f);
 	message_box_ui_panel->update_contents(0.0f);
 
@@ -204,7 +204,7 @@ m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path&
 	m2_reflect_unexpected(state);
 	type_state.emplace<bsedit::State>(std::move(*state));
 
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.dimensions().message_box);
+	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().message_box);
 
 	// Create default objects
 	player_id = m2::obj::create_god();
@@ -212,9 +212,9 @@ m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path&
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&ui::bulk_sheet_editor_left_hud, M2_GAME.dimensions().left_hud);
+	left_hud_ui_panel.emplace(&ui::bulk_sheet_editor_left_hud, M2_GAME.Dimensions().left_hud);
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&ui::bulk_sheet_editor_right_hud, M2_GAME.dimensions().right_hud);
+	right_hud_ui_panel.emplace(&ui::bulk_sheet_editor_right_hud, M2_GAME.Dimensions().right_hud);
 	right_hud_ui_panel->update_contents(0.0f);
 	message_box_ui_panel->update_contents(0.0f);
 
@@ -242,7 +242,7 @@ m2::void_expected m2::Level::reset_bulk_sheet_editor() {
 	return {};
 }
 
-float m2::Level::horizontal_fov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.dimensions().width_m; }
+float m2::Level::horizontal_fov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().width_m; }
 
 m2::sdl::ticks_t m2::Level::get_level_duration() const {
 	return sdl::get_ticks_since(*level_start_ticks, M2_GAME.pause_ticks - *level_start_pause_ticks);
@@ -320,9 +320,9 @@ m2::void_expected m2::Level::init_any_player(
 
 	(M2G_PROXY.*pre_level_init)(_name, *_lb);
 
-	left_hud_ui_panel.emplace(M2G_PROXY.left_hud(), M2_GAME.dimensions().left_hud);
-	right_hud_ui_panel.emplace(M2G_PROXY.right_hud(), M2_GAME.dimensions().right_hud);
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.dimensions().message_box);
+	left_hud_ui_panel.emplace(M2G_PROXY.left_hud(), M2_GAME.Dimensions().left_hud);
+	right_hud_ui_panel.emplace(M2G_PROXY.right_hud(), M2_GAME.Dimensions().right_hud);
+	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().message_box);
 
 	if (physical_world) {
 		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());
@@ -349,7 +349,7 @@ m2::void_expected m2::Level::init_any_player(
 
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
 					auto it = obj::create_tile(
-					    static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, M2_GAME.get_sprite(sprite_type));
+					    static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, M2_GAME.GetSprite(sprite_type));
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.id());
 				}

@@ -6,7 +6,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 bool is_card(Card card) {
-	const auto& card_item = M2_GAME.get_named_item(card);
+	const auto& card_item = M2_GAME.GetNamedItem(card);
 	return (card_item.category() == ITEM_CATEGORY_WILD_CARD ||
 		card_item.category() == ITEM_CATEGORY_INDUSTRY_CARD ||
 		card_item.category() == ITEM_CATEGORY_CITY_CARD);
@@ -67,7 +67,7 @@ bool is_merchant_location(MerchantLocation location) {
 
 bool is_merchant_benefit_develop(MerchantLocation location) {
 	auto merchant_city = city_of_location(location);
-	return M2_GAME.get_named_item(merchant_city).has_attribute(MERCHANT_BONUS_DEVELOP);
+	return M2_GAME.GetNamedItem(merchant_city).has_attribute(MERCHANT_BONUS_DEVELOP);
 }
 
 bool is_connection(Connection connection) {
@@ -181,8 +181,8 @@ City city_of_location(Location location) {
 		throw M2_ERROR("Sprite is not a location");
 	}
 
-	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
-		if (M2_GAME.get_named_item(named_item).category() == ITEM_CATEGORY_CITY_CARD) {
+	for (const auto& named_item : M2_GAME.GetSprite(location).named_items()) {
+		if (M2_GAME.GetNamedItem(named_item).category() == ITEM_CATEGORY_CITY_CARD) {
 			return named_item;
 		}
 	}
@@ -234,7 +234,7 @@ IndustryTileCategory industry_tile_category_of_industry(Industry industry_card) 
 }
 
 IndustryTileCategory industry_tile_category_of_industry_tile(IndustryTile industry_tile) {
-	const auto& item = M2_GAME.get_named_item(industry_tile);
+	const auto& item = M2_GAME.GetNamedItem(industry_tile);
 	return item.category();
 }
 
@@ -276,7 +276,7 @@ std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity c
 	}
 
 	std::vector<MerchantLocation> locations;
-	M2_GAME.for_each_sprite([&locations, city](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
+	M2_GAME.ForEachSprite([&locations, city](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
 		if (is_merchant_location(sprite_type)) {
 			if (std::ranges::find(sprite.named_items(), city) != sprite.named_items().end()) {
 				locations.emplace_back(sprite_type);
@@ -340,7 +340,7 @@ std::vector<IndustryLocation> industry_locations_in_city(City city_card) {
 
 std::vector<Connection> connections_from_city(City city_card) {
 	std::vector<Connection> connections;
-	M2_GAME.for_each_sprite([&connections, city_card](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
+	M2_GAME.ForEachSprite([&connections, city_card](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
 		auto city_license = std::ranges::find(sprite.named_items(), city_card);
 		if (city_license != sprite.named_items().end()) {
 			auto canal_license = std::ranges::find(sprite.named_items(), CANAL_LICENSE);
@@ -356,9 +356,9 @@ std::vector<Connection> connections_from_city(City city_card) {
 
 std::vector<City> cities_from_connection(Connection connection) {
 	std::vector<City> cities;
-	auto connection_items = M2_GAME.get_sprite(connection).named_items();
+	auto connection_items = M2_GAME.GetSprite(connection).named_items();
 	for (auto item_type : connection_items) {
-		if (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD) {
+		if (M2_GAME.GetNamedItem(item_type).category() == ITEM_CATEGORY_CITY_CARD) {
 			cities.emplace_back(item_type);
 		}
 	}
@@ -382,8 +382,8 @@ std::vector<Industry> industries_on_location(IndustryLocation location) {
 	}
 
 	std::vector<m2g::pb::ItemType> industries;
-	for (const auto& named_item : M2_GAME.get_sprite(location).named_items()) {
-		if (M2_GAME.get_named_item(named_item).category() == ITEM_CATEGORY_INDUSTRY_CARD) {
+	for (const auto& named_item : M2_GAME.GetSprite(location).named_items()) {
+		if (M2_GAME.GetNamedItem(named_item).category() == ITEM_CATEGORY_INDUSTRY_CARD) {
 			industries.emplace_back(named_item);
 		}
 	}

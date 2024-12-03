@@ -178,7 +178,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 					// Merchant location
 					auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
 					// Get a game drawing centered at the merchant location
-					auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
+					auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
 					if (ask_for_confirmation_bottom("Buy 1 coal from market for £" + std::to_string(M2G_PROXY.market_coal_cost(1)) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
@@ -197,7 +197,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 			} else if (closest_mines_with_coal.size() == 1) {
 				// Only one viable coal mine with coal is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
-				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*closest_mines_with_coal.begin()]));
+				auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*closest_mines_with_coal.begin()]));
 				LOG_DEBUG("Asking player if they want to buy coal from the closest mine...");
 				if (ask_for_confirmation_bottom("Buy coal from shown mine for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
@@ -224,7 +224,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 				auto industry_location = *beer_sources.begin(); // While networking, beer only comes from industries.
 				// Only one viable beer industry with beer is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
-				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[industry_location]));
+				auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.industry_positions[industry_location]));
 				LOG_DEBUG("Asking player if they want to buy beer from the closest industry...");
 				if (ask_for_confirmation_bottom("Buy beer from shown industry for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
@@ -303,7 +303,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 				throw M2_ERROR("Unexpected resource type");
 			}
 		}
-		M2_GAME.queue_client_command(cc);
+		M2_GAME.QueueClientCommand(cc);
 	} else {
 		LOG_INFO("Cancelling Network action...");
 	}

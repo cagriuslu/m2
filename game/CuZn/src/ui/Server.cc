@@ -16,8 +16,8 @@ static TextBlueprint client_count = {
 	.text = "0",
 	.wrapped_font_size_in_units = 5.0f,
 	.on_update = [](MAYBE Text& self) {
-		auto client_count = M2_GAME.server_thread().client_count();
-		auto ready_client_count = M2_GAME.server_thread().ready_client_count();
+		auto client_count = M2_GAME.ServerThread().client_count();
+		auto ready_client_count = M2_GAME.ServerThread().ready_client_count();
 		auto text = std::to_string(ready_client_count) + "/" + std::to_string(client_count);
 		// Check if ready to start
 		if (client_count != 1 && client_count == ready_client_count) {
@@ -28,11 +28,11 @@ static TextBlueprint client_count = {
 		return make_continue_action();
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
-		if (2 <= M2_GAME.server_thread().client_count()) {
+		if (2 <= M2_GAME.ServerThread().client_count()) {
 			LOG_INFO("Enough clients have connected");
-			if (M2_GAME.server_thread().close_lobby()) {
-				auto client_count = M2_GAME.server_thread().client_count();
-				const auto expect_success = M2_GAME.load_multi_player_as_host(M2_GAME.levels_dir / "Map.json", std::to_string(client_count));
+			if (M2_GAME.ServerThread().close_lobby()) {
+				auto client_count = M2_GAME.ServerThread().client_count();
+				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.levels_dir / "Map.json", std::to_string(client_count));
 				m2_succeed_or_throw_error(expect_success);
 				return make_clear_stack_action();
 			}
@@ -93,7 +93,7 @@ const PanelBlueprint server_lobby = {
 				.text = "ADD BOT",
 				.wrapped_font_size_in_units = 5.0f,
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-					M2_GAME.add_bot();
+					M2_GAME.AddBot();
 					return make_continue_action();
 				}
 			}
@@ -104,7 +104,7 @@ const PanelBlueprint server_lobby = {
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_GAME.leave_game();
+					M2_GAME.LeaveGame();
 					// TODO kill bots if any
 					return make_return_action();
 				}

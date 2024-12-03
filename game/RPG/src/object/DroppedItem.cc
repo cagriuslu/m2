@@ -4,7 +4,7 @@
 #include <m2/Game.h>
 
 m2::void_expected rpg::create_dropped_item(m2::Object &obj, m2g::pb::ItemType item_type) {
-	const auto& sprite = M2_GAME.get_sprite(M2_GAME.get_named_item(item_type).ui_sprite());
+	const auto& sprite = M2_GAME.GetSprite(M2_GAME.GetNamedItem(item_type).ui_sprite());
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;

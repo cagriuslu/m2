@@ -47,7 +47,7 @@ void m2::Light::default_draw(Light& lig) {
 				// Cut-off vector
 				auto span_m = full_span_m.with_length(distance);
 				// Cut-off vector in pixels
-				auto span_px = span_m * M2_GAME.dimensions().ppm;
+				auto span_px = span_m * M2_GAME.Dimensions().ppm;
 				// Second point of the triangle
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px + span_px), .color = {brightness, brightness, brightness, 0}});
 
@@ -65,10 +65,10 @@ void m2::Light::default_draw(Light& lig) {
 	} else {
 		auto position_px = screen_origin_to_position_dstpx(obj.position);
 		MAYBE auto dstrect = SDL_Rect{
-				(int)roundf(position_px.x - lig.radius_m * M2_GAME.dimensions().ppm),
-				(int)roundf(position_px.y - lig.radius_m * M2_GAME.dimensions().ppm),
-				(int)roundf((float)lig.radius_m * M2_GAME.dimensions().ppm * 2.0f),
-				(int)roundf((float)lig.radius_m * M2_GAME.dimensions().ppm * 2.0f)
+				(int)roundf(position_px.x - lig.radius_m * M2_GAME.Dimensions().ppm),
+				(int)roundf(position_px.y - lig.radius_m * M2_GAME.Dimensions().ppm),
+				(int)roundf((float)lig.radius_m * M2_GAME.Dimensions().ppm * 2.0f),
+				(int)roundf((float)lig.radius_m * M2_GAME.Dimensions().ppm * 2.0f)
 		};
 		SDL_RenderCopy(M2_GAME.renderer, M2_GAME.light_texture, nullptr, &dstrect);
 	}

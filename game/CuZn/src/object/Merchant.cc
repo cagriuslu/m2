@@ -27,7 +27,7 @@ void init_merchant(m2::Object& obj) {
 	gfx.pre_draw = [&chr](m2::Graphic& g) {
 		// Set the sprite if license is added. Licenses are assigned after population, thus do it pre_draw.
 		auto it = chr.find_items(m2g::pb::ITEM_CATEGORY_MERCHANT_LICENSE);
-		g.sprite = (it != chr.end_items()) ? &M2_GAME.get_sprite(it->game_sprite()) : nullptr;
+		g.sprite = (it != chr.end_items()) ? &M2_GAME.GetSprite(it->game_sprite()) : nullptr;
 	};
 	gfx.on_draw = [&chr](m2::Graphic& g) {
 		m2::Graphic::default_draw(g); // Merchant sprite

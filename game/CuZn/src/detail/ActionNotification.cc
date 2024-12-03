@@ -4,10 +4,10 @@
 
 namespace {
 	std::string industry_name(Industry industry) {
-		return M2_GAME.get_named_item(industry).in_game_name();
+		return M2_GAME.GetNamedItem(industry).in_game_name();
 	}
 	std::string city_name(City city) {
-		return M2_GAME.get_named_item(city).in_game_name();
+		return M2_GAME.GetNamedItem(city).in_game_name();
 	}
 	std::string canal_or_railroad() {
 		return M2G_PROXY.is_canal_era() ? "canal" : "railroad";

@@ -72,7 +72,7 @@ void ImageSelection::on_draw() {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto& sprite = M2_GAME.get_sprite(image_selection.list[_selection]);
+		const auto& sprite = M2_GAME.GetSprite(image_selection.list[_selection]);
 		auto image_rect = rect().trim_bottom(rect().h - rect().w);
 		draw_sprite(sprite, image_rect);
 	}

@@ -7,7 +7,7 @@ using namespace m2::ui::widget;
 
 namespace {
 	const Sprite* lookup_sprite(m2g::pb::SpriteType sprite_type) {
-		return sprite_type ? &M2_GAME.get_sprite(sprite_type) : nullptr;
+		return sprite_type ? &M2_GAME.GetSprite(sprite_type) : nullptr;
 	}
 }
 

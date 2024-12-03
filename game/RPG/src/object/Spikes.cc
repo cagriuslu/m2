@@ -7,8 +7,8 @@ struct Spikes : public m2::ObjectImpl {
 };
 
 m2::void_expected rpg::create_spikes(m2::Object& obj) {
-	const auto& spikes_in = M2_GAME.get_sprite(m2g::pb::SPIKES_IN);
-	const auto& spikes_out = M2_GAME.get_sprite(m2g::pb::SPIKES_OUT);
+	const auto& spikes_in = M2_GAME.GetSprite(m2g::pb::SPIKES_IN);
+	const auto& spikes_out = M2_GAME.GetSprite(m2g::pb::SPIKES_OUT);
 
 	// Create physique component
 	auto& phy = obj.add_physique();

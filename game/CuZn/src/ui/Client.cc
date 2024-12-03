@@ -14,18 +14,18 @@ static TextBlueprint client_status = {
 	.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
 	.wrapped_font_size_in_units = 5.0f,
 	.on_update = [](MAYBE Text& self) {
-		if (M2_GAME.real_client_thread().is_connected()) {
+		if (M2_GAME.RealClientThread().is_connected()) {
 			self.set_text("CONNECTED");
-		} else if (M2_GAME.real_client_thread().is_ready()) {
+		} else if (M2_GAME.RealClientThread().is_ready()) {
 			self.set_text("READY");
-		} else if (M2_GAME.real_client_thread().is_started()) {
+		} else if (M2_GAME.RealClientThread().is_started()) {
 			// Start the game
-			auto player_count = M2_GAME.real_client_thread().total_player_count();
+			auto player_count = M2_GAME.RealClientThread().total_player_count();
 			const auto expect_success =
-				M2_GAME.load_multi_player_as_guest(M2_GAME.levels_dir / "Map.json", std::to_string(player_count));
+				M2_GAME.LoadMultiPlayerAsGuest(M2_GAME.levels_dir / "Map.json", std::to_string(player_count));
 			m2_succeed_or_throw_error(expect_success);
 			return make_clear_stack_action();
-		} else if (M2_GAME.real_client_thread().is_quit()) {
+		} else if (M2_GAME.RealClientThread().is_quit()) {
 			self.set_text("SERVER FULL");
 		} else {
 			self.set_text("CONNECTING...");
@@ -38,9 +38,9 @@ static TextBlueprint ready_button = {
 	.text = "...",
 	.wrapped_font_size_in_units = 5.0f,
 	.on_update = [](MAYBE Text& self) {
-		if (M2_GAME.real_client_thread().is_connected()) {
+		if (M2_GAME.RealClientThread().is_connected()) {
 			self.set_text("SET READY");
-		} else if (M2_GAME.real_client_thread().is_ready()) {
+		} else if (M2_GAME.RealClientThread().is_ready()) {
 			self.set_text("CLEAR READY");
 		} else {
 			self.set_text("...");
@@ -48,10 +48,10 @@ static TextBlueprint ready_button = {
 		return make_continue_action();
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
-		if (M2_GAME.real_client_thread().is_connected()) {
-			M2_GAME.real_client_thread().set_ready(true);
-		} else if (M2_GAME.real_client_thread().is_ready()) {
-			M2_GAME.real_client_thread().set_ready(false);
+		if (M2_GAME.RealClientThread().is_connected()) {
+			M2_GAME.RealClientThread().set_ready(true);
+		} else if (M2_GAME.RealClientThread().is_ready()) {
+			M2_GAME.RealClientThread().set_ready(false);
 		}
 		return make_continue_action();
 	}
@@ -86,7 +86,7 @@ static const PanelBlueprint client_lobby = {
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
 				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_GAME.leave_game();
+					M2_GAME.LeaveGame();
 					return make_return_action();
 				}
 			}
@@ -124,7 +124,7 @@ const PanelBlueprint ip_port_form = {
 				.kb_shortcut = SDL_SCANCODE_RETURN,
 				.on_action = [](MAYBE const widget::Text& self) {
 					auto* ip_input_widget = self.parent().find_first_widget_of_type<TextInput>();
-					M2_GAME.join_game(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());
+					M2_GAME.JoinGame(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());
 					return m2::ui::Panel::create_and_run_blocking(&client_lobby);
 				}
 			}

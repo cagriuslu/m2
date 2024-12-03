@@ -25,7 +25,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	const float start_angle = direction_angle + swing_angle / 2.0f;
 	const float swing_speed = swing_angle / average_ttl;
 
-	const auto& sprite = M2_GAME.get_sprite(melee_weapon.game_sprite());
+	const auto& sprite = M2_GAME.GetSprite(melee_weapon.game_sprite());
 
 	// Add physics
 	auto& phy = obj.add_physique();
@@ -47,7 +47,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 
 	// Add character
 	auto& chr = obj.add_tiny_character();
-	chr.add_named_item(M2_GAME.get_named_item(ITEM_AUTOMATIC_TTL));
+	chr.add_named_item(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_TTL));
 	chr.add_resource(RESOURCE_TTL, average_ttl);
 
 	chr.update = [](m2::Character& chr) {

@@ -25,29 +25,29 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.get_sprite(main_sprite_type).background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(M2_GAME.get_sprite(main_sprite_type).foreground_collider_circ_radius_m());
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(M2_GAME.get_sprite(main_sprite_type).foreground_collider_origin_to_origin_vec_m().x);
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(M2_GAME.get_sprite(main_sprite_type).foreground_collider_origin_to_origin_vec_m().y);
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).foreground_collider_circ_radius_m());
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(M2_GAME.GetSprite(main_sprite_type).foreground_collider_origin_to_origin_vec_m().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(M2_GAME.GetSprite(main_sprite_type).foreground_collider_origin_to_origin_vec_m().y);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(PLAYER_MASS);
 	bp.set_linear_damping(PLAYER_LINEAR_DAMPING);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(M2_GAME.get_sprite(main_sprite_type));
+	auto& gfx = obj.add_graphic(M2_GAME.GetSprite(main_sprite_type));
 
 	auto& chr = obj.add_full_character();
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_REUSABLE_DASH_2S));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));
 	if (M2_LEVEL.identifier() != "MeleeTutorialClosed") {
 		// 4th level is melee tutorial
-		chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_REUSABLE_GUN));
+		chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
 	}
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_REUSABLE_SWORD));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_SWORD));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DASH_ENERGY));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.set_max_resource(m2g::pb::RESOURCE_HP, 1.0f);
 	chr.add_resource(m2g::pb::RESOURCE_DASH_ENERGY, 2.0f);
@@ -57,7 +57,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 
 	phy.pre_step = [&, id=id](m2::Physique& phy) {
 		auto& chr = obj.character();
-		auto vector_to_mouse = (M2_GAME.mouse_position_world_m() - obj.position).normalize();
+		auto vector_to_mouse = (M2_GAME.MousePositionWorldM() - obj.position).normalize();
 
 		auto [direction_enum, direction_vector] = m2::calculate_character_movement(m2::Key::LEFT, m2::Key::RIGHT, m2::Key::UP, m2::Key::DOWN);
 		float move_force;
@@ -72,7 +72,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		}
 		if (direction_vector) {
 			// Apply force
-			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(direction_vector * (move_force * M2_GAME.delta_time_s())), true);
+			phy.body->ApplyForceToCenter(static_cast<b2Vec2>(direction_vector * (move_force * M2_GAME.DeltaTimeS())), true);
 		}
 
 		// Primary weapon
@@ -151,7 +151,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 			// Get hit by an enemy
 			self.remove_resource(m2g::pb::RESOURCE_HP, data.hit_damage());
 		} else if (data.has_item_type()) {
-			const auto& item = M2_GAME.get_named_item(data.item_type());
+			const auto& item = M2_GAME.GetNamedItem(data.item_type());
 			// Player can hold only one special weapon of certain type, get rid of the previous one
 			constexpr std::array<ItemCategory, 2> special_categories = {ITEM_CATEGORY_SPECIAL_RANGED_WEAPON, ITEM_CATEGORY_SPECIAL_MELEE_WEAPON};
 			constexpr std::array<ResourceType, 2> special_ammo_type = {RESOURCE_SPECIAL_RANGED_WEAPON_AMMO, NO_RESOURCE};
@@ -170,7 +170,7 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		return std::nullopt;
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
-		impl.animation_fsm.time(M2_GAME.delta_time_s());
+		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
 		gfx.draw_addon_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
 	};
 

@@ -10,7 +10,7 @@ using namespace m2::ui;
 using namespace m2::ui::widget;
 
 PanelBlueprint generate_custom_hud_blueprint(int player_count) {
-	auto turn_holder_index = M2_GAME.turn_holder_index();
+	auto turn_holder_index = M2_GAME.TurnHolderIndex();
 
 	// Add player names
 	auto bp = PanelBlueprint{

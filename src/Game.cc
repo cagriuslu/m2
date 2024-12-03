@@ -19,7 +19,7 @@
 
 m2::Game* m2::Game::_instance;
 
-void m2::Game::create_instance() {
+void m2::Game::CreateInstance() {
 	LOG_DEBUG("Creating Game instance...");
 	if (_instance) {
 		throw M2_ERROR("Cannot create multiple instance of Game");
@@ -32,7 +32,7 @@ void m2::Game::create_instance() {
 	_instance->_proxy.load_resources();
 }
 
-void m2::Game::destroy_instance() {
+void m2::Game::DestroyInstance() {
 	DEBUG_FN();
 	delete _instance;
 	_instance = nullptr;
@@ -48,7 +48,7 @@ m2::Game::Game() {
 		LOG_WARN("Failed to set line render method");
 	}
 
-	recalculate_dimensions(800, 450, _proxy.default_game_height_m);
+	RecalculateDimensions(800, 450, _proxy.default_game_height_m);
 	if ((window = SDL_CreateWindow(_proxy.game_friendly_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		_dims.window.w, _dims.window.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
@@ -143,7 +143,7 @@ m2::Game::~Game() {
 	SDL_DestroyWindow(window);
 }
 
-m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connection_count) {
+m2::void_expected m2::Game::HostGame(mplayer::Type type, unsigned max_connection_count) {
 	if (not std::holds_alternative<std::monostate>(_multi_player_threads)) {
 		throw M2_ERROR("Hosting game requires no other multiplayer threads to exist");
 	}
@@ -151,28 +151,28 @@ m2::void_expected m2::Game::host_game(mplayer::Type type, unsigned max_connectio
 	LOG_INFO("Creating server instance...");
 	_multi_player_threads.emplace<ServerThreads>();
 	LOG_DEBUG("Destroying temporary ServerThread...");
-	server_thread().~ServerThread(); // Destruct the default object
+	ServerThread().~ServerThread(); // Destruct the default object
 	LOG_DEBUG("Temporary ServerThread destroyed, creating real ServerThread...");
-	new (&server_thread()) network::ServerThread(type, max_connection_count);
+	new (&ServerThread()) network::ServerThread(type, max_connection_count);
 	LOG_DEBUG("Real ServerThread created");
 
 	// Wait until the server is up
-	while (not server_thread().is_listening()) {
+	while (not ServerThread().is_listening()) {
 		SDL_Delay(25);
 	}
 	// TODO prevent other clients from joining until the host client joins
 
 	LOG_INFO("Server is listening, joining the game as host client...");
 	LOG_DEBUG("Destroying temporary HostClientThread...");
-	host_client_thread().~HostClientThread(); // Destruct the default object
+	HostClientThread().~HostClientThread(); // Destruct the default object
 	LOG_DEBUG("Temporary HostClientThread destroyed, creating real HostClientThread");
-	new (&host_client_thread()) network::HostClientThread(type);
+	new (&HostClientThread()) network::HostClientThread(type);
 	LOG_DEBUG("Real HostClientThread created");
 
 	return {};
 }
 
-m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& addr) {
+m2::void_expected m2::Game::JoinGame(mplayer::Type type, const std::string& addr) {
 	if (not std::holds_alternative<std::monostate>(_multi_player_threads)) {
 		throw M2_ERROR("Joining game requires no other multiplayer threads to exist");
 	}
@@ -180,12 +180,12 @@ m2::void_expected m2::Game::join_game(mplayer::Type type, const std::string& add
 	_multi_player_threads.emplace<network::RealClientThread>(type, addr);
 	return {};
 }
-void m2::Game::leave_game() {
+void m2::Game::LeaveGame() {
 	_multi_player_threads = std::monostate{};
 }
 
-bool m2::Game::add_bot() {
-	if (not is_server()) {
+bool m2::Game::AddBot() {
+	if (not IsServer()) {
 		throw M2_ERROR("Only server can add bots");
 	}
 
@@ -197,7 +197,7 @@ bool m2::Game::add_bot() {
 	it->first.~BotClientThread(); // Destruct the default object
 	LOG_DEBUG("Temporary BotClientThread destroyed, creating real BotClientThread");
 
-	new (&it->first) network::BotClientThread(server_thread().type());
+	new (&it->first) network::BotClientThread(ServerThread().type());
 	LOG_DEBUG("Real BotClientThread created");
 
 	if (it->first.is_active()) {
@@ -210,7 +210,7 @@ bool m2::Game::add_bot() {
 	}
 }
 
-m2::network::BotClientThread& m2::Game::find_bot(int receiver_index) {
+m2::network::BotClientThread& m2::Game::FindBot(int receiver_index) {
 	auto it = std::find_if(_bot_threads.begin(), _bot_threads.end(), is_second_equals<network::BotClientThread, int>(receiver_index));
 	if (it == _bot_threads.end()) {
 		throw M2_ERROR("Bot not found");
@@ -218,77 +218,77 @@ m2::network::BotClientThread& m2::Game::find_bot(int receiver_index) {
 	return it->first;
 }
 
-int m2::Game::total_player_count() {
-	if (is_server()) {
-		return server_thread().client_count();
-	} else if (is_real_client()) {
-		return real_client_thread().total_player_count();
+int m2::Game::TotalPlayerCount() {
+	if (IsServer()) {
+		return ServerThread().client_count();
+	} else if (IsRealClient()) {
+		return RealClientThread().total_player_count();
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}
 }
 
-int m2::Game::self_index() {
-	if (is_server()) {
+int m2::Game::SelfIndex() {
+	if (IsServer()) {
 		return 0;
-	} else if (is_real_client()) {
-		return real_client_thread().self_index();
+	} else if (IsRealClient()) {
+		return RealClientThread().self_index();
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}
 }
 
-int m2::Game::turn_holder_index() {
-	if (is_server()) {
-		return server_thread().turn_holder_index();
-	} else if (is_real_client()) {
-		return real_client_thread().turn_holder_index();
+int m2::Game::TurnHolderIndex() {
+	if (IsServer()) {
+		return ServerThread().turn_holder_index();
+	} else if (IsRealClient()) {
+		return RealClientThread().turn_holder_index();
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}
 }
 
-bool m2::Game::is_our_turn() {
-	if (is_server()) {
-		return server_thread().is_our_turn();
-	} else if (is_real_client()) {
-		return real_client_thread().is_our_turn();
+bool m2::Game::IsOurTurn() {
+	if (IsServer()) {
+		return ServerThread().is_our_turn();
+	} else if (IsRealClient()) {
+		return RealClientThread().is_our_turn();
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}
 }
 
-void m2::Game::queue_client_command(const m2g::pb::ClientCommand& cmd) {
-	if (is_server()) {
-		host_client_thread().queue_client_command(cmd);
-	} else if (is_real_client()) {
-		real_client_thread().queue_client_command(cmd);
+void m2::Game::QueueClientCommand(const m2g::pb::ClientCommand& cmd) {
+	if (IsServer()) {
+		HostClientThread().queue_client_command(cmd);
+	} else if (IsRealClient()) {
+		RealClientThread().queue_client_command(cmd);
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}
 }
 
-m2::void_expected m2::Game::load_single_player(
+m2::void_expected m2::Game::LoadSinglePlayer(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
-	reset_state();
+	ResetState();
 	_level.emplace();
 	return _level->init_single_player(level_path_or_blueprint, level_name);
 }
 
-m2::void_expected m2::Game::load_multi_player_as_host(
+m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
-	reset_state();
+	ResetState();
 	_level.emplace();
 
 	auto success = _level->init_multi_player_as_host(level_path_or_blueprint, level_name);
 	m2_reflect_unexpected(success);
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
-	M2_GAME.server_thread().send_server_update();
+	M2_GAME.ServerThread().send_server_update();
 	// Manually set the HostClientThread state to STARTED, because it doesn't receive ServerUpdates
-	M2_GAME.host_client_thread().start_if_ready();
+	M2_GAME.HostClientThread().start_if_ready();
 	// If there are bots, we need to handle the first server update
 	std::this_thread::sleep_for(std::chrono::seconds(1)); // TODO why? system takes some time to deliver the data to bots, even though they are on the same machine
 	for (auto& [bot, index] : _bot_threads) {
@@ -303,7 +303,7 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 	M2G_PROXY.multi_player_level_server_populate(level_name, *_level->_lb);
 
 	// Execute second server update, which will fully initialize client levels.
-	M2_GAME.server_thread().send_server_update();
+	M2_GAME.ServerThread().send_server_update();
 	// Act as if ServerUpdate is received on the server-side as well
 	LOG_DEBUG("Calling server-side post_server_update...");
 	_proxy.post_server_update(false);
@@ -321,17 +321,17 @@ m2::void_expected m2::Game::load_multi_player_as_host(
 	return success;
 }
 
-m2::void_expected m2::Game::load_multi_player_as_guest(
+m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& level_name) {
 	_level.reset();
-	reset_state();
+	ResetState();
 	_level.emplace();
 
 	auto success = _level->init_multi_player_as_guest(level_path_or_blueprint, level_name);
 	m2_reflect_unexpected(success);
 
 	// Consume the initial ServerUpdate that triggered the level to be initialized
-	auto expect_server_update = M2_GAME.real_client_thread().process_server_update();
+	auto expect_server_update = M2_GAME.RealClientThread().process_server_update();
 	m2_reflect_unexpected(expect_server_update);
 	m2_return_unexpected_message_unless(expect_server_update.value() == network::ServerUpdateStatus::PROCESSED,
 		"Unexpected ServerUpdate status");
@@ -339,51 +339,51 @@ m2::void_expected m2::Game::load_multi_player_as_guest(
 	return {};
 }
 
-m2::void_expected m2::Game::load_level_editor(const std::string& level_resource_path) {
+m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_path) {
 	_level.reset();
-	reset_state();
+	ResetState();
 	_level.emplace();
 	return _level->init_level_editor(level_resource_path);
 }
 
-m2::void_expected m2::Game::load_pixel_editor(
+m2::void_expected m2::Game::LoadPixelEditor(
 	const std::string& image_resource_path, const int x_offset, const int y_offset) {
 	_level.reset();
-	reset_state();
+	ResetState();
 	_level.emplace();
 	return _level->init_pixel_editor(image_resource_path, x_offset, y_offset);
 }
 
-m2::void_expected m2::Game::load_sheet_editor() {
+m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.reset();
-	reset_state();
+	ResetState();
 	_level.emplace();
 	return _level->init_sheet_editor(resource_dir / "SpriteSheets.json");
 }
 
-m2::void_expected m2::Game::load_bulk_sheet_editor() {
+m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	_level.reset();
-	reset_state();
+	ResetState();
 	_level.emplace();
 	return _level->init_bulk_sheet_editor(resource_dir / "SpriteSheets.json");
 }
 
-void m2::Game::reset_state() { events.clear(); }
+void m2::Game::ResetState() { events.clear(); }
 
-void m2::Game::handle_quit_event() {
+void m2::Game::HandleQuitEvent() {
 	if (events.pop_quit()) {
 		quit = true;
 	}
 }
 
-void m2::Game::handle_window_resize_event() {
+void m2::Game::HandleWindowResizeEvent() {
 	if (const auto window_resize = events.pop_window_resize(); window_resize) {
-		recalculate_dimensions(window_resize->x, window_resize->y);
-		set_zoom(1.0f);
+		RecalculateDimensions(window_resize->x, window_resize->y);
+		SetZoom(1.0f);
 	}
 }
 
-void m2::Game::handle_console_event() {
+void m2::Game::HandleConsoleEvent() {
 	if (events.pop_key_press(Key::CONSOLE)) {
 		if (ui::Panel::create_and_run_blocking(&ui::console_ui).is_quit()) {
 			quit = true;
@@ -391,17 +391,17 @@ void m2::Game::handle_console_event() {
 	}
 }
 
-void m2::Game::handle_menu_event() {
+void m2::Game::HandleMenuEvent() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
 		const ui::PanelBlueprint* pause_menu{};
-		if (std::holds_alternative<splayer::State>(level().type_state)) {
+		if (std::holds_alternative<splayer::State>(Level().type_state)) {
 			pause_menu = _proxy.pause_menu();
-		} else if (std::holds_alternative<ledit::State>(level().type_state)) {
+		} else if (std::holds_alternative<ledit::State>(Level().type_state)) {
 			pause_menu = &level_editor::ui::menu;
-		} else if (std::holds_alternative<sedit::State>(level().type_state)) {
+		} else if (std::holds_alternative<sedit::State>(Level().type_state)) {
 			pause_menu = &ui::sheet_editor_main_menu;
-		} else if (std::holds_alternative<bsedit::State>(level().type_state)) {
+		} else if (std::holds_alternative<bsedit::State>(Level().type_state)) {
 			pause_menu = &ui::bulk_sheet_editor_pause_menu;
 		}
 
@@ -412,7 +412,7 @@ void m2::Game::handle_menu_event() {
 	}
 }
 
-void m2::Game::handle_hud_events() {
+void m2::Game::HandleHudEvents() {
 	if (_level->custom_blocking_ui_panel) {
 		_level->custom_blocking_ui_panel->handle_events(events, _level->is_panning())
 			.if_any_return([this]() {
@@ -441,56 +441,56 @@ void m2::Game::handle_hud_events() {
 	IF(_level->right_hud_ui_panel)->handle_events(events, _level->is_panning());
 }
 
-void m2::Game::handle_network_events() {
+void m2::Game::HandleNetworkEvents() {
 	// Check if the game ended
-	if ((is_server() && server_thread().is_shutdown()) || (is_real_client() && real_client_thread().is_shutdown())) {
+	if ((IsServer() && ServerThread().is_shutdown()) || (IsRealClient() && RealClientThread().is_shutdown())) {
 		_level.reset();
-		reset_state();
+		ResetState();
 		_multi_player_threads = std::monostate{};
 		_bot_threads.clear();
 		// Execute main menu
 		if (ui::Panel::create_and_run_blocking(_proxy.main_menu()).is_quit()) {
 			quit = true;
 		}
-	} else if (is_server()) {
+	} else if (IsServer()) {
 		// Check if a client has disconnected
-		if (auto disconnected_client_index = server_thread().disconnected_client()) {
+		if (auto disconnected_client_index = ServerThread().disconnected_client()) {
 			auto action = _proxy.handle_disconnected_client(*disconnected_client_index);
 			// TODO handle
 		}
 
 		// Check if a client has misbehaved
-		if (auto misbehaved_client_index = server_thread().misbehaved_client()) {
+		if (auto misbehaved_client_index = ServerThread().misbehaved_client()) {
 			auto action = _proxy.handle_misbehaving_client(*misbehaved_client_index);
 			// TODO handle
 		}
-	} else if (is_real_client()) {
+	} else if (IsRealClient()) {
 		// Check if the client has reconnected and needs to be set as ready
-		if (real_client_thread().is_reconnected()) {
+		if (RealClientThread().is_reconnected()) {
 			// Set as ready using the same ready_token
-			M2_GAME.real_client_thread().set_ready(true);
+			M2_GAME.RealClientThread().set_ready(true);
 			// Expect ServerUpdate, handle it normally
 		}
 
 		// Check if the client has disconnected
-		if (real_client_thread().has_reconnection_timed_out()) {
+		if (RealClientThread().has_reconnection_timed_out()) {
 			_proxy.handle_disconnection_from_server();
 			// TODO handle
 		}
 
 		// Check if the server has behaved unexpectedly
-		if (real_client_thread().is_server_unrecognized()) {
+		if (RealClientThread().is_server_unrecognized()) {
 			_proxy.handle_unrecognized_server();
 			// TODO handle
 		}
 	}
 }
 
-void m2::Game::execute_pre_step() {
+void m2::Game::ExecutePreStep() {
 	for (auto& phy : _level->physics) {
 		IF(phy.pre_step)(phy);
 	}
-	if (is_server()) {
+	if (IsServer()) {
 		if (not _bot_threads.empty()) {
 			// Check if any of the bots need to handle the ServerUpdate
 			for (auto& [bot, _] : _bot_threads) {
@@ -501,25 +501,25 @@ void m2::Game::execute_pre_step() {
 		}
 
 		// Handle client command
-		if (auto client_command = server_thread().pop_turn_holder_command()) {
-			auto new_turn_holder = _proxy.handle_client_command(server_thread().turn_holder_index(), client_command->client_command());
+		if (auto client_command = ServerThread().pop_turn_holder_command()) {
+			auto new_turn_holder = _proxy.handle_client_command(ServerThread().turn_holder_index(), client_command->client_command());
 			if (new_turn_holder) {
 				if (*new_turn_holder < 0) {
 					_server_update_necessary = true;
 					_server_update_with_shutdown = true;
 				} else {
-					server_thread().set_turn_holder(*new_turn_holder);
+					ServerThread().set_turn_holder(*new_turn_holder);
 					_server_update_necessary = true;
 				}
 			}
 		}
 		// Handle reconnected client
-		if (server_thread().has_reconnected_client()) {
+		if (ServerThread().has_reconnected_client()) {
 			_server_update_necessary = true;
 		}
 
 		// Handle server command
-		if (auto server_command = host_client_thread().pop_server_command()) {
+		if (auto server_command = HostClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
 		if (not _bot_threads.empty()) {
@@ -530,15 +530,15 @@ void m2::Game::execute_pre_step() {
 				}
 			}
 		}
-	} else if (is_real_client()) {
+	} else if (IsRealClient()) {
 		// Handle server command
-		if (auto server_command = real_client_thread().pop_server_command()) {
+		if (auto server_command = RealClientThread().pop_server_command()) {
 			_proxy.handle_server_command(*server_command);
 		}
 	}
 }
 
-void m2::Game::update_characters() {
+void m2::Game::UpdateCharacters() {
 	for (auto& character : _level->characters) {
 		auto& chr = to_character_base(character);
 		chr.automatic_update();
@@ -549,7 +549,7 @@ void m2::Game::update_characters() {
 	}
 }
 
-void m2::Game::execute_step() {
+void m2::Game::ExecuteStep() {
 	if (_level->world) {
 		LOGF_TRACE("Stepping world %f seconds...", phy_period);
 		_level->world->Step(phy_period, velocity_iterations, position_iterations);
@@ -576,11 +576,11 @@ void m2::Game::execute_step() {
 	}
 }
 
-void m2::Game::execute_post_step() {
-	if (is_server()) {
+void m2::Game::ExecutePostStep() {
+	if (IsServer()) {
 		if (_server_update_necessary) {
 			LOG_DEBUG("Server update is necessary, sending ServerUpdate...");
-			server_thread().send_server_update(_server_update_with_shutdown);
+			ServerThread().send_server_update(_server_update_with_shutdown);
 			_server_update_necessary = false; // Unset flag
 
 			// Act as if ServerUpdate is received on the server-side as well
@@ -589,23 +589,23 @@ void m2::Game::execute_post_step() {
 
 			// Shutdown the game if necessary
 			if (_server_update_with_shutdown) {
-				if (not server_thread().is_shutdown()) {
+				if (not ServerThread().is_shutdown()) {
 					throw M2_ERROR("Server should have shutdown itself");
 				}
 				_server_update_with_shutdown = false;
 				// Game will be restarted in handle_network_events
 			}
 		}
-	} else if (is_real_client()) {
+	} else if (IsRealClient()) {
 		// Handle ServerUpdate
-		auto status = real_client_thread().process_server_update();
+		auto status = RealClientThread().process_server_update();
 		m2_succeed_or_throw_error(status);
 		if (*status == network::ServerUpdateStatus::PROCESSED || *status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
 			LOG_DEBUG("Calling client-side post_server_update...");
 			_proxy.post_server_update(*status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN);
 		}
 		if (*status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
-			real_client_thread().shutdown();
+			RealClientThread().shutdown();
 			// Game will be restarted in handle_network_events
 		}
 	}
@@ -615,13 +615,13 @@ void m2::Game::execute_post_step() {
 	}
 }
 
-void m2::Game::update_sounds() {
+void m2::Game::UpdateSounds() {
 	for (auto& sound_emitter : _level->sound_emitters) {
 		IF(sound_emitter.update)(sound_emitter);
 	}
 }
 
-void m2::Game::execute_pre_draw() {
+void m2::Game::ExecutePreDraw() {
 	for (auto& gfx : _level->graphics) {
 		if (gfx.enabled) {
 			IF(gfx.pre_draw)(gfx);
@@ -629,7 +629,7 @@ void m2::Game::execute_pre_draw() {
 	}
 }
 
-void m2::Game::update_hud_contents() {
+void m2::Game::UpdateHudContents() {
 	IF(_level->left_hud_ui_panel)->update_contents(_delta_time_s);
 	IF(_level->right_hud_ui_panel)->update_contents(_delta_time_s);
 	IF(_level->message_box_ui_panel)->update_contents(_delta_time_s);
@@ -646,7 +646,7 @@ void m2::Game::update_hud_contents() {
 	IF(_level->custom_blocking_ui_panel)->update_contents(_delta_time_s);
 }
 
-void m2::Game::clear_back_buffer() const {
+void m2::Game::ClearBackBuffer() const {
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 }
@@ -668,7 +668,7 @@ namespace {
 		}
 	}
 }  // namespace
-void m2::Game::draw_background() {
+void m2::Game::DrawBackground() {
 	if (std::holds_alternative<ledit::State>(_level->type_state)) {
 		const auto& le = std::get<ledit::State>(_level->type_state);
 		std::visit(
@@ -693,7 +693,7 @@ void m2::Game::draw_background() {
 	}
 }
 
-void m2::Game::draw_foreground() {
+void m2::Game::DrawForeground() {
 	for (const auto& gfx_id : _level->draw_list) {
 		auto& gfx = _level->graphics[gfx_id];
 		if (gfx.enabled && gfx.draw) {
@@ -703,13 +703,13 @@ void m2::Game::draw_foreground() {
 	}
 }
 
-void m2::Game::draw_lights() {
+void m2::Game::DrawLights() {
 	for (auto& light : _level->lights) {
 		IF(light.on_draw)(light);
 	}
 }
 
-void m2::Game::execute_post_draw() {
+void m2::Game::ExecutePostDraw() {
 	for (auto& gfx : _level->graphics) {
 		if (gfx.enabled) {
 			IF(gfx.post_draw)(gfx);
@@ -717,7 +717,7 @@ void m2::Game::execute_post_draw() {
 	}
 }
 
-void m2::Game::debug_draw() {
+void m2::Game::DebugDraw() {
 #ifdef DEBUG
 	for (auto& phy : _level->physics) {
 		IF(phy.on_debug_draw)(phy);
@@ -737,7 +737,7 @@ void m2::Game::debug_draw() {
 #endif
 }
 
-void m2::Game::draw_hud() {
+void m2::Game::DrawHud() {
 	IF(_level->left_hud_ui_panel)->draw();
 	IF(_level->right_hud_ui_panel)->draw();
 	IF(_level->message_box_ui_panel)->draw();
@@ -747,7 +747,7 @@ void m2::Game::draw_hud() {
 	IF(_level->custom_blocking_ui_panel)->draw();
 }
 
-void m2::Game::draw_envelopes() const {
+void m2::Game::DrawEnvelopes() const {
 	SDL_Rect sdl_rect{};
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -761,14 +761,14 @@ void m2::Game::draw_envelopes() const {
 	SDL_RenderFillRect(renderer, &sdl_rect);
 }
 
-void m2::Game::flip_buffers() const { SDL_RenderPresent(renderer); }
+void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 
-void m2::Game::recalculate_dimensions(const int window_width, const int window_height, const int game_height_m) {
-	_dims = Dimensions{game_height_m == 0 ? _dims.height_m : game_height_m, window_width, window_height, _proxy.game_aspect_ratio_mul, _proxy.game_aspect_ratio_div};
+void m2::Game::RecalculateDimensions(const int window_width, const int window_height, const int game_height_m) {
+	_dims = GameDimensions{game_height_m == 0 ? _dims.height_m : game_height_m, window_width, window_height, _proxy.game_aspect_ratio_mul, _proxy.game_aspect_ratio_div};
 }
 
-void m2::Game::set_zoom(const float game_height_multiplier) {
-	recalculate_dimensions(
+void m2::Game::SetZoom(const float game_height_multiplier) {
+	RecalculateDimensions(
 		_dims.window.w, _dims.window.h, iround(static_cast<float>(_dims.height_m) * game_height_multiplier));
 	if (_level) {
 		IF(_level->left_hud_ui_panel)->update_positions();
@@ -781,39 +781,39 @@ void m2::Game::set_zoom(const float game_height_multiplier) {
 	}
 }
 
-void m2::Game::for_each_sprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
+void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::SpriteType>(); ++i) {
 		auto type = pb::enum_value<m2g::pb::SpriteType>(i);
-		if (!op(type, get_sprite(type))) {
+		if (!op(type, GetSprite(type))) {
 			return;
 		}
 	}
 }
 
-void m2::Game::for_each_named_item(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const {
+void m2::Game::ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::ItemType>(); ++i) {
 		auto type = pb::enum_value<m2g::pb::ItemType>(i);
-		if (!op(type, get_named_item(type))) {
+		if (!op(type, GetNamedItem(type))) {
 			return;
 		}
 	}
 }
 
-const m2::VecF& m2::Game::mouse_position_world_m() const {
+const m2::VecF& m2::Game::MousePositionWorldM() const {
 	if (not _mouse_position_world_m) {
-		recalculate_mouse_position2();
+		RecalculateMousePosition2();
 	}
 	return *_mouse_position_world_m;
 }
 
-const m2::VecF& m2::Game::screen_center_to_mouse_position_m() const {
+const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 	if (not _screen_center_to_mouse_position_m) {
-		recalculate_mouse_position2();
+		RecalculateMousePosition2();
 	}
 	return *_screen_center_to_mouse_position_m;
 }
 
-m2::VecF m2::Game::pixel_to_2d_world_m(const VecI& pixel_position) {
+m2::VecF m2::Game::PixelTo2dWorldM(const VecI& pixel_position) {
 	const auto screen_center_to_pixel_position_px =
 		VecI{pixel_position.x - (_dims.window.w / 2), pixel_position.y - (_dims.window.h / 2)};
 	const auto screen_center_to_pixel_position_m = VecF{
@@ -822,17 +822,17 @@ m2::VecF m2::Game::pixel_to_2d_world_m(const VecI& pixel_position) {
 	return screen_center_to_pixel_position_m + camera_position;
 }
 
-m2::RectF m2::Game::viewport_to_2d_world_rect_m() {
-	const auto top_left = pixel_to_2d_world_m(VecI{dimensions().game.x, dimensions().game.y});
+m2::RectF m2::Game::ViewportTo2dWorldRectM() {
+	const auto top_left = PixelTo2dWorldM(VecI{Dimensions().game.x, Dimensions().game.y});
 	const auto bottom_right =
-		pixel_to_2d_world_m(VecI{dimensions().game.x + dimensions().game.w, dimensions().game.y + dimensions().game.h});
+		PixelTo2dWorldM(VecI{Dimensions().game.x + Dimensions().game.w, Dimensions().game.y + Dimensions().game.h});
 	return RectF::from_corners(top_left, bottom_right);
 }
 
-m2::sdl::TextureUniquePtr m2::Game::draw_game_to_texture(m2::VecF camera_position) {
+m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) {
 	// Temporarily change camera position
-	auto prev_camera_position = level().camera()->position;
-	level().camera()->position = camera_position;
+	auto prev_camera_position = Level().camera()->position;
+	Level().camera()->position = camera_position;
 
 	// Create an empty render target
 	auto render_target = sdl::create_drawable_texture_of_screen_size();
@@ -841,22 +841,22 @@ m2::sdl::TextureUniquePtr m2::Game::draw_game_to_texture(m2::VecF camera_positio
 	SDL_SetRenderTarget(renderer, render_target.get());
 
 	// Draw
-	clear_back_buffer();
-	draw_background();
-	draw_foreground();
-	draw_lights();
-	draw_envelopes();
+	ClearBackBuffer();
+	DrawBackground();
+	DrawForeground();
+	DrawLights();
+	DrawEnvelopes();
 
 	// Reinstate old render target
 	SDL_SetRenderTarget(renderer, prev_render_target);
 
 	// Reinstate old camera position
-	level().camera()->position = prev_camera_position;
+	Level().camera()->position = prev_camera_position;
 
 	return render_target;
 }
 
-void m2::Game::recalculate_directional_audio() {
+void m2::Game::RecalculateDirectionalAudio() {
 	if (_level->left_listener || _level->right_listener) {
 		// Loop over sounds
 		for (auto& sound_emitter : _level->sound_emitters) {
@@ -879,11 +879,11 @@ void m2::Game::recalculate_directional_audio() {
 	}
 }
 
-void m2::Game::add_deferred_action(const std::function<void(void)>& action) {
+void m2::Game::AddDeferredAction(const std::function<void(void)>& action) {
 	_level->deferred_actions.push(action);
 }
 
-void m2::Game::execute_deferred_actions() {
+void m2::Game::ExecuteDeferredActions() {
 	// Execute deferred actions one by one. A deferred action may insert another deferred action into the queue. Thus we
 	// cannot iterate over the queue, we must pop one by one.
 	while (not _level->deferred_actions.empty()) {
@@ -892,7 +892,7 @@ void m2::Game::execute_deferred_actions() {
 	}
 }
 
-void m2::Game::recalculate_mouse_position2() const {
+void m2::Game::RecalculateMousePosition2() const {
 	const auto mouse_position = events.mouse_position();
 	const auto screen_center_to_mouse_position_px =
 		VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};

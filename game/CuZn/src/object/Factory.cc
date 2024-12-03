@@ -23,7 +23,7 @@ int required_beer_count_to_sell(IndustryLocation location) {
 		throw M2_ERROR("Invalid factory location");
 	} else {
 		auto industry_tile = to_industry_tile_of_factory_character(factory->character());
-		return m2::iround(M2_GAME.get_named_item(industry_tile).get_attribute(BEER_COST));
+		return m2::iround(M2_GAME.GetNamedItem(industry_tile).get_attribute(BEER_COST));
 	}
 }
 
@@ -64,7 +64,7 @@ void flip_exhausted_factories() {
 
 void sell_factory(m2::Character& factory_chr) {
 	auto tile_type = to_industry_tile_of_factory_character(factory_chr);
-	const auto& tile_item = M2_GAME.get_named_item(tile_type);
+	const auto& tile_item = M2_GAME.GetNamedItem(tile_type);
 	// Earn income points
 	auto income_bonus = tile_item.get_attribute(INCOME_POINTS_BONUS);
 	auto curr_income_points = factory_chr.owner().get_parent()->character().get_attribute(INCOME_POINTS);
@@ -136,9 +136,9 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 
 	// Add all available information to the factories: industry, city, industry tile
 	auto& chr = obj.add_full_character();
-	chr.add_named_item(M2_GAME.get_named_item(industry));
-	chr.add_named_item(M2_GAME.get_named_item(city));
-	chr.add_named_item(M2_GAME.get_named_item(industry_tile));
+	chr.add_named_item(M2_GAME.GetNamedItem(industry));
+	chr.add_named_item(M2_GAME.GetNamedItem(city));
+	chr.add_named_item(M2_GAME.GetNamedItem(industry_tile));
 
 	auto color = M2G_PROXY.player_colors[parent_index];
 	auto& _gfx = obj.add_graphic(industry_sprite_of_industry(industry));

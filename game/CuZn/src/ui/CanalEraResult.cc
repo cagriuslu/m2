@@ -59,6 +59,6 @@ void display_canal_era_result(const m2g::pb::ServerCommand::CanalEraResult& cana
 			});
 	}
 
-	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
 	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background));
 }

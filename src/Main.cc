@@ -66,8 +66,8 @@ int main(const int argc, char **argv) {
 	}
 	LOG_DEBUG("SDL_ttf initialized");
 
-	Game::create_instance();
-	M2_GAME.add_pause_ticks(sdl::get_ticks()); // Add initialization duration as pause ticks
+	Game::CreateInstance();
+	M2_GAME.AddPauseTicks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
 	LOG_DEBUG("Executing main menu...");
 	if (m2::ui::Panel::create_and_run_blocking(M2G_PROXY.main_menu()).is_quit()) {
@@ -77,7 +77,7 @@ int main(const int argc, char **argv) {
 	LOG_DEBUG("Main menu returned");
 
 	// Check if there's a level
-	if (not M2_GAME.has_level()) {
+	if (not M2_GAME.HasLevel()) {
 		LOG_WARN("Main menu didn't initialize a level");
 	}
 
@@ -86,7 +86,7 @@ int main(const int argc, char **argv) {
 	sdl::Stopwatch since_last_fps(M2_GAME.pause_ticks);
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
 	LOG_DEBUG("Initial pause ticks", M2_GAME.pause_ticks);
-	while (M2_GAME.has_level() && !M2_GAME.quit) {
+	while (M2_GAME.HasLevel() && !M2_GAME.quit) {
 		M2_LEVEL.begin_game_loop();
 
 		////////////////////////////////////////////////////////////////////////
@@ -98,16 +98,16 @@ int main(const int argc, char **argv) {
 			M2_GAME.events.clear();
 		}
 		if (M2_GAME.events.gather()) {
-			M2_GAME.handle_quit_event();
-			M2_GAME.handle_window_resize_event();
-			M2_GAME.handle_console_event();
-			M2_GAME.handle_menu_event();
-			M2_GAME.handle_hud_events();
-			M2_GAME.handle_network_events();
-			M2_GAME.execute_deferred_actions();
+			M2_GAME.HandleQuitEvent();
+			M2_GAME.HandleWindowResizeEvent();
+			M2_GAME.HandleConsoleEvent();
+			M2_GAME.HandleMenuEvent();
+			M2_GAME.HandleHudEvents();
+			M2_GAME.HandleNetworkEvents();
+			M2_GAME.ExecuteDeferredActions();
 		}
 		BREAK_IF_QUIT();
-		M2_GAME.reset_mouse_position();
+		M2_GAME.ResetMousePosition();
 
 		////////////////////////////////////////////////////////////////////////
 		/////////////////////////////// PHYSICS ////////////////////////////////
@@ -120,17 +120,17 @@ int main(const int argc, char **argv) {
 			// Advance time by M2_GAME.phy_period
 			M2_GAME._delta_time_s = M2_GAME.phy_period;
 
-			M2_GAME.execute_pre_step();
-			M2_GAME.execute_deferred_actions();
-			M2_GAME.update_characters();
-			M2_GAME.execute_deferred_actions();
-			M2_GAME.execute_step();
-			M2_GAME.execute_deferred_actions();
-			M2_GAME.execute_post_step();
-			M2_GAME.execute_deferred_actions();
-			M2_GAME.update_sounds();
-			M2_GAME.execute_deferred_actions();
-			M2_GAME.recalculate_directional_audio();
+			M2_GAME.ExecutePreStep();
+			M2_GAME.ExecuteDeferredActions();
+			M2_GAME.UpdateCharacters();
+			M2_GAME.ExecuteDeferredActions();
+			M2_GAME.ExecuteStep();
+			M2_GAME.ExecuteDeferredActions();
+			M2_GAME.ExecutePostStep();
+			M2_GAME.ExecuteDeferredActions();
+			M2_GAME.UpdateSounds();
+			M2_GAME.ExecuteDeferredActions();
+			M2_GAME.RecalculateDirectionalAudio();
 		}
 		if (last_phy_count == 4) {
 			since_last_phy.new_lap();
@@ -144,17 +144,17 @@ int main(const int argc, char **argv) {
 		since_last_gfx.measure();
 		M2_GAME._delta_time_s = static_cast<float>(since_last_gfx.last()) / 1000.0f;
 
-		M2_GAME.execute_pre_draw();
-		M2_GAME.update_hud_contents();
-		M2_GAME.clear_back_buffer();
-		M2_GAME.draw_background();
-		M2_GAME.draw_foreground();
-		M2_GAME.draw_lights();
-		M2_GAME.execute_post_draw();
-		M2_GAME.debug_draw();
-		M2_GAME.draw_hud();
-		M2_GAME.draw_envelopes();
-		M2_GAME.flip_buffers();
+		M2_GAME.ExecutePreDraw();
+		M2_GAME.UpdateHudContents();
+		M2_GAME.ClearBackBuffer();
+		M2_GAME.DrawBackground();
+		M2_GAME.DrawForeground();
+		M2_GAME.DrawLights();
+		M2_GAME.ExecutePostDraw();
+		M2_GAME.DebugDraw();
+		M2_GAME.DrawHud();
+		M2_GAME.DrawEnvelopes();
+		M2_GAME.FlipBuffers();
 		++gfx_count;
 
 		if (since_last_fps.measure(); 5000 < since_last_fps.lap()) {
@@ -165,7 +165,7 @@ int main(const int argc, char **argv) {
 		}
 	}
 
-	Game::destroy_instance();
+	Game::DestroyInstance();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();

@@ -72,7 +72,7 @@ namespace {
 		.text = "Pass",
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-			if (M2_GAME.is_our_turn()) {
+			if (M2_GAME.IsOurTurn()) {
 				execute_pass_journey();
 			}
 			return make_continue_action();
@@ -127,9 +127,9 @@ const PanelBlueprint left_hud_blueprint = {
 			.variant = TextBlueprint{
 				.wrapped_font_size_in_units = 2.5f,
 				.on_create = [](MAYBE Text& self) {
-					auto text = generate_player_name(M2_GAME.self_index());
+					auto text = generate_player_name(M2_GAME.SelfIndex());
 					self.set_text(text);
-					self.set_color(generate_player_color(M2_GAME.self_index()));
+					self.set_color(generate_player_color(M2_GAME.SelfIndex()));
 					return make_continue_action();
 				}
 			}
@@ -141,7 +141,7 @@ const PanelBlueprint left_hud_blueprint = {
 				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.35f,
 				.on_update = [](MAYBE Text& self) {
-					if (M2_GAME.is_our_turn()) {
+					if (M2_GAME.IsOurTurn()) {
 						if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
 							self.set_text("Take your\nlast action\nof this turn");
 						} else {

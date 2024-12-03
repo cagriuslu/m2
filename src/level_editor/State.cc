@@ -16,7 +16,7 @@ void m2::ledit::State::PaintMode::select_sprite_type(m2g::pb::SpriteType sprite_
 	}
 	if (sprite_type) {
 		selected_sprite_type = sprite_type;
-		selected_sprite_ghost_id = obj::create_ghost(M2_GAME.get_sprite(sprite_type));
+		selected_sprite_ghost_id = obj::create_ghost(M2_GAME.GetSprite(sprite_type));
 
 		const auto sprite_name = pb::enum_name(sprite_type);
 		M2_LEVEL.display_message(sprite_name);
@@ -27,7 +27,7 @@ void m2::ledit::State::PaintMode::paint_sprite(const VecI& position) {
 		// Delete previous placeholder
 		EraseMode::erase_position(position, std::get<ledit::State>(M2_LEVEL.type_state).selected_layer);
 		// Create/Replace placeholder
-		std::get<ledit::State>(M2_LEVEL.type_state).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.type_state).selected_layer)][position] = std::make_pair(obj::create_background_placeholder(VecF{position}, M2_GAME.get_sprite(selected_sprite_type), std::get<ledit::State>(M2_LEVEL.type_state).selected_layer), selected_sprite_type);
+		std::get<ledit::State>(M2_LEVEL.type_state).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.type_state).selected_layer)][position] = std::make_pair(obj::create_background_placeholder(VecF{position}, M2_GAME.GetSprite(selected_sprite_type), std::get<ledit::State>(M2_LEVEL.type_state).selected_layer), selected_sprite_type);
 	}
 }
 m2::ledit::State::PaintMode::~PaintMode() {
@@ -51,7 +51,7 @@ void m2::ledit::State::PlaceMode::select_object_type(m2g::pb::ObjectType object_
 	}
 	if (object_type) {
 		selected_object_type = object_type;
-		selected_sprite_ghost_id = obj::create_ghost(M2_GAME.get_sprite(M2_GAME.object_main_sprites[object_type]));
+		selected_sprite_ghost_id = obj::create_ghost(M2_GAME.GetSprite(M2_GAME.object_main_sprites[object_type]));
 	}
 }
 void m2::ledit::State::PlaceMode::select_group_type(m2g::pb::GroupType group_type) { selected_group_type = group_type; }
@@ -67,7 +67,7 @@ void m2::ledit::State::PlaceMode::place_object(const VecI& position) const {
 		level_object.set_type(selected_object_type);
 		level_object.mutable_group()->set_type(selected_group_type);
 		level_object.mutable_group()->set_instance(selected_group_instance);
-		std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders[position] = std::make_pair(obj::create_foreground_placeholder(VecF{position}, M2_GAME.get_sprite(M2_GAME.object_main_sprites[selected_object_type])), level_object);
+		std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders[position] = std::make_pair(obj::create_foreground_placeholder(VecF{position}, M2_GAME.GetSprite(M2_GAME.object_main_sprites[selected_object_type])), level_object);
 	}
 }
 m2::ledit::State::PlaceMode::~PlaceMode() {
@@ -98,7 +98,7 @@ std::optional<m2::pb::LevelObject> m2::ledit::State::PickMode::lookup_foreground
 }
 m2::ledit::State::SelectMode::SelectMode() {
 	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.dimensions().game});
+	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().game});
 }
 m2::ledit::State::SelectMode::~SelectMode() {
 	Events::disable_primary_selection();
@@ -162,7 +162,7 @@ void m2::ledit::State::SelectMode::paste_bg() {
 					auto new_position = positions->first + (cell - *clipboard_position_1);
 					auto sprite_type = it->second.second;
 					EraseMode::erase_position(new_position, std::get<ledit::State>(M2_LEVEL.type_state).selected_layer);
-					std::get<ledit::State>(M2_LEVEL.type_state).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.type_state).selected_layer)][new_position] = std::make_pair(obj::create_background_placeholder(VecF{new_position}, M2_GAME.get_sprite(sprite_type), std::get<ledit::State>(M2_LEVEL.type_state).selected_layer), sprite_type);
+					std::get<ledit::State>(M2_LEVEL.type_state).bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.type_state).selected_layer)][new_position] = std::make_pair(obj::create_background_placeholder(VecF{new_position}, M2_GAME.GetSprite(sprite_type), std::get<ledit::State>(M2_LEVEL.type_state).selected_layer), sprite_type);
 				}
 			});
 		}
@@ -180,7 +180,7 @@ void m2::ledit::State::SelectMode::paste_fg() {
 					level_object.mutable_position()->set_x(new_position.x);
 					level_object.mutable_position()->set_y(new_position.y);
 					RemoveMode::remove_object(new_position);
-					std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders[new_position] = std::make_pair(obj::create_foreground_placeholder(VecF{new_position}, M2_GAME.get_sprite(M2_GAME.object_main_sprites[level_object.type()])), level_object);
+					std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders[new_position] = std::make_pair(obj::create_foreground_placeholder(VecF{new_position}, M2_GAME.GetSprite(M2_GAME.object_main_sprites[level_object.type()])), level_object);
 				}
 			});
 		}
@@ -215,7 +215,7 @@ m2::ui::Action m2::ledit::State::SelectMode::rfill() {
 				std::get<ledit::State>(M2_LEVEL.type_state)
 				    .bg_placeholders[I(std::get<ledit::State>(M2_LEVEL.type_state).selected_layer)][cell] = std::make_pair(
 				    obj::create_background_placeholder(
-				        VecF{cell}, M2_GAME.get_sprite(sprite_type),
+				        VecF{cell}, M2_GAME.GetSprite(sprite_type),
 				        std::get<ledit::State>(M2_LEVEL.type_state).selected_layer),
 				    sprite_type);
 			});

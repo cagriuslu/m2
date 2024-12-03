@@ -43,7 +43,7 @@ int link_count_of_road_character(m2::Character& chr) {
 		return acc + std::accumulate(locations.begin(), locations.end(), 0, [](int acc, IndustryLocation location) -> int {
 			if (auto* factory = find_factory_at_location(location)) {
 				auto industry_tile = to_industry_tile_of_factory_character(factory->character());
-				return acc + m2::iround(M2_GAME.get_named_item(industry_tile).get_attribute(m2g::pb::LINK_BONUS));
+				return acc + m2::iround(M2_GAME.GetNamedItem(industry_tile).get_attribute(m2g::pb::LINK_BONUS));
 			}
 			return acc;
 		});
@@ -60,7 +60,7 @@ m2::void_expected init_road(m2::Object& obj, Connection connection) {
 	// Add the city cards to the character
 	auto& chr = obj.add_full_character();
 	for (auto city : cities_from_connection(connection)) {
-		chr.add_named_item(M2_GAME.get_named_item(city));
+		chr.add_named_item(M2_GAME.GetNamedItem(city));
 	}
 
 	auto parent_id = obj.parent_id();

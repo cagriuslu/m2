@@ -105,7 +105,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 							// Look up tile names
 							TextSelectionBlueprint::Options options;
 							std::transform(industry_tiles.begin(), industry_tiles.end(), std::back_inserter(options), [](IndustryTile tile) {
-								return widget::TextSelectionBlueprint::Option{M2_GAME.get_named_item(tile).in_game_name(), m2::I(tile)};
+								return widget::TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(tile).in_game_name(), m2::I(tile)};
 							});
 							// Look for the other widget
 							auto* tile_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("TileSelection");
@@ -134,7 +134,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 					.on_action = [](TextSelection &self) -> Action {
 						if (auto selections = self.selections(); not selections.empty()) {
 							auto selected_item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
-							const auto& selected_item = M2_GAME.get_named_item(selected_item_type);
+							const auto& selected_item = M2_GAME.GetNamedItem(selected_item_type);
 							{
 								std::string build_requirements = "£" + std::to_string(iround(selected_item.get_attribute(m2g::pb::MONEY_COST)));
 								if (auto coal_cost = iround(selected_item.get_attribute(m2g::pb::COAL_COST))) {
@@ -316,7 +316,7 @@ std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclud
 	Panel::create_and_run_blocking(
 			std::make_unique<PanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)),
 			tiles_window_ratio(),
-			M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position))
+			M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position))
 		.if_void_return([&]() { LOG_INFO("Tile selection cancelled"); })
 		.if_return<m2g::pb::ItemType>([&selected_tile](auto picked_tile) {
 			LOG_INFO("Tile selected", m2g::pb::ItemType_Name(picked_tile));

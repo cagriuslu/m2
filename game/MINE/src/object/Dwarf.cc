@@ -12,7 +12,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.get_sprite(m2g::pb::DWARF_FULL).background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(m2g::pb::DWARF_FULL).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_friction(0.0f);
 	bp.mutable_background_fixture()->set_category(m2::pb::FRIEND_ON_BACKGROUND);
 	bp.set_mass(100);
@@ -21,11 +21,11 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	obj.add_graphic(M2_GAME.get_sprite(SpriteType::DWARF_FULL));
+	obj.add_graphic(M2_GAME.GetSprite(SpriteType::DWARF_FULL));
 
 	auto& chr = obj.add_full_character();
-	chr.add_named_item(M2_GAME.get_named_item(ITEM_REUSABLE_JUMP));
-	chr.add_named_item(M2_GAME.get_named_item(ITEM_AUTOMATIC_JUMP_ENERGY));
+	chr.add_named_item(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));
+	chr.add_named_item(M2_GAME.GetNamedItem(ITEM_AUTOMATIC_JUMP_ENERGY));
 
 	phy.pre_step = [&obj, &chr](m2::Physique& phy) {
 		// Character movement
@@ -60,7 +60,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 					// If character has HP
 					if (chr_under_mouse.has_resource(RESOURCE_HP)) {
 						// Damage object
-						chr_under_mouse.remove_resource(RESOURCE_HP, 2.0f * M2_GAME.delta_time_s());
+						chr_under_mouse.remove_resource(RESOURCE_HP, 2.0f * M2_GAME.DeltaTimeS());
 						// Show health bar
 						auto hp = chr_under_mouse.get_resource(RESOURCE_HP);
 						auto max_hp = chr_under_mouse.get_max_resource(RESOURCE_HP);

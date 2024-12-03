@@ -28,7 +28,7 @@ m2::RectF cards_window_ratio() {
 }
 m2::RectF cards_panel_ratio() {
 	return m2::RectF{
-		M2_GAME.dimensions().hud_width_to_game_and_hud_width_ratio() + M2_GAME.dimensions().game_width_to_game_and_hud_width_ration() - 0.16f,
+		M2_GAME.Dimensions().hud_width_to_game_and_hud_width_ratio() + M2_GAME.Dimensions().game_width_to_game_and_hud_width_ration() - 0.16f,
 		0.6f,
 		0.16f,
 		0.4f};
@@ -77,7 +77,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 								// Add options
 								options.emplace_back(
 									widget::TextSelectionBlueprint::Option{
-										M2_GAME.get_named_item(card).in_game_name(), static_cast<int>(card),
+										M2_GAME.GetNamedItem(card).in_game_name(), static_cast<int>(card),
 										cards_window_card_color(card)});
 								// Sort first by type, then by alphabetically
 								std::sort(options.begin(), options.end(),
@@ -143,7 +143,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2) {
 	LOG_INFO("Asking player to select a card...");
 	std::optional<m2g::pb::ItemType> selected_card;
-	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
 	Panel::create_and_run_blocking(std::make_unique<PanelBlueprint>(
 		generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)),
 			cards_window_ratio(), std::move(background))

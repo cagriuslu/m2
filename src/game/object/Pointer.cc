@@ -7,7 +7,7 @@ m2::Id m2::obj::create_pointer() {
     auto it = m2::create_object({});
 
 	it->add_graphic().pre_draw = [](MAYBE m2::Graphic& gfx) {
-		gfx.owner().position = M2_GAME.mouse_position_world_m();
+		gfx.owner().position = M2_GAME.MousePositionWorldM();
 	};
 
     auto& lig = it->add_light();

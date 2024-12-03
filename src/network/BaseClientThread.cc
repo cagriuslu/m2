@@ -78,7 +78,7 @@ void m2::network::detail::BaseClientThread::locked_set_ready(bool ready) {
 	{
 		const std::lock_guard lock(_mutex);
 		pb::NetworkMessage msg;
-		msg.set_game_hash(M2_GAME.hash());
+		msg.set_game_hash(M2_GAME.Hash());
 		msg.mutable_client_update()->set_ready_token(ready ? _ready_token : 0);
 		_outgoing_queue.push(std::move(msg));
 		LOG_DEBUG("Readiness message queued");
@@ -104,7 +104,7 @@ void m2::network::detail::BaseClientThread::locked_queue_client_command(const m2
 	INFO_FN();
 
 	pb::NetworkMessage msg;
-	msg.set_game_hash(M2_GAME.hash());
+	msg.set_game_hash(M2_GAME.Hash());
 	msg.mutable_client_command()->CopyFrom(cmd);
 
 	{

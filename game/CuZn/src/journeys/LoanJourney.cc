@@ -27,13 +27,13 @@ m2::void_expected can_player_attempt_to_loan(m2::Character& player) {
 void execute_loan_journey() {
 	LOG_INFO("Loan action");
 	if (auto selected_card = ask_for_card_selection(); selected_card) {
-		auto card_name = M2_GAME.get_named_item(*selected_card).in_game_name();
+		auto card_name = M2_GAME.GetNamedItem(*selected_card).in_game_name();
 		if (ask_for_confirmation("Take a loan using ", card_name + " card?", "OK", "Cancel")) {
 			LOG_INFO("Loan action confirmed");
 
 			pb::ClientCommand cc;
 			cc.mutable_loan_action()->set_card(*selected_card);
-			M2_GAME.queue_client_command(cc);
+			M2_GAME.QueueClientCommand(cc);
 
 			return;
 		}

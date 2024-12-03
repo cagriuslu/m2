@@ -38,15 +38,15 @@ Enemy::Enemy(m2::Object& obj, const pb::Enemy* enemy) : animation_fsm(enemy->ani
 m2::void_expected Enemy::init(m2::Object& obj) {
 	auto main_sprite_type = M2_GAME.object_main_sprites[obj.object_type()];
 
-	auto& gfx = obj.add_graphic(M2_GAME.get_sprite(main_sprite_type));
+	auto& gfx = obj.add_graphic(M2_GAME.GetSprite(main_sprite_type));
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.set_allow_sleep(true);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.get_sprite(main_sprite_type).background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).background_collider_circ_radius_m());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(M2_GAME.get_sprite(main_sprite_type).foreground_collider_circ_radius_m());
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).foreground_collider_circ_radius_m());
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_FOREGROUND);
 	bp.set_mass(20.0f); // Enemy mass is lower than player, so that player can push the enemies
 	bp.set_linear_damping(5.0f);
@@ -54,12 +54,12 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
 	auto& chr = obj.add_full_character();
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_REUSABLE_GUN));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
-	chr.add_named_item(M2_GAME.get_named_item(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_GUN));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_ENEMY_SWORD));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_DAMAGE_EFFECT_TTL));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_RANGED_ENERGY));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_MELEE_ENERGY));
+	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_AUTOMATIC_STUN_TTL));
 	chr.add_resource(m2g::pb::RESOURCE_HP, 1.0f);
 
     obj.impl = std::make_unique<Enemy>(obj, M2G_PROXY.get_enemy(obj.object_type()));
@@ -71,7 +71,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	phy.pre_step = [&](MAYBE m2::Physique& phy) {
 		std::visit(m2::overloaded {
 			[](MAYBE std::monostate& v) {},
-			[](auto& v) { v.time(M2_GAME.delta_time_s()); }
+			[](auto& v) { v.time(M2_GAME.DeltaTimeS()); }
 		}, impl.ai_fsm);
 		std::visit(m2::overloaded {
 			[](ChaserFsm& v) { v.signal(ChaserFsmSignal{ChaserFsmSignal::Type::PHY_STEP}); },
@@ -151,7 +151,7 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	};
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		using namespace m2::pb;
-		impl.animation_fsm.time(M2_GAME.delta_time_s());
+		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
 		gfx.draw_addon_health_bar = chr.get_resource(RESOURCE_HP);
 		if (chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL)) {
 			gfx.variant_draw_order[0] = SPRITE_EFFECT_MASK;
@@ -179,7 +179,7 @@ void rpg::Enemy::move_towards(m2::Object& obj, m2::VecF direction, float force) 
 		auto anim_state_type = rpg::detail::to_animation_state_type(char_move_dir);
 		dynamic_cast<Enemy&>(*obj.impl).animation_fsm.signal(m2::AnimationFsmSignal{anim_state_type});
 		// Apply force
-		m2::VecF force_direction = direction * (M2_GAME.delta_time_s() * force);
+		m2::VecF force_direction = direction * (M2_GAME.DeltaTimeS() * force);
 		obj.physique().body->ApplyForceToCenter(static_cast<b2Vec2>(force_direction), true);
 	}
 }

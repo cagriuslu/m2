@@ -28,18 +28,18 @@ m2::Id m2::obj::create_camera() {
 		    overloaded{
 		        [](sedit::State& ss) {
 			        if (auto* dil = ss.dynamic_image_loader()) {
-				        dil->move(M2_GAME.viewport_to_2d_world_rect_m());
+				        dil->move(M2_GAME.ViewportTo2dWorldRectM());
 			        }
 		        },
 		        [](bsedit::State& ss) {
 			        if (auto* dil = ss.dynamic_sprite_sheet_loader()) {
-				        dil->move(M2_GAME.viewport_to_2d_world_rect_m());
+				        dil->move(M2_GAME.ViewportTo2dWorldRectM());
 			        }
 		        },
 		        DEFAULT_OVERLOAD},
 		    M2_LEVEL.type_state);
-		IF(M2_LEVEL.dynamic_grid_lines_loader)->move(M2_GAME.viewport_to_2d_world_rect_m());
-		IF(M2_LEVEL.dynamic_sheet_grid_lines_loader)->move(M2_GAME.viewport_to_2d_world_rect_m());
+		IF(M2_LEVEL.dynamic_grid_lines_loader)->move(M2_GAME.ViewportTo2dWorldRectM());
+		IF(M2_LEVEL.dynamic_sheet_grid_lines_loader)->move(M2_GAME.ViewportTo2dWorldRectM());
 
 		// Mouse lookahead disabled temporarily
 		//		if (M2_GAME.level->type() == Level::Type::SINGLE_PLAYER) {

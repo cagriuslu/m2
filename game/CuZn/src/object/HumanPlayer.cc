@@ -31,13 +31,13 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 	     industry_tile <= m2g::pb::MANUFACTURED_GOODS_TILE_VIII;
 	     industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
-		const auto& item = M2_GAME.get_named_item(industry_tile);
+		const auto& item = M2_GAME.GetNamedItem(industry_tile);
 		auto possession_limit = m2::I(item.get_attribute(m2g::pb::POSSESSION_LIMIT));
 		m2_repeat(possession_limit) { chr.add_named_item(item); }
 	}
 
 	// Add connection tiles
-	const auto& road_item = M2_GAME.get_named_item(m2g::pb::ROAD_TILE);
+	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = m2::I(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
 	m2_repeat(road_possession_limit) { chr.add_named_item(road_item); }
 
@@ -45,9 +45,9 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 	phy.pre_step = [&o = obj](MAYBE m2::Physique& _) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
-		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.dimensions().game)) {
+		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().game)) {
 			LOG_DEBUG("Begin panning");
-			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.mouse_position_world_m());
+			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
 			M2_LEVEL.enable_panning();
 		} else if (impl.mouse_click_prev_position && not M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			LOG_DEBUG("End panning");
@@ -57,22 +57,22 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 		// Map movement is enabled
 		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {
 			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.mouse_position();
-			auto diff_m = m2::VecF{diff} / m2::F(M2_GAME.dimensions().ppm);
+			auto diff_m = m2::VecF{diff} / m2::F(M2_GAME.Dimensions().ppm);
 			o.position += diff_m;
-			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.mouse_position_world_m());
+			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
 		}
 
 		constexpr float zoom_step = 0.05f;
-		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.dimensions().game); 0 < scroll) {
+		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.Dimensions().game); 0 < scroll) {
 			// Zoom in by decreasing game height
-			M2_GAME.set_zoom(1.0f / (1.0f + zoom_step * m2::F(scroll)));
+			M2_GAME.SetZoom(1.0f / (1.0f + zoom_step * m2::F(scroll)));
 		} else if (scroll < 0) {
 			// Zoom out by increasing game height
-			M2_GAME.set_zoom(1.0f + zoom_step * m2::F(-scroll));
+			M2_GAME.SetZoom(1.0f + zoom_step * m2::F(-scroll));
 		}
 
 		// Limit the player inside the level
-		const auto& dims = M2_GAME.dimensions();
+		const auto& dims = M2_GAME.Dimensions();
 		// If the map is zoomed out so much that the black space is showing on the left and the right
 		if (M2_LEVEL.background_boundary().w < dims.width_m) {
 			o.position.x = M2_LEVEL.background_boundary().x_center();
@@ -100,7 +100,7 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::SECONDARY)) {
 			if (M2G_PROXY.main_journeys) {
 				std::visit(m2::overloaded{
-					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.mouse_position_world_m())); }
+					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.MousePositionWorldM())); }
 				}, *M2G_PROXY.main_journeys);
 			}
 		}
@@ -127,13 +127,13 @@ m2::void_expected init_other_human_player_instance(m2::Object& obj) {
 		 industry_tile <= m2g::pb::MANUFACTURED_GOODS_TILE_VIII;
 		 industry_tile = static_cast<m2g::pb::ItemType>(m2::I(industry_tile) + 1)) {
 		// Lookup possession count
-		const auto& item = M2_GAME.get_named_item(industry_tile);
+		const auto& item = M2_GAME.GetNamedItem(industry_tile);
 		auto possession_limit = m2::I(item.get_attribute(m2g::pb::POSSESSION_LIMIT));
 		m2_repeat(possession_limit) { chr.add_named_item(item); }
 		 }
 
 	// Add connection tiles
-	const auto& road_item = M2_GAME.get_named_item(m2g::pb::ROAD_TILE);
+	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
 	auto road_possession_limit = m2::I(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
 	m2_repeat(road_possession_limit) { chr.add_named_item(road_item); }
 
@@ -300,7 +300,7 @@ std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Conne
 		// Iterate and find all the canals that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
-			const auto& road_location = M2_GAME.get_sprite(road_location_type);
+			const auto& road_location = M2_GAME.GetSprite(road_location_type);
 			if (std::ranges::any_of(road_location.named_items(), is_canal_license) &&
 				std::ranges::count(road_location.named_items(), city)) {
 				canals.insert(road_location_type);
@@ -324,7 +324,7 @@ std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player, Co
 		// Iterate and find all the railroads that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
-			const auto& road_location = M2_GAME.get_sprite(road_location_type);
+			const auto& road_location = M2_GAME.GetSprite(road_location_type);
 			if (std::ranges::any_of(road_location.named_items(), is_railroad_license) &&
 				std::ranges::count(road_location.named_items(), city)) {
 				railroads.insert(road_location_type);

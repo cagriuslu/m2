@@ -62,7 +62,7 @@ bool m2::Events::gather() {
 				mouse_buttons_pressed[u(m2::button_to_mouse_button(e.button.button))]++;
 				if (primary_selection_screen_rect_px &&
 				    peek_mouse_button_press(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
-					primary_selection_position_1_m = M2_GAME.mouse_position_world_m();
+					primary_selection_position_1_m = M2_GAME.MousePositionWorldM();
 					primary_selection_position_2_m = std::nullopt;
 					secondary_selection_position_1_m = std::nullopt;
 					secondary_selection_position_2_m = std::nullopt;
@@ -71,7 +71,7 @@ bool m2::Events::gather() {
 				    peek_mouse_button_press(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
 					primary_selection_position_1_m = std::nullopt;
 					primary_selection_position_2_m = std::nullopt;
-					secondary_selection_position_1_m = M2_GAME.mouse_position_world_m();
+					secondary_selection_position_1_m = M2_GAME.MousePositionWorldM();
 					secondary_selection_position_2_m = std::nullopt;
 				}
 				break;
@@ -80,7 +80,7 @@ bool m2::Events::gather() {
 				mouse_buttons_released[u(m2::button_to_mouse_button(e.button.button))]++;
 				if (primary_selection_screen_rect_px &&
 				    peek_mouse_button_release(MouseButton::PRIMARY, *primary_selection_screen_rect_px)) {
-					primary_selection_position_2_m = M2_GAME.mouse_position_world_m();
+					primary_selection_position_2_m = M2_GAME.MousePositionWorldM();
 					secondary_selection_position_1_m = std::nullopt;
 					secondary_selection_position_2_m = std::nullopt;
 				}
@@ -88,7 +88,7 @@ bool m2::Events::gather() {
 				    peek_mouse_button_release(MouseButton::SECONDARY, *secondary_selection_screen_rect_px)) {
 					primary_selection_position_1_m = std::nullopt;
 					primary_selection_position_2_m = std::nullopt;
-					secondary_selection_position_2_m = M2_GAME.mouse_position_world_m();
+					secondary_selection_position_2_m = M2_GAME.MousePositionWorldM();
 				}
 				break;
 			case SDL_MOUSEWHEEL:

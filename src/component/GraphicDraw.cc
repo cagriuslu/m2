@@ -11,10 +11,10 @@ void m2::draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant dr
 		// TODO Both implementations (integer/floating point math) is prone to micro flickering while panning because a sprite is drawn at different sizes with one pixel difference.
 		// TODO The only solution to this is only drawing sprites are integer multiples.
 		// TODO Using floating point has a small performance impact 308 vs 322. Not much, but we have to find a solution to flickering anyways.
-		iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm) / 2.0f)),
-		iround(screen_origin_to_sprite_center_px_vec.y - (F(src_rect.h) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm) / 2.0f)),
-		iround(F(src_rect.w) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm)),
-		iround(F(src_rect.h) * F(M2_GAME.dimensions().ppm) / F(sprite_ppm))
+		iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * F(M2_GAME.Dimensions().ppm) / F(sprite_ppm) / 2.0f)),
+		iround(screen_origin_to_sprite_center_px_vec.y - (F(src_rect.h) * F(M2_GAME.Dimensions().ppm) / F(sprite_ppm) / 2.0f)),
+		iround(F(src_rect.w) * F(M2_GAME.Dimensions().ppm) / F(sprite_ppm)),
+		iround(F(src_rect.h) * F(M2_GAME.Dimensions().ppm) / F(sprite_ppm))
 
 //		(int)roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * M2_GAME.dimensions().ppm / sprite_ppm / 2),
 //		(int)roundf(screen_origin_to_sprite_center_px_vec.y) - (src_rect.h * M2_GAME.dimensions().ppm / sprite_ppm / 2),
@@ -52,22 +52,22 @@ void m2::draw_fake_3d(const VecF& position, const Sprite& sprite, DrawVariant dr
 	if (is_foreground) {
 		auto sprite_x_offset_in_dest_px = sprite.center_to_origin_dstpx(draw_variant).x;
 		auto point_0_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				position.y,
 				(float)src_rect.h / (float)sprite.ppm()
 		};
 		auto point_1_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				position.y,
 				(float)src_rect.h / (float)sprite.ppm()
 		};
 		auto point_2_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				position.y,
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				position.y,
 				0.0f
 		};
@@ -94,23 +94,23 @@ void m2::draw_fake_3d(const VecF& position, const Sprite& sprite, DrawVariant dr
 		auto sprite_x_offset_in_dest_px = sprite.center_to_origin_dstpx(draw_variant).x;
 		auto sprite_y_offset_in_dest_px = sprite.center_to_origin_dstpx(draw_variant).y;
 		auto point_0_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
-				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
+				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				0.0f
 		};
 		auto point_1_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
-				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
+				position.y - ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				0.0f
 		};
 		auto point_2_not_rotated = m3::VecF{
-				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
-				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x - ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
+				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				0.0f
 		};
 		auto point_3_not_rotated = m3::VecF{
-				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.dimensions().ppm),
-				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.dimensions().ppm),
+				position.x + ((float)src_rect.w / sprite_ppm_f / 2.0f) - (sprite_x_offset_in_dest_px / M2_GAME.Dimensions().ppm),
+				position.y + ((float)src_rect.h / sprite_ppm_f / 2.0f) - (sprite_y_offset_in_dest_px / M2_GAME.Dimensions().ppm),
 				0.0f
 		};
 

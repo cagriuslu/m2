@@ -35,7 +35,7 @@ namespace {
 
 		if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
 			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
-				auto load_result = M2_GAME.load_level_editor((M2_GAME.levels_dir / match_results.str(1)).string());
+				auto load_result = M2_GAME.LoadLevelEditor((M2_GAME.levels_dir / match_results.str(1)).string());
 				if (load_result) {
 					return make_clear_stack_action();
 				}
@@ -52,7 +52,7 @@ namespace {
 			    std::regex_match(command, match_results, std::regex{R"(pedit\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
 				auto x_offset = strtol(match_results.str(1).c_str(), nullptr, 0);
 				auto y_offset = strtol(match_results.str(2).c_str(), nullptr, 0);
-				auto load_result = M2_GAME.load_pixel_editor(
+				auto load_result = M2_GAME.LoadPixelEditor(
 				    match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
 				if (load_result) {
 					return make_clear_stack_action();
@@ -64,7 +64,7 @@ namespace {
 			}
 			return make_continue_action();
 		} else if (command == "sedit") {
-			auto load_result = M2_GAME.load_sheet_editor();
+			auto load_result = M2_GAME.LoadSheetEditor();
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
 				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::sheet_editor_main_menu);
@@ -73,7 +73,7 @@ namespace {
 			M2_GAME.console_output.emplace_back(load_result.error());
 			return make_continue_action();
 		} else if (command == "bsedit") {
-			auto load_result = M2_GAME.load_bulk_sheet_editor();
+			auto load_result = M2_GAME.LoadBulkSheetEditor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
 				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::bulk_sheet_editor_main_menu);
@@ -86,8 +86,8 @@ namespace {
 			    std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
 				if (auto parameter = match_results.str(1); parameter == "game_height") {
 					auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
-					M2_GAME.recalculate_dimensions(
-					    M2_GAME.dimensions().window.w, M2_GAME.dimensions().window.h, new_game_height);
+					M2_GAME.RecalculateDimensions(
+					    M2_GAME.Dimensions().window.w, M2_GAME.Dimensions().window.h, new_game_height);
 					return make_continue_action();
 				}
 				M2_GAME.console_output.emplace_back("Unknown parameter");
@@ -166,7 +166,7 @@ Action Panel::run_blocking() {
 
 			// Handle resize action
 			if (const auto window_resize = events.pop_window_resize(); window_resize) {
-				M2_GAME.recalculate_dimensions(window_resize->x, window_resize->y);
+				M2_GAME.RecalculateDimensions(window_resize->x, window_resize->y);
 				update_positions();
 			}
 
@@ -220,7 +220,7 @@ std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_
 	} else if (std::holds_alternative<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
 		// Pixel dims, convert to "relation to game_and_hud dimensions"
 		const auto& pixel_rect = std::get<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
-		const auto& game_and_hud_dims = M2_GAME.dimensions().game_and_hud;
+		const auto& game_and_hud_dims = M2_GAME.Dimensions().game_and_hud;
 		_relation_to_game_and_hud_dims = RectF{
 			F(pixel_rect.x - game_and_hud_dims.x) / F(game_and_hud_dims.w),
 			F(pixel_rect.y - game_and_hud_dims.y) / F(game_and_hud_dims.h),
@@ -270,7 +270,7 @@ Action Panel::create_and_run_blocking(
 		Panel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
 		auto action = panel.run_blocking();
 		// Add pause ticks
-		M2_GAME.add_pause_ticks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
+		M2_GAME.AddPauseTicks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
 		M2_GAME.ui_begin_ticks.reset();
 		// Return
 		return action;
@@ -288,7 +288,7 @@ Panel::~Panel() {
 }
 
 RectI Panel::rect_px() const {
-	const auto& game_and_hud_dims = M2_GAME.dimensions().game_and_hud;
+	const auto& game_and_hud_dims = M2_GAME.Dimensions().game_and_hud;
 	return RectI{
 		iround(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
 		iround(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),

@@ -93,12 +93,12 @@ namespace {
 			throw M2_ERROR("Sprite is not an industry location");
 		}
 
-		const auto& selected_card_item = M2_GAME.get_named_item(selected_card);
-		const auto& selected_sprite_sprite = M2_GAME.get_sprite(selected_location);
+		const auto& selected_card_item = M2_GAME.GetNamedItem(selected_card);
+		const auto& selected_sprite_sprite = M2_GAME.GetSprite(selected_location);
 		// Lookup industries on the sprite
 		std::vector<ItemType> selected_sprite_industries;
 		std::ranges::copy_if(selected_sprite_sprite.named_items(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
-			return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
+			return (M2_GAME.GetNamedItem(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
 		});
 		if (selected_sprite_industries.empty()) {
 			throw M2_ERROR("Selected sprite does not hold any industry cards");
@@ -124,7 +124,7 @@ namespace {
 		} else { // ITEM_CATEGORY_CITY_CARD
 			// Look up the location of the sprite
 			auto location_card_it = std::ranges::find_if(selected_sprite_sprite.named_items(), [](auto item_type) {
-				return (M2_GAME.get_named_item(item_type).category() == ITEM_CATEGORY_CITY_CARD);
+				return (M2_GAME.GetNamedItem(item_type).category() == ITEM_CATEGORY_CITY_CARD);
 			});
 			if (location_card_it == selected_sprite_sprite.named_items().end()) {
 				throw M2_ERROR("Selected sprite does not hold a location card");
@@ -141,8 +141,8 @@ namespace {
 
 	bool is_next_tile_higher_level_than_built_tile(m2::Character& factory_character, IndustryTile next_industry_tile) {
 		auto built_industry_tile_type = to_industry_tile_of_factory_character(factory_character);
-		const auto& built_industry_tile_item = M2_GAME.get_named_item(built_industry_tile_type);
-		const auto& next_industry_tile_item = M2_GAME.get_named_item(next_industry_tile);
+		const auto& built_industry_tile_item = M2_GAME.GetNamedItem(built_industry_tile_type);
+		const auto& next_industry_tile_item = M2_GAME.GetNamedItem(next_industry_tile);
 		return is_less(
 				built_industry_tile_item.get_attribute(TILE_LEVEL),
 				next_industry_tile_item.get_attribute(TILE_LEVEL),
@@ -255,10 +255,10 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 
 		// Create empty entries in resource_sources for every required resource
 		_resource_sources.insert(_resource_sources.end(),
-				iround(M2_GAME.get_named_item(*tile_type).get_attribute(COAL_COST)),
+				iround(M2_GAME.GetNamedItem(*tile_type).get_attribute(COAL_COST)),
 				std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
 		_resource_sources.insert(_resource_sources.end(),
-				iround(M2_GAME.get_named_item(*tile_type).get_attribute(IRON_COST)),
+				iround(M2_GAME.GetNamedItem(*tile_type).get_attribute(IRON_COST)),
 				std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
 		return _resource_sources.empty() ? BuildJourneyStep::EXPECT_CONFIRMATION : BuildJourneyStep::EXPECT_RESOURCE_SOURCE;
 	} else {
@@ -289,7 +289,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 					// Merchant location
 					auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
 					// Get a game drawing centered at the merchant location
-					auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
+					auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
 					if (ask_for_confirmation_bottom("Buy " + std::to_string(remaining_unspecified_coal_count) + " coal from market for £" + std::to_string(cost_of_buying) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
@@ -309,7 +309,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 			} else if (closest_mines_with_coal.size() == 1) {
 				// Only one viable coal mine with coal is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
-				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*closest_mines_with_coal.begin()]));
+				auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*closest_mines_with_coal.begin()]));
 				LOG_DEBUG("Asking player if they want to buy coal from the closest mine...");
 				if (ask_for_confirmation_bottom("Buy coal from shown mine for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
@@ -352,7 +352,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 			} else if (iron_industries.size() == 1) {
 				// Only one viable iron industry with iron is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
-				auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*iron_industries.begin()]));
+				auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*iron_industries.begin()]));
 				LOG_DEBUG("Asking player if they want to buy iron from the closest industry...");
 				if (ask_for_confirmation_bottom("Buy iron from shown industry for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
@@ -414,9 +414,9 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
 
 std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal() {
 	LOG_INFO("Asking for confirmation...");
-	auto card_name = M2_GAME.get_named_item(_selected_card).in_game_name();
-	auto city_name = M2_GAME.get_named_item(city_of_location(_selected_location)).in_game_name();
-	auto industry_name = M2_GAME.get_named_item(_selected_industry).in_game_name();
+	auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();
+	auto city_name = M2_GAME.GetNamedItem(city_of_location(_selected_location)).in_game_name();
+	auto industry_name = M2_GAME.GetNamedItem(_selected_industry).in_game_name();
 	if (ask_for_confirmation("Build " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		LOG_INFO("Build action confirmed");
 		M2G_PROXY.show_notification("Building location...");
@@ -434,7 +434,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal()
 				throw M2_ERROR("Unexpected resource type");
 			}
 		}
-		M2_GAME.queue_client_command(cc);
+		M2_GAME.QueueClientCommand(cc);
 	} else {
 		LOG_INFO("Cancelling Build action...");
 	}
@@ -476,7 +476,7 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 	}
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
 	// Check if the tile is the next tile
-	const auto& selected_industry_tile = M2_GAME.get_named_item(build_action.industry_tile());
+	const auto& selected_industry_tile = M2_GAME.GetNamedItem(build_action.industry_tile());
 	auto next_industry_tile = get_next_industry_tile_of_category(player, selected_industry_tile.category());
 	if (not next_industry_tile || *next_industry_tile != build_action.industry_tile()) {
 		LOG_WARN("Player cannot use the selected tile");
@@ -531,10 +531,10 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 	std::vector<std::pair<m2g::pb::ResourceType, Location>> resource_sources;
 	// Create empty entries in resource_sources for every required resource
 	resource_sources.insert(resource_sources.end(),
-		iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(COAL_COST)),
+		iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(COAL_COST)),
 		std::make_pair(COAL_CUBE_COUNT, NO_SPRITE));
 	resource_sources.insert(resource_sources.end(),
-		iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(IRON_COST)),
+		iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(IRON_COST)),
 		std::make_pair(IRON_CUBE_COUNT, NO_SPRITE));
 	// Gather reserved resources so that they can be given back
 	std::vector<std::pair<m2::Object*, m2g::pb::ResourceType>> reserved_resources;
@@ -628,7 +628,7 @@ return_resources:
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
 	// Check if the player has enough money
-	if (m2::iround(player.get_resource(MONEY)) < m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
+	if (m2::iround(player.get_resource(MONEY)) < m2::iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(MONEY_COST)) +
 		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market))) {
 		LOG_WARN("Player does not have enough money");
 		return false;
@@ -641,7 +641,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	// Assume validation is done
 
 	// Take tile from player
-	const auto& tile_item = M2_GAME.get_named_item(build_action.industry_tile());
+	const auto& tile_item = M2_GAME.GetNamedItem(build_action.industry_tile());
 	auto tile_category = tile_item.category();
 	auto tile_type = get_next_industry_tile_of_category(player, tile_category);
 	player.remove_item(player.find_items(*tile_type));
@@ -653,7 +653,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
-	auto cost = m2::iround(M2_GAME.get_named_item(build_action.industry_tile()).get_attribute(MONEY_COST)) +
+	auto cost = m2::iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(MONEY_COST)) +
 		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market));
 
 	// Take resources

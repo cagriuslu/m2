@@ -1,4 +1,5 @@
-#include <m2/Game.h>
+#include <m2/GameDimensions.h>
+#include <m2/Meta.h>
 
 constexpr int GAME_AND_HUD_ASPECT_RATIO_MUL = 16;
 constexpr int GAME_AND_HUD_ASPECT_RATIO_DIV = 9;
@@ -15,7 +16,7 @@ namespace {
 	}
 }
 
-m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window_height, int game_aspect_ratio_mul, int game_aspect_ratio_div) : height_m(game_height_m), width_m(static_cast<float>(height_m * game_aspect_ratio_mul) / static_cast<float>(game_aspect_ratio_div)) {
+m2::GameDimensions::GameDimensions(int game_height_m, int window_width, int window_height, int game_aspect_ratio_mul, int game_aspect_ratio_div) : height_m(game_height_m), width_m(static_cast<float>(height_m * game_aspect_ratio_mul) / static_cast<float>(game_aspect_ratio_div)) {
 	window = RectI{0, 0, window_width, window_height};
 
 	auto ideal_width = window_height * GAME_AND_HUD_ASPECT_RATIO_MUL / GAME_AND_HUD_ASPECT_RATIO_DIV;
@@ -52,9 +53,9 @@ m2::Game::Dimensions::Dimensions(int game_height_m, int window_width, int window
 	message_box = RectI{game.x, game.y + game.h - message_box_height, game.w, message_box_height};
 }
 
-float m2::Game::Dimensions::hud_width_to_game_and_hud_width_ratio() const {
+float m2::GameDimensions::hud_width_to_game_and_hud_width_ratio() const {
 	return F(left_hud.w) / F(game_and_hud.w);
 }
-float m2::Game::Dimensions::game_width_to_game_and_hud_width_ration() const {
+float m2::GameDimensions::game_width_to_game_and_hud_width_ration() const {
 	return F(game.w) / F(game_and_hud.w);
 }

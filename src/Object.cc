@@ -152,7 +152,7 @@ m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
 	return *gfx;
 }
 m2::Graphic& m2::Object::add_graphic(m2g::pb::SpriteType sprite_type) {
-	return add_graphic(M2_GAME.get_sprite(sprite_type));
+	return add_graphic(M2_GAME.GetSprite(sprite_type));
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
 	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id());

@@ -125,7 +125,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 		} else if (iron_industries.size() == 1) {
 			// Only one viable iron industry with iron is in the vicinity, confirm with the player.
 			// Get a game drawing centered at the industry location
-			auto background = M2_GAME.draw_game_to_texture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*iron_industries.begin()]));
+			auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.industry_positions[*iron_industries.begin()]));
 			LOG_DEBUG("Asking player if they want to buy iron from the closest industry...");
 			if (ask_for_confirmation_bottom("Buy iron from shown industry for free?", "Yes", "No", std::move(background))) {
 				LOG_DEBUG("Player agreed");
@@ -206,7 +206,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_confirmation_enter_sign
 		cc.mutable_develop_action()->set_industry_tile_2(_selected_tile_2);
 		cc.mutable_develop_action()->set_iron_sources_1(_iron_source_1);
 		cc.mutable_develop_action()->set_iron_sources_2(_iron_source_2);
-		M2_GAME.queue_client_command(cc);
+		M2_GAME.QueueClientCommand(cc);
 	} else {
 		LOG_INFO("Cancelling Develop action...");
 	}
@@ -244,7 +244,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 	}
 
 	// Check if the tiles are the next tiles
-	const auto& selected_industry_tile_1 = M2_GAME.get_named_item(develop_action.industry_tile_1());
+	const auto& selected_industry_tile_1 = M2_GAME.GetNamedItem(develop_action.industry_tile_1());
 	auto next_industry_tile_1 = get_next_industry_tile_of_category(player, selected_industry_tile_1.category());
 	if (not next_industry_tile_1 || *next_industry_tile_1 != develop_action.industry_tile_1()) {
 		LOG_WARN("Player cannot develop the selected tile");
@@ -254,7 +254,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 		// Reserve the first tile
 		player.remove_item(player.find_items(develop_action.industry_tile_1()));
 		// Check the tile
-		const auto& selected_industry_tile_2 = M2_GAME.get_named_item(develop_action.industry_tile_2());
+		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
 		auto next_industry_tile_2 = get_next_industry_tile_of_category(player, selected_industry_tile_2.category());
 		auto success = true;
 		if (not next_industry_tile_2 || *next_industry_tile_2 != develop_action.industry_tile_2()) {
@@ -262,7 +262,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 			success = false;
 		}
 		// Give the tile back
-		player.add_named_item_no_benefits(M2_GAME.get_named_item(develop_action.industry_tile_1()));
+		player.add_named_item_no_benefits(M2_GAME.GetNamedItem(develop_action.industry_tile_1()));
 		if (not success) {
 			return false;
 		}
@@ -274,7 +274,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 		return false;
 	}
 	if (develop_action.industry_tile_2()) {
-		const auto& selected_industry_tile_2 = M2_GAME.get_named_item(develop_action.industry_tile_2());
+		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
 		if (m2::is_equal(selected_industry_tile_2.get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
 			LOG_WARN("Selected tile cannot be developed");
 			return false;

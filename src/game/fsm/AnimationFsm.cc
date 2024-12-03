@@ -12,7 +12,7 @@ std::optional<m2::AnimationFsmState> m2::AnimationFsm::handle_signal(const Anima
 		this->state_index = index;
 		auto gfx = M2_LEVEL.graphics.get(this->gfx_id);
 		if (gfx) {
-			gfx->sprite = &M2_GAME.get_sprite(animation.state(state).sprites(index));
+			gfx->sprite = &M2_GAME.GetSprite(animation.state(state).sprites(index));
 		} else {
 			LOG_WARN("Graphics component destroyed before Animation FSM");
 		}

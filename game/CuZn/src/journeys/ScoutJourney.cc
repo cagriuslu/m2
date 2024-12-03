@@ -25,9 +25,9 @@ void execute_scout_journey() {
 	if (auto selected_card_0 = ask_for_card_selection()) {
 		if (auto selected_card_1 = ask_for_card_selection(*selected_card_0)) {
 			if (auto selected_card_2 = ask_for_card_selection(*selected_card_0, *selected_card_1)) {
-				auto card_name_0 = M2_GAME.get_named_item(*selected_card_0).in_game_name();
-				auto card_name_1 = M2_GAME.get_named_item(*selected_card_1).in_game_name();
-				auto card_name_2 = M2_GAME.get_named_item(*selected_card_2).in_game_name();
+				auto card_name_0 = M2_GAME.GetNamedItem(*selected_card_0).in_game_name();
+				auto card_name_1 = M2_GAME.GetNamedItem(*selected_card_1).in_game_name();
+				auto card_name_2 = M2_GAME.GetNamedItem(*selected_card_2).in_game_name();
 				if (ask_for_confirmation("Scout using " + card_name_0 + ",", card_name_1 + ", and " + card_name_2 + " cards?", "OK", "Cancel")) {
 					LOG_INFO("Scout action confirmed");
 
@@ -35,7 +35,7 @@ void execute_scout_journey() {
 					cc.mutable_scout_action()->set_card_0(*selected_card_0);
 					cc.mutable_scout_action()->set_card_1(*selected_card_1);
 					cc.mutable_scout_action()->set_card_2(*selected_card_2);
-					M2_GAME.queue_client_command(cc);
+					M2_GAME.QueueClientCommand(cc);
 
 					return;
 				}
@@ -71,8 +71,8 @@ Card execute_scout_action(m2::Character& player, const m2g::pb::ClientCommand_Sc
 	auto card_2_it = player.find_items(scout_action.card_2());
 	player.remove_item(card_1_it);
 	player.remove_item(card_2_it);
-	player.add_named_item(M2_GAME.get_named_item(m2g::pb::WILD_INDUSTRY_CARD));
-	player.add_named_item(M2_GAME.get_named_item(m2g::pb::WILD_LOCATION_CARD));
+	player.add_named_item(M2_GAME.GetNamedItem(m2g::pb::WILD_INDUSTRY_CARD));
+	player.add_named_item(M2_GAME.GetNamedItem(m2g::pb::WILD_LOCATION_CARD));
 
 	return scout_action.card_0();
 }

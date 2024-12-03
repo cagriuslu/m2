@@ -185,7 +185,7 @@ bool m2::NamedItem::has_attribute(m2g::pb::AttributeType type) const {
 }
 
 const m2::NamedItem& m2::to_named_item(m2g::pb::ItemType item_type) {
-	return M2_GAME.get_named_item(item_type);
+	return M2_GAME.GetNamedItem(item_type);
 }
 
 std::function<float(const m2::NamedItem&)> m2::generate_to_attribute_value_transformer(m2g::pb::AttributeType attribute_type) {

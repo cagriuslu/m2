@@ -109,7 +109,7 @@ void m2::network::ServerThread::set_turn_holder(int idx) {
 m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(bool shutdown) {
 	// Prepare the ServerUpdate except the receiver_index field
 	pb::NetworkMessage message;
-	message.set_game_hash(M2_GAME.hash());
+	message.set_game_hash(M2_GAME.Hash());
 	message.mutable_server_update()->set_turn_holder_index(turn_holder_index());
 	for (auto player_id : M2G_PROXY.multi_player_object_ids) {
 		message.mutable_server_update()->add_player_object_ids(player_id);
@@ -200,7 +200,7 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 		}
 
 		pb::NetworkMessage message;
-		message.set_game_hash(M2_GAME.hash());
+		message.set_game_hash(M2_GAME.Hash());
 		message.mutable_server_command()->CopyFrom(command);
 
 		{

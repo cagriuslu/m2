@@ -42,8 +42,8 @@ const m2::ui::PanelBlueprint* m2g::Proxy::right_hud() { return &right_hud_bluepr
 void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();
 
-	auto client_count = M2_GAME.total_player_count();
-	auto self_index = M2_GAME.self_index();
+	auto client_count = M2_GAME.TotalPlayerCount();
+	auto self_index = M2_GAME.SelfIndex();
 
 	// Add human players
 	for (auto i = 0; i < client_count; ++i) {
@@ -80,7 +80,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 }
 
 void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
-	auto client_count = M2_GAME.server_thread().client_count();
+	auto client_count = M2_GAME.ServerThread().client_count();
 
 	// Assign licenses to active merchants
 	{
@@ -99,7 +99,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 				auto merchant_object_id = merchant_object_ids[possibly_active_merchant_loc];
 				auto& merchant_char = M2_LEVEL.objects[merchant_object_id].character();
 				LOG_DEBUG("Adding license to merchant", m2g::pb::ItemType_Name(license));
-				merchant_char.add_named_item(M2_GAME.get_named_item(license));
+				merchant_char.add_named_item(M2_GAME.GetNamedItem(license));
 				merchant_char.add_resource(pb::BEER_BARREL_COUNT, 1.0f);
 			}
 		}
@@ -114,7 +114,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	// Don't put the first player on the list
-	for (int i = 1; i < M2_GAME.server_thread().client_count(); ++i) {
+	for (int i = 1; i < M2_GAME.ServerThread().client_count(); ++i) {
 		_waiting_players.emplace_back(i);
 	}
 }
@@ -234,9 +234,9 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		auto [card_to_discard, money_spent] = card_to_discard_and_money_spent;
 
 		LOG_DEBUG("Sending action notification to clients");
-		for (int i = 0; i < M2_GAME.server_thread().client_count(); ++i) {
+		for (int i = 0; i < M2_GAME.ServerThread().client_count(); ++i) {
 			if (i != turn_holder_index) {
-				M2_GAME.server_thread().send_server_command(action_notification_command, i);
+				M2_GAME.ServerThread().send_server_command(action_notification_command, i);
 			}
 		}
 		// TODO when the game ends, this is sent to the host, but game ending calls post_server_update without network
@@ -244,7 +244,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 
 		// Discard card from player
 		if (card_to_discard) {
-			LOG_INFO("Discard card from player", M2_GAME.get_named_item(card_to_discard).in_game_name());
+			LOG_INFO("Discard card from player", M2_GAME.GetNamedItem(card_to_discard).in_game_name());
 			auto card_it = turn_holder_character.find_items(card_to_discard);
 			turn_holder_character.remove_item(card_it);
 		}
@@ -259,7 +259,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		turn_holder_character.remove_resource(pb::MONEY, m2::F(money_spent));
 
 		// Save spent money to game state tracker so that it's shared among clients
-		for (int i = 0; i < M2_GAME.total_player_count(); ++i) {
+		for (int i = 0; i < M2_GAME.TotalPlayerCount(); ++i) {
 			auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + i);
 			game_state_tracker().set_resource(money_spent_by_player_enum, 0.0f);
 		}
@@ -301,7 +301,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 							m2::iround(human_player.get_resource(pb::VICTORY_POINTS)));
 					});
 				LOG_INFO("Sending CanalEraResult to clients");
-				M2_GAME.server_thread().send_server_command(canal_era_result_command, -1);
+				M2_GAME.ServerThread().send_server_command(canal_era_result_command, -1);
 
 				// Reset merchant beer
 				for (const auto& [_, merchant_id] : merchant_object_ids) {
@@ -309,12 +309,12 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 				}
 
 				// Shuffle the draw deck
-				auto draw_deck = prepare_draw_deck(M2_GAME.server_thread().client_count());
+				auto draw_deck = prepare_draw_deck(M2_GAME.ServerThread().client_count());
 				give_8_cards_to_each_player(draw_deck);
 				_draw_deck = std::move(draw_deck);
 
 				// Give roads to players
-				const auto& road_item = M2_GAME.get_named_item(m2g::pb::ROAD_TILE);
+				const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
 				auto road_possession_limit = m2::zround(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
 				std::ranges::for_each(M2G_PROXY.multi_player_object_ids
 					| std::views::transform(m2::to_object_of_id)
@@ -339,7 +339,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// Give card to player
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
-		turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
+		turn_holder_character.add_named_item(M2_GAME.GetNamedItem(card));
 
 		// Check if first turn finished for all players
 		if (_waiting_players.empty()) {
@@ -362,7 +362,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		while (not _draw_deck.empty() && player_card_count(turn_holder_character) < 8) {
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
-			turn_holder_character.add_named_item(M2_GAME.get_named_item(card));
+			turn_holder_character.add_named_item(M2_GAME.GetNamedItem(card));
 		}
 
 		game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
@@ -383,7 +383,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	if (liquidation_necessary) {
 		_is_liquidating = true; // Set the liquidation state so that client commands are handled properly
 		LOG_INFO("Sending liquidation command to player", liquidation_necessary->first);
-		M2_GAME.server_thread().send_server_command(liquidation_necessary->second, liquidation_necessary->first);
+		M2_GAME.ServerThread().send_server_command(liquidation_necessary->second, liquidation_necessary->first);
 		// Give turn holder index to that player so that they can respond
 		next_turn_holder = liquidation_necessary->first;
 	} else {
@@ -422,7 +422,7 @@ void m2g::Proxy::post_server_update(bool shutdown) {
 	}
 	M2_LEVEL.remove_custom_nonblocking_ui_panel(_status_bar_panel);
 	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.total_player_count())),
+		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
 		status_bar_window_ratio());
 
 	if (shutdown) {
@@ -430,7 +430,7 @@ void m2g::Proxy::post_server_update(bool shutdown) {
 		display_game_result();
 	} else {
 		// Enable/disable buttons
-		if (M2_GAME.is_our_turn()) {
+		if (M2_GAME.IsOurTurn()) {
 			enable_action_buttons();
 		} else {
 			disable_action_buttons();
@@ -454,7 +454,7 @@ void m2g::Proxy::bot_handle_server_update(const m2::pb::ServerUpdate& server_upd
 		LOG_INFO("Bot passing turn");
 		m2g::pb::ClientCommand cc;
 		cc.mutable_pass_action()->set_card(static_cast<m2g::pb::ItemType>(*card_it));
-		M2_GAME.find_bot(receiver_index).queue_client_command(cc);
+		M2_GAME.FindBot(receiver_index).queue_client_command(cc);
 	}
 }
 
@@ -473,7 +473,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	// Store the positions of the industries build locations
 	else if (is_industry_location(sprite_type)) {
 		// Verify that ppm of the industry tiles are double of the sprite sheet
-		if (M2_GAME.get_sprite(sprite_type).ppm() != M2_GAME.get_sprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
+		if (M2_GAME.GetSprite(sprite_type).ppm() != M2_GAME.GetSprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
 			throw M2_ERROR("Sprite ppm mismatch");
 		}
 		// Object position has {0.5f, 0.5f} offset
@@ -485,7 +485,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	else if (is_canal(sprite_type) || is_railroad(sprite_type)) {
 		m2::RectF connection_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 1.0f, 1.0f};
 		// Different canal or railroad backgrounds have different offsets
-		auto original_type = M2_GAME.get_sprite(sprite_type).original_type(); // Connection sprites are duplicate of another
+		auto original_type = M2_GAME.GetSprite(sprite_type).original_type(); // Connection sprites are duplicate of another
 		auto offset = connection_sprite_world_offset(*original_type);
 		connection_cell_rect = connection_cell_rect.shift(offset);
 		connection_positions[sprite_type] = std::make_tuple(obj.position + offset, connection_cell_rect, obj.id());
@@ -537,7 +537,7 @@ m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, cons
 }
 
 m2g::Proxy& m2g::Proxy::get_instance() {
-	return dynamic_cast<m2g::Proxy&>(M2_GAME.proxy());
+	return dynamic_cast<m2g::Proxy&>(M2_GAME.Proxy());
 }
 
 void m2g::Proxy::main_journey_deleter() {

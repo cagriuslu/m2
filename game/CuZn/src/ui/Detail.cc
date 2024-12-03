@@ -30,7 +30,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 			WidgetBlueprint{
 				.x = 5, .y = 14, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.text = M2_GAME.get_named_item(industry_1).in_game_name(),
+					.text = M2_GAME.GetNamedItem(industry_1).in_game_name(),
 					.on_action = [industry_1](MAYBE const Text& self) -> Action {
 						return make_return_action<m2g::pb::ItemType>(industry_1);
 					}
@@ -39,7 +39,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 			WidgetBlueprint{
 				.x = 5, .y = 21, .w = 50, .h = 5,
 				.variant = TextBlueprint{
-					.text = M2_GAME.get_named_item(industry_2).in_game_name(),
+					.text = M2_GAME.GetNamedItem(industry_2).in_game_name(),
 					.on_action = [industry_2](MAYBE const Text& self) -> Action {
 						return make_return_action<m2g::pb::ItemType>(industry_2);
 					}
@@ -49,7 +49,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 	};
 
 	std::optional<m2g::pb::ItemType> selected_industry;
-	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
 	m2::ui::Panel::create_and_run_blocking(std::make_unique<m2::ui::PanelBlueprint>(blueprint), RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
 		.if_void_return([&]() {
 			LOG_INFO("Industry selection cancelled");
@@ -105,7 +105,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 	};
 
 	bool selection;
-	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
 	Panel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
@@ -161,7 +161,7 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 	};
 
 	std::optional<bool> selection;
-	auto background = M2_GAME.draw_game_to_texture(M2_LEVEL.camera()->position);
+	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
 	Panel::create_and_run_blocking(&blueprint, RectF{0.25f, 0.25f, 0.5f, 0.5f}, std::move(background))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
@@ -203,7 +203,7 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	}; // 1 + 32 + 1 + 4 + 1 + 4 + 1
 
 	bool selection;
-	Panel::create_and_run_blocking(&blueprint, M2_GAME.dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
+	Panel::create_and_run_blocking(&blueprint, M2_GAME.Dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }

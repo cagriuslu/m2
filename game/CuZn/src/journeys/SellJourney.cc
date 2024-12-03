@@ -221,7 +221,7 @@ std::optional<SellJourneyStep> SellJourney::handle_develop_benefit_industry_tile
 				// Ask for tile selection
 				if (auto selected_tile = ask_for_tile_selection()) {
 					// Check if tile can be developed
-					if (m2::is_equal(M2_GAME.get_named_item(*selected_tile).get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001)) {
+					if (m2::is_equal(M2_GAME.GetNamedItem(*selected_tile).get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001)) {
 						M2G_PROXY.show_notification("Selected industry cannot be developed");
 						M2_DEFER(m2g::Proxy::main_journey_deleter);
 						return std::nullopt;
@@ -236,10 +236,10 @@ std::optional<SellJourneyStep> SellJourney::handle_develop_benefit_industry_tile
 }
 
 std::optional<SellJourneyStep> SellJourney::handle_confirmation_enter_signal() {
-	auto card_name = M2_GAME.get_named_item(_selected_card).in_game_name();
-	auto city_name = M2_GAME.get_named_item(city_of_location(_selected_location)).in_game_name();
+	auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();
+	auto city_name = M2_GAME.GetNamedItem(city_of_location(_selected_location)).in_game_name();
 	auto industry = to_industry_of_factory_character(find_factory_at_location(_selected_location)->character());
-	auto industry_name = M2_GAME.get_named_item(industry).in_game_name();
+	auto industry_name = M2_GAME.GetNamedItem(industry).in_game_name();
 	if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		M2G_PROXY.show_notification("Selling location...");
 
@@ -251,7 +251,7 @@ std::optional<SellJourneyStep> SellJourney::handle_confirmation_enter_signal() {
 			cc.mutable_sell_action()->add_beer_sources(beer_source);
 		}
 		cc.mutable_sell_action()->set_merchant_develop_benefit_industry_tile(_merchant_develop_benefit_industry_tile);
-		M2_GAME.queue_client_command(cc);
+		M2_GAME.QueueClientCommand(cc);
 	}
 	M2_DEFER(m2g::Proxy::main_journey_deleter);
 	return std::nullopt;
@@ -318,7 +318,7 @@ m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCo
 			"Selected develop benefit tile is not an industry tile");
 		m2_return_unexpected_message_unless(get_next_industry_tile_of_category(player, industry_tile_category_of_industry_tile(tile)) == tile,
 			"Selected develop benefit tile is not the next tile to develop in the category");
-		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.get_named_item(tile).get_attribute(DEVELOPMENT_BAN), 0.0f, 0.001),
+		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.GetNamedItem(tile).get_attribute(DEVELOPMENT_BAN), 0.0f, 0.001),
 			"Selected develop benefit tile cannot be developed");
 	}
 

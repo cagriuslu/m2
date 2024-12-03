@@ -53,7 +53,7 @@ m2::expected<m2::network::TcpSocketManager::ReadResult> m2::network::TcpSocketMa
 			return TcpSocketManager::ReadResult::INVALID_MESSAGE;
 		}
 		// Check game_hash
-		if (message->game_hash() != M2_GAME.hash()) {
+		if (message->game_hash() != M2_GAME.Hash()) {
 			LOG_ERROR("Game hash mismatch", _index, possible_message);
 			return TcpSocketManager::ReadResult::GAME_HASH_MISMATCH;
 		}

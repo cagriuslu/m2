@@ -136,7 +136,7 @@ const m2::ui::PanelBlueprint* m2g::Proxy::generate_main_menu() {
 		        .text = level_display_name,
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) {
 			        alive_enemy_count = 0;
-			        m2_succeed_or_throw_error(M2_GAME.load_single_player(level_json, level_name));
+			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(level_json, level_name));
 			        M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_MAIN_THEME],
 			                                 m2::AudioManager::PlayPolicy::LOOP, 0.5f);
 			        return m2::ui::make_return_action();
@@ -219,7 +219,7 @@ const m2::ui::PanelBlueprint* m2g::Proxy::you_died_menu() {
 		        .text = "Retry",
 		        .on_action = [=, this](MAYBE const m2::ui::widget::Text &self) -> m2::ui::Action {
 			        alive_enemy_count = 0;
-			        m2_succeed_or_throw_error(M2_GAME.load_single_player(*lb_path, M2_LEVEL.name()));
+			        m2_succeed_or_throw_error(M2_GAME.LoadSinglePlayer(*lb_path, M2_LEVEL.name()));
 			        return m2::ui::make_return_action();
 		        }
 		    }

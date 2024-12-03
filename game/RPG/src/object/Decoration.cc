@@ -2,7 +2,7 @@
 #include <m2/Game.h>
 
 m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
-	const auto& sprite = M2_GAME.get_sprite(sprite_type);
+	const auto& sprite = M2_GAME.GetSprite(sprite_type);
 
 	auto& gfx = obj.add_graphic(sprite);
 	if (obj.object_type() == m2g::pb::FENCE_VERTICAL) {
