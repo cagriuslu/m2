@@ -91,7 +91,8 @@ void m2::network::detail::BaseClientThread::locked_set_ready(bool ready) {
 
 	do {
 		// Wait until output queue is empty
-		std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		LOG_DEBUG("Waiting 100ms until outgoing message queue is empty");
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	} while (locked_has_outgoing_message());
 	locked_set_state(state ? pb::CLIENT_READY : pb::CLIENT_CONNECTED);
 }
@@ -184,6 +185,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 			if (thread_manager->_ping_broadcast && not ping_broadcast_thread) {
 				ping_broadcast_thread.emplace();
 				// Wait some time before attempting to connect
+				LOG_DEBUG("Waiting 2s for ping broadcasts");
 				std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 			}
 #endif
@@ -193,7 +195,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 				throw M2_ERROR("Connect failed: " + connect_success.error());
 			} else {
 				if (not *connect_success) {
-					LOG_INFO("Connection timed out, will try in 1 second");
+					LOG_INFO("Connection timed out, waiting 1s before retrying");
 					std::this_thread::sleep_for(std::chrono::seconds(1));
 					// We cannot reuse the socket for retrying
 				} else {
@@ -206,12 +208,13 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 						TcpSocketHandles sockets_to_read;
 						sockets_to_read.emplace_back(&*socket);
 						// Select
-						auto select_result = Select{}(sockets_to_read, {}, 1000);
+						LOG_INFO("Waiting 100ms in case the server rejects the new connection");
+						auto select_result = Select{}(sockets_to_read, {}, 100);
 						if (not select_result) {
 							throw M2_ERROR("Select failed: " + select_result.error());
 						}
 						if (*select_result == std::nullopt) {
-							// Timeout occurred, all good
+							// Timeout occurred, all good, the socket isn't closed.
 							socket_manager_or_ticks_disconnected_at.emplace<TcpSocketManager>(std::move(*socket), -1);
 							thread_manager->locked_set_state(pb::CLIENT_CONNECTED);
 						} else if (not select_result.value().value().first.empty()) {
@@ -239,6 +242,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 
 			// Wait until the previous ServerUpdate & ServerCommand is processed
 			while (locked_has_unprocessed_server_update_or_command(thread_manager)) {
+				LOG_DEBUG("Waiting 250ms until unprocessed server updates or commands to be processed");
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			}
 

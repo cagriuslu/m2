@@ -158,7 +158,7 @@ m2::void_expected m2::Game::HostGame(mplayer::Type type, unsigned max_connection
 
 	// Wait until the server is up
 	while (not ServerThread().is_listening()) {
-		SDL_Delay(25);
+		std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	}
 	// TODO prevent other clients from joining until the host client joins
 
@@ -290,6 +290,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	// Manually set the HostClientThread state to STARTED, because it doesn't receive ServerUpdates
 	M2_GAME.HostClientThread().start_if_ready();
 	// If there are bots, we need to handle the first server update
+	LOG_DEBUG("Waiting 1s until the first server update is delivered to bots");
 	std::this_thread::sleep_for(std::chrono::seconds(1)); // TODO why? system takes some time to deliver the data to bots, even though they are on the same machine
 	for (auto& [bot, index] : _bot_threads) {
 		auto server_update = bot.pop_server_update();
@@ -309,6 +310,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	_proxy.post_server_update(false);
 
 	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
+	LOG_DEBUG("Waiting 1s until the second server update is delivered to bots");
 	std::this_thread::sleep_for(std::chrono::seconds(1));
 	for (auto& [bot, index] : _bot_threads) {
 		auto server_update = bot.pop_server_update();

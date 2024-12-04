@@ -247,7 +247,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 			throw M2_ERROR("Bind failed: " + bind_result.error());
 		}
 		if (not *bind_result) {
-			LOG_INFO("TcpSocket is busy, retry binding");
+			LOG_INFO("TcpSocket is busy, waiting 1s before retrying binding");
 			m2::sdl::delay(1000);
 		} else {
 			binded = true;

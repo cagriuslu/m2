@@ -7,6 +7,7 @@ m2::network::HostClientThread::HostClientThread(mplayer::Type type)
 
 	// Wait until the client is connected
 	while (not is_connected()) {
+		LOG_DEBUG("Waiting 25ms until the host client is connected");
 		std::this_thread::sleep_for(std::chrono::milliseconds(25));
 	}
 	LOG_INFO("HostClientThread connected, becoming ready...");

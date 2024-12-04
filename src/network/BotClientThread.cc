@@ -5,9 +5,10 @@ m2::network::BotClientThread::BotClientThread(mplayer::Type type)
 	: detail::BaseClientThread(type, "127.0.0.1", false) {
 	latch();
 
-	// Wait until the bot is connected. The Bot thread waits 1 second to ensure that the connection to host is not
-	// closed from the host side. We need to wait longer than 1 second to be sure.
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	// Wait until the bot is connected. The Bot thread waits 100 millisecond to ensure that the connection to host is not
+	// closed from the host side. Let's wait a bit longer than that.
+	LOG_DEBUG("Waiting 150ms until the bot is connected");
+	std::this_thread::sleep_for(std::chrono::milliseconds(150));
 
 	if (locked_get_client_state() == pb::CLIENT_CONNECTED) {
 		LOG_INFO("BotClientThread connected, becoming ready...");
