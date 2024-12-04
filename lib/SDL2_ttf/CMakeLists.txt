@@ -1,10 +1,5 @@
-# Point to the install location of freetype
+# Point to the install locations of freetype and SDL2
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/../freetype")
-
-if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/../SDL2/lib")
-    message(WARNING "libSDL2 needs to be built first")
-    return()
-endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/../SDL2")
 
 # ExternalProject cannot handle regular CMake lists, replace the list separator with some other separator

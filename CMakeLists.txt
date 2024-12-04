@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 # Options
 option(DEBUG "Enable debug mode" OFF)
+option(BUILDING_DEPS "Signifies that CMake is executed recursively to build the dependencies" OFF)
 if(DEBUG)
     add_compile_definitions(DEBUG)
 endif()
@@ -11,6 +12,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 13.3)
 cmake_policy(SET CMP0135 OLD)
 
+# Enable parallel build
 include(ProcessorCount)
 ProcessorCount(PROCESSOR_COUNT)
 set(CMAKE_BUILD_PARALLEL_LEVEL ${PROCESSOR_COUNT})
@@ -23,8 +25,7 @@ FetchContent_MakeAvailable(libbox2d libexpected)
 
 # protobuf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf/bin")
-    message(WARNING "libprotobuf needs to be built first")
-    return()
+    BuildDependency(libprotobuf)
 endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/protobuf")
 if(WIN32)
@@ -37,8 +38,7 @@ include_directories(SYSTEM ${CMAKE_CURRENT_BINARY_DIR})
 
 # SDL2
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2/lib")
-    message(WARNING "libSDL2 needs to be built first")
-    return()
+    BuildDependency(libSDL2)
 endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2")
 find_package(SDL2 REQUIRED)
@@ -48,8 +48,7 @@ endif()
 
 # SDL2_image
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image/lib")
-    message(WARNING "libSDL2_image needs to be built first")
-    return()
+    BuildDependency(libSDL2_image)
 endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_image")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/z")
@@ -71,8 +70,7 @@ endif()
 
 # SDL2_ttf
 if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf/lib")
-    message(WARNING "libSDL2_ttf needs to be built first")
-    return()
+    BuildDependency(libSDL2_ttf)
 endif()
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/SDL2_ttf")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/freetype")
@@ -92,10 +90,8 @@ endif()
 if(DEBUG)
     # GTest
     if(NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest/lib")
-        message(WARNING "libgtest needs to be built first")
-        return()
+        BuildDependency(libgtest)
     endif()
-    message("GTest found")
     list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/lib/googletest")
     find_package(GTest REQUIRED)
 endif()
