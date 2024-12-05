@@ -326,6 +326,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 					});
 
 				game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
+				game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
+				LOG_INFO("Switch to railroad era and next player");
 			}
 		} else {
 			LOG_INFO("Ending game");
