@@ -1,6 +1,5 @@
 #pragma once
 #include "../M2.h"
-#include "../Error.h"
 #include <string>
 #include <cstdint>
 
@@ -16,7 +15,7 @@ namespace m2 {
 	public:
 		// Constructors
 
-		FixedPoint() {}
+		FixedPoint() = default;
 		explicit FixedPoint(std::in_place_t, const int32_t value) noexcept : _value(value) {}
 		explicit FixedPoint(const    int i) { ThrowIfOutOfBounds(i); *this = UnsafeFromInt(i);    }
 		explicit FixedPoint(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
@@ -27,7 +26,7 @@ namespace m2 {
 
 		// Operators
 
-		operator bool() const { return not IsZero(); }
+		explicit operator bool() const { return not IsZero(); }
 		bool operator==(const FixedPoint& b) const { return _value == b._value; }
 
 		// Attributes
@@ -42,23 +41,23 @@ namespace m2 {
 
 		// Accessors
 
-		bool IsZero() const { return _value == 0; }
-		bool IsPositive() const { return not IsZero() && not IsNegative(); }
-		bool IsNegative() const { return _value & 0x80000000; }
+		[[nodiscard]] bool IsZero() const { return _value == 0; }
+		[[nodiscard]] bool IsPositive() const { return not IsZero() && not IsNegative(); }
+		[[nodiscard]] bool IsNegative() const { return _value & 0x80000000; }
 		/// The result is an approximation because the fractional part of the number will be thrown away
-		int32_t ToInteger() const { return _value >> PRECISION; }
+		[[nodiscard]] int32_t ToInteger() const { return _value >> PRECISION; }
 		/// The result is an approximation because floating point numbers get less accurate away from origin
-		float ToFloat() const { return F(_value) / F(0x1 << PRECISION); }
+		[[nodiscard]] float ToFloat() const { return F(_value) / F(0x1 << PRECISION); }
 		/// The result is an approximation because floating point numbers get less accurate away from origin
-		double ToDouble() const { return D(_value) / D(0x1 << PRECISION); }
+		[[nodiscard]] double ToDouble() const { return D(_value) / D(0x1 << PRECISION); }
 		/// Returns the raw value contained inside
-		int32_t ToRawValue() const { return _value; }
+		[[nodiscard]] int32_t ToRawValue() const { return _value; }
 		/// The result is an approximation because only 8 digits of fraction is printed.
-		std::string ToString() const;
+		[[nodiscard]] std::string ToString() const;
 		/// The result is an approximation because ToDouble() is used internally, and it's less accurate than ToString().
-		std::string ToFastString() const;
+		[[nodiscard]] std::string ToFastString() const;
 		/// The result is an approximation because ToFloat() is used internally, and it's less accurate than ToFastString().
-		std::string ToFastestString() const;
+		[[nodiscard]] std::string ToFastestString() const;
 
 		// Modifiers
 
@@ -70,8 +69,8 @@ namespace m2 {
 		FixedPoint operator/(const FixedPoint& b) const { return FixedPoint{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
 
 	private:
-		static void ThrowIfOutOfBounds(const int i);
-		static void ThrowIfOutOfBounds(const float f);
-		static void ThrowIfOutOfBounds(const double d);
+		static void ThrowIfOutOfBounds(int i);
+		static void ThrowIfOutOfBounds(float f);
+		static void ThrowIfOutOfBounds(double d);
 	};
 }

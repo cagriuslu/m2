@@ -37,7 +37,7 @@ std::string m2::FixedPoint::ToString() const {
 		throw M2_ERROR("Implementation error, precision not supported");
 	}
 
-	std::array<char, 32> buffer;
+	std::array<char, 32> buffer{};
 	std::ranges::fill(buffer, 0);
 
 	int seek = 0;
@@ -71,19 +71,19 @@ std::string m2::FixedPoint::ToString() const {
 	// Append the fraction to the buffer
 	snprintf(buffer.data() + seek, buffer.size() - seek, "%08d", fraction);
 
-	return std::string(buffer.data());
+	return {buffer.data()};
 }
 std::string m2::FixedPoint::ToFastString() const {
-	std::array<char, 32> buffer;
+	std::array<char, 32> buffer{};
 	std::ranges::fill(buffer, 0);
 	snprintf(buffer.data(), buffer.size(), "%+016.8f", ToDouble());
-	return std::string(buffer.data());
+	return {buffer.data()};
 }
 std::string m2::FixedPoint::ToFastestString() const {
-	std::array<char, 32> buffer;
+	std::array<char, 32> buffer{};
 	std::ranges::fill(buffer, 0);
 	snprintf(buffer.data(), buffer.size(), "%+016.08f", ToFloat());
-	return std::string(buffer.data());
+	return {buffer.data()};
 }
 
 void m2::FixedPoint::ThrowIfOutOfBounds(const int i) {
