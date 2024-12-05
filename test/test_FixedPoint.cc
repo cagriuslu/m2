@@ -18,6 +18,19 @@ TEST(FixedPoint, constructor) {
 	EXPECT_EQ(FixedPoint{-1.1f}.ToRawValue(), 0b11111111'11111111'10111001'10011010);
 	EXPECT_EQ(FixedPoint{1.0}.ToRawValue(), 0b00000000'00000000'01000000'00000000);
 	EXPECT_EQ(FixedPoint{-1.0}.ToRawValue(), 0b11111111'11111111'11000000'00000000);
+	EXPECT_EQ(FixedPoint{1.5}.ToRawValue(), 0b00000000'00000000'01100000'00000000);
+	EXPECT_EQ(FixedPoint{3.75}.ToRawValue(), 0b00000000'00000000'11110000'00000000);
+	EXPECT_EQ(FixedPoint{7.875}.ToRawValue(), 0b00000000'00000001'11111000'00000000);
+	EXPECT_EQ(FixedPoint{15.9375}.ToRawValue(), 0b00000000'00000011'11111100'00000000);
+	EXPECT_EQ(FixedPoint{31.96875}.ToRawValue(), 0b00000000'00000111'11111110'00000000);
+	EXPECT_EQ(FixedPoint{63.984375}.ToRawValue(), 0b00000000'00001111'11111111'00000000);
+	EXPECT_EQ(FixedPoint{127.9921875}.ToRawValue(), 0b00000000'00011111'11111111'10000000);
+	EXPECT_EQ(FixedPoint{255.99609375}.ToRawValue(), 0b00000000'00111111'11111111'11000000);
+	EXPECT_EQ(FixedPoint{511.99804688}.ToRawValue(), 0b00000000'01111111'11111111'11100000);
+	EXPECT_EQ(FixedPoint{1023.99902344}.ToRawValue(), 0b00000000'11111111'11111111'11110000);
+	EXPECT_EQ(FixedPoint{2047.99951172}.ToRawValue(), 0b00000001'11111111'11111111'11111000);
+	EXPECT_EQ(FixedPoint{4095.99975586}.ToRawValue(), 0b00000011'11111111'11111111'11111100);
+	// Number bigger than this cannot be represented by double accurately
 	EXPECT_NO_THROW(FixedPoint{131071.99993896}); // This is the highest number that can be represented
 	EXPECT_NO_THROW(FixedPoint{-131072.0}); // This is the lowest number that can be represented
 }
@@ -99,6 +112,12 @@ TEST(FixedPoint, accessors) {
 }
 
 TEST(FixedPoint, modifiers) {
+	EXPECT_EQ((FixedPoint{1.5} + FixedPoint{3.75}).ToString(), "+000005.25000000");
+	EXPECT_EQ((FixedPoint{1.5} + FixedPoint{3.75}), FixedPoint{5.25});
+
+	EXPECT_EQ((FixedPoint{3.75} - FixedPoint{1.5}).ToString(), "+000002.25000000");
+	EXPECT_EQ((FixedPoint{3.75} - FixedPoint{1.5}), FixedPoint{2.25});
+
 	std::cout << FixedPoint{1.2515}.ToString() << std::endl; // Closest number is 1.25152588
 	std::cout << FixedPoint{2.6362}.ToString() << std::endl; // Closest number is 2.63623046
 	std::cout << FixedPoint{3.2993106463}.ToString() << std::endl; // Multiplication of the closest numbers
