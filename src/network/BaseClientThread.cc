@@ -185,8 +185,8 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 			if (thread_manager->_ping_broadcast && not ping_broadcast_thread) {
 				ping_broadcast_thread.emplace();
 				// Wait some time before attempting to connect
-				LOG_DEBUG("Waiting 2s for ping broadcasts");
-				std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+				LOG_DEBUG("Waiting 1s for ping broadcasts");
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 			}
 #endif
 
