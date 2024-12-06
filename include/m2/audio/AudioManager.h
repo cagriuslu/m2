@@ -1,6 +1,6 @@
 #pragma once
 #include "../Song.h"
-#include "../Pool.h"
+#include <m2/containers/Pool.h>
 #include <SDL.h>
 #include <mutex>
 

@@ -1,6 +1,6 @@
 #pragma once
-#include "Pool.h"
-#include "math/VecI.h"
+#include <m2/containers/Pool.h>
+#include <m2/math/VecI.h>
 #include <map>
 #include <algorithm>
 #include <iterator>

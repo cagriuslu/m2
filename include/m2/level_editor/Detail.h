@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/Object.h>
-#include <m2/Pool.h>
+#include <m2/containers/Pool.h>
 #include <m2/math/VecI.h>
 
 namespace m2::level_editor {

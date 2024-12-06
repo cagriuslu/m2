@@ -1,6 +1,6 @@
 #pragma once
 #include <m2/M2.h>
-#include "Pool.h"
+#include <m2/containers/Pool.h>
 #include <SDL2/SDL.h>
 
 namespace m2 {

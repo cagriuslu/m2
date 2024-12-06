@@ -1,7 +1,7 @@
 #pragma once
 
-#include "math/RectF.h"
-#include "Pool.h"
+#include <m2/math/RectF.h>
+#include <m2/containers/Pool.h>
 #include <deque>
 #include <memory>
 #include <cstdint>
