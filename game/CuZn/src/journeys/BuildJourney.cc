@@ -40,6 +40,8 @@ namespace {
 				// If canal era, remove the cities where there is already an industry of player
 				for (const auto& built_factory_location : player_built_factory_locations(player)) {
 					cities_in_network.erase(city_of_location(built_factory_location));
+					// For overbuilding, include the location of the already built industry
+					industry_locations_in_network.insert(built_factory_location);
 				}
 			}
 
