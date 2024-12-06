@@ -54,3 +54,7 @@ std::string m2::to_string(const char* s) {
 std::string m2::to_string(const std::string& s) {
 	return s;
 }
+
+std::string m2::to_string(std::string_view sv) {
+	return std::string{sv};
+}

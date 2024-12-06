@@ -6,8 +6,6 @@
 #include <SDL.h>
 #include <SDL2/SDL_image.h>
 #include <m2/Log.h>
-#include <m2/command_line/SpriteSheets.h>
-#include <m2/detail/ArgumentParser.h>
 
 #define BREAK_IF_QUIT() if (M2_GAME.quit) break
 
@@ -17,37 +15,9 @@ int main(const int argc, char **argv) {
 	set_thread_name_for_logging("MN");
 	INFO_FN();
 
-	auto arg_list = to_argument_list(argc, argv);
-	if (auto log_level_opt = parse_argument(arg_list, "log-level")) {
-		if (not LogLevel_Parse(*log_level_opt, &current_log_level)) {
-			LOG_WARN("Invalid log level", *log_level_opt);
-		}
-		LOG_INFO("New log level", current_log_level);
-	}
-	if (auto silent_opt = parse_argument(arg_list, "silent")) {
-		LOG_INFO("Silent");
-		silent = true;
-	}
-	if (auto slowdown_opt = parse_argument(arg_list, "slowdown")) {
-		if (auto const slowdown_factor = strtol(slowdown_opt->c_str(), nullptr, 0); 1 <= slowdown_factor) {
-			time_slowdown_factor = static_cast<int>(slowdown_factor);
-			LOG_INFO("New slowdown factor", time_slowdown_factor);
-		} else {
-			LOG_WARN("Invalid slowdown factor", *slowdown_opt);
-		}
-	}
-	if (auto sprite_sheets_opt = parse_argument(arg_list, "sprite-sheets")) {
-		LOG_INFO("Generating sprite sheets");
-		printf("%s\n", generate_sprite_sheets_skeleton().c_str());
-		return 0;
-	}
-	if (auto console_opt = parse_argument(arg_list, "console")) {
-		console_command = *console_opt;
-		LOG_INFO("Console command", *console_opt);
-	}
-	if (auto god_mode_opt = parse_argument(arg_list, "god-mode")) {
-		LOG_INFO("God mode");
-		god_mode = true;
+	if (auto success = load_options(argc, argv); not success) {
+		LOG_ERROR("Error while loading program arguments", success.error());
+		return -1;
 	}
 
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
