@@ -1,3 +1,4 @@
+#include <Sprite.pb.h>
 #include <m2/Options.h>
 #include <m2/Log.h>
 #include <m2/M2.h>
@@ -69,7 +70,7 @@ m2::void_expected m2::load_options(int argc, char** argv) {
 	if (parse_argument(arg_list, "generate-empty-sprite-sheet")) {
 		LOG_INFO("Generating empty sprite sheet");
 
-		pb::SpriteSheets ss;
+		m2::pb::SpriteSheets ss;
 		auto* sheet = ss.add_sheets();
 		sheet->set_comment("Auto-generated");
 		pb::for_each_enum_value<m2g::pb::SpriteType>([&sheet](m2g::pb::SpriteType type) {
