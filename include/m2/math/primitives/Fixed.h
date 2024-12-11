@@ -1,5 +1,5 @@
 #pragma once
-#include "../M2.h"
+#include <m2/M2.h>
 #include <string>
 #include <cstdint>
 
@@ -67,6 +67,7 @@ namespace m2 {
 		Fixed operator-(const Fixed& b) const { return Fixed{std::in_place, _value - b._value}; }
 		Fixed operator*(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) * static_cast<int64_t>(b._value)) >> PRECISION)}; }
 		Fixed operator/(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
+		[[nodiscard]] Fixed AbsoluteValue() const { return IsNegative() ? -*this : *this; }
 
 	private:
 		static void ThrowIfOutOfBounds(int i);

@@ -1,4 +1,4 @@
-#include <m2/math/Fixed.h>
+#include <m2/math/primitives/Fixed.h>
 #include <cstdio>
 #include <array>
 #include <ranges>
