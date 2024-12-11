@@ -1,4 +1,4 @@
-#include <m2/math/FixedPoint.h>
+#include <m2/math/Fixed.h>
 #include <cstdio>
 #include <array>
 #include <ranges>
@@ -32,7 +32,7 @@ static int PrecisionPointToDecimalLut[] = {
 	       3, // 1 / (2^25)
 };
 
-std::string m2::FixedPoint::ToString() const {
+std::string m2::Fixed::ToString() const {
 	if constexpr (std::size(PrecisionPointToDecimalLut) < PRECISION) {
 		throw M2_ERROR("Implementation error, precision not supported");
 	}
@@ -51,7 +51,7 @@ std::string m2::FixedPoint::ToString() const {
 	auto integer_part =
 		(_value == static_cast<int>(0x80000000))
 		? (1 << (SIGNIFICANT - 1)) // Special case where the negative number doesn't fit into SIGNIFICANT number of bits
-		: IsNegative() ? FixedPoint{std::in_place, -_value}.ToInteger() : ToInteger();
+		: IsNegative() ? Fixed{std::in_place, -_value}.ToInteger() : ToInteger();
 	seek += snprintf(buffer.data() + seek, buffer.size() - seek, "%06d", integer_part);
 
 	// Then, print the radix point
@@ -73,40 +73,40 @@ std::string m2::FixedPoint::ToString() const {
 
 	return {buffer.data()};
 }
-std::string m2::FixedPoint::ToFastString() const {
+std::string m2::Fixed::ToFastString() const {
 	std::array<char, 32> buffer{};
 	std::ranges::fill(buffer, 0);
 	snprintf(buffer.data(), buffer.size(), "%+016.8f", ToDouble());
 	return {buffer.data()};
 }
-std::string m2::FixedPoint::ToFastestString() const {
+std::string m2::Fixed::ToFastestString() const {
 	std::array<char, 32> buffer{};
 	std::ranges::fill(buffer, 0);
 	snprintf(buffer.data(), buffer.size(), "%+016.08f", ToFloat());
 	return {buffer.data()};
 }
 
-void m2::FixedPoint::ThrowIfOutOfBounds(const int i) {
+void m2::Fixed::ThrowIfOutOfBounds(const int i) {
 	if (Max().ToInteger() < i) {
-		throw M2_ERROR("Integer is more than what FixedPoint can hold");
+		throw M2_ERROR("Integer is more than what Fixed can hold");
 	}
 	if (i < Min().ToInteger()) {
-		throw M2_ERROR("Integer is less than what FixedPoint can hold");
+		throw M2_ERROR("Integer is less than what Fixed can hold");
 	}
 }
-void m2::FixedPoint::ThrowIfOutOfBounds(const float f) {
+void m2::Fixed::ThrowIfOutOfBounds(const float f) {
 	if (Max().ToFloat() < f) {
-		throw M2_ERROR("Float is more than what FixedPoint can hold");
+		throw M2_ERROR("Float is more than what Fixed can hold");
 	}
 	if (f < Min().ToFloat()) {
-		throw M2_ERROR("Float is less than what FixedPoint can hold");
+		throw M2_ERROR("Float is less than what Fixed can hold");
 	}
 }
-void m2::FixedPoint::ThrowIfOutOfBounds(const double d) {
+void m2::Fixed::ThrowIfOutOfBounds(const double d) {
 	if (Max().ToDouble() < d) {
-		throw M2_ERROR("Double is more than what FixedPoint can hold");
+		throw M2_ERROR("Double is more than what Fixed can hold");
 	}
 	if (d < Min().ToDouble()) {
-		throw M2_ERROR("Double is less than what FixedPoint can hold");
+		throw M2_ERROR("Double is less than what Fixed can hold");
 	}
 }

@@ -4,7 +4,7 @@
 #include <cstdint>
 
 namespace m2 {
-	class FixedPoint final {
+	class Fixed final {
 		// PRECISION=14 divides [0, 1) into 2^14 (16384) pieces. This guarantees 4 digits of decimal fractions.
 		static constexpr int PRECISION = 14;
 		// SIGNIFICANT=18 extends to [-131072, 131071).
@@ -15,27 +15,27 @@ namespace m2 {
 	public:
 		// Constructors
 
-		FixedPoint() = default;
-		explicit FixedPoint(std::in_place_t, const int32_t value) noexcept : _value(value) {}
-		explicit FixedPoint(const    int i) { ThrowIfOutOfBounds(i); *this = UnsafeFromInt(i);    }
-		explicit FixedPoint(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
-		explicit FixedPoint(const double d) { ThrowIfOutOfBounds(d); *this = UnsafeFromDouble(d); }
-		static FixedPoint UnsafeFromInt(int i)       noexcept { return FixedPoint{std::in_place, i << PRECISION}; }
-		static FixedPoint UnsafeFromFloat(float f)   noexcept { return FixedPoint{std::in_place, iround(F(0x1 << PRECISION) * f)}; }
-		static FixedPoint UnsafeFromDouble(double d) noexcept { return FixedPoint{std::in_place, iround(D(0x1 << PRECISION) * d)}; }
+		Fixed() = default;
+		explicit Fixed(std::in_place_t, const int32_t value) noexcept : _value(value) {}
+		explicit Fixed(const    int i) { ThrowIfOutOfBounds(i); *this = UnsafeFromInt(i);    }
+		explicit Fixed(const  float f) { ThrowIfOutOfBounds(f); *this = UnsafeFromFloat(f);  }
+		explicit Fixed(const double d) { ThrowIfOutOfBounds(d); *this = UnsafeFromDouble(d); }
+		static Fixed UnsafeFromInt(int i)       noexcept { return Fixed{std::in_place, i << PRECISION}; }
+		static Fixed UnsafeFromFloat(float f)   noexcept { return Fixed{std::in_place, iround(F(0x1 << PRECISION) * f)}; }
+		static Fixed UnsafeFromDouble(double d) noexcept { return Fixed{std::in_place, iround(D(0x1 << PRECISION) * d)}; }
 
 		// Operators
 
 		explicit operator bool() const { return not IsZero(); }
-		bool operator==(const FixedPoint& b) const { return _value == b._value; }
+		bool operator==(const Fixed& b) const { return _value == b._value; }
 
 		// Attributes
 
-		static FixedPoint Zero() { return FixedPoint{}; }
-		static FixedPoint Max() { return FixedPoint{std::in_place, 0x7FFFFFFF}; }
-		static FixedPoint Min() { return FixedPoint{std::in_place, static_cast<int32_t>(0x80000000)}; }
-		static FixedPoint MaxInteger() { return FixedPoint{std::in_place, (0xFFFFFFFFu << PRECISION) & 0x7FFFFFFF}; }
-		static FixedPoint MinInteger() { return Min(); }
+		static Fixed Zero() { return Fixed{}; }
+		static Fixed Max() { return Fixed{std::in_place, 0x7FFFFFFF}; }
+		static Fixed Min() { return Fixed{std::in_place, static_cast<int32_t>(0x80000000)}; }
+		static Fixed MaxInteger() { return Fixed{std::in_place, (0xFFFFFFFFu << PRECISION) & 0x7FFFFFFF}; }
+		static Fixed MinInteger() { return Min(); }
 		static uint32_t IntegerPartMask()    { return 0xFFFFFFFFu << PRECISION; }
 		static uint32_t FractionalPartMask() { return 0xFFFFFFFFu >> SIGNIFICANT; }
 
@@ -61,12 +61,12 @@ namespace m2 {
 
 		// Modifiers
 
-		FixedPoint operator+() const { return *this; }
-		FixedPoint operator-() const { return FixedPoint{std::in_place, -_value}; }
-		FixedPoint operator+(const FixedPoint& b) const { return FixedPoint{std::in_place, _value + b._value}; }
-		FixedPoint operator-(const FixedPoint& b) const { return FixedPoint{std::in_place, _value - b._value}; }
-		FixedPoint operator*(const FixedPoint& b) const { return FixedPoint{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) * static_cast<int64_t>(b._value)) >> PRECISION)}; }
-		FixedPoint operator/(const FixedPoint& b) const { return FixedPoint{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
+		Fixed operator+() const { return *this; }
+		Fixed operator-() const { return Fixed{std::in_place, -_value}; }
+		Fixed operator+(const Fixed& b) const { return Fixed{std::in_place, _value + b._value}; }
+		Fixed operator-(const Fixed& b) const { return Fixed{std::in_place, _value - b._value}; }
+		Fixed operator*(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) * static_cast<int64_t>(b._value)) >> PRECISION)}; }
+		Fixed operator/(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
 
 	private:
 		static void ThrowIfOutOfBounds(int i);

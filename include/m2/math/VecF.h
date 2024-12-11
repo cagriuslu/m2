@@ -60,7 +60,7 @@ namespace m2 {
 		[[nodiscard]] float distance(const VecF& other) const { return (other - *this).length(); }
 		[[nodiscard]] float angle_rads() const { return atan2f(y, x); }
 
-		// Immutable modifiers
+		// Modifiers
 
 		[[nodiscard]] VecF normalize() const {
 			float len = length();
