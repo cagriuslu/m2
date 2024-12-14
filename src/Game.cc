@@ -62,7 +62,12 @@ m2::Game::Game() {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 
-	// SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1"); // Unset: pixelated sprites, "1": filtered sprites
+	if (_proxy.pixelated_graphics) {
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
+	} else {
+		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
+	}
+
 	if ((renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE)) ==
 		nullptr) {  // TODO: SDL_RENDERER_PRESENTVSYNC
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
@@ -121,8 +126,7 @@ m2::Game::Game() {
 		throw M2_ERROR(sheets_pb.error());
 	}
 	sprite_sheets = load_sprite_sheets(*sheets_pb, renderer, _proxy.lightning);
-	_sprites =
-		load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, renderer, font, _proxy.default_font_size, _proxy.lightning);
+	_sprites = load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, renderer, font, _proxy.default_font_size, _proxy.lightning);
 	LOG_INFO("Loaded sprites", _sprites.size());
 	level_editor_background_sprites = list_level_editor_background_sprites(_sprites);
 	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");

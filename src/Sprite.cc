@@ -9,8 +9,7 @@
 #include <m2/detail/Gaussian.h>
 #include <numeric>
 
-m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer, bool lightning)
-    : _sprite_sheet(sprite_sheet) {
+m2::SpriteSheet::SpriteSheet(const pb::SpriteSheet& sprite_sheet, SDL_Renderer* renderer, bool lightning) : _sprite_sheet(sprite_sheet) {
 	_surface.reset(IMG_Load((resource_path() / sprite_sheet.resource()).string().c_str()));
 	if (not _surface) {
 		throw M2_ERROR("SDL Error while loading " + sprite_sheet.resource() + ": " + IMG_GetError());
@@ -415,8 +414,7 @@ m2::VecF m2::Sprite::center_to_origin_srcpx(DrawVariant draw_variant) const {
 	}
 }
 
-std::vector<m2::SpriteSheet> m2::load_sprite_sheets(
-    const pb::SpriteSheets& sprite_sheets, SDL_Renderer* renderer, bool lightning) {
+std::vector<m2::SpriteSheet> m2::load_sprite_sheets(const pb::SpriteSheets& sprite_sheets, SDL_Renderer* renderer, bool lightning) {
 	std::vector<m2::SpriteSheet> sheets_vector;
 	std::for_each(sprite_sheets.sheets().begin(), sprite_sheets.sheets().end(), [&](const auto& sheet) {
 		sheets_vector.emplace_back(sheet, renderer, lightning);

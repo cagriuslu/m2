@@ -45,6 +45,9 @@ namespace m2 {
 		/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
 		const bool world_is_static = true;
 
+		/// Determines if nearest neighbor should be used for sprite resizing
+		const bool pixelated_graphics = true;
+
 		/// Is lightning enabled? Darkens the textures.
 		const bool lightning = false;
 

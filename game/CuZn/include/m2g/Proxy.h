@@ -21,6 +21,7 @@ namespace m2g {
 		const int game_aspect_ratio_div = 2;
 		const int default_game_height_m = 32;
 		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
+		const bool pixelated_graphics = true;
 
 		const m2::ui::PanelBlueprint* main_menu();
 		const m2::ui::PanelBlueprint* pause_menu();
