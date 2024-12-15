@@ -60,6 +60,12 @@
       "binaryDir": "build/RPG-DEBUG"
     },
     {
+      "name": "RPG-WIN-RELEASE",
+      "inherits": ["RELEASE", "RPG"],
+      "binaryDir": "build/RPG-RELEASE"
+    },
+
+    {
       "name": "MINE-POSIX-DEBUG",
       "inherits": ["POSIX", "DEBUG", "MINE"],
       "binaryDir": "build/MINE-DEBUG"
@@ -70,6 +76,12 @@
       "binaryDir": "build/MINE-DEBUG"
     },
     {
+      "name": "MINE-WIN-RELEASE",
+      "inherits": ["RELEASE", "MINE"],
+      "binaryDir": "build/MINE-RELEASE"
+    },
+
+    {
       "name": "CuZn-POSIX-DEBUG",
       "inherits": ["POSIX", "DEBUG", "CuZn"],
       "binaryDir": "build/CuZn-DEBUG"
@@ -78,6 +90,11 @@
       "name": "CuZn-WIN-DEBUG",
       "inherits": ["DEBUG", "CuZn"],
       "binaryDir": "build/CuZn-DEBUG"
+    },
+    {
+      "name": "CuZn-WIN-RELEASE",
+      "inherits": ["RELEASE", "CuZn"],
+      "binaryDir": "build/CuZn-RELEASE"
     }
   ]
 }

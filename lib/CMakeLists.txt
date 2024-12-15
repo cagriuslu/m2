@@ -29,7 +29,7 @@ macro(BuildDependency dependency)
             message(FATAL_ERROR "Failed to configure ${dependency}")
         endif()
         execute_process(
-                COMMAND "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --target ${dependency}
+                COMMAND "${CMAKE_COMMAND}" --build ${CMAKE_BINARY_DIR} --config ${CMAKE_BUILD_TYPE} --target ${dependency}
                 OUTPUT_FILE ${CMAKE_BINARY_DIR}/${dependency}-build.out
                 ERROR_FILE ${CMAKE_BINARY_DIR}/${dependency}-build.err
                 RESULT_VARIABLE EXIT_CODE)
