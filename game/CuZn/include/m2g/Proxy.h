@@ -17,11 +17,9 @@ namespace m2g {
 
 		const std::string game_identifier = "CuZn";
 		const std::string game_friendly_name = "OpenBrass";
-		const int game_aspect_ratio_mul = 3;
-		const int game_aspect_ratio_div = 2;
-		const int default_game_height_m = 32;
+		const int gameAspectRatioMul = 3;
+		const int gameAspectRatioDiv = 2;
 		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
-		const bool pixelated_graphics = true;
 
 		const m2::ui::PanelBlueprint* main_menu();
 		const m2::ui::PanelBlueprint* pause_menu();

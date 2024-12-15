@@ -85,7 +85,7 @@ bool bsedit::State::select() {
 			obj::create_horizontal_line(F(image_size.y / sprite_sheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
 
 			// Enable selection
-			Events::enable_primary_selection(M2_GAME.Dimensions().game);
+			Events::enable_primary_selection(M2_GAME.Dimensions().Game());
 
 			return true;
 		}

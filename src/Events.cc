@@ -31,7 +31,7 @@ bool m2::Events::gather() {
 				switch (e.window.event) {
 					case SDL_WINDOWEVENT_RESIZED:
 					case SDL_WINDOWEVENT_SIZE_CHANGED:
-						window_resize = m2::VecI{e.window.data1, e.window.data2};
+						window_resize = true;
 						break;
 				}
 				break;
@@ -137,14 +137,12 @@ bool m2::Events::pop_quit() {
 	return value;
 }
 
-std::optional<m2::VecI> m2::Events::pop_window_resize() {
+bool m2::Events::pop_window_resize() {
 	if (window_resize) {
-		auto value = *window_resize;
-		window_resize.reset();
-		return value;
-	} else {
-		return {};
+		window_resize = false;
+		return true;
 	}
+	return false;
 }
 
 bool m2::Events::pop_key_press(m2::Key k) {

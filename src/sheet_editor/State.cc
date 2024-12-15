@@ -28,7 +28,7 @@ State::ForegroundCompanionMode::ForegroundCompanionMode() {
 		current_center = VecF{sprite.regular().foreground_companion_center_to_origin_vec_px()};
 	}
 	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().game});
+	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
 }
 State::ForegroundCompanionMode::~ForegroundCompanionMode() { Events::disable_primary_selection(); }
 void State::ForegroundCompanionMode::on_draw() const {
@@ -97,7 +97,7 @@ State::RectMode::RectMode() {
 	// Set center
 	current_center = VecF{sprite.regular().center_to_origin_vec_px()};
 	// Enable selection
-	Events::enable_primary_selection(M2_GAME.Dimensions().game);
+	Events::enable_primary_selection(M2_GAME.Dimensions().Game());
 }
 State::RectMode::~RectMode() { Events::disable_primary_selection(); }
 void State::RectMode::on_draw() const {
@@ -172,8 +172,8 @@ State::BackgroundColliderMode::BackgroundColliderMode() {
 		}
 	}
 	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().game});
-	Events::enable_secondary_selection(RectI{M2_GAME.Dimensions().game});
+	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
+	Events::enable_secondary_selection(RectI{M2_GAME.Dimensions().Game()});
 }
 State::BackgroundColliderMode::~BackgroundColliderMode() {
 	Events::disable_primary_selection();
@@ -263,8 +263,8 @@ State::ForegroundColliderMode::ForegroundColliderMode() {
 		}
 	}
 	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().game});
-	Events::enable_secondary_selection(RectI{M2_GAME.Dimensions().game});
+	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
+	Events::enable_secondary_selection(RectI{M2_GAME.Dimensions().Game()});
 }
 State::ForegroundColliderMode::~ForegroundColliderMode() {
 	Events::disable_primary_selection();

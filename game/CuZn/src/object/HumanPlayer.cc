@@ -45,7 +45,7 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 	phy.pre_step = [&o = obj](MAYBE m2::Physique& _) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
-		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().game)) {
+		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
 			LOG_DEBUG("Begin panning");
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
 			M2_LEVEL.enable_panning();
@@ -57,42 +57,40 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 		// Map movement is enabled
 		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {
 			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.mouse_position();
-			auto diff_m = m2::VecF{diff} / m2::F(M2_GAME.Dimensions().ppm);
+			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().RealOutputPixelsPerMeter();
 			o.position += diff_m;
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
 		}
 
 		constexpr float zoom_step = 0.05f;
-		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.Dimensions().game); 0 < scroll) {
-			// Zoom in by decreasing game height
-			M2_GAME.SetZoom(1.0f / (1.0f + zoom_step * m2::F(scroll)));
+		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.Dimensions().Game()); 0 < scroll) {
+			M2_GAME.SetScale(m2::GameDimensionsManager::NextPixelatedScale(M2_GAME.Dimensions().PixelatedScale()));
 		} else if (scroll < 0) {
-			// Zoom out by increasing game height
-			M2_GAME.SetZoom(1.0f + zoom_step * m2::F(-scroll));
+			M2_GAME.SetScale(m2::GameDimensionsManager::PrevPixelatedScale(M2_GAME.Dimensions().PixelatedScale()));
 		}
 
 		// Limit the player inside the level
 		const auto& dims = M2_GAME.Dimensions();
 		// If the map is zoomed out so much that the black space is showing on the left and the right
-		if (M2_LEVEL.background_boundary().w < dims.width_m) {
+		if (M2_LEVEL.background_boundary().w < dims.GameM().x) {
 			o.position.x = M2_LEVEL.background_boundary().x_center();
 		} else {
-			if (o.position.x < dims.width_m / 2.0f) {
-				o.position.x = dims.width_m / 2.0f; // Left
+			if (o.position.x < dims.GameM().x / 2.0f) {
+				o.position.x = dims.GameM().x / 2.0f; // Left
 			}
-			if (M2_LEVEL.background_boundary().x2() < o.position.x + dims.width_m / 2.0f) {
-				o.position.x = M2_LEVEL.background_boundary().x2() - dims.width_m / 2.0f; // Right
+			if (M2_LEVEL.background_boundary().x2() < o.position.x + dims.GameM().x / 2.0f) {
+				o.position.x = M2_LEVEL.background_boundary().x2() - dims.GameM().x / 2.0f; // Right
 			}
 		}
 		// If the map is zoomed out so much that the black space is showing on the top and the bottom
-		if (M2_LEVEL.background_boundary().h < dims.height_m) {
+		if (M2_LEVEL.background_boundary().h < dims.GameM().y) {
 			o.position.y = M2_LEVEL.background_boundary().y_center();
 		} else {
-			if (o.position.y < m2::F(dims.height_m) / 2.0f) {
-				o.position.y = m2::F(dims.height_m) / 2.0f; // Top
+			if (o.position.y < dims.GameM().y / 2.0f) {
+				o.position.y = dims.GameM().y / 2.0f; // Top
 			}
-			if (M2_LEVEL.background_boundary().y2() < o.position.y + m2::F(dims.height_m) / 2.0f) {
-				o.position.y = M2_LEVEL.background_boundary().y2() - m2::F(dims.height_m) / 2.0f; // Bottom
+			if (M2_LEVEL.background_boundary().y2() < o.position.y + dims.GameM().y / 2.0f) {
+				o.position.y = M2_LEVEL.background_boundary().y2() - dims.GameM().y / 2.0f; // Bottom
 			}
 		}
 

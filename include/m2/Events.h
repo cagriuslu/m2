@@ -16,7 +16,7 @@ namespace m2 {
 
 		bool quit{};
 
-		std::optional<m2::VecI> window_resize;
+		bool window_resize{};
 
 		uint32_t key_press_count{};
 		std::array<uint16_t, u(Key::end)> keys_pressed{};
@@ -51,7 +51,7 @@ namespace m2 {
 		// Quit
 		bool pop_quit();
 		// Window resize
-		std::optional<VecI> pop_window_resize();
+		bool pop_window_resize();
 		// Key presses
 		bool pop_key_press(Key k);
 		bool pop_ui_key_press(SDL_Scancode scode);

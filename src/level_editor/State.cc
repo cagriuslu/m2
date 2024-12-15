@@ -98,7 +98,7 @@ std::optional<m2::pb::LevelObject> m2::ledit::State::PickMode::lookup_foreground
 }
 m2::ledit::State::SelectMode::SelectMode() {
 	// Enable selection
-	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().game});
+	Events::enable_primary_selection(RectI{M2_GAME.Dimensions().Game()});
 }
 m2::ledit::State::SelectMode::~SelectMode() {
 	Events::disable_primary_selection();

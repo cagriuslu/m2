@@ -147,21 +147,11 @@ m2::Id m2::obj::create_god() {
 		if (M2_GAME.events.is_key_down(Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		obj.position += move_direction.normalize() * ((float)M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().height_m);
+		obj.position += move_direction.normalize() * ((float)M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
 		// Prevent God from going into negative quadrants
 		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 
 		handle_mouse_events(M2_GAME.MousePositionWorldM().iround(), M2_GAME.MousePositionWorldM().hround());
-
-		// Change zoom
-		if (std::holds_alternative<sedit::State>(M2_LEVEL.type_state) ||
-		    std::holds_alternative<bsedit::State>(M2_LEVEL.type_state)) {
-			if (M2_GAME.events.pop_key_press(Key::MINUS)) {
-				M2_GAME.SetZoom(1.1f);  // Increase game height
-			} else if (M2_GAME.events.pop_key_press(Key::PLUS)) {
-				M2_GAME.SetZoom(0.9f);  // Decrease game height
-			}
-		}
 	};
 
 	it->add_graphic().post_draw = [](MAYBE Graphic& gfx) {

@@ -1,4 +1,5 @@
 #include <cuzn/ui/Cards.h>
+#include <cuzn/Detail.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <m2/ui/widget/TextSelection.h>
@@ -28,7 +29,7 @@ m2::RectF cards_window_ratio() {
 }
 m2::RectF cards_panel_ratio() {
 	return m2::RectF{
-		M2_GAME.Dimensions().hud_width_to_game_and_hud_width_ratio() + M2_GAME.Dimensions().game_width_to_game_and_hud_width_ration() - 0.16f,
+		M2_GAME.Dimensions().HudWidthToGameAndHudWidthRatio() + M2_GAME.Dimensions().GameWidthToGameAndHudWidthRatio() - 0.16f,
 		0.6f,
 		0.16f,
 		0.4f};

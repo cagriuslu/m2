@@ -24,10 +24,16 @@ namespace m2 {
 		/// Friendly name of the game that's use as the window title.
 		const std::string game_friendly_name = "<game-friendly-name>";
 
-		const int game_aspect_ratio_mul = 5;
-		const int game_aspect_ratio_div = 4;
-
-		const int default_game_height_m = 16;
+		/// PPM (pixels per meter) of the overall game. Ideally, this number should be the greatest common factor of all
+		/// sprites used in the game. In case there could be outliers, this values isn't calculated from Sprite Sheets,
+		/// but instead hardcoded in Proxy.
+		const int gamePpm = 16;
+		const int gameAspectRatioMul = 5;
+		const int gameAspectRatioDiv = 4;
+		/// Determines if nearest neighbor should be used while resizing sprites
+		const bool areGraphicsPixelated = true;
+		/// Determines the initial and minimum window size.
+		const float defaultGameHeightM = 18.0f;
 
 		//const std::string default_font_path = "fonts/Courier_Prime/CourierPrime-Regular.ttf";
 		//const std::string default_font_path = "fonts/Kode_Mono/KodeMono-VariableFont_wght.ttf";
@@ -44,9 +50,6 @@ namespace m2 {
 
 		/// Is the world (background, the obstacles) static? If true, pathfinder uses caching.
 		const bool world_is_static = true;
-
-		/// Determines if nearest neighbor should be used for sprite resizing
-		const bool pixelated_graphics = true;
 
 		/// Is lightning enabled? Darkens the textures.
 		const bool lightning = false;

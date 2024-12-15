@@ -48,13 +48,13 @@ m2::Game::Game() {
 		LOG_WARN("Failed to set line render method");
 	}
 
-	RecalculateDimensions(800, 450, _proxy.default_game_height_m);
+	auto minimumWindowDims = GameDimensionsManager::EstimateMinimumWindowDimensions(_proxy.gamePpm, _proxy.defaultGameHeightM);
 	if ((window = SDL_CreateWindow(_proxy.game_friendly_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		_dims.window.w, _dims.window.h, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
+		minimumWindowDims.x, minimumWindowDims.y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE)) == nullptr) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
-	SDL_SetWindowMinimumSize(window, 400, 225);
-	SDL_StopTextInput();  // Text input begins activated (sometimes)
+	SDL_SetWindowMinimumSize(window, minimumWindowDims.x, minimumWindowDims.y);
+	SDL_StopTextInput(); // Text input begins activated (sometimes)
 
 	cursor = SdlUtils_CreateCursor();
 	SDL_SetCursor(cursor);
@@ -62,7 +62,7 @@ m2::Game::Game() {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});
 	}
 
-	if (_proxy.pixelated_graphics) {
+	if (_proxy.areGraphicsPixelated) {
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "0");
 	} else {
 		SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
@@ -76,9 +76,7 @@ m2::Game::Game() {
 	SDL_GetRendererInfo(renderer, &info);
 	LOG_INFO("Renderer", info.name);
 
-	// TODO If you want to use this, you have to use SDL_RenderGetLogicalSize on all places where you query the window size!!!
-	// May also require SDL_RenderSetIntegerScale
-	//SDL_RenderSetLogicalSize(renderer, 800, 450);
+	_dimensionsManager.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv, _proxy.areGraphicsPixelated);
 
 	SDL_Surface* lightSurface = IMG_Load((resource_path() / "RadialGradient-WhiteBlack.png").string().c_str());
 	if (lightSurface == nullptr) {
@@ -384,8 +382,7 @@ void m2::Game::HandleQuitEvent() {
 
 void m2::Game::HandleWindowResizeEvent() {
 	if (const auto window_resize = events.pop_window_resize(); window_resize) {
-		RecalculateDimensions(window_resize->x, window_resize->y);
-		SetZoom(1.0f);
+		OnWindowResize();
 	}
 }
 
@@ -757,25 +754,20 @@ void m2::Game::DrawEnvelopes() const {
 	SDL_Rect sdl_rect{};
 
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	sdl_rect = static_cast<SDL_Rect>(_dims.top_envelope);
+	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->TopEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dims.bottom_envelope);
+	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->BottomEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dims.left_envelope);
+	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->LeftEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
-	sdl_rect = static_cast<SDL_Rect>(_dims.right_envelope);
+	sdl_rect = static_cast<SDL_Rect>(_dimensionsManager->RightEnvelope());
 	SDL_RenderFillRect(renderer, &sdl_rect);
 }
 
 void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 
-void m2::Game::RecalculateDimensions(const int window_width, const int window_height, const int game_height_m) {
-	_dims = GameDimensions{game_height_m == 0 ? _dims.height_m : game_height_m, window_width, window_height, _proxy.game_aspect_ratio_mul, _proxy.game_aspect_ratio_div};
-}
-
-void m2::Game::SetZoom(const float game_height_multiplier) {
-	RecalculateDimensions(
-		_dims.window.w, _dims.window.h, iround(static_cast<float>(_dims.height_m) * game_height_multiplier));
+void m2::Game::OnWindowResize() {
+	_dimensionsManager->OnWindowResize();
 	if (_level) {
 		IF(_level->left_hud_ui_panel)->update_positions();
 		IF(_level->right_hud_ui_panel)->update_positions();
@@ -785,6 +777,12 @@ void m2::Game::SetZoom(const float game_height_multiplier) {
 		}
 		IF (_level->custom_blocking_ui_panel)->update_positions();
 	}
+}
+void m2::Game::SetScale(float scale) {
+	_dimensionsManager->SetScale(scale);
+}
+void m2::Game::SetScale(int scale) {
+	_dimensionsManager->SetScale(scale);
 }
 
 void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
@@ -821,17 +819,17 @@ const m2::VecF& m2::Game::ScreenCenterToMousePositionM() const {
 
 m2::VecF m2::Game::PixelTo2dWorldM(const VecI& pixel_position) {
 	const auto screen_center_to_pixel_position_px =
-		VecI{pixel_position.x - (_dims.window.w / 2), pixel_position.y - (_dims.window.h / 2)};
+		VecI{pixel_position.x - (Dimensions().WindowDimensions().x / 2), pixel_position.y - (Dimensions().WindowDimensions().y / 2)};
 	const auto screen_center_to_pixel_position_m = VecF{
-		F(screen_center_to_pixel_position_px.x) / F(_dims.ppm), F(screen_center_to_pixel_position_px.y) / F(_dims.ppm)};
+		F(screen_center_to_pixel_position_px.x) / Dimensions().RealOutputPixelsPerMeter(), F(screen_center_to_pixel_position_px.y) / Dimensions().RealOutputPixelsPerMeter()};
 	const auto camera_position = _level->objects[_level->camera_id].position;
 	return screen_center_to_pixel_position_m + camera_position;
 }
 
 m2::RectF m2::Game::ViewportTo2dWorldRectM() {
-	const auto top_left = PixelTo2dWorldM(VecI{Dimensions().game.x, Dimensions().game.y});
+	const auto top_left = PixelTo2dWorldM(VecI{Dimensions().Game().x, Dimensions().Game().y});
 	const auto bottom_right =
-		PixelTo2dWorldM(VecI{Dimensions().game.x + Dimensions().game.w, Dimensions().game.y + Dimensions().game.h});
+		PixelTo2dWorldM(VecI{Dimensions().Game().x + Dimensions().Game().w, Dimensions().Game().y + Dimensions().Game().h});
 	return RectF::from_corners(top_left, bottom_right);
 }
 
@@ -901,9 +899,9 @@ void m2::Game::ExecuteDeferredActions() {
 void m2::Game::RecalculateMousePosition2() const {
 	const auto mouse_position = events.mouse_position();
 	const auto screen_center_to_mouse_position_px =
-		VecI{mouse_position.x - (_dims.window.w / 2), mouse_position.y - (_dims.window.h / 2)};
+		VecI{mouse_position.x - (Dimensions().WindowDimensions().x / 2), mouse_position.y - (Dimensions().WindowDimensions().y / 2)};
 	_screen_center_to_mouse_position_m = VecF{
-		F(screen_center_to_mouse_position_px.x) / F(_dims.ppm), F(screen_center_to_mouse_position_px.y) / F(_dims.ppm)};
+		F(screen_center_to_mouse_position_px.x) / Dimensions().RealOutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().RealOutputPixelsPerMeter()};
 
 	if (is_projection_type_perspective(_level->projection_type())) {
 		// Mouse moves on the plane centered at the player looking towards the camera

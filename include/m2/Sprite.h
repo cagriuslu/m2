@@ -121,7 +121,7 @@ namespace m2 {
 
 		/// Returns a vector from the sprite's center pixel to the sprite's graphical origin in screen dimensions
 		/// (dstpx).
-		[[nodiscard]] inline VecF center_to_origin_dstpx(DrawVariant draw_variant) const {
+		[[nodiscard]] VecF center_to_origin_dstpx(DrawVariant draw_variant) const {
 			// Convert from source pixels to destination pixels
 			return center_to_origin_srcpx(draw_variant) * sheet_to_screen_pixel_multiplier();
 		}

@@ -39,7 +39,7 @@ namespace m2 {
 	class Game {
 		static Game* _instance;
 		::m2g::Proxy _proxy{};
-		GameDimensions _dims;
+		std::optional<GameDimensionsManager> _dimensionsManager;
 
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
@@ -154,7 +154,7 @@ namespace m2 {
 		Level& Level() { return *_level; }
 
 		// Accessors
-		const GameDimensions& Dimensions() const { return _dims; }
+		const GameDimensionsManager& Dimensions() const { return *_dimensionsManager; }
 		const Sprite& GetSprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
 		void ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
 		const NamedItem& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
@@ -167,6 +167,7 @@ namespace m2 {
 		sdl::TextureUniquePtr DrawGameToTexture(m2::VecF camera_position);
 
 		// Handlers
+
 		void HandleQuitEvent();
 		void HandleWindowResizeEvent();
 		void HandleConsoleEvent();
@@ -191,9 +192,11 @@ namespace m2 {
 		void FlipBuffers() const;
 
 		// Modifiers
+
 		void AddPauseTicks(const sdl::ticks_t ticks) { pause_ticks += ticks; }
-		void RecalculateDimensions(int window_width, int window_height, int game_height_m = 0);
-		void SetZoom(float game_height_multiplier);
+		void OnWindowResize();
+		void SetScale(float scale);
+		void SetScale(int scale);
 		void ResetMousePosition() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
 		void RecalculateDirectionalAudio();
 

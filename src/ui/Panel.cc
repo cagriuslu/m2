@@ -81,19 +81,6 @@ namespace {
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
 			return make_continue_action();
-		} else if (std::regex_match(command, std::regex{"set(\\s.*)?"})) {
-			if (std::smatch match_results;
-			    std::regex_match(command, match_results, std::regex{R"(set\s+([_a-zA-Z]+)\s+([a-zA-Z0-9]+))"})) {
-				if (auto parameter = match_results.str(1); parameter == "game_height") {
-					auto new_game_height = I(strtol(match_results.str(2).c_str(), nullptr, 0));
-					M2_GAME.RecalculateDimensions(
-					    M2_GAME.Dimensions().window.w, M2_GAME.Dimensions().window.h, new_game_height);
-					return make_continue_action();
-				}
-				M2_GAME.console_output.emplace_back("Unknown parameter");
-			} else {
-				// TODO print help
-			}
 		} else if (command == "quit") {
 			return make_quit_action();
 		} else if (command == "close") {
@@ -166,7 +153,8 @@ Action Panel::run_blocking() {
 
 			// Handle resize action
 			if (const auto window_resize = events.pop_window_resize(); window_resize) {
-				M2_GAME.RecalculateDimensions(window_resize->x, window_resize->y);
+				M2_GAME.OnWindowResize();
+				// TODO what about the other sync panels in the stack?
 				update_positions();
 			}
 
@@ -220,7 +208,7 @@ std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_
 	} else if (std::holds_alternative<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
 		// Pixel dims, convert to "relation to game_and_hud dimensions"
 		const auto& pixel_rect = std::get<RectI>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud);
-		const auto& game_and_hud_dims = M2_GAME.Dimensions().game_and_hud;
+		const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 		_relation_to_game_and_hud_dims = RectF{
 			F(pixel_rect.x - game_and_hud_dims.x) / F(game_and_hud_dims.w),
 			F(pixel_rect.y - game_and_hud_dims.y) / F(game_and_hud_dims.h),
@@ -288,7 +276,7 @@ Panel::~Panel() {
 }
 
 RectI Panel::rect_px() const {
-	const auto& game_and_hud_dims = M2_GAME.Dimensions().game_and_hud;
+	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	return RectI{
 		iround(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
 		iround(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),

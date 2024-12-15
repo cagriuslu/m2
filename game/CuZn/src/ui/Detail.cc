@@ -203,7 +203,7 @@ bool ask_for_confirmation_bottom(const std::string& question, const std::string&
 	}; // 1 + 32 + 1 + 4 + 1 + 4 + 1
 
 	bool selection;
-	Panel::create_and_run_blocking(&blueprint, M2_GAME.Dimensions().game.ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
+	Panel::create_and_run_blocking(&blueprint, M2_GAME.Dimensions().Game().ratio({0.0f, 0.9f, 1.0f, 0.1f}), std::move(background_texture))
 		.if_return<bool>([&](auto result) { selection = result; });
 	return selection;
 }

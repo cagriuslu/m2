@@ -44,11 +44,11 @@ m2::VecF m2::camera_to_position_m(const VecF& position) {
 }
 
 m2::VecF m2::camera_to_position_dstpx(const VecF& position) {
-	return camera_to_position_m(position) * M2_GAME.Dimensions().ppm;
+	return camera_to_position_m(position) * M2_GAME.Dimensions().RealOutputPixelsPerMeter();
 }
 
 m2::VecF m2::screen_origin_to_position_dstpx(const VecF& position) {
-	return camera_to_position_dstpx(position) + VecF{M2_GAME.Dimensions().window.w / 2, M2_GAME.Dimensions().window.h / 2 };
+	return camera_to_position_dstpx(position) + VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
 
 m2::VecF m2::screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, DrawVariant draw_variant) {
@@ -80,7 +80,7 @@ float m3::visible_width_m() {
 	return visible_width;
 }
 float m3::ppm() {
-	return static_cast<float>(M2_GAME.Dimensions().game.w) / visible_width_m();
+	return static_cast<float>(M2_GAME.Dimensions().Game().w) / visible_width_m();
 }
 
 m3::Line m3::camera_to_position_line(const VecF& position) {
@@ -148,7 +148,7 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx
 	if (not focus_to_projection_along_camera_plane_px) {
 		return {};
 	}
-	return *focus_to_projection_along_camera_plane_px + m2::VecF{M2_GAME.Dimensions().window.w / 2, M2_GAME.Dimensions().window.h / 2 };
+	return *focus_to_projection_along_camera_plane_px + m2::VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
 
 m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
@@ -220,17 +220,17 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 		const auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.owner().position,
 				*gfx.sprite, DrawVariant{});
 		dst_rect = SDL_Rect{
-				(int) roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * M2_GAME.Dimensions().ppm / gfx.sprite->ppm() / 2),
-				(int) roundf(screen_origin_to_sprite_center_px_vec.y) + (src_rect.h * M2_GAME.Dimensions().ppm * 11 / gfx.sprite->ppm() / 2 / 10), // Give an offset of 1.1
-				M2_GAME.Dimensions().ppm,
-				M2_GAME.Dimensions().ppm * 12 / 100 // 0.15 m height
+				iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * M2_GAME.Dimensions().RealOutputPixelsPerMeter() / F(gfx.sprite->ppm()) / 2.0f)),
+				iround(screen_origin_to_sprite_center_px_vec.y + (F(src_rect.h) * M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 11.0f / F(gfx.sprite->ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
+				iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter()),
+				iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 12.0f / 100.0f) // 0.15 m height
 		};
 	} else {
 		const auto obj_position = gfx.owner().position;
 		// Place add-on below the sprite
 		const auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
 		if (const auto projected_addon_position = screen_origin_to_projection_along_camera_plane_dstpx(addon_position)) {
-			const auto rect = RectI::centered_around(VecI{*projected_addon_position}, M2_GAME.Dimensions().ppm, M2_GAME.Dimensions().ppm * 12 / 100);
+			const auto rect = RectI::centered_around(VecI{*projected_addon_position}, iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter()), iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 12.0f / 100.0f));
 			dst_rect = static_cast<SDL_Rect>(rect);
 		}
 	}
@@ -249,10 +249,10 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
 	const auto screen_origin_to_cell_center_px = screen_origin_to_position_dstpx(VecF{cell});
 	const auto rect = SDL_Rect{
-		(int)roundf(screen_origin_to_cell_center_px.x) - (M2_GAME.Dimensions().ppm / 2),
-		(int)roundf(screen_origin_to_cell_center_px.y) - (M2_GAME.Dimensions().ppm / 2),
-		M2_GAME.Dimensions().ppm,
-		M2_GAME.Dimensions().ppm
+		iround(screen_origin_to_cell_center_px.x - (M2_GAME.Dimensions().RealOutputPixelsPerMeter() / 2.0f)),
+		iround(screen_origin_to_cell_center_px.y - (M2_GAME.Dimensions().RealOutputPixelsPerMeter() / 2.0f)),
+		iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter()),
+		iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter())
 	};
 
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
@@ -280,7 +280,7 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGB& color)
 
 void m2::Graphic::color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color) {
 	const auto center_position_px = screen_origin_to_position_dstpx(center_position_m);
-	const auto radius_px = radius_m * M2_GAME.Dimensions().ppm;
+	const auto radius_px = radius_m * M2_GAME.Dimensions().RealOutputPixelsPerMeter();
 	sdl::draw_disk(M2_GAME.renderer, center_position_px, color, radius_px, color);
 }
 
@@ -309,13 +309,13 @@ void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_posi
 void m2::Graphic::draw_vertical_line(float x, SDL_Color color) {
 	const auto x_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{x, 0.0f}).x));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawLine(M2_GAME.renderer, x_px, M2_GAME.Dimensions().game.y, x_px, M2_GAME.Dimensions().game.y + M2_GAME.Dimensions().game.h);
+	SDL_RenderDrawLine(M2_GAME.renderer, x_px, M2_GAME.Dimensions().Game().y, x_px, M2_GAME.Dimensions().Game().y + M2_GAME.Dimensions().Game().h);
 }
 
 void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
 	const auto y_px = static_cast<int>(roundf(screen_origin_to_position_dstpx(VecF{0.0f, y}).y));
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().game.x, y_px, M2_GAME.Dimensions().game.x + M2_GAME.Dimensions().game.w, y_px);
+	SDL_RenderDrawLine(M2_GAME.renderer, M2_GAME.Dimensions().Game().x, y_px, M2_GAME.Dimensions().Game().x + M2_GAME.Dimensions().Game().w, y_px);
 }
 
 bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture) {

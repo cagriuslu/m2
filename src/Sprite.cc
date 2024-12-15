@@ -403,7 +403,7 @@ const m2::RectI& m2::Sprite::rect(DrawVariant draw_variant) const {
 }
 
 float m2::Sprite::sheet_to_screen_pixel_multiplier() const {
-	return static_cast<float>(M2_GAME.Dimensions().ppm) / static_cast<float>(_ppm);
+	return M2_GAME.Dimensions().RealOutputPixelsPerMeter() / static_cast<float>(_ppm);
 }
 m2::VecF m2::Sprite::center_to_origin_srcpx(DrawVariant draw_variant) const {
 	if (std::holds_alternative<ForegroundCompanion>(draw_variant)) {
