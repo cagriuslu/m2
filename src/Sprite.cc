@@ -508,3 +508,25 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::list_level_editor_object_
 
 	return object_sprite_map;
 }
+
+m2::void_expected m2::move_background(int from, int to, const std::string& level) {
+	if (from < 0 || 3 < from || to < 0 || 3 < to) {
+		return m2::make_unexpected("Invalid layer");
+	}
+
+	auto lb = pb::json_file_to_message<pb::Level>(M2_GAME.levels_dir / level);
+	m2_reflect_unexpected(lb);
+
+	// Ensure there are enough layers
+	while (lb->background_layers_size() < 4) {
+		lb->add_background_layers();
+	}
+
+	// Move
+	auto layer = lb->background_layers(from);
+	lb->mutable_background_layers(to)->CopyFrom(layer);
+	lb->mutable_background_layers(from)->Clear();
+
+	// Save
+	return pb::message_to_json_file(*lb, M2_GAME.levels_dir / level);
+}

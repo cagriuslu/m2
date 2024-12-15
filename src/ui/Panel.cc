@@ -81,6 +81,20 @@ namespace {
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
 			return make_continue_action();
+		} else if (std::regex_match(command, std::regex{"mvbg(\\s.*)?"})) {
+			// Move background
+			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{R"(mvbg\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
+				auto layer_from = strtol(match_results.str(1).c_str(), nullptr, 0);
+				auto layer_to = strtol(match_results.str(2).c_str(), nullptr, 0);
+				auto level = match_results.str(3);
+				if (auto success = move_background(I(layer_from), I(layer_to), level); not success) {
+					M2_GAME.console_output.emplace_back(success.error());
+				}
+			} else {
+				M2_GAME.console_output.emplace_back("mvbg usage:");
+				M2_GAME.console_output.emplace_back(".. from to - move one background layer into another");
+			}
+			return make_continue_action();
 		} else if (command == "quit") {
 			return make_quit_action();
 		} else if (command == "close") {
@@ -94,7 +108,8 @@ namespace {
 			M2_GAME.console_output.emplace_back("medit - open midi editor");
 			M2_GAME.console_output.emplace_back("pedit - open pixel editor");
 			M2_GAME.console_output.emplace_back("sedit - open sheet editor");
-			M2_GAME.console_output.emplace_back("set - set game variable");
+			M2_GAME.console_output.emplace_back("bsedit - open bulk sheet editor");
+			M2_GAME.console_output.emplace_back("mvbg - move background");
 			M2_GAME.console_output.emplace_back("close - close the console");
 			M2_GAME.console_output.emplace_back("quit - quit game");
 		}

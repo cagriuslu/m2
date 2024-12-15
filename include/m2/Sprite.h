@@ -127,13 +127,12 @@ namespace m2 {
 		}
 	};
 
-	std::vector<SpriteSheet> load_sprite_sheets(
-	    const pb::SpriteSheets& sprite_sheets, SDL_Renderer* renderer, bool lightning);
+	std::vector<SpriteSheet> load_sprite_sheets(const pb::SpriteSheets& sprite_sheets, SDL_Renderer* renderer, bool lightning);
 	std::vector<Sprite> load_sprites(
 	    const std::vector<SpriteSheet>& sprite_sheets,
 	    const ::google::protobuf::RepeatedPtrField<pb::TextLabel>& text_labels,
 	    SpriteEffectsSheet& sprite_effects_sheet, SDL_Renderer* renderer, TTF_Font* font, int font_size, bool lightning);
 	std::vector<m2g::pb::SpriteType> list_level_editor_background_sprites(const std::vector<Sprite>& sprites);
-	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(
-	    const std::filesystem::path& objects_path);
+	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> list_level_editor_object_sprites(const std::filesystem::path& objects_path);
+	void_expected move_background(int from, int to, const std::string& level);
 }  // namespace m2
