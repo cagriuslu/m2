@@ -3,6 +3,7 @@
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
 #include <m2/Meta.h>
+#include <variant>
 
 namespace m2 {
     class GameDimensionsManager final {
