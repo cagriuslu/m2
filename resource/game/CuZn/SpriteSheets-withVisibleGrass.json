@@ -29,8 +29,8 @@
           "type": "GRASS_1",
           "regular": {
             "rect": {
-              "w": 0,
-              "h": 0
+              "w": 16,
+              "h": 16
             },
             "isBackgroundTile": true
           }
@@ -40,8 +40,8 @@
           "regular": {
             "rect": {
               "x": 16,
-              "w": 0,
-              "h": 0
+              "w": 16,
+              "h": 16
             },
             "isBackgroundTile": true
           }
@@ -51,8 +51,8 @@
           "regular": {
             "rect": {
               "x": 32,
-              "w": 0,
-              "h": 0
+              "w": 16,
+              "h": 16
             },
             "isBackgroundTile": true
           }
@@ -62,8 +62,8 @@
           "regular": {
             "rect": {
               "x": 48,
-              "w": 0,
-              "h": 0
+              "w": 16,
+              "h": 16
             },
             "isBackgroundTile": true
           }
