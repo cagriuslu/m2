@@ -181,7 +181,7 @@ City city_of_location(Location location) {
 		throw M2_ERROR("Sprite is not a location");
 	}
 
-	for (const auto& named_item : M2_GAME.GetSprite(location).named_items()) {
+	for (const auto& named_item : M2_GAME.GetSprite(location).NamedItems()) {
 		if (M2_GAME.GetNamedItem(named_item).category() == ITEM_CATEGORY_CITY_CARD) {
 			return named_item;
 		}
@@ -278,7 +278,7 @@ std::vector<MerchantLocation> merchant_locations_of_merchant_city(MerchantCity c
 	std::vector<MerchantLocation> locations;
 	M2_GAME.ForEachSprite([&locations, city](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
 		if (is_merchant_location(sprite_type)) {
-			if (std::ranges::find(sprite.named_items(), city) != sprite.named_items().end()) {
+			if (std::ranges::find(sprite.NamedItems(), city) != sprite.NamedItems().end()) {
 				locations.emplace_back(sprite_type);
 			}
 		}
@@ -341,11 +341,11 @@ std::vector<IndustryLocation> industry_locations_in_city(City city_card) {
 std::vector<Connection> connections_from_city(City city_card) {
 	std::vector<Connection> connections;
 	M2_GAME.ForEachSprite([&connections, city_card](m2g::pb::SpriteType sprite_type, const m2::Sprite& sprite) {
-		auto city_license = std::ranges::find(sprite.named_items(), city_card);
-		if (city_license != sprite.named_items().end()) {
-			auto canal_license = std::ranges::find(sprite.named_items(), CANAL_LICENSE);
-			auto railroad_license = std::ranges::find(sprite.named_items(), RAILROAD_LICENSE);
-			if (canal_license != sprite.named_items().end() || railroad_license != sprite.named_items().end()) {
+		auto city_license = std::ranges::find(sprite.NamedItems(), city_card);
+		if (city_license != sprite.NamedItems().end()) {
+			auto canal_license = std::ranges::find(sprite.NamedItems(), CANAL_LICENSE);
+			auto railroad_license = std::ranges::find(sprite.NamedItems(), RAILROAD_LICENSE);
+			if (canal_license != sprite.NamedItems().end() || railroad_license != sprite.NamedItems().end()) {
 				connections.emplace_back(sprite_type);
 			}
 		}
@@ -356,7 +356,7 @@ std::vector<Connection> connections_from_city(City city_card) {
 
 std::vector<City> cities_from_connection(Connection connection) {
 	std::vector<City> cities;
-	auto connection_items = M2_GAME.GetSprite(connection).named_items();
+	auto connection_items = M2_GAME.GetSprite(connection).NamedItems();
 	for (auto item_type : connection_items) {
 		if (M2_GAME.GetNamedItem(item_type).category() == ITEM_CATEGORY_CITY_CARD) {
 			cities.emplace_back(item_type);
@@ -382,7 +382,7 @@ std::vector<Industry> industries_on_location(IndustryLocation location) {
 	}
 
 	std::vector<m2g::pb::ItemType> industries;
-	for (const auto& named_item : M2_GAME.GetSprite(location).named_items()) {
+	for (const auto& named_item : M2_GAME.GetSprite(location).NamedItems()) {
 		if (M2_GAME.GetNamedItem(named_item).category() == ITEM_CATEGORY_INDUSTRY_CARD) {
 			industries.emplace_back(named_item);
 		}

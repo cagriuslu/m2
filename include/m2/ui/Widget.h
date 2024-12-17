@@ -5,7 +5,7 @@
 
 #include "../video/Color.h"
 #include "../Events.h"
-#include "../Sprite.h"
+#include <m2/video/Sprite.h>
 #include "Action.h"
 #include "WidgetBlueprint.h"
 

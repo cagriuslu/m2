@@ -51,8 +51,8 @@ m2::VecF m2::screen_origin_to_position_dstpx(const VecF& position) {
 	return camera_to_position_dstpx(position) + VecF{M2_GAME.Dimensions().WindowDimensions().x / 2, M2_GAME.Dimensions().WindowDimensions().y / 2 };
 }
 
-m2::VecF m2::screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, DrawVariant draw_variant) {
-	return screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx(draw_variant);
+m2::VecF m2::screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, SpriteVariant sprite_variant) {
+	return screen_origin_to_position_dstpx(position) - sprite.CenterToOriginDstpx(sprite_variant);
 }
 
 m3::VecF m3::camera_position_m() {
@@ -155,13 +155,13 @@ m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(const uint64_t object_id, const Sprite& sprite) : Component(object_id), on_draw(default_draw), on_addon(default_draw_addons), sprite(&sprite) {}
 
 namespace detail {
-	void default_draw(const m2::Graphic* gfx, m2::DrawVariant draw_variant) {
+	void default_draw(const m2::Graphic* gfx, m2::SpriteVariant sprite_variant) {
 		if (m2::is_projection_type_perspective(M2_LEVEL.projection_type())) {
 			// Check if foreground or background
 			const bool is_foreground = M2_LEVEL.graphics.get_id(gfx);
-			draw_fake_3d(gfx->owner().position, *gfx->sprite, draw_variant, gfx->draw_angle, is_foreground, gfx->z);
+			draw_fake_3d(gfx->owner().position, *gfx->sprite, sprite_variant, gfx->draw_angle, is_foreground, gfx->z);
 		} else {
-			draw_real_2d(gfx->owner().position, *gfx->sprite, draw_variant, gfx->draw_angle);
+			draw_real_2d(gfx->owner().position, *gfx->sprite, sprite_variant, gfx->draw_angle);
 		}
 	}
 }
@@ -173,26 +173,26 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 	}
 
 	// Dim the sprite if dimming mode is enabled. TODO Dimming is implemented only for default variant.
-	bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), gfx.sprite->texture(DrawVariant{}));
+	bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), gfx.sprite->Texture(SpriteVariant{}));
 
 	bool is_anything_drawn = false;
 	for (size_t i = 0; i < gfx.variant_draw_order.size(); ++i) {
-		if (const auto& draw_variant = gfx.variant_draw_order[i]) {
-			::detail::default_draw(&gfx, *draw_variant);
+		if (const auto& sprite_variant = gfx.variant_draw_order[i]) {
+			::detail::default_draw(&gfx, *sprite_variant);
 			is_anything_drawn = true;
 		}
 	}
 	// If nothing is drawn, fallback to default variant draw order of the sprite
 	if (not is_anything_drawn) {
 		// If the default variant draw order list is empty, draw the default variant. This is the most common drawing branch.
-		if (gfx.sprite->default_variant_draw_order().empty()) {
-			::detail::default_draw(&gfx, DrawVariant{});
+		if (gfx.sprite->DefaultVariantDrawOrder().empty()) {
+			::detail::default_draw(&gfx, SpriteVariant{});
 		} else {
-			for (const auto& draw_variant : gfx.sprite->default_variant_draw_order()) {
-				if (draw_variant == pb::SpriteEffectType::__NO_SPRITE_EFFECT) {
-					::detail::default_draw(&gfx, DrawVariant{});
+			for (const auto& sprite_variant : gfx.sprite->DefaultVariantDrawOrder()) {
+				if (sprite_variant == pb::SpriteEffectType::__NO_SPRITE_EFFECT) {
+					::detail::default_draw(&gfx, SpriteVariant{});
 				} else {
-					::detail::default_draw(&gfx, DrawVariant{draw_variant});
+					::detail::default_draw(&gfx, SpriteVariant{sprite_variant});
 				}
 			}
 		}
@@ -200,7 +200,7 @@ void m2::Graphic::default_draw(const Graphic& gfx) {
 
 	// If dimming was active, we need to un-dim.
 	if (dimmed) {
-		undim_rendering(gfx.sprite->texture(DrawVariant{}));
+		undim_rendering(gfx.sprite->Texture(SpriteVariant{}));
 	}
 }
 
@@ -216,12 +216,12 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 	SDL_Rect dst_rect{};
 
 	if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
-		const auto src_rect = static_cast<SDL_Rect>(gfx.sprite->rect());
+		const auto src_rect = static_cast<SDL_Rect>(gfx.sprite->Rect());
 		const auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(gfx.owner().position,
-				*gfx.sprite, DrawVariant{});
+				*gfx.sprite, SpriteVariant{});
 		dst_rect = SDL_Rect{
-				iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * M2_GAME.Dimensions().RealOutputPixelsPerMeter() / F(gfx.sprite->ppm()) / 2.0f)),
-				iround(screen_origin_to_sprite_center_px_vec.y + (F(src_rect.h) * M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 11.0f / F(gfx.sprite->ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
+				iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * M2_GAME.Dimensions().RealOutputPixelsPerMeter() / F(gfx.sprite->Ppm()) / 2.0f)),
+				iround(screen_origin_to_sprite_center_px_vec.y + (F(src_rect.h) * M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 11.0f / F(gfx.sprite->Ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
 				iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter()),
 				iround(M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 12.0f / 100.0f) // 0.15 m height
 		};

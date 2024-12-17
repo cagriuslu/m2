@@ -12,7 +12,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(m2g::pb::DWARF_FULL).background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(m2g::pb::DWARF_FULL).BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_friction(0.0f);
 	bp.mutable_background_fixture()->set_category(m2::pb::FRIEND_ON_BACKGROUND);
 	bp.set_mass(100);

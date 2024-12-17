@@ -16,7 +16,7 @@ m2::void_expected rpg::create_spikes(m2::Object& obj) {
 	bp.set_type(m2::pb::BodyType::STATIC);
 	bp.set_allow_sleep(true);
 	bp.set_is_bullet(false);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(spikes_in.background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(spikes_in.BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::OBSTACLE_BACKGROUND);
 	bp.mutable_background_fixture()->set_is_sensor(true);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);

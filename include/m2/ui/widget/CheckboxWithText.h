@@ -5,7 +5,7 @@
 namespace m2::ui::widget {
 	class CheckboxWithText : public AbstractButton {
 		bool _state;
-		sdl::FontTexture _font_texture;
+		sdl::FontTexture _fontTexture;
 
 	public:
 		explicit CheckboxWithText(Panel* parent, const WidgetBlueprint* blueprint);

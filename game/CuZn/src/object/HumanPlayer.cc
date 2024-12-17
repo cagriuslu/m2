@@ -299,8 +299,8 @@ std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Conne
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
 			const auto& road_location = M2_GAME.GetSprite(road_location_type);
-			if (std::ranges::any_of(road_location.named_items(), is_canal_license) &&
-				std::ranges::count(road_location.named_items(), city)) {
+			if (std::ranges::any_of(road_location.NamedItems(), is_canal_license) &&
+				std::ranges::count(road_location.NamedItems(), city)) {
 				canals.insert(road_location_type);
 			}
 		}
@@ -323,8 +323,8 @@ std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player, Co
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
 			const auto& road_location = M2_GAME.GetSprite(road_location_type);
-			if (std::ranges::any_of(road_location.named_items(), is_railroad_license) &&
-				std::ranges::count(road_location.named_items(), city)) {
+			if (std::ranges::any_of(road_location.NamedItems(), is_railroad_license) &&
+				std::ranges::count(road_location.NamedItems(), city)) {
 				railroads.insert(road_location_type);
 			}
 		}

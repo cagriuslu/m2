@@ -5,7 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include <m2/Error.h>
 #include <m2/Object.h>
-#include <m2/Sprite.h>
+#include <m2/video/Sprite.h>
 #include <m2/String.h>
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/level_editor/Ui.h>
@@ -111,7 +111,7 @@ m2::Game::Game() {
 	// Height and ascent can be queried. For width, you need to render.
 
 	audio_manager.emplace();
-	sprite_effects_sheet = SpriteEffectsSheet{renderer};
+	spriteEffectsSheet = SpriteEffectsSheet{renderer};
 	shapes_sheet = ShapesSheet{renderer};
 	dynamic_sheet = DynamicSheet{renderer};
 
@@ -123,11 +123,13 @@ m2::Game::Game() {
 	if (!sheets_pb) {
 		throw M2_ERROR(sheets_pb.error());
 	}
-	sprite_sheets = load_sprite_sheets(*sheets_pb, renderer, _proxy.lightning);
-	_sprites = load_sprites(sprite_sheets, sheets_pb->text_labels(), *sprite_effects_sheet, renderer, font, _proxy.default_font_size, _proxy.lightning);
+	spriteSheets = SpriteSheet::LoadSpriteSheets(*sheets_pb, renderer, _proxy.lightning);
+	_sprites = LoadSprites(spriteSheets, sheets_pb->text_labels(), *spriteEffectsSheet, renderer, font, _proxy.default_font_size, _proxy.lightning);
 	LOG_INFO("Loaded sprites", _sprites.size());
-	level_editor_background_sprites = list_level_editor_background_sprites(_sprites);
-	object_main_sprites = list_level_editor_object_sprites(resource_dir / "Objects.json");
+	auto backgroundSprites = _sprites | std::views::filter(IsSpriteBackgroundTile) | std::views::transform(ToSpriteType);
+	level_editor_background_sprites = std::vector<m2g::pb::SpriteType>{backgroundSprites.begin(), backgroundSprites.end()};
+	LOG_INFO("Loaded level editor background sprites", level_editor_background_sprites.size());
+	object_main_sprites = ListLevelEditorObjectSprites(resource_dir / "Objects.json");
 	LOG_INFO("Loaded objects", object_main_sprites.size());
 	named_items = pb::LUT<m2::pb::Item, NamedItem>::load(resource_dir / "Items.json", &m2::pb::Items::items);
 	LOG_INFO("Loaded named items", named_items.size());

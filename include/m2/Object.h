@@ -5,7 +5,7 @@
 #include "Group.h"
 #include "ObjectImpl.h"
 #include <m2/containers/Pool.h>
-#include "Sprite.h"
+#include <m2/video/Sprite.h>
 #include "component/Character.h"
 #include "component/Graphic.h"
 #include "component/Light.h"

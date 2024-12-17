@@ -67,8 +67,8 @@ Action TextInput::on_update() {
 	}
 
 	// Generate new texture is the string has changed
-	if (not _font_texture || str != _font_texture.string()) {
-		_font_texture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, str));
+	if (not _fontTexture || str != _fontTexture.string()) {
+		_fontTexture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, str));
 	}
 
 	return make_continue_action();
@@ -76,7 +76,7 @@ Action TextInput::on_update() {
 
 void TextInput::on_draw() {
 	draw_background_color();
-	if (const auto texture = _font_texture.texture(); texture) {
+	if (const auto texture = _fontTexture.texture(); texture) {
 		sdl::render_texture_with_color_mod(texture, calculate_text_rect(texture, rect(), TextHorizontalAlignment::LEFT));
 	}
 	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());

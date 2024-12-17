@@ -1,4 +1,4 @@
-#include <m2/DynamicSheet.h>
+#include <m2/video/DynamicSheet.h>
 #include <m2/Error.h>
 #include <m2/Game.h>
 
@@ -13,10 +13,10 @@ m2::DynamicSheet::DynamicSheet(SDL_Renderer *renderer) : _renderer(renderer) {
 	}
 	_surface.reset(surface);
 }
-SDL_Texture* m2::DynamicSheet::texture() const {
+SDL_Texture* m2::DynamicSheet::Texture() const {
 	return _texture.get();
 }
-std::pair<SDL_Surface*, m2::RectI> m2::DynamicSheet::alloc(int w, int h) {
+std::pair<SDL_Surface*, m2::RectI> m2::DynamicSheet::Alloc(int w, int h) {
 	// Check if effect will fit
 	if (_surface->w < w) {
 		throw M2_ERROR("Sprite effect exceeds width limit: " + std::to_string(_surface->w));
@@ -39,7 +39,7 @@ std::pair<SDL_Surface*, m2::RectI> m2::DynamicSheet::alloc(int w, int h) {
 	_h += h;
 	return retval;
 }
-SDL_Texture* m2::DynamicSheet::recreate_texture(bool lightning) {
+SDL_Texture* m2::DynamicSheet::RecreateTexture(bool lightning) {
 	_texture.reset(SDL_CreateTextureFromSurface(_renderer, _surface.get()));
 	if (not _texture) {
 		throw M2_ERROR("SDL error: " + std::string{SDL_GetError()});

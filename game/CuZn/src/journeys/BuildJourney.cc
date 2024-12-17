@@ -99,7 +99,7 @@ namespace {
 		const auto& selected_sprite_sprite = M2_GAME.GetSprite(selected_location);
 		// Lookup industries on the sprite
 		std::vector<ItemType> selected_sprite_industries;
-		std::ranges::copy_if(selected_sprite_sprite.named_items(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
+		std::ranges::copy_if(selected_sprite_sprite.NamedItems(), std::back_inserter(selected_sprite_industries), [](auto item_type) {
 			return (M2_GAME.GetNamedItem(item_type).category() == ITEM_CATEGORY_INDUSTRY_CARD);
 		});
 		if (selected_sprite_industries.empty()) {
@@ -125,10 +125,10 @@ namespace {
 			return {selected_card}; // Only the selected industry card is buildable
 		} else { // ITEM_CATEGORY_CITY_CARD
 			// Look up the location of the sprite
-			auto location_card_it = std::ranges::find_if(selected_sprite_sprite.named_items(), [](auto item_type) {
+			auto location_card_it = std::ranges::find_if(selected_sprite_sprite.NamedItems(), [](auto item_type) {
 				return (M2_GAME.GetNamedItem(item_type).category() == ITEM_CATEGORY_CITY_CARD);
 			});
-			if (location_card_it == selected_sprite_sprite.named_items().end()) {
+			if (location_card_it == selected_sprite_sprite.NamedItems().end()) {
 				throw M2_ERROR("Selected sprite does not hold a location card");
 			}
 			ItemType selected_sprite_location = *location_card_it;

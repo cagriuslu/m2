@@ -1,5 +1,5 @@
 #pragma once
-#include "../../Sprite.h"
+#include <m2/video/Sprite.h>
 #include "AbstractButton.h"
 
 namespace m2::ui::widget {

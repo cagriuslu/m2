@@ -120,7 +120,7 @@ void Widget::draw_rectangle(const m2::RectI& rect, const SDL_Color& color) {
 }
 
 void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
-	auto src_rect = static_cast<SDL_Rect>(sprite.rect());
+	auto src_rect = static_cast<SDL_Rect>(sprite.Rect());
 	auto sprite_aspect_ratio = (float)src_rect.w / (float)src_rect.h;
 	auto widget_aspect_ratio = (float)dst_rect.w / (float)dst_rect.h;
 
@@ -135,7 +135,7 @@ void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
 	    .w = iround(src_rect.w * sprite_size_multiplier),
 	    .h = iround(src_rect.h * sprite_size_multiplier)};
 
-	SDL_RenderCopy(M2_GAME.renderer, sprite.texture(DrawVariant{}), &src_rect, &actual_dst_rect);
+	SDL_RenderCopy(M2_GAME.renderer, sprite.Texture(SpriteVariant{}), &src_rect, &actual_dst_rect);
 }
 
 void Widget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color) {

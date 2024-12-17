@@ -87,7 +87,7 @@ namespace {
 				auto layer_from = strtol(match_results.str(1).c_str(), nullptr, 0);
 				auto layer_to = strtol(match_results.str(2).c_str(), nullptr, 0);
 				auto level = match_results.str(3);
-				if (auto success = move_background(I(layer_from), I(layer_to), level); not success) {
+				if (auto success = MoveBackground(I(layer_from), I(layer_to), level); not success) {
 					M2_GAME.console_output.emplace_back(success.error());
 				}
 			} else {

@@ -34,22 +34,22 @@ pb::SpriteSheets bsedit::State::sprite_sheets() const {
 }
 
 std::optional<pb::SpriteSheet> bsedit::State::selected_sprite_sheet() const {
-	auto sprite_sheets = this->sprite_sheets();
+	auto spriteSheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets
-	for (const auto& sprite_sheet : sprite_sheets.sheets()) {
-		if (sprite_sheet.resource() == _selected_resource.first) {
-			return sprite_sheet;
+	for (const auto& spriteSheet : spriteSheets.sheets()) {
+		if (spriteSheet.resource() == _selected_resource.first) {
+			return spriteSheet;
 		}
 	}
 	return std::nullopt;  // Resource not yet selected
 }
 
 void bsedit::State::select_resource(const std::string& resource) {
-	const auto& sprite_sheets = this->sprite_sheets();
+	const auto& spriteSheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets
-	for (const auto& sprite_sheet : sprite_sheets.sheets()) {
-		if (sprite_sheet.resource() == resource) {
-			_selected_resource = std::make_pair(resource, sprite_sheet.ppm());
+	for (const auto& spriteSheet : spriteSheets.sheets()) {
+		if (spriteSheet.resource() == resource) {
+			_selected_resource = std::make_pair(resource, spriteSheet.ppm());
 			return;
 		}
 	}
@@ -60,19 +60,19 @@ bool bsedit::State::select() {
 	// Get rid of previously created pixels, lines, etc.
 	M2_LEVEL.reset_bulk_sheet_editor();
 
-	const auto& sprite_sheets = this->sprite_sheets();
+	const auto& spriteSheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets
-	for (const auto& sprite_sheet : sprite_sheets.sheets()) {
-		if (sprite_sheet.resource() == _selected_resource.first) {
-			if (sprite_sheet.sprites().empty()) {
+	for (const auto& spriteSheet : spriteSheets.sheets()) {
+		if (spriteSheet.resource() == _selected_resource.first) {
+			if (spriteSheet.sprites().empty()) {
 				LOG_ERROR("Selected sprite sheet has no sprites");
 				return false;
 			}
 
 			// Reload dynamic image loader with the resource
-			auto image_loader = DynamicSpriteSheetLoader::create(sprite_sheet.resource(), sprite_sheet.ppm());
+			auto image_loader = DynamicSpriteSheetLoader::create(spriteSheet.resource(), spriteSheet.ppm());
 			if (!image_loader) {
-				throw M2_ERROR("Failed to load the image: " + sprite_sheet.resource());
+				throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
 			}
 			_dynamic_sprite_sheet_loader.emplace(std::move(*image_loader));
 			M2_LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
@@ -81,8 +81,8 @@ bool bsedit::State::select() {
 			obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});
 			obj::create_horizontal_line(-0.5f, SDL_Color{255, 0, 0, 255});
 			const auto image_size = _dynamic_sprite_sheet_loader->image_size();
-			obj::create_vertical_line(F(image_size.x / sprite_sheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
-			obj::create_horizontal_line(F(image_size.y / sprite_sheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
+			obj::create_vertical_line(F(image_size.x / spriteSheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
+			obj::create_horizontal_line(F(image_size.y / spriteSheet.ppm()) - 0.5f, SDL_Color{255, 0, 0, 255});
 
 			// Enable selection
 			Events::enable_primary_selection(M2_GAME.Dimensions().Game());
@@ -94,8 +94,8 @@ bool bsedit::State::select() {
 }
 
 void bsedit::State::select_sprite(m2g::pb::SpriteType type) {
-	const auto sprite_sheet = *selected_sprite_sheet();
-	for (const auto& sprite : sprite_sheet.sprites()) {
+	const auto spriteSheet = *selected_sprite_sheet();
+	for (const auto& sprite : spriteSheet.sprites()) {
 		if (sprite.type() == type) {
 			_selected_sprite = std::make_pair(type, RectI{sprite.regular().rect()});
 

@@ -15,13 +15,13 @@ namespace m2::sdl {
 
 	public:
 		FontTexture() = default;
-		/// Create a FontTexture without text wrapping. `font_size` determines the height of the texture, and since the
+		/// Create a FontTexture without text wrapping. `fontSize` determines the height of the texture, and since the
 		/// text is unwrapped, the width is also determined.
-		static expected<FontTexture> create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int font_size,
+		static expected<FontTexture> create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int fontSize,
 			const std::string& text, SDL_Color color = {255, 255, 255, 255});
-		/// Create a FontTexture with text wrapping. `font_size` determines the height of the texture and `width_px`
+		/// Create a FontTexture with text wrapping. `fontSize` determines the height of the texture and `width_px`
 		/// limits the number of characters per line.
-		static expected<FontTexture> create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int font_size, int width_px,
+		static expected<FontTexture> create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px,
 			ui::TextHorizontalAlignment horizontal_alignment, const std::string& text,
 			SDL_Color color = {255, 255, 255, 255});
 

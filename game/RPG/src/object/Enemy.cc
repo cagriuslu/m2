@@ -44,9 +44,9 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
 	bp.set_allow_sleep(true);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).foreground_collider_circ_radius_m());
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).ForegroundColliderCircRadiusM());
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FOE_ON_FOREGROUND);
 	bp.set_mass(20.0f); // Enemy mass is lower than player, so that player can push the enemies
 	bp.set_linear_damping(5.0f);

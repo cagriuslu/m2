@@ -475,7 +475,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	// Store the positions of the industries build locations
 	else if (is_industry_location(sprite_type)) {
 		// Verify that ppm of the industry tiles are double of the sprite sheet
-		if (M2_GAME.GetSprite(sprite_type).ppm() != M2_GAME.GetSprite(sprite_type).sprite_sheet().sprite_sheet().ppm()) {
+		if (M2_GAME.GetSprite(sprite_type).Ppm() != M2_GAME.GetSprite(sprite_type).Sheet().Pb().ppm()) {
 			throw M2_ERROR("Sprite ppm mismatch");
 		}
 		// Object position has {0.5f, 0.5f} offset
@@ -487,7 +487,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	else if (is_canal(sprite_type) || is_railroad(sprite_type)) {
 		m2::RectF connection_cell_rect = m2::RectF{obj.position.x - 0.5f, obj.position.y - 0.5f, 1.0f, 1.0f};
 		// Different canal or railroad backgrounds have different offsets
-		auto original_type = M2_GAME.GetSprite(sprite_type).original_type(); // Connection sprites are duplicate of another
+		auto original_type = M2_GAME.GetSprite(sprite_type).OriginalType(); // Connection sprites are duplicate of another
 		auto offset = connection_sprite_world_offset(*original_type);
 		connection_cell_rect = connection_cell_rect.shift(offset);
 		connection_positions[sprite_type] = std::make_tuple(obj.position + offset, connection_cell_rect, obj.id());

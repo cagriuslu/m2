@@ -26,13 +26,13 @@ void Text::on_draw() {
 
 	// Generate font texture if necessary
 	if (not _font_texture_and_destination_cache) {
-		// Calculate the ideal font_size
-		auto font_size = text_blueprint().wrapped_font_size_in_units != 0.0f
+		// Calculate the ideal fontSize
+		auto fontSize = text_blueprint().wrapped_font_size_in_units != 0.0f
 			// Integer rounding because iround might produce too big of a font
 			? I(vertical_pixels_per_unit() * text_blueprint().wrapped_font_size_in_units)
 			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(m2::utf8_codepoint_count(_current_text.c_str()))).h;
 		auto font_texture = text_blueprint().wrapped_font_size_in_units != 0.0f
-			? m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, font_size,
+			? m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, fontSize,
 				drawable_area().w, text_blueprint().horizontal_alignment, _current_text))
 			: m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
 				M2G_PROXY.default_font_size, _current_text));

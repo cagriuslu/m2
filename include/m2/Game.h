@@ -9,7 +9,7 @@
 #include "Proxy.h"
 #include "Shape.h"
 #include "Song.h"
-#include "Sprite.h"
+#include <m2/video/Sprite.h>
 #include "game/Animation.h"
 #include "network/HostClientThread.h"
 #include "network/RealClientThread.h"
@@ -88,8 +88,8 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		std::vector<SpriteSheet> sprite_sheets;
-		std::optional<SpriteEffectsSheet> sprite_effects_sheet;
+		std::vector<SpriteSheet> spriteSheets;
+		std::optional<SpriteEffectsSheet> spriteEffectsSheet;
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
 		std::optional<ShapesSheet> shapes_sheet;

@@ -18,7 +18,7 @@ m2::Pathfinder::Pathfinder(const pb::Level &lb) {
 	for (int y = 0; y < first_layer.background_rows_size(); ++y) {
 		for (int x = 0; x < first_layer.background_rows(y).items_size(); ++x) {
 			auto sprite_type = first_layer.background_rows(y).items(x);
-			if (sprite_type && M2_GAME.GetSprite(sprite_type).background_collider_type() != box2d::ColliderType::NONE) {
+			if (sprite_type && M2_GAME.GetSprite(sprite_type).BackgroundColliderType() != box2d::ColliderType::NONE) {
 				_blocked_locations.emplace(x, y);
 			}
 		}

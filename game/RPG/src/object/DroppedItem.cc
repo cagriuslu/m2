@@ -11,7 +11,7 @@ m2::void_expected rpg::create_dropped_item(m2::Object &obj, m2g::pb::ItemType it
 	bp.set_type(m2::pb::BodyType::STATIC);
 	bp.set_allow_sleep(true);
 	bp.set_is_bullet(false);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.background_collider_circ_radius_m());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(sprite.BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_is_sensor(true);
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ITEM_ON_FOREGROUND);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);

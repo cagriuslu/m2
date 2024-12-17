@@ -7,7 +7,7 @@
 #include <functional>
 #include <optional>
 #include <string>
-
+#include <m2/sdl/Detail.h>
 #include <m2/containers/DrawList.h>
 #include "Meta.h"
 #include "Object.h"

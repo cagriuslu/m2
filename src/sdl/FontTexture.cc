@@ -35,14 +35,14 @@ namespace {
 	}
 }
 
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int font_size, const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int fontSize, const std::string& text, SDL_Color color) {
 	if (text.empty()) {
 		return FontTexture{nullptr, text};
 	}
 
 	// This clears the glyph caches, but that's the only option we have. As long as we don't call this every frame, it
 	// should be fine.
-	TTF_SetFontSize(font, font_size);
+	TTF_SetFontSize(font, fontSize);
 	// Render to surface
 	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(font, text.c_str(), color)};
 	m2_return_unexpected_message_unless(surface, TTF_GetError());
@@ -52,14 +52,14 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(SDL_Rende
 	return FontTexture{texture, text};
 }
 
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int font_size, int width_px, ui::TextHorizontalAlignment horizontal_alignment, const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px, ui::TextHorizontalAlignment horizontal_alignment, const std::string& text, SDL_Color color) {
 	if (text.empty()) {
 		return FontTexture{nullptr, text};
 	}
 
 	// This clears the glyph caches, but that's the only option we have. As long as we don't call this every frame, it
 	// should be fine.
-	TTF_SetFontSize(font, font_size);
+	TTF_SetFontSize(font, fontSize);
 	// Render to surface
 	TTF_SetFontWrappedAlign(font, text_horizontal_alignment_to_ttf_wrap_alignment(horizontal_alignment));
 	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, width_px)};

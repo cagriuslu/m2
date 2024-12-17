@@ -42,7 +42,7 @@ bool m2::Vson::is_string() const {
 
 const m2::Vson* m2::Vson::query(const std::string& path) const {
 	const Vson* v = this;
-	for (const auto& path_piece : m2::string::split(path, '/')) {
+	for (const auto& path_piece : m2::SplitString(path, '/')) {
 		if (std::holds_alternative<vson_object>(value)) {
 			const auto& obj = std::get<vson_object>(value);
 			const auto it = obj.find(path_piece);

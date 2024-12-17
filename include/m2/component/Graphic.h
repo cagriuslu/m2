@@ -1,6 +1,6 @@
 #pragma once
 #include "../Component.h"
-#include "../Sprite.h"
+#include <m2/video/Sprite.h>
 #include "../math/VecF.h"
 #include "../m3/VecF.h"
 #include "../m3/Line.h"
@@ -28,7 +28,7 @@ namespace m2 {
 
 	/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
 	/// Returns screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx() if sprite is non-NULL.
-	VecF screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, DrawVariant draw_variant);
+	VecF screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, SpriteVariant sprite_variant);
 }
 
 namespace m3 {
@@ -87,7 +87,7 @@ namespace m2 {
 
 		const Sprite* sprite{};
 		// If any of the entries exist, Sprite's default_variant_draw_order is overridden. First variant is drawn first.
-		std::array<std::optional<DrawVariant>, 2> variant_draw_order{};
+		std::array<std::optional<SpriteVariant>, 2> variant_draw_order{};
 		float draw_angle{}; // Rads
 		float z{};
 		std::optional<float> draw_addon_health_bar; /// [0,1]
@@ -117,6 +117,6 @@ namespace m2 {
 		static void undim_rendering(SDL_Texture* texture);
 	};
 
-	void draw_real_2d(const VecF& position, const Sprite& sprite, DrawVariant draw_variant, float angle);
-	void draw_fake_3d(const VecF& position, const Sprite& sprite, DrawVariant draw_variant, float angle, bool is_foreground, float z);
+	void draw_real_2d(const VecF& position, const Sprite& sprite, SpriteVariant sprite_variant, float angle);
+	void draw_fake_3d(const VecF& position, const Sprite& sprite, SpriteVariant sprite_variant, float angle, bool is_foreground, float z);
 }

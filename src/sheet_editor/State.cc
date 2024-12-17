@@ -399,20 +399,20 @@ void m2::sedit::State::select() {
 	// Get rid of previously created pixels, lines, etc.
 	M2_LEVEL.reset_sheet_editor();
 
-	const auto& sprite_sheets = this->sprite_sheets();
+	const auto& spriteSheets = this->sprite_sheets();
 	// Reload dynamic image loader with the resource
 	// To find sprite in the sheet, iterate over sheets
-	for (const auto& sprite_sheet : sprite_sheets.sheets()) {
+	for (const auto& spriteSheet : spriteSheets.sheets()) {
 		// Iterate over sprites
-		for (const auto& sprite : sprite_sheet.sprites()) {
+		for (const auto& sprite : spriteSheet.sprites()) {
 			if (sprite.type() == _selected_sprite_type) {
-				auto image_loader = DynamicImageLoader::create(sprite_sheet.resource());
+				auto image_loader = DynamicImageLoader::create(spriteSheet.resource());
 				if (!image_loader) {
-					throw M2_ERROR("Failed to load the image: " + sprite_sheet.resource());
+					throw M2_ERROR("Failed to load the image: " + spriteSheet.resource());
 				}
 				_dynamic_image_loader.emplace(std::move(*image_loader));
 				M2_LEVEL.dynamic_grid_lines_loader.emplace(SDL_Color{127, 127, 255, 80});
-				M2_LEVEL.dynamic_sheet_grid_lines_loader.emplace(SDL_Color{255, 255, 255, 80}, sprite_sheet.ppm());
+				M2_LEVEL.dynamic_sheet_grid_lines_loader.emplace(SDL_Color{255, 255, 255, 80}, spriteSheet.ppm());
 
 				// Creates lines showing the boundaries of the sheet
 				obj::create_vertical_line(-0.5f, SDL_Color{255, 0, 0, 255});
@@ -445,14 +445,14 @@ void m2::sedit::modify_sprite_in_sheet(
 	// If path exists,
 	if (std::filesystem::exists(path)) {
 		// Check if the file is a valid pb::SpriteSheets
-		if (auto sprite_sheets = pb::json_file_to_message<pb::SpriteSheets>(path); sprite_sheets) {
-			for (int i = 0; i < sprite_sheets->sheets_size(); ++i) {
-				auto* mutable_sheet = sprite_sheets->mutable_sheets(i);
+		if (auto spriteSheets = pb::json_file_to_message<pb::SpriteSheets>(path); spriteSheets) {
+			for (int i = 0; i < spriteSheets->sheets_size(); ++i) {
+				auto* mutable_sheet = spriteSheets->mutable_sheets(i);
 				for (int j = 0; j < mutable_sheet->sprites_size(); ++j) {
 					auto* mutable_sprite = mutable_sheet->mutable_sprites(j);
 					if (mutable_sprite->type() == type) {
 						modifier(*mutable_sprite);
-						message_to_json_file(*sprite_sheets, path);
+						message_to_json_file(*spriteSheets, path);
 						return;
 					}
 				}

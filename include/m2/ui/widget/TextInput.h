@@ -6,7 +6,7 @@
 namespace m2::ui::widget {
 	class TextInput : public Widget {
 		std::stringstream _text_input;
-		sdl::FontTexture _font_texture;
+		sdl::FontTexture _fontTexture;
 
 	public:
 		explicit TextInput(Panel* parent, const WidgetBlueprint* blueprint);
