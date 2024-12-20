@@ -18,6 +18,7 @@ namespace m2 {
 	double D(auto t) { return static_cast<double>(t); }
 	std::string S(const auto& s) { return std::string(s); }
 	inline int iround(float t) { return static_cast<int>(roundf(t)); }
+	inline int iround(double t) { return static_cast<int>(round(t)); }
 	inline unsigned uround(float t) { return static_cast<unsigned>(roundf(t)); }
 	inline uint8_t u8round(float t) { return static_cast<uint8_t>(roundf(t)); }
 	inline size_t zround(float t) { return static_cast<size_t>(roundf(t)); }

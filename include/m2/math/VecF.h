@@ -31,7 +31,7 @@ namespace m2 {
 
 		VecF operator+(const VecF& rhs) const { return {x + rhs.x, y + rhs.y}; }
 		VecF operator+(const float& rhs) const { return {x + rhs, y + rhs}; }
-		VecF& operator+=(const VecF& rhs) { *this = *this + rhs; return *this; }
+		VecF& operator+=(const VecF& rhs) { *this = *this + rhs; return *this; } // TODO make in-place
 		VecF operator-(const VecF& rhs) const { return {x - rhs.x, y - rhs.y}; }
 		VecF operator-(const float& rhs) const { return {x - rhs, y - rhs}; }
 		VecF operator*(const int& rhs) const { return {x * static_cast<float>(rhs), y * static_cast<float>(rhs)}; }

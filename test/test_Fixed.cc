@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/math/Fixed.h>
+#include <m2/math/primitives/Fixed.h>
 #include <bitset>
 
 using namespace m2;

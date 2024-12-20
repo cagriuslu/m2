@@ -8,3 +8,7 @@ std::string m2::Float::ToString() const {
 	snprintf(buffer.data(), buffer.size(), "%+014.06f", ToFloat());
 	return {buffer.data()};
 }
+
+std::string m2::to_string(const Float& f) {
+	return f.ToString();
+}

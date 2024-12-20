@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/MapF.h>
+#include <m2/containers/MapF.h>
 #include <m2/math/RectF.h>
 
 TEST(MapF, size) {

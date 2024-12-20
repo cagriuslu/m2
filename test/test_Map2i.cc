@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <m2/Map2i.h>
+#include <m2/containers/Map2i.h>
 
 TEST(Map2i, basic) {
 	using namespace m2;

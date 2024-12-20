@@ -110,3 +110,7 @@ void m2::Fixed::ThrowIfOutOfBounds(const double d) {
 		throw M2_ERROR("Double is less than what Fixed can hold");
 	}
 }
+
+std::string m2::to_string(const Fixed& f) {
+	return f.ToString();
+}

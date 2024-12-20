@@ -19,6 +19,15 @@ namespace m2 {
 
 		explicit operator bool() const { return not IsZero(); }
 		bool operator==(const Float& f) const { return _value == f._value; }
+		bool operator<=(const Float& f) const { return _value <= f._value; }
+		Float operator+() const { return *this; }
+		Float& operator+=(const Float& other) { _value += other._value; return *this; }
+		Float operator-() const { return Float{-_value}; }
+		Float operator+(const Float& b) const { return Float{_value + b._value}; }
+		Float operator-(const Float& b) const { return Float{_value - b._value}; }
+		Float operator*(const Float& b) const { return Float{_value * b._value}; }
+		Float operator/(const Float& b) const { return Float{_value / b._value}; }
+		friend bool operator<(const Float& a, const Float& b) { return a._value < b._value; }
 
 		// Attributes
 
@@ -31,6 +40,8 @@ namespace m2 {
 		[[nodiscard]] bool IsZero() const { return _value == 0.0f; }
 		[[nodiscard]] bool IsPositive() const { return 0.0f < _value; }
 		[[nodiscard]] bool IsNegative() const { return _value < 0.0f; }
+		// Check if the given number is equal enough to this number. Tolerance is assumed to be positive.
+		[[nodiscard]] bool IsEqual(const Float& other, const Float& tolerance) const { return (*this - other).AbsoluteValue() <= tolerance; }
 		[[nodiscard]] int32_t ToInteger() const { return static_cast<int>(_value); }
 		[[nodiscard]] float ToFloat() const { return _value; }
 		[[nodiscard]] double ToDouble() const { return _value; }
@@ -38,12 +49,11 @@ namespace m2 {
 
 		// Modifiers
 
-		Float operator+() const { return *this; }
-		Float operator-() const { return Float{-_value}; }
-		Float operator+(const Float& b) const { return Float{_value + b._value}; }
-		Float operator-(const Float& b) const { return Float{_value - b._value}; }
-		Float operator*(const Float& b) const { return Float{_value * b._value}; }
-		Float operator/(const Float& b) const { return Float{_value / b._value}; }
 		[[nodiscard]] Float AbsoluteValue() const { return Float{fabsf(_value)}; }
+		[[nodiscard]] Float Inverse() const { return Float{1.0f / _value}; }
+		[[nodiscard]] Float Power(const Float& p) const { return Float{powf(_value, p._value)}; }
+		[[nodiscard]] Float SquareRoot() const { return Float{sqrtf(_value)}; }
 	};
+
+	std::string to_string(const Float&);
 }

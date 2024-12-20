@@ -1,5 +1,6 @@
 #pragma once
 #include <utility>
+#include <sstream>
 
 namespace m2 {
 	template <typename Primitive>
@@ -17,11 +18,24 @@ namespace m2 {
 
 		explicit operator bool() const { return static_cast<bool>(_x) || static_cast<bool>(_y); }
 		bool operator==(const Vec& other) const { return _x == other._x && _y == other._y; }
+		Vec operator+(const Vec& other) const { return {_x + other._x, _y + other._y}; }
+		Vec& operator+=(const Vec& other) { _x += other._x; _y += other._y; return *this; }
+		Vec operator*(const Primitive& p) const { return {_x * p, _y * p}; }
+		Vec operator/(const Primitive& p) const { return {_x / p, _y / p}; }
 
 		// Accessors
 
+		[[nodiscard]] const Primitive& X() const { return _x; }
+		[[nodiscard]] const Primitive& Y() const { return _y; }
 		[[nodiscard]] bool IsNear(const Vec& other, Primitive tolerance) const { return (other._x - _x).AbsoluteValue() <= tolerance && (other._y - _y).AbsoluteValue() <= tolerance; }
-		[[nodiscard]] Primitive Magnitude() const { /* TODO */ }
-		[[nodiscard]] Primitive MagnitudeSquare() const { /* TODO */ }
+		[[nodiscard]] Primitive Magnitude() const { return MagnitudeSquare().SquareRoot(); }
+		[[nodiscard]] Primitive MagnitudeSquare() const { return _x * _x + _y * _y; }
 	};
+
+	template <typename Primitive>
+	std::string to_string(const Vec<Primitive>& v) {
+		std::stringstream ss;
+		ss << "{x:" << to_string(v.X()) << ",y:" << to_string(v.Y()) << "}";
+		return ss.str();
+	}
 }

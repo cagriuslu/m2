@@ -28,6 +28,14 @@ namespace m2 {
 
 		explicit operator bool() const { return not IsZero(); }
 		bool operator==(const Fixed& b) const { return _value == b._value; }
+		bool operator<=(const Fixed& b) const { return _value <= b._value; }
+		Fixed operator+() const { return *this; }
+		Fixed operator-() const { return Fixed{std::in_place, -_value}; }
+		Fixed operator+(const Fixed& b) const { return Fixed{std::in_place, _value + b._value}; }
+		Fixed operator-(const Fixed& b) const { return Fixed{std::in_place, _value - b._value}; }
+		Fixed operator*(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) * static_cast<int64_t>(b._value)) >> PRECISION)}; }
+		Fixed operator/(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
+		friend bool operator<(const Fixed& a, const Fixed& b) { return a._value < b._value; }
 
 		// Attributes
 
@@ -44,6 +52,10 @@ namespace m2 {
 		[[nodiscard]] bool IsZero() const { return _value == 0; }
 		[[nodiscard]] bool IsPositive() const { return not IsZero() && not IsNegative(); }
 		[[nodiscard]] bool IsNegative() const { return _value & 0x80000000; }
+		// Check if the given number is equal enough to this number. Tolerance is assumed to be positive.
+		// Fixed point numbers should not have an equality conversion problem, but this functions is provided to be API
+		// compatible with Float.
+		[[nodiscard]] bool IsEqual(const Fixed& other, const Fixed& tolerance) const { return (*this - other).AbsoluteValue() <= tolerance; }
 		/// The result is an approximation because the fractional part of the number will be thrown away
 		[[nodiscard]] int32_t ToInteger() const { return _value >> PRECISION; }
 		/// The result is an approximation because floating point numbers get less accurate away from origin
@@ -61,17 +73,14 @@ namespace m2 {
 
 		// Modifiers
 
-		Fixed operator+() const { return *this; }
-		Fixed operator-() const { return Fixed{std::in_place, -_value}; }
-		Fixed operator+(const Fixed& b) const { return Fixed{std::in_place, _value + b._value}; }
-		Fixed operator-(const Fixed& b) const { return Fixed{std::in_place, _value - b._value}; }
-		Fixed operator*(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) * static_cast<int64_t>(b._value)) >> PRECISION)}; }
-		Fixed operator/(const Fixed& b) const { return Fixed{std::in_place, static_cast<int32_t>((static_cast<int64_t>(_value) << PRECISION) / static_cast<int64_t>(b._value))}; }
 		[[nodiscard]] Fixed AbsoluteValue() const { return IsNegative() ? -*this : *this; }
+		[[nodiscard]] Fixed Inverse() const { return Fixed{1} / *this; }
 
 	private:
 		static void ThrowIfOutOfBounds(int i);
 		static void ThrowIfOutOfBounds(float f);
 		static void ThrowIfOutOfBounds(double d);
 	};
+
+	std::string to_string(const Fixed&);
 }
