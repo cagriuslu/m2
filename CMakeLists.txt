@@ -205,6 +205,7 @@ if(GTest_FOUND)
             "src/M2.cc"
             "src/Options.cc"
             "src/physics/Particle.cc"
+            "src/physics/RigidBody.cc"
             "src/String.cc"
             "src/Synth.cc"
             "src/VmAddScript.cc"

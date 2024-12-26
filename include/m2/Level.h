@@ -8,6 +8,7 @@
 #include <optional>
 #include <string>
 #include <m2/sdl/Detail.h>
+#include <m2/physics/World.h>
 #include <m2/containers/DrawList.h>
 #include "Meta.h"
 #include "Object.h"
@@ -56,6 +57,7 @@ namespace m2 {
 		Pool<SoundEmitter> sound_emitters;
 		Pool<CharacterVariant> characters;
 		b2World* world{};
+		World _world2;
 		box2d::ContactListener* contact_listener{};
 		Id camera_id{}, player_id{}, pointer_id{};
 		std::optional<SoundListener> left_listener, right_listener;
@@ -91,9 +93,11 @@ namespace m2 {
 		void_expected reset_bulk_sheet_editor();
 
 		// Accessors
+
 		std::optional<std::filesystem::path> path() const { return _lb_path; }
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }
+		World& World2() { return _world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
 		[[nodiscard]] const RectI& background_boundary() const { return _background_boundary; }
 		const std::string& identifier() const { return _lb ? _lb->identifier() : empty_string; }

@@ -13,12 +13,15 @@ namespace m2 {
 		Vec() = default;
 		Vec(const Primitive& x, const Primitive& y) : _x(x), _y(y) {}
 		Vec(Primitive&& x, Primitive&& y) : _x(std::move(x)), _y(std::move(y)) {}
+		Vec(int x, int y) : _x(x), _y(y) {}
+		Vec(float x, float y) : _x(x), _y(y) {}
 
 		// Operators
 
 		explicit operator bool() const { return static_cast<bool>(_x) || static_cast<bool>(_y); }
 		bool operator==(const Vec& other) const { return _x == other._x && _y == other._y; }
 		Vec operator+(const Vec& other) const { return {_x + other._x, _y + other._y}; }
+		Vec operator-(const Vec& other) const { return {_x - other._x, _y - other._y}; }
 		Vec& operator+=(const Vec& other) { _x += other._x; _y += other._y; return *this; }
 		Vec operator*(const Primitive& p) const { return {_x * p, _y * p}; }
 		Vec operator/(const Primitive& p) const { return {_x / p, _y / p}; }

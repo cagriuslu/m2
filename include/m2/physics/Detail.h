@@ -8,5 +8,8 @@ namespace m2 {
 
 	const auto physicsDeltaTime = PhysicsPrimitive{0.01f};
 	const auto physicsDeltaTimeSquared = PhysicsPrimitive{0.001f};
-	const auto physicsDefaultDamping = PhysicsPrimitive{0.95f};
+	const auto physicsDefaultVelocitySustainment = PhysicsPrimitive{0.95f};
+	const auto physicsDefaultAngularVelocitySustainment = PhysicsPrimitive{0.95f};
+	// const auto physicsDefaultGravity = Vec{PhysicsPrimitive{0.0f}, PhysicsPrimitive{9.8f}};
+	const auto physicsDefaultGravity = Vec{PhysicsPrimitive{0.0f}, PhysicsPrimitive{0.0f}};
 }

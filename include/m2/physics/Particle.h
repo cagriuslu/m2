@@ -20,7 +20,7 @@ namespace m2 {
 		Vec<PhysicsPrimitive> _acceleration;
 
 	public:
-		explicit Particle(PhysicsPrimitive mass, Vec<PhysicsPrimitive> initialPosition, Vec<PhysicsPrimitive> gravitationalAcceleration = {}, PhysicsPrimitive damping = physicsDefaultDamping);
+		explicit Particle(PhysicsPrimitive mass, Vec<PhysicsPrimitive> initialPosition, Vec<PhysicsPrimitive> gravitationalAcceleration = {}, PhysicsPrimitive damping = physicsDefaultVelocitySustainment);
 		// Copy not allowed
 		Particle(const Particle& other) = delete;
 		Particle& operator=(const Particle& other) = delete;
