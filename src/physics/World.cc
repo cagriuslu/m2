@@ -14,3 +14,8 @@ m2::RigidBody& m2::World::GetRigidBody(const size_t index) {
 	}
 	return _rigidBodies[index];
 }
+void m2::World::Integrate() {
+	for (auto& body : _rigidBodies) {
+		body.Integrate();
+	}
+}

@@ -18,7 +18,7 @@ namespace m2::network {
 		size_t _outgoing_buffer_bytes_left{};
 
 	public:
-		TcpSocketManager(TcpSocket&& s, int index) : _socket(std::move(s)),_index(index) {}
+		TcpSocketManager(TcpSocket&& s, int index) : _socket(std::move(s)), _index(index) {}
 
 		TcpSocket& socket() { return _socket; }
 		[[nodiscard]] int index() const { return _index; }

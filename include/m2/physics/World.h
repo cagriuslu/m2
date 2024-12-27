@@ -23,5 +23,6 @@ namespace m2 {
 			return _rigidBodies.size() - 1;
 		}
 		RigidBody& GetRigidBody(size_t index);
+		void Integrate();
 	};
 }

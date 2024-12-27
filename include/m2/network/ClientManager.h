@@ -18,7 +18,7 @@ namespace m2::network {
 			std::queue<pb::NetworkMessage> outgoing_queue{};
 			uint64_t ready_token;
 		};
-		// Client has disconnected due to network errors
+		// Client has disconnected due to network errors and may reconnect if it presents the same ready token
 		struct HonorablyDisconnected {
 			uint64_t expected_ready_token; // Same as Ready::ready_token
 			sdl::ticks_t disconnected_at;
@@ -67,7 +67,7 @@ namespace m2::network {
 		void set_misbehaved();
 
 		/// Returns true if there's some message to process. If the socket is readable, more data will be fetched.
-		/// Otherwise only the local buffers will be checked.
+		/// Otherwise, only the local buffers will be checked.
 		bool has_incoming_data(bool is_socket_readable);
 		/// Take a peek at the next fully received message waiting to be processed. Returns nullptr if there are none.
 		const pb::NetworkMessage* peak_incoming_message();

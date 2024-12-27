@@ -12,12 +12,15 @@ namespace m2::network {
 
 	class TcpSocket {
 		detail::PlatformSpecificTcpSocketData* _platform_specific_data{};
+		/// If the socket is a server, the address will contain 0. Otherwise, the address will contain the IP address
+		/// of the server.
 		IpAddress _addr{};
+		/// The port is always the port number of the server.
 		Port _port{};
 
 		/// Client sockets held by the server are created with this constructor. Platform specific data should be
 		/// initialized after calling this constructor.
-		TcpSocket(IpAddress addr, Port port) : _addr(addr), _port(port) {}
+		TcpSocket(const IpAddress addr, const Port port) : _addr(addr), _port(port) {}
 
 	public:
         static expected<TcpSocket> create_server(uint16_t port);
