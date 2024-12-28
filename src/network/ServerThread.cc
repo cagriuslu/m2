@@ -7,7 +7,7 @@
 #include <m2/Game.h>
 #include <algorithm>
 
-#define PORT (1162)
+#define TCP_PORT_NO (1162)
 
 m2::network::ServerThread::ServerThread(mplayer::Type type, unsigned max_connection_count) : _type(type),
 	_max_connection_count(max_connection_count), _thread(ServerThread::thread_func, this) {
@@ -233,7 +233,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	set_thread_name_for_logging("SR");
 	LOG_INFO("ServerThread function");
 
-	auto listen_socket = TcpSocket::create_server(PORT);
+	auto listen_socket = TcpSocket::create_server(TCP_PORT_NO);
 	if (not listen_socket) {
 		throw M2_ERROR("TcpSocket creation failed: " + listen_socket.error());
 	}
@@ -263,7 +263,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	if (not listen_success) {
 		throw M2_ERROR("Listen failed: " + listen_success.error());
 	}
-	LOG_INFO("TcpSocket listening on port", PORT);
+	LOG_INFO("TcpSocket listening on port", TCP_PORT_NO);
 	server_thread->set_state_locked(pb::ServerState::SERVER_LISTENING);
 
     // Ping broadcast for Windows is not implemented

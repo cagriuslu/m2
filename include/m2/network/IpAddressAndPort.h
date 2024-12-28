@@ -5,11 +5,13 @@
 #include <cstdint>
 
 namespace m2::network {
+	/// In network byte order
 	using IpAddress = uint32_t;
+	/// In network byte order
 	using Port = uint16_t;
 	using IpAddressAndPort = std::pair<IpAddress,Port>;
 
-	m2::expected<std::vector<std::string>> get_ip_addresses();
+	expected<std::vector<std::string>> get_ip_addresses();
 }
 
 namespace m2 {
