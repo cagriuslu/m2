@@ -22,6 +22,39 @@ namespace {
 				return {255, 255, 255};
 		}
 	}
+
+	TextSelectionBlueprint::Options list_cards_as_selection_options(const m2g::pb::ItemType exclude_card_1, const m2g::pb::ItemType exclude_card_2) {
+		const auto card_filter = generate_named_item_types_filter(
+				{m2g::pb::ITEM_CATEGORY_CITY_CARD,
+				m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD,
+				m2g::pb::ITEM_CATEGORY_WILD_CARD});
+		const auto cards = card_filter(M2_PLAYER.character());
+
+		Card filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
+		TextSelectionBlueprint::Options options;
+		std::ranges::for_each(cards, [&filter_card_1, &filter_card_2, &options](const auto card) {
+				if (filter_card_1 && card == filter_card_1) {
+					filter_card_1 = static_cast<Card>(0);
+				} else if (filter_card_2 && card == filter_card_2) {
+					filter_card_2 = static_cast<Card>(0);
+				} else {
+					// Add option
+					options.emplace_back(TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(card).in_game_name(), static_cast<int>(card),cards_window_card_color(card)});
+				}});
+
+		// Sort first by type, then by alphabetically
+		std::ranges::sort(options,
+				[](const TextSelectionBlueprint::Option& a, const TextSelectionBlueprint::Option& b) {
+					const auto a_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(a.return_value))].category();
+					const auto b_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(b.return_value))].category();
+					if (a_category != b_category) {
+						return a_category < b_category;
+					}
+					return a.text < b.text;
+				});
+
+		return options;
+	}
 }
 
 m2::RectF cards_window_ratio() {
@@ -61,34 +94,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
 					.on_create = [=](MAYBE TextSelection& self) {
-						auto card_filter = generate_named_item_types_filter(
-							{m2g::pb::ITEM_CATEGORY_CITY_CARD,
-							 m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD,
-							 m2g::pb::ITEM_CATEGORY_WILD_CARD});
-						auto cards = card_filter(M2_PLAYER.character());
-
-						Card filter_card_1 = exclude_card_1, filter_card_2 = exclude_card_2;
-						TextSelectionBlueprint::Options options;
-						std::ranges::for_each(cards, [&filter_card_1, &filter_card_2, &options](const auto card) {
-								if (filter_card_1 && card == filter_card_1) {
-									filter_card_1 = static_cast<Card>(0);
-								} else if (filter_card_2 && card == filter_card_2) {
-									filter_card_2 = static_cast<Card>(0);
-								} else {
-									// Add option
-									options.emplace_back(TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(card).in_game_name(), static_cast<int>(card),cards_window_card_color(card)});
-								}});
-						// Sort first by type, then by alphabetically
-						std::ranges::sort(options,
-								[](const TextSelectionBlueprint::Option& a, const TextSelectionBlueprint::Option& b) {
-									const auto a_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(a.return_value))].category();
-									const auto b_category = M2_GAME.named_items[static_cast<Card>(std::get<int>(b.return_value))].category();
-									if (a_category != b_category) {
-										return a_category < b_category;
-									}
-									return a.text < b.text;
-								});
-						self.set_options(options);
+						self.set_options(list_cards_as_selection_options(exclude_card_1, exclude_card_2));
 					}
 				}
 			},
