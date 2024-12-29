@@ -18,13 +18,12 @@ m2::Object* find_road_at_location(m2g::pb::SpriteType location) {
 
 void remove_all_roads() {
 	std::vector<m2::ObjectId> ids;
-	ids.reserve(28); // Reserve an average amount of space
 	std::ranges::copy(
-		M2_LEVEL.characters
-		| std::views::transform(m2::to_character_base)
-		| std::views::filter(is_road_character)
-		| std::views::transform(m2::to_owner_id_of_component),
-		std::back_inserter(ids));
+			M2_LEVEL.characters
+				| std::views::transform(m2::to_character_base)
+				| std::views::filter(is_road_character)
+				| std::views::transform(m2::to_owner_id_of_component),
+			std::back_inserter(ids));
 
 	// Delete objects immediately
 	std::ranges::for_each(ids, [](m2::ObjectId id) {

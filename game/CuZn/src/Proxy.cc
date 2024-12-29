@@ -669,7 +669,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	score_sold_factories_and_remove_obsolete();
 
 	// Send canal era results
-	m2g::pb::ServerCommand canal_era_result_command;
+	pb::ServerCommand canal_era_result_command;
 	std::ranges::for_each(M2G_PROXY.multi_player_object_ids
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object),
@@ -692,13 +692,13 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	// Give roads to players
-	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-	auto road_possession_limit = m2::zround(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
+	const auto& road_item = M2_GAME.GetNamedItem(pb::ROAD_TILE);
+	auto road_possession_limit = m2::zround(road_item.get_attribute(pb::POSSESSION_LIMIT));
 	std::ranges::for_each(M2G_PROXY.multi_player_object_ids
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object),
 		[&](m2::Character& human_player) {
-			while (human_player.count_item(m2g::pb::ROAD_TILE) < road_possession_limit) {
+			while (human_player.count_item(pb::ROAD_TILE) < road_possession_limit) {
 				human_player.add_named_item(road_item);
 			}
 		});

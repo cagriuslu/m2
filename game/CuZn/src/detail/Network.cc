@@ -3,6 +3,7 @@
 #include <cuzn/Detail.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 
 using namespace m2g;
 using namespace m2g::pb;
@@ -52,13 +53,10 @@ bool is_industry_city_connected_to_location(IndustryCity city, Location location
 
 m2::Graph create_active_connections_graph() {
 	m2::Graph active_connections;
-	for (const auto& road_chr : M2_LEVEL.characters
-								| std::views::transform(m2::to_character_base)
-								| std::views::filter(is_road_character)) {
+	for (const auto& road_chr : M2_LEVEL.characters | std::views::transform(m2::to_character_base) | std::views::filter(is_road_character)) {
 		// Get the cities connected by the road
 		std::vector<City> cities;
-		std::transform(road_chr.find_items(ITEM_CATEGORY_CITY_CARD), road_chr.end_items(), std::back_inserter(cities),
-			[](const auto& item) { return item.type(); });
+		std::transform(road_chr.find_items(ITEM_CATEGORY_CITY_CARD), road_chr.end_items(), std::back_inserter(cities), [](const auto& item) { return item.type(); });
 		// Fill the graph
 		if (cities.size() == 2) {
 			active_connections.add_edge(cities[0], {cities[1], 1.0f});
