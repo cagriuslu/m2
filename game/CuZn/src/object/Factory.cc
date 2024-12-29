@@ -95,14 +95,14 @@ City to_city_of_factory_character(m2::Character& chr) {
 	return chr.find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD)->type();
 }
 
-Industry to_industry_of_factory_character(m2::Character& chr) {
+Industry to_industry_of_factory_character(const m2::Character& chr) {
 	if (not is_factory_character(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
 	return chr.find_items(m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD)->type();
 }
 
-IndustryTile to_industry_tile_of_factory_character(m2::Character& chr) {
+IndustryTile to_industry_tile_of_factory_character(const m2::Character& chr) {
 	if (not is_factory_character(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}

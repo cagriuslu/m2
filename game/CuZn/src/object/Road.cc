@@ -38,10 +38,16 @@ int link_count_of_road_character(m2::Character& chr) {
 
 	auto cities = to_city_cards_of_road_character(chr);
 	return std::accumulate(cities.begin(), cities.end(), 0, [](int acc, City city) -> int {
+		// If the city is a merchant city, add 2 links
+		if (is_merchant_city(city)) {
+			return acc + 2;
+		}
+		// Else, iterate over locations in the city
 		auto locations = industry_locations_in_city(city);
 		return acc + std::accumulate(locations.begin(), locations.end(), 0, [](int acc, IndustryLocation location) -> int {
-			if (auto* factory = find_factory_at_location(location)) {
-				auto industry_tile = to_industry_tile_of_factory_character(factory->character());
+			// Check if there's a built factory
+			if (const auto* factory = find_factory_at_location(location)) {
+				const auto industry_tile = to_industry_tile_of_factory_character(factory->character());
 				return acc + m2::iround(M2_GAME.GetNamedItem(industry_tile).get_attribute(m2g::pb::LINK_BONUS));
 			}
 			return acc;
