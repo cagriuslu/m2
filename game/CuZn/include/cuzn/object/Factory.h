@@ -17,6 +17,7 @@ void sell_factory(m2::Character& factory_chr);
 // Filters
 inline bool is_factory_character(m2::Character& chr) { return chr.owner().object_type() == m2g::pb::FACTORY; }
 bool is_factory_sold(m2::Character& chr);
+inline bool is_factory_not_sold(m2::Character& chr) { return not is_factory_sold(chr); }
 bool is_factory_level_1(m2::Character& chr);
 
 // Transformers

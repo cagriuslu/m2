@@ -48,7 +48,8 @@ void flip_exhausted_factories() {
 	std::ranges::for_each(
 		M2_LEVEL.characters
 			| std::views::transform(m2::to_character_base)
-			| std::views::filter(is_factory_character),
+			| std::views::filter(is_factory_character)
+			| std::views::filter(is_factory_not_sold),
 		[](m2::Character& chr) {
 			const auto is_coal_mine_exhausted = to_industry_of_factory_character(chr) == COAL_MINE_CARD
 				&& m2::is_equal(chr.get_resource(COAL_CUBE_COUNT), 0.0f, 0.001f);
