@@ -293,7 +293,7 @@ m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCo
 			if (is_industry_location(beer_source)) {
 				auto* source_factory = find_factory_at_location(beer_source);
 				source_factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
-				reserved_beers.emplace_back(factory);
+				reserved_beers.emplace_back(source_factory);
 			} else if (is_merchant_location(beer_source)) {
 				auto* source_merchant = find_merchant_at_location(beer_source);
 				source_merchant->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
