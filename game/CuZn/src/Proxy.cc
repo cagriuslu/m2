@@ -148,8 +148,8 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			return std::nullopt;
 		}
 
-		m2g::pb::ServerCommand action_notification_command;
-		m2g::pb::ServerCommand::ActionNotification* action_notification = action_notification_command.mutable_action_notification();
+		pb::ServerCommand action_notification_command;
+		pb::ServerCommand::ActionNotification* action_notification = action_notification_command.mutable_action_notification();
 		action_notification->set_player_index(turn_holder_index);
 
 		std::pair<Card,int> card_to_discard_and_money_spent{};
@@ -279,56 +279,11 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), (size_t)0, [](size_t sum, const std::vector<Card>& v) { return sum + v.size(); });
 	card_count += _draw_deck.size();
 
-	std::optional<std::pair<PlayerIndex, m2g::pb::ServerCommand>> liquidation_necessary;
+	decltype(prepare_next_round()) liquidation_necessary;
 	if (_waiting_players.empty() && card_count == 0) {
 		LOG_INFO("No cards left in the game");
-		// If no cards left in the game
 		if (M2G_PROXY.is_canal_era()) {
-			liquidation_necessary = prepare_next_round();
-			if (not liquidation_necessary) {
-				LOG_INFO("Ending canal era");
-
-				score_links_and_remove_roads();
-				score_sold_factories_and_remove_obsolete();
-
-				// Send canal era results
-				m2g::pb::ServerCommand canal_era_result_command;
-				std::ranges::for_each(M2G_PROXY.multi_player_object_ids
-					| std::views::transform(m2::to_object_of_id)
-					| std::views::transform(m2::to_character_of_object),
-					[&](m2::Character& human_player) {
-						canal_era_result_command.mutable_canal_era_result()->add_victory_points(
-							m2::iround(human_player.get_resource(pb::VICTORY_POINTS)));
-					});
-				LOG_INFO("Sending CanalEraResult to clients");
-				M2_GAME.ServerThread().send_server_command(canal_era_result_command, -1);
-
-				// Reset merchant beer
-				for (const auto& [_, merchant_id] : merchant_object_ids) {
-					M2_LEVEL.objects[merchant_id].character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
-				}
-
-				// Shuffle the draw deck
-				auto draw_deck = prepare_draw_deck(M2_GAME.ServerThread().client_count());
-				give_8_cards_to_each_player(draw_deck);
-				_draw_deck = std::move(draw_deck);
-
-				// Give roads to players
-				const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
-				auto road_possession_limit = m2::zround(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
-				std::ranges::for_each(M2G_PROXY.multi_player_object_ids
-					| std::views::transform(m2::to_object_of_id)
-					| std::views::transform(m2::to_character_of_object),
-					[&](m2::Character& human_player) {
-						while (human_player.count_item(m2g::pb::ROAD_TILE) < road_possession_limit) {
-							human_player.add_named_item(road_item);
-						}
-					});
-
-				game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
-				game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
-				LOG_INFO("Switch to railroad era and next player");
-			}
+			liquidation_necessary = prepare_railroad_era();
 		} else {
 			LOG_INFO("Ending game");
 			score_links_and_remove_roads();
@@ -353,7 +308,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			// Otherwise, just fetch the next player from _waiting_players
 			LOG_INFO("Switch to next player");
 		}
-	} else if (not _is_first_turn && card_count % 2) {
+	} else if (card_count % 2) { // && not _is_first_turn
 		// If there are odd number of cards, the turn holder does not change
 		// Push to the front of the waiting players, so that it's popped first below.
 		_waiting_players.push_front(turn_holder_index);
@@ -397,7 +352,6 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			next_turn_holder = -1;
 		}
 	}
-
 	return next_turn_holder;
 }
 
@@ -416,7 +370,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 	}
 }
 
-void m2g::Proxy::post_server_update(bool shutdown) {
+void m2g::Proxy::post_server_update(const bool shutdown) {
 	// Delete the custom hud and refresh the status bar
 	if (custom_hud_panel) {
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*custom_hud_panel);
@@ -562,43 +516,34 @@ m2::Character& m2g::Proxy::game_state_tracker() const {
 bool m2g::Proxy::is_last_action_of_player() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 1.0f, 0.001f);
 }
-
 bool m2g::Proxy::is_canal_era() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 0.0f, 0.001f);
 }
-
 bool m2g::Proxy::is_railroad_era() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_RAILROAD_ERA), 1.0f, 0.001f);
 }
-
 int m2g::Proxy::market_coal_count() const {
 	return m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
 }
-
 int m2g::Proxy::market_iron_count() const {
 	return m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 }
-
 int m2g::Proxy::market_coal_cost(int coal_count) const {
 	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
 	return calculate_cost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
 }
-
 int m2g::Proxy::market_iron_cost(int iron_count) const {
 	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 	return calculate_cost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
 }
-
 int m2g::Proxy::player_spent_money(int player_index) const {
 	auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
 	return m2::iround(game_state_tracker().get_resource(money_spent_by_player_enum));
 }
-
 std::pair<int,int> m2g::Proxy::market_coal_revenue(int count) const {
 	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
 	return calculate_revenue(COAL_MARKET_CAPACITY, current_coal_count, count);
 }
-
 std::pair<int,int> m2g::Proxy::market_iron_revenue(int count) const {
 	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
 	return calculate_revenue(IRON_MARKET_CAPACITY, current_iron_count, count);
@@ -652,7 +597,7 @@ void m2g::Proxy::remove_notification() {
 }
 
 std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::Proxy::prepare_next_round() {
-	LOG_INFO("Prepare next round");
+	LOG_INFO("Preparing next round");
 
 	// First, before preparing the next round, check if liquidation is necessary.
 	if (auto liquidation = is_liquidation_necessary()) {
@@ -704,6 +649,55 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	}
 
 	// Liquidation not necessary
+	return std::nullopt;
+}
+
+m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
+	if (auto isLiquidationNecessary = prepare_next_round()) {
+		return isLiquidationNecessary;
+	}
+
+	LOG_INFO("Preparing railroad era");
+	score_links_and_remove_roads();
+	score_sold_factories_and_remove_obsolete();
+
+	// Send canal era results
+	m2g::pb::ServerCommand canal_era_result_command;
+	std::ranges::for_each(M2G_PROXY.multi_player_object_ids
+		| std::views::transform(m2::to_object_of_id)
+		| std::views::transform(m2::to_character_of_object),
+		[&](const m2::Character& human_player) {
+			canal_era_result_command.mutable_canal_era_result()->add_victory_points(
+				m2::iround(human_player.get_resource(pb::VICTORY_POINTS)));
+		});
+	LOG_INFO("Sending CanalEraResult to clients");
+	M2_GAME.ServerThread().send_server_command(canal_era_result_command, -1);
+
+	// Reset merchant beer
+	for (const auto& [_, merchant_id] : merchant_object_ids) {
+		M2_LEVEL.objects[merchant_id].character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+	}
+
+	// Shuffle the draw deck
+	auto draw_deck = prepare_draw_deck(M2_GAME.ServerThread().client_count());
+	give_8_cards_to_each_player(draw_deck);
+	_draw_deck = std::move(draw_deck);
+
+	// Give roads to players
+	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);
+	auto road_possession_limit = m2::zround(road_item.get_attribute(m2g::pb::POSSESSION_LIMIT));
+	std::ranges::for_each(M2G_PROXY.multi_player_object_ids
+		| std::views::transform(m2::to_object_of_id)
+		| std::views::transform(m2::to_character_of_object),
+		[&](m2::Character& human_player) {
+			while (human_player.count_item(m2g::pb::ROAD_TILE) < road_possession_limit) {
+				human_player.add_named_item(road_item);
+			}
+		});
+
+	game_state_tracker().set_resource(pb::IS_RAILROAD_ERA, 1.0f);
+	game_state_tracker().set_resource(pb::IS_LAST_ACTION_OF_PLAYER, 0.0f);
+	LOG_INFO("Switch to railroad era and next player");
 	return std::nullopt;
 }
 

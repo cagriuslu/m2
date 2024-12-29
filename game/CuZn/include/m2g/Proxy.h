@@ -46,6 +46,7 @@ namespace m2g {
 		std::optional<std::list<m2::ui::Panel>::iterator> custom_hud_panel, cards_panel;
 
 		// Once the level is created, these should not be modified.
+
 		std::vector<m2::RGB> player_colors;
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> merchant_positions;
 		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
@@ -54,10 +55,12 @@ namespace m2g {
 		m2::Graph available_connections_graph; // Nodes are City (m2g::pb::ItemType) // TODO instead of holding onto this object, maybe recreate it by looking at sprites each time it's needed
 
 		// User journeys
+
 		std::optional<std::variant<BuildJourney, SellJourney, NetworkJourney, DevelopJourney, LiquidationJourney>> main_journeys;
 		static void main_journey_deleter();
 
 		// Accessors
+
 		[[nodiscard]] unsigned player_index(m2::Id id) const;
 		[[nodiscard]] m2::Character& game_state_tracker() const;
 		[[nodiscard]] bool is_last_action_of_player() const;
@@ -75,20 +78,30 @@ namespace m2g {
 		[[nodiscard]] std::set<m2::ObjectId> object_ids_of_connection_bg_tiles(const std::set<Connection>&) const;
 
 		// Modifiers
+
 		void enable_action_buttons();
 		void disable_action_buttons();
 		void show_notification(const std::string& msg);
 		void remove_notification();
 
 		// Server only fields
+
 		std::vector<Card> _draw_deck;
 		bool _is_first_turn{true};
+		/// Liquidation is a special state where a player needs to sell some of its factories to pay back their loan.
+		/// In this state, the current state holder is the player that needs to sell its factories.
 		bool _is_liquidating{};
+
 		using PlayerIndex = int;
-		std::list<PlayerIndex> _waiting_players; // Front of the list is the next player
 		using SpentMoney = int;
+		std::list<PlayerIndex> _waiting_players; // Front of the list is the next player
 		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players; // Front of the list played first
-		std::optional<std::pair<PlayerIndex, m2g::pb::ServerCommand>> prepare_next_round(); // Returns the index of the player that should liquidate assets
+
+		using LiquidationDetails = std::optional<std::pair<PlayerIndex, pb::ServerCommand>>;
+		/// If non-null, the index of the player that should liquidate their assets is returned.
+		LiquidationDetails prepare_next_round();
+		LiquidationDetails prepare_railroad_era();
+
 		void buy_coal_from_market();
 		void buy_iron_from_market();
 		void sell_coal_to_market(int count);
