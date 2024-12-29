@@ -78,7 +78,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 				M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
 				_cancel_button_panel.reset();
 			}
-			M2G_PROXY.remove_notification();
+			// M2G_PROXY.remove_notification(); // TODO both error messages and usage tips are shown as notification. We need to differentiate between the two before removing the notification.
 			M2_LEVEL.enable_hud();
 			M2_LEVEL.disable_dimming_with_exceptions();
 			break;
