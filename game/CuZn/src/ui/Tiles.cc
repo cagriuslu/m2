@@ -5,6 +5,8 @@
 #include <m2/ui/Widget.h>
 #include <m2/ui/Panel.h>
 #include <m2/Log.h>
+#include <m2/protobuf/Detail.h>
+#include <m2/ui/widget/Image.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -13,46 +15,36 @@ using namespace m2::ui::widget;
 namespace {
 	struct TileComparator {
 		static int roman_to_int(const std::string& r) {
-			if (r == "I") {
-				return 1;
-			} else if (r == "II") {
-				return 2;
-			} else if (r == "III") {
-				return 3;
-			} else if (r == "IV") {
-				return 4;
-			} else if (r == "V") {
-				return 5;
-			} else if (r == "VI") {
-				return 6;
-			} else if (r == "VII") {
-				return 7;
-			} else if (r == "VIII") {
-				return 8;
-			} else {
-				throw M2_ERROR("Unexpected roman numeral");
-			}
+			if (r == "I") { return 1; }
+			if (r == "II") { return 2; }
+			if (r == "III") { return 3; }
+			if (r == "IV") { return 4; }
+			if (r == "V") { return 5; }
+			if (r == "VI") { return 6; }
+			if (r == "VII") { return 7; }
+			if (r == "VIII") { return 8; }
+			throw M2_ERROR("Unexpected roman numeral");
 		}
 
 		// The tile names end with _TILE_YYY where YYY is a Roman numeral
-		bool operator()(IndustryTile a, IndustryTile b) {
-			auto name_a = pb::enum_name(a);
-			auto name_b = pb::enum_name(b);
-			std::string search_for = "_TILE_";
-			auto pos_a = name_a.rfind(search_for);
-			auto pos_b = name_b.rfind(search_for);
-			auto roman_a = name_a.substr(pos_a + search_for.size());
-			auto roman_b = name_b.substr(pos_b + search_for.size());
+		bool operator()(const IndustryTile a, const IndustryTile b) const {
+			const auto name_a = pb::enum_name(a);
+			const auto name_b = pb::enum_name(b);
+			const std::string search_for = "_TILE_";
+			const auto pos_a = name_a.rfind(search_for);
+			const auto pos_b = name_b.rfind(search_for);
+			const auto roman_a = name_a.substr(pos_a + search_for.size());
+			const auto roman_b = name_b.substr(pos_b + search_for.size());
 			return roman_to_int(roman_a) < roman_to_int(roman_b);
 		}
 	};
 }
 
-m2::RectF tiles_window_ratio() {
-	return m2::RectF{0.05f, 0.05f, 0.9f, 0.9f};
+RectF tiles_window_ratio() {
+	return RectF{0.05f, 0.05f, 0.9f, 0.9f};
 }
 
-m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
+PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
 	return PanelBlueprint{
 		.w = 61,
 		.h = 26,
@@ -71,9 +63,8 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 				.x = 1,
 				.y = 4,
 				.w = 18,
-				.h = 16,
-				.variant =
-				TextSelectionBlueprint{
+				.h = 10,
+				.variant = TextSelectionBlueprint{
 					.options = {
 						{"Cotton Mill", static_cast<int>(m2g::pb::ITEM_CATEGORY_COTTON_MILL_TILE)},
 						{"Iron Works", static_cast<int>(m2g::pb::ITEM_CATEGORY_IRON_WORKS_TILE)},
@@ -81,7 +72,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 						{"Coal Mine", static_cast<int>(m2g::pb::ITEM_CATEGORY_COAL_MINE_TILE)},
 						{"Pottery", static_cast<int>(m2g::pb::ITEM_CATEGORY_POTTERY_TILE)},
 						{"Manufactured Goods", static_cast<int>(m2g::pb::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)}},
-					.line_count = 11,
+					.line_count = 6,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
 					.on_action = [exclude_tile](const TextSelection &self) -> Action {
@@ -94,22 +85,30 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 							std::vector<IndustryTile> industry_tiles;
 							for (auto item_it = M2_PLAYER.character().find_items(industry_type); item_it != M2_PLAYER.character().end_items(); ++item_it) {
 								if (item_it->type() == tile_to_filter) {
-									// Don't emplace, clear filter
+									// Don't emplace, clear filter because only one tile is filtered
 									tile_to_filter = {};
 								} else {
 									industry_tiles.emplace_back(item_it->type());
 								}
 							}
 							// Sort the tiles
-							std::sort(industry_tiles.begin(), industry_tiles.end(), TileComparator{});
+							std::ranges::sort(industry_tiles, TileComparator{});
 							// Look up tile names
 							TextSelectionBlueprint::Options options;
-							std::transform(industry_tiles.begin(), industry_tiles.end(), std::back_inserter(options), [](IndustryTile tile) {
-								return widget::TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(tile).in_game_name(), m2::I(tile)};
+							std::ranges::transform(industry_tiles, std::back_inserter(options), [](const IndustryTile tile) {
+								return TextSelectionBlueprint::Option{M2_GAME.GetNamedItem(tile).in_game_name(), I(tile)};
 							});
 							// Look for the other widget
-							auto* tile_selection_widget = self.parent().find_first_widget_by_name<TextSelection>("TileSelection");
-							tile_selection_widget->set_options(std::move(options)); // Trigger the other widget to recreate itself
+							self.parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")
+									->set_options(std::move(options)); // Trigger the other widget to recreate itself
+							const auto industry = industry_of_industry_tile_category(industry_type);
+							self.parent().find_first_widget_by_name<Image>("IndustryVisual")
+									->set_sprite(M2_GAME.GetNamedItem(industry).ui_sprite()); // Set the industry image
+						} else {
+							self.parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")
+									->set_options({}); // Trigger the other widget to recreate itself
+							self.parent().find_first_widget_by_name<Image>("IndustryVisual")
+									->set_sprite({}); // Clear the industry image
 						}
 						// Clear details
 						self.parent().find_first_widget_by_name<Text>("BuildRequirements")->set_text("");
@@ -121,13 +120,20 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 				}
 			},
 			WidgetBlueprint{
-				.name = "TileSelection",
+				.name = "IndustryVisual",
+				.x = 6,
+				.y = 15,
+				.w = 8,
+				.h = 5,
+				.variant = ImageBlueprint{}
+			},
+			WidgetBlueprint{
+				.name = "TileLevelSelection",
 				.x = 20,
 				.y = 4,
 				.w = 10,
 				.h = 16,
-				.variant =
-				TextSelectionBlueprint{
+				.variant = TextSelectionBlueprint{
 					.line_count = 11,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
@@ -295,7 +301,7 @@ m2::ui::PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::It
 					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.on_action = [](const Text& self) -> Action {
 						// Find the other blueprint
-						if (auto* tile_selection = self.parent().find_first_widget_by_name<TextSelection>("TileSelection")) {
+						if (auto* tile_selection = self.parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")) {
 							if (auto selections = tile_selection->selections(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 								return make_return_action<m2g::pb::ItemType>(item_type);
