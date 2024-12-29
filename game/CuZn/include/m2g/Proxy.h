@@ -63,6 +63,7 @@ namespace m2g {
 
 		[[nodiscard]] unsigned player_index(m2::Id id) const;
 		[[nodiscard]] m2::Character& game_state_tracker() const;
+		[[nodiscard]] int total_card_count() const;
 		[[nodiscard]] bool is_last_action_of_player() const;
 		[[nodiscard]] bool is_canal_era() const;
 		[[nodiscard]] bool is_railroad_era() const;

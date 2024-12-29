@@ -110,7 +110,6 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	m2_repeat(client_count) { draw_deck.pop_back(); } // In the canal era, we discard client_count number of cards from the deck
 	give_8_cards_to_each_player(draw_deck);
 	_draw_deck = std::move(draw_deck);
-	// Store draw deck size to Game State Tracker
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	// Don't put the first player on the list
@@ -270,15 +269,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	}
 
 	// Determine next player
-
-	// Count the cards in the game
-	auto player_card_lists = M2G_PROXY.multi_player_object_ids
-		| std::views::transform(m2::to_object_of_id)
-		| std::views::transform(m2::to_character_of_object)
-		| std::views::transform(m2::generate_named_item_types_filter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
-	auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), (size_t)0, [](size_t sum, const std::vector<Card>& v) { return sum + v.size(); });
-	card_count += _draw_deck.size();
-
+	const auto card_count = total_card_count();
 	decltype(prepare_next_round()) liquidation_necessary;
 	if (_waiting_players.empty() && card_count == 0) {
 		LOG_INFO("No cards left in the game");
@@ -296,6 +287,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		// Give card to player
 		auto card = _draw_deck.back();
 		_draw_deck.pop_back();
+		game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 		turn_holder_character.add_named_item(M2_GAME.GetNamedItem(card));
 
 		// Check if first turn finished for all players
@@ -319,6 +311,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		while (not _draw_deck.empty() && player_card_count(turn_holder_character) < 8) {
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
+			game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 			turn_holder_character.add_named_item(M2_GAME.GetNamedItem(card));
 		}
 
@@ -332,9 +325,6 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 			LOG_INFO("Switch to next player");
 		}
 	}
-
-	// Store draw deck size to Game State Tracker
-	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	int next_turn_holder;
 	if (liquidation_necessary) {
@@ -512,7 +502,14 @@ unsigned m2g::Proxy::player_index(m2::Id id) const {
 m2::Character& m2g::Proxy::game_state_tracker() const {
 	return M2_LEVEL.objects[_game_state_tracker_id].character();
 }
-
+int m2g::Proxy::total_card_count() const {
+	const auto player_card_lists = M2G_PROXY.multi_player_object_ids
+		| std::views::transform(m2::to_object_of_id)
+		| std::views::transform(m2::to_character_of_object)
+		| std::views::transform(m2::generate_named_item_types_filter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
+	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<Card>& card_list) { return sum + card_list.size(); });
+	return card_count + m2::iround(game_state_tracker().get_resource(pb::DRAW_DECK_SIZE));
+}
 bool m2g::Proxy::is_last_action_of_player() const {
 	return m2::is_equal(game_state_tracker().get_resource(pb::IS_LAST_ACTION_OF_PLAYER), 1.0f, 0.001f);
 }
@@ -603,20 +600,20 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	if (auto liquidation = is_liquidation_necessary()) {
 		LOG_INFO("Liquidation is necessary");
 		// Prepare the ServerCommand and return
-		m2g::pb::ServerCommand sc;
+		pb::ServerCommand sc;
 		sc.set_liquidate_assets_for_loan(liquidation->second);
 		return std::make_pair(liquidation->first, sc);
 	}
 
 	// Gain incomes
-	for (auto player_id : M2G_PROXY.multi_player_object_ids) {
+	for (const auto player_id : M2G_PROXY.multi_player_object_ids) {
 		// Lookup player
 		auto& player_character = M2_LEVEL.objects[player_id].character();
-		auto income_points = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
-		auto income_level = income_level_from_income_points(income_points);
-		auto player_money = m2::iround(player_character.get_resource(pb::MONEY));
+		const auto income_points = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
+		const auto income_level = income_level_from_income_points(income_points);
+		const auto player_money = m2::iround(player_character.get_resource(pb::MONEY));
 		LOG_DEBUG("Player gained money", income_level);
-		auto new_player_money = player_money + income_level;
+		const auto new_player_money = player_money + income_level;
 		if (new_player_money < 0) {
 			LOG_INFO("Player doesn't have enough money to pay its loan, they'll lose victory points", new_player_money);
 			player_character.add_resource(pb::VICTORY_POINTS, m2::F(new_player_money));
@@ -682,6 +679,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	auto draw_deck = prepare_draw_deck(M2_GAME.ServerThread().client_count());
 	give_8_cards_to_each_player(draw_deck);
 	_draw_deck = std::move(draw_deck);
+	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
 	// Give roads to players
 	const auto& road_item = M2_GAME.GetNamedItem(m2g::pb::ROAD_TILE);

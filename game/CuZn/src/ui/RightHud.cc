@@ -157,7 +157,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.35f,
 				.on_update = [](MAYBE Text& self) {
 					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
-					self.set_text(std::string{"Cards Left in Deck:"} + std::to_string(dds));
+					self.set_text(std::string{"Cards Left in Deck: "} + std::to_string(dds));
 					return make_continue_action();
 				}
 			}
