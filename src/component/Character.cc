@@ -72,7 +72,7 @@ std::vector<m2g::pb::ItemType> m2::Character::named_item_types() const {
 	}
 	return types;
 }
-std::vector<m2g::pb::ItemType> m2::Character::named_item_types(m2g::pb::ItemCategory item_cat) const {
+std::vector<m2g::pb::ItemType> m2::Character::named_item_types(const m2g::pb::ItemCategory item_cat) const {
 	std::vector<m2g::pb::ItemType> types;
 	for (auto it = find_items(item_cat); it != end_items(); ++it) {
 		auto* item = it.get();
@@ -419,14 +419,14 @@ std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named
 		return c.named_item_types(item_category);
 	};
 }
-std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_filter(std::initializer_list<m2g::pb::ItemCategory>&& item_categories) {
-	return [item_categories](m2::Character& c) -> std::vector<m2g::pb::ItemType> {
-		std::vector<m2g::pb::ItemType> types;
-		for (auto cat : item_categories) {
+std::function<std::vector<m2g::pb::ItemType>(m2::Character&)> m2::generate_named_item_types_filter(std::initializer_list<m2g::pb::ItemCategory> categoriesToFilter) {
+	return [categoriesToFilter = std::move(categoriesToFilter)](const Character& c) -> std::vector<m2g::pb::ItemType> {
+		std::vector<m2g::pb::ItemType> itemTypes;
+		for (const auto& cat : categoriesToFilter) {
 			auto _tmp = c.named_item_types(cat);
-			types.insert(types.cend(), _tmp.begin(), _tmp.end());
+			itemTypes.insert(itemTypes.cend(), _tmp.begin(), _tmp.end());
 		}
-		return types;
+		return itemTypes;
 	};
 }
 

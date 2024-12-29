@@ -195,7 +195,7 @@ namespace m2 {
 	// Filters
 	constexpr auto has_item_of_type(m2g::pb::ItemType it) { return [it](const Character& c) { return c.has_item(it); }; }
 	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_filter(m2g::pb::ItemCategory item_category);
-	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_filter(std::initializer_list<m2g::pb::ItemCategory>&& item_categories);
+	std::function<std::vector<m2g::pb::ItemType>(Character&)> generate_named_item_types_filter(std::initializer_list<m2g::pb::ItemCategory> categoriesToFilter);
 	// Transformers
 	Character& to_character_base(CharacterVariant& v);
 	inline Object& to_owner_of_character(const Character& chr) { return chr.owner(); }

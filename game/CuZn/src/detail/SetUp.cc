@@ -3,6 +3,7 @@
 #include <m2/Error.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/Game.h>
+#include <m2/Log.h>
 #include <random>
 
 using namespace m2g;
@@ -89,14 +90,17 @@ std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count) {
 	return draw_deck;
 }
 
-void give_8_cards_to_each_player(std::vector<m2g::pb::ItemType>& deck) {
-	for (const auto& player_object_id : M2G_PROXY.multi_player_object_ids) {
+void give_8_cards_to_each_player(std::vector<ItemType>& deck) {
+	for (int i = 0; i < M2G_PROXY.multi_player_object_ids.size(); ++i) {
+		const auto player_object_id = M2G_PROXY.multi_player_object_ids[i];
 		m2_repeat(8) {
 			// Draw card
-			auto card = deck.back();
+			auto card_type = deck.back();
 			deck.pop_back();
 			// Add card
-			M2_LEVEL.objects[player_object_id].character().add_named_item(M2_GAME.GetNamedItem(card));
+			const auto& card = M2_GAME.GetNamedItem(card_type);
+			M2_LEVEL.objects[player_object_id].character().add_named_item(card);
+			LOG_DEBUG("Giving card to player", i, card.in_game_name());
 		}
 	}
 }
