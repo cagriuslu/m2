@@ -14,18 +14,18 @@ int income_level_from_income_points(int ip) {
 
 	if (ip <= 0) {
 		return ip;
-	} else {
-		for (size_t level_minus_one = 0; level_minus_one < income_point_level_points.size(); ++level_minus_one) {
-			ip -= income_point_level_points[level_minus_one];
-			if (ip <= 0) {
-				return static_cast<int>(level_minus_one) + 1;
-			}
-		}
-		throw M2_ERROR("Invalid income_point_level_points map");
 	}
+
+	for (size_t level_minus_one = 0; level_minus_one < income_point_level_points.size(); ++level_minus_one) {
+		ip -= income_point_level_points[level_minus_one];
+		if (ip <= 0) {
+			return static_cast<int>(level_minus_one) + 1;
+		}
+	}
+	throw M2_ERROR("Invalid income_point_level_points map");
 }
 
-int highest_income_points_of_level(int level) {
+int highest_income_points_of_level(const int level) {
 	if (level < -10 || 30 < level) {
 		throw M2_ERROR("Invalid income level");
 	}

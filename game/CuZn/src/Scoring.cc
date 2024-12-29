@@ -19,12 +19,13 @@ void score_links_and_remove_roads() {
 }
 
 void score_sold_factories_and_remove_obsolete() {
-	std::ranges::for_each(M2_LEVEL.characters
-						  | std::views::transform(m2::to_character_base)
-						  | std::views::filter(is_factory_character)
-						  | std::views::filter(is_factory_sold),
-			[](m2::Character& factory) {
-				auto& player = factory.owner();
+	std::ranges::for_each(
+			M2_LEVEL.characters
+				| std::views::transform(m2::to_character_base)
+				| std::views::filter(is_factory_character)
+				| std::views::filter(is_factory_sold),
+			[](const m2::Character& factory) {
+				const auto& player = factory.owner();
 				player.character().add_resource(pb::VICTORY_POINTS, factory.get_attribute(pb::VICTORY_POINTS_BONUS));
 			});
 	remove_obsolete_factories();

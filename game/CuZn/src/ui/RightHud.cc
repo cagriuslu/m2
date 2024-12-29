@@ -1,4 +1,5 @@
 #include <cuzn/ui/RightHud.h>
+#include <cuzn/detail/Income.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/ui/widget/TextInput.h>
 #include <m2/ui/widget/TextSelection.h>
@@ -27,11 +28,11 @@ const PanelBlueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
-				.wrapped_font_size_in_units = 1.75f,
+				.horizontal_alignment = TextHorizontalAlignment::LEFT,
+				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
-					self.set_text(std::string{"Points:"} + std::to_string(vp));
+					self.set_text(std::string{"Victory Points: "} + std::to_string(vp));
 					return make_continue_action();
 				}
 			}
@@ -44,11 +45,11 @@ const PanelBlueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
-				.wrapped_font_size_in_units = 1.75f,
+				.horizontal_alignment = TextHorizontalAlignment::LEFT,
+				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
-					self.set_text(std::string{"Income:"} + std::to_string(vp));
+					self.set_text(std::string{"Income Points: "} + std::to_string(vp));
 					return make_continue_action();
 				}
 			}
@@ -61,11 +62,12 @@ const PanelBlueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
-				.wrapped_font_size_in_units = 1.75f,
+				.horizontal_alignment = TextHorizontalAlignment::LEFT,
+				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
-					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
-					self.set_text(std::string{"Cash:£"} + std::to_string(money));
+					const auto income_points = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
+					const auto income_level = income_level_from_income_points(income_points);
+					self.set_text(std::string{"Income: £"} + std::to_string(income_level));
 					return make_continue_action();
 				}
 			}
@@ -73,6 +75,23 @@ const PanelBlueprint right_hud_blueprint = {
 		WidgetBlueprint{
 			.x = 2,
 			.y = 17,
+			.w = 15,
+			.h = 4,
+			.border_width = 0,
+			.variant =
+			TextBlueprint{
+				.horizontal_alignment = TextHorizontalAlignment::LEFT,
+				.wrapped_font_size_in_units = 1.25f,
+				.on_update = [](MAYBE Text& self) {
+					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
+					self.set_text(std::string{"Cash: £"} + std::to_string(money));
+					return make_continue_action();
+				}
+			}
+		},
+		WidgetBlueprint{
+			.x = 2,
+			.y = 22,
 			.w = 15,
 			.h = 4,
 			.variant =
@@ -98,7 +117,7 @@ const PanelBlueprint right_hud_blueprint = {
 		},
 		WidgetBlueprint{
 			.x = 2,
-			.y = 22,
+			.y = 27,
 			.w = 15,
 			.h = 4,
 			.variant = TextBlueprint{
@@ -113,7 +132,7 @@ const PanelBlueprint right_hud_blueprint = {
 		},
 		WidgetBlueprint{
 			.x = 2,
-			.y = 27,
+			.y = 32,
 			.w = 15,
 			.h = 4,
 			.variant = TextBlueprint{
@@ -128,7 +147,7 @@ const PanelBlueprint right_hud_blueprint = {
 		},
 		WidgetBlueprint{
 			.x = 2,
-			.y = 32,
+			.y = 37,
 			.w = 15,
 			.h = 8,
 			.border_width = 0,

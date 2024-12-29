@@ -50,11 +50,11 @@ void flip_exhausted_factories() {
 			| std::views::transform(m2::to_character_base)
 			| std::views::filter(is_factory_character),
 		[](m2::Character& chr) {
-			auto is_coal_mine_exhausted = to_industry_of_factory_character(chr) == COAL_MINE_CARD
+			const auto is_coal_mine_exhausted = to_industry_of_factory_character(chr) == COAL_MINE_CARD
 				&& m2::is_equal(chr.get_resource(COAL_CUBE_COUNT), 0.0f, 0.001f);
-			auto is_iron_works_exhausted = to_industry_of_factory_character(chr) == IRON_WORKS_CARD
+			const auto is_iron_works_exhausted = to_industry_of_factory_character(chr) == IRON_WORKS_CARD
 				&& m2::is_equal(chr.get_resource(IRON_CUBE_COUNT), 0.0f, 0.001f);
-			auto is_brewery_exhausted = to_industry_of_factory_character(chr) == BREWERY_CARD
+			const auto is_brewery_exhausted = to_industry_of_factory_character(chr) == BREWERY_CARD
 				&& m2::is_equal(chr.get_resource(BEER_BARREL_COUNT), 0.0f, 0.001f);
 			if (is_coal_mine_exhausted || is_iron_works_exhausted || is_brewery_exhausted) {
 				sell_factory(chr);
@@ -63,16 +63,13 @@ void flip_exhausted_factories() {
 }
 
 void sell_factory(m2::Character& factory_chr) {
-	auto tile_type = to_industry_tile_of_factory_character(factory_chr);
+	const auto tile_type = to_industry_tile_of_factory_character(factory_chr);
 	const auto& tile_item = M2_GAME.GetNamedItem(tile_type);
 	// Earn income points
-	auto income_bonus = tile_item.get_attribute(INCOME_POINTS_BONUS);
-	auto curr_income_points = factory_chr.owner().get_parent()->character().get_attribute(INCOME_POINTS);
+	const auto income_bonus = tile_item.get_attribute(INCOME_POINTS_BONUS);
+	const auto curr_income_points = factory_chr.owner().get_parent()->character().get_attribute(INCOME_POINTS);
 	factory_chr.owner().get_parent()->character().set_attribute(INCOME_POINTS, curr_income_points + income_bonus);
-	// Earn victory points
-	auto victory_point_bonus = tile_item.get_attribute(VICTORY_POINTS_BONUS);
-	auto curr_victory_points = factory_chr.owner().get_parent()->character().get_resource(VICTORY_POINTS);
-	factory_chr.owner().get_parent()->character().set_resource(VICTORY_POINTS, curr_victory_points + victory_point_bonus);
+	// Victory points are NOT earned while selling
 	// Flip the tile
 	factory_chr.set_resource(IS_SOLD, 1.0f);
 }
