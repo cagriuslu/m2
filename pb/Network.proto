@@ -7,7 +7,7 @@ import "m2g_ItemType.proto";
 import "Item.proto";
 import "VecF.proto";
 
-enum ServerState {
+enum ServerThreadState {
   // Default state of the ServerThread. In this state, the ServerThread is not yet listening.
   SERVER_INITIAL_STATE = 0;
   // Signifies that the ServerThread is listening for new client connections.
@@ -22,7 +22,7 @@ enum ServerState {
   SERVER_QUIT = 5;
 }
 
-enum ClientState {
+enum ClientThreadState {
   // Default state of the ClientThread.
   CLIENT_INITIAL_STATE = 0;
   // Signifies that the ClientThread has successfully connected to the server, but is not ready.
@@ -95,4 +95,25 @@ message NetworkMessage {
     // Sent by the game engine automatically (not yet implemented, no known use case)
     m2.pb.ClientUpdate client_update = 5;
   }
+}
+
+message ServerEvent {}
+message ServerState {}
+message ClientEvent {}
+message ClientState {}
+
+message NetworkDatagram {
+  int32 game_hash = 1;
+  // Each datagram has an ever-increasing ID
+  int32 datagram_id = 2;
+  // Signifies that a message with the given ID is acknowledged
+  int32 ack_id = 3;
+
+  // The following fields are optional. If none exists, the datagram is only a ping message. The datagram cannot contain
+  // both server and client fields, but it might contain both an event and a state.
+
+  ServerEvent server_event = 4;
+  ServerState server_state = 5;
+  ClientEvent client_event = 6;
+  ClientState client_state = 7;
 }

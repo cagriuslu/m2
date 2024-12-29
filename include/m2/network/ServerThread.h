@@ -21,7 +21,7 @@ namespace m2::network {
 		// Shared variables
 		std::latch _latch{1};
 		std::mutex _mutex{};
-		pb::ServerState _state{pb::ServerState::SERVER_INITIAL_STATE};
+		pb::ServerThreadState _state{pb::ServerThreadState::SERVER_INITIAL_STATE};
 		std::vector<ClientManager> _clients;
 		bool _has_reconnected_client{};
 		int _turn_holder{};
@@ -63,9 +63,9 @@ namespace m2::network {
 
 	private:
 		pb::NetworkMessage prepare_server_update(bool shutdown);
-		pb::ServerState locked_get_state();
-		void set_state_locked(pb::ServerState state);
-		void set_state_unlocked(pb::ServerState state);
+		pb::ServerThreadState locked_get_state();
+		void set_state_locked(pb::ServerThreadState state);
+		void set_state_unlocked(pb::ServerThreadState state);
 
 		// Thread functions
 		static void thread_func(ServerThread* server_thread);

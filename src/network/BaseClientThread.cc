@@ -20,7 +20,7 @@ m2::network::detail::BaseClientThread::~BaseClientThread() {
 	std::this_thread::sleep_for(std::chrono::milliseconds(250)); // Give some time for the client thread to initiate TCP shutdown
 }
 
-m2::pb::ClientState m2::network::detail::BaseClientThread::locked_get_client_state() {
+m2::pb::ClientThreadState m2::network::detail::BaseClientThread::locked_get_client_state() {
 	const std::lock_guard lock(_mutex);
 	return _state;
 }
@@ -117,12 +117,12 @@ void m2::network::detail::BaseClientThread::locked_shutdown() {
 	locked_set_state(pb::CLIENT_SHUTDOWN);
 }
 
-void m2::network::detail::BaseClientThread::unlocked_set_state(pb::ClientState state) {
+void m2::network::detail::BaseClientThread::unlocked_set_state(pb::ClientThreadState state) {
 	LOG_DEBUG("Setting ClientThread state", pb::enum_name(state));
 	_state = state;
 }
 
-void m2::network::detail::BaseClientThread::locked_set_state(pb::ClientState state) {
+void m2::network::detail::BaseClientThread::locked_set_state(pb::ClientThreadState state) {
 	const std::lock_guard lock(_mutex);
 	unlocked_set_state(state);
 }

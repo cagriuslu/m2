@@ -20,7 +20,7 @@ namespace m2::network::detail {
 		// Shared variables
 		std::latch _latch{1};
 		std::mutex _mutex;
-		pb::ClientState _state{pb::ClientState::CLIENT_INITIAL_STATE};
+		pb::ClientThreadState _state{pb::ClientThreadState::CLIENT_INITIAL_STATE};
 		std::queue<pb::NetworkMessage> _outgoing_queue, _incoming_queue;
 		std::optional<pb::ServerUpdate> _received_server_update;
 		std::optional<m2g::pb::ServerCommand> _received_server_command;
@@ -47,7 +47,7 @@ namespace m2::network::detail {
 
 		// Accessors
 
-		pb::ClientState locked_get_client_state();
+		pb::ClientThreadState locked_get_client_state();
 		bool locked_has_server_update();
 		const pb::ServerUpdate* locked_peek_server_update();
 		std::optional<pb::ServerUpdate> locked_pop_server_update();
@@ -64,8 +64,8 @@ namespace m2::network::detail {
 
 	private:
 		// Private modifiers
-		void unlocked_set_state(pb::ClientState state);
-		void locked_set_state(pb::ClientState state);
+		void unlocked_set_state(pb::ClientThreadState state);
+		void locked_set_state(pb::ClientThreadState state);
 
 		static void base_client_thread_func(BaseClientThread* thread_manager);
 	};

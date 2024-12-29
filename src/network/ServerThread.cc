@@ -16,7 +16,7 @@ m2::network::ServerThread::ServerThread(mplayer::Type type, unsigned max_connect
 
 m2::network::ServerThread::~ServerThread() {
 	DEBUG_FN();
-	set_state_locked(pb::ServerState::SERVER_QUIT);
+	set_state_locked(pb::ServerThreadState::SERVER_QUIT);
 	if (_thread.joinable()) {
 		// If the object is default created, thread may not be joinable
 		_thread.join();
@@ -25,7 +25,7 @@ m2::network::ServerThread::~ServerThread() {
 
 bool m2::network::ServerThread::is_listening() {
 	const std::lock_guard lock(_mutex);
-	return _state == pb::ServerState::SERVER_LISTENING;
+	return _state == pb::ServerThreadState::SERVER_LISTENING;
 }
 
 int m2::network::ServerThread::client_count() {
@@ -81,7 +81,7 @@ std::optional<int> m2::network::ServerThread::misbehaved_client() {
 
 bool m2::network::ServerThread::is_shutdown() {
 	const std::lock_guard lock(_mutex);
-	return _state == pb::ServerState::SERVER_SHUTDOWN;
+	return _state == pb::ServerThreadState::SERVER_SHUTDOWN;
 }
 
 m2::void_expected m2::network::ServerThread::close_lobby() {
@@ -94,7 +94,7 @@ m2::void_expected m2::network::ServerThread::close_lobby() {
 		}
 		// Stop ping broadcast
 		_ping_broadcast_thread.reset();
-		set_state_unlocked(pb::ServerState::SERVER_READY);
+		set_state_unlocked(pb::ServerThreadState::SERVER_READY);
 	}
 	LOG_INFO("Lobby closed");
 	return {};
@@ -215,16 +215,16 @@ void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand
 	}
 }
 
-m2::pb::ServerState m2::network::ServerThread::locked_get_state() {
+m2::pb::ServerThreadState m2::network::ServerThread::locked_get_state() {
 	const std::lock_guard lock(_mutex);
 	return _state;
 }
-void m2::network::ServerThread::set_state_locked(pb::ServerState state) {
+void m2::network::ServerThread::set_state_locked(pb::ServerThreadState state) {
 	const std::lock_guard lock(_mutex);
 	set_state_unlocked(state);
 }
-void m2::network::ServerThread::set_state_unlocked(pb::ServerState state) {
-	LOG_DEBUG("Setting state", pb::ServerState_Name(state));
+void m2::network::ServerThread::set_state_unlocked(pb::ServerThreadState state) {
+	LOG_DEBUG("Setting state", pb::ServerThreadState_Name(state));
 	_state = state;
 }
 
@@ -264,7 +264,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 		throw M2_ERROR("Listen failed: " + listen_success.error());
 	}
 	LOG_INFO("TcpSocket listening on port", TCP_PORT_NO);
-	server_thread->set_state_locked(pb::ServerState::SERVER_LISTENING);
+	server_thread->set_state_locked(pb::ServerThreadState::SERVER_LISTENING);
 
     // Ping broadcast for Windows is not implemented
 #ifndef _WIN32
@@ -387,7 +387,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 				client.has_incoming_data(is_readable);
 			}
 			// If the lobby is not yet closed, remove disconnected clients
-			if (server_thread->_state == pb::ServerState::SERVER_LISTENING) {
+			if (server_thread->_state == pb::ServerThreadState::SERVER_LISTENING) {
 				auto erase_it = std::remove_if(server_thread->_clients.begin(), server_thread->_clients.end(),
 						[](auto& client) { return client.is_disconnected_or_untrusted(); });
 				server_thread->_clients.erase(erase_it, server_thread->_clients.end());
@@ -423,5 +423,5 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 
 bool m2::network::ServerThread::locked_is_quit() {
 	const std::lock_guard lock(_mutex);
-	return _state == pb::ServerState::SERVER_QUIT;
+	return _state == pb::ServerThreadState::SERVER_QUIT;
 }
