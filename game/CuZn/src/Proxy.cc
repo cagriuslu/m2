@@ -364,16 +364,17 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 void m2g::Proxy::post_server_update(const bool shutdown) {
 	// Delete the custom hud
 	if (custom_hud_panel) {
+		LOG_DEBUG("Hiding top HUD");
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*custom_hud_panel);
 		custom_hud_panel = std::nullopt;
 	}
-	// Refresh the status bar
+	LOG_DEBUG("Refreshing status bar");
 	M2_LEVEL.remove_custom_nonblocking_ui_panel(_status_bar_panel);
 	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
-		status_bar_window_ratio());
-	// Refresh the cards panel on the corner
+			std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
+			status_bar_window_ratio());
 	if (cards_panel) {
+		LOG_DEBUG("Refreshing cards panel");
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
 		M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
 				std::make_unique<m2::ui::PanelBlueprint>(generate_cards_window("Cards")),
