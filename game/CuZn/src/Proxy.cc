@@ -681,8 +681,11 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	M2_GAME.ServerThread().send_server_command(canal_era_result_command, -1);
 
 	// Reset merchant beer
-	for (const auto& [_, merchant_id] : merchant_object_ids) {
-		M2_LEVEL.objects[merchant_id].character().add_resource(pb::BEER_BARREL_COUNT, 1.0f);
+	for (const auto& merchantObjId: merchant_object_ids | std::views::values) {
+		auto& merchantChr = M2_LEVEL.objects[merchantObjId].character();
+		if (merchantChr.has_item(pb::ITEM_CATEGORY_MERCHANT_LICENSE)) {
+			merchantChr.set_resource(pb::BEER_BARREL_COUNT, 1.0f);
+		}
 	}
 
 	// Shuffle the draw deck

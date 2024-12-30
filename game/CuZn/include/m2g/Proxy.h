@@ -49,7 +49,9 @@ namespace m2g {
 
 		std::vector<m2::RGB> player_colors;
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> merchant_positions;
-		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;  // Contains only active merchants
+		/// Contains all merchants since they are all "active". Active merchants are different from merchants with a
+		/// license. Only select merchants have a license.
+		std::unordered_map<pb::SpriteType, m2::Id> merchant_object_ids;
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> industry_positions; // Exact position, cell rectangle, tile object ID
 		std::unordered_map<pb::SpriteType, std::tuple<m2::VecF,m2::RectF,m2::ObjectId>> connection_positions;
 		m2::Graph available_connections_graph; // Nodes are City (m2g::pb::ItemType) // TODO instead of holding onto this object, maybe recreate it by looking at sprites each time it's needed
