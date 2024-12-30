@@ -23,12 +23,11 @@ namespace m2::ui {
 
 		Panel() = default;
 		explicit Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
-			std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
-			sdl::TextureUniquePtr background_texture = {});
-		static Action create_and_run_blocking(
-			std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
-			std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
-			sdl::TextureUniquePtr background_texture = {});
+				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
+				sdl::TextureUniquePtr background_texture = {});
+		static Action create_and_run_blocking(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
+				sdl::TextureUniquePtr background_texture = {});
 		// Copy not allowed
 		Panel(const Panel& other) = delete;
 		Panel& operator=(const Panel& other) = delete;
@@ -45,6 +44,9 @@ namespace m2::ui {
 		// Modifiers
 
 		void set_timeout(float in_seconds) { _timeout_s = in_seconds; }
+		/// Given position must be with respect to GameAndHUD area, which means {0,0} corresponds to top-left point of
+		/// GameAndHud area.
+		void SetTopLeftPosition(const VecI&);
 
 		// Lifecycle Management
 

@@ -60,7 +60,6 @@ namespace m2 {
 		std::optional<Level> _level;
 		float _delta_time_s{};
 
-	   public:
 		static void CreateInstance();
 		static Game& Instance() { return *_instance; }
 		static void DestroyInstance();
@@ -154,12 +153,14 @@ namespace m2 {
 		Level& Level() { return *_level; }
 
 		// Accessors
+
 		const GameDimensionsManager& Dimensions() const { return *_dimensionsManager; }
 		const Sprite& GetSprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
 		void ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
 		const NamedItem& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
 		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
 		float DeltaTimeS() const { return _delta_time_s; }
+		[[nodiscard]] VecI MousePositionPx() const { return events.mouse_position(); }
 		const VecF& MousePositionWorldM() const;
 		const VecF& ScreenCenterToMousePositionM() const;
 		VecF PixelTo2dWorldM(const VecI& pixel_position);

@@ -279,17 +279,17 @@ void m2::Level::disable_hud() {
 
 void m2::Level::remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it) {
 	DEBUG_FN();
-	_custom_nonblocking_ui_panels.erase(it);
+	_customNonblockingUiPanels.erase(it);
 }
 void m2::Level::remove_custom_nonblocking_ui_panel_deferred(std::list<ui::Panel>::iterator it) {
 	DEBUG_FN();
-	M2_DEFER(([this,it]() { _custom_nonblocking_ui_panels.erase(it); }));
+	M2_DEFER(([this,it]() { _customNonblockingUiPanels.erase(it); }));
 }
 void m2::Level::add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint) {
-	custom_blocking_ui_panel.emplace(std::move(blueprint), position_ratio);
+	_customBlockingUiPanel.emplace(std::move(blueprint), position_ratio);
 }
 void m2::Level::remove_custom_blocking_ui_panel() {
-	custom_blocking_ui_panel.reset();
+	_customBlockingUiPanel.reset();
 }
 void m2::Level::remove_custom_blocking_ui_panel_deferred() {
 	M2_DEFER([this]() { this->remove_custom_blocking_ui_panel(); });
@@ -401,4 +401,34 @@ m2::void_expected m2::Level::init_any_player(
 	(M2G_PROXY.*post_level_init)(_name, *_lb);
 
 	return {};
+}
+
+m2::VecI m2::Level::CalculateMouseHoverUiPanelTopLeftPosition() const {
+	// Check the height of the panel
+	const auto panelHeight = _mouseHoverUiPanel->rect_px().h;
+	// Check if there's enough space below the mouse
+	const auto heightUnderMouse = M2_GAME.Dimensions().GameAndHud().y2() - M2_GAME.MousePositionPx().y;
+	int finalY;
+	if (panelHeight <= heightUnderMouse) {
+		// We CAN fit the panel under the mouse
+		finalY = M2_GAME.MousePositionPx().y;
+	} else {
+		// We CAN'T fit the panel under the mouse
+		finalY = M2_GAME.MousePositionPx().y - panelHeight;
+	}
+
+	// Check the width of the panel
+	const auto panelWidth = _mouseHoverUiPanel->rect_px().w;
+	// Check if there's enough space to the right of the mouse
+	const auto widthLeftOfTheMouse = M2_GAME.Dimensions().GameAndHud().x2() - M2_GAME.MousePositionPx().x;
+	int finalX;
+	if (panelWidth <= widthLeftOfTheMouse) {
+		// We CAN fit the panel to the right of the mouse
+		finalX = M2_GAME.MousePositionPx().x;
+	} else {
+		// We CAN'T fit the panel to the right of the mouse
+		finalX = M2_GAME.MousePositionPx().x - panelWidth;
+	}
+
+	return {finalX - M2_GAME.Dimensions().GameAndHud().x, finalY - M2_GAME.Dimensions().GameAndHud().y};
 }

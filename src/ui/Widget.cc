@@ -111,7 +111,7 @@ m2::RectI m2::ui::Widget::calculate_filled_text_rect(RectI drawable_area, TextHo
 	}
 }
 
-void Widget::draw_rectangle(const m2::RectI& rect, const SDL_Color& color) {
+void Widget::draw_rectangle(const RectI& rect, const SDL_Color& color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 

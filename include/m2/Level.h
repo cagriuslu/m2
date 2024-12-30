@@ -3,7 +3,7 @@
 #include <box2d/b2_world.h>
 #include <m2/game/DynamicGridLinesLoader.h>
 #include <m2g/Proxy.h>
-
+#include <m2/Log.h>
 #include <functional>
 #include <optional>
 #include <string>
@@ -27,7 +27,7 @@
 #include <queue>
 
 namespace m2 {
-	// Forward iterator
+	// Forward declarations
 	class Game;
 
 	class Level final {
@@ -36,7 +36,12 @@ namespace m2 {
 		std::string _name;
 
 		RectI _background_boundary;
-		std::list<ui::Panel> _custom_nonblocking_ui_panels;
+		/// If there's a blocking panel, the events are cleared after they are delivered to it. Other panels are still
+		/// updated and the world is still simulated.
+		std::optional<ui::Panel> _customBlockingUiPanel;
+		std::list<ui::Panel> _customNonblockingUiPanels;
+		/// If activated, the panel floats next to the cursor. This panel doesn't receive events, but is updated.
+		std::optional<ui::Panel> _mouseHoverUiPanel;
 		std::optional<std::set<ObjectId>> _dimming_exceptions;
 		bool _is_panning{};
 
@@ -64,9 +69,6 @@ namespace m2 {
 		std::optional<Pathfinder> pathfinder;
 
 		std::optional<ui::Panel> left_hud_ui_panel, right_hud_ui_panel;
-		// Rect represents the position ratio of the UI in reference to the game_and_hud dimensions
-		// If there's an active blocking panel, all events are delivered to it. World is still simulated, but button and mouse presses won't be delivered to the world objects.
-		std::optional<ui::Panel> custom_blocking_ui_panel;
 		std::optional<std::string> message;
 		std::optional<ui::Panel> message_box_ui_panel;
 
@@ -138,7 +140,7 @@ namespace m2 {
 		/// events meant for itself.
 		template <typename... Args>
 		std::list<ui::Panel>::iterator add_custom_nonblocking_ui_panel(Args&&... args) {
-			return _custom_nonblocking_ui_panels.emplace(_custom_nonblocking_ui_panels.end(), std::forward<Args>(args)...);
+			return _customNonblockingUiPanels.emplace(_customNonblockingUiPanels.end(), std::forward<Args>(args)...);
 		}
 		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
 		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
@@ -152,6 +154,17 @@ namespace m2 {
 		void add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
 		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
 		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
+
+		/// Add a UI panel that follows the location of the mouse. The given position of the Panel will be overridden,
+		/// but the size of the panel is preserved.
+		template <typename... Args>
+		void AddMouseHoverUiPanel(Args&&... args) {
+			_mouseHoverUiPanel.emplace(std::forward<Args>(args)...);
+			_mouseHoverUiPanel->SetTopLeftPosition(CalculateMouseHoverUiPanelTopLeftPosition());
+		}
+		void RemoveMouseHoverUiPanel() {
+			_mouseHoverUiPanel.reset();
+		}
 
 		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
 		/// thought the mouse spills into UI elements.
@@ -167,6 +180,8 @@ namespace m2 {
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
 		    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
 		    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&));
+		/// Returns the position with respect to GameAndHud
+		VecI CalculateMouseHoverUiPanelTopLeftPosition() const;
 
 		friend class Game;
 	};

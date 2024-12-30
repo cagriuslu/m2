@@ -205,9 +205,9 @@ Action Panel::run_blocking() {
 }
 
 Panel::Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
-std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
-	sdl::TextureUniquePtr background_texture)
-	: _is_valid(true), _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
+		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
+		sdl::TextureUniquePtr background_texture)
+		: _is_valid(true), _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const PanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
 		blueprint = std::get<const PanelBlueprint*>(static_or_unique_blueprint);
@@ -257,10 +257,9 @@ std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_
 	IF(blueprint->on_create)(*this);
 }
 
-Action Panel::create_and_run_blocking(
-	std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
-	std::variant<std::monostate, RectI, RectF> fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
-	sdl::TextureUniquePtr background_texture) {
+Action Panel::create_and_run_blocking(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
+		sdl::TextureUniquePtr background_texture) {
 	// Check if there are other blocking UI panels
 	if (M2_GAME.ui_begin_ticks) {
 		// Execute panel without keeping time
@@ -297,6 +296,16 @@ RectI Panel::rect_px() const {
 		iround(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),
 		iround(_relation_to_game_and_hud_dims.w * F(game_and_hud_dims.w)),
 		iround(_relation_to_game_and_hud_dims.h * F(game_and_hud_dims.h))};
+}
+
+void Panel::SetTopLeftPosition(const VecI& newPosition) {
+	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
+	_relation_to_game_and_hud_dims = RectF{
+			F(newPosition.x) / F(game_and_hud_dims.w),
+			F(newPosition.y) / F(game_and_hud_dims.h),
+			_relation_to_game_and_hud_dims.w,
+			_relation_to_game_and_hud_dims.h};
+	update_positions();
 }
 
 void Panel::update_positions() {
