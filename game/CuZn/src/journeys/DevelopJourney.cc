@@ -195,7 +195,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_confirmation_enter_sign
 	LOG_INFO("Asking for confirmation...");
 
 	auto confirmation = _develop_double_tiles
-		? ask_for_confirmation("Develop " + ItemType_Name(_selected_tile_1), "and " + ItemType_Name(_selected_tile_1) + "?", "Yes", "No")
+		? ask_for_confirmation("Develop " + ItemType_Name(_selected_tile_1), "and " + ItemType_Name(_selected_tile_2) + "?", "Yes", "No")
 		: ask_for_confirmation("Develop " + ItemType_Name(_selected_tile_1) + "?", "", "Yes", "No");
 	if (confirmation) {
 		LOG_INFO("Develop action confirmed");
