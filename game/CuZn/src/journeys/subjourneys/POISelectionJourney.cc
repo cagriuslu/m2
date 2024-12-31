@@ -40,6 +40,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 			M2_LEVEL.disable_hud();
 			// Destroy cards panel if exists
 			if (M2G_PROXY.cards_panel) {
+				M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
 				M2G_PROXY.cards_panel.reset();
 			}
 			// Display message
