@@ -15,8 +15,8 @@ namespace {
 	}
 }
 
-m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv, bool areGraphicsPixelated)
-		: _renderer(renderer), _gamePpm(gamePpm), _gameAspectRatioMul(gameAspectRatioMul), _gameAspectRatioDiv(gameAspectRatioDiv), _isPixelated(areGraphicsPixelated) {
+m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gamePpm, const int gameAspectRatioMul, const int gameAspectRatioDiv)
+		: _renderer(renderer), _gamePpm(gamePpm), _gameAspectRatioMul(gameAspectRatioMul), _gameAspectRatioDiv(gameAspectRatioDiv) {
 	if (renderer == nullptr) {
 		throw M2_ERROR("Given renderer is NULL");
 	}
@@ -31,11 +31,7 @@ m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gameP
 	}
 
 	// In the beginning, the scale is 1. We can fit as much as we can into the window using this scale.
-	if (_isPixelated) {
-		_scale = 1;
-	} else {
-		_scale = 1.0f;
-	}
+	_scale = 1.0f;
 
 	_topEnvelope = _bottomEnvelope = _leftEnvelope = _rightEnvelope = {};
 
@@ -64,35 +60,8 @@ m2::VecI m2::GameDimensionsManager::WindowDimensions() const {
 	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
 	return {w, h};
 }
-int m2::GameDimensionsManager::PixelatedOutputPixelsPerMeter() const {
-	if (not _isPixelated) {
-		throw M2_ERROR("Pixelated output PPM is queried for non-pixelated game");
-	}
-	if (0 < std::get<int>(_scale)) {
-		return _gamePpm * std::get<int>(_scale);
-	}
-	return iround(F(_gamePpm) / F(-std::get<int>(_scale)));
-}
 float m2::GameDimensionsManager::RealOutputPixelsPerMeter() const {
-	if (_isPixelated) {
-		if (0 < std::get<int>(_scale)) {
-			return F(_gamePpm * std::get<int>(_scale));
-		}
-		return F(_gamePpm / -std::get<int>(_scale));
-	}
-	return F(_gamePpm) * std::get<float>(_scale);
-}
-int m2::GameDimensionsManager::PixelatedScale() const {
-	if (not _isPixelated) {
-		throw M2_ERROR("Pixelated scale is queried for non-pixelated game");
-	}
-	return std::get<int>(_scale);
-}
-float m2::GameDimensionsManager::RealScale() const {
-	if (_isPixelated) {
-		throw M2_ERROR("Real scale is queried for pixelated game");
-	}
-	return std::get<float>(_scale);
+	return F(_gamePpm) * _scale;
 }
 float m2::GameDimensionsManager::GameWidthToGameAndHudWidthRatio() const {
 	return F(_game.w) / F(_gameAndHud.w);
@@ -105,9 +74,9 @@ void m2::GameDimensionsManager::OnWindowResize() {
 	// We must keep the _gameAndHudM (and thus _gameM) exactly the same. The scale and the envelopes may be adjusted.
 
 	const auto windowDimensions = WindowDimensions();
+	// The unit is pixels, but in fractional form
 	const auto minimumGameAndHudDimensions = VecF{_gameAndHudM.x * F(_gamePpm), _gameAndHudM.y * F(_gamePpm)};
 
-	float provisionalScale;
 	const auto idealWidthForSelectedWindowHeight = windowDimensions.y * GAME_AND_HUD_ASPECT_RATIO_MUL
 		/ GAME_AND_HUD_ASPECT_RATIO_DIV;
 	if (windowDimensions.x < idealWidthForSelectedWindowHeight) {
@@ -117,7 +86,7 @@ void m2::GameDimensionsManager::OnWindowResize() {
 		const int realWindowWidthRemainder = realWindowWidth % GAME_AND_HUD_ASPECT_RATIO_MUL;
 		const int windowWidthForCorrectAspectRation = realWindowWidth - realWindowWidthRemainder;
 		// Use the _gameAndHudM width for scale calculation
-		provisionalScale = F(windowWidthForCorrectAspectRation) / minimumGameAndHudDimensions.x;
+		_scale = F(windowWidthForCorrectAspectRation) / minimumGameAndHudDimensions.x;
 	} else {
 		// Screen is exact or wider than expected, we might have left and right envelopes.
 		// Ensure that only the 16:9 part of the window is taken into scale calculation
@@ -125,18 +94,10 @@ void m2::GameDimensionsManager::OnWindowResize() {
 		const int realWindowHeightRemainder = realWindowHeight % GAME_AND_HUD_ASPECT_RATIO_DIV;
 		const int windowHeightForCorrectAspectRation = realWindowHeight - realWindowHeightRemainder;
 		// Use the _gameAndHudM height for scale calculation
-		provisionalScale = F(windowHeightForCorrectAspectRation) / minimumGameAndHudDimensions.y;
+		_scale = F(windowHeightForCorrectAspectRation) / minimumGameAndHudDimensions.y;
 	}
 
-	int gameHeight;
-	if (_isPixelated) {
-		const auto flooredScale = floorf(provisionalScale);
-		_scale = static_cast<int>(flooredScale);
-		gameHeight = iround(minimumGameAndHudDimensions.y * flooredScale);
-	} else {
-		_scale = provisionalScale;
-		gameHeight = iround(minimumGameAndHudDimensions.y * provisionalScale);
-	}
+	const int gameHeight = iround(minimumGameAndHudDimensions.y * _scale);
 	const int gameWidth = gameHeight * _gameAspectRatioMul / _gameAspectRatioDiv;
 	const int hudHeight = gameHeight;
 	const int hudWidth = gameHeight * HudAspectRatioMul(_gameAspectRatioMul, _gameAspectRatioDiv)
@@ -161,25 +122,10 @@ void m2::GameDimensionsManager::OnWindowResize() {
 	_messageBox = RectI{_game.x, _game.y + _game.h - messageBoxHeight, _game.w, messageBoxHeight};
 }
 void m2::GameDimensionsManager::SetScale(float scale) {
-	if (_isPixelated) {
-		throw M2_ERROR("Rational scaling is used for a pixelated game");
-	}
 	if (scale <= 0.0f) {
 		throw M2_ERROR("Given scale is invalid: " + std::to_string(scale));
 	}
-	LOG_INFO("Setting non-pixelated scale to", scale);
-
-	_scale = scale;
-	ReadjustAfterScaleChange();
-}
-void m2::GameDimensionsManager::SetScale(int scale) {
-	if (not _isPixelated) {
-		throw M2_ERROR("Integer scaling is used for a non-pixelated game");
-	}
-	if (scale == 0) {
-		throw M2_ERROR("Given scale is invalid: 0");
-	}
-	LOG_INFO("Setting pixelated scale to", scale);
+	LOG_INFO("Setting scale to", scale);
 
 	_scale = scale;
 	ReadjustAfterScaleChange();

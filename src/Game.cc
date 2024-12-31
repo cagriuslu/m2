@@ -76,7 +76,7 @@ m2::Game::Game() {
 	SDL_GetRendererInfo(renderer, &info);
 	LOG_INFO("Renderer", info.name);
 
-	_dimensionsManager.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv, _proxy.areGraphicsPixelated);
+	_dimensionsManager.emplace(renderer, _proxy.gamePpm, _proxy.gameAspectRatioMul, _proxy.gameAspectRatioDiv);
 
 	SDL_Surface* lightSurface = IMG_Load((resource_path() / "RadialGradient-WhiteBlack.png").string().c_str());
 	if (lightSurface == nullptr) {
@@ -785,10 +785,7 @@ void m2::Game::OnWindowResize() {
 		IF (_level->_customBlockingUiPanel)->update_positions();
 	}
 }
-void m2::Game::SetScale(float scale) {
-	_dimensionsManager->SetScale(scale);
-}
-void m2::Game::SetScale(int scale) {
+void m2::Game::SetScale(const float scale) {
 	_dimensionsManager->SetScale(scale);
 }
 

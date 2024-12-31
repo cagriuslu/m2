@@ -7,19 +7,14 @@ void m2::draw_real_2d(const VecF& position, const Sprite& sprite, SpriteVariant 
 
 	auto screen_origin_to_sprite_center_px_vec = screen_origin_to_sprite_center_dstpx(position, sprite, sprite_variant);
 	auto dst_rect = SDL_Rect{
-		// TODO This calculates switches to floating point, because non-integer multiple rendering is problematic, can cause empty vertical or horizontal lines. Think of a solution to this.
-		// TODO Both implementations (integer/floating point math) is prone to micro flickering while panning because a sprite is drawn at different sizes with one pixel difference.
-		// TODO The only solution to this is only drawing sprites are integer multiples.
-		// TODO Using floating point has a small performance impact 308 vs 322. Not much, but we have to find a solution to flickering anyways.
-		iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm) / 2.0f)),
-		iround(screen_origin_to_sprite_center_px_vec.y - (F(src_rect.h) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm) / 2.0f)),
-		iround(F(src_rect.w) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm)),
-		iround(F(src_rect.h) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm))
-
-//		(int)roundf(screen_origin_to_sprite_center_px_vec.x) - (src_rect.w * M2_GAME.dimensions().ppm / sprite_ppm / 2),
-//		(int)roundf(screen_origin_to_sprite_center_px_vec.y) - (src_rect.h * M2_GAME.dimensions().ppm / sprite_ppm / 2),
-//		src_rect.w * M2_GAME.dimensions().ppm / sprite_ppm,
-//		src_rect.h * M2_GAME.dimensions().ppm / sprite_ppm
+		I(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm) / 2.0f)),
+		I(screen_origin_to_sprite_center_px_vec.y - (F(src_rect.h) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm) / 2.0f)),
+		(int)ceilf(F(src_rect.w) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm)),
+		(int)ceilf(F(src_rect.h) * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter()) / F(sprite_ppm))
+		// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
+		//  leaving any gaps between sprites
+		// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
+		//  avoid flickering by avoiding highly repeating patterns.
 	};
 
 	// Sprite is rotated around this point

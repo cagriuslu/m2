@@ -64,11 +64,11 @@ m2::void_expected InitThisHumanPlayerInstance(m2::Object& obj) {
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
 		}
 
-		constexpr float zoom_step = 0.05f;
+		constexpr float zoom_step = 1.1f;
 		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.Dimensions().Game()); 0 < scroll) {
-			M2_GAME.SetScale(m2::GameDimensionsManager::NextPixelatedScale(M2_GAME.Dimensions().PixelatedScale()));
+			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * zoom_step);
 		} else if (scroll < 0) {
-			M2_GAME.SetScale(m2::GameDimensionsManager::PrevPixelatedScale(M2_GAME.Dimensions().PixelatedScale()));
+			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() / zoom_step);
 		}
 
 		// Limit the player inside the level

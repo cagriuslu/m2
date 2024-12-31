@@ -71,9 +71,8 @@ m2::Rational::Rational(double d) {
 //		}
 	}
 
-	auto raised_d = round(d * (double) precision);
-	auto raised = (int64_t) raised_d;
-
+	const auto raised_d = round(d * static_cast<double>(precision));
+	const auto raised = static_cast<int64_t>(raised_d);
 	*this = internal::simplify(raised, precision);
 }
 

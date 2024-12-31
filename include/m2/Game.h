@@ -197,7 +197,6 @@ namespace m2 {
 		void AddPauseTicks(const sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void OnWindowResize();
 		void SetScale(float scale);
-		void SetScale(int scale);
 		void ResetMousePosition() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
 		void RecalculateDirectionalAudio();
 

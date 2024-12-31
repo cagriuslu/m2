@@ -21,14 +21,14 @@ namespace m2 {
 		[[nodiscard]] Rational simplify() const;
 		[[nodiscard]] Rational mod(const Rational& other) const;
 
-		[[nodiscard]] inline int64_t n() const { return _n; }
-		[[nodiscard]] inline int64_t d() const { return _d; }
-		[[nodiscard]] inline float to_float() const { return static_cast<float>(_n) / static_cast<float>(_d); }
-		[[nodiscard]] inline double to_double() const { return static_cast<double>(_n) / static_cast<double>(_d); }
-		[[nodiscard]] inline pb::Rational to_pb() const { pb::Rational r; r.set_n(_n); r.set_d(_d); return r; }
+		[[nodiscard]] int64_t n() const { return _n; }
+		[[nodiscard]] int64_t d() const { return _d; }
+		[[nodiscard]] float to_float() const { return static_cast<float>(_n) / static_cast<float>(_d); }
+		[[nodiscard]] double to_double() const { return static_cast<double>(_n) / static_cast<double>(_d); }
+		[[nodiscard]] pb::Rational to_pb() const { pb::Rational r; r.set_n(_n); r.set_d(_d); return r; }
 
-		static inline Rational zero() { return Rational{}; }
-		static inline Rational one() { return Rational{1,1}; }
+		static Rational zero() { return Rational{}; }
+		static Rational one() { return Rational{1,1}; }
 		static Rational pi_mul2();
 	};
 	std::string to_string(const Rational& r);
