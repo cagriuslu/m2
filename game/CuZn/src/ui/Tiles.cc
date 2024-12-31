@@ -250,7 +250,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 				.h = 1,
 				.border_width = 0,
 				.variant = TextBlueprint{
-					.text = "CO = Canal Only   RRO = Railroad Only   ND = No Develop",
+					.text = "CO = Canal Era Only   RRO = Railroad Era Only   ND = No Develop",
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},

@@ -2,9 +2,8 @@
 #include <cuzn/object/Factory.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/ui/Tiles.h>
+#include <m2/Game.h>
 #include <m2/Log.h>
-
-#include "m2/Game.h"
 
 using namespace m2;
 using namespace m2::ui;
