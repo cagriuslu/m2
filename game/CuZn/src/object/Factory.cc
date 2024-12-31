@@ -7,10 +7,10 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-m2::Object* find_factory_at_location(Location location) {
+m2::Object* FindFactoryAtLocation(Location location) {
 	auto factories = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(is_factory_character)
+		| std::views::filter(IsFactoryCharacter)
 		| std::views::transform(m2::to_owner_of_component)
 		| std::views::filter(m2::is_object_in_area(std::get<m2::RectF>(M2G_PROXY.industry_positions[location])));
 	if (auto factory_it = factories.begin(); factory_it != factories.end()) {
@@ -19,23 +19,23 @@ m2::Object* find_factory_at_location(Location location) {
 	return nullptr;
 }
 
-int required_beer_count_to_sell(IndustryLocation location) {
-	if (auto* factory = find_factory_at_location(location); not factory) {
+int RequiredBeerCountToSell(IndustryLocation location) {
+	if (auto* factory = FindFactoryAtLocation(location); not factory) {
 		throw M2_ERROR("Invalid factory location");
 	} else {
-		auto industry_tile = to_industry_tile_of_factory_character(factory->character());
+		auto industry_tile = ToIndustryTileOfFactoryCharacter(factory->character());
 		return m2::iround(M2_GAME.GetNamedItem(industry_tile).get_attribute(BEER_COST));
 	}
 }
 
-void remove_obsolete_factories() {
+void RemoveObsoleteFactories() {
 	std::vector<m2::ObjectId> ids;
 	ids.reserve(20); // Reserve an average amount of space
 	std::ranges::copy(
 		M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(is_factory_character)
-		| std::views::filter(is_factory_level_1)
+		| std::views::filter(IsFactoryCharacter)
+		| std::views::filter(IsFactoryLevel1)
 		| std::views::transform(m2::to_owner_id_of_component),
 		std::back_inserter(ids));
 
@@ -45,27 +45,27 @@ void remove_obsolete_factories() {
 	});
 }
 
-void flip_exhausted_factories() {
+void FlipExhaustedFactories() {
 	std::ranges::for_each(
 		M2_LEVEL.characters
 			| std::views::transform(m2::to_character_base)
-			| std::views::filter(is_factory_character)
-			| std::views::filter(is_factory_not_sold),
+			| std::views::filter(IsFactoryCharacter)
+			| std::views::filter(IsFactoryNotSold),
 		[](m2::Character& chr) {
-			const auto is_coal_mine_exhausted = to_industry_of_factory_character(chr) == COAL_MINE_CARD
+			const auto is_coal_mine_exhausted = ToIndustryOfFactoryCharacter(chr) == COAL_MINE_CARD
 				&& m2::is_equal(chr.get_resource(COAL_CUBE_COUNT), 0.0f, 0.001f);
-			const auto is_iron_works_exhausted = to_industry_of_factory_character(chr) == IRON_WORKS_CARD
+			const auto is_iron_works_exhausted = ToIndustryOfFactoryCharacter(chr) == IRON_WORKS_CARD
 				&& m2::is_equal(chr.get_resource(IRON_CUBE_COUNT), 0.0f, 0.001f);
-			const auto is_brewery_exhausted = to_industry_of_factory_character(chr) == BREWERY_CARD
+			const auto is_brewery_exhausted = ToIndustryOfFactoryCharacter(chr) == BREWERY_CARD
 				&& m2::is_equal(chr.get_resource(BEER_BARREL_COUNT), 0.0f, 0.001f);
 			if (is_coal_mine_exhausted || is_iron_works_exhausted || is_brewery_exhausted) {
-				sell_factory(chr);
+				SellFactory(chr);
 			}
 		});
 }
 
-void sell_factory(m2::Character& factory_chr) {
-	const auto tileType = to_industry_tile_of_factory_character(factory_chr);
+void SellFactory(m2::Character& factory_chr) {
+	const auto tileType = ToIndustryTileOfFactoryCharacter(factory_chr);
 	const auto& tileTtem = M2_GAME.GetNamedItem(tileType);
 	// Earn income points
 	const auto incomeBonus = m2::iround(tileTtem.get_attribute(INCOME_POINTS_BONUS));
@@ -75,50 +75,50 @@ void sell_factory(m2::Character& factory_chr) {
 	factory_chr.set_resource(IS_SOLD, 1.0f);
 }
 
-bool is_factory_sold(m2::Character& chr) {
-	if (not is_factory_character(chr)) {
+bool IsFactorySold(m2::Character& chr) {
+	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
 	return m2::is_equal(chr.get_resource(m2g::pb::IS_SOLD), 1.0f, 0.001f);
 }
 
-bool is_factory_level_1(m2::Character& chr) {
+bool IsFactoryLevel1(m2::Character& chr) {
 	static std::set<IndustryTile> level_1_tiles{COTTON_MILL_TILE_I, IRON_WORKS_TILE_I, BREWERY_TILE_I, COAL_MINE_TILE_I,
 		POTTERY_TILE_I, MANUFACTURED_GOODS_TILE_I};
-	return level_1_tiles.contains(to_industry_tile_of_factory_character(chr));
+	return level_1_tiles.contains(ToIndustryTileOfFactoryCharacter(chr));
 }
 
-City to_city_of_factory_character(m2::Character& chr) {
-	if (not is_factory_character(chr)) {
+City ToCityOfFactoryCharacter(m2::Character& chr) {
+	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
 	return chr.find_items(m2g::pb::ITEM_CATEGORY_CITY_CARD)->type();
 }
 
-Industry to_industry_of_factory_character(const m2::Character& chr) {
-	if (not is_factory_character(chr)) {
+Industry ToIndustryOfFactoryCharacter(const m2::Character& chr) {
+	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
 	return chr.find_items(m2g::pb::ITEM_CATEGORY_INDUSTRY_CARD)->type();
 }
 
-IndustryTile to_industry_tile_of_factory_character(const m2::Character& chr) {
-	if (not is_factory_character(chr)) {
+IndustryTile ToIndustryTileOfFactoryCharacter(const m2::Character& chr) {
+	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
-	auto industry = to_industry_of_factory_character(chr);
+	auto industry = ToIndustryOfFactoryCharacter(chr);
 	auto industry_tile_category = industry_tile_category_of_industry(industry);
 	return chr.find_items(industry_tile_category)->type();
 }
 
-IndustryLocation to_industry_location_of_factory_character(m2::Character& chr) {
-	if (not is_factory_character(chr)) {
+IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr) {
+	if (not IsFactoryCharacter(chr)) {
 		throw M2_ERROR("Character doesn't belong to a factory");
 	}
 	return *industry_location_on_position(chr.owner().position);
 }
 
-m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry_tile) {
+m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_tile) {
 	DEBUG_FN();
 
 	if (not is_city(city)) {
@@ -159,7 +159,7 @@ m2::void_expected init_factory(m2::Object& obj, City city, IndustryTile industry
 		m2::Graphic::default_draw(gfx);
 
 		// Draw the resources
-		draw_resources(gfx.owner().character());
+		DrawResources(gfx.owner().character());
 	};
 
 	return {};

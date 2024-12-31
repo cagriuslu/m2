@@ -30,7 +30,7 @@ namespace {
 	};
 }
 
-std::list<m2::ui::Panel>::iterator add_cancel_button() {
+std::list<m2::ui::Panel>::iterator AddCancelButton() {
 	return M2_LEVEL.add_custom_nonblocking_ui_panel(&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f});
 }
 

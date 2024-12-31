@@ -4,26 +4,26 @@
 #include <cuzn/Detail.h>
 
 // Accessors
-m2::Object* find_factory_at_location(Location location);
-int required_beer_count_to_sell(IndustryLocation location);
+m2::Object* FindFactoryAtLocation(Location location);
+int RequiredBeerCountToSell(IndustryLocation location);
 
 // Global Modifiers
-void remove_obsolete_factories();
-void flip_exhausted_factories();
+void RemoveObsoleteFactories();
+void FlipExhaustedFactories();
 
 // Modifiers
-void sell_factory(m2::Character& factory_chr);
+void SellFactory(m2::Character& factory_chr);
 
 // Filters
-inline bool is_factory_character(const m2::Character& chr) { return chr.owner().object_type() == m2g::pb::FACTORY; }
-bool is_factory_sold(m2::Character& chr);
-inline bool is_factory_not_sold(m2::Character& chr) { return not is_factory_sold(chr); }
-bool is_factory_level_1(m2::Character& chr);
+inline bool IsFactoryCharacter(const m2::Character& chr) { return chr.owner().object_type() == m2g::pb::FACTORY; }
+bool IsFactorySold(m2::Character& chr);
+inline bool IsFactoryNotSold(m2::Character& chr) { return not IsFactorySold(chr); }
+bool IsFactoryLevel1(m2::Character& chr);
 
 // Transformers
-City to_city_of_factory_character(m2::Character& chr);
-Industry to_industry_of_factory_character(const m2::Character& chr);
-IndustryTile to_industry_tile_of_factory_character(const m2::Character& chr);
-IndustryLocation to_industry_location_of_factory_character(m2::Character& chr);
+City ToCityOfFactoryCharacter(m2::Character& chr);
+Industry ToIndustryOfFactoryCharacter(const m2::Character& chr);
+IndustryTile ToIndustryTileOfFactoryCharacter(const m2::Character& chr);
+IndustryLocation ToIndustryLocationOfFactoryCharacter(m2::Character& chr);
 
-m2::void_expected init_factory(m2::Object&, City, IndustryTile);
+m2::void_expected InitFactory(m2::Object&, City, IndustryTile);

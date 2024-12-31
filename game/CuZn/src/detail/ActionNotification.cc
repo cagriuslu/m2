@@ -14,23 +14,23 @@ namespace {
 	}
 }
 
-std::string build_notification(Industry industry, City city) {
+std::string GenerateBuildNotification(Industry industry, City city) {
 	return "Built " + industry_name(industry) + " on " + city_name(city) + ".";
 }
-std::string network_notification(City connection1_city1, City connection1_city2, City connection2_city1, City connection2_city2) {
-	if (connection2_city1 && connection2_city2) {
-		return "Built one " + canal_or_railroad() + " between " + city_name(connection1_city1) + " and " + city_name(connection1_city2) + ", and another " + canal_or_railroad() + " between " + city_name(connection2_city1) + " and " + city_name(connection2_city2) + ".";
+std::string GenerateNetworkNotification(City connection1City1, City connection1City2, City connection2City1, City connection2City2) {
+	if (connection2City1 && connection2City2) {
+		return "Built one " + canal_or_railroad() + " between " + city_name(connection1City1) + " and " + city_name(connection1City2) + ", and another " + canal_or_railroad() + " between " + city_name(connection2City1) + " and " + city_name(connection2City2) + ".";
 	} else {
-		return "Built " + canal_or_railroad() + " between " + city_name(connection1_city1) + " and " + city_name(connection1_city2) + ".";
+		return "Built " + canal_or_railroad() + " between " + city_name(connection1City1) + " and " + city_name(connection1City2) + ".";
 	}
 }
-std::string sell_notification(Industry industry, City city) {
+std::string GenerateSellNotification(Industry industry, City city) {
 	return "Sold " + industry_name(industry) + " on " + city_name(city) + ".";
 }
-std::string loan_notification() {
+std::string GenerateLoanNotification() {
 	return "Took loan.";
 }
-std::string develop_notification(Industry industry1, Industry industry2) {
+std::string GenerateDevelopNotification(Industry industry1, Industry industry2) {
 	if (industry2) {
 		if (industry1 == industry2) {
 			return "Developed two " + industry_name(industry1) + " tiles.";
@@ -41,9 +41,9 @@ std::string develop_notification(Industry industry1, Industry industry2) {
 		return "Developed a " + industry_name(industry1) + " tile.";
 	}
 }
-std::string scout_notification() {
+std::string GenerateScoutNotification() {
 	return "Scouted for wild cards.";
 }
-std::string pass_notification() {
+std::string GeneratePassNotification() {
 	return "Skipped action.";
 }

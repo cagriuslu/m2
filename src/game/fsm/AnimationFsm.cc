@@ -6,7 +6,7 @@ m2::AnimationFsm::AnimationFsm(m2g::pb::AnimationType animation_type, GraphicId 
 	init({});
 }
 
-std::optional<m2::AnimationFsmState> m2::AnimationFsm::handle_signal(const AnimationFsmSignal& signal) {
+std::optional<m2::AnimationFsmState> m2::AnimationFsm::HandleSignal(const AnimationFsmSignal& signal) {
 	auto set_sprite = [this](m2g::pb::AnimationStateType state, int index) {
 		this->anim_state = state;
 		this->state_index = index;

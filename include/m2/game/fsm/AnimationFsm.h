@@ -27,6 +27,6 @@ namespace m2 {
 		AnimationFsm(m2g::pb::AnimationType animation_type, GraphicId gfx_id);
 
 	protected:
-		std::optional<AnimationFsmState> handle_signal(const AnimationFsmSignal& signal) override;
+		std::optional<AnimationFsmState> HandleSignal(const AnimationFsmSignal& signal) override;
 	};
 }

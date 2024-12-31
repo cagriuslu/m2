@@ -35,7 +35,7 @@ namespace {
 	}
 }
 
-std::set<Location> reachable_locations_from_industry_city(IndustryCity city) {
+std::set<Location> ReachableLocationsFromIndustryCity(IndustryCity city) {
 	if (not is_industry_city(city)) {
 		throw M2_ERROR("Invalid industry city");
 	}
@@ -46,12 +46,12 @@ std::set<Location> reachable_locations_from_industry_city(IndustryCity city) {
 	return locations;
 }
 
-bool is_industry_city_connected_to_location(IndustryCity city, Location location) {
-	auto network = reachable_locations_from_industry_city(city);
+bool IsIndustryCityConnectedToLocation(IndustryCity city, Location location) {
+	auto network = ReachableLocationsFromIndustryCity(city);
 	return network.contains(location);
 }
 
-m2::Graph create_active_connections_graph() {
+m2::Graph CreateActiveConnectionsGraph() {
 	m2::Graph active_connections;
 	for (const auto& road_chr : M2_LEVEL.characters | std::views::transform(m2::to_character_base) | std::views::filter(is_road_character)) {
 		// Get the cities connected by the road

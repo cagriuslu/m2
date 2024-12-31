@@ -9,14 +9,14 @@ using namespace m2;
 using namespace m2::ui;
 
 std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBlueprint(const IndustryLocation loc) {
-	const auto* factory = find_factory_at_location(loc);
+	const auto* factory = FindFactoryAtLocation(loc);
 	if (not factory) {
 		throw M2_ERROR("Factory not found");
 	}
 
-	const auto industryType = to_industry_of_factory_character(factory->character());
+	const auto industryType = ToIndustryOfFactoryCharacter(factory->character());
 	const auto& industryCard = M2_GAME.GetNamedItem(industryType);
-	const auto industryTileType = to_industry_tile_of_factory_character(factory->character());
+	const auto industryTileType = ToIndustryTileOfFactoryCharacter(factory->character());
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
 	return std::make_pair(
 			PanelBlueprint{

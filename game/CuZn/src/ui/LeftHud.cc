@@ -20,7 +20,7 @@ namespace {
 		.text = "Build",
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (auto build_prerequisite = can_player_attempt_to_build(M2_PLAYER.character())) {
+			if (auto build_prerequisite = CanPlayerAttemptToBuild(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<BuildJourney>); // Avoid a temporary
 			} else {
 				M2G_PROXY.show_notification(build_prerequisite.error());
@@ -33,7 +33,7 @@ namespace {
 		.text = "Develop",
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (auto develop_prerequisite = can_player_attempt_to_develop(M2_PLAYER.character())) {
+			if (auto develop_prerequisite = CanPlayerAttemptToDevelop(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<DevelopJourney>);
 			} else {
 				M2G_PROXY.show_notification(develop_prerequisite.error());
@@ -46,8 +46,8 @@ namespace {
 		.text = "Loan",
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-			if (auto loan_prerequisite = can_player_attempt_to_loan(M2_PLAYER.character())) {
-				execute_loan_journey();
+			if (auto loan_prerequisite = CanPlayerAttemptToLoan(M2_PLAYER.character())) {
+				ExecuteLoanJourney();
 			} else {
 				M2G_PROXY.show_notification(loan_prerequisite.error());
 			}
@@ -59,7 +59,7 @@ namespace {
 		.text = "Network",
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (auto network_prerequisite = can_player_attempt_to_network(M2_PLAYER.character())) {
+			if (auto network_prerequisite = CanPlayerAttemptToNetwork(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<NetworkJourney>);
 			} else {
 				M2G_PROXY.show_notification(network_prerequisite.error());
@@ -73,7 +73,7 @@ namespace {
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 			if (M2_GAME.IsOurTurn()) {
-				execute_pass_journey();
+				ExecutePassJourney();
 			}
 			return make_continue_action();
 		}
@@ -83,8 +83,8 @@ namespace {
 		.text = "Scout",
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
-			if (auto scout_prerequisite = can_player_attempt_to_scout(M2_PLAYER.character())) {
-				execute_scout_journey();
+			if (auto scout_prerequisite = CanPlayerAttemptToScout(M2_PLAYER.character())) {
+				ExecuteScoutJourney();
 			} else {
 				M2G_PROXY.show_notification(scout_prerequisite.error());
 			}
@@ -96,7 +96,7 @@ namespace {
 		.text = "Sell",
 		.wrapped_font_size_in_units = 1.75f,
 		.on_action = [](MAYBE const Text& self) -> Action {
-			if (auto sell_prerequisite = can_player_attempt_to_sell(M2_PLAYER.character())) {
+			if (auto sell_prerequisite = CanPlayerAttemptToSell(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<SellJourney>);
 			} else {
 				M2G_PROXY.show_notification(sell_prerequisite.error());

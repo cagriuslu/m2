@@ -66,7 +66,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
 					const auto income_points = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
-					const auto income_level = income_level_from_income_points(income_points);
+					const auto income_level = IncomeLevelFromIncomePoints(income_points);
 					self.set_text(std::string{"Income: £"} + std::to_string(income_level));
 					return make_continue_action();
 				}

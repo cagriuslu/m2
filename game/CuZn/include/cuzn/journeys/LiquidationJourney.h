@@ -19,8 +19,8 @@ public:
 	std::optional<POISelectionJourney> sub_journey{};
 
 protected:
-	std::optional<LiquidationJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
-	std::optional<LiquidationJourneyStep> handle_location_enter_signal();
-	std::optional<LiquidationJourneyStep> handle_location_mouse_click_signal(const POIOrCancelSignal&);
-	std::optional<LiquidationJourneyStep> handle_location_exit_signal();
+	std::optional<LiquidationJourneyStep> HandleSignal(const POIOrCancelSignal& s) override;
+	std::optional<LiquidationJourneyStep> HandleLocationEnterSignal();
+	std::optional<LiquidationJourneyStep> HandleLocationMouseClickSignal(const POIOrCancelSignal&);
+	std::optional<LiquidationJourneyStep> HandleLocationExitSignal();
 };

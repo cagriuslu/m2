@@ -11,24 +11,24 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 	auto player_breweries_with_beer = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-		| std::views::filter(is_factory_character)
+		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter([](m2::Character& chr) { return chr.has_resource(m2g::pb::BEER_BARREL_COUNT); })
-		| std::views::transform(to_industry_location_of_factory_character);
+		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	locations.insert(player_breweries_with_beer.begin(), player_breweries_with_beer.end());
 
 	// Look-up breweries reachable from the city
-	auto reachable_locations = reachable_locations_from_industry_city(city);
+	auto reachable_locations = ReachableLocationsFromIndustryCity(city);
 	if (city_2 && is_industry_city(city_2)) {
-		auto reachable_locations_2 = reachable_locations_from_industry_city(city_2);
+		auto reachable_locations_2 = ReachableLocationsFromIndustryCity(city_2);
 		reachable_locations.insert(reachable_locations_2.begin(), reachable_locations_2.end());
 	}
 	auto reachable_breweries_with_beer = reachable_locations
 		| std::views::filter(is_industry_location)
-		| std::views::filter(find_factory_at_location)
-		| std::views::transform(find_factory_at_location)
+		| std::views::filter(FindFactoryAtLocation)
+		| std::views::transform(FindFactoryAtLocation)
 		| std::views::transform(m2::to_character_of_object_unsafe)
 		| std::views::filter([](m2::Character& chr) { return chr.has_resource(m2g::pb::BEER_BARREL_COUNT); })
-		| std::views::transform(to_industry_location_of_factory_character);
+		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	locations.insert(reachable_breweries_with_beer.begin(), reachable_breweries_with_beer.end());
 
 	// If selling to a merchant, check if the merchant location has beer
@@ -36,7 +36,7 @@ std::set<Location> find_breweries_with_beer(m2::Character& player, City city, st
 		// Check if merchant is active, has beer, and is connected
 		if (auto merchant = find_merchant_at_location(*selling_to);
 			merchant && merchant->character().has_resource(m2g::pb::BEER_BARREL_COUNT)
-			&& is_industry_city_connected_to_location(city, *selling_to)) {
+			&& IsIndustryCityConnectedToLocation(city, *selling_to)) {
 			locations.insert(*selling_to);
 		}
 	}

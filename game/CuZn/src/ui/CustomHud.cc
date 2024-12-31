@@ -66,8 +66,8 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 			.x = 70 - ((i + 1) * 10), .y = 5, .w = 10, .h = 5,
 			.border_width = 0.0f,
 			.variant = TextBlueprint{
-				.text = std::to_string(player_victory_points(chr))
-					+ "/" + std::to_string(player_income_points(chr)),
+				.text = std::to_string(PlayerVictoryPoints(chr))
+					+ "/" + std::to_string(PlayerIncomePoints(chr)),
 				.wrapped_font_size_in_units = 3.5f
 			}
 		});
@@ -89,9 +89,9 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 			.x = 70 - ((i + 1) * 10), .y = 10, .w = 10, .h = 5,
 			.border_width = 0.0f,
 			.variant = TextBlueprint{
-				.text = std::to_string(player_money(chr))
+				.text = std::to_string(PlayerMoney(chr))
 					+ "/" + std::to_string(player_available_road_count(chr))
-					+ "/" + std::to_string(player_card_count(chr)),
+					+ "/" + std::to_string(PlayerCardCount(chr)),
 				.wrapped_font_size_in_units = 3.5f
 			}
 		});

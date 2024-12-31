@@ -5,11 +5,11 @@
 std::set<IndustryLocation> find_iron_industries_with_iron() {
 	auto industry_locations = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
-		| std::views::filter(is_factory_character)
+		| std::views::filter(IsFactoryCharacter)
 		| std::views::filter([](const auto& chr) {
 				return chr.has_resource(m2g::pb::IRON_CUBE_COUNT);
 			})
-		| std::views::transform(to_industry_location_of_factory_character);
+		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {industry_locations.begin(), industry_locations.end()};
 }
 
@@ -18,7 +18,7 @@ bool is_there_iron_on_the_board() {
 	auto there_is_iron_works_with_iron = std::ranges::any_of(
 			M2_LEVEL.characters
 				| std::views::transform(m2::to_character_base)
-				| std::views::filter(is_factory_character),
+				| std::views::filter(IsFactoryCharacter),
 			[](m2::Character& chr) {
 				return m2::is_positive(chr.get_resource(m2g::pb::IRON_CUBE_COUNT), 0.001f);
 			});

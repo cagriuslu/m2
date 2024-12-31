@@ -19,6 +19,6 @@ namespace rpg {
 		}
 
 	protected:
-		inline std::optional<PatrollerMode> handle_signal(MAYBE const PatrollerFsmSignal& s) override { return {}; }
+		inline std::optional<PatrollerMode> HandleSignal(MAYBE const PatrollerFsmSignal& s) override { return {}; }
 	};
 }

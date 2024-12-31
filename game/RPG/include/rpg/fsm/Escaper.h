@@ -25,7 +25,7 @@ namespace rpg {
 		EscaperFsm(m2::Object* obj, const pb::Ai* ai);
 
 	protected:
-		std::optional<EscaperMode> handle_signal(const EscaperFsmSignal& s) override;
+		std::optional<EscaperMode> HandleSignal(const EscaperFsmSignal& s) override;
 
 	private:
 		std::optional<EscaperMode> handle_alarm_while_idle();

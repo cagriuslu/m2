@@ -50,10 +50,10 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	for (auto i = 0; i < client_count; ++i) {
 		auto it = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
 		if (i == self_index) {
-			auto client_init_result = init_this_human_player_instance(*it);
+			auto client_init_result = InitThisHumanPlayerInstance(*it);
 			m2_succeed_or_throw_error(client_init_result);
 		} else {
-			auto client_init_result = init_other_human_player_instance(*it);
+			auto client_init_result = InitOtherHumanPlayerInstance(*it);
 			m2_succeed_or_throw_error(client_init_result);
 		}
 		multi_player_object_ids.emplace_back(it.id());
@@ -61,7 +61,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	}
 
 	// Add all merchants (without any license) since all merchants can deal in coal and iron
-	for (const auto& merchant_sprite : possibly_active_merchant_locations()) {
+	for (const auto& merchant_sprite : PossiblyActiveMerchantLocations()) {
 		// Create merchant object
 		auto it = m2::create_object(std::get<m2::VecF>(merchant_positions[merchant_sprite]), m2g::pb::ObjectType::MERCHANT);
 		init_merchant(*it);
@@ -71,7 +71,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 
 	// Add Game State Tracker object
 	auto it = m2::create_object(m2::VecF{}, m2g::pb::ObjectType::GAME_STATE_TRACKER);
-	init_game_state_tracker(*it);
+	InitGameStateTracker(*it);
 	_game_state_tracker_id = it.id();
 
 	// Add status bar panel to the level
@@ -85,8 +85,8 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 
 	// Assign licenses to active merchants
 	{
-		auto merchant_licenses = prepare_merchant_license_list(client_count); // Contains some active licenses, and some NO_MERCHANT_LICENSE
-		auto possibly_active_merchant_locs = possibly_active_merchant_locations(client_count);
+		auto merchant_licenses = PrepareMerchantLicenseList(client_count); // Contains some active licenses, and some NO_MERCHANT_LICENSE
+		auto possibly_active_merchant_locs = PossiblyActiveMerchantLocations(client_count);
 		if (merchant_licenses.size() != possibly_active_merchant_locs.size()) {
 			throw M2_ERROR("Merchant count mismatch");
 		}
@@ -107,9 +107,9 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	}
 
 	// Prepare draw deck
-	auto draw_deck = prepare_draw_deck(client_count);
+	auto draw_deck = PrepareDrawDeck(client_count);
 	m2_repeat(client_count) { draw_deck.pop_back(); } // In the canal era, we discard client_count number of cards from the deck
-	give_8_cards_to_each_player(draw_deck);
+	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 
@@ -128,7 +128,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		if (not client_command.has_liquidate_action()) {
 			LOG_WARN("Received unexpected command while expecting LiquidateAction");
 			return std::nullopt;
-		} else if (auto expect_factories_and_gain = can_player_liquidate_factories(turn_holder_character, client_command.liquidate_action())) {
+		} else if (auto expect_factories_and_gain = CanPlayerLiquidateFactories(turn_holder_character, client_command.liquidate_action())) {
 			LOG_INFO("Liquidating factories");
 			for (auto* factory : expect_factories_and_gain->first) {
 				// Delete object immediately
@@ -155,24 +155,24 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		std::pair<Card,int> card_to_discard_and_money_spent{};
 		if (client_command.has_build_action()) {
 			LOG_INFO("Validating build action");
-			if (not can_player_build(turn_holder_character, client_command.build_action())) {
+			if (not CanPlayerBuild(turn_holder_character, client_command.build_action())) {
 				return std::nullopt;
 			}
 			// Build notification
 			action_notification->set_notification(
-				build_notification(
+				GenerateBuildNotification(
 					industry_of_industry_tile(client_command.build_action().industry_tile()),
 					city_of_location(client_command.build_action().industry_location())));
 			LOG_INFO("Executing build action");
-			card_to_discard_and_money_spent = execute_build_action(turn_holder_character, client_command.build_action());
+			card_to_discard_and_money_spent = ExecuteBuildAction(turn_holder_character, client_command.build_action());
 		} else if (client_command.has_network_action()) {
 			LOG_INFO("Validating network action");
-			if (not can_player_network(turn_holder_character, client_command.network_action())) {
+			if (not CanPlayerNetwork(turn_holder_character, client_command.network_action())) {
 				return std::nullopt;
 			}
 			// Build notification
 			action_notification->set_notification(
-				network_notification(
+				GenerateNetworkNotification(
 					cities_from_connection(client_command.network_action().connection_1())[0],
 					cities_from_connection(client_command.network_action().connection_1())[1],
 					client_command.network_action().connection_2()
@@ -180,54 +180,54 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 					client_command.network_action().connection_2()
 						? cities_from_connection(client_command.network_action().connection_2())[1] : m2g::pb::NO_ITEM));
 			LOG_INFO("Executing network action");
-			card_to_discard_and_money_spent = execute_network_action(turn_holder_character, client_command.network_action());
+			card_to_discard_and_money_spent = ExecuteNetworkAction(turn_holder_character, client_command.network_action());
 		} else if (client_command.has_sell_action()) {
 			LOG_INFO("Validating sell action");
-			if (auto success = can_player_sell(turn_holder_character, client_command.sell_action()); not success) {
+			if (auto success = CanPlayerSell(turn_holder_character, client_command.sell_action()); not success) {
 				LOG_WARN("Sell validation failed", success.error());
 				return std::nullopt;
 			}
 			// Build notification
 			action_notification->set_notification(
-				sell_notification(
-					to_industry_of_factory_character(find_factory_at_location(client_command.sell_action().industry_location())->character()),
+				GenerateSellNotification(
+					ToIndustryOfFactoryCharacter(FindFactoryAtLocation(client_command.sell_action().industry_location())->character()),
 					city_of_location(client_command.sell_action().industry_location())));
 			LOG_INFO("Executing sell action");
-			card_to_discard_and_money_spent.first = execute_sell_action(turn_holder_character, client_command.sell_action());
+			card_to_discard_and_money_spent.first = ExecuteSellAction(turn_holder_character, client_command.sell_action());
 		} else if (client_command.has_develop_action()) {
 			LOG_INFO("Validating develop action");
-			if (not can_player_develop(turn_holder_character, client_command.develop_action())) {
+			if (not CanPlayerDevelop(turn_holder_character, client_command.develop_action())) {
 				return std::nullopt;
 			}
 			// Build notification
 			action_notification->set_notification(
-				develop_notification(
+				GenerateDevelopNotification(
 					industry_of_industry_tile(client_command.develop_action().industry_tile_1()),
 					client_command.develop_action().industry_tile_2()
 						? industry_of_industry_tile(client_command.develop_action().industry_tile_2()) : m2g::pb::NO_ITEM));
 			LOG_INFO("Executing develop action");
-			card_to_discard_and_money_spent = execute_develop_action(turn_holder_character, client_command.develop_action());
+			card_to_discard_and_money_spent = ExecuteDevelopAction(turn_holder_character, client_command.develop_action());
 		} else if (client_command.has_loan_action()) {
 			LOG_INFO("Validating loan action");
-			if (not can_player_loan(turn_holder_character, client_command.loan_action())) {
+			if (not CanPlayerLoan(turn_holder_character, client_command.loan_action())) {
 				return std::nullopt;
 			}
 			// Build notification
-			action_notification->set_notification(loan_notification());
+			action_notification->set_notification(GenerateLoanNotification());
 			LOG_INFO("Executing loan action");
-			card_to_discard_and_money_spent.first = execute_loan_action(turn_holder_character, client_command.loan_action());
+			card_to_discard_and_money_spent.first = ExecuteLoanAction(turn_holder_character, client_command.loan_action());
 		} else if (client_command.has_scout_action()) {
 			LOG_INFO("Validating scout action");
-			if (not can_player_scout(turn_holder_character, client_command.scout_action())) {
+			if (not CanPlayerScout(turn_holder_character, client_command.scout_action())) {
 				return std::nullopt;
 			}
 			// Build notification
-			action_notification->set_notification(scout_notification());
+			action_notification->set_notification(GenerateScoutNotification());
 			LOG_INFO("Executing scout action");
-			card_to_discard_and_money_spent.first = execute_scout_action(turn_holder_character, client_command.scout_action());
+			card_to_discard_and_money_spent.first = ExecuteScoutAction(turn_holder_character, client_command.scout_action());
 		} else if (client_command.has_pass_action()) {
 			// Build notification
-			action_notification->set_notification(pass_notification());
+			action_notification->set_notification(GeneratePassNotification());
 			LOG_INFO("Executing pass action");
 			card_to_discard_and_money_spent.first = client_command.pass_action().card();
 		}
@@ -309,7 +309,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		LOG_INFO("Continuing with the same player");
 	} else { // not is_first_turn() && (card_count % 2) == 0
 		// If there are even number of cards, the turn holder changes. Give cards to player
-		while (not _draw_deck.empty() && player_card_count(turn_holder_character) < 8) {
+		while (not _draw_deck.empty() && PlayerCardCount(turn_holder_character) < 8) {
 			auto card = _draw_deck.back();
 			_draw_deck.pop_back();
 			game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
@@ -475,7 +475,7 @@ m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, cons
 			auto city = std::ranges::find_if(items, is_city);
 			auto industry_tile = std::ranges::find_if(items, is_industry_tile);
 			if (city != items.end() && industry_tile != items.end()) {
-				return init_factory(obj, *city, *industry_tile);
+				return InitFactory(obj, *city, *industry_tile);
 			} else {
 				return m2::make_unexpected("Unable to find city or industry tile of the object received from the server");
 			}
@@ -537,11 +537,11 @@ int m2g::Proxy::market_iron_count() const {
 }
 int m2g::Proxy::market_coal_cost(int coal_count) const {
 	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
-	return calculate_cost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
+	return CalculateCost(COAL_MARKET_CAPACITY, current_coal_count, coal_count);
 }
 int m2g::Proxy::market_iron_cost(int iron_count) const {
 	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
-	return calculate_cost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
+	return CalculateCost(IRON_MARKET_CAPACITY, current_iron_count, iron_count);
 }
 int m2g::Proxy::player_spent_money(int player_index) const {
 	auto money_spent_by_player_enum = static_cast<pb::ResourceType>(pb::MONEY_SPENT_BY_PLAYER_0 + player_index);
@@ -549,11 +549,11 @@ int m2g::Proxy::player_spent_money(int player_index) const {
 }
 std::pair<int,int> m2g::Proxy::market_coal_revenue(int count) const {
 	auto current_coal_count = m2::iround(game_state_tracker().get_resource(m2g::pb::COAL_CUBE_COUNT));
-	return calculate_revenue(COAL_MARKET_CAPACITY, current_coal_count, count);
+	return CalculateRevenue(COAL_MARKET_CAPACITY, current_coal_count, count);
 }
 std::pair<int,int> m2g::Proxy::market_iron_revenue(int count) const {
 	auto current_iron_count = m2::iround(game_state_tracker().get_resource(m2g::pb::IRON_CUBE_COUNT));
-	return calculate_revenue(IRON_MARKET_CAPACITY, current_iron_count, count);
+	return CalculateRevenue(IRON_MARKET_CAPACITY, current_iron_count, count);
 }
 
 std::set<m2::ObjectId> m2g::Proxy::object_ids_of_industry_location_bg_tiles(const std::set<IndustryLocation>& industry_locations) const {
@@ -608,7 +608,7 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	LOG_INFO("Preparing next round");
 
 	// First, before preparing the next round, check if liquidation is necessary.
-	if (auto liquidation = is_liquidation_necessary()) {
+	if (auto liquidation = IsLiquidationNecessary()) {
 		LOG_INFO("Liquidation is necessary");
 		// Prepare the ServerCommand and return
 		pb::ServerCommand sc;
@@ -621,7 +621,7 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 		// Lookup player
 		auto& player_character = M2_LEVEL.objects[player_id].character();
 		const auto incomePoints = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
-		const auto incomeLevel = income_level_from_income_points(incomePoints);
+		const auto incomeLevel = IncomeLevelFromIncomePoints(incomePoints);
 		const auto playerMoney = m2::iround(player_character.get_resource(pb::MONEY));
 		LOG_DEBUG("Player gained money", incomeLevel);
 		const auto newPlayerMoney = playerMoney + incomeLevel;
@@ -690,8 +690,8 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	}
 
 	// Shuffle the draw deck
-	auto draw_deck = prepare_draw_deck(M2_GAME.ServerThread().client_count());
-	give_8_cards_to_each_player(draw_deck);
+	auto draw_deck = PrepareDrawDeck(M2_GAME.ServerThread().client_count());
+	Give8CardsToEachPlayer(draw_deck);
 	_draw_deck = std::move(draw_deck);
 	game_state_tracker().set_resource(pb::DRAW_DECK_SIZE, m2::F(_draw_deck.size()));
 

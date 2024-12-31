@@ -13,7 +13,7 @@ namespace {
 	}
 }
 
-std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const PositionOrCancelSignal& signal) {
+std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const PositionOrCancelSignal& signal) {
 	switch (signal.type()) {
 		case m2::FsmSignalType::EnterState: {
 			LOG_INFO("Entering POISelectionJourney");
@@ -21,7 +21,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			auto object_ids = _pois | std::views::transform([](POI poi) {
 				if (is_industry_location(poi)) {
 					// Light up the factory if built, otherwise the background sprite.
-					if (auto* factory = find_factory_at_location(poi)) {
+					if (auto* factory = FindFactoryAtLocation(poi)) {
 						return factory->id();
 					} else {
 						return std::get<m2::ObjectId>(M2G_PROXY.industry_positions[poi]);
@@ -46,7 +46,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 			M2G_PROXY.show_notification(_message);
 			if (_allow_cancellation) {
 				// Display cancel button
-				_cancel_button_panel = add_cancel_button();
+				_cancel_button_panel = AddCancelButton();
 			}
 			break;
 		}
@@ -55,7 +55,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::handle_signal(const 
 				LOG_DEBUG("Received mouse click", *world_position);
 				if (auto industry_location = industry_location_on_position(*world_position)) {
 					// Look up factory if exists, otherwise the background sprite
-					if (auto* factory = find_factory_at_location(*industry_location);
+					if (auto* factory = FindFactoryAtLocation(*industry_location);
 						(factory && M2_LEVEL.dimming_exceptions()->contains(factory->id()))
 						|| M2_LEVEL.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
 						notify_main_journey(*industry_location);

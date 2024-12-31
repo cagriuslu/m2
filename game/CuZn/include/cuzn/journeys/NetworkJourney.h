@@ -12,7 +12,7 @@
 #include <list>
 #include "subjourneys/POISelectionJourney.h"
 
-m2::void_expected can_player_attempt_to_network(m2::Character& player);
+m2::void_expected CanPlayerAttemptToNetwork(m2::Character& player);
 
 enum class NetworkJourneyStep {
 	INITIAL_STEP = 0,
@@ -44,22 +44,22 @@ public:
 	std::optional<POISelectionJourney> sub_journey{};
 
 protected:
-	std::optional<NetworkJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
-	std::optional<NetworkJourneyStep> handle_initial_enter_signal();
-	std::optional<NetworkJourneyStep> handle_location_enter_signal();
-	std::optional<NetworkJourneyStep> handle_location_mouse_click_signal(const POIOrCancelSignal&);
-	std::optional<NetworkJourneyStep> handle_location_exit_signal();
-	std::optional<NetworkJourneyStep> handle_resource_enter_signal();
-	std::optional<NetworkJourneyStep> handle_resource_mouse_click_signal(const POIOrCancelSignal&);
-	std::optional<NetworkJourneyStep> handle_resource_exit_signal();
-	std::optional<NetworkJourneyStep> handle_confirmation_enter_signal();
+	std::optional<NetworkJourneyStep> HandleSignal(const POIOrCancelSignal& s) override;
+	std::optional<NetworkJourneyStep> HandleInitialEnterSignal();
+	std::optional<NetworkJourneyStep> HandleLocationEnterSignal();
+	std::optional<NetworkJourneyStep> HandleLocationMouseClickSignal(const POIOrCancelSignal&);
+	std::optional<NetworkJourneyStep> HandleLocationExitSignal();
+	std::optional<NetworkJourneyStep> HandleResourceEnterSignal();
+	std::optional<NetworkJourneyStep> HandleResourceMouseClickSignal(const POIOrCancelSignal&);
+	std::optional<NetworkJourneyStep> HandleResourceExitSignal();
+	std::optional<NetworkJourneyStep> HandleConfirmationEnterSignal();
 
-	std::vector<ResourceSource> required_resources_for_network();
-	decltype(_resource_sources)::iterator get_next_unspecified_resource();
+	std::vector<ResourceSource> RequiredResourcesForNetwork();
+	decltype(_resource_sources)::iterator GetNextUnspecifiedResource();
 };
 
 // For the server
-bool can_player_network(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action);
+bool CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action);
 
 // For the server
-std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action);
+std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action);

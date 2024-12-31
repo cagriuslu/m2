@@ -14,8 +14,8 @@ using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
 
-m2::void_expected can_player_attempt_to_develop(m2::Character& player) {
-	if (player_card_count(player) < 1) {
+m2::void_expected CanPlayerAttemptToDevelop(m2::Character& player) {
+	if (PlayerCardCount(player) < 1) {
 		return m2::make_unexpected("Develop action requires a card");
 	}
 
@@ -44,24 +44,24 @@ DevelopJourney::~DevelopJourney() {
 	}
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_signal(const POIOrCancelSignal& s) {
+std::optional<DevelopJourneyStep> DevelopJourney::HandleSignal(const POIOrCancelSignal& s) {
 	static std::initializer_list<std::tuple<
 			DevelopJourneyStep,
 			FsmSignalType,
 			std::optional<DevelopJourneyStep> (DevelopJourney::*)(),
 			std::optional<DevelopJourneyStep> (DevelopJourney::*)(const POIOrCancelSignal &)>> handlers = {
-			{DevelopJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &DevelopJourney::handle_initial_enter_signal, nullptr},
+			{DevelopJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &DevelopJourney::HandleInitialEnterSignal, nullptr},
 
-			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &DevelopJourney::handle_resource_enter_signal, nullptr},
-			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &DevelopJourney::handle_resource_mouse_click_signal},
-			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &DevelopJourney::handle_resource_exit_signal, nullptr},
+			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &DevelopJourney::HandleResourceEnterSignal, nullptr},
+			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &DevelopJourney::HandleResourceMouseClickSignal},
+			{DevelopJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &DevelopJourney::HandleResourceExitSignal, nullptr},
 
-			{DevelopJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &DevelopJourney::handle_confirmation_enter_signal, nullptr},
+			{DevelopJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &DevelopJourney::HandleConfirmationEnterSignal, nullptr},
 	};
 	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() {
+std::optional<DevelopJourneyStep> DevelopJourney::HandleInitialEnterSignal() {
 	if (1 < player_tile_count(M2_PLAYER.character())) {
 		if (auto selection = ask_for_confirmation_with_cancellation("Develop two industries at once? (Requires 2 Irons instead of 1)", "Yes", "No"); not selection) {
 			M2_DEFER(m2g::Proxy::main_journey_deleter);
@@ -98,7 +98,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_initial_enter_signal() 
 	return DevelopJourneyStep::EXPECT_RESOURCE_SOURCE;
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal() {
+std::optional<DevelopJourneyStep> DevelopJourney::HandleResourceEnterSignal() {
 	// Check if there's an unspecified iron source
 	if (_iron_source_1 == 0 || (_develop_double_tiles && _iron_source_2 == 0)) {
 		if (auto iron_industries = find_iron_industries_with_iron(); iron_industries.empty()) {
@@ -130,7 +130,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 			if (ask_for_confirmation_bottom("Buy iron from shown industry for free?", "Yes", "No", std::move(background))) {
 				LOG_DEBUG("Player agreed");
 				// Reserve resource
-				auto* factory = find_factory_at_location(*iron_industries.begin());
+				auto* factory = FindFactoryAtLocation(*iron_industries.begin());
 				factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 				((_iron_source_1 == 0) ? _reserved_source_1 : _reserved_source_2) = factory;
 				// Specify resource source
@@ -150,12 +150,12 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_enter_signal()
 	}
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {
-		auto industry_location = *s.poi_or_cancel();
+std::optional<DevelopJourneyStep> DevelopJourney::HandleResourceMouseClickSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		auto industry_location = *s.poi();
 
 		// Check if location has a built factory
-		if (auto *factory = find_factory_at_location(industry_location)) {
+		if (auto *factory = FindFactoryAtLocation(industry_location)) {
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
 				// Deduct resource
@@ -186,12 +186,12 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_mouse_click_si
 	}
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_resource_exit_signal() {
+std::optional<DevelopJourneyStep> DevelopJourney::HandleResourceExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
 
-std::optional<DevelopJourneyStep> DevelopJourney::handle_confirmation_enter_signal() {
+std::optional<DevelopJourneyStep> DevelopJourney::HandleConfirmationEnterSignal() {
 	LOG_INFO("Asking for confirmation...");
 
 	auto confirmation = _develop_double_tiles
@@ -214,9 +214,9 @@ std::optional<DevelopJourneyStep> DevelopJourney::handle_confirmation_enter_sign
 	return std::nullopt;
 }
 
-bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
+bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
 	// Check if the prerequisites are met
-	if (auto prerequisite = can_player_attempt_to_develop(player); not prerequisite) {
+	if (auto prerequisite = CanPlayerAttemptToDevelop(player); not prerequisite) {
 		LOG_WARN("player does not meet develop prerequisites", prerequisite.error());
 		return false;
 	}
@@ -292,7 +292,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 			return false;
 		} else {
 			// Reserve resource
-			auto* factory = find_factory_at_location(develop_action.iron_sources_1());
+			auto* factory = FindFactoryAtLocation(develop_action.iron_sources_1());
 			factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 			reserved_resource = factory;
 		}
@@ -352,7 +352,7 @@ bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_Deve
 	return true;
 }
 
-std::pair<Card,int> execute_develop_action(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
+std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
 	// Assume validation is done
 
 	// Calculate the cost of buying the resources
@@ -362,14 +362,14 @@ std::pair<Card,int> execute_develop_action(m2::Character& player, const m2g::pb:
 
 	// Take resources
 	if (is_industry_location(develop_action.iron_sources_1())) {
-		auto* factory = find_factory_at_location(develop_action.iron_sources_1());
+		auto* factory = FindFactoryAtLocation(develop_action.iron_sources_1());
 		factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 	} else if (is_merchant_location(develop_action.iron_sources_1())) {
 		M2G_PROXY.buy_iron_from_market();
 	}
 	if (develop_action.industry_tile_2()) {
 		if (is_industry_location(develop_action.iron_sources_2())) {
-			auto* factory = find_factory_at_location(develop_action.iron_sources_2());
+			auto* factory = FindFactoryAtLocation(develop_action.iron_sources_2());
 			factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 		} else if (is_merchant_location(develop_action.iron_sources_2())) {
 			M2G_PROXY.buy_iron_from_market();
@@ -382,7 +382,7 @@ std::pair<Card,int> execute_develop_action(m2::Character& player, const m2g::pb:
 		player.remove_item(player.find_items(develop_action.industry_tile_2()));
 	}
 
-	flip_exhausted_factories();
+	FlipExhaustedFactories();
 
 	return std::make_pair(develop_action.card(), cost);
 }

@@ -5,17 +5,17 @@
 #include <set>
 #include <cuzn/Detail.h>
 
-m2::void_expected init_this_human_player_instance(m2::Object& obj);
-m2::void_expected init_other_human_player_instance(m2::Object& obj);
+m2::void_expected InitThisHumanPlayerInstance(m2::Object& obj);
+m2::void_expected InitOtherHumanPlayerInstance(m2::Object& obj);
 
 // Accessors
-size_t player_card_count(m2::Character& player);
-std::list<Card> player_cards(m2::Character& player);
-inline bool does_player_hold_card(m2::Character& player, Card card) { return player.find_items(card) != player.end_items(); }
-int player_link_count(m2::Character& player);
-int player_victory_points(m2::Character& player);
-int player_income_points(m2::Character& player);
-int player_money(m2::Character& player);
+size_t PlayerCardCount(m2::Character& player);
+std::list<Card> PlayerCards(m2::Character& player);
+inline bool DoesPlayerHoldCard(m2::Character& player, Card card) { return player.find_items(card) != player.end_items(); }
+int PlayerLinkCount(m2::Character& player);
+int PlayerVictoryPoints(m2::Character& player);
+int PlayerIncomePoints(m2::Character& player);
+int PlayerMoney(m2::Character& player);
 size_t player_tile_count(m2::Character& player);
 inline size_t player_available_road_count(m2::Character& player) { return player.count_item(m2g::pb::ROAD_TILE); }
 std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Character& player, m2g::pb::ItemCategory tile_category);

@@ -21,7 +21,7 @@ public:
 	explicit POIOrCancelSignal(std::optional<POI> poi) : m2::FsmSignalBase(m2::FsmSignalType::Custom), _poi(poi) {}
 
 	// Accessors
-	[[nodiscard]] std::optional<POI> poi_or_cancel() const { return _poi; }
+	[[nodiscard]] std::optional<POI> poi() const { return _poi; }
 };
 
 class POISelectionJourney : public m2::FsmBase<POISelectionJourneyStep, PositionOrCancelSignal> {
@@ -42,5 +42,5 @@ public:
 	}
 
 protected:
-	std::optional<POISelectionJourneyStep> handle_signal(const PositionOrCancelSignal&) override;
+	std::optional<POISelectionJourneyStep> HandleSignal(const PositionOrCancelSignal&) override;
 };

@@ -54,7 +54,7 @@ namespace {
 
 		// Filter out already built locations
 		for (auto it = industry_locations_in_network.begin(); it != industry_locations_in_network.end(); ) {
-			if (find_factory_at_location(*it)) {
+			if (FindFactoryAtLocation(*it)) {
 				if (can_player_overbuild_on_location_with_card(player, *it, card)) {
 					++it;
 				} else {
@@ -107,9 +107,9 @@ namespace {
 		}
 
 		// If overbuilding
-		if (auto* factory = find_factory_at_location(selected_location)) {
+		if (auto* factory = FindFactoryAtLocation(selected_location)) {
 			// Only the type of the factory can be built
-			return {to_industry_of_factory_character(factory->character())};
+			return {ToIndustryOfFactoryCharacter(factory->character())};
 		}
 
 		// If the card is wild card
@@ -142,7 +142,7 @@ namespace {
 	}
 
 	bool is_next_tile_higher_level_than_built_tile(m2::Character& factory_character, IndustryTile next_industry_tile) {
-		auto built_industry_tile_type = to_industry_tile_of_factory_character(factory_character);
+		auto built_industry_tile_type = ToIndustryTileOfFactoryCharacter(factory_character);
 		const auto& built_industry_tile_item = M2_GAME.GetNamedItem(built_industry_tile_type);
 		const auto& next_industry_tile_item = M2_GAME.GetNamedItem(next_industry_tile);
 		return is_less(
@@ -152,8 +152,8 @@ namespace {
 	}
 }
 
-m2::void_expected can_player_attempt_to_build(m2::Character& player) {
-	if (player_card_count(player) < 1) {
+m2::void_expected CanPlayerAttemptToBuild(m2::Character& player) {
+	if (PlayerCardCount(player) < 1) {
 		return m2::make_unexpected("Build action requires a card");
 	}
 
@@ -178,28 +178,28 @@ BuildJourney::~BuildJourney() {
 	_reserved_resources.clear();
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_signal(const POIOrCancelSignal& s) {
+std::optional<BuildJourneyStep> BuildJourney::HandleSignal(const POIOrCancelSignal& s) {
 	static const std::initializer_list<std::tuple<
 			BuildJourneyStep,
 			FsmSignalType,
 			std::optional<BuildJourneyStep>(BuildJourney::*)(),
 			std::optional<BuildJourneyStep>(BuildJourney::*)(const POIOrCancelSignal&)>>& handlers = {
-		{BuildJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &BuildJourney::handle_initial_enter_signal, nullptr},
+		{BuildJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &BuildJourney::HandleInitialEnterSignal, nullptr},
 
-		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &BuildJourney::handle_location_enter_signal, nullptr},
-		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::Custom, nullptr, &BuildJourney::handle_location_mouse_click_signal},
-		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::ExitState, &BuildJourney::handle_location_exit_signal, nullptr},
+		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &BuildJourney::HandleLocationEnterSignal, nullptr},
+		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::Custom, nullptr, &BuildJourney::HandleLocationMouseClickSignal},
+		{BuildJourneyStep::EXPECT_LOCATION, FsmSignalType::ExitState, &BuildJourney::HandleLocationExitSignal, nullptr},
 
-		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &BuildJourney::handle_resource_enter_signal, nullptr},
-		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &BuildJourney::handle_resource_mouse_click_signal},
-		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &BuildJourney::handle_resource_exit_signal, nullptr},
+		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &BuildJourney::HandleResourceEnterSignal, nullptr},
+		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &BuildJourney::HandleResourceMouseClickSignal},
+		{BuildJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &BuildJourney::HandleResourceExitSignal, nullptr},
 
-		{BuildJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &BuildJourney::handle_confirmation_enter_signal, nullptr},
+		{BuildJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &BuildJourney::HandleConfirmationEnterSignal, nullptr},
 	};
 	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::HandleInitialEnterSignal() {
 	if (auto selected_card = ask_for_card_selection(); selected_card) {
 		_selected_card = *selected_card;
 		return BuildJourneyStep::EXPECT_LOCATION;
@@ -209,15 +209,15 @@ std::optional<BuildJourneyStep> BuildJourney::handle_initial_enter_signal() {
 	}
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_location_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::HandleLocationEnterSignal() {
 	const auto buildable_locations = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
 	sub_journey.emplace(buildable_locations, "Pick a location using right mouse button...");
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {
-		auto selected_location = *s.poi_or_cancel();
+std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		auto selected_location = *s.poi();
 
 		// Check if there's a need to make an industry selection based on the card and the sprite
 		if (auto buildable_inds = buildable_industries_with_card_on_location(_selected_card, selected_location); buildable_inds.empty()) {
@@ -245,7 +245,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 			return std::nullopt;
 		}
 		// If overbuilding
-		if (auto* factory = find_factory_at_location(selected_location)) {
+		if (auto* factory = FindFactoryAtLocation(selected_location)) {
 			// The next tile must be higher level than the built industry
 			if (not is_next_tile_higher_level_than_built_tile(factory->character(), *tile_type)) {
 				M2G_PROXY.show_notification("Overbuilding requires a higher level tile");
@@ -270,14 +270,14 @@ std::optional<BuildJourneyStep> BuildJourney::handle_location_mouse_click_signal
 	}
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_location_exit_signal() {
+std::optional<BuildJourneyStep> BuildJourney::HandleLocationExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 	// Check if there's an unspecified resource left
-	if (auto unspecified_resource = get_next_unspecified_resource(); unspecified_resource != _resource_sources.end()) {
+	if (auto unspecified_resource = GetNextUnspecifiedResource(); unspecified_resource != _resource_sources.end()) {
 		if (unspecified_resource->first == COAL_CUBE_COUNT) {
 			auto selected_city = city_of_location(_selected_location);
 			if (auto closest_mines_with_coal = find_closest_connected_coal_mines_with_coal(selected_city); closest_mines_with_coal.empty()) {
@@ -316,7 +316,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				if (ask_for_confirmation_bottom("Buy coal from shown mine for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
-					auto* factory = find_factory_at_location(*closest_mines_with_coal.begin());
+					auto* factory = FindFactoryAtLocation(*closest_mines_with_coal.begin());
 					factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
 					_reserved_resources.emplace_back(factory, COAL_CUBE_COUNT);
 					// Specify resource source
@@ -359,7 +359,7 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 				if (ask_for_confirmation_bottom("Buy iron from shown industry for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
-					auto* factory = find_factory_at_location(*iron_industries.begin());
+					auto* factory = FindFactoryAtLocation(*iron_industries.begin());
 					factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 					_reserved_resources.emplace_back(factory, IRON_CUBE_COUNT);
 					// Specify resource source
@@ -382,13 +382,13 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_enter_signal() {
 	}
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {
-		auto industry_location = *s.poi_or_cancel();
+std::optional<BuildJourneyStep> BuildJourney::HandleResourceMouseClickSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		auto industry_location = *s.poi();
 
-		auto unspecified_resource = get_next_unspecified_resource();
+		auto unspecified_resource = GetNextUnspecifiedResource();
 		// Check if location has a built factory
-		if (auto* factory = find_factory_at_location(industry_location)) {
+		if (auto* factory = FindFactoryAtLocation(industry_location)) {
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
 				// Reserve resource
@@ -409,12 +409,12 @@ std::optional<BuildJourneyStep> BuildJourney::handle_resource_mouse_click_signal
 	}
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_resource_exit_signal() {
+std::optional<BuildJourneyStep> BuildJourney::HandleResourceExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
 
-std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal() {
+std::optional<BuildJourneyStep> BuildJourney::HandleConfirmationEnterSignal() {
 	LOG_INFO("Asking for confirmation...");
 	auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();
 	auto city_name = M2_GAME.GetNamedItem(city_of_location(_selected_location)).in_game_name();
@@ -444,15 +444,15 @@ std::optional<BuildJourneyStep> BuildJourney::handle_confirmation_enter_signal()
 	return std::nullopt;
 }
 
-decltype(BuildJourney::_resource_sources)::iterator BuildJourney::get_next_unspecified_resource() {
+decltype(BuildJourney::_resource_sources)::iterator BuildJourney::GetNextUnspecifiedResource() {
 	return std::find_if(_resource_sources.begin(), _resource_sources.end(), [](const auto& r) {
 		return r.second == NO_SPRITE;
 	});
 }
 
-bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
+bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
 	// Check if prerequisites are met
-	if (auto prerequisite = can_player_attempt_to_build(player); not prerequisite) {
+	if (auto prerequisite = CanPlayerAttemptToBuild(player); not prerequisite) {
 		LOG_WARN("Player does not meet build prerequisites", prerequisite.error());
 		return false;
 	}
@@ -498,8 +498,8 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 		return false;
 	}
 	// If overbuilding, check if the built industry is selected
-	if (auto* factory = find_factory_at_location(build_action.industry_location())) {
-		if (to_industry_of_factory_character(factory->character()) != industry_of_industry_tile(build_action.industry_tile())) {
+	if (auto* factory = FindFactoryAtLocation(build_action.industry_location())) {
+		if (ToIndustryOfFactoryCharacter(factory->character()) != industry_of_industry_tile(build_action.industry_tile())) {
 			LOG_WARN("Player selected an industry type different from overbuilt industry");
 			return false;
 		}
@@ -521,7 +521,7 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 			const auto industries = industries_on_location(loc);
 			return (industries.size() == 1 && industries[0] == industry);
 		});
-		auto is_all_other_locations_occupied = std::ranges::all_of(other_locations_with_only_the_industry, find_factory_at_location);
+		auto is_all_other_locations_occupied = std::ranges::all_of(other_locations_with_only_the_industry, FindFactoryAtLocation);
 		if (not is_all_other_locations_occupied) {
 			LOG_WARN("Player cannot build on the selected location while the city has an empty location with only that industry");
 			return false;
@@ -552,7 +552,7 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 				goto return_resources;
 			} else {
 				// Reserve resource
-				auto* factory = find_factory_at_location(location);
+				auto* factory = FindFactoryAtLocation(location);
 				factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
 				reserved_resources.emplace_back(factory, COAL_CUBE_COUNT);
 				// Specify resource source
@@ -583,7 +583,7 @@ bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildA
 				goto return_resources;
 			} else {
 				// Reserve resource
-				auto* factory = find_factory_at_location(location);
+				auto* factory = FindFactoryAtLocation(location);
 				factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 				reserved_resources.emplace_back(factory, IRON_CUBE_COUNT);
 				// Specify resource source
@@ -639,7 +639,7 @@ return_resources:
 	return true;
 }
 
-std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
+std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
 	// Assume validation is done
 
 	// Take tile from player
@@ -662,7 +662,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	for (const auto& coal_source : build_action.coal_sources()) {
 		auto location = static_cast<Location>(coal_source);
 		if (is_industry_location(location)) {
-			auto* factory = find_factory_at_location(location);
+			auto* factory = FindFactoryAtLocation(location);
 			factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_coal_from_market();
@@ -671,7 +671,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	for (const auto& iron_source : build_action.iron_sources()) {
 		auto location = static_cast<Location>(iron_source);
 		if (is_industry_location(location)) {
-			auto* factory = find_factory_at_location(location);
+			auto* factory = FindFactoryAtLocation(location);
 			factory->character().remove_resource(IRON_CUBE_COUNT, 1.0f);
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_iron_from_market();
@@ -679,14 +679,14 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 	}
 
 	// If overbuilding
-	if (auto* factory = find_factory_at_location(build_action.industry_location())) {
+	if (auto* factory = FindFactoryAtLocation(build_action.industry_location())) {
 		// Remove previous factory
 		M2_DEFER(m2::create_object_deleter(factory->id()));
 	}
 	// Create factory on the map
 	auto it = m2::create_object(position_of_industry_location(build_action.industry_location()), m2g::pb::FACTORY, player.owner_id());
 	auto city = city_of_location(build_action.industry_location());
-	init_factory(*it, city, build_action.industry_tile());
+	InitFactory(*it, city, build_action.industry_tile());
 	// Give resources to factory, sell to market at the same time
 	if (tile_category == ITEM_CATEGORY_COAL_MINE_TILE) {
 		// If there's a connection to coal market
@@ -716,7 +716,7 @@ std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::C
 			M2G_PROXY.is_canal_era() ? BEER_BONUS_FIRST_ERA : BEER_BONUS_SECOND_ERA));
 	}
 
-	flip_exhausted_factories();
+	FlipExhaustedFactories();
 
 	return std::make_pair(build_action.card(), cost);
 }

@@ -7,7 +7,7 @@
 #include <Network.pb.h>
 #include <list>
 
-m2::void_expected can_player_attempt_to_develop(m2::Character& player);
+m2::void_expected CanPlayerAttemptToDevelop(m2::Character& player);
 
 enum class DevelopJourneyStep {
 	INITIAL_STEP = 0,
@@ -31,16 +31,16 @@ public:
 	std::optional<POISelectionJourney> sub_journey{};
 
 protected:
-	std::optional<DevelopJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
-	std::optional<DevelopJourneyStep> handle_initial_enter_signal();
-	std::optional<DevelopJourneyStep> handle_resource_enter_signal();
-	std::optional<DevelopJourneyStep> handle_resource_mouse_click_signal(const POIOrCancelSignal&);
-	std::optional<DevelopJourneyStep> handle_resource_exit_signal();
-	std::optional<DevelopJourneyStep> handle_confirmation_enter_signal();
+	std::optional<DevelopJourneyStep> HandleSignal(const POIOrCancelSignal& s) override;
+	std::optional<DevelopJourneyStep> HandleInitialEnterSignal();
+	std::optional<DevelopJourneyStep> HandleResourceEnterSignal();
+	std::optional<DevelopJourneyStep> HandleResourceMouseClickSignal(const POIOrCancelSignal&);
+	std::optional<DevelopJourneyStep> HandleResourceExitSignal();
+	std::optional<DevelopJourneyStep> HandleConfirmationEnterSignal();
 };
 
 // For the server
-bool can_player_develop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);
+bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);
 
 // For the server
-std::pair<Card,int> execute_develop_action(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);
+std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action);

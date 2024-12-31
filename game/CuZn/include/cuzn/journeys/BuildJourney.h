@@ -8,7 +8,7 @@
 #include <cuzn/journeys/subjourneys/POISelectionJourney.h>
 #include <Network.pb.h>
 
-m2::void_expected can_player_attempt_to_build(m2::Character& player);
+m2::void_expected CanPlayerAttemptToBuild(m2::Character& player);
 
 enum class BuildJourneyStep {
 	INITIAL_STEP = 0,
@@ -33,21 +33,21 @@ public:
 	std::optional<POISelectionJourney> sub_journey;
 
 protected:
-	std::optional<BuildJourneyStep> handle_signal(const POIOrCancelSignal& s) override;
-	std::optional<BuildJourneyStep> handle_initial_enter_signal();
-	std::optional<BuildJourneyStep> handle_location_enter_signal();
-	std::optional<BuildJourneyStep> handle_location_mouse_click_signal(const POIOrCancelSignal& s);
-	std::optional<BuildJourneyStep> handle_location_exit_signal();
-	std::optional<BuildJourneyStep> handle_resource_enter_signal();
-	std::optional<BuildJourneyStep> handle_resource_mouse_click_signal(const POIOrCancelSignal& s);
-	std::optional<BuildJourneyStep> handle_resource_exit_signal();
-	std::optional<BuildJourneyStep> handle_confirmation_enter_signal();
+	std::optional<BuildJourneyStep> HandleSignal(const POIOrCancelSignal& s) override;
+	std::optional<BuildJourneyStep> HandleInitialEnterSignal();
+	std::optional<BuildJourneyStep> HandleLocationEnterSignal();
+	std::optional<BuildJourneyStep> HandleLocationMouseClickSignal(const POIOrCancelSignal& s);
+	std::optional<BuildJourneyStep> HandleLocationExitSignal();
+	std::optional<BuildJourneyStep> HandleResourceEnterSignal();
+	std::optional<BuildJourneyStep> HandleResourceMouseClickSignal(const POIOrCancelSignal& s);
+	std::optional<BuildJourneyStep> HandleResourceExitSignal();
+	std::optional<BuildJourneyStep> HandleConfirmationEnterSignal();
 
-	decltype(_resource_sources)::iterator get_next_unspecified_resource();
+	decltype(_resource_sources)::iterator GetNextUnspecifiedResource();
 };
 
 // For the server
-bool can_player_build(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
+bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
 
 // For the server
-std::pair<Card,int> execute_build_action(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
+std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);

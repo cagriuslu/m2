@@ -16,7 +16,7 @@ rpg::EscaperFsm::EscaperFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(
 	init(EscaperMode::Idle);
 }
 
-std::optional<rpg::EscaperMode> rpg::EscaperFsm::handle_signal(const EscaperFsmSignal& s) {
+std::optional<rpg::EscaperMode> rpg::EscaperFsm::HandleSignal(const EscaperFsmSignal& s) {
 	if (s.type() == m2::FsmSignalType::EnterState) {
 		// Action for EnterState is the same for all states
 		arm(random_alarm_duration(ai->recalculation_period()));

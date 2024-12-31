@@ -1,7 +1,7 @@
 #include <cuzn/detail/Market.h>
 #include <m2/M2.h>
 
-int calculate_cost(int capacity, int current_resource_count, int to_buy) {
+int CalculateCost(int capacity, int current_resource_count, int to_buy) {
 	auto cost_of_one = [&](int resource_count) {
 		if (0 < resource_count) {
 			return (capacity / 2) + 1 - m2::I(ceilf(m2::F(resource_count) / 2.0f));
@@ -17,7 +17,7 @@ int calculate_cost(int capacity, int current_resource_count, int to_buy) {
 	return total_cost;
 }
 
-std::pair<int,int> calculate_revenue(int capacity, int current_resource_count, int count) {
+std::pair<int,int> CalculateRevenue(int capacity, int current_resource_count, int count) {
 	auto revenue_of_one = [&](int resource_count) {
 		return (capacity / 2) - m2::I(floorf(m2::F(resource_count) / 2.0f));
 	};

@@ -27,7 +27,7 @@ rpg::ChaserFsm::ChaserFsm(m2::Object* obj, const pb::Ai* ai) : FsmBase(), obj(ob
 	init(ChaserMode::Idle);
 }
 
-std::optional<rpg::ChaserMode> rpg::ChaserFsm::handle_signal(const ChaserFsmSignal &s) {
+std::optional<rpg::ChaserMode> rpg::ChaserFsm::HandleSignal(const ChaserFsmSignal &s) {
 	if (s.type() == m2::FsmSignalType::EnterState) {
 		// Action for EnterState is the same for all states
 		arm(random_alarm_duration(ai->recalculation_period()));

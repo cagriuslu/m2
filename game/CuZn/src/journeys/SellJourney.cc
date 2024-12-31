@@ -18,14 +18,14 @@ using namespace m2g::pb;
 
 namespace {
 	std::set<MerchantLocation> merchants_buying_industry_on_location(IndustryLocation l) {
-		auto industry = to_industry_of_factory_character(find_factory_at_location(l)->character());
+		auto industry = ToIndustryOfFactoryCharacter(FindFactoryAtLocation(l)->character());
 		if (not is_sellable_industry(industry)) {
 			return {};
 		}
 
 		// Check if a merchant connection to an eligible merchant exists
 		std::set<MerchantLocation> merchants;
-		for (auto reachable_location : reachable_locations_from_industry_city(city_of_location(l))) {
+		for (auto reachable_location : ReachableLocationsFromIndustryCity(city_of_location(l))) {
 			if (is_merchant_location(reachable_location)) {
 				if (can_merchant_buy_sellable_industry(find_merchant_at_location(reachable_location)->character(), industry)) {
 					merchants.insert(reachable_location);
@@ -48,8 +48,8 @@ namespace {
 	}
 }
 
-m2::void_expected can_player_attempt_to_sell(m2::Character& player) {
-	if (player_card_count(player) < 1) {
+m2::void_expected CanPlayerAttemptToSell(m2::Character& player) {
+	if (PlayerCardCount(player) < 1) {
 		return m2::make_unexpected("Sell action requires a card");
 	}
 
@@ -74,34 +74,34 @@ SellJourney::~SellJourney() {
 	_reserved_beers.clear();
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_signal(const POIOrCancelSignal& s) {
+std::optional<SellJourneyStep> SellJourney::HandleSignal(const POIOrCancelSignal& s) {
 	static std::initializer_list<std::tuple<
 			SellJourneyStep,
 			FsmSignalType,
 			std::optional<SellJourneyStep> (SellJourney::*)(),
 			std::optional<SellJourneyStep> (SellJourney::*)(const POIOrCancelSignal &)>> handlers = {
-		{SellJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &SellJourney::handle_initial_enter_signal, nullptr},
+		{SellJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &SellJourney::HandleInitialEnterSignal, nullptr},
 
-		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_industry_location_enter_signal, nullptr},
-		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_industry_location_poi_or_cancel_signal},
-		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_industry_location_exit_signal, nullptr},
+		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::EnterState, &SellJourney::HandleIndustryLocationEnterSignal, nullptr},
+		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::HandleIndustryLocationPoiOrCancelSignal},
+		{SellJourneyStep::EXPECT_INDUSTRY_LOCATION, FsmSignalType::ExitState, &SellJourney::HandleIndustryLocationExitSignal, nullptr},
 
-		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::EnterState, &SellJourney::handle_merchant_location_enter_signal, nullptr},
-		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::handle_merchant_location_poi_or_cancel_signal},
-		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::ExitState, &SellJourney::handle_merchant_location_exit_signal, nullptr},
+		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::EnterState, &SellJourney::HandleMerchantLocationEnterSignal, nullptr},
+		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::Custom, nullptr, &SellJourney::HandleMerchantLocationPoiOrCancelSignal},
+		{SellJourneyStep::EXPECT_MERCHANT_LOCATION, FsmSignalType::ExitState, &SellJourney::HandleMerchantLocationExitSignal, nullptr},
 
-		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &SellJourney::handle_resource_enter_signal, nullptr},
-		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &SellJourney::handle_resource_poi_or_cancel_signal},
-		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &SellJourney::handle_resource_exit_signal, nullptr},
+		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &SellJourney::HandleResourceEnterSignal, nullptr},
+		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &SellJourney::HandleResourcePoiOrCancelSignal},
+		{SellJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &SellJourney::HandleResourceExitSignal, nullptr},
 
-		{SellJourneyStep::EXPECT_DEVELOP_BENEFIT_INDUSTRY_TILE, FsmSignalType::EnterState, &SellJourney::handle_develop_benefit_industry_tile_enter_signal, nullptr},
+		{SellJourneyStep::EXPECT_DEVELOP_BENEFIT_INDUSTRY_TILE, FsmSignalType::EnterState, &SellJourney::HandleDevelopBenefitIndustryTileEnterSignal, nullptr},
 
-		{SellJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &SellJourney::handle_confirmation_enter_signal, nullptr},
+		{SellJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &SellJourney::HandleConfirmationEnterSignal, nullptr},
 	};
 	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_initial_enter_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleInitialEnterSignal() {
 	if (auto selected_card = ask_for_card_selection(); selected_card) {
 		_selected_card = *selected_card;
 		return SellJourneyStep::EXPECT_INDUSTRY_LOCATION;
@@ -111,15 +111,15 @@ std::optional<SellJourneyStep> SellJourney::handle_initial_enter_signal() {
 	}
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_industry_location_enter_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleIndustryLocationEnterSignal() {
 	auto sellable_locations = sellable_factory_locations_with_merchant_connection(M2_PLAYER.character());
 	sub_journey.emplace(sellable_locations, "Pick the industry to sell using right mouse button...");
 	return std::nullopt;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_industry_location_poi_or_cancel_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {
-		_selected_location = *s.poi_or_cancel();
+std::optional<SellJourneyStep> SellJourney::HandleIndustryLocationPoiOrCancelSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		_selected_location = *s.poi();
 		return SellJourneyStep::EXPECT_MERCHANT_LOCATION;
 	} else {
 		M2_DEFER(m2g::Proxy::main_journey_deleter);
@@ -127,20 +127,20 @@ std::optional<SellJourneyStep> SellJourney::handle_industry_location_poi_or_canc
 	}	
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_industry_location_exit_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleIndustryLocationExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_merchant_location_enter_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleMerchantLocationEnterSignal() {
 	auto merchants_buying = merchants_buying_industry_on_location(_selected_location);
 	sub_journey.emplace(merchants_buying, "Pick the merchant to sell to using right mouse button...");
 	return std::nullopt;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_merchant_location_poi_or_cancel_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {
-		_merchant_location = *s.poi_or_cancel();
+std::optional<SellJourneyStep> SellJourney::HandleMerchantLocationPoiOrCancelSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		_merchant_location = *s.poi();
 		return SellJourneyStep::EXPECT_RESOURCE_SOURCE;
 	} else {
 		M2_DEFER(m2g::Proxy::main_journey_deleter);
@@ -148,13 +148,13 @@ std::optional<SellJourneyStep> SellJourney::handle_merchant_location_poi_or_canc
 	}
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_merchant_location_exit_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleMerchantLocationExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_resource_enter_signal() {
-	if (auto beer_count = required_beer_count_to_sell(_selected_location)) {
+std::optional<SellJourneyStep> SellJourney::HandleResourceEnterSignal() {
+	if (auto beer_count = RequiredBeerCountToSell(_selected_location)) {
 		// On first entry, create empty entries in _beer_sources for every required beer
 		if (_beer_sources.empty()) {
 			_beer_sources.insert(_beer_sources.end(), beer_count, NO_SPRITE);
@@ -181,12 +181,12 @@ std::optional<SellJourneyStep> SellJourney::handle_resource_enter_signal() {
 	}
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_resource_poi_or_cancel_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {	
-		auto poi = *s.poi_or_cancel();
+std::optional<SellJourneyStep> SellJourney::HandleResourcePoiOrCancelSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		auto poi = *s.poi();
 		// Reserve the resource
 		if (is_industry_location(poi)) {
-			auto* factory = find_factory_at_location(poi);
+			auto* factory = FindFactoryAtLocation(poi);
 			factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
 			_reserved_beers.emplace_back(factory);
 		} else if (is_merchant_location(poi)) {
@@ -204,14 +204,14 @@ std::optional<SellJourneyStep> SellJourney::handle_resource_poi_or_cancel_signal
 	}
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_resource_exit_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleResourceExitSignal() {
 	if (sub_journey) {
 		sub_journey.reset();
 	}
 	return std::nullopt;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_develop_benefit_industry_tile_enter_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleDevelopBenefitIndustryTileEnterSignal() {
 	// Check if merchant bonus is free develop
 	if (is_merchant_benefit_develop(_merchant_location)) {
 		// Check if using merchant beer
@@ -235,10 +235,10 @@ std::optional<SellJourneyStep> SellJourney::handle_develop_benefit_industry_tile
 	return SellJourneyStep::EXPECT_CONFIRMATION;
 }
 
-std::optional<SellJourneyStep> SellJourney::handle_confirmation_enter_signal() {
+std::optional<SellJourneyStep> SellJourney::HandleConfirmationEnterSignal() {
 	auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();
 	auto city_name = M2_GAME.GetNamedItem(city_of_location(_selected_location)).in_game_name();
-	auto industry = to_industry_of_factory_character(find_factory_at_location(_selected_location)->character());
+	auto industry = ToIndustryOfFactoryCharacter(FindFactoryAtLocation(_selected_location)->character());
 	auto industry_name = M2_GAME.GetNamedItem(industry).in_game_name();
 	if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		M2G_PROXY.show_notification("Selling location...");
@@ -258,23 +258,23 @@ std::optional<SellJourneyStep> SellJourney::handle_confirmation_enter_signal() {
 }
 
 Industry SellJourney::selected_industry() const {
-	return to_industry_of_factory_character(find_factory_at_location(_selected_location)->character());
+	return ToIndustryOfFactoryCharacter(FindFactoryAtLocation(_selected_location)->character());
 }
 
-m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
-	auto prerequisite = can_player_attempt_to_sell(player);
+m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
+	auto prerequisite = CanPlayerAttemptToSell(player);
 	m2_reflect_unexpected(prerequisite);
 
 	// Validate the card
 	m2_return_unexpected_message_unless(is_card(sell_action.card()), "Selected card is not a card");
-	m2_return_unexpected_message_unless(does_player_hold_card(player, sell_action.card()), "Player does not hold the selected card");
+	m2_return_unexpected_message_unless(DoesPlayerHoldCard(player, sell_action.card()), "Player does not hold the selected card");
 
 	// Validate the factory
 	m2_return_unexpected_message_unless(is_industry_location(sell_action.industry_location()), "Selected location is not an industry location");
-	auto* factory = find_factory_at_location(sell_action.industry_location());
+	auto* factory = FindFactoryAtLocation(sell_action.industry_location());
 	m2_return_unexpected_message_unless(factory, "Selected location does not have a built factory");
 	m2_return_unexpected_message_unless(factory->parent_id() == player.owner_id(), "Selected factory does not belong to the player");
-	m2_return_unexpected_message_unless(is_sellable_industry(to_industry_of_factory_character(factory->character())), "Selected factory is not sellable");
+	m2_return_unexpected_message_unless(is_sellable_industry(ToIndustryOfFactoryCharacter(factory->character())), "Selected factory is not sellable");
 
 	// Validate the merchant
 	m2_return_unexpected_message_unless(is_merchant_location(sell_action.merchant_location()), "Selected merchant location is not a merchant location");
@@ -282,7 +282,7 @@ m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCo
 	m2_return_unexpected_message_unless(merchants.contains(sell_action.merchant_location()), "Selected merchant cannot buy the selected industry");
 
 	// Validate the beer sources
-	if (auto required_beer_count = required_beer_count_to_sell(sell_action.industry_location())) {
+	if (auto required_beer_count = RequiredBeerCountToSell(sell_action.industry_location())) {
 		m2_return_unexpected_message_unless(required_beer_count == sell_action.beer_sources_size(), "Invalid number of beer sources are provided");
 		std::vector<m2::Object*> reserved_beers;
 		for (const auto& beer_source_i : sell_action.beer_sources()) {
@@ -291,7 +291,7 @@ m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCo
 			m2_return_unexpected_message_unless(breweries.contains(beer_source), "Selected beer source cannot be used");
 			// Reserve the resource
 			if (is_industry_location(beer_source)) {
-				auto* source_factory = find_factory_at_location(beer_source);
+				auto* source_factory = FindFactoryAtLocation(beer_source);
 				source_factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
 				reserved_beers.emplace_back(source_factory);
 			} else if (is_merchant_location(beer_source)) {
@@ -325,14 +325,14 @@ m2::void_expected can_player_sell(m2::Character& player, const m2g::pb::ClientCo
 	return {};
 }
 
-Card execute_sell_action(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
+Card ExecuteSellAction(m2::Character& player, const m2g::pb::ClientCommand_SellAction& sell_action) {
 	// Assume validation is done
 
 	// Take resources
 	for (const auto& beer_source_i : sell_action.beer_sources()) {
 		auto beer_source = static_cast<Location>(beer_source_i);
 		if (is_industry_location(beer_source)) {
-			auto* source_factory = find_factory_at_location(beer_source);
+			auto* source_factory = FindFactoryAtLocation(beer_source);
 			source_factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
 		} else if (is_merchant_location(beer_source)) {
 			auto* source_merchant = find_merchant_at_location(beer_source);
@@ -340,7 +340,7 @@ Card execute_sell_action(m2::Character& player, const m2g::pb::ClientCommand_Sel
 		}
 	}
 
-	sell_factory(find_factory_at_location(sell_action.industry_location())->character());
+	SellFactory(FindFactoryAtLocation(sell_action.industry_location())->character());
 
 	// Merchant develop benefit
 	if (sell_action.merchant_develop_benefit_industry_tile()) {
@@ -348,7 +348,7 @@ Card execute_sell_action(m2::Character& player, const m2g::pb::ClientCommand_Sel
 		player.remove_item(player.find_items(sell_action.merchant_develop_benefit_industry_tile()));
 	}
 
-	flip_exhausted_factories();
+	FlipExhaustedFactories();
 
 	return sell_action.card();
 }

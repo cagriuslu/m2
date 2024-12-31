@@ -13,15 +13,15 @@ LiquidationJourney::LiquidationJourney(int money_to_be_paid) : m2::FsmBase<Liqui
 	init(LiquidationJourneyStep::EXPECT_LOCATION);
 }
 
-std::optional<LiquidationJourneyStep> LiquidationJourney::handle_signal(const POIOrCancelSignal& s) {
+std::optional<LiquidationJourneyStep> LiquidationJourney::HandleSignal(const POIOrCancelSignal& s) {
 	static std::initializer_list<std::tuple<
 			LiquidationJourneyStep,
 			m2::FsmSignalType,
 			std::optional<LiquidationJourneyStep> (LiquidationJourney::*)(),
 			std::optional<LiquidationJourneyStep> (LiquidationJourney::*)(const POIOrCancelSignal &)>> handlers = {
-			{LiquidationJourneyStep::EXPECT_LOCATION, m2::FsmSignalType::EnterState, &LiquidationJourney::handle_location_enter_signal, nullptr},
-			{LiquidationJourneyStep::EXPECT_LOCATION, m2::FsmSignalType::Custom, nullptr, &LiquidationJourney::handle_location_mouse_click_signal},
-			{LiquidationJourneyStep::EXPECT_LOCATION, m2::FsmSignalType::ExitState, &LiquidationJourney::handle_location_exit_signal, nullptr},
+			{LiquidationJourneyStep::EXPECT_LOCATION, m2::FsmSignalType::EnterState, &LiquidationJourney::HandleLocationEnterSignal, nullptr},
+			{LiquidationJourneyStep::EXPECT_LOCATION, m2::FsmSignalType::Custom, nullptr, &LiquidationJourney::HandleLocationMouseClickSignal},
+			{LiquidationJourneyStep::EXPECT_LOCATION, m2::FsmSignalType::ExitState, &LiquidationJourney::HandleLocationExitSignal, nullptr},
 	};
 	return handle_signal_using_handler_map(handlers, *this, s);
 }
@@ -29,14 +29,14 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_signal(const PO
 namespace {
 	int sell_return_of_factories(const std::vector<IndustryLocation>& locations) {
 		auto half_costs = locations
-			| std::views::transform(find_factory_at_location)
+			| std::views::transform(FindFactoryAtLocation)
 			| std::views::transform(m2::to_character_of_object_unsafe)
-			| std::views::transform(liquidation_return_of_factory_character);
+			| std::views::transform(LiquidationReturnOfFactoryCharacter);
 		return std::accumulate(half_costs.begin(), half_costs.end(), 0);
 	}
 }
 
-std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_enter_signal() {
+std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationEnterSignal() {
 	if (sell_return_of_factories(_selected_locations) < _money_to_be_paid) {
 		auto player_factories = player_built_factory_locations(M2_PLAYER.character());
 		std::set<IndustryLocation> liquidateable_factories;
@@ -56,10 +56,10 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_enter_
 	return std::nullopt;
 }
 
-std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_mouse_click_signal(const POIOrCancelSignal& poi_or_cancel) {
+std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationMouseClickSignal(const POIOrCancelSignal& poi_or_cancel) {
 	// Cancellation is not allowed, assume POI is received
 
-	auto selected_location = *poi_or_cancel.poi_or_cancel();
+	auto selected_location = *poi_or_cancel.poi();
 	LOG_INFO("Location selected for liquidation", m2g::pb::SpriteType_Name(selected_location));
 	_selected_locations.emplace_back(selected_location);
 	// Destroy the POI selection journey before the next iteration
@@ -68,7 +68,7 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_mouse_
 	return LiquidationJourneyStep::EXPECT_LOCATION;
 }
 
-std::optional<LiquidationJourneyStep> LiquidationJourney::handle_location_exit_signal() {
+std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationExitSignal() {
 	// Send the Liquidate action
 	m2g::pb::ClientCommand cc;
 	for (const auto& loc : _selected_locations) {

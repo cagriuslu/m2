@@ -7,7 +7,7 @@ namespace {
 												  4, 4, 4, 4, 4, 4, 4, 4, 4, 3};
 }
 
-int income_level_from_income_points(int ip) {
+int IncomeLevelFromIncomePoints(int ip) {
 	if (ip < -10 || 89 < ip) {
 		throw M2_ERROR("Invalid income points");
 	}
@@ -25,7 +25,7 @@ int income_level_from_income_points(int ip) {
 	throw M2_ERROR("Invalid income_point_level_points map");
 }
 
-int highest_income_points_of_level(const int level) {
+int HighestIncomePointsOfLevel(const int level) {
 	if (level < -10 || 30 < level) {
 		throw M2_ERROR("Invalid income level");
 	}

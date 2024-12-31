@@ -19,6 +19,6 @@ namespace rpg {
 		}
 
 	protected:
-		inline std::optional<HitNRunnerMode> handle_signal(MAYBE const HitNRunnerFsmSignal& s) override { return {}; }
+		inline std::optional<HitNRunnerMode> HandleSignal(MAYBE const HitNRunnerFsmSignal& s) override { return {}; }
 	};
 }

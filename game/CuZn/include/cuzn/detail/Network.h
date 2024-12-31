@@ -8,9 +8,11 @@
 
 /// Returns industry or merchant locations starting from the given city.
 /// Useful for iterating over accessible locations from a city.
-std::set<Location> reachable_locations_from_industry_city(IndustryCity city);
+std::set<Location> ReachableLocationsFromIndustryCity(IndustryCity city);
+
 /// Check if a location can be reached from an industry city
-bool is_industry_city_connected_to_location(IndustryCity city, Location location);
+bool IsIndustryCityConnectedToLocation(IndustryCity city, Location location);
+
 /// Create a graph of currently built connections where nodes are of type `City`.
 /// Useful for finding the closest cities/industries.
-m2::Graph create_active_connections_graph();
+m2::Graph CreateActiveConnectionsGraph();

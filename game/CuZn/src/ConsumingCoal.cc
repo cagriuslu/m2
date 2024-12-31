@@ -11,7 +11,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city, City city_2) {
-	auto active_connections = create_active_connections_graph();
+	auto active_connections = CreateActiveConnectionsGraph();
 	// Find all reachable cities and their costs
 	auto reachable_cities = active_connections.reachable_nodes_from(city, 100.0f);
 	if (city_2) {
@@ -33,7 +33,7 @@ std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city
 		// Check if the city contains a coal resource
 		auto locs_in_city = industry_locations_in_city(static_cast<City>(node));
 		for (const auto& loc : locs_in_city) {
-			if (auto* factory = find_factory_at_location(loc); factory && factory->character().has_resource(COAL_CUBE_COUNT)) {
+			if (auto* factory = FindFactoryAtLocation(loc); factory && factory->character().has_resource(COAL_CUBE_COUNT)) {
 				industry_locations.emplace(loc);
 				closest_coal_mine_cost = cost;
 			}
@@ -44,7 +44,7 @@ std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city
 }
 
 std::optional<MerchantCity> find_connected_coal_market(City city, City city_2) {
-	auto active_connections = create_active_connections_graph();
+	auto active_connections = CreateActiveConnectionsGraph();
 	// Find all reachable cities and their costs
 	auto reachable_cities = active_connections.reachable_nodes_from(city, 100.0f);
 	// Check if any of the reachable cities is a merchant city
@@ -73,7 +73,7 @@ bool is_there_coal_on_the_board() {
 	auto there_is_coal_mine_with_coal = std::ranges::any_of(
 			M2_LEVEL.characters
 				| std::views::transform(m2::to_character_base)
-				| std::views::filter(is_factory_character),
+				| std::views::filter(IsFactoryCharacter),
 			[](m2::Character& chr) {
 				return m2::is_positive(chr.get_resource(COAL_CUBE_COUNT), 0.001f);
 			});

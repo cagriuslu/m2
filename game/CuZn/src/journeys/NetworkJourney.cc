@@ -45,8 +45,8 @@ namespace {
 	}
 }
 
-m2::void_expected can_player_attempt_to_network(m2::Character& player) {
-	if (player_card_count(player) < 1) {
+m2::void_expected CanPlayerAttemptToNetwork(m2::Character& player) {
+	if (PlayerCardCount(player) < 1) {
 		return m2::make_unexpected("Network action requires a card");
 	}
 
@@ -80,28 +80,28 @@ NetworkJourney::~NetworkJourney() {
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_signal(const POIOrCancelSignal& s) {
+std::optional<NetworkJourneyStep> NetworkJourney::HandleSignal(const POIOrCancelSignal& s) {
 	static std::initializer_list<std::tuple<
 			NetworkJourneyStep,
 			FsmSignalType,
 			std::optional<NetworkJourneyStep> (NetworkJourney::*)(),
 			std::optional<NetworkJourneyStep> (NetworkJourney::*)(const POIOrCancelSignal &)>> handlers = {
-			{NetworkJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &NetworkJourney::handle_initial_enter_signal, nullptr},
+			{NetworkJourneyStep::INITIAL_STEP, FsmSignalType::EnterState, &NetworkJourney::HandleInitialEnterSignal, nullptr},
 
-			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &NetworkJourney::handle_location_enter_signal, nullptr},
-			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::Custom, nullptr, &NetworkJourney::handle_location_mouse_click_signal},
-			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::ExitState, &NetworkJourney::handle_location_exit_signal, nullptr},
+			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::EnterState, &NetworkJourney::HandleLocationEnterSignal, nullptr},
+			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::Custom, nullptr, &NetworkJourney::HandleLocationMouseClickSignal},
+			{NetworkJourneyStep::EXPECT_LOCATION, FsmSignalType::ExitState, &NetworkJourney::HandleLocationExitSignal, nullptr},
 
-			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &NetworkJourney::handle_resource_enter_signal, nullptr},
-			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &NetworkJourney::handle_resource_mouse_click_signal},
-			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &NetworkJourney::handle_resource_exit_signal, nullptr},
+			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::EnterState, &NetworkJourney::HandleResourceEnterSignal, nullptr},
+			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::Custom, nullptr, &NetworkJourney::HandleResourceMouseClickSignal},
+			{NetworkJourneyStep::EXPECT_RESOURCE_SOURCE, FsmSignalType::ExitState, &NetworkJourney::HandleResourceExitSignal, nullptr},
 
-			{NetworkJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &NetworkJourney::handle_confirmation_enter_signal, nullptr}
+			{NetworkJourneyStep::EXPECT_CONFIRMATION, FsmSignalType::EnterState, &NetworkJourney::HandleConfirmationEnterSignal, nullptr}
 	};
 	return handle_signal_using_handler_map(handlers, *this, s);
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() {
+std::optional<NetworkJourneyStep> NetworkJourney::HandleInitialEnterSignal() {
 	// Ask if double railroads should be built
 	if (M2G_PROXY.is_railroad_era() && 1 < M2_PLAYER.character().count_item(m2g::pb::ROAD_TILE)) {
 		_build_double_railroads = ask_for_confirmation("Build double railroads?", "", "Yes", "No");
@@ -116,14 +116,14 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_initial_enter_signal() 
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_location_enter_signal() {
+std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationEnterSignal() {
 	sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character()), "Pick connection using right mouse button...");
 	return std::nullopt;
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {
-		auto selected_location = *s.poi_or_cancel();
+std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationMouseClickSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		auto selected_location = *s.poi();
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(selected_location));
 
 		if (!_selected_connection_1) {
@@ -136,7 +136,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_si
 
 		// If selection done
 		if ((not _build_double_railroads && _selected_connection_1) || _selected_connection_2) {
-			_resource_sources = required_resources_for_network();
+			_resource_sources = RequiredResourcesForNetwork();
 			return _resource_sources.empty() ? NetworkJourneyStep::EXPECT_CONFIRMATION
 											 : NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 		}
@@ -148,14 +148,14 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_location_mouse_click_si
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_location_exit_signal() {
+std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal() {
+std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 	// Check if there's an unspecified resource left
-	if (auto unspecified_resource = get_next_unspecified_resource(); unspecified_resource != _resource_sources.end()) {
+	if (auto unspecified_resource = GetNextUnspecifiedResource(); unspecified_resource != _resource_sources.end()) {
 		// Create the decoy connections if necessary
 		if (unspecified_resource->connection == _selected_connection_1 && not _decoy_road_1) {
 			// Create the first decoy
@@ -202,7 +202,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 				if (ask_for_confirmation_bottom("Buy coal from shown mine for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
-					auto* factory = find_factory_at_location(*closest_mines_with_coal.begin());
+					auto* factory = FindFactoryAtLocation(*closest_mines_with_coal.begin());
 					factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
@@ -229,7 +229,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 				if (ask_for_confirmation_bottom("Buy beer from shown industry for free?", "Yes", "No", std::move(background))) {
 					LOG_DEBUG("Player agreed");
 					// Reserve resource
-					auto* factory = find_factory_at_location(industry_location);
+					auto* factory = FindFactoryAtLocation(industry_location);
 					factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
 					unspecified_resource->reserved_object = factory;
 					// Specify resource source
@@ -252,13 +252,13 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_enter_signal()
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_mouse_click_signal(const POIOrCancelSignal& s) {
-	if (s.poi_or_cancel()) {
-		auto selected_location = *s.poi_or_cancel();
-		auto unspecified_resource = get_next_unspecified_resource();
+std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceMouseClickSignal(const POIOrCancelSignal& s) {
+	if (s.poi()) {
+		auto selected_location = *s.poi();
+		auto unspecified_resource = GetNextUnspecifiedResource();
 		LOG_DEBUG("Industry location", m2g::pb::SpriteType_Name(selected_location));
 		// Check if location has a built factory
-		if (auto *factory = find_factory_at_location(selected_location)) {
+		if (auto *factory = FindFactoryAtLocation(selected_location)) {
 			// Check if the location is one of the dimming exceptions
 			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
 				// Reserve resource
@@ -277,12 +277,12 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_mouse_click_si
 	}
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_resource_exit_signal() {
+std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
 
-std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_signal() {
+std::optional<NetworkJourneyStep> NetworkJourney::HandleConfirmationEnterSignal() {
 	LOG_INFO("Asking for confirmation...");
 	// TODO
 	if (ask_for_confirmation("Are you sure?", "", "OK", "Cancel")) {
@@ -311,7 +311,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::handle_confirmation_enter_sign
 	return std::nullopt;
 }
 
-std::vector<NetworkJourney::ResourceSource> NetworkJourney::required_resources_for_network() {
+std::vector<NetworkJourney::ResourceSource> NetworkJourney::RequiredResourcesForNetwork() {
 	if (not _selected_connection_1) {
 		throw M2_ERROR("No connection is selected");
 	}
@@ -329,15 +329,15 @@ std::vector<NetworkJourney::ResourceSource> NetworkJourney::required_resources_f
 	}
 }
 
-decltype(NetworkJourney::_resource_sources)::iterator NetworkJourney::get_next_unspecified_resource() {
+decltype(NetworkJourney::_resource_sources)::iterator NetworkJourney::GetNextUnspecifiedResource() {
 	return std::find_if(_resource_sources.begin(), _resource_sources.end(), [](const auto& r) {
 		return r.source == NO_SPRITE;
 	});
 }
 
-bool can_player_network(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
+bool CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
 	// Check if the prerequisites are met
-	if (auto prerequisite = can_player_attempt_to_network(player); not prerequisite) {
+	if (auto prerequisite = CanPlayerAttemptToNetwork(player); not prerequisite) {
 		LOG_WARN("Player does not meet network prerequisites", prerequisite.error());
 		return false;
 	}
@@ -403,7 +403,7 @@ bool can_player_network(m2::Character& player, const m2g::pb::ClientCommand_Netw
 	return true;
 }
 
-std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
+std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
 	// Assume everything is validated
 
 	// Take road tiles from player
@@ -424,7 +424,7 @@ std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb:
 	for (const auto& coal_source : network_action.coal_sources()) {
 		auto location = static_cast<Location>(coal_source);
 		if (is_industry_location(location)) {
-			auto* factory = find_factory_at_location(location);
+			auto* factory = FindFactoryAtLocation(location);
 			factory->character().remove_resource(COAL_CUBE_COUNT, 1.0f);
 		} else if (is_merchant_location(location)) {
 			M2G_PROXY.buy_coal_from_market();
@@ -432,7 +432,7 @@ std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb:
 	}
 	if (network_action.beer_source()) {
 		auto location = static_cast<Location>(network_action.beer_source());
-		auto* factory = find_factory_at_location(location);
+		auto* factory = FindFactoryAtLocation(location);
 		factory->character().remove_resource(BEER_BARREL_COUNT, 1.0f);
 	}
 
@@ -444,7 +444,7 @@ std::pair<Card,int> execute_network_action(m2::Character& player, const m2g::pb:
 		init_road(*it_2, network_action.connection_2());
 	}
 
-	flip_exhausted_factories();
+	FlipExhaustedFactories();
 
 	return std::make_pair(network_action.card(), cost);
 }

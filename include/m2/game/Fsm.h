@@ -41,7 +41,7 @@ namespace m2 {
 	public:
 		virtual ~FsmBase() = default;
 
-		/// Must be called by the child class constructor because handle_signal will be called with Enter signal to
+		/// Must be called by the child class constructor because HandleSignal will be called with Enter signal to
 		/// enter the initial state.
 		void init(StateEnum initial_state) {
 			if (_state) {
@@ -51,7 +51,7 @@ namespace m2 {
 			signal(SignalT{FsmSignalType::EnterState});
 		}
 
-		/// Must be called by the child class destructor because handle_signal will be called with Exit signal to exit
+		/// Must be called by the child class destructor because HandleSignal will be called with Exit signal to exit
 		/// the current state.
 		void deinit() {
 			if (_state) {
@@ -86,8 +86,8 @@ namespace m2 {
 
 		/// Send a signal to the state machine
 		void signal(const SignalT& s) {
-			if (auto optional_next_state = handle_signal(s); optional_next_state) {
-				handle_signal(SignalT{FsmSignalType::ExitState});
+			if (auto optional_next_state = HandleSignal(s); optional_next_state) {
+				HandleSignal(SignalT{FsmSignalType::ExitState});
 				_state = *optional_next_state;
 				signal(SignalT{FsmSignalType::EnterState});
 			}
@@ -96,10 +96,10 @@ namespace m2 {
 	protected:
 		/// If StateEnum is returned, ExitState and EnterState signals will be called.
 		/// If std::nullopt is returned, the state stays the same.
-		virtual std::optional<StateEnum> handle_signal(const SignalT& s) = 0;
+		virtual std::optional<StateEnum> HandleSignal(const SignalT& s) = 0;
 	};
 
-	/// Convenience function that can be called from `handle_signal` with a look up table of state, signal type, and
+	/// Convenience function that can be called from `HandleSignal` with a look up table of state, signal type, and
 	/// signal handler.
 	template <typename FsmT, typename StateEnum, typename SignalT>
 	std::optional<StateEnum> handle_signal_using_handler_map(

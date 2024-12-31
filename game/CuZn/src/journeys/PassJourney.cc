@@ -4,7 +4,7 @@
 #include <cuzn/ui/Cards.h>
 #include <m2/Game.h>
 
-void execute_pass_journey() {
+void ExecutePassJourney() {
 	LOG_INFO("Executing pass action");
 	if (auto selected_card = ask_for_card_selection()) {
 		auto card_name = M2_GAME.GetNamedItem(*selected_card).in_game_name();

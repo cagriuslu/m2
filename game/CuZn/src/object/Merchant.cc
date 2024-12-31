@@ -31,6 +31,6 @@ void init_merchant(m2::Object& obj) {
 	};
 	gfx.on_draw = [&chr](m2::Graphic& g) {
 		m2::Graphic::default_draw(g); // Merchant sprite
-		draw_resources(chr); // Resources
+		DrawResources(chr); // Resources
 	};
 }

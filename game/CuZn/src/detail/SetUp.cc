@@ -9,7 +9,7 @@
 using namespace m2g;
 using namespace m2g::pb;
 
-std::vector<m2g::pb::SpriteType> possibly_active_merchant_locations(int client_count) {
+std::vector<m2g::pb::SpriteType> PossiblyActiveMerchantLocations(int client_count) {
 	switch (client_count) {
 		case 2:
 			return {pb::GLOUCESTER_1, pb::GLOUCESTER_2, pb::SHREWSBURY_1, pb::OXFORD_1, pb::OXFORD_2};
@@ -24,7 +24,7 @@ std::vector<m2g::pb::SpriteType> possibly_active_merchant_locations(int client_c
 	}
 }
 
-std::vector<m2g::pb::ItemType> prepare_merchant_license_list(int client_count) {
+std::vector<m2g::pb::ItemType> PrepareMerchantLicenseList(int client_count) {
 	// Figure out the attribute to use for card selection
 	m2g::pb::AttributeType count_attr = [=]() {
 		switch (client_count) {
@@ -57,7 +57,7 @@ std::vector<m2g::pb::ItemType> prepare_merchant_license_list(int client_count) {
 	return merchant_licenses;
 }
 
-std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count) {
+std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 	// Figure out the attribute to use for card selection
 	m2g::pb::AttributeType count_attr = [=]() {
 		switch (client_count) {
@@ -90,7 +90,7 @@ std::vector<m2g::pb::ItemType> prepare_draw_deck(int client_count) {
 	return draw_deck;
 }
 
-void give_8_cards_to_each_player(std::vector<ItemType>& deck) {
+void Give8CardsToEachPlayer(std::vector<ItemType>& deck) {
 	for (int i = 0; i < M2G_PROXY.multi_player_object_ids.size(); ++i) {
 		const auto player_object_id = M2G_PROXY.multi_player_object_ids[i];
 		m2_repeat(8) {

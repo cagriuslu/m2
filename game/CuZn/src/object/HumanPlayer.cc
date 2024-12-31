@@ -19,7 +19,7 @@ struct HumanPlayer : public m2::ObjectImpl {
 	std::optional<Location> currentMouseHoverLocation;
 };
 
-m2::void_expected init_this_human_player_instance(m2::Object& obj) {
+m2::void_expected InitThisHumanPlayerInstance(m2::Object& obj) {
 	DEBUG_FN();
 
 	obj.impl = std::make_unique<HumanPlayer>();
@@ -114,7 +114,7 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 					impl.currentMouseHoverLocation.reset();
 				}
 				// Look up factory if exists, otherwise the background sprite
-				if (find_factory_at_location(*industry_location)) {
+				if (FindFactoryAtLocation(*industry_location)) {
 					auto [bp, rectf] = GenerateBuiltIndustryLocationMouseHoverUiBlueprint(*industry_location);
 					M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::ui::PanelBlueprint>(bp), rectf);
 					impl.currentMouseHoverLocation = *industry_location;
@@ -158,7 +158,7 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 
 	return {};
 }
-m2::void_expected init_other_human_player_instance(m2::Object& obj) {
+m2::void_expected InitOtherHumanPlayerInstance(m2::Object& obj) {
 	DEBUG_FN();
 
 	auto& chr = obj.add_full_character();
@@ -187,13 +187,13 @@ m2::void_expected init_other_human_player_instance(m2::Object& obj) {
 	return {};
 }
 
-size_t player_card_count(m2::Character& player) {
+size_t PlayerCardCount(m2::Character& player) {
 	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD)
 	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD)
 	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
 }
 
-std::list<Card> player_cards(m2::Character& player) {
+std::list<Card> PlayerCards(m2::Character& player) {
 	std::list<Card> card_list;
 	for (auto it = player.begin_items(); it != player.end_items(); ++it) {
 		if (it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD
@@ -205,7 +205,7 @@ std::list<Card> player_cards(m2::Character& player) {
 	return card_list;
 }
 
-int player_link_count(m2::Character& player) {
+int PlayerLinkCount(m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
 					  | std::views::transform(m2::to_character_base)
 					  | std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
@@ -215,15 +215,15 @@ int player_link_count(m2::Character& player) {
 	});
 }
 
-int player_victory_points(m2::Character& player) {
+int PlayerVictoryPoints(m2::Character& player) {
 	return m2::iround(player.get_resource(m2g::pb::VICTORY_POINTS));
 }
 
-int player_income_points(m2::Character& player) {
+int PlayerIncomePoints(m2::Character& player) {
 	return m2::iround(player.get_attribute(m2g::pb::INCOME_POINTS));
 }
 
-int player_money(m2::Character& player) {
+int PlayerMoney(m2::Character& player) {
 	return m2::iround(player.get_resource(m2g::pb::MONEY));
 }
 
@@ -257,7 +257,7 @@ size_t player_built_factory_count(m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-		| std::views::filter(is_factory_character);
+		| std::views::filter(IsFactoryCharacter);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
 
@@ -265,8 +265,8 @@ std::set<IndustryLocation> player_built_factory_locations(m2::Character& player)
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-		| std::views::filter(is_factory_character)
-		| std::views::transform(to_industry_location_of_factory_character);
+		| std::views::filter(IsFactoryCharacter)
+		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
 
@@ -274,19 +274,19 @@ std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& play
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-		| std::views::filter(is_factory_character)
-		| std::views::filter(is_factory_not_sold)
+		| std::views::filter(IsFactoryCharacter)
+		| std::views::filter(IsFactoryNotSold)
 		| std::views::filter([](const m2::Character& c) {
-			return is_sellable_industry(to_industry_of_factory_character(c));
+			return is_sellable_industry(ToIndustryOfFactoryCharacter(c));
 		})
-		| std::views::transform(to_industry_location_of_factory_character);
+		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
 
 m2::void_expected can_player_overbuild_on_location_with_card(m2::Character& player, IndustryLocation location, Card card) {
 	// Check the industry type of the already built factory
-	auto* factory = find_factory_at_location(location);
-	auto industry_of_factory = to_industry_of_factory_character(factory->character());
+	auto* factory = FindFactoryAtLocation(location);
+	auto industry_of_factory = ToIndustryOfFactoryCharacter(factory->character());
 
 	// Check if the selected card can build the same industry
 	if (card != m2g::pb::WILD_LOCATION_CARD && card != m2g::pb::WILD_INDUSTRY_CARD & card != industry_of_factory) {
@@ -322,8 +322,8 @@ std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 	auto cities_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-		| std::views::filter(is_factory_character)
-		| std::views::transform(to_city_of_factory_character);
+		| std::views::filter(IsFactoryCharacter)
+		| std::views::transform(ToCityOfFactoryCharacter);
 	cities.insert(cities_view.begin(), cities_view.end());
 
 	auto roads_view = M2_LEVEL.characters

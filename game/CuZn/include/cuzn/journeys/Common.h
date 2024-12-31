@@ -4,7 +4,7 @@
 #include <m2/ui/PanelBlueprint.h>
 #include <list>
 
-std::list<m2::ui::Panel>::iterator add_cancel_button();
+std::list<m2::ui::Panel>::iterator AddCancelButton();
 
 // Used by various Journey state machines to carry mouse click position, or cancel button press.
 class PositionOrCancelSignal : public m2::FsmSignalBase {

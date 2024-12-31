@@ -43,7 +43,7 @@ namespace rpg {
 		const m2::Path reverse_path() const { return _reverse_path; }
 
 	protected:
-		std::optional<ChaserMode> handle_signal(const ChaserFsmSignal& s) override;
+		std::optional<ChaserMode> HandleSignal(const ChaserFsmSignal& s) override;
 
 	private:
 		std::optional<ChaserMode> handle_alarm_while_idle();
