@@ -72,7 +72,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 	auto panel_blueprint = PanelBlueprint{
 		.w = 24,
 		.h = 24,
-		.border_width = blocking_window ? 0.001f : 0.0f,
+		.border_width = 0.001f,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			WidgetBlueprint{
