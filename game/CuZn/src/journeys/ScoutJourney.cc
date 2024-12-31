@@ -68,8 +68,8 @@ bool CanPlayerScout(m2::Character& player, const m2g::pb::ClientCommand_ScoutAct
 
 Card ExecuteScoutAction(m2::Character& player, const m2g::pb::ClientCommand_ScoutAction& scout_action) {
 	auto card_1_it = player.find_items(scout_action.card_1());
-	auto card_2_it = player.find_items(scout_action.card_2());
 	player.remove_item(card_1_it);
+	auto card_2_it = player.find_items(scout_action.card_2());
 	player.remove_item(card_2_it);
 	player.add_named_item(M2_GAME.GetNamedItem(m2g::pb::WILD_INDUSTRY_CARD));
 	player.add_named_item(M2_GAME.GetNamedItem(m2g::pb::WILD_LOCATION_CARD));
