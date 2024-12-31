@@ -275,7 +275,8 @@ std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& play
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(is_factory_character)
-		| std::views::filter([](m2::Character& c) {
+		| std::views::filter(is_factory_not_sold)
+		| std::views::filter([](const m2::Character& c) {
 			return is_sellable_industry(to_industry_of_factory_character(c));
 		})
 		| std::views::transform(to_industry_location_of_factory_character);
