@@ -1,6 +1,7 @@
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/journeys/BuildJourney.h>
 #include <cuzn/journeys/NetworkJourney.h>
+#include <cuzn/ui/MouseHover.h>
 #include <m2/Controls.h>
 #include <m2/Log.h>
 #include <m2/Game.h>
@@ -15,6 +16,7 @@
 
 struct HumanPlayer : public m2::ObjectImpl {
 	std::optional<std::pair<m2::VecI, m2::VecF>> mouse_click_prev_position;
+	std::optional<Location> currentMouseHoverLocation;
 };
 
 m2::void_expected init_this_human_player_instance(m2::Object& obj) {
@@ -100,6 +102,53 @@ m2::void_expected init_this_human_player_instance(m2::Object& obj) {
 				std::visit(m2::overloaded{
 					[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_mouse_click_signal(M2_GAME.MousePositionWorldM())); }
 				}, *M2G_PROXY.main_journeys);
+			}
+		}
+
+		// Mouse hover UI panel
+		const auto mousePositionInWorld = M2_GAME.MousePositionWorldM();
+		if (const auto industry_location = industry_location_on_position(mousePositionInWorld)) {
+			if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != industry_location) {
+				if (impl.currentMouseHoverLocation) {
+					M2_LEVEL.RemoveMouseHoverUiPanel();
+					impl.currentMouseHoverLocation.reset();
+				}
+				// Look up factory if exists, otherwise the background sprite
+				if (find_factory_at_location(*industry_location)) {
+					auto [bp, rectf] = GenerateBuiltIndustryLocationMouseHoverUiBlueprint(*industry_location);
+					M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::ui::PanelBlueprint>(bp), rectf);
+					impl.currentMouseHoverLocation = *industry_location;
+				} else {
+					auto [bp, rectf] = GenerateEmptyIndustryLocationMouseHoverUiBlueprint(*industry_location);
+					M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::ui::PanelBlueprint>(bp), rectf);
+					impl.currentMouseHoverLocation = *industry_location;
+				}
+			}
+		} else if (const auto merchant_location = merchant_location_on_position(mousePositionInWorld)) {
+			if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != merchant_location) {
+				if (impl.currentMouseHoverLocation) {
+					M2_LEVEL.RemoveMouseHoverUiPanel();
+					impl.currentMouseHoverLocation.reset();
+				}
+				auto [bp, rectf] = GenerateMerchantLocationMouseHoverUiBlueprint(*merchant_location);
+				M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::ui::PanelBlueprint>(bp), rectf);
+				impl.currentMouseHoverLocation = *merchant_location;
+			}
+		} else if (const auto connection = connection_on_position(mousePositionInWorld)) {
+			if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != connection) {
+				if (impl.currentMouseHoverLocation) {
+					M2_LEVEL.RemoveMouseHoverUiPanel();
+					impl.currentMouseHoverLocation.reset();
+				}
+				auto [bp, rectf] = GenerateConnectionMouseHoverUiBlueprint(*connection);
+				M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::ui::PanelBlueprint>(bp), rectf);
+				impl.currentMouseHoverLocation = *connection;
+			}
+		} else {
+			// Remove mouse hover UI panel if activated
+			if (impl.currentMouseHoverLocation) {
+				M2_LEVEL.RemoveMouseHoverUiPanel();
+				impl.currentMouseHoverLocation.reset();
 			}
 		}
 	};
@@ -199,6 +248,9 @@ std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Characte
 	} else {
 		return tile_item;
 	}
+}
+std::optional<m2g::pb::ItemType> get_next_industry_tile_of_industry(m2::Character& player, const Industry industry) {
+	return get_next_industry_tile_of_category(player, industry_tile_category_of_industry(industry));
 }
 
 size_t player_built_factory_count(m2::Character& player) {
