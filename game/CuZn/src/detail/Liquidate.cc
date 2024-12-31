@@ -15,9 +15,9 @@ int liquidation_return_of_factory_character(m2::Character& chr) {
 }
 
 int is_liquidation_necessary_for_player(m2::Character& player_character) {
-	auto income_points = m2::iround(player_character.get_attribute(m2g::pb::INCOME_POINTS));
-	auto income_level = income_level_from_income_points(income_points);
-	auto player_money = m2::iround(player_character.get_resource(m2g::pb::MONEY));
+	const auto income_points = m2::iround(player_character.get_attribute(m2g::pb::INCOME_POINTS));
+	const auto income_level = income_level_from_income_points(income_points);
+	const auto player_money = m2::iround(player_character.get_resource(m2g::pb::MONEY));
 	// Check if player money would go below zero, and the player has at least one factory to sell
 	if (player_money + income_level < 0 && player_built_factory_count(player_character)) {
 		return -(player_money + income_level);

@@ -1,5 +1,8 @@
 #pragma once
 
+inline int ClampIncomePoints(const int ip) { return std::clamp(ip, -10, 89); }
+inline int ClampIncomeLevel(const int il) { return std::clamp(il, -10, 30); }
+
 // Convert income points to income level.
 int income_level_from_income_points(int ip);
 

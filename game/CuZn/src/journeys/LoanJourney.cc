@@ -57,13 +57,12 @@ bool can_player_loan(m2::Character& player, const m2g::pb::ClientCommand_LoanAct
 	return true;
 }
 
-Card execute_loan_action(m2::Character& player, const m2g::pb::ClientCommand_LoanAction& loan_action) {
-	auto curr_income_points = player_income_points(player);
-	auto curr_income_level = income_level_from_income_points(curr_income_points);
-	auto new_income_level = curr_income_level - 3;
-	auto new_income_points = highest_income_points_of_level(new_income_level);
-	player.set_attribute(pb::INCOME_POINTS, m2::F(new_income_points));
-	player.add_resource(pb::MONEY, 30.0f);
-
+Card execute_loan_action(m2::Character& player, const ClientCommand_LoanAction& loan_action) {
+	const auto currIncomePoints = player_income_points(player);
+	const auto currIncomeLevel = income_level_from_income_points(currIncomePoints);
+	const auto newIncomeLevel = ClampIncomeLevel(currIncomeLevel - 3);
+	const auto newIncomePoints = highest_income_points_of_level(newIncomeLevel);
+	player.set_attribute(INCOME_POINTS, m2::F(ClampIncomePoints(newIncomePoints)));
+	player.add_resource(MONEY, 30.0f);
 	return loan_action.card();
 }

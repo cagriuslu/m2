@@ -620,16 +620,16 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	for (const auto player_id : M2G_PROXY.multi_player_object_ids) {
 		// Lookup player
 		auto& player_character = M2_LEVEL.objects[player_id].character();
-		const auto income_points = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
-		const auto income_level = income_level_from_income_points(income_points);
-		const auto player_money = m2::iround(player_character.get_resource(pb::MONEY));
-		LOG_DEBUG("Player gained money", income_level);
-		const auto new_player_money = player_money + income_level;
-		if (new_player_money < 0) {
-			LOG_INFO("Player doesn't have enough money to pay its loan, they'll lose victory points", new_player_money);
-			player_character.add_resource(pb::VICTORY_POINTS, m2::F(new_player_money));
+		const auto incomePoints = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
+		const auto incomeLevel = income_level_from_income_points(incomePoints);
+		const auto playerMoney = m2::iround(player_character.get_resource(pb::MONEY));
+		LOG_DEBUG("Player gained money", incomeLevel);
+		const auto newPlayerMoney = playerMoney + incomeLevel;
+		if (newPlayerMoney < 0) {
+			LOG_INFO("Player doesn't have enough money to pay its loan, they'll lose victory points", newPlayerMoney);
+			player_character.add_resource(pb::VICTORY_POINTS, m2::F(newPlayerMoney));
 		}
-		player_character.set_resource(pb::MONEY, m2::F(std::clamp(new_player_money, 0, INT32_MAX)));
+		player_character.set_resource(pb::MONEY, m2::F(std::clamp(newPlayerMoney, 0, INT32_MAX)));
 	}
 
 	// Determine player orders

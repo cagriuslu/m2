@@ -1,6 +1,7 @@
 #include <cuzn/object/Factory.h>
 #include <m2/Game.h>
 #include <cuzn/detail/Graphic.h>
+#include <cuzn/detail/Income.h>
 #include <m2/Log.h>
 
 using namespace m2g;
@@ -64,13 +65,12 @@ void flip_exhausted_factories() {
 }
 
 void sell_factory(m2::Character& factory_chr) {
-	const auto tile_type = to_industry_tile_of_factory_character(factory_chr);
-	const auto& tile_item = M2_GAME.GetNamedItem(tile_type);
+	const auto tileType = to_industry_tile_of_factory_character(factory_chr);
+	const auto& tileTtem = M2_GAME.GetNamedItem(tileType);
 	// Earn income points
-	const auto income_bonus = tile_item.get_attribute(INCOME_POINTS_BONUS);
-	const auto curr_income_points = factory_chr.owner().get_parent()->character().get_attribute(INCOME_POINTS);
-	factory_chr.owner().get_parent()->character().set_attribute(INCOME_POINTS, curr_income_points + income_bonus);
-	// Victory points are NOT earned while selling
+	const auto incomeBonus = m2::iround(tileTtem.get_attribute(INCOME_POINTS_BONUS));
+	const auto currIncomePoints = m2::iround(factory_chr.owner().get_parent()->character().get_attribute(INCOME_POINTS));
+	factory_chr.owner().get_parent()->character().set_attribute(INCOME_POINTS, m2::F(ClampIncomePoints(currIncomePoints + incomeBonus)));
 	// Flip the tile
 	factory_chr.set_resource(IS_SOLD, 1.0f);
 }
