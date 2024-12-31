@@ -10,6 +10,7 @@
 #include <cuzn/detail/Network.h>
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/ConsumingBeer.h>
+#include <cuzn/detail/Income.h>
 
 using namespace m2;
 using namespace m2::ui;
@@ -45,6 +46,10 @@ namespace {
 			}
 		}
 		return with_merchant_connection;
+	}
+
+	bool DoesBeerSourcesContainMerchant(const auto& beerSources, MerchantLocation merchantLocation) {
+		return std::ranges::find(beerSources, merchantLocation) != beerSources.end();
 	}
 }
 
@@ -213,13 +218,13 @@ std::optional<SellJourneyStep> SellJourney::HandleResourceExitSignal() {
 
 std::optional<SellJourneyStep> SellJourney::HandleDevelopBenefitIndustryTileEnterSignal() {
 	// Check if merchant bonus is free develop
-	if (is_merchant_benefit_develop(_merchant_location)) {
+	if (DoesMerchantHasDevelopBenefit(_merchant_location)) {
 		// Check if using merchant beer
-		if (does_contain_location_from_city(_beer_sources, city_of_location(_merchant_location))) {
+		if (DoesBeerSourcesContainMerchant(_beer_sources, _merchant_location)) {
 			// Ask if player wants to develop
 			if (ask_for_confirmation("Merchant offers 1 free develop action.", "Use it?", "Yes", "No")) {
 				// Ask for tile selection
-				if (auto selected_tile = ask_for_tile_selection()) {
+				if (const auto selected_tile = ask_for_tile_selection()) {
 					// Check if tile can be developed
 					if (m2::is_equal(M2_GAME.GetNamedItem(*selected_tile).get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001)) {
 						M2G_PROXY.show_notification("Selected industry cannot be developed");
@@ -236,10 +241,10 @@ std::optional<SellJourneyStep> SellJourney::HandleDevelopBenefitIndustryTileEnte
 }
 
 std::optional<SellJourneyStep> SellJourney::HandleConfirmationEnterSignal() {
-	auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();
-	auto city_name = M2_GAME.GetNamedItem(city_of_location(_selected_location)).in_game_name();
-	auto industry = ToIndustryOfFactoryCharacter(FindFactoryAtLocation(_selected_location)->character());
-	auto industry_name = M2_GAME.GetNamedItem(industry).in_game_name();
+	const auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();
+	const auto city_name = M2_GAME.GetNamedItem(city_of_location(_selected_location)).in_game_name();
+	const auto industry = ToIndustryOfFactoryCharacter(FindFactoryAtLocation(_selected_location)->character());
+	const auto industry_name = M2_GAME.GetNamedItem(industry).in_game_name();
 	if (ask_for_confirmation("Sell " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		M2G_PROXY.show_notification("Selling location...");
 
@@ -309,10 +314,10 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientComm
 	}
 
 	// Validate merchant develop benefit
-	if (auto tile = sell_action.merchant_develop_benefit_industry_tile()) {
-		m2_return_unexpected_message_unless(is_merchant_benefit_develop(sell_action.merchant_location()),
+	if (const auto tile = sell_action.merchant_develop_benefit_industry_tile()) {
+		m2_return_unexpected_message_unless(DoesMerchantHasDevelopBenefit(sell_action.merchant_location()),
 			"Selected merchant does not offer develop benefit but a tile to develop has been provided");
-		m2_return_unexpected_message_unless(does_contain_location_from_city(sell_action.beer_sources(), city_of_location(sell_action.merchant_location())),
+		m2_return_unexpected_message_unless(DoesBeerSourcesContainMerchant(sell_action.beer_sources(), sell_action.merchant_location()),
 			"Develop benefit tile is provided but merchant beer is not used");
 		m2_return_unexpected_message_unless(is_industry_tile(tile),
 			"Selected develop benefit tile is not an industry tile");
@@ -346,6 +351,20 @@ Card ExecuteSellAction(m2::Character& player, const m2g::pb::ClientCommand_SellA
 	if (sell_action.merchant_develop_benefit_industry_tile()) {
 		// Take tile from player
 		player.remove_item(player.find_items(sell_action.merchant_develop_benefit_industry_tile()));
+	}
+	if (DoesBeerSourcesContainMerchant(sell_action.beer_sources(), sell_action.merchant_location())) {
+		if (const auto incomePointsBenefit = MerchantIncomePointsBenefit(sell_action.merchant_location())) {
+			LOG_INFO("Player income points benefit", incomePointsBenefit);
+			player.set_attribute(INCOME_POINTS, F(ClampIncomePoints(PlayerIncomePoints(player) + incomePointsBenefit)));
+		}
+		if (const auto victoryPointsBenefit = MerchantVictoryPointsBenefit(sell_action.merchant_location())) {
+			LOG_INFO("Player victory points benefit", victoryPointsBenefit);
+			player.add_resource(VICTORY_POINTS, F(victoryPointsBenefit));
+		}
+		if (const auto moneyPointsBenefit = MerchantMoneyBenefit(sell_action.merchant_location())) {
+			LOG_INFO("Player income points benefit", moneyPointsBenefit);
+			player.add_resource(MONEY, F(moneyPointsBenefit));
+		}
 	}
 
 	FlipExhaustedFactories();

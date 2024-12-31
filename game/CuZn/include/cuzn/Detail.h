@@ -35,7 +35,10 @@ bool is_industry_sprite(IndustrySprite industry_sprite);
 bool is_location(Location location);
 bool is_industry_location(IndustryLocation location);
 bool is_merchant_location(MerchantLocation location);
-bool is_merchant_benefit_develop(MerchantLocation location);
+bool DoesMerchantHasDevelopBenefit(MerchantLocation location);
+int MerchantIncomePointsBenefit(MerchantLocation location);
+int MerchantVictoryPointsBenefit(MerchantLocation location);
+int MerchantMoneyBenefit(MerchantLocation location);
 bool is_connection(Connection connection);
 bool is_canal(Connection connection);
 bool is_railroad(Connection connection);
@@ -81,11 +84,3 @@ std::optional<MerchantLocation> merchant_location_on_position(const m2::VecF& wo
 m2::VecF position_of_industry_location(IndustryLocation industry_location);
 std::optional<Connection> connection_on_position(const m2::VecF& world_position);
 m2::VecF position_of_connection(Connection connection);
-
-// Algorithms
-
-bool does_contain_location_from_city(const auto& range, City city) {
-	return std::ranges::any_of(range, [city](auto location) {
-		return city_of_location(static_cast<Location>(location)) == city;
-	});
-}

@@ -65,9 +65,21 @@ bool is_merchant_location(MerchantLocation location) {
 	return GLOUCESTER_1 <= location && location <= WARRINGTON_2;
 }
 
-bool is_merchant_benefit_develop(MerchantLocation location) {
-	auto merchant_city = city_of_location(location);
-	return M2_GAME.GetNamedItem(merchant_city).has_attribute(MERCHANT_BONUS_DEVELOP);
+bool DoesMerchantHasDevelopBenefit(const MerchantLocation location) {
+	const auto merchantCity = city_of_location(location);
+	return M2_GAME.GetNamedItem(merchantCity).has_attribute(MERCHANT_BONUS_DEVELOP);
+}
+int MerchantIncomePointsBenefit(const MerchantLocation location) {
+	const auto merchantCity = city_of_location(location);
+	return m2::iround(M2_GAME.GetNamedItem(merchantCity).get_attribute(MERCHANT_BONUS_INCOME));
+}
+int MerchantVictoryPointsBenefit(const MerchantLocation location) {
+	const auto merchantCity = city_of_location(location);
+	return m2::iround(M2_GAME.GetNamedItem(merchantCity).get_attribute(MERCHANT_BONUS_VICTORY_POINTS));
+}
+int MerchantMoneyBenefit(const MerchantLocation location) {
+	const auto merchantCity = city_of_location(location);
+	return m2::iround(M2_GAME.GetNamedItem(merchantCity).get_attribute(MERCHANT_BONUS_MONEY));
 }
 
 bool is_connection(Connection connection) {
