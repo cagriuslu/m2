@@ -338,7 +338,7 @@ decltype(NetworkJourney::_resource_sources)::iterator NetworkJourney::GetNextUns
 bool CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
 	// Check if the prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToNetwork(player); not prerequisite) {
-		LOG_WARN("Player does not meet network prerequisites", prerequisite.error());
+		LOG_INFO("Player does not meet network prerequisites", prerequisite.error());
 		return false;
 	}
 
@@ -363,12 +363,12 @@ bool CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_Networ
 			return false;
 		}
 		if (network_action.connection_1() == network_action.connection_2()) {
-			LOG_WARN("Selected connections are the same");
+			LOG_INFO("Selected connections are the same");
 			return false;
 		}
 	}
 	if (player.count_item(ROAD_TILE) < (network_action.connection_2() ? 2 : 1)) {
-		LOG_WARN("Player doesn't have enough road tiles");
+		LOG_INFO("Player doesn't have enough road tiles");
 		return false;
 	}
 	// Check if the connections can be built in this era
@@ -396,7 +396,7 @@ bool CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_Networ
 	});
 	// Check if the player has enough money
 	if (m2::iround(player.get_resource(MONEY)) < road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market))) {
-		LOG_WARN("Player does not have enough money");
+		LOG_INFO("Player does not have enough money");
 		return false;
 	}
 

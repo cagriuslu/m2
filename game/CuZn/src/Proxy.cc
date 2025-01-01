@@ -184,7 +184,7 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		} else if (client_command.has_sell_action()) {
 			LOG_INFO("Validating sell action");
 			if (auto success = CanPlayerSell(turn_holder_character, client_command.sell_action()); not success) {
-				LOG_WARN("Sell validation failed", success.error());
+				LOG_INFO("Sell validation failed", success.error());
 				return std::nullopt;
 			}
 			// Build notification

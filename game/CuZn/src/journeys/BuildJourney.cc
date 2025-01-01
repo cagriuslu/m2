@@ -445,7 +445,7 @@ decltype(BuildJourney::_resource_sources)::iterator BuildJourney::GetNextUnspeci
 bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToBuild(player); not prerequisite) {
-		LOG_WARN("Player does not meet build prerequisites", prerequisite.error());
+		LOG_INFO("Player does not meet build prerequisites", prerequisite.error());
 		return false;
 	}
 
@@ -480,7 +480,7 @@ bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAct
 	auto forbidden_era = selected_industry_tile.get_attribute(m2g::pb::FORBIDDEN_ERA);
 	if ((m2::is_equal(forbidden_era, 1.0f, 0.001f) && M2G_PROXY.is_canal_era()) ||
 		(m2::is_equal(forbidden_era, 2.0f, 0.001f) && M2G_PROXY.is_railroad_era())) {
-		LOG_WARN("Player selected an industry that cannot be built in this era");
+		LOG_INFO("Player selected an industry that cannot be built in this era");
 		return false;
 	}
 
@@ -624,7 +624,7 @@ return_resources:
 	// Check if the player has enough money
 	if (m2::iround(player.get_resource(MONEY)) < m2::iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(MONEY_COST)) +
 		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market))) {
-		LOG_WARN("Player does not have enough money");
+		LOG_INFO("Player does not have enough money");
 		return false;
 	}
 

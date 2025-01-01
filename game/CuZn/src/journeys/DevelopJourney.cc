@@ -217,7 +217,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleConfirmationEnterSignal(
 bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
 	// Check if the prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToDevelop(player); not prerequisite) {
-		LOG_WARN("player does not meet develop prerequisites", prerequisite.error());
+		LOG_INFO("player does not meet develop prerequisites", prerequisite.error());
 		return false;
 	}
 
@@ -247,7 +247,7 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 	const auto& selected_industry_tile_1 = M2_GAME.GetNamedItem(develop_action.industry_tile_1());
 	auto next_industry_tile_1 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_1.category());
 	if (not next_industry_tile_1 || *next_industry_tile_1 != develop_action.industry_tile_1()) {
-		LOG_WARN("Player cannot develop the selected tile");
+		LOG_INFO("Player cannot develop the selected tile");
 		return false;
 	}
 	if (develop_action.industry_tile_2()) {
@@ -258,7 +258,7 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 		auto next_industry_tile_2 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_2.category());
 		auto success = true;
 		if (not next_industry_tile_2 || *next_industry_tile_2 != develop_action.industry_tile_2()) {
-			LOG_WARN("Player cannot develop the selected tile");
+			LOG_INFO("Player cannot develop the selected tile");
 			success = false;
 		}
 		// Give the tile back
@@ -270,13 +270,13 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 
 	// Check if the tile can be developed
 	if (m2::is_equal(selected_industry_tile_1.get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
-		LOG_WARN("Selected tile cannot be developed");
+		LOG_INFO("Selected tile cannot be developed");
 		return false;
 	}
 	if (develop_action.industry_tile_2()) {
 		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
 		if (m2::is_equal(selected_industry_tile_2.get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
-			LOG_WARN("Selected tile cannot be developed");
+			LOG_INFO("Selected tile cannot be developed");
 			return false;
 		}
 	}
@@ -345,7 +345,7 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 	auto iron_from_market = is_merchant_location(develop_action.iron_sources_1()) ? 1 : 0;
 	iron_from_market += develop_action.industry_tile_2() && is_merchant_location(develop_action.iron_sources_2()) ? 1 : 0;
 	if (m2::iround(player.get_resource(MONEY)) < M2G_PROXY.market_iron_cost(iron_from_market)) {
-		LOG_WARN("Player does not have enough money");
+		LOG_INFO("Player does not have enough money");
 		return false;
 	}
 

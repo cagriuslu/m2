@@ -48,7 +48,7 @@ void ExecuteScoutJourney() {
 bool CanPlayerScout(m2::Character& player, const m2g::pb::ClientCommand_ScoutAction& scout_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToScout(player); not prerequisite) {
-		LOG_WARN("Player does not meet scout prerequisites", prerequisite.error());
+		LOG_INFO("Player does not meet scout prerequisites", prerequisite.error());
 		return false;
 	}
 

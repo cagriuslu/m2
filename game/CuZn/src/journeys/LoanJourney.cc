@@ -44,7 +44,7 @@ void ExecuteLoanJourney() {
 bool CanPlayerLoan(m2::Character& player, const m2g::pb::ClientCommand_LoanAction& loan_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToLoan(player); not prerequisite) {
-		LOG_WARN("Player does not meet loan prerequisites", prerequisite.error());
+		LOG_INFO("Player does not meet loan prerequisites", prerequisite.error());
 		return false;
 	}
 
