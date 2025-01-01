@@ -27,7 +27,7 @@ std::set<IndustryLocation> player_built_factory_locations(m2::Character& player)
 /// Returns the locations of the industries of type COTTON, POTTERY, and MANUFACTURED_GOODS belonging to the player
 std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& player);
 
-m2::void_expected can_player_overbuild_on_location_with_card(m2::Character& player, IndustryLocation location, Card card);
+m2::void_expected can_player_overbuild_on_location_with_card(const m2::Character& player, IndustryLocation location, Card card);
 
 std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player);
 std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Connection provisional_extra_connection = {});

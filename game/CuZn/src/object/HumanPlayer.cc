@@ -283,13 +283,16 @@ std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& play
 	return {factories_view.begin(), factories_view.end()};
 }
 
-m2::void_expected can_player_overbuild_on_location_with_card(m2::Character& player, IndustryLocation location, Card card) {
+m2::void_expected can_player_overbuild_on_location_with_card(const m2::Character& player, const IndustryLocation location, const Card card) {
 	// Check the industry type of the already built factory
-	auto* factory = FindFactoryAtLocation(location);
-	auto industry_of_factory = ToIndustryOfFactoryCharacter(factory->character());
+	const auto* factory = FindFactoryAtLocation(location);
+	const auto industryOfFactory = ToIndustryOfFactoryCharacter(factory->character());
+	const auto cityOfFactory = ToCityOfFactoryCharacter(factory->character());
 
 	// Check if the selected card can build the same industry
-	if (card != m2g::pb::WILD_LOCATION_CARD && card != m2g::pb::WILD_INDUSTRY_CARD & card != industry_of_factory) {
+	if (card == m2g::pb::WILD_LOCATION_CARD || card == m2g::pb::WILD_INDUSTRY_CARD || card == cityOfFactory || card == industryOfFactory) {
+		// Can build
+	} else {
 		return m2::make_unexpected("Selected card cannot overbuild the same industry type");
 	}
 
@@ -300,11 +303,11 @@ m2::void_expected can_player_overbuild_on_location_with_card(m2::Character& play
 	}
 
 	// Only coal mine or iron works can be overbuilt
-	if (industry_of_factory != m2g::pb::COAL_MINE_CARD && industry_of_factory != m2g::pb::IRON_WORKS_CARD) {
+	if (industryOfFactory != m2g::pb::COAL_MINE_CARD && industryOfFactory != m2g::pb::IRON_WORKS_CARD) {
 		return m2::make_unexpected("Selected industry type cannot be overbuilt when it belongs to another player");
 	}
 	// There must be no resources left on the whole board of the type of the resource of the factory
-	if (industry_of_factory == m2g::pb::COAL_MINE_CARD) {
+	if (industryOfFactory == m2g::pb::COAL_MINE_CARD) {
 		if (is_there_coal_on_the_board()) {
 			return m2::make_unexpected("Cannot overbuild coal mine while there are still coal on the board");
 		}
