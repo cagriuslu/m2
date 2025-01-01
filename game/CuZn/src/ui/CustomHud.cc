@@ -90,7 +90,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 			.border_width = 0.0f,
 			.variant = TextBlueprint{
 				.text = std::to_string(PlayerMoney(chr))
-					+ "/" + std::to_string(player_available_road_count(chr))
+					+ "/" + std::to_string(PlayerUnbuiltRoadCount(chr))
 					+ "/" + std::to_string(PlayerCardCount(chr)),
 				.wrapped_font_size_in_units = 3.5f
 			}

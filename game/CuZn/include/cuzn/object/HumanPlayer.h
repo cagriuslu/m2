@@ -5,31 +5,36 @@
 #include <set>
 #include <cuzn/Detail.h>
 
-m2::void_expected InitThisHumanPlayerInstance(m2::Object& obj);
-m2::void_expected InitOtherHumanPlayerInstance(m2::Object& obj);
+m2::void_expected PlayerInitThisInstance(m2::Object& obj);
+m2::void_expected PlayerInitOtherInstance(m2::Object& obj);
 
-// Accessors
-size_t PlayerCardCount(m2::Character& player);
-std::list<Card> PlayerCards(m2::Character& player);
-inline bool DoesPlayerHoldCard(m2::Character& player, Card card) { return player.find_items(card) != player.end_items(); }
-int PlayerLinkCount(m2::Character& player);
-int PlayerVictoryPoints(m2::Character& player);
-int PlayerIncomePoints(m2::Character& player);
-int PlayerMoney(m2::Character& player);
-size_t player_tile_count(m2::Character& player);
-inline size_t player_available_road_count(m2::Character& player) { return player.count_item(m2g::pb::ROAD_TILE); }
-std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Character& player, m2g::pb::ItemCategory tile_category);
-std::optional<m2g::pb::ItemType> get_next_industry_tile_of_industry(m2::Character& player, Industry);
-/// Returns the number of industries belonging to the player
-size_t player_built_factory_count(m2::Character& player);
-/// Returns the locations of the industries belonging to the player
-std::set<IndustryLocation> player_built_factory_locations(m2::Character& player);
-/// Returns the locations of the industries of type COTTON, POTTERY, and MANUFACTURED_GOODS belonging to the player
-std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& player);
+// Card Accessors
 
-m2::void_expected can_player_overbuild_on_location_with_card(const m2::Character& player, IndustryLocation location, Card card);
+size_t PlayerCardCount(const m2::Character& player);
+std::list<Card> PlayerCards(const m2::Character& player);
+inline bool PlayerHasCard(const m2::Character& player, const Card card) { return player.find_items(card) != player.end_items(); }
 
-std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player);
-std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Connection provisional_extra_connection = {});
-std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player, Connection provisional_extra_connection = {});
-std::set<m2g::pb::SpriteType> get_connections_in_network(m2::Character& player, Connection provisional_extra_connection = {});
+// Resource Accessors
+
+int PlayerLinkCount(const m2::Character& player);
+int PlayerVictoryPoints(const m2::Character& player);
+int PlayerIncomePoints(const m2::Character& player);
+int PlayerMoney(const m2::Character& player);
+
+// Industry and Tile Accessors
+
+size_t PlayerIndustryTileCount(const m2::Character& player);
+std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfCategory(const m2::Character& player, m2g::pb::ItemCategory tile_category);
+std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, Industry);
+size_t PlayerBuiltFactoryCount(const m2::Character& player);
+std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player);
+std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player);
+m2::void_expected PlayerCanOverbuild(const m2::Character& player, IndustryLocation, Card);
+
+// Road and Network Accessors
+
+inline size_t PlayerUnbuiltRoadCount(const m2::Character& player) { return player.count_item(m2g::pb::ROAD_TILE); }
+std::set<m2g::pb::ItemType> PlayerCitiesInNetwork(const m2::Character& player);
+std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});
+std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});
+std::set<m2g::pb::SpriteType> PlayerConnectionsInNetwork(const m2::Character& player, Connection provisional_extra_connection = {});

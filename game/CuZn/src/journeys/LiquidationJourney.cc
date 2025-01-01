@@ -38,7 +38,7 @@ namespace {
 
 std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationEnterSignal() {
 	if (sell_return_of_factories(_selected_locations) < _money_to_be_paid) {
-		auto player_factories = player_built_factory_locations(M2_PLAYER.character());
+		auto player_factories = PlayerBuiltFactoryLocations(M2_PLAYER.character());
 		std::set<IndustryLocation> liquidateable_factories;
 		// Remove selected locations from player's factories
 		std::set_difference(player_factories.begin(), player_factories.end(),

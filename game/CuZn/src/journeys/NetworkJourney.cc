@@ -29,7 +29,7 @@ namespace {
 
 	std::set<Connection> buildable_connections_in_network(m2::Character& player, Connection provisional_extra_connection = {}) {
 		// Gather connections in player's network
-		std::set<Connection> connections_in_network = get_connections_in_network(player, provisional_extra_connection);
+		std::set<Connection> connections_in_network = PlayerConnectionsInNetwork(player, provisional_extra_connection);
 		if (connections_in_network.empty()) {
 			connections_in_network = M2G_PROXY.is_canal_era() ? all_canals() : all_railroads();
 		}
@@ -50,7 +50,7 @@ m2::void_expected CanPlayerAttemptToNetwork(m2::Character& player) {
 		return m2::make_unexpected("Network action requires a card");
 	}
 
-	if (player_available_road_count(player) < 1) {
+	if (PlayerUnbuiltRoadCount(player) < 1) {
 		return m2::make_unexpected("Network action requires a link tile");
 	}
 

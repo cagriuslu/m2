@@ -50,10 +50,10 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	for (auto i = 0; i < client_count; ++i) {
 		auto it = m2::create_object(m2::VecF{i, i}, m2g::pb::ObjectType::HUMAN_PLAYER);
 		if (i == self_index) {
-			auto client_init_result = InitThisHumanPlayerInstance(*it);
+			auto client_init_result = PlayerInitThisInstance(*it);
 			m2_succeed_or_throw_error(client_init_result);
 		} else {
-			auto client_init_result = InitOtherHumanPlayerInstance(*it);
+			auto client_init_result = PlayerInitOtherInstance(*it);
 			m2_succeed_or_throw_error(client_init_result);
 		}
 		multi_player_object_ids.emplace_back(it.id());

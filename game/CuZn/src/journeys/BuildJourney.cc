@@ -27,7 +27,7 @@ namespace {
 
 		// Gather industry locations in player's network
 		std::set<IndustryLocation> industry_locations_in_network;
-		if (auto cities_in_network = get_cities_in_network(player); cities_in_network.empty() || card == WILD_LOCATION_CARD) {
+		if (auto cities_in_network = PlayerCitiesInNetwork(player); cities_in_network.empty() || card == WILD_LOCATION_CARD) {
 			// If there are no locations in network, or the wild location card is selected, all locations are considered in-network
 			industry_locations_in_network = all_industry_locations();
 		} else {
@@ -38,7 +38,7 @@ namespace {
 
 			if (M2G_PROXY.is_canal_era()) {
 				// If canal era, remove the cities where there is already an industry of player
-				for (const auto& built_factory_location : player_built_factory_locations(player)) {
+				for (const auto& built_factory_location : PlayerBuiltFactoryLocations(player)) {
 					cities_in_network.erase(city_of_location(built_factory_location));
 					// For overbuilding, include the location of the already built industry
 					industry_locations_in_network.insert(built_factory_location);
@@ -55,7 +55,7 @@ namespace {
 		// Filter out already built locations
 		for (auto it = industry_locations_in_network.begin(); it != industry_locations_in_network.end(); ) {
 			if (FindFactoryAtLocation(*it)) {
-				if (can_player_overbuild_on_location_with_card(player, *it, card)) {
+				if (PlayerCanOverbuild(player, *it, card)) {
 					++it;
 				} else {
 					it = industry_locations_in_network.erase(it);
@@ -157,7 +157,7 @@ m2::void_expected CanPlayerAttemptToBuild(m2::Character& player) {
 		return m2::make_unexpected("Build action requires a card");
 	}
 
-	if (player_tile_count(player) < 1) {
+	if (PlayerIndustryTileCount(player) < 1) {
 		return m2::make_unexpected("Build action requires an industry tile");
 	}
 
@@ -238,7 +238,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(con
 		_selected_location = selected_location;
 
 		// Check if the player has a factory to build
-		auto tile_type = get_next_industry_tile_of_category(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
+		auto tile_type = PlayerNextIndustryTileOfCategory(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
 			M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
 			M2_DEFER(m2g::Proxy::main_journey_deleter);
@@ -479,7 +479,7 @@ bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAct
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
 	// Check if the tile is the next tile
 	const auto& selected_industry_tile = M2_GAME.GetNamedItem(build_action.industry_tile());
-	auto next_industry_tile = get_next_industry_tile_of_category(player, selected_industry_tile.category());
+	auto next_industry_tile = PlayerNextIndustryTileOfCategory(player, selected_industry_tile.category());
 	if (not next_industry_tile || *next_industry_tile != build_action.industry_tile()) {
 		LOG_WARN("Player cannot use the selected tile");
 		return false;
@@ -645,7 +645,7 @@ std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::Cli
 	// Take tile from player
 	const auto& tile_item = M2_GAME.GetNamedItem(build_action.industry_tile());
 	auto tile_category = tile_item.category();
-	auto tile_type = get_next_industry_tile_of_category(player, tile_category);
+	auto tile_type = PlayerNextIndustryTileOfCategory(player, tile_category);
 	player.remove_item(player.find_items(*tile_type));
 
 	// Calculate the cost before building the industry

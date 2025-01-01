@@ -19,7 +19,7 @@ m2::void_expected CanPlayerAttemptToDevelop(m2::Character& player) {
 		return m2::make_unexpected("Develop action requires a card");
 	}
 
-	if (player_tile_count(player) < 1) {
+	if (PlayerIndustryTileCount(player) < 1) {
 		return m2::make_unexpected("Develop action requires an industry tile");
 	}
 
@@ -62,7 +62,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleSignal(const POIOrCancel
 }
 
 std::optional<DevelopJourneyStep> DevelopJourney::HandleInitialEnterSignal() {
-	if (1 < player_tile_count(M2_PLAYER.character())) {
+	if (1 < PlayerIndustryTileCount(M2_PLAYER.character())) {
 		if (auto selection = ask_for_confirmation_with_cancellation("Develop two industries at once? (Requires 2 Irons instead of 1)", "Yes", "No"); not selection) {
 			M2_DEFER(m2g::Proxy::main_journey_deleter);
 			return std::nullopt;
@@ -245,7 +245,7 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 
 	// Check if the tiles are the next tiles
 	const auto& selected_industry_tile_1 = M2_GAME.GetNamedItem(develop_action.industry_tile_1());
-	auto next_industry_tile_1 = get_next_industry_tile_of_category(player, selected_industry_tile_1.category());
+	auto next_industry_tile_1 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_1.category());
 	if (not next_industry_tile_1 || *next_industry_tile_1 != develop_action.industry_tile_1()) {
 		LOG_WARN("Player cannot develop the selected tile");
 		return false;
@@ -255,7 +255,7 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 		player.remove_item(player.find_items(develop_action.industry_tile_1()));
 		// Check the tile
 		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
-		auto next_industry_tile_2 = get_next_industry_tile_of_category(player, selected_industry_tile_2.category());
+		auto next_industry_tile_2 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_2.category());
 		auto success = true;
 		if (not next_industry_tile_2 || *next_industry_tile_2 != develop_action.industry_tile_2()) {
 			LOG_WARN("Player cannot develop the selected tile");

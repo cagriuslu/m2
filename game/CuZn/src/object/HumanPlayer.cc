@@ -19,7 +19,7 @@ struct HumanPlayer : public m2::ObjectImpl {
 	std::optional<Location> currentMouseHoverLocation;
 };
 
-m2::void_expected InitThisHumanPlayerInstance(m2::Object& obj) {
+m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 	DEBUG_FN();
 
 	obj.impl = std::make_unique<HumanPlayer>();
@@ -158,7 +158,7 @@ m2::void_expected InitThisHumanPlayerInstance(m2::Object& obj) {
 
 	return {};
 }
-m2::void_expected InitOtherHumanPlayerInstance(m2::Object& obj) {
+m2::void_expected PlayerInitOtherInstance(m2::Object& obj) {
 	DEBUG_FN();
 
 	auto& chr = obj.add_full_character();
@@ -187,13 +187,12 @@ m2::void_expected InitOtherHumanPlayerInstance(m2::Object& obj) {
 	return {};
 }
 
-size_t PlayerCardCount(m2::Character& player) {
+size_t PlayerCardCount(const m2::Character& player) {
 	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD)
 	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_WILD_CARD)
 	+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_INDUSTRY_CARD);
 }
-
-std::list<Card> PlayerCards(m2::Character& player) {
+std::list<Card> PlayerCards(const m2::Character& player) {
 	std::list<Card> card_list;
 	for (auto it = player.begin_items(); it != player.end_items(); ++it) {
 		if (it->category() == m2g::pb::ItemCategory::ITEM_CATEGORY_CITY_CARD
@@ -205,7 +204,7 @@ std::list<Card> PlayerCards(m2::Character& player) {
 	return card_list;
 }
 
-int PlayerLinkCount(m2::Character& player) {
+int PlayerLinkCount(const m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
 					  | std::views::transform(m2::to_character_base)
 					  | std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
@@ -214,20 +213,17 @@ int PlayerLinkCount(m2::Character& player) {
 		return acc + link_count_of_road_character(road_char);
 	});
 }
-
-int PlayerVictoryPoints(m2::Character& player) {
+int PlayerVictoryPoints(const m2::Character& player) {
 	return m2::iround(player.get_resource(m2g::pb::VICTORY_POINTS));
 }
-
-int PlayerIncomePoints(m2::Character& player) {
+int PlayerIncomePoints(const m2::Character& player) {
 	return m2::iround(player.get_attribute(m2g::pb::INCOME_POINTS));
 }
-
-int PlayerMoney(m2::Character& player) {
+int PlayerMoney(const m2::Character& player) {
 	return m2::iround(player.get_resource(m2g::pb::MONEY));
 }
 
-size_t player_tile_count(m2::Character& player) {
+size_t PlayerIndustryTileCount(const m2::Character& player) {
 	return player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_COAL_MINE_TILE)
 		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_IRON_WORKS_TILE)
 		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_BREWERY_TILE)
@@ -235,8 +231,7 @@ size_t player_tile_count(m2::Character& player) {
 		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_MANUFACTURED_GOODS_TILE)
 		+ player.count_item(m2g::pb::ItemCategory::ITEM_CATEGORY_POTTERY_TILE);
 }
-
-std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Character& player, m2g::pb::ItemCategory tile_category) {
+std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfCategory(const m2::Character& player, const m2g::pb::ItemCategory tile_category) {
 	// Find the item with the category with the smallest integer value
 	auto tile_item = m2g::pb::ItemType_MAX;
 	for (auto item_it = player.find_items(tile_category); item_it != player.end_items(); ++item_it) {
@@ -249,19 +244,17 @@ std::optional<m2g::pb::ItemType> get_next_industry_tile_of_category(m2::Characte
 		return tile_item;
 	}
 }
-std::optional<m2g::pb::ItemType> get_next_industry_tile_of_industry(m2::Character& player, const Industry industry) {
-	return get_next_industry_tile_of_category(player, industry_tile_category_of_industry(industry));
+std::optional<m2g::pb::ItemType> PlayerNextIndustryTileOfIndustry(const m2::Character& player, const Industry industry) {
+	return PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry(industry));
 }
-
-size_t player_built_factory_count(m2::Character& player) {
+size_t PlayerBuiltFactoryCount(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
 		| std::views::filter(IsFactoryCharacter);
 	return std::distance(factories_view.begin(), factories_view.end());
 }
-
-std::set<IndustryLocation> player_built_factory_locations(m2::Character& player) {
+std::set<IndustryLocation> PlayerBuiltFactoryLocations(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
@@ -269,8 +262,7 @@ std::set<IndustryLocation> player_built_factory_locations(m2::Character& player)
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
-
-std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& player) {
+std::set<IndustryLocation> PlayerSellableFactoryLocations(const m2::Character& player) {
 	auto factories_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
@@ -282,8 +274,7 @@ std::set<IndustryLocation> player_sellable_factory_locations(m2::Character& play
 		| std::views::transform(ToIndustryLocationOfFactoryCharacter);
 	return {factories_view.begin(), factories_view.end()};
 }
-
-m2::void_expected can_player_overbuild_on_location_with_card(const m2::Character& player, const IndustryLocation location, const Card card) {
+m2::void_expected PlayerCanOverbuild(const m2::Character& player, const IndustryLocation location, const Card card) {
 	// Check the industry type of the already built factory
 	const auto* factory = FindFactoryAtLocation(location);
 	const auto industryOfFactory = ToIndustryOfFactoryCharacter(factory->character());
@@ -319,7 +310,7 @@ m2::void_expected can_player_overbuild_on_location_with_card(const m2::Character
 	return {};
 }
 
-std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
+std::set<m2g::pb::ItemType> PlayerCitiesInNetwork(const m2::Character& player) {
 	std::set<m2g::pb::ItemType> cities;
 
 	auto cities_view = M2_LEVEL.characters
@@ -340,11 +331,10 @@ std::set<m2g::pb::ItemType> get_cities_in_network(m2::Character& player) {
 
 	return cities;
 }
-
-std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Connection provisional_extra_connection) {
+std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player, Connection provisional_extra_connection) {
 	std::set<m2g::pb::SpriteType> canals;
 
-	auto cities_in_network = get_cities_in_network(player);
+	auto cities_in_network = PlayerCitiesInNetwork(player);
 	if (provisional_extra_connection) {
 		auto extra_cities = cities_from_connection(provisional_extra_connection);
 		cities_in_network.insert(extra_cities.begin(), extra_cities.end());
@@ -364,11 +354,10 @@ std::set<m2g::pb::SpriteType> get_canals_in_network(m2::Character& player, Conne
 
 	return canals;
 }
-
-std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player, Connection provisional_extra_connection) {
+std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& player, Connection provisional_extra_connection) {
 	std::set<m2g::pb::SpriteType> railroads;
 
-	auto cities_in_network = get_cities_in_network(player);
+	auto cities_in_network = PlayerCitiesInNetwork(player);
 	if (provisional_extra_connection) {
 		auto extra_cities = cities_from_connection(provisional_extra_connection);
 		cities_in_network.insert(extra_cities.begin(), extra_cities.end());
@@ -388,11 +377,10 @@ std::set<m2g::pb::SpriteType> get_railroads_in_network(m2::Character& player, Co
 
 	return railroads;
 }
-
-std::set<m2g::pb::SpriteType> get_connections_in_network(m2::Character& player, Connection provisional_extra_connection) {
+std::set<m2g::pb::SpriteType> PlayerConnectionsInNetwork(const m2::Character& player, Connection provisional_extra_connection) {
 	if (M2G_PROXY.is_canal_era()) {
-		return get_canals_in_network(player, provisional_extra_connection);
+		return PlayerCanalsInNetwork(player, provisional_extra_connection);
 	} else {
-		return get_railroads_in_network(player, provisional_extra_connection);
+		return PlayerRailroadsInNetwork(player, provisional_extra_connection);
 	}
 }

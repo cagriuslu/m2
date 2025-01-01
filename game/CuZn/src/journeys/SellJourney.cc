@@ -39,7 +39,7 @@ namespace {
 	std::set<IndustryLocation> sellable_factory_locations_with_merchant_connection(m2::Character& player) {
 		std::set<IndustryLocation> with_merchant_connection;
 		// For each sellable location
-		for (auto sellable_location : player_sellable_factory_locations(player)) {
+		for (auto sellable_location : PlayerSellableFactoryLocations(player)) {
 			// Check if there's a merchant willing to buy the industry
 			if (not merchants_buying_industry_on_location(sellable_location).empty()) {
 				with_merchant_connection.insert(sellable_location);
@@ -272,7 +272,7 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientComm
 
 	// Validate the card
 	m2_return_unexpected_message_unless(is_card(sell_action.card()), "Selected card is not a card");
-	m2_return_unexpected_message_unless(DoesPlayerHoldCard(player, sell_action.card()), "Player does not hold the selected card");
+	m2_return_unexpected_message_unless(PlayerHasCard(player, sell_action.card()), "Player does not hold the selected card");
 
 	// Validate the factory
 	m2_return_unexpected_message_unless(is_industry_location(sell_action.industry_location()), "Selected location is not an industry location");
@@ -321,7 +321,7 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientComm
 			"Develop benefit tile is provided but merchant beer is not used");
 		m2_return_unexpected_message_unless(is_industry_tile(tile),
 			"Selected develop benefit tile is not an industry tile");
-		m2_return_unexpected_message_unless(get_next_industry_tile_of_category(player, industry_tile_category_of_industry_tile(tile)) == tile,
+		m2_return_unexpected_message_unless(PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry_tile(tile)) == tile,
 			"Selected develop benefit tile is not the next tile to develop in the category");
 		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.GetNamedItem(tile).get_attribute(DEVELOPMENT_BAN), 0.0f, 0.001),
 			"Selected develop benefit tile cannot be developed");

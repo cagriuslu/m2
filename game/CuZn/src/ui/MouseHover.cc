@@ -77,7 +77,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 
 	if (industries.size() == 1) {
 		const auto& industryCard = M2_GAME.GetNamedItem(industries[0]);
-		const auto nextIndustryTileType = get_next_industry_tile_of_industry(M2_PLAYER.character(), industries[0]);
+		const auto nextIndustryTileType = PlayerNextIndustryTileOfIndustry(M2_PLAYER.character(), industries[0]);
 		const auto* nextIndustryTile = nextIndustryTileType ? &M2_GAME.GetNamedItem(*nextIndustryTileType) : nullptr;
 		return std::make_pair(
 				PanelBlueprint{
@@ -172,8 +172,8 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 	} else { // industries.size() == 2
 		const auto& industryCard1 = M2_GAME.GetNamedItem(industries[0]);
 		const auto& industryCard2 = M2_GAME.GetNamedItem(industries[1]);
-		const auto nextIndustryTileType1 = get_next_industry_tile_of_industry(M2_PLAYER.character(), industries[0]);
-		const auto nextIndustryTileType2 = get_next_industry_tile_of_industry(M2_PLAYER.character(), industries[1]);
+		const auto nextIndustryTileType1 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.character(), industries[0]);
+		const auto nextIndustryTileType2 = PlayerNextIndustryTileOfIndustry(M2_PLAYER.character(), industries[1]);
 		const auto* nextIndustryTile1 = nextIndustryTileType1 ? &M2_GAME.GetNamedItem(*nextIndustryTileType1) : nullptr;
 		const auto* nextIndustryTile2 = nextIndustryTileType2 ? &M2_GAME.GetNamedItem(*nextIndustryTileType2) : nullptr;
 		return std::make_pair(
