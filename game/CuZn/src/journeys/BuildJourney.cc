@@ -17,7 +17,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 namespace {
-	std::set<IndustryLocation> buildable_industry_locations_in_network_with_card(m2::Character& player, Card card) {
+	std::set<IndustryLocation> buildable_industry_locations_in_network_with_card(const Character& player, Card card) {
 		if (not is_card(card)) {
 			throw M2_ERROR("Item is not a card");
 		}
@@ -87,7 +87,7 @@ namespace {
 		}
 	}
 
-	std::vector<Industry> buildable_industries_with_card_on_location(ItemType selected_card, SpriteType selected_location) {
+	std::vector<Industry> buildable_industries_with_card_on_location(ItemType selected_card, const SpriteType selected_location) {
 		if (not is_card(selected_card)) {
 			throw M2_ERROR("Item is not a card");
 		}
@@ -141,7 +141,7 @@ namespace {
 		}
 	}
 
-	bool is_next_tile_higher_level_than_built_tile(m2::Character& factory_character, IndustryTile next_industry_tile) {
+	bool is_next_tile_higher_level_than_built_tile(const Character& factory_character, const IndustryTile next_industry_tile) {
 		auto built_industry_tile_type = ToIndustryTileOfFactoryCharacter(factory_character);
 		const auto& built_industry_tile_item = M2_GAME.GetNamedItem(built_industry_tile_type);
 		const auto& next_industry_tile_item = M2_GAME.GetNamedItem(next_industry_tile);
@@ -162,7 +162,7 @@ void_expected CanPlayerAttemptToBuild(const Character& player) {
 	return {};
 }
 
-BuildJourney::BuildJourney() : m2::FsmBase<BuildJourneyStep, POIOrCancelSignal>() {
+BuildJourney::BuildJourney() : FsmBase<BuildJourneyStep, POIOrCancelSignal>() {
 	DEBUG_FN();
 	init(BuildJourneyStep::INITIAL_STEP);
 }
@@ -207,20 +207,21 @@ std::optional<BuildJourneyStep> BuildJourney::HandleInitialEnterSignal() {
 	return std::nullopt;
 }
 std::optional<BuildJourneyStep> BuildJourney::HandleLocationEnterSignal() {
-	const auto buildable_locations = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
-	sub_journey.emplace(buildable_locations, "Pick a location using right mouse button...");
+	if (const auto buildableLocations = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card); buildableLocations.empty()) {
+		M2G_PROXY.show_notification("No buildable locations in network is found");
+	} else {
+		sub_journey.emplace(buildableLocations, "Pick a location using right mouse button...");
+	}
 	return std::nullopt;
 }
 std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(const POIOrCancelSignal& s) {
 	if (s.poi()) {
-		auto selected_location = *s.poi();
-
+		const auto selected_location = *s.poi();
 		// Check if there's a need to make an industry selection based on the card and the sprite
-		if (auto buildable_inds = buildable_industries_with_card_on_location(_selected_card, selected_location); buildable_inds.empty()) {
-			M2G_PROXY.show_notification("Selected position cannot be built with the selected card");
-			return std::nullopt;
+		if (const auto buildable_inds = buildable_industries_with_card_on_location(_selected_card, selected_location); buildable_inds.empty()) {
+			throw M2_ERROR("Implementation error, point-of-interest does not have a buildable location");
 		} else if (buildable_inds.size() == 2) {
-			if (auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
+			if (const auto selected_industry = ask_for_industry_selection(buildable_inds[0], buildable_inds[1]); selected_industry) {
 				_selected_industry = *selected_industry;
 			} else {
 				M2_DEFER(m2g::Proxy::main_journey_deleter);
@@ -236,7 +237,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(con
 		// Check if the player has a factory to build
 		auto tile_type = PlayerNextIndustryTileOfCategory(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
-			M2G_PROXY.show_notification("Player doesn't have an industry tile of appropriate type");
+			M2G_PROXY.show_notification("No industry tile of appropriate type is found");
 			M2_DEFER(m2g::Proxy::main_journey_deleter);
 			return std::nullopt;
 		}
