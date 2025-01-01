@@ -196,6 +196,7 @@ Action Panel::run_blocking() {
 
 		// Draw UI elements
 		draw();
+		M2_GAME.DrawEnvelopes();
 
 		// Present
 		SDL_RenderPresent(M2_GAME.renderer);
