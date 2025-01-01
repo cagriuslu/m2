@@ -91,15 +91,15 @@ std::vector<m2g::pb::ItemType> PrepareDrawDeck(int client_count) {
 }
 
 void Give8CardsToEachPlayer(std::vector<ItemType>& deck) {
-	for (int i = 0; i < M2G_PROXY.multi_player_object_ids.size(); ++i) {
-		const auto player_object_id = M2G_PROXY.multi_player_object_ids[i];
+	for (int i = 0; i < M2G_PROXY.multiPlayerObjectIds.size(); ++i) {
+		const auto playerObjectId = M2G_PROXY.multiPlayerObjectIds[i];
 		m2_repeat(8) {
 			// Draw card
-			auto card_type = deck.back();
+			const auto cardType = deck.back();
 			deck.pop_back();
 			// Add card
-			const auto& card = M2_GAME.GetNamedItem(card_type);
-			M2_LEVEL.objects[player_object_id].character().add_named_item(card);
+			const auto& card = M2_GAME.GetNamedItem(cardType);
+			M2_LEVEL.objects[playerObjectId].character().add_named_item(card);
 			LOG_DEBUG("Giving card to player", i, card.in_game_name());
 		}
 	}

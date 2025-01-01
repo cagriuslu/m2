@@ -48,11 +48,11 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		auto& impl = dynamic_cast<HumanPlayer&>(*o.impl);
 		// Start map movement with mouse
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
-			LOG_DEBUG("Begin panning");
+			LOG_TRACE("Begin panning");
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
 			M2_LEVEL.enable_panning();
 		} else if (impl.mouse_click_prev_position && not M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
-			LOG_DEBUG("End panning");
+			LOG_TRACE("End panning");
 			impl.mouse_click_prev_position.reset();
 			M2_LEVEL.disable_panning();
 		}

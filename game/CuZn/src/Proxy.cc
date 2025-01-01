@@ -56,7 +56,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 			auto client_init_result = PlayerInitOtherInstance(*it);
 			m2_succeed_or_throw_error(client_init_result);
 		}
-		multi_player_object_ids.emplace_back(it.id());
+		multiPlayerObjectIds.emplace_back(it.id());
 		player_colors.emplace_back(generate_player_color(i));
 	}
 
@@ -121,7 +121,7 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
 	LOG_INFO("Received command from client", turn_holder_index);
-	auto turn_holder_object_id = M2G_PROXY.multi_player_object_ids[turn_holder_index];
+	auto turn_holder_object_id = M2G_PROXY.multiPlayerObjectIds[turn_holder_index];
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 
 	if (_is_liquidating) {
@@ -501,9 +501,9 @@ void m2g::Proxy::main_journey_deleter() {
 }
 
 unsigned m2g::Proxy::player_index(m2::Id id) const {
-	auto it = std::find(multi_player_object_ids.begin(), multi_player_object_ids.end(), id);
-	if (it != multi_player_object_ids.end()) {
-		return std::distance(multi_player_object_ids.begin(), it);
+	auto it = std::find(multiPlayerObjectIds.begin(), multiPlayerObjectIds.end(), id);
+	if (it != multiPlayerObjectIds.end()) {
+		return std::distance(multiPlayerObjectIds.begin(), it);
 	} else {
 		throw M2_ERROR("Invalid player ID");
 	}
@@ -513,7 +513,7 @@ m2::Character& m2g::Proxy::game_state_tracker() const {
 	return M2_LEVEL.objects[_game_state_tracker_id].character();
 }
 int m2g::Proxy::total_card_count() const {
-	const auto player_card_lists = M2G_PROXY.multi_player_object_ids
+	const auto player_card_lists = M2G_PROXY.multiPlayerObjectIds
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object)
 		| std::views::transform(m2::generate_named_item_types_filter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
@@ -592,7 +592,7 @@ void m2g::Proxy::disable_action_buttons() {
 }
 
 void m2g::Proxy::show_notification(const std::string& msg) {
-	LOG_INFO("Will show notification", msg);
+	LOG_INFO("Showing notification", msg);
 	remove_notification();
 	_notification_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
 		std::make_unique<m2::ui::PanelBlueprint>(generate_notification_panel_blueprint(msg)), m2::RectF{0.1f, 0.96f, 0.8f, 0.04f});
@@ -617,7 +617,7 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 	}
 
 	// Gain incomes
-	for (const auto player_id : M2G_PROXY.multi_player_object_ids) {
+	for (const auto player_id : M2G_PROXY.multiPlayerObjectIds) {
 		// Lookup player
 		auto& player_character = M2_LEVEL.objects[player_id].character();
 		const auto incomePoints = m2::iround(player_character.get_attribute(pb::INCOME_POINTS));
@@ -671,7 +671,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 
 	// Send canal era results
 	pb::ServerCommand canal_era_result_command;
-	std::ranges::for_each(M2G_PROXY.multi_player_object_ids
+	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object),
 		[&](const m2::Character& human_player) {
@@ -698,7 +698,7 @@ m2g::Proxy::LiquidationDetails m2g::Proxy::prepare_railroad_era() {
 	// Give roads to players
 	const auto& road_item = M2_GAME.GetNamedItem(pb::ROAD_TILE);
 	auto road_possession_limit = m2::zround(road_item.get_attribute(pb::POSSESSION_LIMIT));
-	std::ranges::for_each(M2G_PROXY.multi_player_object_ids
+	std::ranges::for_each(M2G_PROXY.multiPlayerObjectIds
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object),
 		[&](m2::Character& human_player) {

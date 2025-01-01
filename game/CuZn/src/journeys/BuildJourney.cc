@@ -152,15 +152,13 @@ namespace {
 	}
 }
 
-m2::void_expected CanPlayerAttemptToBuild(m2::Character& player) {
+void_expected CanPlayerAttemptToBuild(const Character& player) {
 	if (PlayerCardCount(player) < 1) {
-		return m2::make_unexpected("Build action requires a card");
+		return make_unexpected("Build action requires a card");
 	}
-
 	if (PlayerIndustryTileCount(player) < 1) {
-		return m2::make_unexpected("Build action requires an industry tile");
+		return make_unexpected("Build action requires an industry tile");
 	}
-
 	return {};
 }
 
@@ -200,21 +198,19 @@ std::optional<BuildJourneyStep> BuildJourney::HandleSignal(const POIOrCancelSign
 }
 
 std::optional<BuildJourneyStep> BuildJourney::HandleInitialEnterSignal() {
-	if (auto selected_card = ask_for_card_selection(); selected_card) {
+	LOG_INFO("Entering build journey");
+	if (const auto selected_card = ask_for_card_selection(); selected_card) {
 		_selected_card = *selected_card;
 		return BuildJourneyStep::EXPECT_LOCATION;
-	} else {
-		M2_DEFER(m2g::Proxy::main_journey_deleter);
-		return std::nullopt;
 	}
+	M2_DEFER(m2g::Proxy::main_journey_deleter);
+	return std::nullopt;
 }
-
 std::optional<BuildJourneyStep> BuildJourney::HandleLocationEnterSignal() {
 	const auto buildable_locations = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card);
 	sub_journey.emplace(buildable_locations, "Pick a location using right mouse button...");
 	return std::nullopt;
 }
-
 std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(const POIOrCancelSignal& s) {
 	if (s.poi()) {
 		auto selected_location = *s.poi();
@@ -269,12 +265,10 @@ std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(con
 		return std::nullopt;
 	}
 }
-
 std::optional<BuildJourneyStep> BuildJourney::HandleLocationExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
-
 std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 	// Check if there's an unspecified resource left
 	if (auto unspecified_resource = GetNextUnspecifiedResource(); unspecified_resource != _resource_sources.end()) {
@@ -381,7 +375,6 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 		return BuildJourneyStep::EXPECT_CONFIRMATION;
 	}
 }
-
 std::optional<BuildJourneyStep> BuildJourney::HandleResourceMouseClickSignal(const POIOrCancelSignal& s) {
 	if (s.poi()) {
 		auto industry_location = *s.poi();
@@ -408,12 +401,10 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceMouseClickSignal(con
 		return std::nullopt;
 	}
 }
-
 std::optional<BuildJourneyStep> BuildJourney::HandleResourceExitSignal() {
 	sub_journey.reset();
 	return std::nullopt;
 }
-
 std::optional<BuildJourneyStep> BuildJourney::HandleConfirmationEnterSignal() {
 	LOG_INFO("Asking for confirmation...");
 	auto card_name = M2_GAME.GetNamedItem(_selected_card).in_game_name();

@@ -258,23 +258,25 @@ void m2::Level::begin_game_loop() {
 }
 
 void m2::Level::enable_dimming_with_exceptions(std::set<ObjectId>&& exceptions) {
+	LOG_DEBUG("Enabling dimming with a number of exceptions", exceptions.size());
 	_dimming_exceptions = std::move(exceptions);
 }
 
 void m2::Level::disable_dimming_with_exceptions() {
+	LOG_DEBUG("Disabling dimming");
 	_dimming_exceptions.reset();
 }
 
 void m2::Level::enable_hud() {
+	LOG_DEBUG("Enabling HUD");
 	left_hud_ui_panel->enabled = true;
 	right_hud_ui_panel->enabled = true;
-	LOG_DEBUG("HUD enabled");
 }
 
 void m2::Level::disable_hud() {
+	LOG_DEBUG("Disabling HUD");
 	left_hud_ui_panel->enabled = false;
 	right_hud_ui_panel->enabled = false;
-	LOG_DEBUG("HUD disabled");
 }
 
 void m2::Level::remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it) {

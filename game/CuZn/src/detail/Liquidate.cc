@@ -26,8 +26,8 @@ int IsLiquidationNecessaryForPlayer(m2::Character& player_character) {
 }
 
 std::optional<std::pair<m2g::Proxy::PlayerIndex, int>> IsLiquidationNecessary() {
-	for (int i = 0; i < m2::I(M2G_PROXY.multi_player_object_ids.size()); ++i) {
-		auto player_id = M2G_PROXY.multi_player_object_ids[i];
+	for (int i = 0; i < m2::I(M2G_PROXY.multiPlayerObjectIds.size()); ++i) {
+		auto player_id = M2G_PROXY.multiPlayerObjectIds[i];
 		auto& player_character = M2_LEVEL.objects[player_id].character();
 		auto liquidation_amount = IsLiquidationNecessaryForPlayer(player_character);
 		if (0 < liquidation_amount) {
@@ -54,8 +54,8 @@ m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactori
 	LOG_DEBUG("Validating liquidate command");
 
 	// Check if the player needed a liquidation in the first place
-	auto necessary_liquidation_amount = IsLiquidationNecessaryForPlayer(player);
-	if (necessary_liquidation_amount <= 0) {
+	const auto necessaryLiquidationAmount = IsLiquidationNecessaryForPlayer(player);
+	if (necessaryLiquidationAmount <= 0) {
 		return m2::make_unexpected("Player didn't need liquidation");
 	}
 
@@ -63,18 +63,18 @@ m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactori
 		return m2::make_unexpected("LiquidateCommand doesn't contain any locations");
 	}
 
-	std::vector<m2::Object*> factory_objects;
+	std::vector<m2::Object*> factoryObjects;
 
 	// Order locations from cheap to expensive
 	std::set<LocationAndLiquidationReturnPair, LocationAndLiquidationReturnPairComparator> ordered_location_and_liquidation_return_pairs;
 	for (auto location_i : liquidate_action.locations_to_sell()) {
-		auto location = static_cast<Location>(location_i);
+		const auto location = static_cast<Location>(location_i);
 		// Search for a factory in the given location
 		if (auto* factory = FindFactoryAtLocation(location)) {
 			// Check if the factory belongs to the player
 			if (factory->parent_id() == player.owner().id()) {
-				factory_objects.emplace_back(factory);
-				auto liquidation_return = LiquidationReturnOfFactoryCharacter(factory->character());
+				factoryObjects.emplace_back(factory);
+				const auto liquidation_return = LiquidationReturnOfFactoryCharacter(factory->character());
 				ordered_location_and_liquidation_return_pairs.emplace(LocationAndLiquidationReturnPair{location, liquidation_return});
 			} else {
 				return m2::make_unexpected("Factory does not belong to the liquidating player: " + m2g::pb::SpriteType_Name(location));
@@ -90,18 +90,18 @@ m2::expected<std::pair<std::vector<m2::Object*>, int>> CanPlayerLiquidateFactori
 	}
 
 	// Iterate the set in reverse order; expensive to cheap, and stop when enough factories are sold
-	int liquidated_factory_count = 0;
-	int cumulative_liquidation_return = 0;
+	int liquidatedFactoryCount = 0;
+	int cumulativeLiquidationReturn = 0;
 	for (auto rit = ordered_location_and_liquidation_return_pairs.rbegin();
-		rit != ordered_location_and_liquidation_return_pairs.rend() && cumulative_liquidation_return < necessary_liquidation_amount;
+		rit != ordered_location_and_liquidation_return_pairs.rend() && cumulativeLiquidationReturn < necessaryLiquidationAmount;
 		++rit) {
-		liquidated_factory_count++;
-		cumulative_liquidation_return += rit->liquidation_return;
+		liquidatedFactoryCount++;
+		cumulativeLiquidationReturn += rit->liquidation_return;
 	}
 
-	if (liquidated_factory_count != liquidate_action.locations_to_sell_size()) {
+	if (liquidatedFactoryCount != liquidate_action.locations_to_sell_size()) {
 		return m2::make_unexpected("Player selected more than enough liquidation locations");
 	}
 
-	return std::make_pair(std::move(factory_objects), cumulative_liquidation_return);
+	return std::make_pair(std::move(factoryObjects), cumulativeLiquidationReturn);
 }

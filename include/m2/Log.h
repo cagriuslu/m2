@@ -33,6 +33,7 @@
 #define LOG_ERROR(msg, ...) ::m2::detail::log(::m2::pb::LogLevel::ERR, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 #define LOG_FATAL(msg, ...) ::m2::detail::log(::m2::pb::LogLevel::FTL, __FILE__, __LINE__, (msg), ##__VA_ARGS__)
 
+// TODO get rid of these, they are not descriptive enough
 #define TRACE_FN() LOG_TRACE("f", __FUNCTION__)
 #define DEBUG_FN() LOG_DEBUG("f", __FUNCTION__)
 #define INFO_FN() LOG_INFO("f", __FUNCTION__)

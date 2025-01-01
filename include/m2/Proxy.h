@@ -110,7 +110,7 @@ namespace m2 {
 		/// learn the 0-based index of this game instance, and the corresponding object can be assigned to M2_PLAYER.
 		/// For the server, the first item would contain the ObjectId of the player.
 		/// For the client with index 1, the second item would contain the ObjectId of the player.
-		std::vector<m2::ObjectId> multi_player_object_ids;
+		std::vector<m2::ObjectId> multiPlayerObjectIds;
 
 		/// Should be implemented from the perspective of a server. Implementation should return the new turn holder
 		/// index if the command is accepted and a ServerUpdate is necessary. Implementation should return std::nullopt

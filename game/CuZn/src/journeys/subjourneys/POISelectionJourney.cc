@@ -16,23 +16,23 @@ namespace {
 std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const PositionOrCancelSignal& signal) {
 	switch (signal.type()) {
 		case m2::FsmSignalType::EnterState: {
-			LOG_INFO("Entering POISelectionJourney");
+			LOG_INFO("Entering point-of-interest selection journey");
 			// Look-up the object IDs of the POIs
-			auto object_ids = _pois | std::views::transform([](POI poi) {
+			auto object_ids = _pois | std::views::transform([](const POI poi) {
 				if (is_industry_location(poi)) {
 					// Light up the factory if built, otherwise the background sprite.
-					if (auto* factory = FindFactoryAtLocation(poi)) {
+					if (const auto* factory = FindFactoryAtLocation(poi)) {
 						return factory->id();
-					} else {
-						return std::get<m2::ObjectId>(M2G_PROXY.industry_positions[poi]);
 					}
-				} else if (is_merchant_location(poi)) {
-					return std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[poi]);
-				} else if (is_connection(poi)) {
-					return std::get<m2::ObjectId>(M2G_PROXY.connection_positions[poi]);
-				} else {
-					throw M2_ERROR("Unknown location");
+					return std::get<m2::ObjectId>(M2G_PROXY.industry_positions[poi]);
 				}
+				if (is_merchant_location(poi)) {
+					return std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[poi]);
+				}
+				if (is_connection(poi)) {
+					return std::get<m2::ObjectId>(M2G_PROXY.connection_positions[poi]);
+				}
+				throw M2_ERROR("Unknown location");
 			});
 			// Enable dimming with exceptions
 			M2_LEVEL.enable_dimming_with_exceptions({object_ids.begin(), object_ids.end()});
@@ -52,29 +52,36 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 			break;
 		}
 		case m2::FsmSignalType::Custom: {
-			if (auto world_position = signal.world_position()) {
-				LOG_DEBUG("Received mouse click", *world_position);
-				if (auto industry_location = industry_location_on_position(*world_position)) {
+			if (const auto world_position = signal.world_position()) {
+				if (const auto industry_location = industry_location_on_position(*world_position)) {
 					// Look up factory if exists, otherwise the background sprite
 					if (auto* factory = FindFactoryAtLocation(*industry_location);
 						(factory && M2_LEVEL.dimming_exceptions()->contains(factory->id()))
 						|| M2_LEVEL.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
+						LOG_INFO("Player selected industry location of interest, notifying main journey", *industry_location);
 						notify_main_journey(*industry_location);
+					} else {
+						LOG_INFO("Player selected uninteresting industry location", *industry_location);
 					}
 				} else if (auto merchant_location = merchant_location_on_position(*world_position);
 					merchant_location && M2_LEVEL.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[*merchant_location]))) {
+					LOG_INFO("Player selected merchant location of interest, notifying main journey", *merchant_location);
 					notify_main_journey(*merchant_location);
 				} else if (auto connection = connection_on_position(*world_position);
 					connection && M2_LEVEL.dimming_exceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[*connection]))) {
+					LOG_INFO("Player selected connection of interest, notifying main journey", *connection);
 					notify_main_journey(*connection);
 				}
 			} else if (signal.cancel()) {
+				LOG_INFO("Player cancelled selection, notifying main journey");
 				notify_main_journey(std::nullopt);
+			} else {
+				throw M2_ERROR("Unexpected signal");
 			}
 			break;
 		}
 		case m2::FsmSignalType::ExitState: {
-			LOG_INFO("Exiting POISelectionJourney");
+			LOG_INFO("Exiting point-of-interest selection journey");
 			if (_cancel_button_panel) {
 				M2_LEVEL.remove_custom_nonblocking_ui_panel(*_cancel_button_panel);
 				_cancel_button_panel.reset();

@@ -96,6 +96,8 @@ bool m2::network::ClientManager::has_incoming_data(bool is_socket_readable) {
 		auto& incoming_queue_ = incoming_queue();
 		auto read_result = socket_manager_.read_incoming_data(incoming_queue_);
 		if (not read_result) {
+			// If the client TCP connection is broken, select returns that the socket is readable, and we fail here.
+			// So this warning might also mean that the connection just timed out.
 			LOG_WARN("Error occurred while reading, closing connection to client", socket_manager_.index(), read_result.error());
 			honorably_disconnect();
 			return false;

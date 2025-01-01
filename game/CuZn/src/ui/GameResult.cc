@@ -36,8 +36,8 @@ void display_game_result() {
 			}
 		}
 	};
-	for (int i = 0; i < I(M2G_PROXY.multi_player_object_ids.size()); ++i) {
-		auto id = M2G_PROXY.multi_player_object_ids[i];
+	for (int i = 0; i < I(M2G_PROXY.multiPlayerObjectIds.size()); ++i) {
+		auto id = M2G_PROXY.multiPlayerObjectIds[i];
 		auto& player_obj = M2_LEVEL.objects[id];
 		auto& player_chr = player_obj.character();
 		auto victory_points = iround(player_chr.get_resource(m2g::pb::VICTORY_POINTS));

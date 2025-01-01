@@ -61,7 +61,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		}
 	});
 	for (int i = 0; i < player_count; ++i) {
-		auto& chr = M2_LEVEL.objects[M2G_PROXY.multi_player_object_ids[i]].character();
+		auto& chr = M2_LEVEL.objects[M2G_PROXY.multiPlayerObjectIds[i]].character();
 		bp.widgets.emplace_back(WidgetBlueprint{
 			.x = 70 - ((i + 1) * 10), .y = 5, .w = 10, .h = 5,
 			.border_width = 0.0f,
@@ -84,7 +84,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		}
 	});
 	for (int i = 0; i < player_count; ++i) {
-		auto& chr = M2_LEVEL.objects[M2G_PROXY.multi_player_object_ids[i]].character();
+		auto& chr = M2_LEVEL.objects[M2G_PROXY.multiPlayerObjectIds[i]].character();
 		bp.widgets.emplace_back(WidgetBlueprint{
 			.x = 70 - ((i + 1) * 10), .y = 10, .w = 10, .h = 5,
 			.border_width = 0.0f,

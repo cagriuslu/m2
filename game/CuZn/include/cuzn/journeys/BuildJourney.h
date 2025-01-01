@@ -8,7 +8,7 @@
 #include <cuzn/journeys/subjourneys/POISelectionJourney.h>
 #include <Network.pb.h>
 
-m2::void_expected CanPlayerAttemptToBuild(m2::Character& player);
+m2::void_expected CanPlayerAttemptToBuild(const m2::Character& player);
 
 enum class BuildJourneyStep {
 	INITIAL_STEP = 0,

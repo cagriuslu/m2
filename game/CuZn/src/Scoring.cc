@@ -10,7 +10,7 @@ using namespace m2g;
 
 void score_links_and_remove_roads() {
 	std::ranges::for_each(
-			M2G_PROXY.multi_player_object_ids
+			M2G_PROXY.multiPlayerObjectIds
 			| std::views::transform(m2::to_object_of_id)
 			| std::views::transform(m2::to_character_of_object),
 			[](m2::Character& player) {
