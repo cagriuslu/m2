@@ -115,7 +115,7 @@ TEST(VecF, basic) {
 	EXPECT_FLOAT_EQ(v30.x, 1.0f / sqrtf(2.0f));
 
 	VecF v31{1.23f, 4.56f};
-	EXPECT_STREQ(to_string(v31).c_str(), "{x:1.23,y:4.56}");
+	EXPECT_STREQ(ToString(v31).c_str(), "{x:1.23,y:4.56}");
 }
 
 TEST(VecF, hround) {

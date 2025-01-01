@@ -18,7 +18,7 @@ static TextBlueprint client_count = {
 	.on_update = [](MAYBE Text& self) {
 		auto client_count = M2_GAME.ServerThread().client_count();
 		auto ready_client_count = M2_GAME.ServerThread().ready_client_count();
-		auto text = std::to_string(ready_client_count) + "/" + std::to_string(client_count);
+		auto text = m2::ToString(ready_client_count) + "/" + m2::ToString(client_count);
 		// Check if ready to start
 		if (client_count != 1 && client_count == ready_client_count) {
 			text += " - START!";
@@ -32,7 +32,7 @@ static TextBlueprint client_count = {
 			LOG_INFO("Enough clients have connected");
 			if (M2_GAME.ServerThread().close_lobby()) {
 				auto client_count = M2_GAME.ServerThread().client_count();
-				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.levels_dir / "Map.json", std::to_string(client_count));
+				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.levels_dir / "Map.json", m2::ToString(client_count));
 				m2_succeed_or_throw_error(expect_success);
 				return make_clear_stack_action();
 			}

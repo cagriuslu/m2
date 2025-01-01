@@ -28,7 +28,7 @@ expected<std::optional<std::pair<TcpSocketHandles, TcpSocketHandles>>> Select::o
 
     int select_result = ::select(0, &read_set, &write_set, nullptr, &tv);
     if (select_result == SOCKET_ERROR ) {
-        return make_unexpected("select failed: " + std::to_string(WSAGetLastError()));
+        return make_unexpected("select failed: " + m2::ToString(WSAGetLastError()));
     } else if (select_result == 0) {
         return std::nullopt; // Timeout occurred
     } else {

@@ -36,5 +36,5 @@ namespace m3 {
 }
 
 namespace m2 {
-	std::string to_string(const m3::VecF&);
+	std::string ToString(const m3::VecF&);
 }

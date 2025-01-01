@@ -347,7 +347,7 @@ const widget::TextBlueprint left_hud_gridlines_button = {
 const widget::TextBlueprint left_hud_coordinates = {
     .text = "0,0", .on_update = [](MAYBE widget::Text& self) {
 	    const auto mouse_position = M2_GAME.MousePositionWorldM().iround();
-		self.set_text(std::to_string(mouse_position.x) + ',' + std::to_string(mouse_position.y));
+		self.set_text(m2::ToString(mouse_position.x) + ',' + m2::ToString(mouse_position.y));
 	    return make_continue_action();
     }};
 const PanelBlueprint level_editor::ui::left_hud = {

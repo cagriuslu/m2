@@ -26,7 +26,7 @@ namespace {
 			// Success
 			return id.str();
 		} else {
-			throw M2_ERROR("Unexpected identifier character: " + std::to_string(c));
+			throw M2_ERROR("Unexpected identifier character: " + m2::ToString(c));
 		}
 	}
 
@@ -102,7 +102,7 @@ namespace {
 				return (int) strtol(str.c_str(), nullptr, 10);
 			}
 		} else {
-			throw M2_ERROR("Unexpected digit character: " + std::to_string(c));
+			throw M2_ERROR("Unexpected digit character: " + m2::ToString(c));
 		}
 	}
 
@@ -110,7 +110,7 @@ namespace {
 		auto n = fetch_number(ss);
 		return std::visit(m2::overloaded {
 			[](int i) -> int { return i; },
-			[](float f) -> int { throw M2_ERROR("Expected integer: " + std::to_string(f)); }
+			[](float f) -> int { throw M2_ERROR("Expected integer: " + m2::ToString(f)); }
 		}, n);
 	}
 

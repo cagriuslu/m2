@@ -9,6 +9,6 @@ std::string m2::Float::ToString() const {
 	return {buffer.data()};
 }
 
-std::string m2::to_string(const Float& f) {
+std::string m2::ToString(const Float& f) {
 	return f.ToString();
 }

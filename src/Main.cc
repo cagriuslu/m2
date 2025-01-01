@@ -12,7 +12,7 @@
 using namespace m2;
 
 int main(const int argc, char **argv) {
-	set_thread_name_for_logging("MN");
+	SetThreadNameForLogging("MN");
 	INFO_FN();
 
 	if (auto success = load_options(argc, argv); not success) {

@@ -57,14 +57,14 @@ m2::VecI m2::VecI::aspect_ratio_dimensions(int w, int h) const {
 namespace {
 	m2::Vson to_vson(const m2::VecI& v) {
 		auto vs = m2::Vson::object();
-		vs["x"] = m2::to_string(v.x);
-		vs["y"] = m2::to_string(v.y);
+		vs["x"] = m2::ToString(v.x);
+		vs["y"] = m2::ToString(v.y);
 		return vs;
 	}
 }  // namespace
 
-std::string m2::to_string(const m2::VecI& v) { return to_vson(v).dump_to_string(); }
-std::string m2::to_string(const std::vector<VecI>& vec) {
+std::string m2::ToString(const m2::VecI& v) { return to_vson(v).dump_to_string(); }
+std::string m2::ToString(const std::vector<VecI>& vec) {
 	auto vs = Vson::array();
 	for (const auto& v : vec) {
 		vs.push_back(to_vson(v));

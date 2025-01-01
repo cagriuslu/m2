@@ -30,7 +30,7 @@ bool PingBroadcastThread::is_quit() {
 
 void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
 	context->_latch.wait();
-	set_thread_name_for_logging("PN");
+	SetThreadNameForLogging("PN");
 	LOG_INFO("PingBroadcastThread function");
 
 	while (not context->is_quit()) {

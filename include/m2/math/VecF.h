@@ -87,7 +87,7 @@ namespace m2 {
 		static VecF from_angle(float rads) { return {cosf(rads), sinf(rads)}; }
 	};
 
-	std::string to_string(const VecF&);
+	std::string ToString(const VecF&);
 
 	struct VecFCompareRightToLeft {
 		// Reverse sort based on x coordinate

@@ -19,7 +19,7 @@ expected<TcpSocket> TcpSocket::create_server(uint16_t port) {
     std::call_once(g_initialize_winsock_once, []() {
         // Initialize WinSock2
         if (int result = WSAStartup(MAKEWORD(2,2), &g_wsa_data); result != 0) {
-            throw M2_ERROR("WSAStartup failed: " + std::to_string(result));
+            throw M2_ERROR("WSAStartup failed: " + m2::ToString(result));
         }
     });
 
@@ -32,9 +32,9 @@ expected<TcpSocket> TcpSocket::create_server(uint16_t port) {
 
     // Resolve the local address and port to be used by the server
     addrinfo *result = nullptr;
-    auto addr_error_code = ::getaddrinfo(nullptr, std::to_string(port).c_str(), &hints, &result);
+    auto addr_error_code = ::getaddrinfo(nullptr, m2::ToString(port).c_str(), &hints, &result);
     if (addr_error_code) {
-        return m2::make_unexpected("getaddrinfo failed: " + std::to_string(addr_error_code));
+        return m2::make_unexpected("getaddrinfo failed: " + m2::ToString(addr_error_code));
     }
 
     // Create the socket
@@ -42,7 +42,7 @@ expected<TcpSocket> TcpSocket::create_server(uint16_t port) {
     if (listen_socket == INVALID_SOCKET) {
         auto last_error = WSAGetLastError();
         freeaddrinfo(result);
-        return m2::make_unexpected("socket failed: " + std::to_string(last_error));
+        return m2::make_unexpected("socket failed: " + m2::ToString(last_error));
     }
 
     TcpSocket tcp_socket{INADDR_ANY, port};
@@ -54,7 +54,7 @@ expected<TcpSocket> TcpSocket::create_client(const std::string& server_ip_addr, 
     std::call_once(g_initialize_winsock_once, []() {
         // Initialize WinSock2
         if (int result = WSAStartup(MAKEWORD(2,2), &g_wsa_data); result != 0) {
-            throw M2_ERROR("WSAStartup failed: " + std::to_string(result));
+            throw M2_ERROR("WSAStartup failed: " + m2::ToString(result));
         }
     });
 
@@ -66,9 +66,9 @@ expected<TcpSocket> TcpSocket::create_client(const std::string& server_ip_addr, 
 
     // Resolve the server address and port
     addrinfo *result = nullptr;
-    auto addr_error_code = ::getaddrinfo(server_ip_addr.c_str(), std::to_string(server_port).c_str(), &hints, &result);
+    auto addr_error_code = ::getaddrinfo(server_ip_addr.c_str(), m2::ToString(server_port).c_str(), &hints, &result);
     if (addr_error_code) {
-        return m2::make_unexpected("getaddrinfo failed: " + std::to_string(addr_error_code));
+        return m2::make_unexpected("getaddrinfo failed: " + m2::ToString(addr_error_code));
     }
 
     // Create the socket using the first returned address result
@@ -76,7 +76,7 @@ expected<TcpSocket> TcpSocket::create_client(const std::string& server_ip_addr, 
     if (connect_socket == INVALID_SOCKET) {
         auto last_error = WSAGetLastError();
         freeaddrinfo(result);
-        return m2::make_unexpected("socket failed: " + std::to_string(last_error));
+        return m2::make_unexpected("socket failed: " + m2::ToString(last_error));
     }
 
     TcpSocket tcp_socket{reinterpret_cast<sockaddr_in*>(result->ai_addr)->sin_addr.S_un.S_addr, server_port};
@@ -115,7 +115,7 @@ expected<bool> TcpSocket::bind() {
         if (last_error == WSAEADDRINUSE) {
             return false;
         } else {
-            return m2::make_unexpected("bind failed: " + std::to_string(last_error));
+            return m2::make_unexpected("bind failed: " + m2::ToString(last_error));
         }
     }
     return true;
@@ -123,7 +123,7 @@ expected<bool> TcpSocket::bind() {
 
 void_expected TcpSocket::listen(int queue_size) {
     if (::listen(_platform_specific_data->socket, queue_size) == SOCKET_ERROR) {
-        return m2::make_unexpected("listen failed: " + std::to_string(WSAGetLastError()));
+        return m2::make_unexpected("listen failed: " + m2::ToString(WSAGetLastError()));
     }
 
     return {};
@@ -136,7 +136,7 @@ expected<bool> TcpSocket::connect() {
         if (last_error == WSAECONNREFUSED || last_error == WSAENETUNREACH || last_error == WSAEHOSTUNREACH || last_error == WSAETIMEDOUT) {
             return false;
         }
-        return m2::make_unexpected("connect failed: " + std::to_string(last_error));
+        return m2::make_unexpected("connect failed: " + m2::ToString(last_error));
     }
     return true;
 }
@@ -149,7 +149,7 @@ expected<std::optional<TcpSocket>> TcpSocket::accept() {
         if (WSAGetLastError() == WSAECONNRESET) {
             return std::nullopt;
         }
-        return m2::make_unexpected("accept failed: " + std::to_string(WSAGetLastError()));
+        return m2::make_unexpected("accept failed: " + m2::ToString(WSAGetLastError()));
     }
 
     TcpSocket child_socket{reinterpret_cast<sockaddr_in*>(&child_address)->sin_addr.S_un.S_addr, reinterpret_cast<sockaddr_in*>(&child_address)->sin_port};
@@ -164,7 +164,7 @@ expected<int> TcpSocket::send(const uint8_t* buffer, size_t length) {
         if (last_error == WSAEWOULDBLOCK) {
             return -1;
         } else {
-            return m2::make_unexpected("send failed: " + std::to_string(last_error));
+            return m2::make_unexpected("send failed: " + m2::ToString(last_error));
         }
     } else {
         return send_result;
@@ -178,7 +178,7 @@ expected<int> TcpSocket::recv(uint8_t* buffer, size_t length) {
         if (last_error == WSAEWOULDBLOCK) {
             return 0;
         }
-        return m2::make_unexpected("recv failed: " + std::to_string(last_error));
+        return m2::make_unexpected("recv failed: " + m2::ToString(last_error));
     } else if (recv_result == 0) {
         return m2::make_unexpected("Peer shut connection down");
     } else {

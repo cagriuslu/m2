@@ -2,8 +2,8 @@
 
 const std::string m2::empty_string;
 
-std::string m2::to_string(BackgroundLayer layer) {
-	return to_string(I(layer));
+std::string m2::ToString(BackgroundLayer layer) {
+	return ToString(I(layer));
 }
 
 size_t m2::utf8_codepoint_count(const char* s) {

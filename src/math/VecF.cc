@@ -66,13 +66,13 @@ m3::VecF m3::VecF::rotate_xz(float rads) const {
 	return {xz_rotated.x, y, xz_rotated.y};
 }
 
-std::string m2::to_string(const m2::VecF& v) {
+std::string m2::ToString(const m2::VecF& v) {
 	std::stringstream ss;
 	ss << "{x:" << v.x << ",y:" << v.y << "}";
 	return ss.str();
 }
 
-std::string m2::to_string(const m3::VecF& v) {
+std::string m2::ToString(const m3::VecF& v) {
 	std::stringstream ss;
 	ss << "{x:" << v.x << ",y:" << v.y << ",z:" << v.z << "}";
 	return ss.str();

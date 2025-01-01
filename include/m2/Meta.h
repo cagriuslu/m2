@@ -26,21 +26,21 @@ namespace m2 {
 	inline int iceil(const float t) { return static_cast<int>(ceilf(t)); }
 	int RoundDownToEvenI(float);
 
-	std::string to_string(bool);
-	std::string to_string(int);
-	std::string to_string(unsigned int);
-	std::string to_string(long);
-	std::string to_string(unsigned long);
-	std::string to_string(long long);
-	std::string to_string(unsigned long long);
-	std::string to_string(float);
-	std::string to_string(float, unsigned precision);
-	std::string to_string(double);
-	std::string to_string(const char*);
-	std::string to_string(const std::string&);
-	std::string to_string(std::string_view);
-	template <typename T, typename U> std::string to_string(const std::pair<T,U>& pair) {
-		return "(" + to_string(pair.first) + "," + to_string(pair.second) + ")";
+	inline std::string ToString(const bool b) { return b ? "true" : "false"; }
+	inline std::string ToString(const int i) { return std::to_string(i); }
+	inline std::string ToString(const unsigned int u) { return std::to_string(u); }
+	inline std::string ToString(const long l) { return std::to_string(l); }
+	inline std::string ToString(const unsigned long ul) { return std::to_string(ul); }
+	inline std::string ToString(const long long ll) { return std::to_string(ll); }
+	inline std::string ToString(const unsigned long long ull) { return std::to_string(ull); }
+	inline std::string ToString(const float f) { return std::to_string(f); }
+	std::string ToString(float, unsigned precision);
+	inline std::string ToString(const double d) { return std::to_string(d); }
+	inline std::string ToString(const char* c) { return {c}; }
+	inline std::string ToString(const std::string& s) { return s; }
+	inline std::string ToString(const std::string_view sv) { return std::string{sv}; }
+	template <typename T, typename U> std::string ToString(const std::pair<T,U>& pair) {
+		return "(" + ToString(pair.first) + "," + ToString(pair.second) + ")";
 	}
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

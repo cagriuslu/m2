@@ -209,7 +209,7 @@ const widget::TextBlueprint left_hud_coordinates = {
 		.text = "0.0:0.0",
 		.on_update = [](MAYBE widget::Text& self) {
 			auto mouse_position = M2_GAME.MousePositionWorldM().hround();
-			self.set_text(m2::to_string(mouse_position.x, 1) + ':' + m2::to_string(mouse_position.y, 1));
+			self.set_text(m2::ToString(mouse_position.x, 1) + ':' + m2::ToString(mouse_position.y, 1));
 			return make_continue_action();
 		}
 };

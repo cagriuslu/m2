@@ -48,7 +48,7 @@ m2::void_expected m2::write_to_file(const std::string& str, const std::filesyste
 	if (success) {
 		return {};
 	} else {
-		return make_unexpected("Unable to write string of size " + std::to_string(size));
+		return make_unexpected("Unable to write string of size " + m2::ToString(size));
 	}
 }
 

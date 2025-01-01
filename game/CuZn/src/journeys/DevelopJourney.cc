@@ -107,7 +107,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleResourceEnterSignal() {
 			// Calculate the cost of buying iron
 			auto cost_of_buying = M2G_PROXY.market_iron_cost(m2::I(remaining_unspecified_iron_count));
 			LOG_DEBUG("Asking player if they want to buy iron from the market...");
-			if (ask_for_confirmation("Buy " + std::to_string(remaining_unspecified_iron_count) + " iron from market for £" + std::to_string(cost_of_buying) + "?", "", "Yes", "No")) {
+			if (ask_for_confirmation("Buy " + m2::ToString(remaining_unspecified_iron_count) + " iron from market for £" + m2::ToString(cost_of_buying) + "?", "", "Yes", "No")) {
 				LOG_DEBUG("Player agreed");
 				// Specify resource sources
 				if (_iron_source_1 == 0) {

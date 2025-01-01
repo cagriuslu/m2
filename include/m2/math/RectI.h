@@ -67,5 +67,5 @@ namespace m2 {
 		[[nodiscard]] RectI ratio(const RectF& ratio_rect) const;
 	};
 
-	std::string to_string(const RectI&);
+	std::string ToString(const RectI&);
 }  // namespace m2

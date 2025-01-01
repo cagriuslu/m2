@@ -118,7 +118,7 @@ m2::Rational m2::Rational::pi_mul2() {
 	return Rational{PI_MUL2};
 }
 
-std::string m2::to_string(const Rational& r) {
+std::string m2::ToString(const Rational& r) {
 	char buffer[20 + 1 + 20 + 1];
 	snprintf(buffer, sizeof(buffer), "%lld/%lld", r.n(), r.d());
 	return buffer;

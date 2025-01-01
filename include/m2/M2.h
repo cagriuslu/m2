@@ -15,7 +15,7 @@ namespace m2 {
 		L3 = 3,
 		n
 	};
-	std::string to_string(BackgroundLayer layer);
+	std::string ToString(BackgroundLayer layer);
 
 	/// Returns the number of codepoints in a UTF-8 string.
 	/// One codepoint does not always equate to one glyph, but it's a good estimation for most characters.

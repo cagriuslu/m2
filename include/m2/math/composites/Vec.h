@@ -36,9 +36,9 @@ namespace m2 {
 	};
 
 	template <typename Primitive>
-	std::string to_string(const Vec<Primitive>& v) {
+	std::string ToString(const Vec<Primitive>& v) {
 		std::stringstream ss;
-		ss << "{x:" << to_string(v.X()) << ",y:" << to_string(v.Y()) << "}";
+		ss << "{x:" << ToString(v.X()) << ",y:" << ToString(v.Y()) << "}";
 		return ss.str();
 	}
 }

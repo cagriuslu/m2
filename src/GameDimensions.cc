@@ -21,13 +21,13 @@ m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gameP
 		throw M2_ERROR("Given renderer is NULL");
 	}
 	if (gamePpm < 1) {
-		throw M2_ERROR("Given PPM is not positive: " + std::to_string(gamePpm));
+		throw M2_ERROR("Given PPM is not positive: " + m2::ToString(gamePpm));
 	}
 	if (gameAspectRatioMul < 1) {
-		throw M2_ERROR("Given aspect ration multiplier is not positive: " + std::to_string(gameAspectRatioMul));
+		throw M2_ERROR("Given aspect ration multiplier is not positive: " + m2::ToString(gameAspectRatioMul));
 	}
 	if (gameAspectRatioDiv < 1) {
-		throw M2_ERROR("Given aspect ration divider is not positive: " + std::to_string(gameAspectRatioDiv));
+		throw M2_ERROR("Given aspect ration divider is not positive: " + m2::ToString(gameAspectRatioDiv));
 	}
 
 	// In the beginning, the scale is 1. We can fit as much as we can into the window using this scale.
@@ -123,7 +123,7 @@ void m2::GameDimensionsManager::OnWindowResize() {
 }
 void m2::GameDimensionsManager::SetScale(float scale) {
 	if (scale <= 0.0f) {
-		throw M2_ERROR("Given scale is invalid: " + std::to_string(scale));
+		throw M2_ERROR("Given scale is invalid: " + m2::ToString(scale));
 	}
 	LOG_INFO("Setting scale to", scale);
 
@@ -144,7 +144,7 @@ m2::VecI m2::GameDimensionsManager::EstimateMinimumWindowDimensions(const int ga
 }
 int m2::GameDimensionsManager::NextPixelatedScale(int currentScale) {
 	if (currentScale == 0) {
-		throw M2_ERROR("Unexpected scale: " + std::to_string(currentScale));
+		throw M2_ERROR("Unexpected scale: " + m2::ToString(currentScale));
 	}
 	if (currentScale == -1) {
 		return 2;
@@ -153,7 +153,7 @@ int m2::GameDimensionsManager::NextPixelatedScale(int currentScale) {
 }
 int m2::GameDimensionsManager::PrevPixelatedScale(int currentScale) {
 	if (currentScale == 0) {
-		throw M2_ERROR("Unexpected scale: " + std::to_string(currentScale));
+		throw M2_ERROR("Unexpected scale: " + m2::ToString(currentScale));
 	}
 	if (currentScale == 1) {
 		return -2;

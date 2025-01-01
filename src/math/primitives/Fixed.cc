@@ -111,6 +111,6 @@ void m2::Fixed::ThrowIfOutOfBounds(const double d) {
 	}
 }
 
-std::string m2::to_string(const Fixed& f) {
+std::string m2::ToString(const Fixed& f) {
 	return f.ToString();
 }

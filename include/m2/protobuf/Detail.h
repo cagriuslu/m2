@@ -146,15 +146,15 @@ namespace m2 {
 	}  // namespace pb
 
 	template <typename EnumT>
-	std::string to_string(const EnumT& enum_val) {
+	std::string ToString(const EnumT& enum_val) {
 		return pb::enum_name(enum_val);
 	}
 
 	template <typename EnumT>
-	std::string to_string(const std::vector<EnumT>& enum_arr) {
+	std::string ToString(const std::vector<EnumT>& enum_arr) {
 		std::string s = "[";
 		for (const auto& enum_val : enum_arr) {
-			s = s + to_string(enum_val) + ",";
+			s = s + ToString(enum_val) + ",";
 		}
 		s += "]";
 		return s;

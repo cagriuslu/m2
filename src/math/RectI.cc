@@ -231,7 +231,7 @@ m2::RectI m2::RectI::ratio(const RectF& ratio_rect) const {
 	};
 }
 
-std::string m2::to_string(const m2::RectI& v) {
+std::string m2::ToString(const m2::RectI& v) {
 	std::stringstream ss;
 	ss << "{x:" << v.x << ",y:" << v.y << ",w:" << v.w << ",h:" << v.h << "}";
 	return ss.str();

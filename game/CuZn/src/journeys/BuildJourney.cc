@@ -288,7 +288,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 					// Get a game drawing centered at the merchant location
 					auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
-					if (ask_for_confirmation_bottom("Buy " + std::to_string(remaining_unspecified_coal_count) + " coal from market for £" + std::to_string(cost_of_buying) + "?", "Yes", "No", std::move(background))) {
+					if (ask_for_confirmation_bottom("Buy " + m2::ToString(remaining_unspecified_coal_count) + " coal from market for £" + m2::ToString(cost_of_buying) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
 						// Specify resource sources
 						std::replace(_resource_sources.begin(), _resource_sources.end(),
@@ -335,7 +335,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 				// Calculate the cost of buying iron
 				auto cost_of_buying = M2G_PROXY.market_iron_cost(m2::I(remaining_unspecified_iron_count));
 				LOG_DEBUG("Asking player if they want to buy iron from the market...");
-				if (ask_for_confirmation("Buy " + std::to_string(remaining_unspecified_iron_count) + " iron from market for £" + std::to_string(cost_of_buying) + "?", "", "Yes", "No")) {
+				if (ask_for_confirmation("Buy " + m2::ToString(remaining_unspecified_iron_count) + " iron from market for £" + m2::ToString(cost_of_buying) + "?", "", "Yes", "No")) {
 					LOG_DEBUG("Player agreed");
 					// Specify resource sources
 					std::replace(_resource_sources.begin(), _resource_sources.end(),

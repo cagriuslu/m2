@@ -15,5 +15,5 @@ namespace m2::network {
 }
 
 namespace m2 {
-	std::string to_string(const network::IpAddressAndPort& ip_port);
+	std::string ToString(const network::IpAddressAndPort& ip_port);
 }

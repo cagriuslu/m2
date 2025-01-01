@@ -48,8 +48,8 @@ namespace m2 {
 		/// the integer multiple of the given number
 		[[nodiscard]] VecI aspect_ratio_dimensions(int w, int h) const; // TODO too complex of a function, get rid of this, is this really necessary. use RectI::trim_to_aspect_ration instead
 	};
-	std::string to_string(const m2::VecI&);
-	std::string to_string(const std::vector<VecI>&);
+	std::string ToString(const m2::VecI&);
+	std::string ToString(const std::vector<VecI>&);
 
 	struct VecIHash {
 		size_t operator()(const VecI& a) const {

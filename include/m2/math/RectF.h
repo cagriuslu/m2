@@ -45,5 +45,5 @@ namespace m2 {
 		[[nodiscard]] VecF center() const;
 	};
 
-	std::string to_string(const RectF&);
+	std::string ToString(const RectF&);
 }

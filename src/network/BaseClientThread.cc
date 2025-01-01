@@ -129,7 +129,7 @@ void m2::network::detail::BaseClientThread::locked_set_state(pb::ClientThreadSta
 
 void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientThread* thread_manager) {
 	thread_manager->_latch.wait();
-	set_thread_name_for_logging(thread_manager->thread_name());
+	SetThreadNameForLogging(thread_manager->thread_name());
 	LOG_INFO("BaseClientThread function");
 
 	auto locked_should_continue_running = [](BaseClientThread* thread_manager) {
@@ -336,7 +336,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 					thread_manager->unlocked_set_state(pb::CLIENT_RECONNECTING);
 					continue;
 				} else if (*send_result != TcpSocketManager::SendResult::OK) {
-					throw M2_ERROR("An invalid or too large outgoing message was queued to server: " + std::to_string(static_cast<int>(*send_result)));
+					throw M2_ERROR("An invalid or too large outgoing message was queued to server: " + m2::ToString(static_cast<int>(*send_result)));
 				}
 			}
 		}

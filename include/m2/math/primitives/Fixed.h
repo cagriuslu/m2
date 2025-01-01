@@ -82,5 +82,5 @@ namespace m2 {
 		static void ThrowIfOutOfBounds(double d);
 	};
 
-	std::string to_string(const Fixed&);
+	std::string ToString(const Fixed&);
 }

@@ -230,7 +230,7 @@ void m2::network::ServerThread::set_state_unlocked(pb::ServerThreadState state) 
 
 void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	server_thread->_latch.wait();
-	set_thread_name_for_logging("SR");
+	SetThreadNameForLogging("SR");
 	LOG_INFO("ServerThread function");
 
 	auto listen_socket = TcpSocket::create_server(TCP_PORT_NO);

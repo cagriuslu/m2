@@ -55,5 +55,5 @@ namespace m2 {
 		[[nodiscard]] Float SquareRoot() const { return Float{sqrtf(_value)}; }
 	};
 
-	std::string to_string(const Float&);
+	std::string ToString(const Float&);
 }

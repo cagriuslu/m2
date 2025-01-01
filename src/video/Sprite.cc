@@ -88,7 +88,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 			const auto index = enum_index(effect.type());
 			// Check if the effect is already created
 			if (is_created[index]) {
-				throw M2_ERROR("Sprite has duplicate effect definition: " + std::to_string(effect.type()));
+				throw M2_ERROR("Sprite has duplicate effect definition: " + m2::ToString(effect.type()));
 			}
 			// Create effect
 			switch (effect.type()) {
@@ -109,7 +109,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 					break;
 				default:
 					throw M2_ERROR(
-					    "Encountered a sprite with unknown sprite effect: " + std::to_string(original_sprite->type()));
+					    "Encountered a sprite with unknown sprite effect: " + m2::ToString(original_sprite->type()));
 			}
 			is_created[index] = true;
 		}
@@ -180,7 +180,7 @@ std::vector<m2::Sprite> m2::LoadSprites(const std::vector<SpriteSheet>& spriteSh
 			const auto index = pb::enum_index(sprite.type());
 			// Check if the sprite is already loaded
 			if (is_loaded[index]) {
-				throw M2_ERROR("Sprite has duplicate definition: " + std::to_string(sprite.type()));
+				throw M2_ERROR("Sprite has duplicate definition: " + m2::ToString(sprite.type()));
 			}
 			// Load sprite
 			sprites_vector[index] = Sprite{spriteSheets, spriteSheet, spriteEffectsSheet, sprite, lightning};
@@ -191,7 +191,7 @@ std::vector<m2::Sprite> m2::LoadSprites(const std::vector<SpriteSheet>& spriteSh
 		const auto index = pb::enum_index(textLabel.type());
 		// Check if the sprite is already loaded
 		if (is_loaded[index]) {
-			throw M2_ERROR("Sprite has duplicate definition: " + std::to_string(textLabel.type()));
+			throw M2_ERROR("Sprite has duplicate definition: " + m2::ToString(textLabel.type()));
 		}
 		// Load sprite
 		sprites_vector[index] = Sprite{renderer, font, fontSize, textLabel};
@@ -223,7 +223,7 @@ std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> m2::ListLevelEditorObjectSpri
 		const auto index = pb::enum_index(object.type());
 		// Check if object type already exists
 		if (has_encountered[index]) {
-			throw M2_ERROR("Object has duplicate definition: " + std::to_string(object.type()));
+			throw M2_ERROR("Object has duplicate definition: " + m2::ToString(object.type()));
 		}
 		has_encountered[index] = true;
 

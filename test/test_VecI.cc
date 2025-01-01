@@ -82,8 +82,8 @@ TEST(VecI, utils) {
 	EXPECT_EQ(v9.manhattan_distance(v10), 18);
 }
 
-TEST(VecI, to_string) {
+TEST(VecI, ToString) {
 	using namespace m2;
 
-	EXPECT_STREQ(to_string(VecI{10,20}).c_str(), "{\"y\":\"20\",\"x\":\"10\",}");
+	EXPECT_STREQ(ToString(VecI{10,20}).c_str(), "{\"y\":\"20\",\"x\":\"10\",}");
 }

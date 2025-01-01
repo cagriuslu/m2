@@ -19,7 +19,7 @@ SDL_Texture* m2::DynamicSheet::Texture() const {
 std::pair<SDL_Surface*, m2::RectI> m2::DynamicSheet::Alloc(int w, int h) {
 	// Check if effect will fit
 	if (_surface->w < w) {
-		throw M2_ERROR("Sprite effect exceeds width limit: " + std::to_string(_surface->w));
+		throw M2_ERROR("Sprite effect exceeds width limit: " + m2::ToString(_surface->w));
 	}
 
 	// Resize surface if necessary

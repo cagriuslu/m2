@@ -9,10 +9,10 @@
 #endif
 
 namespace {
-	bool unexpected_event_occured = false;
+	bool gUnexpectedEventOccured = false;
 	std::vector<std::pair<std::thread::id, std::string>> thread_names;
 
-	const char* lookup_thread_name() {
+	const char* LookupThreadName() {
 		auto id = std::this_thread::get_id();
 		for (const auto& pair : thread_names) {
 			if (pair.first == id) {
@@ -23,14 +23,12 @@ namespace {
 	}
 }
 
-std::mutex m2::detail::log_mutex;
-thread_local int m2::detail::thread_indentation{0};
+std::mutex m2::detail::gLogMutex;
 
-void m2::set_thread_name_for_logging(const char* thread_name) {
+void m2::SetThreadNameForLogging(const char* thread_name) {
 	thread_names.emplace_back(std::this_thread::get_id(), thread_name);
 }
-
-void m2::log_stacktrace() {
+void m2::LogStacktrace() {
 #ifdef _WIN32
 	// Not yet supported
 #else
@@ -43,17 +41,16 @@ void m2::log_stacktrace() {
 	free(strs);
 #endif
 }
-
-const std::string& m2::to_string(const pb::LogLevel& lvl) {
+const std::string& m2::ToString(const pb::LogLevel& lvl) {
 	return pb::LogLevel_Name(lvl);
 }
 
-void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
+void m2::detail::LogHeader(pb::LogLevel lvl, const char *file, int line) {
 	auto lvl_int = int(lvl);
 
 	// Set unexpected event
-	if (int(pb::LogLevel::WRN) <= lvl_int && !unexpected_event_occured) {
-		unexpected_event_occured = true;
+	if (int(pb::LogLevel::WRN) <= lvl_int && !gUnexpectedEventOccured) {
+		gUnexpectedEventOccured = true;
 	}
 
 	// Get time
@@ -64,7 +61,7 @@ void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 	if (lvl_int <= int(pb::LogLevel::FTL)) {
 		static const char lvl_chars[] = {0, 'T', 'D', 'I', 'W', 'E', 'F'};
 		static const char lvl_chars_un[] = {0, 't', 'd', 'i', 'w', 'e', 'f'};
-		lvl_char = unexpected_event_occured ? lvl_chars_un[lvl_int] : lvl_chars[lvl_int];
+		lvl_char = gUnexpectedEventOccured ? lvl_chars_un[lvl_int] : lvl_chars[lvl_int];
 	}
 
 	// Get file name
@@ -88,18 +85,19 @@ void m2::detail::log_header(pb::LogLevel lvl, const char *file, int line) {
 	};
 	const char* file_name_padding = file_name_paddings[file_name_capitals_len];
 
-	fprintf(stderr, "[%c %09lld %s%s %03d %s] ", lvl_char, (long long)now, file_name_padding, file_name_capitals, line % 1000, lookup_thread_name());
+	fprintf(stderr, "[%c %09lld %s%s %03d %s] ", lvl_char, (long long)now, file_name_padding, file_name_capitals, line % 1000, LookupThreadName());
 }
 
 #if _MSC_VER > 1400
-void m2::detail::logf(pb::LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...) {
+void m2::detail::LogF(pb::LogLevel lvl, const char* file, int line, _Printf_format_string_ const char* fmt, ...) {
 #else
-void m2::detail::logf(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) {
+void m2::detail::LogF(pb::LogLevel lvl, const char* file, int line, const char* fmt, ...) {
 #endif
 	if (lvl < current_log_level) {
 		return;
 	}
-	log_header(lvl, file, line);
+	std::unique_lock lock{gLogMutex};
+	LogHeader(lvl, file, line);
 	va_list args;
 	va_start(args, fmt);
 	vfprintf(stderr, fmt, args);

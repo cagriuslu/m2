@@ -8,8 +8,8 @@
 SDL_Cursor* SdlUtils_CreateCursor();
 
 namespace m2 {
-	std::string to_string(const SDL_Rect& rf);
-	std::string to_string(const SDL_FRect& rf);
+	std::string ToString(const SDL_Rect& rf);
+	std::string ToString(const SDL_FRect& rf);
 }
 
 namespace m2::sdl {

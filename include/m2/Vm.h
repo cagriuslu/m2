@@ -89,5 +89,5 @@ namespace m2 {
 		void execute_recursively(Stack& stack, const std::string& func) const;
 	};
 
-	std::string to_string(const Vm::StackValue& value);
+	std::string ToString(const Vm::StackValue& value);
 }

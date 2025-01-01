@@ -31,7 +31,7 @@ namespace m2 {
 		static Rational one() { return Rational{1,1}; }
 		static Rational pi_mul2();
 	};
-	std::string to_string(const Rational& r);
+	std::string ToString(const Rational& r);
 
 	inline float to_float(const pb::Rational& r) {
 		return static_cast<float>(r.n()) / static_cast<float>(r.d());

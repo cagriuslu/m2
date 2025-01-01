@@ -152,7 +152,7 @@ void m2::network::ClientManager::send_outgoing_data() {
 		return;
 	}
 	if (*send_result != TcpSocketManager::SendResult::OK) {
-		throw M2_ERROR("An invalid or too large outgoing message was queued to client: " + std::to_string(socket_manager_.index()) + " " + std::to_string(static_cast<int>(*send_result)));
+		throw M2_ERROR("An invalid or too large outgoing message was queued to client: " + m2::ToString(socket_manager_.index()) + " " + m2::ToString(static_cast<int>(*send_result)));
 	}
 }
 void m2::network::ClientManager::flush_and_shutdown() {

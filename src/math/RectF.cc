@@ -116,7 +116,7 @@ m2::VecF m2::RectF::center() const {
 	return VecF{x + w / 2.0f, y + h / 2.0f};
 }
 
-std::string m2::to_string(const RectF& rect) {
+std::string m2::ToString(const RectF& rect) {
 	std::stringstream ss;
 	ss << "{x:" << rect.x << ",y:" << rect.y << ",w:" << rect.w << ",h:" << rect.h << "}";
 	return ss.str();

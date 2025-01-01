@@ -32,7 +32,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
-					self.set_text(std::string{"Victory Points: "} + std::to_string(vp));
+					self.set_text(std::string{"Victory Points: "} + m2::ToString(vp));
 					return make_continue_action();
 				}
 			}
@@ -49,7 +49,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
-					self.set_text(std::string{"Income Points: "} + std::to_string(vp));
+					self.set_text(std::string{"Income Points: "} + m2::ToString(vp));
 					return make_continue_action();
 				}
 			}
@@ -67,7 +67,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.on_update = [](MAYBE Text& self) {
 					const auto income_points = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
 					const auto income_level = IncomeLevelFromIncomePoints(income_points);
-					self.set_text(std::string{"Income: £"} + std::to_string(income_level));
+					self.set_text(std::string{"Income: £"} + m2::ToString(income_level));
 					return make_continue_action();
 				}
 			}
@@ -84,7 +84,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
 					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
-					self.set_text(std::string{"Cash: £"} + std::to_string(money));
+					self.set_text(std::string{"Cash: £"} + m2::ToString(money));
 					return make_continue_action();
 				}
 			}
@@ -157,7 +157,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.35f,
 				.on_update = [](MAYBE Text& self) {
 					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
-					self.set_text(std::string{"Cards Left in Deck: "} + std::to_string(dds));
+					self.set_text(std::string{"Cards Left in Deck: "} + m2::ToString(dds));
 					return make_continue_action();
 				}
 			}

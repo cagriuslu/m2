@@ -52,7 +52,7 @@ void display_canal_era_result(const m2g::pb::ServerCommand::CanalEraResult& cana
 				.x = 8, .y = 3 + (2 * i), .w = 3, .h = 1,
 				.border_width = 0,
 				.variant = widget::TextBlueprint{
-					.text = std::to_string(canal_era_result.victory_points(i)),
+					.text = m2::ToString(canal_era_result.victory_points(i)),
 					.horizontal_alignment = m2::ui::TextHorizontalAlignment::RIGHT,
 					.wrapped_font_size_in_units = 0.8f
 				}

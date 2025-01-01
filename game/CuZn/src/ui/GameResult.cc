@@ -58,7 +58,7 @@ void display_game_result() {
 				.x = 8, .y = 3 + (2 * i), .w = 3, .h = 1,
 				.border_width = 0,
 				.variant = widget::TextBlueprint{
-					.text = std::to_string(victory_points),
+					.text = m2::ToString(victory_points),
 					.horizontal_alignment = m2::ui::TextHorizontalAlignment::RIGHT,
 					.wrapped_font_size_in_units = 0.8f
 				}

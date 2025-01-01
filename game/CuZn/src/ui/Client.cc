@@ -22,7 +22,7 @@ static TextBlueprint client_status = {
 			// Start the game
 			auto player_count = M2_GAME.RealClientThread().total_player_count();
 			const auto expect_success =
-				M2_GAME.LoadMultiPlayerAsGuest(M2_GAME.levels_dir / "Map.json", std::to_string(player_count));
+				M2_GAME.LoadMultiPlayerAsGuest(M2_GAME.levels_dir / "Map.json", m2::ToString(player_count));
 			m2_succeed_or_throw_error(expect_success);
 			return make_clear_stack_action();
 		} else if (M2_GAME.RealClientThread().is_quit()) {
