@@ -11,17 +11,20 @@
 #define DEFAULT_OVERLOAD [](MAYBE const auto& _){}
 
 namespace m2 {
-	int I(auto t) { return static_cast<int>(t); }
-	unsigned U(auto t) { return static_cast<unsigned>(t); }
-	size_t Z(auto t) { return static_cast<size_t>(t); }
-	float F(auto t) { return static_cast<float>(t); }
-	double D(auto t) { return static_cast<double>(t); }
+	int I(const auto t) { return static_cast<int>(t); }
+	unsigned U(const auto t) { return static_cast<unsigned>(t); }
+	size_t Z(const auto t) { return static_cast<size_t>(t); }
+	float F(const auto t) { return static_cast<float>(t); }
+	double D(const auto t) { return static_cast<double>(t); }
 	std::string S(const auto& s) { return std::string(s); }
-	inline int iround(float t) { return static_cast<int>(roundf(t)); }
-	inline int iround(double t) { return static_cast<int>(round(t)); }
-	inline unsigned uround(float t) { return static_cast<unsigned>(roundf(t)); }
-	inline uint8_t u8round(float t) { return static_cast<uint8_t>(roundf(t)); }
-	inline size_t zround(float t) { return static_cast<size_t>(roundf(t)); }
+	inline int iround(const float t) { return static_cast<int>(roundf(t)); }
+	inline int iround(const double t) { return static_cast<int>(round(t)); }
+	inline unsigned uround(const float t) { return static_cast<unsigned>(roundf(t)); }
+	inline uint8_t u8round(const float t) { return static_cast<uint8_t>(roundf(t)); }
+	inline size_t zround(const float t) { return static_cast<size_t>(roundf(t)); }
+	inline int ifloor(const float t) { return static_cast<int>(floorf(t)); }
+	inline int iceil(const float t) { return static_cast<int>(ceilf(t)); }
+	int RoundDownToEvenI(float);
 
 	std::string to_string(bool);
 	std::string to_string(int);

@@ -27,10 +27,10 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 					WidgetBlueprint{
 						.x = 0, .y = 0, .w = 4, .h = 1,
 						.border_width = 0.001f,
-						.background_color = {0, 0, 0, 255},
+						.background_color = {0, 0, 127, 255},
 						.variant = widget::TextBlueprint {
 							.text = industryCard.in_game_name(),
-							.wrapped_font_size_in_units = 0.8f
+							.wrapped_font_size_in_units = 0.75f
 						}
 					},
 					WidgetBlueprint{
@@ -38,9 +38,9 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 						.border_width = 0.0f,
 						.background_color = {0, 0, 0, 255},
 						.variant = widget::TextBlueprint {
-							.text = "Level: " + industryTile.in_game_name(),
+							.text = "Level     : " + industryTile.in_game_name(),
 							.horizontal_alignment = TextHorizontalAlignment::LEFT,
-							.wrapped_font_size_in_units = 0.8f
+							.wrapped_font_size_in_units = 0.75f
 						}
 					},
 					WidgetBlueprint{
@@ -48,9 +48,9 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 						.border_width = 0.0f,
 						.background_color = {0, 0, 0, 255},
 						.variant = widget::TextBlueprint {
-							.text = "Sell Req: " + GetIndustryTileSellRequirementsString(industryTileType),
+							.text = "Sell Reqs : " + GetIndustryTileSellRequirementsString(industryTileType),
 							.horizontal_alignment = TextHorizontalAlignment::LEFT,
-							.wrapped_font_size_in_units = 0.8f
+							.wrapped_font_size_in_units = 0.75f
 						}
 					},
 					WidgetBlueprint{
@@ -60,7 +60,7 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 						.variant = widget::TextBlueprint {
 							.text = "Sell Benft: " + GetIndustryTileSellBenefitsString(industryTileType),
 							.horizontal_alignment = TextHorizontalAlignment::LEFT,
-							.wrapped_font_size_in_units = 0.8f
+							.wrapped_font_size_in_units = 0.75f
 						}
 					}
 				}
@@ -88,10 +88,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 						WidgetBlueprint{
 							.x = 0, .y = 0, .w = 4, .h = 1,
 							.border_width = 0.001f,
-							.background_color = {0, 0, 0, 255},
+							.background_color = {0, 0, 127, 255},
 							.variant = widget::TextBlueprint {
 								.text = industryCard.in_game_name(),
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -100,10 +100,11 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile
-										? "Your next " + industryCard.in_game_name() + " tile:"
+										? "Your next " + industryCard.in_game_name() + " tile"
 										: industryCard.in_game_name() + " tile not found",
-								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.horizontal_alignment = TextHorizontalAlignment::CENTER,
+								.wrapped_font_size_in_units = 0.75f,
+								.color = {127, 127, 127}
 							}
 						},
 						WidgetBlueprint{
@@ -112,10 +113,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile
-										? "Level: " + nextIndustryTile->in_game_name()
+										? "Level     : " + nextIndustryTile->in_game_name()
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -124,10 +125,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile
-										? "Build Req: " + GetIndustryTileBuildRequirementsString(*nextIndustryTileType)
+										? "Build Reqs: " + GetIndustryTileBuildRequirementsString(*nextIndustryTileType)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -136,10 +137,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile
-										? "Resouce Gain: " + GetIndustryTileResourceGainString(*nextIndustryTileType)
+										? "Build Gain: " + GetIndustryTileResourceGainString(*nextIndustryTileType)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -148,10 +149,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile
-										? "Sell Req: " + GetIndustryTileSellRequirementsString(*nextIndustryTileType)
+										? "Sell Reqs : " + GetIndustryTileSellRequirementsString(*nextIndustryTileType)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -163,7 +164,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 										? "Sell Benft: " + GetIndustryTileSellBenefitsString(*nextIndustryTileType)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						}
 					}
@@ -186,10 +187,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 						WidgetBlueprint{
 							.x = 0, .y = 0, .w = 4, .h = 1,
 							.border_width = 0.001f,
-							.background_color = {0, 0, 0, 255},
+							.background_color = {0, 0, 127, 255},
 							.variant = widget::TextBlueprint {
 								.text = industryCard1.in_game_name(),
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -198,10 +199,11 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile1
-										? "Your next " + industryCard1.in_game_name() + " tile:"
+										? "Your next " + industryCard1.in_game_name() + " tile"
 										: industryCard1.in_game_name() + " tile not found",
-								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.horizontal_alignment = TextHorizontalAlignment::CENTER,
+								.wrapped_font_size_in_units = 0.75f,
+								.color = {127, 127, 127}
 							}
 						},
 						WidgetBlueprint{
@@ -210,10 +212,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile1
-										? "Level: " + nextIndustryTile1->in_game_name()
+										? "Level     : " + nextIndustryTile1->in_game_name()
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -222,10 +224,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile1
-										? "Build Req: " + GetIndustryTileBuildRequirementsString(*nextIndustryTileType1)
+										? "Build Reqs: " + GetIndustryTileBuildRequirementsString(*nextIndustryTileType1)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -234,10 +236,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile1
-										? "Resouce Gain: " + GetIndustryTileResourceGainString(*nextIndustryTileType1)
+										? "Build Gain: " + GetIndustryTileResourceGainString(*nextIndustryTileType1)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -246,10 +248,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile1
-										? "Sell Req: " + GetIndustryTileSellRequirementsString(*nextIndustryTileType1)
+										? "Sell Reqs : " + GetIndustryTileSellRequirementsString(*nextIndustryTileType1)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -261,17 +263,17 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 										? "Sell Benft: " + GetIndustryTileSellBenefitsString(*nextIndustryTileType1)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						// Second tile
 						WidgetBlueprint{
 							.x = 0, .y = 7, .w = 4, .h = 1,
 							.border_width = 0.001f,
-							.background_color = {0, 0, 0, 255},
+							.background_color = {0, 0, 127, 255},
 							.variant = widget::TextBlueprint {
 								.text = industryCard2.in_game_name(),
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -280,10 +282,11 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile2
-										? "Your next " + industryCard2.in_game_name() + " tile:"
+										? "Your next " + industryCard2.in_game_name() + " tile"
 										: industryCard2.in_game_name() + " tile not found",
-								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.horizontal_alignment = TextHorizontalAlignment::CENTER,
+								.wrapped_font_size_in_units = 0.75f,
+								.color = {127, 127, 127}
 							}
 						},
 						WidgetBlueprint{
@@ -292,10 +295,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile2
-										? "Level: " + nextIndustryTile2->in_game_name()
+										? "Level     : " + nextIndustryTile2->in_game_name()
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -304,10 +307,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile2
-										? "Build Req: " + GetIndustryTileBuildRequirementsString(*nextIndustryTileType2)
+										? "Build Reqs: " + GetIndustryTileBuildRequirementsString(*nextIndustryTileType2)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -316,10 +319,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile2
-										? "Resouce Gain: " + GetIndustryTileResourceGainString(*nextIndustryTileType2)
+										? "Build Gain: " + GetIndustryTileResourceGainString(*nextIndustryTileType2)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -328,10 +331,10 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							.background_color = {0, 0, 0, 255},
 							.variant = widget::TextBlueprint {
 								.text = nextIndustryTile2
-										? "Sell Req: " + GetIndustryTileSellRequirementsString(*nextIndustryTileType2)
+										? "Sell Reqs : " + GetIndustryTileSellRequirementsString(*nextIndustryTileType2)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						},
 						WidgetBlueprint{
@@ -343,7 +346,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 										? "Sell Benft: " + GetIndustryTileSellBenefitsString(*nextIndustryTileType2)
 										: "",
 								.horizontal_alignment = TextHorizontalAlignment::LEFT,
-								.wrapped_font_size_in_units = 0.8f
+								.wrapped_font_size_in_units = 0.75f
 							}
 						}
 					}

@@ -2,7 +2,7 @@
 #include <m2/sdl/Surface.h>
 
 namespace {
-	int text_horizontal_alignment_to_ttf_wrap_alignment(m2::ui::TextHorizontalAlignment horizontal_alignment) {
+	int ToTtfWrapAlignment(m2::ui::TextHorizontalAlignment horizontal_alignment) {
 		switch (horizontal_alignment) {
 			case m2::ui::TextHorizontalAlignment::LEFT:
 				return TTF_WRAPPED_ALIGN_LEFT;
@@ -61,7 +61,7 @@ m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_wrapped(SDL_Rend
 	// should be fine.
 	TTF_SetFontSize(font, fontSize);
 	// Render to surface
-	TTF_SetFontWrappedAlign(font, text_horizontal_alignment_to_ttf_wrap_alignment(horizontal_alignment));
+	TTF_SetFontWrappedAlign(font, ToTtfWrapAlignment(horizontal_alignment));
 	SurfaceUniquePtr surface{TTF_RenderUTF8_Blended_Wrapped(font, text.c_str(), color, width_px)};
 	m2_return_unexpected_message_unless(surface, TTF_GetError());
 	// Render to texture
