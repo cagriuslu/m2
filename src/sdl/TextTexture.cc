@@ -1,4 +1,4 @@
-#include <m2/sdl/FontTexture.h>
+#include <m2/sdl/TextTexture.h>
 #include <m2/sdl/Surface.h>
 
 namespace {
@@ -35,9 +35,9 @@ namespace {
 	}
 }
 
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int fontSize, const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int fontSize, const std::string& text, SDL_Color color) {
 	if (text.empty()) {
-		return FontTexture{nullptr, text};
+		return TextTexture{nullptr, text};
 	}
 
 	// This clears the glyph caches, but that's the only option we have. As long as we don't call this every frame, it
@@ -49,12 +49,12 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_nowrap(SDL_Rende
 	// Render to texture
 	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
 	m2_return_unexpected_message_unless(texture, SDL_GetError());
-	return FontTexture{texture, text};
+	return TextTexture{texture, text};
 }
 
-m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px, ui::TextHorizontalAlignment horizontal_alignment, const std::string& text, SDL_Color color) {
+m2::expected<m2::sdl::TextTexture> m2::sdl::TextTexture::create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px, ui::TextHorizontalAlignment horizontal_alignment, const std::string& text, SDL_Color color) {
 	if (text.empty()) {
-		return FontTexture{nullptr, text};
+		return TextTexture{nullptr, text};
 	}
 
 	// This clears the glyph caches, but that's the only option we have. As long as we don't call this every frame, it
@@ -67,5 +67,5 @@ m2::expected<m2::sdl::FontTexture> m2::sdl::FontTexture::create_wrapped(SDL_Rend
 	// Render to texture
 	SDL_Texture* texture = create_texture_with_linear_filtering(renderer, surface.get());
 	m2_return_unexpected_message_unless(texture, SDL_GetError());
-	return FontTexture{texture, text};
+	return TextTexture{texture, text};
 }

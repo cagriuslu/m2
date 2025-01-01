@@ -6,22 +6,21 @@
 #include <SDL2/SDL_ttf.h>
 
 namespace m2::sdl {
-	// TODO rename to TextTexture
-	class FontTexture {
+	class TextTexture {
 		TextureUniquePtr _texture;
 		std::string _string;
 
-		FontTexture(SDL_Texture* texture, std::string text) : _texture(texture), _string(std::move(text)) {}
+		TextTexture(SDL_Texture* texture, std::string text) : _texture(texture), _string(std::move(text)) {}
 
 	public:
-		FontTexture() = default;
-		/// Create a FontTexture without text wrapping. `fontSize` determines the height of the texture, and since the
+		TextTexture() = default;
+		/// Create a TextTexture without text wrapping. `fontSize` determines the height of the texture, and since the
 		/// text is unwrapped, the width is also determined.
-		static expected<FontTexture> create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int fontSize,
+		static expected<TextTexture> create_nowrap(SDL_Renderer* renderer, TTF_Font* font, int fontSize,
 			const std::string& text, SDL_Color color = {255, 255, 255, 255});
-		/// Create a FontTexture with text wrapping. `fontSize` determines the height of the texture and `width_px`
+		/// Create a TextTexture with text wrapping. `fontSize` determines the height of the texture and `width_px`
 		/// limits the number of characters per line.
-		static expected<FontTexture> create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px,
+		static expected<TextTexture> create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px,
 			ui::TextHorizontalAlignment horizontal_alignment, const std::string& text,
 			SDL_Color color = {255, 255, 255, 255});
 
@@ -33,9 +32,9 @@ namespace m2::sdl {
 		[[nodiscard]] const std::string& string() const { return _string; }
 	};
 
-	/// FontTexture and its destination is sometimes grouped together if the text is created for that destination.
-	struct FontTextureAndDestination {
-		FontTexture font_texture;
-		RectI destination_rect;
+	/// TextTexture and its destination is sometimes grouped together if the text is created for that destination.
+	struct TextTextureAndDestination {
+		TextTexture textTexture;
+		RectI destinationRect;
 	};
 }  // namespace m2::sdl

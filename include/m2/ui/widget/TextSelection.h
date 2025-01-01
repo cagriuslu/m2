@@ -1,5 +1,5 @@
 #pragma once
-#include <m2/sdl/FontTexture.h>
+#include <m2/sdl/TextTexture.h>
 #include <m2/ui/Widget.h>
 
 namespace m2::ui::widget {
@@ -7,16 +7,16 @@ namespace m2::ui::widget {
 		struct Option {
 			TextSelectionBlueprint::Option blueprint_option;
 			bool is_selected{};
-			std::optional<sdl::FontTextureAndDestination> font_texture_and_destination;
+			std::optional<sdl::TextTextureAndDestination> text_texture_and_destination;
 		};
 		std::vector<Option> _options;
 
 		// Applicable to +/- selection mode
-		std::optional<sdl::FontTextureAndDestination> _plus_texture, _minus_texture;
+		std::optional<sdl::TextTextureAndDestination> _plus_texture, _minus_texture;
 		bool _plus_depressed{}, _minus_depressed{};
 
 		// Applicable to scrollable list
-		std::optional<sdl::FontTextureAndDestination> _up_arrow_texture, _down_arrow_texture;
+		std::optional<sdl::TextTextureAndDestination> _up_arrow_texture, _down_arrow_texture;
 		int _top_index{};
 
 	public:

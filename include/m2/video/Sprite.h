@@ -3,7 +3,7 @@
 #include <m2/video/SpriteSheet.h>
 #include <m2/video/SpriteVariant.h>
 #include <m2/box2d/Body.h>
-#include <m2/sdl/FontTexture.h>
+#include <m2/sdl/TextTexture.h>
 #include <m2/protobuf/Detail.h>
 
 namespace m2 {
@@ -35,7 +35,7 @@ namespace m2 {
 		std::vector<m2g::pb::ItemType> _namedItems;
 
 		// Text label
-		std::optional<sdl::FontTexture> _fontTexture;
+		std::optional<sdl::TextTexture> _textTexture;
 
 	   public:
 		Sprite() = default;

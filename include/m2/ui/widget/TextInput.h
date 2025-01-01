@@ -1,12 +1,12 @@
 #pragma once
 #include "../Widget.h"
-#include <m2/sdl/FontTexture.h>
+#include <m2/sdl/TextTexture.h>
 #include <sstream>
 
 namespace m2::ui::widget {
 	class TextInput : public Widget {
 		std::stringstream _text_input;
-		sdl::FontTexture _fontTexture;
+		sdl::TextTexture _textTexture;
 
 	public:
 		explicit TextInput(Panel* parent, const WidgetBlueprint* blueprint);

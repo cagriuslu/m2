@@ -1,11 +1,11 @@
 #pragma once
 #include "../Widget.h"
-#include <m2/sdl/FontTexture.h>
+#include <m2/sdl/TextTexture.h>
 
 namespace m2::ui::widget {
 	class IntegerInput : public Widget {
 		int _value;
-		sdl::FontTexture _fontTexture, _plus_texture, _minus_texture;
+		sdl::TextTexture _textTexture, _plus_texture, _minus_texture;
 		bool _inc_depressed{};
 		bool _dec_depressed{};
 

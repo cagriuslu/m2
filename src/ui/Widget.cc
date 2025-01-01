@@ -50,8 +50,8 @@ m2::RectI m2::ui::Widget::drawable_area() const {
 
 m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align) {
 	// Fit the font into the drawable_area with correct aspect ratio
-	auto font_texture_dimensions = sdl::texture_dimensions(text_texture);
-	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(font_texture_dimensions.x, font_texture_dimensions.y);
+	auto text_texture_dimensions = sdl::texture_dimensions(text_texture);
+	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(text_texture_dimensions.x, text_texture_dimensions.y);
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {
@@ -65,11 +65,11 @@ m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI d
 }
 
 m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
-	auto font_texture_dimensions = sdl::texture_dimensions(text_texture);
-	if (drawable_area.w < font_texture_dimensions.x) {
+	auto text_texture_dimensions = sdl::texture_dimensions(text_texture);
+	if (drawable_area.w < text_texture_dimensions.x) {
 		throw M2_ERROR("Font should have been generated at most as wide as the drawable area");
 	}
-	RectI unaligned = RectI{-1, -1, font_texture_dimensions.x, font_texture_dimensions.y};
+	RectI unaligned = RectI{-1, -1, text_texture_dimensions.x, text_texture_dimensions.y};
 
 	RectI horizontally_aligned;
 	switch (align_h) {
@@ -80,7 +80,7 @@ m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(SDL_Texture* text_texture,
 			horizontally_aligned = unaligned.align_right_to(drawable_area.x2());
 			break;
 		default:
-			horizontally_aligned = unaligned.align_left_to(drawable_area.x_center() - font_texture_dimensions.x / 2);
+			horizontally_aligned = unaligned.align_left_to(drawable_area.x_center() - text_texture_dimensions.x / 2);
 			break;
 	}
 
@@ -90,7 +90,7 @@ m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(SDL_Texture* text_texture,
 		case TextVerticalAlignment::BOTTOM:
 			return horizontally_aligned.align_bottom_to(drawable_area.y2());
 		default:
-			return horizontally_aligned.align_top_to(drawable_area.y_center() - font_texture_dimensions.y / 2);
+			return horizontally_aligned.align_top_to(drawable_area.y_center() - text_texture_dimensions.y / 2);
 	}
 }
 

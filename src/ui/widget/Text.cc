@@ -1,5 +1,5 @@
 #include <m2/Game.h>
-#include <m2/sdl/FontTexture.h>
+#include <m2/sdl/TextTexture.h>
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 
@@ -25,21 +25,21 @@ void Text::on_draw() {
 	draw_background_color();
 
 	// Generate font texture if necessary
-	if (not _font_texture_and_destination_cache) {
+	if (not _text_texture_and_destination_cache) {
 		// Calculate the ideal fontSize
 		auto fontSize = text_blueprint().wrapped_font_size_in_units != 0.0f
 			// Integer rounding because iround might produce too big of a font
 			? I(vertical_pixels_per_unit() * text_blueprint().wrapped_font_size_in_units)
 			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(m2::utf8_codepoint_count(_current_text.c_str()))).h;
-		auto font_texture = text_blueprint().wrapped_font_size_in_units != 0.0f
-			? m2_move_or_throw_error(sdl::FontTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, fontSize,
+		auto textTexture = text_blueprint().wrapped_font_size_in_units != 0.0f
+			? m2_move_or_throw_error(sdl::TextTexture::create_wrapped(M2_GAME.renderer, M2_GAME.font, fontSize,
 				drawable_area().w, text_blueprint().horizontal_alignment, _current_text))
-			: m2_move_or_throw_error(sdl::FontTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
+			: m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
 				M2G_PROXY.default_font_size, _current_text));
 		auto destination_rect = text_blueprint().wrapped_font_size_in_units != 0.0f
-			? calculate_wrapped_text_rect(font_texture.texture(), drawable_area(), text_blueprint().horizontal_alignment, text_blueprint().vertical_alignment)
+			? calculate_wrapped_text_rect(textTexture.texture(), drawable_area(), text_blueprint().horizontal_alignment, text_blueprint().vertical_alignment)
 			: calculate_filled_text_rect(drawable_area(), text_blueprint().horizontal_alignment, I(m2::utf8_codepoint_count(_current_text.c_str())));
-		_font_texture_and_destination_cache = sdl::FontTextureAndDestination{std::move(font_texture), destination_rect};
+		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
 
 	{
@@ -47,8 +47,8 @@ void Text::on_draw() {
 		auto drawable_area_sdl = static_cast<SDL_Rect>(drawable_area());
 		SDL_RenderSetClipRect(M2_GAME.renderer, &drawable_area_sdl);
 	}
-	sdl::render_texture_with_color_mod(_font_texture_and_destination_cache->font_texture.texture(),
-		_font_texture_and_destination_cache->destination_rect, depressed ? _current_color / 2.0f : _current_color);
+	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->textTexture.texture(),
+		_text_texture_and_destination_cache->destinationRect, depressed ? _current_color / 2.0f : _current_color);
 	SDL_RenderSetClipRect(M2_GAME.renderer, nullptr);
 
 	auto border_color = depressed ? SDL_Color{127, 127, 127, 255} : SDL_Color{255, 255, 255, 255};
@@ -58,6 +58,6 @@ void Text::on_draw() {
 void Text::set_text(const std::string& text) {
 	if (_current_text != text) {
 		_current_text = text;
-		_font_texture_and_destination_cache = std::nullopt;
+		_text_texture_and_destination_cache = std::nullopt;
 	}
 }

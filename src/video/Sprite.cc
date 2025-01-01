@@ -118,8 +118,8 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 
 m2::Sprite::Sprite(SDL_Renderer* renderer, TTF_Font* font, const int fontSize, const pb::TextLabel& textLabel)
 		: _type(textLabel.type()) {
-	_fontTexture = m2_move_or_throw_error(sdl::FontTexture::create_nowrap(renderer, font, fontSize, textLabel.text()));
-	const auto dims = _fontTexture->texture_dimensions();
+	_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(renderer, font, fontSize, textLabel.text()));
+	const auto dims = _textTexture->texture_dimensions();
 	_rect = RectI{0, 0, dims.x, dims.y};
 	_ppm = I(roundf(F(_rect.h) / textLabel.height_m()));
 	_isBackgroundTile = textLabel.is_background_tile();
@@ -130,8 +130,8 @@ m2::Sprite::Sprite(SDL_Renderer* renderer, TTF_Font* font, const int fontSize, c
 }
 
 SDL_Texture* m2::Sprite::Texture(const SpriteVariant spriteVariant) const {
-	if (_fontTexture) {
-		return _fontTexture->texture();
+	if (_textTexture) {
+		return _textTexture->texture();
 	}
 	if (std::holds_alternative<DefaultVariant>(spriteVariant)) {
 		return Sheet().texture();
