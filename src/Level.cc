@@ -280,11 +280,11 @@ void m2::Level::disable_hud() {
 }
 
 void m2::Level::remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it) {
-	DEBUG_FN();
+	TRACE_FN();
 	_customNonblockingUiPanels.erase(it);
 }
 void m2::Level::remove_custom_nonblocking_ui_panel_deferred(std::list<ui::Panel>::iterator it) {
-	DEBUG_FN();
+	TRACE_FN();
 	M2_DEFER(([this,it]() { _customNonblockingUiPanels.erase(it); }));
 }
 void m2::Level::add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint) {

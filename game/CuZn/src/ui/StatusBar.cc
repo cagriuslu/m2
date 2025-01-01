@@ -9,30 +9,30 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
+RectF status_bar_window_ratio() {
+	const auto x = (1.0f - M2_GAME.Dimensions().GameWidthToGameAndHudWidthRatio()) / 2.0f;
+	return {x, 0.0f, M2_GAME.Dimensions().GameWidthToGameAndHudWidthRatio(), 0.08f};
+}
+
 PanelBlueprint generate_status_bar_blueprint(int player_count) {
-	auto turn_holder_index = M2_GAME.TurnHolderIndex();
+	const auto turn_holder_index = M2_GAME.TurnHolderIndex();
 
 	// Add player names
 	auto bp = PanelBlueprint{
-		.w = 70,
-		.h = 8,
+		.w = 70, .h = 8,
 		.border_width = 0.0f,
-		.on_event = [=](Panel& panel, Events& events) -> Action {
+		.on_event = [=](const Panel& panel, const Events& events) -> Action {
 			if (panel.rect_px().contains(events.mouse_position())) {
-				// Create custom hud if not already
 				if (not M2G_PROXY.custom_hud_panel) {
 					M2G_PROXY.custom_hud_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-						std::make_unique<m2::ui::PanelBlueprint>(generate_custom_hud_blueprint(player_count)),
-						custom_hud_window_ratio());
+							std::make_unique<PanelBlueprint>(generate_custom_hud_blueprint(player_count)),
+							custom_hud_window_ratio());
 				}
-			}
-			return make_continue_action();
-		},
-		.on_update = [](MAYBE Panel& panel) -> Action {
-			// Clean up custom hud if not already destroyed
-			if (M2G_PROXY.custom_hud_panel && not (*M2G_PROXY.custom_hud_panel)->is_valid()) {
-				M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.custom_hud_panel);
-				M2G_PROXY.custom_hud_panel = std::nullopt;
+			} else {
+				if (M2G_PROXY.custom_hud_panel) {
+					M2_LEVEL.remove_custom_nonblocking_ui_panel_deferred(*M2G_PROXY.custom_hud_panel);
+					M2G_PROXY.custom_hud_panel = std::nullopt;
+				}
 			}
 			return make_continue_action();
 		},
@@ -41,14 +41,14 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 			WidgetBlueprint{
 				.x = 0, .y = 0, .w = 70, .h = 6,
 				.border_width = 0.0f,
-				.background_color = {0, 0, 0, 80},
+				.background_color = {80, 80, 80, 80},
 				.variant = TextBlueprint{}
 			},
 			WidgetBlueprint{
 				.x = 0, .y = 0, .w = 30, .h = 5,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = "Current Player",
+					.text = " Current Player:",
 					.horizontal_alignment = TextHorizontalAlignment::LEFT,
 					.wrapped_font_size_in_units = 4.0f
 				}
@@ -56,7 +56,7 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 			WidgetBlueprint{
 				.x = 33, .y = 6, .w = 4, .h = 2,
 				.border_width = 0.0f,
-				.background_color = {0, 0, 0, 80},
+				.background_color = {80, 80, 80, 80},
 				.variant = TextBlueprint{
 					.text = "v",
 					.wrapped_font_size_in_units = 2.0f

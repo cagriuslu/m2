@@ -9,27 +9,25 @@ using namespace m2;
 using namespace m2::ui;
 using namespace m2::ui::widget;
 
-PanelBlueprint generate_custom_hud_blueprint(int player_count) {
+RectF custom_hud_window_ratio() {
+	const auto x = (1.0f - M2_GAME.Dimensions().GameWidthToGameAndHudWidthRatio()) / 2.0f;
+	return {x, 0.0f, M2_GAME.Dimensions().GameWidthToGameAndHudWidthRatio(), 0.2f};
+}
+
+PanelBlueprint generate_custom_hud_blueprint(const int player_count) {
 	auto turn_holder_index = M2_GAME.TurnHolderIndex();
 
 	// Add player names
 	auto bp = PanelBlueprint{
 		.w = 70,
 		.h = 20,
-		.border_width = 0.0f,
 		.background_color = {0, 0, 0, 255},
-		.on_update = [](Panel& panel) -> Action {
-			if (panel.rect_px().contains(sdl::mouse_position())) {
-				panel.set_timeout(0.5f);
-			}
-			return make_continue_action();
-		},
 		.widgets = {
 			WidgetBlueprint{
 				.x = 0, .y = 0, .w = 30, .h = 5,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = "Current Player",
+					.text = " Current Player:",
 					.horizontal_alignment = TextHorizontalAlignment::LEFT,
 					.wrapped_font_size_in_units = 3.5f
 				}
@@ -55,7 +53,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		.x = 0, .y = 5, .w = 30, .h = 5,
 		.border_width = 0.0f,
 		.variant = TextBlueprint{
-			.text = "Victory/Income Points",
+			.text = " Victory/Income Points",
 			.horizontal_alignment = TextHorizontalAlignment::LEFT,
 			.wrapped_font_size_in_units = 3.5f
 		}
@@ -78,7 +76,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		.x = 0, .y = 10, .w = 30, .h = 5,
 		.border_width = 0.0f,
 		.variant = TextBlueprint{
-			.text = "Money/Roads/Cards",
+			.text = " Money/Roads/Cards",
 			.horizontal_alignment = TextHorizontalAlignment::LEFT,
 			.wrapped_font_size_in_units = 3.5f
 		}
@@ -102,7 +100,7 @@ PanelBlueprint generate_custom_hud_blueprint(int player_count) {
 		.x = 0, .y = 15, .w = 30, .h = 5,
 		.border_width = 0.0f,
 		.variant = TextBlueprint{
-			.text = "Money spent this turn",
+			.text = " Money spent this turn",
 			.horizontal_alignment = TextHorizontalAlignment::LEFT,
 			.wrapped_font_size_in_units = 3.5f
 		}
