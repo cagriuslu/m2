@@ -24,13 +24,13 @@ static TextBlueprint client_status = {
 			const auto expect_success =
 				M2_GAME.LoadMultiPlayerAsGuest(M2_GAME.levels_dir / "Map.json", m2::ToString(player_count));
 			m2_succeed_or_throw_error(expect_success);
-			return make_clear_stack_action();
-		} else if (M2_GAME.RealClientThread().is_quit()) {
+			return MakeClearStackAction();
+		} else if (M2_GAME.RealClientThread().IsQuit()) {
 			self.set_text("SERVER FULL");
 		} else {
 			self.set_text("CONNECTING...");
 		}
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 };
 
@@ -45,7 +45,7 @@ static TextBlueprint ready_button = {
 		} else {
 			self.set_text("...");
 		}
-		return make_continue_action();
+		return MakeContinueAction();
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
 		if (M2_GAME.RealClientThread().is_connected()) {
@@ -53,7 +53,7 @@ static TextBlueprint ready_button = {
 		} else if (M2_GAME.RealClientThread().is_ready()) {
 			M2_GAME.RealClientThread().set_ready(false);
 		}
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 };
 
@@ -87,7 +87,7 @@ static const PanelBlueprint client_lobby = {
 				.wrapped_font_size_in_units = 5.0f,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_GAME.LeaveGame();
-					return make_return_action();
+					return MakeReturnAction();
 				}
 			}
 		},
@@ -134,7 +134,7 @@ const PanelBlueprint ip_port_form = {
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const Text& self) -> Action { return make_return_action(); }
+				.on_action = [](MAYBE const Text& self) -> Action { return MakeReturnAction(); }
 			}
 		}
 	}

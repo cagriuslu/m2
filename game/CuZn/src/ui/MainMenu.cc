@@ -23,9 +23,9 @@ const PanelBlueprint main_menu_blueprint = {
 				.text = "JOIN",
 				.wrapped_font_size_in_units = 5.0f,
 				.on_action = [](MAYBE const widget::Text& self) {
-					if (auto action = m2::ui::Panel::create_and_run_blocking(&ip_port_form); action.is_return()) {
+					if (auto action = m2::ui::Panel::create_and_run_blocking(&ip_port_form); action.IsReturn()) {
 						// If the sub menu has returned, stay at main menu
-						return make_continue_action();
+						return MakeContinueAction();
 					} else {
 						// If the sub menu has returned something else (clear stack, quit), propagate
 						return action;
@@ -40,9 +40,9 @@ const PanelBlueprint main_menu_blueprint = {
 				.wrapped_font_size_in_units = 5.0f,
 				.on_action = [](MAYBE const widget::Text& self) {
 					M2_GAME.HostGame(m2::mplayer::Type::TurnBased, 4);
-					if (auto action = m2::ui::Panel::create_and_run_blocking(&server_lobby); action.is_return()) {
+					if (auto action = m2::ui::Panel::create_and_run_blocking(&server_lobby); action.IsReturn()) {
 						// If the sub menu has returned, stay at main menu
-						return make_continue_action();
+						return MakeContinueAction();
 					} else {
 						// If the sub menu has returned something else (clear stack, quit), propagate
 						return action;

@@ -16,7 +16,7 @@ Action TextSelection::on_update() {
 	if (text_list_selection_blueprint().on_update) {
 		return text_list_selection_blueprint().on_update(*this);
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 Action TextSelection::on_event(Events& events) {
@@ -41,18 +41,18 @@ Action TextSelection::on_event(Events& events) {
 			// Check if scrolled
 			if (auto scroll_amount = events.pop_mouse_wheel_vertical_scroll(rect()); 0 < scroll_amount) {
 				m2_repeat(scroll_amount) {
-					if (auto action = increment_selection(); not action.is_continue()) {
+					if (auto action = increment_selection(); not action.IsContinue()) {
 						return action;
 					}
 				}
-				return make_continue_action();
+				return MakeContinueAction();
 			} else if (scroll_amount < 0) {
 				m2_repeat(scroll_amount) {
-					if (auto action = decrement_selection(); not action.is_continue()) {
+					if (auto action = decrement_selection(); not action.IsContinue()) {
 						return action;
 					}
 				}
-				return make_continue_action();
+				return MakeContinueAction();
 			}
 		}
 	} else if (line_count == 1) {
@@ -119,7 +119,7 @@ Action TextSelection::on_event(Events& events) {
 			}
 		}
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 void TextSelection::on_draw() {
@@ -303,7 +303,7 @@ Action TextSelection::increment_selection() {
 			}
 		}
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 Action TextSelection::decrement_selection() {
@@ -317,5 +317,5 @@ Action TextSelection::decrement_selection() {
 			}
 		}
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }

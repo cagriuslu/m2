@@ -115,7 +115,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 						self.parent().find_first_widget_by_name<Text>("ResourceGain")->set_text("");
 						self.parent().find_first_widget_by_name<Text>("SellRequirements")->set_text("");
 						self.parent().find_first_widget_by_name<Text>("SellBenefits")->set_text("");
-						return make_continue_action();
+						return MakeContinueAction();
 					}
 				}
 			},
@@ -151,7 +151,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 							self.parent().find_first_widget_by_name<Text>("SellRequirements")->set_text("");
 							self.parent().find_first_widget_by_name<Text>("SellBenefits")->set_text("");
 						}
-						return make_continue_action();
+						return MakeContinueAction();
 					}
 				}
 			},
@@ -267,10 +267,10 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 						if (auto* tile_selection = self.parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")) {
 							if (auto selections = tile_selection->selections(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
-								return make_return_action<m2g::pb::ItemType>(item_type);
+								return MakeReturnAction<m2g::pb::ItemType>(item_type);
 							}
 						}
-						return make_return_action();
+						return MakeReturnAction();
 					}
 				}
 			}
@@ -286,8 +286,8 @@ std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclud
 			std::make_unique<PanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)),
 			tiles_window_ratio(),
 			M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position))
-		.if_void_return([&]() { LOG_INFO("Tile selection cancelled"); })
-		.if_return<m2g::pb::ItemType>([&selected_tile](auto picked_tile) {
+		.IfVoidReturn([&]() { LOG_INFO("Tile selection cancelled"); })
+		.IfReturn<m2g::pb::ItemType>([&selected_tile](auto picked_tile) {
 			LOG_INFO("Tile selected", m2g::pb::ItemType_Name(picked_tile));
 			selected_tile = picked_tile;
 		});

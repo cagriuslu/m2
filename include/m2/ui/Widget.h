@@ -34,9 +34,9 @@ namespace m2::ui {
 
 		// Modifiers
 		void set_rect(const RectI& rect_px) { _rect_px = rect_px; on_resize(); }
-		virtual Action on_event(MAYBE Events& events) { return make_continue_action(); }
+		virtual Action on_event(MAYBE Events& events) { return MakeContinueAction(); }
 		virtual void on_focus_change() {}
-		virtual Action on_update() { return make_continue_action(); }
+		virtual Action on_update() { return MakeContinueAction(); }
 		virtual void on_draw() {}
 
 	protected:

@@ -22,7 +22,7 @@ namespace {
 									[](auto& journey) { journey.sub_journey->signal(PositionOrCancelSignal::create_cancel_signal()); }
 							}, *M2G_PROXY.main_journeys);
 						}
-						return make_return_action();
+						return MakeReturnAction();
 					}
 				}
 			}

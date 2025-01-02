@@ -25,7 +25,7 @@ namespace {
 			} else {
 				M2G_PROXY.show_notification(build_prerequisite.error());
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 	};
 
@@ -38,7 +38,7 @@ namespace {
 			} else {
 				M2G_PROXY.show_notification(develop_prerequisite.error());
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 	};
 
@@ -51,7 +51,7 @@ namespace {
 			} else {
 				M2G_PROXY.show_notification(loan_prerequisite.error());
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 	};
 
@@ -64,7 +64,7 @@ namespace {
 			} else {
 				M2G_PROXY.show_notification(network_prerequisite.error());
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 	};
 
@@ -75,7 +75,7 @@ namespace {
 			if (M2_GAME.IsOurTurn()) {
 				ExecutePassJourney();
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 	};
 
@@ -88,7 +88,7 @@ namespace {
 			} else {
 				M2G_PROXY.show_notification(scout_prerequisite.error());
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 	};
 
@@ -101,7 +101,7 @@ namespace {
 			} else {
 				M2G_PROXY.show_notification(sell_prerequisite.error());
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 	};
 }
@@ -130,7 +130,7 @@ const PanelBlueprint left_hud_blueprint = {
 					auto text = generate_player_name(M2_GAME.SelfIndex());
 					self.set_text(text);
 					self.set_color(generate_player_color(M2_GAME.SelfIndex()));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -154,7 +154,7 @@ const PanelBlueprint left_hud_blueprint = {
 							self.set_text("Current\nplayer will\ntake their\nfirst action\nof this turn");
 						}
 					}
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},

@@ -111,10 +111,10 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 						if (auto* card_selection = self.parent().find_first_widget_by_name<TextSelection>("CardSelection")) {
 							if (auto selections = card_selection->selections(); not selections.empty()) {
 								auto item_type = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
-								return make_return_action<m2g::pb::ItemType>(item_type);
+								return MakeReturnAction<m2g::pb::ItemType>(item_type);
 							}
 						}
-						return make_return_action();
+						return MakeReturnAction();
 					}
 				}
 			}
@@ -132,7 +132,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 					.text = "Cancel",
 					.on_action = [](MAYBE const Text& self) -> Action {
 						// Return empty return
-						return make_return_action();
+						return MakeReturnAction();
 					}
 				}
 			}
@@ -149,10 +149,10 @@ std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclud
 	Panel::create_and_run_blocking(std::make_unique<PanelBlueprint>(
 		generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)),
 			cards_window_ratio(), std::move(background))
-		.if_void_return([&]() {
+		.IfVoidReturn([&]() {
 			LOG_INFO("Card selection cancelled");
 		})
-		.if_return<m2g::pb::ItemType>([&selected_card](auto picked_card) {
+		.IfReturn<m2g::pb::ItemType>([&selected_card](const auto& picked_card) {
 			LOG_INFO("Card selected", m2g::pb::ItemType_Name(picked_card));
 			selected_card = picked_card;
 		});

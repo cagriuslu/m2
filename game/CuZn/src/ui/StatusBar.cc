@@ -34,7 +34,7 @@ PanelBlueprint generate_status_bar_blueprint(int player_count) {
 					M2G_PROXY.custom_hud_panel = std::nullopt;
 				}
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		},
 		.widgets = {
 			// Gray background

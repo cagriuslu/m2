@@ -31,7 +31,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 				M2G_PROXY.save_progress();
 				LOG_INFO("Progress saved");
 
-				if (m2::ui::Panel::create_and_run_blocking(M2G_PROXY.main_menu()).is_quit()) {
+				if (m2::ui::Panel::create_and_run_blocking(M2G_PROXY.main_menu()).IsQuit()) {
 					M2_GAME.quit = true;
 				}
 			});

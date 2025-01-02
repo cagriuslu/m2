@@ -23,7 +23,7 @@ void PingBroadcastThread::shutdown() {
 	_quit = true;
 }
 
-bool PingBroadcastThread::is_quit() {
+bool PingBroadcastThread::IsQuit() {
 	const std::lock_guard lock(_mutex);
 	return _quit;
 }
@@ -33,7 +33,7 @@ void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
 	SetThreadNameForLogging("PN");
 	LOG_INFO("PingBroadcastThread function");
 
-	while (not context->is_quit()) {
+	while (not context->IsQuit()) {
 		// Ping the broadcast address only once with some timeout
 		auto retval = system("ping -c 1 -t 1 255.255.255.255 1>/dev/null 2>/dev/null");
 		if (retval == 0) {
@@ -45,8 +45,8 @@ void PingBroadcastThread::thread_func(PingBroadcastThread* context) {
 		}
 
 		// Wait some time before pinging again
-		m2::mt::wait_on_condition(5000, [&context]() -> bool {
-			return context->is_quit();
+		m2::mt::WaitOnCondition(5000, [&context]() -> bool {
+			return context->IsQuit();
 		});
 	}
 

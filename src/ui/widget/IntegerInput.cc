@@ -46,7 +46,7 @@ Action IntegerInput::on_event(Events& events) {
 			select(value() - 1);
 		}
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 Action IntegerInput::select(int v) {
@@ -58,7 +58,7 @@ Action IntegerInput::select(int v) {
 	if (action_callback) {
 		return action_callback(*this);
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 Action IntegerInput::on_update() {
@@ -70,7 +70,7 @@ Action IntegerInput::on_update() {
 			_textTexture = std::move(*sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(*optional_value)));
 		}
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 void IntegerInput::on_draw() {

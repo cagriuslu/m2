@@ -390,7 +390,7 @@ void m2::Game::HandleWindowResizeEvent() {
 
 void m2::Game::HandleConsoleEvent() {
 	if (events.pop_key_press(Key::CONSOLE)) {
-		if (ui::Panel::create_and_run_blocking(&ui::console_ui).is_quit()) {
+		if (ui::Panel::create_and_run_blocking(&ui::console_ui).IsQuit()) {
 			quit = true;
 		}
 	}
@@ -411,7 +411,7 @@ void m2::Game::HandleMenuEvent() {
 		}
 
 		// Execute pause menu if found, exit if QUIT is returned
-		if (pause_menu && ui::Panel::create_and_run_blocking(pause_menu).is_quit()) {
+		if (pause_menu && ui::Panel::create_and_run_blocking(pause_menu).IsQuit()) {
 			quit = true;
 		}
 	}
@@ -420,7 +420,7 @@ void m2::Game::HandleMenuEvent() {
 void m2::Game::HandleHudEvents() {
 	if (_level->_customBlockingUiPanel) {
 		_level->_customBlockingUiPanel->handle_events(events, _level->is_panning())
-			.if_any_return([this]() {
+			.IfAnyReturn([this]() {
 				// If the blocking panel returned, remove the state
 				_level->_customBlockingUiPanel.reset();
 			});
@@ -433,7 +433,7 @@ void m2::Game::HandleHudEvents() {
 	// The order of event handling is the reverse of the drawing order
 	for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
 		panel.handle_events(events, _level->is_panning())
-			.if_any_return([&panel]() {
+			.IfAnyReturn([&panel]() {
 				// If UI returned, reset the panel. We cannot delete it, the iterator is held by the client,
 				// but we can replace it with a dummy object.
 				panel.~Panel(); new (&panel) ui::Panel();
@@ -456,7 +456,7 @@ void m2::Game::HandleNetworkEvents() {
 		_multi_player_threads = std::monostate{};
 		_bot_threads.clear();
 		// Execute main menu
-		if (ui::Panel::create_and_run_blocking(_proxy.main_menu()).is_quit()) {
+		if (ui::Panel::create_and_run_blocking(_proxy.main_menu()).IsQuit()) {
 			quit = true;
 		}
 	} else if (IsServer()) {
@@ -642,7 +642,7 @@ void m2::Game::UpdateHudContents() {
 	IF(_level->message_box_ui_panel)->update_contents(_delta_time_s);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		panel.update_contents(_delta_time_s)
-			.if_any_return([&panel]() {
+			.IfAnyReturn([&panel]() {
 				// If returned, reset the panel. We cannot delete it, the iterator is held by the client,
 				// but we can recreate the object with a dummy version.
 				panel.~Panel(); new (&panel) ui::Panel();

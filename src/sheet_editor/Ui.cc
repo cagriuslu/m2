@@ -15,7 +15,7 @@ const widget::TextBlueprint right_hud_set_button = {
 					[](sedit::State::ForegroundColliderMode& mode) { mode.set(); },
 					[](const auto&) {},
 			}, std::get<sedit::State>(M2_LEVEL.type_state).mode);
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint right_hud_set_rect_button = {
@@ -26,7 +26,7 @@ const widget::TextBlueprint right_hud_set_rect_button = {
 					[](sedit::State::RectMode& mode) { mode.set_rect(); },
 					[](const auto&) {},
 			}, std::get<sedit::State>(M2_LEVEL.type_state).mode);
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint right_hud_set_center_button = {
@@ -37,7 +37,7 @@ const widget::TextBlueprint right_hud_set_center_button = {
 					[](sedit::State::RectMode& mode) { mode.set_center(); },
 					[](const auto&) {},
 			}, std::get<sedit::State>(M2_LEVEL.type_state).mode);
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint right_hud_reset_button = {
@@ -50,7 +50,7 @@ const widget::TextBlueprint right_hud_reset_button = {
 				[](sedit::State::ForegroundColliderMode& mode) { mode.reset(); },
 				[](const auto&) {},
 			}, std::get<sedit::State>(M2_LEVEL.type_state).mode);
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 
@@ -166,7 +166,7 @@ const widget::TextBlueprint left_hud_foreground_companion_button = {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_foreground_companion_mode();
 
 			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_foreground_companion_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint left_hud_rect_button = {
@@ -175,7 +175,7 @@ const widget::TextBlueprint left_hud_rect_button = {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_rect_mode();
 
 			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_rect_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint left_hud_background_collider_button = {
@@ -184,7 +184,7 @@ const widget::TextBlueprint left_hud_background_collider_button = {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_background_collider_mode();
 
 			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_background_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint left_hud_foreground_collider_button = {
@@ -193,7 +193,7 @@ const widget::TextBlueprint left_hud_foreground_collider_button = {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_foreground_collider_mode();
 
 			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_foreground_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint left_hud_cancel_button = {
@@ -202,7 +202,7 @@ const widget::TextBlueprint left_hud_cancel_button = {
 			std::get<sedit::State>(M2_LEVEL.type_state).deactivate_mode();
 
 			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const widget::TextBlueprint left_hud_coordinates = {
@@ -210,7 +210,7 @@ const widget::TextBlueprint left_hud_coordinates = {
 		.on_update = [](MAYBE widget::Text& self) {
 			auto mouse_position = M2_GAME.MousePositionWorldM().hround();
 			self.set_text(m2::ToString(mouse_position.x, 1) + ':' + m2::ToString(mouse_position.y, 1));
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const PanelBlueprint m2::ui::sheet_editor_left_hud = {
@@ -251,7 +251,7 @@ widget::ImageBlueprint sprite_display = {
 			m2g::pb::SpriteType selected_sprite_type = static_cast<m2g::pb::SpriteType>(
 				std::get<int>(
 					dynamic_cast<widget::TextSelection*>(text_selection_widget)->selections()[0]));
-			return std::make_pair(make_continue_action(), selected_sprite_type);
+			return std::make_pair(MakeContinueAction(), selected_sprite_type);
 		}
 };
 const widget::TextSelectionBlueprint sprite_selection = {
@@ -276,7 +276,7 @@ const widget::TextSelectionBlueprint sprite_selection = {
 		.on_action = [](widget::TextSelection& self) -> ui::Action {
 			std::get<sedit::State>(M2_LEVEL.type_state).set_sprite_type(
 				static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0])));
-			return make_continue_action();
+			return MakeContinueAction();
 		}
 };
 const PanelBlueprint m2::ui::sheet_editor_main_menu = {
@@ -297,7 +297,7 @@ const PanelBlueprint m2::ui::sheet_editor_main_menu = {
 						.variant = widget::TextBlueprint{
 								.text = "QUIT",
 								.kb_shortcut = SDL_SCANCODE_Q,
-								.on_action = [](MAYBE const widget::Text& self) -> Action { return make_quit_action(); },
+								.on_action = [](MAYBE const widget::Text& self) -> Action { return MakeQuitAction(); },
 						}
 				},
 				WidgetBlueprint{
@@ -311,7 +311,7 @@ const PanelBlueprint m2::ui::sheet_editor_main_menu = {
 										M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 									}
 									std::get<sedit::State>(M2_LEVEL.type_state).select();
-									return make_return_action(); // TODO Return value
+									return MakeReturnAction(); // TODO Return value
 								}
 						}
 				}

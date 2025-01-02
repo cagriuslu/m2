@@ -33,7 +33,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_resource(VICTORY_POINTS));
 					self.set_text(std::string{"Victory Points: "} + m2::ToString(vp));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -50,7 +50,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.on_update = [](MAYBE Text& self) {
 					auto vp = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
 					self.set_text(std::string{"Income Points: "} + m2::ToString(vp));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -68,7 +68,7 @@ const PanelBlueprint right_hud_blueprint = {
 					const auto income_points = m2::iround(M2_PLAYER.character().get_attribute(INCOME_POINTS));
 					const auto income_level = IncomeLevelFromIncomePoints(income_points);
 					self.set_text(std::string{"Income: £"} + m2::ToString(income_level));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -85,7 +85,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.on_update = [](MAYBE Text& self) {
 					auto money = m2::iround(M2_PLAYER.character().get_resource(MONEY));
 					self.set_text(std::string{"Cash: £"} + m2::ToString(money));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -111,7 +111,7 @@ const PanelBlueprint right_hud_blueprint = {
 							cards_panel_ratio()
 						);
 					}
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -126,7 +126,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.75f,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_blocking_ui_panel(tiles_window_ratio(), std::make_unique<PanelBlueprint>(generate_tiles_window("Tiles")));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -141,7 +141,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.75f,
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_LEVEL.add_custom_blocking_ui_panel(market_window_ratio(), std::make_unique<PanelBlueprint>(generate_market_window()));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -158,7 +158,7 @@ const PanelBlueprint right_hud_blueprint = {
 				.on_update = [](MAYBE Text& self) {
 					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));
 					self.set_text(std::string{"Cards Left in Deck: "} + m2::ToString(dds));
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		}

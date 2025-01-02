@@ -37,14 +37,14 @@ namespace {
 			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{"ledit\\s+(.+)"})) {
 				auto load_result = M2_GAME.LoadLevelEditor((M2_GAME.levels_dir / match_results.str(1)).string());
 				if (load_result) {
-					return make_clear_stack_action();
+					return MakeClearStackAction();
 				}
 				M2_GAME.console_output.emplace_back(load_result.error());
 			} else {
 				M2_GAME.console_output.emplace_back("ledit usage:");
 				M2_GAME.console_output.emplace_back(".. file_name - open level editor with file");
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		} else if (std::regex_match(command, std::regex{"medit(\\s.*)?"})) {
 			// MIDI editor (?)
 		} else if (std::regex_match(command, std::regex{"pedit(\\s.*)?"})) {
@@ -55,32 +55,32 @@ namespace {
 				auto load_result = M2_GAME.LoadPixelEditor(
 				    match_results.str(3), static_cast<int>(x_offset), static_cast<int>(y_offset));
 				if (load_result) {
-					return make_clear_stack_action();
+					return MakeClearStackAction();
 				}
 				M2_GAME.console_output.emplace_back(load_result.error());
 			} else {
 				M2_GAME.console_output.emplace_back("pedit usage:");
 				M2_GAME.console_output.emplace_back(".. x_offset y_offset file_name - open pixel editor with file");
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		} else if (command == "sedit") {
 			auto load_result = M2_GAME.LoadSheetEditor();
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
 				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::sheet_editor_main_menu);
-				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
+				return main_menu_result.IsReturn() ? MakeClearStackAction() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
-			return make_continue_action();
+			return MakeContinueAction();
 		} else if (command == "bsedit") {
 			auto load_result = M2_GAME.LoadBulkSheetEditor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
 				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::bulk_sheet_editor_main_menu);
-				return main_menu_result.is_return() ? make_clear_stack_action() : std::move(main_menu_result);
+				return main_menu_result.IsReturn() ? MakeClearStackAction() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
-			return make_continue_action();
+			return MakeContinueAction();
 		} else if (std::regex_match(command, std::regex{"mvbg(\\s.*)?"})) {
 			// Move background
 			if (std::smatch match_results; std::regex_match(command, match_results, std::regex{R"(mvbg\s+([0-9]+)\s+([0-9]+)\s+(.+))"})) {
@@ -94,11 +94,11 @@ namespace {
 				M2_GAME.console_output.emplace_back("mvbg usage:");
 				M2_GAME.console_output.emplace_back(".. from to - move one background layer into another");
 			}
-			return make_continue_action();
+			return MakeContinueAction();
 		} else if (command == "quit") {
-			return make_quit_action();
+			return MakeQuitAction();
 		} else if (command == "close") {
-			return make_return_action();
+			return MakeReturnAction();
 		} else if (command.empty()) {
 			// Do nothing
 		} else {
@@ -113,7 +113,7 @@ namespace {
 			M2_GAME.console_output.emplace_back("close - close the console");
 			M2_GAME.console_output.emplace_back("quit - quit game");
 		}
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 }  // namespace
 
@@ -126,7 +126,7 @@ Action Panel::run_blocking() {
 	}
 
 	// Update initial contents
-	if (auto return_value = update_contents(0.0f); not return_value.is_continue()) {
+	if (auto return_value = update_contents(0.0f); not return_value.IsContinue()) {
 		LOG_DEBUG("Update action is not continue");
 		return return_value;
 	}
@@ -145,7 +145,7 @@ Action Panel::run_blocking() {
 		if (events.gather()) {
 			// Handle quit action
 			if (events.pop_quit()) {
-				return make_quit_action();
+				return MakeQuitAction();
 			}
 
 			// Handle console action
@@ -157,10 +157,10 @@ Action Panel::run_blocking() {
 				console_command.clear();
 
 				LOG_INFO("Opening console");
-				if (auto action = create_and_run_blocking(&console_ui); action.is_return()) {
+				if (auto action = create_and_run_blocking(&console_ui); action.IsReturn()) {
 					// Continue with the prev UI
 					LOG_DEBUG("Console returned");
-				} else if (action.is_clear_stack() || action.is_quit()) {
+				} else if (action.IsClearStack() || action.IsQuit()) {
 					LOG_DEBUG("Console clear stack or quit");
 					return action;
 				}
@@ -174,7 +174,7 @@ Action Panel::run_blocking() {
 			}
 
 			// Handle events
-			if (auto return_value = handle_events(events); not return_value.is_continue()) {
+			if (auto return_value = handle_events(events); not return_value.IsContinue()) {
 				return return_value;
 			}
 		}
@@ -185,7 +185,7 @@ Action Panel::run_blocking() {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Update contents
-		if (auto return_value = update_contents(delta_time_s); not return_value.is_continue()) {
+		if (auto return_value = update_contents(delta_time_s); not return_value.IsContinue()) {
 			return return_value;
 		}
 
@@ -322,16 +322,16 @@ void Panel::update_positions() {
 Action Panel::handle_events(Events& events, bool is_panning) {
 	// Return if Panel not enabled
 	if (not _is_valid || not enabled) {
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 	// Return if Panel is set to ignore events
 	if (blueprint->ignore_events) {
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 
 	// If the UI is cancellable, check if MENU button is pressed
 	if (blueprint->cancellable && events.pop_key_press(Key::MENU)) {
-		return make_return_action();
+		return MakeReturnAction();
 	}
 
 	// First, deliver the event to the panel
@@ -340,8 +340,8 @@ Action Panel::handle_events(Events& events, bool is_panning) {
 	}
 	// Then, deliver the event to the widgets
 	for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		if (auto action = widget->on_event(events); action.is_continue()) {
-			action.if_continue_with_focus_state([&](bool focus_state) {
+		if (auto action = widget->on_event(events); action.IsContinue()) {
+			action.IfContinueWithFocusState([&](bool focus_state) {
 				set_widget_focus_state(*widget, focus_state);
 			});
 			continue;
@@ -360,27 +360,27 @@ Action Panel::handle_events(Events& events, bool is_panning) {
 		events.clear_mouse_button_down(rect);
 	}
 
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 Action Panel::update_contents(float delta_time_s) {
 	// Return if Panel not enabled
 	if (not _is_valid || not enabled) {
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 
 	// Check if timed out
 	if (_timeout_s && *_timeout_s < 0.0f) {
-		return make_return_action();
+		return MakeReturnAction();
 	}
 
 	if (blueprint->on_update) {
-		if (auto action = blueprint->on_update(*this); not action.is_continue()) {
+		if (auto action = blueprint->on_update(*this); not action.IsContinue()) {
 			return action;
 		}
 	}
 	for (const auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		if (auto action = widget->on_update(); not action.is_continue()) {
+		if (auto action = widget->on_update(); not action.IsContinue()) {
 			return action;
 		} else {
 			continue;
@@ -392,7 +392,7 @@ Action Panel::update_contents(float delta_time_s) {
 		*_timeout_s -= delta_time_s;
 	}
 
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 void Panel::draw() {
@@ -516,7 +516,7 @@ widget::TextBlueprint command_output_variant() {
 			self.set_text(INDEX < M2_GAME.console_output.size()
 				? M2_GAME.console_output[M2_GAME.console_output.size() - INDEX - 1]
 				: std::string());
-		    return make_continue_action();
+		    return MakeContinueAction();
 	    }};
 }
 
@@ -608,7 +608,7 @@ const PanelBlueprint m2::ui::message_box_ui = {
 					if (M2_LEVEL.message) {
 						self.set_text(*M2_LEVEL.message);
 					}
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 		}
 	}}

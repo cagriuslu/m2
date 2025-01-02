@@ -18,7 +18,7 @@ const PanelBlueprint pause_menu_blueprint = {
 			.x = 45, .y = 35, .w = 10, .h = 10,
 			.variant = TextBlueprint{
 				.text = "RESUME", .on_action = [](MAYBE const widget::Text& self) {
-					return make_return_action();  // TODO Return value
+					return MakeReturnAction();  // TODO Return value
 				}
 			}
 		},

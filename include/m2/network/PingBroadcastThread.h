@@ -31,7 +31,7 @@ namespace m2::network {
 		void shutdown();
 
 	private:
-		[[nodiscard]] bool is_quit();
+		[[nodiscard]] bool IsQuit();
 		static void thread_func(PingBroadcastThread* context);
 	};
 }

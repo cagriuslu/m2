@@ -449,7 +449,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					.text = "Dismiss",
 					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.on_action = [](MAYBE const Text& self) -> Action {
-						return make_return_action();
+						return MakeReturnAction();
 					}
 				}
 			}

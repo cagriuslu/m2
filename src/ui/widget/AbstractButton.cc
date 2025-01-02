@@ -28,7 +28,7 @@ Action AbstractButton::on_event(Events &events) {
 			[](MAYBE const auto& v) -> bool { return false; }
 	}, blueprint->variant);
 	if (!has_action_callback) {
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 
 	auto run_action = false;
@@ -52,19 +52,19 @@ Action AbstractButton::on_event(Events &events) {
 		}
 	}
 
-	return run_action ? trigger_action() : make_continue_action();
+	return run_action ? trigger_action() : MakeContinueAction();
 }
 
 Action AbstractButton::trigger_action() {
 	return std::visit(overloaded {
-			[&](const TextBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Text&>(*this)) : make_continue_action(); },
-			[&](const ImageBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Image&>(*this)) : make_continue_action(); },
+			[&](const TextBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Text&>(*this)) : MakeContinueAction(); },
+			[&](const ImageBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Image&>(*this)) : MakeContinueAction(); },
 			[&](const CheckboxWithTextBlueprint& v) {
 				// Overloading handle_events for CheckboxWithText is too much work, do it here
 				auto& checkbox_with_text_state = dynamic_cast<CheckboxWithText&>(*this);
 				checkbox_with_text_state._state = !checkbox_with_text_state._state;
-				return v.on_action ? v.on_action(checkbox_with_text_state) : make_continue_action();
+				return v.on_action ? v.on_action(checkbox_with_text_state) : MakeContinueAction();
 			},
-			[](MAYBE const auto& v) { return make_continue_action(); }
+			[](MAYBE const auto& v) { return MakeContinueAction(); }
 	}, blueprint->variant);
 }

@@ -25,7 +25,7 @@ static TextBlueprint client_count = {
 		}
 		self.set_text(text);
 
-		return make_continue_action();
+		return MakeContinueAction();
 	},
 	.on_action = [](MAYBE const Text& self) -> Action {
 		if (2 <= M2_GAME.ServerThread().client_count()) {
@@ -34,10 +34,10 @@ static TextBlueprint client_count = {
 				auto client_count = M2_GAME.ServerThread().client_count();
 				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.levels_dir / "Map.json", m2::ToString(client_count));
 				m2_succeed_or_throw_error(expect_success);
-				return make_clear_stack_action();
+				return MakeClearStackAction();
 			}
 		}
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 };
 
@@ -94,7 +94,7 @@ const PanelBlueprint server_lobby = {
 				.wrapped_font_size_in_units = 5.0f,
 				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
 					M2_GAME.AddBot();
-					return make_continue_action();
+					return MakeContinueAction();
 				}
 			}
 		},
@@ -106,7 +106,7 @@ const PanelBlueprint server_lobby = {
 				.on_action = [](MAYBE const Text& self) -> Action {
 					M2_GAME.LeaveGame();
 					// TODO kill bots if any
-					return make_return_action();
+					return MakeReturnAction();
 				}
 			}
 		}

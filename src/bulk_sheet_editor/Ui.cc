@@ -8,12 +8,12 @@ using namespace m2::ui;
 const widget::TextBlueprint right_hud_set_rect_button = {
     .text = "Set Rect", .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).set_rect();
-	    return make_continue_action();
+	    return MakeContinueAction();
     }};
 const widget::TextBlueprint right_hud_reset_button = {
     .text = "Reset", .on_action = [](MAYBE const widget::Text& self) -> Action {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).reset();
-	    return make_continue_action();
+	    return MakeContinueAction();
     }};
 const PanelBlueprint ui::bulk_sheet_editor_right_hud = {
     .w = 19,
@@ -43,7 +43,7 @@ const PanelBlueprint ui::bulk_sheet_editor_right_hud = {
                 .on_action = [](widget::TextSelection& self) -> Action {
 	                if (auto selected_sprite_type = static_cast<m2g::pb::SpriteType>(std::get<int>(self.selections()[0]))) {
 		                std::get<bsedit::State>(M2_LEVEL.type_state).select_sprite(selected_sprite_type);
-		                return make_continue_action();
+		                return MakeContinueAction();
 	                }
 	                throw M2_ERROR("Implementation error: Unknown sprite type ended up in sprite selection list");
                 }
@@ -71,7 +71,7 @@ const widget::TextSelectionBlueprint resource_selection = {
     },
     .on_action = [](const widget::TextSelection& self) -> ui::Action {
 	    std::get<bsedit::State>(M2_LEVEL.type_state).select_resource(std::get<std::string>(self.selections()[0]));
-	    return make_continue_action();
+	    return MakeContinueAction();
     }};
 const PanelBlueprint ui::bulk_sheet_editor_main_menu = {
     .w = 160,
@@ -94,7 +94,7 @@ const PanelBlueprint ui::bulk_sheet_editor_main_menu = {
                 widget::TextBlueprint{
                     .text = "QUIT",
                     .kb_shortcut = SDL_SCANCODE_Q,
-                    .on_action = [](MAYBE const widget::Text& self) -> Action { return make_quit_action(); },
+                    .on_action = [](MAYBE const widget::Text& self) -> Action { return MakeQuitAction(); },
                 }},
         WidgetBlueprint{
             .x = 85,
@@ -108,9 +108,9 @@ const PanelBlueprint ui::bulk_sheet_editor_main_menu = {
 	                if (std::get<bsedit::State>(M2_LEVEL.type_state).select()) {
 		                M2_LEVEL.right_hud_ui_panel.emplace(&bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 		                // TODO return selection instead
-		                return make_return_action();
+		                return MakeReturnAction();
 	                } else {
-		                return make_continue_action();
+		                return MakeContinueAction();
 	                }
                 }}}}};
 
@@ -127,5 +127,5 @@ const PanelBlueprint ui::bulk_sheet_editor_pause_menu = {
         .variant = widget::TextBlueprint{
             .text = "QUIT",
             .kb_shortcut = SDL_SCANCODE_Q,
-            .on_action = [](MAYBE const widget::Text& self) -> Action { return make_quit_action(); },
+            .on_action = [](MAYBE const widget::Text& self) -> Action { return MakeQuitAction(); },
         }}}};

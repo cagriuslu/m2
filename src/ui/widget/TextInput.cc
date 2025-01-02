@@ -21,15 +21,15 @@ TextInput::TextInput(Panel* parent, const WidgetBlueprint* blueprint) : Widget(p
 Action TextInput::on_event(Events& events) {
 	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{rect()})) {
 		LOG_INFO("Regaining focus");
-		return make_continue_action(true);
+		return MakeContinueAction(true);
 	}
 	// Ignore all events if not focused
 	if (!focused) {
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 
 	if (events.pop_key_press(Key::MENU)) {
-		return make_continue_action(false);
+		return MakeContinueAction(false);
 	} else if (events.pop_key_press(Key::ENTER) && std::get<TextInputBlueprint>(blueprint->variant).on_action) {
 		auto [action, new_string] = std::get<TextInputBlueprint>(blueprint->variant).on_action(*this);
 		if (new_string) {
@@ -46,7 +46,7 @@ Action TextInput::on_event(Events& events) {
 			_text_input << *opt_text_input;
 		}
 	}
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 void TextInput::on_focus_change() {
@@ -71,7 +71,7 @@ Action TextInput::on_update() {
 		_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, str));
 	}
 
-	return make_continue_action();
+	return MakeContinueAction();
 }
 
 void TextInput::on_draw() {

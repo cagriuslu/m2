@@ -17,7 +17,7 @@ Action Text::on_update() {
 	if (text_blueprint().on_update) {
 		return text_blueprint().on_update(*this);
 	} else {
-		return make_continue_action();
+		return MakeContinueAction();
 	}
 }
 

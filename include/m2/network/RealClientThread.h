@@ -46,7 +46,7 @@ namespace m2::network {
 		/// Check whether the game has gracefully shutdown by the server.
 		bool is_shutdown() { return locked_get_client_state() == pb::CLIENT_SHUTDOWN; }
 		/// Check whether the thread has quited. This happens if the connection is rejected by the server, most likely due to player count reaching the limit.
-		bool is_quit() { return locked_get_client_state() == pb::CLIENT_QUIT; }
+		bool IsQuit() { return locked_get_client_state() == pb::CLIENT_QUIT; }
 		/// Check whether the server has shown an unexpected behavior.
 		bool is_server_unrecognized() { return locked_get_client_state() == pb::CLIENT_MISBEHAVING_SERVER_QUIT; }
 
