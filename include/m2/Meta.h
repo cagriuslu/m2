@@ -147,10 +147,20 @@ namespace m2 {
 				throw Error{file, line, e.error()};
 			}
 		}
-
 		template <typename T>
 		void _succeed_or_throw_message(const char* file, int line, const std::optional<T>& o, const char* message) {
 			if (!o) {
+				throw Error{file, line, message};
+			}
+		}
+		template <typename T, typename U>
+		void _succeed_or_throw_message(const char* file, int line, const std::unique_ptr<T,U>& u, const char* message) {
+			if (!u) {
+				throw Error{file, line, message};
+			}
+		}
+		void _expect_zero_or_throw_message(const char* file, int line, auto integralType, const char* message) {
+			if (integralType) {
 				throw Error{file, line, message};
 			}
 		}
@@ -180,8 +190,10 @@ namespace m2 {
 
 /// Do nothing if v contains a value, otherwise throw the contained error
 #define m2_succeed_or_throw_error(expected_type) (::m2::detail::_succeed_or_throw_error(__FILE__, __LINE__, (expected_type)))
-/// Do nothing if v contains a value, otherwise throw the message
+/// Do nothing if optional_type contains a value, otherwise throw the message
 #define m2_succeed_or_throw_message(optional_type, msg) (::m2::detail::_succeed_or_throw_message(__FILE__, __LINE__, (optional_type), msg))
+/// Do nothing if integral_type is zero, otherwise throw the message
+#define m2_expect_zero_or_throw_message(integral_type, msg) (::m2::detail::_expect_zero_or_throw_message(__FILE__, __LINE__, (integral_type), msg))
 
 #define _m2_token_concat(x, y) x ## y
 #define m2_token_concat(x, y) _m2_token_concat(x, y)

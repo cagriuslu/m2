@@ -2,9 +2,8 @@
 #include <m2/Game.h>
 
 m2::void_expected rpg::create_decoration(m2::Object& obj, m2g::pb::SpriteType sprite_type) {
-	const auto& sprite = M2_GAME.GetSprite(sprite_type);
-
-	auto& gfx = obj.add_graphic(sprite);
+	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
+	auto& gfx = obj.add_graphic(sprite_type);
 	if (obj.object_type() == m2g::pb::FENCE_VERTICAL) {
 		gfx.draw_angle = m2::PI_DIV2;
 	}

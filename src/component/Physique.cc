@@ -56,9 +56,9 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 
 				if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
-					int rect_w = I(roundf(width * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter())));
-					int rect_h = I(roundf(height * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter())));
-					auto screen_origin_to_sprite_center_px = screen_origin_to_position_dstpx(position + center_offset_m);
+					int rect_w = I(roundf(width * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
+					int rect_h = I(roundf(height * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
+					auto screen_origin_to_sprite_center_px = ScreenOriginToPositionVecPx(position + center_offset_m);
 					auto dst_rect = SDL_Rect{
 							(int)roundf(screen_origin_to_sprite_center_px.x) - (rect_w / 2),
 							(int)roundf(screen_origin_to_sprite_center_px.y) - (rect_h / 2),
@@ -101,10 +101,10 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 
 				if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
 					// Calculate circumference in pixels
-					int R = I(roundf(circumference * F(M2_GAME.Dimensions().RealOutputPixelsPerMeter())));
+					int R = I(roundf(circumference * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
 					auto [texture, src_rect] = M2_GAME.shapes_sheet->get_circle(color, R, R, 16);
 					// Calculate destination Rect
-					auto screen_origin_to_sprite_center_px = screen_origin_to_position_dstpx(position + center_offset_m);
+					auto screen_origin_to_sprite_center_px = ScreenOriginToPositionVecPx(position + center_offset_m);
 					auto dst_rect = SDL_Rect{
 							I(roundf(screen_origin_to_sprite_center_px.x)) - (src_rect.w / 2),
 							I(roundf(screen_origin_to_sprite_center_px.y)) - (src_rect.h / 2),

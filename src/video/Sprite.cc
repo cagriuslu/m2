@@ -116,23 +116,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 	}
 }
 
-m2::Sprite::Sprite(SDL_Renderer* renderer, TTF_Font* font, const int fontSize, const pb::TextLabel& textLabel)
-		: _type(textLabel.type()) {
-	_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(renderer, font, fontSize, textLabel.text()));
-	const auto dims = _textTexture->texture_dimensions();
-	_rect = RectI{0, 0, dims.x, dims.y};
-	_ppm = I(roundf(F(_rect.h) / textLabel.height_m()));
-	_isBackgroundTile = textLabel.is_background_tile();
-	if (textLabel.pull_half_cell()) {
-		_centerToOriginVecM = VecF{0.5f, 0.0f};
-		_centerToOriginVecPx = _centerToOriginVecM * F(_ppm);
-	}
-}
-
 SDL_Texture* m2::Sprite::Texture(const SpriteVariant spriteVariant) const {
-	if (_textTexture) {
-		return _textTexture->texture();
-	}
 	if (std::holds_alternative<DefaultVariant>(spriteVariant)) {
 		return Sheet().texture();
 	}
@@ -156,10 +140,11 @@ const m2::RectI& m2::Sprite::Rect(const SpriteVariant spriteVariant) const {
 	return EffectRect(std::get<pb::SpriteEffectType>(spriteVariant));
 }
 
-float m2::Sprite::SheetToScreenPixelMultiplier() const {
-	return M2_GAME.Dimensions().RealOutputPixelsPerMeter() / static_cast<float>(_ppm);
+float m2::Sprite::SourceToOutputPixelMultiplier() const {
+	return M2_GAME.Dimensions().OutputPixelsPerMeter() / static_cast<float>(_ppm);
 }
-m2::VecF m2::Sprite::CenterToOriginSrcpx(const SpriteVariant spriteVariant) const {
+
+m2::VecF m2::Sprite::CenterToOriginVecSrcpx(const SpriteVariant spriteVariant) const {
 	if (std::holds_alternative<ForegroundCompanion>(spriteVariant)) {
 		return ForegroundCompanionCenterToOriginVecPx();
 	}
@@ -168,10 +153,59 @@ m2::VecF m2::Sprite::CenterToOriginSrcpx(const SpriteVariant spriteVariant) cons
 			: CenterToOriginVecPx();
 }
 
-std::vector<m2::Sprite> m2::LoadSprites(const std::vector<SpriteSheet>& spriteSheets,
+m2::VecF m2::Sprite::ScreenOriginToCenterVecOutpx(const VecF& position, const SpriteVariant sprite_variant) const {
+	return ScreenOriginToPositionVecPx(position) - CenterToOriginVecOutpx(sprite_variant);
+}
+
+void m2::Sprite::DrawIn2dWorld(const VecF& position, SpriteVariant sprite_variant, float angle, MAYBE bool is_foreground, MAYBE float z) const {
+	const auto sourceRect = static_cast<SDL_Rect>(Rect(sprite_variant));
+	DrawTextureIn2dWorld(
+			M2_GAME.renderer,
+			Texture(sprite_variant),
+			&sourceRect,
+			OriginalRotationRadians(),
+			M2_GAME.Dimensions().OutputPixelsPerMeter() / F(Ppm()),
+			CenterToOriginVecOutpx(sprite_variant),
+			ScreenOriginToCenterVecOutpx(position, sprite_variant),
+			angle
+	);
+}
+void m2::Sprite::DrawIn3dWorld(const VecF& position, SpriteVariant sprite_variant, float angle, bool is_foreground, float z) const {
+	const auto sourceRect = static_cast<SDL_Rect>(Rect(sprite_variant));
+	DrawTextureIn3dWorld(
+			M2_GAME.renderer,
+			Texture(sprite_variant),
+			&sourceRect,
+			F(Ppm()),
+			CenterToOriginVecOutpx(sprite_variant),
+			OriginalRotationRadians(),
+			TextureTotalDims(sprite_variant),
+			position,
+			z,
+			angle,
+			is_foreground);
+}
+
+bool m2::IsSpriteBackgroundTile(const std::variant<Sprite,pb::TextLabel>& spriteOrTextLabel) {
+	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
+		return std::get<Sprite>(spriteOrTextLabel).IsBackgroundTile();
+	} else {
+		return std::get<pb::TextLabel>(spriteOrTextLabel).is_background_tile();
+	}
+}
+
+m2g::pb::SpriteType m2::ToSpriteType(const std::variant<Sprite,pb::TextLabel>& spriteOrTextLabel) {
+	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
+		return std::get<Sprite>(spriteOrTextLabel).Type();
+	} else {
+		return std::get<pb::TextLabel>(spriteOrTextLabel).type();
+	}
+}
+
+std::vector<std::variant<m2::Sprite, m2::pb::TextLabel>> m2::LoadSprites(const std::vector<SpriteSheet>& spriteSheets,
 		const google::protobuf::RepeatedPtrField<pb::TextLabel>& textLabels, SpriteEffectsSheet& spriteEffectsSheet,
-		SDL_Renderer* renderer, TTF_Font* font, const int fontSize, const bool lightning) {
-	std::vector<Sprite> sprites_vector(pb::enum_value_count<m2g::pb::SpriteType>());
+		const bool lightning) {
+	std::vector<std::variant<Sprite, pb::TextLabel>> sprites_vector(pb::enum_value_count<m2g::pb::SpriteType>());
 	std::vector<bool> is_loaded(pb::enum_value_count<m2g::pb::SpriteType>());
 
 	// Load sprites
@@ -194,7 +228,7 @@ std::vector<m2::Sprite> m2::LoadSprites(const std::vector<SpriteSheet>& spriteSh
 			throw M2_ERROR("Sprite has duplicate definition: " + m2::ToString(textLabel.type()));
 		}
 		// Load sprite
-		sprites_vector[index] = Sprite{renderer, font, fontSize, textLabel};
+		sprites_vector[index] = textLabel;
 		is_loaded[index] = true;
 	}
 

@@ -64,7 +64,7 @@ namespace m2::ui {
 		static RectI calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length);
 
 		static void draw_rectangle(const RectI& rect, const SDL_Color& color);
-		static void draw_sprite(const Sprite& sprite, const RectI& dst_rect);
+		static void DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>&, const RectI& dst_rect);
 		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 
 		// Allow Panel to use the utilities

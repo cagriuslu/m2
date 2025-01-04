@@ -35,7 +35,7 @@ namespace m2 {
         [[nodiscard]] VecF GameAndHudM() const { return _gameAndHudM; }
         [[nodiscard]] VecF GameM() const { return _gameM; }
         /// Number of pixels in the renderer output that would be occupied by a one-meter object. Applicable to pixelated and non-pixelated games.
-        [[nodiscard]] float RealOutputPixelsPerMeter() const; // TODO rename to OutputPixelsPerMeter
+        [[nodiscard]] float OutputPixelsPerMeter() const;
         [[nodiscard]] float Scale() const { return _scale; }
         [[nodiscard]] float GameWidthToGameAndHudWidthRatio() const;
         [[nodiscard]] float HudWidthToGameAndHudWidthRatio() const;
@@ -45,6 +45,7 @@ namespace m2 {
         /// Re-evaluates the logical area dimensions and scale after a window resize.
         void OnWindowResize();
         void SetScale(float scale);
+        void SetGameHeightM(float heightM);
 
         // Helpers
 

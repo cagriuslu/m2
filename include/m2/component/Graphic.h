@@ -15,20 +15,13 @@ namespace m2 {
 	bool is_projection_type_perspective(pb::ProjectionType pt);
 
 	/// Returns a vector from camera to given position in meters.
-	/// Hint: (position - camera.position)
-	VecF camera_to_position_m(const VecF& position);
-
-	/// Returns a vector from camera to given position in pixels.
-	/// For meters to pixels conversion, game_ppm is used.
-	VecF camera_to_position_dstpx(const VecF& position);
-
-	/// Returns a vector from screen origin (top-left corner) to given position in pixels.
-	/// For meter to pixels conversion, game_ppm is used.
-	VecF screen_origin_to_position_dstpx(const VecF& position);
-
-	/// Returns a vector from screen origin (top-left) to the center of the sprite that should be drawn.
-	/// Returns screen_origin_to_position_dstpx(position) - sprite.center_to_origin_dstpx() if sprite is non-NULL.
-	VecF screen_origin_to_sprite_center_dstpx(const VecF& position, const Sprite& sprite, SpriteVariant sprite_variant);
+	VecF CameraToPositionVecM(const VecF& position);
+	/// Returns a vector from camera to given position in output pixels.
+	/// For meters to pixels conversion, Game Output PPM is used.
+	VecF CameraToPositionVecPx(const VecF& position);
+	/// Returns a vector from screen origin (top-left corner) to given position in output pixels.
+	/// For meters to pixels conversion, Game Output PPM is used.
+	VecF ScreenOriginToPositionVecPx(const VecF& position);
 }
 
 namespace m3 {
@@ -74,29 +67,34 @@ namespace m3 {
 }
 
 namespace m2 {
-	struct Graphic : public Component {
-		using Callback = std::function<void(Graphic&)>;
-
+	struct Graphic final : Component {
 		bool enabled{true};
 		bool draw{true};
 
+		using Callback = std::function<void(Graphic&)>;
 		Callback pre_draw{};
 		Callback on_draw{};
 		Callback on_addon{};
 		Callback post_draw{};
 
-		const Sprite* sprite{};
-		// If any of the entries exist, Sprite's default_variant_draw_order is overridden. First variant is drawn first.
+		std::variant<std::monostate, const Sprite*, const pb::TextLabel*> visual;
+
+		/// Only applicable to sprites. If any of the entries exist, Sprite's default_variant_draw_order is overridden.
+		/// First variant is drawn first.
 		std::array<std::optional<SpriteVariant>, 2> variant_draw_order{};
+
+		/// Only applicable to text labels.
+		RectI textLabelRect{};
+
 		float draw_angle{}; // Rads
 		float z{};
 		std::optional<float> draw_addon_health_bar; /// [0,1]
 
 		Graphic() = default;
-		explicit Graphic(uint64_t object_id);
-		explicit Graphic(uint64_t object_id, const Sprite& sprite);
+		explicit Graphic(uint64_t object_id); // TODO can this be deleted
+		explicit Graphic(uint64_t object_id, const std::variant<Sprite, pb::TextLabel>&);
 
-		static void default_draw(const Graphic& gfx);
+		static void DefaultDrawCallback(Graphic& gfx);
 		static void default_draw_addons(const Graphic& gfx);
 
 		/// Color the world cell with the given color
@@ -117,6 +115,16 @@ namespace m2 {
 		static void undim_rendering(SDL_Texture* texture);
 	};
 
-	void draw_real_2d(const VecF& position, const Sprite& sprite, SpriteVariant sprite_variant, float angle);
-	void draw_fake_3d(const VecF& position, const Sprite& sprite, SpriteVariant sprite_variant, float angle, bool is_foreground, float z);
+	/// Draws the given texture to the 2D World. Before applying extra rotation to the texture, the rotation of the
+	/// source texture is corrected in case it has a rotation of its own.
+	void DrawTextureIn2dWorld(SDL_Renderer* renderer, SDL_Texture* sourceTexture, const SDL_Rect* sourceRect,
+			float originalRotationOfSourceTextureInRadians, float outputToSourcePpmRatio,
+			const VecF& textureCenterToTextureOriginVecInOutputPixels,
+			const VecF& screenOriginToTextureCenterVecInOutputPixels, float rotationToApplyInRadians);
+	/// Draws the given texture to the 3D World. Before applying extra rotation to the texture, the rotation of the
+	/// source texture is corrected in case it has a rotation of its own.
+	void DrawTextureIn3dWorld(SDL_Renderer* renderer, SDL_Texture* sourceTexture, const SDL_Rect* sourceRect,
+			float sourcePpm, const VecF& sourceCenterToOriginVectorInOutputPixels,
+			float originalRotationOfSourceTextureInRadians, const VecF& sourceTextureSheetDimensions,
+			const VecF& xyPositionInWorldM, float zPositionInWorldM, float rotationToApplyInRadians, bool isForeground);
 }

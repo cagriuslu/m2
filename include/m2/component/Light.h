@@ -11,6 +11,6 @@ namespace m2 {
 		Light() = default;
 		explicit Light(Id object_id);
 
-		static void default_draw(Light& lig);
+		static void DefaultDrawCallback(Light& lig);
 	};
 }

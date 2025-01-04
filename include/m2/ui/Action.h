@@ -21,7 +21,7 @@ namespace m2::ui {
 	public:
 		Continue() = default;
 		explicit Continue(bool focus) : ActionBase(), _focus(focus) {}
-		const std::optional<bool>& Focus() const { return _focus; }
+		[[nodiscard]] const std::optional<bool>& Focus() const { return _focus; }
 	};
 
 	class ReturnBase : public ActionBase {
@@ -37,14 +37,14 @@ namespace m2::ui {
 	public:
 		explicit Return(T&& value) : ReturnBase(), _value(std::move(value)) {}
 		explicit Return(const T& value) : ReturnBase(), _value(value) {}
-		const T& Value() const { return _value; }
+		[[nodiscard]] const T& Value() const { return _value; }
 	};
 
 	class AnyReturnContainer final {
 		std::unique_ptr<ReturnBase> _ptr;
 	public:
 		explicit AnyReturnContainer(std::unique_ptr<ReturnBase> ptr) : _ptr(std::move(ptr)) {}
-		const ReturnBase* Get() const { return _ptr.get(); }
+		[[nodiscard]] const ReturnBase* Get() const { return _ptr.get(); }
 	};
 
 	class ClearStack final : public ActionBase {};
@@ -64,11 +64,11 @@ namespace m2::ui {
 
 		// Accessors
 
-		bool IsContinue() const { return std::holds_alternative<Continue>(_variant); }
-		bool IsReturn() const { return std::holds_alternative<AnyReturnContainer>(_variant); }
-		template <typename T> bool IsReturn() const { return IsReturn() && dynamic_cast<const Return<T>*>(std::get<AnyReturnContainer>(_variant).Get()); }
-		bool IsClearStack() const { return std::holds_alternative<ClearStack>(_variant); }
-		bool IsQuit() const { return std::holds_alternative<Quit>(_variant); }
+		[[nodiscard]] bool IsContinue() const { return std::holds_alternative<Continue>(_variant); }
+		[[nodiscard]] bool IsReturn() const { return std::holds_alternative<AnyReturnContainer>(_variant); }
+		template <typename T> [[nodiscard]] bool IsReturn() const { return IsReturn() && dynamic_cast<const Return<T>*>(std::get<AnyReturnContainer>(_variant).Get()); }
+		[[nodiscard]] bool IsClearStack() const { return std::holds_alternative<ClearStack>(_variant); }
+		[[nodiscard]] bool IsQuit() const { return std::holds_alternative<Quit>(_variant); }
 
 		const Action& IfContinue(const std::function<void()>& handler) const {
 			if (IsContinue()) { handler(); }
@@ -112,7 +112,7 @@ namespace m2::ui {
 	inline Action MakeReturnAction() { return Action{AnyReturnContainer{std::make_unique<Return<>>(Void{})}}; }
 
 	template <typename T>
-	Action MakeReturnAction(T&& value) { return Action{AnyReturnContainer{std::make_unique<Return<T>>(std::move(value))}}; }
+	Action MakeReturnAction(T&& value) { return Action{AnyReturnContainer{std::make_unique<Return<T>>(std::forward<T>(value))}}; }
 	template <typename T>
 	Action MakeReturnAction(const T& value) { return Action{AnyReturnContainer{std::make_unique<Return<T>>(value)}}; }
 

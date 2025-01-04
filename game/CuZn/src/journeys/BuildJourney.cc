@@ -96,7 +96,7 @@ namespace {
 		}
 
 		const auto& selected_card_item = M2_GAME.GetNamedItem(selected_card);
-		const auto& selected_sprite_sprite = M2_GAME.GetSprite(selected_location);
+		const auto& selected_sprite_sprite = std::get<Sprite>(M2_GAME.GetSpriteOrTextLabel(selected_location));
 		// Lookup industries on the sprite
 		std::vector<ItemType> selected_sprite_industries;
 		std::ranges::copy_if(selected_sprite_sprite.NamedItems(), std::back_inserter(selected_sprite_industries), [](auto item_type) {

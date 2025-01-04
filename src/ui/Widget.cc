@@ -119,23 +119,31 @@ void Widget::draw_rectangle(const RectI& rect, const SDL_Color& color) {
 	SDL_RenderFillRect(M2_GAME.renderer, &sdl_rect);
 }
 
-void m2::ui::Widget::draw_sprite(const Sprite& sprite, const RectI& dst_rect) {
-	auto src_rect = static_cast<SDL_Rect>(sprite.Rect());
-	auto sprite_aspect_ratio = (float)src_rect.w / (float)src_rect.h;
-	auto widget_aspect_ratio = (float)dst_rect.w / (float)dst_rect.h;
+void Widget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel, const RectI& dst_rect) {
+	SDL_Rect src_rect;
+	SDL_Texture* texture;
+	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
+		src_rect = static_cast<SDL_Rect>(std::get<Sprite>(spriteOrTextLabel).Rect());
+		texture = std::get<Sprite>(spriteOrTextLabel).Texture();
+	} else {
+		src_rect = static_cast<SDL_Rect>(M2_GAME.TextLabelCache().Create(std::get<pb::TextLabel>(spriteOrTextLabel).text(), M2G_PROXY.default_font_size));
+		texture = M2_GAME.TextLabelCache().Texture();
+	}
 
-	float sprite_size_multiplier =
-	    sprite_aspect_ratio < widget_aspect_ratio  // Compare aspect ratios of sprite and widget
-	    ? (float)dst_rect.h / (float)src_rect.h  // Widget is wider than the sprite
-	    : (float)dst_rect.w / (float)src_rect.w;  // Sprite is wider than the widget
+	const auto sprite_aspect_ratio = F(src_rect.w) / F(src_rect.h);
+	const auto widget_aspect_ratio = F(dst_rect.w) / F(dst_rect.h);
+	const float sprite_size_multiplier =
+		sprite_aspect_ratio < widget_aspect_ratio  // Compare aspect ratios of sprite and widget
+		? F(dst_rect.h) / F(src_rect.h) // Widget is wider than the sprite
+		: F(dst_rect.w) / F(src_rect.w);  // Sprite is wider than the widget
 
-	auto actual_dst_rect = SDL_Rect{
-	    .x = dst_rect.x + (dst_rect.w - iround(src_rect.w * sprite_size_multiplier)) / 2,
-	    .y = dst_rect.y + (dst_rect.h - iround(src_rect.h * sprite_size_multiplier)) / 2,
-	    .w = iround(src_rect.w * sprite_size_multiplier),
-	    .h = iround(src_rect.h * sprite_size_multiplier)};
+	const auto actual_dst_rect = SDL_Rect{
+		.x = dst_rect.x + (dst_rect.w - iround(src_rect.w * sprite_size_multiplier)) / 2,
+		.y = dst_rect.y + (dst_rect.h - iround(src_rect.h * sprite_size_multiplier)) / 2,
+		.w = iround(src_rect.w * sprite_size_multiplier),
+		.h = iround(src_rect.h * sprite_size_multiplier)};
 
-	SDL_RenderCopy(M2_GAME.renderer, sprite.Texture(SpriteVariant{}), &src_rect, &actual_dst_rect);
+	SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &actual_dst_rect);
 }
 
 void Widget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color) {

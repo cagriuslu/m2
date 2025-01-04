@@ -103,17 +103,17 @@ m2::Game::Game() {
 		throw M2_ERROR("Unable to measure the font letter size");
 	}
 	LOG_INFO("Font letter size", font_letter_width, font_letter_height); // 34,16
-	_font_letter_width_to_height_ratio = Rational{font_letter_width, font_letter_height};
 	// Font size, is the size of the letter from the baseline (ascent).
 	// Descent, is the (negated) size of the tails from the baseline.
 	// Font height is ascent + descent + line gap.
 	// You can request a certain font size, but you may not get an exact font.
 	// Height and ascent can be queried. For width, you need to render.
+	_font_letter_width_to_height_ratio = Rational{font_letter_width, font_letter_height};
+	_textLabelCache.emplace(renderer, font);
 
 	audio_manager.emplace();
 	spriteEffectsSheet = SpriteEffectsSheet{renderer};
 	shapes_sheet = ShapesSheet{renderer};
-	dynamic_sheet = DynamicSheet{renderer};
 
 	// Load game resources
 	resource_dir = resource_path() / "game" / _proxy.game_identifier;
@@ -124,7 +124,7 @@ m2::Game::Game() {
 		throw M2_ERROR(sheets_pb.error());
 	}
 	spriteSheets = SpriteSheet::LoadSpriteSheets(*sheets_pb, renderer, _proxy.lightning);
-	_sprites = LoadSprites(spriteSheets, sheets_pb->text_labels(), *spriteEffectsSheet, renderer, font, _proxy.default_font_size, _proxy.lightning);
+	_sprites = LoadSprites(spriteSheets, sheets_pb->text_labels(), *spriteEffectsSheet, _proxy.lightning);
 	LOG_INFO("Loaded sprites", _sprites.size());
 	auto backgroundSprites = _sprites | std::views::filter(IsSpriteBackgroundTile) | std::views::transform(ToSpriteType);
 	level_editor_background_sprites = std::vector<m2g::pb::SpriteType>{backgroundSprites.begin(), backgroundSprites.end()};
@@ -783,16 +783,48 @@ void m2::Game::OnWindowResize() {
 			panel.update_positions();
 		}
 		IF (_level->_customBlockingUiPanel)->update_positions();
+		for (auto& gfx : _level->graphics) {
+			gfx.textLabelRect = {};
+		}
+		for (auto& terrain_graphics : std::ranges::reverse_view(_level->terrain_graphics)) {
+			for (auto& gfx : terrain_graphics) {
+				gfx.textLabelRect = {};
+			}
+		}
 	}
 }
 void m2::Game::SetScale(const float scale) {
 	_dimensionsManager->SetScale(scale);
+	if (_level) {
+		for (auto& gfx : _level->graphics) {
+			gfx.textLabelRect = {};
+		}
+		for (auto& terrain_graphics : std::ranges::reverse_view(_level->terrain_graphics)) {
+			for (auto& gfx : terrain_graphics) {
+				gfx.textLabelRect = {};
+			}
+		}
+	}
+}
+void m2::Game::SetGameHeightM(const float heightM) {
+	_dimensionsManager->SetGameHeightM(heightM);
+	if (_level) {
+		for (auto& gfx : _level->graphics) {
+			gfx.textLabelRect = {};
+		}
+		for (auto& terrain_graphics : std::ranges::reverse_view(_level->terrain_graphics)) {
+			for (auto& gfx : terrain_graphics) {
+				gfx.textLabelRect = {};
+			}
+		}
+	}
 }
 
 void m2::Game::ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const {
 	for (int i = 0; i < pb::enum_value_count<m2g::pb::SpriteType>(); ++i) {
 		auto type = pb::enum_value<m2g::pb::SpriteType>(i);
-		if (!op(type, GetSprite(type))) {
+		const auto& spriteOrTextLabel = GetSpriteOrTextLabel(type);
+		if (std::holds_alternative<Sprite>(spriteOrTextLabel) && not op(type, std::get<Sprite>(spriteOrTextLabel))) {
 			return;
 		}
 	}
@@ -825,7 +857,7 @@ m2::VecF m2::Game::PixelTo2dWorldM(const VecI& pixel_position) {
 	const auto screen_center_to_pixel_position_px =
 		VecI{pixel_position.x - (Dimensions().WindowDimensions().x / 2), pixel_position.y - (Dimensions().WindowDimensions().y / 2)};
 	const auto screen_center_to_pixel_position_m = VecF{
-		F(screen_center_to_pixel_position_px.x) / Dimensions().RealOutputPixelsPerMeter(), F(screen_center_to_pixel_position_px.y) / Dimensions().RealOutputPixelsPerMeter()};
+		F(screen_center_to_pixel_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_pixel_position_px.y) / Dimensions().OutputPixelsPerMeter()};
 	const auto camera_position = _level->objects[_level->camera_id].position;
 	return screen_center_to_pixel_position_m + camera_position;
 }
@@ -905,7 +937,7 @@ void m2::Game::RecalculateMousePosition2() const {
 	const auto screen_center_to_mouse_position_px =
 		VecI{mouse_position.x - (Dimensions().WindowDimensions().x / 2), mouse_position.y - (Dimensions().WindowDimensions().y / 2)};
 	_screen_center_to_mouse_position_m = VecF{
-		F(screen_center_to_mouse_position_px.x) / Dimensions().RealOutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().RealOutputPixelsPerMeter()};
+		F(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
 
 	if (is_projection_type_perspective(_level->projection_type())) {
 		// Mouse moves on the plane centered at the player looking towards the camera

@@ -81,7 +81,7 @@ m2::void_expected init_road(m2::Object& obj, Connection connection) {
 								? color * M2G_PROXY.dimming_factor : color;
 		m2::Graphic::color_rect(cell_rect, background_color);
 
-		m2::Graphic::default_draw(gfx); // Draw connection
+		m2::Graphic::DefaultDrawCallback(gfx); // Draw connection
 	};
 
 	return {};

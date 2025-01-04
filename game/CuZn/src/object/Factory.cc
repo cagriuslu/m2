@@ -156,7 +156,7 @@ m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_
 		}
 
 		// Draw the industry graphic
-		m2::Graphic::default_draw(gfx);
+		m2::Graphic::DefaultDrawCallback(gfx);
 
 		// Draw the resources
 		DrawResources(gfx.owner().character());

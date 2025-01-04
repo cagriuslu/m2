@@ -25,7 +25,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	const float start_angle = direction_angle + swing_angle / 2.0f;
 	const float swing_speed = swing_angle / average_ttl;
 
-	const auto& sprite = M2_GAME.GetSprite(melee_weapon.game_sprite());
+	const auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(melee_weapon.game_sprite()));
 
 	// Add physics
 	auto& phy = obj.add_physique();
@@ -41,7 +41,7 @@ m2::void_expected rpg::create_blade(m2::Object &obj, const m2::VecF &direction, 
 	phy.body->SetAngularVelocity(-swing_speed);
 
 	// Add graphics
-	auto& gfx = obj.add_graphic(sprite);
+	auto& gfx = obj.add_graphic(melee_weapon.game_sprite());
 	gfx.draw_angle = phy.body->GetAngle();
 	gfx.z = 0.5f;
 

@@ -59,16 +59,20 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		// Map movement is enabled
 		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {
 			auto diff = impl.mouse_click_prev_position->first - M2_GAME.events.mouse_position();
-			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().RealOutputPixelsPerMeter();
+			auto diff_m = m2::VecF{diff} / M2_GAME.Dimensions().OutputPixelsPerMeter();
 			o.position += diff_m;
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
 		}
 
-		constexpr float zoom_step = 1.1f;
+		constexpr float zoom_step = 1.2f;
 		if (auto scroll = M2_GAME.events.pop_mouse_wheel_vertical_scroll(M2_GAME.Dimensions().Game()); 0 < scroll) {
-			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * zoom_step);
+			if (20.0f < M2_GAME.Dimensions().GameM().y) {
+				M2_GAME.SetScale(M2_GAME.Dimensions().Scale() * zoom_step);
+			}
 		} else if (scroll < 0) {
-			M2_GAME.SetScale(M2_GAME.Dimensions().Scale() / zoom_step);
+			if (M2_GAME.Dimensions().GameM().y < 55.0f) {
+				M2_GAME.SetScale(M2_GAME.Dimensions().Scale() / zoom_step);
+			}
 		}
 
 		// Limit the player inside the level
@@ -344,7 +348,7 @@ std::set<m2g::pb::SpriteType> PlayerCanalsInNetwork(const m2::Character& player,
 		// Iterate and find all the canals that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
-			const auto& road_location = M2_GAME.GetSprite(road_location_type);
+			const auto& road_location = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(road_location_type));
 			if (std::ranges::any_of(road_location.NamedItems(), is_canal_license) &&
 				std::ranges::count(road_location.NamedItems(), city)) {
 				canals.insert(road_location_type);
@@ -367,7 +371,7 @@ std::set<m2g::pb::SpriteType> PlayerRailroadsInNetwork(const m2::Character& play
 		// Iterate and find all the railroads that have the city as one of it's legs
 		for (int i = m2g::pb::BELPER_DERBY_CANAL_RAILROAD; i <= m2g::pb::REDDITCH_OXFORD_CANAL_RAILROAD; ++i) {
 			auto road_location_type = static_cast<m2g::pb::SpriteType>(i);
-			const auto& road_location = M2_GAME.GetSprite(road_location_type);
+			const auto& road_location = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(road_location_type));
 			if (std::ranges::any_of(road_location.NamedItems(), is_railroad_license) &&
 				std::ranges::count(road_location.NamedItems(), city)) {
 				railroads.insert(road_location_type);

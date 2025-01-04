@@ -11,7 +11,7 @@ namespace m2 {
 	class DynamicSheet {
 		SDL_Renderer* _renderer; // TODO Use weak-ptr instead
 		std::unique_ptr<SDL_Surface, sdl::SurfaceDeleter> _surface;
-		int _h{};
+		int _lastW{}, _lastH{}, _heightOfCurrentRow{};
 		std::unique_ptr<SDL_Texture, sdl::TextureDeleter> _texture;
 
 	public:
@@ -23,7 +23,7 @@ namespace m2 {
 
 		// Modifiers
 
-		std::pair<SDL_Surface*, RectI> Alloc(int w, int h);
+		std::pair<SDL_Surface*, RectI> Alloc(int requestedW, int requestedH);
 		SDL_Texture* RecreateTexture(bool lightning);
 
 	protected:

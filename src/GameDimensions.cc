@@ -60,7 +60,7 @@ m2::VecI m2::GameDimensionsManager::WindowDimensions() const {
 	SDL_GetRendererOutputSize(static_cast<SDL_Renderer*>(_renderer), &w, &h);
 	return {w, h};
 }
-float m2::GameDimensionsManager::RealOutputPixelsPerMeter() const {
+float m2::GameDimensionsManager::OutputPixelsPerMeter() const {
 	return F(_gamePpm) * _scale;
 }
 float m2::GameDimensionsManager::GameWidthToGameAndHudWidthRatio() const {
@@ -121,7 +121,7 @@ void m2::GameDimensionsManager::OnWindowResize() {
 	const auto messageBoxHeight = _game.h / 25;
 	_messageBox = RectI{_game.x, _game.y + _game.h - messageBoxHeight, _game.w, messageBoxHeight};
 }
-void m2::GameDimensionsManager::SetScale(float scale) {
+void m2::GameDimensionsManager::SetScale(const float scale) {
 	if (scale <= 0.0f) {
 		throw M2_ERROR("Given scale is invalid: " + m2::ToString(scale));
 	}
@@ -129,6 +129,15 @@ void m2::GameDimensionsManager::SetScale(float scale) {
 
 	_scale = scale;
 	ReadjustAfterScaleChange();
+}
+void m2::GameDimensionsManager::SetGameHeightM(const float heightM) {
+	// GameHeightM determines how much of the word is shown in the game window.
+	// It's notmally calculated with the formula: GameHeightM = GameHeightPx / PPM
+	// We can't change GameHeightPx, because the window isn't resized, thus we must calculate a new PPM instead.
+	// We also don't prefer to change the PPM directly, instead we change the scale: PPM = GamePpm * Scale
+	// Thus: GameHeightM = GameHeightPx / (GamePpm * Scale)
+	// Thus: Scale = GameHeightPx / (GamePpm * GameHeightM)
+	SetScale(F(_game.h) / (F(_gamePpm) * heightM));
 }
 
 m2::VecI m2::GameDimensionsManager::EstimateMinimumWindowDimensions(const int gamePpm, const float gameHeightM) {
@@ -165,6 +174,6 @@ void m2::GameDimensionsManager::ReadjustAfterScaleChange() {
 	// Scale adjustment is used to adjust the zoom of the game. This means, we must keep envelopes, gameAndHud, game,
 	// leftHud, rightHud, messageBox exactly the same. The portion of the game shown inside the game area, thus
 	// gameAndHudM and gameM, can be adjusted instead.
-	_gameAndHudM = {F(_gameAndHud.w) / RealOutputPixelsPerMeter(), F(_gameAndHud.h) / RealOutputPixelsPerMeter()};
-	_gameM = {F(_game.w) / RealOutputPixelsPerMeter(), F(_game.h) / RealOutputPixelsPerMeter()};
+	_gameAndHudM = {F(_gameAndHud.w) / OutputPixelsPerMeter(), F(_gameAndHud.h) / OutputPixelsPerMeter()};
+	_gameM = {F(_game.w) / OutputPixelsPerMeter(), F(_game.h) / OutputPixelsPerMeter()};
 }

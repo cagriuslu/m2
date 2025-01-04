@@ -34,16 +34,13 @@ namespace m2 {
 		bool _isBackgroundTile{};
 		std::vector<m2g::pb::ItemType> _namedItems;
 
-		// Text label
-		std::optional<sdl::TextTexture> _textTexture;
-
 	   public:
 		Sprite() = default;
 		Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteSheet& spriteSheet,
 				SpriteEffectsSheet& spriteEffectsSheet, const pb::Sprite& sprite, bool lightning);
-		Sprite(SDL_Renderer* renderer, TTF_Font* font, int fontSize, const pb::TextLabel& textLabel);
 
 		// Accessors
+
 		[[nodiscard]] const SpriteSheet& Sheet() const { return *_spriteSheet; }
 		[[nodiscard]] const SpriteEffectsSheet* EffectsSheet() const { return _effectsSheet; }
 		[[nodiscard]] m2g::pb::SpriteType Type() const { return _type; }
@@ -76,32 +73,41 @@ namespace m2 {
 
 		/// Ratio of screen pixels to sprite pixels
 		/// Multiply sprite dimensions (srcpx) with this number to convert them to screen dimensions (dstpx).
-		[[nodiscard]] float SheetToScreenPixelMultiplier() const;
+		[[nodiscard]] float SourceToOutputPixelMultiplier() const;
 
 		/// Returns a vector from the sprite's center pixel to the sprite's origin.
-		[[nodiscard]] VecF CenterToOriginSrcpx(SpriteVariant spriteVariant) const;
+		[[nodiscard]] VecF CenterToOriginVecSrcpx(SpriteVariant spriteVariant) const;
 
-		/// Returns a vector from the sprite's center pixel to the sprite's graphical origin in screen dimensions
-		/// (dstpx).
-		[[nodiscard]] VecF CenterToOriginDstpx(const SpriteVariant spriteVariant) const {
+		/// Returns a vector from the sprite's center to the sprite's origin in output pixel units.
+		[[nodiscard]] VecF CenterToOriginVecOutpx(const SpriteVariant spriteVariant) const {
 			// Convert from source pixels to destination pixels
-			return CenterToOriginSrcpx(spriteVariant) * SheetToScreenPixelMultiplier();
+			return CenterToOriginVecSrcpx(spriteVariant) * SourceToOutputPixelMultiplier();
 		}
+
+		/// Returns a vector from the screen origin (top-left) to the center of this sprite in output pixel units.
+		[[nodiscard]] VecF ScreenOriginToCenterVecOutpx(const VecF& position, SpriteVariant sprite_variant) const;
+
+		/// Draws the given variant of the sprite with the given angle at world position in 2D mode. is_foreground and
+		/// z parameters are ignored, and only provided for API compatibility with DrawIn3dWorld.
+		void DrawIn2dWorld(const VecF& position, SpriteVariant sprite_variant, float angle, bool is_foreground = {}, float z = {}) const;
+		/// Draws the given variant of the sprite with the given angle at world position in 3D mode. If is_foreground
+		/// is true, the sprite is drawn standing up, with its origin at z.
+		void DrawIn3dWorld(const VecF& position, SpriteVariant sprite_variant, float angle, bool is_foreground, float z) const;
 	};
 
 	// Filters
 
-	inline bool IsSpriteBackgroundTile(const Sprite& sprite) { return sprite.IsBackgroundTile(); }
+	bool IsSpriteBackgroundTile(const std::variant<Sprite,pb::TextLabel>&);
 
 	// Transformers
 
-	inline m2g::pb::SpriteType ToSpriteType(const Sprite& sprite) { return sprite.Type(); }
+	m2g::pb::SpriteType ToSpriteType(const std::variant<Sprite,pb::TextLabel>&);
 
 	// Helpers
 
-	std::vector<Sprite> LoadSprites(const std::vector<SpriteSheet>& spriteSheets,
+	std::vector<std::variant<Sprite, pb::TextLabel>> LoadSprites(const std::vector<SpriteSheet>& spriteSheets,
 			const google::protobuf::RepeatedPtrField<pb::TextLabel>& textLabels,
-			SpriteEffectsSheet& spriteEffectsSheet, SDL_Renderer* renderer, TTF_Font* font, int fontSize, bool lightning);
+			SpriteEffectsSheet& spriteEffectsSheet, bool lightning);
 	std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> ListLevelEditorObjectSprites(const std::filesystem::path& objects_path);
 	void_expected MoveBackground(int from, int to, const std::string& level);
 }

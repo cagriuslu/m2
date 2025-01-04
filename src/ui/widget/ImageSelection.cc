@@ -72,9 +72,8 @@ void ImageSelection::on_draw() {
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);
 	if (!image_selection.list.empty()) {
-		const auto& sprite = M2_GAME.GetSprite(image_selection.list[_selection]);
-		auto image_rect = rect().trim_bottom(rect().h - rect().w);
-		draw_sprite(sprite, image_rect);
+		const auto image_rect = rect().trim_bottom(rect().h - rect().w);
+		DrawSpriteOrTextLabel(M2_GAME.GetSpriteOrTextLabel(image_selection.list[_selection]), image_rect);
 	}
 
 	auto buttons_rect = rect().trim_top(rect().w);

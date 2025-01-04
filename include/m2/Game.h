@@ -12,6 +12,7 @@
 #include <m2/video/Sprite.h>
 #include "game/Animation.h"
 #include "network/HostClientThread.h"
+#include <m2/video/TextLabel.h>
 #include "network/RealClientThread.h"
 #include "network/BotClientThread.h"
 #include "network/ServerThread.h"
@@ -53,8 +54,9 @@ namespace m2 {
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
-		Rational _font_letter_width_to_height_ratio; // letter w/h
-		std::vector<Sprite> _sprites;
+		Rational _font_letter_width_to_height_ratio; // letter w/h // TODO get rid of this, because this is only accurate if the font is used in default size, which isn't always the case
+		std::vector<std::variant<Sprite, pb::TextLabel>> _sprites;
+		std::optional<TextLabelCache> _textLabelCache;
 
 	public:  // TODO private
 		std::optional<Level> _level;
@@ -92,11 +94,11 @@ namespace m2 {
 		std::vector<m2g::pb::SpriteType> level_editor_background_sprites;
 		std::map<m2g::pb::ObjectType, m2g::pb::SpriteType> object_main_sprites;
 		std::optional<ShapesSheet> shapes_sheet;
-		std::optional<DynamicSheet> dynamic_sheet;
 		pb::LUT<m2::pb::Item, NamedItem> named_items;
 		pb::LUT<m2::pb::Animation, Animation> animations;
 		pb::LUT<m2::pb::Song, Song> songs;
 		const Rational& font_letter_width_to_height_ratio() const { return _font_letter_width_to_height_ratio; }
+		TextLabelCache& TextLabelCache() { return *_textLabelCache; }
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// CONFIG ////////////////////////////////
@@ -155,7 +157,7 @@ namespace m2 {
 		// Accessors
 
 		const GameDimensionsManager& Dimensions() const { return *_dimensionsManager; }
-		const Sprite& GetSprite(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
+		const std::variant<Sprite,pb::TextLabel>& GetSpriteOrTextLabel(const m2g::pb::SpriteType sprite_type) const { return _sprites[pb::enum_index(sprite_type)]; }
 		void ForEachSprite(const std::function<bool(m2g::pb::SpriteType, const Sprite&)>& op) const;
 		const NamedItem& GetNamedItem(const m2g::pb::ItemType item_type) const { return named_items[item_type]; }
 		void ForEachNamedItem(const std::function<bool(m2g::pb::ItemType, const NamedItem&)>& op) const;
@@ -196,7 +198,10 @@ namespace m2 {
 
 		void AddPauseTicks(const sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void OnWindowResize();
+		/// Scale can be used to adjust the zoom
 		void SetScale(float scale);
+		/// Game height in meters can be used to adjust the zoom
+		void SetGameHeightM(float heightM);
 		void ResetMousePosition() { _mouse_position_world_m = std::nullopt; _screen_center_to_mouse_position_m = std::nullopt; }
 		void RecalculateDirectionalAudio();
 

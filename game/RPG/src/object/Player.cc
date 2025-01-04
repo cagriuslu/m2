@@ -21,22 +21,23 @@ rpg::Player::Player(m2::Object& obj) : animation_fsm(m2g::pb::ANIMATION_TYPE_PLA
 m2::void_expected rpg::Player::init(m2::Object& obj) {
 	auto id = obj.id();
 	auto main_sprite_type = M2_GAME.object_main_sprites[m2g::pb::PLAYER];
+	const auto& mainSprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(main_sprite_type));
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).BackgroundColliderCircRadiusM());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(mainSprite.BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_BACKGROUND);
-	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(main_sprite_type).ForegroundColliderCircRadiusM());
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(M2_GAME.GetSprite(main_sprite_type).ForegroundColliderOriginToOriginVecM().x);
-	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(M2_GAME.GetSprite(main_sprite_type).ForegroundColliderOriginToOriginVecM().y);
+	bp.mutable_foreground_fixture()->mutable_circ()->set_radius(mainSprite.ForegroundColliderCircRadiusM());
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_x(mainSprite.ForegroundColliderOriginToOriginVecM().x);
+	bp.mutable_foreground_fixture()->mutable_circ()->mutable_center_offset()->set_y(mainSprite.ForegroundColliderOriginToOriginVecM().y);
 	bp.mutable_foreground_fixture()->set_category(m2::pb::FixtureCategory::FRIEND_ON_FOREGROUND);
 	bp.set_mass(PLAYER_MASS);
 	bp.set_linear_damping(PLAYER_LINEAR_DAMPING);
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(M2_GAME.GetSprite(main_sprite_type));
+	auto& gfx = obj.add_graphic(main_sprite_type);
 
 	auto& chr = obj.add_full_character();
 	chr.add_named_item(M2_GAME.GetNamedItem(m2g::pb::ITEM_REUSABLE_DASH_2S));

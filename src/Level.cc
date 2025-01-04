@@ -81,9 +81,8 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 					if (sprite_type) {
 						auto position = VecF{x, y};
 						le_state.bg_placeholders[l][position.iround()] = std::make_pair(
-						    obj::create_background_placeholder(
-						        position, M2_GAME.GetSprite(sprite_type), static_cast<BackgroundLayer>(l)),
-						    sprite_type);  // HERE
+						    obj::create_background_placeholder(position, sprite_type, static_cast<BackgroundLayer>(l)),
+									sprite_type);
 					}
 				}
 			}
@@ -92,9 +91,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 		for (const auto& fg_object : lb->objects()) {
 			auto position = m2::VecF{fg_object.position()};
 			le_state.fg_placeholders[position.iround()] = std::make_pair(
-			    obj::create_foreground_placeholder(
-			        position, M2_GAME.GetSprite(M2_GAME.object_main_sprites[fg_object.type()])),
-			    fg_object);
+			    obj::create_foreground_placeholder(position, M2_GAME.object_main_sprites[fg_object.type()]), fg_object);
 		}
 	}
 
@@ -350,8 +347,7 @@ m2::void_expected m2::Level::init_any_player(
 					}
 
 					LOGF_TRACE("Creating tile from %d sprite at (%d,%d)...", sprite_type, x, y);
-					auto it = obj::create_tile(
-					    static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, M2_GAME.GetSprite(sprite_type));
+					auto it = obj::create_tile(static_cast<BackgroundLayer>(l), VecF{x, y} + VecF{0.5f, 0.5f}, sprite_type);
 					M2G_PROXY.post_tile_create(*it, sprite_type);
 					LOG_TRACE("Created tile", it.id());
 				}

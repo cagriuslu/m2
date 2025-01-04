@@ -20,7 +20,7 @@ message ImageAdjustment {
 message BlurredDropShadow {
   int32 blur_radius = 1; // The width (or height) of the convolution matrix will be (blur_radius * 2 + 1).
   float standard_deviation = 2; // of Gaussian blur
-  float final_transparency = 3; // [0, -] Multiplies the alpha value after blurring.
+  float final_transparency = 3; // [0, inf] Multiplies the alpha value after blurring.
 }
 
 enum SpriteEffectType {
@@ -58,9 +58,10 @@ message RegularSprite {
   // List of effects that might be used during the game
   repeated SpriteEffect effects = 1;
 
-  // An array of SpriteEffectTypes describing how the Sprite should be drawn by the m2::Graphic::default_draw function.
+  // An array of SpriteEffectTypes describing how the Sprite should be drawn by the **default** Sprite drawing function.
   // The variants are drawn in order, ie. the first variant in the array will be drawn first. Use __NO_SPRITE_EFFECT to
-  // describe the original sprite. If the array is empty, only the original sprite will be drawn.
+  // describe the original sprite. If the array is empty, only the original sprite will be drawn. This field is usually
+  // used for sprited that are drawn together with an effect by default, ex. text with drop shadows.
   repeated SpriteEffectType default_variant_draw_order = 2;
 
   // Coordinates of the sprite in sheet
@@ -118,6 +119,7 @@ message SpriteSheet {
   repeated Sprite sprites = 4;
 }
 
+// TextLabel is a sprite-like object that can be placed in the game world.
 message TextLabel {
   m2g.pb.SpriteType type = 1;
   string text = 2;

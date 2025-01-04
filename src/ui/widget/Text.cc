@@ -42,7 +42,7 @@ void Text::on_draw() {
 
 	{
 		// Clip to widget area
-		auto drawable_area_sdl = static_cast<SDL_Rect>(drawable_area());
+		const auto drawable_area_sdl = static_cast<SDL_Rect>(drawable_area());
 		SDL_RenderSetClipRect(M2_GAME.renderer, &drawable_area_sdl);
 	}
 	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->textTexture.texture(),

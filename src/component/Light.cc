@@ -6,9 +6,9 @@
 #include <m2/Proxy.h>
 #include <m2/Object.h>
 
-m2::Light::Light(Id object_id) : Component(object_id), radius_m(0.0f), on_draw(default_draw) {}
+m2::Light::Light(Id object_id) : Component(object_id), radius_m(0.0f), on_draw(DefaultDrawCallback) {}
 
-void m2::Light::default_draw(Light& lig) {
+void m2::Light::DefaultDrawCallback(Light& lig) {
 	if (not M2G_PROXY.lightning) {
 		return;
 	}
@@ -29,7 +29,7 @@ void m2::Light::default_draw(Light& lig) {
 		});
 
 		if (not inside_body) {
-			auto position_px = screen_origin_to_position_dstpx(obj.position);
+			auto position_px = ScreenOriginToPositionVecPx(obj.position);
 
 			std::vector<SDL_Vertex> vertices;
 			// The vector that'll be rotated for raycasting
@@ -47,7 +47,7 @@ void m2::Light::default_draw(Light& lig) {
 				// Cut-off vector
 				auto span_m = full_span_m.with_length(distance);
 				// Cut-off vector in pixels
-				auto span_px = span_m * M2_GAME.Dimensions().RealOutputPixelsPerMeter();
+				auto span_px = span_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
 				// Second point of the triangle
 				vertices.push_back(SDL_Vertex{.position = static_cast<SDL_FPoint>(position_px + span_px), .color = {brightness, brightness, brightness, 0}});
 
@@ -63,12 +63,12 @@ void m2::Light::default_draw(Light& lig) {
 			SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 		}
 	} else {
-		auto position_px = screen_origin_to_position_dstpx(obj.position);
+		auto position_px = ScreenOriginToPositionVecPx(obj.position);
 		MAYBE auto dstrect = SDL_Rect{
-				(int)roundf(position_px.x - lig.radius_m * M2_GAME.Dimensions().RealOutputPixelsPerMeter()),
-				(int)roundf(position_px.y - lig.radius_m * M2_GAME.Dimensions().RealOutputPixelsPerMeter()),
-				(int)roundf((float)lig.radius_m * M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 2.0f),
-				(int)roundf((float)lig.radius_m * M2_GAME.Dimensions().RealOutputPixelsPerMeter() * 2.0f)
+				(int)roundf(position_px.x - lig.radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				(int)roundf(position_px.y - lig.radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter()),
+				(int)roundf((float)lig.radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter() * 2.0f),
+				(int)roundf((float)lig.radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter() * 2.0f)
 		};
 		SDL_RenderCopy(M2_GAME.renderer, M2_GAME.light_texture, nullptr, &dstrect);
 	}

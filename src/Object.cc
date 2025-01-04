@@ -144,15 +144,12 @@ m2::Graphic& m2::Object::add_graphic() {
     LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
 }
-m2::Graphic& m2::Object::add_graphic(const Sprite& sprite) {
-	auto gfx = M2_LEVEL.graphics.emplace(id(), sprite);
+m2::Graphic& m2::Object::add_graphic(const m2g::pb::SpriteType spriteType) {
+	auto gfx = M2_LEVEL.graphics.emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_graphic_id = gfx.id();
 	M2_LEVEL.draw_list.insert(id());
-    LOG_TRACE("Added graphic component", _graphic_id);
+	LOG_TRACE("Added graphic component", _graphic_id);
 	return *gfx;
-}
-m2::Graphic& m2::Object::add_graphic(m2g::pb::SpriteType sprite_type) {
-	return add_graphic(M2_GAME.GetSprite(sprite_type));
 }
 m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
 	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id());
@@ -160,10 +157,10 @@ m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer) {
 	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
-m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const Sprite& sprite) {
-	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id(), sprite);
+m2::Graphic& m2::Object::add_terrain_graphic(BackgroundLayer layer, const m2g::pb::SpriteType spriteType) {
+	auto terrain_gfx = M2_LEVEL.terrain_graphics[I(layer)].emplace(id(), M2_GAME.GetSpriteOrTextLabel(spriteType));
 	_terrain_graphic_id = std::make_pair(terrain_gfx.id(), layer);
-    LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
+	LOG_TRACE("Added terrain graphic component", _terrain_graphic_id);
 	return *terrain_gfx;
 }
 m2::Light& m2::Object::add_light() {
@@ -281,7 +278,7 @@ std::function<void(void)> m2::create_character_deleter(ObjectId id) {
 }
 
 std::function<bool(m2::Object&)> m2::is_object_in_area(const RectF& rect) {
-	return [rect](m2::Object& o) -> bool {
+	return [rect](const Object& o) -> bool {
 		return rect.contains(o.position);
 	};
 }

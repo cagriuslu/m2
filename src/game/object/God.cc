@@ -147,7 +147,7 @@ m2::Id m2::obj::create_god() {
 		if (M2_GAME.events.is_key_down(Key::RIGHT)) {
 			move_direction.x += 1.0f;
 		}
-		obj.position += move_direction.normalize() * ((float)M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
+		obj.position += move_direction.normalize() * (M2_GAME.DeltaTimeS() * M2_GAME.Dimensions().GameM().y);
 		// Prevent God from going into negative quadrants
 		obj.position = obj.position.clamp(VecF{0.0f, 0.0f}, std::nullopt);
 

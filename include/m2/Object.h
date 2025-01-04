@@ -69,10 +69,9 @@ namespace m2 {
 		void set_group(const GroupId& group_id, IndexInGroup group_index);
 		Physique& add_physique();
 		Graphic& add_graphic();
-		Graphic& add_graphic(const Sprite& sprite);
 		Graphic& add_graphic(m2g::pb::SpriteType);
 		Graphic& add_terrain_graphic(BackgroundLayer layer);
-		Graphic& add_terrain_graphic(BackgroundLayer layer, const Sprite& sprite);
+		Graphic& add_terrain_graphic(BackgroundLayer layer, m2g::pb::SpriteType);
 		Light& add_light();
 		SoundEmitter& add_sound_emitter();
 		Character& add_tiny_character();

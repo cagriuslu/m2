@@ -4,7 +4,7 @@
 
 namespace m2::ui::widget {
 	class Image : public AbstractButton {
-		std::pair<m2g::pb::SpriteType, const Sprite*> _sprite{};
+		m2g::pb::SpriteType _spriteType{};
 
 	public:
 		explicit Image(Panel* parent, const WidgetBlueprint* blueprint);

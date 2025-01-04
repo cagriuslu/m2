@@ -4,7 +4,7 @@
 
 m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	auto sprite_type = M2_GAME.object_main_sprites[obj.object_type()];
-	auto& sprite = M2_GAME.GetSprite(sprite_type);
+	auto& sprite = std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(sprite_type));
 
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
@@ -16,7 +16,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 	bp.mutable_background_fixture()->set_is_sensor(true);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	auto& gfx = obj.add_graphic(sprite);
+	auto& gfx = obj.add_graphic(sprite_type);
 	gfx.variant_draw_order[0] = m2::pb::SpriteEffectType::SPRITE_EFFECT_GRAYSCALE;
 
 	phy.on_collision = [](MAYBE m2::Physique& self, MAYBE m2::Physique& other, MAYBE const m2::box2d::Contact& contact) {
