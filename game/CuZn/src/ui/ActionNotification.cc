@@ -51,5 +51,6 @@ void display_action_notification(const m2g::pb::ServerCommand::ActionNotificatio
 	// Play sound
 	M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_NOTIFICATION_SOUND], m2::AudioManager::ONCE);
 
-	UiPanel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f});
+	UiPanel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f})
+			.IfQuit([] { M2_GAME.quit = true; });
 }

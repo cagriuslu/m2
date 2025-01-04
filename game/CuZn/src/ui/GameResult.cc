@@ -65,5 +65,6 @@ void display_game_result() {
 	}
 
 	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
-	UiPanel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background));
+	UiPanel::create_and_run_blocking(&blueprint, RectF{0.15f, 0.15f, 0.7f, 0.7f}, std::move(background))
+			.IfQuit([] { M2_GAME.quit = true; });
 }

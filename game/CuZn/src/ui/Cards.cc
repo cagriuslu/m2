@@ -146,14 +146,14 @@ std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclud
 	std::optional<m2g::pb::ItemType> selected_card;
 	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
 	UiPanel::create_and_run_blocking(std::make_unique<UiPanelBlueprint>(
-		generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)),
-			cards_window_ratio(), std::move(background))
-		.IfVoidReturn([&]() {
-			LOG_INFO("Card selection cancelled");
-		})
-		.IfReturn<m2g::pb::ItemType>([&selected_card](const auto& picked_card) {
-			LOG_INFO("Card selected", m2g::pb::ItemType_Name(picked_card));
-			selected_card = picked_card;
-		});
+			generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)), cards_window_ratio(), std::move(background))
+			.IfQuit([] { M2_GAME.quit = true; })
+			.IfVoidReturn([&]() {
+				LOG_INFO("Card selection cancelled");
+			})
+			.IfReturn<m2g::pb::ItemType>([&selected_card](const auto& picked_card) {
+				LOG_INFO("Card selected", m2g::pb::ItemType_Name(picked_card));
+				selected_card = picked_card;
+			});
 	return selected_card;
 }
