@@ -1,16 +1,16 @@
 #pragma once
-#include "../Widget.h"
+#include "../UiWidget.h"
 
-namespace m2::ui::widget {
-	struct AbstractButton : public Widget {
+namespace m2::widget {
+	struct AbstractButton : public UiWidget {
 		SDL_Scancode kb_shortcut;
 		bool depressed;
 
-		explicit AbstractButton(Panel* parent, const WidgetBlueprint* blueprint);
-		Action on_event(Events& events) final;
+		explicit AbstractButton(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		UiAction on_event(Events& events) final;
 
 		// Modifiers
 		void recreate();
-		Action trigger_action();
+		UiAction trigger_action();
 	};
 }

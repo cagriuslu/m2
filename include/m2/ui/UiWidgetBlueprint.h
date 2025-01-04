@@ -11,8 +11,8 @@
 #include <SDL.h>
 #include <variant>
 
-namespace m2::ui {
-	struct WidgetBlueprint {
+namespace m2 {
+	struct UiWidgetBlueprint {
 		std::string name{};
 		bool initially_enabled{true};
 		bool initially_focused{false};

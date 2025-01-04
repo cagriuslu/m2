@@ -1,12 +1,12 @@
 #include <m2/ui/widget/ProgressBar.h>
 #include <m2/Game.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 
-ProgressBar::ProgressBar(Panel* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint), _progress(std::get<ProgressBarBlueprint>(blueprint->variant).initial_progress) {}
+ProgressBar::ProgressBar(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(parent, blueprint), _progress(std::get<ProgressBarBlueprint>(blueprint->variant).initial_progress) {}
 
-Action ProgressBar::on_update() {
+UiAction ProgressBar::on_update() {
 	auto& pb_blueprint = std::get<ProgressBarBlueprint>(blueprint->variant);
 	if (pb_blueprint.on_update) {
 		_progress = pb_blueprint.on_update(*this);

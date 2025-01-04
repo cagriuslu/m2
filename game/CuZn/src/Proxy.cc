@@ -32,13 +32,13 @@
 #include <cuzn/ui/CanalEraResult.h>
 #include <cuzn/ui/Cards.h>
 
-const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
+const m2::UiPanelBlueprint* m2g::Proxy::main_menu() { return &main_menu_blueprint; }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::pause_menu() { return &pause_menu_blueprint; }
+const m2::UiPanelBlueprint* m2g::Proxy::pause_menu() { return &pause_menu_blueprint; }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::left_hud() { return &left_hud_blueprint; }
+const m2::UiPanelBlueprint* m2g::Proxy::left_hud() { return &left_hud_blueprint; }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::right_hud() { return &right_hud_blueprint; }
+const m2::UiPanelBlueprint* m2g::Proxy::right_hud() { return &right_hud_blueprint; }
 
 void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& name, MAYBE const m2::pb::Level& level) {
 	DEBUG_FN();
@@ -76,7 +76,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 
 	// Add status bar panel to the level
 	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-		std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(client_count)),
+		std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint(client_count)),
 		status_bar_window_ratio());
 }
 
@@ -371,13 +371,13 @@ void m2g::Proxy::post_server_update(const bool shutdown) {
 	LOG_DEBUG("Refreshing status bar");
 	M2_LEVEL.remove_custom_nonblocking_ui_panel(_status_bar_panel);
 	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-			std::make_unique<m2::ui::PanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
+			std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
 			status_bar_window_ratio());
 	if (cards_panel) {
 		LOG_DEBUG("Refreshing cards panel");
 		M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
 		M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-				std::make_unique<m2::ui::PanelBlueprint>(generate_cards_window("Cards")),
+				std::make_unique<m2::UiPanelBlueprint>(generate_cards_window("Cards")),
 				cards_panel_ratio());
 	}
 
@@ -581,14 +581,14 @@ namespace {
 
 void m2g::Proxy::enable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.left_hud_ui_panel->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
+		auto* button = M2_LEVEL.left_hud_ui_panel->find_first_widget_by_name<m2::widget::Text>(button_name);
 		button->enabled = true;
 	}
 }
 
 void m2g::Proxy::disable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
-		auto* button = M2_LEVEL.left_hud_ui_panel->find_first_widget_by_name<m2::ui::widget::Text>(button_name);
+		auto* button = M2_LEVEL.left_hud_ui_panel->find_first_widget_by_name<m2::widget::Text>(button_name);
 		button->enabled = false;
 	}
 }
@@ -597,7 +597,7 @@ void m2g::Proxy::show_notification(const std::string& msg) {
 	LOG_INFO("Showing notification", msg);
 	remove_notification();
 	_notification_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-		std::make_unique<m2::ui::PanelBlueprint>(generate_notification_panel_blueprint(msg)), m2::RectF{0.1f, 0.96f, 0.8f, 0.04f});
+		std::make_unique<m2::UiPanelBlueprint>(generate_notification_panel_blueprint(msg)), m2::RectF{0.1f, 0.96f, 0.8f, 0.04f});
 }
 void m2g::Proxy::remove_notification() {
 	if (_notification_panel) {

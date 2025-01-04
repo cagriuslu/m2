@@ -15,7 +15,7 @@
 #include <filesystem>
 #include <ranges>
 #include "m2/component/Graphic.h"
-#include <m2/ui/Action.h>
+#include <m2/ui/UiAction.h>
 
 m2::Game* m2::Game::_instance;
 
@@ -390,7 +390,7 @@ void m2::Game::HandleWindowResizeEvent() {
 
 void m2::Game::HandleConsoleEvent() {
 	if (events.pop_key_press(Key::CONSOLE)) {
-		if (ui::Panel::create_and_run_blocking(&ui::console_ui).IsQuit()) {
+		if (UiPanel::create_and_run_blocking(&console_ui).IsQuit()) {
 			quit = true;
 		}
 	}
@@ -399,19 +399,19 @@ void m2::Game::HandleConsoleEvent() {
 void m2::Game::HandleMenuEvent() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
-		const ui::PanelBlueprint* pause_menu{};
+		const UiPanelBlueprint* pause_menu{};
 		if (std::holds_alternative<splayer::State>(Level().type_state)) {
 			pause_menu = _proxy.pause_menu();
 		} else if (std::holds_alternative<ledit::State>(Level().type_state)) {
-			pause_menu = &level_editor::ui::menu;
+			pause_menu = &level_editor::menu;
 		} else if (std::holds_alternative<sedit::State>(Level().type_state)) {
-			pause_menu = &ui::sheet_editor_main_menu;
+			pause_menu = &sheet_editor_main_menu;
 		} else if (std::holds_alternative<bsedit::State>(Level().type_state)) {
-			pause_menu = &ui::bulk_sheet_editor_pause_menu;
+			pause_menu = &bulk_sheet_editor_pause_menu;
 		}
 
 		// Execute pause menu if found, exit if QUIT is returned
-		if (pause_menu && ui::Panel::create_and_run_blocking(pause_menu).IsQuit()) {
+		if (pause_menu && UiPanel::create_and_run_blocking(pause_menu).IsQuit()) {
 			quit = true;
 		}
 	}
@@ -436,8 +436,8 @@ void m2::Game::HandleHudEvents() {
 			.IfAnyReturn([&panel]() {
 				// If UI returned, reset the panel. We cannot delete it, the iterator is held by the client,
 				// but we can replace it with a dummy object.
-				panel.~Panel(); new (&panel) ui::Panel();
-				// TODO returned object is lost, maybe we can store it inside Panel
+				panel.~UiPanel(); new (&panel) UiPanel();
+				// TODO returned object is lost, maybe we can store it inside UiPanel
 			});
 		// TODO handle quit
 	}
@@ -456,7 +456,7 @@ void m2::Game::HandleNetworkEvents() {
 		_multi_player_threads = std::monostate{};
 		_bot_threads.clear();
 		// Execute main menu
-		if (ui::Panel::create_and_run_blocking(_proxy.main_menu()).IsQuit()) {
+		if (UiPanel::create_and_run_blocking(_proxy.main_menu()).IsQuit()) {
 			quit = true;
 		}
 	} else if (IsServer()) {
@@ -645,8 +645,8 @@ void m2::Game::UpdateHudContents() {
 			.IfAnyReturn([&panel]() {
 				// If returned, reset the panel. We cannot delete it, the iterator is held by the client,
 				// but we can recreate the object with a dummy version.
-				panel.~Panel(); new (&panel) ui::Panel();
-				// TODO returned object is lost, maybe we can store it inside Panel
+				panel.~UiPanel(); new (&panel) UiPanel();
+				// TODO returned object is lost, maybe we can store it inside UiPanel
 			});
 		// TODO handle quit
 	}

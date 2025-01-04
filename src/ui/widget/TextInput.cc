@@ -3,8 +3,8 @@
 #include <m2/sdl/TextTexture.h>
 #include <m2/ui/widget/TextInput.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 
 namespace {
 	void reset_focus() {
@@ -13,12 +13,12 @@ namespace {
 	}
 }  // namespace
 
-TextInput::TextInput(Panel* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
+TextInput::TextInput(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(parent, blueprint) {
 	const auto& te_blueprint = std::get<TextInputBlueprint>(blueprint->variant);
 	_text_input << te_blueprint.initial_text;
 }
 
-Action TextInput::on_event(Events& events) {
+UiAction TextInput::on_event(Events& events) {
 	if (events.pop_mouse_button_press(MouseButton::PRIMARY, RectI{rect()})) {
 		LOG_INFO("Regaining focus");
 		return MakeContinueAction(true);
@@ -58,7 +58,7 @@ void TextInput::on_focus_change() {
 	}
 }
 
-Action TextInput::on_update() {
+UiAction TextInput::on_update() {
 	auto str = _text_input.str();
 
 	// Add '_' if focused

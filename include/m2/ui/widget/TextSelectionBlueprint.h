@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	// Forward declaration
 	class TextSelection;
 
@@ -30,7 +30,7 @@ namespace m2::ui::widget {
 		bool show_scroll_bar{true};
 
 		std::function<void(TextSelection& self)> on_create{};
-		std::function<Action(TextSelection& self)> on_update{};
-		std::function<Action(TextSelection& self)> on_action{};
+		std::function<UiAction(TextSelection& self)> on_update{};
+		std::function<UiAction(TextSelection& self)> on_action{};
 	};
-}  // namespace m2::ui::widget
+}  // namespace m2::widget

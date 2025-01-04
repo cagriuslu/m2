@@ -4,7 +4,7 @@
 #include "../Common.h"
 #include <set>
 #include <utility>
-#include <m2/ui/Panel.h>
+#include <m2/ui/UiPanel.h>
 #include <list>
 
 enum class POISelectionJourneyStep {
@@ -25,7 +25,7 @@ public:
 };
 
 class POISelectionJourney : public m2::FsmBase<POISelectionJourneyStep, PositionOrCancelSignal> {
-	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
+	std::optional<std::list<m2::UiPanel>::iterator> _cancel_button_panel;
 
 	std::set<POI> _pois;
 	std::string _message;

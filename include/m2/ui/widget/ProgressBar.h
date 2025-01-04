@@ -1,13 +1,13 @@
 #pragma once
-#include "../Widget.h"
+#include "../UiWidget.h"
 
-namespace m2::ui::widget {
-	class ProgressBar : public Widget {
+namespace m2::widget {
+	class ProgressBar : public UiWidget {
 		float _progress;
 
 	public:
-		explicit ProgressBar(Panel* parent, const WidgetBlueprint* blueprint);
-		Action on_update() override;
+		explicit ProgressBar(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		UiAction on_update() override;
 		void on_draw() override;
 
 		// Modifiers

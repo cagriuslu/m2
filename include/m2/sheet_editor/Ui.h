@@ -1,8 +1,8 @@
 #pragma once
-#include "../ui/PanelBlueprint.h"
+#include "../ui/UiPanelBlueprint.h"
 
-namespace m2::ui {
-	extern const PanelBlueprint sheet_editor_left_hud;
-	extern const PanelBlueprint sheet_editor_right_hud;
-	extern const PanelBlueprint sheet_editor_main_menu;
+namespace m2 {
+	extern const UiPanelBlueprint sheet_editor_left_hud;
+	extern const UiPanelBlueprint sheet_editor_right_hud;
+	extern const UiPanelBlueprint sheet_editor_main_menu;
 }

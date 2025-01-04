@@ -9,18 +9,18 @@
 #include <cuzn/ui/Tiles.h>
 #include <m2/Game.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
-const PanelBlueprint right_hud_blueprint = {
+const UiPanelBlueprint right_hud_blueprint = {
 	.w = 19,
 	.h = 72,
 	.border_width = 0,
 	.background_color = {0, 0, 0, 255},
 	.widgets = {
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 2,
 			.w = 15,
@@ -37,7 +37,7 @@ const PanelBlueprint right_hud_blueprint = {
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 7,
 			.w = 15,
@@ -54,7 +54,7 @@ const PanelBlueprint right_hud_blueprint = {
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 12,
 			.w = 15,
@@ -72,7 +72,7 @@ const PanelBlueprint right_hud_blueprint = {
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 17,
 			.w = 15,
@@ -89,7 +89,7 @@ const PanelBlueprint right_hud_blueprint = {
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 22,
 			.w = 15,
@@ -97,17 +97,17 @@ const PanelBlueprint right_hud_blueprint = {
 			.variant =
 			TextBlueprint{
 				.text = "Cards",
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
-				.on_action = [](MAYBE const Text& self) -> Action {
+				.on_action = [](MAYBE const Text& self) -> UiAction {
 					// Check if the panel is still active
 					if (M2G_PROXY.cards_panel && (*M2G_PROXY.cards_panel)->is_valid()) {
 						M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
 						M2G_PROXY.cards_panel.reset();
 					} else {
-						// Panel is not available, or have been self-destroyed
+						// UiPanel is not available, or have been self-destroyed
 						M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-							std::make_unique<PanelBlueprint>(generate_cards_window("Cards")),
+							std::make_unique<UiPanelBlueprint>(generate_cards_window("Cards")),
 							cards_panel_ratio()
 						);
 					}
@@ -115,37 +115,37 @@ const PanelBlueprint right_hud_blueprint = {
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 27,
 			.w = 15,
 			.h = 4,
 			.variant = TextBlueprint{
 				.text = "Tiles",
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
-				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_blocking_ui_panel(tiles_window_ratio(), std::make_unique<PanelBlueprint>(generate_tiles_window("Tiles")));
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.add_custom_blocking_ui_panel(tiles_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_tiles_window("Tiles")));
 					return MakeContinueAction();
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 32,
 			.w = 15,
 			.h = 4,
 			.variant = TextBlueprint{
 				.text = "Market",
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
-				.on_action = [](MAYBE const Text& self) -> Action {
-					M2_LEVEL.add_custom_blocking_ui_panel(market_window_ratio(), std::make_unique<PanelBlueprint>(generate_market_window()));
+				.on_action = [](MAYBE const Text& self) -> UiAction {
+					M2_LEVEL.add_custom_blocking_ui_panel(market_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_market_window()));
 					return MakeContinueAction();
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 2,
 			.y = 37,
 			.w = 15,
@@ -153,7 +153,7 @@ const PanelBlueprint right_hud_blueprint = {
 			.border_width = 0,
 			.variant =
 			TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::CENTER,
+				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.35f,
 				.on_update = [](MAYBE Text& self) {
 					auto dds = m2::iround(M2G_PROXY.game_state_tracker().get_resource(DRAW_DECK_SIZE));

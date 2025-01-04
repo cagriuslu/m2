@@ -1,40 +1,40 @@
 #pragma once
-#include "PanelBlueprint.h"
-#include "Widget.h"
+#include "UiPanelBlueprint.h"
+#include "UiWidget.h"
 #include "../math/RectI.h"
 #include "../math/RectF.h"
 
-namespace m2::ui {
-	struct Panel {
+namespace m2 {
+	struct UiPanel {
 	private:
-		bool _is_valid{false}; // If default constructed, Panel is not a valid panel.
+		bool _is_valid{false}; // If default constructed, UiPanel is not a valid panel.
 		bool _prev_text_input_state{};
-		std::unique_ptr<PanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
+		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		RectF _relation_to_game_and_hud_dims;
 		sdl::TextureUniquePtr _background_texture; // TODO if the screen is resized, background looks bad
 		std::optional<float> _timeout_s;
 
 		// Modifiers
-		Action run_blocking();
+		UiAction run_blocking();
 	public:
 		bool enabled{true};
-		const PanelBlueprint* blueprint{};
-		std::vector<std::unique_ptr<Widget>> widgets;
+		const UiPanelBlueprint* blueprint{};
+		std::vector<std::unique_ptr<UiWidget>> widgets;
 
-		Panel() = default;
-		explicit Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+		UiPanel() = default;
+		explicit UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
 				sdl::TextureUniquePtr background_texture = {});
-		static Action create_and_run_blocking(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+		static UiAction create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
 				sdl::TextureUniquePtr background_texture = {});
 		// Copy not allowed
-		Panel(const Panel& other) = delete;
-		Panel& operator=(const Panel& other) = delete;
-		// Move not allowed, because Widgets hold raw pointer to Panel
-		Panel(Panel&& other) noexcept = delete;
-		Panel& operator=(Panel&& other) noexcept = delete;
-		~Panel();
+		UiPanel(const UiPanel& other) = delete;
+		UiPanel& operator=(const UiPanel& other) = delete;
+		// Move not allowed, because Widgets hold raw pointer to UiPanel
+		UiPanel(UiPanel&& other) noexcept = delete;
+		UiPanel& operator=(UiPanel&& other) noexcept = delete;
+		~UiPanel();
 
 		// Accessors
 
@@ -53,23 +53,23 @@ namespace m2::ui {
         void update_positions();
 		/// Handle the events. If `is_panning` is true, the mouse state (button states) are not cleared after the
 		/// handling so that the game objects can still observe that the mouse buttons are down.
-        Action handle_events(Events& events, bool is_panning = false);
-        Action update_contents(float delta_time_s);
+        UiAction handle_events(Events& events, bool is_panning = false);
+        UiAction update_contents(float delta_time_s);
         void draw();
 
 	private:
 		[[nodiscard]] int vertical_border_width_px() const;
 		[[nodiscard]] int horizontal_border_width_px() const;
 
-		std::unique_ptr<Widget> create_widget_state(const WidgetBlueprint& widget_blueprint);
-		void set_widget_focus_state(Widget& w, bool state);
+		std::unique_ptr<UiWidget> create_widget_state(const UiWidgetBlueprint& widget_blueprint);
+		void set_widget_focus_state(UiWidget& w, bool state);
 		void clear_focus();
 
 	public:
 		// Helpers
 
 		template <typename WidgetBlueprintT>
-		[[nodiscard]] Widget* find_first_widget_of_blueprint_type() const {
+		[[nodiscard]] UiWidget* find_first_widget_of_blueprint_type() const {
 			for (auto& w : widgets) {
 				if (std::holds_alternative<WidgetBlueprintT>(w->blueprint->variant)) {
 					return w.get();
@@ -103,9 +103,9 @@ namespace m2::ui {
 	};
 
 	// Helpers
-	RectI calculate_widget_rect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
-	Widget* find_text_widget(Panel& state, const std::string& text);
+	RectI CalculateWidgetRect(const RectI& root_rect_px, unsigned root_w, unsigned root_h, int child_x, int child_y, unsigned child_w, unsigned child_h);
+	UiWidget* FindTextWidget(UiPanel& state, const std::string& text);
 
-	extern PanelBlueprint console_ui;
-	extern const PanelBlueprint message_box_ui;
+	extern UiPanelBlueprint console_ui;
+	extern const UiPanelBlueprint message_box_ui;
 }

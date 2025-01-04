@@ -6,37 +6,37 @@
 #include "../video/Color.h"
 #include "../Events.h"
 #include <m2/video/Sprite.h>
-#include "Action.h"
-#include "WidgetBlueprint.h"
+#include "UiAction.h"
+#include "UiWidgetBlueprint.h"
 
-namespace m2::ui {
+namespace m2 {
 	// Forward declaration
-	struct Panel;
+	struct UiPanel;
 
 	// Base class of all widgets instances
-	struct Widget {
+	struct UiWidget {
 	private:
-		Panel* _parent;
+		UiPanel* _parent;
 		RectI _rect_px{}; // Position on screen
 
 	public:
 		bool enabled{true};
 		bool focused{false};
-		const WidgetBlueprint* blueprint;
+		const UiWidgetBlueprint* blueprint;
 
-		Widget(Panel* parent, const WidgetBlueprint* blueprint)
+		UiWidget(UiPanel* parent, const UiWidgetBlueprint* blueprint)
 		    : _parent(parent), enabled(blueprint->initially_enabled), blueprint(blueprint) {}
-		virtual ~Widget() = default;
+		virtual ~UiWidget() = default;
 
 		// Accessors
-		[[nodiscard]] Panel& parent() const { return *_parent; }
+		[[nodiscard]] UiPanel& parent() const { return *_parent; }
 		[[nodiscard]] const RectI& rect() const { return _rect_px; }
 
 		// Modifiers
 		void set_rect(const RectI& rect_px) { _rect_px = rect_px; on_resize(); }
-		virtual Action on_event(MAYBE Events& events) { return MakeContinueAction(); }
+		virtual UiAction on_event(MAYBE Events& events) { return MakeContinueAction(); }
 		virtual void on_focus_change() {}
-		virtual Action on_update() { return MakeContinueAction(); }
+		virtual UiAction on_update() { return MakeContinueAction(); }
 		virtual void on_draw() {}
 
 	protected:
@@ -67,7 +67,7 @@ namespace m2::ui {
 		static void DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>&, const RectI& dst_rect);
 		static void draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color = {255, 255, 255, 255});
 
-		// Allow Panel to use the utilities
-		friend struct Panel;
+		// Allow UiPanel to use the utilities
+		friend struct UiPanel;
 	};
-}  // namespace m2::ui
+}  // namespace m2

@@ -1,10 +1,10 @@
 #pragma once
-#include "../Action.h"
+#include "../UiAction.h"
 #include <string>
 #include <functional>
 #include <SDL.h>
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	// Forward declaration
 	class CheckboxWithText;
 
@@ -13,6 +13,6 @@ namespace m2::ui::widget {
 		bool initial_state{};
 		SDL_Scancode kb_shortcut{};
 
-		std::function<Action(const CheckboxWithText& self)> on_action{};
+		std::function<UiAction(const CheckboxWithText& self)> on_action{};
 	};
 }

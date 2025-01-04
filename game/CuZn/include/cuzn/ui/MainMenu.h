@@ -1,5 +1,5 @@
 #pragma once
 
-#include <m2/ui/PanelBlueprint.h>
+#include <m2/ui/UiPanelBlueprint.h>
 
-extern const m2::ui::PanelBlueprint main_menu_blueprint;
+extern const m2::UiPanelBlueprint main_menu_blueprint;

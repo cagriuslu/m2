@@ -4,7 +4,7 @@
 #include <m2/game/Fsm.h>
 #include <m2/math/VecF.h>
 #include <m2/Object.h>
-#include <m2/ui/Panel.h>
+#include <m2/ui/UiPanel.h>
 #include <cuzn/journeys/subjourneys/POISelectionJourney.h>
 #include <Network.pb.h>
 
@@ -17,7 +17,7 @@ enum class BuildJourneyStep {
 	EXPECT_CONFIRMATION,
 };
 class BuildJourney : public m2::FsmBase<BuildJourneyStep, POIOrCancelSignal> {
-	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
+	std::optional<std::list<m2::UiPanel>::iterator> _cancel_button_panel;
 
 	Card _selected_card{};
 	IndustryLocation _selected_location{};

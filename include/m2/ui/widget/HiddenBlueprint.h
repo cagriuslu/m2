@@ -1,8 +1,8 @@
 #pragma once
-#include "../Action.h"
+#include "../UiAction.h"
 #include <SDL.h>
 
-namespace m2::ui::widget {
+namespace m2::widget {
     // Forward declaration
     class Hidden;
 
@@ -11,7 +11,7 @@ namespace m2::ui::widget {
         SDL_Scancode kb_shortcut{};
 
 		std::function<void(const Hidden& self)> on_create{};
-        std::function<Action(const Hidden& self)> on_action{};
-        std::function<Action(const Hidden& self)> on_update{};
+        std::function<UiAction(const Hidden& self)> on_action{};
+        std::function<UiAction(const Hidden& self)> on_update{};
     };
 }

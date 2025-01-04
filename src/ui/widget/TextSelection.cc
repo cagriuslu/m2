@@ -2,24 +2,23 @@
 #include <m2/ui/widget/TextSelection.h>
 
 using namespace m2;
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 
-TextSelection::TextSelection(Panel* parent, const WidgetBlueprint* blueprint) : Widget(parent, blueprint) {
+TextSelection::TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint) : UiWidget(parent, blueprint) {
 	set_options(text_list_selection_blueprint().options);
 	if (text_list_selection_blueprint().on_create) {
 		text_list_selection_blueprint().on_create(*this);
 	}
 }
 
-Action TextSelection::on_update() {
+UiAction TextSelection::on_update() {
 	if (text_list_selection_blueprint().on_update) {
 		return text_list_selection_blueprint().on_update(*this);
 	}
 	return MakeContinueAction();
 }
 
-Action TextSelection::on_event(Events& events) {
+UiAction TextSelection::on_event(Events& events) {
 	// +/- selection
 	if (auto line_count = text_list_selection_blueprint().line_count; line_count == 0) {
 		auto buttons_rect = rect().trim_left(rect().w - rect().h / 2);
@@ -292,7 +291,7 @@ const TextSelectionBlueprint& TextSelection::text_list_selection_blueprint() con
 	return std::get<TextSelectionBlueprint>(blueprint->variant);
 }
 
-Action TextSelection::increment_selection() {
+UiAction TextSelection::increment_selection() {
 	if (auto current_selection = std::ranges::find_if(_options, [](auto& o) { return o.is_selected == true; });
 		current_selection != _options.end()) {
 		if (auto next_selection = std::next(current_selection); next_selection != _options.end()) {
@@ -306,7 +305,7 @@ Action TextSelection::increment_selection() {
 	return MakeContinueAction();
 }
 
-Action TextSelection::decrement_selection() {
+UiAction TextSelection::decrement_selection() {
 	if (auto current_selection = std::find_if(_options.rbegin(), _options.rend(), [](auto& o) { return o.is_selected == true; });
 		current_selection != _options.rend()) {
 		if (auto prev_selection = std::next(current_selection); prev_selection != _options.rend()) {

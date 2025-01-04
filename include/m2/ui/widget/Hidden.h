@@ -1,13 +1,13 @@
 #pragma once
-#include "../Widget.h"
+#include "../UiWidget.h"
 
-namespace m2::ui::widget {
-    class Hidden final : public Widget {
+namespace m2::widget {
+    class Hidden final : public UiWidget {
     public:
-        Hidden(Panel* parent, const WidgetBlueprint* blueprint);
+        Hidden(UiPanel* parent, const UiWidgetBlueprint* blueprint);
 
-        Action on_event(Events& events) override;
-        Action on_update() override;
+        UiAction on_event(Events& events) override;
+        UiAction on_update() override;
 
     private:
         [[nodiscard]] const HiddenBlueprint& hidden_blueprint() const { return std::get<HiddenBlueprint>(blueprint->variant); }

@@ -9,10 +9,12 @@ using namespace m2g;
 using namespace m2g::pb;
 
 m2::void_expected create_dwarf(m2::Object& obj) {
+
+
 	auto& phy = obj.add_physique();
 	m2::pb::BodyBlueprint bp;
 	bp.set_type(m2::pb::BodyType::DYNAMIC);
-	bp.mutable_background_fixture()->mutable_circ()->set_radius(M2_GAME.GetSprite(m2g::pb::DWARF_FULL).BackgroundColliderCircRadiusM());
+	bp.mutable_background_fixture()->mutable_circ()->set_radius(std::get<m2::Sprite>(M2_GAME.GetSpriteOrTextLabel(DWARF_FULL)).BackgroundColliderCircRadiusM());
 	bp.mutable_background_fixture()->set_friction(0.0f);
 	bp.mutable_background_fixture()->set_category(m2::pb::FRIEND_ON_BACKGROUND);
 	bp.set_mass(100);
@@ -21,7 +23,7 @@ m2::void_expected create_dwarf(m2::Object& obj) {
 	bp.set_fixed_rotation(true);
 	phy.body = m2::box2d::create_body(*M2_LEVEL.world, obj.physique_id(), obj.position, bp);
 
-	obj.add_graphic(M2_GAME.GetSprite(SpriteType::DWARF_FULL));
+	obj.add_graphic(DWARF_FULL);
 
 	auto& chr = obj.add_full_character();
 	chr.add_named_item(M2_GAME.GetNamedItem(ITEM_REUSABLE_JUMP));

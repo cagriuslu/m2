@@ -2,13 +2,13 @@
 #include "AbstractButton.h"
 #include <m2/sdl/TextTexture.h>
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	class CheckboxWithText : public AbstractButton {
 		bool _state;
 		sdl::TextTexture _textTexture;
 
 	public:
-		explicit CheckboxWithText(Panel* parent, const WidgetBlueprint* blueprint);
+		explicit CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blueprint);
 		void on_draw() override;
 
 		// Accessors
@@ -16,7 +16,7 @@ namespace m2::ui::widget {
 
 		// Modifiers
 		void recreate();
-		Action trigger_action(bool new_state);
+		UiAction trigger_action(bool new_state);
 
 		friend struct AbstractButton;
 	};

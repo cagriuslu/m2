@@ -8,7 +8,6 @@
 #include "m2/game/object/Ghost.h"
 
 using namespace m2;
-using namespace m2::ui;
 
 // Common widgets
 const widget::IntegerInputBlueprint layer_selection = {
@@ -18,76 +17,76 @@ const widget::IntegerInputBlueprint layer_selection = {
     .on_create = [](MAYBE const widget::IntegerInput& self) -> std::optional<int> {
 	    return I(std::get<ledit::State>(M2_LEVEL.type_state).selected_layer);
     },
-    .on_action = [](const widget::IntegerInput& self) -> Action {
+    .on_action = [](const widget::IntegerInput& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).selected_layer = static_cast<BackgroundLayer>(self.value());
 	    return MakeContinueAction();
     }};
 
 const widget::TextBlueprint paint_mode_title = {.text = "PAINT"};
 const widget::ImageSelectionBlueprint paint_mode_image_selection = {
-    .on_action = [](const widget::ImageSelection& self) -> Action {
+    .on_action = [](const widget::ImageSelection& self) -> UiAction {
 	    std::get<ledit::State::PaintMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode)
 	        .select_sprite_type(self.selection());
 	    return MakeContinueAction();
     }};
-PanelBlueprint paint_mode_right_hud = {
+UiPanelBlueprint paint_mode_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = paint_mode_title},
-        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
-        WidgetBlueprint{
+        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = paint_mode_title},
+        UiWidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
+        UiWidgetBlueprint{
             .x = 4, .y = 13, .w = 11, .h = 14, .variant = paint_mode_image_selection}}};
 
 const widget::TextBlueprint erase_mode_title = {.text = "ERASE"};
-const PanelBlueprint erase_mode_right_hud = {
+const UiPanelBlueprint erase_mode_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = erase_mode_title},
-        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
+        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = erase_mode_title},
+        UiWidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
     }};
 
 const widget::TextBlueprint place_mode_title = {.text = "PLACE"};
 const widget::TextSelectionBlueprint place_mode_right_hud_object_type_selection = {
-    .on_action = [](widget::TextSelection& self) -> Action {
+    .on_action = [](widget::TextSelection& self) -> UiAction {
 	    auto object_type = static_cast<m2g::pb::ObjectType>(std::get<int>(self.selections()[0]));
 	    std::get<ledit::State::PlaceMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).select_object_type(object_type);
 	    return MakeContinueAction();
     }};
 const widget::TextSelectionBlueprint place_mode_right_hud_group_type_selection = {
-    .on_action = [](widget::TextSelection& self) -> Action {
+    .on_action = [](widget::TextSelection& self) -> UiAction {
 	    auto group_type = static_cast<m2g::pb::GroupType>(std::get<int>(self.selections()[0]));
 	    std::get<ledit::State::PlaceMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).select_group_type(group_type);
 	    return MakeContinueAction();
     }};
 const widget::IntegerInputBlueprint place_mode_right_hud_group_instance_selection = {
-    .min_value = 0, .max_value = 999, .initial_value = 0, .on_action = [](const widget::IntegerInput& self) -> Action {
+    .min_value = 0, .max_value = 999, .initial_value = 0, .on_action = [](const widget::IntegerInput& self) -> UiAction {
 	    std::get<ledit::State::PlaceMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode)
 	        .select_group_instance(self.value());
 	    return MakeContinueAction();
     }};
-PanelBlueprint place_mode_right_hud = {
+UiPanelBlueprint place_mode_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = place_mode_title},
-        WidgetBlueprint{
+        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = place_mode_title},
+        UiWidgetBlueprint{
             .x = 4,
             .y = 6,
             .w = 11,
             .h = 4,
             .variant = place_mode_right_hud_object_type_selection},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 11,
             .w = 11,
             .h = 4,
             .variant = place_mode_right_hud_group_type_selection},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 16,
             .w = 11,
@@ -95,16 +94,16 @@ PanelBlueprint place_mode_right_hud = {
             .variant = place_mode_right_hud_group_instance_selection}}};
 
 const widget::TextBlueprint remove_mode_title = {.text = "REMOVE"};
-const PanelBlueprint remove_mode_right_hud = {
+const UiPanelBlueprint remove_mode_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
-    .widgets = {WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = remove_mode_title}}};
+    .widgets = {UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0.0f, .variant = remove_mode_title}}};
 
 const widget::TextBlueprint pick_mode_title = {.text = "PICK"};
 const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
     .options = {{"Background", "Background"}, {"Foreground", "Foreground"}},
-	.on_action = [](const widget::TextSelection& self) -> Action {
+	.on_action = [](const widget::TextSelection& self) -> UiAction {
 	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Background") {
 		    std::get<ledit::State::PickMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).pick_foreground = false;
 	    } else if (selection == "Foreground") {
@@ -112,59 +111,59 @@ const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
 	    }
 	    return MakeContinueAction();
     }};
-const PanelBlueprint pick_mode_right_hud = {
+const UiPanelBlueprint pick_mode_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = pick_mode_title},
-        WidgetBlueprint{
+        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = pick_mode_title},
+        UiWidgetBlueprint{
             .x = 4, .y = 6, .w = 11, .h = 4, .variant = pick_mode_right_hud_ground_selection},
-        WidgetBlueprint{.x = 4, .y = 11, .w = 11, .h = 6, .variant = layer_selection},
+        UiWidgetBlueprint{.x = 4, .y = 11, .w = 11, .h = 6, .variant = layer_selection},
     }};
 
 const widget::TextBlueprint select_mode_title = {.text = "SELECT"};
 const widget::TextBlueprint select_mode_right_hud_shift_right_button = {
-    .text = "Shift Right", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Shift Right", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).shift_right();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint select_mode_right_hud_shift_down_button = {
-    .text = "Shift Down", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Shift Down", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).shift_down();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint select_mode_right_hud_copy_button = {
-    .text = "Copy", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Copy", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).copy();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint select_mode_right_hud_paste_bg_button = {
-    .text = "Paste BG", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Paste BG", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).paste_bg();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint select_mode_right_hud_paste_fg_button = {
-    .text = "Paste FG", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Paste FG", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).paste_fg();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint select_mode_right_hud_erase_button = {
-    .text = "Erase", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Erase", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).erase();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint select_mode_right_hud_remove_button = {
-    .text = "Remove", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Remove", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).remove();
 	    return MakeContinueAction();
     }};
-const PanelBlueprint m2::level_editor::ui::fill_dialog = {
+const UiPanelBlueprint m2::level_editor::fill_dialog = {
     .w = 160,
     .h = 90,
     .background_color = {0, 0, 0, 255},
     .widgets = {
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 5, .y = 5, .w = 150, .h = 70,
             .variant = widget::TextSelectionBlueprint{
                 .line_count = 10,
@@ -178,11 +177,11 @@ const PanelBlueprint m2::level_editor::ui::fill_dialog = {
                 }
             }
         },
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 60, .y = 80, .w = 40, .h = 5,
             .variant = widget::TextBlueprint {
                 .text = "Fill",
-                .on_action = [](MAYBE const widget::Text& self) -> Action {
+                .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	                auto text_list_selection = self.parent().find_first_widget_of_type<widget::TextSelection>();
 
 	                std::vector<m2g::pb::SpriteType> sprite_types;
@@ -199,41 +198,41 @@ const PanelBlueprint m2::level_editor::ui::fill_dialog = {
 };
 const widget::TextBlueprint select_mode_right_hud_fill_button = {
     .text = "RFill",
-    .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    return std::get<ledit::State::SelectMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).rfill();
     }
 };
-const PanelBlueprint select_mode_right_hud = {
+const UiPanelBlueprint select_mode_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = select_mode_title},
-        WidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
-        WidgetBlueprint{
+        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = select_mode_title},
+        UiWidgetBlueprint{.x = 4, .y = 6, .w = 11, .h = 6, .variant = layer_selection},
+        UiWidgetBlueprint{
             .x = 4,
             .y = 13,
             .w = 11,
             .h = 3,
             .variant = select_mode_right_hud_shift_right_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4, .y = 17, .w = 11, .h = 3, .variant = select_mode_right_hud_shift_down_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4, .y = 21, .w = 11, .h = 3, .variant = select_mode_right_hud_copy_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4, .y = 25, .w = 11, .h = 3, .variant = select_mode_right_hud_paste_bg_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4, .y = 29, .w = 11, .h = 3, .variant = select_mode_right_hud_paste_fg_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4, .y = 33, .w = 11, .h = 3, .variant = select_mode_right_hud_erase_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4, .y = 37, .w = 11, .h = 3, .variant = select_mode_right_hud_remove_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4, .y = 41, .w = 11, .h = 3, .variant = select_mode_right_hud_fill_button}}};
 
 const widget::TextBlueprint shift_mode_title = {.text = "SHIFT"};
 const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_selection = {
-    .options = {{"Right", "Right"}, {"Down", "Down"}, {"Right & Down", "Right & Down"}}, .on_action = [](const widget::TextSelection& self) -> Action {
+    .options = {{"Right", "Right"}, {"Down", "Down"}, {"Right & Down", "Right & Down"}}, .on_action = [](const widget::TextSelection& self) -> UiAction {
 	    if (auto selection = std::get<std::string>(self.selections()[0]); selection == "Right") {
 		    std::get<ledit::State::ShiftMode>(std::get<ledit::State>(M2_LEVEL.type_state).mode).shift_type =
 		        ledit::State::ShiftMode::ShiftType::RIGHT;
@@ -246,13 +245,13 @@ const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_select
 	    }
 	    return MakeContinueAction();
     }};
-const PanelBlueprint shift_mode_right_hud = {
+const UiPanelBlueprint shift_mode_right_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = shift_mode_title},
-        WidgetBlueprint{
+        UiWidgetBlueprint{.x = 4, .y = 2, .w = 11, .h = 3, .border_width = 0, .variant = shift_mode_title},
+        UiWidgetBlueprint{
             .x = 4,
             .y = 6,
             .w = 11,
@@ -262,7 +261,7 @@ const PanelBlueprint shift_mode_right_hud = {
 const widget::TextBlueprint left_hud_paint_button = {
     .text = std::string{level_editor::paint_button_label},
     .kb_shortcut = SDL_SCANCODE_P,
-    .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_paint_mode();
 	    // Fill tile selector with editor-enabled sprites
 	    auto& list = std::get<widget::ImageSelectionBlueprint>(paint_mode_right_hud.widgets[2].variant).list;
@@ -274,7 +273,7 @@ const widget::TextBlueprint left_hud_paint_button = {
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_erase_button = {
-    .text = "ERASE", .kb_shortcut = SDL_SCANCODE_E, .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "ERASE", .kb_shortcut = SDL_SCANCODE_E, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_erase_mode();
 	    M2_LEVEL.right_hud_ui_panel.emplace(&erase_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
@@ -282,7 +281,7 @@ const widget::TextBlueprint left_hud_erase_button = {
 const widget::TextBlueprint left_hud_place_button = {
     .text = std::string{level_editor::place_button_label},
     .kb_shortcut = SDL_SCANCODE_O,
-    .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_place_mode();
 	    // Fill object type selector with editor-enabled object types
 	    auto& object_type_selection = std::get<widget::TextSelectionBlueprint>(place_mode_right_hud.widgets[1].variant);
@@ -306,37 +305,37 @@ const widget::TextBlueprint left_hud_place_button = {
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_remove_button = {
-    .text = "REMOVE", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "REMOVE", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_remove_mode();
 	    M2_LEVEL.right_hud_ui_panel.emplace(&remove_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_pick_button = {
-    .text = "PICK", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "PICK", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_pick_mode();
 	    M2_LEVEL.right_hud_ui_panel.emplace(&pick_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_select_button = {
-    .text = "SELECT", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "SELECT", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_select_mode();
 	    M2_LEVEL.right_hud_ui_panel.emplace(&select_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_shift_button = {
-    .text = "SHIFT", .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "SHIFT", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_shift_mode();
 	    M2_LEVEL.right_hud_ui_panel.emplace(&shift_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_cancel_button = {
-    .text = "CANCEL", .kb_shortcut = SDL_SCANCODE_X, .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "CANCEL", .kb_shortcut = SDL_SCANCODE_X, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).deactivate_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&level_editor::ui::right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.right_hud_ui_panel.emplace(&level_editor::right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_gridlines_button = {
-    .text = "GRID", .kb_shortcut = SDL_SCANCODE_G, .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "GRID", .kb_shortcut = SDL_SCANCODE_G, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    if (M2_LEVEL.dynamic_grid_lines_loader) {
 		    M2_LEVEL.dynamic_grid_lines_loader.reset();
 	    } else {
@@ -350,87 +349,87 @@ const widget::TextBlueprint left_hud_coordinates = {
 		self.set_text(m2::ToString(mouse_position.x) + ',' + m2::ToString(mouse_position.y));
 	    return MakeContinueAction();
     }};
-const PanelBlueprint level_editor::ui::left_hud = {
+const UiPanelBlueprint level_editor::left_hud = {
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
     .widgets = {
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 2,
             .w = 11,
             .h = 3,
             .variant = left_hud_paint_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 6,
             .w = 11,
             .h = 3,
             .variant = left_hud_erase_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 10,
             .w = 11,
             .h = 3,
             .variant = left_hud_place_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 14,
             .w = 11,
             .h = 3,
             .variant = left_hud_remove_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 18,
             .w = 11,
             .h = 3,
             .variant = left_hud_pick_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 22,
             .w = 11,
             .h = 3,
             .variant = left_hud_select_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 26,
             .w = 11,
             .h = 3,
             .variant = left_hud_shift_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 30,
             .w = 11,
             .h = 3,
             .variant = left_hud_cancel_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 4,
             .y = 66,
             .w = 11,
             .h = 3,
             .variant = left_hud_gridlines_button},
-        WidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width = 0, .variant = left_hud_coordinates}}};
+        UiWidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width = 0, .variant = left_hud_coordinates}}};
 
-const PanelBlueprint level_editor::ui::right_hud = {
+const UiPanelBlueprint level_editor::right_hud = {
     .w = 19, .h = 72, .background_color = {50, 50, 50, 255}, .widgets = {}};
 
 const widget::TextBlueprint save_button = {
-    .text = "Save", .kb_shortcut = SDL_SCANCODE_S, .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Save", .kb_shortcut = SDL_SCANCODE_S, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    ledit::State::save();
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint quit_button = {
-    .text = "Quit", .kb_shortcut = SDL_SCANCODE_Q, .on_action = [](MAYBE const widget::Text& self) -> Action {
+    .text = "Quit", .kb_shortcut = SDL_SCANCODE_Q, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    return MakeQuitAction();
     }};
-const PanelBlueprint level_editor::ui::menu = {
+const UiPanelBlueprint level_editor::menu = {
     .w = 160,
     .h = 90,
     .border_width = 0,
     .background_color = {50, 50, 50, 255},
     .cancellable = true,
     .widgets = {
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 70, .y = 40, .w = 20, .h = 10, .variant = save_button},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 70, .y = 70, .w = 20, .h = 10, .variant = quit_button}}};

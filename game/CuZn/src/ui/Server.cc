@@ -7,8 +7,8 @@
 #include <m2/network/IpAddressAndPort.h>
 #include <numeric>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
@@ -27,7 +27,7 @@ static TextBlueprint client_count = {
 
 		return MakeContinueAction();
 	},
-	.on_action = [](MAYBE const Text& self) -> Action {
+	.on_action = [](MAYBE const Text& self) -> UiAction {
 		if (2 <= M2_GAME.ServerThread().client_count()) {
 			LOG_INFO("Enough clients have connected");
 			if (M2_GAME.ServerThread().close_lobby()) {
@@ -41,28 +41,28 @@ static TextBlueprint client_count = {
 	}
 };
 
-const PanelBlueprint server_lobby = {
+const UiPanelBlueprint server_lobby = {
 	.w = 160,
 	.h = 90,
 	.border_width = 0,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 35, .y = 5, .w = 40, .h = 20,
 			.border_width = 0,
 			.variant = TextBlueprint{
 				.text = "LISTENING ON:",
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::RIGHT,
-				.vertical_alignment = m2::ui::TextVerticalAlignment::CENTER,
+				.horizontal_alignment = m2::TextHorizontalAlignment::RIGHT,
+				.vertical_alignment = m2::TextVerticalAlignment::CENTER,
 				.wrapped_font_size_in_units = 5.0f
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 85, .y = 5, .w = 60, .h = 20,
 			.border_width = 0,
 			.variant = TextBlueprint{
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
-				.vertical_alignment = m2::ui::TextVerticalAlignment::CENTER,
+				.horizontal_alignment = m2::TextHorizontalAlignment::LEFT,
+				.vertical_alignment = m2::TextVerticalAlignment::CENTER,
 				.wrapped_font_size_in_units = 5.0f,
 				.on_create = [](Text& self) {
 					if (auto addresses = m2::network::get_ip_addresses()) {
@@ -74,36 +74,36 @@ const PanelBlueprint server_lobby = {
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 35, .y = 35, .w = 40, .h = 10,
 			.border_width = 0,
 			.variant = TextBlueprint{
 				.text = "CLIENT COUNT:",
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::RIGHT,
+				.horizontal_alignment = m2::TextHorizontalAlignment::RIGHT,
 				.wrapped_font_size_in_units = 5.0f,
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 85, .y = 35, .w = 40, .h = 10,
 			.variant = client_count
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 60, .y = 55, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "ADD BOT",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const m2::ui::widget::Text& self) -> m2::ui::Action {
+				.on_action = [](MAYBE const m2::widget::Text& self) -> m2::UiAction {
 					M2_GAME.AddBot();
 					return MakeContinueAction();
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 60, .y = 75, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const Text& self) -> Action {
+				.on_action = [](MAYBE const Text& self) -> UiAction {
 					M2_GAME.LeaveGame();
 					// TODO kill bots if any
 					return MakeReturnAction();

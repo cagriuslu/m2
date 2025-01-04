@@ -3,17 +3,16 @@
 #include <m2/ui/widget/ImageSelection.h>
 
 using namespace m2;
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 
-ImageSelection::ImageSelection(Panel* parent, const WidgetBlueprint* blueprint)
-    : Widget(parent, blueprint),
+ImageSelection::ImageSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint)
+    : UiWidget(parent, blueprint),
       _plus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
       _minus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
 	select(0);
 }
 
-Action ImageSelection::on_event(Events& events) {
+UiAction ImageSelection::on_event(Events& events) {
 	auto buttons_rect = rect().trim_top(rect().w);
 	auto inc_button_rect = buttons_rect.trim_left(buttons_rect.w / 2);
 	auto dec_button_rect = buttons_rect.trim_right(buttons_rect.w / 2);
@@ -54,7 +53,7 @@ Action ImageSelection::on_event(Events& events) {
 	return MakeContinueAction();
 }
 
-Action ImageSelection::select(unsigned index) {
+UiAction ImageSelection::select(unsigned index) {
 	_selection = index;
 
 	const auto& image_selection = std::get<ImageSelectionBlueprint>(blueprint->variant);

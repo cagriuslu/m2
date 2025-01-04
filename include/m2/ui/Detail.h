@@ -1,6 +1,6 @@
 #pragma once
 
-namespace m2::ui {
+namespace m2 {
 	enum class TextHorizontalAlignment {
 		CENTER = 0,
 		LEFT,

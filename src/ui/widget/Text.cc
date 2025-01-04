@@ -3,17 +3,17 @@
 #include <m2/ui/widget/Text.h>
 #include <m2/Log.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 
-Text::Text(Panel* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
+Text::Text(UiPanel* parent, const UiWidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
 	_current_text(text_blueprint().text), _current_color(text_blueprint().color) {
 	if (text_blueprint().on_create) {
 		text_blueprint().on_create(*this);
 	}
 }
 
-Action Text::on_update() {
+UiAction Text::on_update() {
 	if (text_blueprint().on_update) {
 		return text_blueprint().on_update(*this);
 	} else {

@@ -1,16 +1,16 @@
 #include <m2/Game.h>
-#include <m2/ui/Widget.h>
+#include <m2/ui/UiWidget.h>
 
-using namespace m2::ui;
+using namespace m2;
 
-void m2::ui::Widget::draw_background_color() const {
+void m2::UiWidget::draw_background_color() const {
 	const auto& color = blueprint->background_color;
 	if (color.r || color.g || color.b || color.a) {
 		draw_rectangle(rect(), color);
 	}
 }
 
-int m2::ui::Widget::vertical_border_width_px() const {
+int m2::UiWidget::vertical_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
@@ -18,7 +18,7 @@ int m2::ui::Widget::vertical_border_width_px() const {
 	}
 }
 
-int m2::ui::Widget::horizontal_border_width_px() const {
+int m2::UiWidget::horizontal_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
@@ -26,7 +26,7 @@ int m2::ui::Widget::horizontal_border_width_px() const {
 	}
 }
 
-int m2::ui::Widget::vertical_padding_width_px() const {
+int m2::UiWidget::vertical_padding_width_px() const {
 	if (blueprint->padding_width == 0.0f) {
 		return 0;
 	} else {
@@ -34,7 +34,7 @@ int m2::ui::Widget::vertical_padding_width_px() const {
 	}
 }
 
-int m2::ui::Widget::horizontal_padding_width_px() const {
+int m2::UiWidget::horizontal_padding_width_px() const {
 	if (blueprint->padding_width == 0.0f) {
 		return 0;
 	} else {
@@ -42,13 +42,13 @@ int m2::ui::Widget::horizontal_padding_width_px() const {
 	}
 }
 
-m2::RectI m2::ui::Widget::drawable_area() const {
+m2::RectI m2::UiWidget::drawable_area() const {
 	auto vertical_excess = vertical_border_width_px() + vertical_padding_width_px();
 	auto horizontal_excess = horizontal_border_width_px() + horizontal_padding_width_px();
 	return rect().trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
 }
 
-m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align) {
+m2::RectI m2::UiWidget::calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align) {
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto text_texture_dimensions = sdl::texture_dimensions(text_texture);
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(text_texture_dimensions.x, text_texture_dimensions.y);
@@ -64,7 +64,7 @@ m2::RectI m2::ui::Widget::calculate_text_rect(SDL_Texture* text_texture, RectI d
 	}
 }
 
-m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
+m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
 	auto text_texture_dimensions = sdl::texture_dimensions(text_texture);
 	if (drawable_area.w < text_texture_dimensions.x) {
 		throw M2_ERROR("Font should have been generated at most as wide as the drawable area");
@@ -94,7 +94,7 @@ m2::RectI m2::ui::Widget::calculate_wrapped_text_rect(SDL_Texture* text_texture,
 	}
 }
 
-m2::RectI m2::ui::Widget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
+m2::RectI m2::UiWidget::calculate_filled_text_rect(RectI drawable_area, TextHorizontalAlignment align, int text_length) {
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(
 		I(text_length * M2_GAME.font_letter_width_to_height_ratio().n()),
@@ -111,7 +111,7 @@ m2::RectI m2::ui::Widget::calculate_filled_text_rect(RectI drawable_area, TextHo
 	}
 }
 
-void Widget::draw_rectangle(const RectI& rect, const SDL_Color& color) {
+void UiWidget::draw_rectangle(const RectI& rect, const SDL_Color& color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 
@@ -119,7 +119,7 @@ void Widget::draw_rectangle(const RectI& rect, const SDL_Color& color) {
 	SDL_RenderFillRect(M2_GAME.renderer, &sdl_rect);
 }
 
-void Widget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel, const RectI& dst_rect) {
+void UiWidget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel, const RectI& dst_rect) {
 	SDL_Rect src_rect;
 	SDL_Texture* texture;
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
@@ -134,7 +134,7 @@ void Widget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& sp
 	const auto widget_aspect_ratio = F(dst_rect.w) / F(dst_rect.h);
 	const float sprite_size_multiplier =
 		sprite_aspect_ratio < widget_aspect_ratio  // Compare aspect ratios of sprite and widget
-		? F(dst_rect.h) / F(src_rect.h) // Widget is wider than the sprite
+		? F(dst_rect.h) / F(src_rect.h) // UiWidget is wider than the sprite
 		: F(dst_rect.w) / F(src_rect.w);  // Sprite is wider than the widget
 
 	const auto actual_dst_rect = SDL_Rect{
@@ -146,7 +146,7 @@ void Widget::DrawSpriteOrTextLabel(const std::variant<Sprite, pb::TextLabel>& sp
 	SDL_RenderCopy(M2_GAME.renderer, texture, &src_rect, &actual_dst_rect);
 }
 
-void Widget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color) {
+void UiWidget::draw_border(const RectI& rect, int vertical_border_width_px, int horizontal_border_width_px, const SDL_Color& color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
 	SDL_SetRenderDrawBlendMode(M2_GAME.renderer, SDL_BLENDMODE_BLEND);
 

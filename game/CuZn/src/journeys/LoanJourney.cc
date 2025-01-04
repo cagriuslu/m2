@@ -6,8 +6,7 @@
 #include <cuzn/object/HumanPlayer.h>
 #include <cuzn/detail/Income.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 using namespace m2g;
 using namespace m2g::pb;
 

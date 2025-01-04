@@ -22,10 +22,10 @@ namespace m2g {
 		const float defaultGameHeightM = 30.0f;
 		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
 
-		const m2::ui::PanelBlueprint* main_menu();
-		const m2::ui::PanelBlueprint* pause_menu();
-		const m2::ui::PanelBlueprint* left_hud();
-		const m2::ui::PanelBlueprint* right_hud();
+		const m2::UiPanelBlueprint* main_menu();
+		const m2::UiPanelBlueprint* pause_menu();
+		const m2::UiPanelBlueprint* left_hud();
+		const m2::UiPanelBlueprint* right_hud();
 
 		void post_multi_player_level_client_init(const std::string& name, const m2::pb::Level& level);
 		void multi_player_level_server_populate(const std::string& name, const m2::pb::Level& level);
@@ -40,11 +40,11 @@ namespace m2g {
 
 	private:
 		m2::Id _game_state_tracker_id{};
-		std::list<m2::ui::Panel>::iterator _status_bar_panel;
-		std::optional<std::list<m2::ui::Panel>::iterator> _notification_panel;
+		std::list<m2::UiPanel>::iterator _status_bar_panel;
+		std::optional<std::list<m2::UiPanel>::iterator> _notification_panel;
 
 	public:
-		std::optional<std::list<m2::ui::Panel>::iterator> custom_hud_panel, cards_panel;
+		std::optional<std::list<m2::UiPanel>::iterator> custom_hud_panel, cards_panel;
 
 		// Once the level is created, these should not be modified.
 

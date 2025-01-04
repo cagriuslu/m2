@@ -14,7 +14,6 @@
 #include <m2g/Proxy.h>
 
 using namespace m2;
-using namespace m2::ui;
 using namespace m2g;
 using namespace m2g::pb;
 

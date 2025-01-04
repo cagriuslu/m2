@@ -1,9 +1,9 @@
 #pragma once
-#include "../Action.h"
+#include "../UiAction.h"
 #include <m2g_SpriteType.pb.h>
 #include <SDL.h>
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	// Forward declaration
 	class Image;
 
@@ -12,7 +12,7 @@ namespace m2::ui::widget {
 		SDL_Scancode kb_shortcut{};
 
 		std::function<void(Image& self)> on_create{};
-		std::function<std::pair<Action,std::optional<m2g::pb::SpriteType>>(const Image& self)> on_update{};
-		std::function<Action(const Image& self)> on_action{};
+		std::function<std::pair<UiAction,std::optional<m2g::pb::SpriteType>>(const Image& self)> on_update{};
+		std::function<UiAction(const Image& self)> on_action{};
 	};
 }

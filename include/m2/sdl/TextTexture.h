@@ -21,7 +21,7 @@ namespace m2::sdl {
 		/// Create a TextTexture with text wrapping. `fontSize` determines the height of the texture and `width_px`
 		/// limits the number of characters per line.
 		static expected<TextTexture> create_wrapped(SDL_Renderer* renderer, TTF_Font* font, int fontSize, int width_px,
-			ui::TextHorizontalAlignment horizontal_alignment, const std::string& text,
+			TextHorizontalAlignment horizontal_alignment, const std::string& text,
 			SDL_Color color = {255, 255, 255, 255});
 
 		// Can be null if the string is empty

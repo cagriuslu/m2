@@ -1,5 +1,5 @@
 #pragma once
-#include "../ui/Action.h"
+#include "../ui/UiAction.h"
 #include "Detail.h"
 
 namespace m2::ledit {
@@ -58,7 +58,7 @@ namespace m2::ledit {
 			void erase();
 			void remove();
 			std::vector<m2g::pb::SpriteType> rfill_sprite_types;  // Filled by UI
-			ui::Action rfill();
+			UiAction rfill();
 		};
 		struct ShiftMode {
 			enum class ShiftType { RIGHT, DOWN, RIGHT_N_DOWN } shift_type;

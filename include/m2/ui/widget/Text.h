@@ -2,7 +2,7 @@
 #include "AbstractButton.h"
 #include <m2/sdl/TextTexture.h>
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	class Text : public AbstractButton {
 		std::string _current_text;
 		/// Instead of generating colored font texture, generate white text and color the text before rendering.
@@ -11,8 +11,8 @@ namespace m2::ui::widget {
 		std::optional<sdl::TextTextureAndDestination> _text_texture_and_destination_cache;
 
 	public:
-		explicit Text(Panel* parent, const WidgetBlueprint* blueprint);
-		Action on_update() override;
+		explicit Text(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		UiAction on_update() override;
 		void on_draw() override;
 
 		// Accessors

@@ -66,7 +66,7 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	type_state.emplace<ledit::State>();
 	auto& le_state = std::get<ledit::State>(type_state);
 
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().MessageBox());
+	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
 
 	if (std::filesystem::exists(*_lb_path)) {
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
@@ -101,9 +101,9 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&level_editor::ui::left_hud, M2_GAME.Dimensions().LeftHud());
+	left_hud_ui_panel.emplace(&level_editor::left_hud, M2_GAME.Dimensions().LeftHud());
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&level_editor::ui::right_hud, M2_GAME.Dimensions().RightHud());
+	right_hud_ui_panel.emplace(&level_editor::right_hud, M2_GAME.Dimensions().RightHud());
 	right_hud_ui_panel->update_contents(0.0f);
 	message_box_ui_panel->update_contents(0.0f);
 
@@ -164,9 +164,9 @@ m2::void_expected m2::Level::init_pixel_editor(const std::filesystem::path& path
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&ui::pixel_editor_left_hud, M2_GAME.Dimensions().LeftHud());
+	left_hud_ui_panel.emplace(&pixel_editor_left_hud, M2_GAME.Dimensions().LeftHud());
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&ui::pixel_editor_right_hud, M2_GAME.Dimensions().RightHud());
+	right_hud_ui_panel.emplace(&pixel_editor_right_hud, M2_GAME.Dimensions().RightHud());
 	right_hud_ui_panel->update_contents(0.0f);
 
 	return {};
@@ -178,7 +178,7 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	m2_reflect_unexpected(state);
 	type_state.emplace<sedit::State>(std::move(*state));
 
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().MessageBox());
+	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
 
 	// Create default objects
 	player_id = m2::obj::create_god();
@@ -186,9 +186,9 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&ui::sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
+	left_hud_ui_panel.emplace(&sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&ui::sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+	right_hud_ui_panel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 	right_hud_ui_panel->update_contents(0.0f);
 	message_box_ui_panel->update_contents(0.0f);
 
@@ -201,7 +201,7 @@ m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path&
 	m2_reflect_unexpected(state);
 	type_state.emplace<bsedit::State>(std::move(*state));
 
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().MessageBox());
+	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
 
 	// Create default objects
 	player_id = m2::obj::create_god();
@@ -209,9 +209,9 @@ m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path&
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&ui::bulk_sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
+	left_hud_ui_panel.emplace(&bulk_sheet_editor_left_hud, M2_GAME.Dimensions().LeftHud());
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&ui::bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+	right_hud_ui_panel.emplace(&bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 	right_hud_ui_panel->update_contents(0.0f);
 	message_box_ui_panel->update_contents(0.0f);
 
@@ -276,15 +276,15 @@ void m2::Level::disable_hud() {
 	right_hud_ui_panel->enabled = false;
 }
 
-void m2::Level::remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it) {
+void m2::Level::remove_custom_nonblocking_ui_panel(std::list<UiPanel>::iterator it) {
 	TRACE_FN();
 	_customNonblockingUiPanels.erase(it);
 }
-void m2::Level::remove_custom_nonblocking_ui_panel_deferred(std::list<ui::Panel>::iterator it) {
+void m2::Level::remove_custom_nonblocking_ui_panel_deferred(std::list<UiPanel>::iterator it) {
 	TRACE_FN();
 	M2_DEFER(([this,it]() { _customNonblockingUiPanels.erase(it); }));
 }
-void m2::Level::add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint) {
+void m2::Level::add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
 	_customBlockingUiPanel.emplace(std::move(blueprint), position_ratio);
 }
 void m2::Level::remove_custom_blocking_ui_panel() {
@@ -321,7 +321,7 @@ m2::void_expected m2::Level::init_any_player(
 
 	left_hud_ui_panel.emplace(M2G_PROXY.left_hud(), M2_GAME.Dimensions().LeftHud());
 	right_hud_ui_panel.emplace(M2G_PROXY.right_hud(), M2_GAME.Dimensions().RightHud());
-	message_box_ui_panel.emplace(&ui::message_box_ui, M2_GAME.Dimensions().MessageBox());
+	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
 
 	if (physical_world) {
 		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());

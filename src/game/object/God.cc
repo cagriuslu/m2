@@ -11,17 +11,17 @@ using namespace m2;
 namespace {
 	void level_editor_pick_foreground(const pb::LevelObject& level_object) {
 		// Find the Place button
-		auto* widget = ui::find_text_widget(*M2_LEVEL.left_hud_ui_panel, m2::level_editor::place_button_label.data());
+		auto* widget = FindTextWidget(*M2_LEVEL.left_hud_ui_panel, m2::level_editor::place_button_label.data());
 		if (!widget) {
 			return;
 		}
 		// Press the button
-		dynamic_cast<ui::widget::Text*>(widget)->trigger_action();
+		dynamic_cast<widget::Text*>(widget)->trigger_action();
 		// Right hud points to `place_mode_right_hud`, select the object type
 		auto object_type_index = 0;
 		for (const auto& level_editor_object : M2_GAME.object_main_sprites) {
 			if (level_editor_object.first == level_object.type()) {
-				dynamic_cast<ui::widget::TextSelection&>(*M2_LEVEL.right_hud_ui_panel->widgets[1])
+				dynamic_cast<widget::TextSelection&>(*M2_LEVEL.right_hud_ui_panel->widgets[1])
 				    .set_unique_selection(object_type_index);
 				break;
 			}
@@ -29,25 +29,25 @@ namespace {
 		}
 		// Select group type
 		auto group_type_index = pb::enum_index(level_object.group().type());
-		dynamic_cast<ui::widget::TextSelection&>(*M2_LEVEL.right_hud_ui_panel->widgets[2]).set_unique_selection(group_type_index);
+		dynamic_cast<widget::TextSelection&>(*M2_LEVEL.right_hud_ui_panel->widgets[2]).set_unique_selection(group_type_index);
 		// Select group instance
 		auto group_instance = level_object.group().instance();
-		dynamic_cast<ui::widget::IntegerInput&>(*M2_LEVEL.right_hud_ui_panel->widgets[3]).select((int)group_instance);
+		dynamic_cast<widget::IntegerInput&>(*M2_LEVEL.right_hud_ui_panel->widgets[3]).select((int)group_instance);
 	}
 
 	void level_editor_pick_background(m2g::pb::SpriteType picked_sprite_type) {
 		// Find the Place button
-		auto* widget = ui::find_text_widget(*M2_LEVEL.left_hud_ui_panel, m2::level_editor::paint_button_label.data());
+		auto* widget = FindTextWidget(*M2_LEVEL.left_hud_ui_panel, m2::level_editor::paint_button_label.data());
 		if (!widget) {
 			return;
 		}
 		// Press the button
-		dynamic_cast<ui::widget::Text*>(widget)->trigger_action();
+		dynamic_cast<widget::Text*>(widget)->trigger_action();
 		// Right hud points to `paint_mode_right_hud`, select the sprite type
 		auto sprite_type_index = 0;
 		for (const auto& sprite_type : M2_GAME.level_editor_background_sprites) {
 			if (sprite_type == picked_sprite_type) {
-				dynamic_cast<ui::widget::ImageSelection&>(*M2_LEVEL.right_hud_ui_panel->widgets[2])
+				dynamic_cast<widget::ImageSelection&>(*M2_LEVEL.right_hud_ui_panel->widgets[2])
 				    .select(sprite_type_index);
 				break;
 			}

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <m2/ui/PanelBlueprint.h>
+#include <m2/ui/UiPanelBlueprint.h>
 #include <m2/ui/widget/Text.h>
 
-constexpr auto quit_button_action = [](MAYBE const m2::ui::widget::Text& self) { return m2::ui::MakeQuitAction(); };
+constexpr auto quit_button_action = [](MAYBE const m2::widget::Text& self) { return m2::MakeQuitAction(); };
 
 std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType industry_1, m2g::pb::ItemType industry_2);
 

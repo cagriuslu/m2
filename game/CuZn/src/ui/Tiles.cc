@@ -2,15 +2,14 @@
 #include <m2/Game.h>
 #include <m2/ui/widget/TextSelection.h>
 #include <m2/ui/widget/Text.h>
-#include <m2/ui/Widget.h>
-#include <m2/ui/Panel.h>
+#include <m2/ui/UiWidget.h>
+#include <m2/ui/UiPanel.h>
 #include <m2/Log.h>
 #include <m2/protobuf/Detail.h>
 #include <m2/ui/widget/Image.h>
 
 using namespace m2;
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 
 namespace {
 	struct TileComparator {
@@ -44,13 +43,13 @@ RectF tiles_window_ratio() {
 	return RectF{0.05f, 0.05f, 0.9f, 0.9f};
 }
 
-PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
-	return PanelBlueprint{
+UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
+	return UiPanelBlueprint{
 		.w = 61,
 		.h = 26,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 1,
 				.w = 59,
@@ -58,7 +57,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = msg }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "IndustryTypeSelection",
 				.x = 1,
 				.y = 4,
@@ -75,7 +74,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.line_count = 6,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_action = [exclude_tile](const TextSelection &self) -> Action {
+					.on_action = [exclude_tile](const TextSelection &self) -> UiAction {
 						auto tile_to_filter = exclude_tile; // Create a copy because it'll be mutated once the filtered tile is encountered
 						if (auto industry_type_selections = self.selections(); not industry_type_selections.empty()) {
 							auto industry_type_selection = industry_type_selections[0];
@@ -119,7 +118,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "IndustryVisual",
 				.x = 6,
 				.y = 15,
@@ -127,7 +126,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 				.h = 5,
 				.variant = ImageBlueprint{}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "TileLevelSelection",
 				.x = 20,
 				.y = 4,
@@ -137,7 +136,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.line_count = 11,
 					.allow_multiple_selection = false,
 					.show_scroll_bar = false,
-					.on_action = [](const TextSelection &self) -> Action {
+					.on_action = [](const TextSelection &self) -> UiAction {
 						if (auto selections = self.selections(); not selections.empty()) {
 							const auto selectedTileType = static_cast<m2g::pb::ItemType>(std::get<int>(selections[0]));
 							self.parent().find_first_widget_by_name<Text>("BuildRequirements")->set_text(GetIndustryTileBuildRequirementsString(selectedTileType));
@@ -155,7 +154,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 31,
 				.y = 4,
 				.w = 29,
@@ -166,7 +165,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "BuildRequirements",
 				.x = 31,
 				.y = 6,
@@ -177,7 +176,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 31,
 				.y = 8,
 				.w = 29,
@@ -188,7 +187,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "ResourceGain",
 				.x = 31,
 				.y = 10,
@@ -199,7 +198,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 31,
 				.y = 12,
 				.w = 29,
@@ -210,7 +209,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "SellRequirements",
 				.x = 31,
 				.y = 14,
@@ -221,7 +220,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 31,
 				.y = 16,
 				.w = 29,
@@ -232,7 +231,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "SellBenefits",
 				.x = 31,
 				.y = 18,
@@ -243,7 +242,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::RIGHT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 21,
 				.w = 59,
@@ -254,7 +253,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 					.horizontal_alignment = TextHorizontalAlignment::LEFT
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 23,
 				.w = 59,
@@ -262,7 +261,7 @@ PanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType e
 				.variant = TextBlueprint{
 					.text = "OK",
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](const Text& self) -> Action {
+					.on_action = [](const Text& self) -> UiAction {
 						// Find the other blueprint
 						if (auto* tile_selection = self.parent().find_first_widget_by_name<TextSelection>("TileLevelSelection")) {
 							if (auto selections = tile_selection->selections(); not selections.empty()) {
@@ -282,8 +281,8 @@ std::optional<m2g::pb::ItemType> ask_for_tile_selection(m2g::pb::ItemType exclud
 	LOG_INFO("Asking player to select a tile...");
 
 	std::optional<m2g::pb::ItemType> selected_tile;
-	Panel::create_and_run_blocking(
-			std::make_unique<PanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)),
+	UiPanel::create_and_run_blocking(
+			std::make_unique<UiPanelBlueprint>(generate_tiles_window("Select tile to develop", exclude_tile)),
 			tiles_window_ratio(),
 			M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position))
 		.IfVoidReturn([&]() { LOG_INFO("Tile selection cancelled"); })

@@ -7,8 +7,8 @@
 #include "m2/game/Noise.h"
 #include <m2/FileSystem.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
@@ -64,19 +64,19 @@ static TextBlueprint entry_variant_3 = {
 		.kb_shortcut = SDL_SCANCODE_Q,
 		.on_action = quit_button_action
 };
-const PanelBlueprint main_menu_blueprint = {
+const UiPanelBlueprint main_menu_blueprint = {
 		.w = 100, .h = 100,
 		.background_color = {20, 20, 20, 255},
 		.widgets = {
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 45, .y = 15, .w = 10, .h = 10,
 						.variant = entry_variant_1
 				},
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 45, .y = 35, .w = 10, .h = 10,
 						.variant = entry_variant_2
 				},
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 45, .y = 55, .w = 10, .h = 10,
 						.variant = entry_variant_3
 				}
@@ -96,43 +96,43 @@ static TextBlueprint pause_variant_2 = {
 		.kb_shortcut = SDL_SCANCODE_Q,
 		.on_action = quit_button_action,
 };
-const PanelBlueprint pause_menu_blueprint = {
+const UiPanelBlueprint pause_menu_blueprint = {
 		.w = 100, .h = 100,
 		.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 		.widgets = {
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 45, .y = 35, .w = 10, .h = 10,
 						.variant = pause_variant_1
 				},
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 45, .y = 55, .w = 10, .h = 10,
 						.variant = pause_variant_2
 				}
 		}
 };
 
-const PanelBlueprint left_hud_blueprint = {
+const UiPanelBlueprint left_hud_blueprint = {
 		.w = 19, .h = 72,
 		.widgets = {}
 };
 
-const PanelBlueprint right_hud_blueprint = {
+const UiPanelBlueprint right_hud_blueprint = {
 		.w = 19, .h = 72,
 		.widgets = {}
 };
 
-const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::main_menu() {
 	return &main_menu_blueprint;
 }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::pause_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::pause_menu() {
 	return &pause_menu_blueprint;
 }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::left_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::left_hud() {
 	return &left_hud_blueprint;
 }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::right_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::right_hud() {
 	return &right_hud_blueprint;
 }

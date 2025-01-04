@@ -202,11 +202,11 @@ void m2::ledit::State::SelectMode::remove() {
 		});
 	}
 }
-m2::ui::Action m2::ledit::State::SelectMode::rfill() {
+m2::UiAction m2::ledit::State::SelectMode::rfill() {
 	if (auto selection_result = SelectionResult{M2_GAME.events}; selection_result.is_primary_selection_finished()) {
 		auto positions = selection_result.primary_int_selection_position_m();
 
-		auto action = ui::Panel::create_and_run_blocking(&level_editor::ui::fill_dialog);
+		auto action = UiPanel::create_and_run_blocking(&level_editor::fill_dialog);
 		if (action.IsReturn() && not rfill_sprite_types.empty()) {
 			positions->first.for_each_cell_in_between(positions->second, [&](const VecI& cell) {
 				auto index = rand(static_cast<uint32_t>(rfill_sprite_types.size()));
@@ -221,7 +221,7 @@ m2::ui::Action m2::ledit::State::SelectMode::rfill() {
 			return action;
 		}
 	}
-	return ui::MakeContinueAction();
+	return MakeContinueAction();
 }
 void m2::ledit::State::ShiftMode::shift(MAYBE const VecI& position) const {
 	if (shift_type == ShiftType::RIGHT) {

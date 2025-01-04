@@ -4,11 +4,11 @@
 #include <m2/ui/widget/Image.h>
 #include <m2/M2.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 
-AbstractButton::AbstractButton(Panel* parent, const WidgetBlueprint *blueprint) :
-		Widget(parent, blueprint),
+AbstractButton::AbstractButton(UiPanel* parent, const UiWidgetBlueprint *blueprint) :
+		UiWidget(parent, blueprint),
 		kb_shortcut(
 				std::visit(overloaded {
 						[](const TextBlueprint& v) -> SDL_Scancode { return v.kb_shortcut; },
@@ -19,7 +19,7 @@ AbstractButton::AbstractButton(Panel* parent, const WidgetBlueprint *blueprint) 
 		),
 		depressed(false) {}
 
-Action AbstractButton::on_event(Events &events) {
+UiAction AbstractButton::on_event(Events &events) {
 	// Return early if there is no action callback
 	const bool has_action_callback = std::visit(overloaded {
 			[](const TextBlueprint& v) -> bool { return (bool) v.on_action; },
@@ -55,7 +55,7 @@ Action AbstractButton::on_event(Events &events) {
 	return run_action ? trigger_action() : MakeContinueAction();
 }
 
-Action AbstractButton::trigger_action() {
+UiAction AbstractButton::trigger_action() {
 	return std::visit(overloaded {
 			[&](const TextBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Text&>(*this)) : MakeContinueAction(); },
 			[&](const ImageBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Image&>(*this)) : MakeContinueAction(); },

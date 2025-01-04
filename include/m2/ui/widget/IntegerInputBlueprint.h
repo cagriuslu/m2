@@ -2,7 +2,7 @@
 #include <functional>
 #include <optional>
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	// Forward declaration
 	class IntegerInput;
 
@@ -12,6 +12,6 @@ namespace m2::ui::widget {
 
 		std::function<std::optional<int>(const IntegerInput& self)> on_create{};
 		std::function<std::optional<int>(const IntegerInput& self)> on_update{};
-		std::function<Action(const IntegerInput& self)> on_action{};
+		std::function<UiAction(const IntegerInput& self)> on_action{};
 	};
 }

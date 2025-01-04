@@ -1,19 +1,19 @@
 #pragma once
-#include "../Widget.h"
+#include "../UiWidget.h"
 #include <m2/sdl/TextTexture.h>
 
-namespace m2::ui::widget {
-	class IntegerInput : public Widget {
+namespace m2::widget {
+	class IntegerInput : public UiWidget {
 		int _value;
 		sdl::TextTexture _textTexture, _plus_texture, _minus_texture;
 		bool _inc_depressed{};
 		bool _dec_depressed{};
 
 	public:
-		explicit IntegerInput(Panel* parent, const WidgetBlueprint* blueprint);
-		Action on_event(Events& events) override;
-		Action select(int value);
-		Action on_update() override;
+		explicit IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		UiAction on_event(Events& events) override;
+		UiAction select(int value);
+		UiAction on_update() override;
 		void on_draw() override;
 
 		// Accessors
@@ -21,7 +21,7 @@ namespace m2::ui::widget {
 
 		// Modifiers
 		void recreate();
-		Action trigger_action(int new_value);
+		UiAction trigger_action(int new_value);
 
 	private:
 		[[nodiscard]] const IntegerInputBlueprint& integer_selection_blueprint() const { return std::get<IntegerInputBlueprint>(blueprint->variant); }

@@ -2,11 +2,11 @@
 #include <m2/sdl/TextTexture.h>
 #include <m2/ui/widget/IntegerInput.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 
-IntegerInput::IntegerInput(Panel* parent, const WidgetBlueprint* blueprint)
-    : Widget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
+IntegerInput::IntegerInput(UiPanel* parent, const UiWidgetBlueprint* blueprint)
+    : UiWidget(parent, blueprint), _value(std::get<IntegerInputBlueprint>(blueprint->variant).initial_value),
       _plus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "+"))),
       _minus_texture(m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, "-"))) {
 	_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(_value)));
@@ -22,7 +22,7 @@ IntegerInput::IntegerInput(Panel* parent, const WidgetBlueprint* blueprint)
 	}
 }
 
-Action IntegerInput::on_event(Events& events) {
+UiAction IntegerInput::on_event(Events& events) {
 	auto buttons_rect = rect().trim_left(rect().w - rect().h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
@@ -49,7 +49,7 @@ Action IntegerInput::on_event(Events& events) {
 	return MakeContinueAction();
 }
 
-Action IntegerInput::select(int v) {
+UiAction IntegerInput::select(int v) {
 	_value = v;
 	_textTexture = std::move(*sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, ToString(v)));
 
@@ -61,7 +61,7 @@ Action IntegerInput::select(int v) {
 	return MakeContinueAction();
 }
 
-Action IntegerInput::on_update() {
+UiAction IntegerInput::on_update() {
 	auto& pb_blueprint = std::get<IntegerInputBlueprint>(blueprint->variant);
 	if (pb_blueprint.on_update) {
 		auto optional_value = pb_blueprint.on_update(*this);

@@ -2,17 +2,16 @@
 #include <m2/Game.h>
 
 using namespace m2;
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 
-Image::Image(Panel* parent, const WidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
+Image::Image(UiPanel* parent, const UiWidgetBlueprint* blueprint) : AbstractButton(parent, blueprint),
 		_spriteType(image_blueprint().initial_sprite) {
 	if (image_blueprint().on_create) {
 		image_blueprint().on_create(*this);
 	}
 }
 
-Action Image::on_update() {
+UiAction Image::on_update() {
 	auto& image_blueprint = std::get<ImageBlueprint>(blueprint->variant);
 	if (image_blueprint.on_update) {
 		auto[action, opt_sprite] = image_blueprint.on_update(*this);

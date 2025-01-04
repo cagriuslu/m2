@@ -1,7 +1,7 @@
 #pragma once
-#include "../ui/PanelBlueprint.h"
+#include "../ui/UiPanelBlueprint.h"
 
-namespace m2::ui {
-	extern const PanelBlueprint pixel_editor_left_hud;
-	extern const PanelBlueprint pixel_editor_right_hud;
+namespace m2 {
+	extern const UiPanelBlueprint pixel_editor_left_hud;
+	extern const UiPanelBlueprint pixel_editor_right_hud;
 }

@@ -7,7 +7,7 @@
 #include "../math/CircF.h"
 #include "../Meta.h"
 #include "../sheet_editor/DynamicImageLoader.h"
-#include "../ui/Panel.h"
+#include "../ui/UiPanel.h"
 
 namespace m2::sedit {
 	struct State {

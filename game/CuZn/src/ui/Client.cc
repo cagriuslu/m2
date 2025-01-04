@@ -4,14 +4,14 @@
 #include <m2/Game.h>
 #include <m2/Log.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2;
+using namespace m2::widget;
 using namespace m2g;
 using namespace m2g::pb;
 
 static TextBlueprint client_status = {
 	.text = "CONNECTING",
-	.horizontal_alignment = m2::ui::TextHorizontalAlignment::LEFT,
+	.horizontal_alignment = m2::TextHorizontalAlignment::LEFT,
 	.wrapped_font_size_in_units = 5.0f,
 	.on_update = [](MAYBE Text& self) {
 		if (M2_GAME.RealClientThread().is_connected()) {
@@ -47,7 +47,7 @@ static TextBlueprint ready_button = {
 		}
 		return MakeContinueAction();
 	},
-	.on_action = [](MAYBE const Text& self) -> Action {
+	.on_action = [](MAYBE const Text& self) -> UiAction {
 		if (M2_GAME.RealClientThread().is_connected()) {
 			M2_GAME.RealClientThread().set_ready(true);
 		} else if (M2_GAME.RealClientThread().is_ready()) {
@@ -57,13 +57,13 @@ static TextBlueprint ready_button = {
 	}
 };
 
-static const PanelBlueprint client_lobby = {
+static const UiPanelBlueprint client_lobby = {
 	.w = 160,
 	.h = 90,
 	.border_width = 0,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 40, .y = 20, .w = 40, .h = 10,
 			.border_width = 0,
 			.variant = TextBlueprint{
@@ -71,21 +71,21 @@ static const PanelBlueprint client_lobby = {
 				.wrapped_font_size_in_units = 5.0f
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 80, .y = 20, .w = 40, .h = 10,
 			.border_width = 0,
 			.variant = client_status
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 60, .y = 40, .w = 40, .h = 10,
 			.variant = ready_button
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 60, .y = 60, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const Text& self) -> Action {
+				.on_action = [](MAYBE const Text& self) -> UiAction {
 					M2_GAME.LeaveGame();
 					return MakeReturnAction();
 				}
@@ -94,29 +94,29 @@ static const PanelBlueprint client_lobby = {
 	}
 };
 
-const PanelBlueprint ip_port_form = {
+const UiPanelBlueprint ip_port_form = {
 	.w = 160,
 	.h = 90,
 	.border_width = 0,
 	.background_color = {20, 20, 20, 255},
 	.widgets = {
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 40, .y = 20, .w = 40, .h = 10,
 			.border_width = 0,
 			.variant = TextBlueprint{
 				.text = "ENTER IP:",
-				.horizontal_alignment = m2::ui::TextHorizontalAlignment::RIGHT,
+				.horizontal_alignment = m2::TextHorizontalAlignment::RIGHT,
 				.wrapped_font_size_in_units = 5.0f,
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.initially_focused = true,
 			.x = 80, .y = 20, .w = 40, .h = 10,
 			.variant = TextInputBlueprint{
 				.initial_text = "127.0.0.1"
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 60, .y = 40, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "CONNECT",
@@ -125,16 +125,16 @@ const PanelBlueprint ip_port_form = {
 				.on_action = [](MAYBE const widget::Text& self) {
 					auto* ip_input_widget = self.parent().find_first_widget_of_type<TextInput>();
 					M2_GAME.JoinGame(m2::mplayer::Type::TurnBased, ip_input_widget->text_input());
-					return m2::ui::Panel::create_and_run_blocking(&client_lobby);
+					return m2::UiPanel::create_and_run_blocking(&client_lobby);
 				}
 			}
 		},
-		WidgetBlueprint{
+		UiWidgetBlueprint{
 			.x = 60, .y = 60, .w = 40, .h = 10,
 			.variant = TextBlueprint{
 				.text = "CANCEL",
 				.wrapped_font_size_in_units = 5.0f,
-				.on_action = [](MAYBE const Text& self) -> Action { return MakeReturnAction(); }
+				.on_action = [](MAYBE const Text& self) -> UiAction { return MakeReturnAction(); }
 			}
 		}
 	}

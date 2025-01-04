@@ -3,7 +3,7 @@
 #include <cuzn/Detail.h>
 #include "subjourneys/POISelectionJourney.h"
 #include <m2/game/Fsm.h>
-#include <m2/ui/Panel.h>
+#include <m2/ui/UiPanel.h>
 #include <Network.pb.h>
 #include <list>
 
@@ -16,7 +16,7 @@ enum class DevelopJourneyStep {
 };
 
 class DevelopJourney : public m2::FsmBase<DevelopJourneyStep, POIOrCancelSignal> {
-	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
+	std::optional<std::list<m2::UiPanel>::iterator> _cancel_button_panel;
 
 	bool _develop_double_tiles{};
 	Card _selected_card{};

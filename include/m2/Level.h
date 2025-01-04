@@ -23,7 +23,7 @@
 #include "sheet_editor/DynamicImageLoader.h"
 #include "sheet_editor/State.h"
 #include "single_player/State.h"
-#include "ui/Panel.h"
+#include "ui/UiPanel.h"
 #include <queue>
 
 namespace m2 {
@@ -38,10 +38,10 @@ namespace m2 {
 		RectI _background_boundary;
 		/// If there's a blocking panel, the events are cleared after they are delivered to it. Other panels are still
 		/// updated and the world is still simulated.
-		std::optional<ui::Panel> _customBlockingUiPanel;
-		std::list<ui::Panel> _customNonblockingUiPanels;
+		std::optional<UiPanel> _customBlockingUiPanel;
+		std::list<UiPanel> _customNonblockingUiPanels;
 		/// If activated, the panel floats next to the cursor. This panel doesn't receive events, but is updated.
-		std::optional<ui::Panel> _mouseHoverUiPanel;
+		std::optional<UiPanel> _mouseHoverUiPanel;
 		std::optional<std::set<ObjectId>> _dimming_exceptions;
 		bool _is_panning{};
 
@@ -68,9 +68,9 @@ namespace m2 {
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
 
-		std::optional<ui::Panel> left_hud_ui_panel, right_hud_ui_panel;
+		std::optional<UiPanel> left_hud_ui_panel, right_hud_ui_panel;
 		std::optional<std::string> message;
-		std::optional<ui::Panel> message_box_ui_panel;
+		std::optional<UiPanel> message_box_ui_panel;
 
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
@@ -139,23 +139,23 @@ namespace m2 {
 		/// Adds a UI element that is drawn above the HUD. The UI doesn't block the game loop and consumes only the
 		/// events meant for itself.
 		template <typename... Args>
-		std::list<ui::Panel>::iterator add_custom_nonblocking_ui_panel(Args&&... args) {
+		std::list<UiPanel>::iterator add_custom_nonblocking_ui_panel(Args&&... args) {
 			return _customNonblockingUiPanels.emplace(_customNonblockingUiPanels.end(), std::forward<Args>(args)...);
 		}
 		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
 		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
-		void remove_custom_nonblocking_ui_panel(std::list<ui::Panel>::iterator it);
+		void remove_custom_nonblocking_ui_panel(std::list<UiPanel>::iterator it);
 		/// Removes the custom UI at next step. Can be called from anywhere.
-		void remove_custom_nonblocking_ui_panel_deferred(std::list<ui::Panel>::iterator it);
+		void remove_custom_nonblocking_ui_panel_deferred(std::list<UiPanel>::iterator it);
 
 		/// Displays a UI element as a blocking panel, above the HUD. The UI doesn't block the game loop but consumes all events
 		/// except the time passed event. Mouse movement, button and key presses are not delivered to HUD, other UI
 		/// elements and the game until the display is discarded either by returning or being destroyed.
-		void add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const ui::PanelBlueprint*, std::unique_ptr<ui::PanelBlueprint>> blueprint);
+		void add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
 		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
 		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
 
-		/// Add a UI panel that follows the location of the mouse. The given position of the Panel will be overridden,
+		/// Add a UI panel that follows the location of the mouse. The given position of the UiPanel will be overridden,
 		/// but the size of the panel is preserved.
 		template <typename... Args>
 		void AddMouseHoverUiPanel(Args&&... args) {

@@ -3,7 +3,7 @@
 #include <m2/Game.h>
 #include <m2/M2.h>
 
-using namespace m2::ui;
+using namespace m2;
 
 static widget::TextBlueprint resume_button = {
 		.text = "Resume",
@@ -20,16 +20,16 @@ static widget::TextBlueprint quit_button = {
 			return MakeQuitAction();
 		}
 };
-const PanelBlueprint pause_menu_blueprint = {
+const UiPanelBlueprint pause_menu_blueprint = {
 		.w = 160, .h = 90,
 		.border_width = 0,
 		.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 		.widgets = {
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 75, .y = 42, .w = 10, .h = 6,
 						.variant = resume_button
 				},
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 75, .y = 78, .w = 10, .h = 6,
 						.variant = quit_button
 				}
@@ -68,43 +68,43 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 			return 0.0f;
 		}
 };
-const PanelBlueprint left_hud_blueprint = {
+const UiPanelBlueprint left_hud_blueprint = {
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 2, .y = 60, .w = 15, .h = 2,
 						.border_width = 0,
 						.variant = hp_label
 				},
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 2, .y = 62, .w = 15, .h = 2,
 						.variant = hp_progress_bar
 				},
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 2, .y = 66, .w = 15, .h = 2,
 						.border_width = 0,
 						.variant = dash_label
 				},
-				WidgetBlueprint{
+				UiWidgetBlueprint{
 						.x = 2, .y = 68, .w = 15, .h = 2,
 						.variant = dash_progress_bar
 				}
 		}
 };
 
-const m2::ui::PanelBlueprint* m2g::Proxy::main_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::main_menu() {
 	return M2G_PROXY.generate_main_menu();
 }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::pause_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::pause_menu() {
 	return &pause_menu_blueprint;
 }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::left_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::left_hud() {
 	return &left_hud_blueprint;
 }
 
-const m2::ui::PanelBlueprint* m2g::Proxy::right_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::right_hud() {
 	return M2G_PROXY.generate_right_hud();
 }

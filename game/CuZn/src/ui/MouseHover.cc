@@ -6,9 +6,8 @@
 #include <m2/Log.h>
 
 using namespace m2;
-using namespace m2::ui;
 
-std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBlueprint(const IndustryLocation loc) {
+std::pair<UiPanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBlueprint(const IndustryLocation loc) {
 	const auto* factory = FindFactoryAtLocation(loc);
 	if (not factory) {
 		throw M2_ERROR("Factory not found");
@@ -19,12 +18,12 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 	const auto industryTileType = ToIndustryTileOfFactoryCharacter(factory->character());
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
 	return std::make_pair(
-			PanelBlueprint{
+			UiPanelBlueprint{
 				.w = 4, .h = 4,
 				.border_width = 0.001f,
 				.background_color = {0, 0, 0, 255},
 				.widgets = {
-					WidgetBlueprint{
+					UiWidgetBlueprint{
 						.x = 0, .y = 0, .w = 4, .h = 1,
 						.border_width = 0.001f,
 						.background_color = {0, 0, 127, 255},
@@ -33,7 +32,7 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 							.wrapped_font_size_in_units = 0.75f
 						}
 					},
-					WidgetBlueprint{
+					UiWidgetBlueprint{
 						.x = 0, .y = 1, .w = 4, .h = 1,
 						.border_width = 0.0f,
 						.background_color = {0, 0, 0, 255},
@@ -43,7 +42,7 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 							.wrapped_font_size_in_units = 0.75f
 						}
 					},
-					WidgetBlueprint{
+					UiWidgetBlueprint{
 						.x = 0, .y = 2, .w = 4, .h = 1,
 						.border_width = 0.0f,
 						.background_color = {0, 0, 0, 255},
@@ -53,7 +52,7 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 							.wrapped_font_size_in_units = 0.75f
 						}
 					},
-					WidgetBlueprint{
+					UiWidgetBlueprint{
 						.x = 0, .y = 3, .w = 4, .h = 1,
 						.border_width = 0.0f,
 						.background_color = {0, 0, 0, 255},
@@ -68,7 +67,7 @@ std::pair<PanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluepri
 			RectF{0.0f, 0.0f, 0.33f, 0.1270f});
 }
 
-std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBlueprint(const IndustryLocation loc) {
+std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBlueprint(const IndustryLocation loc) {
 	const auto industries = industries_on_location(loc);
 	// There should at most be 2 industries
 	if (industries.empty() || 2 < industries.size()) {
@@ -80,12 +79,12 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 		const auto nextIndustryTileType = PlayerNextIndustryTileOfIndustry(M2_PLAYER.character(), industries[0]);
 		const auto* nextIndustryTile = nextIndustryTileType ? &M2_GAME.GetNamedItem(*nextIndustryTileType) : nullptr;
 		return std::make_pair(
-				PanelBlueprint{
+				UiPanelBlueprint{
 					.w = 4, .h = 7,
 					.border_width = 0.001f,
 					.background_color = {0, 0, 0, 255},
 					.widgets = {
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 0, .w = 4, .h = 1,
 							.border_width = 0.001f,
 							.background_color = {0, 0, 127, 255},
@@ -94,7 +93,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 1, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -107,7 +106,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.color = {127, 127, 127}
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 2, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -119,7 +118,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 3, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -131,7 +130,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 4, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -143,7 +142,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 5, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -155,7 +154,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 6, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -178,13 +177,13 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 		const auto* nextIndustryTile1 = nextIndustryTileType1 ? &M2_GAME.GetNamedItem(*nextIndustryTileType1) : nullptr;
 		const auto* nextIndustryTile2 = nextIndustryTileType2 ? &M2_GAME.GetNamedItem(*nextIndustryTileType2) : nullptr;
 		return std::make_pair(
-				PanelBlueprint{
+				UiPanelBlueprint{
 					.w = 4, .h = 14,
 					.border_width = 0.001f,
 					.background_color = {0, 0, 0, 255},
 					.widgets = {
 						// First tile
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 0, .w = 4, .h = 1,
 							.border_width = 0.001f,
 							.background_color = {0, 0, 127, 255},
@@ -193,7 +192,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 1, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -206,7 +205,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.color = {127, 127, 127}
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 2, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -218,7 +217,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 3, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -230,7 +229,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 4, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -242,7 +241,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 5, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -254,7 +253,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 6, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -267,7 +266,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 							}
 						},
 						// Second tile
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 7, .w = 4, .h = 1,
 							.border_width = 0.001f,
 							.background_color = {0, 0, 127, 255},
@@ -276,7 +275,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 8, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -289,7 +288,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.color = {127, 127, 127}
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 9, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -301,7 +300,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 10, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -313,7 +312,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 11, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -325,7 +324,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 12, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -337,7 +336,7 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 								.wrapped_font_size_in_units = 0.75f
 							}
 						},
-						WidgetBlueprint{
+						UiWidgetBlueprint{
 							.x = 0, .y = 13, .w = 4, .h = 1,
 							.border_width = 0.0f,
 							.background_color = {0, 0, 0, 255},
@@ -355,12 +354,12 @@ std::pair<PanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluepri
 	}
 }
 
-std::pair<PanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(MerchantLocation) {
+std::pair<UiPanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(MerchantLocation) {
 	// TODO
 	return {};
 }
 
-std::pair<PanelBlueprint,RectF> GenerateConnectionMouseHoverUiBlueprint(Connection) {
+std::pair<UiPanelBlueprint,RectF> GenerateConnectionMouseHoverUiBlueprint(Connection) {
 	// TODO
 	return {};
 }

@@ -2,7 +2,7 @@
 #include "Controls.h"
 #include "Group.h"
 #include "Object.h"
-#include "ui/PanelBlueprint.h"
+#include "ui/UiPanelBlueprint.h"
 #include "math/Rational.h"
 #include "component/Graphic.h"
 #include "Meta.h"
@@ -69,10 +69,10 @@ namespace m2 {
 		void load_resources() {}
 
 		// UI
-		const m2::ui::PanelBlueprint* main_menu() { return nullptr; }
-		const m2::ui::PanelBlueprint* pause_menu() { return nullptr; }
-		const m2::ui::PanelBlueprint* left_hud() { return nullptr; }
-		const m2::ui::PanelBlueprint* right_hud() { return nullptr; }
+		const m2::UiPanelBlueprint* main_menu() { return nullptr; }
+		const m2::UiPanelBlueprint* pause_menu() { return nullptr; }
+		const m2::UiPanelBlueprint* left_hud() { return nullptr; }
+		const m2::UiPanelBlueprint* right_hud() { return nullptr; }
 
 		// Controls
 		m2::Key scancode_to_key(SDL_Scancode scancode);

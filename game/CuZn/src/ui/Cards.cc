@@ -6,8 +6,7 @@
 #include <m2/ui/widget/Text.h>
 
 using namespace m2;
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 
 namespace {
 	RGB cards_window_card_color(Card card) {
@@ -68,14 +67,14 @@ m2::RectF cards_panel_ratio() {
 		0.4f};
 }
 
-PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2, bool blocking_window) {
-	auto panel_blueprint = PanelBlueprint{
+UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2, bool blocking_window) {
+	auto panel_blueprint = UiPanelBlueprint{
 		.w = 24,
 		.h = 24,
 		.border_width = 0.001f,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 1,
 				.w = 22,
@@ -83,7 +82,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = msg }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.name = "CardSelection",
 				.x = 1,
 				.y = 4,
@@ -98,7 +97,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 21,
 				.w = blocking_window ? 10 : 22,
@@ -106,7 +105,7 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 				.variant = TextBlueprint{
 					.text = blocking_window ? "OK" : "Close",
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](const Text& self) -> Action {
+					.on_action = [](const Text& self) -> UiAction {
 						// Find the other blueprint
 						if (auto* card_selection = self.parent().find_first_widget_by_name<TextSelection>("CardSelection")) {
 							if (auto selections = card_selection->selections(); not selections.empty()) {
@@ -123,14 +122,14 @@ PanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType e
 
 	if (blocking_window) {
 		panel_blueprint.widgets.emplace_back(
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 21,
 				.w = 10,
 				.h = 2,
 				.variant = TextBlueprint{
 					.text = "Cancel",
-					.on_action = [](MAYBE const Text& self) -> Action {
+					.on_action = [](MAYBE const Text& self) -> UiAction {
 						// Return empty return
 						return MakeReturnAction();
 					}
@@ -146,7 +145,7 @@ std::optional<m2g::pb::ItemType> ask_for_card_selection(m2g::pb::ItemType exclud
 	LOG_INFO("Asking player to select a card");
 	std::optional<m2g::pb::ItemType> selected_card;
 	auto background = M2_GAME.DrawGameToTexture(M2_LEVEL.camera()->position);
-	Panel::create_and_run_blocking(std::make_unique<PanelBlueprint>(
+	UiPanel::create_and_run_blocking(std::make_unique<UiPanelBlueprint>(
 		generate_cards_window("Select card to discard", exclude_card_1, exclude_card_2, true)),
 			cards_window_ratio(), std::move(background))
 		.IfVoidReturn([&]() {

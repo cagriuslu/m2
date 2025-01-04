@@ -2,10 +2,9 @@
 #include <m2/sdl/TextTexture.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 
-CheckboxWithText::CheckboxWithText(Panel* parent, const WidgetBlueprint* blueprint)
+CheckboxWithText::CheckboxWithText(UiPanel* parent, const UiWidgetBlueprint* blueprint)
     : AbstractButton(parent, blueprint), _state(std::get<CheckboxWithTextBlueprint>(blueprint->variant).initial_state) {
 	_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size,
 		std::get<CheckboxWithTextBlueprint>(blueprint->variant).text));

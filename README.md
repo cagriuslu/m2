@@ -6,7 +6,7 @@
 
 * Windows, macOS, and Linux support
 * 2D physics in single player mode (top down or side scroller)
-* Turn based multi-player (LAN) mode (Action multi-player mode is planned)
+* Turn based multi-player (LAN) mode (UiAction multi-player mode is planned)
 * Multi-layer sprite-based graphics (4 background, 1 foreground layers)
 * Optional dynamic lightning
 * Optional, 3D-like sprite "figurine" graphics (ex. Paper Mario)
@@ -38,7 +38,7 @@ The repo contains some game prototypes to showcase the capabilities of the engin
 
 ### Included Games
 
-* RPG - Simulates a 2D Action RPG game
+* RPG - Simulates a 2D UiAction RPG game
 * MINE - Simulates a side-scroller game
 * CuZn - Simulates a multi-player turn based top-down board game
 

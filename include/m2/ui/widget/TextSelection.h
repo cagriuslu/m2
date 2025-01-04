@@ -1,9 +1,9 @@
 #pragma once
 #include <m2/sdl/TextTexture.h>
-#include <m2/ui/Widget.h>
+#include <m2/ui/UiWidget.h>
 
-namespace m2::ui::widget {
-	class TextSelection : public Widget {
+namespace m2::widget {
+	class TextSelection : public UiWidget {
 		struct Option {
 			TextSelectionBlueprint::Option blueprint_option;
 			bool is_selected{};
@@ -20,9 +20,9 @@ namespace m2::ui::widget {
 		int _top_index{};
 
 	public:
-		explicit TextSelection(Panel* parent, const WidgetBlueprint* blueprint);
-		Action on_update() override;
-		Action on_event(Events& events) override;
+		explicit TextSelection(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		UiAction on_update() override;
+		UiAction on_event(Events& events) override;
 		void on_draw() override;
 
 		// Accessors
@@ -40,7 +40,7 @@ namespace m2::ui::widget {
 
 	private:
 		[[nodiscard]] const TextSelectionBlueprint& text_list_selection_blueprint() const;
-		Action increment_selection();
-		Action decrement_selection();
+		UiAction increment_selection();
+		UiAction decrement_selection();
 	};
 }

@@ -7,7 +7,7 @@
 #include <m2/component/Character.h>
 #include <cuzn/Detail.h>
 #include <m2/Object.h>
-#include <m2/ui/Panel.h>
+#include <m2/ui/UiPanel.h>
 #include <Network.pb.h>
 #include <list>
 #include "subjourneys/POISelectionJourney.h"
@@ -29,7 +29,7 @@ class NetworkJourney : public m2::FsmBase<NetworkJourneyStep, POIOrCancelSignal>
 		m2::Object* reserved_object{};
 	};
 
-	std::optional<std::list<m2::ui::Panel>::iterator> _cancel_button_panel;
+	std::optional<std::list<m2::UiPanel>::iterator> _cancel_button_panel;
 
 	bool _build_double_railroads{};
 	m2g::pb::ItemType _selected_card{};

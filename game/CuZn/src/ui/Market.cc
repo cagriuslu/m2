@@ -3,20 +3,19 @@
 #include <m2/ui/widget/Image.h>
 
 using namespace m2;
-using namespace m2::ui;
-using namespace m2::ui::widget;
+using namespace m2::widget;
 
 m2::RectF market_window_ratio() {
 	return m2::RectF{0.35f, 0.05f, 0.3f, 0.9f};
 }
 
-m2::ui::PanelBlueprint generate_market_window() {
+m2::UiPanelBlueprint generate_market_window() {
 	return {
 		.w = 34,
 		.h = 78,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 1,
 				.w = 32,
@@ -24,7 +23,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "Market Status" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 8,
 				.w = 10,
@@ -32,7 +31,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "Cost" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 12,
 				.y = 8,
 				.w = 10,
@@ -40,7 +39,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "Coal" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 23,
 				.y = 8,
 				.w = 10,
@@ -48,7 +47,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "Iron" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 15,
 				.w = 10,
@@ -56,7 +55,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£8" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 12,
 				.y = 15,
 				.w = 10,
@@ -64,7 +63,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = ImageBlueprint{ .initial_sprite = m2g::pb::COAL_CUBE }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 22,
 				.w = 10,
@@ -72,7 +71,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£7" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 22,
 				.w = 4,
@@ -85,7 +84,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 17,
 				.y = 22,
 				.w = 4,
@@ -98,7 +97,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 29,
 				.w = 10,
@@ -106,7 +105,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£6" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 29,
 				.w = 4,
@@ -119,7 +118,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 17,
 				.y = 29,
 				.w = 4,
@@ -132,7 +131,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 25,
 				.y = 29,
 				.w = 6,
@@ -140,7 +139,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = ImageBlueprint{ .initial_sprite = m2g::pb::IRON_CUBE }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 36,
 				.w = 10,
@@ -148,7 +147,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£5" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 36,
 				.w = 4,
@@ -161,7 +160,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 17,
 				.y = 36,
 				.w = 4,
@@ -174,7 +173,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 24,
 				.y = 36,
 				.w = 4,
@@ -187,7 +186,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 28,
 				.y = 36,
 				.w = 4,
@@ -200,7 +199,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 43,
 				.w = 10,
@@ -208,7 +207,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£4" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 43,
 				.w = 4,
@@ -221,7 +220,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 17,
 				.y = 43,
 				.w = 4,
@@ -234,7 +233,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 24,
 				.y = 43,
 				.w = 4,
@@ -247,7 +246,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 28,
 				.y = 43,
 				.w = 4,
@@ -260,7 +259,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 50,
 				.w = 10,
@@ -268,7 +267,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£3" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 50,
 				.w = 4,
@@ -281,7 +280,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 17,
 				.y = 50,
 				.w = 4,
@@ -294,7 +293,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 24,
 				.y = 50,
 				.w = 4,
@@ -307,7 +306,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 28,
 				.y = 50,
 				.w = 4,
@@ -320,7 +319,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 57,
 				.w = 10,
@@ -328,7 +327,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£2" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 57,
 				.w = 4,
@@ -341,7 +340,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 17,
 				.y = 57,
 				.w = 4,
@@ -354,7 +353,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 24,
 				.y = 57,
 				.w = 4,
@@ -367,7 +366,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 28,
 				.y = 57,
 				.w = 4,
@@ -380,7 +379,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 64,
 				.w = 10,
@@ -388,7 +387,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.border_width = 0,
 				.variant = TextBlueprint{ .text = "£1" }
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 13,
 				.y = 64,
 				.w = 4,
@@ -401,7 +400,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 17,
 				.y = 64,
 				.w = 4,
@@ -414,7 +413,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 24,
 				.y = 64,
 				.w = 4,
@@ -427,7 +426,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 28,
 				.y = 64,
 				.w = 4,
@@ -440,7 +439,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 					}
 				}
 			},
-			WidgetBlueprint{
+			UiWidgetBlueprint{
 				.x = 1,
 				.y = 71,
 				.w = 32,
@@ -448,7 +447,7 @@ m2::ui::PanelBlueprint generate_market_window() {
 				.variant = TextBlueprint{
 					.text = "Dismiss",
 					.kb_shortcut = SDL_SCANCODE_RETURN,
-					.on_action = [](MAYBE const Text& self) -> Action {
+					.on_action = [](MAYBE const Text& self) -> UiAction {
 						return MakeReturnAction();
 					}
 				}

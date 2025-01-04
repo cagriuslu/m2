@@ -4,9 +4,9 @@
 #include <m2/bulk_sheet_editor/Ui.h>
 #include <m2/sdl/Detail.h>
 #include <m2/sheet_editor/Ui.h>
-#include <m2/ui/PanelBlueprint.h>
-#include <m2/ui/Panel.h>
-#include <m2/ui/WidgetBlueprint.h>
+#include <m2/ui/UiPanelBlueprint.h>
+#include <m2/ui/UiPanel.h>
+#include <m2/ui/UiWidgetBlueprint.h>
 #include <m2/ui/widget/CheckboxWithText.h>
 #include <m2/ui/widget/Hidden.h>
 #include <m2/ui/widget/Image.h>
@@ -21,7 +21,7 @@
 #include <regex>
 
 using namespace m2;
-using namespace m2::ui;
+using namespace m2;
 
 namespace {
 	// Filters
@@ -30,7 +30,7 @@ namespace {
 	// Actions
 	constexpr auto draw_widget = [](const auto &w) { w->on_draw(); };
 
-	Action handle_console_command(const std::string &command) {
+	UiAction handle_console_command(const std::string &command) {
 		M2_GAME.console_output.emplace_back(">> " + command);
 
 		if (std::regex_match(command, std::regex{"ledit(\\s.*)?"})) {
@@ -67,7 +67,7 @@ namespace {
 			auto load_result = M2_GAME.LoadSheetEditor();
 			if (load_result) {
 				// Execute main menu the first time the sheet editor is run
-				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::sheet_editor_main_menu);
+				auto main_menu_result = UiPanel::create_and_run_blocking(&m2::sheet_editor_main_menu);
 				return main_menu_result.IsReturn() ? MakeClearStackAction() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
@@ -76,7 +76,7 @@ namespace {
 			auto load_result = M2_GAME.LoadBulkSheetEditor();
 			if (load_result) {
 				// Execute main menu the first time the bulk sheet editor is run
-				auto main_menu_result = Panel::create_and_run_blocking(&m2::ui::bulk_sheet_editor_main_menu);
+				auto main_menu_result = UiPanel::create_and_run_blocking(&m2::bulk_sheet_editor_main_menu);
 				return main_menu_result.IsReturn() ? MakeClearStackAction() : std::move(main_menu_result);
 			}
 			M2_GAME.console_output.emplace_back(load_result.error());
@@ -117,7 +117,7 @@ namespace {
 	}
 }  // namespace
 
-Action Panel::run_blocking() {
+UiAction UiPanel::run_blocking() {
 	LOG_DEBUG("Executing UI");
 
 	// Get a screenshot if background_texture is not already provided
@@ -205,16 +205,16 @@ Action Panel::run_blocking() {
 	}
 }
 
-Panel::Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
 		sdl::TextureUniquePtr background_texture)
 		: _is_valid(true), _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
-	if (std::holds_alternative<const PanelBlueprint*>(static_or_unique_blueprint)) {
+	if (std::holds_alternative<const UiPanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
-		blueprint = std::get<const PanelBlueprint*>(static_or_unique_blueprint);
+		blueprint = std::get<const UiPanelBlueprint*>(static_or_unique_blueprint);
 	} else {
 		// Unique blueprint
-		_owned_blueprint = std::move(std::get<std::unique_ptr<PanelBlueprint>>(static_or_unique_blueprint));
+		_owned_blueprint = std::move(std::get<std::unique_ptr<UiPanelBlueprint>>(static_or_unique_blueprint));
 		blueprint = _owned_blueprint.get(); // Point `blueprint` to owned_blueprint
 	}
 
@@ -258,19 +258,19 @@ Panel::Panel(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>
 	IF(blueprint->on_create)(*this);
 }
 
-Action Panel::create_and_run_blocking(std::variant<const PanelBlueprint*, std::unique_ptr<PanelBlueprint>> static_or_unique_blueprint,
+UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
 		sdl::TextureUniquePtr background_texture) {
 	// Check if there are other blocking UI panels
 	if (M2_GAME.ui_begin_ticks) {
 		// Execute panel without keeping time
-		Panel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
+		UiPanel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
 		return panel.run_blocking();
 	} else {
 		// Save begin ticks for later and other nested UIs
 		M2_GAME.ui_begin_ticks = sdl::get_ticks();
 		// Execute panel
-		Panel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
+		UiPanel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
 		auto action = panel.run_blocking();
 		// Add pause ticks
 		M2_GAME.AddPauseTicks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
@@ -280,7 +280,7 @@ Action Panel::create_and_run_blocking(std::variant<const PanelBlueprint*, std::u
 	}
 }
 
-Panel::~Panel() {
+UiPanel::~UiPanel() {
 	clear_focus();
 
 	if (_prev_text_input_state) {
@@ -290,7 +290,7 @@ Panel::~Panel() {
 	}
 }
 
-RectI Panel::rect_px() const {
+RectI UiPanel::rect_px() const {
 	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	return RectI{
 		iround(F(game_and_hud_dims.x) + _relation_to_game_and_hud_dims.x * F(game_and_hud_dims.w)),
@@ -299,7 +299,7 @@ RectI Panel::rect_px() const {
 		iround(_relation_to_game_and_hud_dims.h * F(game_and_hud_dims.h))};
 }
 
-void Panel::SetTopLeftPosition(const VecI& newPosition) {
+void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
 	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	_relation_to_game_and_hud_dims = RectF{
 			F(newPosition.x) / F(game_and_hud_dims.w),
@@ -309,22 +309,22 @@ void Panel::SetTopLeftPosition(const VecI& newPosition) {
 	update_positions();
 }
 
-void Panel::update_positions() {
+void UiPanel::update_positions() {
 	auto rect = rect_px();
 	for (const auto &widget_state : widgets) {
-		auto widget_rect = calculate_widget_rect(
+		auto widget_rect = CalculateWidgetRect(
 		    rect, blueprint->w, blueprint->h, widget_state->blueprint->x, widget_state->blueprint->y,
 		    widget_state->blueprint->w, widget_state->blueprint->h);
 		widget_state->set_rect(widget_rect);
 	}
 }
 
-Action Panel::handle_events(Events& events, bool is_panning) {
-	// Return if Panel not enabled
+UiAction UiPanel::handle_events(Events& events, bool is_panning) {
+	// Return if UiPanel not enabled
 	if (not _is_valid || not enabled) {
 		return MakeContinueAction();
 	}
-	// Return if Panel is set to ignore events
+	// Return if UiPanel is set to ignore events
 	if (blueprint->ignore_events) {
 		return MakeContinueAction();
 	}
@@ -363,8 +363,8 @@ Action Panel::handle_events(Events& events, bool is_panning) {
 	return MakeContinueAction();
 }
 
-Action Panel::update_contents(float delta_time_s) {
-	// Return if Panel not enabled
+UiAction UiPanel::update_contents(float delta_time_s) {
+	// Return if UiPanel not enabled
 	if (not _is_valid || not enabled) {
 		return MakeContinueAction();
 	}
@@ -395,19 +395,19 @@ Action Panel::update_contents(float delta_time_s) {
 	return MakeContinueAction();
 }
 
-void Panel::draw() {
-	// Return if Panel not enabled
+void UiPanel::draw() {
+	// Return if UiPanel not enabled
 	if (not _is_valid || not enabled) {
 		return;
 	}
 
 	auto rect = rect_px();
-	Widget::draw_rectangle(rect, blueprint->background_color);
+	UiWidget::draw_rectangle(rect, blueprint->background_color);
 	std::ranges::for_each(widgets | std::views::filter(is_widget_enabled), draw_widget);
-	Widget::draw_border(rect, vertical_border_width_px(), horizontal_border_width_px());
+	UiWidget::draw_border(rect, vertical_border_width_px(), horizontal_border_width_px());
 }
 
-int Panel::vertical_border_width_px() const {
+int UiPanel::vertical_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
@@ -417,7 +417,7 @@ int Panel::vertical_border_width_px() const {
 	}
 }
 
-int Panel::horizontal_border_width_px() const {
+int UiPanel::horizontal_border_width_px() const {
 	if (blueprint->border_width == 0.0f) {
 		return 0;
 	} else {
@@ -427,10 +427,10 @@ int Panel::horizontal_border_width_px() const {
 	}
 }
 
-std::unique_ptr<Widget> Panel::create_widget_state(const WidgetBlueprint &widget_blueprint) {
-	std::unique_ptr<Widget> state;
+std::unique_ptr<UiWidget> UiPanel::create_widget_state(const UiWidgetBlueprint &widget_blueprint) {
+	std::unique_ptr<UiWidget> state;
 
-	using namespace m2::ui::widget;
+	using namespace m2::widget;
 	if (std::holds_alternative<HiddenBlueprint>(widget_blueprint.variant)) {
 		state = std::make_unique<Hidden>(this, &widget_blueprint);
 	} else if (std::holds_alternative<TextBlueprint>(widget_blueprint.variant)) {
@@ -456,7 +456,7 @@ std::unique_ptr<Widget> Panel::create_widget_state(const WidgetBlueprint &widget
 	return state;
 }
 
-void Panel::set_widget_focus_state(Widget &w, const bool state) {
+void UiPanel::set_widget_focus_state(UiWidget &w, const bool state) {
 	if (state) {
 		if (!w.focused) {
 			// Clear existing focus
@@ -474,13 +474,13 @@ void Panel::set_widget_focus_state(Widget &w, const bool state) {
 	}
 }
 
-void Panel::clear_focus() {
+void UiPanel::clear_focus() {
 	// Check if there's an already focused widget
 	std::ranges::for_each(
 	    widgets | std::views::filter(is_widget_focused), [&](const auto &it) { set_widget_focus_state(*it, false); });
 }
 
-RectI ui::calculate_widget_rect(
+RectI m2::CalculateWidgetRect(
     const RectI &root_rect_px, const unsigned root_w, const unsigned root_h, const int child_x, const int child_y,
     const unsigned child_w, const unsigned child_h) {
 	const auto pixels_per_unit_w = static_cast<float>(root_rect_px.w) / static_cast<float>(root_w);
@@ -492,12 +492,12 @@ RectI ui::calculate_widget_rect(
 	    static_cast<int>(roundf(static_cast<float>(child_h) * pixels_per_unit_h))};
 }
 
-m2::ui::Widget *m2::ui::find_text_widget(Panel &state, const std::string &text) {
+m2::UiWidget *m2::FindTextWidget(UiPanel &state, const std::string &text) {
 	const auto it = std::ranges::find_if(
 	    state.widgets,
 	    // Predicate
 	    [=](const auto *blueprint) {
-		    const auto *text_variant = std::get_if<ui::widget::TextBlueprint>(&blueprint->variant);
+		    const auto *text_variant = std::get_if<widget::TextBlueprint>(&blueprint->variant);
 		    // If widget is Text and the button is labelled correctly
 		    return text_variant && text_variant->text == text;
 	    },
@@ -520,61 +520,61 @@ widget::TextBlueprint command_output_variant() {
 	    }};
 }
 
-PanelBlueprint m2::ui::console_ui = {
+UiPanelBlueprint m2::console_ui = {
     .w = 1,
     .h = 25,
     .border_width = 0,
     .background_color = {0, 0, 0, 255},
     .widgets = {
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 0, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<23>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 1, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<22>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 2, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<21>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 3, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<20>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 4, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<19>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 5, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<18>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 6, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<17>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 7, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<16>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 8, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<15>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 9, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<14>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 10, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<13>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 11, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<12>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 12, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<11>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 13, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<10>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 14, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<9>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 15, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<8>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 16, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<7>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 17, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<6>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 18, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<5>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 19, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<4>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 20, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<3>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 21, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<2>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 22, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<1>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .x = 0, .y = 23, .w = 1, .h = 1, .border_width = 0, .variant = command_output_variant<0>()},
-        WidgetBlueprint{
+        UiWidgetBlueprint{
             .initially_focused = true,
             .x = 0,
             .y = 24,
@@ -583,17 +583,17 @@ PanelBlueprint m2::ui::console_ui = {
             .background_color = SDL_Color{27, 27, 27, 255},
             .variant = widget::TextInputBlueprint{
                 .initial_text = "", // May be overriden with console_command on startup
-                .on_action = [](const widget::TextInput &self) -> std::pair<Action, std::optional<std::string>> {
+                .on_action = [](const widget::TextInput &self) -> std::pair<UiAction, std::optional<std::string>> {
 	                const auto &command = self.text_input();
 	                return std::make_pair(handle_console_command(command), std::string{});
                 }}}}};
 
-const PanelBlueprint m2::ui::message_box_ui = {
+const UiPanelBlueprint m2::message_box_ui = {
     .w = 1,
     .h = 1,
     .border_width = 0,
 	.ignore_events = true,
-    .widgets = {WidgetBlueprint{
+    .widgets = {UiWidgetBlueprint{
         .initially_enabled = false,
         .x = 0,
         .y = 0,

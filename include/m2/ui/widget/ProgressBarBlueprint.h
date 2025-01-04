@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <functional>
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	// Forward declaration
 	class ProgressBar;
 

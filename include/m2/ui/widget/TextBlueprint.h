@@ -4,11 +4,11 @@
 #include <string>
 #include <variant>
 
-#include "../Action.h"
+#include "../UiAction.h"
 #include "../Detail.h"
 #include "../../video/Color.h"
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	// Forward declaration
 	class Text;
 
@@ -28,7 +28,7 @@ namespace m2::ui::widget {
 		SDL_Scancode kb_shortcut{};
 
 		std::function<void(Text& self)> on_create{};
-		std::function<Action(Text& self)> on_update{};
-		std::function<Action(const Text& self)> on_action{};
+		std::function<UiAction(Text& self)> on_update{};
+		std::function<UiAction(const Text& self)> on_action{};
 	};
-}  // namespace m2::ui::widget
+}  // namespace m2::widget

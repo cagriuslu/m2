@@ -2,13 +2,13 @@
 #include <m2/video/Sprite.h>
 #include "AbstractButton.h"
 
-namespace m2::ui::widget {
+namespace m2::widget {
 	class Image : public AbstractButton {
 		m2g::pb::SpriteType _spriteType{};
 
 	public:
-		explicit Image(Panel* parent, const WidgetBlueprint* blueprint);
-		Action on_update() override;
+		explicit Image(UiPanel* parent, const UiWidgetBlueprint* blueprint);
+		UiAction on_update() override;
 		void on_draw() override;
 
 		void set_sprite(m2g::pb::SpriteType);
