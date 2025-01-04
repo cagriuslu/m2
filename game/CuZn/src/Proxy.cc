@@ -484,7 +484,7 @@ m2::void_expected m2g::Proxy::init_server_update_fg_object(m2::Object& obj, cons
 		}
 		case pb::ROAD: {
 			if (auto connection = connection_on_position(obj.position)) {
-				return init_road(obj, *connection);
+				return InitRoad(obj, *connection);
 			} else {
 				return m2::make_unexpected("Unable to find connection from object location");
 			}

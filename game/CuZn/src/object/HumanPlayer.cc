@@ -212,9 +212,9 @@ int PlayerLinkCount(const m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
 					  | std::views::transform(m2::to_character_base)
 					  | std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-					  | std::views::filter(is_road_character);
+					  | std::views::filter(IsRoadCharacter);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
-		return acc + link_count_of_road_character(road_char);
+		return acc + LinkCountOfRoadCharacter(road_char);
 	});
 }
 int PlayerVictoryPoints(const m2::Character& player) {
@@ -327,8 +327,8 @@ std::set<m2g::pb::ItemType> PlayerCitiesInNetwork(const m2::Character& player) {
 	auto roads_view = M2_LEVEL.characters
 		| std::views::transform(m2::to_character_base)
 		| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-		| std::views::filter(is_road_character)
-		| std::views::transform(to_city_cards_of_road_character);
+		| std::views::filter(IsRoadCharacter)
+		| std::views::transform(ToCitiesOfRoadCharacter);
 	for (const auto& road_cities : roads_view) {
 		std::ranges::copy(road_cities, std::inserter(cities, cities.begin()));
 	}

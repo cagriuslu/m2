@@ -34,7 +34,7 @@ namespace {
 		}
 		// Filter out already built locations
 		for (auto it = connections_in_network.begin(); it != connections_in_network.end(); ) {
-			if (find_road_at_location(*it)) {
+			if (FindRoadAtLocation(*it)) {
 				it = connections_in_network.erase(it);
 			} else {
 				++it;
@@ -159,13 +159,13 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 		if (unspecified_resource->connection == _selected_connection_1 && not _decoy_road_1) {
 			// Create the first decoy
 			auto it = m2::create_object(position_of_connection(_selected_connection_1), m2g::pb::ROAD, M2_PLAYER.id());
-			init_road(*it, _selected_connection_1);
+			InitRoad(*it, _selected_connection_1);
 			_decoy_road_1 = it->id();
 		}
 		if (unspecified_resource->connection == _selected_connection_2 && not _decoy_road_2) {
 			// Create the second decoy
 			auto it = m2::create_object(position_of_connection(_selected_connection_2), m2g::pb::ROAD, M2_PLAYER.id());
-			init_road(*it, _selected_connection_2);
+			InitRoad(*it, _selected_connection_2);
 			_decoy_road_2 = it->id();
 		}
 
@@ -437,10 +437,10 @@ std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::C
 
 	// Create the road on the map
 	auto it = m2::create_object(position_of_connection(network_action.connection_1()), m2g::pb::ROAD, player.owner_id());
-	init_road(*it, network_action.connection_1());
+	InitRoad(*it, network_action.connection_1());
 	if (network_action.connection_2()) {
 		auto it_2 = m2::create_object(position_of_connection(network_action.connection_2()), m2g::pb::ROAD, player.owner_id());
-		init_road(*it_2, network_action.connection_2());
+		InitRoad(*it_2, network_action.connection_2());
 	}
 
 	FlipExhaustedFactories();

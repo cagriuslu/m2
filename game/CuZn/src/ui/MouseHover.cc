@@ -1,6 +1,8 @@
 #include <cuzn/ui/MouseHover.h>
 #include <cuzn/object/Factory.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <cuzn/object/Merchant.h>
+#include <cuzn/object/Road.h>
 #include <cuzn/ui/Tiles.h>
 #include <m2/Game.h>
 #include <m2/Log.h>
@@ -354,12 +356,84 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 	}
 }
 
-std::pair<UiPanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(MerchantLocation) {
-	// TODO
-	return {};
+std::pair<UiPanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(const MerchantLocation loc) {
+	const auto* merchant = find_merchant_at_location(loc);
+	const std::string merchantBenefit = merchant->character().has_resource(m2g::pb::BEER_BARREL_COUNT)
+			? "Available" : "Exhausted";
+	const auto merchantBenefitBackgroundColor = merchant->character().has_resource(m2g::pb::BEER_BARREL_COUNT)
+			? SDL_Color{0, 0, 0, 255} : SDL_Color{180, 0, 0, 255};
+
+	return std::make_pair(
+			UiPanelBlueprint{
+				.w = 4, .h = 3,
+				.border_width = 0.001f,
+				.background_color = {0, 0, 0, 255},
+				.widgets = {
+					UiWidgetBlueprint{
+						.x = 0, .y = 0, .w = 4, .h = 1,
+						.border_width = 0.001f,
+						.background_color = {0, 0, 127, 255},
+						.variant = widget::TextBlueprint {
+							.text = "Merchant",
+							.wrapped_font_size_in_units = 0.75f
+						}
+					},
+					UiWidgetBlueprint{
+						.x = 0, .y = 1, .w = 4, .h = 1,
+						.border_width = 0.0f,
+						.background_color = {0, 0, 0, 255},
+						.variant = widget::TextBlueprint {
+							.text = "Total Link Count: 2",
+							.horizontal_alignment = TextHorizontalAlignment::LEFT,
+							.wrapped_font_size_in_units = 0.75f
+						}
+					},
+
+					UiWidgetBlueprint{
+						.x = 0, .y = 2, .w = 4, .h = 1,
+						.border_width = 0.0f,
+						.background_color = merchantBenefitBackgroundColor,
+						.variant = widget::TextBlueprint {
+							.text = "Merchant Benefit: " + merchantBenefit,
+							.horizontal_alignment = TextHorizontalAlignment::LEFT,
+							.wrapped_font_size_in_units = 0.75f
+						}
+					}
+				}
+			},
+			RectF{0.0f, 0.0f, 0.33f, 0.09525f});
 }
 
-std::pair<UiPanelBlueprint,RectF> GenerateConnectionMouseHoverUiBlueprint(Connection) {
-	// TODO
-	return {};
+std::pair<UiPanelBlueprint,RectF> GenerateConnectionMouseHoverUiBlueprint(Connection loc) {
+	const auto* road = FindRoadAtLocation(loc);
+	return std::make_pair(
+			UiPanelBlueprint{
+				.w = 4, .h = 2,
+				.border_width = 0.001f,
+				.background_color = {0, 0, 0, 255},
+				.widgets = {
+					UiWidgetBlueprint{
+						.x = 0, .y = 0, .w = 4, .h = 1,
+						.border_width = 0.001f,
+						.background_color = {0, 0, 127, 255},
+						.variant = widget::TextBlueprint {
+							.text = "Connection",
+							.wrapped_font_size_in_units = 0.75f
+						}
+					},
+					UiWidgetBlueprint{
+						.x = 0, .y = 1, .w = 4, .h = 1,
+						.border_width = 0.0f,
+						.background_color = {0, 0, 0, 255},
+						.variant = widget::TextBlueprint {
+							.text = road
+									? "Current Link Count: " + ToString(LinkCountOfRoadCharacter(road->character()))
+									: "Estimated Link Count: " + ToString(LinkCountOfConnectionLocation(loc)),
+							.horizontal_alignment = TextHorizontalAlignment::LEFT,
+							.wrapped_font_size_in_units = 0.75f
+						}
+					}
+				}
+			},
+			RectF{0.0f, 0.0f, 0.33f, 0.0635f});
 }

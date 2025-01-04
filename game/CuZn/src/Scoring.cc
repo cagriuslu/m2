@@ -18,7 +18,7 @@ void score_links_and_remove_roads() {
 				LOG_INFO("Player link count", linkCount);
 				player.add_resource(pb::VICTORY_POINTS, m2::F(linkCount));
 			});
-	remove_all_roads();
+	RemoveAllRoads();
 }
 
 void score_sold_factories_and_remove_obsolete() {
