@@ -284,14 +284,14 @@ void m2::Level::remove_custom_nonblocking_ui_panel_deferred(std::list<UiPanel>::
 	TRACE_FN();
 	M2_DEFER(([this,it]() { _customNonblockingUiPanels.erase(it); }));
 }
-void m2::Level::ShowBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
-	_blockingUiPanel.emplace(std::move(blueprint), position_ratio);
+void m2::Level::ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint) {
+	_semiBlockingUiPanel.emplace(std::move(blueprint), position_ratio);
 }
-void m2::Level::DismissBlockingUiPanel() {
-	_blockingUiPanel.reset();
+void m2::Level::DismissSemiBlockingUiPanel() {
+	_semiBlockingUiPanel.reset();
 }
-void m2::Level::DismissBlockingUiPanelDeferred() {
-	M2_DEFER([this]() { this->DismissBlockingUiPanel(); });
+void m2::Level::DismissSemiBlockingUiPanelDeferred() {
+	M2_DEFER([this]() { this->DismissSemiBlockingUiPanel(); });
 }
 void m2::Level::display_message(const std::string& msg) {
 	message = msg;

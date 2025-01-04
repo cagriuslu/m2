@@ -60,7 +60,7 @@ UiAction AbstractButton::trigger_action() {
 			[&](const TextBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Text&>(*this)) : MakeContinueAction(); },
 			[&](const ImageBlueprint& v) { return v.on_action ? v.on_action(dynamic_cast<const Image&>(*this)) : MakeContinueAction(); },
 			[&](const CheckboxWithTextBlueprint& v) {
-				// Overloading handle_events for CheckboxWithText is too much work, do it here
+				// Overloading HandleEvents for CheckboxWithText is too much work, do it here
 				auto& checkbox_with_text_state = dynamic_cast<CheckboxWithText&>(*this);
 				checkbox_with_text_state._state = !checkbox_with_text_state._state;
 				return v.on_action ? v.on_action(checkbox_with_text_state) : MakeContinueAction();

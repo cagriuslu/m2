@@ -38,7 +38,7 @@ namespace m2 {
 		RectI _background_boundary;
 		/// If there's a blocking panel, the events are cleared after they are delivered to it. Other panels are still
 		/// updated and the world is still simulated.
-		std::optional<UiPanel> _blockingUiPanel;
+		std::optional<UiPanel> _semiBlockingUiPanel;
 		std::list<UiPanel> _customNonblockingUiPanels;
 		/// If activated, the panel floats next to the cursor. This panel doesn't receive events, but is updated.
 		std::optional<UiPanel> _mouseHoverUiPanel;
@@ -148,12 +148,12 @@ namespace m2 {
 		/// Removes the custom UI at next step. Can be called from anywhere.
 		void remove_custom_nonblocking_ui_panel_deferred(std::list<UiPanel>::iterator it);
 
-		/// Displays a UI element as a blocking panel, above the HUD. The UI doesn't block the game loop but consumes all events
-		/// except the time passed event. Mouse movement, button and key presses are not delivered to HUD, other UI
-		/// elements and the game until the display is discarded either by returning or being destroyed.
-		void ShowBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
-		void DismissBlockingUiPanel(); // Should not be called from the custom UI itself
-		void DismissBlockingUiPanelDeferred(); // Can be called from the custom UI itself
+		/// Displays a semi-blocking UI panel above all other UI panels. The UI is blocking in the sense that mouse
+		/// movement, button, and key presses are not delivered to other panels or game objects. The UI is semi-blocking
+		/// in the sense that other panels are still updated and the game loop keeps running.
+		void ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
+		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
+		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
 
 		/// Add a UI panel that follows the location of the mouse. The given position of the UiPanel will be overridden,
 		/// but the size of the panel is preserved.

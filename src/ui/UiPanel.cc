@@ -174,7 +174,7 @@ UiAction UiPanel::run_blocking() {
 			}
 
 			// Handle events
-			if (auto return_value = handle_events(events); not return_value.IsContinue()) {
+			if (auto return_value = HandleEvents(events); not return_value.IsContinue()) {
 				return return_value;
 			}
 		}
@@ -319,7 +319,7 @@ void UiPanel::update_positions() {
 	}
 }
 
-UiAction UiPanel::handle_events(Events& events, bool is_panning) {
+UiAction UiPanel::HandleEvents(Events& events, bool is_panning) {
 	// Return if UiPanel not enabled
 	if (not _is_valid || not enabled) {
 		return MakeContinueAction();
@@ -334,25 +334,31 @@ UiAction UiPanel::handle_events(Events& events, bool is_panning) {
 		return MakeReturnAction();
 	}
 
+	std::optional<UiAction> action;
+
 	// First, deliver the event to the panel
 	if (blueprint->on_event) {
-		blueprint->on_event(*this, events);
+		action = blueprint->on_event(*this, events);
 	}
-	// Then, deliver the event to the widgets
-	for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
-		if (auto action = widget->on_event(events); action.IsContinue()) {
-			action.IfContinueWithFocusState([&](bool focus_state) {
-				set_widget_focus_state(*widget, focus_state);
-			});
-			continue;
-		} else {
-			return action;
+
+	if (not action || action->IsContinue()) {
+		// Then, deliver the event to the widgets
+		for (auto &widget : widgets | std::views::filter(is_widget_enabled)) {
+			action = widget->on_event(events);
+			action->IfContinueWithFocusState(
+					[&](const bool focus_state) {
+						set_widget_focus_state(*widget, focus_state);
+					});
+
+			if (not action->IsContinue()) {
+				break;
+			}
 		}
 	}
 
 	// Clear mouse events if the mouse is inside the UI element so that it isn't delivered to game objects. This
 	// behavior can partially be overwritten with Game::enable_panning().
-	auto rect = rect_px();
+	const auto rect = rect_px();
 	events.clear_mouse_button_presses(rect);
 	events.clear_mouse_button_releases(rect);
 	events.clear_mouse_wheel_scrolls(rect);
@@ -360,7 +366,10 @@ UiAction UiPanel::handle_events(Events& events, bool is_panning) {
 		events.clear_mouse_button_down(rect);
 	}
 
-	return MakeContinueAction();
+	if (not action) {
+		return MakeContinueAction();
+	}
+	return std::move(*action);
 }
 
 UiAction UiPanel::update_contents(float delta_time_s) {

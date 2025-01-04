@@ -17,7 +17,9 @@ namespace m2 {
 		SDL_Color background_color{};
 
 		bool cancellable{}; // TODO if there are multiple UI states, it's hard to tell which one needs to be cancelled. Handle cancellations with a hidden button
-		bool ignore_events{false}; // If true, no events are delivered to the UiPanel
+		/// If set to true, no events will be delivered to the UiPanel. This is usually used for semi-transparent
+		/// message and notification boxes.
+		bool ignore_events{false};
 		float timeout_s{}; // If set, the UiPanel is destroyed once the timeout runs out
 
 		std::function<void(UiPanel&)> on_create{};

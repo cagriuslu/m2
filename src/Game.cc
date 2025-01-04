@@ -383,7 +383,7 @@ void m2::Game::HandleQuitEvent() {
 }
 
 void m2::Game::HandleWindowResizeEvent() {
-	if (const auto window_resize = events.pop_window_resize(); window_resize) {
+	if (events.pop_window_resize()) {
 		OnWindowResize();
 	}
 }
@@ -418,32 +418,39 @@ void m2::Game::HandleMenuEvent() {
 }
 
 void m2::Game::HandleHudEvents() {
-	if (_level->_blockingUiPanel) {
-		_level->_blockingUiPanel->handle_events(events, _level->is_panning())
-			.IfAnyReturn([this]() {
-				// If the blocking panel returned, remove the state
-				_level->_blockingUiPanel.reset();
-			});
-		// TODO handle quit
-		// If there's a blocking UI panel, no events will be delivered to rest of the UI states and the game world
+	if (_level->_semiBlockingUiPanel) {
+		_level->_semiBlockingUiPanel->HandleEvents(events, _level->is_panning())
+				.IfQuit([this]() {
+					quit = true;
+				})
+				.IfAnyReturn([this]() {
+					// If the blocking panel returned, remove the state
+					_level->_semiBlockingUiPanel.reset();
+				});
+
+		// After semi-blocking UI, events are cleared to prevent the game objects from receiving it.
 		events.clear();
-		// handle_events of others are executed regardless, because there may be timing related actions
+		// Handling of events of other UI panels are also skipped.
+	} else {
+		// The order of event handling is the reverse of the drawing order
+		for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
+			panel.HandleEvents(events, _level->is_panning())
+					.IfQuit([this]() {
+						quit = true;
+					})
+					.IfAnyReturn([&panel]() {
+						// If UI returned, reset the panel. We cannot delete it, the iterator is held by the client,
+						// but we can replace it with a dummy object.
+						panel.~UiPanel();
+						new (&panel) UiPanel();
+						// TODO returned object is lost, maybe we can store it inside UiPanel
+					});
+		}
+		IF(_level->message_box_ui_panel)->HandleEvents(events, _level->is_panning());
+		IF(_level->left_hud_ui_panel)->HandleEvents(events, _level->is_panning());
+		IF(_level->right_hud_ui_panel)->HandleEvents(events, _level->is_panning());
 	}
 
-	// The order of event handling is the reverse of the drawing order
-	for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
-		panel.handle_events(events, _level->is_panning())
-			.IfAnyReturn([&panel]() {
-				// If UI returned, reset the panel. We cannot delete it, the iterator is held by the client,
-				// but we can replace it with a dummy object.
-				panel.~UiPanel(); new (&panel) UiPanel();
-				// TODO returned object is lost, maybe we can store it inside UiPanel
-			});
-		// TODO handle quit
-	}
-	IF(_level->message_box_ui_panel)->handle_events(events, _level->is_panning());
-	IF(_level->left_hud_ui_panel)->handle_events(events, _level->is_panning());
-	IF(_level->right_hud_ui_panel)->handle_events(events, _level->is_panning());
 	// Mouse hover UI panel doesn't receive events, but based on the mouse position, it may be moved
 	IF(_level->_mouseHoverUiPanel)->SetTopLeftPosition(_level->CalculateMouseHoverUiPanelTopLeftPosition());
 }
@@ -650,7 +657,7 @@ void m2::Game::UpdateHudContents() {
 			});
 		// TODO handle quit
 	}
-	IF(_level->_blockingUiPanel)->update_contents(_delta_time_s);
+	IF(_level->_semiBlockingUiPanel)->update_contents(_delta_time_s);
 	IF(_level->_mouseHoverUiPanel)->update_contents(_delta_time_s);
 }
 
@@ -753,7 +760,7 @@ void m2::Game::DrawHud() {
 		panel.draw();
 	}
 	IF(_level->_mouseHoverUiPanel)->draw();
-	IF(_level->_blockingUiPanel)->draw();
+	IF(_level->_semiBlockingUiPanel)->draw();
 }
 
 void m2::Game::DrawEnvelopes() const {
@@ -782,7 +789,7 @@ void m2::Game::OnWindowResize() {
 		for (auto &panel : _level->_customNonblockingUiPanels) {
 			panel.update_positions();
 		}
-		IF (_level->_blockingUiPanel)->update_positions();
+		IF (_level->_semiBlockingUiPanel)->update_positions();
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}

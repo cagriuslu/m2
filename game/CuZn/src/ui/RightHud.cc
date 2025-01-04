@@ -125,7 +125,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
 				.on_action = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ShowBlockingUiPanel(tiles_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_tiles_window("Tiles")));
+					M2_LEVEL.ShowSemiBlockingUiPanel(tiles_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_tiles_window("Tiles")));
 					return MakeContinueAction();
 				}
 			}
@@ -140,7 +140,7 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
 				.wrapped_font_size_in_units = 1.75f,
 				.on_action = [](MAYBE const Text& self) -> UiAction {
-					M2_LEVEL.ShowBlockingUiPanel(market_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_market_window()));
+					M2_LEVEL.ShowSemiBlockingUiPanel(market_window_ratio(), std::make_unique<UiPanelBlueprint>(generate_market_window()));
 					return MakeContinueAction();
 				}
 			}
