@@ -2,6 +2,7 @@
 
 #include <m2/M2.h>
 #include <memory>
+#include <variant>
 
 namespace m2 {
 	// UiAction types

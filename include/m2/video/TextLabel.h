@@ -3,6 +3,7 @@
 #include <m2/containers/Cache.h>
 #include <m2/math/VecF.h>
 #include <SDL2/SDL_ttf.h>
+#include <Sprite.pb.h>
 
 namespace m2 {
 	// Utilities for drawing text labels

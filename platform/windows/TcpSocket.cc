@@ -1,5 +1,4 @@
 #include <m2/network/TcpSocket.h>
-#include <m2/Log.h>
 #include "PlatformSpecificTcpSocketData.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>

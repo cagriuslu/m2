@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 
 inline int ClampIncomePoints(const int ip) { return std::clamp(ip, -10, 89); }
 inline int ClampIncomeLevel(const int il) { return std::clamp(il, -10, 30); }

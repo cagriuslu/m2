@@ -1,6 +1,7 @@
 #pragma once
 #include <m2/sdl/Surface.h>
 #include <m2/sdl/Texture.h>
+#include <Sprite.pb.h>
 
 namespace m2 {
 	class SpriteSheet final {

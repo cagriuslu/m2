@@ -5,6 +5,7 @@
 #include <m2/box2d/Body.h>
 #include <m2/sdl/TextTexture.h>
 #include <m2/protobuf/Detail.h>
+#include <m2g_ObjectType.pb.h>
 
 namespace m2 {
 	class Sprite final {
