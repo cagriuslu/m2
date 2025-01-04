@@ -127,9 +127,9 @@ int main(const int argc, char **argv) {
 		M2_GAME.FlipBuffers();
 		++gfx_count;
 
-		if (since_last_fps.measure(); 5000 < since_last_fps.lap()) {
-			since_last_fps.subtract_from_lap(5000);
-			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 5.0f);
+		if (since_last_fps.measure(); 10000 < since_last_fps.lap()) {
+			since_last_fps.subtract_from_lap(10000);
+			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 10.0f);
 			phy_count = 0;
 			gfx_count = 0;
 		}
