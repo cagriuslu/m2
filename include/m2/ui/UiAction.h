@@ -83,8 +83,8 @@ namespace m2 {
 			}
 			return *this;
 		}
-		const UiAction& IfAnyReturn(const std::function<void()>& handler) const {
-			if (IsReturn()) { handler(); }
+		const UiAction& IfAnyReturn(const std::function<void(const ReturnBase&)>& handler) const {
+			if (IsReturn()) { handler(*std::get<AnyReturnContainer>(_variant).Get()); }
 			return *this;
 		}
 		const UiAction& IfVoidReturn(const std::function<void()>& handler) const {
@@ -103,6 +103,15 @@ namespace m2 {
 		const UiAction& IfQuit(const std::function<void()>& handler) const {
 			if (IsQuit()) { handler(); }
 			return *this;
+		}
+
+		// Modifiers
+
+		std::optional<AnyReturnContainer> ExtractAnyReturnContainer() {
+			if (IsReturn()) {
+				return std::move(std::get<AnyReturnContainer>(_variant));
+			}
+			return std::nullopt;
 		}
 	};
 

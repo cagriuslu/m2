@@ -423,8 +423,8 @@ void m2::Game::HandleHudEvents() {
 				.IfQuit([this]() {
 					quit = true;
 				})
-				.IfAnyReturn([this]() {
-					// If the blocking panel returned, remove the state
+				.IfAnyReturn([this](const ReturnBase&) {
+					// The return object is discarded. Remove the state.
 					_level->_semiBlockingUiPanel.reset();
 				});
 
@@ -434,21 +434,17 @@ void m2::Game::HandleHudEvents() {
 	} else {
 		// The order of event handling is the reverse of the drawing order
 		for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
-			panel.HandleEvents(events, _level->is_panning())
-					.IfQuit([this]() {
-						quit = true;
-					})
-					.IfAnyReturn([&panel]() {
-						// If UI returned, reset the panel. We cannot delete it, the iterator is held by the client,
-						// but we can replace it with a dummy object.
-						panel.~UiPanel();
-						new (&panel) UiPanel();
-						// TODO returned object is lost, maybe we can store it inside UiPanel
-					});
+			auto action{panel.HandleEvents(events, _level->is_panning())};
+			action.IfQuit([this]() { quit = true; });
+			if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
+				// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
+				// can replace it with a killed object that can hold the AnyReturnContainer instead.
+				panel.KillWithReturnValue(std::move(*anyReturnContainer));
+			}
 		}
 		IF(_level->message_box_ui_panel)->HandleEvents(events, _level->is_panning());
-		IF(_level->left_hud_ui_panel)->HandleEvents(events, _level->is_panning());
 		IF(_level->right_hud_ui_panel)->HandleEvents(events, _level->is_panning());
+		IF(_level->left_hud_ui_panel)->HandleEvents(events, _level->is_panning());
 	}
 
 	// Mouse hover UI panel doesn't receive events, but based on the mouse position, it may be moved
@@ -648,14 +644,13 @@ void m2::Game::UpdateHudContents() {
 	IF(_level->right_hud_ui_panel)->update_contents(_delta_time_s);
 	IF(_level->message_box_ui_panel)->update_contents(_delta_time_s);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
-		panel.update_contents(_delta_time_s)
-			.IfAnyReturn([&panel]() {
-				// If returned, reset the panel. We cannot delete it, the iterator is held by the client,
-				// but we can recreate the object with a dummy version.
-				panel.~UiPanel(); new (&panel) UiPanel();
-				// TODO returned object is lost, maybe we can store it inside UiPanel
-			});
-		// TODO handle quit
+		auto action{panel.update_contents(_delta_time_s)};
+		action.IfQuit([this]() { quit = true; });
+		if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
+			// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
+			// can replace it with a killed object that can hold the AnyReturnContainer instead.
+			panel.KillWithReturnValue(std::move(*anyReturnContainer));
+		}
 	}
 	IF(_level->_semiBlockingUiPanel)->update_contents(_delta_time_s);
 	IF(_level->_mouseHoverUiPanel)->update_contents(_delta_time_s);
@@ -759,8 +754,8 @@ void m2::Game::DrawHud() {
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		panel.draw();
 	}
-	IF(_level->_mouseHoverUiPanel)->draw();
 	IF(_level->_semiBlockingUiPanel)->draw();
+	IF(_level->_mouseHoverUiPanel)->draw();
 }
 
 void m2::Game::DrawEnvelopes() const {
@@ -782,7 +777,6 @@ void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 void m2::Game::OnWindowResize() {
 	_dimensionsManager->OnWindowResize();
 	if (_level) {
-		IF(_level->_mouseHoverUiPanel)->update_positions();
 		IF(_level->left_hud_ui_panel)->update_positions();
 		IF(_level->right_hud_ui_panel)->update_positions();
 		IF(_level->message_box_ui_panel)->update_positions();
@@ -790,6 +784,9 @@ void m2::Game::OnWindowResize() {
 			panel.update_positions();
 		}
 		IF (_level->_semiBlockingUiPanel)->update_positions();
+		IF(_level->_mouseHoverUiPanel)->update_positions();
+
+		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}
@@ -803,6 +800,7 @@ void m2::Game::OnWindowResize() {
 void m2::Game::SetScale(const float scale) {
 	_dimensionsManager->SetScale(scale);
 	if (_level) {
+		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}
@@ -816,6 +814,7 @@ void m2::Game::SetScale(const float scale) {
 void m2::Game::SetGameHeightM(const float heightM) {
 	_dimensionsManager->SetGameHeightM(heightM);
 	if (_level) {
+		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}

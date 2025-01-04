@@ -7,12 +7,20 @@
 namespace m2 {
 	struct UiPanel {
 	private:
-		bool _is_valid{false}; // If default constructed, UiPanel is not a valid panel.
+		/// If this field contains an object, the UiPanel has returned a Return value, but the panel wasn't destroyed
+		/// completely. Instead, the Panel is destroyed, recreated without any content, and the return value is stored
+		/// inside, to be extracted later. HUD UI panels can't be destroyed right away, because the Proxy code may
+		/// contain references to them.
+		std::optional<AnyReturnContainer> _returnValueContainer;
 		bool _prev_text_input_state{};
 		std::unique_ptr<UiPanelBlueprint> _owned_blueprint; // `blueprint` will point here if this object exists
 		RectF _relation_to_game_and_hud_dims;
 		sdl::TextureUniquePtr _background_texture; // TODO if the screen is resized, background looks bad
 		std::optional<float> _timeout_s;
+
+		/// Used by KillWithReturnValue()
+		explicit UiPanel(AnyReturnContainer&& returnValueContainer)
+				: _returnValueContainer(std::move(returnValueContainer)) {}
 
 		// Modifiers
 		UiAction run_blocking();
@@ -21,7 +29,6 @@ namespace m2 {
 		const UiPanelBlueprint* blueprint{};
 		std::vector<std::unique_ptr<UiWidget>> widgets;
 
-		UiPanel() = default;
 		explicit UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
 				sdl::TextureUniquePtr background_texture = {});
@@ -38,12 +45,15 @@ namespace m2 {
 
 		// Accessors
 
-		[[nodiscard]] bool is_valid() const { return _is_valid; }
+		/// Check if the UI panel is already killed
+		[[nodiscard]] bool IsKilled() const;
+		/// Peek the return value contained inside the killed panel
+		[[nodiscard]] const AnyReturnContainer* PeekReturnValueContainer() const;
 		[[nodiscard]] RectI rect_px() const;
 
 		// Modifiers
 
-		void set_timeout(float in_seconds) { _timeout_s = in_seconds; }
+		void KillWithReturnValue(AnyReturnContainer&&);
 		/// Given position must be with respect to GameAndHUD area, which means {0,0} corresponds to top-left point of
 		/// GameAndHud area.
 		void SetTopLeftPosition(const VecI&);

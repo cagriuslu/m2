@@ -101,15 +101,21 @@ const UiPanelBlueprint right_hud_blueprint = {
 				.wrapped_font_size_in_units = 1.75f,
 				.on_action = [](MAYBE const Text& self) -> UiAction {
 					// Check if the panel is still active
-					if (M2G_PROXY.cards_panel && (*M2G_PROXY.cards_panel)->is_valid()) {
-						M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
-						M2G_PROXY.cards_panel.reset();
+					if (M2G_PROXY.cards_panel) {
+						if ((*M2G_PROXY.cards_panel)->IsKilled()) {
+							// Cards panel have been killed
+							M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
+							M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+									std::make_unique<UiPanelBlueprint>(generate_cards_window("Cards")),
+									cards_panel_ratio());
+						} else {
+							M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
+							M2G_PROXY.cards_panel.reset();
+						}
 					} else {
-						// UiPanel is not available, or have been self-destroyed
 						M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-							std::make_unique<UiPanelBlueprint>(generate_cards_window("Cards")),
-							cards_panel_ratio()
-						);
+								std::make_unique<UiPanelBlueprint>(generate_cards_window("Cards")),
+								cards_panel_ratio());
 					}
 					return MakeContinueAction();
 				}

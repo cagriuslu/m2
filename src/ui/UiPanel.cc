@@ -208,7 +208,7 @@ UiAction UiPanel::run_blocking() {
 UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
 		sdl::TextureUniquePtr background_texture)
-		: _is_valid(true), _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
+		: _prev_text_input_state(SDL_IsTextInputActive()), _background_texture(std::move(background_texture)) {
 	if (std::holds_alternative<const UiPanelBlueprint*>(static_or_unique_blueprint)) {
 		// Static blueprint
 		blueprint = std::get<const UiPanelBlueprint*>(static_or_unique_blueprint);
@@ -290,6 +290,12 @@ UiPanel::~UiPanel() {
 	}
 }
 
+bool UiPanel::IsKilled() const {
+	return static_cast<bool>(_returnValueContainer);
+}
+const AnyReturnContainer* UiPanel::PeekReturnValueContainer() const {
+	return IsKilled() ? &*_returnValueContainer : nullptr;
+}
 RectI UiPanel::rect_px() const {
 	const auto& game_and_hud_dims = M2_GAME.Dimensions().GameAndHud();
 	return RectI{
@@ -297,6 +303,13 @@ RectI UiPanel::rect_px() const {
 		iround(F(game_and_hud_dims.y) + _relation_to_game_and_hud_dims.y * F(game_and_hud_dims.h)),
 		iround(_relation_to_game_and_hud_dims.w * F(game_and_hud_dims.w)),
 		iround(_relation_to_game_and_hud_dims.h * F(game_and_hud_dims.h))};
+}
+
+void UiPanel::KillWithReturnValue(AnyReturnContainer&& arc) {
+	// Destruct self
+	this->~UiPanel();
+	// Re-construct self in-place with return value
+	new (this) UiPanel(std::move(arc));
 }
 
 void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
@@ -321,7 +334,7 @@ void UiPanel::update_positions() {
 
 UiAction UiPanel::HandleEvents(Events& events, bool is_panning) {
 	// Return if UiPanel not enabled
-	if (not _is_valid || not enabled) {
+	if (IsKilled() || not enabled) {
 		return MakeContinueAction();
 	}
 	// Return if UiPanel is set to ignore events
@@ -374,7 +387,7 @@ UiAction UiPanel::HandleEvents(Events& events, bool is_panning) {
 
 UiAction UiPanel::update_contents(float delta_time_s) {
 	// Return if UiPanel not enabled
-	if (not _is_valid || not enabled) {
+	if (IsKilled() || not enabled) {
 		return MakeContinueAction();
 	}
 
@@ -405,8 +418,7 @@ UiAction UiPanel::update_contents(float delta_time_s) {
 }
 
 void UiPanel::draw() {
-	// Return if UiPanel not enabled
-	if (not _is_valid || not enabled) {
+	if (IsKilled() || not enabled) {
 		return;
 	}
 
