@@ -418,11 +418,11 @@ void m2::Game::HandleMenuEvent() {
 }
 
 void m2::Game::HandleHudEvents() {
-	if (_level->_customBlockingUiPanel) {
-		_level->_customBlockingUiPanel->handle_events(events, _level->is_panning())
+	if (_level->_blockingUiPanel) {
+		_level->_blockingUiPanel->handle_events(events, _level->is_panning())
 			.IfAnyReturn([this]() {
 				// If the blocking panel returned, remove the state
-				_level->_customBlockingUiPanel.reset();
+				_level->_blockingUiPanel.reset();
 			});
 		// TODO handle quit
 		// If there's a blocking UI panel, no events will be delivered to rest of the UI states and the game world
@@ -650,7 +650,7 @@ void m2::Game::UpdateHudContents() {
 			});
 		// TODO handle quit
 	}
-	IF(_level->_customBlockingUiPanel)->update_contents(_delta_time_s);
+	IF(_level->_blockingUiPanel)->update_contents(_delta_time_s);
 	IF(_level->_mouseHoverUiPanel)->update_contents(_delta_time_s);
 }
 
@@ -753,7 +753,7 @@ void m2::Game::DrawHud() {
 		panel.draw();
 	}
 	IF(_level->_mouseHoverUiPanel)->draw();
-	IF(_level->_customBlockingUiPanel)->draw();
+	IF(_level->_blockingUiPanel)->draw();
 }
 
 void m2::Game::DrawEnvelopes() const {
@@ -782,7 +782,7 @@ void m2::Game::OnWindowResize() {
 		for (auto &panel : _level->_customNonblockingUiPanels) {
 			panel.update_positions();
 		}
-		IF (_level->_customBlockingUiPanel)->update_positions();
+		IF (_level->_blockingUiPanel)->update_positions();
 		for (auto& gfx : _level->graphics) {
 			gfx.textLabelRect = {};
 		}

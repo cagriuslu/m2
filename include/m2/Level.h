@@ -38,7 +38,7 @@ namespace m2 {
 		RectI _background_boundary;
 		/// If there's a blocking panel, the events are cleared after they are delivered to it. Other panels are still
 		/// updated and the world is still simulated.
-		std::optional<UiPanel> _customBlockingUiPanel;
+		std::optional<UiPanel> _blockingUiPanel;
 		std::list<UiPanel> _customNonblockingUiPanels;
 		/// If activated, the panel floats next to the cursor. This panel doesn't receive events, but is updated.
 		std::optional<UiPanel> _mouseHoverUiPanel;
@@ -151,9 +151,9 @@ namespace m2 {
 		/// Displays a UI element as a blocking panel, above the HUD. The UI doesn't block the game loop but consumes all events
 		/// except the time passed event. Mouse movement, button and key presses are not delivered to HUD, other UI
 		/// elements and the game until the display is discarded either by returning or being destroyed.
-		void add_custom_blocking_ui_panel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
-		void remove_custom_blocking_ui_panel(); // Should not be called from the custom UI itself
-		void remove_custom_blocking_ui_panel_deferred(); // Can be called from the custom UI itself
+		void ShowBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
+		void DismissBlockingUiPanel(); // Should not be called from the custom UI itself
+		void DismissBlockingUiPanelDeferred(); // Can be called from the custom UI itself
 
 		/// Add a UI panel that follows the location of the mouse. The given position of the UiPanel will be overridden,
 		/// but the size of the panel is preserved.
@@ -180,6 +180,7 @@ namespace m2 {
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
 		    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
 		    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&));
+
 		/// Returns the position with respect to GameAndHud
 		VecI CalculateMouseHoverUiPanelTopLeftPosition() const;
 
