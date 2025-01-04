@@ -168,6 +168,9 @@ namespace m2 {
 		VecF PixelTo2dWorldM(const VecI& pixel_position);
 		RectF ViewportTo2dWorldRectM();
 		sdl::TextureUniquePtr DrawGameToTexture(m2::VecF camera_position);
+		/// This function can be used to check if the mouse is resting on any UI panels. If not, the mouse must be
+		/// inside the game window.
+		[[nodiscard]] bool IsMouseOnAnyUiPanel() const;
 
 		// Handlers
 

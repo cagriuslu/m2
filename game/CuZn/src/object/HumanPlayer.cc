@@ -111,42 +111,50 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 
 		// Mouse hover UI panel
 		const auto mousePositionInWorld = M2_GAME.MousePositionWorldM();
-		if (const auto industry_location = industry_location_on_position(mousePositionInWorld)) {
-			if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != industry_location) {
-				if (impl.currentMouseHoverLocation) {
-					M2_LEVEL.RemoveMouseHoverUiPanel();
-					impl.currentMouseHoverLocation.reset();
+		if (not M2_GAME.IsMouseOnAnyUiPanel()) {
+			if (const auto industry_location = industry_location_on_position(mousePositionInWorld)) {
+				if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != industry_location) {
+					if (impl.currentMouseHoverLocation) {
+						M2_LEVEL.RemoveMouseHoverUiPanel();
+						impl.currentMouseHoverLocation.reset();
+					}
+					// Look up factory if exists, otherwise the background sprite
+					if (FindFactoryAtLocation(*industry_location)) {
+						auto [bp, rectf] = GenerateBuiltIndustryLocationMouseHoverUiBlueprint(*industry_location);
+						M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
+						impl.currentMouseHoverLocation = *industry_location;
+					} else {
+						auto [bp, rectf] = GenerateEmptyIndustryLocationMouseHoverUiBlueprint(*industry_location);
+						M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
+						impl.currentMouseHoverLocation = *industry_location;
+					}
 				}
-				// Look up factory if exists, otherwise the background sprite
-				if (FindFactoryAtLocation(*industry_location)) {
-					auto [bp, rectf] = GenerateBuiltIndustryLocationMouseHoverUiBlueprint(*industry_location);
+			} else if (const auto merchant_location = merchant_location_on_position(mousePositionInWorld)) {
+				if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != merchant_location) {
+					if (impl.currentMouseHoverLocation) {
+						M2_LEVEL.RemoveMouseHoverUiPanel();
+						impl.currentMouseHoverLocation.reset();
+					}
+					auto [bp, rectf] = GenerateMerchantLocationMouseHoverUiBlueprint(*merchant_location);
 					M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
-					impl.currentMouseHoverLocation = *industry_location;
-				} else {
-					auto [bp, rectf] = GenerateEmptyIndustryLocationMouseHoverUiBlueprint(*industry_location);
+					impl.currentMouseHoverLocation = *merchant_location;
+				}
+			} else if (const auto connection = connection_on_position(mousePositionInWorld)) {
+				if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != connection) {
+					if (impl.currentMouseHoverLocation) {
+						M2_LEVEL.RemoveMouseHoverUiPanel();
+						impl.currentMouseHoverLocation.reset();
+					}
+					auto [bp, rectf] = GenerateConnectionMouseHoverUiBlueprint(*connection);
 					M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
-					impl.currentMouseHoverLocation = *industry_location;
+					impl.currentMouseHoverLocation = *connection;
 				}
-			}
-		} else if (const auto merchant_location = merchant_location_on_position(mousePositionInWorld)) {
-			if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != merchant_location) {
+			} else {
+				// Remove mouse hover UI panel if activated
 				if (impl.currentMouseHoverLocation) {
 					M2_LEVEL.RemoveMouseHoverUiPanel();
 					impl.currentMouseHoverLocation.reset();
 				}
-				auto [bp, rectf] = GenerateMerchantLocationMouseHoverUiBlueprint(*merchant_location);
-				M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
-				impl.currentMouseHoverLocation = *merchant_location;
-			}
-		} else if (const auto connection = connection_on_position(mousePositionInWorld)) {
-			if (not impl.currentMouseHoverLocation || *impl.currentMouseHoverLocation != connection) {
-				if (impl.currentMouseHoverLocation) {
-					M2_LEVEL.RemoveMouseHoverUiPanel();
-					impl.currentMouseHoverLocation.reset();
-				}
-				auto [bp, rectf] = GenerateConnectionMouseHoverUiBlueprint(*connection);
-				M2_LEVEL.AddMouseHoverUiPanel(std::make_unique<m2::UiPanelBlueprint>(bp), rectf);
-				impl.currentMouseHoverLocation = *connection;
 			}
 		} else {
 			// Remove mouse hover UI panel if activated

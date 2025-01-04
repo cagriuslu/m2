@@ -901,6 +901,30 @@ m2::sdl::TextureUniquePtr m2::Game::DrawGameToTexture(m2::VecF camera_position) 
 
 	return render_target;
 }
+bool m2::Game::IsMouseOnAnyUiPanel() const {
+	// If semi-blocking UI panel is action, we act as if the UI panel covers the whole screen
+	if (_level->_semiBlockingUiPanel) {
+		return true;
+	}
+	// Otherwise, check if the mouse is on top of the other UI panels known to Level
+	const auto mouse_position = events.mouse_position();
+	if (_level->left_hud_ui_panel && _level->left_hud_ui_panel->rect_px().contains(mouse_position)) {
+		return true;
+	}
+	if (_level->right_hud_ui_panel && _level->right_hud_ui_panel->rect_px().contains(mouse_position)) {
+		return true;
+	}
+	if (_level->message_box_ui_panel && _level->message_box_ui_panel->rect_px().contains(mouse_position)) {
+		return true;
+	}
+	for (auto &panel : _level->_customNonblockingUiPanels) {
+		if (panel.rect_px().contains(mouse_position)) {
+			return true;
+		}
+	}
+	// Ignore mouse hover panel, as the mouse can't intersect with it.
+	return false;
+}
 
 void m2::Game::RecalculateDirectionalAudio() {
 	if (_level->left_listener || _level->right_listener) {
