@@ -233,13 +233,15 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		auto [card_to_discard, money_spent] = card_to_discard_and_money_spent;
 
 		LOG_DEBUG("Sending action notification to clients");
-		for (int i = 0; i < M2_GAME.ServerThread().client_count(); ++i) {
+		if (turn_holder_index != 0) {
+			// For server, do not send the command, execute it right away
+			display_action_notification(action_notification_command.action_notification());
+		}
+		for (int i = 1; i < M2_GAME.ServerThread().client_count(); ++i) {
 			if (i != turn_holder_index) {
 				M2_GAME.ServerThread().send_server_command(action_notification_command, i);
 			}
 		}
-		// TODO when the game ends, this is sent to the host, but game ending calls post_server_update without network
-		//  delay, so the game result is shown before this action notification
 
 		// Discard card from player
 		if (card_to_discard) {

@@ -43,7 +43,7 @@ namespace m2g {
 		std::list<m2::UiPanel>::iterator _status_bar_panel;
 
 	public:
-		std::optional<std::list<m2::UiPanel>::iterator> custom_hud_panel, cards_panel;
+		std::optional<std::list<m2::UiPanel>::iterator> custom_hud_panel, cards_panel, actionNotificationPanel;
 
 		// Once the level is created, these should not be modified.
 

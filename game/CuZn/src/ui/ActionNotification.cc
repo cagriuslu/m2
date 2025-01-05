@@ -38,9 +38,8 @@ void display_action_notification(const m2g::pb::ServerCommand::ActionNotificatio
 			UiWidgetBlueprint{
 				.x = 5, .y = 50, .w = 50, .h = 5,
 				.variant = widget::TextBlueprint{
-					.text = "OK",
+					.text = "Close",
 					.wrapped_font_size_in_units = 3.0f,
-					.kb_shortcut = SDL_SCANCODE_RETURN,
 					.on_action = [](MAYBE const widget::Text& self) -> UiAction {
 						return MakeReturnAction();
 					}
@@ -49,15 +48,20 @@ void display_action_notification(const m2g::pb::ServerCommand::ActionNotificatio
 		}
 	};
 
+	const auto area = RectF{
+			M2_GAME.Dimensions().HudWidthToGameAndHudWidthRatio() + 0.016875f,
+			0.6f - 0.03f,
+			0.3f,
+			0.4f};
+
 	// Play sound
 	M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_NOTIFICATION_SOUND], m2::AudioManager::ONCE);
 
-	UiPanel::create_and_run_blocking(
-			&blueprint,
-			RectF{
-				M2_GAME.Dimensions().HudWidthToGameAndHudWidthRatio() + 0.016875f,
-				0.6f - 0.03f,
-				0.3f,
-				0.4f})
-		.IfQuit([] { M2_GAME.quit = true; });
+	// Remove panel if already created (or created and killed)
+	if (M2G_PROXY.actionNotificationPanel) {
+		M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.actionNotificationPanel);
+		M2G_PROXY.actionNotificationPanel.reset();
+	}
+	M2G_PROXY.actionNotificationPanel = M2_LEVEL.AddCustomNonblockingUiPanel(
+			std::make_unique<UiPanelBlueprint>(blueprint), area);
 }
