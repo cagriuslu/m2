@@ -276,7 +276,7 @@ void TextSelection::set_unique_selection(int index) {
 	}
 }
 
-void TextSelection::on_resize() {
+void TextSelection::on_resize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {
 	// Invalidate every font texture cache
 	for (auto& option : _options) {
 		option.text_texture_and_destination.reset();

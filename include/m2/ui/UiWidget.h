@@ -34,7 +34,7 @@ namespace m2 {
 		[[nodiscard]] const RectI& rect() const { return _rect_px; }
 
 		// Modifiers
-		void set_rect(const RectI& rect_px) { _rect_px = rect_px; on_resize(); }
+		void set_rect(const RectI& rect_px);
 		virtual UiAction on_event(MAYBE Events& events) { return MakeContinueAction(); }
 		virtual void on_focus_change() {}
 		virtual UiAction on_update() { return MakeContinueAction(); }
@@ -42,7 +42,7 @@ namespace m2 {
 
 	protected:
 		// Virtual functions for children to implement
-		virtual void on_resize() {}
+		virtual void on_resize(MAYBE const RectI& oldRect, MAYBE const RectI& newRect) {}
 
 		// Utilities for child classes to use
 

@@ -3,6 +3,12 @@
 
 using namespace m2;
 
+void UiWidget::set_rect(const RectI& rect_px) {
+	const auto oldRect = _rect_px;
+	_rect_px = rect_px;
+	on_resize(oldRect, _rect_px);
+}
+
 void m2::UiWidget::draw_background_color() const {
 	const auto& color = blueprint->background_color;
 	if (color.r || color.g || color.b || color.a) {

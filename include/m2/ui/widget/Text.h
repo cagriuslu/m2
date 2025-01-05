@@ -24,7 +24,7 @@ namespace m2::widget {
 		void set_color(RGB&& c) { _current_color = c; }
 
 	protected:
-		void on_resize() override { _text_texture_and_destination_cache = std::nullopt; }
+		void on_resize(const RectI& oldRect, const RectI& newRect) override;
 
 	private:
 		[[nodiscard]] const TextBlueprint& text_blueprint() const { return std::get<TextBlueprint>(blueprint->variant); }

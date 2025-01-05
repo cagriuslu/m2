@@ -59,3 +59,14 @@ void Text::set_text(const std::string& text) {
 		_text_texture_and_destination_cache = std::nullopt;
 	}
 }
+
+void Text::on_resize(const RectI& oldRect, const RectI& newRect) {
+	// Check if size has changed
+	if (oldRect.w != newRect.w || oldRect.h != newRect.h) {
+		_text_texture_and_destination_cache = std::nullopt;
+	} else if (_text_texture_and_destination_cache) {
+		// Size is the same, just move the destination
+		_text_texture_and_destination_cache->destinationRect.x += newRect.x - oldRect.x;
+		_text_texture_and_destination_cache->destinationRect.y += newRect.y - oldRect.y;
+	}
+}

@@ -36,7 +36,7 @@ namespace m2::widget {
 		void set_unique_selection(int index);
 
 	protected:
-		void on_resize() override;
+		void on_resize(const RectI& oldRect, const RectI& newRect) override;
 
 	private:
 		[[nodiscard]] const TextSelectionBlueprint& text_list_selection_blueprint() const;
