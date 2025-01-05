@@ -46,7 +46,7 @@ m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gameP
 
 	_game = {hudWidth, 0, gameWidth, gameHeight};
 	_leftHud = {0, 0, hudWidth, hudHeight};
-	_rightHud = {hudWidth + gameWidth, 0, hudWidth, hudHeight};
+	_rightHud = {windowDimensions.x - hudWidth, 0, hudWidth, hudHeight};
 
 	_gameAndHudM = {F(_gameAndHud.w) / F(_gamePpm), F(_gameAndHud.h) / F(_gamePpm)};
 	_gameM = {F(_game.w) / F(_gamePpm), F(_game.h) / F(_gamePpm)};
@@ -106,13 +106,13 @@ void m2::GameDimensionsManager::OnWindowResize() {
 	const int rightEnvelopeSize = windowDimensions.x - gameWidth - 2 * hudWidth - leftEnvelopeSize;
 
 	_topEnvelope = RectI{0, 0, windowDimensions.x, topEnvelopeSize};
-	_bottomEnvelope = RectI{0, topEnvelopeSize + gameHeight, windowDimensions.x, bottomEnvelopeSize};
+	_bottomEnvelope = RectI{0, windowDimensions.y - bottomEnvelopeSize, windowDimensions.x, bottomEnvelopeSize};
 	_leftEnvelope = RectI{0, topEnvelopeSize, leftEnvelopeSize, gameHeight};
-	_rightEnvelope = RectI{leftEnvelopeSize + 2 * hudWidth + gameWidth, topEnvelopeSize, rightEnvelopeSize, gameHeight};
+	_rightEnvelope = RectI{windowDimensions.x - rightEnvelopeSize, topEnvelopeSize, rightEnvelopeSize, gameHeight};
 
-	_gameAndHud = RectI{leftEnvelopeSize, topEnvelopeSize, 2 * hudWidth + gameWidth, gameHeight};
+	_gameAndHud = RectI{leftEnvelopeSize, topEnvelopeSize, windowDimensions.x - leftEnvelopeSize - rightEnvelopeSize, gameHeight};
 	_leftHud = RectI{leftEnvelopeSize, topEnvelopeSize, hudWidth, hudHeight};
-	_rightHud = RectI{leftEnvelopeSize + hudWidth + gameWidth, topEnvelopeSize, hudWidth, hudHeight};
+	_rightHud = RectI{windowDimensions.x - rightEnvelopeSize - hudWidth, topEnvelopeSize, hudWidth, hudHeight};
 	_game = RectI{leftEnvelopeSize + hudWidth, topEnvelopeSize, gameWidth, gameHeight};
 }
 void m2::GameDimensionsManager::SetScale(const float scale) {
