@@ -10,6 +10,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 const UiPanelBlueprint pause_menu_blueprint = {
+	.name = "PauseMenu",
 	.w = 100,
 	.h = 100,
 	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},

@@ -12,6 +12,7 @@ void display_canal_era_result(const m2g::pb::ServerCommand::CanalEraResult& cana
 	LOG_INFO("Displaying CanalEraResult");
 
 	auto blueprint = UiPanelBlueprint{
+		.name = "CanalEraResult",
 		.w = 12, .h = 13,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {

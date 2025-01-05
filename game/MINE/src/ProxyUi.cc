@@ -65,6 +65,7 @@ static TextBlueprint entry_variant_3 = {
 		.on_action = quit_button_action
 };
 const UiPanelBlueprint main_menu_blueprint = {
+	.name = "MainMenu",
 		.w = 100, .h = 100,
 		.background_color = {20, 20, 20, 255},
 		.widgets = {
@@ -97,6 +98,7 @@ static TextBlueprint pause_variant_2 = {
 		.on_action = quit_button_action,
 };
 const UiPanelBlueprint pause_menu_blueprint = {
+	.name = "PauseMenu",
 		.w = 100, .h = 100,
 		.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
 		.widgets = {
@@ -112,13 +114,15 @@ const UiPanelBlueprint pause_menu_blueprint = {
 };
 
 const UiPanelBlueprint left_hud_blueprint = {
-		.w = 19, .h = 72,
-		.widgets = {}
+	.name = "LeftHud",
+	.w = 19, .h = 72,
+	.widgets = {}
 };
 
 const UiPanelBlueprint right_hud_blueprint = {
-		.w = 19, .h = 72,
-		.widgets = {}
+	.name = "RightHud",
+	.w = 19, .h = 72,
+	.widgets = {}
 };
 
 const m2::UiPanelBlueprint* m2g::Proxy::main_menu() {

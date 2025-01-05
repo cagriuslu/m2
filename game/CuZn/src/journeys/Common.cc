@@ -8,6 +8,7 @@ using namespace m2g::pb;
 
 namespace {
 	const m2::UiPanelBlueprint journey_cancel_button{
+		.name = "JourneyCancelButton",
 		.border_width = 0,
 		.widgets = {
 			UiWidgetBlueprint{

@@ -118,7 +118,12 @@ namespace {
 }  // namespace
 
 UiAction UiPanel::run_blocking() {
-	LOG_DEBUG("Executing UI");
+	LOG_DEBUG("Running blocking UI", blueprint->name);
+
+	if (M2_GAME.IsMultiPlayer() && not M2_GAME.IsOurTurn()) {
+		// Running a blocking UI in this case could lead to client commands being blocked from processing
+		LOG_WARN("Running blocking UI panel during a multiplayer game while it's not our turn");
+	}
 
 	// Get a screenshot if background_texture is not already provided
 	if (not _background_texture) {
@@ -217,6 +222,8 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 		_owned_blueprint = std::move(std::get<std::unique_ptr<UiPanelBlueprint>>(static_or_unique_blueprint));
 		blueprint = _owned_blueprint.get(); // Point `blueprint` to owned_blueprint
 	}
+
+	LOG_DEBUG("Initializing UI", blueprint->name);
 
 	if (std::holds_alternative<std::monostate>(fullscreen_or_pixel_rect_or_relation_to_game_and_hud)) {
 		// Fullscreen
@@ -542,6 +549,7 @@ widget::TextBlueprint command_output_variant() {
 }
 
 UiPanelBlueprint m2::console_ui = {
+	.name = "Console",
     .w = 1,
     .h = 25,
     .border_width = 0,
@@ -610,6 +618,7 @@ UiPanelBlueprint m2::console_ui = {
                 }}}}};
 
 const UiPanelBlueprint m2::message_box_ui = {
+	.name = "MessageBox",
     .w = 1,
     .h = 1,
     .border_width = 0,

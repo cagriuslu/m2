@@ -4,6 +4,7 @@ using namespace m2;
 
 UiPanelBlueprint generate_notification_panel_blueprint(const std::string& msg) {
 	return UiPanelBlueprint{
+		.name = "NotificationPanel",
 		.w = 1, .h = 1,
 		.border_width = 0,
 		.ignore_events = true,

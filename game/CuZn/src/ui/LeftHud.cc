@@ -107,6 +107,7 @@ namespace {
 }
 
 const UiPanelBlueprint left_hud_blueprint = {
+	.name = "LeftHud",
 	.w = 19,
 	.h = 72,
 	.border_width = 0,

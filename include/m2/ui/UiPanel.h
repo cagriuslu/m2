@@ -23,15 +23,19 @@ namespace m2 {
 				: _returnValueContainer(std::move(returnValueContainer)) {}
 
 		// Modifiers
+
 		UiAction run_blocking();
+
 	public:
 		bool enabled{true};
 		const UiPanelBlueprint* blueprint{};
 		std::vector<std::unique_ptr<UiWidget>> widgets;
 
+		/// Use this constructor for non-blocking operation
 		explicit UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
 				sdl::TextureUniquePtr background_texture = {});
+		/// Use this constructor for blocking operation
 		static UiAction create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 				const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud = {},
 				sdl::TextureUniquePtr background_texture = {});

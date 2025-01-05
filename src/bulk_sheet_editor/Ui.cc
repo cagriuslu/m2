@@ -16,6 +16,7 @@ const widget::TextBlueprint right_hud_reset_button = {
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint m2::bulk_sheet_editor_right_hud = {
+	.name = "RightHud",
     .w = 19,
     .h = 72,
     .background_color = {0, 0, 0, 255},
@@ -53,6 +54,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_right_hud = {
         UiWidgetBlueprint{.x = 2, .y = 11, .w = 15, .h = 4, .variant = right_hud_reset_button}}};
 
 const UiPanelBlueprint m2::bulk_sheet_editor_left_hud = {
+	.name = "LeftHud",
     .w = 19, .h = 72, .background_color = {0, 0, 0, 255}, .widgets = {}};
 
 const widget::TextSelectionBlueprint resource_selection = {
@@ -74,6 +76,7 @@ const widget::TextSelectionBlueprint resource_selection = {
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint m2::bulk_sheet_editor_main_menu = {
+	.name = "MainMenu",
     .w = 160,
     .h = 90,
     .border_width = 0,
@@ -115,6 +118,7 @@ const UiPanelBlueprint m2::bulk_sheet_editor_main_menu = {
                 }}}}};
 
 const UiPanelBlueprint m2::bulk_sheet_editor_pause_menu = {
+	.name = "PauseMenu",
     .w = 160,
     .h = 90,
     .border_width = 0,

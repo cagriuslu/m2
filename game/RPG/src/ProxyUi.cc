@@ -21,19 +21,20 @@ static widget::TextBlueprint quit_button = {
 		}
 };
 const UiPanelBlueprint pause_menu_blueprint = {
-		.w = 160, .h = 90,
-		.border_width = 0,
-		.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
-		.widgets = {
-				UiWidgetBlueprint{
-						.x = 75, .y = 42, .w = 10, .h = 6,
-						.variant = resume_button
-				},
-				UiWidgetBlueprint{
-						.x = 75, .y = 78, .w = 10, .h = 6,
-						.variant = quit_button
-				}
+	.name = "PauseMenu",
+	.w = 160, .h = 90,
+	.border_width = 0,
+	.background_color = {.r = 20, .g = 20, .b = 20, .a = 255},
+	.widgets = {
+		UiWidgetBlueprint{
+			.x = 75, .y = 42, .w = 10, .h = 6,
+			.variant = resume_button
+		},
+		UiWidgetBlueprint{
+			.x = 75, .y = 78, .w = 10, .h = 6,
+			.variant = quit_button
 		}
+	}
 };
 
 static widget::TextBlueprint hp_label = {
@@ -69,6 +70,7 @@ static widget::ProgressBarBlueprint dash_progress_bar = {
 		}
 };
 const UiPanelBlueprint left_hud_blueprint = {
+		.name = "LeftHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {

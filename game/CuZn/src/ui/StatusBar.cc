@@ -18,6 +18,7 @@ UiPanelBlueprint generate_status_bar_blueprint(int player_count) {
 
 	// Add player names
 	auto bp = UiPanelBlueprint{
+		.name = "StatusBar",
 		.w = 70, .h = 8,
 		.border_width = 0.0f,
 		.on_event = [=](const UiPanel& panel, const Events& events) -> UiAction {

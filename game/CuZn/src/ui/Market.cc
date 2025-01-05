@@ -11,6 +11,7 @@ m2::RectF market_window_ratio() {
 
 m2::UiPanelBlueprint generate_market_window() {
 	return {
+		.name = "MarketPanel",
 		.w = 34,
 		.h = 78,
 		.background_color = {0, 0, 0, 255},

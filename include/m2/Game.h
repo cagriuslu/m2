@@ -34,6 +34,8 @@
 #define M2_PLAYER (*M2_LEVEL.player())
 
 namespace m2 {
+	// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
+	// This is important for the server thread to not linger too much.
 	using ServerThreads = std::pair<network::ServerThread, network::HostClientThread>;
 	using BotAndIndexThread = std::pair<network::BotClientThread,int>;
 
@@ -45,8 +47,6 @@ namespace m2 {
 		mutable std::optional<VecF> _mouse_position_world_m;
 		mutable std::optional<VecF> _screen_center_to_mouse_position_m;  // Doesn't mean much in 2.5D mode
 
-		// Client server comes after server thread, thus during shutdown, it'll be killed before the ServerThread.
-		// This is important for the server thread to not linger too much.
 		std::variant<std::monostate, ServerThreads, network::RealClientThread> _multi_player_threads;
 		std::list<BotAndIndexThread> _bot_threads; // thread,receiver_index pairs (receiver_index is initially -1)
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
@@ -123,6 +123,7 @@ namespace m2 {
 		~Game();
 
 		int32_t Hash() const { return ihash(_proxy.game_identifier); }
+		bool IsMultiPlayer() const { return not std::holds_alternative<std::monostate>(_multi_player_threads); }
 		/// For server
 		void_expected HostGame(mplayer::Type type, unsigned max_connection_count);
 		/// For client

@@ -58,6 +58,7 @@ static TextBlueprint ready_button = {
 };
 
 static const UiPanelBlueprint client_lobby = {
+	.name = "ClientLobby",
 	.w = 160,
 	.h = 90,
 	.border_width = 0,
@@ -95,6 +96,7 @@ static const UiPanelBlueprint client_lobby = {
 };
 
 const UiPanelBlueprint ip_port_form = {
+	.name = "IpPortForm",
 	.w = 160,
 	.h = 90,
 	.border_width = 0,

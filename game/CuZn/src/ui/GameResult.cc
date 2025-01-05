@@ -13,6 +13,7 @@ void display_game_result() {
 
 	// Lookup the status from the game status
 	auto blueprint = UiPanelBlueprint{
+		.name = "GameResult",
 		.w = 12, .h = 13,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {

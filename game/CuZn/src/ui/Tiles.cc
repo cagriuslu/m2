@@ -45,6 +45,7 @@ RectF tiles_window_ratio() {
 
 UiPanelBlueprint generate_tiles_window(const std::string& msg, m2g::pb::ItemType exclude_tile) {
 	return UiPanelBlueprint{
+		.name = "TilesWindow",
 		.w = 61,
 		.h = 26,
 		.background_color = {0, 0, 0, 255},

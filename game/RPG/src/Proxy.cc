@@ -107,6 +107,7 @@ void m2g::Proxy::save_progress() const {
 
 const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 	_main_menu = m2::UiPanelBlueprint{
+		.name = "MainMenu",
 	    .w = 160, .h = 90,
 	    .border_width = 0,
 	    .background_color = SDL_Color{20, 20, 20, 255}
@@ -162,6 +163,7 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_main_menu() {
 
 const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 	_right_hud = m2::UiPanelBlueprint{
+		.name = "RightHud",
 	    .w = 19, .h = 72,
 	    .background_color = {0, 0, 0, 255},
 		.widgets = {}
@@ -206,6 +208,7 @@ void m2g::Proxy::set_ammo_display_state(bool enabled) {
 
 const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {
 	_you_died_menu = m2::UiPanelBlueprint{
+		.name = "YouDiedPanel",
 	    .w = 160, .h = 90,
 	    .border_width = 0,
 	    .background_color = SDL_Color{127, 0, 0, 127}

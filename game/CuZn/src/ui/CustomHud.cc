@@ -18,6 +18,7 @@ UiPanelBlueprint generate_custom_hud_blueprint(const int player_count) {
 
 	// Add player names
 	auto bp = UiPanelBlueprint{
+		.name = "CustomHud",
 		.w = 70,
 		.h = 20,
 		.background_color = {0, 0, 0, 255},

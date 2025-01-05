@@ -12,6 +12,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 const UiPanelBlueprint main_menu_blueprint = {
+	.name = "MainMenu",
 	.w = 160,
 	.h = 90,
 	.border_width = 0,

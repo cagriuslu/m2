@@ -58,6 +58,7 @@ const widget::TextBlueprint pixel_editor_left_hud_save_button = {
 		}
 };
 const UiPanelBlueprint m2::pixel_editor_left_hud = {
+	.name = "LeftHud",
 		.w = 19, .h = 72,
 		.widgets = {
 				UiWidgetBlueprint{
@@ -152,6 +153,7 @@ const widget::IntegerInputBlueprint pixel_editor_right_hud_alpha_selection = {
 		}
 };
 const UiPanelBlueprint m2::pixel_editor_right_hud = {
+	.name = "RightHud",
 		.w = 19, .h = 72,
 		.widgets = {
 				UiWidgetBlueprint{

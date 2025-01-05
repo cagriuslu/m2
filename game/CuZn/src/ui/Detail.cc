@@ -14,6 +14,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 	LOG_INFO("Asking player to select an industry...");
 
 	auto blueprint = UiPanelBlueprint{
+		.name = "IndustrySelection",
 		.w = 60, .h = 40,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -63,6 +64,7 @@ std::optional<m2g::pb::ItemType> ask_for_industry_selection(m2g::pb::ItemType in
 
 bool ask_for_confirmation(const std::string& question1, const std::string& question2, const std::string& accept_text, const std::string& decline_text) {
 	auto blueprint = UiPanelBlueprint{
+		.name = "Confirmation",
 		.w = 60, .h = 40,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -114,6 +116,7 @@ bool ask_for_confirmation(const std::string& question1, const std::string& quest
 
 std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& question, const std::string& accept_text, const std::string& decline_text) {
 	auto blueprint = UiPanelBlueprint{
+		.name = "ConfirmationWithCancellation",
 		.w = 80, .h = 45,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -171,6 +174,7 @@ std::optional<bool> ask_for_confirmation_with_cancellation(const std::string& qu
 
 bool ask_for_confirmation_bottom(const std::string& question, const std::string& accept_text, const std::string& decline_text, m2::sdl::TextureUniquePtr background_texture) {
 	auto blueprint = UiPanelBlueprint{
+		.name = "ConfirmationOnBottom",
 		.w = 44, .h = 12,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {

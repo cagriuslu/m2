@@ -69,6 +69,7 @@ m2::RectF cards_panel_ratio() {
 
 UiPanelBlueprint generate_cards_window(const std::string& msg, m2g::pb::ItemType exclude_card_1, m2g::pb::ItemType exclude_card_2, bool blocking_window) {
 	auto panel_blueprint = UiPanelBlueprint{
+		.name = "CardsPanel",
 		.w = 24,
 		.h = 24,
 		.border_width = 0.001f,

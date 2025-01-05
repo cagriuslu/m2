@@ -42,6 +42,7 @@ static TextBlueprint client_count = {
 };
 
 const UiPanelBlueprint server_lobby = {
+	.name = "ServerLobby",
 	.w = 160,
 	.h = 90,
 	.border_width = 0,

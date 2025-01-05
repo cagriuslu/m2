@@ -15,6 +15,7 @@ using namespace m2g;
 using namespace m2g::pb;
 
 const UiPanelBlueprint right_hud_blueprint = {
+	.name = "RightHud",
 	.w = 19,
 	.h = 72,
 	.border_width = 0,

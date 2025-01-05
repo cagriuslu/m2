@@ -9,6 +9,8 @@ namespace m2 {
 	struct UiPanel;
 
 	struct UiPanelBlueprint {
+		/// Name of the panel used for searching and logging
+		std::string name;
 		int w{1}, h{1}; // unitless
 
 		// Unitless border width. If non-zero, the drawn border is at least 1 pixel. Border is drawn *inside* the Rect

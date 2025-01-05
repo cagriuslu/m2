@@ -12,6 +12,7 @@ void display_action_notification(const m2g::pb::ServerCommand::ActionNotificatio
 	LOG_INFO("Displaying action notification", action_notification.player_index(), action_notification.notification());
 
 	auto blueprint = UiPanelBlueprint{
+		.name = "ActionNotification",
 		.w = 60, .h = 60,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {

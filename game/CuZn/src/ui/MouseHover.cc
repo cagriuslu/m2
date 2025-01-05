@@ -21,6 +21,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateBuiltIndustryLocationMouseHoverUiBluep
 	const auto& industryTile = M2_GAME.GetNamedItem(industryTileType);
 	return std::make_pair(
 			UiPanelBlueprint{
+				.name = "BuiltIndustryLocationHover",
 				.w = 4, .h = 4,
 				.border_width = 0.001f,
 				.background_color = {0, 0, 0, 255},
@@ -82,6 +83,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 		const auto* nextIndustryTile = nextIndustryTileType ? &M2_GAME.GetNamedItem(*nextIndustryTileType) : nullptr;
 		return std::make_pair(
 				UiPanelBlueprint{
+					.name = "EmptyIndustryLocationHover",
 					.w = 4, .h = 7,
 					.border_width = 0.001f,
 					.background_color = {0, 0, 0, 255},
@@ -180,6 +182,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateEmptyIndustryLocationMouseHoverUiBluep
 		const auto* nextIndustryTile2 = nextIndustryTileType2 ? &M2_GAME.GetNamedItem(*nextIndustryTileType2) : nullptr;
 		return std::make_pair(
 				UiPanelBlueprint{
+					.name = "EmptyIndustryLocationHover2",
 					.w = 4, .h = 14,
 					.border_width = 0.001f,
 					.background_color = {0, 0, 0, 255},
@@ -365,6 +368,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateMerchantLocationMouseHoverUiBlueprint(
 
 	return std::make_pair(
 			UiPanelBlueprint{
+				.name = "MerchantLocationHover",
 				.w = 4, .h = 3,
 				.border_width = 0.001f,
 				.background_color = {0, 0, 0, 255},
@@ -408,6 +412,7 @@ std::pair<UiPanelBlueprint,RectF> GenerateConnectionMouseHoverUiBlueprint(Connec
 	const auto* road = FindRoadAtLocation(loc);
 	return std::make_pair(
 			UiPanelBlueprint{
+				.name = "ConnectionHover",
 				.w = 4, .h = 2,
 				.border_width = 0.001f,
 				.background_color = {0, 0, 0, 255},

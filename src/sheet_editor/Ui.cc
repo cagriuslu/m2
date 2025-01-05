@@ -58,6 +58,7 @@ const widget::TextBlueprint foreground_companion_mode_title = {
 		.text = "FComp"
 };
 UiPanelBlueprint sheet_editor_foreground_companion_mode_right_hud = {
+	.name = "ForegroundCompanionModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -85,6 +86,7 @@ const widget::TextBlueprint rect_mode_title = {
 		.text = "Rect"
 };
 UiPanelBlueprint sheet_editor_rect_mode_right_hud = {
+	.name = "RectModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -112,6 +114,7 @@ const widget::TextBlueprint background_collider_mode_title = {
 		.text = "BColl"
 };
 UiPanelBlueprint sheet_editor_background_collider_mode_right_hud = {
+	.name = "BackgroundColliderModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -135,6 +138,7 @@ const widget::TextBlueprint foreground_collider_mode_title = {
 		.text = "FColl"
 };
 UiPanelBlueprint sheet_editor_foreground_collider_mode_right_hud = {
+	.name = "ForegroundColliderModeRightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -155,6 +159,7 @@ UiPanelBlueprint sheet_editor_foreground_collider_mode_right_hud = {
 };
 
 const UiPanelBlueprint m2::sheet_editor_right_hud = {
+	.name = "RightHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {}
@@ -214,6 +219,7 @@ const widget::TextBlueprint left_hud_coordinates = {
 		}
 };
 const UiPanelBlueprint m2::sheet_editor_left_hud = {
+	.name = "LeftHud",
 		.w = 19, .h = 72,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
@@ -280,6 +286,7 @@ const widget::TextSelectionBlueprint sprite_selection = {
 		}
 };
 const UiPanelBlueprint m2::sheet_editor_main_menu = {
+	.name = "MainMenu",
 		.w = 160, .h = 90,
 		.border_width = 0,
 		.background_color = {0, 0, 0, 255},

@@ -30,6 +30,7 @@ const widget::ImageSelectionBlueprint paint_mode_image_selection = {
 	    return MakeContinueAction();
     }};
 UiPanelBlueprint paint_mode_right_hud = {
+	.name = "PaintModeRightHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -41,6 +42,7 @@ UiPanelBlueprint paint_mode_right_hud = {
 
 const widget::TextBlueprint erase_mode_title = {.text = "ERASE"};
 const UiPanelBlueprint erase_mode_right_hud = {
+	.name = "EraseModeRightHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -69,6 +71,7 @@ const widget::IntegerInputBlueprint place_mode_right_hud_group_instance_selectio
 	    return MakeContinueAction();
     }};
 UiPanelBlueprint place_mode_right_hud = {
+	.name = "PlaceModeRightHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -95,6 +98,7 @@ UiPanelBlueprint place_mode_right_hud = {
 
 const widget::TextBlueprint remove_mode_title = {.text = "REMOVE"};
 const UiPanelBlueprint remove_mode_right_hud = {
+	.name = "RemoveModeRightHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -112,6 +116,7 @@ const widget::TextSelectionBlueprint pick_mode_right_hud_ground_selection = {
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint pick_mode_right_hud = {
+	.name = "PickModeRightHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -159,6 +164,7 @@ const widget::TextBlueprint select_mode_right_hud_remove_button = {
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint m2::level_editor::fill_dialog = {
+	.name = "FillDialog",
     .w = 160,
     .h = 90,
     .background_color = {0, 0, 0, 255},
@@ -203,6 +209,7 @@ const widget::TextBlueprint select_mode_right_hud_fill_button = {
     }
 };
 const UiPanelBlueprint select_mode_right_hud = {
+	.name = "SelectModeRightHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -246,6 +253,7 @@ const widget::TextSelectionBlueprint shift_mode_right_hud_shift_direction_select
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint shift_mode_right_hud = {
+	.name = "ShiftModeRightHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -350,6 +358,7 @@ const widget::TextBlueprint left_hud_coordinates = {
 	    return MakeContinueAction();
     }};
 const UiPanelBlueprint level_editor::left_hud = {
+	.name = "LeftHud",
     .w = 19,
     .h = 72,
     .background_color = {50, 50, 50, 255},
@@ -411,6 +420,7 @@ const UiPanelBlueprint level_editor::left_hud = {
         UiWidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width = 0, .variant = left_hud_coordinates}}};
 
 const UiPanelBlueprint level_editor::right_hud = {
+	.name = "RightHud",
     .w = 19, .h = 72, .background_color = {50, 50, 50, 255}, .widgets = {}};
 
 const widget::TextBlueprint save_button = {
@@ -423,6 +433,7 @@ const widget::TextBlueprint quit_button = {
 	    return MakeQuitAction();
     }};
 const UiPanelBlueprint level_editor::menu = {
+	.name = "MainMenu",
     .w = 160,
     .h = 90,
     .border_width = 0,
