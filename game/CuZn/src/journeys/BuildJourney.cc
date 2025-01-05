@@ -290,7 +290,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 					if (ask_for_confirmation_bottom("Buy " + m2::ToString(remaining_unspecified_coal_count) + " coal from market for £" + m2::ToString(cost_of_buying) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
 						// Specify resource sources
-						std::replace(_resource_sources.begin(), _resource_sources.end(),
+						std::ranges::replace(_resource_sources,
 							std::make_pair(COAL_CUBE_COUNT, NO_SPRITE), std::make_pair(COAL_CUBE_COUNT, merchant_location));
 						// Re-enter resource selection
 						return BuildJourneyStep::EXPECT_RESOURCE_SOURCE;

@@ -116,19 +116,20 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleInitialEnterSignal() {
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationEnterSignal() {
-	sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character()), "Pick connection using right mouse button...");
+	sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character()), "Pick a connection using right mouse button...");
 	return std::nullopt;
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationMouseClickSignal(const POIOrCancelSignal& s) {
 	if (s.poi()) {
-		auto selected_location = *s.poi();
+		const auto selected_location = *s.poi();
 		LOG_INFO("Clicked on", m2g::pb::SpriteType_Name(selected_location));
 
 		if (!_selected_connection_1) {
 			_selected_connection_1 = selected_location;
 			// Update buildable connections with the new selection
-			sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1), "Pick connection using right mouse button...");
+			sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1),
+					"Pick the second connection using right mouse button...");
 		} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != selected_location) {
 			_selected_connection_2 = selected_location;
 		}
@@ -140,11 +141,10 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationMouseClickSignal
 											 : NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 		}
 		return std::nullopt;
-	} else {
-		LOG_INFO("Cancelling Network action...");
-		M2_DEFER(m2g::Proxy::main_journey_deleter);
-		return std::nullopt;
 	}
+	LOG_INFO("Cancelling Network action...");
+	M2_DEFER(m2g::Proxy::main_journey_deleter);
+	return std::nullopt;
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationExitSignal() {
@@ -169,20 +169,29 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 			_decoy_road_2 = it->id();
 		}
 
-		auto major_cities = major_cities_from_connection(unspecified_resource->connection);
+		const auto major_cities = major_cities_from_connection(unspecified_resource->connection);
 		if (unspecified_resource->resource_type == COAL_CUBE_COUNT) {
 			if (auto closest_mines_with_coal = find_closest_connected_coal_mines_with_coal(major_cities[0], major_cities[1]); closest_mines_with_coal.empty()) {
 				// No reachable coal mines with coal, check the coal market
-				if (auto coal_market_city = find_connected_coal_market(major_cities[0], major_cities[1])) {
-					// Merchant location
-					auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
+				if (const auto coal_market_city = find_connected_coal_market(major_cities[0], major_cities[1])) {
+					// If no reachable coal has left on the map, all the remaining coal must come from the market
+					const auto remainingUnspecifiedCoalCount = std::ranges::count_if(_resource_sources, [](const auto& resourceSource) {
+						return resourceSource.resource_type == COAL_CUBE_COUNT && resourceSource.source == 0;
+					});
+					// Calculate the cost of buying coal
+					const auto costOfBuying = M2G_PROXY.market_coal_cost(I(remainingUnspecifiedCoalCount));
+					const auto merchant_location = merchant_locations_of_merchant_city(*coal_market_city)[0];
 					// Get a game drawing centered at the merchant location
 					auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.merchant_positions[merchant_location]));
 					LOG_DEBUG("Asking player if they want to buy coal from the market...");
-					if (ask_for_confirmation_bottom("Buy 1 coal from market for £" + m2::ToString(M2G_PROXY.market_coal_cost(1)) + "?", "Yes", "No", std::move(background))) {
+					if (ask_for_confirmation_bottom("Buy " + ToString(remainingUnspecifiedCoalCount) + " coal from market for £" + ToString(costOfBuying) + "?", "Yes", "No", std::move(background))) {
 						LOG_DEBUG("Player agreed");
 						// Specify resource source
-						unspecified_resource->source = merchant_location;
+						std::ranges::for_each(_resource_sources, [merchant_location](auto& resourceSource) {
+							if (resourceSource.resource_type == COAL_CUBE_COUNT && resourceSource.source == 0) {
+								resourceSource.source = merchant_location;
+							}
+						});
 						// Re-enter resource selection
 						return NetworkJourneyStep::EXPECT_RESOURCE_SOURCE;
 					} else {
@@ -220,7 +229,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 				M2_LEVEL.ShowMessage("Beer required but none available in network");
 				M2_DEFER(m2g::Proxy::main_journey_deleter);
 			} else if (beer_sources.size() == 1) {
-				auto industry_location = *beer_sources.begin(); // While networking, beer only comes from industries.
+				const auto industry_location = *beer_sources.begin(); // While networking, beer only comes from industries.
 				// Only one viable beer industry with beer is in the vicinity, confirm with the player.
 				// Get a game drawing centered at the industry location
 				auto background = M2_GAME.DrawGameToTexture(std::get<m2::VecF>(M2G_PROXY.industry_positions[industry_location]));
@@ -246,9 +255,8 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 			throw M2_ERROR("Unexpected resource in resource list");
 		}
 		return std::nullopt;
-	} else {
-		return NetworkJourneyStep::EXPECT_CONFIRMATION;
 	}
+	return NetworkJourneyStep::EXPECT_CONFIRMATION;
 }
 
 std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceMouseClickSignal(const POIOrCancelSignal& s) {
