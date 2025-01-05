@@ -41,7 +41,6 @@ namespace m2g {
 	private:
 		m2::Id _game_state_tracker_id{};
 		std::list<m2::UiPanel>::iterator _status_bar_panel;
-		std::optional<std::list<m2::UiPanel>::iterator> _notification_panel;
 
 	public:
 		std::optional<std::list<m2::UiPanel>::iterator> custom_hud_panel, cards_panel;
@@ -85,8 +84,6 @@ namespace m2g {
 
 		void enable_action_buttons();
 		void disable_action_buttons();
-		void show_notification(const std::string& msg);
-		void remove_notification();
 
 		// Server only fields
 

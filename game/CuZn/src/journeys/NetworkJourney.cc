@@ -190,7 +190,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 						M2_DEFER(m2g::Proxy::main_journey_deleter);
 					}
 				} else {
-					M2G_PROXY.show_notification("Coal required but none available in network");
+					M2_LEVEL.ShowMessage("Coal required but none available in network");
 					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else if (closest_mines_with_coal.size() == 1) {
@@ -217,7 +217,7 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleResourceEnterSignal() {
 			}
 		} else if (unspecified_resource->resource_type == BEER_BARREL_COUNT) {
 			if (auto beer_sources = find_breweries_with_beer(M2_PLAYER.character(), major_cities[0], std::nullopt, major_cities[1]); beer_sources.empty()) {
-				M2G_PROXY.show_notification("Beer required but none available in network");
+				M2_LEVEL.ShowMessage("Beer required but none available in network");
 				M2_DEFER(m2g::Proxy::main_journey_deleter);
 			} else if (beer_sources.size() == 1) {
 				auto industry_location = *beer_sources.begin(); // While networking, beer only comes from industries.

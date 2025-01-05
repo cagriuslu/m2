@@ -44,7 +44,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 				M2G_PROXY.cards_panel.reset();
 			}
 			// Display message
-			M2G_PROXY.show_notification(_message);
+			M2_LEVEL.ShowMessage(_message);
 			if (_allow_cancellation) {
 				// Display cancel button
 				_cancel_button_panel = AddCancelButton();

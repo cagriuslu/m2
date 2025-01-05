@@ -27,7 +27,6 @@
 #include <numeric>
 #include <cuzn/ui/CustomHud.h>
 #include <cuzn/ui/StatusBar.h>
-#include <cuzn/ui/Notification.h>
 #include <cuzn/detail/ActionNotification.h>
 #include <cuzn/ui/CanalEraResult.h>
 #include <cuzn/ui/Cards.h>
@@ -590,19 +589,6 @@ void m2g::Proxy::disable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
 		auto* button = M2_LEVEL.LeftHud()->find_first_widget_by_name<m2::widget::Text>(button_name);
 		button->enabled = false;
-	}
-}
-
-void m2g::Proxy::show_notification(const std::string& msg) {
-	LOG_INFO("Showing notification", msg);
-	remove_notification();
-	_notification_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
-		std::make_unique<m2::UiPanelBlueprint>(generate_notification_panel_blueprint(msg)), m2::RectF{0.1f, 0.96f, 0.8f, 0.04f});
-}
-void m2g::Proxy::remove_notification() {
-	if (_notification_panel) {
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*_notification_panel);
-		_notification_panel.reset();
 	}
 }
 

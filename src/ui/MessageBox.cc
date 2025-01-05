@@ -15,14 +15,14 @@ const m2::UiPanelBlueprint m2::DefaultMessageBoxBlueprint = {
 			widget::TextBlueprint{
 				.text = "Placeholder text",
 				.horizontal_alignment = TextHorizontalAlignment::LEFT,
-				.wrapped_font_size_in_units = 1.0f
+				.wrapped_font_size_in_units = 0.85f
 			}
 	}}
 };
 
 const m2::RectF m2::DefaultMessageBoxArea = {
-	1.0f / 3.0f,
+	1.0f / 6.0f,
 	1.0f - 1.0f / 25.0f,
-	1.0f / 3.0f,
+	2.0f / 3.0f,
 	1.0f / 25.0f
 };
