@@ -284,14 +284,18 @@ void m2::Graphic::color_cell(const VecI& cell, SDL_Color color) {
 	SDL_RenderFillRect(M2_GAME.renderer, &rect);
 }
 
-void m2::Graphic::color_rect(const RectF& world_coordinates_m, SDL_Color color) {
+void m2::Graphic::color_rect(const RectF& world_coordinates_m, const SDL_Color color) {
 	const auto screen_origin_to_top_left_px = ScreenOriginToPositionVecPx(world_coordinates_m.top_left());
 	const auto screen_origin_to_bottom_right_px = ScreenOriginToPositionVecPx(world_coordinates_m.bottom_right());
 	const auto rect = SDL_Rect{
-			(int)roundf(screen_origin_to_top_left_px.x),
-			(int)roundf(screen_origin_to_top_left_px.y),
-			(int)roundf(screen_origin_to_bottom_right_px.x - screen_origin_to_top_left_px.x),
-			(int)roundf(screen_origin_to_bottom_right_px.y - screen_origin_to_top_left_px.y)
+			I(screen_origin_to_top_left_px.x),
+			I(screen_origin_to_top_left_px.y),
+			iceil(screen_origin_to_bottom_right_px.x - screen_origin_to_top_left_px.x),
+			iceil(screen_origin_to_bottom_right_px.y - screen_origin_to_top_left_px.y)
+			// TODO using I() and ceilf() here is quite problematic, but I couldn't find any other way of ensuring not
+			//  leaving any gaps between sprites
+			// TODO unfortunately, we can't draw pixel perfect sprites with floating point scaling. However, the game can
+			//  avoid flickering by avoiding highly repeating patterns.
 	};
 
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
@@ -302,7 +306,7 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGB& color)
 	color_rect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, 255});
 }
 
-void m2::Graphic::color_disk(const VecF& center_position_m, float radius_m, const SDL_Color& color) {
+void m2::Graphic::color_disk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {
 	const auto center_position_px = ScreenOriginToPositionVecPx(center_position_m);
 	const auto radius_px = radius_m * M2_GAME.Dimensions().OutputPixelsPerMeter();
 	sdl::draw_disk(M2_GAME.renderer, center_position_px, color, radius_px, color);

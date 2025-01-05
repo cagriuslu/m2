@@ -150,8 +150,8 @@ m2::void_expected InitFactory(m2::Object& obj, City city, IndustryTile industry_
 		m2::Graphic::color_rect(cell_rect, background_color);
 
 		// If sold, draw the black bottom half
-		if (m2::is_equal(1.0f, gfx.owner().character().get_resource(m2g::pb::IS_SOLD), 0.005f)) {
-			auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.x - 0.5f, top_left_cell_pos.y + 0.5f, 2.0f, 1.0f};
+		if (m2::is_one(gfx.owner().character().get_resource(IS_SOLD), 0.005f)) {
+			const auto bottom_half_cell_rect = m2::RectF{top_left_cell_pos.x - 0.5f, top_left_cell_pos.y + 0.5f, 2.0f, 1.0f};
 			m2::Graphic::color_rect(bottom_half_cell_rect, m2::RGB{0, 0, 0});
 		}
 
