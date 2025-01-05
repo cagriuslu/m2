@@ -35,15 +35,20 @@ namespace m2 {
 		std::optional<pb::Level> _lb;
 		std::string _name;
 
-		RectI _background_boundary;
-		/// If there's a blocking panel, the events are cleared after they are delivered to it. Other panels are still
-		/// updated and the world is still simulated.
-		std::optional<UiPanel> _semiBlockingUiPanel;
+		RectI _background_boundary; // In meters
+		std::optional<std::set<ObjectId>> _dimming_exceptions;
+		bool _is_panning{};
+
+		// UI panels (the order is significant)
+
+		std::optional<UiPanel> left_hud_ui_panel, right_hud_ui_panel, _messageBoxUiPanel;
 		std::list<UiPanel> _customNonblockingUiPanels;
 		/// If activated, the panel floats next to the cursor. This panel doesn't receive events, but is updated.
 		std::optional<UiPanel> _mouseHoverUiPanel;
-		std::optional<std::set<ObjectId>> _dimming_exceptions;
-		bool _is_panning{};
+		/// If there's a blocking panel, the events are cleared after they are delivered to it. Other panels are still
+		/// updated and the world is still simulated.
+		std::optional<UiPanel> _semiBlockingUiPanel;
+
 
 	public:
 		~Level();
@@ -67,10 +72,6 @@ namespace m2 {
 		Id camera_id{}, player_id{}, pointer_id{};
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
-
-		std::optional<UiPanel> left_hud_ui_panel, right_hud_ui_panel;
-		std::optional<std::string> message;
-		std::optional<UiPanel> message_box_ui_panel;
 
 		std::optional<sdl::ticks_t> level_start_ticks;
 		std::optional<sdl::ticks_t> level_start_pause_ticks;
@@ -132,9 +133,21 @@ namespace m2 {
 		void disable_dimming_with_exceptions();
 
 		/// Show the HUD UI elements. HUD is set to be shown at start of the game.
-		void enable_hud();
+		void EnableHud();
 		/// Hides the HUD UI elements. UI elements would get disabled, thus they won't receive any events or updates.
-		void disable_hud();
+		void DisableHud();
+
+		UiPanel* LeftHud() { return left_hud_ui_panel ? &*left_hud_ui_panel : nullptr; }
+		UiPanel* RightHud() { return right_hud_ui_panel ? &*right_hud_ui_panel : nullptr; }
+		template <typename... Args> void ReplaceLeftHud(Args&&... args) {
+			left_hud_ui_panel.emplace(std::forward<Args>(args)...);
+		}
+		template <typename... Args> void ReplaceRightHud(Args&&... args) {
+			right_hud_ui_panel.emplace(std::forward<Args>(args)...);
+		}
+
+		void ShowMessage(const std::string& msg, float timeoutS = 0.0f);
+		void HideMessage();
 
 		/// Adds a UI element that is drawn above the HUD. The UI doesn't block the game loop and consumes only the
 		/// events meant for itself.
@@ -148,13 +161,6 @@ namespace m2 {
 		/// Removes the custom UI at next step. Can be called from anywhere.
 		void remove_custom_nonblocking_ui_panel_deferred(std::list<UiPanel>::iterator it);
 
-		/// Displays a semi-blocking UI panel above all other UI panels. The UI is blocking in the sense that mouse
-		/// movement, button, and key presses are not delivered to other panels or game objects. The UI is semi-blocking
-		/// in the sense that other panels are still updated and the game loop keeps running.
-		void ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
-		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
-		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
-
 		/// Add a UI panel that follows the location of the mouse. The given position of the UiPanel will be overridden,
 		/// but the size of the panel is preserved.
 		template <typename... Args>
@@ -166,14 +172,18 @@ namespace m2 {
 			_mouseHoverUiPanel.reset();
 		}
 
+		/// Displays a semi-blocking UI panel above all other UI panels. The UI is blocking in the sense that mouse
+		/// movement, button, and key presses are not delivered to other panels or game objects. The UI is semi-blocking
+		/// in the sense that other panels are still updated and the game loop keeps running.
+		void ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
+		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
+		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
+
 		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
 		/// thought the mouse spills into UI elements.
 		bool is_panning() const {  return _is_panning; }
 		void enable_panning() { _is_panning = true; }
 		void disable_panning() { _is_panning = false; }
-
-		[[deprecated]] void display_message(const std::string& msg);
-		[[deprecated]] void remove_message();
 
 	   private:
 		void_expected init_any_player(

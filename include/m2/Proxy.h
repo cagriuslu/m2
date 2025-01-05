@@ -11,6 +11,7 @@
 #include <Level.pb.h>
 #include <string_view>
 #include <array>
+#include "ui/MessageBox.h"
 
 namespace m2 {
 	class Proxy {
@@ -69,10 +70,13 @@ namespace m2 {
 		void load_resources() {}
 
 		// UI
-		const m2::UiPanelBlueprint* main_menu() { return nullptr; }
-		const m2::UiPanelBlueprint* pause_menu() { return nullptr; }
-		const m2::UiPanelBlueprint* left_hud() { return nullptr; }
-		const m2::UiPanelBlueprint* right_hud() { return nullptr; }
+		const UiPanelBlueprint* MainMenuBlueprint() { return nullptr; }
+		const UiPanelBlueprint* PauseMenuBlueprint() { return nullptr; }
+		const UiPanelBlueprint* LeftHudBlueprint() { return nullptr; }
+		const UiPanelBlueprint* RightHudBlueprint() { return nullptr; }
+		/// The MessageBox blueprint should contain a Widget named "MessageText" of variant TextBlueprint. This widget
+		/// will be filled with the message text.
+		std::pair<const UiPanelBlueprint*, std::variant<std::monostate,RectI,RectF>> MessageBoxBlueprintAndArea() { return std::make_pair(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea); }
 
 		// Controls
 		m2::Key scancode_to_key(SDL_Scancode scancode);

@@ -2,9 +2,6 @@
 #include <m2/math/RectI.h>
 #include <m2/math/VecF.h>
 #include <m2/math/VecI.h>
-#include <m2/Meta.h>
-#include <variant>
-#include <m2/math/Rational.h>
 
 namespace m2 {
     class GameDimensionsManager final {
@@ -14,7 +11,7 @@ namespace m2 {
         float _scale;
         RectI _topEnvelope, _bottomEnvelope, _leftEnvelope, _rightEnvelope;
         RectI _gameAndHud, _game;
-        RectI _leftHud, _rightHud, _messageBox;
+        RectI _leftHud, _rightHud;
         VecF _gameAndHudM, _gameM;
 
     public:
@@ -31,7 +28,6 @@ namespace m2 {
         [[nodiscard]] RectI Game() const { return _game; }
         [[nodiscard]] RectI LeftHud() const { return _leftHud; }
         [[nodiscard]] RectI RightHud() const { return _rightHud; }
-        [[nodiscard]] RectI MessageBox() const { return _messageBox; }
         [[nodiscard]] VecF GameAndHudM() const { return _gameAndHudM; }
         [[nodiscard]] VecF GameM() const { return _gameM; }
         /// Number of pixels in the renderer output that would be occupied by a one-meter object. Applicable to pixelated and non-pixelated games.

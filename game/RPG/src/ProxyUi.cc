@@ -95,18 +95,18 @@ const UiPanelBlueprint left_hud_blueprint = {
 		}
 };
 
-const m2::UiPanelBlueprint* m2g::Proxy::main_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::MainMenuBlueprint() {
 	return M2G_PROXY.generate_main_menu();
 }
 
-const m2::UiPanelBlueprint* m2g::Proxy::pause_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::PauseMenuBlueprint() {
 	return &pause_menu_blueprint;
 }
 
-const m2::UiPanelBlueprint* m2g::Proxy::left_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::LeftHudBlueprint() {
 	return &left_hud_blueprint;
 }
 
-const m2::UiPanelBlueprint* m2g::Proxy::right_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::RightHudBlueprint() {
 	return M2G_PROXY.generate_right_hud();
 }

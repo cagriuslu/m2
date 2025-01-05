@@ -277,13 +277,13 @@ const widget::TextBlueprint left_hud_paint_button = {
 	        std::begin(M2_GAME.level_editor_background_sprites), std::end(M2_GAME.level_editor_background_sprites),
 	        std::back_inserter(list));
 
-	    M2_LEVEL.right_hud_ui_panel.emplace(&paint_mode_right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&paint_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_erase_button = {
     .text = "ERASE", .kb_shortcut = SDL_SCANCODE_E, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_erase_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&erase_mode_right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&erase_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_place_button = {
@@ -309,37 +309,37 @@ const widget::TextBlueprint left_hud_place_button = {
 		    }
 	    }
 
-	    M2_LEVEL.right_hud_ui_panel.emplace(&place_mode_right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&place_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_remove_button = {
     .text = "REMOVE", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_remove_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&remove_mode_right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&remove_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_pick_button = {
     .text = "PICK", .kb_shortcut = SDL_SCANCODE_R, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_pick_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&pick_mode_right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&pick_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_select_button = {
     .text = "SELECT", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_select_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&select_mode_right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&select_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_shift_button = {
     .text = "SHIFT", .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).activate_shift_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&shift_mode_right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&shift_mode_right_hud, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_cancel_button = {
     .text = "CANCEL", .kb_shortcut = SDL_SCANCODE_X, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
 	    std::get<ledit::State>(M2_LEVEL.type_state).deactivate_mode();
-	    M2_LEVEL.right_hud_ui_panel.emplace(&level_editor::right_hud, M2_GAME.Dimensions().RightHud());
+	    M2_LEVEL.ReplaceRightHud(&level_editor::RightHudBlueprint, M2_GAME.Dimensions().RightHud());
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint left_hud_gridlines_button = {
@@ -357,7 +357,7 @@ const widget::TextBlueprint left_hud_coordinates = {
 		self.set_text(m2::ToString(mouse_position.x) + ',' + m2::ToString(mouse_position.y));
 	    return MakeContinueAction();
     }};
-const UiPanelBlueprint level_editor::left_hud = {
+const UiPanelBlueprint level_editor::LeftHudBlueprint = {
 	.name = "LeftHud",
     .w = 19,
     .h = 72,
@@ -419,7 +419,7 @@ const UiPanelBlueprint level_editor::left_hud = {
             .variant = left_hud_gridlines_button},
         UiWidgetBlueprint{.x = 0, .y = 70, .w = 19, .h = 2, .border_width = 0, .variant = left_hud_coordinates}}};
 
-const UiPanelBlueprint level_editor::right_hud = {
+const UiPanelBlueprint level_editor::RightHudBlueprint = {
 	.name = "RightHud",
     .w = 19, .h = 72, .background_color = {50, 50, 50, 255}, .widgets = {}};
 

@@ -19,6 +19,7 @@
 
 #include <filesystem>
 #include <iterator>
+#include <m2/ui/widget/Text.h>
 
 m2::Level::~Level() {
 	// Custom destructor is provided because the order is important
@@ -66,7 +67,9 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	type_state.emplace<ledit::State>();
 	auto& le_state = std::get<ledit::State>(type_state);
 
-	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
+	// Create message box initially disabled
+	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
+	_messageBoxUiPanel->enabled = false;
 
 	if (std::filesystem::exists(*_lb_path)) {
 		auto lb = pb::json_file_to_message<pb::Level>(*_lb_path);
@@ -101,11 +104,11 @@ m2::void_expected m2::Level::init_level_editor(const std::filesystem::path& lb_p
 	m2::obj::create_origin();
 
 	// UI Hud
-	left_hud_ui_panel.emplace(&level_editor::left_hud, M2_GAME.Dimensions().LeftHud());
+	left_hud_ui_panel.emplace(&level_editor::LeftHudBlueprint, M2_GAME.Dimensions().LeftHud());
 	left_hud_ui_panel->update_contents(0.0f);
-	right_hud_ui_panel.emplace(&level_editor::right_hud, M2_GAME.Dimensions().RightHud());
+	right_hud_ui_panel.emplace(&level_editor::RightHudBlueprint, M2_GAME.Dimensions().RightHud());
 	right_hud_ui_panel->update_contents(0.0f);
-	message_box_ui_panel->update_contents(0.0f);
+	_messageBoxUiPanel->update_contents(0.0f);
 
 	return {};
 }
@@ -178,7 +181,9 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	m2_reflect_unexpected(state);
 	type_state.emplace<sedit::State>(std::move(*state));
 
-	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
+	// Create message box initially disabled
+	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
+	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
 	player_id = m2::obj::create_god();
@@ -190,7 +195,7 @@ m2::void_expected m2::Level::init_sheet_editor(const std::filesystem::path& path
 	left_hud_ui_panel->update_contents(0.0f);
 	right_hud_ui_panel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 	right_hud_ui_panel->update_contents(0.0f);
-	message_box_ui_panel->update_contents(0.0f);
+	_messageBoxUiPanel->update_contents(0.0f);
 
 	return {};
 }
@@ -201,7 +206,9 @@ m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path&
 	m2_reflect_unexpected(state);
 	type_state.emplace<bsedit::State>(std::move(*state));
 
-	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
+	// Create message box initially disabled
+	_messageBoxUiPanel.emplace(&DefaultMessageBoxBlueprint, DefaultMessageBoxArea);
+	_messageBoxUiPanel->enabled = false;
 
 	// Create default objects
 	player_id = m2::obj::create_god();
@@ -213,7 +220,7 @@ m2::void_expected m2::Level::init_bulk_sheet_editor(const std::filesystem::path&
 	left_hud_ui_panel->update_contents(0.0f);
 	right_hud_ui_panel.emplace(&bulk_sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 	right_hud_ui_panel->update_contents(0.0f);
-	message_box_ui_panel->update_contents(0.0f);
+	_messageBoxUiPanel->update_contents(0.0f);
 
 	return {};
 }
@@ -264,16 +271,42 @@ void m2::Level::disable_dimming_with_exceptions() {
 	_dimming_exceptions.reset();
 }
 
-void m2::Level::enable_hud() {
+void m2::Level::EnableHud() {
 	LOG_DEBUG("Enabling HUD");
 	left_hud_ui_panel->enabled = true;
 	right_hud_ui_panel->enabled = true;
 }
 
-void m2::Level::disable_hud() {
+void m2::Level::DisableHud() {
 	LOG_DEBUG("Disabling HUD");
 	left_hud_ui_panel->enabled = false;
 	right_hud_ui_panel->enabled = false;
+}
+
+void m2::Level::ShowMessage(const std::string& msg, const float timeoutS) {
+	if (_messageBoxUiPanel) {
+		auto* messageTextWidget = _messageBoxUiPanel->find_first_widget_by_name<widget::Text>("MessageText");
+		if (not messageTextWidget) {
+			throw M2_ERROR("MessageBox does not contain a widget with name MessageText");
+		}
+		messageTextWidget->set_text(msg);
+		if (timeoutS == 0.0f) {
+			_messageBoxUiPanel->ClearTimeout();
+		} else {
+			_messageBoxUiPanel->SetTimeout(timeoutS);
+		}
+		_messageBoxUiPanel->enabled = true;
+	} else {
+		throw M2_ERROR("Attempt to display a message but MessageBox is not defined");
+	}
+}
+void m2::Level::HideMessage() {
+	if (_messageBoxUiPanel) {
+		_messageBoxUiPanel->enabled = false;
+		_messageBoxUiPanel->ClearTimeout();
+	} else {
+		throw M2_ERROR("Attempt to discard a message but MessageBox is not defined");
+	}
 }
 
 void m2::Level::remove_custom_nonblocking_ui_panel(std::list<UiPanel>::iterator it) {
@@ -293,14 +326,6 @@ void m2::Level::DismissSemiBlockingUiPanel() {
 void m2::Level::DismissSemiBlockingUiPanelDeferred() {
 	M2_DEFER([this]() { this->DismissSemiBlockingUiPanel(); });
 }
-void m2::Level::display_message(const std::string& msg) {
-	message = msg;
-	message_box_ui_panel->widgets[0]->enabled = true;
-}
-void m2::Level::remove_message() {
-	message.reset();
-	message_box_ui_panel->widgets[0]->enabled = false;
-}
 
 m2::void_expected m2::Level::init_any_player(
     const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
@@ -319,9 +344,12 @@ m2::void_expected m2::Level::init_any_player(
 
 	(M2G_PROXY.*pre_level_init)(_name, *_lb);
 
-	left_hud_ui_panel.emplace(M2G_PROXY.left_hud(), M2_GAME.Dimensions().LeftHud());
-	right_hud_ui_panel.emplace(M2G_PROXY.right_hud(), M2_GAME.Dimensions().RightHud());
-	message_box_ui_panel.emplace(&message_box_ui, M2_GAME.Dimensions().MessageBox());
+	left_hud_ui_panel.emplace(M2G_PROXY.LeftHudBlueprint(), M2_GAME.Dimensions().LeftHud());
+	right_hud_ui_panel.emplace(M2G_PROXY.RightHudBlueprint(), M2_GAME.Dimensions().RightHud());
+	if (const auto messageBoxBlueprintAndArea = M2G_PROXY.MessageBoxBlueprintAndArea(); messageBoxBlueprintAndArea.first) {
+		_messageBoxUiPanel.emplace(messageBoxBlueprintAndArea.first, messageBoxBlueprintAndArea.second);
+		_messageBoxUiPanel->enabled = false;
+	}
 
 	if (physical_world) {
 		world = new b2World(M2G_PROXY.gravity ? b2Vec2{0.0f, 10.0f} : box2d::vec2_zero());

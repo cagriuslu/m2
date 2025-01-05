@@ -37,7 +37,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 			// Enable dimming with exceptions
 			M2_LEVEL.enable_dimming_with_exceptions({object_ids.begin(), object_ids.end()});
 			// Disable HUD
-			M2_LEVEL.disable_hud();
+			M2_LEVEL.DisableHud();
 			// Destroy cards panel if exists
 			if (M2G_PROXY.cards_panel) {
 				M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
@@ -87,7 +87,7 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 				_cancel_button_panel.reset();
 			}
 			// M2G_PROXY.remove_notification(); // TODO both error messages and usage tips are shown as notification. We need to differentiate between the two before removing the notification.
-			M2_LEVEL.enable_hud();
+			M2_LEVEL.EnableHud();
 			M2_LEVEL.disable_dimming_with_exceptions();
 			break;
 		}

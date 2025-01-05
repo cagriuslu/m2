@@ -399,19 +399,19 @@ void m2::Game::HandleConsoleEvent() {
 void m2::Game::HandleMenuEvent() {
 	if (events.pop_key_press(Key::MENU)) {
 		// Select the correct pause menu
-		const UiPanelBlueprint* pause_menu{};
+		const UiPanelBlueprint* PauseMenuBlueprint{};
 		if (std::holds_alternative<splayer::State>(Level().type_state)) {
-			pause_menu = _proxy.pause_menu();
+			PauseMenuBlueprint = _proxy.PauseMenuBlueprint();
 		} else if (std::holds_alternative<ledit::State>(Level().type_state)) {
-			pause_menu = &level_editor::menu;
+			PauseMenuBlueprint = &level_editor::menu;
 		} else if (std::holds_alternative<sedit::State>(Level().type_state)) {
-			pause_menu = &sheet_editor_main_menu;
+			PauseMenuBlueprint = &sheet_editor_main_menu;
 		} else if (std::holds_alternative<bsedit::State>(Level().type_state)) {
-			pause_menu = &bulk_sheet_editor_pause_menu;
+			PauseMenuBlueprint = &bulk_sheet_editor_pause_menu;
 		}
 
 		// Execute pause menu if found, exit if QUIT is returned
-		if (pause_menu && UiPanel::create_and_run_blocking(pause_menu).IsQuit()) {
+		if (PauseMenuBlueprint && UiPanel::create_and_run_blocking(PauseMenuBlueprint).IsQuit()) {
 			quit = true;
 		}
 	}
@@ -432,6 +432,9 @@ void m2::Game::HandleHudEvents() {
 		events.clear();
 		// Handling of events of other UI panels are also skipped.
 	} else {
+		// Mouse hover UI panel doesn't receive events, but based on the mouse position, it may be moved
+		IF(_level->_mouseHoverUiPanel)->SetTopLeftPosition(_level->CalculateMouseHoverUiPanelTopLeftPosition());
+
 		// The order of event handling is the reverse of the drawing order
 		for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
 			auto action{panel.HandleEvents(events, _level->is_panning())};
@@ -442,13 +445,10 @@ void m2::Game::HandleHudEvents() {
 				panel.KillWithReturnValue(std::move(*anyReturnContainer));
 			}
 		}
-		IF(_level->message_box_ui_panel)->HandleEvents(events, _level->is_panning());
+		IF(_level->_messageBoxUiPanel)->HandleEvents(events, _level->is_panning());
 		IF(_level->right_hud_ui_panel)->HandleEvents(events, _level->is_panning());
 		IF(_level->left_hud_ui_panel)->HandleEvents(events, _level->is_panning());
 	}
-
-	// Mouse hover UI panel doesn't receive events, but based on the mouse position, it may be moved
-	IF(_level->_mouseHoverUiPanel)->SetTopLeftPosition(_level->CalculateMouseHoverUiPanelTopLeftPosition());
 }
 
 void m2::Game::HandleNetworkEvents() {
@@ -459,7 +459,7 @@ void m2::Game::HandleNetworkEvents() {
 		_multi_player_threads = std::monostate{};
 		_bot_threads.clear();
 		// Execute main menu
-		if (UiPanel::create_and_run_blocking(_proxy.main_menu()).IsQuit()) {
+		if (UiPanel::create_and_run_blocking(_proxy.MainMenuBlueprint()).IsQuit()) {
 			quit = true;
 		}
 	} else if (IsServer()) {
@@ -642,7 +642,7 @@ void m2::Game::ExecutePreDraw() {
 void m2::Game::UpdateHudContents() {
 	IF(_level->left_hud_ui_panel)->update_contents(_delta_time_s);
 	IF(_level->right_hud_ui_panel)->update_contents(_delta_time_s);
-	IF(_level->message_box_ui_panel)->update_contents(_delta_time_s);
+	IF(_level->_messageBoxUiPanel)->update_contents(_delta_time_s);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		auto action{panel.update_contents(_delta_time_s)};
 		action.IfQuit([this]() { quit = true; });
@@ -652,8 +652,8 @@ void m2::Game::UpdateHudContents() {
 			panel.KillWithReturnValue(std::move(*anyReturnContainer));
 		}
 	}
-	IF(_level->_semiBlockingUiPanel)->update_contents(_delta_time_s);
 	IF(_level->_mouseHoverUiPanel)->update_contents(_delta_time_s);
+	IF(_level->_semiBlockingUiPanel)->update_contents(_delta_time_s);
 }
 
 void m2::Game::ClearBackBuffer() const {
@@ -750,12 +750,12 @@ void m2::Game::DebugDraw() {
 void m2::Game::DrawHud() {
 	IF(_level->left_hud_ui_panel)->draw();
 	IF(_level->right_hud_ui_panel)->draw();
-	IF(_level->message_box_ui_panel)->draw();
+	IF(_level->_messageBoxUiPanel)->draw();
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		panel.draw();
 	}
-	IF(_level->_semiBlockingUiPanel)->draw();
 	IF(_level->_mouseHoverUiPanel)->draw();
+	IF(_level->_semiBlockingUiPanel)->draw();
 }
 
 void m2::Game::DrawEnvelopes() const {
@@ -779,12 +779,12 @@ void m2::Game::OnWindowResize() {
 	if (_level) {
 		IF(_level->left_hud_ui_panel)->update_positions();
 		IF(_level->right_hud_ui_panel)->update_positions();
-		IF(_level->message_box_ui_panel)->update_positions();
+		IF(_level->_messageBoxUiPanel)->update_positions();
 		for (auto &panel : _level->_customNonblockingUiPanels) {
 			panel.update_positions();
 		}
-		IF (_level->_semiBlockingUiPanel)->update_positions();
 		IF(_level->_mouseHoverUiPanel)->update_positions();
+		IF (_level->_semiBlockingUiPanel)->update_positions();
 
 		// Clear text label rectangles so that they are regenerated with new size
 		for (auto& gfx : _level->graphics) {
@@ -914,7 +914,7 @@ bool m2::Game::IsMouseOnAnyUiPanel() const {
 	if (_level->right_hud_ui_panel && _level->right_hud_ui_panel->rect_px().contains(mouse_position)) {
 		return true;
 	}
-	if (_level->message_box_ui_panel && _level->message_box_ui_panel->rect_px().contains(mouse_position)) {
+	if (_level->_messageBoxUiPanel && _level->_messageBoxUiPanel->rect_px().contains(mouse_position)) {
 		return true;
 	}
 	for (auto &panel : _level->_customNonblockingUiPanels) {

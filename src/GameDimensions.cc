@@ -48,9 +48,6 @@ m2::GameDimensionsManager::GameDimensionsManager(void* renderer, const int gameP
 	_leftHud = {0, 0, hudWidth, hudHeight};
 	_rightHud = {hudWidth + gameWidth, 0, hudWidth, hudHeight};
 
-	const auto messageBoxHeight = _game.h / 25;
-	_messageBox = {_game.x, _game.y + _game.h - messageBoxHeight, _game.w, messageBoxHeight};
-
 	_gameAndHudM = {F(_gameAndHud.w) / F(_gamePpm), F(_gameAndHud.h) / F(_gamePpm)};
 	_gameM = {F(_game.w) / F(_gamePpm), F(_game.h) / F(_gamePpm)};
 }
@@ -117,9 +114,6 @@ void m2::GameDimensionsManager::OnWindowResize() {
 	_leftHud = RectI{leftEnvelopeSize, topEnvelopeSize, hudWidth, hudHeight};
 	_rightHud = RectI{leftEnvelopeSize + hudWidth + gameWidth, topEnvelopeSize, hudWidth, hudHeight};
 	_game = RectI{leftEnvelopeSize + hudWidth, topEnvelopeSize, gameWidth, gameHeight};
-
-	const auto messageBoxHeight = _game.h / 25;
-	_messageBox = RectI{_game.x, _game.y + _game.h - messageBoxHeight, _game.w, messageBoxHeight};
 }
 void m2::GameDimensionsManager::SetScale(const float scale) {
 	if (scale <= 0.0f) {

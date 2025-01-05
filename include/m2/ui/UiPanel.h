@@ -61,6 +61,9 @@ namespace m2 {
 		/// Given position must be with respect to GameAndHUD area, which means {0,0} corresponds to top-left point of
 		/// GameAndHud area.
 		void SetTopLeftPosition(const VecI&);
+		/// After timeout, the panel is disabled, which effectively also hides it.
+		void SetTimeout(float timeoutS);
+		void ClearTimeout();
 
 		// Lifecycle Management
 
@@ -95,8 +98,8 @@ namespace m2 {
 		template <typename WidgetT>
 		[[nodiscard]] WidgetT* find_first_widget_of_type() const {
 			for (auto& w : widgets) {
-				if (dynamic_cast<WidgetT*>(w.get()) != nullptr) {
-					return dynamic_cast<WidgetT*>(w.get());
+				if (auto* widget = dynamic_cast<WidgetT*>(w.get())) {
+					return widget;
 				}
 			}
 			return nullptr;
@@ -105,11 +108,8 @@ namespace m2 {
 		template <typename WidgetT>
 		[[nodiscard]] WidgetT* find_first_widget_by_name(const std::string& name) const {
 			for (auto& w : widgets) {
-				if (dynamic_cast<WidgetT*>(w.get()) != nullptr) {
-					auto* widget_state = dynamic_cast<WidgetT*>(w.get());
-					if (widget_state->blueprint->name == name) {
-						return widget_state;
-					}
+				if (auto* widget = dynamic_cast<WidgetT*>(w.get()); widget && widget->blueprint->name == name) {
+					return widget;
 				}
 			}
 			return nullptr;
@@ -121,5 +121,4 @@ namespace m2 {
 	UiWidget* FindTextWidget(UiPanel& state, const std::string& text);
 
 	extern UiPanelBlueprint console_ui;
-	extern const UiPanelBlueprint message_box_ui;
 }

@@ -25,21 +25,21 @@ void m2g::Proxy::load_resources() {
 void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, const m2::pb::Level& level) {
 	const auto& id = level.identifier();
 	if (id == "WalkingTutorialClosed") {
-		M2_LEVEL.display_message("Use W,A,S,D to walk.");
+		M2_LEVEL.ShowMessage("Use W,A,S,D to walk.");
 	} else if (id == "WalkingTutorialOpen") {
-		M2_LEVEL.display_message("Some levels will be outdoors.");
+		M2_LEVEL.ShowMessage("Some levels will be outdoors.");
 	} else if (id == "FlagTutorialClosed") {
-		M2_LEVEL.display_message("Find the blue flag to exit the level.");
+		M2_LEVEL.ShowMessage("Find the blue flag to exit the level.");
 	} else if (id == "FlagTutorialOpen") {
-		M2_LEVEL.display_message("Find the blue flag to exit the level.");
+		M2_LEVEL.ShowMessage("Find the blue flag to exit the level.");
 	} else if (id == "DashTutorialClosed") {
-		M2_LEVEL.display_message("Use SPACE button while walking to dash.");
+		M2_LEVEL.ShowMessage("Use SPACE button while walking to dash.");
 	} else if (id == "RangedWeaponTutorialClosed") {
-		M2_LEVEL.display_message("Use left mouse button to shoot bullets.");
+		M2_LEVEL.ShowMessage("Use left mouse button to shoot bullets.");
 	} else if (id == "MeleeTutorialClosed") {
-		M2_LEVEL.display_message("Use right mouse button to melee.");
+		M2_LEVEL.ShowMessage("Use right mouse button to melee.");
 	} else if (id == "AllMustBeKilledTutorialOpen") {
-		M2_LEVEL.display_message("All enemies must be killed to complete the level successfully.");
+		M2_LEVEL.ShowMessage("All enemies must be killed to complete the level successfully.");
 	}
 }
 
@@ -202,8 +202,8 @@ const m2::UiPanelBlueprint* m2g::Proxy::generate_right_hud() {
 }
 
 void m2g::Proxy::set_ammo_display_state(bool enabled) {
-	M2_LEVEL.right_hud_ui_panel->widgets[0]->enabled = enabled;
-	M2_LEVEL.right_hud_ui_panel->widgets[1]->enabled = enabled;
+	M2_LEVEL.RightHud()->widgets[0]->enabled = enabled;
+	M2_LEVEL.RightHud()->widgets[1]->enabled = enabled;
 }
 
 const m2::UiPanelBlueprint* m2g::Proxy::you_died_menu() {

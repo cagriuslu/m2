@@ -22,10 +22,10 @@ namespace m2g {
 		const float defaultGameHeightM = 30.0f;
 		const std::string default_font_path = "fonts/Roboto_Mono/RobotoMono-VariableFont_wght.ttf";
 
-		const m2::UiPanelBlueprint* main_menu();
-		const m2::UiPanelBlueprint* pause_menu();
-		const m2::UiPanelBlueprint* left_hud();
-		const m2::UiPanelBlueprint* right_hud();
+		const m2::UiPanelBlueprint* MainMenuBlueprint();
+		const m2::UiPanelBlueprint* PauseMenuBlueprint();
+		const m2::UiPanelBlueprint* LeftHudBlueprint();
+		const m2::UiPanelBlueprint* RightHudBlueprint();
 
 		void post_multi_player_level_client_init(const std::string& name, const m2::pb::Level& level);
 		void multi_player_level_server_populate(const std::string& name, const m2::pb::Level& level);

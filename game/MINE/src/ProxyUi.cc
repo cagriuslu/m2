@@ -125,18 +125,18 @@ const UiPanelBlueprint right_hud_blueprint = {
 	.widgets = {}
 };
 
-const m2::UiPanelBlueprint* m2g::Proxy::main_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::MainMenuBlueprint() {
 	return &main_menu_blueprint;
 }
 
-const m2::UiPanelBlueprint* m2g::Proxy::pause_menu() {
+const m2::UiPanelBlueprint* m2g::Proxy::PauseMenuBlueprint() {
 	return &pause_menu_blueprint;
 }
 
-const m2::UiPanelBlueprint* m2g::Proxy::left_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::LeftHudBlueprint() {
 	return &left_hud_blueprint;
 }
 
-const m2::UiPanelBlueprint* m2g::Proxy::right_hud() {
+const m2::UiPanelBlueprint* m2g::Proxy::RightHudBlueprint() {
 	return &right_hud_blueprint;
 }

@@ -11,10 +11,10 @@ namespace m2g {
 
 		void load_resources();
 
-		const m2::UiPanelBlueprint* main_menu();
-		const m2::UiPanelBlueprint* pause_menu();
-		const m2::UiPanelBlueprint* left_hud();
-		const m2::UiPanelBlueprint* right_hud();
+		const m2::UiPanelBlueprint* MainMenuBlueprint();
+		const m2::UiPanelBlueprint* PauseMenuBlueprint();
+		const m2::UiPanelBlueprint* LeftHudBlueprint();
+		const m2::UiPanelBlueprint* RightHudBlueprint();
 
 		void post_single_player_level_init(const std::string& name, const m2::pb::Level& level);
 		m2::void_expected init_level_blueprint_fg_object(m2::Object& obj);

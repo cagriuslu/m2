@@ -170,7 +170,7 @@ const widget::TextBlueprint left_hud_foreground_companion_button = {
 		.on_action = [](MAYBE const widget::Text& self) -> UiAction {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_foreground_companion_mode();
 
-			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_foreground_companion_mode_right_hud, M2_GAME.Dimensions().RightHud());
+			M2_LEVEL.ReplaceRightHud(&sheet_editor_foreground_companion_mode_right_hud, M2_GAME.Dimensions().RightHud());
 			return MakeContinueAction();
 		}
 };
@@ -179,7 +179,7 @@ const widget::TextBlueprint left_hud_rect_button = {
 		.on_action = [](MAYBE const widget::Text& self) -> UiAction {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_rect_mode();
 
-			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_rect_mode_right_hud, M2_GAME.Dimensions().RightHud());
+			M2_LEVEL.ReplaceRightHud(&sheet_editor_rect_mode_right_hud, M2_GAME.Dimensions().RightHud());
 			return MakeContinueAction();
 		}
 };
@@ -188,7 +188,7 @@ const widget::TextBlueprint left_hud_background_collider_button = {
 		.on_action = [](MAYBE const widget::Text& self) -> UiAction {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_background_collider_mode();
 
-			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_background_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
+			M2_LEVEL.ReplaceRightHud(&sheet_editor_background_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
 			return MakeContinueAction();
 		}
 };
@@ -197,7 +197,7 @@ const widget::TextBlueprint left_hud_foreground_collider_button = {
 		.on_action = [](MAYBE const widget::Text& self) -> UiAction {
 			std::get<sedit::State>(M2_LEVEL.type_state).activate_foreground_collider_mode();
 
-			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_foreground_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
+			M2_LEVEL.ReplaceRightHud(&sheet_editor_foreground_collider_mode_right_hud, M2_GAME.Dimensions().RightHud());
 			return MakeContinueAction();
 		}
 };
@@ -206,7 +206,7 @@ const widget::TextBlueprint left_hud_cancel_button = {
 		.on_action = [](MAYBE const widget::Text& self) -> UiAction {
 			std::get<sedit::State>(M2_LEVEL.type_state).deactivate_mode();
 
-			M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+			M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 			return MakeContinueAction();
 		}
 };
@@ -315,7 +315,7 @@ const UiPanelBlueprint m2::sheet_editor_main_menu = {
 								.on_action = [](MAYBE const widget::Text& self) -> UiAction {
 									if (not std::holds_alternative<std::monostate>(std::get<sedit::State>(M2_LEVEL.type_state).mode)) {
 										std::get<sedit::State>(M2_LEVEL.type_state).deactivate_mode();
-										M2_LEVEL.right_hud_ui_panel.emplace(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
+										M2_LEVEL.ReplaceRightHud(&sheet_editor_right_hud, M2_GAME.Dimensions().RightHud());
 									}
 									std::get<sedit::State>(M2_LEVEL.type_state).select();
 									return MakeReturnAction(); // TODO Return value

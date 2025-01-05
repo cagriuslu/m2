@@ -20,6 +20,7 @@ namespace m2 {
 		RectI _rect_px{}; // Position on screen
 
 	public:
+		/// For a widget, being enabled and being shown are the same things
 		bool enabled{true};
 		bool focused{false};
 		const UiWidgetBlueprint* blueprint;

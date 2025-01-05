@@ -328,6 +328,15 @@ void UiPanel::SetTopLeftPosition(const VecI& newPosition) {
 			_relation_to_game_and_hud_dims.h};
 	update_positions();
 }
+void UiPanel::SetTimeout(const float timeoutS) {
+	if (timeoutS < 0.0f) {
+		throw M2_ERROR("Given timeout is negative: " + ToString(timeoutS));
+	}
+	_timeout_s = timeoutS;
+}
+void UiPanel::ClearTimeout() {
+	_timeout_s.reset();
+}
 
 void UiPanel::update_positions() {
 	auto rect = rect_px();
@@ -400,7 +409,8 @@ UiAction UiPanel::update_contents(float delta_time_s) {
 
 	// Check if timed out
 	if (_timeout_s && *_timeout_s < 0.0f) {
-		return MakeReturnAction();
+		enabled = false;
+		return MakeContinueAction();
 	}
 
 	if (blueprint->on_update) {
@@ -616,30 +626,3 @@ UiPanelBlueprint m2::console_ui = {
 	                const auto &command = self.text_input();
 	                return std::make_pair(handle_console_command(command), std::string{});
                 }}}}};
-
-const UiPanelBlueprint m2::message_box_ui = {
-	.name = "MessageBox",
-    .w = 1,
-    .h = 1,
-    .border_width = 0,
-	.ignore_events = true,
-    .widgets = {UiWidgetBlueprint{
-        .initially_enabled = false,
-        .x = 0,
-        .y = 0,
-        .w = 1,
-        .h = 1,
-        .border_width = 0,
-        .background_color = SDL_Color{127, 127, 127, 127},
-        .variant =
-            widget::TextBlueprint{
-				.horizontal_alignment = TextHorizontalAlignment::LEFT,
-				.on_update = [](MAYBE widget::Text &self) {
-					if (M2_LEVEL.message) {
-						self.set_text(*M2_LEVEL.message);
-					}
-					return MakeContinueAction();
-				}
-		}
-	}}
-};

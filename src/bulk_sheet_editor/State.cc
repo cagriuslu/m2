@@ -100,7 +100,7 @@ void bsedit::State::select_sprite(m2g::pb::SpriteType type) {
 			_selected_sprite = std::make_pair(type, RectI{sprite.regular().rect()});
 
 			const auto sprite_name = pb::enum_name(type);
-			M2_LEVEL.display_message(sprite_name);
+			M2_LEVEL.ShowMessage(sprite_name);
 			return;
 		}
 	}
