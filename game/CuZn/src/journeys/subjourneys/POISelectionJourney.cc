@@ -2,6 +2,7 @@
 #include <m2/Log.h>
 #include <m2/Game.h>
 #include <cuzn/object/Factory.h>
+#include <cuzn/object/Merchant.h>
 
 namespace {
 	void notify_main_journey(std::optional<POI> poi) {
@@ -12,36 +13,42 @@ namespace {
 		});
 	}
 }
-
+// find_merchant_at_location(poi)->id();
 std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const PositionOrCancelSignal& signal) {
 	switch (signal.type()) {
 		case m2::FsmSignalType::EnterState: {
 			LOG_INFO("Entering point-of-interest selection journey");
 			// Look-up the object IDs of the POIs
-			auto object_ids = _pois | std::views::transform([](const POI poi) {
+			std::set<m2::ObjectId> objectIds;
+			std::ranges::for_each(_pois, [&objectIds](const POI poi) {
 				if (is_industry_location(poi)) {
 					// Light up the factory if built, otherwise the background sprite.
 					if (const auto* factory = FindFactoryAtLocation(poi)) {
-						return factory->id();
+						objectIds.insert(factory->id());
+					} else {
+						objectIds.insert(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[poi]));
 					}
-					return std::get<m2::ObjectId>(M2G_PROXY.industry_positions[poi]);
+				} else if (is_merchant_location(poi)) {
+					objectIds.insert(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[poi]));
+					objectIds.insert(find_merchant_at_location(poi)->id());
+				} else if (is_connection(poi)) {
+					objectIds.insert(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[poi]));
+				} else {
+					throw M2_ERROR("Unknown location");
 				}
-				if (is_merchant_location(poi)) {
-					return std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[poi]);
-				}
-				if (is_connection(poi)) {
-					return std::get<m2::ObjectId>(M2G_PROXY.connection_positions[poi]);
-				}
-				throw M2_ERROR("Unknown location");
 			});
 			// Enable dimming with exceptions
-			M2_LEVEL.EnableDimmingWithExceptions({object_ids.begin(), object_ids.end()});
+			M2_LEVEL.EnableDimmingWithExceptions({objectIds.begin(), objectIds.end()});
 			// Disable HUD
 			M2_LEVEL.DisableHud();
 			// Destroy cards panel if exists
 			if (M2G_PROXY.cards_panel) {
 				M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.cards_panel);
 				M2G_PROXY.cards_panel.reset();
+			}
+			if (M2G_PROXY.actionNotificationPanel) {
+				M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.actionNotificationPanel);
+				M2G_PROXY.actionNotificationPanel.reset();
 			}
 			// Display message
 			M2_LEVEL.ShowMessage(_message);
