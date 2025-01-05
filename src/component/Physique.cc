@@ -55,7 +55,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				// Compose the "object origin" to "current shape centroid" vector
 				auto center_offset_m = VecF::from_angle(centroid_offset_angle + current_angle).with_length(centroid_offset_length_m);
 
-				if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
+				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
 					int rect_w = I(roundf(width * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
 					int rect_h = I(roundf(height * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
 					auto screen_origin_to_sprite_center_px = ScreenOriginToPositionVecPx(position + center_offset_m);
@@ -99,7 +99,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				auto circumference = aabb.upperBound.x - aabb.lowerBound.x;
 				auto radius = circumference / 2.0f;
 
-				if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
+				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
 					// Calculate circumference in pixels
 					int R = I(roundf(circumference * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
 					auto [texture, src_rect] = M2_GAME.shapes_sheet->get_circle(color, R, R, 16);

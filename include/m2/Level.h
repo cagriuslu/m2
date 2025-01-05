@@ -31,17 +31,17 @@ namespace m2 {
 	class Game;
 
 	class Level final {
-		std::optional<std::filesystem::path> _lb_path;
+		std::optional<std::filesystem::path> _lbPath;
 		std::optional<pb::Level> _lb;
 		std::string _name;
 
-		RectI _background_boundary; // In meters
-		std::optional<std::set<ObjectId>> _dimming_exceptions;
-		bool _is_panning{};
+		RectI _backgroundBoundary; // In meters
+		std::optional<std::set<ObjectId>> _dimmingExceptions;
+		bool _isPanning{};
 
 		// UI panels (the order is significant)
 
-		std::optional<UiPanel> left_hud_ui_panel, right_hud_ui_panel, _messageBoxUiPanel;
+		std::optional<UiPanel> _leftHudUiPanel, _rightHudUiPanel, _messageBoxUiPanel;
 		std::list<UiPanel> _customNonblockingUiPanels;
 		/// If activated, the panel floats next to the cursor. This panel doesn't receive events, but is updated.
 		std::optional<UiPanel> _mouseHoverUiPanel;
@@ -82,29 +82,29 @@ namespace m2 {
 		std::optional<DynamicGridLinesLoader> dynamic_grid_lines_loader;
 		std::optional<DynamicGridLinesLoader> dynamic_sheet_grid_lines_loader;
 
-		void_expected init_single_player(
+		void_expected InitSinglePlayer(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected init_multi_player_as_host(
+		void_expected InitMultiPlayerAsHost(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected init_multi_player_as_guest(
+		void_expected InitMultiPlayerAsGuest(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name);
-		void_expected init_level_editor(const std::filesystem::path& lb_path);
-		void_expected init_pixel_editor(const std::filesystem::path& path, int x_offset, int y_offset);
-		void_expected init_sheet_editor(const std::filesystem::path& path);
-		void_expected init_bulk_sheet_editor(const std::filesystem::path& path);
-		void_expected reset_sheet_editor();
-		void_expected reset_bulk_sheet_editor();
+		void_expected InitLevelEditor(const std::filesystem::path& lb_path);
+		void_expected InitPixelEditor(const std::filesystem::path& path, int x_offset, int y_offset);
+		void_expected InitSheetEditor(const std::filesystem::path& path);
+		void_expected InitBulkSheetEditor(const std::filesystem::path& path);
+		void_expected ResetSheetEditor();
+		void_expected ResetBulkSheetEditor();
 
 		// Accessors
 
-		std::optional<std::filesystem::path> path() const { return _lb_path; }
+		std::optional<std::filesystem::path> path() const { return _lbPath; }
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }
 		World& World2() { return _world2; }
 		/// Inclusive rectangle that contains all terrain graphics inside. The unit is meters.
-		[[nodiscard]] const RectI& background_boundary() const { return _background_boundary; }
+		[[nodiscard]] const RectI& BackgroundBoundary() const { return _backgroundBoundary; }
 		const std::string& identifier() const { return _lb ? _lb->identifier() : empty_string; }
-		pb::ProjectionType projection_type() const {
+		pb::ProjectionType ProjectionType() const {
 			return ((std::holds_alternative<splayer::State>(type_state) ||
 			         std::holds_alternative<mplayer::State>(type_state)) &&
 			        _lb)
@@ -113,7 +113,7 @@ namespace m2 {
 		}
 		m3::VecF camera_offset() const {
 			return _lb
-			    ? m3::VecF{projection_type() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f, _lb->camera_offset(), _lb->camera_z_offset()}
+			    ? m3::VecF{ProjectionType() == pb::PERSPECTIVE_XYZ ? _lb->camera_offset() : 0.0f, _lb->camera_offset(), _lb->camera_z_offset()}
 			    : m3::VecF{};
 		}
 		float horizontal_fov() const;
@@ -123,27 +123,27 @@ namespace m2 {
 
 		// Modifiers
 
-		void begin_game_loop();
+		void BeginGameLoop();
 
 		// Features
 
 		/// "Dimming with exceptions" is a mod where sprite sheets are dimmed for all objects except the exceptions.
-		const std::optional<std::set<ObjectId>>& dimming_exceptions() const { return _dimming_exceptions; }
-		void enable_dimming_with_exceptions(std::set<ObjectId>&& exceptions);
-		void disable_dimming_with_exceptions();
+		const std::optional<std::set<ObjectId>>& DimmingExceptions() const { return _dimmingExceptions; }
+		void EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions);
+		void DisableDimmingWithExceptions();
 
 		/// Show the HUD UI elements. HUD is set to be shown at start of the game.
 		void EnableHud();
 		/// Hides the HUD UI elements. UI elements would get disabled, thus they won't receive any events or updates.
 		void DisableHud();
 
-		UiPanel* LeftHud() { return left_hud_ui_panel ? &*left_hud_ui_panel : nullptr; }
-		UiPanel* RightHud() { return right_hud_ui_panel ? &*right_hud_ui_panel : nullptr; }
+		UiPanel* LeftHud() { return _leftHudUiPanel ? &*_leftHudUiPanel : nullptr; }
+		UiPanel* RightHud() { return _rightHudUiPanel ? &*_rightHudUiPanel : nullptr; }
 		template <typename... Args> void ReplaceLeftHud(Args&&... args) {
-			left_hud_ui_panel.emplace(std::forward<Args>(args)...);
+			_leftHudUiPanel.emplace(std::forward<Args>(args)...);
 		}
 		template <typename... Args> void ReplaceRightHud(Args&&... args) {
-			right_hud_ui_panel.emplace(std::forward<Args>(args)...);
+			_rightHudUiPanel.emplace(std::forward<Args>(args)...);
 		}
 
 		void ShowMessage(const std::string& msg, float timeoutS = 0.0f);
@@ -152,14 +152,14 @@ namespace m2 {
 		/// Adds a UI element that is drawn above the HUD. The UI doesn't block the game loop and consumes only the
 		/// events meant for itself.
 		template <typename... Args>
-		std::list<UiPanel>::iterator add_custom_nonblocking_ui_panel(Args&&... args) {
+		std::list<UiPanel>::iterator AddCustomNonblockingUiPanel(Args&&... args) {
 			return _customNonblockingUiPanels.emplace(_customNonblockingUiPanels.end(), std::forward<Args>(args)...);
 		}
 		/// Removes the custom UI immediately. Can be called from the UI itself if the UI blueprint is static
 		/// (won't cause lambdas to be deallocated). Can be called from outside the UI safely.
-		void remove_custom_nonblocking_ui_panel(std::list<UiPanel>::iterator it);
+		void RemoveCustomNonblockingUiPanel(std::list<UiPanel>::iterator it);
 		/// Removes the custom UI at next step. Can be called from anywhere.
-		void remove_custom_nonblocking_ui_panel_deferred(std::list<UiPanel>::iterator it);
+		void RemoveCustomNonblockingUiPanelDeferred(std::list<UiPanel>::iterator it);
 
 		/// Add a UI panel that follows the location of the mouse. The given position of the UiPanel will be overridden,
 		/// but the size of the panel is preserved.
@@ -181,12 +181,12 @@ namespace m2 {
 
 		/// In panning mode, mouse states are not cleared by UI elements so that panning the map is possible even
 		/// thought the mouse spills into UI elements.
-		bool is_panning() const {  return _is_panning; }
-		void enable_panning() { _is_panning = true; }
-		void disable_panning() { _is_panning = false; }
+		bool IsPanning() const {  return _isPanning; }
+		void EnablePanning() { _isPanning = true; }
+		void DisablePanning() { _isPanning = false; }
 
 	   private:
-		void_expected init_any_player(
+		void_expected InitAnyPlayer(
 		    const std::variant<std::filesystem::path, pb::Level>& level_path_or_blueprint, const std::string& name,
 		    bool physical_world, void (m2g::Proxy::*pre_level_init)(const std::string&, const pb::Level&),
 		    void (m2g::Proxy::*post_level_init)(const std::string&, const pb::Level&));

@@ -105,16 +105,16 @@ const UiPanelBlueprint right_hud_blueprint = {
 					if (M2G_PROXY.cards_panel) {
 						if ((*M2G_PROXY.cards_panel)->IsKilled()) {
 							// Cards panel have been killed
-							M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
-							M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+							M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.cards_panel);
+							M2G_PROXY.cards_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 									std::make_unique<UiPanelBlueprint>(generate_cards_window("Cards")),
 									cards_panel_ratio());
 						} else {
-							M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
+							M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.cards_panel);
 							M2G_PROXY.cards_panel.reset();
 						}
 					} else {
-						M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+						M2G_PROXY.cards_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 								std::make_unique<UiPanelBlueprint>(generate_cards_window("Cards")),
 								cards_panel_ratio());
 					}

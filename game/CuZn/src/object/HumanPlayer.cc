@@ -50,11 +50,11 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		if (M2_GAME.events.pop_mouse_button_press(m2::MouseButton::PRIMARY, M2_GAME.Dimensions().Game())) {
 			LOG_TRACE("Begin panning");
 			impl.mouse_click_prev_position = std::make_pair(M2_GAME.events.mouse_position(), M2_GAME.MousePositionWorldM());
-			M2_LEVEL.enable_panning();
+			M2_LEVEL.EnablePanning();
 		} else if (impl.mouse_click_prev_position && not M2_GAME.events.is_mouse_button_down(m2::MouseButton::PRIMARY)) {
 			LOG_TRACE("End panning");
 			impl.mouse_click_prev_position.reset();
-			M2_LEVEL.disable_panning();
+			M2_LEVEL.DisablePanning();
 		}
 		// Map movement is enabled
 		if (impl.mouse_click_prev_position && impl.mouse_click_prev_position->first != M2_GAME.events.mouse_position()) {
@@ -78,25 +78,25 @@ m2::void_expected PlayerInitThisInstance(m2::Object& obj) {
 		// Limit the player inside the level
 		const auto& dims = M2_GAME.Dimensions();
 		// If the map is zoomed out so much that the black space is showing on the left and the right
-		if (M2_LEVEL.background_boundary().w < dims.GameM().x) {
-			o.position.x = M2_LEVEL.background_boundary().x_center();
+		if (M2_LEVEL.BackgroundBoundary().w < dims.GameM().x) {
+			o.position.x = M2_LEVEL.BackgroundBoundary().x_center();
 		} else {
 			if (o.position.x < dims.GameM().x / 2.0f) {
 				o.position.x = dims.GameM().x / 2.0f; // Left
 			}
-			if (M2_LEVEL.background_boundary().x2() < o.position.x + dims.GameM().x / 2.0f) {
-				o.position.x = M2_LEVEL.background_boundary().x2() - dims.GameM().x / 2.0f; // Right
+			if (M2_LEVEL.BackgroundBoundary().x2() < o.position.x + dims.GameM().x / 2.0f) {
+				o.position.x = M2_LEVEL.BackgroundBoundary().x2() - dims.GameM().x / 2.0f; // Right
 			}
 		}
 		// If the map is zoomed out so much that the black space is showing on the top and the bottom
-		if (M2_LEVEL.background_boundary().h < dims.GameM().y) {
-			o.position.y = M2_LEVEL.background_boundary().y_center();
+		if (M2_LEVEL.BackgroundBoundary().h < dims.GameM().y) {
+			o.position.y = M2_LEVEL.BackgroundBoundary().y_center();
 		} else {
 			if (o.position.y < dims.GameM().y / 2.0f) {
 				o.position.y = dims.GameM().y / 2.0f; // Top
 			}
-			if (M2_LEVEL.background_boundary().y2() < o.position.y + dims.GameM().y / 2.0f) {
-				o.position.y = M2_LEVEL.background_boundary().y2() - dims.GameM().y / 2.0f; // Bottom
+			if (M2_LEVEL.BackgroundBoundary().y2() < o.position.y + dims.GameM().y / 2.0f) {
+				o.position.y = M2_LEVEL.BackgroundBoundary().y2() - dims.GameM().y / 2.0f; // Bottom
 			}
 		}
 

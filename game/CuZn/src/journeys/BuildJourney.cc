@@ -383,7 +383,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceMouseClickSignal(con
 		// Check if location has a built factory
 		if (auto* factory = FindFactoryAtLocation(industry_location)) {
 			// Check if the location is one of the dimming exceptions
-			if (M2_LEVEL.dimming_exceptions()->contains(factory->id())) {
+			if (M2_LEVEL.DimmingExceptions()->contains(factory->id())) {
 				// Reserve resource
 				factory->character().remove_resource(unspecified_resource->first, 1.0f);
 				// Specify resource source

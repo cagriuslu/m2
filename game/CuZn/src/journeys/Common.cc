@@ -31,7 +31,7 @@ namespace {
 }
 
 std::list<m2::UiPanel>::iterator AddCancelButton() {
-	return M2_LEVEL.add_custom_nonblocking_ui_panel(&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f});
+	return M2_LEVEL.AddCustomNonblockingUiPanel(&journey_cancel_button, RectF{0.775f, 0.1f, 0.15f, 0.1f});
 }
 
 PositionOrCancelSignal PositionOrCancelSignal::create_mouse_click_signal(m2::VecF world_position) {

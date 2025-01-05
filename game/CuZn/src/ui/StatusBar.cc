@@ -24,13 +24,13 @@ UiPanelBlueprint generate_status_bar_blueprint(int player_count) {
 		.on_event = [=](const UiPanel& panel, const Events& events) -> UiAction {
 			if (panel.rect_px().contains(events.mouse_position())) {
 				if (not M2G_PROXY.custom_hud_panel) {
-					M2G_PROXY.custom_hud_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+					M2G_PROXY.custom_hud_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 							std::make_unique<UiPanelBlueprint>(generate_custom_hud_blueprint(player_count)),
 							custom_hud_window_ratio());
 				}
 			} else {
 				if (M2G_PROXY.custom_hud_panel) {
-					M2_LEVEL.remove_custom_nonblocking_ui_panel_deferred(*M2G_PROXY.custom_hud_panel);
+					M2_LEVEL.RemoveCustomNonblockingUiPanelDeferred(*M2G_PROXY.custom_hud_panel);
 					M2G_PROXY.custom_hud_panel = std::nullopt;
 				}
 			}

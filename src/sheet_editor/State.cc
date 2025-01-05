@@ -397,7 +397,7 @@ void m2::sedit::State::set_sprite_type(m2g::pb::SpriteType sprite_type) { _selec
 
 void m2::sedit::State::select() {
 	// Get rid of previously created pixels, lines, etc.
-	M2_LEVEL.reset_sheet_editor();
+	M2_LEVEL.ResetSheetEditor();
 
 	const auto& spriteSheets = this->sprite_sheets();
 	// Reload dynamic image loader with the resource

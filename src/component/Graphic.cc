@@ -108,7 +108,7 @@ std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(co
 	}
 
 	float horizontal_projection, vertical_projection;
-	if (M2_LEVEL.projection_type() == m2::pb::PERSPECTIVE_YZ) {
+	if (M2_LEVEL.ProjectionType() == m2::pb::PERSPECTIVE_YZ) {
 		static const auto unit_vector_along_x = VecF{1.0f, 0.0f, 0.0f};
 		horizontal_projection = focus_to_projection->dot(unit_vector_along_x);
 		const auto projection_x = VecF{horizontal_projection, 0.0f, 0.0f};
@@ -119,7 +119,7 @@ std::optional<m2::VecF> m3::focus_to_projection_in_camera_plane_coordinates_m(co
 		const auto projection_y_length = projection_y.length();
 		const auto projection_y_sign = 0 <= projection_y.y ? 1.0f : -1.0f;
 		vertical_projection = projection_y_length * projection_y_sign;
-	} else if (M2_LEVEL.projection_type() == m2::pb::PERSPECTIVE_XYZ) {
+	} else if (M2_LEVEL.ProjectionType() == m2::pb::PERSPECTIVE_XYZ) {
 		static const auto horizontal_unit_vector = VecF{m2::SQROOT_2, -m2::SQROOT_2, 0.0f};
 		horizontal_projection = focus_to_projection->dot(horizontal_unit_vector);
 
@@ -162,7 +162,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// Check if foreground or background
 		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
-		const auto projector = is_projection_type_perspective(M2_LEVEL.projection_type())
+		const auto projector = is_projection_type_perspective(M2_LEVEL.ProjectionType())
 				? &Sprite::DrawIn3dWorld
 				: &Sprite::DrawIn2dWorld;
 		const auto spriteDrawer = [&](const SpriteVariant sv) -> void {
@@ -213,7 +213,7 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 
 		// Draw
 		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
-		const auto projector = is_projection_type_perspective(M2_LEVEL.projection_type())
+		const auto projector = is_projection_type_perspective(M2_LEVEL.ProjectionType())
 				? &DrawTextLabelIn3dWorld
 				: &DrawTextLabelIn2dWorld;
 		projector(textLabel, gfx.textLabelRect, gfx.owner().position, gfx.draw_angle, is_foreground, gfx.z);
@@ -237,7 +237,7 @@ void m2::Graphic::default_draw_addons(const Graphic& gfx) {
 
 		SDL_Rect dst_rect{};
 
-		if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
+		if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
 			const auto src_rect = static_cast<SDL_Rect>(sprite.Rect());
 			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.owner().position, SpriteVariant{});
 			dst_rect = SDL_Rect{
@@ -317,7 +317,7 @@ void m2::Graphic::draw_cross(const VecF& world_position, SDL_Color color) {
 
 void m2::Graphic::draw_line(const VecF& world_position_1, const VecF& world_position_2, SDL_Color color) {
 	SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
-	if (is_projection_type_parallel(M2_LEVEL.projection_type())) {
+	if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
 		const auto p1 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_1));
 		const auto p2 = static_cast<VecI>(ScreenOriginToPositionVecPx(world_position_2));
 		SDL_RenderDrawLine(M2_GAME.renderer, p1.x, p1.y, p2.x, p2.y);
@@ -344,8 +344,8 @@ void m2::Graphic::draw_horizontal_line(float y, SDL_Color color) {
 
 bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture) {
 	// Dim the sprite if dimming mode is enabled
-	if (const auto& dimming_exceptions = M2_LEVEL.dimming_exceptions()) {
-		if (not dimming_exceptions->contains(object_id)) {
+	if (const auto& DimmingExceptions = M2_LEVEL.DimmingExceptions()) {
+		if (not DimmingExceptions->contains(object_id)) {
 			static uint8_t mod = uround(M2G_PROXY.dimming_factor * F(255));
 			SDL_SetTextureColorMod(texture, mod, mod, mod);
 			return true;

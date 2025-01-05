@@ -57,7 +57,7 @@ int main(const int argc, char **argv) {
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
 	LOG_DEBUG("Initial pause ticks", M2_GAME.pause_ticks);
 	while (M2_GAME.HasLevel() && !M2_GAME.quit) {
-		M2_LEVEL.begin_game_loop();
+		M2_LEVEL.BeginGameLoop();
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////

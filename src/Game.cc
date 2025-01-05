@@ -277,7 +277,7 @@ m2::void_expected m2::Game::LoadSinglePlayer(
 	_level.reset();
 	ResetState();
 	_level.emplace();
-	return _level->init_single_player(level_path_or_blueprint, level_name);
+	return _level->InitSinglePlayer(level_path_or_blueprint, level_name);
 }
 
 m2::void_expected m2::Game::LoadMultiPlayerAsHost(
@@ -286,7 +286,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	ResetState();
 	_level.emplace();
 
-	auto success = _level->init_multi_player_as_host(level_path_or_blueprint, level_name);
+	auto success = _level->InitMultiPlayerAsHost(level_path_or_blueprint, level_name);
 	m2_reflect_unexpected(success);
 
 	// Execute the first server update, which will trigger clients to initialize their levels, but not fully.
@@ -333,7 +333,7 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	ResetState();
 	_level.emplace();
 
-	auto success = _level->init_multi_player_as_guest(level_path_or_blueprint, level_name);
+	auto success = _level->InitMultiPlayerAsGuest(level_path_or_blueprint, level_name);
 	m2_reflect_unexpected(success);
 
 	// Consume the initial ServerUpdate that triggered the level to be initialized
@@ -349,7 +349,7 @@ m2::void_expected m2::Game::LoadLevelEditor(const std::string& level_resource_pa
 	_level.reset();
 	ResetState();
 	_level.emplace();
-	return _level->init_level_editor(level_resource_path);
+	return _level->InitLevelEditor(level_resource_path);
 }
 
 m2::void_expected m2::Game::LoadPixelEditor(
@@ -357,21 +357,21 @@ m2::void_expected m2::Game::LoadPixelEditor(
 	_level.reset();
 	ResetState();
 	_level.emplace();
-	return _level->init_pixel_editor(image_resource_path, x_offset, y_offset);
+	return _level->InitPixelEditor(image_resource_path, x_offset, y_offset);
 }
 
 m2::void_expected m2::Game::LoadSheetEditor() {
 	_level.reset();
 	ResetState();
 	_level.emplace();
-	return _level->init_sheet_editor(resource_dir / "SpriteSheets.json");
+	return _level->InitSheetEditor(resource_dir / "SpriteSheets.json");
 }
 
 m2::void_expected m2::Game::LoadBulkSheetEditor() {
 	_level.reset();
 	ResetState();
 	_level.emplace();
-	return _level->init_bulk_sheet_editor(resource_dir / "SpriteSheets.json");
+	return _level->InitBulkSheetEditor(resource_dir / "SpriteSheets.json");
 }
 
 void m2::Game::ResetState() { events.clear(); }
@@ -419,7 +419,7 @@ void m2::Game::HandleMenuEvent() {
 
 void m2::Game::HandleHudEvents() {
 	if (_level->_semiBlockingUiPanel) {
-		_level->_semiBlockingUiPanel->HandleEvents(events, _level->is_panning())
+		_level->_semiBlockingUiPanel->HandleEvents(events, _level->IsPanning())
 				.IfQuit([this]() {
 					quit = true;
 				})
@@ -437,7 +437,7 @@ void m2::Game::HandleHudEvents() {
 
 		// The order of event handling is the reverse of the drawing order
 		for (auto &panel : std::ranges::reverse_view(_level->_customNonblockingUiPanels)) {
-			auto action{panel.HandleEvents(events, _level->is_panning())};
+			auto action{panel.HandleEvents(events, _level->IsPanning())};
 			action.IfQuit([this]() { quit = true; });
 			if (auto anyReturnContainer = action.ExtractAnyReturnContainer()) {
 				// If UI returned, kill the panel. We cannot delete it yet, the iterator is held by the client, but we
@@ -445,9 +445,9 @@ void m2::Game::HandleHudEvents() {
 				panel.KillWithReturnValue(std::move(*anyReturnContainer));
 			}
 		}
-		IF(_level->_messageBoxUiPanel)->HandleEvents(events, _level->is_panning());
-		IF(_level->right_hud_ui_panel)->HandleEvents(events, _level->is_panning());
-		IF(_level->left_hud_ui_panel)->HandleEvents(events, _level->is_panning());
+		IF(_level->_messageBoxUiPanel)->HandleEvents(events, _level->IsPanning());
+		IF(_level->_rightHudUiPanel)->HandleEvents(events, _level->IsPanning());
+		IF(_level->_leftHudUiPanel)->HandleEvents(events, _level->IsPanning());
 	}
 }
 
@@ -640,8 +640,8 @@ void m2::Game::ExecutePreDraw() {
 }
 
 void m2::Game::UpdateHudContents() {
-	IF(_level->left_hud_ui_panel)->update_contents(_delta_time_s);
-	IF(_level->right_hud_ui_panel)->update_contents(_delta_time_s);
+	IF(_level->_leftHudUiPanel)->update_contents(_delta_time_s);
+	IF(_level->_rightHudUiPanel)->update_contents(_delta_time_s);
 	IF(_level->_messageBoxUiPanel)->update_contents(_delta_time_s);
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		auto action{panel.update_contents(_delta_time_s)};
@@ -733,7 +733,7 @@ void m2::Game::DebugDraw() {
 		IF(phy.on_debug_draw)(phy);
 	}
 
-	if (is_projection_type_perspective(_level->projection_type())) {
+	if (is_projection_type_perspective(_level->ProjectionType())) {
 		SDL_SetRenderDrawColor(M2_GAME.renderer, 255, 255, 255, 127);
 		for (int y = 0; y < 20; ++y) {
 			for (int x = 0; x < 20; ++x) {
@@ -748,8 +748,8 @@ void m2::Game::DebugDraw() {
 }
 
 void m2::Game::DrawHud() {
-	IF(_level->left_hud_ui_panel)->draw();
-	IF(_level->right_hud_ui_panel)->draw();
+	IF(_level->_leftHudUiPanel)->draw();
+	IF(_level->_rightHudUiPanel)->draw();
 	IF(_level->_messageBoxUiPanel)->draw();
 	for (auto &panel : _level->_customNonblockingUiPanels) {
 		panel.draw();
@@ -777,8 +777,8 @@ void m2::Game::FlipBuffers() const { SDL_RenderPresent(renderer); }
 void m2::Game::OnWindowResize() {
 	_dimensionsManager->OnWindowResize();
 	if (_level) {
-		IF(_level->left_hud_ui_panel)->update_positions();
-		IF(_level->right_hud_ui_panel)->update_positions();
+		IF(_level->_leftHudUiPanel)->update_positions();
+		IF(_level->_rightHudUiPanel)->update_positions();
 		IF(_level->_messageBoxUiPanel)->update_positions();
 		for (auto &panel : _level->_customNonblockingUiPanels) {
 			panel.update_positions();
@@ -908,10 +908,10 @@ bool m2::Game::IsMouseOnAnyUiPanel() const {
 	}
 	// Otherwise, check if the mouse is on top of the other UI panels known to Level
 	const auto mouse_position = events.mouse_position();
-	if (_level->left_hud_ui_panel && _level->left_hud_ui_panel->rect_px().contains(mouse_position)) {
+	if (_level->_leftHudUiPanel && _level->_leftHudUiPanel->rect_px().contains(mouse_position)) {
 		return true;
 	}
-	if (_level->right_hud_ui_panel && _level->right_hud_ui_panel->rect_px().contains(mouse_position)) {
+	if (_level->_rightHudUiPanel && _level->_rightHudUiPanel->rect_px().contains(mouse_position)) {
 		return true;
 	}
 	if (_level->_messageBoxUiPanel && _level->_messageBoxUiPanel->rect_px().contains(mouse_position)) {
@@ -969,7 +969,7 @@ void m2::Game::RecalculateMousePosition2() const {
 	_screen_center_to_mouse_position_m = VecF{
 		F(screen_center_to_mouse_position_px.x) / Dimensions().OutputPixelsPerMeter(), F(screen_center_to_mouse_position_px.y) / Dimensions().OutputPixelsPerMeter()};
 
-	if (is_projection_type_perspective(_level->projection_type())) {
+	if (is_projection_type_perspective(_level->ProjectionType())) {
 		// Mouse moves on the plane centered at the player looking towards the camera
 		// Find m3::VecF of the mouse position in the world starting from the player position
 		const auto sin_of_player_to_camera_angle = M2_LEVEL.camera_offset().z / M2_LEVEL.camera_offset().length();

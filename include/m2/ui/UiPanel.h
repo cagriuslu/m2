@@ -68,9 +68,9 @@ namespace m2 {
 		// Lifecycle Management
 
         void update_positions();
-		/// Handle the events. If `is_panning` is true, the mouse state (button states) are not cleared after the
+		/// Handle the events. If `IsPanning` is true, the mouse state (button states) are not cleared after the
 		/// handling so that the game objects can still observe that the mouse buttons are down.
-        UiAction HandleEvents(Events& events, bool is_panning = false);
+        UiAction HandleEvents(Events& events, bool IsPanning = false);
         UiAction update_contents(float delta_time_s);
         void draw();
 

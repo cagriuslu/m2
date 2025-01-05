@@ -74,7 +74,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 	_game_state_tracker_id = it.id();
 
 	// Add status bar panel to the level
-	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 		std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint(client_count)),
 		status_bar_window_ratio());
 }
@@ -364,18 +364,18 @@ void m2g::Proxy::post_server_update(const bool shutdown) {
 	// Delete the custom hud
 	if (custom_hud_panel) {
 		LOG_DEBUG("Hiding top HUD");
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*custom_hud_panel);
+		M2_LEVEL.RemoveCustomNonblockingUiPanel(*custom_hud_panel);
 		custom_hud_panel = std::nullopt;
 	}
 	LOG_DEBUG("Refreshing status bar");
-	M2_LEVEL.remove_custom_nonblocking_ui_panel(_status_bar_panel);
-	_status_bar_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+	M2_LEVEL.RemoveCustomNonblockingUiPanel(_status_bar_panel);
+	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 			std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
 			status_bar_window_ratio());
 	if (cards_panel) {
 		LOG_DEBUG("Refreshing cards panel");
-		M2_LEVEL.remove_custom_nonblocking_ui_panel(*M2G_PROXY.cards_panel);
-		M2G_PROXY.cards_panel = M2_LEVEL.add_custom_nonblocking_ui_panel(
+		M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.cards_panel);
+		M2G_PROXY.cards_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 				std::make_unique<m2::UiPanelBlueprint>(generate_cards_window("Cards")),
 				cards_panel_ratio());
 	}

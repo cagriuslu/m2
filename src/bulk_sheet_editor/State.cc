@@ -58,7 +58,7 @@ void bsedit::State::select_resource(const std::string& resource) {
 
 bool bsedit::State::select() {
 	// Get rid of previously created pixels, lines, etc.
-	M2_LEVEL.reset_bulk_sheet_editor();
+	M2_LEVEL.ResetBulkSheetEditor();
 
 	const auto& spriteSheets = this->sprite_sheets();
 	// To find the selected resource in the sheets, iterate over sheets

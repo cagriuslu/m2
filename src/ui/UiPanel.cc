@@ -348,7 +348,7 @@ void UiPanel::update_positions() {
 	}
 }
 
-UiAction UiPanel::HandleEvents(Events& events, bool is_panning) {
+UiAction UiPanel::HandleEvents(Events& events, bool IsPanning) {
 	// Return if UiPanel not enabled
 	if (IsKilled() || not enabled) {
 		return MakeContinueAction();
@@ -386,12 +386,12 @@ UiAction UiPanel::HandleEvents(Events& events, bool is_panning) {
 	}
 
 	// Clear mouse events if the mouse is inside the UI element so that it isn't delivered to game objects. This
-	// behavior can partially be overwritten with Game::enable_panning().
+	// behavior can partially be overwritten with Game::EnablePanning().
 	const auto rect = rect_px();
 	events.clear_mouse_button_presses(rect);
 	events.clear_mouse_button_releases(rect);
 	events.clear_mouse_wheel_scrolls(rect);
-	if (not is_panning) {
+	if (not IsPanning) {
 		events.clear_mouse_button_down(rect);
 	}
 
