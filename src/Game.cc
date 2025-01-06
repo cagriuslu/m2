@@ -256,7 +256,11 @@ bool m2::Game::IsOurTurn() {
 	if (IsServer()) {
 		return ServerThread().is_our_turn();
 	} else if (IsRealClient()) {
-		return RealClientThread().is_our_turn();
+		if (RealClientThread().is_started()) {
+			return RealClientThread().is_our_turn();
+		} else {
+			return false;
+		}
 	} else {
 		throw M2_ERROR("Not a multiplayer game");
 	}

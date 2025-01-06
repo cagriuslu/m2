@@ -106,12 +106,13 @@ void m2::network::ServerThread::set_turn_holder(int idx) {
 	_turn_holder = idx;
 }
 
-m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(bool shutdown) {
+m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(const bool shutdown) {
 	// Prepare the ServerUpdate except the receiver_index field
 	pb::NetworkMessage message;
 	message.set_game_hash(M2_GAME.Hash());
+	message.set_sequence_no(_nextServerUpdateSequenceNo++);
 	message.mutable_server_update()->set_turn_holder_index(turn_holder_index());
-	for (auto player_id : M2G_PROXY.multiPlayerObjectIds) {
+	for (const auto player_id : M2G_PROXY.multiPlayerObjectIds) {
 		message.mutable_server_update()->add_player_object_ids(player_id);
 	}
 	for (auto& char_variant : M2_LEVEL.characters) { // Iterate over characters

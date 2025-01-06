@@ -16,7 +16,7 @@ namespace m2::network {
 		/// peek_unprocessed_server_update() can be used to take a peek at it.
 		/// When process_server_update() is called, ServerUpdate is shifted as follows:
 		/// _prev_processed_server_update << _last_processed_server_update << BaseClientThread::_received_server_update
-		std::optional<pb::ServerUpdate> _prev_processed_server_update, _last_processed_server_update;
+		std::optional<std::pair<SequenceNo,pb::ServerUpdate>> _prev_processed_server_update, _last_processed_server_update;
 
 		/// Mapping of server object IDs to local object IDs. The boolean represents if the object has been visited during
 		/// the processing of ServerUpdate or not. If an object is not visited, it must have been deleted on the server side.

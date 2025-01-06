@@ -31,16 +31,15 @@ bool m2::network::detail::BaseClientThread::locked_has_server_update() {
 const m2::pb::ServerUpdate* m2::network::detail::BaseClientThread::locked_peek_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
-		return &*_received_server_update;
-	} else {
-		return nullptr;
+		return &_received_server_update->second;
 	}
+	return nullptr;
 }
-std::optional<m2::pb::ServerUpdate> m2::network::detail::BaseClientThread::locked_pop_server_update() {
+std::optional<std::pair<m2::SequenceNo,m2::pb::ServerUpdate>> m2::network::detail::BaseClientThread::locked_pop_server_update() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_update) {
 		auto tmp = std::move(_received_server_update);
-		_received_server_update = {};
+		_received_server_update.reset();
 		return tmp;
 	} else {
 		return std::nullopt;
@@ -246,7 +245,7 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 				std::this_thread::sleep_for(std::chrono::milliseconds(250));
 			}
 
-			// Preprocess one incoming message
+			// Preprocess only one incoming message to not block the other incoming/outgoing messages
 			if (locked_has_incoming_message(thread_manager)) {
 				const std::lock_guard lock(thread_manager->_mutex);
 
@@ -274,10 +273,20 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 							thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 							continue;
 						}
-						LOG_INFO("ServerUpdate found in incoming queue");
-						auto* server_update = front_message.release_server_update();
-						thread_manager->_received_server_update.emplace(std::move(*server_update));
-						delete server_update;
+						// Check sequence number
+						if (front_message.sequence_no() < thread_manager->_expectedServerUpdateSequenceNo) {
+							LOG_WARN("Ignoring ServerUpdate with an outdated sequence number", front_message.sequence_no());
+						} else if (thread_manager->_expectedServerUpdateSequenceNo < front_message.sequence_no()) {
+							LOG_WARN("ServerUpdate with an unexpected sequence number received, closing client", front_message.sequence_no());
+							thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
+							continue;
+						} else {
+							LOG_INFO("ServerUpdate with sequence number received", front_message.sequence_no());
+							thread_manager->_expectedServerUpdateSequenceNo++;
+							auto* server_update = front_message.release_server_update();
+							thread_manager->_received_server_update.emplace(std::make_pair(front_message.sequence_no(), std::move(*server_update)));
+							delete server_update;
+						}
 					}
 				} else if (front_message.has_server_command()) {
 					if (thread_manager->_state != pb::CLIENT_STARTED) {

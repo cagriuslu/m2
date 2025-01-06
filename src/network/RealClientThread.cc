@@ -35,7 +35,7 @@ const char* m2::network::RealClientThread::thread_name() const {
 int m2::network::RealClientThread::total_player_count() {
 	if (_last_processed_server_update) {
 		// Game is already running
-		return _last_processed_server_update->player_object_ids_size();
+		return _last_processed_server_update->second.player_object_ids_size();
 	} else if (auto unprocessed_server_update = locked_peek_server_update()) {
 		// Game is not yet running, but a ServerUpdate is received (but not yet processed).
 		return unprocessed_server_update->player_object_ids_size();
@@ -47,7 +47,7 @@ int m2::network::RealClientThread::total_player_count() {
 int m2::network::RealClientThread::self_index() {
 	if (_last_processed_server_update) {
 		// Game is already running
-		return _last_processed_server_update->receiver_index();
+		return _last_processed_server_update->second.receiver_index();
 	} else if (auto unprocessed_server_update = locked_peek_server_update()) {
 		// Game is not yet running, but a ServerUpdate is received (but not yet processed).
 		return unprocessed_server_update->receiver_index();
@@ -59,7 +59,7 @@ int m2::network::RealClientThread::self_index() {
 int m2::network::RealClientThread::turn_holder_index() {
 	if (_last_processed_server_update) {
 		// Game is already running
-		return _last_processed_server_update->turn_holder_index();
+		return _last_processed_server_update->second.turn_holder_index();
 	} else if (auto unprocessed_server_update = locked_peek_server_update()) {
 		// Game is not yet running, but a ServerUpdate is received (but not yet processed).
 		return unprocessed_server_update->turn_holder_index();
@@ -87,7 +87,7 @@ m2::expected<m2::network::ServerUpdateStatus> m2::network::RealClientThread::pro
 		LOG_DEBUG("Processing first ServerUpdate");
 		// This will be the first ServerUpdate, that started the game.
 		// Only do verification as level initialization should have initialized the same exact game state
-		const auto& server_update = *_last_processed_server_update;
+		const auto& server_update = _last_processed_server_update->second;
 
 		if (M2G_PROXY.multiPlayerObjectIds.size() != Z(server_update.player_object_ids_size())) {
 			return make_unexpected("Server and local player count doesn't match");
@@ -141,9 +141,9 @@ m2::expected<m2::network::ServerUpdateStatus> m2::network::RealClientThread::pro
 	}
 
 	LOG_DEBUG("Processing ServerUpdate");
-	const auto& server_update = *_last_processed_server_update;
+	const auto& server_update = _last_processed_server_update->second;
 	{
-		const auto& prev_server_update = *_prev_processed_server_update;
+		const auto& prev_server_update = _prev_processed_server_update->second;
 		// Check that the player IDs haven't changed
 		if (prev_server_update.player_object_ids_size() != server_update.player_object_ids_size()) {
 			return make_unexpected("Number of players have changed");

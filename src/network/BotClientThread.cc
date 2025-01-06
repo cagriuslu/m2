@@ -27,3 +27,10 @@ bool m2::network::BotClientThread::is_active() {
 	auto state = locked_get_client_state();
 	return state == pb::CLIENT_READY || state == pb::CLIENT_STARTED;
 }
+
+std::optional<m2::pb::ServerUpdate> m2::network::BotClientThread::pop_server_update() {
+	if (auto serverUpdate = locked_pop_server_update()) {
+		return serverUpdate->second;
+	}
+	return std::nullopt;
+}

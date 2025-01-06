@@ -17,6 +17,7 @@ namespace m2::network {
 		// Main thread variables
 		const mplayer::Type _type{};
 		const unsigned _max_connection_count{};
+		int32_t _nextServerUpdateSequenceNo{};
 
 		// Shared variables
 		std::latch _latch{1};
