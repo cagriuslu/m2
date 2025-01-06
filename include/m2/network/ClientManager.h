@@ -44,6 +44,9 @@ namespace m2::network {
 	public:
 		ClientManager(TcpSocket&& socket, int index);
 
+		// Properties
+		SequenceNo expectedClientCommandSequenceNo{};
+
 		// Accessors
 
 		[[nodiscard]] IpAddressAndPort ip_address_and_port() const { return _ip_address_and_port; }

@@ -26,7 +26,7 @@ namespace m2::network {
 		std::vector<ClientManager> _clients;
 		bool _has_reconnected_client{};
 		int _turn_holder{};
-		std::optional<pb::NetworkMessage> _received_client_command;
+		std::optional<std::pair<SequenceNo,pb::NetworkMessage>> _received_client_command;
 
 		// Inner thread variables
 		std::optional<PingBroadcastThread> _ping_broadcast_thread;
@@ -50,7 +50,7 @@ namespace m2::network {
 		int ready_client_count();
 		int turn_holder_index();
 		inline bool is_our_turn() { return turn_holder_index() == 0; }
-		std::optional<pb::NetworkMessage> pop_turn_holder_command();
+		std::optional<std::pair<SequenceNo,pb::NetworkMessage>> pop_turn_holder_command();
 		bool has_reconnected_client();
 		std::optional<int> disconnected_client();
 		std::optional<int> misbehaved_client();

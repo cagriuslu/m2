@@ -43,15 +43,19 @@ int m2::network::ServerThread::turn_holder_index() {
 	return _turn_holder;
 }
 
-std::optional<m2::pb::NetworkMessage> m2::network::ServerThread::pop_turn_holder_command() {
+std::optional<std::pair<m2::SequenceNo,m2::pb::NetworkMessage>> m2::network::ServerThread::pop_turn_holder_command() {
 	TRACE_FN();
 	const std::lock_guard lock(_mutex);
-	auto opt_message = _clients[_turn_holder].pop_incoming_message();
-	if (opt_message) {
-		auto json_str = pb::message_to_json_string(*opt_message);
+	if (_received_client_command) {
+		auto tmp = std::move(_received_client_command);
+		_received_client_command.reset();
+
+		auto json_str = pb::message_to_json_string(tmp->second);
 		LOG_DEBUG("Popping client command", _turn_holder, json_str->c_str());
+
+		return std::move(tmp);
 	}
-	return opt_message;
+	return std::nullopt;
 }
 
 bool m2::network::ServerThread::has_reconnected_client() {
@@ -234,6 +238,11 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 	SetThreadNameForLogging("SR");
 	LOG_INFO("ServerThread function");
 
+	auto locked_has_unprocessed_client_command = [](ServerThread* serverThread) {
+		const std::lock_guard lock(serverThread->_mutex);
+		return serverThread->_received_client_command;
+	};
+
 	auto listen_socket = TcpSocket::create_server(TCP_PORT_NO);
 	if (not listen_socket) {
 		throw M2_ERROR("TcpSocket creation failed: " + listen_socket.error());
@@ -274,18 +283,25 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 #endif
 
 	while (not server_thread->locked_is_quit() && not server_thread->is_shutdown()) {
+
+		// Wait until the previous ClientCommand is processed
+		while (locked_has_unprocessed_client_command(server_thread)) {
+			LOG_DEBUG("Waiting 250ms until unprocessed client commands to be processed");
+			std::this_thread::sleep_for(std::chrono::milliseconds(250));
+		}
+
 		// Process one incoming message from each client
 		{
 			const std::lock_guard lock(server_thread->_mutex);
 			for (auto i = 0; i < I(server_thread->_clients.size()); ++i) {
-				auto& client = server_thread->_clients[i];
-				if (client.has_incoming_data(false)) {
-					if (const auto* peak = client.peak_incoming_message(); peak->has_client_update()) {
+				if (auto& client = server_thread->_clients[i]; client.has_incoming_data(false)) {
+					// Peek cannot be null if has_incoming_data() is true
+					if (const auto* peek = client.peak_incoming_message(); peek->has_client_update()) {
 						if (server_thread->_state == pb::SERVER_LISTENING) {
-							LOG_INFO("Received client ready token", i, peak->client_update().ready_token());
-							client.set_ready_token(peak->client_update().ready_token()); // TODO handle response
+							LOG_INFO("Received client ready token", i, peek->client_update().ready_token());
+							client.set_ready_token(peek->client_update().ready_token()); // TODO handle response
 						} else if (server_thread->_state == pb::SERVER_STARTED && client.is_untrusted()) {
-							if (client.set_ready_token(peak->client_update().ready_token())) {
+							if (client.set_ready_token(peek->client_update().ready_token())) {
 								LOG_INFO("Previously reconnected client has presented the correct ready token, will send ServerUpdate", i);
 								server_thread->_has_reconnected_client = true;
 							} else {
@@ -297,13 +313,27 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 							client.set_misbehaved();
 						}
 						client.pop_incoming_message(); // Message handled
-					} else if (peak->has_client_command()) {
-						if (server_thread->_turn_holder != i) {
-							LOG_WARN("Received ClientCommand from a non-turn-holder client", i);
+					} else if (peek->has_client_command()) {
+						// Check sequence number
+						if (peek->sequence_no() < client.expectedClientCommandSequenceNo) {
+							LOG_WARN("Ignoring ClientCommand with an outdated sequence number", peek->sequence_no());
+							client.pop_incoming_message();
+						} else if (client.expectedClientCommandSequenceNo < peek->sequence_no()) {
+							LOG_WARN("ClientCommand with an unexpected sequence number received, closing client", peek->sequence_no());
 							client.set_misbehaved();
-							client.pop_incoming_message(); // Message handled
 						} else {
-							LOG_INFO("ClientCommand is received, will be processed by game loop", i);
+							// Since we're incrementing the expected sequence number here, the ClientCommand MUST be
+							// processed before the next iteration
+							client.expectedClientCommandSequenceNo++;
+							if (server_thread->_turn_holder != i) {
+								LOG_WARN("Received ClientCommand from a non-turn-holder client", i);
+								client.set_misbehaved();
+							} else {
+								LOG_INFO("ClientCommand from player index with sequence number received, will be processed by game loop", i, peek->sequence_no());
+								auto message = client.pop_incoming_message();
+								auto sequenceNo = message->sequence_no();
+								server_thread->_received_client_command.emplace(std::make_pair(sequenceNo, std::move(*message)));
+							}
 						}
 					} else {
 						LOG_WARN("Received unexpected message from client", i);

@@ -105,6 +105,7 @@ void m2::network::detail::BaseClientThread::locked_queue_client_command(const m2
 
 	pb::NetworkMessage msg;
 	msg.set_game_hash(M2_GAME.Hash());
+	msg.set_sequence_no(_nextClientCommandSequenceNo++);
 	msg.mutable_client_command()->CopyFrom(cmd);
 
 	{

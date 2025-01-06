@@ -516,7 +516,7 @@ void m2::Game::ExecutePreStep() {
 
 		// Handle client command
 		if (auto client_command = ServerThread().pop_turn_holder_command()) {
-			auto new_turn_holder = _proxy.handle_client_command(ServerThread().turn_holder_index(), client_command->client_command());
+			auto new_turn_holder = _proxy.handle_client_command(ServerThread().turn_holder_index(), client_command->second.client_command());
 			if (new_turn_holder) {
 				if (*new_turn_holder < 0) {
 					_server_update_necessary = true;

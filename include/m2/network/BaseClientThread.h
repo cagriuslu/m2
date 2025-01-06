@@ -12,11 +12,12 @@
 namespace m2::network::detail {
 	/// Base class of ClientThreads
 	class BaseClientThread {
-		// Read only
+		// Main thread variables
 		MAYBE const mplayer::Type _type{};
 		const std::string _addr;
 		const bool _ping_broadcast{};
 		uint64_t _ready_token{};
+		SequenceNo _nextClientCommandSequenceNo{};
 
 		// Shared variables
 		std::latch _latch{1};
@@ -27,7 +28,7 @@ namespace m2::network::detail {
 		std::optional<std::pair<SequenceNo,m2g::pb::ServerCommand>> _received_server_command;
 
 		// Inner thread variables
-		int32_t _expectedServerUpdateSequenceNo{}, _expectedServerCommandSequenceNo{};
+		SequenceNo _expectedServerUpdateSequenceNo{}, _expectedServerCommandSequenceNo{};
 		uint64_t _level_token{};
 
 		// Initialize the thread after the shared variables
