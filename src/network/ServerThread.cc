@@ -297,22 +297,33 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 				if (auto& client = server_thread->_clients[i]; client.has_incoming_data(false)) {
 					// Peek cannot be null if has_incoming_data() is true
 					if (const auto* peek = client.peak_incoming_message(); peek->has_client_update()) {
-						if (server_thread->_state == pb::SERVER_LISTENING) {
-							LOG_INFO("Received client ready token", i, peek->client_update().ready_token());
-							client.set_ready_token(peek->client_update().ready_token()); // TODO handle response
-						} else if (server_thread->_state == pb::SERVER_STARTED && client.is_untrusted()) {
-							if (client.set_ready_token(peek->client_update().ready_token())) {
-								LOG_INFO("Previously reconnected client has presented the correct ready token, will send ServerUpdate", i);
-								server_thread->_has_reconnected_client = true;
-							} else {
-								LOG_INFO("Previously reconnected client presented incorrect ready token, disconnecting client", i);
-								client.honorably_disconnect();
-							}
-						} else {
-							LOG_WARN("Received unexpected ClientUpdate", i);
+						// Check sequence number
+						if (peek->sequence_no() < client.expectedClientUpdateSequenceNo) {
+							LOG_WARN("Ignoring ClientUpdate with an outdated sequence number", peek->sequence_no());
+							client.pop_incoming_message();
+						} else if (client.expectedClientUpdateSequenceNo < peek->sequence_no()) {
+							LOG_WARN("ClientUpdate with an unexpected sequence number received, closing client", peek->sequence_no());
 							client.set_misbehaved();
+						} else {
+							client.expectedClientUpdateSequenceNo++;
+							if (server_thread->_state == pb::SERVER_LISTENING) {
+								LOG_INFO("Received client ready token", i, peek->client_update().ready_token());
+								client.set_ready_token(peek->client_update().ready_token()); // TODO handle response
+								client.pop_incoming_message(); // Message handled
+							} else if (server_thread->_state == pb::SERVER_STARTED && client.is_untrusted()) {
+								if (client.set_ready_token(peek->client_update().ready_token())) {
+									LOG_INFO("Previously reconnected client has presented the correct ready token, will send ServerUpdate", i);
+									server_thread->_has_reconnected_client = true;
+								} else {
+									LOG_INFO("Previously reconnected client presented incorrect ready token, disconnecting client", i);
+									client.honorably_disconnect();
+								}
+								client.pop_incoming_message(); // Message handled
+							} else {
+								LOG_WARN("Received unexpected ClientUpdate", i);
+								client.set_misbehaved();
+							}
 						}
-						client.pop_incoming_message(); // Message handled
 					} else if (peek->has_client_command()) {
 						// Check sequence number
 						if (peek->sequence_no() < client.expectedClientCommandSequenceNo) {

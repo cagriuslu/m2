@@ -97,7 +97,7 @@ message NetworkMessage {
     // Sent by the client game code explicitly to trigger an action. Only the turn holder can send this command. ClientCommands
     // from other player's will be ignored.
     m2g.pb.ClientCommand client_command = 5;
-    // Sent by the game engine automatically (not yet implemented, no known use case)
+    // Sent by the game engine automatically
     m2.pb.ClientUpdate client_update = 6;
   }
 }

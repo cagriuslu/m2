@@ -45,7 +45,7 @@ namespace m2::network {
 		ClientManager(TcpSocket&& socket, int index);
 
 		// Properties
-		SequenceNo expectedClientCommandSequenceNo{};
+		SequenceNo expectedClientCommandSequenceNo{}, expectedClientUpdateSequenceNo{};
 
 		// Accessors
 
