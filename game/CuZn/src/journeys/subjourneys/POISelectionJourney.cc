@@ -62,24 +62,30 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 			if (const auto world_position = signal.world_position()) {
 				if (const auto industry_location = industry_location_on_position(*world_position)) {
 					// Look up factory if exists, otherwise the background sprite
-					if (auto* factory = FindFactoryAtLocation(*industry_location);
-						(factory && M2_LEVEL.DimmingExceptions()->contains(factory->id()))
-						|| M2_LEVEL.DimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
-						LOG_INFO("Player selected industry location of interest, notifying main journey", *industry_location);
+					if (auto* factory = FindFactoryAtLocation(*industry_location); factory && M2_LEVEL.DimmingExceptions()->contains(factory->id())) {
+						M2_LEVEL.HideMessage();
+						LOG_INFO("Player selected factory of interest, notifying main journey", *industry_location);
+						notify_main_journey(*industry_location);
+					} else if (M2_LEVEL.DimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.industry_positions[*industry_location]))) {
+						M2_LEVEL.HideMessage();
+						LOG_INFO("Player selected empty industry location of interest, notifying main journey", *industry_location);
 						notify_main_journey(*industry_location);
 					} else {
 						LOG_INFO("Player selected uninteresting industry location", *industry_location);
 					}
 				} else if (auto merchant_location = merchant_location_on_position(*world_position);
 					merchant_location && M2_LEVEL.DimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.merchant_positions[*merchant_location]))) {
+					M2_LEVEL.HideMessage();
 					LOG_INFO("Player selected merchant location of interest, notifying main journey", *merchant_location);
 					notify_main_journey(*merchant_location);
 				} else if (auto connection = connection_on_position(*world_position);
 					connection && M2_LEVEL.DimmingExceptions()->contains(std::get<m2::ObjectId>(M2G_PROXY.connection_positions[*connection]))) {
+					M2_LEVEL.HideMessage();
 					LOG_INFO("Player selected connection of interest, notifying main journey", *connection);
 					notify_main_journey(*connection);
 				}
 			} else if (signal.cancel()) {
+				M2_LEVEL.HideMessage();
 				LOG_INFO("Player cancelled selection, notifying main journey");
 				notify_main_journey(std::nullopt);
 			} else {
@@ -93,7 +99,6 @@ std::optional<POISelectionJourneyStep> POISelectionJourney::HandleSignal(const P
 				M2_LEVEL.RemoveCustomNonblockingUiPanel(*_cancel_button_panel);
 				_cancel_button_panel.reset();
 			}
-			// M2G_PROXY.remove_notification(); // TODO both error messages and usage tips are shown as notification. We need to differentiate between the two before removing the notification.
 			M2_LEVEL.EnableHud();
 			M2_LEVEL.DisableDimmingWithExceptions();
 			break;
