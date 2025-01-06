@@ -24,10 +24,10 @@ namespace m2::network::detail {
 		pb::ClientThreadState _state{pb::ClientThreadState::CLIENT_INITIAL_STATE};
 		std::queue<pb::NetworkMessage> _outgoing_queue, _incoming_queue;
 		std::optional<std::pair<SequenceNo,pb::ServerUpdate>> _received_server_update;
-		std::optional<m2g::pb::ServerCommand> _received_server_command;
+		std::optional<std::pair<SequenceNo,m2g::pb::ServerCommand>> _received_server_command;
 
 		// Inner thread variables
-		int32_t _expectedServerUpdateSequenceNo{};
+		int32_t _expectedServerUpdateSequenceNo{}, _expectedServerCommandSequenceNo{};
 		uint64_t _level_token{};
 
 		// Initialize the thread after the shared variables
@@ -54,7 +54,7 @@ namespace m2::network::detail {
 		const pb::ServerUpdate* locked_peek_server_update();
 		std::optional<std::pair<SequenceNo,pb::ServerUpdate>> locked_pop_server_update();
 		bool locked_has_server_command();
-		std::optional<m2g::pb::ServerCommand> locked_pop_server_command();
+		std::optional<std::pair<SequenceNo,m2g::pb::ServerCommand>> locked_pop_server_command();
 
 		// Modifiers
 

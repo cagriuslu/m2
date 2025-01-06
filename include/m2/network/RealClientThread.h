@@ -55,7 +55,7 @@ namespace m2::network {
 		/// Query the total number of players in the game.
 		int total_player_count();
 		/// Try to pop the ServerCommand.
-		inline std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }
+		std::optional<m2g::pb::ServerCommand> pop_server_command();
 		/// Query the index of this game instance in server's client list.
 		int self_index();
 		/// Query the index of the current turn holder.

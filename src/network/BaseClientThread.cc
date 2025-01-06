@@ -49,11 +49,11 @@ bool m2::network::detail::BaseClientThread::locked_has_server_command() {
 	const std::lock_guard lock(_mutex);
 	return static_cast<bool>(_received_server_command);
 }
-std::optional<m2g::pb::ServerCommand> m2::network::detail::BaseClientThread::locked_pop_server_command() {
+std::optional<std::pair<m2::SequenceNo,m2g::pb::ServerCommand>> m2::network::detail::BaseClientThread::locked_pop_server_command() {
 	const std::lock_guard lock(_mutex);
 	if (_received_server_command) {
 		auto tmp = std::move(_received_server_command);
-		_received_server_command = {};
+		_received_server_command.reset();
 		return tmp;
 	} else {
 		return std::nullopt;
@@ -294,10 +294,20 @@ void m2::network::detail::BaseClientThread::base_client_thread_func(BaseClientTh
 						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
 						continue;
 					}
-					LOG_INFO("ServerCommand found in incoming queue");
-					auto* server_command = front_message.release_server_command();
-					thread_manager->_received_server_command.emplace(std::move(*server_command));
-					delete server_command;
+					// Check sequence number
+					if (front_message.sequence_no() < thread_manager->_expectedServerCommandSequenceNo) {
+						LOG_WARN("Ignoring ServerCommand with an outdated sequence number", front_message.sequence_no());
+					} else if (thread_manager->_expectedServerCommandSequenceNo < front_message.sequence_no()) {
+						LOG_WARN("ServerCommand with an unexpected sequence number received, closing client", front_message.sequence_no());
+						thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);
+						continue;
+					} else {
+						LOG_INFO("ServerCommand with sequence number received", front_message.sequence_no());
+						thread_manager->_expectedServerCommandSequenceNo++;
+						auto* server_command = front_message.release_server_command();
+						thread_manager->_received_server_command.emplace(std::make_pair(front_message.sequence_no(), std::move(*server_command)));
+						delete server_command;
+					}
 				} else {
 					LOG_WARN("Unsupported message received from server, closing client");
 					thread_manager->unlocked_set_state(pb::CLIENT_MISBEHAVING_SERVER_QUIT);

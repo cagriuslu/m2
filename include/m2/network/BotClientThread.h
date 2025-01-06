@@ -15,7 +15,7 @@ namespace m2::network {
 
 		// Accessors
 		bool is_active();
-		std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }
+		std::optional<m2g::pb::ServerCommand> pop_server_command();
 
 		// Modifiers
 		void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }

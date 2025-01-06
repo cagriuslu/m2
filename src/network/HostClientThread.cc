@@ -23,6 +23,12 @@ const char* m2::network::HostClientThread::thread_name() const {
 bool m2::network::HostClientThread::is_shutdown() {
 	return locked_get_client_state() == pb::CLIENT_SHUTDOWN;
 }
+std::optional<m2g::pb::ServerCommand> m2::network::HostClientThread::pop_server_command() {
+	if (auto serverCommand = locked_pop_server_command()) {
+		return serverCommand->second;
+	}
+	return std::nullopt;
+}
 
 bool m2::network::HostClientThread::is_connected() {
 	return locked_get_client_state() == pb::CLIENT_CONNECTED;

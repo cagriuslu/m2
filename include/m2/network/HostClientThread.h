@@ -15,7 +15,7 @@ namespace m2::network {
 
 		// Accessors
 		bool is_shutdown();
-		inline std::optional<m2g::pb::ServerCommand> pop_server_command() { return locked_pop_server_command(); }
+		std::optional<m2g::pb::ServerCommand> pop_server_command();
 
 		// Modifiers
 		void start_if_ready() { locked_start_if_ready(); }

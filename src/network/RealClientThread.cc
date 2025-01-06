@@ -43,7 +43,12 @@ int m2::network::RealClientThread::total_player_count() {
 		throw M2_ERROR("Game not yet started");
 	}
 }
-
+std::optional<m2g::pb::ServerCommand> m2::network::RealClientThread::pop_server_command() {
+	if (auto serverCommand = locked_pop_server_command()) {
+		return serverCommand->second;
+	}
+	return std::nullopt;
+}
 int m2::network::RealClientThread::self_index() {
 	if (_last_processed_server_update) {
 		// Game is already running

@@ -1,6 +1,7 @@
 #pragma once
 #include "TcpSocketManager.h"
 #include "IpAddressAndPort.h"
+#include <m2/network/SequenceNo.h>
 #include "../sdl/Detail.h"
 #include <variant>
 
@@ -37,6 +38,7 @@ namespace m2::network {
 
 		int _index;
 		IpAddressAndPort _ip_address_and_port;
+		SequenceNo _nextServerCommandSequenceNo{};
 		std::variant<Connected, Ready, HonorablyDisconnected, ReconnectedUntrusted, Misbehaved, Shutdown> _state;
 
 	public:
@@ -75,6 +77,7 @@ namespace m2::network {
 		std::optional<pb::NetworkMessage> pop_incoming_message();
 
 		[[nodiscard]] bool has_outgoing_data();
+		SequenceNo ReturnAndIncrementServerCommandSequenceNo();
 		/// Place a message in the outgoing message queue to be sent later.
 		void queue_outgoing_message(pb::NetworkMessage msg);
 		/// Should be called only if the socket is already writeable.

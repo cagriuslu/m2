@@ -139,6 +139,9 @@ std::optional<m2::pb::NetworkMessage> m2::network::ClientManager::pop_incoming_m
 bool m2::network::ClientManager::has_outgoing_data() {
 	return socket_manager().has_outgoing_data() || not outgoing_queue().empty();
 }
+m2::SequenceNo m2::network::ClientManager::ReturnAndIncrementServerCommandSequenceNo() {
+	return _nextServerCommandSequenceNo++;
+}
 void m2::network::ClientManager::queue_outgoing_message(m2::pb::NetworkMessage msg) {
 	outgoing_queue().emplace(std::move(msg));
 }
