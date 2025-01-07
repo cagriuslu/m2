@@ -255,7 +255,7 @@ std::optional<SellJourneyStep> SellJourney::HandleConfirmationEnterSignal() {
 			cc.mutable_sell_action()->add_beer_sources(beer_source);
 		}
 		cc.mutable_sell_action()->set_merchant_develop_benefit_industry_tile(_merchant_develop_benefit_industry_tile);
-		M2_GAME.QueueClientCommand(cc);
+		M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 	}
 	M2_DEFER(m2g::Proxy::main_journey_deleter);
 	return std::nullopt;

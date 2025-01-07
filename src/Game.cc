@@ -312,10 +312,10 @@ m2::void_expected m2::Game::LoadMultiPlayerAsHost(
 	M2G_PROXY.multi_player_level_server_populate(level_name, *_level->_lb);
 
 	// Execute second server update, which will fully initialize client levels.
-	M2_GAME.ServerThread().send_server_update();
+	_lastSentOrReceivedServerUpdateSequenceNo = M2_GAME.ServerThread().send_server_update();
 	// Act as if ServerUpdate is received on the server-side as well
 	LOG_DEBUG("Calling server-side post_server_update...");
-	_proxy.post_server_update(false);
+	_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, false);
 
 	// If there are bots, we need to consume the second server update as bots are never the first turn holder.
 	LOG_DEBUG("Waiting 1s until the second server update is delivered to bots");
@@ -343,9 +343,9 @@ m2::void_expected m2::Game::LoadMultiPlayerAsGuest(
 	// Consume the initial ServerUpdate that triggered the level to be initialized
 	auto expect_server_update = M2_GAME.RealClientThread().process_server_update();
 	m2_reflect_unexpected(expect_server_update);
-	m2_return_unexpected_message_unless(expect_server_update.value() == network::ServerUpdateStatus::PROCESSED,
-		"Unexpected ServerUpdate status");
-
+	_lastSentOrReceivedServerUpdateSequenceNo = expect_server_update->second;
+	m2_return_unexpected_message_unless(expect_server_update->first == network::ServerUpdateStatus::PROCESSED,
+			"Unexpected ServerUpdate status");
 	return {};
 }
 
@@ -594,12 +594,12 @@ void m2::Game::ExecutePostStep() {
 	if (IsServer()) {
 		if (_server_update_necessary) {
 			LOG_DEBUG("Server update is necessary, sending ServerUpdate...");
-			ServerThread().send_server_update(_server_update_with_shutdown);
+			_lastSentOrReceivedServerUpdateSequenceNo = ServerThread().send_server_update(_server_update_with_shutdown);
 			_server_update_necessary = false; // Unset flag
 
 			// Act as if ServerUpdate is received on the server-side as well
 			LOG_DEBUG("Calling server-side post_server_update...");
-			_proxy.post_server_update(_server_update_with_shutdown);
+			_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, _server_update_with_shutdown);
 
 			// Shutdown the game if necessary
 			if (_server_update_with_shutdown) {
@@ -614,11 +614,13 @@ void m2::Game::ExecutePostStep() {
 		// Handle ServerUpdate
 		auto status = RealClientThread().process_server_update();
 		m2_succeed_or_throw_error(status);
-		if (*status == network::ServerUpdateStatus::PROCESSED || *status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
+
+		if (status->first == network::ServerUpdateStatus::PROCESSED || status->first == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
+			_lastSentOrReceivedServerUpdateSequenceNo = status->second;
 			LOG_DEBUG("Calling client-side post_server_update...");
-			_proxy.post_server_update(*status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN);
+			_proxy.post_server_update(*_lastSentOrReceivedServerUpdateSequenceNo, status->first == network::ServerUpdateStatus::PROCESSED_SHUTDOWN);
 		}
-		if (*status == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
+		if (status->first == network::ServerUpdateStatus::PROCESSED_SHUTDOWN) {
 			RealClientThread().shutdown();
 			// Game will be restarted in handle_network_events
 		}
@@ -644,6 +646,7 @@ void m2::Game::ExecutePreDraw() {
 }
 
 void m2::Game::UpdateHudContents() {
+	// TODO handle returned actions
 	IF(_level->_leftHudUiPanel)->update_contents(_delta_time_s);
 	IF(_level->_rightHudUiPanel)->update_contents(_delta_time_s);
 	IF(_level->_messageBoxUiPanel)->update_contents(_delta_time_s);
@@ -657,7 +660,16 @@ void m2::Game::UpdateHudContents() {
 		}
 	}
 	IF(_level->_mouseHoverUiPanel)->update_contents(_delta_time_s);
-	IF(_level->_semiBlockingUiPanel)->update_contents(_delta_time_s);
+	if (_level->_semiBlockingUiPanel) {
+		_level->_semiBlockingUiPanel->update_contents(_delta_time_s)
+				.IfQuit([this]() {
+					quit = true;
+				})
+				.IfAnyReturn([this](const ReturnBase&) {
+					// The return object is discarded. Remove the state.
+					_level->_semiBlockingUiPanel.reset();
+				});
+	}
 }
 
 void m2::Game::ClearBackBuffer() const {

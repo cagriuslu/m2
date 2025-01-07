@@ -205,7 +205,7 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleConfirmationEnterSignal(
 		cc.mutable_develop_action()->set_industry_tile_2(_selected_tile_2);
 		cc.mutable_develop_action()->set_iron_sources_1(_iron_source_1);
 		cc.mutable_develop_action()->set_iron_sources_2(_iron_source_2);
-		M2_GAME.QueueClientCommand(cc);
+		M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 	} else {
 		LOG_INFO("Cancelling Develop action...");
 	}

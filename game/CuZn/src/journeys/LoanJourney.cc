@@ -32,7 +32,7 @@ void ExecuteLoanJourney() {
 
 			pb::ClientCommand cc;
 			cc.mutable_loan_action()->set_card(*selected_card);
-			M2_GAME.QueueClientCommand(cc);
+			M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 
 			return;
 		}

@@ -44,6 +44,7 @@ namespace m2::network {
 		~ServerThread();
 
 		// Accessors
+
 		[[nodiscard]] mplayer::Type type() const { return _type; }
 		bool is_listening();
 		int client_count();
@@ -57,9 +58,11 @@ namespace m2::network {
 		bool is_shutdown();
 
 		// Modifiers
+
 		void_expected close_lobby();
 		void set_turn_holder(int index);
-		void send_server_update(bool shutdown_as_well = false);
+		/// Returns the sequence number of the ServerUpdate that's sent
+		SequenceNo send_server_update(bool shutdown_as_well = false);
 		void send_server_command(const m2g::pb::ServerCommand& command, int receiver_index = -1);
 
 	private:

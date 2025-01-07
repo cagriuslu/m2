@@ -69,9 +69,11 @@ namespace m2::network {
 		inline void set_ready(bool state) { locked_set_ready(state); }
 		/// Queue a ClientCommand to be sent to the server.
 		inline void queue_client_command(const m2g::pb::ClientCommand& c) { locked_queue_client_command(c); }
-		/// Returns true if there was a ServerUpdate and it was processed, otherwise returns false.
+		/// Returns PROCESSED if there was a ServerUpdate, and it was processed. Returns PROCESSED_SHUTDOWN if there was
+		/// a ServerUpdate, and it was processed, but it also contained the shutdown flag. In both these conditions, the
+		/// SequenceNo belonging to the ServerUpdate is also returned. Returns NOT_FOUND if there wasn't a ServerUpdate.
 		/// Returns unexpected if an error occurs while processing.
-		expected<ServerUpdateStatus> process_server_update();
+		expected<std::pair<ServerUpdateStatus,SequenceNo>> process_server_update();
 		/// Shutdown the client. This should be called only if the last ServerUpdateStatus indicated shutdown.
 		void shutdown();
 	};

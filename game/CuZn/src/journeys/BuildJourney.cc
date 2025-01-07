@@ -427,7 +427,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleConfirmationEnterSignal() {
 				throw M2_ERROR("Unexpected resource type");
 			}
 		}
-		M2_GAME.QueueClientCommand(cc);
+		M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 	} else {
 		LOG_INFO("Cancelling Build action...");
 	}

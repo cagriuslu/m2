@@ -50,6 +50,7 @@ namespace m2 {
 		std::variant<std::monostate, ServerThreads, network::RealClientThread> _multi_player_threads;
 		std::list<BotAndIndexThread> _bot_threads; // thread,receiver_index pairs (receiver_index is initially -1)
 		bool _server_update_necessary{}, _server_update_with_shutdown{};
+		std::optional<SequenceNo> _lastSentOrReceivedServerUpdateSequenceNo;
 
 		////////////////////////////////////////////////////////////////////////
 		////////////////////////////// RESOURCES ///////////////////////////////
@@ -139,6 +140,7 @@ namespace m2 {
 		network::ServerThread& ServerThread() { return std::get<ServerThreads>(_multi_player_threads).first; }
 		network::HostClientThread& HostClientThread() { return std::get<ServerThreads>(_multi_player_threads).second; }
 		network::RealClientThread& RealClientThread() { return std::get<network::RealClientThread>(_multi_player_threads); }
+		std::optional<SequenceNo> LastServerUpdateSequenceNo() const { return _lastSentOrReceivedServerUpdateSequenceNo; }
 		int TotalPlayerCount();
 		int SelfIndex();
 		int TurnHolderIndex();

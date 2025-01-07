@@ -73,13 +73,13 @@ int m2::network::RealClientThread::turn_holder_index() {
 	}
 }
 
-m2::expected<m2::network::ServerUpdateStatus> m2::network::RealClientThread::process_server_update() {
+m2::expected<std::pair<m2::network::ServerUpdateStatus,m2::SequenceNo>> m2::network::RealClientThread::process_server_update() {
 	TRACE_FN();
 
 	auto unprocessed_server_update = locked_pop_server_update();
 	if (not unprocessed_server_update) {
 		LOG_TRACE("No ServerUpdate to process");
-		return ServerUpdateStatus::NOT_FOUND;
+		return std::make_pair(ServerUpdateStatus::NOT_FOUND, -1);
 	}
 
 	LOG_DEBUG("Shifting server update: prev << last << unprocessed << null");
@@ -142,7 +142,7 @@ m2::expected<m2::network::ServerUpdateStatus> m2::network::RealClientThread::pro
 			return make_unexpected("Unexpected shutdown flag in first ServerUpdate");
 		}
 
-		return ServerUpdateStatus::PROCESSED; // Successfully processed the first ServerUpdate
+		return std::make_pair(ServerUpdateStatus::PROCESSED, _last_processed_server_update->first); // Successfully processed the first ServerUpdate
 	}
 
 	LOG_DEBUG("Processing ServerUpdate");
@@ -254,7 +254,11 @@ m2::expected<m2::network::ServerUpdateStatus> m2::network::RealClientThread::pro
 		}
 	}
 
-	return server_update.shutdown() ? ServerUpdateStatus::PROCESSED_SHUTDOWN : ServerUpdateStatus::PROCESSED;
+	return std::make_pair(
+			server_update.shutdown()
+			? ServerUpdateStatus::PROCESSED_SHUTDOWN
+			: ServerUpdateStatus::PROCESSED,
+			_last_processed_server_update->first);
 }
 
 void m2::network::RealClientThread::shutdown() {

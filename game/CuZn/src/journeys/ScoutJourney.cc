@@ -35,7 +35,7 @@ void ExecuteScoutJourney() {
 					cc.mutable_scout_action()->set_card_0(*selected_card_0);
 					cc.mutable_scout_action()->set_card_1(*selected_card_1);
 					cc.mutable_scout_action()->set_card_2(*selected_card_2);
-					M2_GAME.QueueClientCommand(cc);
+					M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 
 					return;
 				}

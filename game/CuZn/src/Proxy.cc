@@ -362,7 +362,7 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 	}
 }
 
-void m2g::Proxy::post_server_update(const bool shutdown) {
+void m2g::Proxy::post_server_update(m2::SequenceNo, const bool shutdown) {
 	// Delete the custom hud
 	if (custom_hud_panel) {
 		LOG_DEBUG("Hiding top HUD");
@@ -586,12 +586,38 @@ void m2g::Proxy::enable_action_buttons() {
 		button->enabled = true;
 	}
 }
-
 void m2g::Proxy::disable_action_buttons() {
 	for (const auto& button_name : action_button_names) {
 		auto* button = M2_LEVEL.LeftHud()->find_first_widget_by_name<m2::widget::Text>(button_name);
 		button->enabled = false;
 	}
+}
+void m2g::Proxy::SendClientCommandAndWaitForServerUpdate(const pb::ClientCommand& cc) {
+	auto blueprint = m2::UiPanelBlueprint{
+			.name = "WaitingForServerUpdate",
+			.w = 1, .h = 1,
+			.background_color = {0, 0, 0, 255},
+			.on_create = [&cc](m2::UiPanel&) {
+				M2_GAME.QueueClientCommand(cc);
+			},
+			.on_update = [prevSequenceNo = *M2_GAME.LastServerUpdateSequenceNo()](m2::UiPanel&) -> m2::UiAction {
+				// Poll until the sequence number changes
+				if (prevSequenceNo == *M2_GAME.LastServerUpdateSequenceNo()) {
+					return m2::MakeContinueAction();
+				}
+				return m2::MakeReturnAction();
+			},
+			.widgets = {
+				m2::UiWidgetBlueprint{
+					.x = 0, .y = 0, .w = 1, .h = 1,
+					.border_width = 0,
+					.variant = m2::widget::TextBlueprint{
+						.text = "Waiting for server...",
+						.wrapped_font_size_in_units = 0.1f
+					}
+				},
+			}};
+	M2_LEVEL.ShowSemiBlockingUiPanel(m2::RectF{0.3f, 0.3f, 0.4f, 0.4f}, std::make_unique<m2::UiPanelBlueprint>(blueprint));
 }
 
 std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::Proxy::prepare_next_round() {

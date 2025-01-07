@@ -74,6 +74,6 @@ std::optional<LiquidationJourneyStep> LiquidationJourney::HandleLocationExitSign
 	for (const auto& loc : _selected_locations) {
 		cc.mutable_liquidate_action()->add_locations_to_sell(loc);
 	}
-	M2_GAME.QueueClientCommand(cc);
+	M2G_PROXY.SendClientCommandAndWaitForServerUpdate(cc);
 	return std::nullopt;
 }

@@ -158,7 +158,7 @@ m2::pb::NetworkMessage m2::network::ServerThread::prepare_server_update(const bo
 
 	return message;
 }
-void m2::network::ServerThread::send_server_update(bool shutdown_as_well) {
+m2::SequenceNo m2::network::ServerThread::send_server_update(bool shutdown_as_well) {
 	INFO_FN();
 
 	// Make sure the state is set as READY
@@ -178,13 +178,15 @@ void m2::network::ServerThread::send_server_update(bool shutdown_as_well) {
 			_clients[i].queue_outgoing_message(message);
 		}
 	}
-	// Clear reconnected client
+	// Clear reconnected client, since the ServerUpdate will cause them to start the game
 	_has_reconnected_client = false;
 
 	if (shutdown_as_well) {
 		LOG_INFO("Shutting down the server");
 		set_state_locked(pb::SERVER_SHUTDOWN);
 	}
+
+	return message.sequence_no();
 }
 
 void m2::network::ServerThread::send_server_command(const m2g::pb::ServerCommand& command, int receiver_index) {

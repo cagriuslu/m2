@@ -11,6 +11,7 @@
 #include <Level.pb.h>
 #include <string_view>
 #include <array>
+#include "network/SequenceNo.h"
 #include "ui/MessageBox.h"
 
 namespace m2 {
@@ -127,7 +128,7 @@ namespace m2 {
 		/// ServerUpdate is published (except the initial ServerUpdate). For the client, it's called after the
 		/// ServerUpdate is received & processed by the engine. If shutdown is true, the shutdown flag is set in the
 		/// ServerUpdate and the server or the client will be shutdown after this call.
-		void post_server_update(MAYBE bool shutdown) {}
+		void post_server_update(MAYBE SequenceNo sequenceNo, MAYBE bool shutdown) {}
 		/// Should be implemented from the perspective of a bot.
 		void bot_handle_server_update(MAYBE const m2::pb::ServerUpdate& server_update) {}
 		/// Should be implemented from the perspective of a bot.
