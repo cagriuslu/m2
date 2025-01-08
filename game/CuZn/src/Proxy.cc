@@ -117,6 +117,21 @@ void m2g::Proxy::multi_player_level_server_populate(MAYBE const std::string& nam
 	for (int i = 1; i < M2_GAME.ServerThread().client_count(); ++i) {
 		_waiting_players.emplace_back(i);
 	}
+	// Now that the player order is determined, fill the game state tracker with the order
+	{
+		game_state_tracker().set_attribute(pb::FIRST_PLAYER_INDEX, 0.0f);
+		auto waitingPlayersCopy = _waiting_players;
+		for (auto order = pb::SECOND_PLAYER_INDEX;
+				order <= pb::FORTH_PLAYER_INDEX;
+				order = static_cast<pb::AttributeType>(I(order) + 1)) {
+			if (not waitingPlayersCopy.empty()) {
+				game_state_tracker().set_attribute(order, F(waitingPlayersCopy.front()));
+				waitingPlayersCopy.pop_front();
+				continue;
+			}
+			game_state_tracker().set_attribute(order, F(-1));
+		}
+	}
 }
 
 std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYBE const m2g::pb::ClientCommand& client_command) {
@@ -231,6 +246,31 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 		} else {
 			// Otherwise, just fetch the next player from _waiting_players
 			LOG_INFO("Switch to next player");
+		}
+	}
+
+	// Now that the player order is determined, fill the game state tracker with the order
+	{
+		auto playedPlayersCopy = _played_players;
+		auto waitingPlayersCopy = _waiting_players;
+		// If only the first action is played, the last player of playedPlayers should be the same as the first player of waitingPlayers
+		if (not playedPlayersCopy.empty() && not waitingPlayersCopy.empty() && playedPlayersCopy.back().first == waitingPlayersCopy.front()) {
+			playedPlayersCopy.pop_back();
+		}
+
+		for (auto order = pb::FIRST_PLAYER_INDEX; order <= pb::FORTH_PLAYER_INDEX;
+				order = static_cast<pb::AttributeType>(I(order) + 1)) {
+			if (not playedPlayersCopy.empty()) {
+				game_state_tracker().set_attribute(order, F(playedPlayersCopy.front().first));
+				playedPlayersCopy.pop_front();
+				continue;
+			}
+			if (not waitingPlayersCopy.empty()) {
+				game_state_tracker().set_attribute(order, F(waitingPlayersCopy.front()));
+				waitingPlayersCopy.pop_front();
+				continue;
+			}
+			game_state_tracker().set_attribute(order, F(-1));
 		}
 	}
 
@@ -611,9 +651,10 @@ std::optional<std::pair<m2g::Proxy::PlayerIndex, m2g::pb::ServerCommand>> m2g::P
 		}
 
 		// Remove the selected player from the list
-		auto it = std::remove_if(_played_players.begin(), _played_players.end(), [player_index](const auto& pair) {
-			return pair.first == player_index;
-		});
+		auto it = std::remove_if(_played_players.begin(), _played_players.end(),
+				[player_index](const auto& pair) {
+					return pair.first == player_index;
+				});
 		_played_players.erase(it);
 
 		_waiting_players.emplace_back(player_index);

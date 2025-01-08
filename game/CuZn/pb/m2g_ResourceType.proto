@@ -14,10 +14,10 @@ enum ResourceType {
   BEER_BARREL_COUNT = 13;
   IS_SOLD = 14;
 
-  // For GAME_STATE_TRACKER
   DRAW_DECK_SIZE = 41;
   IS_RAILROAD_ERA = 42;
   IS_LAST_ACTION_OF_PLAYER = 43;
+  // The order of the following resources are important
   MONEY_SPENT_BY_PLAYER_0 = 45;
   MONEY_SPENT_BY_PLAYER_1 = 46;
   MONEY_SPENT_BY_PLAYER_2 = 47;

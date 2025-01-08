@@ -41,4 +41,11 @@ enum AttributeType {
     MERCHANT_BONUS_MONEY = 28;
 
     TILE_LEVEL = 29;
+
+    // For GAME_STATE_TRACKER
+    // The order of the following resources are important
+    FIRST_PLAYER_INDEX = 30;
+    SECOND_PLAYER_INDEX = 31;
+    THIRD_PLAYER_INDEX = 32;
+    FORTH_PLAYER_INDEX = 33;
 }

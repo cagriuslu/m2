@@ -96,8 +96,10 @@ namespace m2g {
 
 		using PlayerIndex = int;
 		using SpentMoney = int;
-		std::list<PlayerIndex> _waiting_players; // Front of the list is the next player
-		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players; // Front of the list played first
+		/// List of players waiting their turn. Front of the list is the next player
+		std::list<PlayerIndex> _waiting_players;
+		/// List of players that have already taken one or both of their actions. Front of the list is the player that went the first.
+		std::list<std::pair<PlayerIndex, SpentMoney>> _played_players;
 
 		using LiquidationDetails = std::optional<std::pair<PlayerIndex, pb::ServerCommand>>;
 		/// If non-null, the index of the player that should liquidate their assets is returned.
