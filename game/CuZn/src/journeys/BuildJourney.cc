@@ -207,7 +207,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleInitialEnterSignal() {
 }
 std::optional<BuildJourneyStep> BuildJourney::HandleLocationEnterSignal() {
 	if (const auto buildableLocations = buildable_industry_locations_in_network_with_card(M2_PLAYER.character(), _selected_card); buildableLocations.empty()) {
-		M2_LEVEL.ShowMessage("No buildable locations in network is found");
+		M2_LEVEL.ShowMessage("No buildable locations in network is found", 8.0f);
 	} else {
 		sub_journey.emplace(buildableLocations, "Pick a location using right mouse button...");
 	}
@@ -236,7 +236,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(con
 		// Check if the player has a factory to build
 		auto tile_type = PlayerNextIndustryTileOfCategory(M2_PLAYER.character(), industry_tile_category_of_industry(_selected_industry));
 		if (not tile_type) {
-			M2_LEVEL.ShowMessage("No industry tile of appropriate type is found");
+			M2_LEVEL.ShowMessage("No industry tile of appropriate type is found", 8.0f);
 			M2_DEFER(m2g::Proxy::main_journey_deleter);
 			return std::nullopt;
 		}
@@ -244,7 +244,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleLocationMouseClickSignal(con
 		if (auto* factory = FindFactoryAtLocation(selected_location)) {
 			// The next tile must be higher level than the built industry
 			if (not is_next_tile_higher_level_than_built_tile(factory->character(), *tile_type)) {
-				M2_LEVEL.ShowMessage("Overbuilding requires a higher level tile");
+				M2_LEVEL.ShowMessage("Overbuilding requires a higher level tile", 8.0f);
 				M2_DEFER(m2g::Proxy::main_journey_deleter);
 				return std::nullopt;
 			}
@@ -299,7 +299,7 @@ std::optional<BuildJourneyStep> BuildJourney::HandleResourceEnterSignal() {
 						M2_DEFER(m2g::Proxy::main_journey_deleter);
 					}
 				} else {
-					M2_LEVEL.ShowMessage("Coal required but none available in network");
+					M2_LEVEL.ShowMessage("Coal required but none available in network", 8.0f);
 					M2_DEFER(m2g::Proxy::main_journey_deleter);
 				}
 			} else if (closest_mines_with_coal.size() == 1) {
@@ -412,7 +412,6 @@ std::optional<BuildJourneyStep> BuildJourney::HandleConfirmationEnterSignal() {
 	auto industry_name = M2_GAME.GetNamedItem(_selected_industry).in_game_name();
 	if (ask_for_confirmation("Build " + industry_name + " in " + city_name, "using " + card_name + " card?", "OK", "Cancel")) {
 		LOG_INFO("Build action confirmed");
-		M2_LEVEL.ShowMessage("Building location...");
 
 		m2g::pb::ClientCommand cc;
 		cc.mutable_build_action()->set_card(_selected_card);

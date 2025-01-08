@@ -23,7 +23,7 @@ namespace {
 			if (auto build_prerequisite = CanPlayerAttemptToBuild(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<BuildJourney>); // Avoid a temporary
 			} else {
-				M2_LEVEL.ShowMessage(build_prerequisite.error());
+				M2_LEVEL.ShowMessage(build_prerequisite.error(), 8.0f);
 			}
 			return MakeContinueAction();
 		}
@@ -36,7 +36,7 @@ namespace {
 			if (auto develop_prerequisite = CanPlayerAttemptToDevelop(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<DevelopJourney>);
 			} else {
-				M2_LEVEL.ShowMessage(develop_prerequisite.error());
+				M2_LEVEL.ShowMessage(develop_prerequisite.error(), 8.0f);
 			}
 			return MakeContinueAction();
 		}
@@ -49,7 +49,7 @@ namespace {
 			if (auto loan_prerequisite = CanPlayerAttemptToLoan(M2_PLAYER.character())) {
 				ExecuteLoanJourney();
 			} else {
-				M2_LEVEL.ShowMessage(loan_prerequisite.error());
+				M2_LEVEL.ShowMessage(loan_prerequisite.error(), 8.0f);
 			}
 			return MakeContinueAction();
 		}
@@ -62,7 +62,7 @@ namespace {
 			if (auto network_prerequisite = CanPlayerAttemptToNetwork(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<NetworkJourney>);
 			} else {
-				M2_LEVEL.ShowMessage(network_prerequisite.error());
+				M2_LEVEL.ShowMessage(network_prerequisite.error(), 8.0f);
 			}
 			return MakeContinueAction();
 		}
@@ -86,7 +86,7 @@ namespace {
 			if (auto scout_prerequisite = CanPlayerAttemptToScout(M2_PLAYER.character())) {
 				ExecuteScoutJourney();
 			} else {
-				M2_LEVEL.ShowMessage(scout_prerequisite.error());
+				M2_LEVEL.ShowMessage(scout_prerequisite.error(), 8.0f);
 			}
 			return MakeContinueAction();
 		}
@@ -99,7 +99,7 @@ namespace {
 			if (auto sell_prerequisite = CanPlayerAttemptToSell(M2_PLAYER.character())) {
 				m2g::Proxy::get_instance().main_journeys.emplace(std::in_place_type<SellJourney>);
 			} else {
-				M2_LEVEL.ShowMessage(sell_prerequisite.error());
+				M2_LEVEL.ShowMessage(sell_prerequisite.error(), 8.0f);
 			}
 			return MakeContinueAction();
 		}
