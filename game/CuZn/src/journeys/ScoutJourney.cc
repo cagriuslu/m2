@@ -45,11 +45,10 @@ void ExecuteScoutJourney() {
 	LOG_INFO("Scout action cancelled");
 }
 
-bool CanPlayerScout(m2::Character& player, const m2g::pb::ClientCommand_ScoutAction& scout_action) {
+m2::void_expected CanPlayerScout(m2::Character& player, const m2g::pb::ClientCommand_ScoutAction& scout_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToScout(player); not prerequisite) {
-		LOG_INFO("Player does not meet scout prerequisites", prerequisite.error());
-		return false;
+		return m2::make_unexpected(prerequisite.error());
 	}
 
 	// Check if the player holds the selected cards
@@ -57,13 +56,12 @@ bool CanPlayerScout(m2::Character& player, const m2g::pb::ClientCommand_ScoutAct
 	for (const auto& card_to_discard : {scout_action.card_0(), scout_action.card_1(), scout_action.card_2()}) {
 		auto card_it = std::find(player_card_list.begin(), player_card_list.end(), card_to_discard);
 		if (card_it == player_card_list.end()) {
-			LOG_WARN("Player does not have the selected card", m2::pb::enum_name(card_to_discard));
-			return false;
+			return m2::make_unexpected("Player does not have the selected card: " + m2::pb::enum_name(card_to_discard));
 		}
 		player_card_list.erase(card_it);
 	}
 
-	return true;
+	return {};
 }
 
 Card ExecuteScoutAction(m2::Character& player, const m2g::pb::ClientCommand_ScoutAction& scout_action) {

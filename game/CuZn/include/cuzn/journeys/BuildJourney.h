@@ -47,7 +47,7 @@ protected:
 };
 
 // For the server
-bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
+m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);
 
 // For the server
 std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action);

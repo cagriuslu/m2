@@ -342,52 +342,43 @@ decltype(NetworkJourney::_resource_sources)::iterator NetworkJourney::GetNextUns
 	});
 }
 
-bool CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
+m2::void_expected CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {
 	// Check if the prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToNetwork(player); not prerequisite) {
-		LOG_INFO("Player does not meet network prerequisites", prerequisite.error());
-		return false;
+		return make_unexpected(prerequisite.error());
 	}
 
 	// Check if the player holds the selected card
 	if (not is_card(network_action.card())) {
-		LOG_WARN("Selected card is not a card");
-		return false;
+		return make_unexpected("Selected card is not a card");
 	}
 	if (player.find_items(network_action.card()) == player.end_items()) {
-		LOG_WARN("Player does not have the selected card");
-		return false;
+		return make_unexpected("Player does not have the selected card");
 	}
 
 	// Check if the player has network tiles
 	if (not is_connection(network_action.connection_1())) {
-		LOG_WARN("Selected connection is not a connection");
-		return false;
+		return make_unexpected("Selected connection is not a connection");
 	}
 	if (network_action.connection_2()) {
 		if (not is_connection(network_action.connection_2())) {
-			LOG_WARN("Selected connection is not a connection");
-			return false;
+			return make_unexpected("Selected connection is not a connection");
 		}
 		if (network_action.connection_1() == network_action.connection_2()) {
-			LOG_INFO("Selected connections are the same");
-			return false;
+			return make_unexpected("Selected connections are the same");
 		}
 	}
 	if (player.count_item(ROAD_TILE) < (network_action.connection_2() ? 2 : 1)) {
-		LOG_INFO("Player doesn't have enough road tiles");
-		return false;
+		return make_unexpected("Player doesn't have enough road tiles");
 	}
 	// Check if the connections can be built in this era
 	if (M2G_PROXY.is_canal_era()) {
 		if (not is_canal(network_action.connection_1()) || (network_action.connection_2() && not is_canal(network_action.connection_2()))) {
-			LOG_WARN("Selected connection cannot be built in this era");
-			return false;
+			return make_unexpected("Selected connection cannot be built in this era");
 		}
 	} else {
 		if (not is_railroad(network_action.connection_1()) || (network_action.connection_2() && not is_railroad(network_action.connection_2()))) {
-			LOG_WARN("Selected connection cannot be built in this era");
-			return false;
+			return make_unexpected("Selected connection cannot be built in this era");
 		}
 	}
 
@@ -403,11 +394,10 @@ bool CanPlayerNetwork(m2::Character& player, const m2g::pb::ClientCommand_Networ
 	});
 	// Check if the player has enough money
 	if (m2::iround(player.get_resource(MONEY)) < road_cost(network_action.connection_2()) + M2G_PROXY.market_coal_cost(m2::I(coal_from_market))) {
-		LOG_INFO("Player does not have enough money");
-		return false;
+		return make_unexpected("Player does not have enough money");
 	}
 
-	return true;
+	return {};
 }
 
 std::pair<Card,int> ExecuteNetworkAction(m2::Character& player, const m2g::pb::ClientCommand_NetworkAction& network_action) {

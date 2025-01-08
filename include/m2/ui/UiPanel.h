@@ -49,6 +49,7 @@ namespace m2 {
 
 		// Accessors
 
+		[[nodiscard]] const std::string& Name() const;
 		/// Check if the UI panel is already killed
 		[[nodiscard]] bool IsKilled() const;
 		/// Peek the return value contained inside the killed panel

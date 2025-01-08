@@ -441,62 +441,52 @@ decltype(BuildJourney::_resource_sources)::iterator BuildJourney::GetNextUnspeci
 	});
 }
 
-bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
+m2::void_expected CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToBuild(player); not prerequisite) {
-		LOG_INFO("Player does not meet build prerequisites", prerequisite.error());
-		return false;
+		return make_unexpected(prerequisite.error());
 	}
 
 	// Check if the player holds the selected card
 	if (not is_card(build_action.card())) {
-		LOG_WARN("Selected card is not a card");
-		return false;
+		return make_unexpected("Selected card is not a card");
 	}
 	if (player.find_items(build_action.card()) == player.end_items()) {
-		LOG_WARN("Player does not have the selected card");
-		return false;
+		return make_unexpected("Player does not have the selected card");
 	}
 
 	// Check if the player has the selected tile
 	if (not is_industry_tile(build_action.industry_tile())) {
-		LOG_WARN("Selected industry tile is not an industry tile");
-		return false;
+		return make_unexpected("Selected industry tile is not an industry tile");
 	}
 	if (player.find_items(build_action.industry_tile()) == player.end_items()) {
-		LOG_WARN("Player does not have the selected tile");
-		return false;
+		return make_unexpected("Player does not have the selected tile");
 	}
 	auto industry = industry_of_industry_tile(build_action.industry_tile());
 	// Check if the tile is the next tile
 	const auto& selected_industry_tile = M2_GAME.GetNamedItem(build_action.industry_tile());
 	auto next_industry_tile = PlayerNextIndustryTileOfCategory(player, selected_industry_tile.category());
 	if (not next_industry_tile || *next_industry_tile != build_action.industry_tile()) {
-		LOG_WARN("Player cannot use the selected tile");
-		return false;
+		return make_unexpected("Player cannot use the selected tile");
 	}
 	// Check if the tile can be built in this era
 	auto forbidden_era = selected_industry_tile.get_attribute(m2g::pb::FORBIDDEN_ERA);
 	if ((m2::is_equal(forbidden_era, 1.0f, 0.001f) && M2G_PROXY.is_canal_era()) ||
 		(m2::is_equal(forbidden_era, 2.0f, 0.001f) && M2G_PROXY.is_railroad_era())) {
-		LOG_INFO("Player selected an industry that cannot be built in this era");
-		return false;
+		return make_unexpected("Player selected an industry that cannot be built in this era");
 	}
 
 	// Check if the player can build the industry with the selected card
 	if (not buildable_industry_locations_in_network_with_card(player, build_action.card()).contains(build_action.industry_location())) {
-		LOG_WARN("Player selected an industry location that is not reachable or cannot be built with the selected card");
-		return false;
+		return make_unexpected("Player selected an industry location that is not reachable or cannot be built with the selected card");
 	}
 	// If overbuilding, check if the built industry is selected
 	if (auto* factory = FindFactoryAtLocation(build_action.industry_location())) {
 		if (ToIndustryOfFactoryCharacter(factory->character()) != industry_of_industry_tile(build_action.industry_tile())) {
-			LOG_WARN("Player selected an industry type different from overbuilt industry");
-			return false;
+			return make_unexpected("Player selected an industry type different from overbuilt industry");
 		}
 		if (not is_next_tile_higher_level_than_built_tile(factory->character(), build_action.industry_tile())) {
-			LOG_WARN("Player selected a tile with level not higher than overbuilt tile");
-			return false;
+			return make_unexpected("Player selected a tile with level not higher than overbuilt tile");
 		}
 	}
 	auto city = city_of_location(build_action.industry_location());
@@ -514,8 +504,7 @@ bool CanPlayerBuild(m2::Character& player, const m2g::pb::ClientCommand_BuildAct
 		});
 		auto is_all_other_locations_occupied = std::ranges::all_of(other_locations_with_only_the_industry, FindFactoryAtLocation);
 		if (not is_all_other_locations_occupied) {
-			LOG_WARN("Player cannot build on the selected location while the city has an empty location with only that industry");
-			return false;
+			return make_unexpected("Player cannot build on the selected location while the city has an empty location with only that industry");
 		}
 	}
 
@@ -602,32 +591,29 @@ return_resources:
 	}
 	// Check if exploration finished with a success
 	if (not resource_sources_are_valid) {
-		LOG_WARN("Some or all selected resources are unreachable");
-		return false;
+		return make_unexpected("Some or all selected resources are unreachable");
 	}
 
 	// Check if all required resources are provided
 	for (const auto& resource_source : resource_sources) {
 		if (resource_source.second == NO_SPRITE) {
-			LOG_WARN("Player provided no source for a requires resource", m2::pb::enum_name(resource_source.first));
-			return false;
+			return make_unexpected("Player provided no source for a required resource: " + m2::pb::enum_name(resource_source.first));
 		}
 	}
 
-	auto coal_from_market = std::count_if(build_action.coal_sources().begin(), build_action.coal_sources().end(), [](const auto& coal_source) {
+	auto coal_from_market = std::ranges::count_if(build_action.coal_sources(), [](const auto& coal_source) {
 		return is_merchant_location(static_cast<Location>(coal_source));
 	});
-	auto iron_from_market = std::count_if(build_action.iron_sources().begin(), build_action.iron_sources().end(), [](const auto& iron_source) {
+	auto iron_from_market = std::ranges::count_if(build_action.iron_sources(), [](const auto& iron_source) {
 		return is_merchant_location(static_cast<Location>(iron_source));
 	});
 	// Check if the player has enough money
-	if (m2::iround(player.get_resource(MONEY)) < m2::iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(MONEY_COST)) +
-		M2G_PROXY.market_coal_cost(m2::I(coal_from_market)) + M2G_PROXY.market_iron_cost(m2::I(iron_from_market))) {
-		LOG_INFO("Player does not have enough money");
-		return false;
+	if (iround(player.get_resource(MONEY)) < iround(M2_GAME.GetNamedItem(build_action.industry_tile()).get_attribute(MONEY_COST)) +
+		M2G_PROXY.market_coal_cost(I(coal_from_market)) + M2G_PROXY.market_iron_cost(I(iron_from_market))) {
+		return make_unexpected("Player does not have enough money");
 	}
 
-	return true;
+	return {};
 }
 
 std::pair<Card,int> ExecuteBuildAction(m2::Character& player, const m2g::pb::ClientCommand_BuildAction& build_action) {

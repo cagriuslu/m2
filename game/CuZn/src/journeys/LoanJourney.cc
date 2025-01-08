@@ -40,20 +40,18 @@ void ExecuteLoanJourney() {
 	LOG_INFO("Loan action cancelled");
 }
 
-bool CanPlayerLoan(m2::Character& player, const m2g::pb::ClientCommand_LoanAction& loan_action) {
+m2::void_expected CanPlayerLoan(m2::Character& player, const m2g::pb::ClientCommand_LoanAction& loan_action) {
 	// Check if prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToLoan(player); not prerequisite) {
-		LOG_INFO("Player does not meet loan prerequisites", prerequisite.error());
-		return false;
+		return m2::make_unexpected(prerequisite.error());
 	}
 
 	// Check if the player holds the selected card
 	if (player.find_items(loan_action.card()) == player.end_items()) {
-		LOG_WARN("Player does not have the selected card", m2::pb::enum_name(loan_action.card()));
-		return false;
+		return m2::make_unexpected("Player does not have the selected card: " + m2::pb::enum_name(loan_action.card()));
 	}
 
-	return true;
+	return {};
 }
 
 Card ExecuteLoanAction(m2::Character& player, const ClientCommand_LoanAction& loan_action) {

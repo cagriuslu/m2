@@ -297,6 +297,9 @@ UiPanel::~UiPanel() {
 	}
 }
 
+const std::string& UiPanel::Name() const {
+	return blueprint->name;
+}
 bool UiPanel::IsKilled() const {
 	return static_cast<bool>(_returnValueContainer);
 }

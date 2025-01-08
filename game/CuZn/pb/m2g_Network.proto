@@ -14,9 +14,10 @@ message ServerCommand {
   }
 
   oneof type {
-    int32 liquidate_assets_for_loan = 1;
-    ActionNotification action_notification = 2;
-    CanalEraResult canal_era_result = 3;
+    string action_failure = 1;
+    int32 liquidate_assets_for_loan = 2;
+    ActionNotification action_notification = 3;
+    CanalEraResult canal_era_result = 4;
   }
 }
 

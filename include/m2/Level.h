@@ -176,6 +176,7 @@ namespace m2 {
 		/// movement, button, and key presses are not delivered to other panels or game objects. The UI is semi-blocking
 		/// in the sense that other panels are still updated and the game loop keeps running.
 		void ShowSemiBlockingUiPanel(RectF position_ratio, std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> blueprint);
+		UiPanel* SemiBlockingUiPanel() { return _semiBlockingUiPanel ? &*_semiBlockingUiPanel : nullptr; }
 		void DismissSemiBlockingUiPanel(); // Should not be called from the custom UI itself
 		void DismissSemiBlockingUiPanelDeferred(); // Can be called from the custom UI itself
 

@@ -15,8 +15,6 @@
 #include <cuzn/ui/RightHud.h>
 #include <cuzn/detail/SetUp.h>
 #include <cuzn/detail/Market.h>
-#include <cuzn/journeys/ScoutJourney.h>
-#include <cuzn/journeys/LoanJourney.h>
 #include <cuzn/detail/Liquidate.h>
 #include <m2/game/Detail.h>
 #include "cuzn/object/Road.h"
@@ -27,9 +25,12 @@
 #include <numeric>
 #include <cuzn/ui/CustomHud.h>
 #include <cuzn/ui/StatusBar.h>
-#include <cuzn/detail/ActionNotification.h>
 #include <cuzn/ui/CanalEraResult.h>
 #include <cuzn/ui/Cards.h>
+#include <cuzn/Action.h>
+
+using namespace m2;
+using namespace m2g;
 
 const m2::UiPanelBlueprint* m2g::Proxy::MainMenuBlueprint() { return &main_menu_blueprint; }
 
@@ -124,140 +125,45 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 	auto& turn_holder_character = M2_LEVEL.objects[turn_holder_object_id].character();
 
 	if (_is_liquidating) {
-		if (not client_command.has_liquidate_action()) {
-			LOG_WARN("Received unexpected command while expecting LiquidateAction");
-			return std::nullopt;
-		} else if (auto expect_factories_and_gain = CanPlayerLiquidateFactories(turn_holder_character, client_command.liquidate_action())) {
-			LOG_INFO("Liquidating factories");
-			for (auto* factory : expect_factories_and_gain->first) {
-				// Delete object immediately
-				M2_LEVEL.objects.free(factory->id());
-			}
-			// Gain money
-			turn_holder_character.add_resource(pb::MONEY, m2::F(expect_factories_and_gain->second));
-			_is_liquidating = false; // No longer liquidating
-		} else {
-			LOG_WARN("Player sent invalid liquidate command", expect_factories_and_gain.error());
+		if (auto liquidationSuccessful = HandleActionWhileLiquidating(turn_holder_character, client_command); not liquidationSuccessful) {
+			LOG_INFO("Failed to handle action while liquidating", liquidationSuccessful.error());
+			pb::ServerCommand sc;
+			sc.set_action_failure(liquidationSuccessful.error());
+			M2_GAME.ServerThread().send_server_command(sc, turn_holder_index);
 			return std::nullopt;
 		}
+		_is_liquidating = false; // No longer liquidating
 	} else {
-		// LiquidateAction is not allowed
-		if (client_command.has_liquidate_action()) {
-			LOG_WARN("Received unexpected LiquidateAction");
+		// Prepare action notification
+		pb::ServerCommand actionNotificationCommand;
+		pb::ServerCommand::ActionNotification* actionNotification = actionNotificationCommand.mutable_action_notification();
+		actionNotification->set_player_index(turn_holder_index);
+		auto moneySpentIfSuccessful = HandleActionWhileNotLiquidating(turn_holder_character, client_command, *actionNotification);
+		if (not moneySpentIfSuccessful) {
+			LOG_INFO("Failed to handle action", moneySpentIfSuccessful.error());
+			pb::ServerCommand sc;
+			sc.set_action_failure(moneySpentIfSuccessful.error());
+			M2_GAME.ServerThread().send_server_command(sc, turn_holder_index);
 			return std::nullopt;
 		}
-
-		pb::ServerCommand action_notification_command;
-		pb::ServerCommand::ActionNotification* action_notification = action_notification_command.mutable_action_notification();
-		action_notification->set_player_index(turn_holder_index);
-
-		std::pair<Card,int> card_to_discard_and_money_spent{};
-		if (client_command.has_build_action()) {
-			LOG_INFO("Validating build action");
-			if (not CanPlayerBuild(turn_holder_character, client_command.build_action())) {
-				return std::nullopt;
-			}
-			// Build notification
-			action_notification->set_notification(
-				GenerateBuildNotification(
-					industry_of_industry_tile(client_command.build_action().industry_tile()),
-					city_of_location(client_command.build_action().industry_location())));
-			LOG_INFO("Executing build action");
-			card_to_discard_and_money_spent = ExecuteBuildAction(turn_holder_character, client_command.build_action());
-		} else if (client_command.has_network_action()) {
-			LOG_INFO("Validating network action");
-			if (not CanPlayerNetwork(turn_holder_character, client_command.network_action())) {
-				return std::nullopt;
-			}
-			// Build notification
-			action_notification->set_notification(
-				GenerateNetworkNotification(
-					cities_from_connection(client_command.network_action().connection_1())[0],
-					cities_from_connection(client_command.network_action().connection_1())[1],
-					client_command.network_action().connection_2()
-						? cities_from_connection(client_command.network_action().connection_2())[0] : m2g::pb::NO_ITEM,
-					client_command.network_action().connection_2()
-						? cities_from_connection(client_command.network_action().connection_2())[1] : m2g::pb::NO_ITEM));
-			LOG_INFO("Executing network action");
-			card_to_discard_and_money_spent = ExecuteNetworkAction(turn_holder_character, client_command.network_action());
-		} else if (client_command.has_sell_action()) {
-			LOG_INFO("Validating sell action");
-			if (auto success = CanPlayerSell(turn_holder_character, client_command.sell_action()); not success) {
-				LOG_INFO("Sell validation failed", success.error());
-				return std::nullopt;
-			}
-			// Build notification
-			action_notification->set_notification(
-				GenerateSellNotification(
-					ToIndustryOfFactoryCharacter(FindFactoryAtLocation(client_command.sell_action().industry_location())->character()),
-					city_of_location(client_command.sell_action().industry_location())));
-			LOG_INFO("Executing sell action");
-			card_to_discard_and_money_spent.first = ExecuteSellAction(turn_holder_character, client_command.sell_action());
-		} else if (client_command.has_develop_action()) {
-			LOG_INFO("Validating develop action");
-			if (not CanPlayerDevelop(turn_holder_character, client_command.develop_action())) {
-				return std::nullopt;
-			}
-			// Build notification
-			action_notification->set_notification(
-				GenerateDevelopNotification(
-					industry_of_industry_tile(client_command.develop_action().industry_tile_1()),
-					client_command.develop_action().industry_tile_2()
-						? industry_of_industry_tile(client_command.develop_action().industry_tile_2()) : m2g::pb::NO_ITEM));
-			LOG_INFO("Executing develop action");
-			card_to_discard_and_money_spent = ExecuteDevelopAction(turn_holder_character, client_command.develop_action());
-		} else if (client_command.has_loan_action()) {
-			LOG_INFO("Validating loan action");
-			if (not CanPlayerLoan(turn_holder_character, client_command.loan_action())) {
-				return std::nullopt;
-			}
-			// Build notification
-			action_notification->set_notification(GenerateLoanNotification());
-			LOG_INFO("Executing loan action");
-			card_to_discard_and_money_spent.first = ExecuteLoanAction(turn_holder_character, client_command.loan_action());
-		} else if (client_command.has_scout_action()) {
-			LOG_INFO("Validating scout action");
-			if (not CanPlayerScout(turn_holder_character, client_command.scout_action())) {
-				return std::nullopt;
-			}
-			// Build notification
-			action_notification->set_notification(GenerateScoutNotification());
-			LOG_INFO("Executing scout action");
-			card_to_discard_and_money_spent.first = ExecuteScoutAction(turn_holder_character, client_command.scout_action());
-		} else if (client_command.has_pass_action()) {
-			// Build notification
-			action_notification->set_notification(GeneratePassNotification());
-			LOG_INFO("Executing pass action");
-			card_to_discard_and_money_spent.first = client_command.pass_action().card();
-		}
-		auto [card_to_discard, money_spent] = card_to_discard_and_money_spent;
 
 		LOG_DEBUG("Sending action notification to clients");
 		if (turn_holder_index != 0) {
 			// For server, do not send the command, execute it right away
-			display_action_notification(action_notification_command.action_notification());
+			display_action_notification(actionNotificationCommand.action_notification());
 		}
 		for (int i = 1; i < M2_GAME.ServerThread().client_count(); ++i) {
 			if (i != turn_holder_index) {
-				M2_GAME.ServerThread().send_server_command(action_notification_command, i);
+				M2_GAME.ServerThread().send_server_command(actionNotificationCommand, i);
 			}
-		}
-
-		// Discard card from player
-		if (card_to_discard) {
-			LOG_INFO("Discard card from player", M2_GAME.GetNamedItem(card_to_discard).in_game_name());
-			auto card_it = turn_holder_character.find_items(card_to_discard);
-			turn_holder_character.remove_item(card_it);
 		}
 
 		// Record spent money
 		if (not _played_players.empty() && _played_players.back().first == turn_holder_index) {
-			_played_players.back().second += money_spent;
+			_played_players.back().second += *moneySpentIfSuccessful;
 		} else {
-			_played_players.emplace_back(turn_holder_index, money_spent);
+			_played_players.emplace_back(turn_holder_index, *moneySpentIfSuccessful);
 		}
-		// Deduct money from player
-		turn_holder_character.remove_resource(pb::MONEY, m2::F(money_spent));
 
 		// Save spent money to game state tracker so that it's shared among clients
 		for (int i = 0; i < M2_GAME.TotalPlayerCount(); ++i) {
@@ -348,12 +254,51 @@ std::optional<int> m2g::Proxy::handle_client_command(int turn_holder_index, MAYB
 }
 
 void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) {
-	if (server_command.has_action_notification()) {
-		display_action_notification(server_command.action_notification());
+	if (server_command.has_action_failure()) {
+		// If we have received this command, we must be showing the "WaitingForServerUpdate" screen, waiting for a response from the server
+		if (const auto* semiBlockingUiPanel = M2_LEVEL.SemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
+			M2_LEVEL.DismissSemiBlockingUiPanel();
+			// Show failure screen
+			auto blueprint = UiPanelBlueprint{
+				.name = "ActionFailure",
+				.w = 60, .h = 60,
+				.background_color = {0, 0, 0, 255},
+				.widgets = {
+					UiWidgetBlueprint{
+						.x = 5, .y = 5, .w = 50, .h = 40,
+						.border_width = 0,
+						.variant = widget::TextBlueprint{
+							.text = server_command.action_failure(),
+							.horizontal_alignment = TextHorizontalAlignment::LEFT,
+							.vertical_alignment = TextVerticalAlignment::TOP,
+							.wrapped_font_size_in_units = 3.0f
+						}
+					},
+					UiWidgetBlueprint{
+						.x = 5, .y = 50, .w = 50, .h = 5,
+						.variant = widget::TextBlueprint{
+							.text = "Close",
+							.wrapped_font_size_in_units = 3.0f,
+							.on_action = [](MAYBE const widget::Text& self) -> UiAction {
+								return MakeReturnAction();
+							}
+						}
+					}
+				}
+			};
+			// Play sound
+			M2_GAME.audio_manager->play(&M2_GAME.songs[m2g::pb::SONG_NOTIFICATION_SOUND], m2::AudioManager::ONCE);
+			// Show screen
+			M2_LEVEL.ShowSemiBlockingUiPanel(RectF{0.3f, 0.3f, 0.4f, 0.4f}, std::make_unique<m2::UiPanelBlueprint>(blueprint));
+		} else {
+			LOG_WARN("Expected to find the WaitingForServerUpdate panel, but not found");
+		}
 	} else if (server_command.has_liquidate_assets_for_loan()) {
 		LOG_INFO("Received liquidate command, beginning liquidation journey");
 		auto money_to_be_paid = server_command.liquidate_assets_for_loan();
 		M2G_PROXY.main_journeys.emplace(std::in_place_type<LiquidationJourney>, money_to_be_paid);
+	} else if (server_command.has_action_notification()) {
+		display_action_notification(server_command.action_notification());
 	} else if (server_command.has_canal_era_result()) {
 		LOG_INFO("Received CanalEraResult command");
 		display_canal_era_result(server_command.canal_era_result());
@@ -363,17 +308,26 @@ void m2g::Proxy::handle_server_command(const pb::ServerCommand& server_command) 
 }
 
 void m2g::Proxy::post_server_update(m2::SequenceNo, const bool shutdown) {
+	// If we have received a server update, we might have taken an action and showing the "WaitingForServerUpdate" screen.
+	if (const auto* semiBlockingUiPanel = M2_LEVEL.SemiBlockingUiPanel(); semiBlockingUiPanel && semiBlockingUiPanel->Name() == "WaitingForServerUpdate") {
+		M2_LEVEL.DismissSemiBlockingUiPanel();
+	} else {
+		// Don't remove other type of screen. ServerUpdate is received when others take an action too
+	}
+
 	// Delete the custom hud
 	if (custom_hud_panel) {
 		LOG_DEBUG("Hiding top HUD");
 		M2_LEVEL.RemoveCustomNonblockingUiPanel(*custom_hud_panel);
 		custom_hud_panel = std::nullopt;
 	}
+
 	LOG_DEBUG("Refreshing status bar");
 	M2_LEVEL.RemoveCustomNonblockingUiPanel(_status_bar_panel);
 	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
 			std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
 			status_bar_window_ratio());
+
 	if (cards_panel) {
 		LOG_DEBUG("Refreshing cards panel");
 		M2_LEVEL.RemoveCustomNonblockingUiPanel(*M2G_PROXY.cards_panel);
@@ -597,15 +551,8 @@ void m2g::Proxy::SendClientCommandAndWaitForServerUpdate(const pb::ClientCommand
 			.name = "WaitingForServerUpdate",
 			.w = 1, .h = 1,
 			.background_color = {0, 0, 0, 255},
-			.on_create = [&cc](m2::UiPanel&) {
+			.on_create = [&cc](UiPanel&) {
 				M2_GAME.QueueClientCommand(cc);
-			},
-			.on_update = [prevSequenceNo = *M2_GAME.LastServerUpdateSequenceNo()](m2::UiPanel&) -> m2::UiAction {
-				// Poll until the sequence number changes
-				if (prevSequenceNo == *M2_GAME.LastServerUpdateSequenceNo()) {
-					return m2::MakeContinueAction();
-				}
-				return m2::MakeReturnAction();
 			},
 			.widgets = {
 				m2::UiWidgetBlueprint{

@@ -213,41 +213,35 @@ std::optional<DevelopJourneyStep> DevelopJourney::HandleConfirmationEnterSignal(
 	return std::nullopt;
 }
 
-bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
+m2::void_expected CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
 	// Check if the prerequisites are met
 	if (auto prerequisite = CanPlayerAttemptToDevelop(player); not prerequisite) {
-		LOG_INFO("player does not meet develop prerequisites", prerequisite.error());
-		return false;
+		return make_unexpected(prerequisite.error());
 	}
 
 	// Check if the player holds the selected card
 	if (not is_card(develop_action.card())) {
-		LOG_WARN("Selected card is not a card");
-		return false;
+		return make_unexpected("Selected card is not a card");
 	}
 	if (player.find_items(develop_action.card()) == player.end_items()) {
-		LOG_WARN("Player does not have the selected card");
-		return false;
+		return make_unexpected("Player does not have the selected card");
 	}
 
 	// Check if the player holds the selected tiles
 	if (not is_industry_tile(develop_action.industry_tile_1())
 		|| (develop_action.industry_tile_2() && not is_industry_tile(develop_action.industry_tile_2()))) {
-		LOG_WARN("Selected industry tile is not an industry tile");
-		return false;
+		return make_unexpected("Selected industry tile is not an industry tile");
 	}
 	if (player.find_items(develop_action.industry_tile_1()) == player.end_items()
 		|| (develop_action.industry_tile_2() && player.find_items(develop_action.industry_tile_2()) == player.end_items())) {
-		LOG_WARN("Player does not have the selected tile");
-		return false;
+		return make_unexpected("Player does not have the selected tile");
 	}
 
 	// Check if the tiles are the next tiles
 	const auto& selected_industry_tile_1 = M2_GAME.GetNamedItem(develop_action.industry_tile_1());
 	auto next_industry_tile_1 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_1.category());
 	if (not next_industry_tile_1 || *next_industry_tile_1 != develop_action.industry_tile_1()) {
-		LOG_INFO("Player cannot develop the selected tile");
-		return false;
+		return make_unexpected("Player cannot develop the selected tile");
 	}
 	if (develop_action.industry_tile_2()) {
 		// Reserve the first tile
@@ -257,26 +251,23 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 		auto next_industry_tile_2 = PlayerNextIndustryTileOfCategory(player, selected_industry_tile_2.category());
 		auto success = true;
 		if (not next_industry_tile_2 || *next_industry_tile_2 != develop_action.industry_tile_2()) {
-			LOG_INFO("Player cannot develop the selected tile");
 			success = false;
 		}
 		// Give the tile back
 		player.add_named_item_no_benefits(M2_GAME.GetNamedItem(develop_action.industry_tile_1()));
 		if (not success) {
-			return false;
+			return make_unexpected("Player cannot develop the selected tile");
 		}
 	}
 
 	// Check if the tile can be developed
 	if (m2::is_equal(selected_industry_tile_1.get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
-		LOG_INFO("Selected tile cannot be developed");
-		return false;
+		return make_unexpected("Selected tile cannot be developed");
 	}
 	if (develop_action.industry_tile_2()) {
 		const auto& selected_industry_tile_2 = M2_GAME.GetNamedItem(develop_action.industry_tile_2());
 		if (m2::is_equal(selected_industry_tile_2.get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
-			LOG_INFO("Selected tile cannot be developed");
-			return false;
+			return make_unexpected("Selected tile cannot be developed");
 		}
 	}
 
@@ -287,8 +278,7 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 		// If iron source is an industry, find_iron_industries_with_iron must return it
 		auto iron_industries = find_iron_industries_with_iron();
 		if (iron_industries.find(develop_action.iron_sources_1()) == iron_industries.end()) {
-			LOG_WARN("Player provided an iron source from an industry that does not contain an iron");
-			return false;
+			return make_unexpected("Player provided an iron source from an industry that does not contain an iron");
 		} else {
 			// Reserve resource
 			auto* factory = FindFactoryAtLocation(develop_action.iron_sources_1());
@@ -300,12 +290,10 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 		if (find_iron_industries_with_iron().empty()) {
 			// Buying from market
 		} else {
-			LOG_WARN("Player provided a merchant as iron source, but an iron cannot be bought from the market");
-			return false;
+			return make_unexpected("Player provided a merchant as iron source, but an iron cannot be bought from the market");
 		}
 	} else {
-		LOG_WARN("Player provided unknown source for iron");
-		return false;
+		return make_unexpected("Player provided unknown source for iron");
 	}
 	auto resource_sources_are_valid = true;
 	if (develop_action.industry_tile_2()) {
@@ -336,19 +324,17 @@ bool CanPlayerDevelop(m2::Character& player, const m2g::pb::ClientCommand_Develo
 	}
 	// Check if exploration finished with a success
 	if (not resource_sources_are_valid) {
-		LOG_WARN("Some or all selected resources are unreachable");
-		return false;
+		return make_unexpected("Some or all selected resources are unreachable");
 	}
 
 	// Check if the player has enough money to buy the resources
 	auto iron_from_market = is_merchant_location(develop_action.iron_sources_1()) ? 1 : 0;
 	iron_from_market += develop_action.industry_tile_2() && is_merchant_location(develop_action.iron_sources_2()) ? 1 : 0;
 	if (m2::iround(player.get_resource(MONEY)) < M2G_PROXY.market_iron_cost(iron_from_market)) {
-		LOG_INFO("Player does not have enough money");
-		return false;
+		return make_unexpected("Player does not have enough money");
 	}
 
-	return true;
+	return {};
 }
 
 std::pair<Card,int> ExecuteDevelopAction(m2::Character& player, const m2g::pb::ClientCommand_DevelopAction& develop_action) {
