@@ -469,13 +469,13 @@ void m2::Game::HandleNetworkEvents() {
 	} else if (IsServer()) {
 		// Check if a client has disconnected
 		if (auto disconnected_client_index = ServerThread().disconnected_client()) {
-			auto action = _proxy.handle_disconnected_client(*disconnected_client_index);
+			MAYBE auto action = _proxy.handle_disconnected_client(*disconnected_client_index);
 			// TODO handle
 		}
 
 		// Check if a client has misbehaved
 		if (auto misbehaved_client_index = ServerThread().misbehaved_client()) {
-			auto action = _proxy.handle_misbehaving_client(*misbehaved_client_index);
+			MAYBE auto action = _proxy.handle_misbehaving_client(*misbehaved_client_index);
 			// TODO handle
 		}
 	} else if (IsRealClient()) {

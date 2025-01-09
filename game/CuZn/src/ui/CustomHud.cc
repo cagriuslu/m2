@@ -13,7 +13,7 @@ RectF custom_hud_window_ratio() {
 	return {x, 0.0f, M2_GAME.Dimensions().GameWidthToGameAndHudWidthRatio(), 0.45f};
 }
 
-UiPanelBlueprint generate_custom_hud_blueprint(const int player_count) {
+UiPanelBlueprint generate_custom_hud_blueprint() {
 	auto turn_holder_index = M2_GAME.TurnHolderIndex();
 
 	// Add player names

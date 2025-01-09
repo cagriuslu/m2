@@ -4,4 +4,4 @@
 
 m2::RectF status_bar_window_ratio();
 
-m2::UiPanelBlueprint generate_status_bar_blueprint(int player_count);
+m2::UiPanelBlueprint generate_status_bar_blueprint();

@@ -4,4 +4,4 @@
 
 m2::RectF custom_hud_window_ratio();
 
-m2::UiPanelBlueprint generate_custom_hud_blueprint(int player_count);
+m2::UiPanelBlueprint generate_custom_hud_blueprint();

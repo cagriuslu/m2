@@ -15,7 +15,7 @@ RectF status_bar_window_ratio() {
 	return {x, 0.0f, M2_GAME.Dimensions().GameWidthToGameAndHudWidthRatio(), 0.08f};
 }
 
-UiPanelBlueprint generate_status_bar_blueprint(int player_count) {
+UiPanelBlueprint generate_status_bar_blueprint() {
 	const auto turn_holder_index = M2_GAME.TurnHolderIndex();
 
 	// Add player names
@@ -27,7 +27,7 @@ UiPanelBlueprint generate_status_bar_blueprint(int player_count) {
 			if (panel.rect_px().contains(events.mouse_position())) {
 				if (not M2G_PROXY.custom_hud_panel) {
 					M2G_PROXY.custom_hud_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
-							std::make_unique<UiPanelBlueprint>(generate_custom_hud_blueprint(player_count)),
+							std::make_unique<UiPanelBlueprint>(generate_custom_hud_blueprint()),
 							custom_hud_window_ratio());
 				}
 			} else {

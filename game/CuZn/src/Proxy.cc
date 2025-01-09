@@ -76,7 +76,7 @@ void m2g::Proxy::post_multi_player_level_client_init(MAYBE const std::string& na
 
 	// Add status bar panel to the level
 	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
-		std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint(client_count)),
+		std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint()),
 		status_bar_window_ratio());
 }
 
@@ -365,7 +365,7 @@ void m2g::Proxy::post_server_update(m2::SequenceNo, const bool shutdown) {
 	LOG_DEBUG("Refreshing status bar");
 	M2_LEVEL.RemoveCustomNonblockingUiPanel(_status_bar_panel);
 	_status_bar_panel = M2_LEVEL.AddCustomNonblockingUiPanel(
-			std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint(M2_GAME.TotalPlayerCount())),
+			std::make_unique<m2::UiPanelBlueprint>(generate_status_bar_blueprint()),
 			status_bar_window_ratio());
 
 	if (cards_panel) {

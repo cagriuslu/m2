@@ -53,7 +53,7 @@ std::optional<std::pair<m2::SequenceNo,m2::pb::NetworkMessage>> m2::network::Ser
 		auto json_str = pb::message_to_json_string(tmp->second);
 		LOG_DEBUG("Popping client command", _turn_holder, json_str->c_str());
 
-		return std::move(tmp);
+		return tmp;
 	}
 	return std::nullopt;
 }

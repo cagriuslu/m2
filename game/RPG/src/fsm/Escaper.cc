@@ -74,7 +74,7 @@ std::optional<m2::VecF> rpg::EscaperFsm::find_direction_to_escape() {
 	float raycast_length = ai->trigger_distance() / 2.0f;
 	auto angle_from_player_to_obj = (obj->position - M2_PLAYER.position).angle_rads();
 
-	auto can_escape = [=](float offset) -> bool {
+	auto can_escape = [=, this](float offset) -> bool {
 		auto radians_offset = angle_from_player_to_obj + offset;
 		auto raycast_target = obj->position + m2::VecF::from_angle(radians_offset).with_length(raycast_length);
 		auto raycast_distance = m2::box2d::check_distance(*M2_LEVEL.world, obj->position, raycast_target, m2::box2d::FIXTURE_CATEGORY_OBSTACLE);
