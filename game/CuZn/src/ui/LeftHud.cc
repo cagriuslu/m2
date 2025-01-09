@@ -119,7 +119,7 @@ const UiPanelBlueprint left_hud_blueprint = {
 			.variant = TextBlueprint{
 				.text = "Your player\nname:",
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
-				.wrapped_font_size_in_units = 1.35f
+				.wrapped_font_size_in_units = 1.25f
 			}
 		},
 		UiWidgetBlueprint{
@@ -140,7 +140,7 @@ const UiPanelBlueprint left_hud_blueprint = {
 			.border_width = 0,
 			.variant = TextBlueprint{
 				.horizontal_alignment = m2::TextHorizontalAlignment::CENTER,
-				.wrapped_font_size_in_units = 1.35f,
+				.wrapped_font_size_in_units = 1.25f,
 				.on_update = [](MAYBE Text& self) {
 					if (M2_GAME.IsOurTurn()) {
 						if (m2::is_one(M2G_PROXY.game_state_tracker().get_resource(m2g::pb::IS_LAST_ACTION_OF_PLAYER), 0.001f)) {
