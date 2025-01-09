@@ -15,7 +15,7 @@ namespace {
 				auto locations = industry_locations_in_city(city);
 				return acc + std::accumulate(locations.begin(), locations.end(), 0, [](const int acc2, const IndustryLocation location) -> int {
 					// Check if there's a built factory
-					if (const auto* factory = FindFactoryAtLocation(location)) {
+					if (const auto* factory = FindFactoryAtLocation(location); factory && IsFactorySold(factory->character())) {
 						const auto industry_tile = ToIndustryTileOfFactoryCharacter(factory->character());
 						return acc2 + m2::iround(M2_GAME.GetNamedItem(industry_tile).get_attribute(m2g::pb::LINK_BONUS));
 					}
