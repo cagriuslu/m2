@@ -17,6 +17,7 @@ inline bool PlayerHasCard(const m2::Character& player, const Card card) { return
 // Resource Accessors
 
 int PlayerLinkCount(const m2::Character& player);
+int PlayerEstimatedVictoryPoints(const m2::Character& player);
 int PlayerVictoryPoints(const m2::Character& player);
 int PlayerIncomePoints(const m2::Character& player);
 int PlayerMoney(const m2::Character& player);

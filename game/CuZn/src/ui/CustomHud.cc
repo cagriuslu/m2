@@ -20,7 +20,7 @@ UiPanelBlueprint generate_custom_hud_blueprint(const int player_count) {
 	auto bp = UiPanelBlueprint{
 		.name = "CustomHud",
 		.w = 7,
-		.h = 4,
+		.h = 5,
 		.background_color = {0, 0, 0, 255},
 		.widgets = {
 			UiWidgetBlueprint{
@@ -45,13 +45,22 @@ UiPanelBlueprint generate_custom_hud_blueprint(const int player_count) {
 				.x = 0, .y = 2, .w = 3, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = " Money/Roads/Cards",
+					.text = " Estimated Victory Points",
 					.horizontal_alignment = TextHorizontalAlignment::LEFT,
 					.wrapped_font_size_in_units = 0.7f
 				}
 			},
 			UiWidgetBlueprint{
 				.x = 0, .y = 3, .w = 3, .h = 1,
+				.border_width = 0.0f,
+				.variant = TextBlueprint{
+					.text = " Money/Roads/Cards",
+					.horizontal_alignment = TextHorizontalAlignment::LEFT,
+					.wrapped_font_size_in_units = 0.7f
+				}
+			},
+			UiWidgetBlueprint{
+				.x = 0, .y = 4, .w = 3, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
 					.text = " Money spent this turn",
@@ -95,9 +104,18 @@ UiPanelBlueprint generate_custom_hud_blueprint(const int player_count) {
 				}
 			});
 
-			// Add income points
+			// Estimated victory points
 			bp.widgets.emplace_back(UiWidgetBlueprint{
 				.x = x, .y = 2, .w = 1, .h = 1,
+				.border_width = 0.0f,
+				.variant = TextBlueprint{
+					.text = m2::ToString(PlayerLinkCount(chr) + PlayerEstimatedVictoryPoints(chr)),
+					.wrapped_font_size_in_units = 0.7f
+				}
+			});
+
+			bp.widgets.emplace_back(UiWidgetBlueprint{
+				.x = x, .y = 3, .w = 1, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
 					.text = m2::ToString(PlayerMoney(chr))
@@ -109,7 +127,7 @@ UiPanelBlueprint generate_custom_hud_blueprint(const int player_count) {
 
 			// Add money spent this turn
 			bp.widgets.emplace_back(UiWidgetBlueprint{
-				.x = x, .y = 3, .w = 1, .h = 1,
+				.x = x, .y = 4, .w = 1, .h = 1,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
 					.text = m2::ToString(M2G_PROXY.player_spent_money(playerIndexOfOrder)),

@@ -218,11 +218,22 @@ std::list<Card> PlayerCards(const m2::Character& player) {
 
 int PlayerLinkCount(const m2::Character& player) {
 	auto road_characters = M2_LEVEL.characters
-					  | std::views::transform(m2::to_character_base)
-					  | std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
-					  | std::views::filter(IsRoadCharacter);
+			| std::views::transform(m2::to_character_base)
+			| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+			| std::views::filter(IsRoadCharacter);
 	return std::accumulate(road_characters.begin(), road_characters.end(), 0, [](int acc, m2::Character& road_char) -> int {
 		return acc + LinkCountOfRoadCharacter(road_char);
+	});
+}
+int PlayerEstimatedVictoryPoints(const m2::Character& player) {
+	auto soldFactories = M2_LEVEL.characters
+			| std::views::transform(m2::to_character_base)
+			| std::views::filter(m2::is_component_of_parent_object(player.owner_id()))
+			| std::views::filter(IsFactoryCharacter)
+			| std::views::filter(IsFactorySold);
+	return std::accumulate(soldFactories.begin(), soldFactories.end(), 0, [](int acc, m2::Character& factoryCharacter) -> int {
+		const auto& industryTileItem = M2_GAME.GetNamedItem(ToIndustryTileOfFactoryCharacter(factoryCharacter));
+		return acc + m2::iround(industryTileItem.get_attribute(m2g::pb::VICTORY_POINTS_BONUS));
 	});
 }
 int PlayerVictoryPoints(const m2::Character& player) {
