@@ -1,6 +1,7 @@
 #include <cuzn/journeys/LoanJourney.h>
 #include <m2/Log.h>
 #include <cuzn/ui/Detail.h>
+#include <cuzn/ui/Selection.h>
 #include <cuzn/ui/Cards.h>
 #include <m2/Game.h>
 #include <cuzn/object/HumanPlayer.h>

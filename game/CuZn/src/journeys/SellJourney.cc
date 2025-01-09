@@ -4,6 +4,7 @@
 #include <cuzn/ui/Detail.h>
 #include <cuzn/ui/Cards.h>
 #include <cuzn/ui/Tiles.h>
+#include <cuzn/ui/Selection.h>
 #include <m2/Game.h>
 #include "cuzn/object/Factory.h"
 #include "cuzn/object/Merchant.h"

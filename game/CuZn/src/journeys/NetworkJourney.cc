@@ -4,6 +4,7 @@
 #include <cuzn/ui/Detail.h>
 #include <cuzn/ui/Cards.h>
 #include <cuzn/object/HumanPlayer.h>
+#include <cuzn/ui/Selection.h>
 #include <cuzn/ConsumingCoal.h>
 #include <cuzn/ConsumingBeer.h>
 #include <cuzn/object/Road.h>
