@@ -50,7 +50,7 @@ UiPanelBlueprint generate_status_bar_blueprint(int player_count) {
 				.x = 0, .y = 0, .w = 30, .h = 5,
 				.border_width = 0.0f,
 				.variant = TextBlueprint{
-					.text = " Current Player Order:",
+					.text = " Current Player Order",
 					.horizontal_alignment = TextHorizontalAlignment::LEFT,
 					.wrapped_font_size_in_units = 4.0f
 				}
