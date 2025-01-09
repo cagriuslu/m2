@@ -58,26 +58,27 @@ void TextInput::on_focus_change() {
 	}
 }
 
-UiAction TextInput::on_update() {
-	auto str = _text_input.str();
-
-	// Add '_' if focused
-	if (focused) {
-		str += '_';
-	}
-
-	// Generate new texture is the string has changed
-	if (not _textTexture || str != _textTexture.string()) {
-		_textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font, M2G_PROXY.default_font_size, str));
-	}
-
-	return MakeContinueAction();
-}
-
 void TextInput::on_draw() {
 	draw_background_color();
-	if (const auto texture = _textTexture.texture(); texture) {
-		sdl::render_texture_with_color_mod(texture, calculate_text_rect(texture, rect(), TextHorizontalAlignment::LEFT));
+
+	auto str = _text_input.str();
+	if (not _text_texture_and_destination_cache || _text_texture_and_destination_cache->textTexture.string() != str) {
+		// Add '_' if focused
+		if (focused) {
+			str += '_';
+		}
+		// Generate text texture
+		auto textTexture = m2_move_or_throw_error(sdl::TextTexture::create_nowrap(M2_GAME.renderer, M2_GAME.font,
+				M2G_PROXY.default_font_size, str));
+		// Calculate destination rectangle
+		auto destination_rect = calculate_filled_text_rect(drawable_area(), TextHorizontalAlignment::LEFT,
+				I(utf8_codepoint_count(str.c_str())));
+		// Save for later
+		_text_texture_and_destination_cache = sdl::TextTextureAndDestination{std::move(textTexture), destination_rect};
 	}
+
+	sdl::render_texture_with_color_mod(_text_texture_and_destination_cache->textTexture.texture(),
+		_text_texture_and_destination_cache->destinationRect);
+
 	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());
 }

@@ -78,18 +78,21 @@ void IntegerInput::on_draw() {
 
 	if (const auto texture = _textTexture.texture(); texture) {
 		sdl::render_texture_with_color_mod(texture,
-			calculate_text_rect(texture, rect().trim_right(rect().h / 2), TextHorizontalAlignment::LEFT));
+				calculate_filled_text_rect(rect().trim_right(rect().h / 2), TextHorizontalAlignment::LEFT,
+					I(utf8_codepoint_count(_textTexture.string().c_str()))));
 	}
 
 	auto buttons_rect = rect().trim_left(rect().w - rect().h / 2);
 	auto inc_button_rect = buttons_rect.trim_bottom(buttons_rect.h / 2);
 	sdl::render_texture_with_color_mod(_plus_texture.texture(),
-		calculate_text_rect(_plus_texture.texture(), inc_button_rect, TextHorizontalAlignment::CENTER));
+			calculate_filled_text_rect(inc_button_rect,
+				TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_plus_texture.string().c_str()))));
 	draw_border(inc_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	auto dec_button_rect = buttons_rect.trim_top(buttons_rect.h / 2);
 	sdl::render_texture_with_color_mod(_minus_texture.texture(),
-		calculate_text_rect(_minus_texture.texture(), dec_button_rect, TextHorizontalAlignment::CENTER));
+			calculate_filled_text_rect(dec_button_rect,
+				TextHorizontalAlignment::LEFT, I(utf8_codepoint_count(_minus_texture.string().c_str()))));
 	draw_border(dec_button_rect, vertical_border_width_px(), horizontal_border_width_px());
 
 	draw_border(rect(), vertical_border_width_px(), horizontal_border_width_px());

@@ -54,22 +54,6 @@ m2::RectI m2::UiWidget::drawable_area() const {
 	return rect().trim_left(vertical_excess).trim_right(vertical_excess).trim_top(horizontal_excess).trim_bottom(horizontal_excess);
 }
 
-m2::RectI m2::UiWidget::calculate_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align) {
-	// Fit the font into the drawable_area with correct aspect ratio
-	auto text_texture_dimensions = sdl::texture_dimensions(text_texture);
-	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(text_texture_dimensions.x, text_texture_dimensions.y);
-
-	// If drawable area is wider than the font, horizontal alignment is necessary.
-	switch (align) {
-		case TextHorizontalAlignment::LEFT:
-			return unaligned_destination.align_left_to(drawable_area.x);
-		case TextHorizontalAlignment::RIGHT:
-			return unaligned_destination.align_right_to(drawable_area.x2());
-		default:
-			return unaligned_destination;
-	}
-}
-
 m2::RectI m2::UiWidget::calculate_wrapped_text_rect(SDL_Texture* text_texture, RectI drawable_area, TextHorizontalAlignment align_h, TextVerticalAlignment align_v) {
 	auto text_texture_dimensions = sdl::texture_dimensions(text_texture);
 	if (drawable_area.w < text_texture_dimensions.x) {

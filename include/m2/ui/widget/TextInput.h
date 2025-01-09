@@ -6,13 +6,13 @@
 namespace m2::widget {
 	class TextInput : public UiWidget {
 		std::stringstream _text_input;
-		sdl::TextTexture _textTexture;
+		/// During initialization, the destination cannot yet be determined.
+		std::optional<sdl::TextTextureAndDestination> _text_texture_and_destination_cache;
 
 	public:
 		explicit TextInput(UiPanel* parent, const UiWidgetBlueprint* blueprint);
 		UiAction on_event(Events& events) override;
 		void on_focus_change() override;
-		UiAction on_update() override;
 		void on_draw() override;
 
 		// Accessors
