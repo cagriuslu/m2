@@ -1473,176 +1473,401 @@
       "type": "TEXT_LABEL_WARRINGTON",
       "text": "WARRINGTON",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_STOKE_ON_TRENT",
       "text": "STOKE ON TRENT",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_LEEK",
       "text": "LEEK",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_BELPER",
       "text": "BELPER",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_STONE",
       "text": "STONE",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_UTTOXETER",
       "text": "UTTOXETER",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_DERBY",
       "text": "DERBY",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_NOTTINGHAM",
       "text": "NOTTINGHAM",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_STAFFORD",
       "text": "STAFFORD",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_BURTON_UPON_TRENT",
       "text": "BURTON UPON TRENT",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_CANNOCK",
       "text": "CANNOCK",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_TAMWORTH",
       "text": "TAMWORTH",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_SHREWSBURY",
       "text": "SHREWSBURY",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_COALBROOKEDALE",
       "text": "COALBROOKEDALE",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_WOLFERHAMPTON",
       "text": "WOLFERHAMPTON",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_WALSALL",
       "text": "WALSALL",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_NUNEATON",
       "text": "NUNEATON",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_KIDDERMINSTER",
       "text": "KIDDERMINSTER",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_DUDLEY",
       "text": "DUDLEY",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_BIRMINGHAM",
       "text": "BIRMINGHAM",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_COVENTRY",
       "text": "COVENTRY",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_WORCESTER",
       "text": "WORCESTER",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_REDDITCH",
       "text": "REDDITCH",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_OXFORD",
       "text": "OXFORD",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_GLOUCESTER",
       "text": "GLOUCESTER",
       "heightM": 1,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_1X",
@@ -1678,36 +1903,81 @@
       "type": "TEXT_LABEL_PLUS_5_MONEY",
       "text": "(+5 Money)",
       "heightM": 0.75,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_PLUS_3_POINTS",
       "text": "(+3 Points)",
       "heightM": 0.75,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_PLUS_4_POINTS",
       "text": "(+4 Points)",
       "heightM": 0.75,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_PLUS_2_INCOME",
       "text": "(+2 Income)",
       "heightM": 0.75,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     },
     {
       "type": "TEXT_LABEL_1_FREE_DEVELOP",
       "text": "(1 Free Develop)",
       "heightM": 0.75,
-      "isBackgroundTile": true,
-      "pullHalfCell": true
+      "backgroundColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 180
+      },
+      "pushDimensions": {
+        "x": -0.5,
+        "y": 0.15
+      },
+      "isBackgroundTile": true
     }
   ]
 }

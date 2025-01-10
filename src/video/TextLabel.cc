@@ -14,12 +14,10 @@ m2::VecI m2::EstimateTextLabelDimensions(TTF_Font* font, const std::string& text
 }
 
 m2::VecF m2::TextLabelCenterToOriginVectorInSourcePixels(const pb::TextLabel& tl) {
-	if (tl.pull_half_cell()) {
-		const auto centerToOriginM = VecF{0.5f, 0.0f};
-		// Text labels are pre-rendered at the same PPM as the game, thus we need to multiply with the PPM of the game.
-		return centerToOriginM * M2_GAME.Dimensions().OutputPixelsPerMeter();
-	}
-	return {};
+	const auto centerToOriginM = VecF{-tl.push_dimensions().x(), -tl.push_dimensions().y()};
+	// Text labels are pre-rendered at the same PPM as the game (source PPM is 1), thus we need to multiply only
+	// with the PPM of the game to convert from source pixels to destination pixels.
+	return centerToOriginM * M2_GAME.Dimensions().OutputPixelsPerMeter();
 }
 
 /// Returns a vector from the screen origin (top-left) to the center of this sprite in output pixel units.
@@ -28,9 +26,23 @@ m2::VecF m2::ScreenOriginToTextLabelCenterVecOutpx(const pb::TextLabel& tl, cons
 }
 
 int m2::FontSizeOfTextLabel(const pb::TextLabel& tl) {
-	return tl.height_m() * M2_GAME.Dimensions().OutputPixelsPerMeter();
+	return I(tl.height_m() * M2_GAME.Dimensions().OutputPixelsPerMeter());
 }
 
+void m2::DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const bool isDimmed) {
+	const auto backgroundColor = RGBA{tl.background_color()};
+	const auto trueBackgroundColor = isDimmed ? backgroundColor * M2G_PROXY.dimming_factor : backgroundColor;
+	RectF rect{
+		position.x - F(sourceRect.w) / 2.0f / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+		position.y - F(sourceRect.h) / 2.0f / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+		F(sourceRect.w) / M2_GAME.Dimensions().OutputPixelsPerMeter(),
+		F(sourceRect.h) / M2_GAME.Dimensions().OutputPixelsPerMeter()
+	};
+	// Push the text label
+	rect.x += tl.push_dimensions().x();
+	rect.y += tl.push_dimensions().y();
+	Graphic::color_rect(rect, trueBackgroundColor);
+}
 void m2::DrawTextLabelIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, const float angle, MAYBE bool is_foreground, MAYBE float z) {
 	const auto sourceRectSdl = static_cast<SDL_Rect>(sourceRect);
 	DrawTextureIn2dWorld(

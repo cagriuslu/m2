@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include "../Meta.h"
+#include <Sprite.pb.h>
 
 namespace m2 {
 	struct RGB {
@@ -12,5 +13,13 @@ namespace m2 {
 
 	struct RGBA {
 		uint8_t r{}, g{}, b{}, a{};
+
+		RGBA(const uint8_t _r, const uint8_t _g, const uint8_t _b, const uint8_t _a) : r(_r), g(_g), b(_b), a(_a) {}
+		explicit RGBA(const m2::pb::Color& c) : r(c.r()), g(c.g()), b(c.b()), a(c.a()) {}
+
+		/// Alpha value isn't scaled
+		RGBA operator*(const float rhs) const { return RGBA{u8round(F(r) * rhs), u8round(F(g) * rhs), u8round(F(b) * rhs), a}; }
+		/// Alpha value isn't scaled
+		RGBA operator/(const float rhs) const { return RGBA{u8round(F(r) / rhs), u8round(F(g) / rhs), u8round(F(b) / rhs), a}; }
 	};
 }

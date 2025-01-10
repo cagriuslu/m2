@@ -124,10 +124,11 @@ message TextLabel {
   m2g.pb.SpriteType type = 1;
   string text = 2;
   float height_m = 3;
-  bool is_background_tile = 4;
-
-  // Display the text half a cell to the left. Useful when aligning in-between cells.
-  bool pull_half_cell = 5;
+  Color background_color = 4;
+  // Amount in world dimensions the text label will be pushed towards. Often used to center a text below an even number
+  // of cells by pushing the text label toward right or left by 0.5 meters.
+  VecF push_dimensions = 5;
+  bool is_background_tile = 6;
 }
 
 message SpriteSheets {

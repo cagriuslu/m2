@@ -211,7 +211,11 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		// Dim the sprite if dimming mode is enabled.
 		const bool dimmed = dim_rendering_if_necessary(gfx.owner_id(), M2_GAME.TextLabelCache().Texture());
 
-		// Draw
+		// Draw background
+		if (textLabel.background_color().a()) {
+			DrawTextLabelBackgroundIn2dWorld(textLabel, gfx.textLabelRect, gfx.owner().position, dimmed);
+		}
+		// Draw text label
 		const bool is_foreground = M2_LEVEL.graphics.get_id(&gfx);
 		const auto projector = is_projection_type_perspective(M2_LEVEL.ProjectionType())
 				? &DrawTextLabelIn3dWorld
@@ -304,6 +308,9 @@ void m2::Graphic::color_rect(const RectF& world_coordinates_m, const SDL_Color c
 }
 void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGB& color) {
 	color_rect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, 255});
+}
+void m2::Graphic::color_rect(const RectF& world_coordinates_m, const RGBA& color) {
+	color_rect(world_coordinates_m, SDL_Color{color.r, color.g, color.b, color.a});
 }
 
 void m2::Graphic::color_disk(const VecF& center_position_m, const float radius_m, const SDL_Color& color) {

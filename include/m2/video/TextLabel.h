@@ -24,6 +24,8 @@ namespace m2 {
 
 	int FontSizeOfTextLabel(const pb::TextLabel&);
 
+	void DrawTextLabelBackgroundIn2dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, bool isDimmed);
+	void DrawTextLabelBackgroundIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect, const VecF& position, bool isDimmed);
 	void DrawTextLabelIn2dWorld(const pb::TextLabel&, const RectI& sourceRect, const VecF& position, float angle, bool is_foreground = {}, float z = {});
 	void DrawTextLabelIn3dWorld(const pb::TextLabel&, const RectI& sourceRect, const VecF& position, float angle, bool is_foreground = {}, float z = {});
 

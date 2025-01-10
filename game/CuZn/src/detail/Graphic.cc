@@ -30,7 +30,7 @@ void DrawResources(m2::Character& chr) {
 	// Draw count
 	const auto& textLabel = std::get<m2::pb::TextLabel>(M2_GAME.GetSpriteOrTextLabel(count_sprite_type));
 	const auto rect = M2_GAME.TextLabelCache().Create(textLabel.text(), m2::FontSizeOfTextLabel(textLabel));
-	DrawTextLabelIn2dWorld(textLabel, rect, pos + m2::VecF{0.20f, 1.06f}, 0.0f);
+	DrawTextLabelIn2dWorld(textLabel, rect, pos + m2::VecF{0.20f, 1.0f}, 0.0f);
 	// Draw resource
 	// We're not using a graphics component, so we have to draw the drop shadow ourselves.
 	sprite.DrawIn2dWorld(pos + m2::VecF{1.0f, 1.05f}, m2::pb::SpriteEffectType{m2::pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW}, 0.0f);
