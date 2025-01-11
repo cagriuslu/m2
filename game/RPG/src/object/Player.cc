@@ -2,6 +2,7 @@
 #include <m2/Object.h>
 #include "m2/Log.h"
 #include "m2/Game.h"
+#include <rpg/Graphic.h>
 #include <rpg/Detail.h>
 #include "m2/Controls.h"
 #include <m2/game/CharacterMovement.h>
@@ -11,6 +12,7 @@
 #include <Item.pb.h>
 #include <rpg/Defs.h>
 #include <array>
+
 
 using namespace rpg;
 using namespace m2g;
@@ -170,9 +172,14 @@ m2::void_expected rpg::Player::init(m2::Object& obj) {
 		}
 		return std::nullopt;
 	};
-	gfx.pre_draw = [&](m2::Graphic& gfx) {
+	gfx.pre_draw = [&](MAYBE m2::Graphic& gfx) {
 		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
-		gfx.draw_addon_health_bar = chr.get_resource(m2g::pb::RESOURCE_HP);
+	};
+	gfx.on_draw = [&](m2::Graphic& gfx) {
+		// Draw the sprite itself
+		m2::Graphic::DefaultDrawCallback(gfx);
+		// Draw the HP addon
+		DrawAddons(gfx, chr.get_resource(RESOURCE_HP));
 	};
 
 	M2_LEVEL.player_id = M2_LEVEL.objects.get_id(&obj);

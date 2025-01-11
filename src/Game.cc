@@ -682,7 +682,6 @@ namespace {
 		for (auto& gfx : terrain_graphics) {
 			if (gfx.enabled && gfx.draw) {
 				IF(gfx.on_draw)(gfx);
-				IF(gfx.on_addon)(gfx);
 			}
 		}
 	}
@@ -724,7 +723,6 @@ void m2::Game::DrawForeground() {
 		auto& gfx = _level->graphics[gfx_id];
 		if (gfx.enabled && gfx.draw) {
 			IF(gfx.on_draw)(gfx);
-			IF(gfx.on_addon)(gfx);
 		}
 	}
 }

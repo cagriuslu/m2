@@ -14,6 +14,7 @@
 
 #include "m2/Game.h"
 #include "m2/game/Pathfinder.h"
+#include <rpg/Graphic.h>
 #include "rpg/group/ItemGroup.h"
 
 using namespace rpg;
@@ -152,12 +153,17 @@ m2::void_expected Enemy::init(m2::Object& obj) {
 	gfx.pre_draw = [&](m2::Graphic& gfx) {
 		using namespace m2::pb;
 		impl.animation_fsm.time(M2_GAME.DeltaTimeS());
-		gfx.draw_addon_health_bar = chr.get_resource(RESOURCE_HP);
 		if (chr.has_resource(RESOURCE_DAMAGE_EFFECT_TTL)) {
 			gfx.variant_draw_order[0] = SPRITE_EFFECT_MASK;
 		} else {
 			gfx.variant_draw_order[0] = std::nullopt;
 		}
+	};
+	gfx.on_draw = [&](m2::Graphic& gfx) {
+		// Draw the sprite itself
+		m2::Graphic::DefaultDrawCallback(gfx);
+		// Draw the HP addon
+		DrawAddons(gfx, chr.get_resource(RESOURCE_HP));
 	};
 	phy.on_debug_draw = [&impl](m2::Physique& phy) {
 		m2::Physique::default_debug_draw(phy);

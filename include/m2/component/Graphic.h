@@ -74,7 +74,6 @@ namespace m2 {
 		using Callback = std::function<void(Graphic&)>;
 		Callback pre_draw{};
 		Callback on_draw{};
-		Callback on_addon{};
 		Callback post_draw{};
 
 		std::variant<std::monostate, const Sprite*, const pb::TextLabel*> visual;
@@ -88,14 +87,14 @@ namespace m2 {
 
 		float draw_angle{}; // Rads
 		float z{};
-		std::optional<float> draw_addon_health_bar; /// [0,1]
 
 		Graphic() = default;
 		explicit Graphic(uint64_t object_id); // TODO can this be deleted
 		explicit Graphic(uint64_t object_id, const std::variant<Sprite, pb::TextLabel>&);
 
+		/// Default draw callback that's capable of drawing sprites, foreground components, sprite effects, and text
+		/// labels.
 		static void DefaultDrawCallback(Graphic& gfx);
-		static void default_draw_addons(const Graphic& gfx);
 
 		/// Color the world cell with the given color
 		static void color_cell(const VecI& cell, SDL_Color color);

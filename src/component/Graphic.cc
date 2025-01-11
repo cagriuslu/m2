@@ -148,7 +148,7 @@ std::optional<m2::VecF> m3::screen_origin_to_projection_along_camera_plane_dstpx
 
 m2::Graphic::Graphic(const Id object_id) : Component(object_id) {}
 m2::Graphic::Graphic(const uint64_t object_id, const std::variant<Sprite, pb::TextLabel>& spriteOrTextLabel)
-		: Component(object_id), on_draw(DefaultDrawCallback), on_addon(default_draw_addons) {
+		: Component(object_id), on_draw(DefaultDrawCallback) {
 	if (std::holds_alternative<Sprite>(spriteOrTextLabel)) {
 		visual = &std::get<Sprite>(spriteOrTextLabel);
 	} else {
@@ -228,49 +228,6 @@ void m2::Graphic::DefaultDrawCallback(Graphic& gfx) {
 		}
 	} else {
 		// This function only draws visuals
-	}
-}
-
-void m2::Graphic::default_draw_addons(const Graphic& gfx) {
-	if (std::holds_alternative<const Sprite*>(gfx.visual)) {
-		const auto& sprite = *std::get<const Sprite*>(gfx.visual);
-
-		if (not gfx.draw_addon_health_bar) {
-			return;
-		}
-
-		SDL_Rect dst_rect{};
-
-		if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
-			const auto src_rect = static_cast<SDL_Rect>(sprite.Rect());
-			const auto screen_origin_to_sprite_center_px_vec = sprite.ScreenOriginToCenterVecOutpx(gfx.owner().position, SpriteVariant{});
-			dst_rect = SDL_Rect{
-				iround(screen_origin_to_sprite_center_px_vec.x - (F(src_rect.w) * M2_GAME.Dimensions().OutputPixelsPerMeter() / F(sprite.Ppm()) / 2.0f)),
-				iround(screen_origin_to_sprite_center_px_vec.y + (F(src_rect.h) * M2_GAME.Dimensions().OutputPixelsPerMeter() * 11.0f / F(sprite.Ppm()) / 2.0f / 10.0f)), // Give an offset of 1.1
-				iround(M2_GAME.Dimensions().OutputPixelsPerMeter()),
-				iround(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f) // 0.15 m height
-		};
-		} else {
-			const auto obj_position = gfx.owner().position;
-			// Place add-on below the sprite
-			const auto addon_position = m3::VecF{obj_position.x, obj_position.y, -0.2f};
-			if (const auto projected_addon_position = screen_origin_to_projection_along_camera_plane_dstpx(addon_position)) {
-				const auto rect = RectI::centered_around(VecI{*projected_addon_position}, iround(M2_GAME.Dimensions().OutputPixelsPerMeter()), iround(M2_GAME.Dimensions().OutputPixelsPerMeter() * 12.0f / 100.0f));
-				dst_rect = static_cast<SDL_Rect>(rect);
-			}
-		}
-
-		// Black background
-		SDL_SetRenderDrawColor(M2_GAME.renderer, 0, 0, 0, 255);
-		SDL_RenderFillRect(M2_GAME.renderer, &dst_rect);
-
-		// Green part
-		const float percentage = (*gfx.draw_addon_health_bar) < 0.0f ? 0.0f : (1.0f < *gfx.draw_addon_health_bar) ? 1.0f : *gfx.draw_addon_health_bar;
-		const auto green_rect = SDL_Rect{dst_rect.x + 1, dst_rect.y + 1, I(roundf(percentage * F(dst_rect.w - 2))), dst_rect.h - 2};
-		SDL_SetRenderDrawColor(M2_GAME.renderer, 0, 255, 0, 255);
-		SDL_RenderFillRect(M2_GAME.renderer, &green_rect);
-	} else {
-		// This function only works if there is a sprite
 	}
 }
 
