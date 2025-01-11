@@ -1,8 +1,10 @@
 #include <m2/video/SpriteEffectSheet.h>
 #include <m2/detail/Gaussian.h>
+#include <m2/Log.h>
 #include <numeric>
 
 m2::SpriteEffectsSheet::SpriteEffectsSheet(SDL_Renderer* renderer) : DynamicSheet(renderer) {}
+
 m2::RectI m2::SpriteEffectsSheet::create_mask_effect(
     const SpriteSheet& sheet, const pb::RectI& rect, const pb::Color& mask_color, bool lightning) {
 	auto [dst_surface, dst_rect] = Alloc(rect.w(), rect.h());
@@ -34,7 +36,7 @@ m2::RectI m2::SpriteEffectsSheet::create_mask_effect(
 
 			// Color dst pixel
 			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + dst_rect.y) * dst_surface->w);
+			auto* dst_pixel = dst_pixels + ((x - rect.x() + dst_rect.x) + (y - rect.y() + dst_rect.y) * dst_surface->w);
 			*dst_pixel = (src_pixel & src_surface->format->Amask) ? dst_color : 0;
 		}
 	}
@@ -92,7 +94,7 @@ m2::RectI m2::SpriteEffectsSheet::create_grayscale_effect(
 			auto bw = (uint8_t)roundf((rf + gf + bf) * 255.0f);
 			// Color dst pixel
 			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + dst_rect.y) * dst_surface->w);
+			auto* dst_pixel = dst_pixels + ((x - rect.x() + dst_rect.x) + (y - rect.y() + dst_rect.y) * dst_surface->w);
 			*dst_pixel = SDL_MapRGBA(dst_surface->format, bw, bw, bw, a);
 		}
 	}
@@ -135,7 +137,7 @@ m2::RectI m2::SpriteEffectsSheet::create_image_adjustment_effect(
 			auto bn = (uint8_t)roundf(bf * 255.0f);
 			// Color dst pixel
 			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + dst_rect.y) * dst_surface->w);
+			auto* dst_pixel = dst_pixels + ((x - rect.x() + dst_rect.x) + (y - rect.y() + dst_rect.y) * dst_surface->w); // ?
 			*dst_pixel = SDL_MapRGBA(dst_surface->format, rn, gn, bn, a);
 		}
 	}
@@ -204,7 +206,7 @@ m2::RectI m2::SpriteEffectsSheet::create_blurred_drop_shadow_effect(const Sprite
 			auto an = iround(sum * 255.0f);
 			// Color dst pixel
 			auto* dst_pixels = static_cast<uint32_t*>(dst_surface->pixels);
-			auto* dst_pixel = dst_pixels + ((x - rect.x()) + (y - rect.y() + dst_rect.y) * dst_surface->w);
+			auto* dst_pixel = dst_pixels + ((x - rect.x() + dst_rect.x) + (y - rect.y() + dst_rect.y) * dst_surface->w);
 			*dst_pixel = SDL_MapRGBA(dst_surface->format, 0, 0, 0, an);
 		}
 	}

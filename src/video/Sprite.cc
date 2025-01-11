@@ -75,6 +75,7 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 		_foregroundCompanionSpriteEffectsSheetRect = spriteEffectsSheet.create_foreground_companion_effect(
 		    spriteSheet, original_sprite->regular().rect(), original_sprite->regular().foreground_companion_rects(),
 		    lightning);
+		LOG_DEBUG("Foreground companion rect", original_sprite->type(), *_foregroundCompanionSpriteEffectsSheetRect);
 		_foregroundCompanionCenterToOriginVecPx =
 		    VecF{original_sprite->regular().foreground_companion_center_to_origin_vec_px()};
 		_foregroundCompanionCenterToOriginVecM =
@@ -96,17 +97,21 @@ m2::Sprite::Sprite(const std::vector<SpriteSheet>& spriteSheets, const SpriteShe
 				case pb::SPRITE_EFFECT_MASK:
 					_effects[index] = spriteEffectsSheet.create_mask_effect(
 					    spriteSheet, original_sprite->regular().rect(), effect.mask_color(), lightning);
+					LOG_DEBUG("Sprite mask effect rect", original_sprite->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_GRAYSCALE:
 					_effects[index] = spriteEffectsSheet.create_grayscale_effect(
 					    spriteSheet, original_sprite->regular().rect(), lightning);
+					LOG_DEBUG("Grayscale effect rect", original_sprite->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_IMAGE_ADJUSTMENT:
 					_effects[index] = spriteEffectsSheet.create_image_adjustment_effect(
 					    spriteSheet, original_sprite->regular().rect(), effect.image_adjustment(), lightning);
+					LOG_DEBUG("Image adjustment effect rect", original_sprite->type(), _effects[index]);
 					break;
 				case pb::SPRITE_EFFECT_BLURRED_DROP_SHADOW:
 					_effects[index] = spriteEffectsSheet.create_blurred_drop_shadow_effect(spriteSheet, original_sprite->regular().rect(), effect.blurred_drop_shadow(), lightning);
+					LOG_DEBUG("Blurred drop shadow effect rect", original_sprite->type(), _effects[index]);
 					break;
 				default:
 					throw M2_ERROR(
