@@ -128,9 +128,11 @@ std::optional<NetworkJourneyStep> NetworkJourney::HandleLocationMouseClickSignal
 
 		if (!_selected_connection_1) {
 			_selected_connection_1 = selected_location;
-			// Update buildable connections with the new selection
-			sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1),
-					"Pick the second connection using right mouse button...");
+			if (_build_double_railroads) {
+				// Update buildable connections with the new selection
+				sub_journey.emplace(buildable_connections_in_network(M2_PLAYER.character(), _selected_connection_1),
+						"Pick the second connection using right mouse button...");
+			}
 		} else if (_build_double_railroads && !_selected_connection_2 && _selected_connection_1 != selected_location) {
 			_selected_connection_2 = selected_location;
 		}
