@@ -102,7 +102,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
 					// Calculate circumference in pixels
 					int R = I(roundf(circumference * F(M2_GAME.Dimensions().OutputPixelsPerMeter())));
-					auto [texture, src_rect] = M2_GAME.shapes_sheet->get_circle(color, R, R, 16);
+					auto [texture, src_rect] = M2_GAME.shapes_sheet->get_circle(color, static_cast<uint16_t>(R), static_cast<uint16_t>(R), 16);
 					// Calculate destination Rect
 					auto screen_origin_to_sprite_center_px = ScreenOriginToPositionVecPx(position + center_offset_m);
 					auto dst_rect = SDL_Rect{
@@ -136,7 +136,7 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 								SDL_FPoint{vertical_point_b->x, vertical_point_b->y},
 								SDL_FPoint{horizontal_point_a->x, horizontal_point_a->y}
 						};
-						SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), points.size());
+						SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), I(points.size()));
 					}
 				}
 				break;

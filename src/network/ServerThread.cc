@@ -396,7 +396,7 @@ void m2::network::ServerThread::thread_func(ServerThread* server_thread) {
 						LOG_INFO("Refusing connection because of connection limit", (*client_socket)->ip_address_and_port());
 					} else if (server_thread->_state == pb::SERVER_LISTENING) {
 						LOG_INFO("New client connected with index", server_thread->_clients.size(), (*client_socket)->ip_address_and_port());
-						server_thread->_clients.emplace_back(std::move(**client_socket), server_thread->_clients.size());
+						server_thread->_clients.emplace_back(std::move(**client_socket), I(server_thread->_clients.size()));
 					} else if (server_thread->_state == pb::SERVER_READY) {
 						LOG_INFO("Refusing connection to closed lobby", (*client_socket)->ip_address_and_port());
 					} else if (server_thread->_state == pb::SERVER_STARTED) {

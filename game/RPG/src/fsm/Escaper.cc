@@ -36,6 +36,8 @@ std::optional<rpg::EscaperMode> rpg::EscaperFsm::HandleSignal(const EscaperFsmSi
 				case m2::FsmSignalType::Custom: return handle_physics_step_while_triggered();
 				default: return {};
 			}
+		default:
+			return {};
 	}
 }
 

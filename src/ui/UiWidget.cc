@@ -88,7 +88,7 @@ m2::RectI m2::UiWidget::calculate_filled_text_rect(RectI drawable_area, TextHori
 	// Fit the font into the drawable_area with correct aspect ratio
 	auto unaligned_destination = drawable_area.trim_to_aspect_ratio(
 		I(text_length * M2_GAME.font_letter_width_to_height_ratio().n()),
-			M2_GAME.font_letter_width_to_height_ratio().d());
+			I(M2_GAME.font_letter_width_to_height_ratio().d()));
 
 	// If drawable area is wider than the font, horizontal alignment is necessary.
 	switch (align) {

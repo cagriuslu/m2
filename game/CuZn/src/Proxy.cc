@@ -500,7 +500,7 @@ void m2g::Proxy::main_journey_deleter() {
 unsigned m2g::Proxy::player_index(m2::Id id) const {
 	auto it = std::find(multiPlayerObjectIds.begin(), multiPlayerObjectIds.end(), id);
 	if (it != multiPlayerObjectIds.end()) {
-		return std::distance(multiPlayerObjectIds.begin(), it);
+		return U(std::distance(multiPlayerObjectIds.begin(), it));
 	} else {
 		throw M2_ERROR("Invalid player ID");
 	}
@@ -514,7 +514,7 @@ int m2g::Proxy::total_card_count() const {
 		| std::views::transform(m2::to_object_of_id)
 		| std::views::transform(m2::to_character_of_object)
 		| std::views::transform(m2::generate_named_item_types_filter({pb::ITEM_CATEGORY_CITY_CARD, pb::ITEM_CATEGORY_INDUSTRY_CARD, pb::ITEM_CATEGORY_WILD_CARD}));
-	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<Card>& card_list) { return sum + card_list.size(); });
+	const auto card_count = std::accumulate(player_card_lists.begin(), player_card_lists.end(), 0, [](const int sum, const std::vector<Card>& card_list) { return sum + I(card_list.size()); });
 	return card_count + m2::iround(game_state_tracker().get_resource(pb::DRAW_DECK_SIZE));
 }
 bool m2g::Proxy::is_last_action_of_player() const {

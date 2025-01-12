@@ -25,7 +25,7 @@ std::set<IndustryLocation> find_closest_connected_coal_mines_with_coal(City city
 	std::set<IndustryLocation> industry_locations;
 	float closest_coal_mine_cost = 0.0f;
 	for (const auto& [cost, node] : cities_ordered_by_cost) {
-		if (not industry_locations.empty() && m2::is_less(closest_coal_mine_cost, cost, 0.001)) {
+		if (not industry_locations.empty() && m2::is_less(closest_coal_mine_cost, cost, 0.001f)) {
 			// If some coal mines are found and there aren't any other cities as close, stop searching.
 			break;
 		}

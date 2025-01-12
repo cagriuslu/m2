@@ -73,7 +73,7 @@ std::string m2::ToString(const SDL_FRect& rf) {
 
 void m2::sdl::delay(ticks_t duration) {
 	if (0 < duration) {
-		SDL_Delay(duration);
+		SDL_Delay(U(duration));
 	}
 }
 

@@ -41,7 +41,7 @@ UiAction ImageSelection::on_event(Events& events) {
 			auto min_scroll_amount =
 			    std::min(static_cast<size_t>(scroll_amount), image_selection.list.size() - _selection - 1);
 			if (min_scroll_amount) {
-				return select(_selection + min_scroll_amount);
+				return select(_selection + U(min_scroll_amount));
 			}
 		} else if (scroll_amount < 0) {
 			auto min_scroll_amount = std::min(static_cast<unsigned>(-scroll_amount), _selection);

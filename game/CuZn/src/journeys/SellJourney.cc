@@ -226,7 +226,7 @@ std::optional<SellJourneyStep> SellJourney::HandleDevelopBenefitIndustryTileEnte
 				// Ask for tile selection
 				if (const auto selected_tile = ask_for_tile_selection()) {
 					// Check if tile can be developed
-					if (m2::is_equal(M2_GAME.GetNamedItem(*selected_tile).get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001)) {
+					if (m2::is_equal(M2_GAME.GetNamedItem(*selected_tile).get_attribute(DEVELOPMENT_BAN), 1.0f, 0.001f)) {
 						M2_LEVEL.ShowMessage("Selected industry cannot be developed", 8.0f);
 						M2_DEFER(m2g::Proxy::main_journey_deleter);
 						return std::nullopt;
@@ -321,7 +321,7 @@ m2::void_expected CanPlayerSell(m2::Character& player, const m2g::pb::ClientComm
 			"Selected develop benefit tile is not an industry tile");
 		m2_return_unexpected_message_unless(PlayerNextIndustryTileOfCategory(player, industry_tile_category_of_industry_tile(tile)) == tile,
 			"Selected develop benefit tile is not the next tile to develop in the category");
-		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.GetNamedItem(tile).get_attribute(DEVELOPMENT_BAN), 0.0f, 0.001),
+		m2_return_unexpected_message_unless(m2::is_equal(M2_GAME.GetNamedItem(tile).get_attribute(DEVELOPMENT_BAN), 0.0f, 0.001f),
 			"Selected develop benefit tile cannot be developed");
 	}
 

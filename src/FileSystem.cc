@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <m2/FileSystem.h>
 #include <sstream>
 

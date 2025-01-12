@@ -63,6 +63,8 @@ std::optional<rpg::ChaserMode> rpg::ChaserFsm::HandleSignal(const ChaserFsmSigna
 				case m2::FsmSignalType::Custom: return handle_physics_step_while_gave_up();
 				default: return {};
 			}
+		default:
+			return {};
 	}
 }
 

@@ -314,7 +314,7 @@ bool m2::Graphic::dim_rendering_if_necessary(Id object_id, SDL_Texture* texture)
 	// Dim the sprite if dimming mode is enabled
 	if (const auto& DimmingExceptions = M2_LEVEL.DimmingExceptions()) {
 		if (not DimmingExceptions->contains(object_id)) {
-			static uint8_t mod = uround(M2G_PROXY.dimming_factor * F(255));
+			static uint8_t mod = static_cast<uint8_t>(uround(M2G_PROXY.dimming_factor * F(255)));
 			SDL_SetTextureColorMod(texture, mod, mod, mod);
 			return true;
 		}

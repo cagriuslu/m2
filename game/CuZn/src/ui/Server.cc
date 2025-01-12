@@ -16,11 +16,11 @@ static TextBlueprint client_count = {
 	.text = "0",
 	.wrapped_font_size_in_units = 5.0f,
 	.on_update = [](MAYBE Text& self) {
-		auto client_count = M2_GAME.ServerThread().client_count();
+		auto ccount = M2_GAME.ServerThread().client_count();
 		auto ready_client_count = M2_GAME.ServerThread().ready_client_count();
-		auto text = m2::ToString(ready_client_count) + "/" + m2::ToString(client_count);
+		auto text = m2::ToString(ready_client_count) + "/" + m2::ToString(ccount);
 		// Check if ready to start
-		if (client_count != 1 && client_count == ready_client_count) {
+		if (ccount != 1 && ccount == ready_client_count) {
 			text += " - START!";
 		}
 		self.set_text(text);
@@ -31,8 +31,8 @@ static TextBlueprint client_count = {
 		if (2 <= M2_GAME.ServerThread().client_count()) {
 			LOG_INFO("Enough clients have connected");
 			if (M2_GAME.ServerThread().close_lobby()) {
-				auto client_count = M2_GAME.ServerThread().client_count();
-				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.levels_dir / "Map.json", m2::ToString(client_count));
+				auto ccount = M2_GAME.ServerThread().client_count();
+				const auto expect_success = M2_GAME.LoadMultiPlayerAsHost(M2_GAME.levels_dir / "Map.json", m2::ToString(ccount));
 				m2_succeed_or_throw_error(expect_success);
 				return MakeClearStackAction();
 			}

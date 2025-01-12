@@ -84,9 +84,9 @@ m2::void_expected m2g::Proxy::init_level_blueprint_fg_object(m2::Object& obj) {
 m2::Group* m2g::Proxy::create_group(pb::GroupType group_type) {
 	switch (group_type) {
 		case pb::GROUP_LOW_HP_POTION_DROPPER:
-			return new rpg::ItemGroup({{pb::ITEM_CONSUMABLE_HP_POTION_20, 4}, {pb::ITEM_CONSUMABLE_HP_POTION_80, 1}});
+			return new rpg::ItemGroup({std::make_pair(pb::ITEM_CONSUMABLE_HP_POTION_20, 4.0f), std::make_pair(pb::ITEM_CONSUMABLE_HP_POTION_80, 1.0f)});
 		case pb::GROUP_MACHINE_GUN_DROPPER:
-			return new rpg::ItemGroup({{pb::ITEM_REUSABLE_MACHINE_GUN, 1}});
+			return new rpg::ItemGroup({{pb::ITEM_REUSABLE_MACHINE_GUN, 1.0f}});
 		default:
 			return nullptr;
 	}
