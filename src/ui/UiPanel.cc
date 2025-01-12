@@ -265,26 +265,27 @@ UiPanel::UiPanel(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBl
 	IF(blueprint->on_create)(*this);
 }
 
-UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*, std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
+UiAction UiPanel::create_and_run_blocking(std::variant<const UiPanelBlueprint*,
+		std::unique_ptr<UiPanelBlueprint>> static_or_unique_blueprint,
 		const std::variant<std::monostate, RectI, RectF>& fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
 		sdl::TextureUniquePtr background_texture) {
-	// Check if there are other blocking UI panels
-	if (M2_GAME.ui_begin_ticks) {
-		// Execute panel without keeping time
-		UiPanel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
-		return panel.run_blocking();
-	} else {
-		// Save begin ticks for later and other nested UIs
-		M2_GAME.ui_begin_ticks = sdl::get_ticks();
-		// Execute panel
-		UiPanel panel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)};
-		auto action = panel.run_blocking();
-		// Add pause ticks
-		M2_GAME.AddPauseTicks(sdl::get_ticks_since(*M2_GAME.ui_begin_ticks));
-		M2_GAME.ui_begin_ticks.reset();
-		// Return
-		return action;
+	// Check if there is already a blocking UI panel
+	if (M2_GAME.rootBlockingUiBeginTicks) {
+		// Execute panel without keeping time, it's being kept already
+		return UiPanel{std::move(static_or_unique_blueprint), fullscreen_or_pixel_rect_or_relation_to_game_and_hud,
+				std::move(background_texture)}.run_blocking();
 	}
+
+	// Save begin ticks for later and other nested UIs
+	M2_GAME.rootBlockingUiBeginTicks = sdl::get_ticks();
+	// Execute panel
+	auto action = UiPanel{std::move(static_or_unique_blueprint),
+			fullscreen_or_pixel_rect_or_relation_to_game_and_hud, std::move(background_texture)}.run_blocking();
+	// Add pause ticks
+	M2_GAME.AddPauseTicks(sdl::get_ticks_since(*M2_GAME.rootBlockingUiBeginTicks));
+	M2_GAME.rootBlockingUiBeginTicks.reset();
+	// Return
+	return action;
 }
 
 UiPanel::~UiPanel() {
