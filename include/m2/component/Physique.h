@@ -13,7 +13,10 @@ namespace m2 {
 		Callback post_step{};
 		Callback on_debug_draw{default_debug_draw};
 
+		// An object has either body or rigidBodyIndex.
 		box2d::BodyUniquePtr body;
+		std::optional<int> rigidBodyIndex;
+
 		std::function<void(Physique&, Physique&, const box2d::Contact&)> on_collision;
 		std::function<void(Physique&, Physique&)> off_collision;
 

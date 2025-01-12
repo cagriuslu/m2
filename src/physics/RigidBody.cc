@@ -105,7 +105,7 @@ m2::PhysicsPrimitive m2::RigidBody::InverseOfTotalMass() const {
 	return cumulativeMass.Inverse();
 }
 m2::PhysicsPrimitive m2::RigidBody::InverseOfMomentOfInertiaAboutCenterOfMass() const {
-	// TODO make a proper implementation
+	// TODO make a proper implementation. Right now, we assume body parts are point masses.
 	const auto offsetOfCenterOfMass = OffsetOfCenterOfMass();
 	PhysicsPrimitive cumulativeMomentOfInertia;
 	for (const auto& part : _parts) {
@@ -113,7 +113,7 @@ m2::PhysicsPrimitive m2::RigidBody::InverseOfMomentOfInertiaAboutCenterOfMass() 
 		if (part.inverseMass == PhysicsPrimitive::Zero()) {
 			return PhysicsPrimitive::Zero();
 		}
-		// For now, assume that each body part is a particle
+		// Assume that each body part is a particle
 		const auto partOriginToCenterOfMassVec = part.position - offsetOfCenterOfMass;
 		const auto partDistanceSquareToCenterOfMass = partOriginToCenterOfMassVec.MagnitudeSquare();
 		const auto partMass = part.inverseMass.Inverse();

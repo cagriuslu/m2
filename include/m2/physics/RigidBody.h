@@ -67,9 +67,9 @@ namespace m2 {
 
 		/// Offset of the center of mass from the origin of the object. The origin of the object is arbitrary. The
 		/// location of the center of mass is determined based on the body parts.
-		Vec<PhysicsPrimitive> OffsetOfCenterOfMass() const;
+		[[nodiscard]] Vec<PhysicsPrimitive> OffsetOfCenterOfMass() const;
 		/// Position of the center of mass in the physics world.
-		Vec<PhysicsPrimitive> PositionOfCenterOfMass() const { return _positionOfCenterOfMass; }
+		[[nodiscard]] Vec<PhysicsPrimitive> PositionOfCenterOfMass() const { return _positionOfCenterOfMass; }
 
 		// Modifiers
 

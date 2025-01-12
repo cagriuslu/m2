@@ -10,8 +10,9 @@
 
 m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
 
-m2::Physique::Physique(Physique&& other) noexcept : Component(other._owner_id), pre_step(std::move(other.pre_step)), post_step(std::move(other.post_step)), body(std::move(other.body)), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
+m2::Physique::Physique(Physique&& other) noexcept : Component(other._owner_id), pre_step(std::move(other.pre_step)), post_step(std::move(other.post_step)), body(std::move(other.body)), rigidBodyIndex(std::move(other.rigidBodyIndex)), on_collision(std::move(other.on_collision)), off_collision(std::move(other.off_collision)) {
     other.body = nullptr;
+	other.rigidBodyIndex = std::nullopt;
 }
 
 m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
@@ -19,6 +20,7 @@ m2::Physique& m2::Physique::operator=(Physique&& other) noexcept {
     std::swap(pre_step, other.pre_step);
     std::swap(post_step, other.post_step);
     std::swap(body, other.body);
+    std::swap(rigidBodyIndex, other.rigidBodyIndex);
 	std::swap(on_collision, other.on_collision);
 	std::swap(off_collision, other.off_collision);
     return *this;

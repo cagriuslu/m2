@@ -580,6 +580,7 @@ void m2::Game::ExecuteStep() {
 	if (_level->world) {
 		LOGF_TRACE("Stepping world %f seconds...", phy_period);
 		_level->world->Step(phy_period, velocity_iterations, position_iterations);
+		_level->World2().Integrate();
 		LOG_TRACE("World stepped");
 		// Update positions
 		for (auto& phy : _level->physics) {
@@ -589,6 +590,15 @@ void m2::Game::ExecuteStep() {
 				// Update draw list
 				object.position = m2::VecF{phy.body->GetPosition()};
 				if (old_pos != object.position) {
+					_level->draw_list.queue_update(phy.owner_id(), object.position);
+				}
+			} else if (phy.rigidBodyIndex) {
+				auto& object = phy.owner();
+				auto oldPosition = object.position;
+				auto newPosition = _level->World2().GetRigidBody(*phy.rigidBodyIndex).PositionOfCenterOfMass();
+				object.position.x = newPosition.X().ToFloat();
+				object.position.y = newPosition.Y().ToFloat();
+				if (oldPosition != object.position) {
 					_level->draw_list.queue_update(phy.owner_id(), object.position);
 				}
 			}
