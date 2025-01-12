@@ -30,10 +30,7 @@ m2::void_expected rpg::init_finish_point(m2::Object& obj) {
 				LOG_INFO("Saving progress...");
 				M2G_PROXY.save_progress();
 				LOG_INFO("Progress saved");
-
-				if (m2::UiPanel::create_and_run_blocking(M2G_PROXY.MainMenuBlueprint()).IsQuit()) {
-					M2_GAME.quit = true;
-				}
+				M2_LEVEL.MarkForDeletion();
 			});
 		}
 	};

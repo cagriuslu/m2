@@ -39,6 +39,11 @@ int main(const int argc, char **argv) {
 	std::optional<sdl::Stopwatch> sinceLastPhy, sinceLastGfx, sinceLastFps;
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
 	while (not M2_GAME.quit) {
+		// If the level is marked for deletion, delete it
+		if (M2_GAME.HasLevel() && M2_LEVEL.IsMarkedForDeletion()) {
+			M2_GAME.UnloadLevel();
+		}
+
 		// Try to load a level if there's no level
 		if (not M2_GAME.HasLevel()) {
 			LOG_DEBUG("Executing main menu...");
@@ -49,9 +54,8 @@ int main(const int argc, char **argv) {
 			if (not M2_GAME.HasLevel()) {
 				LOG_WARN("Main menu didn't initialize a level");
 				continue;
-			} else {
-				LOG_INFO("Main menu loaded a level");
 			}
+			LOG_INFO("Main menu loaded a level");
 			M2_LEVEL.BeginGameLoop();
 			sinceLastPhy = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};
 			sinceLastGfx = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};

@@ -155,6 +155,7 @@ namespace m2 {
 		void_expected LoadBulkSheetEditor();
 		bool HasLevel() const { return static_cast<bool>(_level); }
 		Level& Level() { return *_level; }
+		void UnloadLevel() { _level.reset(); ResetState(); }
 
 		// Accessors
 

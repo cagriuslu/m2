@@ -31,6 +31,7 @@ namespace m2 {
 	class Game;
 
 	class Level final {
+		bool _markedForDeletion{false};
 		std::optional<std::filesystem::path> _lbPath;
 		std::optional<pb::Level> _lb;
 		std::string _name;
@@ -99,6 +100,7 @@ namespace m2 {
 
 		// Accessors
 
+		[[nodiscard]] bool IsMarkedForDeletion() const { return _markedForDeletion; }
 		std::optional<std::filesystem::path> path() const { return _lbPath; }
 		std::optional<pb::Level> level_blueprint() const { return _lb; }
 		const std::string& name() const { return _name; }
@@ -128,6 +130,7 @@ namespace m2 {
 
 		void BeginGameLoop();
 		void AddPauseTicks(const sdl::ticks_t ticks) { _pauseTicks = _pauseTicks ? *_pauseTicks + ticks : ticks; }
+		void MarkForDeletion() { _markedForDeletion = true; }
 
 		// Features
 
