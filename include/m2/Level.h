@@ -34,8 +34,11 @@ namespace m2 {
 		std::optional<std::filesystem::path> _lbPath;
 		std::optional<pb::Level> _lb;
 		std::string _name;
-
 		RectI _backgroundBoundary; // In meters
+		std::optional<sdl::ticks_t> _beginTicks, _pauseTicks;
+
+		// Special properties effecting the simulation
+
 		std::optional<std::set<ObjectId>> _dimmingExceptions;
 		bool _isPanning{};
 
@@ -73,8 +76,7 @@ namespace m2 {
 		std::optional<SoundListener> left_listener, right_listener;
 		std::optional<Pathfinder> pathfinder;
 
-		std::optional<sdl::ticks_t> level_start_ticks;
-		std::optional<sdl::ticks_t> level_start_pause_ticks;
+		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
 		std::queue<std::function<void()>> deferred_actions;
 		std::variant<
 		    std::monostate, splayer::State, mplayer::State, ledit::State, pedit::State, sedit::State, bsedit::State>
@@ -119,11 +121,13 @@ namespace m2 {
 		float horizontal_fov() const;
 		Object* player() { return objects.get(player_id); }
 		Object* camera() { return objects.get(camera_id); }
+		const sdl::ticks_t* PauseTicksHandle() const { return &*_pauseTicks; }
 		sdl::ticks_t get_level_duration() const;
 
 		// Modifiers
 
 		void BeginGameLoop();
+		void AddPauseTicks(const sdl::ticks_t ticks) { _pauseTicks = _pauseTicks ? *_pauseTicks + ticks : ticks; }
 
 		// Features
 

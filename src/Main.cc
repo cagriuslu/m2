@@ -24,40 +24,39 @@ int main(const int argc, char **argv) {
 		LOG_FATAL("SDL_Init error", SDL_GetError());
 		return -1;
 	}
-	LOG_DEBUG("SDL initialized");
 	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
 		LOG_FATAL("IMG_Init error", IMG_GetError());
 		return -1;
 	}
-	LOG_DEBUG("SDL_image initialized");
 	if (TTF_Init() != 0) {
 		LOG_FATAL("TTF_Init error", TTF_GetError());
 		return -1;
 	}
-	LOG_DEBUG("SDL_ttf initialized");
 
+	LOG_INFO("Creating Game instance...");
 	Game::CreateInstance();
-	M2_GAME.AddPauseTicks(sdl::get_ticks()); // Add initialization duration as pause ticks
 
-	LOG_DEBUG("Executing main menu...");
-	if (m2::UiPanel::create_and_run_blocking(M2G_PROXY.MainMenuBlueprint()).IsQuit()) {
-		LOG_INFO("Main menu returned QUIT");
-		return 0;
-	}
-	LOG_DEBUG("Main menu returned");
-
-	// Check if there's a level
-	if (not M2_GAME.HasLevel()) {
-		LOG_WARN("Main menu didn't initialize a level");
-	}
-
-	sdl::Stopwatch since_last_phy(M2_GAME.pause_ticks);
-	sdl::Stopwatch since_last_gfx(M2_GAME.pause_ticks);
-	sdl::Stopwatch since_last_fps(M2_GAME.pause_ticks);
+	std::optional<sdl::Stopwatch> sinceLastPhy, sinceLastGfx, sinceLastFps;
 	unsigned phy_count{}, gfx_count{}, last_phy_count = UINT_MAX;
-	LOG_DEBUG("Initial pause ticks", M2_GAME.pause_ticks);
-	while (M2_GAME.HasLevel() && !M2_GAME.quit) {
-		M2_LEVEL.BeginGameLoop();
+	while (not M2_GAME.quit) {
+		// Try to load a level if there's no level
+		if (not M2_GAME.HasLevel()) {
+			LOG_DEBUG("Executing main menu...");
+			if (UiPanel::create_and_run_blocking(M2G_PROXY.MainMenuBlueprint()).IsQuit()) {
+				LOG_INFO("Main menu returned QUIT");
+				break;
+			}
+			if (not M2_GAME.HasLevel()) {
+				LOG_WARN("Main menu didn't initialize a level");
+				continue;
+			} else {
+				LOG_INFO("Main menu loaded a level");
+			}
+			M2_LEVEL.BeginGameLoop();
+			sinceLastPhy = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};
+			sinceLastGfx = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};
+			sinceLastFps = sdl::Stopwatch{M2_GAME._level->PauseTicksHandle()};
+		}
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////// EVENT HANDLING ////////////////////////////
@@ -84,9 +83,9 @@ int main(const int argc, char **argv) {
 		////////////////////////////////////////////////////////////////////////
 		for (last_phy_count = 0;
 			// Up to 4 times, if enough time has passed since last phy, if game hasn't quit
-			last_phy_count < 4 && M2_GAME.phy_period_ticks <= since_last_phy.measure() && !M2_GAME.quit;
+			last_phy_count < 4 && M2_GAME.phy_period_ticks <= sinceLastPhy->measure() && !M2_GAME.quit;
 			// Increment phy counters, subtract period from stopwatch
-			++last_phy_count, ++phy_count, since_last_phy.subtract_from_lap(M2_GAME.phy_period_ticks)) {
+			++last_phy_count, ++phy_count, sinceLastPhy->subtract_from_lap(M2_GAME.phy_period_ticks)) {
 			// Advance time by M2_GAME.phy_period
 			M2_GAME._delta_time_s = M2_GAME.phy_period;
 
@@ -103,7 +102,7 @@ int main(const int argc, char **argv) {
 			M2_GAME.RecalculateDirectionalAudio();
 		}
 		if (last_phy_count == 4) {
-			since_last_phy.new_lap();
+			sinceLastPhy->new_lap();
 		}
 		BREAK_IF_QUIT();
 
@@ -111,8 +110,8 @@ int main(const int argc, char **argv) {
 		/////////////////////////////// GRAPHICS ///////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		// Measure and advance time
-		since_last_gfx.measure();
-		M2_GAME._delta_time_s = static_cast<float>(since_last_gfx.last()) / 1000.0f;
+		sinceLastGfx->measure();
+		M2_GAME._delta_time_s = static_cast<float>(sinceLastGfx->last()) / 1000.0f;
 
 		M2_GAME.ExecutePreDraw();
 		M2_GAME.UpdateHudContents();
@@ -127,8 +126,8 @@ int main(const int argc, char **argv) {
 		M2_GAME.FlipBuffers();
 		++gfx_count;
 
-		if (since_last_fps.measure(); 10000 < since_last_fps.lap()) {
-			since_last_fps.subtract_from_lap(10000);
+		if (sinceLastFps->measure(); 10000 < sinceLastFps->lap()) {
+			sinceLastFps->subtract_from_lap(10000);
 			LOGF_DEBUG("PHY count %d, GFX count %d, FPS %f", phy_count, gfx_count, gfx_count / 10.0f);
 			phy_count = 0;
 			gfx_count = 0;

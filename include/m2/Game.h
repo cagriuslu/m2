@@ -116,8 +116,7 @@ namespace m2 {
 		///////////////////////////////// MISC /////////////////////////////////
 		////////////////////////////////////////////////////////////////////////
 		Events events;
-		sdl::ticks_t pause_ticks{};  // Ticks spent outside of game
-		std::optional<sdl::ticks_t> rootBlockingUiBeginTicks;  // Exists only if there is an ongoing blocking UI
+
 		std::vector<std::string> console_output;
 
 		Game();
@@ -202,7 +201,6 @@ namespace m2 {
 
 		// Modifiers
 
-		void AddPauseTicks(const sdl::ticks_t ticks) { pause_ticks += ticks; }
 		void OnWindowResize();
 		/// Scale can be used to adjust the zoom
 		void SetScale(float scale);

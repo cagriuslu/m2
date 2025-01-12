@@ -249,16 +249,18 @@ m2::void_expected m2::Level::ResetBulkSheetEditor() {
 float m2::Level::horizontal_fov() const { return _lb ? _lb->horizontal_fov() : M2_GAME.Dimensions().GameM().x; }
 
 m2::sdl::ticks_t m2::Level::get_level_duration() const {
-	return sdl::get_ticks_since(*level_start_ticks, M2_GAME.pause_ticks - *level_start_pause_ticks);
+	return sdl::get_ticks_since(*_beginTicks, *_pauseTicks);
 }
 
 void m2::Level::BeginGameLoop() {
-	if (!level_start_ticks || !level_start_pause_ticks) {
-		// This means this is the first time the game loop is executing
-		// Initialize start_ticks counters
-		level_start_ticks = sdl::get_ticks();
-		level_start_pause_ticks = M2_GAME.pause_ticks;
+	if (_beginTicks || _pauseTicks) {
+		throw M2_ERROR("BeginGameLoop called for an second time");
 	}
+
+	// This means this is the first time the game loop is executing
+	// Initialize start_ticks counters
+	_beginTicks = sdl::get_ticks();
+	_pauseTicks = 0;
 }
 
 void m2::Level::EnableDimmingWithExceptions(std::set<ObjectId>&& exceptions) {
