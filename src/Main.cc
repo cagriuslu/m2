@@ -20,19 +20,6 @@ int main(const int argc, char **argv) {
 		return -1;
 	}
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
-		LOG_FATAL("SDL_Init error", SDL_GetError());
-		return -1;
-	}
-	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
-		LOG_FATAL("IMG_Init error", IMG_GetError());
-		return -1;
-	}
-	if (TTF_Init() != 0) {
-		LOG_FATAL("TTF_Init error", TTF_GetError());
-		return -1;
-	}
-
 	LOG_INFO("Creating Game instance...");
 	Game::CreateInstance();
 
@@ -139,8 +126,5 @@ int main(const int argc, char **argv) {
 	}
 
 	Game::DestroyInstance();
-	TTF_Quit();
-	IMG_Quit();
-	SDL_Quit();
 	return 0;
 }

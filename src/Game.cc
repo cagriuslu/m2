@@ -39,6 +39,16 @@ void m2::Game::DestroyInstance() {
 }
 
 m2::Game::Game() {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) != 0) {
+		throw M2_ERROR("SDL_Init error: " + std::string{SDL_GetError()});
+	}
+	if (IMG_Init(IMG_INIT_PNG) != IMG_INIT_PNG) {
+		throw M2_ERROR("IMG_Init error: " + std::string{IMG_GetError()});
+	}
+	if (TTF_Init() != 0) {
+		throw M2_ERROR("TTF_Init error: " + std::string{TTF_GetError()});
+	}
+
 	// Default Metal backend is slow in 2.5D mode, while drawing the rectangle debug shapes
 	if (SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl") == false) {
 		LOG_WARN("Failed to set opengl as render hint");
@@ -145,6 +155,9 @@ m2::Game::~Game() {
 	SDL_DestroyRenderer(renderer);
 	SDL_FreeCursor(cursor);
 	SDL_DestroyWindow(window);
+	TTF_Quit();
+	IMG_Quit();
+	SDL_Quit();
 }
 
 m2::void_expected m2::Game::HostGame(mplayer::Type type, unsigned max_connection_count) {
