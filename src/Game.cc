@@ -593,13 +593,17 @@ void m2::Game::ExecuteStep() {
 					_level->draw_list.queue_update(phy.owner_id(), object.position);
 				}
 			} else if (phy.rigidBodyIndex) {
+				const auto& rigidBody = _level->World2().GetRigidBody(*phy.rigidBodyIndex);
 				auto& object = phy.owner();
 				auto oldPosition = object.position;
-				auto newPosition = _level->World2().GetRigidBody(*phy.rigidBodyIndex).PositionOfCenterOfMass();
+				auto newPosition = rigidBody.PositionOfCenterOfMass();
 				object.position.x = newPosition.X().ToFloat();
 				object.position.y = newPosition.Y().ToFloat();
 				if (oldPosition != object.position) {
 					_level->draw_list.queue_update(phy.owner_id(), object.position);
+				}
+				if (const auto gfxId = object.graphic_id()) {
+					_level->graphics[gfxId].draw_angle = rigidBody.OrientationAboutCenterOfMass().ToFloat();
 				}
 			}
 		}

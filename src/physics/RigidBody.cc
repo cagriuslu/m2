@@ -1,5 +1,32 @@
 #include <m2/physics/RigidBody.h>
 
+std::optional<m2::PhysicsPrimitive> m2::RigidBodyPart::CalculateMomentOfInertia(const Vec<PhysicsPrimitive>& offsetOfOverallCenterOfMass) const {
+	// If the body part has infinite mass, immediately return infinite moment of inertia
+	if (inverseMass == PhysicsPrimitive::Zero()) {
+		return std::nullopt;
+	}
+
+	// Find the moment of inertia due to the mass being offset from the center of mass of the body.
+	const auto partOriginToCenterOfMassVec = position - offsetOfOverallCenterOfMass;
+	const auto partOriginDistanceSquareToCenterOfMass = partOriginToCenterOfMassVec.MagnitudeSquare();
+	const auto partMass = inverseMass.Inverse();
+	const auto momentOfInertiaDueToOffsetFromCenter = partMass * partOriginDistanceSquareToCenterOfMass;
+
+	// Find the moment of inertia due to the shape of the body part.
+	if (std::holds_alternative<CircParams>(shapeParameters)) {
+		const auto radius = std::get<CircParams>(shapeParameters).radius;
+		// This is just a made up formula
+		return momentOfInertiaDueToOffsetFromCenter + PhysicsPrimitive{0.5f} * partMass * radius * radius;
+	} else if (std::holds_alternative<RectParams>(shapeParameters)) {
+		const auto width = std::get<RectParams>(shapeParameters).dimensions.X();
+		const auto height = std::get<RectParams>(shapeParameters).dimensions.Y();
+		// This is just a made up formula
+		return momentOfInertiaDueToOffsetFromCenter + PhysicsPrimitive{0.5f} * partMass * width * height;
+	} else {
+		throw M2_ERROR("Unimplemented shape");
+	}
+}
+
 m2::RigidBody::RigidBody(std::vector<RigidBodyPart> bodyParts,
 		const Vec<PhysicsPrimitive> initialPositionOfCenterOfMass, PhysicsPrimitive initialOrientationAboutCenterOfMass,
 		PhysicsPrimitive gravityInfluence, PhysicsPrimitive velocitySustainment,
@@ -25,6 +52,8 @@ m2::RigidBody::RigidBody(std::vector<RigidBodyPart> bodyParts,
 			if (std::get<RigidBodyPart::RectParams>(part.shapeParameters).dimensions.Y() < PhysicsPrimitive{}) {
 				throw M2_ERROR("Given rectangle height is negative");
 			}
+		} else {
+			throw M2_ERROR("Unimplemented shape");
 		}
 	}
 	// Check velocity sustainment
@@ -105,19 +134,15 @@ m2::PhysicsPrimitive m2::RigidBody::InverseOfTotalMass() const {
 	return cumulativeMass.Inverse();
 }
 m2::PhysicsPrimitive m2::RigidBody::InverseOfMomentOfInertiaAboutCenterOfMass() const {
-	// TODO make a proper implementation. Right now, we assume body parts are point masses.
 	const auto offsetOfCenterOfMass = OffsetOfCenterOfMass();
 	PhysicsPrimitive cumulativeMomentOfInertia;
 	for (const auto& part : _parts) {
-		// If any of the body parts have infinite mass, immediately return infinite moment of inertia
-		if (part.inverseMass == PhysicsPrimitive::Zero()) {
+		const auto momentOfInertiaOfPart = part.CalculateMomentOfInertia(offsetOfCenterOfMass);
+		if (not momentOfInertiaOfPart) {
+			// The part must have infinite mass
 			return PhysicsPrimitive::Zero();
 		}
-		// Assume that each body part is a particle
-		const auto partOriginToCenterOfMassVec = part.position - offsetOfCenterOfMass;
-		const auto partDistanceSquareToCenterOfMass = partOriginToCenterOfMassVec.MagnitudeSquare();
-		const auto partMass = part.inverseMass.Inverse();
-		cumulativeMomentOfInertia += partMass * partDistanceSquareToCenterOfMass;
+		cumulativeMomentOfInertia += *momentOfInertiaOfPart;
 	}
-	return cumulativeMomentOfInertia;
+	return cumulativeMomentOfInertia.Inverse();
 }

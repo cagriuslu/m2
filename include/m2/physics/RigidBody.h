@@ -3,6 +3,7 @@
 #include <m2/physics/Detail.h>
 #include <vector>
 #include <variant>
+#include <optional>
 
 namespace m2 {
 	struct RigidBodyPart {
@@ -21,6 +22,10 @@ namespace m2 {
 		const PhysicsPrimitive orientation;
 		/// Shape parameters
 		const std::variant<CircParams, RectParams> shapeParameters;
+
+		/// If nullopt, the part has infinite mass, thus infinite moment of inertia. offsetOfOverallCenterOfMass is what
+		/// OffsetOfCenterOfMass() returns for the body.
+		[[nodiscard]] std::optional<PhysicsPrimitive> CalculateMomentOfInertia(const Vec<PhysicsPrimitive>& offsetOfOverallCenterOfMass) const;
 	};
 
 	class RigidBody {
@@ -70,6 +75,7 @@ namespace m2 {
 		[[nodiscard]] Vec<PhysicsPrimitive> OffsetOfCenterOfMass() const;
 		/// Position of the center of mass in the physics world.
 		[[nodiscard]] Vec<PhysicsPrimitive> PositionOfCenterOfMass() const { return _positionOfCenterOfMass; }
+		[[nodiscard]] PhysicsPrimitive OrientationAboutCenterOfMass() const { return _orientationAboutCenterOfMass; }
 
 		// Modifiers
 
