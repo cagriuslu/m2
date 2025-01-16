@@ -16,12 +16,12 @@ std::optional<m2::PhysicsPrimitive> m2::RigidBodyPart::CalculateMomentOfInertia(
 	if (std::holds_alternative<CircParams>(shapeParameters)) {
 		const auto radius = std::get<CircParams>(shapeParameters).radius;
 		// This is just a made up formula
-		return momentOfInertiaDueToOffsetFromCenter + PhysicsPrimitive{0.5f} * partMass * radius * radius;
+		return momentOfInertiaDueToOffsetFromCenter + partMass * radius * radius;
 	} else if (std::holds_alternative<RectParams>(shapeParameters)) {
 		const auto width = std::get<RectParams>(shapeParameters).dimensions.X();
 		const auto height = std::get<RectParams>(shapeParameters).dimensions.Y();
 		// This is just a made up formula
-		return momentOfInertiaDueToOffsetFromCenter + PhysicsPrimitive{0.5f} * partMass * width * height;
+		return momentOfInertiaDueToOffsetFromCenter + partMass * width * height;
 	} else {
 		throw M2_ERROR("Unimplemented shape");
 	}

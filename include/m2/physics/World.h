@@ -12,6 +12,7 @@ namespace m2 {
 		// Accessors
 
 		[[nodiscard]] const RigidBody& GetRigidBody(size_t index) const;
+		RigidBody& GetRigidBody(size_t index);
 
 		// Modifiers
 
@@ -22,7 +23,6 @@ namespace m2 {
 			_rigidBodies.emplace_back(std::forward<Args>(args)...);
 			return _rigidBodies.size() - 1;
 		}
-		RigidBody& GetRigidBody(size_t index);
 		void Integrate();
 	};
 }
