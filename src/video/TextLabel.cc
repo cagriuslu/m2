@@ -71,17 +71,17 @@ void m2::DrawTextLabelIn3dWorld(const pb::TextLabel& tl, const RectI& sourceRect
 			is_foreground);
 }
 
-m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::string& text, int fontSize) {
+m2::RectI m2::TextLabelCache::TextLabelGenerator::operator()(const std::tuple<std::string,int>& item) {
 	// Change the font size. This operation clears the glyph caches, but that's a sacrifice I'm willing to make.
-	TTF_SetFontSize(_font, fontSize);
+	TTF_SetFontSize(_font, std::get<int>(item));
 
 	// Estimate the size of the final text
 	int w, h;
-	const auto sizeResult = TTF_SizeUTF8(_font, text.c_str(), &w, &h);
+	const auto sizeResult = TTF_SizeUTF8(_font, std::get<std::string>(item).c_str(), &w, &h);
 	m2_expect_zero_or_throw_message(sizeResult, TTF_GetError());
 
 	// Render to new surface
-	sdl::SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(_font, text.c_str(), SDL_Color{255, 255, 255, 255})};
+	sdl::SurfaceUniquePtr surface{TTF_RenderUTF8_Blended(_font, std::get<std::string>(item).c_str(), SDL_Color{255, 255, 255, 255})};
 	m2_succeed_or_throw_message(surface, TTF_GetError());
 
 	// Allocate space

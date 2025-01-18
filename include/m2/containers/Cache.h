@@ -4,27 +4,27 @@
 #include <unordered_map>
 
 namespace m2 {
-	template <typename T, typename TGenerator, typename HashFunc, typename ...Args>
+	template <typename Key, typename Value, typename ValueGenerator, typename KeyHashFunc = std::hash<Key>, typename KeyComparator = std::equal_to<Key>>
 	class Cache {
-		TGenerator _generator;
-		std::unordered_map<std::tuple<Args...>, T, HashFunc> _storage;
+		ValueGenerator _generator;
+		std::unordered_map<Key, Value, KeyHashFunc, KeyComparator> _storage;
 
 	public:
-		explicit Cache(TGenerator&& generator = {}) : _generator(std::move(generator)) {}
+		explicit Cache(ValueGenerator&& generator = {}) : _generator(std::move(generator)) {}
 
 		// Accessors
 
-		const TGenerator& Generator() const { return _generator; }
+		const ValueGenerator& Generator() const { return _generator; }
 
 		// Modifiers
 
-		T& operator()(Args... args) {
+		Value& operator()(const Key& args) {
 			// Search if the entry exists in the storage
-			if (auto it = _storage.find(std::make_tuple(args...)); it != _storage.end()) {
+			if (auto it = _storage.find(args); it != _storage.end()) {
 				return it->second;
 			}
 			// Otherwise, create the object
-			auto [new_it, success] = _storage.emplace(std::make_tuple(args...), _generator(args...));
+			auto [new_it, success] = _storage.emplace(args, _generator(args));
 			return new_it->second;
 		}
 	};

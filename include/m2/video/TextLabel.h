@@ -39,19 +39,18 @@ namespace m2 {
 		public:
 			explicit TextLabelGenerator(SDL_Renderer* renderer, TTF_Font* font) : _dynamicSheet(renderer), _font(font) {}
 			[[nodiscard]] SDL_Texture* Texture() const { return _dynamicSheet.Texture(); }
-			RectI operator()(const std::string& text, int fontSize);
+			RectI operator()(const std::tuple<std::string,int>& item);
 		};
-
 		/// Hash function used in Cache
 		struct TextLabelHash {
 			size_t operator()(const std::tuple<std::string,int>& item) const;
 		};
 
 		Cache<
-				RectI, // Return type
-				TextLabelGenerator, // Generator
-				TextLabelHash, // Hash function
-				std::string, int // Generator parameters
+				std::tuple<std::string,int>, // Key
+				RectI, // Value
+				TextLabelGenerator, // Value generator
+				TextLabelHash // Key hash function
 				> _cache;
 
 	public:
@@ -63,6 +62,6 @@ namespace m2 {
 
 		// Modifiers
 
-		RectI Create(const std::string& text, const int fontSize) { return _cache(text, fontSize); }
+		RectI Create(const std::string& text, const int fontSize) { return _cache(std::make_tuple(text, fontSize)); }
 	};
 }

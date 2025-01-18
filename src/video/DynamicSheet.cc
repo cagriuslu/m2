@@ -7,7 +7,7 @@ m2::DynamicSheet::DynamicSheet(SDL_Renderer *renderer) : _renderer(renderer) {
 	uint32_t r_mask, g_mask, b_mask, a_mask;
 	SDL_PixelFormatEnumToMasks(SDL_PIXELFORMAT_BGRA32, &bpp, &r_mask, &g_mask, &b_mask, &a_mask);
 
-	auto* surface = SDL_CreateRGBSurface(0, 16384, 512, bpp, r_mask, g_mask, b_mask, a_mask);
+	auto* surface = SDL_CreateRGBSurface(0, 1024, 512, bpp, r_mask, g_mask, b_mask, a_mask);
 	if (!surface) {
 		throw M2_ERROR("Failed to create RGB surface: " + std::string{SDL_GetError()});
 	}
