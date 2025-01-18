@@ -26,6 +26,7 @@
 #include <vector>
 #include "math/Hash.h"
 #include "GameDimensions.h"
+#include <m2/video/Shape.h>
 
 #define M2_GAME (m2::Game::Instance())
 #define M2_DEFER(f) (M2_GAME.AddDeferredAction(f))
@@ -58,6 +59,7 @@ namespace m2 {
 		Rational _font_letter_width_to_height_ratio; // letter w/h // TODO get rid of this, because this is only accurate if the font is used in default size, which isn't always the case
 		std::vector<std::variant<Sprite, pb::TextLabel>> _sprites;
 		std::optional<TextLabelCache> _textLabelCache;
+		std::optional<ShapeCache> _shapeCache;
 
 	public:  // TODO private
 		std::optional<Level> _level;
@@ -100,6 +102,7 @@ namespace m2 {
 		pb::LUT<m2::pb::Song, Song> songs;
 		const Rational& font_letter_width_to_height_ratio() const { return _font_letter_width_to_height_ratio; }
 		TextLabelCache& TextLabelCache() { return *_textLabelCache; }
+		ShapeCache& ShapeCache() { return *_shapeCache; }
 
 		////////////////////////////////////////////////////////////////////////
 		//////////////////////////////// CONFIG ////////////////////////////////

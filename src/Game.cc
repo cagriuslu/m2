@@ -120,6 +120,7 @@ m2::Game::Game() {
 	// Height and ascent can be queried. For width, you need to render.
 	_font_letter_width_to_height_ratio = Rational{font_letter_width, font_letter_height};
 	_textLabelCache.emplace(renderer, font);
+	_shapeCache.emplace(renderer);
 
 	audio_manager.emplace();
 	spriteEffectsSheet = SpriteEffectsSheet{renderer};
