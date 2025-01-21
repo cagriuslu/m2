@@ -48,6 +48,13 @@
         "GAME": "CuZn"
       }
     },
+    {
+      "name": "PINBALL",
+      "hidden": true,
+      "cacheVariables": {
+        "GAME": "PINBALL"
+      }
+    },
 
     {
       "name": "RPG-POSIX-DEBUG",
@@ -110,6 +117,27 @@
       "name": "CuZn-WIN-RELEASE",
       "inherits": ["RELEASE", "CuZn"],
       "binaryDir": "build/CuZn-RELEASE"
+    },
+
+    {
+      "name": "PINBALL-POSIX-DEBUG",
+      "inherits": ["POSIX", "DEBUG", "PINBALL"],
+      "binaryDir": "build/PINBALL-DEBUG"
+    },
+    {
+      "name": "PINBALL-POSIX-RELEASE",
+      "inherits": ["POSIX", "RELEASE", "PINBALL"],
+      "binaryDir": "build/PINBALL-RELEASE"
+    },
+    {
+      "name": "PINBALL-WIN-DEBUG",
+      "inherits": ["DEBUG", "PINBALL"],
+      "binaryDir": "build/PINBALL-DEBUG"
+    },
+    {
+      "name": "PINBALL-WIN-RELEASE",
+      "inherits": ["RELEASE", "PINBALL"],
+      "binaryDir": "build/PINBALL-RELEASE"
     }
   ]
 }

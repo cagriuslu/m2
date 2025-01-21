@@ -1,0 +1,13 @@
+{
+  "sheets": [
+    {
+      "resource": "game/PINBALL/png/dummy.png",
+      "ppm": 32,
+      "sprites": [
+        {
+          "type": "NO_SPRITE"
+        }
+      ]
+    }
+  ]
+}

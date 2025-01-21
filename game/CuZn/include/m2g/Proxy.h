@@ -13,7 +13,7 @@
 namespace m2g {
 	class Proxy : public m2::Proxy {
 	public:
-		static Proxy& get_instance();
+		static Proxy& get_instance(); // TODO remove
 
 		const std::string game_identifier = "CuZn";
 		const std::string game_friendly_name = "OpenBrass";
