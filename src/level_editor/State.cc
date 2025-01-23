@@ -269,7 +269,7 @@ void m2::ledit::State::activate_select_mode() {
 void m2::ledit::State::activate_shift_mode() {
 	mode.emplace<ShiftMode>();
 }
-void m2::ledit::State::save() {
+m2::void_expected m2::ledit::State::save() {
 	pb::Level level;
 	// Start from the current level
 	if (auto lb = M2_LEVEL.level_blueprint(); lb) {
@@ -290,5 +290,5 @@ void m2::ledit::State::save() {
 	for (const auto& [position, pair] : std::get<ledit::State>(M2_LEVEL.type_state).fg_placeholders) {
 		level.add_objects()->CopyFrom(pair.second);
 	}
-	pb::message_to_json_file(level, *M2_LEVEL.path());
+	return pb::message_to_json_file(level, *M2_LEVEL.path());
 }

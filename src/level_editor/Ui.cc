@@ -425,7 +425,9 @@ const UiPanelBlueprint level_editor::RightHudBlueprint = {
 
 const widget::TextBlueprint save_button = {
     .text = "Save", .kb_shortcut = SDL_SCANCODE_S, .on_action = [](MAYBE const widget::Text& self) -> UiAction {
-	    ledit::State::save();
+	    if (auto success = ledit::State::save(); not success) {
+    		M2_LEVEL.ShowMessage(success.error(), 8.0f);
+    	}
 	    return MakeContinueAction();
     }};
 const widget::TextBlueprint quit_button = {

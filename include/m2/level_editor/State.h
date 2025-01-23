@@ -80,6 +80,6 @@ namespace m2::ledit {
 		void activate_pick_mode();
 		void activate_select_mode();
 		void activate_shift_mode();
-		static void save();
+		static void_expected save();
 	};
 }  // namespace m2::ledit
