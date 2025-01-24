@@ -43,7 +43,7 @@ void m2g::Proxy::post_single_player_level_init(MAYBE const std::string& name, co
 	}
 }
 
-m2::void_expected m2g::Proxy::init_level_blueprint_fg_object(m2::Object& obj) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(m2::Object& obj) {
 	using namespace rpg;
 	switch (obj.object_type()) {
 		case pb::ObjectType::PLAYER:

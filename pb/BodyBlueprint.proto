@@ -47,6 +47,7 @@ message Fixture {
   bool is_sensor = 5;
 }
 
+// TODO no reason for this to be a protobuf object
 message BodyBlueprint {
   BodyType type = 1;
   bool allow_sleep = 2;
@@ -60,4 +61,5 @@ message BodyBlueprint {
   float gravity_scale = 9; // 0: default, NEGATIVE: disable gravity
   float linear_damping = 10;
   bool fixed_rotation = 11;
+  float inertia = 12;
 }

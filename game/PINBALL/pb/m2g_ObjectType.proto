@@ -3,4 +3,8 @@ package m2g.pb;
 
 enum ObjectType {
   NO_OBJECT = 0;
+  PLAYER = 1;
+  BALL = 2;
+  FLIPPER_LEFT = 3;
+  FLIPPER_RIGHT = 4;
 }

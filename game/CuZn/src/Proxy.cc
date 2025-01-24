@@ -461,7 +461,7 @@ void m2g::Proxy::post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_ty
 	}
 }
 
-m2::void_expected m2g::Proxy::init_level_blueprint_fg_object(MAYBE m2::Object& obj) {
+m2::void_expected m2g::Proxy::LoadForegroundObjectFromLevelBlueprint(MAYBE m2::Object& obj) {
 	return m2::make_unexpected("Invalid object type");
 }
 

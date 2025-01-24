@@ -155,7 +155,7 @@ namespace m2 {
 		void post_tile_create(MAYBE m2::Object& obj, MAYBE m2g::pb::SpriteType sprite_type) {}
 
 		/// Load foreground object from a level blueprint
-		m2::void_expected init_level_blueprint_fg_object(MAYBE m2::Object& obj) { return {}; }
+		m2::void_expected LoadForegroundObjectFromLevelBlueprint(MAYBE m2::Object& obj) { throw M2_ERROR("Proxy is missing an object loader"); }
 		/// Load foreground object from a ServerUpdate. The item and resources should NOT be added to the character,
 		/// because those will be added automatically after the initialization.
 		m2::void_expected init_server_update_fg_object(MAYBE m2::Object& obj, MAYBE const std::vector<m2g::pb::ItemType>& named_item_types, MAYBE const std::vector<m2::pb::Resource>& resources) { return {}; }

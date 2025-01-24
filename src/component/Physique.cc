@@ -6,6 +6,7 @@
 #include <box2d/b2_shape.h>
 #include <box2d/b2_polygon_shape.h>
 #include <box2d/b2_circle_shape.h>
+#include <box2d/b2_edge_shape.h>
 #include <m2/Object.h>
 
 m2::Physique::Physique(Id object_id) : Component(object_id), body(nullptr) {}
@@ -140,6 +141,19 @@ void m2::Physique::default_debug_draw(Physique& phy) {
 						};
 						SDL_RenderDrawLinesF(M2_GAME.renderer, points.data(), I(points.size()));
 					}
+				}
+				break;
+			}
+			case b2Shape::Type::e_edge: {
+				const auto* shape = dynamic_cast<const b2EdgeShape*>(fixture->GetShape());
+				auto point1 = static_cast<VecF>(shape->m_vertex1);
+				auto point2 = static_cast<VecF>(shape->m_vertex2);
+				if (is_projection_type_parallel(M2_LEVEL.ProjectionType())) {
+					auto point1OnScreen = ScreenOriginToPositionVecPx(position + point1);
+					auto point2OnScreen = ScreenOriginToPositionVecPx(position + point2);
+					SDL_SetRenderDrawColor(M2_GAME.renderer, color.r, color.g, color.b, color.a);
+					SDL_RenderDrawLine(M2_GAME.renderer, iround(point1OnScreen.x), iround(point1OnScreen.y),
+							iround(point2OnScreen.x), iround(point2OnScreen.y));
 				}
 				break;
 			}

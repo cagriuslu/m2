@@ -1,11 +1,43 @@
 {
   "sheets": [
     {
-      "resource": "game/PINBALL/png/dummy.png",
+      "resource": "game/PINBALL/png/Basic.png",
       "ppm": 32,
       "sprites": [
+        {},
         {
-          "type": "NO_SPRITE"
+          "type": "SPRITE_BASIC_BALL",
+          "regular": {
+            "rect": {
+              "w": 16,
+              "h": 16
+            },
+            "foregroundCollider": {
+              "circRadiusPx": 8
+            }
+          }
+        },
+        {
+          "type": "SPRITE_BASIC_FLIPPER",
+          "regular": {
+            "rect": {
+              "x": 32,
+              "w": 64,
+              "h": 32
+            },
+            "centerToOriginVecPx": {
+              "x": -23.5
+            },
+            "foregroundCollider": {
+              "originToOriginVecPx": {
+                "x": 23.5
+              },
+              "rectDimsPx": {
+                "w": 64,
+                "h": 18
+              }
+            }
+          }
         }
       ]
     }

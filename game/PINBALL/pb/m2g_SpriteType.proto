@@ -3,4 +3,7 @@ package m2g.pb;
 
 enum SpriteType {
   NO_SPRITE = 0;
+
+  SPRITE_BASIC_BALL = 1;
+  SPRITE_BASIC_FLIPPER = 2;
 }

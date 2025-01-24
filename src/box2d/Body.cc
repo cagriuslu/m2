@@ -80,7 +80,7 @@ m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, 
 			circle_shape.m_p = static_cast<b2Vec2>(VecF{fixture_blueprint.circ().center_offset()});
 			fixtureDef.shape = &circle_shape;
 		} else {
-			m2::VecF halfDims = VecF{fixture_blueprint.rect().dims()} * 0.5f;
+			VecF halfDims = VecF{fixture_blueprint.rect().dims()} * 0.5f;
 			polygon_shape.SetAsBox(halfDims.x, halfDims.y, static_cast<b2Vec2>(VecF{fixture_blueprint.rect().center_offset()}), fixture_blueprint.rect().angle());
 			fixtureDef.shape = &polygon_shape;
 		}
@@ -101,7 +101,7 @@ m2::box2d::BodyUniquePtr m2::box2d::create_body(b2World& world, Id physique_id, 
 		body->SetLinearDamping(blueprint.linear_damping());
 		body->SetAngularDamping(0.0f);
 		body->SetFixedRotation(blueprint.fixed_rotation());
-		b2MassData massData = {blueprint.mass(), b2Vec2{0.0f, 0.0f}, 0.0f};
+		b2MassData massData = {blueprint.mass(), b2Vec2{0.0f, 0.0f}, blueprint.inertia()};
 		body->SetMassData(&massData);
 
 		auto gravity_scale = blueprint.gravity_scale();

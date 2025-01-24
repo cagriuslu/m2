@@ -14,6 +14,11 @@
 #include "m2/box2d/RayCast.h"
 
 m2::Pathfinder::Pathfinder(const pb::Level &lb) {
+	// Early out
+	if (lb.background_layers_size() == 0) {
+		return;
+	}
+
 	const auto& first_layer = lb.background_layers(0);
 	for (int y = 0; y < first_layer.background_rows_size(); ++y) {
 		for (int x = 0; x < first_layer.background_rows(y).items_size(); ++x) {

@@ -92,9 +92,12 @@ m2::void_expected m2::Level::InitLevelEditor(const std::filesystem::path& lb_pat
 		}
 		// Create foreground objects
 		for (const auto& fg_object : lb->objects()) {
-			auto position = m2::VecF{fg_object.position()};
-			le_state.fg_placeholders[position.iround()] = std::make_pair(
-			    obj::create_foreground_placeholder(position, M2_GAME.object_main_sprites[fg_object.type()]), fg_object);
+			if (fg_object.has_position_f()) {
+				LOG_WARN("Unable to load object with floating position", VecF{fg_object.position_f()});
+			} else {
+				auto position = VecF{fg_object.position()};
+				le_state.fg_placeholders[position.iround()] = std::make_pair(obj::create_foreground_placeholder(position, M2_GAME.object_main_sprites[fg_object.type()]), fg_object);
+			}
 		}
 	}
 
@@ -253,8 +256,8 @@ m2::sdl::ticks_t m2::Level::get_level_duration() const {
 }
 
 void m2::Level::BeginGameLoop() {
-	if (_beginTicks || _pauseTicks) {
-		throw M2_ERROR("BeginGameLoop called for an second time");
+	if (_beginTicks) {
+		throw M2_ERROR("BeginGameLoop called for a second time");
 	}
 
 	// This means this is the first time the game loop is executing
@@ -387,10 +390,11 @@ m2::void_expected m2::Level::InitAnyPlayer(
 	LOG_DEBUG("Background boundary", _backgroundBoundary);
 	// Create foreground objects
 	for (const auto& fg_object : _lb->objects()) {
-		LOGF_TRACE(
-		    "Creating %d type object at (%d,%d)...", fg_object.type(), fg_object.position().x(),
-		    fg_object.position().y());
-		auto it = m2::create_object(m2::VecF{fg_object.position()} + VecF{0.5f, 0.5f}, fg_object.type());
+		const auto objectPosition = fg_object.has_position_f()
+				? VecF{fg_object.position_f()}
+				: VecF{fg_object.position()} + VecF{0.5f, 0.5f};
+		LOG_TRACE("Loading foreground object", fg_object.type(), objectPosition);
+		auto it = create_object(objectPosition, fg_object.type());
 
 		// Assign to group
 		if (fg_object.has_group() && fg_object.group().type() != m2g::pb::GroupType::NO_GROUP) {
@@ -407,7 +411,7 @@ m2::void_expected m2::Level::InitAnyPlayer(
 			it->set_group(group_id, group->add_member(it.id()));
 		}
 
-		auto load_result = M2G_PROXY.init_level_blueprint_fg_object(*it);
+		auto load_result = M2G_PROXY.LoadForegroundObjectFromLevelBlueprint(*it);
 		m2_reflect_unexpected(load_result);
 		LOG_TRACE("Created object", it.id());
 	}

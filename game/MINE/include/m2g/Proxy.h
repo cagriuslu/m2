@@ -14,6 +14,6 @@ namespace m2g {
 		const m2::UiPanelBlueprint* RightHudBlueprint();
 
 		void post_tile_create(m2::Object& obj, m2g::pb::SpriteType sprite_type);
-		m2::void_expected init_level_blueprint_fg_object(m2::Object& obj);
+		m2::void_expected LoadForegroundObjectFromLevelBlueprint(m2::Object& obj);
 	};
 }

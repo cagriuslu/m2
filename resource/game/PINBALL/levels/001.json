@@ -1,0 +1,17 @@
+{
+  "identifier": "001",
+  "objects": [
+    {
+      "type": "FLIPPER_RIGHT"
+    },
+    {
+      "type": "FLIPPER_LEFT"
+    },
+    {
+      "type": "BALL"
+    },
+    {
+      "type": "PLAYER"
+    }
+  ]
+}

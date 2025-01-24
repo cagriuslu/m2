@@ -2,6 +2,21 @@
   "objects": [
     {
       "type": "NO_OBJECT"
+    },
+    {
+      "type": "PLAYER"
+    },
+    {
+      "type": "BALL",
+      "mainSprite": "SPRITE_BASIC_BALL"
+    },
+    {
+      "type": "FLIPPER_LEFT",
+      "mainSprite": "SPRITE_BASIC_FLIPPER"
+    },
+    {
+      "type": "FLIPPER_RIGHT",
+      "mainSprite": "SPRITE_BASIC_FLIPPER"
     }
   ]
 }
